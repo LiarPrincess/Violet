@@ -1,0 +1,108 @@
+line_length:
+  warning: 120
+  error:   140
+
+function_body_length:
+  warning: 25
+  error:   30
+
+type_body_length:
+  warning: 250
+  error:   300
+
+file_length:
+  warning: 250
+  error:   300
+
+force_cast:
+  severity: warning
+
+# This may seem like a lot, but basically I like to write some code
+# and then enable all of the optional rules that do not break the project.
+opt_in_rules:
+  - array_init
+  - attributes
+  - closure_end_indentation
+  - contains_over_first_not_nil
+  - empty_count
+  - explicit_init
+  - fatal_error_message
+  - first_where
+  - implicit_return
+  - implicitly_unwrapped_optional
+  - joined_default_parameter
+  - literal_expression_end_indentation
+  - multiline_parameters
+  - nimble_operator
+  - number_separator
+  - overridden_super_call
+  - pattern_matching_keywords
+  - private_outlet
+  - prohibited_super_call
+  - quick_discouraged_call
+  - redundant_nil_coalescing
+  - single_test_class
+  - unneeded_parentheses_in_closure_argument
+  - vertical_parameter_alignment_on_call
+  - anyobject_protocol
+  - closure_body_length
+  - closure_spacing
+  - collection_alignment
+  - convenience_type
+  - explicit_self
+  - discouraged_object_literal
+  - discouraged_optional_boolean
+  - discouraged_optional_collection
+  - empty_string
+  - empty_xctest_method
+  - explicit_enum_raw_value
+  # - fallthrough
+  - file_header
+  - force_unwrapping
+  - function_default_parameter_at_end
+  - identical_operands
+  - legacy_random
+  - lower_acl_than_parent
+  - multiline_arguments
+  - multiline_function_chains
+  - multiline_literal_brackets
+  - object_literal
+  - override_in_extension
+  - private_action
+  - prohibited_interface_builder
+  - quick_discouraged_focused_test
+  - quick_discouraged_pending_test
+  - redundant_type_annotation
+  - required_enum_case
+  - sorted_first_last
+  - static_operator
+  # - strict_fileprivate
+  - toggle_bool
+  - trailing_closure
+  - unavailable_function
+  - unused_import
+  - unused_private_declaration
+  - vertical_whitespace_closing_braces
+  - yoda_condition
+  # - explicit_acl
+  # - explicit_top_level_acl
+  - no_extension_access_modifier
+
+disabled_rules:
+  - identifier_name # annoying
+
+  - colon                   # align properties
+  - comma                   # align func params
+  - return_arrow_whitespace # align return type
+
+  - opening_brace      # if true { ... }
+  - statement_position # else    { ... }
+
+  - redundant_optional_initialization # I like it that way
+
+included:
+  - Violet
+  - VioletLib
+  - VioletLibTests
+  - VioletLibTestsPy
+
