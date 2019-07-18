@@ -1,0 +1,8 @@
+# spm
+/Build
+/.build
+/Packages
+
+# mac
+.DS_Store
+/*.xcodeproj
