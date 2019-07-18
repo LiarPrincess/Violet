@@ -127,7 +127,8 @@ extension TokenKind: CustomStringConvertible {
     case let .int(val):   return "int(\(val))"
     case let .float(val): return "float(\(val))"
     case let .complex(real, imag): return "complex(\(real) + \(imag)j)"
-    case let .string(val): return "string(\(val))"
+    case let .string(val):         return "string(\(val))"
+    case let .formatString(val):   return "formatString(\(val)):"
     case let .bytes(val):  return "data(\(val))"
 
     case .indent:  return "indent"
