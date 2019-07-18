@@ -4,6 +4,10 @@
 
 public struct SourceLocation {
 
+  public static var start: SourceLocation {
+    return SourceLocation(line: 1, column: 1)
+  }
+
   public private(set) var line:   UInt
   public private(set) var column: UInt
 
@@ -24,10 +28,6 @@ public struct SourceLocation {
   internal mutating func newLine() {
     self.line += 1
     self.column = 1
-  }
-
-  public static var start: SourceLocation {
-    return SourceLocation(line: 1, column: 1)
   }
 }
 
