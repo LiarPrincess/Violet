@@ -5,7 +5,7 @@
 // Mostly taken from CPython.
 // Basically rewritting C in Swift, because indents are soooo crucial.
 
-// TODO: test it with: https://docs.python.org/2.5/ref/indentation.html
+// TODO: test it with: https://docs.python.org/3/reference/lexical_analysis.html#indentation
 
 internal struct IndentState {
 
@@ -22,6 +22,10 @@ private let maxIndent = 100
 /// Tab spacing.
 private let tabSize = 8
 
+/// Used when indentation stack is empty.
+private let defaultIndent = 0
+
+// https://docs.python.org/3/reference/lexical_analysis.html#indentation
 extension Lexer {
 
   internal mutating func calculateIndent() {
@@ -39,7 +43,7 @@ extension Lexer {
         // TODO: Indent - error when >= maxIndent
       }
 
-      let startColumn = self.indents.stack.last ?? 0
+      let startColumn = self.indents.stack.last ?? defaultIndent
       let start = SourceLocation(line: self.location.line, column: startColumn)
       let token = Token(.indent, start: start, end: self.location)
 
@@ -50,14 +54,14 @@ extension Lexer {
       while let oldIndent = self.indents.stack.last, oldIndent > indent {
         _ = self.indents.stack.popLast()
 
-        let previous = self.indents.stack.last ?? 0
+        let previous = self.indents.stack.last ?? defaultIndent
         let start = SourceLocation(line: self.location.line, column: previous)
         let end   = SourceLocation(line: self.location.line, column: oldIndent)
         let token = Token(.dedent, start: start, end: end)
         self.indents.pendingTokens.push(token)
       }
 
-      let oldIndent = self.indents.stack.last ?? 0
+      let oldIndent = self.indents.stack.last ?? defaultIndent
       if oldIndent != indent {
         // TODO: Dedent - error when inconsistent
       }
@@ -91,7 +95,7 @@ extension Lexer {
   }
 
   private func compareWithCurrentIndent(_ indent: Int) -> IndentCompare {
-    let currentIndent = self.indents.stack.last ?? 0
+    let currentIndent = self.indents.stack.last ?? defaultIndent
     return indent == currentIndent ? .equal :
            indent  > currentIndent ? .greater :
            .less

@@ -79,6 +79,7 @@ public struct Lexer {
 
   public mutating func getToken() -> Token? {
     if self.isAtBeginOfLine {
+      // TODO: check nesting? if self.nesting == 0 {
       self.calculateIndent()
       self.isAtBeginOfLine = false
     }
@@ -90,42 +91,3 @@ public struct Lexer {
     return nil
   }
 }
-
-private let keywords: [String:TokenKind] = [
-  "and":      .and,
-  "as":       .as,
-  "assert":   .assert,
-  "async":    .async,
-  "await":    .await,
-  "break":    .break,
-  "class":    .class,
-  "continue": .continue,
-  "def":      .def,
-  "del":      .del,
-  "elif":     .elif,
-  "ellipsis": .ellipsis,
-  "else":     .else,
-  "except":   .except,
-  "false":    .false,
-  "finally":  .finally,
-  "for":      .for,
-  "from":     .from,
-  "global":   .global,
-  "if":       .if,
-  "import":   .import,
-  "in":       .in,
-  "is":       .is,
-  "lambda":   .lambda,
-  "none":     .none,
-  "nonlocal": .nonlocal,
-  "not":      .not,
-  "or":       .or,
-  "pass":     .pass,
-  "raise":    .raise,
-  "return":   .return,
-  "true":     .true,
-  "try":      .try,
-  "while":    .while,
-  "with":     .with,
-  "yield":    .yield
-]
