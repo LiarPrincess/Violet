@@ -8,9 +8,9 @@ public struct Token {
   public let start: SourceLocation
   public let end:   SourceLocation
 
-  public init(kind:  TokenKind,
-              start: SourceLocation,
-              end:   SourceLocation) {
+  public init(_ kind: TokenKind,
+              start:  SourceLocation,
+              end:    SourceLocation) {
 
     self.kind = kind
     self.start = start

@@ -7,26 +7,26 @@ import Foundation
 public struct Lexer {
 
   /// Data to lex.
-  private var stream: InputStream
+  internal var stream: InputStream
 
   /// Is at begin of new line?
-  private var atBeginOfLine = true
+  internal var isAtBeginOfLine = true
 
   /// Stack of parentheses: () [] {}.
-  private var parenStack = [TokenKind]()
+  internal var parenStack = [TokenKind]()
 
-  /// Stack of indents
-  ///  indentation_stack: Vec<IndentationLevel>,
-  //  private var indentationStack
+  /// Stack of indents.
+  internal var indents = IndentState()
 
-  // indentManager
-  // at bol: calculate indent
-  // next: get pending indent? -> not null -> return
+  /// Next character that will be read.
+  /// Use `self.advance` to consume.
+  internal var peek: UnicodeScalar?
 
-  private var chr0: UnicodeScalar? = nil
-  private var chr1: UnicodeScalar? = nil
+  /// Character after `self.peek`.
+  internal var peekNext: UnicodeScalar?
 
-  private var location = SourceLocation.start
+  /// Where are we in the source file?
+  internal var location = SourceLocation.start
 
   public init(url: URL) {
     // TODO: Handle file open error
@@ -41,25 +41,51 @@ public struct Lexer {
   internal init(stream: InputStream) {
     self.stream = NewLineConverter(base: stream)
 
-    // populate 'chr0' and 'chr1'
-    _ = self.nextChar()
-    _ = self.nextChar()
+    // populate 'peek' and 'peekNext'
+    _ = self.advance()
+    _ = self.advance()
   }
 
   // MARK: - Traversal
 
-  private mutating func nextChar() -> UnicodeScalar? {
-    let c = self.chr0
-    self.chr0 = self.chr1
-    self.chr1 = self.stream.advance()
-    self.location.advance()
-    return c
+  internal mutating func advance() -> UnicodeScalar? {
+    let consumed = self.peek
+    self.peek = self.peekNext
+    self.peekNext = self.stream.advance()
+
+    if consumed == "\n" {
+      self.location.advanceLine()
+    } else {
+      self.location.advanceColumn()
+    }
+
+    return self.peek
+  }
+
+  internal mutating func advanceIf(_ expected: UnicodeScalar) -> Bool {
+    guard let next = self.peek else {
+      return false
+    }
+
+    if next == expected {
+      _ = self.advance()
+      return true
+    }
+
+    return false
   }
 
   // MARK: - Lexing
 
-  public func getToken() -> Token? {
+  public mutating func getToken() -> Token? {
+    if self.isAtBeginOfLine {
+      self.calculateIndent()
+      self.isAtBeginOfLine = false
+    }
 
+    if let indentToken = self.indents.pendingTokens.popLast() {
+      return indentToken
+    }
 
     return nil
   }

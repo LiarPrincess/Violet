@@ -8,26 +8,21 @@ public struct SourceLocation {
     return SourceLocation(line: 1, column: 1)
   }
 
-  public private(set) var line:   UInt
-  public private(set) var column: UInt
+  public private(set) var line:   Int
+  public private(set) var column: Int
 
-  public init(line: UInt, column: UInt) {
+  public init(line: Int, column: Int) {
     self.line = line
     self.column = column
   }
 
-  internal mutating func reset() {
-    self.line = 1
-    self.column = 1
-  }
-
-  internal mutating func advance() {
-    self.column += 1
-  }
-
-  internal mutating func newLine() {
+  internal mutating func advanceLine() {
     self.line += 1
     self.column = 1
+  }
+
+  internal mutating func advanceColumn() {
+    self.column += 1
   }
 }
 
