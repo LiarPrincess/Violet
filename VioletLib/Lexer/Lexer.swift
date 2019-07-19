@@ -41,13 +41,13 @@ public struct Lexer {
   internal init(stream: InputStream) {
     self.stream = NewLineConverter(base: stream)
 
-    // populate 'peek' and 'peekNext'
-    _ = self.advance()
-    _ = self.advance()
+    self.peek     = self.stream.advance()
+    self.peekNext = self.stream.advance()
   }
 
   // MARK: - Traversal
 
+  /// Consumes current character. Returns next `peek`.
   internal mutating func advance() -> UnicodeScalar? {
     let consumed = self.peek
     self.peek = self.peekNext
@@ -75,18 +75,24 @@ public struct Lexer {
     return false
   }
 
+  // MARK: - Errors
+
+  internal func createError(_ type: LexerErrorType) -> LexerError {
+    return LexerError(type, location: self.location)
+  }
+
   // MARK: - Lexing
 
   public mutating func getToken() -> Token? {
-    if self.isAtBeginOfLine {
-      // TODO: check nesting? if self.nesting == 0 {
-      self.calculateIndent()
-      self.isAtBeginOfLine = false
-    }
+//    if self.isAtBeginOfLine {
+//      // TODO: check nesting? if self.nesting == 0 {
+//      self.calculateIndent()
+//      self.isAtBeginOfLine = false
+//    }
 
-    if let indentToken = self.indents.pendingTokens.popLast() {
-      return indentToken
-    }
+//    if let indentToken = self.indents.pendingTokens.popLast() {
+//      return indentToken
+//    }
 
     return nil
   }

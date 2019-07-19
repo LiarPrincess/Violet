@@ -4,13 +4,26 @@
 
 import Foundation
 
-private struct StringFlags {
-  fileprivate var b = false
-  fileprivate var r = false
-  fileprivate var u = false
-  fileprivate var f = false
+// See:
+// https://docs.python.org/3/reference/lexical_analysis.html#identifiers
 
-  fileprivate mutating func update(_ c: UnicodeScalar) -> Bool {
+internal struct StringPrefix {
+
+  /// Bytes literal.
+  internal var b = false
+
+  /// Raw string which treats backslashes as literal characters.
+  internal var r = false
+
+  /// Unicode legacy literal.
+  internal var u = false
+
+  /// Formatted string literal.
+  internal var f = false
+
+  internal mutating func update(_ c: UnicodeScalar) -> Bool {
+    // From CPython.
+
     if !(self.b || self.u || self.f) && (c == "b" || c == "B") {
       self.b = true
       return true
@@ -35,32 +48,32 @@ private struct StringFlags {
   }
 }
 
-// See: https://docs.python.org/3/reference/lexical_analysis.html#identifiers
 extension Lexer {
 
-  internal mutating func identifierOrString() -> Token {
-    // state: self.peek == isIdentifierStart,
-    // but we still don't know if it is identifier or string in form bruf"xxx"
+  internal mutating func identifierOrString() throws -> Token {
+    assert(self.peek != nil)
+    assert(self.isIdentifierStart(self.peek))
 
-    var flags = StringFlags()
+    var stringPrefix = StringPrefix()
     var identifierParts = [UnicodeScalar]()
     let start = self.location
 
+    /// we don't know if it is identifier or string in form bruf"xxx"
     while true {
       guard let c = self.peek else {
-        break // no character (eof)? -> only identifier is possible
+        break // no character (meaning eof)? -> only identifier is possible
       }
 
-      guard flags.update(c) else {
-        break // not one of the flags? -> only identifier is possible
+      guard stringPrefix.update(c) else {
+        break // not one of the prefixes? -> only identifier is possible
       }
 
-      // still undecided. identifier or string?
+      // still undecided
       identifierParts.append(c)
 
       let next = self.advance()
       if next == "\"" || next == "'" { // quotes are not valid identifiers
-        return self.string(flags: flags)
+        return try self.string(prefix: stringPrefix, start: start)
       }
     }
 
@@ -75,27 +88,24 @@ extension Lexer {
     if let keyword = keywords[identifier] {
       return Token(keyword, start: start, end: end)
     } else {
-      self.verifyIdentifier(identifier, start: start, end: end)
+      try self.verifyIdentifier(identifier, start: start, end: end)
       return Token(.identifier(identifier), start: start, end: end)
     }
   }
 
-  private mutating func string(flags: StringFlags) -> Token {
-    return Token(.amper, start: .start, end: .start)
-  }
-
-  internal func isIdentifierStart(_ c: UnicodeScalar) -> Bool {
+  internal func isIdentifierStart(_ c: UnicodeScalar?) -> Bool {
     // We do more detailed verification after we have collected the whole
     // identifier (this is important for error messages, otherwise we won't
     // even start lexing identifier and throw 'unknown character' exception).
 
+    guard let c = c else { return false }
     return ("a" <= c && c <= "z")
         || ("A" <= c && c <= "Z")
         || c == "_"
         || c.value >= 128
   }
 
-  internal func isIdentifierContinuation(_ c: UnicodeScalar) -> Bool {
+  private func isIdentifierContinuation(_ c: UnicodeScalar) -> Bool {
     // We do more detailed verification after we have collected the whole
     // identifier.
 
@@ -108,13 +118,11 @@ extension Lexer {
 
   private func verifyIdentifier(_ identifier: String,
                                 start:        SourceLocation,
-                                end:          SourceLocation) {
-
-    // TODO: Add 'verifyIdentifier' exceptions
+                                end:          SourceLocation) throws {
 
     let scalars = identifier.unicodeScalars
     guard scalars.any else {
-      return // error
+      throw self.createError(.identifier)
     }
 
     var index = scalars.startIndex
@@ -122,7 +130,7 @@ extension Lexer {
     // as for underscore: https://codepoints.net/U+005F -> Cmd+F -> XID Start
     let first = scalars[index]
     guard first == "_" || first.properties.isXIDStart else {
-      return // error
+      throw self.createError(.identifier)
     }
 
     // go to 2nd character
@@ -131,7 +139,7 @@ extension Lexer {
     while index != scalars.endIndex {
       let c = scalars[index]
       guard c.properties.isXIDContinue else {
-        return // error
+        throw self.createError(.identifier)
       }
 
       index = scalars.index(after: index)

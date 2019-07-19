@@ -2,19 +2,10 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-// Mostly taken from CPython.
-// Basically rewritting C in Swift, because indents are soooo crucial.
+// Mostly based on CPython.
+// https://docs.python.org/3/reference/lexical_analysis.html#indentation
 
 // TODO: test it with: https://docs.python.org/3/reference/lexical_analysis.html#indentation
-
-internal struct IndentState {
-
-  /// Start of each indent level.
-  internal var stack = [Int]()
-
-  /// Tokens that we have to pop to sync with source.
-  internal var pendingTokens = [Token]()
-}
 
 /// Max indentation level.
 private let maxIndent = 100
@@ -25,13 +16,21 @@ private let tabSize = 8
 /// Used when indentation stack is empty.
 private let defaultIndent = 0
 
-// https://docs.python.org/3/reference/lexical_analysis.html#indentation
+internal struct IndentState {
+
+  /// Start of each indent level.
+  internal var stack = [Int]()
+
+  /// Tokens that we have to pop to sync with source.
+  internal var pendingTokens = [Token]()
+}
+
 extension Lexer {
 
-  internal mutating func calculateIndent() {
+  internal mutating func calculateIndent() throws {
     let indent = self.calculateIndentColumn()
 
-    // TODO: hendle comments and new lines in indent
+    // TODO: handle comments and new lines in indent
     if self.peek == "#" || self.peek == "\n" { }
 
     switch self.compareWithCurrentIndent(indent) {
@@ -40,7 +39,7 @@ extension Lexer {
 
     case .greater: // Indent -- always one
       if self.indents.stack.count + 1 >= maxIndent {
-        // TODO: Indent - error when >= maxIndent
+        throw self.createError(.tooDeep)
       }
 
       let startColumn = self.indents.stack.last ?? defaultIndent
@@ -63,7 +62,7 @@ extension Lexer {
 
       let oldIndent = self.indents.stack.last ?? defaultIndent
       if oldIndent != indent {
-        // TODO: Dedent - error when inconsistent
+        throw self.createError(.dedent)
       }
     }
   }
