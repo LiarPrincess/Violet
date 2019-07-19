@@ -11,7 +11,7 @@ internal protocol FileDescriptor: AnyObject {
 
 extension FileHandle: FileDescriptor { }
 
-internal class FileStream  {
+internal class FileStream: InputStream {
 
   /// File from which we are reading.
   /// Nil when we finish reading.

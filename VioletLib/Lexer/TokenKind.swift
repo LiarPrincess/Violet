@@ -2,12 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-// TODO: Move PyInt to AST
-public typealias PyInt = Int64
-
 // Based on 'Grammar/Tokens' from CPython. Changes:
 // 1. Associated values instead of pointers inside buf.
-// 2. Lifted keywords to token level (as in slit, lox and many others).
+// 2. Lifted keywords to token level
 
 public enum TokenKind {
 
@@ -55,9 +52,9 @@ public enum TokenKind {
   /** ^= */ case circumflexEqual
   /** @= */ case atEqual
 
-  /** < */ case less
+  /** < */  case less
   /** \> */ case greater
-  /** = */ case equal
+  /** = */  case equal
 
   /** == */ case equalEqual
   /** != */ case notEqual

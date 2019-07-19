@@ -37,6 +37,8 @@ class FileStreamTests: XCTestCase {
     let fd = FakeFileDescriptor()
 
     do { // just so we have scope
+      // TODO: this is an error in Swift?
+      // Changing variable name from xxx to _ affects 'deinit' sideffect order
       let stream = FileStream(fd: fd)
       XCTAssertEqual(fd.closeFileHitCount, 0)
     }
