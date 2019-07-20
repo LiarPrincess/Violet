@@ -14,7 +14,7 @@ class LexerStringTest: XCTestCase {
 
   func test_emptyString_isLexed() {
     let s = ""
-    let stream = StringStream(self.quote(s))
+    let stream = StringStream(self.doubleQuote(s))
     var lexer  = Lexer(stream: stream)
 
     if let token = self.string(&lexer) {
@@ -29,7 +29,7 @@ class LexerStringTest: XCTestCase {
   /// py: "Look at this stuff. Isnt it neat?"
   func test_doubleQuote_simple() {
     let s = "Look at this stuff. Isnt it neat?"
-    let stream = StringStream(self.quote(s))
+    let stream = StringStream(self.doubleQuote(s))
     var lexer  = Lexer(stream: stream)
 
     if let token = self.string(&lexer) {
@@ -45,7 +45,7 @@ class LexerStringTest: XCTestCase {
     let s = "Wouldnt\\\\you\\\'think\\\"my\\ncollections\\tcomplete?"
     let expected = "Wouldnt\\you'think\"my\ncollections\tcomplete?"
 
-    let stream = StringStream(self.quote(s))
+    let stream = StringStream(self.doubleQuote(s))
     var lexer  = Lexer(stream: stream)
 
     if let token = self.string(&lexer) {
@@ -62,7 +62,7 @@ class LexerStringTest: XCTestCase {
     let s = "Wouldnt you think Im the girl\\\nThe girl who has everything?"
     let expected = "Wouldnt you think Im the girlThe girl who has everything?"
 
-    let stream = StringStream(self.quote(s))
+    let stream = StringStream(self.doubleQuote(s))
     var lexer  = Lexer(stream: stream)
 
     if let token = self.string(&lexer) {
@@ -78,7 +78,7 @@ class LexerStringTest: XCTestCase {
     let s = "Wanderin\\47 free \\055 wish \\x49 could be Part of that \\U0001F30D"
     let expected = "Wanderin' free - wish I could be Part of that 🌍"
 
-    let stream = StringStream(self.quote(s))
+    let stream = StringStream(self.doubleQuote(s))
     var lexer  = Lexer(stream: stream)
 
     if let token = self.string(&lexer) {
@@ -92,7 +92,7 @@ class LexerStringTest: XCTestCase {
   /// py: "🧜‍♀️: I wanna be where the people are, I wanna 👀, wanna 👀 em 💃"
   func test_doubleQuote_emoji() {
     let s = "🧜‍♀️: I wanna be where the people are, I wanna 👀, wanna 👀 em 💃"
-    let stream = StringStream(self.quote(s))
+    let stream = StringStream(self.doubleQuote(s))
     var lexer  = Lexer(stream: stream)
 
     if let token = self.string(&lexer) {
@@ -103,9 +103,9 @@ class LexerStringTest: XCTestCase {
   }
 
   /// py: "c: 小美人鱼 j: リトルマーメイド k: 인어 공주"
-  func test_doubleQuote_cjk() {
+  func test_doubleQuote_CJK() {
     let s = "c: 小美人鱼 j: リトルマーメイド k: 인어 공주"
-    let stream = StringStream(self.quote(s))
+    let stream = StringStream(self.doubleQuote(s))
     var lexer  = Lexer(stream: stream)
 
     if let token = self.string(&lexer) {
@@ -115,7 +115,7 @@ class LexerStringTest: XCTestCase {
     }
   }
 
-  /// Single quote, without closing.
+  /// Quote, without closing.
   /// py: "Ive got gadgets and gizmos a-plenty
   func test_doubleQuote_withoutEnd_throws() {
     let stream = StringStream("\"Ive got gadgets and gizmos a-plenty\n")
@@ -124,6 +124,22 @@ class LexerStringTest: XCTestCase {
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.type, LexerErrorType.eols)
       XCTAssertEqual(error.location, SourceLocation(line: 1, column: 36))
+    }
+  }
+
+  // MARK: - Single quote
+
+  /// Basically we assume, that if double quotes are working then single too.
+  /// py: 'Look at this stuff. Isnt it neat?'
+  func test_singleQuote_simple() {
+    let s = "Look at this stuff. Isnt it neat?"
+    let stream = StringStream(self.singleQuote(s))
+    var lexer  = Lexer(stream: stream)
+
+    if let token = self.string(&lexer) {
+      XCTAssertEqual(token.kind, .string(s))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 35))
     }
   }
 
@@ -173,7 +189,11 @@ class LexerStringTest: XCTestCase {
 
   // MARK: - Helpers
 
-  private func quote(_ s: String) -> String {
+  private func singleQuote(_ s: String) -> String {
+    return "'\(s)'"
+  }
+
+  private func doubleQuote(_ s: String) -> String {
     return "\"\(s)\""
   }
 

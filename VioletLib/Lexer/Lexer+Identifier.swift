@@ -20,11 +20,11 @@ extension Lexer {
     /// we don't know if it is identifier or string in form bruf"xxx"
     while true {
       guard let c = self.peek else {
-        break // no character (meaning eof)? -> only identifier is possible
+        break // no character (meaning eof) -> only identifier is possible
       }
 
       guard stringPrefix.update(c) else {
-        break // not one of the prefixes? -> only identifier is possible
+        break // not one of the prefixes -> only identifier is possible
       }
 
       // still undecided
@@ -44,10 +44,10 @@ extension Lexer {
     let end = self.location
     let identifier = String(identifierParts)
 
-    if let keyword = keywords[identifier] {
+    if let keyword = Lexer.keywords[identifier] {
       return Token(keyword, start: start, end: end)
     } else {
-      try self.verifyIdentifier(identifier, start: start, end: end)
+      try self.verifyIdentifier(identifier, start: start)
       return Token(.identifier(identifier), start: start, end: end)
     }
   }
@@ -76,71 +76,66 @@ extension Lexer {
   }
 
   private func verifyIdentifier(_ identifier: String,
-                                start:        SourceLocation,
-                                end:          SourceLocation) throws {
+                                start:        SourceLocation) throws {
 
     let scalars = identifier.unicodeScalars
-    guard scalars.any else {
-      throw self.createError(.identifier)
-    }
 
-    var index = scalars.startIndex
+    guard let first = scalars.first else {
+      throw self.createError(.identifier, location: start)
+    }
 
     // as for underscore: https://codepoints.net/U+005F -> Cmd+F -> XID Start
-    let first = scalars[index]
     guard first == "_" || first.properties.isXIDStart else {
-      throw self.createError(.identifier)
+      throw self.createError(.identifier, location: start)
     }
 
-    // go to 2nd character
-    index = scalars.index(after: index)
-
-    while index != scalars.endIndex {
-      let c = scalars[index]
-      guard c.properties.isXIDContinue else {
-        throw self.createError(.identifier)
+    for (index, char) in scalars.dropFirst().enumerated() {
+      // swiftlint:disable:next for_where
+      if !char.properties.isXIDContinue {
+        let skippedFirst = 1
+        let column = start.column + index + skippedFirst
+        let location = SourceLocation(line: start.line, column: column)
+        throw self.createError(.identifier, location: location)
       }
-
-      index = scalars.index(after: index)
     }
   }
-}
 
-private let keywords: [String:TokenKind] = [
-  "and":      .and,
-  "as":       .as,
-  "assert":   .assert,
-  "async":    .async,
-  "await":    .await,
-  "break":    .break,
-  "class":    .class,
-  "continue": .continue,
-  "def":      .def,
-  "del":      .del,
-  "elif":     .elif,
-  "ellipsis": .ellipsis,
-  "else":     .else,
-  "except":   .except,
-  "false":    .false,
-  "finally":  .finally,
-  "for":      .for,
-  "from":     .from,
-  "global":   .global,
-  "if":       .if,
-  "import":   .import,
-  "in":       .in,
-  "is":       .is,
-  "lambda":   .lambda,
-  "none":     .none,
-  "nonlocal": .nonlocal,
-  "not":      .not,
-  "or":       .or,
-  "pass":     .pass,
-  "raise":    .raise,
-  "return":   .return,
-  "true":     .true,
-  "try":      .try,
-  "while":    .while,
-  "with":     .with,
-  "yield":    .yield
-]
+  internal static let keywords: [String:TokenKind] = [
+    "and":      .and,
+    "as":       .as,
+    "assert":   .assert,
+    "async":    .async,
+    "await":    .await,
+    "break":    .break,
+    "class":    .class,
+    "continue": .continue,
+    "def":      .def,
+    "del":      .del,
+    "elif":     .elif,
+    "ellipsis": .ellipsis,
+    "else":     .else,
+    "except":   .except,
+    "false":    .false,
+    "finally":  .finally,
+    "for":      .for,
+    "from":     .from,
+    "global":   .global,
+    "if":       .if,
+    "import":   .import,
+    "in":       .in,
+    "is":       .is,
+    "lambda":   .lambda,
+    "none":     .none,
+    "nonlocal": .nonlocal,
+    "not":      .not,
+    "or":       .or,
+    "pass":     .pass,
+    "raise":    .raise,
+    "return":   .return,
+    "true":     .true,
+    "try":      .try,
+    "while":    .while,
+    "with":     .with,
+    "yield":    .yield
+  ]
+}
