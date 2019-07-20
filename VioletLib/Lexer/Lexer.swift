@@ -77,8 +77,10 @@ public struct Lexer {
 
   // MARK: - Errors
 
-  internal func createError(_ type: LexerErrorType) -> LexerError {
-    return LexerError(type, location: self.location)
+  internal func createError(_ type:   LexerErrorType,
+                            location: SourceLocation? = nil) -> LexerError {
+
+    return LexerError(type, location: location ?? self.location)
   }
 
   // MARK: - Lexing

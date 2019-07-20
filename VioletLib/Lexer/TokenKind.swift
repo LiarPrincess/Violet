@@ -6,7 +6,7 @@
 // 1. Associated values instead of pointers inside buf.
 // 2. Lifted keywords to token level
 
-public enum TokenKind {
+public enum TokenKind: Equatable {
 
   case eof
 

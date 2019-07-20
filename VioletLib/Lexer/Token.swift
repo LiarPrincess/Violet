@@ -2,7 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-public struct Token {
+public struct Token: Equatable {
 
   public let kind:  TokenKind
   public let start: SourceLocation
@@ -20,6 +20,6 @@ public struct Token {
 
 extension Token: CustomStringConvertible {
   public var description: String {
-    return "[\(self.start)-\(self.end)] \(self.kind)"
+    return "\(self.start)-\(self.end): \(self.kind)"
   }
 }

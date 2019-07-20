@@ -9,7 +9,6 @@ internal struct StringStream: InputStream {
     return StringStream("")
   }
 
-  // TODO: Check performance
   private var scalars: String.UnicodeScalarView
   private var index:   String.UnicodeScalarView.Index
 
