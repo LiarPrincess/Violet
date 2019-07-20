@@ -42,7 +42,7 @@ extension Lexer {
     }
 
     let end = self.location
-    let identifier = String(String.UnicodeScalarView(identifierParts))
+    let identifier = String(identifierParts)
 
     if let keyword = keywords[identifier] {
       return Token(keyword, start: start, end: end)

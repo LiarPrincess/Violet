@@ -18,6 +18,8 @@ internal struct StringPrefix {
   /// Formatted string literal.
   internal var f = false
 
+  internal var isString: Bool { return !self.b }
+
   internal mutating func update(_ c: UnicodeScalar) -> Bool {
     // From CPython.
 

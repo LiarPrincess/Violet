@@ -6,6 +6,8 @@
 
 public enum LexerErrorType {
 
+  // MARK: CPython
+
   /// Unexpected end of file
   case eof
   /// Inconsistent mixing of tabs and spaces
@@ -20,18 +22,24 @@ public enum LexerErrorType {
   case eofs
   /// EOL in single-quoted string
   case eols
-  /// Bytes can only contain ASCII literal characters
-  case badByte
   /// Unexpected characters after a line continuation
   case lineCont
   /// Invalid characters in identifier
   case identifier
   /// Ill-formed single statement input
   case badSingle
+
+  // MARK: Violet
+
+  /// Bytes can only contain ASCII literal characters
+  case badByte
+
+  /// Unable to decode string escape sequence.
+  case unicodeEscape
 }
 
 extension LexerErrorType: CustomStringConvertible {
-  // TODO: Check other error translations
+  // TODO: Check other error translations + unicodeEscape
   public var description: String {
     switch self {
     case .eof: return "Unexpected end of file" // check
@@ -41,10 +49,12 @@ extension LexerErrorType: CustomStringConvertible {
     case .decode: return "Error in decoding into Unicode" // check
     case .eofs: return "EOF while scanning triple-quoted string literal"
     case .eols: return "EOL while scanning string literal"
-    case .badByte: return "Bytes can only contain ASCII literal characters"
     case .lineCont: return "Unexpected characters after a line continuation" // check
     case .identifier: return "Invalid character in identifier"
     case .badSingle: return "Ill-formed single statement input" // check
+
+    case .badByte: return "Bytes can only contain ASCII literal characters"
+    case .unicodeEscape: return "Unable to decode string escape sequence"
     }
   }
 }
