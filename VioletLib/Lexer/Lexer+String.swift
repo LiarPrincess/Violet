@@ -2,7 +2,6 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-// Because we are dealing with text:
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
 
@@ -37,7 +36,6 @@ extension Lexer {
   internal mutating func string(prefix: StringPrefix,
                                 start:  SourceLocation) throws -> Token {
 
-    let start = self.location
     let scalars = try readString(prefix: prefix)
     let end = self.location
 
@@ -87,7 +85,7 @@ extension Lexer {
         throw self.createError(quoteType.nilPeekError)
       }
 
-      try self.checkByteRangeIfNeeded(prefix, peek)
+      try self.checkValidByteIfNeeded(prefix, peek)
 
       switch peek {
       case "\\":
@@ -113,7 +111,7 @@ extension Lexer {
 
   // MARK: - Byte range
 
-  private func checkByteRangeIfNeeded(_ prefix: StringPrefix,
+  private func checkValidByteIfNeeded(_ prefix: StringPrefix,
                                       _ c: UnicodeScalar) throws {
     if prefix.b && !self.isValidByte(c) {
       throw self.createError(.badByte)
@@ -134,7 +132,6 @@ extension Lexer {
 
   private mutating func readEscaped(_ prefix: StringPrefix,
                                     _ quoteType: QuoteType) throws -> EscapeResult {
-
     assert(self.peek == "\\")
 
     if prefix.r {
@@ -160,7 +157,7 @@ extension Lexer {
     case "t":  return self.simpleEscaped("\t") // ASCII Horizontal Tab (TAB)
 
     /// \ooo Character with octal value ooo
-    case let c where self.isOctal(c):
+    case let c where OctalNumber.isDigit(c):
       return .escaped(try self.readOctal(quoteType))
 
     // \xhh Character with hex value hh
@@ -180,17 +177,18 @@ extension Lexer {
          "f", // ASCII Formfeed (FF)
          "v", // ASCII Vertical Tab (VT)
          "N": // Character named name in the Unicode database
-      throw NotImplemented("String escape \\'\(escaped)' is not currently supported.")
+      throw NotImplemented("\(self.location) String escape \\'\(escaped)' " +
+        "is not currently supported.")
 
     default:
-      // TODO: Version 3.6: Unrecognized escape sequences produce a DeprecationWarning.
+      // TODO: 3.6: Unrecognized escape sequences produce a DeprecationWarning.
       return .notEscapeCharacter // invalid escape -> no escape
     }
   }
 
   private mutating func simpleEscaped(_ c: UnicodeScalar) -> EscapeResult {
-    _ = self.advance() // escape symbol - '\'
-    _ = self.advance() // character
+    _ = self.advance() // backslash
+    _ = self.advance() // escaped character
     return .escaped(c)
   }
 
@@ -198,21 +196,18 @@ extension Lexer {
     _ = self.advance() // backslash
 
     let maxCount = 3
-    let radix: UInt32 = 8
-
-    var count = 0
     var result: UInt32 = 0
-    while count < maxCount {
+
+    for _ in 0..<maxCount {
       guard let peek = self.peek else {
         throw self.createError(quoteType.nilPeekError)
       }
 
-      guard self.isOctal(peek) else {
-        break // we can exit before we reach 3rd character
+      guard OctalNumber.isDigit(peek) else {
+        break // we can exit before we reach all 3 'o'
       }
 
-      result = result * radix + self.parseOctalDigit(peek)
-      count += 1
+      result = result * OctalNumber.radix + OctalNumber.parseDigit(peek)
       _ = self.advance()
     }
 
@@ -220,37 +215,25 @@ extension Lexer {
       throw self.createError(.unicodeEscape)
     }
     return scalar
-  }
-
-  private func isOctal(_ c: UnicodeScalar) -> Bool {
-    return "0" <= c && c <= "7"
-  }
-
-  private func parseOctalDigit(_ c: UnicodeScalar) -> UInt32 {
-    assert(self.isOctal(c))
-    return c.value - 48
   }
 
   private mutating func readHex(_ quoteType: QuoteType,
-                                count maxCount: Int) throws -> UnicodeScalar {
+                                count: Int) throws -> UnicodeScalar {
     _ = self.advance() // backslash
     _ = self.advance() // xuU
 
-    let radix: UInt32 = 16
-
-    var count = 0
     var result: UInt32 = 0
-    while count < maxCount {
+
+    for _ in 0..<count {
       guard let peek = self.peek else {
         throw self.createError(quoteType.nilPeekError)
       }
 
-      guard self.isHex(peek) else {
+      guard HexNumber.isDigit(peek) else {
         throw self.createError(.unicodeEscape)
       }
 
-      result = result * radix + self.parseHexDigit(peek)
-      count += 1
+      result = result * HexNumber.radix + HexNumber.parseDigit(peek)
       _ = self.advance()
     }
 
@@ -258,21 +241,5 @@ extension Lexer {
       throw self.createError(.unicodeEscape)
     }
     return scalar
-  }
-
-  private func isHex(_ c: UnicodeScalar) -> Bool {
-    return ("0" <= c && c <= "9")
-        || ("a" <= c && c <= "f")
-        || ("A" <= c && c <= "F")
-  }
-
-  private func parseHexDigit(_ c: UnicodeScalar) -> UInt32 {
-    assert(self.isHex(c))
-    switch c {
-    case "0"..."9": return c.value - 48
-    case "a"..."f": return c.value - 97 + 10
-    case "A"..."F": return c.value - 65 + 10
-    default: return 0 // not possible, we checked it with self.isHex
-    }
   }
 }

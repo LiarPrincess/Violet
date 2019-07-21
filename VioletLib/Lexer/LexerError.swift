@@ -4,7 +4,7 @@
 
 // MARK: - Error type
 
-public enum LexerErrorType {
+public enum LexerErrorType: Equatable {
 
   // MARK: CPython
 
@@ -33,9 +33,10 @@ public enum LexerErrorType {
 
   /// Bytes can only contain ASCII literal characters
   case badByte
-
   /// Unable to decode string escape sequence.
-  case unicodeEscape
+  case unicodeEscape // TODO: SyntaxError: (unicode error) 'unicodeescape' codec can't decode bytes in position 2-5: truncated \uXXXX escape
+  /// Syntax error
+  case syntax(message: String)
 }
 
 extension LexerErrorType: CustomStringConvertible {
@@ -55,13 +56,14 @@ extension LexerErrorType: CustomStringConvertible {
 
     case .badByte: return "Bytes can only contain ASCII literal characters"
     case .unicodeEscape: return "Unable to decode string escape sequence"
+    case .syntax(let message): return "Syntax error: \(message)"
     }
   }
 }
 
 // MARK: - Error
 
-public struct LexerError: Error {
+public struct LexerError: Error, Equatable {
 
   public let type:     LexerErrorType
   public let location: SourceLocation
