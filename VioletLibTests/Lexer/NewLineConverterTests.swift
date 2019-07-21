@@ -9,45 +9,46 @@ class NewLineConverterTests: XCTestCase {
 
   // MARK: - Base
 
-  /// abc -> abc
   func test_withoutNewLines_returnsBase() {
-    self.assertEqualAfterConversion("abc", "abc")
+    self.assertEqualAfterConversion("Under the sea", "Under the sea")
   }
 
   // MARK: - Single newline
 
-  /// a\nbc -> a\nbc
+  /// \n -> \n
   func test_withUnixNewLine_returnsBase() {
-    self.assertEqualAfterConversion("a\nbc", "a\nbc")
+    self.assertEqualAfterConversion("Under\nthe sea", "Under\nthe sea")
   }
 
-  /// a\rb\nc -> a\nb\nc
+  /// \r -> \n
   func test_withOldMacNewLine_convertsToUnixNewLine() {
-    self.assertEqualAfterConversion("a\rb\nc", "a\nb\nc")
+    self.assertEqualAfterConversion("Under\rthe sea", "Under\nthe sea")
   }
 
-  /// a\r\nb\nc -> a\nb\nc
+  /// \r\n -> \n
   func test_withWindowsNewLine_convertsToUnixNewLine() {
-    self.assertEqualAfterConversion("a\r\nb\nc", "a\nb\nc")
+    self.assertEqualAfterConversion("Under\r\nthe sea", "Under\nthe sea")
   }
 
   // MARK: - Multiple new lines
 
-  /// a\r\n\rb\nc -> a\n\nb\nc
+  /// \n -> \n
+  /// \r -> \n
+  /// \r\n -> \n
   func test_withAllNewLines_convertsToUnixNewLine() {
-    self.assertEqualAfterConversion("a\r\n\rb\nc", "a\n\nb\nc")
+    self.assertEqualAfterConversion("Un\nder\rthe\r\nsea", "Un\nder\nthe\nsea")
   }
 
   // MARK: - Beginning/end
 
-  /// \r\nabc -> abc
+  /// \r\nxxx -> \nxxx
   func test_withNewLine_atBeginning_convertsToUnixNewLine() {
-    self.assertEqualAfterConversion("\r\nabc", "\nabc")
+    self.assertEqualAfterConversion("\r\nUnder the sea", "\nUnder the sea")
   }
 
-  /// abc\r\n -> abc
+  /// xxx\r\n -> xxx\n
   func test_withNewLine_atEnd_convertsToUnixNewLine() {
-    self.assertEqualAfterConversion("abc\r\n", "abc\n")
+    self.assertEqualAfterConversion("Under the sea\r\n", "Under the sea\n")
   }
 
   // MARK: - Helper

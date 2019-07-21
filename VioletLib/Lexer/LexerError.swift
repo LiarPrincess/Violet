@@ -34,7 +34,7 @@ public enum LexerErrorType: Equatable {
   /// Bytes can only contain ASCII literal characters
   case badByte
   /// Unable to decode string escape sequence.
-  case unicodeEscape // TODO: SyntaxError: (unicode error) 'unicodeescape' codec can't decode bytes in position 2-5: truncated \uXXXX escape
+  case unicodeEscape
   /// Syntax error
   case syntax(message: String)
 }

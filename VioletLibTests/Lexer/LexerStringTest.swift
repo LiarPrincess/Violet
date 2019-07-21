@@ -8,7 +8,7 @@ import XCTest
 /// Use 'python3 -m tokenize -e file.py' for python reference
 /// and https://www.stlyrics.com/lyrics/classicdisney/partofyourworld.htm
 /// for song reference.
-class LexerStringTest: XCTestCase {
+class LexerStringTest: XCTestCase, LexerTest {
 
   // MARK: - Empty
 
@@ -121,7 +121,7 @@ class LexerStringTest: XCTestCase {
     let stream = StringStream("\"Ive got gadgets and gizmos a-plenty\n")
     var lexer = Lexer(stream: stream)
 
-    if let error = self.error(&lexer) {
+    if let error = self.stringError(&lexer) {
       XCTAssertEqual(error.type, LexerErrorType.eols)
       XCTAssertEqual(error.location, SourceLocation(line: 1, column: 36))
     }
@@ -184,46 +184,6 @@ class LexerStringTest: XCTestCase {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 3, column: 14))
-    }
-  }
-
-  // MARK: - Helpers
-
-  private func singleQuote(_ s: String) -> String {
-    return "'\(s)'"
-  }
-
-  private func doubleQuote(_ s: String) -> String {
-    return "\"\(s)\""
-  }
-
-  private func tripleQuote(_ s: String) -> String {
-    return "\"\"\"\(s)\"\"\""
-  }
-
-  private func string(_ lexer: inout Lexer,
-                      file:     StaticString = #file,
-                      line:     UInt = #line) -> Token? {
-    do {
-      return try lexer.string()
-    } catch {
-      XCTAssert(false, "\(error)", file: file, line: line)
-      return nil
-    }
-  }
-
-  private func error(_ lexer: inout Lexer,
-                     file:     StaticString = #file,
-                     line:     UInt = #line) -> LexerError? {
-    do {
-      let result = try lexer.string()
-      XCTAssert(false, "Got token: \(result)", file: file, line: line)
-      return nil
-    } catch let error as LexerError {
-      return error
-    } catch {
-      XCTAssert(false, "Invalid error: \(error)", file: file, line: line)
-      return nil
     }
   }
 }

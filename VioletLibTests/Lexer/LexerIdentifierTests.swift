@@ -8,14 +8,14 @@ import XCTest
 /// Use 'python3 -m tokenize -e file.py' for python reference
 /// and https://www.stlyrics.com/lyrics/classicdisney/kissthegirl.htm
 /// for song reference.
-class LexerIdentifierTests: XCTestCase {
+class LexerIdentifierTests: XCTestCase, LexerTest {
 
   // MARK: - String
 
   /// py: f"Kiss The Girl"
   func test_prefixedString_shouldBeLexedAsString() {
     let s = "Kiss The Girl"
-    let stream = StringStream("f\"\(s)\"")
+    let stream = StringStream("f" + self.doubleQuote(s))
     var lexer  = Lexer(stream: stream)
 
     if let token = self.identifierOrString(&lexer) {
@@ -115,7 +115,7 @@ class LexerIdentifierTests: XCTestCase {
     let stream = StringStream("🎤withMeNow")
     var lexer  = Lexer(stream: stream)
 
-    if let error = self.error(&lexer) {
+    if let error = self.identifierOrStringError(&lexer) {
       XCTAssertEqual(error.type, LexerErrorType.identifier)
       XCTAssertEqual(error.location, SourceLocation(line: 1, column: 0))
     }
@@ -126,37 +126,9 @@ class LexerIdentifierTests: XCTestCase {
     let stream = StringStream("no⏱️WillBeBetter")
     var lexer  = Lexer(stream: stream)
 
-    if let error = self.error(&lexer) {
+    if let error = self.identifierOrStringError(&lexer) {
       XCTAssertEqual(error.type, LexerErrorType.identifier)
       XCTAssertEqual(error.location, SourceLocation(line: 1, column: 2))
-    }
-  }
-
-  // MARK: - Helpers
-
-  private func identifierOrString(_ lexer: inout Lexer,
-                                  file:     StaticString = #file,
-                                  line:     UInt = #line) -> Token? {
-    do {
-      return try lexer.identifierOrString()
-    } catch {
-      XCTAssert(false, "\(error)", file: file, line: line)
-      return nil
-    }
-  }
-
-  private func error(_ lexer: inout Lexer,
-                     file:     StaticString = #file,
-                     line:     UInt = #line) -> LexerError? {
-    do {
-      let result = try lexer.identifierOrString()
-      XCTAssert(false, "Got token: \(result)", file: file, line: line)
-      return nil
-    } catch let error as LexerError {
-      return error
-    } catch {
-      XCTAssert(false, "Invalid error: \(error)", file: file, line: line)
-      return nil
     }
   }
 }

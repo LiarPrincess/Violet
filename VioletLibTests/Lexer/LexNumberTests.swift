@@ -6,7 +6,7 @@ import XCTest
 @testable import VioletLib
 
 /// Use 'python3 -m tokenize -e file.py' for python reference.
-class LexerNumberTests: XCTestCase {
+class LexerNumberTests: XCTestCase, LexerTest {
 
   // MARK: - Decimal integer
 
@@ -115,35 +115,6 @@ class LexerNumberTests: XCTestCase {
       XCTAssertEqual(token.kind, .int(0x01_23_45_67_89_ac))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 20))
-    }
-  }
-
-  // MARK: - Helpers
-
-  // TODO: move to XCTestCase extension
-  private func number(_ lexer: inout Lexer,
-                      file:     StaticString = #file,
-                      line:     UInt = #line) -> Token? {
-    do {
-      return try lexer.number()
-    } catch {
-      XCTAssert(false, "\(error)", file: file, line: line)
-      return nil
-    }
-  }
-
-  private func error(_ lexer: inout Lexer,
-                     file:     StaticString = #file,
-                     line:     UInt = #line) -> LexerError? {
-    do {
-      let result = try lexer.number()
-      XCTAssert(false, "Got token: \(result)", file: file, line: line)
-      return nil
-    } catch let error as LexerError {
-      return error
-    } catch {
-      XCTAssert(false, "Invalid error: \(error)", file: file, line: line)
-      return nil
     }
   }
 }

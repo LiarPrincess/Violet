@@ -31,7 +31,7 @@ private class FakeFileDescriptor: FileDescriptor {
 
 class FileStreamTests: XCTestCase {
 
-  private let asciiABC: [UInt8] = [0x41, 0x42, 0x43]
+  private let asciiAriel: [UInt8] = [0x41, 0x72, 0x69, 0x65, 0x6c]
 
   func test_closesFile_onDeinit() {
     let fd = FakeFileDescriptor()
@@ -49,7 +49,7 @@ class FileStreamTests: XCTestCase {
     let dataCount  = 15
     let bufferSize = 10 // < dataCount, so we fill buffer 2 times
 
-    let dataRaw = (0..<dataCount).map { self.asciiABC[$0 % 3] }
+    let dataRaw = (0..<dataCount).map { self.asciiAriel[$0 % 5] }
     let fd = FakeFileDescriptor(data: Data(dataRaw))
 
     let stream = FileStream(fd: fd, encoding: .ascii, bufferSize: bufferSize)
