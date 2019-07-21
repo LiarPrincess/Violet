@@ -10,6 +10,30 @@ class LexerNumberTests: XCTestCase, LexerTest {
 
   // MARK: - Decimal integer
 
+  func test_integerZero_isLexed() {
+    let s = "0"
+    let stream = StringStream(s)
+    var lexer  = Lexer(stream: stream)
+
+    if let token = self.number(&lexer) {
+      XCTAssertEqual(token.kind, .int(0))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 1))
+    }
+  }
+
+  func test_integerZero_withUnderscores_isLexed() {
+    let s = "0_000_000"
+    let stream = StringStream(s)
+    var lexer  = Lexer(stream: stream)
+
+    if let token = self.number(&lexer) {
+      XCTAssertEqual(token.kind, .int(0))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 9))
+    }
+  }
+
   //  3
   //  7
   //  2147483647
@@ -45,18 +69,6 @@ class LexerNumberTests: XCTestCase, LexerTest {
       XCTAssertEqual(token.kind, .int(0b1110_0101))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 12))
-    }
-  }
-
-  func test_binaryInteger_zero_isLexed() {
-    let s = "0b0"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
-
-    if let token = self.number(&lexer) {
-      XCTAssertEqual(token.kind, .int(0b0))
-      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 3))
     }
   }
 
@@ -115,6 +127,36 @@ class LexerNumberTests: XCTestCase, LexerTest {
       XCTAssertEqual(token.kind, .int(0x01_23_45_67_89_ac))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 20))
+    }
+  }
+
+  func test_hexInteger_zero_isLexed() {
+    let s = "0x0"
+    let stream = StringStream(s)
+    var lexer  = Lexer(stream: stream)
+
+    if let token = self.number(&lexer) {
+      XCTAssertEqual(token.kind, .int(0x0))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 3))
+    }
+  }
+
+  func test_hexInteger_lastUnderscore_isNotAPartOfTheNumber() {
+    let s = "0x123_"
+    let stream = StringStream(s)
+    var lexer  = Lexer(stream: stream)
+
+    if let token = self.number(&lexer) {
+      XCTAssertEqual(token.kind, .int(0x123))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 5))
+    }
+
+    if let id = self.identifierOrString(&lexer) {
+      XCTAssertEqual(id.kind, .identifier("_"))
+      XCTAssertEqual(id.start, SourceLocation(line: 1, column: 5))
+      XCTAssertEqual(id.end,   SourceLocation(line: 1, column: 6))
     }
   }
 }

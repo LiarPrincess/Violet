@@ -19,7 +19,7 @@ public enum LexerErrorType: Equatable {
   /// Error in decoding into Unicode
   case decode
   /// EOF in triple-quoted string
-  case eofs
+  case eofs // TODO: actually correct, better message than eof
   /// EOL in single-quoted string
   case eols
   /// Unexpected characters after a line continuation
@@ -36,7 +36,7 @@ public enum LexerErrorType: Equatable {
   /// Unable to decode string escape sequence.
   case unicodeEscape
   /// Syntax error
-  case syntax(message: String)
+  case syntax(message: String) // TODO: lexer does not have grammar!
 }
 
 extension LexerErrorType: CustomStringConvertible {

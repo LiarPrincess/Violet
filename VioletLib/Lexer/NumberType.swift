@@ -10,6 +10,7 @@ private let asciiA: UInt32 = 65
 
 // MARK: - NumberType
 
+// TODO: NumberType - move to Int
 internal protocol NumberType {
 
   /// Base
@@ -56,17 +57,33 @@ internal enum OctalNumber: NumberType {
 
 // MARK: - Decimal
 
-internal enum DecimalNumber: NumberType {
+internal protocol DecimalNumberType: NumberType { }
 
-  internal static var radix: UInt32 = 10
+extension DecimalNumberType {
 
-  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
-    return "0" <= c && c <= "9"
-  }
+  internal static var radix: UInt32 { return 10 }
 
   internal static func parseDigit(_ c: UnicodeScalar) -> UInt32 {
     assert(isDigit(c))
     return c.value - ascii0
+  }
+}
+
+internal enum DecimalNumber: DecimalNumberType {
+  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
+    return "0" <= c && c <= "9"
+  }
+}
+
+internal enum ZeroDecimal: DecimalNumberType {
+  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
+    return c == "0"
+  }
+}
+
+internal enum NonZeroDecimal: DecimalNumberType {
+  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
+    return "1" <= c && c <= "9"
   }
 }
 

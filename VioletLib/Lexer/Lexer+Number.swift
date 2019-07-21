@@ -12,7 +12,7 @@ extension Lexer {
 
   internal mutating func number() throws -> Token {
     assert(self.peek != nil)
-    assert(self.isDecimalDigit(self.peek ?? " ")) // " " is invalid
+    assert(self.isDecimalDigit(self.peek ?? " ")) // never nil (see assert above)
 
     let start = self.location
 
@@ -31,7 +31,8 @@ extension Lexer {
         _ = self.advance() // Xx
         return try self.integer(start: start, type: HexNumber.self)
       default:
-        return try self.decimalIntegerOrFloat() // e.g. simple '0'
+        // decimal zero: "0"+ (["_"] "0")*
+        return try self.integer(start: start, type: ZeroDecimal.self)
       }
     }
 
@@ -44,28 +45,39 @@ extension Lexer {
     // we have at least 1 digit
     guard let peek = self.peek else { throw self.createError(.eof) }
     guard self.isDigitOrUnderscore(peek, type: type) else {
-      let message = "Integer should have at least 1 digit."
+      let message = "Number should have at least 1 digit."
       throw self.createError(.syntax(message: message))
     }
 
     var result: PyInt = 0
     let radix = PyInt(type.radix)
 
-    while let peek = self.peek, self.isDigitOrUnderscore(peek, type: type) {
-      if peek != "_" {
-        let digit = PyInt(type.parseDigit(peek))
-
-        // currently we do not support unlimited integers
-        let (v1, o1) = result.multipliedReportingOverflow(by: radix)
-        let (v2, o2) = v1.addingReportingOverflow(digit)
-
-        if o1 || o2 {
-          throw NotImplemented("\(start) Violet currently does not support " +
-            "integers outside of <\(PyInt.min), \(PyInt.max)> range")
+    // (["_"] xxxdigit)+
+    while var peek = self.peek, self.isDigitOrUnderscore(peek, type: type) {
+      if peek == "_" {
+        // if next is not digit then '_' it is not a part of the number
+        // it is still not correct, but by grammar, not lex
+        guard let afterUnderscore = self.peekNext,
+              type.isDigit(afterUnderscore) else {
+          break
         }
 
-        result = v2
+        _ = self.advance() // consume underscore
+        peek = afterUnderscore
       }
+
+      let digit = PyInt(type.parseDigit(peek))
+
+      // currently we do not support unlimited integers
+      let (v1, o1) = result.multipliedReportingOverflow(by: radix)
+      let (v2, o2) = v1.addingReportingOverflow(digit)
+
+      if o1 || o2 {
+        throw NotImplemented("\(start) Violet currently does not support " +
+          "integers outside of <\(PyInt.min), \(PyInt.max)> range")
+      }
+
+      result = v2
 
       _ = self.advance()
     }
