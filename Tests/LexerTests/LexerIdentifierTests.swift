@@ -15,7 +15,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
   /// py: f"Kiss The Girl"
   func test_prefixedString_shouldBeLexedAsString() {
     let s = "Kiss The Girl"
-    let stream = StringStream("f" + self.doubleQuote(s))
+    let stream = StringStream("f" + self.shortQuote(s))
     var lexer  = Lexer(stream: stream)
 
     if let token = self.identifierOrString(&lexer) {

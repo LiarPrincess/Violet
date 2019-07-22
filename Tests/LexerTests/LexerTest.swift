@@ -12,17 +12,12 @@ extension LexerTest {
 
   // MARK: - Quotes
 
-  // TODO: rename shortQuote/longQuote
-  internal func singleQuote(_ s: String) -> String {
-    return "'\(s)'"
+  internal func shortQuote(_ s: String, _ q: String = "\"") -> String {
+    return "\(q)\(s)\(q)"
   }
 
-  internal func doubleQuote(_ s: String) -> String {
-    return "\"\(s)\""
-  }
-
-  internal func tripleQuote(_ s: String) -> String {
-    return "\"\"\"\(s)\"\"\""
+  internal func longQuote(_ s: String, _ q: String = "\"") -> String {
+    return "\(q)\(q)\(q)\(s)\(q)\(q)\(q)"
   }
 
   // MARK: - Lex

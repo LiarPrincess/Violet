@@ -5,8 +5,6 @@
 // Mostly based on CPython.
 // https://docs.python.org/3/reference/lexical_analysis.html#indentation
 
-// TODO: test it with: https://docs.python.org/3/reference/lexical_analysis.html#indentation
-
 /// Max indentation level.
 private let maxIndent = 100
 

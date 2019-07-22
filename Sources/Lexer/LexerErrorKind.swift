@@ -4,8 +4,6 @@
 
 import Core
 
-// TODO: CPython error translation
-
 public enum LexerErrorKind: Equatable {
 
   /// Unexpected end of file
