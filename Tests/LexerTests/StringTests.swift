@@ -8,7 +8,7 @@ import XCTest
 /// Use 'python3 -m tokenize -e file.py' for python reference
 /// and https://www.stlyrics.com/lyrics/classicdisney/partofyourworld.htm
 /// for song reference.
-class LexerStringTest: XCTestCase, LexerTest {
+class StringTests: XCTestCase, Common {
 
   // MARK: - Empty
 

@@ -6,7 +6,7 @@ import XCTest
 @testable import Lexer
 
 /// Use 'python3 -m tokenize -e file.py' for python reference.
-class LexerIntegerTests: XCTestCase, LexerTest {
+class IntegerTests: XCTestCase, Common {
 
   // MARK: - Decimal integer
 

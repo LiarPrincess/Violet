@@ -6,7 +6,7 @@ import XCTest
 @testable import Lexer
 
 /// Use 'python3 -m tokenize -e file.py' for python reference.
-class LexterFloatingPointTests: XCTestCase, LexerTest {
+class FloatingPointTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals

@@ -7,9 +7,9 @@ import Core
 @testable import Lexer
 
 /// Lexer test helpers.
-internal protocol LexerTest { }
+internal protocol Common { }
 
-extension LexerTest {
+extension Common {
 
   // MARK: - Int
 

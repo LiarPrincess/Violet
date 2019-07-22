@@ -8,7 +8,7 @@ import XCTest
 /// Use 'python3 -m tokenize -e file.py' for python reference
 /// and https://www.stlyrics.com/lyrics/classicdisney/kissthegirl.htm
 /// for song reference.
-class LexerIdentifierTests: XCTestCase, LexerTest {
+class IdentifierTests: XCTestCase, Common {
 
   // MARK: - String
 
