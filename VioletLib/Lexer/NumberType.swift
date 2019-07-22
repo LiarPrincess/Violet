@@ -13,6 +13,8 @@ private let asciiA: UInt32 = 65
 // TODO: NumberType - move to Int
 internal protocol NumberType {
 
+  static var name: String { get }
+
   /// Base
   static var radix: UInt32 { get }
 
@@ -26,6 +28,8 @@ internal protocol NumberType {
 // MARK: - Binary
 
 internal enum BinaryNumber: NumberType {
+
+  internal static var name: String = "binary"
 
   internal static var radix: UInt32 = 2
 
@@ -43,6 +47,8 @@ internal enum BinaryNumber: NumberType {
 
 internal enum OctalNumber: NumberType {
 
+  internal static var name: String = "octal"
+
   internal static var radix: UInt32 = 8
 
   internal static func isDigit(_ c: UnicodeScalar) -> Bool {
@@ -57,11 +63,15 @@ internal enum OctalNumber: NumberType {
 
 // MARK: - Decimal
 
-internal protocol DecimalNumberType: NumberType { }
+internal enum DecimalNumber: NumberType {
 
-extension DecimalNumberType {
+  internal static var name: String = "decimal"
 
-  internal static var radix: UInt32 { return 10 }
+  internal static var radix: UInt32 = 10
+
+  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
+    return "0" <= c && c <= "9"
+  }
 
   internal static func parseDigit(_ c: UnicodeScalar) -> UInt32 {
     assert(isDigit(c))
@@ -69,27 +79,27 @@ extension DecimalNumberType {
   }
 }
 
-internal enum DecimalNumber: DecimalNumberType {
-  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
-    return "0" <= c && c <= "9"
-  }
-}
+internal enum ZeroDecimal: NumberType {
 
-internal enum ZeroDecimal: DecimalNumberType {
+  internal static var name: String = "decimal"
+
+  internal static var radix: UInt32 = 10
+
   internal static func isDigit(_ c: UnicodeScalar) -> Bool {
     return c == "0"
   }
-}
 
-internal enum NonZeroDecimal: DecimalNumberType {
-  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
-    return "1" <= c && c <= "9"
+  internal static func parseDigit(_ c: UnicodeScalar) -> UInt32 {
+    assert(isDigit(c))
+    return c.value - ascii0
   }
 }
 
 // MARK: - Hex
 
 internal enum HexNumber: NumberType {
+
+  internal static var name: String = "hexadecimal"
 
   internal static var radix: UInt32 = 16
 
@@ -105,7 +115,7 @@ internal enum HexNumber: NumberType {
     case "0"..."9": return c.value - ascii0
     case "a"..."f": return c.value - asciia + 10
     case "A"..."F": return c.value - asciiA + 10
-    default: return 0 // not possible, we checked it with self.isHex
+    default: return 0 // not possible, we checked it with self.isDigit
     }
   }
 }

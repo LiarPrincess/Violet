@@ -5,4 +5,7 @@
 // https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
 // There is no limit for the length of integer literals apart
 // from what can be stored in available memory.
+
+/// Int64 because we don't have BigInt support.
+/// Range: <-Int64.max, Int64.max> due to '-' being unary operator.
 public typealias PyInt = Int64

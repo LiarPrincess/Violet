@@ -16,7 +16,7 @@ public enum TokenKind: Equatable {
 
   case int(PyInt)
   case float(Double)
-  case complex(real: Double, imag: Double)
+  case imaginary(Double)
 
   case bytes(Data)
 
@@ -130,9 +130,9 @@ extension TokenKind: CustomStringConvertible {
     case let .string(val):       return "string(\(val))"
     case let .formatString(val): return "formatString(\(val)):"
 
-    case let .int(val):            return "int(\(val))"
-    case let .float(val):          return "float(\(val))"
-    case let .complex(real, imag): return "complex(\(real) + \(imag)j)"
+    case let .int(val):       return "int(\(val))"
+    case let .float(val):     return "float(\(val))"
+    case let .imaginary(val): return "imaginary(\(val))"
 
     case let .bytes(val): return "data(\(val))"
 

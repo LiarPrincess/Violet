@@ -3,16 +3,13 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 // https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
+// https://github.molgen.mpg.de/git-mirror/glibc/blob/master/stdlib/strtod_l.c
 
 extension Lexer {
 
-  internal mutating func isDecimalDigit(_ c: UnicodeScalar) -> Bool {
-    return DecimalNumber.isDigit(c)
-  }
-
   internal mutating func number() throws -> Token {
     assert(self.peek != nil)
-    assert(self.isDecimalDigit(self.peek ?? " ")) // never nil (see assert above)
+    assert(DecimalNumber.isDigit(self.peek ?? " ") || self.peek == ".")
 
     let start = self.location
 
@@ -21,76 +18,147 @@ extension Lexer {
       case "B", "b":
         _ = self.advance() // 0
         _ = self.advance() // Bb
-        return try self.integer(start: start, type: BinaryNumber.self)
+        return try self.integer(start, type: BinaryNumber.self)
       case "O", "o":
         _ = self.advance() // 0
         _ = self.advance() // Oo
-        return try self.integer(start: start, type: OctalNumber.self)
+        return try self.integer(start, type: OctalNumber.self)
       case "X", "x":
         _ = self.advance() // 0
         _ = self.advance() // Xx
-        return try self.integer(start: start, type: HexNumber.self)
+        return try self.integer(start, type: HexNumber.self)
       default:
-        // decimal zero: "0"+ (["_"] "0")*
-        return try self.integer(start: start, type: ZeroDecimal.self)
+        return try self.decimalIntegerOrFloat(start)
       }
     }
 
-    return try self.decimalIntegerOrFloat()
+    return try self.decimalIntegerOrFloat(start)
   }
 
-  private mutating func integer<T: NumberType>(start: SourceLocation,
-                                               type:  T.Type) throws -> Token {
+  private mutating func integer<T: NumberType>(_ start: SourceLocation,
+                                               type: T.Type) throws -> Token {
+    var scalars = [UnicodeScalar]()
+    repeat {
+      if self.peek == "_" {
+        _ = self.advance()
+      }
 
-    // we have at least 1 digit
-    guard let peek = self.peek else { throw self.createError(.eof) }
-    guard self.isDigitOrUnderscore(peek, type: type) else {
-      let message = "Number should have at least 1 digit."
+      // we need to have digit after underscore
+      guard let digitPeek = self.peek else {
+        // TODO: separate error with associated value
+        // TODO: rename createError to error
+        throw self.createError(.syntax(message: "Invalid \(type.name) literal.")) // integerDanglingUnderscore
+      }
+
+      guard type.isDigit(digitPeek) else {
+        let message = "Invalid digit '\(digitPeek)' in \(type.name) literal."
+        throw self.createError(.syntax(message: message))
+      }
+
+      while let digit = self.peek, type.isDigit(digit) {
+        scalars.append(digit)
+        _ = self.advance()
+      }
+    } while self.peek == "_"
+
+    let value = try self.parseInt(scalars, type: type)
+    return Token(.int(value), start: start, end: self.location)
+  }
+
+  // swiftlint:disable:next function_body_length
+  private mutating func decimalIntegerOrFloat(_ start: SourceLocation) throws -> Token {
+    // it can't be nil, otherwise we would never call self.number().
+    guard let first = self.peek else { throw self.createError(.eof) }
+
+    var scalars = [UnicodeScalar]()
+
+    if DecimalNumber.isDigit(first) {
+      try self.collectDecimals(into: &scalars)
+    }
+    let integerCount = scalars.count // so we know if we have int or float
+
+    if self.peek == "." {
+      _ = self.advance() // .
+      scalars.append(".")
+      try self.collectDecimals(into: &scalars)
+    }
+
+    if self.peek == "E" || self.peek == "e" {
+      _ = self.advance() // Ee
+      scalars.append("e")
+
+      if let sign = self.peek, sign == "+" || sign == "-" {
+        _ = self.advance() // +-
+        scalars.append(sign)
+      }
+
+      try self.collectDecimals(into: &scalars)
+    }
+
+    if self.peek == "J" || self.peek == "j" {
+      _ = self.advance() // Jj
+      let value = try self.parseDouble(scalars)
+      return Token(.imaginary(value), start: start, end: self.location)
+    }
+
+    let isInteger = scalars.count == integerCount
+    if isInteger {
+      let value = try self.parseInt(scalars, type: DecimalNumber.self)
+      return Token(.int(value), start: start, end: self.location)
+    }
+
+    let value = try self.parseDouble(scalars)
+    return Token(.float(value), start: start, end: self.location)
+  }
+
+  private mutating func collectDecimals(into scalars: inout [UnicodeScalar]) throws {
+    let type = DecimalNumber.self
+
+    guard let first = self.peek, type.isDigit(first) else {
+      return // just point, no fraction
+    }
+
+    while true {
+      while let digit = self.peek, type.isDigit(digit) {
+        scalars.append(digit)
+        _ = self.advance()
+      }
+
+      // if '_' then continue else break
+      guard let underscore = self.peek, underscore == "_" else {
+        break
+      }
+
+      // if we have more, then it must be an digit
+      if let digit = self.advance(), !type.isDigit(digit) {
+        throw self.createError(.syntax(message: "Invalid decimal literal"))
+      }
+    }
+  }
+
+  // MARK: - Parse
+
+  private func parseInt<T: NumberType>(_ scalars: [UnicodeScalar],
+                                       type: T.Type) throws -> PyInt {
+    let string = String(scalars)
+
+    guard let value = PyInt(string, radix: Int(type.radix)) else {
+      let message = "Invalid \(type.name) integer value. Integers outside of " +
+      "<-\(PyInt.max), \(PyInt.max)> range are not supported."
+
       throw self.createError(.syntax(message: message))
     }
 
-    var result: PyInt = 0
-    let radix = PyInt(type.radix)
+    return value
+  }
 
-    // (["_"] xxxdigit)+
-    while var peek = self.peek, self.isDigitOrUnderscore(peek, type: type) {
-      if peek == "_" {
-        // if next is not digit then '_' it is not a part of the number
-        // it is still not correct, but by grammar, not lex
-        guard let afterUnderscore = self.peekNext,
-              type.isDigit(afterUnderscore) else {
-          break
-        }
+  private func parseDouble(_ scalars: [UnicodeScalar]) throws -> Double {
+    let string = String(scalars)
 
-        _ = self.advance() // consume underscore
-        peek = afterUnderscore
-      }
-
-      let digit = PyInt(type.parseDigit(peek))
-
-      // currently we do not support unlimited integers
-      let (v1, o1) = result.multipliedReportingOverflow(by: radix)
-      let (v2, o2) = v1.addingReportingOverflow(digit)
-
-      if o1 || o2 {
-        throw NotImplemented("\(start) Violet currently does not support " +
-          "integers outside of <\(PyInt.min), \(PyInt.max)> range")
-      }
-
-      result = v2
-
-      _ = self.advance()
+    guard let value = Double(string) else {
+      throw self.createError(.syntax(message: "Invalid decimal value."))
     }
 
-    return Token(.int(result), start: start, end: self.location)
-  }
-
-  private func isDigitOrUnderscore<T: NumberType>(_ c: UnicodeScalar,
-                                                  type:  T.Type) -> Bool {
-    return type.isDigit(c) || c == "_"
-  }
-
-  private mutating func decimalIntegerOrFloat() throws -> Token {
-    return Token(.amper, start: .start, end: .start)
+    return value
   }
 }
