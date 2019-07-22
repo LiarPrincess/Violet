@@ -11,6 +11,7 @@ internal protocol FileDescriptor: AnyObject {
 
 extension FileHandle: FileDescriptor { }
 
+// TODO: FileStreamState: notOpen(FH), open(FD), reading, closed; throw only when advance
 internal class FileStream: InputStream {
 
   /// File from which we are reading.

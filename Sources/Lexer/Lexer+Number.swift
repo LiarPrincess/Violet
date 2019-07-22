@@ -2,6 +2,8 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import Core
+
 // https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
 // https://github.molgen.mpg.de/git-mirror/glibc/blob/master/stdlib/strtod_l.c
 

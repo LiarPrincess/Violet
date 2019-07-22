@@ -4,7 +4,7 @@
 
 import XCTest
 import Foundation
-@testable import VioletLib
+@testable import Lexer
 
 private class FakeFileDescriptor: FileDescriptor {
 

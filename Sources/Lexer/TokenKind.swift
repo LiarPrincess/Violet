@@ -2,6 +2,9 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+import Foundation
+import Core
+
 // Based on 'Grammar/Tokens' from CPython. Changes:
 // 1. Associated values instead of pointers inside buf.
 // 2. Lifted keywords to token level

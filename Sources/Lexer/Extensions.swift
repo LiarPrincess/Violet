@@ -7,7 +7,7 @@
 extension Collection {
 
   /// Basically: `!self.isEmpty`
-  internal var any: Bool {
+  public var any: Bool {
     return !self.isEmpty
   }
 }
@@ -17,7 +17,7 @@ extension Collection {
 extension Array {
 
   /// Basically: `self.append(element)`
-  internal mutating func push(_ element: Element) {
+  public mutating func push(_ element: Element) {
     self.append(element)
   }
 }
@@ -26,7 +26,7 @@ extension Array {
 
 extension String {
 
-  internal init(_ scalars: [UnicodeScalar]) {
+  public init(_ scalars: [UnicodeScalar]) {
     self.init(String.UnicodeScalarView(scalars))
   }
 }

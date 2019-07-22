@@ -8,32 +8,20 @@ let package = Package(
     .macOS(.v10_11)
   ],
   products: [
-    .library(name: "VioletLib", targets: ["VioletLib"]),
-    .executable(name: "Violet", targets: ["Violet"]),
-    .executable(name: "VioletLibTestsPy", targets: ["VioletLibTestsPy"])
+    .library(name: "LibViolet", targets: ["Core", "Lexer"]),
+    .executable(name: "Violet", targets: ["Main"]),
+    .executable(name: "PyTests", targets: ["PyTests"])
   ],
   dependencies: [
   ],
   targets: [
-    .target(
-      name: "VioletLib",
-      dependencies: [],
-      path: "VioletLib"
-    ),
-    .target(
-      name: "Violet",
-      dependencies: ["VioletLib"],
-      path: "Violet"
-    ),
-    .testTarget(
-      name: "VioletLibTests",
-      dependencies: ["VioletLib"],
-      path: "VioletLibTests"
-    ),
-    .target(
-      name: "VioletLibTestsPy",
-      dependencies: ["VioletLib"],
-      path: "VioletLibTestsPy"
-    )
+    .target(name: "Core", dependencies: []),
+    .testTarget(name: "CoreTests", dependencies: ["Core"]),
+
+    .target(name: "Lexer", dependencies: ["Core"]),
+    .testTarget(name: "LexerTests", dependencies: ["Core", "Lexer"]),
+
+    .target(name: "Main", dependencies: ["Core", "Lexer"]),
+    .target(name: "PyTests", dependencies: ["Core", "Lexer"]),
   ]
 )
