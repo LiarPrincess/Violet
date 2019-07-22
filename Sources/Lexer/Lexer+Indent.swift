@@ -43,7 +43,7 @@ extension Lexer {
 
       let startColumn = self.indents.stack.last ?? defaultIndent
       let start = SourceLocation(line: self.location.line, column: startColumn)
-      let token = self.token(.indent, start: start, end: self.location)
+      let token = self.token(.indent, start: start)
 
       self.indents.stack.push(indent)
       self.indents.pendingTokens.push(token)

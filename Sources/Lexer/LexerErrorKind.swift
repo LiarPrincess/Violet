@@ -26,17 +26,17 @@ public enum LexerErrorKind: Equatable {
   /// Unable to decode string escape sequence
   case unicodeEscape
   /// Bytes can only contain ASCII literal characters
-  case badByte(UnicodeScalar)
+  case badByte(Character)
 
   /// Digit is required after underscore
   case danglingIntegerUnderscore
   /// Character 'x' is not an valid integer digit
-  case invalidIntegerDigit(NumberType, UnicodeScalar)
+  case invalidIntegerDigit(NumberType, Character)
   /// Unable to parse integer from 'x'
   case unableToParseInteger(NumberType, String)
 
   /// Character 'x' is not an valid decimal digit
-  case invalidDecimalDigit(UnicodeScalar)
+  case invalidDecimalDigit(Character)
   /// Unable to parse integer from 'x'
   case unableToParseDecimal(String)
 

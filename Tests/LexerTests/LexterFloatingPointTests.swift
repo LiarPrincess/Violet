@@ -12,8 +12,7 @@ class LexterFloatingPointTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
   func test_zero_isLexed() {
     let s = "0.0"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertEqual(token.kind, .float(0.0))
@@ -26,8 +25,7 @@ class LexterFloatingPointTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
   func test_zero_asExponent_isLexed() {
     let s = "0e0"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertEqual(token.kind, .float(0.0))
@@ -40,8 +38,7 @@ class LexterFloatingPointTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
   func test_number_isLexed() {
     let s = "3.14"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertEqual(token.kind, .float(3.14))
@@ -54,8 +51,7 @@ class LexterFloatingPointTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
   func test_number_withUnderscores_isLexed() {
     let s = "3.14_15_93"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertEqual(token.kind, .float(3.141_593))
@@ -70,8 +66,7 @@ class LexterFloatingPointTests: XCTestCase, LexerTest {
     // trivia: glibc calss this 'american style' number
 
     let s = "10."
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertEqual(token.kind, .float(10))
@@ -84,8 +79,7 @@ class LexterFloatingPointTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
   func test_number_withoutWhole_isLexed() {
     let s = ".001"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertEqual(token.kind, .float(0.001))
@@ -98,8 +92,7 @@ class LexterFloatingPointTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
   func test_number_withExponent_isLexed() {
     let s = "1e100"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertEqual(token.kind, .float(1e100))
@@ -113,8 +106,7 @@ class LexterFloatingPointTests: XCTestCase, LexerTest {
   /// 'For example, 077e010 is legal, and denotes the same number as 77e10.'
   func test_number_withExponent_isLexed2() {
     let s = "077e010"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertEqual(token.kind, .float(77e010))
@@ -127,8 +119,7 @@ class LexterFloatingPointTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
   func test_number_withFraction_andExponent_isLexed() {
     let s = "3.14e-10"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertEqual(token.kind, .float(3.14e-10))

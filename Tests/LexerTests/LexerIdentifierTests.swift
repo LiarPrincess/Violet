@@ -15,8 +15,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
   /// py: f"Kiss The Girl"
   func test_prefixedString_shouldBeLexedAsString() {
     let s = "Kiss The Girl"
-    let stream = StringStream("f" + self.shortQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: "f" + self.shortQuote(s))
 
     if let token = self.identifierOrString(&lexer) {
       XCTAssertEqual(token.kind, .formatString(s))
@@ -29,8 +28,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
 
   func test_allKeywords_shouldBeRecognized() {
     for (keyword, value) in keywords {
-      let stream = StringStream(keyword)
-      var lexer  = Lexer(stream: stream)
+      var lexer = Lexer(string: keyword)
 
       if let token = self.identifierOrString(&lexer) {
         XCTAssertEqual(token.kind, .keyword(value), keyword)
@@ -45,8 +43,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
   /// py: shaLaLaLaLaLa
   func test_identifier_simple_isValid() {
     let s = "shaLaLaLaLaLa"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.identifierOrString(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
@@ -58,8 +55,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
   /// py: _lookAtTheBoyTooShy
   func test_identifier_startingWithUnderscore_isValid() {
     let s = "_lookAtTheBoyTooShy"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.identifierOrString(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
@@ -73,8 +69,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
     let reserved = ["_", "__x__", "__x"]
 
     for identifier in reserved {
-      let stream = StringStream(identifier)
-      var lexer  = Lexer(stream: stream)
+      var lexer = Lexer(string: identifier)
 
       if let token = self.identifierOrString(&lexer) {
         XCTAssertEqual(token.kind, .identifier(identifier), identifier)
@@ -87,8 +82,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
   /// py: 齀words
   func test_identifier_startingWithCJK_isValid() {
     let s = "齀words"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.identifierOrString(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
@@ -100,8 +94,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
   // py: win齀ds
   func test_identifier_containingCJK_isValid() {
     let s = "win齀ds"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.identifierOrString(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
@@ -112,8 +105,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
 
   /// py: 🎤withMeNow
   func test_identifier_startingWithEmoji_isNotValid() {
-    let stream = StringStream("🎤withMeNow")
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: "🎤withMeNow")
 
     if let error = self.identifierOrStringError(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
@@ -124,8 +116,7 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
 
   // py: no⏱️WillBeBetter
   func test_identifier_containingEmoji_isNotValid() {
-    let stream = StringStream("no⏱️WillBeBetter")
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: "no⏱️WillBeBetter")
 
     if let error = self.identifierOrStringError(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.identifier)

@@ -4,7 +4,7 @@
 
 public enum NotImplemented: Error {
   case unlimitedInteger
-  case stringEscape(UnicodeScalar)
+  case stringEscape(Character)
 }
 
 extension NotImplemented: CustomStringConvertible {

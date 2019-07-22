@@ -4,17 +4,16 @@
 
 import Foundation
 
-// See:
 // https://docs.python.org/3/reference/lexical_analysis.html#identifiers
 
 extension Lexer {
 
   internal mutating func identifierOrString() throws -> Token {
     assert(self.peek != nil)
-    assert(self.isIdentifierStart(self.peek))
+    assert(self.isIdentifierStart(self.peek ?? " "))
 
+    var identifier = ""
     var stringPrefix = StringPrefix()
-    var identifierParts = [UnicodeScalar]()
     let start = self.location
 
     /// we don't know if it is identifier or string in form bruf"xxx"
@@ -28,7 +27,7 @@ extension Lexer {
       }
 
       // still undecided
-      identifierParts.append(c)
+      identifier.append(c)
 
       let next = self.advance()
       if next == "\"" || next == "'" { // quotes are not valid identifiers
@@ -37,46 +36,40 @@ extension Lexer {
     }
 
     while let c = self.peek, self.isIdentifierContinuation(c) {
-      identifierParts.append(c)
+      identifier.append(c)
       self.advance()
     }
 
-    let end = self.location
-    let identifier = String(identifierParts)
-
     if let keyword = keywords[identifier] {
-      return self.token(.keyword(keyword), start: start, end: end)
+      return self.token(.keyword(keyword), start: start)
     } else {
       try self.verifyIdentifier(identifier, start: start)
-      return self.token(.identifier(identifier), start: start, end: end)
+      return self.token(.identifier(identifier), start: start)
     }
   }
 
-  internal func isIdentifierStart(_ c: UnicodeScalar?) -> Bool {
+  internal func isIdentifierStart(_ c: Character) -> Bool {
     // We do more detailed verification after we have collected the whole
     // identifier (this is important for error messages, otherwise we won't
     // even start lexing identifier and throw 'unknown character' exception).
-
-    guard let c = c else { return false }
     return ("a" <= c && c <= "z")
         || ("A" <= c && c <= "Z")
         || c == "_"
-        || c.value >= 128
+        || !c.isASCII
   }
 
-  private func isIdentifierContinuation(_ c: UnicodeScalar) -> Bool {
+  private func isIdentifierContinuation(_ c: Character) -> Bool {
     // We do more detailed verification after we have collected the whole
     // identifier.
-
     return ("a" <= c && c <= "z")
         || ("A" <= c && c <= "Z")
         || ("0" <= c && c <= "9")
         || c == "_"
-        || c.value >= 128
+        || !c.isASCII
   }
 
   private func verifyIdentifier(_ identifier: String,
-                                start:        SourceLocation) throws {
+                                start: SourceLocation) throws {
 
     let scalars = identifier.unicodeScalars
 
@@ -84,7 +77,7 @@ extension Lexer {
       throw self.error(.identifier, start: start)
     }
 
-    // as for underscore: https://codepoints.net/U+005F -> Cmd+F -> XID Start
+    // as for underscore: https://codepoints.net/U+005F -> Cmd+F -> 'XID Start'
     guard first == "_" || first.properties.isXIDStart else {
       throw self.error(.identifier, start: start, end: start)
     }

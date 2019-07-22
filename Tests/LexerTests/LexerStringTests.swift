@@ -14,8 +14,7 @@ class LexerStringTest: XCTestCase, LexerTest {
 
   func test_emptyString_isLexed() {
     let s = ""
-    let stream = StringStream(self.shortQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.shortQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
@@ -29,8 +28,7 @@ class LexerStringTest: XCTestCase, LexerTest {
   /// py: "Look at this stuff. Isnt it neat?"
   func test_doubleQuote_simple() {
     let s = "Look at this stuff. Isnt it neat?"
-    let stream = StringStream(self.shortQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.shortQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
@@ -45,8 +43,7 @@ class LexerStringTest: XCTestCase, LexerTest {
     let s = "Wouldnt\\\\you\\\'think\\\"my\\ncollections\\tcomplete?"
     let expected = "Wouldnt\\you'think\"my\ncollections\tcomplete?"
 
-    let stream = StringStream(self.shortQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.shortQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(expected))
@@ -62,8 +59,7 @@ class LexerStringTest: XCTestCase, LexerTest {
     let s = "Wouldnt you think Im the girl\\\nThe girl who has everything?"
     let expected = "Wouldnt you think Im the girlThe girl who has everything?"
 
-    let stream = StringStream(self.shortQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.shortQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(expected))
@@ -78,8 +74,7 @@ class LexerStringTest: XCTestCase, LexerTest {
     let s = "Wanderin\\47 free \\055 wish \\x49 could be Part of that \\U0001F30D"
     let expected = "Wanderin' free - wish I could be Part of that 🌍"
 
-    let stream = StringStream(self.shortQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.shortQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(expected))
@@ -91,8 +86,7 @@ class LexerStringTest: XCTestCase, LexerTest {
   /// py: "Wouldn't I love, love to exp\lore that shore up above?"
   func test_doubleQuote_withUnrecognizedEscape_warns() {
     let s = "Wouldn't I love, love to exp\\lore that shore up above?"
-    let stream = StringStream(self.shortQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.shortQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
@@ -106,21 +100,19 @@ class LexerStringTest: XCTestCase, LexerTest {
   /// py: "🧜‍♀️: I wanna be where the people are, I wanna 👀, wanna 👀 em 💃"
   func test_doubleQuote_emoji() {
     let s = "🧜‍♀️: I wanna be where the people are, I wanna 👀, wanna 👀 em 💃"
-    let stream = StringStream(self.shortQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.shortQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 64))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 61)) // py: 64
     }
   }
 
   /// py: "c: 小美人鱼 j: リトルマーメイド k: 인어 공주"
   func test_doubleQuote_CJK() {
     let s = "c: 小美人鱼 j: リトルマーメイド k: 인어 공주"
-    let stream = StringStream(self.shortQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.shortQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
@@ -132,8 +124,7 @@ class LexerStringTest: XCTestCase, LexerTest {
   /// Quote, without closing.
   /// py: "Ive got gadgets and gizmos a-plenty
   func test_doubleQuote_withoutEnd_throws() {
-    let stream = StringStream("\"Ive got gadgets and gizmos a-plenty\n")
-    var lexer = Lexer(stream: stream)
+    var lexer = Lexer(string: "\"Ive got gadgets and gizmos a-plenty\n")
 
     if let error = self.stringError(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedShortString)
@@ -148,8 +139,7 @@ class LexerStringTest: XCTestCase, LexerTest {
   /// py: 'Look at this stuff. Isnt it neat?'
   func test_singleQuote_simple() {
     let s = "Look at this stuff. Isnt it neat?"
-    let stream = StringStream(self.shortQuote(s, "'"))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.shortQuote(s, "'"))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
@@ -163,8 +153,7 @@ class LexerStringTest: XCTestCase, LexerTest {
   /// py: """Ive got whozits and whatzits galore"""
   func test_tripleQuote_simple() {
     let s = "Ive got whozits and whatzits galore"
-    let stream = StringStream(self.longQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.longQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
@@ -176,8 +165,7 @@ class LexerStringTest: XCTestCase, LexerTest {
   /// py: """You want thingamabobs?"I've got twenty!"""
   func test_tripleQuote_singleQuotes_doNotEnd() {
     let s = "You want thingamabobs?\"I've got twenty!"
-    let stream = StringStream(self.longQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.longQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
@@ -192,8 +180,7 @@ class LexerStringTest: XCTestCase, LexerTest {
   /// I want more"""
   func test_tripleQuote_multilineString() {
     let s = "But who cares?\nNo big deal\nI want more"
-    let stream = StringStream(self.longQuote(s))
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: self.longQuote(s))
 
     if let token = self.string(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
@@ -207,8 +194,7 @@ class LexerStringTest: XCTestCase, LexerTest {
   /// No big deal
   /// I want more"
   func test_tripleQuote_withoutEnd_throws() {
-    let stream = StringStream("\"\"\"But who cares?\nNo big deal\nI want more\"")
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: "\"\"\"But who cares?\nNo big deal\nI want more\"")
 
     if let error = self.stringError(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedLongString)

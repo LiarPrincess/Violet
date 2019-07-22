@@ -2,6 +2,7 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+// Code mostly from CPython.
 // https://docs.python.org/3/reference/lexical_analysis.html#grammar-token-stringprefix
 
 internal struct StringPrefix {
@@ -20,9 +21,7 @@ internal struct StringPrefix {
 
   internal var isString: Bool { return !self.b }
 
-  internal mutating func update(_ c: UnicodeScalar) -> Bool {
-    // From CPython.
-
+  internal mutating func update(_ c: Character) -> Bool {
     if !(self.b || self.u || self.f) && (c == "b" || c == "B") {
       self.b = true
       return true

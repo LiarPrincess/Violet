@@ -12,8 +12,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
 
   func test_decimal_zero_isLexed() {
     let s = "0"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 0)
@@ -24,8 +23,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
 
   func test_decimal_zero_withUnderscores_isLexed() {
     let s = "0_000_000"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 0)
@@ -38,8 +36,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_decimal_isLexed() {
     let s = "2147483647"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 2_147_483_647)
@@ -52,8 +49,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_decimal_withUnderscores_isLexed() {
     let s = "100_000_000_000"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 100_000_000_000)
@@ -64,8 +60,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
 
   func test_decimal_maxInt64_isLexed() {
     let s = "9223372036854775807"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 9_223_372_036_854_775_807)
@@ -80,8 +75,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_binary_isLexed() {
     let s = "0b100110111"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 0b100110111)
@@ -94,8 +88,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_binary_withUnderscores_isLexed() {
     let s = "0b_1110_0101"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 0b1110_0101)
@@ -110,8 +103,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_octal_isLexed() {
     let s = "0o177"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 0o177)
@@ -124,8 +116,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_octal_withUnderscores_isLexed() {
     let s = "0o_37_7"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 0o377)
@@ -140,8 +131,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_hex_isLexed() {
     let s = "0xdeadBEEF"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 0xdeadbeef)
@@ -152,8 +142,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
 
   func test_hex_withUnderscores_isLexed() {
     let s = "0x_01_23_45_67_89_ac"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 0x01_23_45_67_89_ac)
@@ -164,8 +153,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
 
   func test_hex_zero_isLexed() {
     let s = "0x0"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let token = self.number(&lexer) {
       XCTAssertInt(token.kind, 0x0)
@@ -176,8 +164,7 @@ class LexerIntegerTests: XCTestCase, LexerTest {
 
   func test_hex_lastUnderscore_isNotAPartOfTheNumber() {
     let s = "0x123_"
-    let stream = StringStream(s)
-    var lexer  = Lexer(stream: stream)
+    var lexer = Lexer(string: s)
 
     if let error = self.numberError(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.danglingIntegerUnderscore)
