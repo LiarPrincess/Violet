@@ -4,6 +4,7 @@
 
 import Foundation
 
+// swiftlint:disable file_length
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
 
@@ -198,7 +199,7 @@ extension Lexer {
     _ = self.advance() // backslash
 
     let maxCount = 3
-    var result: UInt32 = 0
+    var scalars = [UnicodeScalar]()
 
     for _ in 0..<maxCount {
       guard let peek = self.peek else {
@@ -209,14 +210,11 @@ extension Lexer {
         break // we can exit before we reach all 3 'o'
       }
 
-      result = result * OctalNumber.radix + OctalNumber.parseDigit(peek)
+      scalars.append(peek)
       _ = self.advance()
     }
 
-    guard let scalar = UnicodeScalar(result) else {
-      throw self.createError(.unicodeEscape)
-    }
-    return scalar
+    return try self.readScalar(scalars, radix: 8)
   }
 
   private mutating func readHex(_ quoteType: QuoteType,
@@ -224,7 +222,7 @@ extension Lexer {
     _ = self.advance() // backslash
     _ = self.advance() // xuU
 
-    var result: UInt32 = 0
+    var scalars = [UnicodeScalar]()
 
     for _ in 0..<count {
       guard let peek = self.peek else {
@@ -235,13 +233,25 @@ extension Lexer {
         throw self.createError(.unicodeEscape)
       }
 
-      result = result * HexNumber.radix + HexNumber.parseDigit(peek)
+      scalars.append(peek)
       _ = self.advance()
     }
 
-    guard let scalar = UnicodeScalar(result) else {
+    return try self.readScalar(scalars, radix: 16)
+  }
+
+  private func readScalar(_ scalars: [UnicodeScalar],
+                          radix: Int) throws -> UnicodeScalar {
+
+    let s = String(scalars)
+    guard let v = UInt32(s, radix: radix) else {
       throw self.createError(.unicodeEscape)
     }
+
+    guard let scalar = UnicodeScalar(v) else {
+      throw self.createError(.unicodeEscape)
+    }
+
     return scalar
   }
 }
