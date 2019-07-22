@@ -100,9 +100,5 @@ disabled_rules:
 
   - redundant_optional_initialization # I like it that way
 
-included:
-  - Violet
-  - VioletLib
-  - VioletLibTests
-  - VioletLibTestsPy
-
+excluded:
+  - Package.swift
