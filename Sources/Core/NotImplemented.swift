@@ -3,12 +3,15 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 public enum NotImplemented: Error {
+  case unlimitedInteger
   case stringEscape(UnicodeScalar)
 }
 
 extension NotImplemented: CustomStringConvertible {
   public var description: String {
     switch self {
+    case.unlimitedInteger:
+      return "Integers outside of <\(PyInt.min), \(PyInt.max)> range are not supported."
     case .stringEscape(let escaped):
       return "String escape '\\\(escaped)' is not currently supported."
     }

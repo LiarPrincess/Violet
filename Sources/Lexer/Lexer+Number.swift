@@ -143,8 +143,10 @@ extension Lexer {
     let string = String(scalars)
 
     guard let value = PyInt(string, radix: base.radix) else {
-      let kind = LexerErrorKind.unableToParseInteger(base.type, string)
-      throw self.error(kind, start: start)
+      // After we add proper ints:
+      // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
+      // throw self.error(kind, start: start)
+      throw NotImplemented.unlimitedInteger
     }
 
     return value

@@ -3,12 +3,24 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import XCTest
+import Core
 @testable import Lexer
 
 /// Lexer test helpers.
 internal protocol LexerTest { }
 
 extension LexerTest {
+
+  // MARK: - Int
+
+  internal func XCTAssertInt(_ kind: TokenKind,
+                             _ expected: Int64,
+                             file: StaticString = #file,
+                             line: UInt         = #line) {
+
+    let pyExpected = PyInt(expected)
+    XCTAssertEqual(kind, .int(pyExpected), file: file, line: line)
+  }
 
   // MARK: - Quotes
 

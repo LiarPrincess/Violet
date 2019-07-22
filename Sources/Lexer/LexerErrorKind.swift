@@ -20,16 +20,12 @@ public enum LexerErrorKind: Equatable {
   case identifier
 
   /// EOL in single-quoted string
-  /// eols
   case unfinishedShortString
   /// EOF in triple-quoted string
-  /// eofs
   case unfinishedLongString
   /// Unable to decode string escape sequence
-  /// SyntaxError: (unicode error) 'unicodeescape' codec can't decode bytes in position 0-4: truncated \uXXXX escape
   case unicodeEscape
   /// Bytes can only contain ASCII literal characters
-  /// SyntaxError
   case badByte(UnicodeScalar)
 
   /// Digit is required after underscore
@@ -55,33 +51,43 @@ public enum LexerErrorKind: Equatable {
 extension LexerErrorKind: CustomStringConvertible {
   public var description: String {
     switch self {
-    case .eof: return "Unexpected end of file"
+    case .eof:
+      return "Unexpected end of file"
 
-    case .tabSpace: return "Inconsistent mixing of tabs and spaces"
-    case .tooDeep:  return "Too many levels of indentation"
-    case .dedent:   return "Unindent does not match any outer indentation level"
+    case .tabSpace:
+      return "Inconsistent mixing of tabs and spaces"
+    case .tooDeep:
+      return "Too many levels of indentation"
+    case .dedent:
+      return "Unindent does not match any outer indentation level"
 
-    case .identifier: return "Invalid character in identifier"
+    case .identifier:
+      return "Invalid character in identifier"
 
-    case .unfinishedShortString: return "EOL while scanning string literal"
-    case .unfinishedLongString: return "EOF while scanning triple-quoted string literal"
-    case .badByte: return "Bytes can only contain ASCII literal characters"
-    case .unicodeEscape: return "Unable to decode string escape sequence"
+    case .unfinishedShortString:
+      return "EOL while scanning string literal"
+    case .unfinishedLongString:
+      return "EOF while scanning triple-quoted string literal"
+    case .badByte:
+      return "Bytes can only contain ASCII literal characters"
+    case .unicodeEscape:
+      return "Unable to decode string escape sequence"
 
-    case .danglingIntegerUnderscore: return "Digit is required after underscore"
-    case let .invalidIntegerDigit(type, c): return "Character '\(c)' is not valid \(type) digit."
+    case .danglingIntegerUnderscore:
+      return "Digit is required after underscore"
+    case let .invalidIntegerDigit(type, c):
+      return "Character '\(c)' is not valid \(type) digit."
     case let .unableToParseInteger(type, s):
-      var message = ""
-      message += "Invalid \(type) integer '\(s)'. "
-      message += "Integers outside of <-\(PyInt.max), \(PyInt.max)> range are not supported."
-      return message
+      return "Unable to parse \(type) integer from '\(s)'"
 
-    case .invalidDecimalDigit(let c): return "Character '\(c)' is not valid decimal digit."
-    case .unableToParseDecimal(let s): return "Unable to parse decimal from '\(s)'"
+    case .invalidDecimalDigit(let c):
+      return "Character '\(c)' is not valid decimal digit."
+    case .unableToParseDecimal(let s):
+      return "Unable to parse decimal from '\(s)'"
 
-//    case .decode: return "Error in decoding into Unicode" // check
-//    case .lineCont: return "Unexpected characters after a line continuation" // check
-//    case .badSingle: return "Ill-formed single statement input" // check
+//    case .decode: return "Error in decoding into Unicode"
+//    case .lineCont: return "Unexpected characters after a line continuation"
+//    case .badSingle: return "Ill-formed single statement input"
     }
   }
 }
