@@ -72,9 +72,9 @@ extension Lexer {
     var quoteType = QuoteType.single
     var endQuoteCount = 0 // counting quotes to know when to end
 
-    if self.advance() == quote {
-      if self.advance() == quote {
-        _ = self.advance()
+    if self.advance() == quote { // 2nd quote
+      if self.advance() == quote { // 3rd quote
+        self.advance()
         quoteType = .triple // quote -> quote -> quote -> (string)
       } else {
         return [] // quote -> quote -> (whatever)
@@ -104,7 +104,7 @@ extension Lexer {
 
         result.append(peek)
         endQuoteCount = (peek == quote) ? endQuoteCount + 1 : 0
-        _ = self.advance()
+        self.advance()
       }
     }
 
@@ -138,7 +138,7 @@ extension Lexer {
     assert(self.peek == "\\")
 
     if prefix.r {
-      _ = self.advance() // backslash
+      self.advance() // backslash
       return .escaped("\\")
     }
 
@@ -148,8 +148,8 @@ extension Lexer {
 
     switch escaped {
     case "\n": // Backslash and newline ignored
-      _ = self.advance() // backslash
-      _ = self.advance() // new line
+      self.advance() // backslash
+      self.advance() // new line
       return .escapedNewLine
 
     case "\\": return self.simpleEscaped("\\") // Backslash (\)
@@ -190,13 +190,13 @@ extension Lexer {
   }
 
   private mutating func simpleEscaped(_ c: UnicodeScalar) -> EscapeResult {
-    _ = self.advance() // backslash
-    _ = self.advance() // escaped character
+    self.advance() // backslash
+    self.advance() // escaped character
     return .escaped(c)
   }
 
   private mutating func readOctal(_ quoteType: QuoteType) throws -> UnicodeScalar {
-    _ = self.advance() // backslash
+    self.advance() // backslash
 
     let maxCount = 3
     var scalars = [UnicodeScalar]()
@@ -211,7 +211,7 @@ extension Lexer {
       }
 
       scalars.append(peek)
-      _ = self.advance()
+      self.advance()
     }
 
     return try self.readScalar(scalars, radix: 8)
@@ -219,8 +219,8 @@ extension Lexer {
 
   private mutating func readHex(_ quoteType: QuoteType,
                                 count: Int) throws -> UnicodeScalar {
-    _ = self.advance() // backslash
-    _ = self.advance() // xuU
+    self.advance() // backslash
+    self.advance() // xuU
 
     var scalars = [UnicodeScalar]()
 
@@ -234,7 +234,7 @@ extension Lexer {
       }
 
       scalars.append(peek)
-      _ = self.advance()
+      self.advance()
     }
 
     return try self.readScalar(scalars, radix: 16)

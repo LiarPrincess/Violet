@@ -48,6 +48,7 @@ public struct Lexer {
   // MARK: - Traversal
 
   /// Consumes current character. Returns next `peek`.
+  @discardableResult
   internal mutating func advance() -> UnicodeScalar? {
     let consumed = self.peek
     self.peek = self.peekNext
@@ -68,7 +69,7 @@ public struct Lexer {
     }
 
     if next == expected {
-      _ = self.advance()
+      self.advance()
       return true
     }
 

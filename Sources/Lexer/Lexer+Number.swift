@@ -18,16 +18,16 @@ extension Lexer {
     if self.peek == "0" {
       switch self.peekNext {
       case "B", "b":
-        _ = self.advance() // 0
-        _ = self.advance() // Bb
+        self.advance() // 0
+        self.advance() // Bb
         return try self.integer(start, type: BinaryNumber.self)
       case "O", "o":
-        _ = self.advance() // 0
-        _ = self.advance() // Oo
+        self.advance() // 0
+        self.advance() // Oo
         return try self.integer(start, type: OctalNumber.self)
       case "X", "x":
-        _ = self.advance() // 0
-        _ = self.advance() // Xx
+        self.advance() // 0
+        self.advance() // Xx
         return try self.integer(start, type: HexNumber.self)
       default:
         return try self.decimalIntegerOrFloat(start)
@@ -42,7 +42,7 @@ extension Lexer {
     var scalars = [UnicodeScalar]()
     repeat {
       if self.peek == "_" {
-        _ = self.advance()
+        self.advance()
       }
 
       // we need to have digit after underscore
@@ -59,7 +59,7 @@ extension Lexer {
 
       while let digit = self.peek, type.isDigit(digit) {
         scalars.append(digit)
-        _ = self.advance()
+        self.advance()
       }
     } while self.peek == "_"
 
@@ -80,17 +80,17 @@ extension Lexer {
     let integerCount = scalars.count // so we know if we have int or float
 
     if self.peek == "." {
-      _ = self.advance() // .
+      self.advance() // .
       scalars.append(".")
       try self.collectDecimals(into: &scalars)
     }
 
     if self.peek == "E" || self.peek == "e" {
-      _ = self.advance() // Ee
+      self.advance() // Ee
       scalars.append("e")
 
       if let sign = self.peek, sign == "+" || sign == "-" {
-        _ = self.advance() // +-
+        self.advance() // +-
         scalars.append(sign)
       }
 
@@ -98,7 +98,7 @@ extension Lexer {
     }
 
     if self.peek == "J" || self.peek == "j" {
-      _ = self.advance() // Jj
+      self.advance() // Jj
       let value = try self.parseDouble(scalars)
       return Token(.imaginary(value), start: start, end: self.location)
     }
@@ -123,7 +123,7 @@ extension Lexer {
     while true {
       while let digit = self.peek, type.isDigit(digit) {
         scalars.append(digit)
-        _ = self.advance()
+        self.advance()
       }
 
       // if '_' then continue else break

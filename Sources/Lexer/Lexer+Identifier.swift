@@ -38,7 +38,7 @@ extension Lexer {
 
     while let c = self.peek, self.isIdentifierContinuation(c) {
       identifierParts.append(c)
-      _ = self.advance()
+      self.advance()
     }
 
     let end = self.location

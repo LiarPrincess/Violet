@@ -75,11 +75,11 @@ extension Lexer {
 
       case " ":
         column += 1
-        _ = self.advance()
+        self.advance()
 
       case "\t":
         column = (column / tabSize + 1) * tabSize
-        _ = self.advance()
+        self.advance()
 
       default:
         return column
