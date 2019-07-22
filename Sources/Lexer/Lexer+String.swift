@@ -187,7 +187,7 @@ extension Lexer {
       throw NotImplemented.stringEscape(escaped)
 
     default:
-      // TODO: 3.6: Unrecognized escape sequences produce a DeprecationWarning.
+      self.warning(.unrecognizedEscapeSequence)
       return .notEscapeCharacter // invalid escape -> no escape
     }
   }
