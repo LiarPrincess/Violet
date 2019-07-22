@@ -200,7 +200,7 @@ extension Lexer {
     self.advance() // backslash
 
     let maxCount = 3
-    var string = ""
+    let startIndex = self.sourceIndex
 
     for _ in 0..<maxCount {
       guard let peek = self.peek else {
@@ -211,20 +211,21 @@ extension Lexer {
         break // we can exit before we reach all 3 'o'
       }
 
-      string.append(peek)
       self.advance()
     }
 
+    let string = self.source[startIndex..<self.sourceIndex]
     return try self.getUnicodeCharacter(string, radix: 8, start: start)
   }
 
   private mutating func readHex(_ quoteType: QuoteType,
                                 count: Int) throws -> Character {
     let start = self.location
+
     self.advance() // backslash
     self.advance() // xuU
 
-    var string = ""
+    let startIndex = self.sourceIndex
 
     for _ in 0..<count {
       guard let peek = self.peek else {
@@ -235,15 +236,15 @@ extension Lexer {
         throw self.error(.unicodeEscape, start: start)
       }
 
-      string.append(peek)
       self.advance()
     }
 
+    let string = self.source[startIndex..<self.sourceIndex]
     return try self.getUnicodeCharacter(string, radix: 16, start: start)
   }
 
   /// string: '123', radix: 10 -> Unicode character at 123
-  private func getUnicodeCharacter(_ string: String,
+  private func getUnicodeCharacter(_ string: Substring,
                                    radix:    Int,
                                    start:    SourceLocation) throws -> Character {
 

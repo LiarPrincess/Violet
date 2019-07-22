@@ -92,7 +92,6 @@ class LexerStringTest: XCTestCase, LexerTest {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 56))
-      XCTAssertTrue(token.warnings.contains(.unrecognizedEscapeSequence))
     }
   }
 

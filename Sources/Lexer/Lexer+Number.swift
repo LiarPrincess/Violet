@@ -39,7 +39,7 @@ extension Lexer {
 
   private mutating func integer<T: NumberBase>(_ start: SourceLocation,
                                                base: T.Type) throws -> Token {
-    var string = ""
+    let startIndex = self.sourceIndex
     repeat {
       if self.peek == "_" {
         self.advance()
@@ -55,44 +55,42 @@ extension Lexer {
       }
 
       while let digit = self.peek, base.isDigit(digit) {
-        string.append(digit)
         self.advance()
       }
     } while self.peek == "_"
 
+    let string = self.source[startIndex..<self.sourceIndex]
     let value = try self.parseInt(string, start: start, base: base)
     return self.token(.int(value), start: start)
   }
 
-  // swiftlint:disable:next function_body_length
   private mutating func decimalIntegerOrFloat(_ start: SourceLocation) throws -> Token {
     // it can't be nil, otherwise we would never call self.number().
     guard let first = self.peek else { throw self.error(.eof) }
 
-    var string = ""
+    let startIndex = self.sourceIndex
 
     if DecimalNumber.isDigit(first) {
-      try self.collectDecimals(into: &string)
+      try self.advanceDecimals()
     }
-    let integerString = string // so we know if we have int or float
+    let integerEnd = self.sourceIndex
 
     if self.peek == "." {
       self.advance() // .
-      string.append(".")
-      try self.collectDecimals(into: &string)
+      try self.advanceDecimals()
     }
 
     if self.peek == "E" || self.peek == "e" {
       self.advance() // Ee
-      string.append("e")
 
       if let sign = self.peek, sign == "+" || sign == "-" {
         self.advance() // +-
-        string.append(sign)
       }
 
-      try self.collectDecimals(into: &string)
+      try self.advanceDecimals()
     }
+
+    let string = self.source[startIndex..<self.sourceIndex]
 
     if self.peek == "J" || self.peek == "j" {
       self.advance() // Jj
@@ -100,7 +98,7 @@ extension Lexer {
       return self.token(.imaginary(value), start: start)
     }
 
-    let isInteger = string == integerString
+    let isInteger = self.sourceIndex == integerEnd
     if isInteger {
       let value = try self.parseInt(string, start: start, base: DecimalNumber.self)
       return self.token(.int(value), start: start)
@@ -110,7 +108,7 @@ extension Lexer {
     return self.token(.float(value), start: start)
   }
 
-  private mutating func collectDecimals(into string: inout String) throws {
+  private mutating func advanceDecimals() throws {
     let type = DecimalNumber.self
 
     guard let first = self.peek, type.isDigit(first) else {
@@ -119,7 +117,6 @@ extension Lexer {
 
     while true {
       while let digit = self.peek, type.isDigit(digit) {
-        string.append(digit)
         self.advance()
       }
 
@@ -137,11 +134,12 @@ extension Lexer {
 
   // MARK: - Parse
 
-  private func parseInt<T: NumberBase>(_ string: String,
+  private func parseInt<T: NumberBase>(_ string: Substring,
                                        start: SourceLocation,
                                        base: T.Type) throws -> PyInt {
 
-    guard let value = PyInt(string, radix: base.radix) else {
+    let s = string.replacingOccurrences(of: "_", with: "")
+    guard let value = PyInt(s, radix: base.radix) else {
       // After we add proper ints:
       // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
       // throw self.error(kind, start: start)
@@ -151,11 +149,12 @@ extension Lexer {
     return value
   }
 
-  private func parseDouble(_ string: String,
+  private func parseDouble(_ string: Substring,
                            start: SourceLocation) throws -> Double {
 
-    guard let value = Double(string) else {
-      throw self.error(.unableToParseDecimal(string), start: start)
+    let s = string.replacingOccurrences(of: "_", with: "")
+    guard let value = Double(s) else {
+      throw self.error(.unableToParseDecimal(String(string)), start: start)
     }
 
     return value
