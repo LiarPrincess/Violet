@@ -4,18 +4,15 @@
 
 public struct Token: Equatable {
 
-  public let kind:     TokenKind
-  public let warnings: LexerWarning
-  public let start:    SourceLocation
-  public let end:      SourceLocation
+  public let kind:  TokenKind
+  public let start: SourceLocation
+  public let end:   SourceLocation
 
   public init(_ kind:   TokenKind,
-              warnings: LexerWarning,
               start:    SourceLocation,
               end:      SourceLocation) {
 
     self.kind = kind
-    self.warnings = warnings
     self.start = start
     self.end = end
   }

@@ -87,23 +87,20 @@ public struct Lexer {
 
   // MARK: - Token creation
 
-  /// Warnings to be attached to the next token
-  private var warnings: LexerWarning = []
-
   /// Create token
   internal mutating func token(_ kind: TokenKind,
                                start:  SourceLocation? = nil,
                                end:    SourceLocation? = nil) -> Token {
     let s = start ?? self.location
     let e = end ?? self.location
-    let token = Token(kind, warnings: self.warnings, start: s, end: e)
-    self.warnings = []
-    return token
+    return Token(kind, start: s, end: e)
   }
 
-  /// Attach warning to next token
-  internal mutating func warning(_ warning: LexerWarning) {
-    self.warnings.insert(warning)
+  /// Create lexer warning
+  internal mutating func warn(_ warning: LexerWarning,
+                              start:     SourceLocation? = nil,
+                              end:       SourceLocation? = nil) {
+    // empty
   }
 
   /// Create lexer error

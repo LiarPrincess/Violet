@@ -184,7 +184,7 @@ extension Lexer {
 
     default:
       self.advance() // backslash
-      self.warning(.unrecognizedEscapeSequence)
+      self.warn(.unrecognizedEscapeSequence)
       return .notEscapeCharacter // invalid escape -> no escape
     }
   }
