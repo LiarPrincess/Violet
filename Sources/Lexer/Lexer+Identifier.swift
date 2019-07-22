@@ -81,61 +81,22 @@ extension Lexer {
     let scalars = identifier.unicodeScalars
 
     guard let first = scalars.first else {
-      throw self.createError(.identifier, location: start)
+      throw self.error(.identifier, start: start)
     }
 
     // as for underscore: https://codepoints.net/U+005F -> Cmd+F -> XID Start
     guard first == "_" || first.properties.isXIDStart else {
-      throw self.createError(.identifier, location: start)
+      throw self.error(.identifier, start: start, end: start)
     }
 
     for (index, char) in scalars.dropFirst().enumerated() {
       // swiftlint:disable:next for_where
       if !char.properties.isXIDContinue {
         let skippedFirst = 1
-        let column = start.column + index + skippedFirst
+        let column   = start.column + index + skippedFirst
         let location = SourceLocation(line: start.line, column: column)
-        throw self.createError(.identifier, location: location)
+        throw self.error(.identifier, start: location, end: location)
       }
     }
   }
-
-  internal static let keywords: [String:TokenKind] = [
-    "and":      .and,
-    "as":       .as,
-    "assert":   .assert,
-    "async":    .async,
-    "await":    .await,
-    "break":    .break,
-    "class":    .class,
-    "continue": .continue,
-    "def":      .def,
-    "del":      .del,
-    "elif":     .elif,
-    "ellipsis": .ellipsis,
-    "else":     .else,
-    "except":   .except,
-    "false":    .false,
-    "finally":  .finally,
-    "for":      .for,
-    "from":     .from,
-    "global":   .global,
-    "if":       .if,
-    "import":   .import,
-    "in":       .in,
-    "is":       .is,
-    "lambda":   .lambda,
-    "none":     .none,
-    "nonlocal": .nonlocal,
-    "not":      .not,
-    "or":       .or,
-    "pass":     .pass,
-    "raise":    .raise,
-    "return":   .return,
-    "true":     .true,
-    "try":      .try,
-    "while":    .while,
-    "with":     .with,
-    "yield":    .yield
-  ]
 }

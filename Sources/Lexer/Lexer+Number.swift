@@ -20,15 +20,15 @@ extension Lexer {
       case "B", "b":
         self.advance() // 0
         self.advance() // Bb
-        return try self.integer(start, type: BinaryNumber.self)
+        return try self.integer(start, base: BinaryNumber.self)
       case "O", "o":
         self.advance() // 0
         self.advance() // Oo
-        return try self.integer(start, type: OctalNumber.self)
+        return try self.integer(start, base: OctalNumber.self)
       case "X", "x":
         self.advance() // 0
         self.advance() // Xx
-        return try self.integer(start, type: HexNumber.self)
+        return try self.integer(start, base: HexNumber.self)
       default:
         return try self.decimalIntegerOrFloat(start)
       }
@@ -37,8 +37,8 @@ extension Lexer {
     return try self.decimalIntegerOrFloat(start)
   }
 
-  private mutating func integer<T: NumberType>(_ start: SourceLocation,
-                                               type: T.Type) throws -> Token {
+  private mutating func integer<T: NumberBase>(_ start: SourceLocation,
+                                               base: T.Type) throws -> Token {
     var scalars = [UnicodeScalar]()
     repeat {
       if self.peek == "_" {
@@ -47,30 +47,27 @@ extension Lexer {
 
       // we need to have digit after underscore
       guard let digitPeek = self.peek else {
-        // TODO: separate error with associated value
-        // TODO: rename createError to error
-        throw self.createError(.syntax(message: "Invalid \(type.name) literal.")) // integerDanglingUnderscore
+        throw self.error(.danglingIntegerUnderscore)
       }
 
-      guard type.isDigit(digitPeek) else {
-        let message = "Invalid digit '\(digitPeek)' in \(type.name) literal."
-        throw self.createError(.syntax(message: message))
+      guard base.isDigit(digitPeek) else {
+        throw self.error(.invalidIntegerDigit(base.type, digitPeek))
       }
 
-      while let digit = self.peek, type.isDigit(digit) {
+      while let digit = self.peek, base.isDigit(digit) {
         scalars.append(digit)
         self.advance()
       }
     } while self.peek == "_"
 
-    let value = try self.parseInt(scalars, type: type)
+    let value = try self.parseInt(scalars, start: start, base: base)
     return Token(.int(value), start: start, end: self.location)
   }
 
   // swiftlint:disable:next function_body_length
   private mutating func decimalIntegerOrFloat(_ start: SourceLocation) throws -> Token {
     // it can't be nil, otherwise we would never call self.number().
-    guard let first = self.peek else { throw self.createError(.eof) }
+    guard let first = self.peek else { throw self.error(.eof) }
 
     var scalars = [UnicodeScalar]()
 
@@ -99,17 +96,17 @@ extension Lexer {
 
     if self.peek == "J" || self.peek == "j" {
       self.advance() // Jj
-      let value = try self.parseDouble(scalars)
+      let value = try self.parseDouble(scalars, start: start)
       return Token(.imaginary(value), start: start, end: self.location)
     }
 
     let isInteger = scalars.count == integerCount
     if isInteger {
-      let value = try self.parseInt(scalars, type: DecimalNumber.self)
+      let value = try self.parseInt(scalars, start: start, base: DecimalNumber.self)
       return Token(.int(value), start: start, end: self.location)
     }
 
-    let value = try self.parseDouble(scalars)
+    let value = try self.parseDouble(scalars, start: start)
     return Token(.float(value), start: start, end: self.location)
   }
 
@@ -133,32 +130,33 @@ extension Lexer {
 
       // if we have more, then it must be an digit
       if let digit = self.advance(), !type.isDigit(digit) {
-        throw self.createError(.syntax(message: "Invalid decimal literal"))
+        throw self.error(.invalidDecimalDigit(digit))
       }
     }
   }
 
   // MARK: - Parse
 
-  private func parseInt<T: NumberType>(_ scalars: [UnicodeScalar],
-                                       type: T.Type) throws -> PyInt {
+  private func parseInt<T: NumberBase>(_ scalars: [UnicodeScalar],
+                                       start: SourceLocation,
+                                       base: T.Type) throws -> PyInt {
     let string = String(scalars)
 
-    guard let value = PyInt(string, radix: Int(type.radix)) else {
-      let message = "Invalid \(type.name) integer value. Integers outside of " +
-      "<-\(PyInt.max), \(PyInt.max)> range are not supported."
-
-      throw self.createError(.syntax(message: message))
+    guard let value = PyInt(string, radix: base.radix) else {
+      let kind = LexerErrorKind.unableToParseInteger(base.type, string)
+      throw self.error(kind, start: start)
     }
 
     return value
   }
 
-  private func parseDouble(_ scalars: [UnicodeScalar]) throws -> Double {
+  private func parseDouble(_ scalars: [UnicodeScalar],
+                           start: SourceLocation) throws -> Double {
+
     let string = String(scalars)
 
     guard let value = Double(string) else {
-      throw self.createError(.syntax(message: "Invalid decimal value."))
+      throw self.error(.unableToParseDecimal(string), start: start)
     }
 
     return value

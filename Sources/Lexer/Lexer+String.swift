@@ -3,6 +3,7 @@
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 import Foundation
+import Core
 
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
@@ -21,10 +22,10 @@ private enum QuoteType {
     }
   }
 
-  fileprivate var nilPeekError: LexerErrorType {
+  fileprivate var nilPeekError: LexerErrorKind {
     switch self {
-    case .single: return .eols
-    case .triple: return .eofs
+    case .single: return .unfinishedShortString
+    case .triple: return .unfinishedLongString
     }
   }
 }
@@ -39,7 +40,7 @@ extension Lexer {
   internal mutating func string(prefix: StringPrefix,
                                 start:  SourceLocation) throws -> Token {
 
-    let scalars = try readString(prefix: prefix)
+    let scalars = try readString(prefix: prefix, start: start)
     let end = self.location
 
     if prefix.b {
@@ -50,7 +51,7 @@ extension Lexer {
           data.append(UInt8(c.value & 0xff))
         } else {
           // not very precise, 'self.readString' is better
-          throw self.createError(.badByte, location: start)
+          throw self.error(.badByte(c), start: start)
         }
       }
 
@@ -62,11 +63,13 @@ extension Lexer {
     return Token(kind, start: start, end: end)
   }
 
-  private mutating func readString(prefix: StringPrefix) throws -> [UnicodeScalar] {
+  private mutating func readString(prefix: StringPrefix,
+                                   start:  SourceLocation) throws -> [UnicodeScalar] {
+
     assert(self.peek == "\"" || self.peek == "'")
 
     guard let quote = self.peek else {
-      throw self.createError(.eof)
+      throw self.error(.eof, start: start)
     }
 
     var quoteType = QuoteType.single
@@ -85,21 +88,21 @@ extension Lexer {
     var result = [UnicodeScalar]()
     while endQuoteCount != quoteType.quoteCount {
       guard let peek = self.peek else {
-        throw self.createError(quoteType.nilPeekError)
+        throw self.error(quoteType.nilPeekError, start: start)
       }
 
       try self.checkValidByteIfNeeded(prefix, peek)
 
       switch peek {
       case "\\":
-        switch try self.readEscaped(prefix, quoteType) {
+        switch try self.readEscaped(prefix, quoteType, start: start) {
         case .escaped(let char):  result.append(char)
         case .escapedNewLine:     break
         case .notEscapeCharacter: result.append("\\")
         }
       default:
         if quoteType == .single && peek == "\n" {
-          throw self.createError(.eols)
+          throw self.error(.unfinishedShortString, start: start)
         }
 
         result.append(peek)
@@ -117,7 +120,7 @@ extension Lexer {
   private func checkValidByteIfNeeded(_ prefix: StringPrefix,
                                       _ c: UnicodeScalar) throws {
     if prefix.b && !self.isValidByte(c) {
-      throw self.createError(.badByte)
+      throw self.error(.badByte(c))
     }
   }
 
@@ -134,7 +137,8 @@ extension Lexer {
   }
 
   private mutating func readEscaped(_ prefix: StringPrefix,
-                                    _ quoteType: QuoteType) throws -> EscapeResult {
+                                    _ quoteType: QuoteType,
+                                    start:  SourceLocation) throws -> EscapeResult {
     assert(self.peek == "\\")
 
     if prefix.r {
@@ -143,7 +147,7 @@ extension Lexer {
     }
 
     guard let escaped = self.peekNext else {
-      throw self.createError(quoteType.nilPeekError)
+      throw self.error(quoteType.nilPeekError, start: start)
     }
 
     switch escaped {
@@ -180,8 +184,7 @@ extension Lexer {
          "f", // ASCII Formfeed (FF)
          "v", // ASCII Vertical Tab (VT)
          "N": // Character named name in the Unicode database
-      throw NotImplemented("\(self.location) String escape \\'\(escaped)' " +
-        "is not currently supported.")
+      throw NotImplemented.stringEscape(escaped)
 
     default:
       // TODO: 3.6: Unrecognized escape sequences produce a DeprecationWarning.
@@ -196,6 +199,7 @@ extension Lexer {
   }
 
   private mutating func readOctal(_ quoteType: QuoteType) throws -> UnicodeScalar {
+    let start = self.location
     self.advance() // backslash
 
     let maxCount = 3
@@ -203,7 +207,7 @@ extension Lexer {
 
     for _ in 0..<maxCount {
       guard let peek = self.peek else {
-        throw self.createError(quoteType.nilPeekError)
+        throw self.error(quoteType.nilPeekError, start: start)
       }
 
       guard OctalNumber.isDigit(peek) else {
@@ -214,11 +218,12 @@ extension Lexer {
       self.advance()
     }
 
-    return try self.readScalar(scalars, radix: 8)
+    return try self.readScalar(scalars, start: start, radix: 8)
   }
 
   private mutating func readHex(_ quoteType: QuoteType,
                                 count: Int) throws -> UnicodeScalar {
+    let start = self.location
     self.advance() // backslash
     self.advance() // xuU
 
@@ -226,30 +231,31 @@ extension Lexer {
 
     for _ in 0..<count {
       guard let peek = self.peek else {
-        throw self.createError(quoteType.nilPeekError)
+        throw self.error(quoteType.nilPeekError, start: start)
       }
 
       guard HexNumber.isDigit(peek) else {
-        throw self.createError(.unicodeEscape)
+        throw self.error(.unicodeEscape, start: start)
       }
 
       scalars.append(peek)
       self.advance()
     }
 
-    return try self.readScalar(scalars, radix: 16)
+    return try self.readScalar(scalars, start: start, radix: 16)
   }
 
   private func readScalar(_ scalars: [UnicodeScalar],
+                          start: SourceLocation,
                           radix: Int) throws -> UnicodeScalar {
 
-    let s = String(scalars)
-    guard let v = UInt32(s, radix: radix) else {
-      throw self.createError(.unicodeEscape)
+    let string = String(scalars)
+    guard let int = UInt32(string, radix: radix) else {
+      throw self.error(.unicodeEscape, start: start)
     }
 
-    guard let scalar = UnicodeScalar(v) else {
-      throw self.createError(.unicodeEscape)
+    guard let scalar = UnicodeScalar(int) else {
+      throw self.error(.unicodeEscape, start: start)
     }
 
     return scalar

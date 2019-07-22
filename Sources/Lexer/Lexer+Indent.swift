@@ -28,6 +28,7 @@ internal struct IndentState {
 extension Lexer {
 
   internal mutating func calculateIndent() throws {
+    let start = self.location
     let indent = self.calculateIndentColumn()
 
     // TODO: handle comments and new lines in indent
@@ -39,7 +40,7 @@ extension Lexer {
 
     case .greater: // Indent -- always one
       if self.indents.stack.count + 1 >= maxIndent {
-        throw self.createError(.tooDeep)
+        throw self.error(.tooDeep, start: start)
       }
 
       let startColumn = self.indents.stack.last ?? defaultIndent
@@ -62,7 +63,7 @@ extension Lexer {
 
       let oldIndent = self.indents.stack.last ?? defaultIndent
       if oldIndent != indent {
-        throw self.createError(.dedent)
+        throw self.error(.dedent, start: start)
       }
     }
   }

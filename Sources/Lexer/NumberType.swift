@@ -4,118 +4,90 @@
 
 // https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
 
-private let ascii0: UInt32 = 48
-private let asciia: UInt32 = 97
-private let asciiA: UInt32 = 65
-
 // MARK: - NumberType
 
-// TODO: NumberType - move to Int
-internal protocol NumberType {
+public enum NumberType {
+  case binary
+  case octal
+  case decimal
+  case hexadecimal
+}
 
-  static var name: String { get }
+extension NumberType: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case .binary:      return "binary"
+    case .octal:       return "octal"
+    case .decimal:     return "decimal"
+    case .hexadecimal: return "hexadecimal"
+    }
+  }
+}
+
+// MARK: - NumberBase
+
+internal protocol NumberBase {
+
+  /// Type
+  static var type: NumberType { get }
 
   /// Base
-  static var radix: UInt32 { get }
+  static var radix: Int { get }
 
   /// Does given unicode scalar represent valid digit?
   static func isDigit(_ c: UnicodeScalar) -> Bool
-
-  /// Get digit value
-  static func parseDigit(_ c: UnicodeScalar) -> UInt32
 }
 
 // MARK: - Binary
 
-internal enum BinaryNumber: NumberType {
+internal enum BinaryNumber: NumberBase {
 
-  internal static var name: String = "binary"
+  internal static var type = NumberType.binary
 
-  internal static var radix: UInt32 = 2
+  internal static var radix = 2
 
   internal static func isDigit(_ c: UnicodeScalar) -> Bool {
     return c == "0" || c == "1"
-  }
-
-  internal static func parseDigit(_ c: UnicodeScalar) -> UInt32 {
-    assert(isDigit(c))
-    return c.value - ascii0
   }
 }
 
 // MARK: - Octal
 
-internal enum OctalNumber: NumberType {
+internal enum OctalNumber: NumberBase {
 
-  internal static var name: String = "octal"
+  internal static var type = NumberType.octal
 
-  internal static var radix: UInt32 = 8
+  internal static var radix = 8
 
   internal static func isDigit(_ c: UnicodeScalar) -> Bool {
     return "0" <= c && c <= "7"
-  }
-
-  internal static func parseDigit(_ c: UnicodeScalar) -> UInt32 {
-    assert(isDigit(c))
-    return c.value - ascii0
   }
 }
 
 // MARK: - Decimal
 
-internal enum DecimalNumber: NumberType {
+internal enum DecimalNumber: NumberBase {
 
-  internal static var name: String = "decimal"
+  internal static var type = NumberType.decimal
 
-  internal static var radix: UInt32 = 10
+  internal static var radix = 10
 
   internal static func isDigit(_ c: UnicodeScalar) -> Bool {
     return "0" <= c && c <= "9"
-  }
-
-  internal static func parseDigit(_ c: UnicodeScalar) -> UInt32 {
-    assert(isDigit(c))
-    return c.value - ascii0
-  }
-}
-
-internal enum ZeroDecimal: NumberType {
-
-  internal static var name: String = "decimal"
-
-  internal static var radix: UInt32 = 10
-
-  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
-    return c == "0"
-  }
-
-  internal static func parseDigit(_ c: UnicodeScalar) -> UInt32 {
-    assert(isDigit(c))
-    return c.value - ascii0
   }
 }
 
 // MARK: - Hex
 
-internal enum HexNumber: NumberType {
+internal enum HexNumber: NumberBase {
 
-  internal static var name: String = "hexadecimal"
+  internal static var type = NumberType.hexadecimal
 
-  internal static var radix: UInt32 = 16
+  internal static var radix = 16
 
   internal static func isDigit(_ c: UnicodeScalar) -> Bool {
     return ("0" <= c && c <= "9")
         || ("a" <= c && c <= "f")
         || ("A" <= c && c <= "F")
-  }
-
-  internal static func parseDigit(_ c: UnicodeScalar) -> UInt32 {
-    assert(isDigit(c))
-    switch c {
-    case "0"..."9": return c.value - ascii0
-    case "a"..."f": return c.value - asciia + 10
-    case "A"..."F": return c.value - asciiA + 10
-    default: return 0 // not possible, we checked it with self.isDigit
-    }
   }
 }

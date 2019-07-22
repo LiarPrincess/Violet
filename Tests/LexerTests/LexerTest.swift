@@ -12,6 +12,7 @@ extension LexerTest {
 
   // MARK: - Quotes
 
+  // TODO: rename shortQuote/longQuote
   internal func singleQuote(_ s: String) -> String {
     return "'\(s)'"
   }

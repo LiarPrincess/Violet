@@ -122,8 +122,9 @@ class LexerStringTest: XCTestCase, LexerTest {
     var lexer = Lexer(stream: stream)
 
     if let error = self.stringError(&lexer) {
-      XCTAssertEqual(error.type, LexerErrorType.eols)
-      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 36))
+      XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedShortString)
+      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 36))
     }
   }
 
@@ -184,6 +185,21 @@ class LexerStringTest: XCTestCase, LexerTest {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 3, column: 14))
+    }
+  }
+
+  /// py:
+  /// """But who cares?
+  /// No big deal
+  /// I want more"
+  func test_tripleQuote_withoutEnd_throws() {
+    let stream = StringStream("\"\"\"But who cares?\nNo big deal\nI want more\"")
+    var lexer  = Lexer(stream: stream)
+
+    if let error = self.stringError(&lexer) {
+      XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedLongString)
+      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(error.end,   SourceLocation(line: 3, column: 12))
     }
   }
 }

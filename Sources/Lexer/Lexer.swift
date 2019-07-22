@@ -76,19 +76,26 @@ public struct Lexer {
     return false
   }
 
-  // MARK: - Errors
+  // MARK: - Token creation
 
-  internal func createError(_ type:   LexerErrorType,
-                            location: SourceLocation? = nil) -> LexerError {
+  internal func token(_ kind: TokenKind,
+                      start:  SourceLocation,
+                      end:    SourceLocation) -> Token {
+    return Token(kind, start: start, end: end)
+  }
 
-    return LexerError(type, location: location ?? self.location)
+  internal func error(_ kind: LexerErrorKind,
+                      start:  SourceLocation? = nil,
+                      end:    SourceLocation? = nil) -> LexerError {
+    let s = start ?? self.location
+    let e = end ?? self.location
+    return LexerError(kind, start: s, end: e)
   }
 
   // MARK: - Lexing
 
   public mutating func getToken() -> Token? {
 //    if self.isAtBeginOfLine {
-//      // TODO: check nesting? if self.nesting == 0 {
 //      self.calculateIndent()
 //      self.isAtBeginOfLine = false
 //    }

@@ -116,8 +116,9 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
     var lexer  = Lexer(stream: stream)
 
     if let error = self.identifierOrStringError(&lexer) {
-      XCTAssertEqual(error.type, LexerErrorType.identifier)
-      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
+      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 0))
     }
   }
 
@@ -127,8 +128,9 @@ class LexerIdentifierTests: XCTestCase, LexerTest {
     var lexer  = Lexer(stream: stream)
 
     if let error = self.identifierOrStringError(&lexer) {
-      XCTAssertEqual(error.type, LexerErrorType.identifier)
-      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 2))
+      XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
+      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 2))
+      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 2))
     }
   }
 }

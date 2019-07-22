@@ -174,16 +174,15 @@ class LexerIntegerTests: XCTestCase, LexerTest {
     }
   }
 
-  // TODO: Fix 'test_hex_lastUnderscore_isNotAPartOfTheNumber' test
   func test_hex_lastUnderscore_isNotAPartOfTheNumber() {
     let s = "0x123_"
     let stream = StringStream(s)
     var lexer  = Lexer(stream: stream)
 
     if let error = self.numberError(&lexer) {
-//      XCTAssertEqual(token.kind, .int(0x123))
-//      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 0))
-//      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 5))
+      XCTAssertEqual(error.kind,  LexerErrorKind.danglingIntegerUnderscore)
+      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 6))
+      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 6))
     }
   }
 }
