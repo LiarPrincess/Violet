@@ -88,6 +88,20 @@ class LexerStringTest: XCTestCase, LexerTest {
     }
   }
 
+  /// py: "Wouldn't I love, love to exp\lore that shore up above?"
+  func test_doubleQuote_withUnrecognizedEscape_warns() {
+    let s = "Wouldn't I love, love to exp\\lore that shore up above?"
+    let stream = StringStream(self.doubleQuote(s))
+    var lexer  = Lexer(stream: stream)
+
+    if let token = self.string(&lexer) {
+      XCTAssertEqual(token.kind, .string(s))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 56))
+      XCTAssertTrue(token.warnings.contains(.unrecognizedEscapeSequence))
+    }
+  }
+
   /// Test mixing text and emoji in single string (emoji at start/middle/end)
   /// py: "🧜‍♀️: I wanna be where the people are, I wanna 👀, wanna 👀 em 💃"
   func test_doubleQuote_emoji() {

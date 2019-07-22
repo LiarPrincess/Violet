@@ -61,7 +61,7 @@ extension Lexer {
     } while self.peek == "_"
 
     let value = try self.parseInt(scalars, start: start, base: base)
-    return Token(.int(value), start: start, end: self.location)
+    return self.token(.int(value), start: start, end: self.location)
   }
 
   // swiftlint:disable:next function_body_length
@@ -97,17 +97,17 @@ extension Lexer {
     if self.peek == "J" || self.peek == "j" {
       self.advance() // Jj
       let value = try self.parseDouble(scalars, start: start)
-      return Token(.imaginary(value), start: start, end: self.location)
+      return self.token(.imaginary(value), start: start, end: self.location)
     }
 
     let isInteger = scalars.count == integerCount
     if isInteger {
       let value = try self.parseInt(scalars, start: start, base: DecimalNumber.self)
-      return Token(.int(value), start: start, end: self.location)
+      return self.token(.int(value), start: start, end: self.location)
     }
 
     let value = try self.parseDouble(scalars, start: start)
-    return Token(.float(value), start: start, end: self.location)
+    return self.token(.float(value), start: start, end: self.location)
   }
 
   private mutating func collectDecimals(into scalars: inout [UnicodeScalar]) throws {

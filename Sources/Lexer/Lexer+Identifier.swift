@@ -45,10 +45,10 @@ extension Lexer {
     let identifier = String(identifierParts)
 
     if let keyword = keywords[identifier] {
-      return Token(.keyword(keyword), start: start, end: end)
+      return self.token(.keyword(keyword), start: start, end: end)
     } else {
       try self.verifyIdentifier(identifier, start: start)
-      return Token(.identifier(identifier), start: start, end: end)
+      return self.token(.identifier(identifier), start: start, end: end)
     }
   }
 

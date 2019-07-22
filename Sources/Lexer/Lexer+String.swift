@@ -55,12 +55,12 @@ extension Lexer {
         }
       }
 
-      return Token(.bytes(data), start: start, end: end)
+      return self.token(.bytes(data), start: start, end: end)
     }
 
     let string = String(scalars)
     let kind: TokenKind = prefix.f ? .formatString(string) : .string(string)
-    return Token(kind, start: start, end: end)
+    return self.token(kind, start: start, end: end)
   }
 
   private mutating func readString(prefix: StringPrefix,
@@ -187,6 +187,7 @@ extension Lexer {
       throw NotImplemented.stringEscape(escaped)
 
     default:
+      self.advance() // backslash
       self.warning(.unrecognizedEscapeSequence)
       return .notEscapeCharacter // invalid escape -> no escape
     }

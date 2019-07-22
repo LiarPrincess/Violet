@@ -81,8 +81,6 @@ public struct Lexer {
   /// Warnings to be attached to the next token
   private var warnings: LexerWarning = []
 
-  // TODO: use 'Create token' & test warnings
-
   /// Create token
   internal mutating func token(_ kind: TokenKind,
                                start:  SourceLocation? = nil,
