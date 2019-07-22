@@ -5,15 +5,15 @@
 import Foundation
 import Core
 
-// Based on 'Grammar/Tokens' from CPython. Changes:
-// 1. Associated values instead of pointers inside buf.
-// 2. Lifted keywords to token level
+// Based on 'Grammar/Tokens' from CPython.
 
 public enum TokenKind: Equatable {
 
   case eof
 
   case identifier(String)
+  case keyword(Keyword)
+
   case string(String)
   case formatString(String)
 
@@ -82,46 +82,6 @@ public enum TokenKind: Equatable {
   /** ~ */   case tilde
   /** -> */  case rightArrow
   /** := */  case colonEqual
-
-  // Keywords
-  // https://docs.python.org/3/reference/lexical_analysis.html#keywords
-
-  /** `None` keyword */  case none
-  /** `False` keyword */ case `false`
-  /** `True` keyword */  case `true`
-
-  /** `and` keyword */      case and
-  /** `as` keyword */       case `as`
-  /** `assert` keyword */   case assert
-  /** `async` keyword */    case async
-  /** `await` keyword */    case await
-  /** `break` keyword */    case `break`
-  /** `class` keyword */    case `class`
-  /** `continue` keyword */ case `continue`
-  /** `def` keyword */      case def
-  /** `del` keyword */      case del
-  /** `elif` keyword */     case elif
-  /** `else` keyword */     case `else`
-  /** `except` keyword */   case except
-  /** `finally` keyword */  case finally
-  /** `for` keyword */      case `for`
-  /** `from` keyword */     case from
-  /** `global` keyword */   case global
-  /** `if` keyword */       case `if`
-  /** `import` keyword */   case `import`
-  /** `in` keyword */       case `in`
-  /** `is` keyword */       case `is`
-  /** `lambda` keyword */   case lambda
-  /** `nonlocal` keyword */ case nonlocal
-  /** `not` keyword */      case not
-  /** `or` keyword */       case or
-  /** `pass` keyword */     case pass
-  /** `raise` keyword */    case raise
-  /** `return` keyword */   case `return`
-  /** `try` keyword */      case `try`
-  /** `while` keyword */    case `while`
-  /** `with` keyword */     case with
-  /** `yield` keyword */    case yield
 }
 
 extension TokenKind: CustomStringConvertible {
@@ -129,7 +89,9 @@ extension TokenKind: CustomStringConvertible {
     switch self {
     case .eof: return "eof"
 
-    case let .identifier(val):   return "identifier(\(val))"
+    case let .identifier(val): return "identifier(\(val))"
+    case let .keyword(val):    return "keyword(\(val))"
+
     case let .string(val):       return "string(\(val))"
     case let .formatString(val): return "formatString(\(val)):"
 
@@ -197,43 +159,6 @@ extension TokenKind: CustomStringConvertible {
     case .tilde:      return "~"
     case .rightArrow: return "->"
     case .colonEqual: return ":="
-
-    case .none:  return "None"
-    case .false: return "False"
-    case .true:  return "True"
-
-    case .and:      return "and"
-    case .as:       return "as"
-    case .assert:   return "assert"
-    case .async:    return "async"
-    case .await:    return "await"
-    case .break:    return "break"
-    case .class:    return "class"
-    case .continue: return "continue"
-    case .def:      return "def"
-    case .del:      return "del"
-    case .elif:     return "elif"
-    case .else:     return "else"
-    case .except:   return "except"
-    case .finally:  return "finally"
-    case .for:      return "for"
-    case .from:     return "from"
-    case .global:   return "global"
-    case .if:       return "if"
-    case .import:   return "import"
-    case .in:       return "in"
-    case .is:       return "is"
-    case .lambda:   return "lambda"
-    case .nonlocal: return "nonlocal"
-    case .not:      return "not"
-    case .or:       return "or"
-    case .pass:     return "pass"
-    case .raise:    return "raise"
-    case .return:   return "return"
-    case .try:      return "try"
-    case .while:    return "while"
-    case .with:     return "with"
-    case .yield:    return "yield"
     }
   }
 }

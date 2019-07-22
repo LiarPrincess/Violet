@@ -44,8 +44,8 @@ extension Lexer {
     let end = self.location
     let identifier = String(identifierParts)
 
-    if let keyword = Lexer.keywords[identifier] {
-      return Token(keyword, start: start, end: end)
+    if let keyword = keywords[identifier] {
+      return Token(.keyword(keyword), start: start, end: end)
     } else {
       try self.verifyIdentifier(identifier, start: start)
       return Token(.identifier(identifier), start: start, end: end)
