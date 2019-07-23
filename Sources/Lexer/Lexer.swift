@@ -18,8 +18,8 @@ public struct Lexer {
   /// Is at begin of new line?
   internal var isAtBeginOfLine = true
 
-  /// Stack of parentheses: () [] {}.
-  internal var parenStack = [TokenKind]()
+  /// Amount of parentheses: () [] {}.
+  internal var nesting = 0
 
   /// Stack of indents.
   internal var indents = IndentState()
@@ -56,9 +56,7 @@ public struct Lexer {
   internal var peekNext: Character? {
     let end = self.source.endIndex
     let index = self.source.index(self.sourceIndex, offsetBy: 1, limitedBy: end)
-
-    let atEnd = index == nil || index == end
-    return atEnd ? nil : self.source[index!]
+    return index.flatMap { $0 == end ? nil : self.source[$0] }
   }
 
   /// Consumes current character.
@@ -74,7 +72,7 @@ public struct Lexer {
     if consumed == "\n" || consumed == "\r" {
       self.location.advanceLine()
 
-      // if we have "\r\n" then consume '\n' as well
+      // if we have '\r\n' then consume '\n' as well
       if self.peek == "\n" {
         self.source.formIndex(after: &self.sourceIndex)
       }
@@ -85,7 +83,20 @@ public struct Lexer {
     return self.peek
   }
 
-  // MARK: - Token creation
+  internal mutating func advanceIf(_ expected: Character) -> Bool {
+    guard let next = self.peek else {
+      return false
+    }
+
+    if next == expected {
+      self.advance()
+      return true
+    }
+
+    return false
+  }
+
+  // MARK: - Creation helpers (always use them!)
 
   /// Create token
   internal mutating func token(_ kind: TokenKind,
@@ -100,7 +111,8 @@ public struct Lexer {
   internal mutating func warn(_ warning: LexerWarning,
                               start:     SourceLocation? = nil,
                               end:       SourceLocation? = nil) {
-    // empty
+    // uh... oh... well that's embarrassing...
+    // your code is perfect and it does not generate any warnings...
   }
 
   /// Create lexer error
@@ -110,20 +122,5 @@ public struct Lexer {
     let s = start ?? self.location
     let e = end ?? self.location
     return LexerError(kind, start: s, end: e)
-  }
-
-  // MARK: - Lexing
-
-  public mutating func getToken() -> Token? {
-//    if self.isAtBeginOfLine {
-//      self.calculateIndent()
-//      self.isAtBeginOfLine = false
-//    }
-
-//    if let indentToken = self.indents.pendingTokens.popLast() {
-//      return indentToken
-//    }
-
-    return nil
   }
 }

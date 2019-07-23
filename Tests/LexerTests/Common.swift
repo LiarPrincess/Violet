@@ -34,6 +34,13 @@ extension Common {
 
   // MARK: - Lex
 
+  // TODO: move all tests to this
+  internal func getToken(_ lexer: inout Lexer,
+                         file:    StaticString = #file,
+                         line:    UInt         = #line) -> Token? {
+    return self.lex(try lexer.getToken(), file: file, line: line)
+  }
+
   internal func identifierOrString(_ lexer: inout Lexer,
                                    file:    StaticString = #file,
                                    line:    UInt         = #line) -> Token? {

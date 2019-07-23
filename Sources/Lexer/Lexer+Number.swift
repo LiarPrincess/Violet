@@ -9,6 +9,10 @@ import Core
 
 extension Lexer {
 
+  internal func isDecimalDigit(_ c: Character) -> Bool {
+    return DecimalNumber.isDigit(c)
+  }
+
   internal mutating func number() throws -> Token {
     assert(self.peek != nil)
     assert(DecimalNumber.isDigit(self.peek ?? " ") || self.peek == ".")

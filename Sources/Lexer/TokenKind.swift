@@ -49,7 +49,7 @@ public enum TokenKind: Equatable {
   /** @ */  case at
 
   /** += */ case plusEqual
-  /** -= */ case minEqual
+  /** -= */ case minusEqual
   /** *= */ case starEqual
   /** /= */ case slashEqual
   /** %= */ case percentEqual
@@ -127,7 +127,7 @@ extension TokenKind: CustomStringConvertible {
     case .at:         return "@"
 
     case .plusEqual:       return "+="
-    case .minEqual:        return "-="
+    case .minusEqual:        return "-="
     case .starEqual:       return "*="
     case .slashEqual:      return "/="
     case .percentEqual:    return "%="

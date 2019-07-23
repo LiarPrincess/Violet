@@ -36,7 +36,7 @@ extension Lexer {
     case .equal:
       break
 
-    case .greater: // Indent -- always one
+    case .greater: // Indent - always one
       if self.indents.stack.count + 1 >= maxIndent {
         throw self.error(.tooDeep, start: start)
       }
@@ -48,7 +48,7 @@ extension Lexer {
       self.indents.stack.push(indent)
       self.indents.pendingTokens.push(token)
 
-    case .less: // Dedent -- any number, must be consistent
+    case .less: // Dedent - any number, must be consistent
       while let oldIndent = self.indents.stack.last, oldIndent > indent {
         _ = self.indents.stack.popLast()
 
