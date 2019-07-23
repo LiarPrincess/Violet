@@ -14,7 +14,7 @@ class OtherTests: XCTestCase, Common {
     var lexer = Lexer(string: "\n")
 
     if let token = self.getToken(&lexer) {
-      XCTAssertEqual(token.kind, .newline)
+      XCTAssertEqual(token.kind, .newLine)
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 1))
     }
@@ -24,7 +24,7 @@ class OtherTests: XCTestCase, Common {
     var lexer = Lexer(string: "\n\r")
 
     if let token = self.getToken(&lexer) {
-      XCTAssertEqual(token.kind, .newline)
+      XCTAssertEqual(token.kind, .newLine)
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 1))
     }
@@ -34,7 +34,7 @@ class OtherTests: XCTestCase, Common {
     var lexer = Lexer(string: "\r")
 
     if let token = self.getToken(&lexer) {
-      XCTAssertEqual(token.kind, .newline)
+      XCTAssertEqual(token.kind, .newLine)
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 1))
     }

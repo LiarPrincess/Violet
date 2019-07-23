@@ -22,11 +22,12 @@ extension Lexer {
         return indentToken
       }
 
+      let start = self.location
+
       guard let peek = self.peek else {
-        return self.token(.eof)
+        return self.token(.eof, start: start, end: start.next)
       }
 
-      let start = self.location
       switch peek {
 
       // MARK: Whitespace
@@ -39,9 +40,7 @@ extension Lexer {
           self.isAtBeginOfLine = true
 
           // 'self.advance' moved us to new line, so we can't use current location
-          let endColumn = start.column + 1
-          let end = SourceLocation(line: start.line, column: endColumn)
-          return self.token(.newline, start: start, end: end)
+          return self.token(.newLine, start: start, end: start.next)
         }
         // just consume it, nothing else
 
@@ -60,7 +59,7 @@ extension Lexer {
       case let c where self.isDecimalDigit(c):
         return try self.number()
       case "#":
-        fatalError()
+        try self.comment() // just consume it, nothing else
       case "'", "\"":
         return try self.string()
 

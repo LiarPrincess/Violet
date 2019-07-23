@@ -59,4 +59,41 @@ extension Common {
       return nil
     }
   }
+
+  internal func notImplemented(_ lexer: inout Lexer,
+                               file:    StaticString = #file,
+                               line:    UInt = #line) -> NotImplemented? {
+    do {
+      let result = try lexer.getToken()
+      XCTAssert(false, "Token: \(result)", file: file, line: line)
+      return nil
+    } catch let error as NotImplemented {
+      return error
+    } catch {
+      XCTAssert(false, "\(error)", file: file, line: line)
+      return nil
+    }
+  }
+
+  internal func XCTAssertEncoding(_ error: NotImplemented,
+                                  _ expectedEncoding: String,
+                                  file:    StaticString = #file,
+                                  line:    UInt = #line) {
+    switch error {
+    case .encodingOtherThanUTF8(let encoding):
+      XCTAssertEqual(encoding, expectedEncoding, file: file, line: line)
+    default:
+      XCTAssertTrue(false, "\(error)", file: file, line: line)
+    }
+  }
+
+  // MARK: - Encoding
+
+  internal func emacsEncoding(_ value: String) -> String {
+    return "# -*- coding: \(value) -*-"
+  }
+
+  internal func vimEncoding(_ value: String) -> String{
+    return "# vim:fileencoding=\(value)"
+  }
 }

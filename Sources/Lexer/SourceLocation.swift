@@ -24,6 +24,12 @@ public struct SourceLocation: Equatable {
   internal mutating func advanceColumn() {
     self.column += 1
   }
+
+  internal var next: SourceLocation {
+    let line = self.line
+    let column = self.column + 1
+    return SourceLocation(line: line, column: column)
+  }
 }
 
 extension SourceLocation: CustomStringConvertible {

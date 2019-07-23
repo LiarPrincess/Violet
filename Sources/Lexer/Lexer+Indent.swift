@@ -29,8 +29,10 @@ extension Lexer {
     let start = self.location
     let indent = self.calculateIndentColumn()
 
-    // TODO: handle comments and new lines in indent
-    if self.peek == "#" || self.peek == "\n" { }
+    // Lines with only whitespace and/or comments shouldn't affect indentation
+    if self.peek == "#" || self.peek == "\n" {
+      return
+    }
 
     switch self.compareWithCurrentIndent(indent) {
     case .equal:
@@ -71,15 +73,12 @@ extension Lexer {
 
     while true {
       switch self.peek {
-
       case " ":
         column += 1
         self.advance()
-
       case "\t":
         column = (column / tabSize + 1) * tabSize
         self.advance()
-
       default:
         return column
       }

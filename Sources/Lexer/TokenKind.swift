@@ -25,7 +25,7 @@ public enum TokenKind: Equatable {
 
   case indent
   case dedent
-  case newline
+  case newLine
 
   /** ( */ case leftParen
   /** [ */ case leftSqb
@@ -103,7 +103,7 @@ extension TokenKind: CustomStringConvertible {
 
     case .indent:  return "indent"
     case .dedent:  return "dedent"
-    case .newline: return "newline"
+    case .newLine: return "newline"
 
     case .leftParen:  return "("
     case .leftSqb:    return "["
