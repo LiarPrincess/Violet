@@ -43,27 +43,25 @@ extension Lexer {
         throw self.error(.tooDeep, start: start)
       }
 
-      let startColumn = self.indents.stack.last ?? defaultIndent
-      let start = SourceLocation(line: self.location.line, column: startColumn)
+      let start = SourceLocation(line: self.location.line, column: 0)
       let token = self.token(.indent, start: start)
 
       self.indents.stack.push(indent)
       self.indents.pendingTokens.push(token)
 
     case .less: // Dedent - any number, must be consistent
+      let location = SourceLocation(line: self.location.line, column: 0)
+
       while let oldIndent = self.indents.stack.last, oldIndent > indent {
         _ = self.indents.stack.popLast()
 
-        let previous = self.indents.stack.last ?? defaultIndent
-        let start = SourceLocation(line: self.location.line, column: previous)
-        let end   = SourceLocation(line: self.location.line, column: oldIndent)
-        let token = self.token(.dedent, start: start, end: end)
+        let token = self.token(.dedent, start: location, end: location)
         self.indents.pendingTokens.push(token)
       }
 
       let oldIndent = self.indents.stack.last ?? defaultIndent
       if oldIndent != indent {
-        throw self.error(.dedent, start: start)
+        throw self.error(.dedent, start: location, end: location)
       }
     }
   }

@@ -34,6 +34,40 @@ extension Common {
 
   // MARK: - Lex
 
+  @discardableResult
+  internal func getIdentifier(_ lexer: inout Lexer,
+                              value:   String,
+                              file:    StaticString = #file,
+                              line:    UInt         = #line) -> Token? {
+    if let token = self.getToken(&lexer, file: file, line: line) {
+      XCTAssertEqual(token.kind, .identifier(value), file: file, line: line)
+      return token
+    }
+    return nil
+  }
+
+  @discardableResult
+  internal func getNewLine(_ lexer: inout Lexer,
+                           file:    StaticString = #file,
+                           line:    UInt         = #line) -> Token? {
+    if let token = self.getToken(&lexer, file: file, line: line) {
+      XCTAssertEqual(token.kind, .newLine, file: file, line: line)
+      return token
+    }
+    return nil
+  }
+
+  @discardableResult
+  internal func getEOF(_ lexer: inout Lexer,
+                       file:    StaticString = #file,
+                       line:    UInt         = #line) -> Token? {
+    if let token = self.getToken(&lexer, file: file, line: line) {
+      XCTAssertEqual(token.kind, .eof, file: file, line: line)
+      return token
+    }
+    return nil
+  }
+
   internal func getToken(_ lexer: inout Lexer,
                          file:    StaticString = #file,
                          line:    UInt         = #line) -> Token? {
