@@ -120,14 +120,4 @@ extension Common {
       XCTAssertTrue(false, "\(error)", file: file, line: line)
     }
   }
-
-  // MARK: - Encoding
-
-  internal func emacsEncoding(_ value: String) -> String {
-    return "# -*- coding: \(value) -*-"
-  }
-
-  internal func vimEncoding(_ value: String) -> String{
-    return "# vim:fileencoding=\(value)"
-  }
 }

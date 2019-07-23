@@ -14,7 +14,7 @@ class CommentTests: XCTestCase, Common {
 
   // MARK: - Comment
 
-  func test_comment_isNotLexed() {
+  func test_comment_isIgnored() {
     var lexer = Lexer(string: "# No one's slick as Gaston\n")
 
     if let token = self.getToken(&lexer) {
@@ -24,7 +24,7 @@ class CommentTests: XCTestCase, Common {
     }
   }
 
-  func test_comment_afterCode_isNotLexed() {
+  func test_comment_afterCode_isIgnored() {
     var lexer = Lexer(string: "Gaston # No one's quick as Gaston\n")
 
     if let codeToken = self.getToken(&lexer) {
@@ -40,7 +40,7 @@ class CommentTests: XCTestCase, Common {
     }
   }
 
-  func test_comment_inLastLine_isNotLexed() {
+  func test_comment_inLastLine_isIgnored() {
     var lexer = Lexer(string: "# No one's neck's as incredibly thick as Gaston")
 
     if let token = self.getToken(&lexer) {
@@ -56,7 +56,7 @@ class CommentTests: XCTestCase, Common {
   private let invalidEncoding = "latin-1"
 
   /// py: # -*- coding: utf-8 -*-
-  func test_emacs_validEncoding_inFirstline_isAccepted() {
+  func test_emacs_validEncoding_inFirstLine_isAccepted() {
     let s = "\(self.emacsEncoding(validEncoding))"
     var lexer = Lexer(string: s)
 
@@ -68,7 +68,7 @@ class CommentTests: XCTestCase, Common {
   }
 
   /// py: # -*- coding: latin-1 -*-
-  func test_emacs_invalidEncoding_inFirstline_throws() {
+  func test_emacs_invalidEncoding_inFirstLine_throws() {
     let s = "\(self.emacsEncoding(invalidEncoding))"
     var lexer = Lexer(string: s)
 
@@ -78,7 +78,7 @@ class CommentTests: XCTestCase, Common {
   }
 
   /// py:     # -*- coding: latin-1 -*-
-  func test_emacs_invalidEncoding_inFirstline_withIndent_throws() {
+  func test_emacs_invalidEncoding_inFirstLine_withIndent_throws() {
     // we can have spaces before encoding
     let s = "    \(self.emacsEncoding(invalidEncoding))"
     var lexer = Lexer(string: s)
@@ -89,7 +89,7 @@ class CommentTests: XCTestCase, Common {
   }
 
   /// py: Gaston # -*- coding: latin-1 -*-
-  func test_emacs_invalidEncoding_inFirstline_withSomethingBefore_isIgnored() {
+  func test_emacs_invalidEncoding_inFirstLine_withSomethingBefore_isIgnored() {
     let s = "Gaston \(self.emacsEncoding(invalidEncoding))\n"
     var lexer = Lexer(string: s)
 
@@ -109,7 +109,7 @@ class CommentTests: XCTestCase, Common {
   /// py:
   /// # No one fights like Gaston
   ///  # -*- coding: latin-1 -*-
-  func test_emacs_invalidEncoding_inSecondline_throws() {
+  func test_emacs_invalidEncoding_inSecondLine_throws() {
     let s = "# No one fights like Gaston\n \(self.emacsEncoding(invalidEncoding))"
     print(s)
     var lexer = Lexer(string: s)
@@ -123,5 +123,15 @@ class CommentTests: XCTestCase, Common {
     if let error = self.notImplemented(&lexer) {
       XCTAssertEncoding(error, invalidEncoding)
     }
+  }
+
+  // MARK: - Helpers
+
+  internal func emacsEncoding(_ value: String) -> String {
+    return "# -*- coding: \(value) -*-"
+  }
+
+  internal func vimEncoding(_ value: String) -> String{
+    return "# vim:fileencoding=\(value)"
   }
 }

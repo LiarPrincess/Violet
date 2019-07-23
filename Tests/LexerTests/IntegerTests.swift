@@ -10,7 +10,7 @@ class IntegerTests: XCTestCase, Common {
 
   // MARK: - Decimal integer
 
-  func test_decimal_zero_isLexed() {
+  func test_decimal_zero() {
     let s = "0"
     var lexer = Lexer(string: s)
 
@@ -21,7 +21,7 @@ class IntegerTests: XCTestCase, Common {
     }
   }
 
-  func test_decimal_zero_withUnderscores_isLexed() {
+  func test_decimal_zero_withUnderscores() {
     let s = "0_000_000"
     var lexer = Lexer(string: s)
 
@@ -34,7 +34,7 @@ class IntegerTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
-  func test_decimal_isLexed() {
+  func test_decimal() {
     let s = "2147483647"
     var lexer = Lexer(string: s)
 
@@ -47,7 +47,7 @@ class IntegerTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
-  func test_decimal_withUnderscores_isLexed() {
+  func test_decimal_withUnderscores() {
     let s = "100_000_000_000"
     var lexer = Lexer(string: s)
 
@@ -58,7 +58,7 @@ class IntegerTests: XCTestCase, Common {
     }
   }
 
-  func test_decimal_maxInt64_isLexed() {
+  func test_decimal_maxInt64() {
     let s = "9223372036854775807"
     var lexer = Lexer(string: s)
 
@@ -73,7 +73,7 @@ class IntegerTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
-  func test_binary_isLexed() {
+  func test_binary() {
     let s = "0b100110111"
     var lexer = Lexer(string: s)
 
@@ -86,7 +86,7 @@ class IntegerTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
-  func test_binary_withUnderscores_isLexed() {
+  func test_binary_withUnderscores() {
     let s = "0b_1110_0101"
     var lexer = Lexer(string: s)
 
@@ -101,7 +101,7 @@ class IntegerTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
-  func test_octal_isLexed() {
+  func test_octal() {
     let s = "0o177"
     var lexer = Lexer(string: s)
 
@@ -114,7 +114,7 @@ class IntegerTests: XCTestCase, Common {
 
   /// Test case from (I added underscores):
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
-  func test_octal_withUnderscores_isLexed() {
+  func test_octal_withUnderscores() {
     let s = "0o_37_7"
     var lexer = Lexer(string: s)
 
@@ -129,7 +129,7 @@ class IntegerTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
-  func test_hex_isLexed() {
+  func test_hex() {
     let s = "0xdeadBEEF"
     var lexer = Lexer(string: s)
 
@@ -140,7 +140,7 @@ class IntegerTests: XCTestCase, Common {
     }
   }
 
-  func test_hex_withUnderscores_isLexed() {
+  func test_hex_withUnderscores() {
     let s = "0x_01_23_45_67_89_ac"
     var lexer = Lexer(string: s)
 
@@ -151,7 +151,7 @@ class IntegerTests: XCTestCase, Common {
     }
   }
 
-  func test_hex_zero_isLexed() {
+  func test_hex_zero() {
     let s = "0x0"
     var lexer = Lexer(string: s)
 

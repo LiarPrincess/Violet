@@ -6,13 +6,12 @@ import XCTest
 @testable import Lexer
 
 /// Use 'python3 -m tokenize -e file.py' for python reference
-/// and https://www.stlyrics.com/lyrics/classicdisney/partofyourworld.htm
-/// for song reference.
+/// and https://www.youtube.com/watch?v=t6Ol7VsZGk4 for song reference.
 class StringTests: XCTestCase, Common {
 
   // MARK: - Empty
 
-  func test_emptyString_isLexed() {
+  func test_emptyString() {
     let s = ""
     var lexer = Lexer(string: self.shortQuote(s))
 
@@ -121,14 +120,14 @@ class StringTests: XCTestCase, Common {
   }
 
   /// Quote, without closing.
-  /// py: "Ive got gadgets and gizmos a-plenty
+  /// py: "Ive got gadgets and gizmos aplenty
   func test_doubleQuote_withoutEnd_throws() {
-    var lexer = Lexer(string: "\"Ive got gadgets and gizmos a-plenty\n")
+    var lexer = Lexer(string: "\"Ive got gadgets and gizmos aplenty\n")
 
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedShortString)
       XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 36))
+      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 35))
     }
   }
 
@@ -161,15 +160,15 @@ class StringTests: XCTestCase, Common {
     }
   }
 
-  /// py: """You want thingamabobs?"I've got twenty!"""
+  /// py: """You'want"thingamabobs?""I got twenty!"""
   func test_tripleQuote_singleQuotes_doNotEnd() {
-    let s = "You want thingamabobs?\"I've got twenty!"
+    let s = "You'want\"thingamabobs?\"\"I got twenty!"
     var lexer = Lexer(string: self.longQuote(s))
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 45))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 43))
     }
   }
 

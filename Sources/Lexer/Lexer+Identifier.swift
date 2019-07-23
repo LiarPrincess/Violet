@@ -79,7 +79,7 @@ extension Lexer {
 
     // as for underscore: https://codepoints.net/U+005F -> Cmd+F -> 'XID Start'
     guard first == "_" || first.properties.isXIDStart else {
-      throw self.error(.identifier, start: start, end: start)
+      throw self.error(.identifier, start: start, end: start.next)
     }
 
     for (index, char) in scalars.dropFirst().enumerated() {
@@ -88,7 +88,7 @@ extension Lexer {
         let skippedFirst = 1
         let column   = start.column + index + skippedFirst
         let location = SourceLocation(line: start.line, column: column)
-        throw self.error(.identifier, start: location, end: location)
+        throw self.error(.identifier, start: location, end: location.next)
       }
     }
   }

@@ -6,21 +6,20 @@ import XCTest
 @testable import Lexer
 
 /// Use 'python3 -m tokenize -e file.py' for python reference
-/// and https://www.stlyrics.com/lyrics/classicdisney/kissthegirl.htm
-/// for song reference.
+/// and https://www.youtube.com/watch?v=LCCxnuLlS18 for song reference.
 class IdentifierTests: XCTestCase, Common {
 
   // MARK: - String
 
-  /// py: f"Kiss The Girl"
+  /// py: f"I know you I walked with you once upon a dream"
   func test_prefixedString_shouldBeLexedAsString() {
-    let s = "Kiss The Girl"
+    let s = "I know you I walked with you once upon a dream"
     var lexer = Lexer(string: "f" + self.shortQuote(s))
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .formatString(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 16))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 49))
     }
   }
 
@@ -40,27 +39,74 @@ class IdentifierTests: XCTestCase, Common {
 
   // MARK: - Identifiers
 
-  /// py: shaLaLaLaLaLa
+  /// py: iKnowYouTheGleamInYourEyesIsSoFamiliarAGleam
   func test_identifier_simple_isValid() {
-    let s = "shaLaLaLaLaLa"
+    let s = "iKnowYouTheGleamInYourEyesIsSoFamiliarAGleam"
     var lexer = Lexer(string: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 13))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 44))
     }
   }
 
-  /// py: _lookAtTheBoyTooShy
+  /// py: _yetIKnowItsTrueThatVisionsAreSeldomAllTheySeem
   func test_identifier_startingWithUnderscore_isValid() {
-    let s = "_lookAtTheBoyTooShy"
+    // use 'and' instead of 'yet' for prince version
+    let s = "_yetIKnowItsTrueThatVisionsAreSeldomAllTheySeem"
     var lexer = Lexer(string: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 19))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 47))
+    }
+  }
+
+  /// py: 齀butIfIKnowYouIKnowWhatYoullDo
+  func test_identifier_startingWithCJK_isValid() {
+    let s = "齀butIfIKnowYouIKnowWhatYoullDo"
+    var lexer = Lexer(string: s)
+
+    if let token = self.getToken(&lexer) {
+      XCTAssertEqual(token.kind, .identifier(s))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 30))
+    }
+  }
+
+  // py: youllLoveMeAtOnce齀TheWayYouDidOnceUponADream
+  func test_identifier_containingCJK_isValid() {
+    let s = "youllLoveMeAtOnce齀TheWayYouDidOnceUponADream"
+    var lexer = Lexer(string: s)
+
+    if let token = self.getToken(&lexer) {
+      XCTAssertEqual(token.kind, .identifier(s))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 44))
+    }
+  }
+
+  /// py: 👸butIfIKnowYouIKnowWhatYoullDo
+  func test_identifier_startingWithEmoji_isNotValid() {
+    var lexer = Lexer(string: "👸butIfIKnowYouIKnowWhatYoullDo")
+
+    if let error = self.error(&lexer) {
+      XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
+      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 1))
+    }
+  }
+
+  // py: youll❤️MeAtOnceTheWayYouDidOnceUponADream
+  func test_identifier_containingEmoji_isNotValid() {
+    var lexer = Lexer(string: "youll❤️MeAtOnceTheWayYouDidOnceUponADream")
+
+    if let error = self.error(&lexer) {
+      XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
+      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 5))
+      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 6))
     }
   }
 
@@ -76,52 +122,6 @@ class IdentifierTests: XCTestCase, Common {
         XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0), identifier)
         XCTAssertEqual(token.end,   SourceLocation(line: 1, column: identifier.count), identifier)
       }
-    }
-  }
-
-  /// py: 齀words
-  func test_identifier_startingWithCJK_isValid() {
-    let s = "齀words"
-    var lexer = Lexer(string: s)
-
-    if let token = self.getToken(&lexer) {
-      XCTAssertEqual(token.kind, .identifier(s))
-      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 6))
-    }
-  }
-
-  // py: win齀ds
-  func test_identifier_containingCJK_isValid() {
-    let s = "win齀ds"
-    var lexer = Lexer(string: s)
-
-    if let token = self.getToken(&lexer) {
-      XCTAssertEqual(token.kind, .identifier(s))
-      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 6))
-    }
-  }
-
-  /// py: 🎤withMeNow
-  func test_identifier_startingWithEmoji_isNotValid() {
-    var lexer = Lexer(string: "🎤withMeNow")
-
-    if let error = self.error(&lexer) {
-      XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
-      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 0))
-    }
-  }
-
-  // py: no⏱️WillBeBetter
-  func test_identifier_containingEmoji_isNotValid() {
-    var lexer = Lexer(string: "no⏱️WillBeBetter")
-
-    if let error = self.error(&lexer) {
-      XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
-      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 2))
-      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 2))
     }
   }
 }

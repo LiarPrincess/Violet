@@ -10,7 +10,7 @@ class FloatingPointTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
-  func test_zero_isLexed() {
+  func test_zero() {
     let s = "0.0"
     var lexer = Lexer(string: s)
 
@@ -23,7 +23,7 @@ class FloatingPointTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
-  func test_zero_asExponent_isLexed() {
+  func test_zero_asExponent() {
     let s = "0e0"
     var lexer = Lexer(string: s)
 
@@ -36,7 +36,7 @@ class FloatingPointTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
-  func test_number_isLexed() {
+  func test_number() {
     let s = "3.14"
     var lexer = Lexer(string: s)
 
@@ -49,7 +49,7 @@ class FloatingPointTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
-  func test_number_withUnderscores_isLexed() {
+  func test_number_withUnderscores() {
     let s = "3.14_15_93"
     var lexer = Lexer(string: s)
 
@@ -62,7 +62,7 @@ class FloatingPointTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
-  func test_number_withoutFractions_isLexed() {
+  func test_number_withoutFractions() {
     // trivia: glibc calss this 'american style' number
 
     let s = "10."
@@ -77,7 +77,7 @@ class FloatingPointTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
-  func test_number_withoutWhole_isLexed() {
+  func test_number_withoutWhole() {
     let s = ".001"
     var lexer = Lexer(string: s)
 
@@ -90,7 +90,7 @@ class FloatingPointTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
-  func test_number_withExponent_isLexed() {
+  func test_number_withExponent() {
     let s = "1e100"
     var lexer = Lexer(string: s)
 
@@ -104,7 +104,7 @@ class FloatingPointTests: XCTestCase, Common {
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
   /// 'For example, 077e010 is legal, and denotes the same number as 77e10.'
-  func test_number_withExponent_isLexed2() {
+  func test_number_withExponent2() {
     let s = "077e010"
     var lexer = Lexer(string: s)
 
@@ -117,7 +117,7 @@ class FloatingPointTests: XCTestCase, Common {
 
   /// Test case from:
   /// https://docs.python.org/3/reference/lexical_analysis.html#floating-point-literals
-  func test_number_withFraction_andExponent_isLexed() {
+  func test_number_withFraction_andExponent() {
     let s = "3.14e-10"
     var lexer = Lexer(string: s)
 

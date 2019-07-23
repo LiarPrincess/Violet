@@ -13,7 +13,7 @@ import XCTest
 //   let length = kind.description.count
 //   print("""
 //
-//     func test_\(name)_isLexed() {
+//     func test_\(name)() {
 //       var lexer = Lexer(string: "\(kind)")
 //       if let token = self.getToken(&lexer) {
 //         XCTAssertEqual(token.kind, .\(name))
@@ -27,7 +27,7 @@ import XCTest
 /// Use 'python3 -m tokenize -e file.py' for python reference
 class OperatorTests: XCTestCase, Common {
 
-  func test_leftParen_isLexed() {
+  func test_leftParen() {
     var lexer = Lexer(string: "(")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .leftParen)
@@ -36,7 +36,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_leftSqb_isLexed() {
+  func test_leftSqb() {
     var lexer = Lexer(string: "[")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .leftSqb)
@@ -45,7 +45,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_leftBrace_isLexed() {
+  func test_leftBrace() {
     var lexer = Lexer(string: "{")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .leftBrace)
@@ -54,7 +54,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_rightParen_isLexed() {
+  func test_rightParen() {
     var lexer = Lexer(string: ")")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .rightParen)
@@ -63,7 +63,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_rightSqb_isLexed() {
+  func test_rightSqb() {
     var lexer = Lexer(string: "]")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .rightSqb)
@@ -72,7 +72,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_rightBrace_isLexed() {
+  func test_rightBrace() {
     var lexer = Lexer(string: "}")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .rightBrace)
@@ -81,7 +81,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_colon_isLexed() {
+  func test_colon() {
     var lexer = Lexer(string: ":")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .colon)
@@ -90,7 +90,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_comma_isLexed() {
+  func test_comma() {
     var lexer = Lexer(string: ",")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .comma)
@@ -99,7 +99,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_semicolon_isLexed() {
+  func test_semicolon() {
     var lexer = Lexer(string: ";")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .semicolon)
@@ -108,7 +108,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_ellipsis_isLexed() {
+  func test_ellipsis() {
     var lexer = Lexer(string: "...")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .ellipsis)
@@ -117,7 +117,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_plus_isLexed() {
+  func test_plus() {
     var lexer = Lexer(string: "+")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .plus)
@@ -126,7 +126,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_minus_isLexed() {
+  func test_minus() {
     var lexer = Lexer(string: "-")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .minus)
@@ -135,7 +135,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_star_isLexed() {
+  func test_star() {
     var lexer = Lexer(string: "*")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .star)
@@ -144,7 +144,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_slash_isLexed() {
+  func test_slash() {
     var lexer = Lexer(string: "/")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .slash)
@@ -153,7 +153,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_vbar_isLexed() {
+  func test_vbar() {
     var lexer = Lexer(string: "|")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .vbar)
@@ -162,7 +162,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_amper_isLexed() {
+  func test_amper() {
     var lexer = Lexer(string: "&")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .amper)
@@ -171,7 +171,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_circumflex_isLexed() {
+  func test_circumflex() {
     var lexer = Lexer(string: "^")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .circumflex)
@@ -180,7 +180,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_at_isLexed() {
+  func test_at() {
     var lexer = Lexer(string: "@")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .at)
@@ -189,7 +189,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_plusEqual_isLexed() {
+  func test_plusEqual() {
     var lexer = Lexer(string: "+=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .plusEqual)
@@ -198,7 +198,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_minusEqual_isLexed() {
+  func test_minusEqual() {
     var lexer = Lexer(string: "-=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .minusEqual)
@@ -207,7 +207,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_starEqual_isLexed() {
+  func test_starEqual() {
     var lexer = Lexer(string: "*=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .starEqual)
@@ -216,7 +216,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_slashEqual_isLexed() {
+  func test_slashEqual() {
     var lexer = Lexer(string: "/=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .slashEqual)
@@ -225,7 +225,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_percentEqual_isLexed() {
+  func test_percentEqual() {
     var lexer = Lexer(string: "%=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .percentEqual)
@@ -234,7 +234,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_vbarEqual_isLexed() {
+  func test_vbarEqual() {
     var lexer = Lexer(string: "|=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .vbarEqual)
@@ -243,7 +243,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_amperEqual_isLexed() {
+  func test_amperEqual() {
     var lexer = Lexer(string: "&=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .amperEqual)
@@ -252,7 +252,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_circumflexEqual_isLexed() {
+  func test_circumflexEqual() {
     var lexer = Lexer(string: "^=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .circumflexEqual)
@@ -261,7 +261,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_atEqual_isLexed() {
+  func test_atEqual() {
     var lexer = Lexer(string: "@=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .atEqual)
@@ -270,7 +270,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_less_isLexed() {
+  func test_less() {
     var lexer = Lexer(string: "<")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .less)
@@ -279,7 +279,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_greater_isLexed() {
+  func test_greater() {
     var lexer = Lexer(string: ">")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .greater)
@@ -288,7 +288,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_equal_isLexed() {
+  func test_equal() {
     var lexer = Lexer(string: "=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .equal)
@@ -297,7 +297,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_equalEqual_isLexed() {
+  func test_equalEqual() {
     var lexer = Lexer(string: "==")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .equalEqual)
@@ -306,7 +306,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_notEqual_isLexed() {
+  func test_notEqual() {
     var lexer = Lexer(string: "!=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .notEqual)
@@ -315,7 +315,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_lessEqual_isLexed() {
+  func test_lessEqual() {
     var lexer = Lexer(string: "<=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .lessEqual)
@@ -324,7 +324,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_greaterEqual_isLexed() {
+  func test_greaterEqual() {
     var lexer = Lexer(string: ">=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .greaterEqual)
@@ -333,7 +333,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_leftShift_isLexed() {
+  func test_leftShift() {
     var lexer = Lexer(string: "<<")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .leftShift)
@@ -342,7 +342,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_rightShift_isLexed() {
+  func test_rightShift() {
     var lexer = Lexer(string: ">>")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .rightShift)
@@ -351,7 +351,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_starStar_isLexed() {
+  func test_starStar() {
     var lexer = Lexer(string: "**")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .starStar)
@@ -360,7 +360,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_slashSlash_isLexed() {
+  func test_slashSlash() {
     var lexer = Lexer(string: "//")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .slashSlash)
@@ -369,7 +369,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_leftShiftEqual_isLexed() {
+  func test_leftShiftEqual() {
     var lexer = Lexer(string: "<<=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .leftShiftEqual)
@@ -378,7 +378,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_rightShiftEqual_isLexed() {
+  func test_rightShiftEqual() {
     var lexer = Lexer(string: ">>=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .rightShiftEqual)
@@ -387,7 +387,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_starStarEqual_isLexed() {
+  func test_starStarEqual() {
     var lexer = Lexer(string: "**=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .starStarEqual)
@@ -396,7 +396,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_slashSlashEqual_isLexed() {
+  func test_slashSlashEqual() {
     var lexer = Lexer(string: "//=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .slashSlashEqual)
@@ -405,7 +405,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_dot_isLexed() {
+  func test_dot() {
     var lexer = Lexer(string: ".")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .dot)
@@ -414,7 +414,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_percent_isLexed() {
+  func test_percent() {
     var lexer = Lexer(string: "%")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .percent)
@@ -423,7 +423,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_tilde_isLexed() {
+  func test_tilde() {
     var lexer = Lexer(string: "~")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .tilde)
@@ -432,7 +432,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_rightArrow_isLexed() {
+  func test_rightArrow() {
     var lexer = Lexer(string: "->")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .rightArrow)
@@ -441,7 +441,7 @@ class OperatorTests: XCTestCase, Common {
     }
   }
 
-  func test_colonEqual_isLexed() {
+  func test_colonEqual() {
     var lexer = Lexer(string: ":=")
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .colonEqual)

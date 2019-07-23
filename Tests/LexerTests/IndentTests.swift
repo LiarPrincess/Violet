@@ -11,7 +11,7 @@ class IndentTests: XCTestCase, Common {
   // MARK: - No indent
 
   /// py: Ariel
-  func test_noIndent_isLexed() {
+  func test_noIndent() {
     let s = "Ariel"
     var lexer = Lexer(string: s)
 
