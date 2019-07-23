@@ -100,7 +100,7 @@ extension Lexer {
         case .notEscapeCharacter: result.append("\\")
         }
       default:
-        if quoteType == .single && peek == "\n" {
+        if quoteType == .single && self.isNewLine(peek) {
           throw self.error(.unfinishedShortString, start: start)
         }
 

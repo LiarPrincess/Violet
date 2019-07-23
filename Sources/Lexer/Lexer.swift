@@ -69,13 +69,8 @@ public struct Lexer {
     let consumed = self.peek
     self.source.formIndex(after: &self.sourceIndex)
 
-    if consumed == "\n" || consumed == "\r" {
+    if self.isNewLine(consumed) {
       self.location.advanceLine()
-
-      // if we have '\r\n' then consume '\n' as well
-      if self.peek == "\n" {
-        self.source.formIndex(after: &self.sourceIndex)
-      }
     } else {
       self.location.advanceColumn()
     }
@@ -122,5 +117,12 @@ public struct Lexer {
     let s = start ?? self.location
     let e = end ?? self.location
     return LexerError(kind, start: s, end: e)
+  }
+
+  // MARK: - Helpers
+
+  internal func isNewLine(_ c: Character?) -> Bool {
+    // there is also `c.isNewline`
+    return c == CR || c == LF || c == CRLF
   }
 }

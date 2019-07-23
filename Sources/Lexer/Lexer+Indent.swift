@@ -30,7 +30,7 @@ extension Lexer {
     let indent = self.calculateIndentColumn()
 
     // Lines with only whitespace and/or comments shouldn't affect indentation
-    if self.peek == "#" || self.peek == "\n" {
+    if self.peek == "#" || self.isNewLine(self.peek) {
       return
     }
 

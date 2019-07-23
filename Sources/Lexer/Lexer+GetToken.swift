@@ -32,9 +32,8 @@ extension Lexer {
 
       // MARK: Whitespace
 
-      case "\n", "\r":
-        // self.advance() takes care of '\r\n'
-        self.advance() // \n \r \r\n
+      case let c where self.isNewLine(c):
+        self.advance() // CR, LF, CRLF
 
         if self.nesting == 0 {
           self.isAtBeginOfLine = true

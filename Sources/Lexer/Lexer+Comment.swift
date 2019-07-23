@@ -26,7 +26,7 @@ extension Lexer {
     let commentIndex = self.sourceIndex
 
     assert(self.peek == "#")
-    while let p = self.peek, !self.isEOL(p) {
+    while let p = self.peek, !self.isNewLine(p) {
       self.advance()
     }
 
@@ -80,7 +80,7 @@ extension Lexer {
     while index != self.source.startIndex {
       let c = self.source[index]
 
-      if self.isEOL(c) {
+      if self.isNewLine(c) {
         return true
       }
 
@@ -97,9 +97,5 @@ extension Lexer {
 
   private func isWhitespace(_ c: Character) -> Bool {
     return c == " " || c == "\t"
-  }
-
-  private func isEOL(_ c: Character) -> Bool {
-    return c == "\n" || c == "\r"
   }
 }
