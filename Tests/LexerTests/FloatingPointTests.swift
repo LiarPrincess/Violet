@@ -14,7 +14,7 @@ class FloatingPointTests: XCTestCase, Common {
     let s = "0.0"
     var lexer = Lexer(string: s)
 
-    if let token = self.number(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .float(0.0))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 3))
@@ -27,7 +27,7 @@ class FloatingPointTests: XCTestCase, Common {
     let s = "0e0"
     var lexer = Lexer(string: s)
 
-    if let token = self.number(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .float(0.0))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 3))
@@ -40,7 +40,7 @@ class FloatingPointTests: XCTestCase, Common {
     let s = "3.14"
     var lexer = Lexer(string: s)
 
-    if let token = self.number(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .float(3.14))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 4))
@@ -53,7 +53,7 @@ class FloatingPointTests: XCTestCase, Common {
     let s = "3.14_15_93"
     var lexer = Lexer(string: s)
 
-    if let token = self.number(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .float(3.141_593))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 10))
@@ -68,7 +68,7 @@ class FloatingPointTests: XCTestCase, Common {
     let s = "10."
     var lexer = Lexer(string: s)
 
-    if let token = self.number(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .float(10))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 3))
@@ -81,7 +81,7 @@ class FloatingPointTests: XCTestCase, Common {
     let s = ".001"
     var lexer = Lexer(string: s)
 
-    if let token = self.number(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .float(0.001))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 4))
@@ -94,7 +94,7 @@ class FloatingPointTests: XCTestCase, Common {
     let s = "1e100"
     var lexer = Lexer(string: s)
 
-    if let token = self.number(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .float(1e100))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 5))
@@ -108,7 +108,7 @@ class FloatingPointTests: XCTestCase, Common {
     let s = "077e010"
     var lexer = Lexer(string: s)
 
-    if let token = self.number(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .float(77e010))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 7))
@@ -121,7 +121,7 @@ class FloatingPointTests: XCTestCase, Common {
     let s = "3.14e-10"
     var lexer = Lexer(string: s)
 
-    if let token = self.number(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .float(3.14e-10))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 8))

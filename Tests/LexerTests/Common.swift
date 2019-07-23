@@ -34,73 +34,28 @@ extension Common {
 
   // MARK: - Lex
 
-  // TODO: move all tests to this
   internal func getToken(_ lexer: inout Lexer,
                          file:    StaticString = #file,
                          line:    UInt         = #line) -> Token? {
-    return self.lex(try lexer.getToken(), file: file, line: line)
-  }
-
-  internal func identifierOrString(_ lexer: inout Lexer,
-                                   file:    StaticString = #file,
-                                   line:    UInt         = #line) -> Token? {
-    return self.lex(try lexer.identifierOrString(), file: file, line: line)
-  }
-
-  internal func string(_ lexer: inout Lexer,
-                       file:    StaticString = #file,
-                       line:    UInt         = #line) -> Token? {
-    return self.lex(try lexer.string(), file: file, line: line)
-  }
-
-  internal func number(_ lexer: inout Lexer,
-                       file:    StaticString = #file,
-                       line:    UInt         = #line) -> Token? {
-    return self.lex(try lexer.number(), file: file, line: line)
-  }
-
-  private func lex(_ f:  @autoclosure () throws -> Token,
-                   file: StaticString = #file,
-                   line: UInt         = #line) -> Token? {
     do {
-      return try f()
+      return try lexer.getToken()
     } catch {
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil
     }
   }
 
-  // MARK: - Lex errors
-
-  internal func identifierOrStringError(_ lexer: inout Lexer,
-                                        file:    StaticString = #file,
-                                        line:    UInt = #line) -> LexerError? {
-    return self.error(try lexer.identifierOrString(), file: file, line: line)
-  }
-
-  internal func stringError(_ lexer: inout Lexer,
-                            file:    StaticString = #file,
-                            line:    UInt = #line) -> LexerError? {
-    return self.error(try lexer.string(), file: file, line: line)
-  }
-
-  internal func numberError(_ lexer: inout Lexer,
-                            file:    StaticString = #file,
-                            line:    UInt = #line) -> LexerError? {
-    return self.error(try lexer.number(), file: file, line: line)
-  }
-
-  private func error(_ f:  @autoclosure () throws -> Token,
-                     file: StaticString = #file,
-                     line: UInt         = #line) -> LexerError? {
+  internal func error(_ lexer: inout Lexer,
+                      file:    StaticString = #file,
+                      line:    UInt = #line) -> LexerError? {
     do {
-      let result = try f()
-      XCTAssert(false, "Got token: \(result)", file: file, line: line)
+      let result = try lexer.getToken()
+      XCTAssert(false, "Token: \(result)", file: file, line: line)
       return nil
     } catch let error as LexerError {
       return error
     } catch {
-      XCTAssert(false, "Invalid error: \(error)", file: file, line: line)
+      XCTAssert(false, "\(error)", file: file, line: line)
       return nil
     }
   }

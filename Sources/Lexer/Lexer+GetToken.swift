@@ -9,11 +9,11 @@ extension Lexer {
 
   public mutating func getToken() throws -> Token {
     while true {
-
       if self.isAtBeginOfLine {
         self.isAtBeginOfLine = false
 
-        if self.nesting == 0 {
+        let isTupleArrayDict = self.nesting > 0
+        if !isTupleArrayDict {
           try self.calculateIndent()
         }
       }
@@ -28,6 +28,33 @@ extension Lexer {
 
       let start = self.location
       switch peek {
+
+      // MARK: Whitespace
+
+      case "\n", "\r":
+        // self.advance() takes care of '\r\n'
+        self.advance() // \n \r \r\n
+
+        if self.nesting == 0 {
+          self.isAtBeginOfLine = true
+
+          // 'self.advance' moved us to new line, so we can't use current location
+          let endColumn = start.column + 1
+          let end = SourceLocation(line: start.line, column: endColumn)
+          return self.token(.newline, start: start, end: end)
+        }
+        // just consume it, nothing else
+
+      case " ", "\t":
+        // just consume it, nothing else
+        // we don't collect trivia
+
+        repeat {
+          self.advance()
+        } while self.peek == " " || self.peek == "\t"
+
+      // MARK: Main
+
       case let c where self.isIdentifierStart(c):
         return try self.identifierOrString()
       case let c where self.isDecimalDigit(c):
@@ -118,7 +145,7 @@ extension Lexer {
         self.advance() // ~
         return self.token(.tilde, start: start)
 
-        // MARK: Parens
+      // MARK: Parens
 
       case "(":
         self.advance() // (
@@ -196,25 +223,6 @@ extension Lexer {
             self.token(.leftShift, start: start)
         }
         return self.token(.less, start: start)
-
-      // MARK: Whitespace
-
-      case "\n", "\r":
-        // self.advance() takes care of '\r' and '\r\n' mess
-        self.advance() // \n
-
-        if self.nesting == 0 {
-          self.isAtBeginOfLine = true
-
-          // 'self.advance' moved us to new line
-          let endColumn = start.column + 1
-          let end = SourceLocation(line: start.line, column: endColumn)
-          return self.token(.newline, start: start, end: end)
-        }
-        // just consume it, nothing else
-
-      case " ", "\t":
-        self.advance() // just consume it, nothing else
 
       default:
         fatalError()

@@ -17,7 +17,7 @@ class IdentifierTests: XCTestCase, Common {
     let s = "Kiss The Girl"
     var lexer = Lexer(string: "f" + self.shortQuote(s))
 
-    if let token = self.identifierOrString(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .formatString(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 16))
@@ -30,7 +30,7 @@ class IdentifierTests: XCTestCase, Common {
     for (keyword, value) in keywords {
       var lexer = Lexer(string: keyword)
 
-      if let token = self.identifierOrString(&lexer) {
+      if let token = self.getToken(&lexer) {
         XCTAssertEqual(token.kind, .keyword(value), keyword)
         XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0), keyword)
         XCTAssertEqual(token.end,   SourceLocation(line: 1, column: keyword.count), keyword)
@@ -45,7 +45,7 @@ class IdentifierTests: XCTestCase, Common {
     let s = "shaLaLaLaLaLa"
     var lexer = Lexer(string: s)
 
-    if let token = self.identifierOrString(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 13))
@@ -57,7 +57,7 @@ class IdentifierTests: XCTestCase, Common {
     let s = "_lookAtTheBoyTooShy"
     var lexer = Lexer(string: s)
 
-    if let token = self.identifierOrString(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 19))
@@ -71,7 +71,7 @@ class IdentifierTests: XCTestCase, Common {
     for identifier in reserved {
       var lexer = Lexer(string: identifier)
 
-      if let token = self.identifierOrString(&lexer) {
+      if let token = self.getToken(&lexer) {
         XCTAssertEqual(token.kind, .identifier(identifier), identifier)
         XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0), identifier)
         XCTAssertEqual(token.end,   SourceLocation(line: 1, column: identifier.count), identifier)
@@ -84,7 +84,7 @@ class IdentifierTests: XCTestCase, Common {
     let s = "齀words"
     var lexer = Lexer(string: s)
 
-    if let token = self.identifierOrString(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 6))
@@ -96,7 +96,7 @@ class IdentifierTests: XCTestCase, Common {
     let s = "win齀ds"
     var lexer = Lexer(string: s)
 
-    if let token = self.identifierOrString(&lexer) {
+    if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 6))
@@ -107,7 +107,7 @@ class IdentifierTests: XCTestCase, Common {
   func test_identifier_startingWithEmoji_isNotValid() {
     var lexer = Lexer(string: "🎤withMeNow")
 
-    if let error = self.identifierOrStringError(&lexer) {
+    if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
       XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 0))
@@ -118,7 +118,7 @@ class IdentifierTests: XCTestCase, Common {
   func test_identifier_containingEmoji_isNotValid() {
     var lexer = Lexer(string: "no⏱️WillBeBetter")
 
-    if let error = self.identifierOrStringError(&lexer) {
+    if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
       XCTAssertEqual(error.start, SourceLocation(line: 1, column: 2))
       XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 2))

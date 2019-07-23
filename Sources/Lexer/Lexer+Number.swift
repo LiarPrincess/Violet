@@ -142,7 +142,7 @@ extension Lexer {
                                        start: SourceLocation,
                                        base: T.Type) throws -> PyInt {
 
-    let s = string.replacingOccurrences(of: "_", with: "")
+    let s = string.replacingOccurrences(of: "_", with: "") // smol me maybe
     guard let value = PyInt(s, radix: base.radix) else {
       // After we add proper ints:
       // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
@@ -156,7 +156,7 @@ extension Lexer {
   private func parseDouble(_ string: Substring,
                            start: SourceLocation) throws -> Double {
 
-    let s = string.replacingOccurrences(of: "_", with: "")
+    let s = string.replacingOccurrences(of: "_", with: "") // smol me maybe
     guard let value = Double(s) else {
       throw self.error(.unableToParseDecimal(String(string)), start: start)
     }
