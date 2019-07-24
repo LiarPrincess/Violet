@@ -138,7 +138,8 @@ extension Lexer {
         if self.advanceIf("=") {
           return self.token(.notEqual, start: start)
         }
-        fatalError() // there is no standalone '!'
+        // there is no standalone '!'
+        try self.throwUnexpectedCharacter(peek)
       case "~":
         self.advance() // ~
         return self.token(.tilde, start: start)
@@ -223,8 +224,14 @@ extension Lexer {
         return self.token(.less, start: start)
 
       default:
-        fatalError()
+        try self.throwUnexpectedCharacter(peek)
       }
     }
+  }
+
+  private func throwUnexpectedCharacter(_ c: UnicodeScalar) throws {
+    let start = self.location
+    let kind = LexerErrorKind.unexpectedCharacter(c)
+    throw self.error(kind, start: start, end: start.next)
   }
 }
