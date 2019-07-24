@@ -165,6 +165,11 @@ extension Lexer {
     case "r":  return self.simpleEscaped("\r") // ASCII Carriage Return (CR)
     case "t":  return self.simpleEscaped("\t") // ASCII Horizontal Tab (TAB)
 
+    case "a": return self.simpleEscaped("\u{0007}") // ASCII Bell (BEL)
+    case "b": return self.simpleEscaped("\u{0008}") // ASCII Backspace (BS)
+    case "f": return self.simpleEscaped("\u{000c}") // ASCII Formfeed (FF)
+    case "v": return self.simpleEscaped("\u{000b}") // ASCII Vertical Tab (VT)
+
     /// \ooo Character with octal value ooo
     case let c where OctalNumber.isDigit(c):
       return .escaped(try self.readOctal(quoteType))
@@ -181,12 +186,8 @@ extension Lexer {
     case "U" where prefix.isString:
       return .escaped(try self.readHex(quoteType, count: 8))
 
-    case "a", // ASCII Bell (BEL)
-         "b", // ASCII Backspace (BS)
-         "f", // ASCII Formfeed (FF)
-         "v", // ASCII Vertical Tab (VT)
-         "N": // Character named name in the Unicode database
-      throw NotImplemented.stringEscape(escaped)
+    case "N": // Character named name in the Unicode database
+      throw NotImplemented.stringNamedEscape
 
     default:
       self.advance() // backslash
