@@ -230,8 +230,7 @@ extension Lexer {
   }
 
   private func throwUnexpectedCharacter(_ c: UnicodeScalar) throws {
-    let start = self.location
     let kind = LexerErrorKind.unexpectedCharacter(c)
-    throw self.error(kind, start: start, end: start.next)
+    throw self.error(kind)
   }
 }

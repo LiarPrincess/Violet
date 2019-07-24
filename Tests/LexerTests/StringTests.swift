@@ -126,8 +126,7 @@ class StringTests: XCTestCase, Common {
 
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedShortString)
-      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 35))
+      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 35))
     }
   }
 
@@ -196,8 +195,7 @@ class StringTests: XCTestCase, Common {
 
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind,  LexerErrorKind.unfinishedLongString)
-      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(error.end,   SourceLocation(line: 3, column: 12))
+      XCTAssertEqual(error.location, SourceLocation(line: 3, column: 12))
     }
   }
 

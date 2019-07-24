@@ -120,12 +120,9 @@ public struct Lexer {
   }
 
   /// Create lexer error
-  internal func error(_ kind: LexerErrorKind,
-                      start:  SourceLocation? = nil,
-                      end:    SourceLocation? = nil) -> LexerError {
-    let s = start ?? self.location
-    let e = end ?? self.location
-    return LexerError(kind, start: s, end: e)
+  internal func error(_ kind:   LexerErrorKind,
+                      location: SourceLocation? = nil) -> LexerError {
+    return LexerError(kind, location: location ?? self.location)
   }
 
   // MARK: - Helpers

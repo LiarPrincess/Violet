@@ -147,7 +147,7 @@ extension Lexer {
     guard let value = PyInt(string, radix: base.radix) else {
       // After we add proper ints:
       // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
-      // throw self.error(kind, start: start)
+      // throw self.error(kind, location: start)
       throw NotImplemented.unlimitedInteger
     }
 
@@ -159,7 +159,7 @@ extension Lexer {
 
     let string = self.toNumberString(scalars)
     guard let value = Double(string) else {
-      throw self.error(.unableToParseDecimal(string), start: start)
+      throw self.error(.unableToParseDecimal(string), location: start)
     }
 
     return value

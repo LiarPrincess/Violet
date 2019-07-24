@@ -93,9 +93,8 @@ class IdentifierTests: XCTestCase, Common {
     var lexer = Lexer(string: "👸butIfIKnowYouIKnowWhatYoullDo")
 
     if let error = self.error(&lexer) {
-      XCTAssertEqual(error.kind,  LexerErrorKind.identifier("👸"))
-      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 1))
+      XCTAssertEqual(error.kind, LexerErrorKind.identifier("👸"))
+      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 0))
     }
   }
 
@@ -104,9 +103,8 @@ class IdentifierTests: XCTestCase, Common {
     var lexer = Lexer(string: "youll❤️MeAtOnceTheWayYouDidOnceUponADream")
 
     if let error = self.error(&lexer) {
-      XCTAssertEqual(error.kind,  LexerErrorKind.identifier("❤")) // not the same!
-      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 5))
-      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 6)) // py: 7
+      XCTAssertEqual(error.kind, LexerErrorKind.identifier("❤")) // not the same!
+      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 5))
     }
   }
 
@@ -115,8 +113,7 @@ class IdentifierTests: XCTestCase, Common {
 
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind, LexerErrorKind.identifier("\u{301}"))
-      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 1))
+      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 0))
     }
   }
 

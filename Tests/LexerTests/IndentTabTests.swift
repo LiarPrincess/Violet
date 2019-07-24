@@ -133,8 +133,7 @@ class IndentTabTests: XCTestCase, Common {
 
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind, .dedent)
-      XCTAssertEqual(error.start, SourceLocation(line: 2, column: 0))
-      XCTAssertEqual(error.end,   SourceLocation(line: 2, column: 0))
+      XCTAssertEqual(error.location, SourceLocation(line: 2, column: 0))
     }
   }
 }

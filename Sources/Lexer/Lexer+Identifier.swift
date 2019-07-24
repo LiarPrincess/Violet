@@ -72,17 +72,17 @@ extension Lexer {
 
     // Throwing single scalar does not make sense (individual scalars don't
     // have meaning). We include its location, but not very precise.
-    // Basically 'best efford', because text is hard.
+    // Basically everything is 'best efford', because text is hard.
 
     // This should never happen, how did we even started lexing?
     guard let first = identifier.first else {
-      throw self.error(.identifier(" "), start: start)
+      throw self.error(.identifier(" "), location: start)
     }
 
     // As for the underscore look for 'XID_Start' in:
     // https://unicode.org/cldr/utility/character.jsp?a=005f
     guard first.properties.isXIDStart || first == "_" else {
-      throw self.error(.identifier(first), start: start, end: start.next)
+      throw self.error(.identifier(first), location: start)
     }
 
     for (index, c) in identifier.dropFirst().enumerated() {
@@ -90,7 +90,7 @@ extension Lexer {
         let skippedFirst = 1
         let column   = start.column + skippedFirst + index
         let location = SourceLocation(line: start.line, column: column)
-        throw self.error(.identifier(c), start: location, end: location.next)
+        throw self.error(.identifier(c), location: location)
       }
     }
   }

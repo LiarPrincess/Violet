@@ -167,9 +167,8 @@ class IntegerTests: XCTestCase, Common {
     var lexer = Lexer(string: s)
 
     if let error = self.error(&lexer) {
-      XCTAssertEqual(error.kind,  LexerErrorKind.danglingIntegerUnderscore)
-      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 6))
-      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 6))
+      XCTAssertEqual(error.kind, LexerErrorKind.danglingIntegerUnderscore)
+      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 6))
     }
   }
 }

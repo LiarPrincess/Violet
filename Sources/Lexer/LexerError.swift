@@ -4,22 +4,19 @@
 
 public struct LexerError: Error, Equatable {
 
-  public let kind:  LexerErrorKind
-  public let start: SourceLocation
-  public let end:   SourceLocation
+  public let kind:     LexerErrorKind
+  public let location: SourceLocation
 
-  public init(_ kind: LexerErrorKind,
-              start:  SourceLocation,
-              end:    SourceLocation) {
+  public init(_ kind:   LexerErrorKind,
+              location: SourceLocation) {
 
     self.kind = kind
-    self.start = start
-    self.end = end
+    self.location = location
   }
 }
 
 extension LexerError: CustomStringConvertible {
   public var description: String {
-    return "\(self.start)-\(self.end): \(self.kind)"
+    return "\(self.location): \(self.kind)"
   }
 }

@@ -40,7 +40,7 @@ extension Lexer {
   internal mutating func string(prefix: StringPrefix,
                                 start:  SourceLocation) throws -> Token {
 
-    let scalars = try readString(prefix: prefix, start: start)
+    let scalars = try readString(prefix: prefix)
     let end = self.location
 
     if prefix.b {
@@ -51,7 +51,7 @@ extension Lexer {
           data.append(UInt8(char.value & 0xff))
         } else {
           // not very precise, 'self.readString' is better
-          throw self.error(.badByte(char), start: start)
+          throw self.error(.badByte(char), location: start)
         }
       }
 
@@ -63,13 +63,12 @@ extension Lexer {
     return self.token(kind, start: start, end: end)
   }
 
-  private mutating func readString(prefix: StringPrefix,
-                                   start:  SourceLocation) throws -> [UnicodeScalar] {
+  private mutating func readString(prefix: StringPrefix) throws -> [UnicodeScalar] {
 
     assert(self.peek == "\"" || self.peek == "'")
 
     guard let quote = self.peek else {
-      throw self.error(.eof, start: start)
+      throw self.error(.eof)
     }
 
     var quoteType = QuoteType.single
@@ -88,21 +87,21 @@ extension Lexer {
     var result = [UnicodeScalar]()
     while endQuoteCount != quoteType.quoteCount {
       guard let peek = self.peek else {
-        throw self.error(quoteType.nilPeekError, start: start)
+        throw self.error(quoteType.nilPeekError)
       }
 
       try self.checkValidByteIfNeeded(prefix, peek)
 
       switch peek {
       case "\\":
-        switch try self.readEscaped(prefix, quoteType, start: start) {
+        switch try self.readEscaped(prefix, quoteType) {
         case .escaped(let char):  result.append(char)
         case .escapedNewLine:     break
         case .notEscapeCharacter: result.append("\\")
         }
       default:
         if quoteType == .single && self.isNewLine(peek) {
-          throw self.error(.unfinishedShortString, start: start)
+          throw self.error(.unfinishedShortString)
         }
 
         result.append(peek)
@@ -139,8 +138,7 @@ extension Lexer {
   }
 
   private mutating func readEscaped(_ prefix: StringPrefix,
-                                    _ quoteType: QuoteType,
-                                    start:  SourceLocation) throws -> EscapeResult {
+                                    _ quoteType: QuoteType) throws -> EscapeResult {
     assert(self.peek == "\\")
 
     if prefix.r {
@@ -149,7 +147,7 @@ extension Lexer {
     }
 
     guard let escaped = self.peekNext else {
-      throw self.error(quoteType.nilPeekError, start: start)
+      throw self.error(quoteType.nilPeekError)
     }
 
     switch escaped {
@@ -211,7 +209,7 @@ extension Lexer {
 
     for _ in 0..<maxCount {
       guard let peek = self.peek else {
-        throw self.error(quoteType.nilPeekError, start: start)
+        throw self.error(quoteType.nilPeekError)
       }
 
       guard OctalNumber.isDigit(peek) else {
@@ -228,7 +226,6 @@ extension Lexer {
   private mutating func readHex(_ quoteType: QuoteType,
                                 count: Int) throws -> UnicodeScalar {
     let start = self.location
-
     self.advance() // backslash
     self.advance() // xuU
 
@@ -236,11 +233,11 @@ extension Lexer {
 
     for _ in 0..<count {
       guard let peek = self.peek else {
-        throw self.error(quoteType.nilPeekError, start: start)
+        throw self.error(quoteType.nilPeekError)
       }
 
       guard HexNumber.isDigit(peek) else {
-        throw self.error(.unicodeEscape, start: start)
+        throw self.error(.unicodeEscape)
       }
 
       self.advance()
@@ -257,11 +254,11 @@ extension Lexer {
 
     let string = String(scalars)
     guard let int = UInt32(string, radix: radix) else {
-      throw self.error(.unicodeEscape, start: start)
+      throw self.error(.unicodeEscape, location: start)
     }
 
     guard let result = UnicodeScalar(int) else {
-      throw self.error(.unicodeEscape, start: start)
+      throw self.error(.unicodeEscape, location: start)
     }
 
     return result
