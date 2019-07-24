@@ -103,7 +103,7 @@ class StringTests: XCTestCase, Common {
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .string(s))
       XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
-      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 61)) // py: 64
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 64))
     }
   }
 

@@ -4,16 +4,20 @@
 
 import Foundation
 
+// https://docs.python.org/3/reference/lexical_analysis.html
+
 public struct Lexer {
 
   /// Name of the input source.
   public let filename: String
 
   /// Text input to lex.
-  internal var source: String
+  /// Scalars because 'Python reads program text as Unicode code points' (quote
+  /// from [doc](https://docs.python.org/3/reference/lexical_analysis.html)\).
+  internal var source: UnicodeScalarView
 
   /// Current position in `self.source`
-  internal var sourceIndex: String.Index
+  internal var sourceIndex: UnicodeScalarIndex
 
   /// Is at begin of new line?
   internal var isAtBeginOfLine = true
@@ -40,20 +44,20 @@ public struct Lexer {
   /// Used when we have an actual file.
   public init(filename: String, source: String) {
     self.filename = filename
-    self.source = source
-    self.sourceIndex = source.startIndex
+    self.source = source.unicodeScalars
+    self.sourceIndex = self.source.startIndex
   }
 
   // MARK: - Traversal
 
   /// Current character. Use `self.advance` to consume.
-  internal var peek: Character? {
+  internal var peek: UnicodeScalar? {
     let atEnd = self.sourceIndex == self.source.endIndex
     return atEnd ? nil : self.source[self.sourceIndex]
   }
 
   /// Character after `self.peek`.
-  internal var peekNext: Character? {
+  internal var peekNext: UnicodeScalar? {
     let end = self.source.endIndex
     let index = self.source.index(self.sourceIndex, offsetBy: 1, limitedBy: end)
     return index.flatMap { $0 == end ? nil : self.source[$0] }
@@ -61,7 +65,7 @@ public struct Lexer {
 
   /// Consumes current character.
   @discardableResult
-  internal mutating func advance() -> Character? {
+  internal mutating func advance() -> UnicodeScalar? {
     guard self.sourceIndex < self.source.endIndex else {
       return nil
     }
@@ -71,6 +75,11 @@ public struct Lexer {
 
     if self.isNewLine(consumed) {
       self.location.advanceLine()
+
+      // if we have '\r\n' then consume '\n' as well
+      if consumed == CR && self.peek == LF {
+        self.source.formIndex(after: &self.sourceIndex)
+      }
     } else {
       self.location.advanceColumn()
     }
@@ -78,7 +87,7 @@ public struct Lexer {
     return self.peek
   }
 
-  internal mutating func advanceIf(_ expected: Character) -> Bool {
+  internal mutating func advanceIf(_ expected: UnicodeScalar) -> Bool {
     guard let next = self.peek else {
       return false
     }
@@ -121,8 +130,11 @@ public struct Lexer {
 
   // MARK: - Helpers
 
-  internal func isNewLine(_ c: Character?) -> Bool {
-    // there is also `c.isNewline`
-    return c == CR || c == LF || c == CRLF
+  internal func isWhitespace(_ c: UnicodeScalar) -> Bool {
+    return c == " " || c == "\t"
+  }
+
+  internal func isNewLine(_ c: UnicodeScalar?) -> Bool {
+    return c == CR || c == LF
   }
 }

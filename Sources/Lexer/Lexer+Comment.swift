@@ -6,9 +6,8 @@ import Foundation
 import Core
 
 // https://docs.python.org/3/reference/lexical_analysis.html#encoding-declarations
-// There is also https://www.python.org/dev/peps/pep-0263/ but it is for 2.3.
-// Regex is better there (less work for us), but I don't want to use it since
-// I don't know how it interacts with Python 3.6+.
+// https://www.python.org/dev/peps/pep-3120/
+// https://www.python.org/dev/peps/pep-0263/
 
 // swiftlint:disable:next force_try
 private let encodingRegex = try! NSRegularExpression(
@@ -37,7 +36,9 @@ extension Lexer {
 
   /// Do we have anything in line before '#'? -> nop
   /// Do we have encoding after '#' -> check if utf-8
-  private func checkForEncodingAndPossiblyThrow(_ commentIndex: String.Index) throws {
+  private func checkForEncodingAndPossiblyThrow(
+    _ commentIndex: UnicodeScalarIndex) throws {
+
     // if we are in 2nd line we should also check if 1st is also comment,
     // but it is not that simple because we can have whitespace before '#'
 
@@ -71,9 +72,10 @@ extension Lexer {
     return lower == "utf-8" || lower == "utf-8-"
   }
 
-  private func hasOnlyWhitespaceBefore(_ index: String.Index) -> Bool {
-    guard index != self.source.startIndex else { // fast path
-      return true
+  private func hasOnlyWhitespaceBefore(_ index: UnicodeScalarIndex) -> Bool {
+    let isFirstCharInSource = index == self.source.startIndex
+    guard !isFirstCharInSource else {
+      return true // fast path
     }
 
     var index = self.source.index(before: index)
@@ -91,11 +93,7 @@ extension Lexer {
       self.source.formIndex(before: &index)
     }
 
-    // index == self.source.startIndex
+    // we have: index == self.source.startIndex
     return true
-  }
-
-  private func isWhitespace(_ c: Character) -> Bool {
-    return c == " " || c == "\t"
   }
 }

@@ -35,7 +35,7 @@ internal protocol NumberBase {
   static var radix: Int { get }
 
   /// Does given character represent valid digit?
-  static func isDigit(_ c: Character) -> Bool
+  static func isDigit(_ c: UnicodeScalar) -> Bool
 }
 
 // MARK: - Binary
@@ -46,7 +46,7 @@ internal enum BinaryNumber: NumberBase {
 
   internal static var radix = 2
 
-  internal static func isDigit(_ c: Character) -> Bool {
+  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
     return c == "0" || c == "1"
   }
 }
@@ -59,7 +59,7 @@ internal enum OctalNumber: NumberBase {
 
   internal static var radix = 8
 
-  internal static func isDigit(_ c: Character) -> Bool {
+  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
     return "0" <= c && c <= "7"
   }
 }
@@ -72,7 +72,7 @@ internal enum DecimalNumber: NumberBase {
 
   internal static var radix = 10
 
-  internal static func isDigit(_ c: Character) -> Bool {
+  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
     return "0" <= c && c <= "9"
   }
 }
@@ -85,7 +85,7 @@ internal enum HexNumber: NumberBase {
 
   internal static var radix = 16
 
-  internal static func isDigit(_ c: Character) -> Bool {
+  internal static func isDigit(_ c: UnicodeScalar) -> Bool {
     return ("0" <= c && c <= "9")
         || ("a" <= c && c <= "f")
         || ("A" <= c && c <= "F")

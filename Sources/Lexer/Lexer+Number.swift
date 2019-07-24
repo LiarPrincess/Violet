@@ -9,7 +9,7 @@ import Core
 
 extension Lexer {
 
-  internal func isDecimalDigit(_ c: Character) -> Bool {
+  internal func isDecimalDigit(_ c: UnicodeScalar) -> Bool {
     return DecimalNumber.isDigit(c)
   }
 
@@ -64,7 +64,7 @@ extension Lexer {
     } while self.peek == "_"
 
     let string = self.source[startIndex..<self.sourceIndex]
-    let value = try self.parseInt(string, start: start, base: base)
+    let value = try self.parseInt(string, base: base, start: start)
     return self.token(.int(value), start: start)
   }
 
@@ -104,7 +104,8 @@ extension Lexer {
 
     let isInteger = self.sourceIndex == integerEnd
     if isInteger {
-      let value = try self.parseInt(string, start: start, base: DecimalNumber.self)
+      let base = DecimalNumber.self
+      let value = try self.parseInt(string, base: base, start: start)
       return self.token(.int(value), start: start)
     }
 
@@ -138,12 +139,12 @@ extension Lexer {
 
   // MARK: - Parse
 
-  private func parseInt<T: NumberBase>(_ string: Substring,
-                                       start: SourceLocation,
-                                       base: T.Type) throws -> PyInt {
+  private func parseInt<T: NumberBase>(_ scalars: UnicodeScalarView.SubSequence,
+                                       base: T.Type,
+                                       start: SourceLocation) throws -> PyInt {
 
-    let s = string.replacingOccurrences(of: "_", with: "") // smol me maybe
-    guard let value = PyInt(s, radix: base.radix) else {
+    let string = self.toNumberString(scalars)
+    guard let value = PyInt(string, radix: base.radix) else {
       // After we add proper ints:
       // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
       // throw self.error(kind, start: start)
@@ -153,14 +154,20 @@ extension Lexer {
     return value
   }
 
-  private func parseDouble(_ string: Substring,
+  private func parseDouble(_ scalars: UnicodeScalarView.SubSequence,
                            start: SourceLocation) throws -> Double {
 
-    let s = string.replacingOccurrences(of: "_", with: "") // smol me maybe
-    guard let value = Double(s) else {
-      throw self.error(.unableToParseDecimal(String(string)), start: start)
+    let string = self.toNumberString(scalars)
+    guard let value = Double(string) else {
+      throw self.error(.unableToParseDecimal(string), start: start)
     }
 
     return value
+  }
+
+  private func toNumberString(_ scalars: UnicodeScalarView.SubSequence) -> String {
+    // Not really sure if 'scalars.filter' should return
+    // 'UnicodeScalarView.SubSequence', it seems weird...
+    return String(scalars.filter { $0 != "_" }) // smol me maybe
   }
 }

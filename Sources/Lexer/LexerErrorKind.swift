@@ -16,8 +16,8 @@ public enum LexerErrorKind: Equatable {
   /// No matching outer block for dedent
   case dedent
 
-  /// Invalid characters in identifier
-  case identifier
+  /// Invalid character in identifier
+  case identifier(UnicodeScalar)
 
   /// EOL in single-quoted string
   case unfinishedShortString
@@ -26,17 +26,17 @@ public enum LexerErrorKind: Equatable {
   /// Unable to decode string escape sequence
   case unicodeEscape
   /// Bytes can only contain ASCII literal characters
-  case badByte(Character)
+  case badByte(UnicodeScalar)
 
   /// Digit is required after underscore
   case danglingIntegerUnderscore
   /// Character 'x' is not an valid integer digit
-  case invalidIntegerDigit(NumberType, Character)
+  case invalidIntegerDigit(NumberType, UnicodeScalar)
   /// Unable to parse integer from 'x'
   case unableToParseInteger(NumberType, String)
 
   /// Character 'x' is not an valid decimal digit
-  case invalidDecimalDigit(Character)
+  case invalidDecimalDigit(UnicodeScalar)
   /// Unable to parse integer from 'x'
   case unableToParseDecimal(String)
 
@@ -61,15 +61,16 @@ extension LexerErrorKind: CustomStringConvertible {
     case .dedent:
       return "Unindent does not match any outer indentation level"
 
-    case .identifier:
-      return "Invalid character in identifier"
+    case .identifier(let c):
+      return "Invalid character '\(c)' (unicode: \(c.debugDescription)) in identifier"
 
     case .unfinishedShortString:
       return "EOL while scanning string literal"
     case .unfinishedLongString:
       return "EOF while scanning triple-quoted string literal"
-    case .badByte:
-      return "Bytes can only contain ASCII literal characters"
+    case .badByte(let c):
+      return "Invalid character '\(c)' (value: \(c.value). " +
+             "Bytes can only contain ASCII literal characters"
     case .unicodeEscape:
       return "Unable to decode string escape sequence"
 

@@ -12,7 +12,7 @@ class IdentifierTests: XCTestCase, Common {
   // MARK: - String
 
   /// py: f"I know you I walked with you once upon a dream"
-  func test_prefixedString_shouldBeLexedAsString() {
+  func test_prefixedString_isString() {
     let s = "I know you I walked with you once upon a dream"
     var lexer = Lexer(string: "f" + self.shortQuote(s))
 
@@ -25,7 +25,7 @@ class IdentifierTests: XCTestCase, Common {
 
   // MARK: - Keywords
 
-  func test_allKeywords_shouldBeRecognized() {
+  func test_keywords() {
     for (keyword, value) in keywords {
       var lexer = Lexer(string: keyword)
 
@@ -40,7 +40,7 @@ class IdentifierTests: XCTestCase, Common {
   // MARK: - Identifiers
 
   /// py: iKnowYouTheGleamInYourEyesIsSoFamiliarAGleam
-  func test_identifier_simple_isValid() {
+  func test_identifier_simple() {
     let s = "iKnowYouTheGleamInYourEyesIsSoFamiliarAGleam"
     var lexer = Lexer(string: s)
 
@@ -52,7 +52,7 @@ class IdentifierTests: XCTestCase, Common {
   }
 
   /// py: _yetIKnowItsTrueThatVisionsAreSeldomAllTheySeem
-  func test_identifier_startingWithUnderscore_isValid() {
+  func test_identifier_startingWithUnderscore() {
     // use 'and' instead of 'yet' for prince version
     let s = "_yetIKnowItsTrueThatVisionsAreSeldomAllTheySeem"
     var lexer = Lexer(string: s)
@@ -65,7 +65,7 @@ class IdentifierTests: XCTestCase, Common {
   }
 
   /// py: 齀butIfIKnowYouIKnowWhatYoullDo
-  func test_identifier_startingWithCJK_isValid() {
+  func test_identifier_startingWithCJK() {
     let s = "齀butIfIKnowYouIKnowWhatYoullDo"
     var lexer = Lexer(string: s)
 
@@ -77,7 +77,7 @@ class IdentifierTests: XCTestCase, Common {
   }
 
   // py: youllLoveMeAtOnce齀TheWayYouDidOnceUponADream
-  func test_identifier_containingCJK_isValid() {
+  func test_identifier_containingCJK() {
     let s = "youllLoveMeAtOnce齀TheWayYouDidOnceUponADream"
     var lexer = Lexer(string: s)
 
@@ -89,29 +89,39 @@ class IdentifierTests: XCTestCase, Common {
   }
 
   /// py: 👸butIfIKnowYouIKnowWhatYoullDo
-  func test_identifier_startingWithEmoji_isNotValid() {
+  func test_identifier_startingWithEmoji_throws() {
     var lexer = Lexer(string: "👸butIfIKnowYouIKnowWhatYoullDo")
 
     if let error = self.error(&lexer) {
-      XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
+      XCTAssertEqual(error.kind,  LexerErrorKind.identifier("👸"))
       XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
       XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 1))
     }
   }
 
   // py: youll❤️MeAtOnceTheWayYouDidOnceUponADream
-  func test_identifier_containingEmoji_isNotValid() {
+  func test_identifier_containingEmoji_throws() {
     var lexer = Lexer(string: "youll❤️MeAtOnceTheWayYouDidOnceUponADream")
 
     if let error = self.error(&lexer) {
-      XCTAssertEqual(error.kind,  LexerErrorKind.identifier)
+      XCTAssertEqual(error.kind,  LexerErrorKind.identifier("❤")) // not the same!
       XCTAssertEqual(error.start, SourceLocation(line: 1, column: 5))
-      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 6))
+      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 6)) // py: 7
+    }
+  }
+
+  func test_identifier_singleCombiningCharacter_throws() {
+    var lexer = Lexer(string: "\u{301}")
+
+    if let error = self.error(&lexer) {
+      XCTAssertEqual(error.kind, LexerErrorKind.identifier("\u{301}"))
+      XCTAssertEqual(error.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(error.end,   SourceLocation(line: 1, column: 1))
     }
   }
 
   /// https://docs.python.org/3/reference/lexical_analysis.html#reserved-classes-of-identifiers
-  func test_identifier_fromReservedClass_isValid() {
+  func test_identifiers_fromReservedClass() {
     let reserved = ["_", "__x__", "__x"]
 
     for identifier in reserved {

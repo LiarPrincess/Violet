@@ -40,30 +40,31 @@ extension Lexer {
   internal mutating func string(prefix: StringPrefix,
                                 start:  SourceLocation) throws -> Token {
 
-    let string = try readString(prefix: prefix, start: start)
+    let scalars = try readString(prefix: prefix, start: start)
     let end = self.location
 
     if prefix.b {
       // 'self.readString', should find any incorrect input, but just in case:
-      var data = Data(capacity: string.count)
-      for c in string {
-        if let ascii = c.asciiValue {
-          data.append(ascii)
+      var data = Data(capacity: scalars.count)
+      for char in scalars {
+        if char.isASCII {
+          data.append(UInt8(char.value & 0xff))
         } else {
           // not very precise, 'self.readString' is better
-          throw self.error(.badByte(c), start: start)
+          throw self.error(.badByte(char), start: start)
         }
       }
 
       return self.token(.bytes(data), start: start, end: end)
     }
 
+    let string = String(scalars)
     let kind: TokenKind = prefix.f ? .formatString(string) : .string(string)
     return self.token(kind, start: start, end: end)
   }
 
   private mutating func readString(prefix: StringPrefix,
-                                   start:  SourceLocation) throws -> String {
+                                   start:  SourceLocation) throws -> [UnicodeScalar] {
 
     assert(self.peek == "\"" || self.peek == "'")
 
@@ -79,12 +80,12 @@ extension Lexer {
         self.advance()
         quoteType = .triple // quote -> quote -> quote -> (string)
       } else {
-        return "" // quote -> quote -> (whatever)
+        return [] // quote -> quote -> (whatever)
       }
     }
 
     // State: self.peek = 1st character of string
-    var result = ""
+    var result = [UnicodeScalar]()
     while endQuoteCount != quoteType.quoteCount {
       guard let peek = self.peek else {
         throw self.error(quoteType.nilPeekError, start: start)
@@ -110,15 +111,14 @@ extension Lexer {
       }
     }
 
-    /// quotes are ASCII, so we can do this:
     let withoutTrailingQuotes = result.dropLast(endQuoteCount)
-    return String(withoutTrailingQuotes)
+    return [UnicodeScalar](withoutTrailingQuotes)
   }
 
   // MARK: - Byte range
 
   private func checkValidByteIfNeeded(_ prefix: StringPrefix,
-                                      _ c: Character) throws {
+                                      _ c: UnicodeScalar) throws {
     if prefix.b && !c.isASCII {
       throw self.error(.badByte(c))
     }
@@ -127,7 +127,7 @@ extension Lexer {
   // MARK: - Escape
 
   private enum EscapeResult {
-    case escaped(Character)
+    case escaped(UnicodeScalar)
     case escapedNewLine
     case notEscapeCharacter
   }
@@ -189,13 +189,13 @@ extension Lexer {
     }
   }
 
-  private mutating func simpleEscaped(_ c: Character) -> EscapeResult {
+  private mutating func simpleEscaped(_ c: UnicodeScalar) -> EscapeResult {
     self.advance() // backslash
     self.advance() // escaped character
     return .escaped(c)
   }
 
-  private mutating func readOctal(_ quoteType: QuoteType) throws -> Character {
+  private mutating func readOctal(_ quoteType: QuoteType) throws -> UnicodeScalar {
     let start = self.location
     self.advance() // backslash
 
@@ -214,12 +214,12 @@ extension Lexer {
       self.advance()
     }
 
-    let string = self.source[startIndex..<self.sourceIndex]
-    return try self.getUnicodeCharacter(string, radix: 8, start: start)
+    let scalars = self.source[startIndex..<self.sourceIndex]
+    return try self.decodeScalar(scalars, radix: 8, start: start)
   }
 
   private mutating func readHex(_ quoteType: QuoteType,
-                                count: Int) throws -> Character {
+                                count: Int) throws -> UnicodeScalar {
     let start = self.location
 
     self.advance() // backslash
@@ -239,23 +239,24 @@ extension Lexer {
       self.advance()
     }
 
-    let string = self.source[startIndex..<self.sourceIndex]
-    return try self.getUnicodeCharacter(string, radix: 16, start: start)
+    let scalars = self.source[startIndex..<self.sourceIndex]
+    return try self.decodeScalar(scalars, radix: 16, start: start)
   }
 
   /// string: '123', radix: 10 -> Unicode character at 123
-  private func getUnicodeCharacter(_ string: Substring,
-                                   radix:    Int,
-                                   start:    SourceLocation) throws -> Character {
+  private func decodeScalar(_ scalars: UnicodeScalarView.SubSequence,
+                            radix:     Int,
+                            start:     SourceLocation) throws -> UnicodeScalar {
 
+    let string = String(scalars)
     guard let int = UInt32(string, radix: radix) else {
       throw self.error(.unicodeEscape, start: start)
     }
 
-    guard let scalar = UnicodeScalar(int) else {
+    guard let result = UnicodeScalar(int) else {
       throw self.error(.unicodeEscape, start: start)
     }
 
-    return Character(scalar)
+    return result
   }
 }

@@ -5,7 +5,7 @@
 public enum NotImplemented: Error {
   case encodingOtherThanUTF8(String)
   case unlimitedInteger
-  case stringEscape(Character) // e.g. print("\N{Em Dash}")
+  case stringEscape(UnicodeScalar) // e.g. print("\N{Em Dash}")
 
   /// This will never be implemented, because of Swift limitations.
   /// https://www.python.org/dev/peps/pep-0401/

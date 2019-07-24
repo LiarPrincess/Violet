@@ -21,7 +21,7 @@ internal struct StringPrefix {
 
   internal var isString: Bool { return !self.b }
 
-  internal mutating func update(_ c: Character) -> Bool {
+  internal mutating func update(_ c: UnicodeScalar) -> Bool {
     if !(self.b || self.u || self.f) && (c == "b" || c == "B") {
       self.b = true
       return true

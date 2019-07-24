@@ -14,6 +14,12 @@ private let tabSize = 8
 /// Used when indentation stack is empty.
 private let defaultIndent = 0
 
+private enum IndentCompare {
+  case equal
+  case greater
+  case less
+}
+
 internal struct IndentState {
 
   /// Start of each indent level.
@@ -81,12 +87,6 @@ extension Lexer {
         return column
       }
     }
-  }
-
-  private enum IndentCompare {
-    case equal
-    case greater
-    case less
   }
 
   private func compareWithCurrentIndent(_ indent: Int) -> IndentCompare {
