@@ -20,18 +20,22 @@ private let encodingMaxLine = startLine + 2
 
 extension Lexer {
 
-  internal mutating func comment() throws {
-    let line = self.location.line
-    let commentIndex = self.sourceIndex
+  internal mutating func comment() throws -> Token {
+    let start = self.location
+    let index = self.sourceIndex
 
     assert(self.peek == "#")
     while let p = self.peek, !self.isNewLine(p) {
       self.advance()
     }
 
-    if line < encodingMaxLine {
-      try self.checkForEncodingAndPossiblyThrow(commentIndex)
+    if start.line < encodingMaxLine {
+      try self.checkForEncodingAndPossiblyThrow(index)
     }
+
+    // We will include '#'
+    let value = String(self.source[index..<self.sourceIndex])
+    return self.token(.comment(value), start: start)
   }
 
   /// Do we have anything in line before '#'? -> nop
@@ -39,8 +43,8 @@ extension Lexer {
   private func checkForEncodingAndPossiblyThrow(
     _ commentIndex: UnicodeScalarIndex) throws {
 
-    // if we are in 2nd line we should also check if 1st is also comment,
-    // but it is not that simple because we can have whitespace before '#'
+    // If we are in 2nd line we should also check if 1st is also comment,
+    // but it is not that simple because we can have whitespace before '#'.
 
     guard self.hasOnlyWhitespaceBefore(commentIndex) else {
       return

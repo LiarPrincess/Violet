@@ -27,7 +27,6 @@ class IndentTests: XCTestCase, Common {
   /// Charming
   func test_emptyLine_doesNotIndent() {
     let s = "Prince\n    \nCharming"
-
     var lexer = Lexer(string: s)
 
     self.getIdentifier(&lexer, value: "Prince")
@@ -43,11 +42,11 @@ class IndentTests: XCTestCase, Common {
   /// Waifu
   func test_lineWithOnlyComment_doesNotIndent() {
     let s = "Gaston\n    #Best\nWaifu"
-
     var lexer = Lexer(string: s)
 
     self.getIdentifier(&lexer, value: "Gaston")
     self.getNewLine(&lexer)
+    self.getComment(&lexer, value: "#Best")
     self.getNewLine(&lexer)
     self.getIdentifier(&lexer, value: "Waifu")
     self.getEOF(&lexer)

@@ -32,42 +32,9 @@ extension Common {
     return "\(q)\(q)\(q)\(s)\(q)\(q)\(q)"
   }
 
-  // MARK: - Lex
+  // MARK: - Get token
 
-  @discardableResult
-  internal func getIdentifier(_ lexer: inout Lexer,
-                              value:   String,
-                              file:    StaticString = #file,
-                              line:    UInt         = #line) -> Token? {
-    if let token = self.getToken(&lexer, file: file, line: line) {
-      XCTAssertEqual(token.kind, .identifier(value), file: file, line: line)
-      return token
-    }
-    return nil
-  }
-
-  @discardableResult
-  internal func getNewLine(_ lexer: inout Lexer,
-                           file:    StaticString = #file,
-                           line:    UInt         = #line) -> Token? {
-    if let token = self.getToken(&lexer, file: file, line: line) {
-      XCTAssertEqual(token.kind, .newLine, file: file, line: line)
-      return token
-    }
-    return nil
-  }
-
-  @discardableResult
-  internal func getEOF(_ lexer: inout Lexer,
-                       file:    StaticString = #file,
-                       line:    UInt         = #line) -> Token? {
-    if let token = self.getToken(&lexer, file: file, line: line) {
-      XCTAssertEqual(token.kind, .eof, file: file, line: line)
-      return token
-    }
-    return nil
-  }
-
+  /// Use this if you just want to perform detailed tests on token.
   internal func getToken(_ lexer: inout Lexer,
                          file:    StaticString = #file,
                          line:    UInt         = #line) -> Token? {
@@ -78,6 +45,54 @@ extension Common {
       return nil
     }
   }
+
+  /// Use this if you just want to test that next token is identifier.
+  @discardableResult
+  internal func getIdentifier(_ lexer: inout Lexer,
+                              value: String,
+                              file:  StaticString = #file,
+                              line:  UInt = #line) -> Token? {
+    return self.getSpecificToken(&lexer, kind: .identifier(value), file: file, line: line)
+  }
+
+  /// Use this if you just want to test that next token is EOL.
+  @discardableResult
+  internal func getComment(_ lexer: inout Lexer,
+                           value: String,
+                           file:  StaticString = #file,
+                           line:  UInt = #line) -> Token? {
+    return self.getSpecificToken(&lexer, kind: .comment(value), file: file, line: line)
+  }
+
+  /// Use this if you just want to test that next token is EOL.
+  @discardableResult
+  internal func getNewLine(_ lexer: inout Lexer,
+                           file: StaticString = #file,
+                           line: UInt = #line) -> Token? {
+    return self.getSpecificToken(&lexer, kind: .newLine, file: file, line: line)
+  }
+
+  /// Use this if you just want to test that next token is EOF.
+  @discardableResult
+  internal func getEOF(_ lexer: inout Lexer,
+                       file: StaticString = #file,
+                       line: UInt = #line) -> Token? {
+    return self.getSpecificToken(&lexer, kind: .eof, file: file, line: line)
+  }
+
+  @discardableResult
+  private func getSpecificToken(_ lexer: inout Lexer,
+                                kind: TokenKind,
+                                file: StaticString = #file,
+                                line: UInt         = #line) -> Token? {
+    if let token = self.getToken(&lexer, file: file, line: line) {
+      XCTAssertEqual(token.kind, kind, file: file, line: line)
+      return token
+    }
+    return nil
+  }
+
+  // MARK: - Errors
 
   internal func error(_ lexer: inout Lexer,
                       file:    StaticString = #file,
@@ -108,6 +123,8 @@ extension Common {
       return nil
     }
   }
+
+  // MARK: - Encoding
 
   internal func XCTAssertEncoding(_ error: NotImplemented,
                                   _ expectedEncoding: String,

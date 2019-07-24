@@ -58,7 +58,7 @@ extension Lexer {
       case let c where self.isDecimalDigit(c):
         return try self.number()
       case "#":
-        try self.comment() // just consume it, nothing else
+        return try self.comment()
       case "'", "\"":
         return try self.string()
 

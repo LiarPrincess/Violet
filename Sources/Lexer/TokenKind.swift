@@ -26,6 +26,7 @@ public enum TokenKind: Equatable {
   case indent
   case dedent
   case newLine
+  case comment(String)
 
   /** ( */ case leftParen
   /** [ */ case leftSqb
@@ -104,6 +105,10 @@ extension TokenKind: CustomStringConvertible {
     case .indent:  return "indent"
     case .dedent:  return "dedent"
     case .newLine: return "newline"
+    case .comment(let s):
+      let maxCount = 20
+      let dotDotDot = s.count > maxCount ? "..." : ""
+      return "comment(\"\(s.prefix(maxCount - 3))\(dotDotDot)\")"
 
     case .leftParen:  return "("
     case .leftSqb:    return "["
