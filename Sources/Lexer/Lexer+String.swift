@@ -47,7 +47,7 @@ extension Lexer {
       // 'self.readString', should find any incorrect input, but just in case:
       var data = Data(capacity: scalars.count)
       for char in scalars {
-        if char.isASCII {
+        if self.isValidByte(char) {
           data.append(UInt8(char.value & 0xff))
         } else {
           // not very precise, 'self.readString' is better
@@ -119,9 +119,15 @@ extension Lexer {
 
   private func checkValidByteIfNeeded(_ prefix: StringPrefix,
                                       _ c: UnicodeScalar) throws {
-    if prefix.b && !c.isASCII {
+    if prefix.b && !self.isValidByte(c) {
       throw self.error(.badByte(c))
     }
+  }
+
+  /// Basically: 0 <= x < 256
+  /// https://docs.python.org/3/library/stdtypes.html#bytes-objects
+  private func isValidByte(_ c: UnicodeScalar) -> Bool {
+    return c.value < 256
   }
 
   // MARK: - Escape

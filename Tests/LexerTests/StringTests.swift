@@ -200,4 +200,39 @@ class StringTests: XCTestCase, Common {
       XCTAssertEqual(error.end,   SourceLocation(line: 3, column: 12))
     }
   }
+
+  // MARK: - Raw string
+
+  func test_rawString() {
+    let s = "r\"\\\\\\\\\""
+    var lexer = Lexer(string: s)
+
+    if let token = self.getToken(&lexer) {
+      XCTAssertEqual(token.kind, .string("\\\\\\\\"))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 7))
+    }
+  }
+
+  // MARK: - Bytes
+
+  func test_bytes() {
+    let rawData = (UInt8.min..<UInt8.max)
+    let s = rawData
+    .map { x -> String in
+      let hex = String(x, radix: 16, uppercase: false)
+      let pad = hex.count < 2 ? "0" : ""
+      return "\\x\(pad)\(hex)"
+    }
+    .joined()
+
+    var lexer = Lexer(string: "b" + self.shortQuote(s))
+
+    if let token = self.getToken(&lexer) {
+      let data = Data(rawData)
+      XCTAssertEqual(token.kind, .bytes(data))
+      XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token.end,   SourceLocation(line: 1, column: 1_023))
+    }
+  }
 }

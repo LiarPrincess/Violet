@@ -69,7 +69,7 @@ extension LexerErrorKind: CustomStringConvertible {
     case .unfinishedLongString:
       return "EOF while scanning triple-quoted string literal"
     case .badByte(let c):
-      return "Invalid character '\(c)' (value: \(c.value). " +
+      return "Invalid character '\(c)' (value: \(c.value)). " +
              "Bytes can only contain ASCII literal characters"
     case .unicodeEscape:
       return "Unable to decode string escape sequence"
