@@ -87,8 +87,8 @@ extension LexerErrorKind: CustomStringConvertible {
   }
 }
 
-/// Scalar -> U+005F.
-/// Then use this: https://unicode.org/cldr/utility/character.jsp?a=005f
+/// Scalar -> U+XXXX (for example U+005F). Then you can use it
+/// [here](https://unicode.org/cldr/utility/character.jsp?a=005f)\.
 private func unicode(_ c: UnicodeScalar) -> String {
   let hex = String(c.value, radix: 16, uppercase: true)
   let pad = String(repeating: "0", count: 4 - hex.count)

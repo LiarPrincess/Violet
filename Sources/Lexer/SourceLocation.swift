@@ -4,11 +4,15 @@
 
 public struct SourceLocation: Equatable {
 
+  /// Initial location.
   public static var start: SourceLocation {
     return SourceLocation(line: 1, column: 0)
   }
 
-  public private(set) var line:   Int
+  /// Line in file starting from 1.
+  public private(set) var line: Int
+
+  /// Column in line starting from 0.
   public private(set) var column: Int
 
   internal init(line: Int, column: Int) {
