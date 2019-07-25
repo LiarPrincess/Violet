@@ -10,7 +10,9 @@ let package = Package(
   products: [
     .library(name: "LibViolet", targets: ["Core", "Lexer"]),
     .executable(name: "Violet", targets: ["Main"]),
-    .executable(name: "PyTests", targets: ["PyTests"])
+    .executable(name: "PyTests", targets: ["PyTests"]),
+
+    .executable(name: "Elsa", targets: ["Elsa"]),
   ],
   dependencies: [
   ],
@@ -22,6 +24,9 @@ let package = Package(
     .testTarget(name: "LexerTests", dependencies: ["Core", "Lexer"]),
 
     .target(name: "Main", dependencies: ["Core", "Lexer"]),
+
+    // Utilities
+    .target(name: "Elsa"),
     .target(name: "PyTests", dependencies: ["Core", "Lexer"]),
   ]
 )
