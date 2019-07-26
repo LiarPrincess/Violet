@@ -4,74 +4,41 @@
 
 import Foundation
 
-internal struct Token: Equatable {
-  internal let kind: TokenKind
-  internal let location: SourceLocation
-}
-
-internal struct SourceLocation: Equatable, CustomStringConvertible {
-
-  public static var start: SourceLocation {
-    return SourceLocation(line: 1, column: 0)
-  }
-
-  internal private(set) var line: Int
-  internal private(set) var column: Int
-
-  fileprivate mutating func advanceLine() {
-    self.line += 1
-    self.column = 0
-  }
-
-  fileprivate mutating func advanceColumn() {
-    self.column += 1
-  }
-
-  internal var description: String {
-    return "\(self.line):\(self.column)"
-  }
-}
-
-internal enum TokenKind: Equatable {
-  case eof
-  case name(String)
-
-  case typedef
-  case `enum`
-  case `struct`
-  case equal
-  case or
-
-  case star
-  case option
-  case leftParen
-  case rightParen
-}
-
 private let keywords: [String:TokenKind] = [
-  "typedef": .typedef,
-  "enum":    .enum,
-  "struct":  .struct,
+  "alias":    .alias,
+  "enum":     .enum,
+  "indirect": .indirect,
+  "struct":   .struct,
+  "doc":      .doc
+]
+
+private let operators: [Character: TokenKind] = [
   "=": .equal,
   "|": .or,
   "*": .star,
   "?": .option,
+  ",": .comma,
   "(": .leftParen,
   ")": .rightParen
 ]
 
-// so we know when to finish lexing name
-private let singleCharKeywords = Set<Character>([
-  "=", "|", "*", "?", "(", ")"
-])
+// It should not contain any of the operators!
+private func isValidNameCharacter(_ c: Character) -> Bool {
+  return ("0" <= c && c <= "9")
+      || ("a" <= c && c <= "z")
+      || ("A" <= c && c <= "Z")
+      || c == "_"
+}
 
-internal struct Lexer {
+// MARK: - Lexer
+
+public struct Lexer {
 
   private var source: String
   private var sourceIndex: String.Index
   private var location = SourceLocation.start
 
-  internal init(source: String) {
+  public init(source: String) {
     self.source = source
     self.sourceIndex = source.startIndex
   }
@@ -104,87 +71,107 @@ internal struct Lexer {
     }
   }
 
-  // MARK: - Token creation
-
-  internal mutating func token(_ kind:   TokenKind,
-                               location: SourceLocation? = nil) -> Token {
-    return Token(kind: kind, location: location ?? self.location)
-  }
-
   // MARK: - Get token
 
-  internal mutating func getToken() -> Token {
+  // swiftlint:disable:next function_body_length cyclomatic_complexity
+  public mutating func getToken() -> Token {
     while true {
       guard let peek = self.peek else {
-        return self.token(.eof)
+        return Token(.eof, location: self.location)
       }
 
       let start = self.location
 
       switch peek {
-      case "*":
-        self.advance()
-        return self.token(.star, location: start)
-      case "?":
-        self.advance()
-        return self.token(.option, location: start)
-      case "(":
-        self.advance()
-        return self.token(.leftParen, location: start)
-      case ")":
-        self.advance()
-        return self.token(.rightParen, location: start)
-      case "-":
-        if self.peekNext == "-" {
-          self.comment() // consume, but do not produce token
-        } else {
-          self.unexpectedCharacter(peek)
-        }
-      case ",":
-        self.advance() // skip
-      case let c where singleCharKeywords.contains(c):
-        self.advance()
-        guard let kind = keywords[String(c)] else {
-          self.unexpectedCharacter(c) // not possible?
-        }
-        return self.token(kind, location: start)
       case let c where c.isWhitespace:
         while let p = self.peek, p.isWhitespace {
-          self.advance()
+          self.advance() // consume all whitespaces
         }
+
+      case "-":
+        if self.peekNext == "-" {
+          self.consumeComment() // consume, but do not produce token
+        } else {
+          self.fail("Character '-' is only permitted as part of the comment '--'.")
+        }
+
+      case "@":
+        self.advance() // @
+        let name = self.getName()
+        guard let keyword = keywords[name] else {
+          self.fail("Invalid keyword '@\(name)'.", location: start)
+        }
+        return Token(keyword, location: start)
+
+      case "\"":
+        let value = self.getString()
+        return Token(.string(value), location: start)
+
+      case let c where isValidNameCharacter(c):
+        let name = self.getName()
+        return Token(.name(name), location: start)
+
       default:
-        return self.keywordOrName()
+        if let op = operators[peek] {
+          self.advance() // op
+          return Token(op, location: start)
+        }
+
+        self.fail("Unexpected character '\(peek)'.")
       }
     }
   }
 
-  private mutating func comment() {
-    assert(self.peek == "-")
+  private mutating func consumeComment() {
     while let peek = self.peek, !peek.isNewline {
       self.advance()
     }
   }
 
-  private mutating func keywordOrName() -> Token {
+  private mutating func getName() -> String {
     let startIndex = self.sourceIndex
-    let startLocation = self.location
 
-    while let peek = self.peek, self.isKeywordChar(peek) {
+    while let peek = self.peek, isValidNameCharacter(peek) {
       self.advance()
     }
 
+    return String(self.source[startIndex..<self.sourceIndex])
+  }
+
+  private mutating func getString() -> String {
+    assert(self.peek == "\"")
+    self.advance() // "
+
+    let startLocation = self.location
+    let startIndex = self.sourceIndex
+
+    while let peek = self.peek, peek != "\"" {
+      self.advance()
+    }
+
+    guard let peek = self.peek, peek == "\"" else {
+      self.fail("Missing ending quotes for string starting at: '\(startLocation)'.")
+    }
+
     let value = String(self.source[startIndex..<self.sourceIndex])
-    let kind = keywords[value] ?? .name(value)
-    return self.token(kind, location: startLocation)
+    self.advance() // "
+    return value
   }
 
-  private func isKeywordChar(_ c: Character) -> Bool {
-    let isInvalid = c.isWhitespace || singleCharKeywords.contains(c) || c == ","
-    return !isInvalid
-  }
-
-  private func unexpectedCharacter(_ c: Character) -> Never {
-    print("Unexpedted character '\(c)' at \(self.location).")
+  private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
+    print("\(location ?? self.location):\(message)")
     exit(1)
+  }
+
+  /// Print all tokens up to eof.
+  public mutating func dumpTokens() {
+    while true {
+      let token = self.getToken()
+      print(token)
+
+      if token.kind == .eof {
+        return
+      }
+    }
   }
 }

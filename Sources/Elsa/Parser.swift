@@ -10,7 +10,7 @@ internal struct Parser {
   private var token: Token? /// peek, nil on eof
   private var location = SourceLocation.start
 
-  private var typedefs = [String:String]()
+  private var aliases = [String:String]()
 
   internal init(lexer: Lexer) {
     self.lexer = lexer
@@ -45,59 +45,71 @@ internal struct Parser {
 
     while let token = self.token {
       switch token.kind {
-      case .typedef:
-        self.typedef()
-      case .enum:
-        let value = self.enum()
+      case .alias:
+        self.alias()
+      case .enum, .indirect:
+        let value = self.enumDef()
         result.append(.enum(value))
+      case .struct:
+        let value = self.structDef()
+        result.append(.struct(value))
+
+      case .name(let value):
+        self.fail("'\(value)' is not a valid entity declaration (missing '@'?).")
       default:
-        print("Not implemented: \(token)")
-        // self.advance()
-        exit(1)
+        self.fail("Invalid token '\(token.kind)'.")
       }
     }
 
     return result
   }
 
-  private mutating func typedef() {
-    assert(self.token?.kind == .some(.typedef))
+  private mutating func alias() {
+    assert(self.token?.kind == .some(.alias))
     self.advance() // typedef
 
     let oldName = self.consumeNameOrFail()
     self.consumeOrFail(kind: .equal)
     let newName = self.consumeNameOrFail()
 
-    self.typedefs[oldName] = newName
+    self.aliases[oldName] = newName
   }
 
-  private mutating func `enum`() -> Enum {
-    assert(self.token?.kind == .some(.enum))
+  private mutating func enumDef() -> EnumDef {
+    assert(self.token?.kind == .some(.enum) || self.token?.kind == .some(.indirect))
+    let indirect = self.token?.kind == .some(.indirect)
     self.advance() // enum
 
     let name = self.consumeNameOrFail()
     self.consumeOrFail(kind: .equal)
 
-    var cases = [EnumCase]()
-    cases.append(self.enumCase())
+    var cases = [EnumCaseDef]()
+    cases.append(self.enumCaseDef())
 
     while let token = self.token, token.kind == .or {
       self.advance() // |
-      cases.append(self.enumCase())
+      cases.append(self.enumCaseDef())
     }
 
-    return Enum(name: name, cases: cases)
+    return EnumDef(name: name, cases: cases, indirect: indirect)
   }
 
-  private mutating func enumCase() -> EnumCase {
+  private mutating func enumCaseDef() -> EnumCaseDef {
     let name = self.consumeNameOrFail()
     let properties = self.properties()
-    return EnumCase(name: name, properties: properties)
+    let doc = self.getDoc()
+    return EnumCaseDef(name: name, properties: properties, doc: doc)
   }
 
-//  private mutating func `struct`() -> Struct {
-//
-//  }
+  private mutating func structDef() -> StructDef {
+    assert(self.token?.kind == .some(.struct))
+    self.advance() // struct
+
+    let name = self.consumeNameOrFail()
+    self.consumeOrFail(kind: .equal)
+    let properties = self.properties()
+    return StructDef(name: name, properties: properties)
+  }
 
   private mutating func properties() -> [Property] {
     guard self.token?.kind == .leftParen else {
@@ -105,11 +117,15 @@ internal struct Parser {
     }
 
     self.advance() // (
-
     var result = [Property]()
+
     while let token = self.token, token.kind != .rightParen {
       let property = self.property()
       result.append(property)
+
+      if self.token?.kind == .some(.comma) {
+        self.advance() // comma is optional
+      }
     }
 
     self.consumeOrFail(kind: .rightParen)
@@ -117,7 +133,7 @@ internal struct Parser {
   }
 
   private mutating func property() -> Property {
-    var kind = PropertyKind.default
+    var kind = PropertyKind.single
 
     let type = self.consumeNameOrFail()
     if self.consumeIfEqual(kind: .star) { kind = .many }
@@ -144,8 +160,7 @@ internal struct Parser {
     let token = self.tokenOrFail()
 
     guard token.kind == kind else {
-      print("\(self.location) Invalid token kind. Expected: '\(kind)', got: '\(token.kind)'.")
-      exit(1)
+      self.fail("Invalid token kind. Expected: '\(kind)', got: '\(token.kind)'.")
     }
 
     self.advance()
@@ -155,20 +170,39 @@ internal struct Parser {
     let token = self.tokenOrFail()
 
     guard case let TokenKind.name(value) = token.kind else {
-      print("\(self.location) Invalid token kind. Expected: 'name', got: '\(token.kind)'.")
-      exit(1)
+      self.fail("Invalid token kind. Expected: 'name', got: '\(token.kind)'.")
     }
 
     self.advance()
-    return self.typedefs[value] ?? value
+    return self.aliases[value] ?? value
+  }
+
+  private mutating func getDoc() -> String? {
+    guard let docToken = self.token, docToken.kind == .doc else {
+      return nil
+    }
+
+    self.advance() // doc
+    let token = self.tokenOrFail()
+
+    guard case let TokenKind.string(value) = token.kind else {
+      self.fail("Invalid token kind. Expected: 'string', got: '\(token.kind)'.")
+    }
+
+    self.advance() // value
+    return value
   }
 
   private mutating func tokenOrFail() -> Token {
     guard let token = self.token else {
-      print("Trying to use eof token.")
-      exit(1)
+      self.fail("Trying to use eof token.")
     }
 
     return token
+  }
+
+  private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
+    print("\(location ?? self.location): \(message)")
+    exit(1)
   }
 }

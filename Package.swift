@@ -8,7 +8,7 @@ let package = Package(
     .macOS(.v10_11)
   ],
   products: [
-    .library(name: "LibViolet", targets: ["Core", "Lexer"]),
+    .library(name: "LibViolet", targets: ["Core", "Lexer", "Parser"]),
     .executable(name: "Violet", targets: ["Main"]),
     .executable(name: "PyTests", targets: ["PyTests"]),
 
@@ -22,6 +22,9 @@ let package = Package(
 
     .target(name: "Lexer", dependencies: ["Core"]),
     .testTarget(name: "LexerTests", dependencies: ["Core", "Lexer"]),
+
+    .target(name: "Parser", dependencies: ["Core", "Lexer"]),
+    .testTarget(name: "ParserTests", dependencies: ["Core", "Lexer", "Parser"]),
 
     .target(name: "Main", dependencies: ["Core", "Lexer"]),
 

@@ -1,11 +1,14 @@
-typedef int = Int
-typedef identifier = String
-typedef string     = String
-typedef object   = Any
-typedef constant = Any
+@alias int = Int
+@alias identifier = String
+@alias string     = String
+@alias object   = Any
+@alias constant = Any
 
-typedef expr = Expression
-typedef stmt = Statement
+ -- less typing (also CPython used those and we are lazy)
+@alias expr = Expression
+@alias exprKind = ExpressionKind
+@alias stmt = Statement
+@alias loc = SourceLocation
 
 --enum top =
 --  Module(stmt* body, type_ignore *type_ignores)
@@ -49,72 +52,104 @@ typedef stmt = Statement
 --  -- col_offset is the byte offset in the utf8 string the parser uses
 --  attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
--- BoolOp() can use left & right?
---enum expr =
---    BoolOp(boolop op, expr* values)
+@struct expr = (exprKind kind, loc start, loc end)
+
+@indirect exprKind =
+    BoolOp(BooleanOperator op, expr a, expr b)
 --  | NamedExpr(expr target, expr value)
---  | BinOp(expr left, operator op, expr right)
---  | UnaryOp(unaryop op, expr operand)
+  | BinaryOp(BinaryOperator op, expr left, expr right)
+  | UnaryOp(UnaryOperator op, expr a)
 --  | Lambda(arguments args, expr body)
---  | IfExp(expr test, expr body, expr orelse)
---  | Dict(expr* keys, expr* values)
---  | Set(expr* elts)
---  | ListComp(expr elt, comprehension* generators)
---  | SetComp(expr elt, comprehension* generators)
---  | DictComp(expr key, expr value, comprehension* generators)
+  | IfExpression(expr test, expr body, expr orelse)
+--  | Dictionary(expr* keys, expr* values)
+  | Set(expr* elements)
+
+--  | ListComprehension(expr elt, comprehension* generators)
+--  | SetComprehension(expr elt, comprehension* generators)
+--  | DictionaryComprehension(expr key, expr value, comprehension* generators)
+
+  -- the grammar constrains where yield expressions can occur
 --  | GeneratorExp(expr elt, comprehension* generators)
---  -- the grammar constrains where yield expressions can occur
 --  | Await(expr value)
 --  | Yield(expr? value)
 --  | YieldFrom(expr value)
---  -- need sequences for compare to distinguish between
---  -- x < 4 < 3 and (x < 4) < 3
+
+  -- need sequences for compare to distinguish between
+  -- x < 4 < 3 and (x < 4) < 3
 --  | Compare(expr left, cmpop* ops, expr* comparators)
 --  | Call(expr func, expr* args, keyword* keywords)
 --  | FormattedValue(expr value, int? conversion, expr? format_spec)
 --  | JoinedStr(expr* values)
 --  | Constant(constant value, string? kind)
---
---  -- the following expression can appear in assignment context
---  | Attribute(expr value, identifier attr, expr_context ctx)
---  | Subscript(expr value, slice slice, expr_context ctx)
---  | Starred(expr value, expr_context ctx)
---  | Name(identifier id, expr_context ctx)
---  | List(expr* elts, expr_context ctx)
---  | Tuple(expr* elts, expr_context ctx)
 
---  -- col_offset is the byte offset in the utf8 string the parser uses
---  attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+  -- the following expression can appear in assignment context
+  | Attribute(identifier name, expr value) -- , expr_context ctx
+--  | Subscript(expr value, slice slice) -- , expr_context ctx
+  | Starred(expr value) -- , expr_context ctx
+  | Identifier(identifier id) -- , expr_context ctx
+  | List(expr* elements) -- , expr_context ctx
+  | Tuple(expr* elements) -- , expr_context ctx
 
---enum expr_context = Load | Store | Del | AugLoad | AugStore | Param
+-- enum expr_context = Load | Store | Del | AugLoad | AugStore | Param
 
 --enum slice = Slice(expr? lower, expr? upper, expr? step)
 -- | ExtSlice(slice* dims)
 -- | Index(expr value)
 
-enum boolop = And | Or
+@enum BooleanOperator =
+    And @doc "Logical `and` with short-circuit."
+  | Or  @doc "Logical `or` with short-circuit."
 
-enum operator = Add | Sub | Mult | MatMult | Div | Mod | Pow | LShift
-  | RShift | BitOr | BitXor | BitAnd | FloorDiv
+-- @doc "https://docs.python.org/3/reference/expressions.html#binary-arithmetic-operations"
+@enum BinaryOperator =
+  Add       @doc "Sum of its arguments.\n- Numbers added together.\n- Sequences are concatenated."
+  | Sub     @doc "Difference of its arguments."
+  | Mul     @doc "Product of its arguments.\n- Numbers multiplied together.\n- For integer and sequence repetition is performed."
+  | MatMult @doc "Intended to be used for matrix multiplication.\nNo builtin Python types implement this operator."
+  | Div     @doc "Quotient of their arguments.\nDivision of integers yields a float."
+  | Modulo  @doc "Remainder from the division of the first argument by the second."
+  | Pow     @doc "Left argument raised to the power of its right argument."
+  | LeftShift  @doc "Shift the first argument to the left by the number of bits\ngiven by the second argument."
+  | RightShift @doc "Shift the first argument to the right by the number of bits\ngiven by the second argument."
+  | BitOr      @doc "Bitwise (inclusive) OR of its arguments, which must be integers."
+  | BitXor     @doc "Bitwise XOR (exclusive OR) of its arguments, which must be integers."
+  | BitAnd     @doc "Bitwise AND of its arguments, which must be integers."
+  | FloorDiv   @doc "Quotient of their arguments.\nFloor division of integers results in an integer."
 
-enum unaryop = Invert | Not | UAdd | USub
+@enum UnaryOperator =
+  Invert  @doc "Bitwise inversion of its integer argument.\nOnly applies to integral numbers."
+  | Not   @doc "True if its argument is false, False otherwise."
+  | Plus  @doc "Unchanged argument."
+  | Minus @doc "Negation of its numeric argument."
 
-enum cmpop = Eq | NotEq | Lt | LtE | Gt | GtE | Is | IsNot | In | NotIn
+@enum ComparisonOperator =
+  Equal      @doc "Equality comparison."
+  | NotEqual @doc "Non equality comparison."
+  | Less           @doc "Order comparison."
+  | LessOrEqual    @doc "Order comparison."
+  | Greater        @doc "Order comparison."
+  | GreaterOrEqual @doc "Order comparison."
+  | Is    @doc "`x is y` is true if and only if x and y are the same object."
+  | IsNot @doc "`x is not y` returns the negation of `x is y`."
+  | In    @doc "`x in s` evaluates to True if x is a member of s, and False otherwise."
+  | NotIn @doc "`x not in s` returns the negation of `x in s`"
 
 -- comprehension = (expr target, expr iter, expr* ifs, int is_async)
 --
 -- excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
 -- attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
---
--- arguments = (arg* args, arg* posonlyargs, arg? vararg, arg* kwonlyargs,
--- expr* kw_defaults, arg? kwarg, expr* defaults)
---
--- arg = (identifier arg, expr? annotation, string? type_comment)
+
+-- arguments = (
+--   arg* args, arg* posonlyargs, arg? vararg, arg* kwonlyargs,
+--   expr* kw_defaults, arg? kwarg, expr* defaults
+-- )
+
+-- struct arg = (identifier arg, expr? annotation) -- , string? type_comment
 -- attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
---
--- -- keyword arguments supplied to call (NULL identifier for **kwargs)
--- keyword = (identifier? arg, expr value)
---
+
+-- keyword arguments supplied to call (NULL identifier for **kwargs)
+-- @struct keyword = (identifier? name, expr value)
+
 -- -- import name with optional 'as' alias.
 -- alias = (identifier name, identifier? asname)
 --

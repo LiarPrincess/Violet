@@ -2,14 +2,24 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
+// swiftlint:disable force_try
+
 import Foundation
 
-let dir = URL(fileURLWithPath: #file).deletingLastPathComponent()
-let astFile = dir.appendingPathComponent("ast.letitgo", isDirectory: false)
-let astSource = try! String(contentsOf: astFile, encoding: .utf8)
+let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
+let sourceFile = elsaDir.appendingPathComponent("ast.letitgo", isDirectory: false)
+let source = try! String(contentsOf: sourceFile, encoding: .utf8)
 
-var lexer = Lexer(source: astSource)
+let parserDir = elsaDir.deletingLastPathComponent().appendingPathComponent("Parser")
+let targetFile = parserDir.appendingPathComponent("AST.swift")
+
+freopen(targetFile.path, "w", stdout)
+defer { fclose(stdout) }
+
+var lexer = Lexer(source: source)
+//lexer.dumpTokens()
 var parser = Parser(lexer: lexer)
 let entities = parser.parse()
 
+emitHeader(sourceFile: sourceFile, command: "ast")
 emitCode(entities: entities)
