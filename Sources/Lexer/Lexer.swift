@@ -6,7 +6,7 @@ import Foundation
 
 // https://docs.python.org/3/reference/lexical_analysis.html
 
-public struct Lexer {
+public struct Lexer: LexerType {
 
   /// Name of the input source.
   public let filename: String
