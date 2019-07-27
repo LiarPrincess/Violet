@@ -6,6 +6,44 @@ import Foundation
 
 // https://docs.python.org/3/reference/lexical_analysis.html#identifiers
 
+internal let keywords: [String:TokenKind] = [
+  "and":      .and,
+  "as":       .as,
+  "assert":   .assert,
+  "async":    .async,
+  "await":    .await,
+  "break":    .break,
+  "class":    .class,
+  "continue": .continue,
+  "def":      .def,
+  "del":      .del,
+  "elif":     .elif,
+  "else":     .else,
+  "except":   .except,
+  "false":    .false,
+  "finally":  .finally,
+  "for":      .for,
+  "from":     .from,
+  "global":   .global,
+  "if":       .if,
+  "import":   .import,
+  "in":       .in,
+  "is":       .is,
+  "lambda":   .lambda,
+  "none":     .none,
+  "nonlocal": .nonlocal,
+  "not":      .not,
+  "or":       .or,
+  "pass":     .pass,
+  "raise":    .raise,
+  "return":   .return,
+  "true":     .true,
+  "try":      .try,
+  "while":    .while,
+  "with":     .with,
+  "yield":    .yield
+]
+
 extension Lexer {
 
   internal mutating func identifierOrString() throws -> Token {
@@ -40,7 +78,7 @@ extension Lexer {
     let identifier = String(scalars)
 
     if let keyword = keywords[identifier] {
-      return self.token(.keyword(keyword), start: start)
+      return self.token(keyword, start: start)
     } else {
       try self.verifyIdentifier(scalars, start: start)
       return self.token(.identifier(identifier), start: start)

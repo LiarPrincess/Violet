@@ -30,7 +30,7 @@ class IdentifierTests: XCTestCase, Common {
       var lexer = Lexer(string: keyword)
 
       if let token = self.getToken(&lexer) {
-        XCTAssertEqual(token.kind, .keyword(value), keyword)
+        XCTAssertEqual(token.kind,  value, keyword)
         XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0), keyword)
         XCTAssertEqual(token.end,   SourceLocation(line: 1, column: keyword.count), keyword)
       }
