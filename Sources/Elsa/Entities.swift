@@ -2,78 +2,80 @@
 // License, v. 2.0. If a copy of the MPL was not distributed with this
 // file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
-internal enum Entity {
+public enum Entity {
   case `enum`(EnumDef)
   case `struct`(StructDef)
 }
 
-internal struct StructDef {
-  internal let name: String
-  internal let properties: [Property]
+// MARK: - Struct
 
-  internal init(name: String, properties: [Property]) {
+public struct StructDef {
+  public let name: String
+  public let properties: [Property]
+
+  public init(name: String, properties: [Property]) {
     self.name = pascalCase(name)
     self.properties = properties
   }
 }
 
-internal struct EnumDef {
-  internal let name: String
-  internal let cases: [EnumCaseDef]
-  internal let indirect: Bool
+// MARK: - Enum
 
-  internal init(name: String, cases: [EnumCaseDef], indirect: Bool = false) {
+public struct EnumDef {
+  public let name: String
+  public let cases: [EnumCaseDef]
+  public let indirect: Bool
+
+  public init(name: String, cases: [EnumCaseDef], indirect: Bool = false) {
     self.name = pascalCase(name)
     self.cases = cases
     self.indirect = indirect
   }
 }
 
-internal struct EnumCaseDef {
-  internal let name: String
-  internal let properties: [Property]
-  internal let doc: String?
+public struct EnumCaseDef {
+  public let name: String
+  public let properties: [Property]
+  public let doc: String?
 
-  internal var escapedName: String { return escaped(self.name) }
+  public var escapedName: String { return escaped(self.name) }
 
-  internal init(name: String, properties: [Property], doc: String?) {
+  public init(name: String, properties: [Property], doc: String?) {
     self.name = camelCase(name)
     self.properties = properties
     self.doc = doc?.replacingOccurrences(of: "\\n", with: "\n")
   }
 }
 
-internal enum PropertyKind {
+// MARK: - Property
+
+public enum PropertyKind {
   case single
   case many
   case optional
 }
 
-internal struct Property {
-  internal let name: String
-  internal let type: String
-  internal let kind: PropertyKind
+public struct Property {
+  public let name: String?
+  public let type: String
+  public let kind: PropertyKind
 
-  internal init(name: String, type baseType: String, kind: PropertyKind) {
-    self.name = camelCase(name)
-    self.type = Property.getType(baseType: baseType, kind: kind)
+  public init(name: String?, type baseType: String, kind: PropertyKind) {
+    self.name = name.map { camelCase($0) }
+    self.type = getType(baseType: baseType, kind: kind)
     self.kind = kind
-  }
-
-  internal var nameColonType: String {
-    return "\(self.name): \(self.type)"
-  }
-
-  private static func getType(baseType: String, kind: PropertyKind) -> String {
-    switch kind {
-    case .single:   return baseType
-    case .many:     return "[" + baseType + "]"
-    case .optional: return baseType + "?"
-    }
   }
 }
 
-// MARK: - Processing
+// MARK: - Helpers
+
+private func getType(baseType: String, kind: PropertyKind) -> String {
+  switch kind {
+  case .single:   return baseType
+  case .many:     return "[" + baseType + "]"
+  case .optional: return baseType + "?"
+  }
+}
 
 private func pascalCase(_ s: String) -> String {
   let first = s.first?.uppercased() ?? ""

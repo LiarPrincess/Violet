@@ -6,7 +6,7 @@
 // There is no limit for the length of integer literals apart
 // from what can be stored in available memory.
 
-public struct PyInt: Equatable {
+public struct PyInt: Equatable, Hashable {
 
   // Range: <-Int64.max, Int64.max> due to '-' being unary operator.
   public static let min = PyInt(-Int64.max)

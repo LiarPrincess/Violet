@@ -160,7 +160,7 @@ public struct Lexer {
 
   private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
     print("\(location ?? self.location):\(message)")
-    exit(1)
+    exit(EXIT_FAILURE)
   }
 
   /// Print all tokens up to eof.

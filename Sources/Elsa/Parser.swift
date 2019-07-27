@@ -23,8 +23,7 @@ internal struct Parser {
   private mutating func advance() -> Token? {
     // should not happen if we wrote everything else correctly
     if self.token == nil {
-      print("Trying to advance past eof.")
-      exit(1)
+      self.fail("Trying to advance past eof.")
     }
 
     self.lexNextToken()
@@ -124,7 +123,7 @@ internal struct Parser {
       result.append(property)
 
       if self.token?.kind == .some(.comma) {
-        self.advance() // comma is optional
+        self.advance() // comma is optional, but it looks better with it!
       }
     }
 
@@ -138,7 +137,14 @@ internal struct Parser {
     let type = self.consumeNameOrFail()
     if self.consumeIfEqual(kind: .star) { kind = .many }
     if self.consumeIfEqual(kind: .option) { kind = .optional }
-    let name = self.consumeNameOrFail()
+
+    var name: String? = nil
+    if let token = self.token {
+      switch token.kind {
+      case .name: name = self.consumeNameOrFail()
+      default: break
+      }
+    }
 
     return Property(name: name, type: type, kind: kind)
   }
@@ -169,7 +175,7 @@ internal struct Parser {
   private mutating func consumeNameOrFail() -> String {
     let token = self.tokenOrFail()
 
-    guard case let TokenKind.name(value) = token.kind else {
+    guard case let .name(value) = token.kind else {
       self.fail("Invalid token kind. Expected: 'name', got: '\(token.kind)'.")
     }
 
@@ -185,7 +191,7 @@ internal struct Parser {
     self.advance() // doc
     let token = self.tokenOrFail()
 
-    guard case let TokenKind.string(value) = token.kind else {
+    guard case let .string(value) = token.kind else {
       self.fail("Invalid token kind. Expected: 'string', got: '\(token.kind)'.")
     }
 
@@ -203,6 +209,6 @@ internal struct Parser {
 
   private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
     print("\(location ?? self.location): \(message)")
-    exit(1)
+    exit(EXIT_FAILURE)
   }
 }

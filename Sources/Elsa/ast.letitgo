@@ -1,4 +1,4 @@
-@alias int = Int
+@alias int = PyInt
 @alias identifier = String
 @alias string     = String
 @alias object   = Any
@@ -52,55 +52,70 @@
 --  -- col_offset is the byte offset in the utf8 string the parser uses
 --  attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
+-- @doc "https://docs.python.org/3/reference/expressions.html"
 @struct expr = (exprKind kind, loc start, loc end)
 
+-- @doc "https://docs.python.org/3/reference/expressions.html"
 @indirect exprKind =
-    BoolOp(BooleanOperator op, expr a, expr b)
---  | NamedExpr(expr target, expr value)
-  | BinaryOp(BinaryOperator op, expr left, expr right)
-  | UnaryOp(UnaryOperator op, expr a)
---  | Lambda(arguments args, expr body)
-  | IfExpression(expr test, expr body, expr orelse)
---  | Dictionary(expr* keys, expr* values)
-  | Set(expr* elements)
-
---  | ListComprehension(expr elt, comprehension* generators)
---  | SetComprehension(expr elt, comprehension* generators)
---  | DictionaryComprehension(expr key, expr value, comprehension* generators)
-
+-- Base
+    True
+  | False
+  | None
+  | Ellipsis
+-- Literals
+  | Identifier(String)
+  | String(StringGroup)
+  | Int(PyInt)
+  | Float(Double)
+  | Complex(Double real, Double imag)
+  | Bytes(Data)
+-- Operators
+  | UnaryOp(UnaryOperator, expr right) @doc "Operation with single operand."
+  | BinaryOp(BinaryOperator, expr left, expr right) @doc "Operation with 2 operands."
+  | BoolOp(BooleanOperator, expr left, expr right) @doc "Operation with logical values as operands.
+Returns last evaluated argument (even if it's not True or False).
+- Note:\nFollowing values are interpreted as false:\n- False\n- None\n- numeric zero\n- empty strings\n- empty containers"
+  -- need sequence to distinguish between: x < 4 < 3 and (x < 4) < 3
+  | Compare(expr left, ComparisonElement* elements)
+-- Collections
+  | Tuple(expr* elements) @doc "Values separated by commas between parentheses: (a,b)."
+  | List(expr* elements) @doc "List of comma-separated values between square brackets: [a,b]."
+  --  | Dictionary(expr* keys, expr* values) @doc "Set of `key: value` pairs between braces: {a: b}. Keys are unique."
+  | Set(expr* elements) @doc "List of comma-separated values between braces: {a}. Unordered with no duplicates."
+-- Comprehensions
+  --  | ListComprehension(expr elt, comprehension* generators)
+  --  | SetComprehension(expr elt, comprehension* generators)
+  --  | DictionaryComprehension(expr key, expr value, comprehension* generators)
+-- Generators/coroutines
   -- the grammar constrains where yield expressions can occur
---  | GeneratorExp(expr elt, comprehension* generators)
---  | Await(expr value)
---  | Yield(expr? value)
---  | YieldFrom(expr value)
+  --  | GeneratorExp(expr elt, comprehension* generators)
+  | Await(expr value)
+  | Yield(expr? value)
+  | YieldFrom(expr value)
 
-  -- need sequences for compare to distinguish between
-  -- x < 4 < 3 and (x < 4) < 3
---  | Compare(expr left, cmpop* ops, expr* comparators)
---  | Call(expr func, expr* args, keyword* keywords)
---  | FormattedValue(expr value, int? conversion, expr? format_spec)
---  | JoinedStr(expr* values)
---  | Constant(constant value, string? kind)
+  --  | NamedExpr(expr target, expr value)
+  --  | Lambda(arguments args, expr body)
+  --  | IfExpression(expr test, expr body, expr orelse)
+
+  --  | Call(expr func, expr* args, keyword* keywords)
+  --  | FormattedValue(expr value, int? conversion, expr? format_spec)
+  --  | Constant(constant value, string? kind)
 
   -- the following expression can appear in assignment context
-  | Attribute(identifier name, expr value) -- , expr_context ctx
---  | Subscript(expr value, slice slice) -- , expr_context ctx
-  | Starred(expr value) -- , expr_context ctx
-  | Identifier(identifier id) -- , expr_context ctx
-  | List(expr* elements) -- , expr_context ctx
-  | Tuple(expr* elements) -- , expr_context ctx
+  --  | Attribute(identifier name, expr value) -- , expr_context ctx
+  --  | Subscript(expr value, slice slice) -- , expr_context ctx
+  | Starred(expr value)
 
--- enum expr_context = Load | Store | Del | AugLoad | AugStore | Param
-
---enum slice = Slice(expr? lower, expr? upper, expr? step)
--- | ExtSlice(slice* dims)
--- | Index(expr value)
+@enum UnaryOperator =
+  Invert  @doc "Bitwise inversion of its integer argument.\nOnly applies to integral numbers."
+  | Not   @doc "True if its argument is false, False otherwise."
+  | Plus  @doc "Unchanged argument."
+  | Minus @doc "Negation of its numeric argument."
 
 @enum BooleanOperator =
     And @doc "Logical `and` with short-circuit."
   | Or  @doc "Logical `or` with short-circuit."
 
--- @doc "https://docs.python.org/3/reference/expressions.html#binary-arithmetic-operations"
 @enum BinaryOperator =
   Add       @doc "Sum of its arguments.\n- Numbers added together.\n- Sequences are concatenated."
   | Sub     @doc "Difference of its arguments."
@@ -116,26 +131,42 @@
   | BitAnd     @doc "Bitwise AND of its arguments, which must be integers."
   | FloorDiv   @doc "Quotient of their arguments.\nFloor division of integers results in an integer."
 
-@enum UnaryOperator =
-  Invert  @doc "Bitwise inversion of its integer argument.\nOnly applies to integral numbers."
-  | Not   @doc "True if its argument is false, False otherwise."
-  | Plus  @doc "Unchanged argument."
-  | Minus @doc "Negation of its numeric argument."
+@struct ComparisonElement = (
+  ComparisonOperator op,
+  expr right
+)
 
 @enum ComparisonOperator =
   Equal      @doc "Equality comparison."
   | NotEqual @doc "Non equality comparison."
-  | Less           @doc "Order comparison."
-  | LessOrEqual    @doc "Order comparison."
-  | Greater        @doc "Order comparison."
-  | GreaterOrEqual @doc "Order comparison."
+  | Less         @doc "Order comparison."
+  | LessEqual    @doc "Order comparison."
+  | Greater      @doc "Order comparison."
+  | GreaterEqual @doc "Order comparison."
   | Is    @doc "`x is y` is true if and only if x and y are the same object."
   | IsNot @doc "`x is not y` returns the negation of `x is y`."
   | In    @doc "`x in s` evaluates to True if x is a member of s, and False otherwise."
   | NotIn @doc "`x not in s` returns the negation of `x in s`"
 
+-- Based on RustPython.
+-- CPython uses 'JoinedStr(expr* values)', but we know that values are strings.
+@enum StringGroup =
+    String(String)
+  | FormattedValue(expr value, ConversionFlag? conversion, String spec) -- FormattedValue(expr value, int? conversion, expr? format_spec)
+  | JoinedString(StringGroup*) -- JoinedStr(expr* values)
+
+-- @doc Transforms a value prior to formatting it.
+@enum ConversionFlag =
+    Str   @doc "Converts by calling `str(<value>)`."
+  | Ascii @doc "Converts by calling `ascii(<value>)`."
+  | Repr  @doc "Converts by calling `repr(<value>)`."
+
+-- @enum slice = Slice(expr? lower, expr? upper, expr? step)
+--  | ExtSlice(slice* dims)
+--  | Index(expr value)
+
 -- comprehension = (expr target, expr iter, expr* ifs, int is_async)
---
+
 -- excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
 -- attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 

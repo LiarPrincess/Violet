@@ -7,7 +7,7 @@ import Core
 
 // Based on 'Grammar/Tokens' from CPython.
 
-public enum TokenKind: Equatable {
+public enum TokenKind: Equatable, Hashable {
 
   case eof
 
