@@ -67,7 +67,7 @@ public indirect enum ExpressionKind: Equatable {
   case yieldFrom(Expression)
   case lambda(args: Arguments, body: Expression)
   case namedExpr(target: Expression, value: Expression)
-  case ifExpression(test: Expression, body: Expression, orelse: Expression)
+  case ifExpression(test: Expression, body: Expression, orElse: Expression)
   case starred(value: Expression)
 }
 

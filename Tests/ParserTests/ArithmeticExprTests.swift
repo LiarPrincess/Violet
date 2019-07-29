@@ -227,7 +227,7 @@ class ArithmeticExprTests: XCTestCase, Common {
   // MARK: - Precedence
 
   /// 4.2 * -3.1 = 4.2 * (-3.1)
-  func test_minus_haveHigherPrecedence_thanMul() {
+  func test_minus_hasHigherPrecedence_thanMul() {
     var parser = self.parser(
       self.token(.float(4.2), start: self.loc0, end: self.loc1),
       self.token(.star,       start: self.loc2, end: self.loc3),
@@ -249,7 +249,7 @@ class ArithmeticExprTests: XCTestCase, Common {
   }
 
   /// 4.2 + 3.1 * 2.0 = 4.2 + (3.1 * 2.0)
-  func test_mul_haveHigherPrecedence_thanAdd() {
+  func test_mul_hasHigherPrecedence_thanAdd() {
     var parser = self.parser(
       self.token(.float(4.2), start: self.loc0, end: self.loc1),
       self.token(.plus,       start: self.loc2, end: self.loc3),

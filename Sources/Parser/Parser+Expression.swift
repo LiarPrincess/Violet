@@ -11,7 +11,7 @@ import Lexer
 extension Parser {
 
   internal mutating func expression() throws -> Expression {
-    return try self.expr()
+    return try self.orTest()
   }
 
   private func expression(_ kind: ExpressionKind,
@@ -65,7 +65,7 @@ extension Parser {
     try self.advance() // else
     let right = try self.test()
 
-    let kind = ExpressionKind.ifExpression(test: test, body: left, orelse: right)
+    let kind = ExpressionKind.ifExpression(test: test, body: left, orElse: right)
     return Expression(kind: kind, start: left.start, end: right.end)
   }
 
@@ -133,7 +133,7 @@ extension Parser {
     while self.peek.kind == .or {
       try self.advance() // or
 
-      let right = try self.notTest()
+      let right = try self.andTest()
       let kind = ExpressionKind.boolOp(.or, left: left, right: right)
       left = self.expression(kind, start: left.start, end: right.end)
     }
