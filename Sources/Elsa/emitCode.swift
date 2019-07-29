@@ -7,7 +7,7 @@
 
 // TODO: (Elsa) _ in init
 // TODO: (Elsa) @str
-// TODO: To class and line() write() (as in slip)
+// TODO: (Elsa.emit) To class and line() write() (as in slip)
 
 internal func emitCode(entities: [Entity]) {
   print("import Foundation")
@@ -15,6 +15,7 @@ internal func emitCode(entities: [Entity]) {
   print("import Lexer")
   print()
 
+  print("// swiftlint:disable line_length")
   print("// swiftlint:disable trailing_newline")
   print()
 

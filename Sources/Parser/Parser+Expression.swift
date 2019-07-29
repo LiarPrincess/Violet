@@ -20,6 +20,110 @@ extension Parser {
     return Expression(kind: kind, start: start, end: end)
   }
 
+  internal mutating func varargslist() throws -> Arguments {
+    throw self.unimplemented()
+  }
+
+  /// namedexpr_test: test [':=' test]
+  private mutating func namedexpr_test() throws -> Expression {
+    let left = try self.test()
+
+    if self.peek.kind == .colonEqual {
+      try self.advance() // :=
+      let right = try self.test()
+      let kind = ExpressionKind.namedExpr(target: left, value: right)
+      return Expression(kind: kind, start: left.start, end: right.end)
+    }
+
+    return left
+  }
+
+  // MARK: - Test
+
+  /// test: or_test ['if' or_test 'else' test] | lambdef
+  internal mutating func test() throws -> Expression {
+    // we will start from lambdef, becuse it is simpler
+
+    if let lambda = try self.lambDef_orNil() {
+      return lambda
+    }
+
+    let left = try self.orTest()
+
+    // is this a simple form? if not then just return
+    guard self.peek.kind == .if else {
+      return left
+    }
+
+    try self.advance() // if
+    let test = try self.orTest()
+
+    guard self.peek.kind == .else else {
+      throw self.failUnexpectedToken(expected: .else)
+    }
+
+    try self.advance() // else
+    let right = try self.test()
+
+    let kind = ExpressionKind.ifExpression(test: test, body: left, orelse: right)
+    return Expression(kind: kind, start: left.start, end: right.end)
+  }
+
+  /// test_nocond: or_test | lambdef_nocond
+  private mutating func test_noCond() throws -> Expression {
+    // we will start from lambdef_nocond, becuse it is simpler
+
+    if let lambda = try self.lambDef_noCond_orNil() {
+      return lambda
+    }
+
+    return try self.orTest()
+  }
+
+  // MARK: - Lambda
+
+  /// lambdef: 'lambda' [varargslist] ':' test
+  /// 'Or nil' means that we terminate (without changing current parser state)
+  /// if we can't parse according to that rule.
+  private mutating func lambDef_orNil() throws -> Expression? {
+    guard self.peek.kind == .lambda else {
+      return nil
+    }
+
+    let start = self.peek.start
+    try self.advance() // lambda
+    let args = try self.varargslist()
+
+    guard self.consumeIf(.colon) else {
+      throw self.failUnexpectedToken(expected: .colon)
+    }
+
+    let body = try self.test()
+    let kind = ExpressionKind.lambda(args: args, body: body)
+    return Expression(kind: kind, start: start, end: body.end)
+  }
+
+  /// lambdef_nocond: 'lambda' [varargslist] ':' test_nocond
+  /// 'Or nil' means that we terminate (without changing current parser state)
+  /// if we can't parse according to that rule.
+  private mutating func lambDef_noCond_orNil() throws -> Expression? {
+    guard self.peek.kind == .lambda else {
+      return nil
+    }
+
+    let start = self.peek.start
+    try self.advance() // lambda
+    let args = try self.varargslist()
+
+    guard self.consumeIf(.colon) else {
+      throw self.failUnexpectedToken(expected: .colon)
+    }
+
+    let body = try self.test_noCond()
+    let kind = ExpressionKind.lambda(args: args, body: body)
+    return Expression(kind: kind, start: start, end: body.end)
+  }
+
   // MARK: - Or test
 
   /// or_test: and_test ('or' and_test)*
@@ -369,7 +473,9 @@ extension Parser {
   // MARK: - Trailer
 
   /// trailer: '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME
-  private mutating func trailer() throws -> Expression {
+  /// 'Or nil' means that we terminate (without changing current parser state)
+  /// if we can't parse according to that rule.
+  private mutating func trailer_orNil() throws -> Expression? {
     let token = self.peek
 
     switch token.kind {
@@ -393,7 +499,7 @@ extension Parser {
       }
 
     default:
-      throw self.failUnexpectedToken(expected: .noIdea)
+      return nil
     }
   }
 }

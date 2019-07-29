@@ -9,12 +9,17 @@ import Foundation
 import Core
 import Lexer
 
+// swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 
+/// https://docs.python.org/3/reference/expressions.html
 public struct Expression: Equatable {
 
+  /// Type of the expression.
   public let kind: ExpressionKind
+  /// Start location in the source code.
   public let start: SourceLocation
+  /// End location in the source code.
   public let end: SourceLocation
 
   public init(kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
@@ -24,6 +29,7 @@ public struct Expression: Equatable {
   }
 }
 
+/// https://docs.python.org/3/reference/expressions.html
 public indirect enum ExpressionKind: Equatable {
   case `true`
   case `false`
@@ -50,7 +56,7 @@ public indirect enum ExpressionKind: Equatable {
   /// - empty containers
   case boolOp(BooleanOperator, left: Expression, right: Expression)
   case compare(left: Expression, elements: [ComparisonElement])
-  /// Values separated by commas between parentheses: (a,b).
+  /// Values separated by commas (sometimes between parentheses): (a,b).
   case tuple(elements: [Expression])
   /// List of comma-separated values between square brackets: [a,b].
   case list(elements: [Expression])
@@ -59,6 +65,9 @@ public indirect enum ExpressionKind: Equatable {
   case await(value: Expression)
   case yield(value: Expression?)
   case yieldFrom(value: Expression)
+  case lambda(args: Arguments, body: Expression)
+  case namedExpr(target: Expression, value: Expression)
+  case ifExpression(test: Expression, body: Expression, orelse: Expression)
   case starred(value: Expression)
 }
 
@@ -156,6 +165,7 @@ public enum ComparisonOperator: Equatable {
 public enum StringGroup: Equatable {
   case string(String)
   case formattedValue(value: Expression, conversion: ConversionFlag?, spec: String)
+  /// Transforms a value prior to formatting it.
   case joinedString([StringGroup])
 }
 
@@ -166,5 +176,66 @@ public enum ConversionFlag: Equatable {
   case ascii
   /// Converts by calling `repr(<value>)`.
   case repr
+}
+
+/// The arguments for a function.
+public struct Arguments: Equatable {
+
+  /// Function positional arguments.
+  public let args: [Arg]
+  /// Default values for positional arguments.
+  /// If there are fewer defaults, they correspond to the last n arguments.
+  /// - Important: The default value is evaluated only **once**.
+  public let defaults: [Expression]
+  /// Non-keyworded variable length arguments.
+  /// By convention called `*args`.
+  public let vararg: Vararg
+  /// Parameters which occur after the '*args'.
+  /// They can only be used as keywords rather than positional arguments.
+  /// CPython `kwonlyargs`.
+  public let kwOnlyArgs: [Arg]
+  /// Default values for keyword-only arguments.
+  /// If there are fewer defaults, they correspond to the last n arguments.
+  /// - Important: The default value is evaluated only **once**.
+  /// CPython `kw_defaults`
+  public let kwOnlyDefaults: [Expression]
+  /// Keyworded (named) variable length arguments.
+  /// By convention called `**kwargs`.
+  public let kwarg: Vararg
+
+  public init(args: [Arg], defaults: [Expression], vararg: Vararg, kwOnlyArgs: [Arg], kwOnlyDefaults: [Expression], kwarg: Vararg) {
+    self.args = args
+    self.defaults = defaults
+    self.vararg = vararg
+    self.kwOnlyArgs = kwOnlyArgs
+    self.kwOnlyDefaults = kwOnlyDefaults
+    self.kwarg = kwarg
+  }
+}
+
+public struct Arg: Equatable {
+
+  /// Argument name.
+  public let name: String
+  /// Python expression evaluated at compile time.
+  /// Not used during runtime, can be used by third party libraries. (PEP 3107)
+  public let annotation: Expression?
+  /// Start location in the source code.
+  public let start: SourceLocation
+  /// End location in the source code.
+  public let end: SourceLocation
+
+  public init(name: String, annotation: Expression?, start: SourceLocation, end: SourceLocation) {
+    self.name = name
+    self.annotation = annotation
+    self.start = start
+    self.end = end
+  }
+}
+
+public enum Vararg: Equatable {
+  case none
+  case anonymous
+  case named(Arg)
 }
 

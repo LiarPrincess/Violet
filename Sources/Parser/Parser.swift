@@ -9,11 +9,11 @@ public struct Parser {
   /// Token source.
   internal var lexer: LexerType
 
-  /// Current token. /// Nil if EOF.
-  internal var peek: Token = Token.init(.amper, start: .start, end: .start)
+  /// Current token.
+  internal var peek = Token(.amper, start: .start, end: .start)
 
-  /// Token after `self.peek`. /// Nil if EOF.
-  internal var peekNext: Token = Token.init(.amper, start: .start, end: .start)
+  /// Token after `self.peek`.
+  internal var peekNext = Token(.amper, start: .start, end: .start)
 
   public init(lexer: LexerType) {
     self.lexer = lexer
@@ -27,9 +27,8 @@ public struct Parser {
   internal mutating func advance() throws -> Token? {
     // COMMENT, NEW LINE
     // should not happen if we wrote everything else correctly
-    if self.peek == nil {
-      print("Trying to advance past eof.")
-      fatalError() // for linter
+    if self.peek.kind == .eof {
+      throw self.unimplemented("Trying to advance past eof.")
     }
 
     self.peek = self.peekNext
@@ -47,7 +46,6 @@ public struct Parser {
     // TODO: Check if parsed before
     self.peek = try self.lexer.getToken()
     self.peekNext = try self.lexer.getToken()
-
   }
 
   // MARK: - Consume
@@ -83,7 +81,7 @@ public struct Parser {
 //    return token
 //  }
 
-  @available(*, deprecated, message: "Unimplemented")
+  // @available(*, deprecated, message: "Unimplemented")
   internal func unimplemented(_ message: String? = nil,
                               function:  StaticString = #function) -> ParserError {
     return ParserError.unimplemented("\(function): \(message ?? "")")
