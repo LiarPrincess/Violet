@@ -4,16 +4,18 @@
 
 import Lexer
 
+private enum ParserState {
+  case notStarted
+  case finished(Expression)
+}
+
 public struct Parser {
 
   /// Token source.
   internal var lexer: LexerType
 
-  /// Current token.
-  internal var peek = Token(.amper, start: .start, end: .start)
-
-  /// Token after `self.peek`.
-  internal var peekNext = Token(.amper, start: .start, end: .start)
+  /// Current parser state, used for example for: caching parsing result.
+  private var state = ParserState.notStarted
 
   public init(lexer: LexerType) {
     self.lexer = lexer
@@ -21,65 +23,65 @@ public struct Parser {
 
   // MARK: - Traversal
 
-  // TODO: self.location should remember start of token
+  /// Current token.
+  internal var peek = Token(.comment(""), start: .start, end: .start)
+
+  /// Token after `self.peek`.
+  internal var peekNext = Token(.comment(""), start: .start, end: .start)
 
   @discardableResult
   internal mutating func advance() throws -> Token? {
-    // COMMENT, NEW LINE
-    // should not happen if we wrote everything else correctly
     if self.peek.kind == .eof {
-      throw self.unimplemented("Trying to advance past eof.")
+      return self.peek
     }
 
-    self.peek = self.peekNext
-    self.peekNext = try self.lexer.getToken()
+    repeat {
+      self.peek = self.peekNext
+      self.peekNext = try self.lexer.getToken()
+    } while self.isComment(self.peek) && !self.isEOF(self.peek)
 
-//    self.lexNextToken()
-//    let token = self.token
-//    return token
-    return nil
+    return self.peek
+  }
+
+  private func isComment(_ token: Token?) -> Bool {
+    guard let kind = token?.kind else { return false }
+    guard case TokenKind.comment(_) = kind else { return false }
+    return true
+  }
+
+  private func isEOF(_ token: Token?) -> Bool {
+    guard let kind = token?.kind else { return false }
+    return kind == .eof
   }
 
   // MARK: - Parse
 
-  public mutating func parse() throws {
-    // TODO: Check if parsed before
-    self.peek = try self.lexer.getToken()
-    self.peekNext = try self.lexer.getToken()
+  public mutating func parse() throws -> Expression {
+    switch self.state {
+    case .notStarted:
+      // populate peeks
+      self.peek = try self.lexer.getToken()
+      self.peekNext = try self.lexer.getToken()
+
+      let expr = try self.expression()
+      self.state = .finished(expr)
+      return expr
+
+    case .finished(let ast):
+      return ast
+    }
   }
 
   // MARK: - Consume
 
-  internal func consume(_ kind: ExpectedToken) { }
+  internal mutating func consumeIf(_ kind: TokenKind) throws -> Bool {
+    if self.peek.kind == kind {
+      try self.advance()
+      return true
+    }
 
-  internal func consumeIf(_ kind: ExpectedToken) -> Bool { return true }
-
-//  internal mutating func consumeIdentifier() -> String {
-//    guard case let .identifier(value) = self.peek else {
-//      fatalError()
-//    }
-//
-//    return ""
-//  }
-
-//  private mutating func consumeNameOrFail() -> String {
-//    let token = self.tokenOrFail()
-//
-//    guard case let TokenKind.name(value) = token.kind else {
-//      self.fail("Invalid token kind. Expected: 'name', got: '\(token.kind)'.")
-//    }
-//
-//    self.advance()
-//    return self.aliases[value] ?? value
-//  }
-
-//  private mutating func tokenOrFail() -> Token {
-//    guard let token = self.token else {
-//      self.fail("Trying to use eof token.")
-//    }
-//
-//    return token
-//  }
+    return false
+  }
 
   // @available(*, deprecated, message: "Unimplemented")
   internal func unimplemented(_ message: String? = nil,
@@ -87,19 +89,10 @@ public struct Parser {
     return ParserError.unimplemented("\(function): \(message ?? "")")
   }
 
-  internal func failUnexpectedEOF(expected: ExpectedToken...) -> Error {
-    return self.unimplemented()
-  }
-
   internal func failUnexpectedToken(expected: ExpectedToken...) -> Error {
     switch self.peek.kind {
-    case .eof: return self.failUnexpectedEOF()
+    case .eof: return self.unimplemented() // self.failUnexpectedEOF
     default:   return self.unimplemented()
     }
   }
-
-//  private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
-//    print("\(location ?? self.location): \(message)")
-//    exit(EXIT_FAILURE)
-//  }
 }

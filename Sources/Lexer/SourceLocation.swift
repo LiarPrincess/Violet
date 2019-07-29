@@ -15,7 +15,7 @@ public struct SourceLocation: Equatable {
   /// Column in line starting from 0.
   public private(set) var column: Int
 
-  internal init(line: Int, column: Int) {
+  public init(line: Int, column: Int) {
     self.line = line
     self.column = column
   }

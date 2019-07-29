@@ -6,7 +6,7 @@ import XCTest
 import Core
 @testable import Lexer
 
-/// Lexer test helpers.
+/// Shared test helpers.
 internal protocol Common { }
 
 extension Common {

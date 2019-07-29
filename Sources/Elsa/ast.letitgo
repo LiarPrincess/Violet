@@ -93,9 +93,9 @@ Returns last evaluated argument (even if it's not True or False).
 -- Generators/coroutines
   -- the grammar constrains where yield expressions can occur
   --  | GeneratorExp(expr elt, comprehension* generators)
-  | Await(expr value)
-  | Yield(expr? value)
-  | YieldFrom(expr value)
+  | Await(expr)
+  | Yield(expr?)
+  | YieldFrom(expr)
 -- Functions
   | Lambda(arguments args, expr body)
   --  | Call(expr func, expr* args, keyword* keywords)
@@ -120,13 +120,13 @@ Returns last evaluated argument (even if it's not True or False).
   | Or  @doc "Logical `or` with short-circuit."
 
 @enum BinaryOperator =
-  Add       @doc "Sum of its arguments.\n- Numbers added together.\n- Sequences are concatenated."
-  | Sub     @doc "Difference of its arguments."
-  | Mul     @doc "Product of its arguments.\n- Numbers multiplied together.\n- For integer and sequence repetition is performed."
-  | MatMult @doc "Intended to be used for matrix multiplication.\nNo builtin Python types implement this operator."
-  | Div     @doc "Quotient of their arguments.\nDivision of integers yields a float."
-  | Modulo  @doc "Remainder from the division of the first argument by the second."
-  | Pow     @doc "Left argument raised to the power of its right argument."
+  Add      @doc "Sum of its arguments.\n- Numbers added together.\n- Sequences are concatenated."
+  | Sub    @doc "Difference of its arguments."
+  | Mul    @doc "Product of its arguments.\n- Numbers multiplied together.\n- For integer and sequence repetition is performed."
+  | MatMul @doc "Intended to be used for matrix multiplication.\nNo builtin Python types implement this operator."
+  | Div    @doc "Quotient of their arguments.\nDivision of integers yields a float."
+  | Modulo @doc "Remainder from the division of the first argument by the second."
+  | Pow    @doc "Left argument raised to the power of its right argument."
   | LeftShift  @doc "Shift the first argument to the left by the number of bits\ngiven by the second argument."
   | RightShift @doc "Shift the first argument to the right by the number of bits\ngiven by the second argument."
   | BitOr      @doc "Bitwise (inclusive) OR of its arguments, which must be integers."

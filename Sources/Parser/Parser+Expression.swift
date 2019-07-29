@@ -10,8 +10,8 @@ import Lexer
 
 extension Parser {
 
-  internal func expression() throws -> Expression {
-    throw self.unimplemented()
+  internal mutating func expression() throws -> Expression {
+    return try self.arithExpr()
   }
 
   private func expression(_ kind: ExpressionKind,
@@ -20,12 +20,12 @@ extension Parser {
     return Expression(kind: kind, start: start, end: end)
   }
 
-  internal mutating func varargslist() throws -> Arguments {
+  internal mutating func varargsList() throws -> Arguments {
     throw self.unimplemented()
   }
 
   /// namedexpr_test: test [':=' test]
-  private mutating func namedexpr_test() throws -> Expression {
+  private mutating func namedExprTest() throws -> Expression {
     let left = try self.test()
 
     if self.peek.kind == .colonEqual {
@@ -44,7 +44,7 @@ extension Parser {
   internal mutating func test() throws -> Expression {
     // we will start from lambdef, becuse it is simpler
 
-    if let lambda = try self.lambDef_orNil() {
+    if let lambda = try self.lambDefOrNop() {
       return lambda
     }
 
@@ -70,10 +70,10 @@ extension Parser {
   }
 
   /// test_nocond: or_test | lambdef_nocond
-  private mutating func test_noCond() throws -> Expression {
+  private mutating func testNoCond() throws -> Expression {
     // we will start from lambdef_nocond, becuse it is simpler
 
-    if let lambda = try self.lambDef_noCond_orNil() {
+    if let lambda = try self.lambDefNoCondOrNop() {
       return lambda
     }
 
@@ -83,18 +83,18 @@ extension Parser {
   // MARK: - Lambda
 
   /// lambdef: 'lambda' [varargslist] ':' test
-  /// 'Or nil' means that we terminate (without changing current parser state)
+  /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to that rule.
-  private mutating func lambDef_orNil() throws -> Expression? {
+  private mutating func lambDefOrNop() throws -> Expression? {
     guard self.peek.kind == .lambda else {
       return nil
     }
 
     let start = self.peek.start
     try self.advance() // lambda
-    let args = try self.varargslist()
+    let args = try self.varargsList()
 
-    guard self.consumeIf(.colon) else {
+    guard try self.consumeIf(.colon) else {
       throw self.failUnexpectedToken(expected: .colon)
     }
 
@@ -104,22 +104,22 @@ extension Parser {
   }
 
   /// lambdef_nocond: 'lambda' [varargslist] ':' test_nocond
-  /// 'Or nil' means that we terminate (without changing current parser state)
+  /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to that rule.
-  private mutating func lambDef_noCond_orNil() throws -> Expression? {
+  private mutating func lambDefNoCondOrNop() throws -> Expression? {
     guard self.peek.kind == .lambda else {
       return nil
     }
 
     let start = self.peek.start
     try self.advance() // lambda
-    let args = try self.varargslist()
+    let args = try self.varargsList()
 
-    guard self.consumeIf(.colon) else {
+    guard try self.consumeIf(.colon) else {
       throw self.failUnexpectedToken(expected: .colon)
     }
 
-    let body = try self.test_noCond()
+    let body = try self.testNoCond()
     let kind = ExpressionKind.lambda(args: args, body: body)
     return Expression(kind: kind, start: start, end: body.end)
   }
@@ -337,7 +337,7 @@ extension Parser {
 
   private static let termOperators: [TokenKind:BinaryOperator] = [
     .star: .mul,
-    .at: .matMult,
+    .at: .matMul,
     .slash: .div,
     .percent: .modulo,
     .slashSlash: .floorDiv
@@ -409,6 +409,8 @@ extension Parser {
 
   /// atom_expr: [AWAIT] atom trailer*
   private mutating func atomExpr() throws -> Expression {
+    let start = self.peek.start
+
     var isAwait = false
     if self.peek.kind == .await {
       isAwait = true
@@ -416,9 +418,11 @@ extension Parser {
     }
 
     let atom = try self.atom()
-    // TODO: trailer
+    // TODO: trailer (+ new end)
 
-    throw self.unimplemented()
+    return isAwait ?
+      Expression(kind: .await(atom), start: start, end: atom.end):
+      atom
   }
 
   /// atom:
@@ -458,6 +462,7 @@ extension Parser {
       return try self.simpleAtom(.true, from: token)
     case .false:
       return try self.simpleAtom(.false, from: token)
+      // TODO: bytes?
 
     default:
       throw self.failUnexpectedToken(expected: .noIdea)
@@ -473,9 +478,9 @@ extension Parser {
   // MARK: - Trailer
 
   /// trailer: '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME
-  /// 'Or nil' means that we terminate (without changing current parser state)
+  /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to that rule.
-  private mutating func trailer_orNil() throws -> Expression? {
+  private mutating func trailerOrNop() throws -> Expression? {
     let token = self.peek
 
     switch token.kind {

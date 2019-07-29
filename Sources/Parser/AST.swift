@@ -62,9 +62,9 @@ public indirect enum ExpressionKind: Equatable {
   case list(elements: [Expression])
   /// List of comma-separated values between braces: {a}. Unordered with no duplicates.
   case set(elements: [Expression])
-  case await(value: Expression)
-  case yield(value: Expression?)
-  case yieldFrom(value: Expression)
+  case await(Expression)
+  case yield(Expression?)
+  case yieldFrom(Expression)
   case lambda(args: Arguments, body: Expression)
   case namedExpr(target: Expression, value: Expression)
   case ifExpression(test: Expression, body: Expression, orelse: Expression)
@@ -103,7 +103,7 @@ public enum BinaryOperator: Equatable {
   case mul
   /// Intended to be used for matrix multiplication.
   /// No builtin Python types implement this operator.
-  case matMult
+  case matMul
   /// Quotient of their arguments.
   /// Division of integers yields a float.
   case div
