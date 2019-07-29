@@ -7,7 +7,7 @@
 
 // TODO: (Elsa) _ in init
 // TODO: (Elsa) @str
-// TODO: To class and line() write()
+// TODO: To class and line() write() (as in slip)
 
 internal func emitCode(entities: [Entity]) {
   print("import Foundation")
@@ -27,6 +27,7 @@ internal func emitCode(entities: [Entity]) {
 }
 
 private func emitEnum(_ enumDef: EnumDef) {
+  emitDoc(enumDef.doc, indent: 0)
   let indirect = enumDef.indirect ? "indirect " : ""
   print("public \(indirect)enum \(enumDef.name): Equatable {")
 
@@ -36,12 +37,34 @@ private func emitEnum(_ enumDef: EnumDef) {
     var properties = ""
     if !caseDef.properties.isEmpty {
       properties += "("
-      properties += caseDef.properties.map { nameColonType($0) }.joined(", ")
+      properties += caseDef.properties.map { $0.nameColonType ?? $0.type }.joined(", ")
       properties += ")"
     }
 
     print("  case \(caseDef.escapedName)\(properties)")
   }
+
+  print("}")
+  print()
+}
+
+private func emitStruct(_ structDef: StructDef) {
+  emitDoc(structDef.doc, indent: 0)
+  print("public struct \(structDef.name): Equatable {")
+  print()
+
+  for property in structDef.properties {
+    emitDoc(property.doc, indent: 2)
+    print("  public let \(property.nameColonType)")
+  }
+  print()
+
+  let initArgs = structDef.properties.map { $0.nameColonType }.joined(", ")
+  print("  public init(\(initArgs)) {")
+  for property in structDef.properties {
+    print("    self.\(property.name) = \(property.name)")
+  }
+  print("  }")
 
   print("}")
   print()
@@ -54,29 +77,4 @@ private func emitDoc(_ doc: String?, indent indentCount: Int) {
   for line in doc.split(separator: "\n") {
     print("\(indent)/// \(line)")
   }
-}
-
-private func emitStruct(_ structDef: StructDef) {
-  print("public struct \(structDef.name): Equatable {")
-  print()
-
-  for property in structDef.properties {
-    print("  public let \(nameColonType(property))")
-  }
-  print()
-
-  let initArgs = structDef.properties.map { nameColonType($0) }.joined(", ")
-  print("  public init(\(initArgs)) {")
-  for property in structDef.properties {
-    guard let name = property.name else { fatalError() }
-    print("    self.\(name) = \(name)")
-  }
-  print("  }")
-
-  print("}")
-  print()
-}
-
-private func nameColonType(_ p: Property) -> String {
-  return p.name.map { "\($0): \(p.type)" } ?? p.type
 }

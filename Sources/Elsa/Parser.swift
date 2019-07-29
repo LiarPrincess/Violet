@@ -7,34 +7,29 @@ import Foundation
 internal struct Parser {
 
   private var lexer: Lexer
-  private var token: Token? /// peek, nil on eof
+  private var token: Token
   private var location = SourceLocation.start
 
   private var aliases = [String:String]()
+  private var pendingEntityDoc: String? = nil
 
   internal init(lexer: Lexer) {
     self.lexer = lexer
-    self.lexNextToken()
+    self.token = self.lexer.getToken()
   }
 
   // MARK: - Traversal
 
   @discardableResult
-  private mutating func advance() -> Token? {
+  private mutating func advance() -> Token {
     // should not happen if we wrote everything else correctly
-    if self.token == nil {
+    if self.token.kind == .eof {
       self.fail("Trying to advance past eof.")
     }
 
-    self.lexNextToken()
-    let token = self.token
-    return token
-  }
-
-  private mutating func lexNextToken() {
-    let next = self.lexer.getToken()
-    self.token = next.kind == .eof ? nil : next
-    self.location = self.token?.location ?? self.location
+    self.token = self.lexer.getToken()
+    self.location = token.location
+    return self.token
   }
 
   // MARK: - Parse
@@ -42,8 +37,9 @@ internal struct Parser {
   internal mutating func parse() -> [Entity] {
     var result = [Entity]()
 
-    while let token = self.token {
+    while self.token.kind != .eof {
       switch token.kind {
+
       case .alias:
         self.alias()
       case .enum, .indirect:
@@ -52,6 +48,9 @@ internal struct Parser {
       case .struct:
         let value = self.structDef()
         result.append(.struct(value))
+
+      case .doc:
+        self.pendingEntityDoc = self.consumeDocIfAny()
 
       case .name(let value):
         self.fail("'\(value)' is not a valid entity declaration (missing '@'?).")
@@ -63,109 +62,143 @@ internal struct Parser {
     return result
   }
 
+  // MARK: - Alias
+
   private mutating func alias() {
-    assert(self.token?.kind == .some(.alias))
-    self.advance() // typedef
+    assert(self.token.kind == .alias)
+    self.advance() // @alias
 
     let oldName = self.consumeNameOrFail()
-    self.consumeOrFail(kind: .equal)
+    self.consumeOrFail(.equal)
     let newName = self.consumeNameOrFail()
 
     self.aliases[oldName] = newName
   }
 
+  // MARK: - Enum
+
   private mutating func enumDef() -> EnumDef {
-    assert(self.token?.kind == .some(.enum) || self.token?.kind == .some(.indirect))
-    let indirect = self.token?.kind == .some(.indirect)
-    self.advance() // enum
+    assert(self.token.kind == .enum || self.token.kind == .indirect)
+    let indirect = self.token.kind == .indirect
+    self.advance() // @enum, @indirect
 
     let name = self.consumeNameOrFail()
-    self.consumeOrFail(kind: .equal)
+    self.consumeOrFail(.equal)
 
     var cases = [EnumCaseDef]()
     cases.append(self.enumCaseDef())
 
-    while let token = self.token, token.kind == .or {
+    while self.token.kind == .or {
       self.advance() // |
       cases.append(self.enumCaseDef())
     }
 
-    return EnumDef(name: name, cases: cases, indirect: indirect)
+    let doc = self.useEntityDoc()
+    return EnumDef(name, cases: cases, indirect: indirect, doc: doc)
   }
 
   private mutating func enumCaseDef() -> EnumCaseDef {
     let name = self.consumeNameOrFail()
-    let properties = self.properties()
-    let doc = self.getDoc()
-    return EnumCaseDef(name: name, properties: properties, doc: doc)
+    let properties = self.enumProperties()
+    let doc = self.consumeDocIfAny()
+    return EnumCaseDef(name, properties: properties, doc: doc)
   }
 
+  // MARK: - Struct
+
   private mutating func structDef() -> StructDef {
-    assert(self.token?.kind == .some(.struct))
+    assert(self.token.kind == .struct)
     self.advance() // struct
 
     let name = self.consumeNameOrFail()
-    self.consumeOrFail(kind: .equal)
-    let properties = self.properties()
-    return StructDef(name: name, properties: properties)
+    self.consumeOrFail(.equal)
+    let properties = self.structProperties()
+
+    let doc = self.useEntityDoc()
+    return StructDef(name, properties: properties, doc: doc)
   }
 
-  private mutating func properties() -> [Property] {
-    guard self.token?.kind == .leftParen else {
+  // MARK: - Properties
+
+  private mutating func enumProperties() -> [EnumCaseProperty] {
+    // enum properties are optional
+    guard self.token.kind == .leftParen else {
       return []
     }
 
     self.advance() // (
-    var result = [Property]()
+    var result = [EnumCaseProperty]()
 
-    while let token = self.token, token.kind != .rightParen {
-      let property = self.property()
+    while self.token.kind != .rightParen {
+      var kind = PropertyKind.single
+
+      let type = self.consumeNameOrFail()
+      if self.consumeIfEqual(kind: .star) { kind = .many }
+      if self.consumeIfEqual(kind: .option) { kind = .optional }
+
+      // name is optional
+      var name: String? = nil
+      if case let TokenKind.name(nameValue) = self.token.kind {
+        self.advance() // name
+        name = nameValue
+      }
+
+      let property = EnumCaseProperty(name, type: type, kind: kind)
       result.append(property)
 
-      if self.token?.kind == .some(.comma) {
-        self.advance() // comma is optional, but it looks better with it!
+      if self.token.kind != .rightParen {
+        self.consumeOrFail(.comma)
       }
     }
 
-    self.consumeOrFail(kind: .rightParen)
+    self.consumeOrFail(.rightParen)
     return result
   }
 
-  private mutating func property() -> Property {
-    var kind = PropertyKind.single
+  private mutating func structProperties() -> [StructProperty] {
+    self.consumeOrFail(.leftParen)
 
-    let type = self.consumeNameOrFail()
-    if self.consumeIfEqual(kind: .star) { kind = .many }
-    if self.consumeIfEqual(kind: .option) { kind = .optional }
+    var result = [StructProperty]()
+    while self.token.kind != .rightParen {
+      var kind = PropertyKind.single
 
-    var name: String? = nil
-    if let token = self.token {
-      switch token.kind {
-      case .name: name = self.consumeNameOrFail()
-      default: break
+      let type = self.consumeNameOrFail()
+      if self.consumeIfEqual(kind: .star) { kind = .many }
+      if self.consumeIfEqual(kind: .option) { kind = .optional }
+      let name = self.consumeNameOrFail()
+      let doc = self.consumeDocIfAny()
+
+      let property = StructProperty(name, type: type, kind: kind, doc: doc)
+      result.append(property)
+
+      if self.token.kind != .rightParen {
+        self.consumeOrFail(.comma)
       }
     }
 
-    return Property(name: name, type: type, kind: kind)
+    self.consumeOrFail(.rightParen)
+    return result
   }
 
   // MARK: - Helpers
 
-  private mutating func consumeIfEqual(kind: TokenKind) -> Bool {
-    let token = self.tokenOrFail()
-
-    guard token.kind == kind else {
-      return false
-    }
-
-    self.advance()
-    return true
+  private mutating func useEntityDoc() -> String? {
+    let doc = self.pendingEntityDoc
+    self.pendingEntityDoc = nil
+    return doc
   }
 
-  private mutating func consumeOrFail(kind: TokenKind) {
-    let token = self.tokenOrFail()
+  private mutating func consumeIfEqual(kind: TokenKind) -> Bool {
+    if self.token.kind == kind {
+      self.advance()
+      return true
+    }
 
-    guard token.kind == kind else {
+    return false
+  }
+
+  private mutating func consumeOrFail(_ kind: TokenKind) {
+    guard self.token.kind == kind else {
       self.fail("Invalid token kind. Expected: '\(kind)', got: '\(token.kind)'.")
     }
 
@@ -173,38 +206,25 @@ internal struct Parser {
   }
 
   private mutating func consumeNameOrFail() -> String {
-    let token = self.tokenOrFail()
-
-    guard case let .name(value) = token.kind else {
-      self.fail("Invalid token kind. Expected: 'name', got: '\(token.kind)'.")
+    guard case let .name(value) = self.token.kind else {
+      self.fail("Invalid token kind. Expected: 'name', got: '\(self.token.kind)'.")
     }
 
     self.advance()
     return self.aliases[value] ?? value
   }
 
-  private mutating func getDoc() -> String? {
-    guard let docToken = self.token, docToken.kind == .doc else {
+  private mutating func consumeDocIfAny() -> String? {
+    guard self.consumeIfEqual(kind: .doc) else {
       return nil
     }
 
-    self.advance() // doc
-    let token = self.tokenOrFail()
-
-    guard case let .string(value) = token.kind else {
-      self.fail("Invalid token kind. Expected: 'string', got: '\(token.kind)'.")
+    guard case let .string(value) = self.token.kind else {
+      self.fail("Invalid token kind. Expected: 'string', got: '\(self.token.kind)'.")
     }
 
     self.advance() // value
     return value
-  }
-
-  private mutating func tokenOrFail() -> Token {
-    guard let token = self.token else {
-      self.fail("Trying to use eof token.")
-    }
-
-    return token
   }
 
   private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
