@@ -11,15 +11,25 @@ let sourceFile = elsaDir.appendingPathComponent("ast.letitgo", isDirectory: fals
 let source = try! String(contentsOf: sourceFile, encoding: .utf8)
 
 let parserDir = elsaDir.deletingLastPathComponent().appendingPathComponent("Parser")
-let targetFile = parserDir.appendingPathComponent("AST.swift")
-
-freopen(targetFile.path, "w", stdout)
-defer { fclose(stdout) }
 
 var lexer = Lexer(source: source)
-//lexer.dumpTokens()
 var parser = Parser(lexer: lexer)
 let entities = parser.parse()
 
+// MARK: - Code
+
+let astFile = parserDir.appendingPathComponent("AST.swift")
+freopen(astFile.path, "w", stdout)
+defer { fclose(stdout) }
+
 emitHeader(sourceFile: sourceFile, command: "ast")
 emitCode(entities: entities)
+
+// MARK: - Description
+
+let astDescriptionFile = parserDir.appendingPathComponent("AST+Description.swift")
+freopen(astDescriptionFile.path, "w", stdout)
+defer { fclose(stdout) }
+
+emitHeader(sourceFile: sourceFile, command: "ast-desc")
+emitDescription(entities: entities)

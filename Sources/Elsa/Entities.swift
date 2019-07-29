@@ -112,16 +112,6 @@ private func getType(baseType: String, kind: PropertyKind) -> String {
   }
 }
 
-private func pascalCase(_ s: String) -> String {
-  let first = s.first?.uppercased() ?? ""
-  return first + s.dropFirst()
-}
-
-private func camelCase(_ s: String) -> String {
-  let first = s.first?.lowercased() ?? ""
-  return first + s.dropFirst()
-}
-
 /// https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html
 private let swiftKeywords = Set<String>([
   "associatedtype", "class", "deinit", "enum", "extension", "fileprivate",
