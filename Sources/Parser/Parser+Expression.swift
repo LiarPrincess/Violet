@@ -200,12 +200,15 @@ extension Parser {
       let first = self.peek
       try self.advance() // op
 
-      if first.kind == .not && self.peek.kind != .in {
-        throw self.failUnexpectedToken(expected: .in)
+      if first.kind == .not {
+        if self.peek.kind != .in {
+          throw self.failUnexpectedToken(expected: .in)
+        }
+        try self.advance() // in
       }
 
       if first.kind == .is && self.peek.kind == .not {
-        op = .notIn
+        op = .isNot
         try self.advance() // not
       }
 
