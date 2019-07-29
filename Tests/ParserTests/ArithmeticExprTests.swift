@@ -15,37 +15,37 @@ class ArithmeticExprTests: XCTestCase, Common {
     let value = PyInt(42)
 
     var parser = self.parser(
-      self.token(.int(value), start: loc(l: 1, c: 0), end: loc(l: 1, c: 2))
+      self.token(.int(value), start: self.loc0, end: self.loc1)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertEqual(expr.kind,  .int(value))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 1, c: 2))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc1)
     }
   }
 
   func test_float() {
     var parser = self.parser(
-      self.token(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 3))
+      self.token(.float(4.2), start: self.loc0, end: self.loc2)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertEqual(expr.kind,  .float(4.2))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 1, c: 3))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc2)
     }
   }
 
   func test_imaginary() {
     var parser = self.parser(
-      self.token(.imaginary(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 4))
+      self.token(.imaginary(4.2), start: self.loc0, end: self.loc1)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertEqual(expr.kind,  .complex(real: 0.0, imag: 4.2))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 1, c: 4))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc1)
     }
   }
 
@@ -53,16 +53,16 @@ class ArithmeticExprTests: XCTestCase, Common {
     let value = PyInt(42)
 
     var parser = self.parser(
-      self.token(.await,      start: loc(l: 1, c: 0), end: loc(l: 1, c: 2)),
-      self.token(.int(value), start: loc(l: 1, c: 4), end: loc(l: 1, c: 10))
+      self.token(.await,      start: self.loc0, end: self.loc1),
+      self.token(.int(value), start: self.loc2, end: self.loc3)
     )
 
     if let expr = self.parse(&parser) {
-      let inner = Expression(kind: .int(value), start: loc(l: 1, c: 4), end: loc(l: 1, c: 10))
+      let inner = Expression(kind: .int(value), start: self.loc2, end: self.loc3)
 
       XCTAssertEqual(expr.kind,  ExpressionKind.await(inner))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 1, c: 10))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc3)
     }
   }
 
@@ -77,8 +77,8 @@ class ArithmeticExprTests: XCTestCase, Common {
       let value = PyInt(42)
 
       var parser = self.parser(
-        self.token(token,       start: loc(l: 1, c: 0), end: loc(l: 1, c: 1)),
-        self.token(.int(value), start: loc(l: 1, c: 3), end: loc(l: 1, c: 7))
+        self.token(token,       start: self.loc0, end: self.loc1),
+        self.token(.int(value), start: self.loc2, end: self.loc3)
       )
 
       if let expr = self.parse(&parser) {
@@ -86,11 +86,11 @@ class ArithmeticExprTests: XCTestCase, Common {
 
         XCTAssertEqual(expr.kind, .unaryOp(
           op,
-          right: Expression(.int(value), start: loc(l: 1, c: 3), end: loc(l: 1, c: 7))
-          ), msg)
+          right: Expression(.int(value), start: self.loc2, end: self.loc3)
+        ), msg)
 
-        XCTAssertEqual(expr.start, loc(l: 1, c: 0), msg)
-        XCTAssertEqual(expr.end,   loc(l: 1, c: 7), msg)
+        XCTAssertEqual(expr.start, self.loc0, msg)
+        XCTAssertEqual(expr.end,   self.loc3, msg)
       }
     }
   }
@@ -109,9 +109,9 @@ class ArithmeticExprTests: XCTestCase, Common {
 
     for (token, op) in variants {
       var parser = self.parser(
-        self.token(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5)),
-        self.token(token,       start: loc(l: 1, c: 7), end: loc(l: 1, c: 9)),
-        self.token(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3))
+        self.token(.float(4.2), start: self.loc0, end: self.loc1),
+        self.token(token,       start: self.loc2, end: self.loc3),
+        self.token(.float(3.1), start: self.loc4, end: self.loc5)
       )
 
       if let expr = self.parse(&parser) {
@@ -119,12 +119,12 @@ class ArithmeticExprTests: XCTestCase, Common {
 
         XCTAssertEqual(expr.kind, .binaryOp(
           op,
-          left:  Expression(kind: .float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5)),
-          right: Expression(kind: .float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3))
+          left:  Expression(kind: .float(4.2), start: self.loc0, end: self.loc1),
+          right: Expression(kind: .float(3.1), start: self.loc4, end: self.loc5)
           ), msg)
 
-        XCTAssertEqual(expr.start, loc(l: 1, c: 0), msg)
-        XCTAssertEqual(expr.end,   loc(l: 2, c: 3), msg)
+        XCTAssertEqual(expr.start, self.loc0, msg)
+        XCTAssertEqual(expr.end,   self.loc5, msg)
       }
     }
   }
@@ -134,20 +134,20 @@ class ArithmeticExprTests: XCTestCase, Common {
   /// -+4.2 = -(+4.2)
   func test_unaryGroup_isRightAssociative() {
     var parser = self.parser(
-      self.token(.minus,      start: loc(l: 1, c: 0), end: loc(l: 1, c: 1)),
-      self.token(.plus,       start: loc(l: 1, c: 7), end: loc(l: 1, c: 9)),
-      self.token(.float(4.2), start: loc(l: 2, c: 3), end: loc(l: 2, c: 5))
+      self.token(.minus,      start: self.loc0, end: self.loc1),
+      self.token(.plus,       start: self.loc2, end: self.loc3),
+      self.token(.float(4.2), start: self.loc4, end: self.loc5)
     )
 
     if let expr = self.parse(&parser) {
-      let first = Expression(.float(4.2), start: loc(l: 2, c: 3), end: loc(l: 2, c: 5))
+      let first = Expression(.float(4.2), start: self.loc4, end: self.loc5)
 
       let plusKind = ExpressionKind.unaryOp(.plus, right: first)
-      let plus = Expression(kind: plusKind, start: loc(l: 1, c: 7), end: loc(l: 2, c: 5))
+      let plus = Expression(kind: plusKind, start: self.loc2, end: self.loc5)
 
       XCTAssertEqual(expr.kind, .unaryOp(.minus, right: plus))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 2, c: 5))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc5)
     }
   }
 
@@ -155,72 +155,72 @@ class ArithmeticExprTests: XCTestCase, Common {
   /// For example: 2 ** 3 ** 4 = 2 ** 81 = 2417851639229258349412352
   func test_powerGroup_isRightAssociative() {
     var parser = self.parser(
-      self.token(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5)),
-      self.token(.starStar,   start: loc(l: 1, c: 7), end: loc(l: 1, c: 9)),
-      self.token(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3)),
-      self.token(.starStar,   start: loc(l: 3, c: 7), end: loc(l: 3, c: 9)),
-      self.token(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+      self.token(.float(4.2), start: self.loc0, end: self.loc1),
+      self.token(.starStar,   start: self.loc2, end: self.loc3),
+      self.token(.float(3.1), start: self.loc4, end: self.loc5),
+      self.token(.starStar,   start: self.loc6, end: self.loc7),
+      self.token(.float(2.0), start: self.loc8, end: self.loc9)
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5))
-      let second = Expression(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3))
-      let third  = Expression(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
+      let second = Expression(.float(3.1), start: self.loc4, end: self.loc5)
+      let third  = Expression(.float(2.0), start: self.loc8, end: self.loc9)
 
       let rightKind = ExpressionKind.binaryOp(.pow, left: second, right: third)
-      let right = Expression(kind: rightKind, start: loc(l: 2, c: 0), end: loc(l: 3, c: 15))
+      let right = Expression(kind: rightKind, start: self.loc4, end: self.loc9)
 
       XCTAssertEqual(expr.kind, .binaryOp(.pow, left: first, right: right))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 3, c: 15))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc9)
     }
   }
 
   /// 4.2 + 3.1 - 2.0 -> (4.2 + 3.1) - 2.0
   func test_addGroup_isLeftAssociative() {
     var parser = self.parser(
-      self.token(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5)),
-      self.token(.plus,       start: loc(l: 1, c: 7), end: loc(l: 1, c: 9)),
-      self.token(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3)),
-      self.token(.minus,      start: loc(l: 3, c: 7), end: loc(l: 3, c: 9)),
-      self.token(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+      self.token(.float(4.2), start: self.loc0, end: self.loc1),
+      self.token(.plus,       start: self.loc2, end: self.loc3),
+      self.token(.float(3.1), start: self.loc4, end: self.loc5),
+      self.token(.minus,      start: self.loc6, end: self.loc7),
+      self.token(.float(2.0), start: self.loc8, end: self.loc9)
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5))
-      let second = Expression(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3))
-      let third  = Expression(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
+      let second = Expression(.float(3.1), start: self.loc4, end: self.loc5)
+      let third  = Expression(.float(2.0), start: self.loc8, end: self.loc9)
 
       let addKind = ExpressionKind.binaryOp(.add, left: first, right: second)
-      let add = Expression(kind: addKind, start: loc(l: 1, c: 0), end: loc(l: 2, c: 3))
+      let add = Expression(kind: addKind, start: self.loc0, end: self.loc5)
 
       XCTAssertEqual(expr.kind, .binaryOp(.sub, left: add, right: third))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 3, c: 15))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc9)
     }
   }
 
   /// 4.2 * 3.1 / 2.0 -> (4.2 * 3.1) / 2.0
   func test_mulGroup_isLeftAssociative() {
     var parser = self.parser(
-      self.token(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5)),
-      self.token(.star,       start: loc(l: 1, c: 7), end: loc(l: 1, c: 9)),
-      self.token(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3)),
-      self.token(.slash,      start: loc(l: 3, c: 7), end: loc(l: 3, c: 9)),
-      self.token(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+      self.token(.float(4.2), start: self.loc0, end: self.loc1),
+      self.token(.star,       start: self.loc2, end: self.loc3),
+      self.token(.float(3.1), start: self.loc4, end: self.loc5),
+      self.token(.slash,      start: self.loc6, end: self.loc7),
+      self.token(.float(2.0), start: self.loc8, end: self.loc9)
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5))
-      let second = Expression(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3))
-      let third  = Expression(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
+      let second = Expression(.float(3.1), start: self.loc4, end: self.loc5)
+      let third  = Expression(.float(2.0), start: self.loc8, end: self.loc9)
 
       let mulKind = ExpressionKind.binaryOp(.mul, left: first, right: second)
-      let mul = Expression(kind: mulKind, start: loc(l: 1, c: 0), end: loc(l: 2, c: 3))
+      let mul = Expression(kind: mulKind, start: self.loc0, end: self.loc5)
 
       XCTAssertEqual(expr.kind, .binaryOp(.div, left: mul, right: third))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 3, c: 15))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc9)
     }
   }
 
@@ -229,46 +229,46 @@ class ArithmeticExprTests: XCTestCase, Common {
   /// 4.2 * -3.1 = 4.2 * (-3.1)
   func test_minus_haveHigherPrecedence_thanMul() {
     var parser = self.parser(
-      self.token(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5)),
-      self.token(.star,       start: loc(l: 1, c: 7), end: loc(l: 1, c: 9)),
-      self.token(.minus,      start: loc(l: 2, c: 0), end: loc(l: 2, c: 3)),
-      self.token(.float(3.1), start: loc(l: 3, c: 7), end: loc(l: 3, c: 9))
+      self.token(.float(4.2), start: self.loc0, end: self.loc1),
+      self.token(.star,       start: self.loc2, end: self.loc3),
+      self.token(.minus,      start: self.loc4, end: self.loc5),
+      self.token(.float(3.1), start: self.loc6, end: self.loc7)
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5))
-      let second = Expression(.float(3.1), start: loc(l: 3, c: 7), end: loc(l: 3, c: 9))
+      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
+      let second = Expression(.float(3.1), start: self.loc6, end: self.loc7)
 
       let negKind = ExpressionKind.unaryOp(.minus, right: second)
-      let neg = Expression(kind: negKind, start: loc(l: 2, c: 0), end: loc(l: 3, c: 9))
+      let neg = Expression(kind: negKind, start: self.loc4, end: self.loc7)
 
       XCTAssertEqual(expr.kind, .binaryOp(.mul, left: first, right: neg))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 3, c: 9))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc7)
     }
   }
 
   /// 4.2 + 3.1 * 2.0 = 4.2 + (3.1 * 2.0)
   func test_mul_haveHigherPrecedence_thanAdd() {
     var parser = self.parser(
-      self.token(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5)),
-      self.token(.plus,       start: loc(l: 1, c: 7), end: loc(l: 1, c: 9)),
-      self.token(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3)),
-      self.token(.star,       start: loc(l: 3, c: 7), end: loc(l: 3, c: 9)),
-      self.token(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+      self.token(.float(4.2), start: self.loc0, end: self.loc1),
+      self.token(.plus,       start: self.loc2, end: self.loc3),
+      self.token(.float(3.1), start: self.loc4, end: self.loc5),
+      self.token(.star,       start: self.loc6, end: self.loc7),
+      self.token(.float(2.0), start: self.loc8, end: self.loc9)
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5))
-      let second = Expression(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3))
-      let third  = Expression(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
+      let second = Expression(.float(3.1), start: self.loc4, end: self.loc5)
+      let third  = Expression(.float(2.0), start: self.loc8, end: self.loc9)
 
       let mulKind = ExpressionKind.binaryOp(.mul, left: second, right: third)
-      let mul = Expression(kind: mulKind, start: loc(l: 2, c: 0), end: loc(l: 3, c: 15))
+      let mul = Expression(kind: mulKind, start: self.loc4, end: self.loc9)
 
       XCTAssertEqual(expr.kind, .binaryOp(.add, left: first, right: mul))
-      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
-      XCTAssertEqual(expr.end,   loc(l: 3, c: 15))
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc9)
     }
   }
 }

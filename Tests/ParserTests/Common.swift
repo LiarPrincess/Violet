@@ -18,6 +18,19 @@ internal protocol Common { }
 
 extension Common {
 
+  // MARK: - Locations
+
+  internal var loc0: SourceLocation { return SourceLocation(line: 1, column: 0) }
+  internal var loc1: SourceLocation { return SourceLocation(line: 1, column: 5) }
+  internal var loc2: SourceLocation { return SourceLocation(line: 1, column: 7) }
+  internal var loc3: SourceLocation { return SourceLocation(line: 1, column: 9) }
+  internal var loc4: SourceLocation { return SourceLocation(line: 2, column: 0) }
+  internal var loc5: SourceLocation { return SourceLocation(line: 2, column: 10) }
+  internal var loc6: SourceLocation { return SourceLocation(line: 3, column: 7) }
+  internal var loc7: SourceLocation { return SourceLocation(line: 3, column: 8) }
+  internal var loc8: SourceLocation { return SourceLocation(line: 3, column: 11) }
+  internal var loc9: SourceLocation { return SourceLocation(line: 3, column: 15) }
+
   // MARK: - Creation
 
   /// Create parser for given tokens.
@@ -31,10 +44,6 @@ extension Common {
 
     let lexer = FakeLexer(tokens: lexerTokens)
     return Parser(lexer: lexer)
-  }
-
-  internal func loc(l: Int, c: Int) -> SourceLocation {
-    return SourceLocation(line: l, column: c)
   }
 
   internal func token(_ kind: TokenKind,
