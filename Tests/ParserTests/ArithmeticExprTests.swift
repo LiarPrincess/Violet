@@ -9,12 +9,6 @@ import Lexer
 
 // swiftlint:disable multiline_arguments
 
-extension Expression {
-  public init(_ kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
-    self.init(kind: kind, start: start, end: end)
-  }
-}
-
 class ArithmeticExprTests: XCTestCase, Common {
 
   func test_int() {
@@ -154,6 +148,31 @@ class ArithmeticExprTests: XCTestCase, Common {
       XCTAssertEqual(expr.kind, .unaryOp(.minus, right: plus))
       XCTAssertEqual(expr.start, loc(l: 1, c: 0))
       XCTAssertEqual(expr.end,   loc(l: 2, c: 5))
+    }
+  }
+
+  /// 4.2 ** 3.1 ** 2.0 -> 4.2 ** (3.1 ** 2.0)
+  /// For example: 2 ** 3 ** 4 = 2 ** 81 = 2417851639229258349412352
+  func test_powerGroup_isRightAssociative() {
+    var parser = self.parser(
+      self.token(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5)),
+      self.token(.starStar,   start: loc(l: 1, c: 7), end: loc(l: 1, c: 9)),
+      self.token(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3)),
+      self.token(.starStar,   start: loc(l: 3, c: 7), end: loc(l: 3, c: 9)),
+      self.token(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+    )
+
+    if let expr = self.parse(&parser) {
+      let first  = Expression(.float(4.2), start: loc(l: 1, c: 0), end: loc(l: 1, c: 5))
+      let second = Expression(.float(3.1), start: loc(l: 2, c: 0), end: loc(l: 2, c: 3))
+      let third  = Expression(.float(2.0), start: loc(l: 3, c: 11), end: loc(l: 3, c: 15))
+
+      let rightKind = ExpressionKind.binaryOp(.pow, left: second, right: third)
+      let right = Expression(kind: rightKind, start: loc(l: 2, c: 0), end: loc(l: 3, c: 15))
+
+      XCTAssertEqual(expr.kind, .binaryOp(.pow, left: first, right: right))
+      XCTAssertEqual(expr.start, loc(l: 1, c: 0))
+      XCTAssertEqual(expr.end,   loc(l: 3, c: 15))
     }
   }
 

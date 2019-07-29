@@ -7,6 +7,12 @@ import Core
 import Lexer
 @testable import Parser
 
+extension Expression {
+  public init(_ kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
+    self.init(kind: kind, start: start, end: end)
+  }
+}
+
 /// Shared test helpers.
 internal protocol Common { }
 

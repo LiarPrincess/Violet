@@ -11,7 +11,7 @@ import Lexer
 extension Parser {
 
   internal mutating func expression() throws -> Expression {
-    return try self.arithExpr()
+    return try self.expr()
   }
 
   private func expression(_ kind: ExpressionKind,
@@ -248,7 +248,7 @@ extension Parser {
       try self.advance() // op
 
       let right = try self.xorExpr()
-      let kind = ExpressionKind.binaryOp(.bitXor, left: left, right: right)
+      let kind = ExpressionKind.binaryOp(.bitOr, left: left, right: right)
       left = self.expression(kind, start: left.start, end: right.end)
     }
 
@@ -298,7 +298,7 @@ extension Parser {
 
   /// shift_expr: arith_expr (('<<'|'>>') arith_expr)*
   private mutating func shiftExpr() throws -> Expression {
-    var left = try self.term()
+    var left = try self.arithExpr()
 
     while let op = Parser.shiftExprOperators[self.peek.kind] {
       try self.advance() // op
