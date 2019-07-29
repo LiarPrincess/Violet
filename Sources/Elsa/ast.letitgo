@@ -52,10 +52,14 @@
 --  -- col_offset is the byte offset in the utf8 string the parser uses
 --  attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
--- @doc "https://docs.python.org/3/reference/expressions.html"
-@struct expr = (exprKind kind, loc start, loc end)
+@doc "https://docs.python.org/3/reference/expressions.html"
+@struct expr = (
+  exprKind kind @doc "Type of the expression.",
+  loc start @doc "Start location in the source code.",
+  loc end @doc "End location in the source code."
+)
 
--- @doc "https://docs.python.org/3/reference/expressions.html"
+@doc "https://docs.python.org/3/reference/expressions.html"
 @indirect exprKind =
 -- Base
     True
@@ -78,7 +82,7 @@ Returns last evaluated argument (even if it's not True or False).
   -- need sequence to distinguish between: x < 4 < 3 and (x < 4) < 3
   | Compare(expr left, ComparisonElement* elements)
 -- Collections
-  | Tuple(expr* elements) @doc "Values separated by commas between parentheses: (a,b)."
+  | Tuple(expr* elements) @doc "Values separated by commas (sometimes between parentheses): (a,b)."
   | List(expr* elements) @doc "List of comma-separated values between square brackets: [a,b]."
   --  | Dictionary(expr* keys, expr* values) @doc "Set of `key: value` pairs between braces: {a: b}. Keys are unique."
   | Set(expr* elements) @doc "List of comma-separated values between braces: {a}. Unordered with no duplicates."
@@ -92,15 +96,14 @@ Returns last evaluated argument (even if it's not True or False).
   | Await(expr value)
   | Yield(expr? value)
   | YieldFrom(expr value)
-
-  --  | NamedExpr(expr target, expr value)
-  --  | Lambda(arguments args, expr body)
-  --  | IfExpression(expr test, expr body, expr orelse)
-
+-- Functions
+  | Lambda(arguments args, expr body)
   --  | Call(expr func, expr* args, keyword* keywords)
-  --  | FormattedValue(expr value, int? conversion, expr? format_spec)
+-- Other
+  | NamedExpr(expr target, expr value)
+  -- 1 if True else 2 TODO: @doc
+  | IfExpression(expr test, expr body, expr orelse)
   --  | Constant(constant value, string? kind)
-
   -- the following expression can appear in assignment context
   --  | Attribute(identifier name, expr value) -- , expr_context ctx
   --  | Subscript(expr value, slice slice) -- , expr_context ctx
@@ -155,7 +158,7 @@ Returns last evaluated argument (even if it's not True or False).
   | FormattedValue(expr value, ConversionFlag? conversion, String spec) -- FormattedValue(expr value, int? conversion, expr? format_spec)
   | JoinedString(StringGroup*) -- JoinedStr(expr* values)
 
--- @doc Transforms a value prior to formatting it.
+@doc "Transforms a value prior to formatting it."
 @enum ConversionFlag =
     Str   @doc "Converts by calling `str(<value>)`."
   | Ascii @doc "Converts by calling `ascii(<value>)`."
@@ -170,12 +173,40 @@ Returns last evaluated argument (even if it's not True or False).
 -- excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
 -- attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
--- arguments = (
---   arg* args, arg* posonlyargs, arg? vararg, arg* kwonlyargs,
---   expr* kw_defaults, arg? kwarg, expr* defaults
--- )
+@doc "The arguments for a function."
+@struct arguments = (
+  arg* args @doc "Function positional arguments.",
+  expr* defaults @doc "Default values for positional arguments.
+If there are fewer defaults, they correspond to the last n arguments.
+- Important: The default value is evaluated only **once**.",
 
--- struct arg = (identifier arg, expr? annotation) -- , string? type_comment
+  vararg vararg @doc "Non-keyworded variable length arguments.
+By convention called `*args`.",
+  arg* kwOnlyArgs @doc "Parameters which occur after the '*args'.
+They can only be used as keywords rather than positional arguments.
+CPython `kwonlyargs`.",
+  expr* kwOnlyDefaults @doc "Default values for keyword-only arguments.
+If there are fewer defaults, they correspond to the last n arguments.
+- Important: The default value is evaluated only **once**.
+CPython `kw_defaults`",
+
+  vararg kwarg @doc "Keyworded (named) variable length arguments.
+By convention called `**kwargs`.",
+)
+
+@struct arg = (
+  identifier name @doc "Argument name.",
+  expr? annotation @doc "Python expression evaluated at compile time.
+Not used during runtime, can be used by third party libraries. (PEP 3107)",
+  loc start @doc "Start location in the source code.",
+  loc end @doc "End location in the source code."
+) -- , string? type_comment
+
+@enum vararg =
+  none
+  | anonymous
+  | named(Arg)
+
 -- attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
 -- keyword arguments supplied to call (NULL identifier for **kwargs)
