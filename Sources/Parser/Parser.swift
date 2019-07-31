@@ -101,16 +101,28 @@ public struct Parser {
     return false
   }
 
+  // TODO: start/end?
+  /// Create parser error
+  internal func error(_ kind:   ParserErrorKind,
+                      location: SourceLocation? = nil) -> ParserError {
+    return ParserError(kind, location: location ?? self.peek.start)
+  }
+
   // @available(*, deprecated, message: "Unimplemented")
   internal func unimplemented(_ message: String? = nil,
                               function:  StaticString = #function) -> ParserError {
-    return ParserError.unimplemented("\(function): \(message ?? "")")
+    return self.error(.unimplemented("\(function): \(message ?? "")"))
   }
 
-  internal func failUnexpectedToken(expected: ExpectedToken...) -> Error {
+  // TODO: unexpectedTokenError()
+  internal func failUnexpectedToken(expected: ExpectedToken...,
+                                    function:  StaticString = #function) -> Error {
     switch self.peek.kind {
-    case .eof: return self.unimplemented() // self.failUnexpectedEOF
-    default:   return self.unimplemented()
+    case .eof:
+      // self.failUnexpectedEOF
+      return self.error(.unimplemented("\(function): unexpected eof, expected: \(expected)"))
+    default:
+      return self.error(.unimplemented("\(function): unexpected \(self.peek.kind), expected: \(expected)"))
     }
   }
 }
