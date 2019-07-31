@@ -11,31 +11,13 @@ import Lexer
 extension Parser {
 
   internal mutating func expression() throws -> Expression {
-    return try self.orTest()
+    return try self.test()
   }
 
   private func expression(_ kind: ExpressionKind,
                           start:  SourceLocation,
                           end:    SourceLocation) -> Expression {
     return Expression(kind: kind, start: start, end: end)
-  }
-
-  internal mutating func varargsList() throws -> Arguments {
-    throw self.unimplemented()
-  }
-
-  /// namedexpr_test: test [':=' test]
-  private mutating func namedExprTest() throws -> Expression {
-    let left = try self.test()
-
-    if self.peek.kind == .colonEqual {
-      try self.advance() // :=
-      let right = try self.test()
-      let kind = ExpressionKind.namedExpr(target: left, value: right)
-      return Expression(kind: kind, start: left.start, end: right.end)
-    }
-
-    return left
   }
 
   // MARK: - Test
@@ -93,7 +75,8 @@ extension Parser {
 
     let start = self.peek.start
     try self.advance() // lambda
-    let args = try self.varargsList()
+
+    let args = try self.varArgsList(closingToken: .colon)
 
     guard try self.consumeIf(.colon) else {
       throw self.failUnexpectedToken(expected: .colon)
@@ -115,7 +98,8 @@ extension Parser {
 
     let start = self.peek.start
     try self.advance() // lambda
-    let args = try self.varargsList()
+
+    let args = try self.varArgsList(closingToken: .colon)
 
     guard try self.consumeIf(.colon) else {
       throw self.failUnexpectedToken(expected: .colon)

@@ -75,6 +75,20 @@ public struct Parser {
     }
   }
 
+  // MARK: - Naming
+
+  /// CPython:
+  /// `forbidden_name(struct compiling*, identifier, const node*, int)`
+  internal func checkForbiddenName(_ name: String) throws {
+    if name == "__debug__" {
+      // invalid keyword usage
+      throw self.unimplemented("assignment to keyword")
+    }
+
+    // We don't need to check for 'None', 'True', 'False',
+    // because those keywords are handled by lexer.
+  }
+
   // MARK: - Consume
 
   internal mutating func consumeIdentifierOrThrow() throws -> String {

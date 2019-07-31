@@ -8,33 +8,38 @@
 @alias expr = Expression
 @alias exprKind = ExpressionKind
 @alias stmt = Statement
+@alias stmtKind = StatementKind
 @alias loc = SourceLocation
 
---enum top =
---  Module(stmt* body, type_ignore *type_ignores)
---  | Interactive(stmt* body)
---  | Expression(expr body)
---  | FunctionType(expr* argtypes, expr returns)
+  -- mod = Module(stmt* body)
+  --     | Interactive(stmt* body)
+  --     | Expression(expr body)
 
---enum stmt =
---    FunctionDef     (identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns, string? type_comment)
---  | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns, string? type_comment)
+-- @struct stmt = (
+--   stmtKind kind @doc "Type of the statement.",
+--   loc start @doc "Location of the first character in the source code.",
+--   loc end @doc "Location just after the last character in the source code."
+-- )
+
+-- @enum stmtKind =
+--    FunctionDef     (identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
+--  | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
 --  | ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
 --  | Return(expr? value)
 --
 --  | Delete(expr* targets)
---  | Assign(expr* targets, expr value, string? type_comment)
+--  | Assign(expr* targets, expr value)
 --  | AugAssign(expr target, operator op, expr value)
 --  -- 'simple' indicates that we annotate simple name without parens
 --  | AnnAssign(expr target, expr annotation, expr? value, int simple)
 --
 --  -- use 'orelse' because else is a keyword in target languages
---  | For     (expr target, expr iter, stmt* body, stmt* orelse, string? type_comment)
---  | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse, string? type_comment)
+--  | For     (expr target, expr iter, stmt* body, stmt* orelse)
+--  | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse)
 --  | While(expr test, stmt* body, stmt* orelse)
 --  | If(expr test, stmt* body, stmt* orelse)
---  | With     (withitem* items, stmt* body, string? type_comment)
---  | AsyncWith(withitem* items, stmt* body, string? type_comment)
+--  | With     (withitem* items, stmt* body)
+--  | AsyncWith(withitem* items, stmt* body)
 --
 --  | Raise(expr? exc, expr? cause)
 --  | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
@@ -50,13 +55,13 @@
 
 --  -- XXX Jython will be different
 --  -- col_offset is the byte offset in the utf8 string the parser uses
---  attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+--  attributes (int lineno, int col_offset)
 
 @doc "https://docs.python.org/3/reference/expressions.html"
 @struct expr = (
   exprKind kind @doc "Type of the expression.",
-  loc start @doc "Start location in the source code.",
-  loc end @doc "End location in the source code."
+  loc start @doc "Location of the first character in the source code.",
+  loc end @doc "Location just after the last character in the source code."
 )
 
 @doc "https://docs.python.org/3/reference/expressions.html"
@@ -68,7 +73,7 @@
   | Ellipsis
 -- Literals
   | Identifier(String)
-  | String(StringGroup)
+  --  | String(StringGroup)
   | Int(PyInt)
   | Float(Double)
   | Complex(Double real, Double imag)
@@ -112,8 +117,8 @@ Returns last evaluated argument (even if it's not True or False).
 @enum UnaryOperator =
   Invert  @doc "Bitwise inversion of its integer argument.\nOnly applies to integral numbers."
   | Not   @doc "True if its argument is false, False otherwise."
-  | Plus  @doc "Unchanged argument."
-  | Minus @doc "Negation of its numeric argument."
+  | Plus  @doc "Unchanged argument. CPython: UAdd (unary add)."
+  | Minus @doc "Negation of its numeric argument. CPython: USub (unary sub)."
 
 @enum BooleanOperator =
     And @doc "Logical `and` with short-circuit."
@@ -171,43 +176,49 @@ Returns last evaluated argument (even if it's not True or False).
 -- comprehension = (expr target, expr iter, expr* ifs, int is_async)
 
 -- excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
--- attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
+--                 attributes (int lineno, int col_offset)
 
-@doc "The arguments for a function."
+@doc "The arguments for a function passed by value
+(where the value is always an object reference, not the value of the object).
+https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"
 @struct arguments = (
-  arg* args @doc "Function positional arguments.",
+  arg* args @doc "Function positional arguments.
+When a function is called, positional arguments are mapped
+to these parameters based solely on their position.",
   expr* defaults @doc "Default values for positional arguments.
-If there are fewer defaults, they correspond to the last n arguments.
+If there are fewer defaults, they correspond to the last *n* arguments.
 - Important: The default value is evaluated only **once**.",
 
   vararg vararg @doc "Non-keyworded variable length arguments.
 By convention called `*args`.",
   arg* kwOnlyArgs @doc "Parameters which occur after the '*args'.
-They can only be used as keywords rather than positional arguments.
+Can only be used as keywords rather than positional arguments.
 CPython `kwonlyargs`.",
   expr* kwOnlyDefaults @doc "Default values for keyword-only arguments.
-If there are fewer defaults, they correspond to the last n arguments.
-- Important: The default value is evaluated only **once**.
-CPython `kw_defaults`",
+If no default value is specified then implicit `None` is assumed.
+CPython `kw_defaults`.
+- Important: The default value is evaluated only **once**.",
 
-  vararg kwarg @doc "Keyworded (named) variable length arguments.
+  arg? kwarg @doc "Keyworded (named) variable length arguments.
 By convention called `**kwargs`.",
+
+  loc start @doc "Location of the first character in the source code.",
+  loc end @doc "Location just after the last character in the source code."
 )
 
 @struct arg = (
   identifier name @doc "Argument name.",
   expr? annotation @doc "Python expression evaluated at compile time.
-Not used during runtime, can be used by third party libraries. (PEP 3107)",
-  loc start @doc "Start location in the source code.",
-  loc end @doc "End location in the source code."
-) -- , string? type_comment
+Not used during runtime, can be used by third party libraries.
+Introduced in PEP 3107.",
+  loc start @doc "Location of the first character in the source code.",
+  loc end @doc "Location just after the last character in the source code."
+)
 
 @enum vararg =
   none
-  | anonymous
+  | unnamed @doc "Separator for keyword arguments. Represented by just `*`."
   | named(Arg)
-
--- attributes (int lineno, int col_offset, int? end_lineno, int? end_col_offset)
 
 -- keyword arguments supplied to call (NULL identifier for **kwargs)
 -- @struct keyword = (identifier? name, expr value)
@@ -216,5 +227,3 @@ Not used during runtime, can be used by third party libraries. (PEP 3107)",
 -- alias = (identifier name, identifier? asname)
 --
 -- withitem = (expr context_expr, expr? optional_vars)
---
--- type_ignore = TypeIgnore(int lineno, string tag)
