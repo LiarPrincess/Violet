@@ -17,9 +17,9 @@ public struct Expression: Equatable {
 
   /// Type of the expression.
   public let kind: ExpressionKind
-  /// Start location in the source code.
+  /// Location of the first character in the source code.
   public let start: SourceLocation
-  /// End location in the source code.
+  /// Location just after the last character in the source code.
   public let end: SourceLocation
 
   public init(kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
@@ -36,7 +36,6 @@ public indirect enum ExpressionKind: Equatable {
   case none
   case ellipsis
   case identifier(String)
-  case string(StringGroup)
   case int(PyInt)
   case float(Double)
   case complex(real: Double, imag: Double)
@@ -77,9 +76,9 @@ public enum UnaryOperator: Equatable {
   case invert
   /// True if its argument is false, False otherwise.
   case not
-  /// Unchanged argument.
+  /// Unchanged argument. CPython: UAdd (unary add).
   case plus
-  /// Negation of its numeric argument.
+  /// Negation of its numeric argument. CPython: USub (unary sub).
   case minus
 }
 
@@ -178,38 +177,48 @@ public enum ConversionFlag: Equatable {
   case repr
 }
 
-/// The arguments for a function.
+/// The arguments for a function passed by value
+/// (where the value is always an object reference, not the value of the object).
+/// https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions
 public struct Arguments: Equatable {
 
   /// Function positional arguments.
+  /// When a function is called, positional arguments are mapped
+  /// to these parameters based solely on their position.
   public let args: [Arg]
   /// Default values for positional arguments.
-  /// If there are fewer defaults, they correspond to the last n arguments.
+  /// If there are fewer defaults, they correspond to the last *n* arguments.
   /// - Important: The default value is evaluated only **once**.
   public let defaults: [Expression]
   /// Non-keyworded variable length arguments.
   /// By convention called `*args`.
   public let vararg: Vararg
   /// Parameters which occur after the '*args'.
-  /// They can only be used as keywords rather than positional arguments.
+  /// Can only be used as keywords rather than positional arguments.
   /// CPython `kwonlyargs`.
   public let kwOnlyArgs: [Arg]
   /// Default values for keyword-only arguments.
-  /// If there are fewer defaults, they correspond to the last n arguments.
+  /// If no default value is specified then implicit `None` is assumed.
+  /// CPython `kw_defaults`.
   /// - Important: The default value is evaluated only **once**.
-  /// CPython `kw_defaults`
   public let kwOnlyDefaults: [Expression]
   /// Keyworded (named) variable length arguments.
   /// By convention called `**kwargs`.
-  public let kwarg: Vararg
+  public let kwarg: Arg?
+  /// Location of the first character in the source code.
+  public let start: SourceLocation
+  /// Location just after the last character in the source code.
+  public let end: SourceLocation
 
-  public init(args: [Arg], defaults: [Expression], vararg: Vararg, kwOnlyArgs: [Arg], kwOnlyDefaults: [Expression], kwarg: Vararg) {
+  public init(args: [Arg], defaults: [Expression], vararg: Vararg, kwOnlyArgs: [Arg], kwOnlyDefaults: [Expression], kwarg: Arg?, start: SourceLocation, end: SourceLocation) {
     self.args = args
     self.defaults = defaults
     self.vararg = vararg
     self.kwOnlyArgs = kwOnlyArgs
     self.kwOnlyDefaults = kwOnlyDefaults
     self.kwarg = kwarg
+    self.start = start
+    self.end = end
   }
 }
 
@@ -218,11 +227,12 @@ public struct Arg: Equatable {
   /// Argument name.
   public let name: String
   /// Python expression evaluated at compile time.
-  /// Not used during runtime, can be used by third party libraries. (PEP 3107)
+  /// Not used during runtime, can be used by third party libraries.
+  /// Introduced in PEP 3107.
   public let annotation: Expression?
-  /// Start location in the source code.
+  /// Location of the first character in the source code.
   public let start: SourceLocation
-  /// End location in the source code.
+  /// Location just after the last character in the source code.
   public let end: SourceLocation
 
   public init(name: String, annotation: Expression?, start: SourceLocation, end: SourceLocation) {
@@ -235,7 +245,8 @@ public struct Arg: Equatable {
 
 public enum Vararg: Equatable {
   case none
-  case anonymous
+  /// Separator for keyword arguments. Represented by just `*`.
+  case unnamed
   case named(Arg)
 }
 

@@ -8,11 +8,11 @@ public struct Token: Equatable {
   /// Type of the token.
   public let kind: TokenKind
 
-  /// Start of the token in the code.
+  /// Location of the first character in the source code.
   /// Should be roughly equal to the one you would get from CPython.
   public let start: SourceLocation
 
-  /// End of the token in the code.
+  /// Location just after the last character in the source code.
   /// Should be roughly equal to the one you would get from CPython.
   public let end: SourceLocation
 

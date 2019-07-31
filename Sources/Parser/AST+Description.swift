@@ -27,8 +27,6 @@ extension ExpressionKind: CustomStringConvertible {
     case .ellipsis: return "ellipsis"
     case let .identifier(p0):
       return "identifier(\(p0))"
-    case let .string(p0):
-      return "string(\(p0))"
     case let .int(p0):
       return "int(\(p0))"
     case let .float(p0):
@@ -157,7 +155,7 @@ extension ConversionFlag: CustomStringConvertible {
 
 extension Arguments: CustomStringConvertible {
   public var description: String {
-    return "Arguments(args: \(self.args), defaults: \(self.defaults), vararg: \(self.vararg), kwOnlyArgs: \(self.kwOnlyArgs), kwOnlyDefaults: \(self.kwOnlyDefaults), kwarg: \(self.kwarg))"
+    return "Arguments(args: \(self.args), defaults: \(self.defaults), vararg: \(self.vararg), kwOnlyArgs: \(self.kwOnlyArgs), kwOnlyDefaults: \(self.kwOnlyDefaults), kwarg: \(self.kwarg), start: \(self.start), end: \(self.end))"
   }
 }
 
@@ -171,7 +169,7 @@ extension Vararg: CustomStringConvertible {
   public var description: String {
     switch self {
     case .none: return "none"
-    case .anonymous: return "anonymous"
+    case .unnamed: return "unnamed"
     case let .named(p0):
       return "named(\(p0))"
     }

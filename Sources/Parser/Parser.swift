@@ -4,6 +4,9 @@
 
 import Lexer
 
+// https://docs.python.org/3/reference/index.html
+// Python/ast.c in CPython
+
 private enum ParserState {
   case notStarted
   case finished(Expression)
@@ -32,7 +35,7 @@ public struct Parser {
   @discardableResult
   internal mutating func advance() throws -> Token? {
     if self.peek.kind == .eof {
-      return self.peek
+      throw self.unimplemented("Important, because we no longer have nil on end: self.failUnexpectedEOF")
     }
 
     repeat {
@@ -73,6 +76,21 @@ public struct Parser {
   }
 
   // MARK: - Consume
+
+  internal mutating func consumeIdentifierOrThrow() throws -> String {
+    if case let TokenKind.identifier(value) = self.peek.kind {
+      try self.advance() // identifier
+      return value
+    }
+
+    throw self.unimplemented()
+  }
+
+  internal mutating func consumeOrThrow(_ kind: TokenKind) throws {
+    guard try self.consumeIf(kind) else {
+      throw self.unimplemented("consumeOrThrow: \(kind)")
+    }
+  }
 
   internal mutating func consumeIf(_ kind: TokenKind) throws -> Bool {
     if self.peek.kind == kind {

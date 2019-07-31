@@ -40,7 +40,7 @@ extension Parser {
 
   // MARK: - Test
 
-  /// test: or_test ['if' or_test 'else' test] | lambdef
+  /// `test: or_test ['if' or_test 'else' test] | lambdef`
   internal mutating func test() throws -> Expression {
     // we will start from lambdef, becuse it is simpler
 
@@ -50,7 +50,7 @@ extension Parser {
 
     let left = try self.orTest()
 
-    // is this a simple form? if not then just return
+    // is this a simple form? if so then just return
     guard self.peek.kind == .if else {
       return left
     }
@@ -69,7 +69,7 @@ extension Parser {
     return Expression(kind: kind, start: left.start, end: right.end)
   }
 
-  /// test_nocond: or_test | lambdef_nocond
+  /// `test_nocond: or_test | lambdef_nocond`
   private mutating func testNoCond() throws -> Expression {
     // we will start from lambdef_nocond, becuse it is simpler
 
@@ -82,7 +82,8 @@ extension Parser {
 
   // MARK: - Lambda
 
-  /// lambdef: 'lambda' [varargslist] ':' test
+  /// `lambdef: 'lambda' [varargslist] ':' test`
+  ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to that rule.
   private mutating func lambDefOrNop() throws -> Expression? {
@@ -103,7 +104,8 @@ extension Parser {
     return Expression(kind: kind, start: start, end: body.end)
   }
 
-  /// lambdef_nocond: 'lambda' [varargslist] ':' test_nocond
+  /// `lambdef_nocond: 'lambda' [varargslist] ':' test_nocond`
+  ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to that rule.
   private mutating func lambDefNoCondOrNop() throws -> Expression? {
@@ -126,7 +128,7 @@ extension Parser {
 
   // MARK: - Or test
 
-  /// or_test: and_test ('or' and_test)*
+  /// `or_test: and_test ('or' and_test)*`
   private mutating func orTest() throws -> Expression {
     var left = try self.andTest()
 
@@ -143,7 +145,7 @@ extension Parser {
 
   // MARK: - And test
 
-  /// and_test: not_test ('and' not_test)*
+  /// `and_test: not_test ('and' not_test)*`
   private mutating func andTest() throws -> Expression {
     var left = try self.notTest()
 
@@ -160,7 +162,7 @@ extension Parser {
 
   // MARK: - Not test
 
-  /// not_test: 'not' not_test | comparison
+  /// `not_test: 'not' not_test | comparison`
   private mutating func notTest() throws -> Expression {
     let token = self.peek
     if token.kind == .not {
@@ -176,7 +178,7 @@ extension Parser {
 
   // MARK: - Comparison
 
-  /// comp_op: '<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'
+  /// `comp_op: '<'|'>'|'=='|'>='|'<='|'<>'|'!='|'in'|'not' 'in'|'is'|'is' 'not'`
   private static let comparisonOperators: [TokenKind:ComparisonOperator] = [
     .equalEqual: .equal,
     .notEqual:   .notEqual,
@@ -191,7 +193,7 @@ extension Parser {
     // is not - will be handled in code
   ]
 
-  /// comparison: expr (comp_op expr)*
+  /// `comparison: expr (comp_op expr)*`
   private mutating func comparison() throws -> Expression {
     let left = try self.expr()
 
@@ -228,6 +230,7 @@ extension Parser {
 
   // MARK: - Star expr
 
+  /// `star_expr: '*' expr`
   private mutating func starExpr() throws -> Expression {
     let token = self.peek
     switch token.kind {
@@ -243,7 +246,7 @@ extension Parser {
 
   // MARK: - Expr
 
-  /// expr: xor_expr ('|' xor_expr)*
+  /// `expr: xor_expr ('|' xor_expr)*`
   private mutating func expr() throws -> Expression {
     var left = try self.xorExpr()
 
@@ -260,7 +263,7 @@ extension Parser {
 
   // MARK: - Xor expr
 
-  /// xor_expr: and_expr ('^' and_expr)*
+  /// `xor_expr: and_expr ('^' and_expr)*`
   private mutating func xorExpr() throws -> Expression {
     var left = try self.andExpr()
 
@@ -277,7 +280,7 @@ extension Parser {
 
   // MARK: - And expr
 
-  /// and_expr: shift_expr ('&' shift_expr)*
+  /// `and_expr: shift_expr ('&' shift_expr)*`
   private mutating func andExpr() throws -> Expression {
     var left = try self.shiftExpr()
 
@@ -299,7 +302,7 @@ extension Parser {
     .rightShift: .rightShift
   ]
 
-  /// shift_expr: arith_expr (('<<'|'>>') arith_expr)*
+  /// `shift_expr: arith_expr (('<<'|'>>') arith_expr)*`
   private mutating func shiftExpr() throws -> Expression {
     var left = try self.arithExpr()
 
@@ -321,7 +324,7 @@ extension Parser {
     .minus: .sub
   ]
 
-  /// arith_expr: term (('+'|'-') term)*
+  /// `arith_expr: term (('+'|'-') term)*`
   private mutating func arithExpr() throws -> Expression {
     var left = try self.term()
 
@@ -346,7 +349,7 @@ extension Parser {
     .slashSlash: .floorDiv
   ]
 
-  /// term: factor (('*'|'@'|'/'|'%'|'//') factor)*
+  /// `term: factor (('*'|'@'|'/'|'%'|'//') factor)*`
   private mutating func term() throws -> Expression {
     var left = try self.factor()
 
@@ -363,7 +366,7 @@ extension Parser {
 
   // MARK: - Factor
 
-  /// factor: ('+'|'-'|'~') factor | power
+  /// `factor: ('+'|'-'|'~') factor | power`
   private mutating func factor() throws -> Expression {
     let token = self.peek
 
@@ -393,7 +396,7 @@ extension Parser {
 
   // MARK: - Power
 
-  /// power: atom_expr ['**' factor]
+  /// `power: atom_expr ['**' factor]`
   private mutating func power() throws -> Expression {
     let atomExpr = try self.atomExpr()
 
@@ -410,7 +413,7 @@ extension Parser {
 
   // MARK: - Atom
 
-  /// atom_expr: [AWAIT] atom trailer*
+  /// `atom_expr: [AWAIT] atom trailer*`
   private mutating func atomExpr() throws -> Expression {
     let start = self.peek.start
 
@@ -428,11 +431,13 @@ extension Parser {
       atom
   }
 
+  ///```
   /// atom:
   ///  - '(' [yield_expr|testlist_comp] ')'
   ///  - '[' [testlist_comp] ']'
   ///  - '{' [dictorsetmaker] '}'
   ///  - NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False'
+  /// ```
   private mutating func atom() throws -> Expression {
     let token = self.peek
 
@@ -480,7 +485,8 @@ extension Parser {
 
   // MARK: - Trailer
 
-  /// trailer: '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME
+  /// ```trailer: '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME```
+  ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to that rule.
   private mutating func trailerOrNop() throws -> Expression? {
@@ -496,15 +502,10 @@ extension Parser {
     case .dot:
       try self.advance() // .
 
-      let name = self.peek
-      switch name.kind {
-      case let .identifier(value):
-        try self.advance() // name
-        let kind = ExpressionKind.identifier(value)
-        return self .self.expression(kind, start: token.start, end: name.end)
-      default:
-        throw self.failUnexpectedToken(expected: .identifier)
-      }
+      let nameToken = self.peek
+      let name = try self.consumeIdentifierOrThrow()
+      let kind = ExpressionKind.identifier(name)
+      return self.expression(kind, start: token.start, end: nameToken.end)
 
     default:
       return nil
