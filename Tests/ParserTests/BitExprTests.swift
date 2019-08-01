@@ -7,8 +7,6 @@ import Core
 import Lexer
 @testable import Parser
 
-// swiftlint:disable multiline_arguments
-
 class BitExprTests: XCTestCase, Common {
 
   func test_operators() {

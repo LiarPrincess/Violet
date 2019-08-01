@@ -9,6 +9,7 @@ import Lexer
 
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
 
 class LambdaTests: XCTestCase, Common {
 
@@ -465,7 +466,6 @@ class LambdaTests: XCTestCase, Common {
   // MARK: - All
 
   /// lambda a, *b, c, **d: 5
-  // swiftlint:disable function_body_length
   func test_all() {
     var parser = self.parser(
       self.token(.lambda,          start: self.loc0, end: self.loc1),

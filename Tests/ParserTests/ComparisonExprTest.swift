@@ -32,14 +32,15 @@ class ComparisonExprTest: XCTestCase, Common {
       )
 
       if let expr = self.parse(&parser) {
-        let msg = "\(token) -> \(op)"
+        let msg = "for token '\(token)'"
 
-        let one = Expression(kind: .float(1.0), start: self.loc0, end: self.loc1)
-        let two = Expression(kind: .float(2.0), start: self.loc4, end: self.loc5)
-        let element = ComparisonElement(op: op, right: two)
+        guard let b = self.destructCompare(expr) else { return }
 
-        XCTAssertEqual(expr.kind, .compare(left: one, elements: [element]), msg)
+        let two = Expression(.float(2.0), start: self.loc4, end: self.loc5)
+        XCTAssertEqual(b.left, Expression(.float(1.0), start: self.loc0, end: self.loc1), msg)
+        XCTAssertEqual(b.elements, [ComparisonElement(op: op, right: two)], msg)
 
+        XCTAssertExpression(expr, "(cmp 1.0 (\(op) 2.0))", msg)
         XCTAssertEqual(expr.start, self.loc0, msg)
         XCTAssertEqual(expr.end,   self.loc5, msg)
       }
@@ -56,17 +57,19 @@ class ComparisonExprTest: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let one = Expression(kind: .float(1.0), start: self.loc0, end: self.loc1)
-      let two = Expression(kind: .float(2.0), start: self.loc6, end: self.loc7)
-      let element = ComparisonElement(op: .notIn, right: two)
+      guard let b = self.destructCompare(expr) else { return }
 
-      XCTAssertEqual(expr.kind, .compare(left: one, elements: [element]))
+      let two = Expression(.float(2.0), start: self.loc6, end: self.loc7)
+      XCTAssertEqual(b.left, Expression(.float(1.0), start: self.loc0, end: self.loc1))
+      XCTAssertEqual(b.elements, [ComparisonElement(op: .notIn, right: two)])
+
+      XCTAssertExpression(expr, "(cmp 1.0 (not in 2.0))")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc7)
     }
   }
 
-  /// this does not make sense: '1.0 is not 2.0', but it is not sema...
+  /// '1.0 is not 2.0'
   func test_isNot() {
     var parser = self.parser(
       self.token(.float(1.0), start: self.loc0, end: self.loc1),
@@ -76,17 +79,19 @@ class ComparisonExprTest: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let one = Expression(kind: .float(1.0), start: self.loc0, end: self.loc1)
-      let two = Expression(kind: .float(2.0), start: self.loc6, end: self.loc7)
-      let element = ComparisonElement(op: .isNot, right: two)
+      guard let b = self.destructCompare(expr) else { return }
 
-      XCTAssertEqual(expr.kind, .compare(left: one, elements: [element]))
+      let two = Expression(.float(2.0), start: self.loc6, end: self.loc7)
+      XCTAssertEqual(b.left, Expression(.float(1.0), start: self.loc0, end: self.loc1))
+      XCTAssertEqual(b.elements, [ComparisonElement(op: .isNot, right: two)])
+
+      XCTAssertExpression(expr, "(cmp 1.0 (is not 2.0))")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc7)
     }
   }
 
-  /// complex compare: 1<2<3
+  /// complex compare: 1 < 2 <= 3
   func test_compare_withMultipleElements() {
     var parser = self.parser(
       self.token(.float(1.0), start: self.loc0, end: self.loc1),
@@ -97,15 +102,7 @@ class ComparisonExprTest: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let one   = Expression(kind: .float(1.0), start: self.loc0, end: self.loc1)
-      let two   = Expression(kind: .float(2.0), start: self.loc4, end: self.loc5)
-      let three = Expression(kind: .float(3.0), start: self.loc8, end: self.loc9)
-
-      var elements = [ComparisonElement]()
-      elements.append(ComparisonElement(op: .less, right: two))
-      elements.append(ComparisonElement(op: .lessEqual, right: three))
-
-      XCTAssertEqual(expr.kind, .compare(left: one, elements: elements))
+      XCTAssertExpression(expr, "(cmp 1.0 (< 2.0) (<= 3.0))")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }
