@@ -14,12 +14,6 @@ extension Parser {
     return try self.test()
   }
 
-  private func expression(_ kind: ExpressionKind,
-                          start:  SourceLocation,
-                          end:    SourceLocation) -> Expression {
-    return Expression(kind, start: start, end: end)
-  }
-
   // MARK: - Test
 
   /// `test: or_test ['if' or_test 'else' test] | lambdef`
@@ -215,7 +209,10 @@ extension Parser {
   // MARK: - Star expr
 
   /// `star_expr: '*' expr`
-  private mutating func starExpr() throws -> Expression {
+  ///
+  /// 'Or nop' means that we terminate (without changing current parser state)
+  /// if we can't parse according to that rule.
+  private mutating func starExprOrNop() throws -> Expression? {
     let token = self.peek
     switch token.kind {
     case .star:
@@ -224,7 +221,7 @@ extension Parser {
       let kind = ExpressionKind.starred(expr)
       return self.expression(kind, start: token.start, end: expr.end)
     default:
-      throw self.failUnexpectedToken(expected: .star)
+      return nil
     }
   }
 
@@ -407,12 +404,14 @@ extension Parser {
       try self.advance() // await
     }
 
-    let atom = try self.atom()
-    // TODO: trailer (+ new end)
+    var rightExpr = try self.atom()
+    while let withTrailer = try self.trailerOrNop(for: rightExpr) {
+      rightExpr = withTrailer
+    }
 
     return isAwait ?
-      Expression(.await(atom), start: start, end: atom.end):
-      atom
+      Expression(.await(rightExpr), start: start, end: rightExpr.end):
+      rightExpr
   }
 
   ///```
@@ -467,32 +466,63 @@ extension Parser {
     return self.expression(kind, start: token.start, end: token.end)
   }
 
-  // MARK: - Trailer
+  // MARK: - Expr list
 
-  /// ```trailer: '(' [arglist] ')' | '[' subscriptlist ']' | '.' NAME```
-  ///
-  /// 'Or nop' means that we terminate (without changing current parser state)
-  /// if we can't parse according to that rule.
-  private mutating func trailerOrNop() throws -> Expression? {
-    let token = self.peek
+  /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
+  private mutating func exprList(closingToken: TokenKind) throws -> Expression {
+    var elements = [Expression]()
 
-    switch token.kind {
-    case .leftParen:
-      throw self.unimplemented()
+    let first = try self.starExprOrNop() ?? self.expr()
+    elements.append(first)
 
-    case .leftSqb:
-      throw self.unimplemented()
+    while self.peek.kind == .comma && self.peekNext.kind != closingToken {
+      try self.advance() // ,
 
-    case .dot:
-      try self.advance() // .
-
-      let nameToken = self.peek
-      let name = try self.consumeIdentifierOrThrow()
-      let kind = ExpressionKind.identifier(name)
-      return self.expression(kind, start: token.start, end: nameToken.end)
-
-    default:
-      return nil
+      let test = try self.starExprOrNop() ?? self.expr()
+      elements.append(test)
     }
+
+    // optional trailing comma
+    if self.peek.kind == .comma {
+      try self.advance() // ,
+    }
+
+    if elements.count == 1 {
+      return first
+    }
+
+    let start = first.start
+    let end = elements.last?.end ?? first.end
+    return self.expression(.tuple(elements), start: start, end: end)
+  }
+
+  // MARK: - Test list
+
+  /// `testlist: test (',' test)* [',']`
+  private mutating func testList(closingToken: TokenKind) throws -> Expression {
+    var elements = [Expression]()
+
+    let first = try self.test()
+    elements.append(first)
+
+    while self.peek.kind == .comma && self.peekNext.kind != closingToken {
+      try self.advance() // ,
+
+      let test = try self.test()
+      elements.append(test)
+    }
+
+    // optional trailing comma
+    if self.peek.kind == .comma {
+      try self.advance() // ,
+    }
+
+    if elements.count == 1 {
+      return first
+    }
+
+    let start = first.start
+    let end = elements.last?.end ?? first.end
+    return self.expression(.tuple(elements), start: start, end: end)
   }
 }

@@ -160,6 +160,19 @@ extension Common {
       return nil
   }
 
+  internal func destructAttribute(_ expr: Expression,
+                                  file:   StaticString = #file,
+                                  line:   UInt         = #line) ->
+    (value: Expression, name: String)? {
+
+      if case let ExpressionKind.attribute(value: value, name: name) = expr.kind {
+        return (value, name)
+      }
+
+      XCTAssertTrue(false, file: file, line: line)
+      return nil
+  }
+
   internal func destructLambda(_ expr: Expression,
                                file:   StaticString = #file,
                                line:   UInt         = #line) ->

@@ -115,6 +115,14 @@ public struct Parser {
     return false
   }
 
+  // MARK: - Create
+
+  internal func expression(_ kind: ExpressionKind,
+                          start:  SourceLocation,
+                          end:    SourceLocation) -> Expression {
+    return Expression(kind, start: start, end: end)
+  }
+
   // TODO: start/end?
   /// Create parser error
   internal func error(_ kind:   ParserErrorKind,

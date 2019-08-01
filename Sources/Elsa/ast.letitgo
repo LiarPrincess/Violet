@@ -110,8 +110,8 @@ Returns last evaluated argument (even if it's not True or False).
   | IfExpression(expr test, expr body, expr orElse)
   --  | Constant(constant value, string? kind)
   -- the following expression can appear in assignment context
-  --  | Attribute(identifier name, expr value) -- , expr_context ctx
   --  | Subscript(expr value, slice slice) -- , expr_context ctx
+  | Attribute(expr value, identifier name)
   | Starred(expr)
 
 @enum UnaryOperator =

@@ -77,6 +77,8 @@ extension ExpressionKind: CustomStringConvertible {
       return "(if \(test)) then \(body)) else \(orElse))"
     case let .starred(value):
       return "(starred \(value))"
+    case .attribute(let value, let name):
+      return "(attribute \(value) \(name))"
     }
   }
 }
