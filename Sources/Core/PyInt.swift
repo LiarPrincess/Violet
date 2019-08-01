@@ -26,3 +26,9 @@ public struct PyInt: Equatable, Hashable {
     self.value = value
   }
 }
+
+extension PyInt: CustomStringConvertible {
+  public var description: String {
+    return String(describing: self.value)
+  }
+}

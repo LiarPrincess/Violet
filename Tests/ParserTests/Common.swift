@@ -80,6 +80,15 @@ extension Common {
     }
   }
 
+  internal func XCTAssertExpression(_ expr:     Expression,
+                                    _ expected: String,
+                                    _ message:  String = "",
+                                    file: StaticString = #file,
+                                    line: UInt         = #line) {
+    let desc = String(describing: expr.kind)
+    XCTAssertEqual(desc, expected, message, file: file, line: line)
+  }
+
   // MARK: - Errors
 
   internal func error(_ parser: inout Parser,
@@ -95,5 +104,72 @@ extension Common {
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil
     }
+  }
+
+  // MARK: - Desctruct
+
+  internal func destructUnary(_ expr: Expression,
+                              file:   StaticString = #file,
+                              line:   UInt         = #line) ->
+    (UnaryOperator, right: Expression)? {
+
+    if case let ExpressionKind.unaryOp(op, right: right) = expr.kind {
+      return (op, right)
+    }
+
+    XCTAssertTrue(false, file: file, line: line)
+    return nil
+  }
+
+  internal func destructBinary(_ expr: Expression,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+    (BinaryOperator, left: Expression, right: Expression)? {
+
+      if case let ExpressionKind.binaryOp(op, left: left, right: right) = expr.kind {
+        return (op, left, right)
+      }
+
+      XCTAssertTrue(false, file: file, line: line)
+      return nil
+  }
+
+  internal func destructBoolean(_ expr: Expression,
+                                file:   StaticString = #file,
+                                line:   UInt         = #line) ->
+    (BooleanOperator, left: Expression, right: Expression)? {
+
+      if case let ExpressionKind.boolOp(op, left: left, right: right) = expr.kind {
+        return (op, left, right)
+      }
+
+      XCTAssertTrue(false, file: file, line: line)
+      return nil
+  }
+
+  internal func destructCompare(_ expr: Expression,
+                                file:   StaticString = #file,
+                                line:   UInt         = #line) ->
+    (left: Expression, elements: [ComparisonElement])? {
+
+      if case let ExpressionKind.compare(left: left, elements: elements) = expr.kind {
+        return (left, elements)
+      }
+
+      XCTAssertTrue(false, file: file, line: line)
+      return nil
+  }
+
+  internal func destructLambda(_ expr: Expression,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+    (args: Arguments, body: Expression)? {
+
+    if case let ExpressionKind.lambda(args: args, body: body) = expr.kind {
+      return (args, body)
+    }
+
+    XCTAssertTrue(false, file: file, line: line)
+    return nil
   }
 }

@@ -7,8 +7,6 @@ import Core
 import Lexer
 @testable import Parser
 
-// swiftlint:disable multiline_arguments
-
 class BoolExprTests: XCTestCase, Common {
 
   func test_notOperator() {
@@ -18,9 +16,12 @@ class BoolExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let falseExpr = Expression(.false, start: self.loc2, end: self.loc3)
+      guard let b = self.destructUnary(expr) else { return }
 
-      XCTAssertEqual(expr.kind, .unaryOp(.not, right: falseExpr))
+      XCTAssertEqual(b.0, .not)
+      XCTAssertEqual(b.right, Expression(.false, start: self.loc2, end: self.loc3))
+
+      XCTAssertExpression(expr, "(not False)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc3)
     }
@@ -40,14 +41,15 @@ class BoolExprTests: XCTestCase, Common {
       )
 
       if let expr = self.parse(&parser) {
-        let msg = "\(token) -> \(op)"
+        let msg = "for token '\(token)'"
 
-        XCTAssertEqual(expr.kind, .boolOp(
-          op,
-          left:  Expression(kind: .true, start: self.loc0, end: self.loc1),
-          right: Expression(kind: .false, start: self.loc4, end: self.loc5)
-        ), msg)
+        guard let b = self.destructBoolean(expr) else { return }
 
+        XCTAssertEqual(b.0, op, msg)
+        XCTAssertEqual(b.left,  Expression(.true, start: self.loc0, end: self.loc1), msg)
+        XCTAssertEqual(b.right, Expression(.false, start: self.loc4, end: self.loc5), msg)
+
+        XCTAssertExpression(expr, "(\(op) True False)", msg)
         XCTAssertEqual(expr.start, self.loc0, msg)
         XCTAssertEqual(expr.end,   self.loc5, msg)
       }
@@ -65,15 +67,9 @@ class BoolExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first = Expression(.false, start: self.loc4, end: self.loc5)
-
-      let secondKind = ExpressionKind.unaryOp(.not, right: first)
-      let second = Expression(secondKind, start: self.loc2, end: self.loc5)
-
-      let thirdKind = ExpressionKind.unaryOp(.not, right: second)
-      let third = Expression(thirdKind, start: self.loc0, end: self.loc5)
-
-      XCTAssertEqual(expr, third)
+      XCTAssertExpression(expr, "(not (not False))")
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc5)
     }
   }
 
@@ -88,14 +84,7 @@ class BoolExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.true,  start: self.loc0, end: self.loc1)
-      let second = Expression(.false, start: self.loc4, end: self.loc5)
-      let third  = Expression(.true,  start: self.loc8, end: self.loc9)
-
-      let leftKind = ExpressionKind.boolOp(.and, left: first, right: second)
-      let left = Expression(kind: leftKind, start: self.loc0, end: self.loc5)
-
-      XCTAssertEqual(expr.kind, .boolOp(.and, left: left, right: third))
+      XCTAssertExpression(expr, "(and (and True False) True)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }
@@ -112,14 +101,7 @@ class BoolExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.true,  start: self.loc0, end: self.loc1)
-      let second = Expression(.false, start: self.loc4, end: self.loc5)
-      let third  = Expression(.true,  start: self.loc8, end: self.loc9)
-
-      let leftKind = ExpressionKind.boolOp(.or, left: first, right: second)
-      let left = Expression(kind: leftKind, start: self.loc0, end: self.loc5)
-
-      XCTAssertEqual(expr.kind, .boolOp(.or, left: left, right: third))
+      XCTAssertExpression(expr, "(or (or True False) True)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }
@@ -137,14 +119,7 @@ class BoolExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let trueExpr = Expression(.true,  start: self.loc2, end: self.loc3)
-
-      let notTrueExprKind = ExpressionKind.unaryOp(.not, right: trueExpr)
-      let notTrueExpr = Expression(notTrueExprKind, start: self.loc0, end: self.loc3)
-
-      let falseExpr = Expression(kind: .false, start: self.loc6, end: self.loc7)
-
-      XCTAssertEqual(expr.kind, .boolOp(.and, left: notTrueExpr, right: falseExpr))
+      XCTAssertExpression(expr, "(and (not True) False)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc7)
     }
@@ -161,14 +136,7 @@ class BoolExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.true,  start: self.loc0, end: self.loc1)
-      let second = Expression(.false, start: self.loc4, end: self.loc5)
-      let third  = Expression(.true,  start: self.loc8, end: self.loc9)
-
-      let rightKind = ExpressionKind.boolOp(.and, left: second, right: third)
-      let right = Expression(kind: rightKind, start: self.loc4, end: self.loc9)
-
-      XCTAssertEqual(expr.kind, .boolOp(.or, left: first, right: right))
+      XCTAssertExpression(expr, "(or True (and False True))")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }

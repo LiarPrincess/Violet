@@ -7,8 +7,6 @@ import Core
 import Lexer
 @testable import Parser
 
-// swiftlint:disable multiline_arguments
-
 class ArithmeticExprTests: XCTestCase, Common {
 
   func test_unaryOpertors() {
@@ -27,13 +25,14 @@ class ArithmeticExprTests: XCTestCase, Common {
       )
 
       if let expr = self.parse(&parser) {
-        let msg = "\(token) -> \(op)"
+        let msg = "for token '\(token)'"
 
-        XCTAssertEqual(expr.kind, .unaryOp(
-          op,
-          right: Expression(.int(value), start: self.loc2, end: self.loc3)
-        ), msg)
+        guard let b = self.destructUnary(expr) else { return }
 
+        XCTAssertEqual(b.0, op)
+        XCTAssertEqual(b.right, Expression(.int(value), start: self.loc2, end: self.loc3))
+
+        XCTAssertExpression(expr, "(\(op) 42)", msg)
         XCTAssertEqual(expr.start, self.loc0, msg)
         XCTAssertEqual(expr.end,   self.loc3, msg)
       }
@@ -60,14 +59,15 @@ class ArithmeticExprTests: XCTestCase, Common {
       )
 
       if let expr = self.parse(&parser) {
-        let msg = "\(token) -> \(op)"
+        let msg = "for token '\(token)'"
 
-        XCTAssertEqual(expr.kind, .binaryOp(
-          op,
-          left:  Expression(kind: .float(4.2), start: self.loc0, end: self.loc1),
-          right: Expression(kind: .float(3.1), start: self.loc4, end: self.loc5)
-          ), msg)
+        guard let b = self.destructBinary(expr) else { return }
 
+        XCTAssertEqual(b.0, op, msg)
+        XCTAssertEqual(b.left,  Expression(.float(4.2), start: self.loc0, end: self.loc1))
+        XCTAssertEqual(b.right, Expression(.float(3.1), start: self.loc4, end: self.loc5))
+
+        XCTAssertExpression(expr, "(\(op) 4.2 3.1)", msg)
         XCTAssertEqual(expr.start, self.loc0, msg)
         XCTAssertEqual(expr.end,   self.loc5, msg)
       }
@@ -85,12 +85,7 @@ class ArithmeticExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first = Expression(.float(4.2), start: self.loc4, end: self.loc5)
-
-      let plusKind = ExpressionKind.unaryOp(.plus, right: first)
-      let plus = Expression(kind: plusKind, start: self.loc2, end: self.loc5)
-
-      XCTAssertEqual(expr.kind, .unaryOp(.minus, right: plus))
+      XCTAssertExpression(expr, "(- (+ 4.2))")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc5)
     }
@@ -108,14 +103,7 @@ class ArithmeticExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
-      let second = Expression(.float(3.1), start: self.loc4, end: self.loc5)
-      let third  = Expression(.float(2.0), start: self.loc8, end: self.loc9)
-
-      let rightKind = ExpressionKind.binaryOp(.pow, left: second, right: third)
-      let right = Expression(kind: rightKind, start: self.loc4, end: self.loc9)
-
-      XCTAssertEqual(expr.kind, .binaryOp(.pow, left: first, right: right))
+      XCTAssertExpression(expr, "(** 4.2 (** 3.1 2.0))")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }
@@ -132,14 +120,7 @@ class ArithmeticExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
-      let second = Expression(.float(3.1), start: self.loc4, end: self.loc5)
-      let third  = Expression(.float(2.0), start: self.loc8, end: self.loc9)
-
-      let addKind = ExpressionKind.binaryOp(.add, left: first, right: second)
-      let add = Expression(kind: addKind, start: self.loc0, end: self.loc5)
-
-      XCTAssertEqual(expr.kind, .binaryOp(.sub, left: add, right: third))
+      XCTAssertExpression(expr, "(- (+ 4.2 3.1) 2.0)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }
@@ -156,14 +137,7 @@ class ArithmeticExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
-      let second = Expression(.float(3.1), start: self.loc4, end: self.loc5)
-      let third  = Expression(.float(2.0), start: self.loc8, end: self.loc9)
-
-      let mulKind = ExpressionKind.binaryOp(.mul, left: first, right: second)
-      let mul = Expression(kind: mulKind, start: self.loc0, end: self.loc5)
-
-      XCTAssertEqual(expr.kind, .binaryOp(.div, left: mul, right: third))
+      XCTAssertExpression(expr, "(/ (* 4.2 3.1) 2.0)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }
@@ -181,13 +155,7 @@ class ArithmeticExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
-      let second = Expression(.float(3.1), start: self.loc6, end: self.loc7)
-
-      let negKind = ExpressionKind.unaryOp(.minus, right: second)
-      let neg = Expression(kind: negKind, start: self.loc4, end: self.loc7)
-
-      XCTAssertEqual(expr.kind, .binaryOp(.mul, left: first, right: neg))
+      XCTAssertExpression(expr, "(* 4.2 (- 3.1))")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc7)
     }
@@ -204,14 +172,7 @@ class ArithmeticExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.float(4.2), start: self.loc0, end: self.loc1)
-      let second = Expression(.float(3.1), start: self.loc4, end: self.loc5)
-      let third  = Expression(.float(2.0), start: self.loc8, end: self.loc9)
-
-      let mulKind = ExpressionKind.binaryOp(.mul, left: second, right: third)
-      let mul = Expression(kind: mulKind, start: self.loc4, end: self.loc9)
-
-      XCTAssertEqual(expr.kind, .binaryOp(.add, left: first, right: mul))
+      XCTAssertExpression(expr, "(+ 4.2 (* 3.1 2.0))")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }

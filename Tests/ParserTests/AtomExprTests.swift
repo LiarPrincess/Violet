@@ -17,6 +17,7 @@ class AtomExprTest: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
+      XCTAssertExpression(expr, "42")
       XCTAssertEqual(expr.kind,  .int(value))
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc1)
@@ -29,6 +30,7 @@ class AtomExprTest: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
+      XCTAssertExpression(expr, "4.2")
       XCTAssertEqual(expr.kind,  .float(4.2))
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc2)
@@ -41,6 +43,7 @@ class AtomExprTest: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
+      XCTAssertExpression(expr, "(complex 0.0 4.2)")
       XCTAssertEqual(expr.kind,  .complex(real: 0.0, imag: 4.2))
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc1)
@@ -56,9 +59,10 @@ class AtomExprTest: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let inner = Expression(kind: .int(value), start: self.loc2, end: self.loc3)
+      let inner = Expression(.int(value), start: self.loc2, end: self.loc3)
 
-      XCTAssertEqual(expr.kind,  ExpressionKind.await(inner))
+      XCTAssertExpression(expr, "(await 42)")
+      XCTAssertEqual(expr.kind,  .await(inner))
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc3)
     }

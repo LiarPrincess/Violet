@@ -24,12 +24,3 @@ defer { fclose(stdout) }
 
 emitHeader(sourceFile: sourceFile, command: "ast")
 emitCode(entities: entities)
-
-// MARK: - Description
-
-let astDescriptionFile = parserDir.appendingPathComponent("AST+Description.swift")
-freopen(astDescriptionFile.path, "w", stdout)
-defer { fclose(stdout) }
-
-emitHeader(sourceFile: sourceFile, command: "ast-desc")
-emitDescription(entities: entities)

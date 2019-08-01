@@ -22,20 +22,21 @@ class BitExprTests: XCTestCase, Common {
 
     for (token, op) in variants {
       var parser = self.parser(
-        self.token(.float(4.2), start: self.loc0, end: self.loc1),
-        self.token(token,       start: self.loc2, end: self.loc3),
-        self.token(.float(3.1), start: self.loc4, end: self.loc5)
+        self.token(.int(PyInt(5)), start: self.loc0, end: self.loc1),
+        self.token(token,          start: self.loc2, end: self.loc3),
+        self.token(.int(PyInt(3)), start: self.loc4, end: self.loc5)
       )
 
       if let expr = self.parse(&parser) {
-        let msg = "\(token) -> \(op)"
+        let msg = "for token '\(token)'"
 
-        XCTAssertEqual(expr.kind, .binaryOp(
-          op,
-          left:  Expression(kind: .float(4.2), start: self.loc0, end: self.loc1),
-          right: Expression(kind: .float(3.1), start: self.loc4, end: self.loc5)
-          ), msg)
+        guard let b = self.destructBinary(expr) else { return }
 
+        XCTAssertEqual(b.0, op, msg)
+        XCTAssertEqual(b.left,  Expression(.int(PyInt(5)), start: self.loc0, end: self.loc1), msg)
+        XCTAssertEqual(b.right, Expression(.int(PyInt(3)), start: self.loc4, end: self.loc5), msg)
+
+        XCTAssertExpression(expr, "(\(op) 5 3)", msg)
         XCTAssertEqual(expr.start, self.loc0, msg)
         XCTAssertEqual(expr.end,   self.loc5, msg)
       }
@@ -55,14 +56,7 @@ class BitExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.int(PyInt(1)), start: self.loc0, end: self.loc1)
-      let second = Expression(.int(PyInt(2)), start: self.loc4, end: self.loc5)
-      let third  = Expression(.int(PyInt(4)), start: self.loc8, end: self.loc9)
-
-      let leftKind = ExpressionKind.binaryOp(.leftShift, left: first, right: second)
-      let left = Expression(kind: leftKind, start: self.loc0, end: self.loc5)
-
-      XCTAssertEqual(expr.kind, .binaryOp(.leftShift, left: left, right: third))
+      XCTAssertExpression(expr, "(<< (<< 1 2) 4)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }
@@ -79,14 +73,7 @@ class BitExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.int(PyInt(1)), start: self.loc0, end: self.loc1)
-      let second = Expression(.int(PyInt(2)), start: self.loc4, end: self.loc5)
-      let third  = Expression(.int(PyInt(4)), start: self.loc8, end: self.loc9)
-
-      let leftKind = ExpressionKind.binaryOp(.bitAnd, left: first, right: second)
-      let left = Expression(kind: leftKind, start: self.loc0, end: self.loc5)
-
-      XCTAssertEqual(expr.kind, .binaryOp(.bitAnd, left: left, right: third))
+      XCTAssertExpression(expr, "(& (& 1 2) 4)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }
@@ -103,14 +90,7 @@ class BitExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.int(PyInt(1)), start: self.loc0, end: self.loc1)
-      let second = Expression(.int(PyInt(2)), start: self.loc4, end: self.loc5)
-      let third  = Expression(.int(PyInt(4)), start: self.loc8, end: self.loc9)
-
-      let leftKind = ExpressionKind.binaryOp(.bitXor, left: first, right: second)
-      let left = Expression(kind: leftKind, start: self.loc0, end: self.loc5)
-
-      XCTAssertEqual(expr.kind, .binaryOp(.bitXor, left: left, right: third))
+      XCTAssertExpression(expr, "(^ (^ 1 2) 4)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }
@@ -127,14 +107,7 @@ class BitExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      let first  = Expression(.int(PyInt(1)), start: self.loc0, end: self.loc1)
-      let second = Expression(.int(PyInt(2)), start: self.loc4, end: self.loc5)
-      let third  = Expression(.int(PyInt(4)), start: self.loc8, end: self.loc9)
-
-      let leftKind = ExpressionKind.binaryOp(.bitOr, left: first, right: second)
-      let left = Expression(kind: leftKind, start: self.loc0, end: self.loc5)
-
-      XCTAssertEqual(expr.kind, .binaryOp(.bitOr, left: left, right: third))
+      XCTAssertExpression(expr, "(| (| 1 2) 4)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc9)
     }

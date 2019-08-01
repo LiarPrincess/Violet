@@ -17,7 +17,7 @@ extension Parser {
   private func expression(_ kind: ExpressionKind,
                           start:  SourceLocation,
                           end:    SourceLocation) -> Expression {
-    return Expression(kind: kind, start: start, end: end)
+    return Expression(kind, start: start, end: end)
   }
 
   // MARK: - Test
@@ -48,7 +48,7 @@ extension Parser {
     let right = try self.test()
 
     let kind = ExpressionKind.ifExpression(test: test, body: left, orElse: right)
-    return Expression(kind: kind, start: left.start, end: right.end)
+    return Expression(kind, start: left.start, end: right.end)
   }
 
   /// `test_nocond: or_test | lambdef_nocond`
@@ -84,7 +84,7 @@ extension Parser {
 
     let body = try self.test()
     let kind = ExpressionKind.lambda(args: args, body: body)
-    return Expression(kind: kind, start: start, end: body.end)
+    return Expression(kind, start: start, end: body.end)
   }
 
   /// `lambdef_nocond: 'lambda' [varargslist] ':' test_nocond`
@@ -107,7 +107,7 @@ extension Parser {
 
     let body = try self.testNoCond()
     let kind = ExpressionKind.lambda(args: args, body: body)
-    return Expression(kind: kind, start: start, end: body.end)
+    return Expression(kind, start: start, end: body.end)
   }
 
   // MARK: - Or test
@@ -411,7 +411,7 @@ extension Parser {
     // TODO: trailer (+ new end)
 
     return isAwait ?
-      Expression(kind: .await(atom), start: start, end: atom.end):
+      Expression(.await(atom), start: start, end: atom.end):
       atom
   }
 

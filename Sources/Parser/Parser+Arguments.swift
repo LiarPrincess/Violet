@@ -204,7 +204,7 @@ extension Parser {
       } else {
         // We will place 'implicit None' just after 'argument'
         let loc = argument.end
-        let implicitNone = Expression(kind: .none, start: loc, end: loc)
+        let implicitNone = Expression(.none, start: loc, end: loc)
         ir.kwOnlyDefaults.append(implicitNone)
       }
     }
