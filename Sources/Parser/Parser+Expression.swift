@@ -221,7 +221,7 @@ extension Parser {
     case .star:
       try self.advance() // *
       let expr = try self.expr()
-      let kind = ExpressionKind.starred(value: expr)
+      let kind = ExpressionKind.starred(expr)
       return self.expression(kind, start: token.start, end: expr.end)
     default:
       throw self.failUnexpectedToken(expected: .star)

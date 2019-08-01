@@ -56,18 +56,18 @@ public indirect enum ExpressionKind: Equatable {
   case boolOp(BooleanOperator, left: Expression, right: Expression)
   case compare(left: Expression, elements: [ComparisonElement])
   /// Values separated by commas (sometimes between parentheses): (a,b).
-  case tuple(elements: [Expression])
+  case tuple([Expression])
   /// List of comma-separated values between square brackets: [a,b].
-  case list(elements: [Expression])
+  case list([Expression])
   /// List of comma-separated values between braces: {a}. Unordered with no duplicates.
-  case set(elements: [Expression])
+  case set([Expression])
   case await(Expression)
   case yield(Expression?)
   case yieldFrom(Expression)
   case lambda(args: Arguments, body: Expression)
   case namedExpr(target: Expression, value: Expression)
   case ifExpression(test: Expression, body: Expression, orElse: Expression)
-  case starred(value: Expression)
+  case starred(Expression)
 }
 
 public enum UnaryOperator: Equatable {
@@ -139,25 +139,25 @@ public struct ComparisonElement: Equatable {
 }
 
 public enum ComparisonOperator: Equatable {
-  /// Equality comparison.
+  /// True when two operands are equal.
   case equal
-  /// Non equality comparison.
+  /// True when two operands are not equal.
   case notEqual
-  /// Order comparison.
+  /// True when left operand is less than the value of right operand.
   case less
-  /// Order comparison.
+  /// True when left operand is less than or equal to the value of right operand.
   case lessEqual
-  /// Order comparison.
+  /// True when left operand is greater than the value of right operand.
   case greater
-  /// Order comparison.
+  /// True when left operand is greater than or equal to the value of right operand.
   case greaterEqual
-  /// `x is y` is true if and only if x and y are the same object.
+  /// True when x and y are the same object.
   case `is`
-  /// `x is not y` returns the negation of `x is y`.
+  /// Negation of `x is y`.
   case isNot
-  /// `x in s` evaluates to True if x is a member of s, and False otherwise.
+  /// True when x is a member of s.
   case `in`
-  /// `x not in s` returns the negation of `x in s`
+  /// Negation of `x in s`
   case notIn
 }
 

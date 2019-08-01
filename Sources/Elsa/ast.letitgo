@@ -87,10 +87,10 @@ Returns last evaluated argument (even if it's not True or False).
   -- need sequence to distinguish between: x < 4 < 3 and (x < 4) < 3
   | Compare(expr left, ComparisonElement* elements)
 -- Collections
-  | Tuple(expr* elements) @doc "Values separated by commas (sometimes between parentheses): (a,b)."
-  | List(expr* elements) @doc "List of comma-separated values between square brackets: [a,b]."
+  | Tuple(expr*) @doc "Values separated by commas (sometimes between parentheses): (a,b)."
+  | List(expr*) @doc "List of comma-separated values between square brackets: [a,b]."
   --  | Dictionary(expr* keys, expr* values) @doc "Set of `key: value` pairs between braces: {a: b}. Keys are unique."
-  | Set(expr* elements) @doc "List of comma-separated values between braces: {a}. Unordered with no duplicates."
+  | Set(expr*) @doc "List of comma-separated values between braces: {a}. Unordered with no duplicates."
 -- Comprehensions
   --  | ListComprehension(expr elt, comprehension* generators)
   --  | SetComprehension(expr elt, comprehension* generators)
@@ -112,7 +112,7 @@ Returns last evaluated argument (even if it's not True or False).
   -- the following expression can appear in assignment context
   --  | Attribute(identifier name, expr value) -- , expr_context ctx
   --  | Subscript(expr value, slice slice) -- , expr_context ctx
-  | Starred(expr value)
+  | Starred(expr)
 
 @enum UnaryOperator =
   Invert  @doc "Bitwise inversion of its integer argument.\nOnly applies to integral numbers."
@@ -145,16 +145,16 @@ Returns last evaluated argument (even if it's not True or False).
 )
 
 @enum ComparisonOperator =
-  Equal      @doc "Equality comparison."
-  | NotEqual @doc "Non equality comparison."
-  | Less         @doc "Order comparison."
-  | LessEqual    @doc "Order comparison."
-  | Greater      @doc "Order comparison."
-  | GreaterEqual @doc "Order comparison."
-  | Is    @doc "`x is y` is true if and only if x and y are the same object."
-  | IsNot @doc "`x is not y` returns the negation of `x is y`."
-  | In    @doc "`x in s` evaluates to True if x is a member of s, and False otherwise."
-  | NotIn @doc "`x not in s` returns the negation of `x in s`"
+  Equal      @doc "True when two operands are equal."
+  | NotEqual @doc "True when two operands are not equal."
+  | Less         @doc "True when left operand is less than the value of right operand."
+  | LessEqual    @doc "True when left operand is less than or equal to the value of right operand."
+  | Greater      @doc "True when left operand is greater than the value of right operand."
+  | GreaterEqual @doc "True when left operand is greater than or equal to the value of right operand."
+  | Is    @doc "True when x and y are the same object."
+  | IsNot @doc "Negation of `x is y`."
+  | In    @doc "True when x is a member of s."
+  | NotIn @doc "Negation of `x in s`"
 
 -- Based on RustPython.
 -- CPython uses 'JoinedStr(expr* values)', but we know that values are strings.
