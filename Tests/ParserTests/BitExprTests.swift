@@ -16,9 +16,9 @@ class BitExprTests: XCTestCase, Common {
 
     for (token, op) in variants {
       var parser = self.parser(
-        self.token(.int(PyInt(5)), start: self.loc0, end: self.loc1),
-        self.token(token,          start: self.loc2, end: self.loc3),
-        self.token(.int(PyInt(3)), start: self.loc4, end: self.loc5)
+        self.token(.int(PyInt(5)), start: loc0, end: loc1),
+        self.token(token,          start: loc2, end: loc3),
+        self.token(.int(PyInt(3)), start: loc4, end: loc5)
       )
 
       if let expr = self.parse(&parser) {
@@ -27,12 +27,12 @@ class BitExprTests: XCTestCase, Common {
         guard let b = self.destructBinary(expr) else { return }
 
         XCTAssertEqual(b.0, op, msg)
-        XCTAssertEqual(b.left,  Expression(.int(PyInt(5)), start: self.loc0, end: self.loc1), msg)
-        XCTAssertEqual(b.right, Expression(.int(PyInt(3)), start: self.loc4, end: self.loc5), msg)
+        XCTAssertEqual(b.left,  Expression(.int(PyInt(5)), start: loc0, end: loc1), msg)
+        XCTAssertEqual(b.right, Expression(.int(PyInt(3)), start: loc4, end: loc5), msg)
 
         XCTAssertExpression(expr, "(\(op) 5 3)", msg)
-        XCTAssertEqual(expr.start, self.loc0, msg)
-        XCTAssertEqual(expr.end,   self.loc5, msg)
+        XCTAssertEqual(expr.start, loc0, msg)
+        XCTAssertEqual(expr.end,   loc5, msg)
       }
     }
   }
@@ -42,68 +42,68 @@ class BitExprTests: XCTestCase, Common {
   /// 1 << 2 << 4 = (1 << 2) << 4
   func test_shiftGroup_isLeftAssociative() {
     var parser = self.parser(
-      self.token(.int(PyInt(1)), start: self.loc0, end: self.loc1),
-      self.token(.leftShift,     start: self.loc2, end: self.loc3),
-      self.token(.int(PyInt(2)), start: self.loc4, end: self.loc5),
-      self.token(.leftShift,     start: self.loc6, end: self.loc7),
-      self.token(.int(PyInt(4)), start: self.loc8, end: self.loc9)
+      self.token(.int(PyInt(1)), start: loc0, end: loc1),
+      self.token(.leftShift,     start: loc2, end: loc3),
+      self.token(.int(PyInt(2)), start: loc4, end: loc5),
+      self.token(.leftShift,     start: loc6, end: loc7),
+      self.token(.int(PyInt(4)), start: loc8, end: loc9)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertExpression(expr, "(<< (<< 1 2) 4)")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc9)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc9)
     }
   }
 
   /// 1 & 2 & 4 = (1 & 2) & 4
   func test_andGroup_isLeftAssociative() {
     var parser = self.parser(
-      self.token(.int(PyInt(1)), start: self.loc0, end: self.loc1),
-      self.token(.amper,         start: self.loc2, end: self.loc3),
-      self.token(.int(PyInt(2)), start: self.loc4, end: self.loc5),
-      self.token(.amper,         start: self.loc6, end: self.loc7),
-      self.token(.int(PyInt(4)), start: self.loc8, end: self.loc9)
+      self.token(.int(PyInt(1)), start: loc0, end: loc1),
+      self.token(.amper,         start: loc2, end: loc3),
+      self.token(.int(PyInt(2)), start: loc4, end: loc5),
+      self.token(.amper,         start: loc6, end: loc7),
+      self.token(.int(PyInt(4)), start: loc8, end: loc9)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertExpression(expr, "(& (& 1 2) 4)")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc9)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc9)
     }
   }
 
   /// 1 ^ 2 ^ 4 = (1 ^ 2) ^ 4
   func test_xorGroup_isLeftAssociative() {
     var parser = self.parser(
-      self.token(.int(PyInt(1)), start: self.loc0, end: self.loc1),
-      self.token(.circumflex,    start: self.loc2, end: self.loc3),
-      self.token(.int(PyInt(2)), start: self.loc4, end: self.loc5),
-      self.token(.circumflex,    start: self.loc6, end: self.loc7),
-      self.token(.int(PyInt(4)), start: self.loc8, end: self.loc9)
+      self.token(.int(PyInt(1)), start: loc0, end: loc1),
+      self.token(.circumflex,    start: loc2, end: loc3),
+      self.token(.int(PyInt(2)), start: loc4, end: loc5),
+      self.token(.circumflex,    start: loc6, end: loc7),
+      self.token(.int(PyInt(4)), start: loc8, end: loc9)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertExpression(expr, "(^ (^ 1 2) 4)")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc9)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc9)
     }
   }
 
   /// 1 | 2 | 4 = (1 | 2) | 4
   func test_orGroup_isLeftAssociative() {
     var parser = self.parser(
-      self.token(.int(PyInt(1)), start: self.loc0, end: self.loc1),
-      self.token(.vbar,          start: self.loc2, end: self.loc3),
-      self.token(.int(PyInt(2)), start: self.loc4, end: self.loc5),
-      self.token(.vbar,          start: self.loc6, end: self.loc7),
-      self.token(.int(PyInt(4)), start: self.loc8, end: self.loc9)
+      self.token(.int(PyInt(1)), start: loc0, end: loc1),
+      self.token(.vbar,          start: loc2, end: loc3),
+      self.token(.int(PyInt(2)), start: loc4, end: loc5),
+      self.token(.vbar,          start: loc6, end: loc7),
+      self.token(.int(PyInt(4)), start: loc8, end: loc9)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertExpression(expr, "(| (| 1 2) 4)")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc9)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc9)
     }
   }
 

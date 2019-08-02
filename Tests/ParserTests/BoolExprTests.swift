@@ -7,19 +7,19 @@ class BoolExprTests: XCTestCase, Common {
 
   func test_notOperator() {
     var parser = self.parser(
-      self.token(.not,   start: self.loc0, end: self.loc1),
-      self.token(.false, start: self.loc2, end: self.loc3)
+      self.token(.not,   start: loc0, end: loc1),
+      self.token(.false, start: loc2, end: loc3)
     )
 
     if let expr = self.parse(&parser) {
       guard let b = self.destructUnary(expr) else { return }
 
       XCTAssertEqual(b.0, .not)
-      XCTAssertEqual(b.right, Expression(.false, start: self.loc2, end: self.loc3))
+      XCTAssertEqual(b.right, Expression(.false, start: loc2, end: loc3))
 
       XCTAssertExpression(expr, "(not False)")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc3)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc3)
     }
   }
 
@@ -31,9 +31,9 @@ class BoolExprTests: XCTestCase, Common {
 
     for (token, op) in variants {
       var parser = self.parser(
-        self.token(.true,  start: self.loc0, end: self.loc1),
-        self.token(token,  start: self.loc2, end: self.loc3),
-        self.token(.false, start: self.loc4, end: self.loc5)
+        self.token(.true,  start: loc0, end: loc1),
+        self.token(token,  start: loc2, end: loc3),
+        self.token(.false, start: loc4, end: loc5)
       )
 
       if let expr = self.parse(&parser) {
@@ -42,12 +42,12 @@ class BoolExprTests: XCTestCase, Common {
         guard let b = self.destructBoolean(expr) else { return }
 
         XCTAssertEqual(b.0, op, msg)
-        XCTAssertEqual(b.left,  Expression(.true, start: self.loc0, end: self.loc1), msg)
-        XCTAssertEqual(b.right, Expression(.false, start: self.loc4, end: self.loc5), msg)
+        XCTAssertEqual(b.left,  Expression(.true, start: loc0, end: loc1), msg)
+        XCTAssertEqual(b.right, Expression(.false, start: loc4, end: loc5), msg)
 
         XCTAssertExpression(expr, "(\(op) True False)", msg)
-        XCTAssertEqual(expr.start, self.loc0, msg)
-        XCTAssertEqual(expr.end,   self.loc5, msg)
+        XCTAssertEqual(expr.start, loc0, msg)
+        XCTAssertEqual(expr.end,   loc5, msg)
       }
     }
   }
@@ -57,49 +57,49 @@ class BoolExprTests: XCTestCase, Common {
   /// not not false = not (not false)
   func test_not_isRightAssociative() {
     var parser = self.parser(
-      self.token(.not,   start: self.loc0, end: self.loc1),
-      self.token(.not,   start: self.loc2, end: self.loc3),
-      self.token(.false, start: self.loc4, end: self.loc5)
+      self.token(.not,   start: loc0, end: loc1),
+      self.token(.not,   start: loc2, end: loc3),
+      self.token(.false, start: loc4, end: loc5)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertExpression(expr, "(not (not False))")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc5)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc5)
     }
   }
 
   /// true and false and true = (true and false) and true
   func test_and_isLeftAssociative() {
     var parser = self.parser(
-      self.token(.true,  start: self.loc0, end: self.loc1),
-      self.token(.and,   start: self.loc2, end: self.loc3),
-      self.token(.false, start: self.loc4, end: self.loc5),
-      self.token(.and,   start: self.loc6, end: self.loc7),
-      self.token(.true,  start: self.loc8, end: self.loc9)
+      self.token(.true,  start: loc0, end: loc1),
+      self.token(.and,   start: loc2, end: loc3),
+      self.token(.false, start: loc4, end: loc5),
+      self.token(.and,   start: loc6, end: loc7),
+      self.token(.true,  start: loc8, end: loc9)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertExpression(expr, "(and (and True False) True)")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc9)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc9)
     }
   }
 
   /// true or false or true = (true or false) or true
   func test_or_isLeftAssociative() {
     var parser = self.parser(
-      self.token(.true,  start: self.loc0, end: self.loc1),
-      self.token(.or,    start: self.loc2, end: self.loc3),
-      self.token(.false, start: self.loc4, end: self.loc5),
-      self.token(.or,    start: self.loc6, end: self.loc7),
-      self.token(.true,  start: self.loc8, end: self.loc9)
+      self.token(.true,  start: loc0, end: loc1),
+      self.token(.or,    start: loc2, end: loc3),
+      self.token(.false, start: loc4, end: loc5),
+      self.token(.or,    start: loc6, end: loc7),
+      self.token(.true,  start: loc8, end: loc9)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertExpression(expr, "(or (or True False) True)")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc9)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc9)
     }
   }
 
@@ -108,33 +108,33 @@ class BoolExprTests: XCTestCase, Common {
   /// not true and false = (not true) and false
   func test_not_hasHigherPrecedence_thanAnd() {
     var parser = self.parser(
-      self.token(.not,   start: self.loc0, end: self.loc1),
-      self.token(.true,  start: self.loc2, end: self.loc3),
-      self.token(.and,   start: self.loc4, end: self.loc5),
-      self.token(.false, start: self.loc6, end: self.loc7)
+      self.token(.not,   start: loc0, end: loc1),
+      self.token(.true,  start: loc2, end: loc3),
+      self.token(.and,   start: loc4, end: loc5),
+      self.token(.false, start: loc6, end: loc7)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertExpression(expr, "(and (not True) False)")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc7)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc7)
     }
   }
 
   /// true or false and true = true or (false and true)
   func test_and_hasHigherPrecedence_thanOr() {
     var parser = self.parser(
-      self.token(.true,  start: self.loc0, end: self.loc1),
-      self.token(.or,    start: self.loc2, end: self.loc3),
-      self.token(.false, start: self.loc4, end: self.loc5),
-      self.token(.and,   start: self.loc6, end: self.loc7),
-      self.token(.true,  start: self.loc8, end: self.loc9)
+      self.token(.true,  start: loc0, end: loc1),
+      self.token(.or,    start: loc2, end: loc3),
+      self.token(.false, start: loc4, end: loc5),
+      self.token(.and,   start: loc6, end: loc7),
+      self.token(.true,  start: loc8, end: loc9)
     )
 
     if let expr = self.parse(&parser) {
       XCTAssertExpression(expr, "(or True (and False True))")
-      XCTAssertEqual(expr.start, self.loc0)
-      XCTAssertEqual(expr.end,   self.loc9)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc9)
     }
   }
 }
