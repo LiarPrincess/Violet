@@ -7,6 +7,8 @@ import Core
 import Lexer
 @testable import Parser
 
+// swiftlint:disable file_length
+
 class TrailerTests: XCTestCase, Common {
 
   // MARK: - Attribute
@@ -49,39 +51,89 @@ class TrailerTests: XCTestCase, Common {
     }
   }
 
-  // MARK: - Subscript
+  // MARK: - Subscript index
 
   // TODO: a[]
 
-  /// a[5]
+  /// a[1]
   func test_subscript_index() {
     var parser = self.parser(
       self.token(.identifier("a"), start: self.loc0, end: self.loc1),
       self.token(.leftSqb,         start: self.loc2, end: self.loc3),
-      self.token(.int(PyInt(5)),   start: self.loc4, end: self.loc5),
+      self.token(.int(PyInt(1)),   start: self.loc4, end: self.loc5),
       self.token(.rightSqb,        start: self.loc6, end: self.loc7)
     )
 
     if let expr = self.parse(&parser) {
-      guard let slice = self.destructSubscript(expr) else { return }
-      XCTAssertEqual(slice.start, self.loc2)
-      XCTAssertEqual(slice.end,   self.loc7)
+      guard let d = self.destructSubscriptIndex(expr) else { return }
 
-      XCTAssertExpression(expr, "(subscript a 5)")
+      XCTAssertEqual(d.index, Expression(.int(PyInt(1)), start: self.loc4, end: self.loc5))
+      XCTAssertEqual(d.slice.start, self.loc2)
+      XCTAssertEqual(d.slice.end,   self.loc7)
+
+      XCTAssertExpression(expr, "(subscript a 1)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc7)
     }
   }
 
-  // Slices:
-  //      nil,      nil,      nil // 0
-  // PyInt(1),      nil,      nil // 1
-  //      nil, PyInt(2),      nil
-  //      nil,      nil, PyInt(3)
-  // PyInt(1), PyInt(2),      nil // 2 (no tests)
-  // PyInt(1),      nil, PyInt(3)
-  //      nil, PyInt(2), PyInt(3)
-  // PyInt(1), PyInt(2), PyInt(3) // 3
+  /// a[1,2]
+  func test_subscript_index_tuple() {
+    var parser = self.parser(
+      self.token(.identifier("a"), start: self.loc0, end: self.loc1),
+      self.token(.leftSqb,         start: self.loc2, end: self.loc3),
+      self.token(.int(PyInt(1)),   start: self.loc4, end: self.loc5),
+      self.token(.comma,           start: self.loc6, end: self.loc7),
+      self.token(.int(PyInt(2)),   start: self.loc8, end: self.loc9),
+      self.token(.rightSqb,        start: self.loc10, end: self.loc11)
+    )
+
+    if let expr = self.parse(&parser) {
+      guard let d = self.destructSubscriptIndex(expr) else { return }
+
+      let tuple = ExpressionKind.tuple([
+        Expression(.int(PyInt(1)), start: self.loc4, end: self.loc5),
+        Expression(.int(PyInt(2)), start: self.loc8, end: self.loc9)
+      ])
+
+      XCTAssertEqual(d.index, Expression(tuple, start: self.loc4, end: self.loc9))
+      XCTAssertEqual(d.slice.start, self.loc2)
+      XCTAssertEqual(d.slice.end,   self.loc11)
+
+      XCTAssertExpression(expr, "(subscript a (1 2))")
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc11)
+    }
+  }
+
+  /// a[1,]
+  func test_subscript_index_withCommaAfter_isTuple() {
+    var parser = self.parser(
+      self.token(.identifier("a"), start: self.loc0, end: self.loc1),
+      self.token(.leftSqb,         start: self.loc2, end: self.loc3),
+      self.token(.int(PyInt(1)),   start: self.loc4, end: self.loc5),
+      self.token(.comma,           start: self.loc6, end: self.loc7),
+      self.token(.rightSqb,        start: self.loc8, end: self.loc9)
+    )
+
+    if let expr = self.parse(&parser) {
+      guard let d = self.destructSubscriptIndex(expr) else { return }
+
+      let tuple = ExpressionKind.tuple([
+        Expression(.int(PyInt(1)), start: self.loc4, end: self.loc5)
+      ])
+
+      XCTAssertEqual(d.index, Expression(tuple, start: self.loc4, end: self.loc5))
+      XCTAssertEqual(d.slice.start, self.loc2)
+      XCTAssertEqual(d.slice.end,   self.loc9)
+
+      XCTAssertExpression(expr, "(subscript a (1))")
+      XCTAssertEqual(expr.start, self.loc0)
+      XCTAssertEqual(expr.end,   self.loc9)
+    }
+  }
+
+  // MARK: - Subscript slices
 
   /// a[::]
   func test_subscript_slice_none() {
@@ -94,9 +146,13 @@ class TrailerTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      guard let slice = self.destructSubscript(expr) else { return }
-      XCTAssertEqual(slice.start, self.loc2)
-      XCTAssertEqual(slice.end,   self.loc9)
+      guard let d = self.destructSubscriptSlice(expr) else { return }
+
+      XCTAssertNil(d.lower)
+      XCTAssertNil(d.upper)
+      XCTAssertNil(d.step)
+      XCTAssertEqual(d.slice.start, self.loc2)
+      XCTAssertEqual(d.slice.end,   self.loc9)
 
       XCTAssertExpression(expr, "(subscript a ::)")
       XCTAssertEqual(expr.start, self.loc0)
@@ -116,9 +172,13 @@ class TrailerTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      guard let slice = self.destructSubscript(expr) else { return }
-      XCTAssertEqual(slice.start, self.loc2)
-      XCTAssertEqual(slice.end,   self.loc11)
+      guard let d = self.destructSubscriptSlice(expr) else { return }
+
+      XCTAssertEqual(d.lower, Expression(.int(PyInt(1)), start: self.loc4, end: self.loc5))
+      XCTAssertNil(d.upper)
+      XCTAssertNil(d.step)
+      XCTAssertEqual(d.slice.start, self.loc2)
+      XCTAssertEqual(d.slice.end,   self.loc11)
 
       XCTAssertExpression(expr, "(subscript a 1::)")
       XCTAssertEqual(expr.start, self.loc0)
@@ -138,9 +198,13 @@ class TrailerTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      guard let slice = self.destructSubscript(expr) else { return }
-      XCTAssertEqual(slice.start, self.loc2)
-      XCTAssertEqual(slice.end,   self.loc11)
+      guard let d = self.destructSubscriptSlice(expr) else { return }
+
+      XCTAssertNil(d.lower)
+      XCTAssertEqual(d.upper, Expression(.int(PyInt(2)), start: self.loc6, end: self.loc7))
+      XCTAssertNil(d.step)
+      XCTAssertEqual(d.slice.start, self.loc2)
+      XCTAssertEqual(d.slice.end,   self.loc11)
 
       XCTAssertExpression(expr, "(subscript a :2:)")
       XCTAssertEqual(expr.start, self.loc0)
@@ -160,9 +224,13 @@ class TrailerTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      guard let slice = self.destructSubscript(expr) else { return }
-      XCTAssertEqual(slice.start, self.loc2)
-      XCTAssertEqual(slice.end,   self.loc11)
+      guard let d = self.destructSubscriptSlice(expr) else { return }
+
+      XCTAssertNil(d.lower)
+      XCTAssertNil(d.upper)
+      XCTAssertEqual(d.step, Expression(.int(PyInt(3)), start: self.loc8, end: self.loc9))
+      XCTAssertEqual(d.slice.start, self.loc2)
+      XCTAssertEqual(d.slice.end,   self.loc11)
 
       XCTAssertExpression(expr, "(subscript a ::3)")
       XCTAssertEqual(expr.start, self.loc0)
@@ -184,13 +252,19 @@ class TrailerTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      guard let slice = self.destructSubscript(expr) else { return }
-      XCTAssertEqual(slice.start, self.loc2)
-      XCTAssertEqual(slice.end,   self.loc15)
+      guard let d = self.destructSubscriptSlice(expr) else { return }
+
+      XCTAssertEqual(d.lower, Expression(.int(PyInt(1)), start: self.loc4, end: self.loc5))
+      XCTAssertEqual(d.upper, Expression(.int(PyInt(2)), start: self.loc8, end: self.loc9))
+      XCTAssertEqual(d.step,  Expression(.int(PyInt(3)), start: self.loc12, end: self.loc13))
+      XCTAssertEqual(d.slice.start, self.loc2)
+      XCTAssertEqual(d.slice.end,   self.loc15)
 
       XCTAssertExpression(expr, "(subscript a 1:2:3)")
       XCTAssertEqual(expr.start, self.loc0)
       XCTAssertEqual(expr.end,   self.loc15)
     }
   }
+
+  // MARK: - Subscript extended
 }

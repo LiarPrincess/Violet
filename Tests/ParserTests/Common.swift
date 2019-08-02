@@ -175,16 +175,42 @@ extension Common {
       return nil
   }
 
-  internal func destructSubscript(_ expr: Expression,
-                                  file:   StaticString = #file,
-                                  line:   UInt         = #line) -> Slice? {
+  internal func destructSubscriptIndex(_ expr: Expression,
+                                       file:   StaticString = #file,
+                                       line:   UInt         = #line) ->
+    (slice: Slice, index: Expression)? {
 
-    if case let ExpressionKind.subscript(_, slice: slice) = expr.kind {
-      return slice
+    guard case let ExpressionKind.subscript(_, slice: slice) = expr.kind else {
+      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+      return nil
     }
 
-    XCTAssertTrue(false, expr.kind.description, file: file, line: line)
-    return nil
+    switch slice.kind {
+    case let .index(index):
+      return (slice, index)
+    default:
+      XCTAssertTrue(false, slice.kind.description, file: file, line: line)
+      return nil
+    }
+  }
+
+  internal func destructSubscriptSlice(_ expr: Expression,
+                                       file:   StaticString = #file,
+                                       line:   UInt         = #line) ->
+    (slice: Slice, lower: Expression?, upper: Expression?, step: Expression?)? {
+
+      guard case let ExpressionKind.subscript(_, slice: slice) = expr.kind else {
+        XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+        return nil
+      }
+
+      switch slice.kind {
+      case let .slice(lower: l, upper: u, step: s):
+        return (slice, l, u, s)
+      default:
+        XCTAssertTrue(false, slice.kind.description, file: file, line: line)
+        return nil
+      }
   }
 
   internal func destructLambda(_ expr: Expression,

@@ -412,7 +412,7 @@ class LambdaTests: XCTestCase, Common {
   }
 
   /// lambda **a,: 5
-  func test_kwargs_withComaAfter() {
+  func test_kwargs_withCommaAfter() {
     var parser = self.parser(
       self.token(.lambda,          start: self.loc0, end: self.loc1),
       self.token(.starStar,        start: self.loc2, end: self.loc3),

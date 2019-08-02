@@ -61,7 +61,7 @@ extension Parser {
   /// `lambdef: 'lambda' [varargslist] ':' test`
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
-  /// if we can't parse according to that rule.
+  /// if we can't parse according to this rule.
   private mutating func lambDefOrNop() throws -> Expression? {
     guard self.peek.kind == .lambda else {
       return nil
@@ -84,7 +84,7 @@ extension Parser {
   /// `lambdef_nocond: 'lambda' [varargslist] ':' test_nocond`
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
-  /// if we can't parse according to that rule.
+  /// if we can't parse according to this rule.
   private mutating func lambDefNoCondOrNop() throws -> Expression? {
     guard self.peek.kind == .lambda else {
       return nil
@@ -211,7 +211,7 @@ extension Parser {
   /// `star_expr: '*' expr`
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
-  /// if we can't parse according to that rule.
+  /// if we can't parse according to this rule.
   private mutating func starExprOrNop() throws -> Expression? {
     let token = self.peek
     switch token.kind {
