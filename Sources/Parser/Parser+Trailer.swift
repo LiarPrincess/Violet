@@ -131,23 +131,27 @@ extension Parser {
     }
 
     // subscript: [test] ':' [test] [sliceop] -> slice
+    var end = self.peek.end // from now on, everything is optional
     try self.consumeOrThrow(.colon)
 
-    // do we have 2nd?
-    if self.peek.kind != .colon {
+    // do we have 2nd? a[1:(we are here)]
+    if self.peek.kind != .colon && !closingTokens.contains(self.peek.kind) {
       upper = try self.test()
+      end = upper?.end ?? end
     }
 
-    // do we have 3rd? (sliceop)
+    // do we have 3rd? (sliceop) a[1:2(we are here)]
     if self.peek.kind == .colon {
+      end = self.peek.end
       try self.advance() // :
 
       if !closingTokens.contains(self.peek.kind) {
         step = try self.test()
+        end = step?.end ?? end
       }
     }
 
     let kind = SliceKind.slice(lower: lower, upper: upper, step: step)
-    return Slice(kind, start: start, end: .start) // TODO: what is the end?
+    return Slice(kind, start: start, end: end)
   }
 }

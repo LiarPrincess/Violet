@@ -187,7 +187,7 @@ extension SliceKind: CustomStringConvertible {
     case let .index(index):
       return describe(index)
     case let .extSlice(dims: dims):
-      return join(dims)
+      return "(" + join(dims) + ")"
     case let .slice(lower: lower, upper: upper, step: step):
       let l = lower.map(describe) ?? ""
       let u = upper.map(describe) ?? ""

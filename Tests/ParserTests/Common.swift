@@ -213,6 +213,25 @@ extension Common {
       }
   }
 
+  internal func destructSubscriptSliceExt(_ expr: Expression,
+                                          file:   StaticString = #file,
+                                          line:   UInt         = #line) ->
+    (slice: Slice, dims: [Slice])? {
+
+      guard case let ExpressionKind.subscript(_, slice: slice) = expr.kind else {
+        XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+        return nil
+      }
+
+      switch slice.kind {
+      case let .extSlice(dims: dims):
+        return (slice, dims)
+      default:
+        XCTAssertTrue(false, slice.kind.description, file: file, line: line)
+        return nil
+      }
+  }
+
   internal func destructLambda(_ expr: Expression,
                                file:   StaticString = #file,
                                line:   UInt         = #line) ->
