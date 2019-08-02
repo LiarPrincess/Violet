@@ -7,6 +7,8 @@ import Core
 import Lexer
 @testable import Parser
 
+// swiftlint:disable large_tuple
+
 /// Shared test helpers.
 internal protocol Common { }
 
@@ -40,8 +42,8 @@ extension Common {
   internal var loc23: SourceLocation { return self.location(n: 23) }
 
   private func location(n: Int) -> SourceLocation {
-    let line = n / 2 + 1
-    let column = (n % 2) * 5 + line
+    let line = n
+    let column = (n % 2) * 5 + line // some random
     return SourceLocation(line: line, column: column)
   }
 
@@ -117,7 +119,7 @@ extension Common {
       return (op, right)
     }
 
-    XCTAssertTrue(false, file: file, line: line)
+    XCTAssertTrue(false, expr.kind.description, file: file, line: line)
     return nil
   }
 
@@ -130,7 +132,7 @@ extension Common {
         return (op, left, right)
       }
 
-      XCTAssertTrue(false, file: file, line: line)
+      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
       return nil
   }
 
@@ -143,7 +145,7 @@ extension Common {
         return (op, left, right)
       }
 
-      XCTAssertTrue(false, file: file, line: line)
+      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
       return nil
   }
 
@@ -156,21 +158,33 @@ extension Common {
         return (left, elements)
       }
 
-      XCTAssertTrue(false, file: file, line: line)
+      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
       return nil
   }
 
   internal func destructAttribute(_ expr: Expression,
                                   file:   StaticString = #file,
                                   line:   UInt         = #line) ->
-    (value: Expression, name: String)? {
+    (Expression, name: String)? {
 
-      if case let ExpressionKind.attribute(value: value, name: name) = expr.kind {
+      if case let ExpressionKind.attribute(value, name: name) = expr.kind {
         return (value, name)
       }
 
-      XCTAssertTrue(false, file: file, line: line)
+      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
       return nil
+  }
+
+  internal func destructSubscript(_ expr: Expression,
+                                  file:   StaticString = #file,
+                                  line:   UInt         = #line) -> Slice? {
+
+    if case let ExpressionKind.subscript(_, slice: slice) = expr.kind {
+      return slice
+    }
+
+    XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+    return nil
   }
 
   internal func destructLambda(_ expr: Expression,
@@ -182,7 +196,7 @@ extension Common {
       return (args, body)
     }
 
-    XCTAssertTrue(false, file: file, line: line)
+    XCTAssertTrue(false, expr.kind.description, file: file, line: line)
     return nil
   }
 }

@@ -110,8 +110,8 @@ Returns last evaluated argument (even if it's not True or False).
   | IfExpression(expr test, expr body, expr orElse)
   --  | Constant(constant value, string? kind)
   -- the following expression can appear in assignment context
-  --  | Subscript(expr value, slice slice) -- , expr_context ctx
-  | Attribute(expr value, identifier name)
+  | Attribute(expr, identifier name)
+  | Subscript(expr, slice slice)
   | Starred(expr)
 
 @enum UnaryOperator =
@@ -169,9 +169,16 @@ Returns last evaluated argument (even if it's not True or False).
   | Ascii @doc "Converts by calling `ascii(<value>)`."
   | Repr  @doc "Converts by calling `repr(<value>)`."
 
--- @enum slice = Slice(expr? lower, expr? upper, expr? step)
---  | ExtSlice(slice* dims)
---  | Index(expr value)
+@struct slice = (
+  sliceKind kind,
+  loc start @doc "Location of the first character in the source code.",
+  loc end @doc "Location just after the last character in the source code."
+)
+
+@enum sliceKind =
+   Slice(expr? lower, expr? upper, expr? step)
+ | ExtSlice(slice* dims)
+ | Index(expr)
 
 -- comprehension = (expr target, expr iter, expr* ifs, int is_async)
 

@@ -34,7 +34,7 @@ def printNode(node, level = 0):
     elif isinstance(v, int) or isinstance(v, float):
       print(f"{childIndent}{k}: {v}")
     elif v is None:
-      print(f"{childIndent}{k}: none")
+      print(f"{childIndent}{k}: null")
     else:
       print(f"{childIndent}{k}: ?")
 

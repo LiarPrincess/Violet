@@ -22,6 +22,14 @@ extension Expression {
   }
 }
 
+extension Slice {
+  public init(_ kind: SliceKind, start: SourceLocation, end: SourceLocation) {
+    self.kind = kind
+    self.start = start
+    self.end = end
+  }
+}
+
 // TODO: (Elsa) Add default arguments
 extension Arguments {
   public init(argss: [Arg] = [],

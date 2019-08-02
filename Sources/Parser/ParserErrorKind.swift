@@ -40,7 +40,7 @@ extension ParserErrorKind: CustomStringConvertible {
       return "Named arguments must follow bare *."
 
     case .unimplemented(let msg):
-      return "Unimplemented:" + msg
+      return "Unimplemented: '\(msg)'"
     }
   }
 }

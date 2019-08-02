@@ -77,8 +77,10 @@ extension ExpressionKind: CustomStringConvertible {
       return "(if \(test)) then \(body)) else \(orElse))"
     case let .starred(value):
       return "(starred \(value))"
-    case .attribute(let value, let name):
+    case let .attribute(value, name):
       return "(attribute \(value) \(name))"
+    case let .subscript(value, slice):
+      return "(subscript \(value) \(slice))"
     }
   }
 }
@@ -165,6 +167,32 @@ extension ConversionFlag: CustomStringConvertible {
     case .str:   return "str"
     case .ascii: return "ascii"
     case .repr:  return "repr"
+    }
+  }
+}
+
+extension Slice: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String {
+    return describe(self.kind)
+  }
+
+  public var debugDescription: String {
+    return "Slice(\(self.kind), start: \(self.start), end: \(self.end))"
+  }
+}
+
+extension SliceKind: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case let .index(index):
+      return describe(index)
+    case let .extSlice(dims: dims):
+      return join(dims)
+    case let .slice(lower: lower, upper: upper, step: step):
+      let l = lower.map(describe) ?? ""
+      let u = upper.map(describe) ?? ""
+      let s = step.map(describe) ?? ""
+      return "\(l):\(u):\(s)"
     }
   }
 }

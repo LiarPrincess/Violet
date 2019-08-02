@@ -67,6 +67,8 @@ public indirect enum ExpressionKind: Equatable {
   case lambda(args: Arguments, body: Expression)
   case namedExpr(target: Expression, value: Expression)
   case ifExpression(test: Expression, body: Expression, orElse: Expression)
+  case attribute(Expression, name: String)
+  case `subscript`(Expression, slice: Slice)
   case starred(Expression)
 }
 
@@ -177,9 +179,30 @@ public enum ConversionFlag: Equatable {
   case repr
 }
 
-/// The arguments for a function passed by value
-/// (where the value is always an object reference, not the value of the object).
-/// https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions
+public struct Slice: Equatable {
+
+  public let kind: SliceKind
+  /// Location of the first character in the source code.
+  public let start: SourceLocation
+  /// Location just after the last character in the source code.
+  public let end: SourceLocation
+
+  public init(kind: SliceKind, start: SourceLocation, end: SourceLocation) {
+    self.kind = kind
+    self.start = start
+    self.end = end
+  }
+}
+
+public enum SliceKind: Equatable {
+  case slice(lower: Expression?, upper: Expression?, step: Expression?)
+  case extSlice(dims: [Slice])
+  /// The arguments for a function passed by value
+  /// (where the value is always an object reference, not the value of the object).
+  /// https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions
+  case index(Expression)
+}
+
 public struct Arguments: Equatable {
 
   /// Function positional arguments.
