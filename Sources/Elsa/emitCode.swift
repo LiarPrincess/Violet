@@ -1,13 +1,5 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
 // We could go with fancy 'String.StringInterpolation', but it always looks
 // like an hack.
-
-// TODO: (Elsa) _ in init
-// TODO: (Elsa) @str
-// TODO: (Elsa.emit) To class and line() write() (as in slip)
 
 internal func emitCode(entities: [Entity]) {
   print("import Foundation")

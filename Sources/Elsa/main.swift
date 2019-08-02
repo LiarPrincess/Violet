@@ -1,8 +1,8 @@
-// This Source Code Form is subject to the terms of the Mozilla Public
-// License, v. 2.0. If a copy of the MPL was not distributed with this
-// file, You can obtain one at http://mozilla.org/MPL/2.0/.
-
 // swiftlint:disable force_try
+
+// TODO: (Elsa) _ in init
+// TODO: (Elsa.emit) To class and line() write() (as in slip)
+// TODO: (Elsa) Resolve ambiguity for @enum a|b @doc @struct. is it @doc for last case or @struct?
 
 import Foundation
 
