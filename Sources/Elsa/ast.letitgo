@@ -4,140 +4,186 @@
 @alias object   = Any
 @alias constant = Any
 
- -- less typing (also CPython used those and we are lazy)
+{- less typing (also CPython used those and we are lazy) -}
 @alias expr = Expression
 @alias exprKind = ExpressionKind
 @alias stmt = Statement
 @alias stmtKind = StatementKind
 @alias loc = SourceLocation
 
-  -- mod = Module(stmt* body)
-  --     | Interactive(stmt* body)
-  --     | Expression(expr body)
+{-
+  mod = Module(stmt* body)
+      | Interactive(stmt* body)
+      | Expression(expr body)
+-}
 
--- @struct stmt = (
---   stmtKind kind @doc "Type of the statement.",
---   loc start @doc "Location of the first character in the source code.",
---   loc end @doc "Location just after the last character in the source code."
--- )
-
--- @enum stmtKind =
---    FunctionDef     (identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
---  | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
---  | ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
---  | Return(expr? value)
---
---  | Delete(expr* targets)
---  | Assign(expr* targets, expr value)
---  | AugAssign(expr target, operator op, expr value)
---  -- 'simple' indicates that we annotate simple name without parens
---  | AnnAssign(expr target, expr annotation, expr? value, int simple)
---
---  -- use 'orelse' because else is a keyword in target languages
---  | For     (expr target, expr iter, stmt* body, stmt* orelse)
---  | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse)
---  | While(expr test, stmt* body, stmt* orelse)
---  | If(expr test, stmt* body, stmt* orelse)
---  | With     (withitem* items, stmt* body)
---  | AsyncWith(withitem* items, stmt* body)
---
---  | Raise(expr? exc, expr? cause)
---  | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
---  | Assert(expr test, expr? msg)
---
---  | Import(alias* names)
---  | ImportFrom(identifier? module, alias* names, int? level)
---
---  | Global(identifier* names)
---  | Nonlocal(identifier* names)
---  | Expr(expr value)
---  | Pass | Break | Continue
-
---  -- XXX Jython will be different
---  -- col_offset is the byte offset in the utf8 string the parser uses
---  attributes (int lineno, int col_offset)
-
-@doc "https://docs.python.org/3/reference/expressions.html"
-@struct expr = (
-  exprKind kind @doc "Type of the expression.",
+{-
+@struct stmt = (
+  stmtKind kind @doc "Type of the statement.",
   loc start @doc "Location of the first character in the source code.",
   loc end @doc "Location just after the last character in the source code."
 )
 
-@doc "https://docs.python.org/3/reference/expressions.html"
+@enum stmtKind =
+   FunctionDef     (identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
+ | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
+ | ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
+ | Return(expr? value)
+
+ | Delete(expr* targets)
+ | Assign(expr* targets, expr value)
+ | AugAssign(expr target, operator op, expr value)
+ -- 'simple' indicates that we annotate simple name without parens
+ | AnnAssign(expr target, expr annotation, expr? value, int simple)
+
+ -- use 'orelse' because else is a keyword in target languages
+ | For     (expr target, expr iter, stmt* body, stmt* orelse)
+ | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse)
+ | While(expr test, stmt* body, stmt* orelse)
+ | If(expr test, stmt* body, stmt* orelse)
+ | With     (withitem* items, stmt* body)
+ | AsyncWith(withitem* items, stmt* body)
+
+ | Raise(expr? exc, expr? cause)
+ | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
+ | Assert(expr test, expr? msg)
+
+ | Import(alias* names)
+ | ImportFrom(identifier? module, alias* names, int? level)
+
+ | Global(identifier* names)
+ | Nonlocal(identifier* names)
+ | Expr(expr value)
+ | Pass | Break | Continue
+
+ -- XXX Jython will be different
+ -- col_offset is the byte offset in the utf8 string the parser uses
+ attributes (int lineno, int col_offset)
+ -}
+
+-- https://docs.python.org/3/reference/expressions.html
+@struct expr = (
+  -- Type of the expression.
+  exprKind kind,
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
+)
+
+-- https://docs.python.org/3/reference/expressions.html
 @indirect exprKind =
--- Base
-    True
+{- Base -}
+  True
   | False
   | None
   | Ellipsis
--- Literals
+{- Literals -}
   | Identifier(String)
-  --  | String(StringGroup)
+{-   | String(StringGroup) -}
   | Int(PyInt)
   | Float(Double)
   | Complex(Double real, Double imag)
   | Bytes(Data)
--- Operators
-  | UnaryOp(UnaryOperator, expr right) @doc "Operation with single operand."
-  | BinaryOp(BinaryOperator, expr left, expr right) @doc "Operation with 2 operands."
-  | BoolOp(BooleanOperator, expr left, expr right) @doc "Operation with logical values as operands.
-Returns last evaluated argument (even if it's not True or False).
-- Note:\nFollowing values are interpreted as false:\n- False\n- None\n- numeric zero\n- empty strings\n- empty containers"
-  -- need sequence to distinguish between: x < 4 < 3 and (x < 4) < 3
+{- Operators -}
+  -- Operation with single operand.
+  | UnaryOp(UnaryOperator, expr right)
+  -- Operation with 2 operands.
+  | BinaryOp(BinaryOperator, expr left, expr right)
+  -- Operation with logical values as operands.
+  -- Returns last evaluated argument (even if it's not True or False).
+  -- - Note:
+  -- Following values are interpreted as false:
+  -- - False\n- None\n- numeric zero\n- empty strings\n- empty containers
+  | BoolOp(BooleanOperator, expr left, expr right)
+  {- need sequence to distinguish between: x < 4 < 3 and (x < 4) < 3 -}
   | Compare(expr left, ComparisonElement* elements)
--- Collections
-  | Tuple(expr*) @doc "Values separated by commas (sometimes between parentheses): (a,b)."
-  | List(expr*) @doc "List of comma-separated values between square brackets: [a,b]."
-  --  | Dictionary(expr* keys, expr* values) @doc "Set of `key: value` pairs between braces: {a: b}. Keys are unique."
-  | Set(expr*) @doc "List of comma-separated values between braces: {a}. Unordered with no duplicates."
--- Comprehensions
-  --  | ListComprehension(expr elt, comprehension* generators)
-  --  | SetComprehension(expr elt, comprehension* generators)
-  --  | DictionaryComprehension(expr key, expr value, comprehension* generators)
--- Generators/coroutines
-  -- the grammar constrains where yield expressions can occur
-  --  | GeneratorExp(expr elt, comprehension* generators)
+{- Collections -}
+  -- Values separated by commas (sometimes between parentheses): (a,b).
+  | Tuple(expr*)
+  -- List of comma-separated values between square brackets: [a,b].
+  | List(expr*)
+  -- Set of `key: value` pairs between braces: {a: b}. Keys are unique.
+  {- | Dictionary(expr* keys, expr* values) -}
+  -- List of comma-separated values between braces: {a}. Unordered with no duplicates.
+  | Set(expr*)
+{- Comprehensions -}
+{-
+  | ListComprehension(expr elt, comprehension* generators)
+  | SetComprehension(expr elt, comprehension* generators)
+  | DictionaryComprehension(expr key, expr value, comprehension* generators)
+-}
+{- Generators/coroutines -}
+  {- the grammar constrains where yield expressions can occur -}
+  {- | GeneratorExp(expr elt, comprehension* generators) -}
   | Await(expr)
   | Yield(expr?)
   | YieldFrom(expr)
--- Functions
+{- Functions -}
   | Lambda(arguments args, expr body)
-  --  | Call(expr func, expr* args, keyword* keywords)
--- Other
+  {- | Call(expr func, expr* args, keyword* keywords) -}
+{- Other -}
   | NamedExpr(expr target, expr value)
-  -- 1 if True else 2 TODO: @doc
+  {- 1 if True else 2 TODO: @doc -}
   | IfExpression(expr test, expr body, expr orElse)
-  --  | Constant(constant value, string? kind)
-  -- the following expression can appear in assignment context
+  {- the following expression can appear in assignment context -}
   | Attribute(expr, identifier name)
   | Subscript(expr, slice slice)
   | Starred(expr)
 
 @enum UnaryOperator =
-  Invert  @doc "Bitwise inversion of its integer argument.\nOnly applies to integral numbers."
-  | Not   @doc "True if its argument is false, False otherwise."
-  | Plus  @doc "Unchanged argument. CPython: UAdd (unary add)."
-  | Minus @doc "Negation of its numeric argument. CPython: USub (unary sub)."
+  -- Bitwise inversion of its integer argument.
+  -- Only applies to integral numbers.
+  Invert
+  -- True if its argument is false, False otherwise.
+  | Not
+  -- Unchanged argument. CPython: UAdd (unary add).
+  | Plus
+  -- Negation of its numeric argument. CPython: USub (unary sub).
+  | Minus
 
 @enum BooleanOperator =
-    And @doc "Logical `and` with short-circuit."
-  | Or  @doc "Logical `or` with short-circuit."
+  -- Logical `and` with short-circuit.
+  And
+  -- Logical `or` with short-circuit.
+  | Or
 
 @enum BinaryOperator =
-  Add      @doc "Sum of its arguments.\n- Numbers added together.\n- Sequences are concatenated."
-  | Sub    @doc "Difference of its arguments."
-  | Mul    @doc "Product of its arguments.\n- Numbers multiplied together.\n- For integer and sequence repetition is performed."
-  | MatMul @doc "Intended to be used for matrix multiplication.\nNo builtin Python types implement this operator."
-  | Div    @doc "Quotient of their arguments.\nDivision of integers yields a float."
-  | Modulo @doc "Remainder from the division of the first argument by the second."
-  | Pow    @doc "Left argument raised to the power of its right argument."
-  | LeftShift  @doc "Shift the first argument to the left by the number of bits\ngiven by the second argument."
-  | RightShift @doc "Shift the first argument to the right by the number of bits\ngiven by the second argument."
-  | BitOr      @doc "Bitwise (inclusive) OR of its arguments, which must be integers."
-  | BitXor     @doc "Bitwise XOR (exclusive OR) of its arguments, which must be integers."
-  | BitAnd     @doc "Bitwise AND of its arguments, which must be integers."
-  | FloorDiv   @doc "Quotient of their arguments.\nFloor division of integers results in an integer."
+  -- Sum of its arguments.
+  -- - Numbers added together.
+  -- - Sequences are concatenated.
+  Add
+  -- Difference of its arguments.
+  | Sub
+  -- Product of its arguments.
+  -- - Numbers multiplied together.
+  -- - For integer and sequence repetition is performed.
+  | Mul
+  -- Intended to be used for matrix multiplication.
+  -- No builtin Python types implement this operator.
+  | MatMul
+  -- Quotient of their arguments.
+  -- Division of integers yields a float.
+  | Div
+  -- Remainder from the division of the first argument by the second.
+  | Modulo
+  -- Left argument raised to the power of its right argument.
+  | Pow
+  -- Shift the first argument to the left by the number of bits
+  -- given by the second argument.
+  | LeftShift
+  -- Shift the first argument to the right by the number of bits
+  -- given by the second argument.
+  | RightShift
+  -- Bitwise (inclusive) OR of its arguments, which must be integers.
+  | BitOr
+  -- Bitwise XOR (exclusive OR) of its arguments, which must be integers.
+  | BitXor
+  -- Bitwise AND of its arguments, which must be integers.
+  | BitAnd
+  -- Quotient of their arguments.
+  -- Floor division of integers results in an integer.
+  | FloorDiv
 
 @struct ComparisonElement = (
   ComparisonOperator op,
@@ -145,92 +191,132 @@ Returns last evaluated argument (even if it's not True or False).
 )
 
 @enum ComparisonOperator =
-  Equal      @doc "True when two operands are equal."
-  | NotEqual @doc "True when two operands are not equal."
-  | Less         @doc "True when left operand is less than the value of right operand."
-  | LessEqual    @doc "True when left operand is less than or equal to the value of right operand."
-  | Greater      @doc "True when left operand is greater than the value of right operand."
-  | GreaterEqual @doc "True when left operand is greater than or equal to the value of right operand."
-  | Is    @doc "True when x and y are the same object."
-  | IsNot @doc "Negation of `x is y`."
-  | In    @doc "True when x is a member of s."
-  | NotIn @doc "Negation of `x in s`"
+  -- True when two operands are equal.
+  Equal
+  -- True when two operands are not equal.
+  | NotEqual
+  -- True when left operand is less than the value of right operand.
+  | Less
+  -- True when left operand is less than or equal to the value of right operand.
+  | LessEqual
+  -- True when left operand is greater than the value of right operand.
+  | Greater
+  -- True when left operand is greater than or equal to the value of right operand.
+  | GreaterEqual
+  -- True when x and y are the same object.
+  | Is
+  -- Negation of `x is y`.
+  | IsNot
+  -- True when x is a member of s.
+  | In
+  -- Negation of `x in s`
+  | NotIn
 
--- Based on RustPython.
--- CPython uses 'JoinedStr(expr* values)', but we know that values are strings.
+
+{- Based on RustPython. -}
+{- CPython uses 'JoinedStr(expr* values)', but we know that values are strings. -}
+
+{-
 @enum StringGroup =
-    String(String)
-  | FormattedValue(expr value, ConversionFlag? conversion, String spec) -- FormattedValue(expr value, int? conversion, expr? format_spec)
+  String(String)
+  CPython: FormattedValue(expr value, int? conversion, expr? format_spec)
+  | FormattedValue(expr value, ConversionFlag? conversion, String spec)
   | JoinedString(StringGroup*) -- JoinedStr(expr* values)
+ -}
 
-@doc "Transforms a value prior to formatting it."
+-- Transforms a value prior to formatting it.
 @enum ConversionFlag =
-    Str   @doc "Converts by calling `str(<value>)`."
-  | Ascii @doc "Converts by calling `ascii(<value>)`."
-  | Repr  @doc "Converts by calling `repr(<value>)`."
+  -- Converts by calling `str(<value>)`.
+  Str
+  -- Converts by calling `ascii(<value>)`.
+  | Ascii
+  -- Converts by calling `repr(<value>)`.
+  | Repr
 
 @struct slice = (
   sliceKind kind,
-  loc start @doc "Location of the first character in the source code.",
-  loc end @doc "Location just after the last character in the source code."
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
 )
 
 @enum sliceKind =
-   Slice(expr? lower, expr? upper, expr? step)
+  Slice(expr? lower, expr? upper, expr? step)
  | ExtSlice(slice* dims)
  | Index(expr)
 
+{-
 -- comprehension = (expr target, expr iter, expr* ifs, int is_async)
 
 -- excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
 --                 attributes (int lineno, int col_offset)
+-}
 
-@doc "The arguments for a function passed by value
-(where the value is always an object reference, not the value of the object).
-https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"
+-- The arguments for a function passed by value
+-- (where the value is always an object reference, not the value of the object).
+-- https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"
 @struct arguments = (
-  arg* args @doc "Function positional arguments.
-When a function is called, positional arguments are mapped
-to these parameters based solely on their position.",
-  expr* defaults @doc "Default values for positional arguments.
-If there are fewer defaults, they correspond to the last *n* arguments.
-- Important: The default value is evaluated only **once**.",
+  -- Function positional arguments.
+  -- When a function is called, positional arguments are mapped
+  -- to these parameters based solely on their position.
+  arg* args,
+  -- Default values for positional arguments.
+  -- If there are fewer defaults, they correspond to the last *n* arguments.
+  -- - Important: The default value is evaluated only **once**.
+  expr* defaults,
 
-  vararg vararg @doc "Non-keyworded variable length arguments.
-By convention called `*args`.",
-  arg* kwOnlyArgs @doc "Parameters which occur after the '*args'.
-Can only be used as keywords rather than positional arguments.
-CPython `kwonlyargs`.",
-  expr* kwOnlyDefaults @doc "Default values for keyword-only arguments.
-If no default value is specified then implicit `None` is assumed.
-CPython `kw_defaults`.
-- Important: The default value is evaluated only **once**.",
+  -- Non-keyworded variable length arguments.
+  -- By convention called `*args`.
+  vararg vararg,
+  -- Parameters which occur after the '*args'.
+  -- Can only be used as keywords rather than positional arguments.
+  -- CPython `kwonlyargs`.
+  arg* kwOnlyArgs,
+  -- Default values for keyword-only arguments.
+  -- If no default value is specified then implicit `None` is assumed.
+  -- CPython `kw_defaults`.
+  -- - Important: The default value is evaluated only **once**.
+  expr* kwOnlyDefaults,
 
-  arg? kwarg @doc "Keyworded (named) variable length arguments.
-By convention called `**kwargs`.",
+  -- Keyworded (named) variable length arguments.
+  -- By convention called `**kwargs`.
+  arg? kwarg,
 
-  loc start @doc "Location of the first character in the source code.",
-  loc end @doc "Location just after the last character in the source code."
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
 )
 
 @struct arg = (
-  identifier name @doc "Argument name.",
-  expr? annotation @doc "Python expression evaluated at compile time.
-Not used during runtime, can be used by third party libraries.
-Introduced in PEP 3107.",
-  loc start @doc "Location of the first character in the source code.",
-  loc end @doc "Location just after the last character in the source code."
+  -- Argument name.
+  identifier name,
+  -- Python expression evaluated at compile time.
+  -- Not used during runtime, can be used by third party libraries.
+  -- Introduced in PEP 3107.
+  expr? annotation,
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
 )
 
 @enum vararg =
   none
-  | unnamed @doc "Separator for keyword arguments. Represented by just `*`."
+  -- Separator for keyword arguments. Represented by just `*`.
+  | unnamed
   | named(Arg)
 
--- keyword arguments supplied to call (NULL identifier for **kwargs)
--- @struct keyword = (identifier? name, expr value)
+-- Keyword arguments supplied to call (`nil` identifier for `**kwargs`).
+{- @struct keyword = (
+  identifier? name,
+  expr value
+) -}
 
+{-
 -- -- import name with optional 'as' alias.
 -- alias = (identifier name, identifier? asname)
 --
 -- withitem = (expr context_expr, expr? optional_vars)
+-}

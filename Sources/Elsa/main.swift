@@ -13,6 +13,7 @@ let source = try! String(contentsOf: sourceFile, encoding: .utf8)
 let parserDir = elsaDir.deletingLastPathComponent().appendingPathComponent("Parser")
 
 var lexer = Lexer(source: source)
+//lexer.dumpTokens()
 var parser = Parser(lexer: lexer)
 let entities = parser.parse()
 

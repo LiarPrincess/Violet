@@ -1,3 +1,42 @@
+public enum TokenKind: Equatable, CustomStringConvertible {
+  case alias
+  case `enum`
+  case indirect
+  case `struct`
+  case name(String)
+  case doc(String)
+
+  case equal
+  case or
+  case star
+  case option
+  case comma
+
+  case leftParen
+  case rightParen
+
+  case eof
+
+  public var description: String {
+    switch self {
+    case .alias: return "alias"
+    case .enum: return "enum"
+    case .indirect: return "indirect enum"
+    case .struct: return "struct"
+    case .name(let value): return "name(\(value))"
+    case .doc: return "comment(...)"
+    case .equal: return "equal"
+    case .or: return "or"
+    case .star: return "star"
+    case .option: return "option"
+    case .comma: return "comma"
+    case .leftParen: return "left paren"
+    case .rightParen: return "right paren"
+    case .eof: return "eof"
+    }
+  }
+}
+
 public struct Token: Equatable, CustomStringConvertible {
 
   public let kind: TokenKind
@@ -34,48 +73,5 @@ public struct SourceLocation: Equatable, CustomStringConvertible {
   public var description: String {
     let columnPrefix = self.column < 10 ? "0" : ""
     return "\(self.line):\(columnPrefix)\(self.column)"
-  }
-}
-
-public enum TokenKind: Equatable, CustomStringConvertible {
-  case alias
-  case `enum`
-  case indirect
-  case `struct`
-  case doc
-  case str
-  case name(String)
-  case string(String)
-
-  case equal
-  case or
-  case star
-  case option
-  case comma
-
-  case leftParen
-  case rightParen
-
-  case eof
-
-  public var description: String {
-    switch self {
-    case .alias: return "alias"
-    case .enum: return "enum"
-    case .indirect: return "indirect enum"
-    case .struct: return "struct"
-    case .doc: return "doc"
-    case .str: return "str"
-    case .name(let value): return "name(\(value))"
-    case .string: return "string(...)"
-    case .equal: return "equal"
-    case .or: return "or"
-    case .star: return "star"
-    case .option: return "option"
-    case .comma: return "comma"
-    case .leftParen: return "left paren"
-    case .rightParen: return "right paren"
-    case .eof: return "eof"
-    }
   }
 }

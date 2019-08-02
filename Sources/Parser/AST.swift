@@ -55,6 +55,7 @@ public indirect enum ExpressionKind: Equatable {
   case tuple([Expression])
   /// List of comma-separated values between square brackets: [a,b].
   case list([Expression])
+  /// Set of `key: value` pairs between braces: {a: b}. Keys are unique.
   /// List of comma-separated values between braces: {a}. Unordered with no duplicates.
   case set([Expression])
   case await(Expression)
@@ -159,13 +160,7 @@ public enum ComparisonOperator: Equatable {
   case notIn
 }
 
-public enum StringGroup: Equatable {
-  case string(String)
-  case formattedValue(value: Expression, conversion: ConversionFlag?, spec: String)
-  /// Transforms a value prior to formatting it.
-  case joinedString([StringGroup])
-}
-
+/// Transforms a value prior to formatting it.
 public enum ConversionFlag: Equatable {
   /// Converts by calling `str(<value>)`.
   case str
@@ -193,12 +188,12 @@ public struct Slice: Equatable {
 public enum SliceKind: Equatable {
   case slice(lower: Expression?, upper: Expression?, step: Expression?)
   case extSlice(dims: [Slice])
-  /// The arguments for a function passed by value
-  /// (where the value is always an object reference, not the value of the object).
-  /// https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions
   case index(Expression)
 }
 
+/// The arguments for a function passed by value
+/// (where the value is always an object reference, not the value of the object).
+/// https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"
 public struct Arguments: Equatable {
 
   /// Function positional arguments.

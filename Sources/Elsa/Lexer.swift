@@ -4,8 +4,7 @@ private let keywords: [String:TokenKind] = [
   "alias":    .alias,
   "enum":     .enum,
   "indirect": .indirect,
-  "struct":   .struct,
-  "doc":      .doc
+  "struct":   .struct
 ]
 
 private let operators: [Character: TokenKind] = [
@@ -84,13 +83,6 @@ public struct Lexer {
           self.advance() // consume all whitespaces
         }
 
-      case "-":
-        if self.peekNext == "-" {
-          self.consumeComment() // consume, but do not produce token
-        } else {
-          self.fail("Character '-' is only permitted as part of the comment '--'.")
-        }
-
       case "@":
         self.advance() // @
         let name = self.getName()
@@ -99,9 +91,24 @@ public struct Lexer {
         }
         return Token(keyword, location: start)
 
-      case "\"":
-        let value = self.getString()
-        return Token(.string(value), location: start)
+      case "{":
+        if self.peekNext == "-" {
+          self.advance() // {
+          self.advance() // -
+          self.consumeComment() // consume, but do not produce token
+        } else {
+          self.fail("Character '{' is only permitted as part of the comment '{-'.")
+        }
+
+      case "-":
+        if self.peekNext == "-" {
+          self.advance() // -
+          self.advance() // -
+          let value = self.getDoc()
+          return Token(.doc(value), location: start)
+        } else {
+          self.fail("Character '-' is only permitted as part of the documentation '--'.")
+        }
 
       case let c where isValidNameCharacter(c):
         let name = self.getName()
@@ -119,9 +126,34 @@ public struct Lexer {
   }
 
   private mutating func consumeComment() {
+    func isCommentEnd() -> Bool {
+      return self.peek == "-" && self.peekNext == "}"
+    }
+
+    let start = self.location
+    while !isCommentEnd() {
+      self.advance()
+
+      if self.peek == nil {
+        self.fail("Unclosed comment starting at: \(start).")
+      }
+    }
+
+    self.advance() // -
+    self.advance() // }
+  }
+
+  private mutating func getDoc() -> String {
+    while let peek = self.peek, peek.isWhitespace {
+      self.advance()
+    }
+
+    let start = self.sourceIndex
     while let peek = self.peek, !peek.isNewline {
       self.advance()
     }
+
+    return String(self.source[start..<self.sourceIndex])
   }
 
   private mutating func getName() -> String {
@@ -132,26 +164,6 @@ public struct Lexer {
     }
 
     return String(self.source[startIndex..<self.sourceIndex])
-  }
-
-  private mutating func getString() -> String {
-    assert(self.peek == "\"")
-    self.advance() // "
-
-    let startLocation = self.location
-    let startIndex = self.sourceIndex
-
-    while let peek = self.peek, peek != "\"" {
-      self.advance()
-    }
-
-    guard let peek = self.peek, peek == "\"" else {
-      self.fail("Missing ending quotes for string starting at: '\(startLocation)'.")
-    }
-
-    let value = String(self.source[startIndex..<self.sourceIndex])
-    self.advance() // "
-    return value
   }
 
   private func fail(_ message: String, location: SourceLocation? = nil) -> Never {

@@ -7,7 +7,7 @@ internal struct Parser {
   private var location = SourceLocation.start
 
   private var aliases = [String:String]()
-  private var pendingEntityDoc: String? = nil
+  private var collectedDoc: String? = nil
 
   internal init(lexer: Lexer) {
     self.lexer = lexer
@@ -23,9 +23,36 @@ internal struct Parser {
       self.fail("Trying to advance past eof.")
     }
 
+    self.advanceToken()
+    self.collectDoc()
+    return self.token
+  }
+
+  private mutating func advanceToken() {
     self.token = self.lexer.getToken()
     self.location = token.location
-    return self.token
+  }
+
+  private mutating func collectDoc() {
+    var result = ""
+
+    while case let TokenKind.doc(value) = self.token.kind {
+      if !result.isEmpty {
+        result.append("\n")
+      }
+      result.append(value)
+      self.advanceToken()
+    }
+
+    if !result.isEmpty {
+      self.collectedDoc = result
+    }
+  }
+
+  private mutating func useCollectedDoc() -> String? {
+    let doc = self.collectedDoc
+    self.collectedDoc = nil
+    return doc
   }
 
   // MARK: - Parse
@@ -44,9 +71,6 @@ internal struct Parser {
       case .struct:
         let value = self.structDef()
         result.append(.struct(value))
-
-      case .doc:
-        self.pendingEntityDoc = self.consumeDocIfAny()
 
       case .name(let value):
         self.fail("'\(value)' is not a valid entity declaration (missing '@'?).")
@@ -75,6 +99,8 @@ internal struct Parser {
 
   private mutating func enumDef() -> EnumDef {
     assert(self.token.kind == .enum || self.token.kind == .indirect)
+
+    let doc = self.useCollectedDoc()
     let indirect = self.token.kind == .indirect
     self.advance() // @enum, @indirect
 
@@ -89,14 +115,13 @@ internal struct Parser {
       cases.append(self.enumCaseDef())
     }
 
-    let doc = self.useEntityDoc()
     return EnumDef(name, cases: cases, indirect: indirect, doc: doc)
   }
 
   private mutating func enumCaseDef() -> EnumCaseDef {
+    let doc = self.useCollectedDoc()
     let name = self.consumeNameOrFail()
     let properties = self.enumProperties()
-    let doc = self.consumeDocIfAny()
     return EnumCaseDef(name, properties: properties, doc: doc)
   }
 
@@ -104,13 +129,14 @@ internal struct Parser {
 
   private mutating func structDef() -> StructDef {
     assert(self.token.kind == .struct)
+
+    let doc = self.useCollectedDoc()
     self.advance() // struct
 
     let name = self.consumeNameOrFail()
     self.consumeOrFail(.equal)
     let properties = self.structProperties()
 
-    let doc = self.useEntityDoc()
     return StructDef(name, properties: properties, doc: doc)
   }
 
@@ -158,11 +184,11 @@ internal struct Parser {
     while self.token.kind != .rightParen {
       var kind = PropertyKind.single
 
+      let doc = self.useCollectedDoc()
       let type = self.consumeNameOrFail()
       if self.consumeIfEqual(kind: .star) { kind = .many }
       if self.consumeIfEqual(kind: .option) { kind = .optional }
       let name = self.consumeNameOrFail()
-      let doc = self.consumeDocIfAny()
 
       let property = StructProperty(name, type: type, kind: kind, doc: doc)
       result.append(property)
@@ -177,12 +203,6 @@ internal struct Parser {
   }
 
   // MARK: - Helpers
-
-  private mutating func useEntityDoc() -> String? {
-    let doc = self.pendingEntityDoc
-    self.pendingEntityDoc = nil
-    return doc
-  }
 
   private mutating func consumeIfEqual(kind: TokenKind) -> Bool {
     if self.token.kind == kind {
@@ -210,18 +230,7 @@ internal struct Parser {
     return self.aliases[value] ?? value
   }
 
-  private mutating func consumeDocIfAny() -> String? {
-    guard self.consumeIfEqual(kind: .doc) else {
-      return nil
-    }
-
-    guard case let .string(value) = self.token.kind else {
-      self.fail("Invalid token kind. Expected: 'string', got: '\(self.token.kind)'.")
-    }
-
-    self.advance() // value
-    return value
-  }
+  // MARK: - Fail
 
   private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
     print("\(location ?? self.location): \(message)")
