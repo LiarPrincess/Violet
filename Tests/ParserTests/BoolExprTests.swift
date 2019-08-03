@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class BoolExprTests: XCTestCase, Common {
+class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
 
   func test_notOperator() {
     var parser = self.parser(
@@ -12,7 +12,7 @@ class BoolExprTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      guard let b = self.destructUnary(expr) else { return }
+      guard let b = self.destructUnaryOp(expr) else { return }
 
       XCTAssertEqual(b.0, .not)
       XCTAssertEqual(b.right, Expression(.false, start: loc2, end: loc3))
@@ -39,7 +39,7 @@ class BoolExprTests: XCTestCase, Common {
       if let expr = self.parse(&parser) {
         let msg = "for token '\(token)'"
 
-        guard let b = self.destructBoolean(expr) else { return }
+        guard let b = self.destructBoolOp(expr) else { return }
 
         XCTAssertEqual(b.0, op, msg)
         XCTAssertEqual(b.left,  Expression(.true, start: loc0, end: loc1), msg)

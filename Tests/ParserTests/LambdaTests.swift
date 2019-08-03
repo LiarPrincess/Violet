@@ -7,7 +7,7 @@ import Lexer
 // swiftlint:disable type_body_length
 // swiftlint:disable function_body_length
 
-class LambdaTests: XCTestCase, Common {
+class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   // MARK: - No arguments
 

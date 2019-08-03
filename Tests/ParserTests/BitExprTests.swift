@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class BitExprTests: XCTestCase, Common {
+class BitExprTests: XCTestCase, Common, DestructExpressionKind {
 
   func test_operators() {
     let variants: [(TokenKind, BinaryOperator)] = [
@@ -24,7 +24,7 @@ class BitExprTests: XCTestCase, Common {
       if let expr = self.parse(&parser) {
         let msg = "for token '\(token)'"
 
-        guard let b = self.destructBinary(expr) else { return }
+        guard let b = self.destructBinaryOp(expr) else { return }
 
         XCTAssertEqual(b.0, op, msg)
         XCTAssertEqual(b.left,  Expression(.int(PyInt(5)), start: loc0, end: loc1), msg)

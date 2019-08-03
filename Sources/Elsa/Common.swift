@@ -9,3 +9,29 @@ internal func emitHeader(sourceFile: URL, command: String) {
 
 """)
 }
+
+extension Array where Element == String {
+
+  /// The same as `self.joined(separator:_)`, but less typing.
+  internal func joined(_ separator: String = "") -> String {
+    return self.joined(separator: separator)
+  }
+}
+
+internal func parenthesize<T>(_ value: T) -> String {
+  return "(" + String(describing: value) + ")"
+}
+
+internal func pascalCase(_ s: String) -> String {
+  let first = s.first?.uppercased() ?? ""
+  return first + s.dropFirst()
+}
+
+internal func camelCase(_ s: String) -> String {
+  let first = s.first?.lowercased() ?? ""
+  return first + s.dropFirst()
+}
+
+internal func repeating(_ s: String, count: Int) -> String {
+  return String(repeating: s, count: count)
+}

@@ -5,7 +5,7 @@ import Lexer
 
 // swiftlint:disable file_length
 
-class TrailerTests: XCTestCase, Common {
+class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKind {
 
   // MARK: - Attribute
 
@@ -63,7 +63,7 @@ class TrailerTests: XCTestCase, Common {
     if let expr = self.parse(&parser) {
       guard let d = self.destructSubscriptIndex(expr) else { return }
 
-      XCTAssertEqual(d.index, Expression(.int(PyInt(1)), start: loc4, end: loc5))
+      XCTAssertEqual(d.1, Expression(.int(PyInt(1)), start: loc4, end: loc5))
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc7)
 
@@ -92,7 +92,7 @@ class TrailerTests: XCTestCase, Common {
         Expression(.int(PyInt(2)), start: loc8, end: loc9)
       ])
 
-      XCTAssertEqual(d.index, Expression(tuple, start: loc4, end: loc9))
+      XCTAssertEqual(d.1, Expression(tuple, start: loc4, end: loc9))
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc11)
 
@@ -119,7 +119,7 @@ class TrailerTests: XCTestCase, Common {
         Expression(.int(PyInt(1)), start: loc4, end: loc5)
       ])
 
-      XCTAssertEqual(d.index, Expression(tuple, start: loc4, end: loc5))
+      XCTAssertEqual(d.1, Expression(tuple, start: loc4, end: loc5))
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc9)
 
@@ -276,7 +276,7 @@ class TrailerTests: XCTestCase, Common {
     )
 
     if let expr = self.parse(&parser) {
-      guard let d = self.destructSubscriptSliceExt(expr) else { return }
+      guard let d = self.destructSubscriptExtSlice(expr) else { return }
 
       XCTAssertEqual(d.dims.count, 2)
       guard d.dims.count == 2 else { return } // prevent out of range exceptions

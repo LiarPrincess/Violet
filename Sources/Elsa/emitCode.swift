@@ -7,6 +7,7 @@ internal func emitCode(entities: [Entity]) {
   print("import Lexer")
   print()
 
+  print("// swiftlint:disable file_length")
   print("// swiftlint:disable line_length")
   print("// swiftlint:disable trailing_newline")
   print()

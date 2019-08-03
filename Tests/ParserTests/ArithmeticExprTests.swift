@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class ArithmeticExprTests: XCTestCase, Common {
+class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
 
   func test_unaryOpertors() {
     let variants: [(TokenKind, UnaryOperator)] = [
@@ -23,7 +23,7 @@ class ArithmeticExprTests: XCTestCase, Common {
       if let expr = self.parse(&parser) {
         let msg = "for token '\(token)'"
 
-        guard let b = self.destructUnary(expr) else { return }
+        guard let b = self.destructUnaryOp(expr) else { return }
 
         XCTAssertEqual(b.0, op)
         XCTAssertEqual(b.right, Expression(.int(value), start: loc2, end: loc3))
@@ -57,7 +57,7 @@ class ArithmeticExprTests: XCTestCase, Common {
       if let expr = self.parse(&parser) {
         let msg = "for token '\(token)'"
 
-        guard let b = self.destructBinary(expr) else { return }
+        guard let b = self.destructBinaryOp(expr) else { return }
 
         XCTAssertEqual(b.0, op, msg)
         XCTAssertEqual(b.left,  Expression(.float(4.2), start: loc0, end: loc1))

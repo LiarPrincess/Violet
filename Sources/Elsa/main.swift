@@ -2,26 +2,42 @@
 
 // TODO: (Elsa) _ in init
 // TODO: (Elsa.emit) To class and line() write() (as in slip)
-// TODO: (Elsa) Resolve ambiguity for @enum a|b @doc @struct. is it @doc for last case or @struct?
 
 import Foundation
 
 let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
-let sourceFile = elsaDir.appendingPathComponent("ast.letitgo", isDirectory: false)
-let source = try! String(contentsOf: sourceFile, encoding: .utf8)
+let letitgoFile = elsaDir.appendingPathComponent("ast.letitgo", isDirectory: false)
+let letitgoContent = try! String(contentsOf: letitgoFile, encoding: .utf8)
 
-let parserDir = elsaDir.deletingLastPathComponent().appendingPathComponent("Parser")
+let sourcesDir = elsaDir.deletingLastPathComponent()
+let parserDir = sourcesDir.appendingPathComponent("Parser")
 
-var lexer = Lexer(source: source)
-//lexer.dumpTokens()
+let testsDir = elsaDir
+  .deletingLastPathComponent()
+  .deletingLastPathComponent()
+  .appendingPathComponent("Tests")
+let parserTestsDir = testsDir.appendingPathComponent("ParserTests")
+
+let lexer = Lexer(source: letitgoContent)
 var parser = Parser(lexer: lexer)
 let entities = parser.parse()
+
+defer { fclose(stdout) }
 
 // MARK: - Code
 
 let astFile = parserDir.appendingPathComponent("AST.swift")
 freopen(astFile.path, "w", stdout)
-defer { fclose(stdout) }
 
-emitHeader(sourceFile: sourceFile, command: "ast")
+emitHeader(sourceFile: letitgoFile, command: "ast")
 emitCode(entities: entities)
+
+// MARK: - Destruct
+
+let destructFile = parserTestsDir
+  .appendingPathComponent("Helpers")
+  .appendingPathComponent("Destruct.swift")
+freopen(destructFile.path, "w", stdout)
+
+emitHeader(sourceFile: letitgoFile, command: "ast-destruct")
+emitAstDestruction(entities: entities)

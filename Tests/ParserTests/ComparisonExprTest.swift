@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class ComparisonExprTest: XCTestCase, Common {
+class ComparisonExprTest: XCTestCase, Common, DestructExpressionKind {
 
   func test_simple() {
     let variants: [(TokenKind, ComparisonOperator)] = [
