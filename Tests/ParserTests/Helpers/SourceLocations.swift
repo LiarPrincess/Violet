@@ -24,6 +24,8 @@ internal var loc20: SourceLocation { return getLocation(20) }
 internal var loc21: SourceLocation { return getLocation(21) }
 internal var loc22: SourceLocation { return getLocation(22) }
 internal var loc23: SourceLocation { return getLocation(23) }
+internal var loc24: SourceLocation { return getLocation(24) }
+internal var loc25: SourceLocation { return getLocation(25) }
 
 private func getLocation(_ n: Int) -> SourceLocation {
   let line = n

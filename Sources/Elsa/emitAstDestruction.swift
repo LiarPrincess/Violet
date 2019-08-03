@@ -1,5 +1,6 @@
 // swiftlint:disable function_body_length
 
+/// Extract associated values from enums. For unit tests.
 internal func emitAstDestruction(entities: [Entity]) {
   print("import XCTest")
   print("import Core")

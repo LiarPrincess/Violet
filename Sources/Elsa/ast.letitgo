@@ -12,6 +12,11 @@
 @alias loc = SourceLocation
 
 {-
+This is nice source of documentation:
+https://greentreesnakes.readthedocs.io/en/latest/nodes.html
+-}
+
+{-
   mod = Module(stmt* body)
       | Interactive(stmt* body)
       | Expression(expr body)
@@ -91,7 +96,7 @@
   -- Operation with 2 operands.
   | BinaryOp(BinaryOperator, expr left, expr right)
   -- Operation with logical values as operands.
-  -- Returns last evaluated argument (even if it's not True or False).
+  -- Returns last evaluated argument (even if it's not strictly `True` or `False`).
   -- - Note:
   -- Following values are interpreted as false:
   -- - False\n- None\n- numeric zero\n- empty strings\n- empty containers
@@ -108,14 +113,21 @@
   -- List of comma-separated values between braces: {a}. Unordered with no duplicates.
   | Set(expr*)
 {- Comprehensions -}
-{-
+  -- Brackets containing an expression followed by a for clause and then
+  -- zero or more for or if clauses.
+  -- `elt` - expression that will be evaluated for each item
   | ListComprehension(expr elt, comprehension* generators)
+  -- Brackets containing an expression followed by a for clause and then
+  -- zero or more for or if clauses.
+  -- `elt` - expression that will be evaluated for each item
   | SetComprehension(expr elt, comprehension* generators)
+  -- Brackets containing an expression followed by a for clause and then
+  -- zero or more for or if clauses.
+  -- `key` and `value` - expressions that will be evaluated for each item
   | DictionaryComprehension(expr key, expr value, comprehension* generators)
--}
-{- Generators/coroutines -}
   {- the grammar constrains where yield expressions can occur -}
   {- | GeneratorExp(expr elt, comprehension* generators) -}
+{- Generators/coroutines -}
   | Await(expr)
   | Yield(expr?)
   | YieldFrom(expr)
@@ -233,7 +245,7 @@
   -- Converts by calling `repr(<value>)`.
   | Repr
 
-@struct slice = (
+@struct Slice = (
   sliceKind kind,
   -- Location of the first character in the source code.
   loc start,
@@ -241,14 +253,34 @@
   loc end
 )
 
-@enum sliceKind =
+@enum SliceKind =
+  -- Regular slicing: `movies[pinocchio:frozen2]`.
   Slice(expr? lower, expr? upper, expr? step)
+  -- Advanced slicing: `frozen[kristoff:ana, olaf]`.
+  -- `dims` holds a list of `Slice` and `Index` nodes.
  | ExtSlice(slice* dims)
+  -- Subscripting with a single value: `frozen[elsa]`.
  | Index(expr)
 
-{-
--- comprehension = (expr target, expr iter, expr* ifs, int is_async)
+-- One `for` clause in a comprehension.
+@struct Comprehension = (
+  -- Reference to use for each element,
+  -- typically a `Identifier` or `Tuple` node.
+  expr target,
+  -- Object to iterate over.
+  expr iter,
+  -- List of test expressions. We can have multiple `ifs`.
+  expr* ifs,
+  -- Indicates that the comprehension is asynchronous.
+  Bool isAsync,
 
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
+)
+
+{-
 -- excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
 --                 attributes (int lineno, int col_offset)
 -}

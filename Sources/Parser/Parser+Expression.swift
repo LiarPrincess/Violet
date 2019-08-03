@@ -42,7 +42,7 @@ extension Parser {
   }
 
   /// `test_nocond: or_test | lambdef_nocond`
-  private mutating func testNoCond() throws -> Expression {
+  internal mutating func testNoCond() throws -> Expression {
     // we will start from lambdef_nocond, becuse it is simpler
 
     if let lambda = try self.lambDefNoCondOrNop() {
@@ -103,7 +103,7 @@ extension Parser {
   // MARK: - Or test
 
   /// `or_test: and_test ('or' and_test)*`
-  private mutating func orTest() throws -> Expression {
+  internal mutating func orTest() throws -> Expression {
     var left = try self.andTest()
 
     while self.peek.kind == .or {
@@ -419,12 +419,30 @@ extension Parser {
   /// ```
   private mutating func atom() throws -> Expression {
     let token = self.peek
+    let start = token.start
 
     switch token.kind {
     case .leftParen:
       throw self.unimplemented("'(' [yield_expr|testlist_comp] ')'")
+
     case .leftSqb:
-      throw self.unimplemented("'[' [testlist_comp] ']'")
+      try self.advance() // [
+
+      if self.peek.kind == .rightSqb { // a = [] -> empty list
+        let end = self.peek.end
+        try self.advance() // ]
+
+        return self.expression(.list([]), start: start, end: end)
+      } else {
+        let kind = try self.testlistComp(closingToken: .rightSqb)
+
+        assert(self.peek.kind == .rightSqb)
+        let end = self.peek.end
+        try self.advance() // ]
+
+        return self.expression(kind, start: start, end: end)
+      }
+
     case .leftBrace:
       throw self.unimplemented("'{' [dictorsetmaker] '}'")
 
@@ -462,10 +480,36 @@ extension Parser {
     return self.expression(kind, start: token.start, end: token.end)
   }
 
+  // MARK: - Test list comprehension
+
+  /// ```c
+  /// testlist_comp:
+  ///   (test|star_expr) ( comp_for
+  ///                    | (',' (test|star_expr))* [','])
+  /// ```
+  internal mutating func testlistComp(closingToken: TokenKind) throws -> ExpressionKind {
+
+    let first = try self.testOrStarExpr()
+
+    if self.peek.kind == .comma {
+      self.unimplemented("non comprehension")
+    }
+
+    let generators = try self.compFor(closingToken: closingToken)
+    return ExpressionKind.listComprehension(elt: first, generators: generators)
+  }
+
+  private mutating func testOrStarExpr() throws -> Expression {
+    if let expr = try self.starExprOrNop() {
+      return expr
+    }
+    return try self.test()
+  }
+
   // MARK: - Expr list
 
   /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
-  private mutating func exprList(closingToken: TokenKind) throws -> Expression {
+  internal mutating func exprList(closingToken: TokenKind) throws -> Expression {
     var elements = [Expression]()
 
     let first = try self.starExprOrNop() ?? self.expr()
@@ -478,12 +522,13 @@ extension Parser {
       elements.append(test)
     }
 
-    // optional trailing comma
-    if self.peek.kind == .comma {
+    let hasTrailingComma = self.peek.kind == .comma
+    if hasTrailingComma {
       try self.advance() // ,
     }
 
-    if elements.count == 1 {
+    // if we have coma then it is a tuple! (even if it has only 1 element!)
+    if elements.count == 1 && !hasTrailingComma {
       return first
     }
 
@@ -495,6 +540,7 @@ extension Parser {
   // MARK: - Test list
 
   /// `testlist: test (',' test)* [',']`
+  @available(*, deprecated, message: "Without comma?")
   private mutating func testList(closingToken: TokenKind) throws -> Expression {
     var elements = [Expression]()
 
@@ -513,7 +559,7 @@ extension Parser {
       try self.advance() // ,
     }
 
-    if elements.count == 1 {
+    if elements.count == 1 { // TODO: without comma?
       return first
     }
 

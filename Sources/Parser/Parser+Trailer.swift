@@ -51,7 +51,7 @@ extension Parser {
 
   // MARK: - Subscript
 
-  /// subscriptlist: subscript (',' subscript)* [',']
+  /// `subscriptlist: subscript (',' subscript)* [',']`
   private mutating func subscriptList(closingToken: TokenKind) throws -> SliceKind {
     var elements = [Slice]()
 
@@ -65,14 +65,12 @@ extension Parser {
       elements.append(sub)
     }
 
-    // optional trailing comma
     let hasTrailingComma = self.peek.kind == .comma
     if hasTrailingComma {
       try self.advance() // ,
     }
 
-    // In CPython `a[5,]` is classified as:
-    // slice -> Index -> value -> Tuple with single element -> Num -> n = 5
+    // If we have coma then it is a tuple! (even if it has only 1 element!)
     if elements.count == 1 && !hasTrailingComma {
       return first.kind
     }
@@ -101,7 +99,7 @@ extension Parser {
     // This case should be dealt with much sooner than here.
     assert(slices.count >= 1)
     let start = slices.first!.start // swiftlint:disable:this force_unwrapping
-    let end = slices.last!.end      // swiftlint:disable:this force_unwrapping
+    let end   = slices.last!.end    // swiftlint:disable:this force_unwrapping
 
     let tupleKind = ExpressionKind.tuple(indices)
     let tuple = Expression(tupleKind, start: start, end: end)

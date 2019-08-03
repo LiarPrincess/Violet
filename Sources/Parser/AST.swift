@@ -5,6 +5,7 @@ import Foundation
 import Core
 import Lexer
 
+// swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 
@@ -41,7 +42,7 @@ public indirect enum ExpressionKind: Equatable {
   /// Operation with 2 operands.
   case binaryOp(BinaryOperator, left: Expression, right: Expression)
   /// Operation with logical values as operands.
-  /// Returns last evaluated argument (even if it's not True or False).
+  /// Returns last evaluated argument (even if it's not strictly `True` or `False`).
   /// - Note:
   /// Following values are interpreted as false:
   /// - False
@@ -58,6 +59,18 @@ public indirect enum ExpressionKind: Equatable {
   /// Set of `key: value` pairs between braces: {a: b}. Keys are unique.
   /// List of comma-separated values between braces: {a}. Unordered with no duplicates.
   case set([Expression])
+  /// Brackets containing an expression followed by a for clause and then
+  /// zero or more for or if clauses.
+  /// `elt` - expression that will be evaluated for each item
+  case listComprehension(elt: Expression, generators: [Comprehension])
+  /// Brackets containing an expression followed by a for clause and then
+  /// zero or more for or if clauses.
+  /// `elt` - expression that will be evaluated for each item
+  case setComprehension(elt: Expression, generators: [Comprehension])
+  /// Brackets containing an expression followed by a for clause and then
+  /// zero or more for or if clauses.
+  /// `key` and `value` - expressions that will be evaluated for each item
+  case dictionaryComprehension(key: Expression, value: Expression, generators: [Comprehension])
   case await(Expression)
   case yield(Expression?)
   case yieldFrom(Expression)
@@ -186,9 +199,40 @@ public struct Slice: Equatable {
 }
 
 public enum SliceKind: Equatable {
+  /// Regular slicing: `movies[pinocchio:frozen2]`.
   case slice(lower: Expression?, upper: Expression?, step: Expression?)
+  /// Advanced slicing: `frozen[kristoff:ana, olaf]`.
+  /// `dims` holds a list of `Slice` and `Index` nodes.
   case extSlice(dims: [Slice])
+  /// Subscripting with a single value: `frozen[elsa]`.
   case index(Expression)
+}
+
+/// One `for` clause in a comprehension.
+public struct Comprehension: Equatable {
+
+  /// Reference to use for each element,
+  /// typically a `Identifier` or `Tuple` node.
+  public let target: Expression
+  /// Object to iterate over.
+  public let iter: Expression
+  /// List of test expressions. We can have multiple `ifs`.
+  public let ifs: [Expression]
+  /// Indicates that the comprehension is asynchronous.
+  public let isAsync: Bool
+  /// Location of the first character in the source code.
+  public let start: SourceLocation
+  /// Location just after the last character in the source code.
+  public let end: SourceLocation
+
+  public init(target: Expression, iter: Expression, ifs: [Expression], isAsync: Bool, start: SourceLocation, end: SourceLocation) {
+    self.target = target
+    self.iter = iter
+    self.ifs = ifs
+    self.isAsync = isAsync
+    self.start = start
+    self.end = end
+  }
 }
 
 /// The arguments for a function passed by value

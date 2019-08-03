@@ -2,6 +2,8 @@ import Foundation
 import Core
 import Lexer
 
+// swiftlint:disable file_length
+
 // MARK: - Helpers
 
 private func join<A>(_ arr: [A]) -> String {
@@ -52,11 +54,18 @@ extension ExpressionKind: CustomStringConvertible {
       return "(cmp \(left) \(join(elements)))"
 
     case let .tuple(value):
-      return "(\(join(value)))"
+      return "(" + join(value) + ")"
     case let .list(value):
-      return "(list \(join(value))"
+      return describe(value)
     case let .set(value):
-      return "(set \(join(value))"
+      return "{" + join(value) + "}"
+
+    case let .listComprehension(elt, generators):
+      return "(listCompr \(elt) \(join(generators)))"
+    case let .setComprehension(elt, generators):
+      return "(setCompr \(elt) \(join(generators)))"
+    case let .dictionaryComprehension(key, value, generators):
+      return "(dicCompr \(key) \(value) \(join(generators)))"
 
     case let .await(value):
       return "(await \(value))"
@@ -144,18 +153,18 @@ extension ComparisonOperator: CustomStringConvertible {
   }
 }
 
-extension StringGroup: CustomStringConvertible {
-  public var description: String {
-    switch self {
-    case let .string(value):
-      return "string(\(value))"
-    case let .formattedValue(value: value, conversion: conversion, spec: spec):
-      return "formattedValue(value: \(value)), conversion: \(conversion)), spec: \(spec)))"
-    case let .joinedString(value):
-      return "joinedString(\(value))"
-    }
-  }
-}
+//extension StringGroup: CustomStringConvertible {
+//  public var description: String {
+//    switch self {
+//    case let .string(value):
+//      return "string(\(value))"
+//    case let .formattedValue(value: value, conversion: conversion, spec: spec):
+//      return "formattedValue(value: \(value)), conversion: \(conversion)), spec: \(spec)))"
+//    case let .joinedString(value):
+//      return "joinedString(\(value))"
+//    }
+//  }
+//}
 
 extension ConversionFlag: CustomStringConvertible {
   public var description: String {
@@ -190,6 +199,20 @@ extension SliceKind: CustomStringConvertible {
       let s = step.map(describe) ?? ""
       return "\(l):\(u):\(s)"
     }
+  }
+}
+
+extension Comprehension: CustomStringConvertible {
+  public var description: String {
+    var ifs = ""
+    switch self.ifs.count {
+    case 0: break
+    case 1: ifs = " if " + describe(self.ifs[0])
+    default: ifs = " (if " + join(self.ifs) + ")"
+    }
+
+    let async = self.isAsync ? "async " : ""
+    return "(\(async)for \(self.target) in \(self.iter)\(ifs))"
   }
 }
 
