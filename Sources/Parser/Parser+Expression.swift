@@ -494,7 +494,7 @@ extension Parser {
       self.unimplemented("non comprehension")
     }
 
-    let generators = try self.compFor(closingToken: closingToken)
+    let generators = try self.compFor(closingTokens: [closingToken])
     return ExpressionKind.listComprehension(elt: first, generators: generators)
   }
 

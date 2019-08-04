@@ -114,12 +114,18 @@ public struct Parser {
   // MARK: - Create
 
   internal func expression(_ kind: ExpressionKind,
-                          start:  SourceLocation,
-                          end:    SourceLocation) -> Expression {
+                           start:  SourceLocation,
+                           end:    SourceLocation) -> Expression {
     return Expression(kind, start: start, end: end)
   }
 
-  // TODO: start/end?
+  /// Create parser warning
+  internal mutating func warn(_ warning: ParserWarning,
+                              start:     SourceLocation? = nil,
+                              end:       SourceLocation? = nil) {
+    // uh... oh... well that's embarrassing...
+  }
+
   /// Create parser error
   internal func error(_ kind:   ParserErrorKind,
                       location: SourceLocation? = nil) -> ParserError {

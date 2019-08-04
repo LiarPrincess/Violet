@@ -5,6 +5,7 @@ import Lexer
 
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
 
 class CallTests: XCTestCase, Common, DestructExpressionKind {
 
@@ -106,6 +107,32 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertExpression(expr, "(call f 1.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
+    }
+  }
+
+  /// f((a))
+  func test_call_positional_withAdditionalParens() {
+    var parser = self.parser(
+      self.token(.identifier("f"), start: loc0, end: loc1),
+      self.token(.leftParen,       start: loc2, end: loc3),
+      self.token(.leftParen,       start: loc4, end: loc5),
+      self.token(.identifier("a"), start: loc6, end: loc7),
+      self.token(.rightParen,      start: loc8, end: loc9),
+      self.token(.rightParen,      start: loc10, end: loc11)
+    )
+
+    if let expr = self.parse(&parser) {
+      guard let d = self.destructCall(expr) else { return }
+
+      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.args, [
+        Expression(.identifier("a"), start: loc6, end: loc7)
+      ])
+      XCTAssertEqual(d.keywords, [])
+
+      XCTAssertExpression(expr, "(call f 1.0)")
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc11)
     }
   }
 

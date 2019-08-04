@@ -7,7 +7,7 @@ import Lexer
 // Parsing argument list for:
 // - trailer when it is an function call
 // - base class
-// - etc...
+// - decorators
 
 /// Intermediate representation for call.
 internal struct CallIR {
@@ -29,6 +29,8 @@ internal struct CallIR {
 extension Parser {
 
   // MARK: - Call
+
+  // TODO: we should have (bool allowgen) parameter for class
 
   /// `arglist: argument (',' argument)*  [',']`
   internal mutating func argList(closingToken: TokenKind) throws -> CallIR {
@@ -82,7 +84,9 @@ extension Parser {
         // otherwise it is an error (see big comment in CPython grammar)
         try self.parseKeywordArgument(name: nameToken, into: &ir)
       } else {
-        try self.parsePositionalArgument(test: test, into: &ir)
+        try self.parsePositionalArgument(test: test,
+                                         closingToken: closingToken,
+                                         into: &ir)
       }
     }
   }
@@ -147,7 +151,9 @@ extension Parser {
     }
   }
 
+  /// test [comp_for]
   private mutating func parsePositionalArgument(test: Expression,
+                                                closingToken: TokenKind,
                                                 into ir: inout CallIR) throws {
     guard !ir.hasStarStar else {
       throw self.error(.callWithPositionalArgumentAfterKeywordUnpacking,
@@ -159,8 +165,20 @@ extension Parser {
                        location: test.start)
     }
 
-    // test [comp_for]
-    // TODO: optional comprehension
-    ir.args.append(test)
+    let closings = [closingToken, .comma]
+    if let generators = try self.compForOrNop(closingTokens: closings) {
+      assert(!generators.isEmpty)
+
+      // TODO: throw parens when we have some args (+ flag in ir)
+      // and wnother throw in while (and then remove warning)
+      self.warn(.callWithGeneratorArgument)
+
+      let end = generators.last?.end ?? test.end
+      let kind = ExpressionKind.generatorExp(elt: test, generators: generators)
+      let expr = Expression(kind, start: test.start, end: end)
+      ir.args.append(expr)
+    } else {
+      ir.args.append(test)
+    }
   }
 }

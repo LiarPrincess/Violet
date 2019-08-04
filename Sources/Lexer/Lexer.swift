@@ -112,7 +112,6 @@ public struct Lexer: LexerType {
                               start:     SourceLocation? = nil,
                               end:       SourceLocation? = nil) {
     // uh... oh... well that's embarrassing...
-    // your code is perfect and it does not generate any warnings...
   }
 
   /// Create lexer error

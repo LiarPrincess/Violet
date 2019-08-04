@@ -212,6 +212,19 @@ extension DestructExpressionKind {
     return nil
   }
 
+  internal func destructGeneratorExp(_ expr: Expression,
+                                     file:   StaticString = #file,
+                                     line:   UInt         = #line) ->
+    (elt: Expression, generators: [Comprehension])? {
+
+    if case let ExpressionKind.generatorExp(elt: value0, generators: value1) = expr.kind {
+      return (value0, value1)
+    }
+
+    XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+    return nil
+  }
+
   internal func destructAwait(_ expr: Expression,
                               file:   StaticString = #file,
                               line:   UInt         = #line) ->

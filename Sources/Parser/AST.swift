@@ -71,6 +71,10 @@ public indirect enum ExpressionKind: Equatable {
   /// zero or more for or if clauses.
   /// `key` and `value` - expressions that will be evaluated for each item
   case dictionaryComprehension(key: Expression, value: Expression, generators: [Comprehension])
+  /// Expression followed by a for clause and then
+  /// zero or more for or if clauses.
+  /// `elt` - expression that will be evaluated for each item
+  case generatorExp(elt: Expression, generators: [Comprehension])
   case await(Expression)
   case yield(Expression?)
   case yieldFrom(Expression)

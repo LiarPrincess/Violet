@@ -4,8 +4,6 @@ import Lexer
 // Python -> ast.c
 //  ast_for_arguments(struct compiling *c, const node *n)
 
-// Btw. this file is about parameters not arguments, but CPython calls them arguments.
-
 /// Intermediate representation for arguments.
 /// For now it is basically a copy of 'Arguments', but this may change.
 private struct ArgumentsIR {

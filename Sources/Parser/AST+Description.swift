@@ -66,6 +66,8 @@ extension ExpressionKind: CustomStringConvertible {
       return "(setCompr \(elt) \(join(generators)))"
     case let .dictionaryComprehension(key, value, generators):
       return "(dicCompr \(key) \(value) \(join(generators)))"
+    case .generatorExp(let elt, let generators):
+      return "(generatorCompr \(elt) \(join(generators)))"
 
     case let .await(value):
       return "(await \(value))"
