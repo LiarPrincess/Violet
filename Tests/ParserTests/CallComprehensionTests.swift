@@ -81,7 +81,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     }
   }
 
-  /// f(1, (a for a in []))
+  /// f(1, (a for b in []))
   func test_call_comprehension_afterPositional_inParens() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
@@ -96,7 +96,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.leftSqb,         start: loc20, end: loc21),
       self.token(.rightSqb,        start: loc22, end: loc23),
       self.token(.rightParen,      start: loc24, end: loc25),
-      self.token(.leftParen,       start: loc26, end: loc27)
+      self.token(.rightParen,      start: loc26, end: loc27)
     )
 
     if let expr = self.parse(&parser) {
@@ -111,7 +111,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
 
       XCTAssertExpression(expr, "(call f 1.0 (generatorCompr a (for b in [])))")
       XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc23)
+      XCTAssertEqual(expr.end,   loc27)
     }
   }
 

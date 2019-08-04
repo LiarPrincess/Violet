@@ -5,7 +5,6 @@ import Lexer
 
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
-// swiftlint:disable function_body_length
 
 class CallTests: XCTestCase, Common, DestructExpressionKind {
 
@@ -130,7 +129,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       ])
       XCTAssertEqual(d.keywords, [])
 
-      XCTAssertExpression(expr, "(call f 1.0)")
+      XCTAssertExpression(expr, "(call f a)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc11)
     }

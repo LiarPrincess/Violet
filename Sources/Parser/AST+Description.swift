@@ -42,7 +42,7 @@ extension ExpressionKind: CustomStringConvertible {
     case let .complex(real: real, imag: imag):
       return "(complex \(real) \(imag))"
     case let .bytes(data):
-      return "(\(data.count) bytes)"
+      return "(bytes count:\(data.count))"
 
     case let .unaryOp(op, right: right):
       return "(\(op) \(right))"
@@ -66,13 +66,14 @@ extension ExpressionKind: CustomStringConvertible {
       return "(setCompr \(elt) \(join(generators)))"
     case let .dictionaryComprehension(key, value, generators):
       return "(dicCompr \(key) \(value) \(join(generators)))"
-    case .generatorExp(let elt, let generators):
+    case let .generatorExp(elt, generators):
       return "(generatorCompr \(elt) \(join(generators)))"
 
     case let .await(value):
       return "(await \(value))"
     case let .yield(value):
-      return "(yield \(value))"
+      let s = value.map { " " + describe($0) } ?? ""
+      return "(yield\(s))"
     case let .yieldFrom(value):
       return "(yieldFrom \(value))"
 
