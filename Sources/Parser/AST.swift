@@ -75,6 +75,11 @@ public indirect enum ExpressionKind: Equatable {
   case yield(Expression?)
   case yieldFrom(Expression)
   case lambda(args: Arguments, body: Expression)
+  /// A function call.
+  /// - `func` - function to call
+  /// - `args` - arguments passed by position
+  /// - `keywords` - keyword objects representing arguments passed by keyword
+  case call(func: Expression, args: [Expression], keywords: [Keyword])
   case namedExpr(target: Expression, value: Expression)
   case ifExpression(test: Expression, body: Expression, orElse: Expression)
   case attribute(Expression, name: String)
@@ -306,5 +311,26 @@ public enum Vararg: Equatable {
   /// Separator for keyword arguments. Represented by just `*`.
   case unnamed
   case named(Arg)
+}
+
+/// A keyword argument to a function call or class definition.
+/// `nil` name is used for `**kwargs`.
+public struct Keyword: Equatable {
+
+  /// Parameter name.
+  public let name: String?
+  /// Node to pass in.
+  public let value: Expression
+  /// Location of the first character in the source code.
+  public let start: SourceLocation
+  /// Location just after the last character in the source code.
+  public let end: SourceLocation
+
+  public init(name: String?, value: Expression, start: SourceLocation, end: SourceLocation) {
+    self.name = name
+    self.value = value
+    self.start = start
+    self.end = end
+  }
 }
 

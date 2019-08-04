@@ -6,8 +6,8 @@ import Lexer
 
 // MARK: - Helpers
 
-private func join<A>(_ arr: [A]) -> String {
-  return arr.map { describe($0) }.joined(separator: " ")
+private func join<A>(_ arr: [A], _ separator: String = " ") -> String {
+  return arr.map { describe($0) }.joined(separator: separator)
 }
 
 private func describe<T>(_ obj: T) -> String {
@@ -76,12 +76,20 @@ extension ExpressionKind: CustomStringConvertible {
 
     case let .lambda(args: args, body: body):
       return "(lambda \(args) \(body))"
+    case let .call(name, args, keywords):
+      // We could skip 'call' at the beginning,
+      // but that is way too similiar to identifier.
+      // This may actully reorder arguments! Positional before keyword ones.
+      let a = args.isEmpty ? "" : " " + join((args))
+      let k = keywords.isEmpty ? "" : " " + join((keywords))
+      return "(call \(name)\(a)\(k))"
+
     case let .namedExpr(target: target, value: value):
       return "(namedExpr \(target) \(value))"
     case let .ifExpression(test: test, body: body, orElse: orElse):
       return "(if \(test)) then \(body)) else \(orElse))"
     case let .starred(value):
-      return "(starred \(value))"
+      return "*\(value)"
     case let .attribute(value, name):
       return "(attribute \(value) \(name))"
     case let .subscript(value, slice):
@@ -314,5 +322,12 @@ extension Vararg: CustomStringConvertible {
     case .unnamed: return "unnamed"
     case .named(let value): return "named(\(value))"
     }
+  }
+}
+
+extension Keyword: CustomStringConvertible {
+  public var description: String {
+    let name = self.name ?? "**"
+    return "\(name)=\(self.value)"
   }
 }

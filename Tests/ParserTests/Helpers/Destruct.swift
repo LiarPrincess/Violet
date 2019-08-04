@@ -264,6 +264,19 @@ extension DestructExpressionKind {
     return nil
   }
 
+  internal func destructCall(_ expr: Expression,
+                             file:   StaticString = #file,
+                             line:   UInt         = #line) ->
+    (func: Expression, args: [Expression], keywords: [Keyword])? {
+
+    if case let ExpressionKind.call(func: value0, args: value1, keywords: value2) = expr.kind {
+      return (value0, value1, value2)
+    }
+
+    XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+    return nil
+  }
+
   internal func destructNamedExpr(_ expr: Expression,
                                   file:   StaticString = #file,
                                   line:   UInt         = #line) ->

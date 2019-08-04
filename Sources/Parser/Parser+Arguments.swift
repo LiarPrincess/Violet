@@ -1,23 +1,14 @@
 import Lexer
 
-// swiftlint:disable file_length
-// TODO: (Arguments) Better docs
+// In CPython:
+// Python -> ast.c
+//  ast_for_arguments(struct compiling *c, const node *n)
 
-// In CPython: Python -> ast.c -> ast_for_arguments(_)
-
-// Ongoing debate on 'positional only args' (not in the scope of 3.7):
-// https://www.python.org/dev/peps/pep-0457/
-// https://www.python.org/dev/peps/pep-0570/
-
-// As for the code, we use following HACK:
-//   Both `typedargslist` and `varargslist` look basically the same,
-//   the only difference is `tfpdef` vs `vfpdef` for parsing single argument.
-//   We can't pass mutating instance method as a function arg, because
-//   of exclusive access. But we can pass static method with inout arg.
-//   Even if static method stored the arg somewhere it would be a COW copy!
+// Btw. this file is about parameters not arguments, but CPython calls them arguments.
 
 /// Intermediate representation for arguments.
-private struct ArgumentsIR: Equatable {
+/// For now it is basically a copy of 'Arguments', but this may change.
+private struct ArgumentsIR {
 
   /// Positional arguments.
   fileprivate var args: [Arg] = []
@@ -191,7 +182,7 @@ extension Parser {
       if let defaultValue = defaultValue {
         ir.defaults.append(defaultValue)
       } else if !ir.defaults.isEmpty {
-        throw self.error(.defaultFollowedByNonDefaultArgument)
+        throw self.error(.defaultAfterNonDefaultArgument)
       }
     case .unnamed, .named: // keyword only arg (follows * or *args)
       ir.kwOnlyArgs.append(argument)

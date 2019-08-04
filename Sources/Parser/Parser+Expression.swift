@@ -436,9 +436,8 @@ extension Parser {
       } else {
         let kind = try self.testlistComp(closingToken: .rightSqb)
 
-        assert(self.peek.kind == .rightSqb)
         let end = self.peek.end
-        try self.advance() // ]
+        try self.consumeOrThrow(.rightSqb)
 
         return self.expression(kind, start: start, end: end)
       }

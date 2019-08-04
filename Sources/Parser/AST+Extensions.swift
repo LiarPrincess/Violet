@@ -58,3 +58,15 @@ extension Arg {
     self.end = end
   }
 }
+
+extension Keyword {
+  public init(_ name: String?,
+              value:  Expression,
+              start:  SourceLocation,
+              end:    SourceLocation) {
+    self.name = name
+    self.value = value
+    self.start = start
+    self.end = end
+  }
+}

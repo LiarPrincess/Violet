@@ -20,7 +20,15 @@ extension Parser {
   internal mutating func trailerOrNop(for leftExpr: Expression) throws -> Expression? {
     switch self.peek.kind {
     case .leftParen:
-      throw self.unimplemented()
+      try self.advance() // (
+
+      let ir = try self.argList(closingToken: .rightParen)
+
+      let end = self.peek.end
+      try self.consumeOrThrow(.rightParen)
+
+      let kind = ir.compile(calling: leftExpr)
+      return self.expression(kind, start: leftExpr.start, end: end)
 
     case .leftSqb:
       let start = self.peek.start
@@ -28,9 +36,8 @@ extension Parser {
 
       let sliceKind = try self.subscriptList(closingToken: .rightSqb)
 
-      assert(self.peek.kind == .rightSqb)
       let end = self.peek.end
-      try self.advance() // ]
+      try self.consumeOrThrow(.rightSqb)
 
       let slice = Slice(sliceKind, start: start, end: end)
       let kind = ExpressionKind.subscript(leftExpr, slice: slice)

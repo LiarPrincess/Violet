@@ -133,7 +133,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | YieldFrom(expr)
 {- Functions -}
   | Lambda(arguments args, expr body)
-  {- | Call(expr func, expr* args, keyword* keywords) -}
+  -- A function call.
+  -- - `func` - function to call
+  -- - `args` - arguments passed by position
+  -- - `keywords` - keyword objects representing arguments passed by keyword
+  | Call(expr func, expr* args, keyword* keywords)
 {- Other -}
   | NamedExpr(expr target, expr value)
   {- 1 if True else 2 TODO: @doc -}
@@ -340,11 +344,19 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | unnamed
   | named(Arg)
 
--- Keyword arguments supplied to call (`nil` identifier for `**kwargs`).
-{- @struct keyword = (
+-- A keyword argument to a function call or class definition.
+-- `nil` name is used for `**kwargs`.
+@struct keyword = (
+  -- Parameter name.
   identifier? name,
-  expr value
-) -}
+  -- Node to pass in.
+  expr value,
+
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
+)
 
 {-
 -- -- import name with optional 'as' alias.

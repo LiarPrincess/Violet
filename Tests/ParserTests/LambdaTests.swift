@@ -192,7 +192,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let error = self.error(&parser) {
-      XCTAssertEqual(error.kind, .defaultFollowedByNonDefaultArgument)
+      XCTAssertEqual(error.kind, .defaultAfterNonDefaultArgument)
       XCTAssertEqual(error.location, loc12)
     }
   }
