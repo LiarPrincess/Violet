@@ -11,7 +11,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   // MARK: - No arguments
 
   /// f()
-  func test_call_noArgs() {
+  func test_noArgs() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -34,7 +34,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   // MARK: - Positional
 
   /// f(1)
-  func test_call_positional_single() {
+  func test_positional_single() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -58,7 +58,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(a, 1)
-  func test_call_positional_multiple() {
+  func test_positional_multiple() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -85,7 +85,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(1,)
-  func test_call_positional_withCommaAfter() {
+  func test_positional_withCommaAfter() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -110,7 +110,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f((a))
-  func test_call_positional_withAdditionalParens() {
+  func test_positional_withAdditionalParens() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -136,7 +136,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(a=1, b)
-  func test_call_positional_afterKeyword_throws() {
+  func test_positional_afterKeyword_throws() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -155,7 +155,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(**a, b)
-  func test_call_positional_afterKeywordUnpacking_throws() {
+  func test_positional_afterKeywordUnpacking_throws() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -175,7 +175,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   // MARK: - Positional - star
 
   /// f(*a)
-  func test_call_star() {
+  func test_star() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -201,7 +201,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(a, *b)
-  func test_call_star_afterPositional() {
+  func test_star_afterPositional() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -230,7 +230,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(a=1, *b)
-  func test_call_star_afterKeyword() {
+  func test_star_afterKeyword() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -263,7 +263,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(**a, *b)
-  func test_call_star_afterKeywordUnpacking_throws() {
+  func test_star_afterKeywordUnpacking_throws() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -284,7 +284,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   // MARK: - Keyword
 
   /// f(a=1)
-  func test_call_keyword_single() {
+  func test_keyword_single() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -311,7 +311,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(a=1.0, b=2.0)
-  func test_call_keyword_multiple() {
+  func test_keyword_multiple() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -345,7 +345,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(a=1, a=2)
-  func test_call_keyword_duplicate_throws() {
+  func test_keyword_duplicate_throws() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -367,7 +367,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// From comment in CPython:
   /// `f(lambda x: x[0] = 3)`
-  func test_call_keyword_lambda_assignment_throws() {
+  func test_keyword_lambda_assignment_throws() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -390,7 +390,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(3=1)
-  func test_call_keyword_invalidName_throws() {
+  func test_keyword_invalidName_throws() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -409,7 +409,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   // MARK: - Keyword - star star
 
   /// f(**a)
-  func test_call_starStar() {
+  func test_starStar() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -435,7 +435,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(a, **b)
-  func test_call_starStar_afterPositional() {
+  func test_starStar_afterPositional() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),

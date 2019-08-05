@@ -56,7 +56,7 @@ extension ExpressionKind: CustomStringConvertible {
     case let .tuple(value):
       return "(" + join(value) + ")"
     case let .list(value):
-      return describe(value)
+      return "[" + join(value) + "]"
     case let .set(value):
       return "{" + join(value) + "}"
 

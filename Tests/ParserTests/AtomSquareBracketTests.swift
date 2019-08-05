@@ -6,7 +6,84 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-class ComprehensionTests: XCTestCase, Common, DestructExpressionKind {
+class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
+
+  // MARK: - List
+
+  /// []
+  func test_empty() {
+    var parser = self.parser(
+      self.token(.leftSqb,  start: loc0, end: loc1),
+      self.token(.rightSqb, start: loc2, end: loc3)
+    )
+
+    if let expr = self.parse(&parser) {
+      XCTAssertExpression(expr, "[]")
+      XCTAssertEqual(expr.kind,  .list([]))
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc3)
+    }
+  }
+
+  /// [1]
+  func test_value() {
+    var parser = self.parser(
+      self.token(.leftSqb,    start: loc0, end: loc1),
+      self.token(.float(1.0), start: loc2, end: loc3),
+      self.token(.rightSqb,   start: loc4, end: loc5)
+    )
+
+    if let expr = self.parse(&parser) {
+      let one = Expression(.float(1.0), start: loc2, end: loc3)
+
+      XCTAssertExpression(expr, "[1.0]")
+      XCTAssertEqual(expr.kind,  .list([one]))
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc5)
+    }
+  }
+
+  /// [1,]
+  func test_value_withComaAfter() {
+    var parser = self.parser(
+      self.token(.leftSqb,    start: loc0, end: loc1),
+      self.token(.float(1.0), start: loc2, end: loc3),
+      self.token(.comma,      start: loc4, end: loc5),
+      self.token(.rightSqb,   start: loc6, end: loc7)
+    )
+
+    if let expr = self.parse(&parser) {
+      let one = Expression(.float(1.0), start: loc2, end: loc3)
+
+      XCTAssertExpression(expr, "[1.0]")
+      XCTAssertEqual(expr.kind,  .list([one]))
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc7)
+    }
+  }
+
+  /// [1, 2]
+  func test_value_multiple() {
+    var parser = self.parser(
+      self.token(.leftSqb,    start: loc0, end: loc1),
+      self.token(.float(1.0), start: loc2, end: loc3),
+      self.token(.comma,      start: loc4, end: loc5),
+      self.token(.float(2.0), start: loc6, end: loc7),
+      self.token(.rightSqb,   start: loc8, end: loc9)
+    )
+
+    if let expr = self.parse(&parser) {
+      let one = Expression(.float(1.0), start: loc2, end: loc3)
+      let two = Expression(.float(2.0), start: loc6, end: loc7)
+
+      XCTAssertExpression(expr, "[1.0 2.0]")
+      XCTAssertEqual(expr.kind,  .list([one, two]))
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc9)
+    }
+  }
+
+  // MARK: - Comprehension
 
   /// [a for b in []]
   func test_list() {

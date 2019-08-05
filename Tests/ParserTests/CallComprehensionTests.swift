@@ -8,7 +8,7 @@ import Lexer
 class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a for b in [])
-  func test_call_comprehension() {
+  func test_simple() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -50,7 +50,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(1, a for b in [])
-  func test_call_comprehension_afterPositional() {
+  func test_afterPositional() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -82,7 +82,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(1, (a for b in []))
-  func test_call_comprehension_afterPositional_inParens() {
+  func test_afterPositional_inParens() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -116,7 +116,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(a for b in [], 1)
-  func test_call_comprehension_beforePositional() {
+  func test_beforePositional() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
@@ -148,7 +148,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   /// f(a for b in [])
-  func test_call_comprehension_withCommaAfter() {
+  func test_commaAfter() {
     var parser = self.parser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
