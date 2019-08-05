@@ -57,6 +57,8 @@ extension ExpressionKind: CustomStringConvertible {
       return "(" + join(value) + ")"
     case let .list(value):
       return "[" + join(value) + "]"
+    case let .dictionary(value):
+      return "{" + join(value) + "}"
     case let .set(value):
       return "{" + join(value) + "}"
 
@@ -65,7 +67,7 @@ extension ExpressionKind: CustomStringConvertible {
     case let .setComprehension(elt, generators):
       return "(setCompr \(elt) \(join(generators)))"
     case let .dictionaryComprehension(key, value, generators):
-      return "(dicCompr \(key) \(value) \(join(generators)))"
+      return "(dicCompr \(key):\(value) \(join(generators)))"
     case let .generatorExp(elt, generators):
       return "(generatorCompr \(elt) \(join(generators)))"
 
@@ -224,6 +226,17 @@ extension Comprehension: CustomStringConvertible {
 
     let async = self.isAsync ? "async " : ""
     return "(\(async)for \(self.target) in \(self.iter)\(ifs))"
+  }
+}
+
+extension DictionaryElement: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case let .unpacking(expr):
+      return "**" + describe(expr)
+    case let .keyValue(key: key, value: value):
+      return describe(key) + ":" + describe(value)
+    }
   }
 }
 

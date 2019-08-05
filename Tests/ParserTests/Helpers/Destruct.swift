@@ -160,6 +160,19 @@ extension DestructExpressionKind {
     return nil
   }
 
+  internal func destructDictionary(_ expr: Expression,
+                                   file:   StaticString = #file,
+                                   line:   UInt         = #line) ->
+    ([DictionaryElement])? {
+
+    if case let ExpressionKind.dictionary(value0) = expr.kind {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+    return nil
+  }
+
   internal func destructSet(_ expr: Expression,
                             file:   StaticString = #file,
                             line:   UInt         = #line) ->

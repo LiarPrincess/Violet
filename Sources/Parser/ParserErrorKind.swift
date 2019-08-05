@@ -33,6 +33,12 @@ public enum ParserErrorKind: Equatable {
   /// Keyword argument repeated.
   case callWithDuplicateKeywordArgument(String)
 
+  // MARK: - Atom
+
+  /// Dict unpacking cannot be used in dict comprehension.
+  /// `{ **a for b in [] }`
+  case dictUnpackingInsideComprehension
+
   case unimplemented(String)
 }
 
@@ -67,6 +73,10 @@ extension ParserErrorKind: CustomStringConvertible {
       return "Keyword can't be an expression."
     case .callWithDuplicateKeywordArgument(let name):
       return "Duplicate keyword argument '\(name)'."
+
+    case .dictUnpackingInsideComprehension:
+      return "Dictionary unpacking (the one with '**') " +
+             "cannot be used in dictionary comprehension."
 
     case .unimplemented(let msg):
       return "Unimplemented: '\(msg)'"

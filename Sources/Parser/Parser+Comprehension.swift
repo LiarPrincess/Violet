@@ -11,6 +11,19 @@ import Lexer
 
 extension Parser {
 
+  /// Is it a start of `comp_for` rule?
+  ///
+  /// ```c
+  /// comp_for: ['async'] sync_comp_for
+  /// sync_comp_for: 'for' exprlist 'in' or_test [comp_iter]
+  /// comp_iter: comp_for | comp_if
+  /// comp_if: 'if' test_nocond [comp_iter]
+  /// ```
+  internal func isCompFor() -> Bool {
+    return self.peek.kind == .for
+       || (self.peek.kind == .async && self.peekNext.kind == .for)
+  }
+
   /// ```c
   /// comp_for: ['async'] sync_comp_for
   /// sync_comp_for: 'for' exprlist 'in' or_test [comp_iter]
@@ -23,12 +36,9 @@ extension Parser {
   internal mutating func compForOrNop(closingTokens: [TokenKind])
     throws -> [Comprehension]? {
 
-    let isAsyncOrFor = self.peek.kind == .async || self.peek.kind == .for
-    if !isAsyncOrFor {
-      return nil
-    }
-
-    return try self.compFor(closingTokens: closingTokens)
+    return self.isCompFor() ?
+      try self.compFor(closingTokens: closingTokens) :
+      nil
   }
 
   /// ```c

@@ -57,6 +57,7 @@ public indirect enum ExpressionKind: Equatable {
   /// List of comma-separated values between square brackets: [a,b].
   case list([Expression])
   /// Set of `key: value` pairs between braces: {a: b}. Keys are unique.
+  case dictionary([DictionaryElement])
   /// List of comma-separated values between braces: {a}. Unordered with no duplicates.
   case set([Expression])
   /// Brackets containing an expression followed by a for clause and then
@@ -180,6 +181,13 @@ public enum ComparisonOperator: Equatable {
   case `in`
   /// Negation of `x in s`
   case notIn
+}
+
+public enum DictionaryElement: Equatable {
+  /// `**expr`
+  case unpacking(Expression)
+  /// `key : value`
+  case keyValue(key: Expression, value: Expression)
 }
 
 /// Transforms a value prior to formatting it.

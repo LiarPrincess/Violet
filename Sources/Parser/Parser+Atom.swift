@@ -168,58 +168,86 @@ extension Parser {
     let start = self.peek.start
     try self.advance() // {
 
-    if self.peek.kind == .rightBrace { // a = { } -> empty dict
+    // empty dict
+    if self.peek.kind == .rightBrace {
       let end = self.peek.end
       try self.advance() // }
 
       return self.expression(.dictionary([]), start: start, end: end)
     }
 
-    switch self.peek.kind {
-    case .starStar:
+    // star
+    if let expr = try self.starExprOrNop() {
+      return try self.setDisplay(first: expr,
+                                 start: start,
+                                 closingToken: .rightBrace)
+    }
+
+    // star star
+    if self.peek.kind == .starStar {
+      let starStarStart = self.peek.start
       try self.advance() // **
 
-      // TODO: How to represent this?
       let expr = try self.expr()
-      throw self.unimplemented("{**}")
 
-    default:
-      if let expr = try self.starExprOrNop() {
-        return try self.setDisplay(first: expr,
-                                   start: start,
-                                   closingToken: .rightBrace)
+      // { **a for b in [] } <- throws
+      if self.isCompFor() {
+        let kind = ParserErrorKind.dictUnpackingInsideComprehension
+        throw self.error(kind, location: starStarStart)
       }
 
-      let first = try self.test()
-
-      // set with single element
-      if self.peek.kind == .rightBrace {
-        let end = self.peek.end
-        try self.advance() // }
-
-        let kind = ExpressionKind.set([first])
-        return self.expression(kind, start: start, end: end)
-      }
-
-      // set comprehension
-      if let generators = try self.compForOrNop(closingTokens: [.rightBrace]) {
-        let end = self.peek.end
-        try self.consumeOrThrow(.rightBrace)
-
-        let kind = ExpressionKind.setComprehension(elt: first, generators: generators)
-        return self.expression(kind, start: start, end: end)
-      }
-
-      // set with multiple elements
-      if self.peek.kind == .comma {
-        return try self.setDisplay(first: first,
-                                   start: start,
-                                   closingToken: .rightBrace)
-      }
-
-      // dictionary
-      throw self.unimplemented("test:xxx")
+      return try self.dictionaryDisplay(first: .unpacking(expr),
+                                        start: start,
+                                        closingToken: .rightBrace)
     }
+
+    let first = try self.test()
+
+    // set with single element
+    if self.peek.kind == .rightBrace {
+      let end = self.peek.end
+      try self.advance() // }
+
+      let kind = ExpressionKind.set([first])
+      return self.expression(kind, start: start, end: end)
+    }
+
+    // set comprehension
+    if let generators = try self.compForOrNop(closingTokens: [.rightBrace]) {
+      let end = self.peek.end
+      try self.consumeOrThrow(.rightBrace)
+
+      let kind = ExpressionKind.setComprehension(elt: first,
+                                                 generators: generators)
+      return self.expression(kind, start: start, end: end)
+    }
+
+    // set with multiple elements
+    if self.peek.kind == .comma {
+      return try self.setDisplay(first: first,
+                                 start: start,
+                                 closingToken: .rightBrace)
+    }
+
+    // it is a dictionary
+    try self.consumeOrThrow(.colon)
+    let value = try self.test()
+
+    // dictionary comprehension
+    if let generators = try self.compForOrNop(closingTokens: [.rightBrace]) {
+      let end = self.peek.end
+      try self.consumeOrThrow(.rightBrace)
+
+      let kind = ExpressionKind.dictionaryComprehension(key: first,
+                                                        value: value,
+                                                        generators: generators)
+      return self.expression(kind, start: start, end: end)
+    }
+
+    // dictionary
+    return try self.dictionaryDisplay(first: .keyValue(key: first, value: value),
+                                      start: start,
+                                      closingToken: .rightBrace)
   }
 
   /// `(comp_for | (',' (test | star_expr))* [','])`
@@ -246,6 +274,41 @@ extension Parser {
     try self.consumeOrThrow(closingToken)
 
     return self.expression(.set(elements), start: start, end: end)
+  }
+
+  /// `(comp_for | (',' (test ':' test | '**' expr))* [','])`
+  private mutating func dictionaryDisplay(first: DictionaryElement,
+                                          start: SourceLocation,
+                                          closingToken: TokenKind) throws -> Expression {
+
+    var elements = [DictionaryElement]()
+    elements.append(first)
+
+    // while
+    while self.peek.kind == .comma && self.peekNext.kind != closingToken {
+      try self.advance() // ,
+
+      if self.peek.kind == .starStar {
+        try self.advance() // **
+        let expr = try self.expr()
+        elements.append(.unpacking(expr))
+      } else {
+        let key = try self.test()
+        try self.consumeOrThrow(.colon)
+        let value = try self.test()
+        elements.append(.keyValue(key: key, value: value))
+      }
+    }
+
+    // optional trailing comma
+    if self.peek.kind == .comma {
+      try self.advance() // ,
+    }
+
+    let end = self.peek.end
+    try self.consumeOrThrow(closingToken)
+
+    return self.expression(.dictionary(elements), start: start, end: end)
   }
 
   private mutating func simpleAtom(_ kind: ExpressionKind,
