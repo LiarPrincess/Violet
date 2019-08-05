@@ -14,6 +14,10 @@ private func describe<T>(_ obj: T) -> String {
   return String(describing: obj)
 }
 
+private func prefix(_ s: String, length: Int = 5) -> String {
+  return s.count > length ? s.prefix(length) + "..." : s
+}
+
 // MARK: - Descriptions
 
 extension Expression: CustomStringConvertible, CustomDebugStringConvertible {
@@ -41,6 +45,8 @@ extension ExpressionKind: CustomStringConvertible {
 
     case let .complex(real: real, imag: imag):
       return "(complex \(real) \(imag))"
+    case let .string(s):
+      return describe(s)
     case let .bytes(data):
       return "(bytes count:\(data.count))"
 
@@ -166,18 +172,18 @@ extension ComparisonOperator: CustomStringConvertible {
   }
 }
 
-//extension StringGroup: CustomStringConvertible {
-//  public var description: String {
-//    switch self {
-//    case let .string(value):
-//      return "string(\(value))"
-//    case let .formattedValue(value: value, conversion: conversion, spec: spec):
-//      return "formattedValue(value: \(value)), conversion: \(conversion)), spec: \(spec)))"
-//    case let .joinedString(value):
-//      return "joinedString(\(value))"
-//    }
-//  }
-//}
+extension StringGroup: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case let .string(s):
+      return "\"" + prefix(s, length: 10) + "\""
+    case let .formattedValue(value: v, conversion: c, spec: s):
+      return "f\"" + "..." + "\""
+    case let .joinedString(groups):
+      return "(joined \(join(groups))"
+    }
+  }
+}
 
 extension ConversionFlag: CustomStringConvertible {
   public var description: String {

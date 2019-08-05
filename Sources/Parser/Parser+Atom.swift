@@ -63,7 +63,9 @@ extension Parser {
       return try self.simpleAtom(.complex(real: 0.0, imag: value), from: token)
 
     case .string, .formatString:
-      throw self.unimplemented("String+")
+      return try self.strPlus()
+    case .bytes:
+      return try self.bytesPlus()
 
     case .ellipsis:
       return try self.simpleAtom(.ellipsis, from: token)
@@ -73,8 +75,6 @@ extension Parser {
       return try self.simpleAtom(.true, from: token)
     case .false:
       return try self.simpleAtom(.false, from: token)
-    case .bytes(let data):
-      return try self.simpleAtom(.bytes(data), from: token)
 
     default:
       throw self.failUnexpectedToken(expected: .noIdea)

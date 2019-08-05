@@ -20,6 +20,7 @@ internal func emitAstDestruction(entities: [Entity]) {
       switch e.name {
       case "ExpressionKind": emitExpressionDestruct(e)
       case "SliceKind": emitSliceDestruct(e)
+      case "StringGroup": emitStringDestruct(e)
       default: break
       }
 
@@ -124,6 +125,49 @@ private func emitSliceDestruct(_ enumDef: EnumDef) {
           return (slice, \(destruction.returnValue))
         default:
           XCTAssertTrue(false, slice.kind.description, file: file, line: line)
+          return nil
+        }
+      }
+
+    """)
+  }
+
+  print("}")
+  print()
+}
+
+private func emitStringDestruct(_ enumDef: EnumDef) {
+  print("// MARK: - \(enumDef.name)")
+  print()
+
+  print("protocol Destruct\(enumDef.name) { }")
+  print()
+
+  print("extension Destruct\(enumDef.name) {")
+  print()
+
+  for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
+    let namePascal = caseDef.name == "string" ? "Simple" : pascalCase(caseDef.name)
+    let paramIndent = repeating(" ", count: 27 + namePascal.count)
+
+    let destruction = getEnumDestruction(caseDef)
+
+    print("""
+      internal func destructString\(namePascal)(_ expr: Expression,
+        \(paramIndent)file:   StaticString = #file,
+        \(paramIndent)line:   UInt         = #line) ->
+        (\(destruction.resultType))? {
+
+        guard case let ExpressionKind.string(group) = expr.kind else {
+          XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+          return nil
+        }
+
+        switch group {
+        case let .\(caseDef.name)(\(destruction.bindings)):
+          return (\(destruction.returnValue))
+        default:
+          XCTAssertTrue(false, String(describing: group), file: file, line: line)
           return nil
         }
       }

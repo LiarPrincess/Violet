@@ -38,6 +38,8 @@ public enum ParserErrorKind: Equatable {
   /// Dict unpacking cannot be used in dict comprehension.
   /// `{ **a for b in [] }`
   case dictUnpackingInsideComprehension
+  /// Cannot mix bytes and nonbytes literals.
+  case mixBytesAndNonBytesLiterals
 
   case unimplemented(String)
 }
@@ -77,6 +79,8 @@ extension ParserErrorKind: CustomStringConvertible {
     case .dictUnpackingInsideComprehension:
       return "Dictionary unpacking (the one with '**') " +
              "cannot be used in dictionary comprehension."
+    case .mixBytesAndNonBytesLiterals:
+      return "Cannot mix bytes and nonbytes literals."
 
     case .unimplemented(let msg):
       return "Unimplemented: '\(msg)'"

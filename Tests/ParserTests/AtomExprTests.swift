@@ -98,21 +98,6 @@ class AtomExprTest: XCTestCase, Common, DestructExpressionKind {
     }
   }
 
-  func test_bytes() {
-    let data = Data(repeating: 1, count: 5)
-
-    var parser = self.parser(
-      self.token(.bytes(data), start: loc0, end: loc1)
-    )
-
-    if let expr = self.parse(&parser) {
-      XCTAssertExpression(expr, "(bytes count:5)")
-      XCTAssertEqual(expr.kind,  .bytes(data))
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc1)
-    }
-  }
-
   func test_await() {
     let value = PyInt(42)
 

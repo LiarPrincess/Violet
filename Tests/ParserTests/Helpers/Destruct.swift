@@ -30,6 +30,19 @@ extension DestructExpressionKind {
     return nil
   }
 
+  internal func destructString(_ expr: Expression,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+    (StringGroup)? {
+
+    if case let ExpressionKind.string(value0) = expr.kind {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+    return nil
+  }
+
   internal func destructInt(_ expr: Expression,
                             file:   StaticString = #file,
                             line:   UInt         = #line) ->
@@ -366,6 +379,71 @@ extension DestructExpressionKind {
 
     XCTAssertTrue(false, expr.kind.description, file: file, line: line)
     return nil
+  }
+
+}
+
+// MARK: - StringGroup
+
+protocol DestructStringGroup { }
+
+extension DestructStringGroup {
+
+  internal func destructStringSimple(_ expr: Expression,
+                                     file:   StaticString = #file,
+                                     line:   UInt         = #line) ->
+    (String)? {
+
+    guard case let ExpressionKind.string(group) = expr.kind else {
+      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+      return nil
+    }
+
+    switch group {
+    case let .string(value0):
+      return (value0)
+    default:
+      XCTAssertTrue(false, String(describing: group), file: file, line: line)
+      return nil
+    }
+  }
+
+  internal func destructStringFormattedValue(_ expr: Expression,
+                                             file:   StaticString = #file,
+                                             line:   UInt         = #line) ->
+    (value: Expression, conversion: ConversionFlag?, spec: String)? {
+
+    guard case let ExpressionKind.string(group) = expr.kind else {
+      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+      return nil
+    }
+
+    switch group {
+    case let .formattedValue(value: value0, conversion: value1, spec: value2):
+      return (value0, value1, value2)
+    default:
+      XCTAssertTrue(false, String(describing: group), file: file, line: line)
+      return nil
+    }
+  }
+
+  internal func destructStringJoinedString(_ expr: Expression,
+                                           file:   StaticString = #file,
+                                           line:   UInt         = #line) ->
+    ([StringGroup])? {
+
+    guard case let ExpressionKind.string(group) = expr.kind else {
+      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
+      return nil
+    }
+
+    switch group {
+    case let .joinedString(value0):
+      return (value0)
+    default:
+      XCTAssertTrue(false, String(describing: group), file: file, line: line)
+      return nil
+    }
   }
 
 }

@@ -85,7 +85,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | Ellipsis
 {- Literals -}
   | Identifier(String)
-{-   | String(StringGroup) -}
+  | String(StringGroup)
   | Int(PyInt)
   | Float(Double)
   | Complex(Double real, Double imag)
@@ -239,14 +239,15 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 {- Based on RustPython. -}
 {- CPython uses 'JoinedStr(expr* values)', but we know that values are strings. -}
-
-{-
+-- For normal strings and f-strings, concatenate them together.
 @enum StringGroup =
+  -- String - no f-strings.
   String(String)
   CPython: FormattedValue(expr value, int? conversion, expr? format_spec)
+  -- FormattedValue - just an f-string (with no leading or trailing literals).
   | FormattedValue(expr value, ConversionFlag? conversion, String spec)
-  | JoinedString(StringGroup*) -- JoinedStr(expr* values)
- -}
+  -- JoinedStr - if there are multiple f-strings or any literals involved.
+  | JoinedString(StringGroup*)
 
 -- Transforms a value prior to formatting it.
 @enum ConversionFlag =

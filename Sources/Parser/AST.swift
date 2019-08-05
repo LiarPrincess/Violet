@@ -33,6 +33,7 @@ public indirect enum ExpressionKind: Equatable {
   case none
   case ellipsis
   case identifier(String)
+  case string(StringGroup)
   case int(PyInt)
   case float(Double)
   case complex(real: Double, imag: Double)
@@ -188,6 +189,16 @@ public enum DictionaryElement: Equatable {
   case unpacking(Expression)
   /// `key : value`
   case keyValue(key: Expression, value: Expression)
+}
+
+/// For normal strings and f-strings, concatenate them together.
+public enum StringGroup: Equatable {
+  /// String - no f-strings.
+  case string(String)
+  /// FormattedValue - just an f-string (with no leading or trailing literals).
+  case formattedValue(value: Expression, conversion: ConversionFlag?, spec: String)
+  /// JoinedStr - if there are multiple f-strings or any literals involved.
+  case joinedString([StringGroup])
 }
 
 /// Transforms a value prior to formatting it.
