@@ -7,6 +7,7 @@ import Lexer
 
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
+// swiftlint:disable file_length
 
 internal enum TestListCompResult {
   case single(Expression)
@@ -52,7 +53,7 @@ extension Parser {
     case .leftSqb:
       return try self.atomLeftSquareBracket()
     case .leftBrace:
-      throw self.unimplemented("'{' [dictorsetmaker] '}'")
+      return try self.atomLeftBrace()
 
     case let .identifier(value):
       return try self.simpleAtom(.identifier(value), from: token)
@@ -144,6 +145,107 @@ extension Parser {
       let kind = ExpressionKind.listComprehension(elt: elt, generators: gen)
       return self.expression(kind, start: start, end: end)
     }
+  }
+
+  // TODO: Move to Parser+AtomCollections.swift
+  /// ```c
+  /// dictorsetmaker:
+  /// (
+  ///   (
+  ///     (test ':' test | '**' expr)
+  ///     (comp_for | (',' (test ':' test | '**' expr))* [','])
+  ///   )
+  ///   |
+  ///   (
+  ///     (test | star_expr)
+  ///     (comp_for | (',' (test | star_expr))* [','])
+  ///   )
+  /// )
+  /// ```
+  private mutating func atomLeftBrace() throws -> Expression {
+    assert(self.peek.kind == .leftBrace)
+
+    let start = self.peek.start
+    try self.advance() // {
+
+    if self.peek.kind == .rightBrace { // a = { } -> empty dict
+      let end = self.peek.end
+      try self.advance() // }
+
+      return self.expression(.dictionary([]), start: start, end: end)
+    }
+
+    switch self.peek.kind {
+    case .starStar:
+      try self.advance() // **
+
+      // TODO: How to represent this?
+      let expr = try self.expr()
+      throw self.unimplemented("{**}")
+
+    default:
+      if let expr = try self.starExprOrNop() {
+        return try self.setDisplay(first: expr,
+                                   start: start,
+                                   closingToken: .rightBrace)
+      }
+
+      let first = try self.test()
+
+      // set with single element
+      if self.peek.kind == .rightBrace {
+        let end = self.peek.end
+        try self.advance() // }
+
+        let kind = ExpressionKind.set([first])
+        return self.expression(kind, start: start, end: end)
+      }
+
+      // set comprehension
+      if let generators = try self.compForOrNop(closingTokens: [.rightBrace]) {
+        let end = self.peek.end
+        try self.consumeOrThrow(.rightBrace)
+
+        let kind = ExpressionKind.setComprehension(elt: first, generators: generators)
+        return self.expression(kind, start: start, end: end)
+      }
+
+      // set with multiple elements
+      if self.peek.kind == .comma {
+        return try self.setDisplay(first: first,
+                                   start: start,
+                                   closingToken: .rightBrace)
+      }
+
+      // dictionary
+      throw self.unimplemented("test:xxx")
+    }
+  }
+
+  /// `(comp_for | (',' (test | star_expr))* [','])`
+  private mutating func setDisplay(first: Expression,
+                                   start: SourceLocation,
+                                   closingToken: TokenKind) throws -> Expression {
+
+    var elements = [Expression]()
+    elements.append(first)
+
+    while self.peek.kind == .comma && self.peekNext.kind != closingToken {
+      try self.advance() // ,
+
+      let test = try self.testOrStarExpr()
+      elements.append(test)
+    }
+
+    // optional trailing comma
+    if self.peek.kind == .comma {
+      try self.advance() // ,
+    }
+
+    let end = self.peek.end
+    try self.consumeOrThrow(closingToken)
+
+    return self.expression(.set(elements), start: start, end: end)
   }
 
   private mutating func simpleAtom(_ kind: ExpressionKind,
