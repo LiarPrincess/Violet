@@ -389,15 +389,10 @@ protocol DestructStringGroup { }
 
 extension DestructStringGroup {
 
-  internal func destructStringSimple(_ expr: Expression,
+  internal func destructStringSimple(_ group: StringGroup,
                                      file:   StaticString = #file,
                                      line:   UInt         = #line) ->
     (String)? {
-
-    guard case let ExpressionKind.string(group) = expr.kind else {
-      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
-      return nil
-    }
 
     switch group {
     case let .string(value0):
@@ -408,18 +403,13 @@ extension DestructStringGroup {
     }
   }
 
-  internal func destructStringFormattedValue(_ expr: Expression,
+  internal func destructStringFormattedValue(_ group: StringGroup,
                                              file:   StaticString = #file,
                                              line:   UInt         = #line) ->
-    (value: Expression, conversion: ConversionFlag?, spec: String)? {
-
-    guard case let ExpressionKind.string(group) = expr.kind else {
-      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
-      return nil
-    }
+    (Expression, conversion: ConversionFlag?, spec: String)? {
 
     switch group {
-    case let .formattedValue(value: value0, conversion: value1, spec: value2):
+    case let .formattedValue(value0, conversion: value1, spec: value2):
       return (value0, value1, value2)
     default:
       XCTAssertTrue(false, String(describing: group), file: file, line: line)
@@ -427,15 +417,10 @@ extension DestructStringGroup {
     }
   }
 
-  internal func destructStringJoinedString(_ expr: Expression,
+  internal func destructStringJoinedString(_ group: StringGroup,
                                            file:   StaticString = #file,
                                            line:   UInt         = #line) ->
     ([StringGroup])? {
-
-    guard case let ExpressionKind.string(group) = expr.kind else {
-      XCTAssertTrue(false, expr.kind.description, file: file, line: line)
-      return nil
-    }
 
     switch group {
     case let .joinedString(value0):

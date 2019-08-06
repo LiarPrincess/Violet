@@ -1,3 +1,13 @@
+{-
+Quick tips:
+- Use Haskell syntax highlighting
+- Use block comments (the one starting with braces) for Elsa comments
+- Use single line comments (the one starting with --) for Swift documentation
+
+Most of the documentation was taken from:
+https://greentreesnakes.readthedocs.io/en/latest/nodes.html
+-}
+
 @alias int = PyInt
 @alias identifier = String
 @alias string     = String
@@ -10,11 +20,6 @@
 @alias stmt = Statement
 @alias stmtKind = StatementKind
 @alias loc = SourceLocation
-
-{-
-This is nice source of documentation:
-https://greentreesnakes.readthedocs.io/en/latest/nodes.html
--}
 
 {-
   mod = Module(stmt* body)
@@ -245,7 +250,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   String(String)
   CPython: FormattedValue(expr value, int? conversion, expr? format_spec)
   -- FormattedValue - just an f-string (with no leading or trailing literals).
-  | FormattedValue(expr value, ConversionFlag? conversion, String spec)
+  | FormattedValue(expr, ConversionFlag? conversion, String spec)
   -- JoinedStr - if there are multiple f-strings or any literals involved.
   | JoinedString(StringGroup*)
 

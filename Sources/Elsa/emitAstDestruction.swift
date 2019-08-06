@@ -153,15 +153,10 @@ private func emitStringDestruct(_ enumDef: EnumDef) {
     let destruction = getEnumDestruction(caseDef)
 
     print("""
-      internal func destructString\(namePascal)(_ expr: Expression,
+      internal func destructString\(namePascal)(_ group: StringGroup,
         \(paramIndent)file:   StaticString = #file,
         \(paramIndent)line:   UInt         = #line) ->
         (\(destruction.resultType))? {
-
-        guard case let ExpressionKind.string(group) = expr.kind else {
-          XCTAssertTrue(false, expr.kind.description, file: file, line: line)
-          return nil
-        }
 
         switch group {
         case let .\(caseDef.name)(\(destruction.bindings)):
