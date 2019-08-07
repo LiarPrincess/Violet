@@ -196,7 +196,7 @@ public enum StringGroup: Equatable {
   /// String - no f-strings.
   case string(String)
   /// FormattedValue - just an f-string (with no leading or trailing literals).
-  case formattedValue(Expression, conversion: ConversionFlag?, spec: String)
+  case formattedValue(String, conversion: ConversionFlag?, spec: String?)
   /// JoinedStr - if there are multiple f-strings or any literals involved.
   case joinedString([StringGroup])
 }

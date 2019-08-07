@@ -12,7 +12,8 @@ import Foundation
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
 
-public enum FStringError: Error {
+public enum FStringError: Error, Equatable {
+  // TODO: better messages for 'unexpectedEnd'?
   /// We are starting expr but end of string happened: "abc{" or "abc}"
   case unexpectedEnd
   /// f-string: single '}' is not allowed
@@ -25,16 +26,25 @@ public enum FStringError: Error {
   case unterminatedString
   /// f-string: mismatched '(', '{', or '['
   case mismatchedParen
+  /// f-string: invalid conversion character: expected 's', 'r', or 'a'
+  case invalidConversion(UnicodeScalar)
 
   case unimplemented
 }
 
 internal protocol FString {
+
+  /// Literal text not contained in braces, it will be copied to the output.
+  /// For example: `"Elsa"`.
   mutating func append(_ s: String) throws
-  mutating func appendFString(_ s: String) throws
+
+  /// “Replacement fields” surrounded by curly braces.
+  /// For example: `f"Let it {go}"` (where `go` is replacement).
+  mutating func appendFormatString(_ s: String) throws
 
   /// For normal strings and f-strings, concatenate them together.
   /// - Note:
+  /// Result is defined as:
   /// - String - no f-strings.
   /// - FormattedValue - just an f-string (with no leading or trailing literals).
   /// - JoinedStr - if there are multiple f-strings or any literals involved.
@@ -45,7 +55,7 @@ private enum FStringFragment {
   /// String literal (the part NOT between '{' and '}').
   case string(String)
   /// Expression + formatter (the part between '{' and '}').
-  case formattedValue(Expression, conversion: ConversionFlag?, spec: String)
+  case formattedValue(String, conversion: ConversionFlag?, spec: String?)
 
   fileprivate func toGroup() -> StringGroup {
     switch self {
@@ -78,19 +88,27 @@ internal struct FStringImpl: FString {
     self.lastStr = value + s
   }
 
-  internal mutating func appendFString(_ s: String) throws {
+  internal mutating func appendFormatString(_ s: String) throws {
     let view = s.unicodeScalars
     var index = view.startIndex
 
     while index != view.endIndex {
-      let literal = try self.consumeLiteral(in: view, advancing: &index)
-      try self.append(literal)
+      // Literal is optional, because we may start with expr
+      // and we can't just add a node!
+      if let literal = try self.consumeLiteral(in: view, advancing: &index) {
+        try self.append(literal)
+      }
 
       if index != view.endIndex {
         assert(view[index] == "{")
 
         let fragment = try self.consumeExpr(in: view, advancing: &index)
         self.fragments.append(fragment)
+
+        if index != view.endIndex {
+          assert(view[index] == "}")
+          view.formIndex(after: &index)
+        }
       }
     }
   }
@@ -117,7 +135,8 @@ internal struct FStringImpl: FString {
       }
     }
 
-    throw self.unimplemented()
+    let groups = self.fragments.map { $0.toGroup() }
+    return StringGroup.joinedString(groups)
   }
 
   // MARK: - Consume literal
@@ -131,9 +150,9 @@ internal struct FStringImpl: FString {
   /// CPython: `fstring_find_literal`.
   private func consumeLiteral(
     in view: String.UnicodeScalarView,
-    advancing index: inout String.UnicodeScalarIndex) throws -> String {
+    advancing index: inout String.UnicodeScalarIndex) throws -> String? {
 
-    var result = [UnicodeScalar]()
+    var scalars = [UnicodeScalar]()
     while index != view.endIndex {
       let ch = view[index]
 
@@ -152,21 +171,25 @@ internal struct FStringImpl: FString {
         let isEscape = next == ch
 
         if isEscape {
-          result.append(ch)
+          scalars.append(ch)
           view.formIndex(&index, offsetBy: 2) // current {, next {
         } else if ch == "{" { // start of expr
-          return String(result)
+          return self.createLiteralResult(from: scalars)
         } else { // ch == "}", standalone "}" is not allowed, only "}}" is
           throw FStringError.singleRightBrace
         }
 
       default:
-        result.append(ch)
+        scalars.append(ch)
         view.formIndex(after: &index)
       }
     }
 
-    return String(result)
+    return self.createLiteralResult(from: scalars)
+  }
+
+  private func createLiteralResult(from scalars: [UnicodeScalar]) -> String? {
+    return scalars.isEmpty ? nil : String(scalars)
   }
 
   // MARK: - Consume expr
@@ -184,7 +207,7 @@ internal struct FStringImpl: FString {
     advancing index: inout String.UnicodeScalarIndex) throws -> FStringFragment {
 
     assert(view[index] == "{")
-    view.formIndex(after: &index)
+    view.formIndex(after: &index) // consume '{'
 
     let exprString = try self.consumeExprValue(in: view, advancing: &index)
     // TODO: Compile exprString -> expr (+ check for empty)
@@ -195,32 +218,29 @@ internal struct FStringImpl: FString {
       || view[index] == "}"
     )
 
-    /*
-     // conversion (todo: to fun + assert)
-     if index != view.endIndex && view[index] == "!" {
-     view.formIndex(after: &index) // consume !
-     guard index != view.endIndex else {
-     fatalError() // eof
-     }
+    var conversion: ConversionFlag?
+    if index != view.endIndex && view[index] == "!" {
+      conversion = try self.consumeExprConversion(in: view, advancing: &index)
+    }
 
-     let conversion = view[index]
-     switch conversion {
-     case "s": break
-     case "r": break
-     case "a": break
-     default:
-     // f-string: invalid conversion character: expected 's', 'r', or 'a'
-     fatalError()
-     }
+    assert(index == view.endIndex
+      || view[index] == ":"
+      || view[index] == "}"
+    )
 
-     view.formIndex(after: &index) // consume conversion
-     }
-     */
+    var formatSpec: String?
+    if index != view.endIndex && view[index] == ":" {
+      formatSpec = try self.consumeFormatSpec(in: view, advancing: &index)
+    }
 
-    let kind = ExpressionKind.string(.string(exprString))
-    let expr = Expression(kind, start: .start, end: .start)
-    return .formattedValue(expr, conversion: nil, spec: "")
+    assert(index == view.endIndex || view[index] == "}")
+
+    // let kind = ExpressionKind.string(.string(exprString))
+    // let expr = Expression(kind, start: .start, end: .start)
+    return .formattedValue(exprString, conversion: conversion, spec: formatSpec)
   }
+
+  // MARK: - Consume expr - value
 
   private enum QuoteType {
     /** ' */ case single
@@ -235,10 +255,11 @@ internal struct FStringImpl: FString {
   }
 
   private enum QuoteCount {
-    /** " */ case short
+    /** " */   case short
     /** """ */ case long
   }
 
+  // CPython: char * int, Violet 2 * 2 (we avoid asserts this way)
   private typealias Quote = (type: QuoteType, count: QuoteCount)
 
   /// Consume first part of the expression.
@@ -247,7 +268,7 @@ internal struct FStringImpl: FString {
   /// - end of string
   /// - end of expression (in this case view[index] = '!', ':' or '}')
   ///
-  /// This is basically 1:1 from CPython `fstring_find_expr`.
+  /// This is almost 1:1 from CPython `fstring_find_expr`.
   /// But still, you can break it if you try long enough.
   private func consumeExprValue(
     in view: String.UnicodeScalarView,
@@ -258,6 +279,10 @@ internal struct FStringImpl: FString {
 
     let startIndex = index
     whileLoop: while index != view.endIndex {
+      let isInsideParen = nestedDepth > 0
+      let isInsideString = quote != nil
+      let isInsideSomething = isInsideParen || isInsideString
+
       switch view[index] {
       case "\\":
         throw FStringError.backslashInExpression
@@ -265,13 +290,13 @@ internal struct FStringImpl: FString {
       case "[", "{", "(":
         nestedDepth += 1
 
-      case "]" where nestedDepth != 0,
-           "}" where nestedDepth != 0,
-           ")" where nestedDepth != 0:
+      case "]" where isInsideParen,
+           "}" where isInsideParen,
+           ")" where isInsideParen:
         nestedDepth -= 1
 
-      case "'"  where quote == nil, // string start
-           "\"" where quote == nil:
+      case "'"  where !isInsideString, // string start
+           "\"" where !isInsideString:
 
         /// We dont know if it is short (") or long (""") quote.
         quote = try self.getQuoteType(in: view, startingFrom: index)
@@ -299,7 +324,7 @@ internal struct FStringImpl: FString {
       case "#":
         throw FStringError.commentInExpression
 
-      case "!" where nestedDepth == 0:
+      case "!" where !isInsideSomething:
         let nextIndex = view.index(after: index)
 
         // '!=' is a special case mentioned in PEP-0498.
@@ -308,8 +333,8 @@ internal struct FStringImpl: FString {
           break whileLoop
         }
 
-      case ":" where nestedDepth == 0,
-           "}" where nestedDepth == 0:
+      case ":" where !isInsideSomething,
+           "}" where !isInsideSomething:
         break whileLoop
 
       default:
@@ -380,5 +405,57 @@ internal struct FStringImpl: FString {
     case .short:
       return true
     }
+  }
+
+  // MARK: - Consume expr - conversion
+
+  private func consumeExprConversion(
+    in view: String.UnicodeScalarView,
+    advancing index: inout String.UnicodeScalarIndex) throws -> ConversionFlag {
+
+    assert(view[index] == "!")
+    view.formIndex(after: &index) // consume '!'
+
+    if index == view.endIndex {
+      throw FStringError.unexpectedEnd
+    }
+
+    switch view[index] {
+    case "s":
+      view.formIndex(after: &index) // consume 's'
+      return .str
+    case "r":
+      view.formIndex(after: &index) // consume 'r'
+      return .repr
+    case "a":
+      view.formIndex(after: &index) // consume 'a'
+      return .ascii
+    default:
+      throw FStringError.invalidConversion(view[index])
+    }
+  }
+
+  // MARK: - Consume expr - format spec
+
+  private func consumeFormatSpec(
+    in view: String.UnicodeScalarView,
+    advancing index: inout String.UnicodeScalarIndex) throws -> String {
+
+    assert(view[index] == ":")
+    view.formIndex(after: &index) // consume ':'
+
+    if index == view.endIndex {
+      throw FStringError.unexpectedEnd
+    }
+
+    let startIndex = index
+    while index != view.endIndex && view[index] != "}" {
+      view.formIndex(after: &index)
+    }
+
+    assert(index == view.endIndex || view[index] == "}")
+
+    let s = view[startIndex..<index]
+    return String(s)
   }
 }

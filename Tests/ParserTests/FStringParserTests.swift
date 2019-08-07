@@ -59,7 +59,7 @@ class FStringParserTest: XCTestCase, DestructStringGroup {
     let s = "The wind is howling like this swirling storm inside"
 
     var string = self.createFString()
-    try string.appendFString(s)
+    try string.appendFormatString(s)
 
     let group = try string.compile()
     if let result = self.destructStringSimple(group) {
@@ -72,7 +72,7 @@ class FStringParserTest: XCTestCase, DestructStringGroup {
     let expected = "Couldn't keep {it} in, heaven knows I tried!"
 
     var string = self.createFString()
-    try string.appendFString(s)
+    try string.appendFormatString(s)
 
     let group = try string.compile()
     if let result = self.destructStringSimple(group) {
@@ -85,7 +85,7 @@ class FStringParserTest: XCTestCase, DestructStringGroup {
 
     do {
       var string = self.createFString()
-      try string.appendFString(s)
+      try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
       XCTAssertEqual(error, FStringError.unexpectedEnd)
@@ -99,7 +99,7 @@ class FStringParserTest: XCTestCase, DestructStringGroup {
 
     do {
       var string = self.createFString()
-      try string.appendFString(s)
+      try string.appendFormatString(s)
       XCTAssert(false)
     } catch let error as FStringError {
       XCTAssertEqual(error, FStringError.singleRightBrace)
@@ -110,8 +110,8 @@ class FStringParserTest: XCTestCase, DestructStringGroup {
 
   func test_literal_conat() throws {
     var string = self.createFString()
-    try string.appendFString("Conceal, don't feel, don't let them know\n")
-    try string.appendFString("Well, now they know!")
+    try string.appendFormatString("Conceal, don't feel, don't let them know\n")
+    try string.appendFormatString("Well, now they know!")
 
     let expected = """
       Conceal, don't feel, don't let them know
@@ -126,28 +126,93 @@ class FStringParserTest: XCTestCase, DestructStringGroup {
 
   // MARK: - Fstring - formatted value
 
-//  func test_formattedValue() throws {
-//    var string = self.createFString()
-//    try string.appendFString("{2013}")
+  func test_formattedValue() throws {
+    var string = self.createFString()
+    try string.appendFormatString("{2013}")
 
-//    let expected = """
-//      Conceal, don't feel, don't let them know
-//      Well, now they know!
-//      """
-//
-//    let group = try string.compile()
-//    if let result = self.destructStringSimple(group) {
-//      XCTAssertEqual(result, expected)
-//    }
-//  }
+    let group = try string.compile()
+    if let d = self.destructStringFormattedValue(group) {
+      XCTAssertEqual(d.0, "2013")
+      XCTAssertEqual(d.conversion, nil)
+      XCTAssertEqual(d.spec, nil)
+    }
+  }
 
-  // test_formattedValue_string
-  // spaces before after
-  // parens
+  func test_formattedValue_string() throws {
+    var string = self.createFString()
+    try string.appendFormatString("{'Let it go, let it go'}")
+
+    let group = try string.compile()
+    if let d = self.destructStringFormattedValue(group) {
+      XCTAssertEqual(d.0, "'Let it go, let it go'")
+      XCTAssertEqual(d.conversion, nil)
+      XCTAssertEqual(d.spec, nil)
+    }
+  }
+
+  func test_formattedValue_inParens() throws {
+    var string = self.createFString()
+    try string.appendFormatString("{('Cant hold it back anymore')}")
+
+    let group = try string.compile()
+    if let d = self.destructStringFormattedValue(group) {
+      XCTAssertEqual(d.0, "('Cant hold it back anymore')")
+      XCTAssertEqual(d.conversion, nil)
+      XCTAssertEqual(d.spec, nil)
+    }
+  }
+
+  func test_formattedValue_conversion() throws {
+    var string = self.createFString()
+    try string.appendFormatString("{'Let it go, let it go'!r}")
+
+    let group = try string.compile()
+    if let d = self.destructStringFormattedValue(group) {
+      XCTAssertEqual(d.0, "'Let it go, let it go'")
+      XCTAssertEqual(d.conversion, .repr)
+      XCTAssertEqual(d.spec, nil)
+    }
+  }
+
+  func test_formattedValue_formatSpec() throws {
+    var string = self.createFString()
+    try string.appendFormatString("{'Let it go, let it go':^30}")
+
+    let group = try string.compile()
+    if let d = self.destructStringFormattedValue(group) {
+      XCTAssertEqual(d.0, "'Let it go, let it go'")
+      XCTAssertEqual(d.conversion, nil)
+      XCTAssertEqual(d.spec, "^30")
+    }
+  }
+
+  func test_formattedValue_conversion_formatSpec() throws {
+    var string = self.createFString()
+    try string.appendFormatString("{'Turn away and slam the door!'!a:^30}")
+
+    let group = try string.compile()
+    if let d = self.destructStringFormattedValue(group) {
+      XCTAssertEqual(d.0, "'Turn away and slam the door!'")
+      XCTAssertEqual(d.conversion, .ascii)
+      XCTAssertEqual(d.spec, "^30")
+    }
+  }
+
+  // MARK: - FString - joined
 
   // start
   // middle
   // end
+
+  // parens
+  // spaces before after expression
+  // multiline/long string
+
+  // backslashInExpression
+  // commentInExpression
+  // != in expression
+
+  // formats etc
 
   // MARK: - Helpers
 
