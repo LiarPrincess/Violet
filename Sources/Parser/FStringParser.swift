@@ -57,7 +57,7 @@ private enum FStringFragment {
   /// Expression + formatter (the part between '{' and '}').
   case formattedValue(String, conversion: ConversionFlag?, spec: String?)
 
-  fileprivate func toGroup() -> StringGroup {
+  fileprivate func compile() -> StringGroup {
     switch self {
     case let .string(s):
       return .string(s)
@@ -68,11 +68,6 @@ private enum FStringFragment {
 }
 
 internal struct FStringImpl: FString {
-
-  @available(*, deprecated, message: "Ala")
-  private func unimplemented() -> FStringError {
-    return .unimplemented
-  }
 
   /// Conctenate strings (up until next expression).
   private var lastStr: String?
@@ -102,6 +97,12 @@ internal struct FStringImpl: FString {
       if index != view.endIndex {
         assert(view[index] == "{")
 
+        // Commit current literal, we will append expr after it.
+        if let s = self.lastStr {
+          self.fragments.append(.string(s))
+          self.lastStr = nil
+        }
+
         let fragment = try self.consumeExpr(in: view, advancing: &index)
         self.fragments.append(fragment)
 
@@ -117,6 +118,7 @@ internal struct FStringImpl: FString {
   /// - FormattedValue - just an f-string (with no leading or trailing literals).
   /// - JoinedStr - if there are multiple f-strings or any literals involved.
   internal mutating func compile() throws -> StringGroup {
+    // No fstrings? -> simple string.
     if self.fragments.isEmpty {
       return .string(self.lastStr ?? "")
     }
@@ -131,11 +133,11 @@ internal struct FStringImpl: FString {
     if self.fragments.count == 1 {
       let first = self.fragments[0]
       if case .formattedValue = first {
-        return first.toGroup()
+        return first.compile()
       }
     }
 
-    let groups = self.fragments.map { $0.toGroup() }
+    let groups = self.fragments.map { $0.compile() }
     return StringGroup.joinedString(groups)
   }
 
@@ -348,8 +350,13 @@ internal struct FStringImpl: FString {
       throw FStringError.unterminatedString
     }
 
+    // TODO: test_joined_expression_unclosedParen_throws
     guard nestedDepth == 0 else {
       throw FStringError.mismatchedParen
+    }
+
+    if index == view.endIndex {
+      throw FStringError.unexpectedEnd
     }
 
     let s = view[startIndex..<index]

@@ -177,9 +177,12 @@ extension StringGroup: CustomStringConvertible {
     switch self {
     case let .string(s):
       return "\"" + prefix(s, length: 10) + "\""
-      return "f\"" + "..." + "\""
+    case let .formattedValue(v, conversion: conversion, spec: spec):
+      let c = conversion.map { " " + describe($0) } ?? ""
+      let s = spec.map { " " + describe($0) } ?? ""
+      return "(formatted \(v)\(c)\(s))"
     case let .joinedString(groups):
-      return "(joined \(join(groups))"
+      return "(joinedTODO \(join(groups))"
     }
   }
 }
