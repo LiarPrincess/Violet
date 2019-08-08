@@ -4,9 +4,6 @@ import Foundation
 
 public struct Lexer: LexerType {
 
-  /// Name of the input source.
-  public let filename: String
-
   /// Text input to lex.
   /// Scalars because 'Python reads program text as Unicode code points' (quote
   /// from [doc](https://docs.python.org/3/reference/lexical_analysis.html)\).
@@ -27,19 +24,8 @@ public struct Lexer: LexerType {
   /// Where are we in the source file?
   internal var location = SourceLocation.start
 
-  /// Used for REPL.
-  public init(stdin: String) {
-    self.init(filename: "<stdin>", source: stdin)
-  }
-
-  /// Used for 'eval/exec'.
-  public init(string: String) {
-    self.init(filename: "<string>", source: string)
-  }
-
-  /// Used when we have an actual file.
-  public init(filename: String, source: String) {
-    self.filename = filename
+  /// Create lexer that will produce tokens from the source.
+  public init(for source: String) {
     self.source = source.unicodeScalars
     self.sourceIndex = self.source.startIndex
   }

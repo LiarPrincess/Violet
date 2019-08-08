@@ -13,7 +13,7 @@ class IndentTabTests: XCTestCase, Common {
     \tBeast
     """
 
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let indent = self.getToken(&lexer) {
       XCTAssertEqual(indent.kind, .indent)
@@ -38,7 +38,7 @@ class IndentTabTests: XCTestCase, Common {
     Mermaid
     """
 
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let indent = self.getToken(&lexer) {
       XCTAssertEqual(indent.kind, .indent)
@@ -71,7 +71,7 @@ class IndentTabTests: XCTestCase, Common {
     Waifu
     """
 
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let indent1 = self.getToken(&lexer) {
       XCTAssertEqual(indent1.kind, .indent)
@@ -116,7 +116,7 @@ class IndentTabTests: XCTestCase, Common {
     \tCharming
     """
 
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let indent = self.getToken(&lexer) {
       XCTAssertEqual(indent.kind, .indent)

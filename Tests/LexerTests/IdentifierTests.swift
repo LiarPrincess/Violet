@@ -10,7 +10,7 @@ class IdentifierTests: XCTestCase, Common {
   /// py: f"I know you I walked with you once upon a dream"
   func test_prefixedString_isString() {
     let s = "I know you I walked with you once upon a dream"
-    var lexer = Lexer(string: "f" + self.shortQuote(s))
+    var lexer = Lexer(for: "f" + self.shortQuote(s))
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .formatString(s))
@@ -23,7 +23,7 @@ class IdentifierTests: XCTestCase, Common {
 
   func test_keywords() {
     for (keyword, value) in keywords {
-      var lexer = Lexer(string: keyword)
+      var lexer = Lexer(for: keyword)
 
       if let token = self.getToken(&lexer) {
         XCTAssertEqual(token.kind,  value, keyword)
@@ -38,7 +38,7 @@ class IdentifierTests: XCTestCase, Common {
   /// py: iKnowYouTheGleamInYourEyesIsSoFamiliarAGleam
   func test_identifier_simple() {
     let s = "iKnowYouTheGleamInYourEyesIsSoFamiliarAGleam"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
@@ -51,7 +51,7 @@ class IdentifierTests: XCTestCase, Common {
   func test_identifier_startingWithUnderscore() {
     // use 'and' instead of 'yet' for prince version
     let s = "_yetIKnowItsTrueThatVisionsAreSeldomAllTheySeem"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
@@ -63,7 +63,7 @@ class IdentifierTests: XCTestCase, Common {
   /// py: 齀butIfIKnowYouIKnowWhatYoullDo
   func test_identifier_startingWithCJK() {
     let s = "齀butIfIKnowYouIKnowWhatYoullDo"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
@@ -75,7 +75,7 @@ class IdentifierTests: XCTestCase, Common {
   // py: youllLoveMeAtOnce齀TheWayYouDidOnceUponADream
   func test_identifier_containingCJK() {
     let s = "youllLoveMeAtOnce齀TheWayYouDidOnceUponADream"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .identifier(s))
@@ -86,7 +86,7 @@ class IdentifierTests: XCTestCase, Common {
 
   /// py: 👸butIfIKnowYouIKnowWhatYoullDo
   func test_identifier_startingWithEmoji_throws() {
-    var lexer = Lexer(string: "👸butIfIKnowYouIKnowWhatYoullDo")
+    var lexer = Lexer(for: "👸butIfIKnowYouIKnowWhatYoullDo")
 
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind, LexerErrorKind.identifier("👸"))
@@ -96,7 +96,7 @@ class IdentifierTests: XCTestCase, Common {
 
   // py: youll❤️MeAtOnceTheWayYouDidOnceUponADream
   func test_identifier_containingEmoji_throws() {
-    var lexer = Lexer(string: "youll❤️MeAtOnceTheWayYouDidOnceUponADream")
+    var lexer = Lexer(for: "youll❤️MeAtOnceTheWayYouDidOnceUponADream")
 
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind, LexerErrorKind.identifier("❤")) // not the same!
@@ -105,7 +105,7 @@ class IdentifierTests: XCTestCase, Common {
   }
 
   func test_identifier_singleCombiningCharacter_throws() {
-    var lexer = Lexer(string: "\u{301}")
+    var lexer = Lexer(for: "\u{301}")
 
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind, LexerErrorKind.identifier("\u{301}"))
@@ -118,7 +118,7 @@ class IdentifierTests: XCTestCase, Common {
     let reserved = ["_", "__x__", "__x"]
 
     for identifier in reserved {
-      var lexer = Lexer(string: identifier)
+      var lexer = Lexer(for: identifier)
 
       if let token = self.getToken(&lexer) {
         XCTAssertEqual(token.kind, .identifier(identifier), identifier)

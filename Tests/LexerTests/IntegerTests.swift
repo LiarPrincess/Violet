@@ -8,7 +8,7 @@ class IntegerTests: XCTestCase, Common {
 
   func test_decimal_zero() {
     let s = "0"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 0)
@@ -19,7 +19,7 @@ class IntegerTests: XCTestCase, Common {
 
   func test_decimal_zero_withUnderscores() {
     let s = "0_000_000"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 0)
@@ -32,7 +32,7 @@ class IntegerTests: XCTestCase, Common {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_decimal() {
     let s = "2147483647"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 2_147_483_647)
@@ -45,7 +45,7 @@ class IntegerTests: XCTestCase, Common {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_decimal_withUnderscores() {
     let s = "100_000_000_000"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 100_000_000_000)
@@ -56,7 +56,7 @@ class IntegerTests: XCTestCase, Common {
 
   func test_decimal_maxInt64() {
     let s = "9223372036854775807"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 9_223_372_036_854_775_807)
@@ -71,7 +71,7 @@ class IntegerTests: XCTestCase, Common {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_binary() {
     let s = "0b100110111"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 0b100110111)
@@ -84,7 +84,7 @@ class IntegerTests: XCTestCase, Common {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_binary_withUnderscores() {
     let s = "0b_1110_0101"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 0b1110_0101)
@@ -99,7 +99,7 @@ class IntegerTests: XCTestCase, Common {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_octal() {
     let s = "0o177"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 0o177)
@@ -112,7 +112,7 @@ class IntegerTests: XCTestCase, Common {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_octal_withUnderscores() {
     let s = "0o_37_7"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 0o377)
@@ -127,7 +127,7 @@ class IntegerTests: XCTestCase, Common {
   /// https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
   func test_hex() {
     let s = "0xdeadBEEF"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 0xdeadbeef)
@@ -138,7 +138,7 @@ class IntegerTests: XCTestCase, Common {
 
   func test_hex_withUnderscores() {
     let s = "0x_01_23_45_67_89_ac"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 0x01_23_45_67_89_ac)
@@ -149,7 +149,7 @@ class IntegerTests: XCTestCase, Common {
 
   func test_hex_zero() {
     let s = "0x0"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let token = self.getToken(&lexer) {
       XCTAssertInt(token.kind, 0x0)
@@ -160,7 +160,7 @@ class IntegerTests: XCTestCase, Common {
 
   func test_hex_lastUnderscore_isNotAPartOfTheNumber() {
     let s = "0x123_"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let error = self.error(&lexer) {
       XCTAssertEqual(error.kind, LexerErrorKind.danglingIntegerUnderscore)

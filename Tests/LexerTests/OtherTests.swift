@@ -7,7 +7,7 @@ class OtherTests: XCTestCase, Common {
   // MARK: - EOF
 
   func test_eof() {
-    var lexer = Lexer(string: "")
+    var lexer = Lexer(for: "")
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .eof)
@@ -19,7 +19,7 @@ class OtherTests: XCTestCase, Common {
   // MARK: - New line
 
   func test_newLine_CR() {
-    var lexer = Lexer(string: "\(CR)")
+    var lexer = Lexer(for: "\(CR)")
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .newLine)
@@ -31,7 +31,7 @@ class OtherTests: XCTestCase, Common {
   }
 
   func test_newLine_LF() {
-    var lexer = Lexer(string: "\(LF)")
+    var lexer = Lexer(for: "\(LF)")
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .newLine)
@@ -43,7 +43,7 @@ class OtherTests: XCTestCase, Common {
   }
 
   func test_newLine_CRLF() {
-    var lexer = Lexer(string: "\(CR)\(LF)")
+    var lexer = Lexer(for: "\(CR)\(LF)")
 
     if let token = self.getToken(&lexer) {
       XCTAssertEqual(token.kind, .newLine)
@@ -55,7 +55,7 @@ class OtherTests: XCTestCase, Common {
   }
 
   func test_newLine_LFCR() {
-    var lexer = Lexer(string: "\(LF)\(CR)")
+    var lexer = Lexer(for: "\(LF)\(CR)")
 
     if let token1 = self.getToken(&lexer) {
       XCTAssertEqual(token1.kind, .newLine)

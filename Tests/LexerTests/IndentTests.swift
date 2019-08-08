@@ -9,7 +9,7 @@ class IndentTests: XCTestCase, Common {
   /// py: Ariel
   func test_noIndent() {
     let s = "Ariel"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     self.getIdentifier(&lexer, value: "Ariel")
     self.getEOF(&lexer)
@@ -23,7 +23,7 @@ class IndentTests: XCTestCase, Common {
   /// Charming
   func test_emptyLine_doesNotIndent() {
     let s = "Prince\n    \nCharming"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     self.getIdentifier(&lexer, value: "Prince")
     self.getNewLine(&lexer)
@@ -38,7 +38,7 @@ class IndentTests: XCTestCase, Common {
   /// Waifu
   func test_lineWithOnlyComment_doesNotIndent() {
     let s = "Gaston\n    #Best\nWaifu"
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     self.getIdentifier(&lexer, value: "Gaston")
     self.getNewLine(&lexer)
@@ -63,7 +63,7 @@ class IndentTests: XCTestCase, Common {
     )
     """
 
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     while let token = self.getToken(&lexer), token.kind != .eof {
       XCTAssertNotEqual(token.kind, .indent, token.description)
@@ -82,7 +82,7 @@ class IndentTests: XCTestCase, Common {
             Beast
     """
 
-    var lexer = Lexer(string: s)
+    var lexer = Lexer(for: s)
 
     if let indent = self.getToken(&lexer) {
       XCTAssertEqual(indent.kind, .indent)
