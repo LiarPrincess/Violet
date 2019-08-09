@@ -4,12 +4,6 @@ import Lexer
 // Python -> ast.c
 //  ast_for_atom(struct compiling *c, const node *n)
 
-internal enum TestListCompResult {
-  case single(Expression)
-  case multiple([Expression])
-  case listComprehension(elt: Expression, generators: [Comprehension])
-}
-
 extension Parser {
 
   /// `atom_expr: [AWAIT] atom trailer*`
@@ -89,6 +83,12 @@ extension Parser {
 
   // MARK: - Test list comprehension
 
+  internal enum TestListCompResult {
+    case single(Expression)
+    case multiple([Expression])
+    case listComprehension(elt: Expression, generators: [Comprehension])
+  }
+
   /// ```c
   /// testlist_comp:
   ///   (test|star_expr) ( comp_for
@@ -165,9 +165,21 @@ extension Parser {
       return self.expression(kind, start: yieldToken.start, end: test.end)
 
     default:
-      let list = try self.testList(closingToken: closingToken)
-      let kind = ExpressionKind.yield(list)
-      return self.expression(kind, start: yieldToken.start, end: list.end)
+      let testList = try self.testList(closingToken: closingToken)
+      let target = self.yieldTarget(testList)
+      let kind = ExpressionKind.yield(target)
+      return self.expression(kind, start: yieldToken.start, end: target.end)
+    }
+  }
+
+  private func yieldTarget(_ result: TestListResult) -> Expression {
+    switch result {
+    case let .single(e):
+      return e
+    case let .many(es):
+      let start = es.first.start
+      let end = es.last.end
+      return self.expression(.tuple(Array(es)), start: start, end: end)
     }
   }
 }

@@ -64,7 +64,7 @@ extension Parser {
 
       // sync_comp_for: 'for' exprlist 'in' or_test
       try self.consumeOrThrow(.for)
-      let target = try self.exprList(closingToken: .in)
+      let exprList = try self.exprList(closingTokens: [.in])
       try self.consumeOrThrow(.in)
       let iter = try self.orTest()
 
@@ -75,16 +75,26 @@ extension Parser {
         ifs.append(try self.testNoCond())
       }
 
-      let end = ifs.last?.end ?? iter.end
-      let comp = Comprehension(target: target,
+      let comp = Comprehension(target: self.compForTarget(exprList),
                                iter: iter,
                                ifs: ifs,
                                isAsync: isAsync,
                                start: start,
-                               end: end)
+                               end: ifs.last?.end ?? iter.end)
       result.append(comp)
     } while !closingTokens.contains(self.peek.kind) // start another comprehension
 
     return result
+  }
+
+  private func compForTarget(_ result: ExprListResult) -> Expression {
+    switch result {
+    case let .single(e):
+      return e
+    case let .many(es):
+      let start = es.first.start
+      let end = es.last.end
+      return self.expression(.tuple(Array(es)), start: start, end: end)
+    }
   }
 }

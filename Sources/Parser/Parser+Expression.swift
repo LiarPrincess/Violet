@@ -388,20 +388,23 @@ extension Parser {
 
   // MARK: - Expr list
 
-  // TODO: those should return enum
+  internal enum ExprListResult {
+    case single(Expression)
+    case many(NonEmptyArray<Expression>)
+  }
 
   /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
-  internal mutating func exprList(closingToken: TokenKind) throws -> Expression {
-    var elements = [Expression]()
+  internal mutating func exprList(closingTokens: [TokenKind])
+    throws -> ExprListResult {
 
     let first = try self.starExprOrNop() ?? self.expr()
-    elements.append(first)
 
-    while self.peek.kind == .comma && self.peekNext.kind != closingToken {
+    var additionalElements = [Expression]()
+    while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
       try self.advance() // ,
 
       let test = try self.starExprOrNop() ?? self.expr()
-      elements.append(test)
+      additionalElements.append(test)
     }
 
     let hasTrailingComma = self.peek.kind == .comma
@@ -410,29 +413,33 @@ extension Parser {
     }
 
     // if we have coma then it is a tuple! (even if it has only 1 element!)
-    if elements.count == 1 && !hasTrailingComma {
-      return first
+    if additionalElements.isEmpty && !hasTrailingComma {
+      return .single(first)
     }
 
-    let start = first.start
-    let end = elements.last?.end ?? first.end
-    return self.expression(.tuple(elements), start: start, end: end)
+    let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
+    return .many(array)
   }
 
   // MARK: - Test list
 
+  internal enum TestListResult {
+    case single(Expression)
+    case many(NonEmptyArray<Expression>)
+  }
+
   /// `testlist: test (',' test)* [',']`
-  internal mutating func testList(closingToken: TokenKind) throws -> Expression {
-    var elements = [Expression]()
+  internal mutating func testList(closingToken: TokenKind)
+    throws -> TestListResult {
 
     let first = try self.test()
-    elements.append(first)
 
+    var additionalElements = [Expression]()
     while self.peek.kind == .comma && self.peekNext.kind != closingToken {
       try self.advance() // ,
 
       let test = try self.test()
-      elements.append(test)
+      additionalElements.append(test)
     }
 
     let hasTrailingComma = self.peek.kind == .comma
@@ -440,12 +447,11 @@ extension Parser {
       try self.advance() // ,
     }
 
-    if elements.count == 1 && !hasTrailingComma {
-      return first
+    if additionalElements.isEmpty && !hasTrailingComma {
+      return .single(first)
     }
 
-    let start = first.start
-    let end = elements.last?.end ?? first.end
-    return self.expression(.tuple(elements), start: start, end: end)
+    let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
+    return .many(array)
   }
 }
