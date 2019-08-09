@@ -44,15 +44,6 @@ extension Common {
     }
   }
 
-  internal func XCTAssertExpression(_ expr:     Expression,
-                                    _ expected: String,
-                                    _ message:  String = "",
-                                    file: StaticString = #file,
-                                    line: UInt         = #line) {
-    let desc = String(describing: expr.kind)
-    XCTAssertEqual(desc, expected, message, file: file, line: line)
-  }
-
   // MARK: - Errors
 
   internal func error(_ parser: inout Parser,

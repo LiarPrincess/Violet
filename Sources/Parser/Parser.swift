@@ -9,6 +9,7 @@ import Lexer
 private enum ParserState {
   case notStarted
   case finished(AST)
+  case error(Error)
 }
 
 public struct Parser {
@@ -29,45 +30,39 @@ public struct Parser {
   }
 
   public enum Mode {
-    /// REPL.
+    /// Single interactive statement.
     case single
-    /// For evaluating expression.
+    /// Input for the eval() functions.
     case eval
-    /// For executing statement.
+    /// Module or sequence of commands.
     case exec
   }
 
   // MARK: - Traversal
 
   /// Current token.
-  internal var peek = Token(.comment(""), start: .start, end: .start)
+  internal var peek = Token(.eof, start: .start, end: .start)
 
   /// Token after `self.peek`.
-  internal var peekNext = Token(.comment(""), start: .start, end: .start)
+  internal var peekNext = Token(.eof, start: .start, end: .start)
 
   @discardableResult
   internal mutating func advance() throws -> Token? {
-    if self.peek.kind == .eof {
-      throw self.unimplemented("Important, because we no longer have nil on end: self.failUnexpectedEOF")
-    }
+    // EOF should be handled before we ask for next token.
+    // Consuming 'EOF' should not be a thing.
+    assert(self.peek.kind != .eof)
 
     repeat {
       self.peek = self.peekNext
       self.peekNext = try self.lexer.getToken()
-    } while self.isComment(self.peek) && !self.isEOF(self.peek)
+    } while self.isComment(self.peek)
 
     return self.peek
   }
 
-  private func isComment(_ token: Token?) -> Bool {
-    guard let kind = token?.kind else { return false }
-    guard case TokenKind.comment(_) = kind else { return false }
+  private func isComment(_ token: Token) -> Bool {
+    guard case TokenKind.comment = token.kind else { return false }
     return true
-  }
-
-  private func isEOF(_ token: Token?) -> Bool {
-    guard let kind = token?.kind else { return false }
-    return kind == .eof
   }
 
   // MARK: - Parse
@@ -75,17 +70,38 @@ public struct Parser {
   public mutating func parse() throws -> AST {
     switch self.state {
     case .notStarted:
+
       // populate peeks
       self.peek = try self.lexer.getToken()
       self.peekNext = try self.lexer.getToken()
 
-      let expr = try self.expression()
-      let ast = AST.expression(expr)
-      self.state = .finished(ast)
-      return ast
+      do {
+        let ast = try self.parseByMode()
+        self.state = .finished(ast)
+        return ast
+      }
+      catch {
+        self.state = .error(error)
+        throw error
+      }
 
     case .finished(let ast):
       return ast
+
+    case .error(let error):
+      throw error
+    }
+  }
+
+  private mutating func parseByMode() throws -> AST {
+    switch self.mode {
+    case .eval:
+      let expr = try self.expression()
+      return AST.expression(expr)
+    case .exec:
+      throw self.unimplemented()
+    case .single:
+      throw self.unimplemented()
     }
   }
 
