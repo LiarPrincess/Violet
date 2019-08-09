@@ -6,7 +6,7 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
+class AtomBraceTests: XCTestCase, Common, DestructExpressionKind {
 
   // MARK: - Empty
 

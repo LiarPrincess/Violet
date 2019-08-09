@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
+class AtomParenTests: XCTestCase, Common, DestructExpressionKind {
 
   // MARK: - Empty
 
