@@ -68,7 +68,7 @@ private func emitDoc(_ doc: String?, indent indentCount: Int) {
   guard let doc = doc else { return }
 
   let indent = String(repeating: " ", count: indentCount)
-  for line in doc.split(separator: "\n") {
+  for line in doc.split(separator: "\n", maxSplits: .max, omittingEmptySubsequences: false) {
     print("\(indent)/// \(line)")
   }
 }

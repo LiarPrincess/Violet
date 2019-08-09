@@ -15,7 +15,7 @@ public struct StructDef {
               doc:        String? = nil) {
     self.name = pascalCase(name)
     self.properties = properties
-    self.doc = doc
+    self.doc = fixDocNewLines(doc)
   }
 }
 
@@ -36,7 +36,7 @@ public struct StructProperty {
     self.name = camelCase(name)
     self.type = getType(baseType: baseType, kind: kind)
     self.kind = kind
-    self.doc = doc
+    self.doc = fixDocNewLines(doc)
   }
 }
 
@@ -69,7 +69,7 @@ public struct EnumCaseDef {
   public init(_ name: String, properties: [EnumCaseProperty], doc: String?) {
     self.name = camelCase(name)
     self.properties = properties
-    self.doc = doc?.replacingOccurrences(of: "\\n", with: "\n")
+    self.doc = fixDocNewLines(doc)
   }
 }
 
@@ -98,6 +98,10 @@ public enum PropertyKind {
 }
 
 // MARK: - Helpers
+
+private func fixDocNewLines(_ doc: String?) -> String? {
+  return doc?.replacingOccurrences(of: "\\n", with: "\n")
+}
 
 private func getType(baseType: String, kind: PropertyKind) -> String {
   let type = pascalCase(baseType)

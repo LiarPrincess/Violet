@@ -45,31 +45,35 @@ extension Parser {
   /// - JoinedStr - if there are multiple f-strings or any literals involved.
   internal mutating func strPlus() throws -> Expression {
     assert(self.isString(self.peek) || self.isFormatString(self.peek))
-
+/*
     let start = self.peek.start
-    var end = self.peek.end
-
-    var strings = [String]()
+    var end   = self.peek.end
+    var parser: FStringParser = FStringParserImpl()
 
     while self.isString(self.peek) || self.isFormatString(self.peek) {
       switch self.peek.kind {
       case let .string(s):
-        strings.append(s)
-      default:
-        break
+        parser.append(s)
+      case let .formatString(s):
+        parser.appendFString(s)
+      default: // should not happen
+        assert(false)
       }
 
       end = self.peek.end
-      try self.advance()
+      try self.advance() // needed?
     }
 
     if self.isBytes(self.peek) {
       throw self.error(.mixBytesAndNonBytesLiterals)
     }
 
-    let group = StringGroup.string(strings.joined())
+    let s = parser.compile()
+    let group = StringGroup.string(s)
     let kind = ExpressionKind.string(group)
     return self.expression(kind, start: start, end: end)
+*/
+    throw self.unimplemented()
   }
 
   private func isString(_ token: Token) -> Bool {

@@ -19,14 +19,134 @@ public enum AST: Equatable {
 
 public struct Statement: Equatable {
 
+  /// Type of the statement.
+  public let kind: StatementKind
   /// Location of the first character in the source code.
   public let start: SourceLocation
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(start: SourceLocation, end: SourceLocation) {
+  public init(kind: StatementKind, start: SourceLocation, end: SourceLocation) {
+    self.kind = kind
     self.start = start
     self.end = end
+  }
+}
+
+public enum StatementKind: Equatable {
+  /// A function definition.
+  /// - `name` is a raw string of the function name.
+  /// - `args` is a arguments node.
+  /// - `body` is the list of nodes inside the function.
+  /// - `decorator_list` is the list of decorators to be applied, stored outermost first (i.e. the first in the list will be applied last).
+  /// - `returns` is the return annotation (Python 3 only).
+  case functionDef(name: String, args: Arguments, body: [Statement], decorator_list: [Expression], returns: Expression?)
+  /// An async def function definition.
+  /// Has the same fields as `FunctionDef`.
+  case asyncFunctionDef(name: String, args: Arguments, body: [Statement], decorator_list: [Expression], returns: Expression?)
+  /// A class definition.
+  /// - `name` is a raw string for the class name
+  /// - `bases` is a list of nodes for explicitly specified base classes.
+  /// - `keywords` is a list of keyword nodes, principally for ‘metaclass’. Other keywords will be passed to the metaclass, as per PEP-3115.
+  /// - `starargs` and kwargs are each a single node, as in a function call. starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass. These are removed in Python 3.5 - see below for details.
+  /// - `body` is a list of nodes representing the code within the class definition.
+  /// - `decorator_list` is a list of nodes, as in `FunctionDef`.
+  case classDef(name: String, bases: [Expression], keywords: [Keyword], body: [Statement], decorator_list: [Expression])
+  /// A `return` statement.
+  case `return`(value: Expression?)
+  /// Represents a `del` statement.
+  /// - `targets` is a list of nodes, such as Name, Attribute or Subscript nodes.
+  case delete(targets: [Expression])
+  /// An assignment.
+  /// - `targets` is a list of nodes
+  /// - `value` is a single node
+  /// 
+  /// Multiple nodes in targets represents assigning the same value to each.
+  /// Unpacking is represented by putting a Tuple or List within targets.
+  case assign(targets: [Expression], value: Expression)
+  /// Augmented assignment, such as `a += 1`.
+  /// - `target` is a Name node for `a`. Target can be Name, Subscript
+  /// or Attribute, but not a Tuple or List (unlike the targets of `Assign`).
+  /// - `op` is `Add`
+  /// - `value` is a Num node for 1.
+  case augAssign(target: Expression, op: Operator, value: Expression)
+  /// An assignment with a type annotation.
+  /// - `target` is a single node and can be a Name, a Attribute or a Subscript
+  /// - `annotation` is the annotation, such as a Str or Name node
+  /// - `value` is a single optional node
+  /// - `simple` indicates that `target` does not appear
+  /// in between parenthesis and is pure name and not expression.
+  case annAssign(target: Expression, annotation: Expression, value: Expression?, simple: PyInt)
+  /// A `for` loop.
+  /// - `target` holds the variable(s) the loop assigns to, as a single Name, Tuple or List node.
+  /// - `iter` holds the item to be looped over, again as a single node.
+  /// - `body` and `orelse` contain lists of nodes to execute. Those in orelse
+  /// are executed if the loop finishes normally, rather than via a break statement.
+  case `for`(target: Expression, iter: Expression, body: [Statement], orelse: [Statement])
+  /// An `async for` definition.
+  /// Has the same fields as `For`.
+  case asyncFor(target: Expression, iter: Expression, body: [Statement], orelse: [Statement])
+  /// A `while` loop.
+  /// - `test` holds the condition, such as a Compare node.
+  case `while`(test: Expression, body: [Statement], orelse: [Statement])
+  /// An if statement.
+  /// - `test` holds a single node, such as a Compare node.
+  /// - `body` and `orelse` each hold a list of nodes.
+  /// 
+  /// - `elif` clauses don’t have a special representation in the AST,
+  /// but rather appear as extra `If` nodes within the `orelse` section
+  /// of the previous one.
+  case `if`(test: Expression, body: [Statement], orelse: [Statement])
+  /// A `with` block.
+  /// - `items` is a list of withitem nodes representing the context managers.
+  /// - `body` is the indented block inside the context.
+  /// Raising an exception.
+  /// - `exc` is the exception object to be raised, normally a Call or Name
+  /// or None for a standalone raise.
+  /// - `cause` is the optional part for y in raise x from y.
+  case raise(exc: Expression?, cause: Expression?)
+  /// `try` block.
+  /// All attributes are list of nodes to execute, except for handlers,
+  /// which is a list of ExceptHandler nodes.
+  case `try`(body: [Statement], handlers: [Excepthandler], orelse: [Statement], finalbody: [Statement])
+  /// An assertion.
+  /// - `test` holds the condition, such as a Compare node.
+  /// - `msg` holds the failure message, normally a Str node.
+  case assert(test: Expression, msg: Expression?)
+  /// An import statement.
+  /// - `names` is a list of alias nodes.
+  case `import`(names: [Alias])
+  /// Represents `from x import y`.
+  /// - `moduleName` is a raw string of the ‘from’ name, without any leading dots
+  /// or None for statements such as `from . import foo`.
+  /// - `level` is an integer holding the level of the relative import
+  /// (0 means absolute import).
+  case importFrom(moduleName: String?, names: [Alias], level: PyInt?)
+  /// `global` statement.
+  case global(names: [String])
+  /// `nonlocal` statement.
+  case nonlocal(names: [String])
+  /// `Expression` statement.
+  case expr(value: Expression)
+  /// A `pass` statement.
+  case pass
+  /// `break` statement.
+  case `break`
+  /// `continue` statement.
+  case `continue`
+}
+
+/// Import name with optional 'as' alias.
+/// Both parameters are raw strings of the names.
+/// `asname` can be None if the regular name is to be used.
+public struct Alias: Equatable {
+
+  public let name: String
+  public let asname: String?
+
+  public init(name: String, asname: String?) {
+    self.name = name
+    self.asname = asname
   }
 }
 
@@ -98,9 +218,21 @@ public indirect enum ExpressionKind: Equatable {
   /// zero or more for or if clauses.
   /// `elt` - expression that will be evaluated for each item
   case generatorExp(elt: Expression, generators: [Comprehension])
+  /// An await expression.
+  /// `value` is what it waits for.
+  /// 
+  /// Only valid in the body of an AsyncFunctionDef.
   case await(Expression)
+  /// A `yield` or `yield from` expression.
+  /// Because these are expressions, they must be wrapped in a `Expr` node
+  /// if the value sent back is not used.
   case yield(Expression?)
+  /// A `yield` or `yield from` expression.
+  /// Because these are expressions, they must be wrapped in a `Expr` node
+  /// if the value sent back is not used.
   case yieldFrom(Expression)
+  /// Minimal function definition that can be used inside an expression.
+  /// Unlike FunctionDef, body holds a single node.
   case lambda(args: Arguments, body: Expression)
   /// A function call.
   /// - `func` - function to call
