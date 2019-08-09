@@ -4,27 +4,27 @@ import Core
 import Lexer
 @testable import Parser
 
-// Use this for song reference:
+// Use this for reference:
 // https://www.youtube.com/watch?v=BTBaUHSi-xk
+// The beginning it rather discouraging, but it gets easier later.
 
 private let e: UInt8 = 0x45 // it is 'E', but camelCase happened
 private let l: UInt8 = 0x6c
 private let s: UInt8 = 0x73
 private let a: UInt8 = 0x61
 
-class AtomStringTest: XCTestCase, Common,
-  DestructExpressionKind, DestructStringGroup {
+class AtomStringTest: XCTestCase, Common, DestructStringGroup {
 
   // MARK: - Bytes
 
   func test_bytes() {
     let data = Data([e, l, s, a])
 
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.bytes(data), start: loc0, end: loc1)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(bytes count:4)")
       XCTAssertEqual(expr.kind,  .bytes(data))
       XCTAssertEqual(expr.start, loc0)
@@ -36,12 +36,12 @@ class AtomStringTest: XCTestCase, Common,
     let el = Data([e, l])
     let sa = Data([s, a])
 
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.bytes(el), start: loc0, end: loc1),
       self.token(.bytes(sa), start: loc2, end: loc3)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(bytes count:4)")
       XCTAssertEqual(expr.kind,  .bytes(el + sa))
       XCTAssertEqual(expr.start, loc0)
@@ -52,7 +52,7 @@ class AtomStringTest: XCTestCase, Common,
   func test_bytes_concatWithString_throws() {
     let data = Data(repeating: 1, count: 2)
 
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.bytes(data), start: loc0, end: loc1),
       self.token(.string("Let It Go"), start: loc2, end: loc3)
     )
@@ -66,7 +66,7 @@ class AtomStringTest: XCTestCase, Common,
   func test_bytes_concatWithFormatString_throws() {
     let data = Data(repeating: 1, count: 2)
 
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.bytes(data), start: loc0, end: loc1),
       self.token(.formatString("Let It Go"), start: loc2, end: loc3)
     )
@@ -78,7 +78,7 @@ class AtomStringTest: XCTestCase, Common,
   }
 
   // MARK: - String
-
+/*
   func test_string() {
     let s = "The snow glows white on the mountain tonight"
 
@@ -136,4 +136,5 @@ class AtomStringTest: XCTestCase, Common,
       XCTAssertEqual(error.location, loc2)
     }
   }
+ */
 }

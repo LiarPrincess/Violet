@@ -14,7 +14,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen, start: loc2, end: loc3)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "()")
       XCTAssertEqual(expr.kind,  .tuple([]))
       XCTAssertEqual(expr.start, loc0)
@@ -32,7 +32,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen, start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "1.0")
       XCTAssertEqual(expr.kind,  .float(1.0))
       XCTAssertEqual(expr.start, loc2)
@@ -51,7 +51,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen, start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc2, end: loc3)
 
       XCTAssertExpression(expr, "(1.0)")
@@ -71,7 +71,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen, start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc2, end: loc3)
       let two = Expression(.float(2.0), start: loc6, end: loc7)
 
@@ -92,7 +92,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen, start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(yield)")
       XCTAssertEqual(expr.kind,  .yield(nil))
       XCTAssertEqual(expr.start, loc2)
@@ -109,7 +109,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen, start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc4, end: loc5)
 
       XCTAssertExpression(expr, "(yield 1.0)")
@@ -129,7 +129,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen, start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc4, end: loc5)
       let tuple = Expression(.tuple([one]), start: loc4, end: loc5)
 
@@ -155,7 +155,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc14, end: loc15)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructGeneratorExp(expr) else { return }
 
       XCTAssertEqual(d.elt, Expression(.identifier("a"), start: loc2, end: loc3))

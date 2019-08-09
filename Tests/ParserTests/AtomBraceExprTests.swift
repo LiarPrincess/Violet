@@ -17,7 +17,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace, start: loc2, end: loc3)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "{}")
       XCTAssertEqual(expr.kind,  .dictionary([]))
       XCTAssertEqual(expr.start, loc0)
@@ -35,7 +35,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace, start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc2, end: loc3)
 
       XCTAssertExpression(expr, "{1.0}")
@@ -54,7 +54,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace, start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc2, end: loc3)
 
       XCTAssertExpression(expr, "{1.0}")
@@ -73,7 +73,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace, start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc4, end: loc5)
       let star = Expression(.starred(one), start: loc2, end: loc5)
 
@@ -97,7 +97,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace, start: loc14, end: loc15)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc2, end: loc3)
       let two = Expression(.float(2.0), start: loc8, end: loc9)
       let starTwo = Expression(.starred(two), start: loc6, end: loc9)
@@ -125,7 +125,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace,      start: loc14, end: loc15)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSetComprehension(expr) else { return }
 
       XCTAssertEqual(d.elt, Expression(.identifier("a"), start: loc2, end: loc3))
@@ -158,7 +158,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace,      start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let exprA = Expression(.identifier("a"), start: loc2, end: loc3)
       let exprB = Expression(.identifier("b"), start: loc6, end: loc7)
       let element = DictionaryElement.keyValue(key: exprA, value: exprB)
@@ -181,7 +181,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace,      start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let exprA = Expression(.identifier("a"), start: loc2, end: loc3)
       let exprB = Expression(.identifier("b"), start: loc6, end: loc7)
       let element = DictionaryElement.keyValue(key: exprA, value: exprB)
@@ -202,7 +202,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace,      start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let exprA = Expression(.identifier("a"), start: loc4, end: loc5)
       let element = DictionaryElement.unpacking(exprA)
 
@@ -230,7 +230,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace,      start: loc22, end: loc23)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let exprA = Expression(.identifier("a"), start: loc2, end: loc3)
       let exprB = Expression(.identifier("b"), start: loc6, end: loc7)
       let el0 = DictionaryElement.keyValue(key: exprA, value: exprB)
@@ -266,7 +266,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightBrace,      start: loc18, end: loc19)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructDictionaryComprehension(expr) else { return }
 
       XCTAssertEqual(d.key,   Expression(.identifier("a"), start: loc2, end: loc3))

@@ -17,7 +17,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb, start: loc2, end: loc3)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "[]")
       XCTAssertEqual(expr.kind,  .list([]))
       XCTAssertEqual(expr.start, loc0)
@@ -33,7 +33,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb,   start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc2, end: loc3)
 
       XCTAssertExpression(expr, "[1.0]")
@@ -52,7 +52,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb,   start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc2, end: loc3)
 
       XCTAssertExpression(expr, "[1.0]")
@@ -72,7 +72,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb,   start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc2, end: loc3)
       let two = Expression(.float(2.0), start: loc6, end: loc7)
 
@@ -98,7 +98,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb,        start: loc14, end: loc15)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructListComprehension(expr) else { return }
 
       XCTAssertEqual(d.elt, Expression(.identifier("a"), start: loc2, end: loc3))
@@ -134,7 +134,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb,        start: loc16, end: loc17)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructListComprehension(expr) else { return }
 
       XCTAssertEqual(d.elt, Expression(.identifier("a"), start: loc2, end: loc3))
@@ -171,7 +171,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb,        start: loc18, end: loc19)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructListComprehension(expr) else { return }
 
       XCTAssertEqual(d.elt, Expression(.identifier("a"), start: loc2, end: loc3))
@@ -214,7 +214,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb,        start: loc16, end: loc17)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructListComprehension(expr) else { return }
 
       XCTAssertEqual(d.elt, Expression(.identifier("a"), start: loc2, end: loc3))
@@ -260,7 +260,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb,        start: loc24, end: loc25)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructListComprehension(expr) else { return }
 
       XCTAssertEqual(d.elt, Expression(.identifier("a"), start: loc2, end: loc3))
@@ -307,7 +307,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightSqb,        start: loc22, end: loc23)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructListComprehension(expr) else { return }
 
       XCTAssertEqual(d.elt, Expression(.identifier("a"), start: loc2, end: loc3))

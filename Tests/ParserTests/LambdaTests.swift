@@ -19,7 +19,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5), start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       XCTAssertEqual(l.args.args, [])
@@ -51,7 +51,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let argA = Arg(name: "a", annotation: nil, start: loc2, end: loc3)
@@ -84,7 +84,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let argA = Arg(name: "a", annotation: nil, start: loc2, end: loc3)
@@ -118,7 +118,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let argA = Arg(name: "a", annotation: nil, start: loc2, end: loc3)
@@ -154,7 +154,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc14, end: loc15)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let argA = Arg(name: "a", annotation: nil, start: loc2, end: loc3)
@@ -209,7 +209,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let varargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
@@ -245,7 +245,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc16, end: loc17)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let varargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
@@ -281,7 +281,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc12, end: loc13)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let varargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
@@ -335,7 +335,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let kwA = Arg(name: "a", annotation: nil, start: loc6, end: loc7)
@@ -385,7 +385,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let kwargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
@@ -418,7 +418,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let kwargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
@@ -478,7 +478,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(5.0),      start: loc22, end: loc23)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let l = self.destructLambda(expr) else { return }
 
       let argA    = Arg(name: "a", annotation: nil, start: loc2, end: loc3)

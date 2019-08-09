@@ -27,7 +27,7 @@ class ComparisonExprTests: XCTestCase, Common, DestructExpressionKind {
         self.token(.float(2.0), start: loc4, end: loc5)
       )
 
-      if let expr = self.parse(&parser) {
+      if let expr = self.parseExpr(&parser) {
         let msg = "for token '\(token)'"
 
         guard let b = self.destructCompare(expr) else { return }
@@ -52,7 +52,7 @@ class ComparisonExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(2.0), start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let b = self.destructCompare(expr) else { return }
 
       let two = Expression(.float(2.0), start: loc6, end: loc7)
@@ -74,7 +74,7 @@ class ComparisonExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(2.0), start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let b = self.destructCompare(expr) else { return }
 
       let two = Expression(.float(2.0), start: loc6, end: loc7)
@@ -97,7 +97,7 @@ class ComparisonExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(3.0), start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(cmp 1.0 (< 2.0) (<= 3.0))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)

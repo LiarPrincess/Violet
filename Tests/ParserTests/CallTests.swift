@@ -18,7 +18,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
@@ -42,7 +42,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
@@ -68,7 +68,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
@@ -94,7 +94,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
@@ -120,7 +120,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
@@ -184,7 +184,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       let argA = Expression(.identifier("a"), start: loc6, end: loc7)
@@ -212,7 +212,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc12, end: loc13)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       let argA = Expression(.identifier("a"), start: loc4, end: loc5)
@@ -243,7 +243,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc16, end: loc17)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       let valueA = Expression(.float(1.0), start: loc8, end: loc9)
@@ -294,7 +294,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       let valueA = Expression(.float(1.0), start: loc8, end: loc9)
@@ -325,7 +325,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc18, end: loc19)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       let valueA = Expression(.float(1.0), start: loc8, end: loc9)
@@ -418,7 +418,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       let valueA = Expression(.identifier("a"), start: loc6, end: loc7)
@@ -446,7 +446,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc12, end: loc13)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       let argA = Expression(.identifier("a"), start: loc4, end: loc5)

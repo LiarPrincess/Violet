@@ -21,7 +21,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc16, end: loc17)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
@@ -65,7 +65,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc22, end: loc23)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
@@ -99,7 +99,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc26, end: loc27)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
@@ -131,7 +131,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc20, end: loc23)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
@@ -162,7 +162,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.rightParen,      start: loc18, end: loc19)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))

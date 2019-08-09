@@ -11,7 +11,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.false, start: loc2, end: loc3)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let b = self.destructUnaryOp(expr) else { return }
 
       XCTAssertEqual(b.0, .not)
@@ -36,7 +36,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
         self.token(.false, start: loc4, end: loc5)
       )
 
-      if let expr = self.parse(&parser) {
+      if let expr = self.parseExpr(&parser) {
         let msg = "for token '\(token)'"
 
         guard let b = self.destructBoolOp(expr) else { return }
@@ -62,7 +62,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.false, start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(not (not False))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc5)
@@ -79,7 +79,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.true,  start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(and (and True False) True)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
@@ -96,7 +96,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.true,  start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(or (or True False) True)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
@@ -114,7 +114,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.false, start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(and (not True) False)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
@@ -131,7 +131,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.true,  start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(or True (and False True))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)

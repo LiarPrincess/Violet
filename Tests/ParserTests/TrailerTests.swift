@@ -17,7 +17,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.identifier("b"), start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructAttribute(expr) else { return }
 
       let valueKind = ExpressionKind.identifier("a")
@@ -40,7 +40,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.identifier("c"), start: loc7, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(attribute (attribute a b) c)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
@@ -60,7 +60,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.rightSqb,        start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptIndex(expr) else { return }
 
       XCTAssertEqual(d.1, Expression(.int(PyInt(1)), start: loc4, end: loc5))
@@ -84,7 +84,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.rightSqb,        start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptIndex(expr) else { return }
 
       let tuple = ExpressionKind.tuple([
@@ -112,7 +112,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.rightSqb,        start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptIndex(expr) else { return }
 
       let tuple = ExpressionKind.tuple([
@@ -141,7 +141,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.rightSqb,        start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptSlice(expr) else { return }
 
       XCTAssertNil(d.lower)
@@ -166,7 +166,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.rightSqb,        start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptSlice(expr) else { return }
 
       XCTAssertEqual(d.lower, Expression(.int(PyInt(1)), start: loc4, end: loc5))
@@ -192,7 +192,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.rightSqb,        start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptSlice(expr) else { return }
 
       XCTAssertNil(d.lower)
@@ -218,7 +218,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.rightSqb,        start: loc10, end: loc11)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptSlice(expr) else { return }
 
       XCTAssertNil(d.lower)
@@ -246,7 +246,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.rightSqb,        start: loc14, end: loc15)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptSlice(expr) else { return }
 
       XCTAssertEqual(d.lower, Expression(.int(PyInt(1)), start: loc4, end: loc5))
@@ -275,7 +275,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.rightSqb,        start: loc12, end: loc13)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptExtSlice(expr) else { return }
 
       XCTAssertEqual(d.dims.count, 2)

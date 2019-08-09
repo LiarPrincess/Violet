@@ -32,9 +32,9 @@ extension Common {
   // MARK: - Parse
 
   /// Use this if you just want to perform detailed tests on token.
-  internal func parse(_ parser: inout Parser,
-                      file:    StaticString = #file,
-                      line:    UInt         = #line) -> Expression? {
+  internal func parseExpr(_ parser: inout Parser,
+                          file:    StaticString = #file,
+                          line:    UInt         = #line) -> Expression? {
     do {
       return try parser.parse()
     } catch {

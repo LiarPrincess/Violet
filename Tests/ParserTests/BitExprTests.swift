@@ -21,7 +21,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
         self.token(.int(PyInt(3)), start: loc4, end: loc5)
       )
 
-      if let expr = self.parse(&parser) {
+      if let expr = self.parseExpr(&parser) {
         let msg = "for token '\(token)'"
 
         guard let b = self.destructBinaryOp(expr) else { return }
@@ -49,7 +49,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.int(PyInt(4)), start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(<< (<< 1 2) 4)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
@@ -66,7 +66,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.int(PyInt(4)), start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(& (& 1 2) 4)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
@@ -83,7 +83,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.int(PyInt(4)), start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(^ (^ 1 2) 4)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
@@ -100,7 +100,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.int(PyInt(4)), start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(| (| 1 2) 4)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)

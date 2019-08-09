@@ -20,7 +20,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
         self.token(.int(value), start: loc2, end: loc3)
       )
 
-      if let expr = self.parse(&parser) {
+      if let expr = self.parseExpr(&parser) {
         let msg = "for token '\(token)'"
 
         guard let b = self.destructUnaryOp(expr) else { return }
@@ -54,7 +54,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
         self.token(.float(3.1), start: loc4, end: loc5)
       )
 
-      if let expr = self.parse(&parser) {
+      if let expr = self.parseExpr(&parser) {
         let msg = "for token '\(token)'"
 
         guard let b = self.destructBinaryOp(expr) else { return }
@@ -80,7 +80,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(4.2), start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(- (+ 4.2))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc5)
@@ -98,7 +98,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(2.0), start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(** 4.2 (** 3.1 2.0))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
@@ -115,7 +115,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(2.0), start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(- (+ 4.2 3.1) 2.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
@@ -132,7 +132,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(2.0), start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(/ (* 4.2 3.1) 2.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
@@ -150,7 +150,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(3.1), start: loc6, end: loc7)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(* 4.2 (- 3.1))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
@@ -167,7 +167,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
       self.token(.float(2.0), start: loc8, end: loc9)
     )
 
-    if let expr = self.parse(&parser) {
+    if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "(+ 4.2 (* 3.1 2.0))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
