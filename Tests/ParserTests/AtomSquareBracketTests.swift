@@ -12,7 +12,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// []
   func test_empty() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,  start: loc0, end: loc1),
       self.token(.rightSqb, start: loc2, end: loc3)
     )
@@ -27,7 +27,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// [1]
   func test_value() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,    start: loc0, end: loc1),
       self.token(.float(1.0), start: loc2, end: loc3),
       self.token(.rightSqb,   start: loc4, end: loc5)
@@ -45,7 +45,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// [1,]
   func test_value_withComaAfter() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,    start: loc0, end: loc1),
       self.token(.float(1.0), start: loc2, end: loc3),
       self.token(.comma,      start: loc4, end: loc5),
@@ -64,7 +64,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// [1, 2]
   func test_value_multiple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,    start: loc0, end: loc1),
       self.token(.float(1.0), start: loc2, end: loc3),
       self.token(.comma,      start: loc4, end: loc5),
@@ -87,7 +87,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// [a for b in []]
   func test_list() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,         start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.for,             start: loc4, end: loc5),
@@ -122,7 +122,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// [a async for b in []]
   func test_list_async() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,         start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.async,           start: loc4, end: loc5),
@@ -158,7 +158,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// [a for b, c in []]
   func test_list_target_multiple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,         start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.for,             start: loc4, end: loc5),
@@ -202,7 +202,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// [a for b, in []]
   func test_list_target_withCommaAfter_isTuple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,         start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.for,             start: loc4, end: loc5),
@@ -244,7 +244,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// [a for b in [] for c in []]
   func test_list_for_multiple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,         start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.for,             start: loc4, end: loc5),
@@ -292,7 +292,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
 
   /// [a for b in [] if c if d]
   func test_list_ifs_multiple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftSqb,         start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.for,             start: loc4, end: loc5),

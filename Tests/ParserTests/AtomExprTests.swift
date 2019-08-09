@@ -6,7 +6,7 @@ import Lexer
 class AtomExprTest: XCTestCase, Common, DestructExpressionKind {
 
   func test_none() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.none, start: loc0, end: loc1)
     )
 
@@ -19,7 +19,7 @@ class AtomExprTest: XCTestCase, Common, DestructExpressionKind {
   }
 
   func test_true() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.true, start: loc0, end: loc1)
     )
 
@@ -32,7 +32,7 @@ class AtomExprTest: XCTestCase, Common, DestructExpressionKind {
   }
 
   func test_false() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.false, start: loc0, end: loc1)
     )
 
@@ -47,7 +47,7 @@ class AtomExprTest: XCTestCase, Common, DestructExpressionKind {
   func test_int() {
     let value = PyInt(42)
 
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.int(value), start: loc0, end: loc1)
     )
 
@@ -60,7 +60,7 @@ class AtomExprTest: XCTestCase, Common, DestructExpressionKind {
   }
 
   func test_float() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.float(4.2), start: loc0, end: loc1)
     )
 
@@ -73,7 +73,7 @@ class AtomExprTest: XCTestCase, Common, DestructExpressionKind {
   }
 
   func test_imaginary() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.imaginary(4.2), start: loc0, end: loc1)
     )
 
@@ -86,7 +86,7 @@ class AtomExprTest: XCTestCase, Common, DestructExpressionKind {
   }
 
   func test_ellipsis() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.ellipsis, start: loc0, end: loc1)
     )
 
@@ -101,7 +101,7 @@ class AtomExprTest: XCTestCase, Common, DestructExpressionKind {
   func test_await() {
     let value = PyInt(42)
 
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.await,      start: loc0, end: loc1),
       self.token(.int(value), start: loc2, end: loc3)
     )

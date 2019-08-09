@@ -21,7 +21,7 @@ class ComparisonExprTests: XCTestCase, Common, DestructExpressionKind {
     ]
 
     for (token, op) in variants {
-      var parser = self.parser(
+      var parser = self.createExprParser(
         self.token(.float(1.0), start: loc0, end: loc1),
         self.token(token,       start: loc2, end: loc3),
         self.token(.float(2.0), start: loc4, end: loc5)
@@ -45,7 +45,7 @@ class ComparisonExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// this does not make sense: '1.0 not in 2.0', but it is not sema...
   func test_notIn() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.float(1.0), start: loc0, end: loc1),
       self.token(.not,        start: loc2, end: loc3),
       self.token(.in,         start: loc4, end: loc5),
@@ -67,7 +67,7 @@ class ComparisonExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// '1.0 is not 2.0'
   func test_isNot() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.float(1.0), start: loc0, end: loc1),
       self.token(.is,         start: loc2, end: loc3),
       self.token(.not,        start: loc4, end: loc5),
@@ -89,7 +89,7 @@ class ComparisonExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// complex compare: 1 < 2 <= 3
   func test_compare_withMultipleElements() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.float(1.0), start: loc0, end: loc1),
       self.token(.less,       start: loc2, end: loc3),
       self.token(.float(2.0), start: loc4, end: loc5),

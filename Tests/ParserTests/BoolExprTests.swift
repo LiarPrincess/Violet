@@ -6,7 +6,7 @@ import Lexer
 class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
 
   func test_notOperator() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.not,   start: loc0, end: loc1),
       self.token(.false, start: loc2, end: loc3)
     )
@@ -30,7 +30,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
     ]
 
     for (token, op) in variants {
-      var parser = self.parser(
+      var parser = self.createExprParser(
         self.token(.true,  start: loc0, end: loc1),
         self.token(token,  start: loc2, end: loc3),
         self.token(.false, start: loc4, end: loc5)
@@ -56,7 +56,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// not not false = not (not false)
   func test_not_isRightAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.not,   start: loc0, end: loc1),
       self.token(.not,   start: loc2, end: loc3),
       self.token(.false, start: loc4, end: loc5)
@@ -71,7 +71,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// true and false and true = (true and false) and true
   func test_and_isLeftAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.true,  start: loc0, end: loc1),
       self.token(.and,   start: loc2, end: loc3),
       self.token(.false, start: loc4, end: loc5),
@@ -88,7 +88,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// true or false or true = (true or false) or true
   func test_or_isLeftAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.true,  start: loc0, end: loc1),
       self.token(.or,    start: loc2, end: loc3),
       self.token(.false, start: loc4, end: loc5),
@@ -107,7 +107,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// not true and false = (not true) and false
   func test_not_hasHigherPrecedence_thanAnd() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.not,   start: loc0, end: loc1),
       self.token(.true,  start: loc2, end: loc3),
       self.token(.and,   start: loc4, end: loc5),
@@ -123,7 +123,7 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// true or false and true = true or (false and true)
   func test_and_hasHigherPrecedence_thanOr() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.true,  start: loc0, end: loc1),
       self.token(.or,    start: loc2, end: loc3),
       self.token(.false, start: loc4, end: loc5),

@@ -9,7 +9,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a for b in [])
   func test_simple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -51,7 +51,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(1, a for b in [])
   func test_afterPositional() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.float(1.0),      start: loc6, end: loc7),
@@ -83,7 +83,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(1, (a for b in []))
   func test_afterPositional_inParens() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.float(1.0),      start: loc6, end: loc7),
@@ -117,7 +117,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a for b in [], 1)
   func test_beforePositional() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc11),
@@ -149,7 +149,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a for b in [])
   func test_commaAfter() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),

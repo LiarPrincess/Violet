@@ -12,7 +12,7 @@ extension Common {
 
   /// Create parser for given tokens.
   /// Will automatically add EOF at the end.
-  internal func parser(_ tokens: Token...) -> Parser {
+  internal func createExprParser(_ tokens: Token...) -> Parser {
     let eofLocation = tokens.last?.end ?? .start
     let eof = Token(.eof, start: eofLocation, end: eofLocation)
 
@@ -20,7 +20,7 @@ extension Common {
     lexerTokens.append(eof)
 
     let lexer = FakeLexer(tokens: lexerTokens)
-    return Parser(lexer: lexer)
+    return Parser(mode: .eval, tokenSource: lexer)
   }
 
   internal func token(_ kind: TokenKind,

@@ -15,7 +15,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
     ]
 
     for (token, op) in variants {
-      var parser = self.parser(
+      var parser = self.createExprParser(
         self.token(.int(PyInt(5)), start: loc0, end: loc1),
         self.token(token,          start: loc2, end: loc3),
         self.token(.int(PyInt(3)), start: loc4, end: loc5)
@@ -41,7 +41,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// 1 << 2 << 4 = (1 << 2) << 4
   func test_shiftGroup_isLeftAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.int(PyInt(1)), start: loc0, end: loc1),
       self.token(.leftShift,     start: loc2, end: loc3),
       self.token(.int(PyInt(2)), start: loc4, end: loc5),
@@ -58,7 +58,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// 1 & 2 & 4 = (1 & 2) & 4
   func test_andGroup_isLeftAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.int(PyInt(1)), start: loc0, end: loc1),
       self.token(.amper,         start: loc2, end: loc3),
       self.token(.int(PyInt(2)), start: loc4, end: loc5),
@@ -75,7 +75,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// 1 ^ 2 ^ 4 = (1 ^ 2) ^ 4
   func test_xorGroup_isLeftAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.int(PyInt(1)), start: loc0, end: loc1),
       self.token(.circumflex,    start: loc2, end: loc3),
       self.token(.int(PyInt(2)), start: loc4, end: loc5),
@@ -92,7 +92,7 @@ class BitExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// 1 | 2 | 4 = (1 | 2) | 4
   func test_orGroup_isLeftAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.int(PyInt(1)), start: loc0, end: loc1),
       self.token(.vbar,          start: loc2, end: loc3),
       self.token(.int(PyInt(2)), start: loc4, end: loc5),

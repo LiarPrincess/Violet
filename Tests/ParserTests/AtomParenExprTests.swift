@@ -9,7 +9,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// ()
   func test_empty() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftParen,  start: loc0, end: loc1),
       self.token(.rightParen, start: loc2, end: loc3)
     )
@@ -26,7 +26,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// (1)
   func test_value() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftParen,  start: loc0, end: loc1),
       self.token(.float(1.0), start: loc2, end: loc3),
       self.token(.rightParen, start: loc4, end: loc5)
@@ -44,7 +44,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// (1,)
   func test_value_withComaAfter_givesTuple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftParen,  start: loc0, end: loc1),
       self.token(.float(1.0), start: loc2, end: loc3),
       self.token(.comma,      start: loc4, end: loc5),
@@ -63,7 +63,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// (1, 2)
   func test_tuple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftParen,  start: loc0, end: loc1),
       self.token(.float(1.0), start: loc2, end: loc3),
       self.token(.comma,      start: loc4, end: loc5),
@@ -86,7 +86,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// (yield)
   func test_yield_nil() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftParen,  start: loc0, end: loc1),
       self.token(.yield,      start: loc2, end: loc3),
       self.token(.rightParen, start: loc4, end: loc5)
@@ -102,7 +102,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// (yield 1.0)
   func test_yield_expr() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftParen,  start: loc0, end: loc1),
       self.token(.yield,      start: loc2, end: loc3),
       self.token(.float(1.0), start: loc4, end: loc5),
@@ -121,7 +121,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// (yield 1.0, )
   func test_yield_tuple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftParen,  start: loc0, end: loc1),
       self.token(.yield,      start: loc2, end: loc3),
       self.token(.float(1.0), start: loc4, end: loc5),
@@ -144,7 +144,7 @@ class AtomParenExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// (a for b in [])
   func test_generator() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftParen,       start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.for,             start: loc4, end: loc5),

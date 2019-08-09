@@ -11,7 +11,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a.b
   func test_attribute() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.dot,             start: loc2, end: loc3),
       self.token(.identifier("b"), start: loc4, end: loc5)
@@ -32,7 +32,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a.b.c
   func test_attribute_multiple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.dot,             start: loc2, end: loc3),
       self.token(.identifier("b"), start: loc4, end: loc5),
@@ -53,7 +53,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a[1]
   func test_subscript_index() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.int(PyInt(1)),   start: loc4, end: loc5),
@@ -75,7 +75,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a[1,2]
   func test_subscript_index_tuple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.int(PyInt(1)),   start: loc4, end: loc5),
@@ -104,7 +104,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a[1,]
   func test_subscript_index_withCommaAfter_isTuple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.int(PyInt(1)),   start: loc4, end: loc5),
@@ -133,7 +133,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a[::]
   func test_subscript_slice_none() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
@@ -158,7 +158,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a[1:]
   func test_subscript_slice_lower() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.int(PyInt(1)),   start: loc4, end: loc5),
@@ -183,7 +183,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a[:2]
   func test_subscript_slice_upper() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
@@ -209,7 +209,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a[::3]
   func test_subscript_slice_step() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
@@ -235,7 +235,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a[1:2:3]
   func test_subscript_slice_all() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.int(PyInt(1)),   start: loc4, end: loc5),
@@ -265,7 +265,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   /// a[1:,2]
   func test_subscript_extSlice() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.int(PyInt(1)),   start: loc4, end: loc5),

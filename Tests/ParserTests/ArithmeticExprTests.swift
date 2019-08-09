@@ -15,7 +15,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
     for (token, op) in variants {
       let value = PyInt(42)
 
-      var parser = self.parser(
+      var parser = self.createExprParser(
         self.token(token,       start: loc0, end: loc1),
         self.token(.int(value), start: loc2, end: loc3)
       )
@@ -48,7 +48,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
     ]
 
     for (token, op) in variants {
-      var parser = self.parser(
+      var parser = self.createExprParser(
         self.token(.float(4.2), start: loc0, end: loc1),
         self.token(token,       start: loc2, end: loc3),
         self.token(.float(3.1), start: loc4, end: loc5)
@@ -74,7 +74,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// -+4.2 = -(+4.2)
   func test_unaryGroup_isRightAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.minus,      start: loc0, end: loc1),
       self.token(.plus,       start: loc2, end: loc3),
       self.token(.float(4.2), start: loc4, end: loc5)
@@ -90,7 +90,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
   /// 4.2 ** 3.1 ** 2.0 -> 4.2 ** (3.1 ** 2.0)
   /// For example: 2 ** 3 ** 4 = 2 ** 81 = 2417851639229258349412352
   func test_powerGroup_isRightAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.float(4.2), start: loc0, end: loc1),
       self.token(.starStar,   start: loc2, end: loc3),
       self.token(.float(3.1), start: loc4, end: loc5),
@@ -107,7 +107,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// 4.2 + 3.1 - 2.0 -> (4.2 + 3.1) - 2.0
   func test_addGroup_isLeftAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.float(4.2), start: loc0, end: loc1),
       self.token(.plus,       start: loc2, end: loc3),
       self.token(.float(3.1), start: loc4, end: loc5),
@@ -124,7 +124,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// 4.2 * 3.1 / 2.0 -> (4.2 * 3.1) / 2.0
   func test_mulGroup_isLeftAssociative() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.float(4.2), start: loc0, end: loc1),
       self.token(.star,       start: loc2, end: loc3),
       self.token(.float(3.1), start: loc4, end: loc5),
@@ -143,7 +143,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// 4.2 * -3.1 = 4.2 * (-3.1)
   func test_minus_hasHigherPrecedence_thanMul() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.float(4.2), start: loc0, end: loc1),
       self.token(.star,       start: loc2, end: loc3),
       self.token(.minus,      start: loc4, end: loc5),
@@ -159,7 +159,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// 4.2 + 3.1 * 2.0 = 4.2 + (3.1 * 2.0)
   func test_mul_hasHigherPrecedence_thanAdd() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.float(4.2), start: loc0, end: loc1),
       self.token(.plus,       start: loc2, end: loc3),
       self.token(.float(3.1), start: loc4, end: loc5),

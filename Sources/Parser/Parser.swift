@@ -3,6 +3,9 @@ import Lexer
 // https://docs.python.org/3/reference/index.html
 // Python/ast.c in CPython
 
+// PyAST_FromNodeObject(const node *n, PyCompilerFlags *flags,
+//                      PyObject *filename, PyArena *arena)
+
 private enum ParserState {
   case notStarted
   case finished(Expression)
@@ -13,11 +16,25 @@ public struct Parser {
   /// Token source.
   internal var lexer: LexerType
 
-  /// Current parser state, used for example for: caching parsing result.
+  /// What are we parsing? Expression? Statement?
+  private var mode: Mode
+
+  /// Current parser state.
+  /// Used for example for: caching parsing result.
   private var state = ParserState.notStarted
 
-  public init(lexer: LexerType) {
+  public init(mode: Mode, tokenSource lexer: LexerType) {
+    self.mode = mode
     self.lexer = lexer
+  }
+
+  public enum Mode {
+    /// REPL.
+    case single
+    /// For evaluating expression.
+    case eval
+    /// For executing statement.
+    case exec
   }
 
   // MARK: - Traversal

@@ -12,7 +12,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {}
   func test_empty_givesDictionary() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,  start: loc0, end: loc1),
       self.token(.rightBrace, start: loc2, end: loc3)
     )
@@ -29,7 +29,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {1}
   func test_set_singleElement() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,  start: loc0, end: loc1),
       self.token(.float(1.0), start: loc2, end: loc3),
       self.token(.rightBrace, start: loc4, end: loc5)
@@ -47,7 +47,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {1,}
   func test_set_withComaAfter() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,  start: loc0, end: loc1),
       self.token(.float(1.0), start: loc2, end: loc3),
       self.token(.comma,      start: loc4, end: loc5),
@@ -66,7 +66,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {*1}
   func test_set_star() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,  start: loc0, end: loc1),
       self.token(.star,       start: loc2, end: loc3),
       self.token(.float(1.0), start: loc4, end: loc5),
@@ -86,7 +86,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {1, *2, 3}
   func test_set_multipleElements() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,  start: loc0, end: loc1),
       self.token(.float(1.0), start: loc2, end: loc3),
       self.token(.comma,      start: loc4, end: loc5),
@@ -114,7 +114,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {a for b in []}
   func test_set_comprehension() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,       start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.for,             start: loc4, end: loc5),
@@ -150,7 +150,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {a:b}
   func test_dictionary_singleElement() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,       start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
@@ -172,7 +172,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {a:b,}
   func test_dictionary_withComaAfter() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,       start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
@@ -195,7 +195,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {**a}
   func test_dictionary_starStar() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,       start: loc0, end: loc1),
       self.token(.starStar,        start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -215,7 +215,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// {a:b, **c, d:e}
   func test_dictionary_multipleElements() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,       start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
@@ -253,7 +253,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// { a:b for c in [] }
   func test_dictionary_comprehension() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,       start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
@@ -291,7 +291,7 @@ class AtomBraceExprTests: XCTestCase, Common, DestructExpressionKind {
 
   /// { **a for b in [] }
   func test_dictUnpacking_insideComprehension_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.leftBrace,       start: loc0, end: loc1),
       self.token(.starStar,        start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),

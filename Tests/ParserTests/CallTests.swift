@@ -12,7 +12,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f()
   func test_noArgs() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.rightParen,      start: loc4, end: loc5)
@@ -35,7 +35,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(1)
   func test_positional_single() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.float(1.0),      start: loc4, end: loc5),
@@ -59,7 +59,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a, 1)
   func test_positional_multiple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -86,7 +86,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(1,)
   func test_positional_withCommaAfter() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.float(1.0),      start: loc4, end: loc5),
@@ -111,7 +111,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f((a))
   func test_positional_withAdditionalParens() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.leftParen,       start: loc4, end: loc5),
@@ -137,7 +137,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a=1, b)
   func test_positional_afterKeyword_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -156,7 +156,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(**a, b)
   func test_positional_afterKeywordUnpacking_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.starStar,        start: loc6, end: loc7),
@@ -176,7 +176,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(*a)
   func test_star() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.star,            start: loc4, end: loc5),
@@ -202,7 +202,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a, *b)
   func test_star_afterPositional() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -231,7 +231,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a=1, *b)
   func test_star_afterKeyword() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -264,7 +264,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(**a, *b)
   func test_star_afterKeywordUnpacking_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.starStar,        start: loc4, end: loc5),
@@ -285,7 +285,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a=1)
   func test_keyword_single() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -312,7 +312,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a=1.0, b=2.0)
   func test_keyword_multiple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -346,7 +346,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a=1, a=2)
   func test_keyword_duplicate_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -368,7 +368,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   /// From comment in CPython:
   /// `f(lambda x: x[0] = 3)`
   func test_keyword_lambda_assignment_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.lambda,          start: loc4, end: loc5),
@@ -391,7 +391,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(3=1)
   func test_keyword_invalidName_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.int(PyInt(3)),   start: loc4, end: loc5),
@@ -410,7 +410,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(**a)
   func test_starStar() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.starStar,        start: loc4, end: loc5),
@@ -436,7 +436,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
   /// f(a, **b)
   func test_starStar_afterPositional() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),

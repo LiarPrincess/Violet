@@ -13,7 +13,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda: 5
   func test_noArguments() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,   start: loc0, end: loc1),
       self.token(.colon,    start: loc2, end: loc3),
       self.token(.float(5), start: loc4, end: loc5)
@@ -44,7 +44,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda a: 5
   func test_positional() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
@@ -75,7 +75,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda a = 1: 5
   func test_positional_default() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.equal,           start: loc4, end: loc5),
@@ -109,7 +109,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda a, b: 5
   func test_positional_multiple() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.comma,           start: loc4, end: loc5),
@@ -143,7 +143,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda a, b = 1: 5
   func test_positional_default_afterRequired() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.comma,           start: loc4, end: loc5),
@@ -180,7 +180,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda a = 1, b: 5
   func test_positional_requited_afterDefault_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.equal,           start: loc4, end: loc5),
@@ -201,7 +201,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda *a: 5
   func test_varargs() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.star,            start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -233,7 +233,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda *a, b = 1: 5
   func test_varargs_keywordOnly_withDefault() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.star,            start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -271,7 +271,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda *a, b: 5
   func test_varargs_keywordOnly_withoutDefault_isImplicitNone() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.star,            start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -307,7 +307,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda *a, *b: 5
   func test_varargs_duplicate_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.star,            start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -326,7 +326,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda *, a: 5
   func test_varargsUnnamed() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.star,            start: loc2, end: loc3),
       self.token(.comma,           start: loc4, end: loc5),
@@ -360,7 +360,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda *: 5
   func test_varargsUnnamed_withoutFollowingArguments_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.star,            start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
@@ -377,7 +377,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda **a: 5
   func test_kwargs() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.starStar,        start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -409,7 +409,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda **a,: 5
   func test_kwargs_withCommaAfter() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.starStar,        start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -442,7 +442,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda **a, **b: 5
   func test_kwargs_duplicate_throws() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.starStar,        start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -463,7 +463,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   /// lambda a, *b, c, **d: 5
   func test_all() {
-    var parser = self.parser(
+    var parser = self.createExprParser(
       self.token(.lambda,          start: loc0, end: loc1),
       self.token(.identifier("a"), start: loc2, end: loc3),
       self.token(.comma,           start: loc4, end: loc5),
