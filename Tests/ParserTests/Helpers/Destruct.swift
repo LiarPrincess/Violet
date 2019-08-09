@@ -11,6 +11,53 @@ import Parser
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable trailing_newline
 
+// MARK: - AST
+
+protocol DestructAST { }
+
+extension DestructAST {
+
+  internal func destructModule(_ ast: AST,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+  ([Statement])? {
+
+    if case let AST.module(value0) = ast {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, String(describing: ast), file: file, line: line)
+    return nil
+  }
+
+  internal func destructStatement(_ ast: AST,
+                                  file:   StaticString = #file,
+                                  line:   UInt         = #line) ->
+  ([Statement])? {
+
+    if case let AST.statement(value0) = ast {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, String(describing: ast), file: file, line: line)
+    return nil
+  }
+
+  internal func destructExpression(_ ast: AST,
+                                   file:   StaticString = #file,
+                                   line:   UInt         = #line) ->
+  (Expression)? {
+
+    if case let AST.expression(value0) = ast {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, String(describing: ast), file: file, line: line)
+    return nil
+  }
+
+}
+
 // MARK: - ExpressionKind
 
 protocol DestructExpressionKind { }

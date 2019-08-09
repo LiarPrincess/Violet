@@ -8,7 +8,7 @@ import Lexer
 
 private enum ParserState {
   case notStarted
-  case finished(Expression)
+  case finished(AST)
 }
 
 public struct Parser {
@@ -72,7 +72,7 @@ public struct Parser {
 
   // MARK: - Parse
 
-  public mutating func parse() throws -> Expression {
+  public mutating func parse() throws -> AST {
     switch self.state {
     case .notStarted:
       // populate peeks
@@ -80,8 +80,9 @@ public struct Parser {
       self.peekNext = try self.lexer.getToken()
 
       let expr = try self.expression()
-      self.state = .finished(expr)
-      return expr
+      let ast = AST.expression(expr)
+      self.state = .finished(ast)
+      return ast
 
     case .finished(let ast):
       return ast

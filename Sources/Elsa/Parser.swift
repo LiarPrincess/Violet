@@ -73,7 +73,8 @@ internal struct Parser {
         result.append(.struct(value))
 
       case .name(let value):
-        self.fail("'\(value)' is not a valid entity declaration (missing '@'?).")
+        self.fail("'\(value)' is not a valid entity declaration. " +
+                  "Expected @struct, @enum or @indirect.")
       default:
         self.fail("Invalid token '\(token.kind)'.")
       }
@@ -215,7 +216,7 @@ internal struct Parser {
 
   private mutating func consumeOrFail(_ kind: TokenKind) {
     guard self.token.kind == kind else {
-      self.fail("Invalid token kind. Expected: '\(kind)', got: '\(token.kind)'.")
+      self.fail("Invalid token. Expected: '\(kind)', got: '\(token.kind)'.")
     }
 
     self.advance()
@@ -223,7 +224,7 @@ internal struct Parser {
 
   private mutating func consumeNameOrFail() -> String {
     guard case let .name(value) = self.token.kind else {
-      self.fail("Invalid token kind. Expected: 'name', got: '\(self.token.kind)'.")
+      self.fail("Invalid token. Expected: 'name', got: '\(self.token.kind)'.")
     }
 
     self.advance()

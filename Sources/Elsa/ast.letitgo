@@ -21,19 +21,22 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 @alias stmtKind = StatementKind
 @alias loc = SourceLocation
 
-{-
-  mod = Module(stmt* body)
-      | Interactive(stmt* body)
-      | Expression(expr body)
--}
+-- Top (root) node in AST.
+-- Represents the while program.
+@enum AST =
+  Module(stmt*)
+  | Statement(stmt*)
+  | Expression(expr)
 
-{-
 @struct stmt = (
-  stmtKind kind @doc "Type of the statement.",
-  loc start @doc "Location of the first character in the source code.",
-  loc end @doc "Location just after the last character in the source code."
+  {- stmtKind kind @doc "Type of the statement.", -}
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
 )
 
+{-
 @enum stmtKind =
    FunctionDef     (identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
  | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)

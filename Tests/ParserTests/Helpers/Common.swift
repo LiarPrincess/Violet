@@ -4,7 +4,7 @@ import Lexer
 @testable import Parser
 
 /// Shared test helpers.
-internal protocol Common { }
+internal protocol Common: DestructAST { }
 
 extension Common {
 
@@ -36,7 +36,8 @@ extension Common {
                           file:    StaticString = #file,
                           line:    UInt         = #line) -> Expression? {
     do {
-      return try parser.parse()
+      let ast = try parser.parse()
+      return self.destructExpression(ast, file: file, line: line)
     } catch {
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil

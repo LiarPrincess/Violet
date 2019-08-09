@@ -9,6 +9,27 @@ import Lexer
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 
+/// Top (root) node in AST.
+/// Represents the while program.
+public enum AST: Equatable {
+  case module([Statement])
+  case statement([Statement])
+  case expression(Expression)
+}
+
+public struct Statement: Equatable {
+
+  /// Location of the first character in the source code.
+  public let start: SourceLocation
+  /// Location just after the last character in the source code.
+  public let end: SourceLocation
+
+  public init(start: SourceLocation, end: SourceLocation) {
+    self.start = start
+    self.end = end
+  }
+}
+
 /// https://docs.python.org/3/reference/expressions.html
 public struct Expression: Equatable {
 

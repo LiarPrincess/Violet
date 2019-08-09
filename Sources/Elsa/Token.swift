@@ -19,19 +19,19 @@ public enum TokenKind: Equatable, CustomStringConvertible {
 
   public var description: String {
     switch self {
-    case .alias: return "alias"
-    case .enum: return "enum"
-    case .indirect: return "indirect enum"
-    case .struct: return "struct"
-    case .name(let value): return "name(\(value))"
-    case .doc: return "comment(...)"
-    case .equal: return "equal"
-    case .or: return "or"
-    case .star: return "star"
-    case .option: return "option"
-    case .comma: return "comma"
-    case .leftParen: return "left paren"
-    case .rightParen: return "right paren"
+    case .alias: return "@alias"
+    case .enum: return "@enum"
+    case .indirect: return "@indirect"
+    case .struct: return "@struct"
+    case .name(let value): return value
+    case .doc: return "doc"
+    case .equal: return "="
+    case .or: return "|"
+    case .star: return "*"
+    case .option: return "?"
+    case .comma: return ","
+    case .leftParen: return "("
+    case .rightParen: return ")"
     case .eof: return "eof"
     }
   }

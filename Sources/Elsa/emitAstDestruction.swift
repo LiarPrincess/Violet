@@ -18,6 +18,7 @@ internal func emitAstDestruction(entities: [Entity]) {
     switch entity {
     case .enum(let e):
       switch e.name {
+      case "AST": emitASTDestruction(e)
       case "ExpressionKind": emitExpressionDestruct(e)
       case "SliceKind": emitSliceDestruct(e)
       case "StringGroup": emitStringDestruct(e)
@@ -29,6 +30,8 @@ internal func emitAstDestruction(entities: [Entity]) {
     }
   }
 }
+
+// MARK: - Common
 
 private struct EnumDestruction {
   fileprivate var resultType:  String = ""
@@ -54,6 +57,45 @@ private func getEnumDestruction(_ caseDef: EnumCaseDef) -> EnumDestruction {
   }
 
   return destruction
+}
+
+// MARK: - Specifics
+
+private func emitASTDestruction(_ enumDef: EnumDef) {
+  print("// MARK: - \(enumDef.name)")
+  print()
+
+  print("protocol Destruct\(enumDef.name) { }")
+  print()
+
+  print("extension Destruct\(enumDef.name) {")
+  print()
+
+  for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
+    let namePascal = pascalCase(caseDef.name)
+    let paramIndent = repeating(" ", count: 23 + namePascal.count)
+
+    let destruction = getEnumDestruction(caseDef)
+
+    print("""
+      internal func destruct\(namePascal)(_ ast: AST,
+      \(paramIndent)file:   StaticString = #file,
+      \(paramIndent)line:   UInt         = #line) ->
+      (\(destruction.resultType))? {
+
+        if case let \(enumDef.name).\(caseDef.name)(\(destruction.bindings)) = ast {
+          return (\(destruction.returnValue))
+        }
+
+        XCTAssertTrue(false, String(describing: ast), file: file, line: line)
+        return nil
+      }
+
+    """)
+  }
+
+  print("}")
+  print()
 }
 
 private func emitExpressionDestruct(_ enumDef: EnumDef) {
