@@ -53,10 +53,10 @@ public enum StatementKind: Equatable {
   /// - `decorator_list` is a list of nodes, as in `FunctionDef`.
   case classDef(name: String, bases: [Expression], keywords: [Keyword], body: [Statement], decorator_list: [Expression])
   /// A `return` statement.
-  case `return`(value: Expression?)
+  case `return`(Expression?)
   /// Represents a `del` statement.
-  /// - `targets` is a list of nodes, such as Name, Attribute or Subscript nodes.
-  case delete(targets: [Expression])
+  /// Contains a list of nodes, such as Name, Attribute or Subscript nodes.
+  case delete([Expression])
   /// An assignment.
   /// - `targets` is a list of nodes
   /// - `value` is a single node
@@ -69,7 +69,6 @@ public enum StatementKind: Equatable {
   /// or Attribute, but not a Tuple or List (unlike the targets of `Assign`).
   /// - `op` is `Add`
   /// - `value` is a Num node for 1.
-  case augAssign(target: Expression, op: Operator, value: Expression)
   /// An assignment with a type annotation.
   /// - `target` is a single node and can be a Name, a Attribute or a Subscript
   /// - `annotation` is the annotation, such as a Str or Name node
@@ -108,7 +107,6 @@ public enum StatementKind: Equatable {
   /// `try` block.
   /// All attributes are list of nodes to execute, except for handlers,
   /// which is a list of ExceptHandler nodes.
-  case `try`(body: [Statement], handlers: [Excepthandler], orelse: [Statement], finalbody: [Statement])
   /// An assertion.
   /// - `test` holds the condition, such as a Compare node.
   /// - `msg` holds the failure message, normally a Str node.
@@ -123,11 +121,11 @@ public enum StatementKind: Equatable {
   /// (0 means absolute import).
   case importFrom(moduleName: String?, names: [Alias], level: PyInt?)
   /// `global` statement.
-  case global(names: [String])
+  case global([String])
   /// `nonlocal` statement.
-  case nonlocal(names: [String])
+  case nonlocal([String])
   /// `Expression` statement.
-  case expr(value: Expression)
+  case expr(Expression)
   /// A `pass` statement.
   case pass
   /// `break` statement.

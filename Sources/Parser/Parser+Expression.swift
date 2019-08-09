@@ -390,7 +390,7 @@ extension Parser {
 
   internal enum ExprListResult {
     case single(Expression)
-    case many(NonEmptyArray<Expression>)
+    case tuple(NonEmptyArray<Expression>)
   }
 
   /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
@@ -418,24 +418,24 @@ extension Parser {
     }
 
     let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-    return .many(array)
+    return .tuple(array)
   }
 
   // MARK: - Test list
 
   internal enum TestListResult {
     case single(Expression)
-    case many(NonEmptyArray<Expression>)
+    case tuple(NonEmptyArray<Expression>)
   }
 
   /// `testlist: test (',' test)* [',']`
-  internal mutating func testList(closingToken: TokenKind)
+  internal mutating func testList(closingTokens: [TokenKind])
     throws -> TestListResult {
 
     let first = try self.test()
 
     var additionalElements = [Expression]()
-    while self.peek.kind == .comma && self.peekNext.kind != closingToken {
+    while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
       try self.advance() // ,
 
       let test = try self.test()
@@ -452,6 +452,6 @@ extension Parser {
     }
 
     let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-    return .many(array)
+    return .tuple(array)
   }
 }

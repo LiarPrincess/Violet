@@ -20,7 +20,7 @@ extension Parser {
       return self.expression(.tuple([]), start: start, end: end)
     }
 
-    if let yield = try self.yieldExprOrNop(closingToken: .rightParen) {
+    if let yield = try self.yieldExprOrNop(closingTokens: [.rightParen]) {
       try self.advance() // )
       return yield
     }

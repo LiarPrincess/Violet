@@ -147,6 +147,12 @@ public struct Parser {
 
   // MARK: - Create
 
+  internal func statement(_ kind: StatementKind,
+                          start:  SourceLocation,
+                          end:    SourceLocation) -> Statement {
+    return Statement(kind: kind, start: start, end: end)
+  }
+
   internal func expression(_ kind: ExpressionKind,
                            start:  SourceLocation,
                            end:    SourceLocation) -> Expression {

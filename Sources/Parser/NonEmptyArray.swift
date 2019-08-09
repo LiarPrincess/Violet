@@ -1,7 +1,7 @@
 internal struct NonEmptyArray<Element> {
 
   internal let first: Element
-  fileprivate let rest: [Element]
+  internal let rest: [Element]
 
   internal var last: Element {
     if let l = self.rest.last {

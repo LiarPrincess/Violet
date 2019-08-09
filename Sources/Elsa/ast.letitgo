@@ -44,7 +44,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `body` is the list of nodes inside the function.
   -- - `decorator_list` is the list of decorators to be applied, stored outermost first (i.e. the first in the list will be applied last).
   -- - `returns` is the return annotation (Python 3 only).
-    FunctionDef     (identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
+    FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
   -- An async def function definition.
   -- Has the same fields as `FunctionDef`.
   | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
@@ -57,11 +57,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `decorator_list` is a list of nodes, as in `FunctionDef`.
   | ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
   -- A `return` statement.
-  | Return(expr? value)
+  | Return(expr?)
 
   -- Represents a `del` statement.
-  -- - `targets` is a list of nodes, such as Name, Attribute or Subscript nodes.
-  | Delete(expr* targets)
+  -- Contains a list of nodes, such as Name, Attribute or Subscript nodes.
+  | Delete(expr*)
   -- An assignment.
   -- - `targets` is a list of nodes
   -- - `value` is a single node\n
@@ -73,7 +73,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- or Attribute, but not a Tuple or List (unlike the targets of `Assign`).
   -- - `op` is `Add`
   -- - `value` is a Num node for 1.
-  | AugAssign(expr target, operator op, expr value)
+  {- | AugAssign(expr target, operator op, expr value) -}
   --  An assignment with a type annotation.
   -- - `target` is a single node and can be a Name, a Attribute or a Subscript
   -- - `annotation` is the annotation, such as a Str or Name node
@@ -87,7 +87,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `iter` holds the item to be looped over, again as a single node.
   -- - `body` and `orelse` contain lists of nodes to execute. Those in orelse
   -- are executed if the loop finishes normally, rather than via a break statement.
-  | For (expr target, expr iter, stmt* body, stmt* orelse)
+  | For(expr target, expr iter, stmt* body, stmt* orelse)
   -- An `async for` definition.
   -- Has the same fields as `For`.
   | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse)
@@ -116,7 +116,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- `try` block.
   -- All attributes are list of nodes to execute, except for handlers,
   -- which is a list of ExceptHandler nodes.
-  | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody)
+  {- | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody) -}
   -- An assertion.
   -- - `test` holds the condition, such as a Compare node.
   -- - `msg` holds the failure message, normally a Str node.
@@ -133,11 +133,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | ImportFrom(identifier? moduleName, alias* names, int? level)
 
   -- `global` statement.
-  | Global(identifier* names)
+  | Global(identifier*)
   -- `nonlocal` statement.
-  | Nonlocal(identifier* names)
+  | Nonlocal(identifier*)
   -- `Expression` statement.
-  | Expr(expr value)
+  | Expr(expr)
   -- A `pass` statement.
   | Pass
   --  `break` statement.
