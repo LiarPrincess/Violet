@@ -12,6 +12,7 @@ internal struct Parser {
   internal init(lexer: Lexer) {
     self.lexer = lexer
     self.token = self.lexer.getToken()
+    self.location = self.token.location
   }
 
   // MARK: - Traversal
@@ -76,7 +77,7 @@ internal struct Parser {
         self.fail("'\(value)' is not a valid entity declaration. " +
                   "Expected @struct, @enum or @indirect.")
       default:
-        self.fail("Invalid token '\(token.kind)'.")
+        self.fail("Unexpected '\(token.kind)'.")
       }
     }
 

@@ -24,7 +24,7 @@ public enum TokenKind: Equatable, CustomStringConvertible {
     case .indirect: return "@indirect"
     case .struct: return "@struct"
     case .name(let value): return value
-    case .doc: return "doc"
+    case .doc: return "documentation"
     case .equal: return "="
     case .or: return "|"
     case .star: return "*"

@@ -250,7 +250,7 @@ extension DestructStatementKind {
   internal func destructImportFrom(_ stmt: Statement,
                                    file:   StaticString = #file,
                                    line:   UInt         = #line) ->
-  (moduleName: String?, names: [Alias], level: PyInt?)? {
+  (moduleName: String?, names: [Alias], level: Int?)? {
 
     if case let StatementKind.importFrom(moduleName: value0, names: value1, level: value2) = stmt.kind {
       return (value0, value1, value2)

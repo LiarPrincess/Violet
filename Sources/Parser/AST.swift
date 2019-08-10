@@ -131,7 +131,7 @@ public enum StatementKind: Equatable {
   /// or None for statements such as `from . import foo`.
   /// - `level` is an integer holding the level of the relative import
   /// (0 means absolute import).
-  case importFrom(moduleName: String?, names: [Alias], level: PyInt?)
+  case importFrom(moduleName: String?, names: [Alias], level: Int?)
   /// `global` statement.
   case global([String])
   /// `nonlocal` statement.

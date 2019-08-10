@@ -63,10 +63,12 @@ extension StatementKind: CustomStringConvertible {
     case let .assert(test, msg):
       let m = msg.map { " msg: " + describe($0) } ?? ""
       return "(assert \(test)\(m))"
-//    case .import(let names):
-//
-//    case .importFrom(let moduleName, let names, let level):
-//
+    case let .import(names):
+      return "(import \(join(names)))"
+    case let .importFrom(module, names, level):
+      let d = level.map { String(repeating: ".", count: $0) } ?? ""
+      let m = module.map(describe) ?? ""
+      return "(from \(d)\(m) import: \(join(names)))"
     case let .global(v):
       return "(global \(join(v)))"
     case let .nonlocal(v):
@@ -82,6 +84,17 @@ extension StatementKind: CustomStringConvertible {
 
     default:
       return "TODO"
+    }
+  }
+}
+
+extension Alias: CustomStringConvertible {
+  public var description: String {
+    switch self.asName {
+    case .none:
+      return self.name
+    case let .some(alias):
+      return "(\(self.name) as \(alias))"
     }
   }
 }

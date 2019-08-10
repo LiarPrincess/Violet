@@ -6,6 +6,8 @@ import Lexer
 //  ast_for_import_stmt(struct compiling *c, const node *n)
 //  alias_for_import_name(struct compiling *c, const node *n, int store)
 
+// swiftlint:disable file_length
+
 extension Parser {
 
   /// ```c
@@ -44,6 +46,8 @@ extension Parser {
     }
   }
 
+  // MARK: - Import
+
   /// `import_name: 'import' dotted_as_names`
   private mutating func parseImport() throws -> Statement {
     assert(self.peek.kind == .import)
@@ -55,6 +59,68 @@ extension Parser {
     let kind = StatementKind.import(Array(names))
     return self.statement(kind, start: start, end: names.last.end)
   }
+
+  // MARK: - Dotted names
+
+  /// `dotted_as_name: dotted_name ['as' NAME]`
+  private mutating func dottedAsName() throws -> Alias {
+    let base = try self.dottedName()
+
+    guard self.peek.kind == .as else {
+      return base
+    }
+
+    try self.advance() // as
+
+    let end = self.peek.end
+    let alias = try self.consumeIdentifierOrThrow()
+    try self.checkForbiddenName(alias)
+
+    return Alias(name: base.name, asName: alias, start: base.start, end: end)
+  }
+
+  /// `dotted_as_names: dotted_as_name (',' dotted_as_name)*`
+  private mutating func dottedAsNames() throws -> NonEmptyArray<Alias> {
+    let first = try self.dottedAsName()
+
+    var additionalElements = [Alias]()
+    while self.peek.kind == .comma {
+      try self.advance() // ,
+
+      let element = try self.dottedAsName()
+      additionalElements.append(element)
+    }
+
+    return NonEmptyArray(first: first, rest: additionalElements)
+  }
+
+  /// `dotted_name: NAME ('.' NAME)*`
+  private mutating func dottedName() throws -> Alias {
+    let start = self.peek.start
+    var end = self.peek.end
+    let first = try self.consumeIdentifierOrThrow()
+
+    // Create a string of the form "a.b.c"
+    var dottedNames = ""
+    while self.peek.kind == .dot {
+      try self.advance() // .
+
+      end = self.peek.end
+      let name = try self.consumeIdentifierOrThrow()
+      dottedNames += "." + name
+    }
+
+    // CPython: `if (NCH(n) == 1)` branch
+    let isWithoutDotes = dottedNames.isEmpty
+    if isWithoutDotes {
+      try self.checkForbiddenName(first)
+    }
+
+    let name = first + dottedNames
+    return Alias(name: name, asName: nil, start: start, end: end)
+  }
+
+  // MARK: - Import from
 
   /// ```c
   /// import_from: (
@@ -120,9 +186,9 @@ extension Parser {
       aliases.append(contentsOf: Array(a))
     }
 
-    let modName = module?.name
-    let level = PyInt(dotCount)
-    let kind = StatementKind.importFrom(moduleName: modName, names: aliases, level: level)
+    let kind = StatementKind.importFrom(moduleName: module?.name,
+                                        names: aliases,
+                                        level: dotCount)
     return self.statement(kind, start: start, end: end)
   }
 
@@ -187,65 +253,5 @@ extension Parser {
     }
 
     return Alias(name: name, asName: asName, start: start, end: end)
-  }
-
-  // MARK: - Dotted names
-
-  /// `dotted_as_name: dotted_name ['as' NAME]`
-  private mutating func dottedAsName() throws -> Alias {
-    let base = try self.dottedName()
-
-    guard self.peek.kind == .as else {
-      return base
-    }
-
-    try self.advance() // as
-
-    let end = self.peek.end
-    let alias = try self.consumeIdentifierOrThrow()
-    try self.checkForbiddenName(alias)
-
-    return Alias(name: base.name, asName: alias, start: base.start, end: end)
-  }
-
-  /// `dotted_as_names: dotted_as_name (',' dotted_as_name)*`
-  private mutating func dottedAsNames() throws -> NonEmptyArray<Alias> {
-    let first = try self.dottedAsName()
-
-    var additionalElements = [Alias]()
-    while self.peek.kind == .comma {
-      try self.advance() // ,
-
-      let element = try self.dottedAsName()
-      additionalElements.append(element)
-    }
-
-    return NonEmptyArray(first: first, rest: additionalElements)
-  }
-
-  /// `dotted_name: NAME ('.' NAME)*`
-  private mutating func dottedName() throws -> Alias {
-    let start = self.peek.start
-    var end = self.peek.end
-    let first = try self.consumeIdentifierOrThrow()
-
-    // Create a string of the form "a.b.c"
-    var dottedNames = ""
-    while self.peek.kind == .dot {
-      try self.advance() // .
-
-      end = self.peek.end
-      let name = try self.consumeIdentifierOrThrow()
-      dottedNames += "." + name
-    }
-
-    // CPython: `if (NCH(n) == 1)` branch
-    let isWithoutDotes = dottedNames.isEmpty
-    if isWithoutDotes {
-      try self.checkForbiddenName(first)
-    }
-
-    let name = first + dottedNames
-    return Alias(name: name, asName: nil, start: start, end: end)
   }
 }
