@@ -18,7 +18,75 @@ private func prefix(_ s: String, length: Int = 5) -> String {
   return s.count > length ? s.prefix(length) + "..." : s
 }
 
-// MARK: - Descriptions
+// MARK: - Statement
+
+extension Statement: CustomStringConvertible, CustomDebugStringConvertible {
+  public var description: String {
+    return describe(self.kind)
+  }
+
+  public var debugDescription: String {
+    return "Statement(\(self.kind), start: \(self.start), end: \(self.end))"
+  }
+}
+
+extension StatementKind: CustomStringConvertible {
+  public var description: String {
+    switch self {
+//    case .functionDef(let name, let args, let body, let decorator_list, let returns):
+//
+//    case .asyncFunctionDef(let name, let args, let body, let decorator_list, let returns):
+//
+//    case .classDef(let name, let bases, let keywords, let body, let decorator_list):
+//
+    case let .return(v):
+      let val = v.map { " " + describe($0) } ?? ""
+      return "(return\(val))"
+    case let .delete(v):
+      return "(del \(join(v)))"
+//    case let .assign(targets, value):
+//      return "(return \(describe(targets)) \(describe(value)))"
+//    case .annAssign(let target, let annotation, let value, let simple):
+//
+//    case .for(let target, let iter, let body, let orelse):
+//
+//    case .asyncFor(let target, let iter, let body, let orelse):
+//
+//    case .while(let test, let body, let orelse):
+//
+//    case .if(let test, let body, let orelse):
+//
+    case let .raise(exc, cause):
+      let e = exc.map { " " + describe($0) } ?? ""
+      let c = cause.map { " from: " + describe($0) } ?? ""
+      return "(raise\(e)\(c))"
+    case let .assert(test, msg):
+      let m = msg.map { " msg: " + describe($0) } ?? ""
+      return "(assert \(test)\(m))"
+//    case .import(let names):
+//
+//    case .importFrom(let moduleName, let names, let level):
+//
+    case let .global(v):
+      return "(global \(join(v)))"
+    case let .nonlocal(v):
+      return "(nonlocal \(join(v)))"
+    case let .expr(e):
+      return describe(e)
+    case .pass:
+      return "(pass)"
+    case .break:
+      return "(break)"
+    case .continue:
+      return "(continue)"
+
+    default:
+      return "TODO"
+    }
+  }
+}
+
+// MARK: - Expression
 
 extension Expression: CustomStringConvertible, CustomDebugStringConvertible {
   public var description: String {
@@ -109,6 +177,8 @@ extension ExpressionKind: CustomStringConvertible {
   }
 }
 
+// MARK: - Opertors
+
 extension UnaryOperator: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -172,6 +242,8 @@ extension ComparisonOperator: CustomStringConvertible {
   }
 }
 
+// MARK: - String
+
 extension StringGroup: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -196,6 +268,8 @@ extension ConversionFlag: CustomStringConvertible {
     }
   }
 }
+
+// MARK: - Slice
 
 extension Slice: CustomStringConvertible, CustomDebugStringConvertible {
   public var description: String {
@@ -223,6 +297,8 @@ extension SliceKind: CustomStringConvertible {
   }
 }
 
+// MARK: - Comprehension
+
 extension Comprehension: CustomStringConvertible {
   public var description: String {
     var ifs = ""
@@ -237,6 +313,8 @@ extension Comprehension: CustomStringConvertible {
   }
 }
 
+// MARK: - Dictionary
+
 extension DictionaryElement: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -247,6 +325,8 @@ extension DictionaryElement: CustomStringConvertible {
     }
   }
 }
+
+// MARK: - Arguments
 
 extension Arguments: CustomStringConvertible, CustomDebugStringConvertible {
 

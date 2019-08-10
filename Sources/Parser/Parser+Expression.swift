@@ -390,7 +390,7 @@ extension Parser {
 
   internal enum ExprListResult {
     case single(Expression)
-    case tuple(NonEmptyArray<Expression>)
+    case tuple(NonEmptyArray<Expression>, end: SourceLocation)
   }
 
   /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
@@ -398,6 +398,7 @@ extension Parser {
     throws -> ExprListResult {
 
     let first = try self.starExprOrNop() ?? self.expr()
+    var end = first.end
 
     var additionalElements = [Expression]()
     while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
@@ -405,10 +406,12 @@ extension Parser {
 
       let test = try self.starExprOrNop() ?? self.expr()
       additionalElements.append(test)
+      end = test.end
     }
 
     let hasTrailingComma = self.peek.kind == .comma
     if hasTrailingComma {
+      end = self.peek.end
       try self.advance() // ,
     }
 
@@ -418,14 +421,14 @@ extension Parser {
     }
 
     let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-    return .tuple(array)
+    return .tuple(array, end: end)
   }
 
   // MARK: - Test list
 
   internal enum TestListResult {
     case single(Expression)
-    case tuple(NonEmptyArray<Expression>)
+    case tuple(NonEmptyArray<Expression>, end: SourceLocation)
   }
 
   /// `testlist: test (',' test)* [',']`
@@ -433,6 +436,7 @@ extension Parser {
     throws -> TestListResult {
 
     let first = try self.test()
+    var end = first.end
 
     var additionalElements = [Expression]()
     while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
@@ -440,10 +444,12 @@ extension Parser {
 
       let test = try self.test()
       additionalElements.append(test)
+      end = test.end
     }
 
     let hasTrailingComma = self.peek.kind == .comma
     if hasTrailingComma {
+      end = self.peek.end
       try self.advance() // ,
     }
 
@@ -452,6 +458,6 @@ extension Parser {
     }
 
     let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-    return .tuple(array)
+      return .tuple(array, end: end)
   }
 }

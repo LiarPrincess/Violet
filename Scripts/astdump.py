@@ -28,7 +28,10 @@ def printNode(node, level = 0):
       else:
         print(f"{childIndent}{k} (list)")
         for e in v:
-          printNode(e, childLevel + 1)
+          if isinstance(e, ast.AST):
+            printNode(e, childLevel + 1)
+          else:
+            print(f"{childIndent}  {e}")
     elif isinstance(v, str):
       print(f"{childIndent}{k}: {v}")
     elif isinstance(v, int) or isinstance(v, float):

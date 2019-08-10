@@ -52,7 +52,7 @@ extension Parser {
     try self.advance() // import
 
     let names = try self.dottedAsNames()
-    let kind = StatementKind.import(names: Array(names))
+    let kind = StatementKind.import(Array(names))
     return self.statement(kind, start: start, end: names.last.end)
   }
 

@@ -13,14 +13,24 @@ extension Common {
   /// Create parser for given tokens.
   /// Will automatically add EOF at the end.
   internal func createExprParser(_ tokens: Token...) -> Parser {
-    let eofLocation = tokens.last?.end ?? .start
+    return self.createParser(mode: .eval, tokens: tokens)
+  }
+
+  /// Create parser for given tokens.
+  /// Will automatically add EOF at the end.
+  internal func createStmtParser(_ tokens: Token...) -> Parser {
+    return self.createParser(mode: .fileInput, tokens: tokens)
+  }
+
+  private func createParser(mode: ParserMode, tokens: [Token]) -> Parser {
+    let eofLocation = tokens.last?.end ?? loc0
     let eof = Token(.eof, start: eofLocation, end: eofLocation)
 
     var lexerTokens = tokens
     lexerTokens.append(eof)
 
     let lexer = FakeLexer(tokens: lexerTokens)
-    return Parser(mode: .eval, tokenSource: lexer)
+    return Parser(mode: mode, tokenSource: lexer)
   }
 
   internal func token(_ kind: TokenKind,
@@ -31,13 +41,36 @@ extension Common {
 
   // MARK: - Parse
 
-  /// Use this if you just want to perform detailed tests on token.
   internal func parseExpr(_ parser: inout Parser,
                           file:    StaticString = #file,
                           line:    UInt         = #line) -> Expression? {
     do {
       let ast = try parser.parse()
       return self.destructExpression(ast, file: file, line: line)
+    } catch {
+      XCTAssert(false, "\(error)", file: file, line: line)
+      return nil
+    }
+  }
+
+  internal func parseStmt(_ parser: inout Parser,
+                          file:    StaticString = #file,
+                          line:    UInt         = #line) -> Statement? {
+    do {
+      let ast = try parser.parse()
+      guard let statements = self.destructFileInput(ast,
+                                                    file: file,
+                                                    line: line) else {
+        return nil
+      }
+
+      guard statements.count == 1 else {
+        let msg = "More than 1 statement: count \(statements.count)"
+        XCTAssert(false, msg, file: file, line: line)
+        return nil
+      }
+
+      return statements[0]
     } catch {
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil

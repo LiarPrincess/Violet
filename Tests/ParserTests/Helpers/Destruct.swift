@@ -7,6 +7,7 @@ import Lexer
 import Parser
 
 // swiftlint:disable file_length
+// swiftlint:disable line_length
 // swiftlint:disable large_tuple
 // swiftlint:disable vertical_whitespace_closing_braces
 // swiftlint:disable trailing_newline
@@ -53,6 +54,248 @@ extension DestructAST {
     }
 
     XCTAssertTrue(false, String(describing: ast), file: file, line: line)
+    return nil
+  }
+
+}
+
+// MARK: - StatementKind
+
+protocol DestructStatementKind { }
+
+extension DestructStatementKind {
+
+  internal func destructFunctionDef(_ stmt: Statement,
+                                    file:   StaticString = #file,
+                                    line:   UInt         = #line) ->
+  (name: String, args: Arguments, body: [Statement], decorator_list: [Expression], returns: Expression?)? {
+
+    if case let StatementKind.functionDef(name: value0, args: value1, body: value2, decorator_list: value3, returns: value4) = stmt.kind {
+      return (value0, value1, value2, value3, value4)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructAsyncFunctionDef(_ stmt: Statement,
+                                         file:   StaticString = #file,
+                                         line:   UInt         = #line) ->
+  (name: String, args: Arguments, body: [Statement], decorator_list: [Expression], returns: Expression?)? {
+
+    if case let StatementKind.asyncFunctionDef(name: value0, args: value1, body: value2, decorator_list: value3, returns: value4) = stmt.kind {
+      return (value0, value1, value2, value3, value4)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructClassDef(_ stmt: Statement,
+                                 file:   StaticString = #file,
+                                 line:   UInt         = #line) ->
+  (name: String, bases: [Expression], keywords: [Keyword], body: [Statement], decorator_list: [Expression])? {
+
+    if case let StatementKind.classDef(name: value0, bases: value1, keywords: value2, body: value3, decorator_list: value4) = stmt.kind {
+      return (value0, value1, value2, value3, value4)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructReturn(_ stmt: Statement,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+  (Expression?)? {
+
+    if case let StatementKind.return(value0) = stmt.kind {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructDelete(_ stmt: Statement,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+  ([Expression])? {
+
+    if case let StatementKind.delete(value0) = stmt.kind {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructAssign(_ stmt: Statement,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+  (targets: [Expression], value: Expression)? {
+
+    if case let StatementKind.assign(targets: value0, value: value1) = stmt.kind {
+      return (value0, value1)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructAnnAssign(_ stmt: Statement,
+                                  file:   StaticString = #file,
+                                  line:   UInt         = #line) ->
+  (target: Expression, annotation: Expression, value: Expression?, simple: PyInt)? {
+
+    if case let StatementKind.annAssign(target: value0, annotation: value1, value: value2, simple: value3) = stmt.kind {
+      return (value0, value1, value2, value3)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructFor(_ stmt: Statement,
+                            file:   StaticString = #file,
+                            line:   UInt         = #line) ->
+  (target: Expression, iter: Expression, body: [Statement], orelse: [Statement])? {
+
+    if case let StatementKind.for(target: value0, iter: value1, body: value2, orelse: value3) = stmt.kind {
+      return (value0, value1, value2, value3)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructAsyncFor(_ stmt: Statement,
+                                 file:   StaticString = #file,
+                                 line:   UInt         = #line) ->
+  (target: Expression, iter: Expression, body: [Statement], orelse: [Statement])? {
+
+    if case let StatementKind.asyncFor(target: value0, iter: value1, body: value2, orelse: value3) = stmt.kind {
+      return (value0, value1, value2, value3)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructWhile(_ stmt: Statement,
+                              file:   StaticString = #file,
+                              line:   UInt         = #line) ->
+  (test: Expression, body: [Statement], orelse: [Statement])? {
+
+    if case let StatementKind.while(test: value0, body: value1, orelse: value2) = stmt.kind {
+      return (value0, value1, value2)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructIf(_ stmt: Statement,
+                           file:   StaticString = #file,
+                           line:   UInt         = #line) ->
+  (test: Expression, body: [Statement], orelse: [Statement])? {
+
+    if case let StatementKind.if(test: value0, body: value1, orelse: value2) = stmt.kind {
+      return (value0, value1, value2)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructRaise(_ stmt: Statement,
+                              file:   StaticString = #file,
+                              line:   UInt         = #line) ->
+  (exc: Expression?, cause: Expression?)? {
+
+    if case let StatementKind.raise(exc: value0, cause: value1) = stmt.kind {
+      return (value0, value1)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructAssert(_ stmt: Statement,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+  (test: Expression, msg: Expression?)? {
+
+    if case let StatementKind.assert(test: value0, msg: value1) = stmt.kind {
+      return (value0, value1)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructImport(_ stmt: Statement,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+  ([Alias])? {
+
+    if case let StatementKind.import(value0) = stmt.kind {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructImportFrom(_ stmt: Statement,
+                                   file:   StaticString = #file,
+                                   line:   UInt         = #line) ->
+  (moduleName: String?, names: [Alias], level: PyInt?)? {
+
+    if case let StatementKind.importFrom(moduleName: value0, names: value1, level: value2) = stmt.kind {
+      return (value0, value1, value2)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructGlobal(_ stmt: Statement,
+                               file:   StaticString = #file,
+                               line:   UInt         = #line) ->
+  ([String])? {
+
+    if case let StatementKind.global(value0) = stmt.kind {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructNonlocal(_ stmt: Statement,
+                                 file:   StaticString = #file,
+                                 line:   UInt         = #line) ->
+  ([String])? {
+
+    if case let StatementKind.nonlocal(value0) = stmt.kind {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructExpr(_ stmt: Statement,
+                             file:   StaticString = #file,
+                             line:   UInt         = #line) ->
+  (Expression)? {
+
+    if case let StatementKind.expr(value0) = stmt.kind {
+      return (value0)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
     return nil
   }
 

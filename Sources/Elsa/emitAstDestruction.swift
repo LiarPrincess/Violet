@@ -9,6 +9,7 @@ internal func emitAstDestruction(entities: [Entity]) {
   print()
 
   print("// swiftlint:disable file_length")
+  print("// swiftlint:disable line_length")
   print("// swiftlint:disable large_tuple")
   print("// swiftlint:disable vertical_whitespace_closing_braces")
   print("// swiftlint:disable trailing_newline")
@@ -19,6 +20,7 @@ internal func emitAstDestruction(entities: [Entity]) {
     case .enum(let e):
       switch e.name {
       case "AST": emitASTDestruction(e)
+      case "StatementKind": emitStatementDestruct(e)
       case "ExpressionKind": emitExpressionDestruct(e)
       case "SliceKind": emitSliceDestruct(e)
       case "StringGroup": emitStringDestruct(e)
@@ -88,6 +90,43 @@ private func emitASTDestruction(_ enumDef: EnumDef) {
         }
 
         XCTAssertTrue(false, String(describing: ast), file: file, line: line)
+        return nil
+      }
+
+    """)
+  }
+
+  print("}")
+  print()
+}
+
+private func emitStatementDestruct(_ enumDef: EnumDef) {
+  print("// MARK: - \(enumDef.name)")
+  print()
+
+  print("protocol Destruct\(enumDef.name) { }")
+  print()
+
+  print("extension Destruct\(enumDef.name) {")
+  print()
+
+  for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
+    let namePascal = pascalCase(caseDef.name)
+    let paramIndent = repeating(" ", count: 23 + namePascal.count)
+
+    let destruction = getEnumDestruction(caseDef)
+
+    print("""
+      internal func destruct\(namePascal)(_ stmt: Statement,
+      \(paramIndent)file:   StaticString = #file,
+      \(paramIndent)line:   UInt         = #line) ->
+      (\(destruction.resultType))? {
+
+        if case let \(enumDef.name).\(caseDef.name)(\(destruction.bindings)) = stmt.kind {
+          return (\(destruction.returnValue))
+        }
+
+        XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
         return nil
       }
 

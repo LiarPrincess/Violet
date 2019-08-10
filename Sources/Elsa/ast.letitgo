@@ -34,7 +34,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - when parsing a string passed to the `exec()` function;\n
   -- `file_input ::=  (NEWLINE | statement)*`
   | FileInput(stmt*)
-  -- Used for example for `eval()`.
+  -- Used for `eval()`.
   -- It ignores leading whitespace.
   -- `eval_input ::= expression_list NEWLINE*`
   | Expression(expr)
@@ -134,8 +134,8 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | Assert(expr test, expr? msg)
 
   -- An import statement.
-  -- - `names` is a list of alias nodes.
-  | Import(alias* names)
+  -- Contains a list of alias nodes.
+  | Import(alias*)
   -- Represents `from x import y`.
   -- - `moduleName` is a raw string of the ‘from’ name, without any leading dots
   -- or None for statements such as `from . import foo`.

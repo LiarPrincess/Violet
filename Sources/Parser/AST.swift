@@ -23,7 +23,7 @@ public enum AST: Equatable {
   /// 
   /// `file_input ::=  (NEWLINE | statement)*`
   case fileInput([Statement])
-  /// Used for example for `eval()`.
+  /// Used for `eval()`.
   /// It ignores leading whitespace.
   /// `eval_input ::= expression_list NEWLINE*`
   case expression(Expression)
@@ -124,8 +124,8 @@ public enum StatementKind: Equatable {
   /// - `msg` holds the failure message, normally a Str node.
   case assert(test: Expression, msg: Expression?)
   /// An import statement.
-  /// - `names` is a list of alias nodes.
-  case `import`(names: [Alias])
+  /// Contains a list of alias nodes.
+  case `import`([Alias])
   /// Represents `from x import y`.
   /// - `moduleName` is a raw string of the ‘from’ name, without any leading dots
   /// or None for statements such as `from . import foo`.

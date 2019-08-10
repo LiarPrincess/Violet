@@ -91,9 +91,8 @@ extension Parser {
     switch result {
     case let .single(e):
       return e
-    case let .tuple(es):
+    case let .tuple(es, end):
       let start = es.first.start
-      let end = es.last.end
       return self.expression(.tuple(Array(es)), start: start, end: end)
     }
   }

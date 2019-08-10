@@ -6,6 +6,15 @@ import Lexer
 // PyAST_FromNodeObject(const node *n, PyCompilerFlags *flags,
 //                      PyObject *filename, PyArena *arena)
 
+public enum ParserMode {
+  /// Used for input in interactive mode.
+  case single
+  /// Used for all input read from non-interactive files.
+  case fileInput
+  /// Used for `eval()`.
+  case eval
+}
+
 private enum ParserState {
   case notStarted
   case finished(AST)
@@ -18,24 +27,15 @@ public struct Parser {
   internal var lexer: LexerType
 
   /// What are we parsing? Expression? Statement?
-  private var mode: Mode
+  private var mode: ParserMode
 
   /// Current parser state.
   /// Used for example for: caching parsing result.
   private var state = ParserState.notStarted
 
-  public init(mode: Mode, tokenSource lexer: LexerType) {
+  public init(mode: ParserMode, tokenSource lexer: LexerType) {
     self.mode = mode
     self.lexer = lexer
-  }
-
-  public enum Mode {
-    /// Single interactive statement.
-    case single
-    /// Input for the eval() functions.
-    case eval
-    /// Module or sequence of commands.
-    case exec
   }
 
   // MARK: - Traversal
@@ -95,13 +95,16 @@ public struct Parser {
 
   private mutating func parseByMode() throws -> AST {
     switch self.mode {
+    case .single:
+      throw self.unimplemented()
+
+    case .fileInput:
+      let stmt = try self.smallStmt(closingTokens: [.semicolon, .newLine, .eof])
+      return .fileInput([stmt])
+
     case .eval:
       let expr = try self.expression()
       return AST.expression(expr)
-    case .exec:
-      throw self.unimplemented()
-    case .single:
-      throw self.unimplemented()
     }
   }
 
@@ -172,7 +175,7 @@ public struct Parser {
     return ParserError(kind, location: location ?? self.peek.start)
   }
 
-  // @available(*, deprecated, message: "Unimplemented")
+  @available(*, deprecated, message: "Unimplemented")
   internal func unimplemented(_ message: String? = nil,
                               function:  StaticString = #function) -> ParserError {
     return self.error(.unimplemented("\(function): \(message ?? "")"))

@@ -131,12 +131,12 @@ class AtomParenTests: XCTestCase, Common, DestructExpressionKind {
 
     if let expr = self.parseExpr(&parser) {
       let one = Expression(.float(1.0), start: loc4, end: loc5)
-      let tuple = Expression(.tuple([one]), start: loc4, end: loc5)
+      let tuple = Expression(.tuple([one]), start: loc4, end: loc7)
 
       XCTAssertExpression(expr, "(yield (1.0))")
       XCTAssertEqual(expr.kind,  .yield(tuple))
       XCTAssertEqual(expr.start, loc2)
-      XCTAssertEqual(expr.end,   loc5)
+      XCTAssertEqual(expr.end,   loc7)
     }
   }
 

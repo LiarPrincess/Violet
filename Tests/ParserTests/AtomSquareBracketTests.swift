@@ -229,7 +229,7 @@ class AtomSquareBracketTests: XCTestCase, Common, DestructExpressionKind {
           Expression(.identifier("b"), start: loc6, end: loc7)
         ]),
         start: loc6,
-        end: loc7)
+        end: loc9)
       )
       XCTAssertEqual(gen.iter, Expression(.list([]), start: loc12, end: loc15))
       XCTAssertEqual(gen.ifs.count, 0)

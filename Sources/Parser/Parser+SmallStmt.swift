@@ -7,8 +7,6 @@ import Lexer
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
 
-// TODO: stms description
-
 extension Parser {
 
   ///```c
@@ -16,7 +14,6 @@ extension Parser {
   ///              import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
   ///```
   internal mutating func smallStmt(closingTokens: [TokenKind]) throws -> Statement {
-    // TODO: closingTokens: ';' NEWLINE
     let token = self.peek
     let start = token.start
 
@@ -30,10 +27,10 @@ extension Parser {
 
       let exprs = try self.exprList(closingTokens: closingTokens)
       switch exprs {
-      case .single(let e):
+      case let .single(e):
         return self.statement(.delete([e]), start: start, end: e.end)
-      case .tuple(let es):
-        return self.statement(.delete(Array(es)), start: start, end: es.last.end)
+      case let .tuple(es, end):
+        return self.statement(.delete(Array(es)), start: start, end: end)
       }
 
     case .pass:
@@ -61,13 +58,12 @@ extension Parser {
 
       let testList = try self.testList(closingTokens: closingTokens)
       switch testList {
-      case .single(let e):
+      case let .single(e):
         return self.statement(.return(e), start: start, end: e.end)
-      case .tuple(let es):
-        let esStart = es.first.start
-        let esEnd = es.last.end
-        let tuple = self.expression(.tuple(Array(es)), start: esStart, end: esEnd)
-        return self.statement(.return(tuple), start: start, end: esEnd)
+      case let .tuple(es, end):
+        let tupleStart = es.first.start
+        let tuple = self.expression(.tuple(Array(es)), start: tupleStart, end: end)
+        return self.statement(.return(tuple), start: start, end: end)
       }
 
     case _ where self.isYieldExpr():
@@ -95,8 +91,9 @@ extension Parser {
         cause = try self.test()
       }
 
+      let end = cause?.end ?? exc.end
       let kind = StatementKind.raise(exc: exc, cause: cause)
-      return self.statement(kind, start: start, end: token.end)
+      return self.statement(kind, start: start, end: end)
 
     // MARK: import_stmt
 
