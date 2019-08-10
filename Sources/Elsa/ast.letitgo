@@ -24,8 +24,19 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- Top (root) node in AST.
 -- Represents the while program.
 @enum AST =
-  Module(stmt*)
-  | Statement(stmt*)
+  -- Used for input in interactive mode.
+  -- `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
+  Single(stmt*)
+  -- Used for all input read from non-interactive files.
+  -- For example:
+  -- - when parsing a complete Python program (from a file or from a string);
+  -- - when parsing a module;
+  -- - when parsing a string passed to the `exec()` function;\n
+  -- `file_input ::=  (NEWLINE | statement)*`
+  | FileInput(stmt*)
+  -- Used for example for `eval()`.
+  -- It ignores leading whitespace.
+  -- `eval_input ::= expression_list NEWLINE*`
   | Expression(expr)
 
 @struct stmt = (
@@ -150,7 +161,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- `asname` can be None if the regular name is to be used.
 @struct Alias = (
   identifier name,
-  identifier? asname
+  identifier? asName,
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
 )
 
 {- @struct WithItem = (

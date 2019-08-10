@@ -41,6 +41,12 @@ public enum ParserErrorKind: Equatable {
   /// Cannot mix bytes and nonbytes literals.
   case mixBytesAndNonBytesLiterals
 
+  // MARK: - Import
+
+  /// Trailing comma not allowed without surrounding parentheses.
+  /// `from a import b,`
+  case fromImportWithTrailingComma
+
   case unimplemented(String)
 }
 
@@ -81,6 +87,9 @@ extension ParserErrorKind: CustomStringConvertible {
              "cannot be used in dictionary comprehension."
     case .mixBytesAndNonBytesLiterals:
       return "Cannot mix bytes and nonbytes literals."
+
+    case .fromImportWithTrailingComma:
+      return "Trailing comma not allowed without surrounding parentheses."
 
     case .unimplemented(let msg):
       return "Unimplemented: '\(msg)'"

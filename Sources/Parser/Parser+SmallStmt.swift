@@ -7,19 +7,13 @@ import Lexer
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
 
-// TODO: rename closingToken -> endToken
+// TODO: stms description
 
 extension Parser {
 
   ///```c
   /// small_stmt: (expr_stmt | del_stmt | pass_stmt | flow_stmt |
   ///              import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
-  ///  del_stmt: 'del' exprlist
-  ///  pass_stmt: 'pass'
-  ///  flow_stmt: break_stmt | continue_stmt | return_stmt | raise_stmt | yield_stmt
-  ///  global_stmt: 'global' NAME (',' NAME)*
-  ///  nonlocal_stmt: 'nonlocal' NAME (',' NAME)*
-  ///  assert_stmt: 'assert' test [',' test]
   ///```
   internal mutating func smallStmt(closingTokens: [TokenKind]) throws -> Statement {
     // TODO: closingTokens: ';' NEWLINE
@@ -27,7 +21,6 @@ extension Parser {
     let start = token.start
 
     switch token.kind {
-    // MARK: expr_stmt
 
     // MARK: del_stmt, pass_stmt
 
@@ -107,6 +100,9 @@ extension Parser {
 
     // MARK: import_stmt
 
+    case _ where self.isImportStmt():
+      return try self.importStmt(closingTokens: closingTokens)
+
     // MARK: global_stmt, nonlocal_stmt, assert_stmt
 
     case .global:
@@ -139,6 +135,8 @@ extension Parser {
       let kind = StatementKind.assert(test: test, msg: msg)
       return self.statement(kind, start: start, end: end)
 
+    // MARK: expr_stmt
+
     default:
       throw self.unimplemented()
     }
@@ -155,21 +153,14 @@ extension Parser {
     throws -> (names: NonEmptyArray<String>, end: SourceLocation) {
 
     var end = self.peek.end
-
-    guard case let TokenKind.identifier(first) = self.peek.kind else {
-      throw self.failUnexpectedToken(expected: .identifier)
-    }
+    let first = try self.consumeIdentifierOrThrow()
 
     var additionalElements = [String]()
     while self.peek.kind == separator {
       try self.advance() // separator
 
-      guard case let TokenKind.identifier(element) = self.peek.kind else {
-        throw self.failUnexpectedToken(expected: .identifier)
-      }
-
       end = self.peek.end
-      try self.advance() // element
+      let element = try self.consumeIdentifierOrThrow()
       additionalElements.append(element)
     }
 

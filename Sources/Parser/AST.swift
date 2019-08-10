@@ -12,8 +12,20 @@ import Lexer
 /// Top (root) node in AST.
 /// Represents the while program.
 public enum AST: Equatable {
-  case module([Statement])
-  case statement([Statement])
+  /// Used for input in interactive mode.
+  /// `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
+  case single([Statement])
+  /// Used for all input read from non-interactive files.
+  /// For example:
+  /// - when parsing a complete Python program (from a file or from a string);
+  /// - when parsing a module;
+  /// - when parsing a string passed to the `exec()` function;
+  /// 
+  /// `file_input ::=  (NEWLINE | statement)*`
+  case fileInput([Statement])
+  /// Used for example for `eval()`.
+  /// It ignores leading whitespace.
+  /// `eval_input ::= expression_list NEWLINE*`
   case expression(Expression)
 }
 
@@ -140,11 +152,17 @@ public enum StatementKind: Equatable {
 public struct Alias: Equatable {
 
   public let name: String
-  public let asname: String?
+  public let asName: String?
+  /// Location of the first character in the source code.
+  public let start: SourceLocation
+  /// Location just after the last character in the source code.
+  public let end: SourceLocation
 
-  public init(name: String, asname: String?) {
+  public init(name: String, asName: String?, start: SourceLocation, end: SourceLocation) {
     self.name = name
-    self.asname = asname
+    self.asName = asName
+    self.start = start
+    self.end = end
   }
 }
 

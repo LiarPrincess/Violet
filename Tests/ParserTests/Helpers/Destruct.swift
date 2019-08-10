@@ -17,12 +17,12 @@ protocol DestructAST { }
 
 extension DestructAST {
 
-  internal func destructModule(_ ast: AST,
+  internal func destructSingle(_ ast: AST,
                                file:   StaticString = #file,
                                line:   UInt         = #line) ->
   ([Statement])? {
 
-    if case let AST.module(value0) = ast {
+    if case let AST.single(value0) = ast {
       return (value0)
     }
 
@@ -30,12 +30,12 @@ extension DestructAST {
     return nil
   }
 
-  internal func destructStatement(_ ast: AST,
+  internal func destructFileInput(_ ast: AST,
                                   file:   StaticString = #file,
                                   line:   UInt         = #line) ->
   ([Statement])? {
 
-    if case let AST.statement(value0) = ast {
+    if case let AST.fileInput(value0) = ast {
       return (value0)
     }
 
