@@ -143,10 +143,23 @@ extension DestructStatementKind {
     return nil
   }
 
+  internal func destructAugAssign(_ stmt: Statement,
+                                  file:   StaticString = #file,
+                                  line:   UInt         = #line) ->
+  (target: Expression, op: BinaryOperator, value: Expression)? {
+
+    if case let StatementKind.augAssign(target: value0, op: value1, value: value2) = stmt.kind {
+      return (value0, value1, value2)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
   internal func destructAnnAssign(_ stmt: Statement,
                                   file:   StaticString = #file,
                                   line:   UInt         = #line) ->
-  (target: Expression, annotation: Expression, value: Expression?, simple: PyInt)? {
+  (target: Expression, annotation: Expression, value: Expression?, simple: Bool)? {
 
     if case let StatementKind.annAssign(target: value0, annotation: value1, value: value2, simple: value3) = stmt.kind {
       return (value0, value1, value2, value3)

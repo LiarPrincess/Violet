@@ -429,6 +429,15 @@ extension Parser {
   internal enum TestListResult {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
+
+    internal func toExpression(start: SourceLocation) -> Expression {
+      switch self {
+      case let .single(e):
+        return e
+      case let .tuple(es, end):
+        return Expression(.tuple(Array(es)), start: start, end: end)
+      }
+    }
   }
 
   /// `testlist: test (',' test)* [',']`
@@ -458,6 +467,6 @@ extension Parser {
     }
 
     let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-      return .tuple(array, end: end)
+    return .tuple(array, end: end)
   }
 }

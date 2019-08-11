@@ -79,15 +79,16 @@ public enum StatementKind: Equatable {
   /// Augmented assignment, such as `a += 1`.
   /// - `target` is a Name node for `a`. Target can be Name, Subscript
   /// or Attribute, but not a Tuple or List (unlike the targets of `Assign`).
-  /// - `op` is `Add`
-  /// - `value` is a Num node for 1.
+  /// - `op` is an operation (for example `Add`)
+  /// - `value` is the operand (for example Num node for 1)
+  case augAssign(target: Expression, op: BinaryOperator, value: Expression)
   /// An assignment with a type annotation.
   /// - `target` is a single node and can be a Name, a Attribute or a Subscript
   /// - `annotation` is the annotation, such as a Str or Name node
   /// - `value` is a single optional node
   /// - `simple` indicates that `target` does not appear
   /// in between parenthesis and is pure name and not expression.
-  case annAssign(target: Expression, annotation: Expression, value: Expression?, simple: PyInt)
+  case annAssign(target: Expression, annotation: Expression, value: Expression?, simple: Bool)
   /// A `for` loop.
   /// - `target` holds the variable(s) the loop assigns to, as a single Name, Tuple or List node.
   /// - `iter` holds the item to be looped over, again as a single node.

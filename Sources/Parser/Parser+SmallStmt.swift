@@ -135,7 +135,7 @@ extension Parser {
     // MARK: expr_stmt
 
     default:
-      throw self.unimplemented()
+      return try self.exprStmt(closingTokens: closingTokens)
     }
   }
 

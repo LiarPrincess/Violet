@@ -47,6 +47,17 @@ public enum ParserErrorKind: Equatable {
   /// `from a import b,`
   case fromImportWithTrailingComma
 
+  // MARK: - Assignment
+
+  /// Illegal target for annotation
+  case illegalAnnAssignmentTarget
+  /// Only single target (not list) can be annotated
+  case illegalListInAnnAssignmentTarget
+  /// Only single target (not tuple) can be annotated
+  case illegalTupleInAnnAssignmentTarget
+  /// Illegal expression for augmented assignment
+  case illegalAugAssignmentTarget
+
   case unimplemented(String)
 }
 
@@ -90,6 +101,15 @@ extension ParserErrorKind: CustomStringConvertible {
 
     case .fromImportWithTrailingComma:
       return "Trailing comma not allowed without surrounding parentheses."
+
+    case .illegalAnnAssignmentTarget:
+      return "Illegal target for annotation."
+    case .illegalListInAnnAssignmentTarget:
+      return "Only single target (not list) can be annotated."
+    case .illegalTupleInAnnAssignmentTarget:
+      return "Only single target (not tuple) can be annotated."
+    case .illegalAugAssignmentTarget:
+      return "Illegal expression for augmented assignment."
 
     case .unimplemented(let msg):
       return "Unimplemented: '\(msg)'"

@@ -82,16 +82,16 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Augmented assignment, such as `a += 1`.
   -- - `target` is a Name node for `a`. Target can be Name, Subscript
   -- or Attribute, but not a Tuple or List (unlike the targets of `Assign`).
-  -- - `op` is `Add`
-  -- - `value` is a Num node for 1.
-  {- | AugAssign(expr target, operator op, expr value) -}
+  -- - `op` is an operation (for example `Add`)
+  -- - `value` is the operand (for example Num node for 1)
+  | AugAssign(expr target, BinaryOperator op, expr value)
   --  An assignment with a type annotation.
   -- - `target` is a single node and can be a Name, a Attribute or a Subscript
   -- - `annotation` is the annotation, such as a Str or Name node
   -- - `value` is a single optional node
   -- - `simple` indicates that `target` does not appear
   -- in between parenthesis and is pure name and not expression.
-  | AnnAssign(expr target, expr annotation, expr? value, int simple)
+  | AnnAssign(expr target, expr annotation, expr? value, Bool simple)
 
   -- A `for` loop.
   -- - `target` holds the variable(s) the loop assigns to, as a single Name, Tuple or List node.
