@@ -24,7 +24,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.0, Expression(valueKind, start: loc0, end: loc1))
       XCTAssertEqual(d.name, "b")
 
-      XCTAssertExpression(expr, "(attribute a b)")
+      XCTAssertExpression(expr, "a.b")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc5)
     }
@@ -41,7 +41,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
     )
 
     if let expr = self.parseExpr(&parser) {
-      XCTAssertExpression(expr, "(attribute (attribute a b) c)")
+      XCTAssertExpression(expr, "a.b.c")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }
@@ -67,7 +67,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc7)
 
-      XCTAssertExpression(expr, "(subscript a 1)")
+      XCTAssertExpression(expr, "a[1]")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
     }
@@ -96,7 +96,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc11)
 
-      XCTAssertExpression(expr, "(subscript a (1 2))")
+      XCTAssertExpression(expr, "a[(1 2)]")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc11)
     }
@@ -123,7 +123,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc9)
 
-      XCTAssertExpression(expr, "(subscript a (1))")
+      XCTAssertExpression(expr, "a[(1)]")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }
@@ -150,7 +150,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc9)
 
-      XCTAssertExpression(expr, "(subscript a ::)")
+      XCTAssertExpression(expr, "a[::]")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }
@@ -175,7 +175,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc9)
 
-      XCTAssertExpression(expr, "(subscript a 1::)")
+      XCTAssertExpression(expr, "a[1::]")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }
@@ -201,7 +201,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc11)
 
-      XCTAssertExpression(expr, "(subscript a :2:)")
+      XCTAssertExpression(expr, "a[:2:]")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc11)
     }
@@ -227,7 +227,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc11)
 
-      XCTAssertExpression(expr, "(subscript a ::3)")
+      XCTAssertExpression(expr, "a[::3]")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc11)
     }
@@ -255,7 +255,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc15)
 
-      XCTAssertExpression(expr, "(subscript a 1:2:3)")
+      XCTAssertExpression(expr, "a[1:2:3]")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc15)
     }
@@ -294,7 +294,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc13)
 
-      XCTAssertExpression(expr, "(subscript a (1:: 2))")
+      XCTAssertExpression(expr, "a[(1:: 2)]")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc13)
     }

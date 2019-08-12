@@ -44,10 +44,12 @@ extension StatementKind: CustomStringConvertible {
       return "(return\(val))"
     case let .delete(v):
       return "(del \(join(v)))"
-//    case let .assign(targets, value):
-//      return "(return \(describe(targets)) \(describe(value)))"
-//    case .annAssign(let target, let annotation, let value, let simple):
-//
+    case let .assign(targets, value):
+      return "(return \(describe(targets)) \(describe(value)))"
+    case let .annAssign(target, annotation, value, simple):
+      return "Abd"
+    case let .augAssign(target: target, op: op, value: value):
+      return "(\(op)= \(target) \(value))"
 //    case .for(let target, let iter, let body, let orelse):
 //
 //    case .asyncFor(let target, let iter, let body, let orelse):
@@ -183,9 +185,9 @@ extension ExpressionKind: CustomStringConvertible {
     case let .starred(value):
       return "*\(value)"
     case let .attribute(value, name):
-      return "(attribute \(value) \(name))"
+      return "\(value).\(name)"
     case let .subscript(value, slice):
-      return "(subscript \(value) \(slice))"
+      return "\(value)[\(slice)]"
     }
   }
 }
