@@ -35,8 +35,8 @@ class AtomParenTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       XCTAssertExpression(expr, "1.0")
       XCTAssertEqual(expr.kind,  .float(1.0))
-      XCTAssertEqual(expr.start, loc2)
-      XCTAssertEqual(expr.end,   loc3)
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc5)
     }
   }
 

@@ -45,9 +45,10 @@ extension StatementKind: CustomStringConvertible {
     case let .delete(v):
       return "(del \(join(v)))"
     case let .assign(targets, value):
-      return "(return \(describe(targets)) \(describe(value)))"
+      return "(= \(join(targets)) \(value))"
     case let .annAssign(target, annotation, value, simple):
-      return "Abd"
+      let v = value.map { " " + describe($0) } ?? ""
+      return "(= \(target):\(annotation)\(v))"
     case let .augAssign(target: target, op: op, value: value):
       return "(\(op)= \(target) \(value))"
 //    case .for(let target, let iter, let body, let orelse):

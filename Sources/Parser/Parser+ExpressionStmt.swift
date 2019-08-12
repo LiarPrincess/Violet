@@ -24,16 +24,12 @@ extension Parser {
     // FIRST(n) == '('
     let isFirstInParen = self.peek.kind == .leftParen
 
-    let firstStart = self.peek.start
-    let firstList = try self.testListStarExpr(closingTokens: closingTokens)
-    let first = firstList.toExpression(start: firstStart)
+    var firstClosing = closingTokens
+    firstClosing.append(.equal)
 
-    // Just an expr, without anything else (not included in grammar).
-    // It does not even matter (unless it has an side-effect like exception...)
-    if closingTokens.contains(self.peek.kind) {
-      return self.statement(.expr(first), start: first.start, end: first.end)
-    }
-    // TODO: move ^ this to default?
+    let firstStart = self.peek.start
+    let firstList = try self.testListStarExpr(closingTokens: firstClosing)
+    let first = firstList.toExpression(start: firstStart)
 
     switch self.peek.kind {
     case .colon:
@@ -44,12 +40,9 @@ extension Parser {
      return try self.parseAugAssign(target: first,
                                     closingTokens: closingTokens)
 
-    case .equal:
+    default:
       return try self.parseNormalAssign(firstTarget: first,
                                         closingTokens: closingTokens)
-
-    default:
-      throw self.unimplemented()
     }
   }
 
@@ -87,6 +80,8 @@ extension Parser {
   }
 
   private func checkAnnAssignTarget(_ target: Expression) throws {
+    let loc = target.start
+
     switch target.kind {
 
     case let .identifier(name):
@@ -99,11 +94,11 @@ extension Parser {
       break
 
     case .list:
-      throw self.error(.illegalListInAnnAssignmentTarget)
+      throw self.error(.illegalListInAnnAssignmentTarget, location: loc)
     case .tuple:
-      throw self.error(.illegalTupleInAnnAssignmentTarget)
+      throw self.error(.illegalTupleInAnnAssignmentTarget, location: loc)
     default:
-      throw self.error(.illegalAnnAssignmentTarget)
+      throw self.error(.illegalAnnAssignmentTarget, location: loc)
     }
   }
 
@@ -163,7 +158,7 @@ extension Parser {
          .subscript:
       break
     default:
-      throw self.error(.illegalAugAssignmentTarget)
+      throw self.error(.illegalAugAssignmentTarget, location: target.start)
     }
   }
 
@@ -187,8 +182,6 @@ extension Parser {
     firstTarget: Expression,
     closingTokens: [TokenKind]) throws -> Statement {
 
-    assert(self.peek.kind == .equal)
-
     var elements = [Expression]()
     var elementClosing = closingTokens
     elementClosing.append(.equal)
@@ -196,13 +189,21 @@ extension Parser {
     while self.peek.kind == .equal {
       try self.advance() // =
 
-      let testStart = self.peek.start
-      let test = try self.testListStarExpr(closingTokens: elementClosing)
-      elements.append(test.toExpression(start: testStart))
+      if let yield = try self.yieldExprOrNop(closingTokens: elementClosing) {
+        elements.append(yield)
+      } else {
+        let testStart = self.peek.start
+        let test = try self.testListStarExpr(closingTokens: elementClosing)
+        elements.append(test.toExpression(start: testStart))
+      }
     }
 
     guard let value = elements.last else {
-      throw self.unimplemented()
+      // Just an expr, without anything else. It does not even matter
+      // (unless it has an side-effect like exception...).
+      return self.statement(.expr(firstTarget),
+                            start: firstTarget.start,
+                            end: firstTarget.end)
     }
 
     var targets = [firstTarget]
@@ -224,7 +225,7 @@ extension Parser {
   private func checkNormalAssignTargets(_ targets: [Expression]) throws {
     for expr in targets {
       if self.isYieldExpr(expr) {
-        throw self.unimplemented()
+        throw self.error(.illegalAssignmentToYield, location: expr.start)
       }
     }
   }

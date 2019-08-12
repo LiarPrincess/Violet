@@ -125,7 +125,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
 
       XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [
-        Expression(.identifier("a"), start: loc6, end: loc7)
+        Expression(.identifier("a"), start: loc4, end: loc9)
       ])
       XCTAssertEqual(d.keywords, [])
 

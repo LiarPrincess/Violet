@@ -57,6 +57,8 @@ public enum ParserErrorKind: Equatable {
   case illegalTupleInAnnAssignmentTarget
   /// Illegal expression for augmented assignment
   case illegalAugAssignmentTarget
+  /// Assignment to yield expression not possible
+  case illegalAssignmentToYield
 
   case unimplemented(String)
 }
@@ -110,6 +112,8 @@ extension ParserErrorKind: CustomStringConvertible {
       return "Only single target (not tuple) can be annotated."
     case .illegalAugAssignmentTarget:
       return "Illegal expression for augmented assignment."
+    case .illegalAssignmentToYield:
+      return "Assignment to yield expression not possible."
 
     case .unimplemented(let msg):
       return "Unimplemented: '\(msg)'"

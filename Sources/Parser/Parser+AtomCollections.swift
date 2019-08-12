@@ -33,7 +33,8 @@ extension Parser {
 
     switch test {
     case let .single(e):
-      return e
+      // rebind start/end to include parens
+      return self.expression(e.kind, start: start, end: end)
     case let .multiple(es):
       return self.expression(.tuple(es), start: start, end: end)
     case let .listComprehension(elt: elt, generators: gen):
