@@ -172,9 +172,9 @@ extension DestructStatementKind {
   internal func destructFor(_ stmt: Statement,
                             file:   StaticString = #file,
                             line:   UInt         = #line) ->
-  (target: Expression, iter: Expression, body: [Statement], orelse: [Statement])? {
+  (target: Expression, iter: Expression, body: [Statement], orElse: [Statement])? {
 
-    if case let StatementKind.for(target: value0, iter: value1, body: value2, orelse: value3) = stmt.kind {
+    if case let StatementKind.for(target: value0, iter: value1, body: value2, orElse: value3) = stmt.kind {
       return (value0, value1, value2, value3)
     }
 
@@ -185,9 +185,9 @@ extension DestructStatementKind {
   internal func destructAsyncFor(_ stmt: Statement,
                                  file:   StaticString = #file,
                                  line:   UInt         = #line) ->
-  (target: Expression, iter: Expression, body: [Statement], orelse: [Statement])? {
+  (target: Expression, iter: Expression, body: [Statement], orElse: [Statement])? {
 
-    if case let StatementKind.asyncFor(target: value0, iter: value1, body: value2, orelse: value3) = stmt.kind {
+    if case let StatementKind.asyncFor(target: value0, iter: value1, body: value2, orElse: value3) = stmt.kind {
       return (value0, value1, value2, value3)
     }
 
@@ -198,9 +198,9 @@ extension DestructStatementKind {
   internal func destructWhile(_ stmt: Statement,
                               file:   StaticString = #file,
                               line:   UInt         = #line) ->
-  (test: Expression, body: [Statement], orelse: [Statement])? {
+  (test: Expression, body: [Statement], orElse: [Statement])? {
 
-    if case let StatementKind.while(test: value0, body: value1, orelse: value2) = stmt.kind {
+    if case let StatementKind.while(test: value0, body: value1, orElse: value2) = stmt.kind {
       return (value0, value1, value2)
     }
 
@@ -211,9 +211,9 @@ extension DestructStatementKind {
   internal func destructIf(_ stmt: Statement,
                            file:   StaticString = #file,
                            line:   UInt         = #line) ->
-  (test: Expression, body: [Statement], orelse: [Statement])? {
+  (test: Expression, body: [Statement], orElse: [Statement])? {
 
-    if case let StatementKind.if(test: value0, body: value1, orelse: value2) = stmt.kind {
+    if case let StatementKind.if(test: value0, body: value1, orElse: value2) = stmt.kind {
       return (value0, value1, value2)
     }
 

@@ -46,7 +46,7 @@ extension StatementKind: CustomStringConvertible {
       return "(del \(join(v)))"
     case let .assign(targets, value):
       return "(= \(join(targets)) \(value))"
-    case let .annAssign(target, annotation, value, simple):
+    case let .annAssign(target, annotation, value, _):
       let v = value.map { " " + describe($0) } ?? ""
       return "(= \(target):\(annotation)\(v))"
     case let .augAssign(target: target, op: op, value: value):
@@ -57,8 +57,22 @@ extension StatementKind: CustomStringConvertible {
 //
 //    case .while(let test, let body, let orelse):
 //
-//    case .if(let test, let body, let orelse):
-//
+    case let .if(test, body, orElse):
+      var b: String?
+      switch body.count {
+      case 0: b = "()"
+      case 1: b = describe(body[0])
+      default: b = "(\(join(body)))"
+      }
+
+      var e: String?
+      switch orElse.count {
+      case 0: e = ""
+      case 1: e = " else: \(orElse[0])"
+      default: e = " else: (\(join(body)))"
+      }
+
+      return "(if \(test) then: \(b ?? "")\(e ?? ""))"
     case let .raise(exc, cause):
       let e = exc.map { " " + describe($0) } ?? ""
       let c = cause.map { " from: " + describe($0) } ?? ""
@@ -373,13 +387,15 @@ extension Arguments: CustomStringConvertible, CustomDebugStringConvertible {
   }
 
   public var debugDescription: String {
+    let k = self.kwarg.map { describe($0) } ?? "[]"
+
     var result = ""
     result += "args: \(self.args), "
     result += "defaults: \(self.defaults), "
     result += "vararg: \(self.vararg), "
     result += "kwOnlyArgs: \(self.kwOnlyArgs), "
     result += "kwOnlyDefaults: \(self.kwOnlyDefaults), "
-    result += "kwarg: \(self.kwarg), "
+    result += "kwarg: \(k), "
     result += "start: \(self.start), "
     result += "end: \(self.end))"
 

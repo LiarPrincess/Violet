@@ -94,13 +94,13 @@ public enum StatementKind: Equatable {
   /// - `iter` holds the item to be looped over, again as a single node.
   /// - `body` and `orelse` contain lists of nodes to execute. Those in orelse
   /// are executed if the loop finishes normally, rather than via a break statement.
-  case `for`(target: Expression, iter: Expression, body: [Statement], orelse: [Statement])
+  case `for`(target: Expression, iter: Expression, body: [Statement], orElse: [Statement])
   /// An `async for` definition.
   /// Has the same fields as `For`.
-  case asyncFor(target: Expression, iter: Expression, body: [Statement], orelse: [Statement])
+  case asyncFor(target: Expression, iter: Expression, body: [Statement], orElse: [Statement])
   /// A `while` loop.
   /// - `test` holds the condition, such as a Compare node.
-  case `while`(test: Expression, body: [Statement], orelse: [Statement])
+  case `while`(test: Expression, body: [Statement], orElse: [Statement])
   /// An if statement.
   /// - `test` holds a single node, such as a Compare node.
   /// - `body` and `orelse` each hold a list of nodes.
@@ -108,7 +108,7 @@ public enum StatementKind: Equatable {
   /// - `elif` clauses don’t have a special representation in the AST,
   /// but rather appear as extra `If` nodes within the `orelse` section
   /// of the previous one.
-  case `if`(test: Expression, body: [Statement], orelse: [Statement])
+  case `if`(test: Expression, body: [Statement], orElse: [Statement])
   /// A `with` block.
   /// - `items` is a list of withitem nodes representing the context managers.
   /// - `body` is the indented block inside the context.

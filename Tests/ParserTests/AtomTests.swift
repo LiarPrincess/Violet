@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class AtomTest: XCTestCase, Common, DestructExpressionKind {
+class AtomTests: XCTestCase, Common, DestructExpressionKind {
 
   func test_none() {
     var parser = self.createExprParser(

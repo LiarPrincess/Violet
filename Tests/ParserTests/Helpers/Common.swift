@@ -65,7 +65,7 @@ extension Common {
       }
 
       guard statements.count == 1 else {
-        let msg = "More than 1 statement: count \(statements.count)"
+        let msg = "Got \(statements.count) statements (expected 1)."
         XCTAssert(false, msg, file: file, line: line)
         return nil
       }

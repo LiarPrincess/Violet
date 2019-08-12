@@ -94,13 +94,22 @@ public struct Parser {
   }
 
   private mutating func parseByMode() throws -> AST {
+    // TODO: take this from grammar (PyAST_FromNodeObject)
     switch self.mode {
     case .single:
       throw self.unimplemented()
 
     case .fileInput:
-      let stmt = try self.smallStmt(closingTokens: [.semicolon, .newLine, .eof])
-      return .fileInput([stmt])
+      let closingTokens: [TokenKind] = [.semicolon, .newLine, .eof]
+
+      var stmt: Statement?
+      if let s = try self.compoundStmtOrNop(closingTokens: closingTokens) {
+        stmt = s
+      } else {
+        stmt = try self.smallStmt(closingTokens: [.semicolon, .newLine, .eof])
+      }
+
+      return .fileInput([stmt!])
 
     case .eval:
       let expr = try self.expression()
