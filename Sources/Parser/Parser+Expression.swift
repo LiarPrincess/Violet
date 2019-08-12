@@ -27,11 +27,8 @@ extension Parser {
 
     try self.advance() // if
     let test = try self.orTest()
-
-    guard self.peek.kind == .else else {
-      throw self.failUnexpectedToken(expected: .else)
-    }
-
+    try self.consumeOrThrow(.else)
+    
     try self.advance() // else
     let right = try self.test()
 
@@ -65,10 +62,7 @@ extension Parser {
     try self.advance() // lambda
 
     let args = try self.varArgsList(closingToken: .colon)
-
-    guard try self.consumeIf(.colon) else {
-      throw self.failUnexpectedToken(expected: .colon)
-    }
+    try self.consumeOrThrow(.colon)
 
     let body = try self.test()
     let kind = ExpressionKind.lambda(args: args, body: body)
@@ -88,10 +82,7 @@ extension Parser {
     try self.advance() // lambda
 
     let args = try self.varArgsList(closingToken: .colon)
-
-    guard try self.consumeIf(.colon) else {
-      throw self.failUnexpectedToken(expected: .colon)
-    }
+    try self.consumeOrThrow(.colon)
 
     let body = try self.testNoCond()
     let kind = ExpressionKind.lambda(args: args, body: body)
@@ -175,10 +166,7 @@ extension Parser {
       try self.advance() // op
 
       if first.kind == .not {
-        if self.peek.kind != .in {
-          throw self.failUnexpectedToken(expected: .in)
-        }
-        try self.advance() // in
+        try self.consumeOrThrow(.in)
       }
 
       if first.kind == .is && self.peek.kind == .not {

@@ -49,7 +49,20 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
   // MARK: - Subscript index
 
-  // TODO: a[]
+  /// a[]
+  func test_subscript_empty_throws() {
+    var parser = self.createExprParser(
+      self.token(.identifier("a"), start: loc0, end: loc1),
+      self.token(.leftSqb,         start: loc2, end: loc3),
+      self.token(.rightSqb,        start: loc4, end: loc5)
+    )
+
+    if let error = self.error(&parser) {
+      let kind = ParserErrorKind.unexpectedToken(.rightSqb, expected: [.expression])
+      XCTAssertEqual(error.kind, kind)
+      XCTAssertEqual(error.location, loc4)
+    }
+  }
 
   /// a[1]
   func test_subscript_index() {

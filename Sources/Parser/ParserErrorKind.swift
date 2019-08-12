@@ -1,3 +1,5 @@
+import Lexer
+
 public enum ParserErrorKind: Equatable {
 
   // MARK: - Function/lambda definition
@@ -60,6 +62,13 @@ public enum ParserErrorKind: Equatable {
   /// Assignment to yield expression not possible
   case illegalAssignmentToYield
 
+  // MARK: - General
+
+  // Unexpected end of file, expected: [expected].
+  case unexpectedEOF(expected: [ExpectedToken])
+  // Unexpected 'tokenKind', expected: 'expected'.
+  case unexpectedToken(TokenKind, expected: [ExpectedToken])
+
   case unimplemented(String)
 }
 
@@ -114,6 +123,27 @@ extension ParserErrorKind: CustomStringConvertible {
       return "Illegal expression for augmented assignment."
     case .illegalAssignmentToYield:
       return "Assignment to yield expression not possible."
+
+    case let .unexpectedEOF(expected):
+      switch expected.count {
+      case 0:
+        return "Unexpected end of file."
+      case 1:
+        return "Unexpected end of file, expected \(expected[0])."
+      default:
+        let e = expected.map { String(describing: $0) }.joined(separator: ", ")
+        return "Unexpected end of file, expected any of: \(e)."
+      }
+    case let .unexpectedToken(tokenKind, expected):
+      switch expected.count {
+      case 0:
+        return "Unexpected '\(tokenKind)'."
+      case 1:
+        return "Unexpected '\(tokenKind)', expected \(expected[0])."
+      default:
+        let e = expected.map { String(describing: $0) }.joined(separator: ", ")
+        return "Unexpected '\(tokenKind)', expected any of: \(e)."
+      }
 
     case .unimplemented(let msg):
       return "Unimplemented: '\(msg)'"

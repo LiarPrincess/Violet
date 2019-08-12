@@ -1,7 +1,16 @@
+import Lexer
+
+// Really regretting that we don't have prper union types in Swift
+// (but not really sure how would that work).
+// We can also use `case token(TokenKind)`, but in most common use case
+// we know which token we expected and now we have to wrap it in .token(X)
+// which is not very ergonomic.
 public enum ExpectedToken {
 
-  // TODO: remove
-  case noIdea
+  case expression
+  case slice
+
+  case eof
 
   case identifier
   case string
@@ -15,6 +24,7 @@ public enum ExpectedToken {
   case indent
   case dedent
   case newLine
+  case comment
 
   /** ( */ case leftParen
   /** [ */ case leftSqb
@@ -110,4 +120,118 @@ public enum ExpectedToken {
   /** `while` keyword */    case `while`
   /** `with` keyword */     case with
   /** `yield` keyword */    case yield
+}
+
+extension TokenKind {
+  public var expected: ExpectedToken {
+    switch self {
+    case .eof: return .eof
+
+    case .identifier: return .identifier
+    case .string: return .string
+    case .formatString: return .string
+    case .int: return .int
+    case .float: return .float
+    case .imaginary: return .imaginary
+    case .bytes: return .bytes
+
+    case .indent: return .indent
+    case .dedent: return .dedent
+    case .newLine: return .newLine
+    case .comment: return .comment
+
+    case .leftParen: return .leftParen
+    case .leftSqb: return .leftSqb
+    case .leftBrace: return .leftBrace
+    case .rightParen: return .rightParen
+    case .rightSqb: return .rightSqb
+    case .rightBrace: return .rightBrace
+
+    case .colon: return .colon
+    case .comma: return .comma
+    case .semicolon: return .semicolon
+    case .ellipsis: return .ellipsis
+
+    case .plus: return .plus
+    case .minus: return .minus
+    case .star: return .star
+    case .slash: return .slash
+    case .vbar: return .vbar
+    case .amper: return .amper
+    case .circumflex: return .circumflex
+    case .at: return .at
+
+    case .plusEqual: return .plusEqual
+    case .minusEqual: return .minusEqual
+    case .starEqual: return .starEqual
+    case .slashEqual: return .slashEqual
+    case .percentEqual: return .percentEqual
+    case .vbarEqual: return .vbarEqual
+    case .amperEqual: return .amperEqual
+    case .circumflexEqual: return .circumflexEqual
+    case .atEqual: return .atEqual
+
+    case .less: return .less
+    case .greater: return .greater
+    case .equal: return .equal
+
+    case .equalEqual: return .equalEqual
+    case .notEqual: return .notEqual
+    case .lessEqual: return .lessEqual
+    case .greaterEqual: return .greaterEqual
+
+    case .leftShift: return .leftShift
+    case .rightShift: return .rightShift
+    case .starStar: return .starStar
+    case .slashSlash: return .slashSlash
+
+    case .leftShiftEqual: return .leftShiftEqual
+    case .rightShiftEqual: return .rightShiftEqual
+    case .starStarEqual: return .starStarEqual
+    case .slashSlashEqual: return .slashSlashEqual
+
+    case .dot: return .dot
+    case .percent: return .percent
+    case .tilde: return .tilde
+    case .rightArrow: return .rightArrow
+    case .colonEqual: return .colonEqual
+
+    case .none: return .none
+    case .false: return .false
+    case .true: return .true
+
+    case .and: return .and
+    case .as: return .as
+    case .assert: return .assert
+    case .async: return .async
+    case .await: return .await
+    case .break: return .break
+    case .class: return .class
+    case .continue: return .continue
+    case .def: return .def
+    case .del: return .del
+    case .elif: return .elif
+    case .else: return .else
+    case .except: return .except
+    case .finally: return .finally
+    case .for: return .for
+    case .from: return .from
+    case .global: return .global
+    case .if: return .if
+    case .import: return .import
+    case .in: return .in
+    case .is: return .is
+    case .lambda: return .lambda
+    case .nonlocal: return .nonlocal
+    case .not: return .not
+    case .or: return .or
+    case .pass: return .pass
+    case .raise: return .raise
+    case .return: return .return
+    case .try: return .try
+    case .while: return .while
+    case .with: return .with
+    case .yield: return .yield
+    }
+  }
 }

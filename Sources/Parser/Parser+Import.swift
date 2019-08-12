@@ -42,7 +42,7 @@ extension Parser {
       return try self.parseImportFrom(closingTokens: closingTokens)
     default:
       assert(false)
-      throw self.failUnexpectedToken(expected: .import, .from)
+      throw self.unexpectedToken(expected: [.import, .from])
     }
   }
 
@@ -146,7 +146,7 @@ extension Parser {
     let isDotsOnly = self.peek.kind == .import
     if isDotsOnly { // 'from .. import'
       guard dotCount > 0 else {
-        throw self.failUnexpectedToken(expected: .dot, .identifier)
+        throw self.unexpectedToken(expected: [.dot, .identifier])
       }
     } else { // 'from ..name import'
       module = try self.dottedName()

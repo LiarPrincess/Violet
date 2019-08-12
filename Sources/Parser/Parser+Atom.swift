@@ -71,7 +71,7 @@ extension Parser {
       return try self.simpleAtom(.false, from: token)
 
     default:
-      throw self.failUnexpectedToken(expected: .noIdea)
+      throw self.unexpectedToken(expected: [.expression])
     }
   }
 

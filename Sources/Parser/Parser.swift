@@ -130,12 +130,12 @@ public struct Parser {
       return value
     }
 
-    throw self.unimplemented()
+    throw self.unexpectedToken(expected: [.identifier])
   }
 
   internal mutating func consumeOrThrow(_ kind: TokenKind) throws {
     guard try self.consumeIf(kind) else {
-      throw self.unimplemented("consumeOrThrow: \(kind)")
+      throw self.unexpectedToken(expected: [kind.expected])
     }
   }
 
@@ -175,21 +175,30 @@ public struct Parser {
     return ParserError(kind, location: location ?? self.peek.start)
   }
 
+  internal func unexpectedToken(token: Token? = nil,
+                                location: SourceLocation? = nil,
+                                expected: [ExpectedToken] = []) -> ParserError {
+
+    let tok = token ?? self.peek
+    switch tok.kind {
+    case .eof:
+      return self.error(
+        .unexpectedEOF(expected: expected),
+        location: location
+      )
+    default:
+      return self.error(
+        .unexpectedToken(tok.kind, expected: expected),
+        location: location
+      )
+    }
+  }
+
+  // MARK: - Unimplemented
+
   @available(*, deprecated, message: "Unimplemented")
   internal func unimplemented(_ message: String? = nil,
                               function:  StaticString = #function) -> ParserError {
     return self.error(.unimplemented("\(function): \(message ?? "")"))
-  }
-
-  // TODO: unexpectedTokenError()
-  internal func failUnexpectedToken(expected: ExpectedToken...,
-                                    function:  StaticString = #function) -> Error {
-    switch self.peek.kind {
-    case .eof:
-      // self.failUnexpectedEOF
-      return self.error(.unimplemented("\(function): unexpected eof, expected: \(expected)"))
-    default:
-      return self.error(.unimplemented("\(function): unexpected \(self.peek.kind), expected: \(expected)"))
-    }
   }
 }

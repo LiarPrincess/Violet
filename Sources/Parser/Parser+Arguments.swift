@@ -135,7 +135,7 @@ extension Parser {
       case .star:       try self.parseVarargs(ir: &ir, parseArg: parseArg)
       case .starStar:   try self.parseKwargs(ir: &ir, parseArg: parseArg)
       default:
-        throw self.unimplemented("\(self.peek.kind)")
+        throw self.unexpectedToken(expected: [.identifier, .star, .starStar])
       }
 
       // After the argument we have either comma or closing, else error
@@ -143,8 +143,7 @@ extension Parser {
         ir.end = self.peek.end
         try self.advance() // ,
       } else if self.peek.kind != closingToken {
-        // TODO: add 'closingToken'
-        throw self.failUnexpectedToken(expected: .comma)
+        throw self.unexpectedToken(expected: [.comma, closingToken.expected])
       }
     }
 
