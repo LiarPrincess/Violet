@@ -1,4 +1,4 @@
-import Lexer
+import Core
 
 internal var loc0:  SourceLocation { return getLocation( 0) }
 internal var loc1:  SourceLocation { return getLocation( 1) }

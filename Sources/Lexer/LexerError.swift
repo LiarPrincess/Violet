@@ -1,3 +1,5 @@
+import Core
+
 public struct LexerError: Error, Equatable {
 
   /// Type of the error.

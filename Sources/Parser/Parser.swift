@@ -1,3 +1,4 @@
+import Core
 import Lexer
 
 // https://docs.python.org/3/reference/index.html
@@ -162,7 +163,7 @@ public struct Parser {
   internal func statement(_ kind: StatementKind,
                           start:  SourceLocation,
                           end:    SourceLocation) -> Statement {
-    return Statement(kind: kind, start: start, end: end)
+    return Statement(kind, start: start, end: end)
   }
 
   internal func expression(_ kind: ExpressionKind,

@@ -123,15 +123,15 @@ extension TokenKind: CustomStringConvertible {
     switch self {
     case .eof: return "eof"
 
-    case let .identifier(val):   return "identifier(\(val))"
-    case let .string(val):       return "string(\(val))"
-    case let .formatString(val): return "formatString(\(val)):"
+    case let .identifier(val):   return "identifier (value: \"\(val)\")"
+    case let .string(val):       return "string (value: \"\(val)\")"
+    case let .formatString(val): return "format string (value: \"\(val)\"):"
 
-    case let .int(val):       return "int(\(val))"
-    case let .float(val):     return "float(\(val))"
-    case let .imaginary(val): return "imaginary(\(val))"
+    case let .int(val):       return "int (value: \(val))"
+    case let .float(val):     return "float (value: \(val))"
+    case let .imaginary(val): return "imaginary (value: \(val))"
 
-    case let .bytes(val): return "data(\(val))"
+    case let .bytes(val): return "data (value: \(val))"
 
     case .indent:  return "indent"
     case .dedent:  return "dedent"
@@ -139,7 +139,7 @@ extension TokenKind: CustomStringConvertible {
     case .comment(let s):
       let maxCount = 20
       let dotDotDot = s.count > maxCount ? "..." : ""
-      return "comment(\"\(s.prefix(maxCount - 3))\(dotDotDot)\")"
+      return "comment (value: \"\(s.prefix(maxCount - 3))\(dotDotDot)\")"
 
     case .leftParen:  return "("
     case .leftSqb:    return "["

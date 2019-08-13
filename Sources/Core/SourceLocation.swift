@@ -16,16 +16,16 @@ public struct SourceLocation: Equatable {
     self.column = column
   }
 
-  internal mutating func advanceLine() {
+  public mutating func advanceLine() {
     self.line += 1
     self.column = 0
   }
 
-  internal mutating func advanceColumn() {
+  public mutating func advanceColumn() {
     self.column += 1
   }
 
-  internal var next: SourceLocation {
+  public var next: SourceLocation {
     let line = self.line
     let column = self.column + 1
     return SourceLocation(line: line, column: column)

@@ -1,4 +1,5 @@
 import XCTest
+import Core
 @testable import Lexer
 
 // swiftlint:disable file_length

@@ -1,4 +1,5 @@
 // swiftlint:disable function_body_length
+// swiftlint:disable file_length
 
 /// Extract associated values from enums. For unit tests.
 internal func emitAstDestruction(entities: [Entity]) {

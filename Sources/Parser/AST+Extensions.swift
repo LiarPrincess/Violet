@@ -2,13 +2,13 @@ import Foundation
 import Core
 import Lexer
 
-//extension Statement {
-//  public init(_ kind: StatementKind,
-//              start: SourceLocation,
-//              end: SourceLocation) {
-//    self.init(kind: kind, start: start, end: end)
-//  }
-//}
+extension Statement {
+  public init(_ kind: StatementKind,
+              start: SourceLocation,
+              end: SourceLocation) {
+    self.init(kind: kind, start: start, end: end)
+  }
+}
 
 extension Expression {
   public init(_ kind: ExpressionKind,

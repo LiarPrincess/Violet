@@ -71,7 +71,7 @@ extension StatementKind: CustomStringConvertible {
 
 //    case .asyncFor(let target, let iter, let body, let orElse):
 
-    case .while(let test, let body, let orElse):
+    case let .while(test, body, orElse):
       var b: String?
       switch body.count {
       case 0: b = "()"
