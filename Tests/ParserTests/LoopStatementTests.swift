@@ -7,10 +7,12 @@ import Lexer
 // https://www.youtube.com/watch?v=tTUZswZHsWQ
 // (First part of the song is in 'if' tests)
 
-class LoopStatementTests: XCTestCase, Common,
-                                    DestructStatementKind,
-                                    DestructExpressionKind,
-                                    DestructStringGroup {
+class LoopStatementTests: XCTestCase,
+  Common,
+  DestructStatementKind,
+  DestructExpressionKind,
+  DestructStringGroup {
+
   // MARK: - While
 
   /// while a: "Since the morning that we came"

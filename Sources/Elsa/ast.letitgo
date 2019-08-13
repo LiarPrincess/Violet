@@ -129,7 +129,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- `try` block.
   -- All attributes are list of nodes to execute, except for handlers,
   -- which is a list of ExceptHandler nodes.
-  {- | Try(stmt* body, excepthandler* handlers, stmt* orelse, stmt* finalbody) -}
+  | Try(stmt* body, ExceptHandler* handlers, stmt* orElse, stmt* finalBody)
   -- An assertion.
   -- - `test` holds the condition, such as a Compare node.
   -- - `msg` holds the failure message, normally a Str node.
@@ -178,6 +178,21 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   expr? optionalVars
 )
 
+-- A single except clause.
+@struct ExceptHandler = (
+  -- Exception type it will match, typically a Name node
+  -- (or `nil` for a catch-all except: clause).
+  expr? type,
+  -- Raw string for the name to hold the exception,
+  -- or `nil` if the clause doesn’t have as foo.
+  identifier? name,
+  -- List of handler nodes.
+  stmt* body,
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
+)
 
 -- https://docs.python.org/3/reference/expressions.html
 @struct expr = (
@@ -416,11 +431,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Location just after the last character in the source code.
   loc end
 )
-
-{-
--- excepthandler = ExceptHandler(expr? type, identifier? name, stmt* body)
---                 attributes (int lineno, int col_offset)
--}
 
 -- The arguments for a function passed by value
 -- (where the value is always an object reference, not the value of the object).

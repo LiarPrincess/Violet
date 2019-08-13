@@ -92,7 +92,7 @@ public enum StatementKind: Equatable {
   /// A `for` loop.
   /// - `target` holds the variable(s) the loop assigns to, as a single Name, Tuple or List node.
   /// - `iter` holds the item to be looped over, again as a single node.
-  /// - `body` and `orelse` contain lists of nodes to execute. Those in orelse
+  /// - `body` and `orElse` contain lists of nodes to execute. Those in orElse
   /// are executed if the loop finishes normally, rather than via a break statement.
   case `for`(target: Expression, iter: Expression, body: [Statement], orElse: [Statement])
   /// An `async for` definition.
@@ -103,10 +103,10 @@ public enum StatementKind: Equatable {
   case `while`(test: Expression, body: [Statement], orElse: [Statement])
   /// An if statement.
   /// - `test` holds a single node, such as a Compare node.
-  /// - `body` and `orelse` each hold a list of nodes.
+  /// - `body` and `orElse` each hold a list of nodes.
   /// 
   /// - `elif` clauses don’t have a special representation in the AST,
-  /// but rather appear as extra `If` nodes within the `orelse` section
+  /// but rather appear as extra `If` nodes within the `orElse` section
   /// of the previous one.
   case `if`(test: Expression, body: [Statement], orElse: [Statement])
   /// A `with` block.
@@ -124,6 +124,7 @@ public enum StatementKind: Equatable {
   /// `try` block.
   /// All attributes are list of nodes to execute, except for handlers,
   /// which is a list of ExceptHandler nodes.
+  case `try`(body: [Statement], handlers: [ExceptHandler], orElse: [Statement], finalBody: [Statement])
   /// An assertion.
   /// - `test` holds the condition, such as a Compare node.
   /// - `msg` holds the failure message, normally a Str node.
@@ -182,6 +183,31 @@ public struct WithItem: Equatable {
   public init(contextExpr: Expression, optionalVars: Expression?) {
     self.contextExpr = contextExpr
     self.optionalVars = optionalVars
+  }
+}
+
+/// A single except clause.
+public struct ExceptHandler: Equatable {
+
+  /// Exception type it will match, typically a Name node
+  /// (or `nil` for a catch-all except: clause).
+  public let type: Expression?
+  /// Raw string for the name to hold the exception,
+  /// or `nil` if the clause doesn’t have as foo.
+  public let name: String?
+  /// List of handler nodes.
+  public let body: [Statement]
+  /// Location of the first character in the source code.
+  public let start: SourceLocation
+  /// Location just after the last character in the source code.
+  public let end: SourceLocation
+
+  public init(type: Expression?, name: String?, body: [Statement], start: SourceLocation, end: SourceLocation) {
+    self.type = type
+    self.name = name
+    self.body = body
+    self.start = start
+    self.end = end
   }
 }
 

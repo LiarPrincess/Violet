@@ -260,6 +260,19 @@ extension DestructStatementKind {
     return nil
   }
 
+  internal func destructTry(_ stmt: Statement,
+                            file:   StaticString = #file,
+                            line:   UInt         = #line) ->
+  (body: [Statement], handlers: [ExceptHandler], orElse: [Statement], finalBody: [Statement])? {
+
+    if case let StatementKind.try(body: value0, handlers: value1, orElse: value2, finalBody: value3) = stmt.kind {
+      return (value0, value1, value2, value3)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
   internal func destructAssert(_ stmt: Statement,
                                file:   StaticString = #file,
                                line:   UInt         = #line) ->
