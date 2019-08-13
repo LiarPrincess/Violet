@@ -11,7 +11,7 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
 
-class FStringParserTest: XCTestCase, DestructStringGroup {
+class FStringTests: XCTestCase, DestructStringGroup {
 
   // MARK: - Empty
 
