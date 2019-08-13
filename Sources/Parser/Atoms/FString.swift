@@ -7,7 +7,7 @@ import Foundation
 // Python -> ast.c
 //  parsestrplus(struct compiling *c, const node *n)
 
-// It is FString, normal rules do not take effect here:
+// It is FString (basically one of the hardest things), so normal rules do apply:
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
@@ -29,6 +29,7 @@ public enum FStringError: Error, Equatable {
   /// f-string: invalid conversion character: expected 's', 'r', or 'a'
   case invalidConversion(UnicodeScalar)
 
+  // TODO: Remove
   case unimplemented
 }
 

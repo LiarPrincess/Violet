@@ -4,10 +4,6 @@ import Lexer
 
 extension Parser {
 
-  internal mutating func expression() throws -> Expression {
-    return try self.test()
-  }
-
   // MARK: - Test
 
   /// `test: or_test ['if' or_test 'else' test] | lambdef`
@@ -28,8 +24,6 @@ extension Parser {
     try self.advance() // if
     let test = try self.orTest()
     try self.consumeOrThrow(.else)
-    
-    try self.advance() // else
     let right = try self.test()
 
     let kind = ExpressionKind.ifExpression(test: test, body: left, orElse: right)
@@ -374,96 +368,14 @@ extension Parser {
     return atomExpr
   }
 
-  // MARK: - Expr list
+  // MARK: - Test or star expr
 
-  internal enum ExprListResult {
-    case single(Expression)
-    case tuple(NonEmptyArray<Expression>, end: SourceLocation)
-
-    internal func toExpression(start: SourceLocation) -> Expression {
-      switch self {
-      case let .single(e):
-        return e
-      case let .tuple(es, end):
-        return Expression(.tuple(Array(es)), start: start, end: end)
-      }
+  /// Star expression if possible else test.
+  /// There is no rule for this, but it is commonly used.
+  internal mutating func testOrStarExpr() throws -> Expression {
+    if let expr = try self.starExprOrNop() {
+      return expr
     }
-  }
-
-  /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
-  internal mutating func exprList(closingTokens: [TokenKind])
-    throws -> ExprListResult {
-
-    let first = try self.starExprOrNop() ?? self.expr()
-    var end = first.end
-
-    var additionalElements = [Expression]()
-    while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
-      try self.advance() // ,
-
-      let test = try self.starExprOrNop() ?? self.expr()
-      additionalElements.append(test)
-      end = test.end
-    }
-
-    let hasTrailingComma = self.peek.kind == .comma
-    if hasTrailingComma {
-      end = self.peek.end
-      try self.advance() // ,
-    }
-
-    // if we have coma then it is a tuple! (even if it has only 1 element!)
-    if additionalElements.isEmpty && !hasTrailingComma {
-      return .single(first)
-    }
-
-    let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-    return .tuple(array, end: end)
-  }
-
-  // MARK: - Test list
-
-  internal enum TestListResult {
-    case single(Expression)
-    case tuple(NonEmptyArray<Expression>, end: SourceLocation)
-
-    internal func toExpression(start: SourceLocation) -> Expression {
-      switch self {
-      case let .single(e):
-        return e
-      case let .tuple(es, end):
-        return Expression(.tuple(Array(es)), start: start, end: end)
-      }
-    }
-  }
-
-  /// `testlist: test (',' test)* [',']`
-  internal mutating func testList(closingTokens: [TokenKind])
-    throws -> TestListResult {
-
-    let first = try self.test()
-    var end = first.end
-
-    var additionalElements = [Expression]()
-    while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
-      try self.advance() // ,
-
-      let test = try self.test()
-      additionalElements.append(test)
-      end = test.end
-    }
-
-    let hasTrailingComma = self.peek.kind == .comma
-    if hasTrailingComma {
-      end = self.peek.end
-      try self.advance() // ,
-    }
-
-    if additionalElements.isEmpty && !hasTrailingComma {
-      return .single(first)
-    }
-
-    let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-    return .tuple(array, end: end)
+    return try self.test()
   }
 }

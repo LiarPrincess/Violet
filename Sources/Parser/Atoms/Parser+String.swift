@@ -29,13 +29,6 @@ extension Parser {
     return self.expression(.bytes(data), start: start, end: end)
   }
 
-  private func isBytes(_ token: Token) -> Bool {
-    if case TokenKind.bytes = token.kind {
-      return true
-    }
-    return false
-  }
-
   // MARK: - String
 
   /// For normal strings and f-strings, concatenate them together.
@@ -71,6 +64,15 @@ extension Parser {
     let group = try string.compile()
     let kind = ExpressionKind.string(group)
     return self.expression(kind, start: start, end: end)
+  }
+
+  // MARK: - Is xxx
+
+  private func isBytes(_ token: Token) -> Bool {
+    if case TokenKind.bytes = token.kind {
+      return true
+    }
+    return false
   }
 
   private func isString(_ token: Token) -> Bool {

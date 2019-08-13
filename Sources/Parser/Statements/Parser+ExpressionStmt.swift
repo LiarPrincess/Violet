@@ -5,8 +5,6 @@ import Lexer
 // Python -> ast.c
 //  ast_for_expr_stmt(struct compiling *c, const node *n)
 
-// swiftlint:disable file_length
-
 extension Parser {
 
   /// ```c
@@ -228,51 +226,5 @@ extension Parser {
         throw self.error(.illegalAssignmentToYield, location: expr.start)
       }
     }
-  }
-
-  // MARK: - Test list star expression
-
-  internal enum TestListStarExprResult {
-    case single(Expression)
-    case tuple(NonEmptyArray<Expression>, end: SourceLocation)
-
-    internal func toExpression(start: SourceLocation) -> Expression {
-      switch self {
-      case let .single(e):
-        return e
-      case let .tuple(es, end):
-        return Expression(.tuple(Array(es)), start: start, end: end)
-      }
-    }
-  }
-
-  /// `testlist_star_expr: (test|star_expr) (',' (test|star_expr))* [',']`
-  private mutating func testListStarExpr(closingTokens: [TokenKind])
-    throws -> TestListStarExprResult {
-
-    let first = try self.testOrStarExpr()
-    var end = first.end
-
-    var additionalElements = [Expression]()
-    while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
-      try self.advance() // ,
-
-      let element = try self.testOrStarExpr()
-      additionalElements.append(element)
-      end = element.end
-    }
-
-    let hasTrailingComma = self.peek.kind == .comma
-    if hasTrailingComma {
-      end = self.peek.end
-      try self.advance() // ,
-    }
-
-    if additionalElements.isEmpty && !hasTrailingComma {
-      return .single(first)
-    }
-
-    let array = NonEmptyArray(first: first, rest: additionalElements)
-    return .tuple(array, end: end)
   }
 }

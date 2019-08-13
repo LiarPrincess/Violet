@@ -112,7 +112,7 @@ public struct Parser {
       return .fileInput([stmt!])
 
     case .eval:
-      let expr = try self.expression()
+      let expr = try self.test()
       return AST.expression(expr)
     }
   }
