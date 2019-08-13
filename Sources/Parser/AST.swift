@@ -112,6 +112,10 @@ public enum StatementKind: Equatable {
   /// A `with` block.
   /// - `items` is a list of withitem nodes representing the context managers.
   /// - `body` is the indented block inside the context.
+  case with(items: [WithItem], body: [Statement])
+  /// An `async with` definition.
+  /// Has the same fields as `With`.
+  case asyncWith(items: [WithItem], body: [Statement])
   /// Raising an exception.
   /// - `exc` is the exception object to be raised, normally a Call or Name
   /// or None for a standalone raise.
@@ -164,6 +168,20 @@ public struct Alias: Equatable {
     self.asName = asName
     self.start = start
     self.end = end
+  }
+}
+
+/// A single context manager in a `with` block.
+public struct WithItem: Equatable {
+
+  /// Context manager (often a Call node).
+  public let contextExpr: Expression
+  /// Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
+  public let optionalVars: Expression?
+
+  public init(contextExpr: Expression, optionalVars: Expression?) {
+    self.contextExpr = contextExpr
+    self.optionalVars = optionalVars
   }
 }
 

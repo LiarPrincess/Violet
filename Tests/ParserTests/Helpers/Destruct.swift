@@ -221,6 +221,32 @@ extension DestructStatementKind {
     return nil
   }
 
+  internal func destructWith(_ stmt: Statement,
+                             file:   StaticString = #file,
+                             line:   UInt         = #line) ->
+  (items: [WithItem], body: [Statement])? {
+
+    if case let StatementKind.with(items: value0, body: value1) = stmt.kind {
+      return (value0, value1)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
+  internal func destructAsyncWith(_ stmt: Statement,
+                                  file:   StaticString = #file,
+                                  line:   UInt         = #line) ->
+  (items: [WithItem], body: [Statement])? {
+
+    if case let StatementKind.asyncWith(items: value0, body: value1) = stmt.kind {
+      return (value0, value1)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
   internal func destructRaise(_ stmt: Statement,
                               file:   StaticString = #file,
                               line:   UInt         = #line) ->

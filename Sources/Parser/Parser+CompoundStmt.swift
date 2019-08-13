@@ -4,6 +4,8 @@ import Lexer
 // Python -> ast.c
 //  ast_for_stmt(struct compiling *c, const node *n)
 
+// swiftlint:disable file_length
+
 extension Parser {
 
   /// `suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT`
@@ -41,7 +43,7 @@ extension Parser {
     case .try:
       break
     case .with:
-      break
+      return try self.withStmt(closingTokens: closingTokens)
     case .async:
       break
 
@@ -216,5 +218,46 @@ extension Parser {
 
     let end = orElse?.last.end ?? body.last.end
     return self.statement(kind, start: forStart, end: end)
+  }
+
+  // MARK: - With
+
+  /// `with_stmt: 'with' with_item (',' with_item)*  ':' suite`
+  internal mutating func withStmt(closingTokens: [TokenKind]) throws -> Statement {
+    assert(self.peek.kind == .with)
+
+    let start = self.peek.start
+    try self.advance() // with
+
+    let first = try self.withItem()
+
+    var items = [WithItem]()
+    items.append(first)
+
+    while self.peek.kind == .comma {
+      try self.advance() // ,
+
+      let item = try self.withItem()
+      items.append(item)
+    }
+
+    try self.consumeOrThrow(.colon)
+    let body = try self.suite(closingTokens: closingTokens)
+
+    let kind = StatementKind.with(items: items, body: Array(body))
+    return self.statement(kind, start: start, end: body.last.end)
+  }
+
+  /// `with_item: test ['as' expr]`
+  private mutating func withItem() throws -> WithItem {
+    let context = try self.test()
+
+    var optionalVars: Expression?
+    if self.peek.kind == .as {
+      try self.advance() // as
+      optionalVars = try self.expr()
+    }
+
+    return WithItem(contextExpr: context, optionalVars: optionalVars)
   }
 }

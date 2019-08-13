@@ -184,9 +184,10 @@ public struct Parser {
     return ParserError(kind, location: location ?? self.peek.start)
   }
 
+  // swiftlint:disable:next function_default_parameter_at_end
   internal func unexpectedToken(token: Token? = nil,
                                 location: SourceLocation? = nil,
-                                expected: [ExpectedToken] = []) -> ParserError {
+                                expected: [ExpectedToken]) -> ParserError {
 
     let tok = token ?? self.peek
     switch tok.kind {
