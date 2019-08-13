@@ -7,10 +7,7 @@ import Lexer
 // swiftlint:disable file_length
 
 class TryStatementTests: XCTestCase,
-  Common,
-  DestructStatementKind,
-  DestructExpressionKind,
-  DestructStringGroup {
+  Common, DestructStatementKind, DestructExpressionKind, DestructStringGroup {
 
   // MARK: - No else or finally
 
@@ -131,7 +128,6 @@ class TryStatementTests: XCTestCase,
 
   /// try: "Mulan"
   /// except Disguise as Soldier: "Ping"
-  /// ^OMG this works soo... well
   func test_except_type_withName() {
     var parser = self.createStmtParser(
       self.token(.try,                    start: loc0,  end: loc1),

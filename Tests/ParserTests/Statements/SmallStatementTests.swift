@@ -7,11 +7,11 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
 
   // MARK: - del
 
-  /// del a
+  /// del Jafar
   func test_del() {
     var parser = self.createStmtParser(
-      self.token(.del,             start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3)
+      self.token(.del,                 start: loc0, end: loc1),
+      self.token(.identifier("Jafar"), start: loc2, end: loc3)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -20,19 +20,19 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
       XCTAssertEqual(d.count, 1)
       guard d.count == 1 else { return }
 
-      XCTAssertExpression(d[0], "a")
+      XCTAssertExpression(d[0], "Jafar")
 
-      XCTAssertStatement(stmt, "(del a)")
+      XCTAssertStatement(stmt, "(del Jafar)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc3)
     }
   }
 
-  // del a,
+  // del Jafar,
   func test_del_withCommaAfter() {
     var parser = self.createStmtParser(
       self.token(.del,             start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
+      self.token(.identifier("Jafar"), start: loc2, end: loc3),
       self.token(.comma,           start: loc4, end: loc5)
     )
 
@@ -42,23 +42,23 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
       XCTAssertEqual(d.count, 1)
       guard d.count == 1 else { return }
 
-      XCTAssertExpression(d[0], "a")
+      XCTAssertExpression(d[0], "Jafar")
 
-      XCTAssertStatement(stmt, "(del a)")
+      XCTAssertStatement(stmt, "(del Jafar)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc5)
     }
   }
 
-  // del a,b,c
+  // del Jafar, Iago, Lamp
   func test_del_multiple() {
     var parser = self.createStmtParser(
-      self.token(.del,             start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.comma,           start: loc8, end: loc9),
-      self.token(.identifier("c"), start: loc10, end: loc11)
+      self.token(.del,                 start: loc0, end: loc1),
+      self.token(.identifier("Jafar"), start: loc2, end: loc3),
+      self.token(.comma,               start: loc4, end: loc5),
+      self.token(.identifier("Iago"),  start: loc6, end: loc7),
+      self.token(.comma,               start: loc8, end: loc9),
+      self.token(.identifier("Lamp"),  start: loc10, end: loc11)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -67,11 +67,11 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
       XCTAssertEqual(d.count, 3)
       guard d.count == 3 else { return }
 
-      XCTAssertExpression(d[0], "a")
-      XCTAssertExpression(d[1], "b")
-      XCTAssertExpression(d[2], "c")
+      XCTAssertExpression(d[0], "Jafar")
+      XCTAssertExpression(d[1], "Iago")
+      XCTAssertExpression(d[2], "Lamp")
 
-      XCTAssertStatement(stmt, "(del a b c)")
+      XCTAssertStatement(stmt, "(del Jafar Iago Lamp)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -95,39 +95,39 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
 
   // MARK: - global
 
-  /// global a
+  /// global Aladdin
   func test_global() {
     var parser = self.createStmtParser(
-      self.token(.global,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3)
+      self.token(.global,                start: loc0, end: loc1),
+      self.token(.identifier("Aladdin"), start: loc2, end: loc3)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructGlobal(stmt) else { return }
 
-      XCTAssertEqual(d, ["a"])
+      XCTAssertEqual(d, ["Aladdin"])
 
-      XCTAssertStatement(stmt, "(global a)")
+      XCTAssertStatement(stmt, "(global Aladdin)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc3)
     }
   }
 
-  /// global a, b
+  /// global Aladdin, Jasmine
   func test_global_multiple() {
     var parser = self.createStmtParser(
-      self.token(.global,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7)
+      self.token(.global,                start: loc0, end: loc1),
+      self.token(.identifier("Aladdin"), start: loc2, end: loc3),
+      self.token(.comma,                 start: loc4, end: loc5),
+      self.token(.identifier("Jasmine"), start: loc6, end: loc7)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructGlobal(stmt) else { return }
 
-      XCTAssertEqual(d, ["a", "b"])
+      XCTAssertEqual(d, ["Aladdin", "Jasmine"])
 
-      XCTAssertStatement(stmt, "(global a b)")
+      XCTAssertStatement(stmt, "(global Aladdin Jasmine)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -135,39 +135,39 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
 
   // MARK: - nonlocal
 
-  /// nonlocal a
+  /// nonlocal Genie
   func test_nonlocal() {
     var parser = self.createStmtParser(
-      self.token(.nonlocal,        start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3)
+      self.token(.nonlocal,            start: loc0, end: loc1),
+      self.token(.identifier("Genie"), start: loc2, end: loc3)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructNonlocal(stmt) else { return }
 
-      XCTAssertEqual(d, ["a"])
+      XCTAssertEqual(d, ["Genie"])
 
-      XCTAssertStatement(stmt, "(nonlocal a)")
+      XCTAssertStatement(stmt, "(nonlocal Genie)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc3)
     }
   }
 
-  /// nonlocal a, b
+  /// nonlocal Genie, MagicCarpet
   func test_nonlocal_multiple() {
     var parser = self.createStmtParser(
-      self.token(.nonlocal,        start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7)
+      self.token(.nonlocal,                  start: loc0, end: loc1),
+      self.token(.identifier("Genie"),       start: loc2, end: loc3),
+      self.token(.comma,                     start: loc4, end: loc5),
+      self.token(.identifier("MagicCarpet"), start: loc6, end: loc7)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructNonlocal(stmt) else { return }
 
-      XCTAssertEqual(d, ["a", "b"])
+      XCTAssertEqual(d, ["Genie", "MagicCarpet"])
 
-      XCTAssertStatement(stmt, "(nonlocal a b)")
+      XCTAssertStatement(stmt, "(nonlocal Genie MagicCarpet)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -175,41 +175,41 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
 
   // MARK: - assert
 
-  /// assert a
+  /// assert Aladdin
   func test_assert() {
     var parser = self.createStmtParser(
-      self.token(.assert,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3)
+      self.token(.assert,                start: loc0, end: loc1),
+      self.token(.identifier("Aladdin"), start: loc2, end: loc3)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAssert(stmt) else { return }
 
-      XCTAssertExpression(d.test, "a")
+      XCTAssertExpression(d.test, "Aladdin")
       XCTAssertNil(d.msg)
 
-      XCTAssertStatement(stmt, "(assert a)")
+      XCTAssertStatement(stmt, "(assert Aladdin)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc3)
     }
   }
 
-  /// assert a, b
+  /// assert Aladdin, Jasmine
   func test_assert_withMessage() {
     var parser = self.createStmtParser(
-      self.token(.assert,        start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7)
+      self.token(.assert,                start: loc0, end: loc1),
+      self.token(.identifier("Aladdin"), start: loc2, end: loc3),
+      self.token(.comma,                 start: loc4, end: loc5),
+      self.token(.identifier("Jasmine"), start: loc6, end: loc7)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAssert(stmt) else { return }
 
-      XCTAssertExpression(d.test, "a")
-      XCTAssertExpression(d.msg,  "b")
+      XCTAssertExpression(d.test, "Aladdin")
+      XCTAssertExpression(d.msg,  "Jasmine")
 
-      XCTAssertStatement(stmt, "(assert a msg: b)")
+      XCTAssertStatement(stmt, "(assert Aladdin msg: Jasmine)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }

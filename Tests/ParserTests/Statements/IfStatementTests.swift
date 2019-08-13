@@ -3,115 +3,101 @@ import Core
 import Lexer
 @testable import Parser
 
-// Use this for reference:
-// https://www.youtube.com/watch?v=tTUZswZHsWQ
-// (In this file we start the song and continue in 'loop' tests)
-
 // swiftlint:disable function_body_length
 
-class IfStatementTests: XCTestCase, Common,
-                                    DestructStatementKind,
-                                    DestructExpressionKind,
-                                    DestructStringGroup {
+class IfStatementTests: XCTestCase,
+  Common, DestructStatementKind, DestructExpressionKind, DestructStringGroup {
 
-  /// if a: "Little town, it's a quiet village"
+  /// if Pooh: "Honey"
   func test_if() {
-    let s = "Little town, it's a quiet village"
-
     var parser = self.createStmtParser(
-      self.token(.if,              start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.string(s),       start: loc6, end: loc7)
+      self.token(.if,                 start: loc0, end: loc1),
+      self.token(.identifier("Pooh"), start: loc2, end: loc3),
+      self.token(.colon,              start: loc4, end: loc5),
+      self.token(.string("Honey"),    start: loc6, end: loc7)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructIf(stmt) else { return }
 
-      XCTAssertExpression(d.test, "a")
+      XCTAssertExpression(d.test, "Pooh")
       XCTAssertEqual(d.orElse, [])
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Little tow...\"")
+      XCTAssertStatement(d.body[0], "\"Honey\"")
 
-      XCTAssertStatement(stmt, "(if a then: \"Little tow...\")")
+      XCTAssertStatement(stmt, "(if Pooh then: \"Honey\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
   }
 
-  /// if a: "Every day like the one before"
-  /// else: "Little town, full of little people"
+  /// if Pooh: "Honey"
+  /// else: "More honey"
   func test_if_withElse() {
-    let s0 = "Every day like the one before"
-    let s1 = "Little town, full of little people"
-
     var parser = self.createStmtParser(
-      self.token(.if,              start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.string(s0),      start: loc6, end: loc7),
-      self.token(.else,            start: loc8, end: loc9),
-      self.token(.colon,           start: loc10, end: loc11),
-      self.token(.string(s1),      start: loc12, end: loc13)
+      self.token(.if,                   start: loc0, end: loc1),
+      self.token(.identifier("Pooh"),   start: loc2, end: loc3),
+      self.token(.colon,                start: loc4, end: loc5),
+      self.token(.string("Honey"),      start: loc6, end: loc7),
+      self.token(.else,                 start: loc8, end: loc9),
+      self.token(.colon,                start: loc10, end: loc11),
+      self.token(.string("More honey"), start: loc12, end: loc13)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructIf(stmt) else { return }
 
-      XCTAssertExpression(d.test, "a")
+      XCTAssertExpression(d.test, "Pooh")
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Every day ...\"")
+      XCTAssertStatement(d.body[0], "\"Honey\"")
 
       XCTAssertEqual(d.orElse.count, 1)
       guard d.orElse.count == 1 else { return }
-      XCTAssertStatement(d.orElse[0], "\"Little tow...\"")
+      XCTAssertStatement(d.orElse[0], "\"More honey\"")
 
-      XCTAssertStatement(stmt, "(if a then: \"Every day ...\" else: \"Little tow...\")")
+      XCTAssertStatement(stmt, "(if Pooh then: \"Honey\" else: \"More honey\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
   }
 
-  /// if a: "Waking up to say"
-  /// elif b: "Bonjour!"
+  /// if Pooh: "Honey"
+  /// elif Tigger: "Bouncing"
   /// Expected:
   /// ```
   /// If0
-  ///   test: a
-  ///   body: Waking up to say
+  ///   test: Pooh
+  ///   body: Honey
   ///   orelse:
   ///     If1
-  ///       test: b
-  ///       body: Bonjour!
+  ///       test: Tigger
+  ///       body: Bouncing
   ///       orelse: empty
   /// ```
   func test_if_withElif() {
-    let s0 = "Waking up to say"
-    let s1 = "Bonjour!"
-
     var parser = self.createStmtParser(
-      self.token(.if,              start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.string(s0),      start: loc6, end: loc7),
-      self.token(.elif,            start: loc8, end: loc9),
-      self.token(.identifier("b"), start: loc10, end: loc11),
-      self.token(.colon,           start: loc12, end: loc13),
-      self.token(.string(s1),      start: loc14, end: loc15)
+      self.token(.if,                   start: loc0, end: loc1),
+      self.token(.identifier("Pooh"),   start: loc2, end: loc3),
+      self.token(.colon,                start: loc4, end: loc5),
+      self.token(.string("Honey"),      start: loc6, end: loc7),
+      self.token(.elif,                 start: loc8, end: loc9),
+      self.token(.identifier("Tigger"), start: loc10, end: loc11),
+      self.token(.colon,                start: loc12, end: loc13),
+      self.token(.string("Bouncing"),   start: loc14, end: loc15)
     )
 
     if let stmt = self.parseStmt(&parser) {
       // first if
       guard let if0 = self.destructIf(stmt) else { return }
-      XCTAssertExpression(if0.test, "a")
+      XCTAssertExpression(if0.test, "Pooh")
 
       XCTAssertEqual(if0.body.count, 1)
       guard if0.body.count == 1 else { return }
-      XCTAssertStatement(if0.body[0], "\"Waking up ...\"")
+      XCTAssertStatement(if0.body[0], "\"Honey\"")
 
       XCTAssertEqual(if0.orElse.count, 1)
       guard if0.orElse.count == 1 else { return }
@@ -119,12 +105,12 @@ class IfStatementTests: XCTestCase, Common,
       // nested if
       guard let if1 = self.destructIf(if0.orElse[0]) else { return }
 
-      XCTAssertExpression(if1.test, "b")
+      XCTAssertExpression(if1.test, "Tigger")
       XCTAssertEqual(if1.orElse, [])
 
       XCTAssertEqual(if1.body.count, 1)
       guard if1.body.count == 1 else { return }
-      XCTAssertStatement(if1.body[0], "\"Bonjour!\"")
+      XCTAssertStatement(if1.body[0], "\"Bouncing\"")
 
       // general
       XCTAssertEqual(stmt.start, loc0)
@@ -132,58 +118,52 @@ class IfStatementTests: XCTestCase, Common,
     }
   }
 
-  /// if a:   "There goes the baker with his tray, like always"
-  /// elif b: "The same old bread and rolls to sell"
-  /// else:   "Every morning just the same"
+  /// if Pooh:     "Honey"
+  /// elif Tigger: "Bouncing"
+  /// else:        "Carrots?"
   /// Expected AST is similiar to the one in `test_if_withElif`.
   func test_if_withElif_andElse() {
-    let s0 = "There goes the baker with his tray, like always"
-    let s1 = "The same old bread and rolls to sell"
-    let s2 = "Every morning just the same"
-
     var parser = self.createStmtParser(
-      self.token(.if,              start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.string(s0),      start: loc6, end: loc7),
-      self.token(.elif,            start: loc8, end: loc9),
-      self.token(.identifier("b"), start: loc10, end: loc11),
-      self.token(.colon,           start: loc12, end: loc13),
-      self.token(.string(s1),      start: loc14, end: loc15),
-      self.token(.else,            start: loc16, end: loc17),
-      self.token(.colon,           start: loc18, end: loc19),
-      self.token(.string(s2),      start: loc20, end: loc21)
+      self.token(.if,                   start: loc0, end: loc1),
+      self.token(.identifier("Pooh"),   start: loc2, end: loc3),
+      self.token(.colon,                start: loc4, end: loc5),
+      self.token(.string("Honey"),      start: loc6, end: loc7),
+      self.token(.elif,                 start: loc8, end: loc9),
+      self.token(.identifier("Tigger"), start: loc10, end: loc11),
+      self.token(.colon,                start: loc12, end: loc13),
+      self.token(.string("Bouncing"),   start: loc14, end: loc15),
+      self.token(.else,                 start: loc16, end: loc17),
+      self.token(.colon,                start: loc18, end: loc19),
+      self.token(.string("Carrots?"),   start: loc20, end: loc21)
     )
 
     if let stmt = self.parseStmt(&parser) {
       // first if
       guard let if0 = self.destructIf(stmt) else { return }
-      XCTAssertExpression(if0.test, "a")
+      XCTAssertExpression(if0.test, "Pooh")
 
       XCTAssertEqual(if0.body.count, 1)
       guard if0.body.count == 1 else { return }
-      XCTAssertStatement(if0.body[0], "\"There goes...\"")
+      XCTAssertStatement(if0.body[0], "\"Honey\"")
 
       XCTAssertEqual(if0.orElse.count, 1)
       guard if0.orElse.count == 1 else { return }
 
       // nested if
       guard let if1 = self.destructIf(if0.orElse[0]) else { return }
-      XCTAssertExpression(if1.test, "b")
+      XCTAssertExpression(if1.test, "Tigger")
 
       XCTAssertEqual(if1.body.count, 1)
       guard if1.body.count == 1 else { return }
-      XCTAssertStatement(if1.body[0], "\"The same o...\"")
+      XCTAssertStatement(if1.body[0], "\"Bouncing\"")
 
       XCTAssertEqual(if1.orElse.count, 1)
       guard if1.orElse.count == 1 else { return }
-      XCTAssertStatement(if1.orElse[0], "\"Every morn...\"")
+      XCTAssertStatement(if1.orElse[0], "\"Carrots?\"")
 
       // general
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc21)
     }
   }
-
-  // TODO: if - big suite
 }

@@ -3,26 +3,19 @@ import Core
 import Lexer
 @testable import Parser
 
-// Use this for reference:
-// https://www.youtube.com/watch?v=tTuwo_TqlhQ
-// (we start with Flynn lines)
-
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
 
-class ExpressionStatementTests: XCTestCase, Common,
-  DestructStatementKind,
-  DestructExpressionKind,
-  DestructStringGroup {
+class ExpressionStatementTests: XCTestCase,
+  Common, DestructStatementKind, DestructExpressionKind, DestructStringGroup {
 
   // MARK: - Just expression
 
-  /// "I have dreams, like you -- no, really!"
+  /// "Ariel+Eric"
   func test_expression() {
-    let s = "I have dreams, like you -- no, really!"
-
     var parser = self.createStmtParser(
-      self.token(.string(s), start: loc0, end: loc1)
+      self.token(.string("Ariel+Eric"), start: loc0, end: loc1)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -30,9 +23,9 @@ class ExpressionStatementTests: XCTestCase, Common,
       guard let group = self.destructString(expr) else { return }
       guard let string = self.destructStringSimple(group) else { return }
 
-      XCTAssertEqual(string, s)
+      XCTAssertEqual(string, "Ariel+Eric")
 
-      XCTAssertStatement(stmt, "\"I have dre...\"")
+      XCTAssertStatement(stmt, "\"Ariel+Eric\"")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc1)
     }
@@ -40,11 +33,8 @@ class ExpressionStatementTests: XCTestCase, Common,
 
   // MARK: - Augumented assignment
 
-  /// a += "Just much less touchy-feely"
-  // swiftlint:disable:next function_body_length
+  /// Ariel += "legs"
   func test_augAssign() {
-    let s = "Just much less touchy-feely"
-
     let augAssign: [TokenKind:BinaryOperator] = [
       .plusEqual: .add, // +=
       .minusEqual: .sub, // -=
@@ -65,85 +55,79 @@ class ExpressionStatementTests: XCTestCase, Common,
 
     for (tokenKind, op) in augAssign {
       var parser = self.createStmtParser(
-        self.token(.identifier("a"), start: loc0, end: loc1),
-        self.token(tokenKind,        start: loc2, end: loc3),
-        self.token(.string(s),       start: loc4, end: loc5)
+        self.token(.identifier("Ariel"), start: loc0, end: loc1),
+        self.token(tokenKind,            start: loc2, end: loc3),
+        self.token(.string("legs"),      start: loc4, end: loc5)
       )
 
       if let stmt = self.parseStmt(&parser) {
         let msg = "for: \(tokenKind)"
         guard let d = self.destructAugAssign(stmt) else { return }
 
-        XCTAssertExpression(d.target, "a", msg)
+        XCTAssertExpression(d.target, "Ariel", msg)
         XCTAssertEqual(d.op, op, msg)
-        XCTAssertExpression(d.value, "\"Just much ...\"", msg)
+        XCTAssertExpression(d.value, "\"legs\"", msg)
 
-        XCTAssertStatement(stmt, "(\(op)= a \"Just much ...\")", msg)
+        XCTAssertStatement(stmt, "(\(op)= Ariel \"legs\")", msg)
         XCTAssertEqual(stmt.start, loc0)
         XCTAssertEqual(stmt.end,   loc5)
       }
     }
   }
 
-  /// a.b += "They mainly happen somewhere warm and sunny"
+  /// sea.cavern += "Gizmos"
   func test_augAssign_toAttribute() {
-    let s = "They mainly happen somewhere warm and sunny"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.dot,             start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5),
-      self.token(.plusEqual,       start: loc6, end: loc7),
-      self.token(.string(s),       start: loc8, end: loc9)
+      self.token(.identifier("sea"),    start: loc0, end: loc1),
+      self.token(.dot,                  start: loc2, end: loc3),
+      self.token(.identifier("cavern"), start: loc4, end: loc5),
+      self.token(.plusEqual,            start: loc6, end: loc7),
+      self.token(.string("Gizmos"),     start: loc8, end: loc9)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAugAssign(stmt) else { return }
 
-      XCTAssertExpression(d.target, "a.b")
+      XCTAssertExpression(d.target, "sea.cavern")
       XCTAssertEqual(d.op, .add)
-      XCTAssertExpression(d.value, "\"They mainl...\"")
+      XCTAssertExpression(d.value, "\"Gizmos\"")
 
-      XCTAssertStatement(stmt, "(+= a.b \"They mainl...\")")
+      XCTAssertStatement(stmt, "(+= sea.cavern \"Gizmos\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc9)
     }
   }
 
-  /// a[b] = On an island that I own
+  /// sea[cavern] += "Gizmos"
   func test_augAssign_toSubscript() {
-    let s = "On an island that I own"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.leftSqb,         start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5),
-      self.token(.rightSqb,        start: loc6, end: loc7),
-      self.token(.plusEqual,       start: loc8, end: loc9),
-      self.token(.string(s),       start: loc10, end: loc11)
+      self.token(.identifier("sea"),    start: loc0, end: loc1),
+      self.token(.leftSqb,              start: loc2, end: loc3),
+      self.token(.identifier("cavern"), start: loc4, end: loc5),
+      self.token(.rightSqb,             start: loc6, end: loc7),
+      self.token(.plusEqual,            start: loc8, end: loc9),
+      self.token(.string("Gizmos"),     start: loc10, end: loc11)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAugAssign(stmt) else { return }
 
-      XCTAssertExpression(d.target, "a[b]")
+      XCTAssertExpression(d.target, "sea[cavern]")
       XCTAssertEqual(d.op, .add)
-      XCTAssertExpression(d.value, "\"On an isla...\"")
+      XCTAssertExpression(d.value, "\"Gizmos\"")
 
-      XCTAssertStatement(stmt, "(+= a[b] \"On an isla...\")")
+      XCTAssertStatement(stmt, "(+= sea[cavern] \"Gizmos\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
   }
 
-  /// 3 += Tanned and rested and alone
+  /// 3 += "Ursula"
   func test_augAssign_toConstants_throws() {
-    let s = "Tanned and rested and alone"
-
     var parser = self.createStmtParser(
-      self.token(.int(PyInt(3)), start: loc0, end: loc1),
-      self.token(.plusEqual,     start: loc2, end: loc3),
-      self.token(.string(s),     start: loc4, end: loc5)
+      self.token(.int(PyInt(3)),    start: loc0, end: loc1),
+      self.token(.plusEqual,        start: loc2, end: loc3),
+      self.token(.string("Ursula"), start: loc4, end: loc5)
     )
 
     if let error = self.error(&parser) {
@@ -152,25 +136,23 @@ class ExpressionStatementTests: XCTestCase, Common,
     }
   }
 
-  /// a += yield "Surrounded by enormous piles of money"
+  /// Ariel += yield "legs"
   func test_augAssign_yield() {
-    let s = "Surrounded by enormous piles of money"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.plusEqual,       start: loc2, end: loc3),
-      self.token(.yield,           start: loc4, end: loc5),
-      self.token(.string(s),       start: loc6, end: loc7)
+      self.token(.identifier("Ariel"), start: loc0, end: loc1),
+      self.token(.plusEqual,           start: loc2, end: loc3),
+      self.token(.yield,               start: loc4, end: loc5),
+      self.token(.string("legs"),      start: loc6, end: loc7)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAugAssign(stmt) else { return }
 
-      XCTAssertExpression(d.target, "a")
+      XCTAssertExpression(d.target, "Ariel")
       XCTAssertEqual(d.op, .add)
-      XCTAssertExpression(d.value, "(yield \"Surrounded...\")")
+      XCTAssertExpression(d.value, "(yield \"legs\")")
 
-      XCTAssertStatement(stmt, "(+= a (yield \"Surrounded...\"))")
+      XCTAssertStatement(stmt, "(+= Ariel (yield \"legs\"))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -178,151 +160,140 @@ class ExpressionStatementTests: XCTestCase, Common,
 
   // MARK: - Annotated assignment
 
-  /// a:b = "I've got a dream!"
+  /// Flounder:Animal = "Friend"
   func test_annAssign() {
-    let s = "I've got a dream!"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.colon,           start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5),
-      self.token(.equal,           start: loc6, end: loc7),
-      self.token(.string(s),       start: loc8, end: loc9)
+      self.token(.identifier("Flounder"), start: loc0, end: loc1),
+      self.token(.colon,                  start: loc2, end: loc3),
+      self.token(.identifier("Animal"),   start: loc4, end: loc5),
+      self.token(.equal,                  start: loc6, end: loc7),
+      self.token(.string("Friend"),       start: loc8, end: loc9)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAnnAssign(stmt) else { return }
 
-      XCTAssertExpression(d.target, "a")
-      XCTAssertExpression(d.annotation, "b")
-      XCTAssertExpression(d.value, "\"I've got a...\"")
+      XCTAssertExpression(d.target, "Flounder")
+      XCTAssertExpression(d.annotation, "Animal")
+      XCTAssertExpression(d.value, "\"Friend\"")
       XCTAssertEqual(d.simple, true)
 
-      XCTAssertStatement(stmt, "(= a:b \"I've got a...\")")
+      XCTAssertStatement(stmt, "(= Flounder:Animal \"Friend\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc9)
     }
   }
 
-  /// a:"She's got a dream!" <-- soo... wrong but valid according to grammar
+  /// Ariel:Mermaid
   func test_annAssign_withoutValue() {
-    let s = "She's got a dream!"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.colon,           start: loc2, end: loc3),
-      self.token(.string(s),       start: loc4, end: loc5)
+      self.token(.identifier("Ariel"),   start: loc0, end: loc1),
+      self.token(.colon,                 start: loc2, end: loc3),
+      self.token(.identifier("Mermaid"), start: loc4, end: loc5)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAnnAssign(stmt) else { return }
 
-      XCTAssertExpression(d.target, "a")
-      XCTAssertExpression(d.annotation, "\"She's got ...\"")
+      XCTAssertExpression(d.target, "Ariel")
+      XCTAssertExpression(d.annotation, "Mermaid")
       XCTAssertEqual(d.value, nil)
       XCTAssertEqual(d.simple, true)
 
-      XCTAssertStatement(stmt, "(= a:\"She's got ...\")")
+      XCTAssertStatement(stmt, "(= Ariel:Mermaid)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc5)
     }
   }
 
-  /// a.b:c = "I just want to see the floating lanterns gleam!"
+  /// Sea.Flounder:Animal = "Friend"
   func test_annAssign_toAttribute() {
-    let s = "I just want to see the floating lanterns gleam!"
 
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.dot,             start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5),
-      self.token(.colon,           start: loc6, end: loc7),
-      self.token(.identifier("c"), start: loc8, end: loc9),
-      self.token(.equal,           start: loc10, end: loc11),
-      self.token(.string(s),       start: loc12, end: loc13)
+      self.token(.identifier("Sea"),      start: loc0, end: loc1),
+      self.token(.dot,                    start: loc2, end: loc3),
+      self.token(.identifier("Flounder"), start: loc4, end: loc5),
+      self.token(.colon,                  start: loc6, end: loc7),
+      self.token(.identifier("Animal"),   start: loc8, end: loc9),
+      self.token(.equal,                  start: loc10, end: loc11),
+      self.token(.string("Friend"),       start: loc12, end: loc13)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAnnAssign(stmt) else { return }
 
-      XCTAssertExpression(d.target, "a.b")
-      XCTAssertExpression(d.annotation, "c")
-      XCTAssertExpression(d.value, "\"I just wan...\"")
+      XCTAssertExpression(d.target, "Sea.Flounder")
+      XCTAssertExpression(d.annotation, "Animal")
+      XCTAssertExpression(d.value, "\"Friend\"")
       XCTAssertEqual(d.simple, false) // <-- this
 
-      XCTAssertStatement(stmt, "(= a.b:c \"I just wan...\")")
+      XCTAssertStatement(stmt, "(= Sea.Flounder:Animal \"Friend\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
   }
 
-  /// a[b]:c = "I just want to see the floating lanterns gleam!"
+  /// Sea[Flounder]:Animal = "Friend"
   func test_annAssign_toSubscript() {
-    let s = "Yeah!"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.leftSqb,         start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5),
-      self.token(.rightSqb,        start: loc6, end: loc7),
-      self.token(.colon,           start: loc8, end: loc9),
-      self.token(.identifier("c"), start: loc10, end: loc11),
-      self.token(.equal,           start: loc12, end: loc13),
-      self.token(.string(s),       start: loc14, end: loc15)
+      self.token(.identifier("Sea"),      start: loc0, end: loc1),
+      self.token(.leftSqb,                start: loc2, end: loc3),
+      self.token(.identifier("Flounder"), start: loc4, end: loc5),
+      self.token(.rightSqb,               start: loc6, end: loc7),
+      self.token(.colon,                  start: loc8, end: loc9),
+      self.token(.identifier("Animal"),   start: loc10, end: loc11),
+      self.token(.equal,                  start: loc12, end: loc13),
+      self.token(.string("Friend"),       start: loc14, end: loc15)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAnnAssign(stmt) else { return }
 
-      XCTAssertExpression(d.target, "a[b]")
-      XCTAssertExpression(d.annotation, "c")
-      XCTAssertExpression(d.value, "\"Yeah!\"")
+      XCTAssertExpression(d.target, "Sea[Flounder]")
+      XCTAssertExpression(d.annotation, "Animal")
+      XCTAssertExpression(d.value, "\"Friend\"")
       XCTAssertEqual(d.simple, false) // <-- this
 
-      XCTAssertStatement(stmt, "(= a[b]:c \"Yeah!\")")
+      XCTAssertStatement(stmt, "(= Sea[Flounder]:Animal \"Friend\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
   }
 
-  /// (a):b = "And with every passing hour"
+  /// (Ariel):Mermaid = "Princess"
   func test_annAssign_inParen_isNotSimple() {
-    let s = "And with every passing hour"
-
     var parser = self.createStmtParser(
-      self.token(.leftParen,       start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.rightParen,      start: loc4, end: loc5),
-      self.token(.colon,           start: loc6, end: loc7),
-      self.token(.identifier("b"), start: loc8, end: loc9),
-      self.token(.equal,           start: loc10, end: loc11),
-      self.token(.string(s),       start: loc12, end: loc13)
+      self.token(.leftParen,             start: loc0, end: loc1),
+      self.token(.identifier("Ariel"),   start: loc2, end: loc3),
+      self.token(.rightParen,            start: loc4, end: loc5),
+      self.token(.colon,                 start: loc6, end: loc7),
+      self.token(.identifier("Mermaid"), start: loc8, end: loc9),
+      self.token(.equal,                 start: loc10, end: loc11),
+      self.token(.string("Princess"),    start: loc12, end: loc13)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructAnnAssign(stmt) else { return }
 
-      XCTAssertExpression(d.target, "a")
-      XCTAssertExpression(d.annotation, "b")
-      XCTAssertExpression(d.value, "\"And with e...\"")
+      XCTAssertExpression(d.target, "Ariel")
+      XCTAssertExpression(d.annotation, "Mermaid")
+      XCTAssertExpression(d.value, "\"Princess\"")
       XCTAssertEqual(d.simple, false) // <-- this (because parens!)
 
-      XCTAssertStatement(stmt, "(= a:b \"And with e...\")")
+      XCTAssertStatement(stmt, "(= Ariel:Mermaid \"Princess\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
   }
 
-  /// 3:b = "I'm so glad I left my tower"
+  /// 3:Witch = "Ursula"
   func test_annAssign_toConstants_throws() {
-    let s = "I'm so glad I left my tower"
-
     var parser = self.createStmtParser(
-      self.token(.int(PyInt(3)),   start: loc0, end: loc1),
-      self.token(.colon,           start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5),
-      self.token(.equal,           start: loc6, end: loc7),
-      self.token(.string(s),       start: loc8, end: loc9)
+      self.token(.int(PyInt(3)),       start: loc0, end: loc1),
+      self.token(.colon,               start: loc2, end: loc3),
+      self.token(.identifier("Witch"), start: loc4, end: loc5),
+      self.token(.equal,               start: loc6, end: loc7),
+      self.token(.string("Ursula"),    start: loc8, end: loc9)
     )
 
     if let error = self.error(&parser) {
@@ -333,14 +304,12 @@ class ExpressionStatementTests: XCTestCase, Common,
 
   // MARK: - Normal assignment
 
-  /// a = "Like all you lovely folks"
+  /// Ariel = "Princess"
   func test_normalAssign() {
-    let s = "Like all you lovely folks"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.equal,           start: loc2, end: loc3),
-      self.token(.string(s),       start: loc4, end: loc5)
+      self.token(.identifier("Ariel"), start: loc0, end: loc1),
+      self.token(.equal,               start: loc2, end: loc3),
+      self.token(.string("Princess"),  start: loc4, end: loc5)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -349,25 +318,23 @@ class ExpressionStatementTests: XCTestCase, Common,
       XCTAssertEqual(d.targets.count, 1)
       guard d.targets.count == 1 else { return }
 
-      XCTAssertExpression(d.targets[0], "a")
-      XCTAssertExpression(d.value, "\"Like all y...\"")
+      XCTAssertExpression(d.targets[0], "Ariel")
+      XCTAssertExpression(d.value, "\"Princess\"")
 
-      XCTAssertStatement(stmt, "(= a \"Like all y...\")")
+      XCTAssertStatement(stmt, "(= Ariel \"Princess\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc5)
     }
   }
 
-  /// a,b = "I've got a dream!"
+  /// Ariel, Eric = "couple"
   func test_normalAssign_toTuple() {
-    let s = "I've got a dream!"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.comma,           start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5),
-      self.token(.equal,           start: loc6, end: loc7),
-      self.token(.string(s),       start: loc8, end: loc9)
+      self.token(.identifier("Ariel"), start: loc0, end: loc1),
+      self.token(.comma,               start: loc2, end: loc3),
+      self.token(.identifier("Eric"),  start: loc4, end: loc5),
+      self.token(.equal,               start: loc6, end: loc7),
+      self.token(.string("couple"),    start: loc8, end: loc9)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -376,24 +343,22 @@ class ExpressionStatementTests: XCTestCase, Common,
       XCTAssertEqual(d.targets.count, 1)
       guard d.targets.count == 1 else { return }
 
-      XCTAssertExpression(d.targets[0], "(a b)")
-      XCTAssertExpression(d.value, "\"I've got a...\"")
+      XCTAssertExpression(d.targets[0], "(Ariel Eric)")
+      XCTAssertExpression(d.value, "\"couple\"")
 
-      XCTAssertStatement(stmt, "(= (a b) \"I've got a...\")")
+      XCTAssertStatement(stmt, "(= (Ariel Eric) \"couple\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc9)
     }
   }
 
-  /// a, = "She's got a dream!"
+  /// Ariel, = "Princess"
   func test_normalAssign_withComma_isTuple() {
-    let s = "She's got a dream!"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.comma,           start: loc2, end: loc3),
-      self.token(.equal,           start: loc4, end: loc5),
-      self.token(.string(s),       start: loc6, end: loc7)
+      self.token(.identifier("Ariel"), start: loc0, end: loc1),
+      self.token(.comma,               start: loc2, end: loc3),
+      self.token(.equal,               start: loc4, end: loc5),
+      self.token(.string("Princess"),  start: loc6, end: loc7)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -402,25 +367,23 @@ class ExpressionStatementTests: XCTestCase, Common,
       XCTAssertEqual(d.targets.count, 1)
       guard d.targets.count == 1 else { return }
 
-      XCTAssertExpression(d.targets[0], "(a)")
-      XCTAssertExpression(d.value, "\"She's got ...\"")
+      XCTAssertExpression(d.targets[0], "(Ariel)")
+      XCTAssertExpression(d.value, "\"Princess\"")
 
-      XCTAssertStatement(stmt, "(= (a) \"She's got ...\")")
+      XCTAssertStatement(stmt, "(= (Ariel) \"Princess\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
   }
 
-  /// a = b = "She's got a dream!"
+  /// Sebastian = Flounder = "Friend"
   func test_normalAssign_multiple() {
-    let s = "He's got a dream!"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.equal,           start: loc2, end: loc3),
-      self.token(.identifier("b"), start: loc4, end: loc5),
-      self.token(.equal,           start: loc6, end: loc7),
-      self.token(.string(s),       start: loc8, end: loc9)
+      self.token(.identifier("Sebastian"), start: loc0, end: loc1),
+      self.token(.equal,                   start: loc2, end: loc3),
+      self.token(.identifier("Flounder"),  start: loc4, end: loc5),
+      self.token(.equal,                   start: loc6, end: loc7),
+      self.token(.string("Friend"),        start: loc8, end: loc9)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -429,25 +392,23 @@ class ExpressionStatementTests: XCTestCase, Common,
       XCTAssertEqual(d.targets.count, 2)
       guard d.targets.count == 2 else { return }
 
-      XCTAssertExpression(d.targets[0], "a")
-      XCTAssertExpression(d.targets[1], "b")
-      XCTAssertExpression(d.value, "\"He's got a...\"")
+      XCTAssertExpression(d.targets[0], "Sebastian")
+      XCTAssertExpression(d.targets[1], "Flounder")
+      XCTAssertExpression(d.value, "\"Friend\"")
 
-      XCTAssertStatement(stmt, "(= a b \"He's got a...\")")
+      XCTAssertStatement(stmt, "(= Sebastian Flounder \"Friend\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc9)
     }
   }
 
-  /// a = yield "They've got a dream!"
+  /// Ariel = yield "Princess"
   func test_normalAssign_yieldValue() {
-    let s = "They've got a dream!"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.equal,           start: loc2, end: loc3),
-      self.token(.yield,           start: loc4, end: loc5),
-      self.token(.string(s),       start: loc6, end: loc7)
+      self.token(.identifier("Ariel"), start: loc0, end: loc1),
+      self.token(.equal,               start: loc2, end: loc3),
+      self.token(.yield,               start: loc4, end: loc5),
+      self.token(.string("Princess"),  start: loc6, end: loc7)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -456,47 +417,30 @@ class ExpressionStatementTests: XCTestCase, Common,
       XCTAssertEqual(d.targets.count, 1)
       guard d.targets.count == 1 else { return }
 
-      XCTAssertExpression(d.targets[0], "a")
-      XCTAssertExpression(d.value, "(yield \"They've go...\")")
+      XCTAssertExpression(d.targets[0], "Ariel")
+      XCTAssertExpression(d.value, "(yield \"Princess\")")
 
-      XCTAssertStatement(stmt, "(= a (yield \"They've go...\"))")
+      XCTAssertStatement(stmt, "(= Ariel (yield \"Princess\"))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
   }
 
-  /// a = yield b = "We've got a dream!"
+  /// Ariel = yield Eric = "couple"
   /// If we used 'yield a = xxx' then it is 'yield stmt' by grammar
   func test_normalAssign_yieldTarget() {
-    let s = "We've got a dream!"
-
     var parser = self.createStmtParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.equal,           start: loc2, end: loc3),
-      self.token(.yield,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.equal,           start: loc8, end: loc9),
-      self.token(.string(s),       start: loc10, end: loc11)
+      self.token(.identifier("Ariel"), start: loc0, end: loc1),
+      self.token(.equal,               start: loc2, end: loc3),
+      self.token(.yield,               start: loc4, end: loc5),
+      self.token(.identifier("Eric"),  start: loc6, end: loc7),
+      self.token(.equal,               start: loc8, end: loc9),
+      self.token(.string("couple"),    start: loc10, end: loc11)
     )
 
     if let error = self.error(&parser) {
       XCTAssertEqual(error.kind, .illegalAssignmentToYield)
       XCTAssertEqual(error.location, loc4)
     }
-  }
-
-  // MARK: - Helpers
-
-  private func getString(_ expr: Expression,
-                         file:   StaticString = #file,
-                         line:   UInt         = #line) -> String? {
-
-    guard let group = self.destructString(expr, file: file, line: line)
-      else { return nil }
-
-    guard let string = self.destructStringSimple(group, file: file, line: line)
-      else { return nil }
-
-    return string
   }
 }

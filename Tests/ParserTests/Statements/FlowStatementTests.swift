@@ -58,63 +58,64 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     }
   }
 
-  /// return a
+  /// return Megara
   func test_return_withValue() {
     var parser = self.createStmtParser(
-      self.token(.return,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3)
+      self.token(.return,               start: loc0, end: loc1),
+      self.token(.identifier("Megara"), start: loc2, end: loc3)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructReturn(stmt) else { return }
 
       XCTAssertNotNil(d)
-      XCTAssertExpression(d, "a")
+      XCTAssertExpression(d, "Megara")
 
-      XCTAssertStatement(stmt, "(return a)")
+      XCTAssertStatement(stmt, "(return Megara)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc3)
     }
   }
 
-  // return a,
+  /// return Megara,
   func test_return_withCommaAfter_returnsTuple() {
     var parser = self.createStmtParser(
-      self.token(.return,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5)
+      self.token(.return,               start: loc0, end: loc1),
+      self.token(.identifier("Megara"), start: loc2, end: loc3),
+      self.token(.comma,                start: loc4, end: loc5)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructReturn(stmt) else { return }
 
       XCTAssertNotNil(d)
-      XCTAssertExpression(d, "(a)")
+      XCTAssertExpression(d, "(Megara)")
 
-      XCTAssertStatement(stmt, "(return (a))")
+      XCTAssertStatement(stmt, "(return (Megara))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc5)
     }
   }
 
-  // return a,b,c
+  /// return Calliope, Melpomene, Terpsichore
+  /// Those are the names of the muses (Thalia and Clio are missing)
   func test_return_multiple() {
     var parser = self.createStmtParser(
-      self.token(.return,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.comma,           start: loc8, end: loc9),
-      self.token(.identifier("c"), start: loc10, end: loc11)
+      self.token(.return,                    start: loc0, end: loc1),
+      self.token(.identifier("Calliope"),    start: loc2, end: loc3),
+      self.token(.comma,                     start: loc4, end: loc5),
+      self.token(.identifier("Melpomene"),   start: loc6, end: loc7),
+      self.token(.comma,                     start: loc8, end: loc9),
+      self.token(.identifier("Terpsichore"), start: loc10, end: loc11)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructReturn(stmt) else { return }
 
       XCTAssertNotNil(d)
-      XCTAssertExpression(d, "(a b c)")
+      XCTAssertExpression(d, "(Calliope Melpomene Terpsichore)")
 
-      XCTAssertStatement(stmt, "(return (a b c))")
+      XCTAssertStatement(stmt, "(return (Calliope Melpomene Terpsichore))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -140,41 +141,41 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     }
   }
 
-  /// raise e
+  /// raise Hades
   func test_raise_exception() {
     var parser = self.createStmtParser(
-      self.token(.raise,           start: loc0, end: loc1),
-      self.token(.identifier("e"), start: loc2, end: loc3)
+      self.token(.raise,               start: loc0, end: loc1),
+      self.token(.identifier("Hades"), start: loc2, end: loc3)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructRaise(stmt) else { return }
 
-      XCTAssertExpression(d.exc, "e")
+      XCTAssertExpression(d.exc, "Hades")
       XCTAssertNil(d.cause)
 
-      XCTAssertStatement(stmt, "(raise e)")
+      XCTAssertStatement(stmt, "(raise Hades)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc3)
     }
   }
 
-  /// raise e from f
+  /// raise Hercules from Olympus
   func test_raise_from() {
     var parser = self.createStmtParser(
-      self.token(.raise,           start: loc0, end: loc1),
-      self.token(.identifier("e"), start: loc2, end: loc3),
-      self.token(.from,            start: loc4, end: loc5),
-      self.token(.identifier("f"), start: loc6, end: loc7)
+      self.token(.raise,                start: loc0, end: loc1),
+      self.token(.identifier("Hercules"), start: loc2, end: loc3),
+      self.token(.from,                 start: loc4, end: loc5),
+      self.token(.identifier("Olympus"),   start: loc6, end: loc7)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructRaise(stmt) else { return }
 
-      XCTAssertExpression(d.exc, "e")
-      XCTAssertExpression(d.cause, "f")
+      XCTAssertExpression(d.exc, "Hercules")
+      XCTAssertExpression(d.cause, "Olympus")
 
-      XCTAssertStatement(stmt, "(raise e from: f)")
+      XCTAssertStatement(stmt, "(raise Hercules from: Olympus)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -199,77 +200,77 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     }
   }
 
-  /// yield a
+  /// yield Megara
   func test_yield_value() {
     var parser = self.createStmtParser(
-      self.token(.yield,           start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3)
+      self.token(.yield,                start: loc0, end: loc1),
+      self.token(.identifier("Megara"), start: loc2, end: loc3)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructExpr(stmt) else { return }
 
-      XCTAssertExpression(d, "(yield a)")
+      XCTAssertExpression(d, "(yield Megara)")
 
-      XCTAssertStatement(stmt, "(yield a)")
+      XCTAssertStatement(stmt, "(yield Megara)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc3)
     }
   }
 
-  /// yield a,
+  /// yield Megara,
   func test_yield_value_withCommaAfter_yieldsTuple() {
     var parser = self.createStmtParser(
-      self.token(.yield,           start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5)
+      self.token(.yield,                start: loc0, end: loc1),
+      self.token(.identifier("Megara"), start: loc2, end: loc3),
+      self.token(.comma,                start: loc4, end: loc5)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructExpr(stmt) else { return }
 
-      XCTAssertExpression(d, "(yield (a))")
+      XCTAssertExpression(d, "(yield (Megara))")
 
-      XCTAssertStatement(stmt, "(yield (a))")
+      XCTAssertStatement(stmt, "(yield (Megara))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc5)
     }
   }
 
-  /// yield a,b
+  /// yield Pain, Panic
   func test_yield_multiple() {
     var parser = self.createStmtParser(
       self.token(.yield,           start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
+      self.token(.identifier("Pain"), start: loc2, end: loc3),
       self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7)
+      self.token(.identifier("Panic"), start: loc6, end: loc7)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructExpr(stmt) else { return }
 
-      XCTAssertExpression(d, "(yield (a b))")
+      XCTAssertExpression(d, "(yield (Pain Panic))")
 
-      XCTAssertStatement(stmt, "(yield (a b))")
+      XCTAssertStatement(stmt, "(yield (Pain Panic))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
   }
 
-  /// yield from a
+  /// yield from Olympus
   func test_yield_from() {
     var parser = self.createStmtParser(
-      self.token(.yield,           start: loc0, end: loc1),
-      self.token(.from,            start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5)
+      self.token(.yield,                 start: loc0, end: loc1),
+      self.token(.from,                  start: loc2, end: loc3),
+      self.token(.identifier("Olympus"), start: loc4, end: loc5)
     )
 
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.destructExpr(stmt) else { return }
 
-      XCTAssertExpression(d, "(yieldFrom a)")
+      XCTAssertExpression(d, "(yieldFrom Olympus)")
 
-      XCTAssertStatement(stmt, "(yieldFrom a)")
+      XCTAssertStatement(stmt, "(yieldFrom Olympus)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc5)
     }
