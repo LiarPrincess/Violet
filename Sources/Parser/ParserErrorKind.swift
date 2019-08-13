@@ -53,14 +53,21 @@ public enum ParserErrorKind: Equatable {
 
   /// Illegal target for annotation
   case illegalAnnAssignmentTarget
-  /// Only single target (not list) can be annotated
+  /// Only single target (not list) can be annotated.
   case illegalListInAnnAssignmentTarget
-  /// Only single target (not tuple) can be annotated
+  /// Only single target (not tuple) can be annotated.
   case illegalTupleInAnnAssignmentTarget
-  /// Illegal expression for augmented assignment
+  /// Illegal expression for augmented assignment.
   case illegalAugAssignmentTarget
-  /// Assignment to yield expression not possible
+  /// Assignment to yield expression not possible.
   case illegalAssignmentToYield
+
+  // MARK: - Try
+
+  /// `Try` without `except` or `finally` is not allowed.
+  case tryWithoutExceptOrFinally
+  /// `Else` requires at least one `except`.
+  case tryWithElseWithoutExcept
 
   // MARK: - General
 
@@ -123,6 +130,11 @@ extension ParserErrorKind: CustomStringConvertible {
       return "Illegal expression for augmented assignment."
     case .illegalAssignmentToYield:
       return "Assignment to yield expression not possible."
+
+    case .tryWithoutExceptOrFinally:
+      return "'Try' without 'except' or 'finally' is not allowed."
+    case .tryWithElseWithoutExcept:
+      return "'Else' requires at least one 'except'."
 
     case let .unexpectedEOF(expected):
       switch expected.count {

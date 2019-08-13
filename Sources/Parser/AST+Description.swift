@@ -33,12 +33,13 @@ extension Statement: CustomStringConvertible, CustomDebugStringConvertible {
 extension StatementKind: CustomStringConvertible {
   public var description: String {
     switch self {
-//    case .functionDef(let name, let args, let body, let decorator_list, let returns):
-//
-//    case .asyncFunctionDef(let name, let args, let body, let decorator_list, let returns):
-//
-//    case .classDef(let name, let bases, let keywords, let body, let decorator_list):
-//
+    case let .functionDef(name, args, body, decorator_list, returns):
+      return "TODO"
+    case let .asyncFunctionDef(name, args, body, decorator_list, returns):
+      return "TODO"
+    case let .classDef(name, bases, keywords, body, decorator_list):
+      return "TODO"
+
     case let .return(v):
       let val = v.map { " " + describe($0) } ?? ""
       return "(return\(val))"
@@ -69,7 +70,8 @@ extension StatementKind: CustomStringConvertible {
 
       return "(for \(target) in: \(iter) do: \(b ?? "")\(e ?? ""))"
 
-//    case .asyncFor(let target, let iter, let body, let orElse):
+    case .asyncFor(let target, let iter, let body, let orElse):
+      return "TODO"
 
     case let .while(test, body, orElse):
       var b: String?
@@ -105,6 +107,16 @@ extension StatementKind: CustomStringConvertible {
 
       return "(if \(test) then: \(b ?? "")\(e ?? ""))"
 
+    case let .with(items, body):
+      return "TODO"
+    case let .asyncWith(items, body):
+      return "TODO"
+    case let .try(body, handlers, orElse, finalBody):
+      let h = handlers.isEmpty  ? "" : " " + join(handlers)
+      let o = orElse.isEmpty    ? "" : " else: \(join(orElse))"
+      let f = finalBody.isEmpty ? "" : " finally: \(join(finalBody))"
+      return "(try \(join(body))\(h)\(o)\(f))"
+
     case let .raise(exc, cause):
       let e = exc.map { " " + describe($0) } ?? ""
       let c = cause.map { " from: " + describe($0) } ?? ""
@@ -130,9 +142,6 @@ extension StatementKind: CustomStringConvertible {
       return "(break)"
     case .continue:
       return "(continue)"
-
-    default:
-      return "TODO"
     }
   }
 }
@@ -145,6 +154,30 @@ extension Alias: CustomStringConvertible {
     case let .some(alias):
       return "(\(self.name) as \(alias))"
     }
+  }
+}
+
+extension WithItem {
+
+}
+
+extension ExceptHandler: CustomStringConvertible {
+  public var description: String {
+//    /// Exception type it will match, typically a Name node
+//    /// (or `nil` for a catch-all except: clause).
+//    public let type: Expression?
+    let t = self.type.map { " " + describe($0) } ?? ""
+
+//    /// Raw string for the name to hold the exception,
+//    /// or `nil` if the clause doesn’t have as foo.
+//    public let name: String?
+    let n = self.name.map { " as: \($0)" } ?? ""
+
+//    /// List of handler nodes.
+//    public let body: [Statement]
+    let b = self.body.isEmpty ? "" : " do: \(join(self.body))"
+    // except EnvironmentError as err: "But you can bet before we're through"
+    return "(except\(t)\(n)\(b))"
   }
 }
 

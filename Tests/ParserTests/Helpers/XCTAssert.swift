@@ -25,3 +25,12 @@ internal func XCTAssertStatement(_ stmt:     Statement,
   let desc = String(describing: stmt.kind)
   XCTAssertEqual(desc, expected, message, file: file, line: line)
 }
+
+internal func XCTAssertExceptHandler(_ handler:  ExceptHandler,
+                                     _ expected: String,
+                                     _ message:  String = "",
+                                     file: StaticString = #file,
+                                     line: UInt         = #line) {
+  let desc = String(describing: handler)
+  XCTAssertEqual(desc, expected, message, file: file, line: line)
+}
