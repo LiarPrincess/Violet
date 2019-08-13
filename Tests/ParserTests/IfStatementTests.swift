@@ -5,7 +5,7 @@ import Lexer
 
 // Use this for reference:
 // https://www.youtube.com/watch?v=tTUZswZHsWQ
-// (In this file we start the song and continue in `while` and `for` tests)
+// (In this file we start the song and continue in 'loop' tests)
 
 // swiftlint:disable function_body_length
 

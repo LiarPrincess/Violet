@@ -51,12 +51,43 @@ extension StatementKind: CustomStringConvertible {
       return "(= \(target):\(annotation)\(v))"
     case let .augAssign(target: target, op: op, value: value):
       return "(\(op)= \(target) \(value))"
-//    case .for(let target, let iter, let body, let orelse):
-//
-//    case .asyncFor(let target, let iter, let body, let orelse):
-//
-//    case .while(let test, let body, let orelse):
-//
+
+    case let .for(target, iter, body, orElse):
+      var b: String?
+      switch body.count {
+      case 0: b = "()"
+      case 1: b = describe(body[0])
+      default: b = "(\(join(body)))"
+      }
+
+      var e: String?
+      switch orElse.count {
+      case 0: e = ""
+      case 1: e = " else: \(orElse[0])"
+      default: e = " else: (\(join(body)))"
+      }
+
+      return "(for \(target) in: \(iter) do: \(b ?? "")\(e ?? ""))"
+
+//    case .asyncFor(let target, let iter, let body, let orElse):
+
+    case .while(let test, let body, let orElse):
+      var b: String?
+      switch body.count {
+      case 0: b = "()"
+      case 1: b = describe(body[0])
+      default: b = "(\(join(body)))"
+      }
+
+      var e: String?
+      switch orElse.count {
+      case 0: e = ""
+      case 1: e = " else: \(orElse[0])"
+      default: e = " else: (\(join(body)))"
+      }
+
+      return "(while \(test) \(b ?? "")\(e ?? ""))"
+
     case let .if(test, body, orElse):
       var b: String?
       switch body.count {
@@ -73,6 +104,7 @@ extension StatementKind: CustomStringConvertible {
       }
 
       return "(if \(test) then: \(b ?? "")\(e ?? ""))"
+
     case let .raise(exc, cause):
       let e = exc.map { " " + describe($0) } ?? ""
       let c = cause.map { " from: " + describe($0) } ?? ""

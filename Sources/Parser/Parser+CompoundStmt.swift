@@ -35,12 +35,9 @@ extension Parser {
     case .if:
       return try self.ifStmt(closingTokens: closingTokens)
     case .while:
-      break
+      return try self.whileStmt(closingTokens: closingTokens)
     case .for:
-      break
-
-    // MARK: - try, with, async
-
+      return try self.forStmt(closingTokens: closingTokens)
     case .try:
       break
     case .with:
@@ -57,7 +54,7 @@ extension Parser {
     return nil
   }
 
-  // MARK: if
+  // MARK: If
 
   /// Intermediate representation for if/elif.
   private struct IfIR {
@@ -106,6 +103,23 @@ extension Parser {
     return self.compile(irs: irs, orElse: orElse)
   }
 
+  /// ```c
+  /// if a:   "Baker: Good morning, Belle!"
+  /// elif b: "Belle: Good morning, Monsieur."
+  /// else:   "Baker: Where are you off to?"
+  /// ```
+  /// Returns:
+  /// ```
+  /// If
+  ///   test: a
+  ///   body: "Baker: Good morning, Belle!"
+  ///   orElse:
+  ///     If
+  ///       test: b
+  ///       body: "Belle: Good morning, Monsieur."
+  ///       orElse: "Baker: Where are you off to?"
+  /// ```
+  /// Full song [here](https://www.youtube.com/watch?v=tTUZswZHsWQ ).
   private func compile(irs: NonEmptyArray<IfIR>,
                        orElse: NonEmptyArray<Statement>?) -> Statement {
 
@@ -128,6 +142,79 @@ extension Parser {
     return result! // swiftlint:disable:this force_unwrapping
   }
 
-  /// `while_stmt: 'while' test ':' suite ['else' ':' suite]`
-  /// `for_stmt: 'for' exprlist 'in' testlist ':' suite ['else' ':' suite]`
+  // MARK: - While
+
+  /// ```c
+  /// while_stmt:
+  ///   'while' test ':' suite
+  ///   ['else' ':' suite]
+  /// ```
+  internal mutating func whileStmt(closingTokens: [TokenKind]) throws -> Statement {
+    assert(self.peek.kind == .while)
+
+    let start = self.peek.start
+    try self.advance() // while
+
+    let test = try self.test()
+    try self.consumeOrThrow(.colon)
+
+    var bodyClosing = closingTokens
+    bodyClosing.append(contentsOf: [.else])
+
+    let body = try self.suite(closingTokens: bodyClosing)
+
+    var orElse: NonEmptyArray<Statement>?
+    if self.peek.kind == .else {
+      try self.advance() // else
+      try self.consumeOrThrow(.colon)
+      orElse = try self.suite(closingTokens: closingTokens)
+    }
+
+    let kind = StatementKind.while(test: test,
+                                   body: Array(body),
+                                   orElse: orElse.map { Array($0) } ?? [])
+
+    let end = orElse?.last.end ?? body.last.end
+    return self.statement(kind, start: start, end: end)
+  }
+
+  /// ```c
+  /// for_stmt:
+  ///   'for' exprlist 'in' testlist ':' suite
+  ///   ['else' ':' suite]
+  /// ```
+  internal mutating func forStmt(closingTokens: [TokenKind]) throws -> Statement {
+    assert(self.peek.kind == .for)
+
+    let forStart = self.peek.start
+    try self.advance() // for
+
+    let targetStart = self.peek.start
+    let target = try self.exprList(closingTokens: [.in])
+    try self.consumeOrThrow(.in)
+
+    let iterStart = self.peek.start
+    let iter = try self.testList(closingTokens: [.colon])
+    try self.consumeOrThrow(.colon)
+
+    var bodyClosing = closingTokens
+    bodyClosing.append(contentsOf: [.else])
+
+    let body = try self.suite(closingTokens: bodyClosing)
+
+    var orElse: NonEmptyArray<Statement>?
+    if self.peek.kind == .else {
+      try self.advance() // else
+      try self.consumeOrThrow(.colon)
+      orElse = try self.suite(closingTokens: closingTokens)
+    }
+
+    let kind = StatementKind.for(target: target.toExpression(start: targetStart),
+                                 iter: iter.toExpression(start: iterStart),
+                                 body: Array(body),
+                                 orElse: orElse.map { Array($0) } ?? [])
+
+    let end = orElse?.last.end ?? body.last.end
+    return self.statement(kind, start: forStart, end: end)
+  }
 }

@@ -98,13 +98,13 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `iter` holds the item to be looped over, again as a single node.
   -- - `body` and `orelse` contain lists of nodes to execute. Those in orelse
   -- are executed if the loop finishes normally, rather than via a break statement.
-  | For(expr target, expr iter, stmt* body, stmt* orelse)
+  | For(expr target, expr iter, stmt* body, stmt* orElse)
   -- An `async for` definition.
   -- Has the same fields as `For`.
-  | AsyncFor(expr target, expr iter, stmt* body, stmt* orelse)
+  | AsyncFor(expr target, expr iter, stmt* body, stmt* orElse)
   -- A `while` loop.
   -- - `test` holds the condition, such as a Compare node.
-  | While(expr test, stmt* body, stmt* orelse)
+  | While(expr test, stmt* body, stmt* orElse)
 
   -- An if statement.
   -- - `test` holds a single node, such as a Compare node.
@@ -112,7 +112,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `elif` clauses don’t have a special representation in the AST,
   -- but rather appear as extra `If` nodes within the `orelse` section
   -- of the previous one.
-  | If(expr test, stmt* body, stmt* orelse)
+  | If(expr test, stmt* body, stmt* orElse)
   -- A `with` block.
   -- - `items` is a list of withitem nodes representing the context managers.
   -- - `body` is the indented block inside the context.

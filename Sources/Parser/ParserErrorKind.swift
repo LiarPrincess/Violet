@@ -137,12 +137,12 @@ extension ParserErrorKind: CustomStringConvertible {
     case let .unexpectedToken(tokenKind, expected):
       switch expected.count {
       case 0:
-        return "Unexpected '\(tokenKind)'."
+        return "Unexpected \(tokenKind)."
       case 1:
-        return "Unexpected '\(tokenKind)', expected \(expected[0])."
+        return "Unexpected \(tokenKind), expected \(expected[0])."
       default:
         let e = expected.map { String(describing: $0) }.joined(separator: ", ")
-        return "Unexpected '\(tokenKind)', expected any of: \(e)."
+        return "Unexpected \(tokenKind), expected any of: \(e)."
       }
 
     case .unimplemented(let msg):
