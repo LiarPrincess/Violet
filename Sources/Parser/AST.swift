@@ -50,7 +50,8 @@ public enum StatementKind: Equatable {
   /// - `name` is a raw string of the function name.
   /// - `args` is a arguments node.
   /// - `body` is the list of nodes inside the function.
-  /// - `decoratorList` is the list of decorators to be applied, stored outermost first (i.e. the first in the list will be applied last).
+  /// - `decoratorList` is the list of decorators to be applied,
+  /// stored outermost first (i.e. the first in the list will be applied last).
   /// - `returns` is the return annotation (Python 3 only).
   case functionDef(name: String, args: Arguments, body: [Statement], decoratorList: [Expression], returns: Expression?)
   /// An async def function definition.
@@ -59,8 +60,11 @@ public enum StatementKind: Equatable {
   /// A class definition.
   /// - `name` is a raw string for the class name
   /// - `bases` is a list of nodes for explicitly specified base classes.
-  /// - `keywords` is a list of keyword nodes, principally for ‘metaclass’. Other keywords will be passed to the metaclass, as per PEP-3115.
-  /// - `starargs` and kwargs are each a single node, as in a function call. starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass. These are removed in Python 3.5 - see below for details.
+  /// - `keywords` is a list of keyword nodes, principally for ‘metaclass’.
+  /// Other keywords will be passed to the metaclass, as per PEP-3115.
+  /// - `starargs` and kwargs are each a single node, as in a function call.
+  /// starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass.
+  /// These are removed in Python 3.5 - see below for details.
   /// - `body` is a list of nodes representing the code within the class definition.
   /// - `decoratorList` is a list of nodes, as in `FunctionDef`.
   case classDef(name: String, bases: [Expression], keywords: [Keyword], body: [Statement], decoratorList: [Expression])
@@ -104,7 +108,6 @@ public enum StatementKind: Equatable {
   /// An if statement.
   /// - `test` holds a single node, such as a Compare node.
   /// - `body` and `orElse` each hold a list of nodes.
-  /// 
   /// - `elif` clauses don’t have a special representation in the AST,
   /// but rather appear as extra `If` nodes within the `orElse` section
   /// of the previous one.

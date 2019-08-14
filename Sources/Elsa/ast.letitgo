@@ -60,6 +60,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- An async def function definition.
   -- Has the same fields as `FunctionDef`.
   | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decoratorList, expr? returns)
+
   -- A class definition.
   -- - `name` is a raw string for the class name
   -- - `bases` is a list of nodes for explicitly specified base classes.
@@ -71,12 +72,13 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `body` is a list of nodes representing the code within the class definition.
   -- - `decoratorList` is a list of nodes, as in `FunctionDef`.
   | ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decoratorList)
+
   -- A `return` statement.
   | Return(expr?)
-
   -- Represents a `del` statement.
   -- Contains a list of nodes, such as Name, Attribute or Subscript nodes.
   | Delete(expr*)
+
   -- An assignment.
   -- - `targets` is a list of nodes
   -- - `value` is a single node\n
@@ -112,11 +114,12 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
   -- An if statement.
   -- - `test` holds a single node, such as a Compare node.
-  -- - `body` and `orElse` each hold a list of nodes.\n
+  -- - `body` and `orElse` each hold a list of nodes.
   -- - `elif` clauses don’t have a special representation in the AST,
   -- but rather appear as extra `If` nodes within the `orElse` section
   -- of the previous one.
   | If(expr test, stmt* body, stmt* orElse)
+
   -- A `with` block.
   -- - `items` is a list of withitem nodes representing the context managers.
   -- - `body` is the indented block inside the context.

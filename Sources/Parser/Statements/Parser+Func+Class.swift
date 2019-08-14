@@ -3,21 +3,23 @@ import Lexer
 
 // In CPython:
 // Python -> ast.c
-//  ast_for_funcdef_impl(struct compiling *c, const node *n0,
-//                       asdl_seq *decorator_seq, bool is_async)
-//  ast_for_classdef(struct compiling *c, const node *n, asdl_seq *decorator_seq)
+//  ast_for_funcdef_impl(struct compiling *c, const node *n0, ...)
+//  ast_for_classdef(struct compiling *c, const node *n, ...)
 
 extension Parser {
 
   // MARK: - Function
 
   /// `funcdef: 'def' NAME parameters ['->' test] ':' suite`
-  internal mutating func funcDef(isAsync: Bool,
-                                 decoratorList: [Expression],
-                                 closingTokens: [TokenKind]) throws -> Statement {
+  internal mutating func funcDef(
+    closingTokens: [TokenKind],
+    start:         SourceLocation? = nil,
+    isAsync:       Bool = false,
+    decoratorList: [Expression] = []) throws -> Statement {
+
     assert(self.peek.kind == .def)
 
-    let start = self.peek.start
+    let start = start ?? self.peek.start
     try self.advance() // def
 
     let name = try self.consumeIdentifierOrThrow()
@@ -33,13 +35,11 @@ extension Parser {
     try self.consumeOrThrow(.colon)
     let body = try self.suite(closingTokens: closingTokens)
 
-    // swiftlint:disable multiline_arguments
-    let kind = isAsync ?
-      StatementKind.asyncFunctionDef(name: name, args: args, body: Array(body),
-                                     decoratorList: decoratorList, returns: returns) :
-      StatementKind.functionDef     (name: name, args: args, body: Array(body),
-                                     decoratorList: decoratorList, returns: returns)
-    // swiftlint:enable multiline_arguments
+    let kind: StatementKind = isAsync ?
+      .asyncFunctionDef(name: name, args: args, body: Array(body),
+                        decoratorList: decoratorList, returns: returns) :
+      .functionDef     (name: name, args: args, body: Array(body),
+                        decoratorList: decoratorList, returns: returns)
 
     return self.statement(kind, start: start, end: body.last.end)
   }
@@ -47,8 +47,10 @@ extension Parser {
   // MARK: - Class
 
   /// `classdef: 'class' NAME ['(' [arglist] ')'] ':' suite`
-  internal mutating func classDef(decoratorList: [Expression],
-                                  closingTokens: [TokenKind]) throws -> Statement {
+  internal mutating func classDef(
+    closingTokens: [TokenKind],
+    decoratorList: [Expression] = []) throws -> Statement {
+
     assert(self.peek.kind == .class)
 
     let start = self.peek.start
