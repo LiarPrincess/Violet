@@ -26,6 +26,15 @@ internal func XCTAssertStatement(_ stmt:     Statement,
   XCTAssertEqual(desc, expected, message, file: file, line: line)
 }
 
+internal func XCTAssertWithItem(_ item:  WithItem,
+                                _ expected: String,
+                                _ message:  String = "",
+                                file: StaticString = #file,
+                                line: UInt         = #line) {
+  let desc = String(describing: item)
+  XCTAssertEqual(desc, expected, message, file: file, line: line)
+}
+
 internal func XCTAssertExceptHandler(_ handler:  ExceptHandler,
                                      _ expected: String,
                                      _ message:  String = "",

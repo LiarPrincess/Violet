@@ -108,9 +108,9 @@ extension StatementKind: CustomStringConvertible {
       return "(if \(test) then: \(b ?? "")\(e ?? ""))"
 
     case let .with(items, body):
-      return "TODO"
+      return "(with \(join(items)) do: \(join(body)))"
     case let .asyncWith(items, body):
-      return "TODO"
+      return "(asyncWith \(join(items)) do: \(join(body)))"
     case let .try(body, handlers, orElse, finalBody):
       let h = handlers.isEmpty  ? "" : " " + join(handlers)
       let o = orElse.isEmpty    ? "" : " else: \(join(orElse))"
@@ -152,31 +152,27 @@ extension Alias: CustomStringConvertible {
     case .none:
       return self.name
     case let .some(alias):
-      return "(\(self.name) as \(alias))"
+      return "(\(self.name) as: \(alias))"
     }
   }
 }
 
-extension WithItem {
-
+extension WithItem: CustomStringConvertible {
+  public var description: String {
+    switch self.optionalVars {
+    case .none:
+      return describe(self.contextExpr)
+    case .some(let opt):
+      return "(\(self.contextExpr) as: \(opt))"
+    }
+  }
 }
 
 extension ExceptHandler: CustomStringConvertible {
   public var description: String {
-//    /// Exception type it will match, typically a Name node
-//    /// (or `nil` for a catch-all except: clause).
-//    public let type: Expression?
     let t = self.type.map { " " + describe($0) } ?? ""
-
-//    /// Raw string for the name to hold the exception,
-//    /// or `nil` if the clause doesn’t have as foo.
-//    public let name: String?
     let n = self.name.map { " as: \($0)" } ?? ""
-
-//    /// List of handler nodes.
-//    public let body: [Statement]
     let b = self.body.isEmpty ? "" : " do: \(join(self.body))"
-    // except EnvironmentError as err: "But you can bet before we're through"
     return "(except\(t)\(n)\(b))"
   }
 }

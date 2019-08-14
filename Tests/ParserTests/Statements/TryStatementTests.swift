@@ -7,7 +7,7 @@ import Lexer
 // swiftlint:disable file_length
 
 class TryStatementTests: XCTestCase,
-  Common, DestructStatementKind, DestructExpressionKind, DestructStringGroup {
+  Common, DestructStatementKind, DestructExpressionKind {
 
   // MARK: - No else or finally
 

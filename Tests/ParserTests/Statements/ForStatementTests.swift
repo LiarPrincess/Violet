@@ -4,7 +4,7 @@ import Lexer
 @testable import Parser
 
 class ForStatementTests: XCTestCase,
-  Common, DestructStatementKind, DestructExpressionKind, DestructStringGroup {
+  Common, DestructStatementKind, DestructExpressionKind {
 
   /// for person in village: "Beast"
   func test_for() {

@@ -4,7 +4,7 @@ import Lexer
 @testable import Parser
 
 class WhileStatementTests: XCTestCase,
-  Common, DestructStatementKind, DestructExpressionKind, DestructStringGroup {
+  Common, DestructStatementKind, DestructExpressionKind {
 
   /// while Frollo: "Quasimodo"
   func test_while() {

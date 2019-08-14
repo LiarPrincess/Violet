@@ -73,7 +73,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
       XCTAssertEqual(d[0].name, "Rapunzel")
       XCTAssertEqual(d[0].asName, "Daughter")
 
-      XCTAssertStatement(stmt, "(import (Rapunzel as Daughter))")
+      XCTAssertStatement(stmt, "(import (Rapunzel as: Daughter))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -102,7 +102,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
       XCTAssertEqual(d[1].name, "Pascal")
       XCTAssertNil(d[1].asName)
 
-      XCTAssertStatement(stmt, "(import (Rapunzel as Daughter) Pascal)")
+      XCTAssertStatement(stmt, "(import (Rapunzel as: Daughter) Pascal)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -160,7 +160,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
       XCTAssertEqual(d.names[0].name, "Rapunzel")
       XCTAssertEqual(d.names[0].asName, "Daughter")
 
-      XCTAssertStatement(stmt, "(from Tangled import: (Rapunzel as Daughter))")
+      XCTAssertStatement(stmt, "(from Tangled import: (Rapunzel as: Daughter))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -194,7 +194,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
       XCTAssertEqual(d.names[1].name, "Pascal")
       XCTAssertEqual(d.names[1].asName, nil)
 
-      XCTAssertStatement(stmt, "(from Tangled import: (Rapunzel as Daughter) Pascal)")
+      XCTAssertStatement(stmt, "(from Tangled import: (Rapunzel as: Daughter) Pascal)")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
