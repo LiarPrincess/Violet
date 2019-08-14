@@ -84,7 +84,16 @@ extension StatementKind: CustomStringConvertible {
                                  returns: returns)
 
     case let .classDef(name, bases, keywords, body, decorator_list):
-      return "TODO"
+      var parents = ""
+      switch (bases.isEmpty, keywords.isEmpty) {
+      case (true, true): break
+      case (false, true):  parents = " (" + join(bases) + ")"
+      case (true, false):  parents = " (" + join(keywords) + ")"
+      case (false, false): parents = " (" + join(bases) + " " + join(keywords) + ")"
+      }
+
+      // TODO: decoratorList
+      return "(class \(name)\(parents) body: \(join(body)))"
 
     case let .return(v):
       let val = v.map { " " + describe($0) } ?? ""
@@ -567,7 +576,11 @@ extension Vararg: CustomStringConvertible {
 
 extension Keyword: CustomStringConvertible {
   public var description: String {
-    let name = self.name ?? "**"
-    return "\(name)=\(self.value)"
+    switch self.name {
+    case .none:
+      return "**" + describe(self.value)
+    case .some(let name):
+      return "\(name)=\(self.value)"
+    }
   }
 }

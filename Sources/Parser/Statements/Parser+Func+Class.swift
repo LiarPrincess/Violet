@@ -54,7 +54,6 @@ extension Parser {
     let start = self.peek.start
     try self.advance() // class
 
-    // TODO: test generator
     let name = try self.consumeIdentifierOrThrow()
     try self.checkForbiddenName(name)
     let args = try self.parseBaseClass()
@@ -84,7 +83,7 @@ extension Parser {
       return nil
     }
 
-    let result = try self.argList(closingToken: .rightParen)
+    let result = try self.argList(closingToken: .rightParen, isBaseClass: true)
     try self.consumeOrThrow(.rightParen)
     return result
   }

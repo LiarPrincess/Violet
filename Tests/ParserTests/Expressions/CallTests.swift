@@ -428,7 +428,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [keywordA])
 
-      XCTAssertExpression(expr, "(call f **=a)")
+      XCTAssertExpression(expr, "(call f **a)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }
@@ -457,7 +457,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [argA])
       XCTAssertEqual(d.keywords, [keywordB])
 
-      XCTAssertExpression(expr, "(call f a **=b)")
+      XCTAssertExpression(expr, "(call f a **b)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc13)
     }

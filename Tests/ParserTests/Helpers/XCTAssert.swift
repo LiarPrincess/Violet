@@ -43,3 +43,12 @@ internal func XCTAssertExceptHandler(_ handler:  ExceptHandler,
   let desc = String(describing: handler)
   XCTAssertEqual(desc, expected, message, file: file, line: line)
 }
+
+internal func XCTAssertKeyword(_ keyword:  Keyword,
+                               _ expected: String,
+                               _ message:  String = "",
+                               file: StaticString = #file,
+                               line: UInt         = #line) {
+  let desc = String(describing: keyword)
+  XCTAssertEqual(desc, expected, message, file: file, line: line)
+}

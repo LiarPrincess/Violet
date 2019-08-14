@@ -84,7 +84,7 @@ extension Common {
                       line:    UInt = #line) -> ParserError? {
     do {
       let result = try parser.parse()
-      XCTAssert(false, "Result: \(result)", file: file, line: line)
+      XCTAssert(false, "Successful parse: \(result)", file: file, line: line)
       return nil
     } catch let error as ParserError {
       return error
