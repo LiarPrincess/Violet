@@ -148,25 +148,56 @@ extension ParserErrorKind: CustomStringConvertible {
       switch expected.count {
       case 0:
         return "Unexpected end of file."
-      case 1:
-        return "Unexpected end of file, expected \(expected[0])."
       default:
-        let e = expected.map { String(describing: $0) }.joined(separator: ", ")
+        let e = joinWithCommaAndOr(expected)
         return "Unexpected end of file, expected any of: \(e)."
       }
     case let .unexpectedToken(tokenKind, expected):
+      let token = needsQuotes(tokenKind) ?
+        "'" + String(describing: tokenKind) + "'" :
+        String(describing: tokenKind)
+
       switch expected.count {
       case 0:
-        return "Unexpected \(tokenKind)."
-      case 1:
-        return "Unexpected \(tokenKind), expected \(expected[0])."
+        return "Unexpected \(token)."
       default:
-        let e = expected.map { String(describing: $0) }.joined(separator: ", ")
-        return "Unexpected \(tokenKind), expected any of: \(e)."
+        let e = joinWithCommaAndOr(expected)
+        return "Unexpected \(token), expected \(e)."
       }
 
     case .unimplemented(let msg):
       return "Unimplemented: '\(msg)'"
     }
   }
+}
+
+/// Comma between elements and 'or' before last one.
+private func joinWithCommaAndOr<T>(_ elements: [T]) -> String {
+  var result = String(describing: elements[0])
+
+  for (index, element) in elements.dropFirst().enumerated() {
+    let isLast = index == elements.count - 2 // -1 for count, -1 for dropFirst
+    result += isLast ? " or " : ", "
+    result += String(describing: element)
+  }
+
+  return result
+}
+
+// swiftlint:disable:next cyclomatic_complexity
+private func needsQuotes(_ kind: TokenKind) -> Bool {
+  if case TokenKind.identifier   = kind { return false }
+  if case TokenKind.string       = kind { return false }
+  if case TokenKind.formatString = kind { return false }
+  if case TokenKind.int          = kind { return false }
+  if case TokenKind.float        = kind { return false }
+  if case TokenKind.imaginary    = kind { return false }
+  if case TokenKind.bytes        = kind { return false }
+
+  if case TokenKind.indent  = kind { return false }
+  if case TokenKind.dedent  = kind { return false }
+  if case TokenKind.newLine = kind { return false }
+  if case TokenKind.comment = kind { return false }
+
+  return true
 }

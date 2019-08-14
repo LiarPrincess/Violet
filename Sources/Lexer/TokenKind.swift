@@ -131,15 +131,12 @@ extension TokenKind: CustomStringConvertible {
     case let .float(val):     return "float (value: \(val))"
     case let .imaginary(val): return "imaginary (value: \(val))"
 
-    case let .bytes(val): return "data (value: \(val))"
+    case let .bytes(val): return "bytes (value: \(val))"
 
     case .indent:  return "indent"
     case .dedent:  return "dedent"
-    case .newLine: return "newline"
-    case .comment(let s):
-      let maxCount = 20
-      let dotDotDot = s.count > maxCount ? "..." : ""
-      return "comment (value: \"\(s.prefix(maxCount - 3))\(dotDotDot)\")"
+    case .newLine: return "new line"
+    case .comment(let s): return "comment (value: \(s))"
 
     case .leftParen:  return "("
     case .leftSqb:    return "["
@@ -163,7 +160,7 @@ extension TokenKind: CustomStringConvertible {
     case .at:         return "@"
 
     case .plusEqual:       return "+="
-    case .minusEqual:        return "-="
+    case .minusEqual:      return "-="
     case .starEqual:       return "*="
     case .slashEqual:      return "/="
     case .percentEqual:    return "%="

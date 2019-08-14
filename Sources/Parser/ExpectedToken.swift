@@ -1,5 +1,7 @@
 import Lexer
 
+// swiftlint:disable file_length
+
 // Really regretting that we don't have prper union types in Swift
 // (but not really sure how would that work).
 // We can also use `case token(TokenKind)`, but in most common use case
@@ -120,6 +122,124 @@ public enum ExpectedToken {
   /** `while` keyword */    case `while`
   /** `with` keyword */     case with
   /** `yield` keyword */    case yield
+}
+
+extension ExpectedToken: CustomStringConvertible {
+  public var description: String {
+    switch self {
+
+    case .expression: return "expression"
+    case .slice: return "slice"
+
+    case .eof: return "eof"
+
+    case .identifier:   return "identifier"
+    case .string:       return "string"
+
+    case .int:       return "int"
+    case .float:     return "float"
+    case .imaginary: return "imaginary"
+
+    case .bytes: return "bytes"
+
+    case .indent:  return "indent"
+    case .dedent:  return "dedent"
+    case .newLine: return "new line"
+    case .comment: return "comment"
+
+    case .leftParen:  return "'('"
+    case .leftSqb:    return "'['"
+    case .leftBrace:  return "'{'"
+    case .rightParen: return "')'"
+    case .rightSqb:   return "']'"
+    case .rightBrace: return "'}'"
+
+    case .colon:     return "':'"
+    case .comma:     return "','"
+    case .semicolon: return "';'"
+    case .ellipsis:  return "'...'"
+
+    case .plus:       return "'+'"
+    case .minus:      return "'-'"
+    case .star:       return "'*'"
+    case .slash:      return "'/'"
+    case .vbar:       return "'|'"
+    case .amper:      return "'&'"
+    case .circumflex: return "'^'"
+    case .at:         return "'@'"
+
+    case .plusEqual:       return "'+='"
+    case .minusEqual:      return "'-='"
+    case .starEqual:       return "'*='"
+    case .slashEqual:      return "'/='"
+    case .percentEqual:    return "'%='"
+    case .vbarEqual:       return "'|='"
+    case .amperEqual:      return "'&='"
+    case .circumflexEqual: return "'^='"
+    case .atEqual:         return "'@='"
+
+    case .less:    return "'<'"
+    case .greater: return "'>'"
+    case .equal:   return "'='"
+
+    case .equalEqual:   return "'=='"
+    case .notEqual:     return "'!='"
+    case .lessEqual:    return "'<='"
+    case .greaterEqual: return "'>='"
+
+    case .leftShift:       return "'<<'"
+    case .rightShift:      return "'>>'"
+    case .starStar:        return "'**'"
+    case .slashSlash:      return "'//'"
+    case .leftShiftEqual:  return "'<<='"
+    case .rightShiftEqual: return "'>>='"
+    case .starStarEqual:   return "'**='"
+    case .slashSlashEqual: return "'//='"
+
+    case .dot:        return "'.'"
+    case .percent:    return "'%'"
+    case .tilde:      return "'~'"
+    case .rightArrow: return "'->'"
+    case .colonEqual: return "':='"
+
+    case .none:  return "'None'"
+    case .false: return "'False'"
+    case .true:  return "'True'"
+
+    case .and:      return "'and'"
+    case .as:       return "'as'"
+    case .assert:   return "'assert'"
+    case .async:    return "'async'"
+    case .await:    return "'await'"
+    case .break:    return "'break'"
+    case .class:    return "'class'"
+    case .continue: return "'continue'"
+    case .def:      return "'def'"
+    case .del:      return "'del'"
+    case .elif:     return "'elif'"
+    case .else:     return "'else'"
+    case .except:   return "'except'"
+    case .finally:  return "'finally'"
+    case .for:      return "'for'"
+    case .from:     return "'from'"
+    case .global:   return "'global'"
+    case .if:       return "'if'"
+    case .import:   return "'import'"
+    case .in:       return "'in'"
+    case .is:       return "'is'"
+    case .lambda:   return "'lambda'"
+    case .nonlocal: return "'nonlocal'"
+    case .not:      return "'not'"
+    case .or:       return "'or'"
+    case .pass:     return "'pass'"
+    case .raise:    return "'raise'"
+    case .return:   return "'return'"
+    case .try:      return "'try'"
+    case .while:    return "'while'"
+    case .with:     return "'with'"
+    case .yield:    return "'yield'"
+    }
+  }
 }
 
 extension TokenKind {
