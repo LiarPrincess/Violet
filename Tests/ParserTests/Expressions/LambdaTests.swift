@@ -11,496 +11,484 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
 
   // MARK: - No arguments
 
-  /// lambda: 5
+  /// lambda: "Ratatouille"
   func test_noArguments() {
     var parser = self.createExprParser(
-      self.token(.lambda,   start: loc0, end: loc1),
-      self.token(.colon,    start: loc2, end: loc3),
-      self.token(.float(5), start: loc4, end: loc5)
+      self.token(.lambda,                start: loc0, end: loc1),
+      self.token(.colon,                 start: loc8, end: loc9),
+      self.token(.string("Ratatouille"), start: loc10, end: loc11)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
+      guard let d = self.destructLambda(expr) else { return }
 
-      XCTAssertEqual(l.args.args, [])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .none)
-      XCTAssertEqual(l.args.kwOnlyArgs, [])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [])
-      XCTAssertEqual(l.args.kwarg, nil)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc2)
+      XCTAssertEqual(d.args.args, [])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .none)
+      XCTAssertEqual(d.args.kwOnlyArgs, [])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertEqual(d.args.kwarg, nil)
+      XCTAssertEqual(d.args.start, loc8)
+      XCTAssertEqual(d.args.end,   loc8)
 
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc4, end: loc5))
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
 
-      XCTAssertExpression(expr, "(lambda () 5.0)")
+      XCTAssertExpression(expr, "(lambda () do: \"Ratatouille\")")
       XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc5)
+      XCTAssertEqual(expr.end,   loc11)
     }
   }
 
   // MARK: - Positional
 
-  /// lambda a: 5
+  /// lambda zucchini: "Ratatouille"
   func test_positional() {
     var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.float(5.0),      start: loc6, end: loc7)
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.identifier("zucchini"), start: loc6, end: loc7),
+      self.token(.colon,                  start: loc10, end: loc11),
+      self.token(.string("Ratatouille"),  start: loc12, end: loc13)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
+      guard let d = self.destructLambda(expr) else { return }
 
-      let argA = Arg(name: "a", annotation: nil, start: loc2, end: loc3)
-      XCTAssertEqual(l.args.args, [argA])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .none)
-      XCTAssertEqual(l.args.kwOnlyArgs, [])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [])
-      XCTAssertEqual(l.args.kwarg, nil)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc3)
+      let argA = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      XCTAssertEqual(d.args.args, [argA])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .none)
+      XCTAssertEqual(d.args.kwOnlyArgs, [])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertEqual(d.args.kwarg, nil)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc7)
 
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc6, end: loc7))
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
 
-      XCTAssertExpression(expr, "(lambda (a) 5.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc7)
-    }
-  }
-
-  /// lambda a = 1: 5
-  func test_positional_default() {
-    var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.equal,           start: loc4, end: loc5),
-      self.token(.float(1.0),      start: loc6, end: loc7),
-      self.token(.colon,           start: loc8, end: loc9),
-      self.token(.float(5.0),      start: loc10, end: loc11)
-    )
-
-    if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
-
-      let argA = Arg(name: "a", annotation: nil, start: loc2, end: loc3)
-      let defA = Expression(.float(1.0), start: loc6, end: loc7)
-      XCTAssertEqual(l.args.args, [argA])
-      XCTAssertEqual(l.args.defaults, [defA])
-      XCTAssertEqual(l.args.vararg, .none)
-      XCTAssertEqual(l.args.kwOnlyArgs, [])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [])
-      XCTAssertEqual(l.args.kwarg, nil)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc7)
-
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc10, end: loc11))
-
-      XCTAssertExpression(expr, "(lambda (a=1.0) 5.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc11)
-    }
-  }
-
-  /// lambda a, b: 5
-  func test_positional_multiple() {
-    var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.colon,           start: loc8, end: loc9),
-      self.token(.float(5.0),      start: loc10, end: loc11)
-    )
-
-    if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
-
-      let argA = Arg(name: "a", annotation: nil, start: loc2, end: loc3)
-      let argB = Arg(name: "b", annotation: nil, start: loc6, end: loc7)
-      XCTAssertEqual(l.args.args, [argA, argB])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .none)
-      XCTAssertEqual(l.args.kwOnlyArgs, [])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [])
-      XCTAssertEqual(l.args.kwarg, nil)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc7)
-
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc10, end: loc11))
-
-      XCTAssertExpression(expr, "(lambda (a b) 5.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc11)
-    }
-  }
-
-  /// lambda a, b = 1: 5
-  func test_positional_default_afterRequired() {
-    var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.equal,           start: loc8, end: loc9),
-      self.token(.float(1.0),      start: loc10, end: loc11),
-      self.token(.colon,           start: loc12, end: loc13),
-      self.token(.float(5.0),      start: loc14, end: loc15)
-    )
-
-    if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
-
-      let argA = Arg(name: "a", annotation: nil, start: loc2, end: loc3)
-      let argB = Arg(name: "b", annotation: nil, start: loc6, end: loc7)
-      let defB = Expression(.float(1.0), start: loc10, end: loc11)
-      XCTAssertEqual(l.args.args, [argA, argB])
-      XCTAssertEqual(l.args.defaults, [defB])
-      XCTAssertEqual(l.args.vararg, .none)
-      XCTAssertEqual(l.args.kwOnlyArgs, [])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [])
-      XCTAssertEqual(l.args.kwarg, nil)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc11)
-
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc14, end: loc15))
-
-      XCTAssertExpression(expr, "(lambda (a b=1.0) 5.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc15)
-    }
-  }
-
-  /// lambda a = 1, b: 5
-  func test_positional_requited_afterDefault_throws() {
-    var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.equal,           start: loc4, end: loc5),
-      self.token(.float(1.0),      start: loc6, end: loc7),
-      self.token(.comma,           start: loc8, end: loc9),
-      self.token(.identifier("b"), start: loc10, end: loc11),
-      self.token(.colon,           start: loc12, end: loc13),
-      self.token(.float(5.0),      start: loc14, end: loc15)
-    )
-
-    if let error = self.error(&parser) {
-      XCTAssertEqual(error.kind, .defaultAfterNonDefaultArgument)
-      XCTAssertEqual(error.location, loc10)
-    }
-  }
-
-  // MARK: - Variadic
-
-  /// lambda *a: 5
-  func test_varargs() {
-    var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.star,            start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.colon,           start: loc6, end: loc7),
-      self.token(.float(5.0),      start: loc8, end: loc9)
-    )
-
-    if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
-
-      let varargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
-      XCTAssertEqual(l.args.args, [])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .named(varargA))
-      XCTAssertEqual(l.args.kwOnlyArgs, [])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [])
-      XCTAssertEqual(l.args.kwarg, nil)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc5)
-
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc8, end: loc9))
-
-      XCTAssertExpression(expr, "(lambda (*a) 5.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
-    }
-  }
-
-  /// lambda *a, b = 1: 5
-  func test_varargs_keywordOnly_withDefault() {
-    var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.star,            start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.comma,           start: loc6, end: loc7),
-      self.token(.identifier("b"), start: loc8, end: loc9),
-      self.token(.equal,           start: loc10, end: loc11),
-      self.token(.float(1.0),      start: loc12, end: loc13),
-      self.token(.colon,           start: loc14, end: loc15),
-      self.token(.float(5.0),      start: loc16, end: loc17)
-    )
-
-    if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
-
-      let varargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
-      let kwB     = Arg(name: "b", annotation: nil, start: loc8, end: loc9)
-      let kwDefB  = Expression(.float(1), start: loc12, end: loc13)
-      XCTAssertEqual(l.args.args, [])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .named(varargA))
-      XCTAssertEqual(l.args.kwOnlyArgs, [kwB])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [kwDefB])
-      XCTAssertEqual(l.args.kwarg, nil)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc13)
-
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc16, end: loc17))
-
-      XCTAssertExpression(expr, "(lambda (*a b=1.0) 5.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc17)
-    }
-  }
-
-  /// lambda *a, b: 5
-  func test_varargs_keywordOnly_withoutDefault_isImplicitNone() {
-    var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.star,            start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.comma,           start: loc6, end: loc7),
-      self.token(.identifier("b"), start: loc8, end: loc9),
-      self.token(.colon,           start: loc10, end: loc11),
-      self.token(.float(5.0),      start: loc12, end: loc13)
-    )
-
-    if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
-
-      let varargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
-      let kwB     = Arg(name: "b", annotation: nil, start: loc8, end: loc9)
-      let kwDefB = Expression(.none, start: loc9, end: loc9)
-      XCTAssertEqual(l.args.args, [])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .named(varargA))
-      XCTAssertEqual(l.args.kwOnlyArgs, [kwB])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [kwDefB])
-      XCTAssertEqual(l.args.kwarg, nil)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc9)
-
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc12, end: loc13))
-
-      XCTAssertExpression(expr, "(lambda (*a b=None) 5.0)")
+      XCTAssertExpression(expr, "(lambda (zucchini) do: \"Ratatouille\")")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc13)
     }
   }
 
-  /// lambda *a, *b: 5
+  /// lambda zucchini = 1: "Ratatouille"
+  func test_positional_default() {
+    var parser = self.createExprParser(
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.identifier("zucchini"), start: loc6, end: loc7),
+      self.token(.equal,                  start: loc8, end: loc9),
+      self.token(.float(1.0),             start: loc10, end: loc11),
+      self.token(.colon,                  start: loc14, end: loc15),
+      self.token(.string("Ratatouille"),  start: loc16, end: loc17)
+    )
+
+    if let expr = self.parseExpr(&parser) {
+      guard let d = self.destructLambda(expr) else { return }
+
+      let argA = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let defA = Expression(.float(1.0), start: loc10, end: loc11)
+      XCTAssertEqual(d.args.args, [argA])
+      XCTAssertEqual(d.args.defaults, [defA])
+      XCTAssertEqual(d.args.vararg, .none)
+      XCTAssertEqual(d.args.kwOnlyArgs, [])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertEqual(d.args.kwarg, nil)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc11)
+
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
+
+      XCTAssertExpression(expr, "(lambda (zucchini=1.0) do: \"Ratatouille\")")
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc17)
+    }
+  }
+
+  /// lambda zucchini, tomato: "Ratatouille"
+  func test_positional_multiple() {
+    var parser = self.createExprParser(
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.identifier("zucchini"), start: loc6, end: loc7),
+      self.token(.comma,                  start: loc8, end: loc9),
+      self.token(.identifier("tomato"),   start: loc10, end: loc11),
+      self.token(.colon,                  start: loc14, end: loc15),
+      self.token(.string("Ratatouille"),  start: loc16, end: loc17)
+    )
+
+    if let expr = self.parseExpr(&parser) {
+      guard let d = self.destructLambda(expr) else { return }
+
+      let argA = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let argB = Arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
+      XCTAssertEqual(d.args.args, [argA, argB])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .none)
+      XCTAssertEqual(d.args.kwOnlyArgs, [])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertEqual(d.args.kwarg, nil)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc11)
+
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
+
+      XCTAssertExpression(expr, "(lambda (zucchini tomato) do: \"Ratatouille\")")
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc17)
+    }
+  }
+
+  /// lambda zucchini, tomato=1: "Ratatouille"
+  func test_positional_default_afterRequired() {
+    var parser = self.createExprParser(
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.identifier("zucchini"), start: loc6, end: loc7),
+      self.token(.comma,                  start: loc8, end: loc9),
+      self.token(.identifier("tomato"),   start: loc10, end: loc11),
+      self.token(.equal,                  start: loc12, end: loc13),
+      self.token(.float(1.0),             start: loc14, end: loc15),
+      self.token(.colon,                  start: loc18, end: loc19),
+      self.token(.string("Ratatouille"),  start: loc20, end: loc21)
+    )
+
+    if let expr = self.parseExpr(&parser) {
+      guard let d = self.destructLambda(expr) else { return }
+
+      let argA = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let argB = Arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
+      let defB = Expression(.float(1.0), start: loc14, end: loc15)
+      XCTAssertEqual(d.args.args, [argA, argB])
+      XCTAssertEqual(d.args.defaults, [defB])
+      XCTAssertEqual(d.args.vararg, .none)
+      XCTAssertEqual(d.args.kwOnlyArgs, [])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertEqual(d.args.kwarg, nil)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc15)
+
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
+
+      XCTAssertExpression(expr, "(lambda (zucchini tomato=1.0) do: \"Ratatouille\")")
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc21)
+    }
+  }
+
+  /// lambda zucchini = 1, tomato: "Ratatouille"
+  func test_positional_requited_afterDefault_throws() {
+    var parser = self.createExprParser(
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.identifier("zucchini"), start: loc6, end: loc7),
+      self.token(.equal,                  start: loc8, end: loc9),
+      self.token(.float(1.0),             start: loc10, end: loc11),
+      self.token(.comma,                  start: loc12, end: loc13),
+      self.token(.identifier("tomato"),   start: loc14, end: loc15),
+      self.token(.colon,                  start: loc18, end: loc19),
+      self.token(.string("Ratatouille"),  start: loc20, end: loc21)
+    )
+
+    if let error = self.error(&parser) {
+      XCTAssertEqual(error.kind, .defaultAfterNonDefaultArgument)
+      XCTAssertEqual(error.location, loc14)
+    }
+  }
+
+  // MARK: - Variadic
+
+  /// lambda *zucchini: "Ratatouille"
+  func test_varargs() {
+    var parser = self.createExprParser(
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.star,                   start: loc6, end: loc7),
+      self.token(.identifier("zucchini"), start: loc8, end: loc9),
+      self.token(.colon,                  start: loc12, end: loc13),
+      self.token(.string("Ratatouille"),  start: loc14, end: loc15)
+    )
+
+    if let expr = self.parseExpr(&parser) {
+      guard let d = self.destructLambda(expr) else { return }
+
+      let varargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      XCTAssertEqual(d.args.args, [])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .named(varargA))
+      XCTAssertEqual(d.args.kwOnlyArgs, [])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertEqual(d.args.kwarg, nil)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc9)
+
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
+
+      XCTAssertExpression(expr, "(lambda (*zucchini) do: \"Ratatouille\")")
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc15)
+    }
+  }
+
+  /// lambda *zucchini, tomato=1: "Ratatouille"
+  func test_varargs_keywordOnly_withDefault() {
+    var parser = self.createExprParser(
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.star,                   start: loc6, end: loc7),
+      self.token(.identifier("zucchini"), start: loc8, end: loc9),
+      self.token(.comma,                  start: loc10, end: loc11),
+      self.token(.identifier("tomato"),   start: loc12, end: loc13),
+      self.token(.equal,                  start: loc14, end: loc15),
+      self.token(.float(1.0),             start: loc16, end: loc17),
+      self.token(.colon,                  start: loc20, end: loc21),
+      self.token(.string("Ratatouille"),  start: loc22, end: loc23)
+    )
+
+    if let expr = self.parseExpr(&parser) {
+      guard let d = self.destructLambda(expr) else { return }
+
+      let varargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwB     = Arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let kwDefB  = Expression(.float(1), start: loc16, end: loc17)
+      XCTAssertEqual(d.args.args, [])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .named(varargA))
+      XCTAssertEqual(d.args.kwOnlyArgs, [kwB])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [kwDefB])
+      XCTAssertEqual(d.args.kwarg, nil)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc17)
+
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
+
+      XCTAssertExpression(expr, "(lambda (*zucchini tomato=1.0) do: \"Ratatouille\")")
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc23)
+    }
+  }
+
+  /// lambda *zucchini, tomato: "Ratatouille"
+  func test_varargs_keywordOnly_withoutDefault_isImplicitNone() {
+    var parser = self.createExprParser(
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.star,                   start: loc6, end: loc7),
+      self.token(.identifier("zucchini"), start: loc8, end: loc9),
+      self.token(.comma,                  start: loc10, end: loc11),
+      self.token(.identifier("tomato"),   start: loc12, end: loc13),
+      self.token(.colon,                  start: loc16, end: loc17),
+      self.token(.string("Ratatouille"),  start: loc18, end: loc19)
+    )
+
+    if let expr = self.parseExpr(&parser) {
+      guard let d = self.destructLambda(expr) else { return }
+
+      let varargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwB     = Arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let kwDefB = Expression(.none, start: loc13, end: loc13)
+      XCTAssertEqual(d.args.args, [])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .named(varargA))
+      XCTAssertEqual(d.args.kwOnlyArgs, [kwB])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [kwDefB])
+      XCTAssertEqual(d.args.kwarg, nil)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc13)
+
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
+
+      XCTAssertExpression(expr, "(lambda (*zucchini tomato=None) do: \"Ratatouille\")")
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc19)
+    }
+  }
+
+  /// lambda *zucchini, *tomato: "Ratatouille"
   func test_varargs_duplicate_throws() {
     var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.star,            start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.comma,           start: loc6, end: loc7),
-      self.token(.star,            start: loc8, end: loc9),
-      self.token(.identifier("b"), start: loc10, end: loc11),
-      self.token(.colon,           start: loc12, end: loc13),
-      self.token(.float(5.0),      start: loc14, end: loc15)
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.star,                   start: loc6, end: loc7),
+      self.token(.identifier("zucchini"), start: loc8, end: loc9),
+      self.token(.comma,                  start: loc10, end: loc11),
+      self.token(.star,                   start: loc12, end: loc13),
+      self.token(.identifier("tomato"),   start: loc14, end: loc15),
+      self.token(.colon,                  start: loc18, end: loc19),
+      self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
     if let error = self.error(&parser) {
       XCTAssertEqual(error.kind, .duplicateVarargs)
-      XCTAssertEqual(error.location, loc8)
+      XCTAssertEqual(error.location, loc12)
     }
   }
 
-  /// lambda *, a: 5
+  /// lambda *, zucchini: "Ratatouille"
   func test_varargsUnnamed() {
     var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.star,            start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.identifier("a"), start: loc6, end: loc7),
-      self.token(.colon,           start: loc8, end: loc9),
-      self.token(.float(5.0),      start: loc10, end: loc11)
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.star,                   start: loc6, end: loc7),
+      self.token(.comma,                  start: loc8, end: loc9),
+      self.token(.identifier("zucchini"), start: loc10, end: loc11),
+      self.token(.colon,                  start: loc14, end: loc15),
+      self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
+      guard let d = self.destructLambda(expr) else { return }
 
-      let kwA = Arg(name: "a", annotation: nil, start: loc6, end: loc7)
-      let kwDefA = Expression(.none, start: loc7, end: loc7)
-      XCTAssertEqual(l.args.args, [])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .unnamed)
-      XCTAssertEqual(l.args.kwOnlyArgs, [kwA])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [kwDefA])
-      XCTAssertEqual(l.args.kwarg, nil)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc7)
+      let kwA = Arg(name: "zucchini", annotation: nil, start: loc10, end: loc11)
+      let kwDefA = Expression(.none, start: loc11, end: loc11)
+      XCTAssertEqual(d.args.args, [])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .unnamed)
+      XCTAssertEqual(d.args.kwOnlyArgs, [kwA])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [kwDefA])
+      XCTAssertEqual(d.args.kwarg, nil)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc11)
 
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc10, end: loc11))
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
 
-      XCTAssertExpression(expr, "(lambda (* a=None) 5.0)")
+      XCTAssertExpression(expr, "(lambda (* zucchini=None) do: \"Ratatouille\")")
       XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc11)
+      XCTAssertEqual(expr.end,   loc17)
     }
   }
 
-  /// lambda *: 5
+  /// lambda *: "Ratatouille"
   func test_varargsUnnamed_withoutFollowingArguments_throws() {
     var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.star,            start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.float(5.0),      start: loc6, end: loc7)
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.star,                   start: loc6, end: loc7),
+      self.token(.colon,                  start: loc10, end: loc11),
+      self.token(.string("Ratatouille"),  start: loc12, end: loc13)
     )
 
     if let error = self.error(&parser) {
       XCTAssertEqual(error.kind, .starWithoutFollowingArguments)
-      XCTAssertEqual(error.location, loc4)
+      XCTAssertEqual(error.location, loc10)
     }
   }
 
   // MARK: - Kwargs
 
-  /// lambda **a: 5
+  /// lambda **zucchini: "Ratatouille"
   func test_kwargs() {
     var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.starStar,        start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.colon,           start: loc6, end: loc7),
-      self.token(.float(5.0),      start: loc8, end: loc9)
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.starStar,               start: loc6, end: loc7),
+      self.token(.identifier("zucchini"), start: loc8, end: loc9),
+      self.token(.colon,                  start: loc12, end: loc13),
+      self.token(.string("Ratatouille"),  start: loc14, end: loc15)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
+      guard let d = self.destructLambda(expr) else { return }
 
-      let kwargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
-      XCTAssertEqual(l.args.args, [])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .none)
-      XCTAssertEqual(l.args.kwOnlyArgs, [])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [])
-      XCTAssertEqual(l.args.kwarg, kwargA)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc5)
+      let kwargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      XCTAssertEqual(d.args.args, [])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .none)
+      XCTAssertEqual(d.args.kwOnlyArgs, [])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertEqual(d.args.kwarg, kwargA)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc9)
 
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc8, end: loc9))
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
 
-      XCTAssertExpression(expr, "(lambda (**a) 5.0)")
+      XCTAssertExpression(expr, "(lambda (**zucchini) do: \"Ratatouille\")")
       XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
+      XCTAssertEqual(expr.end,   loc15)
     }
   }
 
-  /// lambda **a,: 5
+  /// lambda **zucchini,: "Ratatouille"
   func test_kwargs_withCommaAfter() {
     var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.starStar,        start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.comma,           start: loc6, end: loc7),
-      self.token(.colon,           start: loc8, end: loc9),
-      self.token(.float(5.0),      start: loc10, end: loc11)
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.starStar,               start: loc6, end: loc7),
+      self.token(.identifier("zucchini"), start: loc8, end: loc9),
+      self.token(.comma,                  start: loc10, end: loc11),
+      self.token(.colon,                  start: loc14, end: loc15),
+      self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
+      guard let d = self.destructLambda(expr) else { return }
 
-      let kwargA = Arg(name: "a", annotation: nil, start: loc4, end: loc5)
-      XCTAssertEqual(l.args.args, [])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .none)
-      XCTAssertEqual(l.args.kwOnlyArgs, [])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [])
-      XCTAssertEqual(l.args.kwarg, kwargA)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc7)
+      let kwargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      XCTAssertEqual(d.args.args, [])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .none)
+      XCTAssertEqual(d.args.kwOnlyArgs, [])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertEqual(d.args.kwarg, kwargA)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc11)
 
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc10, end: loc11))
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
 
-      XCTAssertExpression(expr, "(lambda (**a) 5.0)")
+      XCTAssertExpression(expr, "(lambda (**zucchini) do: \"Ratatouille\")")
       XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc11)
+      XCTAssertEqual(expr.end,   loc17)
     }
   }
 
-  /// lambda **a, **b: 5
+  /// lambda **zucchini, **tomato: "Ratatouille"
   func test_kwargs_duplicate_throws() {
     var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.starStar,        start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.comma,           start: loc6, end: loc7),
-      self.token(.starStar,        start: loc8, end: loc9),
-      self.token(.identifier("b"), start: loc10, end: loc11),
-      self.token(.colon,           start: loc12, end: loc13),
-      self.token(.float(5.0),      start: loc14, end: loc15)
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.starStar,               start: loc6, end: loc7),
+      self.token(.identifier("zucchini"), start: loc8, end: loc9),
+      self.token(.comma,                  start: loc10, end: loc11),
+      self.token(.starStar,               start: loc12, end: loc13),
+      self.token(.identifier("tomato"),   start: loc14, end: loc15),
+      self.token(.colon,                  start: loc18, end: loc19),
+      self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
     if let error = self.error(&parser) {
       XCTAssertEqual(error.kind, .duplicateKwargs)
-      XCTAssertEqual(error.location, loc8)
+      XCTAssertEqual(error.location, loc12)
     }
   }
 
   // MARK: - All
 
-  /// lambda a, *b, c, **d: 5
+  /// lambda zucchini, *tomato, pepper, **eggplant: "Ratatouille"
   func test_all() {
     var parser = self.createExprParser(
-      self.token(.lambda,          start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.comma,           start: loc4, end: loc5),
-      self.token(.star,            start: loc6, end: loc7),
-      self.token(.identifier("b"), start: loc8, end: loc9),
-      self.token(.comma,           start: loc10, end: loc11),
-      self.token(.identifier("c"), start: loc12, end: loc13),
-      self.token(.comma,           start: loc14, end: loc15),
-      self.token(.starStar,        start: loc16, end: loc17),
-      self.token(.identifier("d"), start: loc18, end: loc19),
-      self.token(.colon,           start: loc20, end: loc21),
-      self.token(.float(5.0),      start: loc22, end: loc23)
+      self.token(.lambda,                 start: loc0, end: loc1),
+      self.token(.identifier("zucchini"), start: loc6, end: loc7),
+      self.token(.comma,                  start: loc8, end: loc9),
+      self.token(.star,                   start: loc10, end: loc11),
+      self.token(.identifier("tomato"),   start: loc12, end: loc13),
+      self.token(.comma,                  start: loc14, end: loc15),
+      self.token(.identifier("pepper"),   start: loc16, end: loc17),
+      self.token(.comma,                  start: loc18, end: loc19),
+      self.token(.starStar,               start: loc20, end: loc21),
+      self.token(.identifier("eggplant"), start: loc22, end: loc23),
+      self.token(.colon,                  start: loc26, end: loc27),
+      self.token(.string("Ratatouille"),  start: loc28, end: loc29)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let l = self.destructLambda(expr) else { return }
+      guard let d = self.destructLambda(expr) else { return }
 
-      let argA    = Arg(name: "a", annotation: nil, start: loc2, end: loc3)
-      let varargB = Arg(name: "b", annotation: nil, start: loc8, end: loc9)
-      let kwC     = Arg(name: "c", annotation: nil, start: loc12, end: loc13)
-      let kwDefC  = Expression(.none, start: loc13, end: loc13)
-      let kwargD = Arg(name: "d", annotation: nil, start: loc18, end: loc19)
-      XCTAssertEqual(l.args.args, [argA])
-      XCTAssertEqual(l.args.defaults, [])
-      XCTAssertEqual(l.args.vararg, .named(varargB))
-      XCTAssertEqual(l.args.kwOnlyArgs, [kwC])
-      XCTAssertEqual(l.args.kwOnlyDefaults, [kwDefC])
-      XCTAssertEqual(l.args.kwarg, kwargD)
-      XCTAssertEqual(l.args.start, loc2)
-      XCTAssertEqual(l.args.end,   loc19)
+      let argA    = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let varargB = Arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let kwC     = Arg(name: "pepper", annotation: nil, start: loc16, end: loc17)
+      let kwDefC  = Expression(.none, start: loc17, end: loc17)
+      let kwargD = Arg(name: "eggplant", annotation: nil, start: loc22, end: loc23)
+      XCTAssertEqual(d.args.args, [argA])
+      XCTAssertEqual(d.args.defaults, [])
+      XCTAssertEqual(d.args.vararg, .named(varargB))
+      XCTAssertEqual(d.args.kwOnlyArgs, [kwC])
+      XCTAssertEqual(d.args.kwOnlyDefaults, [kwDefC])
+      XCTAssertEqual(d.args.kwarg, kwargD)
+      XCTAssertEqual(d.args.start, loc6)
+      XCTAssertEqual(d.args.end,   loc23)
 
-      let bodyKind = ExpressionKind.float(5.0)
-      XCTAssertEqual(l.body, Expression(bodyKind, start: loc22, end: loc23))
+      XCTAssertExpression(d.body, "\"Ratatouille\"")
 
-      XCTAssertExpression(expr, "(lambda (a *b c=None **d) 5.0)")
+      XCTAssertExpression(expr, "(lambda (zucchini *tomato pepper=None **eggplant) do: \"Ratatouille\")")
       XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc23)
+      XCTAssertEqual(expr.end,   loc29)
     }
   }
 }

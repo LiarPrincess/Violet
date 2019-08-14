@@ -288,7 +288,7 @@ extension ExpressionKind: CustomStringConvertible {
       return "(yieldFrom \(value))"
 
     case let .lambda(args: args, body: body):
-      return "(lambda \(args) \(body))"
+      return "(lambda \(args) do: \(body))"
     case let .call(name, args, keywords):
       // We could skip 'call' at the beginning,
       // but that is way too similiar to identifier.
