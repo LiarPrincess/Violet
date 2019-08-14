@@ -68,9 +68,9 @@ extension DestructStatementKind {
   internal func destructFunctionDef(_ stmt: Statement,
                                     file:   StaticString = #file,
                                     line:   UInt         = #line) ->
-  (name: String, args: Arguments, body: [Statement], decorator_list: [Expression], returns: Expression?)? {
+  (name: String, args: Arguments, body: [Statement], decoratorList: [Expression], returns: Expression?)? {
 
-    if case let StatementKind.functionDef(name: value0, args: value1, body: value2, decorator_list: value3, returns: value4) = stmt.kind {
+    if case let StatementKind.functionDef(name: value0, args: value1, body: value2, decoratorList: value3, returns: value4) = stmt.kind {
       return (value0, value1, value2, value3, value4)
     }
 
@@ -81,9 +81,9 @@ extension DestructStatementKind {
   internal func destructAsyncFunctionDef(_ stmt: Statement,
                                          file:   StaticString = #file,
                                          line:   UInt         = #line) ->
-  (name: String, args: Arguments, body: [Statement], decorator_list: [Expression], returns: Expression?)? {
+  (name: String, args: Arguments, body: [Statement], decoratorList: [Expression], returns: Expression?)? {
 
-    if case let StatementKind.asyncFunctionDef(name: value0, args: value1, body: value2, decorator_list: value3, returns: value4) = stmt.kind {
+    if case let StatementKind.asyncFunctionDef(name: value0, args: value1, body: value2, decoratorList: value3, returns: value4) = stmt.kind {
       return (value0, value1, value2, value3, value4)
     }
 
@@ -94,9 +94,9 @@ extension DestructStatementKind {
   internal func destructClassDef(_ stmt: Statement,
                                  file:   StaticString = #file,
                                  line:   UInt         = #line) ->
-  (name: String, bases: [Expression], keywords: [Keyword], body: [Statement], decorator_list: [Expression])? {
+  (name: String, bases: [Expression], keywords: [Keyword], body: [Statement], decoratorList: [Expression])? {
 
-    if case let StatementKind.classDef(name: value0, bases: value1, keywords: value2, body: value3, decorator_list: value4) = stmt.kind {
+    if case let StatementKind.classDef(name: value0, bases: value1, keywords: value2, body: value3, decoratorList: value4) = stmt.kind {
       return (value0, value1, value2, value3, value4)
     }
 

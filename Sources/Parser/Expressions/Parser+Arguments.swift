@@ -180,7 +180,7 @@ extension Parser {
       if let defaultValue = defaultValue {
         ir.defaults.append(defaultValue)
       } else if !ir.defaults.isEmpty {
-        throw self.error(.defaultAfterNonDefaultArgument)
+        throw self.error(.defaultAfterNonDefaultArgument, location: argument.start)
       }
     case .unnamed, .named: // keyword only arg (follows * or *args)
       ir.kwOnlyArgs.append(argument)

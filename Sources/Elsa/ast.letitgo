@@ -53,20 +53,24 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `name` is a raw string of the function name.
   -- - `args` is a arguments node.
   -- - `body` is the list of nodes inside the function.
-  -- - `decorator_list` is the list of decorators to be applied, stored outermost first (i.e. the first in the list will be applied last).
+  -- - `decoratorList` is the list of decorators to be applied,
+  --    stored outermost first (i.e. the first in the list will be applied last).
   -- - `returns` is the return annotation (Python 3 only).
-    FunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
+  FunctionDef(identifier name, arguments args, stmt* body, expr* decoratorList, expr? returns)
   -- An async def function definition.
   -- Has the same fields as `FunctionDef`.
-  | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decorator_list, expr? returns)
+  | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decoratorList, expr? returns)
   -- A class definition.
   -- - `name` is a raw string for the class name
   -- - `bases` is a list of nodes for explicitly specified base classes.
-  -- - `keywords` is a list of keyword nodes, principally for ‘metaclass’. Other keywords will be passed to the metaclass, as per PEP-3115.
-  -- - `starargs` and kwargs are each a single node, as in a function call. starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass. These are removed in Python 3.5 - see below for details.
+  -- - `keywords` is a list of keyword nodes, principally for ‘metaclass’.
+  --    Other keywords will be passed to the metaclass, as per PEP-3115.
+  -- - `starargs` and kwargs are each a single node, as in a function call.
+  --    starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass.
+  --    These are removed in Python 3.5 - see below for details.
   -- - `body` is a list of nodes representing the code within the class definition.
-  -- - `decorator_list` is a list of nodes, as in `FunctionDef`.
-  | ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decorator_list)
+  -- - `decoratorList` is a list of nodes, as in `FunctionDef`.
+  | ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decoratorList)
   -- A `return` statement.
   | Return(expr?)
 

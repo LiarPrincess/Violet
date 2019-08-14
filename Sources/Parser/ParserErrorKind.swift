@@ -69,6 +69,11 @@ public enum ParserErrorKind: Equatable {
   /// `Else` requires at least one `except`.
   case tryWithElseWithoutExcept
 
+  // MARK: - Func, class
+
+  /// Base class definition cannot contain generator.
+  case baseClassWithGenerator
+
   // MARK: - General
 
   // Unexpected end of file, expected: [expected].
@@ -135,6 +140,9 @@ extension ParserErrorKind: CustomStringConvertible {
       return "'Try' without 'except' or 'finally' is not allowed."
     case .tryWithElseWithoutExcept:
       return "'Else' requires at least one 'except'."
+
+    case .baseClassWithGenerator:
+      return "Base class definition cannot contain generator."
 
     case let .unexpectedEOF(expected):
       switch expected.count {

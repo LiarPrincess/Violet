@@ -12,12 +12,20 @@ import Lexer
 /// Intermediate representation for call.
 internal struct CallIR {
 
-  fileprivate var args: [Expression] = []
-  fileprivate var keywords: [Keyword] = []
+  internal fileprivate(set) var args: [Expression] = []
+  internal fileprivate(set) var keywords: [Keyword] = []
 
   /// Flag for preventing incorrect ordering of arguments
   /// (for example `f(**a, b)` is not valid).
   fileprivate var hasStarStar = false
+
+  /// Is it base class definition (so we don't allow generators)?
+  /// Just so we don't have to pass it as an arg to every method.
+  fileprivate let isBaseClass: Bool
+
+  fileprivate init(isBaseClass: Bool) {
+    self.isBaseClass = isBaseClass
+  }
 
   internal func compile(calling leftExpr: Expression) -> ExpressionKind {
     return ExpressionKind.call(func: leftExpr,
@@ -30,11 +38,11 @@ extension Parser {
 
   // MARK: - Call
 
-  // TODO: we should have (bool allowgen) parameter for class
-
   /// `arglist: argument (',' argument)*  [',']`
-  internal mutating func argList(closingToken: TokenKind) throws -> CallIR {
-    var ir = CallIR()
+  internal mutating func argList(closingToken: TokenKind,
+                                 isBaseClass: Bool = false) throws -> CallIR {
+
+    var ir = CallIR(isBaseClass: isBaseClass)
 
     guard self.peek.kind != closingToken else { // no args
       return ir
@@ -155,6 +163,11 @@ extension Parser {
   private mutating func parsePositionalArgument(test: Expression,
                                                 closingToken: TokenKind,
                                                 into ir: inout CallIR) throws {
+
+    if ir.isBaseClass && self.isCompFor() {
+      throw self.error(.baseClassWithGenerator, location: test.start)
+    }
+
     guard !ir.hasStarStar else {
       throw self.error(.callWithPositionalArgumentAfterKeywordUnpacking,
                        location: test.start)
@@ -170,7 +183,7 @@ extension Parser {
       assert(!generators.isEmpty)
 
       // TODO: throw parens when we have some args (+ flag in ir)
-      // and wnother throw in while (and then remove warning)
+      // and another throw in while (and then remove warning)
       self.warn(.callWithGeneratorArgument)
 
       let end = generators.last?.end ?? test.end

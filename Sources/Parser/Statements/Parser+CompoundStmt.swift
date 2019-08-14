@@ -33,15 +33,19 @@ extension Parser {
     case .with:
       return try self.withStmt(closingTokens: closingTokens)
     case .async:
-      break
-
-    // MARK: - Func | Class
-    // MARK: - Decorated
-
+      return nil // TODO: Decorated async
+    case .def:
+      return try self.funcDef(isAsync: false,
+                              decoratorList: [],
+                              closingTokens: closingTokens)
+    case .class:
+      return try self.classDef(decoratorList: [],
+                               closingTokens: closingTokens)
+    case .at:
+      return nil // TODO: Decorated
     default:
-      break
+      return nil
     }
-    return nil
   }
 
   // MARK: If

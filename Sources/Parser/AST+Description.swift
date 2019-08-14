@@ -3,6 +3,7 @@ import Core
 import Lexer
 
 // swiftlint:disable file_length
+// swiftlint:disable function_parameter_count
 
 // MARK: - Helpers
 
@@ -31,12 +32,57 @@ extension Statement: CustomStringConvertible, CustomDebugStringConvertible {
 }
 
 extension StatementKind: CustomStringConvertible {
+  private func defDescription(header: String,
+                              name: String,
+                              args: Arguments,
+                              body: [Statement],
+                              decoratorList: [Expression],
+                              returns: Expression?) -> String {
+    // TODO: decoratorList
+    let r = returns.map { " -> " + describe($0) } ?? ""
+    return "(\(header) \(name) \(args)\(r) do: \(join(body)))"
+  }
+
+  private func forDescription(header: String,
+                              target: Expression,
+                              iter: Expression,
+                              body: [Statement],
+                              orElse: [Statement]) -> String {
+    var b: String?
+    switch body.count {
+    case 0: b = "()"
+    case 1: b = describe(body[0])
+    default: b = "(\(join(body)))"
+    }
+
+    var e: String?
+    switch orElse.count {
+    case 0: e = ""
+    case 1: e = " else: \(orElse[0])"
+    default: e = " else: (\(join(body)))"
+    }
+
+    return "(\(header) \(target) in: \(iter) do: \(b ?? "")\(e ?? ""))"
+  }
+
   public var description: String {
     switch self {
-    case let .functionDef(name, args, body, decorator_list, returns):
-      return "TODO"
-    case let .asyncFunctionDef(name, args, body, decorator_list, returns):
-      return "TODO"
+
+    case let .functionDef(name, args, body, decoratorList, returns):
+      return self.defDescription(header: "def",
+                                 name: name,
+                                 args: args,
+                                 body: body,
+                                 decoratorList: decoratorList,
+                                 returns: returns)
+    case let .asyncFunctionDef(name, args, body, decoratorList, returns):
+      return self.defDescription(header: "asyncDef",
+                                 name: name,
+                                 args: args,
+                                 body: body,
+                                 decoratorList: decoratorList,
+                                 returns: returns)
+
     case let .classDef(name, bases, keywords, body, decorator_list):
       return "TODO"
 
@@ -54,24 +100,17 @@ extension StatementKind: CustomStringConvertible {
       return "(\(op)= \(target) \(value))"
 
     case let .for(target, iter, body, orElse):
-      var b: String?
-      switch body.count {
-      case 0: b = "()"
-      case 1: b = describe(body[0])
-      default: b = "(\(join(body)))"
-      }
-
-      var e: String?
-      switch orElse.count {
-      case 0: e = ""
-      case 1: e = " else: \(orElse[0])"
-      default: e = " else: (\(join(body)))"
-      }
-
-      return "(for \(target) in: \(iter) do: \(b ?? "")\(e ?? ""))"
-
-    case .asyncFor(let target, let iter, let body, let orElse):
-      return "TODO"
+      return self.forDescription(header: "for",
+                                 target: target,
+                                 iter: iter,
+                                 body: body,
+                                 orElse: orElse)
+    case let .asyncFor(target, iter, body, orElse):
+      return self.forDescription(header: "asyncFor",
+                                 target: target,
+                                 iter: iter,
+                                 body: body,
+                                 orElse: orElse)
 
     case let .while(test, body, orElse):
       var b: String?
@@ -111,6 +150,7 @@ extension StatementKind: CustomStringConvertible {
       return "(with \(join(items)) do: \(join(body)))"
     case let .asyncWith(items, body):
       return "(asyncWith \(join(items)) do: \(join(body)))"
+
     case let .try(body, handlers, orElse, finalBody):
       let h = handlers.isEmpty  ? "" : " " + join(handlers)
       let o = orElse.isEmpty    ? "" : " else: \(join(orElse))"
@@ -121,19 +161,22 @@ extension StatementKind: CustomStringConvertible {
       let e = exc.map { " " + describe($0) } ?? ""
       let c = cause.map { " from: " + describe($0) } ?? ""
       return "(raise\(e)\(c))"
-    case let .assert(test, msg):
-      let m = msg.map { " msg: " + describe($0) } ?? ""
-      return "(assert \(test)\(m))"
+
     case let .import(names):
       return "(import \(join(names)))"
     case let .importFrom(module, names, level):
       let d = level.map { String(repeating: ".", count: $0) } ?? ""
       let m = module.map(describe) ?? ""
       return "(from \(d)\(m) import: \(join(names)))"
+
     case let .global(v):
       return "(global \(join(v)))"
     case let .nonlocal(v):
       return "(nonlocal \(join(v)))"
+    case let .assert(test, msg):
+      let m = msg.map { " msg: " + describe($0) } ?? ""
+      return "(assert \(test)\(m))"
+
     case let .expr(e):
       return describe(e)
     case .pass:
@@ -339,7 +382,7 @@ extension StringGroup: CustomStringConvertible {
   public var description: String {
     switch self {
     case let .string(s):
-      return "\"" + prefix(s, length: 10) + "\""
+      return "\"" + prefix(s, length: 20) + "\""
     case let .formattedValue(v, conversion: conversion, spec: spec):
       let c = conversion.map { " " + describe($0) } ?? ""
       let s = spec.map { " " + describe($0) } ?? ""
