@@ -43,7 +43,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(g.start, loc6)
       XCTAssertEqual(g.end, loc15)
 
-      XCTAssertExpression(expr, "(call f (generatorCompr a (for b in [])))")
+      XCTAssertExpression(expr, "f((generatorCompr a (for b in [])))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc17)
     }
@@ -75,7 +75,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       // We don't have to check detailed props,
       // if the basic tests are working then this one should too.
 
-      XCTAssertExpression(expr, "(call f 1.0 (generatorCompr a (for b in [])))")
+      XCTAssertExpression(expr, "f(1.0 (generatorCompr a (for b in [])))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc23)
     }
@@ -109,7 +109,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       // We don't have to check detailed props,
       // if the basic tests are working then this one should too.
 
-      XCTAssertExpression(expr, "(call f 1.0 (generatorCompr a (for b in [])))")
+      XCTAssertExpression(expr, "f(1.0 (generatorCompr a (for b in [])))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc27)
     }
@@ -141,7 +141,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       // We don't have to check detailed props,
       // if the basic tests are working then this one should too.
 
-      XCTAssertExpression(expr, "(call f (generatorCompr a (for b in [])) 1.0)")
+      XCTAssertExpression(expr, "f((generatorCompr a (for b in [])) 1.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc23)
     }
@@ -184,7 +184,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(g.start, loc6)
       XCTAssertEqual(g.end, loc15)
 
-      XCTAssertExpression(expr, "(call f (generatorCompr a (for b in [])))")
+      XCTAssertExpression(expr, "f((generatorCompr a (for b in [])))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc19)
     }

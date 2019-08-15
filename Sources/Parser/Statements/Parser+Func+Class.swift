@@ -49,11 +49,12 @@ extension Parser {
   /// `classdef: 'class' NAME ['(' [arglist] ')'] ':' suite`
   internal mutating func classDef(
     closingTokens: [TokenKind],
+    start:         SourceLocation? = nil,
     decoratorList: [Expression] = []) throws -> Statement {
 
     assert(self.peek.kind == .class)
 
-    let start = self.peek.start
+    let start = start ?? self.peek.start
     try self.advance() // class
 
     let name = try self.consumeIdentifierOrThrow()

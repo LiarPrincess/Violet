@@ -38,9 +38,9 @@ extension StatementKind: CustomStringConvertible {
                               body: [Statement],
                               decoratorList: [Expression],
                               returns: Expression?) -> String {
-    // TODO: decoratorList
     let r = returns.map { " -> " + describe($0) } ?? ""
-    return "(\(header) \(name) \(args)\(r) do: \(join(body)))"
+    let d = self.decorators(from: decoratorList)
+    return "(\(header) \(name) \(args)\(r)\(d) do: \(join(body)))"
   }
 
   private func forDescription(header: String,
@@ -65,6 +65,11 @@ extension StatementKind: CustomStringConvertible {
     return "(\(header) \(target) in: \(iter) do: \(b ?? "")\(e ?? ""))"
   }
 
+  private func decorators(from decoratorList: [Expression]) -> String {
+    return decoratorList.isEmpty ? "" :
+      " decorators: " + join(decoratorList.map { "@" + describe($0) })
+  }
+
   public var description: String {
     switch self {
 
@@ -83,7 +88,7 @@ extension StatementKind: CustomStringConvertible {
                                  decoratorList: decoratorList,
                                  returns: returns)
 
-    case let .classDef(name, bases, keywords, body, decorator_list):
+    case let .classDef(name, bases, keywords, body, decoratorList):
       var parents = ""
       switch (bases.isEmpty, keywords.isEmpty) {
       case (true, true): break
@@ -92,8 +97,8 @@ extension StatementKind: CustomStringConvertible {
       case (false, false): parents = " (" + join(bases) + " " + join(keywords) + ")"
       }
 
-      // TODO: decoratorList
-      return "(class \(name)\(parents) body: \(join(body)))"
+      let d = self.decorators(from: decoratorList)
+      return "(class \(name)\(parents)\(d) body: \(join(body)))"
 
     case let .return(v):
       let val = v.map { " " + describe($0) } ?? ""
@@ -299,12 +304,16 @@ extension ExpressionKind: CustomStringConvertible {
     case let .lambda(args: args, body: body):
       return "(lambda \(args) do: \(body))"
     case let .call(name, args, keywords):
-      // We could skip 'call' at the beginning,
-      // but that is way too similiar to identifier.
-      // This may actully reorder arguments! Positional before keyword ones.
-      let a = args.isEmpty ? "" : " " + join((args))
-      let k = keywords.isEmpty ? "" : " " + join((keywords))
-      return "(call \(name)\(a)\(k))"
+      // This may reorder arguments! Positional before keyword ones.
+      var ak = ""
+      switch (args.isEmpty, keywords.isEmpty) {
+      case (true, true): break
+      case (false, true):  ak = join(args)
+      case (true, false):  ak = join(keywords)
+      case (false, false): ak = join(args) + " " + join(keywords)
+      }
+
+      return "\(name)(\(ak))"
 
     case let .namedExpr(target: target, value: value):
       return "(namedExpr \(target) \(value))"

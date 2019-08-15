@@ -39,7 +39,7 @@ extension Parser {
     case .class:
       return try self.classDef(closingTokens: closingTokens)
     case .at:
-      return nil // TODO: Decorated
+      return try self.decorated(closingTokens: closingTokens)
     default:
       return nil
     }

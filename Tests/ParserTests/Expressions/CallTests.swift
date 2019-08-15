@@ -25,7 +25,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [])
 
-      XCTAssertExpression(expr, "(call f)")
+      XCTAssertExpression(expr, "f()")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc5)
     }
@@ -51,7 +51,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       ])
       XCTAssertEqual(d.keywords, [])
 
-      XCTAssertExpression(expr, "(call f 1.0)")
+      XCTAssertExpression(expr, "f(1.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
     }
@@ -78,7 +78,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       ])
       XCTAssertEqual(d.keywords, [])
 
-      XCTAssertExpression(expr, "(call f a 1.0)")
+      XCTAssertExpression(expr, "f(a 1.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc11)
     }
@@ -103,7 +103,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       ])
       XCTAssertEqual(d.keywords, [])
 
-      XCTAssertExpression(expr, "(call f 1.0)")
+      XCTAssertExpression(expr, "f(1.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }
@@ -129,7 +129,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       ])
       XCTAssertEqual(d.keywords, [])
 
-      XCTAssertExpression(expr, "(call f a)")
+      XCTAssertExpression(expr, "f(a)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc11)
     }
@@ -194,7 +194,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [starredA])
       XCTAssertEqual(d.keywords, [])
 
-      XCTAssertExpression(expr, "(call f *a)")
+      XCTAssertExpression(expr, "f(*a)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }
@@ -223,7 +223,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [argA, starredB])
       XCTAssertEqual(d.keywords, [])
 
-      XCTAssertExpression(expr, "(call f a *b)")
+      XCTAssertExpression(expr, "f(a *b)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc13)
     }
@@ -256,7 +256,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [starredB])
       XCTAssertEqual(d.keywords, [keywordA])
 
-      XCTAssertExpression(expr, "(call f *b a=1.0)") // reorder?
+      XCTAssertExpression(expr, "f(*b a=1.0)") // reorder
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc17)
     }
@@ -304,7 +304,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [keywordA])
 
-      XCTAssertExpression(expr, "(call f a=1.0)")
+      XCTAssertExpression(expr, "f(a=1.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc11)
     }
@@ -338,7 +338,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [keywordA, keywordB])
 
-      XCTAssertExpression(expr, "(call f a=1.0 b=2.0)")
+      XCTAssertExpression(expr, "f(a=1.0 b=2.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc19)
     }
@@ -428,7 +428,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [keywordA])
 
-      XCTAssertExpression(expr, "(call f **a)")
+      XCTAssertExpression(expr, "f(**a)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }
@@ -457,7 +457,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args, [argA])
       XCTAssertEqual(d.keywords, [keywordB])
 
-      XCTAssertExpression(expr, "(call f a **b)")
+      XCTAssertExpression(expr, "f(a **b)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc13)
     }

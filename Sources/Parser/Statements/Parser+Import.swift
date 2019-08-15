@@ -63,7 +63,7 @@ extension Parser {
   // MARK: - Dotted names
 
   /// `dotted_as_name: dotted_name ['as' NAME]`
-  private mutating func dottedAsName() throws -> Alias {
+  internal mutating func dottedAsName() throws -> Alias {
     let base = try self.dottedName()
 
     guard self.peek.kind == .as else {
@@ -80,7 +80,7 @@ extension Parser {
   }
 
   /// `dotted_as_names: dotted_as_name (',' dotted_as_name)*`
-  private mutating func dottedAsNames() throws -> NonEmptyArray<Alias> {
+  internal mutating func dottedAsNames() throws -> NonEmptyArray<Alias> {
     let first = try self.dottedAsName()
 
     var additionalElements = [Alias]()
@@ -95,7 +95,7 @@ extension Parser {
   }
 
   /// `dotted_name: NAME ('.' NAME)*`
-  private mutating func dottedName() throws -> Alias {
+  internal mutating func dottedName() throws -> Alias {
     let start = self.peek.start
     var end = self.peek.end
     let first = try self.consumeIdentifierOrThrow()

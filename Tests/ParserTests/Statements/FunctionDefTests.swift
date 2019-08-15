@@ -7,8 +7,6 @@ import Lexer
 // swiftlint:disable type_body_length
 // swiftlint:disable function_body_length
 
-// TODO: decoratorList
-
 class FunctionDefTests: XCTestCase,
   Common, DestructExpressionKind, DestructStatementKind {
 

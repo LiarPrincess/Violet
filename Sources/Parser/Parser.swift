@@ -189,7 +189,7 @@ public struct Parser {
   internal func unexpectedToken(token: Token? = nil,
                                 location: SourceLocation? = nil,
                                 expected: [ExpectedToken]) -> ParserError {
-
+    // TODO: Replace this with case by case errors and better messages.
     let tok = token ?? self.peek
     switch tok.kind {
     case .eof:
