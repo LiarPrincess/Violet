@@ -40,7 +40,7 @@ extension StatementKind: CustomStringConvertible {
                               returns: Expression?) -> String {
     let r = returns.map { " -> " + describe($0) } ?? ""
     let d = self.decorators(from: decoratorList)
-    return "(\(header) \(name) \(args)\(r)\(d) do: \(join(body)))"
+    return "(\(header) \(name)\(args)\(r)\(d) do: \(join(body)))"
   }
 
   private func forDescription(header: String,
@@ -137,8 +137,8 @@ extension StatementKind: CustomStringConvertible {
       var b: String?
       switch body.count {
       case 0: b = "()"
-      case 1: b = describe(body[0])
-      default: b = "(\(join(body)))"
+      case 1: b = "do: " + describe(body[0])
+      default: b = "do: (\(join(body)))"
       }
 
       var e: String?

@@ -269,7 +269,7 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc3)
 
-      XCTAssertStatement(stmt, "(def feel () decorators: @Joy do: \"emotion\")")
+      XCTAssertStatement(stmt, "(def feel() decorators: @Joy do: \"emotion\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -301,7 +301,7 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc3)
 
-      XCTAssertStatement(stmt, "(asyncDef feel () decorators: @Joy do: \"emotion\")")
+      XCTAssertStatement(stmt, "(asyncDef feel() decorators: @Joy do: \"emotion\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc19)
     }

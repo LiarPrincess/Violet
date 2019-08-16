@@ -38,7 +38,7 @@ class AsyncStatementTests: XCTestCase, Common, DestructStatementKind {
       guard d.body.count == 1 else { return }
       XCTAssertStatement(d.body[0], "\"Ratatouille\"")
 
-      XCTAssertStatement(stmt, "(asyncDef cook () do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(asyncDef cook() do: \"Ratatouille\")")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
