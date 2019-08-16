@@ -1,7 +1,5 @@
 // swiftlint:disable force_try
 
-// TODO: (Elsa.emit) To class and line() write() (as in slip)
-
 import Foundation
 
 let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
@@ -20,8 +18,6 @@ let parserTestsDir = testsDir.appendingPathComponent("ParserTests")
 let lexer = Lexer(source: letitgoContent)
 var parser = Parser(lexer: lexer)
 let entities = parser.parse()
-
-defer { fclose(stdout) }
 
 // MARK: - Code
 
