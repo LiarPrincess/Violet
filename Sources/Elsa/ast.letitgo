@@ -288,12 +288,15 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `keywords` - keyword objects representing arguments passed by keyword
   | Call(expr func, expr* args, keyword* keywords)
 {- Other -}
-  | NamedExpr(expr target, expr value)
-  {- 1 if True else 2 TODO: @doc -}
+  -- For example: `1 if True else 2`
   | IfExpression(expr test, expr body, expr orElse)
-  {- the following expression can appear in assignment context -}
+  -- For example `apple.juice = poison`.
   | Attribute(expr, identifier name)
+  -- For example `apple[juice] = poison`.
   | Subscript(expr, slice slice)
+  -- For example:
+  -- `dwarfs = ["Doc", "Grumpy", "Happy", "Sleepy", "Bashful", "Sneezy", "Dopey"]`
+  -- `singSong(*dwarfs)`
   | Starred(expr)
 
 @enum UnaryOperator =

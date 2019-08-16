@@ -658,19 +658,6 @@ extension DestructExpressionKind {
     return nil
   }
 
-  internal func destructNamedExpr(_ expr: Expression,
-                                  file:   StaticString = #file,
-                                  line:   UInt         = #line) ->
-    (target: Expression, value: Expression)? {
-
-    if case let ExpressionKind.namedExpr(target: value0, value: value1) = expr.kind {
-      return (value0, value1)
-    }
-
-    XCTAssertTrue(false, expr.kind.description, file: file, line: line)
-    return nil
-  }
-
   internal func destructIfExpression(_ expr: Expression,
                                      file:   StaticString = #file,
                                      line:   UInt         = #line) ->

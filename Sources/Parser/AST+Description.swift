@@ -100,18 +100,25 @@ extension StatementKind: CustomStringConvertible {
       let d = self.decorators(from: decoratorList)
       return "(class \(name)\(parents)\(d) body: \(join(body)))"
 
-    case let .return(v):
-      let val = v.map { " " + describe($0) } ?? ""
-      return "(return\(val))"
+    case let .return(value):
+      switch value {
+      case .none: return "return"
+      case .some(let v): return "(return \(describe(v)))"
+      }
+
     case let .delete(v):
       return "(del \(join(v)))"
+
     case let .assign(targets, value):
-      return "(= \(join(targets)) \(value))"
+      let t = join(targets, " = ")
+      return "(\(t) = \(value))"
+
     case let .annAssign(target, annotation, value, _):
-      let v = value.map { " " + describe($0) } ?? ""
-      return "(= \(target):\(annotation)\(v))"
+      let v = value.map { " = " + describe($0) } ?? ""
+      return "(\(target):\(annotation)\(v))"
+
     case let .augAssign(target: target, op: op, value: value):
-      return "(\(op)= \(target) \(value))"
+      return "(\(target) \(op)= \(value))"
 
     case let .for(target, iter, body, orElse):
       return self.forDescription(header: "for",
@@ -187,12 +194,14 @@ extension StatementKind: CustomStringConvertible {
       return "(global \(join(v)))"
     case let .nonlocal(v):
       return "(nonlocal \(join(v)))"
+
     case let .assert(test, msg):
       let m = msg.map { " msg: " + describe($0) } ?? ""
       return "(assert \(test)\(m))"
 
     case let .expr(e):
       return describe(e)
+
     case .pass:
       return "(pass)"
     case .break:
@@ -260,7 +269,8 @@ extension ExpressionKind: CustomStringConvertible {
     case let .float(value):      return describe(value)
 
     case let .complex(real: real, imag: imag):
-      return "(complex \(real) \(imag))"
+      return "(\(real)+\(imag)j)"
+
     case let .string(s):
       return describe(s)
     case let .bytes(data):
@@ -273,7 +283,7 @@ extension ExpressionKind: CustomStringConvertible {
     case let .boolOp(op, left: left, right: right):
       return "(\(op) \(left) \(right))"
     case let .compare(left: left, elements: elements):
-      return "(cmp \(left) \(join(elements)))"
+      return "(\(left) \(join(elements)))"
 
     case let .tuple(value):
       return "(" + join(value) + ")"
@@ -302,7 +312,8 @@ extension ExpressionKind: CustomStringConvertible {
       return "(yieldFrom \(value))"
 
     case let .lambda(args: args, body: body):
-      return "(lambda \(args) do: \(body))"
+      return "(λ \(args) do: \(body))"
+
     case let .call(name, args, keywords):
       // This may reorder arguments! Positional before keyword ones.
       var ak = ""
@@ -315,10 +326,9 @@ extension ExpressionKind: CustomStringConvertible {
 
       return "\(name)(\(ak))"
 
-    case let .namedExpr(target: target, value: value):
-      return "(namedExpr \(target) \(value))"
     case let .ifExpression(test: test, body: body, orElse: orElse):
       return "(if \(test)) then \(body)) else \(orElse))"
+
     case let .starred(value):
       return "*\(value)"
     case let .attribute(value, name):
@@ -373,7 +383,7 @@ extension BinaryOperator: CustomStringConvertible {
 
 extension ComparisonElement: CustomStringConvertible {
   public var description: String {
-    return "(\(self.op) \(self.right))"
+    return "\(self.op) \(self.right)"
   }
 }
 

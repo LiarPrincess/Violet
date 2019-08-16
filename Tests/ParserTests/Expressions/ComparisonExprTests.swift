@@ -36,7 +36,7 @@ class ComparisonTests: XCTestCase, Common, DestructExpressionKind {
         XCTAssertEqual(b.left, Expression(.float(1.0), start: loc0, end: loc1), msg)
         XCTAssertEqual(b.elements, [ComparisonElement(op: op, right: two)], msg)
 
-        XCTAssertExpression(expr, "(cmp 1.0 (\(op) 2.0))", msg)
+        XCTAssertExpression(expr, "(1.0 \(op) 2.0)", msg)
         XCTAssertEqual(expr.start, loc0, msg)
         XCTAssertEqual(expr.end,   loc5, msg)
       }
@@ -59,7 +59,7 @@ class ComparisonTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(b.left, Expression(.float(1.0), start: loc0, end: loc1))
       XCTAssertEqual(b.elements, [ComparisonElement(op: .notIn, right: two)])
 
-      XCTAssertExpression(expr, "(cmp 1.0 (not in 2.0))")
+      XCTAssertExpression(expr, "(1.0 not in 2.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
     }
@@ -81,7 +81,7 @@ class ComparisonTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(b.left, Expression(.float(1.0), start: loc0, end: loc1))
       XCTAssertEqual(b.elements, [ComparisonElement(op: .isNot, right: two)])
 
-      XCTAssertExpression(expr, "(cmp 1.0 (is not 2.0))")
+      XCTAssertExpression(expr, "(1.0 is not 2.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
     }
@@ -98,7 +98,7 @@ class ComparisonTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      XCTAssertExpression(expr, "(cmp 1.0 (< 2.0) (<= 3.0))")
+      XCTAssertExpression(expr, "(1.0 < 2.0 <= 3.0)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }

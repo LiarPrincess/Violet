@@ -78,7 +78,7 @@ class AtomTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      XCTAssertExpression(expr, "(complex 0.0 4.2)")
+      XCTAssertExpression(expr, "(0.0+4.2j)")
       XCTAssertEqual(expr.kind,  .complex(real: 0.0, imag: 4.2))
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc1)

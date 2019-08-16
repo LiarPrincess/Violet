@@ -52,7 +52,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
 
       XCTAssertEqual(d, nil)
 
-      XCTAssertStatement(stmt, "(return)")
+      XCTAssertStatement(stmt, "return")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc1)
     }

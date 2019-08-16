@@ -303,10 +303,15 @@ public indirect enum ExpressionKind: Equatable {
   /// - `args` - arguments passed by position
   /// - `keywords` - keyword objects representing arguments passed by keyword
   case call(func: Expression, args: [Expression], keywords: [Keyword])
-  case namedExpr(target: Expression, value: Expression)
+  /// For example: `1 if True else 2`
   case ifExpression(test: Expression, body: Expression, orElse: Expression)
+  /// For example `apple.juice = poison`.
   case attribute(Expression, name: String)
+  /// For example `apple[juice] = poison`.
   case `subscript`(Expression, slice: Slice)
+  /// For example:
+  /// `dwarfs = ["Doc", "Grumpy", "Happy", "Sleepy", "Bashful", "Sneezy", "Dopey"]`
+  /// `singSong(*dwarfs)`
   case starred(Expression)
 }
 
