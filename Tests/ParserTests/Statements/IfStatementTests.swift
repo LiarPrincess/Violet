@@ -41,9 +41,10 @@ class IfStatementTests: XCTestCase,
       self.token(.identifier("Pooh"),   start: loc2, end: loc3),
       self.token(.colon,                start: loc4, end: loc5),
       self.token(.string("Honey"),      start: loc6, end: loc7),
-      self.token(.else,                 start: loc8, end: loc9),
-      self.token(.colon,                start: loc10, end: loc11),
-      self.token(.string("More honey"), start: loc12, end: loc13)
+      self.token(.newLine,              start: loc8, end: loc9),
+      self.token(.else,                 start: loc10, end: loc11),
+      self.token(.colon,                start: loc12, end: loc13),
+      self.token(.string("More honey"), start: loc14, end: loc15)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -61,7 +62,7 @@ class IfStatementTests: XCTestCase,
 
       XCTAssertStatement(stmt, "(if Pooh then: \"Honey\" else: \"More honey\")")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
+      XCTAssertEqual(stmt.end,   loc15)
     }
   }
 
@@ -84,10 +85,11 @@ class IfStatementTests: XCTestCase,
       self.token(.identifier("Pooh"),   start: loc2, end: loc3),
       self.token(.colon,                start: loc4, end: loc5),
       self.token(.string("Honey"),      start: loc6, end: loc7),
-      self.token(.elif,                 start: loc8, end: loc9),
-      self.token(.identifier("Tigger"), start: loc10, end: loc11),
-      self.token(.colon,                start: loc12, end: loc13),
-      self.token(.string("Bouncing"),   start: loc14, end: loc15)
+      self.token(.newLine,              start: loc8, end: loc9),
+      self.token(.elif,                 start: loc10, end: loc11),
+      self.token(.identifier("Tigger"), start: loc12, end: loc13),
+      self.token(.colon,                start: loc14, end: loc15),
+      self.token(.string("Bouncing"),   start: loc16, end: loc17)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -114,7 +116,7 @@ class IfStatementTests: XCTestCase,
 
       // general
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc15)
+      XCTAssertEqual(stmt.end,   loc17)
     }
   }
 
@@ -128,13 +130,15 @@ class IfStatementTests: XCTestCase,
       self.token(.identifier("Pooh"),   start: loc2, end: loc3),
       self.token(.colon,                start: loc4, end: loc5),
       self.token(.string("Honey"),      start: loc6, end: loc7),
-      self.token(.elif,                 start: loc8, end: loc9),
-      self.token(.identifier("Tigger"), start: loc10, end: loc11),
-      self.token(.colon,                start: loc12, end: loc13),
-      self.token(.string("Bouncing"),   start: loc14, end: loc15),
-      self.token(.else,                 start: loc16, end: loc17),
-      self.token(.colon,                start: loc18, end: loc19),
-      self.token(.string("Carrots?"),   start: loc20, end: loc21)
+      self.token(.newLine,              start: loc8, end: loc9),
+      self.token(.elif,                 start: loc10, end: loc11),
+      self.token(.identifier("Tigger"), start: loc12, end: loc13),
+      self.token(.colon,                start: loc14, end: loc15),
+      self.token(.string("Bouncing"),   start: loc16, end: loc17),
+      self.token(.newLine,              start: loc18, end: loc19),
+      self.token(.else,                 start: loc20, end: loc21),
+      self.token(.colon,                start: loc22, end: loc23),
+      self.token(.string("Carrots?"),   start: loc24, end: loc25)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -163,7 +167,7 @@ class IfStatementTests: XCTestCase,
 
       // general
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc21)
+      XCTAssertEqual(stmt.end,   loc25)
     }
   }
 }

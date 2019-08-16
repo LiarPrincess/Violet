@@ -86,36 +86,71 @@ public struct Parser {
         throw error
       }
 
-    case .finished(let ast):
+    case let .finished(ast):
       return ast
 
-    case .error(let error):
+    case let .error(error):
       throw error
     }
   }
 
   private mutating func parseByMode() throws -> AST {
-    // TODO: take this from grammar (PyAST_FromNodeObject)
     switch self.mode {
-    case .single:
-      throw self.unimplemented()
-
-    case .fileInput:
-      let closingTokens: [TokenKind] = [.semicolon, .newLine, .eof]
-
-      var stmt: Statement?
-      if let s = try self.compoundStmtOrNop(closingTokens: closingTokens) {
-        stmt = s
-      } else {
-        stmt = try self.smallStmt(closingTokens: [.semicolon, .newLine, .eof])
-      }
-
-      return .fileInput([stmt!])
-
-    case .eval:
-      let expr = try self.test()
-      return AST.expression(expr)
+    case .single:    return try self.singleInput()
+    case .fileInput: return try self.fileInput()
+    case .eval:      return try self.evalInput()
     }
+  }
+
+  /// single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE
+  internal mutating func singleInput() throws -> AST {
+    if self.peek.kind == .newLine {
+      return .single([])
+    }
+
+    if let stmt = try self.compoundStmtOrNop() {
+      try self.consumeOrThrow(.newLine)
+      return .single([stmt])
+    }
+
+    let stmts = try self.simpleStmt()
+    return .single(Array(stmts))
+  }
+
+  /// file_input: (NEWLINE | stmt)* ENDMARKER
+  internal mutating func fileInput() throws -> AST {
+    var result = [Statement]()
+
+    while self.peek.kind != .eof {
+      switch self.peek.kind {
+      case .newLine:
+        try self.advance() // newLine
+      default:
+        let stmts = try self.stmt()
+        result.append(contentsOf: stmts)
+      }
+    }
+
+    // We know that 'self.peek.kind == .eof' (because of 'while' condition)
+    return .fileInput(result)
+  }
+
+  /// eval_input: testlist NEWLINE* ENDMARKER
+  internal mutating func evalInput() throws -> AST {
+    let start = self.peek.start
+    let list = try self.testList(closingTokens: [.newLine, .eof])
+    // TODO: every time when rule is 'a xxxList' we need .eof in closing tokens.
+
+    while self.peek.kind == .newLine {
+      try self.advance() // newLine
+    }
+
+    guard self.peek.kind == .eof else {
+      throw self.unexpectedToken(expected: [.eof])
+    }
+
+    let expr = list.toExpression(start: start)
+    return .expression(expr)
   }
 
   // MARK: - Naming

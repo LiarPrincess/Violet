@@ -10,26 +10,18 @@ extension Common {
 
   // MARK: - Creation
 
-  /// Create parser for given tokens.
-  /// Will automatically add EOF at the end.
+  /// Create parser for given tokens..
   internal func createExprParser(_ tokens: Token...) -> Parser {
     return self.createParser(mode: .eval, tokens: tokens)
   }
 
   /// Create parser for given tokens.
-  /// Will automatically add EOF at the end.
   internal func createStmtParser(_ tokens: Token...) -> Parser {
     return self.createParser(mode: .fileInput, tokens: tokens)
   }
 
   private func createParser(mode: ParserMode, tokens: [Token]) -> Parser {
-    let eofLocation = tokens.last?.end ?? loc0
-    let eof = Token(.eof, start: eofLocation, end: eofLocation)
-
-    var lexerTokens = tokens
-    lexerTokens.append(eof)
-
-    let lexer = FakeLexer(tokens: lexerTokens)
+    let lexer = FakeLexer(tokens: tokens)
     return Parser(mode: mode, tokenSource: lexer)
   }
 

@@ -12,9 +12,8 @@ extension Parser {
 
   /// `funcdef: 'def' NAME parameters ['->' test] ':' suite`
   internal mutating func funcDef(
-    closingTokens: [TokenKind],
-    start:         SourceLocation? = nil,
     isAsync:       Bool = false,
+    start:         SourceLocation? = nil,
     decoratorList: [Expression] = []) throws -> Statement {
 
     assert(self.peek.kind == .def)
@@ -33,7 +32,7 @@ extension Parser {
     }
 
     try self.consumeOrThrow(.colon)
-    let body = try self.suite(closingTokens: closingTokens)
+    let body = try self.suite()
 
     let kind: StatementKind = isAsync ?
       .asyncFunctionDef(name: name, args: args, body: Array(body),
@@ -48,7 +47,6 @@ extension Parser {
 
   /// `classdef: 'class' NAME ['(' [arglist] ')'] ':' suite`
   internal mutating func classDef(
-    closingTokens: [TokenKind],
     start:         SourceLocation? = nil,
     decoratorList: [Expression] = []) throws -> Statement {
 
@@ -61,7 +59,7 @@ extension Parser {
     try self.checkForbiddenName(name)
     let args = try self.parseBaseClass()
     try self.consumeOrThrow(.colon)
-    let body = try self.suite(closingTokens: closingTokens)
+    let body = try self.suite()
 
     let kind = StatementKind.classDef(name: name,
                                       bases: args?.args ?? [],

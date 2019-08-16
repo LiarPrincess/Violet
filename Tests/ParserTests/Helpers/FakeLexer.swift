@@ -7,11 +7,18 @@ internal struct FakeLexer: LexerType {
 
   internal init(tokens: [Token]) {
     self.tokens = tokens
+
+    // uncomment this for debug:
+    // print("Starting with:")
+    // for token in tokens {
+    //   print("  ", token)
+    // }
   }
 
   internal mutating func getToken() throws -> Token {
     if self.index == self.tokens.count {
-      return self.tokens[tokens.count - 1]
+      let eofLocation = self.tokens.last?.end ?? loc0
+      return Token(.eof, start: eofLocation, end: eofLocation)
     }
 
     let token = self.tokens[self.index]

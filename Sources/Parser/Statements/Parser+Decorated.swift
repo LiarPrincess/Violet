@@ -11,7 +11,7 @@ extension Parser {
 
   /// decorated: decorators (classdef | funcdef | async_funcdef)
   /// async_funcdef: 'async' funcdef
-  internal mutating func decorated(closingTokens: [TokenKind]) throws -> Statement {
+  internal mutating func decorated() throws -> Statement {
     assert(self.peek.kind == .at)
 
     let start = self.peek.start
@@ -20,23 +20,18 @@ extension Parser {
 
     switch self.peek.kind {
     case .class:
-      return try self.classDef(closingTokens: closingTokens,
-                               start: start,
-                               decoratorList: decorators)
+      return try self.classDef(start: start, decoratorList: decorators)
 
     case .def:
-      return try self.funcDef(closingTokens: closingTokens,
-                              start: start,
-                              decoratorList: decorators)
+      return try self.funcDef(start: start, decoratorList: decorators)
 
     case .async:
       try self.advance() // async
 
       switch self.peek.kind {
       case .def:
-        return try self.funcDef(closingTokens: closingTokens,
+        return try self.funcDef(isAsync: true,
                                 start: start,
-                                isAsync: true,
                                 decoratorList: decorators)
 
       default:

@@ -31,22 +31,19 @@ extension Parser {
   ///  )
   ///  except_clause: 'except' [test ['as' NAME]]
   /// ```
-  internal mutating func tryStmt(closingTokens: [TokenKind]) throws -> Statement {
+  internal mutating func tryStmt() throws -> Statement {
     assert(self.peek.kind == .try)
 
     let start = self.peek.start
     try self.advance() // try
     try self.consumeOrThrow(.colon)
 
-    var bodyClosing = closingTokens
-    bodyClosing.append(contentsOf: [.except, .finally])
-
-    let body = try self.suite(closingTokens: bodyClosing)
+    let body = try self.suite()
 
     var ir = TryIR(end: body.last.end)
-    try self.parseExceptClauses(into: &ir, closingTokens: closingTokens)
-    try self.parseElse(into: &ir, closingTokens: closingTokens)
-    try self.parseFinally(into: &ir, closingTokens: closingTokens)
+    try self.parseExceptClauses(into: &ir)
+    try self.parseElse(into: &ir)
+    try self.parseFinally(into: &ir)
 
     if ir.handlers.isEmpty && ir.finalBody.isEmpty {
       throw self.error(.tryWithoutExceptOrFinally, location: start)
@@ -68,11 +65,7 @@ extension Parser {
   /// (except_clause ':' suite)+
   /// except_clause: 'except' [test ['as' NAME]]
   /// ```
-  private mutating func parseExceptClauses(into ir: inout TryIR,
-                                           closingTokens: [TokenKind]) throws {
-
-    var bodyClosing = closingTokens
-    bodyClosing.append(contentsOf: [.except, .else, .finally])
+  private mutating func parseExceptClauses(into ir: inout TryIR) throws {
 
     while self.peek.kind == .except {
       let start = self.peek.start
@@ -90,7 +83,7 @@ extension Parser {
       }
 
       try self.consumeOrThrow(.colon)
-      let body = try self.suite(closingTokens: bodyClosing)
+      let body = try self.suite()
 
       let handler = ExceptHandler(type: type,
                                   name: name,
@@ -104,8 +97,7 @@ extension Parser {
   }
 
   /// `['else' ':' suite]`
-  private mutating func parseElse(into ir: inout TryIR,
-                                  closingTokens: [TokenKind]) throws {
+  private mutating func parseElse(into ir: inout TryIR) throws {
 
     guard self.peek.kind == .else else {
       return
@@ -114,17 +106,13 @@ extension Parser {
     try self.advance() // else
     try self.consumeOrThrow(.colon)
 
-    var orElseClosing = closingTokens
-    orElseClosing.append(contentsOf: [.finally])
-
-    let value = try self.suite(closingTokens: orElseClosing)
+    let value = try self.suite()
     ir.orElse = Array(value)
     ir.end = value.last.end
   }
 
   /// `'finally' ':' suite`
-  private mutating func parseFinally(into ir: inout TryIR,
-                                     closingTokens: [TokenKind]) throws {
+  private mutating func parseFinally(into ir: inout TryIR) throws {
 
     guard self.peek.kind == .finally else {
       return
@@ -133,7 +121,7 @@ extension Parser {
     try self.advance() // finally
     try self.consumeOrThrow(.colon)
 
-    let value = try self.suite(closingTokens: closingTokens)
+    let value = try self.suite()
     ir.finalBody = Array(value)
     ir.end = value.last.end
   }

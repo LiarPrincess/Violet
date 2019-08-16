@@ -3,44 +3,61 @@ import Lexer
 
 extension Parser {
 
-  /// `suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT`
-  internal mutating func suite(closingTokens: [TokenKind])
-    throws -> NonEmptyArray<Statement> {
+  /// stmt: simple_stmt | compound_stmt
+  internal mutating func stmt() throws -> NonEmptyArray<Statement> {
+    if let stmt = try self.compoundStmtOrNop() {
+      return NonEmptyArray(first: stmt)
+    }
 
-      // TODO: suite - finish
-      if self.peek.kind == .newLine {
-        try self.advance() // newLine
-        try self.consumeOrThrow(.indent)
-        throw self.unimplemented()
-        try self.consumeOrThrow(.dedent)
-      }
-
-      return try self.smallStmtSuite(closingTokens: closingTokens)
+    return try self.simpleStmt()
   }
 
-  private mutating func smallStmtSuite(closingTokens: [TokenKind])
-    throws -> NonEmptyArray<Statement> {
+  /// simple_stmt: small_stmt (';' small_stmt)* [';'] NEWLINE
+  internal mutating func simpleStmt() throws -> NonEmptyArray<Statement> {
+    let ruleClosing: [TokenKind] = [.newLine, .eof]
+    let smallStmtClosing: [TokenKind] = [.semicolon, .newLine, .eof]
 
-    // TODO: add newline to closings?
-    let first = try self.smallStmt(closingTokens: closingTokens)
-    var result = NonEmptyArray(first: first)
+    let first = try self.smallStmt(closingTokens: smallStmtClosing)
+    var array = NonEmptyArray(first: first)
 
-//    var additionalClosing = closingTokens
-//    additionalClosing.append(.newLine)
-//
-//    while self.peek.kind == .semicolon && !additionalClosing.contains(self.peekNext.kind) {
-//      try self.advance() // ;
-//
-//      let stmt = try self.smallStmt(closingTokens: closingTokens) // additionalClosing
-//      result.append(stmt)
-//    }
-//
-//    // optional semicolon
-//    if self.peek.kind == .semicolon {
-//      try self.advance() // ;
-//    }
-//
-//    try self.consumeOrThrow(.newLine)
-    return result
+    while self.peek.kind == .semicolon && !ruleClosing.contains(self.peekNext.kind) {
+      try self.advance() // ;
+
+      let element = try self.smallStmt(closingTokens: smallStmtClosing)
+      array.append(element)
+    }
+
+    // optional trailing semocolon
+    if self.peek.kind == .semicolon {
+      try self.advance() // ;
+    }
+
+    // consume new line (we will also accept eof)
+    switch self.peek.kind {
+    case .eof: break
+    case .newLine: try self.advance()
+    default: throw self.unexpectedToken(expected: [.newLine, .eof])
+    }
+
+    return array
+  }
+
+  /// suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT`
+  internal mutating func suite() throws -> NonEmptyArray<Statement> {
+    if try self.consumeIf(.newLine) {
+      try self.consumeOrThrow(.indent)
+
+      var result = try self.stmt()
+
+      while self.peek.kind != .dedent {
+        let stmts = try self.stmt()
+        result.append(contentsOf: stmts)
+      }
+
+      try self.consumeOrThrow(.dedent)
+      return result
+    }
+
+    return try self.simpleStmt()
   }
 }

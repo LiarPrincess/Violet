@@ -150,7 +150,7 @@ extension ParserErrorKind: CustomStringConvertible {
         return "Unexpected end of file."
       default:
         let e = joinWithCommaAndOr(expected)
-        return "Unexpected end of file, expected any of: \(e)."
+        return "Unexpected end of file, expected \(e)."
       }
     case let .unexpectedToken(tokenKind, expected):
       let token = needsQuotes(tokenKind) ?

@@ -18,28 +18,28 @@ extension Parser {
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal mutating func compoundStmtOrNop(closingTokens: [TokenKind])
+  internal mutating func compoundStmtOrNop()
     throws -> Statement? {
 
     switch self.peek.kind {
     case .if:
-      return try self.ifStmt(closingTokens: closingTokens)
+      return try self.ifStmt()
     case .while:
-      return try self.whileStmt(closingTokens: closingTokens)
+      return try self.whileStmt()
     case .for:
-      return try self.forStmt(closingTokens: closingTokens)
+      return try self.forStmt()
     case .try:
-      return try self.tryStmt(closingTokens: closingTokens)
+      return try self.tryStmt()
     case .with:
-      return try self.withStmt(closingTokens: closingTokens)
+      return try self.withStmt()
     case .async:
-      return try self.asyncStmt(closingTokens: closingTokens)
+      return try self.asyncStmt()
     case .def:
-      return try self.funcDef(closingTokens: closingTokens)
+      return try self.funcDef()
     case .class:
-      return try self.classDef(closingTokens: closingTokens)
+      return try self.classDef()
     case .at:
-      return try self.decorated(closingTokens: closingTokens)
+      return try self.decorated()
     default:
       return nil
     }
@@ -60,17 +60,14 @@ extension Parser {
   ///   ('elif' test ':' suite)*
   ///   ['else' ':' suite]
   /// ```
-  internal mutating func ifStmt(closingTokens: [TokenKind]) throws -> Statement {
+  internal mutating func ifStmt() throws -> Statement {
     assert(self.peek.kind == .if)
-
-    var bodyClosing = closingTokens
-    bodyClosing.append(contentsOf: [.elif, .else])
 
     let start = self.peek.start
     try self.advance() // if
     let test = try self.test()
     try self.consumeOrThrow(.colon)
-    let body = try self.suite(closingTokens: bodyClosing)
+    let body = try self.suite()
 
     let first = IfIR(start: start, test: test, body: body)
     var irs = NonEmptyArray<IfIR>(first: first)
@@ -80,7 +77,7 @@ extension Parser {
       try self.advance() // elif
       let test = try self.test()
       try self.consumeOrThrow(.colon)
-      let body = try self.suite(closingTokens: bodyClosing)
+      let body = try self.suite()
       irs.append(IfIR(start: start, test: test, body: body))
     }
 
@@ -88,7 +85,7 @@ extension Parser {
     if self.peek.kind == .else {
       try self.advance() // else
       try self.consumeOrThrow(.colon)
-      orElse = try self.suite(closingTokens: closingTokens)
+      orElse = try self.suite()
     }
 
     return self.compile(irs: irs, orElse: orElse)
@@ -140,7 +137,7 @@ extension Parser {
   ///   'while' test ':' suite
   ///   ['else' ':' suite]
   /// ```
-  internal mutating func whileStmt(closingTokens: [TokenKind]) throws -> Statement {
+  internal mutating func whileStmt() throws -> Statement {
     assert(self.peek.kind == .while)
 
     let start = self.peek.start
@@ -148,17 +145,13 @@ extension Parser {
 
     let test = try self.test()
     try self.consumeOrThrow(.colon)
-
-    var bodyClosing = closingTokens
-    bodyClosing.append(contentsOf: [.else])
-
-    let body = try self.suite(closingTokens: bodyClosing)
+    let body = try self.suite()
 
     var orElse: NonEmptyArray<Statement>?
     if self.peek.kind == .else {
       try self.advance() // else
       try self.consumeOrThrow(.colon)
-      orElse = try self.suite(closingTokens: closingTokens)
+      orElse = try self.suite()
     }
 
     let kind = StatementKind.while(test: test,
@@ -174,9 +167,8 @@ extension Parser {
   ///   'for' exprlist 'in' testlist ':' suite
   ///   ['else' ':' suite]
   /// ```
-  internal mutating func forStmt(closingTokens: [TokenKind],
-                                 start:         SourceLocation? = nil,
-                                 isAsync:       Bool = false) throws -> Statement {
+  internal mutating func forStmt(isAsync: Bool = false,
+                                 start: SourceLocation? = nil) throws -> Statement {
 
     assert(self.peek.kind == .for)
 
@@ -193,17 +185,14 @@ extension Parser {
     let iter = iterRaw.toExpression(start: iterStart)
     try self.consumeOrThrow(.colon)
 
-    var bodyClosing = closingTokens
-    bodyClosing.append(contentsOf: [.else])
-
-    let body = try self.suite(closingTokens: bodyClosing)
+    let body = try self.suite()
 
     var orElse = [Statement]()
     if self.peek.kind == .else {
       try self.advance() // else
       try self.consumeOrThrow(.colon)
 
-      let orElseRaw = try self.suite(closingTokens: closingTokens)
+      let orElseRaw = try self.suite()
       orElse = Array(orElseRaw)
     }
 
@@ -218,9 +207,8 @@ extension Parser {
   // MARK: - With
 
   /// `with_stmt: 'with' with_item (',' with_item)*  ':' suite`
-  internal mutating func withStmt(closingTokens: [TokenKind],
-                                  start:         SourceLocation? = nil,
-                                  isAsync:       Bool = false) throws -> Statement {
+  internal mutating func withStmt(isAsync: Bool = false,
+                                  start:   SourceLocation? = nil) throws -> Statement {
 
     assert(self.peek.kind == .with)
 
@@ -240,7 +228,7 @@ extension Parser {
     }
 
     try self.consumeOrThrow(.colon)
-    let body = try self.suite(closingTokens: closingTokens)
+    let body = try self.suite()
 
     let kind: StatementKind = isAsync ?
       .asyncWith(items: items, body: Array(body)) :
@@ -265,9 +253,7 @@ extension Parser {
   // MARK: - Async
 
   /// async_stmt: 'async' (funcdef | with_stmt | for_stmt)
-  internal mutating func asyncStmt(closingTokens: [TokenKind])
-    throws -> Statement {
-
+  internal mutating func asyncStmt() throws -> Statement {
     assert(self.peek.kind == .async)
 
     let start = self.peek.start
@@ -275,20 +261,11 @@ extension Parser {
 
     switch self.peek.kind {
     case .def:
-      return try self.funcDef(closingTokens: closingTokens,
-                              start: start,
-                              isAsync: true)
-
+      return try self.funcDef(isAsync: true, start: start)
     case .with:
-      return try self.withStmt(closingTokens: closingTokens,
-                               start: start,
-                               isAsync: true)
-
+      return try self.withStmt(isAsync: true, start: start)
     case .for:
-      return try self.forStmt(closingTokens: closingTokens,
-                              start: start,
-                              isAsync: true)
-
+      return try self.forStmt(isAsync: true, start: start)
     default:
       throw self.unexpectedToken(expected: [.def, .with, .for])
     }

@@ -34,9 +34,10 @@ class TryStatementTests: XCTestCase,
       self.token(.try,             start: loc0,  end: loc1),
       self.token(.colon,           start: loc2,  end: loc3),
       self.token(.string("Ping"),  start: loc4,  end: loc5),
-      self.token(.finally,         start: loc6,  end: loc7),
-      self.token(.colon,           start: loc8,  end: loc9),
-      self.token(.string("Mulan"), start: loc10, end: loc11)
+      self.token(.newLine,         start: loc6,  end: loc7),
+      self.token(.finally,         start: loc8,  end: loc9),
+      self.token(.colon,           start: loc10, end: loc11),
+      self.token(.string("Mulan"), start: loc12, end: loc13)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -55,7 +56,7 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertStatement(stmt, "(try \"Ping\" finally: \"Mulan\")")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc11)
+      XCTAssertEqual(stmt.end,   loc13)
     }
   }
 
@@ -68,9 +69,10 @@ class TryStatementTests: XCTestCase,
       self.token(.try,             start: loc0,  end: loc1),
       self.token(.colon,           start: loc2,  end: loc3),
       self.token(.string("Mulan"), start: loc4,  end: loc5),
-      self.token(.except,          start: loc6,  end: loc7),
-      self.token(.colon,           start: loc8,  end: loc9),
-      self.token(.string("Ping"),  start: loc10, end: loc11)
+      self.token(.newLine,         start: loc6,  end: loc7),
+      self.token(.except,          start: loc8,  end: loc9),
+      self.token(.colon,           start: loc10, end: loc11),
+      self.token(.string("Ping"),  start: loc12, end: loc13)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -89,7 +91,7 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertStatement(stmt, "(try \"Mulan\" (except do: \"Ping\"))")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc11)
+      XCTAssertEqual(stmt.end,   loc13)
     }
   }
 
@@ -100,10 +102,11 @@ class TryStatementTests: XCTestCase,
       self.token(.try,                   start: loc0,  end: loc1),
       self.token(.colon,                 start: loc2,  end: loc3),
       self.token(.string("Mulan"),       start: loc4,  end: loc5),
-      self.token(.except,                start: loc6,  end: loc7),
-      self.token(.identifier("Soldier"), start: loc8,  end: loc9),
-      self.token(.colon,                 start: loc10, end: loc11),
-      self.token(.string("Ping"),        start: loc12, end: loc13)
+      self.token(.newLine,               start: loc6,  end: loc7),
+      self.token(.except,                start: loc8,  end: loc9),
+      self.token(.identifier("Soldier"), start: loc10, end: loc11),
+      self.token(.colon,                 start: loc12, end: loc13),
+      self.token(.string("Ping"),        start: loc14, end: loc15)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -122,7 +125,7 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertStatement(stmt, "(try \"Mulan\" (except Soldier do: \"Ping\"))")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
+      XCTAssertEqual(stmt.end,   loc15)
     }
   }
 
@@ -133,12 +136,13 @@ class TryStatementTests: XCTestCase,
       self.token(.try,                    start: loc0,  end: loc1),
       self.token(.colon,                  start: loc2,  end: loc3),
       self.token(.string("Mulan"),        start: loc4,  end: loc5),
-      self.token(.except,                 start: loc6,  end: loc7),
-      self.token(.identifier("Disguise"), start: loc8,  end: loc9),
-      self.token(.as,                     start: loc10, end: loc11),
-      self.token(.identifier("Soldier"),  start: loc12, end: loc13),
-      self.token(.colon,                  start: loc14, end: loc15),
-      self.token(.string("Ping"),         start: loc16, end: loc17)
+      self.token(.newLine,                start: loc6,  end: loc7),
+      self.token(.except,                 start: loc8,  end: loc9),
+      self.token(.identifier("Disguise"), start: loc10, end: loc11),
+      self.token(.as,                     start: loc12, end: loc13),
+      self.token(.identifier("Soldier"),  start: loc14, end: loc15),
+      self.token(.colon,                  start: loc16, end: loc17),
+      self.token(.string("Ping"),         start: loc18, end: loc19)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -157,7 +161,7 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertStatement(stmt, "(try \"Mulan\" (except Disguise as: Soldier do: \"Ping\"))")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
+      XCTAssertEqual(stmt.end,   loc19)
     }
   }
 
@@ -169,13 +173,15 @@ class TryStatementTests: XCTestCase,
       self.token(.try,                   start: loc0,  end: loc1),
       self.token(.colon,                 start: loc2,  end: loc3),
       self.token(.string("Mulan"),       start: loc4,  end: loc5),
-      self.token(.except,                start: loc6,  end: loc7),
-      self.token(.identifier("Soldier"), start: loc8,  end: loc9),
-      self.token(.colon,                 start: loc10, end: loc11),
-      self.token(.string("Ping"),        start: loc12, end: loc13),
-      self.token(.except,                start: loc14, end: loc15),
-      self.token(.colon,                 start: loc16, end: loc17),
-      self.token(.string("Pong"),        start: loc18, end: loc19)
+      self.token(.newLine,               start: loc6,  end: loc7),
+      self.token(.except,                start: loc8,  end: loc9),
+      self.token(.identifier("Soldier"), start: loc10, end: loc11),
+      self.token(.colon,                 start: loc12, end: loc13),
+      self.token(.string("Ping"),        start: loc14, end: loc15),
+      self.token(.newLine,               start: loc16, end: loc17),
+      self.token(.except,                start: loc18, end: loc19),
+      self.token(.colon,                 start: loc20, end: loc21),
+      self.token(.string("Pong"),        start: loc22, end: loc23)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -195,7 +201,7 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertStatement(stmt, "(try \"Mulan\" (except Soldier do: \"Ping\") (except do: \"Pong\"))")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc19)
+      XCTAssertEqual(stmt.end,   loc23)
     }
   }
 
@@ -207,12 +213,14 @@ class TryStatementTests: XCTestCase,
       self.token(.try,                start: loc0,  end: loc1),
       self.token(.colon,              start: loc2,  end: loc3),
       self.token(.string("Mulan"),    start: loc4,  end: loc5),
-      self.token(.except,             start: loc6,  end: loc7),
-      self.token(.colon,              start: loc8,  end: loc9),
-      self.token(.string("Ping"),     start: loc10, end: loc11),
-      self.token(.else,               start: loc12, end: loc13),
-      self.token(.colon,              start: loc14, end: loc15),
-      self.token(.string("Fa Mulan"), start: loc16, end: loc17)
+      self.token(.newLine,            start: loc6,  end: loc7),
+      self.token(.except,             start: loc8,  end: loc9),
+      self.token(.colon,              start: loc10, end: loc11),
+      self.token(.string("Ping"),     start: loc12, end: loc13),
+      self.token(.newLine,            start: loc14, end: loc15),
+      self.token(.else,               start: loc16, end: loc17),
+      self.token(.colon,              start: loc18, end: loc19),
+      self.token(.string("Fa Mulan"), start: loc20, end: loc21)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -235,7 +243,7 @@ class TryStatementTests: XCTestCase,
       print(stmt)
       XCTAssertStatement(stmt, "(try \"Mulan\" (except do: \"Ping\") else: \"Fa Mulan\")")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
+      XCTAssertEqual(stmt.end,   loc21)
     }
   }
 
@@ -247,12 +255,14 @@ class TryStatementTests: XCTestCase,
       self.token(.try,                start: loc0,  end: loc1),
       self.token(.colon,              start: loc2,  end: loc3),
       self.token(.string("Mulan"),    start: loc4,  end: loc5),
-      self.token(.except,             start: loc6,  end: loc7),
-      self.token(.colon,              start: loc8,  end: loc9),
-      self.token(.string("Ping"),     start: loc10, end: loc11),
-      self.token(.finally,            start: loc12, end: loc13),
-      self.token(.colon,              start: loc14, end: loc15),
-      self.token(.string("Fa Mulan"), start: loc16, end: loc17)
+      self.token(.newLine,            start: loc6,  end: loc7),
+      self.token(.except,             start: loc8,  end: loc9),
+      self.token(.colon,              start: loc10, end: loc11),
+      self.token(.string("Ping"),     start: loc12, end: loc13),
+      self.token(.newLine,            start: loc14, end: loc15),
+      self.token(.finally,            start: loc16, end: loc17),
+      self.token(.colon,              start: loc18, end: loc19),
+      self.token(.string("Fa Mulan"), start: loc20, end: loc21)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -275,7 +285,7 @@ class TryStatementTests: XCTestCase,
       print(stmt)
       XCTAssertStatement(stmt, "(try \"Mulan\" (except do: \"Ping\") finally: \"Fa Mulan\")")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
+      XCTAssertEqual(stmt.end,   loc21)
     }
   }
 
@@ -288,15 +298,18 @@ class TryStatementTests: XCTestCase,
       self.token(.try,                start: loc0,  end: loc1),
       self.token(.colon,              start: loc2,  end: loc3),
       self.token(.string("Mulan"),    start: loc4,  end: loc5),
-      self.token(.except,             start: loc6,  end: loc7),
-      self.token(.colon,              start: loc8,  end: loc9),
-      self.token(.string("Ping"),     start: loc10, end: loc11),
-      self.token(.else,               start: loc12, end: loc13),
-      self.token(.colon,              start: loc14, end: loc15),
-      self.token(.string("Pong"),     start: loc16, end: loc17),
-      self.token(.finally,            start: loc18, end: loc19),
-      self.token(.colon,              start: loc20, end: loc21),
-      self.token(.string("Fa Mulan"), start: loc22, end: loc23)
+      self.token(.newLine,            start: loc6,  end: loc7),
+      self.token(.except,             start: loc8,  end: loc9),
+      self.token(.colon,              start: loc10, end: loc11),
+      self.token(.string("Ping"),     start: loc12, end: loc13),
+      self.token(.newLine,            start: loc14, end: loc15),
+      self.token(.else,               start: loc16, end: loc17),
+      self.token(.colon,              start: loc18, end: loc19),
+      self.token(.string("Pong"),     start: loc20, end: loc21),
+      self.token(.newLine,            start: loc22, end: loc23),
+      self.token(.finally,            start: loc24, end: loc25),
+      self.token(.colon,              start: loc26, end: loc27),
+      self.token(.string("Fa Mulan"), start: loc28, end: loc29)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -321,7 +334,7 @@ class TryStatementTests: XCTestCase,
       print(stmt)
       XCTAssertStatement(stmt, "(try \"Mulan\" (except do: \"Ping\") else: \"Pong\" finally: \"Fa Mulan\")")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc23)
+      XCTAssertEqual(stmt.end,   loc29)
     }
   }
 
@@ -335,12 +348,14 @@ class TryStatementTests: XCTestCase,
       self.token(.try,                start: loc0,  end: loc1),
       self.token(.colon,              start: loc2,  end: loc3),
       self.token(.string("Mulan"),    start: loc4,  end: loc5),
-      self.token(.else,               start: loc6,  end: loc7),
-      self.token(.colon,              start: loc8,  end: loc9),
-      self.token(.string("Ping"),     start: loc10, end: loc11),
-      self.token(.finally,            start: loc12, end: loc13),
-      self.token(.colon,              start: loc14, end: loc15),
-      self.token(.string("Fa Mulan"), start: loc16, end: loc17)
+      self.token(.newLine,            start: loc6,  end: loc7),
+      self.token(.else,               start: loc8,  end: loc9),
+      self.token(.colon,              start: loc10, end: loc11),
+      self.token(.string("Ping"),     start: loc12, end: loc13),
+      self.token(.newLine,            start: loc14, end: loc15),
+      self.token(.finally,            start: loc16, end: loc17),
+      self.token(.colon,              start: loc18, end: loc19),
+      self.token(.string("Fa Mulan"), start: loc20, end: loc21)
     )
 
     if let error = self.error(&parser) {

@@ -39,9 +39,10 @@ class WhileStatementTests: XCTestCase,
       self.token(.identifier("Frollo"), start: loc2, end: loc3),
       self.token(.colon,                start: loc4, end: loc5),
       self.token(.string("Quasimodo"),  start: loc6, end: loc7),
-      self.token(.else,                 start: loc8, end: loc9),
-      self.token(.colon,                start: loc10, end: loc11),
-      self.token(.string("Esmeralda"),  start: loc12, end: loc13)
+      self.token(.newLine,              start: loc8, end: loc9),
+      self.token(.else,                 start: loc10, end: loc11),
+      self.token(.colon,                start: loc12, end: loc13),
+      self.token(.string("Esmeralda"),  start: loc14, end: loc15)
     )
 
     if let stmt = self.parseStmt(&parser) {
@@ -59,7 +60,7 @@ class WhileStatementTests: XCTestCase,
 
       XCTAssertStatement(stmt, "(while Frollo \"Quasimodo\" else: \"Esmeralda\")")
       XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
+      XCTAssertEqual(stmt.end,   loc15)
     }
   }
 }
