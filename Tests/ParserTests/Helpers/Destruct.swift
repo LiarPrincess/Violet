@@ -735,7 +735,7 @@ extension DestructStringGroup {
   internal func destructStringFormattedValue(_ group: StringGroup,
                                              file:   StaticString = #file,
                                              line:   UInt         = #line) ->
-    (String, conversion: ConversionFlag?, spec: String?)? {
+    (Expression, conversion: ConversionFlag?, spec: String?)? {
 
     switch group {
     case let .formattedValue(value0, conversion: value1, spec: value2):

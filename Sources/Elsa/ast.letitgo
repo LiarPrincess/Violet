@@ -393,8 +393,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- String - no f-strings.
   String(String)
   -- FormattedValue - just an f-string (with no leading or trailing literals).
-{- TODO: CPython: FormattedValue(expr value, int? conversion, expr? format_spec) -}
-  | FormattedValue(String, ConversionFlag? conversion, String? spec)
+  | FormattedValue(expr, ConversionFlag? conversion, String? spec)
   -- JoinedStr - if there are multiple f-strings or any literals involved.
   | JoinedString(StringGroup*)
 

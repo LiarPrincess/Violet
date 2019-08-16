@@ -1,3 +1,4 @@
+import Core
 import Lexer
 import Foundation
 
@@ -7,68 +8,28 @@ import Foundation
 // Python -> ast.c
 //  parsestrplus(struct compiling *c, const node *n)
 
-// It is FString (basically one of the hardest things), so normal rules do apply:
+// It is FString (basically one of the hardest things), so normal rules do apply
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
-
-public enum FStringError: Error, Equatable {
-  // TODO: better messages for 'unexpectedEnd'?
-  /// We are starting expr but end of string happened: "abc{" or "abc}"
-  case unexpectedEnd
-  /// f-string: single '}' is not allowed
-  case singleRightBrace
-  /// f-string expression part cannot include a backslash
-  case backslashInExpression
-  /// f-string expression part cannot include '#'
-  case commentInExpression
-  /// f-string: unterminated string
-  case unterminatedString
-  /// f-string: mismatched '(', '{', or '['
-  case mismatchedParen
-  /// f-string: invalid conversion character: expected 's', 'r', or 'a'
-  case invalidConversion(UnicodeScalar)
-
-  // TODO: Remove
-  case unimplemented
-}
-
-internal protocol FString {
-
-  /// Literal text not contained in braces, it will be copied to the output.
-  /// For example: `"Elsa"`.
-  mutating func append(_ s: String) throws
-
-  /// “Replacement fields” surrounded by curly braces.
-  /// For example: `f"Let it {go}"` (where `go` is replacement).
-  mutating func appendFormatString(_ s: String) throws
-
-  /// For normal strings and f-strings, concatenate them together.
-  /// - Note:
-  /// Result is defined as:
-  /// - String - no f-strings.
-  /// - FormattedValue - just an f-string (with no leading or trailing literals).
-  /// - JoinedStr - if there are multiple f-strings or any literals involved.
-  mutating func compile() throws -> StringGroup
-}
 
 private enum FStringFragment {
   /// String literal (the part NOT between '{' and '}').
   case string(String)
   /// Expression + formatter (the part between '{' and '}').
-  case formattedValue(String, conversion: ConversionFlag?, spec: String?)
+  case formattedValue(Expression, conversion: ConversionFlag?, spec: String?)
 
   fileprivate func compile() -> StringGroup {
     switch self {
     case let .string(s):
       return .string(s)
-    case let .formattedValue(v, conversion: c, spec: s):
-      return .formattedValue(v, conversion: c, spec: s)
+    case let .formattedValue(e, conversion: c, spec: s):
+      return .formattedValue(e, conversion: c, spec: s)
     }
   }
 }
 
-internal struct FStringImpl: FString {
+internal struct FString {
 
   /// Conctenate strings (up until next expression).
   private var lastStr: String?
@@ -79,11 +40,15 @@ internal struct FStringImpl: FString {
 
   // MARK: - FString
 
-  internal mutating func append(_ s: String) throws {
+  /// Literal text not contained in braces, it will be copied to the output.
+  /// For example: `"Elsa"`.
+  internal mutating func append(_ s: String) {
     let value = self.lastStr ?? ""
     self.lastStr = value + s
   }
 
+  /// “Replacement fields” surrounded by curly braces.
+  /// For example: `f"Let it {go}"` (where `go` is replacement).
   internal mutating func appendFormatString(_ s: String) throws {
     let view = s.unicodeScalars
     var index = view.startIndex
@@ -92,7 +57,7 @@ internal struct FStringImpl: FString {
       // Literal is optional, because we may start with expr
       // and we can't just add a node!
       if let literal = try self.consumeLiteral(in: view, advancing: &index) {
-        try self.append(literal)
+        self.append(literal)
       }
 
       if index != view.endIndex {
@@ -115,6 +80,9 @@ internal struct FStringImpl: FString {
     }
   }
 
+  /// For normal strings and f-strings, concatenate them together.
+  /// - Note:
+  /// Result is defined as:
   /// - String - no f-strings.
   /// - FormattedValue - just an f-string (with no leading or trailing literals).
   /// - JoinedStr - if there are multiple f-strings or any literals involved.
@@ -212,8 +180,9 @@ internal struct FStringImpl: FString {
     assert(view[index] == "{")
     view.formIndex(after: &index) // consume '{'
 
+    // We have to eval right now, so output proper errors.
     let exprString = try self.consumeExprValue(in: view, advancing: &index)
-    // TODO: Compile exprString -> expr (+ check for empty)
+    let expr = try self.eval(exprString)
 
     assert(index == view.endIndex
       || view[index] == "!"
@@ -238,9 +207,28 @@ internal struct FStringImpl: FString {
 
     assert(index == view.endIndex || view[index] == "}")
 
-    // let kind = ExpressionKind.string(.string(exprString))
-    // let expr = Expression(kind, start: .start, end: .start)
-    return .formattedValue(exprString, conversion: conversion, spec: formatSpec)
+    return .formattedValue(expr, conversion: conversion, spec: formatSpec)
+  }
+
+  private func eval(_ s: String) throws -> Expression {
+    if s.isEmpty {
+      throw FStringError.emptyExpression
+    }
+
+    do {
+      let lexer = Lexer(for: s)
+      var parser = Parser(mode: .eval, tokenSource: lexer)
+      let ast = try parser.parse()
+
+      switch ast {
+      case .expression(let e):  return e
+      case .single, .fileInput: assert(false)
+      }
+    } catch let error as ParserError {
+      throw FStringError.parsingError(error.kind)
+    } catch {
+      throw FStringError.unknownParsingError(error)
+    }
   }
 
   // MARK: - Consume expr - value
@@ -351,7 +339,10 @@ internal struct FStringImpl: FString {
       throw FStringError.unterminatedString
     }
 
-    // TODO: test_joined_expression_unclosedParen_throws
+    // f"Let it go, {(let} it go" <- will not trigger it, we got +1 from '(' and
+    //                               -1 from '}', it is 'unexpectedEnd' instead
+    // f"Let it go, {((let} it go" <- will trigger it
+    // This is how CPython works (kind of surprising).
     guard nestedDepth == 0 else {
       throw FStringError.mismatchedParen
     }
@@ -458,12 +449,14 @@ internal struct FStringImpl: FString {
 
     let startIndex = index
     while index != view.endIndex && view[index] != "}" {
+      if view[index] == "{" {
+        throw NotImplemented.expressionInFormatSpecifierInsideFString
+      }
+
       view.formIndex(after: &index)
     }
 
     assert(index == view.endIndex || view[index] == "}")
-
-    let s = view[startIndex..<index]
-    return String(s)
+    return String(view[startIndex..<index])
   }
 }

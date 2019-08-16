@@ -41,12 +41,12 @@ extension Parser {
 
     let start = self.peek.start
     var end   = self.peek.end
-    var string: FString = FStringImpl()
+    var string = FString()
 
     while self.isString(self.peek) || self.isFormatString(self.peek) {
       switch self.peek.kind {
       case let .string(s):
-        try string.append(s)
+        string.append(s)
       case let .formatString(s):
         try string.appendFormatString(s)
       default: // should not happen
@@ -62,8 +62,7 @@ extension Parser {
     }
 
     let group = try string.compile()
-    let kind = ExpressionKind.string(group)
-    return self.expression(kind, start: start, end: end)
+    return self.expression(.string(group), start: start, end: end)
   }
 
   // MARK: - Is xxx

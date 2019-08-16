@@ -1,5 +1,9 @@
 // swiftlint:disable force_unwrapping
 
+// Do not add:
+// - RandomAccessCollection - it may throw. We don’t like throwing (and runtime checks).
+// - ExpressibleByArrayLiteral - it may break our invariant. We dont't like that.
+
 /// Array that has at least 1 element.
 public struct NonEmptyArray<Element>: Sequence,
                                         Collection,
