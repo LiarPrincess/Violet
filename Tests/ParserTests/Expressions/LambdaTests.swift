@@ -53,7 +53,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let argA = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
       XCTAssertEqual(d.args.args, [argA])
       XCTAssertEqual(d.args.defaults, [])
       XCTAssertEqual(d.args.vararg, .none)
@@ -85,7 +85,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let argA = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
       let defA = Expression(.float(1.0), start: loc10, end: loc11)
       XCTAssertEqual(d.args.args, [argA])
       XCTAssertEqual(d.args.defaults, [defA])
@@ -118,8 +118,8 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let argA = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = Arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
+      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
+      let argB = Arg("tomato", annotation: nil, start: loc10, end: loc11)
       XCTAssertEqual(d.args.args, [argA, argB])
       XCTAssertEqual(d.args.defaults, [])
       XCTAssertEqual(d.args.vararg, .none)
@@ -153,8 +153,8 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let argA = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = Arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
+      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
+      let argB = Arg("tomato", annotation: nil, start: loc10, end: loc11)
       let defB = Expression(.float(1.0), start: loc14, end: loc15)
       XCTAssertEqual(d.args.args, [argA, argB])
       XCTAssertEqual(d.args.defaults, [defB])
@@ -207,7 +207,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let varargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
       XCTAssertEqual(d.args.args, [])
       XCTAssertEqual(d.args.defaults, [])
       XCTAssertEqual(d.args.vararg, .named(varargA))
@@ -242,8 +242,8 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let varargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = Arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwB     = Arg("tomato", annotation: nil, start: loc12, end: loc13)
       let kwDefB  = Expression(.float(1), start: loc16, end: loc17)
       XCTAssertEqual(d.args.args, [])
       XCTAssertEqual(d.args.defaults, [])
@@ -277,8 +277,8 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let varargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = Arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwB     = Arg("tomato", annotation: nil, start: loc12, end: loc13)
       let kwDefB = Expression(.none, start: loc13, end: loc13)
       XCTAssertEqual(d.args.args, [])
       XCTAssertEqual(d.args.defaults, [])
@@ -330,7 +330,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let kwA = Arg(name: "zucchini", annotation: nil, start: loc10, end: loc11)
+      let kwA = Arg("zucchini", annotation: nil, start: loc10, end: loc11)
       let kwDefA = Expression(.none, start: loc11, end: loc11)
       XCTAssertEqual(d.args.args, [])
       XCTAssertEqual(d.args.defaults, [])
@@ -379,7 +379,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let kwargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
       XCTAssertEqual(d.args.args, [])
       XCTAssertEqual(d.args.defaults, [])
       XCTAssertEqual(d.args.vararg, .none)
@@ -411,7 +411,7 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let kwargA = Arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
       XCTAssertEqual(d.args.args, [])
       XCTAssertEqual(d.args.defaults, [])
       XCTAssertEqual(d.args.vararg, .none)
@@ -470,11 +470,11 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructLambda(expr) else { return }
 
-      let argA    = Arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let varargB = Arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
-      let kwC     = Arg(name: "pepper", annotation: nil, start: loc16, end: loc17)
+      let argA    = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
+      let varargB = Arg("tomato", annotation: nil, start: loc12, end: loc13)
+      let kwC     = Arg("pepper", annotation: nil, start: loc16, end: loc17)
       let kwDefC  = Expression(.none, start: loc17, end: loc17)
-      let kwargD = Arg(name: "eggplant", annotation: nil, start: loc22, end: loc23)
+      let kwargD = Arg("eggplant", annotation: nil, start: loc22, end: loc23)
       XCTAssertEqual(d.args.args, [argA])
       XCTAssertEqual(d.args.defaults, [])
       XCTAssertEqual(d.args.vararg, .named(varargB))

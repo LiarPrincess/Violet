@@ -41,7 +41,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 @struct stmt = (
   -- Type of the statement.
-  stmtKind kind,
+  stmtKind kind @underscoreInit,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -204,7 +204,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- https://docs.python.org/3/reference/expressions.html
 @struct expr = (
   -- Type of the expression.
-  exprKind kind,
+  exprKind kind @underscoreInit,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -390,7 +390,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- String - no f-strings.
   String(String)
   -- FormattedValue - just an f-string (with no leading or trailing literals).
-{- CPython: FormattedValue(expr value, int? conversion, expr? format_spec) -}
+{- TODO: CPython: FormattedValue(expr value, int? conversion, expr? format_spec) -}
   | FormattedValue(String, ConversionFlag? conversion, String? spec)
   -- JoinedStr - if there are multiple f-strings or any literals involved.
   | JoinedString(StringGroup*)
@@ -405,7 +405,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | Repr
 
 @struct Slice = (
-  sliceKind kind,
+  sliceKind kind @underscoreInit,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -417,9 +417,9 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   Slice(expr? lower, expr? upper, expr? step)
   -- Advanced slicing: `frozen[kristoff:ana, olaf]`.
   -- `dims` holds a list of `Slice` and `Index` nodes.
- | ExtSlice(slice* dims)
+  | ExtSlice(slice* dims)
   -- Subscripting with a single value: `frozen[elsa]`.
- | Index(expr)
+  | Index(expr)
 
 -- One `for` clause in a comprehension.
 @struct Comprehension = (
@@ -477,7 +477,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 @struct Arg = (
   -- Argument name.
-  identifier name,
+  identifier name @underscoreInit,
   -- Python expression evaluated at compile time.
   -- Not used during runtime, can be used by third party libraries.
   -- Introduced in PEP 3107.

@@ -38,7 +38,7 @@ public struct Statement: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(kind: StatementKind, start: SourceLocation, end: SourceLocation) {
+  public init(_ kind: StatementKind, start: SourceLocation, end: SourceLocation) {
     self.kind = kind
     self.start = start
     self.end = end
@@ -224,7 +224,7 @@ public struct Expression: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
+  public init(_ kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
     self.kind = kind
     self.start = start
     self.end = end
@@ -436,7 +436,7 @@ public struct Slice: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(kind: SliceKind, start: SourceLocation, end: SourceLocation) {
+  public init(_ kind: SliceKind, start: SourceLocation, end: SourceLocation) {
     self.kind = kind
     self.start = start
     self.end = end
@@ -538,7 +538,7 @@ public struct Arg: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(name: String, annotation: Expression?, start: SourceLocation, end: SourceLocation) {
+  public init(_ name: String, annotation: Expression?, start: SourceLocation, end: SourceLocation) {
     self.name = name
     self.annotation = annotation
     self.start = start

@@ -4,7 +4,8 @@ private let keywords: [String:TokenKind] = [
   "alias":    .alias,
   "enum":     .enum,
   "indirect": .indirect,
-  "struct":   .struct
+  "struct":   .struct,
+  "underscoreInit": .underscoreInit
 ]
 
 private let operators: [Character: TokenKind] = [

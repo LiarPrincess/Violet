@@ -53,7 +53,7 @@ private func emitStruct(_ structDef: StructDef) {
   }
   print()
 
-  let initArgs = structDef.properties.map { $0.nameColonType }.joined(", ")
+  let initArgs = structDef.properties.map(propertyInit).joined(", ")
   print("  public init(\(initArgs)) {")
   for property in structDef.properties {
     print("    self.\(property.name) = \(property.name)")
@@ -62,6 +62,11 @@ private func emitStruct(_ structDef: StructDef) {
 
   print("}")
   print()
+}
+
+private func propertyInit(_ prop: StructProperty) -> String {
+  let prefix = prop.underscoreInit ? "_ " : ""
+  return prefix + prop.nameColonType
 }
 
 private func emitDoc(_ doc: String?, indent indentCount: Int) {

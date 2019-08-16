@@ -121,7 +121,7 @@ extension Parser {
     try self.advance() // **
 
     let test = try self.test()
-    let kw = Keyword(nil, value: test, start: start, end: test.end)
+    let kw = Keyword(name: nil, value: test, start: start, end: test.end)
     ir.keywords.append(kw)
     ir.hasStarStar = true
   }
@@ -144,7 +144,7 @@ extension Parser {
       }
 
       let value = try self.test()
-      let keyword = Keyword(name,
+      let keyword = Keyword(name: name,
                             value: value,
                             start: nameToken.start,
                             end: value.end)

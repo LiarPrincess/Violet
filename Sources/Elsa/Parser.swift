@@ -185,14 +185,20 @@ internal struct Parser {
     var result = [StructProperty]()
     while self.token.kind != .rightParen {
       var kind = PropertyKind.single
+      var underscoreInit = false
 
       let doc = self.useCollectedDoc()
       let type = self.consumeNameOrFail()
       if self.consumeIfEqual(kind: .star) { kind = .many }
       if self.consumeIfEqual(kind: .option) { kind = .optional }
       let name = self.consumeNameOrFail()
+      if self.consumeIfEqual(kind: .underscoreInit) { underscoreInit = true }
 
-      let property = StructProperty(name, type: type, kind: kind, doc: doc)
+      let property = StructProperty(name,
+                                    type: type,
+                                    kind: kind,
+                                    underscoreInit: underscoreInit,
+                                    doc: doc)
       result.append(property)
 
       if self.token.kind != .rightParen {

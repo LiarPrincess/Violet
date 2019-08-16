@@ -1,6 +1,5 @@
 // swiftlint:disable force_try
 
-// TODO: (Elsa) _ in init
 // TODO: (Elsa.emit) To class and line() write() (as in slip)
 
 import Foundation

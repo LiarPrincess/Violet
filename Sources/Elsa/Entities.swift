@@ -24,18 +24,21 @@ public struct StructProperty {
   public let type: String
   public let kind: PropertyKind
   public let doc:  String?
+  public let underscoreInit: Bool
 
   public var nameColonType: String {
     return "\(self.name): \(self.type)"
   }
 
-  public init(_ name:        String,
-              type baseType: String,
-              kind:          PropertyKind,
-              doc:           String? = nil) {
+  public init(_ name:         String,
+              type baseType:  String,
+              kind:           PropertyKind,
+              underscoreInit: Bool,
+              doc:            String? = nil) {
     self.name = camelCase(name)
     self.type = getType(baseType: baseType, kind: kind)
     self.kind = kind
+    self.underscoreInit = underscoreInit
     self.doc = fixDocNewLines(doc)
   }
 }
