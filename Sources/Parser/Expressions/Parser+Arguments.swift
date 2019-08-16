@@ -100,7 +100,7 @@ extension Parser {
   private static func vfpdef(_ parser: inout Parser) throws -> Arg {
     let token = parser.peek
     let name = try parser.consumeIdentifierOrThrow()
-    try parser.checkForbiddenName(name)
+    try parser.checkForbiddenName(name, location: token.start)
     return Arg(name, annotation: nil, start: token.start, end: token.end)
   }
 
@@ -108,7 +108,7 @@ extension Parser {
   private static func tfpdef(_ parser: inout Parser) throws -> Arg {
     let token = parser.peek
     let name = try parser.consumeIdentifierOrThrow()
-    try parser.checkForbiddenName(name)
+    try parser.checkForbiddenName(name, location: token.start)
 
     // annotation is optional
     var annotation: Expression? = nil

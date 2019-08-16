@@ -21,8 +21,10 @@ extension Parser {
     let start = start ?? self.peek.start
     try self.advance() // def
 
+    let nameLocation = self.peek.start
     let name = try self.consumeIdentifierOrThrow()
-    try self.checkForbiddenName(name)
+    try self.checkForbiddenName(name, location: nameLocation)
+
     let args = try self.parameters()
 
     var returns: Expression?
@@ -55,8 +57,10 @@ extension Parser {
     let start = start ?? self.peek.start
     try self.advance() // class
 
+    let nameLocation = self.peek.start
     let name = try self.consumeIdentifierOrThrow()
-    try self.checkForbiddenName(name)
+    try self.checkForbiddenName(name, location: nameLocation)
+
     let args = try self.parseBaseClass()
     try self.consumeOrThrow(.colon)
     let body = try self.suite()

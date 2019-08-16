@@ -72,11 +72,14 @@ extension Parser {
 
     try self.advance() // as
 
-    let end = self.peek.end
+    let aliasToken = self.peek
     let alias = try self.consumeIdentifierOrThrow()
-    try self.checkForbiddenName(alias)
+    try self.checkForbiddenName(alias, location: aliasToken.start)
 
-    return Alias(name: base.name, asName: alias, start: base.start, end: end)
+    return Alias(name: base.name,
+                 asName: alias,
+                 start: base.start,
+                 end: aliasToken.end)
   }
 
   /// `dotted_as_names: dotted_as_name (',' dotted_as_name)*`
@@ -113,7 +116,7 @@ extension Parser {
     // CPython: `if (NCH(n) == 1)` branch
     let isWithoutDotes = dottedNames.isEmpty
     if isWithoutDotes {
-      try self.checkForbiddenName(first)
+      try self.checkForbiddenName(first, location: start)
     }
 
     let name = first + dottedNames
@@ -245,11 +248,11 @@ extension Parser {
 
       end = self.peek.end
       let value = try self.consumeIdentifierOrThrow()
-      try self.checkForbiddenName(value)
+      try self.checkForbiddenName(value, location: start)
 
       asName = value
     } else {
-      try self.checkForbiddenName(name)
+      try self.checkForbiddenName(name, location: start)
     }
 
     return Alias(name: name, asName: asName, start: start, end: end)

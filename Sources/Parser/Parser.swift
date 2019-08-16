@@ -157,10 +157,10 @@ public struct Parser {
 
   /// CPython:
   /// `forbidden_name(struct compiling*, identifier, const node*, int)`
-  internal func checkForbiddenName(_ name: String) throws {
+  internal func checkForbiddenName(_ name: String,
+                                   location: SourceLocation) throws {
     if name == "__debug__" {
-      // invalid keyword usage
-      throw self.unimplemented("assignment to keyword")
+      throw self.error(.forbiddenName(name), location: location)
     }
 
     // We don't need to check for 'None', 'True', 'False',

@@ -83,10 +83,10 @@ extension Parser {
     switch target.kind {
 
     case let .identifier(name):
-      try self.checkForbiddenName(name)
+      try self.checkForbiddenName(name, location: loc)
 
     case let .attribute(_, name):
-      try self.checkForbiddenName(name)
+      try self.checkForbiddenName(name, location: loc)
 
     case .subscript:
       break

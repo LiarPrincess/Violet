@@ -76,6 +76,8 @@ public enum ParserErrorKind: Equatable {
 
   // MARK: - General
 
+  /// "'xxx' cannot be used as an identifier."
+  case forbiddenName(String)
   // Unexpected end of file, expected: [expected].
   case unexpectedEOF(expected: [ExpectedToken])
   // Unexpected 'tokenKind', expected: 'expected'.
@@ -143,6 +145,9 @@ extension ParserErrorKind: CustomStringConvertible {
 
     case .baseClassWithGenerator:
       return "Base class definition cannot contain generator."
+
+    case let .forbiddenName(name):
+      return "'\(name)' cannot be used as an identifier."
 
     case let .unexpectedEOF(expected):
       switch expected.count {

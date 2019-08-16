@@ -135,7 +135,7 @@ extension Parser {
     case .identifier(let name):
       try self.advance() // =
 
-      try self.checkForbiddenName(name)
+      try self.checkForbiddenName(name, location: nameToken.start)
 
       let isDuplicate = ir.keywords.contains { $0.name == name }
       if isDuplicate {
