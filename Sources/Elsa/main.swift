@@ -27,6 +27,13 @@ freopen(astFile.path, "w", stdout)
 emitHeader(sourceFile: letitgoFile, command: "ast")
 emitCode(entities: entities)
 
+// MARK: - Pass
+
+//let passFile = parserDir.appendingPathComponent("ASTValidationPass.swift")
+//freopen(passFile.path, "w", stdout)
+
+//emitPass(entities: entities)
+
 // MARK: - Destruct
 
 let destructFile = parserTestsDir

@@ -114,18 +114,3 @@ private func getType(baseType: String, kind: PropertyKind) -> String {
   case .optional: return type + "?"
   }
 }
-
-/// https://docs.swift.org/swift-book/ReferenceManual/LexicalStructure.html
-private let swiftKeywords = Set<String>([
-  "associatedtype", "class", "deinit", "enum", "extension", "fileprivate",
-  "func", "import", "init", "inout", "internal", "let", "open", "operator",
-  "private", "protocol", "public", "static", "struct", "subscript", "typealias",
-  "var,", "break", "case", "continue", "default", "defer", "do", "else",
-  "fallthrough", "for", "guard", "if", "in", "repeat", "return", "switch",
-  "where", "while", "as", "Any", "catch", "false", "is", "nil", "rethrows",
-  "super", "self", "Self", "throw", "throws", "true", "try"
-])
-
-private func escaped(_ name: String) -> String {
-  return swiftKeywords.contains(name) ? "`\(name)`" : name
-}
