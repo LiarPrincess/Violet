@@ -56,11 +56,7 @@ extension Parser {
       let start = self.peek.start
 
       // comp_for: ['async'] sync_comp_for
-      var isAsync = false
-      if self.peek.kind == .async {
-        try self.advance() // async
-        isAsync = true
-      }
+      let isAsync = try self.consumeIf(.async)
 
       // sync_comp_for: 'for' exprlist 'in' or_test
       try self.consumeOrThrow(.for)

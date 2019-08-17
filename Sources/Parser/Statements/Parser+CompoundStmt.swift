@@ -82,8 +82,7 @@ extension Parser {
     }
 
     var orElse: NonEmptyArray<Statement>?
-    if self.peek.kind == .else {
-      try self.advance() // else
+    if try self.consumeIf(.else) {
       try self.consumeOrThrow(.colon)
       orElse = try self.suite()
     }
@@ -148,8 +147,7 @@ extension Parser {
     let body = try self.suite()
 
     var orElse: NonEmptyArray<Statement>?
-    if self.peek.kind == .else {
-      try self.advance() // else
+    if try self.consumeIf(.else) {
       try self.consumeOrThrow(.colon)
       orElse = try self.suite()
     }
@@ -188,8 +186,7 @@ extension Parser {
     let body = try self.suite()
 
     var orElse = [Statement]()
-    if self.peek.kind == .else {
-      try self.advance() // else
+    if try self.consumeIf(.else) {
       try self.consumeOrThrow(.colon)
 
       let orElseRaw = try self.suite()
@@ -242,8 +239,7 @@ extension Parser {
     let context = try self.test()
 
     var optionalVars: Expression?
-    if self.peek.kind == .as {
-      try self.advance() // as
+    if try self.consumeIf(.as) {
       optionalVars = try self.expr()
     }
 

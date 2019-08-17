@@ -243,9 +243,7 @@ extension Parser {
     let name = try self.consumeIdentifierOrThrow()
 
     var asName: String?
-    if self.peek.kind == .as {
-      try self.advance() // as
-
+    if try self.consumeIf(.as) {
       end = self.peek.end
       let value = try self.consumeIdentifierOrThrow()
       try self.checkForbiddenName(value, location: start)

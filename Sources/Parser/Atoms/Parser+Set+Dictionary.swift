@@ -130,9 +130,7 @@ extension Parser {
     }
 
     // optional trailing comma
-    if self.peek.kind == .comma {
-      try self.advance() // ,
-    }
+    try self.consumeIf(.comma)
 
     let end = self.peek.end
     try self.consumeOrThrow(closingToken)
@@ -152,8 +150,7 @@ extension Parser {
     while self.peek.kind == .comma && self.peekNext.kind != closingToken {
       try self.advance() // ,
 
-      if self.peek.kind == .starStar {
-        try self.advance() // **
+      if try self.consumeIf(.starStar) {
         let expr = try self.expr()
         elements.append(.unpacking(expr))
       } else {
@@ -165,9 +162,7 @@ extension Parser {
     }
 
     // optional trailing comma
-    if self.peek.kind == .comma {
-      try self.advance() // ,
-    }
+    try self.consumeIf(.comma)
 
     let end = self.peek.end
     try self.consumeOrThrow(closingToken)

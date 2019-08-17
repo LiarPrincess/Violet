@@ -21,6 +21,7 @@ extension Parser {
       return left
     }
 
+    // TODO: test this
     try self.advance() // if
     let test = try self.orTest()
     try self.consumeOrThrow(.else)
@@ -357,9 +358,7 @@ extension Parser {
   internal mutating func power() throws -> Expression {
     let atomExpr = try self.atomExpr()
 
-    if self.peek.kind == .starStar {
-      try self.advance() // **
-
+    if try self.consumeIf(.starStar) {
       let factor = try self.factor()
       let kind = ExpressionKind.binaryOp(.pow, left: atomExpr, right: factor)
       return self.expression(kind, start: atomExpr.start, end: factor.end)
@@ -373,9 +372,6 @@ extension Parser {
   /// Star expression if possible else test.
   /// There is no rule for this, but it is commonly used.
   internal mutating func testOrStarExpr() throws -> Expression {
-    if let expr = try self.starExprOrNop() {
-      return expr
-    }
-    return try self.test()
+    return try self.starExprOrNop() ?? self.test()
   }
 }

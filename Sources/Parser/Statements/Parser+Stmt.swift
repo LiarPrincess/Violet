@@ -28,9 +28,7 @@ extension Parser {
     }
 
     // optional trailing semocolon
-    if self.peek.kind == .semicolon {
-      try self.advance() // ;
-    }
+    try self.consumeIf(.semicolon)
 
     // consume new line (we will also accept eof)
     switch self.peek.kind {

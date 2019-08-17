@@ -110,10 +110,9 @@ extension Parser {
     }
 
     let exc = try self.test()
-    var cause: Expression?
 
-    if self.peek.kind == .from {
-      try self.advance() // from
+    var cause: Expression?
+    if try self.consumeIf(.from) {
       cause = try self.test()
     }
 
@@ -155,11 +154,10 @@ extension Parser {
     try self.advance() // assert
 
     let test = try self.test()
-    var msg: Expression?
 
-    if self.peek.kind == .comma {
-      try self.advance() // ,
-      msg  = try self.test()
+    var msg: Expression?
+    if try self.consumeIf(.comma) {
+      msg = try self.test()
     }
 
     let end = msg?.end ?? test.end

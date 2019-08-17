@@ -28,8 +28,7 @@ extension Parser {
     let args = try self.parameters()
 
     var returns: Expression?
-    if self.peek.kind == .rightArrow {
-      try self.advance() // ->
+    if try self.consumeIf(.rightArrow) {
       returns = try self.test()
     }
 
@@ -83,8 +82,7 @@ extension Parser {
     try self.advance() // (
 
     // empty parens -> no base class
-    if self.peek.kind == .rightParen {
-      try self.advance() // )
+    if try self.consumeIf(.rightParen) {
       return nil
     }
 

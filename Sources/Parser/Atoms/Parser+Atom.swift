@@ -9,12 +9,7 @@ extension Parser {
   /// `atom_expr: [AWAIT] atom trailer*`
   internal mutating func atomExpr() throws -> Expression {
     let start = self.peek.start
-
-    var isAwait = false
-    if self.peek.kind == .await {
-      isAwait = true
-      try self.advance() // await
-    }
+    let isAwait = try self.consumeIf(.await)
 
     var rightExpr = try self.atom()
     while let withTrailer = try self.trailerOrNop(for: rightExpr) {

@@ -184,6 +184,7 @@ public struct Parser {
     }
   }
 
+  @discardableResult
   internal mutating func consumeIf(_ kind: TokenKind) throws -> Bool {
     if self.peek.kind == kind {
       try self.advance()

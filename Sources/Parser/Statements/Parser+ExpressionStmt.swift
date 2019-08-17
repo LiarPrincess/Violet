@@ -46,7 +46,13 @@ extension Parser {
 
   // MARK: - Annotated assignment
 
-  /// `expr_stmt: testlist_star_expr augassign (yield_expr|testlist)`
+  /// ```c
+  /// expr_stmt: testlist_star_expr (
+  ///   annassign
+  ///   (...)
+  /// )
+  /// annassign: ':' test ['=' test]
+  /// ```
   private mutating func parseAnnAssign(
     target: Expression,
     isTargetInParen: Bool) throws -> Statement {
@@ -62,9 +68,8 @@ extension Parser {
     let annotation = try self.test()
 
     var value: Expression?
-    if self.peek.kind == .equal {
-      try self.advance()
-      value  = try self.test()
+    if try self.consumeIf(.equal) {
+      value = try self.test()
     }
 
     let kind = StatementKind.annAssign(target: target,

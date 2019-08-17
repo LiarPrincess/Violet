@@ -56,9 +56,8 @@ extension Parser {
       try self.argument(into: &ir, closingToken: closingToken)
     }
 
-    if self.peek.kind == .comma {
-      try self.advance() // ,
-    }
+    // optional trailing comma
+    try self.consumeIf(.comma)
 
     return ir
   }
