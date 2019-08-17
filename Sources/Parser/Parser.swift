@@ -78,6 +78,10 @@ public struct Parser {
 
       do {
         let ast = try self.parseByMode()
+
+        let validator = ASTValidationPass()
+        try validator.visit(ast)
+
         self.state = .finished(ast)
         return ast
       }
@@ -239,13 +243,5 @@ public struct Parser {
         location: location
       )
     }
-  }
-
-  // MARK: - Unimplemented
-
-  @available(*, deprecated, message: "Unimplemented")
-  internal func unimplemented(_ message: String? = nil,
-                              function:  StaticString = #function) -> ParserError {
-    return self.error(.unimplemented("\(function): \(message ?? "")"))
   }
 }
