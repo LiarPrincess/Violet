@@ -10,6 +10,7 @@ public enum TokenKind: Equatable, CustomStringConvertible {
   case equal
   case or
   case star
+  case plus
   case option
   case comma
 
@@ -30,6 +31,7 @@ public enum TokenKind: Equatable, CustomStringConvertible {
     case .equal: return "="
     case .or: return "|"
     case .star: return "*"
+    case .plus: return "+"
     case .option: return "?"
     case .comma: return ","
     case .leftParen: return "("

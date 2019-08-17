@@ -12,6 +12,7 @@ private let operators: [Character: TokenKind] = [
   "=": .equal,
   "|": .or,
   "*": .star,
+  "+": .plus,
   "?": .option,
   ",": .comma,
   "(": .leftParen,

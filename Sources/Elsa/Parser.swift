@@ -154,11 +154,8 @@ internal struct Parser {
     var result = [EnumCaseProperty]()
 
     while self.token.kind != .rightParen {
-      var kind = PropertyKind.single
-
       let type = self.consumeNameOrFail()
-      if self.consumeIfEqual(kind: .star) { kind = .many }
-      if self.consumeIfEqual(kind: .option) { kind = .optional }
+      let kind = self.consumePropertyKind()
 
       // name is optional
       var name: String? = nil
@@ -184,15 +181,11 @@ internal struct Parser {
 
     var result = [StructProperty]()
     while self.token.kind != .rightParen {
-      var kind = PropertyKind.single
-      var underscoreInit = false
-
       let doc = self.useCollectedDoc()
       let type = self.consumeNameOrFail()
-      if self.consumeIfEqual(kind: .star) { kind = .many }
-      if self.consumeIfEqual(kind: .option) { kind = .optional }
+      let kind = self.consumePropertyKind()
       let name = self.consumeNameOrFail()
-      if self.consumeIfEqual(kind: .underscoreInit) { underscoreInit = true }
+      let underscoreInit = self.consumeIfEqual(kind: .underscoreInit)
 
       let property = StructProperty(name,
                                     type: type,
@@ -236,6 +229,13 @@ internal struct Parser {
 
     self.advance()
     return self.aliases[value] ?? value
+  }
+
+  private mutating func consumePropertyKind() -> PropertyKind {
+    if self.consumeIfEqual(kind: .star)   { return .many }
+    if self.consumeIfEqual(kind: .option) { return .optional }
+    if self.consumeIfEqual(kind: .plus)   { return .min1 }
+    return .single
   }
 
   // MARK: - Fail

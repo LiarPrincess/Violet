@@ -20,6 +20,10 @@ public struct NonEmptyArray<Element>: Sequence,
     self.elements.append(contentsOf: rest)
   }
 
+  public init(_ first: Element, _ rest: Element...) {
+    self.init(first: first, rest: rest)
+  }
+
   public mutating func append(_ newElement: Element) {
     self.elements.append(newElement)
   }

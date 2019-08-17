@@ -96,6 +96,7 @@ public struct EnumCaseProperty {
 
 public enum PropertyKind {
   case single
+  case min1
   case many
   case optional
 }
@@ -110,6 +111,7 @@ private func getType(baseType: String, kind: PropertyKind) -> String {
   let type = pascalCase(baseType)
   switch kind {
   case .single:   return type
+  case .min1:     return "NonEmptyArray<" + type + ">"
   case .many:     return "[" + type + "]"
   case .optional: return type + "?"
   }
