@@ -8,11 +8,10 @@ let package = Package(
     .macOS(.v10_11)
   ],
   products: [
-    .library(name: "LibViolet", targets: ["Core", "Lexer", "Parser"]),
+    .library(name: "LibViolet", targets: ["Core", "Lexer", "Parser", "Compiler"]),
     .executable(name: "Violet", targets: ["Main"]),
-    .executable(name: "PyTests", targets: ["PyTests"]),
 
-    .executable(name: "Elsa", targets: ["Elsa"]),
+    .executable(name: "Elsa", targets: ["Elsa"])
   ],
   dependencies: [
   ],
@@ -26,10 +25,16 @@ let package = Package(
     .target(name: "Parser", dependencies: ["Core", "Lexer"]),
     .testTarget(name: "ParserTests", dependencies: ["Core", "Lexer", "Parser"]),
 
+    .target(name: "Compiler", dependencies: ["Core", "Parser"]),
+    .testTarget(name: "CompilerTests", dependencies: ["Core", "Parser", "Compiler"]),
+
+    .target(name: "Bytecode", dependencies: ["Core"]),
+
     .target(name: "Main", dependencies: ["Core", "Lexer"]),
 
-    // Utilities
-    .target(name: "Elsa"),
-    .target(name: "PyTests", dependencies: ["Core", "Lexer"]),
+    // -- Tools --
+
+    // Elsa is our code generation tool.
+    .target(name: "Elsa")
   ]
 )
