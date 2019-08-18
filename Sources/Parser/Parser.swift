@@ -1,11 +1,11 @@
 import Core
 import Lexer
 
-// https://docs.python.org/3/reference/index.html
-// Python/ast.c in CPython
+// In CPython:
+// Python -> ast.c
+//  PyAST_FromNodeObject(const node *n, PyCompilerFlags *flags, ...)
 
-// PyAST_FromNodeObject(const node *n, PyCompilerFlags *flags,
-//                      PyObject *filename, PyArena *arena)
+// https://docs.python.org/3/reference/index.html
 
 public enum ParserMode {
   /// Used for input in interactive mode.
@@ -78,10 +78,7 @@ public struct Parser {
 
       do {
         let ast = try self.parseByMode()
-
-        let validator = ASTValidationPass()
-        try validator.visit(ast)
-
+        try self.validate(ast)
         self.state = .finished(ast)
         return ast
       }
@@ -104,6 +101,11 @@ public struct Parser {
     case .fileInput: return try self.fileInput()
     case .eval:      return try self.evalInput()
     }
+  }
+
+  private func validate(_ ast: AST) throws {
+    let validator = ASTValidationPass()
+    try validator.visit(ast)
   }
 
   /// single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE

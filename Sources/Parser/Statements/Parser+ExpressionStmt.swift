@@ -97,9 +97,9 @@ extension Parser {
       break
 
     case .list:
-      throw self.error(.illegalListInAnnAssignmentTarget, location: loc)
+      throw self.error(.annAssignmentWithListTarget, location: loc)
     case .tuple:
-      throw self.error(.illegalTupleInAnnAssignmentTarget, location: loc)
+      throw self.error(.annAssignmentWithTupleTarget, location: loc)
     default:
       throw self.error(.illegalAnnAssignmentTarget, location: loc)
     }
@@ -229,7 +229,7 @@ extension Parser {
 
     for expr in targets {
       if self.isYieldExpr(expr) {
-        throw self.error(.illegalAssignmentToYield, location: expr.start)
+        throw self.error(.assignmentToYield, location: expr.start)
       }
     }
   }

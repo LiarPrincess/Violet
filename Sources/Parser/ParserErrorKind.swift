@@ -17,6 +17,10 @@ public enum ParserErrorKind: Equatable {
   case varargsAfterKwargs
   /// Named arguments must follow bare *.
   case starWithoutFollowingArguments
+  /// More positional defaults than args on arguments.
+  case moreDefaultsThanArgs
+  /// Length of kwOnlyArgs is not the same as kwOnlyDefaults on arguments.
+  case kwOnlyArgsCountNotEqualToDefaults
 
   // MARK: - Call
 
@@ -53,21 +57,25 @@ public enum ParserErrorKind: Equatable {
 
   /// Illegal target for annotation
   case illegalAnnAssignmentTarget
+  /// AnnAssign with simple non-Name target
+  case simpleAnnAssignmentWithNonNameTarget
   /// Only single target (not list) can be annotated.
-  case illegalListInAnnAssignmentTarget
+  case annAssignmentWithListTarget
   /// Only single target (not tuple) can be annotated.
-  case illegalTupleInAnnAssignmentTarget
+  case annAssignmentWithTupleTarget
   /// Illegal expression for augmented assignment.
   case illegalAugAssignmentTarget
   /// Assignment to yield expression not possible.
-  case illegalAssignmentToYield
+  case assignmentToYield
 
-  // MARK: - Try
+  // MARK: - Try/raise
 
   /// `Try` without `except` or `finally` is not allowed.
   case tryWithoutExceptOrFinally
   /// `Else` requires at least one `except`.
   case tryWithElseWithoutExcept
+  /// `Raise` with cause but no exception.
+  case raiseWithCauseWithoutException
 
   // MARK: - Func, class
 
@@ -103,6 +111,10 @@ extension ParserErrorKind: CustomStringConvertible {
              "keyworded variable length argument (the one with '**')."
     case .starWithoutFollowingArguments:
       return "Named arguments must follow bare *."
+    case .moreDefaultsThanArgs:
+      return "More positional defaults than args on arguments."
+    case .kwOnlyArgsCountNotEqualToDefaults:
+      return "Length of kwOnlyArgs is not the same as kwOnlyDefaults on arguments."
 
     case .callWithPositionalArgumentAfterKeywordArgument:
       return "Positional argument follows keyword argument."
@@ -129,19 +141,23 @@ extension ParserErrorKind: CustomStringConvertible {
 
     case .illegalAnnAssignmentTarget:
       return "Illegal target for annotation."
-    case .illegalListInAnnAssignmentTarget:
+    case .simpleAnnAssignmentWithNonNameTarget:
+      return "AnnAssign with simple non-Name target"
+    case .annAssignmentWithListTarget:
       return "Only single target (not list) can be annotated."
-    case .illegalTupleInAnnAssignmentTarget:
+    case .annAssignmentWithTupleTarget:
       return "Only single target (not tuple) can be annotated."
     case .illegalAugAssignmentTarget:
       return "Illegal expression for augmented assignment."
-    case .illegalAssignmentToYield:
+    case .assignmentToYield:
       return "Assignment to yield expression not possible."
 
     case .tryWithoutExceptOrFinally:
       return "'Try' without 'except' or 'finally' is not allowed."
     case .tryWithElseWithoutExcept:
       return "'Else' requires at least one 'except'."
+    case .raiseWithCauseWithoutException:
+      return "Raise with cause but no exception."
 
     case .baseClassWithGenerator:
       return "Base class definition cannot contain generator."

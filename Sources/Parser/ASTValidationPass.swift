@@ -2,7 +2,6 @@ import Foundation
 import Core
 import Lexer
 
-// swiftlint:disable type_body_length
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
@@ -69,8 +68,7 @@ public struct ASTValidationPass: ASTPass {
       try self.visit(value)
     case let .annAssign(target, annotation, value, isSimple):
       if isSimple && !target.kind.isIdentifier {
-        // PyErr_SetString(PyExc_TypeError, "AnnAssign with simple non-Name target");
-        fatalError()
+        throw self.error(.simpleAnnAssignmentWithNonNameTarget, statement: stmt)
       }
 
       try self.visit(target)
@@ -112,21 +110,18 @@ public struct ASTValidationPass: ASTPass {
         try self.visit(exc)
         try self.visit(cause)
       } else if cause != nil {
-        // PyErr_SetString(PyExc_ValueError, "Raise with cause but no exception");
-        fatalError()
+        throw self.error(.raiseWithCauseWithoutException, statement: stmt)
       }
 
     case let .try(body, handlers, orElse, finalBody):
       try self.visit(body)
 
       if handlers.isEmpty && finalBody.isEmpty {
-        // PyErr_SetString(PyExc_ValueError, "Try has neither except handlers nor finalbody");
-        fatalError()
+        throw self.error(.tryWithoutExceptOrFinally, statement: stmt)
       }
 
       if handlers.isEmpty && !orElse.isEmpty {
-        // PyErr_SetString(PyExc_ValueError, "Try has orelse but no except handlers");
-        fatalError()
+        throw self.error(.tryWithElseWithoutExcept, statement: stmt)
       }
 
       try self.visit(handlers)
@@ -339,13 +334,11 @@ public struct ASTValidationPass: ASTPass {
     try self.visit(args.kwarg?.annotation)
 
     if args.defaults.count > args.args.count {
-      // PyErr_SetString(PyExc_ValueError, "more positional defaults than args on arguments");
-      fatalError()
+      throw self.error(.moreDefaultsThanArgs, location: args.start)
     }
 
     if args.kwOnlyDefaults.count != args.kwOnlyArgs.count {
-      // PyErr_SetString(PyExc_ValueError, "length of kwonlyargs is not the same as " "kw_defaults on arguments");
-      fatalError()
+      throw self.error(.kwOnlyArgsCountNotEqualToDefaults, location: args.start)
     }
 
     try self.visit(args.defaults)
@@ -374,5 +367,19 @@ public struct ASTValidationPass: ASTPass {
     for keyword in keywords {
       try self.visit(keyword.value)
     }
+  }
+
+  // MARK: - Error
+
+  /// Create parser error
+  internal func error(_ kind: ParserErrorKind,
+                      statement: Statement) -> ParserError {
+    return ParserError(kind, location: statement.start)
+  }
+
+  /// Create parser error
+  internal func error(_ kind:   ParserErrorKind,
+                      location: SourceLocation) -> ParserError {
+    return ParserError(kind, location: location)
   }
 }

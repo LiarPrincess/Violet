@@ -439,7 +439,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let error = self.error(&parser) {
-      XCTAssertEqual(error.kind, .illegalAssignmentToYield)
+      XCTAssertEqual(error.kind, .assignmentToYield)
       XCTAssertEqual(error.location, loc4)
     }
   }
