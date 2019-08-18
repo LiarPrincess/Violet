@@ -1,19 +1,45 @@
-public protocol ASTPass: AnyObject {
+public protocol ASTPass {
 
   associatedtype PassResult
 
-  func visit(_ ast: AST) throws -> PassResult
+  mutating func visit(_ ast: AST) throws -> PassResult
 }
 
-public final class AnyASTPass<PassResult>: ASTPass {
+// MARK: - AnyASTPass
 
-  private let _visit: (AST) throws -> PassResult
+// We cannot use closure-based type erasure, because we want to use structs
+// and visit is marked as mutating (and we can't store mutating closures).
 
-  public init<P: ASTPass>(_ inner: P) where P.PassResult == PassResult {
-    self._visit = inner.visit
+private class AnyASTPassBoxBase<PassResult>: ASTPass {
+
+  // swiftlint:disable:next unavailable_function
+  fileprivate func visit(_ ast: AST) throws -> PassResult {
+    fatalError("Method must be overridden")
+  }
+}
+
+private final class ASTPassBox<Base: ASTPass>: AnyASTPassBoxBase<Base.PassResult> {
+
+  private var _base: Base
+
+  fileprivate init(_ base: Base) {
+    self._base = base
+  }
+
+  fileprivate override func visit(_ ast: AST) throws -> Base.PassResult {
+    return try self._base.visit(ast)
+  }
+}
+
+public struct AnyASTPass<PassResult>: ASTPass {
+
+  private let _box: AnyASTPassBoxBase<PassResult>
+
+  public init<P: ASTPass>(_ base: P) where P.PassResult == PassResult {
+    self._box = ASTPassBox(base)
   }
 
   public func visit(_ ast: AST) throws -> PassResult {
-    return try self._visit(ast)
+    return try self._box.visit(ast)
   }
 }

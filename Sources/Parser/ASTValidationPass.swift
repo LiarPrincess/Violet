@@ -21,7 +21,7 @@ extension ExpressionKind {
   }
 }
 
-public class ASTValidationPass: ASTPass {
+public struct ASTValidationPass: ASTPass {
 
   public typealias PassResult = Void
 
