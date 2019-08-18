@@ -37,8 +37,11 @@ internal func emitAstDestruction(entities: [Entity]) {
 // MARK: - Common
 
 private struct EnumDestruction {
+  /// BinaryOperator, left: Expression, right: Expression
   fileprivate var resultType:  String = ""
+  /// value0, left: value1, right: value2
   fileprivate var bindings:    String = ""
+  /// value0, value1, value2
   fileprivate var returnValue: String = ""
 }
 
@@ -49,14 +52,19 @@ private func getEnumDestruction(_ caseDef: EnumCaseDef) -> EnumDestruction {
     let isLast = i == caseDef.properties.count - 1
     let comma = isLast ? "" : ", "
 
-    let resultType = property.nameColonType ?? property.type
+    // destruct Min1 as Array (because it it simpler)
+    let isMin1 = property.kind == .min1
+    let type = isMin1 ? "[" + property.baseType + "]" : property.type
+
+    let resultType = property.name.map { "\($0): \(type)" } ?? type
     destruction.resultType += resultType + comma
 
     let binding = "value\(i)"
     let bindingsLabel = property.name.map { $0 + ": " } ?? ""
     destruction.bindings += "\(bindingsLabel)\(binding)\(comma)"
 
-    destruction.returnValue += "\(binding)\(comma)"
+    let retVal = isMin1 ? "Array(\(binding))" : binding
+    destruction.returnValue += "\(retVal)\(comma)"
   }
 
   return destruction
@@ -82,8 +90,8 @@ private func emitASTDestruction(_ enumDef: EnumDef) {
 
     print("""
       internal func destruct\(namePascal)(_ ast: AST,
-      \(paramIndent)file:   StaticString = #file,
-      \(paramIndent)line:   UInt         = #line) ->
+      \(paramIndent)file: StaticString = #file,
+      \(paramIndent)line: UInt         = #line) ->
       (\(destruction.resultType))? {
 
         if case let \(enumDef.name).\(caseDef.name)(\(destruction.bindings)) = ast {
@@ -119,8 +127,8 @@ private func emitStatementDestruct(_ enumDef: EnumDef) {
 
     print("""
       internal func destruct\(namePascal)(_ stmt: Statement,
-      \(paramIndent)file:   StaticString = #file,
-      \(paramIndent)line:   UInt         = #line) ->
+      \(paramIndent)file: StaticString = #file,
+      \(paramIndent)line: UInt         = #line) ->
       (\(destruction.resultType))? {
 
         if case let \(enumDef.name).\(caseDef.name)(\(destruction.bindings)) = stmt.kind {
@@ -156,8 +164,8 @@ private func emitExpressionDestruct(_ enumDef: EnumDef) {
 
     print("""
       internal func destruct\(namePascal)(_ expr: Expression,
-      \(paramIndent)file:   StaticString = #file,
-      \(paramIndent)line:   UInt         = #line) ->
+      \(paramIndent)file: StaticString = #file,
+      \(paramIndent)line: UInt         = #line) ->
         (\(destruction.resultType))? {
 
         if case let \(enumDef.name).\(caseDef.name)(\(destruction.bindings)) = expr.kind {
@@ -193,8 +201,8 @@ private func emitSliceDestruct(_ enumDef: EnumDef) {
 
     print("""
       internal func destructSubscript\(namePascal)(_ expr: Expression,
-      \(paramIndent)file:   StaticString = #file,
-      \(paramIndent)line:   UInt         = #line) ->
+      \(paramIndent)file: StaticString = #file,
+      \(paramIndent)line: UInt         = #line) ->
         (slice: Slice, \(destruction.resultType))? {
 
         guard case let ExpressionKind.subscript(_, slice: slice) = expr.kind else {
@@ -236,8 +244,8 @@ private func emitStringDestruct(_ enumDef: EnumDef) {
 
     print("""
       internal func destructString\(namePascal)(_ group: StringGroup,
-        \(paramIndent)file:   StaticString = #file,
-        \(paramIndent)line:   UInt         = #line) ->
+        \(paramIndent)file: StaticString = #file,
+        \(paramIndent)line: UInt         = #line) ->
         (\(destruction.resultType))? {
 
         switch group {

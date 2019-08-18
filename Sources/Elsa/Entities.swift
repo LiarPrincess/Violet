@@ -21,8 +21,14 @@ public struct StructDef {
 
 public struct StructProperty {
   public let name: String
+  /// Type of the property
   public let type: String
+  /// `baseType` modifier. `baseType + kind = type`
   public let kind: PropertyKind
+  /// Type of the property excluding `kind` modifiers.
+  /// For example for `type = [Int]`, `baseType = Int`.
+  /// `baseType + kind = type`
+  public let baseType: String
   public let doc:  String?
   public let underscoreInit: Bool
 
@@ -36,7 +42,8 @@ public struct StructProperty {
               underscoreInit: Bool,
               doc:            String? = nil) {
     self.name = camelCase(name)
-    self.type = getType(baseType: baseType, kind: kind)
+    self.baseType = pascalCase(baseType)
+    self.type = getType(baseType: pascalCase(baseType), kind: kind)
     self.kind = kind
     self.underscoreInit = underscoreInit
     self.doc = fixDocNewLines(doc)
@@ -78,8 +85,14 @@ public struct EnumCaseDef {
 
 public struct EnumCaseProperty {
   public let name: String?
+  /// Type of the property
   public let type: String
+  /// `baseType` modifier. `baseType + kind = type`
   public let kind: PropertyKind
+  /// Type of the property excluding `kind` modifiers.
+  /// For example for `type = [Int]`, `baseType = Int`.
+  /// `baseType + kind = type`
+  public let baseType: String
 
   public var nameColonType: String? {
     return self.name.map { "\($0): \(self.type)" }
@@ -87,7 +100,8 @@ public struct EnumCaseProperty {
 
   public init(_ name: String?, type baseType: String, kind: PropertyKind) {
     self.name = name.map { camelCase($0) }
-    self.type = getType(baseType: baseType, kind: kind)
+    self.baseType = pascalCase(baseType)
+    self.type = getType(baseType: pascalCase(baseType), kind: kind)
     self.kind = kind
   }
 }
@@ -107,8 +121,7 @@ private func fixDocNewLines(_ doc: String?) -> String? {
   return doc?.replacingOccurrences(of: "\\n", with: "\n")
 }
 
-private func getType(baseType: String, kind: PropertyKind) -> String {
-  let type = pascalCase(baseType)
+private func getType(baseType type: String, kind: PropertyKind) -> String {
   switch kind {
   case .single:   return type
   case .min1:     return "NonEmptyArray<" + type + ">"

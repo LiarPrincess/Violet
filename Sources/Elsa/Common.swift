@@ -45,7 +45,7 @@ private let swiftKeywords = Set<String>([
   "fallthrough", "for", "guard", "if", "in", "repeat", "return", "switch",
   "where", "while", "as", "Any", "catch", "false", "is", "nil", "rethrows",
   "super", "self", "Self", "throw", "throws", "true", "try"
-  ])
+])
 
 /// Escape Swift keyword
 internal func escaped(_ name: String) -> String {
