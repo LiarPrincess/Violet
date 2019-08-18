@@ -6,22 +6,22 @@
 
 /// Array that has at least 1 element.
 public struct NonEmptyArray<Element>: Sequence,
-                                        Collection,
-                                        BidirectionalCollection,
-                                        CustomStringConvertible {
+                                      Collection,
+                                      BidirectionalCollection,
+                                      CustomStringConvertible {
 
   public private(set) var elements = [Element]()
 
   public var first: Element { return self.elements.first! }
   public var last:  Element { return self.elements.last! }
 
-  public init(first: Element, rest: [Element] = []) {
-    self.elements.append(first)
-    self.elements.append(contentsOf: rest)
+  public init(first: Element) {
+    self.init(first: first, rest: [])
   }
 
-  public init(_ first: Element, _ rest: Element...) {
-    self.init(first: first, rest: rest)
+  public init<S: Sequence>(first: Element, rest: S) where S.Element == Element {
+    self.elements.append(first)
+    self.elements.append(contentsOf: rest)
   }
 
   public mutating func append(_ newElement: Element) {
@@ -65,6 +65,11 @@ public struct NonEmptyArray<Element>: Sequence,
     return String(describing: self.elements)
   }
 }
+
+// MARK: - Conditional conformance
+
+extension NonEmptyArray: Equatable where Element: Equatable { }
+extension NonEmptyArray: Hashable  where Element: Hashable  { }
 
 // MARK: - To array
 
