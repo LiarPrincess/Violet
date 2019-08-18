@@ -110,6 +110,7 @@ public struct Parser {
 
   /// single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE
   internal mutating func singleInput() throws -> AST {
+    // TODO: test this
     if self.peek.kind == .newLine {
       return .single([])
     }
@@ -145,7 +146,6 @@ public struct Parser {
   internal mutating func evalInput() throws -> AST {
     let start = self.peek.start
     let list = try self.testList(closingTokens: [.newLine, .eof])
-    // TODO: every time when rule is 'a xxxList' we need .eof in closing tokens.
 
     while self.peek.kind == .newLine {
       try self.advance() // newLine
@@ -231,7 +231,6 @@ public struct Parser {
   internal func unexpectedToken(token: Token? = nil,
                                 location: SourceLocation? = nil,
                                 expected: [ExpectedToken]) -> ParserError {
-    // TODO: Replace this with case by case errors and better messages.
     let tok = token ?? self.peek
     switch tok.kind {
     case .eof:

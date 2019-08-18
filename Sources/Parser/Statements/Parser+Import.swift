@@ -127,6 +127,7 @@ extension Parser {
 
   private struct ImportFromIR {
     fileprivate var module: String?
+    // swiftlint:disable:next implicitly_unwrapped_optional
     fileprivate var names: NonEmptyArray<Alias>!
     fileprivate var level: UInt8 = 0
     fileprivate var end: SourceLocation = .start

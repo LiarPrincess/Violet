@@ -8,8 +8,6 @@ import Lexer
 // TODO: yield and yield from expressions are prohibited in the implicitly
 // nested scope (in Python 3.7, such expressions emit DeprecationWarning)
 
-// swiftlint:disable discouraged_optional_collection
-
 extension Parser {
 
   /// Is it a start of `comp_for` rule?
