@@ -1,5 +1,6 @@
-// TODO: (LexerWarning) We have warnings, but we don't do anything with them.
-internal enum LexerWarning {
+import Core
+
+internal enum LexerWarning: Warning {
 
   /// Changed in version 3.6:
   /// Unrecognized escape sequences produce a DeprecationWarning.

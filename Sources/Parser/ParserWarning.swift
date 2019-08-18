@@ -1,5 +1,6 @@
-// TODO: (ParserWarning) We have warnings, but we don't do anything with them.
-public enum ParserWarning {
+import Core
+
+public enum ParserWarning: Warning {
 
   /// Something like `f(a for b in [])`.
   /// Basic support is implemented, but it may not work correctly.
