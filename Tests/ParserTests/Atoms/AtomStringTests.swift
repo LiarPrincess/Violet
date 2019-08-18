@@ -4,16 +4,13 @@ import Core
 import Lexer
 @testable import Parser
 
-// Use this for reference:
-// https://www.youtube.com/watch?v=BTBaUHSi-xk
-// The beginning it rather discouraging, but it gets easier later.
-
 private let e: UInt8 = 0x45 // it is 'E', but camelCase happened
 private let l: UInt8 = 0x6c
 private let s: UInt8 = 0x73
 private let a: UInt8 = 0x61
 
-class AtomStringTest: XCTestCase, Common, DestructStringGroup {
+class AtomStringTest: XCTestCase,
+  Common, DestructExpressionKind, DestructStringGroup {
 
   // MARK: - Bytes
 
@@ -78,57 +75,119 @@ class AtomStringTest: XCTestCase, Common, DestructStringGroup {
   }
 
   // MARK: - String
-/*
-  func test_string() {
-    let s = "The snow glows white on the mountain tonight"
 
-    var parser = self.parser(
-      self.token(.string(s), start: loc0, end: loc1)
+  func test_string() {
+    var parser = self.createExprParser(
+      self.token(.string("Let it go"), start: loc0, end: loc1)
     )
 
-    if let expr = self.parse(&parser) {
-      guard let value = self.destructStringSimple(expr) else { return }
-      XCTAssertEqual(value, s)
+    if let expr = self.parseExpr(&parser) {
+      guard let group = self.destructString(expr) else { return }
+      guard let value = self.destructStringSimple(group) else { return }
+      XCTAssertEqual(value, "Let it go")
 
-      XCTAssertExpression(expr, "\"The snow g...\"")
+      XCTAssertExpression(expr, "\"Let it go\"")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc1)
     }
   }
 
   func test_string_concat() {
-    let s0 = "Not a footprint to be seen\n"
-    let s1 = "A kingdom of isolation\n"
-    let s2 = "And it looks like I'm the queen"
-
-    var parser = self.parser(
-      self.token(.string(s0), start: loc0, end: loc1),
-      self.token(.string(s1), start: loc2, end: loc3),
-      self.token(.string(s2), start: loc4, end: loc5)
+    var parser = self.createExprParser(
+      self.token(.string("Let "), start: loc0, end: loc1),
+      self.token(.string("it "),  start: loc2, end: loc3),
+      self.token(.string("go"),   start: loc4, end: loc5)
     )
 
-    if let expr = self.parse(&parser) {
-      let expected = """
-      Not a footprint to be seen
-      A kingdom of isolation
-      And it looks like I'm the queen
-      """
+    if let expr = self.parseExpr(&parser) {
+      guard let group = self.destructString(expr) else { return }
+      guard let value = self.destructStringSimple(group) else { return }
+      XCTAssertEqual(value, "Let it go")
 
-      guard let value = self.destructStringSimple(expr) else { return }
-      XCTAssertEqual(value, expected)
+      XCTAssertExpression(expr, "\"Let it go\"")
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc5)
+    }
+  }
 
-      XCTAssertExpression(expr, "\"Not a foot...\"")
+  func test_fstring() throws {
+    var parser = self.createExprParser(
+      self.token(.formatString("Let {'it'} go"), start: loc0, end: loc1)
+    )
+
+    if let expr = self.parseExpr(&parser) {
+      guard let group = self.destructString(expr) else { return }
+      guard let d = self.destructStringJoinedString(group) else { return }
+
+      XCTAssertEqual(d.count, 3)
+      guard d.count == 3 else { return }
+
+      guard let g0 = self.destructStringSimple(d[0]) else { return }
+      XCTAssertEqual(g0, "Let ")
+
+      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
+      guard let g1s = self.destructString(g1.0) else { return }
+      guard let g1value = self.destructStringSimple(g1s) else { return }
+      XCTAssertEqual(g1value, "it")
+      XCTAssertEqual(g1.conversion, nil)
+      XCTAssertEqual(g1.spec, nil)
+
+      guard let g2 = self.destructStringSimple(d[2]) else { return }
+      XCTAssertEqual(g2, " go")
+
+      // ("Let " f""it"" " go")
+      XCTAssertExpression(expr, "(\"Let \" f\"\"it\"\" \" go\")")
+      XCTAssertEqual(expr.start, loc0)
+      XCTAssertEqual(expr.end,   loc1)
+    }
+  }
+
+  // swiftlint:disable:next function_body_length cyclomatic_complexity
+  func test_fstring_concat() throws {
+    var parser = self.createExprParser(
+      self.token(.string("Let "),          start: loc0, end: loc1),
+      self.token(.formatString("{'it'}"),  start: loc2, end: loc3),
+      self.token(.formatString(" {'go'}"), start: loc4, end: loc5)
+    )
+
+    if let expr = self.parseExpr(&parser) {
+      guard let group = self.destructString(expr) else { return }
+      guard let d = self.destructStringJoinedString(group) else { return }
+
+      XCTAssertEqual(d.count, 4)
+      guard d.count == 4 else { return }
+
+      guard let g0 = self.destructStringSimple(d[0]) else { return }
+      XCTAssertEqual(g0, "Let ")
+
+      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
+      guard let g1s = self.destructString(g1.0) else { return }
+      guard let g1value = self.destructStringSimple(g1s) else { return }
+      XCTAssertEqual(g1value, "it")
+      XCTAssertEqual(g1.conversion, nil)
+      XCTAssertEqual(g1.spec, nil)
+
+      guard let g2 = self.destructStringSimple(d[2]) else { return }
+      XCTAssertEqual(g2, " ")
+
+      guard let g3 = self.destructStringFormattedValue(d[3]) else { return }
+      guard let g3s = self.destructString(g3.0) else { return }
+      guard let g3value = self.destructStringSimple(g3s) else { return }
+      XCTAssertEqual(g3value, "go")
+      XCTAssertEqual(g3.conversion, nil)
+      XCTAssertEqual(g3.spec, nil)
+
+      // ("Let " f""it"" " " f""go"")
+      XCTAssertExpression(expr, "(\"Let \" f\"\"it\"\" \" \" f\"\"go\"\")")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc5)
     }
   }
 
   func test_string_concatWithBytes_throws() {
-    let s = "The wind is howling like this swirling storm inside"
-
-    var parser = self.parser(
-      self.token(.string(s),     start: loc0, end: loc1),
-      self.token(.bytes(Data()), start: loc2, end: loc3)
+    var parser = self.createExprParser(
+      self.token(.string("Let it go"), start: loc0, end: loc1),
+      self.token(.bytes(Data()),       start: loc2, end: loc3)
     )
 
     if let error = self.error(&parser) {
@@ -136,5 +195,4 @@ class AtomStringTest: XCTestCase, Common, DestructStringGroup {
       XCTAssertEqual(error.location, loc2)
     }
   }
- */
 }

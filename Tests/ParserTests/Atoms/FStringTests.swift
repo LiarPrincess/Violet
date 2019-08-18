@@ -520,5 +520,4 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
       XCTAssert(false, "\(error)")
     }
   }
-  // TODO: != in expression
 }

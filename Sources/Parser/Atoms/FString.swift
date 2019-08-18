@@ -8,7 +8,7 @@ import Foundation
 // Python -> ast.c
 //  parsestrplus(struct compiling *c, const node *n)
 
-// It is FString (basically one of the hardest things), so normal rules do apply
+// It is FString, so normal rules do not apply:
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
@@ -180,7 +180,7 @@ internal struct FString {
     assert(view[index] == "{")
     view.formIndex(after: &index) // consume '{'
 
-    // We have to eval right now, so output proper errors.
+    // We have to eval right now (not later), to output errors in correct order.
     let exprString = try self.consumeExprValue(in: view, advancing: &index)
     let expr = try self.eval(exprString)
 
@@ -450,6 +450,7 @@ internal struct FString {
     let startIndex = index
     while index != view.endIndex && view[index] != "}" {
       if view[index] == "{" {
+        // if we ever implement this: add validation in ASTValidationPass
         throw NotImplemented.expressionInFormatSpecifierInsideFString
       }
 
