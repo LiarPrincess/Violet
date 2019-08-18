@@ -25,9 +25,9 @@ class IfStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Honey\"")
+      XCTAssertStatement(d.body[0], "'Honey'")
 
-      XCTAssertStatement(stmt, "(if Pooh then: \"Honey\")")
+      XCTAssertStatement(stmt, "(if Pooh then: 'Honey')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -54,13 +54,13 @@ class IfStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Honey\"")
+      XCTAssertStatement(d.body[0], "'Honey'")
 
       XCTAssertEqual(d.orElse.count, 1)
       guard d.orElse.count == 1 else { return }
-      XCTAssertStatement(d.orElse[0], "\"More honey\"")
+      XCTAssertStatement(d.orElse[0], "'More honey'")
 
-      XCTAssertStatement(stmt, "(if Pooh then: \"Honey\" else: \"More honey\")")
+      XCTAssertStatement(stmt, "(if Pooh then: 'Honey' else: 'More honey')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -99,7 +99,7 @@ class IfStatementTests: XCTestCase,
 
       XCTAssertEqual(if0.body.count, 1)
       guard if0.body.count == 1 else { return }
-      XCTAssertStatement(if0.body[0], "\"Honey\"")
+      XCTAssertStatement(if0.body[0], "'Honey'")
 
       XCTAssertEqual(if0.orElse.count, 1)
       guard if0.orElse.count == 1 else { return }
@@ -112,7 +112,7 @@ class IfStatementTests: XCTestCase,
 
       XCTAssertEqual(if1.body.count, 1)
       guard if1.body.count == 1 else { return }
-      XCTAssertStatement(if1.body[0], "\"Bouncing\"")
+      XCTAssertStatement(if1.body[0], "'Bouncing'")
 
       // general
       XCTAssertEqual(stmt.start, loc0)
@@ -148,7 +148,7 @@ class IfStatementTests: XCTestCase,
 
       XCTAssertEqual(if0.body.count, 1)
       guard if0.body.count == 1 else { return }
-      XCTAssertStatement(if0.body[0], "\"Honey\"")
+      XCTAssertStatement(if0.body[0], "'Honey'")
 
       XCTAssertEqual(if0.orElse.count, 1)
       guard if0.orElse.count == 1 else { return }
@@ -159,11 +159,11 @@ class IfStatementTests: XCTestCase,
 
       XCTAssertEqual(if1.body.count, 1)
       guard if1.body.count == 1 else { return }
-      XCTAssertStatement(if1.body[0], "\"Bouncing\"")
+      XCTAssertStatement(if1.body[0], "'Bouncing'")
 
       XCTAssertEqual(if1.orElse.count, 1)
       guard if1.orElse.count == 1 else { return }
-      XCTAssertStatement(if1.orElse[0], "\"Carrots?\"")
+      XCTAssertStatement(if1.orElse[0], "'Carrots?'")
 
       // general
       XCTAssertEqual(stmt.start, loc0)

@@ -36,9 +36,9 @@ class AsyncStatementTests: XCTestCase, Common, DestructStatementKind {
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(asyncDef cook() do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(asyncDef cook() do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
@@ -63,9 +63,9 @@ class AsyncStatementTests: XCTestCase, Common, DestructStatementKind {
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"wonderland\"")
+      XCTAssertStatement(d.body[0], "'wonderland'")
 
-      XCTAssertStatement(stmt, "(asyncWith Alice do: \"wonderland\")")
+      XCTAssertStatement(stmt, "(asyncWith Alice do: 'wonderland')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc9)
     }
@@ -92,9 +92,9 @@ class AsyncStatementTests: XCTestCase, Common, DestructStatementKind {
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"becomeItem\"")
+      XCTAssertStatement(d.body[0], "'becomeItem'")
 
-      XCTAssertStatement(stmt, "(asyncFor person in: castle do: \"becomeItem\")")
+      XCTAssertStatement(stmt, "(asyncFor person in: castle do: 'becomeItem')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }

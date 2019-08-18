@@ -86,7 +86,7 @@ class AtomStringTest: XCTestCase,
       guard let value = self.destructStringSimple(group) else { return }
       XCTAssertEqual(value, "Let it go")
 
-      XCTAssertExpression(expr, "\"Let it go\"")
+      XCTAssertExpression(expr, "'Let it go'")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc1)
     }
@@ -104,7 +104,7 @@ class AtomStringTest: XCTestCase,
       guard let value = self.destructStringSimple(group) else { return }
       XCTAssertEqual(value, "Let it go")
 
-      XCTAssertExpression(expr, "\"Let it go\"")
+      XCTAssertExpression(expr, "'Let it go'")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc5)
     }
@@ -135,8 +135,7 @@ class AtomStringTest: XCTestCase,
       guard let g2 = self.destructStringSimple(d[2]) else { return }
       XCTAssertEqual(g2, " go")
 
-      // ("Let " f""it"" " go")
-      XCTAssertExpression(expr, "(\"Let \" f\"\"it\"\" \" go\")")
+      XCTAssertExpression(expr, "('Let ' f''it'' ' go')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc1)
     }
@@ -177,8 +176,7 @@ class AtomStringTest: XCTestCase,
       XCTAssertEqual(g3.conversion, nil)
       XCTAssertEqual(g3.spec, nil)
 
-      // ("Let " f""it"" " " f""go"")
-      XCTAssertExpression(expr, "(\"Let \" f\"\"it\"\" \" \" f\"\"go\"\")")
+      XCTAssertExpression(expr, "('Let ' f''it'' ' ' f''go'')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc5)
     }

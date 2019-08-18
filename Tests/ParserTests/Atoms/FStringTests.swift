@@ -170,7 +170,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
       guard let str = self.destructString(d.0) else { return }
       XCTAssertEqual(str, StringGroup.string("Let it go, let it go"))
 
-      XCTAssertExpression(d.0, "\"Let it go, let it go\"")
+      XCTAssertExpression(d.0, "'Let it go, let it go'")
       XCTAssertEqual(d.conversion, nil)
       XCTAssertEqual(d.spec, nil)
     }
@@ -182,7 +182,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
 
     let group = try string.compile()
     if let d = self.destructStringFormattedValue(group) {
-      XCTAssertExpression(d.0, "\"Cant hold it back an...\"")
+      XCTAssertExpression(d.0, "'Cant hold it back an...'")
       XCTAssertEqual(d.conversion, nil)
       XCTAssertEqual(d.spec, nil)
     }
@@ -194,7 +194,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
 
     let group = try string.compile()
     if let d = self.destructStringFormattedValue(group) {
-      XCTAssertExpression(d.0, "\"Let it go, let it go\"")
+      XCTAssertExpression(d.0, "'Let it go, let it go'")
       XCTAssertEqual(d.conversion, .repr)
       XCTAssertEqual(d.spec, nil)
     }
@@ -206,7 +206,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
 
     let group = try string.compile()
     if let d = self.destructStringFormattedValue(group) {
-      XCTAssertExpression(d.0, "\"Let it go, let it go\"")
+      XCTAssertExpression(d.0, "'Let it go, let it go'")
       XCTAssertEqual(d.conversion, nil)
       XCTAssertEqual(d.spec, "^30")
     }
@@ -218,7 +218,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
 
     let group = try string.compile()
     if let d = self.destructStringFormattedValue(group) {
-      XCTAssertExpression(d.0, "\"Turn away and slam t...\"")
+      XCTAssertExpression(d.0, "'Turn away and slam t...'")
       XCTAssertEqual(d.conversion, .ascii)
       XCTAssertEqual(d.spec, "^30")
     }

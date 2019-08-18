@@ -33,7 +33,7 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc3)
 
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy body: \"feel\")")
+      XCTAssertStatement(stmt, "(class Riley decorators: @Joy body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
@@ -64,7 +64,7 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc7)
 
-      XCTAssertStatement(stmt, "(class Riley decorators: @Emotion.Joy body: \"feel\")")
+      XCTAssertStatement(stmt, "(class Riley decorators: @Emotion.Joy body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -101,7 +101,7 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList[1].start, loc8)
       XCTAssertEqual(d.decoratorList[1].end,   loc9)
 
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy @Sadness body: \"feel\")")
+      XCTAssertStatement(stmt, "(class Riley decorators: @Joy @Sadness body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc19)
     }
@@ -134,7 +134,7 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc7)
 
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy() body: \"feel\")")
+      XCTAssertStatement(stmt, "(class Riley decorators: @Joy() body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -166,7 +166,7 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc9)
 
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy(memory) body: \"feel\")")
+      XCTAssertStatement(stmt, "(class Riley decorators: @Joy(memory) body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc19)
     }
@@ -196,11 +196,11 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy(memory=\"happy\")")
+      XCTAssertExpression(d.decoratorList[0], "Joy(memory='happy')")
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc13)
 
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy(memory=\"happy\") body: \"feel\")")
+      XCTAssertStatement(stmt, "(class Riley decorators: @Joy(memory='happy') body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc23)
     }
@@ -232,11 +232,11 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy(core memory=\"happy\")")
+      XCTAssertExpression(d.decoratorList[0], "Joy(core memory='happy')")
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc17)
 
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy(core memory=\"happy\") body: \"feel\")")
+      XCTAssertStatement(stmt, "(class Riley decorators: @Joy(core memory='happy') body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc27)
     }
@@ -269,7 +269,7 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc3)
 
-      XCTAssertStatement(stmt, "(def feel() decorators: @Joy do: \"emotion\")")
+      XCTAssertStatement(stmt, "(def feel() decorators: @Joy do: 'emotion')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -301,7 +301,7 @@ class DecoratorTests: XCTestCase,
       XCTAssertEqual(d.decoratorList[0].start, loc2)
       XCTAssertEqual(d.decoratorList[0].end,   loc3)
 
-      XCTAssertStatement(stmt, "(asyncDef feel() decorators: @Joy do: \"emotion\")")
+      XCTAssertStatement(stmt, "(asyncDef feel() decorators: @Joy do: 'emotion')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc19)
     }

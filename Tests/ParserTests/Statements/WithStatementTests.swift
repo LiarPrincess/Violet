@@ -23,9 +23,9 @@ class WithStatementTests: XCTestCase, Common, DestructStatementKind {
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"wonderland\"")
+      XCTAssertStatement(d.body[0], "'wonderland'")
 
-      XCTAssertStatement(stmt, "(with Alice do: \"wonderland\")")
+      XCTAssertStatement(stmt, "(with Alice do: 'wonderland')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -51,9 +51,9 @@ class WithStatementTests: XCTestCase, Common, DestructStatementKind {
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"wonderland\"")
+      XCTAssertStatement(d.body[0], "'wonderland'")
 
-      XCTAssertStatement(stmt, "(with (Alice as: smol) do: \"wonderland\")")
+      XCTAssertStatement(stmt, "(with (Alice as: smol) do: 'wonderland')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -80,9 +80,9 @@ class WithStatementTests: XCTestCase, Common, DestructStatementKind {
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"wonderland\"")
+      XCTAssertStatement(d.body[0], "'wonderland'")
 
-      XCTAssertStatement(stmt, "(with Alice Rabbit do: \"wonderland\")")
+      XCTAssertStatement(stmt, "(with Alice Rabbit do: 'wonderland')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -113,9 +113,9 @@ class WithStatementTests: XCTestCase, Common, DestructStatementKind {
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"wonderland\"")
+      XCTAssertStatement(d.body[0], "'wonderland'")
 
-      XCTAssertStatement(stmt, "(with (Alice as: big) (Rabbit as: small) do: \"wonderland\")")
+      XCTAssertStatement(stmt, "(with (Alice as: big) (Rabbit as: small) do: 'wonderland')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc19)
     }

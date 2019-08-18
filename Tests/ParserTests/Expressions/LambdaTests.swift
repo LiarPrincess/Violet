@@ -31,9 +31,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc8)
       XCTAssertEqual(d.args.end,   loc8)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ () do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ () do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc11)
     }
@@ -63,9 +63,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc7)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (zucchini) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (zucchini) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc13)
     }
@@ -96,9 +96,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc11)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (zucchini=1.0) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (zucchini=1.0) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc17)
     }
@@ -129,9 +129,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc11)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (zucchini tomato) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (zucchini tomato) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc17)
     }
@@ -165,9 +165,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc15)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (zucchini tomato=1.0) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (zucchini tomato=1.0) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc21)
     }
@@ -217,9 +217,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc9)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (*zucchini) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (*zucchini) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc15)
     }
@@ -254,9 +254,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc17)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (*zucchini tomato=1.0) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (*zucchini tomato=1.0) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc23)
     }
@@ -289,9 +289,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc13)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (*zucchini tomato=None) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (*zucchini tomato=None) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc19)
     }
@@ -341,9 +341,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc11)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (* zucchini=None) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (* zucchini=None) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc17)
     }
@@ -389,9 +389,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc9)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (**zucchini) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (**zucchini) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc15)
     }
@@ -421,9 +421,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc11)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (**zucchini) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (**zucchini) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc17)
     }
@@ -484,9 +484,9 @@ class LambdaTests: XCTestCase, Common, DestructExpressionKind {
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc23)
 
-      XCTAssertExpression(d.body, "\"Ratatouille\"")
+      XCTAssertExpression(d.body, "'Ratatouille'")
 
-      XCTAssertExpression(expr, "(λ (zucchini *tomato pepper=None **eggplant) do: \"Ratatouille\")")
+      XCTAssertExpression(expr, "(λ (zucchini *tomato pepper=None **eggplant) do: 'Ratatouille')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc29)
     }

@@ -48,13 +48,13 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ping\"")
+      XCTAssertStatement(d.body[0], "'Ping'")
 
       XCTAssertEqual(d.finalBody.count, 1)
       guard d.finalBody.count == 1 else { return }
-      XCTAssertStatement(d.finalBody[0], "\"Mulan\"")
+      XCTAssertStatement(d.finalBody[0], "'Mulan'")
 
-      XCTAssertStatement(stmt, "(try \"Ping\" finally: \"Mulan\")")
+      XCTAssertStatement(stmt, "(try 'Ping' finally: 'Mulan')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
@@ -83,13 +83,13 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Mulan\"")
+      XCTAssertStatement(d.body[0], "'Mulan'")
 
       XCTAssertEqual(d.handlers.count, 1)
       guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except do: \"Ping\")")
+      XCTAssertExceptHandler(d.handlers[0], "(except do: 'Ping')")
 
-      XCTAssertStatement(stmt, "(try \"Mulan\" (except do: \"Ping\"))")
+      XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
@@ -117,13 +117,13 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Mulan\"")
+      XCTAssertStatement(d.body[0], "'Mulan'")
 
       XCTAssertEqual(d.handlers.count, 1)
       guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except Soldier do: \"Ping\")")
+      XCTAssertExceptHandler(d.handlers[0], "(except Soldier do: 'Ping')")
 
-      XCTAssertStatement(stmt, "(try \"Mulan\" (except Soldier do: \"Ping\"))")
+      XCTAssertStatement(stmt, "(try 'Mulan' (except Soldier do: 'Ping'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -153,13 +153,13 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Mulan\"")
+      XCTAssertStatement(d.body[0], "'Mulan'")
 
       XCTAssertEqual(d.handlers.count, 1)
       guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except Disguise as: Soldier do: \"Ping\")")
+      XCTAssertExceptHandler(d.handlers[0], "(except Disguise as: Soldier do: 'Ping')")
 
-      XCTAssertStatement(stmt, "(try \"Mulan\" (except Disguise as: Soldier do: \"Ping\"))")
+      XCTAssertStatement(stmt, "(try 'Mulan' (except Disguise as: Soldier do: 'Ping'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc19)
     }
@@ -192,14 +192,14 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Mulan\"")
+      XCTAssertStatement(d.body[0], "'Mulan'")
 
       XCTAssertEqual(d.handlers.count, 2)
       guard d.handlers.count == 2 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except Soldier do: \"Ping\")")
-      XCTAssertExceptHandler(d.handlers[1], "(except do: \"Pong\")")
+      XCTAssertExceptHandler(d.handlers[0], "(except Soldier do: 'Ping')")
+      XCTAssertExceptHandler(d.handlers[1], "(except do: 'Pong')")
 
-      XCTAssertStatement(stmt, "(try \"Mulan\" (except Soldier do: \"Ping\") (except do: \"Pong\"))")
+      XCTAssertStatement(stmt, "(try 'Mulan' (except Soldier do: 'Ping') (except do: 'Pong'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc23)
     }
@@ -230,18 +230,18 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Mulan\"")
+      XCTAssertStatement(d.body[0], "'Mulan'")
 
       XCTAssertEqual(d.handlers.count, 1)
       guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except do: \"Ping\")")
+      XCTAssertExceptHandler(d.handlers[0], "(except do: 'Ping')")
 
       XCTAssertEqual(d.orElse.count, 1)
       guard d.orElse.count == 1 else { return }
-      XCTAssertStatement(d.orElse[0], "\"Fa Mulan\"")
+      XCTAssertStatement(d.orElse[0], "'Fa Mulan'")
 
       print(stmt)
-      XCTAssertStatement(stmt, "(try \"Mulan\" (except do: \"Ping\") else: \"Fa Mulan\")")
+      XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping') else: 'Fa Mulan')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc21)
     }
@@ -272,18 +272,18 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Mulan\"")
+      XCTAssertStatement(d.body[0], "'Mulan'")
 
       XCTAssertEqual(d.handlers.count, 1)
       guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except do: \"Ping\")")
+      XCTAssertExceptHandler(d.handlers[0], "(except do: 'Ping')")
 
       XCTAssertEqual(d.finalBody.count, 1)
       guard d.finalBody.count == 1 else { return }
-      XCTAssertStatement(d.finalBody[0], "\"Fa Mulan\"")
+      XCTAssertStatement(d.finalBody[0], "'Fa Mulan'")
 
       print(stmt)
-      XCTAssertStatement(stmt, "(try \"Mulan\" (except do: \"Ping\") finally: \"Fa Mulan\")")
+      XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping') finally: 'Fa Mulan')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc21)
     }
@@ -317,22 +317,22 @@ class TryStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Mulan\"")
+      XCTAssertStatement(d.body[0], "'Mulan'")
 
       XCTAssertEqual(d.handlers.count, 1)
       guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except do: \"Ping\")")
+      XCTAssertExceptHandler(d.handlers[0], "(except do: 'Ping')")
 
       XCTAssertEqual(d.orElse.count, 1)
       guard d.orElse.count == 1 else { return }
-      XCTAssertStatement(d.orElse[0], "\"Pong\"")
+      XCTAssertStatement(d.orElse[0], "'Pong'")
 
       XCTAssertEqual(d.finalBody.count, 1)
       guard d.finalBody.count == 1 else { return }
-      XCTAssertStatement(d.finalBody[0], "\"Fa Mulan\"")
+      XCTAssertStatement(d.finalBody[0], "'Fa Mulan'")
 
       print(stmt)
-      XCTAssertStatement(stmt, "(try \"Mulan\" (except do: \"Ping\") else: \"Pong\" finally: \"Fa Mulan\")")
+      XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping') else: 'Pong' finally: 'Fa Mulan')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc29)
     }

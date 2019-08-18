@@ -410,11 +410,11 @@ extension StringGroup: CustomStringConvertible {
   public var description: String {
     switch self {
     case let .string(s):
-      return "\"" + prefix(s, length: 20) + "\""
+      return "'" + prefix(s, length: 20) + "'"
     case let .formattedValue(v, conversion: conversion, spec: spec):
       let c = conversion.map { " " + describe($0) } ?? ""
       let s = spec.map { " " + describe($0) } ?? ""
-      return "f\"\(v)\(c)\(s)\""
+      return "f'\(v)\(c)\(s)'"
     case let .joinedString(groups):
       return "(\(join(groups)))"
     }

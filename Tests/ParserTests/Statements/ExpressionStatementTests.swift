@@ -25,7 +25,7 @@ class ExpressionStatementTests: XCTestCase,
 
       XCTAssertEqual(string, "Ariel+Eric")
 
-      XCTAssertStatement(stmt, "\"Ariel+Eric\"")
+      XCTAssertStatement(stmt, "'Ariel+Eric'")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc1)
     }
@@ -66,9 +66,9 @@ class ExpressionStatementTests: XCTestCase,
 
         XCTAssertExpression(d.target, "Ariel", msg)
         XCTAssertEqual(d.op, op, msg)
-        XCTAssertExpression(d.value, "\"legs\"", msg)
+        XCTAssertExpression(d.value, "'legs'", msg)
 
-        XCTAssertStatement(stmt, "(Ariel \(op)= \"legs\")", msg)
+        XCTAssertStatement(stmt, "(Ariel \(op)= 'legs')", msg)
         XCTAssertEqual(stmt.start, loc0)
         XCTAssertEqual(stmt.end,   loc5)
       }
@@ -90,9 +90,9 @@ class ExpressionStatementTests: XCTestCase,
 
       XCTAssertExpression(d.target, "sea.cavern")
       XCTAssertEqual(d.op, .add)
-      XCTAssertExpression(d.value, "\"Gizmos\"")
+      XCTAssertExpression(d.value, "'Gizmos'")
 
-      XCTAssertStatement(stmt, "(sea.cavern += \"Gizmos\")")
+      XCTAssertStatement(stmt, "(sea.cavern += 'Gizmos')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc9)
     }
@@ -114,9 +114,9 @@ class ExpressionStatementTests: XCTestCase,
 
       XCTAssertExpression(d.target, "sea[cavern]")
       XCTAssertEqual(d.op, .add)
-      XCTAssertExpression(d.value, "\"Gizmos\"")
+      XCTAssertExpression(d.value, "'Gizmos'")
 
-      XCTAssertStatement(stmt, "(sea[cavern] += \"Gizmos\")")
+      XCTAssertStatement(stmt, "(sea[cavern] += 'Gizmos')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -150,9 +150,9 @@ class ExpressionStatementTests: XCTestCase,
 
       XCTAssertExpression(d.target, "Ariel")
       XCTAssertEqual(d.op, .add)
-      XCTAssertExpression(d.value, "(yield \"legs\")")
+      XCTAssertExpression(d.value, "(yield 'legs')")
 
-      XCTAssertStatement(stmt, "(Ariel += (yield \"legs\"))")
+      XCTAssertStatement(stmt, "(Ariel += (yield 'legs'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -175,10 +175,10 @@ class ExpressionStatementTests: XCTestCase,
 
       XCTAssertExpression(d.target, "Flounder")
       XCTAssertExpression(d.annotation, "Animal")
-      XCTAssertExpression(d.value, "\"Friend\"")
+      XCTAssertExpression(d.value, "'Friend'")
       XCTAssertEqual(d.isSimple, true)
 
-      XCTAssertStatement(stmt, "(Flounder:Animal = \"Friend\")")
+      XCTAssertStatement(stmt, "(Flounder:Animal = 'Friend')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc9)
     }
@@ -224,10 +224,10 @@ class ExpressionStatementTests: XCTestCase,
 
       XCTAssertExpression(d.target, "Sea.Flounder")
       XCTAssertExpression(d.annotation, "Animal")
-      XCTAssertExpression(d.value, "\"Friend\"")
+      XCTAssertExpression(d.value, "'Friend'")
       XCTAssertEqual(d.isSimple, false) // <-- this
 
-      XCTAssertStatement(stmt, "(Sea.Flounder:Animal = \"Friend\")")
+      XCTAssertStatement(stmt, "(Sea.Flounder:Animal = 'Friend')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
@@ -251,10 +251,10 @@ class ExpressionStatementTests: XCTestCase,
 
       XCTAssertExpression(d.target, "Sea[Flounder]")
       XCTAssertExpression(d.annotation, "Animal")
-      XCTAssertExpression(d.value, "\"Friend\"")
+      XCTAssertExpression(d.value, "'Friend'")
       XCTAssertEqual(d.isSimple, false) // <-- this
 
-      XCTAssertStatement(stmt, "(Sea[Flounder]:Animal = \"Friend\")")
+      XCTAssertStatement(stmt, "(Sea[Flounder]:Animal = 'Friend')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -277,10 +277,10 @@ class ExpressionStatementTests: XCTestCase,
 
       XCTAssertExpression(d.target, "Ariel")
       XCTAssertExpression(d.annotation, "Mermaid")
-      XCTAssertExpression(d.value, "\"Princess\"")
+      XCTAssertExpression(d.value, "'Princess'")
       XCTAssertEqual(d.isSimple, false) // <-- this (because parens!)
 
-      XCTAssertStatement(stmt, "(Ariel:Mermaid = \"Princess\")")
+      XCTAssertStatement(stmt, "(Ariel:Mermaid = 'Princess')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
@@ -319,9 +319,9 @@ class ExpressionStatementTests: XCTestCase,
       guard d.targets.count == 1 else { return }
 
       XCTAssertExpression(d.targets[0], "Ariel")
-      XCTAssertExpression(d.value, "\"Princess\"")
+      XCTAssertExpression(d.value, "'Princess'")
 
-      XCTAssertStatement(stmt, "(Ariel = \"Princess\")")
+      XCTAssertStatement(stmt, "(Ariel = 'Princess')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc5)
     }
@@ -344,9 +344,9 @@ class ExpressionStatementTests: XCTestCase,
       guard d.targets.count == 1 else { return }
 
       XCTAssertExpression(d.targets[0], "(Ariel Eric)")
-      XCTAssertExpression(d.value, "\"couple\"")
+      XCTAssertExpression(d.value, "'couple'")
 
-      XCTAssertStatement(stmt, "((Ariel Eric) = \"couple\")")
+      XCTAssertStatement(stmt, "((Ariel Eric) = 'couple')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc9)
     }
@@ -368,9 +368,9 @@ class ExpressionStatementTests: XCTestCase,
       guard d.targets.count == 1 else { return }
 
       XCTAssertExpression(d.targets[0], "(Ariel)")
-      XCTAssertExpression(d.value, "\"Princess\"")
+      XCTAssertExpression(d.value, "'Princess'")
 
-      XCTAssertStatement(stmt, "((Ariel) = \"Princess\")")
+      XCTAssertStatement(stmt, "((Ariel) = 'Princess')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -394,9 +394,9 @@ class ExpressionStatementTests: XCTestCase,
 
       XCTAssertExpression(d.targets[0], "Sebastian")
       XCTAssertExpression(d.targets[1], "Flounder")
-      XCTAssertExpression(d.value, "\"Friend\"")
+      XCTAssertExpression(d.value, "'Friend'")
 
-      XCTAssertStatement(stmt, "(Sebastian = Flounder = \"Friend\")")
+      XCTAssertStatement(stmt, "(Sebastian = Flounder = 'Friend')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc9)
     }
@@ -418,9 +418,9 @@ class ExpressionStatementTests: XCTestCase,
       guard d.targets.count == 1 else { return }
 
       XCTAssertExpression(d.targets[0], "Ariel")
-      XCTAssertExpression(d.value, "(yield \"Princess\")")
+      XCTAssertExpression(d.value, "(yield 'Princess')")
 
-      XCTAssertStatement(stmt, "(Ariel = (yield \"Princess\"))")
+      XCTAssertStatement(stmt, "(Ariel = (yield 'Princess'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }

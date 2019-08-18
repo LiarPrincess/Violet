@@ -30,9 +30,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sing\"")
+      XCTAssertStatement(d.body[0], "'Sing'")
 
-      XCTAssertStatement(stmt, "(class Princess body: \"Sing\")")
+      XCTAssertStatement(stmt, "(class Princess body: 'Sing')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -58,9 +58,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sing\"")
+      XCTAssertStatement(d.body[0], "'Sing'")
 
-      XCTAssertStatement(stmt, "(class Princess body: \"Sing\")")
+      XCTAssertStatement(stmt, "(class Princess body: 'Sing')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -92,9 +92,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (Princess) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (Princess) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
@@ -125,9 +125,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (Princess) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (Princess) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -160,9 +160,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (Princess Human) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (Princess Human) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -194,9 +194,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (Princess) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (Princess) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -272,9 +272,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (*Princess) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (*Princess) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -312,9 +312,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (*Human Princess=1.0) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (*Human Princess=1.0) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc23)
     }
@@ -370,9 +370,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (Princess=1.0) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (Princess=1.0) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -409,9 +409,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (Princess=1.0 Human=2.0) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (Princess=1.0 Human=2.0) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc25)
     }
@@ -516,9 +516,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (**Princess) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (**Princess) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -554,9 +554,9 @@ class ClassDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Sleep\"")
+      XCTAssertStatement(d.body[0], "'Sleep'")
 
-      XCTAssertStatement(stmt, "(class Aurora (Princess **Human) body: \"Sleep\")")
+      XCTAssertStatement(stmt, "(class Aurora (Princess **Human) body: 'Sleep')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc19)
     }

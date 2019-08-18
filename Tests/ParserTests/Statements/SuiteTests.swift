@@ -43,9 +43,9 @@ class SuiteTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(def fly() do: \"up\")")
+      XCTAssertStatement(d.body[0], "(def fly() do: 'up')")
 
-      XCTAssertStatement(stmt, "(class Peter body: (def fly() do: \"up\"))")
+      XCTAssertStatement(stmt, "(class Peter body: (def fly() do: 'up'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc25) // 'up' is is last statement
     }
@@ -113,9 +113,9 @@ class SuiteTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(while tick do: \"run\")")
+      XCTAssertStatement(d.body[0], "(while tick do: 'run')")
 
-      XCTAssertStatement(stmt, "(if Hook then: (while tick do: \"run\"))")
+      XCTAssertStatement(stmt, "(if Hook then: (while tick do: 'run'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc21) // 'run' is is last statement
     }
@@ -149,9 +149,9 @@ class SuiteTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(for tock in: crocodile do: \"run\")")
+      XCTAssertStatement(d.body[0], "(for tock in: crocodile do: 'run')")
 
-      XCTAssertStatement(stmt, "(while tick do: (for tock in: crocodile do: \"run\"))")
+      XCTAssertStatement(stmt, "(while tick do: (for tock in: crocodile do: 'run'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc25) // 'run' is is last statement
     }
@@ -185,9 +185,9 @@ class SuiteTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(with Hook do: \"run\")")
+      XCTAssertStatement(d.body[0], "(with Hook do: 'run')")
 
-      XCTAssertStatement(stmt, "(for tock in: crocodile do: (with Hook do: \"run\"))")
+      XCTAssertStatement(stmt, "(for tock in: crocodile do: (with Hook do: 'run'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc25) // 'run' is is last statement
     }
@@ -219,9 +219,9 @@ class SuiteTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(class Dust body: \"fly\")")
+      XCTAssertStatement(d.body[0], "(class Dust body: 'fly')")
 
-      XCTAssertStatement(stmt, "(with TinkerBell do: (class Dust body: \"fly\"))")
+      XCTAssertStatement(stmt, "(with TinkerBell do: (class Dust body: 'fly'))")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc21) // 'fly' is is last statement
     }

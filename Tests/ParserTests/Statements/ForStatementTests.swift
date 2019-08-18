@@ -26,9 +26,9 @@ class ForStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"becomeItem\"")
+      XCTAssertStatement(d.body[0], "'becomeItem'")
 
-      XCTAssertStatement(stmt, "(for person in: castle do: \"becomeItem\")")
+      XCTAssertStatement(stmt, "(for person in: castle do: 'becomeItem')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -55,9 +55,9 @@ class ForStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"evil\"")
+      XCTAssertStatement(d.body[0], "'evil'")
 
-      XCTAssertStatement(stmt, "(for (Gaston) in: village do: \"evil\")")
+      XCTAssertStatement(stmt, "(for (Gaston) in: village do: 'evil')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
@@ -86,9 +86,9 @@ class ForStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"evil\"")
+      XCTAssertStatement(d.body[0], "'evil'")
 
-      XCTAssertStatement(stmt, "(for (Gaston LeFou) in: village do: \"evil\")")
+      XCTAssertStatement(stmt, "(for (Gaston LeFou) in: village do: 'evil')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -117,9 +117,9 @@ class ForStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"go castle\"")
+      XCTAssertStatement(d.body[0], "'go castle'")
 
-      XCTAssertStatement(stmt, "(for person in: (Belle Maurice) do: \"go castle\")")
+      XCTAssertStatement(stmt, "(for person in: (Belle Maurice) do: 'go castle')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -149,13 +149,13 @@ class ForStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Husband\"")
+      XCTAssertStatement(d.body[0], "'Husband'")
 
       XCTAssertEqual(d.orElse.count, 1)
       guard d.orElse.count == 1 else { return }
-      XCTAssertStatement(d.orElse[0], "\"Beast\"")
+      XCTAssertStatement(d.orElse[0], "'Beast'")
 
-      XCTAssertStatement(stmt, "(for person in: Belle do: \"Husband\" else: \"Beast\")")
+      XCTAssertStatement(stmt, "(for person in: Belle do: 'Husband' else: 'Beast')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc19)
     }

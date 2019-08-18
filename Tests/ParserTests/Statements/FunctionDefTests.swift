@@ -40,9 +40,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook() do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook() do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc11)
     }
@@ -78,9 +78,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook() -> Dish do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook() -> Dish do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -118,9 +118,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(zucchini) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(zucchini) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc13)
     }
@@ -159,9 +159,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(zucchini:Vegetable) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(zucchini:Vegetable) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -200,9 +200,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(zucchini=1.0) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(zucchini=1.0) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -241,9 +241,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(zucchini tomato) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(zucchini tomato) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -285,9 +285,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(zucchini tomato=1.0) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(zucchini tomato=1.0) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc21)
     }
@@ -348,9 +348,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(*zucchini) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(*zucchini) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -393,9 +393,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(*zucchini tomato=1.0) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(*zucchini tomato=1.0) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc23)
     }
@@ -436,9 +436,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(*zucchini tomato=None) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(*zucchini tomato=None) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc19)
     }
@@ -499,9 +499,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(* zucchini=None) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(* zucchini=None) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -558,9 +558,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(**zucchini) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(**zucchini) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
@@ -598,9 +598,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(**zucchini) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(**zucchini) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc17)
     }
@@ -672,9 +672,9 @@ class FunctionDefTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Ratatouille\"")
+      XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(zucchini *tomato pepper=None **eggplant) do: \"Ratatouille\")")
+      XCTAssertStatement(stmt, "(def cook(zucchini *tomato pepper=None **eggplant) do: 'Ratatouille')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc29)
     }

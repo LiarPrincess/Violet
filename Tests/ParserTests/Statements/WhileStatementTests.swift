@@ -23,9 +23,9 @@ class WhileStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Quasimodo\"")
+      XCTAssertStatement(d.body[0], "'Quasimodo'")
 
-      XCTAssertStatement(stmt, "(while Frollo do: \"Quasimodo\")")
+      XCTAssertStatement(stmt, "(while Frollo do: 'Quasimodo')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc7)
     }
@@ -52,13 +52,13 @@ class WhileStatementTests: XCTestCase,
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "\"Quasimodo\"")
+      XCTAssertStatement(d.body[0], "'Quasimodo'")
 
       XCTAssertEqual(d.orElse.count, 1)
       guard d.orElse.count == 1 else { return }
-      XCTAssertStatement(d.orElse[0], "\"Esmeralda\"")
+      XCTAssertStatement(d.orElse[0], "'Esmeralda'")
 
-      XCTAssertStatement(stmt, "(while Frollo do: \"Quasimodo\" else: \"Esmeralda\")")
+      XCTAssertStatement(stmt, "(while Frollo do: 'Quasimodo' else: 'Esmeralda')")
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc15)
     }
