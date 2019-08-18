@@ -101,7 +101,7 @@ extension Parser {
   internal enum TestListCompResult {
     case single(Expression)
     case multiple([Expression])
-    case listComprehension(elt: Expression, generators: [Comprehension])
+    case listComprehension(elt: Expression, generators: NonEmptyArray<Comprehension>)
   }
 
   /// ```c

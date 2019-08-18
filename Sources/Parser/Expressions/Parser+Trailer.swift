@@ -1,3 +1,4 @@
+import Core
 import Lexer
 
 // In CPython:
@@ -60,10 +61,8 @@ extension Parser {
 
   /// `subscriptlist: subscript (',' subscript)* [',']`
   private mutating func subscriptList(closingToken: TokenKind) throws -> SliceKind {
-    var elements = [Slice]()
-
     let first = try self.subscript(closingTokens: closingToken, .comma)
-    elements.append(first)
+    var elements = NonEmptyArray<Slice>(first: first)
 
     while self.peek.kind == .comma && self.peekNext.kind != closingToken {
       try self.advance() // ,
@@ -89,10 +88,12 @@ extension Parser {
       return tupleSlice
     }
 
-    return .extSlice(dims: elements)
+    return .extSlice(elements)
   }
 
-  private func asTupleIndexIfAllElementsAreIndices(_ slices: [Slice]) -> SliceKind? {
+  private func asTupleIndexIfAllElementsAreIndices(
+    _ slices: NonEmptyArray<Slice>) -> SliceKind? {
+
     var indices = [Expression]()
 
     for slice in slices {
@@ -102,14 +103,9 @@ extension Parser {
       }
     }
 
-    // 0 slices is not allowed by grammar: `subscriptlist: subscript ...`
-    // This case should be dealt with much sooner than here.
-    assert(slices.count >= 1)
-    let start = slices.first!.start // swiftlint:disable:this force_unwrapping
-    let end   = slices.last!.end    // swiftlint:disable:this force_unwrapping
-
-    let tupleKind = ExpressionKind.tuple(indices)
-    let tuple = Expression(tupleKind, start: start, end: end)
+    let tuple = Expression(.tuple(indices),
+                           start: slices.first.start,
+                           end: slices.last.end)
     return .index(tuple)
   }
 

@@ -291,15 +291,15 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptExtSlice(expr) else { return }
 
-      XCTAssertEqual(d.dims.count, 2)
-      guard d.dims.count == 2 else { return } // prevent out of range exceptions
+      XCTAssertEqual(d.1.count, 2)
+      guard d.1.count == 2 else { return }
 
-      let dim0 = d.dims[0]
+      let dim0 = d.1[0]
       let dim0Lower = Expression(.int(PyInt(1)), start: loc4, end: loc5)
       let dim0Kind = SliceKind.slice(lower: dim0Lower, upper: nil, step: nil)
       XCTAssertEqual(dim0.kind, dim0Kind)
 
-      let dim1 = d.dims[1]
+      let dim1 = d.1[1]
       let dim1Expr = Expression(.int(PyInt(2)), start: loc10, end: loc11)
       let dim1Kind = SliceKind.index(dim1Expr)
       XCTAssertEqual(dim1.kind, dim1Kind)

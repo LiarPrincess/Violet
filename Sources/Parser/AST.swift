@@ -53,10 +53,10 @@ public enum StatementKind: Equatable {
   /// - `decoratorList` is the list of decorators to be applied,
   /// stored outermost first (i.e. the first in the list will be applied last).
   /// - `returns` is the return annotation (Python 3 only).
-  case functionDef(name: String, args: Arguments, body: [Statement], decoratorList: [Expression], returns: Expression?)
+  case functionDef(name: String, args: Arguments, body: NonEmptyArray<Statement>, decoratorList: [Expression], returns: Expression?)
   /// An async def function definition.
   /// Has the same fields as `FunctionDef`.
-  case asyncFunctionDef(name: String, args: Arguments, body: [Statement], decoratorList: [Expression], returns: Expression?)
+  case asyncFunctionDef(name: String, args: Arguments, body: NonEmptyArray<Statement>, decoratorList: [Expression], returns: Expression?)
   /// A class definition.
   /// - `name` is a raw string for the class name
   /// - `bases` is a list of nodes for explicitly specified base classes.
@@ -67,19 +67,19 @@ public enum StatementKind: Equatable {
   /// These are removed in Python 3.5 - see below for details.
   /// - `body` is a list of nodes representing the code within the class definition.
   /// - `decoratorList` is a list of nodes, as in `FunctionDef`.
-  case classDef(name: String, bases: [Expression], keywords: [Keyword], body: [Statement], decoratorList: [Expression])
+  case classDef(name: String, bases: [Expression], keywords: [Keyword], body: NonEmptyArray<Statement>, decoratorList: [Expression])
   /// A `return` statement.
   case `return`(Expression?)
   /// Represents a `del` statement.
   /// Contains a list of nodes, such as Name, Attribute or Subscript nodes.
-  case delete([Expression])
+  case delete(NonEmptyArray<Expression>)
   /// An assignment.
   /// - `targets` is a list of nodes
   /// - `value` is a single node
   /// 
   /// Multiple nodes in targets represents assigning the same value to each.
   /// Unpacking is represented by putting a Tuple or List within targets.
-  case assign(targets: [Expression], value: Expression)
+  case assign(targets: NonEmptyArray<Expression>, value: Expression)
   /// Augmented assignment, such as `a += 1`.
   /// - `target` is a Name node for `a`. Target can be Name, Subscript
   /// or Attribute, but not a Tuple or List (unlike the targets of `Assign`).
@@ -92,33 +92,33 @@ public enum StatementKind: Equatable {
   /// - `value` is a single optional node
   /// - `simple` indicates that `target` does not appear
   /// in between parenthesis and is pure name and not expression.
-  case annAssign(target: Expression, annotation: Expression, value: Expression?, simple: Bool)
+  case annAssign(target: Expression, annotation: Expression, value: Expression?, isSimple: Bool)
   /// A `for` loop.
   /// - `target` holds the variable(s) the loop assigns to, as a single Name, Tuple or List node.
   /// - `iter` holds the item to be looped over, again as a single node.
   /// - `body` and `orElse` contain lists of nodes to execute. Those in orElse
   /// are executed if the loop finishes normally, rather than via a break statement.
-  case `for`(target: Expression, iter: Expression, body: [Statement], orElse: [Statement])
+  case `for`(target: Expression, iter: Expression, body: NonEmptyArray<Statement>, orElse: [Statement])
   /// An `async for` definition.
   /// Has the same fields as `For`.
-  case asyncFor(target: Expression, iter: Expression, body: [Statement], orElse: [Statement])
+  case asyncFor(target: Expression, iter: Expression, body: NonEmptyArray<Statement>, orElse: [Statement])
   /// A `while` loop.
   /// - `test` holds the condition, such as a Compare node.
-  case `while`(test: Expression, body: [Statement], orElse: [Statement])
+  case `while`(test: Expression, body: NonEmptyArray<Statement>, orElse: [Statement])
   /// An if statement.
   /// - `test` holds a single node, such as a Compare node.
   /// - `body` and `orElse` each hold a list of nodes.
   /// - `elif` clauses don’t have a special representation in the AST,
   /// but rather appear as extra `If` nodes within the `orElse` section
   /// of the previous one.
-  case `if`(test: Expression, body: [Statement], orElse: [Statement])
+  case `if`(test: Expression, body: NonEmptyArray<Statement>, orElse: [Statement])
   /// A `with` block.
   /// - `items` is a list of withitem nodes representing the context managers.
   /// - `body` is the indented block inside the context.
-  case with(items: [WithItem], body: [Statement])
+  case with(items: NonEmptyArray<WithItem>, body: NonEmptyArray<Statement>)
   /// An `async with` definition.
   /// Has the same fields as `With`.
-  case asyncWith(items: [WithItem], body: [Statement])
+  case asyncWith(items: NonEmptyArray<WithItem>, body: NonEmptyArray<Statement>)
   /// Raising an exception.
   /// - `exc` is the exception object to be raised, normally a Call or Name
   /// or None for a standalone raise.
@@ -127,24 +127,24 @@ public enum StatementKind: Equatable {
   /// `try` block.
   /// All attributes are list of nodes to execute, except for handlers,
   /// which is a list of ExceptHandler nodes.
-  case `try`(body: [Statement], handlers: [ExceptHandler], orElse: [Statement], finalBody: [Statement])
+  case `try`(body: NonEmptyArray<Statement>, handlers: [ExceptHandler], orElse: [Statement], finalBody: [Statement])
   /// An assertion.
   /// - `test` holds the condition, such as a Compare node.
   /// - `msg` holds the failure message, normally a Str node.
   case assert(test: Expression, msg: Expression?)
   /// An import statement.
   /// Contains a list of alias nodes.
-  case `import`([Alias])
+  case `import`(NonEmptyArray<Alias>)
   /// Represents `from x import y`.
   /// - `moduleName` is a raw string of the ‘from’ name, without any leading dots
   /// or None for statements such as `from . import foo`.
   /// - `level` is an integer holding the level of the relative import
   /// (0 means absolute import).
-  case importFrom(moduleName: String?, names: [Alias], level: Int?)
+  case importFrom(moduleName: String?, names: NonEmptyArray<Alias>, level: UInt8)
   /// `global` statement.
-  case global([String])
+  case global(NonEmptyArray<String>)
   /// `nonlocal` statement.
-  case nonlocal([String])
+  case nonlocal(NonEmptyArray<String>)
   /// `Expression` statement.
   case expr(Expression)
   /// A `pass` statement.
@@ -199,13 +199,13 @@ public struct ExceptHandler: Equatable {
   /// or `nil` if the clause doesn’t have as foo.
   public let name: String?
   /// List of handler nodes.
-  public let body: [Statement]
+  public let body: NonEmptyArray<Statement>
   /// Location of the first character in the source code.
   public let start: SourceLocation
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(type: Expression?, name: String?, body: [Statement], start: SourceLocation, end: SourceLocation) {
+  public init(type: Expression?, name: String?, body: NonEmptyArray<Statement>, start: SourceLocation, end: SourceLocation) {
     self.type = type
     self.name = name
     self.body = body
@@ -257,7 +257,7 @@ public indirect enum ExpressionKind: Equatable {
   /// - empty strings
   /// - empty containers
   case boolOp(BooleanOperator, left: Expression, right: Expression)
-  case compare(left: Expression, elements: [ComparisonElement])
+  case compare(left: Expression, elements: NonEmptyArray<ComparisonElement>)
   /// Values separated by commas (sometimes between parentheses): (a,b).
   case tuple([Expression])
   /// List of comma-separated values between square brackets: [a,b].
@@ -269,19 +269,19 @@ public indirect enum ExpressionKind: Equatable {
   /// Brackets containing an expression followed by a for clause and then
   /// zero or more for or if clauses.
   /// `elt` - expression that will be evaluated for each item
-  case listComprehension(elt: Expression, generators: [Comprehension])
+  case listComprehension(elt: Expression, generators: NonEmptyArray<Comprehension>)
   /// Brackets containing an expression followed by a for clause and then
   /// zero or more for or if clauses.
   /// `elt` - expression that will be evaluated for each item
-  case setComprehension(elt: Expression, generators: [Comprehension])
+  case setComprehension(elt: Expression, generators: NonEmptyArray<Comprehension>)
   /// Brackets containing an expression followed by a for clause and then
   /// zero or more for or if clauses.
   /// `key` and `value` - expressions that will be evaluated for each item
-  case dictionaryComprehension(key: Expression, value: Expression, generators: [Comprehension])
+  case dictionaryComprehension(key: Expression, value: Expression, generators: NonEmptyArray<Comprehension>)
   /// Expression followed by a for clause and then
   /// zero or more for or if clauses.
   /// `elt` - expression that will be evaluated for each item
-  case generatorExp(elt: Expression, generators: [Comprehension])
+  case generatorExp(elt: Expression, generators: NonEmptyArray<Comprehension>)
   /// An await expression.
   /// `value` is what it waits for.
   /// 
@@ -452,8 +452,8 @@ public enum SliceKind: Equatable {
   /// Regular slicing: `movies[pinocchio:frozen2]`.
   case slice(lower: Expression?, upper: Expression?, step: Expression?)
   /// Advanced slicing: `frozen[kristoff:ana, olaf]`.
-  /// `dims` holds a list of `Slice` and `Index` nodes.
-  case extSlice(dims: [Slice])
+  /// `value` holds a list of `Slice` and `Index` nodes.
+  case extSlice(NonEmptyArray<Slice>)
   /// Subscripting with a single value: `frozen[elsa]`.
   case index(Expression)
 }

@@ -1,3 +1,4 @@
+import Core
 import Lexer
 
 // swiftlint:disable file_length
@@ -175,9 +176,11 @@ extension Parser {
     }
 
     // If we have any element then return compare otherwise normal expr
-    if let last = elements.last {
-      let kind = ExpressionKind.compare(left: left, elements: elements)
-      return self.expression(kind, start: left.start, end: last.right.end)
+    if let first = elements.first {
+      let rest = elements.dropFirst()
+      let comps = NonEmptyArray<ComparisonElement>(first: first, rest: rest)
+      let kind = ExpressionKind.compare(left: left, elements: comps)
+      return self.expression(kind, start: left.start, end: comps.last.right.end)
     }
 
     return left

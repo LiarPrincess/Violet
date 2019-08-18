@@ -75,7 +75,7 @@ extension Parser {
     let kind = StatementKind.annAssign(target: target,
                                        annotation: annotation,
                                        value: value,
-                                       simple: isSimple)
+                                       isSimple: isSimple)
 
     let start = target.start
     let end = value?.end ?? annotation.end
@@ -186,6 +186,7 @@ extension Parser {
     closingTokens: [TokenKind]) throws -> Statement {
 
     var elements = [Expression]()
+
     var elementClosing = closingTokens
     elementClosing.append(.equal)
 
@@ -209,9 +210,7 @@ extension Parser {
                             end: firstTarget.end)
     }
 
-    var targets = [firstTarget]
-    targets.append(contentsOf: elements.dropLast())
-
+    let targets = NonEmptyArray(first: firstTarget, rest: elements.dropLast())
     try self.checkNormalAssignTargets(targets)
 
     let kind = StatementKind.assign(targets: targets, value: value)
@@ -225,7 +224,9 @@ extension Parser {
     return false
   }
 
-  private func checkNormalAssignTargets(_ targets: [Expression]) throws {
+  private func checkNormalAssignTargets(
+    _ targets: NonEmptyArray<Expression>) throws {
+
     for expr in targets {
       if self.isYieldExpr(expr) {
         throw self.error(.illegalAssignmentToYield, location: expr.start)

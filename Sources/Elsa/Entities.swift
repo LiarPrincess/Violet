@@ -29,7 +29,7 @@ public struct StructProperty {
   /// For example for `type = [Int]`, `baseType = Int`.
   /// `baseType + kind = type`
   public let baseType: String
-  public let doc:  String?
+  public let doc: String?
   public let underscoreInit: Bool
 
   public var nameColonType: String {

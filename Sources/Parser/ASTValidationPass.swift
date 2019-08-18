@@ -7,6 +7,10 @@ import Lexer
 // swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
 
+// In CPython:
+// Python -> ast.c
+//  int PyAST_Validate(mod_ty mod)
+
 // TODO: Elsa
 extension ExpressionKind {
   internal var isIdentifier: Bool {
@@ -21,6 +25,7 @@ public class ASTValidationPass: ASTPass {
 
   public typealias PassResult = Void
 
+  /// int PyAST_Validate(mod_ty mod)
   public func visit(_ ast: AST) throws {
     switch ast {
     case let .single(stmts):
@@ -34,48 +39,28 @@ public class ASTValidationPass: ASTPass {
 
   // MARK: - Statement
 
-  @available(*, deprecated, message: "Elsa")
-  private func validate_nonempty_seq<T>(_ elements: [T]) throws {
-    if elements.isEmpty {
-      fatalError()
-    }
-  }
-
-  private func validate_assignlist(_ exprs: [Expression]) throws {
-    try self.validate_nonempty_seq(exprs)
-    try self.visit(exprs)
-  }
-
-  private func validate_body(_ stmts: [Statement]) throws {
-    try self.validate_nonempty_seq(stmts)
-    try self.visit(stmts)
-  }
-
-  private func validate_stmts(_ stmts: [Statement]) throws {
-    // just standard
-  }
-
-  private func visit(_ stmts: [Statement]) throws {
+  private func visit<S: Sequence>(_ stmts: S) throws where S.Element == Statement {
     for s in stmts {
       try self.visit(s)
     }
   }
 
+  /// validate_stmt(stmt_ty stmt)
   private func visit(_ stmt: Statement) throws {
     switch stmt.kind {
     case let .functionDef(_, args, body, decoratorList, returns):
-      try self.validate_body(body)
+      try self.visit(body)
       try self.visit(args)
       try self.visit(decoratorList)
       try self.visit(returns)
     case let .asyncFunctionDef(_, args, body, decoratorList, returns):
-      try self.validate_body(body)
+      try self.visit(body)
       try self.visit(args)
       try self.visit(decoratorList)
       try self.visit(returns)
 
     case let .classDef(_, bases, keywords, body, decoratorList):
-      try self.validate_body(body)
+      try self.visit(body)
       try self.visit(bases)
       try self.visit(keywords)
       try self.visit(decoratorList)
@@ -84,10 +69,10 @@ public class ASTValidationPass: ASTPass {
       try self.visit(value)
 
     case let .delete(exprs):
-      try self.validate_assignlist(exprs)
+      try self.visit(exprs)
 
     case let .assign(targets, value):
-      try validate_assignlist(targets)
+      try self.visit(targets)
       try self.visit(value)
     case let .augAssign(target, _, value):
       try self.visit(target)
@@ -105,32 +90,32 @@ public class ASTValidationPass: ASTPass {
     case let .for(target, iter, body, orElse):
       try self.visit(target)
       try self.visit(iter)
-      try self.validate_body(body)
-      try self.validate_stmts(orElse)
+      try self.visit(body)
+      try self.visit(orElse)
     case let .asyncFor(target, iter, body, orElse):
       try self.visit(target)
       try self.visit(iter)
-      try self.validate_body(body)
-      try self.validate_stmts(orElse)
+      try self.visit(body)
+      try self.visit(orElse)
 
     case let .while(test, body, orElse):
       try self.visit(test)
-      try self.validate_body(body)
-      try self.validate_stmts(orElse)
+      try self.visit(body)
+      try self.visit(orElse)
 
     case let .if(test, body, orElse):
       try self.visit(test)
-      try self.validate_body(body)
-      try self.validate_stmts(orElse)
+      try self.visit(body)
+      try self.visit(orElse)
 
     case let .with(items, body):
-      try self.validate_nonempty_seq(items)
+      // we don't have to check .isEmpty because of NonEmptyArray
       try self.visit(items)
-      try self.validate_body(body)
+      try self.visit(body)
     case let .asyncWith(items, body):
-      try self.validate_nonempty_seq(items)
+      // we don't have to check .isEmpty because of NonEmptyArray
       try self.visit(items)
-      try self.validate_body(body)
+      try self.visit(body)
 
     case let .raise(exc, cause):
       if let exc = exc {
@@ -142,7 +127,7 @@ public class ASTValidationPass: ASTPass {
       }
 
     case let .try(body, handlers, orElse, finalBody):
-      try self.validate_body(body)
+      try self.visit(body)
 
       if handlers.isEmpty && finalBody.isEmpty {
         // PyErr_SetString(PyExc_ValueError, "Try has neither except handlers nor finalbody");
@@ -155,27 +140,21 @@ public class ASTValidationPass: ASTPass {
       }
 
       try self.visit(handlers)
-      try self.validate_stmts(finalBody)
-      try self.validate_stmts(orElse)
+      try self.visit(finalBody)
+      try self.visit(orElse)
 
     case let .assert(test, msg):
       try self.visit(test)
       try self.visit(msg)
 
-    case let .import(value):
-      try self.validate_nonempty_seq(value)
-    case let .importFrom(_, names, level):
-      if let l = level, l < 0 {
-        // PyErr_SetString(PyExc_ValueError, "Negative ImportFrom level");
-        fatalError()
-      }
+    case .import, .importFrom:
+      // we don't have to check names.isEmpty because of NonEmptyArray
+      // we don't have to check level > 0 because of UInt
+      break
 
-      try self.validate_nonempty_seq(names)
-
-    case let .global(value):
-      try self.validate_nonempty_seq(value)
-    case let .nonlocal(value):
-      try self.validate_nonempty_seq(value)
+    case .global, .nonlocal:
+      // we don't have to check .isEmpty because of NonEmptyArray
+      break
 
     case let .expr(expr):
       try self.visit(expr)
@@ -185,10 +164,7 @@ public class ASTValidationPass: ASTPass {
     }
   }
 
-  private func visit(_ alias: Alias) throws {
-  }
-
-  private func visit(_ items: [WithItem]) throws {
+  private func visit(_ items: NonEmptyArray<WithItem>) throws {
     for i in items {
       try self.visit(i.contextExpr)
       try self.visit(i.optionalVars)
@@ -198,13 +174,13 @@ public class ASTValidationPass: ASTPass {
   private func visit(_ handlers: [ExceptHandler]) throws {
     for h in handlers {
       try self.visit(h.type)
-      try self.validate_body(h.body)
+      try self.visit(h.body)
     }
   }
 
   // MARK: - Expression
 
-  private func visit(_ exprs: [Expression]) throws {
+  private func visit<S: Sequence>(_ exprs: S) throws where S.Element == Expression {
     for e in exprs {
       try self.visit(e)
     }
@@ -237,7 +213,7 @@ public class ASTValidationPass: ASTPass {
     case let .unaryOp(_, right):
       try self.visit(right)
     case let .compare(left, elements):
-      if elements.isEmpty { fatalError() }
+      // we don't have to check elements.isEmpty because of NonEmptyArray
       try self.visit(left)
       try self.visit(elements)
 
@@ -310,7 +286,7 @@ public class ASTValidationPass: ASTPass {
 
   // MARK: - Comparison
 
-  private func visit(_ elements: [ComparisonElement]) throws {
+  private func visit(_ elements: NonEmptyArray<ComparisonElement>) throws {
     for e in elements{
       try self.visit(e.right)
     }
@@ -342,8 +318,7 @@ public class ASTValidationPass: ASTPass {
       if let step  = step  { try self.visit(step) }
 
     case let .extSlice(dims):
-      if dims.isEmpty { fatalError() }
-
+      // we don't have to check .isEmpty because of NonEmptyArray
       for slice in dims {
         try self.visit(slice)
       }
@@ -356,7 +331,7 @@ public class ASTValidationPass: ASTPass {
   // MARK: - Comprehension
 
   /// validate_comprehension(asdl_seq *gens)
-  private func visit(_ comprehensions: [Comprehension]) throws {
+  private func visit(_ comprehensions: NonEmptyArray<Comprehension>) throws {
     for c in comprehensions {
       try self.visit(c.target)
       try self.visit(c.iter)

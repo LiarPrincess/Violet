@@ -65,9 +65,10 @@ extension Parser {
     let exprs = try self.exprList(closingTokens: closingTokens)
     switch exprs {
     case let .single(e):
-      return self.statement(.delete([e]), start: start, end: e.end)
+      let es = NonEmptyArray(first: e)
+      return self.statement(.delete(es), start: start, end: e.end)
     case let .tuple(es, end):
-      return self.statement(.delete(Array(es)), start: start, end: end)
+      return self.statement(.delete(es), start: start, end: end)
     }
   }
 
@@ -130,7 +131,7 @@ extension Parser {
     try self.advance() // global
 
     let (names, end) = try self.nameList(separator: .comma)
-    return self.statement(.global(Array(names)), start: start, end: end)
+    return self.statement(.global(names), start: start, end: end)
   }
 
   /// nonlocal_stmt: 'nonlocal' NAME (',' NAME)*
@@ -142,7 +143,7 @@ extension Parser {
     try self.advance() // nonlocal
 
     let (names, end) = try self.nameList(separator: .comma)
-    return self.statement(.nonlocal(Array(names)), start: start, end: end)
+    return self.statement(.nonlocal(names), start: start, end: end)
   }
 
   /// assert_stmt: 'assert' test [',' test]

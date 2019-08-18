@@ -115,7 +115,7 @@ extension Parser {
 
     for ir in irs.reversed() {
       let kind = StatementKind.if(test: ir.test,
-                                  body: Array(ir.body),
+                                  body: ir.body,
                                   orElse: pendingElse)
 
       let end = pendingElse.last?.end ?? ir.body.last.end
@@ -153,7 +153,7 @@ extension Parser {
     }
 
     let kind = StatementKind.while(test: test,
-                                   body: Array(body),
+                                   body: body,
                                    orElse: orElse.map { Array($0) } ?? [])
 
     let end = orElse?.last.end ?? body.last.end
@@ -194,8 +194,8 @@ extension Parser {
     }
 
     let kind: StatementKind = isAsync ?
-      .asyncFor(target: target, iter: iter, body: Array(body), orElse: orElse) :
-      .for     (target: target, iter: iter, body: Array(body), orElse: orElse)
+      .asyncFor(target: target, iter: iter, body: body, orElse: orElse) :
+      .for     (target: target, iter: iter, body: body, orElse: orElse)
 
     let end = orElse.last?.end ?? body.last.end
     return self.statement(kind, start: forStart, end: end)
@@ -213,9 +213,7 @@ extension Parser {
     try self.advance() // with
 
     let first = try self.withItem()
-
-    var items = [WithItem]()
-    items.append(first)
+    var items = NonEmptyArray<WithItem>(first: first)
 
     while self.peek.kind == .comma {
       try self.advance() // ,
@@ -228,8 +226,8 @@ extension Parser {
     let body = try self.suite()
 
     let kind: StatementKind = isAsync ?
-      .asyncWith(items: items, body: Array(body)) :
-      .with(items: items, body: Array(body))
+      .asyncWith(items: items, body: body) :
+      .with     (items: items, body: body)
 
     return self.statement(kind, start: start, end: body.last.end)
   }

@@ -36,9 +36,9 @@ extension Parser {
     let body = try self.suite()
 
     let kind: StatementKind = isAsync ?
-      .asyncFunctionDef(name: name, args: args, body: Array(body),
+      .asyncFunctionDef(name: name, args: args, body: body,
                         decoratorList: decoratorList, returns: returns) :
-      .functionDef     (name: name, args: args, body: Array(body),
+      .functionDef     (name: name, args: args, body: body,
                         decoratorList: decoratorList, returns: returns)
 
     return self.statement(kind, start: start, end: body.last.end)
@@ -67,7 +67,7 @@ extension Parser {
     let kind = StatementKind.classDef(name: name,
                                       bases: args?.args ?? [],
                                       keywords: args?.keywords ?? [], // PEP3115
-                                      body: Array(body),
+                                      body: body,
                                       decoratorList: decoratorList)
 
     let end = body.last.end

@@ -56,7 +56,7 @@ extension Parser {
     try self.advance() // import
 
     let names = try self.dottedAsNames()
-    let kind = StatementKind.import(Array(names))
+    let kind = StatementKind.import(names)
     return self.statement(kind, start: start, end: names.last.end)
   }
 
@@ -125,78 +125,62 @@ extension Parser {
 
   // MARK: - Import from
 
+  private struct ImportFromIR {
+    fileprivate var module: String?
+    fileprivate var names: NonEmptyArray<Alias>!
+    fileprivate var level: UInt8 = 0
+    fileprivate var end: SourceLocation = .start
+  }
+
   /// ```c
   /// import_from: (
   ///   'from' (('.' | '...')* dotted_name | ('.' | '...')+)
   ///   'import' ('*' | '(' import_as_names ')' | import_as_names)
   /// )
   /// ```
-  // swiftlint:disable:next function_body_length
   private mutating func parseImportFrom(closingTokens: [TokenKind])
     throws -> Statement {
 
     assert(self.peek.kind == .from)
 
     let start = self.peek.start
-    var end = self.peek.end
-    try self.advance() // from
 
-    let dotCount = try self.consumeDots()
-    var module: Alias?
-    var aliases = [Alias]()
+    var ir = ImportFromIR()
+    try self.parseImportFromModule(into: &ir)
+    try self.parseImportFromNames(into: &ir, closingTokens: closingTokens)
 
-    // it is either 'from ..name import' or 'from .. import'
+    let kind = StatementKind.importFrom(moduleName: ir.module,
+                                        names: ir.names,
+                                        level: ir.level)
+
+    return self.statement(kind, start: start, end: ir.end)
+  }
+
+  /// ```c
+  /// import_from: (
+  ///   'from' (('.' | '...')* dotted_name | ('.' | '...')+) <- THIS
+  ///   'import' ('*' | '(' import_as_names ')' | import_as_names)
+  /// )
+  /// ```
+  private mutating func parseImportFromModule(into ir: inout ImportFromIR) throws {
+    try self.consumeOrThrow(.from)
+
+    ir.level = try self.consumeDots()
+
+    // it is either 'from .. import' or 'from ..name import'
     let isDotsOnly = self.peek.kind == .import
     if isDotsOnly { // 'from .. import'
-      guard dotCount > 0 else {
+      guard ir.level > 0 else {
         throw self.unexpectedToken(expected: [.dot, .identifier])
       }
     } else { // 'from ..name import'
-      module = try self.dottedName()
+      let alias = try self.dottedName()
+      ir.module = alias.name
     }
-
-    try self.consumeOrThrow(.import)
-
-    switch self.peek.kind {
-    case .star:
-      let star = self.peek
-      end = star.end
-      try self.advance() // *
-
-      let alias = Alias(name: "*", asName: nil, start: star.start, end: star.end)
-      aliases.append(alias)
-
-    case .leftParen:
-      try self.advance() // (
-
-      var close = closingTokens
-      close.append(.rightParen)
-
-      let (a, _) = try self.importAsNames(closingTokens: close)
-      aliases.append(contentsOf: Array(a))
-
-      end = self.peek.end
-      try self.consumeOrThrow(.rightParen)
-
-    default:
-      let (a, trailingComma) = try self.importAsNames(closingTokens: closingTokens)
-
-      if trailingComma {
-        throw self.error(.fromImportWithTrailingComma)
-      }
-
-      end = a.last.end
-      aliases.append(contentsOf: Array(a))
-    }
-
-    let kind = StatementKind.importFrom(moduleName: module?.name,
-                                        names: aliases,
-                                        level: dotCount)
-    return self.statement(kind, start: start, end: end)
   }
 
-  private mutating func consumeDots() throws -> Int {
-    var count = 0
+  private mutating func consumeDots() throws -> UInt8 {
+    var count: UInt8 = 0
 
     while self.peek.kind == .dot || self.peek.kind == .ellipsis {
       switch self.peek.kind {
@@ -209,6 +193,49 @@ extension Parser {
     }
 
     return count
+  }
+
+  /// ```c
+  /// import_from: (
+  ///   'from' (('.' | '...')* dotted_name | ('.' | '...')+)
+  ///   'import' ('*' | '(' import_as_names ')' | import_as_names) <- THIS
+  /// )
+  /// ```
+  private mutating func parseImportFromNames(into ir: inout ImportFromIR,
+                                             closingTokens: [TokenKind]) throws {
+
+    try self.consumeOrThrow(.import)
+
+    switch self.peek.kind {
+    case .star:
+      let star = self.peek
+      try self.advance() // *
+
+      let alias = Alias(name: "*", asName: nil, start: star.start, end: star.end)
+      ir.names = NonEmptyArray(first: alias)
+      ir.end = star.end
+
+    case .leftParen:
+      try self.advance() // (
+
+      var close = closingTokens
+      close.append(.rightParen)
+
+      let result = try self.importAsNames(closingTokens: close)
+      ir.names = result.aliases
+      ir.end = self.peek.end // end of ')'
+      try self.consumeOrThrow(.rightParen)
+
+    default:
+      let result = try self.importAsNames(closingTokens: closingTokens)
+
+      if result.hasTrailingComma {
+        throw self.error(.fromImportWithTrailingComma)
+      }
+
+      ir.names = result.aliases
+      ir.end = result.aliases.last.end
+    }
   }
 
   // MARK: - Import as names

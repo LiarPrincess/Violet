@@ -53,7 +53,7 @@ extension Parser {
       throw self.error(.tryWithElseWithoutExcept, location: start)
     }
 
-    let kind = StatementKind.try(body: Array(body),
+    let kind = StatementKind.try(body: body,
                                  handlers: ir.handlers,
                                  orElse: ir.orElse,
                                  finalBody: ir.finalBody)
@@ -87,7 +87,7 @@ extension Parser {
 
       let handler = ExceptHandler(type: type,
                                   name: name,
-                                  body: Array(body),
+                                  body: body,
                                   start: start,
                                   end: body.last.end)
 

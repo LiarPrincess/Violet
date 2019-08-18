@@ -176,7 +176,7 @@ class ExpressionStatementTests: XCTestCase,
       XCTAssertExpression(d.target, "Flounder")
       XCTAssertExpression(d.annotation, "Animal")
       XCTAssertExpression(d.value, "\"Friend\"")
-      XCTAssertEqual(d.simple, true)
+      XCTAssertEqual(d.isSimple, true)
 
       XCTAssertStatement(stmt, "(Flounder:Animal = \"Friend\")")
       XCTAssertEqual(stmt.start, loc0)
@@ -198,7 +198,7 @@ class ExpressionStatementTests: XCTestCase,
       XCTAssertExpression(d.target, "Ariel")
       XCTAssertExpression(d.annotation, "Mermaid")
       XCTAssertEqual(d.value, nil)
-      XCTAssertEqual(d.simple, true)
+      XCTAssertEqual(d.isSimple, true)
 
       XCTAssertStatement(stmt, "(Ariel:Mermaid)")
       XCTAssertEqual(stmt.start, loc0)
@@ -225,7 +225,7 @@ class ExpressionStatementTests: XCTestCase,
       XCTAssertExpression(d.target, "Sea.Flounder")
       XCTAssertExpression(d.annotation, "Animal")
       XCTAssertExpression(d.value, "\"Friend\"")
-      XCTAssertEqual(d.simple, false) // <-- this
+      XCTAssertEqual(d.isSimple, false) // <-- this
 
       XCTAssertStatement(stmt, "(Sea.Flounder:Animal = \"Friend\")")
       XCTAssertEqual(stmt.start, loc0)
@@ -252,7 +252,7 @@ class ExpressionStatementTests: XCTestCase,
       XCTAssertExpression(d.target, "Sea[Flounder]")
       XCTAssertExpression(d.annotation, "Animal")
       XCTAssertExpression(d.value, "\"Friend\"")
-      XCTAssertEqual(d.simple, false) // <-- this
+      XCTAssertEqual(d.isSimple, false) // <-- this
 
       XCTAssertStatement(stmt, "(Sea[Flounder]:Animal = \"Friend\")")
       XCTAssertEqual(stmt.start, loc0)
@@ -278,7 +278,7 @@ class ExpressionStatementTests: XCTestCase,
       XCTAssertExpression(d.target, "Ariel")
       XCTAssertExpression(d.annotation, "Mermaid")
       XCTAssertExpression(d.value, "\"Princess\"")
-      XCTAssertEqual(d.simple, false) // <-- this (because parens!)
+      XCTAssertEqual(d.isSimple, false) // <-- this (because parens!)
 
       XCTAssertStatement(stmt, "(Ariel:Mermaid = \"Princess\")")
       XCTAssertEqual(stmt.start, loc0)

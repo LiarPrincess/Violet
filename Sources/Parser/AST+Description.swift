@@ -7,7 +7,7 @@ import Lexer
 
 // MARK: - Helpers
 
-private func join<A>(_ arr: [A], _ separator: String = " ") -> String {
+private func join<S: Sequence>(_ arr: S, _ separator: String = " ") -> String {
   return arr.map { describe($0) }.joined(separator: separator)
 }
 
@@ -35,7 +35,7 @@ extension StatementKind: CustomStringConvertible {
   private func defDescription(header: String,
                               name: String,
                               args: Arguments,
-                              body: [Statement],
+                              body: NonEmptyArray<Statement>,
                               decoratorList: [Expression],
                               returns: Expression?) -> String {
     let r = returns.map { " -> " + describe($0) } ?? ""
@@ -46,7 +46,7 @@ extension StatementKind: CustomStringConvertible {
   private func forDescription(header: String,
                               target: Expression,
                               iter: Expression,
-                              body: [Statement],
+                              body: NonEmptyArray<Statement>,
                               orElse: [Statement]) -> String {
     var b: String?
     switch body.count {
@@ -186,7 +186,7 @@ extension StatementKind: CustomStringConvertible {
     case let .import(names):
       return "(import \(join(names)))"
     case let .importFrom(module, names, level):
-      let d = level.map { String(repeating: ".", count: $0) } ?? ""
+      let d = level == 0 ? "" : String(repeating: ".", count: Int(level))
       let m = module.map(describe) ?? ""
       return "(from \(d)\(m) import: \(join(names)))"
 

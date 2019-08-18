@@ -1,3 +1,4 @@
+import Core
 import Lexer
 
 // In CPython:
@@ -34,7 +35,7 @@ extension Parser {
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
   internal mutating func compForOrNop(closingTokens: [TokenKind])
-    throws -> [Comprehension]? {
+    throws -> NonEmptyArray<Comprehension>? {
 
     return self.isCompFor() ?
       try self.compFor(closingTokens: closingTokens) :
@@ -48,11 +49,11 @@ extension Parser {
   /// comp_if: 'if' test_nocond [comp_iter]
   /// ```
   internal mutating func compFor(closingTokens: [TokenKind])
-    throws -> [Comprehension] {
+    throws -> NonEmptyArray<Comprehension> {
 
-    var result = [Comprehension]()
+    var elements = [Comprehension]()
 
-    repeat {
+    while !closingTokens.contains(self.peek.kind) {
       let start = self.peek.start
 
       // comp_for: ['async'] sync_comp_for
@@ -77,9 +78,14 @@ extension Parser {
                                isAsync: isAsync,
                                start: start,
                                end: ifs.last?.end ?? iter.end)
-      result.append(comp)
-    } while !closingTokens.contains(self.peek.kind) // start another comprehension
+      elements.append(comp)
+    }
 
+    guard let first = elements.first else {
+      throw self.unexpectedToken(expected: [.async, .for])
+    }
+
+    let result = NonEmptyArray(first: first, rest: elements.dropFirst())
     return result
   }
 
