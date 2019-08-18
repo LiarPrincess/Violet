@@ -22,7 +22,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 @alias loc = SourceLocation
 
 -- Top (root) node in AST.
--- Represents the while program.
+-- Represents the whole program.
 @enum AST =
   -- Used for input in interactive mode.
   -- `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
@@ -55,11 +55,19 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `body` is the list of nodes inside the function.
   -- - `decoratorList` is the list of decorators to be applied,
   --    stored outermost first (i.e. the first in the list will be applied last).
-  -- - `returns` is the return annotation (Python 3 only).
-  FunctionDef(identifier name, arguments args, stmt* body, expr* decoratorList, expr? returns)
+  -- - `returns` is the return annotation (the thing after '->').
+  FunctionDef(identifier name,
+              arguments args,
+              stmt+ body,
+              expr* decoratorList,
+              expr? returns)
   -- An async def function definition.
   -- Has the same fields as `FunctionDef`.
-  | AsyncFunctionDef(identifier name, arguments args, stmt* body, expr* decoratorList, expr? returns)
+  | AsyncFunctionDef(identifier name,
+                     arguments args,
+                     stmt+ body,
+                     expr* decoratorList,
+                     expr? returns)
 
   -- A class definition.
   -- - `name` is a raw string for the class name
@@ -71,46 +79,50 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   --    These are removed in Python 3.5 - see below for details.
   -- - `body` is a list of nodes representing the code within the class definition.
   -- - `decoratorList` is a list of nodes, as in `FunctionDef`.
-  | ClassDef(identifier name, expr* bases, keyword* keywords, stmt* body, expr* decoratorList)
+  | ClassDef(identifier name,
+             expr* bases,
+             keyword* keywords,
+             stmt+ body,
+             expr* decoratorList)
 
   -- A `return` statement.
   | Return(expr?)
   -- Represents a `del` statement.
   -- Contains a list of nodes, such as Name, Attribute or Subscript nodes.
-  | Delete(expr*)
+  | Delete(expr+)
 
   -- An assignment.
   -- - `targets` is a list of nodes
   -- - `value` is a single node\n
   -- Multiple nodes in targets represents assigning the same value to each.
   -- Unpacking is represented by putting a Tuple or List within targets.
-  | Assign(expr* targets, expr value)
+  | Assign(expr+ targets, expr value)
   -- Augmented assignment, such as `a += 1`.
   -- - `target` is a Name node for `a`. Target can be Name, Subscript
   -- or Attribute, but not a Tuple or List (unlike the targets of `Assign`).
   -- - `op` is an operation (for example `Add`)
   -- - `value` is the operand (for example Num node for 1)
   | AugAssign(expr target, BinaryOperator op, expr value)
-  --  An assignment with a type annotation.
+  -- An assignment with a type annotation.
   -- - `target` is a single node and can be a Name, a Attribute or a Subscript
   -- - `annotation` is the annotation, such as a Str or Name node
   -- - `value` is a single optional node
   -- - `simple` indicates that `target` does not appear
   -- in between parenthesis and is pure name and not expression.
-  | AnnAssign(expr target, expr annotation, expr? value, Bool simple)
+  | AnnAssign(expr target, expr annotation, expr? value, Bool isSimple)
 
   -- A `for` loop.
   -- - `target` holds the variable(s) the loop assigns to, as a single Name, Tuple or List node.
   -- - `iter` holds the item to be looped over, again as a single node.
   -- - `body` and `orElse` contain lists of nodes to execute. Those in orElse
   -- are executed if the loop finishes normally, rather than via a break statement.
-  | For(expr target, expr iter, stmt* body, stmt* orElse)
+  | For(expr target, expr iter, stmt+ body, stmt* orElse)
   -- An `async for` definition.
   -- Has the same fields as `For`.
-  | AsyncFor(expr target, expr iter, stmt* body, stmt* orElse)
+  | AsyncFor(expr target, expr iter, stmt+ body, stmt* orElse)
   -- A `while` loop.
   -- - `test` holds the condition, such as a Compare node.
-  | While(expr test, stmt* body, stmt* orElse)
+  | While(expr test, stmt+ body, stmt* orElse)
 
   -- An if statement.
   -- - `test` holds a single node, such as a Compare node.
@@ -118,15 +130,15 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `elif` clauses don’t have a special representation in the AST,
   -- but rather appear as extra `If` nodes within the `orElse` section
   -- of the previous one.
-  | If(expr test, stmt* body, stmt* orElse)
+  | If(expr test, stmt+ body, stmt* orElse)
 
   -- A `with` block.
   -- - `items` is a list of withitem nodes representing the context managers.
   -- - `body` is the indented block inside the context.
-  | With(WithItem* items, stmt* body)
+  | With(WithItem+ items, stmt+ body)
   -- An `async with` definition.
   -- Has the same fields as `With`.
-  | AsyncWith(WithItem* items, stmt* body)
+  | AsyncWith(WithItem+ items, stmt+ body)
 
   -- Raising an exception.
   -- - `exc` is the exception object to be raised, normally a Call or Name
@@ -136,7 +148,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- `try` block.
   -- All attributes are list of nodes to execute, except for handlers,
   -- which is a list of ExceptHandler nodes.
-  | Try(stmt* body, ExceptHandler* handlers, stmt* orElse, stmt* finalBody)
+  | Try(stmt+ body, ExceptHandler* handlers, stmt* orElse, stmt* finalBody)
   -- An assertion.
   -- - `test` holds the condition, such as a Compare node.
   -- - `msg` holds the failure message, normally a Str node.
@@ -144,25 +156,25 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
   -- An import statement.
   -- Contains a list of alias nodes.
-  | Import(alias*)
+  | Import(Alias+)
   -- Represents `from x import y`.
   -- - `moduleName` is a raw string of the ‘from’ name, without any leading dots
   -- or None for statements such as `from . import foo`.
   -- - `level` is an integer holding the level of the relative import
   -- (0 means absolute import).
-  | ImportFrom(identifier? moduleName, alias* names, Int? level)
+  | ImportFrom(identifier? moduleName, Alias+ names, UInt8 level)
 
   -- `global` statement.
-  | Global(identifier*)
+  | Global(identifier+)
   -- `nonlocal` statement.
-  | Nonlocal(identifier*)
+  | Nonlocal(identifier+)
   -- `Expression` statement.
   | Expr(expr)
   -- A `pass` statement.
   | Pass
-  --  `break` statement.
+  -- `break` statement.
   | Break
-  --  `continue` statement.
+  -- `continue` statement.
   | Continue
 
 -- Import name with optional 'as' alias.
@@ -194,7 +206,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- or `nil` if the clause doesn’t have as foo.
   identifier? name,
   -- List of handler nodes.
-  stmt* body,
+  stmt+ body,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -237,7 +249,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - False\n- None\n- numeric zero\n- empty strings\n- empty containers
   | BoolOp(BooleanOperator, expr left, expr right)
   {- need sequence to distinguish between: x < 4 < 3 and (x < 4) < 3 -}
-  | Compare(expr left, ComparisonElement* elements)
+  | Compare(expr left, ComparisonElement+ elements)
 {- Collections -}
   -- Values separated by commas (sometimes between parentheses): (a,b).
   | Tuple(expr*)
@@ -251,20 +263,20 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Brackets containing an expression followed by a for clause and then
   -- zero or more for or if clauses.
   -- `elt` - expression that will be evaluated for each item
-  | ListComprehension(expr elt, comprehension* generators)
+  | ListComprehension(expr elt, comprehension+ generators)
   -- Brackets containing an expression followed by a for clause and then
   -- zero or more for or if clauses.
   -- `elt` - expression that will be evaluated for each item
-  | SetComprehension(expr elt, comprehension* generators)
+  | SetComprehension(expr elt, comprehension+ generators)
   -- Brackets containing an expression followed by a for clause and then
   -- zero or more for or if clauses.
   -- `key` and `value` - expressions that will be evaluated for each item
-  | DictionaryComprehension(expr key, expr value, comprehension* generators)
+  | DictionaryComprehension(expr key, expr value, comprehension+ generators)
   {- the grammar constrains where yield expressions can occur -}
   -- Expression followed by a for clause and then
   -- zero or more for or if clauses.
   -- `elt` - expression that will be evaluated for each item
-  | GeneratorExp(expr elt, comprehension* generators)
+  | GeneratorExp(expr elt, comprehension+ generators)
 {- Generators/coroutines -}
   -- An await expression.
   -- `value` is what it waits for.\n
@@ -418,8 +430,8 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Regular slicing: `movies[pinocchio:frozen2]`.
   Slice(expr? lower, expr? upper, expr? step)
   -- Advanced slicing: `frozen[kristoff:ana, olaf]`.
-  -- `dims` holds a list of `Slice` and `Index` nodes.
-  | ExtSlice(slice* dims)
+  -- `value` holds a list of `Slice` and `Index` nodes.
+  | ExtSlice(Slice+)
   -- Subscripting with a single value: `frozen[elsa]`.
   | Index(expr)
 

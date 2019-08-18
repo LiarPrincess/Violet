@@ -10,6 +10,7 @@ internal func emitCode(entities: [Entity]) {
   print("// swiftlint:disable file_length")
   print("// swiftlint:disable line_length")
   print("// swiftlint:disable trailing_newline")
+  print("// swiftlint:disable vertical_whitespace_closing_braces")
   print()
 
   for entity in entities {
@@ -25,6 +26,7 @@ private func emitEnum(_ enumDef: EnumDef) {
   let indirect = enumDef.indirect ? "indirect " : ""
   print("public \(indirect)enum \(enumDef.name): Equatable {")
 
+  // emit `case single([Statement])`
   for caseDef in enumDef.cases {
     emitDoc(caseDef.doc, indent: 2)
 
@@ -36,6 +38,16 @@ private func emitEnum(_ enumDef: EnumDef) {
     }
 
     print("  case \(caseDef.escapedName)\(properties)")
+  }
+  print()
+
+  // emit `var isSingle: Bool {`
+  for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
+    print("  public var is\(pascalCase(caseDef.name)): Bool {")
+    print("    if case .\(caseDef.name) = self { return true }")
+    print("    return false")
+    print("  }")
+    print()
   }
 
   print("}")

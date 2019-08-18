@@ -11,16 +11,6 @@ import Lexer
 // Python -> ast.c
 //  int PyAST_Validate(mod_ty mod)
 
-// TODO: Elsa
-extension ExpressionKind {
-  internal var isIdentifier: Bool {
-    if case ExpressionKind.identifier = self {
-      return true
-    }
-    return false
-  }
-}
-
 public struct ASTValidationPass: ASTPass {
 
   public typealias PassResult = Void

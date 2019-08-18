@@ -8,9 +8,10 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
+// swiftlint:disable vertical_whitespace_closing_braces
 
 /// Top (root) node in AST.
-/// Represents the while program.
+/// Represents the whole program.
 public enum AST: Equatable {
   /// Used for input in interactive mode.
   /// `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
@@ -27,6 +28,22 @@ public enum AST: Equatable {
   /// It ignores leading whitespace.
   /// `eval_input ::= expression_list NEWLINE*`
   case expression(Expression)
+
+  public var isSingle: Bool {
+    if case .single = self { return true }
+    return false
+  }
+
+  public var isFileInput: Bool {
+    if case .fileInput = self { return true }
+    return false
+  }
+
+  public var isExpression: Bool {
+    if case .expression = self { return true }
+    return false
+  }
+
 }
 
 public struct Statement: Equatable {
@@ -52,7 +69,7 @@ public enum StatementKind: Equatable {
   /// - `body` is the list of nodes inside the function.
   /// - `decoratorList` is the list of decorators to be applied,
   /// stored outermost first (i.e. the first in the list will be applied last).
-  /// - `returns` is the return annotation (Python 3 only).
+  /// - `returns` is the return annotation (the thing after '->').
   case functionDef(name: String, args: Arguments, body: NonEmptyArray<Statement>, decoratorList: [Expression], returns: Expression?)
   /// An async def function definition.
   /// Has the same fields as `FunctionDef`.
@@ -153,6 +170,117 @@ public enum StatementKind: Equatable {
   case `break`
   /// `continue` statement.
   case `continue`
+
+  public var isFunctionDef: Bool {
+    if case .functionDef = self { return true }
+    return false
+  }
+
+  public var isAsyncFunctionDef: Bool {
+    if case .asyncFunctionDef = self { return true }
+    return false
+  }
+
+  public var isClassDef: Bool {
+    if case .classDef = self { return true }
+    return false
+  }
+
+  public var isReturn: Bool {
+    if case .return = self { return true }
+    return false
+  }
+
+  public var isDelete: Bool {
+    if case .delete = self { return true }
+    return false
+  }
+
+  public var isAssign: Bool {
+    if case .assign = self { return true }
+    return false
+  }
+
+  public var isAugAssign: Bool {
+    if case .augAssign = self { return true }
+    return false
+  }
+
+  public var isAnnAssign: Bool {
+    if case .annAssign = self { return true }
+    return false
+  }
+
+  public var isFor: Bool {
+    if case .for = self { return true }
+    return false
+  }
+
+  public var isAsyncFor: Bool {
+    if case .asyncFor = self { return true }
+    return false
+  }
+
+  public var isWhile: Bool {
+    if case .while = self { return true }
+    return false
+  }
+
+  public var isIf: Bool {
+    if case .if = self { return true }
+    return false
+  }
+
+  public var isWith: Bool {
+    if case .with = self { return true }
+    return false
+  }
+
+  public var isAsyncWith: Bool {
+    if case .asyncWith = self { return true }
+    return false
+  }
+
+  public var isRaise: Bool {
+    if case .raise = self { return true }
+    return false
+  }
+
+  public var isTry: Bool {
+    if case .try = self { return true }
+    return false
+  }
+
+  public var isAssert: Bool {
+    if case .assert = self { return true }
+    return false
+  }
+
+  public var isImport: Bool {
+    if case .import = self { return true }
+    return false
+  }
+
+  public var isImportFrom: Bool {
+    if case .importFrom = self { return true }
+    return false
+  }
+
+  public var isGlobal: Bool {
+    if case .global = self { return true }
+    return false
+  }
+
+  public var isNonlocal: Bool {
+    if case .nonlocal = self { return true }
+    return false
+  }
+
+  public var isExpr: Bool {
+    if case .expr = self { return true }
+    return false
+  }
+
 }
 
 /// Import name with optional 'as' alias.
@@ -313,6 +441,142 @@ public indirect enum ExpressionKind: Equatable {
   /// `dwarfs = ["Doc", "Grumpy", "Happy", "Sleepy", "Bashful", "Sneezy", "Dopey"]`
   /// `singSong(*dwarfs)`
   case starred(Expression)
+
+  public var isIdentifier: Bool {
+    if case .identifier = self { return true }
+    return false
+  }
+
+  public var isString: Bool {
+    if case .string = self { return true }
+    return false
+  }
+
+  public var isInt: Bool {
+    if case .int = self { return true }
+    return false
+  }
+
+  public var isFloat: Bool {
+    if case .float = self { return true }
+    return false
+  }
+
+  public var isComplex: Bool {
+    if case .complex = self { return true }
+    return false
+  }
+
+  public var isBytes: Bool {
+    if case .bytes = self { return true }
+    return false
+  }
+
+  public var isUnaryOp: Bool {
+    if case .unaryOp = self { return true }
+    return false
+  }
+
+  public var isBinaryOp: Bool {
+    if case .binaryOp = self { return true }
+    return false
+  }
+
+  public var isBoolOp: Bool {
+    if case .boolOp = self { return true }
+    return false
+  }
+
+  public var isCompare: Bool {
+    if case .compare = self { return true }
+    return false
+  }
+
+  public var isTuple: Bool {
+    if case .tuple = self { return true }
+    return false
+  }
+
+  public var isList: Bool {
+    if case .list = self { return true }
+    return false
+  }
+
+  public var isDictionary: Bool {
+    if case .dictionary = self { return true }
+    return false
+  }
+
+  public var isSet: Bool {
+    if case .set = self { return true }
+    return false
+  }
+
+  public var isListComprehension: Bool {
+    if case .listComprehension = self { return true }
+    return false
+  }
+
+  public var isSetComprehension: Bool {
+    if case .setComprehension = self { return true }
+    return false
+  }
+
+  public var isDictionaryComprehension: Bool {
+    if case .dictionaryComprehension = self { return true }
+    return false
+  }
+
+  public var isGeneratorExp: Bool {
+    if case .generatorExp = self { return true }
+    return false
+  }
+
+  public var isAwait: Bool {
+    if case .await = self { return true }
+    return false
+  }
+
+  public var isYield: Bool {
+    if case .yield = self { return true }
+    return false
+  }
+
+  public var isYieldFrom: Bool {
+    if case .yieldFrom = self { return true }
+    return false
+  }
+
+  public var isLambda: Bool {
+    if case .lambda = self { return true }
+    return false
+  }
+
+  public var isCall: Bool {
+    if case .call = self { return true }
+    return false
+  }
+
+  public var isIfExpression: Bool {
+    if case .ifExpression = self { return true }
+    return false
+  }
+
+  public var isAttribute: Bool {
+    if case .attribute = self { return true }
+    return false
+  }
+
+  public var isSubscript: Bool {
+    if case .subscript = self { return true }
+    return false
+  }
+
+  public var isStarred: Bool {
+    if case .starred = self { return true }
+    return false
+  }
+
 }
 
 public enum UnaryOperator: Equatable {
@@ -325,6 +589,7 @@ public enum UnaryOperator: Equatable {
   case plus
   /// Negation of its numeric argument. CPython: USub (unary sub).
   case minus
+
 }
 
 public enum BooleanOperator: Equatable {
@@ -332,6 +597,7 @@ public enum BooleanOperator: Equatable {
   case and
   /// Logical `or` with short-circuit.
   case or
+
 }
 
 public enum BinaryOperator: Equatable {
@@ -370,6 +636,7 @@ public enum BinaryOperator: Equatable {
   /// Quotient of their arguments.
   /// Floor division of integers results in an integer.
   case floorDiv
+
 }
 
 public struct ComparisonElement: Equatable {
@@ -404,6 +671,7 @@ public enum ComparisonOperator: Equatable {
   case `in`
   /// Negation of `x in s`
   case notIn
+
 }
 
 public enum DictionaryElement: Equatable {
@@ -411,6 +679,17 @@ public enum DictionaryElement: Equatable {
   case unpacking(Expression)
   /// `key : value`
   case keyValue(key: Expression, value: Expression)
+
+  public var isUnpacking: Bool {
+    if case .unpacking = self { return true }
+    return false
+  }
+
+  public var isKeyValue: Bool {
+    if case .keyValue = self { return true }
+    return false
+  }
+
 }
 
 /// For normal strings and f-strings, concatenate them together.
@@ -421,6 +700,22 @@ public enum StringGroup: Equatable {
   case formattedValue(Expression, conversion: ConversionFlag?, spec: String?)
   /// JoinedStr - if there are multiple f-strings or any literals involved.
   case joinedString([StringGroup])
+
+  public var isString: Bool {
+    if case .string = self { return true }
+    return false
+  }
+
+  public var isFormattedValue: Bool {
+    if case .formattedValue = self { return true }
+    return false
+  }
+
+  public var isJoinedString: Bool {
+    if case .joinedString = self { return true }
+    return false
+  }
+
 }
 
 /// Transforms a value prior to formatting it.
@@ -431,6 +726,7 @@ public enum ConversionFlag: Equatable {
   case ascii
   /// Converts by calling `repr(<value>)`.
   case repr
+
 }
 
 public struct Slice: Equatable {
@@ -456,6 +752,22 @@ public enum SliceKind: Equatable {
   case extSlice(NonEmptyArray<Slice>)
   /// Subscripting with a single value: `frozen[elsa]`.
   case index(Expression)
+
+  public var isSlice: Bool {
+    if case .slice = self { return true }
+    return false
+  }
+
+  public var isExtSlice: Bool {
+    if case .extSlice = self { return true }
+    return false
+  }
+
+  public var isIndex: Bool {
+    if case .index = self { return true }
+    return false
+  }
+
 }
 
 /// One `for` clause in a comprehension.
@@ -556,6 +868,12 @@ public enum Vararg: Equatable {
   /// Separator for keyword arguments. Represented by just `*`.
   case unnamed
   case named(Arg)
+
+  public var isNamed: Bool {
+    if case .named = self { return true }
+    return false
+  }
+
 }
 
 /// A keyword argument to a function call or class definition.
