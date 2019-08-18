@@ -48,7 +48,11 @@ extension Parser {
       case let .string(s):
         string.append(s)
       case let .formatString(s):
+        do {
         try string.appendFormatString(s)
+        } catch let error as FStringError {
+          throw self.error(.fStringError(error))
+        }
       default: // should not happen
         assert(false)
       }

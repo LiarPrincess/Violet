@@ -226,8 +226,6 @@ internal struct FString {
       }
     } catch let error as ParserError {
       throw FStringError.parsingError(error.kind)
-    } catch {
-      throw FStringError.unknownParsingError(error)
     }
   }
 

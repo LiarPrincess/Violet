@@ -16,3 +16,14 @@ extension String {
     self.init(view)
   }
 }
+
+extension UnicodeScalar {
+
+  /// Scalar -> U+XXXX (for example U+005F). Then you can use it
+  /// [here](https://unicode.org/cldr/utility/character.jsp?a=005f)\.
+  public var uPlus: String {
+    let hex = String(self.value, radix: 16, uppercase: true)
+    let pad = String(repeating: "0", count: 4 - hex.count)
+    return "U+\(pad)\(hex)"
+  }
+}

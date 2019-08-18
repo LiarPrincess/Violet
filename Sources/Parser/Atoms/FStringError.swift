@@ -1,7 +1,7 @@
-public enum FStringError: Error, Equatable {
-  // TODO: better messages for 'unexpectedEnd'?
-  /// We are starting expr but end of string happened: "abc{" or "abc}"
-  case unexpectedEnd // TODO: f-string: expecting '}'
+public indirect enum FStringError: Error, Equatable {
+  /// f-string: expecting '}'.
+  /// For example: "abc{" or "abc}"
+  case unexpectedEnd
   /// f-string: single '}' is not allowed
   case singleRightBrace
   /// f-string expression part cannot include a backslash
@@ -18,33 +18,30 @@ public enum FStringError: Error, Equatable {
   case invalidConversion(UnicodeScalar)
   /// Error when parsing expression.
   case parsingError(ParserErrorKind)
-  /// Error when parsing expression.
-  case unknownParsingError(Error)
+}
 
-  public static func == (lhs: FStringError, rhs: FStringError) -> Bool {
-    switch (lhs, rhs) {
-    case (.unexpectedEnd, .unexpectedEnd):
-      return true
-    case (.singleRightBrace, .singleRightBrace):
-      return true
-    case (.backslashInExpression, .backslashInExpression):
-      return true
-    case (.commentInExpression, .commentInExpression):
-      return true
-    case (.unterminatedString, .unterminatedString):
-      return true
-    case (.mismatchedParen, .mismatchedParen):
-      return true
-    case (.emptyExpression, .emptyExpression):
-      return true
-    case let (.invalidConversion(s0), .invalidConversion(s1)):
-      return s0 == s1
-    case let (.parsingError(e0), .parsingError(e1)):
-      return e0 == e1
-    case (.unknownParsingError, .unknownParsingError):
-      return true
-    default:
-      return false
+extension FStringError: CustomStringConvertible {
+  public var description: String {
+    switch self {
+    case .unexpectedEnd:
+      return "Expecting '}'"
+    case .singleRightBrace:
+      return "Single '}' is not allowed"
+    case .backslashInExpression:
+      return "Expression part cannot include a backslash"
+    case .commentInExpression:
+      return "Expression part cannot include '#'"
+    case .unterminatedString:
+      return "Unterminated string"
+    case .mismatchedParen:
+      return "Mismatched '(', '{', or '['"
+    case .emptyExpression:
+      return "Empty expression not allowed"
+    case let .invalidConversion(c):
+      return "Invalid conversion character '\(c)' (unicode: \(c.uPlus)), " +
+             "expected 's', 'r', or 'a'"
+    case let .parsingError(kind):
+      return String(describing: kind)
     }
   }
 }

@@ -184,6 +184,18 @@ class AtomStringTest: XCTestCase,
     }
   }
 
+  func test_fstring_error() throws {
+    // Unclosed f-string
+    var parser = self.createExprParser(
+      self.token(.formatString("Let it go {"), start: loc0, end: loc1)
+    )
+
+    if let error = self.error(&parser) {
+      XCTAssertEqual(error.kind, .fStringError(.unexpectedEnd))
+      XCTAssertEqual(error.location, loc0)
+    }
+  }
+
   func test_string_concatWithBytes_throws() {
     var parser = self.createExprParser(
       self.token(.string("Let it go"), start: loc0, end: loc1),

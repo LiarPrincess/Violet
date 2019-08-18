@@ -46,7 +46,7 @@ extension LexerErrorKind: CustomStringConvertible {
     case .eof:
       return "Unexpected end of file."
     case .unexpectedCharacter(let c):
-      return "Unexpected character '\(c)' (unicode: \(unicode(c)))."
+      return "Unexpected character '\(c)' (unicode: \(c.uPlus))."
 
 //    case .tabSpace:
 //      return "Inconsistent mixing of tabs and spaces"
@@ -56,7 +56,7 @@ extension LexerErrorKind: CustomStringConvertible {
       return "Unindent does not match any outer indentation level."
 
     case .identifier(let c):
-      return "Invalid character '\(c)' (unicode: \(unicode(c)) in identifier."
+      return "Invalid character '\(c)' (unicode: \(c.uPlus)) in identifier."
 
     case .unfinishedShortString:
       return "EOL while scanning string literal."
@@ -71,22 +71,14 @@ extension LexerErrorKind: CustomStringConvertible {
     case .danglingIntegerUnderscore:
       return "Digit is required after underscore."
     case let .invalidIntegerDigit(type, c):
-      return "Character '\(c)' (unicode: \(unicode(c)) is not valid \(type) digit."
+      return "Character '\(c)' (unicode: \(c.uPlus)) is not valid \(type) digit."
     case let .unableToParseInteger(type, s):
       return "Unable to parse \(type) integer from '\(s)'."
 
     case .invalidDecimalDigit(let c):
-      return "Character '\(c)' (unicode: \(unicode(c)) is not valid decimal digit."
+      return "Character '\(c)' (unicode: \(c.uPlus)) is not valid decimal digit."
     case .unableToParseDecimal(let s):
       return "Unable to parse decimal from '\(s)'."
     }
   }
-}
-
-/// Scalar -> U+XXXX (for example U+005F). Then you can use it
-/// [here](https://unicode.org/cldr/utility/character.jsp?a=005f)\.
-private func unicode(_ c: UnicodeScalar) -> String {
-  let hex = String(c.value, radix: 16, uppercase: true)
-  let pad = String(repeating: "0", count: 4 - hex.count)
-  return "U+\(pad)\(hex)"
 }

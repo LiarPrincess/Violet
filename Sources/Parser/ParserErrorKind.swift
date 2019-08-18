@@ -46,6 +46,8 @@ public enum ParserErrorKind: Equatable {
   case dictUnpackingInsideComprehension
   /// Cannot mix bytes and nonbytes literals.
   case mixBytesAndNonBytesLiterals
+  // For example: "f-string: single '}' is not allowed"
+  case fStringError(FStringError)
 
   // MARK: - Import
 
@@ -135,6 +137,8 @@ extension ParserErrorKind: CustomStringConvertible {
              "cannot be used in dictionary comprehension."
     case .mixBytesAndNonBytesLiterals:
       return "Cannot mix bytes and nonbytes literals."
+    case .fStringError(let e):
+      return "f-string: \(e)."
 
     case .fromImportWithTrailingComma:
       return "Trailing comma not allowed without surrounding parentheses."
