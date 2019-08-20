@@ -5,9 +5,6 @@ import Lexer
 // Python -> ast.c
 //  ast_for_comprehension(struct compiling *c, const node *n)
 
-// TODO: yield and yield from expressions are prohibited in the implicitly
-// nested scope (in Python 3.7, such expressions emit DeprecationWarning)
-
 extension Parser {
 
   /// Is it a start of `comp_for` rule?

@@ -6,6 +6,37 @@ extension Array {
   }
 }
 
+extension Collection {
+
+  /// A Boolean value that indicates whether the collection has any elements.
+  public var any: Bool {
+    return !self.isEmpty
+  }
+}
+
+extension OptionSet {
+
+  /// A Boolean value that indicates whether the set has any elements.
+  public var any: Bool {
+    return !self.isEmpty
+  }
+
+  /// Returns a Boolean value that indicates whether
+  /// the set contains any of the specified elements.
+  public func containsAny(_ other: Self) -> Bool {
+    return self.intersection(other).any
+  }
+}
+
+extension Dictionary {
+
+  /// Returns a Boolean value indicating whether the sequence contains the
+  /// given element.
+  public func contains(_ key: Key) -> Bool {
+    return self[key] != nil
+  }
+}
+
 extension String {
 
   /// Create String instance from given scalars.
