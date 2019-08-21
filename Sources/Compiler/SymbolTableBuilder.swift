@@ -4,13 +4,29 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
+internal enum SpecialIdentifiers {
+  internal static let top = "top"
+  internal static let lambda = "lambda"
+  internal static let genexpr = "genexpr"
+  internal static let listcomp = "listcomp"
+  internal static let setcomp = "setcomp"
+  internal static let dictcomp = "dictcomp"
+  internal static let __class__ = "__class__"
+}
+
 public struct SymbolTableBuilder {
 
   /// Scope stack.
   private var scopeStack = [SymbolScope]()
 
   /// Scope that we are currently filling.
-  internal var currentScope = SymbolScope(type: .module, isNested: false)
+  internal var currentScope: SymbolScope {
+    if let scope = self.scopeStack.last {
+      return scope
+    }
+    assert(false)
+    fatalError()
+  }
 
   /// Name of the class that we are currently filling (if any).
   internal var className: String?
@@ -21,7 +37,7 @@ public struct SymbolTableBuilder {
   public mutating func visit(_ ast: AST) throws -> SymbolScope {
     self.scopeStack.removeAll()
 
-    self.enterScope(type: .module)
+    self.enterScope(name: SpecialIdentifiers.top, type: .module)
 
     switch ast {
     case let .single(stmts):
@@ -45,11 +61,11 @@ public struct SymbolTableBuilder {
   // MARK: - Scope
 
   /// symtable_enter_block(struct symtable *st, identifier name, ...)
-  internal mutating func enterScope(type: ScopeType) {
+  internal mutating func enterScope(name: String, type: ScopeType) {
     let isNested = self.scopeStack.any &&
       (self.scopeStack.last?.isNested ?? false || type == .function)
 
-    let scope = SymbolScope(type: type, isNested: isNested)
+    let scope = SymbolScope(name: name, type: type, isNested: isNested)
 
     // parent is null if we are adding top (module) scope
     if let parent = self.scopeStack.last {

@@ -1,18 +1,14 @@
-public struct SymbolTable {
-
-  /// 
-  public internal(set) var top = SymbolScope(type: .module, isNested: false)
-
-  /// Symbol scopes for statements.
-  /// They do not contain top scope.
-  public internal(set) var scopes = [SymbolScope]()
-}
-
 /// Captures all symbols in the current scope
-/// and has a list of subscopes in this scope.
+/// and has a list of subscopes (childrens).
 public class SymbolScope {
 
-  /// Module, class, or function
+  /// Name of the class if the table is for a class.
+  /// Name of the function if the table is for a function.
+  /// Otherwise 'top'.
+  public let name: String
+
+  /// Type of the symbol table.
+  /// Possible values are 'class', 'module', and 'function'.
   public let type: ScopeType
 
   /// A set of symbols present on this scope level
@@ -27,7 +23,7 @@ public class SymbolScope {
   /// List of function parameters
   public internal(set) var varnames = [String]()
 
-  /// true if block is nested
+  /// Return True if the block is a nested class or function.
   public let isNested: Bool
   /// true if block has free variables
   public internal(set) var hasFreeVariables = false
@@ -46,7 +42,8 @@ public class SymbolScope {
   // For class scopes: true if a closure over __class__ should be created
   public internal(set) var needsClassClosure = false
 
-  public init(type: ScopeType, isNested: Bool) {
+  public init(name: String, type: ScopeType, isNested: Bool) {
+    self.name = name
     self.type = type
     self.isNested = isNested
   }

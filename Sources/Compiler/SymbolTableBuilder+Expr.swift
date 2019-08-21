@@ -42,7 +42,10 @@ extension SymbolTableBuilder {
     case let .identifier(name):
       try self.addSymbol(name, flags: isAssignmentTarget ? .local : .use)
 
-      // TODO: super - if (!GET_IDENTIFIER(__class__) || !symtable_add_def(st, __class__, USE))
+      let isSuper = self.currentScope.type == .function && name == "super"
+      if !isAssignmentTarget && isSuper {
+        try self.addSymbol(SpecialIdentifiers.__class__, flags: .use)
+      }
     case let .string(group):
       try self.visit(group)
 
@@ -101,7 +104,7 @@ extension SymbolTableBuilder {
     case let .lambda(args, body):
       try self.visitDefaults(args)
 
-      self.enterScope(type: .function)
+      self.enterScope(name: SpecialIdentifiers.lambda, type: .function)
       try self.visitArguments(args)
       try self.visit(body)
       self.leaveScope()
@@ -186,7 +189,7 @@ extension SymbolTableBuilder {
     try self.visit(first.iter)
 
     // new scope for comprehensions
-    self.enterScope(type: .function)
+    self.enterScope(name: kind.identifier, type: .function)
     defer { self.leaveScope() }
 
     if first.isAsync {
