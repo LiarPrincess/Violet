@@ -62,7 +62,7 @@ extension SymbolTableBuilder {
       try self.visit(value)
     case let .annAssign(target, annotation, value, isSimple):
       if case let ExpressionKind.identifier(name) = target.kind {
-        let current = self.lookup(name)
+        let current = self.lookupMangled(name)
 
         // global elsa
         // elsa: Int = 5 <- we can't do that
@@ -127,10 +127,9 @@ extension SymbolTableBuilder {
          let .importFrom(_, names, _):
       try self.visit(names)
 
-    // TODO: globals and locals should be mangled?
     case let .global(names):
       for name in names {
-        let current = self.lookup(name)
+        let current = self.lookupMangled(name)
 
         if let c = current {
           let errorLocation = stmt.start
@@ -154,7 +153,7 @@ extension SymbolTableBuilder {
 
     case let .nonlocal(names):
       for name in names {
-        let current = self.lookup(name)
+        let current = self.lookupMangled(name)
 
         if let c = current {
           let errorLocation = stmt.start

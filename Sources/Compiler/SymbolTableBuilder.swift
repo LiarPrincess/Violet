@@ -29,6 +29,7 @@ public struct SymbolTableBuilder {
   }
 
   /// Name of the class that we are currently filling (if any).
+  /// Mostly used for mangling.
   internal var className: String?
 
   // MARK: - Pass
@@ -84,8 +85,17 @@ public struct SymbolTableBuilder {
   // MARK: - Names
 
   /// symtable_add_def(struct symtable *st, PyObject *name, int flag)
+  ///
+  /// Always mangle! So something like this is also mangled:
+  /// ```c
+  /// class Frozen:
+  ///   def let_it_go(self):
+  ///     __elsa    <- mangled local variable `_Frozen__elsa`
+  /// ```
+  /// In general variables with '__' prefix should only be used if we
+  /// really need mangling to avoid potential name clash.
   internal mutating func addSymbol(_ name: String, flags: SymbolFlags) throws {
-    let mangled = mangle(className: self.className, identifier: name)
+    let mangled = MangledName(className: self.className, name: name)
 
     var flagsToSet = flags
     if let existing = self.currentScope.symbols[mangled] {
@@ -97,7 +107,7 @@ public struct SymbolTableBuilder {
       flagsToSet.formUnion(existing)
     }
 
-    self.currentScope.symbols[name] = flagsToSet
+    self.currentScope.symbols[mangled] = flagsToSet
 
     if flags.contains(.param) {
       self.currentScope.varnames.append(mangled)
@@ -108,21 +118,16 @@ public struct SymbolTableBuilder {
 
   /// symtable_record_directive(struct symtable *st, identifier name, stmt_ty s)
   internal func addDirective(_ name: String) {
-    // TODO: Mangling
-    self.currentScope.directives.append(name)
-  }
-
-  /// Lookup name in current scope.
-  internal func lookup(_ name: String) -> SymbolFlags? {
-    return self.currentScope.symbols[name]
+    let mangled = MangledName(className: self.className, name: name)
+    self.currentScope.directives.append(mangled)
   }
 
   /// Lookup mangled name in current scope.
   ///
   /// symtable_lookup(struct symtable *st, PyObject *name)
   internal func lookupMangled(_ name: String) -> SymbolFlags? {
-    let mangled = mangle(className: self.className, identifier: name)
-    return self.lookup(mangled)
+    let mangled = MangledName(className: self.className, name: name)
+    return self.currentScope.symbols[mangled]
   }
 
   // MARK: - Arguments

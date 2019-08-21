@@ -12,16 +12,16 @@ public class SymbolScope {
   public let type: ScopeType
 
   /// A set of symbols present on this scope level
-  public internal(set) var symbols = [String: SymbolFlags]()
+  public internal(set) var symbols = [MangledName: SymbolFlags]()
 
   /// A list of subscopes in the order as found in the AST nodes
   public internal(set) var children = [SymbolScope]()
 
   /// Locations of global and nonlocal statements
-  public internal(set) var directives = [String]()
+  public internal(set) var directives = [MangledName]()
 
   /// List of function parameters
-  public internal(set) var varnames = [String]()
+  public internal(set) var varnames = [MangledName]()
 
   /// Return True if the block is a nested class or function.
   public let isNested: Bool
