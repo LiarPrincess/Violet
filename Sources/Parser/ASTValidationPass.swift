@@ -37,12 +37,8 @@ public struct ASTValidationPass: ASTPass {
   /// validate_stmt(stmt_ty stmt)
   private func visit(_ stmt: Statement) throws {
     switch stmt.kind {
-    case let .functionDef(_, args, body, decoratorList, returns):
-      try self.visit(body)
-      try self.visit(args)
-      try self.visit(decoratorList)
-      try self.visit(returns)
-    case let .asyncFunctionDef(_, args, body, decoratorList, returns):
+    case let .functionDef(_, args, body, decoratorList, returns),
+         let .asyncFunctionDef(_, args, body, decoratorList, returns):
       try self.visit(body)
       try self.visit(args)
       try self.visit(decoratorList)
@@ -75,12 +71,8 @@ public struct ASTValidationPass: ASTPass {
       try self.visit(value)
       try self.visit(annotation)
 
-    case let .for(target, iter, body, orElse):
-      try self.visit(target)
-      try self.visit(iter)
-      try self.visit(body)
-      try self.visit(orElse)
-    case let .asyncFor(target, iter, body, orElse):
+    case let .for(target, iter, body, orElse),
+         let .asyncFor(target, iter, body, orElse):
       try self.visit(target)
       try self.visit(iter)
       try self.visit(body)
@@ -96,11 +88,8 @@ public struct ASTValidationPass: ASTPass {
       try self.visit(body)
       try self.visit(orElse)
 
-    case let .with(items, body):
-      // we don't have to check .isEmpty because of NonEmptyArray
-      try self.visit(items)
-      try self.visit(body)
-    case let .asyncWith(items, body):
+    case let .with(items, body),
+         let .asyncWith(items, body):
       // we don't have to check .isEmpty because of NonEmptyArray
       try self.visit(items)
       try self.visit(body)
@@ -189,35 +178,27 @@ public struct ASTValidationPass: ASTPass {
          .identifier:
       break
 
-    case let .boolOp(_, left, right):
-      try self.visit(left)
-      try self.visit(right)
-    case let .binaryOp(_, left, right):
-      try self.visit(left)
-      try self.visit(right)
     case let .unaryOp(_, right):
+      try self.visit(right)
+    case let .boolOp(_, left, right),
+         let .binaryOp(_, left, right):
+      try self.visit(left)
       try self.visit(right)
     case let .compare(left, elements):
       // we don't have to check elements.isEmpty because of NonEmptyArray
       try self.visit(left)
       try self.visit(elements)
 
-    case let .tuple(elements):
-      try self.visit(elements)
-    case let .list(elements):
+    case let .tuple(elements),
+         let .list(elements),
+         let .set(elements):
       try self.visit(elements)
     case let .dictionary(elements):
       try self.visit(elements)
-    case let .set(elements):
-      try self.visit(elements)
 
-    case let .listComprehension(elt, generators):
-      try self.visit(elt)
-      try self.visit(generators)
-    case let .setComprehension(elt, generators):
-      try self.visit(elt)
-      try self.visit(generators)
-    case let .generatorExp(elt, generators):
+    case let .listComprehension(elt, generators),
+         let .setComprehension(elt, generators),
+         let .generatorExp(elt, generators):
       try self.visit(elt)
       try self.visit(generators)
     case let .dictionaryComprehension(key, value, generators):
