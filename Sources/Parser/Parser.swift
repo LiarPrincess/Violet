@@ -216,8 +216,7 @@ public struct Parser {
 
   /// Create parser warning
   internal mutating func warn(_ warning: ParserWarning,
-                              start:     SourceLocation? = nil,
-                              end:       SourceLocation? = nil) {
+                              location:  SourceLocation? = nil) {
     // uh... oh... well that's embarrassing...
   }
 

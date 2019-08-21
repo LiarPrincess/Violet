@@ -96,8 +96,7 @@ public struct Lexer: LexerType {
 
   /// Create lexer warning
   internal mutating func warn(_ warning: LexerWarning,
-                              start:     SourceLocation? = nil,
-                              end:       SourceLocation? = nil) {
+                              location:  SourceLocation? = nil) {
     // uh... oh... well that's embarrassing...
   }
 

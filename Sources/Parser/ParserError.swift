@@ -19,6 +19,6 @@ public struct ParserError: Error, Equatable {
 
 extension ParserError: CustomStringConvertible {
   public var description: String {
-    return "\(self.location): SyntaxError: \(self.kind)"
+    return "\(self.location): \(self.kind)"
   }
 }
