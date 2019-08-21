@@ -52,11 +52,8 @@ public struct SymbolTableBuilder {
     assert(self.scopeStack.count == 1)
     let topScope = self.scopeStack[0]
 
-    try self.analyze(topScope)
+    try self.analyze(topScope: topScope)
     return topScope
-  }
-
-  internal func analyze(_ scope: SymbolScope) throws {
   }
 
   // MARK: - Scope
