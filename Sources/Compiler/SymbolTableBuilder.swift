@@ -113,6 +113,8 @@ public struct SymbolTableBuilder {
     }
   }
 
+  /// Directive means global and nonlocal statement.
+  ///
   /// symtable_record_directive(struct symtable *st, identifier name, stmt_ty s)
   internal func addDirective(_ name: String) {
     let mangled = MangledName(className: self.className, name: name)
@@ -127,7 +129,7 @@ public struct SymbolTableBuilder {
     return self.currentScope.symbols[mangled]
   }
 
-  // MARK: - Arguments
+  // MARK: - Visit arguments
 
   internal mutating func visitDefaults(_ args: Arguments) throws {
     try self.visit(args.defaults)
@@ -180,7 +182,7 @@ public struct SymbolTableBuilder {
     try self.visit(args.kwarg?.annotation)
   }
 
-  // MARK: - Keyword
+  // MARK: - Visit keyword
 
   /// symtable_visit_keyword(struct symtable *st, keyword_ty k)
   internal mutating func visit(_ keywords: [Keyword]) throws {
@@ -201,10 +203,5 @@ public struct SymbolTableBuilder {
   internal func error(_ kind: CompilerErrorKind,
                       location: SourceLocation) -> CompilerError {
     return CompilerError(kind, location: location)
-  }
-
-  @available(*, deprecated, message: "TO REMOVE!")
-  private func unimplemented() -> Error {
-    return NotImplemented.pep401
   }
 }
