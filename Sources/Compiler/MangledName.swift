@@ -15,6 +15,13 @@ public struct MangledName: Equatable, Hashable {
   /// Name AFTER mangling
   public let value: String
 
+  /// Init without mangling
+  public init(from name: String) {
+    self.base = name
+    self.value = name
+  }
+
+  /// Init with mangling
   public init(className: String?, name: String) {
     self.base = name
     self.value = mangle(className: className, name: name)

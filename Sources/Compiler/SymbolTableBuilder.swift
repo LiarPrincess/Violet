@@ -20,13 +20,17 @@ public struct SymbolTableBuilder {
   private var scopeStack = [SymbolScope]()
 
   /// Scope that we are currently filling.
-  internal var currentScope: SymbolScope {
-    if let scope = self.scopeStack.last {
-      return scope
+   internal var currentScope: SymbolScope {
+    get {
+      assert(self.scopeStack.any)
+      return self.scopeStack[self.scopeStack.count - 1]
     }
-    assert(false)
-    fatalError()
-  }
+    set { assert(false, "Use `self.scopeStack` instead.") }
+    _modify {
+      assert(self.scopeStack.any)
+      yield &self.scopeStack[self.scopeStack.count - 1]
+    }
+   }
 
   /// Name of the class that we are currently filling (if any).
   /// Mostly used for mangling.
@@ -50,33 +54,35 @@ public struct SymbolTableBuilder {
     }
 
     assert(self.scopeStack.count == 1)
-    let topScope = self.scopeStack[0]
 
-    try self.analyze(topScope: topScope)
+    var topScope = self.scopeStack[0]
+    try self.analyze(top: &topScope)
+
     return topScope
   }
 
   // MARK: - Scope
 
+  /// Push new scope.
+  ///
   /// symtable_enter_block(struct symtable *st, identifier name, ...)
   internal mutating func enterScope(name: String, type: ScopeType) {
     let isNested = self.scopeStack.any &&
       (self.scopeStack.last?.isNested ?? false || type == .function)
 
     let scope = SymbolScope(name: name, type: type, isNested: isNested)
-
-    // parent is null if we are adding top (module) scope
-    if let parent = self.scopeStack.last {
-      parent.children.append(scope)
-    }
-
     self.scopeStack.push(scope)
   }
 
+  /// Pop scope and add to child of parent scope.
+  ///
   /// symtable_exit_block(struct symtable *st, void *ast)
   internal mutating func leaveScope() {
     let scope = self.scopeStack.popLast()
     assert(scope != nil)
+
+    // swiftlint:disable:next force_unwrapping
+    self.currentScope.children.append(scope!)
   }
 
   // MARK: - Names
@@ -96,7 +102,7 @@ public struct SymbolTableBuilder {
 
     var flagsToSet = flags
     if let existing = self.currentScope.symbols[mangled] {
-      if flags.contains(.param) && existing.contains(.param) {
+      if flags.contains(.defParam) && existing.contains(.defParam) {
         // TODO: location
         throw self.error(.duplicateArgument(name), location: .start)
       }
@@ -106,9 +112,9 @@ public struct SymbolTableBuilder {
 
     self.currentScope.symbols[mangled] = flagsToSet
 
-    if flags.contains(.param) {
+    if flags.contains(.defParam) {
       self.currentScope.varnames.append(mangled)
-    } else if flags.contains(.global) {
+    } else if flags.contains(.defGlobal) {
       // TODO: gather global scope symbols? (CPython)
     }
   }
@@ -116,7 +122,7 @@ public struct SymbolTableBuilder {
   /// Directive means global and nonlocal statement.
   ///
   /// symtable_record_directive(struct symtable *st, identifier name, stmt_ty s)
-  internal func addDirective(_ name: String) {
+  internal mutating func addDirective(_ name: String) {
     let mangled = MangledName(className: self.className, name: name)
     self.currentScope.directives.append(mangled)
   }
@@ -140,23 +146,23 @@ public struct SymbolTableBuilder {
   /// symtable_visit_arguments(struct symtable *st, arguments_ty a)
   internal mutating func visitArguments(_ args: Arguments) throws {
     for a in args.args {
-      try self.addSymbol(a.name, flags: .param)
+      try self.addSymbol(a.name, flags: .defParam)
     }
 
     switch args.vararg {
     case let .named(a):
-      try self.addSymbol(a.name, flags: .param)
+      try self.addSymbol(a.name, flags: .defParam)
       self.currentScope.hasVarargs = true
     case .none, .unnamed:
       break
     }
 
     for a in args.kwOnlyArgs {
-      try self.addSymbol(a.name, flags: .param)
+      try self.addSymbol(a.name, flags: .defParam)
     }
 
     if let a = args.kwarg {
-      try self.addSymbol(a.name, flags: .param)
+      try self.addSymbol(a.name, flags: .defParam)
       self.currentScope.hasVarKeywords = true
     }
   }

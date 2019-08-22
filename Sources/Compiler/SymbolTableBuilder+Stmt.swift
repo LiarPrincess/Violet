@@ -18,7 +18,7 @@ extension SymbolTableBuilder {
     case let .functionDef(name, args, body, decoratorList, returns),
          let .asyncFunctionDef(name, args, body, decoratorList, returns):
 
-      try self.addSymbol(name, flags: .local)
+      try self.addSymbol(name, flags: .defLocal)
       try self.visitDefaults(args)
       try self.visitAnnotations(args)
       try self.visit(returns) // in CPython it is a part of visitAnnotations
@@ -33,7 +33,7 @@ extension SymbolTableBuilder {
       self.leaveScope()
 
     case let .classDef(name, bases, keywords, body, decoratorList):
-      try self.addSymbol(name, flags: .local)
+      try self.addSymbol(name, flags: .defLocal)
       try self.visit(bases)
       try self.visit(keywords)
       try self.visit(decoratorList)
@@ -66,19 +66,19 @@ extension SymbolTableBuilder {
 
         // global elsa
         // elsa: Int = 5 <- we can't do that
-        let isGlobalNonlocal = current?.containsAny([.global, .nonlocal]) ?? false
+        let isGlobalNonlocal = current?.containsAny([.defGlobal, .defNonlocal]) ?? false
 
         if isSimple && isGlobalNonlocal {
-          let kind: CompilerErrorKind = current == .global ?
+          let kind: CompilerErrorKind = current == .defGlobal ?
             .globalAnnot(name) :
             .nonlocalAnnot(name)
           throw self.error(kind, location: stmt.start)
         }
 
         if isSimple {
-          try self.addSymbol(name, flags: [.local, .annotated])
+          try self.addSymbol(name, flags: [.defLocal, .annotated])
         } else if value != nil {
-          try self.addSymbol(name, flags: .local)
+          try self.addSymbol(name, flags: .defLocal)
         }
       } else {
         try self.visit(target, isAssignmentTarget: true)
@@ -133,7 +133,7 @@ extension SymbolTableBuilder {
 
         if let c = current {
           let errorLocation = stmt.start
-          if c.contains(.param) {
+          if c.contains(.defParam) {
             throw self.error(.globalParam(name), location: errorLocation)
           }
           if c.contains(.use) {
@@ -142,12 +142,12 @@ extension SymbolTableBuilder {
           if c.contains(.annotated) {
             throw self.error(.globalAnnot(name), location: errorLocation)
           }
-          if c.contains(.local) {
+          if c.contains(.defLocal) {
             throw self.error(.globalAfterAssign(name), location: errorLocation)
           }
         }
 
-        try self.addSymbol(name, flags: .global)
+        try self.addSymbol(name, flags: .defGlobal)
         self.addDirective(name)
       }
 
@@ -157,7 +157,7 @@ extension SymbolTableBuilder {
 
         if let c = current {
           let errorLocation = stmt.start
-          if c.contains(.param) {
+          if c.contains(.defParam) {
             throw self.error(.nonlocalParam(name), location: errorLocation)
           }
           if c.contains(.use) {
@@ -166,12 +166,12 @@ extension SymbolTableBuilder {
           if c.contains(.annotated) {
             throw self.error(.nonlocalAnnot(name), location: errorLocation)
           }
-          if c.contains(.local) {
+          if c.contains(.defLocal) {
             throw self.error(.nonlocalAfterAssign(name), location: errorLocation)
           }
         }
 
-        try self.addSymbol(name, flags: .nonlocal)
+        try self.addSymbol(name, flags: .defNonlocal)
         self.addDirective(name)
       }
 
@@ -200,7 +200,7 @@ extension SymbolTableBuilder {
     for h in handlers {
       try self.visit(h.type)
       if let name = h.name {
-        try self.addSymbol(name, flags: .local)
+        try self.addSymbol(name, flags: .defLocal)
       }
       try self.visit(h.body)
     }
@@ -231,7 +231,7 @@ extension SymbolTableBuilder {
           name = String(name[name.startIndex..<dotIndex])
         }
 
-        try self.addSymbol(name, flags: .import)
+        try self.addSymbol(name, flags: .defImport)
       }
     }
   }

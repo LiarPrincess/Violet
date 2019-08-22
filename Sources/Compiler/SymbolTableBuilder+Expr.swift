@@ -42,7 +42,7 @@ extension SymbolTableBuilder {
       break
 
     case let .identifier(name):
-      try self.addSymbol(name, flags: isAssignmentTarget ? .local : .use)
+      try self.addSymbol(name, flags: isAssignmentTarget ? .defLocal : .use)
 
       let isSuper = self.currentScope.type == .function && name == "super"
       if !isAssignmentTarget && isSuper {
@@ -223,7 +223,7 @@ extension SymbolTableBuilder {
   /// symtable_implicit_arg(struct symtable *st, int pos)
   private mutating func implicitArg(pos: Int) throws {
     let id = ".\(pos)"
-    try self.addSymbol(id, flags: .param)
+    try self.addSymbol(id, flags: .defParam)
   }
 
   /// symtable_visit_comprehension(struct symtable *st, comprehension_ty lc)

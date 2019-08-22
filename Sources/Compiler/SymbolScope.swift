@@ -1,6 +1,6 @@
 /// Captures all symbols in the current scope
 /// and has a list of subscopes (childrens).
-public class SymbolScope {
+public struct SymbolScope {
 
   /// Name of the class if the table is for a class.
   /// Name of the function if the table is for a function.
@@ -39,7 +39,7 @@ public class SymbolScope {
   public internal(set) var hasVarKeywords = false
   /// true if namespace uses return with an argument
   public internal(set) var hasReturnValue = false
-  // For class scopes: true if a closure over __class__ should be created
+  /// For class scopes: true if a closure over __class__ should be created
   public internal(set) var needsClassClosure = false
 
   public init(name: String, type: ScopeType, isNested: Bool) {
@@ -55,29 +55,52 @@ public enum ScopeType {
   case module
 }
 
+// TODO: Check if all of those are used
 public struct SymbolFlags: OptionSet {
   public let rawValue: UInt16
 
-  /// Assignment in code block
-  public static let local = SymbolFlags(rawValue: 1 << 0)
-  /// `global` stmt
-  public static let global = SymbolFlags(rawValue: 1 << 1)
-  /// `nonlocal` stmt
-  public static let nonlocal = SymbolFlags(rawValue: 1 << 2)
-  /// Formal parameter
-  public static let param = SymbolFlags(rawValue: 1 << 3)
-  /// Assignment occurred via import
-  public static let `import` = SymbolFlags(rawValue: 2 << 4)
+  // MARK: Variable definition (in a current scope)
 
+  /// Defined by assignment in code block
+  public static let defLocal = SymbolFlags(rawValue: 1 << 0)
+  /// Defined by `global` statement
+  public static let defGlobal = SymbolFlags(rawValue: 1 << 1)
+  /// Defined by `nonlocal` statement
+  public static let defNonlocal = SymbolFlags(rawValue: 1 << 2)
+  /// Defined by formal function parameter
+  public static let defParam = SymbolFlags(rawValue: 1 << 3)
+  /// Defined by using import statement
+  public static let defImport = SymbolFlags(rawValue: 1 << 4)
   /// Name used but not defined in nested block
-  public static let free = SymbolFlags(rawValue: 2 << 5)
+  public static let defFree = SymbolFlags(rawValue: 1 << 5)
   /// Free variable from class's method
-  public static let freeClass = SymbolFlags(rawValue: 2 << 6)
+  public static let defFreeClass = SymbolFlags(rawValue: 1 << 6)
+
+  /// Bound in local scope (either by local, param or import)
+  public static let defBound: SymbolFlags = [.defLocal, .defParam, .defImport]
+
+  // MARK: Variable source (from other scopes)
+
+  /// Local variable, parameter or import
+  public static let srcLocal = SymbolFlags(rawValue: 1 << 7)
+  /// `global` symbol (the one that can be used with `global` statement)
+  public static let srcGlobalExplicit = SymbolFlags(rawValue: 1 << 8)
+  /// Free variable without binding in an enclosing function scope.
+  /// It is either a global or a builtin.
+  public static let srcGlobalImplicit = SymbolFlags(rawValue: 1 << 9)
+
+  /// Variable comes from parent scope (its exact source is called `cell`)
+  public static let srcFree = SymbolFlags(rawValue: 1 << 10)
+  /// Variable provides binding that is used for `srcFree` variables
+  /// in enclosed blocks
+  public static let cell = SymbolFlags(rawValue: 1 << 11)
+
+  // MARK: Additional
 
   /// Name is used
-  public static let use = SymbolFlags(rawValue: 1 << 7)
+  public static let use = SymbolFlags(rawValue: 1 << 12)
   /// This name is annotated
-  public static let annotated = SymbolFlags(rawValue: 2 << 8)
+  public static let annotated = SymbolFlags(rawValue: 2 << 13)
 
   public init(rawValue: UInt16) {
     self.rawValue = rawValue
