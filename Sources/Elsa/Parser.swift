@@ -1,6 +1,6 @@
 import Foundation
 
-internal struct Parser {
+internal class Parser {
 
   private var lexer: Lexer
   private var token: Token
@@ -18,7 +18,7 @@ internal struct Parser {
   // MARK: - Traversal
 
   @discardableResult
-  private mutating func advance() -> Token {
+  private func advance() -> Token {
     // should not happen if we wrote everything else correctly
     if self.token.kind == .eof {
       self.fail("Trying to advance past eof.")
@@ -29,12 +29,12 @@ internal struct Parser {
     return self.token
   }
 
-  private mutating func advanceToken() {
+  private func advanceToken() {
     self.token = self.lexer.getToken()
     self.location = token.location
   }
 
-  private mutating func collectDoc() {
+  private func collectDoc() {
     var result = ""
 
     while case let TokenKind.doc(value) = self.token.kind {
@@ -50,7 +50,7 @@ internal struct Parser {
     }
   }
 
-  private mutating func useCollectedDoc() -> String? {
+  private func useCollectedDoc() -> String? {
     let doc = self.collectedDoc
     self.collectedDoc = nil
     return doc
@@ -58,7 +58,7 @@ internal struct Parser {
 
   // MARK: - Parse
 
-  internal mutating func parse() -> [Entity] {
+  internal func parse() -> [Entity] {
     var result = [Entity]()
 
     while self.token.kind != .eof {
@@ -86,7 +86,7 @@ internal struct Parser {
 
   // MARK: - Alias
 
-  private mutating func alias() {
+  private func alias() {
     assert(self.token.kind == .alias)
     self.advance() // @alias
 
@@ -99,7 +99,7 @@ internal struct Parser {
 
   // MARK: - Enum
 
-  private mutating func enumDef() -> EnumDef {
+  private func enumDef() -> EnumDef {
     assert(self.token.kind == .enum || self.token.kind == .indirect)
 
     let doc = self.useCollectedDoc()
@@ -120,7 +120,7 @@ internal struct Parser {
     return EnumDef(name, cases: cases, indirect: indirect, doc: doc)
   }
 
-  private mutating func enumCaseDef() -> EnumCaseDef {
+  private func enumCaseDef() -> EnumCaseDef {
     let doc = self.useCollectedDoc()
     let name = self.consumeNameOrFail()
     let properties = self.enumProperties()
@@ -129,7 +129,7 @@ internal struct Parser {
 
   // MARK: - Struct
 
-  private mutating func structDef() -> StructDef {
+  private func structDef() -> StructDef {
     assert(self.token.kind == .struct)
 
     let doc = self.useCollectedDoc()
@@ -144,7 +144,7 @@ internal struct Parser {
 
   // MARK: - Properties
 
-  private mutating func enumProperties() -> [EnumCaseProperty] {
+  private func enumProperties() -> [EnumCaseProperty] {
     // enum properties are optional
     guard self.token.kind == .leftParen else {
       return []
@@ -176,7 +176,7 @@ internal struct Parser {
     return result
   }
 
-  private mutating func structProperties() -> [StructProperty] {
+  private func structProperties() -> [StructProperty] {
     self.consumeOrFail(.leftParen)
 
     var result = [StructProperty]()
@@ -205,7 +205,7 @@ internal struct Parser {
 
   // MARK: - Helpers
 
-  private mutating func consumeIfEqual(kind: TokenKind) -> Bool {
+  private func consumeIfEqual(kind: TokenKind) -> Bool {
     if self.token.kind == kind {
       self.advance()
       return true
@@ -214,7 +214,7 @@ internal struct Parser {
     return false
   }
 
-  private mutating func consumeOrFail(_ kind: TokenKind) {
+  private func consumeOrFail(_ kind: TokenKind) {
     guard self.token.kind == kind else {
       self.fail("Invalid token. Expected: '\(kind)', got: '\(token.kind)'.")
     }
@@ -222,7 +222,7 @@ internal struct Parser {
     self.advance()
   }
 
-  private mutating func consumeNameOrFail() -> String {
+  private func consumeNameOrFail() -> String {
     guard case let .name(value) = self.token.kind else {
       self.fail("Invalid token. Expected: 'name', got: '\(self.token.kind)'.")
     }
@@ -231,7 +231,7 @@ internal struct Parser {
     return self.aliases[value] ?? value
   }
 
-  private mutating func consumePropertyKind() -> PropertyKind {
+  private func consumePropertyKind() -> PropertyKind {
     if self.consumeIfEqual(kind: .star)   { return .many }
     if self.consumeIfEqual(kind: .option) { return .optional }
     if self.consumeIfEqual(kind: .plus)   { return .min1 }

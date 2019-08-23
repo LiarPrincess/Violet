@@ -21,7 +21,7 @@ private func redirectStdout(to path: String) {
 private func parseLetItGo(file: URL)  -> [Entity] {
   let content = try! String(contentsOf: file, encoding: .utf8)
   let lexer = Lexer(source: content)
-  var parser = Parser(lexer: lexer)
+  let parser = Parser(lexer: lexer)
   return parser.parse()
 }
 
@@ -52,6 +52,7 @@ private func generateAST() {
   emitAstDestruction(entities: entities)
 }
 
+generateAST()
 // MARK: - Bytecode - opcodes
 
 //let astFile = parserDir.appendingPathComponent("AST.swift")

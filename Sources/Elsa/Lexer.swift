@@ -29,7 +29,7 @@ private func isValidNameCharacter(_ c: Character) -> Bool {
 
 // MARK: - Lexer
 
-public struct Lexer {
+public class Lexer {
 
   private var source: String
   private var sourceIndex: String.Index
@@ -53,7 +53,7 @@ public struct Lexer {
     return index.flatMap { $0 == end ? nil : self.source[$0] }
   }
 
-  private mutating func advance() {
+  private func advance() {
     guard self.sourceIndex < self.source.endIndex else {
       return
     }
@@ -71,7 +71,7 @@ public struct Lexer {
   // MARK: - Get token
 
   // swiftlint:disable:next function_body_length cyclomatic_complexity
-  public mutating func getToken() -> Token {
+  public func getToken() -> Token {
     while true {
       guard let peek = self.peek else {
         return Token(.eof, location: self.location)
@@ -127,7 +127,7 @@ public struct Lexer {
     }
   }
 
-  private mutating func consumeComment() {
+  private func consumeComment() {
     func isCommentEnd() -> Bool {
       return self.peek == "-" && self.peekNext == "}"
     }
@@ -145,7 +145,7 @@ public struct Lexer {
     self.advance() // }
   }
 
-  private mutating func getDoc() -> String {
+  private func getDoc() -> String {
     while let peek = self.peek, peek.isWhitespace {
       self.advance()
     }
@@ -158,7 +158,7 @@ public struct Lexer {
     return String(self.source[start..<self.sourceIndex])
   }
 
-  private mutating func getName() -> String {
+  private func getName() -> String {
     let startIndex = self.sourceIndex
 
     while let peek = self.peek, isValidNameCharacter(peek) {
@@ -174,7 +174,7 @@ public struct Lexer {
   }
 
   /// Print all tokens up to eof.
-  public mutating func dumpTokens() {
+  public func dumpTokens() {
     while true {
       let token = self.getToken()
       print(token)
