@@ -146,7 +146,8 @@ public class Lexer {
   }
 
   private func getDoc() -> String {
-    while let peek = self.peek, peek.isWhitespace {
+    // consume space (but only 1)
+    if let peek = self.peek, peek == " " {
       self.advance()
     }
 
