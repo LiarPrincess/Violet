@@ -39,6 +39,8 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- `eval_input ::= expression_list NEWLINE*`
   | Expression(expr)
 
+-- https://docs.python.org/3/reference/simple_stmts.html
+-- https://docs.python.org/3/reference/compound_stmts.html
 @struct stmt = (
   -- Type of the statement.
   stmtKind kind @underscoreInit,
