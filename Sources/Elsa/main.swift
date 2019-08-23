@@ -2,48 +2,60 @@
 
 import Foundation
 
+// TODO: Lexer and parser to `class`
+
 let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
-let letitgoFile = elsaDir
-  .deletingLastPathComponent()
-  .deletingLastPathComponent()
-  .appendingPathComponent("Definitions", isDirectory: true)
-  .appendingPathComponent("ast.letitgo", isDirectory: false)
-let letitgoContent = try! String(contentsOf: letitgoFile, encoding: .utf8)
 
-let sourcesDir = elsaDir.deletingLastPathComponent()
-let parserDir = sourcesDir.appendingPathComponent("Parser")
+let sourcesDir  = elsaDir.deletingLastPathComponent()
+let parserDir   = sourcesDir.appendingPathComponent("Parser")
+let bytecodeDir = sourcesDir.appendingPathComponent("Bytecode")
 
-let testsDir = elsaDir
-  .deletingLastPathComponent()
-  .deletingLastPathComponent()
-  .appendingPathComponent("Tests")
+let rootDir = sourcesDir.deletingLastPathComponent()
+let testsDir = rootDir .appendingPathComponent("Tests")
 let parserTestsDir = testsDir.appendingPathComponent("ParserTests")
 
-let lexer = Lexer(source: letitgoContent)
-var parser = Parser(lexer: lexer)
-let entities = parser.parse()
+private func redirectStdout(to path: String) {
+  freopen(path, "w", stdout)
+}
 
-// MARK: - Code
+private func parseLetItGo(file: URL)  -> [Entity] {
+  let content = try! String(contentsOf: file, encoding: .utf8)
+  let lexer = Lexer(source: content)
+  var parser = Parser(lexer: lexer)
+  return parser.parse()
+}
 
-let astFile = parserDir.appendingPathComponent("AST.swift")
-freopen(astFile.path, "w", stdout)
+private func generateAST() {
+  let input = rootDir
+    .appendingPathComponent("Definitions", isDirectory: true)
+    .appendingPathComponent("ast.letitgo", isDirectory: false)
 
-emitHeader(sourceFile: letitgoFile, command: "ast")
-emitCode(entities: entities)
+  let entities = parseLetItGo(file: input)
 
-// MARK: - Pass
+  // Nodes
+  let astFile = parserDir.appendingPathComponent("AST.swift")
+  redirectStdout(to: astFile.path)
+  emitHeader(sourceFile: input, command: "ast")
+  emitCode(entities: entities)
 
-//let passFile = parserDir.appendingPathComponent("ASTValidationPass.swift")
-//freopen(passFile.path, "w", stdout)
+  // Pass
+  // let passFile = parserDir.appendingPathComponent("ASTValidationPass.swift")
+  // redirectStdout(to: passFile.path)
+  // emitPass(entities: entities)
 
-//emitPass(entities: entities)
+  // Destruct
+  let destructFile = parserTestsDir
+    .appendingPathComponent("Helpers")
+    .appendingPathComponent("Destruct.swift")
+  redirectStdout(to: destructFile.path)
+  emitHeader(sourceFile: input, command: "ast-destruct")
+  emitAstDestruction(entities: entities)
+}
 
-// MARK: - Destruct
+// MARK: - Bytecode - opcodes
 
-let destructFile = parserTestsDir
-  .appendingPathComponent("Helpers")
-  .appendingPathComponent("Destruct.swift")
-freopen(destructFile.path, "w", stdout)
-
-emitHeader(sourceFile: letitgoFile, command: "ast-destruct")
-emitAstDestruction(entities: entities)
+//let astFile = parserDir.appendingPathComponent("AST.swift")
+//freopen(astFile.path, "w", stdout)
+//
+//emitHeader(sourceFile: letitgoFile, command: "ast")
+//emitCode(entities: entities)
