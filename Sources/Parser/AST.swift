@@ -371,7 +371,7 @@ public indirect enum ExpressionKind: Equatable {
   case ellipsis
   case identifier(String)
   case string(StringGroup)
-  case int(PyInt)
+  case int(BigInt)
   case float(Double)
   case complex(real: Double, imag: Double)
   case bytes(Data)

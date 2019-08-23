@@ -5,7 +5,8 @@ import Lexer
 
 // swiftlint:disable file_length
 
-class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKind {
+class TrailerTests: XCTestCase,
+Common, DestructExpressionKind, DestructSliceKind {
 
   // MARK: - Attribute
 
@@ -67,16 +68,16 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
   /// a[1]
   func test_subscript_index() {
     var parser = self.createExprParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.leftSqb,         start: loc2, end: loc3),
-      self.token(.int(PyInt(1)),   start: loc4, end: loc5),
-      self.token(.rightSqb,        start: loc6, end: loc7)
+      self.token(.identifier("a"),  start: loc0, end: loc1),
+      self.token(.leftSqb,          start: loc2, end: loc3),
+      self.token(.int(BigInt(1)),   start: loc4, end: loc5),
+      self.token(.rightSqb,         start: loc6, end: loc7)
     )
 
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptIndex(expr) else { return }
 
-      XCTAssertEqual(d.1, Expression(.int(PyInt(1)), start: loc4, end: loc5))
+      XCTAssertEqual(d.1, Expression(.int(BigInt(1)), start: loc4, end: loc5))
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc7)
 
@@ -89,20 +90,20 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
   /// a[1,2]
   func test_subscript_index_tuple() {
     var parser = self.createExprParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.leftSqb,         start: loc2, end: loc3),
-      self.token(.int(PyInt(1)),   start: loc4, end: loc5),
-      self.token(.comma,           start: loc6, end: loc7),
-      self.token(.int(PyInt(2)),   start: loc8, end: loc9),
-      self.token(.rightSqb,        start: loc10, end: loc11)
+      self.token(.identifier("a"),  start: loc0, end: loc1),
+      self.token(.leftSqb,          start: loc2, end: loc3),
+      self.token(.int(BigInt(1)),   start: loc4, end: loc5),
+      self.token(.comma,            start: loc6, end: loc7),
+      self.token(.int(BigInt(2)),   start: loc8, end: loc9),
+      self.token(.rightSqb,         start: loc10, end: loc11)
     )
 
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptIndex(expr) else { return }
 
       let tuple = ExpressionKind.tuple([
-        Expression(.int(PyInt(1)), start: loc4, end: loc5),
-        Expression(.int(PyInt(2)), start: loc8, end: loc9)
+        Expression(.int(BigInt(1)), start: loc4, end: loc5),
+        Expression(.int(BigInt(2)), start: loc8, end: loc9)
       ])
 
       XCTAssertEqual(d.1, Expression(tuple, start: loc4, end: loc9))
@@ -118,18 +119,18 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
   /// a[1,]
   func test_subscript_index_withCommaAfter_isTuple() {
     var parser = self.createExprParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.leftSqb,         start: loc2, end: loc3),
-      self.token(.int(PyInt(1)),   start: loc4, end: loc5),
-      self.token(.comma,           start: loc6, end: loc7),
-      self.token(.rightSqb,        start: loc8, end: loc9)
+      self.token(.identifier("a"),  start: loc0, end: loc1),
+      self.token(.leftSqb,          start: loc2, end: loc3),
+      self.token(.int(BigInt(1)),   start: loc4, end: loc5),
+      self.token(.comma,            start: loc6, end: loc7),
+      self.token(.rightSqb,         start: loc8, end: loc9)
     )
 
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptIndex(expr) else { return }
 
       let tuple = ExpressionKind.tuple([
-        Expression(.int(PyInt(1)), start: loc4, end: loc5)
+        Expression(.int(BigInt(1)), start: loc4, end: loc5)
       ])
 
       XCTAssertEqual(d.1, Expression(tuple, start: loc4, end: loc5))
@@ -172,17 +173,17 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
   /// a[1:]
   func test_subscript_slice_lower() {
     var parser = self.createExprParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.leftSqb,         start: loc2, end: loc3),
-      self.token(.int(PyInt(1)),   start: loc4, end: loc5),
-      self.token(.colon,           start: loc6, end: loc7),
-      self.token(.rightSqb,        start: loc8, end: loc9)
+      self.token(.identifier("a"),  start: loc0, end: loc1),
+      self.token(.leftSqb,          start: loc2, end: loc3),
+      self.token(.int(BigInt(1)),   start: loc4, end: loc5),
+      self.token(.colon,            start: loc6, end: loc7),
+      self.token(.rightSqb,         start: loc8, end: loc9)
     )
 
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptSlice(expr) else { return }
 
-      XCTAssertEqual(d.lower, Expression(.int(PyInt(1)), start: loc4, end: loc5))
+      XCTAssertEqual(d.lower, Expression(.int(BigInt(1)), start: loc4, end: loc5))
       XCTAssertNil(d.upper)
       XCTAssertNil(d.step)
       XCTAssertEqual(d.slice.start, loc2)
@@ -200,7 +201,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.leftSqb,         start: loc2, end: loc3),
       self.token(.colon,           start: loc4, end: loc5),
-      self.token(.int(PyInt(2)),   start: loc6, end: loc7),
+      self.token(.int(BigInt(2)),   start: loc6, end: loc7),
       self.token(.colon,           start: loc8, end: loc9),
       self.token(.rightSqb,        start: loc10, end: loc11)
     )
@@ -209,7 +210,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       guard let d = self.destructSubscriptSlice(expr) else { return }
 
       XCTAssertNil(d.lower)
-      XCTAssertEqual(d.upper, Expression(.int(PyInt(2)), start: loc6, end: loc7))
+      XCTAssertEqual(d.upper, Expression(.int(BigInt(2)), start: loc6, end: loc7))
       XCTAssertNil(d.step)
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc11)
@@ -223,12 +224,12 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
   /// a[::3]
   func test_subscript_slice_step() {
     var parser = self.createExprParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.leftSqb,         start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.colon,           start: loc6, end: loc7),
-      self.token(.int(PyInt(3)),   start: loc8, end: loc9),
-      self.token(.rightSqb,        start: loc10, end: loc11)
+      self.token(.identifier("a"),  start: loc0, end: loc1),
+      self.token(.leftSqb,          start: loc2, end: loc3),
+      self.token(.colon,            start: loc4, end: loc5),
+      self.token(.colon,            start: loc6, end: loc7),
+      self.token(.int(BigInt(3)),   start: loc8, end: loc9),
+      self.token(.rightSqb,         start: loc10, end: loc11)
     )
 
     if let expr = self.parseExpr(&parser) {
@@ -236,7 +237,7 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
 
       XCTAssertNil(d.lower)
       XCTAssertNil(d.upper)
-      XCTAssertEqual(d.step, Expression(.int(PyInt(3)), start: loc8, end: loc9))
+      XCTAssertEqual(d.step, Expression(.int(BigInt(3)), start: loc8, end: loc9))
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc11)
 
@@ -249,22 +250,22 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
   /// a[1:2:3]
   func test_subscript_slice_all() {
     var parser = self.createExprParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.leftSqb,         start: loc2, end: loc3),
-      self.token(.int(PyInt(1)),   start: loc4, end: loc5),
-      self.token(.colon,           start: loc6, end: loc7),
-      self.token(.int(PyInt(2)),   start: loc8, end: loc9),
-      self.token(.colon,           start: loc10, end: loc11),
-      self.token(.int(PyInt(3)),   start: loc12, end: loc13),
-      self.token(.rightSqb,        start: loc14, end: loc15)
+      self.token(.identifier("a"),  start: loc0, end: loc1),
+      self.token(.leftSqb,          start: loc2, end: loc3),
+      self.token(.int(BigInt(1)),   start: loc4, end: loc5),
+      self.token(.colon,            start: loc6, end: loc7),
+      self.token(.int(BigInt(2)),   start: loc8, end: loc9),
+      self.token(.colon,            start: loc10, end: loc11),
+      self.token(.int(BigInt(3)),   start: loc12, end: loc13),
+      self.token(.rightSqb,         start: loc14, end: loc15)
     )
 
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructSubscriptSlice(expr) else { return }
 
-      XCTAssertEqual(d.lower, Expression(.int(PyInt(1)), start: loc4, end: loc5))
-      XCTAssertEqual(d.upper, Expression(.int(PyInt(2)), start: loc8, end: loc9))
-      XCTAssertEqual(d.step,  Expression(.int(PyInt(3)), start: loc12, end: loc13))
+      XCTAssertEqual(d.lower, Expression(.int(BigInt(1)), start: loc4, end: loc5))
+      XCTAssertEqual(d.upper, Expression(.int(BigInt(2)), start: loc8, end: loc9))
+      XCTAssertEqual(d.step,  Expression(.int(BigInt(3)), start: loc12, end: loc13))
       XCTAssertEqual(d.slice.start, loc2)
       XCTAssertEqual(d.slice.end,   loc15)
 
@@ -279,13 +280,13 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
   /// a[1:,2]
   func test_subscript_extSlice() {
     var parser = self.createExprParser(
-      self.token(.identifier("a"), start: loc0, end: loc1),
-      self.token(.leftSqb,         start: loc2, end: loc3),
-      self.token(.int(PyInt(1)),   start: loc4, end: loc5),
-      self.token(.colon,           start: loc6, end: loc7),
-      self.token(.comma,           start: loc8, end: loc9),
-      self.token(.int(PyInt(2)),   start: loc10, end: loc11),
-      self.token(.rightSqb,        start: loc12, end: loc13)
+      self.token(.identifier("a"),  start: loc0, end: loc1),
+      self.token(.leftSqb,          start: loc2, end: loc3),
+      self.token(.int(BigInt(1)),   start: loc4, end: loc5),
+      self.token(.colon,            start: loc6, end: loc7),
+      self.token(.comma,            start: loc8, end: loc9),
+      self.token(.int(BigInt(2)),   start: loc10, end: loc11),
+      self.token(.rightSqb,         start: loc12, end: loc13)
     )
 
     if let expr = self.parseExpr(&parser) {
@@ -295,12 +296,12 @@ class TrailerTests: XCTestCase, Common, DestructExpressionKind, DestructSliceKin
       guard d.1.count == 2 else { return }
 
       let dim0 = d.1[0]
-      let dim0Lower = Expression(.int(PyInt(1)), start: loc4, end: loc5)
+      let dim0Lower = Expression(.int(BigInt(1)), start: loc4, end: loc5)
       let dim0Kind = SliceKind.slice(lower: dim0Lower, upper: nil, step: nil)
       XCTAssertEqual(dim0.kind, dim0Kind)
 
       let dim1 = d.1[1]
-      let dim1Expr = Expression(.int(PyInt(2)), start: loc10, end: loc11)
+      let dim1Expr = Expression(.int(BigInt(2)), start: loc10, end: loc11)
       let dim1Kind = SliceKind.index(dim1Expr)
       XCTAssertEqual(dim1.kind, dim1Kind)
 

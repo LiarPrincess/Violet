@@ -2,11 +2,11 @@
 // There is no limit for the length of integer literals apart
 // from what can be stored in available memory.
 
-public struct PyInt: Equatable, Hashable {
+public struct BigInt: Equatable, Hashable {
 
   // Range: <-Int64.max, Int64.max> due to '-' being unary operator.
-  public static let min = PyInt(-Int64.max)
-  public static let max = PyInt(Int64.max)
+  public static let min = BigInt(-Int64.max)
+  public static let max = BigInt(Int64.max)
 
   private let value: Int64
 
@@ -27,7 +27,7 @@ public struct PyInt: Equatable, Hashable {
   }
 }
 
-extension PyInt: CustomStringConvertible {
+extension BigInt: CustomStringConvertible {
   public var description: String {
     return String(describing: self.value)
   }

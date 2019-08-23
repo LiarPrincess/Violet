@@ -6,7 +6,7 @@ public enum NotImplemented: Error, Equatable {
   case encodingOtherThanUTF8(String)
 
   /// Since we dont have BigInts in Swift integers outside of
-  /// `<PyInt.min, PyInt.max>` range are not currently supported.
+  /// `<BigInt.min, BigInt.max>` range are not currently supported.
   case unlimitedInteger
 
   /// Escapes in form of `\N{UNICODE_NAME}` (for example: `\N{Em Dash}`)
@@ -34,7 +34,7 @@ extension NotImplemented: CustomStringConvertible {
       return "Encoding '\(encoding)' is not currently supported (only UTF-8 is)."
 
     case.unlimitedInteger:
-      return "Integers outside of <\(PyInt.min), \(PyInt.max)> range " +
+      return "Integers outside of <\(BigInt.min), \(BigInt.max)> range " +
              "are not currently supported."
 
     case .stringNamedEscape:

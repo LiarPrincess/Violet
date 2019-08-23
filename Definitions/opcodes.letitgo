@@ -9,14 +9,14 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 -}
 
 {- TODO: Real types -}
-@struct Count = ()
-@struct Counts = ()
-@struct VarNum = ()
-@struct I = ()
-@struct Delta = ()
-@struct Flags = ()
-@struct Target = ()
-@struct BigInt = ()
+@enum Count = NotImplemented
+@enum Counts = NotImplemented
+@enum VarNum = NotImplemented
+@enum I = NotImplemented
+@enum Delta = NotImplemented
+@enum Flags = NotImplemented
+@enum Target = NotImplemented
+@enum BigInt = NotImplemented
 
 @enum Constant =
   Integer(BigInt)

@@ -369,18 +369,18 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   /// `f(lambda x: x[0] = 3)`
   func test_keyword_lambda_assignment_throws() {
     var parser = self.createExprParser(
-      self.token(.identifier("f"), start: loc0, end: loc1),
-      self.token(.leftParen,       start: loc2, end: loc3),
-      self.token(.lambda,          start: loc4, end: loc5),
-      self.token(.identifier("x"), start: loc6, end: loc7),
-      self.token(.colon,           start: loc8, end: loc9),
-      self.token(.identifier("x"), start: loc10, end: loc11),
-      self.token(.leftSqb,         start: loc12, end: loc13),
-      self.token(.int(PyInt(0)),   start: loc14, end: loc15),
-      self.token(.rightSqb,        start: loc16, end: loc17),
-      self.token(.equal,           start: loc18, end: loc19),
-      self.token(.int(PyInt(3)),   start: loc20, end: loc21),
-      self.token(.rightParen,      start: loc22, end: loc23)
+      self.token(.identifier("f"),  start: loc0, end: loc1),
+      self.token(.leftParen,        start: loc2, end: loc3),
+      self.token(.lambda,           start: loc4, end: loc5),
+      self.token(.identifier("x"),  start: loc6, end: loc7),
+      self.token(.colon,            start: loc8, end: loc9),
+      self.token(.identifier("x"),  start: loc10, end: loc11),
+      self.token(.leftSqb,          start: loc12, end: loc13),
+      self.token(.int(BigInt(0)),   start: loc14, end: loc15),
+      self.token(.rightSqb,         start: loc16, end: loc17),
+      self.token(.equal,            start: loc18, end: loc19),
+      self.token(.int(BigInt(3)),   start: loc20, end: loc21),
+      self.token(.rightParen,       start: loc22, end: loc23)
     )
 
     if let error = self.error(&parser) {
@@ -392,12 +392,12 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
   /// f(3=1)
   func test_keyword_invalidName_throws() {
     var parser = self.createExprParser(
-      self.token(.identifier("f"), start: loc0, end: loc1),
-      self.token(.leftParen,       start: loc2, end: loc3),
-      self.token(.int(PyInt(3)),   start: loc4, end: loc5),
-      self.token(.equal,           start: loc6, end: loc7),
-      self.token(.int(PyInt(1)),   start: loc8, end: loc9),
-      self.token(.rightParen,      start: loc10, end: loc11)
+      self.token(.identifier("f"),  start: loc0, end: loc1),
+      self.token(.leftParen,        start: loc2, end: loc3),
+      self.token(.int(BigInt(3)),   start: loc4, end: loc5),
+      self.token(.equal,            start: loc6, end: loc7),
+      self.token(.int(BigInt(1)),   start: loc8, end: loc9),
+      self.token(.rightParen,       start: loc10, end: loc11)
     )
 
     if let error = self.error(&parser) {

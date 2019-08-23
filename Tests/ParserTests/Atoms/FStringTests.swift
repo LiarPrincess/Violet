@@ -136,7 +136,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     let group = try string.compile()
     if let d = self.destructStringFormattedValue(group) {
       guard let pyInt = self.destructInt(d.0) else { return }
-      XCTAssertEqual(pyInt, PyInt(2_013))
+      XCTAssertEqual(pyInt, BigInt(2_013))
 
       XCTAssertExpression(d.0, "2013")
       XCTAssertEqual(d.conversion, nil)

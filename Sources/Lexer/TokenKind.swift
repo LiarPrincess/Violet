@@ -11,7 +11,7 @@ public enum TokenKind: Equatable, Hashable {
   case string(String)
   case formatString(String)
 
-  case int(PyInt)
+  case int(BigInt)
   case float(Double)
   case imaginary(Double)
 

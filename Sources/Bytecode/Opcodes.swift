@@ -13,60 +13,44 @@ import Lexer
 // swiftlint:disable trailing_newline
 // swiftlint:disable vertical_whitespace_closing_braces
 
-public struct Count: Equatable {
+public enum Count: Equatable {
+  case notImplemented
 
-
-  public init() {
-  }
 }
 
-public struct Counts: Equatable {
+public enum Counts: Equatable {
+  case notImplemented
 
-
-  public init() {
-  }
 }
 
-public struct VarNum: Equatable {
+public enum VarNum: Equatable {
+  case notImplemented
 
-
-  public init() {
-  }
 }
 
-public struct I: Equatable {
+public enum I: Equatable {
+  case notImplemented
 
-
-  public init() {
-  }
 }
 
-public struct Delta: Equatable {
+public enum Delta: Equatable {
+  case notImplemented
 
-
-  public init() {
-  }
 }
 
-public struct Flags: Equatable {
+public enum Flags: Equatable {
+  case notImplemented
 
-
-  public init() {
-  }
 }
 
-public struct Target: Equatable {
+public enum Target: Equatable {
+  case notImplemented
 
-
-  public init() {
-  }
 }
 
-public struct BigInt: Equatable {
+public enum BigInt: Equatable {
+  case notImplemented
 
-
-  public init() {
-  }
 }
 
 public enum Constant: Equatable {

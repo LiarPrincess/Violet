@@ -45,7 +45,7 @@ class AtomTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   func test_int() {
-    let value = PyInt(42)
+    let value = BigInt(42)
 
     var parser = self.createExprParser(
       self.token(.int(value), start: loc0, end: loc1)
@@ -99,7 +99,7 @@ class AtomTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   func test_await() {
-    let value = PyInt(42)
+    let value = BigInt(42)
 
     var parser = self.createExprParser(
       self.token(.await,      start: loc0, end: loc1),

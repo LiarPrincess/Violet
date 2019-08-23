@@ -137,10 +137,10 @@ extension Lexer {
 
   private func parseInt<T: NumberBase>(_ scalars: UnicodeScalarView.SubSequence,
                                        base: T.Type,
-                                       start: SourceLocation) throws -> PyInt {
+                                       start: SourceLocation) throws -> BigInt {
 
     let string = self.toNumberString(scalars)
-    guard let value = PyInt(string, radix: base.radix) else {
+    guard let value = BigInt(string, radix: base.radix) else {
       // After we add proper ints:
       // let kind = LexerErrorKind.unableToParseInteger(base.type, string)
       // throw self.error(kind, location: start)

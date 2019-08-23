@@ -13,7 +13,7 @@ class ArithmeticExprTests: XCTestCase, Common, DestructExpressionKind {
     ]
 
     for (token, op) in variants {
-      let value = PyInt(42)
+      let value = BigInt(42)
 
       var parser = self.createExprParser(
         self.token(token,       start: loc0, end: loc1),

@@ -8,7 +8,7 @@ Most of the documentation was taken from:
 https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -}
 
-@alias int = PyInt
+@alias int = BigInt
 @alias identifier = String
 @alias string     = String
 @alias object   = Any
@@ -234,7 +234,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 {- Literals -}
   | Identifier(String)
   | String(StringGroup)
-  | Int(PyInt)
+  | Int(BigInt)
   | Float(Double)
   | Complex(Double real, Double imag)
   | Bytes(Data)

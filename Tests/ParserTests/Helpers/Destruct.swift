@@ -389,7 +389,7 @@ extension DestructExpressionKind {
   internal func destructInt(_ expr: Expression,
                             file: StaticString = #file,
                             line: UInt         = #line) ->
-    (PyInt)? {
+    (BigInt)? {
 
     if case let ExpressionKind.int(value0) = expr.kind {
       return (value0)

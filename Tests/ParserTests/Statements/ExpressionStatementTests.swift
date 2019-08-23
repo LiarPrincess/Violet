@@ -125,9 +125,9 @@ class ExpressionStatementTests: XCTestCase,
   /// 3 += "Ursula"
   func test_augAssign_toConstants_throws() {
     var parser = self.createStmtParser(
-      self.token(.int(PyInt(3)),    start: loc0, end: loc1),
-      self.token(.plusEqual,        start: loc2, end: loc3),
-      self.token(.string("Ursula"), start: loc4, end: loc5)
+      self.token(.int(BigInt(3)),    start: loc0, end: loc1),
+      self.token(.plusEqual,         start: loc2, end: loc3),
+      self.token(.string("Ursula"),  start: loc4, end: loc5)
     )
 
     if let error = self.error(&parser) {
@@ -289,11 +289,11 @@ class ExpressionStatementTests: XCTestCase,
   /// 3:Witch = "Ursula"
   func test_annAssign_toConstants_throws() {
     var parser = self.createStmtParser(
-      self.token(.int(PyInt(3)),       start: loc0, end: loc1),
-      self.token(.colon,               start: loc2, end: loc3),
-      self.token(.identifier("Witch"), start: loc4, end: loc5),
-      self.token(.equal,               start: loc6, end: loc7),
-      self.token(.string("Ursula"),    start: loc8, end: loc9)
+      self.token(.int(BigInt(3)),       start: loc0, end: loc1),
+      self.token(.colon,                start: loc2, end: loc3),
+      self.token(.identifier("Witch"),  start: loc4, end: loc5),
+      self.token(.equal,                start: loc6, end: loc7),
+      self.token(.string("Ursula"),     start: loc8, end: loc9)
     )
 
     if let error = self.error(&parser) {

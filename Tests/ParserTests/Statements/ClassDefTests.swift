@@ -446,21 +446,21 @@ class ClassDefTests: XCTestCase,
   /// I have no idea what would that even mean in class context.
   func test_keyword_lambda_assignment_throws() {
     var parser = self.createStmtParser(
-      self.token(.class,                  start: loc0, end: loc1),
-      self.token(.identifier("Aurora"),   start: loc2, end: loc3),
-      self.token(.leftParen,              start: loc4, end: loc5),
-      self.token(.lambda,                 start: loc6, end: loc7),
-      self.token(.identifier("x"),        start: loc8, end: loc9),
-      self.token(.colon,                  start: loc10, end: loc11),
-      self.token(.identifier("x"),        start: loc12, end: loc13),
-      self.token(.leftSqb,                start: loc14, end: loc15),
-      self.token(.int(PyInt(0)),          start: loc16, end: loc17),
-      self.token(.rightSqb,               start: loc18, end: loc19),
-      self.token(.equal,                  start: loc20, end: loc21),
-      self.token(.int(PyInt(3)),          start: loc20, end: loc21),
-      self.token(.rightParen,             start: loc22, end: loc23),
-      self.token(.colon,                  start: loc24, end: loc25),
-      self.token(.string("Sleep"),        start: loc26, end: loc27)
+      self.token(.class,                   start: loc0, end: loc1),
+      self.token(.identifier("Aurora"),    start: loc2, end: loc3),
+      self.token(.leftParen,               start: loc4, end: loc5),
+      self.token(.lambda,                  start: loc6, end: loc7),
+      self.token(.identifier("x"),         start: loc8, end: loc9),
+      self.token(.colon,                   start: loc10, end: loc11),
+      self.token(.identifier("x"),         start: loc12, end: loc13),
+      self.token(.leftSqb,                 start: loc14, end: loc15),
+      self.token(.int(BigInt(0)),          start: loc16, end: loc17),
+      self.token(.rightSqb,                start: loc18, end: loc19),
+      self.token(.equal,                   start: loc20, end: loc21),
+      self.token(.int(BigInt(3)),          start: loc20, end: loc21),
+      self.token(.rightParen,              start: loc22, end: loc23),
+      self.token(.colon,                   start: loc24, end: loc25),
+      self.token(.string("Sleep"),         start: loc26, end: loc27)
     )
 
     if let error = self.error(&parser) {
@@ -472,15 +472,15 @@ class ClassDefTests: XCTestCase,
   /// class Aurora(3=1): "Sleep"
   func test_keyword_invalidName_throws() {
     var parser = self.createStmtParser(
-      self.token(.class,                  start: loc0, end: loc1),
-      self.token(.identifier("Aurora"),   start: loc2, end: loc3),
-      self.token(.leftParen,              start: loc4, end: loc5),
-      self.token(.int(PyInt(3)),          start: loc6, end: loc7),
-      self.token(.equal,                  start: loc8, end: loc9),
-      self.token(.int(PyInt(1)),          start: loc10, end: loc11),
-      self.token(.rightParen,             start: loc12, end: loc13),
-      self.token(.colon,                  start: loc14, end: loc15),
-      self.token(.string("Sleep"),        start: loc16, end: loc17)
+      self.token(.class,                   start: loc0, end: loc1),
+      self.token(.identifier("Aurora"),    start: loc2, end: loc3),
+      self.token(.leftParen,               start: loc4, end: loc5),
+      self.token(.int(BigInt(3)),          start: loc6, end: loc7),
+      self.token(.equal,                   start: loc8, end: loc9),
+      self.token(.int(BigInt(1)),          start: loc10, end: loc11),
+      self.token(.rightParen,              start: loc12, end: loc13),
+      self.token(.colon,                   start: loc14, end: loc15),
+      self.token(.string("Sleep"),         start: loc16, end: loc17)
     )
 
     if let error = self.error(&parser) {
