@@ -8,7 +8,7 @@ let package = Package(
     .macOS(.v10_11)
   ],
   products: [
-    .library(name: "LibViolet", targets: ["Core", "Lexer", "Parser", "Compiler"]),
+    .library(name: "LibViolet", targets: ["Core", "Lexer", "Parser", "Compiler", "Bytecode"]),
     .executable(name: "Violet", targets: ["Main"]),
 
     .executable(name: "Elsa", targets: ["Elsa"])
@@ -25,7 +25,7 @@ let package = Package(
     .target(name: "Parser", dependencies: ["Core", "Lexer"]),
     .testTarget(name: "ParserTests", dependencies: ["Core", "Lexer", "Parser"]),
 
-    .target(name: "Compiler", dependencies: ["Core", "Parser"]),
+    .target(name: "Compiler", dependencies: ["Core", "Parser", "Bytecode"]),
     .testTarget(name: "CompilerTests", dependencies: ["Core", "Parser", "Compiler"]),
 
     .target(name: "Bytecode", dependencies: ["Core"]),

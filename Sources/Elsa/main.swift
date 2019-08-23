@@ -28,9 +28,9 @@ private func generateAST() {
 
   let entities = parseLetItGo(file: input)
 
-  // Nodes
-  let astFile = parserDir.appendingPathComponent("AST.swift")
-  let codeEmitter = CodeEmitter(for: astFile)
+  // Definitions
+  let defFile = parserDir.appendingPathComponent("AST.swift")
+  let codeEmitter = CodeEmitter(letItGo: input, output: defFile)
   codeEmitter.emit(entities: entities)
 
   // Pass
@@ -42,17 +42,22 @@ private func generateAST() {
   let destructFile = parserTestsDir
     .appendingPathComponent("Helpers")
     .appendingPathComponent("Destruct.swift")
-  let destructEmitter = AstDestructionEmitter(for: destructFile)
+  let destructEmitter = AstDestructionEmitter(letItGo: input, output: destructFile)
   destructEmitter.emit(entities: entities)
 }
 
-//private func generateBytecode() {
-//  let input = rootDir
-//    .appendingPathComponent("Definitions", isDirectory: true)
-//    .appendingPathComponent("opcodes.letitgo", isDirectory: false)
-//
-//  let entities = parseLetItGo(file: input)
-//}
+private func generateBytecode() {
+  let input = rootDir
+    .appendingPathComponent("Definitions", isDirectory: true)
+    .appendingPathComponent("opcodes.letitgo", isDirectory: false)
+
+  let entities = parseLetItGo(file: input)
+
+  // Definitions
+  let defFile = bytecodeDir.appendingPathComponent("Opcodes.swift")
+  let codeEmitter = CodeEmitter(letItGo: input, output: defFile)
+  codeEmitter.emit(entities: entities)
+}
 
 generateAST()
-//generateBytecode()
+generateBytecode()

@@ -8,17 +8,27 @@ CPython bytecode is defined in: Lib -> opcode.py.
 Docs from: https://docs.python.org/3.7/library/dis.html
 -}
 
+{- TODO: Real types -}
+@struct Count = ()
+@struct Counts = ()
+@struct VarNum = ()
+@struct I = ()
+@struct Delta = ()
+@struct Flags = ()
+@struct Target = ()
+@struct BigInt = ()
+
 @enum Constant =
   Integer(BigInt)
   | Float(Double)
-  {- TODO: | Complex(value: Complex64) -}
+  | Complex(Double real, Double imag)
   | Boolean(Bool)
   | String(String)
   | Bytes(Data)
   {- TODO: | Code(code: Box<CodeObject>) -}
   | Tuple(Constant*)
-  | None,
-  | Ellipsis,
+  | None
+  | Ellipsis
 
 @enum ComparisonOperator =
   -- True when two operands are equal.
@@ -41,9 +51,9 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | In
   -- Negation of `x in s`
   | NotIn
-  -- TODO: those
-  | ExceptionMatch
-  | Bad
+  {- TODO: those -}
+  {- | ExceptionMatch -}
+  {- | Bad -}
 
 @enum Bytecode =
 
@@ -143,18 +153,12 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- - generator object with the `CoIterableCoroutine` flag
   -- - `o.Await`
   | GetAwaitable
-  -- Implements `TOS = TOS.Aiter()`.
+  -- Implements `TOS = TOS.AIter()`.
   | GetAIter
-  -- Implements Push(GetAwaitable(TOS.Anext())).
-  -- See GetAwaitable for details about GetAwaitable.
-  {- TODO: Changed in version 3.7: Returning awaitable objects from Aiter is no longer supported. -}
+  -- Implements `Push(GetAwaitable(TOS.ANext()))`.
+  -- See `GetAwaitable` for details.
   | GetANext
-  {- TODO: this is `with` -}
-  -- Resolves `Aenter` and `Aexit` from the object on top of the stack.
-  -- Pushes `Aexit` and result of `Aenter()` to the stack.
-  | BeforeAsyncWith
-  -- Creates a new frame object.
-  | SetupAsyncWith
+  {- TODO: Changed in version 3.7: Returning awaitable objects from AIter is no longer supported. -}
 
 {- ---------- -}
 {- Generators -}
@@ -180,18 +184,16 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Pushes a block for a loop onto the block stack.
   -- The block spans from the current instruction with a size of delta bytes.
-  SetupLoop(delta)
+  | SetupLoop(delta)
 
-  -- TOS is an iterator.
-  -- Call its `Next()` method.
+  -- TOS is an iterator. Call its `Next()` method.
   -- If this `yields` a new value, push it on the stack (leaving the iterator below it).
-  -- If the iterator indicates it is exhausted TOS is popped,
-  -- and the byte code counter is incremented by delta.
-  ForIter(delta)
+  -- If not then TOS is popped, and the byte code counter is incremented by delta.
+  | ForIter(delta)
 
   -- Implements `TOS = iter(TOS)`.
   | GetIter
-    -- If TOS is a generator iterator or coroutine object it is left as is.
+    -- If TOS is a generator iterator or coroutine object then it is left as is.
   -- Otherwise, implements `TOS = iter(TOS)`.
   | GetYieldFromIter
 
@@ -215,7 +217,8 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- and pushes the resulting set onto the stack.
   | BuildSet(count)
   -- Pushes a new dictionary object onto the stack.
-  -- Pops 2 * count items so that the dictionary holds count entries: {..., TOS3: TOS2, TOS1: TOS}.
+  -- Pops 2 * count items so that the dictionary holds count entries:
+  -- {..., TOS3: TOS2, TOS1: TOS}.
   | BuildMap(count)
   -- The version of `BuildMap` specialized for constant keys.
   -- `count` values are consumed from the stack.
@@ -236,7 +239,8 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {-  Unpack  -}
 {- -------- -}
 
-  -- Pops count iterables from the stack, joins them in a single tuple, and pushes the result.
+  -- Pops count iterables from the stack, joins them in a single tuple,
+  -- and pushes the result.
   -- Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
   | BuildTupleUnpack(count)
   -- This is similar to `BuildTupleUnpack`, but is used for `f(*x, *y, *z)` call syntax.
@@ -251,7 +255,8 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Implements iterable unpacking in set displays `{*x, *y, *z}`.
   | BuildSetUnpack(count)
 
-  -- Pops count mappings from the stack, merges them into a single dictionary, and pushes the result.
+  -- Pops count mappings from the stack, merges them into a single dictionary,
+  -- and pushes the result.
   -- Implements dictionary unpacking in dictionary displays `{**x, **y, **z}`.
   | BuildMapUnpack(count)
   -- This is similar to `BuildMapUnpack`, but is used for `f(**x, **y, **z)` call syntax.
@@ -260,18 +265,18 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Unpacks TOS into count individual values,
   -- which are put onto the stack right-to-left.
-  UnpackSequence(count)
+  | UnpackSequence(count)
 
   -- Implements assignment with a starred target:
   --
-  -- Unpacks an iterable in TOS into individual values,
-  -- where the total number of values can be smaller than the number of items in the iterable:
+  -- Unpacks an iterable in TOS into individual values, where the total number
+  -- of values can be smaller than the number of items in the iterable:
   -- one of the new values will be a list of all leftover items.
   --
   -- The low byte of counts is the number of values before the list value,
   -- the high byte of counts the number of values after it.
   -- The resulting values are put onto the stack right-to-left.
-  UnpackEx(counts)
+  | UnpackEx(counts)
 
 {- --------------------- -}
 {-  Store, load, delete  -}
@@ -301,25 +306,25 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Works as DeleteName, but deletes a global name.
   | DeleteGlobal(String)
 
-  -- TODO: Pushes a reference to the local CoVarnames[VarNum] onto the stack.
+  {- TODO: Pushes a reference to the local CoVarnames[VarNum] onto the stack. -}
   | LoadFast(VarNum)
-  -- TODO: Stores TOS into the local CoVarnames[VarNum].
+  {- TODO: Stores TOS into the local CoVarnames[VarNum]. -}
   | StoreFast(VarNum)
-  -- TODO: Deletes local CoVarnames[VarNum].
+  {- TODO: Deletes local CoVarnames[VarNum]. -}
   | DeleteFast(VarNum)
 
   -- Loads the cell contained in slot i of the cell and free variable storage.
   -- Pushes a reference to the object the cell contains on the stack.
-  LoadDeref(i)
+  | LoadDeref(i)
   -- Stores TOS into the cell contained in slot i of the cell and free variable storage.
-  StoreDeref(i)
+  | StoreDeref(i)
   -- Empties the cell contained in slot i of the cell and free variable storage.
   -- Used by the del statement.
-  DeleteDeref(i)
+  | DeleteDeref(i)
 
   -- Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
   -- This is used for loading free variables in class bodies.
-  LoadClassderef(i)
+  | LoadClassderef(i)
 
 {- ---------- -}
 {-  Function  -}
@@ -333,56 +338,56 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- - `0x02` - a dictionary of keyword-only parameters’ default values
   -- - `0x04` - an annotation dictionary
   -- - `0x08` - a tuple containing cells for free variables, making a closure
-  -- - the code associated with the function (at TOS1)
-  -- - the qualified name of the function (at TOS)
-  MakeFunction(argc)
+  -- the code associated with the function (at TOS1)
+  -- the qualified name of the function (at TOS)
+  | MakeFunction(UInt argc)
 
   -- Calls a callable object with positional arguments.
   -- `argc` indicates the number of positional arguments.
   --
-  -- Stack layout (assuming stack that grows down):
-  -- - callable object to call.
+  -- Stack layout (1st item means TOS):
   -- - positional arguments, with the right-most argument on top
+  -- - callable object to call.
   --
   -- It will:
   -- 1. pop all arguments and the callable object off the stack
   -- 2. call the callable object with those arguments
   -- 3. push the return value returned by the callable object
-  -- TODO: This opcode is used only for calls with positional arguments.
-  CallFunction(UInt argc)
+  {- TODO: This opcode is used only for calls with positional arguments. -}
+  | CallFunction(UInt argc)
 
   -- Calls a callable object with positional (if any) and keyword arguments.
   -- `argc` indicates the total number of positional and keyword arguments.
   --
-  -- Stack layout (assuming stack that grows down):
-  -- - callable object to call.
-  -- - positional arguments, with the right-most parameter on top
-  -- - keyword arguments in the order corresponding to the tuple
+  -- Stack layout (1st item means TOS):
   -- - tuple of keyword argument names
+  -- - keyword arguments in the order corresponding to the tuple
+  -- - positional arguments, with the right-most parameter on top
+  -- - callable object to call.
   --
   -- It will:
   -- 1. pop all arguments and the callable object off the stack
   -- 2. call the callable object with those arguments
   -- 3. push the return value returned by the callable object.
-  -- TODO: Changed in version 3.6: Keyword arguments are packed in a tuple instead of a dictionary, argc indicates the total number of arguments.
-  CallFunctionKw(UInt argc)
+  {- TODO: Changed in version 3.6: Keyword arguments are packed in a tuple instead of a dictionary, argc indicates the total number of arguments. -}
+  | CallFunctionKw(UInt argc)
 
   -- Calls a callable object with variable set of positional and keyword arguments.
   --
-  -- Stack layout (assuming stack that grows down):
-  -- - iterable object containing positional arguments and a callable object to call
+  -- Stack layout (1st item means TOS):
   -- - (if `hasKeywordArguments` is set) mapping object containing keyword arguments
+  -- - iterable object containing positional arguments and a callable object to call
   --
   -- `BuildmapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
   -- merging multiple mapping objects and iterables containing arguments.
   --
-  -- It will
+  -- It will:
   -- 1. pop all arguments and the callable object off the stack
   -- 2. mapping object and iterable object are each “unpacked” and their
   -- contents is passed in as keyword and positional arguments respectively
   -- 3. call the callable object with those arguments
   -- 4. push the return value returned by the callable object
-  CallFunctionEx(Bool hasKeywordArguments)
+  | CallFunctionEx(Bool hasKeywordArguments)
 
   -- Returns with TOS to the caller of the function.
   | ReturnValue
@@ -395,28 +400,31 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Pushes `builtins.BuildClass()` onto the stack.
   -- It is later called by `CallFunction` to construct a class.
-  LoadBuildClass
+  | LoadBuildClass
 
   -- Loads a method named `name` from TOS object.
+  --
   -- TOS is popped and method and TOS are pushed when interpreter can call unbound method directly.
-  -- TOS will be used as the first argument (self) by CallMethod.
+  -- TOS will be used as the first argument (self) by `CallMethod`.
   -- Otherwise, NULL and method is pushed (method is bound method or something else).
-  LoadMethod(String)
+  | LoadMethod(String)
 
   -- Calls a method.
-  -- argc is number of positional arguments.
+  -- `argc` is number of positional arguments.
   -- Keyword arguments are not supported.
+  --
   -- This opcode is designed to be used with `LoadMethod`.
   -- Positional arguments are on top of the stack.
   -- Below them, two items described in `LoadMethod` on the stack.
   -- All of them are popped and return value is pushed.
-  CallMethod(argc)
+  | CallMethod(UInt argc)
 
 {- -------- -}
 {-  Import  -}
 {- -------- -}
 
-  -- Loads all symbols not starting with '_' directly from the module TOS to the local namespace.
+  -- Loads all symbols not starting with '_' directly from the module TOS
+  -- to the local namespace.
   --
   -- The module is popped after loading all names.
   -- This opcode implements `from module import *`.
@@ -424,16 +432,17 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Imports the module `name`.
   --
-  -- TOS and TOS1 are popped and provide the `fromlist` and `level` arguments of Import().
+  -- TOS and TOS1 are popped and provide the `fromlist` and `level` arguments of `Import()`.
   -- The module object is pushed onto the stack.
-  -- The current namespace is not affected:
-  -- for a proper import statement, a subsequent StoreFast instruction modifies the namespace.
+  -- The current namespace is not affected: for a proper import statement,
+  -- a subsequent StoreFast instruction modifies the namespace.
   | ImportName(String)
 
   -- Loads the attribute `name` from the module found in TOS.
   --
-  -- The resulting object is pushed onto the stack, to be subsequently stored by a StoreFast instruction.
-  ImportFrom(String)
+  -- The resulting object is pushed onto the stack,
+  -- to be subsequently stored by a `StoreFast` instruction.
+  | ImportFrom(String)
 
 {- --------- -}
 {- Try/catch -}
@@ -444,27 +453,27 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- as implicitly created when entering an except handler.
   -- In addition to popping extraneous values from the frame stack,
   -- the last three popped values are used to restore the exception state.
-  PopExcept
+  | PopExcept
 
   -- Terminates a finally clause.
   -- The interpreter recalls whether the exception has to be re-raised,
   -- or whether the function returns, and continues with the outer-next block.
-  EndFinally
+  | EndFinally
 
   -- Pushes a try block from a try-except clause onto the block stack.
   -- `delta` points to the first except block.
-  SetupExcept(delta)
+  | SetupExcept(delta)
 
   -- Pushes a try block from a try-except clause onto the block stack.
   -- `delta` points to the finally block.
-  SetupFinally(delta)
+  | SetupFinally(delta)
 
   -- Raises an exception using one of the 3 forms of the raise statement,
   -- depending on the value of argc:
   -- - 0: raise (re-raise previous exception)
   -- - 1: raise TOS (raise exception instance or type at TOS)
   -- - 2: raise TOS1 from TOS (raise exception instance or type at TOS1 with Cause set to TOS)
-  RaiseVarargs(UInt argc)
+  | RaiseVarargs(UInt argc)
 
 {- ---- -}
 {- With -}
@@ -475,14 +484,14 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- It does following operations:
   -- 1.loads `Exit()` from the context manager and pushes it onto the stack for later use by `WithCleanup`.
   -- 2. calls `Enter()`
-  -- 3. block pointing to TODO: `delta` is pushed.
+  {- TODO: `delta below` -}
+  -- 3. block pointing to `delta` is pushed.
   -- 4. the result of calling the enter method is pushed onto the stack.
   --
   -- The next opcode will either ignore it (`PopTop`),
   -- or store it in variable (StoreFast, StoreName, or UnpackSequence).
-  SetupWith(delta)
+  | SetupWith(delta)
 
-  -- TODO: check Swift comment format
   -- Cleans up the stack when a `with` statement block exits.
   --
   -- TOS is the context manager’s `__exit__()` bound method.
@@ -494,35 +503,41 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- In the last case, `TOS(SECOND, THIRD, FOURTH)` is called,
   -- otherwise `TOS(None, None, None)`.
   -- Pushes `SECOND` and result of the call to the stack.
-  WithCleanupStart
+  | WithCleanupStart
 
-  -- TODO: document
+  {- TODO: doc -}
   -- Pops exception type and result of ‘exit’ function call from the stack.
   --
   -- If the stack represents an exception, and the function call returns a ‘true’ value,
   -- this information is “zapped” and replaced with a single WhySilenced to prevent EndFinally from re-raising the exception.
   -- (But non-local gotos will still be resumed.)
-  WithCleanupFinish
+  | WithCleanupFinish
+
+  -- Resolves `AEnter` and `AExit` from the object on top of the stack.
+  -- Pushes `AExit` and result of `AEnter()` to the stack.
+  | BeforeAsyncWith
+  -- Creates a new frame object.
+  | SetupAsyncWith
 
 {- ---- -}
 {- Jump -}
 {- ---- -}
 
-  -- TODO: Probably use Label
+  {- TODO: Probably use Label -}
 
   -- Increments bytecode counter by delta.
-  JumpForward(delta)
+  | JumpForward(delta)
   -- Set bytecode counter to target.
-  JumpAbsolute(target)
+  | JumpAbsolute(target)
 
   -- If TOS is true, sets the bytecode counter to target. TOS is popped.
-  PopJumpIfTrue(target)
+  | PopJumpIfTrue(target)
   -- If TOS is false, sets the bytecode counter to target. TOS is popped.
-  PopJumpIfFalse(target)
+  | PopJumpIfFalse(target)
   -- If TOS is true, sets the bytecode counter to target and leaves TOS on the stack. Otherwise (TOS is false), TOS is popped.
-  JumpIfTrueOrPop(target)
+  | JumpIfTrueOrPop(target)
   -- If TOS is false, sets the bytecode counter to target and leaves TOS on the stack. Otherwise (TOS is true), TOS is popped.
-  JumpIfFalseOrPop(target)
+  | JumpIfFalseOrPop(target)
 
 {- ------ -}
 {- String -}
@@ -539,11 +554,11 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- - `(flags & 0x04) == 0x04`: pop `FmtSpec` from the stack and use it, else use an empty `FmtSpec`.
   -- Formatting is performed using `PyobjectFormat()`.
   -- The result is pushed on the stack.
-  FormatValue(flags)
+  | FormatValue(flags)
 
   -- Concatenates `count` strings from the stack
   -- and pushes the resulting string onto the stack.
-  BuildString(count)
+  | BuildString(count)
 
 {- ----- -}
 {- Other -}
@@ -551,21 +566,21 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Checks whether Annotations is defined in locals(), if not it is set up to an empty dict.
     -- This opcode is only emitted if a class or module body contains variable annotations statically.
-  SetupAnnotations
+  | SetupAnnotations
 
   -- Removes one block from the block stack.
   -- Per frame, there is a stack of blocks, denoting nested loops, try statements, and such.
-  PopBlock
+  | PopBlock
 
   {- TODO: docs -}
   -- Pushes a reference to the cell contained in slot i of the cell and free variable storage.
   -- The name of the variable is CoCellvars[i] if i is less than the length of CoCellvars.
     -- Otherwise it is CoFreevars[i - len(CoCellvars)].
-  LoadClosure(i)
+  | LoadClosure(i)
 
   -- Pushes a slice object on the stack.
   -- `argc` must be 2 or 3.
   -- If it is 2, `slice(TOS1, TOS)` is pushed;
   -- if it is 3, `slice(TOS2, TOS1, TOS)` is pushed.
   -- See the `slice()` built-in function for more information.
-  BuildSlice(argc)
+  | BuildSlice(UInt argc)

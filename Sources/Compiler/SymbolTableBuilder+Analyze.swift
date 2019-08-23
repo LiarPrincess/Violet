@@ -2,7 +2,7 @@
 // Python -> symtable.c
 
 // This is basically 1:1 translation from CPython.
-// It is really complicated (but it does make sense it you spend sometime with it).
+// It is quite complicated (but it does make sense if you spend some time with it).
 
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length

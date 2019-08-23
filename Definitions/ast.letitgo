@@ -78,7 +78,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   --    Other keywords will be passed to the metaclass, as per PEP-3115.
   -- - `starargs` and kwargs are each a single node, as in a function call.
   --    starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass.
-  --    These are removed in Python 3.5 - see below for details.
   -- - `body` is a list of nodes representing the code within the class definition.
   -- - `decoratorList` is a list of nodes, as in `FunctionDef`.
   | ClassDef(identifier name,
