@@ -3,7 +3,11 @@
 import Foundation
 
 let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
-let letitgoFile = elsaDir.appendingPathComponent("ast.letitgo", isDirectory: false)
+let letitgoFile = elsaDir
+  .deletingLastPathComponent()
+  .deletingLastPathComponent()
+  .appendingPathComponent("Definitions", isDirectory: true)
+  .appendingPathComponent("ast.letitgo", isDirectory: false)
 let letitgoContent = try! String(contentsOf: letitgoFile, encoding: .utf8)
 
 let sourcesDir = elsaDir.deletingLastPathComponent()
