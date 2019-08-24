@@ -7,13 +7,13 @@ extension SymbolTableBuilder {
 
   // MARK: - Statement
 
-  internal mutating func visit<S: Sequence>(_ stmts: S) throws where S.Element == Statement {
+  internal func visit<S: Sequence>(_ stmts: S) throws where S.Element == Statement {
     for s in stmts {
       try self.visit(s)
     }
   }
 
-  internal mutating func visit(_ stmt: Statement) throws {
+  internal func visit(_ stmt: Statement) throws {
     switch stmt.kind {
     case let .functionDef(name, args, body, decoratorList, returns),
          let .asyncFunctionDef(name, args, body, decoratorList, returns):
@@ -184,7 +184,7 @@ extension SymbolTableBuilder {
   // MARK: - WithItem
 
   /// symtable_visit_withitem(struct symtable *st, withitem_ty item)
-  private mutating func visit(_ items: NonEmptyArray<WithItem>) throws {
+  private func visit(_ items: NonEmptyArray<WithItem>) throws {
     for i in items {
       try self.visit(i.contextExpr)
       try self.visit(i.optionalVars)
@@ -194,7 +194,7 @@ extension SymbolTableBuilder {
   // MARK: - ExceptHandler
 
   /// symtable_visit_excepthandler(struct symtable *st, excepthandler_ty eh)
-  private mutating func visit(_ handlers: [ExceptHandler]) throws {
+  private func visit(_ handlers: [ExceptHandler]) throws {
     for h in handlers {
       try self.visit(h.type)
       if let name = h.name {
@@ -207,7 +207,7 @@ extension SymbolTableBuilder {
   // MARK: - Alias
 
   /// symtable_visit_alias(struct symtable *st, alias_ty a)
-  private mutating func visit(_ aliases: NonEmptyArray<Alias>) throws {
+  private func visit(_ aliases: NonEmptyArray<Alias>) throws {
     for a in aliases {
       switch a.name {
       case "*":

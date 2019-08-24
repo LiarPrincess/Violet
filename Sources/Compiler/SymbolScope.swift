@@ -57,7 +57,7 @@ public struct SymbolScope {
   }
 }
 
-public struct SymbolInfo: Equatable, Hashable {
+public struct SymbolInfo {
 
   /// Symbol information.
   public let flags: SymbolFlags
@@ -66,7 +66,7 @@ public struct SymbolInfo: Equatable, Hashable {
   public let location: SourceLocation
 }
 
-public struct SymbolFlags: OptionSet, Equatable, Hashable {
+public struct SymbolFlags: OptionSet {
   public let rawValue: UInt16
 
   // MARK: Variable definition (in a current scope)

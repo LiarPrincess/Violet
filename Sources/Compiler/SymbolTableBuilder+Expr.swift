@@ -10,8 +10,8 @@ extension SymbolTableBuilder {
   // MARK: - Expression
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  internal mutating func visit<S: Sequence>(_ exprs: S,
-                                            isAssignmentTarget: Bool = false) throws
+  internal func visit<S: Sequence>(_ exprs: S,
+                                   isAssignmentTarget: Bool = false) throws
     where S.Element == Expression {
 
     for e in exprs {
@@ -20,7 +20,7 @@ extension SymbolTableBuilder {
   }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  internal mutating func visit(_ expr: Expression?) throws {
+  internal func visit(_ expr: Expression?) throws {
     if let e = expr {
       try self.visit(e)
     }
@@ -33,8 +33,8 @@ extension SymbolTableBuilder {
   ///   - isAssignmentTarget: Are we visiting target for an assignment statement?
   /// Used only for: identifiers, attributes, subscripts, starred, lists, tuples
   /// (see `expr_context` in CPython -> Parser -> Python.asdl).
-  internal mutating func visit(_ expr: Expression,
-                               isAssignmentTarget: Bool = false) throws {
+  internal func visit(_ expr: Expression,
+                      isAssignmentTarget: Bool = false) throws {
     switch expr.kind {
     case .true, .false, .none, .ellipsis:
       break
@@ -136,7 +136,7 @@ extension SymbolTableBuilder {
   // MARK: - ComparisonElement
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private mutating func visit(_ elements: NonEmptyArray<ComparisonElement>) throws {
+  private func visit(_ elements: NonEmptyArray<ComparisonElement>) throws {
     for e in elements {
       try self.visit(e.right)
     }
@@ -145,7 +145,7 @@ extension SymbolTableBuilder {
   // MARK: - Slice
 
   /// symtable_visit_slice(struct symtable *st, slice_ty s)
-  private mutating func visit(_ slice: Slice) throws {
+  private func visit(_ slice: Slice) throws {
     switch slice.kind {
     case let .slice(lower, upper, step):
       try self.visit(lower)
@@ -163,7 +163,7 @@ extension SymbolTableBuilder {
   // MARK: - DictionaryElement
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private mutating func visit(_ elements: [DictionaryElement]) throws {
+  private func visit(_ elements: [DictionaryElement]) throws {
     for e in elements {
       switch e {
       case let .unpacking(expr):
@@ -182,11 +182,10 @@ extension SymbolTableBuilder {
   /// - Parameters:
   ///   - elt: element (key in dictionary)
   ///   - value: value in dictionary, nil otherwise
-  private mutating func visitComprehension(
-    elt:   Expression,
-    value: Expression?,
-    generators: NonEmptyArray<Comprehension>,
-    kind: ComprehensionKind) throws {
+  private func visitComprehension(elt:   Expression,
+                                  value: Expression?,
+                                  generators: NonEmptyArray<Comprehension>,
+                                  kind: ComprehensionKind) throws {
 
     // iterator (source) is evaluated in parent scope
     let first = generators.first
@@ -233,13 +232,13 @@ extension SymbolTableBuilder {
 
   /// Add implicit `.pos` argument to scope.
   /// symtable_implicit_arg(struct symtable *st, int pos)
-  private mutating func implicitArg(pos: Int, location: SourceLocation) throws {
+  private func implicitArg(pos: Int, location: SourceLocation) throws {
     let id = ".\(pos)"
     try self.addSymbol(id, flags: .defParam, location: location)
   }
 
   /// symtable_visit_comprehension(struct symtable *st, comprehension_ty lc)
-  private mutating func visit(_ comprehension: Comprehension) throws {
+  private func visit(_ comprehension: Comprehension) throws {
     try self.visit(comprehension.target)
     try self.visit(comprehension.iter)
     try self.visit(comprehension.ifs)
@@ -252,7 +251,7 @@ extension SymbolTableBuilder {
   // MARK: - StringGroup
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private mutating func visit(_ group: StringGroup) throws {
+  private func visit(_ group: StringGroup) throws {
     switch group {
     case .string:
       break

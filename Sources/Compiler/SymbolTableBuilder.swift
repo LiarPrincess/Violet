@@ -14,7 +14,7 @@ internal enum SpecialIdentifiers {
   internal static let __class__ = "__class__"
 }
 
-public struct SymbolTableBuilder {
+public class SymbolTableBuilder {
 
   /// Scope stack.
   private var scopeStack = [SymbolScope]()
@@ -39,7 +39,7 @@ public struct SymbolTableBuilder {
   // MARK: - Pass
 
   /// PySymtable_BuildObject(mod_ty mod, ...)
-  public mutating func visit(_ ast: AST) throws -> SymbolScope {
+  public func visit(_ ast: AST) throws -> SymbolScope {
     self.scopeStack.removeAll()
 
     self.enterScope(name: SpecialIdentifiers.top, type: .module)
@@ -66,7 +66,7 @@ public struct SymbolTableBuilder {
   /// Push new scope.
   ///
   /// symtable_enter_block(struct symtable *st, identifier name, ...)
-  internal mutating func enterScope(name: String, type: ScopeType) {
+  internal func enterScope(name: String, type: ScopeType) {
     let isNested = self.scopeStack.any &&
       (self.scopeStack.last?.isNested ?? false || type == .function)
 
@@ -77,7 +77,7 @@ public struct SymbolTableBuilder {
   /// Pop scope and add to child of parent scope.
   ///
   /// symtable_exit_block(struct symtable *st, void *ast)
-  internal mutating func leaveScope() {
+  internal func leaveScope() {
     let scope = self.scopeStack.popLast()
     assert(scope != nil)
 
@@ -97,9 +97,9 @@ public struct SymbolTableBuilder {
   /// ```
   /// In general variables with '__' prefix should only be used if we
   /// really need mangling to avoid potential name clash.
-  internal mutating func addSymbol(_ name: String,
-                                   flags:  SymbolFlags,
-                                   location: SourceLocation) throws {
+  internal func addSymbol(_ name: String,
+                          flags:  SymbolFlags,
+                          location: SourceLocation) throws {
     let mangled = MangledName(className: self.className, name: name)
 
     var flagsToSet = flags
@@ -124,7 +124,7 @@ public struct SymbolTableBuilder {
   /// Directive means global and nonlocal statement.
   ///
   /// symtable_record_directive(struct symtable *st, identifier name, stmt_ty s)
-  internal mutating func addDirective(_ name: String) {
+  internal func addDirective(_ name: String) {
     let mangled = MangledName(className: self.className, name: name)
     self.currentScope.directives.append(mangled)
   }
@@ -139,14 +139,14 @@ public struct SymbolTableBuilder {
 
   // MARK: - Visit arguments
 
-  internal mutating func visitDefaults(_ args: Arguments) throws {
+  internal func visitDefaults(_ args: Arguments) throws {
     try self.visit(args.defaults)
     try self.visit(args.kwOnlyDefaults)
   }
 
   /// symtable_visit_params(struct symtable *st, asdl_seq *args)
   /// symtable_visit_arguments(struct symtable *st, arguments_ty a)
-  internal mutating func visitArguments(_ args: Arguments) throws {
+  internal func visitArguments(_ args: Arguments) throws {
     for a in args.args {
       try self.addSymbol(a.name, flags: .defParam, location: a.start)
     }
@@ -171,7 +171,7 @@ public struct SymbolTableBuilder {
 
   /// symtable_visit_argannotations(struct symtable *st, asdl_seq *args)
   /// symtable_visit_annotations(struct symtable *st, stmt_ty s, ...)
-  internal mutating func visitAnnotations(_ args: Arguments) throws {
+  internal func visitAnnotations(_ args: Arguments) throws {
     for a in args.args {
       try self.visit(a.annotation)
     }
@@ -193,7 +193,7 @@ public struct SymbolTableBuilder {
   // MARK: - Visit keyword
 
   /// symtable_visit_keyword(struct symtable *st, keyword_ty k)
-  internal mutating func visit(_ keywords: [Keyword]) throws {
+  internal func visit(_ keywords: [Keyword]) throws {
     for k in keywords {
       try self.visit(k.value)
     }
@@ -202,7 +202,7 @@ public struct SymbolTableBuilder {
   // MARK: - Errors/warnings
 
   /// Create parser warning
-  internal mutating func warn(_ warning: CompilerWarning,
+  internal func warn(_ warning: CompilerWarning,
                               location:  SourceLocation) {
     // uh... oh... well that's embarrassing...
   }
