@@ -42,11 +42,13 @@ extension SymbolTableBuilder {
       break
 
     case let .identifier(name):
-      try self.addSymbol(name, flags: isAssignmentTarget ? .defLocal : .use)
+      let flags: SymbolFlags = isAssignmentTarget ? .defLocal : .use
+      try self.addSymbol(name, flags: flags, location: expr.start)
 
       let isSuper = self.currentScope.type == .function && name == "super"
       if !isAssignmentTarget && isSuper {
-        try self.addSymbol(SpecialIdentifiers.__class__, flags: .use)
+        let name = SpecialIdentifiers.__class__
+        try self.addSymbol(name, flags: .use, location: expr.start)
       }
     case let .string(group):
       try self.visit(group)
@@ -191,14 +193,15 @@ extension SymbolTableBuilder {
     try self.visit(first.iter)
 
     // new scope for comprehensions
-    self.enterScope(name: kind.identifier, type: .function)
+    let scopeKind = self.getIdentifier(for: kind)
+    self.enterScope(name: scopeKind, type: .function)
     defer { self.leaveScope() }
 
     if first.isAsync {
       self.currentScope.isCoroutine = true
     }
 
-    try self.implicitArg(pos: 0)
+    try self.implicitArg(pos: 0, location: elt.start)
     try self.visit(first.target)
     try self.visit(first.ifs)
 
@@ -219,11 +222,20 @@ extension SymbolTableBuilder {
     }
   }
 
+  private func getIdentifier(for kind: ComprehensionKind) -> String {
+    switch kind {
+    case .list: return SpecialIdentifiers.listcomp
+    case .set: return SpecialIdentifiers.setcomp
+    case .dictionary: return SpecialIdentifiers.dictcomp
+    case .generator: return SpecialIdentifiers.genexpr
+    }
+  }
+
   /// Add implicit `.pos` argument to scope.
   /// symtable_implicit_arg(struct symtable *st, int pos)
-  private mutating func implicitArg(pos: Int) throws {
+  private mutating func implicitArg(pos: Int, location: SourceLocation) throws {
     let id = ".\(pos)"
-    try self.addSymbol(id, flags: .defParam)
+    try self.addSymbol(id, flags: .defParam, location: location)
   }
 
   /// symtable_visit_comprehension(struct symtable *st, comprehension_ty lc)

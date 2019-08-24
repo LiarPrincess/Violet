@@ -1,3 +1,5 @@
+import Core
+
 // In CPython:
 // Python -> symtable.c
 
@@ -18,7 +20,7 @@ private class OuterContext {
   /// Usage:
   /// - child - add new free variables
   /// - parent - bind free vaiables from childs with locals (creating `cells`)
-  fileprivate var free: Set<MangledName>
+  fileprivate var free: [MangledName: SymbolInfo]
 
   /// Set of declared global variables in outer scopes
   fileprivate var global: Set<MangledName>
@@ -26,7 +28,7 @@ private class OuterContext {
   /// Set of variables bound in outer scopes
   fileprivate var bound: Set<MangledName>
 
-  fileprivate init(free:   Set<MangledName>,
+  fileprivate init(free:   [MangledName: SymbolInfo],
                    bound:  Set<MangledName>,
                    global: Set<MangledName>) {
     self.free = free
@@ -55,7 +57,7 @@ private class ScopeContext {
   fileprivate var newGlobal = Set<MangledName>()
 
   /// Free vaiabled that should be resolved by parent scope.
-  fileprivate var newFree = Set<MangledName>()
+  fileprivate var newFree = [MangledName: SymbolInfo]()
 }
 
 extension SymbolTableBuilder {
@@ -78,9 +80,9 @@ extension SymbolTableBuilder {
     }
 
     // Analyze current scope symbols
-    for (name, flags) in scope.symbols {
+    for (name, info) in scope.symbols {
       try self.analyzeName(name,
-                           flags: flags,
+                           info:  info,
                            scope: &scope,
                            scopeContext: context,
                            outerContext: outerContext)
@@ -103,7 +105,7 @@ extension SymbolTableBuilder {
     }
 
     // Recursively call analyze_child_block() on each child block
-    var allFree = Set<MangledName>()
+    var allFree = [MangledName: SymbolInfo]()
     for var child in scope.children {
       try self.analyzeChildBlock(scope: &child,
                                  scopeContext: context,
@@ -114,7 +116,9 @@ extension SymbolTableBuilder {
       }
     }
 
-    context.newFree.formUnion(allFree)
+    // If the free variables from child scope have the same name
+    // then it is the same variable
+    self.mergeFree(target: &context.newFree, src: allFree)
 
     // Check if any local variables must be converted to cells
     if scope.type == .function {
@@ -129,7 +133,15 @@ extension SymbolTableBuilder {
                            outerContext: outerContext)
 
     // Update free variables that we were passed
-    outerContext?.free.formUnion(context.newFree)
+    if let outer = outerContext {
+      self.mergeFree(target: &outer.free, src: context.newFree)
+    }
+  }
+
+  private func mergeFree(target: inout [MangledName: SymbolInfo],
+                         src:          [MangledName: SymbolInfo]) {
+    // swiftlint:disable:next trailing_closure
+    target.merge(src, uniquingKeysWith: { lhs, _ in lhs })
   }
 
   /// Decide on scope of name, given flags.
@@ -138,13 +150,14 @@ extension SymbolTableBuilder {
   ///
   /// analyze_name(PySTEntryObject *ste, PyObject *scopes, PyObject *name, ...)
   private func analyzeName(_ name: MangledName,
-                           flags:  SymbolFlags,
+                           info:   SymbolInfo,
                            scope:  inout SymbolScope,
                            scopeContext: ScopeContext,
                            outerContext: OuterContext?) throws {
     // CPython translation:
     // local, scopes       are from scopeContext
     // bound, free, global are from outerContext
+    let flags = info.flags
 
     if flags.contains(.defGlobal) {
       if flags.contains(.defNonlocal) {
@@ -174,7 +187,7 @@ extension SymbolTableBuilder {
 
       scope.hasFreeVariables = true
       scopeContext.symbolSources[name] = .srcFree
-      outerContext?.free.insert(name)
+      outerContext?.free.updateValue(info, forKey: name)
       return
     }
 
@@ -188,7 +201,7 @@ extension SymbolTableBuilder {
     if let bound = outerContext?.bound, bound.contains(name) {
       scope.hasFreeVariables = true
       scopeContext.symbolSources[name] = .srcFree
-      outerContext?.free.insert(name)
+      outerContext?.free.updateValue(info, forKey: name)
       return
     }
 
@@ -208,7 +221,7 @@ extension SymbolTableBuilder {
   private func analyzeChildBlock(
     scope: inout SymbolScope,
     scopeContext: ScopeContext,
-    addingFreeVariablesTo free: inout Set<MangledName>) throws {
+    addingFreeVariablesTo free: inout [MangledName: SymbolInfo]) throws {
 
     // Set is an value type in Swift, so we can simply:
     let childContext = OuterContext(free:   scopeContext.newFree,
@@ -216,7 +229,7 @@ extension SymbolTableBuilder {
                                     global: scopeContext.newGlobal)
 
     try self.analyzeBlock(scope: &scope, outerContext: childContext)
-    free.formUnion(childContext.free)
+    self.mergeFree(target: &free, src: childContext.free)
   }
 
   /// analyze_cells(PyObject *scopes, PyObject *free)
@@ -236,7 +249,7 @@ extension SymbolTableBuilder {
 
       // we found a declaration of this free vaiable -> cell
       scopeContext.symbolSources[name] = .cell
-      scopeContext.newFree.remove(name)
+      scopeContext.newFree.removeValue(forKey: name)
     }
   }
 
@@ -246,40 +259,39 @@ extension SymbolTableBuilder {
     let name = SpecialIdentifiers.__class__
     let mangled = MangledName(from: name)
 
-    let usedClass = scopeContext.newFree.remove(mangled) != nil
+    let usedClass = scopeContext.newFree.removeValue(forKey: mangled) != nil
     if usedClass {
       scope.needsClassClosure = true
     }
   }
 
   /// update_symbols(PyObject *symbols, PyObject *scopes, PyObject *bound, ...)
-  private func updateSymbols(scope:  inout SymbolScope,
+  private func updateSymbols(scope: inout SymbolScope,
                              scopeContext: ScopeContext,
                              outerContext: OuterContext?) throws {
-    // update_symbols(PyObject *symbols, PyObject *scopes, PyObject *bound, PyObject *free, int classflag)
-    // update_symbols(ste->ste_symbols,  scopes,           bound,           newfree,        ste->ste_type == ClassBlock)
 
     // Update source information for all symbols in this scope
-    for (name, defFlags) in scope.symbols {
+    for (name, info) in scope.symbols {
       guard let srcFlags = scopeContext.symbolSources[name] else {
         assert(false)
         fatalError()
       }
 
-      var flags = defFlags
+      var flags = info.flags
       flags.formUnion(srcFlags)
-      scope.symbols[name] = flags
+      self.updateSymbol(name, flags: flags, in: &scope)
     }
 
     // Record not yet resolved free variables from children (if any)
-    for name in scopeContext.newFree {
-
+    for (name, info) in scopeContext.newFree {
       // Handle symbol that already exists in this scope
-      if let flags = scope.symbols[name] {
-        if scope.type == .class && flags.containsAny(.defBound) {
-          let newFlags = flags.union(.defFreeClass)
-          scope.symbols[name] = newFlags
+      if let info = scope.symbols[name] {
+        if scope.type == .class && info.flags.containsAny(.defBound) {
+          var flags = info.flags
+          flags.formUnion(.defFreeClass)
+          self.updateSymbol(name, flags: flags, in: &scope)
         }
+
         // It's a cell, or already free in this scope
         continue
       }
@@ -290,7 +302,20 @@ extension SymbolTableBuilder {
       }
 
       // Propagate new free symbol up the lexical stack
-      scope.symbols[name] = .srcFree
+      scope.symbols[name] = info
     }
+  }
+
+  /// Update existing symbol.
+  internal func updateSymbol(_ name: MangledName,
+                             flags:  SymbolFlags,
+                             in scope: inout SymbolScope) {
+    guard let current = scope.symbols[name] else {
+      assert(false)
+      fatalError()
+    }
+
+    let new = SymbolInfo(flags: flags, location: current.location)
+    scope.symbols[name] = new
   }
 }

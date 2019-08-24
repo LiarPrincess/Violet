@@ -19,13 +19,4 @@ public enum ComprehensionKind: Equatable {
   case set
   case dictionary
   case generator
-
-  internal var identifier: String {
-    switch self {
-    case .list: return SpecialIdentifiers.listcomp
-    case .set: return SpecialIdentifiers.setcomp
-    case .dictionary: return SpecialIdentifiers.dictcomp
-    case .generator: return SpecialIdentifiers.genexpr
-    }
-  }
 }

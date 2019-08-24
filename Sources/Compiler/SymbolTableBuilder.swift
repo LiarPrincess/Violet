@@ -97,20 +97,22 @@ public struct SymbolTableBuilder {
   /// ```
   /// In general variables with '__' prefix should only be used if we
   /// really need mangling to avoid potential name clash.
-  internal mutating func addSymbol(_ name: String, flags: SymbolFlags) throws {
+  internal mutating func addSymbol(_ name: String,
+                                   flags:  SymbolFlags,
+                                   location: SourceLocation) throws {
     let mangled = MangledName(className: self.className, name: name)
 
     var flagsToSet = flags
-    if let existing = self.currentScope.symbols[mangled] {
-      if flags.contains(.defParam) && existing.contains(.defParam) {
-        // TODO: location
-        throw self.error(.duplicateArgument(name), location: .start)
+    if let current = self.currentScope.symbols[mangled] {
+      if flags.contains(.defParam) && current.flags.contains(.defParam) {
+        throw self.error(.duplicateArgument(name), location: location)
       }
 
-      flagsToSet.formUnion(existing)
+      flagsToSet.formUnion(current.flags)
     }
 
-    self.currentScope.symbols[mangled] = flagsToSet
+    self.currentScope.symbols[mangled] = SymbolInfo(flags: flagsToSet,
+                                                    location: location)
 
     if flags.contains(.defParam) {
       self.currentScope.varnames.append(mangled)
@@ -130,7 +132,7 @@ public struct SymbolTableBuilder {
   /// Lookup mangled name in current scope.
   ///
   /// symtable_lookup(struct symtable *st, PyObject *name)
-  internal func lookupMangled(_ name: String) -> SymbolFlags? {
+  internal func lookupMangled(_ name: String) -> SymbolInfo? {
     let mangled = MangledName(className: self.className, name: name)
     return self.currentScope.symbols[mangled]
   }
@@ -146,23 +148,23 @@ public struct SymbolTableBuilder {
   /// symtable_visit_arguments(struct symtable *st, arguments_ty a)
   internal mutating func visitArguments(_ args: Arguments) throws {
     for a in args.args {
-      try self.addSymbol(a.name, flags: .defParam)
+      try self.addSymbol(a.name, flags: .defParam, location: a.start)
     }
 
     switch args.vararg {
     case let .named(a):
-      try self.addSymbol(a.name, flags: .defParam)
+      try self.addSymbol(a.name, flags: .defParam, location: a.start)
       self.currentScope.hasVarargs = true
     case .none, .unnamed:
       break
     }
 
     for a in args.kwOnlyArgs {
-      try self.addSymbol(a.name, flags: .defParam)
+      try self.addSymbol(a.name, flags: .defParam, location: a.start)
     }
 
     if let a = args.kwarg {
-      try self.addSymbol(a.name, flags: .defParam)
+      try self.addSymbol(a.name, flags: .defParam, location: a.start)
       self.currentScope.hasVarKeywords = true
     }
   }

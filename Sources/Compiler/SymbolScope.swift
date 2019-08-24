@@ -1,3 +1,11 @@
+import Core
+
+public enum ScopeType {
+  case function
+  case `class`
+  case module
+}
+
 /// Captures all symbols in the current scope
 /// and has a list of subscopes (childrens).
 public struct SymbolScope {
@@ -12,7 +20,7 @@ public struct SymbolScope {
   public let type: ScopeType
 
   /// A set of symbols present on this scope level
-  public internal(set) var symbols = [MangledName: SymbolFlags]()
+  public internal(set) var symbols = [MangledName: SymbolInfo]()
 
   /// A list of subscopes in the order as found in the AST nodes
   public internal(set) var children = [SymbolScope]()
@@ -49,14 +57,16 @@ public struct SymbolScope {
   }
 }
 
-public enum ScopeType {
-  case function
-  case `class`
-  case module
+public struct SymbolInfo: Equatable, Hashable {
+
+  /// Symbol information.
+  public let flags: SymbolFlags
+
+  /// Location of the first character in the source code.
+  public let location: SourceLocation
 }
 
-// TODO: Check if all of those are used
-public struct SymbolFlags: OptionSet {
+public struct SymbolFlags: OptionSet, Equatable, Hashable {
   public let rawValue: UInt16
 
   // MARK: Variable definition (in a current scope)
