@@ -54,9 +54,10 @@ public class SymbolTableBuilder {
     }
 
     assert(self.scopeStack.count == 1)
-
     var topScope = self.scopeStack[0]
-    try self.analyze(top: &topScope)
+
+    let sourcePass = SymbolTableVariableSourcePass()
+    try sourcePass.analyze(top: &topScope)
 
     return topScope
   }

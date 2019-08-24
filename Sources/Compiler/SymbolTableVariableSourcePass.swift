@@ -3,6 +3,7 @@ import Core
 // In CPython:
 // Python -> symtable.c
 
+// Implements a 2nd pass when creating symbol table.
 // This is basically 1:1 translation from CPython.
 // It is quite complicated (but it does make sense if you spend some time with it).
 
@@ -22,10 +23,10 @@ private class OuterContext {
   /// - parent - bind free vaiables from childs with locals (creating `cells`)
   fileprivate var free: [MangledName: SymbolInfo]
 
-  /// Set of declared global variables in outer scopes
+  /// Set of declared global variables in outer scopes (used for globals)
   fileprivate var global: Set<MangledName>
 
-  /// Set of variables bound in outer scopes
+  /// Set of variables bound in outer scopes (used for nonlocals)
   fileprivate var bound: Set<MangledName>
 
   fileprivate init(free:   [MangledName: SymbolInfo],
@@ -44,7 +45,7 @@ private class ScopeContext {
   /// Names bound in block
   fileprivate var local = Set<MangledName>()
 
-  /// Scopes defined for each name.
+  /// Sources for each symbol (basically the main thing in this pass).
   /// CPython: `scopes`
   fileprivate var symbolSources = [MangledName:SymbolFlags]()
 
@@ -60,7 +61,9 @@ private class ScopeContext {
   fileprivate var newFree = [MangledName: SymbolInfo]()
 }
 
-extension SymbolTableBuilder {
+/// For each variable adds variable source (local, global, free) flag.
+/// It will also mark sources for free variables (called 'cells').
+internal class SymbolTableVariableSourcePass {
 
   /// symtable_analyze(struct symtable *st)
   internal func analyze(top: inout SymbolScope) throws {
@@ -104,7 +107,7 @@ extension SymbolTableBuilder {
       context.newBound.insert(mangled)
     }
 
-    // Recursively call analyze_child_block() on each child block
+    // Recursively call analyzeChildBlock() on each child block
     var allFree = [MangledName: SymbolInfo]()
     for var child in scope.children {
       try self.analyzeChildBlock(scope: &child,
@@ -116,7 +119,7 @@ extension SymbolTableBuilder {
       }
     }
 
-    // If the free variables from child scope have the same name
+    // If the free variables from child scope have the same names
     // then it is the same variable
     self.mergeFree(target: &context.newFree, src: allFree)
 
@@ -127,7 +130,7 @@ extension SymbolTableBuilder {
       self.remove__class__(scope: &scope, scopeContext: context)
     }
 
-    // Record the results of the analysis in the symbol table entry
+    // Record the results of the analysis in the symbol table
     try self.updateSymbols(scope: &scope,
                            scopeContext: context,
                            outerContext: outerContext)
@@ -307,9 +310,9 @@ extension SymbolTableBuilder {
   }
 
   /// Update existing symbol.
-  internal func updateSymbol(_ name: MangledName,
-                             flags:  SymbolFlags,
-                             in scope: inout SymbolScope) {
+  private func updateSymbol(_ name: MangledName,
+                            flags:  SymbolFlags,
+                            in scope: inout SymbolScope) {
     guard let current = scope.symbols[name] else {
       assert(false)
       fatalError()
