@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
+class BoolExprTests: XCTestCase, Common, ExpressionMatcher {
 
   func test_notOperator() {
     var parser = self.createExprParser(
@@ -12,10 +12,10 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let b = self.destructUnaryOp(expr) else { return }
 
-      XCTAssertEqual(b.0, .not)
-      XCTAssertEqual(b.right, Expression(.false, start: loc2, end: loc3))
+      guard let unaryOp = self.matchUnaryOp(expr) else { return }
+      XCTAssertEqual(unaryOp.0, .not)
+      XCTAssertExpression(unaryOp.right, "False")
 
       XCTAssertExpression(expr, "(not False)")
       XCTAssertEqual(expr.start, loc0)
@@ -39,11 +39,10 @@ class BoolExprTests: XCTestCase, Common, DestructExpressionKind {
       if let expr = self.parseExpr(&parser) {
         let msg = "for token '\(token)'"
 
-        guard let b = self.destructBoolOp(expr) else { return }
-
-        XCTAssertEqual(b.0, op, msg)
-        XCTAssertEqual(b.left,  Expression(.true, start: loc0, end: loc1), msg)
-        XCTAssertEqual(b.right, Expression(.false, start: loc4, end: loc5), msg)
+        guard let binOp = self.matchBoolOp(expr) else { return }
+        XCTAssertEqual(binOp.0, op, msg)
+        XCTAssertExpression(binOp.left,  "True", msg)
+        XCTAssertExpression(binOp.right, "False", msg)
 
         XCTAssertExpression(expr, "(\(op) True False)", msg)
         XCTAssertEqual(expr.start, loc0, msg)

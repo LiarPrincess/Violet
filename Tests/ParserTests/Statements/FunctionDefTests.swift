@@ -7,8 +7,7 @@ import Lexer
 // swiftlint:disable type_body_length
 // swiftlint:disable function_body_length
 
-class FunctionDefTests: XCTestCase,
-  Common, DestructExpressionKind, DestructStatementKind {
+class FunctionDefTests: XCTestCase, Common, StatementMatcher {
 
   // MARK: - No arguments
 
@@ -24,16 +23,16 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      XCTAssertEqual(d.args.args, [])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertArguments(d.args.args, [])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .none)
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc6)
@@ -62,16 +61,16 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertExpression(d.returns, "Dish")
 
-      XCTAssertEqual(d.args.args, [])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertArguments(d.args.args, [])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .none)
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc6)
@@ -101,17 +100,17 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
       let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
-      XCTAssertEqual(d.args.args, [argA])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertArguments(d.args.args, [argA])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .none)
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc7)
@@ -141,18 +140,18 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
       let annA = Expression(.identifier("Vegetable"), start: loc10, end: loc11)
       let argA = Arg("zucchini", annotation: annA, start: loc6, end: loc11)
-      XCTAssertEqual(d.args.args, [argA])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertArguments(d.args.args, [argA])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .none)
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc11)
@@ -182,18 +181,18 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
       let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
       let defA = Expression(.float(1.0), start: loc10, end: loc11)
-      XCTAssertEqual(d.args.args, [argA])
-      XCTAssertEqual(d.args.defaults, [defA])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertArguments(d.args.args, [argA])
+      XCTAssertArgumentDefaults(d.args.defaults, [defA])
+      XCTAssertVararg(d.args.vararg, .none)
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc11)
@@ -223,18 +222,18 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
       let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
       let argB = Arg("tomato", annotation: nil, start: loc10, end: loc11)
-      XCTAssertEqual(d.args.args, [argA, argB])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertArguments(d.args.args, [argA, argB])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .none)
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc11)
@@ -266,7 +265,7 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
@@ -274,11 +273,11 @@ class FunctionDefTests: XCTestCase,
       let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
       let argB = Arg("tomato", annotation: nil, start: loc10, end: loc11)
       let defB = Expression(.float(1.0), start: loc14, end: loc15)
-      XCTAssertEqual(d.args.args, [argA, argB])
-      XCTAssertEqual(d.args.defaults, [defB])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertArguments(d.args.args, [argA, argB])
+      XCTAssertArgumentDefaults(d.args.defaults, [defB])
+      XCTAssertVararg(d.args.vararg, .none)
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc15)
@@ -331,17 +330,17 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
       let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
-      XCTAssertEqual(d.args.args, [])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .named(varargA))
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
+      XCTAssertArguments(d.args.args, [])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .named(varargA))
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc9)
@@ -374,7 +373,7 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
@@ -382,11 +381,11 @@ class FunctionDefTests: XCTestCase,
       let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
       let kwB     = Arg("tomato", annotation: nil, start: loc12, end: loc13)
       let kwDefB  = Expression(.float(1), start: loc16, end: loc17)
-      XCTAssertEqual(d.args.args, [])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .named(varargA))
-      XCTAssertEqual(d.args.kwOnlyArgs, [kwB])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [kwDefB])
+      XCTAssertArguments(d.args.args, [])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .named(varargA))
+      XCTAssertArguments(d.args.kwOnlyArgs, [kwB])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefB])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc17)
@@ -417,7 +416,7 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
@@ -425,11 +424,11 @@ class FunctionDefTests: XCTestCase,
       let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
       let kwB     = Arg("tomato", annotation: nil, start: loc12, end: loc13)
       let kwDefB = Expression(.none, start: loc13, end: loc13)
-      XCTAssertEqual(d.args.args, [])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .named(varargA))
-      XCTAssertEqual(d.args.kwOnlyArgs, [kwB])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [kwDefB])
+      XCTAssertArguments(d.args.args, [])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .named(varargA))
+      XCTAssertArguments(d.args.kwOnlyArgs, [kwB])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefB])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc13)
@@ -481,18 +480,18 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
       let kwA = Arg("zucchini", annotation: nil, start: loc10, end: loc11)
       let kwDefA = Expression(.none, start: loc11, end: loc11)
-      XCTAssertEqual(d.args.args, [])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .unnamed)
-      XCTAssertEqual(d.args.kwOnlyArgs, [kwA])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [kwDefA])
+      XCTAssertArguments(d.args.args, [])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .unnamed)
+      XCTAssertArguments(d.args.kwOnlyArgs, [kwA])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefA])
       XCTAssertEqual(d.args.kwarg, nil)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc11)
@@ -541,18 +540,18 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
       let kwargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
-      XCTAssertEqual(d.args.args, [])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, kwargA)
+      XCTAssertArguments(d.args.args, [])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .none)
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
+      XCTAssertArgument(d.args.kwarg, kwargA)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc9)
 
@@ -581,18 +580,18 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
       let kwargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
-      XCTAssertEqual(d.args.args, [])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, kwargA)
+      XCTAssertArguments(d.args.args, [])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .none)
+      XCTAssertArguments(d.args.kwOnlyArgs, [])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
+      XCTAssertArgument(d.args.kwarg, kwargA)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc11)
 
@@ -651,7 +650,7 @@ class FunctionDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
@@ -661,12 +660,12 @@ class FunctionDefTests: XCTestCase,
       let kwC     = Arg("pepper", annotation: nil, start: loc16, end: loc17)
       let kwDefC  = Expression(.none, start: loc17, end: loc17)
       let kwargD = Arg("eggplant", annotation: nil, start: loc22, end: loc23)
-      XCTAssertEqual(d.args.args, [argA])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .named(varargB))
-      XCTAssertEqual(d.args.kwOnlyArgs, [kwC])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [kwDefC])
-      XCTAssertEqual(d.args.kwarg, kwargD)
+      XCTAssertArguments(d.args.args, [argA])
+      XCTAssertArgumentDefaults(d.args.defaults, [])
+      XCTAssertVararg(d.args.vararg, .named(varargB))
+      XCTAssertArguments(d.args.kwOnlyArgs, [kwC])
+      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefC])
+      XCTAssertArgument(d.args.kwarg, kwargD)
       XCTAssertEqual(d.args.start, loc6)
       XCTAssertEqual(d.args.end,   loc23)
 

@@ -11,7 +11,7 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
 
-class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
+class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
 
   // MARK: - Empty
 
@@ -19,7 +19,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     var string = FString()
 
     let group = try string.compile()
-    if let result = self.destructStringSimple(group) {
+    if let result = self.matchStringSimple(group) {
       XCTAssertEqual(result, "")
     }
   }
@@ -33,7 +33,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     string.append(s)
 
     let group = try string.compile()
-    if let result = self.destructStringSimple(group) {
+    if let result = self.matchStringSimple(group) {
       XCTAssertEqual(result, s)
     }
   }
@@ -51,7 +51,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
       """
 
     let group = try string.compile()
-    if let result = self.destructStringSimple(group) {
+    if let result = self.matchStringSimple(group) {
       XCTAssertEqual(result, expected)
     }
   }
@@ -65,7 +65,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString(s)
 
     let group = try string.compile()
-    if let result = self.destructStringSimple(group) {
+    if let result = self.matchStringSimple(group) {
       XCTAssertEqual(result, s)
     }
   }
@@ -78,7 +78,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString(s)
 
     let group = try string.compile()
-    if let result = self.destructStringSimple(group) {
+    if let result = self.matchStringSimple(group) {
       XCTAssertEqual(result, expected)
     }
   }
@@ -122,7 +122,7 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
       """
 
     let group = try string.compile()
-    if let result = self.destructStringSimple(group) {
+    if let result = self.matchStringSimple(group) {
       XCTAssertEqual(result, expected)
     }
   }
@@ -134,13 +134,13 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("{2013}")
 
     let group = try string.compile()
-    if let d = self.destructStringFormattedValue(group) {
-      guard let pyInt = self.destructInt(d.0) else { return }
+    if let value = self.matchStringFormattedValue(group) {
+      guard let pyInt = self.matchInt(value.0) else { return }
       XCTAssertEqual(pyInt, BigInt(2_013))
 
-      XCTAssertExpression(d.0, "2013")
-      XCTAssertEqual(d.conversion, nil)
-      XCTAssertEqual(d.spec, nil)
+      XCTAssertExpression(value.0, "2013")
+      XCTAssertEqual(value.conversion, nil)
+      XCTAssertEqual(value.spec, nil)
     }
   }
 
@@ -149,15 +149,15 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("{20 + 13}")
 
     let group = try string.compile()
-    if let d = self.destructStringFormattedValue(group) {
-      guard let bin = self.destructBinaryOp(d.0) else { return }
+    if let value = self.matchStringFormattedValue(group) {
+      guard let bin = self.matchBinaryOp(value.0) else { return }
       XCTAssertEqual(bin.0, BinaryOperator.add)
       XCTAssertExpression(bin.left, "20")
       XCTAssertExpression(bin.right, "13")
 
-      XCTAssertExpression(d.0, "(+ 20 13)")
-      XCTAssertEqual(d.conversion, nil)
-      XCTAssertEqual(d.spec, nil)
+      XCTAssertExpression(value.0, "(+ 20 13)")
+      XCTAssertEqual(value.conversion, nil)
+      XCTAssertEqual(value.spec, nil)
     }
   }
 
@@ -166,13 +166,13 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("{'Let it go, let it go'}")
 
     let group = try string.compile()
-    if let d = self.destructStringFormattedValue(group) {
-      guard let str = self.destructString(d.0) else { return }
-      XCTAssertEqual(str, StringGroup.string("Let it go, let it go"))
+    if let value = self.matchStringFormattedValue(group) {
+      guard let valueStr = self.matchString(value.0) else { return }
+      XCTAssertEqual(valueStr, StringGroup.string("Let it go, let it go"))
 
-      XCTAssertExpression(d.0, "'Let it go, let it go'")
-      XCTAssertEqual(d.conversion, nil)
-      XCTAssertEqual(d.spec, nil)
+      XCTAssertExpression(value.0, "'Let it go, let it go'")
+      XCTAssertEqual(value.conversion, nil)
+      XCTAssertEqual(value.spec, nil)
     }
   }
 
@@ -181,10 +181,10 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("{('Cant hold it back anymore')}")
 
     let group = try string.compile()
-    if let d = self.destructStringFormattedValue(group) {
-      XCTAssertExpression(d.0, "'Cant hold it back an...'")
-      XCTAssertEqual(d.conversion, nil)
-      XCTAssertEqual(d.spec, nil)
+    if let value = self.matchStringFormattedValue(group) {
+      XCTAssertExpression(value.0, "'Cant hold it back an...'")
+      XCTAssertEqual(value.conversion, nil)
+      XCTAssertEqual(value.spec, nil)
     }
   }
 
@@ -193,10 +193,10 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("{'Let it go, let it go'!r}")
 
     let group = try string.compile()
-    if let d = self.destructStringFormattedValue(group) {
-      XCTAssertExpression(d.0, "'Let it go, let it go'")
-      XCTAssertEqual(d.conversion, .repr)
-      XCTAssertEqual(d.spec, nil)
+    if let value = self.matchStringFormattedValue(group) {
+      XCTAssertExpression(value.0, "'Let it go, let it go'")
+      XCTAssertEqual(value.conversion, .repr)
+      XCTAssertEqual(value.spec, nil)
     }
   }
 
@@ -205,10 +205,10 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("{'Let it go, let it go':^30}")
 
     let group = try string.compile()
-    if let d = self.destructStringFormattedValue(group) {
-      XCTAssertExpression(d.0, "'Let it go, let it go'")
-      XCTAssertEqual(d.conversion, nil)
-      XCTAssertEqual(d.spec, "^30")
+    if let value = self.matchStringFormattedValue(group) {
+      XCTAssertExpression(value.0, "'Let it go, let it go'")
+      XCTAssertEqual(value.conversion, nil)
+      XCTAssertEqual(value.spec, "^30")
     }
   }
 
@@ -217,10 +217,10 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("{'Turn away and slam the door!'!a:^30}")
 
     let group = try string.compile()
-    if let d = self.destructStringFormattedValue(group) {
-      XCTAssertExpression(d.0, "'Turn away and slam t...'")
-      XCTAssertEqual(d.conversion, .ascii)
-      XCTAssertEqual(d.spec, "^30")
+    if let value = self.matchStringFormattedValue(group) {
+      XCTAssertExpression(value.0, "'Turn away and slam t...'")
+      XCTAssertEqual(value.conversion, .ascii)
+      XCTAssertEqual(value.spec, "^30")
     }
   }
 
@@ -231,18 +231,18 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("{I} don't care\nWhat they're going to say")
 
     let group = try string.compile()
-    if let d = self.destructStringJoinedString(group) {
-      XCTAssertEqual(d.count, 2)
-      guard d.count == 2 else { return }
+    if let joined = self.matchStringJoinedString(group) {
+      XCTAssertEqual(joined.count, 2)
+      guard joined.count == 2 else { return }
 
-      guard let g0 = self.destructStringFormattedValue(d[0]) else { return }
-      guard let id = self.destructIdentifier(g0.0) else { return }
-      XCTAssertEqual(id, "I")
-      XCTAssertEqual(g0.conversion, nil)
-      XCTAssertEqual(g0.spec, nil)
+      guard let value0 = self.matchStringFormattedValue(joined[0]) else { return }
+      guard let id0 = self.matchIdentifier(value0.0) else { return }
+      XCTAssertEqual(id0, "I")
+      XCTAssertEqual(value0.conversion, nil)
+      XCTAssertEqual(value0.spec, nil)
 
-      guard let g1 = self.destructStringSimple(d[1]) else { return }
-      XCTAssertEqual(g1, " don't care\nWhat they're going to say")
+      guard let str1 = self.matchStringSimple(joined[1]) else { return }
+      XCTAssertEqual(str1, " don't care\nWhat they're going to say")
     }
   }
 
@@ -251,18 +251,18 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("Let the storm rage {on}")
 
     let group = try string.compile()
-    if let d = self.destructStringJoinedString(group) {
-      XCTAssertEqual(d.count, 2)
-      guard d.count == 2 else { return }
+    if let joined = self.matchStringJoinedString(group) {
+      XCTAssertEqual(joined.count, 2)
+      guard joined.count == 2 else { return }
 
-      guard let g0 = self.destructStringSimple(d[0]) else { return }
-      XCTAssertEqual(g0, "Let the storm rage ")
+      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      XCTAssertEqual(str0, "Let the storm rage ")
 
-      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
-      guard let id = self.destructIdentifier(g1.0) else { return }
-      XCTAssertEqual(id, "on")
-      XCTAssertEqual(g1.conversion, nil)
-      XCTAssertEqual(g1.spec, nil)
+      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
+      guard let id1 = self.matchIdentifier(value1.0) else { return }
+      XCTAssertEqual(id1, "on")
+      XCTAssertEqual(value1.conversion, nil)
+      XCTAssertEqual(value1.spec, nil)
     }
   }
 
@@ -271,21 +271,21 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("The cold never {bothered} me anyway!")
 
     let group = try string.compile()
-    if let d = self.destructStringJoinedString(group) {
-      XCTAssertEqual(d.count, 3)
-      guard d.count == 3 else { return }
+    if let joined = self.matchStringJoinedString(group) {
+      XCTAssertEqual(joined.count, 3)
+      guard joined.count == 3 else { return }
 
-      guard let g0 = self.destructStringSimple(d[0]) else { return }
-      XCTAssertEqual(g0, "The cold never ")
+      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      XCTAssertEqual(str0, "The cold never ")
 
-      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
-      guard let id = self.destructIdentifier(g1.0) else { return }
-      XCTAssertEqual(id, "bothered")
-      XCTAssertEqual(g1.conversion, nil)
-      XCTAssertEqual(g1.spec, nil)
+      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
+      guard let id1 = self.matchIdentifier(value1.0) else { return }
+      XCTAssertEqual(id1, "bothered")
+      XCTAssertEqual(value1.conversion, nil)
+      XCTAssertEqual(value1.spec, nil)
 
-      guard let g2 = self.destructStringSimple(d[2]) else { return }
-      XCTAssertEqual(g2, " me anyway!")
+      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      XCTAssertEqual(str2, " me anyway!")
     }
   }
 
@@ -294,21 +294,21 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("Its funny {how!s:-10} some distance")
 
     let group = try string.compile()
-    if let d = self.destructStringJoinedString(group) {
-      XCTAssertEqual(d.count, 3)
-      guard d.count == 3 else { return }
+    if let joined = self.matchStringJoinedString(group) {
+      XCTAssertEqual(joined.count, 3)
+      guard joined.count == 3 else { return }
 
-      guard let g0 = self.destructStringSimple(d[0]) else { return }
-      XCTAssertEqual(g0, "Its funny ")
+      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      XCTAssertEqual(str0, "Its funny ")
 
-      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
-      guard let id = self.destructIdentifier(g1.0) else { return }
-      XCTAssertEqual(id, "how")
-      XCTAssertEqual(g1.conversion, .str)
-      XCTAssertEqual(g1.spec, "-10")
+      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
+      guard let id1 = self.matchIdentifier(value1.0) else { return }
+      XCTAssertEqual(id1, "how")
+      XCTAssertEqual(value1.conversion, .str)
+      XCTAssertEqual(value1.spec, "-10")
 
-      guard let g2 = self.destructStringSimple(d[2]) else { return }
-      XCTAssertEqual(g2, " some distance")
+      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      XCTAssertEqual(str2, " some distance")
     }
   }
 
@@ -317,27 +317,27 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("Makes {everything:+6} seem {small!a}")
 
     let group = try string.compile()
-    if let d = self.destructStringJoinedString(group) {
-      XCTAssertEqual(d.count, 4)
-      guard d.count == 4 else { return }
+    if let joined = self.matchStringJoinedString(group) {
+      XCTAssertEqual(joined.count, 4)
+      guard joined.count == 4 else { return }
 
-      guard let g0 = self.destructStringSimple(d[0]) else { return }
-      XCTAssertEqual(g0, "Makes ")
+      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      XCTAssertEqual(str0, "Makes ")
 
-      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
-      guard let id1 = self.destructIdentifier(g1.0) else { return }
+      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
+      guard let id1 = self.matchIdentifier(value1.0) else { return }
       XCTAssertEqual(id1, "everything")
-      XCTAssertEqual(g1.conversion, nil)
-      XCTAssertEqual(g1.spec, "+6")
+      XCTAssertEqual(value1.conversion, nil)
+      XCTAssertEqual(value1.spec, "+6")
 
-      guard let g2 = self.destructStringSimple(d[2]) else { return }
-      XCTAssertEqual(g2, " seem ")
+      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      XCTAssertEqual(str2, " seem ")
 
-      guard let g3 = self.destructStringFormattedValue(d[3]) else { return }
-      guard let id3 = self.destructIdentifier(g3.0) else { return }
+      guard let value3 = self.matchStringFormattedValue(joined[3]) else { return }
+      guard let id3 = self.matchIdentifier(value3.0) else { return }
       XCTAssertEqual(id3, "small")
-      XCTAssertEqual(g3.conversion, .ascii)
-      XCTAssertEqual(g3.spec, nil)
+      XCTAssertEqual(value3.conversion, .ascii)
+      XCTAssertEqual(value3.spec, nil)
     }
   }
 
@@ -346,27 +346,27 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString("And the {fears}{that} once controlled me")
 
     let group = try string.compile()
-    if let d = self.destructStringJoinedString(group) {
-      XCTAssertEqual(d.count, 4)
-      guard d.count == 4 else { return }
+    if let joined = self.matchStringJoinedString(group) {
+      XCTAssertEqual(joined.count, 4)
+      guard joined.count == 4 else { return }
 
-      guard let g0 = self.destructStringSimple(d[0]) else { return }
-      XCTAssertEqual(g0, "And the ")
+      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      XCTAssertEqual(str0, "And the ")
 
-      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
-      guard let id1 = self.destructIdentifier(g1.0) else { return }
+      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
+      guard let id1 = self.matchIdentifier(value1.0) else { return }
       XCTAssertEqual(id1, "fears")
-      XCTAssertEqual(g1.conversion, nil)
-      XCTAssertEqual(g1.spec, nil)
+      XCTAssertEqual(value1.conversion, nil)
+      XCTAssertEqual(value1.spec, nil)
 
-      guard let g2 = self.destructStringFormattedValue(d[2]) else { return }
-      guard let id2 = self.destructIdentifier(g2.0) else { return }
+      guard let value2 = self.matchStringFormattedValue(joined[2]) else { return }
+      guard let id2 = self.matchIdentifier(value2.0) else { return }
       XCTAssertEqual(id2, "that")
-      XCTAssertEqual(g2.conversion, nil)
-      XCTAssertEqual(g2.spec, nil)
+      XCTAssertEqual(value2.conversion, nil)
+      XCTAssertEqual(value2.spec, nil)
 
-      guard let g3 = self.destructStringSimple(d[3]) else { return }
-      XCTAssertEqual(g3, " once controlled me")
+      guard let str3 = self.matchStringSimple(joined[3]) else { return }
+      XCTAssertEqual(str3, " once controlled me")
     }
   }
 
@@ -418,22 +418,22 @@ class FStringTests: XCTestCase, DestructStringGroup, DestructExpressionKind {
     try string.appendFormatString(s)
 
     let group = try string.compile()
-    if let d = self.destructStringJoinedString(group) {
-      XCTAssertEqual(d.count, 3)
-      guard d.count == 3 else { return }
+    if let joined = self.matchStringJoinedString(group) {
+      XCTAssertEqual(joined.count, 3)
+      guard joined.count == 3 else { return }
 
-      guard let g0 = self.destructStringSimple(d[0]) else { return }
-      XCTAssertEqual(g0, "No right, no wrong, ")
+      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      XCTAssertEqual(str0, "No right, no wrong, ")
 
-      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
-      guard let grp1 = self.destructString(g1.0) else { return }
-      guard let str1 = self.destructStringSimple(grp1) else { return }
-      XCTAssertEqual(str1, "no rules for me")
-      XCTAssertEqual(g1.conversion, nil)
-      XCTAssertEqual(g1.spec, nil)
+      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
+      guard let valueGrp1 = self.matchString(value1.0) else { return }
+      guard let valueStr1 = self.matchStringSimple(valueGrp1) else { return }
+      XCTAssertEqual(valueStr1, "no rules for me")
+      XCTAssertEqual(value1.conversion, nil)
+      XCTAssertEqual(value1.spec, nil)
 
-      guard let g2 = self.destructStringSimple(d[2]) else { return }
-      XCTAssertEqual(g2, " Im free!")
+      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      XCTAssertEqual(str2, " Im free!")
     }
   }
 

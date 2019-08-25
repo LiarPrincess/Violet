@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class ComparisonTests: XCTestCase, Common, DestructExpressionKind {
+class ComparisonTests: XCTestCase, Common, ExpressionMatcher {
 
   func test_simple() {
     let variants: [(TokenKind, ComparisonOperator)] = [
@@ -22,83 +22,90 @@ class ComparisonTests: XCTestCase, Common, DestructExpressionKind {
 
     for (token, op) in variants {
       var parser = self.createExprParser(
-        self.token(.float(1.0), start: loc0, end: loc1),
-        self.token(token,       start: loc2, end: loc3),
-        self.token(.float(2.0), start: loc4, end: loc5)
+        self.token(.identifier("aladdin"), start: loc0, end: loc1),
+        self.token(token,                  start: loc2, end: loc3),
+        self.token(.identifier("jasmine"), start: loc4, end: loc5)
       )
 
       if let expr = self.parseExpr(&parser) {
         let msg = "for token '\(token)'"
 
-        guard let b = self.destructCompare(expr) else { return }
+        guard let comp = self.matchCompare(expr) else { return }
+        XCTAssertExpression(comp.left, "aladdin", msg)
 
-        let two = Expression(.float(2.0), start: loc4, end: loc5)
-        XCTAssertEqual(b.left, Expression(.float(1.0), start: loc0, end: loc1), msg)
-        XCTAssertEqual(b.elements, [ComparisonElement(op: op, right: two)], msg)
+        XCTAssertEqual(comp.elements.count, 1, msg)
+        guard comp.elements.count == 1 else { return }
 
-        XCTAssertExpression(expr, "(1.0 \(op) 2.0)", msg)
+        XCTAssertEqual(comp.elements[0].op, op, msg)
+        XCTAssertExpression(comp.elements[0].right, "jasmine", msg)
+
+        XCTAssertExpression(expr, "(aladdin \(op) jasmine)", msg)
         XCTAssertEqual(expr.start, loc0, msg)
         XCTAssertEqual(expr.end,   loc5, msg)
       }
     }
   }
 
-  /// this does not make sense: '1.0 not in 2.0', but it is not sema...
   func test_notIn() {
     var parser = self.createExprParser(
-      self.token(.float(1.0), start: loc0, end: loc1),
-      self.token(.not,        start: loc2, end: loc3),
-      self.token(.in,         start: loc4, end: loc5),
-      self.token(.float(2.0), start: loc6, end: loc7)
+      self.token(.identifier("rapunzel"), start: loc0, end: loc1),
+      self.token(.not,                    start: loc2, end: loc3),
+      self.token(.in,                     start: loc4, end: loc5),
+      self.token(.identifier("aladdin"),  start: loc6, end: loc7)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let b = self.destructCompare(expr) else { return }
+      guard let comp = self.matchCompare(expr) else { return }
+      XCTAssertExpression(comp.left, "rapunzel")
 
-      let two = Expression(.float(2.0), start: loc6, end: loc7)
-      XCTAssertEqual(b.left, Expression(.float(1.0), start: loc0, end: loc1))
-      XCTAssertEqual(b.elements, [ComparisonElement(op: .notIn, right: two)])
+      XCTAssertEqual(comp.elements.count, 1)
+      guard comp.elements.count == 1 else { return }
 
-      XCTAssertExpression(expr, "(1.0 not in 2.0)")
+      XCTAssertEqual(comp.elements[0].op, .notIn)
+      XCTAssertExpression(comp.elements[0].right, "aladdin")
+
+      XCTAssertExpression(expr, "(rapunzel not in aladdin)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
     }
   }
 
-  /// '1.0 is not 2.0'
   func test_isNot() {
     var parser = self.createExprParser(
-      self.token(.float(1.0), start: loc0, end: loc1),
-      self.token(.is,         start: loc2, end: loc3),
-      self.token(.not,        start: loc4, end: loc5),
-      self.token(.float(2.0), start: loc6, end: loc7)
+      self.token(.identifier("aladdin"), start: loc0, end: loc1),
+      self.token(.is,                    start: loc2, end: loc3),
+      self.token(.not,                   start: loc4, end: loc5),
+      self.token(.identifier("jasmine"), start: loc6, end: loc7)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let b = self.destructCompare(expr) else { return }
+      guard let comp = self.matchCompare(expr) else { return }
+      XCTAssertExpression(comp.left, "aladdin")
 
-      let two = Expression(.float(2.0), start: loc6, end: loc7)
-      XCTAssertEqual(b.left, Expression(.float(1.0), start: loc0, end: loc1))
-      XCTAssertEqual(b.elements, [ComparisonElement(op: .isNot, right: two)])
+      XCTAssertEqual(comp.elements.count, 1)
+      guard comp.elements.count == 1 else { return }
 
-      XCTAssertExpression(expr, "(1.0 is not 2.0)")
+      XCTAssertEqual(comp.elements[0].op, .isNot)
+      XCTAssertExpression(comp.elements[0].right, "jasmine")
+
+      XCTAssertExpression(expr, "(aladdin is not jasmine)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
     }
   }
 
-  /// complex compare: 1 < 2 <= 3
+  /// aladdin < jasmine <= genie
   func test_compare_withMultipleElements() {
     var parser = self.createExprParser(
-      self.token(.float(1.0), start: loc0, end: loc1),
-      self.token(.less,       start: loc2, end: loc3),
-      self.token(.float(2.0), start: loc4, end: loc5),
-      self.token(.lessEqual,  start: loc6, end: loc7),
-      self.token(.float(3.0), start: loc8, end: loc9)
+      self.token(.identifier("aladdin"), start: loc0, end: loc1),
+      self.token(.less,                  start: loc2, end: loc3),
+      self.token(.identifier("jasmine"), start: loc4, end: loc5),
+      self.token(.lessEqual,             start: loc6, end: loc7),
+      self.token(.identifier("genie"),   start: loc8, end: loc9)
     )
 
     if let expr = self.parseExpr(&parser) {
-      XCTAssertExpression(expr, "(1.0 < 2.0 <= 3.0)")
+      XCTAssertExpression(expr, "(aladdin < jasmine <= genie)")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }

@@ -21,7 +21,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [])
 
@@ -45,11 +45,12 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
-      XCTAssertEqual(d.args, [
-        Expression(.float(1.0), start: loc4, end: loc5)
-      ])
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
+
+      XCTAssertEqual(d.args.count, 1)
+      guard d.args.count == 1 else { return }
+      XCTAssertExpression(d.args[0], "1.0")
 
       XCTAssertExpression(expr, "f(1.0)")
       XCTAssertEqual(expr.start, loc0)
@@ -71,12 +72,13 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
-      XCTAssertEqual(d.args, [
-        Expression(.identifier("a"), start: loc4, end: loc5),
-        Expression(.float(1.0),      start: loc8, end: loc9)
-      ])
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
+
+      XCTAssertEqual(d.args.count, 2)
+      guard d.args.count == 2 else { return }
+      XCTAssertExpression(d.args[0], "a")
+      XCTAssertExpression(d.args[1], "1.0")
 
       XCTAssertExpression(expr, "f(a 1.0)")
       XCTAssertEqual(expr.start, loc0)
@@ -97,11 +99,12 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
-      XCTAssertEqual(d.args, [
-        Expression(.float(1.0), start: loc4, end: loc5)
-      ])
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
+
+      XCTAssertEqual(d.args.count, 1)
+      guard d.args.count == 1 else { return }
+      XCTAssertExpression(d.args[0], "1.0")
 
       XCTAssertExpression(expr, "f(1.0)")
       XCTAssertEqual(expr.start, loc0)
@@ -123,11 +126,12 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
-      XCTAssertEqual(d.args, [
-        Expression(.identifier("a"), start: loc4, end: loc9)
-      ])
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
+
+      XCTAssertEqual(d.args.count, 1)
+      guard d.args.count == 1 else { return }
+      XCTAssertExpression(d.args[0], "a")
 
       XCTAssertExpression(expr, "f(a)")
       XCTAssertEqual(expr.start, loc0)
@@ -187,12 +191,12 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      let argA = Expression(.identifier("a"), start: loc6, end: loc7)
-      let starredA = Expression(.starred(argA), start: loc4, end: loc7)
-
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
-      XCTAssertEqual(d.args, [starredA])
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
+
+      XCTAssertEqual(d.args.count, 1)
+      guard d.args.count == 1 else { return }
+      XCTAssertExpression(d.args[0], "*a")
 
       XCTAssertExpression(expr, "f(*a)")
       XCTAssertEqual(expr.start, loc0)
@@ -215,13 +219,13 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      let argA = Expression(.identifier("a"), start: loc4, end: loc5)
-      let argB = Expression(.identifier("b"), start: loc10, end: loc11)
-      let starredB = Expression(.starred(argB), start: loc8, end: loc11)
-
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
-      XCTAssertEqual(d.args, [argA, starredB])
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
+
+      XCTAssertEqual(d.args.count, 2)
+      guard d.args.count == 2 else { return }
+      XCTAssertExpression(d.args[0], "a")
+      XCTAssertExpression(d.args[1], "*b")
 
       XCTAssertExpression(expr, "f(a *b)")
       XCTAssertEqual(expr.start, loc0)
@@ -246,15 +250,15 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      let valueA = Expression(.float(1.0), start: loc8, end: loc9)
-      let keywordA = Keyword(name: "a", value: valueA, start: loc4, end: loc9)
+      XCTAssertExpression(d.f, "f")
 
-      let argB = Expression(.identifier("b"), start: loc14, end: loc15)
-      let starredB = Expression(.starred(argB), start: loc12, end: loc15)
+      XCTAssertEqual(d.args.count, 1)
+      guard d.args.count == 1 else { return }
+      XCTAssertExpression(d.args[0], "*b")
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
-      XCTAssertEqual(d.args, [starredB])
-      XCTAssertEqual(d.keywords, [keywordA])
+      XCTAssertEqual(d.keywords.count, 1)
+      guard d.keywords.count == 1 else { return }
+      XCTAssertKeyword(d.keywords[0], "a=1.0")
 
       XCTAssertExpression(expr, "f(*b a=1.0)") // reorder
       XCTAssertEqual(expr.start, loc0)
@@ -297,12 +301,12 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      let valueA = Expression(.float(1.0), start: loc8, end: loc9)
-      let keywordA = Keyword(name: "a", value: valueA, start: loc4, end: loc9)
-
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args, [])
-      XCTAssertEqual(d.keywords, [keywordA])
+
+      XCTAssertEqual(d.keywords.count, 1)
+      guard d.keywords.count == 1 else { return }
+      XCTAssertKeyword(d.keywords[0], "a=1.0")
 
       XCTAssertExpression(expr, "f(a=1.0)")
       XCTAssertEqual(expr.start, loc0)
@@ -328,15 +332,13 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      let valueA = Expression(.float(1.0), start: loc8, end: loc9)
-      let keywordA = Keyword(name: "a", value: valueA, start: loc4, end: loc9)
-
-      let valueB = Expression(.float(2.0), start: loc16, end: loc17)
-      let keywordB = Keyword(name: "b", value: valueB, start: loc12, end: loc17)
-
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args, [])
-      XCTAssertEqual(d.keywords, [keywordA, keywordB])
+
+      XCTAssertEqual(d.keywords.count, 2)
+      guard d.keywords.count == 2 else { return }
+      XCTAssertKeyword(d.keywords[0], "a=1.0")
+      XCTAssertKeyword(d.keywords[1], "b=2.0")
 
       XCTAssertExpression(expr, "f(a=1.0 b=2.0)")
       XCTAssertEqual(expr.start, loc0)
@@ -421,12 +423,12 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      let valueA = Expression(.identifier("a"), start: loc6, end: loc7)
-      let keywordA = Keyword(name: nil, value: valueA, start: loc4, end: loc7)
-
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args, [])
-      XCTAssertEqual(d.keywords, [keywordA])
+
+      XCTAssertEqual(d.keywords.count, 1)
+      guard d.keywords.count == 1 else { return }
+      XCTAssertKeyword(d.keywords[0], "**a")
 
       XCTAssertExpression(expr, "f(**a)")
       XCTAssertEqual(expr.start, loc0)
@@ -449,13 +451,15 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      let argA = Expression(.identifier("a"), start: loc4, end: loc5)
-      let valueB = Expression(.identifier("b"), start: loc10, end: loc11)
-      let keywordB = Keyword(name: nil, value: valueB, start: loc8, end: loc11)
+      XCTAssertExpression(d.f, "f")
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
-      XCTAssertEqual(d.args, [argA])
-      XCTAssertEqual(d.keywords, [keywordB])
+      XCTAssertEqual(d.args.count, 1)
+      guard d.args.count == 1 else { return }
+      XCTAssertExpression(d.args[0], "a")
+
+      XCTAssertEqual(d.keywords.count, 1)
+      guard d.keywords.count == 1 else { return }
+      XCTAssertKeyword(d.keywords[0], "**b")
 
       XCTAssertExpression(expr, "f(a **b)")
       XCTAssertEqual(expr.start, loc0)

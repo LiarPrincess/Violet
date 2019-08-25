@@ -3,7 +3,7 @@ import Core
 import Lexer
 import Parser
 
-internal func XCTAssertExpression(_ expr:     Expression?,
+internal func XCTAssertExpression(_ expr: Expression?,
                                   _ expected: String,
                                   _ message:  String = "",
                                   file: StaticString = #file,
@@ -17,7 +17,7 @@ internal func XCTAssertExpression(_ expr:     Expression?,
   XCTAssertEqual(desc, expected, message, file: file, line: line)
 }
 
-internal func XCTAssertStatement(_ stmt:     Statement,
+internal func XCTAssertStatement(_ stmt: Statement,
                                  _ expected: String,
                                  _ message:  String = "",
                                  file: StaticString = #file,
@@ -26,7 +26,7 @@ internal func XCTAssertStatement(_ stmt:     Statement,
   XCTAssertEqual(desc, expected, message, file: file, line: line)
 }
 
-internal func XCTAssertWithItem(_ item:  WithItem,
+internal func XCTAssertWithItem(_ item: WithItem,
                                 _ expected: String,
                                 _ message:  String = "",
                                 file: StaticString = #file,
@@ -53,10 +53,81 @@ internal func XCTAssertKeyword(_ keyword:  Keyword,
   XCTAssertEqual(desc, expected, message, file: file, line: line)
 }
 
-internal func XCTAssertDictionaryElement(_ element:  DictionaryElement,
-                                         key:      String,
-                                         value:    String,
-                                         _ message:  String = "",
+internal func XCTAssertArgument(_ arg:      Arg?,
+                                _ expected: Arg,
+                                file: StaticString = #file,
+                                line: UInt         = #line) {
+
+  XCTAssertNotNil(arg, file: file, line: line)
+  guard let a = arg else { return }
+
+  XCTAssertEqual(a.name, expected.name, file: file, line: line)
+
+  let aDesc = String(describing: a.annotation)
+  let eDesc = String(describing: expected.annotation)
+  XCTAssertEqual(aDesc, eDesc, aDesc, file: file, line: line)
+
+  XCTAssertEqual(a.start, expected.start, file: file, line: line)
+  XCTAssertEqual(a.end,   expected.end,   file: file, line: line)
+}
+
+internal func XCTAssertArguments(_ args:     [Arg],
+                                 _ expected: [Arg],
+                                 file: StaticString = #file,
+                                 line: UInt         = #line) {
+
+  XCTAssertEqual(args.count,
+                 expected.count,
+                 "Invalid count",
+                 file: file,
+                 line: line)
+
+  for (a, e) in zip(args, expected) {
+    XCTAssertArgument(a, e)
+  }
+}
+
+internal func XCTAssertArgumentDefaults(_ exprs:    [Expression],
+                                        _ expected: [Expression],
+                                        file: StaticString = #file,
+                                        line: UInt         = #line) {
+
+  XCTAssertEqual(exprs.count,
+                 expected.count,
+                 "Invalid count",
+                 file: file,
+                 line: line)
+
+  for (e, rhs) in zip(exprs, expected) {
+    let eDesc = String(describing: e)
+    let rhsDesc = String(describing: rhs)
+    XCTAssertEqual(eDesc, rhsDesc, eDesc, file: file, line: line)
+
+    XCTAssertEqual(e.start, rhs.start)
+    XCTAssertEqual(e.end, rhs.end)
+  }
+}
+
+internal func XCTAssertVararg(_ vararg: Vararg,
+                              _ expected: Vararg,
+                              _ message:  String = "",
+                              file: StaticString = #file,
+                              line: UInt         = #line) {
+  switch (vararg, expected) {
+  case (.none, .none),
+       (.unnamed, .unnamed):
+    return
+  case let (.named(v), .named(e)):
+    XCTAssertArgument(v, e)
+  default:
+    XCTAssertEqual(vararg, expected, file: file, line: line)
+  }
+}
+
+internal func XCTAssertDictionaryElement(_ element: DictionaryElement,
+                                         key:       String,
+                                         value:     String,
+                                         _ message: String = "",
                                          file: StaticString = #file,
                                          line: UInt         = #line) {
 
@@ -72,9 +143,9 @@ internal func XCTAssertDictionaryElement(_ element:  DictionaryElement,
   XCTAssertEqual(vDesc, value, message, file: file, line: line)
 }
 
-internal func XCTAssertDictionaryElement(_ element:  DictionaryElement,
-                                         unpacking:  String,
-                                         _ message:  String = "",
+internal func XCTAssertDictionaryElement(_ element: DictionaryElement,
+                                         unpacking: String,
+                                         _ message: String = "",
                                          file: StaticString = #file,
                                          line: UInt         = #line) {
 

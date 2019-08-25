@@ -24,21 +24,21 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
 
       XCTAssertEqual(d.args.count, 1)
       guard d.args.count == 1 else { return }
       guard let gen = self.destructGeneratorExp(d.args[0]) else { return }
 
-      XCTAssertEqual(gen.elt, Expression(.identifier("a"), start: loc4, end: loc5))
+      XCTAssertExpression(gen.elt, "a")
       XCTAssertEqual(gen.generators.count, 1)
       guard gen.generators.count == 1 else { return }
 
       let g = gen.generators[0]
       XCTAssertEqual(g.isAsync, false)
-      XCTAssertEqual(g.target, Expression(.identifier("b"), start: loc8, end: loc9))
-      XCTAssertEqual(g.iter, Expression(.list([]), start: loc12, end: loc15))
+      XCTAssertExpression(g.target, "b")
+      XCTAssertExpression(g.iter, "[]")
       XCTAssertEqual(g.ifs.count, 0)
       XCTAssertEqual(g.start, loc6)
       XCTAssertEqual(g.end, loc15)
@@ -68,7 +68,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args.count, 2)
       XCTAssertEqual(d.keywords, [])
 
@@ -102,7 +102,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args.count, 2)
       XCTAssertEqual(d.keywords, [])
 
@@ -134,7 +134,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args.count, 2)
       XCTAssertEqual(d.keywords, [])
 
@@ -147,7 +147,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     }
   }
 
-  /// f(a for b in [])
+  /// f(a for b in [],)
   func test_commaAfter() {
     var parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
@@ -165,21 +165,21 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args.count, 1)
       XCTAssertEqual(d.keywords, [])
 
       guard d.args.count == 1 else { return }
       guard let gen = self.destructGeneratorExp(d.args[0]) else { return }
 
-      XCTAssertEqual(gen.elt, Expression(.identifier("a"), start: loc4, end: loc5))
+      XCTAssertExpression(gen.elt, "a")
       XCTAssertEqual(gen.generators.count, 1)
       guard gen.generators.count == 1 else { return }
 
       let g = gen.generators[0]
       XCTAssertEqual(g.isAsync, false)
-      XCTAssertEqual(g.target, Expression(.identifier("b"), start: loc8, end: loc9))
-      XCTAssertEqual(g.iter, Expression(.list([]), start: loc12, end: loc15))
+      XCTAssertExpression(g.target, "b")
+      XCTAssertExpression(g.iter, "[]")
       XCTAssertEqual(g.ifs.count, 0)
       XCTAssertEqual(g.start, loc6)
       XCTAssertEqual(g.end, loc15)

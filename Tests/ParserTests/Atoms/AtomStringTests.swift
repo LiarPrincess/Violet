@@ -9,8 +9,7 @@ private let l: UInt8 = 0x6c
 private let s: UInt8 = 0x73
 private let a: UInt8 = 0x61
 
-class AtomStringTest: XCTestCase,
-  Common, DestructExpressionKind, DestructStringGroup {
+class AtomStringTest: XCTestCase, Common, ExpressionMatcher, StringMatcher {
 
   // MARK: - Bytes
 
@@ -82,9 +81,9 @@ class AtomStringTest: XCTestCase,
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let group = self.destructString(expr) else { return }
-      guard let value = self.destructStringSimple(group) else { return }
-      XCTAssertEqual(value, "Let it go")
+      guard let group = self.matchString(expr) else { return }
+      guard let groupStr = self.matchStringSimple(group) else { return }
+      XCTAssertEqual(groupStr, "Let it go")
 
       XCTAssertExpression(expr, "'Let it go'")
       XCTAssertEqual(expr.start, loc0)
@@ -100,9 +99,9 @@ class AtomStringTest: XCTestCase,
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let group = self.destructString(expr) else { return }
-      guard let value = self.destructStringSimple(group) else { return }
-      XCTAssertEqual(value, "Let it go")
+      guard let group = self.matchString(expr) else { return }
+      guard let groupStr = self.matchStringSimple(group) else { return }
+      XCTAssertEqual(groupStr, "Let it go")
 
       XCTAssertExpression(expr, "'Let it go'")
       XCTAssertEqual(expr.start, loc0)
@@ -116,24 +115,24 @@ class AtomStringTest: XCTestCase,
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let group = self.destructString(expr) else { return }
-      guard let d = self.destructStringJoinedString(group) else { return }
+      guard let group = self.matchString(expr) else { return }
+      guard let joined = self.matchStringJoinedString(group) else { return }
 
-      XCTAssertEqual(d.count, 3)
-      guard d.count == 3 else { return }
+      XCTAssertEqual(joined.count, 3)
+      guard joined.count == 3 else { return }
 
-      guard let g0 = self.destructStringSimple(d[0]) else { return }
-      XCTAssertEqual(g0, "Let ")
+      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      XCTAssertEqual(str0, "Let ")
 
-      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
-      guard let g1s = self.destructString(g1.0) else { return }
-      guard let g1value = self.destructStringSimple(g1s) else { return }
-      XCTAssertEqual(g1value, "it")
-      XCTAssertEqual(g1.conversion, nil)
-      XCTAssertEqual(g1.spec, nil)
+      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
+      guard let value1Group = self.matchString(value1.0) else { return }
+      guard let value1Str = self.matchStringSimple(value1Group) else { return }
+      XCTAssertEqual(value1Str, "it")
+      XCTAssertEqual(value1.conversion, nil)
+      XCTAssertEqual(value1.spec, nil)
 
-      guard let g2 = self.destructStringSimple(d[2]) else { return }
-      XCTAssertEqual(g2, " go")
+      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      XCTAssertEqual(str2, " go")
 
       XCTAssertExpression(expr, "('Let ' f''it'' ' go')")
       XCTAssertEqual(expr.start, loc0)
@@ -150,31 +149,31 @@ class AtomStringTest: XCTestCase,
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let group = self.destructString(expr) else { return }
-      guard let d = self.destructStringJoinedString(group) else { return }
+      guard let group = self.matchString(expr) else { return }
+      guard let joined = self.matchStringJoinedString(group) else { return }
 
-      XCTAssertEqual(d.count, 4)
-      guard d.count == 4 else { return }
+      XCTAssertEqual(joined.count, 4)
+      guard joined.count == 4 else { return }
 
-      guard let g0 = self.destructStringSimple(d[0]) else { return }
-      XCTAssertEqual(g0, "Let ")
+      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      XCTAssertEqual(str0, "Let ")
 
-      guard let g1 = self.destructStringFormattedValue(d[1]) else { return }
-      guard let g1s = self.destructString(g1.0) else { return }
-      guard let g1value = self.destructStringSimple(g1s) else { return }
-      XCTAssertEqual(g1value, "it")
-      XCTAssertEqual(g1.conversion, nil)
-      XCTAssertEqual(g1.spec, nil)
+      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
+      guard let value1Group = self.matchString(value1.0) else { return }
+      guard let value1Str = self.matchStringSimple(value1Group) else { return }
+      XCTAssertEqual(value1Str, "it")
+      XCTAssertEqual(value1.conversion, nil)
+      XCTAssertEqual(value1.spec, nil)
 
-      guard let g2 = self.destructStringSimple(d[2]) else { return }
-      XCTAssertEqual(g2, " ")
+      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      XCTAssertEqual(str2, " ")
 
-      guard let g3 = self.destructStringFormattedValue(d[3]) else { return }
-      guard let g3s = self.destructString(g3.0) else { return }
-      guard let g3value = self.destructStringSimple(g3s) else { return }
-      XCTAssertEqual(g3value, "go")
-      XCTAssertEqual(g3.conversion, nil)
-      XCTAssertEqual(g3.spec, nil)
+      guard let value3 = self.matchStringFormattedValue(joined[3]) else { return }
+      guard let value3Group = self.matchString(value3.0) else { return }
+      guard let value3str = self.matchStringSimple(value3Group) else { return }
+      XCTAssertEqual(value3str, "go")
+      XCTAssertEqual(value3.conversion, nil)
+      XCTAssertEqual(value3.spec, nil)
 
       XCTAssertExpression(expr, "('Let ' f''it'' ' ' f''go'')")
       XCTAssertEqual(expr.start, loc0)
