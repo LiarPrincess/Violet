@@ -41,7 +41,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 -- https://docs.python.org/3/reference/simple_stmts.html
 -- https://docs.python.org/3/reference/compound_stmts.html
-@struct stmt = (
+@struct stmt: Equatable = (
   -- Type of the statement.
   stmtKind kind @underscoreInit,
   -- Location of the first character in the source code.
@@ -181,7 +181,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- Import name with optional 'as' alias.
 -- Both parameters are raw strings of the names.
 -- `asname` can be None if the regular name is to be used.
-@struct Alias = (
+@struct Alias: Equatable = (
   identifier name,
   identifier? asName,
   -- Location of the first character in the source code.
@@ -191,7 +191,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 )
 
 -- A single context manager in a `with` block.
-@struct WithItem = (
+@struct WithItem: Equatable = (
   -- Context manager (often a Call node).
   expr contextExpr,
   -- Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
@@ -199,7 +199,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 )
 
 -- A single except clause.
-@struct ExceptHandler = (
+@struct ExceptHandler: Equatable = (
   -- Exception type it will match, typically a Name node
   -- (or `nil` for a catch-all except: clause).
   expr? type,
@@ -215,9 +215,9 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 )
 
 -- https://docs.python.org/3/reference/expressions.html
-@struct expr = (
+@struct expr: Equatable = (
   -- Type of the expression.
-  exprKind kind @underscoreInit,
+  exprKind kind,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -419,8 +419,8 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Converts by calling `repr(<value>)`.
   | Repr
 
-@struct Slice = (
-  sliceKind kind @underscoreInit,
+@struct Slice: Equatable = (
+  sliceKind kind,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -437,7 +437,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | Index(expr)
 
 -- One `for` clause in a comprehension.
-@struct Comprehension = (
+@struct Comprehension: Equatable = (
   -- Reference to use for each element,
   -- typically a `Identifier` or `Tuple` node.
   expr target,
@@ -457,7 +457,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- The arguments for a function passed by value
 -- (where the value is always an object reference, not the value of the object).
 -- https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"
-@struct Arguments = (
+@struct Arguments: Equatable = (
   -- Function positional arguments.
   -- When a function is called, positional arguments are mapped
   -- to these parameters based solely on their position.
@@ -490,9 +490,9 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   loc end
 )
 
-@struct Arg = (
+@struct Arg: Equatable = (
   -- Argument name.
-  identifier name @underscoreInit,
+  identifier name,
   -- Python expression evaluated at compile time.
   -- Not used during runtime, can be used by third party libraries.
   -- Introduced in PEP 3107.
@@ -511,7 +511,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 -- A keyword argument to a function call or class definition.
 -- `nil` name is used for `**kwargs`.
-@struct Keyword = (
+@struct Keyword: Equatable = (
   -- Parameter name.
   identifier? name,
   -- Node to pass in.

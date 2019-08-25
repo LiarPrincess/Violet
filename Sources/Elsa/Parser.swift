@@ -107,6 +107,7 @@ internal class Parser {
     self.advance() // @enum, @indirect
 
     let name = self.consumeNameOrFail()
+    let bases = self.consumeProtocols()
     self.consumeOrFail(.equal)
 
     var cases = [EnumCaseDef]()
@@ -117,7 +118,7 @@ internal class Parser {
       cases.append(self.enumCaseDef())
     }
 
-    return EnumDef(name, cases: cases, indirect: indirect, doc: doc)
+    return EnumDef(name, bases: bases, cases: cases, indirect: indirect, doc: doc)
   }
 
   private func enumCaseDef() -> EnumCaseDef {
@@ -136,10 +137,11 @@ internal class Parser {
     self.advance() // struct
 
     let name = self.consumeNameOrFail()
+    let bases = self.consumeProtocols()
     self.consumeOrFail(.equal)
     let properties = self.structProperties()
 
-    return StructDef(name, properties: properties, doc: doc)
+    return StructDef(name, bases: bases, properties: properties, doc: doc)
   }
 
   // MARK: - Properties
@@ -237,6 +239,23 @@ internal class Parser {
     if self.consumeIfEqual(kind: .plus)   { return .min1 }
     return .single
   }
+
+  private func consumeProtocols() -> [String] {
+    guard self.consumeIfEqual(kind: .colon) else {
+      return []
+    }
+
+    var result = [String]()
+    result.append(self.consumeNameOrFail())
+
+    while self.token.kind == .comma {
+      self.advance() // ,
+      result.append(self.consumeNameOrFail())
+    }
+
+    return result
+  }
+
 
   // MARK: - Fail
 

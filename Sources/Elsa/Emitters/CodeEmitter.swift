@@ -24,11 +24,14 @@ public final class CodeEmitter: EmitterBase {
     }
   }
 
+  // MARK: - Enum
+
   private func emitEnum(_ enumDef: EnumDef) {
     self.emitDoc(enumDef.doc, indent: 0)
 
+    let bases = self.compileBases(enumDef.bases)
     let indirect = enumDef.indirect ? "indirect " : ""
-    self.write("public \(indirect)enum \(enumDef.name): Equatable {")
+    self.write("public \(indirect)enum \(enumDef.name)\(bases) {")
 
     // emit `case single([Statement])`
     for caseDef in enumDef.cases {
@@ -58,9 +61,13 @@ public final class CodeEmitter: EmitterBase {
     self.write()
   }
 
+  // MARK: - Struct
+
   private func emitStruct(_ structDef: StructDef) {
+    let bases = self.compileBases(structDef.bases)
+
     self.emitDoc(structDef.doc, indent: 0)
-    self.write("public struct \(structDef.name): Equatable {")
+    self.write("public struct \(structDef.name)\(bases) {")
     self.write()
 
     for property in structDef.properties {
@@ -83,6 +90,12 @@ public final class CodeEmitter: EmitterBase {
   private func structPropertyInit(_ prop: StructProperty) -> String {
     let prefix = prop.underscoreInit ? "_ " : ""
     return prefix + prop.nameColonType
+  }
+
+  // MARK: - Common
+
+  private func compileBases(_ bases: [String]) -> String {
+    return bases.isEmpty ? "" : ": " + bases.joined(", ")
   }
 
   private func emitDoc(_ doc: String?, indent indentCount: Int) {

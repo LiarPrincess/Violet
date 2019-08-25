@@ -6,20 +6,27 @@ public enum Entity {
 // MARK: - Struct
 
 public struct StructDef {
+  /// Structure name
   public let name: String
+  /// Implemented protocols
+  public let bases: [String]
   public let properties: [StructProperty]
+  /// Comment above definition
   public let doc: String?
 
   public init(_ name:     String,
+              bases:      [String],
               properties: [StructProperty],
               doc:        String? = nil) {
     self.name = pascalCase(name)
+    self.bases = bases
     self.properties = properties
     self.doc = fixDocNewLines(doc)
   }
 }
 
 public struct StructProperty {
+  /// Property name
   public let name: String
   /// Type of the property
   public let type: String
@@ -29,7 +36,9 @@ public struct StructProperty {
   /// For example for `type = [Int]`, `baseType = Int`.
   /// `baseType + kind = type`
   public let baseType: String
+  /// Comment above definition
   public let doc: String?
+  /// Underscore in initializer: `init(_ x: T)`
   public let underscoreInit: Bool
 
   public var nameColonType: String {
@@ -53,16 +62,23 @@ public struct StructProperty {
 // MARK: - Enum
 
 public struct EnumDef {
+  /// Enum name
   public let name: String
+  /// Implemented protocols
+  public let bases: [String]
   public let cases: [EnumCaseDef]
+  /// Use `indirect enum` instead of `enum`
   public let indirect: Bool
+  /// Comment above definition
   public let doc: String?
 
   public init(_ name:   String,
+              bases:    [String],
               cases:    [EnumCaseDef],
               indirect: Bool    = false,
               doc:      String? = nil) {
     self.name = pascalCase(name)
+    self.bases = bases
     self.cases = cases
     self.doc = doc
     self.indirect = indirect
