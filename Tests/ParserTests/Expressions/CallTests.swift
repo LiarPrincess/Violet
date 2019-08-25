@@ -21,7 +21,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [])
 
@@ -45,7 +45,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [
         Expression(.float(1.0), start: loc4, end: loc5)
       ])
@@ -71,7 +71,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [
         Expression(.identifier("a"), start: loc4, end: loc5),
         Expression(.float(1.0),      start: loc8, end: loc9)
@@ -97,7 +97,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [
         Expression(.float(1.0), start: loc4, end: loc5)
       ])
@@ -123,7 +123,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.destructCall(expr) else { return }
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [
         Expression(.identifier("a"), start: loc4, end: loc9)
       ])
@@ -190,7 +190,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       let argA = Expression(.identifier("a"), start: loc6, end: loc7)
       let starredA = Expression(.starred(argA), start: loc4, end: loc7)
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [starredA])
       XCTAssertEqual(d.keywords, [])
 
@@ -219,7 +219,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       let argB = Expression(.identifier("b"), start: loc10, end: loc11)
       let starredB = Expression(.starred(argB), start: loc8, end: loc11)
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [argA, starredB])
       XCTAssertEqual(d.keywords, [])
 
@@ -252,7 +252,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       let argB = Expression(.identifier("b"), start: loc14, end: loc15)
       let starredB = Expression(.starred(argB), start: loc12, end: loc15)
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [starredB])
       XCTAssertEqual(d.keywords, [keywordA])
 
@@ -300,7 +300,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       let valueA = Expression(.float(1.0), start: loc8, end: loc9)
       let keywordA = Keyword(name: "a", value: valueA, start: loc4, end: loc9)
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [keywordA])
 
@@ -334,7 +334,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       let valueB = Expression(.float(2.0), start: loc16, end: loc17)
       let keywordB = Keyword(name: "b", value: valueB, start: loc12, end: loc17)
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [keywordA, keywordB])
 
@@ -424,7 +424,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       let valueA = Expression(.identifier("a"), start: loc6, end: loc7)
       let keywordA = Keyword(name: nil, value: valueA, start: loc4, end: loc7)
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [keywordA])
 
@@ -453,7 +453,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
       let valueB = Expression(.identifier("b"), start: loc10, end: loc11)
       let keywordB = Keyword(name: nil, value: valueB, start: loc8, end: loc11)
 
-      XCTAssertEqual(d.func, Expression(.identifier("f"), start: loc0, end: loc1))
+      XCTAssertEqual(d.f, Expression(.identifier("f"), start: loc0, end: loc1))
       XCTAssertEqual(d.args, [argA])
       XCTAssertEqual(d.keywords, [keywordB])
 

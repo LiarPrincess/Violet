@@ -234,6 +234,7 @@ extension Parser {
 
   /// `with_item: test ['as' expr]`
   private mutating func withItem() throws -> WithItem {
+    let token = self.peek
     let context = try self.test()
 
     var optionalVars: Expression?
@@ -241,7 +242,10 @@ extension Parser {
       optionalVars = try self.expr()
     }
 
-    return WithItem(contextExpr: context, optionalVars: optionalVars)
+    return WithItem(contextExpr: context,
+                    optionalVars: optionalVars,
+                    start: token.start,
+                    end: optionalVars?.end ?? token.end)
   }
 
   // MARK: - Async

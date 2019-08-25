@@ -28,7 +28,7 @@ internal struct CallIR {
   }
 
   internal func compile(calling leftExpr: Expression) -> ExpressionKind {
-    return ExpressionKind.call(func: leftExpr,
+    return ExpressionKind.call(f: leftExpr,
                                args: self.args,
                                keywords: self.keywords)
   }

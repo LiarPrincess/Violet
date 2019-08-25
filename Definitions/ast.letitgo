@@ -23,7 +23,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 -- Top (root) node in AST.
 -- Represents the whole program.
-@enum AST =
+@enum AST: Equatable =
   -- Used for input in interactive mode.
   -- `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
   Single(stmt*)
@@ -50,7 +50,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   loc end
 )
 
-@enum stmtKind =
+@enum stmtKind: Equatable =
   -- A function definition.
   -- - `name` is a raw string of the function name.
   -- - `args` is a arguments node.
@@ -195,7 +195,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Context manager (often a Call node).
   expr contextExpr,
   -- Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
-  expr? optionalVars
+  expr? optionalVars,
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
 )
 
 -- A single except clause.
@@ -217,7 +221,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- https://docs.python.org/3/reference/expressions.html
 @struct expr: Equatable = (
   -- Type of the expression.
-  exprKind kind,
+  exprKind kind @underscoreInit,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -225,7 +229,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 )
 
 -- https://docs.python.org/3/reference/expressions.html
-@indirect exprKind =
+@indirect exprKind: Equatable =
 {- Base -}
   True
   | False
@@ -312,7 +316,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- `singSong(*dwarfs)`
   | Starred(expr)
 
-@enum UnaryOperator =
+@enum UnaryOperator: Equatable =
   -- Bitwise inversion of its integer argument.
   -- Only applies to integral numbers.
   Invert
@@ -323,13 +327,13 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Negation of its numeric argument. CPython: USub (unary sub).
   | Minus
 
-@enum BooleanOperator =
+@enum BooleanOperator: Equatable =
   -- Logical `and` with short-circuit.
   And
   -- Logical `or` with short-circuit.
   | Or
 
-@enum BinaryOperator =
+@enum BinaryOperator: Equatable =
   -- Sum of its arguments.
   -- - Numbers added together.
   -- - Sequences are concatenated.
@@ -366,12 +370,12 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Floor division of integers results in an integer.
   | FloorDiv
 
-@struct ComparisonElement = (
+@struct ComparisonElement: Equatable = (
   ComparisonOperator op,
   expr right
 )
 
-@enum ComparisonOperator =
+@enum ComparisonOperator: Equatable =
   -- True when two operands are equal.
   Equal
   -- True when two operands are not equal.
@@ -393,7 +397,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Negation of `x in s`
   | NotIn
 
-@enum DictionaryElement =
+@enum DictionaryElement: Equatable =
   -- `**expr`
     unpacking(expr)
   -- `key : value`
@@ -402,7 +406,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 {- Based on RustPython. -}
 {- CPython uses 'JoinedStr(expr* values)', but we know that values are strings. -}
 -- For normal strings and f-strings, concatenate them together.
-@enum StringGroup =
+@enum StringGroup: Equatable =
   -- String - no f-strings.
   String(String)
   -- FormattedValue - just an f-string (with no leading or trailing literals).
@@ -411,7 +415,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | JoinedString(StringGroup*)
 
 -- Transforms a value prior to formatting it.
-@enum ConversionFlag =
+@enum ConversionFlag: Equatable =
   -- Converts by calling `str(<value>)`.
   Str
   -- Converts by calling `ascii(<value>)`.
@@ -421,13 +425,14 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 @struct Slice: Equatable = (
   sliceKind kind,
+  sliceKind kind @underscoreInit,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
   loc end
 )
 
-@enum SliceKind =
+@enum SliceKind: Equatable =
   -- Regular slicing: `movies[pinocchio:frozen2]`.
   Slice(expr? lower, expr? upper, expr? step)
   -- Advanced slicing: `frozen[kristoff:ana, olaf]`.
@@ -492,7 +497,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 @struct Arg: Equatable = (
   -- Argument name.
-  identifier name,
+  identifier name @underscoreInit,
   -- Python expression evaluated at compile time.
   -- Not used during runtime, can be used by third party libraries.
   -- Introduced in PEP 3107.
@@ -503,7 +508,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   loc end
 )
 
-@enum Vararg =
+@enum Vararg: Equatable =
   none
   -- Separator for keyword arguments. Represented by just `*`.
   | unnamed

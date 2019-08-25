@@ -111,7 +111,7 @@ extension Parser {
       let end = self.peek.end
       try self.advance() // )
 
-      let kind = ExpressionKind.call(func: left, args: [], keywords: [])
+      let kind = ExpressionKind.call(f: left, args: [], keywords: [])
       return self.expression(kind, start: left.start, end: end)
     }
 

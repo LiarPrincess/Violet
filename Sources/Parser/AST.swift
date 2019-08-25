@@ -314,10 +314,16 @@ public struct WithItem: Equatable {
   public let contextExpr: Expression
   /// Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
   public let optionalVars: Expression?
+  /// Location of the first character in the source code.
+  public let start: SourceLocation
+  /// Location just after the last character in the source code.
+  public let end: SourceLocation
 
-  public init(contextExpr: Expression, optionalVars: Expression?) {
+  public init(contextExpr: Expression, optionalVars: Expression?, start: SourceLocation, end: SourceLocation) {
     self.contextExpr = contextExpr
     self.optionalVars = optionalVars
+    self.start = start
+    self.end = end
   }
 }
 
@@ -434,7 +440,7 @@ public indirect enum ExpressionKind: Equatable {
   /// - `func` - function to call
   /// - `args` - arguments passed by position
   /// - `keywords` - keyword objects representing arguments passed by keyword
-  case call(func: Expression, args: [Expression], keywords: [Keyword])
+  case call(f: Expression, args: [Expression], keywords: [Keyword])
   /// For example: `1 if True else 2`
   case ifExpression(test: Expression, body: Expression, orElse: Expression)
   /// For example `apple.juice = poison`.
