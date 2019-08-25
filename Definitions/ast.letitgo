@@ -39,17 +39,28 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- `eval_input ::= expression_list NEWLINE*`
   | Expression(expr)
 
--- https://docs.python.org/3/reference/simple_stmts.html
--- https://docs.python.org/3/reference/compound_stmts.html
-@struct stmt: Equatable = (
+-- Syntactic unit that expresses some action to be carried out.
+--
+-- See:
+-- - [Simple statement](https://docs.python.org/3/reference/simple_stmts.html)
+-- - [Compound statement](https://docs.python.org/3/reference/compound_stmts.html)
+@struct stmt: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
   -- Type of the statement.
-  stmtKind kind @underscoreInit,
+  stmtKind kind,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
   loc end
 )
 
+-- Syntactic unit that expresses some action to be carried out.
+--
+-- See:
+-- - [Simple statement](https://docs.python.org/3/reference/simple_stmts.html)
+-- - [Compound statement](https://docs.python.org/3/reference/compound_stmts.html)
 @enum stmtKind: Equatable =
   -- A function definition.
   -- - `name` is a raw string of the function name.
@@ -181,7 +192,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- Import name with optional 'as' alias.
 -- Both parameters are raw strings of the names.
 -- `asname` can be None if the regular name is to be used.
-@struct Alias: Equatable = (
+@struct Alias: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
   identifier name,
   identifier? asName,
   -- Location of the first character in the source code.
@@ -191,7 +205,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 )
 
 -- A single context manager in a `with` block.
-@struct WithItem: Equatable = (
+@struct WithItem: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
   -- Context manager (often a Call node).
   expr contextExpr,
   -- Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
@@ -203,7 +220,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 )
 
 -- A single except clause.
-@struct ExceptHandler: Equatable = (
+@struct ExceptHandler: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
   -- Exception type it will match, typically a Name node
   -- (or `nil` for a catch-all except: clause).
   expr? type,
@@ -218,17 +238,26 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   loc end
 )
 
--- https://docs.python.org/3/reference/expressions.html
-@struct expr: Equatable = (
+-- Combination of one or more constants, variables, operators and functions
+-- that the programming language interprets and computes to produce another value.
+--
+-- See: [docs](https://docs.python.org/3/reference/expressions.html)
+@struct expr: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
   -- Type of the expression.
-  exprKind kind @underscoreInit,
+  exprKind kind,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
   loc end
 )
 
--- https://docs.python.org/3/reference/expressions.html
+-- Combination of one or more constants, variables, operators and functions
+-- that the programming language interprets and computes to produce another value.
+--
+-- See: [docs](https://docs.python.org/3/reference/expressions.html)
 @indirect exprKind: Equatable =
 {- Base -}
   True
@@ -303,7 +332,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `func` - function to call
   -- - `args` - arguments passed by position
   -- - `keywords` - keyword objects representing arguments passed by keyword
-  | Call(expr func, expr* args, keyword* keywords)
+  | Call(expr f, expr* args, keyword* keywords)
 {- Other -}
   -- For example: `1 if True else 2`
   | IfExpression(expr test, expr body, expr orElse)
@@ -423,9 +452,12 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Converts by calling `repr(<value>)`.
   | Repr
 
-@struct Slice: Equatable = (
+@struct Slice: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+
   sliceKind kind,
-  sliceKind kind @underscoreInit,
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -442,7 +474,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | Index(expr)
 
 -- One `for` clause in a comprehension.
-@struct Comprehension: Equatable = (
+@struct Comprehension: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+
   -- Reference to use for each element,
   -- typically a `Identifier` or `Tuple` node.
   expr target,
@@ -462,7 +498,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- The arguments for a function passed by value
 -- (where the value is always an object reference, not the value of the object).
 -- https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"
-@struct Arguments: Equatable = (
+@struct Arguments: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+
   -- Function positional arguments.
   -- When a function is called, positional arguments are mapped
   -- to these parameters based solely on their position.
@@ -495,9 +535,13 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   loc end
 )
 
-@struct Arg: Equatable = (
+@struct Arg: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+
   -- Argument name.
-  identifier name @underscoreInit,
+  identifier name,
   -- Python expression evaluated at compile time.
   -- Not used during runtime, can be used by third party libraries.
   -- Introduced in PEP 3107.
@@ -516,7 +560,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 
 -- A keyword argument to a function call or class definition.
 -- `nil` name is used for `**kwargs`.
-@struct Keyword: Equatable = (
+@struct Keyword: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+
   -- Parameter name.
   identifier? name,
   -- Node to pass in.

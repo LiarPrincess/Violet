@@ -29,7 +29,7 @@ private func generateAST() throws {
   // Definitions
   let defFile = parserDir.appendingPathComponent("AST.swift")
   let codeEmitter = try CodeEmitter(letItGo: input, output: defFile)
-  codeEmitter.emit(entities: entities)
+  codeEmitter.emit(entities: entities, imports: ["Foundation", "Core", "Lexer"])
 
   // Pass
 //  let passFile = rootDir.appendingPathComponent("DummyPass.swift")
@@ -39,9 +39,9 @@ private func generateAST() throws {
   // Destruct
   let destructFile = parserTestsDir
     .appendingPathComponent("Helpers")
-    .appendingPathComponent("Destruct.swift")
-  let destructEmitter = try AstDestructionEmitter(letItGo: input, output: destructFile)
-  destructEmitter.emit(entities: entities)
+    .appendingPathComponent("PatternMatching.swift")
+  let patternEmitter = try AstPatternMatchingEmitter(letItGo: input, output: destructFile)
+  patternEmitter.emit(entities: entities)
 }
 
 private func generateBytecode() throws {
@@ -54,7 +54,7 @@ private func generateBytecode() throws {
   // Definitions
   let defFile = bytecodeDir.appendingPathComponent("Opcodes.swift")
   let codeEmitter = try CodeEmitter(letItGo: input, output: defFile)
-  codeEmitter.emit(entities: entities)
+  codeEmitter.emit(entities: entities, imports: ["Foundation", "Core"])
 }
 
 try generateAST()

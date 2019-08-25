@@ -1,11 +1,11 @@
 public final class CodeEmitter: EmitterBase {
 
-  public func emit(entities: [Entity]) {
+  public func emit(entities: [Entity], imports: [String]) {
     self.writeHeader(command: "code")
 
-    self.write("import Foundation")
-    self.write("import Core")
-    self.write("import Lexer")
+    for i in imports {
+      self.write("import \(i)")
+    }
     self.write()
 
     self.write("// swiftlint:disable superfluous_disable_command")

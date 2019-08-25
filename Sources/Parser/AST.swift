@@ -49,10 +49,16 @@ public enum AST: Equatable {
 
 }
 
-/// https://docs.python.org/3/reference/simple_stmts.html
-/// https://docs.python.org/3/reference/compound_stmts.html
-public struct Statement: Equatable {
+/// Syntactic unit that expresses some action to be carried out.
+/// 
+/// See:
+/// - [Simple statement](https://docs.python.org/3/reference/simple_stmts.html)
+/// - [Compound statement](https://docs.python.org/3/reference/compound_stmts.html)
+public struct Statement: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   /// Type of the statement.
   public let kind: StatementKind
   /// Location of the first character in the source code.
@@ -60,13 +66,19 @@ public struct Statement: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(_ kind: StatementKind, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, kind: StatementKind, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.kind = kind
     self.start = start
     self.end = end
   }
 }
 
+/// Syntactic unit that expresses some action to be carried out.
+/// 
+/// See:
+/// - [Simple statement](https://docs.python.org/3/reference/simple_stmts.html)
+/// - [Compound statement](https://docs.python.org/3/reference/compound_stmts.html)
 public enum StatementKind: Equatable {
   /// A function definition.
   /// - `name` is a raw string of the function name.
@@ -290,8 +302,11 @@ public enum StatementKind: Equatable {
 /// Import name with optional 'as' alias.
 /// Both parameters are raw strings of the names.
 /// `asname` can be None if the regular name is to be used.
-public struct Alias: Equatable {
+public struct Alias: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   public let name: String
   public let asName: String?
   /// Location of the first character in the source code.
@@ -299,7 +314,8 @@ public struct Alias: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(name: String, asName: String?, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, name: String, asName: String?, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.name = name
     self.asName = asName
     self.start = start
@@ -308,8 +324,11 @@ public struct Alias: Equatable {
 }
 
 /// A single context manager in a `with` block.
-public struct WithItem: Equatable {
+public struct WithItem: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   /// Context manager (often a Call node).
   public let contextExpr: Expression
   /// Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
@@ -319,7 +338,8 @@ public struct WithItem: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(contextExpr: Expression, optionalVars: Expression?, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, contextExpr: Expression, optionalVars: Expression?, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.contextExpr = contextExpr
     self.optionalVars = optionalVars
     self.start = start
@@ -328,8 +348,11 @@ public struct WithItem: Equatable {
 }
 
 /// A single except clause.
-public struct ExceptHandler: Equatable {
+public struct ExceptHandler: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   /// Exception type it will match, typically a Name node
   /// (or `nil` for a catch-all except: clause).
   public let type: Expression?
@@ -343,7 +366,8 @@ public struct ExceptHandler: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(type: Expression?, name: String?, body: NonEmptyArray<Statement>, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, type: Expression?, name: String?, body: NonEmptyArray<Statement>, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.type = type
     self.name = name
     self.body = body
@@ -352,9 +376,15 @@ public struct ExceptHandler: Equatable {
   }
 }
 
-/// https://docs.python.org/3/reference/expressions.html
-public struct Expression: Equatable {
+/// Combination of one or more constants, variables, operators and functions
+/// that the programming language interprets and computes to produce another value.
+/// 
+/// See: [docs](https://docs.python.org/3/reference/expressions.html)
+public struct Expression: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   /// Type of the expression.
   public let kind: ExpressionKind
   /// Location of the first character in the source code.
@@ -362,14 +392,18 @@ public struct Expression: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(_ kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.kind = kind
     self.start = start
     self.end = end
   }
 }
 
-/// https://docs.python.org/3/reference/expressions.html
+/// Combination of one or more constants, variables, operators and functions
+/// that the programming language interprets and computes to produce another value.
+/// 
+/// See: [docs](https://docs.python.org/3/reference/expressions.html)
 public indirect enum ExpressionKind: Equatable {
   case `true`
   case `false`
@@ -739,15 +773,19 @@ public enum ConversionFlag: Equatable {
 
 }
 
-public struct Slice: Equatable {
+public struct Slice: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   public let kind: SliceKind
   /// Location of the first character in the source code.
   public let start: SourceLocation
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(_ kind: SliceKind, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, kind: SliceKind, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.kind = kind
     self.start = start
     self.end = end
@@ -781,8 +819,11 @@ public enum SliceKind: Equatable {
 }
 
 /// One `for` clause in a comprehension.
-public struct Comprehension: Equatable {
+public struct Comprehension: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   /// Reference to use for each element,
   /// typically a `Identifier` or `Tuple` node.
   public let target: Expression
@@ -797,7 +838,8 @@ public struct Comprehension: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(target: Expression, iter: Expression, ifs: [Expression], isAsync: Bool, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, target: Expression, iter: Expression, ifs: [Expression], isAsync: Bool, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.target = target
     self.iter = iter
     self.ifs = ifs
@@ -810,8 +852,11 @@ public struct Comprehension: Equatable {
 /// The arguments for a function passed by value
 /// (where the value is always an object reference, not the value of the object).
 /// https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"
-public struct Arguments: Equatable {
+public struct Arguments: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   /// Function positional arguments.
   /// When a function is called, positional arguments are mapped
   /// to these parameters based solely on their position.
@@ -840,7 +885,8 @@ public struct Arguments: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(args: [Arg], defaults: [Expression], vararg: Vararg, kwOnlyArgs: [Arg], kwOnlyDefaults: [Expression], kwarg: Arg?, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, args: [Arg], defaults: [Expression], vararg: Vararg, kwOnlyArgs: [Arg], kwOnlyDefaults: [Expression], kwarg: Arg?, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.args = args
     self.defaults = defaults
     self.vararg = vararg
@@ -852,8 +898,11 @@ public struct Arguments: Equatable {
   }
 }
 
-public struct Arg: Equatable {
+public struct Arg: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   /// Argument name.
   public let name: String
   /// Python expression evaluated at compile time.
@@ -865,7 +914,8 @@ public struct Arg: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(_ name: String, annotation: Expression?, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, name: String, annotation: Expression?, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.name = name
     self.annotation = annotation
     self.start = start
@@ -888,8 +938,11 @@ public enum Vararg: Equatable {
 
 /// A keyword argument to a function call or class definition.
 /// `nil` name is used for `**kwargs`.
-public struct Keyword: Equatable {
+public struct Keyword: ASTNode {
 
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
   /// Parameter name.
   public let name: String?
   /// Node to pass in.
@@ -899,7 +952,8 @@ public struct Keyword: Equatable {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(name: String?, value: Expression, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, name: String?, value: Expression, start: SourceLocation, end: SourceLocation) {
+    self.id = id
     self.name = name
     self.value = value
     self.start = start

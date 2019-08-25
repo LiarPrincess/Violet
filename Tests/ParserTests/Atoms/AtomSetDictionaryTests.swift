@@ -6,7 +6,7 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-class AtomBraceTests: XCTestCase, Common, DestructExpressionKind {
+class AtomBraceTests: XCTestCase, Common, ExpressionMatcher {
 
   // MARK: - Empty
 
@@ -18,8 +18,10 @@ class AtomBraceTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
+      guard let dicExpr = self.matchDictionary(expr) else { return }
+      XCTAssertEqual(dicExpr.count, 0)
+
       XCTAssertExpression(expr, "{}")
-      XCTAssertEqual(expr.kind,  .dictionary([]))
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc3)
     }
@@ -27,38 +29,44 @@ class AtomBraceTests: XCTestCase, Common, DestructExpressionKind {
 
   // MARK: - Set
 
-  /// {1}
+  /// {rapunzel}
   func test_set_singleElement() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,  start: loc0, end: loc1),
-      self.token(.float(1.0), start: loc2, end: loc3),
-      self.token(.rightBrace, start: loc4, end: loc5)
+      self.token(.leftBrace,              start: loc0, end: loc1),
+      self.token(.identifier("rapunzel"), start: loc2, end: loc3),
+      self.token(.rightBrace,             start: loc4, end: loc5)
     )
 
     if let expr = self.parseExpr(&parser) {
-      let one = Expression(.float(1.0), start: loc2, end: loc3)
+      guard let setExpr = self.matchSet(expr) else { return }
 
-      XCTAssertExpression(expr, "{1.0}")
-      XCTAssertEqual(expr.kind,  .set([one]))
+      XCTAssertEqual(setExpr.count, 1)
+      guard setExpr.count == 1 else { return }
+      XCTAssertExpression(setExpr[0], "rapunzel")
+
+      XCTAssertExpression(expr, "{rapunzel}")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc5)
     }
   }
 
-  /// {1,}
+  /// {rapunzel,}
   func test_set_withComaAfter() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,  start: loc0, end: loc1),
-      self.token(.float(1.0), start: loc2, end: loc3),
-      self.token(.comma,      start: loc4, end: loc5),
-      self.token(.rightBrace, start: loc6, end: loc7)
+      self.token(.leftBrace,              start: loc0, end: loc1),
+      self.token(.identifier("rapunzel"), start: loc2, end: loc3),
+      self.token(.comma,                  start: loc4, end: loc5),
+      self.token(.rightBrace,             start: loc6, end: loc7)
     )
 
     if let expr = self.parseExpr(&parser) {
-      let one = Expression(.float(1.0), start: loc2, end: loc3)
+      guard let setExpr = self.matchSet(expr) else { return }
 
-      XCTAssertExpression(expr, "{1.0}")
-      XCTAssertEqual(expr.kind,  .set([one]))
+      XCTAssertEqual(setExpr.count, 1)
+      guard setExpr.count == 1 else { return }
+      XCTAssertExpression(setExpr[0], "rapunzel")
+
+      XCTAssertExpression(expr, "{rapunzel}")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
     }
@@ -67,44 +75,48 @@ class AtomBraceTests: XCTestCase, Common, DestructExpressionKind {
   /// {*1}
   func test_set_star() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,  start: loc0, end: loc1),
-      self.token(.star,       start: loc2, end: loc3),
-      self.token(.float(1.0), start: loc4, end: loc5),
-      self.token(.rightBrace, start: loc6, end: loc7)
+      self.token(.leftBrace,              start: loc0, end: loc1),
+      self.token(.star,                   start: loc2, end: loc3),
+      self.token(.identifier("rapunzel"), start: loc4, end: loc5),
+      self.token(.rightBrace,             start: loc6, end: loc7)
     )
 
     if let expr = self.parseExpr(&parser) {
-      let one = Expression(.float(1.0), start: loc4, end: loc5)
-      let star = Expression(.starred(one), start: loc2, end: loc5)
+      guard let setExpr = self.matchSet(expr) else { return }
 
-      XCTAssertExpression(expr, "{*1.0}")
-      XCTAssertEqual(expr.kind,  .set([star]))
+      XCTAssertEqual(setExpr.count, 1)
+      guard setExpr.count == 1 else { return }
+      XCTAssertExpression(setExpr[0], "*rapunzel")
+
+      XCTAssertExpression(expr, "{*rapunzel}")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
     }
   }
 
-  /// {1, *2, 3}
+  /// {rapunzel, *eugene, cassandra}
   func test_set_multipleElements() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,  start: loc0, end: loc1),
-      self.token(.float(1.0), start: loc2, end: loc3),
-      self.token(.comma,      start: loc4, end: loc5),
-      self.token(.star,       start: loc6, end: loc7),
-      self.token(.float(2.0), start: loc8, end: loc9),
-      self.token(.comma,      start: loc10, end: loc11),
-      self.token(.float(3.0), start: loc12, end: loc13),
-      self.token(.rightBrace, start: loc14, end: loc15)
+      self.token(.leftBrace,               start: loc0, end: loc1),
+      self.token(.identifier("rapunzel"),  start: loc2, end: loc3),
+      self.token(.comma,                   start: loc4, end: loc5),
+      self.token(.star,                    start: loc6, end: loc7),
+      self.token(.identifier("eugene"),    start: loc8, end: loc9),
+      self.token(.comma,                   start: loc10, end: loc11),
+      self.token(.identifier("cassandra"), start: loc12, end: loc13),
+      self.token(.rightBrace,              start: loc14, end: loc15)
     )
 
     if let expr = self.parseExpr(&parser) {
-      let one = Expression(.float(1.0), start: loc2, end: loc3)
-      let two = Expression(.float(2.0), start: loc8, end: loc9)
-      let starTwo = Expression(.starred(two), start: loc6, end: loc9)
-      let three = Expression(.float(3.0), start: loc12, end: loc13)
+      guard let setExpr = self.matchSet(expr) else { return }
 
-      XCTAssertExpression(expr, "{1.0 *2.0 3.0}")
-      XCTAssertEqual(expr.kind,  .set([one, starTwo, three]))
+      XCTAssertEqual(setExpr.count, 3)
+      guard setExpr.count == 3 else { return }
+      XCTAssertExpression(setExpr[0], "rapunzel")
+      XCTAssertExpression(setExpr[1], "*eugene")
+      XCTAssertExpression(setExpr[2], "cassandra")
+
+      XCTAssertExpression(expr, "{rapunzel *eugene cassandra}")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc15)
     }
@@ -112,35 +124,35 @@ class AtomBraceTests: XCTestCase, Common, DestructExpressionKind {
 
   // MARK: - Set comprehension
 
-  /// {a for b in []}
+  /// {rapunzel for eugene in []}
   func test_set_comprehension() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,       start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.for,             start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.in,              start: loc8, end: loc9),
-      self.token(.leftSqb,         start: loc10, end: loc11),
-      self.token(.rightSqb,        start: loc12, end: loc13),
-      self.token(.rightBrace,      start: loc14, end: loc15)
+      self.token(.leftBrace,              start: loc0, end: loc1),
+      self.token(.identifier("rapunzel"), start: loc2, end: loc3),
+      self.token(.for,                    start: loc4, end: loc5),
+      self.token(.identifier("eugene"),   start: loc6, end: loc7),
+      self.token(.in,                     start: loc8, end: loc9),
+      self.token(.leftSqb,                start: loc10, end: loc11),
+      self.token(.rightSqb,               start: loc12, end: loc13),
+      self.token(.rightBrace,             start: loc14, end: loc15)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructSetComprehension(expr) else { return }
+      guard let setGen = self.matchSetComprehension(expr) else { return }
+      XCTAssertExpression(setGen.elt, "rapunzel")
 
-      XCTAssertEqual(d.elt, Expression(.identifier("a"), start: loc2, end: loc3))
-      XCTAssertEqual(d.generators.count, 1)
-      guard d.generators.count == 1 else { return }
+      XCTAssertEqual(setGen.generators.count, 1)
+      guard setGen.generators.count == 1 else { return }
 
-      let g = d.generators[0]
+      let g = setGen.generators[0]
       XCTAssertEqual(g.isAsync, false)
-      XCTAssertEqual(g.target, Expression(.identifier("b"), start: loc6, end: loc7))
-      XCTAssertEqual(g.iter, Expression(.list([]), start: loc10, end: loc13))
+      XCTAssertExpression(g.target, "eugene")
+      XCTAssertExpression(g.iter, "[]")
       XCTAssertEqual(g.ifs.count, 0)
       XCTAssertEqual(g.start, loc4)
       XCTAssertEqual(g.end, loc13)
 
-      XCTAssertExpression(expr, "(setCompr a (for b in []))")
+      XCTAssertExpression(expr, "(setCompr rapunzel (for eugene in []))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc15)
     }
@@ -148,102 +160,102 @@ class AtomBraceTests: XCTestCase, Common, DestructExpressionKind {
 
   // MARK: - Dictionary
 
-  /// {a:b}
+  /// {rapunzel:eugene}
   func test_dictionary_singleElement() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,       start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.rightBrace,      start: loc8, end: loc9)
+      self.token(.leftBrace,              start: loc0, end: loc1),
+      self.token(.identifier("rapunzel"), start: loc2, end: loc3),
+      self.token(.colon,                  start: loc4, end: loc5),
+      self.token(.identifier("eugene"),   start: loc6, end: loc7),
+      self.token(.rightBrace,             start: loc8, end: loc9)
     )
 
     if let expr = self.parseExpr(&parser) {
-      let exprA = Expression(.identifier("a"), start: loc2, end: loc3)
-      let exprB = Expression(.identifier("b"), start: loc6, end: loc7)
-      let element = DictionaryElement.keyValue(key: exprA, value: exprB)
+      guard let dicElts = self.matchDictionary(expr) else { return }
 
-      XCTAssertExpression(expr, "{a:b}")
-      XCTAssertEqual(expr.kind,  .dictionary([element]))
+      XCTAssertEqual(dicElts.count, 1)
+      guard dicElts.count == 1 else { return }
+      XCTAssertDictionaryElement(dicElts[0], key: "rapunzel", value: "eugene")
+
+      XCTAssertExpression(expr, "{rapunzel:eugene}")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc9)
     }
   }
 
-  /// {a:b,}
+  /// {rapunzel:eugene,}
   func test_dictionary_withComaAfter() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,       start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.comma,           start: loc8, end: loc9),
-      self.token(.rightBrace,      start: loc10, end: loc11)
+      self.token(.leftBrace,              start: loc0, end: loc1),
+      self.token(.identifier("rapunzel"), start: loc2, end: loc3),
+      self.token(.colon,                  start: loc4, end: loc5),
+      self.token(.identifier("eugene"),   start: loc6, end: loc7),
+      self.token(.comma,                  start: loc8, end: loc9),
+      self.token(.rightBrace,             start: loc10, end: loc11)
     )
 
     if let expr = self.parseExpr(&parser) {
-      let exprA = Expression(.identifier("a"), start: loc2, end: loc3)
-      let exprB = Expression(.identifier("b"), start: loc6, end: loc7)
-      let element = DictionaryElement.keyValue(key: exprA, value: exprB)
+      guard let dicElts = self.matchDictionary(expr) else { return }
 
-      XCTAssertExpression(expr, "{a:b}")
-      XCTAssertEqual(expr.kind,  .dictionary([element]))
+      XCTAssertEqual(dicElts.count, 1)
+      guard dicElts.count == 1 else { return }
+      XCTAssertDictionaryElement(dicElts[0], key: "rapunzel", value: "eugene")
+
+      XCTAssertExpression(expr, "{rapunzel:eugene}")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc11)
     }
   }
 
-  /// {**a}
+  /// {**rapunzel}
   func test_dictionary_starStar() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,       start: loc0, end: loc1),
-      self.token(.starStar,        start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.rightBrace,      start: loc6, end: loc7)
+      self.token(.leftBrace,                   start: loc0, end: loc1),
+      self.token(.starStar,                    start: loc2, end: loc3),
+      self.token(.identifier("rapunzel"),      start: loc4, end: loc5),
+      self.token(.rightBrace,                  start: loc6, end: loc7)
     )
 
     if let expr = self.parseExpr(&parser) {
-      let exprA = Expression(.identifier("a"), start: loc4, end: loc5)
-      let element = DictionaryElement.unpacking(exprA)
+      guard let dicElts = self.matchDictionary(expr) else { return }
 
-      XCTAssertExpression(expr, "{**a}")
-      XCTAssertEqual(expr.kind,  .dictionary([element]))
+      XCTAssertEqual(dicElts.count, 1)
+      guard dicElts.count == 1 else { return }
+      XCTAssertDictionaryElement(dicElts[0], unpacking: "rapunzel")
+
+      XCTAssertExpression(expr, "{**rapunzel}")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc7)
     }
   }
 
-  /// {a:b, **c, d:e}
+  /// {rapunzel:eugene, **cassandra, pascal:maximus}
   func test_dictionary_multipleElements() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,       start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.comma,           start: loc8, end: loc9),
-      self.token(.starStar,        start: loc10, end: loc11),
-      self.token(.identifier("c"), start: loc12, end: loc13),
-      self.token(.comma,           start: loc14, end: loc15),
-      self.token(.identifier("d"), start: loc16, end: loc17),
-      self.token(.colon,           start: loc18, end: loc19),
-      self.token(.identifier("e"), start: loc20, end: loc21),
-      self.token(.rightBrace,      start: loc22, end: loc23)
+      self.token(.leftBrace,                   start: loc0, end: loc1),
+      self.token(.identifier("rapunzel"),      start: loc2, end: loc3),
+      self.token(.colon,                       start: loc4, end: loc5),
+      self.token(.identifier("eugene"),        start: loc6, end: loc7),
+      self.token(.comma,                       start: loc8, end: loc9),
+      self.token(.starStar,                    start: loc10, end: loc11),
+      self.token(.identifier("cassandra"),     start: loc12, end: loc13),
+      self.token(.comma,                       start: loc14, end: loc15),
+      self.token(.identifier("pascal"),        start: loc16, end: loc17),
+      self.token(.colon,                       start: loc18, end: loc19),
+      self.token(.identifier("maximus"),       start: loc20, end: loc21),
+      self.token(.rightBrace,                  start: loc22, end: loc23)
     )
 
     if let expr = self.parseExpr(&parser) {
-      let exprA = Expression(.identifier("a"), start: loc2, end: loc3)
-      let exprB = Expression(.identifier("b"), start: loc6, end: loc7)
-      let el0 = DictionaryElement.keyValue(key: exprA, value: exprB)
+      guard let dicElts = self.matchDictionary(expr) else { return }
 
-      let exprC = Expression(.identifier("c"), start: loc12, end: loc13)
-      let el1 = DictionaryElement.unpacking(exprC)
+      XCTAssertEqual(dicElts.count, 3)
+      guard dicElts.count == 3 else { return }
+      XCTAssertDictionaryElement(dicElts[0], key: "rapunzel", value: "eugene")
+      XCTAssertDictionaryElement(dicElts[1], unpacking: "cassandra")
+      XCTAssertDictionaryElement(dicElts[2], key: "pascal", value: "maximus")
 
-      let exprD = Expression(.identifier("d"), start: loc16, end: loc17)
-      let exprE = Expression(.identifier("e"), start: loc20, end: loc21)
-      let el2 = DictionaryElement.keyValue(key: exprD, value: exprE)
-
-      XCTAssertExpression(expr, "{a:b **c d:e}")
-      XCTAssertEqual(expr.kind,  .dictionary([el0, el1, el2]))
+      XCTAssertExpression(expr, "{rapunzel:eugene **cassandra pascal:maximus}")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc23)
     }
@@ -251,56 +263,56 @@ class AtomBraceTests: XCTestCase, Common, DestructExpressionKind {
 
   // MARK: - Dictionary comprehension
 
-  /// { a:b for c in [] }
+  /// { rapunzel:eugene for cassandra in [] }
   func test_dictionary_comprehension() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,       start: loc0, end: loc1),
-      self.token(.identifier("a"), start: loc2, end: loc3),
-      self.token(.colon,           start: loc4, end: loc5),
-      self.token(.identifier("b"), start: loc6, end: loc7),
-      self.token(.for,             start: loc8, end: loc9),
-      self.token(.identifier("c"), start: loc10, end: loc11),
-      self.token(.in,              start: loc12, end: loc13),
-      self.token(.leftSqb,         start: loc14, end: loc15),
-      self.token(.rightSqb,        start: loc16, end: loc17),
-      self.token(.rightBrace,      start: loc18, end: loc19)
+      self.token(.leftBrace,                   start: loc0, end: loc1),
+      self.token(.identifier("rapunzel"),      start: loc2, end: loc3),
+      self.token(.colon,                       start: loc4, end: loc5),
+      self.token(.identifier("eugene"),        start: loc6, end: loc7),
+      self.token(.for,                         start: loc8, end: loc9),
+      self.token(.identifier("cassandra"),     start: loc10, end: loc11),
+      self.token(.in,                          start: loc12, end: loc13),
+      self.token(.leftSqb,                     start: loc14, end: loc15),
+      self.token(.rightSqb,                    start: loc16, end: loc17),
+      self.token(.rightBrace,                  start: loc18, end: loc19)
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructDictionaryComprehension(expr) else { return }
+      guard let dicCompr = self.matchDictionaryComprehension(expr) else { return }
 
-      XCTAssertEqual(d.key,   Expression(.identifier("a"), start: loc2, end: loc3))
-      XCTAssertEqual(d.value, Expression(.identifier("b"), start: loc6, end: loc7))
+      XCTAssertExpression(dicCompr.key, "rapunzel")
+      XCTAssertExpression(dicCompr.value, "eugene")
 
-      XCTAssertEqual(d.generators.count, 1)
-      guard d.generators.count == 1 else { return }
+      XCTAssertEqual(dicCompr.generators.count, 1)
+      guard dicCompr.generators.count == 1 else { return }
 
-      let g = d.generators[0]
+      let g = dicCompr.generators[0]
       XCTAssertEqual(g.isAsync, false)
-      XCTAssertEqual(g.target, Expression(.identifier("c"), start: loc10, end: loc11))
-      XCTAssertEqual(g.iter, Expression(.list([]), start: loc14, end: loc17))
+      XCTAssertExpression(g.target, "cassandra")
+      XCTAssertExpression(g.iter, "[]")
       XCTAssertEqual(g.ifs.count, 0)
       XCTAssertEqual(g.start, loc8)
       XCTAssertEqual(g.end, loc17)
 
-      XCTAssertExpression(expr, "(dicCompr a:b (for c in []))")
+      XCTAssertExpression(expr, "(dicCompr rapunzel:eugene (for cassandra in []))")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc19)
     }
   }
 
-  /// { **a for b in [] }
+  /// { **rapunzel for eugene in [] }
   func test_dictUnpacking_insideComprehension_throws() {
     var parser = self.createExprParser(
-      self.token(.leftBrace,       start: loc0, end: loc1),
-      self.token(.starStar,        start: loc2, end: loc3),
-      self.token(.identifier("a"), start: loc4, end: loc5),
-      self.token(.for,             start: loc6, end: loc7),
-      self.token(.identifier("b"), start: loc8, end: loc9),
-      self.token(.in,              start: loc10, end: loc11),
-      self.token(.leftSqb,         start: loc12, end: loc13),
-      self.token(.rightSqb,        start: loc14, end: loc15),
-      self.token(.rightBrace,      start: loc16, end: loc17)
+      self.token(.leftBrace,                   start: loc0, end: loc1),
+      self.token(.starStar,                    start: loc2, end: loc3),
+      self.token(.identifier("rapunzel"),      start: loc4, end: loc5),
+      self.token(.for,                         start: loc6, end: loc7),
+      self.token(.identifier("eugene"),        start: loc8, end: loc9),
+      self.token(.in,                          start: loc10, end: loc11),
+      self.token(.leftSqb,                     start: loc12, end: loc13),
+      self.token(.rightSqb,                    start: loc14, end: loc15),
+      self.token(.rightBrace,                  start: loc16, end: loc17)
     )
 
     if let error = self.error(&parser) {

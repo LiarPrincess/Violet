@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class AtomTests: XCTestCase, Common, DestructExpressionKind {
+class AtomTests: XCTestCase, Common, ExpressionMatcher {
 
   func test_none() {
     var parser = self.createExprParser(
@@ -99,18 +99,16 @@ class AtomTests: XCTestCase, Common, DestructExpressionKind {
   }
 
   func test_await() {
-    let value = BigInt(42)
-
     var parser = self.createExprParser(
-      self.token(.await,      start: loc0, end: loc1),
-      self.token(.int(value), start: loc2, end: loc3)
+      self.token(.await,          start: loc0, end: loc1),
+      self.token(.string("Elsa"), start: loc2, end: loc3)
     )
 
     if let expr = self.parseExpr(&parser) {
-      let inner = Expression(.int(value), start: loc2, end: loc3)
+      guard let awaitExpr = self.matchAwait(expr) else { return }
+      XCTAssertExpression(awaitExpr, "'Elsa'")
 
-      XCTAssertExpression(expr, "(await 42)")
-      XCTAssertEqual(expr.kind,  .await(inner))
+      XCTAssertExpression(expr, "(await 'Elsa')")
       XCTAssertEqual(expr.start, loc0)
       XCTAssertEqual(expr.end,   loc3)
     }

@@ -2,7 +2,7 @@
 // swiftlint:disable file_length
 
 /// Extract associated values from enums. For unit tests.
-public final class AstDestructionEmitter: EmitterBase {
+public final class AstPatternMatchingEmitter: EmitterBase {
 
   public func emit(entities: [Entity]) {
     self.writeHeader(command: "ast-destruct")
@@ -24,11 +24,11 @@ public final class AstDestructionEmitter: EmitterBase {
       switch entity {
       case .enum(let e):
         switch e.name {
-        case "AST": emitASTDestruction(e)
-        case "StatementKind": emitStatementDestruct(e)
-        case "ExpressionKind": emitExpressionDestruct(e)
-        case "SliceKind": emitSliceDestruct(e)
-        case "StringGroup": emitStringDestruct(e)
+        case "AST": emitASTMatcher(e)
+        case "StatementKind": emitStatementMatcher(e)
+        case "ExpressionKind": emitExpressionMatcher(e)
+        case "SliceKind": emitSliceMatcher(e)
+        case "StringGroup": emitStringMatcher(e)
         default: break
         }
 
@@ -38,24 +38,24 @@ public final class AstDestructionEmitter: EmitterBase {
     }
   }
 
-  private func emitASTDestruction(_ enumDef: EnumDef) {
-    self.write("// MARK: - \(enumDef.name)")
+  private func emitASTMatcher(_ enumDef: EnumDef) {
+    self.write("// MARK: - ASTMatcher")
     self.write()
 
-    self.write("protocol Destruct\(enumDef.name) { }")
+    self.write("internal protocol ASTMatcher { }")
     self.write()
 
-    self.write("extension Destruct\(enumDef.name) {")
+    self.write("extension ASTMatcher {")
     self.write()
 
     for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
       let namePascal = pascalCase(caseDef.name)
-      let paramIndent = repeating(" ", count: 23 + namePascal.count)
+      let paramIndent = repeating(" ", count: 20 + namePascal.count)
 
-      let destruction = getEnumDestruction(caseDef)
+      let destruction = getEnumMatcher(caseDef)
 
       self.write("""
-        internal func destruct\(namePascal)(_ ast: AST,
+        internal func match\(namePascal)(_ ast: AST,
         \(paramIndent)file: StaticString = #file,
         \(paramIndent)line: UInt         = #line) ->
         (\(destruction.resultType))? {
@@ -75,24 +75,24 @@ public final class AstDestructionEmitter: EmitterBase {
     self.write()
   }
 
-  private func emitStatementDestruct(_ enumDef: EnumDef) {
-    self.write("// MARK: - \(enumDef.name)")
+  private func emitStatementMatcher(_ enumDef: EnumDef) {
+    self.write("// MARK: - StatementMatcher")
     self.write()
 
-    self.write("protocol Destruct\(enumDef.name) { }")
+    self.write("internal protocol StatementMatcher { }")
     self.write()
 
-    self.write("extension Destruct\(enumDef.name) {")
+    self.write("extension StatementMatcher {")
     self.write()
 
     for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
       let namePascal = pascalCase(caseDef.name)
-      let paramIndent = repeating(" ", count: 23 + namePascal.count)
+      let paramIndent = repeating(" ", count: 20 + namePascal.count)
 
-      let destruction = getEnumDestruction(caseDef)
+      let destruction = getEnumMatcher(caseDef)
 
       self.write("""
-        internal func destruct\(namePascal)(_ stmt: Statement,
+        internal func match\(namePascal)(_ stmt: Statement,
         \(paramIndent)file: StaticString = #file,
         \(paramIndent)line: UInt         = #line) ->
         (\(destruction.resultType))? {
@@ -112,24 +112,24 @@ public final class AstDestructionEmitter: EmitterBase {
     self.write()
   }
 
-  private func emitExpressionDestruct(_ enumDef: EnumDef) {
-    self.write("// MARK: - \(enumDef.name)")
+  private func emitExpressionMatcher(_ enumDef: EnumDef) {
+    self.write("// MARK: - ExpressionMatcher")
     self.write()
 
-    self.write("protocol Destruct\(enumDef.name) { }")
+    self.write("internal protocol ExpressionMatcher { }")
     self.write()
 
-    self.write("extension Destruct\(enumDef.name) {")
+    self.write("extension ExpressionMatcher {")
     self.write()
 
     for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
       let namePascal = pascalCase(caseDef.name)
-      let paramIndent = repeating(" ", count: 23 + namePascal.count)
+      let paramIndent = repeating(" ", count: 20 + namePascal.count)
 
-      let destruction = getEnumDestruction(caseDef)
+      let destruction = getEnumMatcher(caseDef)
 
       self.write("""
-        internal func destruct\(namePascal)(_ expr: Expression,
+        internal func match\(namePascal)(_ expr: Expression,
         \(paramIndent)file: StaticString = #file,
         \(paramIndent)line: UInt         = #line) ->
           (\(destruction.resultType))? {
@@ -149,24 +149,24 @@ public final class AstDestructionEmitter: EmitterBase {
     self.write()
   }
 
-  private func emitSliceDestruct(_ enumDef: EnumDef) {
-    self.write("// MARK: - \(enumDef.name)")
+  private func emitSliceMatcher(_ enumDef: EnumDef) {
+    self.write("// MARK: - SliceMatcher")
     self.write()
 
-    self.write("protocol Destruct\(enumDef.name) { }")
+    self.write("internal protocol SliceMatcher { }")
     self.write()
 
-    self.write("extension Destruct\(enumDef.name) {")
+    self.write("extension SliceMatcher {")
     self.write()
 
     for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
       let namePascal = pascalCase(caseDef.name)
-      let paramIndent = repeating(" ", count: 32 + namePascal.count)
+      let paramIndent = repeating(" ", count: 29 + namePascal.count)
 
-      let destruction = getEnumDestruction(caseDef)
+      let destruction = getEnumMatcher(caseDef)
 
       self.write("""
-        internal func destructSubscript\(namePascal)(_ expr: Expression,
+        internal func matchSubscript\(namePascal)(_ expr: Expression,
         \(paramIndent)file: StaticString = #file,
         \(paramIndent)line: UInt         = #line) ->
           (slice: Slice, \(destruction.resultType))? {
@@ -192,24 +192,24 @@ public final class AstDestructionEmitter: EmitterBase {
     self.write()
   }
 
-  private func emitStringDestruct(_ enumDef: EnumDef) {
+  private func emitStringMatcher(_ enumDef: EnumDef) {
     self.write("// MARK: - \(enumDef.name)")
     self.write()
 
-    self.write("protocol Destruct\(enumDef.name) { }")
+    self.write("internal protocol StringMatcher { }")
     self.write()
 
-    self.write("extension Destruct\(enumDef.name) {")
+    self.write("extension StringMatcher {")
     self.write()
 
     for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
       let namePascal = caseDef.name == "string" ? "Simple" : pascalCase(caseDef.name)
-      let paramIndent = repeating(" ", count: 29 + namePascal.count)
+      let paramIndent = repeating(" ", count: 26 + namePascal.count)
 
-      let destruction = getEnumDestruction(caseDef)
+      let destruction = getEnumMatcher(caseDef)
 
       self.write("""
-        internal func destructString\(namePascal)(_ group: StringGroup,
+        internal func matchString\(namePascal)(_ group: StringGroup,
         \(paramIndent)file: StaticString = #file,
         \(paramIndent)line: UInt         = #line) ->
           (\(destruction.resultType))? {
@@ -233,17 +233,17 @@ public final class AstDestructionEmitter: EmitterBase {
 
 // MARK: - EnumDestruction
 
-private struct EnumDestruction {
-  /// BinaryOperator, left: Expression, right: Expression
+private struct EnumMatcher {
+  /// e.g. BinaryOperator, left: Expression, right: Expression
   fileprivate var resultType:  String = ""
-  /// value0, left: value1, right: value2
+  /// e.g. value0, left: value1, right: value2
   fileprivate var bindings:    String = ""
-  /// value0, value1, value2
+  /// e.g. value0, value1, value2
   fileprivate var returnValue: String = ""
 }
 
-private func getEnumDestruction(_ caseDef: EnumCaseDef) -> EnumDestruction {
-  var destruction = EnumDestruction()
+private func getEnumMatcher(_ caseDef: EnumCaseDef) -> EnumMatcher {
+  var destruction = EnumMatcher()
 
   for (i, property) in caseDef.properties.enumerated() {
     let isLast = i == caseDef.properties.count - 1

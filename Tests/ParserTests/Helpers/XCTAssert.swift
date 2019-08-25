@@ -52,3 +52,37 @@ internal func XCTAssertKeyword(_ keyword:  Keyword,
   let desc = String(describing: keyword)
   XCTAssertEqual(desc, expected, message, file: file, line: line)
 }
+
+internal func XCTAssertDictionaryElement(_ element:  DictionaryElement,
+                                         key:      String,
+                                         value:    String,
+                                         _ message:  String = "",
+                                         file: StaticString = #file,
+                                         line: UInt         = #line) {
+
+  guard case let .keyValue(key: k, value: v) = element else {
+    XCTAssertFalse(true, message, file: file, line: line)
+    return
+  }
+
+  let kDesc = String(describing: k)
+  XCTAssertEqual(kDesc, key, message, file: file, line: line)
+
+  let vDesc = String(describing: v)
+  XCTAssertEqual(vDesc, value, message, file: file, line: line)
+}
+
+internal func XCTAssertDictionaryElement(_ element:  DictionaryElement,
+                                         unpacking:  String,
+                                         _ message:  String = "",
+                                         file: StaticString = #file,
+                                         line: UInt         = #line) {
+
+  guard case let .unpacking(expr) = element else {
+    XCTAssertFalse(true, message, file: file, line: line)
+    return
+  }
+
+  let desc = String(describing: expr)
+  XCTAssertEqual(desc, unpacking, message, file: file, line: line)
+}
