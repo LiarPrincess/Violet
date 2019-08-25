@@ -6,7 +6,7 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable type_body_length
 
-class CallTests: XCTestCase, Common, DestructExpressionKind {
+class CallTests: XCTestCase, Common, ExpressionMatcher {
 
   // MARK: - No arguments
 
@@ -19,7 +19,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args, [])
@@ -43,7 +43,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
@@ -70,7 +70,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
@@ -97,7 +97,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
@@ -124,7 +124,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
@@ -189,7 +189,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
@@ -217,7 +217,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
@@ -248,7 +248,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
 
@@ -299,7 +299,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args, [])
@@ -330,7 +330,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args, [])
@@ -421,7 +421,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args, [])
@@ -449,7 +449,7 @@ class CallTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
 

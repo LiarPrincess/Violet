@@ -5,7 +5,7 @@ import Lexer
 
 // swiftlint:disable file_length
 
-class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
+class ImportStatementTests: XCTestCase, Common, StatementMatcher {
 
   // MARK: - Import
 
@@ -17,7 +17,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImport(stmt) else { return }
+      guard let d = self.matchImport(stmt) else { return }
 
       XCTAssertEqual(d.count, 1)
       guard d.count == 1 else { return }
@@ -41,7 +41,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImport(stmt) else { return }
+      guard let d = self.matchImport(stmt) else { return }
 
       XCTAssertEqual(d.count, 1)
       guard d.count == 1 else { return }
@@ -65,7 +65,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImport(stmt) else { return }
+      guard let d = self.matchImport(stmt) else { return }
 
       XCTAssertEqual(d.count, 1)
       guard d.count == 1 else { return }
@@ -91,7 +91,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImport(stmt) else { return }
+      guard let d = self.matchImport(stmt) else { return }
 
       XCTAssertEqual(d.count, 2)
       guard d.count == 2 else { return }
@@ -120,7 +120,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, "Tangled")
       XCTAssertEqual(d.level, 0)
@@ -149,7 +149,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, "Tangled")
       XCTAssertEqual(d.level, 0)
@@ -180,7 +180,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, "Tangled")
       XCTAssertEqual(d.level, 0)
@@ -214,7 +214,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, "Tangled")
       XCTAssertEqual(d.level, 0)
@@ -246,7 +246,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, "Disnep.Tangled")
       XCTAssertEqual(d.level, 0)
@@ -273,7 +273,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, "Tangled")
       XCTAssertEqual(d.level, 0)
@@ -300,7 +300,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, nil)
       XCTAssertEqual(d.level, 1)
@@ -327,7 +327,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, nil)
       XCTAssertEqual(d.level, 3)
@@ -355,7 +355,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, "Tangled")
       XCTAssertEqual(d.level, 1)
@@ -383,7 +383,7 @@ class ImportStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructImportFrom(stmt) else { return }
+      guard let d = self.matchImportFrom(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, "Tangled")
       XCTAssertEqual(d.level, 3)

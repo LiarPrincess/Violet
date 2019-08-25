@@ -5,7 +5,7 @@ import Lexer
 
 // swiftlint:disable function_body_length
 
-class AsyncStatementTests: XCTestCase, Common, DestructStatementKind {
+class AsyncStatementTests: XCTestCase, Common, StatementMatcher {
 
   /// async def cook(): "Ratatouille"
   func test_def() {
@@ -20,7 +20,7 @@ class AsyncStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAsyncFunctionDef(stmt) else { return }
+      guard let d = self.matchAsyncFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
@@ -55,7 +55,7 @@ class AsyncStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAsyncWith(stmt) else { return }
+      guard let d = self.matchAsyncWith(stmt) else { return }
 
       XCTAssertEqual(d.items.count, 1)
       guard d.items.count == 1 else { return }
@@ -84,7 +84,7 @@ class AsyncStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAsyncFor(stmt) else { return }
+      guard let d = self.matchAsyncFor(stmt) else { return }
 
       XCTAssertExpression(d.target, "person")
       XCTAssertExpression(d.iter, "castle")

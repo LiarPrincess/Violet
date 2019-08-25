@@ -4,7 +4,7 @@ import Lexer
 @testable import Parser
 
 /// Shared test helpers.
-internal protocol Common: DestructAST { }
+internal protocol Common: ASTMatcher { }
 
 extension Common {
 
@@ -38,7 +38,7 @@ extension Common {
                           line:    UInt         = #line) -> Expression? {
     do {
       let ast = try parser.parse()
-      return self.destructExpression(ast, file: file, line: line)
+      return self.matchExpression(ast, file: file, line: line)
     } catch {
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil
@@ -50,9 +50,7 @@ extension Common {
                           line:    UInt         = #line) -> Statement? {
     do {
       let ast = try parser.parse()
-      guard let statements = self.destructFileInput(ast,
-                                                    file: file,
-                                                    line: line) else {
+      guard let statements = self.matchFileInput(ast, file: file, line: line) else {
         return nil
       }
 

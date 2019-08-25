@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class WithStatementTests: XCTestCase, Common, DestructStatementKind {
+class WithStatementTests: XCTestCase, Common, StatementMatcher {
 
   /// with Alice: "wonderland"
   func test_with() {
@@ -15,7 +15,7 @@ class WithStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructWith(stmt) else { return }
+      guard let d = self.matchWith(stmt) else { return }
 
       XCTAssertEqual(d.items.count, 1)
       guard d.items.count == 1 else { return }
@@ -43,7 +43,7 @@ class WithStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructWith(stmt) else { return }
+      guard let d = self.matchWith(stmt) else { return }
 
       XCTAssertEqual(d.items.count, 1)
       guard d.items.count == 1 else { return }
@@ -71,7 +71,7 @@ class WithStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructWith(stmt) else { return }
+      guard let d = self.matchWith(stmt) else { return }
 
       XCTAssertEqual(d.items.count, 2)
       guard d.items.count == 2 else { return }
@@ -104,7 +104,7 @@ class WithStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructWith(stmt) else { return }
+      guard let d = self.matchWith(stmt) else { return }
 
       XCTAssertEqual(d.items.count, 2)
       guard d.items.count == 2 else { return }

@@ -8,7 +8,7 @@ import Lexer
 // swiftlint:disable function_body_length
 
 class ExpressionStatementTests: XCTestCase,
-  Common, DestructStatementKind, DestructExpressionKind, DestructStringGroup {
+  Common, ExpressionMatcher, StatementMatcher, StringMatcher {
 
   // MARK: - Just expression
 
@@ -19,9 +19,9 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let expr = self.destructExpr(stmt) else { return }
-      guard let group = self.destructString(expr) else { return }
-      guard let string = self.destructStringSimple(group) else { return }
+      guard let expr = self.matchExpr(stmt) else { return }
+      guard let group = self.matchString(expr) else { return }
+      guard let string = self.matchStringSimple(group) else { return }
 
       XCTAssertEqual(string, "Ariel+Eric")
 
@@ -62,7 +62,7 @@ class ExpressionStatementTests: XCTestCase,
 
       if let stmt = self.parseStmt(&parser) {
         let msg = "for: \(tokenKind)"
-        guard let d = self.destructAugAssign(stmt) else { return }
+        guard let d = self.matchAugAssign(stmt) else { return }
 
         XCTAssertExpression(d.target, "Ariel", msg)
         XCTAssertEqual(d.op, op, msg)
@@ -86,7 +86,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAugAssign(stmt) else { return }
+      guard let d = self.matchAugAssign(stmt) else { return }
 
       XCTAssertExpression(d.target, "sea.cavern")
       XCTAssertEqual(d.op, .add)
@@ -110,7 +110,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAugAssign(stmt) else { return }
+      guard let d = self.matchAugAssign(stmt) else { return }
 
       XCTAssertExpression(d.target, "sea[cavern]")
       XCTAssertEqual(d.op, .add)
@@ -146,7 +146,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAugAssign(stmt) else { return }
+      guard let d = self.matchAugAssign(stmt) else { return }
 
       XCTAssertExpression(d.target, "Ariel")
       XCTAssertEqual(d.op, .add)
@@ -171,7 +171,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAnnAssign(stmt) else { return }
+      guard let d = self.matchAnnAssign(stmt) else { return }
 
       XCTAssertExpression(d.target, "Flounder")
       XCTAssertExpression(d.annotation, "Animal")
@@ -193,7 +193,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAnnAssign(stmt) else { return }
+      guard let d = self.matchAnnAssign(stmt) else { return }
 
       XCTAssertExpression(d.target, "Ariel")
       XCTAssertExpression(d.annotation, "Mermaid")
@@ -220,7 +220,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAnnAssign(stmt) else { return }
+      guard let d = self.matchAnnAssign(stmt) else { return }
 
       XCTAssertExpression(d.target, "Sea.Flounder")
       XCTAssertExpression(d.annotation, "Animal")
@@ -247,7 +247,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAnnAssign(stmt) else { return }
+      guard let d = self.matchAnnAssign(stmt) else { return }
 
       XCTAssertExpression(d.target, "Sea[Flounder]")
       XCTAssertExpression(d.annotation, "Animal")
@@ -273,7 +273,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAnnAssign(stmt) else { return }
+      guard let d = self.matchAnnAssign(stmt) else { return }
 
       XCTAssertExpression(d.target, "Ariel")
       XCTAssertExpression(d.annotation, "Mermaid")
@@ -313,7 +313,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAssign(stmt) else { return }
+      guard let d = self.matchAssign(stmt) else { return }
 
       XCTAssertEqual(d.targets.count, 1)
       guard d.targets.count == 1 else { return }
@@ -338,7 +338,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAssign(stmt) else { return }
+      guard let d = self.matchAssign(stmt) else { return }
 
       XCTAssertEqual(d.targets.count, 1)
       guard d.targets.count == 1 else { return }
@@ -362,7 +362,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAssign(stmt) else { return }
+      guard let d = self.matchAssign(stmt) else { return }
 
       XCTAssertEqual(d.targets.count, 1)
       guard d.targets.count == 1 else { return }
@@ -387,7 +387,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAssign(stmt) else { return }
+      guard let d = self.matchAssign(stmt) else { return }
 
       XCTAssertEqual(d.targets.count, 2)
       guard d.targets.count == 2 else { return }
@@ -412,7 +412,7 @@ class ExpressionStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAssign(stmt) else { return }
+      guard let d = self.matchAssign(stmt) else { return }
 
       XCTAssertEqual(d.targets.count, 1)
       guard d.targets.count == 1 else { return }

@@ -5,8 +5,7 @@ import Lexer
 
 // swiftlint:disable file_length
 
-class DecoratorTests: XCTestCase,
-  Common, DestructExpressionKind, DestructStatementKind {
+class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   // MARK: - General
 
@@ -24,7 +23,7 @@ class DecoratorTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }
@@ -55,7 +54,7 @@ class DecoratorTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }
@@ -88,7 +87,7 @@ class DecoratorTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.decoratorList.count, 2)
       guard d.decoratorList.count == 2 else { return }
@@ -125,7 +124,7 @@ class DecoratorTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }
@@ -157,7 +156,7 @@ class DecoratorTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }
@@ -191,7 +190,7 @@ class DecoratorTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }
@@ -227,7 +226,7 @@ class DecoratorTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }
@@ -260,7 +259,7 @@ class DecoratorTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }
@@ -292,7 +291,7 @@ class DecoratorTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAsyncFunctionDef(stmt) else { return }
+      guard let d = self.matchAsyncFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.decoratorList.count, 1)
       guard d.decoratorList.count == 1 else { return }

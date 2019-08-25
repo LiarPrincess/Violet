@@ -7,8 +7,7 @@ import Lexer
 // swiftlint:disable type_body_length
 // swiftlint:disable function_body_length
 
-class ClassDefTests: XCTestCase,
-  Common, DestructExpressionKind, DestructStatementKind {
+class ClassDefTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   // MARK: - No base
 
@@ -22,7 +21,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Princess")
       XCTAssertEqual(d.bases, [])
@@ -50,7 +49,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Princess")
       XCTAssertEqual(d.bases, [])
@@ -81,7 +80,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
       XCTAssertEqual(d.keywords, [])
@@ -114,7 +113,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
       XCTAssertEqual(d.keywords, [])
@@ -148,7 +147,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
       XCTAssertEqual(d.keywords, [])
@@ -183,7 +182,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
       XCTAssertEqual(d.keywords, [])
@@ -261,7 +260,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
       XCTAssertEqual(d.keywords, [])
@@ -298,7 +297,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
 
@@ -359,7 +358,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
       XCTAssertEqual(d.bases.count, 0)
@@ -397,7 +396,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
       XCTAssertEqual(d.bases.count, 0)
@@ -505,7 +504,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
       XCTAssertEqual(d.bases.count, 0)
@@ -540,7 +539,7 @@ class ClassDefTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.name, "Aurora")
 

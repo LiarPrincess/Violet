@@ -3,7 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
+class SmallStatementTests: XCTestCase, Common, StatementMatcher {
 
   // MARK: - del
 
@@ -15,7 +15,7 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructDelete(stmt) else { return }
+      guard let d = self.matchDelete(stmt) else { return }
 
       XCTAssertEqual(d.count, 1)
       guard d.count == 1 else { return }
@@ -37,7 +37,7 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructDelete(stmt) else { return }
+      guard let d = self.matchDelete(stmt) else { return }
 
       XCTAssertEqual(d.count, 1)
       guard d.count == 1 else { return }
@@ -62,7 +62,7 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructDelete(stmt) else { return }
+      guard let d = self.matchDelete(stmt) else { return }
 
       XCTAssertEqual(d.count, 3)
       guard d.count == 3 else { return }
@@ -103,7 +103,7 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructGlobal(stmt) else { return }
+      guard let d = self.matchGlobal(stmt) else { return }
 
       XCTAssertEqual(d, ["Aladdin"])
 
@@ -123,7 +123,7 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructGlobal(stmt) else { return }
+      guard let d = self.matchGlobal(stmt) else { return }
 
       XCTAssertEqual(d, ["Aladdin", "Jasmine"])
 
@@ -143,7 +143,7 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructNonlocal(stmt) else { return }
+      guard let d = self.matchNonlocal(stmt) else { return }
 
       XCTAssertEqual(d, ["Genie"])
 
@@ -163,7 +163,7 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructNonlocal(stmt) else { return }
+      guard let d = self.matchNonlocal(stmt) else { return }
 
       XCTAssertEqual(d, ["Genie", "MagicCarpet"])
 
@@ -183,7 +183,7 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAssert(stmt) else { return }
+      guard let d = self.matchAssert(stmt) else { return }
 
       XCTAssertExpression(d.test, "Aladdin")
       XCTAssertNil(d.msg)
@@ -204,7 +204,7 @@ class SmallStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructAssert(stmt) else { return }
+      guard let d = self.matchAssert(stmt) else { return }
 
       XCTAssertExpression(d.test, "Aladdin")
       XCTAssertExpression(d.msg,  "Jasmine")

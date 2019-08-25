@@ -5,7 +5,7 @@ import Lexer
 
 // swiftlint:disable file_length
 
-class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
+class FlowStatementTests: XCTestCase, Common, StatementMatcher {
 
   // MARK: - Break
 
@@ -48,7 +48,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructReturn(stmt) else { return }
+      guard let d = self.matchReturn(stmt) else { return }
 
       XCTAssertEqual(d, nil)
 
@@ -66,7 +66,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructReturn(stmt) else { return }
+      guard let d = self.matchReturn(stmt) else { return }
 
       XCTAssertNotNil(d)
       XCTAssertExpression(d, "Megara")
@@ -86,7 +86,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructReturn(stmt) else { return }
+      guard let d = self.matchReturn(stmt) else { return }
 
       XCTAssertNotNil(d)
       XCTAssertExpression(d, "(Megara)")
@@ -110,7 +110,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructReturn(stmt) else { return }
+      guard let d = self.matchReturn(stmt) else { return }
 
       XCTAssertNotNil(d)
       XCTAssertExpression(d, "(Calliope Melpomene Terpsichore)")
@@ -130,7 +130,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructRaise(stmt) else { return }
+      guard let d = self.matchRaise(stmt) else { return }
 
       XCTAssertNil(d.exc)
       XCTAssertNil(d.cause)
@@ -149,7 +149,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructRaise(stmt) else { return }
+      guard let d = self.matchRaise(stmt) else { return }
 
       XCTAssertExpression(d.exc, "Hades")
       XCTAssertNil(d.cause)
@@ -170,7 +170,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructRaise(stmt) else { return }
+      guard let d = self.matchRaise(stmt) else { return }
 
       XCTAssertExpression(d.exc, "Hercules")
       XCTAssertExpression(d.cause, "Olympus")
@@ -190,7 +190,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructExpr(stmt) else { return }
+      guard let d = self.matchExpr(stmt) else { return }
 
       XCTAssertExpression(d, "(yield)")
 
@@ -208,7 +208,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructExpr(stmt) else { return }
+      guard let d = self.matchExpr(stmt) else { return }
 
       XCTAssertExpression(d, "(yield Megara)")
 
@@ -227,7 +227,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructExpr(stmt) else { return }
+      guard let d = self.matchExpr(stmt) else { return }
 
       XCTAssertExpression(d, "(yield (Megara))")
 
@@ -247,7 +247,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructExpr(stmt) else { return }
+      guard let d = self.matchExpr(stmt) else { return }
 
       XCTAssertExpression(d, "(yield (Pain Panic))")
 
@@ -266,7 +266,7 @@ class FlowStatementTests: XCTestCase, Common, DestructStatementKind {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructExpr(stmt) else { return }
+      guard let d = self.matchExpr(stmt) else { return }
 
       XCTAssertExpression(d, "(yieldFrom Olympus)")
 

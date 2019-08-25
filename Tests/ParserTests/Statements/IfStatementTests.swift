@@ -6,7 +6,7 @@ import Lexer
 // swiftlint:disable function_body_length
 
 class IfStatementTests: XCTestCase,
-  Common, DestructStatementKind, DestructExpressionKind, DestructStringGroup {
+Common, ExpressionMatcher, StatementMatcher, StringMatcher {
 
   /// if Pooh: "Honey"
   func test_if() {
@@ -18,7 +18,7 @@ class IfStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructIf(stmt) else { return }
+      guard let d = self.matchIf(stmt) else { return }
 
       XCTAssertExpression(d.test, "Pooh")
       XCTAssertEqual(d.orElse, [])
@@ -48,7 +48,7 @@ class IfStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructIf(stmt) else { return }
+      guard let d = self.matchIf(stmt) else { return }
 
       XCTAssertExpression(d.test, "Pooh")
 
@@ -94,7 +94,7 @@ class IfStatementTests: XCTestCase,
 
     if let stmt = self.parseStmt(&parser) {
       // first if
-      guard let if0 = self.destructIf(stmt) else { return }
+      guard let if0 = self.matchIf(stmt) else { return }
       XCTAssertExpression(if0.test, "Pooh")
 
       XCTAssertEqual(if0.body.count, 1)
@@ -105,7 +105,7 @@ class IfStatementTests: XCTestCase,
       guard if0.orElse.count == 1 else { return }
 
       // nested if
-      guard let if1 = self.destructIf(if0.orElse[0]) else { return }
+      guard let if1 = self.matchIf(if0.orElse[0]) else { return }
 
       XCTAssertExpression(if1.test, "Tigger")
       XCTAssertEqual(if1.orElse, [])
@@ -143,7 +143,7 @@ class IfStatementTests: XCTestCase,
 
     if let stmt = self.parseStmt(&parser) {
       // first if
-      guard let if0 = self.destructIf(stmt) else { return }
+      guard let if0 = self.matchIf(stmt) else { return }
       XCTAssertExpression(if0.test, "Pooh")
 
       XCTAssertEqual(if0.body.count, 1)
@@ -154,7 +154,7 @@ class IfStatementTests: XCTestCase,
       guard if0.orElse.count == 1 else { return }
 
       // nested if
-      guard let if1 = self.destructIf(if0.orElse[0]) else { return }
+      guard let if1 = self.matchIf(if0.orElse[0]) else { return }
       XCTAssertExpression(if1.test, "Tigger")
 
       XCTAssertEqual(if1.body.count, 1)

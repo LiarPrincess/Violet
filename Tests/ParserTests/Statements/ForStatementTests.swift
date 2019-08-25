@@ -3,8 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class ForStatementTests: XCTestCase,
-  Common, DestructStatementKind, DestructExpressionKind {
+class ForStatementTests: XCTestCase, Common, StatementMatcher, ExpressionMatcher {
 
   /// for person in castle: "becomeItem"
   func test_for() {
@@ -18,7 +17,7 @@ class ForStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFor(stmt) else { return }
+      guard let d = self.matchFor(stmt) else { return }
 
       XCTAssertExpression(d.target, "person")
       XCTAssertExpression(d.iter, "castle")
@@ -47,7 +46,7 @@ class ForStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFor(stmt) else { return }
+      guard let d = self.matchFor(stmt) else { return }
 
       XCTAssertExpression(d.target, "(Gaston)")
       XCTAssertExpression(d.iter, "village")
@@ -78,7 +77,7 @@ class ForStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFor(stmt) else { return }
+      guard let d = self.matchFor(stmt) else { return }
 
       XCTAssertExpression(d.target, "(Gaston LeFou)")
       XCTAssertExpression(d.iter, "village")
@@ -109,7 +108,7 @@ class ForStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFor(stmt) else { return }
+      guard let d = self.matchFor(stmt) else { return }
 
       XCTAssertExpression(d.target, "person")
       XCTAssertExpression(d.iter, "(Belle Maurice)")
@@ -142,7 +141,7 @@ class ForStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFor(stmt) else { return }
+      guard let d = self.matchFor(stmt) else { return }
 
       XCTAssertExpression(d.target, "person")
       XCTAssertExpression(d.iter, "Belle")

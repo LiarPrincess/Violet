@@ -6,8 +6,7 @@ import Lexer
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
-class TryStatementTests: XCTestCase,
-  Common, DestructStatementKind, DestructExpressionKind {
+class TryStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   // MARK: - No else or finally
 
@@ -41,7 +40,7 @@ class TryStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructTry(stmt) else { return }
+      guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.handlers, [])
       XCTAssertEqual(d.orElse, [])
@@ -76,7 +75,7 @@ class TryStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructTry(stmt) else { return }
+      guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.orElse, [])
       XCTAssertEqual(d.finalBody, [])
@@ -110,7 +109,7 @@ class TryStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructTry(stmt) else { return }
+      guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.orElse, [])
       XCTAssertEqual(d.finalBody, [])
@@ -146,7 +145,7 @@ class TryStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructTry(stmt) else { return }
+      guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.orElse, [])
       XCTAssertEqual(d.finalBody, [])
@@ -185,7 +184,7 @@ class TryStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructTry(stmt) else { return }
+      guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.orElse, [])
       XCTAssertEqual(d.finalBody, [])
@@ -224,7 +223,7 @@ class TryStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructTry(stmt) else { return }
+      guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.finalBody, [])
 
@@ -266,7 +265,7 @@ class TryStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructTry(stmt) else { return }
+      guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.orElse, [])
 
@@ -313,7 +312,7 @@ class TryStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructTry(stmt) else { return }
+      guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }

@@ -3,8 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class WhileStatementTests: XCTestCase,
-  Common, DestructStatementKind, DestructExpressionKind {
+class WhileStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   /// while Frollo: "Quasimodo"
   func test_while() {
@@ -16,7 +15,7 @@ class WhileStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructWhile(stmt) else { return }
+      guard let d = self.matchWhile(stmt) else { return }
 
       XCTAssertExpression(d.test, "Frollo")
       XCTAssertEqual(d.orElse, [])
@@ -46,7 +45,7 @@ class WhileStatementTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructWhile(stmt) else { return }
+      guard let d = self.matchWhile(stmt) else { return }
 
       XCTAssertExpression(d.test, "Frollo")
 

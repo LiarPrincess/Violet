@@ -12,8 +12,7 @@ import Lexer
 /// with     with class
 /// try??
 /// ```
-class SuiteTests: XCTestCase,
-  Common, DestructExpressionKind, DestructStatementKind {
+class SuiteTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   /// class Peter:
   ///   def fly():
@@ -39,7 +38,7 @@ class SuiteTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructClassDef(stmt) else { return }
+      guard let d = self.matchClassDef(stmt) else { return }
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -75,7 +74,7 @@ class SuiteTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFunctionDef(stmt) else { return }
+      guard let d = self.matchFunctionDef(stmt) else { return }
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -109,7 +108,7 @@ class SuiteTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructIf(stmt) else { return }
+      guard let d = self.matchIf(stmt) else { return }
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -145,7 +144,7 @@ class SuiteTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructWhile(stmt) else { return }
+      guard let d = self.matchWhile(stmt) else { return }
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -181,7 +180,7 @@ class SuiteTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructFor(stmt) else { return }
+      guard let d = self.matchFor(stmt) else { return }
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -215,7 +214,7 @@ class SuiteTests: XCTestCase,
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.destructWith(stmt) else { return }
+      guard let d = self.matchWith(stmt) else { return }
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }

@@ -5,7 +5,7 @@ import Lexer
 
 // swiftlint:disable function_body_length
 
-class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
+class CallComprehensionTests: XCTestCase, Common, ExpressionMatcher {
 
   /// f(a for b in [])
   func test_simple() {
@@ -22,14 +22,14 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.keywords, [])
 
       XCTAssertEqual(d.args.count, 1)
       guard d.args.count == 1 else { return }
-      guard let gen = self.destructGeneratorExp(d.args[0]) else { return }
+      guard let gen = self.matchGeneratorExp(d.args[0]) else { return }
 
       XCTAssertExpression(gen.elt, "a")
       XCTAssertEqual(gen.generators.count, 1)
@@ -66,7 +66,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args.count, 2)
@@ -100,7 +100,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args.count, 2)
@@ -132,7 +132,7 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args.count, 2)
@@ -163,14 +163,14 @@ class CallComprehensionTests: XCTestCase, Common, DestructExpressionKind {
     )
 
     if let expr = self.parseExpr(&parser) {
-      guard let d = self.destructCall(expr) else { return }
+      guard let d = self.matchCall(expr) else { return }
 
       XCTAssertExpression(d.f, "f")
       XCTAssertEqual(d.args.count, 1)
       XCTAssertEqual(d.keywords, [])
 
       guard d.args.count == 1 else { return }
-      guard let gen = self.destructGeneratorExp(d.args[0]) else { return }
+      guard let gen = self.matchGeneratorExp(d.args[0]) else { return }
 
       XCTAssertExpression(gen.elt, "a")
       XCTAssertEqual(gen.generators.count, 1)
