@@ -13,6 +13,7 @@ public enum TokenKind: Equatable, CustomStringConvertible {
   case plus
   case option
   case comma
+  case colon
 
   case leftParen
   case rightParen
@@ -34,6 +35,7 @@ public enum TokenKind: Equatable, CustomStringConvertible {
     case .plus: return "+"
     case .option: return "?"
     case .comma: return ","
+    case .colon: return ":"
     case .leftParen: return "("
     case .rightParen: return ")"
     case .eof: return "eof"

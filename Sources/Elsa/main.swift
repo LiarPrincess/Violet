@@ -2,8 +2,6 @@
 
 import Foundation
 
-// TODO: Lexer and parser to `class`
-
 let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
 
 let sourcesDir  = elsaDir.deletingLastPathComponent()
@@ -21,7 +19,7 @@ private func parseLetItGo(file: URL)  -> [Entity] {
   return parser.parse()
 }
 
-private func generateAST() {
+private func generateAST() throws {
   let input = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)
     .appendingPathComponent("ast.letitgo", isDirectory: false)
@@ -30,23 +28,23 @@ private func generateAST() {
 
   // Definitions
   let defFile = parserDir.appendingPathComponent("AST.swift")
-  let codeEmitter = CodeEmitter(letItGo: input, output: defFile)
+  let codeEmitter = try CodeEmitter(letItGo: input, output: defFile)
   codeEmitter.emit(entities: entities)
 
   // Pass
-  // let passFile = parserDir.appendingPathComponent("ASTValidationPass.swift")
-  // redirectStdout(to: passFile.path)
-  // emitPass(entities: entities)
+//  let passFile = rootDir.appendingPathComponent("DummyPass.swift")
+//  let astPassEmitter = try AstPassEmitter(letItGo: input, output: passFile)
+//  astPassEmitter.emit(entities: entities)
 
   // Destruct
   let destructFile = parserTestsDir
     .appendingPathComponent("Helpers")
     .appendingPathComponent("Destruct.swift")
-  let destructEmitter = AstDestructionEmitter(letItGo: input, output: destructFile)
+  let destructEmitter = try AstDestructionEmitter(letItGo: input, output: destructFile)
   destructEmitter.emit(entities: entities)
 }
 
-private func generateBytecode() {
+private func generateBytecode() throws {
   let input = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)
     .appendingPathComponent("opcodes.letitgo", isDirectory: false)
@@ -55,9 +53,9 @@ private func generateBytecode() {
 
   // Definitions
   let defFile = bytecodeDir.appendingPathComponent("Opcodes.swift")
-  let codeEmitter = CodeEmitter(letItGo: input, output: defFile)
+  let codeEmitter = try CodeEmitter(letItGo: input, output: defFile)
   codeEmitter.emit(entities: entities)
 }
 
-generateAST()
-generateBytecode()
+try generateAST()
+try generateBytecode()

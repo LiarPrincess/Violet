@@ -1,23 +1,25 @@
 import Foundation
 
-// swiftlint:disable force_try
-// swiftlint:disable force_unwrapping
-
 public class EmitterBase {
 
   private let input: URL
   private let output: URL
   private let outputHandle: FileHandle
 
-  public init(letItGo input: URL, output: URL) {
+  public init(letItGo input: URL, output: URL) throws {
     self.input = input
     self.output = output
-    self.outputHandle = try! FileHandle(forWritingTo: output)
+
+    if FileManager.default.fileExists(atPath: output.path) {
+      try FileManager.default.removeItem(atPath: output.path)
+    }
+    _ = FileManager.default.createFile(atPath: output.path, contents: nil)
+
+    self.outputHandle = try FileHandle(forWritingTo: output)
   }
 
-  deinit {
-    self.outputHandle.closeFile()
-  }
+  // We don't have to close file, because Swift will do that for us
+  // deinit { self.outputHandle.closeFile() }
 
   public func write(_ s: String = "") {
     let line = s + "\n"
