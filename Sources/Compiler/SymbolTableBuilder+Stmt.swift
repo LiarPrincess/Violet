@@ -24,7 +24,7 @@ extension SymbolTableBuilder {
       try self.visit(returns) // in CPython it is a part of visitAnnotations
       try self.visit(decoratorList)
 
-      self.enterScope(name: name, type: .function)
+      self.enterScope(name: name, type: .function, node: stmt)
       if stmt.kind.isAsyncFunctionDef {
         self.currentScope.isCoroutine = true
       }
@@ -40,7 +40,7 @@ extension SymbolTableBuilder {
 
       let previousClassName = self.className
 
-      self.enterScope(name: name, type: .class)
+      self.enterScope(name: name, type: .class, node: stmt)
       self.className = name
       try self.visit(body)
       self.className = previousClassName

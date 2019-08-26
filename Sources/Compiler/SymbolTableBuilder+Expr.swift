@@ -75,24 +75,28 @@ extension SymbolTableBuilder {
       try self.visitComprehension(elt: elt,
                                   value: nil,
                                   generators: generators,
+                                  expr: expr,
                                   kind: .list)
 
     case let .setComprehension(elt, generators):
       try self.visitComprehension(elt: elt,
                                   value: nil,
                                   generators: generators,
+                                  expr: expr,
                                   kind: .set)
 
     case let .dictionaryComprehension(key, value, generators):
       try self.visitComprehension(elt: key,
                                   value: value,
                                   generators: generators,
+                                  expr: expr,
                                   kind: .dictionary)
 
     case let .generatorExp(elt, generators):
       try self.visitComprehension(elt: elt,
                                   value: nil,
                                   generators: generators,
+                                  expr: expr,
                                   kind: .generator)
 
     case let .await(value):
@@ -108,7 +112,7 @@ extension SymbolTableBuilder {
     case let .lambda(args, body):
       try self.visitDefaults(args)
 
-      self.enterScope(name: SpecialIdentifiers.lambda, type: .function)
+      self.enterScope(name: SpecialIdentifiers.lambda, type: .function, node: expr)
       try self.visitArguments(args)
       try self.visit(body)
       self.leaveScope()
@@ -185,6 +189,7 @@ extension SymbolTableBuilder {
   private func visitComprehension(elt:   Expression,
                                   value: Expression?,
                                   generators: NonEmptyArray<Comprehension>,
+                                  expr: Expression,
                                   kind: ComprehensionKind) throws {
 
     // iterator (source) is evaluated in parent scope
@@ -193,7 +198,7 @@ extension SymbolTableBuilder {
 
     // new scope for comprehensions
     let scopeKind = self.getIdentifier(for: kind)
-    self.enterScope(name: scopeKind, type: .function)
+    self.enterScope(name: scopeKind, type: .function, node: expr)
     defer { self.leaveScope() }
 
     if first.isAsync {

@@ -10,11 +10,9 @@ import Core
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
-// TODO: everything to struct
-
 /// Structure that represents outer scope
 /// (basically everything OUTSIDE of the currently analyzed function).
-private class OuterContext {
+private final class OuterContext {
 
   /// Set of free variables in outer scopes
   ///
@@ -40,7 +38,7 @@ private class OuterContext {
 
 /// Structure that represents current scope
 /// (basically everything INSIDE of the function).
-private class ScopeContext {
+private final class ScopeContext {
 
   /// Names bound in block
   fileprivate var local = Set<MangledName>()
@@ -63,15 +61,15 @@ private class ScopeContext {
 
 /// For each variable adds variable source (local, global, free) flag.
 /// It will also mark sources for free variables (called 'cells').
-internal class SymbolTableVariableSourcePass {
+internal final class SymbolTableVariableSourcePass {
 
   /// symtable_analyze(struct symtable *st)
-  internal func analyze(top: inout SymbolScope) throws {
-    try self.analyzeBlock(scope: &top, outerContext: nil)
+  internal func analyze(table: SymbolTable) throws {
+    try self.analyzeBlock(scope: table.top, outerContext: nil)
   }
 
   /// analyze_block(PySTEntryObject *ste, PyObject *bound, PyObject *free, ...)
-  private func analyzeBlock(scope: inout SymbolScope,
+  private func analyzeBlock(scope: SymbolScope,
                             outerContext: OuterContext?) throws {
 
     let context = ScopeContext()
@@ -86,7 +84,7 @@ internal class SymbolTableVariableSourcePass {
     for (name, info) in scope.symbols {
       try self.analyzeName(name,
                            info:  info,
-                           scope: &scope,
+                           scope: scope,
                            scopeContext: context,
                            outerContext: outerContext)
     }
@@ -110,7 +108,7 @@ internal class SymbolTableVariableSourcePass {
     // Recursively call analyzeChildBlock() on each child block
     var allFree = [MangledName: SymbolInfo]()
     for var child in scope.children {
-      try self.analyzeChildBlock(scope: &child,
+      try self.analyzeChildBlock(scope: child,
                                  scopeContext: context,
                                  addingFreeVariablesTo: &allFree)
 
@@ -127,11 +125,11 @@ internal class SymbolTableVariableSourcePass {
     if scope.type == .function {
       self.bindChildFreeVariablesToLocalCells(scopeContext: context)
     } else if scope.type == .class {
-      self.remove__class__(scope: &scope, scopeContext: context)
+      self.remove__class__(scope: scope, scopeContext: context)
     }
 
     // Record the results of the analysis in the symbol table
-    try self.updateSymbols(scope: &scope,
+    try self.updateSymbols(scope: scope,
                            scopeContext: context,
                            outerContext: outerContext)
 
@@ -154,7 +152,7 @@ internal class SymbolTableVariableSourcePass {
   /// analyze_name(PySTEntryObject *ste, PyObject *scopes, PyObject *name, ...)
   private func analyzeName(_ name: MangledName,
                            info:   SymbolInfo,
-                           scope:  inout SymbolScope,
+                           scope:  SymbolScope,
                            scopeContext: ScopeContext,
                            outerContext: OuterContext?) throws {
     // CPython translation:
@@ -222,7 +220,7 @@ internal class SymbolTableVariableSourcePass {
 
   /// analyze_child_block(PySTEntryObject *entry, PyObject *bound, ...)
   private func analyzeChildBlock(
-    scope: inout SymbolScope,
+    scope: SymbolScope,
     scopeContext: ScopeContext,
     addingFreeVariablesTo free: inout [MangledName: SymbolInfo]) throws {
 
@@ -231,7 +229,7 @@ internal class SymbolTableVariableSourcePass {
                                     bound:  scopeContext.newBound,
                                     global: scopeContext.newGlobal)
 
-    try self.analyzeBlock(scope: &scope, outerContext: childContext)
+    try self.analyzeBlock(scope: scope, outerContext: childContext)
     self.mergeFree(target: &free, src: childContext.free)
   }
 
@@ -257,7 +255,7 @@ internal class SymbolTableVariableSourcePass {
   }
 
   /// drop_class_free(PySTEntryObject *ste, PyObject *free)
-  private func remove__class__(scope: inout SymbolScope,
+  private func remove__class__(scope: SymbolScope,
                                scopeContext: ScopeContext) {
     let name = SpecialIdentifiers.__class__
     let mangled = MangledName(from: name)
@@ -269,7 +267,7 @@ internal class SymbolTableVariableSourcePass {
   }
 
   /// update_symbols(PyObject *symbols, PyObject *scopes, PyObject *bound, ...)
-  private func updateSymbols(scope: inout SymbolScope,
+  private func updateSymbols(scope: SymbolScope,
                              scopeContext: ScopeContext,
                              outerContext: OuterContext?) throws {
 
@@ -282,7 +280,7 @@ internal class SymbolTableVariableSourcePass {
 
       var flags = info.flags
       flags.formUnion(srcFlags)
-      self.updateSymbol(name, flags: flags, in: &scope)
+      self.updateSymbol(name, flags: flags, in: scope)
     }
 
     // Record not yet resolved free variables from children (if any)
@@ -292,7 +290,7 @@ internal class SymbolTableVariableSourcePass {
         if scope.type == .class && info.flags.containsAny(.defBound) {
           var flags = info.flags
           flags.formUnion(.defFreeClass)
-          self.updateSymbol(name, flags: flags, in: &scope)
+          self.updateSymbol(name, flags: flags, in: scope)
         }
 
         // It's a cell, or already free in this scope
@@ -312,7 +310,7 @@ internal class SymbolTableVariableSourcePass {
   /// Update existing symbol.
   private func updateSymbol(_ name: MangledName,
                             flags:  SymbolFlags,
-                            in scope: inout SymbolScope) {
+                            in scope: SymbolScope) {
     guard let current = scope.symbols[name] else {
       assert(false)
       fatalError()

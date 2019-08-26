@@ -1,4 +1,47 @@
 import Core
+import Parser
+
+public class SymbolTable {
+
+  public let top: SymbolScope
+
+  public let scopeByNode: ScopeByNodeDictionary
+
+  public var globals: [MangledName: SymbolInfo] {
+    return self.top.symbols
+  }
+
+  // `internal` so, that we can't instantiate it outside of this module.
+  internal init(top: SymbolScope, scopeByNode: ScopeByNodeDictionary) {
+    self.top = top
+    self.scopeByNode = scopeByNode
+  }
+}
+
+/// Mapping from ASTNode to Symbol scope.
+/// Returns `nil` if no scope is associated with given node.
+public struct ScopeByNodeDictionary {
+
+  private var inner = [AnyHashable:SymbolScope]()
+
+  // `internal` so, that we can't instantiate it outside of this module.
+  internal init() { }
+
+  public subscript<N: ASTNode>(key: N) -> SymbolScope? {
+    get { return self.get(key) }
+    set { self.insert(key, value: newValue) }
+  }
+
+  public func get<N: ASTNode>(_ key: N) -> SymbolScope? {
+    let hash = AnyHashable(key)
+    return self.inner[hash]
+  }
+
+  public mutating func insert<N: ASTNode>(_ key: N, value: SymbolScope?) {
+    let hash = AnyHashable(key)
+    self.inner[hash] = value
+  }
+}
 
 public enum ScopeType {
   case function
@@ -8,7 +51,7 @@ public enum ScopeType {
 
 /// Captures all symbols in the current scope
 /// and has a list of subscopes (childrens).
-public struct SymbolScope {
+public class SymbolScope {
 
   /// Name of the class if the table is for a class.
   /// Name of the function if the table is for a function.
@@ -50,7 +93,8 @@ public struct SymbolScope {
   /// For class scopes: true if a closure over __class__ should be created
   public internal(set) var needsClassClosure = false
 
-  public init(name: String, type: ScopeType, isNested: Bool) {
+  // `internal` so, that we can't instantiate it outside of this module.
+  internal init(name: String, type: ScopeType, isNested: Bool) {
     self.name = name
     self.type = type
     self.isNested = isNested

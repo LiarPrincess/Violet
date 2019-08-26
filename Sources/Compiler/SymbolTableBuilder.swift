@@ -4,6 +4,8 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
+// TODO: Rewritte this with new pass generator
+
 internal enum SpecialIdentifiers {
   internal static let top = "top"
   internal static let lambda = "lambda"
@@ -14,23 +16,26 @@ internal enum SpecialIdentifiers {
   internal static let __class__ = "__class__"
 }
 
-public class SymbolTableBuilder {
+public final class SymbolTableBuilder {
 
   /// Scope stack.
+  /// Current scope is at the top, top scope is at the bottom.
   private var scopeStack = [SymbolScope]()
 
-  /// Scope that we are currently filling.
-   internal var currentScope: SymbolScope {
-    get {
-      assert(self.scopeStack.any)
-      return self.scopeStack[self.scopeStack.count - 1]
-    }
-    set { assert(false, "Use `self.scopeStack` instead.") }
-    _modify {
-      assert(self.scopeStack.any)
-      yield &self.scopeStack[self.scopeStack.count - 1]
-    }
-   }
+  private var scopeByNode = ScopeByNodeDictionary()
+
+  /// Scope that we are currently filling (top of the `self.scopeStack`).
+  internal var currentScope: SymbolScope {
+    if let last = self.scopeStack.last { return last }
+    assert(false)
+    fatalError("[BUG] SymbolTableBuilder: Using nil current scope.")
+  }
+
+  internal var topScope: SymbolScope {
+    if let first = self.scopeStack.first { return first }
+    assert(false)
+    fatalError("[BUG] SymbolTableBuilder: Using nil top scope.")
+  }
 
   /// Name of the class that we are currently filling (if any).
   /// Mostly used for mangling.
@@ -39,12 +44,12 @@ public class SymbolTableBuilder {
   // MARK: - Pass
 
   /// PySymtable_BuildObject(mod_ty mod, ...)
-  public func visit(_ ast: AST) throws -> SymbolScope {
+  public func visit(_ ast: AST) throws -> SymbolTable {
     self.scopeStack.removeAll()
 
-    self.enterScope(name: SpecialIdentifiers.top, type: .module)
+    self.enterScope(name: SpecialIdentifiers.top, type: .module, node: ast)
 
-    switch ast {
+    switch ast.kind {
     case let .single(stmts):
       try self.visit(stmts)
     case let .fileInput(stmts):
@@ -54,36 +59,38 @@ public class SymbolTableBuilder {
     }
 
     assert(self.scopeStack.count == 1)
-    var topScope = self.scopeStack[0]
+    let top = self.scopeStack[0]
+    let table = SymbolTable(top: top, scopeByNode: self.scopeByNode)
 
     let sourcePass = SymbolTableVariableSourcePass()
-    try sourcePass.analyze(top: &topScope)
+    try sourcePass.analyze(table: table)
 
-    return topScope
+    return table
   }
 
   // MARK: - Scope
 
-  /// Push new scope.
+  /// Push new scope and add as child to current scope.
   ///
   /// symtable_enter_block(struct symtable *st, identifier name, ...)
-  internal func enterScope(name: String, type: ScopeType) {
+  internal func enterScope<N: ASTNode>(name: String, type: ScopeType, node: N) {
     let isNested = self.scopeStack.any &&
       (self.scopeStack.last?.isNested ?? false || type == .function)
 
+    let previous = self.scopeStack.last
+
     let scope = SymbolScope(name: name, type: type, isNested: isNested)
     self.scopeStack.push(scope)
+    self.scopeByNode.insert(node, value: scope)
+    previous?.children.append(scope)
   }
 
-  /// Pop scope and add to child of parent scope.
+  /// Pop scope.
   ///
   /// symtable_exit_block(struct symtable *st, void *ast)
   internal func leaveScope() {
     let scope = self.scopeStack.popLast()
     assert(scope != nil)
-
-    // swiftlint:disable:next force_unwrapping
-    self.currentScope.children.append(scope!)
   }
 
   // MARK: - Names
@@ -112,13 +119,19 @@ public class SymbolTableBuilder {
       flagsToSet.formUnion(current.flags)
     }
 
-    self.currentScope.symbols[mangled] = SymbolInfo(flags: flagsToSet,
-                                                    location: location)
+    let info = SymbolInfo(flags: flagsToSet, location: location)
+    self.currentScope.symbols[mangled] = info
 
     if flags.contains(.defParam) {
       self.currentScope.varnames.append(mangled)
     } else if flags.contains(.defGlobal) {
-      // TODO: gather global scope symbols? (CPython)
+      var globalsToSet = flagsToSet
+      if let currentGlobal = self.topScope.symbols[mangled] {
+        globalsToSet.formUnion(currentGlobal.flags)
+      }
+
+      let globalInfo = SymbolInfo(flags: globalsToSet, location: location)
+      self.topScope.symbols[mangled] = globalInfo
     }
   }
 
@@ -204,7 +217,7 @@ public class SymbolTableBuilder {
 
   /// Create parser warning
   internal func warn(_ warning: CompilerWarning,
-                              location:  SourceLocation) {
+                     location:  SourceLocation) {
     // uh... oh... well that's embarrassing...
   }
 
