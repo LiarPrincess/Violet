@@ -22,10 +22,10 @@ public class SymbolTable {
 /// Returns `nil` if no scope is associated with given node.
 public struct ScopeByNodeDictionary {
 
-  private var inner = [AnyHashable:SymbolScope]()
+  private var inner = [NodeId:SymbolScope]()
 
   // `internal` so, that we can't instantiate it outside of this module.
-  internal init() { }
+  internal init() {}
 
   public subscript<N: ASTNode>(key: N) -> SymbolScope? {
     get { return self.get(key) }
@@ -33,13 +33,11 @@ public struct ScopeByNodeDictionary {
   }
 
   public func get<N: ASTNode>(_ key: N) -> SymbolScope? {
-    let hash = AnyHashable(key)
-    return self.inner[hash]
+    return self.inner[key.id]
   }
 
   public mutating func insert<N: ASTNode>(_ key: N, value: SymbolScope?) {
-    let hash = AnyHashable(key)
-    self.inner[hash] = value
+    self.inner[key.id] = value
   }
 }
 
@@ -59,7 +57,7 @@ public class SymbolScope {
   public let name: String
 
   /// Type of the symbol table.
-  /// Possible values are 'class', 'module', and 'function'.
+  /// Possible values are 'class', 'module' and 'function'.
   public let type: ScopeType
 
   /// A set of symbols present on this scope level

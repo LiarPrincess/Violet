@@ -24,7 +24,7 @@ public final class AstPatternMatchingEmitter: EmitterBase {
       switch entity {
       case .enum(let e):
         switch e.name {
-        case "AST": emitASTMatcher(e)
+        case "ASTKind": emitASTMatcher(e)
         case "StatementKind": emitStatementMatcher(e)
         case "ExpressionKind": emitExpressionMatcher(e)
         case "SliceKind": emitSliceMatcher(e)
@@ -60,7 +60,7 @@ public final class AstPatternMatchingEmitter: EmitterBase {
         \(paramIndent)line: UInt         = #line) ->
         (\(destruction.resultType))? {
 
-          if case let \(enumDef.name).\(caseDef.name)(\(destruction.bindings)) = ast {
+          if case let \(enumDef.name).\(caseDef.name)(\(destruction.bindings)) = ast.kind {
             return (\(destruction.returnValue))
           }
 

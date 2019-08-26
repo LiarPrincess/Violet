@@ -4,7 +4,6 @@
 
 import Foundation
 import Core
-import Lexer
 
 // swiftlint:disable superfluous_disable_command
 // swiftlint:disable type_body_length
@@ -13,56 +12,52 @@ import Lexer
 // swiftlint:disable trailing_newline
 // swiftlint:disable vertical_whitespace_closing_braces
 
-public enum Count: Equatable {
+public enum Count {
   case notImplemented
 
 }
 
-public enum Counts: Equatable {
+public enum Counts {
   case notImplemented
 
 }
 
-public enum VarNum: Equatable {
+public enum VarNum {
   case notImplemented
 
 }
 
-public enum I: Equatable {
+public enum I {
   case notImplemented
 
 }
 
-public enum Delta: Equatable {
+public enum Delta {
   case notImplemented
 
 }
 
-public enum Flags: Equatable {
+public enum Flags {
   case notImplemented
 
 }
 
-public enum Target: Equatable {
+public enum Target {
   case notImplemented
 
 }
 
-public enum BigInt: Equatable {
-  case notImplemented
-
-}
-
-public enum Constant: Equatable {
+public enum Constant {
+  case `true`
+  case `false`
+  case none
+  case ellipsis
   case integer(BigInt)
   case float(Double)
   case complex(real: Double, imag: Double)
-  case boolean(Bool)
   case string(String)
   case bytes(Data)
   case tuple([Constant])
-  case none
-  case ellipsis
 
   public var isInteger: Bool {
     if case .integer = self { return true }
@@ -76,11 +71,6 @@ public enum Constant: Equatable {
 
   public var isComplex: Bool {
     if case .complex = self { return true }
-    return false
-  }
-
-  public var isBoolean: Bool {
-    if case .boolean = self { return true }
     return false
   }
 
@@ -101,7 +91,7 @@ public enum Constant: Equatable {
 
 }
 
-public enum ComparisonOperator: Equatable {
+public enum ComparisonOperator {
   /// True when two operands are equal.
   case equal
   /// True when two operands are not equal.
@@ -125,7 +115,7 @@ public enum ComparisonOperator: Equatable {
 
 }
 
-public enum Bytecode: Equatable {
+public enum Instruction {
   /// Do nothing code.
   case nop
   /// Removes the top-of-stack (TOS) item.
@@ -155,7 +145,7 @@ public enum Bytecode: Equatable {
   /// Implements `TOS = TOS1 @ TOS`.
   case binaryMatrixMultiply
   /// Implements `TOS = TOS1 // TOS`.
-  case binaryfloorDivide
+  case binaryFloorDivide
   /// Implements `TOS = TOS1 / TOS`.
   case binaryTrueDivide
   /// Implements `TOS = TOS1 % TOS`.
@@ -164,8 +154,6 @@ public enum Bytecode: Equatable {
   case binaryAdd
   /// Implements `TOS = TOS1 - TOS`.
   case binarySubtract
-  /// Implements `TOS = TOS1[TOS]`.
-  case binarySubscr
   /// Implements `TOS = TOS1 << TOS`.
   case binaryLShift
   /// Implements `TOS = TOS1 >> TOS`.
@@ -176,6 +164,34 @@ public enum Bytecode: Equatable {
   case binaryXor
   /// Implements `TOS = TOS1 | TOS`.
   case binaryOr
+  /// Implements `TOS = TOS1[TOS]`.
+  case binarySubscr
+  /// Implements in-place TOS = TOS1 ** TOS.
+  case inplacePower
+  /// Implements in-place TOS = TOS1 * TOS.
+  case inplaceMultiply
+  /// Implements in-place TOS = TOS1 @ TOS.
+  case inplaceMatrixMultiply
+  /// Implements in-place TOS = TOS1 // TOS.
+  case inplaceFloorDivide
+  /// Implements in-place TOS = TOS1 / TOS.
+  case inplaceTrueDivide
+  /// Implements in-place TOS = TOS1 % TOS.
+  case inplaceModulo
+  /// Implements in-place TOS = TOS1 + TOS.
+  case inplaceAdd
+  /// Implements in-place TOS = TOS1 - TOS.
+  case inplaceSubtract
+  /// Implements in-place TOS = TOS1 << TOS.
+  case inplaceLShift
+  /// Implements in-place TOS = TOS1 >> TOS.
+  case inplaceRShift
+  /// Implements in-place TOS = TOS1 & TOS.
+  case inplaceAnd
+  /// Implements in-place TOS = TOS1 ^ TOS.
+  case inplaceXor
+  /// Implements in-place TOS = TOS1 | TOS.
+  case inplaceOr
   /// Performs a `Boolean` operation.
   case compareOp(ComparisonOperator)
   /// Implements `TOS = GetAwaitable(TOS)`.
@@ -459,13 +475,15 @@ public enum Bytecode: Equatable {
   /// Set bytecode counter to target.
   case jumpAbsolute(Target)
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
-  case popJumpIfTrue(Target)
+  case popJumpIfTrue(Label)
   /// If TOS is false, sets the bytecode counter to target. TOS is popped.
-  case popJumpIfFalse(Target)
-  /// If TOS is true, sets the bytecode counter to target and leaves TOS on the stack. Otherwise (TOS is false), TOS is popped.
-  case jumpIfTrueOrPop(Target)
-  /// If TOS is false, sets the bytecode counter to target and leaves TOS on the stack. Otherwise (TOS is true), TOS is popped.
-  case jumpIfFalseOrPop(Target)
+  case popJumpIfFalse(Label)
+  /// If TOS is true, sets the bytecode counter to target and leaves TOS on the stack.
+  /// Otherwise (TOS is false), TOS is popped.
+  case jumpIfTrueOrPop(Label)
+  /// If TOS is false, sets the bytecode counter to target and leaves TOS on the stack.
+  /// Otherwise (TOS is true), TOS is popped.
+  case jumpIfFalseOrPop(Label)
   /// Used for implementing formatted literal strings (f-strings).
   /// 
   /// Pops an optional `FmtSpec` from the stack, then a required value.

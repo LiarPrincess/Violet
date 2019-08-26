@@ -16,19 +16,19 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 @enum Delta = NotImplemented
 @enum Flags = NotImplemented
 @enum Target = NotImplemented
-@enum BigInt = NotImplemented
 
 @enum Constant =
-  Integer(BigInt)
+  True
+  | False
+  | None
+  | Ellipsis
+  | Integer(BigInt)
   | Float(Double)
   | Complex(Double real, Double imag)
-  | Boolean(Bool)
   | String(String)
   | Bytes(Data)
   {- TODO: | Code(code: Box<CodeObject>) -}
   | Tuple(Constant*)
-  | None
-  | Ellipsis
 
 @enum ComparisonOperator =
   -- True when two operands are equal.
@@ -55,7 +55,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   {- | ExceptionMatch -}
   {- | Bad -}
 
-@enum Bytecode =
+@enum Instruction =
 
 {- ------- -}
 {- General -}
@@ -113,7 +113,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Implements `TOS = TOS1 @ TOS`.
   | BinaryMatrixMultiply
   -- Implements `TOS = TOS1 // TOS`.
-  | BinaryfloorDivide
+  | BinaryFloorDivide
   -- Implements `TOS = TOS1 / TOS`.
   | BinaryTrueDivide
   -- Implements `TOS = TOS1 % TOS`.
@@ -122,8 +122,6 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | BinaryAdd
   -- Implements `TOS = TOS1 - TOS`.
   | BinarySubtract
-  -- Implements `TOS = TOS1[TOS]`.
-  | BinarySubscr
   -- Implements `TOS = TOS1 << TOS`.
   | BinaryLShift
   -- Implements `TOS = TOS1 >> TOS`.
@@ -134,6 +132,47 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | BinaryXor
   -- Implements `TOS = TOS1 | TOS`.
   | BinaryOr
+
+  -- Implements `TOS = TOS1[TOS]`.
+  | BinarySubscr
+
+{- -------------------- -}
+{-  In-place operations -}
+{- -------------------- -}
+
+  {-
+    In-place operations are like binary operations,
+    in that they remove TOS and TOS1, and push the result back on the stack,
+    but the operation is done in-place when TOS1 supports it,
+    and the resulting TOS may be (but does not have to be) the original TOS1.
+  -}
+
+  -- Implements in-place TOS = TOS1 ** TOS.
+  | InplacePower
+  -- Implements in-place TOS = TOS1 * TOS.
+  | InplaceMultiply
+  -- Implements in-place TOS = TOS1 @ TOS.
+  | InplaceMatrixMultiply
+  -- Implements in-place TOS = TOS1 // TOS.
+  | InplaceFloorDivide
+  -- Implements in-place TOS = TOS1 / TOS.
+  | InplaceTrueDivide
+  -- Implements in-place TOS = TOS1 % TOS.
+  | InplaceModulo
+  -- Implements in-place TOS = TOS1 + TOS.
+  | InplaceAdd
+  -- Implements in-place TOS = TOS1 - TOS.
+  | InplaceSubtract
+  -- Implements in-place TOS = TOS1 << TOS.
+  | InplaceLShift
+  -- Implements in-place TOS = TOS1 >> TOS.
+  | InplaceRShift
+  -- Implements in-place TOS = TOS1 & TOS.
+  | InplaceAnd
+  -- Implements in-place TOS = TOS1 ^ TOS.
+  | InplaceXor
+  -- Implements in-place TOS = TOS1 | TOS.
+  | InplaceOr
 
 {- ----------- -}
 {-  Comparison -}
@@ -531,13 +570,15 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | JumpAbsolute(target)
 
   -- If TOS is true, sets the bytecode counter to target. TOS is popped.
-  | PopJumpIfTrue(target)
+  | PopJumpIfTrue(Label)
   -- If TOS is false, sets the bytecode counter to target. TOS is popped.
-  | PopJumpIfFalse(target)
-  -- If TOS is true, sets the bytecode counter to target and leaves TOS on the stack. Otherwise (TOS is false), TOS is popped.
-  | JumpIfTrueOrPop(target)
-  -- If TOS is false, sets the bytecode counter to target and leaves TOS on the stack. Otherwise (TOS is true), TOS is popped.
-  | JumpIfFalseOrPop(target)
+  | PopJumpIfFalse(Label)
+  -- If TOS is true, sets the bytecode counter to target and leaves TOS on the stack.
+  -- Otherwise (TOS is false), TOS is popped.
+  | JumpIfTrueOrPop(Label)
+  -- If TOS is false, sets the bytecode counter to target and leaves TOS on the stack.
+  -- Otherwise (TOS is true), TOS is popped.
+  | JumpIfFalseOrPop(Label)
 
 {- ------ -}
 {- String -}

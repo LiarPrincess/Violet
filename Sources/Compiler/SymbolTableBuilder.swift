@@ -7,7 +7,8 @@ import Parser
 // TODO: Rewritte this with new pass generator
 
 internal enum SpecialIdentifiers {
-  internal static let top = "top"
+  internal static let top = "top" // TODO: rename to module
+  internal static let module = "module"
   internal static let lambda = "lambda"
   internal static let genexpr = "genexpr"
   internal static let listcomp = "listcomp"
@@ -27,13 +28,11 @@ public final class SymbolTableBuilder {
   /// Scope that we are currently filling (top of the `self.scopeStack`).
   internal var currentScope: SymbolScope {
     if let last = self.scopeStack.last { return last }
-    assert(false)
     fatalError("[BUG] SymbolTableBuilder: Using nil current scope.")
   }
 
   internal var topScope: SymbolScope {
     if let first = self.scopeStack.first { return first }
-    assert(false)
     fatalError("[BUG] SymbolTableBuilder: Using nil top scope.")
   }
 
@@ -89,8 +88,8 @@ public final class SymbolTableBuilder {
   ///
   /// symtable_exit_block(struct symtable *st, void *ast)
   internal func leaveScope() {
-    let scope = self.scopeStack.popLast()
-    assert(scope != nil)
+    assert(self.scopeStack.any)
+    self.scopeStack.popLast()
   }
 
   // MARK: - Names

@@ -47,39 +47,49 @@ public final class AstPassEmitter: EmitterBase {
 
     for entity in entities {
       switch entity {
-      case let .enum(e): self.emitEnum(e)
-      case let .struct(s): self.emitStruct(s)
+      case let .enum(e) where e.name == "AST"
+                           || e.name == "StatementKind"
+                           || e.name == "ExpressionKind":
+        self.emitFunctionWithSingleSwitch(e)
+        self.emitFunctionPerCase(e)
+      case let .struct(s):
+        self.emitStruct(s)
+      default:
+        break
       }
     }
 
     self.write("}")
   }
 
-  private func emitEnum(_ enumDef: EnumDef) {
+  // MARK: - Enum
+
+  private func emitFunctionWithSingleSwitch(_ enumDef: EnumDef) {
+    let pascalName = pascalCase(enumDef.name)
     let argName = argNames[enumDef.name] ?? camelCase(enumDef.name)
     let accessModifier = enumDef.name == "AST" ? "public" : "private"
-    self.write("  \(accessModifier) func visit(_ \(argName): \(enumDef.name)) throws {")
+    self.write("  \(accessModifier) func visit\(pascalName)(_ \(argName): \(enumDef.name)) throws {")
 
     self.write("    switch \(argName) {")
     for caseDef in enumDef.cases {
+      let casePascalName = pascalCase(caseDef.name)
+
       if caseDef.properties.isEmpty {
         self.write("    case .\(caseDef.name):")
+        self.write("      try self.visit\(casePascalName)()")
       } else {
-        let properties = caseDef.properties
-          .enumerated()
-          .map {
-            $0.element.name ??
-              argNames[$0.element.type] ??
-              (caseDef.properties.count == 1 ? "value" : "value\($0.offset)")
-          }
-          .map(escaped)
+        let propertyInfos = self.getPropertyInfos(caseDef.properties)
+        let binds = propertyInfos
+          .map { $0.bind }
           .joined(", ")
 
-        self.write("    case let .\(caseDef.name)(\(properties)):")
-      }
+        let args = propertyInfos
+          .map { $0.arg + ": " + $0.bind }
+          .joined(", ")
 
-      self.write("      break")
-      self.write()
+        self.write("    case let .\(caseDef.name)(\(binds)):")
+        self.write("      try self.visit\(casePascalName)(\(args))")
+      }
     }
     self.write("    }")
 
@@ -87,9 +97,55 @@ public final class AstPassEmitter: EmitterBase {
     self.write()
   }
 
+  private func emitFunctionPerCase(_ enumDef: EnumDef) {
+    for caseDef in enumDef.cases {
+      let namePascal = pascalCase(caseDef.name)
+
+      let propertyInfos = self.getPropertyInfos(caseDef.properties)
+      let args = propertyInfos
+        .map { $0.arg + ": " + $0.type }
+        .joined(",\n")
+
+      self.write("  private func visit\(namePascal)(\(args)) throws {")
+      self.write("  }")
+      self.write()
+    }
+  }
+
+  private struct EnumCaseInfo {
+    /// Binding in `case let`
+    fileprivate let bind: String
+    /// Name of the argument
+    fileprivate let arg: String
+    /// Swift type
+    fileprivate let type: String
+  }
+
+  private func getPropertyInfos(_ properties: [EnumCaseProperty]) -> [EnumCaseInfo] {
+    var result = [EnumCaseInfo]()
+    for (index, property) in properties.enumerated() {
+      let bind = property.name ??
+        argNames[property.type] ??
+        (index == 0 ? "value" : "value\(index)")
+
+      let arg = property.name ??
+        argNames[property.type] ??
+        (properties.count == 1 ? "value" : "value\(index)")
+
+      let type = property.type
+
+      let info = EnumCaseInfo(bind: bind, arg: arg, type: type)
+      result.append(info)
+    }
+    return result
+  }
+
+  // MARK: - Struct
+
   private func emitStruct(_ structDef: StructDef) {
+    let pascalName = pascalCase(structDef.name)
     let argName = argNames[structDef.name] ?? camelCase(structDef.name)
-    self.write("  private func visit(_ \(argName): \(structDef.name)) throws {")
+    self.write("  private func visit\(pascalName)(_ \(argName): \(structDef.name)) throws {")
     self.write("  }")
     self.write()
   }
