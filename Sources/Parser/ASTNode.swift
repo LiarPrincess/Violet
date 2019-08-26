@@ -21,6 +21,8 @@ extension ASTNode {
   }
 }
 
+/// Unique node identifier.
+/// Use `NodeId.next` to obtain next available value.
 public struct NodeId: Equatable, Hashable {
 
   private let value: UInt64
@@ -32,9 +34,10 @@ public struct NodeId: Equatable, Hashable {
 
   private static var nextValue: UInt64 = 0
 
+  /// Next available value.
   public static var next: NodeId {
     if NodeId.nextValue == UInt64.max {
-      fatalError("[ASTode] Reached maximim number of AST nodes: (\(UInt64.max)).")
+      fatalError("[BUG] NodeId: Reached maximim number of AST nodes: (\(UInt64.max)).")
     }
 
     let value = NodeId.nextValue

@@ -13,9 +13,34 @@ import Lexer
 // swiftlint:disable trailing_newline
 // swiftlint:disable vertical_whitespace_closing_braces
 
+/// Tree model of an entire program.
+/// 
+/// See:
+/// - [Official docs](https://docs.python.org/3/reference/index.html)
+/// - [greentreesnakes](https://greentreesnakes.readthedocs.io/en/latest/nodes.html)
+public struct AST: ASTNode {
+
+  /// A unique node identifier.
+  /// Mostly used for efficient Equatable/Hashable implementation.
+  public let id: NodeId
+  /// Type of the statement.
+  public let kind: ASTKind
+  /// Location of the first character in the source code.
+  public let start: SourceLocation
+  /// Location just after the last character in the source code.
+  public let end: SourceLocation
+
+  public init(id: NodeId, kind: ASTKind, start: SourceLocation, end: SourceLocation) {
+    self.id = id
+    self.kind = kind
+    self.start = start
+    self.end = end
+  }
+}
+
 /// Top (root) node in AST.
 /// Represents the whole program.
-public enum AST: Equatable {
+public enum ASTKind: Equatable {
   /// Used for input in interactive mode.
   /// `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
   case single([Statement])

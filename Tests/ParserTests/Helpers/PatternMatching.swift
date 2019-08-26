@@ -24,7 +24,7 @@ extension ASTMatcher {
                             line: UInt         = #line) ->
   ([Statement])? {
 
-    if case let AST.single(value0) = ast {
+    if case let ASTKind.single(value0) = ast.kind {
       return (value0)
     }
 
@@ -37,7 +37,7 @@ extension ASTMatcher {
                                line: UInt         = #line) ->
   ([Statement])? {
 
-    if case let AST.fileInput(value0) = ast {
+    if case let ASTKind.fileInput(value0) = ast.kind {
       return (value0)
     }
 
@@ -50,7 +50,7 @@ extension ASTMatcher {
                                 line: UInt         = #line) ->
   (Expression)? {
 
-    if case let AST.expression(value0) = ast {
+    if case let ASTKind.expression(value0) = ast.kind {
       return (value0)
     }
 

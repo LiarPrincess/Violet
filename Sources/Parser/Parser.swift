@@ -110,22 +110,27 @@ public struct Parser {
 
   /// single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE
   internal mutating func singleInput() throws -> AST {
-    // TODO: test this
+    let start = self.peek.start
+
+    // TODO: test this (and other top level AST nodes)
     if self.peek.kind == .newLine {
-      return .single([])
+      let end = self.peek.end
+      return AST(.single([]), start: start, end: end)
     }
 
     if let stmt = try self.compoundStmtOrNop() {
+      let end = self.peek.end
       try self.consumeOrThrow(.newLine)
-      return .single([stmt])
+      return AST(.single([stmt]), start: start, end: end)
     }
 
     let stmts = try self.simpleStmt()
-    return .single(Array(stmts))
+    return AST(.single(Array(stmts)), start: start, end: stmts.last.end)
   }
 
   /// file_input: (NEWLINE | stmt)* ENDMARKER
   internal mutating func fileInput() throws -> AST {
+    let first = self.peek
     var result = [Statement]()
 
     while self.peek.kind != .eof {
@@ -139,7 +144,8 @@ public struct Parser {
     }
 
     // We know that 'self.peek.kind == .eof' (because of 'while' condition)
-    return .fileInput(result)
+    let end = result.last?.end ?? first.end
+    return AST(.fileInput(result), start: first.start, end: end)
   }
 
   /// eval_input: testlist NEWLINE* ENDMARKER
@@ -151,12 +157,13 @@ public struct Parser {
       try self.advance() // newLine
     }
 
+    let end = self.peek.end
     guard self.peek.kind == .eof else {
       throw self.unexpectedToken(expected: [.eof])
     }
 
     let expr = list.toExpression(start: start)
-    return .expression(expr)
+    return AST(.expression(expr), start: start, end: end)
   }
 
   // MARK: - Naming

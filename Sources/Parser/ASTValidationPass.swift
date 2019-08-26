@@ -10,13 +10,15 @@ import Lexer
 // Python -> ast.c
 //  int PyAST_Validate(mod_ty mod)
 
+// TODO: Rewritte this with new pass generator
+
 public struct ASTValidationPass: ASTPass {
 
   public typealias PassResult = Void
 
   /// int PyAST_Validate(mod_ty mod)
   public func visit(_ ast: AST) throws {
-    switch ast {
+    switch ast.kind {
     case let .single(stmts):
       try self.visit(stmts)
     case let .fileInput(stmts):

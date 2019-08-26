@@ -76,7 +76,7 @@ public class FutureParser {
   }
 
   private func getStatements(from ast: AST) -> [Statement] {
-    switch ast {
+    switch ast.kind {
     case let .fileInput(stmts),
          let .single(stmts):
       return stmts

@@ -21,9 +21,26 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 @alias stmtKind = StatementKind
 @alias loc = SourceLocation
 
+-- Tree model of an entire program.
+--
+-- See:
+-- - [Official docs](https://docs.python.org/3/reference/index.html)
+-- - [greentreesnakes](https://greentreesnakes.readthedocs.io/en/latest/nodes.html)
+@struct AST: ASTNode = (
+  -- A unique node identifier.
+  -- Mostly used for efficient Equatable/Hashable implementation.
+  NodeId id,
+  -- Type of the statement.
+  ASTKind kind,
+  -- Location of the first character in the source code.
+  loc start,
+  -- Location just after the last character in the source code.
+  loc end
+)
+
 -- Top (root) node in AST.
 -- Represents the whole program.
-@enum AST: Equatable =
+@enum ASTKind: Equatable =
   -- Used for input in interactive mode.
   -- `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
   Single(stmt*)

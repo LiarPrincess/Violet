@@ -220,7 +220,7 @@ internal struct FString {
       var parser = Parser(mode: .eval, tokenSource: lexer)
       let ast = try parser.parse()
 
-      switch ast {
+      switch ast.kind {
       case .expression(let e):  return e
       case .single, .fileInput: assert(false)
       }

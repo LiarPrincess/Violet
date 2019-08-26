@@ -1,5 +1,14 @@
 import Core
 
+extension AST {
+
+  public init(_ kind: ASTKind,
+              start:  SourceLocation,
+              end:    SourceLocation) {
+    self.init(id: .next, kind: kind, start: start, end: end)
+  }
+}
+
 extension Statement {
 
   public init(_ kind: StatementKind,
