@@ -2,36 +2,17 @@ import Core
 import Parser
 import Bytecode
 
-public struct CodeObject {
+/// Index of jump target in `CodeObject.labels`.
+/// Basically a wrapper around SmallArrayIndex for additional type safety.
+/// - Important:
+/// Labels can only be used inside a single block!
+public struct Label { // TODO: Internal
 
-  /// Name of the class if the unit is for a class.
-  /// Name of the function if the unit is for a function.
-  /// Otherwise 'top'.
-  public let name: String
+  /// Index in `CodeObject.labels`
+  internal let index: SmallArrayIndex
 
-  public var instructions = [Instruction]()
-  public var locations    = [SourceLocation]()
-
-  /// Jump targets.
-  public var labelMap = [Label:UInt]()
-
-  /// Names of positional arguments
-  public var argNames = [String]()
-  /// *args or *
-  public var varargs = Vararg.none
-  public var kwonlyArgNames = [String]()
-  /// **kwargs or **
-  public var varKeywords = Vararg.none
-
-  public var isGenerator = false
-
-  /*
-   pub source_path: String,
-   pub first_line_number: usize,
-   */
-
-  public init(name: String) {
-    self.name = name
+  internal init(index: SmallArrayIndex) {
+    self.index = index
   }
 }
 

@@ -12,13 +12,12 @@ import Bytecode
 extension Compiler {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  internal func visitExpression<S: Sequence>(_ exprs: S,
-                                   isAssignmentTarget: Bool = false) throws
+  internal func visitExpression<S: Sequence>(_ exprs: S) throws
     where S.Element == Expression {
 
-      for e in exprs {
-        try self.visitExpression(e)
-      }
+    for e in exprs {
+      try self.visitExpression(e)
+    }
   }
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
@@ -30,15 +29,17 @@ extension Compiler {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visitExpression(_ expr: Expression) throws {
+    let line = expr.start.line
+
     switch expr.kind {
     case .true:
-      try self.emitConstant(.true)
+      try self.emitConstant(.true, line: line)
     case .false:
-      try self.emitConstant(.false)
+      try self.emitConstant(.false, line: line)
     case .none:
-      try self.emitConstant(.none)
+      try self.emitConstant(.none, line: line)
     case .ellipsis:
-      try self.emitConstant(.ellipsis)
+      try self.emitConstant(.ellipsis, line: line)
 
     case let .identifier(value):
       try self.visitIdentifier(value: value)
@@ -46,26 +47,26 @@ extension Compiler {
     case let .bytes(value):
       try self.visitBytes(value: value)
     case let .string(group):
-      try self.visitString(group: group)
+      try self.visitString(group: group, line: line)
 
     case let .int(value):
-      try self.emitConstant(.integer(value))
+      try self.emitConstant(.integer(value), line: line)
     case let .float(value):
-      try self.emitConstant(.float(value))
+      try self.emitConstant(.float(value), line: line)
     case let .complex(real, imag):
-      try self.emitConstant(.complex(real: real, imag: imag))
+      try self.emitConstant(.complex(real: real, imag: imag), line: line)
 
     case let .unaryOp(op, right):
       try self.visitExpression(right)
-      try self.emitUnaryOperator(op)
+      try self.emitUnaryOperator(op, line: line)
     case let .binaryOp(op, left, right):
       try self.visitExpression(left)
       try self.visitExpression(right)
-      try emitBinaryOperator(op)
+      try emitBinaryOperator(op, line: line)
     case let .boolOp(op, left, right):
-      try self.visitBoolOp(op: op, left: left, right: right)
+      try self.visitBoolOp(op: op, left: left, right: right, line: line)
     case let .compare(left, elements):
-      try self.visitCompare(left: left, elements: elements)
+      try self.visitCompare(left: left, elements: elements, line: line)
 
     case let .tuple(value):
       try self.visitTuple(value: value)
@@ -110,31 +111,100 @@ extension Compiler {
   private func visitIdentifier(value: String) throws {
   }
 
-  private func visitString(group: StringGroup) throws {
+  /// compiler_formatted_value(struct compiler *c, expr_ty e)
+  /// compiler_joined_str(struct compiler *c, expr_ty e)
+  private func visitString(group: StringGroup, line: SourceLine) throws {
+    switch group {
+    case let .string(s):
+      try self.emitConstant(.string(s), line: line)
+
+    case let .formattedValue(e, conversion: c, spec: s):
+      break
+
+    case let .joinedString(gs):
+      for g in gs {
+        try self.visitString(group: g, line: line)
+      }
+
+      if gs.count > 1 {
+//        try self.emit(.buildString(gs.count))
+      }
+    }
   }
 
   private func visitBytes(value: Data) throws {
   }
 
   /// compiler_boolop(struct compiler *c, expr_ty e)
+  ///
+  /// `dis.dis('a and b')` gives us:
+  /// ```c
+  /// 0 LOAD_NAME                0 (a)
+  /// 2 JUMP_IF_FALSE_OR_POP     6
+  /// 4 LOAD_NAME                1 (b)
+  /// 6 RETURN_VALUE
+  /// ```
   private func visitBoolOp(op: BooleanOperator,
                            left:  Expression,
-                           right: Expression) throws {
+                           right: Expression,
+                           line:  SourceLine) throws {
 
-    let end = self.newLabel()
+    let end = try self.newLabel()
     try self.visitExpression(left)
 
     switch op {
-    case .and: try self.emit(.jumpIfFalseOrPop(end))
-    case .or:  try self.emit(.jumpIfTrueOrPop(end))
+    case .and: try self.emitJumpIfFalseOrPop(to: end, line: line)
+    case .or:  try self.emitJumpIfTrueOrPop(to: end, line: line)
     }
 
     try self.visitExpression(right)
     self.setLabel(end)
   }
 
+  /// compiler_compare(struct compiler *c, expr_ty e)
+  ///
+  /// `dis.dis('a < b <= c')` gives us:
+  /// ```c
+  ///   0 LOAD_NAME                0 (a)
+  ///   2 LOAD_NAME                1 (b)
+  ///   4 DUP_TOP
+  ///   6 ROT_THREE
+  ///   8 COMPARE_OP               0 (<)
+  ///  10 JUMP_IF_FALSE_OR_POP    18
+  ///  12 LOAD_NAME                2 (c)
+  ///  14 COMPARE_OP               1 (<=)
+  ///  16 RETURN_VALUE
+  ///  18 ROT_TWO
+  ///  20 POP_TOP
+  ///  22 RETURN_VALUE
+  /// ```
   private func visitCompare(left: Expression,
-                            elements: NonEmptyArray<ComparisonElement>) throws {
+                            elements: NonEmptyArray<ComparisonElement>,
+                            line: SourceLine) throws {
+
+    try self.visitExpression(left)
+
+    if elements.count == 1 {
+      let e = elements.first
+      try self.visitExpression(e.right)
+      try self.emitComparisonOperator(e.op, line: line)
+    } else {
+      let end = try self.newLabel()
+
+      for e in elements.lazy.dropLast() {
+        try self.visitExpression(e.right)
+        try self.emit(.dupTop, line: line)
+        try self.emit(.rotThree, line: line)
+        try self.emitComparisonOperator(e.op, line: line)
+        try self.emitJumpIfFalseOrPop(to: end, line: line)
+      }
+
+      let l = elements.last
+      try self.visitExpression(l.right)
+      try self.emitComparisonOperator(l.op, line: line)
+
+      self.setLabel(end)
+    }
   }
 
   private func visitTuple(value: [Expression]) throws {

@@ -1,3 +1,8 @@
+// TODO: Migrate to UInt16 for stride 4 (and max 65536 possible values)
+
+public typealias SourceLine = Int
+public typealias SourceColumn = Int
+
 public struct SourceLocation: Equatable {
 
   /// Initial location.
@@ -6,12 +11,12 @@ public struct SourceLocation: Equatable {
   }
 
   /// Line in file starting from 1.
-  public private(set) var line: Int
+  public private(set) var line: SourceLine
 
   /// Column in line starting from 0.
-  public private(set) var column: Int
+  public private(set) var column: SourceColumn
 
-  public init(line: Int, column: Int) {
+  public init(line: SourceLine, column: SourceColumn) {
     self.line = line
     self.column = column
   }

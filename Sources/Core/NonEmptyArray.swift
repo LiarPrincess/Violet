@@ -1,10 +1,8 @@
 // swiftlint:disable force_unwrapping
 
-// Do not add:
-// - RandomAccessCollection - it may throw. We don’t like throwing (and runtime checks).
-// - ExpressibleByArrayLiteral - it may break our invariant. We dont't like that.
-
 /// Array that has at least 1 element.
+///
+/// Do not add 'ExpressibleByArrayLiteral' - it may break our invariant.
 public struct NonEmptyArray<Element>: Sequence,
                                       Collection,
                                       BidirectionalCollection,
@@ -12,8 +10,11 @@ public struct NonEmptyArray<Element>: Sequence,
 
   public private(set) var elements = [Element]()
 
+  /// The first element of the collection.
   public var first: Element { return self.elements.first! }
-  public var last:  Element { return self.elements.last! }
+
+  /// The last element of the collection.
+  public var last: Element { return self.elements.last! }
 
   public init(first: Element) {
     self.init(first: first, rest: [])
@@ -24,10 +25,12 @@ public struct NonEmptyArray<Element>: Sequence,
     self.elements.append(contentsOf: rest)
   }
 
+  /// Adds a new element at the end of the array.
   public mutating func append(_ newElement: Element) {
     self.elements.append(newElement)
   }
 
+  /// Adds the elements of a sequence to the end of the array.
   public mutating func append<S: Sequence>(contentsOf newElements: S)
     where S.Element == Element {
 

@@ -7,11 +7,10 @@ import Bytecode
 
 public final class Compiler {
 
-  internal var codeObjectStack = [CodeObject]()
+  internal var blocksStack = [CodeObject]()
 
-  /// Code object that we are currently filling
-  /// (top of the `self.codeObjectStack`).
-  internal var currentCodeObject: CodeObject {
+  /// Code object that we are currently filling (top of the `self.blocksStack`).
+  internal var currentBlock: CodeObject {
     _read {
 //      assert(self.codeObjectStack.any)
 //      yield self.codeObjectStack[self.codeObjectStack.count - 1]
@@ -24,7 +23,7 @@ public final class Compiler {
     }
   }
 
-  // TODO: Thingies
+  // TODO: Merge symbolTable and scope to code unit
   internal var symbolTable: SymbolTable!
 
   internal var scopeStack = [SymbolScope]()
@@ -33,12 +32,11 @@ public final class Compiler {
     fatalError()
   }
 
-  internal var isInLoop = false
-  internal var isInFunctionDef = false
-  private var nextLabel: UInt16 = 0
+//  internal var isInLoop = false
+//  internal var isInFunctionDef = false
 
-  internal var currentSourceLocation: SourceLocation = .start
-  internal var currentQualifiedPath: String?
+//  internal var currentSourceLocation: SourceLocation = .start
+//  internal var currentQualifiedPath: String?
 
   /// Optimization level
   internal let optimize: Bool
@@ -67,8 +65,10 @@ public final class Compiler {
       break
     }
 
-    assert(self.codeObjectStack.count == 1)
-    return self.currentCodeObject
+    // TODO: Emit nop. because it may be an jump target!
+
+    assert(self.blocksStack.count == 1)
+    return self.currentBlock
   }
 
   // MARK: - Code object
@@ -109,28 +109,29 @@ public final class Compiler {
     return self.currentScope.symbols[name]!
   }
 
-  // MARK: - Label
+  // MARK: - Labels
 
-  internal func newLabel() -> Label {
-    let l = Label(value: self.nextLabel)
-    self.nextLabel += 1 // TODO: Handle overflow
-    return l
+  private var nextLabel: UInt16 = 0
+
+  internal func newLabel() throws -> Label {
+    
+    let index = self.currentBlock.labels.endIndex
+    self.currentBlock.labels.append(0)
+    return Label(index: index)
   }
 
   internal func setLabel(_ label: Label) {
-    // MM - just insert into code block label map
-//    let position = self.current_code_object().instructions.len();
-//    // assert!(label not in self.label_map)
-//    self.current_code_object().label_map.insert(label, position);
+    let jumpTarget = self.currentBlock.instructions.count
+    self.currentBlock.labels[label.index] = jumpTarget
   }
 
   // MARK: - Qualified name
 
-  internal func createQualifiedName() {
+//  internal func createQualifiedName() {
 //    if let Some(ref qualified_path) = self.current_qualified_path {
 //      format!("{}.{}{}", qualified_path, name, suffix)
 //    } else {
 //      format!("{}{}", name, suffix)
 //    }
-  }
+//  }
 }

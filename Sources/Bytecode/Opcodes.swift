@@ -47,6 +47,11 @@ public enum Target {
 
 }
 
+public enum NotDone {
+  case notImplemented
+
+}
+
 public enum Constant {
   case `true`
   case `false`
@@ -91,7 +96,7 @@ public enum Constant {
 
 }
 
-public enum ComparisonOperator {
+public enum ComparisonOpcode {
   /// True when two operands are equal.
   case equal
   /// True when two operands are not equal.
@@ -193,7 +198,7 @@ public enum Instruction {
   /// Implements in-place TOS = TOS1 | TOS.
   case inplaceOr
   /// Performs a `Boolean` operation.
-  case compareOp(ComparisonOperator)
+  case compareOp(ComparisonOpcode)
   /// Implements `TOS = GetAwaitable(TOS)`.
   /// 
   /// `GetAwaitable(o)` returns:
@@ -290,26 +295,26 @@ public enum Instruction {
   /// the high byte of counts the number of values after it.
   /// The resulting values are put onto the stack right-to-left.
   case unpackEx(Counts)
-  /// Pushes constant onto the stack.
-  case loadConst(Constant)
+  /// Pushes constant pointed by `index` onto the stack.
+  case loadConst(index: SmallArrayIndex)
   /// Implements `name = TOS`.
-  case storeName(String)
+  case storeName(nameIndex: SmallArrayIndex)
   /// Pushes the value associated with `name` onto the stack.
-  case loadName(String)
+  case loadName(nameIndex: SmallArrayIndex)
   /// Implements `del name`.
-  case deleteName(String)
+  case deleteName(nameIndex: SmallArrayIndex)
   /// Implements `TOS.name = TOS1`.
-  case storeAttr(String)
+  case storeAttr(nameIndex: SmallArrayIndex)
   /// Replaces TOS with `getAttr(TOS, name)`.
-  case loadAttr(String)
+  case loadAttr(nameIndex: SmallArrayIndex)
   /// Implements `del TOS.name`.
-  case deleteAttr(String)
+  case deleteAttr(nameIndex: SmallArrayIndex)
   /// Works as StoreName, but stores the name as a global.
-  case storeGlobal(String)
+  case storeGlobal(nameIndex: SmallArrayIndex)
   /// Loads the global named `name` onto the stack.
-  case loadGlobal(String)
+  case loadGlobal(nameIndex: SmallArrayIndex)
   /// Works as DeleteName, but deletes a global name.
-  case deleteGlobal(String)
+  case deleteGlobal(nameIndex: SmallArrayIndex)
   case loadFast(VarNum)
   case storeFast(VarNum)
   case deleteFast(VarNum)
@@ -333,7 +338,7 @@ public enum Instruction {
   /// - `0x08` - a tuple containing cells for free variables, making a closure
   /// the code associated with the function (at TOS1)
   /// the qualified name of the function (at TOS)
-  case makeFunction(argc: UInt)
+  case makeFunction(argc: UInt8)
   /// Calls a callable object with positional arguments.
   /// `argc` indicates the number of positional arguments.
   /// 
@@ -345,7 +350,7 @@ public enum Instruction {
   /// 1. pop all arguments and the callable object off the stack
   /// 2. call the callable object with those arguments
   /// 3. push the return value returned by the callable object
-  case callFunction(argc: UInt)
+  case callFunction(argc: UInt8)
   /// Calls a callable object with positional (if any) and keyword arguments.
   /// `argc` indicates the total number of positional and keyword arguments.
   /// 
@@ -359,7 +364,7 @@ public enum Instruction {
   /// 1. pop all arguments and the callable object off the stack
   /// 2. call the callable object with those arguments
   /// 3. push the return value returned by the callable object.
-  case callFunctionKw(argc: UInt)
+  case callFunctionKw(argc: UInt8)
   /// Calls a callable object with variable set of positional and keyword arguments.
   /// 
   /// Stack layout (1st item means TOS):
@@ -386,7 +391,7 @@ public enum Instruction {
   /// TOS is popped and method and TOS are pushed when interpreter can call unbound method directly.
   /// TOS will be used as the first argument (self) by `CallMethod`.
   /// Otherwise, NULL and method is pushed (method is bound method or something else).
-  case loadMethod(String)
+  case loadMethod(nameIndex: UInt8)
   /// Calls a method.
   /// `argc` is number of positional arguments.
   /// Keyword arguments are not supported.
@@ -395,7 +400,7 @@ public enum Instruction {
   /// Positional arguments are on top of the stack.
   /// Below them, two items described in `LoadMethod` on the stack.
   /// All of them are popped and return value is pushed.
-  case callMethod(argc: UInt)
+  case callMethod(argc: UInt8)
   /// Loads all symbols not starting with '_' directly from the module TOS
   /// to the local namespace.
   /// 
@@ -408,12 +413,12 @@ public enum Instruction {
   /// The module object is pushed onto the stack.
   /// The current namespace is not affected: for a proper import statement,
   /// a subsequent StoreFast instruction modifies the namespace.
-  case importName(String)
+  case importName(nameIndex: UInt8)
   /// Loads the attribute `name` from the module found in TOS.
   /// 
   /// The resulting object is pushed onto the stack,
   /// to be subsequently stored by a `StoreFast` instruction.
-  case importFrom(String)
+  case importFrom(nameIndex: UInt8)
   /// Removes one block from the block stack.
   /// The popped block must be an exception handler block,
   /// as implicitly created when entering an except handler.
@@ -435,7 +440,7 @@ public enum Instruction {
   /// - 0: raise (re-raise previous exception)
   /// - 1: raise TOS (raise exception instance or type at TOS)
   /// - 2: raise TOS1 from TOS (raise exception instance or type at TOS1 with Cause set to TOS)
-  case raiseVarargs(argc: UInt)
+  case raiseVarargs(argc: UInt8)
   /// This opcode performs several operations before a `with` block starts.
   /// 
   /// It does following operations:
@@ -471,34 +476,41 @@ public enum Instruction {
   /// Creates a new frame object.
   case setupAsyncWith
   /// Increments bytecode counter by delta.
-  case jumpForward(Delta)
+  case jumpForward(delta: NotDone)
   /// Set bytecode counter to target.
-  case jumpAbsolute(Target)
+  case jumpAbsolute(target: NotDone)
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
-  case popJumpIfTrue(Label)
+  case popJumpIfTrue(labelIndex: SmallArrayIndex)
   /// If TOS is false, sets the bytecode counter to target. TOS is popped.
-  case popJumpIfFalse(Label)
+  case popJumpIfFalse(labelIndex: SmallArrayIndex)
   /// If TOS is true, sets the bytecode counter to target and leaves TOS on the stack.
   /// Otherwise (TOS is false), TOS is popped.
-  case jumpIfTrueOrPop(Label)
+  case jumpIfTrueOrPop(labelIndex: SmallArrayIndex)
   /// If TOS is false, sets the bytecode counter to target and leaves TOS on the stack.
   /// Otherwise (TOS is true), TOS is popped.
-  case jumpIfFalseOrPop(Label)
+  case jumpIfFalseOrPop(labelIndex: SmallArrayIndex)
   /// Used for implementing formatted literal strings (f-strings).
   /// 
-  /// Pops an optional `FmtSpec` from the stack, then a required value.
-  /// `flags` is interpreted as follows:
-  /// - `(flags & 0x03) == 0x00`: value is formatted as-is.
-  /// - `(flags & 0x03) == 0x01`: call `str()` on value before formatting it.
-  /// - `(flags & 0x03) == 0x02`: call `repr()` on value before formatting it.
-  /// - `(flags & 0x03) == 0x03`: call `ascii()` on value before formatting it.
-  /// - `(flags & 0x04) == 0x04`: pop `FmtSpec` from the stack and use it, else use an empty `FmtSpec`.
-  /// Formatting is performed using `PyobjectFormat()`.
-  /// The result is pushed on the stack.
-  case formatValue(Flags)
+  /// Our oparg encodes 2 pieces of information: the conversion
+  /// character, and whether or not a format_spec was provided.
+  /// 
+  /// Convert the conversion char to 2 bits:
+  /// ```c
+  /// None: 000  0x0  FVC_NONE
+  /// !s  : 001  0x1  FVC_STR
+  /// !r  : 010  0x2  FVC_REPR
+  /// !a  : 011  0x3  FVC_ASCII
+  /// ```
+  /// 
+  /// next bit is whether or not we have a format spec:
+  /// ```c
+  /// yes : 100  0x4
+  /// no  : 000  0x0
+  /// ```
+  case formatValue(flags: UInt8)
   /// Concatenates `count` strings from the stack
   /// and pushes the resulting string onto the stack.
-  case buildString(Count)
+  case buildString(UInt8)
   /// Checks whether Annotations is defined in locals(), if not it is set up to an empty dict.
   /// This opcode is only emitted if a class or module body contains variable annotations statically.
   case setupAnnotations
@@ -514,7 +526,7 @@ public enum Instruction {
   /// If it is 2, `slice(TOS1, TOS)` is pushed;
   /// if it is 3, `slice(TOS2, TOS1, TOS)` is pushed.
   /// See the `slice()` built-in function for more information.
-  case buildSlice(argc: UInt)
+  case buildSlice(argc: UInt8)
 
   public var isCompareOp: Bool {
     if case .compareOp = self { return true }

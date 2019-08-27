@@ -8,6 +8,8 @@ CPython bytecode is defined in: Lib -> opcode.py.
 Docs from: https://docs.python.org/3.7/library/dis.html
 -}
 
+@alias Index = SmallArrayIndex
+
 {- TODO: Real types -}
 @enum Count = NotImplemented
 @enum Counts = NotImplemented
@@ -16,6 +18,8 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 @enum Delta = NotImplemented
 @enum Flags = NotImplemented
 @enum Target = NotImplemented
+
+@enum NotDone = NotImplemented
 
 @enum Constant =
   True
@@ -30,7 +34,24 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   {- TODO: | Code(code: Box<CodeObject>) -}
   | Tuple(Constant*)
 
-@enum ComparisonOperator =
+{-
+  We cannot name following type 'ComparisonOpcode',
+  because we have such type in Parser.
+
+  AFAIK this is not supported by Swift because:
+  Module Parser
+    class Parser
+    enum ComparisonOpcode
+  Module Bytecode
+    enum ComparisonOpcode
+
+  We cannot just use 'Parser.ComparisonOpcode',
+  because Swift thinks we are using Parser class instead of Parser as a module.
+  We cannot use the type from Parser,
+  because Bytecode should not import Parser (and vide-versa).
+-}
+
+@enum ComparisonOpcode =
   -- True when two operands are equal.
   Equal
   -- True when two operands are not equal.
@@ -179,7 +200,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {- ----------- -}
 
   -- Performs a `Boolean` operation.
-  | CompareOp(ComparisonOperator)
+  | CompareOp(ComparisonOpcode)
 
 {- ------------------ -}
 {-  Coroutine opcodes -}
@@ -321,29 +342,29 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {-  Store, load, delete  -}
 {- --------------------- -}
 
-  -- Pushes constant onto the stack.
-  | LoadConst(Constant)
+  -- Pushes constant pointed by `index` onto the stack.
+  | LoadConst(Index index)
 
   -- Implements `name = TOS`.
-  | StoreName(String)
+  | StoreName(Index nameIndex)
   -- Pushes the value associated with `name` onto the stack.
-  | LoadName(String)
+  | LoadName(Index nameIndex)
   -- Implements `del name`.
-  | DeleteName(String)
+  | DeleteName(Index nameIndex)
 
   -- Implements `TOS.name = TOS1`.
-  | StoreAttr(String)
+  | StoreAttr(Index nameIndex)
   -- Replaces TOS with `getAttr(TOS, name)`.
-  | LoadAttr(String)
+  | LoadAttr(Index nameIndex)
   -- Implements `del TOS.name`.
-  | DeleteAttr(String)
+  | DeleteAttr(Index nameIndex)
 
   -- Works as StoreName, but stores the name as a global.
-  | StoreGlobal(String)
+  | StoreGlobal(Index nameIndex)
   -- Loads the global named `name` onto the stack.
-  | LoadGlobal(String)
+  | LoadGlobal(Index nameIndex)
   -- Works as DeleteName, but deletes a global name.
-  | DeleteGlobal(String)
+  | DeleteGlobal(Index nameIndex)
 
   {- TODO: Pushes a reference to the local CoVarnames[VarNum] onto the stack. -}
   | LoadFast(VarNum)
@@ -379,7 +400,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- - `0x08` - a tuple containing cells for free variables, making a closure
   -- the code associated with the function (at TOS1)
   -- the qualified name of the function (at TOS)
-  | MakeFunction(UInt argc)
+  | MakeFunction(UInt8 argc)
 
   -- Calls a callable object with positional arguments.
   -- `argc` indicates the number of positional arguments.
@@ -393,7 +414,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- 2. call the callable object with those arguments
   -- 3. push the return value returned by the callable object
   {- TODO: This opcode is used only for calls with positional arguments. -}
-  | CallFunction(UInt argc)
+  | CallFunction(UInt8 argc)
 
   -- Calls a callable object with positional (if any) and keyword arguments.
   -- `argc` indicates the total number of positional and keyword arguments.
@@ -409,7 +430,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- 2. call the callable object with those arguments
   -- 3. push the return value returned by the callable object.
   {- TODO: Changed in version 3.6: Keyword arguments are packed in a tuple instead of a dictionary, argc indicates the total number of arguments. -}
-  | CallFunctionKw(UInt argc)
+  | CallFunctionKw(UInt8 argc)
 
   -- Calls a callable object with variable set of positional and keyword arguments.
   --
@@ -446,7 +467,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- TOS is popped and method and TOS are pushed when interpreter can call unbound method directly.
   -- TOS will be used as the first argument (self) by `CallMethod`.
   -- Otherwise, NULL and method is pushed (method is bound method or something else).
-  | LoadMethod(String)
+  | LoadMethod(UInt8 nameIndex)
 
   -- Calls a method.
   -- `argc` is number of positional arguments.
@@ -456,7 +477,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Positional arguments are on top of the stack.
   -- Below them, two items described in `LoadMethod` on the stack.
   -- All of them are popped and return value is pushed.
-  | CallMethod(UInt argc)
+  | CallMethod(UInt8 argc)
 
 {- -------- -}
 {-  Import  -}
@@ -475,13 +496,13 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- The module object is pushed onto the stack.
   -- The current namespace is not affected: for a proper import statement,
   -- a subsequent StoreFast instruction modifies the namespace.
-  | ImportName(String)
+  | ImportName(UInt8 nameIndex)
 
   -- Loads the attribute `name` from the module found in TOS.
   --
   -- The resulting object is pushed onto the stack,
   -- to be subsequently stored by a `StoreFast` instruction.
-  | ImportFrom(String)
+  | ImportFrom(UInt8 nameIndex)
 
 {- --------- -}
 {- Try/catch -}
@@ -512,7 +533,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- - 0: raise (re-raise previous exception)
   -- - 1: raise TOS (raise exception instance or type at TOS)
   -- - 2: raise TOS1 from TOS (raise exception instance or type at TOS1 with Cause set to TOS)
-  | RaiseVarargs(UInt argc)
+  | RaiseVarargs(UInt8 argc)
 
 {- ---- -}
 {- With -}
@@ -565,20 +586,20 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   {- TODO: Probably use Label -}
 
   -- Increments bytecode counter by delta.
-  | JumpForward(delta)
+  | JumpForward(NotDone delta)
   -- Set bytecode counter to target.
-  | JumpAbsolute(target)
+  | JumpAbsolute(NotDone target)
 
   -- If TOS is true, sets the bytecode counter to target. TOS is popped.
-  | PopJumpIfTrue(Label)
+  | PopJumpIfTrue(Index labelIndex)
   -- If TOS is false, sets the bytecode counter to target. TOS is popped.
-  | PopJumpIfFalse(Label)
+  | PopJumpIfFalse(Index labelIndex)
   -- If TOS is true, sets the bytecode counter to target and leaves TOS on the stack.
   -- Otherwise (TOS is false), TOS is popped.
-  | JumpIfTrueOrPop(Label)
+  | JumpIfTrueOrPop(Index labelIndex)
   -- If TOS is false, sets the bytecode counter to target and leaves TOS on the stack.
   -- Otherwise (TOS is true), TOS is popped.
-  | JumpIfFalseOrPop(Label)
+  | JumpIfFalseOrPop(Index labelIndex)
 
 {- ------ -}
 {- String -}
@@ -586,20 +607,27 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Used for implementing formatted literal strings (f-strings).
   --
-  -- Pops an optional `FmtSpec` from the stack, then a required value.
-  -- `flags` is interpreted as follows:
-  -- - `(flags & 0x03) == 0x00`: value is formatted as-is.
-  -- - `(flags & 0x03) == 0x01`: call `str()` on value before formatting it.
-  -- - `(flags & 0x03) == 0x02`: call `repr()` on value before formatting it.
-  -- - `(flags & 0x03) == 0x03`: call `ascii()` on value before formatting it.
-  -- - `(flags & 0x04) == 0x04`: pop `FmtSpec` from the stack and use it, else use an empty `FmtSpec`.
-  -- Formatting is performed using `PyobjectFormat()`.
-  -- The result is pushed on the stack.
-  | FormatValue(flags)
+  -- Our oparg encodes 2 pieces of information: the conversion
+  -- character, and whether or not a format_spec was provided.
+  --
+  -- Convert the conversion char to 2 bits:
+  -- ```c
+  -- None: 000  0x0  FVC_NONE
+  -- !s  : 001  0x1  FVC_STR
+  -- !r  : 010  0x2  FVC_REPR
+  -- !a  : 011  0x3  FVC_ASCII
+  -- ```
+  --
+  -- next bit is whether or not we have a format spec:
+  -- ```c
+  -- yes : 100  0x4
+  -- no  : 000  0x0
+  -- ```
+  | FormatValue(UInt8 flags)
 
   -- Concatenates `count` strings from the stack
   -- and pushes the resulting string onto the stack.
-  | BuildString(count)
+  | BuildString(UInt8)
 
 {- ----- -}
 {- Other -}
@@ -624,4 +652,4 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- If it is 2, `slice(TOS1, TOS)` is pushed;
   -- if it is 3, `slice(TOS2, TOS1, TOS)` is pushed.
   -- See the `slice()` built-in function for more information.
-  | BuildSlice(UInt argc)
+  | BuildSlice(UInt8 argc)
