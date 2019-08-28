@@ -27,8 +27,8 @@ public struct NodeId: Equatable, Hashable {
 
   private let value: UInt64
 
-  /// Use `NodeId.next` instead.
-  private init(value: UInt64) {
+  /// Use `NodeId.next` for auto-generated value.
+  public init(value: UInt64) {
     self.value = value
   }
 
