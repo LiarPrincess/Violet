@@ -33,8 +33,8 @@ internal var loc29: SourceLocation { return getLocation(29) }
 internal var loc30: SourceLocation { return getLocation(30) }
 internal var loc31: SourceLocation { return getLocation(31) }
 
-private func getLocation(_ n: Int) -> SourceLocation {
-  let line = n
-  let column = (n % 2) * 5 + line // some random
+private func getLocation(_ n: UInt16) -> SourceLocation {
+  let line = SourceLine(n)
+  let column = SourceColumn((n % 2) * 5 + line) // some random
   return SourceLocation(line: line, column: column)
 }

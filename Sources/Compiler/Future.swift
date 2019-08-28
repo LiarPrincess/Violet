@@ -28,7 +28,7 @@ public struct FutureFeatures {
   public fileprivate(set) var flags: FutureFeatureFlags = []
 
   /// Line number of last future statement
-  public fileprivate(set) var line = 0
+  public fileprivate(set) var line: SourceLine = 0
 }
 
 public class FutureParser {
@@ -41,7 +41,7 @@ public class FutureParser {
     }
 
     var isDone = false
-    var previousLine = 0
+    var previousLine: SourceLine = 0
     var result = FutureFeatures()
     let index = self.getIndexAfterDoc(statements)
 

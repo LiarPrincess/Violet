@@ -1,7 +1,5 @@
-// TODO: Migrate to UInt16 for stride 4 (and max 65536 possible values)
-
-public typealias SourceLine = Int
-public typealias SourceColumn = Int
+public typealias SourceLine = UInt16
+public typealias SourceColumn = UInt16
 
 public struct SourceLocation: Equatable {
 

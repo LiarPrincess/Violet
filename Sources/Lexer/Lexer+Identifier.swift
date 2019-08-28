@@ -122,8 +122,8 @@ extension Lexer {
 
     for (index, c) in identifier.dropFirst().enumerated() {
       guard c.properties.isXIDContinue else {
-        let skippedFirst = 1
-        let column   = start.column + skippedFirst + index
+        let skippedFirst: SourceColumn = 1
+        let column   = start.column + skippedFirst + SourceColumn(index)
         let location = SourceLocation(line: start.line, column: column)
         throw self.error(.identifier(c), location: location)
       }

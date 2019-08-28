@@ -27,9 +27,10 @@ class IdentifierTests: XCTestCase, Common {
       var lexer = Lexer(for: keyword)
 
       if let token = self.getToken(&lexer) {
+        let endColumn = SourceColumn(keyword.count)
         XCTAssertEqual(token.kind,  value, keyword)
         XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0), keyword)
-        XCTAssertEqual(token.end,   SourceLocation(line: 1, column: keyword.count), keyword)
+        XCTAssertEqual(token.end,   SourceLocation(line: 1, column: endColumn), keyword)
       }
     }
   }
@@ -122,9 +123,10 @@ class IdentifierTests: XCTestCase, Common {
       var lexer = Lexer(for: identifier)
 
       if let token = self.getToken(&lexer) {
+        let endColumn = SourceColumn(identifier.count)
         XCTAssertEqual(token.kind, .identifier(identifier), identifier)
         XCTAssertEqual(token.start, SourceLocation(line: 1, column: 0), identifier)
-        XCTAssertEqual(token.end,   SourceLocation(line: 1, column: identifier.count), identifier)
+        XCTAssertEqual(token.end,   SourceLocation(line: 1, column: endColumn), identifier)
       }
     }
   }
