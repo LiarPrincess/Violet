@@ -1,15 +1,21 @@
 import Core
 import Parser
 
+// In CPython:
+// Include -> symtable.h
+
+// MARK: - SymbolTable
+
 public class SymbolTable {
 
+  /// Top scope in symbol table, corresponds to top scope in AST.
   public let top: SymbolScope
 
+  /// All of the scopes by their corresponding AST node.
   public let scopeByNode: ScopeByNodeDictionary
 
-  public var globals: [MangledName: SymbolInfo] {
-    return self.top.symbols
-  }
+  // CPython also contains 'st_global' (for 'borrowed ref to st_top->ste_symbols'),
+  // but AFAIK it is not used anywhere.
 
   // `internal` so, that we can't instantiate it outside of this module.
   internal init(top: SymbolScope, scopeByNode: ScopeByNodeDictionary) {
@@ -22,12 +28,13 @@ public class SymbolTable {
 /// Returns `nil` if no scope is associated with given node.
 public struct ScopeByNodeDictionary {
 
+  // We can't use `Node` as key because it as an protocol.
   private var inner = [NodeId:SymbolScope]()
 
   // `internal` so, that we can't instantiate it outside of this module.
-  internal init() {}
+  internal init() { }
 
-  public subscript<N: ASTNode>(key: N) -> SymbolScope? {
+  public internal(set) subscript<N: ASTNode>(key: N) -> SymbolScope? {
     get { return self.get(key) }
     set { self.insert(key, value: newValue) }
   }
@@ -36,12 +43,14 @@ public struct ScopeByNodeDictionary {
     return self.inner[key.id]
   }
 
-  public mutating func insert<N: ASTNode>(_ key: N, value: SymbolScope?) {
+  internal mutating func insert<N: ASTNode>(_ key: N, value: SymbolScope?) {
     self.inner[key.id] = value
   }
 }
 
-public enum ScopeType {
+// MARK: - SymbolScope
+
+public enum ScopeType: Equatable {
   case function
   case `class`
   case module
@@ -53,7 +62,7 @@ public class SymbolScope {
 
   /// Name of the class if the table is for a class.
   /// Name of the function if the table is for a function.
-  /// Otherwise 'top'.
+  /// Otherwise 'module'.
   public let name: String
 
   /// Type of the symbol table.
@@ -63,21 +72,14 @@ public class SymbolScope {
   /// A set of symbols present on this scope level
   public internal(set) var symbols = [MangledName: SymbolInfo]()
 
-  /// A list of subscopes in the order as found in the AST nodes
+  /// A list of subscopes in the order as found in the AST
   public internal(set) var children = [SymbolScope]()
-
-  /// Locations of global and nonlocal statements
-  public internal(set) var directives = [MangledName]()
 
   /// List of function parameters
   public internal(set) var varnames = [MangledName]()
 
   /// Return True if the block is a nested class or function.
   public let isNested: Bool
-  /// true if block has free variables
-  public internal(set) var hasFreeVariables = false
-  /// true if a child block has free vars, including free refs to globals
-  public internal(set) var hasChildFreeVariables = false
   /// true if namespace is a generator
   public internal(set) var isGenerator = false
   /// true if namespace is a coroutine
@@ -91,6 +93,13 @@ public class SymbolScope {
   /// For class scopes: true if a closure over __class__ should be created
   public internal(set) var needsClassClosure = false
 
+  // CPython also contains:
+  // - ste_directives - locations of global and nonlocal statements
+  //                    we don't need it because we store location of each variable
+  // - ste_free       - true if block has free variables - not used
+  // - ste_child_free - true if a child block has free vars,
+  //                    including free refs to globals - not used
+
   // `internal` so, that we can't instantiate it outside of this module.
   internal init(name: String, type: ScopeType, isNested: Bool) {
     self.name = name
@@ -99,16 +108,19 @@ public class SymbolScope {
   }
 }
 
-public struct SymbolInfo {
+// MARK: - SymbolInfo
+
+public struct SymbolInfo: Equatable {
 
   /// Symbol information.
   public let flags: SymbolFlags
 
-  /// Location of the first character in the source code.
+  /// Location of the first occurence of given symbol.
   public let location: SourceLocation
 }
 
-public struct SymbolFlags: OptionSet {
+public struct SymbolFlags: OptionSet, Equatable {
+
   public let rawValue: UInt16
 
   // MARK: Variable definition (in a current scope)

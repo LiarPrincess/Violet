@@ -148,7 +148,6 @@ extension SymbolTableBuilder {
         }
 
         try self.addSymbol(name, flags: .defGlobal, location: stmt.start)
-        self.addDirective(name)
       }
 
     case let .nonlocal(names):
@@ -172,7 +171,6 @@ extension SymbolTableBuilder {
         }
 
         try self.addSymbol(name, flags: .defNonlocal, location: stmt.start)
-        self.addDirective(name)
       }
 
     case let .expr(expr):

@@ -28,25 +28,34 @@ extension CompilerError: CustomStringConvertible {
 
 public enum CompilerErrorKind: Equatable {
 
-  /// Name 'name' is parameter and global
+  // MARK: Symbol table
+
+  /// Name 'value' is parameter and global
   case globalParam(String)
-  /// Name 'name' is assigned to before global declaration
+  /// Name 'value' is assigned to before global declaration
   case globalAfterAssign(String)
-  /// Name 'name' is used prior to global declaration
+  /// Name 'value' is used prior to global declaration
   case globalAfterUse(String)
-  /// Annotated name 'name' can't be global
+  /// Annotated name 'value' can't be global
   case globalAnnot(String)
 
-  /// Name 'name' is parameter and nonlocal
+  /// Name 'value' is parameter and nonlocal
   case nonlocalParam(String)
-  /// Name 'name' is assigned to before nonlocal declaration
+  /// Name 'value' is assigned to before nonlocal declaration
   case nonlocalAfterAssign(String)
-  /// Name 'name' is used prior to nonlocal declaration
+  /// Name 'value' is used prior to nonlocal declaration
   case nonlocalAfterUse(String)
-  /// Annotated name 'name' can't be nonlocal
+  /// Annotated name 'value' can't be nonlocal
   case nonlocalAnnot(String)
+  /// 'nonlocal' declaration of 'value' not allowed at module level
+  case nonlocalAtModuleLevel(String)
+  /// No binding for nonlocal 'value' found
+  case nonlocalWithoutBinding(String)
 
-  /// Duplicate argument 'name' in function definition
+  /// Name 'value' is nonlocal and global
+  case bothGlobalAndNonlocal(String)
+
+  /// Duplicate argument 'value' in function definition
   case duplicateArgument(String)
 
   /// Import * only allowed at module level
@@ -56,7 +65,7 @@ public enum CompilerErrorKind: Equatable {
 
   /// `from __future__ import braces`
   case fromFutureImportBraces
-  /// future feature 'name' is not defined
+  /// future feature 'value' is not defined
   case undefinedFutureFeature(String)
   /// `from __future__ imports` must occur at the beginning of the file
   case lateFuture
@@ -64,20 +73,6 @@ public enum CompilerErrorKind: Equatable {
 
 // TODO: surprisingly appropriate; `fromFutureImportBraces`
 private let letItGo = """
-
-The snow glows white on the mountain tonight
-Not a footprint to be seen
-A kingdom of isolation
-And it looks like I'm the queen
-
-The wind is howling like this swirling storm inside
-Couldn't keep it in, heaven knows I tried!
-
-Don't let them in, don't let them see
-Be the good girl you always have to be
-Conceal, don't feel, don't let them know
-Well, now they know!
-
 Let it go, let it go
 Can't hold it back anymore
 Let it go, let it go
@@ -96,29 +91,4 @@ Can't get to me at all!
 It's time to see what I can do
 To test the limits and break through
 No right, no wrong, no rules for me I'm free!
-
-Let it go, let it go
-I am one with the wind and sky
-Let it go, let it go
-You'll never see me cry!
-
-Here I stand
-And here I'll stay
-Let the storm rage on!
-
-My power flurries through the air into the ground
-My soul is spiraling in frozen fractals all around
-And one thought crystallizes like an icy blast
-I'm never going back
-The past is in the past!
-
-Let it go, let it go
-And I'll rise like the break of dawn
-Let it go, let it go
-That perfect girl is gone!
-
-Here I stand
-In the light of day
-Let the storm rage on
-The cold never bothered me anyway!
 """

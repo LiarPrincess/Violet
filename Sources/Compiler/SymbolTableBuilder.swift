@@ -5,13 +5,19 @@ import Parser
 // Python -> symtable.c
 
 internal enum SpecialIdentifiers {
+  /// Name of the AST root scope
   internal static let top = "top"
 
+  /// Name of the lambda scope
   internal static let lambda = "lambda"
 
+  /// Name of the list comprehension scope
   internal static let listcomp = "listcomp"
+  /// Name of the set comprehension scope
   internal static let setcomp  = "setcomp"
+  /// Name of the dict comprehension scope
   internal static let dictcomp = "dictcomp"
+  /// Name of the generator expression scope
   internal static let genexpr  = "genexpr"
 
   internal static let __class__ = "__class__"
@@ -109,16 +115,19 @@ public final class SymbolTableBuilder {
                           location: SourceLocation) throws {
     let mangled = MangledName(className: self.className, name: name)
 
+    var firstLocation = location
     var flagsToSet = flags
+
     if let current = self.currentScope.symbols[mangled] {
       if flags.contains(.defParam) && current.flags.contains(.defParam) {
         throw self.error(.duplicateArgument(name), location: location)
       }
 
+      firstLocation = current.location
       flagsToSet.formUnion(current.flags)
     }
 
-    let info = SymbolInfo(flags: flagsToSet, location: location)
+    let info = SymbolInfo(flags: flagsToSet, location: firstLocation)
     self.currentScope.symbols[mangled] = info
 
     if flags.contains(.defParam) {
@@ -129,17 +138,9 @@ public final class SymbolTableBuilder {
         globalsToSet.formUnion(currentGlobal.flags)
       }
 
-      let globalInfo = SymbolInfo(flags: globalsToSet, location: location)
+      let globalInfo = SymbolInfo(flags: globalsToSet, location: firstLocation)
       self.topScope.symbols[mangled] = globalInfo
     }
-  }
-
-  /// Directive means global and nonlocal statement.
-  ///
-  /// symtable_record_directive(struct symtable *st, identifier name, stmt_ty s)
-  internal func addDirective(_ name: String) {
-    let mangled = MangledName(className: self.className, name: name)
-    self.currentScope.directives.append(mangled)
   }
 
   /// Lookup mangled name in current scope.

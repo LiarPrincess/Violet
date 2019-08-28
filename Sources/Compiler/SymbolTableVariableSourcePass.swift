@@ -111,10 +111,6 @@ internal final class SymbolTableVariableSourcePass {
       try self.analyzeChildBlock(scope: child,
                                  scopeContext: context,
                                  addingFreeVariablesTo: &allFree)
-
-      if child.hasFreeVariables || child.hasChildFreeVariables {
-        scope.hasChildFreeVariables = true
-      }
     }
 
     // If the free variables from child scope have the same names
@@ -186,7 +182,6 @@ internal final class SymbolTableVariableSourcePass {
         fatalError()
       }
 
-      scope.hasFreeVariables = true
       scopeContext.symbolSources[name] = .srcFree
       outerContext?.free.updateValue(info, forKey: name)
       return
@@ -200,7 +195,6 @@ internal final class SymbolTableVariableSourcePass {
     }
 
     if let bound = outerContext?.bound, bound.contains(name) {
-      scope.hasFreeVariables = true
       scopeContext.symbolSources[name] = .srcFree
       outerContext?.free.updateValue(info, forKey: name)
       return
@@ -209,10 +203,6 @@ internal final class SymbolTableVariableSourcePass {
     if let global = outerContext?.global, global.contains(name) {
       scopeContext.symbolSources[name] = .srcGlobalImplicit
       return
-    }
-
-    if scope.isNested {
-      scope.hasFreeVariables = true
     }
 
     scopeContext.symbolSources[name] = .srcGlobalImplicit
