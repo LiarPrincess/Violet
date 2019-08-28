@@ -6,35 +6,37 @@ internal protocol ASTCreator { }
 
 extension ASTCreator {
 
-  internal var startLocation: SourceLocation {
+  /// Start location
+  internal var start: SourceLocation {
     return SourceLocation(line: 3, column: 5)
   }
 
-  internal var endLocation: SourceLocation {
+  /// End location
+  internal var end: SourceLocation {
     return SourceLocation(line: 7, column: 9)
   }
 
   internal func ast(_ kind: ASTKind) -> AST {
-    return AST(kind, start: startLocation, end: endLocation)
+    return AST(kind, start: start, end: end)
   }
 
   internal func statement(_ kind: StatementKind) -> Statement {
-    return Statement(kind, start: startLocation, end: endLocation)
+    return Statement(kind, start: start, end: end)
   }
 
   internal func expression(_ kind: ExpressionKind) -> Expression {
-    return Expression(kind, start: startLocation, end: endLocation)
+    return Expression(kind, start: start, end: end)
   }
 
   internal func slice(_ kind: SliceKind) -> Slice {
-    return Slice(kind, start: startLocation, end: endLocation)
+    return Slice(kind, start: start, end: end)
   }
 
   internal func alias(name: String, asName: String?) -> Alias {
     return Alias(name: name,
                  asName: asName,
-                 start: startLocation,
-                 end: endLocation)
+                 start: start,
+                 end: end)
   }
 
   internal func withItem(contextExpr: Expression,
@@ -42,8 +44,8 @@ extension ASTCreator {
     return WithItem(id: .next,
                     contextExpr: contextExpr,
                     optionalVars: optionalVars,
-                    start: startLocation,
-                    end: endLocation)
+                    start: start,
+                    end: end)
   }
 
   internal func exceptHandler(type: Expression?,
@@ -53,8 +55,8 @@ extension ASTCreator {
                          type: type,
                          name: name,
                          body: body,
-                         start: startLocation,
-                         end: endLocation)
+                         start: start,
+                         end: end)
   }
 
   internal func comprehension(target: Expression,
@@ -66,8 +68,8 @@ extension ASTCreator {
                          iter: iter,
                          ifs: ifs,
                          isAsync: isAsync,
-                         start: startLocation,
-                         end: endLocation)
+                         start: start,
+                         end: end)
   }
 
   // swiftlint:disable:next function_parameter_count
@@ -84,23 +86,23 @@ extension ASTCreator {
                      kwOnlyArgs: kwOnlyArgs,
                      kwOnlyDefaults: kwOnlyDefaults,
                      kwarg: kwarg,
-                     start: startLocation,
-                     end: endLocation)
+                     start: start,
+                     end: end)
   }
 
-  internal func arg(_ name: String, annotation: Expression?) -> Arg {
+  internal func arg(_ name: String, annotation: Expression? = nil) -> Arg {
     return Arg(id: .next,
                name: name,
                annotation: annotation,
-               start: startLocation,
-               end: endLocation)
+               start: start,
+               end: end)
   }
 
   internal func keyword(name: String?, value: Expression) -> Keyword {
     return Keyword(id: .next,
                    name: name,
                    value: value,
-                   start: startLocation,
-                   end: endLocation)
+                   start: start,
+                   end: end)
   }
 }

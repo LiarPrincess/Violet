@@ -9,6 +9,7 @@ import Compiler
 internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
                                       name: String,
                                       flags: SymbolFlags,
+                                      location: SourceLocation,
                                       _ message:  String = "",
                                       file: StaticString = #file,
                                       line: UInt         = #line) {
@@ -16,10 +17,14 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
 
   XCTAssertNotNil(scope.symbols[mangled],
                   "\(message) (symbol is not present)",
-                  file: file,
-                  line: line)
+                  file: file, line: line)
 
   guard let info = scope.symbols[mangled] else { return }
+
+  XCTAssertEqual(info.location,
+                 location,
+                 "\(message) (invalid location)",
+                 file: file, line: line)
 
   if info.flags == flags {
     return
@@ -35,17 +40,8 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
     XCTAssertEqual(contains,
                    shouldContain,
                    "\(message) (invalid flag: 1<<\(shift))",
-                   file: file,
-                   line: line)
+                   file: file, line: line)
   }
-}
-
-//
-internal func XCTAssertContainsDirective(_ scope: SymbolScope,
-                                         name: String,
-                                         _ message:  String = "",
-                                         file: StaticString = #file,
-                                         line: UInt         = #line) {
 }
 
 internal struct ScopeFeatures: OptionSet {

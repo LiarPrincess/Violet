@@ -116,7 +116,7 @@ class AtomStringTest: XCTestCase, Common, ExpressionMatcher, StringMatcher {
 
     if let expr = self.parseExpr(&parser) {
       guard let group = self.matchString(expr) else { return }
-      guard let joined = self.matchStringJoinedString(group) else { return }
+      guard let joined = self.matchStringJoined(group) else { return }
 
       XCTAssertEqual(joined.count, 3)
       guard joined.count == 3 else { return }
@@ -150,7 +150,7 @@ class AtomStringTest: XCTestCase, Common, ExpressionMatcher, StringMatcher {
 
     if let expr = self.parseExpr(&parser) {
       guard let group = self.matchString(expr) else { return }
-      guard let joined = self.matchStringJoinedString(group) else { return }
+      guard let joined = self.matchStringJoined(group) else { return }
 
       XCTAssertEqual(joined.count, 4)
       guard joined.count == 4 else { return }
