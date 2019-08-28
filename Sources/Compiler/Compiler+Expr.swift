@@ -123,7 +123,7 @@ case let .starred(expr):
   private func visitString(group: StringGroup,
                            location: SourceLocation) throws {
     switch group {
-    case let .string(s):
+    case let .literal(s):
       try self.emitConstant(.string(s), location: location)
 
     case let .formattedValue(expr, conversion: conv, spec: spec):
@@ -144,7 +144,7 @@ case let .starred(expr):
 
       try self.emit(.formatValue(flags: flags), location: location)
 
-    case let .joinedString(groups):
+    case let .joined(groups):
       for g in groups {
         try self.visitString(group: g, location: location)
       }

@@ -21,7 +21,7 @@ class ExpressionStatementTests: XCTestCase,
     if let stmt = self.parseStmt(&parser) {
       guard let expr = self.matchExpr(stmt) else { return }
       guard let group = self.matchString(expr) else { return }
-      guard let string = self.matchStringSimple(group) else { return }
+      guard let string = self.matchStringLiteral(group) else { return }
 
       XCTAssertEqual(string, "Ariel+Eric")
 

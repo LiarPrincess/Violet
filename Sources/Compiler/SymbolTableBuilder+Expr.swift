@@ -260,11 +260,11 @@ extension SymbolTableBuilder {
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
   private func visitString(_ group: StringGroup) throws {
     switch group {
-    case .string:
+    case .literal:
       break
     case let .formattedValue(expr, _, _):
       try self.visitExpression(expr)
-    case let .joinedString(groups):
+    case let .joined(groups):
       for g in groups {
         try self.visitString(g)
       }

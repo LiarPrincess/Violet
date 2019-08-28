@@ -46,7 +46,7 @@ class STAtomExpr: XCTestCase, CommonSymbolTable {
 
   /// 'Elsa'
   func test_string_simple() {
-    let kind = ExpressionKind.string(.string("Elsa"))
+    let kind = ExpressionKind.string(.literal("Elsa"))
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
@@ -87,10 +87,10 @@ class STAtomExpr: XCTestCase, CommonSymbolTable {
     let value = Expression(.identifier("it"), start: loc, end: self.end)
 
     let kind = ExpressionKind.string(
-      .joinedString([
-        .string("let "),
+      .joined([
+        .literal("let "),
         .formattedValue(value, conversion: .repr, spec: "^30"),
-        .string(" go")
+        .literal(" go")
       ])
     )
 

@@ -719,13 +719,13 @@ internal protocol StringMatcher { }
 
 extension StringMatcher {
 
-  internal func matchStringSimple(_ group: StringGroup,
-                                  file: StaticString = #file,
-                                  line: UInt         = #line) ->
+  internal func matchStringLiteral(_ group: StringGroup,
+                                   file: StaticString = #file,
+                                   line: UInt         = #line) ->
     (String)? {
 
     switch group {
-    case let .string(value0):
+    case let .literal(value0):
       return (value0)
     default:
       XCTAssertTrue(false, String(describing: group), file: file, line: line)
@@ -747,13 +747,13 @@ extension StringMatcher {
     }
   }
 
-  internal func matchStringJoinedString(_ group: StringGroup,
-                                        file: StaticString = #file,
-                                        line: UInt         = #line) ->
+  internal func matchStringJoined(_ group: StringGroup,
+                                  file: StaticString = #file,
+                                  line: UInt         = #line) ->
     ([StringGroup])? {
 
     switch group {
-    case let .joinedString(value0):
+    case let .joined(value0):
       return (value0)
     default:
       XCTAssertTrue(false, String(describing: group), file: file, line: line)

@@ -454,11 +454,11 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- For normal strings and f-strings, concatenate them together.
 @enum StringGroup: Equatable =
   -- String - no f-strings.
-  String(String)
+  Literal(String)
   -- FormattedValue - just an f-string (with no leading or trailing literals).
   | FormattedValue(expr, ConversionFlag? conversion, String? spec)
   -- JoinedStr - if there are multiple f-strings or any literals involved.
-  | JoinedString(StringGroup*)
+  | Joined(StringGroup*)
 
 -- Transforms a value prior to formatting it.
 @enum ConversionFlag: Equatable =

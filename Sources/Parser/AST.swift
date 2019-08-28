@@ -764,14 +764,14 @@ public enum DictionaryElement: Equatable {
 /// For normal strings and f-strings, concatenate them together.
 public enum StringGroup: Equatable {
   /// String - no f-strings.
-  case string(String)
+  case literal(String)
   /// FormattedValue - just an f-string (with no leading or trailing literals).
   case formattedValue(Expression, conversion: ConversionFlag?, spec: String?)
   /// JoinedStr - if there are multiple f-strings or any literals involved.
-  case joinedString([StringGroup])
+  case joined([StringGroup])
 
-  public var isString: Bool {
-    if case .string = self { return true }
+  public var isLiteral: Bool {
+    if case .literal = self { return true }
     return false
   }
 
@@ -780,8 +780,8 @@ public enum StringGroup: Equatable {
     return false
   }
 
-  public var isJoinedString: Bool {
-    if case .joinedString = self { return true }
+  public var isJoined: Bool {
+    if case .joined = self { return true }
     return false
   }
 

@@ -15,14 +15,14 @@ import Foundation
 
 private enum FStringFragment {
   /// String literal (the part NOT between '{' and '}').
-  case string(String)
+  case literal(String)
   /// Expression + formatter (the part between '{' and '}').
   case formattedValue(Expression, conversion: ConversionFlag?, spec: String?)
 
   fileprivate func compile() -> StringGroup {
     switch self {
-    case let .string(s):
-      return .string(s)
+    case let .literal(s):
+      return .literal(s)
     case let .formattedValue(e, conversion: c, spec: s):
       return .formattedValue(e, conversion: c, spec: s)
     }
@@ -65,7 +65,7 @@ internal struct FString {
 
         // Commit current literal, we will append expr after it.
         if let s = self.lastStr {
-          self.fragments.append(.string(s))
+          self.fragments.append(.literal(s))
           self.lastStr = nil
         }
 
@@ -89,12 +89,12 @@ internal struct FString {
   internal mutating func compile() throws -> StringGroup {
     // No fstrings? -> simple string.
     if self.fragments.isEmpty {
-      return .string(self.lastStr ?? "")
+      return .literal(self.lastStr ?? "")
     }
 
     // Create a Str node out of last_str, if needed.
     if let s = self.lastStr {
-      self.fragments.append(.string(s))
+      self.fragments.append(.literal(s))
       self.lastStr = nil
     }
 
@@ -107,7 +107,7 @@ internal struct FString {
     }
 
     let groups = self.fragments.map { $0.compile() }
-    return StringGroup.joinedString(groups)
+    return StringGroup.joined(groups)
   }
 
   // MARK: - Consume literal

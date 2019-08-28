@@ -82,7 +82,7 @@ class AtomStringTest: XCTestCase, Common, ExpressionMatcher, StringMatcher {
 
     if let expr = self.parseExpr(&parser) {
       guard let group = self.matchString(expr) else { return }
-      guard let groupStr = self.matchStringSimple(group) else { return }
+      guard let groupStr = self.matchStringLiteral(group) else { return }
       XCTAssertEqual(groupStr, "Let it go")
 
       XCTAssertExpression(expr, "'Let it go'")
@@ -100,7 +100,7 @@ class AtomStringTest: XCTestCase, Common, ExpressionMatcher, StringMatcher {
 
     if let expr = self.parseExpr(&parser) {
       guard let group = self.matchString(expr) else { return }
-      guard let groupStr = self.matchStringSimple(group) else { return }
+      guard let groupStr = self.matchStringLiteral(group) else { return }
       XCTAssertEqual(groupStr, "Let it go")
 
       XCTAssertExpression(expr, "'Let it go'")
@@ -121,17 +121,17 @@ class AtomStringTest: XCTestCase, Common, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(joined.count, 3)
       guard joined.count == 3 else { return }
 
-      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
       XCTAssertEqual(str0, "Let ")
 
       guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
       guard let value1Group = self.matchString(value1.0) else { return }
-      guard let value1Str = self.matchStringSimple(value1Group) else { return }
+      guard let value1Str = self.matchStringLiteral(value1Group) else { return }
       XCTAssertEqual(value1Str, "it")
       XCTAssertEqual(value1.conversion, nil)
       XCTAssertEqual(value1.spec, nil)
 
-      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
       XCTAssertEqual(str2, " go")
 
       XCTAssertExpression(expr, "('Let ' f''it'' ' go')")
@@ -155,22 +155,22 @@ class AtomStringTest: XCTestCase, Common, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(joined.count, 4)
       guard joined.count == 4 else { return }
 
-      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
       XCTAssertEqual(str0, "Let ")
 
       guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
       guard let value1Group = self.matchString(value1.0) else { return }
-      guard let value1Str = self.matchStringSimple(value1Group) else { return }
+      guard let value1Str = self.matchStringLiteral(value1Group) else { return }
       XCTAssertEqual(value1Str, "it")
       XCTAssertEqual(value1.conversion, nil)
       XCTAssertEqual(value1.spec, nil)
 
-      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
       XCTAssertEqual(str2, " ")
 
       guard let value3 = self.matchStringFormattedValue(joined[3]) else { return }
       guard let value3Group = self.matchString(value3.0) else { return }
-      guard let value3str = self.matchStringSimple(value3Group) else { return }
+      guard let value3str = self.matchStringLiteral(value3Group) else { return }
       XCTAssertEqual(value3str, "go")
       XCTAssertEqual(value3.conversion, nil)
       XCTAssertEqual(value3.spec, nil)

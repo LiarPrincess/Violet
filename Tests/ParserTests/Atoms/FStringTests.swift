@@ -19,7 +19,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     var string = FString()
 
     let group = try string.compile()
-    if let result = self.matchStringSimple(group) {
+    if let result = self.matchStringLiteral(group) {
       XCTAssertEqual(result, "")
     }
   }
@@ -33,7 +33,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     string.append(s)
 
     let group = try string.compile()
-    if let result = self.matchStringSimple(group) {
+    if let result = self.matchStringLiteral(group) {
       XCTAssertEqual(result, s)
     }
   }
@@ -51,7 +51,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
       """
 
     let group = try string.compile()
-    if let result = self.matchStringSimple(group) {
+    if let result = self.matchStringLiteral(group) {
       XCTAssertEqual(result, expected)
     }
   }
@@ -65,7 +65,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString(s)
 
     let group = try string.compile()
-    if let result = self.matchStringSimple(group) {
+    if let result = self.matchStringLiteral(group) {
       XCTAssertEqual(result, s)
     }
   }
@@ -78,7 +78,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString(s)
 
     let group = try string.compile()
-    if let result = self.matchStringSimple(group) {
+    if let result = self.matchStringLiteral(group) {
       XCTAssertEqual(result, expected)
     }
   }
@@ -122,7 +122,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
       """
 
     let group = try string.compile()
-    if let result = self.matchStringSimple(group) {
+    if let result = self.matchStringLiteral(group) {
       XCTAssertEqual(result, expected)
     }
   }
@@ -168,7 +168,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     let group = try string.compile()
     if let value = self.matchStringFormattedValue(group) {
       guard let valueStr = self.matchString(value.0) else { return }
-      XCTAssertEqual(valueStr, StringGroup.string("Let it go, let it go"))
+      XCTAssertEqual(valueStr, StringGroup.literal("Let it go, let it go"))
 
       XCTAssertExpression(value.0, "'Let it go, let it go'")
       XCTAssertEqual(value.conversion, nil)
@@ -231,7 +231,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("{I} don't care\nWhat they're going to say")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoinedString(group) {
+    if let joined = self.matchStringJoined(group) {
       XCTAssertEqual(joined.count, 2)
       guard joined.count == 2 else { return }
 
@@ -241,7 +241,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(value0.conversion, nil)
       XCTAssertEqual(value0.spec, nil)
 
-      guard let str1 = self.matchStringSimple(joined[1]) else { return }
+      guard let str1 = self.matchStringLiteral(joined[1]) else { return }
       XCTAssertEqual(str1, " don't care\nWhat they're going to say")
     }
   }
@@ -251,11 +251,11 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("Let the storm rage {on}")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoinedString(group) {
+    if let joined = self.matchStringJoined(group) {
       XCTAssertEqual(joined.count, 2)
       guard joined.count == 2 else { return }
 
-      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
       XCTAssertEqual(str0, "Let the storm rage ")
 
       guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
@@ -271,11 +271,11 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("The cold never {bothered} me anyway!")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoinedString(group) {
+    if let joined = self.matchStringJoined(group) {
       XCTAssertEqual(joined.count, 3)
       guard joined.count == 3 else { return }
 
-      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
       XCTAssertEqual(str0, "The cold never ")
 
       guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
@@ -284,7 +284,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(value1.conversion, nil)
       XCTAssertEqual(value1.spec, nil)
 
-      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
       XCTAssertEqual(str2, " me anyway!")
     }
   }
@@ -294,11 +294,11 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("Its funny {how!s:-10} some distance")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoinedString(group) {
+    if let joined = self.matchStringJoined(group) {
       XCTAssertEqual(joined.count, 3)
       guard joined.count == 3 else { return }
 
-      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
       XCTAssertEqual(str0, "Its funny ")
 
       guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
@@ -307,7 +307,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(value1.conversion, .str)
       XCTAssertEqual(value1.spec, "-10")
 
-      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
       XCTAssertEqual(str2, " some distance")
     }
   }
@@ -317,11 +317,11 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("Makes {everything:+6} seem {small!a}")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoinedString(group) {
+    if let joined = self.matchStringJoined(group) {
       XCTAssertEqual(joined.count, 4)
       guard joined.count == 4 else { return }
 
-      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
       XCTAssertEqual(str0, "Makes ")
 
       guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
@@ -330,7 +330,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(value1.conversion, nil)
       XCTAssertEqual(value1.spec, "+6")
 
-      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
       XCTAssertEqual(str2, " seem ")
 
       guard let value3 = self.matchStringFormattedValue(joined[3]) else { return }
@@ -346,11 +346,11 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("And the {fears}{that} once controlled me")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoinedString(group) {
+    if let joined = self.matchStringJoined(group) {
       XCTAssertEqual(joined.count, 4)
       guard joined.count == 4 else { return }
 
-      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
       XCTAssertEqual(str0, "And the ")
 
       guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
@@ -365,7 +365,7 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(value2.conversion, nil)
       XCTAssertEqual(value2.spec, nil)
 
-      guard let str3 = self.matchStringSimple(joined[3]) else { return }
+      guard let str3 = self.matchStringLiteral(joined[3]) else { return }
       XCTAssertEqual(str3, " once controlled me")
     }
   }
@@ -418,21 +418,21 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString(s)
 
     let group = try string.compile()
-    if let joined = self.matchStringJoinedString(group) {
+    if let joined = self.matchStringJoined(group) {
       XCTAssertEqual(joined.count, 3)
       guard joined.count == 3 else { return }
 
-      guard let str0 = self.matchStringSimple(joined[0]) else { return }
+      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
       XCTAssertEqual(str0, "No right, no wrong, ")
 
       guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
       guard let valueGrp1 = self.matchString(value1.0) else { return }
-      guard let valueStr1 = self.matchStringSimple(valueGrp1) else { return }
+      guard let valueStr1 = self.matchStringLiteral(valueGrp1) else { return }
       XCTAssertEqual(valueStr1, "no rules for me")
       XCTAssertEqual(value1.conversion, nil)
       XCTAssertEqual(value1.spec, nil)
 
-      guard let str2 = self.matchStringSimple(joined[2]) else { return }
+      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
       XCTAssertEqual(str2, " Im free!")
     }
   }

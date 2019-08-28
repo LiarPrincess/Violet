@@ -264,11 +264,11 @@ public struct ASTValidationPass: ASTPass {
 
   private func visit(_ group: StringGroup) throws {
     switch group {
-    case .string:
+    case .literal:
       break
     case let .formattedValue(expr, _, _):
       try self.visit(expr)
-    case let .joinedString(groups):
+    case let .joined(groups):
       for g in groups {
         try self.visit(g)
       }
