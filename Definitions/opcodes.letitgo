@@ -8,7 +8,8 @@ CPython bytecode is defined in: Lib -> opcode.py.
 Docs from: https://docs.python.org/3.7/library/dis.html
 -}
 
-@alias Index = SmallArrayIndex
+{- Index in an array attached to CodeObject (for example CodeObject.constants). -}
+@alias Index = UInt8
 
 {- TODO: Real types -}
 @enum Count = NotImplemented
@@ -628,6 +629,17 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Concatenates `count` strings from the stack
   -- and pushes the resulting string onto the stack.
   | BuildString(UInt8)
+
+{- -------- -}
+{- Extended -}
+{- -------- -}
+
+  -- Prefixes any opcode which has an argument too big to fit into the default one byte.
+  --
+  -- `ext` holds an additional byte which act as higher bits in the argument.
+  -- For each opcode, at most three prefixal `ExtendedArg` are allowed,
+  -- forming an argument from two-byte to four-byte.
+  | ExtendedArg(UInt8)
 
 {- ----- -}
 {- Other -}

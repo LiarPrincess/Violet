@@ -296,25 +296,25 @@ public enum Instruction {
   /// The resulting values are put onto the stack right-to-left.
   case unpackEx(Counts)
   /// Pushes constant pointed by `index` onto the stack.
-  case loadConst(index: SmallArrayIndex)
+  case loadConst(index: UInt8)
   /// Implements `name = TOS`.
-  case storeName(nameIndex: SmallArrayIndex)
+  case storeName(nameIndex: UInt8)
   /// Pushes the value associated with `name` onto the stack.
-  case loadName(nameIndex: SmallArrayIndex)
+  case loadName(nameIndex: UInt8)
   /// Implements `del name`.
-  case deleteName(nameIndex: SmallArrayIndex)
+  case deleteName(nameIndex: UInt8)
   /// Implements `TOS.name = TOS1`.
-  case storeAttr(nameIndex: SmallArrayIndex)
+  case storeAttr(nameIndex: UInt8)
   /// Replaces TOS with `getAttr(TOS, name)`.
-  case loadAttr(nameIndex: SmallArrayIndex)
+  case loadAttr(nameIndex: UInt8)
   /// Implements `del TOS.name`.
-  case deleteAttr(nameIndex: SmallArrayIndex)
+  case deleteAttr(nameIndex: UInt8)
   /// Works as StoreName, but stores the name as a global.
-  case storeGlobal(nameIndex: SmallArrayIndex)
+  case storeGlobal(nameIndex: UInt8)
   /// Loads the global named `name` onto the stack.
-  case loadGlobal(nameIndex: SmallArrayIndex)
+  case loadGlobal(nameIndex: UInt8)
   /// Works as DeleteName, but deletes a global name.
-  case deleteGlobal(nameIndex: SmallArrayIndex)
+  case deleteGlobal(nameIndex: UInt8)
   case loadFast(VarNum)
   case storeFast(VarNum)
   case deleteFast(VarNum)
@@ -478,17 +478,17 @@ public enum Instruction {
   /// Increments bytecode counter by delta.
   case jumpForward(delta: UInt8)
   /// Set bytecode counter to target.
-  case jumpAbsolute(labelIndex: SmallArrayIndex)
+  case jumpAbsolute(labelIndex: UInt8)
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
-  case popJumpIfTrue(labelIndex: SmallArrayIndex)
+  case popJumpIfTrue(labelIndex: UInt8)
   /// If TOS is false, sets the bytecode counter to target. TOS is popped.
-  case popJumpIfFalse(labelIndex: SmallArrayIndex)
+  case popJumpIfFalse(labelIndex: UInt8)
   /// If TOS is true, sets the bytecode counter to target and leaves TOS on the stack.
   /// Otherwise (TOS is false), TOS is popped.
-  case jumpIfTrueOrPop(labelIndex: SmallArrayIndex)
+  case jumpIfTrueOrPop(labelIndex: UInt8)
   /// If TOS is false, sets the bytecode counter to target and leaves TOS on the stack.
   /// Otherwise (TOS is true), TOS is popped.
-  case jumpIfFalseOrPop(labelIndex: SmallArrayIndex)
+  case jumpIfFalseOrPop(labelIndex: UInt8)
   /// Used for implementing formatted literal strings (f-strings).
   /// 
   /// Our oparg encodes 2 pieces of information: the conversion
@@ -511,6 +511,12 @@ public enum Instruction {
   /// Concatenates `count` strings from the stack
   /// and pushes the resulting string onto the stack.
   case buildString(UInt8)
+  /// Prefixes any opcode which has an argument too big to fit into the default one byte.
+  /// 
+  /// `ext` holds an additional byte which act as higher bits in the argument.
+  /// For each opcode, at most three prefixal `ExtendedArg` are allowed,
+  /// forming an argument from two-byte to four-byte.
+  case extendedArg(UInt8)
   /// Checks whether Annotations is defined in locals(), if not it is set up to an empty dict.
   /// This opcode is only emitted if a class or module body contains variable annotations statically.
   case setupAnnotations
@@ -810,6 +816,11 @@ public enum Instruction {
 
   public var isBuildString: Bool {
     if case .buildString = self { return true }
+    return false
+  }
+
+  public var isExtendedArg: Bool {
+    if case .extendedArg = self { return true }
     return false
   }
 

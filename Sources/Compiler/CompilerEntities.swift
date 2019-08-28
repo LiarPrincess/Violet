@@ -3,15 +3,17 @@ import Parser
 import Bytecode
 
 /// Index of jump target in `CodeObject.labels`.
-/// Basically a wrapper around SmallArrayIndex for additional type safety.
+/// Basically a wrapper around array index for additional type safety.
 /// - Important:
 /// Labels can only be used inside a single block!
-public struct Label { // TODO: Internal
+internal struct Label {
+
+  internal static let invalid = -1
 
   /// Index in `CodeObject.labels`
-  internal let index: SmallArrayIndex
+  internal let index: Int
 
-  internal init(index: SmallArrayIndex) {
+  internal init(index: Int) {
     self.index = index
   }
 }
