@@ -107,7 +107,7 @@ internal final class SymbolTableVariableSourcePass {
 
     // Recursively call analyzeChildBlock() on each child block
     var allFree = [MangledName: SymbolInfo]()
-    for var child in scope.children {
+    for child in scope.children {
       try self.analyzeChildBlock(scope: child,
                                  scopeContext: context,
                                  addingFreeVariablesTo: &allFree)

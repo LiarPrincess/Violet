@@ -13,9 +13,11 @@ extension Compiler {
   // MARK: - Base
 
   /// compiler_addop(struct compiler *c, int opcode)
-  internal func emit(_ instruction: Instruction, line: SourceLine) throws {
+  internal func emit(_ instruction: Instruction,
+                     location: SourceLocation) throws {
+
     self.currentBlock.instructions.append(instruction)
-    self.currentBlock.instructionLines.append(line)
+    self.currentBlock.instructionLines.append(location.line)
 
     assert(self.currentBlock.instructions.count ==
            self.currentBlock.instructionLines.count)
@@ -25,95 +27,100 @@ extension Compiler {
 
   /// compiler_addop_o(struct compiler *c, int opcode, PyObject *dict, PyObject *o)
   /// compiler_addop_i(struct compiler *c, int opcode, Py_ssize_t oparg)
-  internal func emitConstant(_ c: Constant, line: SourceLine) throws {
+  internal func emitConstant(_ c: Constant, location: SourceLocation) throws {
     // TODO: check if this value was already added
     let constantIndex = self.currentBlock.constants.endIndex
     self.currentBlock.constants.append(c)
 
-    let index = try self.emitExtendedArgIfNeeded(constantIndex, line: line)
-    try self.emit(.loadConst(index: index), line: line)
+    let index = try self.emitExtendedArgIfNeeded(constantIndex, location: location)
+    try self.emit(.loadConst(index: index), location: location)
   }
 
   // MARK: - Operators
 
   /// unaryop(unaryop_ty op)
   internal func emitUnaryOperator(_ op: UnaryOperator,
-                                  line: SourceLine) throws {
+                                  location: SourceLocation) throws {
     switch op {
-    case .invert: try self.emit(.unaryInvert, line: line)
-    case .not:    try self.emit(.unaryNot,    line: line)
-    case .plus:   try self.emit(.unaryPositive, line: line)
-    case .minus:  try self.emit(.unaryNegative, line: line)
+    case .invert: try self.emit(.unaryInvert, location: location)
+    case .not:    try self.emit(.unaryNot,    location: location)
+    case .plus:   try self.emit(.unaryPositive, location: location)
+    case .minus:  try self.emit(.unaryNegative, location: location)
     }
   }
 
   /// binop(struct compiler *c, operator_ty op)
   internal func emitBinaryOperator(_ op: BinaryOperator,
-                                   line: SourceLine) throws {
+                                   location: SourceLocation) throws {
     switch op {
-    case .add:        try self.emit(.binaryAdd,            line: line)
-    case .sub:        try self.emit(.binarySubtract,       line: line)
-    case .mul:        try self.emit(.binaryMultiply,       line: line)
-    case .matMul:     try self.emit(.binaryMatrixMultiply, line: line)
-    case .div:        try self.emit(.binaryTrueDivide,     line: line)
-    case .modulo:     try self.emit(.binaryModulo,      line: line)
-    case .pow:        try self.emit(.binaryPower,       line: line)
-    case .leftShift:  try self.emit(.binaryLShift,      line: line)
-    case .rightShift: try self.emit(.binaryRShift,      line: line)
-    case .bitOr:      try self.emit(.binaryOr,          line: line)
-    case .bitXor:     try self.emit(.binaryXor,         line: line)
-    case .bitAnd:     try self.emit(.binaryAnd,         line: line)
-    case .floorDiv:   try self.emit(.binaryFloorDivide, line: line)
+    case .add:        try self.emit(.binaryAdd,            location: location)
+    case .sub:        try self.emit(.binarySubtract,       location: location)
+    case .mul:        try self.emit(.binaryMultiply,       location: location)
+    case .matMul:     try self.emit(.binaryMatrixMultiply, location: location)
+    case .div:        try self.emit(.binaryTrueDivide,     location: location)
+    case .modulo:     try self.emit(.binaryModulo,      location: location)
+    case .pow:        try self.emit(.binaryPower,       location: location)
+    case .leftShift:  try self.emit(.binaryLShift,      location: location)
+    case .rightShift: try self.emit(.binaryRShift,      location: location)
+    case .bitOr:      try self.emit(.binaryOr,          location: location)
+    case .bitXor:     try self.emit(.binaryXor,         location: location)
+    case .bitAnd:     try self.emit(.binaryAnd,         location: location)
+    case .floorDiv:   try self.emit(.binaryFloorDivide, location: location)
     }
   }
 
   /// cmpop(cmpop_ty op)
   internal func emitComparisonOperator(_ op: ComparisonOperator,
-                                       line: SourceLine) throws {
+                                       location: SourceLocation) throws {
     switch op {
-    case .equal:        try self.emit(.compareOp(.equal),        line: line)
-    case .notEqual:     try self.emit(.compareOp(.notEqual),     line: line)
-    case .less:         try self.emit(.compareOp(.less),         line: line)
-    case .lessEqual:    try self.emit(.compareOp(.lessEqual),    line: line)
-    case .greater:      try self.emit(.compareOp(.greater),      line: line)
-    case .greaterEqual: try self.emit(.compareOp(.greaterEqual), line: line)
-    case .is:           try self.emit(.compareOp(.is),           line: line)
-    case .isNot:        try self.emit(.compareOp(.isNot),        line: line)
-    case .in:           try self.emit(.compareOp(.in),           line: line)
-    case .notIn:        try self.emit(.compareOp(.notIn),        line: line)
+    case .equal:        try self.emit(.compareOp(.equal),        location: location)
+    case .notEqual:     try self.emit(.compareOp(.notEqual),     location: location)
+    case .less:         try self.emit(.compareOp(.less),         location: location)
+    case .lessEqual:    try self.emit(.compareOp(.lessEqual),    location: location)
+    case .greater:      try self.emit(.compareOp(.greater),      location: location)
+    case .greaterEqual: try self.emit(.compareOp(.greaterEqual), location: location)
+    case .is:           try self.emit(.compareOp(.is),           location: location)
+    case .isNot:        try self.emit(.compareOp(.isNot),        location: location)
+    case .in:           try self.emit(.compareOp(.in),           location: location)
+    case .notIn:        try self.emit(.compareOp(.notIn),        location: location)
     }
   }
 
   // MARK: - Jump
 
   @available(*, unavailable, message: "Use 'self.emitJumpAbsolute' instead.")
-  internal func emitJumpForward(delta: Label, line: SourceLine) throws {
+  internal func emitJumpForward(delta: Label, location: SourceLocation) throws {
     fatalError("Unavailable 'emitJumpForward', use 'emitJumpAbsolute' instead.")
   }
 
-  internal func emitJumpAbsolute(to label: Label, line: SourceLine) throws {
-    let index = try self.emitExtendedArgIfNeeded(label.index, line: line)
-    try self.emit(.jumpAbsolute(labelIndex: index), line: line)
+  internal func emitJumpAbsolute(to label: Label,
+                                 location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.jumpAbsolute(labelIndex: index), location: location)
   }
 
-  internal func emitPopJumpIfTrue(to label: Label, line: SourceLine) throws {
-    let index = try self.emitExtendedArgIfNeeded(label.index, line: line)
-    try self.emit(.popJumpIfTrue(labelIndex: index), line: line)
+  internal func emitPopJumpIfTrue(to label: Label,
+                                  location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.popJumpIfTrue(labelIndex: index), location: location)
   }
 
-  internal func emitPopJumpIfFalse(to label: Label, line: SourceLine) throws {
-    let index = try self.emitExtendedArgIfNeeded(label.index, line: line)
-    try self.emit(.popJumpIfFalse(labelIndex: index), line: line)
+  internal func emitPopJumpIfFalse(to label: Label,
+                                   location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.popJumpIfFalse(labelIndex: index), location: location)
   }
 
-  internal func emitJumpIfTrueOrPop(to label: Label, line: SourceLine) throws {
-    let index = try self.emitExtendedArgIfNeeded(label.index, line: line)
-    try self.emit(.jumpIfTrueOrPop(labelIndex: index), line: line)
+  internal func emitJumpIfTrueOrPop(to label: Label,
+                                    location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.jumpIfTrueOrPop(labelIndex: index), location: location)
   }
 
-  internal func emitJumpIfFalseOrPop(to label: Label, line: SourceLine) throws {
-    let index = try self.emitExtendedArgIfNeeded(label.index, line: line)
-    try self.emit(.jumpIfFalseOrPop(labelIndex: index), line: line)
+  internal func emitJumpIfFalseOrPop(to label: Label,
+                                     location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
   }
 
   // MARK: - Helpers
@@ -123,7 +130,7 @@ extension Compiler {
   /// - Returns:
   /// Value that should be used in instruction.
   private func emitExtendedArgIfNeeded(_ arg: Int,
-                                       line: SourceLine) throws -> UInt8 {
+                                       location: SourceLocation) throws -> UInt8 {
     // TODO: Test this
     // We will use following masks:
     // 0xff000000 <- extended 1
@@ -144,7 +151,7 @@ extension Compiler {
 
     let emit1 = value > 0
     if emit1 {
-      try self.emit(.extendedArg(value), line: line)
+      try self.emit(.extendedArg(value), location: location)
     }
 
     shift = 16
@@ -153,7 +160,7 @@ extension Compiler {
 
     let emit2 = emit1 || value > 0
     if emit2 {
-      try self.emit(.extendedArg(value), line: line)
+      try self.emit(.extendedArg(value), location: location)
     }
 
     shift = 8
@@ -162,7 +169,7 @@ extension Compiler {
 
     let emit3 = emit2 || value > 0
     if emit3 {
-      try self.emit(.extendedArg(value), line: line)
+      try self.emit(.extendedArg(value), location: location)
     }
 
     return UInt8((arg & ffMask) >> shift)

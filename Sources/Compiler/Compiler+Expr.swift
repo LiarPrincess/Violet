@@ -31,44 +31,44 @@ extension Compiler {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visitExpression(_ expr: Expression) throws {
-    let line = expr.start.line
+    let location = expr.start
 
     switch expr.kind {
     case .true:
-      try self.emitConstant(.true, line: line)
+      try self.emitConstant(.true, location: location)
     case .false:
-      try self.emitConstant(.false, line: line)
+      try self.emitConstant(.false, location: location)
     case .none:
-      try self.emitConstant(.none, line: line)
+      try self.emitConstant(.none, location: location)
     case .ellipsis:
-      try self.emitConstant(.ellipsis, line: line)
+      try self.emitConstant(.ellipsis, location: location)
 
 case let .identifier(value):
   try self.visitIdentifier(value: value)
 
     case let .bytes(value):
-      try self.emitConstant(.bytes(value), line: line)
+      try self.emitConstant(.bytes(value), location: location)
     case let .string(group):
-      try self.visitString(group: group, line: line)
+      try self.visitString(group: group, location: location)
 
     case let .int(value):
-      try self.emitConstant(.integer(value), line: line)
+      try self.emitConstant(.integer(value), location: location)
     case let .float(value):
-      try self.emitConstant(.float(value), line: line)
+      try self.emitConstant(.float(value), location: location)
     case let .complex(real, imag):
-      try self.emitConstant(.complex(real: real, imag: imag), line: line)
+      try self.emitConstant(.complex(real: real, imag: imag), location: location)
 
     case let .unaryOp(op, right):
       try self.visitExpression(right)
-      try self.emitUnaryOperator(op, line: line)
+      try self.emitUnaryOperator(op, location: location)
     case let .binaryOp(op, left, right):
       try self.visitExpression(left)
       try self.visitExpression(right)
-      try emitBinaryOperator(op, line: line)
+      try emitBinaryOperator(op, location: location)
     case let .boolOp(op, left, right):
-      try self.visitBoolOp(op: op, left: left, right: right, line: line)
+      try self.visitBoolOp(op: op, left: left, right: right, location: location)
     case let .compare(left, elements):
-      try self.visitCompare(left: left, elements: elements, line: line)
+      try self.visitCompare(left: left, elements: elements, location: location)
 
 case let .tuple(value):
   try self.visitTuple(value: value)
@@ -117,10 +117,11 @@ case let .starred(expr):
 
   /// compiler_formatted_value(struct compiler *c, expr_ty e)
   /// compiler_joined_str(struct compiler *c, expr_ty e)
-  private func visitString(group: StringGroup, line: SourceLine) throws {
+  private func visitString(group: StringGroup,
+                           location: SourceLocation) throws {
     switch group {
     case let .string(s):
-      try self.emitConstant(.string(s), line: line)
+      try self.emitConstant(.string(s), location: location)
 
     case let .formattedValue(expr, conversion: conv, spec: spec):
       try self.visitExpression(expr)
@@ -135,20 +136,20 @@ case let .starred(expr):
 
       if let s = spec {
         flags |= FormattedValueMasks.hasFormat
-        try self.emitConstant(.string(s), line: line)
+        try self.emitConstant(.string(s), location: location)
       }
 
-      try self.emit(.formatValue(flags: flags), line: line)
+      try self.emit(.formatValue(flags: flags), location: location)
 
     case let .joinedString(groups):
       for g in groups {
-        try self.visitString(group: g, line: line)
+        try self.visitString(group: g, location: location)
       }
 
       if groups.count == 1 {
         // do nothing, string is already on TOS
       } else if let count = UInt8(exactly: groups.count) {
-        try self.emit(.buildString(count), line: line)
+        try self.emit(.buildString(count), location: location)
       } else {
         // UInt8 can't represent this value
         fatalError()
@@ -170,14 +171,14 @@ case let .starred(expr):
   private func visitBoolOp(op: BooleanOperator,
                            left:  Expression,
                            right: Expression,
-                           line:  SourceLine) throws {
+                           location: SourceLocation) throws {
 
     let end = try self.newLabel()
     try self.visitExpression(left)
 
     switch op {
-    case .and: try self.emitJumpIfFalseOrPop(to: end, line: line)
-    case .or:  try self.emitJumpIfTrueOrPop(to: end, line: line)
+    case .and: try self.emitJumpIfFalseOrPop(to: end, location: location)
+    case .or:  try self.emitJumpIfTrueOrPop(to: end, location: location)
     }
 
     try self.visitExpression(right)
@@ -203,28 +204,28 @@ case let .starred(expr):
   /// ```
   private func visitCompare(left: Expression,
                             elements: NonEmptyArray<ComparisonElement>,
-                            line: SourceLine) throws {
+                            location: SourceLocation) throws {
 
     try self.visitExpression(left)
 
     if elements.count == 1 {
       let e = elements.first
       try self.visitExpression(e.right)
-      try self.emitComparisonOperator(e.op, line: line)
+      try self.emitComparisonOperator(e.op, location: location)
     } else {
       let end = try self.newLabel()
 
       for e in elements.lazy.dropLast() {
         try self.visitExpression(e.right)
-        try self.emit(.dupTop, line: line)
-        try self.emit(.rotThree, line: line)
-        try self.emitComparisonOperator(e.op, line: line)
-        try self.emitJumpIfFalseOrPop(to: end, line: line)
+        try self.emit(.dupTop, location: location)
+        try self.emit(.rotThree, location: location)
+        try self.emitComparisonOperator(e.op, location: location)
+        try self.emitJumpIfFalseOrPop(to: end, location: location)
       }
 
       let l = elements.last
       try self.visitExpression(l.right)
-      try self.emitComparisonOperator(l.op, line: line)
+      try self.emitComparisonOperator(l.op, location: location)
 
       self.setLabel(end)
     }
@@ -232,6 +233,7 @@ case let .starred(expr):
 
   // MARK: - Collections
 
+  /// compiler_tuple(struct compiler *c, expr_ty e)
   private func visitTuple(value: [Expression]) throws {
   }
 
@@ -285,9 +287,6 @@ case let .starred(expr):
                          keywords: [Keyword]) throws {
   }
 
-  private func visitIfExpression(test: Expression,
-                                 body: Expression,
-                                 orElse: Expression) throws {
   }
 
   // MARK: - Trailer
