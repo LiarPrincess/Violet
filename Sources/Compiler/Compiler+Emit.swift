@@ -28,6 +28,7 @@ extension Compiler {
   /// compiler_addop_o(struct compiler *c, int opcode, PyObject *dict, PyObject *o)
   /// compiler_addop_i(struct compiler *c, int opcode, Py_ssize_t oparg)
   internal func emitConstant(_ c: Constant, line: SourceLine) throws {
+    // TODO: check if this value was already added
     let index = self.currentBlock.constants.endIndex
     self.currentBlock.constants.append(c)
 
@@ -85,6 +86,15 @@ extension Compiler {
   }
 
   // MARK: - Jump
+
+  @available(*, deprecated, message: "Use 'self.emitJumpAbsolute' instead.")
+  internal func emitJumpForward(delta: Label, line: SourceLine) throws {
+    fatalError("Deprecated 'emitJumpForward', use 'emitJumpAbsolute' instead.")
+  }
+
+  internal func emitJumpAbsolute(to label: Label, line: SourceLine) throws {
+    try self.emit(.jumpAbsolute(labelIndex: label.index), line: line)
+  }
 
   internal func emitPopJumpIfTrue(to label: Label, line: SourceLine) throws {
     try self.emit(.popJumpIfTrue(labelIndex: label.index), line: line)

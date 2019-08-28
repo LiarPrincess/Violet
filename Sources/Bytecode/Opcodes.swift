@@ -328,7 +328,7 @@ public enum Instruction {
   case deleteDeref(I)
   /// Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
   /// This is used for loading free variables in class bodies.
-  case loadClassderef(I)
+  case loadClassDeref(I)
   /// Pushes a new function object on the stack.
   /// 
   /// From bottom to top, the consumed stack must consist of values if the argument carries a specified flag value
@@ -476,9 +476,9 @@ public enum Instruction {
   /// Creates a new frame object.
   case setupAsyncWith
   /// Increments bytecode counter by delta.
-  case jumpForward(delta: NotDone)
+  case jumpForward(delta: UInt8)
   /// Set bytecode counter to target.
-  case jumpAbsolute(target: NotDone)
+  case jumpAbsolute(labelIndex: SmallArrayIndex)
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
   case popJumpIfTrue(labelIndex: SmallArrayIndex)
   /// If TOS is false, sets the bytecode counter to target. TOS is popped.
@@ -708,8 +708,8 @@ public enum Instruction {
     return false
   }
 
-  public var isLoadClassderef: Bool {
-    if case .loadClassderef = self { return true }
+  public var isLoadClassDeref: Bool {
+    if case .loadClassDeref = self { return true }
     return false
   }
 

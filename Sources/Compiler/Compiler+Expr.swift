@@ -8,6 +8,8 @@ import Bytecode
 
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
+// swiftlint:disable file_length
+// swiftlint:disable switch_case_alignment
 
 extension Compiler {
 
@@ -41,11 +43,11 @@ extension Compiler {
     case .ellipsis:
       try self.emitConstant(.ellipsis, line: line)
 
-    case let .identifier(value):
-      try self.visitIdentifier(value: value)
+case let .identifier(value):
+  try self.visitIdentifier(value: value)
 
     case let .bytes(value):
-      try self.visitBytes(value: value)
+      try self.emitConstant(.bytes(value), line: line)
     case let .string(group):
       try self.visitString(group: group, line: line)
 
@@ -68,43 +70,45 @@ extension Compiler {
     case let .compare(left, elements):
       try self.visitCompare(left: left, elements: elements, line: line)
 
-    case let .tuple(value):
-      try self.visitTuple(value: value)
-    case let .list(value):
-      try self.visitList(value: value)
-    case let .dictionary(value):
-      try self.visitDictionary(value: value)
-    case let .set(value):
-      try self.visitSet(value: value)
+case let .tuple(value):
+  try self.visitTuple(value: value)
+case let .list(value):
+  try self.visitList(value: value)
+case let .dictionary(value):
+  try self.visitDictionary(value: value)
+case let .set(value):
+  try self.visitSet(value: value)
 
-    case let .listComprehension(elt, generators):
-      try self.visitListComprehension(elt: elt, generators: generators)
-    case let .setComprehension(elt, generators):
-      try self.visitSetComprehension(elt: elt, generators: generators)
-    case let .dictionaryComprehension(key, value, generators):
-      try self.visitDictionaryComprehension(key: key, value: value, generators: generators)
-    case let .generatorExp(elt, generators):
-      try self.visitGeneratorExp(elt: elt, generators: generators)
+case let .listComprehension(elt, generators):
+  try self.visitListComprehension(elt: elt, generators: generators)
+case let .setComprehension(elt, generators):
+  try self.visitSetComprehension(elt: elt, generators: generators)
+case let .dictionaryComprehension(key, value, generators):
+  try self.visitDictionaryComprehension(key: key, value: value, generators: generators)
+case let .generatorExp(elt, generators):
+  try self.visitGeneratorExp(elt: elt, generators: generators)
 
-    case let .await(expr):
-      try self.visitAwait(expr: expr)
-    case let .yield(value):
-      try self.visitYield(value: value)
-    case let .yieldFrom(expr):
-      try self.visitYieldFrom(expr: expr)
+case let .await(expr):
+  try self.visitAwait(expr: expr)
+case let .yield(value):
+  try self.visitYield(value: value)
+case let .yieldFrom(expr):
+  try self.visitYieldFrom(expr: expr)
 
-    case let .lambda(args, body):
-      try self.visitLambda(args: args, body: body)
-    case let .call(f, args, keywords):
-      try self.visitCall(f: f, args: args, keywords: keywords)
+case let .lambda(args, body):
+  try self.visitLambda(args: args, body: body)
+case let .call(f, args, keywords):
+  try self.visitCall(f: f, args: args, keywords: keywords)
+
     case let .ifExpression(test, body, orElse):
       try self.visitIfExpression(test: test, body: body, orElse: orElse)
-    case let .attribute(expr, name):
-      try self.visitAttribute(expr: expr, name: name)
-    case let .subscript(expr, slice):
-      try self.visitSubscript(expr: expr, slice: slice)
-    case let .starred(expr):
-      try self.visitStarred(expr: expr)
+
+case let .attribute(expr, name):
+  try self.visitAttribute(expr: expr, name: name)
+case let .subscript(expr, slice):
+  try self.visitSubscript(expr: expr, slice: slice)
+case let .starred(expr):
+  try self.visitStarred(expr: expr)
     }
   }
 
@@ -118,22 +122,41 @@ extension Compiler {
     case let .string(s):
       try self.emitConstant(.string(s), line: line)
 
-    case let .formattedValue(e, conversion: c, spec: s):
-      break
+    case let .formattedValue(expr, conversion: conv, spec: spec):
+      try self.visitExpression(expr)
 
-    case let .joinedString(gs):
-      for g in gs {
+      var flags: UInt8 = 0
+      switch conv {
+      case .some(.str):   flags |= FormattedValueMasks.conversionStr
+      case .some(.repr):  flags |= FormattedValueMasks.conversionRepr
+      case .some(.ascii): flags |= FormattedValueMasks.conversionASCII
+      default:            flags |= FormattedValueMasks.conversionNone
+      }
+
+      if let s = spec {
+        flags |= FormattedValueMasks.hasFormat
+        try self.emitConstant(.string(s), line: line)
+      }
+
+      try self.emit(.formatValue(flags: flags), line: line)
+
+    case let .joinedString(groups):
+      for g in groups {
         try self.visitString(group: g, line: line)
       }
 
-      if gs.count > 1 {
-//        try self.emit(.buildString(gs.count))
+      if groups.count == 1 {
+        // do nothing, string is already on TOS
+      } else if let count = UInt8(exactly: groups.count) {
+        try self.emit(.buildString(count), line: line)
+      } else {
+        // UInt8 can't represent this value
+        fatalError()
       }
     }
   }
 
-  private func visitBytes(value: Data) throws {
-  }
+  // MARK: - Operations
 
   /// compiler_boolop(struct compiler *c, expr_ty e)
   ///
@@ -207,6 +230,8 @@ extension Compiler {
     }
   }
 
+  // MARK: - Collections
+
   private func visitTuple(value: [Expression]) throws {
   }
 
@@ -218,6 +243,8 @@ extension Compiler {
 
   private func visitSet(value: [Expression]) throws {
   }
+
+  // MARK: - Comprehension
 
   private func visitListComprehension(elt: Expression,
                                       generators: NonEmptyArray<Comprehension>) throws {
@@ -236,6 +263,8 @@ extension Compiler {
                                  generators: NonEmptyArray<Comprehension>) throws {
   }
 
+  // MARK: - Coroutines/Generators
+
   private func visitAwait(expr: Expression) throws {
   }
 
@@ -244,6 +273,8 @@ extension Compiler {
 
   private func visitYieldFrom(expr: Expression) throws {
   }
+
+  // MARK: - Function call
 
   private func visitLambda(args: Arguments,
                            body: Expression) throws {
@@ -259,6 +290,8 @@ extension Compiler {
                                  orElse: Expression) throws {
   }
 
+  // MARK: - Trailer
+
   private func visitAttribute(expr: Expression,
                               name: String) throws {
   }
@@ -267,14 +300,15 @@ extension Compiler {
                               slice: Slice) throws {
   }
 
+  private func visitSlice(_ slice: Slice) throws {
+  }
+
+  // MARK: - Starred
+
   private func visitStarred(expr: Expression) throws {
   }
 
-  private func visitComparisonElement(_ stmt: ComparisonElement) throws {
-  }
-
-  private func visitSlice(_ slice: Slice) throws {
-  }
+  // MARK: - ?
 
   private func visitComprehension(_ comprehension: Comprehension) throws {
   }

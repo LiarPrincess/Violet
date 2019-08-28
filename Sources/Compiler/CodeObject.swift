@@ -16,13 +16,13 @@ public struct CodeObject {
   public var instructionLines = [SourceLine]()
 
   /// Constants used.
-  /// E.g. constant `5` has `constants[5]` value.
+  /// E.g. `LoadConst 5` loads `constants[5]` value.
   public var constants = SmallArray<Constant>()
   /// List of strings (names used)
   public var names = SmallArray<String>()
   /// Absolute jump targets.
   /// E.g. label `5` will move us to `labels[5]` instruction.
-  public var labels = SmallArray<Int>()
+  public var labels = SmallArray<UInt32>()
 
   /// Names of positional arguments
   public var argNames = [String]()

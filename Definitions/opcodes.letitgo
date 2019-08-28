@@ -384,7 +384,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
   -- This is used for loading free variables in class bodies.
-  | LoadClassderef(i)
+  | LoadClassDeref(i)
 
 {- ---------- -}
 {-  Function  -}
@@ -586,9 +586,9 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   {- TODO: Probably use Label -}
 
   -- Increments bytecode counter by delta.
-  | JumpForward(NotDone delta)
+  | JumpForward(UInt8 delta)
   -- Set bytecode counter to target.
-  | JumpAbsolute(NotDone target)
+  | JumpAbsolute(Index labelIndex)
 
   -- If TOS is true, sets the bytecode counter to target. TOS is popped.
   | PopJumpIfTrue(Index labelIndex)

@@ -114,7 +114,6 @@ public final class Compiler {
   private var nextLabel: UInt16 = 0
 
   internal func newLabel() throws -> Label {
-    
     let index = self.currentBlock.labels.endIndex
     self.currentBlock.labels.append(0)
     return Label(index: index)
@@ -122,7 +121,12 @@ public final class Compiler {
 
   internal func setLabel(_ label: Label) {
     let jumpTarget = self.currentBlock.instructions.count
-    self.currentBlock.labels[label.index] = jumpTarget
+
+    guard let exact = UInt32(exactly: jumpTarget) else {
+      fatalError()
+    }
+
+    self.currentBlock.labels[label.index] = exact
   }
 
   // MARK: - Qualified name
