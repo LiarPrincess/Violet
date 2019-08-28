@@ -10,19 +10,19 @@ extension SymbolTableBuilder {
   // MARK: - Expression
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  internal func visit<S: Sequence>(_ exprs: S,
-                                   isAssignmentTarget: Bool = false) throws
-    where S.Element == Expression {
+  internal func visitExpressions<S: Sequence>(
+    _ exprs: S,
+    isAssignmentTarget: Bool = false) throws where S.Element == Expression {
 
     for e in exprs {
-      try self.visit(e)
+      try self.visitExpression(e)
     }
   }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  internal func visit(_ expr: Expression?) throws {
+  internal func visitExpression(_ expr: Expression?) throws {
     if let e = expr {
-      try self.visit(e)
+      try self.visitExpression(e)
     }
   }
 
@@ -33,8 +33,8 @@ extension SymbolTableBuilder {
   ///   - isAssignmentTarget: Are we visiting target for an assignment statement?
   /// Used only for: identifiers, attributes, subscripts, starred, lists, tuples
   /// (see `expr_context` in CPython -> Parser -> Python.asdl).
-  internal func visit(_ expr: Expression,
-                      isAssignmentTarget: Bool = false) throws {
+  internal func visitExpression(_ expr: Expression,
+                                isAssignmentTarget: Bool = false) throws {
     switch expr.kind {
     case .true, .false, .none, .ellipsis:
       break
@@ -51,25 +51,25 @@ extension SymbolTableBuilder {
         try self.addSymbol(name, flags: .use, location: expr.start)
       }
     case let .string(group):
-      try self.visit(group)
+      try self.visitString(group)
 
     case let .unaryOp(_, right):
-      try self.visit(right)
+      try self.visitExpression(right)
     case let .binaryOp(_, left, right),
          let .boolOp(_, left, right):
-      try self.visit(left)
-      try self.visit(right)
+      try self.visitExpression(left)
+      try self.visitExpression(right)
     case let .compare(left, elements):
-      try self.visit(left)
-      try self.visit(elements)
+      try self.visitExpression(left)
+      try self.visitComparisonElements(elements)
 
     case let .tuple(elements),
          let .list(elements):
-      try self.visit(elements, isAssignmentTarget: isAssignmentTarget)
+      try self.visitExpressions(elements, isAssignmentTarget: isAssignmentTarget)
     case let .set(elements):
-      try self.visit(elements)
+      try self.visitExpressions(elements)
     case let .dictionary(elements):
-      try self.visit(elements)
+      try self.visitDictionaryElements(elements)
 
     case let .listComprehension(elt, generators):
       try self.visitComprehension(elt: elt,
@@ -100,13 +100,13 @@ extension SymbolTableBuilder {
                                   kind: .generator)
 
     case let .await(value):
-      try self.visit(value)
+      try self.visitExpression(value)
       self.currentScope.isCoroutine = true
     case let .yield(value):
-      try self.visit(value)
+      try self.visitExpression(value)
       self.currentScope.isGenerator = true
     case let .yieldFrom(value):
-      try self.visit(value)
+      try self.visitExpression(value)
       self.currentScope.isGenerator = true
 
     case let .lambda(args, body):
@@ -114,67 +114,69 @@ extension SymbolTableBuilder {
 
       self.enterScope(name: SpecialIdentifiers.lambda, type: .function, node: expr)
       try self.visitArguments(args)
-      try self.visit(body)
+      try self.visitExpression(body)
       self.leaveScope()
 
     case let .call(`func`, args, keywords):
-      try self.visit(`func`)
-      try self.visit(args)
-      try self.visit(keywords)
+      try self.visitExpression(`func`)
+      try self.visitExpressions(args)
+      try self.visitKeywords(keywords)
 
     case let .ifExpression(test, body, orElse):
-      try self.visit(test)
-      try self.visit(body)
-      try self.visit(orElse)
+      try self.visitExpression(test)
+      try self.visitExpression(body)
+      try self.visitExpression(orElse)
 
     case let .attribute(expr, _):
-      try self.visit(expr, isAssignmentTarget: isAssignmentTarget)
+      try self.visitExpression(expr, isAssignmentTarget: isAssignmentTarget)
     case let .subscript(expr, slice):
-      try self.visit(expr, isAssignmentTarget: isAssignmentTarget)
-      try self.visit(slice)
+      try self.visitExpression(expr, isAssignmentTarget: isAssignmentTarget)
+      try self.visitSlice(slice)
     case let .starred(expr):
-      try self.visit(expr, isAssignmentTarget: isAssignmentTarget)
+      try self.visitExpression(expr, isAssignmentTarget: isAssignmentTarget)
     }
   }
 
   // MARK: - ComparisonElement
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private func visit(_ elements: NonEmptyArray<ComparisonElement>) throws {
+  private func visitComparisonElements(
+    _ elements: NonEmptyArray<ComparisonElement>) throws {
+
     for e in elements {
-      try self.visit(e.right)
+      try self.visitExpression(e.right)
     }
   }
 
   // MARK: - Slice
 
   /// symtable_visit_slice(struct symtable *st, slice_ty s)
-  private func visit(_ slice: Slice) throws {
+  private func visitSlice(_ slice: Slice) throws {
     switch slice.kind {
     case let .slice(lower, upper, step):
-      try self.visit(lower)
-      try self.visit(upper)
-      try self.visit(step)
+      try self.visitExpression(lower)
+      try self.visitExpression(upper)
+      try self.visitExpression(step)
     case let .extSlice(slices):
       for s in slices {
-        try self.visit(s)
+        try self.visitSlice(s)
       }
     case let .index(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
     }
   }
 
   // MARK: - DictionaryElement
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private func visit(_ elements: [DictionaryElement]) throws {
+  private func visitDictionaryElements(_ elements: [DictionaryElement]) throws {
     for e in elements {
       switch e {
       case let .unpacking(expr):
-        try self.visit(expr)
+        try self.visitExpression(expr)
       case let .keyValue(key, value):
-        try self.visit(key)
-        try self.visit(value)
+        try self.visitExpression(key)
+        try self.visitExpression(value)
       }
     }
   }
@@ -194,7 +196,7 @@ extension SymbolTableBuilder {
 
     // iterator (source) is evaluated in parent scope
     let first = generators.first
-    try self.visit(first.iter)
+    try self.visitExpression(first.iter)
 
     // new scope for comprehensions
     let scopeKind = self.getIdentifier(for: kind)
@@ -206,15 +208,15 @@ extension SymbolTableBuilder {
     }
 
     try self.implicitArg(pos: 0, location: elt.start)
-    try self.visit(first.target)
-    try self.visit(first.ifs)
+    try self.visitExpression(first.target)
+    try self.visitExpressions(first.ifs)
 
     for c in generators.dropFirst() {
-      try self.visit(c)
+      try self.visitComprehension(c)
     }
 
-    try self.visit(value)
-    try self.visit(elt)
+    try self.visitExpression(value)
+    try self.visitExpression(elt)
 
     if currentScope.isGenerator {
       // we don't have a better location, we just know it happened
@@ -243,10 +245,10 @@ extension SymbolTableBuilder {
   }
 
   /// symtable_visit_comprehension(struct symtable *st, comprehension_ty lc)
-  private func visit(_ comprehension: Comprehension) throws {
-    try self.visit(comprehension.target)
-    try self.visit(comprehension.iter)
-    try self.visit(comprehension.ifs)
+  private func visitComprehension(_ comprehension: Comprehension) throws {
+    try self.visitExpression(comprehension.target)
+    try self.visitExpression(comprehension.iter)
+    try self.visitExpressions(comprehension.ifs)
 
     if comprehension.isAsync {
       self.currentScope.isCoroutine = true
@@ -256,17 +258,15 @@ extension SymbolTableBuilder {
   // MARK: - StringGroup
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private func visit(_ group: StringGroup) throws {
+  private func visitString(_ group: StringGroup) throws {
     switch group {
     case .string:
       break
     case let .formattedValue(expr, _, _):
-      try self.visit(expr)
-      // add format spec here
-      // NotImplemented.expressionInFormatSpecifierInsideFString
+      try self.visitExpression(expr)
     case let .joinedString(groups):
       for g in groups {
-        try self.visit(g)
+        try self.visitString(g)
       }
     }
   }

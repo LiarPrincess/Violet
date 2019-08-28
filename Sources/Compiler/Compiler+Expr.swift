@@ -14,7 +14,7 @@ import Bytecode
 extension Compiler {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  internal func visitExpression<S: Sequence>(_ exprs: S) throws
+  internal func visitExpressions<S: Sequence>(_ exprs: S) throws
     where S.Element == Expression {
 
     for e in exprs {

@@ -4,16 +4,16 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
-// TODO: Rewritte this with new pass generator
-
 internal enum SpecialIdentifiers {
-  internal static let top = "top" // TODO: rename to module
-  internal static let module = "module"
+  internal static let top = "top"
+
   internal static let lambda = "lambda"
-  internal static let genexpr = "genexpr"
+
   internal static let listcomp = "listcomp"
-  internal static let setcomp = "setcomp"
+  internal static let setcomp  = "setcomp"
   internal static let dictcomp = "dictcomp"
+  internal static let genexpr  = "genexpr"
+
   internal static let __class__ = "__class__"
 }
 
@@ -50,11 +50,11 @@ public final class SymbolTableBuilder {
 
     switch ast.kind {
     case let .single(stmts):
-      try self.visit(stmts)
+      try self.visitStatements(stmts)
     case let .fileInput(stmts):
-      try self.visit(stmts)
+      try self.visitStatements(stmts)
     case let .expression(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
     }
 
     assert(self.scopeStack.count == 1)
@@ -89,7 +89,7 @@ public final class SymbolTableBuilder {
   /// symtable_exit_block(struct symtable *st, void *ast)
   internal func leaveScope() {
     assert(self.scopeStack.any)
-    self.scopeStack.popLast()
+    _ = self.scopeStack.popLast()
   }
 
   // MARK: - Names
@@ -153,8 +153,8 @@ public final class SymbolTableBuilder {
   // MARK: - Visit arguments
 
   internal func visitDefaults(_ args: Arguments) throws {
-    try self.visit(args.defaults)
-    try self.visit(args.kwOnlyDefaults)
+    try self.visitExpressions(args.defaults)
+    try self.visitExpressions(args.kwOnlyDefaults)
   }
 
   /// symtable_visit_params(struct symtable *st, asdl_seq *args)
@@ -186,29 +186,29 @@ public final class SymbolTableBuilder {
   /// symtable_visit_annotations(struct symtable *st, stmt_ty s, ...)
   internal func visitAnnotations(_ args: Arguments) throws {
     for a in args.args {
-      try self.visit(a.annotation)
+      try self.visitExpression(a.annotation)
     }
 
     switch args.vararg {
     case let .named(a):
-      try self.visit(a.annotation)
+      try self.visitExpression(a.annotation)
     case .none, .unnamed:
       break
     }
 
     for a in args.kwOnlyArgs {
-      try self.visit(a.annotation)
+      try self.visitExpression(a.annotation)
     }
 
-    try self.visit(args.kwarg?.annotation)
+    try self.visitExpression(args.kwarg?.annotation)
   }
 
   // MARK: - Visit keyword
 
   /// symtable_visit_keyword(struct symtable *st, keyword_ty k)
-  internal func visit(_ keywords: [Keyword]) throws {
+  internal func visitKeywords(_ keywords: [Keyword]) throws {
     for k in keywords {
-      try self.visit(k.value)
+      try self.visitExpression(k.value)
     }
   }
 

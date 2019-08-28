@@ -7,13 +7,15 @@ extension SymbolTableBuilder {
 
   // MARK: - Statement
 
-  internal func visit<S: Sequence>(_ stmts: S) throws where S.Element == Statement {
+  internal func visitStatements<S: Sequence>(_ stmts: S)
+    throws where S.Element == Statement {
+
     for s in stmts {
-      try self.visit(s)
+      try self.visitStatement(s)
     }
   }
 
-  internal func visit(_ stmt: Statement) throws {
+  internal func visitStatement(_ stmt: Statement) throws {
     switch stmt.kind {
     case let .functionDef(name, args, body, decoratorList, returns),
          let .asyncFunctionDef(name, args, body, decoratorList, returns):
@@ -21,45 +23,45 @@ extension SymbolTableBuilder {
       try self.addSymbol(name, flags: .defLocal, location: stmt.start)
       try self.visitDefaults(args)
       try self.visitAnnotations(args)
-      try self.visit(returns) // in CPython it is a part of visitAnnotations
-      try self.visit(decoratorList)
+      try self.visitExpression(returns) // in CPython it is a part of visitAnnotations
+      try self.visitExpressions(decoratorList)
 
       self.enterScope(name: name, type: .function, node: stmt)
       if stmt.kind.isAsyncFunctionDef {
         self.currentScope.isCoroutine = true
       }
       try self.visitArguments(args)
-      try self.visit(body)
+      try self.visitStatements(body)
       self.leaveScope()
 
     case let .classDef(name, bases, keywords, body, decoratorList):
       try self.addSymbol(name, flags: .defLocal, location: stmt.start)
-      try self.visit(bases)
-      try self.visit(keywords)
-      try self.visit(decoratorList)
+      try self.visitExpressions(bases)
+      try self.visitKeywords(keywords)
+      try self.visitExpressions(decoratorList)
 
       let previousClassName = self.className
 
       self.enterScope(name: name, type: .class, node: stmt)
       self.className = name
-      try self.visit(body)
+      try self.visitStatements(body)
       self.className = previousClassName
       self.leaveScope()
 
     case let .return(value):
       if let value = value {
-        try self.visit(value)
+        try self.visitExpression(value)
         self.currentScope.hasReturnValue = true
       }
     case let .delete(value):
-      try self.visit(value)
+      try self.visitExpressions(value)
 
     case let .assign(targets, value):
-      try self.visit(targets, isAssignmentTarget: true)
-      try self.visit(value)
+      try self.visitExpressions(targets, isAssignmentTarget: true)
+      try self.visitExpression(value)
     case let .augAssign(target, _, value):
-      try self.visit(target, isAssignmentTarget: true)
-      try self.visit(value)
+      try self.visitExpression(target, isAssignmentTarget: true)
+      try self.visitExpression(value)
     case let .annAssign(target, annotation, value, isSimple):
       if case let ExpressionKind.identifier(name) = target.kind {
         let current = self.lookupMangled(name)
@@ -79,51 +81,51 @@ extension SymbolTableBuilder {
         let flags: SymbolFlags = isSimple ? [.defLocal, .annotated] : .defLocal
         try self.addSymbol(name, flags: flags, location: stmt.start)
       } else {
-        try self.visit(target, isAssignmentTarget: true)
+        try self.visitExpression(target, isAssignmentTarget: true)
       }
 
-      try self.visit(annotation)
-      try self.visit(value)
+      try self.visitExpression(annotation)
+      try self.visitExpression(value)
 
     case let .for(target, iter, body, orElse),
          let .asyncFor(target, iter, body, orElse):
-      try self.visit(target)
-      try self.visit(iter)
-      try self.visit(body)
-      try self.visit(orElse)
+      try self.visitExpression(target)
+      try self.visitExpression(iter)
+      try self.visitStatements(body)
+      try self.visitStatements(orElse)
 
     case let .while(test, body, orElse):
-      try self.visit(test)
-      try self.visit(body)
-      try self.visit(orElse)
+      try self.visitExpression(test)
+      try self.visitStatements(body)
+      try self.visitStatements(orElse)
 
     case let .if(test, body, orElse):
-      try self.visit(test)
-      try self.visit(body)
-      try self.visit(orElse)
+      try self.visitExpression(test)
+      try self.visitStatements(body)
+      try self.visitStatements(orElse)
 
     case let .with(items, body),
          let .asyncWith(items, body):
-      try self.visit(items)
-      try self.visit(body)
+      try self.visitWithItems(items)
+      try self.visitStatements(body)
 
     case let .raise(exc, cause):
-      try self.visit(exc)
-      try self.visit(cause)
+      try self.visitExpression(exc)
+      try self.visitExpression(cause)
 
     case let .try(body, handlers, orElse, finalBody):
-      try self.visit(body)
-      try self.visit(handlers)
-      try self.visit(orElse)
-      try self.visit(finalBody)
+      try self.visitStatements(body)
+      try self.visitExceptHandlers(handlers)
+      try self.visitStatements(orElse)
+      try self.visitStatements(finalBody)
 
     case let .assert(test, msg):
-      try self.visit(test)
-      try self.visit(msg)
+      try self.visitExpression(test)
+      try self.visitExpression(msg)
 
     case let .import(names),
          let .importFrom(_, names, _):
-      try self.visit(names)
+      try self.visitAliases(names)
 
     case let .global(names):
       for name in names {
@@ -174,7 +176,7 @@ extension SymbolTableBuilder {
       }
 
     case let .expr(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
 
     case .pass, .break, .continue:
       break
@@ -184,30 +186,30 @@ extension SymbolTableBuilder {
   // MARK: - WithItem
 
   /// symtable_visit_withitem(struct symtable *st, withitem_ty item)
-  private func visit(_ items: NonEmptyArray<WithItem>) throws {
+  private func visitWithItems(_ items: NonEmptyArray<WithItem>) throws {
     for i in items {
-      try self.visit(i.contextExpr)
-      try self.visit(i.optionalVars)
+      try self.visitExpression(i.contextExpr)
+      try self.visitExpression(i.optionalVars)
     }
   }
 
   // MARK: - ExceptHandler
 
   /// symtable_visit_excepthandler(struct symtable *st, excepthandler_ty eh)
-  private func visit(_ handlers: [ExceptHandler]) throws {
+  private func visitExceptHandlers(_ handlers: [ExceptHandler]) throws {
     for h in handlers {
-      try self.visit(h.type)
+      try self.visitExpression(h.type)
       if let name = h.name {
         try self.addSymbol(name, flags: .defLocal, location: h.start)
       }
-      try self.visit(h.body)
+      try self.visitStatements(h.body)
     }
   }
 
   // MARK: - Alias
 
   /// symtable_visit_alias(struct symtable *st, alias_ty a)
-  private func visit(_ aliases: NonEmptyArray<Alias>) throws {
+  private func visitAliases(_ aliases: NonEmptyArray<Alias>) throws {
     for a in aliases {
       switch a.name {
       case "*":
