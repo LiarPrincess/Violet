@@ -101,7 +101,10 @@ case let .call(f, args, keywords):
   try self.visitCall(f: f, args: args, keywords: keywords)
 
     case let .ifExpression(test, body, orElse):
-      try self.visitIfExpression(test: test, body: body, orElse: orElse)
+      try self.visitIfExpression(test: test,
+                                 body: body,
+                                 orElse: orElse,
+                                 location: location)
 
 case let .attribute(expr, name):
   try self.visitAttribute(expr: expr, name: name)
@@ -215,7 +218,7 @@ case let .starred(expr):
     } else {
       let end = try self.newLabel()
 
-      for e in elements.lazy.dropLast() {
+      for e in elements.dropLast() {
         try self.visitExpression(e.right)
         try self.emit(.dupTop, location: location)
         try self.emit(.rotThree, location: location)
@@ -287,6 +290,120 @@ case let .starred(expr):
                          keywords: [Keyword]) throws {
   }
 
+  // MARK: - If
+
+  /// compiler_ifexp(struct compiler *c, expr_ty e)
+  ///
+  /// `dis.dis('1 if a else 3')` gives us:
+  /// ```c
+  ///  0 LOAD_NAME                0 (a)
+  ///  2 POP_JUMP_IF_FALSE        8
+  ///  4 LOAD_CONST               0 (1)
+  ///  6 RETURN_VALUE
+  ///  8 LOAD_CONST               1 (3)
+  /// 10 RETURN_VALUE
+  /// ```
+  private func visitIfExpression(test:   Expression,
+                                 body:   Expression,
+                                 orElse: Expression,
+                                 location: SourceLocation) throws {
+    let end = try self.newLabel()
+    let next = try self.newLabel()
+
+    try self.visitExpression(test, andJumpTo: next, if: false, location: location)
+    try self.visitExpression(body)
+    self.setLabel(next)
+    try self.visitExpression(orElse)
+    self.setLabel(end)
+  }
+
+  // TODO: Do we even need this method? Cant we just compile `expr` and then fancy test?
+  /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
+  private func visitExpression(_ expr:  Expression,
+                               andJumpTo next: Label,
+                               if cond: Bool,
+                               location loc: SourceLocation) throws {
+    switch expr.kind {
+    case let .unaryOp(op, right: right):
+      switch op {
+      case .not:
+        try self.visitExpression(right, andJumpTo: next, if: !cond, location: loc)
+        return
+      case .plus, .minus, .invert:
+        break // fallback to general implementation
+      }
+
+    case let .boolOp(op, left, right):
+      let isOr = op == .or
+      let hasLabel = cond != isOr
+      let next2 = hasLabel ? try self.newLabel() : next
+
+      try self.visitExpression(left,  andJumpTo: next2, if: isOr, location: loc)
+      try self.visitExpression(right, andJumpTo: next,  if: cond, location: loc)
+
+      if hasLabel {
+        self.setLabel(next2)
+      }
+      return
+
+    case let .ifExpression(test, body, orElse):
+      let end = try self.newLabel()
+      let next2 = try self.newLabel()
+
+      try self.visitExpression(test, andJumpTo: next2, if: false, location: loc)
+      try self.visitExpression(body, andJumpTo: next,  if: cond,  location: loc)
+      // TODO: ADDOP_JREL(c, JUMP_FORWARD, end);
+      try self.emitJumpAbsolute(to: end, location: loc)
+      self.setLabel(next2)
+      try self.visitExpression(orElse, andJumpTo: next, if: cond, location: loc)
+      self.setLabel(end)
+
+    case let .compare(left, elements):
+      guard elements.count > 1 else {
+        break // fallback to general implementation
+      }
+
+      try self.visitExpression(left)
+
+      let end = try self.newLabel()
+      let cleanup = try self.newLabel()
+
+      for e in elements.dropLast() {
+        try self.visitExpression(e.right)
+        try self.emit(.dupTop, location: loc)
+        try self.emit(.rotThree, location: loc)
+        try self.emitComparisonOperator(e.op, location: loc)
+        try self.emitJumpIfFalseOrPop(to: cleanup, location: loc)
+      }
+
+      let l = elements.last
+      try self.visitExpression(l.right)
+      try self.emitComparisonOperator(l.op, location: loc)
+
+      switch cond {
+      case true:  try self.emitPopJumpIfTrue (to: next, location: loc)
+      case false: try self.emitPopJumpIfFalse(to: next, location: loc)
+      }
+
+      try self.emitJumpAbsolute(to: end, location: loc)
+      self.setLabel(cleanup)
+      try self.emit(.popTop, location: loc)
+
+      if !cond {
+        try self.emitJumpAbsolute(to: next, location: loc)
+      }
+      self.setLabel(end)
+      return
+
+    default:
+      break // fallback to general implementation
+    }
+
+    try self.visitExpression(expr)
+    switch cond {
+    case true:  try self.emitPopJumpIfTrue (to: next, location: loc)
+    case false: try self.emitPopJumpIfFalse(to: next, location: loc)
+    }
   }
 
   // MARK: - Trailer

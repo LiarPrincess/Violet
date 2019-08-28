@@ -66,6 +66,7 @@ public final class Compiler {
     }
 
     // TODO: Emit nop. because it may be an jump target!
+    // TODO: Check if all blocks have valid labels
 
     assert(self.blocksStack.count == 1)
     return self.currentBlock
