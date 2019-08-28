@@ -158,9 +158,8 @@ internal final class SymbolTableVariableSourcePass {
 
     if flags.contains(.defGlobal) {
       if flags.contains(.defNonlocal) {
-        // PyErr_Format(PyExc_SyntaxError, "name '%U' is nonlocal and global", name);
-        // return error_at_directive(ste, name);
-        fatalError()
+        let kind = CompilerErrorKind.bothGlobalAndNonlocal(name.base)
+        throw self.error(kind, location: info.location)
       }
 
       scopeContext.symbolSources[name] = .srcGlobalExplicit
@@ -171,15 +170,13 @@ internal final class SymbolTableVariableSourcePass {
 
     if flags.contains(.defNonlocal) {
       guard let bound = outerContext?.bound else {
-        // PyErr_Format(PyExc_SyntaxError, "nonlocal declaration not allowed at module level");
-        // return error_at_directive(ste, name);
-        fatalError()
+        let kind = CompilerErrorKind.nonlocalAtModuleLevel(name.base)
+        throw self.error(kind, location: info.location)
       }
 
       if !bound.contains(name) {
-        // PyErr_Format(PyExc_SyntaxError, "no binding for nonlocal '%U' found", name);
-        // return error_at_directive(ste, name);
-        fatalError()
+        let kind = CompilerErrorKind.nonlocalWithoutBinding(name.base)
+        throw self.error(kind, location: info.location)
       }
 
       scopeContext.symbolSources[name] = .srcFree
@@ -264,23 +261,28 @@ internal final class SymbolTableVariableSourcePass {
     // Update source information for all symbols in this scope
     for (name, info) in scope.symbols {
       guard let srcFlags = scopeContext.symbolSources[name] else {
-        assert(false)
-        fatalError()
+        fatalError("[BUG] Source for variable '\(name.base)' was not found, " +
+          "and thus cannot be set.")
       }
 
       var flags = info.flags
       flags.formUnion(srcFlags)
-      self.updateSymbol(name, flags: flags, in: scope)
+
+      let newInfo = SymbolInfo(flags: flags, location: info.location)
+      scope.symbols[name] = newInfo
     }
 
     // Record not yet resolved free variables from children (if any)
     for (name, info) in scopeContext.newFree {
+
       // Handle symbol that already exists in this scope
       if let info = scope.symbols[name] {
         if scope.type == .class && info.flags.containsAny(.defBound) {
           var flags = info.flags
           flags.formUnion(.defFreeClass)
-          self.updateSymbol(name, flags: flags, in: scope)
+
+          let newInfo = SymbolInfo(flags: flags, location: info.location)
+          scope.symbols[name] = newInfo
         }
 
         // It's a cell, or already free in this scope
@@ -297,16 +299,11 @@ internal final class SymbolTableVariableSourcePass {
     }
   }
 
-  /// Update existing symbol.
-  private func updateSymbol(_ name: MangledName,
-                            flags:  SymbolFlags,
-                            in scope: SymbolScope) {
-    guard let current = scope.symbols[name] else {
-      assert(false)
-      fatalError()
-    }
+  // MARK: - Helpers
 
-    let new = SymbolInfo(flags: flags, location: current.location)
-    scope.symbols[name] = new
+  /// Create compiler error
+  internal func error(_ kind: CompilerErrorKind,
+                      location: SourceLocation) -> CompilerError {
+    return CompilerError(kind, location: location)
   }
 }
