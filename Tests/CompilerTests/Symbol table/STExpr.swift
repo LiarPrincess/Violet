@@ -7,6 +7,7 @@ import Parser
 // swiftlint:disable file_length
 
 /// Basic checks for expressions, without nested scopes.
+/// Just so we know that we visit all child expressions.
 class STExpr: XCTestCase, CommonSymbolTable {
 
   // MARK: - Empty
@@ -153,7 +154,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let loc1 = SourceLocation(line: 10, column: 13)
       let left = Expression(.identifier("Anna"), start: loc1, end: self.end)
 
-      let loc2 = SourceLocation(line: 10, column: 13)
+      let loc2 = SourceLocation(line: 12, column: 15)
       let right = Expression(.identifier("Elsa"), start: loc2, end: self.end)
 
       let kind = ExpressionKind.binaryOp(op, left: left, right: right)
@@ -186,7 +187,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let loc1 = SourceLocation(line: 10, column: 13)
       let left = Expression(.identifier("Anna"), start: loc1, end: self.end)
 
-      let loc2 = SourceLocation(line: 10, column: 13)
+      let loc2 = SourceLocation(line: 12, column: 15)
       let right = Expression(.identifier("Elsa"), start: loc2, end: self.end)
 
       let kind = ExpressionKind.boolOp(op, left: left, right: right)
@@ -223,7 +224,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let loc1 = SourceLocation(line: 10, column: 13)
       let left = Expression(.identifier("Anna"), start: loc1, end: self.end)
 
-      let loc2 = SourceLocation(line: 10, column: 13)
+      let loc2 = SourceLocation(line: 12, column: 15)
       let right = Expression(.identifier("Elsa"), start: loc2, end: self.end)
 
       let element = ComparisonElement(op: op, right: right)
@@ -250,10 +251,104 @@ class STExpr: XCTestCase, CommonSymbolTable {
     }
   }
 
-//  case let .tuple(elements),
-//       let .list(elements):
-//  case let .set(elements):
-//  case let .dictionary(elements):
+  // MARK: - Collections
+
+  /// (Anna, Elsa)
+  func test_collections_tuple() {
+    let loc1 = SourceLocation(line: 10, column: 13)
+    let left = Expression(.identifier("Anna"), start: loc1, end: self.end)
+
+    let loc2 = SourceLocation(line: 12, column: 15)
+    let right = Expression(.identifier("Elsa"), start: loc2, end: self.end)
+
+    let kind = ExpressionKind.tuple([left, right])
+
+    if let table = self.createSymbolTable(forExpr: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+
+      XCTAssertEqual(top.symbols.count, 2)
+      XCTAssertContainsSymbol(top,
+                              name: "Anna",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc1)
+      XCTAssertContainsSymbol(top,
+                              name: "Elsa",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc2)
+
+      XCTAssert(top.children.isEmpty)
+      XCTAssert(top.varnames.isEmpty)
+    }
+  }
+
+  /// [Anna, Elsa]
+  func test_collections_list() {
+    let loc1 = SourceLocation(line: 10, column: 13)
+    let left = Expression(.identifier("Anna"), start: loc1, end: self.end)
+
+    let loc2 = SourceLocation(line: 12, column: 15)
+    let right = Expression(.identifier("Elsa"), start: loc2, end: self.end)
+
+    let kind = ExpressionKind.list([left, right])
+
+    if let table = self.createSymbolTable(forExpr: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+
+      XCTAssertEqual(top.symbols.count, 2)
+      XCTAssertContainsSymbol(top,
+                              name: "Anna",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc1)
+      XCTAssertContainsSymbol(top,
+                              name: "Elsa",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc2)
+
+      XCTAssert(top.children.isEmpty)
+      XCTAssert(top.varnames.isEmpty)
+    }
+  }
+
+  /// {Anna:Elsa, **Snowgies}
+  func test_collections_set() {
+    let loc1 = SourceLocation(line: 10, column: 13)
+    let key = Expression(.identifier("Anna"), start: loc1, end: self.end)
+
+    let loc2 = SourceLocation(line: 12, column: 15)
+    let value = Expression(.identifier("Elsa"), start: loc2, end: self.end)
+
+    let loc3 = SourceLocation(line: 10, column: 13)
+    let unpack = Expression(.identifier("Snowgies"), start: loc3, end: self.end)
+
+    let kind = ExpressionKind.dictionary([
+      .keyValue(key: key, value: value),
+      .unpacking(unpack)
+    ])
+
+    if let table = self.createSymbolTable(forExpr: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+
+      XCTAssertEqual(top.symbols.count, 3)
+      XCTAssertContainsSymbol(top,
+                              name: "Anna",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc1)
+      XCTAssertContainsSymbol(top,
+                              name: "Elsa",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc2)
+      XCTAssertContainsSymbol(top,
+                              name: "Snowgies",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc3)
+
+      XCTAssert(top.children.isEmpty)
+      XCTAssert(top.varnames.isEmpty)
+    }
+  }
 
 //  case let .await(value):
 //  case let .yield(value):
