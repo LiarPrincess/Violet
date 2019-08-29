@@ -24,6 +24,11 @@ extension ASTCreator {
     return Statement(kind, start: start, end: end)
   }
 
+  internal func statement(expr kind: ExpressionKind) -> Statement {
+    let stmtKind = StatementKind.expr(self.expression(kind))
+    return Statement(stmtKind, start: start, end: end)
+  }
+
   internal func expression(_ kind: ExpressionKind) -> Expression {
     return Expression(kind, start: start, end: end)
   }
@@ -73,12 +78,12 @@ extension ASTCreator {
   }
 
   // swiftlint:disable:next function_parameter_count
-  internal func arguments(args: [Arg],
-                          defaults: [Expression],
-                          vararg: Vararg,
-                          kwOnlyArgs: [Arg],
-                          kwOnlyDefaults: [Expression],
-                          kwarg: Arg?) -> Arguments {
+  internal func arguments(args: [Arg] = [],
+                          defaults: [Expression] = [],
+                          vararg: Vararg = .none,
+                          kwOnlyArgs: [Arg] = [],
+                          kwOnlyDefaults: [Expression] = [],
+                          kwarg: Arg? = nil) -> Arguments {
     return Arguments(id: .next,
                      args: args,
                      defaults: defaults,
@@ -104,5 +109,22 @@ extension ASTCreator {
                    value: value,
                    start: start,
                    end: end)
+  }
+
+  internal func functionDef(name: String,
+                            args: Arguments? = nil,
+                            body: NonEmptyArray<Statement>? = nil,
+                            decoratorList: [Expression]? = nil,
+                            returns: Expression? = nil) -> StatementKind {
+
+    let a = args ?? self.arguments()
+    let b = body ?? NonEmptyArray(first: self.statement(.pass))
+    let d = decoratorList ?? []
+
+    return StatementKind.functionDef(name: name,
+                                     args: a,
+                                     body: b,
+                                     decoratorList: d,
+                                     returns: returns)
   }
 }

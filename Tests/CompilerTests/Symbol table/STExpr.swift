@@ -8,7 +8,7 @@ import Parser
 // swiftlint:disable type_body_length
 
 /// Basic checks for expressions, without nested scopes.
-/// Just so we know that we visit all child expressions.
+/// Just so we know that we visit all childs.
 class STExpr: XCTestCase, CommonSymbolTable {
 
   // MARK: - Empty
@@ -24,7 +24,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
     }
   }
 
-  // MARK: - Simple atoms
+  // MARK: - Booleans, none, ellipsis, numbers and bytes
 
   func test_bool_none_ellipsis_numbers_bytes() {
     let exprKinds: [ExpressionKind] = [
@@ -504,7 +504,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
     }
   }
 
-  // MARK: - Generators/corutines
+  // MARK: - Generators and corutines
 
   /// await elsa
   func test_await() {
