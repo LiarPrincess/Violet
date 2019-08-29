@@ -29,6 +29,7 @@ public struct CodeObject {
   public var argNames = [String]()
   /// *args or *
   public var varargs = Vararg.none
+  /// Names of keyword only arguments
   public var kwonlyArgNames = [String]()
   /// **kwargs or **
   public var varKeywords = Vararg.none

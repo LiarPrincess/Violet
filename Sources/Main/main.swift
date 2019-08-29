@@ -2,6 +2,7 @@ import Foundation
 import Core
 import Lexer
 import Parser
+import Compiler
 import Bytecode
 
 /// Check the memory footprint of a given type.
@@ -73,6 +74,9 @@ private func checkInvariants() {
   // TODO: StatementKind has size of 234 bytes!
   checkMemorySize(of: Statement.self, expectedSize: 234)
   checkMemorySize(of: StatementKind.self, expectedSize: 217)
+
+  // TODO: CodeObject has size 184 bytes!
+  checkMemorySize(of: CodeObject.self, expectedSize: 184)
 }
 
 checkInvariants()
