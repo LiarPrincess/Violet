@@ -9,6 +9,7 @@ import Parser
 
 /// Basic checks for statements, without nested scopes.
 /// Just so we know that we visit all childs.
+/// Use 'Tools/dump_symtable.py' for reference.
 class STStmt: XCTestCase, CommonSymbolTable {
 
   // MARK: - Pass, break, continue, return, delete and assert
@@ -115,7 +116,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varnames.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -151,7 +152,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varnames.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -166,13 +167,204 @@ class STStmt: XCTestCase, CommonSymbolTable {
   }
 
   // MARK: - For, while, if
+  /// for elsa in frozen:
+  ///   elsa
+  /// else: anna
+  ///
+  /// ```c
+  /// name: top
+  /// lineno: 0
+  /// symbols:
+  ///   elsa - referenced, local, assigned,
+  ///   frozen - referenced, global,
+  ///   anna - referenced, global,
+  /// ```
+  func test_for() {
+    let targetLoc = SourceLocation(line: 10, column: 13)
+    let target = Expression(.identifier("elsa"), start: targetLoc, end: self.end)
 
-//  for(target, iter, body, orElse),
-//  while(test, body, orElse):
-//  if(test, body, orElse):
+    let iterLoc = SourceLocation(line: 12, column: 15)
+    let iter = Expression(.identifier("frozen"), start: iterLoc, end: self.end)
+
+    let bodyLoc = SourceLocation(line: 14, column: 17)
+    let bodyExpr = Expression(.identifier("elsa"), start: bodyLoc, end: self.end)
+    let body = self.statement(.expr(bodyExpr))
+
+    let elseLoc = SourceLocation(line: 16, column: 19)
+    let elseExpr = Expression(.identifier("anna"), start: elseLoc, end: self.end)
+    let elseOr = self.statement(.expr(elseExpr))
+
+    let kind = StatementKind.for(target: target,
+                                 iter: iter,
+                                 body: NonEmptyArray(first: body),
+                                 orElse: [elseOr])
+
+    if let table = self.createSymbolTable(forStmt: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.children.isEmpty)
+
+      XCTAssertEqual(top.symbols.count, 3)
+      XCTAssertContainsSymbol(top,
+                              name: "elsa",
+                              flags: [.defLocal, .srcLocal, .use],
+                              location: targetLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "frozen",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: iterLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "anna",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: elseLoc)
+    }
+  }
+
+  /// while elsa:
+  ///   anna
+  /// else: snowgies
+  ///
+  /// ```c
+  /// name: top
+  /// lineno: 0
+  /// symbols:
+  ///   elsa - referenced, global,
+  ///   anna - referenced, global,
+  ///   snowgies - referenced, global,
+  /// ```
+  func test_while() {
+    let testLoc = SourceLocation(line: 10, column: 13)
+    let test = Expression(.identifier("elsa"), start: testLoc, end: self.end)
+
+    let bodyLoc = SourceLocation(line: 12, column: 15)
+    let bodyExpr = Expression(.identifier("anna"), start: bodyLoc, end: self.end)
+    let body = self.statement(.expr(bodyExpr))
+
+    let elseLoc = SourceLocation(line: 14, column: 17)
+    let elseExpr = Expression(.identifier("snowgies"), start: elseLoc, end: self.end)
+    let elseOr = self.statement(.expr(elseExpr))
+
+    let kind = StatementKind.while(test: test,
+                                   body: NonEmptyArray(first: body),
+                                   orElse: [elseOr])
+
+    if let table = self.createSymbolTable(forStmt: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.children.isEmpty)
+
+      XCTAssertEqual(top.symbols.count, 3)
+      XCTAssertContainsSymbol(top,
+                              name: "elsa",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: testLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "anna",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: bodyLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "snowgies",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: elseLoc)
+    }
+  }
+
+  /// if elsa:
+  ///   anna
+  /// else: snowgies
+  ///
+  /// ```c
+  /// name: top
+  /// lineno: 0
+  /// symbols:
+  ///   elsa - referenced, global,
+  ///   anna - referenced, global,
+  ///   snowgies - referenced, global,
+  /// ```
+  func test_if() {
+    let testLoc = SourceLocation(line: 10, column: 13)
+    let test = Expression(.identifier("elsa"), start: testLoc, end: self.end)
+
+    let bodyLoc = SourceLocation(line: 12, column: 15)
+    let bodyExpr = Expression(.identifier("anna"), start: bodyLoc, end: self.end)
+    let body = self.statement(.expr(bodyExpr))
+
+    let elseLoc = SourceLocation(line: 14, column: 17)
+    let elseExpr = Expression(.identifier("snowgies"), start: elseLoc, end: self.end)
+    let elseOr = self.statement(.expr(elseExpr))
+
+    let kind = StatementKind.if(test: test,
+                                body: NonEmptyArray(first: body),
+                                orElse: [elseOr])
+
+    if let table = self.createSymbolTable(forStmt: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.children.isEmpty)
+
+      XCTAssertEqual(top.symbols.count, 3)
+      XCTAssertContainsSymbol(top,
+                              name: "elsa",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: testLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "anna",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: bodyLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "snowgies",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: elseLoc)
+    }
+  }
 
   // MARK: - With
-//  with(items, body),
+
+  /// with elsa as queen:
+  ///   queen
+  ///
+  /// ```c
+  /// name: top
+  /// lineno: 0
+  /// symbols:
+  ///   elsa - referenced, global,
+  ///   queen - referenced, local, assigned,
+  /// ```
+  func test_with() {
+    let ctxLoc = SourceLocation(line: 10, column: 13)
+    let ctx = Expression(.identifier("elsa"), start: ctxLoc, end: self.end)
+
+    let nameLoc = SourceLocation(line: 12, column: 15)
+    let name = Expression(.identifier("queen"), start: nameLoc, end: self.end)
+
+    let bodyLoc = SourceLocation(line: 14, column: 17)
+    let bodyExpr = Expression(.identifier("queen"), start: bodyLoc, end: self.end)
+    let body = self.statement(.expr(bodyExpr))
+
+    let item = self.withItem(contextExpr: ctx, optionalVars: name)
+    let kind = StatementKind.with(items: NonEmptyArray(first: item),
+                                  body: NonEmptyArray(first: body))
+
+    if let table = self.createSymbolTable(forStmt: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.children.isEmpty)
+
+      XCTAssertEqual(top.symbols.count, 2)
+      XCTAssertContainsSymbol(top,
+                              name: "elsa",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: ctxLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "queen",
+                              flags: [.defLocal, .srcLocal, .use],
+                              location: nameLoc)
+    }
+  }
 
   // MARK: - Exceptions
 //  raise(exc, cause):

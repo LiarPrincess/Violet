@@ -9,6 +9,7 @@ import Parser
 
 /// Basic checks for expressions, without nested scopes.
 /// Just so we know that we visit all childs.
+/// Use 'Tools/dump_symtable.py' for reference.
 class STExpr: XCTestCase, CommonSymbolTable {
 
   // MARK: - Empty

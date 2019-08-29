@@ -6,8 +6,9 @@ import Parser
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
-/// Basic checks for expressions, without nested scopes.
-/// Just so we know that we visit all child expressions.
+/// Basic checks for comprehension, without nested scopes.
+/// Just so we know that we visit all childs.
+/// Use 'Tools/dump_symtable.py' for reference.
 class STExprComprehension: XCTestCase, CommonSymbolTable {
 
   // MARK: - List

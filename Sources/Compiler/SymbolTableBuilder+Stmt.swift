@@ -89,7 +89,7 @@ extension SymbolTableBuilder {
 
     case let .for(target, iter, body, orElse),
          let .asyncFor(target, iter, body, orElse):
-      try self.visitExpression(target)
+      try self.visitExpression(target, context: .store)
       try self.visitExpression(iter)
       try self.visitStatements(body)
       try self.visitStatements(orElse)

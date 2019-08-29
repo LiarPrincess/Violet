@@ -15,7 +15,7 @@ extension SymbolTableBuilder {
     context: ExpressionContext = .load) throws where S.Element == Expression {
 
     for e in exprs {
-      try self.visitExpression(e)
+      try self.visitExpression(e, context: context)
     }
   }
 
@@ -23,7 +23,7 @@ extension SymbolTableBuilder {
   internal func visitExpression(_ expr: Expression?,
                                 context: ExpressionContext = .load) throws {
     if let e = expr {
-      try self.visitExpression(e)
+      try self.visitExpression(e, context: context)
     }
   }
 

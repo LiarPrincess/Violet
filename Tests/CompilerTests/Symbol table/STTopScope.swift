@@ -5,6 +5,7 @@ import Parser
 
 // TODO: Rename to STGlobal, STNonlocal
 
+/// Use 'Tools/dump_symtable.py' for reference.
 class STTopScope: XCTestCase, CommonSymbolTable {
 
   // MARK: - No modifiers
