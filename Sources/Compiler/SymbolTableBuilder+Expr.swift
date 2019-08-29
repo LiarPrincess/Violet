@@ -118,8 +118,8 @@ extension SymbolTableBuilder {
       try self.visitExpression(body)
       self.leaveScope()
 
-    case let .call(`func`, args, keywords):
-      try self.visitExpression(`func`)
+    case let .call(f, args, keywords):
+      try self.visitExpression(f)
       try self.visitExpressions(args)
       try self.visitKeywords(keywords)
 

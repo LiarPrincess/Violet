@@ -625,4 +625,121 @@ class STExpr: XCTestCase, CommonSymbolTable {
       XCTAssert(top.varnames.isEmpty)
     }
   }
+
+  // MARK: - Call
+
+  /// let_it_go(elsa, who=anna)
+  ///
+  /// ```c
+  ///  name: top
+  ///  lineno: 0
+  ///  symbols:
+  ///    let_it_go - referenced, global,
+  ///    elsa - referenced, global,
+  ///    anna - referenced, global,
+  /// ```
+  func test_call_args() {
+    let fLoc = SourceLocation(line: 10, column: 13)
+    let f = Expression(.identifier("let_it_go"), start: fLoc, end: self.end)
+
+    let argLoc = SourceLocation(line: 12, column: 15)
+    let arg = Expression(.identifier("elsa"), start: argLoc, end: self.end)
+
+    let kwArgLoc = SourceLocation(line: 14, column: 17)
+    let kwArg = Expression(.identifier("anna"), start: kwArgLoc, end: self.end)
+    let kw = self.keyword(name: "who", value: kwArg)
+
+    let kind = ExpressionKind.call(f: f, args: [arg], keywords: [kw])
+
+    if let table = self.createSymbolTable(forExpr: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+
+      XCTAssertEqual(top.symbols.count, 3)
+      XCTAssertContainsSymbol(top,
+                              name: "let_it_go",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: fLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "elsa",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: argLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "anna",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: kwArgLoc)
+
+      XCTAssert(top.children.isEmpty)
+      XCTAssert(top.varnames.isEmpty)
+    }
+  }
+
+  // MARK: - Lambda
+
+  /// lambda elsa, anna: elsa
+  /// (We have more tests in function def)
+  ///
+  /// ```c
+  /// name: top
+  /// lineno: 0
+  /// symbols:
+  /// children:
+  ///   name: lambda
+  ///   lineno: 1
+  ///   is optimized
+  ///   parameters: ('elsa', 'anna')
+  ///   locals: ('elsa', 'anna')
+  ///   symbols:
+  ///     elsa - referenced, parameter, local,
+  ///     anna - parameter, local,
+  /// ```
+  func test_call_lambda() {
+    let arg1Loc = SourceLocation(line: 10, column: 13)
+    let arg1 = Arg("elsa", annotation: nil, start: arg1Loc, end: self.end)
+
+    let arg2Loc = SourceLocation(line: 12, column: 15)
+    let arg2 = Arg("anna", annotation: nil, start: arg2Loc, end: self.end)
+
+    let bodyLoc = SourceLocation(line: 14, column: 17)
+    let body = Expression(.identifier("elsa"), start: bodyLoc, end: self.end)
+
+    let kind = ExpressionKind.lambda(
+      args: self.arguments(
+        args:[arg1, arg2],
+        defaults: [],
+        vararg: .none,
+        kwOnlyArgs: [],
+        kwOnlyDefaults: [],
+        kwarg: nil),
+      body: body
+    )
+
+    if let table = self.createSymbolTable(forExpr: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssert(top.symbols.isEmpty)
+      XCTAssert(top.varnames.isEmpty)
+
+      XCTAssertEqual(top.children.count, 1)
+      guard top.children.count == 1 else { return }
+      let lambdaScope = top.children[0]
+
+      XCTAssertScope(lambdaScope, name: "lambda", type: .function, flags: [.isNested])
+      XCTAssert(lambdaScope.children.isEmpty)
+
+      XCTAssertEqual(lambdaScope.varnames.count, 2)
+      XCTAssertContainsParameter(lambdaScope, name: "elsa")
+      XCTAssertContainsParameter(lambdaScope, name: "anna")
+
+      XCTAssertEqual(lambdaScope.symbols.count, 2)
+      XCTAssertContainsSymbol(lambdaScope,
+                              name: "elsa",
+                              flags: [.defParam, .srcLocal, .use],
+                              location: arg1Loc)
+      XCTAssertContainsSymbol(lambdaScope,
+                              name: "anna",
+                              flags: [.defParam, .srcLocal],
+                              location: arg2Loc)
+    }
+  }
 }
