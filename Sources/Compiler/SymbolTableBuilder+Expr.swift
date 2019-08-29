@@ -12,7 +12,7 @@ extension SymbolTableBuilder {
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
   internal func visitExpressions<S: Sequence>(
     _ exprs: S,
-    isAssignmentTarget: Bool = false) throws where S.Element == Expression {
+    context: ExpressionContext = .load) throws where S.Element == Expression {
 
     for e in exprs {
       try self.visitExpression(e)
@@ -20,7 +20,8 @@ extension SymbolTableBuilder {
   }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  internal func visitExpression(_ expr: Expression?) throws {
+  internal func visitExpression(_ expr: Expression?,
+                                context: ExpressionContext = .load) throws {
     if let e = expr {
       try self.visitExpression(e)
     }
@@ -34,7 +35,7 @@ extension SymbolTableBuilder {
   /// Used only for: identifiers, attributes, subscripts, starred, lists, tuples
   /// (see `expr_context` in CPython -> Parser -> Python.asdl).
   internal func visitExpression(_ expr: Expression,
-                                isAssignmentTarget: Bool = false) throws {
+                                context: ExpressionContext = .load) throws {
     switch expr.kind {
     case .true, .false, .none, .ellipsis:
       break
@@ -42,11 +43,11 @@ extension SymbolTableBuilder {
       break
 
     case let .identifier(name):
-      let flags: SymbolFlags = isAssignmentTarget ? .defLocal : .use
+      let flags: SymbolFlags = context == .store ? .defLocal : .use
       try self.addSymbol(name, flags: flags, location: expr.start)
 
       let isSuper = self.currentScope.type == .function && name == "super"
-      if !isAssignmentTarget && isSuper {
+      if context == .load && isSuper {
         let name = SpecialIdentifiers.__class__
         try self.addSymbol(name, flags: .use, location: expr.start)
       }
@@ -65,7 +66,7 @@ extension SymbolTableBuilder {
 
     case let .tuple(elements),
          let .list(elements):
-      try self.visitExpressions(elements, isAssignmentTarget: isAssignmentTarget)
+      try self.visitExpressions(elements, context: context)
     case let .set(elements):
       try self.visitExpressions(elements)
     case let .dictionary(elements):
@@ -129,12 +130,12 @@ extension SymbolTableBuilder {
       try self.visitExpression(orElse)
 
     case let .attribute(expr, _):
-      try self.visitExpression(expr, isAssignmentTarget: isAssignmentTarget)
+      try self.visitExpression(expr, context: context)
     case let .subscript(expr, slice):
-      try self.visitExpression(expr, isAssignmentTarget: isAssignmentTarget)
+      try self.visitExpression(expr, context: context)
       try self.visitSlice(slice)
     case let .starred(expr):
-      try self.visitExpression(expr, isAssignmentTarget: isAssignmentTarget)
+      try self.visitExpression(expr, context: context)
     }
   }
 
@@ -209,7 +210,7 @@ extension SymbolTableBuilder {
 
     // Outermost iter is received as an argument
     try self.implicitArg(pos: 0, location: generators.first.start)
-    try self.visitExpression(first.target, isAssignmentTarget: true)
+    try self.visitExpression(first.target, context: .store)
     try self.visitExpressions(first.ifs)
 
     for c in generators.dropFirst() {

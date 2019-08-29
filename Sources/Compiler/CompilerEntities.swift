@@ -2,6 +2,31 @@ import Core
 import Parser
 import Bytecode
 
+internal enum SpecialIdentifiers {
+  /// Name of the AST root scope
+  internal static let top = "top"
+
+  /// Name of the lambda scope
+  internal static let lambda = "lambda"
+
+  /// Name of the list comprehension scope
+  internal static let listcomp = "listcomp"
+  /// Name of the set comprehension scope
+  internal static let setcomp  = "setcomp"
+  /// Name of the dict comprehension scope
+  internal static let dictcomp = "dictcomp"
+  /// Name of the generator expression scope
+  internal static let genexpr  = "genexpr"
+
+  internal static let __class__ = "__class__"
+}
+
+internal enum ExpressionContext {
+  case store
+  case load
+  case del
+}
+
 /// Index of jump target in `CodeObject.labels`.
 /// Basically a wrapper around array index for additional type safety.
 /// - Important:

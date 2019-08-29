@@ -54,13 +54,13 @@ extension SymbolTableBuilder {
         self.currentScope.hasReturnValue = true
       }
     case let .delete(value):
-      try self.visitExpressions(value)
+      try self.visitExpressions(value, context: .del)
 
     case let .assign(targets, value):
-      try self.visitExpressions(targets, isAssignmentTarget: true)
+      try self.visitExpressions(targets, context: .store)
       try self.visitExpression(value)
     case let .augAssign(target, _, value):
-      try self.visitExpression(target, isAssignmentTarget: true)
+      try self.visitExpression(target, context: .store)
       try self.visitExpression(value)
     case let .annAssign(target, annotation, value, isSimple):
       if case let ExpressionKind.identifier(name) = target.kind {
@@ -68,8 +68,8 @@ extension SymbolTableBuilder {
 
         // global elsa
         // elsa: Int = 5 <- we can't do that
-        let isGlobalNonlocal = current?.flags
-          .containsAny([.defGlobal, .defNonlocal]) ?? false
+        let isGlobalNonlocal =
+          current?.flags.containsAny([.defGlobal, .defNonlocal]) ?? false
 
         if isSimple && isGlobalNonlocal {
           let errorKind: CompilerErrorKind = current?.flags == .defGlobal ?
@@ -81,7 +81,7 @@ extension SymbolTableBuilder {
         let flags: SymbolFlags = isSimple ? [.defLocal, .annotated] : .defLocal
         try self.addSymbol(name, flags: flags, location: stmt.start)
       } else {
-        try self.visitExpression(target, isAssignmentTarget: true)
+        try self.visitExpression(target, context: .store)
       }
 
       try self.visitExpression(annotation)
@@ -129,9 +129,7 @@ extension SymbolTableBuilder {
 
     case let .global(names):
       for name in names {
-        let current = self.lookupMangled(name)
-
-        if let c = current {
+        if let c = self.lookupMangled(name) {
           let errorLocation = stmt.start
           if c.flags.contains(.defParam) {
             throw self.error(.globalParam(name), location: errorLocation)
@@ -152,9 +150,7 @@ extension SymbolTableBuilder {
 
     case let .nonlocal(names):
       for name in names {
-        let current = self.lookupMangled(name)
-
-        if let c = current {
+        if let c = self.lookupMangled(name) {
           let errorLocation = stmt.start
           if c.flags.contains(.defParam) {
             throw self.error(.nonlocalParam(name), location: errorLocation)
@@ -187,7 +183,7 @@ extension SymbolTableBuilder {
   private func visitWithItems(_ items: NonEmptyArray<WithItem>) throws {
     for i in items {
       try self.visitExpression(i.contextExpr)
-      try self.visitExpression(i.optionalVars)
+      try self.visitExpression(i.optionalVars, context: .store)
     }
   }
 

@@ -125,8 +125,8 @@ public struct SymbolFlags: OptionSet, Equatable {
 
   // MARK: Variable definition (in a current scope)
 
-  /// Defined by assignment in code block, for example: `elsa = 5`,
-  /// `assigned` in `symtable` module
+  /// Defined in code block, for example: `elsa = 5`.
+  /// Used for `assigned` property in `symtable` module.
   public static let defLocal = SymbolFlags(rawValue: 1 << 0)
   /// Defined by `global` statement, for example: `global elsa`
   public static let defGlobal = SymbolFlags(rawValue: 1 << 1)
@@ -162,7 +162,8 @@ public struct SymbolFlags: OptionSet, Equatable {
 
   // MARK: Additional
 
-  /// Name is used, `referenced` in `symtable` module
+  /// Name is used.
+  /// Used for `referenced` property in `symtable` module.
   public static let use = SymbolFlags(rawValue: 1 << 12)
   /// This name is annotated
   public static let annotated = SymbolFlags(rawValue: 2 << 13)
