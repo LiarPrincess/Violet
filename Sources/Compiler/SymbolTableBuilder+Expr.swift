@@ -202,14 +202,14 @@ extension SymbolTableBuilder {
     // new scope for comprehensions
     let scopeKind = self.getIdentifier(for: kind)
     self.enterScope(name: scopeKind, type: .function, node: expr)
-    defer { self.leaveScope() }
 
     if first.isAsync {
       self.currentScope.isCoroutine = true
     }
 
-    try self.implicitArg(pos: 0, location: elt.start)
-    try self.visitExpression(first.target)
+    // Outermost iter is received as an argument
+    try self.implicitArg(pos: 0, location: generators.first.start)
+    try self.visitExpression(first.target, isAssignmentTarget: true)
     try self.visitExpressions(first.ifs)
 
     for c in generators.dropFirst() {
@@ -227,6 +227,7 @@ extension SymbolTableBuilder {
     if kind == .generator {
       self.currentScope.isGenerator = true
     }
+    self.leaveScope()
   }
 
   private func getIdentifier(for kind: ComprehensionKind) -> String {
@@ -238,7 +239,7 @@ extension SymbolTableBuilder {
     }
   }
 
-  /// Add implicit `.pos` argument to scope.
+  /// Add implicit `.pos` argument for outermost iter.
   /// symtable_implicit_arg(struct symtable *st, int pos)
   private func implicitArg(pos: Int, location: SourceLocation) throws {
     let id = ".\(pos)"

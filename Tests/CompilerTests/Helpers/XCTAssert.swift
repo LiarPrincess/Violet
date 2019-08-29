@@ -9,7 +9,7 @@ import Compiler
 internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
                                       name: String,
                                       flags: SymbolFlags,
-                                      location: SourceLocation,
+                                      location: SourceLocation? = nil,
                                       _ message:  String = "",
                                       file: StaticString = #file,
                                       line: UInt         = #line) {
@@ -21,10 +21,12 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
 
   guard let info = scope.symbols[mangled] else { return }
 
-  XCTAssertEqual(info.location,
-                 location,
-                 "\(message) (invalid location)",
-                 file: file, line: line)
+  if let loc = location {
+    XCTAssertEqual(info.location,
+                   loc,
+                   "\(message) (invalid location)",
+      file: file, line: line)
+  }
 
   if info.flags == flags {
     return
@@ -37,11 +39,24 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
     let contains = info.flags.contains(f)
     let shouldContain = flags.contains(f)
 
+    let additionalMissing = contains ? "unexpected" : "missing"
+
     XCTAssertEqual(contains,
                    shouldContain,
-                   "\(message) (invalid flag: 1<<\(shift))",
+                   "\(message) (\(additionalMissing) flag: 1<<\(shift))",
                    file: file, line: line)
   }
+}
+
+internal func XCTAssertContainsParameter(_ scope: SymbolScope,
+                                         name: String,
+                                         _ message:  String = "",
+                                         file: StaticString = #file,
+                                         line: UInt         = #line) {
+  let mangled = MangledName(from: name)
+  XCTAssertTrue(scope.varnames.contains(mangled),
+                "\(message) (missing \(name))",
+                file: file, line: line)
 }
 
 internal struct ScopeFeatures: OptionSet {

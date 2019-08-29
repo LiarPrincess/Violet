@@ -125,11 +125,12 @@ public struct SymbolFlags: OptionSet, Equatable {
 
   // MARK: Variable definition (in a current scope)
 
-  /// Defined by assignment in code block
+  /// Defined by assignment in code block, for example: `elsa = 5`,
+  /// `assigned` in `symtable` module
   public static let defLocal = SymbolFlags(rawValue: 1 << 0)
-  /// Defined by `global` statement
+  /// Defined by `global` statement, for example: `global elsa`
   public static let defGlobal = SymbolFlags(rawValue: 1 << 1)
-  /// Defined by `nonlocal` statement
+  /// Defined by `nonlocal` statement, for example: `nonlocal elsa`
   public static let defNonlocal = SymbolFlags(rawValue: 1 << 2)
   /// Defined by formal function parameter
   public static let defParam = SymbolFlags(rawValue: 1 << 3)
@@ -161,7 +162,7 @@ public struct SymbolFlags: OptionSet, Equatable {
 
   // MARK: Additional
 
-  /// Name is used
+  /// Name is used, `referenced` in `symtable` module
   public static let use = SymbolFlags(rawValue: 1 << 12)
   /// This name is annotated
   public static let annotated = SymbolFlags(rawValue: 2 << 13)

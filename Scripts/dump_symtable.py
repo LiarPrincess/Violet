@@ -55,11 +55,13 @@ def dumpTable(table: symtable.SymbolTable, level = 0):
     dumpTable(child, level + 1)
 
 if __name__ == '__main__':
-  if len(sys.argv) < 2:
-    print("Usage: 'python3 dump_symtable.py <file.py>'")
-    sys.exit(1)
+  # if len(sys.argv) < 2:
+  #   print("Usage: 'python3 dump_symtable.py <file.py>'")
+  #   sys.exit(1)
 
-  filename = sys.argv[1]
-  code = open(filename).read()
+  # filename = sys.argv[1]
+  # code = open(filename).read()
+
+  code = '[eric for ariel in [] for eric in []]'
   table = symtable.symtable(code, '<string>', 'exec')
   dumpTable(table)

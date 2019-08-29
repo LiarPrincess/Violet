@@ -587,5 +587,42 @@ class STExpr: XCTestCase, CommonSymbolTable {
   }
 
   // MARK: - If expression
-  //  case let .ifExpression(test, body, orElse):
+
+  /// snow if elsa else anna
+  func test_ifExpression() {
+    let loc1 = SourceLocation(line: 10, column: 13)
+    let body = Expression(.identifier("snow"), start: loc1, end: self.end)
+
+    let loc2 = SourceLocation(line: 12, column: 15)
+    let test = Expression(.identifier("elsa"), start: loc2, end: self.end)
+
+    let loc3 = SourceLocation(line: 14, column: 17)
+    let orElse = Expression(.identifier("anna"), start: loc3, end: self.end)
+
+    let kind = ExpressionKind.ifExpression(test: test,
+                                           body: body,
+                                           orElse: orElse)
+
+    if let table = self.createSymbolTable(forExpr: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+
+      XCTAssertEqual(top.symbols.count, 3)
+      XCTAssertContainsSymbol(top,
+                              name: "snow",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc1)
+      XCTAssertContainsSymbol(top,
+                              name: "elsa",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc2)
+      XCTAssertContainsSymbol(top,
+                              name: "anna",
+                              flags: [.use, .srcGlobalImplicit],
+                              location: loc3)
+
+      XCTAssert(top.children.isEmpty)
+      XCTAssert(top.varnames.isEmpty)
+    }
+  }
 }
