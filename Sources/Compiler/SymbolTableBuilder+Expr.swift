@@ -112,7 +112,8 @@ extension SymbolTableBuilder {
     case let .lambda(args, body):
       try self.visitDefaults(args)
 
-      self.enterScope(name: SpecialIdentifiers.lambda, type: .function, node: expr)
+      let id = SpecialIdentifiers.lambda
+      self.enterScope(name: id, type: .function, node: expr)
       try self.visitArguments(args)
       try self.visitExpression(body)
       self.leaveScope()
