@@ -367,9 +367,131 @@ class STStmt: XCTestCase, CommonSymbolTable {
   }
 
   // MARK: - Exceptions
-//  raise(exc, cause):
-//  try(body, handlers, orElse, finalBody):
+
+  /// raise elsa from arendelle
+  ///
+  /// ```c
+  /// name: top
+  /// lineno: 0
+  /// symbols:
+  ///   elsa - referenced, global,
+  ///   arendelle - referenced, global,
+  /// ```
+  func test_raise() {
+    let excLoc = SourceLocation(line: 10, column: 13)
+    let exc = Expression(.identifier("elsa"), start: excLoc, end: self.end)
+
+    let causeLoc = SourceLocation(line: 12, column: 15)
+    let cause = Expression(.identifier("arendelle"), start: causeLoc, end: self.end)
+
+    let kind = StatementKind.raise(exc: exc, cause: cause)
+
+    if let table = self.createSymbolTable(forStmt: kind) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.children.isEmpty)
+
+      XCTAssertEqual(top.symbols.count, 2)
+      XCTAssertContainsSymbol(top,
+                              name: "elsa",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: excLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "arendelle",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: causeLoc)
+    }
+  }
+
+  /// try: magic
+  /// except elsa as queen: queen
+  /// else: spell
+  /// finally: sing
+  ///
+  /// ```c
+  /// name: top
+  ///  lineno: 0
+  ///  symbols:
+  ///    magic - referenced, global,
+  ///    spell - referenced, global,
+  ///    elsa - referenced, global,
+  ///    queen - referenced, local, assigned,
+  ///    sing - referenced, global,
+  /// ```
+  func test_try() {
+    let tryLoc = SourceLocation(line: 10, column: 13)
+    let tryBody = self.expression(.identifier("magic"), start: tryLoc)
+
+    let handlerTypeLoc = SourceLocation(line: 11, column: 15)
+    let handlerType = self.expression(.identifier("elsa"), start: handlerTypeLoc)
+
+    let handlerLoc = SourceLocation(line: 13, column: 15)
+    let handlerBody = self.statement(expr: .identifier("queen"))
+
+    let elseLoc = SourceLocation(line: 14, column: 17)
+    let elseBody = self.expression(.identifier("spell"), start: elseLoc)
+
+    let finallyLoc = SourceLocation(line: 15, column: 17)
+    let finallyBody = self.expression(.identifier("sing"), start: finallyLoc)
+
+    let handler = self.exceptHandler(type: handlerType,
+                                     name: "queen",
+                                     body: NonEmptyArray(first: handlerBody),
+                                     start: handlerLoc)
+
+    let stmt = self.tryStmt(body: tryBody,
+                            handlers: [handler],
+                            orElse: elseBody,
+                            finalBody: finallyBody)
+
+    if let table = self.createSymbolTable(forStmt: stmt) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.children.isEmpty)
+
+      XCTAssertEqual(top.symbols.count, 5)
+      XCTAssertContainsSymbol(top,
+                              name: "magic",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: tryLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "spell",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: elseLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "elsa",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: handlerTypeLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "queen",
+                              flags: [.defLocal, .srcLocal, .use],
+                              location: handlerLoc)
+      XCTAssertContainsSymbol(top,
+                              name: "sing",
+                              flags: [.srcGlobalImplicit, .use],
+                              location: finallyLoc)
+    }
+  }
+
+  private func tryStmt(body: Expression,
+                       handlers: [ExceptHandler],
+                       orElse: Expression,
+                       finalBody: Expression) -> Statement {
+
+    let kind = StatementKind.try(
+      body: NonEmptyArray(first: self.statement(.expr(body))),
+      handlers: handlers,
+      orElse: [self.statement(.expr(orElse))],
+      finalBody: [self.statement(.expr(finalBody))]
+    )
+    return self.statement(kind)
+  }
 
   // MARK: - import
-//  import(names),
+
+  func test_import() {
+
+  }
 }

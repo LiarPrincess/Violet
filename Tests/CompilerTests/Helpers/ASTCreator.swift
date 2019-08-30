@@ -20,17 +20,20 @@ extension ASTCreator {
     return AST(kind, start: start, end: end)
   }
 
-  internal func statement(_ kind: StatementKind) -> Statement {
-    return Statement(kind, start: start, end: end)
+  internal func statement(_ kind: StatementKind,
+                          start: SourceLocation? = nil) -> Statement {
+    return Statement(kind, start: start ?? self.start, end: end)
   }
 
-  internal func statement(expr kind: ExpressionKind) -> Statement {
+  internal func statement(expr kind: ExpressionKind,
+                          start: SourceLocation? = nil) -> Statement {
     let stmtKind = StatementKind.expr(self.expression(kind))
-    return Statement(stmtKind, start: start, end: end)
+    return Statement(stmtKind, start: start ?? self.start, end: end)
   }
 
-  internal func expression(_ kind: ExpressionKind) -> Expression {
-    return Expression(kind, start: start, end: end)
+  internal func expression(_ kind: ExpressionKind,
+                           start: SourceLocation? = nil) -> Expression {
+    return Expression(kind, start: start ?? self.start, end: end)
   }
 
   internal func slice(_ kind: SliceKind) -> Slice {
@@ -55,12 +58,13 @@ extension ASTCreator {
 
   internal func exceptHandler(type: Expression?,
                               name: String?,
-                              body: NonEmptyArray<Statement>) -> ExceptHandler {
+                              body: NonEmptyArray<Statement>,
+                              start: SourceLocation? = nil) -> ExceptHandler {
     return ExceptHandler(id: .next,
                          type: type,
                          name: name,
                          body: body,
-                         start: start,
+                         start: start ?? self.start,
                          end: end)
   }
 
@@ -77,7 +81,6 @@ extension ASTCreator {
                          end: end)
   }
 
-  // swiftlint:disable:next function_parameter_count
   internal func arguments(args: [Arg] = [],
                           defaults: [Expression] = [],
                           vararg: Vararg = .none,
@@ -114,17 +117,16 @@ extension ASTCreator {
   internal func functionDef(name: String,
                             args: Arguments? = nil,
                             body: NonEmptyArray<Statement>? = nil,
-                            decoratorList: [Expression]? = nil,
+                            decoratorList: [Expression] = [],
                             returns: Expression? = nil) -> StatementKind {
 
     let a = args ?? self.arguments()
     let b = body ?? NonEmptyArray(first: self.statement(.pass))
-    let d = decoratorList ?? []
 
     return StatementKind.functionDef(name: name,
                                      args: a,
                                      body: b,
-                                     decoratorList: d,
+                                     decoratorList: decoratorList,
                                      returns: returns)
   }
 }
