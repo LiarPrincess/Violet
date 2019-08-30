@@ -105,6 +105,25 @@ extension ASTCreator {
                                      returns: returns)
   }
 
+  internal func importStmt(names: [Alias]) -> StatementKind {
+    assert(names.any)
+    let array = NonEmptyArray(first: names[0], rest: names[1...])
+    return StatementKind.import(array)
+  }
+
+  internal func importFromStmt(moduleName: String?,
+                               names: [Alias],
+                               level: UInt8 = 0,
+                               start: SourceLocation? = nil) -> Statement {
+    assert(names.any)
+    let array = NonEmptyArray(first: names[0], rest: names[1...])
+    let kind = StatementKind.importFrom(moduleName: moduleName,
+                                        names: array,
+                                        level: level)
+
+    return self.statement(kind, start: start)
+  }
+
   // MARK: - Expressions
 
   internal func expression(_ kind: ExpressionKind,
@@ -118,10 +137,12 @@ extension ASTCreator {
     return Slice(kind, start: start, end: end)
   }
 
-  internal func alias(name: String, asName: String?) -> Alias {
+  internal func alias(name: String,
+                      asName: String?,
+                      start: SourceLocation? = nil) -> Alias {
     return Alias(name: name,
                  asName: asName,
-                 start: start,
+                 start: start ?? self.start,
                  end: end)
   }
 

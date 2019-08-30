@@ -125,7 +125,7 @@ extension SymbolTableBuilder {
 
     case let .import(names),
          let .importFrom(_, names, _):
-      try self.visitAliases(names)
+      try self.visitAliases(names, importStart: stmt.start)
 
     case let .global(names):
       for name in names {
@@ -203,13 +203,14 @@ extension SymbolTableBuilder {
   // MARK: - Alias
 
   /// symtable_visit_alias(struct symtable *st, alias_ty a)
-  private func visitAliases(_ aliases: NonEmptyArray<Alias>) throws {
+  private func visitAliases(_ aliases: NonEmptyArray<Alias>,
+                            importStart: SourceLocation) throws {
     for a in aliases {
       switch a.name {
       case "*":
         // TODO: AST -> Alias should be a sum type tith star|alias(name, as)
         if self.currentScope.type != .module {
-          throw self.error(.nonModuleImportStar, location: a.start)
+          throw self.error(.nonModuleImportStar, location: importStart)
         }
 
       default:
