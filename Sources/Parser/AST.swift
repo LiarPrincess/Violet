@@ -148,8 +148,9 @@ public enum StatementKind: Equatable {
   /// - `target` is a single node and can be a Name, a Attribute or a Subscript
   /// - `annotation` is the annotation, such as a Str or Name node
   /// - `value` is a single optional node
-  /// - `simple` indicates that `target` does not appear
-  /// in between parenthesis and is pure name and not expression.
+  /// - `simple` indicates that `target`
+  /// does not appear in between parenthesis (which excludes single element tuple)
+  /// and is pure name and not expression (which excludes `tangled.rapunzel`).
   case annAssign(target: Expression, annotation: Expression, value: Expression?, isSimple: Bool)
   /// A `for` loop.
   /// - `target` holds the variable(s) the loop assigns to, as a single Name, Tuple or List node.

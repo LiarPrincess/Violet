@@ -1,12 +1,16 @@
 import Core
 import Parser
 
+// In CPython:
+// Python -> symtable.c
+
 // swiftlint:disable function_body_length cyclomatic_complexity
 
 extension SymbolTableBuilder {
 
   // MARK: - Statement
 
+  /// symtable_visit_stmt(struct symtable *st, stmt_ty s)
   internal func visitStatements<S: Sequence>(_ stmts: S)
     throws where S.Element == Statement {
 
@@ -15,6 +19,7 @@ extension SymbolTableBuilder {
     }
   }
 
+  /// symtable_visit_stmt(struct symtable *st, stmt_ty s)
   internal func visitStatement(_ stmt: Statement) throws {
     switch stmt.kind {
     case let .functionDef(name, args, body, decoratorList, returns),
@@ -66,20 +71,32 @@ extension SymbolTableBuilder {
       if case let ExpressionKind.identifier(name) = target.kind {
         let current = self.lookupMangled(name)
 
-        // global elsa
-        // elsa: Int = 5 <- we can't do that
-        let isGlobalNonlocal =
-          current?.flags.containsAny([.defGlobal, .defNonlocal]) ?? false
+        // This throws (the same for nonlocal):
+        //   global rapunzel
+        //   rapunzel: Int = 5
+        // This does not throw:
+        //   global rapunzel
+        //   (rapunzel): Int = 5 (or tangled.rapunzel: Int = 5)
+        // We use `isSimple` to differentiate between them.
 
-        if isSimple && isGlobalNonlocal {
-          let errorKind: CompilerErrorKind = current?.flags == .defGlobal ?
-            .globalAnnot(name) :
-            .nonlocalAnnot(name)
-          throw self.error(errorKind, location: stmt.start)
+        let isGlobal = current?.flags.contains(.defGlobal) ?? false
+        if isGlobal && isSimple {
+          throw self.error(.globalAnnot(name), location: stmt.start)
         }
 
-        let flags: SymbolFlags = isSimple ? [.defLocal, .annotated] : .defLocal
-        try self.addSymbol(name, flags: flags, location: stmt.start)
+        let isNonlocal = current?.flags.contains(.defNonlocal) ?? false
+        if isNonlocal && isSimple {
+          throw self.error(.nonlocalAnnot(name), location: stmt.start)
+        }
+
+        // '(rapunzel): Int = 5' is tuple -> not simple!
+        if isSimple {
+          let flags: SymbolFlags = [.defLocal, .annotated]
+          try self.addSymbol(name, flags: flags, location: target.start)
+        } else if value != nil {
+          // different than CPython, but has the same effect:
+          try self.visitExpression(target, context: .store)
+        }
       } else {
         try self.visitExpression(target, context: .store)
       }

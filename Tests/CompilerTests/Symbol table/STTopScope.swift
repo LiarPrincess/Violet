@@ -54,7 +54,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
 
   /// global elsa
   func test_global() {
-    let stmt = self.createGlobalIdentifier(name: "elsa", location: loc1)
+    let stmt = self.globalStmt(name: "elsa", location: loc1)
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
@@ -74,7 +74,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
   /// def let_it_go(elsa): global elsa
   func test_global_equalToParam_throws() {
     let arg = self.arg("elsa")
-    let body = self.createGlobalIdentifier(name: "elsa", location: loc1)
+    let body = self.globalStmt(name: "elsa", location: loc1)
 
     let f = self.functionDefStmt(name: "let_it_go",
                                  args: self.arguments(args: [arg]),
@@ -90,7 +90,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
   /// global elsa
   func test_global_afterUse_throws() {
     let stmt1 = self.statement(expr: .identifier("elsa"))
-    let stmt2 = self.createGlobalIdentifier(name: "elsa", location: loc1)
+    let stmt2 = self.globalStmt(name: "elsa", location: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .globalAfterUse("elsa"))
@@ -108,7 +108,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
       isSimple: true)
     )
 
-    let stmt2 = self.createGlobalIdentifier(name: "elsa", location: loc1)
+    let stmt2 = self.globalStmt(name: "elsa", location: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .globalAnnot("elsa"))
@@ -116,17 +116,11 @@ class STTopScope: XCTestCase, CommonSymbolTable {
     }
   }
 
-  private func createGlobalIdentifier(name: String,
-                                      location: SourceLocation) -> Statement {
-    let kind = StatementKind.global(NonEmptyArray(first: name))
-    return self.statement(kind, start: location)
-  }
-
   // MARK: - Nonlocal
 
   /// nonlocal elsa
   func test_nonlocal_throws() {
-    let stmt = self.createNonlocallIdentifier(name: "elsa", location: loc1)
+    let stmt = self.nonlocalStmt(name: "elsa", location: loc1)
 
     if let error = self.error(forStmt: stmt) {
       XCTAssertEqual(error.kind, .nonlocalAtModuleLevel("elsa"))
@@ -137,7 +131,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
   /// def let_it_go(elsa): nonlocal elsa
   func test_nonlocal_equalToParam_throws() {
     let arg = self.arg("elsa")
-    let body = self.createNonlocallIdentifier(name: "elsa", location: loc1)
+    let body = self.nonlocalStmt(name: "elsa", location: loc1)
 
     let f = self.functionDefStmt(name: "let_it_go",
                                  args: self.arguments(args: [arg]),
@@ -153,7 +147,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
   /// nonlocal elsa
   func test_nonlocal_afterUse_throws() {
     let stmt1 = self.statement(expr: .identifier("elsa"))
-    let stmt2 = self.createNonlocallIdentifier(name: "elsa", location: loc1)
+    let stmt2 = self.nonlocalStmt(name: "elsa", location: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .nonlocalAfterUse("elsa"))
@@ -171,17 +165,11 @@ class STTopScope: XCTestCase, CommonSymbolTable {
       isSimple: true)
     )
 
-    let stmt2 = self.createNonlocallIdentifier(name: "elsa", location: loc1)
+    let stmt2 = self.nonlocalStmt(name: "elsa", location: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .nonlocalAnnot("elsa"))
       XCTAssertEqual(error.location, loc1)
     }
-  }
-
-  private func createNonlocallIdentifier(name: String,
-                                         location: SourceLocation) -> Statement {
-    let kind = StatementKind.nonlocal(NonEmptyArray(first: name))
-    return self.statement(kind, start: location)
   }
 }

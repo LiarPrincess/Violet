@@ -1,6 +1,9 @@
 import Core
 import Parser
 
+// In CPython:
+// Python -> symtable.c
+
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
@@ -28,12 +31,6 @@ extension SymbolTableBuilder {
   }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  ///
-  /// - Parameters:
-  ///   - expr: Expression to visit.
-  ///   - isAssignmentTarget: Are we visiting target for an assignment statement?
-  /// Used only for: identifiers, attributes, subscripts, starred, lists, tuples
-  /// (see `expr_context` in CPython -> Parser -> Python.asdl).
   internal func visitExpression(_ expr: Expression,
                                 context: ExpressionContext = .load) throws {
     switch expr.kind {

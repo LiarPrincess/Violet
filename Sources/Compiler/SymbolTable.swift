@@ -166,7 +166,7 @@ public struct SymbolFlags: OptionSet, Equatable {
   /// Used for `referenced` property in `symtable` module.
   public static let use = SymbolFlags(rawValue: 1 << 12)
   /// This name is annotated
-  public static let annotated = SymbolFlags(rawValue: 2 << 13)
+  public static let annotated = SymbolFlags(rawValue: 1 << 13)
 
   public init(rawValue: UInt16) {
     self.rawValue = rawValue

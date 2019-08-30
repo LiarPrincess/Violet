@@ -8,12 +8,12 @@ extension ASTCreator {
 
   /// Start location
   internal var start: SourceLocation {
-    return SourceLocation(line: 3, column: 5)
+    return SourceLocation(line: 98, column: 5)
   }
 
   /// End location
   internal var end: SourceLocation {
-    return SourceLocation(line: 7, column: 9)
+    return SourceLocation(line: 99, column: 9)
   }
 
   // MARK: - AST
@@ -122,6 +122,18 @@ extension ASTCreator {
                                         level: level)
 
     return self.statement(kind, start: start)
+  }
+
+  internal func globalStmt(name: String,
+                           location: SourceLocation? = nil) -> Statement {
+    let kind = StatementKind.global(NonEmptyArray(first: name))
+    return self.statement(kind, start: location ?? self.start)
+  }
+
+  internal func nonlocalStmt(name: String,
+                             location: SourceLocation? = nil) -> Statement {
+    let kind = StatementKind.nonlocal(NonEmptyArray(first: name))
+    return self.statement(kind, start: location ?? self.start)
   }
 
   // MARK: - Expressions
