@@ -31,11 +31,8 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   ///      ariel - referenced, local, assigned,
   /// ```
   func test_list() {
-    let eltLoc = SourceLocation(line: 12, column: 15)
-    let elt = Expression(.identifier("ariel"), start: eltLoc, end: self.end)
-
-    let iterLoc = SourceLocation(line: 13, column: 16)
-    let iter = Expression(.identifier("sea"), start: iterLoc, end: self.end)
+    let elt = self.expression(.identifier("ariel"), start: loc1)
+    let iter = self.expression(.identifier("sea"), start: loc2)
 
     let compr = self.comprehension(target: elt,
                                    iter: iter,
@@ -56,7 +53,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "sea",
                               flags: [.use, .srcGlobalImplicit],
-                              location: iterLoc)
+                              location: loc2)
 
       XCTAssertEqual(top.children.count, 1)
       guard top.children.count == 1 else { return }
@@ -75,7 +72,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(listComp,
                               name: "ariel",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: eltLoc)
+                              location: loc1)
     }
   }
 
@@ -98,11 +95,8 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   ///     hasLegs - referenced, global,
   /// ```
   func test_list_ifs() {
-    let eltLoc = SourceLocation(line: 12, column: 15)
-    let elt = Expression(.identifier("ariel"), start: eltLoc, end: self.end)
-
-    let iffLoc = SourceLocation(line: 13, column: 16)
-    let iff = Expression(.identifier("hasLegs"), start: iffLoc, end: self.end)
+    let elt = self.expression(.identifier("ariel"), start: loc1)
+    let iff = self.expression(.identifier("hasLegs"), start: loc2)
 
     let compr = self.comprehension(target: elt,
                                    iter: self.expression(.list([])),
@@ -124,10 +118,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       guard top.children.count == 1 else { return }
 
       let listComp = top.children[0]
-      XCTAssertScope(listComp,
-                     name: "listcomp",
-                     type: .function,
-                     flags: [.isNested, .isCoroutine])
+      XCTAssertScope(listComp, name: "listcomp", type: .function, flags: [.isNested, .isCoroutine])
       XCTAssert(listComp.children.isEmpty)
 
       XCTAssertEqual(listComp.varnames.count, 1)
@@ -140,11 +131,11 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(listComp,
                               name: "ariel",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: eltLoc)
+                              location: loc1)
       XCTAssertContainsSymbol(listComp,
                               name: "hasLegs",
                               flags: [.srcGlobalImplicit, .use],
-                              location: iffLoc)
+                              location: loc2)
     }
   }
 
@@ -164,17 +155,13 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   ///     ariel - local, assigned,
   ///     eric - referenced, local, assigned,
   func test_list_nested() {
-    let elt1Loc = SourceLocation(line: 12, column: 15)
-    let elt1 = Expression(.identifier("ariel"), start: elt1Loc, end: self.end)
-
+    let elt1 = self.expression(.identifier("ariel"), start: loc1)
     let compr1 = self.comprehension(target: elt1,
                                     iter: self.expression(.list([])),
                                     ifs: [],
                                     isAsync: false)
 
-    let elt2Loc = SourceLocation(line: 13, column: 16)
-    let elt2 = Expression(.identifier("eric"), start: elt2Loc, end: self.end)
-
+    let elt2 = self.expression(.identifier("eric"), start: loc2)
     let compr2 = self.comprehension(target: elt2,
                                     iter: self.expression(.list([])),
                                     ifs: [],
@@ -208,11 +195,11 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(listComp,
                               name: "ariel",
                               flags: [.defLocal, .srcLocal],
-                              location: elt1Loc)
+                              location: loc1)
       XCTAssertContainsSymbol(listComp,
                               name: "eric",
                               flags: [.srcGlobalImplicit, .use],
-                              location: elt2Loc)
+                              location: loc2)
     }
   }
 
@@ -221,11 +208,8 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   /// {ariel for ariel in sea}
   /// (similiar to `self.test_list`)
   func test_set() {
-    let eltLoc = SourceLocation(line: 12, column: 15)
-    let elt = Expression(.identifier("ariel"), start: eltLoc, end: self.end)
-
-    let iterLoc = SourceLocation(line: 13, column: 16)
-    let iter = Expression(.identifier("sea"), start: iterLoc, end: self.end)
+    let elt = self.expression(.identifier("ariel"), start: loc1)
+    let iter = self.expression(.identifier("sea"), start: loc2)
 
     let compr = self.comprehension(target: elt,
                                    iter: iter,
@@ -246,7 +230,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "sea",
                               flags: [.use, .srcGlobalImplicit],
-                              location: iterLoc)
+                              location: loc2)
 
       XCTAssertEqual(top.children.count, 1)
       guard top.children.count == 1 else { return }
@@ -265,7 +249,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(listComp,
                               name: "ariel",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: eltLoc)
+                              location: loc1)
     }
   }
 
@@ -291,14 +275,9 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   ///     eric - referenced, global,
   /// ```
   func test_dictionary() {
-    let keyLoc = SourceLocation(line: 12, column: 15)
-    let key = Expression(.identifier("ariel"), start: keyLoc, end: self.end)
-
-    let valueLoc = SourceLocation(line: 13, column: 16)
-    let value = Expression(.identifier("eric"), start: valueLoc, end: self.end)
-
-    let iterLoc = SourceLocation(line: 14, column: 17)
-    let iter = Expression(.identifier("sea"), start: iterLoc, end: self.end)
+    let key = self.expression(.identifier("ariel"), start: loc1)
+    let value = self.expression(.identifier("eric"), start: loc2)
+    let iter = self.expression(.identifier("sea"), start: loc3)
 
     let compr = self.comprehension(target: key,
                                    iter: iter,
@@ -320,7 +299,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "sea",
                               flags: [.use, .srcGlobalImplicit],
-                              location: iterLoc)
+                              location: loc3)
 
       XCTAssertEqual(top.children.count, 1)
       guard top.children.count == 1 else { return }
@@ -339,11 +318,11 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(listComp,
                               name: "ariel",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: keyLoc)
+                              location: loc1)
       XCTAssertContainsSymbol(listComp,
                               name: "eric",
                               flags: [.srcGlobalImplicit, .use],
-                              location: valueLoc)
+                              location: loc2)
     }
   }
 
@@ -352,11 +331,8 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   /// [ariel for ariel in sea]
   /// (similiar to `self.test_list`)
   func test_generator() {
-    let eltLoc = SourceLocation(line: 12, column: 15)
-    let elt = Expression(.identifier("ariel"), start: eltLoc, end: self.end)
-
-    let iterLoc = SourceLocation(line: 13, column: 16)
-    let iter = Expression(.identifier("sea"), start: iterLoc, end: self.end)
+    let elt = self.expression(.identifier("ariel"), start: loc1)
+    let iter = self.expression(.identifier("sea"), start: loc2)
 
     let compr = self.comprehension(target: elt,
                                    iter: iter,
@@ -377,7 +353,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "sea",
                               flags: [.use, .srcGlobalImplicit],
-                              location: iterLoc)
+                              location: loc2)
 
       XCTAssertEqual(top.children.count, 1)
       guard top.children.count == 1 else { return }
@@ -399,7 +375,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(listComp,
                               name: "ariel",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: eltLoc)
+                              location: loc1)
     }
   }
 }

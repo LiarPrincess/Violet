@@ -52,15 +52,12 @@ class STStmt: XCTestCase, CommonSymbolTable {
   /// ```
   func test_return() {
     let arg = self.arg("elsa")
-    let args = self.arguments(args: [arg])
-
-    let loc = SourceLocation(line: 10, column: 13)
-    let expr = Expression(.identifier("elsa"), start: loc, end: self.end)
+    let expr = self.expression(.identifier("elsa"), start: loc1)
     let body = self.statement(.return(expr))
 
-    let f = self.functionDef(name: "let_it_go",
-                             args: args,
-                             body: NonEmptyArray(first: body))
+    let f = self.functionDefStmt(name: "let_it_go",
+                                 args: self.arguments(args: [arg]),
+                                 body: body)
 
     if let table = self.createSymbolTable(forStmt: f) {
       let top = table.top
@@ -76,11 +73,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
       guard top.children.count == 1 else { return }
 
       let bodyScope = top.children[0]
-      XCTAssertScope(bodyScope,
-                     name: "let_it_go",
-                     type: .function,
-                     flags: [.hasReturnValue, .isNested])
-
+      XCTAssertScope(bodyScope, name: "let_it_go", type: .function, flags: [.hasReturnValue, .isNested])
       XCTAssert(bodyScope.children.isEmpty)
 
       XCTAssertEqual(bodyScope.varnames.count, 1)
@@ -104,12 +97,8 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   anna - local, assigned,
   /// ```
   func test_delete() {
-    let loc1 = SourceLocation(line: 10, column: 13)
-    let expr1 = Expression(.identifier("elsa"), start: loc1, end: self.end)
-
-    let loc2 = SourceLocation(line: 12, column: 15)
-    let expr2 = Expression(.identifier("anna"), start: loc2, end: self.end)
-
+    let expr1 = self.expression(.identifier("elsa"), start: loc1)
+    let expr2 = self.expression(.identifier("anna"), start: loc2)
     let kind = StatementKind.delete(NonEmptyArray(first: expr1, rest: [expr2]))
 
     if let table = self.createSymbolTable(forStmt: kind) {
@@ -140,12 +129,8 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   anna - referenced, global,
   /// ```
   func test_assert() {
-    let loc1 = SourceLocation(line: 10, column: 13)
-    let expr1 = Expression(.identifier("elsa"), start: loc1, end: self.end)
-
-    let loc2 = SourceLocation(line: 12, column: 15)
-    let expr2 = Expression(.identifier("anna"), start: loc2, end: self.end)
-
+    let expr1 = self.expression(.identifier("elsa"), start: loc1)
+    let expr2 = self.expression(.identifier("anna"), start: loc2)
     let kind = StatementKind.assert(test: expr1, msg: expr2)
 
     if let table = self.createSymbolTable(forStmt: kind) {
@@ -180,24 +165,12 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   anna - referenced, global,
   /// ```
   func test_for() {
-    let targetLoc = SourceLocation(line: 10, column: 13)
-    let target = Expression(.identifier("elsa"), start: targetLoc, end: self.end)
+    let target = self.expression(.identifier("elsa"), start: loc1)
+    let iter = self.expression(.identifier("frozen"), start: loc2)
+    let body = self.expression(.identifier("elsa"), start: loc3)
+    let orElse = self.expression(.identifier("anna"), start: loc4)
 
-    let iterLoc = SourceLocation(line: 12, column: 15)
-    let iter = Expression(.identifier("frozen"), start: iterLoc, end: self.end)
-
-    let bodyLoc = SourceLocation(line: 14, column: 17)
-    let bodyExpr = Expression(.identifier("elsa"), start: bodyLoc, end: self.end)
-    let body = self.statement(.expr(bodyExpr))
-
-    let elseLoc = SourceLocation(line: 16, column: 19)
-    let elseExpr = Expression(.identifier("anna"), start: elseLoc, end: self.end)
-    let elseOr = self.statement(.expr(elseExpr))
-
-    let kind = StatementKind.for(target: target,
-                                 iter: iter,
-                                 body: NonEmptyArray(first: body),
-                                 orElse: [elseOr])
+    let kind = self.forStmt(target: target, iter: iter, body: body, orElse: orElse)
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
@@ -209,15 +182,15 @@ class STStmt: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "elsa",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: targetLoc)
+                              location: loc1)
       XCTAssertContainsSymbol(top,
                               name: "frozen",
                               flags: [.srcGlobalImplicit, .use],
-                              location: iterLoc)
+                              location: loc2)
       XCTAssertContainsSymbol(top,
                               name: "anna",
                               flags: [.srcGlobalImplicit, .use],
-                              location: elseLoc)
+                              location: loc4)
     }
   }
 
@@ -234,20 +207,11 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   snowgies - referenced, global,
   /// ```
   func test_while() {
-    let testLoc = SourceLocation(line: 10, column: 13)
-    let test = Expression(.identifier("elsa"), start: testLoc, end: self.end)
+    let test = self.expression(.identifier("elsa"), start: loc1)
+    let body = self.expression(.identifier("anna"), start: loc2)
+    let orElse = self.expression(.identifier("snowgies"), start: loc3)
 
-    let bodyLoc = SourceLocation(line: 12, column: 15)
-    let bodyExpr = Expression(.identifier("anna"), start: bodyLoc, end: self.end)
-    let body = self.statement(.expr(bodyExpr))
-
-    let elseLoc = SourceLocation(line: 14, column: 17)
-    let elseExpr = Expression(.identifier("snowgies"), start: elseLoc, end: self.end)
-    let elseOr = self.statement(.expr(elseExpr))
-
-    let kind = StatementKind.while(test: test,
-                                   body: NonEmptyArray(first: body),
-                                   orElse: [elseOr])
+    let kind = self.whileStmt(test: test, body: body, orElse: orElse)
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
@@ -259,15 +223,15 @@ class STStmt: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "elsa",
                               flags: [.srcGlobalImplicit, .use],
-                              location: testLoc)
+                              location: loc1)
       XCTAssertContainsSymbol(top,
                               name: "anna",
                               flags: [.srcGlobalImplicit, .use],
-                              location: bodyLoc)
+                              location: loc2)
       XCTAssertContainsSymbol(top,
                               name: "snowgies",
                               flags: [.srcGlobalImplicit, .use],
-                              location: elseLoc)
+                              location: loc3)
     }
   }
 
@@ -284,20 +248,11 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   snowgies - referenced, global,
   /// ```
   func test_if() {
-    let testLoc = SourceLocation(line: 10, column: 13)
-    let test = Expression(.identifier("elsa"), start: testLoc, end: self.end)
+    let test = self.expression(.identifier("elsa"), start: loc1)
+    let body = self.expression(.identifier("anna"), start: loc2)
+    let orElse = self.expression(.identifier("snowgies"), start: loc3)
 
-    let bodyLoc = SourceLocation(line: 12, column: 15)
-    let bodyExpr = Expression(.identifier("anna"), start: bodyLoc, end: self.end)
-    let body = self.statement(.expr(bodyExpr))
-
-    let elseLoc = SourceLocation(line: 14, column: 17)
-    let elseExpr = Expression(.identifier("snowgies"), start: elseLoc, end: self.end)
-    let elseOr = self.statement(.expr(elseExpr))
-
-    let kind = StatementKind.if(test: test,
-                                body: NonEmptyArray(first: body),
-                                orElse: [elseOr])
+    let kind = self.ifStmt(test: test, body: body, orElse: orElse)
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
@@ -309,15 +264,15 @@ class STStmt: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "elsa",
                               flags: [.srcGlobalImplicit, .use],
-                              location: testLoc)
+                              location: loc1)
       XCTAssertContainsSymbol(top,
                               name: "anna",
                               flags: [.srcGlobalImplicit, .use],
-                              location: bodyLoc)
+                              location: loc2)
       XCTAssertContainsSymbol(top,
                               name: "snowgies",
                               flags: [.srcGlobalImplicit, .use],
-                              location: elseLoc)
+                              location: loc3)
     }
   }
 
@@ -334,19 +289,15 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   queen - referenced, local, assigned,
   /// ```
   func test_with() {
-    let ctxLoc = SourceLocation(line: 10, column: 13)
-    let ctx = Expression(.identifier("elsa"), start: ctxLoc, end: self.end)
+    let ctx = self.expression(.identifier("elsa"), start: loc1)
+    let name = self.expression(.identifier("queen"), start: loc2)
 
-    let nameLoc = SourceLocation(line: 12, column: 15)
-    let name = Expression(.identifier("queen"), start: nameLoc, end: self.end)
-
-    let bodyLoc = SourceLocation(line: 14, column: 17)
-    let bodyExpr = Expression(.identifier("queen"), start: bodyLoc, end: self.end)
+    let bodyExpr = self.expression(.identifier("queen"), start: loc3)
     let body = self.statement(.expr(bodyExpr))
 
     let item = self.withItem(contextExpr: ctx, optionalVars: name)
     let kind = StatementKind.with(items: NonEmptyArray(first: item),
-                                  body: NonEmptyArray(first: body))
+                                  body:  NonEmptyArray(first: body))
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
@@ -358,11 +309,11 @@ class STStmt: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "elsa",
                               flags: [.srcGlobalImplicit, .use],
-                              location: ctxLoc)
+                              location: loc1)
       XCTAssertContainsSymbol(top,
                               name: "queen",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: nameLoc)
+                              location: loc2)
     }
   }
 
@@ -378,11 +329,8 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   arendelle - referenced, global,
   /// ```
   func test_raise() {
-    let excLoc = SourceLocation(line: 10, column: 13)
-    let exc = Expression(.identifier("elsa"), start: excLoc, end: self.end)
-
-    let causeLoc = SourceLocation(line: 12, column: 15)
-    let cause = Expression(.identifier("arendelle"), start: causeLoc, end: self.end)
+    let exc = self.expression(.identifier("elsa"), start: loc1)
+    let cause = self.expression(.identifier("arendelle"), start: loc2)
 
     let kind = StatementKind.raise(exc: exc, cause: cause)
 
@@ -396,11 +344,11 @@ class STStmt: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "elsa",
                               flags: [.srcGlobalImplicit, .use],
-                              location: excLoc)
+                              location: loc1)
       XCTAssertContainsSymbol(top,
                               name: "arendelle",
                               flags: [.srcGlobalImplicit, .use],
-                              location: causeLoc)
+                              location: loc2)
     }
   }
 
@@ -420,30 +368,21 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///    sing - referenced, global,
   /// ```
   func test_try() {
-    let tryLoc = SourceLocation(line: 10, column: 13)
-    let tryBody = self.expression(.identifier("magic"), start: tryLoc)
+    let body = self.expression(.identifier("magic"), start: loc1)
+    let orElse = self.expression(.identifier("spell"), start: loc2)
+    let finalBody = self.expression(.identifier("sing"), start: loc3)
 
-    let handlerTypeLoc = SourceLocation(line: 11, column: 15)
-    let handlerType = self.expression(.identifier("elsa"), start: handlerTypeLoc)
-
-    let handlerLoc = SourceLocation(line: 13, column: 15)
+    let handlerType = self.expression(.identifier("elsa"), start: loc4)
     let handlerBody = self.statement(expr: .identifier("queen"))
-
-    let elseLoc = SourceLocation(line: 14, column: 17)
-    let elseBody = self.expression(.identifier("spell"), start: elseLoc)
-
-    let finallyLoc = SourceLocation(line: 15, column: 17)
-    let finallyBody = self.expression(.identifier("sing"), start: finallyLoc)
-
     let handler = self.exceptHandler(type: handlerType,
                                      name: "queen",
-                                     body: NonEmptyArray(first: handlerBody),
-                                     start: handlerLoc)
+                                     body: handlerBody,
+                                     start: loc5)
 
-    let stmt = self.tryStmt(body: tryBody,
+    let stmt = self.tryStmt(body: body,
                             handlers: [handler],
-                            orElse: elseBody,
-                            finalBody: finallyBody)
+                            orElse: orElse,
+                            finalBody: finalBody)
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
@@ -455,38 +394,24 @@ class STStmt: XCTestCase, CommonSymbolTable {
       XCTAssertContainsSymbol(top,
                               name: "magic",
                               flags: [.srcGlobalImplicit, .use],
-                              location: tryLoc)
+                              location: loc1)
       XCTAssertContainsSymbol(top,
                               name: "spell",
                               flags: [.srcGlobalImplicit, .use],
-                              location: elseLoc)
+                              location: loc2)
       XCTAssertContainsSymbol(top,
                               name: "elsa",
                               flags: [.srcGlobalImplicit, .use],
-                              location: handlerTypeLoc)
+                              location: loc4)
       XCTAssertContainsSymbol(top,
                               name: "queen",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: handlerLoc)
+                              location: loc5)
       XCTAssertContainsSymbol(top,
                               name: "sing",
                               flags: [.srcGlobalImplicit, .use],
-                              location: finallyLoc)
+                              location: loc3)
     }
-  }
-
-  private func tryStmt(body: Expression,
-                       handlers: [ExceptHandler],
-                       orElse: Expression,
-                       finalBody: Expression) -> Statement {
-
-    let kind = StatementKind.try(
-      body: NonEmptyArray(first: self.statement(.expr(body))),
-      handlers: handlers,
-      orElse: [self.statement(.expr(orElse))],
-      finalBody: [self.statement(.expr(finalBody))]
-    )
-    return self.statement(kind)
   }
 
   // MARK: - import
