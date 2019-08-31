@@ -78,19 +78,19 @@ public class SymbolScope {
   /// List of function parameters
   public internal(set) var varnames = [MangledName]()
 
-  /// Return True if the block is a nested class or function.
+  /// Block is a nested class or function.
   public let isNested: Bool
-  /// true if namespace is a generator
+  /// Namespace is a generator (yield)
   public internal(set) var isGenerator = false
-  /// true if namespace is a coroutine
+  /// Namespace is a coroutine (async/await)
   public internal(set) var isCoroutine = false
-  /// true if block has varargs
+  /// Block has varargs (the ones with '*')
   public internal(set) var hasVarargs = false
-  /// true if block has varKeywords
+  /// Block has varKeywords (the ones with '**')
   public internal(set) var hasVarKeywords = false
-  /// true if namespace uses return with an argument
+  /// Namespace uses return with an argument
   public internal(set) var hasReturnValue = false
-  /// For class scopes: true if a closure over __class__ should be created
+  /// For class scopes: true if a closure over `__class__` should be created
   public internal(set) var needsClassClosure = false
 
   // CPython also contains:

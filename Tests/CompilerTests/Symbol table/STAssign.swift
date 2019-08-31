@@ -252,7 +252,7 @@ class STAssign: XCTestCase, CommonSymbolTable {
   /// ```
   func test_annAssign_attribute() {
     let object = self.expression(.identifier("tangled"), start: loc1)
-    let target = self.expression(.attribute(object, name: "rapunzel"), start: loc2)
+    let target = self.expression(.attribute(object, name: "rapunzel"))
 
     let ann   = self.expression(.identifier("Int"), start: loc3)
     let value = self.expression(.int(BigInt(5)))

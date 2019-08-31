@@ -105,6 +105,19 @@ extension ASTCreator {
                                      returns: returns)
   }
 
+  internal func asyncFunctionDefStmt(name: String,
+                                     args: Arguments,
+                                     body: Statement? = nil,
+                                     decoratorList: [Expression] = [],
+                                     returns: Expression? = nil) -> StatementKind {
+    let b = body ?? self.statement(.pass)
+    return StatementKind.asyncFunctionDef(name: name,
+                                          args: args,
+                                          body: NonEmptyArray(first: b),
+                                          decoratorList: decoratorList,
+                                          returns: returns)
+  }
+
   internal func importStmt(names: [Alias]) -> StatementKind {
     assert(names.any)
     let array = NonEmptyArray(first: names[0], rest: names[1...])
