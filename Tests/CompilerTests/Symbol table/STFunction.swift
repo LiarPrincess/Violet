@@ -5,6 +5,7 @@ import Parser
 
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
+// swiftlint:disable type_body_length
 
 /// Use 'Tools/dump_symtable.py' for reference.
 class STFunction: XCTestCase, CommonSymbolTable {

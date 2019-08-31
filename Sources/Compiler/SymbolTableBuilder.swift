@@ -31,14 +31,11 @@ public final class SymbolTableBuilder {
 
   /// PySymtable_BuildObject(mod_ty mod, ...)
   public func visit(_ ast: AST) throws -> SymbolTable {
-    self.scopeStack.removeAll()
-
     self.enterScope(name: SpecialIdentifiers.top, type: .module, node: ast)
 
     switch ast.kind {
-    case let .single(stmts):
-      try self.visitStatements(stmts)
-    case let .fileInput(stmts):
+    case let .single(stmts),
+         let .fileInput(stmts):
       try self.visitStatements(stmts)
     case let .expression(expr):
       try self.visitExpression(expr)
@@ -194,7 +191,7 @@ public final class SymbolTableBuilder {
     }
   }
 
-  // MARK: - Errors/warnings
+  // MARK: - Error/warning
 
   /// Create parser warning
   internal func warn(_ warning: CompilerWarning,

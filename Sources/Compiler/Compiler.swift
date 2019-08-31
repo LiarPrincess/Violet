@@ -7,36 +7,26 @@ import Bytecode
 
 public final class Compiler {
 
-  internal var blocksStack = [CodeObject]()
+  private var codeObjectStack = [CodeObject]()
 
-  /// Code object that we are currently filling (top of the `self.blocksStack`).
-  internal var currentBlock: CodeObject {
-    _read {
-//      assert(self.codeObjectStack.any)
-//      yield self.codeObjectStack[self.codeObjectStack.count - 1]
-      fatalError()
-    }
-    _modify {
-//      assert(self.codeObjectStack.any)
-//      yield &self.codeObjectStack[self.codeObjectStack.count - 1]
-      fatalError()
-    }
+  /// Code object that we are currently filling (top of the `self.codeObjectStack`).
+  internal var currentCodeObject: CodeObject {
+    if let last = self.codeObjectStack.last { return last }
+    fatalError("[BUG] Compiler: Using nil current code object.")
   }
 
   // TODO: Merge symbolTable and scope to code unit
-  internal var symbolTable: SymbolTable!
+  private var symbolTable: SymbolTable!
 
-  internal var scopeStack = [SymbolScope]()
+  /// Scope stack.
+  /// Current scope is at the top, top scope is at the bottom.
+  private var scopeStack = [SymbolScope]()
 
+  /// Scope that we are currently filling (top of the `self.scopeStack`).
   internal var currentScope: SymbolScope {
-    fatalError()
+    if let last = self.scopeStack.last { return last }
+    fatalError("[BUG] Compiler: Using nil current scope.")
   }
-
-//  internal var isInLoop = false
-//  internal var isInFunctionDef = false
-
-//  internal var currentSourceLocation: SourceLocation = .start
-//  internal var currentQualifiedPath: String?
 
   /// Optimization level
   internal let optimize: Bool
@@ -47,89 +37,87 @@ public final class Compiler {
 
   /// PyAST_CompileObject(mod_ty mod, PyObject *filename, PyCompilerFlags ...)
   /// compiler_mod(struct compiler *c, mod_ty mod)
-  public func compileObject(ast: AST) throws -> CodeObject {
-    // TODO: Clean previous flags
-    // TODO: Special identifiers
-
+  public func visit(ast: AST) throws -> CodeObject {
     let symbolTableBuilder = SymbolTableBuilder()
     self.symbolTable = try symbolTableBuilder.visit(ast)
 
     self.enterScope(node: ast)
 
     switch ast.kind {
-    case let .single(stmts):
-      break
-    case let .fileInput(stmts):
-      break
+    case let .single(stmts),
+         let .fileInput(stmts):
+      try self.visitStatements(stmts)
     case let .expression(expr):
-      break
+      try self.visitExpression(expr)
     }
 
     // TODO: Emit nop. because it may be an jump target!
     // TODO: Check if all blocks have valid labels
 
-    assert(self.blocksStack.count == 1)
-    return self.currentBlock
+    assert(self.codeObjectStack.count == 1)
+    return self.currentCodeObject
+  }
+
+  internal func visitStatements<S: Sequence>(_ stmts: S) throws
+    where S.Element == Statement {
+
+    fatalError()
   }
 
   // MARK: - Code object
 
   internal func pushCodeObject(name: String) {
-//    let line_number = self.get_source_line_number();
-//    self.code_object_stack.push(CodeObject::new(
-//      Vec::new(),
-//      Varargs::None,
-//      Vec::new(),
-//      Varargs::None,
-//      self.source_path.clone().unwrap(),
-//      line_number,
-//      obj_name,
-//    ));
   }
 
   internal func popCodeObject() {
-    // self.code_object_stack.pop().unwrap()
   }
 
   // MARK: - Scope
 
+  /// Push new scope.
+  ///
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
   internal func enterScope<N: ASTNode>(node: N) {
     guard let scope = self.symbolTable.scopeByNode[node] else {
-      fatalError()
+      fatalError("[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
+
     self.scopeStack.push(scope)
   }
 
+  /// Pop scope.
+  ///
+  /// compiler_exit_scope(struct compiler *c)
   internal func leaveScope() {
     assert(self.scopeStack.any)
-    self.scopeStack.popLast()
-  }
-
-  internal func lookupName(name: MangledName) -> SymbolInfo {
-    return self.currentScope.symbols[name]!
+    _ = self.scopeStack.popLast()
   }
 
   // MARK: - Labels
 
   internal func newLabel() throws -> Label {
-    let index = self.currentBlock.labels.endIndex
-    self.currentBlock.labels.append(Label.invalid)
+    let index = self.currentCodeObject.labels.endIndex
+    self.currentCodeObject.labels.append(Label.invalid)
     return Label(index: index)
   }
 
   internal func setLabel(_ label: Label) {
-    let jumpTarget = self.currentBlock.instructions.endIndex
-    self.currentBlock.labels[label.index] = jumpTarget
+    assert(label.index < self.currentCodeObject.labels.count)
+    let jumpTarget = self.currentCodeObject.instructions.endIndex
+    self.currentCodeObject.labels[label.index] = jumpTarget
   }
 
-  // MARK: - Qualified name
+  // MARK: - Error/warning
 
-//  internal func createQualifiedName() {
-//    if let Some(ref qualified_path) = self.current_qualified_path {
-//      format!("{}.{}{}", qualified_path, name, suffix)
-//    } else {
-//      format!("{}{}", name, suffix)
-//    }
-//  }
+  /// Create parser warning
+  internal func warn(_ warning: CompilerWarning,
+                     location:  SourceLocation) {
+    // uh... oh... well that's embarrassing...
+  }
+
+  /// Create compiler error
+  internal func error(_ kind: CompilerErrorKind,
+                      location: SourceLocation) -> CompilerError {
+    return CompilerError(kind, location: location)
+  }
 }

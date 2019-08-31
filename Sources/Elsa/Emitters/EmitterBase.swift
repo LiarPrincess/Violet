@@ -1,5 +1,7 @@
 import Foundation
 
+// swiftlint:disable force_unwrapping
+
 public class EmitterBase {
 
   private let input: URL

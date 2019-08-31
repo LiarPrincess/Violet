@@ -16,11 +16,11 @@ extension Compiler {
   internal func emit(_ instruction: Instruction,
                      location: SourceLocation) throws {
 
-    self.currentBlock.instructions.append(instruction)
-    self.currentBlock.instructionLines.append(location.line)
+    self.currentCodeObject.instructions.append(instruction)
+    self.currentCodeObject.instructionLines.append(location.line)
 
-    assert(self.currentBlock.instructions.count ==
-           self.currentBlock.instructionLines.count)
+    assert(self.currentCodeObject.instructions.count ==
+           self.currentCodeObject.instructionLines.count)
   }
 
   // MARK: - Constants
@@ -29,8 +29,8 @@ extension Compiler {
   /// compiler_addop_i(struct compiler *c, int opcode, Py_ssize_t oparg)
   internal func emitConstant(_ c: Constant, location: SourceLocation) throws {
     // TODO: check if this value was already added
-    let constantIndex = self.currentBlock.constants.endIndex
-    self.currentBlock.constants.append(c)
+    let constantIndex = self.currentCodeObject.constants.endIndex
+    self.currentCodeObject.constants.append(c)
 
     let index = try self.emitExtendedArgIfNeeded(constantIndex, location: location)
     try self.emit(.loadConst(index: index), location: location)

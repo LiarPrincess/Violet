@@ -2,8 +2,8 @@ import Core
 import Parser
 import Bytecode
 
-// TODO: Use struct InstructionLocation = (index, line) - Objects/lnotab_notes
-public struct CodeObject {
+// TODO: To struct
+public class CodeObject {
 
   /// Name of the class if the code is for a class.
   /// Name of the function if the code is for a function.
@@ -14,6 +14,7 @@ public struct CodeObject {
   public var instructions = [Instruction]()
   /// Instruction locations.
   public var instructionLines = [SourceLine]()
+  // TODO: ^ Use struct InstructionLocation = (index, line) - Objects/lnotab_notes
 
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.

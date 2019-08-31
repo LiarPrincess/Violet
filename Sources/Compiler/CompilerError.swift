@@ -69,6 +69,10 @@ public enum CompilerErrorKind: Equatable {
   case undefinedFutureFeature(String)
   /// `from __future__ imports` must occur at the beginning of the file
   case lateFuture
+
+  // MARK: - Compiler
+
+  case fStringWithMoreThan255Elements
 }
 
 // TODO: surprisingly appropriate; `fromFutureImportBraces`

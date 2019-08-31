@@ -1,6 +1,8 @@
 import Core
 import Parser
 
+// swiftlint:disable file_length
+
 /// Create AST (without locations, because we don't need them most of the time).
 internal protocol ASTCreator { }
 

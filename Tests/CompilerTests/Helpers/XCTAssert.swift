@@ -25,7 +25,8 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
     XCTAssertEqual(info.location,
                    loc,
                    "\(message) (invalid location)",
-      file: file, line: line)
+                   file: file,
+                   line: line)
   }
 
   if info.flags == flags {

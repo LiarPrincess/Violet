@@ -155,7 +155,7 @@ case let .starred(expr):
         try self.emit(.buildString(count), location: location)
       } else {
         // UInt8 can't represent this value
-        fatalError()
+        throw self.error(.fStringWithMoreThan255Elements, location: location)
       }
     }
   }

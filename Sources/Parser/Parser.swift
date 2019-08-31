@@ -7,6 +7,8 @@ import Lexer
 
 // https://docs.python.org/3/reference/index.html
 
+// swiftlint:disable file_length
+
 public enum ParserMode {
   /// Used for input in interactive mode.
   case single
