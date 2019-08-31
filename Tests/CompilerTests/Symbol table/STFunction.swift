@@ -314,7 +314,82 @@ class STFunction: XCTestCase, CommonSymbolTable {
     }
   }
 
-  // MARK: - Duplicate argument
+  // MARK: - Error - Nonlocal and global
+
+  /// def let_it_go():
+  ///   elsa = 1
+  ///   def sing():
+  ///     nonlocal elsa
+  ///     global elsa
+  func test_nonlocal_thenGlobal_throws() {
+    let stmt1 = self.assignStmt(
+      target: self.expression(.identifier("elsa")),
+      value: self.expression(.int(BigInt(1)))
+    )
+
+    let stmt2 = self.nonlocalStmt(name: "elsa", location: loc1)
+    let stmt3 = self.globalStmt(name: "elsa")
+
+    let inner = self.functionDefStmt(name: "sing",
+                                     args: self.arguments(),
+                                     body: [stmt2, stmt3])
+
+    let outer = self.functionDefStmt(name: "let_it_go",
+                                     args: self.arguments(),
+                                     body: [stmt1, self.statement(inner)])
+
+    if let error = self.error(forStmt: outer) {
+      XCTAssertEqual(error.kind, .bothGlobalAndNonlocal("elsa"))
+      XCTAssertEqual(error.location, loc1)
+    }
+  }
+
+  /// def let_it_go():
+  ///   elsa = 1
+  ///   def sing():
+  ///     global elsa
+  ///     nonlocal elsa
+  func test_global_thenNonlocal_throws() {
+    let stmt1 = self.assignStmt(
+      target: self.expression(.identifier("elsa")),
+      value: self.expression(.int(BigInt(1)))
+    )
+
+    let stmt2 = self.globalStmt(name: "elsa", location: loc1)
+    let stmt3 = self.nonlocalStmt(name: "elsa")
+
+    let inner = self.functionDefStmt(name: "sing",
+                                     args: self.arguments(),
+                                     body: [stmt2, stmt3])
+
+    let outer = self.functionDefStmt(name: "let_it_go",
+                                     args: self.arguments(),
+                                     body: [stmt1, self.statement(inner)])
+
+    if let error = self.error(forStmt: outer) {
+      XCTAssertEqual(error.kind, .bothGlobalAndNonlocal("elsa"))
+      XCTAssertEqual(error.location, loc1)
+    }
+  }
+
+  // MARK: - Error - Nonlocal without binding
+
+  /// def let_it_go():
+  ///   nonlocal elsa
+  func test_nonlocal_withoutBinding_throws() {
+    let stmt = self.nonlocalStmt(name: "elsa", location: loc1)
+
+    let outer = self.functionDefStmt(name: "let_it_go",
+                                     args: self.arguments(),
+                                     body: stmt)
+
+    if let error = self.error(forStmt: outer) {
+      XCTAssertEqual(error.kind, .nonlocalWithoutBinding("elsa"))
+      XCTAssertEqual(error.location, loc1)
+    }
+  }
+
+  // MARK: - Error - Duplicate argument
 
   func test_duplicateArgument_args_args_throws() {
     let arg0 = self.arg("elsa", annotation: nil)

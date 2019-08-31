@@ -88,7 +88,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
 
   /// elsa
   /// global elsa
-  func test_global_afterUse_throws() {
+  func test_useAsLocal_thenGlobal_throws() {
     let stmt1 = self.statement(expr: .identifier("elsa"))
     let stmt2 = self.globalStmt(name: "elsa", location: loc1)
 
@@ -100,7 +100,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
 
   /// elsa: Queen = 5
   /// global elsa
-  func test_global_afterAnnotatedLocal_throws() {
+  func test_annotatedLocal_thenGlobal_throws() {
     let stmt1 = self.statement(.annAssign(
       target: self.expression(.identifier("elsa")),
       annotation: self.expression(.identifier("Queen")),
@@ -119,7 +119,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
   // MARK: - Nonlocal
 
   /// nonlocal elsa
-  func test_nonlocal_throws() {
+  func test_nonlocal_atModuleScope_throws() {
     let stmt = self.nonlocalStmt(name: "elsa", location: loc1)
 
     if let error = self.error(forStmt: stmt) {
@@ -145,7 +145,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
 
   /// elsa
   /// nonlocal elsa
-  func test_nonlocal_afterUse_throws() {
+  func test_useAsLocal_thenNonlocal_throws() {
     let stmt1 = self.statement(expr: .identifier("elsa"))
     let stmt2 = self.nonlocalStmt(name: "elsa", location: loc1)
 
@@ -157,7 +157,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
 
   /// elsa: Queen = 5
   /// nonlocal elsa
-  func test_nonlocal_afterAnnotatedLocal_throws() {
+  func test_annotatedLocal_thenNonlocal_throws() {
     let stmt1 = self.statement(.annAssign(
       target: self.expression(.identifier("elsa")),
       annotation: self.expression(.identifier("Queen")),

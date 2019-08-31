@@ -105,6 +105,20 @@ extension ASTCreator {
                                      returns: returns)
   }
 
+  internal func functionDefStmt(name: String,
+                                args: Arguments,
+                                body: [Statement],
+                                decoratorList: [Expression] = [],
+                                returns: Expression? = nil) -> StatementKind {
+    assert(body.any)
+    let arr = NonEmptyArray(first: body[0], rest: body[1...])
+    return StatementKind.functionDef(name: name,
+                                     args: args,
+                                     body: arr,
+                                     decoratorList: decoratorList,
+                                     returns: returns)
+  }
+
   internal func asyncFunctionDefStmt(name: String,
                                      args: Arguments,
                                      body: Statement? = nil,
@@ -146,6 +160,16 @@ extension ASTCreator {
   internal func nonlocalStmt(name: String,
                              location: SourceLocation? = nil) -> Statement {
     let kind = StatementKind.nonlocal(NonEmptyArray(first: name))
+    return self.statement(kind, start: location ?? self.start)
+  }
+
+  internal func assignStmt(target: Expression,
+                           value: Expression,
+                           location: SourceLocation? = nil) -> Statement {
+    let kind = StatementKind.assign(
+      targets: NonEmptyArray(first: target),
+      value: value
+    )
     return self.statement(kind, start: location ?? self.start)
   }
 
