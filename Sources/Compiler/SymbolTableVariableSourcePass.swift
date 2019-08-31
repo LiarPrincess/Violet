@@ -236,7 +236,7 @@ internal final class SymbolTableVariableSourcePass {
       guard scopeContext.newFree.contains(name) else { continue }
 
       // we found a declaration of this free vaiable -> cell
-      scopeContext.symbolSources[name] = .cell
+      scopeContext.symbolSources[name] = flags.union(.cell)
       scopeContext.newFree.removeValue(forKey: name)
     }
   }
