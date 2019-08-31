@@ -314,6 +314,101 @@ class STFunction: XCTestCase, CommonSymbolTable {
     }
   }
 
+  // MARK: - Nonlocal
+
+  /// def let_it_go():
+  ///   elsa = 1
+  ///   def sing():
+  ///     nonlocal elsa
+  ///
+  /// ```c
+  /// name: top
+  /// lineno: 0
+  /// symbols:
+  ///   let_it_go - local, assigned, namespace,
+  /// children:
+  ///   name: let_it_go
+  ///   lineno: 2
+  ///   is optimized
+  ///   locals: ('elsa', 'sing')
+  ///   symbols:
+  ///     elsa - local, assigned,
+  ///     sing - local, assigned, namespace,
+  ///   children:
+  ///     name: sing
+  ///     lineno: 4
+  ///     is optimized
+  ///     is nested
+  ///     frees: ('elsa',)
+  ///     symbols:
+  ///       elsa - free,
+  /// ```
+  func test_nonlocal() {
+    let assign = self.assignStmt(
+      target: self.expression(.identifier("elsa"), start: loc1),
+      value: self.expression(.int(BigInt(1)))
+    )
+
+    let inner = self.functionDefStmt(
+      name: "sing",
+      args: self.arguments(),
+      body: self.nonlocalStmt(name: "elsa", location: loc2)
+    )
+    let innerStmt = self.statement(inner, start: loc3)
+
+    let outer = self.functionDefStmt(
+      name: "let_it_go",
+      args: self.arguments(),
+      body: [assign, innerStmt]
+    )
+    let outerStmt = self.statement(outer, start: loc4)
+
+    if let table = self.createSymbolTable(forStmt: outerStmt) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssert(top.varnames.isEmpty)
+
+      XCTAssertEqual(top.symbols.count, 1)
+      XCTAssertContainsSymbol(top,
+                              name: "let_it_go",
+                              flags: [.defLocal, .srcLocal],
+                              location: loc4)
+
+      // let_it_go
+      XCTAssertEqual(top.children.count, 1)
+      guard top.children.count == 1 else { return }
+
+      let letItGo = top.children[0]
+      XCTAssertScope(letItGo, name: "let_it_go", type: .function, flags: [.isNested])
+      XCTAssert(letItGo.varnames.isEmpty)
+
+      XCTAssertEqual(letItGo.symbols.count, 2)
+      XCTAssertContainsSymbol(letItGo,
+                              name: "elsa",
+                              flags: [.defLocal, .srcLocal, .cell],
+                              location: loc1)
+      XCTAssertContainsSymbol(letItGo,
+                              name: "sing",
+                              flags: [.defLocal, .srcLocal],
+                              location: loc3)
+
+      // sing
+      XCTAssertEqual(letItGo.children.count, 1)
+      guard letItGo.children.count == 1 else { return }
+
+      let sing = letItGo.children[0]
+      XCTAssertScope(sing, name: "sing", type: .function, flags: [.isNested])
+      XCTAssert(sing.varnames.isEmpty)
+      XCTAssert(sing.children.isEmpty)
+
+      XCTAssertEqual(sing.symbols.count, 1)
+      XCTAssertContainsSymbol(sing,
+                              name: "elsa",
+                              flags: [.defNonlocal, .srcFree],
+                              location: loc2)
+    }
+  }
+
   // MARK: - Error - Nonlocal and global
 
   /// def let_it_go():
