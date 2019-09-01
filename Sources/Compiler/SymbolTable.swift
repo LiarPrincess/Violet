@@ -141,8 +141,14 @@ public struct SymbolFlags: OptionSet, Equatable {
   /// Free variable from class's method
   public static let defFreeClass = SymbolFlags(rawValue: 1 << 6)
 
-  /// Bound in local scope (either by local, param or import)
-  public static let defBound: SymbolFlags = [.defLocal, .defParam, .defImport]
+  /// Bound in scope.
+  /// Includes: local, param or import
+  public static let defBoundMask: SymbolFlags = [.defLocal, .defParam, .defImport]
+
+  /// Used in scope.
+  /// Includes: global, nonlocal, local, param
+  /// Does NOT include: import, free, freeClass
+  public static let defScopeMask: SymbolFlags = [.defGlobal, .defNonlocal, .defLocal, .defParam]
 
   // MARK: Variable source (from other scopes)
 

@@ -184,7 +184,7 @@ internal final class SymbolTableVariableSourcePass {
       return
     }
 
-    if flags.containsAny(.defBound) {
+    if flags.containsAny(.defBoundMask) {
       scopeContext.symbolSources[name] = .srcLocal
       scopeContext.local.insert(name)
       outerContext?.global.remove(name)
@@ -277,7 +277,7 @@ internal final class SymbolTableVariableSourcePass {
 
       // Handle symbol that already exists in this scope
       if let info = scope.symbols[name] {
-        if scope.type == .class && info.flags.containsAny(.defBound) {
+        if scope.type == .class && info.flags.containsAny(.defBoundMask) {
           var flags = info.flags
           flags.formUnion(.defFreeClass)
 

@@ -14,8 +14,9 @@ import Bytecode
 extension Compiler {
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  internal func visitExpressions<S: Sequence>(_ exprs: S) throws
-    where S.Element == Expression {
+  internal func visitExpressions<S: Sequence>(
+    _ exprs: S,
+    context: ExpressionContext = .load) throws where S.Element == Expression {
 
     for e in exprs {
       try self.visitExpression(e)
@@ -23,14 +24,16 @@ extension Compiler {
   }
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  internal func visitExpression(_ expr: Expression?) throws {
+  internal func visitExpression(_ expr: Expression?,
+                                context: ExpressionContext = .load) throws {
     if let e = expr {
       try self.visitExpression(e)
     }
   }
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  internal func visitExpression(_ expr: Expression) throws {
+  internal func visitExpression(_ expr: Expression,
+                                context: ExpressionContext = .load) throws {
     let location = expr.start
 
     switch expr.kind {
@@ -43,8 +46,10 @@ extension Compiler {
     case .ellipsis:
       try self.emitConstant(.ellipsis, location: location)
 
-case let .identifier(value):
-  try self.visitIdentifier(value: value)
+    case let .identifier(value):
+      try self.visitIdentifier(value: value,
+                               context: context,
+                               location: location)
 
     case let .bytes(value):
       try self.emitConstant(.bytes(value), location: location)
@@ -115,8 +120,72 @@ case let .starred(expr):
     }
   }
 
-  private func visitIdentifier(value: String) throws {
+  // MARK: - Identifier
+
+  private enum IdentifierOperation {
+    case fast
+    case global
+    case deref
+    case name
   }
+
+  /// compiler_nameop(struct compiler *c, identifier name, expr_context_ty ctx)
+  private func visitIdentifier(value: String,
+                               context: ExpressionContext,
+                               location: SourceLocation) throws {
+
+    let mangled = MangledName(className: self.className, name: value)
+    let info = self.currentScope.symbols[mangled]
+
+    // TODO: Leave assert here, but handle __doc__ and the like better
+    assert(info != nil || value.starts(with: "_"))
+
+    let flags = info?.flags ?? []
+    var operation = IdentifierOperation.name
+
+    if flags.contains(.srcFree) {
+      operation = .deref
+    } else if flags.contains(.cell) {
+      operation = .deref
+    } else if flags.contains(.defLocal) {
+      if self.currentScope.type == .function {
+        operation = .fast
+      }
+    } else if flags.contains(.srcGlobalImplicit) {
+      if self.currentScope.type == .function {
+        operation = .global
+      }
+    } else if flags.contains(.srcGlobalExplicit) {
+      operation = .global
+    }
+
+    switch operation {
+    case .deref:
+      let c = self.getDerefContext(context: context)
+      try self.emitDeref(name: mangled, context: c, location: location)
+    case .fast:
+      try self.emitFast(name: mangled, context: context, location: location)
+    case .global:
+      try self.emitGlobal(name: mangled, context: context, location: location)
+    case .name:
+      try self.emitName(name: mangled, context: context, location: location)
+    }
+  }
+
+  private func getDerefContext(context: ExpressionContext) -> DerefContext {
+    switch context {
+    case .store:
+      return .store
+    case .load where self.currentScope.type == .class:
+      return .loadClass
+    case .load:
+      return .load
+    case .del:
+      return .del
+    }
+  }
+
+  // MARK: - String
 
   /// compiler_formatted_value(struct compiler *c, expr_ty e)
   /// compiler_joined_str(struct compiler *c, expr_ty e)

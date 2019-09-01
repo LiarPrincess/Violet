@@ -36,6 +36,71 @@ extension Compiler {
     try self.emit(.loadConst(index: index), location: location)
   }
 
+  // MARK: - Store, load, delete
+
+  internal func emitName(name: MangledName,
+                         context: ExpressionContext,
+                         location: SourceLocation) throws {
+
+    let index = try self.addNameWithExtendedArgIfNeeded(name: name,
+                                                        location: location)
+
+    switch context {
+    case .store:
+      try self.emit(.storeName(nameIndex: index), location: location)
+    case .load:
+      try self.emit(.loadName(nameIndex: index), location: location)
+    case .del:
+      try self.emit(.deleteName(nameIndex: index), location: location)
+    }
+  }
+
+  internal func emitGlobal(name: MangledName,
+                           context: ExpressionContext,
+                           location: SourceLocation) throws {
+
+    let index = try self.addNameWithExtendedArgIfNeeded(name: name,
+                                                        location: location)
+
+    switch context {
+    case .store:
+      try self.emit(.storeGlobal(nameIndex: index), location: location)
+    case .load:
+      try self.emit(.loadGlobal(nameIndex: index), location: location)
+    case .del:
+      try self.emit(.deleteGlobal(nameIndex: index), location: location)
+    }
+  }
+
+  internal func emitFast(name: MangledName,
+                         context: ExpressionContext,
+                         location: SourceLocation) throws {
+    // TODO: fill this
+  }
+
+  internal enum DerefContext {
+    case store
+    case load
+    case loadClass
+    case del
+  }
+
+  internal func emitDeref(name: MangledName,
+                          context: DerefContext,
+                          location: SourceLocation) throws {
+    // TODO: fill this
+  }
+
+  private func addNameWithExtendedArgIfNeeded(
+    name: MangledName,
+    location:  SourceLocation) throws -> UInt8 {
+
+    let rawIndex = self.currentCodeObject.names.endIndex
+    let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
+    self.currentCodeObject.names.append(name)
+    return index
+  }
+
   // MARK: - Operators
 
   /// unaryop(unaryop_ty op)

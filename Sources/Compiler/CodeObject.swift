@@ -21,7 +21,7 @@ public class CodeObject {
   public var constants = [Constant]()
   /// List of strings (names used).
   /// E.g. `LoadName 5` loads `self.names[5]` value.
-  public var names = [String]()
+  public var names = [MangledName]()
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
   public var labels = [Int]()
@@ -31,7 +31,7 @@ public class CodeObject {
   /// *args or *
   public var varargs = Vararg.none
   /// Names of keyword only arguments
-  public var kwonlyArgNames = [String]()
+  public var kwOnlyArgNames = [String]()
   /// **kwargs or **
   public var varKeywords = Vararg.none
 

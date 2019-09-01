@@ -382,7 +382,6 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Empties the cell contained in slot i of the cell and free variable storage.
   -- Used by the del statement.
   | DeleteDeref(i)
-
   -- Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
   -- This is used for loading free variables in class bodies.
   | LoadClassDeref(i)

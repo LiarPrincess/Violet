@@ -15,7 +15,6 @@ public final class Compiler {
     fatalError("[BUG] Compiler: Using nil current code object.")
   }
 
-  // TODO: Merge symbolTable and scope to code unit
   private var symbolTable: SymbolTable!
 
   /// Scope stack.
@@ -28,12 +27,18 @@ public final class Compiler {
     fatalError("[BUG] Compiler: Using nil current scope.")
   }
 
+  /// Name of the class that we are currently filling (if any).
+  /// Mostly used for mangling.
+  internal var className: String?
+
   /// Optimization level
   internal let optimize: Bool
 
   public init(optimize: Bool) {
     self.optimize = optimize
   }
+
+  // MARK: - Visit
 
   /// PyAST_CompileObject(mod_ty mod, PyObject *filename, PyCompilerFlags ...)
   /// compiler_mod(struct compiler *c, mod_ty mod)
