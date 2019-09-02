@@ -47,9 +47,7 @@ extension Compiler {
       try self.emitConstant(.ellipsis, location: location)
 
     case let .identifier(value):
-      try self.visitIdentifier(value: value,
-                               context: context,
-                               location: location)
+      try self.visitIdentifier(value: value, context: context, location: location)
 
     case let .bytes(value):
       try self.emitConstant(.bytes(value), location: location)
@@ -71,31 +69,18 @@ extension Compiler {
       try self.visitExpression(right)
       try emitBinaryOperator(op, location: location)
     case let .boolOp(op, left, right):
-      try self.visitBoolOp(op: op,
-                           left: left,
-                           right: right,
-                           location: location)
+      try self.visitBoolOp(op: op, left: left, right: right, location: location)
     case let .compare(left, elements):
-      try self.visitCompare(left: left,
-                            elements: elements,
-                            location: location)
+      try self.visitCompare(left: left, elements: elements, location: location)
 
     case let .tuple(elements):
-      try self.visitTuple(elements: elements,
-                          context: context,
-                          location: location)
+      try self.visitTuple     (elements: elements, context: context, location: location)
     case let .list(elements):
-      try self.visitList(elements: elements,
-                         context: context,
-                         location: location)
+      try self.visitList      (elements: elements, context: context, location: location)
     case let .dictionary(elements):
-      try self.visitDictionary(elements: elements,
-                               context: context,
-                               location: location)
+      try self.visitDictionary(elements: elements, context: context, location: location)
     case let .set(elements):
-      try self.visitSet(elements: elements,
-                        context: context,
-                        location: location)
+      try self.visitSet       (elements: elements, context: context, location: location)
 
 case let .listComprehension(elt, generators):
   try self.visitListComprehension(elt: elt, generators: generators)
@@ -124,12 +109,24 @@ case let .call(f, args, keywords):
                                  orElse: orElse,
                                  location: location)
 
-case let .attribute(expr, name):
-  try self.visitAttribute(expr: expr, name: name)
-case let .subscript(expr, slice):
-  try self.visitSubscript(expr: expr, slice: slice)
-case let .starred(expr):
-  try self.visitStarred(expr: expr)
+    case let .attribute(expr, name):
+      let mangled = MangledName(className: self.className, name: name)
+      try self.visitExpression(expr)
+      try self.emitAttribute(name: mangled, context: context, location: location)
+
+    case let .subscript(expr, slice):
+      try self.visitExpression(expr)
+      try self.visitSlice(slice: slice, context: context, location: location)
+
+    case .starred:
+      // In all legitimate cases, the starred node was already replaced
+      // inside assign, call etc.
+      switch context {
+      case .store:
+        throw self.error(.starredAssignmentNotListOrTuple, location: location)
+      default:
+        throw self.error(.invalidStarredExpression, location: location)
+      }
     }
   }
 
@@ -419,7 +416,6 @@ case let .starred(expr):
 
       try self.visitExpression(test, andJumpTo: next2, if: false, location: loc)
       try self.visitExpression(body, andJumpTo: next,  if: cond,  location: loc)
-      // TODO: ADDOP_JREL(c, JUMP_FORWARD, end);
       try self.emitJumpAbsolute(to: end, location: loc)
       self.setLabel(next2)
       try self.visitExpression(orElse, andJumpTo: next, if: cond, location: loc)
@@ -473,35 +469,73 @@ case let .starred(expr):
     }
   }
 
-  // MARK: - Trailer
+  // MARK: - Slice
 
-  private func visitAttribute(expr: Expression,
-                              name: String) throws {
+  /// compiler_visit_slice(struct compiler *c, slice_ty s, expr_context_ty ctx)
+  private func visitSlice(slice:  Slice,
+                          context:  ExpressionContext,
+                          location: SourceLocation) throws {
+    switch slice.kind {
+    case let .index(index):
+      try self.visitExpression(index)
+    case let .slice(lower, upper, step):
+      try self.compileSlice(lower: lower,
+                            upper: upper,
+                            step:  step,
+                            location: location)
+    case let .extSlice(slices):
+      for s in slices {
+        try self.visitNestedSlice(slice: s, context: context)
+      }
+    }
+
+    try self.emitSubscript(context: context, location: location)
   }
 
-  private func visitSubscript(expr: Expression,
-                              slice: Slice) throws {
+  /// compiler_visit_nested_slice(struct compiler *c, slice_ty s,
+  /// expr_context_ty ctx)
+  private func visitNestedSlice(slice: Slice,
+                                context: ExpressionContext) throws {
+    let location = slice.start
+
+    switch slice.kind {
+    case let .index(index):
+      try self.visitExpression(index)
+    case let .slice(lower, upper, step):
+      try self.compileSlice(lower: lower,
+                            upper: upper,
+                            step:  step,
+                            location: location)
+    case .extSlice:
+      let kind = CompilerErrorKind.extendedSliceNestedInsideExtendedSlice
+      throw self.error(kind, location: location)
+    }
   }
 
-  private func visitSlice(_ slice: Slice) throws {
-  }
+  /// compiler_slice(struct compiler *c, slice_ty s, expr_context_ty ctx)
+  private func compileSlice(lower: Expression?,
+                            upper: Expression?,
+                            step:  Expression?,
+                            location: SourceLocation) throws {
 
-  // MARK: - Starred
+    if let l = lower {
+      try self.visitExpression(l)
+    } else {
+      try self.emitConstant(.none, location: location)
+    }
 
-  private func visitStarred(expr: Expression) throws {
-  }
+    if let u = upper {
+      try self.visitExpression(u)
+    } else {
+      try self.emitConstant(.none, location: location)
+    }
 
-  // MARK: - ?
+    var n: UInt8 = 2
+    if let s = step {
+      n += 1
+      try self.visitExpression(s)
+    }
 
-  private func visitComprehension(_ comprehension: Comprehension) throws {
-  }
-
-  private func visitArguments(_ args: Arguments) throws {
-  }
-
-  private func visitArg(_ arg: Arg) throws {
-  }
-
-  private func visitKeyword(_ keyword: Keyword) throws {
+    try self.emitBuildSlice(n: n, location: location)
   }
 }

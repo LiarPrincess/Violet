@@ -43,8 +43,8 @@ extension Compiler {
                          context: ExpressionContext,
                          location: SourceLocation) throws {
 
-    let index = try self.addNameWithExtendedArgIfNeeded(name: name,
-                                                        location: location)
+    let index =
+      try self.addNameWithExtendedArgIfNeeded(name: name, location: location)
 
     switch context {
     case .store:
@@ -56,12 +56,41 @@ extension Compiler {
     }
   }
 
+  internal func emitAttribute(name: MangledName,
+                              context: ExpressionContext,
+                              location: SourceLocation) throws {
+
+    let index =
+      try self.addNameWithExtendedArgIfNeeded(name: name, location: location)
+
+    switch context {
+    case .store:
+      try self.emit(.storeAttr(nameIndex: index), location: location)
+    case .load:
+      try self.emit(.loadAttr(nameIndex: index), location: location)
+    case .del:
+      try self.emit(.deleteAttr(nameIndex: index), location: location)
+    }
+  }
+
+  internal func emitSubscript(context: ExpressionContext,
+                              location: SourceLocation) throws {
+    switch context {
+    case .store:
+      try self.emit(.storeSubscr, location: location)
+    case .load:
+      try self.emit(.binarySubscr, location: location)
+    case .del:
+      try self.emit(.deleteSubscr, location: location)
+    }
+  }
+
   internal func emitGlobal(name: MangledName,
                            context: ExpressionContext,
                            location: SourceLocation) throws {
 
-    let index = try self.addNameWithExtendedArgIfNeeded(name: name,
-                                                        location: location)
+    let index =
+      try self.addNameWithExtendedArgIfNeeded(name: name, location: location)
 
     switch context {
     case .store:
@@ -94,7 +123,7 @@ extension Compiler {
 
   private func addNameWithExtendedArgIfNeeded(
     name: MangledName,
-    location:  SourceLocation) throws -> UInt8 {
+    location: SourceLocation) throws -> UInt8 {
 
     let rawIndex = self.currentCodeObject.names.endIndex
     let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
@@ -153,11 +182,6 @@ extension Compiler {
   }
 
   // MARK: - Jump
-
-  @available(*, unavailable, message: "Use 'self.emitJumpAbsolute' instead.")
-  internal func emitJumpForward(delta: Label, location: SourceLocation) throws {
-    fatalError("Unavailable 'emitJumpForward', use 'emitJumpAbsolute' instead.")
-  }
 
   internal func emitJumpAbsolute(to label: Label,
                                  location: SourceLocation) throws {
@@ -274,10 +298,17 @@ extension Compiler {
   internal func emitUnpackEx(countBefore: Int,
                              countAfter:  Int,
                              location:    SourceLocation) throws {
-    precondition(countBefore <= 0xff)
-    precondition(countAfter  <= 0xffff_ff)
+    assert(countBefore <= 0xff)
+    assert(countAfter  <= 0xffff_ff)
 
 //    let rawValue = countAfter << 8 | countBefore
+  }
+
+  // MARK: - Other
+
+  internal func emitBuildSlice(n: UInt8, location: SourceLocation) throws {
+    assert(n == 2 || n == 3)
+    try self.emit(.buildSlice(n), location: location)
   }
 
   // MARK: - Helpers

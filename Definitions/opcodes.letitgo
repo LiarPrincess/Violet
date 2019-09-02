@@ -153,9 +153,6 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Implements `TOS = TOS1 | TOS`.
   | BinaryOr
 
-  -- Implements `TOS = TOS1[TOS]`.
-  | BinarySubscr
-
 {- -------------------- -}
 {-  In-place operations -}
 {- -------------------- -}
@@ -358,6 +355,13 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | LoadAttr(Index nameIndex)
   -- Implements `del TOS.name`.
   | DeleteAttr(Index nameIndex)
+
+  -- Implements `TOS = TOS1[TOS]`.
+  | BinarySubscr
+  -- Implements `TOS1[TOS] = TOS2`.
+  | StoreSubscr
+  -- Implements `del TOS1[TOS]`.
+  | DeleteSubscr
 
   -- Works as StoreName, but stores the name as a global.
   | StoreGlobal(Index nameIndex)
@@ -663,4 +667,4 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- If it is 2, `slice(TOS1, TOS)` is pushed;
   -- if it is 3, `slice(TOS2, TOS1, TOS)` is pushed.
   -- See the `slice()` built-in function for more information.
-  | BuildSlice(UInt8 argc)
+  | BuildSlice(Count)

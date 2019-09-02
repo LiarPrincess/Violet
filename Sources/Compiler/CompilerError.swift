@@ -73,8 +73,16 @@ public enum CompilerErrorKind: Equatable {
   // MARK: - Compiler
 
   case fStringWithMoreThan255Elements
+
   /// Two starred expressions in assignment
   case multipleStarredInAssignmentExpressions
+  /// Starred assignment target must be in a list or tuple
+  case starredAssignmentNotListOrTuple
+  /// Can't use starred expression here
+  case invalidStarredExpression
+
+  /// Extended slice invalid in nested slice
+  case extendedSliceNestedInsideExtendedSlice
 }
 
 // TODO: surprisingly appropriate; `fromFutureImportBraces`

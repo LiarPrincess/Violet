@@ -159,8 +159,6 @@ public enum Instruction {
   case binaryXor
   /// Implements `TOS = TOS1 | TOS`.
   case binaryOr
-  /// Implements `TOS = TOS1[TOS]`.
-  case binarySubscr
   /// Implements in-place TOS = TOS1 ** TOS.
   case inplacePower
   /// Implements in-place TOS = TOS1 * TOS.
@@ -295,6 +293,12 @@ public enum Instruction {
   case loadAttr(nameIndex: UInt8)
   /// Implements `del TOS.name`.
   case deleteAttr(nameIndex: UInt8)
+  /// Implements `TOS = TOS1[TOS]`.
+  case binarySubscr
+  /// Implements `TOS1[TOS] = TOS2`.
+  case storeSubscr
+  /// Implements `del TOS1[TOS]`.
+  case deleteSubscr
   /// Works as StoreName, but stores the name as a global.
   case storeGlobal(nameIndex: UInt8)
   /// Loads the global named `name` onto the stack.
@@ -516,7 +520,7 @@ public enum Instruction {
   /// If it is 2, `slice(TOS1, TOS)` is pushed;
   /// if it is 3, `slice(TOS2, TOS1, TOS)` is pushed.
   /// See the `slice()` built-in function for more information.
-  case buildSlice(argc: UInt8)
+  case buildSlice(UInt8)
 
   public var isCompareOp: Bool {
     if case .compareOp = self { return true }
