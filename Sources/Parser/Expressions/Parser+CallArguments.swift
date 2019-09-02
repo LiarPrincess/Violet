@@ -27,8 +27,8 @@ internal struct CallIR {
     self.isBaseClass = isBaseClass
   }
 
-  internal func compile(calling leftExpr: Expression) -> ExpressionKind {
-    return ExpressionKind.call(f: leftExpr,
+  internal func compile(calling function: Expression) -> ExpressionKind {
+    return ExpressionKind.call(function: function,
                                args: self.args,
                                keywords: self.keywords)
   }

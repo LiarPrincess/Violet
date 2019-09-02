@@ -568,7 +568,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
     let kwArg = self.expression(.identifier("anna"), start: loc3)
     let kw = self.keyword(name: "who", value: kwArg)
 
-    let kind = ExpressionKind.call(f: f, args: [arg], keywords: [kw])
+    let kind = ExpressionKind.call(function: f, args: [arg], keywords: [kw])
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top

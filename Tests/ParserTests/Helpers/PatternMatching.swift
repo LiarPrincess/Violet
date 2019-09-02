@@ -649,9 +649,9 @@ extension ExpressionMatcher {
   internal func matchCall(_ expr: Expression,
                           file: StaticString = #file,
                           line: UInt         = #line) ->
-    (f: Expression, args: [Expression], keywords: [Keyword])? {
+    (function: Expression, args: [Expression], keywords: [Keyword])? {
 
-    if case let ExpressionKind.call(f: value0, args: value1, keywords: value2) = expr.kind {
+    if case let ExpressionKind.call(function: value0, args: value1, keywords: value2) = expr.kind {
       return (value0, value1, value2)
     }
 

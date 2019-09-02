@@ -24,7 +24,7 @@ class CallComprehensionTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.keywords, [])
 
       XCTAssertEqual(d.args.count, 1)
@@ -68,7 +68,7 @@ class CallComprehensionTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.args.count, 2)
       XCTAssertEqual(d.keywords, [])
 
@@ -102,7 +102,7 @@ class CallComprehensionTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.args.count, 2)
       XCTAssertEqual(d.keywords, [])
 
@@ -134,7 +134,7 @@ class CallComprehensionTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.args.count, 2)
       XCTAssertEqual(d.keywords, [])
 
@@ -165,7 +165,7 @@ class CallComprehensionTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.args.count, 1)
       XCTAssertEqual(d.keywords, [])
 

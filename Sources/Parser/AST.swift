@@ -500,7 +500,7 @@ public indirect enum ExpressionKind: Equatable {
   /// - `func` - function to call
   /// - `args` - arguments passed by position
   /// - `keywords` - keyword objects representing arguments passed by keyword
-  case call(f: Expression, args: [Expression], keywords: [Keyword])
+  case call(function: Expression, args: [Expression], keywords: [Keyword])
   /// For example: `1 if True else 2`
   case ifExpression(test: Expression, body: Expression, orElse: Expression)
   /// For example `apple.juice = poison`.

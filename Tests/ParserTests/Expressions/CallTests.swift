@@ -21,7 +21,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.args, [])
       XCTAssertEqual(d.keywords, [])
 
@@ -45,7 +45,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.keywords, [])
 
       XCTAssertEqual(d.args.count, 1)
@@ -72,7 +72,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.keywords, [])
 
       XCTAssertEqual(d.args.count, 2)
@@ -99,7 +99,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.keywords, [])
 
       XCTAssertEqual(d.args.count, 1)
@@ -126,7 +126,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.keywords, [])
 
       XCTAssertEqual(d.args.count, 1)
@@ -191,7 +191,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.keywords, [])
 
       XCTAssertEqual(d.args.count, 1)
@@ -219,7 +219,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.keywords, [])
 
       XCTAssertEqual(d.args.count, 2)
@@ -250,7 +250,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
 
       XCTAssertEqual(d.args.count, 1)
       guard d.args.count == 1 else { return }
@@ -301,7 +301,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.args, [])
 
       XCTAssertEqual(d.keywords.count, 1)
@@ -332,7 +332,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.args, [])
 
       XCTAssertEqual(d.keywords.count, 2)
@@ -423,7 +423,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
       XCTAssertEqual(d.args, [])
 
       XCTAssertEqual(d.keywords.count, 1)
@@ -451,7 +451,7 @@ class CallTests: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchCall(expr) else { return }
 
-      XCTAssertExpression(d.f, "f")
+      XCTAssertExpression(d.function, "f")
 
       XCTAssertEqual(d.args.count, 1)
       guard d.args.count == 1 else { return }

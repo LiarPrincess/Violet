@@ -10,8 +10,6 @@ import Lexer
 // Python -> ast.c
 //  int PyAST_Validate(mod_ty mod)
 
-// TODO: Rewritte this with new pass generator
-
 public struct ASTValidationPass: ASTPass {
 
   public typealias PassResult = Void
@@ -20,92 +18,94 @@ public struct ASTValidationPass: ASTPass {
   public func visit(_ ast: AST) throws {
     switch ast.kind {
     case let .single(stmts):
-      try self.visit(stmts)
+      try self.visitStatements(stmts)
     case let .fileInput(stmts):
-      try self.visit(stmts)
+      try self.visitStatements(stmts)
     case let .expression(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
     }
   }
 
   // MARK: - Statement
 
-  private func visit<S: Sequence>(_ stmts: S) throws where S.Element == Statement {
+  private func visitStatements<S: Sequence>(_ stmts: S)
+    throws where S.Element == Statement {
+
     for s in stmts {
-      try self.visit(s)
+      try self.visitStatement(s)
     }
   }
 
   /// validate_stmt(stmt_ty stmt)
-  private func visit(_ stmt: Statement) throws {
+  private func visitStatement(_ stmt: Statement) throws {
     switch stmt.kind {
     case let .functionDef(_, args, body, decoratorList, returns),
          let .asyncFunctionDef(_, args, body, decoratorList, returns):
-      try self.visit(body)
-      try self.visit(args)
-      try self.visit(decoratorList)
-      try self.visit(returns)
+      try self.visitStatements(body)
+      try self.visitArguments(args)
+      try self.visitExpressions(decoratorList)
+      try self.visitExpression(returns)
 
     case let .classDef(_, bases, keywords, body, decoratorList):
-      try self.visit(body)
-      try self.visit(bases)
-      try self.visit(keywords)
-      try self.visit(decoratorList)
+      try self.visitStatements(body)
+      try self.visitExpressions(bases)
+      try self.visitKeywords(keywords)
+      try self.visitExpressions(decoratorList)
 
     case let .return(value):
-      try self.visit(value)
+      try self.visitExpression(value)
 
     case let .delete(exprs):
-      try self.visit(exprs)
+      try self.visitExpressions(exprs)
 
     case let .assign(targets, value):
-      try self.visit(targets)
-      try self.visit(value)
+      try self.visitExpressions(targets)
+      try self.visitExpression(value)
     case let .augAssign(target, _, value):
-      try self.visit(target)
-      try self.visit(value)
+      try self.visitExpression(target)
+      try self.visitExpression(value)
     case let .annAssign(target, annotation, value, isSimple):
       if isSimple && !target.kind.isIdentifier {
         throw self.error(.simpleAnnAssignmentWithNonNameTarget, statement: stmt)
       }
 
-      try self.visit(target)
-      try self.visit(value)
-      try self.visit(annotation)
+      try self.visitExpression(target)
+      try self.visitExpression(value)
+      try self.visitExpression(annotation)
 
     case let .for(target, iter, body, orElse),
          let .asyncFor(target, iter, body, orElse):
-      try self.visit(target)
-      try self.visit(iter)
-      try self.visit(body)
-      try self.visit(orElse)
+      try self.visitExpression(target)
+      try self.visitExpression(iter)
+      try self.visitStatements(body)
+      try self.visitStatements(orElse)
 
     case let .while(test, body, orElse):
-      try self.visit(test)
-      try self.visit(body)
-      try self.visit(orElse)
+      try self.visitExpression(test)
+      try self.visitStatements(body)
+      try self.visitStatements(orElse)
 
     case let .if(test, body, orElse):
-      try self.visit(test)
-      try self.visit(body)
-      try self.visit(orElse)
+      try self.visitExpression(test)
+      try self.visitStatements(body)
+      try self.visitStatements(orElse)
 
     case let .with(items, body),
          let .asyncWith(items, body):
       // we don't have to check .isEmpty because of NonEmptyArray
-      try self.visit(items)
-      try self.visit(body)
+      try self.visitWithItems(items)
+      try self.visitStatements(body)
 
     case let .raise(exc, cause):
       if let exc = exc {
-        try self.visit(exc)
-        try self.visit(cause)
+        try self.visitExpression(exc)
+        try self.visitExpression(cause)
       } else if cause != nil {
         throw self.error(.raiseWithCauseWithoutException, statement: stmt)
       }
 
     case let .try(body, handlers, orElse, finalBody):
-      try self.visit(body)
+      try self.visitStatements(body)
 
       if handlers.isEmpty && finalBody.isEmpty {
         throw self.error(.tryWithoutExceptOrFinally, statement: stmt)
@@ -115,13 +115,13 @@ public struct ASTValidationPass: ASTPass {
         throw self.error(.tryWithElseWithoutExcept, statement: stmt)
       }
 
-      try self.visit(handlers)
-      try self.visit(finalBody)
-      try self.visit(orElse)
+      try self.visitExceptHandlers(handlers)
+      try self.visitStatements(finalBody)
+      try self.visitStatements(orElse)
 
     case let .assert(test, msg):
-      try self.visit(test)
-      try self.visit(msg)
+      try self.visitExpression(test)
+      try self.visitExpression(msg)
 
     case .import, .importFrom:
       // we don't have to check names.isEmpty because of NonEmptyArray
@@ -133,44 +133,46 @@ public struct ASTValidationPass: ASTPass {
       break
 
     case let .expr(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
 
     case .pass, .break, .continue:
       break
     }
   }
 
-  private func visit(_ items: NonEmptyArray<WithItem>) throws {
+  private func visitWithItems(_ items: NonEmptyArray<WithItem>) throws {
     for i in items {
-      try self.visit(i.contextExpr)
-      try self.visit(i.optionalVars)
+      try self.visitExpression(i.contextExpr)
+      try self.visitExpression(i.optionalVars)
     }
   }
 
-  private func visit(_ handlers: [ExceptHandler]) throws {
+  private func visitExceptHandlers(_ handlers: [ExceptHandler]) throws {
     for h in handlers {
-      try self.visit(h.type)
-      try self.visit(h.body)
+      try self.visitExpression(h.type)
+      try self.visitStatements(h.body)
     }
   }
 
   // MARK: - Expression
 
-  private func visit<S: Sequence>(_ exprs: S) throws where S.Element == Expression {
+  private func visitExpressions<S: Sequence>(_ exprs: S)
+    throws where S.Element == Expression {
+
     for e in exprs {
-      try self.visit(e)
+      try self.visitExpression(e)
     }
   }
 
-  private func visit(_ expr: Expression?) throws {
+  private func visitExpression(_ expr: Expression?) throws {
     if let e = expr {
-      try self.visit(e)
+      try self.visitExpression(e)
     }
   }
 
   /// validate_constant(PyObject *value)
   /// validate_expr(expr_ty exp, expr_context_ty ctx)
-  private func visit(_ expr: Expression) throws {
+  private func visitExpression(_ expr: Expression) throws {
     switch expr.kind {
 
     case .none, .ellipsis,
@@ -181,96 +183,98 @@ public struct ASTValidationPass: ASTPass {
       break
 
     case let .unaryOp(_, right):
-      try self.visit(right)
+      try self.visitExpression(right)
     case let .boolOp(_, left, right),
          let .binaryOp(_, left, right):
-      try self.visit(left)
-      try self.visit(right)
+      try self.visitExpression(left)
+      try self.visitExpression(right)
     case let .compare(left, elements):
       // we don't have to check elements.isEmpty because of NonEmptyArray
-      try self.visit(left)
-      try self.visit(elements)
+      try self.visitExpression(left)
+      try self.visitComparisonElements(elements)
 
     case let .tuple(elements),
          let .list(elements),
          let .set(elements):
-      try self.visit(elements)
+      try self.visitExpressions(elements)
     case let .dictionary(elements):
-      try self.visit(elements)
+      try self.visitDictionaryElements(elements)
 
     case let .listComprehension(elt, generators),
          let .setComprehension(elt, generators),
          let .generatorExp(elt, generators):
-      try self.visit(elt)
-      try self.visit(generators)
+      try self.visitExpression(elt)
+      try self.visitComprehensions(generators)
     case let .dictionaryComprehension(key, value, generators):
-      try self.visit(key)
-      try self.visit(value)
-      try self.visit(generators)
+      try self.visitExpression(key)
+      try self.visitExpression(value)
+      try self.visitComprehensions(generators)
 
     case let .await(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
     case let .yield(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
     case let .yieldFrom(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
 
     case let .lambda(args, body):
-      try self.visit(args)
-      try self.visit(body)
+      try self.visitArguments(args)
+      try self.visitExpression(body)
     case let .call(`func`, args, keywords):
-      try self.visit(`func`)
-      try self.visit(args)
-      try self.visit(keywords)
+      try self.visitExpression(`func`)
+      try self.visitExpressions(args)
+      try self.visitKeywords(keywords)
 
     case let .ifExpression(test, body, orElse):
-      try self.visit(test)
-      try self.visit(body)
-      try self.visit(orElse)
+      try self.visitExpression(test)
+      try self.visitExpression(body)
+      try self.visitExpression(orElse)
 
     case let .attribute(expr, _):
-      try self.visit(expr)
+      try self.visitExpression(expr)
     case let .subscript(expr, slice):
-      try self.visit(expr)
-      try self.visit(slice)
+      try self.visitExpression(expr)
+      try self.visitSlice(slice)
     case let .starred(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
     }
   }
 
   // MARK: - Dictionary
 
-  private func visit(_ elements: [DictionaryElement]) throws {
+  private func visitDictionaryElements(_ elements: [DictionaryElement]) throws {
     for e in elements {
       switch e {
       case let .unpacking(expr):
-        try self.visit(expr)
+        try self.visitExpression(expr)
       case let .keyValue(key, value):
-        try self.visit(key)
-        try self.visit(value)
+        try self.visitExpression(key)
+        try self.visitExpression(value)
       }
     }
   }
 
   // MARK: - Comparison
 
-  private func visit(_ elements: NonEmptyArray<ComparisonElement>) throws {
+  private func visitComparisonElements(
+    _ elements: NonEmptyArray<ComparisonElement>) throws {
+
     for e in elements{
-      try self.visit(e.right)
+      try self.visitExpression(e.right)
     }
   }
 
   // MARK: - String
 
-  private func visit(_ group: StringGroup) throws {
+  private func visitString(_ group: StringGroup) throws {
     switch group {
     case .literal:
       break
     case let .formattedValue(expr, _, _):
-      try self.visit(expr)
+      try self.visitExpression(expr)
     case let .joined(groups):
       for g in groups {
-        try self.visit(g)
+        try self.visitString(g)
       }
     }
   }
@@ -278,43 +282,45 @@ public struct ASTValidationPass: ASTPass {
   // MARK: - Slice
 
   /// validate_slice(slice_ty slice)
-  private func visit(_ slice: Slice) throws {
+  private func visitSlice(_ slice: Slice) throws {
     switch slice.kind {
     case let .slice(lower, upper, step):
-      if let lower = lower { try self.visit(lower) }
-      if let upper = upper { try self.visit(upper) }
-      if let step  = step  { try self.visit(step) }
+      if let lower = lower { try self.visitExpression(lower) }
+      if let upper = upper { try self.visitExpression(upper) }
+      if let step  = step  { try self.visitExpression(step) }
 
     case let .extSlice(dims):
       // we don't have to check .isEmpty because of NonEmptyArray
       for slice in dims {
-        try self.visit(slice)
+        try self.visitSlice(slice)
       }
 
     case let .index(expr):
-      try self.visit(expr)
+      try self.visitExpression(expr)
     }
   }
 
   // MARK: - Comprehension
 
   /// validate_comprehension(asdl_seq *gens)
-  private func visit(_ comprehensions: NonEmptyArray<Comprehension>) throws {
+  private func visitComprehensions(
+    _ comprehensions: NonEmptyArray<Comprehension>) throws {
+
     for c in comprehensions {
-      try self.visit(c.target)
-      try self.visit(c.iter)
-      try self.visit(c.ifs)
+      try self.visitExpression(c.target)
+      try self.visitExpression(c.iter)
+      try self.visitExpressions(c.ifs)
     }
   }
 
   // MARK: - Arguments
 
   /// validate_arguments(arguments_ty args)
-  private func visit(_ args: Arguments) throws {
-    try self.visit(args.args)
-    try self.visit(args.vararg)
-    try self.visit(args.kwOnlyArgs)
-    try self.visit(args.kwarg?.annotation)
+  private func visitArguments(_ args: Arguments) throws {
+    try self.visitArgs(args.args)
+    try self.visitVararg(args.vararg)
+    try self.visitArgs(args.kwOnlyArgs)
+    try self.visitExpression(args.kwarg?.annotation)
 
     if args.defaults.count > args.args.count {
       throw self.error(.moreDefaultsThanArgs, location: args.start)
@@ -324,31 +330,31 @@ public struct ASTValidationPass: ASTPass {
       throw self.error(.kwOnlyArgsCountNotEqualToDefaults, location: args.start)
     }
 
-    try self.visit(args.defaults)
-    try self.visit(args.kwOnlyDefaults)
+    try self.visitExpressions(args.defaults)
+    try self.visitExpressions(args.kwOnlyDefaults)
   }
 
   /// validate_args(asdl_seq *args)
-  private func visit(_ args: [Arg]) throws {
+  private func visitArgs(_ args: [Arg]) throws {
     for a in args {
-      try self.visit(a.annotation)
+      try self.visitExpression(a.annotation)
     }
   }
 
   /// validate_arguments(arguments_ty args)
-  private func visit(_ arg: Vararg) throws {
+  private func visitVararg(_ arg: Vararg) throws {
     switch arg {
     case .none, .unnamed:
       break
     case let .named(arg):
-      try self.visit(arg.annotation)
+      try self.visitExpression(arg.annotation)
     }
   }
 
   /// validate_keywords(asdl_seq *keywords)
-  private func visit(_ keywords: [Keyword]) throws {
+  private func visitKeywords(_ keywords: [Keyword]) throws {
     for keyword in keywords {
-      try self.visit(keyword.value)
+      try self.visitExpression(keyword.value)
     }
   }
 
@@ -361,7 +367,7 @@ public struct ASTValidationPass: ASTPass {
   }
 
   /// Create parser error
-  internal func error(_ kind:   ParserErrorKind,
+  internal func error(_ kind: ParserErrorKind,
                       location: SourceLocation) -> ParserError {
     return ParserError(kind, location: location)
   }

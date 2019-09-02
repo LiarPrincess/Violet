@@ -350,7 +350,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `func` - function to call
   -- - `args` - arguments passed by position
   -- - `keywords` - keyword objects representing arguments passed by keyword
-  | Call(expr f, expr* args, keyword* keywords)
+  | Call(expr function, expr* args, keyword* keywords)
 {- Other -}
   -- For example: `1 if True else 2`
   | IfExpression(expr test, expr body, expr orElse)
