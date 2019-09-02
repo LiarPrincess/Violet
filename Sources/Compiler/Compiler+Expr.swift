@@ -47,12 +47,12 @@ extension Compiler {
       try self.emitConstant(.ellipsis, location: location)
 
     case let .identifier(value):
-      try self.visitIdentifier(value: value, context: context, location: location)
+      try self.visitIdentifier(value, context: context, location: location)
 
     case let .bytes(value):
       try self.emitConstant(.bytes(value), location: location)
-    case let .string(group):
-      try self.visitString(group: group, location: location)
+    case let .string(string):
+      try self.visitString(string, location: location)
 
     case let .int(value):
       try self.emitConstant(.integer(value), location: location)
@@ -82,26 +82,21 @@ extension Compiler {
     case let .set(elements):
       try self.visitSet       (elements: elements, context: context, location: location)
 
-case let .listComprehension(elt, generators):
-  try self.visitListComprehension(elt: elt, generators: generators)
-case let .setComprehension(elt, generators):
-  try self.visitSetComprehension(elt: elt, generators: generators)
-case let .dictionaryComprehension(key, value, generators):
-  try self.visitDictionaryComprehension(key: key, value: value, generators: generators)
-case let .generatorExp(elt, generators):
-  try self.visitGeneratorExp(elt: elt, generators: generators)
+    case .listComprehension,
+         .setComprehension,
+         .dictionaryComprehension:
+      throw self.notImplemented()
 
-case let .await(expr):
-  try self.visitAwait(expr: expr)
-case let .yield(value):
-  try self.visitYield(value: value)
-case let .yieldFrom(expr):
-  try self.visitYieldFrom(expr: expr)
+    case .generatorExp,
+         .await,
+         .yield,
+         .yieldFrom:
+      throw self.notImplemented()
 
-case let .lambda(args, body):
-  try self.visitLambda(args: args, body: body)
-case let .call(f, args, keywords):
-  try self.visitCall(f: f, args: args, keywords: keywords)
+    case .lambda:
+      throw self.notImplemented()
+    case let .call(f, args, keywords):
+      try self.visitCall(f: f, args: args, keywords: keywords)
 
     case let .ifExpression(test, body, orElse):
       try self.visitIfExpression(test: test,
@@ -140,7 +135,7 @@ case let .call(f, args, keywords):
   }
 
   /// compiler_nameop(struct compiler *c, identifier name, expr_context_ty ctx)
-  private func visitIdentifier(value: String,
+  private func visitIdentifier(_ value: String,
                                context: ExpressionContext,
                                location: SourceLocation) throws {
 
@@ -199,7 +194,7 @@ case let .call(f, args, keywords):
 
   /// compiler_formatted_value(struct compiler *c, expr_ty e)
   /// compiler_joined_str(struct compiler *c, expr_ty e)
-  private func visitString(group: StringGroup,
+  private func visitString(_ group: StringGroup,
                            location: SourceLocation) throws {
     switch group {
     case let .literal(s):
@@ -225,7 +220,7 @@ case let .call(f, args, keywords):
 
     case let .joined(groups):
       for g in groups {
-        try self.visitString(group: g, location: location)
+        try self.visitString(g, location: location)
       }
 
       if groups.count == 1 {
@@ -315,25 +310,32 @@ case let .call(f, args, keywords):
 
   // MARK: - Comprehension
 
-  private func visitListComprehension(elt: Expression,
-                                      generators: NonEmptyArray<Comprehension>) throws {
+/*
+  private func visitListComprehension(
+    elt: Expression,
+    generators: NonEmptyArray<Comprehension>) throws {
   }
 
-  private func visitSetComprehension(elt: Expression,
-                                     generators: NonEmptyArray<Comprehension>) throws {
+  private func visitSetComprehension(
+    elt: Expression,
+    generators: NonEmptyArray<Comprehension>) throws {
   }
 
-  private func visitDictionaryComprehension(key: Expression,
-                                            value: Expression,
-                                            generators: NonEmptyArray<Comprehension>) throws {
+  private func visitDictionaryComprehension(
+    key: Expression,
+    value: Expression,
+    generators: NonEmptyArray<Comprehension>) throws {
   }
 
-  private func visitGeneratorExp(elt: Expression,
-                                 generators: NonEmptyArray<Comprehension>) throws {
+  private func visitGeneratorExp(
+    elt: Expression,
+    generators: NonEmptyArray<Comprehension>) throws {
   }
+*/
 
   // MARK: - Coroutines/Generators
 
+/*
   private func visitAwait(expr: Expression) throws {
   }
 
@@ -342,12 +344,15 @@ case let .call(f, args, keywords):
 
   private func visitYieldFrom(expr: Expression) throws {
   }
+*/
 
   // MARK: - Function call
 
+/*
   private func visitLambda(args: Arguments,
                            body: Expression) throws {
   }
+*/
 
   private func visitCall(f: Expression,
                          args: [Expression],

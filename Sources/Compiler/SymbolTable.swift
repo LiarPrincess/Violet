@@ -6,7 +6,7 @@ import Parser
 
 // MARK: - SymbolTable
 
-public class SymbolTable {
+public final class SymbolTable {
 
   /// Top scope in symbol table, corresponds to top scope in AST.
   public let top: SymbolScope
@@ -58,7 +58,7 @@ public enum ScopeType: Equatable {
 
 /// Captures all symbols in the current scope
 /// and has a list of subscopes (childrens).
-public class SymbolScope {
+public final class SymbolScope {
 
   /// Name of the class if the table is for a class.
   /// Name of the function if the table is for a function.

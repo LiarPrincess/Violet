@@ -125,4 +125,10 @@ public final class Compiler {
                       location: SourceLocation) -> CompilerError {
     return CompilerError(kind, location: location)
   }
+
+  // MARK: - Not implemented
+
+  internal func notImplemented() -> Error {
+    fatalError()
+  }
 }

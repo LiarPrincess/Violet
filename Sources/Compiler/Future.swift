@@ -31,7 +31,7 @@ public struct FutureFeatures {
   public fileprivate(set) var line: SourceLine = 0
 }
 
-public class FutureParser {
+public final class FutureParser {
 
   /// future_parse(PyFutureFeatures *ff, mod_ty mod, PyObject *filename)
   public func parse(ast: AST) throws -> FutureFeatures? {
