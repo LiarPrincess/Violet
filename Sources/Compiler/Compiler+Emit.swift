@@ -7,6 +7,7 @@ import Bytecode
 // Python -> compile.c
 
 // swiftlint:disable cyclomatic_complexity
+// swiftlint:disable file_length
 
 extension Compiler {
 
@@ -188,6 +189,97 @@ extension Compiler {
     try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
   }
 
+  // MARK: - Collection
+
+  internal func emitBuildTuple(elementCount: Int,
+                               location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitBuildList(elementCount: Int,
+                              location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitBuildSet(elementCount: Int,
+                             location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitBuildMap(elementCount: Int,
+                             location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitBuildConstKeyMap(elementCount: Int,
+                                     location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  // MARK: - Unpack
+
+  internal func emitBuildTupleUnpack(elementCount: Int,
+                                     location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitBuildTupleUnpackWithCall(elementCount: Int,
+                                             location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitBuildListUnpack(elementCount: Int,
+                                    location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitBuildSetUnpack(elementCount: Int,
+                                   location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitBuildMapUnpack(elementCount: Int,
+                                   location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitBuildMapUnpackWithCall(elementCount: Int,
+                                           location: SourceLocation) throws {
+    // let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    // try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
+  }
+
+  internal func emitUnpackSequence(count: Int, location: SourceLocation) throws {
+  }
+
+  /// Implements assignment with a starred target.
+  ///
+  /// Unpacks an iterable in TOS into individual values, where the total number
+  /// of values can be smaller than the number of items in the iterable:
+  /// one of the new values will be a list of all leftover items.
+  ///
+  /// The low byte of counts is the number of values before the list value,
+  /// the high byte of counts the number of values after it.
+  /// The resulting values are put onto the stack right-to-left.
+  internal func emitUnpackEx(countBefore: Int,
+                             countAfter:  Int,
+                             location:    SourceLocation) throws {
+    precondition(countBefore <= 0xff)
+    precondition(countAfter  <= 0xffff_ff)
+
+//    let rawValue = countAfter << 8 | countBefore
+  }
+
   // MARK: - Helpers
 
   /// If the arg is `>255` then it can't be stored directly in instruction.
@@ -204,7 +296,7 @@ extension Compiler {
     // 0x000000ff <- instruction arg (our return value)
 
     assert(arg > 0)
-    if arg > 0xffff_ffff {
+    if arg > Instruction.maxArgument {
       fatalError()
     }
 

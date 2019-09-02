@@ -3,7 +3,7 @@ import Parser
 import Bytecode
 
 // TODO: To struct
-public class CodeObject {
+public final class CodeObject {
 
   /// Name of the class if the code is for a class.
   /// Name of the function if the code is for a function.

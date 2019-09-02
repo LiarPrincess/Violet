@@ -1,0 +1,302 @@
+import Foundation
+import Core
+import Parser
+import Bytecode
+
+// In CPython:
+// Python -> compile.c
+
+// swiftlint:disable file_length
+
+/// Helper for `emitLoadWithPossibleUnpack` method.
+/// We could pass clojures with `self`, but this is more self-documenting.
+private protocol CollectionLoadAdapter {
+
+  /// Create an *artificial container* for elements with given `count`.
+  ///
+  /// For example: `(a, b*, c) -> (*[a], *b) -> BuildTupleUnpack(count: 2)`,
+  /// where [a] is an *artificial container*.
+  func emitPackElements(count: Int, location: SourceLocation) throws
+
+  /// Create collection (tuple, list etc.) from elements with given `count`.
+  ///
+  /// For example: `(a, b, c) -> BuildTuple(count: 3)`
+  func emitBuildCollection(count: Int, location: SourceLocation) throws
+
+  /// Create collection from iterable elements with given `count`.
+  ///
+  /// For example: `(*a, *b, *c) -> BuildTupleUnpack(count: 3)`
+  func emitBuildUnpackCollection(count: Int, location: SourceLocation) throws
+}
+
+extension Compiler {
+
+  // MARK: - Tuple
+
+  /// compiler_tuple(struct compiler *c, expr_ty e)
+  internal func visitTuple(elements: [Expression],
+                           context:  ExpressionContext,
+                           location: SourceLocation) throws {
+    switch context {
+    case .store:
+      try self.emitStoreWithPossibleUnpack(elements: elements,
+                                           location: location)
+    case .load:
+      let adapter = TupleLoadAdapter(compiler: self)
+      try self.emitLoadWithPossibleUnpack(elements: elements,
+                                          adapter:  adapter,
+                                          location: location)
+    case .del:
+      try self.visitExpressions(elements, context: .del)
+    }
+  }
+
+  private struct TupleLoadAdapter: CollectionLoadAdapter {
+
+    fileprivate let compiler: Compiler
+
+    func emitPackElements(count: Int, location: SourceLocation) throws {
+      try self.compiler.emitBuildTuple(elementCount: count, location: location)
+    }
+
+    func emitBuildCollection(count: Int, location: SourceLocation) throws {
+      try self.compiler.emitBuildTuple(elementCount: count, location: location)
+    }
+
+    func emitBuildUnpackCollection(count: Int, location: SourceLocation) throws {
+      try self.compiler.emitBuildTupleUnpack(elementCount: count, location: location)
+    }
+  }
+
+  // MARK: - List
+
+  /// compiler_list(struct compiler *c, expr_ty e)
+  internal func visitList(elements: [Expression],
+                          context:  ExpressionContext,
+                          location: SourceLocation) throws {
+    switch context {
+    case .store:
+      try self.emitStoreWithPossibleUnpack(elements: elements,
+                                           location: location)
+    case .load:
+      let adapter = ListLoadAdapter(compiler: self)
+      try self.emitLoadWithPossibleUnpack(elements: elements,
+                                          adapter:  adapter,
+                                          location: location)
+    case .del:
+      try self.visitExpressions(elements, context: .del)
+    }
+  }
+
+  private struct ListLoadAdapter: CollectionLoadAdapter {
+
+    fileprivate let compiler: Compiler
+
+    func emitPackElements(count: Int, location: SourceLocation) throws {
+      try self.compiler.emitBuildList(elementCount: count, location: location)
+    }
+
+    func emitBuildCollection(count: Int, location: SourceLocation) throws {
+      try self.compiler.emitBuildTuple(elementCount: count, location: location)
+    }
+
+    func emitBuildUnpackCollection(count: Int, location: SourceLocation) throws {
+      try self.compiler.emitBuildListUnpack(elementCount: count, location: location)
+    }
+  }
+
+  // MARK: - Dictionary
+
+  /// compiler_dict(struct compiler *c, expr_ty e)
+  ///
+  /// Our implementation is similiar to `self.emitLoadWithPossibleUnpack(...)`.
+  internal func visitDictionary(elements: [DictionaryElement],
+                                context:  ExpressionContext,
+                                location: SourceLocation) throws {
+    assert(context == .load)
+
+    /// Elements that do not need unpacking
+    var simpleElementCount = 0
+    /// Elements that need unpacking
+    var packedElementCount = 0
+
+    for el in elements {
+      switch el {
+      case let .unpacking(expr):
+        // change elements to container, so we can unpack it later
+        if simpleElementCount > 0 {
+          try self.emitBuildMap(elementCount: simpleElementCount, location: location)
+          simpleElementCount = 0
+          packedElementCount += 1
+        }
+
+        // add another container
+        try self.visitExpression(expr)
+        packedElementCount += 1
+
+      case let .keyValue(key: k, value: v):
+        try self.visitExpression(k)
+        try self.visitExpression(v)
+        simpleElementCount += 1
+      }
+    }
+
+    if packedElementCount > 0 {
+      if simpleElementCount > 0 {
+        try self.emitBuildMap(elementCount: simpleElementCount, location: location)
+        packedElementCount += 1
+      }
+
+      try self.emitBuildMapUnpack(elementCount: packedElementCount,
+                                  location: location)
+    } else {
+      try self.emitBuildMap(elementCount: simpleElementCount, location: location)
+    }
+  }
+
+  // MARK: - Set
+
+  /// compiler_set(struct compiler *c, expr_ty e)
+  internal func visitSet(elements: [Expression],
+                         context:  ExpressionContext,
+                         location: SourceLocation) throws {
+    assert(context == .load)
+
+    let adapter = SetLoadAdapter(compiler: self)
+    try self.emitLoadWithPossibleUnpack(elements: elements,
+                                        adapter:  adapter,
+                                        location: location)
+  }
+
+  private struct SetLoadAdapter: CollectionLoadAdapter {
+
+    fileprivate let compiler: Compiler
+
+    func emitPackElements(count: Int, location: SourceLocation) throws {
+      try self.compiler.emitBuildSet(elementCount: count, location: location)
+    }
+
+    func emitBuildCollection(count: Int, location: SourceLocation) throws {
+      try self.compiler.emitBuildSet(elementCount: count, location: location)
+    }
+
+    func emitBuildUnpackCollection(count: Int, location: SourceLocation) throws {
+      try self.compiler.emitBuildSetUnpack(elementCount: count, location: location)
+    }
+  }
+
+  // MARK: - Helpers
+
+  /// assignment_helper(struct compiler *c, asdl_seq *elts)
+  ///
+  /// `dis.dis('a, *b, c = [1, 2, 3]')` gives us:
+  /// ```c
+  ///  0 LOAD_CONST               0 (1)
+  ///  2 LOAD_CONST               1 (2)
+  ///  4 LOAD_CONST               2 (3)
+  ///  6 BUILD_LIST               3
+  ///  8 EXTENDED_ARG             1
+  /// 10 UNPACK_EX              257
+  /// 12 STORE_NAME               0 (a)
+  /// 14 STORE_NAME               1 (b)
+  /// 16 STORE_NAME               2 (c)
+  /// 18 LOAD_CONST               3 (None)
+  /// 20 RETURN_VALUE
+  /// ```
+  private func emitStoreWithPossibleUnpack(elements: [Expression],
+                                           location: SourceLocation) throws {
+
+    var hasSeenStar = false
+    var elementsWithoutUnpack = elements
+
+    for (index, el) in elements.enumerated() {
+      guard case let .starred(inner) = el.kind else {
+        continue
+      }
+
+      guard !hasSeenStar else {
+        let kind = CompilerErrorKind.multipleStarredInAssignmentExpressions
+        throw self.error(kind, location: location)
+      }
+
+      // 0x0000_00ff
+      //          ^^ element count before *
+      // 0xffff_ff00
+      //   ^^^^^^^   element count after *
+
+      let countBefore = index
+      let countAfter = elements.count - index - 1
+      if countBefore > 0xff || countAfter > 0xffff_ff {
+        fatalError()
+      }
+
+      hasSeenStar = true
+      elementsWithoutUnpack[index] = inner
+      try self.emitUnpackEx(countBefore: countBefore,
+                            countAfter: countAfter,
+                            location: location)
+    }
+
+    if !hasSeenStar {
+      try self.emitUnpackSequence(count: elements.count, location: location)
+    }
+
+    try self.visitExpressions(elementsWithoutUnpack, context: .store)
+  }
+
+  /// starunpack_helper(struct compiler *c, asdl_seq *elts, int single_op,
+  /// int inner_op, int outer_op)
+  ///
+  /// `dis.dis('(a, *b, c)')` gives us:
+  /// ```c
+  ///  0 LOAD_NAME                0 (a)
+  ///  2 BUILD_TUPLE              1     <- create artificial container
+  ///  4 LOAD_NAME                1 (b)
+  ///  6 LOAD_NAME                2 (c)
+  ///  8 BUILD_TUPLE              1     <- create artificial container
+  /// 10 BUILD_TUPLE_UNPACK       3     <- unpack containers
+  /// 12 RETURN_VALUE
+  /// ```
+  private func emitLoadWithPossibleUnpack<A: CollectionLoadAdapter>(
+    elements: [Expression],
+    adapter:  A,
+    location: SourceLocation) throws {
+
+    /// Elements that do not need unpacking
+    var simpleElementCount = 0
+    /// Elements that need unpacking
+    var packedElementCount = 0
+
+    for el in elements {
+      switch el.kind {
+      case let .starred(inner):
+        // change elements to container, so we can unpack it later
+        if simpleElementCount > 0 {
+          try adapter.emitPackElements(count: simpleElementCount, location: location)
+          simpleElementCount = 0
+          packedElementCount += 1
+        }
+
+        // add another container
+        try self.visitExpression(inner)
+        packedElementCount += 1
+
+      default:
+        try self.visitExpression(el)
+        simpleElementCount += 1
+      }
+    }
+
+    if packedElementCount > 0 {
+      if simpleElementCount > 0 {
+        try adapter.emitPackElements(count: simpleElementCount, location: location)
+        packedElementCount += 1
+      }
+
+      try adapter.emitBuildUnpackCollection(count: packedElementCount,
+                                            location: location)
+    } else {
+      try adapter.emitBuildCollection(count: simpleElementCount, location: location)
+    }
+  }
+}

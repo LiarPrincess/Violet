@@ -10,16 +10,14 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
 {- Index in an array attached to CodeObject (for example CodeObject.constants). -}
 @alias Index = UInt8
+@alias Count = UInt8
 
 {- TODO: Real types -}
-@enum Count = NotImplemented
-@enum Counts = NotImplemented
 @enum VarNum = NotImplemented
 @enum I = NotImplemented
 @enum Delta = NotImplemented
 @enum Flags = NotImplemented
 @enum Target = NotImplemented
-
 @enum NotDone = NotImplemented
 
 @enum Constant =
@@ -270,22 +268,24 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Creates a tuple consuming `count` items from the stack,
   -- and pushes the resulting tuple onto the stack.
-  | BuildTuple(count)
+  | BuildTuple(Count elementCount)
   -- Creates a list consuming `count` items from the stack,
   -- and pushes the resulting list onto the stack.
-  | BuildList(count)
+  | BuildList(Count elementCount)
   -- Creates a set consuming `count` items from the stack,
   -- and pushes the resulting set onto the stack.
-  | BuildSet(count)
+  | BuildSet(Count elementCount)
   -- Pushes a new dictionary object onto the stack.
   -- Pops 2 * count items so that the dictionary holds count entries:
   -- {..., TOS3: TOS2, TOS1: TOS}.
-  | BuildMap(count)
+  | BuildMap(Count elementCount)
+{-
+  NOTE: We always use 'BuildMap'.
   -- The version of `BuildMap` specialized for constant keys.
   -- `count` values are consumed from the stack.
   -- The top element on the stack contains a tuple of keys.
-  | BuildConstKeyMap(count)
-
+  | BuildConstKeyMap(Count elementCount)
+-}
   -- Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
   -- Used to implement set comprehensions.
   | SetAdd(i)
@@ -303,32 +303,31 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Pops count iterables from the stack, joins them in a single tuple,
   -- and pushes the result.
   -- Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
-  | BuildTupleUnpack(count)
+  | BuildTupleUnpack(Count elementCount)
   -- This is similar to `BuildTupleUnpack`, but is used for `f(*x, *y, *z)` call syntax.
   -- The stack item at position count + 1 should be the corresponding callable `f`.
-  | BuildTupleUnpackWithCall(count)
+  | BuildTupleUnpackWithCall(Count elementCount)
 
   -- This is similar to `BuildTupleUnpack`, but pushes a list instead of tuple.
   -- Implements iterable unpacking in list displays `[*x, *y, *z]`.
-  | BuildListUnpack(count)
+  | BuildListUnpack(Count elementCount)
 
   -- This is similar to `BuildTupleUnpack`, but pushes a set instead of tuple.
   -- Implements iterable unpacking in set displays `{*x, *y, *z}`.
-  | BuildSetUnpack(count)
+  | BuildSetUnpack(Count elementCount)
 
   -- Pops count mappings from the stack, merges them into a single dictionary,
   -- and pushes the result.
   -- Implements dictionary unpacking in dictionary displays `{**x, **y, **z}`.
-  | BuildMapUnpack(count)
+  | BuildMapUnpack(Count elementCount)
   -- This is similar to `BuildMapUnpack`, but is used for `f(**x, **y, **z)` call syntax.
   -- The stack item at position count + 2 should be the corresponding callable `f`.
-  | BuildMapUnpackWithCall(count)
+  | BuildMapUnpackWithCall(Count elementCount)
 
   -- Unpacks TOS into count individual values,
   -- which are put onto the stack right-to-left.
-  | UnpackSequence(count)
-
-  -- Implements assignment with a starred target:
+  | UnpackSequence(Count elementCount)
+  -- Implements assignment with a starred target.
   --
   -- Unpacks an iterable in TOS into individual values, where the total number
   -- of values can be smaller than the number of items in the iterable:
@@ -337,7 +336,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- The low byte of counts is the number of values before the list value,
   -- the high byte of counts the number of values after it.
   -- The resulting values are put onto the stack right-to-left.
-  | UnpackEx(counts)
+  | UnpackEx(Count elementCountBefore)
 
 {- --------------------- -}
 {-  Store, load, delete  -}
@@ -583,10 +582,11 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {- Jump -}
 {- ---- -}
 
-  {- TODO: Probably use Label -}
-
+{-
+  NOTE: We always use 'JumpAbsolute'.
   -- Increments bytecode counter by delta.
   | JumpForward(UInt8 delta)
+-}
   -- Set bytecode counter to target.
   | JumpAbsolute(Index labelIndex)
 

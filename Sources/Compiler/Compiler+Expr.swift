@@ -71,18 +71,31 @@ extension Compiler {
       try self.visitExpression(right)
       try emitBinaryOperator(op, location: location)
     case let .boolOp(op, left, right):
-      try self.visitBoolOp(op: op, left: left, right: right, location: location)
+      try self.visitBoolOp(op: op,
+                           left: left,
+                           right: right,
+                           location: location)
     case let .compare(left, elements):
-      try self.visitCompare(left: left, elements: elements, location: location)
+      try self.visitCompare(left: left,
+                            elements: elements,
+                            location: location)
 
-case let .tuple(value):
-  try self.visitTuple(value: value)
-case let .list(value):
-  try self.visitList(value: value)
-case let .dictionary(value):
-  try self.visitDictionary(value: value)
-case let .set(value):
-  try self.visitSet(value: value)
+    case let .tuple(elements):
+      try self.visitTuple(elements: elements,
+                          context: context,
+                          location: location)
+    case let .list(elements):
+      try self.visitList(elements: elements,
+                         context: context,
+                         location: location)
+    case let .dictionary(elements):
+      try self.visitDictionary(elements: elements,
+                               context: context,
+                               location: location)
+    case let .set(elements):
+      try self.visitSet(elements: elements,
+                        context: context,
+                        location: location)
 
 case let .listComprehension(elt, generators):
   try self.visitListComprehension(elt: elt, generators: generators)
@@ -301,21 +314,6 @@ case let .starred(expr):
 
       self.setLabel(end)
     }
-  }
-
-  // MARK: - Collections
-
-  /// compiler_tuple(struct compiler *c, expr_ty e)
-  private func visitTuple(value: [Expression]) throws {
-  }
-
-  private func visitList(value: [Expression]) throws {
-  }
-
-  private func visitDictionary(value: [DictionaryElement]) throws {
-  }
-
-  private func visitSet(value: [Expression]) throws {
   }
 
   // MARK: - Comprehension

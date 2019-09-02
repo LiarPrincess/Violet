@@ -12,16 +12,6 @@ import Core
 // swiftlint:disable trailing_newline
 // swiftlint:disable vertical_whitespace_closing_braces
 
-public enum Count {
-  case notImplemented
-
-}
-
-public enum Counts {
-  case notImplemented
-
-}
-
 public enum VarNum {
   case notImplemented
 
@@ -238,21 +228,17 @@ public enum Instruction {
   case continueLoop(Target)
   /// Creates a tuple consuming `count` items from the stack,
   /// and pushes the resulting tuple onto the stack.
-  case buildTuple(Count)
+  case buildTuple(elementCount: UInt8)
   /// Creates a list consuming `count` items from the stack,
   /// and pushes the resulting list onto the stack.
-  case buildList(Count)
+  case buildList(elementCount: UInt8)
   /// Creates a set consuming `count` items from the stack,
   /// and pushes the resulting set onto the stack.
-  case buildSet(Count)
+  case buildSet(elementCount: UInt8)
   /// Pushes a new dictionary object onto the stack.
   /// Pops 2 * count items so that the dictionary holds count entries:
   /// {..., TOS3: TOS2, TOS1: TOS}.
-  case buildMap(Count)
-  /// The version of `BuildMap` specialized for constant keys.
-  /// `count` values are consumed from the stack.
-  /// The top element on the stack contains a tuple of keys.
-  case buildConstKeyMap(Count)
+  case buildMap(elementCount: UInt8)
   /// Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
   /// Used to implement set comprehensions.
   case setAdd(I)
@@ -265,27 +251,27 @@ public enum Instruction {
   /// Pops count iterables from the stack, joins them in a single tuple,
   /// and pushes the result.
   /// Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
-  case buildTupleUnpack(Count)
+  case buildTupleUnpack(elementCount: UInt8)
   /// This is similar to `BuildTupleUnpack`, but is used for `f(*x, *y, *z)` call syntax.
   /// The stack item at position count + 1 should be the corresponding callable `f`.
-  case buildTupleUnpackWithCall(Count)
+  case buildTupleUnpackWithCall(elementCount: UInt8)
   /// This is similar to `BuildTupleUnpack`, but pushes a list instead of tuple.
   /// Implements iterable unpacking in list displays `[*x, *y, *z]`.
-  case buildListUnpack(Count)
+  case buildListUnpack(elementCount: UInt8)
   /// This is similar to `BuildTupleUnpack`, but pushes a set instead of tuple.
   /// Implements iterable unpacking in set displays `{*x, *y, *z}`.
-  case buildSetUnpack(Count)
+  case buildSetUnpack(elementCount: UInt8)
   /// Pops count mappings from the stack, merges them into a single dictionary,
   /// and pushes the result.
   /// Implements dictionary unpacking in dictionary displays `{**x, **y, **z}`.
-  case buildMapUnpack(Count)
+  case buildMapUnpack(elementCount: UInt8)
   /// This is similar to `BuildMapUnpack`, but is used for `f(**x, **y, **z)` call syntax.
   /// The stack item at position count + 2 should be the corresponding callable `f`.
-  case buildMapUnpackWithCall(Count)
+  case buildMapUnpackWithCall(elementCount: UInt8)
   /// Unpacks TOS into count individual values,
   /// which are put onto the stack right-to-left.
-  case unpackSequence(Count)
-  /// Implements assignment with a starred target:
+  case unpackSequence(elementCount: UInt8)
+  /// Implements assignment with a starred target.
   /// 
   /// Unpacks an iterable in TOS into individual values, where the total number
   /// of values can be smaller than the number of items in the iterable:
@@ -294,7 +280,7 @@ public enum Instruction {
   /// The low byte of counts is the number of values before the list value,
   /// the high byte of counts the number of values after it.
   /// The resulting values are put onto the stack right-to-left.
-  case unpackEx(Counts)
+  case unpackEx(elementCountBefore: UInt8)
   /// Pushes constant pointed by `index` onto the stack.
   case loadConst(index: UInt8)
   /// Implements `name = TOS`.
@@ -475,8 +461,6 @@ public enum Instruction {
   case beforeAsyncWith
   /// Creates a new frame object.
   case setupAsyncWith
-  /// Increments bytecode counter by delta.
-  case jumpForward(delta: UInt8)
   /// Set bytecode counter to target.
   case jumpAbsolute(labelIndex: UInt8)
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
@@ -571,11 +555,6 @@ public enum Instruction {
 
   public var isBuildMap: Bool {
     if case .buildMap = self { return true }
-    return false
-  }
-
-  public var isBuildConstKeyMap: Bool {
-    if case .buildConstKeyMap = self { return true }
     return false
   }
 
@@ -776,11 +755,6 @@ public enum Instruction {
 
   public var isSetupWith: Bool {
     if case .setupWith = self { return true }
-    return false
-  }
-
-  public var isJumpForward: Bool {
-    if case .jumpForward = self { return true }
     return false
   }
 
