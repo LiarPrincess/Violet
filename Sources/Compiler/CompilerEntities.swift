@@ -21,7 +21,7 @@ internal enum SpecialIdentifiers {
   internal static let __class__ = "__class__"
 }
 
-internal enum ExpressionContext {
+public enum ExpressionContext {
   case store
   case load
   case del

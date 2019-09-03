@@ -2,7 +2,7 @@
 /// Basically a wrapper around array index for additional type safety.
 /// - Important:
 /// Labels can only be used inside a single block!
-internal struct Label {
+public struct Label {
 
   internal static let notAssigned = -1
 

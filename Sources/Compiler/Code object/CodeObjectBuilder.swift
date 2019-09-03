@@ -2,25 +2,20 @@ import Core
 import Parser
 import Bytecode
 
+/// Helper for creating new `CodeObjects`.
+///
+/// It is just a bunch of helper methods put thogether, which means
+/// thet you can create multiple builders for a single `CodeObject`.
+/// Builder will store a strong reference to `CodeObject` passed in `init`.
 public struct CodeObjectBuilder {
 
   // MARK: - Code object
 
-  private var _codeObject: CodeObject?
-
   /// Code object that we are currently filling.
-  internal var codeObject: CodeObject {
-    if let object = self._codeObject { return object }
-    fatalError(
-      "[BUG] CodeObjectBuilder: Using nil code object. " +
-      "Use 'setInsertPoint' first."
-    )
-  }
+  internal let codeObject: CodeObject
 
-  /// This specifies that created instructions should be appended to the
-  /// end of the specified object.
-  public mutating func setInsertPoint(_ codeObject: CodeObject) {
-    self._codeObject = codeObject
+  public init(for codeObject: CodeObject) {
+    self.codeObject = codeObject
   }
 
   // MARK: - Emit
@@ -50,6 +45,73 @@ public struct CodeObjectBuilder {
     self.codeObject.labels[label.index] = jumpTarget
   }
 
+  // MARK: - Extended arg
+
+  internal func addNameWithExtendedArgIfNeeded(
+    name: MangledName,
+    location: SourceLocation) throws -> UInt8 {
+
+    let rawIndex = self.codeObject.names.endIndex
+    let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
+    self.codeObject.names.append(name)
+    return index
+  }
+
+  /// If the arg is `>255` then it can't be stored directly in instruction.
+  /// In this case we have to emit `extendedArg` before it.
+  ///
+  /// Will use following masks:
+  /// ```c
+  /// 0xff000000 <- extended 1
+  /// 0x00ff0000 <- extended 2
+  /// 0x0000ff00 <- extended 3
+  /// 0x000000ff <- instruction arg (return value)
+  /// ```
+  /// - Returns:
+  /// Value that should be used in instruction.
+  internal func emitExtendedArgIfNeeded(
+    _ arg: Int,
+    location: SourceLocation) throws -> UInt8 {
+
+    // TODO: Test this
+
+    assert(arg > 0)
+    if arg > Instruction.maxArgument {
+      fatalError()
+    }
+
+    let ffMask = 0xff
+
+    var shift = 24
+    var mask = ffMask << shift
+    var value = UInt8((arg & mask) >> shift)
+
+    let emit1 = value > 0
+    if emit1 {
+      try self.emit(.extendedArg(value), location: location)
+    }
+
+    shift = 16
+    mask = ffMask << shift
+    value = UInt8((arg & mask) >> shift)
+
+    let emit2 = emit1 || value > 0
+    if emit2 {
+      try self.emit(.extendedArg(value), location: location)
+    }
+
+    shift = 8
+    mask = ffMask << shift
+    value = UInt8((arg & mask) >> shift)
+
+    let emit3 = emit2 || value > 0
+    if emit3 {
+      try self.emit(.extendedArg(value), location: location)
+    }
+
+    return UInt8((arg & ffMask) >> shift)
+  }
+
   // MARK: - Error
 
   /// Create compiler error
@@ -60,7 +122,8 @@ public struct CodeObjectBuilder {
 
   // MARK: - Unimplemented
 
+//  @available(*, deprecated, message: "TODO")
   internal func unimplemented() -> Error {
-    fatalError("CodeObjectBuilder.unimplemented")
+    return NotImplemented.pep401
   }
 }

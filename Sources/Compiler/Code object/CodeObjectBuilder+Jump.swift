@@ -4,33 +4,44 @@ import Bytecode
 
 extension CodeObjectBuilder {
 
-  /// Append a `jumpAbsolute` instruction to currently filled code object.
-  public func emitJumpAbsolute(labelIndex: UInt8, location: SourceLocation) throws {
-    // try self.emit(.jumpAbsolute, location: location)
-    throw self.unimplemented()
+  // MARK: - Absolute
+
+  /// Append a `jumpAbsolute` instruction to code object.
+  public func emitJumpAbsolute(to label: Label,
+                               location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.jumpAbsolute(labelIndex: index), location: location)
   }
 
-  /// Append a `popJumpIfTrue` instruction to currently filled code object.
-  public func emitPopJumpIfTrue(labelIndex: UInt8, location: SourceLocation) throws {
-    // try self.emit(.popJumpIfTrue, location: location)
-    throw self.unimplemented()
+  // MARK: - If
+
+  /// Append a `popJumpIfTrue` instruction to code object.
+  public func emitPopJumpIfTrue(to label: Label,
+                                location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.popJumpIfTrue(labelIndex: index), location: location)
   }
 
-  /// Append a `popJumpIfFalse` instruction to currently filled code object.
-  public func emitPopJumpIfFalse(labelIndex: UInt8, location: SourceLocation) throws {
-    // try self.emit(.popJumpIfFalse, location: location)
-    throw self.unimplemented()
+  /// Append a `popJumpIfFalse` instruction to code object.
+  public func emitPopJumpIfFalse(to label: Label,
+                                 location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.popJumpIfFalse(labelIndex: index), location: location)
   }
 
-  /// Append a `jumpIfTrueOrPop` instruction to currently filled code object.
-  public func emitJumpIfTrueOrPop(labelIndex: UInt8, location: SourceLocation) throws {
-    // try self.emit(.jumpIfTrueOrPop, location: location)
-    throw self.unimplemented()
+  // MARK: - Pop
+
+  /// Append a `jumpIfTrueOrPop` instruction to code object.
+  public func emitJumpIfTrueOrPop(to label: Label,
+                                  location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.jumpIfTrueOrPop(labelIndex: index), location: location)
   }
 
-  /// Append a `jumpIfFalseOrPop` instruction to currently filled code object.
-  public func emitJumpIfFalseOrPop(labelIndex: UInt8, location: SourceLocation) throws {
-    // try self.emit(.jumpIfFalseOrPop, location: location)
-    throw self.unimplemented()
+  /// Append a `jumpIfFalseOrPop` instruction to code object.
+  public func emitJumpIfFalseOrPop(to label: Label,
+                                   location: SourceLocation) throws {
+    let index = try self.emitExtendedArgIfNeeded(label.index, location: location)
+    try self.emit(.jumpIfFalseOrPop(labelIndex: index), location: location)
   }
 }

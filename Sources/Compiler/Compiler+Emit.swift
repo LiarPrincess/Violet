@@ -11,17 +11,21 @@ import Bytecode
 
 extension Compiler {
 
+  private var codeObject: CodeObject {
+    return self.currentCodeObject
+  }
+
   // MARK: - Base
 
   /// compiler_addop(struct compiler *c, int opcode)
   internal func emit(_ instruction: Instruction,
                      location: SourceLocation) throws {
 
-    self.currentCodeObject.instructions.append(instruction)
-    self.currentCodeObject.instructionLines.append(location.line)
+    self.codeObject.instructions.append(instruction)
+    self.codeObject.instructionLines.append(location.line)
 
-    assert(self.currentCodeObject.instructions.count ==
-           self.currentCodeObject.instructionLines.count)
+    assert(self.codeObject.instructions.count ==
+      self.codeObject.instructionLines.count)
   }
 
   // MARK: - Constants
@@ -30,8 +34,8 @@ extension Compiler {
   /// compiler_addop_i(struct compiler *c, int opcode, Py_ssize_t oparg)
   internal func emitConstant(_ c: Constant, location: SourceLocation) throws {
     // TODO: check if this value was already added
-    let constantIndex = self.currentCodeObject.constants.endIndex
-    self.currentCodeObject.constants.append(c)
+    let constantIndex = self.codeObject.constants.endIndex
+    self.codeObject.constants.append(c)
 
     let index = try self.emitExtendedArgIfNeeded(constantIndex, location: location)
     try self.emit(.loadConst(index: index), location: location)
@@ -108,13 +112,6 @@ extension Compiler {
     // TODO: fill this
   }
 
-  internal enum DerefContext {
-    case store
-    case load
-    case loadClass
-    case del
-  }
-
   internal func emitDeref(name: MangledName,
                           context: DerefContext,
                           location: SourceLocation) throws {
@@ -125,9 +122,9 @@ extension Compiler {
     name: MangledName,
     location: SourceLocation) throws -> UInt8 {
 
-    let rawIndex = self.currentCodeObject.names.endIndex
+    let rawIndex = self.codeObject.names.endIndex
     let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
-    self.currentCodeObject.names.append(name)
+    self.codeObject.names.append(name)
     return index
   }
 

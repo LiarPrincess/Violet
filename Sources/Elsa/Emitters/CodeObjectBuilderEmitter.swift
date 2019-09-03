@@ -34,7 +34,7 @@ public final class CodeObjectBuilderEmitter: EmitterBase {
     arguments.append(Argument(name: "location", type: "SourceLocation"))
 
     self.write("")
-    self.write("  /// Append \(article) `\(instruction.name)` instruction to currently filled code object.")
+    self.write("  /// Append \(article) `\(instruction.name)` instruction to code object.")
     self.write("  public func emit\(pascalName)(", terminator: "")
     self.write(arguments.map { $0.name + ": " + $0.type }.joined(", "), terminator: "")
     self.write(") throws {")
