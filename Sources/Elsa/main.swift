@@ -27,8 +27,8 @@ private func generateAST() throws {
   let entities = parseLetItGo(file: input)
 
   // Definitions
-  let defFile = parserDir.appendingPathComponent("AST.swift")
-  let codeEmitter = try CodeEmitter(letItGo: input, output: defFile)
+  let codeFile = parserDir.appendingPathComponent("AST.swift")
+  let codeEmitter = try CodeEmitter(letItGo: input, output: codeFile)
   codeEmitter.emit(entities: entities, imports: ["Foundation", "Core", "Lexer"])
 
   // Pass
@@ -37,10 +37,10 @@ private func generateAST() throws {
 //  astPassEmitter.emit(entities: entities)
 
   // Destruct
-  let destructFile = parserTestsDir
+  let patternFile = parserTestsDir
     .appendingPathComponent("Helpers")
     .appendingPathComponent("PatternMatching.swift")
-  let patternEmitter = try AstPatternMatchingEmitter(letItGo: input, output: destructFile)
+  let patternEmitter = try AstPatternMatchingEmitter(letItGo: input, output: patternFile)
   patternEmitter.emit(entities: entities)
 }
 
@@ -55,6 +55,11 @@ private func generateBytecode() throws {
   let codeFile = bytecodeDir.appendingPathComponent("Instructions.swift")
   let codeEmitter = try CodeEmitter(letItGo: input, output: codeFile)
   codeEmitter.emit(entities: entities, imports: ["Foundation", "Core"])
+
+  // CodeObjectBuilder
+//  let builderFile = rootDir.appendingPathComponent("CodeObjectBuilder.swift")
+//  let builderEmitter = try CodeObjectBuilderEmitter(letItGo: input, output: builderFile)
+//  builderEmitter.emit(entities: entities, imports: [])
 }
 
 try generateAST()

@@ -41,3 +41,19 @@ private let swiftKeywords = Set<String>([
 internal func escaped(_ name: String) -> String {
   return swiftKeywords.contains(name) ? "`\(name)`" : name
 }
+
+
+private let vowels = Set<String>(["a", "e", "i", "o", "u"])
+
+internal func isVowel(_ c: String) -> Bool {
+  return vowels.contains(c)
+}
+
+// Not ultra-correct, but better than nothing.
+internal func getArticle(_ s: String) -> String {
+  guard let first = s.first else {
+    return ""
+  }
+
+  return isVowel(String(first)) ? "an" : "a"
+}

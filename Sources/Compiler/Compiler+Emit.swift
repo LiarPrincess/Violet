@@ -9,7 +9,6 @@ import Bytecode
 // swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
 
-// TODO: This has to be in separate class! Builder.
 extension Compiler {
 
   // MARK: - Base
