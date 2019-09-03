@@ -9,6 +9,7 @@ import Bytecode
 // swiftlint:disable cyclomatic_complexity
 // swiftlint:disable function_body_length
 // swiftlint:disable switch_case_alignment
+// swiftlint:disable file_length
 
 extension Compiler {
 
@@ -80,8 +81,8 @@ case let .asyncWith(items, body):
 case let .try(body, handlers, orElse, finalBody):
   try self.visitTry(body: body, handlers: handlers, orElse: orElse, finalBody: finalBody)
 
-case let .assert(test, msg):
-  try self.visitAssert(test: test, msg: msg)
+    case let .assert(test, msg):
+      try self.visitAssert(test: test, msg: msg, location: location)
 
 case let .import(value):
   try self.visitImport(value: value)
@@ -278,10 +279,38 @@ case .continue:
 
   // MARK: - Assert
 
-  private func visitAssert(test: Expression, msg: Expression?) throws {
+  /// compiler_assert(struct compiler *c, stmt_ty s)
+  private func visitAssert(test: Expression,
+                           msg:  Expression?,
+                           location: SourceLocation) throws {
+    if self.optimize {
+      return
+    }
+
+    if case let .tuple(elements) = test.kind, elements.any {
+      self.warn(.assertionWithTuple, location: location)
+    }
+
+    let end = try self.builder.addLabel()
+    try self.visitExpression(test,
+                             andJumpTo: end,
+                             ifBooleanValueIs: true,
+                             location: location)
+
+    // TODO: Do we really want to do it this way?
+    try self.builder.emitString("AssertionError", location: location)
+
+    if let message = msg {
+      // Call 'AssertionError' with single argument
+      try self.visitExpression(message)
+      try self.builder.emitCallFunction(argumentCount: 1, location: location)
+    }
+
+    try self.builder.emitRaiseVarargs(arg: .exceptionOnly, location: location)
+    self.builder.setLabel(end)
   }
 
-  // MARK: - Other
+  // MARK: - Expression statement
 
   private func visitExpressionStatement(expr: Expression) throws {
   }

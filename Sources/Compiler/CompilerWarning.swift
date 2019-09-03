@@ -1,5 +1,13 @@
 import Core
 
+public enum ComprehensionKind: Equatable {
+  case list
+  case set
+  case dictionary
+  case generator
+}
+
+// TODO: Add CustomStringConvertible
 public enum CompilerWarning: Warning {
 
   /// 'yield' inside 'kind' comprehension
@@ -12,11 +20,7 @@ public enum CompilerWarning: Warning {
   /// - [docs](https://docs.python.org/3/reference/expressions.html#yield-expressions)
   /// - [bug report](https://bugs.python.org/issue10544)
   case yieldInsideComprehension(ComprehensionKind)
-}
 
-public enum ComprehensionKind: Equatable {
-  case list
-  case set
-  case dictionary
-  case generator
+  /// Assertion is always true, perhaps remove parentheses?
+  case assertionWithTuple
 }

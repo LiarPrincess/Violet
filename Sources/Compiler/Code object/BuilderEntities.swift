@@ -5,7 +5,13 @@ public enum BuildSliceType {
 }
 
 public enum RaiseArg {
-  case none
+  /// Re-raise previous exception.
+  /// CPython 0.
+  case reRaise
+  /// Raise exception instance or type at TOS
+  /// CPython 1.
   case exceptionOnly
+  /// Raise exception instance or type at TOS1 with Cause set to TOS
+  /// CPython 2.
   case exceptionAndCause
 }

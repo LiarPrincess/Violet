@@ -34,7 +34,7 @@ extension CodeObjectBuilder {
 
   private func getArgumentCount(_ type: RaiseArg) -> UInt8 {
     switch type {
-    case .none: return 0
+    case .reRaise: return 0
     case .exceptionOnly: return 1
     case .exceptionAndCause: return 2
     }

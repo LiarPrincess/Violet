@@ -373,7 +373,11 @@ extension Compiler {
     let end = try self.builder.addLabel()
     let next = try self.builder.addLabel()
 
-    try self.visitExpression(test, andJumpTo: next, if: false, location: location)
+    try self.visitExpression(test,
+                             andJumpTo: next,
+                             ifBooleanValueIs: false,
+                             location: location)
+
     try self.visitExpression(body)
     self.builder.setLabel(next)
     try self.visitExpression(orElse)
@@ -382,15 +386,18 @@ extension Compiler {
 
   // TODO: Do we even need this method? Cant we just compile `expr` and then fancy test?
   /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
-  private func visitExpression(_ expr:  Expression,
-                               andJumpTo next: Label,
-                               if cond: Bool,
-                               location loc: SourceLocation) throws {
+  internal func visitExpression(_ expr:  Expression,
+                                andJumpTo next: Label,
+                                ifBooleanValueIs cond: Bool,
+                                location loc: SourceLocation) throws {
     switch expr.kind {
     case let .unaryOp(op, right: right):
       switch op {
       case .not:
-        try self.visitExpression(right, andJumpTo: next, if: !cond, location: loc)
+        try self.visitExpression(right,
+                                 andJumpTo: next,
+                                 ifBooleanValueIs: !cond,
+                                 location: loc)
         return
       case .plus, .minus, .invert:
         break // fallback to general implementation
@@ -401,8 +408,14 @@ extension Compiler {
       let hasLabel = cond != isOr
       let next2 = hasLabel ? try self.builder.addLabel() : next
 
-      try self.visitExpression(left,  andJumpTo: next2, if: isOr, location: loc)
-      try self.visitExpression(right, andJumpTo: next,  if: cond, location: loc)
+      try self.visitExpression(left,
+                               andJumpTo: next2,
+                               ifBooleanValueIs: isOr,
+                               location: loc)
+      try self.visitExpression(right,
+                               andJumpTo: next,
+                               ifBooleanValueIs: cond,
+                               location: loc)
 
       if hasLabel {
         self.builder.setLabel(next2)
@@ -413,11 +426,20 @@ extension Compiler {
       let end = try self.builder.addLabel()
       let next2 = try self.builder.addLabel()
 
-      try self.visitExpression(test, andJumpTo: next2, if: false, location: loc)
-      try self.visitExpression(body, andJumpTo: next,  if: cond,  location: loc)
+      try self.visitExpression(test,
+                               andJumpTo: next2,
+                               ifBooleanValueIs: false,
+                               location: loc)
+      try self.visitExpression(body,
+                               andJumpTo: next,
+                               ifBooleanValueIs: cond,
+                               location: loc)
       try self.builder.emitJumpAbsolute(to: end, location: loc)
       self.builder.setLabel(next2)
-      try self.visitExpression(orElse, andJumpTo: next, if: cond, location: loc)
+      try self.visitExpression(orElse,
+                               andJumpTo: next,
+                               ifBooleanValueIs: cond,
+                               location: loc)
       self.builder.setLabel(end)
 
     case let .compare(left, elements):
@@ -430,17 +452,17 @@ extension Compiler {
       let end = try self.builder.addLabel()
       let cleanup = try self.builder.addLabel()
 
-      for e in elements.dropLast() {
-        try self.visitExpression(e.right)
+      for element in elements.dropLast() {
+        try self.visitExpression(element.right)
         try self.builder.emit(.dupTop, location: loc)
         try self.builder.emit(.rotThree, location: loc)
-        try self.builder.emitCompareOp(e.op, location: loc)
+        try self.builder.emitCompareOp(element.op, location: loc)
         try self.builder.emitJumpIfFalseOrPop(to: cleanup, location: loc)
       }
 
-      let l = elements.last
-      try self.visitExpression(l.right)
-      try self.builder.emitCompareOp(l.op, location: loc)
+      let last = elements.last
+      try self.visitExpression(last.right)
+      try self.builder.emitCompareOp(last.op, location: loc)
 
       switch cond {
       case true:  try self.builder.emitPopJumpIfTrue (to: next, location: loc)
