@@ -52,8 +52,8 @@ private func generateBytecode() throws {
   let entities = parseLetItGo(file: input)
 
   // Definitions
-  let defFile = bytecodeDir.appendingPathComponent("Opcodes.swift")
-  let codeEmitter = try CodeEmitter(letItGo: input, output: defFile)
+  let codeFile = bytecodeDir.appendingPathComponent("Instructions.swift")
+  let codeEmitter = try CodeEmitter(letItGo: input, output: codeFile)
   codeEmitter.emit(entities: entities, imports: ["Foundation", "Core"])
 }
 
