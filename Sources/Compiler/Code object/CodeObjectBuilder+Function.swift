@@ -36,7 +36,7 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `returnValue` instruction to code object.
-  public func emitReturnValue(location: SourceLocation) throws {
-    try self.emit(.returnValue, location: location)
+  public func emitReturn(location: SourceLocation) throws {
+    try self.emit(.return, location: location)
   }
 }

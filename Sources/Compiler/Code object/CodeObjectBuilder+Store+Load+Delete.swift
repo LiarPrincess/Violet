@@ -107,8 +107,8 @@ extension CodeObjectBuilder {
   // MARK: - Attribute
 
   public func emitAttribute(name: MangledName,
-                       context:  ExpressionContext,
-                       location: SourceLocation) throws {
+                            context:  ExpressionContext,
+                            location: SourceLocation) throws {
     switch context {
     case .store: try self.emitStoreAttribute (name: name, location: location)
     case .load:  try self.emitLoadAttribute  (name: name, location: location)
@@ -119,19 +119,19 @@ extension CodeObjectBuilder {
   /// Append a `storeAttr` instruction to code object.
   public func emitStoreAttribute(name: MangledName, location: SourceLocation) throws {
     let index = try self.addNameWithExtendedArgIfNeeded(name: name, location: location)
-    try self.emit(.storeAttr(nameIndex: index), location: location)
+    try self.emit(.storeAttribute(nameIndex: index), location: location)
   }
 
   /// Append a `loadAttr` instruction to code object.
   public func emitLoadAttribute(name: MangledName, location: SourceLocation) throws {
     let index = try self.addNameWithExtendedArgIfNeeded(name: name, location: location)
-    try self.emit(.loadAttr(nameIndex: index), location: location)
+    try self.emit(.loadAttribute(nameIndex: index), location: location)
   }
 
   /// Append a `deleteAttr` instruction to code object.
   public func emitDeleteAttribute(name: MangledName, location: SourceLocation) throws {
     let index = try self.addNameWithExtendedArgIfNeeded(name: name, location: location)
-    try self.emit(.deleteAttr(nameIndex: index), location: location)
+    try self.emit(.deleteAttribute(nameIndex: index), location: location)
   }
 
   // MARK: - Subscript
@@ -147,17 +147,17 @@ extension CodeObjectBuilder {
 
   /// Append a `binarySubscr` instruction to code object.
   public func emitBinarySubscr(location: SourceLocation) throws {
-    try self.emit(.binarySubscr, location: location)
+    try self.emit(.binarySubscript, location: location)
   }
 
   /// Append a `storeSubscr` instruction to code object.
   public func emitStoreSubscr(location: SourceLocation) throws {
-    try self.emit(.storeSubscr, location: location)
+    try self.emit(.storeSubscript, location: location)
   }
 
   /// Append a `deleteSubscr` instruction to code object.
   public func emitDeleteSubscr(location: SourceLocation) throws {
-    try self.emit(.deleteSubscr, location: location)
+    try self.emit(.deleteSubscript, location: location)
   }
 
   // MARK: - Global

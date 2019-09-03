@@ -254,10 +254,10 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | GetYieldFromIter
 
   -- Terminates a loop due to a break statement.
-  | BreakLoop
+  | Break
   -- Continues a loop due to a continue statement.
   -- `target` is the address to jump to (which should be a `ForIter` instruction).
-  | ContinueLoop(target)
+  | Continue(target)
 
 {- ------------ -}
 {-  Collections -}
@@ -350,18 +350,18 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | DeleteName(Index nameIndex)
 
   -- Implements `TOS.name = TOS1`.
-  | StoreAttr(Index nameIndex)
+  | StoreAttribute(Index nameIndex)
   -- Replaces TOS with `getAttr(TOS, name)`.
-  | LoadAttr(Index nameIndex)
+  | LoadAttribute(Index nameIndex)
   -- Implements `del TOS.name`.
-  | DeleteAttr(Index nameIndex)
+  | DeleteAttribute(Index nameIndex)
 
   -- Implements `TOS = TOS1[TOS]`.
-  | BinarySubscr
+  | BinarySubscript
   -- Implements `TOS1[TOS] = TOS2`.
-  | StoreSubscr
+  | StoreSubscript
   -- Implements `del TOS1[TOS]`.
-  | DeleteSubscr
+  | DeleteSubscript
 
   -- Works as StoreName, but stores the name as a global.
   | StoreGlobal(Index nameIndex)
@@ -452,7 +452,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | CallFunctionEx(Bool hasKeywordArguments)
 
   -- Returns with TOS to the caller of the function.
-  | ReturnValue
+  | Return
 
 {- ----- -}
 {- Class -}

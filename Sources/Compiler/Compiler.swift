@@ -15,6 +15,10 @@ public final class Compiler {
     fatalError("[BUG] Compiler: Using nil current code object.")
   }
 
+  internal var builder: CodeObjectBuilder {
+    fatalError()
+  }
+
   private var symbolTable: SymbolTable!
 
   /// Scope stack.
@@ -63,12 +67,6 @@ public final class Compiler {
     return self.currentCodeObject
   }
 
-  internal func visitStatements<S: Sequence>(_ stmts: S) throws
-    where S.Element == Statement {
-
-    fatalError()
-  }
-
   // MARK: - Code object
 
   internal func pushCodeObject(name: String) {
@@ -96,22 +94,6 @@ public final class Compiler {
   internal func leaveScope() {
     assert(self.scopeStack.any)
     _ = self.scopeStack.popLast()
-  }
-
-  // MARK: - Labels
-
-  internal func newLabel() throws -> Label {
-    let index = self.currentCodeObject.labels.endIndex
-    self.currentCodeObject.labels.append(Label.notAssigned)
-    return Label(index: index)
-  }
-
-  internal func setLabel(_ label: Label) {
-    assert(label.index < self.currentCodeObject.labels.count)
-    assert(self.currentCodeObject.labels[label.index] == Label.notAssigned)
-
-    let jumpTarget = self.currentCodeObject.instructions.endIndex
-    self.currentCodeObject.labels[label.index] = jumpTarget
   }
 
   // MARK: - Error/warning

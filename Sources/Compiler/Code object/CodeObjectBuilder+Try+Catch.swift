@@ -27,8 +27,16 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `raiseVarargs` instruction to code object.
-  public func emitRaiseVarargs(argc: UInt8, location: SourceLocation) throws {
-    // try self.emit(.raiseVarargs, location: location)
-    throw self.unimplemented()
+  public func emitRaiseVarargs(arg: RaiseArg, location: SourceLocation) throws {
+    let argc = self.getArgumentCount(arg)
+    try self.emit(.raiseVarargs(argc: argc), location: location)
+  }
+
+  private func getArgumentCount(_ type: RaiseArg) -> UInt8 {
+    switch type {
+    case .none: return 0
+    case .exceptionOnly: return 1
+    case .exceptionAndCause: return 2
+    }
   }
 }

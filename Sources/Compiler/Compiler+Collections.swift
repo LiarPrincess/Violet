@@ -147,7 +147,7 @@ extension Compiler {
       }
 
       try self.builder.emitBuildMapUnpack(elementCount: nPackedElement,
-                                  location: location)
+                                          location: location)
     } else {
       try self.builder.emitBuildMap(elementCount: nSimpleElement, location: location)
     }
@@ -232,8 +232,8 @@ extension Compiler {
       hasSeenStar = true
       elementsWithoutUnpack[index] = inner
       try self.builder.emitUnpackEx(countBefore: countBefore,
-                            countAfter: countAfter,
-                            location: location)
+                                    countAfter: countAfter,
+                                    location: location)
     }
 
     if !hasSeenStar {

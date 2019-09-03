@@ -2,18 +2,6 @@ import Core
 import Parser
 import Bytecode
 
-public enum BuildSliceType {
-  case lowerUpper
-  case lowerUpperStep
-
-  fileprivate var n: UInt8 {
-    switch self {
-    case .lowerUpper: return 2
-    case .lowerUpperStep: return 3
-    }
-  }
-}
-
 extension CodeObjectBuilder {
 
   /// Append a `nop` instruction to code object.
@@ -76,6 +64,14 @@ extension CodeObjectBuilder {
   /// Append a `buildSlice` instruction to code object.
   public func emitBuildSlice(_ type: BuildSliceType,
                              location: SourceLocation) throws {
-    try self.emit(.buildSlice(type.n), location: location)
+    let n = self.getArgumentCount(type)
+    try self.emit(.buildSlice(n), location: location)
+  }
+
+  private func getArgumentCount(_ type: BuildSliceType) -> UInt8 {
+    switch type {
+    case .lowerUpper: return 2
+    case .lowerUpperStep: return 3
+    }
   }
 }

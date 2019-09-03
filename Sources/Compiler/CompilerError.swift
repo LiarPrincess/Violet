@@ -83,6 +83,13 @@ public enum CompilerErrorKind: Equatable {
 
   /// Extended slice invalid in nested slice
   case extendedSliceNestedInsideExtendedSlice
+
+  /// 'return' outside function
+  case returnOutsideFunction
+  /// 'return' with value in async generator
+  case returnWithValueInAsyncGenerator
+  /// 'break' outside loop
+  case breakOutsideLoop
 }
 
 // TODO: surprisingly appropriate; `fromFutureImportBraces`

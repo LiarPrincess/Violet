@@ -220,10 +220,10 @@ public enum Instruction {
   /// Otherwise, implements `TOS = iter(TOS)`.
   case getYieldFromIter
   /// Terminates a loop due to a break statement.
-  case breakLoop
+  case `break`
   /// Continues a loop due to a continue statement.
   /// `target` is the address to jump to (which should be a `ForIter` instruction).
-  case continueLoop(Target)
+  case `continue`(Target)
   /// Creates a tuple consuming `count` items from the stack,
   /// and pushes the resulting tuple onto the stack.
   case buildTuple(elementCount: UInt8)
@@ -288,17 +288,17 @@ public enum Instruction {
   /// Implements `del name`.
   case deleteName(nameIndex: UInt8)
   /// Implements `TOS.name = TOS1`.
-  case storeAttr(nameIndex: UInt8)
+  case storeAttribute(nameIndex: UInt8)
   /// Replaces TOS with `getAttr(TOS, name)`.
-  case loadAttr(nameIndex: UInt8)
+  case loadAttribute(nameIndex: UInt8)
   /// Implements `del TOS.name`.
-  case deleteAttr(nameIndex: UInt8)
+  case deleteAttribute(nameIndex: UInt8)
   /// Implements `TOS = TOS1[TOS]`.
-  case binarySubscr
+  case binarySubscript
   /// Implements `TOS1[TOS] = TOS2`.
-  case storeSubscr
+  case storeSubscript
   /// Implements `del TOS1[TOS]`.
-  case deleteSubscr
+  case deleteSubscript
   /// Works as StoreName, but stores the name as a global.
   case storeGlobal(nameIndex: UInt8)
   /// Loads the global named `name` onto the stack.
@@ -372,7 +372,7 @@ public enum Instruction {
   /// 4. push the return value returned by the callable object
   case callFunctionEx(hasKeywordArguments: Bool)
   /// Returns with TOS to the caller of the function.
-  case returnValue
+  case `return`
   /// Pushes `builtins.BuildClass()` onto the stack.
   /// It is later called by `CallFunction` to construct a class.
   case loadBuildClass
@@ -537,8 +537,8 @@ public enum Instruction {
     return false
   }
 
-  public var isContinueLoop: Bool {
-    if case .continueLoop = self { return true }
+  public var isContinue: Bool {
+    if case .continue = self { return true }
     return false
   }
 
@@ -637,18 +637,18 @@ public enum Instruction {
     return false
   }
 
-  public var isStoreAttr: Bool {
-    if case .storeAttr = self { return true }
+  public var isStoreAttribute: Bool {
+    if case .storeAttribute = self { return true }
     return false
   }
 
-  public var isLoadAttr: Bool {
-    if case .loadAttr = self { return true }
+  public var isLoadAttribute: Bool {
+    if case .loadAttribute = self { return true }
     return false
   }
 
-  public var isDeleteAttr: Bool {
-    if case .deleteAttr = self { return true }
+  public var isDeleteAttribute: Bool {
+    if case .deleteAttribute = self { return true }
     return false
   }
 

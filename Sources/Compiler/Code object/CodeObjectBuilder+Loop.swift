@@ -27,12 +27,12 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `breakLoop` instruction to code object.
-  public func emitBreakLoop(location: SourceLocation) throws {
-    try self.emit(.breakLoop, location: location)
+  public func emitBreak(location: SourceLocation) throws {
+    try self.emit(.break, location: location)
   }
 
   /// Append a `continueLoop` instruction to code object.
-  public func emitContinueLoop(value: Target, location: SourceLocation) throws {
+  public func emitContinue(value: Target, location: SourceLocation) throws {
     // try self.emit(.continueLoop, location: location)
     throw self.unimplemented()
   }
