@@ -6,7 +6,7 @@ extension CodeObjectBuilder {
 
   // MARK: - Unary
 
-  internal func emitUnaryOperator(ast op: UnaryOperator,
+  internal func emitUnaryOperator(_ op: UnaryOperator,
                                   location: SourceLocation) throws {
     switch op {
     case .invert: try self.emitUnaryInvert(location: location)
@@ -39,7 +39,7 @@ extension CodeObjectBuilder {
   // MARK: - Binary
 
   // swiftlint:disable:next cyclomatic_complexity
-  internal func emitBinaryOperator(ast op: BinaryOperator,
+  internal func emitBinaryOperator(_ op: BinaryOperator,
                                    location: SourceLocation) throws {
     switch op {
     case .add:        try self.emitBinaryAdd            (location: location)
@@ -126,7 +126,7 @@ extension CodeObjectBuilder {
   // MARK: - In-place
 
   // swiftlint:disable:next cyclomatic_complexity
-  internal func emitInplaceOperator(ast op: BinaryOperator,
+  internal func emitInplaceOperator(_ op: BinaryOperator,
                                     location: SourceLocation) throws {
     switch op {
     case .add:        try self.emitInplaceAdd            (location: location)
@@ -219,7 +219,7 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `compareOp` instruction to code object.
-  public func emitCompareOp(ast op: ComparisonOperator,
+  public func emitCompareOp(_ op: ComparisonOperator,
                             location: SourceLocation) throws {
     // swiftlint:disable:next type_name nesting
     typealias O = ComparisonOpcode

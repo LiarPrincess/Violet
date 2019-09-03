@@ -53,9 +53,9 @@ extension Compiler {
     }
 
     try self.visitExpression(object)
-    try self.emitLoadMethod(name: methodName, location: location)
+    try self.builder.emitLoadMethod(name: methodName, location: location)
     try self.visitExpressions(args)
-    try self.emitCallMethod(argumentCount: args.count, location: location)
+    try self.builder.emitCallMethod(argumentCount: args.count, location: location)
     return true
   }
 
@@ -94,7 +94,7 @@ extension Compiler {
         // pack the positional arguments into a tuple.
 
         if nSeen > 0 {
-          try self.emitBuildTuple(elementCount: nSeen, location: location)
+          try self.builder.emitBuildTuple(elementCount: nSeen, location: location)
           nSeen = 0
           nSubArgs += 1
         }
@@ -111,16 +111,17 @@ extension Compiler {
     if nSubArgs > 0 || hasDictionaryUnpack {
       // Pack up any trailing positional arguments.
       if nSeen > 0 {
-        try self.emitBuildTuple(elementCount: nSeen, location: location)
+        try self.builder.emitBuildTuple(elementCount: nSeen, location: location)
         nSubArgs += 1
       }
 
       // If we ended up with more than one stararg, we need
       // to concatenate them into a single sequence.
       if nSubArgs > 1 {
-        try self.emitBuildTupleUnpackWithCall(elementCount: nSubArgs, location: location)
+        try self.builder.emitBuildTupleUnpackWithCall(elementCount: nSubArgs,
+                                                      location: location)
       } else if nSubArgs == 0 {
-        try self.emitBuildTuple(elementCount: 0, location: location)
+        try self.builder.emitBuildTuple(elementCount: 0, location: location)
       }
 
       // the number of keyword arguments on the stack following
@@ -155,20 +156,22 @@ extension Compiler {
       }
 
       if nSubKwArgs > 1 {
-        try self.emitBuildMapUnpackWithCall(elementCount: nSubKwArgs, location: location)
+        try self.builder.emitBuildMapUnpackWithCall(elementCount: nSubKwArgs,
+                                                    location: location)
       }
 
-      try self.emitCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0)
+      try self.builder.emitCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0,
+                                          location: location)
     } else if keywords.any {
       let names = keywords.map { Constant.string($0.name!) }
       let argCount = alreadyPushedArgs + args.count + keywords.count
 
       try self.visitKeywords(keywords: keywords)
-      try self.emitConstant(.tuple(names), location: location)
-      try self.emitCallFunctionKw(argumentCount: argCount)
+      try self.builder.emitTuple(names, location: location)
+      try self.builder.emitCallFunctionKw(argumentCount: argCount, location: location)
     } else {
       let argCount = alreadyPushedArgs + args.count
-      try self.emitCallFunction(argumentCount: argCount)
+      try self.builder.emitCallFunction(argumentCount: argCount, location: location)
     }
   }
 
@@ -189,10 +192,14 @@ extension Compiler {
     assert(start < end)
 
     for kw in keywords[start..<end] {
-      let c = kw.name.map { Constant.string($0) } ?? Constant.none
-      try self.emitConstant(c, location: location)
+      if let s = kw.name {
+         try self.builder.emitString(s, location: location)
+      } else {
+        try self.builder.emitNone(location: location)
+      }
+
       try self.visitExpression(kw.value)
     }
-    try self.emitBuildMap(elementCount: keywords.count, location: location)
+    try self.builder.emitBuildMap(elementCount: keywords.count, location: location)
   }
 }

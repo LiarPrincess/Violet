@@ -37,38 +37,38 @@ extension Compiler {
 
     switch expr.kind {
     case .true:
-      try self.emitConstant(.true, location: location)
+      try self.builder.emitTrue(location: location)
     case .false:
-      try self.emitConstant(.false, location: location)
+      try self.builder.emitFalse(location: location)
     case .none:
-      try self.emitConstant(.none, location: location)
+      try self.builder.emitNone(location: location)
     case .ellipsis:
-      try self.emitConstant(.ellipsis, location: location)
+      try self.builder.emitEllipsis(location: location)
 
     case let .identifier(value):
       try self.visitIdentifier(value, context: context, location: location)
 
     case let .bytes(value):
-      try self.emitConstant(.bytes(value), location: location)
+      try self.builder.emitBytes(value, location: location)
     case let .string(string):
       try self.visitString(string, location: location)
 
     case let .int(value):
-      try self.emitConstant(.integer(value), location: location)
+      try self.builder.emitInteger(value, location: location)
     case let .float(value):
-      try self.emitConstant(.float(value), location: location)
+      try self.builder.emitFloat(value, location: location)
     case let .complex(real, imag):
-      try self.emitConstant(.complex(real: real, imag: imag), location: location)
+      try self.builder.emitComplex(real: real, imag: imag, location: location)
 
     case let .unaryOp(op, right):
       try self.visitExpression(right)
-      try self.emitUnaryOperator(op, location: location)
+      try self.builder.emitUnaryOperator(op, location: location)
     case let .binaryOp(op, left, right):
       try self.visitExpression(left)
       try self.visitExpression(right)
-      try emitBinaryOperator(op, location: location)
+      try self.builder.emitBinaryOperator(op, location: location)
     case let .boolOp(op, left, right):
-      try self.visitBoolOp(op: op, left: left, right: right, location: location)
+      try self.visitBoolOp(op, left: left, right: right, location: location)
     case let .compare(left, elements):
       try self.visitCompare(left: left, elements: elements, location: location)
 
@@ -111,7 +111,7 @@ extension Compiler {
     case let .attribute(expr, name):
       let mangled = MangledName(className: self.className, name: name)
       try self.visitExpression(expr)
-      try self.emitAttribute(name: mangled, context: context, location: location)
+      try self.builder.emitAttribute(name: mangled, context: context, location: location)
 
     case let .subscript(expr, slice):
       try self.visitExpression(expr)
@@ -171,13 +171,13 @@ extension Compiler {
     switch operation {
     case .deref:
       let c = self.getDerefContext(context: context)
-      try self.emitDeref(name: mangled, context: c, location: location)
+      try self.builder.emitDeref(name: mangled, context: c, location: location)
     case .fast:
-      try self.emitFast(name: mangled, context: context, location: location)
+      try self.builder.emitFast(name: mangled, context: context, location: location)
     case .global:
-      try self.emitGlobal(name: mangled, context: context, location: location)
+      try self.builder.emitGlobal(name: mangled, context: context, location: location)
     case .name:
-      try self.emitName(name: mangled, context: context, location: location)
+      try self.builder.emitName(name: mangled, context: context, location: location)
     }
   }
 
@@ -202,7 +202,7 @@ extension Compiler {
                            location: SourceLocation) throws {
     switch group {
     case let .literal(s):
-      try self.emitConstant(.string(s), location: location)
+      try self.builder.emitString(s, location: location)
 
     case let .formattedValue(expr, conversion: conv, spec: spec):
       try self.visitExpression(expr)
@@ -217,10 +217,10 @@ extension Compiler {
 
       if let s = spec {
         flags |= FormattedValueMasks.hasFormat
-        try self.emitConstant(.string(s), location: location)
+        try self.builder.emitString(s, location: location)
       }
 
-      try self.emit(.formatValue(flags: flags), location: location)
+      try self.builder.emit(.formatValue(flags: flags), location: location)
 
     case let .joined(groups):
       for g in groups {
@@ -230,7 +230,7 @@ extension Compiler {
       if groups.count == 1 {
         // do nothing, string is already on TOS
       } else if let count = UInt8(exactly: groups.count) {
-        try self.emit(.buildString(count), location: location)
+        try self.builder.emit(.buildString(count), location: location)
       } else {
         // UInt8 can't represent this value
         throw self.error(.fStringWithMoreThan255Elements, location: location)
@@ -249,21 +249,20 @@ extension Compiler {
   /// 4 LOAD_NAME                1 (b)
   /// 6 RETURN_VALUE
   /// ```
-  private func visitBoolOp(op: BooleanOperator,
+  private func visitBoolOp(_ op:  BooleanOperator,
                            left:  Expression,
                            right: Expression,
                            location: SourceLocation) throws {
-
-    let end = try self.newLabel()
+    let end = try self.builder.addLabel()
     try self.visitExpression(left)
 
     switch op {
-    case .and: try self.emitJumpIfFalseOrPop(to: end, location: location)
-    case .or:  try self.emitJumpIfTrueOrPop(to: end, location: location)
+    case .and: try self.builder.emitJumpIfFalseOrPop(to: end, location: location)
+    case .or:  try self.builder.emitJumpIfTrueOrPop (to: end, location: location)
     }
 
     try self.visitExpression(right)
-    self.setLabel(end)
+    self.builder.setLabel(end)
   }
 
   /// compiler_compare(struct compiler *c, expr_ty e)
@@ -292,23 +291,23 @@ extension Compiler {
     if elements.count == 1 {
       let e = elements.first
       try self.visitExpression(e.right)
-      try self.emitComparisonOperator(e.op, location: location)
+      try self.builder.emitCompareOp(e.op, location: location)
     } else {
-      let end = try self.newLabel()
+      let end = try self.builder.addLabel()
 
       for e in elements.dropLast() {
         try self.visitExpression(e.right)
-        try self.emit(.dupTop, location: location)
-        try self.emit(.rotThree, location: location)
-        try self.emitComparisonOperator(e.op, location: location)
-        try self.emitJumpIfFalseOrPop(to: end, location: location)
+        try self.builder.emit(.dupTop, location: location)
+        try self.builder.emit(.rotThree, location: location)
+        try self.builder.emitCompareOp(e.op, location: location)
+        try self.builder.emitJumpIfFalseOrPop(to: end, location: location)
       }
 
       let l = elements.last
       try self.visitExpression(l.right)
-      try self.emitComparisonOperator(l.op, location: location)
+      try self.builder.emitCompareOp(l.op, location: location)
 
-      self.setLabel(end)
+      self.builder.setLabel(end)
     }
   }
 
@@ -335,11 +334,9 @@ extension Compiler {
     elt: Expression,
     generators: NonEmptyArray<Comprehension>) throws {
   }
-*/
 
   // MARK: - Coroutines/Generators
 
-/*
   private func visitAwait(expr: Expression) throws {
   }
 
@@ -348,11 +345,9 @@ extension Compiler {
 
   private func visitYieldFrom(expr: Expression) throws {
   }
-*/
 
   // MARK: - Lambda
 
-/*
   private func visitLambda(args: Arguments,
                            body: Expression) throws {
   }
@@ -375,14 +370,14 @@ extension Compiler {
                                  body:   Expression,
                                  orElse: Expression,
                                  location: SourceLocation) throws {
-    let end = try self.newLabel()
-    let next = try self.newLabel()
+    let end = try self.builder.addLabel()
+    let next = try self.builder.addLabel()
 
     try self.visitExpression(test, andJumpTo: next, if: false, location: location)
     try self.visitExpression(body)
-    self.setLabel(next)
+    self.builder.setLabel(next)
     try self.visitExpression(orElse)
-    self.setLabel(end)
+    self.builder.setLabel(end)
   }
 
   // TODO: Do we even need this method? Cant we just compile `expr` and then fancy test?
@@ -404,26 +399,26 @@ extension Compiler {
     case let .boolOp(op, left, right):
       let isOr = op == .or
       let hasLabel = cond != isOr
-      let next2 = hasLabel ? try self.newLabel() : next
+      let next2 = hasLabel ? try self.builder.addLabel() : next
 
       try self.visitExpression(left,  andJumpTo: next2, if: isOr, location: loc)
       try self.visitExpression(right, andJumpTo: next,  if: cond, location: loc)
 
       if hasLabel {
-        self.setLabel(next2)
+        self.builder.setLabel(next2)
       }
       return
 
     case let .ifExpression(test, body, orElse):
-      let end = try self.newLabel()
-      let next2 = try self.newLabel()
+      let end = try self.builder.addLabel()
+      let next2 = try self.builder.addLabel()
 
       try self.visitExpression(test, andJumpTo: next2, if: false, location: loc)
       try self.visitExpression(body, andJumpTo: next,  if: cond,  location: loc)
-      try self.emitJumpAbsolute(to: end, location: loc)
-      self.setLabel(next2)
+      try self.builder.emitJumpAbsolute(to: end, location: loc)
+      self.builder.setLabel(next2)
       try self.visitExpression(orElse, andJumpTo: next, if: cond, location: loc)
-      self.setLabel(end)
+      self.builder.setLabel(end)
 
     case let .compare(left, elements):
       guard elements.count > 1 else {
@@ -432,34 +427,34 @@ extension Compiler {
 
       try self.visitExpression(left)
 
-      let end = try self.newLabel()
-      let cleanup = try self.newLabel()
+      let end = try self.builder.addLabel()
+      let cleanup = try self.builder.addLabel()
 
       for e in elements.dropLast() {
         try self.visitExpression(e.right)
-        try self.emit(.dupTop, location: loc)
-        try self.emit(.rotThree, location: loc)
-        try self.emitComparisonOperator(e.op, location: loc)
-        try self.emitJumpIfFalseOrPop(to: cleanup, location: loc)
+        try self.builder.emit(.dupTop, location: loc)
+        try self.builder.emit(.rotThree, location: loc)
+        try self.builder.emitCompareOp(e.op, location: loc)
+        try self.builder.emitJumpIfFalseOrPop(to: cleanup, location: loc)
       }
 
       let l = elements.last
       try self.visitExpression(l.right)
-      try self.emitComparisonOperator(l.op, location: loc)
+      try self.builder.emitCompareOp(l.op, location: loc)
 
       switch cond {
-      case true:  try self.emitPopJumpIfTrue (to: next, location: loc)
-      case false: try self.emitPopJumpIfFalse(to: next, location: loc)
+      case true:  try self.builder.emitPopJumpIfTrue (to: next, location: loc)
+      case false: try self.builder.emitPopJumpIfFalse(to: next, location: loc)
       }
 
-      try self.emitJumpAbsolute(to: end, location: loc)
-      self.setLabel(cleanup)
-      try self.emit(.popTop, location: loc)
+      try self.builder.emitJumpAbsolute(to: end, location: loc)
+      self.builder.setLabel(cleanup)
+      try self.builder.emit(.popTop, location: loc)
 
       if !cond {
-        try self.emitJumpAbsolute(to: next, location: loc)
+        try self.builder.emitJumpAbsolute(to: next, location: loc)
       }
-      self.setLabel(end)
+      self.builder.setLabel(end)
       return
 
     default:
@@ -468,8 +463,8 @@ extension Compiler {
 
     try self.visitExpression(expr)
     switch cond {
-    case true:  try self.emitPopJumpIfTrue (to: next, location: loc)
-    case false: try self.emitPopJumpIfFalse(to: next, location: loc)
+    case true:  try self.builder.emitPopJumpIfTrue (to: next, location: loc)
+    case false: try self.builder.emitPopJumpIfFalse(to: next, location: loc)
     }
   }
 
@@ -493,7 +488,7 @@ extension Compiler {
       }
     }
 
-    try self.emitSubscript(context: context, location: location)
+    try self.builder.emitSubscript(context: context, location: location)
   }
 
   /// compiler_visit_nested_slice(struct compiler *c, slice_ty s,
@@ -525,21 +520,21 @@ extension Compiler {
     if let l = lower {
       try self.visitExpression(l)
     } else {
-      try self.emitConstant(.none, location: location)
+      try self.builder.emitNone(location: location)
     }
 
     if let u = upper {
       try self.visitExpression(u)
     } else {
-      try self.emitConstant(.none, location: location)
+      try self.builder.emitNone(location: location)
     }
 
-    var n: UInt8 = 2
+    var type = BuildSliceType.lowerUpper
     if let s = step {
-      n += 1
+      type = .lowerUpperStep
       try self.visitExpression(s)
     }
 
-    try self.emitBuildSlice(n: n, location: location)
+    try self.builder.emitBuildSlice(type, location: location)
   }
 }
