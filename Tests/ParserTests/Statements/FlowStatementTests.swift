@@ -132,7 +132,7 @@ class FlowStatementTests: XCTestCase, Common, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchRaise(stmt) else { return }
 
-      XCTAssertNil(d.exc)
+      XCTAssertNil(d.exception)
       XCTAssertNil(d.cause)
 
       XCTAssertStatement(stmt, "(raise)")
@@ -151,7 +151,7 @@ class FlowStatementTests: XCTestCase, Common, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchRaise(stmt) else { return }
 
-      XCTAssertExpression(d.exc, "Hades")
+      XCTAssertExpression(d.exception, "Hades")
       XCTAssertNil(d.cause)
 
       XCTAssertStatement(stmt, "(raise Hades)")
@@ -172,7 +172,7 @@ class FlowStatementTests: XCTestCase, Common, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchRaise(stmt) else { return }
 
-      XCTAssertExpression(d.exc, "Hercules")
+      XCTAssertExpression(d.exception, "Hercules")
       XCTAssertExpression(d.cause, "Olympus")
 
       XCTAssertStatement(stmt, "(raise Hercules from: Olympus)")

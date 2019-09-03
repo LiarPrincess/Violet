@@ -126,8 +126,8 @@ extension SymbolTableBuilder {
       try self.visitWithItems(items)
       try self.visitStatements(body)
 
-    case let .raise(exc, cause):
-      try self.visitExpression(exc)
+    case let .raise(exception, cause):
+      try self.visitExpression(exception)
       try self.visitExpression(cause)
 
     case let .try(body, handlers, orElse, finalBody):

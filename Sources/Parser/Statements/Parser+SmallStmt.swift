@@ -106,19 +106,19 @@ extension Parser {
 
     let isEnd = closingTokens.contains(self.peek.kind)
     if isEnd {
-      let kind = StatementKind.raise(exc: nil, cause: nil)
+      let kind = StatementKind.raise(exception: nil, cause: nil)
       return self.statement(kind, start: start, end: token.end)
     }
 
-    let exc = try self.test()
+    let exception = try self.test()
 
     var cause: Expression?
     if try self.consumeIf(.from) {
       cause = try self.test()
     }
 
-    let end = cause?.end ?? exc.end
-    let kind = StatementKind.raise(exc: exc, cause: cause)
+    let end = cause?.end ?? exception.end
+    let kind = StatementKind.raise(exception: exception, cause: cause)
     return self.statement(kind, start: start, end: end)
   }
 

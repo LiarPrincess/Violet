@@ -179,10 +179,10 @@ public enum StatementKind: Equatable {
   /// Has the same fields as `With`.
   case asyncWith(items: NonEmptyArray<WithItem>, body: NonEmptyArray<Statement>)
   /// Raising an exception.
-  /// - `exc` is the exception object to be raised, normally a Call or Name
+  /// - `exception` is the exception object to be raised, normally a Call or Name
   /// or None for a standalone raise.
   /// - `cause` is the optional part for y in raise x from y.
-  case raise(exc: Expression?, cause: Expression?)
+  case raise(exception: Expression?, cause: Expression?)
   /// `try` block.
   /// All attributes are list of nodes to execute, except for handlers,
   /// which is a list of ExceptHandler nodes.

@@ -329,10 +329,10 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   arendelle - referenced, global,
   /// ```
   func test_raise() {
-    let exc = self.expression(.identifier("elsa"), start: loc1)
+    let exception = self.expression(.identifier("elsa"), start: loc1)
     let cause = self.expression(.identifier("arendelle"), start: loc2)
 
-    let kind = StatementKind.raise(exc: exc, cause: cause)
+    let kind = StatementKind.raise(exception: exception, cause: cause)
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top

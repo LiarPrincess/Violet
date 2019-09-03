@@ -251,9 +251,9 @@ extension StatementMatcher {
   internal func matchRaise(_ stmt: Statement,
                            file: StaticString = #file,
                            line: UInt         = #line) ->
-  (exc: Expression?, cause: Expression?)? {
+  (exception: Expression?, cause: Expression?)? {
 
-    if case let StatementKind.raise(exc: value0, cause: value1) = stmt.kind {
+    if case let StatementKind.raise(exception: value0, cause: value1) = stmt.kind {
       return (value0, value1)
     }
 

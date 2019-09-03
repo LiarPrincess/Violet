@@ -171,10 +171,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   | AsyncWith(WithItem+ items, stmt+ body)
 
   -- Raising an exception.
-  -- - `exc` is the exception object to be raised, normally a Call or Name
+  -- - `exception` is the exception object to be raised, normally a Call or Name
   -- or None for a standalone raise.
   -- - `cause` is the optional part for y in raise x from y.
-  | Raise(expr? exc, expr? cause)
+  | Raise(expr? exception, expr? cause)
   -- `try` block.
   -- All attributes are list of nodes to execute, except for handlers,
   -- which is a list of ExceptHandler nodes.

@@ -96,8 +96,8 @@ public struct ASTValidationPass: ASTPass {
       try self.visitWithItems(items)
       try self.visitStatements(body)
 
-    case let .raise(exc, cause):
-      if let exc = exc {
+    case let .raise(exception, cause):
+      if let exc = exception {
         try self.visitExpression(exc)
         try self.visitExpression(cause)
       } else if cause != nil {
