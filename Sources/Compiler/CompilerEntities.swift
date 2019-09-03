@@ -33,7 +33,7 @@ internal enum ExpressionContext {
 /// Labels can only be used inside a single block!
 internal struct Label {
 
-  internal static let invalid = -1
+  internal static let notAssigned = -1
 
   /// Index in `CodeObject.labels`
   internal let index: Int

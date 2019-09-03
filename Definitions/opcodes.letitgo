@@ -403,7 +403,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- - `0x08` - a tuple containing cells for free variables, making a closure
   -- the code associated with the function (at TOS1)
   -- the qualified name of the function (at TOS)
-  | MakeFunction(UInt8 argc)
+  | MakeFunction(UInt8 argumentCount)
 
   -- Calls a callable object with positional arguments.
   -- `argc` indicates the number of positional arguments.
@@ -417,7 +417,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- 2. call the callable object with those arguments
   -- 3. push the return value returned by the callable object
   {- TODO: This opcode is used only for calls with positional arguments. -}
-  | CallFunction(UInt8 argc)
+  | CallFunction(UInt8 argumentCount)
 
   -- Calls a callable object with positional (if any) and keyword arguments.
   -- `argc` indicates the total number of positional and keyword arguments.
@@ -432,8 +432,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- 1. pop all arguments and the callable object off the stack
   -- 2. call the callable object with those arguments
   -- 3. push the return value returned by the callable object.
-  {- TODO: Changed in version 3.6: Keyword arguments are packed in a tuple instead of a dictionary, argc indicates the total number of arguments. -}
-  | CallFunctionKw(UInt8 argc)
+  | CallFunctionKw(UInt8 argumentCount)
 
   -- Calls a callable object with variable set of positional and keyword arguments.
   --
@@ -480,7 +479,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Positional arguments are on top of the stack.
   -- Below them, two items described in `LoadMethod` on the stack.
   -- All of them are popped and return value is pushed.
-  | CallMethod(UInt8 argc)
+  | CallMethod(UInt8 argumentCount)
 
 {- -------- -}
 {-  Import  -}

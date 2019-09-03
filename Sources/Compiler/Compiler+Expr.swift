@@ -9,7 +9,6 @@ import Bytecode
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
-// swiftlint:disable switch_case_alignment
 
 extension Compiler {
 
@@ -95,8 +94,13 @@ extension Compiler {
 
     case .lambda:
       throw self.notImplemented()
-    case let .call(f, args, keywords):
-      try self.visitCall(f: f, args: args, keywords: keywords)
+
+    case let .call(function, args, keywords):
+      try self.visitCall(function: function,
+                         args: args,
+                         keywords: keywords,
+                         context: context,
+                         location: location)
 
     case let .ifExpression(test, body, orElse):
       try self.visitIfExpression(test: test,
@@ -346,18 +350,13 @@ extension Compiler {
   }
 */
 
-  // MARK: - Function call
+  // MARK: - Lambda
 
 /*
   private func visitLambda(args: Arguments,
                            body: Expression) throws {
   }
 */
-
-  private func visitCall(f: Expression,
-                         args: [Expression],
-                         keywords: [Keyword]) throws {
-  }
 
   // MARK: - If
 

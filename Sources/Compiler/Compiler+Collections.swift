@@ -113,44 +113,45 @@ extension Compiler {
   internal func visitDictionary(elements: [DictionaryElement],
                                 context:  ExpressionContext,
                                 location: SourceLocation) throws {
+    // TODO: CPython does this differently
     assert(context == .load)
 
     /// Elements that do not need unpacking
-    var simpleElementCount = 0
+    var nSimpleElement = 0
     /// Elements that need unpacking
-    var packedElementCount = 0
+    var nPackedElement = 0
 
     for el in elements {
       switch el {
       case let .unpacking(expr):
         // change elements to container, so we can unpack it later
-        if simpleElementCount > 0 {
-          try self.emitBuildMap(elementCount: simpleElementCount, location: location)
-          simpleElementCount = 0
-          packedElementCount += 1
+        if nSimpleElement > 0 {
+          try self.emitBuildMap(elementCount: nSimpleElement, location: location)
+          nSimpleElement = 0
+          nPackedElement += 1
         }
 
         // add another container
         try self.visitExpression(expr)
-        packedElementCount += 1
+        nPackedElement += 1
 
       case let .keyValue(key: k, value: v):
         try self.visitExpression(k)
         try self.visitExpression(v)
-        simpleElementCount += 1
+        nSimpleElement += 1
       }
     }
 
-    if packedElementCount > 0 {
-      if simpleElementCount > 0 {
-        try self.emitBuildMap(elementCount: simpleElementCount, location: location)
-        packedElementCount += 1
+    if nPackedElement > 0 {
+      if nSimpleElement > 0 {
+        try self.emitBuildMap(elementCount: nSimpleElement, location: location)
+        nPackedElement += 1
       }
 
-      try self.emitBuildMapUnpack(elementCount: packedElementCount,
+      try self.emitBuildMapUnpack(elementCount: nPackedElement,
                                   location: location)
     } else {
-      try self.emitBuildMap(elementCount: simpleElementCount, location: location)
+      try self.emitBuildMap(elementCount: nSimpleElement, location: location)
     }
   }
 
@@ -263,40 +264,40 @@ extension Compiler {
     location: SourceLocation) throws {
 
     /// Elements that do not need unpacking
-    var simpleElementCount = 0
+    var nSimpleElement = 0
     /// Elements that need unpacking
-    var packedElementCount = 0
+    var nPackedElement = 0
 
     for el in elements {
       switch el.kind {
       case let .starred(inner):
         // change elements to container, so we can unpack it later
-        if simpleElementCount > 0 {
-          try adapter.emitPackElements(count: simpleElementCount, location: location)
-          simpleElementCount = 0
-          packedElementCount += 1
+        if nSimpleElement > 0 {
+          try adapter.emitPackElements(count: nSimpleElement, location: location)
+          nSimpleElement = 0
+          nPackedElement += 1
         }
 
         // add another container
         try self.visitExpression(inner)
-        packedElementCount += 1
+        nPackedElement += 1
 
       default:
         try self.visitExpression(el)
-        simpleElementCount += 1
+        nSimpleElement += 1
       }
     }
 
-    if packedElementCount > 0 {
-      if simpleElementCount > 0 {
-        try adapter.emitPackElements(count: simpleElementCount, location: location)
-        packedElementCount += 1
+    if nPackedElement > 0 {
+      if nSimpleElement > 0 {
+        try adapter.emitPackElements(count: nSimpleElement, location: location)
+        nPackedElement += 1
       }
 
-      try adapter.emitBuildUnpackCollection(count: packedElementCount,
+      try adapter.emitBuildUnpackCollection(count: nPackedElement,
                                             location: location)
     } else {
-      try adapter.emitBuildCollection(count: simpleElementCount, location: location)
+      try adapter.emitBuildCollection(count: nSimpleElement, location: location)
     }
   }
 }

@@ -9,6 +9,7 @@ import Bytecode
 // swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
 
+// TODO: This has to be in separate class! Builder.
 extension Compiler {
 
   // MARK: - Base
@@ -302,6 +303,31 @@ extension Compiler {
     assert(countAfter  <= 0xffff_ff)
 
 //    let rawValue = countAfter << 8 | countBefore
+  }
+
+  // MARK: - Function
+
+  internal func emitCallFunction(argumentCount: Int) throws {
+    // ADDOP_I(c, CALL_FUNCTION, n + argsCount);
+  }
+
+  internal func emitCallFunctionKw(argumentCount: Int) throws {
+    // ADDOP_I(c, CALL_FUNCTION_KW, n + argsCount + keywordCount);
+  }
+
+  internal func emitCallFunctionEx(hasKeywordArguments: Bool) throws {
+    // ADDOP_I(c, CALL_FUNCTION_EX, nsubkwargs > 0);
+  }
+
+  // MARK: - Class
+
+  internal func emitLoadMethod(name: String, location: SourceLocation) throws {
+    // ADDOP_NAME(c, LOAD_METHOD, meth->v.Attribute.attr, names);
+  }
+
+  internal func emitCallMethod(argumentCount: Int,
+                               location: SourceLocation) throws {
+    // ADDOP_I(c, CALL_METHOD, asdl_seq_LEN(e->v.Call.args));
   }
 
   // MARK: - Other

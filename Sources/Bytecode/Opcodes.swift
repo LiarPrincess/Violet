@@ -328,7 +328,7 @@ public enum Instruction {
   /// - `0x08` - a tuple containing cells for free variables, making a closure
   /// the code associated with the function (at TOS1)
   /// the qualified name of the function (at TOS)
-  case makeFunction(argc: UInt8)
+  case makeFunction(argumentCount: UInt8)
   /// Calls a callable object with positional arguments.
   /// `argc` indicates the number of positional arguments.
   /// 
@@ -340,7 +340,7 @@ public enum Instruction {
   /// 1. pop all arguments and the callable object off the stack
   /// 2. call the callable object with those arguments
   /// 3. push the return value returned by the callable object
-  case callFunction(argc: UInt8)
+  case callFunction(argumentCount: UInt8)
   /// Calls a callable object with positional (if any) and keyword arguments.
   /// `argc` indicates the total number of positional and keyword arguments.
   /// 
@@ -354,7 +354,7 @@ public enum Instruction {
   /// 1. pop all arguments and the callable object off the stack
   /// 2. call the callable object with those arguments
   /// 3. push the return value returned by the callable object.
-  case callFunctionKw(argc: UInt8)
+  case callFunctionKw(argumentCount: UInt8)
   /// Calls a callable object with variable set of positional and keyword arguments.
   /// 
   /// Stack layout (1st item means TOS):
@@ -390,7 +390,7 @@ public enum Instruction {
   /// Positional arguments are on top of the stack.
   /// Below them, two items described in `LoadMethod` on the stack.
   /// All of them are popped and return value is pushed.
-  case callMethod(argc: UInt8)
+  case callMethod(argumentCount: UInt8)
   /// Loads all symbols not starting with '_' directly from the module TOS
   /// to the local namespace.
   /// 

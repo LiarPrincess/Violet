@@ -102,12 +102,14 @@ public final class Compiler {
 
   internal func newLabel() throws -> Label {
     let index = self.currentCodeObject.labels.endIndex
-    self.currentCodeObject.labels.append(Label.invalid)
+    self.currentCodeObject.labels.append(Label.notAssigned)
     return Label(index: index)
   }
 
   internal func setLabel(_ label: Label) {
     assert(label.index < self.currentCodeObject.labels.count)
+    assert(self.currentCodeObject.labels[label.index] == Label.notAssigned)
+
     let jumpTarget = self.currentCodeObject.instructions.endIndex
     self.currentCodeObject.labels[label.index] = jumpTarget
   }
