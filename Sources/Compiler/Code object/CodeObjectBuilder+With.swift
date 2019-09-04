@@ -5,7 +5,7 @@ import Bytecode
 extension CodeObjectBuilder {
 
   /// Append a `setupWith` instruction to code object.
-  public func emitSetupWith(value: Delta, location: SourceLocation) throws {
+  public func emitSetupWith(loopEnd: Label, location: SourceLocation) throws {
     // try self.emit(.setupWith, location: location)
     throw self.unimplemented()
   }

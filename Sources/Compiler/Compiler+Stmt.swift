@@ -86,10 +86,10 @@ case let .classDef(name, bases, keywords, body, decoratorList):
                        orElse: orElse,
                        location: location)
 
-case let .with(items, body):
-  try self.visitWith(items: items, body: body)
-case let .asyncWith(items, body):
-  try self.visitAsyncWith(items: items, body: body)
+    case let .with(items, body):
+      try self.visitWith(items: items, body: body, location: location)
+    case .asyncWith:
+      throw self.notImplemented()
 
     case let .raise(exception, cause):
       try self.visitRaise(exception: exception, cause: cause, location: location)
@@ -138,13 +138,6 @@ case let .try(body, handlers, orElse, finalBody):
                                 returns: Expression?) throws {
   }
 
-  private func visitAsyncFunctionDef(name: String,
-                                     args: Arguments,
-                                     body: NonEmptyArray<Statement>,
-                                     decoratorList: [Expression],
-                                     returns: Expression?) throws {
-  }
-
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   private func visitReturn(value: Expression?, location: SourceLocation) throws {
     guard self.currentScope.type == .function else {
@@ -171,16 +164,6 @@ case let .try(body, handlers, orElse, finalBody):
                              keywords: [Keyword],
                              body: NonEmptyArray<Statement>,
                              decoratorList: [Expression]) throws {
-  }
-
-  // MARK: - With
-
-  private func visitWith(items: NonEmptyArray<WithItem>,
-                         body: NonEmptyArray<Statement>) throws {
-  }
-
-  private func visitAsyncWith(items: NonEmptyArray<WithItem>,
-                              body: NonEmptyArray<Statement>) throws {
   }
 
   // MARK: - Try/catch
