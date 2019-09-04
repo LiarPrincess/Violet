@@ -2,6 +2,8 @@ import Core
 import Parser
 import Bytecode
 
+// TODO: This should be an protocol (just as ASTBuilder)
+
 /// Helper for creating new `CodeObjects`.
 ///
 /// It is just a bunch of helper methods put thogether, which means
@@ -51,10 +53,25 @@ public struct CodeObjectBuilder {
     name: MangledName,
     location: SourceLocation) throws -> UInt8 {
 
+    return try self.addNameWithExtendedArgIfNeeded(name: name.value,
+                                                   location: location)
+  }
+
+  internal func addNameWithExtendedArgIfNeeded(
+    name: String,
+    location: SourceLocation) throws -> UInt8 {
+
     let rawIndex = self.codeObject.names.endIndex
     let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
     self.codeObject.names.append(name)
     return index
+  }
+
+  internal func emitIndexWithExtendedArgIfNeeded(
+    _ label: Label,
+    location: SourceLocation) throws -> UInt8 {
+
+    return try self.emitExtendedArgIfNeeded(label.index, location: location)
   }
 
   /// If the arg is `>255` then it can't be stored directly in instruction.

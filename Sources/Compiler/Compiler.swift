@@ -25,6 +25,10 @@ public final class Compiler {
   /// Current scope is at the top, top scope is at the bottom.
   private var scopeStack = [SymbolScope]()
 
+  /// We have to scan '__future__' (as weird as it sounds), to block any
+  /// potential '__future__' imports that occur later in file.
+  internal var future: FutureFeatures!
+
   /// Scope that we are currently filling (top of the `self.scopeStack`).
   internal var currentScope: SymbolScope {
     if let last = self.scopeStack.last { return last }

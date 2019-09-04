@@ -39,7 +39,7 @@ case let .asyncFunctionDef(name, args, body, decoratorList, returns):
                                  returns: returns)
 
 case let .classDef(name, bases, keywords, body, decoratorList):
-  try self.visitClassDef(name: name,
+  try self.visitClassDef(name:  name,
                          bases: bases,
                          keywords: keywords,
                          body: body,
@@ -84,10 +84,14 @@ case let .try(body, handlers, orElse, finalBody):
     case let .assert(test, msg):
       try self.visitAssert(test: test, msg: msg, location: location)
 
-case let .import(value):
-  try self.visitImport(value: value)
-case let .importFrom(moduleName, names, level):
-  try self.visitImportFrom(moduleName: moduleName, names: names, level: level)
+    case let .import(aliases):
+      try self.visitImport(aliases:  aliases,
+                           location: location)
+    case let .importFrom(module, aliases, level):
+      try self.visitImportFrom(module:   module,
+                               aliases:  aliases,
+                               level:    level,
+                               location: location)
 
 case let .expr(expr):
   try self.visitExpressionStatement(expr: expr)
@@ -241,23 +245,13 @@ case .continue:
                               body: NonEmptyArray<Statement>) throws {
   }
 
-  // MARK: - Import
-
-  private func visitImport(value: NonEmptyArray<Alias>) throws {
-  }
-
-  private func visitImportFrom(moduleName: String?,
-                               names: NonEmptyArray<Alias>,
-                               level: UInt8) throws {
-  }
-
   // MARK: - Try/catch
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   private func visitRaise(exception: Expression?,
                           cause:     Expression?,
                           location:  SourceLocation) throws {
-    var arg = RaiseArg.none
+    var arg = RaiseArg.reRaise
     if let e = exception {
       try self.visitExpression(e)
       arg = .exceptionOnly

@@ -10,6 +10,7 @@ public enum DerefContext {
   case del
 }
 
+// TODO: MangledName -> String (or add code object name protocol)
 extension CodeObjectBuilder {
 
   // MARK: - Constants
@@ -84,6 +85,12 @@ extension CodeObjectBuilder {
     case .load:  try self.emitLoadName  (name: name, location: location)
     case .del:   try self.emitDeleteName(name: name, location: location)
     }
+  }
+
+  /// Append a `storeName` instruction to code object.
+  public func emitStoreName(name: String, location: SourceLocation) throws {
+    let index = try self.addNameWithExtendedArgIfNeeded(name: name, location: location)
+    try self.emit(.storeName(nameIndex: index), location: location)
   }
 
   /// Append a `storeName` instruction to code object.

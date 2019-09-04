@@ -28,10 +28,13 @@ public struct FutureFeatures {
   public fileprivate(set) var flags: FutureFeatureFlags = []
 
   /// Line number of last future statement
-  public fileprivate(set) var line: SourceLine = 0
+  public fileprivate(set) var lastLine: SourceLine = 0
 }
 
 public final class FutureParser {
+
+  /// Name of the future module (__future__).
+  public static let moduleName = "__future__"
 
   /// future_parse(PyFutureFeatures *ff, mod_ty mod, PyObject *filename)
   public func parse(ast: AST) throws -> FutureFeatures? {
@@ -54,7 +57,7 @@ public final class FutureParser {
       previousLine = stmt.start.line
 
       if case let .importFrom(moduleName: module, names: names, level: _) = stmt.kind,
-        module == "__future__" {
+        module == FutureParser.moduleName {
 
         if isDone {
           // '__future__' imports have to be first, so this is not valid:
@@ -63,7 +66,7 @@ public final class FutureParser {
           throw CompilerError(.lateFuture, location: stmt.start)
         }
 
-        result.line = stmt.start.line
+        result.lastLine = stmt.start.line
         try self.appendFeatures(from: names,
                                 into: &result,
                                 errorLocation: stmt.start)

@@ -1,6 +1,8 @@
 // https://docs.python.org/3/reference/lexical_analysis.html#integer-literals
-// There is no limit for the length of integer literals apart
-// from what can be stored in available memory.
+// Quote:
+//   There is no limit for the length of integer literals apart
+//   from what can be stored in available memory.
+// We don't have that in Swift, so we will aproximate:
 
 public struct BigInt: Equatable, Hashable {
 
@@ -10,12 +12,16 @@ public struct BigInt: Equatable, Hashable {
 
   private let value: Int64
 
-  public init(_ value: Int64) {
-    self.value = value
-  }
-
   public init(_ value: Int) {
     self.value = Int64(value)
+  }
+
+  public init(_ value: UInt8) {
+    self.value = Int64(value)
+  }
+
+  public init(_ value: Int64) {
+    self.value = value
   }
 
   /// This should be used only by the lexer!
