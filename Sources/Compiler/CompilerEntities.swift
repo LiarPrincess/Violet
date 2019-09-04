@@ -27,7 +27,14 @@ public enum ExpressionContext {
   case del
 }
 
+internal enum BlockType {
+  case loop(startLabel: Label)
+  case except
+  case finallyTry
+  case finallyEnd
+}
 /*
+
 public enum CompilerScope {
   public static let module = 1
   public static let `class` = 2

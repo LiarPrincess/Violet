@@ -27,12 +27,19 @@ public final class Compiler {
 
   /// We have to scan '__future__' (as weird as it sounds), to block any
   /// potential '__future__' imports that occur later in file.
-  internal var future: FutureFeatures!
+  internal var future: FutureFeatures = FutureFeatures(flags: [], lastLine: 0)
+
+  // TODO: u_nfblocks
+  internal var blockTypeStack = [BlockType]()
 
   /// Scope that we are currently filling (top of the `self.scopeStack`).
   internal var currentScope: SymbolScope {
     if let last = self.scopeStack.last { return last }
     fatalError("[BUG] Compiler: Using nil current scope.")
+  }
+
+  internal var isInLoop: Bool {
+    return false
   }
 
   /// Name of the class that we are currently filling (if any).
@@ -77,6 +84,15 @@ public final class Compiler {
   }
 
   internal func popCodeObject() {
+  }
+
+  // MARK: - Block type
+
+  // TODO: compiler_push_fblock
+  internal func pushBlockType(_ type: BlockType) {
+  }
+
+  internal func popBlockType() {
   }
 
   // MARK: - Scope

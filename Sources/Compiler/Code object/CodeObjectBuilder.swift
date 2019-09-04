@@ -22,6 +22,7 @@ public struct CodeObjectBuilder {
 
   // MARK: - Emit
 
+  // TODO: this should not throw!
   internal func emit(_ instruction: Instruction,
                      location: SourceLocation) throws {
     self.codeObject.instructions.append(instruction)
@@ -33,6 +34,7 @@ public struct CodeObjectBuilder {
 
   // MARK: - Label
 
+  // TODO: this should not throw!
   internal func addLabel() throws -> Label {
     let index = self.codeObject.labels.endIndex
     self.codeObject.labels.append(Label.notAssigned)

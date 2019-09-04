@@ -90,6 +90,13 @@ public enum CompilerErrorKind: Equatable {
   case returnWithValueInAsyncGenerator
   /// 'break' outside loop
   case breakOutsideLoop
+
+  case unexpectedStarImport
+
+  /// 'continue' not properly in loop
+  case continueNotInBlock
+  /// 'continue' not supported inside 'finally' clause
+  case continueInsideFinally
 }
 
 // TODO: surprisingly appropriate; `fromFutureImportBraces`

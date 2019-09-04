@@ -31,12 +31,8 @@ case let .functionDef(name, args, body, decoratorList, returns):
                             body: body,
                             decoratorList: decoratorList,
                             returns: returns)
-case let .asyncFunctionDef(name, args, body, decoratorList, returns):
-  try self.visitAsyncFunctionDef(name: name,
-                                 args: args,
-                                 body: body,
-                                 decoratorList: decoratorList,
-                                 returns: returns)
+    case .asyncFunctionDef:
+      throw self.notImplemented()
 
 case let .classDef(name, bases, keywords, body, decoratorList):
   try self.visitClassDef(name:  name,
@@ -60,16 +56,26 @@ case let .annAssign(target, annotation, value, isSimple):
                           value: value,
                           isSimple: isSimple)
 
-case let .for(target, iter, body, orElse):
-  try self.visitFor(target: target, iter: iter, body: body, orElse: orElse)
-case let .asyncFor(target, iter, body, orElse):
-  try self.visitAsyncFor(target: target, iter: iter, body: body, orElse: orElse)
+    case let .for(target, iter, body, orElse):
+      try self.visitFor(target: target,
+                        iter:   iter,
+                        body:   body,
+                        orElse: orElse,
+                        location: location)
+    case .asyncFor:
+      throw self.notImplemented()
 
-case let .while(test, body, orElse):
-  try self.visitWhile(test: test, body: body, orElse: orElse)
+    case let .while(test, body, orElse):
+      try self.visitWhile(test: test,
+                          body: body,
+                          orElse: orElse,
+                          location: location)
 
-case let .if(test, body, orElse):
-  try self.visitIf(test: test, body: body, orElse: orElse)
+    case let .if(test, body, orElse):
+      try self.visitIf(test: test,
+                       body: body,
+                       orElse: orElse,
+                       location: location)
 
 case let .with(items, body):
   try self.visitWith(items: items, body: body)
@@ -98,8 +104,9 @@ case let .expr(expr):
 
     case .break:
       try self.visitBreak(location: location)
-case .continue:
-  try self.visitContinue()
+    case .continue:
+      try self.visitContinue(location: location)
+      // TODO: Add missing cases in 'continue' implementation
 
     case .pass:
       break
@@ -192,47 +199,6 @@ case .continue:
                               annotation: Expression,
                               value: Expression?,
                               isSimple: Bool) throws {
-  }
-
-  // MARK: - Loops
-
-  private func visitFor(target: Expression,
-                        iter: Expression,
-                        body: NonEmptyArray<Statement>,
-                        orElse: [Statement]) throws {
-  }
-
-  private func visitAsyncFor(target: Expression,
-                             iter: Expression,
-                             body: NonEmptyArray<Statement>,
-                             orElse: [Statement]) throws {
-  }
-
-  private func visitBreak(location: SourceLocation) throws {
-    if !self.isInLoop {
-      throw self.error(.breakOutsideLoop, location: location)
-    }
-
-    try self.builder.emitBreak(location: location)
-  }
-
-  private var isInLoop: Bool {
-    return false
-  }
-
-  private func visitContinue() throws {
-  }
-
-  private func visitWhile(test: Expression,
-                          body: NonEmptyArray<Statement>,
-                          orElse: [Statement]) throws {
-  }
-
-  // MARK: - If
-
-  private func visitIf(test: Expression,
-                       body: NonEmptyArray<Statement>,
-                       orElse: [Statement]) throws {
   }
 
   // MARK: - With
