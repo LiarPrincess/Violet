@@ -49,7 +49,7 @@ extension Compiler {
                                 level:    UInt8,
                                 location: SourceLocation) throws {
     // TODO: AST rename import from: names -> aliases
-    if module == FutureParser.moduleName && location.line > self.future.lastLine {
+    if module == SpecialIdentifiers.__future__ && location.line > self.future.lastLine {
       throw self.error(.lateFuture, location: location)
     }
 

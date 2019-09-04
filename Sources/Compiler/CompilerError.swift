@@ -78,6 +78,11 @@ public enum CompilerErrorKind: Equatable {
   case multipleStarredInAssignmentExpressions
   /// Starred assignment target must be in a list or tuple
   case starredAssignmentNotListOrTuple
+  /// invalid target for augmented assignment
+  case invalidTargetForAugmentedAssignment
+  /// invalid target for annotated assignment
+  case invalidTargetForAnnotatedAssignment
+
   /// Can't use starred expression here
   case invalidStarredExpression
 
@@ -88,11 +93,11 @@ public enum CompilerErrorKind: Equatable {
   case returnOutsideFunction
   /// 'return' with value in async generator
   case returnWithValueInAsyncGenerator
-  /// 'break' outside loop
-  case breakOutsideLoop
 
   case unexpectedStarImport
 
+  /// 'break' outside loop
+  case breakOutsideLoop
   /// 'continue' not properly in loop
   case continueNotInBlock
   /// 'continue' not supported inside 'finally' clause

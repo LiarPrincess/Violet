@@ -43,18 +43,27 @@ case let .classDef(name, bases, keywords, body, decoratorList):
 
     case let .return(exprs):
       try self.visitReturn(value: exprs, location: location)
+
     case let .delete(exprs):
       try self.visitExpressions(exprs, context: .del)
 
     case let .assign(targets, value):
-      try self.visitAssign(targets: targets, value: value, location: location)
-case let .augAssign(target, op, value):
-  try self.visitAugAssign(target: target, op: op, value: value)
-case let .annAssign(target, annotation, value, isSimple):
-  try self.visitAnnAssign(target: target,
-                          annotation: annotation,
-                          value: value,
-                          isSimple: isSimple)
+      try self.visitAssign(targets:  targets,
+                           value:    value,
+                           location: location)
+
+    case let .augAssign(target, op, value):
+      try self.visitAugAssign(target:   target,
+                              op:       op,
+                              value:    value,
+                              location: location)
+
+    case let .annAssign(target, annotation, value, isSimple):
+      try self.visitAnnAssign(target:     target,
+                              annotation: annotation,
+                              value:    value,
+                              isSimple: isSimple,
+                              location: location)
 
     case let .for(target, iter, body, orElse):
       try self.visitFor(target: target,
@@ -93,23 +102,26 @@ case let .try(body, handlers, orElse, finalBody):
     case let .import(aliases):
       try self.visitImport(aliases:  aliases,
                            location: location)
+
     case let .importFrom(module, aliases, level):
       try self.visitImportFrom(module:   module,
                                aliases:  aliases,
                                level:    level,
                                location: location)
 
-case let .expr(expr):
-  try self.visitExpressionStatement(expr: expr)
+    case let .expr(expr):
+      try self.visitExpressionStatement(expr, location: location)
 
     case .break:
       try self.visitBreak(location: location)
+
     case .continue:
       try self.visitContinue(location: location)
       // TODO: Add missing cases in 'continue' implementation
 
     case .pass:
       break
+
     case .global,
          .nonlocal:
       // This will be taken from symbol table when emitting expressions.
@@ -159,46 +171,6 @@ case let .expr(expr):
                              keywords: [Keyword],
                              body: NonEmptyArray<Statement>,
                              decoratorList: [Expression]) throws {
-  }
-
-  // MARK: - Assign
-
-  /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
-  ///
-  /// `dis.dis('a = b = c = 5')` gives us:
-  /// ```c
-  ///  0 LOAD_CONST               0 (5)
-  ///  2 DUP_TOP
-  ///  4 STORE_NAME               0 (a)
-  ///  6 DUP_TOP
-  ///  8 STORE_NAME               1 (b)
-  /// 10 STORE_NAME               2 (c)
-  /// 12 LOAD_CONST               1 (None)
-  /// 14 RETURN_VALUE
-  /// ```
-  private func visitAssign(targets:  NonEmptyArray<Expression>,
-                           value:    Expression,
-                           location: SourceLocation) throws {
-
-    try self.visitExpression(value)
-    for (index, t) in targets.enumerated() {
-      if index < targets.count {
-        try self.builder.emitDupTop(location: location)
-      }
-
-      try self.visitExpression(t, context: .store)
-    }
-  }
-
-  private func visitAugAssign(target: Expression,
-                              op: BinaryOperator,
-                              value: Expression) throws {
-  }
-
-  private func visitAnnAssign(target: Expression,
-                              annotation: Expression,
-                              value: Expression?,
-                              isSimple: Bool) throws {
   }
 
   // MARK: - With
@@ -272,6 +244,18 @@ case let .expr(expr):
 
   // MARK: - Expression statement
 
-  private func visitExpressionStatement(expr: Expression) throws {
+  /// compiler_visit_stmt_expr(struct compiler *c, expr_ty value)
+  private func visitExpressionStatement(_ expr: Expression,
+                                        location: SourceLocation) throws {
+    if self.isInteractive && self.nestLevel <= 1 {
+      try self.visitExpression(expr)
+      try self.builder.emitPrintExpr(location: location)
+      return
+    }
+
+    // TODO: if (is_const(value)) {
+
+    try self.visitExpression(expr)
+    try self.builder.emitPopTop(location: location)
   }
 }

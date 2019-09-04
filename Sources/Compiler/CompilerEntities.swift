@@ -2,6 +2,7 @@ import Core
 import Parser
 import Bytecode
 
+// TODO: Do something with this
 internal enum SpecialIdentifiers {
   /// Name of the AST root scope
   internal static let top = "top"
@@ -19,6 +20,8 @@ internal enum SpecialIdentifiers {
   internal static let genexpr  = "genexpr"
 
   internal static let __class__ = "__class__"
+  internal static let __annotations__ = "__annotations__"
+  internal static let __future__ = "__future__"
 }
 
 public enum ExpressionContext {

@@ -42,6 +42,14 @@ public final class Compiler {
     return false
   }
 
+  internal var isInteractive: Bool {
+    return false
+  }
+
+  internal var nestLevel: Int {
+    return 0
+  }
+
   /// Name of the class that we are currently filling (if any).
   /// Mostly used for mangling.
   internal var className: String?

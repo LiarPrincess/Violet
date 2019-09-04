@@ -33,9 +33,6 @@ public struct FutureFeatures {
 
 public final class FutureParser {
 
-  /// Name of the future module (__future__).
-  public static let moduleName = "__future__"
-
   /// future_parse(PyFutureFeatures *ff, mod_ty mod, PyObject *filename)
   public func parse(ast: AST) throws -> FutureFeatures? {
     let statements = self.getStatements(from: ast)
@@ -56,8 +53,9 @@ public final class FutureParser {
 
       previousLine = stmt.start.line
 
-      if case let .importFrom(moduleName: module, names: names, level: _) = stmt.kind,
-        module == FutureParser.moduleName {
+      if case
+        let .importFrom(moduleName: module, names: names, level: _) = stmt.kind,
+        module == SpecialIdentifiers.__future__ {
 
         if isDone {
           // '__future__' imports have to be first, so this is not valid:
