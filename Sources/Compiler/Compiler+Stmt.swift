@@ -251,7 +251,7 @@ case let .expr(expr):
       self.warn(.assertionWithTuple, location: location)
     }
 
-    let end = try self.builder.addLabel()
+    let end = self.builder.addLabel()
     try self.visitExpression(test,
                              andJumpTo: end,
                              ifBooleanValueIs: true,

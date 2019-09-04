@@ -253,7 +253,7 @@ extension Compiler {
                            left:  Expression,
                            right: Expression,
                            location: SourceLocation) throws {
-    let end = try self.builder.addLabel()
+    let end = self.builder.addLabel()
     try self.visitExpression(left)
 
     switch op {
@@ -289,23 +289,23 @@ extension Compiler {
     try self.visitExpression(left)
 
     if elements.count == 1 {
-      let e = elements.first
-      try self.visitExpression(e.right)
-      try self.builder.emitCompareOp(e.op, location: location)
+      let first = elements.first
+      try self.visitExpression(first.right)
+      try self.builder.emitCompareOp(first.op, location: location)
     } else {
-      let end = try self.builder.addLabel()
+      let end = self.builder.addLabel()
 
-      for e in elements.dropLast() {
-        try self.visitExpression(e.right)
+      for element in elements.dropLast() {
+        try self.visitExpression(element.right)
         try self.builder.emit(.dupTop, location: location)
         try self.builder.emit(.rotThree, location: location)
-        try self.builder.emitCompareOp(e.op, location: location)
+        try self.builder.emitCompareOp(element.op, location: location)
         try self.builder.emitJumpIfFalseOrPop(to: end, location: location)
       }
 
-      let l = elements.last
-      try self.visitExpression(l.right)
-      try self.builder.emitCompareOp(l.op, location: location)
+      let last = elements.last
+      try self.visitExpression(last.right)
+      try self.builder.emitCompareOp(last.op, location: location)
 
       self.builder.setLabel(end)
     }
@@ -370,21 +370,20 @@ extension Compiler {
                                  body:   Expression,
                                  orElse: Expression,
                                  location: SourceLocation) throws {
-    let end = try self.builder.addLabel()
-    let next = try self.builder.addLabel()
+    let end  = self.builder.addLabel()
+    let afterBody = self.builder.addLabel()
 
     try self.visitExpression(test,
-                             andJumpTo: next,
+                             andJumpTo: afterBody,
                              ifBooleanValueIs: false,
                              location: location)
 
     try self.visitExpression(body)
-    self.builder.setLabel(next)
+    self.builder.setLabel(afterBody)
     try self.visitExpression(orElse)
     self.builder.setLabel(end)
   }
 
-  // TODO: Do we even need this method? Cant we just compile `expr` and then fancy test?
   /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
   internal func visitExpression(_ expr:  Expression,
                                 andJumpTo next: Label,
@@ -406,7 +405,7 @@ extension Compiler {
     case let .boolOp(op, left, right):
       let isOr = op == .or
       let hasLabel = cond != isOr
-      let next2 = hasLabel ? try self.builder.addLabel() : next
+      let next2 = hasLabel ? self.builder.addLabel() : next
 
       try self.visitExpression(left,
                                andJumpTo: next2,
@@ -423,8 +422,8 @@ extension Compiler {
       return
 
     case let .ifExpression(test, body, orElse):
-      let end = try self.builder.addLabel()
-      let next2 = try self.builder.addLabel()
+      let end   = self.builder.addLabel()
+      let next2 = self.builder.addLabel()
 
       try self.visitExpression(test,
                                andJumpTo: next2,
@@ -449,8 +448,8 @@ extension Compiler {
 
       try self.visitExpression(left)
 
-      let end = try self.builder.addLabel()
-      let cleanup = try self.builder.addLabel()
+      let end     = self.builder.addLabel()
+      let cleanup = self.builder.addLabel()
 
       for element in elements.dropLast() {
         try self.visitExpression(element.right)
@@ -551,7 +550,7 @@ extension Compiler {
       try self.builder.emitNone(location: location)
     }
 
-    var type = BuildSliceType.lowerUpper
+    var type = SliceArg.lowerUpper
     if let s = step {
       type = .lowerUpperStep
       try self.visitExpression(s)

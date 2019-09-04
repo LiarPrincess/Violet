@@ -40,8 +40,8 @@ extension Compiler {
                         orElse: [Statement],
                         location: SourceLocation) throws {
     // TODO: CPython: constant = expr_constant(s->v.If.test);
-    let endLabel = try self.builder.addLabel()
-    let orElseLabel = orElse.any ? try self.builder.addLabel() : endLabel
+    let endLabel = self.builder.addLabel()
+    let orElseLabel = orElse.any ? self.builder.addLabel() : endLabel
 
     try self.visitExpression(test,
                              andJumpTo: orElseLabel,
@@ -91,9 +91,9 @@ extension Compiler {
                          body:   NonEmptyArray<Statement>,
                          orElse: [Statement],
                          location: SourceLocation) throws {
-    let startLabel   = try self.builder.addLabel()
-    let cleanupLabel = try self.builder.addLabel()
-    let endLabel     = try self.builder.addLabel()
+    let startLabel   = self.builder.addLabel()
+    let cleanupLabel = self.builder.addLabel()
+    let endLabel     = self.builder.addLabel()
 
     try self.builder.emitSetupLoop(loopEnd: endLabel, location: location)
 
@@ -147,9 +147,9 @@ extension Compiler {
                            orElse: [Statement],
                            location: SourceLocation) throws {
     // TODO: CPython: constant = expr_constant(s->v.If.test);
-    let startLabel = try self.builder.addLabel()
-    let endLabel   = try self.builder.addLabel()
-    let afterBodyLabel = try self.builder.addLabel() // CPython: anchor
+    let startLabel = self.builder.addLabel()
+    let endLabel   = self.builder.addLabel()
+    let afterBodyLabel = self.builder.addLabel() // CPython: anchor
 
     try self.builder.emitSetupLoop(loopEnd: endLabel, location: location)
 
@@ -179,6 +179,7 @@ extension Compiler {
   /// compiler_continue(struct compiler *c)
   internal func visitContinue(location: SourceLocation) throws {
     guard let blockType = self.blockTypeStack.last else {
+      // return compiler_error(c, "'continue' not properly in loop";);
       fatalError()
     }
 

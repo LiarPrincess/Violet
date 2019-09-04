@@ -1,5 +1,4 @@
-// TODO: Rename to SliceArg
-public enum BuildSliceType {
+public enum SliceArg {
   case lowerUpper
   case lowerUpperStep
 }

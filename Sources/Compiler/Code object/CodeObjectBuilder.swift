@@ -22,7 +22,9 @@ public struct CodeObjectBuilder {
 
   // MARK: - Emit
 
-  // TODO: this should not throw!
+  // This function does not throw, but we will mark it as one for the future.
+  // Also some of the 'emit' functions throw and it would be weird to use 'try'
+  // only on some of the functions in api.
   internal func emit(_ instruction: Instruction,
                      location: SourceLocation) throws {
     self.codeObject.instructions.append(instruction)
@@ -34,8 +36,7 @@ public struct CodeObjectBuilder {
 
   // MARK: - Label
 
-  // TODO: this should not throw!
-  internal func addLabel() throws -> Label {
+  internal func addLabel() -> Label {
     let index = self.codeObject.labels.endIndex
     self.codeObject.labels.append(Label.notAssigned)
     return Label(index: index)
