@@ -2,19 +2,26 @@ import Core
 import Parser
 import Bytecode
 
-public enum VarargName {
-  /// Separator for keyword arguments. Represented by just `*`.
-  case unnamed
-  case named(String)
+public enum CodeObjectType {
+  case module
+  case `class`
+  case function
+  case asyncFunction
+  case lambda
+  case comprehension
 }
 
-// TODO: To struct
 public final class CodeObject {
 
   /// Name of the class if the code is for a class.
   /// Name of the function if the code is for a function.
   /// Otherwise 'top'.
   public let name: String
+  /// Type of the code object.
+  /// Possible values are: module, class, (async)function, lambda and comprehension.
+  public let type: CodeObjectType
+  /// First source line number
+  public let firstLine: SourceLine
 
   /// Instruction opcodes.
   public var instructions = [Instruction]()
@@ -32,16 +39,23 @@ public final class CodeObject {
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
   public var labels = [Int]()
 
-  /// Names of positional arguments
-  public var argNames: [String]?
-  /// *args or *
-  public var varargs: VarargName?
-  /// Names of keyword only arguments
-  public var kwOnlyArgNames: [String]?
-  /// **kwargs or ** (CPython: varKeywords)
-  public var kwargs: String?
+  // TODO: This is filled in 'visitFunction'
+  /// Arguments, except *args
+//  public var argCount = 0
+  /// Keyword only arguments
+//  public var kwOnlyArgCount = 0
 
-  public init(name: String) {
+  // TODO: This is filled in 'enter scope'
+  /// List of strings (local variable names)
+//  public var varNames = [String]()
+  /// List of strings (free variable names)
+//  public var freeVars = [String]()
+  /// List of strings (cell variable names)
+//  public var cellVars = [String]()
+
+  public init(name: String, type: CodeObjectType, line: SourceLine) {
     self.name = name
+    self.type = type
+    self.firstLine = line
   }
 }

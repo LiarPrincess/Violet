@@ -98,7 +98,7 @@ extension Compiler {
     try self.builder.emitSetupLoop(loopEnd: endLabel, location: location)
 
     // 'continue' will jump to 'startLabel'
-    self.pushBlockType(.loop(startLabel: startLabel))
+    self.pushBlock(.loop(startLabel: startLabel))
 
     try self.visitExpression(iter)
     try self.builder.emitGetIter(location: location)
@@ -110,7 +110,7 @@ extension Compiler {
     self.builder.setLabel(cleanupLabel)
 
     try self.builder.emitPopBlock(location: location)
-    self.popBlockType()
+    self.popBlock()
 
     try self.visitStatements(orElse)
     self.builder.setLabel(endLabel)
@@ -156,7 +156,7 @@ extension Compiler {
     self.builder.setLabel(startLabel)
 
     // 'continue' will jump to 'startLabel'
-    self.pushBlockType(.loop(startLabel: startLabel))
+    self.pushBlock(.loop(startLabel: startLabel))
 
     try self.visitExpression(test,
                              andJumpTo: afterBodyLabel,
@@ -168,7 +168,7 @@ extension Compiler {
 
     self.builder.setLabel(afterBodyLabel)
     try self.builder.emitPopBlock(location: location)
-    self.popBlockType()
+    self.popBlock()
 
     try self.visitStatements(orElse)
     self.builder.setLabel(endLabel)
@@ -178,7 +178,7 @@ extension Compiler {
 
   /// compiler_continue(struct compiler *c)
   internal func visitContinue(location: SourceLocation) throws {
-    guard let blockType = self.blockTypeStack.last else {
+    guard let blockType = self.blockStack.last else {
       // return compiler_error(c, "'continue' not properly in loop";);
       fatalError()
     }

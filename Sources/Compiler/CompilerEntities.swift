@@ -38,16 +38,14 @@ internal enum BlockType {
   case except
   case finallyTry
   case finallyEnd
-}
 
-internal enum CompilerScope {
-  case module
-  case `class`
-  case function
-  case asyncFunction
-  case lambda
-  case comprehension
-};
+  internal var isLoop: Bool {
+    switch self {
+    case .loop: return true
+    case .except, .finallyTry, .finallyEnd: return false
+    }
+  }
+}
 
 /*
 

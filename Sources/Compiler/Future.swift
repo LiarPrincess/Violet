@@ -31,18 +31,19 @@ public struct FutureFeatures {
   public fileprivate(set) var lastLine: SourceLine = 0
 }
 
-public final class FutureParser {
+public final class FutureBuilder {
 
   /// future_parse(PyFutureFeatures *ff, mod_ty mod, PyObject *filename)
-  public func parse(ast: AST) throws -> FutureFeatures? {
+  public func parse(ast: AST) throws -> FutureFeatures {
+    var result = FutureFeatures()
+
     let statements = self.getStatements(from: ast)
     guard statements.any else {
-      return nil
+      return result
     }
 
     var isDone = false
     var previousLine: SourceLine = 0
-    var result = FutureFeatures()
     let index = self.getIndexAfterDoc(statements)
 
     for stmt in statements[index...] {

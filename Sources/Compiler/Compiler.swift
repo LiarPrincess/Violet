@@ -5,69 +5,113 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
+public struct CompilerOptions {
+
+  /// True if in interactive mode (REPL)
+  public var isInteractive: Bool
+
+  /// Controls various sorts of optimizations
+  ///
+  /// Possible values:
+  /// - 0 - no optimizations (default)
+  /// - 1 or more - optimize. Tries to reduce code size and execution time.
+  public let optimizationLevel: UInt8
+
+  public init(isInteractive:     Bool = false,
+              optimizationLevel: UInt8 = 0) {
+    self.isInteractive = isInteractive
+    self.optimizationLevel = optimizationLevel
+  }
+}
+
 public final class Compiler {
 
-  private var codeObjectStack = [CodeObject]()
+  /// Program that we are compiling.
+  private let ast: AST
+  /// Compilation options.
+  internal let options: CompilerOptions
 
-  /// Code object that we are currently filling (top of the `self.codeObjectStack`).
-  internal var currentCodeObject: CodeObject {
-    if let last = self.codeObjectStack.last { return last }
-    fatalError("[BUG] Compiler: Using nil current code object.")
-  }
+  /// We have to scan '\_\_future\_\_' (as weird as it sounds), to block any
+  /// potential '\_\_future\_\_' imports that occur later in file.
+  internal let future: FutureFeatures
 
-  internal var builder: CodeObjectBuilder {
-    fatalError()
-  }
-
-  private var symbolTable: SymbolTable!
-
+  /// Symbol table assiciated with `self.ast`.
+  private let symbolTable: SymbolTable
   /// Scope stack.
   /// Current scope is at the top, top scope is at the bottom.
   private var scopeStack = [SymbolScope]()
-
-  /// We have to scan '__future__' (as weird as it sounds), to block any
-  /// potential '__future__' imports that occur later in file.
-  internal var future: FutureFeatures = FutureFeatures(flags: [], lastLine: 0)
-
-  // TODO: u_nfblocks
-  internal var blockTypeStack = [BlockType]()
-
   /// Scope that we are currently filling (top of the `self.scopeStack`).
   internal var currentScope: SymbolScope {
     if let last = self.scopeStack.last { return last }
     fatalError("[BUG] Compiler: Using nil current scope.")
   }
-
-  internal var isInLoop: Bool {
-    return false
+  /// How far are we inside module/class/function scopes.
+  internal var nestLevel: Int {
+    return self.scopeStack.count
   }
 
-  internal var nestLevel: Int {
-    return 0
+  /// Stack of the code objects.
+  /// Current code object (the one that we are emmiting to) is at the top,
+  /// module code object is at the bottom.
+  ///
+  /// For example:
+  /// ```c
+  /// class Frozen:
+  ///   def elsa():
+  ///     pass <- we are emitting here
+  /// ```
+  /// Generates following stack:
+  /// top -> class -> elsa
+  private var codeObjectStack = [CodeObject]()
+  /// Code object that we are currently filling (top of the `self.codeObjectStack`).
+  internal var codeObject: CodeObject {
+    if let last = self.codeObjectStack.last { return last }
+    fatalError("[BUG] Compiler: Using nil current code object.")
+  }
+
+  private var _builder: CodeObjectBuilder?
+  /// Code emitter for `self.codeObject`.
+  internal var builder: CodeObjectBuilder {
+    if let b = self._builder { return b }
+    fatalError("[BUG] Compiler: Using nil builder.")
+  }
+
+  /// Stack of blocks (loop, except, finallyTry, finallyEnd)
+  /// that current statement is surrounded with.
+  internal var blockStack = [BlockType]()
+  /// Does the current statement is inside of the loop?
+  internal var isInLoop: Bool {
+    return self.blockStack.contains { $0.isLoop }
   }
 
   /// Name of the class that we are currently filling (if any).
   /// Mostly used for mangling.
   internal var className: String?
 
+  public init(ast: AST, options: CompilerOptions) throws {
+    self.ast = ast
+    self.options = options
 
-  internal var isInteractive: Bool {
-    return false
-  }
-
-  internal let optimizationLevel: UInt = 0
-
-  // MARK: - Visit
-
-  /// PyAST_CompileObject(mod_ty mod, PyObject *filename, PyCompilerFlags ...)
-  /// compiler_mod(struct compiler *c, mod_ty mod)
-  public func visit(ast: AST) throws -> CodeObject {
     let symbolTableBuilder = SymbolTableBuilder()
     self.symbolTable = try symbolTableBuilder.visit(ast)
 
-    self.enterScope(name: SpecialIdentifiers.top, node: ast, type: .module)
+    let futureBuilder = FutureBuilder()
+    self.future = try futureBuilder.parse(ast: ast)
+  }
 
-    switch ast.kind {
+  // MARK: - Run
+
+  /// PyAST_CompileObject(mod_ty mod, PyObject *filename, PyCompilerFlags ...)
+  /// compiler_mod(struct compiler *c, mod_ty mod)
+  public func run() throws -> CodeObject {
+    // Have we already compiled?
+    if self.codeObjectStack.count == 1 {
+      return self.codeObject
+    }
+
+    self.enterScope(node: ast, type: .module)
+
+    switch self.ast.kind {
     case let .single(stmts),
          let .fileInput(stmts):
       try self.visitStatements(stmts)
@@ -79,46 +123,76 @@ public final class Compiler {
     // TODO: Check if all blocks have valid labels
 
     assert(self.codeObjectStack.count == 1)
-    return self.currentCodeObject
+    return self.codeObject
   }
 
-  // MARK: - Code object
+  // MARK: - Scope/Code object
 
-  internal func pushCodeObject(name: String) {
-  }
-
-  internal func popCodeObject() {
-  }
-
-  // MARK: - Block type
-
-  // TODO: compiler_push_fblock
-  internal func pushBlockType(_ type: BlockType) {
-  }
-
-  internal func popBlockType() {
-  }
-
-  // MARK: - Scope
-
-  /// Push new scope.
+  /// Push new scope (and generate a new code object to emit to).
   ///
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
-  internal func enterScope<N: ASTNode>(name: String, node: N, type: CompilerScope) {
-    // TODO: name may be unused, if so then delete it
+  internal func enterScope<N: ASTNode>(node: N, type: CodeObjectType) {
     guard let scope = self.symbolTable.scopeByNode[node] else {
       fatalError("[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
 
+    assert(self.isMatchingScopeType(scope.type, to: type))
     self.scopeStack.push(scope)
+
+    let line = node.start.line
+    let object = CodeObject(name: scope.name, type: type, line: line)
+
+    self.codeObjectStack.append(object)
+    self._builder = CodeObjectBuilder(for: object)
+    // TODO: qual name
+  }
+
+  private func isMatchingScopeType(_ scopeType: ScopeType,
+                                   to codeObjectType: CodeObjectType) -> Bool {
+    switch scopeType {
+    case .module:
+      return codeObjectType == .module
+    case .class:
+      return codeObjectType == .class
+    case .function:
+      return codeObjectType == .function
+          || codeObjectType == .asyncFunction
+          || codeObjectType == .lambda
+          || codeObjectType == .comprehension
+    }
   }
 
   /// Pop scope.
   ///
   /// compiler_exit_scope(struct compiler *c)
   internal func leaveScope() {
+    // Pop scope
     assert(self.scopeStack.any)
     _ = self.scopeStack.popLast()
+
+    // Pop code object
+    let object = self.codeObjectStack.popLast()
+
+    assert(object != nil)
+    assert(object!.labels.allSatisfy { $0 != Label.notAssigned })
+    // swiftlint:disable:previous force_unwrapping
+
+    if let parent = self.codeObjectStack.last {
+      self._builder = CodeObjectBuilder(for: parent)
+    }
+  }
+
+  // MARK: - Block
+
+  /// compiler_push_fblock(struct compiler *c, enum fblocktype t, basicblock *b)
+  internal func pushBlock(_ type: BlockType) {
+    self.blockStack.push(type)
+  }
+
+  /// compiler_pop_fblock(struct compiler *c, enum fblocktype t, basicblock *b)
+  internal func popBlock() {
+    assert(self.blockStack.any)
+    _ = self.blockStack.popLast()
   }
 
   // MARK: - Qualified name

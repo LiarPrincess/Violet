@@ -81,7 +81,7 @@ extension Compiler {
 
     // SETUP_WITH pushes a finally block.
     self.builder.setLabel(block)
-    self.pushBlockType(.finallyTry)
+    self.pushBlock(.finallyTry)
 
     if let o = item.optionalVars {
       try self.visitExpression(o, context: .store)
@@ -96,11 +96,11 @@ extension Compiler {
 
     // End of try block; start the finally block
     try self.builder.emitPopBlock(location: location)
-    self.popBlockType()
+    self.popBlock()
 
     try self.builder.emitNone(location: location)
     self.builder.setLabel(finally)
-    self.pushBlockType(.finallyEnd)
+    self.pushBlock(.finallyEnd)
 
     // Finally block starts; context.__exit__ is on the stack under
     // the exception or return information. Just issue our magic opcode.
@@ -109,6 +109,6 @@ extension Compiler {
 
     // Finally block ends.
     try self.builder.emitEndFinally(location: location)
-    self.popBlockType()
+    self.popBlock()
   }
 }

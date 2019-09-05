@@ -142,6 +142,7 @@ case let .try(body, handlers, orElse, finalBody):
                              keywords: [Keyword],
                              body: NonEmptyArray<Statement>,
                              decorators: [Expression]) throws {
+    // self.className <- remember about this
   }
 
   // MARK: - Try/catch
@@ -176,7 +177,7 @@ case let .try(body, handlers, orElse, finalBody):
   private func visitAssert(test: Expression,
                            msg:  Expression?,
                            location: SourceLocation) throws {
-    if self.optimizationLevel > 0 {
+    if self.options.optimizationLevel > 0 {
       return
     }
 
@@ -208,7 +209,7 @@ case let .try(body, handlers, orElse, finalBody):
   /// compiler_visit_stmt_expr(struct compiler *c, expr_ty value)
   private func visitExpressionStatement(_ expr: Expression,
                                         location: SourceLocation) throws {
-    if self.isInteractive && self.nestLevel <= 1 {
+    if self.options.isInteractive && self.nestLevel <= 1 {
       try self.visitExpression(expr)
       try self.builder.emitPrintExpr(location: location)
       return

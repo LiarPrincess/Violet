@@ -51,9 +51,9 @@ public struct ScopeByNodeDictionary {
 // MARK: - SymbolScope
 
 public enum ScopeType: Equatable {
-  case function
-  case `class`
   case module
+  case `class`
+  case function
 }
 
 /// Captures all symbols in the current scope
@@ -66,7 +66,7 @@ public final class SymbolScope {
   public let name: String
 
   /// Type of the symbol table.
-  /// Possible values are 'class', 'module' and 'function'.
+  /// Possible values are: module, class and function.
   public let type: ScopeType
 
   /// A set of symbols present on this scope level
