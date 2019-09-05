@@ -111,7 +111,7 @@ extension Compiler {
   internal func visitDictionary(elements: [DictionaryElement],
                                 context:  ExpressionContext,
                                 location: SourceLocation) throws {
-    // TODO: CPython does this differently
+    // TODO: CPython does this differently (const)
     assert(context == .load)
 
     /// Elements that do not need unpacking
@@ -226,7 +226,8 @@ extension Compiler {
       let countBefore = index
       let countAfter = elements.count - index - 1
       if countBefore > 0xff || countAfter > 0xffff_ff {
-        fatalError()
+        let kind = CompilerErrorKind.tooManyExpressionsInStarUnpackingAssignment
+        throw self.error(kind, location: location)
       }
 
       hasSeenStar = true

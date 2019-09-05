@@ -23,3 +23,17 @@ public enum FormattedValueMasks {
   public static let conversionASCII: UInt8 = 0b011
   public static let hasFormat:       UInt8 = 0b100
 }
+
+public struct FunctionFlags: OptionSet, Equatable {
+
+  public let rawValue: UInt8
+
+  public static let hasPositionalArgDefaults = FunctionFlags(rawValue: 0x01)
+  public static let hasKwOnlyArgDefaults = FunctionFlags(rawValue: 0x02)
+  public static let hasAnnotations = FunctionFlags(rawValue: 0x04)
+//  public static let conversionASCII: UInt8 = 0x08
+
+  public init(rawValue: UInt8) {
+    self.rawValue = rawValue
+  }
+}

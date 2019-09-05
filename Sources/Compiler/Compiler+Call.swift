@@ -188,18 +188,27 @@ extension Compiler {
                               start: Int,
                               end:   Int,
                               location: SourceLocation) throws {
-    // TODO: CPython uses BUILD_CONST_KEY_MAP
-    assert(start < end)
+    let n = end - start
+    assert(n > 0)
 
-    for kw in keywords[start..<end] {
-      if let s = kw.name {
-         try self.builder.emitString(s, location: location)
-      } else {
-        try self.builder.emitNone(location: location)
+    if n > 1 {
+      var names = [Constant]()
+      for kw in keywords[start..<end] {
+        try self.visitExpression(kw.value)
+
+        let name = kw.name.map { Constant.string($0) } ?? Constant.none
+        names.append(name)
       }
 
+      try self.builder.emitTuple(names, location: location)
+      try self.builder.emitBuildConstKeyMap(elementCount: names.count,
+                                            location: location)
+    } else {
+      let kw = keywords[start]
+      let name = kw.name.map { Constant.string($0) } ?? Constant.none
+      try self.builder.emitConstant(name, location: location)
       try self.visitExpression(kw.value)
+      try self.builder.emitBuildMap(elementCount: 1, location: location)
     }
-    try self.builder.emitBuildMap(elementCount: keywords.count, location: location)
   }
 }

@@ -22,7 +22,7 @@ extension Compiler {
     let location = statement.start
     try self.visitDecorators(decorators: decorators, location: location)
 
-    var flags: UInt8 = 0
+    var flags: FunctionFlags = []
     try self.visitDefaultArguments(args: args,
                                    updating: &flags,
                                    location: location)
@@ -66,10 +66,10 @@ extension Compiler {
 
   /// compiler_default_arguments(struct compiler *c, arguments_ty args)
   private func visitDefaultArguments(args: Arguments,
-                                     updating flags: inout UInt8,
+                                     updating flags: inout FunctionFlags,
                                      location: SourceLocation) throws {
     if args.defaults.any {
-      flags |= FunctionMasks.hasPositionalArgDefaults
+      flags.formUnion(.hasPositionalArgDefaults)
       try self.visitExpressions(args.defaults)
       try self.builder.emitBuildTuple(elementCount: args.defaults.count,
                                       location: location)
@@ -87,7 +87,7 @@ extension Compiler {
   /// asdl_seq *kw_defaults)
   private func visitKwOnlyDefaults(kwOnlyArgs:     [Arg],
                                    kwOnlyDefaults: [Expression],
-                                   updating flags: inout UInt8,
+                                   updating flags: inout FunctionFlags,
                                    location: SourceLocation) throws {
     assert(kwOnlyArgs.count == kwOnlyDefaults.count)
 
@@ -104,7 +104,7 @@ extension Compiler {
     }
 
     if names.any {
-      flags |= FunctionMasks.hasKwOnlyArgDefaults
+      flags.formUnion(.hasKwOnlyArgDefaults)
       let elements = names.map { Constant.string($0.value) }
       try self.builder.emitTuple(elements, location: location)
       try self.builder.emitBuildConstKeyMap(elementCount: names.count,
@@ -116,12 +116,13 @@ extension Compiler {
 
   /// compiler_visit_annotations(struct compiler *c, arguments_ty args, ...)
   private func visitAnnotations(args: Arguments,
+  // swiftlint:disable:previous function_body_length
                                 returns: Expression?,
-                                updating flags: inout UInt8,
+                                updating flags: inout FunctionFlags,
                                 location: SourceLocation) throws {
     var names = [MangledName]()
     try self.visitArgAnnotations(args: args.args,
-                                 appendingNameTos: &names,
+                                 appendingNamesTo: &names,
                                  location: location)
 
     if case let .named(a) = args.vararg {
@@ -132,7 +133,7 @@ extension Compiler {
     }
 
     try self.visitArgAnnotations(args: args.kwOnlyArgs,
-                                 appendingNameTos: &names,
+                                 appendingNamesTo: &names,
                                  location: location)
 
     if let a = args.kwarg {
@@ -148,7 +149,7 @@ extension Compiler {
                                 location: location)
 
     if names.any {
-      flags |= FunctionMasks.hasAnnotations
+      flags.formUnion(.hasAnnotations)
       let elements = names.map { Constant.string($0.value) }
       try self.builder.emitTuple(elements, location: location)
       try self.builder.emitBuildConstKeyMap(elementCount: names.count,
@@ -158,7 +159,7 @@ extension Compiler {
 
   /// compiler_visit_argannotations(struct compiler *c, asdl_seq* args, ...)
   private func visitArgAnnotations(args: [Arg],
-                                   appendingNameTos names: inout [MangledName],
+                                   appendingNamesTo names: inout [MangledName],
                                    location: SourceLocation) throws {
     for a in args {
       try self.visitArgAnnotation(name: a.name,

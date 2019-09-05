@@ -1,6 +1,4 @@
-import Foundation
 import Core
-import Parser
 import Bytecode
 
 public enum DerefContext {
@@ -12,73 +10,6 @@ public enum DerefContext {
 
 // TODO: MangledName -> String (or add ConstantString protocol)
 extension CodeObjectBuilder {
-
-  // MARK: - Constants
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitTrue(location: SourceLocation) throws {
-    try self.emitConstant(.true, location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitFalse(location: SourceLocation) throws {
-    try self.emitConstant(.false, location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitNone(location: SourceLocation) throws {
-    try self.emitConstant(.none, location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitEllipsis(location: SourceLocation) throws {
-    try self.emitConstant(.ellipsis, location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitInteger(_ value: BigInt, location: SourceLocation) throws {
-    try self.emitConstant(.integer(value), location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitFloat(_ value: Double, location: SourceLocation) throws {
-    try self.emitConstant(.float(value), location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitComplex(real: Double, imag: Double, location: SourceLocation) throws {
-    try self.emitConstant(.complex(real: real, imag: imag), location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitString(_ value: String, location: SourceLocation) throws {
-    try self.emitConstant(.string(value), location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitString(_ mangled: MangledName, location: SourceLocation) throws {
-    try self.emitConstant(.string(mangled.value), location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitBytes(_ value: Data, location: SourceLocation) throws {
-    try self.emitConstant(.bytes(value), location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitTuple(_ value: [Constant], location: SourceLocation) throws {
-    try self.emitConstant(.tuple(value), location: location)
-  }
-
-  public func emitConstant(_ constant: Constant, location: SourceLocation) throws {
-    // TODO: check if this value was already added
-
-    let rawIndex = self.codeObject.constants.endIndex
-    self.codeObject.constants.append(constant)
-
-    let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
-    try self.emit(.loadConst(index: index), location: location)
-  }
 
   // MARK: - Name
 

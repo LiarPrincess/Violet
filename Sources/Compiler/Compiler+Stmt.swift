@@ -33,12 +33,12 @@ extension Compiler {
     case .asyncFunctionDef:
       throw self.notImplemented()
 
-case let .classDef(name, bases, keywords, body, decorators):
-  try self.visitClassDef(name:  name,
-                         bases: bases,
-                         keywords: keywords,
-                         body: body,
-                         decorators: decorators)
+    case let .classDef(name, bases, keywords, body, decorators):
+      try self.visitClassDef(name:  name,
+                             bases: bases,
+                             keywords: keywords,
+                             body: body,
+                             decorators: decorators)
 
     case let .assign(targets, value):
       try self.visitAssign(targets:  targets, value:    value, location: location)
@@ -76,11 +76,11 @@ case let .classDef(name, bases, keywords, body, decorators):
 
     case let .raise(exception, cause):
       try self.visitRaise(exception: exception, cause: cause, location: location)
-case let .try(body, handlers, orElse, finalBody):
-  try self.visitTry(body: body,
-                    handlers: handlers,
-                    orElse: orElse,
-                    finalBody: finalBody)
+    case let .try(body, handlers, orElse, finalBody):
+      try self.visitTry(body: body,
+                        handlers: handlers,
+                        orElse: orElse,
+                        finalBody: finalBody)
 
     case let .import(aliases):
       try self.visitImport(aliases:  aliases, location: location)

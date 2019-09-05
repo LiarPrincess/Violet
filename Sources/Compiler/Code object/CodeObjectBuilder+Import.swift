@@ -1,5 +1,4 @@
 import Core
-import Parser
 import Bytecode
 
 extension CodeObjectBuilder {

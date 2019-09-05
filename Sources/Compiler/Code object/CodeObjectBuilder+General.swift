@@ -1,5 +1,4 @@
 import Core
-import Parser
 import Bytecode
 
 extension CodeObjectBuilder {
@@ -56,7 +55,7 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `loadClosure` instruction to code object.
-  public func emitLoadClosure(value: I, location: SourceLocation) throws {
+  public func emitLoadClosure(value: Item, location: SourceLocation) throws {
     // try self.emit(.loadClosure, location: location)
     throw self.unimplemented()
   }

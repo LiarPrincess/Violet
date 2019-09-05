@@ -1,8 +1,5 @@
 import Core
-import Parser
 import Bytecode
-
-// TODO: This should be an protocol (just as ASTBuilder)
 
 /// Helper for creating new `CodeObjects`.
 ///
@@ -97,7 +94,7 @@ public struct CodeObjectBuilder {
 
     assert(arg > 0)
     if arg > Instruction.maxArgument {
-      fatalError()
+      throw self.error(.instructionArgumentTooBig, location: location)
     }
 
     let ffMask = 0xff
@@ -142,8 +139,8 @@ public struct CodeObjectBuilder {
 
   // MARK: - Unimplemented
 
-//  @available(*, deprecated, message: "TODO")
   internal func unimplemented() -> Error {
+    // TODO: remove this
     return NotImplemented.pep401
   }
 }

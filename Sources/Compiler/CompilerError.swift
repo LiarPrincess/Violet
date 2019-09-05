@@ -76,11 +76,13 @@ public enum CompilerErrorKind: Equatable {
 
   /// Two starred expressions in assignment
   case multipleStarredInAssignmentExpressions
+  /// Too many expressions in star-unpacking assignment
+  case tooManyExpressionsInStarUnpackingAssignment
   /// Starred assignment target must be in a list or tuple
   case starredAssignmentNotListOrTuple
-  /// invalid target for augmented assignment
+  /// Invalid target for augmented assignment
   case invalidTargetForAugmentedAssignment
-  /// invalid target for annotated assignment
+  /// Invalid target for annotated assignment
   case invalidTargetForAnnotatedAssignment
 
   /// Can't use starred expression here
@@ -99,9 +101,12 @@ public enum CompilerErrorKind: Equatable {
   /// 'break' outside loop
   case breakOutsideLoop
   /// 'continue' not properly in loop
-  case continueNotInBlock
+  case continueOutsideLoop
   /// 'continue' not supported inside 'finally' clause
   case continueInsideFinally
+
+  /// More than 'Instruction.maxArgument' objects in single code object
+  case instructionArgumentTooBig
 }
 
 // TODO: surprisingly appropriate; `fromFutureImportBraces`

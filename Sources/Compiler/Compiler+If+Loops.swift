@@ -179,8 +179,7 @@ extension Compiler {
   /// compiler_continue(struct compiler *c)
   internal func visitContinue(location: SourceLocation) throws {
     guard let blockType = self.blockStack.last else {
-      // return compiler_error(c, "'continue' not properly in loop";);
-      fatalError()
+      throw self.error(.continueOutsideLoop, location: location)
     }
 
     switch blockType {

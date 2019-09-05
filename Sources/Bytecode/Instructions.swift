@@ -17,7 +17,7 @@ public enum VarNum {
 
 }
 
-public enum I {
+public enum Item {
   case notImplemented
 
 }
@@ -27,17 +27,7 @@ public enum Delta {
 
 }
 
-public enum Flags {
-  case notImplemented
-
-}
-
 public enum Target {
-  case notImplemented
-
-}
-
-public enum NotDone {
   case notImplemented
 
 }
@@ -243,13 +233,13 @@ public enum Instruction {
   case buildConstKeyMap(elementCount: UInt8)
   /// Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
   /// Used to implement set comprehensions.
-  case setAdd(I)
+  case setAdd(Item)
   /// Calls `list.append(TOS[-i], TOS)`. Container object remains on the stack.
   /// Used to implement list comprehensions.
-  case listAppend(I)
+  case listAppend(Item)
   /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`. Container object remains on the stack.
   /// Used to implement dict comprehensions.
-  case mapAdd(I)
+  case mapAdd(Item)
   /// Pops count iterables from the stack, joins them in a single tuple,
   /// and pushes the result.
   /// Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
@@ -309,20 +299,20 @@ public enum Instruction {
   case loadGlobal(nameIndex: UInt8)
   /// Works as DeleteName, but deletes a global name.
   case deleteGlobal(nameIndex: UInt8)
-  case loadFast(VarNum)
-  case storeFast(VarNum)
-  case deleteFast(VarNum)
+  case loadFast(nameIndex: UInt8)
+  case storeFast(nameIndex: UInt8)
+  case deleteFast(nameIndex: UInt8)
   /// Loads the cell contained in slot i of the cell and free variable storage.
   /// Pushes a reference to the object the cell contains on the stack.
-  case loadDeref(I)
+  case loadDeref(nameIndex: UInt8)
   /// Stores TOS into the cell contained in slot i of the cell and free variable storage.
-  case storeDeref(I)
+  case storeDeref(nameIndex: UInt8)
   /// Empties the cell contained in slot i of the cell and free variable storage.
   /// Used by the del statement.
-  case deleteDeref(I)
+  case deleteDeref(nameIndex: UInt8)
   /// Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
   /// This is used for loading free variables in class bodies.
-  case loadClassDeref(I)
+  case loadClassDeref(nameIndex: UInt8)
   /// Pushes a new function object on the stack.
   /// 
   /// From bottom to top, the consumed stack must consist of values
@@ -522,7 +512,7 @@ public enum Instruction {
   /// Pushes a reference to the cell contained in slot i of the cell and free variable storage.
   /// The name of the variable is CoCellvars[i] if i is less than the length of CoCellvars.
   /// Otherwise it is CoFreevars[i - len(CoCellvars)].
-  case loadClosure(I)
+  case loadClosure(Item)
   /// Pushes a slice object on the stack.
   /// `argc` must be 2 or 3.
   /// If it is 2, `slice(TOS1, TOS)` is pushed;

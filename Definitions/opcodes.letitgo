@@ -14,11 +14,9 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
 {- TODO: Real types -}
 @enum VarNum = NotImplemented
-@enum I = NotImplemented
+@enum Item = NotImplemented
 @enum Delta = NotImplemented
-@enum Flags = NotImplemented
 @enum Target = NotImplemented
-@enum NotDone = NotImplemented
 
 @enum Constant =
   True
@@ -214,7 +212,6 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Implements `Push(GetAwaitable(TOS.ANext()))`.
   -- See `GetAwaitable` for details.
   | GetANext
-  {- TODO: Changed in version 3.7: Returning awaitable objects from AIter is no longer supported. -}
 
 {- ---------- -}
 {- Generators -}
@@ -284,13 +281,13 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
   -- Used to implement set comprehensions.
-  | SetAdd(i)
+  | SetAdd(Item)
   -- Calls `list.append(TOS[-i], TOS)`. Container object remains on the stack.
   -- Used to implement list comprehensions.
-  | ListAppend(i)
+  | ListAppend(Item)
   -- Calls `dict.setitem(TOS1[-i], TOS, TOS1)`. Container object remains on the stack.
   -- Used to implement dict comprehensions.
-  | MapAdd(i)
+  | MapAdd(Item)
 
 {- -------- -}
 {-  Unpack  -}
@@ -369,40 +366,39 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Works as DeleteName, but deletes a global name.
   | DeleteGlobal(Index nameIndex)
 
-  {- TODO: Pushes a reference to the local CoVarnames[VarNum] onto the stack. -}
-  | LoadFast(VarNum)
-  {- TODO: Stores TOS into the local CoVarnames[VarNum]. -}
-  | StoreFast(VarNum)
-  {- TODO: Deletes local CoVarnames[VarNum]. -}
-  | DeleteFast(VarNum)
+  {- Pushes a reference to the local names[nameIndex] onto the stack. -}
+  | LoadFast(Index nameIndex)
+  {- Stores TOS into the local names[nameIndex]. -}
+  | StoreFast(Index nameIndex)
+  {- Deletes local names[nameIndex]. -}
+  | DeleteFast(Index nameIndex)
 
   -- Loads the cell contained in slot i of the cell and free variable storage.
   -- Pushes a reference to the object the cell contains on the stack.
-  | LoadDeref(i)
+  | LoadDeref(Index nameIndex)
   -- Stores TOS into the cell contained in slot i of the cell and free variable storage.
-  | StoreDeref(i)
+  | StoreDeref(Index nameIndex)
   -- Empties the cell contained in slot i of the cell and free variable storage.
   -- Used by the del statement.
-  | DeleteDeref(i)
+  | DeleteDeref(Index nameIndex)
   -- Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
   -- This is used for loading free variables in class bodies.
-  | LoadClassDeref(i)
+  | LoadClassDeref(Index nameIndex)
 
 {- ---------- -}
 {-  Function  -}
 {- ---------- -}
 
-{- TODO: docs -}
   -- Pushes a new function object on the stack.
   --
   -- From bottom to top, the consumed stack must consist of values
   -- if the argument carries a specified flag value
-  -- - `0x01` - a tuple of default values for positional-only
+  -- - `0x01` - has tuple of default values for positional-only
   --            and positional-or-keyword parameters in positional order
-  -- - `0x02` - a dictionary of keyword-only parameters’ default values
-  -- - `0x04` - an annotation dictionary
-  -- - `0x08` - a tuple containing cells for free variables, making a closure
-  --            the code associated with the function (at TOS1)
+  -- - `0x02` - has dictionary of keyword-only parameters default values
+  -- - `0x04` - has annotation dictionary
+  -- - `0x08` - has tuple containing cells for free variables,
+  --            making a closure the code associated with the function (at TOS1)
   --            the qualified name of the function (at TOS)
   | MakeFunction(UInt8 argumentCount)
 
@@ -459,8 +455,6 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {- ----- -}
 {- Class -}
 {- ----- -}
-
-  {- TODO: doc -}
 
   -- Pushes `builtins.BuildClass()` onto the stack.
   -- It is later called by `CallFunction` to construct a class.
@@ -660,8 +654,8 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   {- TODO: docs -}
   -- Pushes a reference to the cell contained in slot i of the cell and free variable storage.
   -- The name of the variable is CoCellvars[i] if i is less than the length of CoCellvars.
-    -- Otherwise it is CoFreevars[i - len(CoCellvars)].
-  | LoadClosure(i)
+  -- Otherwise it is CoFreevars[i - len(CoCellvars)].
+  | LoadClosure(Item)
 
   -- Pushes a slice object on the stack.
   -- `argc` must be 2 or 3.

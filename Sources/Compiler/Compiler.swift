@@ -243,6 +243,7 @@ public final class Compiler {
   // MARK: - Not implemented
 
   internal func notImplemented() -> Error {
-    fatalError()
+    // TODO: remove this
+    return NotImplemented.pep401
   }
 }
