@@ -24,9 +24,9 @@ extension Compiler {
     // The Import node stores a module name like a.b.c as a single string.
 
     for alias in aliases {
-      try self.builder.emitInteger(BigInt(0), location: location)
-      try self.builder.emitNone(location: location)
-      try self.builder.emitImportName(name: alias.name, location: location)
+      try self.codeObject.emitInteger(BigInt(0), location: location)
+      try self.codeObject.emitNone(location: location)
+      try self.codeObject.emitImportName(name: alias.name, location: location)
 
       if let asName = alias.asName {
         try self.emitImportAs(name: alias.name,
@@ -38,7 +38,7 @@ extension Compiler {
           name = String(alias.name.prefix(upTo: dotIndex))
         }
 
-        try self.builder.emitStoreName(name: name, location: location)
+        try self.codeObject.emitStoreName(name: name, location: location)
       }
     }
   }
@@ -54,16 +54,16 @@ extension Compiler {
       throw self.error(.lateFuture, location: location)
     }
 
-    try self.builder.emitInteger(BigInt(level), location: location)
+    try self.codeObject.emitInteger(BigInt(level), location: location)
 
     let nameTuple = aliases.map { Constant.string($0.name) }
-    try self.builder.emitTuple(nameTuple, location: location)
+    try self.codeObject.emitTuple(nameTuple, location: location)
 
     let importName = module ?? ""
-    try self.builder.emitImportName(name: importName, location: location)
+    try self.codeObject.emitImportName(name: importName, location: location)
 
     if aliases.count == 1 && aliases[0].name == "*" {
-      try self.builder.emitImportStar(location: location)
+      try self.codeObject.emitImportStar(location: location)
     } else {
       for alias in aliases {
         if alias.name == "*" {
@@ -71,13 +71,13 @@ extension Compiler {
         }
 
         let storeName = alias.asName ?? alias.name
-        try self.builder.emitImportFrom(name: alias.name, location: location)
-        try self.builder.emitStoreName(name: storeName, location: location)
+        try self.codeObject.emitImportFrom(name: alias.name, location: location)
+        try self.codeObject.emitStoreName(name: storeName, location: location)
       }
     }
 
     // Remove imported module
-    try self.builder.emitPopTop(location: location)
+    try self.codeObject.emitPopTop(location: location)
   }
 
   /// compiler_import_as(struct compiler *c, identifier name, identifier asname)
@@ -95,24 +95,24 @@ extension Compiler {
     let hasAttributes = slices.count > 1
     guard hasAttributes else {
       // for example: import elsa as queen
-      try self.builder.emitStoreName(name: asName, location: location)
+      try self.codeObject.emitStoreName(name: asName, location: location)
       return
     }
 
     // for example: import frozen.elsa as queen ('elsa' is an attribute)
     let attributes = slices[1...]
     for (index, attr) in attributes.enumerated() {
-      try self.builder.emitImportFrom(name: String(attr), location: location)
+      try self.codeObject.emitImportFrom(name: String(attr), location: location)
 
       let isLast = index == attributes.count - 1
       if !isLast {
-        try self.builder.emitRotTwo(location: location)
-        try self.builder.emitPopTop(location: location)
+        try self.codeObject.emitRotTwo(location: location)
+        try self.codeObject.emitPopTop(location: location)
       }
     }
 
     // final store using 'asName'
-    try self.builder.emitStoreName(name: asName, location: location)
-    try self.builder.emitPopTop(location: location)
+    try self.codeObject.emitStoreName(name: asName, location: location)
+    try self.codeObject.emitPopTop(location: location)
   }
 }

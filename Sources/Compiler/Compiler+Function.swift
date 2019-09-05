@@ -38,7 +38,7 @@ extension Compiler {
     if let docString = self.getDocString(body.first),
         self.options.optimizationLevel < 2 {
 
-      try self.builder.emitString(docString, location: location)
+      try self.codeObject.emitString(docString, location: location)
     }
 
     try self.visitStatements(body)
@@ -47,10 +47,10 @@ extension Compiler {
 
     // TODO: compiler_make_closure(c, co, funcflags, qualname);
     for _ in decorators {
-      try self.builder.emitCallFunction(argumentCount: 1, location: location)
+      try self.codeObject.emitCallFunction(argumentCount: 1, location: location)
     }
 
-    try self.builder.emitStoreName(name: name, location: location)
+    try self.codeObject.emitStoreName(name: name, location: location)
   }
 
   // MARK: - Decorators
@@ -69,8 +69,8 @@ extension Compiler {
     if args.defaults.any {
       flags.formUnion(.hasPositionalArgDefaults)
       try self.visitExpressions(args.defaults)
-      try self.builder.emitBuildTuple(elementCount: args.defaults.count,
-                                      location: location)
+      try self.codeObject.emitBuildTuple(elementCount: args.defaults.count,
+                                         location: location)
     }
 
     if args.kwOnlyArgs.any {
@@ -104,9 +104,9 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasKwOnlyArgDefaults)
       let elements = names.map { Constant.string($0.value) }
-      try self.builder.emitTuple(elements, location: location)
-      try self.builder.emitBuildConstKeyMap(elementCount: names.count,
-                                            location: location)
+      try self.codeObject.emitTuple(elements, location: location)
+      try self.codeObject.emitBuildConstKeyMap(elementCount: names.count,
+                                               location: location)
     }
   }
 
@@ -149,9 +149,9 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasAnnotations)
       let elements = names.map { Constant.string($0.value) }
-      try self.builder.emitTuple(elements, location: location)
-      try self.builder.emitBuildConstKeyMap(elementCount: names.count,
-                                            location: location)
+      try self.codeObject.emitTuple(elements, location: location)
+      try self.codeObject.emitBuildConstKeyMap(elementCount: names.count,
+                                               location: location)
     }
   }
 

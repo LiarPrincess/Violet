@@ -1,7 +1,6 @@
 import Core
-import Bytecode
 
-extension CodeObjectBuilder {
+extension CodeObject {
 
   /// Append a `setupWith` instruction to code object.
   public func emitSetupWith(loopEnd: Label, location: SourceLocation) throws {

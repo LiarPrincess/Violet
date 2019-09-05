@@ -41,7 +41,7 @@ extension Compiler {
     case .store:
       try self.emitStoreWithPossibleUnpack(elements: elements, location: location)
     case .load:
-      let adapter = TupleLoadAdapter(builder: self.builder)
+      let adapter = TupleLoadAdapter(codeObject: self.codeObject)
       try self.emitLoadWithPossibleUnpack(elements: elements,
                                           adapter:  adapter,
                                           location: location)
@@ -52,18 +52,18 @@ extension Compiler {
 
   private struct TupleLoadAdapter: CollectionLoadAdapter {
 
-    fileprivate let builder: CodeObjectBuilder
+    fileprivate let codeObject: CodeObject
 
     func emitPackElements(count: Int, location: SourceLocation) throws {
-      try self.builder.emitBuildTuple(elementCount: count, location: location)
+      try self.codeObject.emitBuildTuple(elementCount: count, location: location)
     }
 
     func emitBuildCollection(count: Int, location: SourceLocation) throws {
-      try self.builder.emitBuildTuple(elementCount: count, location: location)
+      try self.codeObject.emitBuildTuple(elementCount: count, location: location)
     }
 
     func emitBuildUnpackCollection(count: Int, location: SourceLocation) throws {
-      try self.builder.emitBuildTupleUnpack(elementCount: count, location: location)
+      try self.codeObject.emitBuildTupleUnpack(elementCount: count, location: location)
     }
   }
 
@@ -77,7 +77,7 @@ extension Compiler {
     case .store:
       try self.emitStoreWithPossibleUnpack(elements: elements, location: location)
     case .load:
-      let adapter = ListLoadAdapter(builder: self.builder)
+      let adapter = ListLoadAdapter(codeObject: self.codeObject)
       try self.emitLoadWithPossibleUnpack(elements: elements,
                                           adapter:  adapter,
                                           location: location)
@@ -88,18 +88,18 @@ extension Compiler {
 
   private struct ListLoadAdapter: CollectionLoadAdapter {
 
-    fileprivate let builder: CodeObjectBuilder
+    fileprivate let codeObject: CodeObject
 
     func emitPackElements(count: Int, location: SourceLocation) throws {
-      try self.builder.emitBuildList(elementCount: count, location: location)
+      try self.codeObject.emitBuildList(elementCount: count, location: location)
     }
 
     func emitBuildCollection(count: Int, location: SourceLocation) throws {
-      try self.builder.emitBuildTuple(elementCount: count, location: location)
+      try self.codeObject.emitBuildTuple(elementCount: count, location: location)
     }
 
     func emitBuildUnpackCollection(count: Int, location: SourceLocation) throws {
-      try self.builder.emitBuildListUnpack(elementCount: count, location: location)
+      try self.codeObject.emitBuildListUnpack(elementCount: count, location: location)
     }
   }
 
@@ -107,7 +107,7 @@ extension Compiler {
 
   /// compiler_dict(struct compiler *c, expr_ty e)
   ///
-  /// Our implementation is similiar to `self.builder.emitLoadWithPossibleUnpack(...)`.
+  /// Our implementation is similiar to `self.codeObject.emitLoadWithPossibleUnpack(...)`.
   internal func visitDictionary(elements: [DictionaryElement],
                                 context:  ExpressionContext,
                                 location: SourceLocation) throws {
@@ -124,7 +124,7 @@ extension Compiler {
       case let .unpacking(expr):
         // change elements to container, so we can unpack it later
         if nSimpleElement > 0 {
-          try self.builder.emitBuildMap(elementCount: nSimpleElement, location: location)
+          try self.codeObject.emitBuildMap(elementCount: nSimpleElement, location: location)
           nSimpleElement = 0
           nPackedElement += 1
         }
@@ -142,14 +142,14 @@ extension Compiler {
 
     if nPackedElement > 0 {
       if nSimpleElement > 0 {
-        try self.builder.emitBuildMap(elementCount: nSimpleElement, location: location)
+        try self.codeObject.emitBuildMap(elementCount: nSimpleElement, location: location)
         nPackedElement += 1
       }
 
-      try self.builder.emitBuildMapUnpack(elementCount: nPackedElement,
-                                          location: location)
+      try self.codeObject.emitBuildMapUnpack(elementCount: nPackedElement,
+                                             location: location)
     } else {
-      try self.builder.emitBuildMap(elementCount: nSimpleElement, location: location)
+      try self.codeObject.emitBuildMap(elementCount: nSimpleElement, location: location)
     }
   }
 
@@ -161,7 +161,7 @@ extension Compiler {
                          location: SourceLocation) throws {
     assert(context == .load)
 
-    let adapter = SetLoadAdapter(builder: self.builder)
+    let adapter = SetLoadAdapter(codeObject: self.codeObject)
     try self.emitLoadWithPossibleUnpack(elements: elements,
                                         adapter:  adapter,
                                         location: location)
@@ -169,18 +169,18 @@ extension Compiler {
 
   private struct SetLoadAdapter: CollectionLoadAdapter {
 
-    fileprivate let builder: CodeObjectBuilder
+    fileprivate let codeObject: CodeObject
 
     func emitPackElements(count: Int, location: SourceLocation) throws {
-      try self.builder.emitBuildSet(elementCount: count, location: location)
+      try self.codeObject.emitBuildSet(elementCount: count, location: location)
     }
 
     func emitBuildCollection(count: Int, location: SourceLocation) throws {
-      try self.builder.emitBuildSet(elementCount: count, location: location)
+      try self.codeObject.emitBuildSet(elementCount: count, location: location)
     }
 
     func emitBuildUnpackCollection(count: Int, location: SourceLocation) throws {
-      try self.builder.emitBuildSetUnpack(elementCount: count, location: location)
+      try self.codeObject.emitBuildSetUnpack(elementCount: count, location: location)
     }
   }
 
@@ -232,14 +232,14 @@ extension Compiler {
 
       hasSeenStar = true
       elementsWithoutUnpack[index] = inner
-      try self.builder.emitUnpackEx(countBefore: countBefore,
-                                    countAfter: countAfter,
-                                    location: location)
+      try self.codeObject.emitUnpackEx(countBefore: countBefore,
+                                       countAfter: countAfter,
+                                       location: location)
     }
 
     if !hasSeenStar {
-      try self.builder.emitUnpackSequence(elementCount: elements.count,
-                                          location: location)
+      try self.codeObject.emitUnpackSequence(elementCount: elements.count,
+                                             location: location)
     }
 
     try self.visitExpressions(elementsWithoutUnpack, context: .store)

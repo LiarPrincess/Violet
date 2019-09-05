@@ -40,8 +40,8 @@ extension Compiler {
                         orElse: [Statement],
                         location: SourceLocation) throws {
     // TODO: CPython: constant = expr_constant(s->v.If.test);
-    let endLabel = self.builder.addLabel()
-    let orElseLabel = orElse.any ? self.builder.addLabel() : endLabel
+    let endLabel = self.codeObject.addLabel()
+    let orElseLabel = orElse.any ? self.codeObject.addLabel() : endLabel
 
     try self.visitExpression(test,
                              andJumpTo: orElseLabel,
@@ -50,12 +50,12 @@ extension Compiler {
 
     try self.visitStatements(body)
     if orElse.any {
-      try self.builder.emitJumpAbsolute(to: endLabel, location: location)
-      self.builder.setLabel(orElseLabel)
+      try self.codeObject.emitJumpAbsolute(to: endLabel, location: location)
+      self.codeObject.setLabel(orElseLabel)
       try self.visitStatements(orElse)
     }
 
-    self.builder.setLabel(endLabel)
+    self.codeObject.setLabel(endLabel)
   }
 
   // MARK: - For
@@ -91,29 +91,29 @@ extension Compiler {
                          body:   NonEmptyArray<Statement>,
                          orElse: [Statement],
                          location: SourceLocation) throws {
-    let startLabel   = self.builder.addLabel()
-    let cleanupLabel = self.builder.addLabel()
-    let endLabel     = self.builder.addLabel()
+    let startLabel   = self.codeObject.addLabel()
+    let cleanupLabel = self.codeObject.addLabel()
+    let endLabel     = self.codeObject.addLabel()
 
-    try self.builder.emitSetupLoop(loopEnd: endLabel, location: location)
+    try self.codeObject.emitSetupLoop(loopEnd: endLabel, location: location)
 
     // 'continue' will jump to 'startLabel'
     self.pushBlock(.loop(startLabel: startLabel))
 
     try self.visitExpression(iter)
-    try self.builder.emitGetIter(location: location)
-    self.builder.setLabel(startLabel)
-    try self.builder.emitForIter(ifEmpty: cleanupLabel, location: location)
+    try self.codeObject.emitGetIter(location: location)
+    self.codeObject.setLabel(startLabel)
+    try self.codeObject.emitForIter(ifEmpty: cleanupLabel, location: location)
     try self.visitExpression(target)
     try self.visitStatements(body)
-    try self.builder.emitJumpAbsolute(to: startLabel, location: location)
-    self.builder.setLabel(cleanupLabel)
+    try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
+    self.codeObject.setLabel(cleanupLabel)
 
-    try self.builder.emitPopBlock(location: location)
+    try self.codeObject.emitPopBlock(location: location)
     self.popBlock()
 
     try self.visitStatements(orElse)
-    self.builder.setLabel(endLabel)
+    self.codeObject.setLabel(endLabel)
   }
 
   // MARK: - While
@@ -147,13 +147,13 @@ extension Compiler {
                            orElse: [Statement],
                            location: SourceLocation) throws {
     // TODO: CPython: constant = expr_constant(s->v.If.test);
-    let startLabel = self.builder.addLabel()
-    let endLabel   = self.builder.addLabel()
-    let afterBodyLabel = self.builder.addLabel() // CPython: anchor
+    let startLabel = self.codeObject.addLabel()
+    let endLabel   = self.codeObject.addLabel()
+    let afterBodyLabel = self.codeObject.addLabel() // CPython: anchor
 
-    try self.builder.emitSetupLoop(loopEnd: endLabel, location: location)
+    try self.codeObject.emitSetupLoop(loopEnd: endLabel, location: location)
 
-    self.builder.setLabel(startLabel)
+    self.codeObject.setLabel(startLabel)
 
     // 'continue' will jump to 'startLabel'
     self.pushBlock(.loop(startLabel: startLabel))
@@ -164,14 +164,14 @@ extension Compiler {
                              location: location)
 
     try self.visitStatements(body)
-    try self.builder.emitJumpAbsolute(to: startLabel, location: location)
+    try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
 
-    self.builder.setLabel(afterBodyLabel)
-    try self.builder.emitPopBlock(location: location)
+    self.codeObject.setLabel(afterBodyLabel)
+    try self.codeObject.emitPopBlock(location: location)
     self.popBlock()
 
     try self.visitStatements(orElse)
-    self.builder.setLabel(endLabel)
+    self.codeObject.setLabel(endLabel)
   }
 
   // MARK: - Continue, break
@@ -184,7 +184,7 @@ extension Compiler {
 
     switch blockType {
     case let .loop(startLabel):
-      try self.builder.emitJumpAbsolute(to: startLabel, location: location)
+      try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
     case .except:
       break
     case .finallyTry:
@@ -200,6 +200,6 @@ extension Compiler {
       throw self.error(.breakOutsideLoop, location: location)
     }
 
-    try self.builder.emitBreak(location: location)
+    try self.codeObject.emitBreak(location: location)
   }
 }

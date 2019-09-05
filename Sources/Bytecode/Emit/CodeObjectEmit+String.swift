@@ -1,7 +1,6 @@
 import Core
-import Bytecode
 
-extension CodeObjectBuilder {
+extension CodeObject {
 
   /// Append a `formatValue` instruction to code object.
   public func emitFormatValue(flags: UInt8, location: SourceLocation) throws {
@@ -10,7 +9,7 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `buildString` instruction to code object.
-  public func emitBuildString(value: UInt8, location: SourceLocation) throws {
+  public func emitBuildString(count: UInt8, location: SourceLocation) throws {
     // try self.emit(.buildString, location: location)
     throw self.unimplemented()
   }

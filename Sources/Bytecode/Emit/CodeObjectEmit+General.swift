@@ -1,7 +1,6 @@
 import Core
-import Bytecode
 
-extension CodeObjectBuilder {
+extension CodeObject {
 
   /// Append a `nop` instruction to code object.
   public func emitNop(location: SourceLocation) throws {
@@ -61,16 +60,7 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `buildSlice` instruction to code object.
-  public func emitBuildSlice(_ arg: SliceArg,
-                             location: SourceLocation) throws {
-    let n = self.getArgumentCount(arg)
-    try self.emit(.buildSlice(n), location: location)
-  }
-
-  private func getArgumentCount(_ arg: SliceArg) -> UInt8 {
-    switch arg {
-    case .lowerUpper: return 2
-    case .lowerUpperStep: return 3
-    }
+  public func emitBuildSlice(_ arg: SliceArg, location: SourceLocation) throws {
+    try self.emit(.buildSlice(arg), location: location)
   }
 }

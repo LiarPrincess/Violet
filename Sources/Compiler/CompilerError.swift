@@ -10,9 +10,7 @@ public struct CompilerError: Error, Equatable {
   /// Location of the error in the code.
   public let location: SourceLocation
 
-  public init(_ kind: CompilerErrorKind,
-              location: SourceLocation) {
-
+  public init(_ kind: CompilerErrorKind, location: SourceLocation) {
     self.kind = kind
     self.location = location
   }
@@ -104,9 +102,6 @@ public enum CompilerErrorKind: Equatable {
   case continueOutsideLoop
   /// 'continue' not supported inside 'finally' clause
   case continueInsideFinally
-
-  /// More than 'Instruction.maxArgument' objects in single code object
-  case instructionArgumentTooBig
 }
 
 // TODO: surprisingly appropriate; `fromFutureImportBraces`

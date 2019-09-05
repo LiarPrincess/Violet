@@ -1,3 +1,5 @@
+import Bytecode
+
 // In CPython:
 // Python -> compile.c
 //   _Py_Mangle(PyObject *privateobj, PyObject *ident)
@@ -36,6 +38,10 @@ public struct MangledName: Equatable, Hashable {
   public func hash(into hasher: inout Hasher) {
     hasher.combine(self.value)
   }
+}
+
+extension MangledName: ConstantString {
+  public var asConstant: String { return self.value }
 }
 
 private func mangle(className: String?, name: String) -> String {

@@ -2,8 +2,8 @@ import Foundation
 import Core
 import Lexer
 import Parser
-import Compiler
 import Bytecode
+import Compiler
 
 /// Check the memory footprint of a given type.
 ///

@@ -1,8 +1,7 @@
 import Foundation
 import Core
-import Bytecode
 
-extension CodeObjectBuilder {
+extension CodeObject {
 
   /// Append a `loadConst` instruction to code object.
   public func emitTrue(location: SourceLocation) throws {
@@ -35,18 +34,15 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `loadConst` instruction to code object.
-  public func emitComplex(real: Double, imag: Double, location: SourceLocation) throws {
+  public func emitComplex(real: Double,
+                          imag: Double,
+                          location: SourceLocation) throws {
     try self.emitConstant(.complex(real: real, imag: imag), location: location)
   }
 
   /// Append a `loadConst` instruction to code object.
   public func emitString(_ value: String, location: SourceLocation) throws {
     try self.emitConstant(.string(value), location: location)
-  }
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitString(_ mangled: MangledName, location: SourceLocation) throws {
-    try self.emitConstant(.string(mangled.value), location: location)
   }
 
   /// Append a `loadConst` instruction to code object.
@@ -59,9 +55,10 @@ extension CodeObjectBuilder {
     try self.emitConstant(.tuple(value), location: location)
   }
 
-  public func emitConstant(_ constant: Constant, location: SourceLocation) throws {
-    let rawIndex = self.codeObject.constants.endIndex
-    self.codeObject.constants.append(constant)
+  public func emitConstant(_ constant: Constant,
+                           location: SourceLocation) throws {
+    let rawIndex = self.constants.endIndex
+    self.constants.append(constant)
 
     let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
     try self.emit(.loadConst(index: index), location: location)

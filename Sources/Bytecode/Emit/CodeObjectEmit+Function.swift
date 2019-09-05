@@ -1,7 +1,6 @@
 import Core
-import Bytecode
 
-extension CodeObjectBuilder {
+extension CodeObject {
 
   /// Append a `makeFunction` instruction to code object.
   public func emitMakeFunction(argumentCount: Int,

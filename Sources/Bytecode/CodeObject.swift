@@ -1,6 +1,4 @@
 import Core
-import Parser
-import Bytecode
 
 public enum CodeObjectType {
   case module
@@ -11,6 +9,7 @@ public enum CodeObjectType {
   case comprehension
 }
 
+// TODO: To struct
 public final class CodeObject {
 
   /// Name of the class if the code is for a class.
@@ -24,20 +23,20 @@ public final class CodeObject {
   public let firstLine: SourceLine
 
   /// Instruction opcodes.
-  public var instructions = [Instruction]()
+  public internal(set) var instructions = [Instruction]()
   /// Instruction locations.
-  public var instructionLines = [SourceLine]()
+  public internal(set) var instructionLines = [SourceLine]()
   // TODO: ^ Use struct InstructionLocation = (index, line) - Objects/lnotab_notes
 
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
-  public var constants = [Constant]()
+  public internal(set) var constants = [Constant]()
   /// List of strings (names used).
   /// E.g. `LoadName 5` loads `self.names[5]` value.
-  public var names = [String]()
+  public internal(set) var names = [String]()
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
-  public var labels = [Int]()
+  public internal(set) var labels = [Int]()
 
   // TODO: This is filled in 'visitFunction'
   /// Arguments, except *args

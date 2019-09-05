@@ -42,6 +42,7 @@ public enum Constant {
   case complex(real: Double, imag: Double)
   case string(String)
   case bytes(Data)
+  case code(CodeObject)
   case tuple([Constant])
 
   public var isInteger: Bool {
@@ -66,6 +67,11 @@ public enum Constant {
 
   public var isBytes: Bool {
     if case .bytes = self { return true }
+    return false
+  }
+
+  public var isCode: Bool {
+    if case .code = self { return true }
     return false
   }
 
@@ -97,6 +103,25 @@ public enum ComparisonOpcode {
   case `in`
   /// Negation of `x in s`
   case notIn
+
+}
+
+public enum SliceArg {
+  case lowerUpper
+  case lowerUpperStep
+
+}
+
+public enum RaiseArg {
+  /// Re-raise previous exception.
+  /// CPython 0.
+  case reRaise
+  /// Raise exception instance or type at TOS
+  /// CPython 1.
+  case exceptionOnly
+  /// Raise exception instance or type at TOS1 with Cause set to TOS
+  /// CPython 2.
+  case exceptionAndCause
 
 }
 
@@ -317,12 +342,12 @@ public enum Instruction {
   /// 
   /// From bottom to top, the consumed stack must consist of values
   /// if the argument carries a specified flag value
-  /// - `0x01` - a tuple of default values for positional-only
+  /// - `0x01` - has tuple of default values for positional-only
   ///            and positional-or-keyword parameters in positional order
-  /// - `0x02` - a dictionary of keyword-only parameters’ default values
-  /// - `0x04` - an annotation dictionary
-  /// - `0x08` - a tuple containing cells for free variables, making a closure
-  ///            the code associated with the function (at TOS1)
+  /// - `0x02` - has dictionary of keyword-only parameters default values
+  /// - `0x04` - has annotation dictionary
+  /// - `0x08` - has tuple containing cells for free variables,
+  ///            making a closure the code associated with the function (at TOS1)
   ///            the qualified name of the function (at TOS)
   case makeFunction(argumentCount: UInt8)
   /// Calls a callable object with positional arguments.
@@ -428,7 +453,7 @@ public enum Instruction {
   /// - 0: raise (re-raise previous exception)
   /// - 1: raise TOS (raise exception instance or type at TOS)
   /// - 2: raise TOS1 from TOS (raise exception instance or type at TOS1 with Cause set to TOS)
-  case raiseVarargs(argc: UInt8)
+  case raiseVarargs(RaiseArg)
   /// This opcode performs several operations before a `with` block starts.
   /// 
   /// It does following operations:
@@ -518,7 +543,7 @@ public enum Instruction {
   /// If it is 2, `slice(TOS1, TOS)` is pushed;
   /// if it is 3, `slice(TOS2, TOS1, TOS)` is pushed.
   /// See the `slice()` built-in function for more information.
-  case buildSlice(UInt8)
+  case buildSlice(SliceArg)
 
   public var isCompareOp: Bool {
     if case .compareOp = self { return true }

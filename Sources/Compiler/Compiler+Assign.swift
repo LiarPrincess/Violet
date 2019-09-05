@@ -32,7 +32,7 @@ extension Compiler {
     try self.visitExpression(value)
     for (index, t) in targets.enumerated() {
       if index < targets.count {
-        try self.builder.emitDupTop(location: location)
+        try self.codeObject.emitDupTop(location: location)
       }
 
       try self.visitExpression(t, context: .store)
@@ -59,16 +59,16 @@ extension Compiler {
     switch target.kind {
     case let .identifier(name):
       let mangled = MangledName(className: self.className, name: name)
-      try self.builder.emitLoadName(name: mangled, location: location)
+      try self.codeObject.emitLoadName(name: mangled, location: location)
       try self.visitExpression(value)
-      try self.builder.emitInplaceOperator(op, location: location)
-      try self.builder.emitStoreName(name: mangled, location: location)
+      try self.codeObject.emitInplaceOperator(op, location: location)
+      try self.codeObject.emitStoreName(name: mangled, location: location)
 
     case .attribute,
          .subscript:
       try self.visitExpression(target, context: .load)
       try self.visitExpression(value)
-      try self.builder.emitInplaceOperator(op, location: location)
+      try self.codeObject.emitInplaceOperator(op, location: location)
       try self.visitExpression(target, context: .store)
 
     default:
@@ -122,9 +122,9 @@ extension Compiler {
       let __annotations__ = SpecialIdentifiers.__annotations__
       let mangled = MangledName(className: self.className, name: name)
 
-      try self.builder.emitLoadName(name: __annotations__, location: location)
-      try self.builder.emitString(mangled, location: location)
-      try self.builder.emitStoreSubscr(location: location)
+      try self.codeObject.emitLoadName(name: __annotations__, location: location)
+      try self.codeObject.emitString(mangled, location: location)
+      try self.codeObject.emitStoreSubscr(location: location)
 
     case let .attribute(obj, name: _):
       if value == nil {
@@ -149,7 +149,7 @@ extension Compiler {
   /// check_ann_expr(struct compiler *c, expr_ty e)
   private func checkAnnExpr(_ expr: Expression, location: SourceLocation) throws {
     try self.visitExpression(expr)
-    try self.builder.emitPopTop(location: location)
+    try self.codeObject.emitPopTop(location: location)
   }
 
   /// check_ann_subscr(struct compiler *c, slice_ty sl)
@@ -200,6 +200,6 @@ extension Compiler {
                              location: SourceLocation) throws {
     // TODO: We should use proper 'ast_unparse' implementation
     let string = String(describing: annotation)
-    try self.builder.emitString(string, location: location)
+    try self.codeObject.emitString(string, location: location)
   }
 }

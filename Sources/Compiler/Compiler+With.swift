@@ -72,22 +72,22 @@ extension Compiler {
     let item = items[index]
 
     // TODO: what to do with block?
-    let block = self.builder.addLabel()
-    let finally = self.builder.addLabel()
+    let block = self.codeObject.addLabel()
+    let finally = self.codeObject.addLabel()
 
     // Evaluate EXPR
     try self.visitExpression(item.contextExpr)
-    try self.builder.emitSetupWith(loopEnd: finally, location: location)
+    try self.codeObject.emitSetupWith(loopEnd: finally, location: location)
 
     // SETUP_WITH pushes a finally block.
-    self.builder.setLabel(block)
+    self.codeObject.setLabel(block)
     self.pushBlock(.finallyTry)
 
     if let o = item.optionalVars {
       try self.visitExpression(o, context: .store)
     } else {
       // Discard result from context.__enter__()
-      try self.builder.emitPopTop(location: location)
+      try self.codeObject.emitPopTop(location: location)
     }
 
     // TODO: some weird condition
@@ -95,20 +95,20 @@ extension Compiler {
     try self.visitStatements(body)
 
     // End of try block; start the finally block
-    try self.builder.emitPopBlock(location: location)
+    try self.codeObject.emitPopBlock(location: location)
     self.popBlock()
 
-    try self.builder.emitNone(location: location)
-    self.builder.setLabel(finally)
+    try self.codeObject.emitNone(location: location)
+    self.codeObject.setLabel(finally)
     self.pushBlock(.finallyEnd)
 
     // Finally block starts; context.__exit__ is on the stack under
     // the exception or return information. Just issue our magic opcode.
-    try self.builder.emitWithCleanupStart(location: location)
-    try self.builder.emitWithCleanupFinish(location: location)
+    try self.codeObject.emitWithCleanupStart(location: location)
+    try self.codeObject.emitWithCleanupFinish(location: location)
 
     // Finally block ends.
-    try self.builder.emitEndFinally(location: location)
+    try self.codeObject.emitEndFinally(location: location)
     self.popBlock()
   }
 }

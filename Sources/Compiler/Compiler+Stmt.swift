@@ -129,10 +129,10 @@ extension Compiler {
 
       try self.visitExpression(v)
     } else {
-      try self.builder.emitNone(location: location)
+      try self.codeObject.emitNone(location: location)
     }
 
-    try self.builder.emitReturn(location: location)
+    try self.codeObject.emitReturn(location: location)
   }
 
   // MARK: - Class
@@ -162,7 +162,7 @@ extension Compiler {
       }
     }
 
-    try self.builder.emitRaiseVarargs(arg: arg, location: location)
+    try self.codeObject.emitRaiseVarargs(arg: arg, location: location)
   }
 
   private func visitTry(body: NonEmptyArray<Statement>,
@@ -185,23 +185,23 @@ extension Compiler {
       self.warn(.assertionWithTuple, location: location)
     }
 
-    let end = self.builder.addLabel()
+    let end = self.codeObject.addLabel()
     try self.visitExpression(test,
                              andJumpTo: end,
                              ifBooleanValueIs: true,
                              location: location)
 
     let id = SpecialIdentifiers.assertionError
-    try self.builder.emitString(id, location: location)
+    try self.codeObject.emitString(id, location: location)
 
     if let message = msg {
       // Call 'AssertionError' with single argument
       try self.visitExpression(message)
-      try self.builder.emitCallFunction(argumentCount: 1, location: location)
+      try self.codeObject.emitCallFunction(argumentCount: 1, location: location)
     }
 
-    try self.builder.emitRaiseVarargs(arg: .exceptionOnly, location: location)
-    self.builder.setLabel(end)
+    try self.codeObject.emitRaiseVarargs(arg: .exceptionOnly, location: location)
+    self.codeObject.setLabel(end)
   }
 
   // MARK: - Expression statement
@@ -211,13 +211,13 @@ extension Compiler {
                                         location: SourceLocation) throws {
     if self.options.isInteractive && self.nestLevel <= 1 {
       try self.visitExpression(expr)
-      try self.builder.emitPrintExpr(location: location)
+      try self.codeObject.emitPrintExpr(location: location)
       return
     }
 
     // TODO: if (is_const(value)) {
 
     try self.visitExpression(expr)
-    try self.builder.emitPopTop(location: location)
+    try self.codeObject.emitPopTop(location: location)
   }
 }

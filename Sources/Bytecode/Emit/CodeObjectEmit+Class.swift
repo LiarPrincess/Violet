@@ -1,7 +1,6 @@
 import Core
-import Bytecode
 
-extension CodeObjectBuilder {
+extension CodeObject {
 
   /// Append a `loadBuildClass` instruction to code object.
   public func emitLoadBuildClass(location: SourceLocation) throws {

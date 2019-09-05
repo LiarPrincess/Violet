@@ -1,7 +1,6 @@
 import Core
-import Bytecode
 
-extension CodeObjectBuilder {
+extension CodeObject {
 
   /// Append an `importName` instruction to code object.
   public func emitImportName(name: String, location: SourceLocation) throws {

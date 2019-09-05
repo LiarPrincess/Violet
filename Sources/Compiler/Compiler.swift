@@ -69,13 +69,6 @@ public final class Compiler {
     fatalError("[BUG] Compiler: Using nil current code object.")
   }
 
-  private var _builder: CodeObjectBuilder?
-  /// Code emitter for `self.codeObject`.
-  internal var builder: CodeObjectBuilder {
-    if let b = self._builder { return b }
-    fatalError("[BUG] Compiler: Using nil builder.")
-  }
-
   /// Stack of blocks (loop, except, finallyTry, finallyEnd)
   /// that current statement is surrounded with.
   internal var blockStack = [BlockType]()
@@ -143,7 +136,6 @@ public final class Compiler {
     let object = CodeObject(name: scope.name, type: type, line: line)
 
     self.codeObjectStack.append(object)
-    self._builder = CodeObjectBuilder(for: object)
     // TODO: qual name
   }
 
@@ -176,10 +168,6 @@ public final class Compiler {
     assert(object != nil)
     assert(object!.labels.allSatisfy { $0 != Label.notAssigned })
     // swiftlint:disable:previous force_unwrapping
-
-    if let parent = self.codeObjectStack.last {
-      self._builder = CodeObjectBuilder(for: parent)
-    }
   }
 
   // MARK: - Block

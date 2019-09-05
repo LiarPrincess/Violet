@@ -4,7 +4,7 @@
 /// Labels can only be used inside a single block!
 public struct Label {
 
-  internal static let notAssigned = -1
+  public static let notAssigned = -1
 
   /// Index in `CodeObject.labels`
   internal let index: Int

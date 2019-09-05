@@ -1,7 +1,6 @@
 import Core
-import Bytecode
 
-extension CodeObjectBuilder {
+extension CodeObject {
 
   /// Append a `popExcept` instruction to code object.
   public func emitPopExcept(location: SourceLocation) throws {
@@ -27,15 +26,6 @@ extension CodeObjectBuilder {
 
   /// Append a `raiseVarargs` instruction to code object.
   public func emitRaiseVarargs(arg: RaiseArg, location: SourceLocation) throws {
-    let argc = self.getArgumentCount(arg)
-    try self.emit(.raiseVarargs(argc: argc), location: location)
-  }
-
-  private func getArgumentCount(_ type: RaiseArg) -> UInt8 {
-    switch type {
-    case .reRaise: return 0
-    case .exceptionOnly: return 1
-    case .exceptionAndCause: return 2
-    }
+    try self.emit(.raiseVarargs(arg), location: location)
   }
 }

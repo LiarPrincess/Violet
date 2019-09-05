@@ -1,21 +1,7 @@
 import Core
-import Bytecode
 
-/// Helper for creating new `CodeObjects`.
-///
-/// It is just a bunch of helper methods put thogether, which means
-/// thet you can create multiple builders for a single `CodeObject`.
-/// Builder will store a strong reference to `CodeObject` passed in `init`.
-public struct CodeObjectBuilder {
-
-  // MARK: - Code object
-
-  /// Code object that we are currently filling.
-  internal let codeObject: CodeObject
-
-  public init(for codeObject: CodeObject) {
-    self.codeObject = codeObject
-  }
+// Internal helpers for all of the 'emit' functions.
+extension CodeObject {
 
   // MARK: - Emit
 
@@ -24,50 +10,41 @@ public struct CodeObjectBuilder {
   // only on some of the functions in api.
   internal func emit(_ instruction: Instruction,
                      location: SourceLocation) throws {
-    self.codeObject.instructions.append(instruction)
-    self.codeObject.instructionLines.append(location.line)
+    self.instructions.append(instruction)
+    self.instructionLines.append(location.line)
 
-    assert(self.codeObject.instructions.count
-        == self.codeObject.instructionLines.count)
+    assert(self.instructions.count == self.instructionLines.count)
   }
 
   // MARK: - Label
 
-  internal func addLabel() -> Label {
-    let index = self.codeObject.labels.endIndex
-    self.codeObject.labels.append(Label.notAssigned)
+  public func addLabel() -> Label {
+    let index = self.labels.endIndex
+    self.labels.append(Label.notAssigned)
     return Label(index: index)
   }
 
-  internal func setLabel(_ label: Label) {
-    assert(label.index < self.codeObject.labels.count)
-    assert(self.codeObject.labels[label.index] == Label.notAssigned)
+  public func setLabel(_ label: Label) {
+    assert(label.index < self.labels.count)
+    assert(self.labels[label.index] == Label.notAssigned)
 
-    let jumpTarget = self.codeObject.instructions.endIndex
-    self.codeObject.labels[label.index] = jumpTarget
+    let jumpTarget = self.instructions.endIndex
+    self.labels[label.index] = jumpTarget
   }
 
   // MARK: - Extended arg
 
-  internal func addNameWithExtendedArgIfNeeded(
-    name: MangledName,
+  internal func addNameWithExtendedArgIfNeeded<S: ConstantString>(
+    name: S,
     location: SourceLocation) throws -> UInt8 {
 
-    return try self.addNameWithExtendedArgIfNeeded(name: name.value,
-                                                   location: location)
-  }
-
-  internal func addNameWithExtendedArgIfNeeded(
-    name: String,
-    location: SourceLocation) throws -> UInt8 {
-
-    let rawIndex = self.codeObject.names.endIndex
+    let rawIndex = self.names.endIndex
     let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
-    self.codeObject.names.append(name)
+    self.names.append(name.asConstant)
     return index
   }
 
-  internal func emitIndexWithExtendedArgIfNeeded(
+  internal func emitLabelWithExtendedArgIfNeeded(
     _ label: Label,
     location: SourceLocation) throws -> UInt8 {
 
@@ -132,9 +109,9 @@ public struct CodeObjectBuilder {
   // MARK: - Error
 
   /// Create compiler error
-  internal func error(_ kind: CompilerErrorKind,
-                      location: SourceLocation) -> CompilerError {
-    return CompilerError(kind, location: location)
+  internal func error(_ kind: CodeObjectErrorKind,
+                      location: SourceLocation) -> CodeObjectError {
+    return CodeObjectError(kind, location: location)
   }
 
   // MARK: - Unimplemented
