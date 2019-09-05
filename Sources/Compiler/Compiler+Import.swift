@@ -48,7 +48,6 @@ extension Compiler {
                                 aliases:  NonEmptyArray<Alias>,
                                 level:    UInt8,
                                 location: SourceLocation) throws {
-    // TODO: AST rename import from: names -> aliases
 
     let futureModule = SpecialIdentifiers.__future__
     if module == futureModule && location.line > self.future.lastLine {

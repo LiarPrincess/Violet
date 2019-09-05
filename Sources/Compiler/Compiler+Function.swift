@@ -8,8 +8,6 @@ import Bytecode
 
 extension Compiler {
 
-  // TODO: rename function.decoratorList -> decorators in AST
-
   /// compiler_function(struct compiler *c, stmt_ty s, int is_async)
   internal func visitFunctionDef(name: String,
  // swiftlint:disable:previous function_parameter_count

@@ -69,9 +69,9 @@ extension StatementMatcher {
   internal func matchFunctionDef(_ stmt: Statement,
                                  file: StaticString = #file,
                                  line: UInt         = #line) ->
-  (name: String, args: Arguments, body: [Statement], decoratorList: [Expression], returns: Expression?)? {
+  (name: String, args: Arguments, body: [Statement], decorators: [Expression], returns: Expression?)? {
 
-    if case let StatementKind.functionDef(name: value0, args: value1, body: value2, decoratorList: value3, returns: value4) = stmt.kind {
+    if case let StatementKind.functionDef(name: value0, args: value1, body: value2, decorators: value3, returns: value4) = stmt.kind {
       return (value0, value1, Array(value2), value3, value4)
     }
 
@@ -82,9 +82,9 @@ extension StatementMatcher {
   internal func matchAsyncFunctionDef(_ stmt: Statement,
                                       file: StaticString = #file,
                                       line: UInt         = #line) ->
-  (name: String, args: Arguments, body: [Statement], decoratorList: [Expression], returns: Expression?)? {
+  (name: String, args: Arguments, body: [Statement], decorators: [Expression], returns: Expression?)? {
 
-    if case let StatementKind.asyncFunctionDef(name: value0, args: value1, body: value2, decoratorList: value3, returns: value4) = stmt.kind {
+    if case let StatementKind.asyncFunctionDef(name: value0, args: value1, body: value2, decorators: value3, returns: value4) = stmt.kind {
       return (value0, value1, Array(value2), value3, value4)
     }
 
@@ -95,9 +95,9 @@ extension StatementMatcher {
   internal func matchClassDef(_ stmt: Statement,
                               file: StaticString = #file,
                               line: UInt         = #line) ->
-  (name: String, bases: [Expression], keywords: [Keyword], body: [Statement], decoratorList: [Expression])? {
+  (name: String, bases: [Expression], keywords: [Keyword], body: [Statement], decorators: [Expression])? {
 
-    if case let StatementKind.classDef(name: value0, bases: value1, keywords: value2, body: value3, decoratorList: value4) = stmt.kind {
+    if case let StatementKind.classDef(name: value0, bases: value1, keywords: value2, body: value3, decorators: value4) = stmt.kind {
       return (value0, value1, value2, Array(value3), value4)
     }
 

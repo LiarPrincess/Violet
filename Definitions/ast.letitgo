@@ -83,20 +83,20 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `name` is a raw string of the function name.
   -- - `args` is a arguments node.
   -- - `body` is the list of nodes inside the function.
-  -- - `decoratorList` is the list of decorators to be applied,
+  -- - `decorators` is the list of decorators to be applied,
   --    stored outermost first (i.e. the first in the list will be applied last).
   -- - `returns` is the return annotation (the thing after '->').
   FunctionDef(identifier name,
               arguments args,
               stmt+ body,
-              expr* decoratorList,
+              expr* decorators,
               expr? returns)
   -- An async def function definition.
   -- Has the same fields as `FunctionDef`.
   | AsyncFunctionDef(identifier name,
                      arguments args,
                      stmt+ body,
-                     expr* decoratorList,
+                     expr* decorators,
                      expr? returns)
 
   -- A class definition.
@@ -107,12 +107,12 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `starargs` and kwargs are each a single node, as in a function call.
   --    starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass.
   -- - `body` is a list of nodes representing the code within the class definition.
-  -- - `decoratorList` is a list of nodes, as in `FunctionDef`.
+  -- - `decorators` is a list of nodes, as in `FunctionDef`.
   | ClassDef(identifier name,
              expr* bases,
              keyword* keywords,
              stmt+ body,
-             expr* decoratorList)
+             expr* decorators)
 
   -- A `return` statement.
   | Return(expr?)

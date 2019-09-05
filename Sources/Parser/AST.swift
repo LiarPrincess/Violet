@@ -109,13 +109,13 @@ public enum StatementKind: Equatable {
   /// - `name` is a raw string of the function name.
   /// - `args` is a arguments node.
   /// - `body` is the list of nodes inside the function.
-  /// - `decoratorList` is the list of decorators to be applied,
+  /// - `decorators` is the list of decorators to be applied,
   ///    stored outermost first (i.e. the first in the list will be applied last).
   /// - `returns` is the return annotation (the thing after '->').
-  case functionDef(name: String, args: Arguments, body: NonEmptyArray<Statement>, decoratorList: [Expression], returns: Expression?)
+  case functionDef(name: String, args: Arguments, body: NonEmptyArray<Statement>, decorators: [Expression], returns: Expression?)
   /// An async def function definition.
   /// Has the same fields as `FunctionDef`.
-  case asyncFunctionDef(name: String, args: Arguments, body: NonEmptyArray<Statement>, decoratorList: [Expression], returns: Expression?)
+  case asyncFunctionDef(name: String, args: Arguments, body: NonEmptyArray<Statement>, decorators: [Expression], returns: Expression?)
   /// A class definition.
   /// - `name` is a raw string for the class name
   /// - `bases` is a list of nodes for explicitly specified base classes.
@@ -124,8 +124,8 @@ public enum StatementKind: Equatable {
   /// - `starargs` and kwargs are each a single node, as in a function call.
   ///    starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass.
   /// - `body` is a list of nodes representing the code within the class definition.
-  /// - `decoratorList` is a list of nodes, as in `FunctionDef`.
-  case classDef(name: String, bases: [Expression], keywords: [Keyword], body: NonEmptyArray<Statement>, decoratorList: [Expression])
+  /// - `decorators` is a list of nodes, as in `FunctionDef`.
+  case classDef(name: String, bases: [Expression], keywords: [Keyword], body: NonEmptyArray<Statement>, decorators: [Expression])
   /// A `return` statement.
   case `return`(Expression?)
   /// Represents a `del` statement.

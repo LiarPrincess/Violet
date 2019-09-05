@@ -12,9 +12,9 @@ extension Parser {
 
   /// `funcdef: 'def' NAME parameters ['->' test] ':' suite`
   internal mutating func funcDef(
-    isAsync:       Bool = false,
-    start:         SourceLocation? = nil,
-    decoratorList: [Expression] = []) throws -> Statement {
+    isAsync:    Bool = false,
+    start:      SourceLocation? = nil,
+    decorators: [Expression] = []) throws -> Statement {
 
     assert(self.peek.kind == .def)
 
@@ -37,9 +37,9 @@ extension Parser {
 
     let kind: StatementKind = isAsync ?
       .asyncFunctionDef(name: name, args: args, body: body,
-                        decoratorList: decoratorList, returns: returns) :
+                        decorators: decorators, returns: returns) :
       .functionDef     (name: name, args: args, body: body,
-                        decoratorList: decoratorList, returns: returns)
+                        decorators: decorators, returns: returns)
 
     return self.statement(kind, start: start, end: body.last.end)
   }
@@ -48,8 +48,8 @@ extension Parser {
 
   /// `classdef: 'class' NAME ['(' [arglist] ')'] ':' suite`
   internal mutating func classDef(
-    start:         SourceLocation? = nil,
-    decoratorList: [Expression] = []) throws -> Statement {
+    start:      SourceLocation? = nil,
+    decorators: [Expression] = []) throws -> Statement {
 
     assert(self.peek.kind == .class)
 
@@ -68,7 +68,7 @@ extension Parser {
                                       bases: args?.args ?? [],
                                       keywords: args?.keywords ?? [], // PEP3115
                                       body: body,
-                                      decoratorList: decoratorList)
+                                      decorators: decorators)
 
     let end = body.last.end
     return self.statement(kind, start: start, end: end)

@@ -22,14 +22,14 @@ extension SymbolTableBuilder {
   /// symtable_visit_stmt(struct symtable *st, stmt_ty s)
   internal func visitStatement(_ stmt: Statement) throws {
     switch stmt.kind {
-    case let .functionDef(name, args, body, decoratorList, returns),
-         let .asyncFunctionDef(name, args, body, decoratorList, returns):
+    case let .functionDef(name, args, body, decorators, returns),
+         let .asyncFunctionDef(name, args, body, decorators, returns):
 
       try self.addSymbol(name, flags: .defLocal, location: stmt.start)
       try self.visitDefaults(args)
       try self.visitAnnotations(args)
       try self.visitExpression(returns) // in CPython it is a part of visitAnnotations
-      try self.visitExpressions(decoratorList)
+      try self.visitExpressions(decorators)
 
       self.enterScope(name: name, type: .function, node: stmt)
       if stmt.kind.isAsyncFunctionDef {
@@ -39,11 +39,11 @@ extension SymbolTableBuilder {
       try self.visitStatements(body)
       self.leaveScope()
 
-    case let .classDef(name, bases, keywords, body, decoratorList):
+    case let .classDef(name, bases, keywords, body, decorators):
       try self.addSymbol(name, flags: .defLocal, location: stmt.start)
       try self.visitExpressions(bases)
       try self.visitKeywords(keywords)
-      try self.visitExpressions(decoratorList)
+      try self.visitExpressions(decorators)
 
       let previousClassName = self.className
 

@@ -3,8 +3,6 @@ import Core
 import Parser
 @testable import Compiler
 
-// TODO: Rename to STGlobal, STNonlocal
-
 /// Use 'Tools/dump_symtable.py' for reference.
 class STTopScope: XCTestCase, CommonSymbolTable {
 

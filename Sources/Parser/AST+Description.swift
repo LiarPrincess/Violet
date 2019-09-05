@@ -36,10 +36,10 @@ extension StatementKind: CustomStringConvertible {
                               name: String,
                               args: Arguments,
                               body: NonEmptyArray<Statement>,
-                              decoratorList: [Expression],
+                              decorators: [Expression],
                               returns: Expression?) -> String {
     let r = returns.map { " -> " + describe($0) } ?? ""
-    let d = self.decorators(from: decoratorList)
+    let d = self.decorators(from: decorators)
     return "(\(header) \(name)\(args)\(r)\(d) do: \(join(body)))"
   }
 
@@ -65,30 +65,30 @@ extension StatementKind: CustomStringConvertible {
     return "(\(header) \(target) in: \(iter) do: \(b ?? "")\(e ?? ""))"
   }
 
-  private func decorators(from decoratorList: [Expression]) -> String {
-    return decoratorList.isEmpty ? "" :
-      " decorators: " + join(decoratorList.map { "@" + describe($0) })
+  private func decorators(from decorators: [Expression]) -> String {
+    return decorators.isEmpty ? "" :
+      " decorators: " + join(decorators.map { "@" + describe($0) })
   }
 
   public var description: String {
     switch self {
 
-    case let .functionDef(name, args, body, decoratorList, returns):
+    case let .functionDef(name, args, body, decorators, returns):
       return self.defDescription(header: "def",
                                  name: name,
                                  args: args,
                                  body: body,
-                                 decoratorList: decoratorList,
+                                 decorators: decorators,
                                  returns: returns)
-    case let .asyncFunctionDef(name, args, body, decoratorList, returns):
+    case let .asyncFunctionDef(name, args, body, decorators, returns):
       return self.defDescription(header: "asyncDef",
                                  name: name,
                                  args: args,
                                  body: body,
-                                 decoratorList: decoratorList,
+                                 decorators: decorators,
                                  returns: returns)
 
-    case let .classDef(name, bases, keywords, body, decoratorList):
+    case let .classDef(name, bases, keywords, body, decorators):
       var parents = ""
       switch (bases.isEmpty, keywords.isEmpty) {
       case (true, true): break
@@ -97,7 +97,7 @@ extension StatementKind: CustomStringConvertible {
       case (false, false): parents = " (" + join(bases) + " " + join(keywords) + ")"
       }
 
-      let d = self.decorators(from: decoratorList)
+      let d = self.decorators(from: decorators)
       return "(class \(name)\(parents)\(d) body: \(join(body)))"
 
     case let .return(value):

@@ -20,10 +20,10 @@ extension Parser {
 
     switch self.peek.kind {
     case .class:
-      return try self.classDef(start: start, decoratorList: decorators)
+      return try self.classDef(start: start, decorators: decorators)
 
     case .def:
-      return try self.funcDef(start: start, decoratorList: decorators)
+      return try self.funcDef(start: start, decorators: decorators)
 
     case .async:
       try self.advance() // async
@@ -32,7 +32,7 @@ extension Parser {
       case .def:
         return try self.funcDef(isAsync: true,
                                 start: start,
-                                decoratorList: decorators)
+                                decorators: decorators)
 
       default:
         throw self.unexpectedToken(expected: [.def])

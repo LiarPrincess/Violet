@@ -97,40 +97,40 @@ extension ASTCreator {
   internal func functionDefStmt(name: String,
                                 args: Arguments,
                                 body: Statement? = nil,
-                                decoratorList: [Expression] = [],
+                                decorators: [Expression] = [],
                                 returns: Expression? = nil) -> StatementKind {
     let b = body ?? self.statement(.pass)
     return StatementKind.functionDef(name: name,
                                      args: args,
                                      body: NonEmptyArray(first: b),
-                                     decoratorList: decoratorList,
+                                     decorators: decorators,
                                      returns: returns)
   }
 
   internal func functionDefStmt(name: String,
                                 args: Arguments,
                                 body: [Statement],
-                                decoratorList: [Expression] = [],
+                                decorators: [Expression] = [],
                                 returns: Expression? = nil) -> StatementKind {
     assert(body.any)
     let arr = NonEmptyArray(first: body[0], rest: body[1...])
     return StatementKind.functionDef(name: name,
                                      args: args,
                                      body: arr,
-                                     decoratorList: decoratorList,
+                                     decorators: decorators,
                                      returns: returns)
   }
 
   internal func asyncFunctionDefStmt(name: String,
                                      args: Arguments,
                                      body: Statement? = nil,
-                                     decoratorList: [Expression] = [],
+                                     decorators: [Expression] = [],
                                      returns: Expression? = nil) -> StatementKind {
     let b = body ?? self.statement(.pass)
     return StatementKind.asyncFunctionDef(name: name,
                                           args: args,
                                           body: NonEmptyArray(first: b),
-                                          decoratorList: decoratorList,
+                                          decorators: decorators,
                                           returns: returns)
   }
 

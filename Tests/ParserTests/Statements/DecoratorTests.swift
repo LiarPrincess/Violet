@@ -25,12 +25,12 @@ class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchClassDef(stmt) else { return }
 
-      XCTAssertEqual(d.decoratorList.count, 1)
-      guard d.decoratorList.count == 1 else { return }
+      XCTAssertEqual(d.decorators.count, 1)
+      guard d.decorators.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy")
-      XCTAssertEqual(d.decoratorList[0].start, loc2)
-      XCTAssertEqual(d.decoratorList[0].end,   loc3)
+      XCTAssertExpression(d.decorators[0], "Joy")
+      XCTAssertEqual(d.decorators[0].start, loc2)
+      XCTAssertEqual(d.decorators[0].end,   loc3)
 
       XCTAssertStatement(stmt, "(class Riley decorators: @Joy body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
@@ -56,12 +56,12 @@ class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchClassDef(stmt) else { return }
 
-      XCTAssertEqual(d.decoratorList.count, 1)
-      guard d.decoratorList.count == 1 else { return }
+      XCTAssertEqual(d.decorators.count, 1)
+      guard d.decorators.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Emotion.Joy")
-      XCTAssertEqual(d.decoratorList[0].start, loc2)
-      XCTAssertEqual(d.decoratorList[0].end,   loc7)
+      XCTAssertExpression(d.decorators[0], "Emotion.Joy")
+      XCTAssertEqual(d.decorators[0].start, loc2)
+      XCTAssertEqual(d.decorators[0].end,   loc7)
 
       XCTAssertStatement(stmt, "(class Riley decorators: @Emotion.Joy body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
@@ -89,16 +89,16 @@ class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchClassDef(stmt) else { return }
 
-      XCTAssertEqual(d.decoratorList.count, 2)
-      guard d.decoratorList.count == 2 else { return }
+      XCTAssertEqual(d.decorators.count, 2)
+      guard d.decorators.count == 2 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy")
-      XCTAssertEqual(d.decoratorList[0].start, loc2)
-      XCTAssertEqual(d.decoratorList[0].end,   loc3)
+      XCTAssertExpression(d.decorators[0], "Joy")
+      XCTAssertEqual(d.decorators[0].start, loc2)
+      XCTAssertEqual(d.decorators[0].end,   loc3)
 
-      XCTAssertExpression(d.decoratorList[1], "Sadness")
-      XCTAssertEqual(d.decoratorList[1].start, loc8)
-      XCTAssertEqual(d.decoratorList[1].end,   loc9)
+      XCTAssertExpression(d.decorators[1], "Sadness")
+      XCTAssertEqual(d.decorators[1].start, loc8)
+      XCTAssertEqual(d.decorators[1].end,   loc9)
 
       XCTAssertStatement(stmt, "(class Riley decorators: @Joy @Sadness body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
@@ -126,12 +126,12 @@ class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchClassDef(stmt) else { return }
 
-      XCTAssertEqual(d.decoratorList.count, 1)
-      guard d.decoratorList.count == 1 else { return }
+      XCTAssertEqual(d.decorators.count, 1)
+      guard d.decorators.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy()")
-      XCTAssertEqual(d.decoratorList[0].start, loc2)
-      XCTAssertEqual(d.decoratorList[0].end,   loc7)
+      XCTAssertExpression(d.decorators[0], "Joy()")
+      XCTAssertEqual(d.decorators[0].start, loc2)
+      XCTAssertEqual(d.decorators[0].end,   loc7)
 
       XCTAssertStatement(stmt, "(class Riley decorators: @Joy() body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
@@ -158,12 +158,12 @@ class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchClassDef(stmt) else { return }
 
-      XCTAssertEqual(d.decoratorList.count, 1)
-      guard d.decoratorList.count == 1 else { return }
+      XCTAssertEqual(d.decorators.count, 1)
+      guard d.decorators.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy(memory)")
-      XCTAssertEqual(d.decoratorList[0].start, loc2)
-      XCTAssertEqual(d.decoratorList[0].end,   loc9)
+      XCTAssertExpression(d.decorators[0], "Joy(memory)")
+      XCTAssertEqual(d.decorators[0].start, loc2)
+      XCTAssertEqual(d.decorators[0].end,   loc9)
 
       XCTAssertStatement(stmt, "(class Riley decorators: @Joy(memory) body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
@@ -192,12 +192,12 @@ class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchClassDef(stmt) else { return }
 
-      XCTAssertEqual(d.decoratorList.count, 1)
-      guard d.decoratorList.count == 1 else { return }
+      XCTAssertEqual(d.decorators.count, 1)
+      guard d.decorators.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy(memory='happy')")
-      XCTAssertEqual(d.decoratorList[0].start, loc2)
-      XCTAssertEqual(d.decoratorList[0].end,   loc13)
+      XCTAssertExpression(d.decorators[0], "Joy(memory='happy')")
+      XCTAssertEqual(d.decorators[0].start, loc2)
+      XCTAssertEqual(d.decorators[0].end,   loc13)
 
       XCTAssertStatement(stmt, "(class Riley decorators: @Joy(memory='happy') body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
@@ -228,12 +228,12 @@ class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchClassDef(stmt) else { return }
 
-      XCTAssertEqual(d.decoratorList.count, 1)
-      guard d.decoratorList.count == 1 else { return }
+      XCTAssertEqual(d.decorators.count, 1)
+      guard d.decorators.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy(core memory='happy')")
-      XCTAssertEqual(d.decoratorList[0].start, loc2)
-      XCTAssertEqual(d.decoratorList[0].end,   loc17)
+      XCTAssertExpression(d.decorators[0], "Joy(core memory='happy')")
+      XCTAssertEqual(d.decorators[0].start, loc2)
+      XCTAssertEqual(d.decorators[0].end,   loc17)
 
       XCTAssertStatement(stmt, "(class Riley decorators: @Joy(core memory='happy') body: 'feel')")
       XCTAssertEqual(stmt.start, loc0)
@@ -261,12 +261,12 @@ class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchFunctionDef(stmt) else { return }
 
-      XCTAssertEqual(d.decoratorList.count, 1)
-      guard d.decoratorList.count == 1 else { return }
+      XCTAssertEqual(d.decorators.count, 1)
+      guard d.decorators.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy")
-      XCTAssertEqual(d.decoratorList[0].start, loc2)
-      XCTAssertEqual(d.decoratorList[0].end,   loc3)
+      XCTAssertExpression(d.decorators[0], "Joy")
+      XCTAssertEqual(d.decorators[0].start, loc2)
+      XCTAssertEqual(d.decorators[0].end,   loc3)
 
       XCTAssertStatement(stmt, "(def feel() decorators: @Joy do: 'emotion')")
       XCTAssertEqual(stmt.start, loc0)
@@ -293,12 +293,12 @@ class DecoratorTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchAsyncFunctionDef(stmt) else { return }
 
-      XCTAssertEqual(d.decoratorList.count, 1)
-      guard d.decoratorList.count == 1 else { return }
+      XCTAssertEqual(d.decorators.count, 1)
+      guard d.decorators.count == 1 else { return }
 
-      XCTAssertExpression(d.decoratorList[0], "Joy")
-      XCTAssertEqual(d.decoratorList[0].start, loc2)
-      XCTAssertEqual(d.decoratorList[0].end,   loc3)
+      XCTAssertExpression(d.decorators[0], "Joy")
+      XCTAssertEqual(d.decorators[0].start, loc2)
+      XCTAssertEqual(d.decorators[0].end,   loc3)
 
       XCTAssertStatement(stmt, "(asyncDef feel() decorators: @Joy do: 'emotion')")
       XCTAssertEqual(stmt.start, loc0)
