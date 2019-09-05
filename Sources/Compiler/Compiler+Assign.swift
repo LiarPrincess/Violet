@@ -196,8 +196,8 @@ extension Compiler {
   }
 
   /// compiler_visit_annexpr(struct compiler *c, expr_ty annotation)
-  private func visitAnnExpr(_ annotation: Expression,
-                            location: SourceLocation) throws {
+  internal func visitAnnExpr(_ annotation: Expression,
+                             location: SourceLocation) throws {
     // TODO: We should use proper 'ast_unparse' implementation
     let string = String(describing: annotation)
     try self.builder.emitString(string, location: location)

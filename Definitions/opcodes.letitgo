@@ -276,13 +276,12 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Pops 2 * count items so that the dictionary holds count entries:
   -- {..., TOS3: TOS2, TOS1: TOS}.
   | BuildMap(Count elementCount)
-{-
-  NOTE: We always use 'BuildMap'.
+
   -- The version of `BuildMap` specialized for constant keys.
-  -- `count` values are consumed from the stack.
+  -- `elementCount` values are consumed from the stack.
   -- The top element on the stack contains a tuple of keys.
   | BuildConstKeyMap(Count elementCount)
--}
+
   -- Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
   -- Used to implement set comprehensions.
   | SetAdd(i)
@@ -396,13 +395,15 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {- TODO: docs -}
   -- Pushes a new function object on the stack.
   --
-  -- From bottom to top, the consumed stack must consist of values if the argument carries a specified flag value
-  -- - `0x01` - a tuple of default values for positional-only and positional-or-keyword parameters in positional order
+  -- From bottom to top, the consumed stack must consist of values
+  -- if the argument carries a specified flag value
+  -- - `0x01` - a tuple of default values for positional-only
+  --            and positional-or-keyword parameters in positional order
   -- - `0x02` - a dictionary of keyword-only parameters’ default values
   -- - `0x04` - an annotation dictionary
   -- - `0x08` - a tuple containing cells for free variables, making a closure
-  -- the code associated with the function (at TOS1)
-  -- the qualified name of the function (at TOS)
+  --            the code associated with the function (at TOS1)
+  --            the qualified name of the function (at TOS)
   | MakeFunction(UInt8 argumentCount)
 
   -- Calls a callable object with positional arguments.
@@ -416,7 +417,8 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- 1. pop all arguments and the callable object off the stack
   -- 2. call the callable object with those arguments
   -- 3. push the return value returned by the callable object
-  {- TODO: This opcode is used only for calls with positional arguments. -}
+  -- - Note:
+  -- This opcode is used only for calls with positional arguments!
   | CallFunction(UInt8 argumentCount)
 
   -- Calls a callable object with positional (if any) and keyword arguments.

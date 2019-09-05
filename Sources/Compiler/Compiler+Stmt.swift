@@ -6,13 +6,9 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
-// swiftlint:disable cyclomatic_complexity
-// swiftlint:disable function_body_length
-// swiftlint:disable switch_case_alignment
-// swiftlint:disable file_length
-
 extension Compiler {
 
+  /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   internal func visitStatements<S: Sequence>(_ stmts: S) throws
     where S.Element == Statement {
 
@@ -21,43 +17,36 @@ extension Compiler {
     }
   }
 
+  /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   internal func visitStatement(_ stmt: Statement) throws {
+    // swiftlint:disable:previous function_body_length cyclomatic_complexity
     let location = stmt.start
 
     switch stmt.kind {
-case let .functionDef(name, args, body, decoratorList, returns):
-  try self.visitFunctionDef(name: name,
-                            args: args,
-                            body: body,
-                            decoratorList: decoratorList,
-                            returns: returns)
+    case let .functionDef(name, args, body, decorators, returns):
+      try self.visitFunctionDef(name: name,
+                                args: args,
+                                body: body,
+                                decorators: decorators,
+                                returns: returns,
+                                statement: stmt)
     case .asyncFunctionDef:
       throw self.notImplemented()
 
-case let .classDef(name, bases, keywords, body, decoratorList):
+case let .classDef(name, bases, keywords, body, decorators):
   try self.visitClassDef(name:  name,
                          bases: bases,
                          keywords: keywords,
                          body: body,
-                         decoratorList: decoratorList)
-
-    case let .return(exprs):
-      try self.visitReturn(value: exprs, location: location)
-
-    case let .delete(exprs):
-      try self.visitExpressions(exprs, context: .del)
+                         decorators: decorators)
 
     case let .assign(targets, value):
-      try self.visitAssign(targets:  targets,
-                           value:    value,
-                           location: location)
-
+      try self.visitAssign(targets:  targets, value:    value, location: location)
     case let .augAssign(target, op, value):
       try self.visitAugAssign(target:   target,
                               op:       op,
                               value:    value,
                               location: location)
-
     case let .annAssign(target, annotation, value, isSimple):
       try self.visitAnnAssign(target:     target,
                               annotation: annotation,
@@ -75,16 +64,10 @@ case let .classDef(name, bases, keywords, body, decoratorList):
       throw self.notImplemented()
 
     case let .while(test, body, orElse):
-      try self.visitWhile(test: test,
-                          body: body,
-                          orElse: orElse,
-                          location: location)
+      try self.visitWhile(test: test, body: body, orElse: orElse, location: location)
 
     case let .if(test, body, orElse):
-      try self.visitIf(test: test,
-                       body: body,
-                       orElse: orElse,
-                       location: location)
+      try self.visitIf(test: test, body: body, orElse: orElse, location: location)
 
     case let .with(items, body):
       try self.visitWith(items: items, body: body, location: location)
@@ -94,15 +77,13 @@ case let .classDef(name, bases, keywords, body, decoratorList):
     case let .raise(exception, cause):
       try self.visitRaise(exception: exception, cause: cause, location: location)
 case let .try(body, handlers, orElse, finalBody):
-  try self.visitTry(body: body, handlers: handlers, orElse: orElse, finalBody: finalBody)
-
-    case let .assert(test, msg):
-      try self.visitAssert(test: test, msg: msg, location: location)
+  try self.visitTry(body: body,
+                    handlers: handlers,
+                    orElse: orElse,
+                    finalBody: finalBody)
 
     case let .import(aliases):
-      try self.visitImport(aliases:  aliases,
-                           location: location)
-
+      try self.visitImport(aliases:  aliases, location: location)
     case let .importFrom(module, aliases, level):
       try self.visitImportFrom(module:   module,
                                aliases:  aliases,
@@ -112,16 +93,20 @@ case let .try(body, handlers, orElse, finalBody):
     case let .expr(expr):
       try self.visitExpressionStatement(expr, location: location)
 
+    case let .assert(test, msg):
+      try self.visitAssert(test: test, msg: msg, location: location)
+    case let .delete(exprs):
+      try self.visitExpressions(exprs, context: .del)
+    case let .return(exprs):
+      try self.visitReturn(value: exprs, location: location)
     case .break:
       try self.visitBreak(location: location)
-
     case .continue:
       try self.visitContinue(location: location)
       // TODO: Add missing cases in 'continue' implementation
 
     case .pass:
       break
-
     case .global,
          .nonlocal:
       // This will be taken from symbol table when emitting expressions.
@@ -129,14 +114,7 @@ case let .try(body, handlers, orElse, finalBody):
     }
   }
 
-  // MARK: - Function
-
-  private func visitFunctionDef(name: String,
-                                args: Arguments,
-                                body: NonEmptyArray<Statement>,
-                                decoratorList: [Expression],
-                                returns: Expression?) throws {
-  }
+  // MARK: - Return
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   private func visitReturn(value: Expression?, location: SourceLocation) throws {
@@ -163,7 +141,7 @@ case let .try(body, handlers, orElse, finalBody):
                              bases: [Expression],
                              keywords: [Keyword],
                              body: NonEmptyArray<Statement>,
-                             decoratorList: [Expression]) throws {
+                             decorators: [Expression]) throws {
   }
 
   // MARK: - Try/catch
@@ -198,7 +176,7 @@ case let .try(body, handlers, orElse, finalBody):
   private func visitAssert(test: Expression,
                            msg:  Expression?,
                            location: SourceLocation) throws {
-    if self.optimize {
+    if self.optimizationLevel > 0 {
       return
     }
 
@@ -212,8 +190,8 @@ case let .try(body, handlers, orElse, finalBody):
                              ifBooleanValueIs: true,
                              location: location)
 
-    // TODO: Do we really want to do it this way?
-    try self.builder.emitString("AssertionError", location: location)
+    let id = SpecialIdentifiers.assertionError
+    try self.builder.emitString(id, location: location)
 
     if let message = msg {
       // Call 'AssertionError' with single argument

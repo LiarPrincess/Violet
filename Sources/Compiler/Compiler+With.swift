@@ -11,6 +11,7 @@ extension Compiler {
   // MARK: - With
 
   /// compiler_with(struct compiler *c, stmt_ty s, int pos)
+  ///
   /// ```
   /// with EXPR as VAR:
   ///     BLOCK
@@ -31,14 +32,16 @@ extension Compiler {
   ///     exit(*exc)
   /// ```
   internal func visitWith(items: NonEmptyArray<WithItem>,
-                         body:   NonEmptyArray<Statement>,
-                         location: SourceLocation) throws {
+                          body:   NonEmptyArray<Statement>,
+                          location: SourceLocation) throws {
     try self.visitWith(items: items,
                        body:  body,
                        index: 0,
                        location: location)
   }
 
+  /// compiler_with(struct compiler *c, stmt_ty s, int pos)
+  ///
   /// ```c
   /// dis.dis('''
   /// with a as b:

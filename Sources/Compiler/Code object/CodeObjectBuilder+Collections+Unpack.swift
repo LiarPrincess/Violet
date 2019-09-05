@@ -34,6 +34,13 @@ extension CodeObjectBuilder {
     throw self.unimplemented()
   }
 
+  /// Append a `buildConstKeyMap` instruction to code object.
+  public func emitBuildConstKeyMap(elementCount: Int,
+                                   location: SourceLocation) throws {
+    // try self.emit(.buildConstKeyMap, location: location)
+    throw self.unimplemented()
+  }
+
   // MARK: - Add
 
   /// Append a `setAdd` instruction to code object.

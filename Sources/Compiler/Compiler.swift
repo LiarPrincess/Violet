@@ -42,10 +42,6 @@ public final class Compiler {
     return false
   }
 
-  internal var isInteractive: Bool {
-    return false
-  }
-
   internal var nestLevel: Int {
     return 0
   }
@@ -54,12 +50,12 @@ public final class Compiler {
   /// Mostly used for mangling.
   internal var className: String?
 
-  /// Optimization level
-  internal let optimize: Bool
 
-  public init(optimize: Bool) {
-    self.optimize = optimize
+  internal var isInteractive: Bool {
+    return false
   }
+
+  internal let optimizationLevel: UInt = 0
 
   // MARK: - Visit
 
@@ -69,7 +65,7 @@ public final class Compiler {
     let symbolTableBuilder = SymbolTableBuilder()
     self.symbolTable = try symbolTableBuilder.visit(ast)
 
-    self.enterScope(node: ast)
+    self.enterScope(name: SpecialIdentifiers.top, node: ast, type: .module)
 
     switch ast.kind {
     case let .single(stmts),
@@ -108,7 +104,8 @@ public final class Compiler {
   /// Push new scope.
   ///
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
-  internal func enterScope<N: ASTNode>(node: N) {
+  internal func enterScope<N: ASTNode>(name: String, node: N, type: CompilerScope) {
+    // TODO: name may be unused, if so then delete it
     guard let scope = self.symbolTable.scopeByNode[node] else {
       fatalError("[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
@@ -124,6 +121,14 @@ public final class Compiler {
     _ = self.scopeStack.popLast()
   }
 
+  // MARK: - Qualified name
+
+  /// compiler_set_qualname(struct compiler *c)
+  internal func createQualifiedName() throws -> String {
+    // TODO: fill this
+    return ""
+  }
+
   // MARK: - Error/warning
 
   /// Create parser warning
@@ -136,6 +141,29 @@ public final class Compiler {
   internal func error(_ kind: CompilerErrorKind,
                       location: SourceLocation) -> CompilerError {
     return CompilerError(kind, location: location)
+  }
+
+  // MARK: - Docstring
+
+  /// compiler_isdocstring(stmt_ty s)
+  internal func isDocString(_ stmt: Statement) -> Bool {
+    return self.getDocString(stmt) != nil
+  }
+
+  internal func getDocString(_ stmt: Statement) -> String? {
+    // TODO: we have similiar code in future as 'isStringLiteral'
+    guard case let StatementKind.expr(expr) = stmt.kind else {
+      return nil
+    }
+
+    guard case let ExpressionKind.string(group) = expr.kind else {
+      return nil
+    }
+
+    switch group {
+    case let .literal(s): return s
+    case .formattedValue, .joined: return nil
+    }
   }
 
   // MARK: - Not implemented

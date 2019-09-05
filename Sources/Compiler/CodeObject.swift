@@ -2,8 +2,13 @@ import Core
 import Parser
 import Bytecode
 
+public enum VarargName {
+  /// Separator for keyword arguments. Represented by just `*`.
+  case unnamed
+  case named(String)
+}
+
 // TODO: To struct
-// TODO: Use ConstantIndex, NameIndex, LabelIndex
 public final class CodeObject {
 
   /// Name of the class if the code is for a class.
@@ -28,13 +33,13 @@ public final class CodeObject {
   public var labels = [Int]()
 
   /// Names of positional arguments
-  public var argNames = [String]()
+  public var argNames: [String]?
   /// *args or *
-  public var varargs = Vararg.none
+  public var varargs: VarargName?
   /// Names of keyword only arguments
-  public var kwOnlyArgNames = [String]()
-  /// **kwargs or **
-  public var varKeywords = Vararg.none
+  public var kwOnlyArgNames: [String]?
+  /// **kwargs or ** (CPython: varKeywords)
+  public var kwargs: String?
 
   public init(name: String) {
     self.name = name

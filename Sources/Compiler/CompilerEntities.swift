@@ -22,6 +22,9 @@ internal enum SpecialIdentifiers {
   internal static let __class__ = "__class__"
   internal static let __annotations__ = "__annotations__"
   internal static let __future__ = "__future__"
+
+  internal static let assertionError = "AssertionError"
+  internal static let `return` = "return"
 }
 
 public enum ExpressionContext {
@@ -36,6 +39,16 @@ internal enum BlockType {
   case finallyTry
   case finallyEnd
 }
+
+internal enum CompilerScope {
+  case module
+  case `class`
+  case function
+  case asyncFunction
+  case lambda
+  case comprehension
+};
+
 /*
 
 public enum CompilerScope {

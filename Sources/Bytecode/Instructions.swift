@@ -237,6 +237,10 @@ public enum Instruction {
   /// Pops 2 * count items so that the dictionary holds count entries:
   /// {..., TOS3: TOS2, TOS1: TOS}.
   case buildMap(elementCount: UInt8)
+  /// The version of `BuildMap` specialized for constant keys.
+  /// `elementCount` values are consumed from the stack.
+  /// The top element on the stack contains a tuple of keys.
+  case buildConstKeyMap(elementCount: UInt8)
   /// Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
   /// Used to implement set comprehensions.
   case setAdd(I)
@@ -321,13 +325,15 @@ public enum Instruction {
   case loadClassDeref(I)
   /// Pushes a new function object on the stack.
   /// 
-  /// From bottom to top, the consumed stack must consist of values if the argument carries a specified flag value
-  /// - `0x01` - a tuple of default values for positional-only and positional-or-keyword parameters in positional order
+  /// From bottom to top, the consumed stack must consist of values
+  /// if the argument carries a specified flag value
+  /// - `0x01` - a tuple of default values for positional-only
+  ///            and positional-or-keyword parameters in positional order
   /// - `0x02` - a dictionary of keyword-only parameters’ default values
   /// - `0x04` - an annotation dictionary
   /// - `0x08` - a tuple containing cells for free variables, making a closure
-  /// the code associated with the function (at TOS1)
-  /// the qualified name of the function (at TOS)
+  ///            the code associated with the function (at TOS1)
+  ///            the qualified name of the function (at TOS)
   case makeFunction(argumentCount: UInt8)
   /// Calls a callable object with positional arguments.
   /// `argc` indicates the number of positional arguments.
@@ -340,6 +346,8 @@ public enum Instruction {
   /// 1. pop all arguments and the callable object off the stack
   /// 2. call the callable object with those arguments
   /// 3. push the return value returned by the callable object
+  /// - Note:
+  /// This opcode is used only for calls with positional arguments!
   case callFunction(argumentCount: UInt8)
   /// Calls a callable object with positional (if any) and keyword arguments.
   /// `argc` indicates the total number of positional and keyword arguments.
@@ -559,6 +567,11 @@ public enum Instruction {
 
   public var isBuildMap: Bool {
     if case .buildMap = self { return true }
+    return false
+  }
+
+  public var isBuildConstKeyMap: Bool {
+    if case .buildConstKeyMap = self { return true }
     return false
   }
 

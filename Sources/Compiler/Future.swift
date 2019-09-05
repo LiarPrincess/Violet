@@ -88,18 +88,22 @@ public final class FutureParser {
 
   private func getIndexAfterDoc(_ statements: [Statement]) -> Int {
     var index = 0
-    while index < statements.count && self.isStringExpr(statements[index]) {
+    while index < statements.count && self.isStringLiteral(statements[index]) {
       index += 1
     }
     return index
   }
 
-  private func isStringExpr(_ s: Statement) -> Bool {
-    guard case let .expr(expr) = s.kind else {
+  private func isStringLiteral(_ stmt: Statement) -> Bool {
+    guard case let StatementKind.expr(expr) = stmt.kind else {
       return false
     }
 
-    return expr.kind.isString
+    guard case let ExpressionKind.string(group) = expr.kind else {
+      return false
+    }
+
+    return group.isLiteral
   }
 
   /// future_check_features(PyFutureFeatures *ff, stmt_ty s, PyObject *filename)
