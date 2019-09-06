@@ -5,6 +5,8 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
+// swiftlint:disable file_length
+
 public struct CompilerOptions {
 
   /// True if in interactive mode (REPL)
@@ -37,22 +39,10 @@ public final class Compiler {
 
   /// Symbol table assiciated with `self.ast`.
   private let symbolTable: SymbolTable
-  /// Scope stack.
-  /// Current scope is at the top, top scope is at the bottom.
-  private var scopeStack = [SymbolScope]()
-  /// Scope that we are currently filling (top of the `self.scopeStack`).
-  internal var currentScope: SymbolScope {
-    if let last = self.scopeStack.last { return last }
-    fatalError("[BUG] Compiler: Using nil current scope.")
-  }
-  /// How far are we inside module/class/function scopes.
-  internal var nestLevel: Int {
-    return self.scopeStack.count
-  }
 
-  /// Stack of the code objects.
-  /// Current code object (the one that we are emmiting to) is at the top,
-  /// module code object is at the bottom.
+  /// Compiler unit stack.
+  /// Current unit (the one that we are emmiting to) is at the top,
+  /// top (module) unit is at the bottom.
   ///
   /// For example:
   /// ```c
@@ -62,11 +52,23 @@ public final class Compiler {
   /// ```
   /// Generates following stack:
   /// top -> class -> elsa
-  private var codeObjectStack = [CodeObject]()
+  private var unitStack = [CompilerUnit]()
+
   /// Code object that we are currently filling (top of the `self.codeObjectStack`).
   internal var codeObject: CodeObject {
-    if let last = self.codeObjectStack.last { return last }
+    if let last = self.unitStack.last { return last.codeObject }
     fatalError("[BUG] Compiler: Using nil current code object.")
+  }
+
+  /// Scope that we are currently filling (top of the `self.scopeStack`).
+  internal var currentScope: SymbolScope {
+    if let last = self.unitStack.last { return last.scope }
+    fatalError("[BUG] Compiler: Using nil current scope.")
+  }
+
+  /// How far are we inside module/class/function scopes.
+  internal var nestLevel: Int {
+    return self.unitStack.count
   }
 
   /// Stack of blocks (loop, except, finallyTry, finallyEnd)
@@ -76,10 +78,6 @@ public final class Compiler {
   internal var isInLoop: Bool {
     return self.blockStack.contains { $0.isLoop }
   }
-
-  /// Name of the class that we are currently filling (if any).
-  /// Mostly used for mangling.
-  internal var className: String?
 
   public init(ast: AST, options: CompilerOptions) throws {
     self.ast = ast
@@ -98,7 +96,7 @@ public final class Compiler {
   /// compiler_mod(struct compiler *c, mod_ty mod)
   public func run() throws -> CodeObject {
     // Have we already compiled?
-    if self.codeObjectStack.count == 1 {
+    if self.unitStack.count == 1 {
       return self.codeObject
     }
 
@@ -112,10 +110,10 @@ public final class Compiler {
       try self.visitExpression(expr)
     }
 
-    // TODO: Emit nop. because it may be an jump target!
-    // TODO: Check if all blocks have valid labels
+    // Emit epilog (because we may be a jump target).
+    try self.codeObject.emitNop(location: self.ast.end)
 
-    assert(self.codeObjectStack.count == 1)
+    assert(self.unitStack.count == 1)
     return self.codeObject
   }
 
@@ -130,13 +128,20 @@ public final class Compiler {
     }
 
     assert(self.isMatchingScopeType(scope.type, to: type))
-    self.scopeStack.push(scope)
 
-    let line = node.start.line
-    let object = CodeObject(name: scope.name, type: type, line: line)
+    let name = scope.name
+    let qualifiedName = self.createQualifiedName(for: name, type: type)
+    let object = CodeObject(name: name,
+                            qualifiedName: qualifiedName,
+                            type: type,
+                            line: node.start.line)
 
-    self.codeObjectStack.append(object)
-    // TODO: qual name
+    let className = type == .class ? name : nil
+    let unit = CompilerUnit(codeObject: object,
+                            scope: scope,
+                            className: className)
+
+    self.unitStack.append(unit)
   }
 
   private func isMatchingScopeType(_ scopeType: ScopeType,
@@ -154,20 +159,21 @@ public final class Compiler {
     }
   }
 
-  /// Pop scope.
+  /// Pop scope (along with correcsponding code object).
   ///
   /// compiler_exit_scope(struct compiler *c)
-  internal func leaveScope() {
-    // Pop scope
-    assert(self.scopeStack.any)
-    _ = self.scopeStack.popLast()
+  internal func leaveScope() -> CodeObject {
+    guard let unit = self.unitStack.popLast() else {
+      fatalError("[BUG] Compiler: Attempting to pop non-existing unit.")
+    }
 
-    // Pop code object
-    let object = self.codeObjectStack.popLast()
+    assert(self.unitStack.any, "Popped top scope.")
+    assert(
+      unit.codeObject.labels.allSatisfy { $0 != Label.notAssigned },
+      "One of the labels does not have assigned address."
+    )
 
-    assert(object != nil)
-    assert(object!.labels.allSatisfy { $0 != Label.notAssigned })
-    // swiftlint:disable:previous force_unwrapping
+    return unit.codeObject
   }
 
   // MARK: - Block
@@ -183,12 +189,58 @@ public final class Compiler {
     _ = self.blockStack.popLast()
   }
 
-  // MARK: - Qualified name
+  // MARK: - Mangled/qualified name
+
+  internal func mangleName(_ name: String) -> MangledName {
+    let unit = self.unitStack.last { $0.className != nil }
+    return MangledName(className: unit?.className, name: name)
+  }
 
   /// compiler_set_qualname(struct compiler *c)
-  internal func createQualifiedName() throws -> String {
-    // TODO: fill this
-    return ""
+  ///
+  /// Special case:
+  /// ```
+  /// def elsa(): print('elsa')
+  ///
+  /// def redefine_elsa():
+  ///   global elsa
+  ///   def elsa(): print('anna') <- qualified name: elsa
+  ///
+  /// elsa() # prints 'elsa'
+  /// redefine_elsa()
+  /// elsa() # prints 'anna'
+  /// ```
+  /// - Note:
+  /// It has to be called BEFORE code object is pushed on stack!
+  /// (which is different than CPython)
+  internal func createQualifiedName(for name: String,
+                                    type: CodeObjectType) -> String {
+
+    // Top scope has "" as qualified name.
+    guard let parent = self.unitStack.last else {
+      return ""
+    }
+
+    /// Is this a special case? (see docstring)
+    let isGlobal: Bool = {
+      guard type == .function || type == .asyncFunction || type == .class else {
+        return false
+      }
+
+      let mangled = MangledName(className: parent.className, name: name)
+      let info = parent.scope.symbols[mangled]
+      return info?.flags.contains(.srcGlobalExplicit) ?? false
+    }()
+
+    if isGlobal {
+      return name
+    }
+
+    let pt = parent.codeObject.type
+    let isFunction = pt == .function || pt == .asyncFunction || pt == .lambda
+    let locals = isFunction ? ".<locals>" : ""
+
+    return parent.codeObject.qualifiedName + locals + "." + name
   }
 
   // MARK: - Error/warning

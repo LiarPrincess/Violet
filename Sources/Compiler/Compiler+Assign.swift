@@ -58,7 +58,7 @@ extension Compiler {
                                location: SourceLocation) throws {
     switch target.kind {
     case let .identifier(name):
-      let mangled = MangledName(className: self.className, name: name)
+      let mangled = self.mangleName(name)
       try self.codeObject.emitLoadName(name: mangled, location: location)
       try self.visitExpression(value)
       try self.codeObject.emitInplaceOperator(op, location: location)
@@ -120,7 +120,7 @@ extension Compiler {
       }
 
       let __annotations__ = SpecialIdentifiers.__annotations__
-      let mangled = MangledName(className: self.className, name: name)
+      let mangled = self.mangleName(name)
 
       try self.codeObject.emitLoadName(name: __annotations__, location: location)
       try self.codeObject.emitString(mangled, location: location)

@@ -109,7 +109,7 @@ extension Compiler {
                                  location: location)
 
     case let .attribute(expr, name):
-      let mangled = MangledName(className: self.className, name: name)
+      let mangled = self.mangleName(name)
       try self.visitExpression(expr)
       try self.codeObject.emitAttribute(name: mangled, context: context, location: location)
 
@@ -143,7 +143,7 @@ extension Compiler {
                                context: ExpressionContext,
                                location: SourceLocation) throws {
 
-    let mangled = MangledName(className: self.className, name: value)
+    let mangled = self.mangleName(value)
     let info = self.currentScope.symbols[mangled]
 
     // TODO: Leave assert here, but handle __doc__ and the like better

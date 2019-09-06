@@ -95,9 +95,7 @@ extension Compiler {
         continue
       }
 
-      let name = MangledName(className: self.className, name: arg.name)
-      names.append(name)
-
+      names.append(self.mangleName(arg.name))
       try self.visitExpression(def)
     }
 
@@ -182,7 +180,6 @@ extension Compiler {
       try self.visitExpression(ann)
     }
 
-    let mangled = MangledName(className: self.className, name: name)
-    names.append(mangled)
+    names.append(self.mangleName(name))
   }
 }

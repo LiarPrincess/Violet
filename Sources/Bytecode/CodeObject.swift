@@ -16,6 +16,16 @@ public final class CodeObject {
   /// Name of the function if the code is for a function.
   /// Otherwise 'top'.
   public let name: String
+  /// Dot-separated qualified name.
+  ///
+  /// For example:
+  /// ```c
+  /// class frozen: <- qualified name: frozen
+  ///   def elsa:   <- qualified name: frozen.elsa
+  ///     pass
+  /// ```
+  public let qualifiedName: String
+
   /// Type of the code object.
   /// Possible values are: module, class, (async)function, lambda and comprehension.
   public let type: CodeObjectType
@@ -52,8 +62,12 @@ public final class CodeObject {
   /// List of strings (cell variable names)
 //  public var cellVars = [String]()
 
-  public init(name: String, type: CodeObjectType, line: SourceLine) {
+  public init(name: String,
+              qualifiedName: String,
+              type: CodeObjectType,
+              line: SourceLine) {
     self.name = name
+    self.qualifiedName = qualifiedName
     self.type = type
     self.firstLine = line
   }
