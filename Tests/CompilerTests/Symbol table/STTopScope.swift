@@ -24,7 +24,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
                               location: loc1)
 
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
     }
   }
 
@@ -44,7 +44,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
                               location: loc1)
 
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
     }
   }
 
@@ -65,7 +65,7 @@ class STTopScope: XCTestCase, CommonSymbolTable {
                               location: loc1)
 
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
     }
   }
 

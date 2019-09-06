@@ -77,7 +77,7 @@ public final class SymbolScope {
   public internal(set) var children = [SymbolScope]()
 
   /// List of function parameters
-  public internal(set) var varnames = [MangledName]()
+  public internal(set) var varNames = [MangledName]()
 
   /// Block is a nested class or function.
   public let isNested: Bool
@@ -124,7 +124,7 @@ public struct SymbolFlags: OptionSet, Equatable {
 
   public let rawValue: UInt16
 
-  // MARK: Variable definition (in a current scope)
+  // MARK: Variable definition (based only on current scope)
 
   /// Defined in code block, for example: `elsa = 5`.
   /// Used for `assigned` property in `symtable` module.
@@ -155,7 +155,7 @@ public struct SymbolFlags: OptionSet, Equatable {
     .defGlobal, .defNonlocal, .defLocal, .defParam
   ]
 
-  // MARK: Variable source (from other scopes)
+  // MARK: Variable source (based on other scopes)
 
   /// Local variable, parameter or import
   public static let srcLocal = SymbolFlags(rawValue: 1 << 7)

@@ -110,7 +110,7 @@ public final class SymbolTableBuilder {
     self.currentScope.symbols[mangled] = info
 
     if flags.contains(.defParam) {
-      self.currentScope.varnames.append(mangled)
+      self.currentScope.varNames.append(mangled)
     } else if flags.contains(.defGlobal) {
       var globalsToSet = flagsToSet
       if let currentGlobal = self.topScope.symbols[mangled] {

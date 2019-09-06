@@ -56,7 +56,7 @@ internal func XCTAssertContainsParameter(_ scope: SymbolScope,
                                          file: StaticString = #file,
                                          line: UInt         = #line) {
   let mangled = MangledName(from: name)
-  XCTAssertTrue(scope.varnames.contains(mangled),
+  XCTAssertTrue(scope.varNames.contains(mangled),
                 "\(message) (missing \(name))",
                 file: file, line: line)
 }

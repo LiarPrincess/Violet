@@ -28,7 +28,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
 
         XCTAssert(top.symbols.isEmpty, msg)
         XCTAssert(top.children.isEmpty, msg)
-        XCTAssert(top.varnames.isEmpty, msg)
+        XCTAssert(top.varNames.isEmpty, msg)
       }
     }
   }
@@ -62,7 +62,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: f) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -76,7 +76,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
       XCTAssertScope(bodyScope, name: "let_it_go", type: .function, flags: [.hasReturnValue, .isNested])
       XCTAssert(bodyScope.children.isEmpty)
 
-      XCTAssertEqual(bodyScope.varnames.count, 1)
+      XCTAssertEqual(bodyScope.varNames.count, 1)
       XCTAssertContainsParameter(bodyScope, name: "elsa")
 
       // We have '.use' flag, which means that return value was visited
@@ -104,7 +104,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -136,7 +136,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -175,7 +175,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
@@ -216,7 +216,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
@@ -257,7 +257,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
@@ -302,7 +302,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -337,7 +337,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -387,7 +387,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 5)
@@ -434,7 +434,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -459,7 +459,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -490,7 +490,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
@@ -520,7 +520,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -554,7 +554,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
@@ -583,7 +583,7 @@ class STStmt: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.children.isEmpty)
       XCTAssert(top.symbols.isEmpty)
     }

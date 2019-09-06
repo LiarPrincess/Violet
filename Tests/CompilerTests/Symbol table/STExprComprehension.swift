@@ -47,7 +47,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -62,7 +62,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertScope(listComp, name: "listcomp", type: .function, flags: [.isNested])
       XCTAssert(listComp.children.isEmpty)
 
-      XCTAssertEqual(listComp.varnames.count, 1)
+      XCTAssertEqual(listComp.varNames.count, 1)
       XCTAssertContainsParameter(listComp, name: ".0")
 
       XCTAssertEqual(listComp.symbols.count, 2)
@@ -111,7 +111,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.symbols.isEmpty)
 
       XCTAssertEqual(top.children.count, 1)
@@ -121,7 +121,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertScope(listComp, name: "listcomp", type: .function, flags: [.isNested, .isCoroutine])
       XCTAssert(listComp.children.isEmpty)
 
-      XCTAssertEqual(listComp.varnames.count, 1)
+      XCTAssertEqual(listComp.varNames.count, 1)
       XCTAssertContainsParameter(listComp, name: ".0")
 
       XCTAssertEqual(listComp.symbols.count, 3)
@@ -175,7 +175,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
       XCTAssert(top.symbols.isEmpty)
 
       XCTAssertEqual(top.children.count, 1)
@@ -185,7 +185,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertScope(listComp, name: "listcomp", type: .function, flags: [.isNested])
       XCTAssert(listComp.children.isEmpty)
 
-      XCTAssertEqual(listComp.varnames.count, 1)
+      XCTAssertEqual(listComp.varNames.count, 1)
       XCTAssertContainsParameter(listComp, name: ".0")
 
       XCTAssertEqual(listComp.symbols.count, 3)
@@ -224,7 +224,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -239,7 +239,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertScope(listComp, name: "setcomp", type: .function, flags: [.isNested])
       XCTAssert(listComp.children.isEmpty)
 
-      XCTAssertEqual(listComp.varnames.count, 1)
+      XCTAssertEqual(listComp.varNames.count, 1)
       XCTAssertContainsParameter(listComp, name: ".0")
 
       XCTAssertEqual(listComp.symbols.count, 2)
@@ -293,7 +293,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -308,7 +308,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
       XCTAssertScope(listComp, name: "dictcomp", type: .function, flags: [.isNested])
       XCTAssert(listComp.children.isEmpty)
 
-      XCTAssertEqual(listComp.varnames.count, 1)
+      XCTAssertEqual(listComp.varNames.count, 1)
       XCTAssertContainsParameter(listComp, name: ".0")
 
       XCTAssertEqual(listComp.symbols.count, 3)
@@ -347,7 +347,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -365,7 +365,7 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
                      flags: [.isNested, .isGenerator])
       XCTAssert(listComp.children.isEmpty)
 
-      XCTAssertEqual(listComp.varnames.count, 1)
+      XCTAssertEqual(listComp.varNames.count, 1)
       XCTAssertContainsParameter(listComp, name: ".0")
 
       XCTAssertEqual(listComp.symbols.count, 2)

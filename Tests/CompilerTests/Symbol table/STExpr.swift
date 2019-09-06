@@ -21,7 +21,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
     }
   }
 
@@ -44,7 +44,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
         XCTAssert(top.symbols.isEmpty, msg)
         XCTAssert(top.children.isEmpty, msg)
-        XCTAssert(top.varnames.isEmpty, msg)
+        XCTAssert(top.varNames.isEmpty, msg)
       }
     }
   }
@@ -61,7 +61,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
     }
   }
 
@@ -76,7 +76,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -101,7 +101,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -125,7 +125,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
         let top = table.top
         XCTAssertScope(top, name: "top", type: .module, flags: [])
         XCTAssert(top.children.isEmpty)
-        XCTAssert(top.varnames.isEmpty)
+        XCTAssert(top.varNames.isEmpty)
 
         XCTAssertEqual(top.symbols.count, 1)
         XCTAssertContainsSymbol(top,
@@ -153,7 +153,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
         let top = table.top
         XCTAssertScope(top, name: "top", type: .module, flags: [])
         XCTAssert(top.children.isEmpty)
-        XCTAssert(top.varnames.isEmpty)
+        XCTAssert(top.varNames.isEmpty)
 
         XCTAssertEqual(top.symbols.count, 2)
         XCTAssertContainsSymbol(top,
@@ -181,7 +181,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
         let top = table.top
         XCTAssertScope(top, name: "top", type: .module, flags: [])
         XCTAssert(top.children.isEmpty)
-        XCTAssert(top.varnames.isEmpty)
+        XCTAssert(top.varNames.isEmpty)
 
         XCTAssertEqual(top.symbols.count, 2)
         XCTAssertContainsSymbol(top,
@@ -216,7 +216,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
         let top = table.top
         XCTAssertScope(top, name: "top", type: .module, flags: [])
         XCTAssert(top.children.isEmpty)
-        XCTAssert(top.varnames.isEmpty)
+        XCTAssert(top.varNames.isEmpty)
 
         XCTAssertEqual(top.symbols.count, 2)
         XCTAssertContainsSymbol(top,
@@ -243,7 +243,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -267,7 +267,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -291,7 +291,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -320,7 +320,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
       XCTAssertContainsSymbol(top,
@@ -349,7 +349,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -372,7 +372,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
@@ -401,7 +401,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 4)
       XCTAssertContainsSymbol(top,
@@ -434,7 +434,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -455,7 +455,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [.isCoroutine])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -475,7 +475,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
       XCTAssert(top.symbols.isEmpty)
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
     }
   }
 
@@ -488,7 +488,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [.isGenerator])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -507,7 +507,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [.isGenerator])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 1)
       XCTAssertContainsSymbol(top,
@@ -531,7 +531,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
       XCTAssertContainsSymbol(top,
@@ -574,7 +574,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
-      XCTAssert(top.varnames.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
 
       XCTAssertEqual(top.symbols.count, 3)
       XCTAssertContainsSymbol(top,
