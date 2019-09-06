@@ -48,23 +48,19 @@ public final class CodeObject {
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
   public internal(set) var labels = [Int]()
 
-  // TODO: This is filled in 'visitFunction'
-  /// Arguments, except *args
-//  public var argCount = 0
-  /// Keyword only arguments
-//  public var kwOnlyArgCount = 0
-
-  // TODO: This is filled in 'enter scope'
-  /// List of strings (local variable names)
-//  public var varNames = [String]()
-  /// List of strings (free variable names)
-//  public var freeVars = [String]()
-  /// List of strings (cell variable names)
-//  public var cellVars = [String]()
+  /// List of local variable names
+  public var varNames = [MangledName]()
+  /// List of free variable names
+  public var freeVars = [MangledName]()
+  /// List of cell variable names
+  public var cellVars = [MangledName]()
 
   public init(name: String,
               qualifiedName: String,
               type: CodeObjectType,
+              varNames: [MangledName],
+              freeVars: [MangledName],
+              cellVars: [MangledName],
               line: SourceLine) {
     self.name = name
     self.qualifiedName = qualifiedName

@@ -349,7 +349,7 @@ public enum Instruction {
   /// - `0x08` - has tuple containing cells for free variables,
   ///            making a closure the code associated with the function (at TOS1)
   ///            the qualified name of the function (at TOS)
-  case makeFunction(argumentCount: UInt8)
+  case makeFunction(FunctionFlags)
   /// Calls a callable object with positional arguments.
   /// `argc` indicates the number of positional arguments.
   /// 

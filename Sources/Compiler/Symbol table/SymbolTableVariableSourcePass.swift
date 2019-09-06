@@ -1,4 +1,5 @@
 import Core
+import Bytecode
 
 // In CPython:
 // Python -> symtable.c

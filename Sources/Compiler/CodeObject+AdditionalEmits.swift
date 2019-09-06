@@ -2,6 +2,7 @@ import Core
 import Bytecode
 import Parser
 
+// TODO: Direct emit in code (instead of indirect)
 public enum DerefContext {
   case store
   case load
@@ -10,11 +11,6 @@ public enum DerefContext {
 }
 
 extension CodeObject {
-
-  /// Append a `loadConst` instruction to code object.
-  public func emitString(_ mangled: MangledName, location: SourceLocation) throws {
-    try self.emitConstant(.string(mangled.value), location: location)
-  }
 
   public func emitName<S: ConstantString>(name: S,
                                           context:  ExpressionContext,

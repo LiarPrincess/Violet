@@ -6,11 +6,13 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
+// swiftlint:disable function_parameter_count
+// swiftlint:disable function_body_length
+
 extension Compiler {
 
   /// compiler_function(struct compiler *c, stmt_ty s, int is_async)
   internal func visitFunctionDef(name: String,
- // swiftlint:disable:previous function_parameter_count
                                  args: Arguments,
                                  body: NonEmptyArray<Statement>,
                                  decorators: [Expression],
@@ -35,17 +37,20 @@ extension Compiler {
 
     self.enterScope(node: statement, type: .function)
 
-    if let docString = self.getDocString(body.first),
-        self.options.optimizationLevel < 2 {
-
+    let optimizationLevel = self.options.optimizationLevel
+    if let docString = self.getDocString(body.first), optimizationLevel < 2 {
       try self.codeObject.emitString(docString, location: location)
     }
 
     try self.visitStatements(body)
-    // TODO: qualname = c->u->u_qualname;
-    self.leaveScope()
+    let qualifiedName = self.codeObject.qualifiedName
+    let codeObject = self.leaveScope()
 
-    // TODO: compiler_make_closure(c, co, funcflags, qualname);
+    try self.makeClosure(codeObject: codeObject,
+                         qualifiedName: qualifiedName,
+                         flags: flags,
+                         location: location)
+
     for _ in decorators {
       try self.codeObject.emitCallFunction(argumentCount: 1, location: location)
     }
@@ -112,7 +117,7 @@ extension Compiler {
 
   /// compiler_visit_annotations(struct compiler *c, arguments_ty args, ...)
   private func visitAnnotations(args: Arguments,
-  // swiftlint:disable:previous function_body_length
+
                                 returns: Expression?,
                                 updating flags: inout FunctionFlags,
                                 location: SourceLocation) throws {
@@ -181,5 +186,60 @@ extension Compiler {
     }
 
     names.append(self.mangleName(name))
+  }
+
+  // MARK: - Closure
+
+  /// compiler_make_closure(struct compiler *c, PyCodeObject *co,
+  /// Py_ssize_t flags, PyObject *qualname)
+  private func makeClosure(codeObject: CodeObject,
+                           qualifiedName: String,
+                           flags:    FunctionFlags,
+                           location: SourceLocation) throws {
+    var makeFunctionFlags = flags
+
+    if codeObject.freeVars.any {
+      for (freeIndex, name) in codeObject.freeVars.enumerated() {
+        // If a class contains a method with a *free variable* that has the same
+        // name as a *method*, the name will be considered free and local.
+
+        var index = ClosureIndex.free(freeIndex)
+
+        let flags = self.getRefType(name: name, qualifiedName: qualifiedName)
+        if flags.contains(.cell) {
+          if let i = codeObject.cellVars.firstIndex(of: name) {
+            index = .cell(i)
+          } else {
+            assert(false)
+          }
+        }
+
+        try self.codeObject.emitLoadClosure(index: index, location: location)
+      }
+
+      let count = codeObject.freeVars.count
+      try self.codeObject.emitBuildTuple(elementCount: count, location: location)
+      makeFunctionFlags.formUnion(.hasFreeVariables)
+    }
+
+    try self.codeObject.emitCode(codeObject, location: location)
+    try self.codeObject.emitString(qualifiedName, location: location)
+    try self.codeObject.emitMakeFunction(flags: makeFunctionFlags,
+                                         location: location)
+  }
+
+  private func getRefType(name: MangledName,
+                          qualifiedName: String) -> SymbolFlags {
+    let classId = SpecialIdentifiers.__class__
+    if self.codeObject.type == .class && name.value == classId {
+      return .cell
+    }
+
+    if let scope = self.currentScope.symbols[name] {
+      return scope.flags
+    }
+
+    fatalError(
+      "[BUG] Compiler: Unknown scope for '\(name)' inside '\(qualifiedName)'.")
   }
 }

@@ -1,5 +1,3 @@
-import Bytecode
-
 // In CPython:
 // Python -> compile.c
 //   _Py_Mangle(PyObject *privateobj, PyObject *ident)
@@ -41,7 +39,13 @@ public struct MangledName: Equatable, Hashable {
 }
 
 extension MangledName: ConstantString {
-  public var asConstant: String { return self.value }
+  public var constant: String { return self.value }
+}
+
+extension MangledName: CustomStringConvertible {
+  public var description: String {
+    return self.value
+  }
 }
 
 private func mangle(className: String?, name: String) -> String {

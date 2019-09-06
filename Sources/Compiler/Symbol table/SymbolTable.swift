@@ -1,4 +1,5 @@
 import Core
+import Bytecode
 import Parser
 
 // In CPython:
@@ -143,12 +144,16 @@ public struct SymbolFlags: OptionSet, Equatable {
 
   /// Bound in scope.
   /// Includes: local, param or import
-  public static let defBoundMask: SymbolFlags = [.defLocal, .defParam, .defImport]
+  public static let defBoundMask: SymbolFlags = [
+    .defLocal, .defParam, .defImport
+  ]
 
   /// Used in scope.
   /// Includes: global, nonlocal, local, param
   /// Does NOT include: import, free, freeClass
-  public static let defScopeMask: SymbolFlags = [.defGlobal, .defNonlocal, .defLocal, .defParam]
+  public static let defScopeMask: SymbolFlags = [
+    .defGlobal, .defNonlocal, .defLocal, .defParam
+  ]
 
   // MARK: Variable source (from other scopes)
 
@@ -159,12 +164,16 @@ public struct SymbolFlags: OptionSet, Equatable {
   /// Free variable without binding in an enclosing function scope.
   /// It is either a global or a builtin.
   public static let srcGlobalImplicit = SymbolFlags(rawValue: 1 << 9)
-
   /// Variable comes from parent scope (its exact source is called `cell`)
   public static let srcFree = SymbolFlags(rawValue: 1 << 10)
+
   /// Variable provides binding that is used for `srcFree` variables
   /// in enclosed blocks
   public static let cell = SymbolFlags(rawValue: 1 << 11)
+
+  public static let srcMask: SymbolFlags = [
+    .srcLocal, .srcGlobalExplicit, .srcGlobalImplicit, .srcFree, .cell
+  ]
 
   // MARK: Additional
 

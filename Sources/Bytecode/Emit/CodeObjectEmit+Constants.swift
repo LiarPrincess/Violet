@@ -41,8 +41,9 @@ extension CodeObject {
   }
 
   /// Append a `loadConst` instruction to code object.
-  public func emitString(_ value: String, location: SourceLocation) throws {
-    try self.emitConstant(.string(value), location: location)
+  public func emitString<S: ConstantString>(_ value: S,
+                                            location: SourceLocation) throws {
+    try self.emitConstant(.string(value.constant), location: location)
   }
 
   /// Append a `loadConst` instruction to code object.
@@ -53,6 +54,11 @@ extension CodeObject {
   /// Append a `loadConst` instruction to code object.
   public func emitTuple(_ value: [Constant], location: SourceLocation) throws {
     try self.emitConstant(.tuple(value), location: location)
+  }
+
+  /// Append a `loadConst` instruction to code object.
+  public func emitCode(_ value: CodeObject, location: SourceLocation) throws {
+    try self.emitConstant(.code(value), location: location)
   }
 
   public func emitConstant(_ constant: Constant,

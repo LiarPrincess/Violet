@@ -1,4 +1,5 @@
 import Core
+import Bytecode
 import Parser
 
 // In CPython:

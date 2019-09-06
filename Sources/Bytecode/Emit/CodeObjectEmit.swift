@@ -40,7 +40,7 @@ extension CodeObject {
 
     let rawIndex = self.names.endIndex
     let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
-    self.names.append(name.asConstant)
+    self.names.append(name.constant)
     return index
   }
 

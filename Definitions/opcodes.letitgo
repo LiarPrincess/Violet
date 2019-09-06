@@ -415,7 +415,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- - `0x08` - has tuple containing cells for free variables,
   --            making a closure the code associated with the function (at TOS1)
   --            the qualified name of the function (at TOS)
-  | MakeFunction(UInt8 argumentCount)
+  | MakeFunction(FunctionFlags)
 
   -- Calls a callable object with positional arguments.
   -- `argc` indicates the number of positional arguments.
@@ -667,10 +667,11 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | PopBlock
 
   {- TODO: docs -}
-  -- Pushes a reference to the cell contained in slot i of the cell and free variable storage.
-  -- The name of the variable is CoCellvars[i] if i is less than the length of CoCellvars.
-  -- Otherwise it is CoFreevars[i - len(CoCellvars)].
-  | LoadClosure(Item)
+  -- Pushes a reference to the cell contained in slot 'i'
+  -- of the 'cell' or 'free' variable storage.
+  -- If 'i' < CellVars.count: name of the variable is CellVars[i].
+  -- otherwise:               name is FreeVars[i - len(CellVars)].
+  | LoadClosure(Index)
 
   -- Pushes a slice object on the stack.
   -- `argc` must be 2 or 3.

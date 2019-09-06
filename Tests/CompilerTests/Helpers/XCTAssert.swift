@@ -2,6 +2,7 @@ import XCTest
 import Core
 import Lexer
 import Parser
+import Bytecode
 import Compiler
 
 // swiftlint:disable multiline_arguments

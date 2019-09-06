@@ -117,7 +117,7 @@ public final class Compiler {
     return self.codeObject
   }
 
-  // MARK: - Scope/Code object
+  // MARK: - Scope/code object
 
   /// Push new scope (and generate a new code object to emit to).
   ///
@@ -131,9 +131,23 @@ public final class Compiler {
 
     let name = scope.name
     let qualifiedName = self.createQualifiedName(for: name, type: type)
+
+    let varNames = scope.varNames
+    let freeVars = self.getSymbols(scope, withAnyOf: [.defFree, .defFreeClass])
+    var cellVars = self.getSymbols(scope, withAnyOf: .cell)
+
+    // append implicit __class__ cell.
+    if scope.needsClassClosure {
+      assert(scope.type == .class) // needsClassClosure can only be set on class
+      cellVars.append(MangledName(from: SpecialIdentifiers.__class__))
+    }
+
     let object = CodeObject(name: name,
                             qualifiedName: qualifiedName,
                             type: type,
+                            varNames: varNames,
+                            freeVars: freeVars,
+                            cellVars: cellVars,
                             line: node.start.line)
 
     let className = type == .class ? name : nil
@@ -142,21 +156,6 @@ public final class Compiler {
                             className: className)
 
     self.unitStack.append(unit)
-  }
-
-  private func isMatchingScopeType(_ scopeType: ScopeType,
-                                   to codeObjectType: CodeObjectType) -> Bool {
-    switch scopeType {
-    case .module:
-      return codeObjectType == .module
-    case .class:
-      return codeObjectType == .class
-    case .function:
-      return codeObjectType == .function
-          || codeObjectType == .asyncFunction
-          || codeObjectType == .lambda
-          || codeObjectType == .comprehension
-    }
   }
 
   /// Pop scope (along with correcsponding code object).
@@ -176,24 +175,21 @@ public final class Compiler {
     return unit.codeObject
   }
 
-  // MARK: - Block
+  // MARK: - Scope/code object helpers
 
-  /// compiler_push_fblock(struct compiler *c, enum fblocktype t, basicblock *b)
-  internal func pushBlock(_ type: BlockType) {
-    self.blockStack.push(type)
-  }
-
-  /// compiler_pop_fblock(struct compiler *c, enum fblocktype t, basicblock *b)
-  internal func popBlock() {
-    assert(self.blockStack.any)
-    _ = self.blockStack.popLast()
-  }
-
-  // MARK: - Mangled/qualified name
-
-  internal func mangleName(_ name: String) -> MangledName {
-    let unit = self.unitStack.last { $0.className != nil }
-    return MangledName(className: unit?.className, name: name)
+  private func isMatchingScopeType(_ scopeType: ScopeType,
+                                   to codeObjectType: CodeObjectType) -> Bool {
+    switch scopeType {
+    case .module:
+      return codeObjectType == .module
+    case .class:
+      return codeObjectType == .class
+    case .function:
+      return codeObjectType == .function
+        || codeObjectType == .asyncFunction
+        || codeObjectType == .lambda
+        || codeObjectType == .comprehension
+    }
   }
 
   /// compiler_set_qualname(struct compiler *c)
@@ -243,6 +239,50 @@ public final class Compiler {
     return parent.codeObject.qualifiedName + locals + "." + name
   }
 
+  /// dictbytype(PyObject *src, int scope_type, int flag, Py_ssize_t offset)
+  ///
+  /// If the scope of a name matches either scope_type or flag is set,
+  /// insert it into the new dict.
+  private func getSymbols(_ scope: SymbolScope,
+                          withAnyOf flags: SymbolFlags) -> [MangledName] {
+    // Sort the keys so that we have a deterministic order on the indexes
+    // saved in the returned dictionary.
+    // These indexes are used as indexes into the free and cell var storage.
+
+    var result = [MangledName]()
+    let sortedNames = scope.symbols.keys.sorted { $0.value < $1.value }
+
+    for name in sortedNames {
+      // swiftlint:disable:next force_unwrapping
+      let symbol = scope.symbols[name]!
+      if symbol.flags.containsAny(flags) {
+        result.append(name)
+      }
+    }
+
+    return result
+  }
+
+  // MARK: - Block
+
+  /// compiler_push_fblock(struct compiler *c, enum fblocktype t, basicblock *b)
+  internal func pushBlock(_ type: BlockType) {
+    self.blockStack.push(type)
+  }
+
+  /// compiler_pop_fblock(struct compiler *c, enum fblocktype t, basicblock *b)
+  internal func popBlock() {
+    assert(self.blockStack.any)
+    _ = self.blockStack.popLast()
+  }
+
+  // MARK: - Helpers
+
+  internal func mangleName(_ name: String) -> MangledName {
+    let unit = self.unitStack.last { $0.className != nil }
+    return MangledName(className: unit?.className, name: name)
+  }
+
   // MARK: - Error/warning
 
   /// Create parser warning
@@ -257,7 +297,7 @@ public final class Compiler {
     return CompilerError(kind, location: location)
   }
 
-  // MARK: - Docstring
+  // MARK: - DocString
 
   /// compiler_isdocstring(stmt_ty s)
   internal func isDocString(_ stmt: Statement) -> Bool {

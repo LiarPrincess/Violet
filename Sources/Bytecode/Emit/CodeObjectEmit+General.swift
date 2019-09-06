@@ -1,5 +1,10 @@
 import Core
 
+public enum ClosureIndex {
+  case cell(Int)
+  case free(Int)
+}
+
 extension CodeObject {
 
   /// Append a `nop` instruction to code object.
@@ -54,8 +59,20 @@ extension CodeObject {
   }
 
   /// Append a `loadClosure` instruction to code object.
-  public func emitLoadClosure(value: Item, location: SourceLocation) throws {
+  public func emitLoadClosure(index: ClosureIndex,
+                              location: SourceLocation) throws {
     // try self.emit(.loadClosure, location: location)
+
+//    switch index {
+//    case let .cell(i):
+//      // index = i
+//      break
+//    case let .free(i):
+//      let offset = self.cellVars.count
+//      // index = offset + i
+//      break
+//    }
+
     throw self.unimplemented()
   }
 

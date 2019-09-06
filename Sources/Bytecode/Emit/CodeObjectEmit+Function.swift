@@ -3,7 +3,7 @@ import Core
 extension CodeObject {
 
   /// Append a `makeFunction` instruction to code object.
-  public func emitMakeFunction(argumentCount: Int,
+  public func emitMakeFunction(flags: FunctionFlags,
                                location: SourceLocation) throws {
     // try self.emit(.makeFunction, location: location)
     throw self.unimplemented()
