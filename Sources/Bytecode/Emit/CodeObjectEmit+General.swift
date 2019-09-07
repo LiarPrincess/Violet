@@ -1,5 +1,6 @@
 import Core
 
+// TODO: We can replace it with .xxx(MangledName)
 public enum ClosureIndex {
   case cell(Int)
   case free(Int)

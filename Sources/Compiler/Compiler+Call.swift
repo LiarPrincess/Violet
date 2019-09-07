@@ -30,8 +30,8 @@ extension Compiler {
     try self.callHelper(args:     args,
                         keywords: keywords,
                         context:  context,
-                        location: location,
-                        alreadyPushedArgs: 0)
+                        alreadyPushedArgs: 0,
+                        location: location)
   }
 
   /// maybe_optimize_method_call(struct compiler *c, expr_ty e)
@@ -43,7 +43,7 @@ extension Compiler {
 
     // Check if it is an method
     guard case let .attribute(object, name: methodName) = function.kind,
-        context == .load else {
+          context == .load else {
       return false
     }
 
@@ -70,8 +70,8 @@ extension Compiler {
   internal func callHelper(args:     [Expression],
                            keywords: [Keyword],
                            context:  ExpressionContext,
-                           location: SourceLocation,
-                           alreadyPushedArgs: Int) throws {
+                           alreadyPushedArgs: Int,
+                           location: SourceLocation) throws {
 
     var hasDictionaryUnpack = false
     for kw in keywords {

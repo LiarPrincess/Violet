@@ -1,5 +1,6 @@
 import Core
 
+// TODO: Use '_' in first arg
 extension CodeObject {
 
   // MARK: - Name

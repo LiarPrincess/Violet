@@ -38,7 +38,8 @@ extension Compiler {
                              bases: bases,
                              keywords: keywords,
                              body: body,
-                             decorators: decorators)
+                             decorators: decorators,
+                             statement: stmt)
 
     case let .assign(targets, value):
       try self.visitAssign(targets:  targets, value:    value, location: location)
@@ -133,16 +134,6 @@ extension Compiler {
     }
 
     try self.codeObject.emitReturn(location: location)
-  }
-
-  // MARK: - Class
-
-  private func visitClassDef(name: String,
-                             bases: [Expression],
-                             keywords: [Keyword],
-                             body: NonEmptyArray<Statement>,
-                             decorators: [Expression]) throws {
-    // self.className <- remember about this
   }
 
   // MARK: - Try/catch

@@ -31,25 +31,16 @@ extension Compiler {
                               updating: &flags,
                               location: location)
 
-    // Body
-    // If we ever get recoverable errors, then remember to exit scope on error!
-    // (every 'try' is possible error)
+    let codeObject = try self.newCodeObject(node: statement, type: .function) {
+      let optimizationLevel = self.options.optimizationLevel
+      if let docString = self.getDocString(body.first), optimizationLevel < 2 {
+        try self.codeObject.emitString(docString, location: location)
+      }
 
-    self.enterScope(node: statement, type: .function)
-
-    let optimizationLevel = self.options.optimizationLevel
-    if let docString = self.getDocString(body.first), optimizationLevel < 2 {
-      try self.codeObject.emitString(docString, location: location)
+      try self.visitStatements(body)
     }
 
-    try self.visitStatements(body)
-    let qualifiedName = self.codeObject.qualifiedName
-    let codeObject = self.leaveScope()
-
-    try self.makeClosure(codeObject: codeObject,
-                         qualifiedName: qualifiedName,
-                         flags: flags,
-                         location: location)
+    try self.makeClosure(codeObject: codeObject, flags: flags, location: location)
 
     for _ in decorators {
       try self.codeObject.emitCallFunction(argumentCount: 1, location: location)
@@ -60,8 +51,9 @@ extension Compiler {
 
   // MARK: - Decorators
 
-  private func visitDecorators(decorators: [Expression],
-                               location: SourceLocation) throws {
+  /// compiler_decorators(struct compiler *c, asdl_seq* decos)
+  internal func visitDecorators(decorators: [Expression],
+                                location: SourceLocation) throws {
     try self.visitExpressions(decorators)
   }
 
@@ -191,10 +183,11 @@ extension Compiler {
 
   /// compiler_make_closure(struct compiler *c, PyCodeObject *co,
   /// Py_ssize_t flags, PyObject *qualname)
-  private func makeClosure(codeObject: CodeObject,
-                           qualifiedName: String,
-                           flags:    FunctionFlags,
-                           location: SourceLocation) throws {
+  internal func makeClosure(codeObject: CodeObject,
+                            flags:    FunctionFlags,
+                            location: SourceLocation) throws {
+
+    let qualifiedName = codeObject.qualifiedName
     var makeFunctionFlags = flags
 
     if codeObject.freeVars.any {

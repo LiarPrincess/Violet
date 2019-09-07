@@ -1,5 +1,4 @@
 import Core
-import Parser
 
 extension CodeObject {
 

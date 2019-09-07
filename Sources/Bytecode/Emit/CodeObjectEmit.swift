@@ -11,7 +11,9 @@ extension CodeObject {
   internal func emit(_ instruction: Instruction,
                      location: SourceLocation) throws {
     self.instructions.append(instruction)
-    self.instructionLines.append(location.line)
+
+    let lastLine = self.instructionLines.last ?? SourceLocation.start.line
+    self.instructionLines.append(max(lastLine, location.line))
 
     assert(self.instructions.count == self.instructionLines.count)
   }

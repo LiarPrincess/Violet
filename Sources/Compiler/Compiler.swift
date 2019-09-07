@@ -119,10 +119,26 @@ public final class Compiler {
 
   // MARK: - Scope/code object
 
+  /// Helper for creation of new code objects.
+  /// It surrounds given `block` with `enterScope` and `leaveScope`
+  /// (1 scope = 1 code object).
+  /// Use `self.codeObject` to emit instructions.
+  internal func newCodeObject<N: ASTNode>(
+    node: N,
+    type: CodeObjectType,
+    emitInstructions block: () throws -> Void) rethrows -> CodeObject {
+
+    self.enterScope(node: node, type: type)
+    defer { self.leaveScope() }
+
+    try block()
+    return self.codeObject
+  }
+
   /// Push new scope (and generate a new code object to emit to).
   ///
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
-  internal func enterScope<N: ASTNode>(node: N, type: CodeObjectType) {
+  private func enterScope<N: ASTNode>(node: N, type: CodeObjectType) {
     guard let scope = self.symbolTable.scopeByNode[node] else {
       fatalError("[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
@@ -161,7 +177,7 @@ public final class Compiler {
   /// Pop scope (along with correcsponding code object).
   ///
   /// compiler_exit_scope(struct compiler *c)
-  internal func leaveScope() -> CodeObject {
+  private func leaveScope() {
     guard let unit = self.unitStack.popLast() else {
       fatalError("[BUG] Compiler: Attempting to pop non-existing unit.")
     }
@@ -171,8 +187,6 @@ public final class Compiler {
       unit.codeObject.labels.allSatisfy { $0 != Label.notAssigned },
       "One of the labels does not have assigned address."
     )
-
-    return unit.codeObject
   }
 
   // MARK: - Scope/code object helpers
