@@ -42,11 +42,15 @@ def printNode(node, level = 0):
       print(f"{childIndent}{k}: ?")
 
 if __name__ == '__main__':
-  if len(sys.argv) < 2:
-    print("Usage: 'python3 astdump.py <file.py>'")
-    sys.exit(1)
+  # if len(sys.argv) < 2:
+  #   print("Usage: 'python3 dump_ast.py <file.py>'")
+  #   sys.exit(1)
 
-  filename = sys.argv[1]
-  code = open(filename).read()
-  root = ast.parse(code, filename)
+  # filename = sys.argv[1]
+  # code = open(filename).read()
+
+  code = '''
+2 + 2
+'''
+  root = ast.parse(code, '<string>')
   printNode(root)
