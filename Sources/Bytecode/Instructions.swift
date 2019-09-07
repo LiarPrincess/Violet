@@ -111,6 +111,8 @@ public enum ComparisonOpcode {
   case `in`
   /// Negation of `x in s`
   case notIn
+  /// Does the exception has specified type?
+  case exceptionMatch
 
 }
 

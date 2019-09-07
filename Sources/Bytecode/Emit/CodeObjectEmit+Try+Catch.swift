@@ -13,13 +13,17 @@ extension CodeObject {
   }
 
   /// Append a `setupExcept` instruction to code object.
-  public func emitSetupExcept(value: Delta, location: SourceLocation) throws {
+  public func emitSetupExcept(firstExcept: Label,
+                              location: SourceLocation) throws {
     // try self.emit(.setupExcept, location: location)
     throw self.unimplemented()
   }
 
   /// Append a `setupFinally` instruction to code object.
-  public func emitSetupFinally(value: Delta, location: SourceLocation) throws {
+  /// - Parameters:
+  ///   - start: First instruction of the `finally` block.
+  public func emitSetupFinally(firstInstruction: Label,
+                               location: SourceLocation) throws {
     // try self.emit(.setupFinally, location: location)
     throw self.unimplemented()
   }

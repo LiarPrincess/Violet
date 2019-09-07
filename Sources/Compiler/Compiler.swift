@@ -279,6 +279,15 @@ public final class Compiler {
 
   // MARK: - Block
 
+  // TODO: private push, and then private pop (+ rename scope to inCodeUnit)
+  /// Push block, execute `body` and then pop block.
+  internal func inBlock(_ type: BlockType, body: () throws -> Void) rethrows {
+    self.pushBlock(type)
+    defer { popBlock() }
+
+    try body()
+  }
+
   /// compiler_push_fblock(struct compiler *c, enum fblocktype t, basicblock *b)
   internal func pushBlock(_ type: BlockType) {
     self.blockStack.push(type)

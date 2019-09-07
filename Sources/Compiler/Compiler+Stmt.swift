@@ -81,7 +81,8 @@ extension Compiler {
       try self.visitTry(body: body,
                         handlers: handlers,
                         orElse: orElse,
-                        finalBody: finalBody)
+                        finalBody: finalBody,
+                        location: location)
 
     case let .import(aliases):
       try self.visitImport(aliases:  aliases, location: location)
@@ -96,10 +97,13 @@ extension Compiler {
 
     case let .assert(test, msg):
       try self.visitAssert(test: test, msg: msg, location: location)
+
     case let .delete(exprs):
       try self.visitExpressions(exprs, context: .del)
+
     case let .return(exprs):
       try self.visitReturn(value: exprs, location: location)
+
     case .break:
       try self.visitBreak(location: location)
     case .continue:
@@ -134,32 +138,6 @@ extension Compiler {
     }
 
     try self.codeObject.emitReturn(location: location)
-  }
-
-  // MARK: - Try/catch
-
-  /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
-  private func visitRaise(exception: Expression?,
-                          cause:     Expression?,
-                          location:  SourceLocation) throws {
-    var arg = RaiseArg.reRaise
-    if let e = exception {
-      try self.visitExpression(e)
-      arg = .exceptionOnly
-
-      if let c = cause {
-        try self.visitExpression(c)
-        arg = .exceptionAndCause
-      }
-    }
-
-    try self.codeObject.emitRaiseVarargs(arg: arg, location: location)
-  }
-
-  private func visitTry(body: NonEmptyArray<Statement>,
-                        handlers: [ExceptHandler],
-                        orElse: [Statement],
-                        finalBody: [Statement]) throws {
   }
 
   // MARK: - Assert
