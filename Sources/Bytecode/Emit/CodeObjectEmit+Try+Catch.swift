@@ -22,8 +22,7 @@ extension CodeObject {
   /// Append a `setupFinally` instruction to code object.
   /// - Parameters:
   ///   - start: First instruction of the `finally` block.
-  public func emitSetupFinally(firstInstruction: Label,
-                               location: SourceLocation) throws {
+  public func emitSetupFinally(jumpTo: Label, location: SourceLocation) throws {
     // try self.emit(.setupFinally, location: location)
     throw self.unimplemented()
   }

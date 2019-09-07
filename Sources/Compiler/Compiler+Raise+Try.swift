@@ -87,8 +87,7 @@ extension Compiler {
     let finallyStart = self.codeObject.addLabel()
 
     // body
-    try self.codeObject.emitSetupFinally(firstInstruction: finallyStart,
-                                         location: location)
+    try self.codeObject.emitSetupFinally(jumpTo: finallyStart, location: location)
     try self.inBlock(.finallyTry) {
       if handlers.any {
         try self.visitTryExcept(body: body,
@@ -105,7 +104,7 @@ extension Compiler {
     try self.codeObject.emitNone(location: location)
 
     // finally
-    self.codeObject.setLabelToNextInstruction(finallyStart)
+    self.codeObject.setLabel(finallyStart)
     try self.inBlock(.finallyEnd) {
       try self.visitStatements(finally)
       try self.codeObject.emitEndFinally(location: location)
@@ -161,7 +160,7 @@ extension Compiler {
     try self.codeObject.emitJumpAbsolute(to: orElseStart, location: location)
 
     // except
-    self.codeObject.setLabelToNextInstruction(firstExcept)
+    self.codeObject.setLabel(firstExcept)
     for (index, handler) in handlers.enumerated() {
       // TODO: AST: ExceptHandler should be sum type default|normal
       let isDefault = handler.type == nil
@@ -196,8 +195,7 @@ extension Compiler {
 
         // second try:
         let cleanupEnd = self.codeObject.addLabel()
-        try self.codeObject.emitSetupFinally(firstInstruction: cleanupEnd,
-                                             location: location)
+        try self.codeObject.emitSetupFinally(jumpTo: cleanupEnd, location: location)
         try self.inBlock(.finallyTry) {
           try self.visitStatements(handler.body)
           try self.codeObject.emitPopBlock(location: location)
@@ -205,7 +203,7 @@ extension Compiler {
 
         // finally:
         try self.codeObject.emitNone(location: location)
-        self.codeObject.setLabelToNextInstruction(cleanupEnd)
+        self.codeObject.setLabel(cleanupEnd)
 
         try self.inBlock(.finallyEnd) {
           // name = None
@@ -228,12 +226,12 @@ extension Compiler {
       }
 
       try self.codeObject.emitJumpAbsolute(to: end, location: location)
-      self.codeObject.setLabelToNextInstruction(nextExcept)
+      self.codeObject.setLabel(nextExcept)
     }
 
     try self.codeObject.emitEndFinally(location: location)
-    self.codeObject.setLabelToNextInstruction(orElseStart)
+    self.codeObject.setLabel(orElseStart)
     try self.visitStatements(orElse)
-    self.codeObject.setLabelToNextInstruction(end)
+    self.codeObject.setLabel(end)
   }
 }

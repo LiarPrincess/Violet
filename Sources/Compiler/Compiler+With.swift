@@ -70,11 +70,11 @@ extension Compiler {
                          index: Int,
                          location: SourceLocation) throws {
     let item = items[index]
-    let loopEnd = self.codeObject.addLabel()
+    let afterBody = self.codeObject.addLabel()
 
     // Evaluate EXPR
     try self.visitExpression(item.contextExpr)
-    try self.codeObject.emitSetupWith(loopEnd: loopEnd, location: location)
+    try self.codeObject.emitSetupWith(afterBody: afterBody, location: location)
 
     // SETUP_WITH pushes a finally block.
     try self.inBlock(.finallyTry) {
@@ -94,7 +94,7 @@ extension Compiler {
     }
 
     try self.codeObject.emitNone(location: location)
-    self.codeObject.setLabelToNextInstruction(loopEnd)
+    self.codeObject.setLabel(afterBody)
 
     try self.inBlock(.finallyEnd) {
       // Finally block starts; context.__exit__ is on the stack under

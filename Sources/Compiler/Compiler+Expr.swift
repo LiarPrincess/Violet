@@ -260,7 +260,7 @@ extension Compiler {
     }
 
     try self.visitExpression(right)
-    self.codeObject.setLabelToNextInstruction(end)
+    self.codeObject.setLabel(end)
   }
 
   /// compiler_compare(struct compiler *c, expr_ty e)
@@ -305,7 +305,7 @@ extension Compiler {
       try self.visitExpression(last.right)
       try self.codeObject.emitCompareOp(last.op, location: location)
 
-      self.codeObject.setLabelToNextInstruction(end)
+      self.codeObject.setLabel(end)
     }
   }
 
@@ -368,18 +368,18 @@ extension Compiler {
                                  body:   Expression,
                                  orElse: Expression,
                                  location: SourceLocation) throws {
-    let end  = self.codeObject.addLabel()
-    let afterBody = self.codeObject.addLabel()
+    let end = self.codeObject.addLabel()
+    let orElseStart = self.codeObject.addLabel()
 
     try self.visitExpression(test,
-                             andJumpTo: afterBody,
+                             andJumpTo: orElseStart,
                              ifBooleanValueIs: false,
                              location: location)
 
     try self.visitExpression(body)
-    self.codeObject.setLabelToNextInstruction(afterBody)
+    self.codeObject.setLabel(orElseStart)
     try self.visitExpression(orElse)
-    self.codeObject.setLabelToNextInstruction(end)
+    self.codeObject.setLabel(end)
   }
 
   /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
@@ -415,7 +415,7 @@ extension Compiler {
                                location: loc)
 
       if hasLabel {
-        self.codeObject.setLabelToNextInstruction(next2)
+        self.codeObject.setLabel(next2)
       }
       return
 
@@ -432,12 +432,12 @@ extension Compiler {
                                ifBooleanValueIs: cond,
                                location: loc)
       try self.codeObject.emitJumpAbsolute(to: end, location: loc)
-      self.codeObject.setLabelToNextInstruction(next2)
+      self.codeObject.setLabel(next2)
       try self.visitExpression(orElse,
                                andJumpTo: next,
                                ifBooleanValueIs: cond,
                                location: loc)
-      self.codeObject.setLabelToNextInstruction(end)
+      self.codeObject.setLabel(end)
 
     case let .compare(left, elements):
       guard elements.count > 1 else {
@@ -467,13 +467,13 @@ extension Compiler {
       }
 
       try self.codeObject.emitJumpAbsolute(to: end, location: loc)
-      self.codeObject.setLabelToNextInstruction(cleanup)
+      self.codeObject.setLabel(cleanup)
       try self.codeObject.emitPopTop(location: loc)
 
       if !cond {
         try self.codeObject.emitJumpAbsolute(to: next, location: loc)
       }
-      self.codeObject.setLabelToNextInstruction(end)
+      self.codeObject.setLabel(end)
       return
 
     default:

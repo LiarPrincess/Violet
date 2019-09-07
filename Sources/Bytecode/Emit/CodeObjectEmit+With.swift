@@ -3,7 +3,7 @@ import Core
 extension CodeObject {
 
   /// Append a `setupWith` instruction to code object.
-  public func emitSetupWith(loopEnd: Label, location: SourceLocation) throws {
+  public func emitSetupWith(afterBody: Label, location: SourceLocation) throws {
     // try self.emit(.setupWith, location: location)
     throw self.unimplemented()
   }

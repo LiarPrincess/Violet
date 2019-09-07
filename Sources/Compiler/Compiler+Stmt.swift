@@ -169,7 +169,7 @@ extension Compiler {
     }
 
     try self.codeObject.emitRaiseVarargs(arg: .exceptionOnly, location: location)
-    self.codeObject.setLabelToNextInstruction(end)
+    self.codeObject.setLabel(end)
   }
 
   // MARK: - Expression statement

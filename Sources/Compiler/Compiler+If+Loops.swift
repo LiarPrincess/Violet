@@ -40,22 +40,23 @@ extension Compiler {
                         orElse: [Statement],
                         location: SourceLocation) throws {
     // TODO: CPython: constant = expr_constant(s->v.If.test);
-    let endLabel = self.codeObject.addLabel()
-    let orElseLabel = orElse.any ? self.codeObject.addLabel() : endLabel
+    let end = self.codeObject.addLabel()
+    let orElseStart = orElse.any ? self.codeObject.addLabel() : end
 
     try self.visitExpression(test,
-                             andJumpTo: orElseLabel,
+                             andJumpTo: orElseStart,
                              ifBooleanValueIs: false,
                              location: location)
 
     try self.visitStatements(body)
+
     if orElse.any {
-      try self.codeObject.emitJumpAbsolute(to: endLabel, location: location)
-      self.codeObject.setLabelToNextInstruction(orElseLabel)
+      try self.codeObject.emitJumpAbsolute(to: end, location: location)
+      self.codeObject.setLabel(orElseStart)
       try self.visitStatements(orElse)
     }
 
-    self.codeObject.setLabelToNextInstruction(endLabel)
+    self.codeObject.setLabel(end)
   }
 
   // MARK: - For
@@ -91,29 +92,29 @@ extension Compiler {
                          body:   NonEmptyArray<Statement>,
                          orElse: [Statement],
                          location: SourceLocation) throws {
-    let startLabel   = self.codeObject.addLabel()
-    let cleanupLabel = self.codeObject.addLabel()
-    let endLabel     = self.codeObject.addLabel()
+    let iterationStart = self.codeObject.addLabel()
+    let cleanup = self.codeObject.addLabel()
+    let end = self.codeObject.addLabel()
 
-    try self.codeObject.emitSetupLoop(loopEnd: endLabel, location: location)
+    try self.codeObject.emitSetupLoop(loopEnd: end, location: location)
 
     // 'continue' will jump to 'startLabel'
-    try self.inBlock(.loop(startLabel: startLabel)) {
+    try self.inBlock(.loop(startLabel: iterationStart)) {
       try self.visitExpression(iter)
       try self.codeObject.emitGetIter(location: location)
 
-      self.codeObject.setLabelToNextInstruction(startLabel)
-      try self.codeObject.emitForIter(ifEmpty: cleanupLabel, location: location)
+      self.codeObject.setLabel(iterationStart)
+      try self.codeObject.emitForIter(ifEmpty: cleanup, location: location)
       try self.visitExpression(target)
       try self.visitStatements(body)
-      try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
+      try self.codeObject.emitJumpAbsolute(to: iterationStart, location: location)
 
-      self.codeObject.setLabelToNextInstruction(cleanupLabel)
+      self.codeObject.setLabel(cleanup)
       try self.codeObject.emitPopBlock(location: location)
     }
 
     try self.visitStatements(orElse)
-    self.codeObject.setLabelToNextInstruction(endLabel)
+    self.codeObject.setLabel(end)
   }
 
   // MARK: - While
@@ -153,7 +154,7 @@ extension Compiler {
 
     try self.codeObject.emitSetupLoop(loopEnd: endLabel, location: location)
 
-    self.codeObject.setLabelToNextInstruction(startLabel)
+    self.codeObject.setLabel(startLabel)
 
     // 'continue' will jump to 'startLabel'
     try self.inBlock(.loop(startLabel: startLabel)) {
@@ -165,12 +166,12 @@ extension Compiler {
       try self.visitStatements(body)
       try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
 
-      self.codeObject.setLabelToNextInstruction(afterBodyLabel)
+      self.codeObject.setLabel(afterBodyLabel)
       try self.codeObject.emitPopBlock(location: location)
     }
 
     try self.visitStatements(orElse)
-    self.codeObject.setLabelToNextInstruction(endLabel)
+    self.codeObject.setLabel(endLabel)
   }
 
   // MARK: - Continue, break

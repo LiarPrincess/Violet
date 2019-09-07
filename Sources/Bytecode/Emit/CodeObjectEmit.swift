@@ -20,13 +20,16 @@ extension CodeObject {
 
   // MARK: - Label
 
+  /// Creates new label (jump target) with invalid value.
+  /// Use `self.setLabel()` to fill value.
   public func addLabel() -> Label {
     let index = self.labels.endIndex
     self.labels.append(Label.notAssigned)
     return Label(index: index)
   }
 
-  public func setLabelToNextInstruction(_ label: Label) {
+  /// Set label to next emitted instruction.
+  public func setLabel(_ label: Label) {
     assert(label.index < self.labels.count)
     assert(self.labels[label.index] == Label.notAssigned)
 
