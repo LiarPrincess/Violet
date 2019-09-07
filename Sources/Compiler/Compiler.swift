@@ -139,12 +139,13 @@ public final class Compiler {
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
   private func enterScope<N: ASTNode>(node: N, type: CodeObjectType) {
     guard let scope = self.symbolTable.scopeByNode[node] else {
-      fatalError("[BUG] Compiler: Entering scope that is not present in symbol table.")
+      fatalError(
+        "[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
 
     assert(self.isMatchingScopeType(scope.type, to: type))
 
-    let name = scope.name
+    let name = self.createName(type: type, scope: scope)
     let qualifiedName = self.createQualifiedName(for: name, type: type)
 
     let varNames = scope.varNames
@@ -205,6 +206,20 @@ public final class Compiler {
     }
   }
 
+  /// Crate CodeObject name
+  private func createName(type: CodeObjectType, scope: SymbolScope) -> String {
+    switch type {
+    case .module: return CodeObject.moduleName
+    case .lambda: return CodeObject.lambdaName
+    // TODO: comprehension names
+    case .comprehension: return scope.name
+    case .class,
+         .function,
+         .asyncFunction:
+      return scope.name
+    }
+  }
+
   /// compiler_set_qualname(struct compiler *c)
   ///
   /// Special case:
@@ -222,9 +237,7 @@ public final class Compiler {
   /// - Note:
   /// It has to be called BEFORE code object is pushed on stack!
   /// (which is different than CPython)
-  internal func createQualifiedName(for name: String,
-                                    type: CodeObjectType) -> String {
-
+  private func createQualifiedName(for name: String, type: CodeObjectType) -> String {
     // Top scope has "" as qualified name.
     guard let parent = self.unitStack.last else {
       return ""

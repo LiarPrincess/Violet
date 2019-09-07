@@ -11,6 +11,33 @@ import Bytecode
 
 extension Compiler {
 
+  // MARK: - Lambda
+
+  internal func visitLambda(args: Arguments,
+                            body: Expression,
+                            expression: Expression) throws {
+    let location = expression.start
+
+    var flags: FunctionFlags = []
+    try self.visitDefaultArguments(args: args,
+                                   updating: &flags,
+                                   location: location)
+
+    let codeObject = try self.inNewCodeObject(node: expression, type: .lambda) {
+      // Make None the first constant, so the lambda can't have a docstring.
+      try self.codeObject.appendNone(at: location)
+
+      try self.visitExpression(body)
+      if !self.currentScope.isGenerator {
+        try self.codeObject.appendReturn(at: location)
+      }
+    }
+
+    try self.makeClosure(codeObject: codeObject, flags: flags, location: location)
+  }
+
+  // MARK: - Function
+
   /// compiler_function(struct compiler *c, stmt_ty s, int is_async)
   internal func visitFunctionDef(name: String,
                                  args: Arguments,

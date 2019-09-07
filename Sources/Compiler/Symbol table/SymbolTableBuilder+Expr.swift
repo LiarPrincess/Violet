@@ -110,8 +110,7 @@ extension SymbolTableBuilder {
     case let .lambda(args, body):
       try self.visitDefaults(args)
 
-      let id = SpecialIdentifiers.lambda
-      self.enterScope(name: id, type: .function, node: expr)
+      self.enterScope(name: SymbolScopeNames.lambda, type: .function, node: expr)
       try self.visitArguments(args)
       try self.visitExpression(body)
       self.leaveScope()
@@ -230,10 +229,10 @@ extension SymbolTableBuilder {
 
   private func getIdentifier(for kind: ComprehensionKind) -> String {
     switch kind {
-    case .list: return SpecialIdentifiers.listcomp
-    case .set: return SpecialIdentifiers.setcomp
-    case .dictionary: return SpecialIdentifiers.dictcomp
-    case .generator: return SpecialIdentifiers.genexpr
+    case .list:       return SymbolScopeNames.listcomp
+    case .set:        return SymbolScopeNames.setcomp
+    case .dictionary: return SymbolScopeNames.dictcomp
+    case .generator:  return SymbolScopeNames.genexpr
     }
   }
 

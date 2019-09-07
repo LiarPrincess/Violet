@@ -4,31 +4,18 @@ import Bytecode
 
 // TODO: Do something with this
 internal enum SpecialIdentifiers {
-  /// Name of the AST root scope
-  internal static let top = "top"
+  internal static let `return` = "return"
+  internal static let assertionError = "AssertionError"
 
-  /// Name of the lambda scope
-  internal static let lambda = "lambda"
-
-  /// Name of the list comprehension scope
-  internal static let listcomp = "listcomp"
-  /// Name of the set comprehension scope
-  internal static let setcomp  = "setcomp"
-  /// Name of the dict comprehension scope
-  internal static let dictcomp = "dictcomp"
-  /// Name of the generator expression scope
-  internal static let genexpr  = "genexpr"
-
+  internal static let __annotations__ = "__annotations__"
   internal static let __class__ = "__class__"
   internal static let __classcell__ = "__classcell__"
-  internal static let __annotations__ = "__annotations__"
-  internal static let __name__ = "__name__"
+  // TODO: Not used
+  internal static let __doc__ = "__doc__"
   internal static let __future__ = "__future__"
   internal static let __module__ = "__module__"
+  internal static let __name__ = "__name__"
   internal static let __qualname__ = "__qualname__"
-
-  internal static let assertionError = "AssertionError"
-  internal static let `return` = "return"
 }
 
 public enum ExpressionContext {

@@ -12,11 +12,26 @@ public enum CodeObjectType {
 // TODO: To struct
 public final class CodeObject {
 
-  /// Name of the class if the code is for a class.
-  /// Name of the function if the code is for a function.
-  /// Otherwise 'top'.
+  public static let moduleName = "<module>"
+  public static let lambdaName = "<lambda>"
+  public static let generatorExpressionName = "<genexpr>"
+  public static let listComprehensionName = "<listcomp>"
+  public static let setComprehensionName = "<setcomp>"
+  public static let dictionaryComprehensionName = "<dictcomp>"
+
+  /// Non-unique name of this code object.
+  ///
+  /// It will be:
+  /// - module -> \<module\>
+  /// - class -> class name
+  /// - function -> function name
+  /// - lambda -> \<lambda\>
+  /// - generator -> \<genexpr\>
+  /// - list comprehension -> \<listcomp\>
+  /// - set comprehension -> \<setcomp\>
+  /// - dictionary comprehension -> \<dictcomp\>
   public let name: String
-  /// Dot-separated qualified name.
+  /// Unique dot-separated qualified name.
   ///
   /// For example:
   /// ```c

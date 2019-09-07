@@ -92,8 +92,8 @@ extension Compiler {
          .yieldFrom:
       throw self.notImplemented()
 
-    case .lambda:
-      throw self.notImplemented()
+    case let .lambda(args, body):
+      try self.visitLambda(args: args, body: body, expression: expr)
 
     case let .call(function, args, keywords):
       try self.visitCall(function: function,
@@ -341,12 +341,6 @@ extension Compiler {
   }
 
   private func visitYieldFrom(expr: Expression) throws {
-  }
-
-  // MARK: - Lambda
-
-  private func visitLambda(args: Arguments,
-                           body: Expression) throws {
   }
 */
 

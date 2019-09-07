@@ -32,7 +32,7 @@ public final class SymbolTableBuilder {
 
   /// PySymtable_BuildObject(mod_ty mod, ...)
   public func visit(_ ast: AST) throws -> SymbolTable {
-    self.enterScope(name: SpecialIdentifiers.top, type: .module, node: ast)
+    self.enterScope(name: SymbolScopeNames.top, type: .module, node: ast)
 
     switch ast.kind {
     case let .single(stmts),
