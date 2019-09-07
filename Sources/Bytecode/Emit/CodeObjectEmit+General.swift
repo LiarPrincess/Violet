@@ -1,9 +1,10 @@
 import Core
 
-// TODO: We can replace it with .xxx(MangledName)
-public enum ClosureIndex {
-  case cell(Int)
-  case free(Int)
+public enum ClosureVariable {
+  /// Captured variable
+  case cell(MangledName)
+  /// Closure over 'name'
+  case free(MangledName)
 }
 
 extension CodeObject {
@@ -60,10 +61,14 @@ extension CodeObject {
   }
 
   /// Append a `loadClosure` instruction to code object.
-  public func emitLoadClosure(index: ClosureIndex,
+  public func emitLoadClosure(_ variable: ClosureVariable,
                               location: SourceLocation) throws {
     // try self.emit(.loadClosure, location: location)
-
+//    if let i = codeObject.cellVars.firstIndex(of: name) {
+//      index = .cell(name)
+//    } else {
+//      assert(false)
+//    }
 //    switch index {
 //    case let .cell(i):
 //      // index = i

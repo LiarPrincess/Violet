@@ -51,11 +51,11 @@ extension Compiler {
     try self.visitStatements(body)
     if orElse.any {
       try self.codeObject.emitJumpAbsolute(to: endLabel, location: location)
-      self.codeObject.setLabel(orElseLabel)
+      self.codeObject.setLabelToNextInstruction(orElseLabel)
       try self.visitStatements(orElse)
     }
 
-    self.codeObject.setLabel(endLabel)
+    self.codeObject.setLabelToNextInstruction(endLabel)
   }
 
   // MARK: - For
@@ -98,22 +98,22 @@ extension Compiler {
     try self.codeObject.emitSetupLoop(loopEnd: endLabel, location: location)
 
     // 'continue' will jump to 'startLabel'
-    self.pushBlock(.loop(startLabel: startLabel))
+    try self.inBlock(.loop(startLabel: startLabel)) {
+      try self.visitExpression(iter)
+      try self.codeObject.emitGetIter(location: location)
 
-    try self.visitExpression(iter)
-    try self.codeObject.emitGetIter(location: location)
-    self.codeObject.setLabel(startLabel)
-    try self.codeObject.emitForIter(ifEmpty: cleanupLabel, location: location)
-    try self.visitExpression(target)
-    try self.visitStatements(body)
-    try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
-    self.codeObject.setLabel(cleanupLabel)
+      self.codeObject.setLabelToNextInstruction(startLabel)
+      try self.codeObject.emitForIter(ifEmpty: cleanupLabel, location: location)
+      try self.visitExpression(target)
+      try self.visitStatements(body)
+      try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
 
-    try self.codeObject.emitPopBlock(location: location)
-    self.popBlock()
+      self.codeObject.setLabelToNextInstruction(cleanupLabel)
+      try self.codeObject.emitPopBlock(location: location)
+    }
 
     try self.visitStatements(orElse)
-    self.codeObject.setLabel(endLabel)
+    self.codeObject.setLabelToNextInstruction(endLabel)
   }
 
   // MARK: - While
@@ -153,25 +153,24 @@ extension Compiler {
 
     try self.codeObject.emitSetupLoop(loopEnd: endLabel, location: location)
 
-    self.codeObject.setLabel(startLabel)
+    self.codeObject.setLabelToNextInstruction(startLabel)
 
     // 'continue' will jump to 'startLabel'
-    self.pushBlock(.loop(startLabel: startLabel))
+    try self.inBlock(.loop(startLabel: startLabel)) {
+      try self.visitExpression(test,
+                               andJumpTo: afterBodyLabel,
+                               ifBooleanValueIs: false,
+                               location: location)
 
-    try self.visitExpression(test,
-                             andJumpTo: afterBodyLabel,
-                             ifBooleanValueIs: false,
-                             location: location)
+      try self.visitStatements(body)
+      try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
 
-    try self.visitStatements(body)
-    try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
-
-    self.codeObject.setLabel(afterBodyLabel)
-    try self.codeObject.emitPopBlock(location: location)
-    self.popBlock()
+      self.codeObject.setLabelToNextInstruction(afterBodyLabel)
+      try self.codeObject.emitPopBlock(location: location)
+    }
 
     try self.visitStatements(orElse)
-    self.codeObject.setLabel(endLabel)
+    self.codeObject.setLabelToNextInstruction(endLabel)
   }
 
   // MARK: - Continue, break

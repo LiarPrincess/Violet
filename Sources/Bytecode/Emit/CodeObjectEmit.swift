@@ -26,7 +26,7 @@ extension CodeObject {
     return Label(index: index)
   }
 
-  public func setLabel(_ label: Label) {
+  public func setLabelToNextInstruction(_ label: Label) {
     assert(label.index < self.labels.count)
     assert(self.labels[label.index] == Label.notAssigned)
 

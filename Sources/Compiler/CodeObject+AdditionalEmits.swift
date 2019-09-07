@@ -2,34 +2,15 @@ import Core
 import Bytecode
 import Parser
 
-// TODO: Direct emit in code (instead of indirect)
-public enum DerefContext {
-  case store
-  case load
-  case loadClass
-  case del
-}
-
 extension CodeObject {
 
   public func emitName<S: ConstantString>(name: S,
                                           context:  ExpressionContext,
                                           location: SourceLocation) throws {
     switch context {
-    case .store: try self.emitStoreName (name: name, location: location)
-    case .load:  try self.emitLoadName  (name: name, location: location)
-    case .del:   try self.emitDeleteName(name: name, location: location)
-    }
-  }
-
-  public func emitDeref<S: ConstantString>(name: S,
-                                           context: DerefContext,
-                                           location: SourceLocation) throws {
-    switch context {
-    case .store: try self.emitStoreDeref (name: name, location: location)
-    case .load:  try self.emitLoadDeref  (name: name, location: location)
-    case .del:   try self.emitDeleteDeref(name: name, location: location)
-    case .loadClass: try self.emitLoadClassDeref(name: name, location: location)
+    case .store: try self.emitStoreName (name, location: location)
+    case .load:  try self.emitLoadName  (name, location: location)
+    case .del:   try self.emitDeleteName(name, location: location)
     }
   }
 
@@ -37,9 +18,9 @@ extension CodeObject {
                                           context:  ExpressionContext,
                                           location: SourceLocation) throws {
     switch context {
-    case .store: try self.emitStoreFast (name: name, location: location)
-    case .load:  try self.emitLoadFast  (name: name, location: location)
-    case .del:   try self.emitDeleteFast(name: name, location: location)
+    case .store: try self.emitStoreFast (name, location: location)
+    case .load:  try self.emitLoadFast  (name, location: location)
+    case .del:   try self.emitDeleteFast(name, location: location)
     }
   }
 
@@ -47,9 +28,9 @@ extension CodeObject {
                                             context:  ExpressionContext,
                                             location: SourceLocation) throws {
     switch context {
-    case .store: try self.emitStoreGlobal (name: name, location: location)
-    case .load:  try self.emitLoadGlobal  (name: name, location: location)
-    case .del:   try self.emitDeleteGlobal(name: name, location: location)
+    case .store: try self.emitStoreGlobal (name, location: location)
+    case .load:  try self.emitLoadGlobal  (name, location: location)
+    case .del:   try self.emitDeleteGlobal(name, location: location)
     }
   }
 
@@ -66,9 +47,9 @@ extension CodeObject {
                                                context:  ExpressionContext,
                                                location: SourceLocation) throws {
     switch context {
-    case .store: try self.emitStoreAttribute (name: name, location: location)
-    case .load:  try self.emitLoadAttribute  (name: name, location: location)
-    case .del:   try self.emitDeleteAttribute(name: name, location: location)
+    case .store: try self.emitStoreAttribute (name, location: location)
+    case .load:  try self.emitLoadAttribute  (name, location: location)
+    case .del:   try self.emitDeleteAttribute(name, location: location)
     }
   }
 

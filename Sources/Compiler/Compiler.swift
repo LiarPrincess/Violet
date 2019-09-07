@@ -123,7 +123,7 @@ public final class Compiler {
   /// It surrounds given `block` with `enterScope` and `leaveScope`
   /// (1 scope = 1 code object).
   /// Use `self.codeObject` to emit instructions.
-  internal func newCodeObject<N: ASTNode>(
+  internal func inNewCodeObject<N: ASTNode>(
     node: N,
     type: CodeObjectType,
     emitInstructions block: () throws -> Void) rethrows -> CodeObject {
@@ -279,7 +279,6 @@ public final class Compiler {
 
   // MARK: - Block
 
-  // TODO: private push, and then private pop (+ rename scope to inCodeUnit)
   /// Push block, execute `body` and then pop block.
   internal func inBlock(_ type: BlockType, body: () throws -> Void) rethrows {
     self.pushBlock(type)
@@ -289,12 +288,12 @@ public final class Compiler {
   }
 
   /// compiler_push_fblock(struct compiler *c, enum fblocktype t, basicblock *b)
-  internal func pushBlock(_ type: BlockType) {
+  private func pushBlock(_ type: BlockType) {
     self.blockStack.push(type)
   }
 
   /// compiler_pop_fblock(struct compiler *c, enum fblocktype t, basicblock *b)
-  internal func popBlock() {
+  private func popBlock() {
     assert(self.blockStack.any)
     _ = self.blockStack.popLast()
   }

@@ -108,7 +108,6 @@ extension Compiler {
       try self.visitBreak(location: location)
     case .continue:
       try self.visitContinue(location: location)
-      // TODO: Add missing cases in 'continue' implementation
 
     case .pass:
       break
@@ -170,7 +169,7 @@ extension Compiler {
     }
 
     try self.codeObject.emitRaiseVarargs(arg: .exceptionOnly, location: location)
-    self.codeObject.setLabel(end)
+    self.codeObject.setLabelToNextInstruction(end)
   }
 
   // MARK: - Expression statement

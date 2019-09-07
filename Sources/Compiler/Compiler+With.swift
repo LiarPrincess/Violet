@@ -70,45 +70,40 @@ extension Compiler {
                          index: Int,
                          location: SourceLocation) throws {
     let item = items[index]
-
-    // TODO: what to do with block?
-    let block = self.codeObject.addLabel()
-    let finally = self.codeObject.addLabel()
+    let loopEnd = self.codeObject.addLabel()
 
     // Evaluate EXPR
     try self.visitExpression(item.contextExpr)
-    try self.codeObject.emitSetupWith(loopEnd: finally, location: location)
+    try self.codeObject.emitSetupWith(loopEnd: loopEnd, location: location)
 
     // SETUP_WITH pushes a finally block.
-    self.codeObject.setLabel(block)
-    self.pushBlock(.finallyTry)
+    try self.inBlock(.finallyTry) {
+      if let o = item.optionalVars {
+        try self.visitExpression(o, context: .store)
+      } else {
+        // Discard result from context.__enter__()
+        try self.codeObject.emitPopTop(location: location)
+      }
 
-    if let o = item.optionalVars {
-      try self.visitExpression(o, context: .store)
-    } else {
-      // Discard result from context.__enter__()
-      try self.codeObject.emitPopTop(location: location)
+      // TODO: some weird condition
+      // BLOCK code
+      try self.visitStatements(body)
+
+      // End of try block; start the finally block
+      try self.codeObject.emitPopBlock(location: location)
     }
 
-    // TODO: some weird condition
-    // BLOCK code
-    try self.visitStatements(body)
-
-    // End of try block; start the finally block
-    try self.codeObject.emitPopBlock(location: location)
-    self.popBlock()
-
     try self.codeObject.emitNone(location: location)
-    self.codeObject.setLabel(finally)
-    self.pushBlock(.finallyEnd)
+    self.codeObject.setLabelToNextInstruction(loopEnd)
 
-    // Finally block starts; context.__exit__ is on the stack under
-    // the exception or return information. Just issue our magic opcode.
-    try self.codeObject.emitWithCleanupStart(location: location)
-    try self.codeObject.emitWithCleanupFinish(location: location)
+    try self.inBlock(.finallyEnd) {
+      // Finally block starts; context.__exit__ is on the stack under
+      // the exception or return information. Just issue our magic opcode.
+      try self.codeObject.emitWithCleanupStart(location: location)
+      try self.codeObject.emitWithCleanupFinish(location: location)
 
-    // Finally block ends.
-    try self.codeObject.emitEndFinally(location: location)
-    self.popBlock()
+      // Finally block ends.
+      try self.codeObject.emitEndFinally(location: location)
+    }
   }
 }

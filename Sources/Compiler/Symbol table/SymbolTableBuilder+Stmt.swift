@@ -225,7 +225,7 @@ extension SymbolTableBuilder {
     for a in aliases {
       switch a.name {
       case "*":
-        // TODO: AST -> Alias should be a sum type tith star|alias(name, as)
+        // TODO: AST: Alias should be a sum type tith star|alias(name, as)
         if self.currentScope.type != .module {
           throw self.error(.nonModuleImportStar, location: importStart)
         }

@@ -59,10 +59,10 @@ extension Compiler {
     switch target.kind {
     case let .identifier(name):
       let mangled = self.mangleName(name)
-      try self.codeObject.emitLoadName(name: mangled, location: location)
+      try self.codeObject.emitLoadName(mangled, location: location)
       try self.visitExpression(value)
       try self.codeObject.emitInplaceOperator(op, location: location)
-      try self.codeObject.emitStoreName(name: mangled, location: location)
+      try self.codeObject.emitStoreName(mangled, location: location)
 
     case .attribute,
          .subscript:
@@ -122,7 +122,7 @@ extension Compiler {
       let __annotations__ = SpecialIdentifiers.__annotations__
       let mangled = self.mangleName(name)
 
-      try self.codeObject.emitLoadName(name: __annotations__, location: location)
+      try self.codeObject.emitLoadName(__annotations__, location: location)
       try self.codeObject.emitString(mangled, location: location)
       try self.codeObject.emitStoreSubscr(location: location)
 

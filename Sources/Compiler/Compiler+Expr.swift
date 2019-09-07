@@ -170,27 +170,22 @@ extension Compiler {
 
     switch operation {
     case .deref:
-      let c = self.getDerefContext(context: context)
-      try self.codeObject.emitDeref(name: mangled, context: c, location: location)
+      switch context {
+      case .store:
+        try self.codeObject.emitStoreDeref(mangled, location: location)
+      case .load where self.currentScope.type == .class:
+        try self.codeObject.emitLoadClassDeref(mangled, location: location)
+      case .load:
+        try self.codeObject.emitLoadDeref(mangled, location: location)
+      case .del:
+        try self.codeObject.emitDeleteDeref(mangled, location: location)
+      }
     case .fast:
       try self.codeObject.emitFast(name: mangled, context: context, location: location)
     case .global:
       try self.codeObject.emitGlobal(name: mangled, context: context, location: location)
     case .name:
       try self.codeObject.emitName(name: mangled, context: context, location: location)
-    }
-  }
-
-  private func getDerefContext(context: ExpressionContext) -> DerefContext {
-    switch context {
-    case .store:
-      return .store
-    case .load where self.currentScope.type == .class:
-      return .loadClass
-    case .load:
-      return .load
-    case .del:
-      return .del
     }
   }
 
@@ -265,7 +260,7 @@ extension Compiler {
     }
 
     try self.visitExpression(right)
-    self.codeObject.setLabel(end)
+    self.codeObject.setLabelToNextInstruction(end)
   }
 
   /// compiler_compare(struct compiler *c, expr_ty e)
@@ -310,7 +305,7 @@ extension Compiler {
       try self.visitExpression(last.right)
       try self.codeObject.emitCompareOp(last.op, location: location)
 
-      self.codeObject.setLabel(end)
+      self.codeObject.setLabelToNextInstruction(end)
     }
   }
 
@@ -382,9 +377,9 @@ extension Compiler {
                              location: location)
 
     try self.visitExpression(body)
-    self.codeObject.setLabel(afterBody)
+    self.codeObject.setLabelToNextInstruction(afterBody)
     try self.visitExpression(orElse)
-    self.codeObject.setLabel(end)
+    self.codeObject.setLabelToNextInstruction(end)
   }
 
   /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
@@ -420,7 +415,7 @@ extension Compiler {
                                location: loc)
 
       if hasLabel {
-        self.codeObject.setLabel(next2)
+        self.codeObject.setLabelToNextInstruction(next2)
       }
       return
 
@@ -437,12 +432,12 @@ extension Compiler {
                                ifBooleanValueIs: cond,
                                location: loc)
       try self.codeObject.emitJumpAbsolute(to: end, location: loc)
-      self.codeObject.setLabel(next2)
+      self.codeObject.setLabelToNextInstruction(next2)
       try self.visitExpression(orElse,
                                andJumpTo: next,
                                ifBooleanValueIs: cond,
                                location: loc)
-      self.codeObject.setLabel(end)
+      self.codeObject.setLabelToNextInstruction(end)
 
     case let .compare(left, elements):
       guard elements.count > 1 else {
@@ -472,13 +467,13 @@ extension Compiler {
       }
 
       try self.codeObject.emitJumpAbsolute(to: end, location: loc)
-      self.codeObject.setLabel(cleanup)
+      self.codeObject.setLabelToNextInstruction(cleanup)
       try self.codeObject.emitPopTop(location: loc)
 
       if !cond {
         try self.codeObject.emitJumpAbsolute(to: next, location: loc)
       }
-      self.codeObject.setLabel(end)
+      self.codeObject.setLabelToNextInstruction(end)
       return
 
     default:

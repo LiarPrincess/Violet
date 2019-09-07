@@ -102,6 +102,9 @@ public enum CompilerErrorKind: Equatable {
   case continueOutsideLoop
   /// 'continue' not supported inside 'finally' clause
   case continueInsideFinally
+
+  /// default 'except:' must be last
+  case defaultExceptNotLast
 }
 
 // TODO: surprisingly appropriate; `fromFutureImportBraces`

@@ -35,19 +35,19 @@ extension Compiler {
     try self.visitDecorators(decorators: decorators, location: location)
 
     // 1. compile the class body into a code object
-    let codeObject = try self.newCodeObject(node: statement, type: .class) {
+    let codeObject = try self.inNewCodeObject(node: statement, type: .class) {
       // load (global) __name__
       let __name__ = SpecialIdentifiers.__name__
       try self.codeObject.emitString(__name__, location: location)
 
       // ... and store it as __module__
       let __module__ = SpecialIdentifiers.__module__
-      try self.codeObject.emitStoreName(name: __module__, location: location)
+      try self.codeObject.emitStoreName(__module__, location: location)
 
       let __qualname__ = SpecialIdentifiers.__qualname__
       let qualifiedName = self.codeObject.qualifiedName
       try self.codeObject.emitString(qualifiedName, location: location)
-      try self.codeObject.emitStoreName(name: __qualname__, location: location)
+      try self.codeObject.emitStoreName(__qualname__, location: location)
 
       try self.visitStatements(body)
 
@@ -57,13 +57,9 @@ extension Compiler {
         let __classcell__ = SpecialIdentifiers.__classcell__
 
         // Store __classcell__ into class namespace & return it
-        guard let i = self.codeObject.cellVars.firstIndex(of: __class__) else {
-          fatalError() // this will be fixed when we change 'emitLoadClosure'
-        }
-
-        try self.codeObject.emitLoadClosure(index: .cell(i), location: location)
+        try self.codeObject.emitLoadClosure(.cell(__class__), location: location)
         try self.codeObject.emitDupTop(location: location)
-        try self.codeObject.emitStoreName(name: __classcell__, location: location)
+        try self.codeObject.emitStoreName(__classcell__, location: location)
       } else {
         assert(self.codeObject.cellVars.isEmpty)
         try self.codeObject.emitNone(location: location)
@@ -89,6 +85,6 @@ extension Compiler {
       try self.codeObject.emitCallFunction(argumentCount: 1, location: location)
     }
     // 7. store into <name>
-    try self.codeObject.emitStoreName(name: name, location: location)
+    try self.codeObject.emitStoreName(name, location: location)
   }
 }

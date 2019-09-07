@@ -168,7 +168,7 @@ public struct SymbolFlags: OptionSet, Equatable {
   public static let srcFree = SymbolFlags(rawValue: 1 << 10)
 
   /// Variable provides binding that is used for `srcFree` variables
-  /// in enclosed blocks
+  /// in enclosed blocks (it is a captured)
   public static let cell = SymbolFlags(rawValue: 1 << 11)
 
   public static let srcMask: SymbolFlags = [

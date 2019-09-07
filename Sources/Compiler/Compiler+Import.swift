@@ -38,7 +38,7 @@ extension Compiler {
           name = String(alias.name.prefix(upTo: dotIndex))
         }
 
-        try self.codeObject.emitStoreName(name: name, location: location)
+        try self.codeObject.emitStoreName(name, location: location)
       }
     }
   }
@@ -72,7 +72,7 @@ extension Compiler {
 
         let storeName = alias.asName ?? alias.name
         try self.codeObject.emitImportFrom(name: alias.name, location: location)
-        try self.codeObject.emitStoreName(name: storeName, location: location)
+        try self.codeObject.emitStoreName(storeName, location: location)
       }
     }
 
@@ -95,7 +95,7 @@ extension Compiler {
     let hasAttributes = slices.count > 1
     guard hasAttributes else {
       // for example: import elsa as queen
-      try self.codeObject.emitStoreName(name: asName, location: location)
+      try self.codeObject.emitStoreName(asName, location: location)
       return
     }
 
@@ -112,7 +112,7 @@ extension Compiler {
     }
 
     // final store using 'asName'
-    try self.codeObject.emitStoreName(name: asName, location: location)
+    try self.codeObject.emitStoreName(asName, location: location)
     try self.codeObject.emitPopTop(location: location)
   }
 }

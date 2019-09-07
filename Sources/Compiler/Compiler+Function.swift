@@ -31,7 +31,7 @@ extension Compiler {
                               updating: &flags,
                               location: location)
 
-    let codeObject = try self.newCodeObject(node: statement, type: .function) {
+    let codeObject = try self.inNewCodeObject(node: statement, type: .function) {
       let optimizationLevel = self.options.optimizationLevel
       if let docString = self.getDocString(body.first), optimizationLevel < 2 {
         try self.codeObject.emitString(docString, location: location)
@@ -46,7 +46,7 @@ extension Compiler {
       try self.codeObject.emitCallFunction(argumentCount: 1, location: location)
     }
 
-    try self.codeObject.emitStoreName(name: name, location: location)
+    try self.codeObject.emitStoreName(name, location: location)
   }
 
   // MARK: - Decorators
@@ -191,25 +191,18 @@ extension Compiler {
     var makeFunctionFlags = flags
 
     if codeObject.freeVars.any {
-      for (freeIndex, name) in codeObject.freeVars.enumerated() {
+      for name in codeObject.freeVars {
         // If a class contains a method with a *free variable* that has the same
         // name as a *method*, the name will be considered free and local.
 
         // The local var is a method
         // and the free var is a free var referenced within a method.
 
-        var index = ClosureIndex.free(freeIndex)
-
         let flags = self.getRefType(name: name, qualifiedName: qualifiedName)
-        if flags.contains(.cell) {
-          if let i = codeObject.cellVars.firstIndex(of: name) {
-            index = .cell(i)
-          } else {
-            assert(false)
-          }
-        }
+        let variable: ClosureVariable =
+          flags.contains(.cell) ? .cell(name) : .free(name)
 
-        try self.codeObject.emitLoadClosure(index: index, location: location)
+        try self.codeObject.emitLoadClosure(variable, location: location)
       }
 
       let count = codeObject.freeVars.count

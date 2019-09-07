@@ -92,8 +92,6 @@ public enum ParserErrorKind: Equatable {
   case unexpectedEOF(expected: [ExpectedToken])
   // Unexpected 'tokenKind', expected: 'expected'.
   case unexpectedToken(TokenKind, expected: [ExpectedToken])
-
-  case unimplemented(String)
 }
 
 extension ParserErrorKind: CustomStringConvertible {
@@ -189,9 +187,6 @@ extension ParserErrorKind: CustomStringConvertible {
         let e = joinWithCommaAndOr(expected)
         return "Unexpected \(token), expected \(e)."
       }
-
-    case .unimplemented(let msg):
-      return "Unimplemented: '\(msg)'"
     }
   }
 }
