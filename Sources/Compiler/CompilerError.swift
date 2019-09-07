@@ -105,6 +105,15 @@ public enum CompilerErrorKind: Equatable {
 
   /// default 'except:' must be last
   case defaultExceptNotLast
+
+  /// 'yield' outside function
+  case yieldOutsideFunction
+  /// 'yield from' inside async function
+  case yieldFromInsideAsyncFunction
+  /// 'await' outside function
+  case awaitOutsideFunction
+  /// 'await' outside async function
+  case awaitOutsideAsyncFunction
 }
 
 // TODO: surprisingly appropriate; `fromFutureImportBraces`
