@@ -53,9 +53,9 @@ extension Compiler {
     }
 
     try self.visitExpression(object)
-    try self.codeObject.emitLoadMethod(name: methodName, location: location)
+    try self.codeObject.appendLoadMethod(name: methodName, at: location)
     try self.visitExpressions(args)
-    try self.codeObject.emitCallMethod(argumentCount: args.count, location: location)
+    try self.codeObject.appendCallMethod(argumentCount: args.count, at: location)
     return true
   }
 
@@ -94,7 +94,7 @@ extension Compiler {
         // pack the positional arguments into a tuple.
 
         if nSeen > 0 {
-          try self.codeObject.emitBuildTuple(elementCount: nSeen, location: location)
+          try self.codeObject.appendBuildTuple(elementCount: nSeen, at: location)
           nSeen = 0
           nSubArgs += 1
         }
@@ -111,17 +111,17 @@ extension Compiler {
     if nSubArgs > 0 || hasDictionaryUnpack {
       // Pack up any trailing positional arguments.
       if nSeen > 0 {
-        try self.codeObject.emitBuildTuple(elementCount: nSeen, location: location)
+        try self.codeObject.appendBuildTuple(elementCount: nSeen, at: location)
         nSubArgs += 1
       }
 
       // If we ended up with more than one stararg, we need
       // to concatenate them into a single sequence.
       if nSubArgs > 1 {
-        try self.codeObject.emitBuildTupleUnpackWithCall(elementCount: nSubArgs,
-                                                         location: location)
+        try self.codeObject.appendBuildTupleUnpackWithCall(elementCount: nSubArgs,
+                                                           at: location)
       } else if nSubArgs == 0 {
-        try self.codeObject.emitBuildTuple(elementCount: 0, location: location)
+        try self.codeObject.appendBuildTuple(elementCount: 0, at: location)
       }
 
       // the number of keyword arguments on the stack following
@@ -156,22 +156,22 @@ extension Compiler {
       }
 
       if nSubKwArgs > 1 {
-        try self.codeObject.emitBuildMapUnpackWithCall(elementCount: nSubKwArgs,
-                                                       location: location)
+        try self.codeObject.appendBuildMapUnpackWithCall(elementCount: nSubKwArgs,
+                                                         at: location)
       }
 
-      try self.codeObject.emitCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0,
-                                             location: location)
+      try self.codeObject.appendCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0,
+                                               at: location)
     } else if keywords.any {
       let names = keywords.map { Constant.string($0.name!) }
       let argCount = alreadyPushedArgs + args.count + keywords.count
 
       try self.visitKeywords(keywords: keywords)
-      try self.codeObject.emitTuple(names, location: location)
-      try self.codeObject.emitCallFunctionKw(argumentCount: argCount, location: location)
+      try self.codeObject.appendTuple(names, at: location)
+      try self.codeObject.appendCallFunctionKw(argumentCount: argCount, at: location)
     } else {
       let argCount = alreadyPushedArgs + args.count
-      try self.codeObject.emitCallFunction(argumentCount: argCount, location: location)
+      try self.codeObject.appendCallFunction(argumentCount: argCount, at: location)
     }
   }
 
@@ -200,15 +200,15 @@ extension Compiler {
         names.append(name)
       }
 
-      try self.codeObject.emitTuple(names, location: location)
-      try self.codeObject.emitBuildConstKeyMap(elementCount: names.count,
-                                               location: location)
+      try self.codeObject.appendTuple(names, at: location)
+      try self.codeObject.appendBuildConstKeyMap(elementCount: names.count,
+                                                 at: location)
     } else {
       let kw = keywords[start]
       let name = kw.name.map { Constant.string($0) } ?? Constant.none
-      try self.codeObject.emitConstant(name, location: location)
+      try self.codeObject.appendConstant(name, at: location)
       try self.visitExpression(kw.value)
-      try self.codeObject.emitBuildMap(elementCount: 1, location: location)
+      try self.codeObject.appendBuildMap(elementCount: 1, at: location)
     }
   }
 }

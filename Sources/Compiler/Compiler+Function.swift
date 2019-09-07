@@ -34,7 +34,7 @@ extension Compiler {
     let codeObject = try self.inNewCodeObject(node: statement, type: .function) {
       let optimizationLevel = self.options.optimizationLevel
       if let docString = self.getDocString(body.first), optimizationLevel < 2 {
-        try self.codeObject.emitString(docString, location: location)
+        try self.codeObject.appendString(docString, at: location)
       }
 
       try self.visitStatements(body)
@@ -43,10 +43,10 @@ extension Compiler {
     try self.makeClosure(codeObject: codeObject, flags: flags, location: location)
 
     for _ in decorators {
-      try self.codeObject.emitCallFunction(argumentCount: 1, location: location)
+      try self.codeObject.appendCallFunction(argumentCount: 1, at: location)
     }
 
-    try self.codeObject.emitStoreName(name, location: location)
+    try self.codeObject.appendStoreName(name, at: location)
   }
 
   // MARK: - Decorators
@@ -66,8 +66,8 @@ extension Compiler {
     if args.defaults.any {
       flags.formUnion(.hasPositionalArgDefaults)
       try self.visitExpressions(args.defaults)
-      try self.codeObject.emitBuildTuple(elementCount: args.defaults.count,
-                                         location: location)
+      try self.codeObject.appendBuildTuple(elementCount: args.defaults.count,
+                                           at: location)
     }
 
     if args.kwOnlyArgs.any {
@@ -99,9 +99,9 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasKwOnlyArgDefaults)
       let elements = names.map { Constant.string($0.value) }
-      try self.codeObject.emitTuple(elements, location: location)
-      try self.codeObject.emitBuildConstKeyMap(elementCount: names.count,
-                                               location: location)
+      try self.codeObject.appendTuple(elements, at: location)
+      try self.codeObject.appendBuildConstKeyMap(elementCount: names.count,
+                                                 at: location)
     }
   }
 
@@ -143,9 +143,9 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasAnnotations)
       let elements = names.map { Constant.string($0.value) }
-      try self.codeObject.emitTuple(elements, location: location)
-      try self.codeObject.emitBuildConstKeyMap(elementCount: names.count,
-                                               location: location)
+      try self.codeObject.appendTuple(elements, at: location)
+      try self.codeObject.appendBuildConstKeyMap(elementCount: names.count,
+                                                 at: location)
     }
   }
 
@@ -202,18 +202,17 @@ extension Compiler {
         let variable: ClosureVariable =
           flags.contains(.cell) ? .cell(name) : .free(name)
 
-        try self.codeObject.emitLoadClosure(variable, location: location)
+        try self.codeObject.appendLoadClosure(variable, at: location)
       }
 
       let count = codeObject.freeVars.count
-      try self.codeObject.emitBuildTuple(elementCount: count, location: location)
+      try self.codeObject.appendBuildTuple(elementCount: count, at: location)
       makeFunctionFlags.formUnion(.hasFreeVariables)
     }
 
-    try self.codeObject.emitCode(codeObject, location: location)
-    try self.codeObject.emitString(qualifiedName, location: location)
-    try self.codeObject.emitMakeFunction(flags: makeFunctionFlags,
-                                         location: location)
+    try self.codeObject.appendCode(codeObject, at: location)
+    try self.codeObject.appendString(qualifiedName, at: location)
+    try self.codeObject.appendMakeFunction(flags: makeFunctionFlags, at: location)
   }
 
   private func getRefType(name: MangledName,

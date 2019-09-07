@@ -19,8 +19,7 @@ public struct CompilerOptions {
   /// - 1 or more - optimize. Tries to reduce code size and execution time.
   public let optimizationLevel: UInt8
 
-  public init(isInteractive:     Bool = false,
-              optimizationLevel: UInt8 = 0) {
+  public init(isInteractive: Bool = false, optimizationLevel: UInt8 = 0) {
     self.isInteractive = isInteractive
     self.optimizationLevel = optimizationLevel
   }
@@ -111,7 +110,7 @@ public final class Compiler {
     }
 
     // Emit epilog (because we may be a jump target).
-    try self.codeObject.emitNop(location: self.ast.end)
+    try self.codeObject.appendNop(at: self.ast.end)
 
     assert(self.unitStack.count == 1)
     return self.codeObject
@@ -308,8 +307,7 @@ public final class Compiler {
   // MARK: - Error/warning
 
   /// Create parser warning
-  internal func warn(_ warning: CompilerWarning,
-                     location:  SourceLocation) {
+  internal func warn(_ warning: CompilerWarning, location:  SourceLocation) {
     // uh... oh... well that's embarrassing...
   }
 

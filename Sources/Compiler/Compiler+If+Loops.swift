@@ -40,8 +40,8 @@ extension Compiler {
                         orElse: [Statement],
                         location: SourceLocation) throws {
     // TODO: CPython: constant = expr_constant(s->v.If.test);
-    let end = self.codeObject.addLabel()
-    let orElseStart = orElse.any ? self.codeObject.addLabel() : end
+    let end = self.codeObject.createLabel()
+    let orElseStart = orElse.any ? self.codeObject.createLabel() : end
 
     try self.visitExpression(test,
                              andJumpTo: orElseStart,
@@ -51,7 +51,7 @@ extension Compiler {
     try self.visitStatements(body)
 
     if orElse.any {
-      try self.codeObject.emitJumpAbsolute(to: end, location: location)
+      try self.codeObject.appendJumpAbsolute(to: end, at: location)
       self.codeObject.setLabel(orElseStart)
       try self.visitStatements(orElse)
     }
@@ -92,25 +92,26 @@ extension Compiler {
                          body:   NonEmptyArray<Statement>,
                          orElse: [Statement],
                          location: SourceLocation) throws {
-    let iterationStart = self.codeObject.addLabel()
-    let cleanup = self.codeObject.addLabel()
-    let end = self.codeObject.addLabel()
 
-    try self.codeObject.emitSetupLoop(loopEnd: end, location: location)
+    let iterationStart = self.codeObject.createLabel()
+    let cleanup = self.codeObject.createLabel()
+    let end = self.codeObject.createLabel()
+
+    try self.codeObject.appendSetupLoop(loopEnd: end, at: location)
 
     // 'continue' will jump to 'startLabel'
     try self.inBlock(.loop(continueTarget: iterationStart)) {
       try self.visitExpression(iter)
-      try self.codeObject.emitGetIter(location: location)
+      try self.codeObject.appendGetIter(at: location)
 
       self.codeObject.setLabel(iterationStart)
-      try self.codeObject.emitForIter(ifEmpty: cleanup, location: location)
+      try self.codeObject.appendForIter(ifEmpty: cleanup, at: location)
       try self.visitExpression(target)
       try self.visitStatements(body)
-      try self.codeObject.emitJumpAbsolute(to: iterationStart, location: location)
+      try self.codeObject.appendJumpAbsolute(to: iterationStart, at: location)
 
       self.codeObject.setLabel(cleanup)
-      try self.codeObject.emitPopBlock(location: location)
+      try self.codeObject.appendPopBlock(at: location)
     }
 
     try self.visitStatements(orElse)
@@ -147,12 +148,13 @@ extension Compiler {
                            body:   NonEmptyArray<Statement>,
                            orElse: [Statement],
                            location: SourceLocation) throws {
-    // TODO: CPython: constant = expr_constant(s->v.If.test);
-    let iterationStart = self.codeObject.addLabel()
-    let cleanup = self.codeObject.addLabel()
-    let end = self.codeObject.addLabel()
 
-    try self.codeObject.emitSetupLoop(loopEnd: end, location: location)
+    // TODO: CPython: constant = expr_constant(s->v.If.test);
+    let iterationStart = self.codeObject.createLabel()
+    let cleanup = self.codeObject.createLabel()
+    let end = self.codeObject.createLabel()
+
+    try self.codeObject.appendSetupLoop(loopEnd: end, at: location)
 
     self.codeObject.setLabel(iterationStart)
 
@@ -164,10 +166,10 @@ extension Compiler {
                                location: location)
 
       try self.visitStatements(body)
-      try self.codeObject.emitJumpAbsolute(to: iterationStart, location: location)
+      try self.codeObject.appendJumpAbsolute(to: iterationStart, at: location)
 
       self.codeObject.setLabel(cleanup)
-      try self.codeObject.emitPopBlock(location: location)
+      try self.codeObject.appendPopBlock(at: location)
     }
 
     try self.visitStatements(orElse)
@@ -184,16 +186,14 @@ extension Compiler {
 
     switch blockType {
     case let .loop(continueTarget):
-      try self.codeObject.emitJumpAbsolute(to: continueTarget,
-                                           location: location)
+      try self.codeObject.appendJumpAbsolute(to: continueTarget, at: location)
     case .except,
          .finallyTry:
       // Try to find the previous loop.
       for block in self.blockStack.reversed() {
         switch block {
         case let .loop(continueTarget):
-          try self.codeObject.emitJumpAbsolute(to: continueTarget,
-                                               location: location)
+          try self.codeObject.appendJumpAbsolute(to: continueTarget, at: location)
           return
         case .except,
              .finallyTry:
@@ -213,6 +213,6 @@ extension Compiler {
       throw self.error(.breakOutsideLoop, location: location)
     }
 
-    try self.codeObject.emitBreak(location: location)
+    try self.codeObject.appendBreak(at: location)
   }
 }

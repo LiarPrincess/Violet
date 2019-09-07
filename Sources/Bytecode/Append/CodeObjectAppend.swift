@@ -8,8 +8,7 @@ extension CodeObject {
   // This function does not throw, but we will mark it as one for the future.
   // Also some of the 'emit' functions throw and it would be weird to use 'try'
   // only on some of the functions in api.
-  internal func emit(_ instruction: Instruction,
-                     location: SourceLocation) throws {
+  internal func append(_ instruction: Instruction, at location: SourceLocation) throws {
     self.instructions.append(instruction)
 
     let lastLine = self.instructionLines.last ?? SourceLocation.start.line
@@ -21,8 +20,8 @@ extension CodeObject {
   // MARK: - Label
 
   /// Creates new label (jump target) with invalid value.
-  /// Use `self.setLabel()` to fill value.
-  public func addLabel() -> Label {
+  /// Use `self.setLabel()` to assign proper value.
+  public func createLabel() -> Label {
     let index = self.labels.endIndex
     self.labels.append(Label.notAssigned)
     return Label(index: index)
@@ -41,19 +40,19 @@ extension CodeObject {
 
   internal func addNameWithExtendedArgIfNeeded<S: ConstantString>(
     name: S,
-    location: SourceLocation) throws -> UInt8 {
+    at location: SourceLocation) throws -> UInt8 {
 
     let rawIndex = self.names.endIndex
-    let index = try self.emitExtendedArgIfNeeded(rawIndex, location: location)
+    let index = try self.appendExtendedArgIfNeeded(rawIndex, at: location)
     self.names.append(name.constant)
     return index
   }
 
-  internal func emitLabelWithExtendedArgIfNeeded(
+  internal func addLabelWithExtendedArgIfNeeded(
     _ label: Label,
-    location: SourceLocation) throws -> UInt8 {
+    at location: SourceLocation) throws -> UInt8 {
 
-    return try self.emitExtendedArgIfNeeded(label.index, location: location)
+    return try self.appendExtendedArgIfNeeded(label.index, at: location)
   }
 
   /// If the arg is `>255` then it can't be stored directly in instruction.
@@ -68,9 +67,9 @@ extension CodeObject {
   /// ```
   /// - Returns:
   /// Value that should be used in instruction.
-  internal func emitExtendedArgIfNeeded(
+  internal func appendExtendedArgIfNeeded(
     _ arg: Int,
-    location: SourceLocation) throws -> UInt8 {
+    at location: SourceLocation) throws -> UInt8 {
 
     // TODO: Test this
 
@@ -87,7 +86,7 @@ extension CodeObject {
 
     let emit1 = value > 0
     if emit1 {
-      try self.emit(.extendedArg(value), location: location)
+      try self.append(.extendedArg(value), at: location)
     }
 
     shift = 16
@@ -96,7 +95,7 @@ extension CodeObject {
 
     let emit2 = emit1 || value > 0
     if emit2 {
-      try self.emit(.extendedArg(value), location: location)
+      try self.append(.extendedArg(value), at: location)
     }
 
     shift = 8
@@ -105,7 +104,7 @@ extension CodeObject {
 
     let emit3 = emit2 || value > 0
     if emit3 {
-      try self.emit(.extendedArg(value), location: location)
+      try self.append(.extendedArg(value), at: location)
     }
 
     return UInt8((arg & ffMask) >> shift)
@@ -113,7 +112,7 @@ extension CodeObject {
 
   // MARK: - Error
 
-  /// Create compiler error
+  /// Create code object error
   internal func error(_ kind: CodeObjectErrorKind,
                       location: SourceLocation) -> CodeObjectError {
     return CodeObjectError(kind, location: location)
