@@ -60,7 +60,7 @@ internal final class CompilerUnit {
 
   internal init(codeObject: CodeObject,
                 scope:      SymbolScope,
-                className:  String?) {
+                className:  String?) {
     self.codeObject = codeObject
     self.scope = scope
     self.className = className

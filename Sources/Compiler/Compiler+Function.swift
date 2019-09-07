@@ -117,7 +117,6 @@ extension Compiler {
 
   /// compiler_visit_annotations(struct compiler *c, arguments_ty args, ...)
   private func visitAnnotations(args: Arguments,
-
                                 returns: Expression?,
                                 updating flags: inout FunctionFlags,
                                 location: SourceLocation) throws {
@@ -202,6 +201,9 @@ extension Compiler {
       for (freeIndex, name) in codeObject.freeVars.enumerated() {
         // If a class contains a method with a *free variable* that has the same
         // name as a *method*, the name will be considered free and local.
+
+        // The local var is a method
+        // and the free var is a free var referenced within a method.
 
         var index = ClosureIndex.free(freeIndex)
 

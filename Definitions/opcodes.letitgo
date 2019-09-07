@@ -31,6 +31,12 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | Code(CodeObject)
   | Tuple(Constant*)
 
+@enum StringConversion =
+    none
+  | str
+  | repr
+  | ascii
+
 {-
   We cannot name following type 'ComparisonOpcode',
   because we have such type in Parser.
@@ -620,24 +626,8 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {- ------ -}
 
   -- Used for implementing formatted literal strings (f-strings).
-  --
-  -- Our oparg encodes 2 pieces of information: the conversion
-  -- character, and whether or not a format_spec was provided.
-  --
-  -- Convert the conversion char to 2 bits:
-  -- ```c
-  -- None: 000  0x0  FVC_NONE
-  -- !s  : 001  0x1  FVC_STR
-  -- !r  : 010  0x2  FVC_REPR
-  -- !a  : 011  0x3  FVC_ASCII
-  -- ```
-  --
-  -- next bit is whether or not we have a format spec:
-  -- ```c
-  -- yes : 100  0x4
-  -- no  : 000  0x0
-  -- ```
-  | FormatValue(UInt8 flags)
+  -- (And yes, Swift will pack both payloads in single byte).
+  | FormatValue(StringConversion conversion, Bool hasFormat)
 
   -- Concatenates `count` strings from the stack
   -- and pushes the resulting string onto the stack.
@@ -666,16 +656,11 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Per frame, there is a stack of blocks, denoting nested loops, try statements, and such.
   | PopBlock
 
-  {- TODO: docs -}
   -- Pushes a reference to the cell contained in slot 'i'
   -- of the 'cell' or 'free' variable storage.
-  -- If 'i' < CellVars.count: name of the variable is CellVars[i].
-  -- otherwise:               name is FreeVars[i - len(CellVars)].
-  | LoadClosure(Index)
+  -- If 'i' < cellVars.count: name of the variable is cellVars[i].
+  -- otherwise:               name is freeVars[i - cellVars.count].
+  | LoadClosure(Index cellOrFreeIndex)
 
   -- Pushes a slice object on the stack.
-  -- `argc` must be 2 or 3.
-  -- If it is 2, `slice(TOS1, TOS)` is pushed;
-  -- if it is 3, `slice(TOS2, TOS1, TOS)` is pushed.
-  -- See the `slice()` built-in function for more information.
   | BuildSlice(SliceArg)

@@ -207,20 +207,23 @@ extension Compiler {
     case let .formattedValue(expr, conversion: conv, spec: spec):
       try self.visitExpression(expr)
 
-      var flags: UInt8 = 0
+      var conversion = StringConversion.none
       switch conv {
-      case .some(.str):   flags |= FormattedValueMasks.conversionStr
-      case .some(.repr):  flags |= FormattedValueMasks.conversionRepr
-      case .some(.ascii): flags |= FormattedValueMasks.conversionASCII
-      default:            flags |= FormattedValueMasks.conversionNone
+      case .some(.str):   conversion = .str
+      case .some(.repr):  conversion = .repr
+      case .some(.ascii): conversion = .ascii
+      default: break
       }
 
+      var hasFormat = false
       if let s = spec {
-        flags |= FormattedValueMasks.hasFormat
+        hasFormat = true
         try self.codeObject.emitString(s, location: location)
       }
 
-      try self.codeObject.emitFormatValue(flags: flags, location: location)
+      try self.codeObject.emitFormatValue(conversion: conversion,
+                                          hasFormat: hasFormat,
+                                          location: location)
 
     case let .joined(groups):
       for g in groups {
