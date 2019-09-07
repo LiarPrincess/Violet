@@ -50,7 +50,7 @@ extension CodeObject {
   public func appendBytes(_ value: Data, at location: SourceLocation) throws {
     try self.appendConstant(.bytes(value), at: location)
   }
-  
+
   /// Append a `loadConst` instruction to code object.
   public func appendTuple(_ value: [Constant], at location: SourceLocation) throws {
     try self.appendConstant(.tuple(value), at: location)

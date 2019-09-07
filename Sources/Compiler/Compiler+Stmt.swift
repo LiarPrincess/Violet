@@ -31,7 +31,7 @@ extension Compiler {
                                 returns: returns,
                                 statement: stmt)
     case .asyncFunctionDef:
-      throw self.notImplemented()
+      throw self.notImplementedAsync()
 
     case let .classDef(name, bases, keywords, body, decorators):
       try self.visitClassDef(name:  name,
@@ -62,7 +62,7 @@ extension Compiler {
                         orElse: orElse,
                         location: location)
     case .asyncFor:
-      throw self.notImplemented()
+      throw self.notImplementedAsync()
 
     case let .while(test, body, orElse):
       try self.visitWhile(test: test, body: body, orElse: orElse, location: location)
@@ -73,7 +73,7 @@ extension Compiler {
     case let .with(items, body):
       try self.visitWith(items: items, body: body, location: location)
     case .asyncWith:
-      throw self.notImplemented()
+      throw self.notImplementedAsync()
 
     case let .raise(exception, cause):
       try self.visitRaise(exception: exception, cause: cause, location: location)

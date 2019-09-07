@@ -142,7 +142,7 @@ extension CodeObject {
   public func appendInplaceRShift(at location: SourceLocation) throws {
     try self.append(.inplaceRShift, at: location)
   }
-  
+
   /// Append an `inplaceAnd` instruction to code object.
   public func appendInplaceAnd(at location: SourceLocation) throws {
     try self.append(.inplaceAnd, at: location)

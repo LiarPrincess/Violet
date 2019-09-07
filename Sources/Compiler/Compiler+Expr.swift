@@ -73,24 +73,46 @@ extension Compiler {
       try self.visitCompare(left: left, elements: elements, location: location)
 
     case let .tuple(elements):
-      try self.visitTuple     (elements: elements, context: context, location: location)
+      try self.visitTuple(elements: elements,
+                          context: context,
+                          location: location)
     case let .list(elements):
-      try self.visitList      (elements: elements, context: context, location: location)
+      try self.visitList(elements: elements,
+                         context: context,
+                         location: location)
     case let .dictionary(elements):
-      try self.visitDictionary(elements: elements, context: context, location: location)
+      try self.visitDictionary(elements: elements,
+                               context: context,
+                               location: location)
     case let .set(elements):
-      try self.visitSet       (elements: elements, context: context, location: location)
+      try self.visitSet(elements: elements,
+                        context: context,
+                        location: location)
 
-    case .listComprehension,
-         .setComprehension,
-         .dictionaryComprehension:
-      throw self.notImplemented()
+    case let .generatorExp(elt, generators):
+      try self.visitGeneratorExpression(elt: elt,
+                                        generators: generators,
+                                        location: location)
+    case let .listComprehension(elt, generators):
+      try self.visitListComprehension(elt: elt,
+                                      generators: generators,
+                                      location: location)
+    case let  .setComprehension(elt, generators):
+      try self.visitSetComprehension(elt: elt,
+                                     generators: generators,
+                                     location: location)
+    case let .dictionaryComprehension(key, value, generators):
+      try self.visitDictionaryComprehension(key: key,
+                                            value: value,
+                                            generators: generators,
+                                            location: location)
 
-    case .generatorExp,
-         .await,
-         .yield,
-         .yieldFrom:
-      throw self.notImplemented()
+    case let .await(expr):
+      try self.visitAwait(expr: expr, location: location)
+    case let .yield(expr):
+      try self.visitYield(value: expr, location: location)
+    case let .yieldFrom(expr):
+      try self.visitYieldFrom(expr: expr, location: location)
 
     case let .lambda(args, body):
       try self.visitLambda(args: args, body: body, expression: expr)
@@ -126,6 +148,111 @@ extension Compiler {
       default:
         throw self.error(.invalidStarredExpression, location: location)
       }
+    }
+  }
+
+  /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
+  internal func visitExpression(_ expr:  Expression,
+                                andJumpTo next: Label,
+                                ifBooleanValueIs cond: Bool,
+                                location: SourceLocation) throws {
+    switch expr.kind {
+    case let .unaryOp(op, right: right):
+      switch op {
+      case .not:
+        try self.visitExpression(right,
+                                 andJumpTo: next,
+                                 ifBooleanValueIs: !cond,
+                                 location: location)
+        return
+      case .plus, .minus, .invert:
+        break // fallback to general implementation
+      }
+
+    case let .boolOp(op, left, right):
+      let isOr = op == .or
+      let hasLabel = cond != isOr
+      let next2 = hasLabel ? self.codeObject.createLabel() : next
+
+      try self.visitExpression(left,
+                               andJumpTo: next2,
+                               ifBooleanValueIs: isOr,
+                               location: location)
+      try self.visitExpression(right,
+                               andJumpTo: next,
+                               ifBooleanValueIs: cond,
+                               location: location)
+
+      if hasLabel {
+        self.codeObject.setLabel(next2)
+      }
+      return
+
+    case let .ifExpression(test, body, orElse):
+      let end   = self.codeObject.createLabel()
+      let next2 = self.codeObject.createLabel()
+
+      try self.visitExpression(test,
+                               andJumpTo: next2,
+                               ifBooleanValueIs: false,
+                               location: location)
+      try self.visitExpression(body,
+                               andJumpTo: next,
+                               ifBooleanValueIs: cond,
+                               location: location)
+      try self.codeObject.appendJumpAbsolute(to: end, at: location)
+      self.codeObject.setLabel(next2)
+      try self.visitExpression(orElse,
+                               andJumpTo: next,
+                               ifBooleanValueIs: cond,
+                               location: location)
+      self.codeObject.setLabel(end)
+
+    case let .compare(left, elements):
+      guard elements.count > 1 else {
+        break // fallback to general implementation
+      }
+
+      try self.visitExpression(left)
+
+      let end     = self.codeObject.createLabel()
+      let cleanup = self.codeObject.createLabel()
+
+      for element in elements.dropLast() {
+        try self.visitExpression(element.right)
+        try self.codeObject.appendDupTop(at: location)
+        try self.codeObject.appendRotThree(at: location)
+        try self.codeObject.appendCompareOp(element.op, at: location)
+        try self.codeObject.appendJumpIfFalseOrPop(to: cleanup, at: location)
+      }
+
+      let last = elements.last
+      try self.visitExpression(last.right)
+      try self.codeObject.appendCompareOp(last.op, at: location)
+
+      switch cond {
+      case true:  try self.codeObject.appendPopJumpIfTrue (to: next, at: location)
+      case false: try self.codeObject.appendPopJumpIfFalse(to: next, at: location)
+      }
+
+      try self.codeObject.appendJumpAbsolute(to: end, at: location)
+      self.codeObject.setLabel(cleanup)
+      try self.codeObject.appendPopTop(at: location)
+
+      if !cond {
+        try self.codeObject.appendJumpAbsolute(to: next, at: location)
+      }
+      self.codeObject.setLabel(end)
+      return
+
+    default:
+      break // fallback to general implementation
+    }
+
+    try self.visitExpression(expr)
+    switch cond {
+    case true:  try self.codeObject.appendPopJumpIfTrue (to: next, at: location)
+    case false: try self.codeObject.appendPopJumpIfFalse(to: next, at: location)
     }
   }
 
@@ -308,42 +435,6 @@ extension Compiler {
     }
   }
 
-  // MARK: - Comprehension
-
-/*
-  private func visitListComprehension(
-    elt: Expression,
-    generators: NonEmptyArray<Comprehension>) throws {
-  }
-
-  private func visitSetComprehension(
-    elt: Expression,
-    generators: NonEmptyArray<Comprehension>) throws {
-  }
-
-  private func visitDictionaryComprehension(
-    key: Expression,
-    value: Expression,
-    generators: NonEmptyArray<Comprehension>) throws {
-  }
-
-  private func visitGeneratorExp(
-    elt: Expression,
-    generators: NonEmptyArray<Comprehension>) throws {
-  }
-
-  // MARK: - Coroutines/Generators
-
-  private func visitAwait(expr: Expression) throws {
-  }
-
-  private func visitYield(value: Expression?) throws {
-  }
-
-  private func visitYieldFrom(expr: Expression) throws {
-  }
-*/
-
   // MARK: - If
 
   /// compiler_ifexp(struct compiler *c, expr_ty e)
@@ -373,111 +464,6 @@ extension Compiler {
     self.codeObject.setLabel(orElseStart)
     try self.visitExpression(orElse)
     self.codeObject.setLabel(end)
-  }
-
-  /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
-  internal func visitExpression(_ expr:  Expression,
-                                andJumpTo next: Label,
-                                ifBooleanValueIs cond: Bool,
-                                location: SourceLocation) throws {
-    switch expr.kind {
-    case let .unaryOp(op, right: right):
-      switch op {
-      case .not:
-        try self.visitExpression(right,
-                                 andJumpTo: next,
-                                 ifBooleanValueIs: !cond,
-                                 location: location)
-        return
-      case .plus, .minus, .invert:
-        break // fallback to general implementation
-      }
-
-    case let .boolOp(op, left, right):
-      let isOr = op == .or
-      let hasLabel = cond != isOr
-      let next2 = hasLabel ? self.codeObject.createLabel() : next
-
-      try self.visitExpression(left,
-                               andJumpTo: next2,
-                               ifBooleanValueIs: isOr,
-                               location: location)
-      try self.visitExpression(right,
-                               andJumpTo: next,
-                               ifBooleanValueIs: cond,
-                               location: location)
-
-      if hasLabel {
-        self.codeObject.setLabel(next2)
-      }
-      return
-
-    case let .ifExpression(test, body, orElse):
-      let end   = self.codeObject.createLabel()
-      let next2 = self.codeObject.createLabel()
-
-      try self.visitExpression(test,
-                               andJumpTo: next2,
-                               ifBooleanValueIs: false,
-                               location: location)
-      try self.visitExpression(body,
-                               andJumpTo: next,
-                               ifBooleanValueIs: cond,
-                               location: location)
-      try self.codeObject.appendJumpAbsolute(to: end, at: location)
-      self.codeObject.setLabel(next2)
-      try self.visitExpression(orElse,
-                               andJumpTo: next,
-                               ifBooleanValueIs: cond,
-                               location: location)
-      self.codeObject.setLabel(end)
-
-    case let .compare(left, elements):
-      guard elements.count > 1 else {
-        break // fallback to general implementation
-      }
-
-      try self.visitExpression(left)
-
-      let end     = self.codeObject.createLabel()
-      let cleanup = self.codeObject.createLabel()
-
-      for element in elements.dropLast() {
-        try self.visitExpression(element.right)
-        try self.codeObject.appendDupTop(at: location)
-        try self.codeObject.appendRotThree(at: location)
-        try self.codeObject.appendCompareOp(element.op, at: location)
-        try self.codeObject.appendJumpIfFalseOrPop(to: cleanup, at: location)
-      }
-
-      let last = elements.last
-      try self.visitExpression(last.right)
-      try self.codeObject.appendCompareOp(last.op, at: location)
-
-      switch cond {
-      case true:  try self.codeObject.appendPopJumpIfTrue (to: next, at: location)
-      case false: try self.codeObject.appendPopJumpIfFalse(to: next, at: location)
-      }
-
-      try self.codeObject.appendJumpAbsolute(to: end, at: location)
-      self.codeObject.setLabel(cleanup)
-      try self.codeObject.appendPopTop(at: location)
-
-      if !cond {
-        try self.codeObject.appendJumpAbsolute(to: next, at: location)
-      }
-      self.codeObject.setLabel(end)
-      return
-
-    default:
-      break // fallback to general implementation
-    }
-
-    try self.visitExpression(expr)
-    switch cond {
-    case true:  try self.codeObject.appendPopJumpIfTrue (to: next, at: location)
-    case false: try self.codeObject.appendPopJumpIfFalse(to: next, at: location)
-    }
   }
 
   // MARK: - Slice

@@ -354,9 +354,13 @@ public final class Compiler {
   }
 
   // MARK: - Not implemented
+  // TODO: Implement this
 
-  internal func notImplemented() -> Error {
-    // TODO: remove this
+  internal func notImplementedAsync() -> Error {
+    return NotImplemented.pep401
+  }
+
+  internal func notImplementedComprehension() -> Error {
     return NotImplemented.pep401
   }
 }
