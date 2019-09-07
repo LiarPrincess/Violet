@@ -178,7 +178,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- `try` block.
   -- All attributes are list of nodes to execute, except for handlers,
   -- which is a list of ExceptHandler nodes.
-  | Try(stmt+ body, ExceptHandler* handlers, stmt* orElse, stmt* finalBody)
+  | Try(stmt+ body, ExceptHandler* handlers, stmt* orElse, stmt* finally)
   -- An assertion.
   -- - `test` holds the condition, such as a Compare node.
   -- - `msg` holds the failure message, normally a Str node.

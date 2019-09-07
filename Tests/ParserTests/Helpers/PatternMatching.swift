@@ -264,9 +264,9 @@ extension StatementMatcher {
   internal func matchTry(_ stmt: Statement,
                          file: StaticString = #file,
                          line: UInt         = #line) ->
-  (body: [Statement], handlers: [ExceptHandler], orElse: [Statement], finalBody: [Statement])? {
+  (body: [Statement], handlers: [ExceptHandler], orElse: [Statement], finally: [Statement])? {
 
-    if case let StatementKind.try(body: value0, handlers: value1, orElse: value2, finalBody: value3) = stmt.kind {
+    if case let StatementKind.try(body: value0, handlers: value1, orElse: value2, finally: value3) = stmt.kind {
       return (Array(value0), value1, value2, value3)
     }
 

@@ -186,7 +186,7 @@ public enum StatementKind: Equatable {
   /// `try` block.
   /// All attributes are list of nodes to execute, except for handlers,
   /// which is a list of ExceptHandler nodes.
-  case `try`(body: NonEmptyArray<Statement>, handlers: [ExceptHandler], orElse: [Statement], finalBody: [Statement])
+  case `try`(body: NonEmptyArray<Statement>, handlers: [ExceptHandler], orElse: [Statement], finally: [Statement])
   /// An assertion.
   /// - `test` holds the condition, such as a Compare node.
   /// - `msg` holds the failure message, normally a Str node.

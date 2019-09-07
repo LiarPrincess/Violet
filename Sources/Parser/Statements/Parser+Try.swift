@@ -8,8 +8,8 @@ import Lexer
 /// Intermediate representation for try.
 private struct TryIR {
   fileprivate var handlers = [ExceptHandler]()
-  fileprivate var orElse = [Statement]()
-  fileprivate var finalBody = [Statement]()
+  fileprivate var orElse   = [Statement]()
+  fileprivate var finally  = [Statement]()
   fileprivate var end: SourceLocation
 
   fileprivate init(end: SourceLocation) {
@@ -45,7 +45,7 @@ extension Parser {
     try self.parseElse(into: &ir)
     try self.parseFinally(into: &ir)
 
-    if ir.handlers.isEmpty && ir.finalBody.isEmpty {
+    if ir.handlers.isEmpty && ir.finally.isEmpty {
       throw self.error(.tryWithoutExceptOrFinally, location: start)
     }
 
@@ -55,8 +55,8 @@ extension Parser {
 
     let kind = StatementKind.try(body: body,
                                  handlers: ir.handlers,
-                                 orElse: ir.orElse,
-                                 finalBody: ir.finalBody)
+                                 orElse:   ir.orElse,
+                                 finally:  ir.finally)
 
     return self.statement(kind, start: start, end: ir.end)
   }
@@ -122,7 +122,7 @@ extension Parser {
     try self.consumeOrThrow(.colon)
 
     let value = try self.suite()
-    ir.finalBody = Array(value)
+    ir.finally = Array(value)
     ir.end = value.last.end
   }
 }

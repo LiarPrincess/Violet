@@ -60,8 +60,8 @@ extension ASTCreator {
     let kind = StatementKind.try(
       body: NonEmptyArray(first: self.statement(.expr(body))),
       handlers: handlers,
-      orElse: [self.statement(.expr(orElse))],
-      finalBody: [self.statement(.expr(finalBody))]
+      orElse:   [self.statement(.expr(orElse))],
+      finally:  [self.statement(.expr(finalBody))]
     )
     return self.statement(kind)
   }

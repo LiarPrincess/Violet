@@ -130,11 +130,11 @@ extension SymbolTableBuilder {
       try self.visitExpression(exception)
       try self.visitExpression(cause)
 
-    case let .try(body, handlers, orElse, finalBody):
+    case let .try(body, handlers, orElse, finally):
       try self.visitStatements(body)
       try self.visitExceptHandlers(handlers)
       try self.visitStatements(orElse)
-      try self.visitStatements(finalBody)
+      try self.visitStatements(finally)
 
     case let .assert(test, msg):
       try self.visitExpression(test)

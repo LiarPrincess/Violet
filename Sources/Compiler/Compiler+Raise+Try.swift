@@ -34,19 +34,19 @@ extension Compiler {
 
   internal func visitTry(body: NonEmptyArray<Statement>,
                          handlers: [ExceptHandler],
-                         orElse: [Statement],
-                         finalBody: [Statement],
+                         orElse:   [Statement],
+                         finally:  [Statement],
                          location: SourceLocation) throws {
-    if finalBody.any {
+    if finally.any {
       try self.visitTryFinally(body: body,
                                handlers: handlers,
-                               orElse: orElse,
-                               finalBody: finalBody,
-                               location: location)
+                               orElse:   orElse,
+                               finally: finally,
+                               location:  location)
     } else {
       try self.visitTryExcept(body: body,
                               handlers: handlers,
-                              orElse: orElse,
+                              orElse:   orElse,
                               location: location)
     }
   }
@@ -80,12 +80,11 @@ extension Compiler {
   ///   and the interpreter jumps to the label gotten from the block
   ///   stack.
   private func visitTryFinally(body: NonEmptyArray<Statement>,
-                               handlers:  [ExceptHandler],
-                               orElse:    [Statement],
-                               finalBody: [Statement],
-                               location:  SourceLocation) throws {
+                               handlers: [ExceptHandler],
+                               orElse:   [Statement],
+                               finally:  [Statement],
+                               location: SourceLocation) throws {
     let finallyStart = self.codeObject.addLabel()
-    // TODO: Rename 'finalBody' -> 'finally'
 
     // body
     try self.codeObject.emitSetupFinally(firstInstruction: finallyStart,
@@ -108,7 +107,7 @@ extension Compiler {
     // finally
     self.codeObject.setLabel(finallyStart)
     try self.inBlock(.finallyEnd) {
-      try self.visitStatements(finalBody)
+      try self.visitStatements(finally)
       try self.codeObject.emitEndFinally(location: location)
     }
   }

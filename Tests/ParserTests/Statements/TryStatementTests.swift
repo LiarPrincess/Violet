@@ -49,9 +49,9 @@ class TryStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher
       guard d.body.count == 1 else { return }
       XCTAssertStatement(d.body[0], "'Ping'")
 
-      XCTAssertEqual(d.finalBody.count, 1)
-      guard d.finalBody.count == 1 else { return }
-      XCTAssertStatement(d.finalBody[0], "'Mulan'")
+      XCTAssertEqual(d.finally.count, 1)
+      guard d.finally.count == 1 else { return }
+      XCTAssertStatement(d.finally[0], "'Mulan'")
 
       XCTAssertStatement(stmt, "(try 'Ping' finally: 'Mulan')")
       XCTAssertEqual(stmt.start, loc0)
@@ -78,7 +78,7 @@ class TryStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher
       guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.orElse, [])
-      XCTAssertEqual(d.finalBody, [])
+      XCTAssertEqual(d.finally, [])
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -112,7 +112,7 @@ class TryStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher
       guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.orElse, [])
-      XCTAssertEqual(d.finalBody, [])
+      XCTAssertEqual(d.finally, [])
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -148,7 +148,7 @@ class TryStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher
       guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.orElse, [])
-      XCTAssertEqual(d.finalBody, [])
+      XCTAssertEqual(d.finally, [])
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -187,7 +187,7 @@ class TryStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher
       guard let d = self.matchTry(stmt) else { return }
 
       XCTAssertEqual(d.orElse, [])
-      XCTAssertEqual(d.finalBody, [])
+      XCTAssertEqual(d.finally, [])
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -225,7 +225,7 @@ class TryStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher
     if let stmt = self.parseStmt(&parser) {
       guard let d = self.matchTry(stmt) else { return }
 
-      XCTAssertEqual(d.finalBody, [])
+      XCTAssertEqual(d.finally, [])
 
       XCTAssertEqual(d.body.count, 1)
       guard d.body.count == 1 else { return }
@@ -277,9 +277,9 @@ class TryStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher
       guard d.handlers.count == 1 else { return }
       XCTAssertExceptHandler(d.handlers[0], "(except do: 'Ping')")
 
-      XCTAssertEqual(d.finalBody.count, 1)
-      guard d.finalBody.count == 1 else { return }
-      XCTAssertStatement(d.finalBody[0], "'Fa Mulan'")
+      XCTAssertEqual(d.finally.count, 1)
+      guard d.finally.count == 1 else { return }
+      XCTAssertStatement(d.finally[0], "'Fa Mulan'")
 
       print(stmt)
       XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping') finally: 'Fa Mulan')")
@@ -326,9 +326,9 @@ class TryStatementTests: XCTestCase, Common, ExpressionMatcher, StatementMatcher
       guard d.orElse.count == 1 else { return }
       XCTAssertStatement(d.orElse[0], "'Pong'")
 
-      XCTAssertEqual(d.finalBody.count, 1)
-      guard d.finalBody.count == 1 else { return }
-      XCTAssertStatement(d.finalBody[0], "'Fa Mulan'")
+      XCTAssertEqual(d.finally.count, 1)
+      guard d.finally.count == 1 else { return }
+      XCTAssertStatement(d.finally[0], "'Fa Mulan'")
 
       print(stmt)
       XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping') else: 'Pong' finally: 'Fa Mulan')")

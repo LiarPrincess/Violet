@@ -104,10 +104,10 @@ public struct ASTValidationPass: ASTPass {
         throw self.error(.raiseWithCauseWithoutException, statement: stmt)
       }
 
-    case let .try(body, handlers, orElse, finalBody):
+    case let .try(body, handlers, orElse, finally):
       try self.visitStatements(body)
 
-      if handlers.isEmpty && finalBody.isEmpty {
+      if handlers.isEmpty && finally.isEmpty {
         throw self.error(.tryWithoutExceptOrFinally, statement: stmt)
       }
 
@@ -116,7 +116,7 @@ public struct ASTValidationPass: ASTPass {
       }
 
       try self.visitExceptHandlers(handlers)
-      try self.visitStatements(finalBody)
+      try self.visitStatements(finally)
       try self.visitStatements(orElse)
 
     case let .assert(test, msg):

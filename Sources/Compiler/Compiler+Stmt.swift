@@ -77,11 +77,11 @@ extension Compiler {
 
     case let .raise(exception, cause):
       try self.visitRaise(exception: exception, cause: cause, location: location)
-    case let .try(body, handlers, orElse, finalBody):
+    case let .try(body, handlers, orElse, finally):
       try self.visitTry(body: body,
                         handlers: handlers,
-                        orElse: orElse,
-                        finalBody: finalBody,
+                        orElse:   orElse,
+                        finally:  finally,
                         location: location)
 
     case let .import(aliases):
