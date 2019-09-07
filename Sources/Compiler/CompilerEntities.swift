@@ -38,7 +38,7 @@ public enum ExpressionContext {
 }
 
 internal enum BlockType {
-  case loop(startLabel: Label)
+  case loop(continueTarget: Label)
   case except
   case finallyTry
   case finallyEnd

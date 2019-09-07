@@ -99,7 +99,7 @@ extension Compiler {
     try self.codeObject.emitSetupLoop(loopEnd: end, location: location)
 
     // 'continue' will jump to 'startLabel'
-    try self.inBlock(.loop(startLabel: iterationStart)) {
+    try self.inBlock(.loop(continueTarget: iterationStart)) {
       try self.visitExpression(iter)
       try self.codeObject.emitGetIter(location: location)
 
@@ -148,30 +148,30 @@ extension Compiler {
                            orElse: [Statement],
                            location: SourceLocation) throws {
     // TODO: CPython: constant = expr_constant(s->v.If.test);
-    let startLabel = self.codeObject.addLabel()
-    let endLabel   = self.codeObject.addLabel()
-    let afterBodyLabel = self.codeObject.addLabel() // CPython: anchor
+    let iterationStart = self.codeObject.addLabel()
+    let cleanup = self.codeObject.addLabel()
+    let end = self.codeObject.addLabel()
 
-    try self.codeObject.emitSetupLoop(loopEnd: endLabel, location: location)
+    try self.codeObject.emitSetupLoop(loopEnd: end, location: location)
 
-    self.codeObject.setLabel(startLabel)
+    self.codeObject.setLabel(iterationStart)
 
     // 'continue' will jump to 'startLabel'
-    try self.inBlock(.loop(startLabel: startLabel)) {
+    try self.inBlock(.loop(continueTarget: iterationStart)) {
       try self.visitExpression(test,
-                               andJumpTo: afterBodyLabel,
+                               andJumpTo: cleanup,
                                ifBooleanValueIs: false,
                                location: location)
 
       try self.visitStatements(body)
-      try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
+      try self.codeObject.emitJumpAbsolute(to: iterationStart, location: location)
 
-      self.codeObject.setLabel(afterBodyLabel)
+      self.codeObject.setLabel(cleanup)
       try self.codeObject.emitPopBlock(location: location)
     }
 
     try self.visitStatements(orElse)
-    self.codeObject.setLabel(endLabel)
+    self.codeObject.setLabel(end)
   }
 
   // MARK: - Continue, break
@@ -183,12 +183,25 @@ extension Compiler {
     }
 
     switch blockType {
-    case let .loop(startLabel):
-      try self.codeObject.emitJumpAbsolute(to: startLabel, location: location)
-    case .except:
-      break
-    case .finallyTry:
-      break
+    case let .loop(continueTarget):
+      try self.codeObject.emitJumpAbsolute(to: continueTarget,
+                                           location: location)
+    case .except,
+         .finallyTry:
+      // Try to find the previous loop.
+      for block in self.blockStack.reversed() {
+        switch block {
+        case let .loop(continueTarget):
+          try self.codeObject.emitJumpAbsolute(to: continueTarget,
+                                               location: location)
+          return
+        case .except,
+             .finallyTry:
+          break
+        case .finallyEnd:
+          throw self.error(.continueInsideFinally, location: location)
+        }
+      }
     case .finallyEnd:
       throw self.error(.continueInsideFinally, location: location)
     }
