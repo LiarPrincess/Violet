@@ -42,7 +42,6 @@ internal func escaped(_ name: String) -> String {
   return swiftKeywords.contains(name) ? "`\(name)`" : name
 }
 
-
 private let vowels = Set<String>(["a", "e", "i", "o", "u"])
 
 internal func isVowel(_ c: String) -> Bool {

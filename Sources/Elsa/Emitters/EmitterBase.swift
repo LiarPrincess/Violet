@@ -23,8 +23,13 @@ public class EmitterBase {
   // We don't have to close file, because Swift will do that for us
   // deinit { self.outputHandle.closeFile() }
 
-  public func write(_ s: String = "", terminator: String = "\n") {
-    let line = s + terminator
+  public func write() {
+    self.write("")
+  }
+
+  public func write<S: CustomStringConvertible>(_ s: S,
+                                                terminator: String = "\n") {
+    let line = String(describing: s) + terminator
     let data = line.data(using: .utf8)!
     self.outputHandle.write(data)
   }

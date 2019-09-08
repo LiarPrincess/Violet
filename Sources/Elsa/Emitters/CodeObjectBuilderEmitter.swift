@@ -1,3 +1,6 @@
+// Used when generating 'append...' functions for CodeObject.
+// NOT USED ANYMORE!
+
 public final class CodeObjectBuilderEmitter: EmitterBase {
 
   public func emit(entities: [Entity], imports: [String]) {

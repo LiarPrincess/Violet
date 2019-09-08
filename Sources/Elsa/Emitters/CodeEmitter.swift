@@ -1,3 +1,5 @@
+// Emit code for given entities (the same for AST, bytecode etc.).
+
 public final class CodeEmitter: EmitterBase {
 
   public func emit(entities: [Entity], imports: [String]) {

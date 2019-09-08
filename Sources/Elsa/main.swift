@@ -56,6 +56,11 @@ private func generateBytecode() throws {
   let codeEmitter = try CodeEmitter(letItGo: input, output: codeFile)
   codeEmitter.emit(entities: entities, imports: ["Foundation", "Core"])
 
+  // Descriptions
+  let descrFile = bytecodeDir.appendingPathComponent("Instructions+Description.swift")
+  let descrEmitter = try CodeObjectDescriptionEmitter(letItGo: input, output: descrFile)
+  descrEmitter.emit(entities: entities, imports: ["Foundation", "Core"])
+
   // CodeObjectBuilder
 //  let builderFile = rootDir.appendingPathComponent("CodeObjectBuilder.swift")
 //  let builderEmitter = try CodeObjectBuilderEmitter(letItGo: input, output: builderFile)

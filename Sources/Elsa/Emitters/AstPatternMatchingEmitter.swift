@@ -1,3 +1,15 @@
+// Generate pattern matching functions for AST (for testing), for example:
+//
+// @enum ASTKind: Equatable =
+//    Single(stmt*)
+//  | FileInput(stmt*)
+//  | Expression(expr)
+//
+// will generate following functions:
+// - func matchSingle    (_ ast: AST, file: StaticString, line: UInt) -> ([Statement])?
+// - func matchFileInput (_ ast: AST, file: StaticString, line: UInt) -> ([Statement])?
+// - func matchExpression(_ ast: AST, file: StaticString, line: UInt) -> Expression?
+
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
 

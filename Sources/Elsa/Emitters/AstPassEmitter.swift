@@ -1,3 +1,5 @@
+// Generate dummy AST pass (mostly giant switches for stmt and expr kind).
+
 private let argNames: [String: String] = [
   "AST":                "ast",
   "StatementKind":      "stmt",
