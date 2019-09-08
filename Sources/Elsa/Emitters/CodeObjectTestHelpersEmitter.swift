@@ -1,7 +1,5 @@
 // Used for generating Emitted (instruction)
 
-// swiftlint:disable function_body_length
-
 public final class CodeObjectTestHelpersEmitter: EmitterBase {
 
   public func emit(entities: [Entity]) {
@@ -13,8 +11,6 @@ public final class CodeObjectTestHelpersEmitter: EmitterBase {
     self.write()
 
     self.write("// swiftlint:disable trailing_newline")
-    self.write("// swiftlint:disable file_length")
-    self.write("// swiftlint:disable vertical_whitespace_closing_braces")
     self.write()
 
     self.emitEmittedInstruction()
@@ -25,7 +21,7 @@ public final class CodeObjectTestHelpersEmitter: EmitterBase {
     }
 
     self.emitEmittedInstructionKind(instructions)
-    self.emitInstructionExtension(instructions)
+    // self.emitInstructionExtension(instructions)
   }
 
   private func getInstructionsEnum(from entities: [Entity]) -> EnumDef? {

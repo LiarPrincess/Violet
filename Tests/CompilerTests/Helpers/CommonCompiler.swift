@@ -58,4 +58,14 @@ extension CommonCompiler {
       return nil
     }
   }
+
+  // MARK: - Print
+
+  @available(*, deprecated, message: "This should be used only for debug.")
+  internal func printInstructions(_ code: CodeObject) {
+    for (index, emitted) in code.emittedInstructions.enumerated() {
+      let arg = emitted.arg ?? ""
+      print("\(index): \(emitted.kind) \(arg)")
+    }
+  }
 }

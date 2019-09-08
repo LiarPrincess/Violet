@@ -71,8 +71,6 @@ extension CodeObject {
     _ arg: Int,
     at location: SourceLocation) throws -> UInt8 {
 
-    // TODO: Test this
-
     assert(arg >= 0)
     if arg > Instruction.maxArgument {
       throw self.error(.instructionArgumentTooBig, location: location)
@@ -107,7 +105,7 @@ extension CodeObject {
       try self.append(.extendedArg(value), at: location)
     }
 
-    return UInt8((arg & ffMask) >> shift)
+    return UInt8(arg & ffMask)
   }
 
   // MARK: - Error
@@ -120,8 +118,21 @@ extension CodeObject {
 
   // MARK: - Unimplemented
 
-  internal func unimplemented() -> Error {
-    // TODO: remove this
-    return NotImplemented.pep401
+  // TODO: remove this
+  internal func unimplemented(fn: StaticString = #function) -> Error {
+    return UnimplementedError(fn: fn)
+  }
+}
+
+internal struct UnimplementedError: Error, CustomStringConvertible {
+
+  private let fn: StaticString
+
+  internal init(fn: StaticString) {
+    self.fn = fn
+  }
+
+  internal var description: String {
+    return "Unimplemented: " + self.fn.description
   }
 }

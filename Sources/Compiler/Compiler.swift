@@ -118,7 +118,7 @@ public final class Compiler {
     // Emit epilog (because we may be a jump target).
     if !self.currentScope.hasReturnValue {
       if !self.ast.kind.isExpression {
-        try self.codeObject.appendNop(at: self.ast.end)
+        try self.codeObject.appendNone(at: self.ast.end)
       }
 
       try self.codeObject.appendReturn(at: self.ast.end)

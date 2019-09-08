@@ -7,29 +7,29 @@ extension CodeObject {
   /// Append a `buildTuple` instruction to code object.
   public func appendBuildTuple(elementCount: Int,
                                at location: SourceLocation) throws {
-    // try self.append(.buildTuple, at: location)
-    throw self.unimplemented()
+    let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
+    try self.append(.buildTuple(elementCount: arg), at: location)
   }
 
   /// Append a `buildList` instruction to code object.
   public func appendBuildList(elementCount: Int,
                               at location: SourceLocation) throws {
-    // try self.append(.buildList, at: location)
-    throw self.unimplemented()
+    let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
+    try self.append(.buildList(elementCount: arg), at: location)
   }
 
   /// Append a `buildSet` instruction to code object.
   public func appendBuildSet(elementCount: Int,
                              at location: SourceLocation) throws {
-    // try self.append(.buildSet, at: location)
-    throw self.unimplemented()
+    let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
+    try self.append(.buildSet(elementCount: arg), at: location)
   }
 
   /// Append a `buildMap` instruction to code object.
   public func appendBuildMap(elementCount: Int,
                              at location: SourceLocation) throws {
-    // try self.append(.buildMap, at: location)
-    throw self.unimplemented()
+    let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
+    try self.append(.buildMap(elementCount: arg), at: location)
   }
 
   /// Append a `buildConstKeyMap` instruction to code object.

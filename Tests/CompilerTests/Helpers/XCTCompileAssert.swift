@@ -28,12 +28,19 @@ internal func XCTAssertInstructions(_ code: CodeObject,
   XCTAssertEqual(code.instructions.count, expected.count,
                  "\(message) (count)", file: file, line: line)
 
-  for (instruction, exp) in zip(code.instructions, expected) {
-    let emitted = instruction.asEmitted
+  var index = 0
+  for (emitted, exp) in zip(code.emittedInstructions, expected) {
+    XCTAssertEqual(emitted.kind,
+                   exp.kind,
+                   "Invalid instruction \(index) (\(exp.kind)) kind \(message)",
+                   file: file,
+                   line: line)
+    XCTAssertEqual(emitted.arg,
+                   exp.arg,
+                   "Invalid instruction \(index) (\(exp.kind)) arg \(message)",
+                   file: file,
+                   line: line)
 
-    XCTAssertEqual(emitted.kind, exp.kind,
-                   "\(message) (kind)", file: file, line: line)
-    XCTAssertEqual(emitted.arg, exp.arg,
-                   "\(message) (argument for \(exp.kind))", file: file, line: line)
+    index += 1
   }
 }
