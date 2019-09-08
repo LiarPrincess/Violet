@@ -522,8 +522,10 @@ public enum Instruction {
   /// For each opcode, at most three prefixal `ExtendedArg` are allowed,
   /// forming an argument from two-byte to four-byte.
   case extendedArg(UInt8)
-  /// Checks whether Annotations is defined in locals(), if not it is set up to an empty dict.
-  /// This opcode is only emitted if a class or module body contains variable annotations statically.
+  /// Checks whether Annotations is defined in locals(),
+  /// if not it is set up to an empty dict.
+  /// This opcode is only emitted if a class or module body contains variable
+  /// annotations statically.
   case setupAnnotations
   /// Removes one block from the block stack.
   /// Per frame, there is a stack of blocks, denoting nested loops, try statements, and such.

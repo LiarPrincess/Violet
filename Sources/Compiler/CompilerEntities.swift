@@ -10,7 +10,6 @@ internal enum SpecialIdentifiers {
   internal static let __annotations__ = "__annotations__"
   internal static let __class__ = "__class__"
   internal static let __classcell__ = "__classcell__"
-  // TODO: Not used
   internal static let __doc__ = "__doc__"
   internal static let __future__ = "__future__"
   internal static let __module__ = "__module__"

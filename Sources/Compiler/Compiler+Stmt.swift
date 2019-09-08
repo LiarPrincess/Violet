@@ -177,7 +177,7 @@ extension Compiler {
   /// compiler_visit_stmt_expr(struct compiler *c, expr_ty value)
   private func visitExpressionStatement(_ expr: Expression,
                                         location: SourceLocation) throws {
-    if self.options.isInteractive && self.nestLevel <= 1 {
+    if self.isInteractive && self.nestLevel <= 1 {
       try self.visitExpression(expr)
       try self.codeObject.appendPrintExpr(at: location)
       return

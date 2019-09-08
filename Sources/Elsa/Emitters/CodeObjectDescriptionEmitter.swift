@@ -22,6 +22,12 @@ public final class CodeObjectDescriptionEmitter: EmitterBase {
         break
       }
     }
+
+    self.write("private func hex(_ value: UInt8) -> String {")
+    self.write("  let s = String(value, radix: 16, uppercase: false)")
+    self.write("  let prefix = s.count < 2 ? \"0\" : \"\"")
+    self.write("  return \"0x\" + prefix + s")
+    self.write("}")
   }
 
   private func emitDescription(_ enumDef: EnumDef) {
@@ -35,7 +41,6 @@ public final class CodeObjectDescriptionEmitter: EmitterBase {
         self.write("      return \"\(caseDef.name)\"")
       } else {
         let matcher = getEnumMatcher(caseDef)
-
         self.write("    case let .\(caseDef.escapedName)(\(matcher.bindings)):")
         self.write("      return \"\(caseDef.name)(\(matcher.print))\"")
       }
@@ -69,8 +74,8 @@ private func getEnumMatcher(_ caseDef: EnumCaseDef) -> EnumMatcher {
     let binding = "value\(i)"
     destruction.bindings += "\(label)\(binding)\(comma)"
 
-//    let retVal = isMin1 ? "Array(\(binding))" : binding
-    destruction.print += "\(label)\\(\(binding))\(comma)"
+    let value = property.type == "UInt8" ? "hex(\(binding))" : binding
+    destruction.print += "\(label)\\(\(value))\(comma)"
   }
 
   return destruction

@@ -9,9 +9,6 @@ import Bytecode
 
 public struct CompilerOptions {
 
-  /// True if in interactive mode (REPL)
-  public var isInteractive: Bool
-
   /// Controls various sorts of optimizations
   ///
   /// Possible values:
@@ -19,8 +16,7 @@ public struct CompilerOptions {
   /// - 1 or more - optimize. Tries to reduce code size and execution time.
   public let optimizationLevel: UInt8
 
-  public init(isInteractive: Bool = false, optimizationLevel: UInt8 = 0) {
-    self.isInteractive = isInteractive
+  public init(optimizationLevel: UInt8 = 0) {
     self.optimizationLevel = optimizationLevel
   }
 }
@@ -70,6 +66,11 @@ public final class Compiler {
     return self.unitStack.count
   }
 
+  /// True if in interactive mode (REPL)
+  internal var isInteractive: Bool {
+    return self.ast.kind.isSingle
+  }
+
   /// Stack of blocks (loop, except, finallyTry, finallyEnd)
   /// that current statement is surrounded with.
   internal var blockStack = [BlockType]()
@@ -102,18 +103,86 @@ public final class Compiler {
     self.enterScope(node: ast, type: .module)
 
     switch self.ast.kind {
-    case let .single(stmts),
-         let .fileInput(stmts):
+    // TODO: AST: Rename single -> interactive
+    case let .single(stmts):
+      if self.hasAnnotations(stmts) {
+        try self.codeObject.appendSetupAnnotations(at: self.ast.start)
+      }
       try self.visitStatements(stmts)
+    case let .fileInput(stmts):
+      try self.visitBody(stmts)
     case let .expression(expr):
       try self.visitExpression(expr)
     }
 
     // Emit epilog (because we may be a jump target).
-    try self.codeObject.appendNop(at: self.ast.end)
+    if !self.currentScope.hasReturnValue {
+      if !self.ast.kind.isExpression {
+        try self.codeObject.appendNop(at: self.ast.end)
+      }
+
+      try self.codeObject.appendReturn(at: self.ast.end)
+    }
 
     assert(self.unitStack.count == 1)
     return self.codeObject
+  }
+
+  /// Compile a sequence of statements, checking for a docstring
+  /// and for annotations.
+  ///
+  /// compiler_body(struct compiler *c, asdl_seq *stmts)
+  private func visitBody(_ stmts: [Statement]) throws {
+    if self.hasAnnotations(stmts) {
+      try self.codeObject.appendSetupAnnotations(at: self.ast.start)
+    }
+
+    guard let first = stmts.first else {
+      return
+    }
+
+    if let doc = self.getDocString(first), self.options.optimizationLevel < 2 {
+      let __doc__ = SpecialIdentifiers.__doc__
+      try self.codeObject.appendString(doc, at: first.start)
+      try self.codeObject.appendStoreName(__doc__, at: first.start)
+
+      try self.visitStatements(stmts.dropFirst())
+    } else {
+      try self.visitStatements(stmts)
+    }
+  }
+
+  /// Search if variable annotations are present statically in a block.
+  ///
+  /// find_ann(asdl_seq *stmts)
+  private func hasAnnotations<S: Sequence>(_ stmts: S) -> Bool
+    where S.Element == Statement {
+    return stmts.contains{ [unowned self] in self.hasAnnotations($0) }
+  }
+
+  /// Search if variable annotations are present statically in a block.
+  ///
+  /// find_ann(asdl_seq *stmts)
+  private func hasAnnotations(_ stmt: Statement) -> Bool {
+    switch stmt.kind {
+    case .annAssign:
+      return true
+    case let .for(_, _, body, orElse),
+         let .asyncFor(_, _, body, orElse),
+         let .while(_, body, orElse),
+         let .if(_, body, orElse):
+      return self.hasAnnotations(body) || self.hasAnnotations(orElse)
+    case let .with(_, body),
+         let .asyncWith(_, body):
+      return self.hasAnnotations(body)
+    case let .try(body, handlers, orElse, finally):
+      return self.hasAnnotations(body)
+          || self.hasAnnotations(finally)
+          || self.hasAnnotations(orElse)
+          || handlers.contains { [unowned self] in self.hasAnnotations($0.body) }
+    default:
+      return false
+    }
   }
 
   // MARK: - Scope/code object

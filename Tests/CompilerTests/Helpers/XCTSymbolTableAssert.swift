@@ -85,23 +85,23 @@ internal func XCTAssertScope(_ scope: SymbolScope,
   XCTAssertEqual(scope.type, type, message, file: file, line: line)
 
   XCTAssertEqual(scope.isNested, flags.contains(.isNested),
-                 "message (isNested)", file: file, line: line)
+                 "\(message) (isNested)", file: file, line: line)
 
   XCTAssertEqual(scope.isGenerator, flags.contains(.isGenerator),
-                 "message (isGenerator)", file: file, line: line)
+                 "\(message) (isGenerator)", file: file, line: line)
 
   XCTAssertEqual(scope.isCoroutine, flags.contains(.isCoroutine),
-                 "message (isCoroutine)", file: file, line: line)
+                 "\(message) (isCoroutine)", file: file, line: line)
 
   XCTAssertEqual(scope.hasVarargs, flags.contains(.hasVarargs),
-                 "message (hasVarargs)", file: file, line: line)
+                 "\(message) (hasVarargs)", file: file, line: line)
 
   XCTAssertEqual(scope.hasVarKeywords, flags.contains(.hasVarKeywords),
-                 "message (hasVarKeywords)", file: file, line: line)
+                 "\(message) (hasVarKeywords)", file: file, line: line)
 
   XCTAssertEqual(scope.hasReturnValue, flags.contains(.hasReturnValue),
-                 "message (hasReturnValue)", file: file, line: line)
+                 "\(message) (hasReturnValue)", file: file, line: line)
 
   XCTAssertEqual(scope.needsClassClosure, flags.contains(.needsClassClosure),
-                 "message (needsClassClosure)", file: file, line: line)
+                 "\(message) (needsClassClosure)", file: file, line: line)
 }

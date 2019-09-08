@@ -11,6 +11,7 @@ let bytecodeDir = sourcesDir.appendingPathComponent("Bytecode")
 let rootDir = sourcesDir.deletingLastPathComponent()
 let testsDir = rootDir .appendingPathComponent("Tests")
 let parserTestsDir = testsDir.appendingPathComponent("ParserTests")
+let compilerTestsDir = testsDir .appendingPathComponent("CompilerTests")
 
 private func parseLetItGo(file: URL)  -> [Entity] {
   let content = try! String(contentsOf: file, encoding: .utf8)
@@ -61,7 +62,14 @@ private func generateBytecode() throws {
   let descrEmitter = try CodeObjectDescriptionEmitter(letItGo: input, output: descrFile)
   descrEmitter.emit(entities: entities, imports: ["Foundation", "Core"])
 
-  // CodeObjectBuilder
+  // Emitted instruction
+  let testFile = compilerTestsDir
+    .appendingPathComponent("Helpers")
+    .appendingPathComponent("EmittedInstruction.swift")
+  let testEmitter = try CodeObjectTestHelpersEmitter(letItGo: input, output: testFile)
+  testEmitter.emit(entities: entities)
+
+  // Append - DO NOT USE
 //  let builderFile = rootDir.appendingPathComponent("CodeObjectBuilder.swift")
 //  let builderEmitter = try CodeObjectBuilderEmitter(letItGo: input, output: builderFile)
 //  builderEmitter.emit(entities: entities, imports: [])

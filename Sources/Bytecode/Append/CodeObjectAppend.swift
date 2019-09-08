@@ -73,7 +73,7 @@ extension CodeObject {
 
     // TODO: Test this
 
-    assert(arg > 0)
+    assert(arg >= 0)
     if arg > Instruction.maxArgument {
       throw self.error(.instructionArgumentTooBig, location: location)
     }

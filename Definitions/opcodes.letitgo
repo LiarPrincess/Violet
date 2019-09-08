@@ -649,8 +649,10 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {- Other -}
 {- ----- -}
 
-  -- Checks whether Annotations is defined in locals(), if not it is set up to an empty dict.
-    -- This opcode is only emitted if a class or module body contains variable annotations statically.
+  -- Checks whether Annotations is defined in locals(),
+  -- if not it is set up to an empty dict.
+  -- This opcode is only emitted if a class or module body contains variable
+  -- annotations statically.
   | SetupAnnotations
 
   -- Removes one block from the block stack.
