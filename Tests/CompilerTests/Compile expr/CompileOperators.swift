@@ -284,7 +284,7 @@ class CompileOperators: XCTestCase, CommonCompiler {
   }
 
   /// eugene < rapunzel < cassandra
-  /// additional_block <-- so that we don't get returns et the end
+  /// additional_block <-- so that we don't get returns at the end
   ///
   ///  0 LOAD_NAME                0 (eugene)
   ///  2 LOAD_NAME                1 (rapunzel)

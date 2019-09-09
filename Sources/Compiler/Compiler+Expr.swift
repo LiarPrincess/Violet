@@ -467,6 +467,7 @@ extension Compiler {
                              location: location)
 
     try self.visitExpression(body)
+    try self.codeObject.appendJumpAbsolute(to: end, at: location)
     self.codeObject.setLabel(orElseStart)
     try self.visitExpression(orElse)
     self.codeObject.setLabel(end)

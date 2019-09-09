@@ -12,8 +12,6 @@ import Bytecode
 /// Helper for `emitLoadWithPossibleUnpack` method.
 /// We could pass clojures with `self`, but this is more self-documenting.
 private protocol CollectionLoadAdapter {
-  // TODO: This is an awfull solution, use closures
-
   /// Create an *artificial container* for elements with given `count`.
   ///
   /// For example: `(a, b*, c) -> (*[a], *b) -> BuildTupleUnpack(count: 2)`,
