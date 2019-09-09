@@ -277,7 +277,7 @@ extension CodeObject {
     case let .loadClosure(cellOrFreeIndex: arg):
       return EmittedInstruction(.loadClosure, String(describing: arg) + "_INVALID")
     case let .buildSlice(arg):
-      return EmittedInstruction(.buildSlice, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.buildSlice, self.toString(arg))
     }
   }
 
@@ -347,6 +347,13 @@ extension CodeObject {
     case .in: return "in"
     case .notIn: return "not in"
     case .exceptionMatch: return "exception match"
+    }
+  }
+
+  private func toString(_ slice: SliceArg) -> String {
+    switch slice {
+    case .lowerUpper: return "2"
+    case .lowerUpperStep: return "3"
     }
   }
 }

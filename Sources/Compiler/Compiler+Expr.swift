@@ -491,6 +491,8 @@ extension Compiler {
       for s in slices {
         try self.visitNestedSlice(slice: s, context: context)
       }
+      try self.codeObject.appendBuildTuple(elementCount: slices.count,
+                                           at: location)
     }
 
     try self.codeObject.appendSubscript(context: context, at: location)
