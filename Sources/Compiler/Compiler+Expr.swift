@@ -378,6 +378,7 @@ extension Compiler {
                            right: Expression,
                            location: SourceLocation) throws {
     let end = self.codeObject.createLabel()
+
     try self.visitExpression(left)
 
     switch op {
@@ -418,19 +419,24 @@ extension Compiler {
       try self.codeObject.appendCompareOp(first.op, at: location)
     } else {
       let end = self.codeObject.createLabel()
+      let cleanup = self.codeObject.createLabel()
 
       for element in elements.dropLast() {
         try self.visitExpression(element.right)
         try self.codeObject.appendDupTop(at: location)
         try self.codeObject.appendRotThree(at: location)
         try self.codeObject.appendCompareOp(element.op, at: location)
-        try self.codeObject.appendJumpIfFalseOrPop(to: end, at: location)
+        try self.codeObject.appendJumpIfFalseOrPop(to: cleanup, at: location)
       }
 
       let last = elements.last
       try self.visitExpression(last.right)
       try self.codeObject.appendCompareOp(last.op, at: location)
 
+      try self.codeObject.appendJumpAbsolute(to: end, at: location)
+      self.codeObject.setLabel(cleanup)
+      try self.codeObject.appendRotTwo(at: location)
+      try self.codeObject.appendPopTop(at: location)
       self.codeObject.setLabel(end)
     }
   }

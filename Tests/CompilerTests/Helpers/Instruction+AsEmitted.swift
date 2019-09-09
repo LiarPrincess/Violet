@@ -27,6 +27,7 @@ extension CodeObject {
       return EmittedInstruction(.dupTop)
     case .dupTopTwo:
       return EmittedInstruction(.dupTopTwo)
+
     case .unaryPositive:
       return EmittedInstruction(.unaryPositive)
     case .unaryNegative:
@@ -35,6 +36,7 @@ extension CodeObject {
       return EmittedInstruction(.unaryNot)
     case .unaryInvert:
       return EmittedInstruction(.unaryInvert)
+
     case .binaryPower:
       return EmittedInstruction(.binaryPower)
     case .binaryMultiply:
@@ -61,6 +63,7 @@ extension CodeObject {
       return EmittedInstruction(.binaryXor)
     case .binaryOr:
       return EmittedInstruction(.binaryOr)
+
     case .inplacePower:
       return EmittedInstruction(.inplacePower)
     case .inplaceMultiply:
@@ -87,20 +90,25 @@ extension CodeObject {
       return EmittedInstruction(.inplaceXor)
     case .inplaceOr:
       return EmittedInstruction(.inplaceOr)
+
     case let .compareOp(arg):
-      return EmittedInstruction(.compareOp, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.compareOp, toString(arg))
+
     case .getAwaitable:
       return EmittedInstruction(.getAwaitable)
     case .getAIter:
       return EmittedInstruction(.getAIter)
     case .getANext:
       return EmittedInstruction(.getANext)
+
     case .yieldValue:
       return EmittedInstruction(.yieldValue)
     case .yieldFrom:
       return EmittedInstruction(.yieldFrom)
+
     case .printExpr:
       return EmittedInstruction(.printExpr)
+
     case let .setupLoop(arg):
       return EmittedInstruction(.setupLoop, String(describing: arg) + "_INVALID")
     case let .forIter(arg):
@@ -242,22 +250,26 @@ extension CodeObject {
       return EmittedInstruction(.beforeAsyncWith)
     case .setupAsyncWith:
       return EmittedInstruction(.setupAsyncWith)
+
     case let .jumpAbsolute(labelIndex: arg):
-      return EmittedInstruction(.jumpAbsolute, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.jumpAbsolute, self.getLabel(arg))
     case let .popJumpIfTrue(labelIndex: arg):
-      return EmittedInstruction(.popJumpIfTrue, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.popJumpIfTrue, self.getLabel(arg))
     case let .popJumpIfFalse(labelIndex: arg):
-      return EmittedInstruction(.popJumpIfFalse, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.popJumpIfFalse, self.getLabel(arg))
     case let .jumpIfTrueOrPop(labelIndex: arg):
-      return EmittedInstruction(.jumpIfTrueOrPop, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.jumpIfTrueOrPop, self.getLabel(arg))
     case let .jumpIfFalseOrPop(labelIndex: arg):
-      return EmittedInstruction(.jumpIfFalseOrPop, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.jumpIfFalseOrPop, self.getLabel(arg))
+
     case let .formatValue(conversion: conversion, hasFormat: hasFormat):
       return EmittedInstruction(.formatValue, "\(conversion) hasFormat: \(hasFormat)")
     case let .buildString(arg):
       return EmittedInstruction(.buildString, String(describing: arg) + "_INVALID")
+
     case let .extendedArg(arg):
       return EmittedInstruction(.extendedArg, String(describing: arg) + "_INVALID")
+
     case .setupAnnotations:
       return EmittedInstruction(.setupAnnotations)
     case .popBlock:
@@ -306,10 +318,35 @@ extension CodeObject {
   }
 
   private func getName(_ index: UInt8) -> String {
-    guard index < self.constants.count else {
+    guard index < self.name.count else {
       return "INDEX_OUT_OF_RANGE: \(index)"
     }
 
     return self.names[Int(index)]
+  }
+
+  private func getLabel(_ index: UInt8) -> String {
+    guard index < self.labels.count else {
+      return "INDEX_OUT_OF_RANGE: \(index)"
+    }
+
+    let address = Instruction.byteSize * self.labels[Int(index)]
+    return String(describing: address)
+  }
+
+  private func toString(_ opcode: ComparisonOpcode) -> String {
+    switch opcode {
+    case .equal: return "=="
+    case .notEqual: return "!="
+    case .less: return "<"
+    case .lessEqual: return "<="
+    case .greater: return ">"
+    case .greaterEqual: return ">="
+    case .is: return "is"
+    case .isNot: return "is not"
+    case .in: return "in"
+    case .notIn: return "not in"
+    case .exceptionMatch: return "exception match"
+    }
   }
 }

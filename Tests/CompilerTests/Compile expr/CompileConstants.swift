@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileConstantsTests: XCTestCase, CommonCompiler {
+class CompileConstants: XCTestCase, CommonCompiler {
 
   // MARK: - Empty
 
@@ -23,6 +23,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
 
   // MARK: - None, ellipsis
 
+  /// none
   func test_none() {
     let expr = self.expression(.none)
 
@@ -37,6 +38,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
     }
   }
 
+  /// ...
   func test_ellipsis() {
     let expr = self.expression(.ellipsis)
 
@@ -53,6 +55,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
 
   // MARK: - Boolean
 
+  /// true
   func test_true() {
     let expr = self.expression(.true)
 
@@ -67,6 +70,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
     }
   }
 
+  /// false
   func test_false() {
     let expr = self.expression(.false)
 
@@ -83,6 +87,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
 
   // MARK: - Numbers
 
+  /// 3
   func test_integer() {
     let expr = self.expression(.int(BigInt(3)))
 
@@ -97,6 +102,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
     }
   }
 
+  /// 12.3
   func test_float() {
     let expr = self.expression(.float(12.3))
 
@@ -111,6 +117,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
     }
   }
 
+  /// 1.2+3.4j
   func test_complex() {
     let expr = self.expression(.complex(real: 1.2, imag: 3.4))
 
@@ -127,6 +134,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
 
   // MARK: - Tuple
 
+  /// ()
   func test_tuple_empty() {
     let expr = self.expression(.tuple([]))
 
@@ -141,6 +149,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
     }
   }
 
+  /// ('elsa', true)
   func test_tuple_constants() {
     let expr = self.expression(.tuple([
       self.expression(.string(.literal("elsa"))),
@@ -160,6 +169,7 @@ class CompileConstantsTests: XCTestCase, CommonCompiler {
     }
   }
 
+  /// (elsa, true)
   func test_tuple_withIdentifier() {
     let expr = self.expression(.tuple([
       self.expression(.identifier("elsa")),

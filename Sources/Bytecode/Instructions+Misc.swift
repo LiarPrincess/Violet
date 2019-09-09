@@ -1,5 +1,7 @@
 extension Instruction {
 
+  public static let byteSize = 2
+
   /// Maximum argument for an single instruction.
   public static let maxArgument = 0xff // (the same value as UInt8.max)
 
