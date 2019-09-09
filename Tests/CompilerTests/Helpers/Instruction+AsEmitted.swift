@@ -144,7 +144,7 @@ extension CodeObject {
     case let .buildTupleUnpack(elementCount: arg):
       return EmittedInstruction(.buildTupleUnpack, String(describing: arg))
     case let .buildTupleUnpackWithCall(elementCount: arg):
-      return EmittedInstruction(.buildTupleUnpackWithCall, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.buildTupleUnpackWithCall, String(describing: arg))
     case let .buildListUnpack(elementCount: arg):
       return EmittedInstruction(.buildListUnpack, String(describing: arg))
     case let .buildSetUnpack(elementCount: arg):
@@ -152,11 +152,11 @@ extension CodeObject {
     case let .buildMapUnpack(elementCount: arg):
       return EmittedInstruction(.buildMapUnpack, String(describing: arg))
     case let .buildMapUnpackWithCall(elementCount: arg):
-      return EmittedInstruction(.buildMapUnpackWithCall, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.buildMapUnpackWithCall, String(describing: arg))
     case let .unpackSequence(elementCount: arg):
-      return EmittedInstruction(.unpackSequence, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.unpackSequence, String(describing: arg))
     case let .unpackEx(elementCountBefore: arg):
-      return EmittedInstruction(.unpackEx, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.unpackEx, String(describing: arg))
 
     case let .loadConst(index: arg):
       return EmittedInstruction(.loadConst, self.getConstant(arg))
@@ -209,11 +209,12 @@ extension CodeObject {
       return EmittedInstruction(.makeFunction, String(describing: arg) + "_INVALID")
 
     case let .callFunction(argumentCount: arg):
-      return EmittedInstruction(.callFunction, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.callFunction, String(describing: arg))
     case let .callFunctionKw(argumentCount: arg):
-      return EmittedInstruction(.callFunctionKw, String(describing: arg) + "_INVALID")
-    case let .callFunctionEx(hasKeywordArguments: arg):
-      return EmittedInstruction(.callFunctionEx, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.callFunctionKw, String(describing: arg))
+    case let .callFunctionEx(hasKeywordArguments: hasKeywordArguments):
+      let arg = hasKeywordArguments ? "1" : "0"
+      return EmittedInstruction(.callFunctionEx, arg)
 
     case .`return`:
       return EmittedInstruction(.return)

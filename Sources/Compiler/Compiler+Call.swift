@@ -73,16 +73,6 @@ extension Compiler {
                            alreadyPushedArgs: Int,
                            location: SourceLocation) throws {
 
-    var hasDictionaryUnpack = false
-    for kw in keywords {
-      // TODO: AST: `Keyword` should be a sum of unpack|name*value
-      let isUnpack = kw.name == nil
-      if isUnpack {
-        hasDictionaryUnpack = true
-        break // for loop
-      }
-    }
-
     var nSeen = alreadyPushedArgs
     var nSubArgs = 0
     var nSubKwArgs = 0
@@ -90,9 +80,7 @@ extension Compiler {
     for arg in args {
       switch arg.kind {
       case let .starred(inner):
-        // A star-arg. If we've seen positional arguments,
-        // pack the positional arguments into a tuple.
-
+        // If we've seen positional arguments, then pack them into a tuple.
         if nSeen > 0 {
           try self.codeObject.appendBuildTuple(elementCount: nSeen, at: location)
           nSeen = 0
@@ -108,6 +96,17 @@ extension Compiler {
       }
     }
 
+    var hasDictionaryUnpack = false
+    for keyword in keywords {
+      // TODO: AST: Rename Keyword.name -> Keyword.arg
+      // TODO: AST: `Keyword` should be a sum of unpack|name*value
+      let isUnpack = keyword.name == nil
+      if isUnpack {
+        hasDictionaryUnpack = true
+        break // break loop
+      }
+    }
+
     if nSubArgs > 0 || hasDictionaryUnpack {
       // Pack up any trailing positional arguments.
       if nSeen > 0 {
@@ -115,31 +114,29 @@ extension Compiler {
         nSubArgs += 1
       }
 
-      // If we ended up with more than one stararg, we need
-      // to concatenate them into a single sequence.
+      // If we ended up with more than one stararg,
+      // we need to concatenate them into a single sequence.
       if nSubArgs > 1 {
         try self.codeObject.appendBuildTupleUnpackWithCall(elementCount: nSubArgs,
                                                            at: location)
       } else if nSubArgs == 0 {
+        // We don't have normal args, fake one.
         try self.codeObject.appendBuildTuple(elementCount: 0, at: location)
-      }
+      } // Else it is 1, so exactly as we need it
 
-      // the number of keyword arguments on the stack following
       nSeen = 0
-
-      for kw in keywords {
-        if kw.name == nil {
+      for (index, keyword) in keywords.enumerated() {
+        if keyword.name == nil {
           // keyword argument unpacking
           if nSeen > 0 {
-            try self.visitSubkwargs(keywords: keywords,
-                                    start: keywords.count - nSeen,
-                                    end: keywords.count,
+            let start = index - nSeen
+            try self.visitSubkwargs(keywords: keywords[start..<index],
                                     location: location)
             nSubKwArgs += 1
             nSeen = 0
           }
 
-          try self.visitExpression(kw.value)
+          try self.visitExpression(keyword.value)
           nSubKwArgs += 1
         } else {
           nSeen += 1
@@ -148,9 +145,8 @@ extension Compiler {
 
       // Pack up any trailing keyword arguments.
       if nSeen > 0 {
-        try self.visitSubkwargs(keywords: keywords,
-                                start: keywords.count - nSeen,
-                                end: keywords.count,
+        let start = keywords.count - nSeen
+        try self.visitSubkwargs(keywords: keywords[start..<keywords.count],
                                 location: location)
         nSubKwArgs += 1
       }
@@ -163,6 +159,8 @@ extension Compiler {
       try self.codeObject.appendCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0,
                                                at: location)
     } else if keywords.any {
+      // We can force unwrap, because: 'hasDictionaryUnpack' = false
+      // swiftlint:disable:next force_unwrapping
       let names = keywords.map { Constant.string($0.name!) }
       let argCount = alreadyPushedArgs + args.count + keywords.count
 
@@ -177,38 +175,36 @@ extension Compiler {
 
   /// compiler_visit_keyword(struct compiler *c, keyword_ty k)
   private func visitKeywords(keywords: [Keyword]) throws {
-    for kw in keywords {
-      try self.visitExpression(kw.value)
+    for keyword in keywords {
+      try self.visitExpression(keyword.value)
     }
   }
 
   /// compiler_subkwargs(struct compiler *c, asdl_seq *keywords,
   /// Py_ssize_t begin, Py_ssize_t end)
-  private func visitSubkwargs(keywords: [Keyword],
-                              start: Int,
-                              end:   Int,
+  private func visitSubkwargs(keywords: ArraySlice<Keyword>,
                               location: SourceLocation) throws {
-    let n = end - start
-    assert(n > 0)
+    if keywords.count == 1 {
+      guard let keyword = keywords.first else {
+        fatalError("[BUG] Compiler: visitSubkwargs sould not be called for unpack.")
+      }
+      let name = keyword.name.map { Constant.string($0) } ?? Constant.none
 
-    if n > 1 {
+      try self.codeObject.appendConstant(name, at: location)
+      try self.visitExpression(keyword.value)
+      try self.codeObject.appendBuildMap(elementCount: 1, at: location)
+    } else {
       var names = [Constant]()
-      for kw in keywords[start..<end] {
-        try self.visitExpression(kw.value)
+      for keyword in keywords {
+        try self.visitExpression(keyword.value)
 
-        let name = kw.name.map { Constant.string($0) } ?? Constant.none
+        let name = keyword.name.map { Constant.string($0) } ?? Constant.none
         names.append(name)
       }
 
       try self.codeObject.appendTuple(names, at: location)
       try self.codeObject.appendBuildConstKeyMap(elementCount: names.count,
                                                  at: location)
-    } else {
-      let kw = keywords[start]
-      let name = kw.name.map { Constant.string($0) } ?? Constant.none
-      try self.codeObject.appendConstant(name, at: location)
-      try self.visitExpression(kw.value)
-      try self.codeObject.appendBuildMap(elementCount: 1, at: location)
     }
   }
 }

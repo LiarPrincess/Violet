@@ -265,4 +265,11 @@ extension ASTCreator {
                    start: start,
                    end: end)
   }
+
+  internal func keyword(name: String?, value: String) -> Keyword {
+    return self.keyword(
+      name: name,
+      value: self.expression(.identifier(value))
+    )
+  }
 }
