@@ -142,15 +142,15 @@ extension CodeObject {
       return EmittedInstruction(.mapAdd, String(describing: arg) + "_INVALID")
 
     case let .buildTupleUnpack(elementCount: arg):
-      return EmittedInstruction(.buildTupleUnpack, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.buildTupleUnpack, String(describing: arg))
     case let .buildTupleUnpackWithCall(elementCount: arg):
       return EmittedInstruction(.buildTupleUnpackWithCall, String(describing: arg) + "_INVALID")
     case let .buildListUnpack(elementCount: arg):
-      return EmittedInstruction(.buildListUnpack, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.buildListUnpack, String(describing: arg))
     case let .buildSetUnpack(elementCount: arg):
-      return EmittedInstruction(.buildSetUnpack, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.buildSetUnpack, String(describing: arg))
     case let .buildMapUnpack(elementCount: arg):
-      return EmittedInstruction(.buildMapUnpack, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.buildMapUnpack, String(describing: arg))
     case let .buildMapUnpackWithCall(elementCount: arg):
       return EmittedInstruction(.buildMapUnpackWithCall, String(describing: arg) + "_INVALID")
     case let .unpackSequence(elementCount: arg):
