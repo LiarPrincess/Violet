@@ -351,13 +351,8 @@ extension Compiler {
         try self.visitString(g, location: location)
       }
 
-      if groups.count == 1 {
-        // do nothing, string is already on TOS
-      } else if let count = UInt8(exactly: groups.count) {
-        try self.codeObject.appendBuildString(count: count, at: location)
-      } else {
-        // UInt8 can't represent this value
-        throw self.error(.fStringWithMoreThan255Elements, location: location)
+      if groups.count > 1 {
+        try self.codeObject.appendBuildString(count: groups.count, at: location)
       }
     }
   }

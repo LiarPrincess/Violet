@@ -263,9 +263,17 @@ extension CodeObject {
       return EmittedInstruction(.jumpIfFalseOrPop, self.getLabel(arg))
 
     case let .formatValue(conversion: conversion, hasFormat: hasFormat):
-      return EmittedInstruction(.formatValue, "\(conversion) hasFormat: \(hasFormat)")
+      var arg = ""
+      if let c = self.toString(conversion) {
+        arg += c
+      }
+      if hasFormat {
+        let space = arg.isEmpty ? "" : ", "
+        arg += space + "with format"
+      }
+      return EmittedInstruction(.formatValue, arg)
     case let .buildString(arg):
-      return EmittedInstruction(.buildString, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.buildString, String(describing: arg))
 
     case let .extendedArg(arg):
       return EmittedInstruction(.extendedArg, String(describing: arg) + "_INVALID")
@@ -354,6 +362,15 @@ extension CodeObject {
     switch slice {
     case .lowerUpper: return "2"
     case .lowerUpperStep: return "3"
+    }
+  }
+
+  private func toString(_ conversion: StringConversion) -> String? {
+    switch conversion {
+    case .none: return nil
+    case .str: return "str"
+    case .repr: return "repr"
+    case .ascii: return "ascii"
     }
   }
 }

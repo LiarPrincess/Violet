@@ -70,8 +70,6 @@ public enum CompilerErrorKind: Equatable {
 
   // MARK: - Compiler
 
-  case fStringWithMoreThan255Elements
-
   /// Two starred expressions in assignment
   case multipleStarredInAssignmentExpressions
   /// Too many expressions in star-unpacking assignment
