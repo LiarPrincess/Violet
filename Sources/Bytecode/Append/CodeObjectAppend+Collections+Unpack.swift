@@ -4,35 +4,35 @@ extension CodeObject {
 
   // MARK: - Collections
 
-  /// Append a `buildTuple` instruction to code object.
+  /// Append a `buildTuple` instruction to this code object.
   public func appendBuildTuple(elementCount: Int,
                                at location: SourceLocation) throws {
     let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
     try self.append(.buildTuple(elementCount: arg), at: location)
   }
 
-  /// Append a `buildList` instruction to code object.
+  /// Append a `buildList` instruction to this code object.
   public func appendBuildList(elementCount: Int,
                               at location: SourceLocation) throws {
     let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
     try self.append(.buildList(elementCount: arg), at: location)
   }
 
-  /// Append a `buildSet` instruction to code object.
+  /// Append a `buildSet` instruction to this code object.
   public func appendBuildSet(elementCount: Int,
                              at location: SourceLocation) throws {
     let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
     try self.append(.buildSet(elementCount: arg), at: location)
   }
 
-  /// Append a `buildMap` instruction to code object.
+  /// Append a `buildMap` instruction to this code object.
   public func appendBuildMap(elementCount: Int,
                              at location: SourceLocation) throws {
     let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
     try self.append(.buildMap(elementCount: arg), at: location)
   }
 
-  /// Append a `buildConstKeyMap` instruction to code object.
+  /// Append a `buildConstKeyMap` instruction to this code object.
   public func appendBuildConstKeyMap(elementCount: Int,
                                      at location: SourceLocation) throws {
     // try self.append(.buildConstKeyMap, at: location)
@@ -41,19 +41,19 @@ extension CodeObject {
 
   // MARK: - Add
 
-  /// Append a `setAdd` instruction to code object.
+  /// Append a `setAdd` instruction to this code object.
   public func appendSetAdd(value: Any, at location: SourceLocation) throws {
     // try self.append(.setAdd, at: location)
     throw self.unimplemented()
   }
 
-  /// Append a `listAppend` instruction to code object.
+  /// Append a `listAppend` instruction to this code object.
   public func appendListAppend(value: Any, at location: SourceLocation) throws {
     // try self.append(.listAppend, at: location)
     throw self.unimplemented()
   }
 
-  /// Append a `mapAdd` instruction to code object.
+  /// Append a `mapAdd` instruction to this code object.
   public func appendMapAdd(value: Any, at location: SourceLocation) throws {
     // try self.append(.mapAdd, at: location)
     throw self.unimplemented()
@@ -61,49 +61,49 @@ extension CodeObject {
 
   // MARK: - Unpack
 
-  /// Append a `buildTupleUnpack` instruction to code object.
+  /// Append a `buildTupleUnpack` instruction to this code object.
   public func appendBuildTupleUnpack(elementCount: Int,
                                      at location: SourceLocation) throws {
     let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
     try self.append(.buildTupleUnpack(elementCount: arg), at: location)
   }
 
-  /// Append a `buildTupleUnpackWithCall` instruction to code object.
+  /// Append a `buildTupleUnpackWithCall` instruction to this code object.
   public func appendBuildTupleUnpackWithCall(elementCount: Int,
                                              at location: SourceLocation) throws {
     // try self.append(.buildTupleUnpackWithCall, at: location)
     throw self.unimplemented()
   }
 
-  /// Append a `buildListUnpack` instruction to code object.
+  /// Append a `buildListUnpack` instruction to this code object.
   public func appendBuildListUnpack(elementCount: Int,
                                     at location: SourceLocation) throws {
     let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
     try self.append(.buildListUnpack(elementCount: arg), at: location)
   }
 
-  /// Append a `buildSetUnpack` instruction to code object.
+  /// Append a `buildSetUnpack` instruction to this code object.
   public func appendBuildSetUnpack(elementCount: Int,
                                    at location: SourceLocation) throws {
     let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
     try self.append(.buildSetUnpack(elementCount: arg), at: location)
   }
 
-  /// Append a `buildMapUnpack` instruction to code object.
+  /// Append a `buildMapUnpack` instruction to this code object.
   public func appendBuildMapUnpack(elementCount: Int,
                                    at location: SourceLocation) throws {
     let arg = try self.appendExtendedArgIfNeeded(elementCount, at: location)
     try self.append(.buildMapUnpack(elementCount: arg), at: location)
   }
 
-  /// Append a `buildMapUnpackWithCall` instruction to code object.
+  /// Append a `buildMapUnpackWithCall` instruction to this code object.
   public func appendBuildMapUnpackWithCall(elementCount: Int,
                                            at location: SourceLocation) throws {
     // try self.append(.buildMapUnpackWithCall, at: location)
     throw self.unimplemented()
   }
 
-  /// Append an `unpackSequence` instruction to code object.
+  /// Append an `unpackSequence` instruction to this code object.
   public func appendUnpackSequence(elementCount: Int,
                                    at location: SourceLocation) throws {
     // try self.append(.unpackSequence, at: location)

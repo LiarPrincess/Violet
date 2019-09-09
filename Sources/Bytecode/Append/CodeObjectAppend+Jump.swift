@@ -4,7 +4,7 @@ extension CodeObject {
 
   // MARK: - Absolute
 
-  /// Append a `jumpAbsolute` instruction to code object.
+  /// Append a `jumpAbsolute` instruction to this code object.
   public func appendJumpAbsolute(to label: Label,
                                  at location: SourceLocation) throws {
     let index = try self.addLabelWithExtendedArgIfNeeded(label, at: location)
@@ -13,14 +13,14 @@ extension CodeObject {
 
   // MARK: - If
 
-  /// Append a `popJumpIfTrue` instruction to code object.
+  /// Append a `popJumpIfTrue` instruction to this code object.
   public func appendPopJumpIfTrue(to label: Label,
                                   at location: SourceLocation) throws {
     let index = try self.addLabelWithExtendedArgIfNeeded(label, at: location)
     try self.append(.popJumpIfTrue(labelIndex: index), at: location)
   }
 
-  /// Append a `popJumpIfFalse` instruction to code object.
+  /// Append a `popJumpIfFalse` instruction to this code object.
   public func appendPopJumpIfFalse(to label: Label,
                                    at location: SourceLocation) throws {
     let index = try self.addLabelWithExtendedArgIfNeeded(label, at: location)
@@ -29,14 +29,14 @@ extension CodeObject {
 
   // MARK: - Pop
 
-  /// Append a `jumpIfTrueOrPop` instruction to code object.
+  /// Append a `jumpIfTrueOrPop` instruction to this code object.
   public func appendJumpIfTrueOrPop(to label: Label,
                                     at location: SourceLocation) throws {
     let index = try self.addLabelWithExtendedArgIfNeeded(label, at: location)
     try self.append(.jumpIfTrueOrPop(labelIndex: index), at: location)
   }
 
-  /// Append a `jumpIfFalseOrPop` instruction to code object.
+  /// Append a `jumpIfFalseOrPop` instruction to this code object.
   public func appendJumpIfFalseOrPop(to label: Label,
                                      at location: SourceLocation) throws {
     let index = try self.addLabelWithExtendedArgIfNeeded(label, at: location)
