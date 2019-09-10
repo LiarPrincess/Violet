@@ -26,10 +26,14 @@ extension CommonCompiler {
   }
 
   internal func compile(stmt: Statement,
+                        optimizationLevel: UInt8 = 0,
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
     let ast = self.ast(.fileInput([stmt]))
-    return self.compile(ast: ast, file: file, line: line)
+    return self.compile(ast: ast,
+                        optimizationLevel: optimizationLevel,
+                        file: file,
+                        line: line)
   }
 
   internal func compile(stmt kind: StatementKind,
@@ -47,10 +51,11 @@ extension CommonCompiler {
   }
 
   private func compile(ast: AST,
+                       optimizationLevel: UInt8 = 0,
                        file: StaticString = #file,
                        line: UInt         = #line) -> CodeObject? {
     do {
-      let options = CompilerOptions(optimizationLevel: 0)
+      let options = CompilerOptions(optimizationLevel: optimizationLevel)
       let compiler = try Compiler(ast: ast, options: options)
       return try compiler.run()
     } catch {

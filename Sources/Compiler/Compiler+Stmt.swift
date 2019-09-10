@@ -160,7 +160,7 @@ extension Compiler {
                              location: location)
 
     let id = SpecialIdentifiers.assertionError
-    try self.codeObject.appendString(id, at: location)
+    try self.codeObject.appendLoadGlobal(id, at: location)
 
     if let message = msg {
       // Call 'AssertionError' with single argument

@@ -240,7 +240,7 @@ extension CodeObject {
     case let .setupFinally(arg):
       return EmittedInstruction(.setupFinally, String(describing: arg) + "_INVALID")
     case let .raiseVarargs(arg):
-      return EmittedInstruction(.raiseVarargs, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.raiseVarargs, self.toString(arg))
     case let .setupWith(arg):
       return EmittedInstruction(.setupWith, String(describing: arg) + "_INVALID")
     case .withCleanupStart:
@@ -372,6 +372,14 @@ extension CodeObject {
     case .str: return "str"
     case .repr: return "repr"
     case .ascii: return "ascii"
+    }
+  }
+
+  private func toString(_ arg: RaiseArg) -> String {
+    switch arg {
+    case .reRaise: return "reRaise"
+    case .exceptionOnly: return "exception"
+    case .exceptionAndCause: return "exception, cause"
     }
   }
 }

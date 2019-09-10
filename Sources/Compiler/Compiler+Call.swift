@@ -184,11 +184,15 @@ extension Compiler {
   /// Py_ssize_t begin, Py_ssize_t end)
   private func visitSubkwargs(keywords: ArraySlice<Keyword>,
                               location: SourceLocation) throws {
+    assert(
+      keywords.allSatisfy { $0.name != nil },
+      "VisitSubkwargs should not be called for unpack."
+    )
+
+    // swiftlint:disable force_unwrapping
     if keywords.count == 1 {
-      guard let keyword = keywords.first else {
-        fatalError("[BUG] Compiler: visitSubkwargs sould not be called for unpack.")
-      }
-      let name = keyword.name.map { Constant.string($0) } ?? Constant.none
+      let keyword = keywords.first!
+      let name = Constant.string(keyword.name!)
 
       try self.codeObject.appendConstant(name, at: location)
       try self.visitExpression(keyword.value)
@@ -198,7 +202,7 @@ extension Compiler {
       for keyword in keywords {
         try self.visitExpression(keyword.value)
 
-        let name = keyword.name.map { Constant.string($0) } ?? Constant.none
+        let name = Constant.string(keyword.name!)
         names.append(name)
       }
 
@@ -206,5 +210,6 @@ extension Compiler {
       try self.codeObject.appendBuildConstKeyMap(elementCount: names.count,
                                                  at: location)
     }
+    // swiftlint:enable force_unwrapping
   }
 }
