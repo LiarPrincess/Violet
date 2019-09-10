@@ -230,8 +230,8 @@ extension Instruction: CustomStringConvertible {
       return "yieldFrom"
     case .printExpr:
       return "printExpr"
-    case let .setupLoop(value0):
-      return "setupLoop(\(value0))"
+    case let .setupLoop(loopEndLabel: value0):
+      return "setupLoop(loopEndLabel: \(hex(value0)))"
     case let .forIter(value0):
       return "forIter(\(value0))"
     case .getIter:
@@ -240,8 +240,6 @@ extension Instruction: CustomStringConvertible {
       return "getYieldFromIter"
     case .`break`:
       return "break"
-    case let .`continue`(value0):
-      return "continue(\(value0))"
     case let .buildTuple(elementCount: value0):
       return "buildTuple(elementCount: \(hex(value0)))"
     case let .buildList(elementCount: value0):

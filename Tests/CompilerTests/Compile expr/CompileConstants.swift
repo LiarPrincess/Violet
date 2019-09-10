@@ -7,20 +7,6 @@ import Bytecode
 /// Use 'Scripts/dump_dis.py' for reference.
 class CompileConstants: XCTestCase, CommonCompiler {
 
-  // MARK: - Empty
-
-  func test_empty() {
-    let expected: [EmittedInstruction] = [
-      .init(.loadConst, "none"),
-      .init(.return)
-    ]
-
-    if let code = self.compile(stmts: []) {
-      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
-      XCTAssertInstructions(code, expected)
-    }
-  }
-
   // MARK: - None, ellipsis
 
   /// none

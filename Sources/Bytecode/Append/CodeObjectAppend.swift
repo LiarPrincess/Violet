@@ -1,5 +1,7 @@
 import Core
 
+// TODO: Rename to builder to avoid duplicate constants in arrays
+
 // Internal helpers for all of the 'emit' functions.
 extension CodeObject {
 

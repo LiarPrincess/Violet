@@ -110,7 +110,7 @@ extension CodeObject {
       return EmittedInstruction(.printExpr)
 
     case let .setupLoop(arg):
-      return EmittedInstruction(.setupLoop, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.setupLoop, self.getLabel(arg))
     case let .forIter(arg):
       return EmittedInstruction(.forIter, String(describing: arg) + "_INVALID")
     case .getIter:
@@ -120,8 +120,6 @@ extension CodeObject {
 
     case .`break`:
       return EmittedInstruction(.break)
-    case let .`continue`(arg):
-      return EmittedInstruction(.continue, String(describing: arg) + "_INVALID")
 
     case let .buildTuple(elementCount: arg):
       return EmittedInstruction(.buildTuple, String(describing: arg))

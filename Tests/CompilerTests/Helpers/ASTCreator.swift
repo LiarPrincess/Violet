@@ -3,6 +3,8 @@ import Parser
 
 // swiftlint:disable file_length
 
+// TODO: Clean this
+
 /// Create AST (without locations, because we don't need them most of the time).
 internal protocol ASTCreator { }
 
@@ -79,14 +81,26 @@ extension ASTCreator {
 
   internal func whileStmt(test: Expression,
                           body: Expression,
-                          orElse: Expression) -> Statement {
+                          orElse: Expression?) -> Statement {
 
     let b = self.statement(.expr(body))
-    let e = self.statement(.expr(orElse))
+    let e = self.statement(orElse.map { .expr($0) } ?? .pass)
 
     let kind = StatementKind.while(test: test,
                                    body: NonEmptyArray(first: b),
                                    orElse: [e])
+
+    return self.statement(kind)
+  }
+
+  internal func `while`(test: Expression,
+                        body: [Statement],
+                        orElse: [Statement]) -> Statement {
+    assert(body.any)
+    let b = NonEmptyArray(first: body[0], rest: body[1...])
+    let kind = StatementKind.while(test: test,
+                                   body: b,
+                                   orElse: orElse)
 
     return self.statement(kind)
   }

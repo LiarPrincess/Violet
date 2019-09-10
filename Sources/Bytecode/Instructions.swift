@@ -233,8 +233,8 @@ public enum Instruction {
   /// In non-interactive mode, an expression statement is terminated with PopTop.
   case printExpr
   /// Pushes a block for a loop onto the block stack.
-  /// The block spans from the current instruction with a size of delta bytes.
-  case setupLoop(Delta)
+  /// The block spans from the current instruction up until `loopEndLabel`.
+  case setupLoop(loopEndLabel: UInt8)
   /// TOS is an iterator. Call its `Next()` method.
   /// If this `yields` a new value, push it on the stack (leaving the iterator below it).
   /// If not then TOS is popped, and the byte code counter is incremented by delta.
@@ -246,9 +246,6 @@ public enum Instruction {
   case getYieldFromIter
   /// Terminates a loop due to a break statement.
   case `break`
-  /// Continues a loop due to a continue statement.
-  /// `target` is the address to jump to (which should be a `ForIter` instruction).
-  case `continue`(Target)
   /// Creates a tuple consuming `count` items from the stack,
   /// and pushes the resulting tuple onto the stack.
   case buildTuple(elementCount: UInt8)
@@ -550,11 +547,6 @@ public enum Instruction {
 
   public var isForIter: Bool {
     if case .forIter = self { return true }
-    return false
-  }
-
-  public var isContinue: Bool {
-    if case .continue = self { return true }
     return false
   }
 

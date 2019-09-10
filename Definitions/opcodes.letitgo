@@ -258,8 +258,8 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {- ------------------- -}
 
   -- Pushes a block for a loop onto the block stack.
-  -- The block spans from the current instruction with a size of delta bytes.
-  | SetupLoop(delta)
+  -- The block spans from the current instruction up until `loopEndLabel`.
+  | SetupLoop(Index loopEndLabel)
 
   -- TOS is an iterator. Call its `Next()` method.
   -- If this `yields` a new value, push it on the stack (leaving the iterator below it).
@@ -274,9 +274,12 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Terminates a loop due to a break statement.
   | Break
+{-
+  This one is never emitted by CPython (they use jumps).
   -- Continues a loop due to a continue statement.
   -- `target` is the address to jump to (which should be a `ForIter` instruction).
   | Continue(target)
+ -}
 
 {- ------------ -}
 {-  Collections -}
@@ -437,7 +440,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- 3. push the return value returned by the callable object
   -- - Note:
   -- This opcode is used only for calls with positional arguments!
-  | CallFunction(UInt8 argumentCount)
+  | CallFunction(Count argumentCount)
 
   -- Calls a callable object with positional (if any) and keyword arguments.
   -- `argc` indicates the total number of positional and keyword arguments.
@@ -452,7 +455,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- 1. pop all arguments and the callable object off the stack
   -- 2. call the callable object with those arguments
   -- 3. push the return value returned by the callable object.
-  | CallFunctionKw(UInt8 argumentCount)
+  | CallFunctionKw(Count argumentCount)
 
   -- Calls a callable object with variable set of positional and keyword arguments.
   --
@@ -487,7 +490,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- TOS is popped and method and TOS are pushed when interpreter can call unbound method directly.
   -- TOS will be used as the first argument (self) by `CallMethod`.
   -- Otherwise, NULL and method is pushed (method is bound method or something else).
-  | LoadMethod(UInt8 nameIndex)
+  | LoadMethod(Index nameIndex)
 
   -- Calls a method.
   -- `argc` is number of positional arguments.
@@ -497,7 +500,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- Positional arguments are on top of the stack.
   -- Below them, two items described in `LoadMethod` on the stack.
   -- All of them are popped and return value is pushed.
-  | CallMethod(UInt8 argumentCount)
+  | CallMethod(Count argumentCount)
 
 {- -------- -}
 {-  Import  -}
@@ -516,13 +519,13 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- The module object is pushed onto the stack.
   -- The current namespace is not affected: for a proper import statement,
   -- a subsequent StoreFast instruction modifies the namespace.
-  | ImportName(UInt8 nameIndex)
+  | ImportName(Index nameIndex)
 
   -- Loads the attribute `name` from the module found in TOS.
   --
   -- The resulting object is pushed onto the stack,
   -- to be subsequently stored by a `StoreFast` instruction.
-  | ImportFrom(UInt8 nameIndex)
+  | ImportFrom(Index nameIndex)
 
 {- --------- -}
 {- Try/catch -}
@@ -632,7 +635,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Concatenates `count` strings from the stack
   -- and pushes the resulting string onto the stack.
-  | BuildString(UInt8)
+  | BuildString(Count)
 
 {- -------- -}
 {- Extended -}

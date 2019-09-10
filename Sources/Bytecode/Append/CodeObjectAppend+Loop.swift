@@ -6,8 +6,8 @@ extension CodeObject {
 
   /// Append a `setupLoop` instruction to this code object.
   public func appendSetupLoop(loopEnd: Label, at location: SourceLocation) throws {
-    // try self.append(.setupLoop, at: location)
-    throw self.unimplemented()
+    let arg = try self.addLabelWithExtendedArgIfNeeded(loopEnd, at: location)
+    try self.append(.setupLoop(loopEndLabel: arg), at: location)
   }
 
   /// Append a `getIter` instruction to this code object.
@@ -26,13 +26,7 @@ extension CodeObject {
     try self.append(.getYieldFromIter, at: location)
   }
 
-  // MARK: - Continue, break
-
-  /// Append a `continueLoop` instruction to this code object.
-  public func appendContinue(value: Target, at location: SourceLocation) throws {
-    // try self.append(.continueLoop, at: location)
-    throw self.unimplemented()
-  }
+  // MARK: - Break
 
   /// Append a `breakLoop` instruction to this code object.
   public func appendBreak(at location: SourceLocation) throws {

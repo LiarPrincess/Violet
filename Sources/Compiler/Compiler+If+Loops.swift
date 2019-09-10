@@ -148,7 +148,6 @@ extension Compiler {
                            orElse: [Statement],
                            location: SourceLocation) throws {
 
-    // TODO: CPython: constant = expr_constant(s->v.If.test);
     let iterationStart = self.codeObject.createLabel()
     let cleanup = self.codeObject.createLabel()
     let end = self.codeObject.createLabel()
