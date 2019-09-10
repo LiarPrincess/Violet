@@ -28,21 +28,21 @@ extension CommonCompiler {
   internal func compile(stmt: Statement,
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.single([stmt]))
+    let ast = self.ast(.fileInput([stmt]))
     return self.compile(ast: ast, file: file, line: line)
   }
 
   internal func compile(stmt kind: StatementKind,
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.single([self.statement(kind)]))
+    let ast = self.ast(.fileInput([self.statement(kind)]))
     return self.compile(ast: ast, file: file, line: line)
   }
 
   internal func compile(stmts: [Statement],
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.single(stmts))
+    let ast = self.ast(.fileInput(stmts))
     return self.compile(ast: ast, file: file, line: line)
   }
 

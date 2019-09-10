@@ -39,7 +39,6 @@ extension Compiler {
                         body:   NonEmptyArray<Statement>,
                         orElse: [Statement],
                         location: SourceLocation) throws {
-    // TODO: CPython: constant = expr_constant(s->v.If.test);
     let end = self.codeObject.createLabel()
     let orElseStart = orElse.any ? self.codeObject.createLabel() : end
 
