@@ -228,9 +228,9 @@ extension CodeObject {
     case .importStar:
       return EmittedInstruction(.importStar)
     case let .importName(nameIndex: arg):
-      return EmittedInstruction(.importName, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.importName, self.getName(arg))
     case let .importFrom(nameIndex: arg):
-      return EmittedInstruction(.importFrom, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.importFrom, self.getName(arg))
     case .popExcept:
       return EmittedInstruction(.popExcept)
     case .endFinally:

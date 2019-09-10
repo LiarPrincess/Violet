@@ -4,8 +4,8 @@ extension CodeObject {
 
   /// Append an `importName` instruction to this code object.
   public func appendImportName(name: String, at location: SourceLocation) throws {
-    let index = try self.addNameWithExtendedArgIfNeeded(name: name, at: location)
-    try self.append(.importName(nameIndex: index), at: location)
+    let arg = try self.addNameWithExtendedArgIfNeeded(name: name, at: location)
+    try self.append(.importName(nameIndex: arg), at: location)
   }
 
   /// Append an `importStar` instruction to this code object.
@@ -15,7 +15,7 @@ extension CodeObject {
 
   /// Append an `importFrom` instruction to this code object.
   public func appendImportFrom(name: String, at location: SourceLocation) throws {
-    // try self.append(.importFrom, at: location)
-    throw self.unimplemented()
+    let arg = try self.addNameWithExtendedArgIfNeeded(name: name, at: location)
+    try self.append(.importFrom(nameIndex: arg), at: location)
   }
 }

@@ -151,6 +151,17 @@ extension ASTCreator {
     return StatementKind.import(array)
   }
 
+  internal func `import`(_ aliasses: Alias...) -> Statement {
+    assert(aliasses.any)
+
+    let kind = StatementKind.import(NonEmptyArray(
+      first: aliasses[0],
+      rest: Array(aliasses.dropFirst())
+    ))
+
+    return self.statement(kind)
+  }
+
   internal func importFromStmt(moduleName: String?,
                                names: [Alias],
                                level: UInt8 = 0,
