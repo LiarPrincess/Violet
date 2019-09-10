@@ -64,7 +64,6 @@ class CompileWhile: XCTestCase, CommonCompiler {
       orElse: [self.statement(expr: .identifier("esmeralda"))]
     )
 
-
     let expected: [EmittedInstruction] = [
       .init(.setupLoop, "18"),
       .init(.loadName, "frollo"),

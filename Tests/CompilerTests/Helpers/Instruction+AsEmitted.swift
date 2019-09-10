@@ -112,7 +112,7 @@ extension CodeObject {
     case let .setupLoop(arg):
       return EmittedInstruction(.setupLoop, self.getLabel(arg))
     case let .forIter(arg):
-      return EmittedInstruction(.forIter, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.forIter, self.getLabel(arg))
     case .getIter:
       return EmittedInstruction(.getIter)
     case .getYieldFromIter:

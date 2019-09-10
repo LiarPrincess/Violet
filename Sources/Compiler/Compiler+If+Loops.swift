@@ -105,7 +105,7 @@ extension Compiler {
 
       self.codeObject.setLabel(iterationStart)
       try self.codeObject.appendForIter(ifEmpty: cleanup, at: location)
-      try self.visitExpression(target)
+      try self.visitExpression(target, context: .store)
       try self.visitStatements(body)
       try self.codeObject.appendJumpAbsolute(to: iterationStart, at: location)
 

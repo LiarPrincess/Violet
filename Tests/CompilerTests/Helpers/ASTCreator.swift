@@ -54,6 +54,20 @@ extension ASTCreator {
     return self.statement(kind)
   }
 
+  internal func `for`(target: Expression,
+                      iter:   Expression,
+                      body:   [Statement],
+                      orElse: [Statement]) -> Statement {
+
+    assert(body.any)
+    return self.statement(.for(
+      target: target,
+      iter: iter,
+      body: NonEmptyArray(first: body[0], rest: body[1...]),
+      orElse: orElse
+    ))
+  }
+
   internal func delete(_ exprs: Expression...) -> Statement {
     assert(exprs.any)
 

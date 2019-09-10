@@ -17,8 +17,8 @@ extension CodeObject {
 
   /// Append a `forIter` instruction to this code object.
   public func appendForIter(ifEmpty: Label, at location: SourceLocation) throws {
-    // try self.append(.forIter, at: location)
-    throw self.unimplemented()
+    let arg = try self.addLabelWithExtendedArgIfNeeded(ifEmpty, at: location)
+    try self.append(.forIter(ifEmptyLabel: arg), at: location)
   }
 
   /// Append a `getYieldFromIter` instruction to this code object.

@@ -232,8 +232,8 @@ extension Instruction: CustomStringConvertible {
       return "printExpr"
     case let .setupLoop(loopEndLabel: value0):
       return "setupLoop(loopEndLabel: \(hex(value0)))"
-    case let .forIter(value0):
-      return "forIter(\(value0))"
+    case let .forIter(ifEmptyLabel: value0):
+      return "forIter(ifEmptyLabel: \(hex(value0)))"
     case .getIter:
       return "getIter"
     case .getYieldFromIter:

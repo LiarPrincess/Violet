@@ -238,7 +238,7 @@ public enum Instruction {
   /// TOS is an iterator. Call its `Next()` method.
   /// If this `yields` a new value, push it on the stack (leaving the iterator below it).
   /// If not then TOS is popped, and the byte code counter is incremented by delta.
-  case forIter(Delta)
+  case forIter(ifEmptyLabel: UInt8)
   /// Implements `TOS = iter(TOS)`.
   case getIter
   /// If TOS is a generator iterator or coroutine object then it is left as is.

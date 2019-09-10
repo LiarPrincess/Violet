@@ -8,9 +8,18 @@ CPython bytecode is defined in: Lib -> opcode.py.
 Docs from: https://docs.python.org/3.7/library/dis.html
 -}
 
-{- Index in an array attached to CodeObject (for example CodeObject.constants). -}
-@alias Index = UInt8
+{-
+Almost all of the associated values are UInt8, but for documentation purposes
+we will alias it to be more precise (they will be changed back to UInt8 by Elsa).
+
+`Count` is just a number, for example count of items in `BuildTuple`.
+`LabelIndex`, `NameIndex`, `ConstantIndex` are indices in constants, names, labels
+properties of `CodeObject`.
+-}
 @alias Count = UInt8
+@alias LabelIndex = UInt8
+@alias NameIndex = UInt8
+@alias ConstantIndex = UInt8
 
 {- TODO: Real types -}
 @enum VarNum = NotImplemented
@@ -259,12 +268,12 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 
   -- Pushes a block for a loop onto the block stack.
   -- The block spans from the current instruction up until `loopEndLabel`.
-  | SetupLoop(Index loopEndLabel)
+  | SetupLoop(LabelIndex loopEndLabel)
 
   -- TOS is an iterator. Call its `Next()` method.
   -- If this `yields` a new value, push it on the stack (leaving the iterator below it).
   -- If not then TOS is popped, and the byte code counter is incremented by delta.
-  | ForIter(delta)
+  | ForIter(LabelIndex ifEmptyLabel)
 
   -- Implements `TOS = iter(TOS)`.
   | GetIter
@@ -361,21 +370,21 @@ Docs from: https://docs.python.org/3.7/library/dis.html
 {- --------------------- -}
 
   -- Pushes constant pointed by `index` onto the stack.
-  | LoadConst(Index index)
+  | LoadConst(ConstantIndex index)
 
   -- Implements `name = TOS`.
-  | StoreName(Index nameIndex)
+  | StoreName(NameIndex nameIndex)
   -- Pushes the value associated with `name` onto the stack.
-  | LoadName(Index nameIndex)
+  | LoadName(NameIndex nameIndex)
   -- Implements `del name`.
-  | DeleteName(Index nameIndex)
+  | DeleteName(NameIndex nameIndex)
 
   -- Implements `TOS.name = TOS1`.
-  | StoreAttribute(Index nameIndex)
+  | StoreAttribute(NameIndex nameIndex)
   -- Replaces TOS with `getAttr(TOS, name)`.
-  | LoadAttribute(Index nameIndex)
+  | LoadAttribute(NameIndex nameIndex)
   -- Implements `del TOS.name`.
-  | DeleteAttribute(Index nameIndex)
+  | DeleteAttribute(NameIndex nameIndex)
 
   -- Implements `TOS = TOS1[TOS]`.
   | BinarySubscript
@@ -385,30 +394,30 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | DeleteSubscript
 
   -- Works as StoreName, but stores the name as a global.
-  | StoreGlobal(Index nameIndex)
+  | StoreGlobal(NameIndex nameIndex)
   -- Loads the global named `name` onto the stack.
-  | LoadGlobal(Index nameIndex)
+  | LoadGlobal(NameIndex nameIndex)
   -- Works as DeleteName, but deletes a global name.
-  | DeleteGlobal(Index nameIndex)
+  | DeleteGlobal(NameIndex nameIndex)
 
   {- Pushes a reference to the local names[nameIndex] onto the stack. -}
-  | LoadFast(Index nameIndex)
+  | LoadFast(NameIndex nameIndex)
   {- Stores TOS into the local names[nameIndex]. -}
-  | StoreFast(Index nameIndex)
+  | StoreFast(NameIndex nameIndex)
   {- Deletes local names[nameIndex]. -}
-  | DeleteFast(Index nameIndex)
+  | DeleteFast(NameIndex nameIndex)
 
   -- Loads the cell contained in slot i of the cell and free variable storage.
   -- Pushes a reference to the object the cell contains on the stack.
-  | LoadDeref(Index nameIndex)
+  | LoadDeref(NameIndex nameIndex)
   -- Stores TOS into the cell contained in slot i of the cell and free variable storage.
-  | StoreDeref(Index nameIndex)
+  | StoreDeref(NameIndex nameIndex)
   -- Empties the cell contained in slot i of the cell and free variable storage.
   -- Used by the del statement.
-  | DeleteDeref(Index nameIndex)
+  | DeleteDeref(NameIndex nameIndex)
   -- Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
   -- This is used for loading free variables in class bodies.
-  | LoadClassDeref(Index nameIndex)
+  | LoadClassDeref(NameIndex nameIndex)
 
 {- ---------- -}
 {-  Function  -}
@@ -490,7 +499,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- TOS is popped and method and TOS are pushed when interpreter can call unbound method directly.
   -- TOS will be used as the first argument (self) by `CallMethod`.
   -- Otherwise, NULL and method is pushed (method is bound method or something else).
-  | LoadMethod(Index nameIndex)
+  | LoadMethod(NameIndex nameIndex)
 
   -- Calls a method.
   -- `argc` is number of positional arguments.
@@ -519,13 +528,13 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- The module object is pushed onto the stack.
   -- The current namespace is not affected: for a proper import statement,
   -- a subsequent StoreFast instruction modifies the namespace.
-  | ImportName(Index nameIndex)
+  | ImportName(NameIndex nameIndex)
 
   -- Loads the attribute `name` from the module found in TOS.
   --
   -- The resulting object is pushed onto the stack,
   -- to be subsequently stored by a `StoreFast` instruction.
-  | ImportFrom(Index nameIndex)
+  | ImportFrom(NameIndex nameIndex)
 
 {- --------- -}
 {- Try/catch -}
@@ -612,18 +621,18 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   | JumpForward(UInt8 delta)
 -}
   -- Set bytecode counter to target.
-  | JumpAbsolute(Index labelIndex)
+  | JumpAbsolute(LabelIndex labelIndex)
 
   -- If TOS is true, sets the bytecode counter to target. TOS is popped.
-  | PopJumpIfTrue(Index labelIndex)
+  | PopJumpIfTrue(LabelIndex labelIndex)
   -- If TOS is false, sets the bytecode counter to target. TOS is popped.
-  | PopJumpIfFalse(Index labelIndex)
+  | PopJumpIfFalse(LabelIndex labelIndex)
   -- If TOS is true, sets the bytecode counter to target and leaves TOS on the stack.
   -- Otherwise (TOS is false), TOS is popped.
-  | JumpIfTrueOrPop(Index labelIndex)
+  | JumpIfTrueOrPop(LabelIndex labelIndex)
   -- If TOS is false, sets the bytecode counter to target and leaves TOS on the stack.
   -- Otherwise (TOS is true), TOS is popped.
-  | JumpIfFalseOrPop(Index labelIndex)
+  | JumpIfFalseOrPop(LabelIndex labelIndex)
 
 {- ------ -}
 {- String -}
@@ -666,7 +675,7 @@ Docs from: https://docs.python.org/3.7/library/dis.html
   -- of the 'cell' or 'free' variable storage.
   -- If 'i' < cellVars.count: name of the variable is cellVars[i].
   -- otherwise:               name is freeVars[i - cellVars.count].
-  | LoadClosure(Index cellOrFreeIndex)
+  | LoadClosure(NameIndex cellOrFreeIndex)
 
   -- Pushes a slice object on the stack.
   | BuildSlice(SliceArg)
