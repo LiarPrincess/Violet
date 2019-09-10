@@ -18,7 +18,7 @@ extension Compiler {
     context: ExpressionContext = .load) throws where S.Element == Expression {
 
     for e in exprs {
-      try self.visitExpression(e)
+      try self.visitExpression(e, context: context)
     }
   }
 
@@ -26,7 +26,7 @@ extension Compiler {
   internal func visitExpression(_ expr: Expression?,
                                 context: ExpressionContext = .load) throws {
     if let e = expr {
-      try self.visitExpression(e)
+      try self.visitExpression(e, context: context)
     }
   }
 
@@ -279,9 +279,7 @@ extension Compiler {
     let flags = info?.flags ?? []
     var operation = IdentifierOperation.name
 
-    if flags.contains(.srcFree) {
-      operation = .deref
-    } else if flags.contains(.cell) {
+    if flags.containsAny([.srcFree, .cell]) {
       operation = .deref
     } else if flags.contains(.defLocal) {
       if self.currentScope.type == .function {

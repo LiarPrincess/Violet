@@ -52,6 +52,17 @@ extension ASTCreator {
     return self.statement(kind)
   }
 
+  internal func delete(_ exprs: Expression...) -> Statement {
+    assert(exprs.any)
+
+    let kind = StatementKind.delete(NonEmptyArray(
+      first: exprs[0],
+      rest: Array(exprs.dropFirst())
+    ))
+
+    return self.statement(kind)
+  }
+
   internal func tryStmt(body: Expression,
                         handlers: [ExceptHandler],
                         orElse: Expression,
