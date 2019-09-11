@@ -451,10 +451,10 @@ public enum Instruction {
   case endFinally
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `delta` points to the first except block.
-  case setupExcept(Delta)
+  case setupExcept(firstExceptLabel: UInt8)
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `delta` points to the finally block.
-  case setupFinally(Delta)
+  case setupFinally(finallyStartLabel: UInt8)
   /// Raises an exception using one of the 3 forms of the raise statement,
   /// depending on the value of argc:
   /// - 0: raise (re-raise previous exception)

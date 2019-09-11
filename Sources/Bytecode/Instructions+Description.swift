@@ -338,10 +338,10 @@ extension Instruction: CustomStringConvertible {
       return "popExcept"
     case .endFinally:
       return "endFinally"
-    case let .setupExcept(value0):
-      return "setupExcept(\(value0))"
-    case let .setupFinally(value0):
-      return "setupFinally(\(value0))"
+    case let .setupExcept(firstExceptLabel: value0):
+      return "setupExcept(firstExceptLabel: \(hex(value0)))"
+    case let .setupFinally(finallyStartLabel: value0):
+      return "setupFinally(finallyStartLabel: \(hex(value0)))"
     case let .raiseVarargs(value0):
       return "raiseVarargs(\(value0))"
     case let .setupWith(value0):

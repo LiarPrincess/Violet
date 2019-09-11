@@ -41,7 +41,7 @@ extension Compiler {
       try self.visitTryFinally(body: body,
                                handlers: handlers,
                                orElse:   orElse,
-                               finally: finally,
+                               finally:  finally,
                                location:  location)
     } else {
       try self.visitTryExcept(body: body,
@@ -87,7 +87,7 @@ extension Compiler {
     let finallyStart = self.codeObject.createLabel()
 
     // body
-    try self.codeObject.appendSetupFinally(jumpTo: finallyStart, at: location)
+    try self.codeObject.appendSetupFinally(finallyStart: finallyStart, at: location)
     try self.inBlock(.finallyTry) {
       if handlers.any {
         try self.visitTryExcept(body: body,
@@ -98,7 +98,7 @@ extension Compiler {
         try self.visitStatements(body)
       }
 
-      try self.codeObject.appendPopTop(at: location)
+      try self.codeObject.appendPopBlock(at: location)
     }
 
     try self.codeObject.appendNone(at: location)
@@ -194,7 +194,7 @@ extension Compiler {
 
         // second try:
         let cleanupEnd = self.codeObject.createLabel()
-        try self.codeObject.appendSetupFinally(jumpTo: cleanupEnd, at: location)
+        try self.codeObject.appendSetupFinally(finallyStart: cleanupEnd, at: location)
         try self.inBlock(.finallyTry) {
           try self.visitStatements(handler.body)
           try self.codeObject.appendPopBlock(at: location)

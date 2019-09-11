@@ -15,17 +15,15 @@ extension CodeObject {
   /// Append a `setupExcept` instruction to this code object.
   public func appendSetupExcept(firstExcept: Label,
                                 at location: SourceLocation) throws {
-    // try self.append(.setupExcept, at: location)
-    throw self.unimplemented()
+    let arg = try self.addLabelWithExtendedArgIfNeeded(firstExcept, at: location)
+    try self.append(.setupExcept(firstExceptLabel: arg), at: location)
   }
 
   /// Append a `setupFinally` instruction to this code object.
-  /// - Parameters:
-  ///   - start: First instruction of the `finally` block.
-  public func appendSetupFinally(jumpTo: Label,
+  public func appendSetupFinally(finallyStart: Label,
                                  at location: SourceLocation) throws {
-    // try self.append(.setupFinally, at: location)
-    throw self.unimplemented()
+    let arg = try self.addLabelWithExtendedArgIfNeeded(finallyStart, at: location)
+    try self.append(.setupFinally(finallyStartLabel: arg), at: location)
   }
 
   /// Append a `raiseVarargs` instruction to this code object.

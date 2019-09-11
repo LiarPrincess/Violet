@@ -183,8 +183,6 @@ extension Compiler {
       return
     }
 
-    // TODO: if (is_const(value)) {
-
     try self.visitExpression(expr)
     try self.codeObject.appendPopTop(at: location)
   }

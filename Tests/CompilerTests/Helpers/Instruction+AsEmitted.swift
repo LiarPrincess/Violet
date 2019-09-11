@@ -234,9 +234,9 @@ extension CodeObject {
     case .endFinally:
       return EmittedInstruction(.endFinally)
     case let .setupExcept(arg):
-      return EmittedInstruction(.setupExcept, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.setupExcept, self.getLabel(arg))
     case let .setupFinally(arg):
-      return EmittedInstruction(.setupFinally, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.setupFinally, self.getLabel(arg))
     case let .raiseVarargs(arg):
       return EmittedInstruction(.raiseVarargs, self.toString(arg))
     case let .setupWith(arg):

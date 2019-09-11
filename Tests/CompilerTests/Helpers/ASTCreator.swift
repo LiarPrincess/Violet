@@ -93,6 +93,32 @@ extension ASTCreator {
     return self.statement(kind)
   }
 
+  internal func `try`(body: Expression,
+                      handlers:  [ExceptHandler],
+                      orElse:    [Expression],
+                      finalBody: [Expression]) -> Statement {
+
+    let kind = StatementKind.try(
+      body: NonEmptyArray(first: self.statement(.expr(body))),
+      handlers: handlers,
+      orElse:   self.toStatements(orElse),
+      finally:  self.toStatements(finalBody)
+    )
+    return self.statement(kind)
+  }
+
+  private func toStatements(_ exprs: [Expression]) -> [Statement] {
+    return exprs.map { self.statement(.expr($0)) }
+  }
+
+  private func toNonEmptyArray<E>(_ array: [E]) -> NonEmptyArray<E> {
+    assert(array.any)
+    return NonEmptyArray(
+      first: array[0],
+      rest: Array(array.dropFirst())
+    )
+  }
+
   internal func whileStmt(test: Expression,
                           body: Expression,
                           orElse: Expression?) -> Statement {
@@ -256,15 +282,15 @@ extension ASTCreator {
                     end: end)
   }
 
-  internal func exceptHandler(type: Expression,
-                              name: String,
+  internal func exceptHandler(type: Expression?,
+                              name: String?,
                               body: Statement,
-                              start: SourceLocation) -> ExceptHandler {
+                              start: SourceLocation? = nil) -> ExceptHandler {
     return ExceptHandler(id: .next,
                          type: type,
                          name: name,
                          body: NonEmptyArray(first: body),
-                         start: start,
+                         start: start ?? self.start,
                          end: self.end)
   }
 
