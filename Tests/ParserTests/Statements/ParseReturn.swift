@@ -6,7 +6,7 @@ import Lexer
 class ParseReturn: XCTestCase, Common, StatementMatcher {
 
   /// return
-  func test_return() {
+  func test_withoutValue() {
     var parser = self.createStmtParser(
       self.token(.return, start: loc0, end: loc1)
     )
@@ -23,7 +23,7 @@ class ParseReturn: XCTestCase, Common, StatementMatcher {
   }
 
   /// return Megara
-  func test_return_withValue() {
+  func test_value() {
     var parser = self.createStmtParser(
       self.token(.return,               start: loc0, end: loc1),
       self.token(.identifier("Megara"), start: loc2, end: loc3)
@@ -42,7 +42,7 @@ class ParseReturn: XCTestCase, Common, StatementMatcher {
   }
 
   /// return Megara,
-  func test_return_withCommaAfter_returnsTuple() {
+  func test_withCommaAfter_returnsTuple() {
     var parser = self.createStmtParser(
       self.token(.return,               start: loc0, end: loc1),
       self.token(.identifier("Megara"), start: loc2, end: loc3),
@@ -63,7 +63,7 @@ class ParseReturn: XCTestCase, Common, StatementMatcher {
 
   /// return Calliope, Melpomene, Terpsichore
   /// Those are the names of the muses (Thalia and Clio are missing)
-  func test_return_multiple() {
+  func test_multiple() {
     var parser = self.createStmtParser(
       self.token(.return,                    start: loc0, end: loc1),
       self.token(.identifier("Calliope"),    start: loc2, end: loc3),

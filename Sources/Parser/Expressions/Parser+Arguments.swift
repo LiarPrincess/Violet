@@ -127,7 +127,7 @@ extension Parser {
 
   private typealias ArgFactory = (inout Parser) throws -> Arg
 
-  private mutating func argsList(parseArg:     ArgFactory,
+  private mutating func argsList(parseArg: ArgFactory,
                                  closingToken: TokenKind) throws -> Arguments {
     let loc = self.peek.start
     var ir = ArgumentsIR(start: loc, end: loc)

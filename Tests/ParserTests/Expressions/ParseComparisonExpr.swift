@@ -5,7 +5,7 @@ import Lexer
 
 class ParseComparisonExpr: XCTestCase, Common, ExpressionMatcher {
 
-  func test_simple() {
+  func test_operators() {
     let variants: [(TokenKind, ComparisonOperator)] = [
       (.equalEqual, .equal),
       (.notEqual,   .notEqual),

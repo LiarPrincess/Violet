@@ -6,7 +6,7 @@ import Lexer
 class ParseFor: XCTestCase, Common, StatementMatcher, ExpressionMatcher {
 
   /// for person in castle: "becomeItem"
-  func test_for() {
+  func test_simple() {
     var parser = self.createStmtParser(
       self.token(.for,                   start: loc0, end: loc1),
       self.token(.identifier("person"),  start: loc2, end: loc3),
@@ -34,7 +34,7 @@ class ParseFor: XCTestCase, Common, StatementMatcher, ExpressionMatcher {
   }
 
   /// for Gaston, in village: "evil"
-  func test_for_withCommaAfterTarget_isTuple() {
+  func test_withCommaAfterTarget_isTuple() {
     var parser = self.createStmtParser(
       self.token(.for,                   start: loc0, end: loc1),
       self.token(.identifier("Gaston"),  start: loc2, end: loc3),
@@ -64,7 +64,7 @@ class ParseFor: XCTestCase, Common, StatementMatcher, ExpressionMatcher {
 
   /// for Gaston, LeFou in village: "evil"
   /// LeFou is Gaston sidekick
-  func test_for_withCommaTargetTuple() {
+  func test_withCommaTargetTuple() {
     var parser = self.createStmtParser(
       self.token(.for,                   start: loc0, end: loc1),
       self.token(.identifier("Gaston"),  start: loc2, end: loc3),
@@ -95,7 +95,7 @@ class ParseFor: XCTestCase, Common, StatementMatcher, ExpressionMatcher {
 
   /// for person in Belle, Maurice: "go castle"
   /// Maurice is Belle father
-  func test_for_withIterTuple() {
+  func test_withIterTuple() {
     var parser = self.createStmtParser(
       self.token(.for,                   start: loc0, end: loc1),
       self.token(.identifier("person"),  start: loc2, end: loc3),
@@ -126,7 +126,7 @@ class ParseFor: XCTestCase, Common, StatementMatcher, ExpressionMatcher {
 
   /// for person in Belle: "Husband"
   /// else: "Beast"
-  func test_for_withElse() {
+  func test_withElse() {
     var parser = self.createStmtParser(
       self.token(.for,                  start: loc0, end: loc1),
       self.token(.identifier("person"), start: loc2, end: loc3),

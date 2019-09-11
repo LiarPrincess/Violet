@@ -42,9 +42,11 @@ public struct AST: ASTNode {
 /// Represents the whole program.
 public enum ASTKind: Equatable {
   /// Used for input in interactive mode.
+  /// 
   /// `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
   case single([Statement])
   /// Used for all input read from non-interactive files.
+  /// 
   /// For example:
   /// - when parsing a complete Python program (from a file or from a string);
   /// - when parsing a module;

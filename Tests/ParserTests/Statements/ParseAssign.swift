@@ -57,7 +57,7 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
   }
 
   /// Ariel, = "Princess"
-  func test_withComma_isTuple() {
+  func test_target_withComma_isTuple() {
     var parser = self.createStmtParser(
       self.token(.identifier("Ariel"), start: loc0, end: loc1),
       self.token(.comma,               start: loc2, end: loc3),
@@ -81,7 +81,7 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
   }
 
   /// Sebastian = Flounder = "Friend"
-  func test_multiple() {
+  func test_target_multiple() {
     var parser = self.createStmtParser(
       self.token(.identifier("Sebastian"), start: loc0, end: loc1),
       self.token(.equal,                   start: loc2, end: loc3),

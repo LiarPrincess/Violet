@@ -8,7 +8,7 @@ class ParseSet: XCTestCase, Common, ExpressionMatcher {
   // MARK: - Set
 
   /// {rapunzel}
-  func test_set_singleElement() {
+  func test_singleElement() {
     var parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.identifier("rapunzel"), start: loc2, end: loc3),
@@ -29,7 +29,7 @@ class ParseSet: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// {rapunzel,}
-  func test_set_withComaAfter() {
+  func test_withComaAfter() {
     var parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.identifier("rapunzel"), start: loc2, end: loc3),
@@ -51,7 +51,7 @@ class ParseSet: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// {*1}
-  func test_set_star() {
+  func test_star() {
     var parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.star,                   start: loc2, end: loc3),
@@ -73,7 +73,7 @@ class ParseSet: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// {rapunzel, *eugene, cassandra}
-  func test_set_multipleElements() {
+  func test_multipleElements() {
     var parser = self.createExprParser(
       self.token(.leftBrace,               start: loc0, end: loc1),
       self.token(.identifier("rapunzel"),  start: loc2, end: loc3),
@@ -103,7 +103,7 @@ class ParseSet: XCTestCase, Common, ExpressionMatcher {
   // MARK: - Set comprehension
 
   /// {rapunzel for eugene in []}
-  func test_set_comprehension() {
+  func test_comprehension() {
     var parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.identifier("rapunzel"), start: loc2, end: loc3),

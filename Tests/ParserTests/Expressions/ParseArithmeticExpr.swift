@@ -5,7 +5,7 @@ import Lexer
 
 class ParseArithmeticExpr: XCTestCase, Common, ExpressionMatcher {
 
-  func test_unaryOpertors() {
+  func test_unary() {
     let variants: [(TokenKind, UnaryOperator)] = [
       (.plus, .plus), // grammar: factor
       (.minus, .minus),
@@ -32,7 +32,7 @@ class ParseArithmeticExpr: XCTestCase, Common, ExpressionMatcher {
     }
   }
 
-  func test_binaryOperators() {
+  func test_binary() {
     let variants: [(TokenKind, BinaryOperator)] = [
       (.plus, .add), // grammar: arith_expr
       (.minus, .sub),

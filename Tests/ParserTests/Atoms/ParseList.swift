@@ -97,7 +97,7 @@ class ParseList: XCTestCase, Common, ExpressionMatcher {
   // MARK: - Comprehension
 
   /// [ariel for eric in []]
-  func test_list() {
+  func test_comprehension_list() {
     var parser = self.createExprParser(
       self.token(.leftSqb,         start: loc0, end: loc1),
       self.token(.identifier("ariel"), start: loc2, end: loc3),
@@ -131,7 +131,7 @@ class ParseList: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// [ariel async for eric in []]
-  func test_list_async() {
+  func test_comprehension_async() {
     var parser = self.createExprParser(
       self.token(.leftSqb,             start: loc0, end: loc1),
       self.token(.identifier("ariel"), start: loc2, end: loc3),
@@ -166,7 +166,7 @@ class ParseList: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// [ariel for eric, sebastian in []]
-  func test_list_target_multiple() {
+  func test_comprehension_target_multiple() {
     var parser = self.createExprParser(
       self.token(.leftSqb,                 start: loc0, end: loc1),
       self.token(.identifier("ariel"),     start: loc2, end: loc3),
@@ -202,7 +202,7 @@ class ParseList: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// [ariel for eric, in []]
-  func test_list_target_withCommaAfter_isTuple() {
+  func test_comprehension_target_withCommaAfter_isTuple() {
     var parser = self.createExprParser(
       self.token(.leftSqb,             start: loc0, end: loc1),
       self.token(.identifier("ariel"), start: loc2, end: loc3),
@@ -237,7 +237,7 @@ class ParseList: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// [ariel for eric in [] for sebastian in []]
-  func test_list_for_multiple() {
+  func test_comprehension_for_multiple() {
     var parser = self.createExprParser(
       self.token(.leftSqb,                 start: loc0, end: loc1),
       self.token(.identifier("ariel"),     start: loc2, end: loc3),
@@ -284,7 +284,7 @@ class ParseList: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// [ariel for eric in [] if sebastian if flounder]
-  func test_list_ifs_multiple() {
+  func test_comprehension_ifs_multiple() {
     var parser = self.createExprParser(
       self.token(.leftSqb,                 start: loc0, end: loc1),
       self.token(.identifier("ariel"),     start: loc2, end: loc3),

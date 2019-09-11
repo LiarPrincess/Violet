@@ -6,7 +6,7 @@ import Lexer
 class ParseRaise: XCTestCase, Common, StatementMatcher {
 
   /// raise
-  func test_raise() {
+  func test_reRaise() {
     var parser = self.createStmtParser(
       self.token(.raise, start: loc0, end: loc1)
     )
@@ -24,7 +24,7 @@ class ParseRaise: XCTestCase, Common, StatementMatcher {
   }
 
   /// raise Hades
-  func test_raise_exception() {
+  func test_exception() {
     var parser = self.createStmtParser(
       self.token(.raise,               start: loc0, end: loc1),
       self.token(.identifier("Hades"), start: loc2, end: loc3)
@@ -43,7 +43,7 @@ class ParseRaise: XCTestCase, Common, StatementMatcher {
   }
 
   /// raise Hercules from Olympus
-  func test_raise_from() {
+  func test_exception_from() {
     var parser = self.createStmtParser(
       self.token(.raise,                start: loc0, end: loc1),
       self.token(.identifier("Hercules"), start: loc2, end: loc3),

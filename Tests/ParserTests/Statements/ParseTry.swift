@@ -11,7 +11,7 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
   // MARK: - No else or finally
 
   /// try: "Mulan"
-  func test_try_withoutFinallyOrElse_throws() {
+  func test_withoutFinallyOrElse_throws() {
     var parser = self.createStmtParser(
       self.token(.try,             start: loc0, end: loc1),
       self.token(.colon,           start: loc2, end: loc3),

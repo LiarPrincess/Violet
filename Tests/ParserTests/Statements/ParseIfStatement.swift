@@ -9,7 +9,7 @@ class ParseIfStatement: XCTestCase,
 Common, ExpressionMatcher, StatementMatcher, StringMatcher {
 
   /// if Pooh: "Honey"
-  func test_if() {
+  func test_simple() {
     var parser = self.createStmtParser(
       self.token(.if,                 start: loc0, end: loc1),
       self.token(.identifier("Pooh"), start: loc2, end: loc3),
@@ -35,7 +35,7 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
 
   /// if Pooh: "Honey"
   /// else: "More honey"
-  func test_if_withElse() {
+  func test_withElse() {
     var parser = self.createStmtParser(
       self.token(.if,                   start: loc0, end: loc1),
       self.token(.identifier("Pooh"),   start: loc2, end: loc3),
@@ -79,7 +79,7 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
   ///       body: Bouncing
   ///       orelse: empty
   /// ```
-  func test_if_withElif() {
+  func test_withElif() {
     var parser = self.createStmtParser(
       self.token(.if,                   start: loc0, end: loc1),
       self.token(.identifier("Pooh"),   start: loc2, end: loc3),
@@ -123,8 +123,8 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
   /// if Pooh:     "Honey"
   /// elif Tigger: "Bouncing"
   /// else:        "Carrots?"
-  /// Expected AST is similiar to the one in `test_if_withElif`.
-  func test_if_withElif_andElse() {
+  /// Expected AST is similiar to the one in `test_withElif`.
+  func test_withElif_andElse() {
     var parser = self.createStmtParser(
       self.token(.if,                   start: loc0, end: loc1),
       self.token(.identifier("Pooh"),   start: loc2, end: loc3),

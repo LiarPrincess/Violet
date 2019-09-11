@@ -5,7 +5,7 @@ import Lexer
 
 class ParseBoolExpr: XCTestCase, Common, ExpressionMatcher {
 
-  func test_notOperator() {
+  func test_not() {
     var parser = self.createExprParser(
       self.token(.not,   start: loc0, end: loc1),
       self.token(.false, start: loc2, end: loc3)
@@ -23,7 +23,7 @@ class ParseBoolExpr: XCTestCase, Common, ExpressionMatcher {
     }
   }
 
-  func test_and_or_operators() {
+  func test_and_or() {
     let variants: [(TokenKind, BooleanOperator)] = [
       (.or, .or), // grammar: or_test
       (.and, .and) // grammar: and_test

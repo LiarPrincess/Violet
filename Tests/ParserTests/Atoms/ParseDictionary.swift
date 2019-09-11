@@ -8,7 +8,7 @@ class ParseDictionary: XCTestCase, Common, ExpressionMatcher {
   // MARK: - Empty
 
   /// {}
-  func test_empty_givesDictionary() {
+  func test_empty() {
     var parser = self.createExprParser(
       self.token(.leftBrace,  start: loc0, end: loc1),
       self.token(.rightBrace, start: loc2, end: loc3)
@@ -27,7 +27,7 @@ class ParseDictionary: XCTestCase, Common, ExpressionMatcher {
   // MARK: - Dictionary
 
   /// {rapunzel:eugene}
-  func test_dictionary_singleElement() {
+  func test_singleElement() {
     var parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.identifier("rapunzel"), start: loc2, end: loc3),
@@ -50,7 +50,7 @@ class ParseDictionary: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// {rapunzel:eugene,}
-  func test_dictionary_withComaAfter() {
+  func test_withComaAfter() {
     var parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.identifier("rapunzel"), start: loc2, end: loc3),
@@ -74,7 +74,7 @@ class ParseDictionary: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// {**rapunzel}
-  func test_dictionary_starStar() {
+  func test_starStar() {
     var parser = self.createExprParser(
       self.token(.leftBrace,                   start: loc0, end: loc1),
       self.token(.starStar,                    start: loc2, end: loc3),
@@ -96,7 +96,7 @@ class ParseDictionary: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// {rapunzel:eugene, **cassandra, pascal:maximus}
-  func test_dictionary_multipleElements() {
+  func test_multipleElements() {
     var parser = self.createExprParser(
       self.token(.leftBrace,                   start: loc0, end: loc1),
       self.token(.identifier("rapunzel"),      start: loc2, end: loc3),
@@ -130,7 +130,7 @@ class ParseDictionary: XCTestCase, Common, ExpressionMatcher {
   // MARK: - Dictionary comprehension
 
   /// { rapunzel:eugene for cassandra in [] }
-  func test_dictionary_comprehension() {
+  func test_comprehension() {
     // swiftlint:disable:previous function_body_length
 
     var parser = self.createExprParser(
@@ -170,7 +170,7 @@ class ParseDictionary: XCTestCase, Common, ExpressionMatcher {
   }
 
   /// { **rapunzel for eugene in [] }
-  func test_dictUnpacking_insideComprehension_throws() {
+  func test_unpacking_insideComprehension_throws() {
     var parser = self.createExprParser(
       self.token(.leftBrace,                   start: loc0, end: loc1),
       self.token(.starStar,                    start: loc2, end: loc3),

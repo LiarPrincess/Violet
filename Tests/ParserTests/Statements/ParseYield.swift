@@ -8,7 +8,7 @@ class ParseYield: XCTestCase, Common, StatementMatcher {
   // MARK: - Yield
 
   /// yield
-  func test_yield() {
+  func test_withoutValue() {
     var parser = self.createStmtParser(
       self.token(.yield, start: loc0, end: loc1)
     )
@@ -25,7 +25,7 @@ class ParseYield: XCTestCase, Common, StatementMatcher {
   }
 
   /// yield Megara
-  func test_yield_value() {
+  func test_value() {
     var parser = self.createStmtParser(
       self.token(.yield,                start: loc0, end: loc1),
       self.token(.identifier("Megara"), start: loc2, end: loc3)
@@ -43,7 +43,7 @@ class ParseYield: XCTestCase, Common, StatementMatcher {
   }
 
   /// yield Megara,
-  func test_yield_value_withCommaAfter_yieldsTuple() {
+  func test_value_withCommaAfter_yieldsTuple() {
     var parser = self.createStmtParser(
       self.token(.yield,                start: loc0, end: loc1),
       self.token(.identifier("Megara"), start: loc2, end: loc3),
@@ -62,7 +62,7 @@ class ParseYield: XCTestCase, Common, StatementMatcher {
   }
 
   /// yield Pain, Panic
-  func test_yield_multiple() {
+  func test_value_multiple() {
     var parser = self.createStmtParser(
       self.token(.yield,           start: loc0, end: loc1),
       self.token(.identifier("Pain"), start: loc2, end: loc3),
@@ -82,7 +82,7 @@ class ParseYield: XCTestCase, Common, StatementMatcher {
   }
 
   /// yield from Olympus
-  func test_yield_from() {
+  func test_from() {
     var parser = self.createStmtParser(
       self.token(.yield,                 start: loc0, end: loc1),
       self.token(.from,                  start: loc2, end: loc3),

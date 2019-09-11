@@ -8,7 +8,7 @@ import Lexer
 class ParseImportFrom: XCTestCase, Common, StatementMatcher {
 
   /// from Tangled import Rapunzel
-  func test_from_module() {
+  func test_module() {
     var parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.identifier("Tangled"),  start: loc2, end: loc3),
@@ -35,7 +35,7 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
   }
 
   /// from Tangled import Rapunzel as Daughter
-  func test_from_module_withAlias() {
+  func test_module_withAlias() {
     var parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.identifier("Tangled"),  start: loc2, end: loc3),
@@ -64,7 +64,7 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
   }
 
   /// from Tangled import Rapunzel as Daughter, Pascal
-  func test_from_module_multiple() {
+  func test_module_multiple() {
     var parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.identifier("Tangled"),  start: loc2, end: loc3),
@@ -98,7 +98,7 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
   }
 
   /// from Tangled import (Rapunzel, Pascal)
-  func test_from_module_multiple_inParens() {
+  func test_module_multiple_inParens() {
     var parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.identifier("Tangled"),  start: loc2, end: loc3),
@@ -132,7 +132,7 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
   }
 
   /// from Disnep.Tangled import Rapunzel
-  func test_from_nestedModule() {
+  func test_nestedModule() {
     var parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.identifier("Disnep"),   start: loc2, end: loc3),
@@ -161,7 +161,7 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
   }
 
   /// from Tangled import *
-  func test_from_module_importAll() {
+  func test_module_importAll() {
     var parser = self.createStmtParser(
       self.token(.from,                  start: loc0, end: loc1),
       self.token(.identifier("Tangled"), start: loc2, end: loc3),
@@ -188,7 +188,7 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
   }
 
   /// from . import Rapunzel
-  func test_from_dir() {
+  func test_dir() {
     var parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.dot,                    start: loc2, end: loc3),
@@ -215,7 +215,7 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
   }
 
   /// from ... import Rapunzel
-  func test_from_elipsis() {
+  func test_elipsis() {
     var parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.ellipsis,               start: loc2, end: loc3),
@@ -242,7 +242,7 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
   }
 
   /// from .Tangled import Rapunzel
-  func test_from_dotModule() {
+  func test_dotModule() {
     var parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.dot,                    start: loc2, end: loc3),
@@ -270,7 +270,7 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
   }
 
   /// from ...Tangled import Rapunzel
-  func test_from_elipsisModule() {
+  func test_elipsisModule() {
     var parser = self.createStmtParser(
       self.token(.from,                   start: loc0, end: loc1),
       self.token(.ellipsis,               start: loc2, end: loc3),

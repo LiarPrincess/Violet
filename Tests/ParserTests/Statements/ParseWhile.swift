@@ -6,7 +6,7 @@ import Lexer
 class ParseWhile: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   /// while Frollo: "Quasimodo"
-  func test_while() {
+  func test_simple() {
     var parser = self.createStmtParser(
       self.token(.while,                start: loc0, end: loc1),
       self.token(.identifier("Frollo"), start: loc2, end: loc3),
@@ -32,7 +32,7 @@ class ParseWhile: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   /// while Frollo: "Quasimodo"
   /// else: "Esmeralda"
-  func test_while_withElse() {
+  func test_withElse() {
     var parser = self.createStmtParser(
       self.token(.while,                start: loc0, end: loc1),
       self.token(.identifier("Frollo"), start: loc2, end: loc3),

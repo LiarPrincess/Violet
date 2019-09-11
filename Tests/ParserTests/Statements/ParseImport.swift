@@ -6,7 +6,7 @@ import Lexer
 class ParseImport: XCTestCase, Common, StatementMatcher {
 
   /// import Rapunzel
-  func test_import() {
+  func test_simple() {
     var parser = self.createStmtParser(
       self.token(.import,                 start: loc0, end: loc1),
       self.token(.identifier("Rapunzel"), start: loc2, end: loc3)
@@ -28,7 +28,7 @@ class ParseImport: XCTestCase, Common, StatementMatcher {
   }
 
   /// import Tangled.Rapunzel
-  func test_import_nested() {
+  func test_nested() {
     var parser = self.createStmtParser(
       self.token(.import,                 start: loc0, end: loc1),
       self.token(.identifier("Tangled"),  start: loc2, end: loc3),
@@ -52,7 +52,7 @@ class ParseImport: XCTestCase, Common, StatementMatcher {
   }
 
   /// import Rapunzel as Daughter
-  func test_import_withAlias() {
+  func test_withAlias() {
     var parser = self.createStmtParser(
       self.token(.import,                 start: loc0, end: loc1),
       self.token(.identifier("Rapunzel"), start: loc2, end: loc3),
@@ -76,7 +76,7 @@ class ParseImport: XCTestCase, Common, StatementMatcher {
   }
 
   /// import Rapunzel as Daughter, Pascal
-  func test_import_multiple() {
+  func test_multiple() {
     var parser = self.createStmtParser(
       self.token(.import,                 start: loc0, end: loc1),
       self.token(.identifier("Rapunzel"), start: loc2, end: loc3),

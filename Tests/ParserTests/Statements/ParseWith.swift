@@ -6,7 +6,7 @@ import Lexer
 class ParseWith: XCTestCase, Common, StatementMatcher {
 
   /// with Alice: "wonderland"
-  func test_with() {
+  func test_simple() {
     var parser = self.createStmtParser(
       self.token(.with,                 start: loc0, end: loc1),
       self.token(.identifier("Alice"),  start: loc2, end: loc3),
@@ -32,7 +32,7 @@ class ParseWith: XCTestCase, Common, StatementMatcher {
   }
 
   /// with Alice as smol: "wonderland"
-  func test_with_alias() {
+  func test_alias() {
     var parser = self.createStmtParser(
       self.token(.with,                 start: loc0, end: loc1),
       self.token(.identifier("Alice"),  start: loc2, end: loc3),
@@ -60,7 +60,7 @@ class ParseWith: XCTestCase, Common, StatementMatcher {
   }
 
   /// with Alice, Rabbit: "wonderland"
-  func test_with_multipleItems() {
+  func test_multipleItems() {
     var parser = self.createStmtParser(
       self.token(.with,                 start: loc0, end: loc1),
       self.token(.identifier("Alice"),  start: loc2, end: loc3),
@@ -89,7 +89,7 @@ class ParseWith: XCTestCase, Common, StatementMatcher {
   }
 
   /// with Alice as big, Rabbit as smol: "wonderland"
-  func test_with_multipleItems_withAlias() {
+  func test_multipleItems_withAlias() {
     var parser = self.createStmtParser(
       self.token(.with,                 start: loc0, end: loc1),
       self.token(.identifier("Alice"),  start: loc2, end: loc3),
