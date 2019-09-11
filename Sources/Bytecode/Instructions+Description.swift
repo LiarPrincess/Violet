@@ -344,8 +344,8 @@ extension Instruction: CustomStringConvertible {
       return "setupFinally(finallyStartLabel: \(hex(value0)))"
     case let .raiseVarargs(value0):
       return "raiseVarargs(\(value0))"
-    case let .setupWith(value0):
-      return "setupWith(\(value0))"
+    case let .setupWith(afterBodyLabel: value0):
+      return "setupWith(afterBodyLabel: \(hex(value0)))"
     case .withCleanupStart:
       return "withCleanupStart"
     case .withCleanupFinish:

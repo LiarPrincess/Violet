@@ -85,9 +85,16 @@ extension Compiler {
         try self.codeObject.appendPopTop(at: location)
       }
 
-      // TODO: some weird condition
-      // BLOCK code
-      try self.visitStatements(body)
+      let nextIndex = index + 1
+      if nextIndex == items.count {
+        // BLOCK code
+        try self.visitStatements(body)
+      } else {
+        try self.visitWith(items: items,
+                           body: body,
+                           index: nextIndex,
+                           location: location)
+      }
 
       // End of try block; start the finally block
       try self.codeObject.appendPopBlock(at: location)

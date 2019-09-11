@@ -466,12 +466,12 @@ public enum Instruction {
   /// It does following operations:
   /// 1.loads `Exit()` from the context manager and pushes it onto the stack for later use by `WithCleanup`.
   /// 2. calls `Enter()`
-  /// 3. block pointing to `delta` is pushed.
+  /// 3. block staring at to `afterBodyLabel` is pushed.
   /// 4. the result of calling the enter method is pushed onto the stack.
   /// 
   /// The next opcode will either ignore it (`PopTop`),
   /// or store it in variable (StoreFast, StoreName, or UnpackSequence).
-  case setupWith(Delta)
+  case setupWith(afterBodyLabel: UInt8)
   /// Cleans up the stack when a `with` statement block exits.
   /// 
   /// TOS is the context manager’s `__exit__()` bound method.

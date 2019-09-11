@@ -240,7 +240,7 @@ extension CodeObject {
     case let .raiseVarargs(arg):
       return EmittedInstruction(.raiseVarargs, self.toString(arg))
     case let .setupWith(arg):
-      return EmittedInstruction(.setupWith, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.setupWith, self.getLabel(arg))
     case .withCleanupStart:
       return EmittedInstruction(.withCleanupStart)
     case .withCleanupFinish:

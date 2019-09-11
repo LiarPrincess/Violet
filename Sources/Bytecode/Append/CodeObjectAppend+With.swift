@@ -5,8 +5,8 @@ extension CodeObject {
   /// Append a `setupWith` instruction to this code object.
   public func appendSetupWith(afterBody: Label,
                               at location: SourceLocation) throws {
-    // try self.append(.setupWith, at: location)
-    throw self.unimplemented()
+    let arg = try self.addLabelWithExtendedArgIfNeeded(afterBody, at: location)
+    try self.append(.setupWith(afterBodyLabel: arg), at: location)
   }
 
   /// Append a `withCleanupStart` instruction to this code object.

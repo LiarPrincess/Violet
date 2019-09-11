@@ -107,6 +107,13 @@ extension ASTCreator {
     return self.statement(kind)
   }
 
+  internal func with(items: [WithItem], body: [Statement]) -> Statement {
+    return self.statement(.with(
+      items: self.toNonEmptyArray(items),
+      body: self.toNonEmptyArray(body)
+    ))
+  }
+
   private func toStatements(_ exprs: [Expression]) -> [Statement] {
     return exprs.map { self.statement(.expr($0)) }
   }
