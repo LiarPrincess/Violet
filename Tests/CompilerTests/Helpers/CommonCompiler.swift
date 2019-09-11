@@ -64,6 +64,23 @@ extension CommonCompiler {
     }
   }
 
+  // MARK: - Nested code objects
+
+  internal func getCodeObject(parent code: CodeObject,
+                              qualifiedName: String,
+                              _ message:  String = "",
+                              file: StaticString = #file,
+                              line: UInt         = #line) -> CodeObject? {
+    for case let Constant.code(c) in code.constants
+      where c.qualifiedName == qualifiedName {
+
+      return c
+    }
+
+    XCTAssertFalse(true, message, file: file, line: line)
+    return nil
+  }
+
   // MARK: - Print
 
   @available(*, deprecated, message: "This should be used only for debug.")

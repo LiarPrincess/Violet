@@ -19,6 +19,16 @@ internal func XCTAssertCode(_ code: CodeObject,
   XCTAssertEqual(code.type,          type,      message, file: file, line: line)
 }
 
+internal func XCTAssertCode(_ code: CodeObject,
+                            name: String,
+                            type: CodeObjectType,
+                            _ message:  String = "",
+                            file: StaticString = #file,
+                            line: UInt         = #line) {
+  XCTAssertEqual(code.name, name, message, file: file, line: line)
+  XCTAssertEqual(code.type, type, message, file: file, line: line)
+}
+
 internal func XCTAssertInstructions(_ code: CodeObject,
                                     _ expected: [EmittedInstruction],
                                     _ message: String = "",

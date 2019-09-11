@@ -115,17 +115,16 @@ public final class Compiler {
       try self.visitExpression(expr)
     }
 
-    // Emit epilog (because we may be a jump target).
-    if !self.currentScope.hasReturnValue {
-      if !self.ast.kind.isExpression {
-        try self.codeObject.appendNone(at: self.ast.end)
-      }
-
-      try self.codeObject.appendReturn(at: self.ast.end)
+    assert(self.unitStack.count == 1)
+    guard let last = self.unitStack.last else {
+      fatalError("[BUG] Compiler: Missing code unit after compilation.")
     }
 
-    assert(self.unitStack.count == 1)
-    return self.codeObject
+    // Emit epilog (because we may be a jump target).
+    let addNone = !self.ast.kind.isExpression
+    try self.emitReturn(unit: last, addNone: addNone)
+
+    return last.codeObject
   }
 
   /// Compile a sequence of statements, checking for a docstring
@@ -194,13 +193,14 @@ public final class Compiler {
   internal func inNewCodeObject<N: ASTNode>(
     node: N,
     type: CodeObjectType,
-    emitInstructions block: () throws -> Void) rethrows -> CodeObject {
+    emitInstructions block: () throws -> Void) throws -> CodeObject {
 
     self.enterScope(node: node, type: type)
-    defer { self.leaveScope() }
-
     try block()
-    return self.codeObject
+    let code = self.codeObject
+    try self.leaveScope()
+
+    return code
   }
 
   /// Push new scope (and generate a new code object to emit to).
@@ -246,10 +246,12 @@ public final class Compiler {
   /// Pop scope (along with correcsponding code object).
   ///
   /// compiler_exit_scope(struct compiler *c)
-  private func leaveScope() {
+  private func leaveScope() throws {
     guard let unit = self.unitStack.popLast() else {
       fatalError("[BUG] Compiler: Attempting to pop non-existing unit.")
     }
+
+    try self.emitReturn(unit: unit, addNone: true)
 
     assert(self.unitStack.any, "Popped top scope.")
     assert(
@@ -312,8 +314,13 @@ public final class Compiler {
       return ""
     }
 
+    let isTopLevel = self.unitStack.count == 1
+    if isTopLevel {
+      return name
+    }
+
     /// Is this a special case? (see docstring)
-    let isGlobal: Bool = {
+    let isGlobalNestedInOtherScope: Bool = {
       guard type == .function || type == .asyncFunction || type == .class else {
         return false
       }
@@ -323,14 +330,17 @@ public final class Compiler {
       return info?.flags.contains(.srcGlobalExplicit) ?? false
     }()
 
-    if isGlobal {
+    if isGlobalNestedInOtherScope {
       return name
     }
 
-    let pt = parent.codeObject.type
-    let isFunction = pt == .function || pt == .asyncFunction || pt == .lambda
-    let locals = isFunction ? ".<locals>" : ""
+    /// Otherwise just concat to parent
+    let parentType = parent.codeObject.type
+    let isParentFunction = parentType == .function
+                        || parentType == .asyncFunction
+                        || parentType == .lambda
 
+    let locals = isParentFunction ? ".<locals>" : ""
     return parent.codeObject.qualifiedName + locals + "." + name
   }
 
@@ -356,6 +366,19 @@ public final class Compiler {
     }
 
     return result
+  }
+
+  /// Emit epilog (because we may be a jump target).
+  private func emitReturn(unit: CompilerUnit, addNone: Bool = true) throws {
+    guard !unit.scope.hasReturnValue else {
+      return
+    }
+
+    if addNone {
+      try unit.codeObject.appendNone(at: self.ast.end)
+    }
+
+    try unit.codeObject.appendReturn(at: self.ast.end)
   }
 
   // MARK: - Block

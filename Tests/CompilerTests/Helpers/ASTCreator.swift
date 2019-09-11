@@ -193,6 +193,26 @@ extension ASTCreator {
                                      returns: returns)
   }
 
+  internal func functionDef(name: String,
+                            args: Arguments,
+                            body: [Statement],
+                            decorators: [Expression] = [],
+                            returns: Expression? = nil) -> Statement {
+    return self.statement(
+      .functionDef(
+        name: name,
+        args: args,
+        body: self.toNonEmptyArray(body),
+        decorators: decorators,
+        returns: returns
+      )
+    )
+  }
+
+  internal func identifierExpr(_ value: String) -> Expression {
+    return self.expression(.identifier(value))
+  }
+
   internal func asyncFunctionDefStmt(name: String,
                                      args: Arguments,
                                      body: Statement? = nil,

@@ -204,7 +204,7 @@ extension CodeObject {
       return EmittedInstruction(.loadClassDeref, String(describing: arg) + "_INVALID")
 
     case let .makeFunction(arg):
-      return EmittedInstruction(.makeFunction, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.makeFunction, String(describing: arg.rawValue))
 
     case let .callFunction(argumentCount: arg):
       return EmittedInstruction(.callFunction, String(describing: arg))
@@ -303,7 +303,6 @@ extension CodeObject {
     case .false: return "false"
     case .none:     return "none"
     case .ellipsis: return "ellipsis"
-    case .code: return "<code>"
 
     case let .integer(value):
       return String(describing: value)
@@ -317,6 +316,9 @@ extension CodeObject {
       return "b'\(s)'"
     case let .string(s):
       return s
+
+    case let .code(c):
+      return "<code object \(c.qualifiedName)>"
 
     case let .tuple(es):
       let ss = es.map { self.toString($0) }.joined(separator: ", ")
