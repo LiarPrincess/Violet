@@ -4,6 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
+// swiftlint:disable type_body_length
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
