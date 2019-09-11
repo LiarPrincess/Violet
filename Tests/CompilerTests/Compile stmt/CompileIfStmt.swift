@@ -18,7 +18,7 @@ class CompileIfStmt: XCTestCase, CommonCompiler {
   /// 10 RETURN_VALUE
   func test_onlyTrue() {
     let stmt = self.statement(.if(
-      test: self.expression(.identifier("eat_me")),
+      test: self.identifierExpr("eat_me"),
       body: NonEmptyArray(first:
         self.statement(expr: .identifier("big"))
       ),
@@ -56,7 +56,7 @@ class CompileIfStmt: XCTestCase, CommonCompiler {
   /// 16 RETURN_VALUE
   func test_withElse() {
     let stmt = self.statement(.if(
-      test: self.expression(.identifier("eat_me")),
+      test: self.identifierExpr("eat_me"),
       body: NonEmptyArray(first:
         self.statement(expr: .identifier("big"))
       ),
@@ -107,13 +107,13 @@ class CompileIfStmt: XCTestCase, CommonCompiler {
     // swiftlint:disable:previous function_body_length
 
     let stmt = self.statement(.if(
-      test: self.expression(.identifier("eat_me")),
+      test: self.identifierExpr("eat_me"),
       body: NonEmptyArray(first:
         self.statement(expr: .identifier("big"))
       ),
       orElse: [
         self.statement(.if(
-          test: self.expression(.identifier("drink_me")),
+          test: self.identifierExpr("drink_me"),
           body: NonEmptyArray(first:
             self.statement(expr: .identifier("smol"))
           ),

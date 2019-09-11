@@ -19,7 +19,7 @@ class CompileSubscript: XCTestCase, CommonCompiler {
   /// 6 RETURN_VALUE
   func test_index_constant() {
     let expr = self.expression(.subscript(
-      self.expression(.identifier("paris")),
+      self.identifierExpr("paris"),
       slice: self.slice(.index(
         self.expression(.string(.literal("notre_dame")))
       ))
@@ -46,9 +46,9 @@ class CompileSubscript: XCTestCase, CommonCompiler {
   /// 6 RETURN_VALUE
   func test_index_identifier() {
     let expr = self.expression(.subscript(
-      self.expression(.identifier("paris")),
+      self.identifierExpr("paris"),
       slice: self.slice(.index(
-        self.expression(.identifier("notre_dame"))
+        self.identifierExpr("notre_dame")
       ))
     ))
 
@@ -75,16 +75,16 @@ class CompileSubscript: XCTestCase, CommonCompiler {
   /// 10 RETURN_VALUE
   func test_index_afterIndex() {
     let left = self.expression(.subscript(
-      self.expression(.identifier("paris")),
+      self.identifierExpr("paris"),
       slice: self.slice(.index(
-        self.expression(.identifier("notre_dame"))
+        self.identifierExpr("notre_dame")
       ))
     ))
 
     let expr = self.expression(.subscript(
       left,
       slice: self.slice(.index(
-        self.expression(.identifier("bell"))
+        self.identifierExpr("bell")
       ))
     ))
 
@@ -116,7 +116,7 @@ class CompileSubscript: XCTestCase, CommonCompiler {
   /// 12 RETURN_VALUE
   func test_slice_constant() {
     let expr = self.expression(.subscript(
-      self.expression(.identifier("paris")),
+      self.identifierExpr("paris"),
       slice: self.slice(.slice(
         lower: self.expression(.string(.literal("Quasimodo"))),
         upper: self.expression(.string(.literal("Esmeralda"))),
@@ -151,11 +151,11 @@ class CompileSubscript: XCTestCase, CommonCompiler {
   /// 12 RETURN_VALUE
   func test_slice_identifiers() {
     let expr = self.expression(.subscript(
-      self.expression(.identifier("paris")),
+      self.identifierExpr("paris"),
       slice: self.slice(.slice(
-        lower: self.expression(.identifier("Quasimodo")),
-        upper: self.expression(.identifier("Esmeralda")),
-        step:  self.expression(.identifier("Frollo"))
+        lower: self.identifierExpr("Quasimodo"),
+        upper: self.identifierExpr("Esmeralda"),
+        step:  self.identifierExpr("Frollo")
       ))
     ))
 
@@ -185,10 +185,10 @@ class CompileSubscript: XCTestCase, CommonCompiler {
   /// 10 RETURN_VALUE
   func test_slice_identifiers_withoutStep() {
     let expr = self.expression(.subscript(
-      self.expression(.identifier("paris")),
+      self.identifierExpr("paris"),
       slice: self.slice(.slice(
-        lower: self.expression(.identifier("Quasimodo")),
-        upper: self.expression(.identifier("Esmeralda")),
+        lower: self.identifierExpr("Quasimodo"),
+        upper: self.identifierExpr("Esmeralda"),
         step:  nil
       ))
     ))
@@ -218,7 +218,7 @@ class CompileSubscript: XCTestCase, CommonCompiler {
   /// 10 RETURN_VALUE
   func test_slice_allNil() {
     let expr = self.expression(.subscript(
-      self.expression(.identifier("paris")),
+      self.identifierExpr("paris"),
       slice: self.slice(.slice(lower: nil, upper: nil, step: nil))
     ))
 
@@ -251,17 +251,17 @@ class CompileSubscript: XCTestCase, CommonCompiler {
   /// 14 RETURN_VALUE
   func test_slice_extended() {
     let expr = self.expression(.subscript(
-      self.expression(.identifier("paris")),
+      self.identifierExpr("paris"),
       slice: self.slice(
         .extSlice(NonEmptyArray(
           first: self.slice(.slice(
-            lower: self.expression(.identifier("Quasimodo")),
-            upper: self.expression(.identifier("Esmeralda")),
+            lower: self.identifierExpr("Quasimodo"),
+            upper: self.identifierExpr("Esmeralda"),
             step:  nil
           )),
           rest: [
             self.slice(.index(
-              self.expression(.identifier("Frollo"))
+              self.identifierExpr("Frollo")
             ))
           ])
         ))

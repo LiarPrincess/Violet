@@ -28,7 +28,7 @@ class CompileOperators: XCTestCase, CommonCompiler {
     for (op, emittedOp) in operators {
       let msg = "for '\(op)'"
 
-      let right = self.expression(.identifier("rapunzel"))
+      let right = self.identifierExpr("rapunzel")
       let expr = self.expression(.unaryOp(op, right: right))
 
       let expected: [EmittedInstruction] = [
@@ -51,7 +51,7 @@ class CompileOperators: XCTestCase, CommonCompiler {
   /// 4 UNARY_POSITIVE
   /// 6 RETURN_VALUE
   func test_unary_multiple() {
-    let right = self.expression(.identifier("rapunzel"))
+    let right = self.identifierExpr("rapunzel")
 
     let expr = self.expression(
       .unaryOp(.plus,
@@ -101,8 +101,8 @@ class CompileOperators: XCTestCase, CommonCompiler {
     for (op, emittedOp) in operators {
       let msg = "for '\(op)'"
 
-      let left = self.expression(.identifier("rapunzel"))
-      let right = self.expression(.identifier("cassandra"))
+      let left = self.identifierExpr("rapunzel")
+      let right = self.identifierExpr("cassandra")
       let expr = self.expression(.binaryOp(op, left: left, right: right))
 
       let expected: [EmittedInstruction] = [
@@ -128,9 +128,9 @@ class CompileOperators: XCTestCase, CommonCompiler {
   ///  8 BINARY_SUBTRACT
   /// 10 RETURN_VALUE
   func test_binary_multiple() {
-    let left   = self.expression(.identifier("eugene"))
-    let middle = self.expression(.identifier("rapunzel"))
-    let right  = self.expression(.identifier("cassandra"))
+    let left   = self.identifierExpr("eugene")
+    let middle = self.identifierExpr("rapunzel")
+    let right  = self.identifierExpr("cassandra")
 
     let add  = self.expression(.binaryOp(.add, left: left, right: middle))
     let expr = self.expression(.binaryOp(.sub, left: add, right: right))
@@ -160,8 +160,8 @@ class CompileOperators: XCTestCase, CommonCompiler {
   /// 4 LOAD_NAME                1 (cassandra)
   /// 6 RETURN_VALUE
   func test_boolean_and() {
-    let left = self.expression(.identifier("rapunzel"))
-    let right = self.expression(.identifier("cassandra"))
+    let left = self.identifierExpr("rapunzel")
+    let right = self.identifierExpr("cassandra")
     let expr = self.expression(.boolOp(.and, left: left, right: right))
 
     let expected: [EmittedInstruction] = [
@@ -185,8 +185,8 @@ class CompileOperators: XCTestCase, CommonCompiler {
   /// 4 LOAD_NAME                1 (cassandra)
   /// 6 RETURN_VALUE
   func test_boolean_or() {
-    let left = self.expression(.identifier("rapunzel"))
-    let right = self.expression(.identifier("cassandra"))
+    let left = self.identifierExpr("rapunzel")
+    let right = self.identifierExpr("cassandra")
     let expr = self.expression(.boolOp(.or, left: left, right: right))
 
     let expected: [EmittedInstruction] = [
@@ -212,9 +212,9 @@ class CompileOperators: XCTestCase, CommonCompiler {
   ///  8 LOAD_NAME                2 (eugene)
   /// 10 RETURN_VALUE
   func test_boolean_multiple() {
-    let left   = self.expression(.identifier("rapunzel"))
-    let middle = self.expression(.identifier("cassandra"))
-    let right  = self.expression(.identifier("eugene"))
+    let left   = self.identifierExpr("rapunzel")
+    let middle = self.identifierExpr("cassandra")
+    let right  = self.identifierExpr("eugene")
 
     let and  = self.expression(.boolOp(.and, left: left, right: middle))
     let expr = self.expression(.boolOp(.or, left: and, right: right))
@@ -260,8 +260,8 @@ class CompileOperators: XCTestCase, CommonCompiler {
     for (op, emittedOp) in operators {
       let msg = "for '\(op)'"
 
-      let left = self.expression(.identifier("rapunzel"))
-      let right = self.expression(.identifier("cassandra"))
+      let left = self.identifierExpr("rapunzel")
+      let right = self.identifierExpr("cassandra")
       let expr = self.expression(
         .compare(
           left: left,
@@ -304,9 +304,9 @@ class CompileOperators: XCTestCase, CommonCompiler {
   /// 28 LOAD_CONST               0 (None)
   /// 30 RETURN_VALUE
   func test_compare_triple() {
-    let left   = self.expression(.identifier("eugene"))
-    let middle = self.expression(.identifier("rapunzel"))
-    let right  = self.expression(.identifier("cassandra"))
+    let left   = self.identifierExpr("eugene")
+    let middle = self.identifierExpr("rapunzel")
+    let right  = self.identifierExpr("cassandra")
 
     let expr = self.expression(
       .compare(
@@ -366,10 +366,10 @@ class CompileOperators: XCTestCase, CommonCompiler {
   /// 38 LOAD_CONST               0 (None)
   /// 40 RETURN_VALUE
   func test_compare_quad() {
-    let element1 = self.expression(.identifier("eugene"))
-    let element2 = self.expression(.identifier("pascal"))
-    let element3 = self.expression(.identifier("rapunzel"))
-    let element4 = self.expression(.identifier("cassandra"))
+    let element1 = self.identifierExpr("eugene")
+    let element2 = self.identifierExpr("pascal")
+    let element3 = self.identifierExpr("rapunzel")
+    let element4 = self.identifierExpr("cassandra")
 
     let expr = self.expression(
       .compare(

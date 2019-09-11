@@ -411,7 +411,7 @@ extension ASTCreator {
   internal func keyword(name: String?, value: String) -> Keyword {
     return self.keyword(
       name: name,
-      value: self.expression(.identifier(value))
+      value: self.identifierExpr(value)
     )
   }
 }

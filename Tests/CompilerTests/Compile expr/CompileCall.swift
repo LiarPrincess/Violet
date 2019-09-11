@@ -18,7 +18,7 @@ class CompileCall: XCTestCase, CommonCompiler {
   /// 4 RETURN_VALUE
   func test_noArgs() {
     let expr = self.expression(.call(
-      function: self.expression(.identifier("cook")),
+      function: self.identifierExpr("cook"),
       args: [],
       keywords: [])
     )
@@ -46,10 +46,10 @@ class CompileCall: XCTestCase, CommonCompiler {
   /// 8 RETURN_VALUE
   func test_args() {
     let expr = self.expression(.call(
-      function: self.expression(.identifier("cook")),
+      function: self.identifierExpr("cook"),
       args: [
-        self.expression(.identifier("zucchini")),
-        self.expression(.identifier("tomato"))
+        self.identifierExpr("zucchini"),
+        self.identifierExpr("tomato")
       ],
       keywords: [])
     )
@@ -79,11 +79,11 @@ class CompileCall: XCTestCase, CommonCompiler {
   /// 12 RETURN_VALUE
   func test_args_unpack() {
     let expr = self.expression(.call(
-      function: self.expression(.identifier("cook")),
+      function: self.identifierExpr("cook"),
       args: [
-        self.expression(.identifier("zucchini")),
+        self.identifierExpr("zucchini"),
         self.expression(.starred(
-          self.expression(.identifier("tomato"))
+          self.identifierExpr("tomato")
         ))
       ],
       keywords: [])
@@ -119,16 +119,16 @@ class CompileCall: XCTestCase, CommonCompiler {
   /// 18 RETURN_VALUE
   func test_args_unpack_multiple() {
     let expr = self.expression(.call(
-      function: self.expression(.identifier("cook")),
+      function: self.identifierExpr("cook"),
       args: [
-        self.expression(.identifier("zucchini")),
+        self.identifierExpr("zucchini"),
         self.expression(.starred(
-          self.expression(.identifier("tomato"))
+          self.identifierExpr("tomato")
         )),
         self.expression(.starred(
-          self.expression(.identifier("pepper"))
+          self.identifierExpr("pepper")
         )),
-        self.expression(.identifier("eggplant"))
+        self.identifierExpr("eggplant")
       ],
       keywords: [])
     )
@@ -164,7 +164,7 @@ class CompileCall: XCTestCase, CommonCompiler {
   /// 10 RETURN_VALUE
   func test_keyword() {
     let expr = self.expression(.call(
-      function: self.expression(.identifier("cook")),
+      function: self.identifierExpr("cook"),
       args: [],
       keywords: [
         self.keyword(name: "zucchini", value: "tomato"),
@@ -201,7 +201,7 @@ class CompileCall: XCTestCase, CommonCompiler {
   /// 18 RETURN_VALUE
   func test_keyword_unpack() {
     let expr = self.expression(.call(
-      function: self.expression(.identifier("cook")),
+      function: self.identifierExpr("cook"),
       args: [],
       keywords: [
         self.keyword(name: "zucchini", value: "tomato"),
@@ -246,7 +246,7 @@ class CompileCall: XCTestCase, CommonCompiler {
   /// 24 RETURN_VALUE
   func test_keyword_unpack_multiple() {
     let expr = self.expression(.call(
-      function: self.expression(.identifier("cook")),
+      function: self.identifierExpr("cook"),
       args: [],
       keywords: [
         self.keyword(name: "zucchini", value: "tomato"),
@@ -296,11 +296,11 @@ class CompileCall: XCTestCase, CommonCompiler {
   /// 22 RETURN_VALUE
   func test_all() {
     let expr = self.expression(.call(
-      function: self.expression(.identifier("cook")),
+      function: self.identifierExpr("cook"),
       args: [
-        self.expression(.identifier("zucchini")),
+        self.identifierExpr("zucchini"),
         self.expression(.starred(
-          self.expression(.identifier("tomato"))
+          self.identifierExpr("tomato")
         ))
       ],
       keywords: [

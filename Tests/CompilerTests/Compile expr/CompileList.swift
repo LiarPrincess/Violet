@@ -45,7 +45,7 @@ class CompileList: XCTestCase, CommonCompiler {
   /// [ariel, True]
   func test_withIdentifier() {
     let expr = self.expression(.list([
-      self.expression(.identifier("ariel")),
+      self.identifierExpr("ariel"),
       self.expression(.true)
     ]))
 
@@ -71,8 +71,8 @@ class CompileList: XCTestCase, CommonCompiler {
   /// 8 RETURN_VALUE
   func test_withUnpack() {
     let expr = self.expression(.list([
-      self.expression(.identifier("ariel")),
-      self.expression(.starred(self.expression(.identifier("sea"))))
+      self.identifierExpr("ariel"),
+      self.expression(.starred(self.identifierExpr("sea")))
     ]))
 
     let expected: [EmittedInstruction] = [
@@ -101,10 +101,10 @@ class CompileList: XCTestCase, CommonCompiler {
   /// 14 RETURN_VALUE
   func test_withUnpack_multiple() {
     let expr = self.expression(.list([
-      self.expression(.identifier("ariel")),
-      self.expression(.starred(self.expression(.identifier("sea")))),
-      self.expression(.starred(self.expression(.identifier("land")))),
-      self.expression(.identifier("eric"))
+      self.identifierExpr("ariel"),
+      self.expression(.starred(self.identifierExpr("sea"))),
+      self.expression(.starred(self.identifierExpr("land"))),
+      self.identifierExpr("eric")
     ]))
 
     let expected: [EmittedInstruction] = [

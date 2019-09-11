@@ -62,9 +62,9 @@ class CompileIfExpr: XCTestCase, CommonCompiler {
   /// 18 RETURN_VALUE
   func test_withIdentifier() {
     let expr = self.expression(.ifExpression(
-      test:   self.expression(.identifier("touched")),
-      body:   self.expression(.identifier("genie")),
-      orElse: self.expression(.identifier("lamp"))
+      test:   self.identifierExpr("touched"),
+      body:   self.identifierExpr("genie"),
+      orElse: self.identifierExpr("lamp")
     ))
 
     let expected: [EmittedInstruction] = [
@@ -101,12 +101,12 @@ class CompileIfExpr: XCTestCase, CommonCompiler {
   /// 26 RETURN_VALUE
   func test_nested() {
     let expr = self.expression(.ifExpression(
-      test:   self.expression(.identifier("jasmine")),
-      body:   self.expression(.identifier("aladdin")),
+      test:   self.identifierExpr("jasmine"),
+      body:   self.identifierExpr("aladdin"),
       orElse: self.expression(.ifExpression(
-        test: self.expression(.identifier("prince")),
-        body: self.expression(.identifier("ali")),
-        orElse: self.expression(.identifier("thief"))
+        test: self.identifierExpr("prince"),
+        body: self.identifierExpr("ali"),
+        orElse: self.identifierExpr("thief")
       ))
     ))
 

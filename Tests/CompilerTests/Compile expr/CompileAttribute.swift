@@ -14,7 +14,7 @@ class CompileAttribute: XCTestCase, CommonCompiler {
   /// 4 RETURN_VALUE
   func test_single() {
     let expr = self.expression(.attribute(
-      self.expression(.identifier("paris")),
+      self.identifierExpr("paris"),
       name: "notre_dame"
     ))
 
@@ -39,7 +39,7 @@ class CompileAttribute: XCTestCase, CommonCompiler {
   func test_nested() {
     let expr = self.expression(.attribute(
       self.expression(.attribute(
-        self.expression(.identifier("paris")),
+        self.identifierExpr("paris"),
         name: "notre_dame"
       )),
       name: "bell"

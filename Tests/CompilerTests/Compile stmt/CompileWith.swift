@@ -27,7 +27,7 @@ class CompileWith: XCTestCase, CommonCompiler {
     let stmt = self.with(
       items: [
         self.withItem(
-          contextExpr: self.expression(.identifier("alice")),
+          contextExpr: self.identifierExpr("alice"),
           optionalVars: nil
         )
       ],
@@ -73,8 +73,8 @@ class CompileWith: XCTestCase, CommonCompiler {
     let stmt = self.with(
       items: [
         self.withItem(
-          contextExpr: self.expression(.identifier("alice")),
-          optionalVars: self.expression(.identifier("smol"))
+          contextExpr: self.identifierExpr("alice"),
+          optionalVars: self.identifierExpr("smol")
         )
       ],
       body: [self.statement(expr: .identifier("wonderland"))]
@@ -127,11 +127,11 @@ class CompileWith: XCTestCase, CommonCompiler {
     let stmt = self.with(
       items: [
         self.withItem(
-          contextExpr: self.expression(.identifier("alice")),
+          contextExpr: self.identifierExpr("alice"),
           optionalVars: nil
         ),
         self.withItem(
-          contextExpr: self.expression(.identifier("rabbit")),
+          contextExpr: self.identifierExpr("rabbit"),
           optionalVars: nil
         )
       ],
@@ -193,12 +193,12 @@ class CompileWith: XCTestCase, CommonCompiler {
     let stmt = self.with(
       items: [
         self.withItem(
-          contextExpr: self.expression(.identifier("alice")),
-          optionalVars: self.expression(.identifier("big"))
+          contextExpr: self.identifierExpr("alice"),
+          optionalVars: self.identifierExpr("big")
         ),
         self.withItem(
-          contextExpr: self.expression(.identifier("rabbit")),
-          optionalVars: self.expression(.identifier("smol"))
+          contextExpr: self.identifierExpr("rabbit"),
+          optionalVars: self.identifierExpr("smol")
         )
       ],
       body: [self.statement(expr: .identifier("wonderland"))]

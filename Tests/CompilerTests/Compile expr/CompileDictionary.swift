@@ -54,12 +54,12 @@ class CompileDictionary: XCTestCase, CommonCompiler {
   func test_withIdentifier() {
     let expr = self.expression(.dictionary([
       .keyValue(
-        key: self.expression(.identifier("ariel")),
+        key: self.identifierExpr("ariel"),
         value: self.expression(.string(.literal("mermaid")))
       ),
       .keyValue(
-        key: self.expression(.identifier("eric")),
-        value: self.expression(.identifier("human"))
+        key: self.identifierExpr("eric"),
+        value: self.identifierExpr("human")
       )
     ]))
 
@@ -89,10 +89,10 @@ class CompileDictionary: XCTestCase, CommonCompiler {
   func test_withUnpack() {
     let expr = self.expression(.dictionary([
       .keyValue(
-        key: self.expression(.identifier("ariel")),
+        key: self.identifierExpr("ariel"),
         value: self.expression(.string(.literal("mermaid")))
       ),
-      .unpacking(self.expression(.identifier("sea")))
+      .unpacking(self.identifierExpr("sea"))
     ]))
 
     let expected: [EmittedInstruction] = [
@@ -125,14 +125,14 @@ class CompileDictionary: XCTestCase, CommonCompiler {
   func test_withUnpack_multiple() {
     let expr = self.expression(.dictionary([
       .keyValue(
-        key: self.expression(.identifier("ariel")),
+        key: self.identifierExpr("ariel"),
         value: self.expression(.string(.literal("mermaid")))
       ),
-      .unpacking(self.expression(.identifier("sea"))),
-      .unpacking(self.expression(.identifier("land"))),
+      .unpacking(self.identifierExpr("sea")),
+      .unpacking(self.identifierExpr("land")),
       .keyValue(
-        key: self.expression(.identifier("eric")),
-        value: self.expression(.identifier("human"))
+        key: self.identifierExpr("eric"),
+        value: self.identifierExpr("human")
       )
     ]))
 

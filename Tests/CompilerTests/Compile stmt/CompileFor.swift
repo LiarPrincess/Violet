@@ -22,8 +22,8 @@ class CompileFor: XCTestCase, CommonCompiler {
   /// 20 RETURN_VALUE
   func test_simple() {
     let stmt = self.for(
-      target: self.expression(.identifier("person")),
-      iter: self.expression(.identifier("castle")),
+      target: self.identifierExpr("person"),
+      iter: self.identifierExpr("castle"),
       body: [self.statement(expr: .identifier("becomeItem"))],
       orElse: []
     )
@@ -66,8 +66,8 @@ class CompileFor: XCTestCase, CommonCompiler {
   /// 24 RETURN_VALUE
   func test_withElse() {
     let stmt = self.for(
-      target: self.expression(.identifier("person")),
-      iter: self.expression(.identifier("belle")),
+      target: self.identifierExpr("person"),
+      iter: self.identifierExpr("belle"),
       body: [self.statement(expr: .identifier("husband"))],
       orElse: [self.statement(expr: .identifier("beast"))]
     )
@@ -112,8 +112,8 @@ class CompileFor: XCTestCase, CommonCompiler {
   /// 22 RETURN_VALUE
   func test_continue() {
     let stmt = self.for(
-      target: self.expression(.identifier("person")),
-      iter: self.expression(.identifier("castle")),
+      target: self.identifierExpr("person"),
+      iter: self.identifierExpr("castle"),
       body: [
         self.statement(.continue),
         self.statement(expr: .identifier("becomeItem"))
@@ -160,8 +160,8 @@ class CompileFor: XCTestCase, CommonCompiler {
   /// 22 RETURN_VALUE
   func test_break() {
     let stmt = self.for(
-      target: self.expression(.identifier("person")),
-      iter: self.expression(.identifier("castle")),
+      target: self.identifierExpr("person"),
+      iter: self.identifierExpr("castle"),
       body: [
         self.statement(.break),
         self.statement(expr: .identifier("becomeItem"))

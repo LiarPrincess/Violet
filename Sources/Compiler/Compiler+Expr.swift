@@ -23,14 +23,6 @@ extension Compiler {
   }
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  internal func visitExpression(_ expr: Expression?,
-                                context: ExpressionContext = .load) throws {
-    if let e = expr {
-      try self.visitExpression(e, context: context)
-    }
-  }
-
-  /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visitExpression(_ expr: Expression,
                                 context: ExpressionContext = .load) throws {
     let location = expr.start

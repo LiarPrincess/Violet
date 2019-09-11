@@ -20,8 +20,8 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
   /// 16 RETURN_VALUE
   func test_simple() {
     let stmt = self.annAssign(
-      target: self.expression(.identifier("Flounder")),
-      annotation: self.expression(.identifier("Animal")),
+      target: self.identifierExpr("Flounder"),
+      annotation: self.identifierExpr("Animal"),
       value: self.expression(.string(.literal("Friend"))),
       isSimple: true
     )
@@ -55,8 +55,8 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
   /// 12 RETURN_VALUE
   func test_withoutValue() {
     let stmt = self.annAssign(
-      target: self.expression(.identifier("Ariel")),
-      annotation: self.expression(.identifier("Mermaid")),
+      target: self.identifierExpr("ariel"),
+      annotation: self.identifierExpr("Mermaid"),
       value: nil,
       isSimple: true
     )
@@ -90,10 +90,10 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
   func test_toAttribute() {
     let stmt = self.annAssign(
       target: self.expression(.attribute(
-        self.expression(.identifier("Sea")),
+        self.identifierExpr("sea"),
         name: "Flounder"
       )),
-      annotation: self.expression(.identifier("Animal")),
+      annotation: self.identifierExpr("Animal"),
       value: self.expression(.string(.literal("Friend"))),
       isSimple: false
     )
@@ -129,12 +129,12 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
   func test_toSubscript() {
     let stmt = self.annAssign(
       target: self.expression(.subscript(
-        self.expression(.identifier("Sea")),
+        self.identifierExpr("sea"),
         slice: self.slice(.index(
-          self.expression(.identifier("Flounder"))
+          self.identifierExpr("Flounder")
         ))
       )),
-      annotation: self.expression(.identifier("Animal")),
+      annotation: self.identifierExpr("Animal"),
       value: self.expression(.string(.literal("Friend"))),
       isSimple: false
     )

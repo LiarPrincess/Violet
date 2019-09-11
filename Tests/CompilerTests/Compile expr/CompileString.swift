@@ -55,7 +55,7 @@ class CompileStringTests: XCTestCase, CommonCompiler {
   /// 4 RETURN_VALUE
   func test_formattedValue_withoutConversion_orFormat() {
     let expr = self.expression(.string(.formattedValue(
-      self.expression(.identifier("alice")),
+      self.identifierExpr("alice"),
       conversion: nil,
       spec: nil)
     ))
@@ -86,7 +86,7 @@ class CompileStringTests: XCTestCase, CommonCompiler {
 
     for (conversion, str) in conversions {
       let expr = self.expression(.string(.formattedValue(
-        self.expression(.identifier("alice")),
+        self.identifierExpr("alice"),
         conversion: conversion,
         spec: nil)
       ))
@@ -112,7 +112,7 @@ class CompileStringTests: XCTestCase, CommonCompiler {
   ///  6 RETURN_VALUE
   func test_formattedValue_withFormat() {
     let expr = self.expression(.string(.formattedValue(
-      self.expression(.identifier("alice")),
+      self.identifierExpr("alice"),
       conversion: nil,
       spec: "wonderland")
     ))
@@ -138,7 +138,7 @@ class CompileStringTests: XCTestCase, CommonCompiler {
   /// 6 RETURN_VALUE
   func test_formattedValue_withConvarsion_andFormat() {
     let expr = self.expression(.string(.formattedValue(
-      self.expression(.identifier("alice")),
+      self.identifierExpr("alice"),
       conversion: .str,
       spec: "wonderland")
     ))
@@ -170,7 +170,7 @@ class CompileStringTests: XCTestCase, CommonCompiler {
     let expr = self.expression(.string(.joined([
       .literal("alice "),
       .formattedValue(
-        self.expression(.identifier("in")),
+        self.identifierExpr("in"),
         conversion: .str,
         spec: "wonderland")
     ])))

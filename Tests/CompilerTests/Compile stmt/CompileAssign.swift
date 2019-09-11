@@ -15,8 +15,8 @@ class CompileAssign: XCTestCase, CommonCompiler {
   ///  6 RETURN_VALUE
   func test_single() {
     let stmt = self.assign(
-      target: [self.expression(.identifier("prince"))],
-      value: self.expression(.identifier("beast"))
+      target: [self.identifierExpr("prince")],
+      value: self.identifierExpr("beast")
     )
 
     let expected: [EmittedInstruction] = [
@@ -45,11 +45,11 @@ class CompileAssign: XCTestCase, CommonCompiler {
   func test_multiple() {
     let stmt = self.assign(
       target: [
-        self.expression(.identifier("lumiere")),
-        self.expression(.identifier("mrsPotts")),
-        self.expression(.identifier("cogsworth"))
+        self.identifierExpr("lumiere"),
+        self.identifierExpr("mrsPotts"),
+        self.identifierExpr("cogsworth")
       ],
-      value: self.expression(.identifier("items"))
+      value: self.identifierExpr("items")
     )
 
     let expected: [EmittedInstruction] = [
@@ -81,12 +81,12 @@ class CompileAssign: XCTestCase, CommonCompiler {
     let stmt = self.assign(
       target: [
         self.expression(.attribute(
-          self.expression(.identifier("pretty")),
+          self.identifierExpr("pretty"),
           name: "prince"
         ))
       ],
       value: self.expression(.attribute(
-        self.expression(.identifier("hairy")),
+        self.identifierExpr("hairy"),
         name: "beast"
       ))
     )
@@ -120,16 +120,16 @@ class CompileAssign: XCTestCase, CommonCompiler {
     let stmt = self.assign(
       target: [
         self.expression(.subscript(
-          self.expression(.identifier("castle")),
+          self.identifierExpr("castle"),
           slice: self.slice(.index(
-            self.expression(.identifier("inhabitant"))
+            self.identifierExpr("inhabitant")
           ))
         ))
       ],
       value: self.expression(.subscript(
-        self.expression(.identifier("items")),
+        self.identifierExpr("items"),
         slice: self.slice(.index(
-          self.expression(.identifier("random"))
+          self.identifierExpr("random")
         ))
       ))
     )

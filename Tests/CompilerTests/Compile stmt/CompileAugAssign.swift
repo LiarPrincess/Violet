@@ -38,9 +38,9 @@ class CompileAugAssign: XCTestCase, CommonCompiler {
       let msg = "for '\(op)'"
 
       let stmt = self.augAssign(
-        target: self.expression(.identifier("prince")),
+        target: self.identifierExpr("prince"),
         op: op,
-        value: self.expression(.identifier("beast"))
+        value: self.identifierExpr("beast")
       )
 
       let expected: [EmittedInstruction] = [
@@ -74,12 +74,12 @@ class CompileAugAssign: XCTestCase, CommonCompiler {
   func test_attribute() {
     let stmt = self.augAssign(
       target: self.expression(.attribute(
-        self.expression(.identifier("pretty")),
+        self.identifierExpr("pretty"),
         name: "prince"
       )),
       op: .add,
       value: self.expression(.attribute(
-        self.expression(.identifier("hairy")),
+        self.identifierExpr("hairy"),
         name: "beast"
       ))
     )
@@ -120,16 +120,16 @@ class CompileAugAssign: XCTestCase, CommonCompiler {
   func test_subscript() {
     let stmt = self.augAssign(
       target: self.expression(.subscript(
-        self.expression(.identifier("castle")),
+        self.identifierExpr("castle"),
           slice: self.slice(.index(
-            self.expression(.identifier("inhabitant"))
+            self.identifierExpr("inhabitant")
           ))
         )),
       op: .add,
       value: self.expression(.subscript(
-        self.expression(.identifier("items")),
+        self.identifierExpr("items"),
         slice: self.slice(.index(
-          self.expression(.identifier("random"))
+          self.identifierExpr("random")
         ))
       ))
     )

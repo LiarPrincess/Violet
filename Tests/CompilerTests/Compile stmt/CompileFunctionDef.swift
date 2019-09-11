@@ -83,7 +83,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
       name: "cook",
       args: self.arguments(),
       body: [self.statement(expr: .identifier("ratatouille"))],
-      returns: self.expression(.identifier("Dish"))
+      returns: self.identifierExpr("Dish")
     )
 
     let expected: [EmittedInstruction] = [

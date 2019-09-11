@@ -17,7 +17,7 @@ class CompileAssert: XCTestCase, CommonCompiler {
   /// 10 RETURN_VALUE
   func test_simple() {
     let stmt = self.statement(.assert(
-      test: self.expression(.identifier("pooh")),
+      test: self.identifierExpr("pooh"),
       msg: nil
     ))
 
@@ -48,7 +48,7 @@ class CompileAssert: XCTestCase, CommonCompiler {
   /// 14 RETURN_VALUE
   func test_withMessage() {
     let stmt = self.statement(.assert(
-      test: self.expression(.identifier("pooh")),
+      test: self.identifierExpr("pooh"),
       msg:  self.expression(.string(.literal("'Stuck at Rabbits Howse'")))
     ))
 
@@ -72,7 +72,7 @@ class CompileAssert: XCTestCase, CommonCompiler {
   /// assert pooh
   func test_withOptimization_emitsNothing() {
     let stmt = self.statement(.assert(
-      test: self.expression(.identifier("pooh")),
+      test: self.identifierExpr("pooh"),
       msg:  nil
     ))
 

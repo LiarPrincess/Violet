@@ -28,10 +28,10 @@ class CompileTry: XCTestCase, CommonCompiler {
   /// 18 RETURN_VALUE
   func test_finally() {
     let stmt = self.try(
-      body: self.expression(.identifier("ping")),
+      body: self.identifierExpr("ping"),
       handlers: [],
       orElse: [],
-      finalBody: [self.expression(.identifier("mulan"))]
+      finalBody: [self.identifierExpr("mulan")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -75,7 +75,7 @@ class CompileTry: XCTestCase, CommonCompiler {
   /// 28 RETURN_VALUE
   func test_except() {
     let stmt = self.try(
-      body: self.expression(.identifier("mulan")),
+      body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
           type: nil,
@@ -135,10 +135,10 @@ class CompileTry: XCTestCase, CommonCompiler {
   /// 36 RETURN_VALUE
   func test_except_type() {
     let stmt = self.try(
-      body: self.expression(.identifier("mulan")),
+      body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: self.expression(.identifier("soldier")),
+          type: self.identifierExpr("soldier"),
           name: nil,
           body: self.statement(expr: .identifier("ping"))
         )
@@ -206,10 +206,10 @@ class CompileTry: XCTestCase, CommonCompiler {
   /// 50 RETURN_VALUE
   func test_except_type_withName() {
     let stmt = self.try(
-      body: self.expression(.identifier("mulan")),
+      body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: self.expression(.identifier("disguise")),
+          type: self.identifierExpr("disguise"),
           name: "soldier",
           body: self.statement(expr: .identifier("ping"))
         )
@@ -285,10 +285,10 @@ class CompileTry: XCTestCase, CommonCompiler {
   /// 50 RETURN_VALUE
   func test_except_multiple() {
     let stmt = self.try(
-      body: self.expression(.identifier("mulan")),
+      body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: self.expression(.identifier("soldier")),
+          type: self.identifierExpr("soldier"),
           name: nil,
           body: self.statement(expr: .identifier("ping"))
         ),
@@ -360,7 +360,7 @@ class CompileTry: XCTestCase, CommonCompiler {
   /// 32 RETURN_VALUE
   func test_except_else() {
     let stmt = self.try(
-      body: self.expression(.identifier("mulan")),
+      body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
           type: nil,
@@ -368,7 +368,7 @@ class CompileTry: XCTestCase, CommonCompiler {
           body: self.statement(expr: .identifier("ping"))
         )
       ],
-      orElse: [self.expression(.identifier("faMulan"))],
+      orElse: [self.identifierExpr("faMulan")],
       finalBody: []
     )
 
@@ -425,7 +425,7 @@ class CompileTry: XCTestCase, CommonCompiler {
   /// 40 RETURN_VALUE
   func test_except_finally() {
     let stmt = self.try(
-      body: self.expression(.identifier("mulan")),
+      body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
           type: nil,
@@ -434,7 +434,7 @@ class CompileTry: XCTestCase, CommonCompiler {
         )
       ],
       orElse: [],
-      finalBody: [self.expression(.identifier("faMulan"))]
+      finalBody: [self.identifierExpr("faMulan")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -497,7 +497,7 @@ class CompileTry: XCTestCase, CommonCompiler {
   /// 44 RETURN_VALUE
   func test_except_else_finally() {
     let stmt = self.try(
-      body: self.expression(.identifier("mulan")),
+      body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
           type: nil,
@@ -505,8 +505,8 @@ class CompileTry: XCTestCase, CommonCompiler {
           body: self.statement(expr: .identifier("ping"))
         )
       ],
-      orElse: [self.expression(.identifier("pong"))],
-      finalBody: [self.expression(.identifier("faMulan"))]
+      orElse: [self.identifierExpr("pong")],
+      finalBody: [self.identifierExpr("faMulan")]
     )
 
     let expected: [EmittedInstruction] = [

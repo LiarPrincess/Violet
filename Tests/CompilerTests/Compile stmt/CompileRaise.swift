@@ -38,7 +38,7 @@ class CompileRaise: XCTestCase, CommonCompiler {
   /// 6 RETURN_VALUE
   func test_raise_exception() {
     let stmt = self.statement(.raise(
-      exception: self.expression(.identifier("Hades")),
+      exception: self.identifierExpr("Hades"),
       cause: nil
     ))
 
@@ -64,8 +64,8 @@ class CompileRaise: XCTestCase, CommonCompiler {
   /// 8 RETURN_VALUE
   func test_raise_exception_from() {
     let stmt = self.statement(.raise(
-      exception: self.expression(.identifier("Hercules")),
-      cause: self.expression(.identifier("Olympus"))
+      exception: self.identifierExpr("Hercules"),
+      cause: self.identifierExpr("Olympus")
     ))
 
     let expected: [EmittedInstruction] = [

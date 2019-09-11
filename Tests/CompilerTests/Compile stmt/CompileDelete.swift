@@ -14,7 +14,7 @@ class CompileDelete: XCTestCase, CommonCompiler {
   /// 4 RETURN_VALUE
   func test_identifier() {
     let stmt = self.delete(
-      self.expression(.identifier("jafar"))
+      self.identifierExpr("jafar")
     )
 
     let expected: [EmittedInstruction] = [
@@ -37,8 +37,8 @@ class CompileDelete: XCTestCase, CommonCompiler {
   /// 6 RETURN_VALUE
   func test_multiple() {
     let stmt = self.delete(
-      self.expression(.identifier("jafar")),
-      self.expression(.identifier("iago"))
+      self.identifierExpr("jafar"),
+      self.identifierExpr("iago")
     )
 
     let expected: [EmittedInstruction] = [
@@ -63,8 +63,8 @@ class CompileDelete: XCTestCase, CommonCompiler {
   func test_tuple() {
     let stmt = self.delete(
       self.expression(.tuple([
-        self.expression(.identifier("jafar")),
-        self.expression(.identifier("iago"))
+        self.identifierExpr("jafar"),
+        self.identifierExpr("iago")
       ]))
     )
 
@@ -91,7 +91,7 @@ class CompileDelete: XCTestCase, CommonCompiler {
     let stmt = self.delete(
       self.expression(
         .attribute(
-          self.expression(.identifier("agrabah")),
+          self.identifierExpr("agrabah"),
           name: "jafar"
         )
       )
@@ -100,6 +100,39 @@ class CompileDelete: XCTestCase, CommonCompiler {
     let expected: [EmittedInstruction] = [
       .init(.loadName, "agrabah"),
       .init(.deleteAttribute, "jafar"),
+      .init(.loadConst, "none"),
+      .init(.return)
+    ]
+
+    if let code = self.compile(stmt: stmt) {
+      XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
+      XCTAssertInstructions(code, expected)
+    }
+  }
+
+  /// del agrabah[jafar]
+  ///
+  ///  0 LOAD_NAME                0 (agrabah)
+  ///  2 LOAD_NAME                1 (jafar)
+  ///  4 DELETE_SUBSCR
+  ///  6 LOAD_CONST               0 (None)
+  ///  8 RETURN_VALUE
+  func test_subscript() {
+    let stmt = self.delete(
+      self.expression(
+        .subscript(
+          self.identifierExpr("agrabah"),
+          slice: self.slice(.index(
+            self.identifierExpr("jafar")
+          ))
+        )
+      )
+    )
+
+    let expected: [EmittedInstruction] = [
+      .init(.loadName, "agrabah"),
+      .init(.loadName, "jafar"),
+      .init(.deleteSubscript),
       .init(.loadConst, "none"),
       .init(.return)
     ]
