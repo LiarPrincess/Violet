@@ -36,12 +36,14 @@ def print_expected(lines):
         # .init(.return)
         name = to_camel_case(instruction)
         name = 'return' if name == 'returnValue' else name
+        name = name.replace('Subscr', 'Subscript')
         print(f'.init(.{name}),')
-        pass
+
       else:
         # .init(.loadConst, "none"),
         name = to_camel_case(instruction[:argStart])
         name = 'jumpAbsolute' if name == 'jumpForward' else name
+        name = name.replace('Attr', 'Attribute')
 
         args = instruction[argStart:].strip()
         f = argRegex.findall(args)

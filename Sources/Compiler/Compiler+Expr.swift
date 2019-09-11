@@ -130,14 +130,16 @@ extension Compiler {
                                  orElse: orElse,
                                  location: location)
 
-    case let .attribute(expr, name):
-      let mangled = self.mangleName(name)
-      try self.visitExpression(expr)
-      try self.codeObject.appendAttribute(name: mangled, context: context, at: location)
-
-    case let .subscript(expr, slice):
-      try self.visitExpression(expr)
-      try self.visitSlice(slice: slice, context: context, location: location)
+    case let .attribute(object, name):
+      try self.visitAttribute(object: object,
+                              name:   name,
+                              context: context,
+                              location: location)
+    case let .subscript(object, slice):
+      try self.visitSubscript(object: object,
+                              slice:  slice,
+                              context: context,
+                              location: location)
 
     case .starred:
       // In all legitimate cases, the starred node was already replaced
@@ -466,29 +468,98 @@ extension Compiler {
     self.codeObject.setLabel(end)
   }
 
-  // MARK: - Slice
+  // MARK: - Attribute
 
-  /// compiler_visit_slice(struct compiler *c, slice_ty s, expr_context_ty ctx)
-  private func visitSlice(slice:  Slice,
-                          context:  ExpressionContext,
-                          location: SourceLocation) throws {
-    switch slice.kind {
-    case let .index(index):
-      try self.visitExpression(index)
-    case let .slice(lower, upper, step):
-      try self.compileSlice(lower: lower,
-                            upper: upper,
-                            step:  step,
-                            location: location)
-    case let .extSlice(slices):
-      for s in slices {
-        try self.visitNestedSlice(slice: s, context: context)
-      }
-      try self.codeObject.appendBuildTuple(elementCount: slices.count,
-                                           at: location)
+  /// compiler_visit_expr(struct compiler *c, expr_ty e)
+  internal func visitAttribute(object: Expression,
+                               name:   String,
+                               context: ExpressionContext,
+                               location: SourceLocation,
+                               isAugumented: Bool = false) throws {
+    let mangled = self.mangleName(name)
+
+    let isAugumentedStore = isAugumented && context == .store
+    if !isAugumentedStore {
+      try self.visitExpression(object)
     }
 
-    try self.codeObject.appendSubscript(context: context, at: location)
+    switch context {
+    case .store:
+      if isAugumented {
+        try self.codeObject.appendRotTwo(at: location)
+      }
+      try self.codeObject.appendStoreAttribute(mangled, at: location)
+    case .load:
+      if isAugumented {
+        try self.codeObject.appendDupTop(at: location)
+      }
+      try self.codeObject.appendLoadAttribute(mangled, at: location)
+    case .del:
+      assert(!isAugumented)
+      try self.codeObject.appendDeleteAttribute(mangled, at: location)
+    }
+  }
+
+  // MARK: - Slice
+
+  /// compiler_visit_expr(struct compiler *c, expr_ty e)
+  internal func visitSubscript(object: Expression,
+                               slice:  Slice,
+                               context:  ExpressionContext,
+                               location: SourceLocation,
+                               isAugumented: Bool = false) throws {
+    let isAugumentedStore = isAugumented && context == .store
+    if !isAugumentedStore {
+      try self.visitExpression(object)
+    }
+
+    try self.visitSlice(slice: slice,
+                        context: context,
+                        location: location,
+                        isAugumented: isAugumented)
+  }
+
+  /// compiler_visit_slice(struct compiler *c, slice_ty s, expr_context_ty ctx)
+  /// compiler_handle_subscr(struct compiler *c, const char *kind, ...)
+  private func visitSlice(slice:  Slice,
+                          context:  ExpressionContext,
+                          location: SourceLocation,
+                          isAugumented: Bool) throws {
+
+    let isAugumentedStore = isAugumented && context == .store
+    if !isAugumentedStore {
+      switch slice.kind {
+      case let .index(index):
+        try self.visitExpression(index)
+      case let .slice(lower, upper, step):
+        try self.compileSlice(lower: lower,
+                              upper: upper,
+                              step:  step,
+                              location: location)
+      case let .extSlice(slices):
+        for s in slices {
+          try self.visitNestedSlice(slice: s, context: context)
+        }
+        try self.codeObject.appendBuildTuple(elementCount: slices.count,
+                                             at: location)
+      }
+    }
+
+    switch context {
+    case .store:
+      if isAugumented {
+        try self.codeObject.appendRotThree(at: location)
+      }
+      try self.codeObject.appendStoreSubscr(at: location)
+    case .load:
+      if isAugumented {
+        try self.codeObject.appendDupTopTwo(at: location)
+      }
+      try self.codeObject.appendBinarySubscr(at: location)
+    case .del:
+      assert(!isAugumented)
+      try self.codeObject.appendDeleteSubscr(at: location)
+    }
   }
 
   /// compiler_visit_nested_slice(struct compiler *c, slice_ty s,

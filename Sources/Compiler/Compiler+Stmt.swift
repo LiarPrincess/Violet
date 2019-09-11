@@ -42,11 +42,13 @@ extension Compiler {
                              statement: stmt)
 
     case let .assign(targets, value):
-      try self.visitAssign(targets:  targets, value:    value, location: location)
+      try self.visitAssign(targets: targets,
+                           value:   value,
+                           location: location)
     case let .augAssign(target, op, value):
-      try self.visitAugAssign(target:   target,
-                              op:       op,
-                              value:    value,
+      try self.visitAugAssign(target: target,
+                              op:     op,
+                              value:  value,
                               location: location)
     case let .annAssign(target, annotation, value, isSimple):
       try self.visitAnnAssign(target:     target,

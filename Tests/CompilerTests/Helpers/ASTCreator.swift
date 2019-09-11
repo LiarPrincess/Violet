@@ -258,6 +258,30 @@ extension ASTCreator {
     return self.statement(kind, start: location ?? self.start)
   }
 
+  internal func assign(target: [Expression],
+                       value: Expression,
+                       location: SourceLocation? = nil) -> Statement {
+    return self.statement(
+      .assign(
+        targets: self.toNonEmptyArray(target),
+        value: value
+      ),
+      start: location ?? self.start)
+  }
+
+  internal func augAssign(target: Expression,
+                          op: BinaryOperator,
+                          value: Expression,
+                          location: SourceLocation? = nil) -> Statement {
+    return self.statement(
+      .augAssign(
+        target: target,
+        op: op,
+        value: value
+      ),
+      start: location ?? self.start)
+  }
+
   // MARK: - Expressions
 
   internal func expression(_ kind: ExpressionKind,

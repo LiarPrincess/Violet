@@ -31,7 +31,8 @@ extension Compiler {
 
     try self.visitExpression(value)
     for (index, t) in targets.enumerated() {
-      if index < targets.count {
+      let isLast = index == targets.count - 1
+      if !isLast {
         try self.codeObject.appendDupTop(at: location)
       }
 
@@ -64,12 +65,33 @@ extension Compiler {
       try self.codeObject.appendInplaceOperator(op, at: location)
       try self.codeObject.appendStoreName(mangled, at: location)
 
-    case .attribute,
-         .subscript:
-      try self.visitExpression(target, context: .load)
+    case let .attribute(object, name: name):
+      func visitAttribute(context: ExpressionContext) throws {
+        try self.visitAttribute(object: object,
+                                name: name,
+                                context: context,
+                                location: location,
+                                isAugumented: true)
+      }
+
+      try visitAttribute(context: .load)
       try self.visitExpression(value)
       try self.codeObject.appendInplaceOperator(op, at: location)
-      try self.visitExpression(target, context: .store)
+      try visitAttribute(context: .store)
+
+    case let .subscript(object, slice: slice):
+      func visitSubscript(context: ExpressionContext) throws {
+        try self.visitSubscript(object: object,
+                                slice: slice,
+                                context: context,
+                                location: location,
+                                isAugumented: true)
+      }
+
+      try visitSubscript(context: .load)
+      try self.visitExpression(value)
+      try self.codeObject.appendInplaceOperator(op, at: location)
+      try visitSubscript(context: .store)
 
     default:
       throw self.error(.invalidTargetForAugmentedAssignment, location: location)

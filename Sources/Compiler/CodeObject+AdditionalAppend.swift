@@ -34,25 +34,6 @@ extension CodeObject {
     }
   }
 
-  public func appendSubscript(context: ExpressionContext,
-                              at location: SourceLocation) throws {
-    switch context {
-    case .store: try self.appendStoreSubscr (at: location)
-    case .load:  try self.appendBinarySubscr(at: location)
-    case .del:   try self.appendDeleteSubscr(at: location)
-    }
-  }
-
-  public func appendAttribute<S: ConstantString>(name: S,
-                                                 context:  ExpressionContext,
-                                                 at location: SourceLocation) throws {
-    switch context {
-    case .store: try self.appendStoreAttribute (name, at: location)
-    case .load:  try self.appendLoadAttribute  (name, at: location)
-    case .del:   try self.appendDeleteAttribute(name, at: location)
-    }
-  }
-
   public func appendUnaryOperator(_ op: UnaryOperator,
                                   at location: SourceLocation) throws {
     switch op {
