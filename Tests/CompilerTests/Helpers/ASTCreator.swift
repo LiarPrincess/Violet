@@ -282,6 +282,21 @@ extension ASTCreator {
       start: location ?? self.start)
   }
 
+  internal func annAssign(target: Expression,
+                          annotation: Expression,
+                          value: Expression?,
+                          isSimple: Bool,
+                          location: SourceLocation? = nil) -> Statement {
+    return self.statement(
+      .annAssign(
+        target: target,
+        annotation: annotation,
+        value: value,
+        isSimple: isSimple
+      ),
+      start: location ?? self.start)
+  }
+
   // MARK: - Expressions
 
   internal func expression(_ kind: ExpressionKind,

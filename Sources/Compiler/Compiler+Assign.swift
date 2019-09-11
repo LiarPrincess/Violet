@@ -123,7 +123,7 @@ extension Compiler {
     // Assignment first
     if let v = value {
       try self.visitExpression(v)
-      try self.visitExpression(target)
+      try self.visitExpression(target, context: .store)
     }
 
     let scopeType = self.currentScope.type
