@@ -38,7 +38,7 @@ extension Compiler {
     let codeObject = try self.inNewCodeObject(node: statement, type: .class) {
       // load (global) __name__
       let __name__ = SpecialIdentifiers.__name__
-      try self.codeObject.appendString(__name__, at: location)
+      try self.codeObject.appendLoadName(__name__, at: location)
 
       // ... and store it as __module__
       let __module__ = SpecialIdentifiers.__module__

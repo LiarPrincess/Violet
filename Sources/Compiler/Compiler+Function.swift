@@ -66,6 +66,11 @@ extension Compiler {
       }
 
       try self.visitStatements(body)
+
+      if !self.currentScope.hasReturnValue {
+        try self.codeObject.appendNone(at: location)
+        try self.codeObject.appendReturn(at: location)
+      }
     }
 
     try self.makeClosure(codeObject: codeObject, flags: flags, location: location)

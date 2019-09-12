@@ -7,20 +7,20 @@ import Bytecode
 /// Use 'Scripts/dump_dis.py' for reference.
 class CompileAnnAssign: XCTestCase, CommonCompiler {
 
-  /// Flounder:Animal = "Friend"
+  /// flounder:Animal = "Friend"
   ///
   ///  0 SETUP_ANNOTATIONS
   ///  2 LOAD_CONST               0 ('Friend')
-  ///  4 STORE_NAME               0 (Flounder)
+  ///  4 STORE_NAME               0 (flounder)
   ///  6 LOAD_NAME                1 (Animal)
   ///  8 LOAD_NAME                2 (__annotations__)
-  /// 10 LOAD_CONST               1 ('Flounder')
+  /// 10 LOAD_CONST               1 ('flounder')
   /// 12 STORE_SUBSCR
   /// 14 LOAD_CONST               2 (None)
   /// 16 RETURN_VALUE
   func test_simple() {
     let stmt = self.annAssign(
-      target: self.identifierExpr("Flounder"),
+      target: self.identifierExpr("flounder"),
       annotation: self.identifierExpr("Animal"),
       value: self.expression(.string(.literal("Friend"))),
       isSimple: true
@@ -29,10 +29,10 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
     let expected: [EmittedInstruction] = [
       .init(.setupAnnotations),
       .init(.loadConst, "Friend"),
-      .init(.storeName, "Flounder"),
+      .init(.storeName, "flounder"),
       .init(.loadName, "Animal"),
       .init(.loadName, "__annotations__"),
-      .init(.loadConst, "Flounder"),
+      .init(.loadConst, "flounder"),
       .init(.storeSubscript),
       .init(.loadConst, "none"),
       .init(.return)
@@ -44,12 +44,12 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
     }
   }
 
-  /// Ariel:Mermaid
+  /// ariel:Mermaid
   ///
   ///  0 SETUP_ANNOTATIONS
   ///  2 LOAD_NAME                0 (Mermaid)
   ///  4 LOAD_NAME                1 (__annotations__)
-  ///  6 LOAD_CONST               0 ('Ariel')
+  ///  6 LOAD_CONST               0 ('ariel')
   ///  8 STORE_SUBSCR
   /// 10 LOAD_CONST               1 (None)
   /// 12 RETURN_VALUE
@@ -65,7 +65,7 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
       .init(.setupAnnotations),
       .init(.loadName, "Mermaid"),
       .init(.loadName, "__annotations__"),
-      .init(.loadConst, "Ariel"),
+      .init(.loadConst, "ariel"),
       .init(.storeSubscript),
       .init(.loadConst, "none"),
       .init(.return)
@@ -77,12 +77,12 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
     }
   }
 
-  /// Sea.Flounder:Animal = "Friend"
+  /// sea.flounder:Animal = "Friend"
   ///
   ///  0 SETUP_ANNOTATIONS
   ///  2 LOAD_CONST               0 ('Friend')
-  ///  4 LOAD_NAME                0 (Sea)
-  ///  6 STORE_ATTR               1 (Flounder)
+  ///  4 LOAD_NAME                0 (sea)
+  ///  6 STORE_ATTR               1 (flounder)
   ///  8 LOAD_NAME                2 (Animal)
   /// 10 POP_TOP
   /// 12 LOAD_CONST               1 (None)
@@ -91,7 +91,7 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
     let stmt = self.annAssign(
       target: self.expression(.attribute(
         self.identifierExpr("sea"),
-        name: "Flounder"
+        name: "flounder"
       )),
       annotation: self.identifierExpr("Animal"),
       value: self.expression(.string(.literal("Friend"))),
@@ -101,8 +101,8 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
     let expected: [EmittedInstruction] = [
       .init(.setupAnnotations),
       .init(.loadConst, "Friend"),
-      .init(.loadName, "Sea"),
-      .init(.storeAttribute, "Flounder"),
+      .init(.loadName, "sea"),
+      .init(.storeAttribute, "flounder"),
       .init(.loadName, "Animal"),
       .init(.popTop),
       .init(.loadConst, "none"),
@@ -115,12 +115,12 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
     }
   }
 
-  /// Sea[Flounder]:Animal = "Friend"
+  /// sea[flounder]:Animal = "Friend"
   ///
   ///  0 SETUP_ANNOTATIONS
   ///  2 LOAD_CONST               0 ('Friend')
-  ///  4 LOAD_NAME                0 (Sea)
-  ///  6 LOAD_NAME                1 (Flounder)
+  ///  4 LOAD_NAME                0 (sea)
+  ///  6 LOAD_NAME                1 (flounder)
   ///  8 STORE_SUBSCR
   /// 10 LOAD_NAME                2 (Animal)
   /// 12 POP_TOP
@@ -131,7 +131,7 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
       target: self.expression(.subscript(
         self.identifierExpr("sea"),
         slice: self.slice(.index(
-          self.identifierExpr("Flounder")
+          self.identifierExpr("flounder")
         ))
       )),
       annotation: self.identifierExpr("Animal"),
@@ -142,8 +142,8 @@ class CompileAnnAssign: XCTestCase, CommonCompiler {
     let expected: [EmittedInstruction] = [
       .init(.setupAnnotations),
       .init(.loadConst, "Friend"),
-      .init(.loadName, "Sea"),
-      .init(.loadName, "Flounder"),
+      .init(.loadName, "sea"),
+      .init(.loadName, "flounder"),
       .init(.storeSubscript),
       .init(.loadName, "Animal"),
       .init(.popTop),

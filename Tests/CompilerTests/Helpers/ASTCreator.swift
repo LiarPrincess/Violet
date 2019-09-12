@@ -213,6 +213,10 @@ extension ASTCreator {
     return self.expression(.identifier(value))
   }
 
+  internal func identifierStmt(_ value: String) -> Statement {
+    return self.statement(expr: .identifier(value))
+  }
+
   internal func asyncFunctionDefStmt(name: String,
                                      args: Arguments,
                                      body: Statement? = nil,
@@ -314,7 +318,26 @@ extension ASTCreator {
         value: value,
         isSimple: isSimple
       ),
-      start: location ?? self.start)
+      start: location ?? self.start
+    )
+  }
+
+  internal func `class`(name: String,
+                        bases: [Expression],
+                        keywords: [Keyword],
+                        body: [Statement],
+                        decorators: [Expression] = [],
+                        location: SourceLocation? = nil) -> Statement {
+    return self.statement(
+      .classDef(
+        name: name,
+        bases: bases,
+        keywords: keywords,
+        body: self.toNonEmptyArray(body),
+        decorators: decorators
+      ),
+      start: location ?? self.start
+    )
   }
 
   // MARK: - Expressions

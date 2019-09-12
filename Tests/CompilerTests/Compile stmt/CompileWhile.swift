@@ -20,7 +20,7 @@ class CompileWhile: XCTestCase, CommonCompiler {
   /// 16 RETURN_VALUE
   func test_simple() {
     let stmt = self.while(
-      test: self.identifierExpr("Frollo"),
+      test: self.identifierExpr("frollo"),
       body: [self.statement(expr: .identifier("quasimodo"))],
       orElse: []
     )
@@ -59,7 +59,7 @@ class CompileWhile: XCTestCase, CommonCompiler {
   /// 20 RETURN_VALUE
   func test_withElse() {
     let stmt = self.while(
-      test: self.identifierExpr("Frollo"),
+      test: self.identifierExpr("frollo"),
       body:   [self.statement(expr: .identifier("quasimodo"))],
       orElse: [self.statement(expr: .identifier("esmeralda"))]
     )
@@ -100,7 +100,7 @@ class CompileWhile: XCTestCase, CommonCompiler {
   /// 18 RETURN_VALUE
   func test_continue() {
     let stmt = self.while(
-      test: self.identifierExpr("Frollo"),
+      test: self.identifierExpr("frollo"),
       body: [
         self.statement(.continue),
         self.statement(expr: .identifier("quasimodo"))
@@ -143,7 +143,7 @@ class CompileWhile: XCTestCase, CommonCompiler {
   /// 18 RETURN_VALUE
   func test_break() {
     let stmt = self.while(
-      test: self.identifierExpr("Frollo"),
+      test: self.identifierExpr("frollo"),
       body: [
         self.statement(.break),
         self.statement(expr: .identifier("quasimodo"))

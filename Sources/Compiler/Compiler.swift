@@ -115,16 +115,16 @@ public final class Compiler {
       try self.visitExpression(expr)
     }
 
-    assert(self.unitStack.count == 1)
-    guard let last = self.unitStack.last else {
-      fatalError("[BUG] Compiler: Missing code unit after compilation.")
+    // Emit epilog (because we may be a jump target).
+    if !self.currentScope.hasReturnValue {
+      if !self.ast.kind.isExpression {
+        try self.codeObject.appendNone(at: self.ast.end)
+      }
+      try self.codeObject.appendReturn(at: self.ast.end)
     }
 
-    // Emit epilog (because we may be a jump target).
-    let addNone = !self.ast.kind.isExpression
-    try self.emitReturn(unit: last, addNone: addNone)
-
-    return last.codeObject
+    assert(self.unitStack.count == 1)
+    return self.codeObject
   }
 
   /// Compile a sequence of statements, checking for a docstring
@@ -251,8 +251,6 @@ public final class Compiler {
       fatalError("[BUG] Compiler: Attempting to pop non-existing unit.")
     }
 
-    try self.emitReturn(unit: unit, addNone: true)
-
     assert(self.unitStack.any, "Popped top scope.")
     assert(
       unit.codeObject.labels.allSatisfy { $0 != Label.notAssigned },
@@ -366,19 +364,6 @@ public final class Compiler {
     }
 
     return result
-  }
-
-  /// Emit epilog (because we may be a jump target).
-  private func emitReturn(unit: CompilerUnit, addNone: Bool = true) throws {
-    guard !unit.scope.hasReturnValue else {
-      return
-    }
-
-    if addNone {
-      try unit.codeObject.appendNone(at: self.ast.end)
-    }
-
-    try unit.codeObject.appendReturn(at: self.ast.end)
   }
 
   // MARK: - Block

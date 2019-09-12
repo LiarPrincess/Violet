@@ -315,6 +315,7 @@ extension CodeObject {
       let s = String(data: bytes, encoding: .ascii) ?? "?"
       return "b'\(s)'"
     case let .string(s):
+      // TODO: Use "'" + s + "'"
       return s
 
     case let .code(c):
