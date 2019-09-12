@@ -2,7 +2,6 @@ import Core
 import Parser
 import Bytecode
 
-// TODO: Do something with this
 internal enum SpecialIdentifiers {
   internal static let `return` = "return"
   internal static let assertionError = "AssertionError"

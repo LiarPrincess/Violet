@@ -155,14 +155,14 @@ extension StatementKind: CustomStringConvertible {
       switch body.count {
       case 0: b = "()"
       case 1: b = describe(body[0])
-      default: b = "(\(join(body)))"
+      default: b = "(\(join(body))"
       }
 
       var e: String?
       switch orElse.count {
       case 0: e = ""
       case 1: e = " else: \(orElse[0])"
-      default: e = " else: (\(join(body)))"
+      default: e = " else: (\(join(body))"
       }
 
       return "(if \(test) then: \(b ?? "")\(e ?? ""))"
@@ -336,7 +336,7 @@ extension ExpressionKind: CustomStringConvertible {
       return "\(name)(\(ak))"
 
     case let .ifExpression(test: test, body: body, orElse: orElse):
-      return "(if \(test)) then \(body)) else \(orElse))"
+      return "(if \(test) then \(body) else \(orElse))"
 
     case let .starred(value):
       return "*\(value)"

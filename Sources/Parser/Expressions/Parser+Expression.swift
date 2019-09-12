@@ -22,7 +22,6 @@ extension Parser {
       return left
     }
 
-    // TODO: test this
     try self.advance() // if
     let test = try self.orTest()
     try self.consumeOrThrow(.else)
