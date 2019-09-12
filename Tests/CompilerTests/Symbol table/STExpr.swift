@@ -587,7 +587,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
       ],
       keywords: [
         self.keyword(
-          name: "who",
+          kind: .named("who"),
           value: self.identifierExpr("anna", start: loc3)
         )
       ]

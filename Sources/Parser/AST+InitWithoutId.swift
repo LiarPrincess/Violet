@@ -130,12 +130,12 @@ extension Arg {
 
 extension Keyword {
 
-  public init(name: String?,
+  public init(kind: KeywordKind,
               value: Expression,
               start: SourceLocation,
               end: SourceLocation) {
     self.id = .next
-    self.name = name
+    self.kind = kind
     self.value = value
     self.start = start
     self.end = end

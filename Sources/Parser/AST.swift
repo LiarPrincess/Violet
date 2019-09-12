@@ -990,8 +990,9 @@ public struct Keyword: ASTNode {
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
   public let id: NodeId
-  /// Parameter name.
-  public let name: String?
+  /// Type of the keyword argument, either dictionary unpack (`**tangled`)
+  /// or named (`princess=rapunzel`).
+  public let kind: KeywordKind
   /// Node to pass in.
   public let value: Expression
   /// Location of the first character in the source code.
@@ -999,12 +1000,23 @@ public struct Keyword: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, name: String?, value: Expression, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, kind: KeywordKind, value: Expression, start: SourceLocation, end: SourceLocation) {
     self.id = id
-    self.name = name
+    self.kind = kind
     self.value = value
     self.start = start
     self.end = end
   }
+}
+
+public enum KeywordKind: Equatable {
+  case dictionaryUnpack
+  case named(String)
+
+  public var isNamed: Bool {
+    if case .named = self { return true }
+    return false
+  }
+
 }
 

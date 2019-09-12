@@ -307,7 +307,7 @@ class CompileClassDef: XCTestCase, CommonCompiler {
       bases: [self.expression(.starred(self.identifierExpr("Human")))],
       keywords: [
         self.keyword(
-          name: "Princess",
+          kind: .named("Princess"),
           value: self.expression(.int(BigInt(1)))
         )
       ],
@@ -383,10 +383,7 @@ class CompileClassDef: XCTestCase, CommonCompiler {
       name: "Aurora",
       bases: [],
       keywords: [
-        self.keyword(
-          name: "Princess",
-          value: self.expression(.int(BigInt(1)))
-        )
+        self.keyword(kind: .named("Princess"), value: self.expression(.int(BigInt(1))))
       ],
       body: [self.identifierStmt("sleep")]
     )
@@ -455,14 +452,8 @@ class CompileClassDef: XCTestCase, CommonCompiler {
       name: "Aurora",
       bases: [],
       keywords: [
-        self.keyword(
-          name: "Princess",
-          value: self.expression(.int(BigInt(1)))
-        ),
-        self.keyword(
-          name: "Human",
-          value: self.expression(.int(BigInt(2)))
-        )
+        self.keyword(kind: .named("Princess"), value: self.expression(.int(BigInt(1)))),
+        self.keyword(kind: .named("Human"),    value: self.expression(.int(BigInt(2))))
       ],
       body: [self.identifierStmt("sleep")]
     )
@@ -533,10 +524,7 @@ class CompileClassDef: XCTestCase, CommonCompiler {
       name: "Aurora",
       bases: [],
       keywords: [
-        self.keyword(
-          name: nil,
-          value: self.identifierExpr("**Princess")
-        )
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr("**Princess"))
       ],
       body: [self.identifierStmt("sleep")]
     )
@@ -605,10 +593,7 @@ class CompileClassDef: XCTestCase, CommonCompiler {
       name: "Aurora",
       bases: [self.identifierExpr("Princess")],
       keywords: [
-        self.keyword(
-          name: nil,
-          value: self.identifierExpr("**Human")
-        )
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr("**Human"))
       ],
       body: [self.identifierStmt("sleep")]
     )

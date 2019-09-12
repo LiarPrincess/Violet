@@ -484,7 +484,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
-
   sliceKind kind,
   -- Location of the first character in the source code.
   loc start,
@@ -506,7 +505,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
-
   -- Reference to use for each element,
   -- typically a `Identifier` or `Tuple` node.
   expr target,
@@ -516,7 +514,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   expr* ifs,
   -- Indicates that the comprehension is asynchronous.
   Bool isAsync,
-
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -530,7 +527,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
-
   -- Function positional arguments.
   -- When a function is called, positional arguments are mapped
   -- to these parameters based solely on their position.
@@ -539,7 +535,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- If there are fewer defaults, they correspond to the last *n* arguments.
   -- - Important: The default value is evaluated only **once**.
   expr* defaults,
-
   -- Non-keyworded variable length arguments.
   -- By convention called `*args`.
   vararg vararg,
@@ -552,11 +547,9 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- CPython `kw_defaults`.
   -- - Important: The default value is evaluated only **once**.
   expr* kwOnlyDefaults,
-
   -- Keyworded (named) variable length arguments.
   -- By convention called `**kwargs`.
   arg? kwarg,
-
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
@@ -567,7 +560,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
-
   -- Argument name.
   identifier name,
   -- Python expression evaluated at compile time.
@@ -592,14 +584,17 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
-
-  -- Parameter name.
-  identifier? name,
+  -- Type of the keyword argument, either dictionary unpack (`**tangled`)
+  -- or named (`princess=rapunzel`).
+  KeywordKind kind,
   -- Node to pass in.
   expr value,
-
   -- Location of the first character in the source code.
   loc start,
   -- Location just after the last character in the source code.
   loc end
 )
+
+@enum KeywordKind: Equatable =
+  dictionaryUnpack
+  | named(identifier)

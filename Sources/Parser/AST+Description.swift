@@ -604,10 +604,10 @@ extension Vararg: CustomStringConvertible {
 
 extension Keyword: CustomStringConvertible {
   public var description: String {
-    switch self.name {
-    case .none:
+    switch self.kind {
+    case .dictionaryUnpack:
       return "**" + describe(self.value)
-    case .some(let name):
+    case let .named(name):
       return "\(name)=\(self.value)"
     }
   }

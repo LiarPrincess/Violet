@@ -120,8 +120,11 @@ extension Parser {
     try self.advance() // **
 
     let test = try self.test()
-    let kw = Keyword(name: nil, value: test, start: start, end: test.end)
-    ir.keywords.append(kw)
+    let keyword = Keyword(kind: .dictionaryUnpack,
+                          value: test,
+                          start: start,
+                          end: test.end)
+    ir.keywords.append(keyword)
     ir.hasStarStar = true
   }
 
@@ -136,14 +139,13 @@ extension Parser {
 
       try self.checkForbiddenName(name, location: nameToken.start)
 
-      let isDuplicate = ir.keywords.contains { $0.name == name }
-      if isDuplicate {
+      if self.isDuplicate(name: name, in: ir.keywords) {
         let kind = ParserErrorKind.callWithDuplicateKeywordArgument(name)
         throw self.error(kind, location: nameToken.start)
       }
 
       let value = try self.test()
-      let keyword = Keyword(name: name,
+      let keyword = Keyword(kind: .named(name),
                             value: value,
                             start: nameToken.start,
                             end: value.end)
@@ -156,6 +158,15 @@ extension Parser {
     default:
       throw self.error(.callWithKeywordExpression, location: nameToken.start)
     }
+  }
+
+  private func isDuplicate(name: String, in keywords: [Keyword]) -> Bool {
+    for k in keywords {
+      if case let KeywordKind.named(n) = k.kind, n == name {
+        return true
+      }
+    }
+    return false
   }
 
   /// test [comp_for]

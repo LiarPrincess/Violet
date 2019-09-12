@@ -177,13 +177,7 @@ class STImport: XCTestCase, CommonSymbolTable {
   /// symbols:
   /// ```
   func test_importFrom_withStar() {
-    let stmt = self.importFrom(
-      moduleName: "disnep",
-      names: [
-        self.alias(name: "*", asName: nil, start: loc1)
-      ],
-      level: 0
-    )
+    let stmt = self.importFromStar(moduleName: "disnep", level: 0)
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
@@ -199,11 +193,8 @@ class STImport: XCTestCase, CommonSymbolTable {
   ///   from disnep import *
   /// ```
   func test_importFrom_withStar_inFunction_throws() {
-    let importStmt = self.importFrom(
+    let importStmt = self.importFromStar(
       moduleName: "disnep",
-      names: [
-        self.alias(name: "*", asName: nil)
-      ],
       level: 0,
       start: loc1
     )

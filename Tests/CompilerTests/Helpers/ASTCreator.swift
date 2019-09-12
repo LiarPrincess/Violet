@@ -333,19 +333,12 @@ extension ASTCreator {
                end: end)
   }
 
-  internal func keyword(name: String?, value: Expression) -> Keyword {
+  internal func keyword(kind: KeywordKind, value: Expression) -> Keyword {
     return Keyword(id: .next,
-                   name: name,
+                   kind: kind,
                    value: value,
                    start: start,
                    end: end)
-  }
-
-  internal func keyword(name: String?, value: String) -> Keyword {
-    return self.keyword(
-      name: name,
-      value: self.identifierExpr(value)
-    )
   }
 
   // MARK: - Other helpers

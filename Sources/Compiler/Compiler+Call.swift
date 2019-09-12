@@ -96,17 +96,7 @@ extension Compiler {
       }
     }
 
-    var hasDictionaryUnpack = false
-    for keyword in keywords {
-      // TODO: AST: Rename Keyword.name -> Keyword.arg
-      // TODO: AST: `Keyword` should be a sum of unpack|name*value
-      let isUnpack = keyword.name == nil
-      if isUnpack {
-        hasDictionaryUnpack = true
-        break // break loop
-      }
-    }
-
+    let hasDictionaryUnpack = keywords.contains { $0.kind == .dictionaryUnpack }
     if nSubArgs > 0 || hasDictionaryUnpack {
       // Pack up any trailing positional arguments.
       if nSeen > 0 {
@@ -126,19 +116,18 @@ extension Compiler {
 
       nSeen = 0
       for (index, keyword) in keywords.enumerated() {
-        if keyword.name == nil {
-          // keyword argument unpacking
+        switch keyword.kind {
+        case .dictionaryUnpack:
           if nSeen > 0 {
             let start = index - nSeen
-            try self.visitSubkwargs(keywords: keywords[start..<index],
-                                    location: location)
+            try self.visitSubkwargs(keywords: keywords[start..<index])
             nSubKwArgs += 1
             nSeen = 0
           }
 
           try self.visitExpression(keyword.value)
           nSubKwArgs += 1
-        } else {
+        case .named:
           nSeen += 1
         }
       }
@@ -146,8 +135,7 @@ extension Compiler {
       // Pack up any trailing keyword arguments.
       if nSeen > 0 {
         let start = keywords.count - nSeen
-        try self.visitSubkwargs(keywords: keywords[start..<keywords.count],
-                                location: location)
+        try self.visitSubkwargs(keywords: keywords[start..<keywords.count])
         nSubKwArgs += 1
       }
 
@@ -159,9 +147,8 @@ extension Compiler {
       try self.codeObject.appendCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0,
                                                at: location)
     } else if keywords.any {
-      // We can force unwrap, because: 'hasDictionaryUnpack' = false
-      // swiftlint:disable:next force_unwrapping
-      let names = keywords.map { Constant.string($0.name!) }
+
+      let names = self.getNames(keywords: keywords)
       let argCount = alreadyPushedArgs + args.count + keywords.count
 
       try self.visitKeywords(keywords: keywords)
@@ -173,6 +160,18 @@ extension Compiler {
     }
   }
 
+  /// Precondition: 'hasDictionaryUnpack' = false
+  private func getNames(keywords: [Keyword]) -> [Constant] {
+    var result = [Constant]()
+    for keyword in keywords {
+      switch keyword.kind {
+      case .dictionaryUnpack: assert(false)
+      case let .named(name): result.append(.string(name))
+      }
+    }
+    return result
+  }
+
   /// compiler_visit_keyword(struct compiler *c, keyword_ty k)
   private func visitKeywords(keywords: [Keyword]) throws {
     for keyword in keywords {
@@ -182,34 +181,38 @@ extension Compiler {
 
   /// compiler_subkwargs(struct compiler *c, asdl_seq *keywords,
   /// Py_ssize_t begin, Py_ssize_t end)
-  private func visitSubkwargs(keywords: ArraySlice<Keyword>,
-                              location: SourceLocation) throws {
-    assert(
-      keywords.allSatisfy { $0.name != nil },
-      "VisitSubkwargs should not be called for unpack."
-    )
+  private func visitSubkwargs(keywords: ArraySlice<Keyword>) throws {
+    assert(keywords.any)
 
-    // swiftlint:disable force_unwrapping
     if keywords.count == 1 {
+      // swiftlint:disable:next force_unwrapping
       let keyword = keywords.first!
-      let name = Constant.string(keyword.name!)
+      let location = keyword.start
 
-      try self.codeObject.appendConstant(name, at: location)
+      guard case let KeywordKind.named(name) = keyword.kind else {
+        fatalError("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
+      }
+
+      try self.codeObject.appendConstant(.string(name), at: location)
       try self.visitExpression(keyword.value)
       try self.codeObject.appendBuildMap(elementCount: 1, at: location)
     } else {
       var names = [Constant]()
       for keyword in keywords {
-        try self.visitExpression(keyword.value)
+        guard case let KeywordKind.named(name) = keyword.kind else {
+          fatalError("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
+        }
 
-        let name = Constant.string(keyword.name!)
-        names.append(name)
+        try self.visitExpression(keyword.value)
+        names.append(.string(name))
       }
+
+      // swiftlint:disable:next force_unwrapping
+      let location = keywords.first!.start
 
       try self.codeObject.appendTuple(names, at: location)
       try self.codeObject.appendBuildConstKeyMap(elementCount: names.count,
                                                  at: location)
     }
-    // swiftlint:enable force_unwrapping
   }
 }

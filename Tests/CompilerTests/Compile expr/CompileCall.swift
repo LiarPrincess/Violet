@@ -167,8 +167,8 @@ class CompileCall: XCTestCase, CommonCompiler {
       function: self.identifierExpr("cook"),
       args: [],
       keywords: [
-        self.keyword(name: "zucchini", value: "tomato"),
-        self.keyword(name: "pepper",   value: "eggplant")
+        self.keyword(kind: .named("zucchini"), value: self.identifierExpr("tomato")),
+        self.keyword(kind: .named("pepper"),   value: self.identifierExpr("eggplant"))
       ])
     )
 
@@ -204,9 +204,9 @@ class CompileCall: XCTestCase, CommonCompiler {
       function: self.identifierExpr("cook"),
       args: [],
       keywords: [
-        self.keyword(name: "zucchini", value: "tomato"),
-        self.keyword(name: "salt",     value: "pepper"),
-        self.keyword(name: nil,        value: "eggplant")
+        self.keyword(kind: .named("zucchini"), value: self.identifierExpr("tomato")),
+        self.keyword(kind: .named("salt"),     value: self.identifierExpr("pepper")),
+        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr("eggplant"))
       ])
     )
 
@@ -249,10 +249,10 @@ class CompileCall: XCTestCase, CommonCompiler {
       function: self.identifierExpr("cook"),
       args: [],
       keywords: [
-        self.keyword(name: "zucchini", value: "tomato"),
-        self.keyword(name: nil,        value: "pepper"),
-        self.keyword(name: nil,        value: "eggplant"),
-        self.keyword(name: "salt",     value: "onion")
+        self.keyword(kind: .named("zucchini"), value: self.identifierExpr("tomato")),
+        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr("pepper")),
+        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr("eggplant")),
+        self.keyword(kind: .named("salt"),     value: self.identifierExpr("onion"))
       ])
     )
 
@@ -304,8 +304,8 @@ class CompileCall: XCTestCase, CommonCompiler {
         ))
       ],
       keywords: [
-        self.keyword(name: "pepper", value: "salt"),
-        self.keyword(name: nil,      value: "eggplant")
+        self.keyword(kind: .named("pepper"),  value: self.identifierExpr("salt")),
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr("eggplant"))
       ])
     )
 
