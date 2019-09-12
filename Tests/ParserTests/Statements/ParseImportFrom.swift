@@ -170,16 +170,10 @@ class ParseImportFrom: XCTestCase, Common, StatementMatcher {
     )
 
     if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchImportFrom(stmt) else { return }
+      guard let d = self.matchImportFromStar(stmt) else { return }
 
       XCTAssertEqual(d.moduleName, "Tangled")
       XCTAssertEqual(d.level, 0)
-
-      XCTAssertEqual(d.names.count, 1)
-      guard d.names.count == 1 else { return }
-
-      XCTAssertEqual(d.names[0].name, "*")
-      XCTAssertEqual(d.names[0].asName, nil)
 
       XCTAssertStatement(stmt, "(from Tangled import: *)")
       XCTAssertEqual(stmt.start, loc0)

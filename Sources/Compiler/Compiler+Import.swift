@@ -44,39 +44,85 @@ extension Compiler {
   }
 
   /// compiler_from_import(struct compiler *c, stmt_ty s)
+  ///
+  /// from Tangled import *
+  /// additional_block <-- so that we don't get returns at the end
+  ///
+  ///  0 LOAD_CONST               0 (0)
+  ///  2 LOAD_CONST               1 (('*',))
+  ///  4 IMPORT_NAME              0 (Tangled)
+  ///  6 IMPORT_STAR
+  ///  8 LOAD_NAME                1 (additional_block)
+  /// 10 POP_TOP
+  /// 12 LOAD_CONST               2 (None)
+  /// 14 RETURN_VALUE
+  internal func visitImportFromStar(module:   String?,
+                                    level:    UInt8,
+                                    location: SourceLocation) throws {
+
+    try self.checkLateFuture(module: module, location: location)
+    try self.appendImportFromProlog(module: module,
+                                    names: ["*"],
+                                    level: level,
+                                    location: location)
+    try self.codeObject.appendImportStar(at: location)
+    try self.codeObject.appendPopTop(at: location)
+  }
+
+  /// compiler_from_import(struct compiler *c, stmt_ty s)
+  ///
+  /// from Tangled import Rapunzel
+  ///
+  ///  0 LOAD_CONST               0 (0)
+  ///  2 LOAD_CONST               1 (('Rapunzel',))
+  ///  4 IMPORT_NAME              0 (Tangled)
+  ///  6 IMPORT_FROM              1 (Rapunzel)
+  ///  8 STORE_NAME               1 (Rapunzel)
+  /// 10 POP_TOP
+  /// 12 LOAD_CONST               2 (None)
+  /// 14 RETURN_VALUE
   internal func visitImportFrom(module:   String?,
                                 aliases:  NonEmptyArray<Alias>,
                                 level:    UInt8,
                                 location: SourceLocation) throws {
 
-    let futureModule = SpecialIdentifiers.__future__
-    if module == futureModule && location.line > self.future.lastLine {
-      throw self.error(.lateFuture, location: location)
+    try self.checkLateFuture(module: module, location: location)
+    try self.appendImportFromProlog(module: module,
+                                    names: aliases.map { $0.name },
+                                    level: level,
+                                    location: location)
+
+    for alias in aliases {
+      if alias.name == "*" {
+        throw self.error(.unexpectedStarImport, location: location)
+      }
+
+      let storeName = alias.asName ?? alias.name
+      try self.codeObject.appendImportFrom(name: alias.name, at: location)
+      try self.codeObject.appendStoreName(storeName, at: location)
     }
 
-    let nameTuple = aliases.map { Constant.string($0.name) }
+    try self.codeObject.appendPopTop(at: location)
+  }
+
+  /// Common code for 'visitImportFromStar' and 'visitImportFrom'
+  private func appendImportFromProlog(module: String?,
+                                      names:  [String],
+                                      level:  UInt8,
+                                      location: SourceLocation) throws {
     let importName = module ?? ""
+    let nameTuple = names.map { Constant.string($0) }
 
     try self.codeObject.appendInteger(BigInt(level), at: location)
     try self.codeObject.appendTuple(nameTuple, at: location)
     try self.codeObject.appendImportName(name: importName, at: location)
+  }
 
-    if aliases.count == 1 && aliases[0].name == "*" {
-      try self.codeObject.appendImportStar(at: location)
-    } else {
-      for alias in aliases {
-        if alias.name == "*" {
-          throw self.error(.unexpectedStarImport, location: location)
-        }
-
-        let storeName = alias.asName ?? alias.name
-        try self.codeObject.appendImportFrom(name: alias.name, at: location)
-        try self.codeObject.appendStoreName(storeName, at: location)
-      }
+  private func checkLateFuture(module: String?, location: SourceLocation) throws {
+    let futureModule = SpecialIdentifiers.__future__
+    if module == futureModule && location.line > self.future.lastLine {
+      throw self.error(.lateFuture, location: location)
     }
-
-    // Remove imported module
-    try self.codeObject.appendPopTop(at: location)
   }
 
   /// compiler_import_as(struct compiler *c, identifier name, identifier asname)

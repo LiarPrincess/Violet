@@ -175,11 +175,8 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module_importAll() {
-    let stmt = self.importFrom(
+    let stmt = self.importFromStar(
       moduleName: "Tangled",
-      names: [
-        self.alias(name: "*", asName: nil)
-      ],
       level: 0
     )
 

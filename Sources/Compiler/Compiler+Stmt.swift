@@ -93,6 +93,10 @@ extension Compiler {
                                aliases:  aliases,
                                level:    level,
                                location: location)
+    case let .importFromStar(module, level):
+      try self.visitImportFromStar(module: module,
+                                   level: level,
+                                   location: location)
 
     case let .expr(expr):
       try self.visitExpressionStatement(expr, location: location)

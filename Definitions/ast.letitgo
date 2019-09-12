@@ -195,6 +195,12 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - `level` is an integer holding the level of the relative import
   -- (0 means absolute import).
   | ImportFrom(identifier? moduleName, Alias+ names, UInt8 level)
+  -- Represents `from x import *`.
+  -- - `moduleName` is a raw string of the ‘from’ name, without any leading dots
+  -- or None for statements such as `from . import foo`.
+  -- - `level` is an integer holding the level of the relative import
+  -- (0 means absolute import).
+  | ImportFromStar(identifier? moduleName, UInt8 level)
 
   -- `global` statement.
   | Global(identifier+)

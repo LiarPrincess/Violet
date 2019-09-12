@@ -313,6 +313,19 @@ extension StatementMatcher {
     return nil
   }
 
+  internal func matchImportFromStar(_ stmt: Statement,
+                                    file: StaticString = #file,
+                                    line: UInt         = #line) ->
+  (moduleName: String?, level: UInt8)? {
+
+    if case let StatementKind.importFromStar(moduleName: value0, level: value1) = stmt.kind {
+      return (value0, value1)
+    }
+
+    XCTAssertTrue(false, stmt.kind.description, file: file, line: line)
+    return nil
+  }
+
   internal func matchGlobal(_ stmt: Statement,
                             file: StaticString = #file,
                             line: UInt         = #line) ->

@@ -4,7 +4,9 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
-// swiftlint:disable function_body_length cyclomatic_complexity
+// swiftlint:disable function_body_length
+// swiftlint:disable cyclomatic_complexity
+// swiftlint:disable file_length
 
 extension SymbolTableBuilder {
 
@@ -143,6 +145,11 @@ extension SymbolTableBuilder {
     case let .import(names),
          let .importFrom(_, names, _):
       try self.visitAliases(names, importStart: stmt.start)
+    case .importFromStar:
+      // No names here, but we can check this:
+      if self.currentScope.type != .module {
+        throw self.error(.nonModuleImportStar, location: stmt.start)
+      }
 
     case let .global(names):
       for name in names {
@@ -224,29 +231,20 @@ extension SymbolTableBuilder {
   /// symtable_visit_alias(struct symtable *st, alias_ty a)
   private func visitAliases(_ aliases: NonEmptyArray<Alias>,
                             importStart: SourceLocation) throws {
-    for a in aliases {
-      switch a.name {
-      case "*":
-        // TODO: AST: Alias should be a sum type tith star|alias(name, as)
-        if self.currentScope.type != .module {
-          throw self.error(.nonModuleImportStar, location: importStart)
-        }
+    for alias in aliases {
+      // import elsa <- register elsa
+      // import elsa as queen <- register queen
+      // import arendelle.elsa <- register arendelle (elsa is an attribute)
 
-      default:
-        // import elsa <- register elsa
-        // import elsa as queen <- register queen
-        // import arendelle.elsa <- register arendelle (elsa is an attribute)
+      // If symbol after 'import' is the name of a module or package,
+      // then to use objects defined in X, you have to write X.object.
 
-        // If symbol after 'import' is the name of a module or package,
-        // then to use objects defined in X, you have to write X.object.
-
-        var name = a.asName ?? a.name
-        if let dotIndex = name.firstIndex(of: ".") {
-          name = String(name[name.startIndex..<dotIndex])
-        }
-
-        try self.addSymbol(name, flags: .defImport, location: a.start)
+      var name = alias.asName ?? alias.name
+      if let dotIndex = name.firstIndex(of: ".") {
+        name = String(name[name.startIndex..<dotIndex])
       }
+
+      try self.addSymbol(name, flags: .defImport, location: alias.start)
     }
   }
 }

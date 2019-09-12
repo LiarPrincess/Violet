@@ -157,6 +157,15 @@ extension ASTCreator {
     )
   }
 
+  internal func importFromStar(moduleName: String?,
+                               level: UInt8,
+                               start: SourceLocation? = nil) -> Statement {
+    return self.statement(
+      .importFromStar(moduleName: moduleName, level: level),
+      start: start
+    )
+  }
+
   internal func global(name: String, start: SourceLocation? = nil) -> Statement {
     let kind = StatementKind.global(NonEmptyArray(first: name))
     return self.statement(kind, start: start ?? self.start)

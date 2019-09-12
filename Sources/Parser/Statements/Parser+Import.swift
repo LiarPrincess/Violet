@@ -63,27 +63,28 @@ extension Parser {
   // MARK: - Dotted names
 
   /// `dotted_as_name: dotted_name ['as' NAME]`
-  internal mutating func dottedAsName() throws -> Alias {
+  private mutating func dottedAsName() throws -> Alias {
     let base = try self.dottedName()
 
-    guard self.peek.kind == .as else {
-      return base
+    var asName: String?
+    var end = base.end
+
+    if self.peek.kind == .as {
+      try self.advance() // as
+
+      let token = self.peek
+      let n = try self.consumeIdentifierOrThrow()
+      try self.checkForbiddenName(n, location: token.start)
+
+      asName = n
+      end = token.end
     }
 
-    try self.advance() // as
-
-    let aliasToken = self.peek
-    let alias = try self.consumeIdentifierOrThrow()
-    try self.checkForbiddenName(alias, location: aliasToken.start)
-
-    return Alias(name: base.name,
-                 asName: alias,
-                 start: base.start,
-                 end: aliasToken.end)
+    return Alias(name: base.name, asName: asName, start: base.start, end: end)
   }
 
   /// `dotted_as_names: dotted_as_name (',' dotted_as_name)*`
-  internal mutating func dottedAsNames() throws -> NonEmptyArray<Alias> {
+  private mutating func dottedAsNames() throws -> NonEmptyArray<Alias> {
     let first = try self.dottedAsName()
 
     var additionalElements = [Alias]()
@@ -97,8 +98,14 @@ extension Parser {
     return NonEmptyArray(first: first, rest: additionalElements)
   }
 
+  private struct DottedName {
+    let name: String
+    let start: SourceLocation
+    let end:   SourceLocation
+  }
+
   /// `dotted_name: NAME ('.' NAME)*`
-  internal mutating func dottedName() throws -> Alias {
+  private mutating func dottedName() throws -> DottedName {
     let start = self.peek.start
     var end = self.peek.end
     let first = try self.consumeIdentifierOrThrow()
@@ -120,15 +127,19 @@ extension Parser {
     }
 
     let name = first + dottedNames
-    return Alias(name: name, asName: nil, start: start, end: end)
+    return DottedName(name: name, start: start, end: end)
   }
 
   // MARK: - Import from
 
+  private enum ImportedValues {
+    case all
+    case aliases(NonEmptyArray<Alias>)
+  }
+
   private struct ImportFromIR {
     fileprivate var module: String?
-    // swiftlint:disable:next implicitly_unwrapped_optional
-    fileprivate var names: NonEmptyArray<Alias>!
+    fileprivate var values = ImportedValues.all
     fileprivate var level: UInt8 = 0
     fileprivate var end: SourceLocation = .start
   }
@@ -150,11 +161,17 @@ extension Parser {
     try self.parseImportFromModule(into: &ir)
     try self.parseImportFromNames(into: &ir, closingTokens: closingTokens)
 
-    let kind = StatementKind.importFrom(moduleName: ir.module,
-                                        names: ir.names,
-                                        level: ir.level)
-
+    let kind = self.getStatementKind(from: ir)
     return self.statement(kind, start: start, end: ir.end)
+  }
+
+  private func getStatementKind(from ir: ImportFromIR) -> StatementKind{
+    switch ir.values {
+    case .all:
+      return .importFromStar(moduleName: ir.module, level: ir.level)
+    case let .aliases(aliases):
+      return .importFrom(moduleName: ir.module, names: aliases, level: ir.level)
+    }
   }
 
   /// ```c
@@ -212,8 +229,7 @@ extension Parser {
       let star = self.peek
       try self.advance() // *
 
-      let alias = Alias(name: "*", asName: nil, start: star.start, end: star.end)
-      ir.names = NonEmptyArray(first: alias)
+      ir.values = .all
       ir.end = star.end
 
     case .leftParen:
@@ -223,7 +239,7 @@ extension Parser {
       close.append(.rightParen)
 
       let result = try self.importAsNames(closingTokens: close)
-      ir.names = result.aliases
+      ir.values = .aliases(result.aliases)
       ir.end = self.peek.end // end of ')'
       try self.consumeOrThrow(.rightParen)
 
@@ -234,7 +250,7 @@ extension Parser {
         throw self.error(.fromImportWithTrailingComma)
       }
 
-      ir.names = result.aliases
+      ir.values = .aliases(result.aliases)
       ir.end = result.aliases.last.end
     }
   }
@@ -242,8 +258,8 @@ extension Parser {
   // MARK: - Import as names
 
   // `import_as_names: import_as_name (',' import_as_name)* [',']`
-  private mutating func importAsNames(closingTokens: [TokenKind])
-    throws -> (aliases: NonEmptyArray<Alias>, hasTrailingComma: Bool) {
+  private mutating func importAsNames(closingTokens: [TokenKind]) throws ->
+    (aliases: NonEmptyArray<Alias>, hasTrailingComma: Bool) {
 
     let first = try self.importAsName()
 

@@ -117,9 +117,7 @@ public final class FutureBuilder {
       // Check 'name' not alias!
       // For example, this should throw:
       // from __future__ import braces as letItGo
-      let name = alias.name
-
-      switch name {
+      switch alias.name {
       case "nested_scopes",
            "generators",
            "division",
@@ -137,11 +135,10 @@ public final class FutureBuilder {
       case "annotations":
         features.flags.formUnion(.annotations)
       case "braces":
-        throw CompilerError(.fromFutureImportBraces,
-                            location: errorLocation)
+        throw CompilerError(.fromFutureImportBraces, location: errorLocation)
       default:
-        throw CompilerError(.undefinedFutureFeature(name),
-                            location: errorLocation)
+        let kind = CompilerErrorKind.undefinedFutureFeature(alias.name)
+        throw CompilerError(kind, location: errorLocation)
       }
     }
   }

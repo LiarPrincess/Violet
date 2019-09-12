@@ -123,7 +123,7 @@ public struct ASTValidationPass: ASTPass {
       try self.visitExpression(test)
       try self.visitExpression(msg)
 
-    case .import, .importFrom:
+    case .import, .importFrom, .importFromStar:
       // we don't have to check names.isEmpty because of NonEmptyArray
       // we don't have to check level > 0 because of UInt
       break

@@ -202,6 +202,12 @@ public enum StatementKind: Equatable {
   /// - `level` is an integer holding the level of the relative import
   /// (0 means absolute import).
   case importFrom(moduleName: String?, names: NonEmptyArray<Alias>, level: UInt8)
+  /// Represents `from x import *`.
+  /// - `moduleName` is a raw string of the ‘from’ name, without any leading dots
+  /// or None for statements such as `from . import foo`.
+  /// - `level` is an integer holding the level of the relative import
+  /// (0 means absolute import).
+  case importFromStar(moduleName: String?, level: UInt8)
   /// `global` statement.
   case global(NonEmptyArray<String>)
   /// `nonlocal` statement.
@@ -310,6 +316,11 @@ public enum StatementKind: Equatable {
     return false
   }
 
+  public var isImportFromStar: Bool {
+    if case .importFromStar = self { return true }
+    return false
+  }
+
   public var isGlobal: Bool {
     if case .global = self { return true }
     return false
@@ -381,8 +392,7 @@ public struct ExceptHandler: ASTNode {
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
   public let id: NodeId
-  /// Exception type it will match, typically a Name node
-  /// (or `nil` for a catch-all except: clause).
+  /// Exception type it will match,  (or `.default` for a catch-all).
   public let kind: ExceptHandlerKind
   /// List of handler nodes.
   public let body: NonEmptyArray<Statement>

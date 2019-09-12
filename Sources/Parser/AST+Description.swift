@@ -189,6 +189,10 @@ extension StatementKind: CustomStringConvertible {
       let d = level == 0 ? "" : String(repeating: ".", count: Int(level))
       let m = module.map(describe) ?? ""
       return "(from \(d)\(m) import: \(join(names)))"
+    case let .importFromStar(module, level):
+      let d = level == 0 ? "" : String(repeating: ".", count: Int(level))
+      let m = module.map(describe) ?? ""
+      return "(from \(d)\(m) import: *)"
 
     case let .global(v):
       return "(global \(join(v)))"
@@ -216,9 +220,9 @@ extension Alias: CustomStringConvertible {
   public var description: String {
     switch self.asName {
     case .none:
-      return self.name
+      return name
     case let .some(alias):
-      return "(\(self.name) as: \(alias))"
+      return "(\(name) as: \(alias))"
     }
   }
 }
