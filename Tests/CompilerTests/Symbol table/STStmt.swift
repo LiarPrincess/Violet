@@ -382,8 +382,10 @@ class STStmt: XCTestCase, CommonSymbolTable {
   /// ```
   func test_try() {
     let handler = self.exceptHandler(
-      type: self.identifierExpr("elsa", start: loc4),
-      name: "queen",
+      kind: .typed(
+        type: self.identifierExpr("elsa", start: loc4),
+        asName: "queen"
+      ),
       body: self.statement(expr: .identifier("queen")),
       start: loc5
     )

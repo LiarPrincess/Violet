@@ -244,12 +244,8 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
-  -- Exception type it will match, typically a Name node
-  -- (or `nil` for a catch-all except: clause).
-  expr? type,
-  -- Raw string for the name to hold the exception,
-  -- or `nil` if the clause doesn’t have as foo.
-  identifier? name,
+  -- Exception type it will match,  (or `.default` for a catch-all).
+  ExceptHandlerKind kind,
   -- List of handler nodes.
   stmt+ body,
   -- Location of the first character in the source code.
@@ -257,6 +253,12 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- Location just after the last character in the source code.
   loc end
 )
+
+@enum ExceptHandlerKind: Equatable =
+  -- Handler with type it will match, typically an `Identifier` node.
+  Typed(expr type, identifier? asName)
+  -- Catch-all handler.
+  | Default
 
 -- Combination of one or more constants, variables, operators and functions
 -- that the programming language interprets and computes to produce another value.

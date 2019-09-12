@@ -66,27 +66,16 @@ extension Parser {
   /// except_clause: 'except' [test ['as' NAME]]
   /// ```
   private mutating func parseExceptClauses(into ir: inout TryIR) throws {
-
     while self.peek.kind == .except {
       let start = self.peek.start
       try self.advance() // except
 
-      var type: Expression?
-      if self.peek.kind != .colon {
-        type = try self.test()
-      }
 
-      var name: String?
-      if type != nil && self.peek.kind == .as {
-        try self.advance() // as
-        name = try self.consumeIdentifierOrThrow()
-      }
-
+      let kind = try self.parseExceptHandlerKind()
       try self.consumeOrThrow(.colon)
       let body = try self.suite()
 
-      let handler = ExceptHandler(type: type,
-                                  name: name,
+      let handler = ExceptHandler(kind: kind,
                                   body: body,
                                   start: start,
                                   end: body.last.end)
@@ -94,6 +83,23 @@ extension Parser {
       ir.handlers.append(handler)
       ir.end = body.last.end
     }
+  }
+
+  /// [test ['as' NAME]] | <empty>
+  private mutating func parseExceptHandlerKind() throws -> ExceptHandlerKind {
+    guard self.peek.kind != .colon else {
+      return .default
+    }
+
+    let type = try self.test()
+
+    var asName: String?
+    if self.peek.kind == .as {
+      try self.advance() // as
+      asName = try self.consumeIdentifierOrThrow()
+    }
+
+    return .typed(type: type, asName: asName)
   }
 
   /// `['else' ':' suite]`

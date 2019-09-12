@@ -209,9 +209,11 @@ extension SymbolTableBuilder {
   /// symtable_visit_excepthandler(struct symtable *st, excepthandler_ty eh)
   private func visitExceptHandlers(_ handlers: [ExceptHandler]) throws {
     for h in handlers {
-      try self.visitExpression(h.type)
-      if let name = h.name {
-        try self.addSymbol(name, flags: .defLocal, location: h.start)
+      if case let .typed(type: type, asName: asName) = h.kind {
+        try self.visitExpression(type)
+        if let n = asName {
+          try self.addSymbol(n, flags: .defLocal, location: h.start)
+        }
       }
       try self.visitStatements(h.body)
     }

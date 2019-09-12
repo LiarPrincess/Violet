@@ -149,7 +149,9 @@ public struct ASTValidationPass: ASTPass {
 
   private func visitExceptHandlers(_ handlers: [ExceptHandler]) throws {
     for h in handlers {
-      try self.visitExpression(h.type)
+      if case let .typed(type: type, asName: _) = h.kind {
+        try self.visitExpression(type)
+      }
       try self.visitStatements(h.body)
     }
   }

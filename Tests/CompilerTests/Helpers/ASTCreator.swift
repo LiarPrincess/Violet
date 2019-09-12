@@ -274,13 +274,11 @@ extension ASTCreator {
                     end: end)
   }
 
-  internal func exceptHandler(type: Expression?,
-                              name: String?,
+  internal func exceptHandler(kind: ExceptHandlerKind,
                               body: Statement,
                               start: SourceLocation? = nil) -> ExceptHandler {
     return ExceptHandler(id: .next,
-                         type: type,
-                         name: name,
+                         kind: kind,
                          body: NonEmptyArray(first: body),
                          start: start ?? self.start,
                          end: self.end)

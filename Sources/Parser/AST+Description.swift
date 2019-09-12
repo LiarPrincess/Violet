@@ -236,10 +236,15 @@ extension WithItem: CustomStringConvertible {
 
 extension ExceptHandler: CustomStringConvertible {
   public var description: String {
-    let t = self.type.map { " " + describe($0) } ?? ""
-    let n = self.name.map { " as: \($0)" } ?? ""
     let b = self.body.isEmpty ? "" : " do: \(join(self.body))"
-    return "(except\(t)\(n)\(b))"
+
+    switch self.kind {
+    case let .typed(type: type, asName: asName):
+      let n = asName.map { " as: \($0)" } ?? ""
+      return "(except \(describe(type))\(n)\(b))"
+    case .default:
+      return "(except\(b))"
+    }
   }
 }
 

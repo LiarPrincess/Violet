@@ -162,16 +162,14 @@ extension Compiler {
     // except
     self.codeObject.setLabel(firstExcept)
     for (index, handler) in handlers.enumerated() {
-      // TODO: AST: ExceptHandler should be sum type default|normal
-      let isDefault = handler.type == nil
       let isLast = index == handlers.count - 1
-      if isDefault && !isLast {
+      if handler.kind == .default && !isLast {
         throw self.error(.defaultExceptNotLast, location: location)
       }
 
       let nextExcept = self.codeObject.createLabel()
 
-      if let type = handler.type {
+      if case let .typed(type: type, asName: _) = handler.kind {
         try self.codeObject.appendDupTop(at: location)
         try self.visitExpression(type)
         try self.codeObject.appendCompareOp(.exceptionMatch, at: location)
@@ -179,7 +177,7 @@ extension Compiler {
       }
       try self.codeObject.appendPopTop(at: location)
 
-      if let name = handler.name {
+      if case let .typed(type: _, asName: asName) = handler.kind, let name = asName {
         try self.codeObject.appendStoreName(name, at: location)
         try self.codeObject.appendPopTop(at: location)
 

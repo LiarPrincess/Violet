@@ -78,8 +78,7 @@ class CompileTry: XCTestCase, CommonCompiler {
       body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: nil,
-          name: nil,
+          kind: .default,
           body: self.statement(expr: .identifier("ping"))
         )
       ],
@@ -138,8 +137,10 @@ class CompileTry: XCTestCase, CommonCompiler {
       body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: self.identifierExpr("soldier"),
-          name: nil,
+          kind: .typed(
+            type: self.identifierExpr("soldier"),
+            asName: nil
+          ),
           body: self.statement(expr: .identifier("ping"))
         )
       ],
@@ -209,8 +210,10 @@ class CompileTry: XCTestCase, CommonCompiler {
       body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: self.identifierExpr("disguise"),
-          name: "soldier",
+          kind: .typed(
+            type: self.identifierExpr("disguise"),
+            asName: "soldier"
+          ),
           body: self.statement(expr: .identifier("ping"))
         )
       ],
@@ -288,13 +291,14 @@ class CompileTry: XCTestCase, CommonCompiler {
       body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: self.identifierExpr("soldier"),
-          name: nil,
+          kind: .typed(
+            type: self.identifierExpr("soldier"),
+            asName: nil
+          ),
           body: self.statement(expr: .identifier("ping"))
         ),
         self.exceptHandler(
-          type: nil,
-          name: nil,
+          kind: .default,
           body: self.statement(expr: .identifier("pong"))
         )
       ],
@@ -363,8 +367,7 @@ class CompileTry: XCTestCase, CommonCompiler {
       body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: nil,
-          name: nil,
+          kind: .default,
           body: self.statement(expr: .identifier("ping"))
         )
       ],
@@ -428,8 +431,7 @@ class CompileTry: XCTestCase, CommonCompiler {
       body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: nil,
-          name: nil,
+          kind: .default,
           body: self.statement(expr: .identifier("ping"))
         )
       ],
@@ -500,8 +502,7 @@ class CompileTry: XCTestCase, CommonCompiler {
       body: self.identifierExpr("mulan"),
       handlers: [
         self.exceptHandler(
-          type: nil,
-          name: nil,
+          kind: .default,
           body: self.statement(expr: .identifier("ping"))
         )
       ],

@@ -44,14 +44,12 @@ extension WithItem {
 
 extension ExceptHandler {
 
-  public init(type: Expression?,
-              name: String?,
+  public init(kind: ExceptHandlerKind,
               body: NonEmptyArray<Statement>,
               start: SourceLocation,
               end: SourceLocation) {
     self.id = .next
-    self.type = type
-    self.name = name
+    self.kind = kind
     self.body = body
     self.start = start
     self.end = end

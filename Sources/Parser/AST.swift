@@ -383,10 +383,7 @@ public struct ExceptHandler: ASTNode {
   public let id: NodeId
   /// Exception type it will match, typically a Name node
   /// (or `nil` for a catch-all except: clause).
-  public let type: Expression?
-  /// Raw string for the name to hold the exception,
-  /// or `nil` if the clause doesn’t have as foo.
-  public let name: String?
+  public let kind: ExceptHandlerKind
   /// List of handler nodes.
   public let body: NonEmptyArray<Statement>
   /// Location of the first character in the source code.
@@ -394,14 +391,26 @@ public struct ExceptHandler: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, type: Expression?, name: String?, body: NonEmptyArray<Statement>, start: SourceLocation, end: SourceLocation) {
+  public init(id: NodeId, kind: ExceptHandlerKind, body: NonEmptyArray<Statement>, start: SourceLocation, end: SourceLocation) {
     self.id = id
-    self.type = type
-    self.name = name
+    self.kind = kind
     self.body = body
     self.start = start
     self.end = end
   }
+}
+
+public enum ExceptHandlerKind: Equatable {
+  /// Handler with type it will match, typically an `Identifier` node.
+  case typed(type: Expression, asName: String?)
+  /// Catch-all handler.
+  case `default`
+
+  public var isTyped: Bool {
+    if case .typed = self { return true }
+    return false
+  }
+
 }
 
 /// Combination of one or more constants, variables, operators and functions
