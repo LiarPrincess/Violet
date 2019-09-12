@@ -32,7 +32,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "0"),
-      .init(.loadConst, "(Rapunzel)"),
+      .init(.loadConst, "('Rapunzel')"),
       .init(.importName, "Tangled"),
       .init(.importFrom, "Rapunzel"),
       .init(.storeName, "Rapunzel"),
@@ -68,7 +68,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "0"),
-      .init(.loadConst, "(Rapunzel)"),
+      .init(.loadConst, "('Rapunzel')"),
       .init(.importName, "Tangled"),
       .init(.importFrom, "Rapunzel"),
       .init(.storeName, "Daughter"),
@@ -108,7 +108,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "0"),
-      .init(.loadConst, "(Rapunzel, Pascal)"),
+      .init(.loadConst, "('Rapunzel', 'Pascal')"),
       .init(.importName, "Tangled"),
       .init(.importFrom, "Rapunzel"),
       .init(.storeName, "Daughter"),
@@ -146,7 +146,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "0"),
-      .init(.loadConst, "(Rapunzel)"),
+      .init(.loadConst, "('Rapunzel')"),
       .init(.importName, "Disnep.Tangled"),
       .init(.importFrom, "Rapunzel"),
       .init(.storeName, "Rapunzel"),
@@ -182,7 +182,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "0"),
-      .init(.loadConst, "(*)"),
+      .init(.loadConst, "('*')"),
       .init(.importName, "Tangled"),
       .init(.importStar),
       .init(.popTop),
@@ -219,7 +219,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "1"),
-      .init(.loadConst, "(Rapunzel)"),
+      .init(.loadConst, "('Rapunzel')"),
       .init(.importName, ""),
       .init(.importFrom, "Rapunzel"),
       .init(.storeName, "Rapunzel"),
@@ -255,7 +255,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "1"),
-      .init(.loadConst, "(Rapunzel)"),
+      .init(.loadConst, "('Rapunzel')"),
       .init(.importName, "Tangled"),
       .init(.importFrom, "Rapunzel"),
       .init(.storeName, "Rapunzel"),

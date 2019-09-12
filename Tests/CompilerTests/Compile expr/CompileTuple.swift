@@ -30,7 +30,7 @@ class CompileTuple: XCTestCase, CommonCompiler {
     ]))
 
     let expected: [EmittedInstruction] = [
-      .init(.loadConst, "ariel"),
+      .init(.loadConst, "'ariel'"),
       .init(.loadConst, "true"),
       .init(.buildTuple, "2"),
       .init(.return)

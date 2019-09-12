@@ -9,7 +9,6 @@ public enum CodeObjectType {
   case comprehension
 }
 
-// TODO: To struct
 public final class CodeObject {
 
   public static let moduleName = "<module>"

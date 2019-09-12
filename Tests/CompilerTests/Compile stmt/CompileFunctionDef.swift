@@ -35,7 +35,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "0"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -88,10 +88,10 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "Dish"),
-      .init(.loadConst, "(return)"),
+      .init(.loadConst, "('return')"),
       .init(.buildConstKeyMap, "1"),
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "4"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -142,7 +142,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "0"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -196,10 +196,10 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "Vegetable"),
-      .init(.loadConst, "(zucchini)"),
+      .init(.loadConst, "('zucchini')"),
       .init(.buildConstKeyMap, "1"),
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "4"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -252,7 +252,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
       .init(.loadConst, "1"),
       .init(.buildTuple, "1"), //  <-- we don't have constatnt propagation!
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "1"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -301,7 +301,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "0"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -354,7 +354,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
       .init(.loadConst, "1"),
       .init(.buildTuple, "1"), //  <-- we don't have constatnt propagation!
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "1"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -405,7 +405,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "0"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -459,10 +459,10 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "1"),
-      .init(.loadConst, "(tomato)"),
+      .init(.loadConst, "('tomato')"),
       .init(.buildConstKeyMap, "1"),
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "2"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -513,7 +513,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "0"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -564,7 +564,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "0"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),
@@ -619,7 +619,7 @@ class CompileFunctionDef: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "<code object cook>"),
-      .init(.loadConst, "cook"),
+      .init(.loadConst, "'cook'"),
       .init(.makeFunction, "0"),
       .init(.storeName, "cook"),
       .init(.loadConst, "none"),

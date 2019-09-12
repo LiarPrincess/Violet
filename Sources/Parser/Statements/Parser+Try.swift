@@ -70,7 +70,6 @@ extension Parser {
       let start = self.peek.start
       try self.advance() // except
 
-
       let kind = try self.parseExceptHandlerKind()
       try self.consumeOrThrow(.colon)
       let body = try self.suite()

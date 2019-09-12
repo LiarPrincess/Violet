@@ -11,7 +11,6 @@ public final class CodeObjectDescriptionEmitter: EmitterBase {
     self.write()
 
     self.write("// swiftlint:disable file_length")
-    self.write("// swiftlint:disable trailing_newline")
     self.write()
 
     for entity in entities {

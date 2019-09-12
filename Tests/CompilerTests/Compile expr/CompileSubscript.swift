@@ -27,7 +27,7 @@ class CompileSubscript: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
-      .init(.loadConst, "notre_dame"),
+      .init(.loadConst, "'notre_dame'"),
       .init(.binarySubscript),
       .init(.return)
     ]
@@ -126,9 +126,9 @@ class CompileSubscript: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
-      .init(.loadConst, "Quasimodo"),
-      .init(.loadConst, "Esmeralda"),
-      .init(.loadConst, "Frollo"),
+      .init(.loadConst, "'Quasimodo'"),
+      .init(.loadConst, "'Esmeralda'"),
+      .init(.loadConst, "'Frollo'"),
       .init(.buildSlice, "3"),
       .init(.binarySubscript),
       .init(.return)

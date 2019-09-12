@@ -6,7 +6,6 @@ import Parser
 
 // swiftlint:disable function_body_length
 // swiftlint:disable cyclomatic_complexity
-// swiftlint:disable file_length
 
 extension SymbolTableBuilder {
 

@@ -6,7 +6,6 @@ import Foundation
 import Core
 
 // swiftlint:disable file_length
-// swiftlint:disable trailing_newline
 
 extension VarNum: CustomStringConvertible {
   public var description: String {

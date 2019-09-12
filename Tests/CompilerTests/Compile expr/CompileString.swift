@@ -36,7 +36,7 @@ class CompileStringTests: XCTestCase, CommonCompiler {
     let expr = self.expression(.string(.literal("Alice")))
 
     let expected: [EmittedInstruction] = [
-      .init(.loadConst, "Alice"),
+      .init(.loadConst, "'Alice'"),
       .init(.return)
     ]
 
@@ -119,7 +119,7 @@ class CompileStringTests: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "alice"),
-      .init(.loadConst, "wonderland"),
+      .init(.loadConst, "'wonderland'"),
       .init(.formatValue, "with format"),
       .init(.return)
     ]
@@ -145,7 +145,7 @@ class CompileStringTests: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "alice"),
-      .init(.loadConst, "wonderland"),
+      .init(.loadConst, "'wonderland'"),
       .init(.formatValue, "str, with format"),
       .init(.return)
     ]
@@ -176,9 +176,9 @@ class CompileStringTests: XCTestCase, CommonCompiler {
     ])))
 
     let expected: [EmittedInstruction] = [
-      .init(.loadConst, "alice "),
+      .init(.loadConst, "'alice '"),
       .init(.loadName, "in"),
-      .init(.loadConst, "wonderland"),
+      .init(.loadConst, "'wonderland'"),
       .init(.formatValue, "str, with format"),
       .init(.buildString, "2"),
       .init(.return)

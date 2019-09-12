@@ -89,22 +89,10 @@ public final class FutureBuilder {
 
   private func getIndexAfterDoc(_ statements: [Statement]) -> Int {
     var index = 0
-    while index < statements.count && self.isStringLiteral(statements[index]) {
+    while index < statements.count && statements[index].isDocString {
       index += 1
     }
     return index
-  }
-
-  private func isStringLiteral(_ stmt: Statement) -> Bool {
-    guard case let StatementKind.expr(expr) = stmt.kind else {
-      return false
-    }
-
-    guard case let ExpressionKind.string(group) = expr.kind else {
-      return false
-    }
-
-    return group.isLiteral
   }
 
   /// future_check_features(PyFutureFeatures *ff, stmt_ty s, PyObject *filename)

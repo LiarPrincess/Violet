@@ -36,10 +36,10 @@ class CompileDictionary: XCTestCase, CommonCompiler {
     ]))
 
     let expected: [EmittedInstruction] = [
-      .init(.loadConst, "ariel"),
-      .init(.loadConst, "mermaid"),
-      .init(.loadConst, "eric"),
-      .init(.loadConst, "human"),
+      .init(.loadConst, "'ariel'"),
+      .init(.loadConst, "'mermaid'"),
+      .init(.loadConst, "'eric'"),
+      .init(.loadConst, "'human'"),
       .init(.buildMap,  "2"),
       .init(.return)
     ]
@@ -65,7 +65,7 @@ class CompileDictionary: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadName,  "ariel"),
-      .init(.loadConst, "mermaid"),
+      .init(.loadConst, "'mermaid'"),
       .init(.loadName,  "eric"),
       .init(.loadName,  "human"),
       .init(.buildMap,  "2"),
@@ -97,7 +97,7 @@ class CompileDictionary: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadName,  "ariel"),
-      .init(.loadConst, "mermaid"),
+      .init(.loadConst, "'mermaid'"),
       .init(.buildMap,  "1"),
       .init(.loadName,  "sea"),
       .init(.buildMapUnpack, "2"),
@@ -138,7 +138,7 @@ class CompileDictionary: XCTestCase, CommonCompiler {
 
     let expected: [EmittedInstruction] = [
       .init(.loadName,  "ariel"),
-      .init(.loadConst, "mermaid"),
+      .init(.loadConst, "'mermaid'"),
       .init(.buildMap,  "1"),
       .init(.loadName,  "sea"),
       .init(.loadName,  "land"),

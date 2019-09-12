@@ -32,11 +32,11 @@ class CompileIfExpr: XCTestCase, CommonCompiler {
     ))
 
     let expected: [EmittedInstruction] = [
-      .init(.loadConst, "touched"),
+      .init(.loadConst, "'touched'"),
       .init(.popJumpIfFalse, "8"),
-      .init(.loadConst, "genie"),
+      .init(.loadConst, "'genie'"),
       .init(.jumpAbsolute, "10"),
-      .init(.loadConst, "lamp"),
+      .init(.loadConst, "'lamp'"),
       .init(.return)
     ]
 

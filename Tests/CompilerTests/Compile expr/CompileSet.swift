@@ -19,7 +19,7 @@ class CompileSet: XCTestCase, CommonCompiler {
     ]))
 
     let expected: [EmittedInstruction] = [
-      .init(.loadConst, "ariel"),
+      .init(.loadConst, "'ariel'"),
       .init(.loadConst, "true"),
       .init(.buildSet, "2"),
       .init(.return)

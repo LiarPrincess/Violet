@@ -49,7 +49,7 @@ class CompileAssert: XCTestCase, CommonCompiler {
   func test_withMessage() {
     let stmt = self.statement(.assert(
       test: self.identifierExpr("pooh"),
-      msg:  self.expression(.string(.literal("'Stuck at Rabbits Howse'")))
+      msg:  self.expression(.string(.literal("Stuck at Rabbits Howse")))
     ))
 
     let expected: [EmittedInstruction] = [

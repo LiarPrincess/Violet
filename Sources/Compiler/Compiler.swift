@@ -139,7 +139,7 @@ public final class Compiler {
       return
     }
 
-    if let doc = self.getDocString(first), self.options.optimizationLevel < 2 {
+    if let doc = first.getDocString(), self.options.optimizationLevel < 2 {
       let __doc__ = SpecialIdentifiers.__doc__
       try self.codeObject.appendString(doc, at: first.start)
       try self.codeObject.appendStoreName(__doc__, at: first.start)
@@ -279,7 +279,6 @@ public final class Compiler {
     switch type {
     case .module: return CodeObject.moduleName
     case .lambda: return CodeObject.lambdaName
-    // TODO: comprehension names
     case .comprehension: return scope.name
     case .class,
          .function,
@@ -404,29 +403,6 @@ public final class Compiler {
   internal func error(_ kind: CompilerErrorKind,
                       location: SourceLocation) -> CompilerError {
     return CompilerError(kind, location: location)
-  }
-
-  // MARK: - DocString
-
-  /// compiler_isdocstring(stmt_ty s)
-  internal func isDocString(_ stmt: Statement) -> Bool {
-    return self.getDocString(stmt) != nil
-  }
-
-  internal func getDocString(_ stmt: Statement) -> String? {
-    // TODO: we have similiar code in future as 'isStringLiteral'
-    guard case let StatementKind.expr(expr) = stmt.kind else {
-      return nil
-    }
-
-    guard case let ExpressionKind.string(group) = expr.kind else {
-      return nil
-    }
-
-    switch group {
-    case let .literal(s): return s
-    case .formattedValue, .joined: return nil
-    }
   }
 
   // MARK: - Not implemented
