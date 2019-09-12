@@ -40,7 +40,7 @@ class STFunction: XCTestCase, CommonSymbolTable {
         args: [
           self.arg("elsa", annotation: nil, start: loc1),
           self.arg("anna", annotation: arg2Default, start: loc3)
-          ]
+        ]
       ),
       body: [
         self.statement(expr: .identifier("anna"))

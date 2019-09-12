@@ -35,8 +35,8 @@ public final class SymbolTableBuilder {
     self.enterScope(name: SymbolScopeNames.top, type: .module, node: ast)
 
     switch ast.kind {
-    case let .single(stmts),
-         let .fileInput(stmts):
+    case let .interactive(stmts),
+         let .module(stmts):
       try self.visitStatements(stmts)
     case let .expression(expr):
       try self.visitExpression(expr)

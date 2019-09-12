@@ -68,7 +68,7 @@ public final class Compiler {
 
   /// True if in interactive mode (REPL)
   internal var isInteractive: Bool {
-    return self.ast.kind.isSingle
+    return self.ast.kind.isInteractive
   }
 
   /// Stack of blocks (loop, except, finallyTry, finallyEnd)
@@ -103,13 +103,12 @@ public final class Compiler {
     self.enterScope(node: ast, type: .module)
 
     switch self.ast.kind {
-    // TODO: AST: Rename single -> interactive
-    case let .single(stmts):
+    case let .interactive(stmts):
       if self.hasAnnotations(stmts) {
         try self.codeObject.appendSetupAnnotations(at: self.ast.start)
       }
       try self.visitStatements(stmts)
-    case let .fileInput(stmts):
+    case let .module(stmts):
       try self.visitBody(stmts)
     case let .expression(expr):
       try self.visitExpression(expr)

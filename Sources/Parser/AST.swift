@@ -41,10 +41,10 @@ public struct AST: ASTNode {
 /// Top (root) node in AST.
 /// Represents the whole program.
 public enum ASTKind: Equatable {
-  /// Used for input in interactive mode.
+  /// Used for input in interactive mode (REPL).
   /// 
   /// `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
-  case single([Statement])
+  case interactive([Statement])
   /// Used for all input read from non-interactive files.
   /// 
   /// For example:
@@ -53,19 +53,19 @@ public enum ASTKind: Equatable {
   /// - when parsing a string passed to the `exec()` function;
   /// 
   /// `file_input ::=  (NEWLINE | statement)*`
-  case fileInput([Statement])
+  case module([Statement])
   /// Used for `eval()`.
   /// It ignores leading whitespace.
   /// `eval_input ::= expression_list NEWLINE*`
   case expression(Expression)
 
-  public var isSingle: Bool {
-    if case .single = self { return true }
+  public var isInteractive: Bool {
+    if case .interactive = self { return true }
     return false
   }
 
-  public var isFileInput: Bool {
-    if case .fileInput = self { return true }
+  public var isModule: Bool {
+    if case .module = self { return true }
     return false
   }
 

@@ -27,21 +27,21 @@ extension CommonSymbolTable {
   internal func createSymbolTable(forStmt stmt: Statement,
                                   file: StaticString = #file,
                                   line: UInt         = #line) -> SymbolTable? {
-    let ast = self.ast(.single([stmt]))
+    let ast = self.ast(.interactive([stmt]))
     return self.createSymbolTable(for: ast, file: file, line: line)
   }
 
   internal func createSymbolTable(forStmt kind: StatementKind,
                                   file: StaticString = #file,
                                   line: UInt         = #line) -> SymbolTable? {
-    let ast = self.ast(.single([self.statement(kind)]))
+    let ast = self.ast(.interactive([self.statement(kind)]))
     return self.createSymbolTable(for: ast, file: file, line: line)
   }
 
   internal func createSymbolTable(forStmts stmts: [Statement],
                                   file: StaticString = #file,
                                   line: UInt         = #line) -> SymbolTable? {
-    let ast = self.ast(.single(stmts))
+    let ast = self.ast(.interactive(stmts))
     return self.createSymbolTable(for: ast, file: file, line: line)
   }
 
@@ -69,21 +69,21 @@ extension CommonSymbolTable {
   internal func error(forStmt stmt: Statement,
                       file: StaticString = #file,
                       line: UInt         = #line) -> CompilerError? {
-    let ast = self.ast(.single([stmt]))
+    let ast = self.ast(.interactive([stmt]))
     return self.error(for: ast, file: file, line: line)
   }
 
   internal func error(forStmt kind: StatementKind,
                       file: StaticString = #file,
                       line: UInt         = #line) -> CompilerError? {
-    let ast = self.ast(.single([self.statement(kind)]))
+    let ast = self.ast(.interactive([self.statement(kind)]))
     return self.error(for: ast, file: file, line: line)
   }
 
   internal func error(forStmts stmts: [Statement],
                       file: StaticString = #file,
                       line: UInt         = #line) -> CompilerError? {
-    let ast = self.ast(.single(stmts))
+    let ast = self.ast(.interactive(stmts))
     return self.error(for: ast, file: file, line: line)
   }
 

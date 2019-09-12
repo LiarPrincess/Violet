@@ -79,8 +79,8 @@ public final class FutureBuilder {
 
   private func getStatements(from ast: AST) -> [Statement] {
     switch ast.kind {
-    case let .fileInput(stmts),
-         let .single(stmts):
+    case let .interactive(stmts),
+         let .module(stmts):
       return stmts
     case .expression:
       return []

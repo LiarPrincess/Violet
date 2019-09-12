@@ -11,7 +11,7 @@ import Lexer
 
 public enum ParserMode {
   /// Used for input in interactive mode.
-  case single
+  case interactive
   /// Used for all input read from non-interactive files.
   case fileInput
   /// Used for `eval()`.
@@ -99,9 +99,9 @@ public struct Parser {
 
   private mutating func parseByMode() throws -> AST {
     switch self.mode {
-    case .single:    return try self.singleInput()
+    case .interactive: return try self.interactiveInput()
     case .fileInput: return try self.fileInput()
-    case .eval:      return try self.evalInput()
+    case .eval: return try self.evalInput()
     }
   }
 
@@ -111,23 +111,23 @@ public struct Parser {
   }
 
   /// single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE
-  internal mutating func singleInput() throws -> AST {
+  internal mutating func interactiveInput() throws -> AST {
     let start = self.peek.start
 
     // TODO: test this (and other top level AST nodes)
     if self.peek.kind == .newLine {
       let end = self.peek.end
-      return AST(.single([]), start: start, end: end)
+      return AST(.interactive([]), start: start, end: end)
     }
 
     if let stmt = try self.compoundStmtOrNop() {
       let end = self.peek.end
       try self.consumeOrThrow(.newLine)
-      return AST(.single([stmt]), start: start, end: end)
+      return AST(.interactive([stmt]), start: start, end: end)
     }
 
     let stmts = try self.simpleStmt()
-    return AST(.single(Array(stmts)), start: start, end: stmts.last.end)
+    return AST(.interactive(Array(stmts)), start: start, end: stmts.last.end)
   }
 
   /// file_input: (NEWLINE | stmt)* ENDMARKER
@@ -147,7 +147,7 @@ public struct Parser {
 
     // We know that 'self.peek.kind == .eof' (because of 'while' condition)
     let end = result.last?.end ?? first.end
-    return AST(.fileInput(result), start: first.start, end: end)
+    return AST(.module(result), start: first.start, end: end)
   }
 
   /// eval_input: testlist NEWLINE* ENDMARKER

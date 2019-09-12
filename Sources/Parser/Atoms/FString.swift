@@ -222,7 +222,7 @@ internal struct FString {
 
       switch ast.kind {
       case .expression(let e):  return e
-      case .single, .fileInput: assert(false)
+      case .interactive, .module: assert(false)
       }
     } catch let error as ParserError {
       throw FStringError.parsingError(error.kind)

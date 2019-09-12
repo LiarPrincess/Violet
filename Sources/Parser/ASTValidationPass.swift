@@ -17,9 +17,9 @@ public struct ASTValidationPass: ASTPass {
   /// int PyAST_Validate(mod_ty mod)
   public func visit(_ ast: AST) throws {
     switch ast.kind {
-    case let .single(stmts):
+    case let .interactive(stmts):
       try self.visitStatements(stmts)
-    case let .fileInput(stmts):
+    case let .module(stmts):
       try self.visitStatements(stmts)
     case let .expression(expr):
       try self.visitExpression(expr)

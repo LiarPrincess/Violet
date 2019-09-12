@@ -41,10 +41,10 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- Top (root) node in AST.
 -- Represents the whole program.
 @enum ASTKind: Equatable =
-  -- Used for input in interactive mode.
+  -- Used for input in interactive mode (REPL).
   --
   -- `interactive_input ::= [stmt_list] NEWLINE | compound_stmt NEWLINE`
-  Single(stmt*)
+  Interactive(stmt*)
   -- Used for all input read from non-interactive files.
   --
   -- For example:
@@ -52,7 +52,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- - when parsing a module;
   -- - when parsing a string passed to the `exec()` function;\n
   -- `file_input ::=  (NEWLINE | statement)*`
-  | FileInput(stmt*)
+  | Module(stmt*)
   -- Used for `eval()`.
   -- It ignores leading whitespace.
   -- `eval_input ::= expression_list NEWLINE*`

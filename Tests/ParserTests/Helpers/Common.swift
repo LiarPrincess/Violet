@@ -50,7 +50,7 @@ extension Common {
                           line:    UInt         = #line) -> Statement? {
     do {
       let ast = try parser.parse()
-      guard let statements = self.matchFileInput(ast, file: file, line: line) else {
+      guard let statements = self.matchModule(ast, file: file, line: line) else {
         return nil
       }
 

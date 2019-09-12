@@ -29,7 +29,7 @@ extension CommonCompiler {
                         optimizationLevel: UInt8 = 0,
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.fileInput([stmt]))
+    let ast = self.ast(.module([stmt]))
     return self.compile(ast: ast,
                         optimizationLevel: optimizationLevel,
                         file: file,
@@ -39,14 +39,14 @@ extension CommonCompiler {
   internal func compile(stmt kind: StatementKind,
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.fileInput([self.statement(kind)]))
+    let ast = self.ast(.module([self.statement(kind)]))
     return self.compile(ast: ast, file: file, line: line)
   }
 
   internal func compile(stmts: [Statement],
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.fileInput(stmts))
+    let ast = self.ast(.module(stmts))
     return self.compile(ast: ast, file: file, line: line)
   }
 

@@ -19,12 +19,12 @@ internal protocol ASTMatcher { }
 
 extension ASTMatcher {
 
-  internal func matchSingle(_ ast: AST,
-                            file: StaticString = #file,
-                            line: UInt         = #line) ->
+  internal func matchInteractive(_ ast: AST,
+                                 file: StaticString = #file,
+                                 line: UInt         = #line) ->
   ([Statement])? {
 
-    if case let ASTKind.single(value0) = ast.kind {
+    if case let ASTKind.interactive(value0) = ast.kind {
       return (value0)
     }
 
@@ -32,12 +32,12 @@ extension ASTMatcher {
     return nil
   }
 
-  internal func matchFileInput(_ ast: AST,
-                               file: StaticString = #file,
-                               line: UInt         = #line) ->
+  internal func matchModule(_ ast: AST,
+                            file: StaticString = #file,
+                            line: UInt         = #line) ->
   ([Statement])? {
 
-    if case let ASTKind.fileInput(value0) = ast.kind {
+    if case let ASTKind.module(value0) = ast.kind {
       return (value0)
     }
 
