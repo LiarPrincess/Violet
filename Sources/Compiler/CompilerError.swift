@@ -92,6 +92,7 @@ public enum CompilerErrorKind: Equatable {
   /// 'return' with value in async generator
   case returnWithValueInAsyncGenerator
 
+  /// Unexpected import all
   case unexpectedStarImport
 
   /// 'break' outside loop
@@ -114,24 +115,110 @@ public enum CompilerErrorKind: Equatable {
   case awaitOutsideAsyncFunction
 }
 
-// TODO: surprisingly appropriate; `fromFutureImportBraces`
-private let letItGo = """
-Let it go, let it go
-Can't hold it back anymore
-Let it go, let it go
-Turn away and slam the door!
+extension CompilerErrorKind: CustomStringConvertible {
+  public var description: String {
+    switch self {
 
-I don't care
-What they're going to say
-Let the storm rage on
-The cold never bothered me anyway!
+    case let .globalParam(name):
+      return "Name '\(name)' is parameter and global"
+    case let .globalAfterAssign(name):
+      return "Name '\(name)' is assigned to before global declaration"
+    case let .globalAfterUse(name):
+      return "Name '\(name)' is used prior to global declaration"
+    case let .globalAnnot(name):
+      return "Annotated name '\(name)' can't be global"
 
-It's funny how some distance
-Makes everything seem small
-And the fears that once controlled me
-Can't get to me at all!
+    case let .nonlocalParam(name):
+      return "Name '\(name)' is parameter and nonlocal"
+    case let .nonlocalAfterAssign(name):
+      return "Name '\(name)' is assigned to before nonlocal declaration"
+    case let .nonlocalAfterUse(name):
+      return "Name '\(name)' is used prior to nonlocal declaration"
+    case let .nonlocalAnnot(name):
+      return "Annotated name '\(name)' can't be nonlocal"
+    case let .nonlocalAtModuleLevel(name):
+      return "'nonlocal' declaration of '\(name)' not allowed at module level"
+    case let .nonlocalWithoutBinding(name):
+      return "No binding for nonlocal '\(name)' found"
 
-It's time to see what I can do
-To test the limits and break through
-No right, no wrong, no rules for me I'm free!
-"""
+    case .bothGlobalAndNonlocal(let name):
+      return "Name '\(name)' is nonlocal and global"
+    case .duplicateArgument(let name):
+      return "Duplicate argument '\(name)' in function definition"
+    case .nonModuleImportStar:
+      return "Import * only allowed at module level"
+
+    case .fromFutureImportBraces:
+      // surprisingly appropriate:
+      return """
+      Let it go, let it go
+      Can't hold it back anymore
+      Let it go, let it go
+      Turn away and slam the door!
+
+      I don't care
+      What they're going to say
+      Let the storm rage on
+      The cold never bothered me anyway!
+
+      It's funny how some distance
+      Makes everything seem small
+      And the fears that once controlled me
+      Can't get to me at all!
+
+      It's time to see what I can do
+      To test the limits and break through
+      No right, no wrong, no rules for me I'm free!
+      """
+    case .undefinedFutureFeature(let name):
+      return "future feature '\(name)' is not defined"
+    case .lateFuture:
+      return "`from __future__ imports` must occur at the beginning of the file"
+      // MARK: - Compiler
+
+    case .multipleStarredInAssignmentExpressions:
+      return "Two starred expressions in assignment"
+    case .tooManyExpressionsInStarUnpackingAssignment:
+      return "Too many expressions in star-unpacking assignment"
+    case .starredAssignmentNotListOrTuple:
+      return "Starred assignment target must be in a list or tuple"
+    case .invalidTargetForAugmentedAssignment:
+      return "Invalid target for augmented assignment"
+    case .invalidTargetForAnnotatedAssignment:
+      return "Invalid target for annotated assignment"
+
+    case .invalidStarredExpression:
+      return "Can't use starred expression here"
+
+    case .extendedSliceNestedInsideExtendedSlice:
+      return "Extended slice invalid in nested slice"
+
+    case .returnOutsideFunction:
+      return "'return' outside function"
+    case .returnWithValueInAsyncGenerator:
+      return "'return' with value in async generator"
+
+    case .unexpectedStarImport:
+      return "Unexpected import all"
+
+    case .breakOutsideLoop:
+      return "'break' outside loop"
+    case .continueOutsideLoop:
+      return "'continue' not properly in loop"
+    case .continueInsideFinally:
+      return "'continue' not supported inside 'finally' clause"
+
+    case .defaultExceptNotLast:
+      return "default 'except:' must be last"
+
+    case .yieldOutsideFunction:
+      return "'yield' outside function"
+    case .yieldFromInsideAsyncFunction:
+      return "'yield from' inside async function"
+    case .awaitOutsideFunction:
+      return "'await' outside function"
+    case .awaitOutsideAsyncFunction:
+      return "'await' outside async function"
+    }
+  }
+}
