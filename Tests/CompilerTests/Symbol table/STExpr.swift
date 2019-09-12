@@ -67,7 +67,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// f'{elsa!r:^30}'
   func test_string_formattedValue() {
-    let value = self.expression(.identifier("elsa"), start: loc1)
+    let value = self.identifierExpr("elsa", start: loc1)
     let kind = ExpressionKind.string(
       .formattedValue(value, conversion: .repr, spec: "^30")
     )
@@ -88,7 +88,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// f'let {it!r:^30} go'
   func test_string_joined() {
-    let value = self.expression(.identifier("it"), start: loc1)
+    let value = self.identifierExpr("it", start: loc1)
     let kind = ExpressionKind.string(
       .joined([
         .literal("let "),
@@ -118,8 +118,10 @@ class STExpr: XCTestCase, CommonSymbolTable {
     let operators: [UnaryOperator] = [.invert, .not, .plus, .minus]
 
     for op in operators {
-      let right = self.expression(.identifier("elsa"), start: loc1)
-      let kind = ExpressionKind.unaryOp(op, right: right)
+      let kind = ExpressionKind.unaryOp(
+        op,
+        right: self.identifierExpr("elsa", start: loc1)
+      )
 
       if let table = self.createSymbolTable(forExpr: kind) {
         let top = table.top
@@ -145,9 +147,11 @@ class STExpr: XCTestCase, CommonSymbolTable {
     ]
 
     for op in operators {
-      let left = self.expression(.identifier("anna"), start: loc1)
-      let right = self.expression(.identifier("elsa"), start: loc2)
-      let kind = ExpressionKind.binaryOp(op, left: left, right: right)
+      let kind = ExpressionKind.binaryOp(
+        op,
+        left: self.identifierExpr("anna", start: loc1),
+        right: self.identifierExpr("elsa", start: loc2)
+      )
 
       if let table = self.createSymbolTable(forExpr: kind) {
         let top = table.top
@@ -173,9 +177,11 @@ class STExpr: XCTestCase, CommonSymbolTable {
     let operators: [BooleanOperator] = [.and, .or]
 
     for op in operators {
-      let left = self.expression(.identifier("anna"), start: loc1)
-      let right = self.expression(.identifier("elsa"), start: loc2)
-      let kind = ExpressionKind.boolOp(op, left: left, right: right)
+      let kind = ExpressionKind.boolOp(
+        op,
+        left: self.identifierExpr("anna", start: loc1),
+        right: self.identifierExpr("elsa", start: loc2)
+      )
 
       if let table = self.createSymbolTable(forExpr: kind) {
         let top = table.top
@@ -205,8 +211,8 @@ class STExpr: XCTestCase, CommonSymbolTable {
     ]
 
     for op in operators {
-      let left = self.expression(.identifier("anna"), start: loc1)
-      let right = self.expression(.identifier("elsa"), start: loc2)
+      let left = self.identifierExpr("anna", start: loc1)
+      let right = self.identifierExpr("elsa", start: loc2)
 
       let element = ComparisonElement(op: op, right: right)
       let kind = ExpressionKind.compare(left: left,
@@ -235,9 +241,12 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// (anna, elsa)
   func test_collections_tuple() {
-    let left = self.expression(.identifier("anna"), start: loc1)
-    let right = self.expression(.identifier("elsa"), start: loc2)
-    let kind = ExpressionKind.tuple([left, right])
+    let kind = ExpressionKind.tuple(
+      [
+        self.identifierExpr("anna", start: loc1),
+        self.identifierExpr("elsa", start: loc2)
+      ]
+    )
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
@@ -259,9 +268,12 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// [anna, elsa]
   func test_collections_list() {
-    let left = self.expression(.identifier("anna"), start: loc1)
-    let right = self.expression(.identifier("elsa"), start: loc2)
-    let kind = ExpressionKind.list([left, right])
+    let kind = ExpressionKind.list(
+      [
+        self.identifierExpr("anna", start: loc1),
+        self.identifierExpr("elsa", start: loc2)
+      ]
+    )
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
@@ -283,9 +295,12 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// {anna, elsa}
   func test_collections_set() {
-    let left = self.expression(.identifier("anna"), start: loc1)
-    let right = self.expression(.identifier("elsa"), start: loc2)
-    let kind = ExpressionKind.set([left, right])
+    let kind = ExpressionKind.set(
+      [
+        self.identifierExpr("anna", start: loc1),
+        self.identifierExpr("elsa", start: loc2)
+      ]
+    )
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
@@ -307,13 +322,14 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// {anna:elsa, **snowgies}
   func test_collections_dictionary() {
-    let key = self.expression(.identifier("anna"), start: loc1)
-    let value = self.expression(.identifier("elsa"), start: loc2)
-    let unpack = self.expression(.identifier("snowgies"), start: loc3)
-
     let kind = ExpressionKind.dictionary([
-      .keyValue(key: key, value: value),
-      .unpacking(unpack)
+      .keyValue(
+        key: self.identifierExpr("anna", start: loc1),
+        value: self.identifierExpr("elsa", start: loc2)
+      ),
+      .unpacking(
+        self.identifierExpr("snowgies", start: loc3)
+      )
     ])
 
     if let table = self.createSymbolTable(forExpr: kind) {
@@ -342,8 +358,8 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// frozen.elsa
   func test_trailers_attribute() {
-    let obj = self.expression(.identifier("frozen"), start: loc1)
-    let kind = ExpressionKind.attribute(obj, name: "elsa")
+    let object = self.identifierExpr("frozen", start: loc1)
+    let kind = ExpressionKind.attribute(object, name: "elsa")
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
@@ -361,12 +377,12 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// frozen[elsa]
   func test_trailers_subscript_index() {
-    let obj = self.expression(.identifier("frozen"), start: loc1)
-    let index = self.expression(.identifier("elsa"), start: loc2)
-
-    let kind = ExpressionKind.subscript(obj, slice: self.slice(
-      .index(index)
-    ))
+    let kind = ExpressionKind.subscript(
+      self.identifierExpr("frozen", start: loc1),
+      slice: self.slice(
+        .index(self.identifierExpr("elsa", start: loc2))
+      )
+    )
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
@@ -388,14 +404,16 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// frozen[elsa:anna:snowgies]
   func test_trailers_subscript_slice() {
-    let obj = self.expression(.identifier("frozen"), start: loc1)
-    let lower = self.expression(.identifier("elsa"), start: loc2)
-    let upper = self.expression(.identifier("anna"), start: loc3)
-    let step = self.expression(.identifier("snowgies"), start: loc4)
-
-    let kind = ExpressionKind.subscript(obj, slice: self.slice(
-      .slice(lower: lower, upper: upper, step: step)
-    ))
+    let kind = ExpressionKind.subscript(
+       self.expression(.identifier("frozen"), start: loc1),
+       slice: self.slice(
+        .slice(
+          lower: self.identifierExpr("elsa", start: loc2),
+          upper: self.identifierExpr("anna", start: loc3),
+          step: self.identifierExpr("snowgies", start: loc4)
+        )
+      )
+    )
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
@@ -427,7 +445,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// *frozen
   func test_starred() {
-    let expr = self.expression(.identifier("frozen"), start: loc1)
+    let expr = self.identifierExpr("frozen", start: loc1)
     let kind = ExpressionKind.starred(expr)
 
     if let table = self.createSymbolTable(forExpr: kind) {
@@ -448,7 +466,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// await elsa
   func test_await() {
-    let right = self.expression(.identifier("elsa"), start: loc1)
+    let right = self.identifierExpr("elsa", start: loc1)
     let kind = ExpressionKind.await(right)
 
     if let table = self.createSymbolTable(forExpr: kind) {
@@ -481,7 +499,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// yield elsa
   func test_yield_value() {
-    let right = self.expression(.identifier("elsa"), start: loc1)
+    let right = self.identifierExpr("elsa", start: loc1)
     let kind = ExpressionKind.yield(right)
 
     if let table = self.createSymbolTable(forExpr: kind) {
@@ -500,7 +518,7 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// yield from elsa
   func test_yieldFrom() {
-    let right = self.expression(.identifier("elsa"), start: loc1)
+    let right = self.identifierExpr("elsa", start: loc1)
     let kind = ExpressionKind.yieldFrom(right)
 
     if let table = self.createSymbolTable(forExpr: kind) {
@@ -521,11 +539,11 @@ class STExpr: XCTestCase, CommonSymbolTable {
 
   /// snow if elsa else anna
   func test_ifExpression() {
-    let body = self.expression(.identifier("snow"), start: loc1)
-    let test = self.expression(.identifier("elsa"), start: loc2)
-    let orElse = self.expression(.identifier("anna"), start: loc3)
-
-    let kind = ExpressionKind.ifExpression(test: test, body: body, orElse: orElse)
+    let kind = ExpressionKind.ifExpression(
+      test: self.identifierExpr("elsa", start: loc2),
+      body: self.identifierExpr("snow", start: loc1),
+      orElse: self.identifierExpr("anna", start: loc3)
+    )
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top
@@ -562,13 +580,18 @@ class STExpr: XCTestCase, CommonSymbolTable {
   ///    anna - referenced, global,
   /// ```
   func test_call_args() {
-    let f = self.expression(.identifier("let_it_go"), start: loc1)
-    let arg = self.expression(.identifier("elsa"), start: loc2)
-
-    let kwArg = self.expression(.identifier("anna"), start: loc3)
-    let kw = self.keyword(name: "who", value: kwArg)
-
-    let kind = ExpressionKind.call(function: f, args: [arg], keywords: [kw])
+    let kind = ExpressionKind.call(
+      function: self.identifierExpr("let_it_go", start: loc1),
+      args: [
+        self.identifierExpr("elsa", start: loc2)
+      ],
+      keywords: [
+        self.keyword(
+          name: "who",
+          value: self.identifierExpr("anna", start: loc3)
+        )
+      ]
+    )
 
     if let table = self.createSymbolTable(forExpr: kind) {
       let top = table.top

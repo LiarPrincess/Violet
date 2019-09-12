@@ -32,18 +32,21 @@ class STFunction: XCTestCase, CommonSymbolTable {
   ///     anna - referenced, parameter, local,
   /// ```
   func test_arguments_positional() {
-    let arg1 = self.arg("elsa", annotation: nil, start: loc1)
+    let arg2Default = self.identifierExpr("sister", start: loc2)
 
-    let arg2Default = self.expression(.identifier("sister"), start: loc2)
-    let arg2 = self.arg("anna", annotation: arg2Default, start: loc3)
-
-    let kind = self.functionDefStmt(
+    let stmt = self.functionDef(
       name: "let_it_go",
-      args: self.arguments(args: [arg1, arg2]),
-      body: self.statement(expr: .identifier("anna"))
+      args: self.arguments(
+        args: [
+          self.arg("elsa", annotation: nil, start: loc1),
+          self.arg("anna", annotation: arg2Default, start: loc3)
+          ]
+      ),
+      body: [
+        self.statement(expr: .identifier("anna"))
+      ],
+      start: loc4
     )
-
-    let stmt = self.statement(kind, start: loc4)
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
@@ -105,19 +108,19 @@ class STFunction: XCTestCase, CommonSymbolTable {
   func test_arguments_vararg_keywordOnly() {
     let vararg = self.arg("elsa", annotation: nil, start: loc1)
 
-    let argDefault = self.expression(.identifier("sister"), start: loc2)
+    let argDefault = self.identifierExpr("sister", start: loc2)
     let arg = self.arg("anna", annotation: argDefault, start: loc3)
 
-    let kind = self.functionDefStmt(
+    let stmt = self.functionDef(
       name: "let_it_go",
       args: self.arguments(
         vararg: .named(vararg),
         kwOnlyArgs: [arg],
-        kwOnlyDefaults: [argDefault]),
-      body: self.statement(expr: .identifier("anna"))
+        kwOnlyDefaults: [argDefault]
+      ),
+      body: [self.statement(expr: .identifier("anna"))],
+      start: loc4
     )
-
-    let stmt = self.statement(kind, start: loc4)
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
@@ -177,13 +180,12 @@ class STFunction: XCTestCase, CommonSymbolTable {
   func test_arguments_kwarg() {
     let arg = self.arg("elsa", annotation: nil, start: loc1)
 
-    let kind = self.functionDefStmt(
+    let stmt = self.functionDef(
       name: "let_it_go",
       args: self.arguments(kwarg: arg),
-      body: self.statement(expr: .identifier("elsa"))
+      body: [self.statement(expr: .identifier("elsa"))],
+      start: loc4
     )
-
-    let stmt = self.statement(kind, start: loc4)
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
@@ -231,13 +233,12 @@ class STFunction: XCTestCase, CommonSymbolTable {
   ///   symbols:
   /// ```
   func test_arguments_async() {
-    let kind = self.asyncFunctionDefStmt(
+    let stmt = self.asyncFunctionDef(
       name: "let_it_go",
       args: self.arguments(),
-      body: self.statement(.pass)
+      body: self.statement(.pass),
+      start: loc4
     )
-
-    let stmt = self.statement(kind, start: loc4)
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
@@ -286,16 +287,17 @@ class STFunction: XCTestCase, CommonSymbolTable {
   /// ```
   func test_returns() {
     let arg = self.arg("elsa", annotation: nil, start: loc1)
-    let ret = self.expression(.identifier("Int"), start: loc2)
+    let ret = self.identifierExpr("Int", start: loc2)
 
-    let kind = self.functionDefStmt(
+    let stmt = self.functionDef(
       name: "let_it_go",
       args: self.arguments(args: [arg]),
-      body: self.statement(expr: .identifier("elsa")),
-      returns: ret
+      body: [
+        self.statement(expr: .identifier("elsa"))
+      ],
+      returns: ret,
+      start: loc4
     )
-
-    let stmt = self.statement(kind, start: loc4)
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
@@ -345,26 +347,26 @@ class STFunction: XCTestCase, CommonSymbolTable {
   ///       elsa - free,
   /// ```
   func test_nonlocal() {
-    let assign = self.assignStmt(
-      target: self.expression(.identifier("elsa"), start: loc1),
+    let assign = self.assign(
+      target: [self.identifierExpr("elsa", start: loc1)],
       value: self.expression(.int(BigInt(1)))
     )
 
-    let inner = self.functionDefStmt(
+    let inner = self.functionDef(
       name: "sing",
       args: self.arguments(),
-      body: self.nonlocalStmt(name: "elsa", location: loc2)
+      body: [self.nonlocal(name: "elsa", start: loc2)],
+      start: loc3
     )
-    let innerStmt = self.statement(inner, start: loc3)
 
-    let outer = self.functionDefStmt(
+    let outer = self.functionDef(
       name: "let_it_go",
       args: self.arguments(),
-      body: [assign, innerStmt]
+      body: [assign, inner],
+      start: loc4
     )
-    let outerStmt = self.statement(outer, start: loc4)
 
-    if let table = self.createSymbolTable(forStmt: outerStmt) {
+    if let table = self.createSymbolTable(forStmt: outer) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -418,21 +420,25 @@ class STFunction: XCTestCase, CommonSymbolTable {
   ///     nonlocal elsa
   ///     global elsa
   func test_nonlocal_thenGlobal_throws() {
-    let stmt1 = self.assignStmt(
-      target: self.expression(.identifier("elsa")),
+    let stmt1 = self.assign(
+      target: [self.identifierExpr("elsa")],
       value: self.expression(.int(BigInt(1)))
     )
 
-    let stmt2 = self.nonlocalStmt(name: "elsa", location: loc1)
-    let stmt3 = self.globalStmt(name: "elsa")
+    let stmt2 = self.nonlocal(name: "elsa", start: loc1)
+    let stmt3 = self.global(name: "elsa")
 
-    let inner = self.functionDefStmt(name: "sing",
-                                     args: self.arguments(),
-                                     body: [stmt2, stmt3])
+    let inner = self.functionDef(
+      name: "sing",
+      args: self.arguments(),
+      body: [stmt2, stmt3]
+    )
 
-    let outer = self.functionDefStmt(name: "let_it_go",
-                                     args: self.arguments(),
-                                     body: [stmt1, self.statement(inner)])
+    let outer = self.functionDef(
+      name: "let_it_go",
+      args: self.arguments(),
+      body: [stmt1, inner]
+    )
 
     if let error = self.error(forStmt: outer) {
       XCTAssertEqual(error.kind, .bothGlobalAndNonlocal("elsa"))
@@ -446,21 +452,21 @@ class STFunction: XCTestCase, CommonSymbolTable {
   ///     global elsa
   ///     nonlocal elsa
   func test_global_thenNonlocal_throws() {
-    let stmt1 = self.assignStmt(
-      target: self.expression(.identifier("elsa")),
+    let stmt1 = self.assign(
+      target: [self.identifierExpr("elsa")],
       value: self.expression(.int(BigInt(1)))
     )
 
-    let stmt2 = self.globalStmt(name: "elsa", location: loc1)
-    let stmt3 = self.nonlocalStmt(name: "elsa")
+    let stmt2 = self.global(name: "elsa", start: loc1)
+    let stmt3 = self.nonlocal(name: "elsa")
 
-    let inner = self.functionDefStmt(name: "sing",
-                                     args: self.arguments(),
-                                     body: [stmt2, stmt3])
+    let inner = self.functionDef(name: "sing",
+                                 args: self.arguments(),
+                                 body: [stmt2, stmt3])
 
-    let outer = self.functionDefStmt(name: "let_it_go",
-                                     args: self.arguments(),
-                                     body: [stmt1, self.statement(inner)])
+    let outer = self.functionDef(name: "let_it_go",
+                                 args: self.arguments(),
+                                 body: [stmt1, inner])
 
     if let error = self.error(forStmt: outer) {
       XCTAssertEqual(error.kind, .bothGlobalAndNonlocal("elsa"))
@@ -473,11 +479,13 @@ class STFunction: XCTestCase, CommonSymbolTable {
   /// def let_it_go():
   ///   nonlocal elsa
   func test_nonlocal_withoutBinding_throws() {
-    let stmt = self.nonlocalStmt(name: "elsa", location: loc1)
-
-    let outer = self.functionDefStmt(name: "let_it_go",
-                                     args: self.arguments(),
-                                     body: stmt)
+    let outer = self.functionDef(
+      name: "let_it_go",
+      args: self.arguments(),
+      body: [
+        self.nonlocal(name: "elsa", start: loc1)
+      ]
+    )
 
     if let error = self.error(forStmt: outer) {
       XCTAssertEqual(error.kind, .nonlocalWithoutBinding("elsa"))
@@ -491,9 +499,12 @@ class STFunction: XCTestCase, CommonSymbolTable {
     let arg0 = self.arg("elsa", annotation: nil)
     let arg1 = self.arg("elsa", annotation: nil, start: loc1)
 
-    let def = self.functionDefStmt(
+    let def = self.functionDef(
       name: "let_it_go",
-      args: self.arguments(args: [arg0, arg1])
+      args: self.arguments(
+        args: [arg0, arg1]
+      ),
+      body: [self.statement(.pass)]
     )
 
     if let error = self.error(forStmt: def) {
@@ -506,9 +517,13 @@ class STFunction: XCTestCase, CommonSymbolTable {
     let arg0 = self.arg("elsa", annotation: nil)
     let arg1 = self.arg("elsa", annotation: nil, start: loc1)
 
-    let def = self.functionDefStmt(
+    let def = self.functionDef(
       name: "let_it_go",
-      args: self.arguments(args: [arg0], vararg: .named(arg1))
+      args: self.arguments(
+        args: [arg0],
+        vararg: .named(arg1)
+      ),
+      body: [self.statement(.pass)]
     )
 
     if let error = self.error(forStmt: def) {
@@ -521,9 +536,13 @@ class STFunction: XCTestCase, CommonSymbolTable {
     let arg0 = self.arg("elsa", annotation: nil)
     let arg1 = self.arg("elsa", annotation: nil, start: loc1)
 
-    let def = self.functionDefStmt(
+    let def = self.functionDef(
       name: "let_it_go",
-      args: self.arguments(vararg: .named(arg0), kwOnlyArgs: [arg1])
+      args: self.arguments(
+        vararg: .named(arg0),
+        kwOnlyArgs: [arg1]
+      ),
+      body: [self.statement(.pass)]
     )
 
     if let error = self.error(forStmt: def) {
@@ -536,9 +555,13 @@ class STFunction: XCTestCase, CommonSymbolTable {
     let arg0 = self.arg("elsa", annotation: nil)
     let arg1 = self.arg("elsa", annotation: nil, start: loc1)
 
-    let def = self.functionDefStmt(
+    let def = self.functionDef(
       name: "let_it_go",
-      args: self.arguments(kwOnlyArgs: [arg0], kwarg: arg1)
+      args: self.arguments(
+        kwOnlyArgs: [arg0],
+        kwarg: arg1
+      ),
+      body: [self.statement(.pass)]
     )
 
     if let error = self.error(forStmt: def) {

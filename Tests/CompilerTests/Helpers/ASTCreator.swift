@@ -3,8 +3,6 @@ import Parser
 
 // swiftlint:disable file_length
 
-// TODO: Clean this
-
 /// Create AST (without locations, because we don't need them most of the time).
 internal protocol ASTCreator { }
 
@@ -39,165 +37,77 @@ extension ASTCreator {
     return Statement(stmtKind, start: start ?? self.start, end: end)
   }
 
-  internal func forStmt(target: Expression,
-                        iter:   Expression,
-                        body:   Expression,
-                        orElse: Expression) -> Statement {
-
-    let b = self.statement(.expr(body))
-    let e = self.statement(.expr(orElse))
-
-    let kind = StatementKind.for(target: target,
-                                 iter: iter,
-                                 body: NonEmptyArray(first: b),
-                                 orElse: [e])
-    return self.statement(kind)
-  }
-
   internal func `for`(target: Expression,
                       iter:   Expression,
                       body:   [Statement],
                       orElse: [Statement]) -> Statement {
-
-    assert(body.any)
-    return self.statement(.for(
-      target: target,
-      iter: iter,
-      body: NonEmptyArray(first: body[0], rest: body[1...]),
-      orElse: orElse
-    ))
+    return self.statement(
+      .for(
+        target: target,
+        iter: iter,
+        body: self.toNonEmptyArray(body),
+        orElse: orElse
+      )
+    )
   }
 
   internal func delete(_ exprs: Expression...) -> Statement {
-    assert(exprs.any)
-
-    let kind = StatementKind.delete(NonEmptyArray(
-      first: exprs[0],
-      rest: Array(exprs.dropFirst())
-    ))
-
-    return self.statement(kind)
-  }
-
-  internal func tryStmt(body: Expression,
-                        handlers: [ExceptHandler],
-                        orElse: Expression,
-                        finalBody: Expression) -> Statement {
-
-    let kind = StatementKind.try(
-      body: NonEmptyArray(first: self.statement(.expr(body))),
-      handlers: handlers,
-      orElse:   [self.statement(.expr(orElse))],
-      finally:  [self.statement(.expr(finalBody))]
-    )
-    return self.statement(kind)
+    return self.statement(.delete(self.toNonEmptyArray(exprs)))
   }
 
   internal func `try`(body: Expression,
                       handlers:  [ExceptHandler],
                       orElse:    [Expression],
                       finalBody: [Expression]) -> Statement {
-
-    let kind = StatementKind.try(
-      body: NonEmptyArray(first: self.statement(.expr(body))),
-      handlers: handlers,
-      orElse:   self.toStatements(orElse),
-      finally:  self.toStatements(finalBody)
+    return self.statement(
+      .try(
+        body: NonEmptyArray(first: self.statement(.expr(body))),
+        handlers: handlers,
+        orElse:   self.toStatements(orElse),
+        finally:  self.toStatements(finalBody)
+      )
     )
-    return self.statement(kind)
   }
 
   internal func with(items: [WithItem], body: [Statement]) -> Statement {
-    return self.statement(.with(
-      items: self.toNonEmptyArray(items),
-      body: self.toNonEmptyArray(body)
-    ))
-  }
-
-  private func toStatements(_ exprs: [Expression]) -> [Statement] {
-    return exprs.map { self.statement(.expr($0)) }
-  }
-
-  private func toNonEmptyArray<E>(_ array: [E]) -> NonEmptyArray<E> {
-    assert(array.any)
-    return NonEmptyArray(
-      first: array[0],
-      rest: Array(array.dropFirst())
+    return self.statement(
+      .with(
+        items: self.toNonEmptyArray(items),
+        body: self.toNonEmptyArray(body)
+      )
     )
-  }
-
-  internal func whileStmt(test: Expression,
-                          body: Expression,
-                          orElse: Expression?) -> Statement {
-
-    let b = self.statement(.expr(body))
-    let e = self.statement(orElse.map { .expr($0) } ?? .pass)
-
-    let kind = StatementKind.while(test: test,
-                                   body: NonEmptyArray(first: b),
-                                   orElse: [e])
-
-    return self.statement(kind)
   }
 
   internal func `while`(test: Expression,
                         body: [Statement],
                         orElse: [Statement]) -> Statement {
-    assert(body.any)
-    let b = NonEmptyArray(first: body[0], rest: body[1...])
-    let kind = StatementKind.while(test: test,
-                                   body: b,
-                                   orElse: orElse)
-
-    return self.statement(kind)
+    return self.statement(
+      .while(
+        test: test,
+        body: self.toNonEmptyArray(body),
+        orElse: orElse
+      )
+    )
   }
 
-  internal func ifStmt(test: Expression,
-                       body: Expression,
-                       orElse: Expression) -> Statement {
-
-    let b = self.statement(.expr(body))
-    let e = self.statement(.expr(orElse))
-
-    let kind = StatementKind.if(test: test,
-                                body: NonEmptyArray(first: b),
-                                orElse: [e])
-
-    return self.statement(kind)
-  }
-
-  internal func functionDefStmt(name: String,
-                                args: Arguments,
-                                body: Statement? = nil,
-                                decorators: [Expression] = [],
-                                returns: Expression? = nil) -> StatementKind {
-    let b = body ?? self.statement(.pass)
-    return StatementKind.functionDef(name: name,
-                                     args: args,
-                                     body: NonEmptyArray(first: b),
-                                     decorators: decorators,
-                                     returns: returns)
-  }
-
-  internal func functionDefStmt(name: String,
-                                args: Arguments,
-                                body: [Statement],
-                                decorators: [Expression] = [],
-                                returns: Expression? = nil) -> StatementKind {
-    assert(body.any)
-    let arr = NonEmptyArray(first: body[0], rest: body[1...])
-    return StatementKind.functionDef(name: name,
-                                     args: args,
-                                     body: arr,
-                                     decorators: decorators,
-                                     returns: returns)
+  internal func `if`(test: Expression,
+                     body: Expression,
+                     orElse: Expression) -> Statement {
+    return self.statement(
+      .if(
+        test: test,
+        body: NonEmptyArray(first: self.statement(.expr(body))),
+        orElse: [self.statement(.expr(orElse))]
+      )
+    )
   }
 
   internal func functionDef(name: String,
                             args: Arguments,
                             body: [Statement],
                             decorators: [Expression] = [],
-                            returns: Expression? = nil) -> Statement {
+                            returns: Expression? = nil,
+                            start: SourceLocation? = nil) -> Statement {
     return self.statement(
       .functionDef(
         name: name,
@@ -205,112 +115,95 @@ extension ASTCreator {
         body: self.toNonEmptyArray(body),
         decorators: decorators,
         returns: returns
-      )
+      ),
+      start: start ?? self.start
     )
   }
 
-  internal func identifierExpr(_ value: String) -> Expression {
-    return self.expression(.identifier(value))
-  }
-
-  internal func identifierStmt(_ value: String) -> Statement {
-    return self.statement(expr: .identifier(value))
-  }
-
-  internal func asyncFunctionDefStmt(name: String,
-                                     args: Arguments,
-                                     body: Statement? = nil,
-                                     decorators: [Expression] = [],
-                                     returns: Expression? = nil) -> StatementKind {
+  internal func asyncFunctionDef(name: String,
+                                 args: Arguments,
+                                 body: Statement? = nil,
+                                 decorators: [Expression] = [],
+                                 returns: Expression? = nil,
+                                 start: SourceLocation? = nil) -> Statement {
     let b = body ?? self.statement(.pass)
-    return StatementKind.asyncFunctionDef(name: name,
-                                          args: args,
-                                          body: NonEmptyArray(first: b),
-                                          decorators: decorators,
-                                          returns: returns)
-  }
-
-  internal func importStmt(names: [Alias]) -> StatementKind {
-    assert(names.any)
-    let array = NonEmptyArray(first: names[0], rest: names[1...])
-    return StatementKind.import(array)
+    return self.statement(
+      .asyncFunctionDef(
+        name: name,
+        args: args,
+        body: NonEmptyArray(first: b),
+        decorators: decorators,
+        returns: returns
+      ),
+      start: start ?? self.start
+    )
   }
 
   internal func `import`(_ aliasses: Alias...) -> Statement {
-    assert(aliasses.any)
-
-    let kind = StatementKind.import(NonEmptyArray(
-      first: aliasses[0],
-      rest: Array(aliasses.dropFirst())
-    ))
-
-    return self.statement(kind)
+    return self.statement(.import(self.toNonEmptyArray(aliasses)))
   }
 
-  internal func importFromStmt(moduleName: String?,
-                               names: [Alias],
-                               level: UInt8 = 0,
-                               start: SourceLocation? = nil) -> Statement {
-    assert(names.any)
-    let array = NonEmptyArray(first: names[0], rest: names[1...])
-    let kind = StatementKind.importFrom(moduleName: moduleName,
-                                        names: array,
-                                        level: level)
-
-    return self.statement(kind, start: start)
-  }
-
-  internal func globalStmt(name: String,
-                           location: SourceLocation? = nil) -> Statement {
-    let kind = StatementKind.global(NonEmptyArray(first: name))
-    return self.statement(kind, start: location ?? self.start)
-  }
-
-  internal func nonlocalStmt(name: String,
-                             location: SourceLocation? = nil) -> Statement {
-    let kind = StatementKind.nonlocal(NonEmptyArray(first: name))
-    return self.statement(kind, start: location ?? self.start)
-  }
-
-  internal func assignStmt(target: Expression,
-                           value: Expression,
-                           location: SourceLocation? = nil) -> Statement {
-    let kind = StatementKind.assign(
-      targets: NonEmptyArray(first: target),
-      value: value
+  internal func importFrom(moduleName: String?,
+                           names: [Alias],
+                           level: UInt8,
+                           start: SourceLocation? = nil) -> Statement {
+    return self.statement(
+      .importFrom(
+        moduleName: moduleName,
+        names: self.toNonEmptyArray(names),
+        level: level
+      ),
+      start: start
     )
-    return self.statement(kind, start: location ?? self.start)
+  }
+
+  internal func global(name: String, start: SourceLocation? = nil) -> Statement {
+    let kind = StatementKind.global(NonEmptyArray(first: name))
+    return self.statement(kind, start: start ?? self.start)
+  }
+
+  internal func nonlocal(name: String, start: SourceLocation? = nil) -> Statement {
+    let kind = StatementKind.nonlocal(NonEmptyArray(first: name))
+    return self.statement(kind, start: start ?? self.start)
+  }
+
+  internal func assign(target: Expression,
+                       value: Expression,
+                       start: SourceLocation? = nil) -> Statement {
+    return self.assign(target: [target], value: value, start: start)
   }
 
   internal func assign(target: [Expression],
                        value: Expression,
-                       location: SourceLocation? = nil) -> Statement {
+                       start: SourceLocation? = nil) -> Statement {
     return self.statement(
       .assign(
         targets: self.toNonEmptyArray(target),
         value: value
       ),
-      start: location ?? self.start)
+      start: start ?? self.start
+    )
   }
 
   internal func augAssign(target: Expression,
                           op: BinaryOperator,
                           value: Expression,
-                          location: SourceLocation? = nil) -> Statement {
+                          start: SourceLocation? = nil) -> Statement {
     return self.statement(
       .augAssign(
         target: target,
         op: op,
         value: value
       ),
-      start: location ?? self.start)
+      start: start ?? self.start
+    )
   }
 
   internal func annAssign(target: Expression,
                           annotation: Expression,
                           value: Expression?,
                           isSimple: Bool,
-                          location: SourceLocation? = nil) -> Statement {
+                          start: SourceLocation? = nil) -> Statement {
     return self.statement(
       .annAssign(
         target: target,
@@ -318,7 +211,7 @@ extension ASTCreator {
         value: value,
         isSimple: isSimple
       ),
-      start: location ?? self.start
+      start: start ?? self.start
     )
   }
 
@@ -327,7 +220,7 @@ extension ASTCreator {
                         keywords: [Keyword],
                         body: [Statement],
                         decorators: [Expression] = [],
-                        location: SourceLocation? = nil) -> Statement {
+                        start: SourceLocation? = nil) -> Statement {
     return self.statement(
       .classDef(
         name: name,
@@ -336,7 +229,7 @@ extension ASTCreator {
         body: self.toNonEmptyArray(body),
         decorators: decorators
       ),
-      start: location ?? self.start
+      start: start ?? self.start
     )
   }
 
@@ -345,6 +238,16 @@ extension ASTCreator {
   internal func expression(_ kind: ExpressionKind,
                            start: SourceLocation? = nil) -> Expression {
     return Expression(kind, start: start ?? self.start, end: end)
+  }
+
+  internal func listComprehension(elt: Expression,
+                                  generators: [Comprehension]) -> Expression {
+    return self.expression(
+      .listComprehension(
+        elt: elt,
+        generators: self.toNonEmptyArray(generators)
+      )
+    )
   }
 
   // MARK: - Other
@@ -435,6 +338,38 @@ extension ASTCreator {
     return self.keyword(
       name: name,
       value: self.identifierExpr(value)
+    )
+  }
+
+  // MARK: - Other helpers
+
+  internal func identifierExpr(_ value: String,
+                               start: SourceLocation? = nil) -> Expression {
+    return self.expression(
+      .identifier(value),
+      start: start ?? self.start
+    )
+  }
+
+  internal func identifierStmt(_ value: String,
+                               exprStart: SourceLocation? = nil) -> Statement {
+
+    return self.statement(
+      .expr(
+        self.expression(.identifier(value), start: exprStart ?? self.start)
+      )
+    )
+  }
+
+  private func toStatements(_ exprs: [Expression]) -> [Statement] {
+    return exprs.map { self.statement(.expr($0)) }
+  }
+
+  private func toNonEmptyArray<E>(_ array: [E]) -> NonEmptyArray<E> {
+    assert(array.any)
+    return NonEmptyArray(
+      first: array[0],
+      rest: Array(array.dropFirst())
     )
   }
 }

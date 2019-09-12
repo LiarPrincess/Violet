@@ -22,7 +22,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module() {
-    let stmt = self.importFromStmt(
+    let stmt = self.importFrom(
       moduleName: "Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: nil)
@@ -58,7 +58,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module_withAlias() {
-    let stmt = self.importFromStmt(
+    let stmt = self.importFrom(
       moduleName: "Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: "Daughter")
@@ -97,7 +97,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
   /// 16 LOAD_CONST               2 (None)
   /// 18 RETURN_VALUE
   func test_module_multiple() {
-    let stmt = self.importFromStmt(
+    let stmt = self.importFrom(
       moduleName: "Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: "Daughter"),
@@ -136,7 +136,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module_nested() {
-    let stmt = self.importFromStmt(
+    let stmt = self.importFrom(
       moduleName: "Disnep.Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: nil)
@@ -175,7 +175,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module_importAll() {
-    let stmt = self.importFromStmt(
+    let stmt = self.importFrom(
       moduleName: "Tangled",
       names: [
         self.alias(name: "*", asName: nil)
@@ -212,7 +212,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_dir() {
-    let stmt = self.importFromStmt(
+    let stmt = self.importFrom(
       moduleName: nil,
       names: [
         self.alias(name: "Rapunzel", asName: nil)
@@ -248,7 +248,7 @@ class CompileImportFrom: XCTestCase, CommonCompiler {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_dotModule() {
-    let stmt = self.importFromStmt(
+    let stmt = self.importFrom(
       moduleName: "Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: nil)

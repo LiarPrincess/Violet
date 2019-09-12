@@ -5,7 +5,6 @@ import Parser
 
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
 
 /// Basic checks for statements, without nested scopes.
 /// Just so we know that we visit all childs.
@@ -51,15 +50,17 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///     elsa - referenced, parameter, local,
   /// ```
   func test_return() {
-    let arg = self.arg("elsa")
-    let expr = self.expression(.identifier("elsa"), start: loc1)
-    let body = self.statement(.return(expr))
+    let stmt = self.functionDef(
+      name: "let_it_go",
+      args: self.arguments(args: [self.arg("elsa")]),
+      body: [
+        self.statement(.return(
+          self.identifierExpr("elsa", start: loc1)
+        ))
+      ]
+    )
 
-    let f = self.functionDefStmt(name: "let_it_go",
-                                 args: self.arguments(args: [arg]),
-                                 body: body)
-
-    if let table = self.createSymbolTable(forStmt: f) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -97,11 +98,12 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   anna - local, assigned,
   /// ```
   func test_delete() {
-    let expr1 = self.expression(.identifier("elsa"), start: loc1)
-    let expr2 = self.expression(.identifier("anna"), start: loc2)
-    let kind = StatementKind.delete(NonEmptyArray(first: expr1, rest: [expr2]))
+    let stmt = self.delete(
+      self.identifierExpr("elsa", start: loc1),
+      self.identifierExpr("anna", start: loc2)
+    )
 
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -129,9 +131,10 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   anna - referenced, global,
   /// ```
   func test_assert() {
-    let expr1 = self.expression(.identifier("elsa"), start: loc1)
-    let expr2 = self.expression(.identifier("anna"), start: loc2)
-    let kind = StatementKind.assert(test: expr1, msg: expr2)
+    let kind = StatementKind.assert(
+      test: self.identifierExpr("elsa", start: loc1),
+      msg: self.identifierExpr("anna", start: loc2)
+    )
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
@@ -165,12 +168,16 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   anna - referenced, global,
   /// ```
   func test_for() {
-    let target = self.expression(.identifier("elsa"), start: loc1)
-    let iter = self.expression(.identifier("frozen"), start: loc2)
-    let body = self.expression(.identifier("elsa"), start: loc3)
-    let orElse = self.expression(.identifier("anna"), start: loc4)
-
-    let kind = self.forStmt(target: target, iter: iter, body: body, orElse: orElse)
+    let kind = self.for(
+      target: self.identifierExpr("elsa", start: loc1),
+      iter: self.identifierExpr("frozen", start: loc2),
+      body: [
+        self.identifierStmt("elsa", exprStart: loc3)
+      ],
+      orElse: [
+        self.identifierStmt("anna", exprStart: loc4)
+      ]
+    )
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
@@ -207,11 +214,15 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   snowgies - referenced, global,
   /// ```
   func test_while() {
-    let test = self.expression(.identifier("elsa"), start: loc1)
-    let body = self.expression(.identifier("anna"), start: loc2)
-    let orElse = self.expression(.identifier("snowgies"), start: loc3)
-
-    let kind = self.whileStmt(test: test, body: body, orElse: orElse)
+    let kind = self.while(
+      test: self.identifierExpr("elsa", start: loc1),
+      body: [
+        self.identifierStmt("anna", exprStart: loc2)
+      ],
+      orElse: [
+        self.identifierStmt("snowgies", exprStart: loc3)
+      ]
+    )
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
@@ -248,11 +259,11 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   snowgies - referenced, global,
   /// ```
   func test_if() {
-    let test = self.expression(.identifier("elsa"), start: loc1)
-    let body = self.expression(.identifier("anna"), start: loc2)
-    let orElse = self.expression(.identifier("snowgies"), start: loc3)
-
-    let kind = self.ifStmt(test: test, body: body, orElse: orElse)
+    let kind = self.if(
+      test: self.identifierExpr("elsa", start: loc1),
+      body: self.identifierExpr("anna", start: loc2),
+      orElse: self.identifierExpr("snowgies", start: loc3)
+    )
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
@@ -289,17 +300,19 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   queen - referenced, local, assigned,
   /// ```
   func test_with() {
-    let ctx = self.expression(.identifier("elsa"), start: loc1)
-    let name = self.expression(.identifier("queen"), start: loc2)
+    let item = self.withItem(
+      contextExpr: self.identifierExpr("elsa", start: loc1),
+      optionalVars: self.identifierExpr("queen", start: loc2)
+    )
 
-    let bodyExpr = self.expression(.identifier("queen"), start: loc3)
-    let body = self.statement(.expr(bodyExpr))
+    let stmt = self.with(
+      items: [item],
+      body: [
+        self.identifierStmt("queen", exprStart: loc3)
+      ]
+    )
 
-    let item = self.withItem(contextExpr: ctx, optionalVars: name)
-    let kind = StatementKind.with(items: NonEmptyArray(first: item),
-                                  body:  NonEmptyArray(first: body))
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -329,10 +342,10 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///   arendelle - referenced, global,
   /// ```
   func test_raise() {
-    let exception = self.expression(.identifier("elsa"), start: loc1)
-    let cause = self.expression(.identifier("arendelle"), start: loc2)
-
-    let kind = StatementKind.raise(exception: exception, cause: cause)
+    let kind = StatementKind.raise(
+      exception: self.identifierExpr("elsa", start: loc1),
+      cause: self.identifierExpr("arendelle", start: loc2)
+    )
 
     if let table = self.createSymbolTable(forStmt: kind) {
       let top = table.top
@@ -368,21 +381,19 @@ class STStmt: XCTestCase, CommonSymbolTable {
   ///    sing - referenced, global,
   /// ```
   func test_try() {
-    let body = self.expression(.identifier("magic"), start: loc1)
-    let orElse = self.expression(.identifier("spell"), start: loc2)
-    let finalBody = self.expression(.identifier("sing"), start: loc3)
+    let handler = self.exceptHandler(
+      type: self.identifierExpr("elsa", start: loc4),
+      name: "queen",
+      body: self.statement(expr: .identifier("queen")),
+      start: loc5
+    )
 
-    let handlerType = self.expression(.identifier("elsa"), start: loc4)
-    let handlerBody = self.statement(expr: .identifier("queen"))
-    let handler = self.exceptHandler(type: handlerType,
-                                     name: "queen",
-                                     body: handlerBody,
-                                     start: loc5)
-
-    let stmt = self.tryStmt(body: body,
-                            handlers: [handler],
-                            orElse: orElse,
-                            finalBody: finalBody)
+    let stmt = self.try(
+      body: self.identifierExpr("magic", start: loc1),
+      handlers: [handler],
+      orElse: [self.identifierExpr("spell", start: loc2)],
+      finalBody: [self.identifierExpr("sing", start: loc3)]
+    )
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
@@ -411,201 +422,6 @@ class STStmt: XCTestCase, CommonSymbolTable {
                               name: "sing",
                               flags: [.srcGlobalImplicit, .use],
                               location: loc3)
-    }
-  }
-
-  // MARK: - import
-
-  /// import frozen, tangled
-  ///
-  /// ```c
-  /// name: top
-  /// lineno: 0
-  /// symbols:
-  ///   frozen - imported, local,
-  ///   tangled - imported, local,
-  /// ```
-  func test_import() {
-    let alias1 = self.alias(name: "frozen",  asName: nil, start: loc1)
-    let alias2 = self.alias(name: "tangled", asName: nil, start: loc2)
-
-    let stmt = self.importStmt(names: [alias1, alias2])
-
-    if let table = self.createSymbolTable(forStmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "frozen",
-                              flags: [.defImport, .srcLocal],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "tangled",
-                              flags: [.defImport, .srcLocal],
-                              location: loc2)
-    }
-  }
-
-  /// import frozen, tangled as bestMovieEver
-  func test_import_withAlias() {
-    let alias1 = self.alias(name: "frozen",  asName: nil, start: loc1)
-    let alias2 = self.alias(name: "tangled", asName: "bestMovieEver", start: loc2)
-
-    let stmt = self.importStmt(names: [alias1, alias2])
-
-    if let table = self.createSymbolTable(forStmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "frozen",
-                              flags: [.defImport, .srcLocal],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "bestMovieEver",
-                              flags: [.defImport, .srcLocal],
-                              location: loc2)
-    }
-  }
-
-  /// import tangled.rapunzel
-  ///
-  /// ```c
-  /// name: top
-  /// lineno: 0
-  /// symbols:
-  ///   tangled - imported, local,
-  /// ```
-  func test_import_withAttribute() {
-    let alias = self.alias(name: "tangled.rapunzel", asName: nil, start: loc1)
-
-    let stmt = self.importStmt(names: [alias])
-
-    if let table = self.createSymbolTable(forStmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 1)
-      XCTAssertContainsSymbol(top,
-                              name: "tangled",
-                              flags: [.defImport, .srcLocal],
-                              location: loc1)
-    }
-  }
-
-  /// from disnep import elsa, rapunzel
-  ///
-  /// ```c
-  /// name: top
-  /// lineno: 0
-  /// symbols:
-  ///   elsa - imported, local,
-  ///   rapunzel - imported, local,
-  /// ```
-  func test_importFrom() {
-    let alias1 = self.alias(name: "elsa",     asName: nil, start: loc1)
-    let alias2 = self.alias(name: "rapunzel", asName: nil, start: loc2)
-
-    let stmt = self.importFromStmt(moduleName: "disnep",
-                                   names: [alias1, alias2])
-
-    if let table = self.createSymbolTable(forStmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.defImport, .srcLocal],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "rapunzel",
-                              flags: [.defImport, .srcLocal],
-                              location: loc2)
-    }
-  }
-
-  /// from disnep import elsa, rapunzel as princess
-  ///
-  /// ```c
-  /// name: top
-  /// lineno: 0
-  /// symbols:
-  ///   elsa - imported, local,
-  ///   princess - imported, local,
-  /// ```
-  func test_importFrom_withAlias() {
-    let alias1 = self.alias(name: "elsa",     asName: nil, start: loc1)
-    let alias2 = self.alias(name: "rapunzel", asName: "princess", start: loc2)
-
-    let stmt = self.importFromStmt(moduleName: "disnep",
-                                   names: [alias1, alias2])
-
-    if let table = self.createSymbolTable(forStmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-
-      XCTAssertEqual(top.symbols.count, 2)
-      XCTAssertContainsSymbol(top,
-                              name: "elsa",
-                              flags: [.defImport, .srcLocal],
-                              location: loc1)
-      XCTAssertContainsSymbol(top,
-                              name: "princess",
-                              flags: [.defImport, .srcLocal],
-                              location: loc2)
-    }
-  }
-
-  /// from disnep import *
-  ///
-  /// ```c
-  /// name: top
-  /// lineno: 0
-  /// symbols:
-  /// ```
-  func test_importFrom_withStar() {
-    let alias = self.alias(name: "*", asName: nil, start: loc1)
-    let stmt = self.importFromStmt(moduleName: "disnep", names: [alias])
-
-    if let table = self.createSymbolTable(forStmt: stmt) {
-      let top = table.top
-      XCTAssertScope(top, name: "top", type: .module, flags: [])
-      XCTAssert(top.varNames.isEmpty)
-      XCTAssert(top.children.isEmpty)
-      XCTAssert(top.symbols.isEmpty)
-    }
-  }
-
-  /// ```c
-  /// def sing():
-  ///   from disnep import *
-  /// ```
-  func test_importFrom_withStar_inFunction_throws() {
-    let alias = self.alias(name: "*", asName: nil)
-    let importStmt = self.importFromStmt(moduleName: "disnep",
-                                         names: [alias],
-                                         start: loc1)
-
-    let stmt = self.functionDefStmt(name: "sing",
-                                    args: self.arguments(),
-                                    body: importStmt)
-
-    if let error = self.error(forStmt: stmt) {
-      XCTAssertEqual(error.kind, .nonModuleImportStar)
-      XCTAssertEqual(error.location, loc1)
     }
   }
 }

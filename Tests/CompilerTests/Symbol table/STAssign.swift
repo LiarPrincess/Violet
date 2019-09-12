@@ -21,13 +21,12 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   rapunzel - local, assigned,
   /// ```
   func test_assign() {
-    let target = self.expression(.identifier("rapunzel"), start: loc1)
-    let value  = self.expression(.int(BigInt(5)))
+    let stmt = self.assign(
+      target: self.identifierExpr("rapunzel", start: loc1),
+      value: self.expression(.int(BigInt(5)))
+    )
 
-    let kind = StatementKind.assign(targets: NonEmptyArray(first: target),
-                                    value: value)
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -50,13 +49,12 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   rapunzel - referenced, local, assigned,
   /// ```
   func test_assign_toItself() {
-    let target = self.expression(.identifier("rapunzel"), start: loc1)
-    let value  = self.expression(.identifier("rapunzel"))
+    let stmt = self.assign(
+      target: self.identifierExpr("rapunzel", start: loc1),
+      value: self.identifierExpr("rapunzel")
+    )
 
-    let kind = StatementKind.assign(targets: NonEmptyArray(first: target),
-                                    value: value)
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -80,16 +78,15 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   eugine - local, assigned,
   /// ```
   func test_assign_multiple() {
-    let target1 = self.expression(.identifier("rapunzel"), start: loc1)
-    let target2 = self.expression(.identifier("eugine"),   start: loc2)
-    let value   = self.expression(.int(BigInt(5)))
-
-    let kind = StatementKind.assign(
-      targets: NonEmptyArray(first: target1, rest: [target2]),
-      value: value
+    let stmt = self.assign(
+      target: [
+        self.identifierExpr("rapunzel", start: loc1),
+        self.expression(.identifier("eugine"), start: loc2)
+      ],
+      value: self.expression(.int(BigInt(5)))
     )
 
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -118,12 +115,13 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   rapunzel - local, assigned,
   /// ```
   func test_augAssign() {
-    let target = self.expression(.identifier("rapunzel"), start: loc1)
-    let value  = self.expression(.int(BigInt(5)))
+    let stmt = self.augAssign(
+      target: self.identifierExpr("rapunzel", start: loc1),
+      op: .add,
+      value: self.expression(.int(BigInt(5)))
+    )
 
-    let kind = StatementKind.augAssign(target: target, op: .add, value: value)
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -146,12 +144,13 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   rapunzel - referenced, local, assigned,
   /// ```
   func test_augAssign_toItself() {
-    let target = self.expression(.identifier("rapunzel"), start: loc1)
-    let value  = self.expression(.identifier("rapunzel"))
+    let stmt = self.augAssign(
+      target: self.identifierExpr("rapunzel", start: loc1),
+      op: .add,
+      value: self.identifierExpr("rapunzel")
+    )
 
-    let kind = StatementKind.augAssign(target: target, op: .add, value: value)
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -177,16 +176,14 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign() {
-    let target = self.expression(.identifier("rapunzel"), start: loc1)
-    let ann    = self.expression(.identifier("Int"),      start: loc2)
-    let value  = self.expression(.int(BigInt(5)))
+    let stmt = self.annAssign(
+      target: self.identifierExpr("rapunzel", start: loc1),
+      annotation: self.expression(.identifier("Int"), start: loc2),
+      value: self.expression(.int(BigInt(5))),
+      isSimple: true
+    )
 
-    let kind = StatementKind.annAssign(target: target,
-                                       annotation: ann,
-                                       value: value,
-                                       isSimple: true)
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -214,16 +211,14 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign_inParens() {
-    let target = self.expression(.identifier("rapunzel"), start: loc1)
-    let ann    = self.expression(.identifier("Int"),      start: loc2)
-    let value  = self.expression(.int(BigInt(5)))
+    let stmt = self.annAssign(
+      target: self.identifierExpr("rapunzel", start: loc1),
+      annotation: self.expression(.identifier("Int"), start: loc2),
+      value: self.expression(.int(BigInt(5))),
+      isSimple: false // <- parens
+    )
 
-    let kind = StatementKind.annAssign(target: target,
-                                       annotation: ann,
-                                       value: value,
-                                       isSimple: false) // <- parens
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -251,18 +246,21 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign_attribute() {
-    let object = self.expression(.identifier("tangled"), start: loc1)
-    let target = self.expression(.attribute(object, name: "rapunzel"))
+    let target = self.expression(
+      .attribute(
+        self.identifierExpr("tangled", start: loc1),
+        name: "rapunzel"
+      )
+    )
 
-    let ann   = self.expression(.identifier("Int"), start: loc3)
-    let value = self.expression(.int(BigInt(5)))
+    let stmt = self.annAssign(
+      target: target,
+      annotation: self.identifierExpr("Int", start: loc3),
+      value: self.expression(.int(BigInt(5))),
+      isSimple: false
+    )
 
-    let kind = StatementKind.annAssign(target: target,
-                                       annotation: ann,
-                                       value: value,
-                                       isSimple: false)
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -290,16 +288,14 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign_toItself() {
-    let target = self.expression(.identifier("rapunzel"), start: loc1)
-    let ann    = self.expression(.identifier("Int"),      start: loc2)
-    let value  = self.expression(.identifier("rapunzel"), start: loc3)
+    let stmt = self.annAssign(
+      target: self.identifierExpr("rapunzel", start: loc1),
+      annotation: self.expression(.identifier("Int"), start: loc2),
+      value: self.identifierExpr("rapunzel", start: loc3),
+      isSimple: true
+    )
 
-    let kind = StatementKind.annAssign(target: target,
-                                       annotation: ann,
-                                       value: value,
-                                       isSimple: true)
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -327,15 +323,14 @@ class STAssign: XCTestCase, CommonSymbolTable {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign_withoutValue() {
-    let target = self.expression(.identifier("rapunzel"), start: loc1)
-    let ann    = self.expression(.identifier("Int"),      start: loc2)
+    let stmt = self.annAssign(
+      target: self.identifierExpr("rapunzel", start: loc1),
+      annotation: self.expression(.identifier("Int"), start: loc2),
+      value: nil,
+      isSimple: true
+    )
 
-    let kind = StatementKind.annAssign(target: target,
-                                       annotation: ann,
-                                       value: nil,
-                                       isSimple: true)
-
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -356,16 +351,15 @@ class STAssign: XCTestCase, CommonSymbolTable {
   // global rapunzel
   // rapunzel: Int
   func test_annAssign_global_withAnnotation_throws() {
-    let stmt1 = self.globalStmt(name: "rapunzel")
+    let stmt1 = self.global(name: "rapunzel")
 
-    let target = self.expression(.identifier("rapunzel"))
-    let ann    = self.expression(.identifier("Int"))
-
-    let kind = StatementKind.annAssign(target: target,
-                                       annotation: ann,
-                                       value: nil,
-                                       isSimple: true)
-    let stmt2 = self.statement(kind, start: loc1)
+    let stmt2 = self.annAssign(
+      target: self.identifierExpr("rapunzel"),
+      annotation: self.identifierExpr("Int"),
+      value: nil,
+      isSimple: true,
+      start: loc1
+    )
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .globalAnnot("rapunzel"))
@@ -376,16 +370,15 @@ class STAssign: XCTestCase, CommonSymbolTable {
   // nonlocal rapunzel
   // rapunzel: Int
   func test_annAssign_nonlocal_withAnnotation_throws() {
-    let stmt1 = self.nonlocalStmt(name: "rapunzel")
+    let stmt1 = self.nonlocal(name: "rapunzel")
 
-    let target = self.expression(.identifier("rapunzel"))
-    let ann    = self.expression(.identifier("Int"))
-
-    let kind = StatementKind.annAssign(target: target,
-                                       annotation: ann,
-                                       value: nil,
-                                       isSimple: true)
-    let stmt2 = self.statement(kind, start: loc1)
+    let stmt2 = self.annAssign(
+      target: self.identifierExpr("rapunzel"),
+      annotation: self.identifierExpr("Int"),
+      value: nil,
+      isSimple: true,
+      start: loc1
+    )
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .nonlocalAnnot("rapunzel"))

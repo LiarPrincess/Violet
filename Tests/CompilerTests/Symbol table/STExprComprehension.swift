@@ -31,20 +31,17 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   ///      ariel - referenced, local, assigned,
   /// ```
   func test_list() {
-    let elt = self.expression(.identifier("ariel"), start: loc1)
-    let iter = self.expression(.identifier("sea"), start: loc2)
+    let elt = self.identifierExpr("ariel", start: loc1)
+    let iter = self.identifierExpr("sea", start: loc2)
 
-    let compr = self.comprehension(target: elt,
-                                   iter: iter,
-                                   ifs: [],
-                                   isAsync: false)
-
-    let kind = ExpressionKind.listComprehension(
+    let expr = self.listComprehension(
       elt: elt,
-      generators: NonEmptyArray(first: compr)
+      generators: [
+        self.comprehension(target: elt, iter: iter, ifs: [], isAsync: false)
+      ]
     )
 
-    if let table = self.createSymbolTable(forExpr: kind) {
+    if let table = self.createSymbolTable(forExpr: expr) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -95,20 +92,22 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   ///     hasLegs - referenced, global,
   /// ```
   func test_list_ifs() {
-    let elt = self.expression(.identifier("ariel"), start: loc1)
-    let iff = self.expression(.identifier("hasLegs"), start: loc2)
+    let elt = self.identifierExpr("ariel", start: loc1)
+    let iff = self.identifierExpr("hasLegs", start: loc2)
 
-    let compr = self.comprehension(target: elt,
-                                   iter: self.expression(.list([])),
-                                   ifs: [iff],
-                                   isAsync: true)
-
-    let kind = ExpressionKind.listComprehension(
+    let expr = self.listComprehension(
       elt: elt,
-      generators: NonEmptyArray(first: compr)
+      generators: [
+        self.comprehension(
+          target: elt,
+          iter: self.expression(.list([])),
+          ifs: [iff],
+          isAsync: true
+        )
+      ]
     )
 
-    if let table = self.createSymbolTable(forExpr: kind) {
+    if let table = self.createSymbolTable(forExpr: expr) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -155,24 +154,24 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   ///     ariel - local, assigned,
   ///     eric - referenced, local, assigned,
   func test_list_nested() {
-    let elt1 = self.expression(.identifier("ariel"), start: loc1)
+    let elt1 = self.identifierExpr("ariel", start: loc1)
     let compr1 = self.comprehension(target: elt1,
                                     iter: self.expression(.list([])),
                                     ifs: [],
                                     isAsync: false)
 
-    let elt2 = self.expression(.identifier("eric"), start: loc2)
+    let elt2 = self.identifierExpr("eric", start: loc2)
     let compr2 = self.comprehension(target: elt2,
                                     iter: self.expression(.list([])),
                                     ifs: [],
                                     isAsync: false)
 
-    let kind = ExpressionKind.listComprehension(
+    let expr = self.listComprehension(
       elt: elt2,
-      generators: NonEmptyArray(first: compr1, rest: [compr2])
+      generators: [compr1, compr2]
     )
 
-    if let table = self.createSymbolTable(forExpr: kind) {
+    if let table = self.createSymbolTable(forExpr: expr) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -208,8 +207,8 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   /// {ariel for ariel in sea}
   /// (similiar to `self.test_list`)
   func test_set() {
-    let elt = self.expression(.identifier("ariel"), start: loc1)
-    let iter = self.expression(.identifier("sea"), start: loc2)
+    let elt = self.identifierExpr("ariel", start: loc1)
+    let iter = self.identifierExpr("sea", start: loc2)
 
     let compr = self.comprehension(target: elt,
                                    iter: iter,
@@ -275,9 +274,9 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   ///     eric - referenced, global,
   /// ```
   func test_dictionary() {
-    let key = self.expression(.identifier("ariel"), start: loc1)
-    let value = self.expression(.identifier("eric"), start: loc2)
-    let iter = self.expression(.identifier("sea"), start: loc3)
+    let key = self.identifierExpr("ariel", start: loc1)
+    let value = self.identifierExpr("eric", start: loc2)
+    let iter = self.identifierExpr("sea", start: loc3)
 
     let compr = self.comprehension(target: key,
                                    iter: iter,
@@ -331,8 +330,8 @@ class STExprComprehension: XCTestCase, CommonSymbolTable {
   /// [ariel for ariel in sea]
   /// (similiar to `self.test_list`)
   func test_generator() {
-    let elt = self.expression(.identifier("ariel"), start: loc1)
-    let iter = self.expression(.identifier("sea"), start: loc2)
+    let elt = self.identifierExpr("ariel", start: loc1)
+    let iter = self.identifierExpr("sea", start: loc2)
 
     let compr = self.comprehension(target: elt,
                                    iter: iter,

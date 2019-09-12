@@ -25,13 +25,14 @@ class STLambda: XCTestCase, CommonSymbolTable {
   ///     anna - parameter, local,
   /// ```
   func test_lambda() {
-    let arg1 = self.arg("elsa", annotation: nil, start: loc1)
-    let arg2 = self.arg("anna", annotation: nil, start: loc2)
-    let body = self.expression(.identifier("elsa"), start: loc3)
-
     let kind = ExpressionKind.lambda(
-      args: self.arguments(args: [arg1, arg2]),
-      body: body
+      args: self.arguments(
+        args: [
+          self.arg("elsa", annotation: nil, start: loc1),
+          self.arg("anna", annotation: nil, start: loc2)
+        ]
+      ),
+      body: self.identifierExpr("elsa", start: loc3)
     )
 
     if let table = self.createSymbolTable(forExpr: kind) {
@@ -89,23 +90,26 @@ class STLambda: XCTestCase, CommonSymbolTable {
   ///        elsa - referenced, free,
   /// ```
   func test_lambda_free_cell() {
-    let stmt1 = self.assignStmt(
-      target: self.expression(.identifier("elsa"), start: loc1),
+    let stmt1 = self.assign(
+      target: [
+        self.identifierExpr("elsa", start: loc1)
+      ],
       value: self.expression(.int(BigInt(1)))
     )
 
     let stmt2 = self.statement(expr:
       .lambda(
         args: self.arguments(),
-        body: self.expression(.identifier("elsa"), start: loc2)
+        body: self.identifierExpr("elsa", start: loc2)
       )
     )
 
-    let kind = self.functionDefStmt(name: "let_it_go",
-                                    args: self.arguments(),
-                                    body: [stmt1, stmt2])
-
-    let stmt = self.statement(kind, start: loc3)
+    let stmt = self.functionDef(
+      name: "let_it_go",
+      args: self.arguments(),
+      body: [stmt1, stmt2],
+      start: loc3
+    )
 
     if let table = self.createSymbolTable(forStmt: stmt) {
       let top = table.top
