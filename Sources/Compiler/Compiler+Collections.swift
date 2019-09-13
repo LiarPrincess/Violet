@@ -7,7 +7,6 @@ import Bytecode
 // Python -> compile.c
 
 // swiftlint:disable file_length
-// swiftlint:disable function_body_length
 
 /// Helper for `emitLoadWithPossibleUnpack` method.
 /// We could pass clojures with `self`, but this is more self-documenting.
@@ -41,7 +40,7 @@ extension Compiler {
     case .store:
       try self.emitStoreWithPossibleUnpack(elements: elements, location: location)
     case .load:
-      let adapter = TupleLoadAdapter(codeObject: self.codeObject)
+      let adapter = TupleLoadAdapter(builder: self.builder)
       try self.emitLoadWithPossibleUnpack(elements: elements,
                                           adapter:  adapter,
                                           location: location)
@@ -52,18 +51,18 @@ extension Compiler {
 
   private struct TupleLoadAdapter: CollectionLoadAdapter {
 
-    fileprivate let codeObject: CodeObject
+    fileprivate let builder: CodeObjectBuilder
 
     func emitPackElements(count: Int, at location: SourceLocation) throws {
-      try self.codeObject.appendBuildTuple(elementCount: count, at: location)
+      try self.builder.appendBuildTuple(elementCount: count, at: location)
     }
 
     func emitBuildCollection(count: Int, at location: SourceLocation) throws {
-      try self.codeObject.appendBuildTuple(elementCount: count, at: location)
+      try self.builder.appendBuildTuple(elementCount: count, at: location)
     }
 
     func emitBuildUnpackCollection(count: Int, at location: SourceLocation) throws {
-      try self.codeObject.appendBuildTupleUnpack(elementCount: count, at: location)
+      try self.builder.appendBuildTupleUnpack(elementCount: count, at: location)
     }
   }
 
@@ -77,7 +76,7 @@ extension Compiler {
     case .store:
       try self.emitStoreWithPossibleUnpack(elements: elements, location: location)
     case .load:
-      let adapter = ListLoadAdapter(codeObject: self.codeObject)
+      let adapter = ListLoadAdapter(builder: self.builder)
       try self.emitLoadWithPossibleUnpack(elements: elements,
                                           adapter:  adapter,
                                           location: location)
@@ -88,18 +87,18 @@ extension Compiler {
 
   private struct ListLoadAdapter: CollectionLoadAdapter {
 
-    fileprivate let codeObject: CodeObject
+    fileprivate let builder: CodeObjectBuilder
 
     func emitPackElements(count: Int, at location: SourceLocation) throws {
-      try self.codeObject.appendBuildTuple(elementCount: count, at: location)
+      try self.builder.appendBuildTuple(elementCount: count, at: location)
     }
 
     func emitBuildCollection(count: Int, at location: SourceLocation) throws {
-      try self.codeObject.appendBuildList(elementCount: count, at: location)
+      try self.builder.appendBuildList(elementCount: count, at: location)
     }
 
     func emitBuildUnpackCollection(count: Int, at location: SourceLocation) throws {
-      try self.codeObject.appendBuildListUnpack(elementCount: count, at: location)
+      try self.builder.appendBuildListUnpack(elementCount: count, at: location)
     }
   }
 
@@ -107,7 +106,7 @@ extension Compiler {
 
   /// compiler_dict(struct compiler *c, expr_ty e)
   ///
-  /// Our implementation is similiar to `self.codeObject.appendLoadWithPossibleUnpack(...)`.
+  /// Our implementation is similiar to `self.visitLoadWithPossibleUnpack(...)`.
   internal func visitDictionary(elements: [DictionaryElement],
                                 context:  ExpressionContext,
                                 location: SourceLocation) throws {
@@ -123,8 +122,7 @@ extension Compiler {
       case let .unpacking(expr):
         // change elements to container, so we can unpack it later
         if nSimpleElement > 0 {
-          try self.codeObject.appendBuildMap(elementCount: nSimpleElement,
-                                             at: location)
+          try self.builder.appendBuildMap(elementCount: nSimpleElement, at: location)
           nSimpleElement = 0
           nPackedElement += 1
         }
@@ -142,16 +140,13 @@ extension Compiler {
 
     if nPackedElement > 0 {
       if nSimpleElement > 0 {
-        try self.codeObject.appendBuildMap(elementCount: nSimpleElement,
-                                           at: location)
+        try self.builder.appendBuildMap(elementCount: nSimpleElement, at: location)
         nPackedElement += 1
       }
 
-      try self.codeObject.appendBuildMapUnpack(elementCount: nPackedElement,
-                                               at: location)
+      try self.builder.appendBuildMapUnpack(elementCount: nPackedElement, at: location)
     } else {
-      try self.codeObject.appendBuildMap(elementCount: nSimpleElement,
-                                         at: location)
+      try self.builder.appendBuildMap(elementCount: nSimpleElement, at: location)
     }
   }
 
@@ -163,7 +158,7 @@ extension Compiler {
                          location: SourceLocation) throws {
     assert(context == .load)
 
-    let adapter = SetLoadAdapter(codeObject: self.codeObject)
+    let adapter = SetLoadAdapter(builder: self.builder)
     try self.emitLoadWithPossibleUnpack(elements: elements,
                                         adapter:  adapter,
                                         location: location)
@@ -171,18 +166,18 @@ extension Compiler {
 
   private struct SetLoadAdapter: CollectionLoadAdapter {
 
-    fileprivate let codeObject: CodeObject
+    fileprivate let builder: CodeObjectBuilder
 
     func emitPackElements(count: Int, at location: SourceLocation) throws {
-      try self.codeObject.appendBuildSet(elementCount: count, at: location)
+      try self.builder.appendBuildSet(elementCount: count, at: location)
     }
 
     func emitBuildCollection(count: Int, at location: SourceLocation) throws {
-      try self.codeObject.appendBuildSet(elementCount: count, at: location)
+      try self.builder.appendBuildSet(elementCount: count, at: location)
     }
 
     func emitBuildUnpackCollection(count: Int, at location: SourceLocation) throws {
-      try self.codeObject.appendBuildSetUnpack(elementCount: count, at: location)
+      try self.builder.appendBuildSetUnpack(elementCount: count, at: location)
     }
   }
 
@@ -234,14 +229,13 @@ extension Compiler {
 
       hasSeenStar = true
       elementsWithoutUnpack[index] = inner
-      try self.codeObject.appendUnpackEx(countBefore: countBefore,
-                                         countAfter: countAfter,
-                                         location: location)
+      try self.builder.appendUnpackEx(countBefore: countBefore,
+                                      countAfter: countAfter,
+                                      location: location)
     }
 
     if !hasSeenStar {
-      try self.codeObject.appendUnpackSequence(elementCount: elements.count,
-                                               at: location)
+      try self.builder.appendUnpackSequence(elementCount: elements.count, at: location)
     }
 
     try self.visitExpressions(elementsWithoutUnpack, context: .store)

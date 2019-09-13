@@ -1,12 +1,13 @@
 import Core
 
-extension CodeObject {
+extension CodeObjectBuilder {
 
   // MARK: - Name
 
   /// Append a `storeName` instruction to this code object.
-  public func appendStoreName<S: ConstantString>(_ name: S,
-                                                 at location: SourceLocation) throws {
+  public func appendStoreName<S: ConstantString>(
+    _ name: S,
+    at location: SourceLocation) throws {
 
     let index = try self.addNameWithExtendedArgIfNeeded(name: name, at: location)
     try self.append(.storeName(nameIndex: index), at: location)

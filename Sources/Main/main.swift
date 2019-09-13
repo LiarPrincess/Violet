@@ -71,11 +71,10 @@ private func checkInvariants() {
   checkMemorySize(of: Expression.self, expectedSize: 24)
   checkMemorySize(of: ExpressionKind.self, expectedSize: 8)
 
-  // TODO: StatementKind has size of 234 bytes!
+  // TODO: StatementKind has 234 and CodeObject 184 bytes!
   checkMemorySize(of: Statement.self, expectedSize: 234)
   checkMemorySize(of: StatementKind.self, expectedSize: 217)
 
-  // TODO: CodeObject has size 184 bytes!
   checkMemorySize(of: CodeObject.self, expectedSize: 184)
 }
 

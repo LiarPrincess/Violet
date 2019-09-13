@@ -1,6 +1,6 @@
 import Core
 
-extension CodeObject {
+extension CodeObjectBuilder {
 
   /// Append a `setupWith` instruction to this code object.
   public func appendSetupWith(afterBody: Label,

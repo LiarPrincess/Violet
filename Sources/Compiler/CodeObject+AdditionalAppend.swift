@@ -2,7 +2,7 @@ import Core
 import Bytecode
 import Parser
 
-extension CodeObject {
+extension CodeObjectBuilder {
 
   public func appendName<S: ConstantString>(name: S,
                                             context:  ExpressionContext,

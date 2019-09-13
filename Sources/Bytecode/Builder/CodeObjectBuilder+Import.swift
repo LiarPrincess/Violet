@@ -1,6 +1,6 @@
 import Core
 
-extension CodeObject {
+extension CodeObjectBuilder {
 
   /// Append an `importName` instruction to this code object.
   public func appendImportName(name: String, at location: SourceLocation) throws {

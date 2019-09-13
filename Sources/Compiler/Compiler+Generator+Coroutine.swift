@@ -20,9 +20,9 @@ extension Compiler {
     }
 
     try self.visitExpression(expr)
-    try self.codeObject.appendGetAwaitable(at: location)
-    try self.codeObject.appendNone(at: location)
-    try self.codeObject.appendYieldFrom(at: location)
+    try self.builder.appendGetAwaitable(at: location)
+    try self.builder.appendNone(at: location)
+    try self.builder.appendYieldFrom(at: location)
   }
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
@@ -34,10 +34,10 @@ extension Compiler {
     if let v = value {
       try self.visitExpression(v)
     } else {
-      try self.codeObject.appendNone(at: location)
+      try self.builder.appendNone(at: location)
     }
 
-    try self.codeObject.appendYieldValue(at: location)
+    try self.builder.appendYieldValue(at: location)
   }
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
@@ -51,8 +51,8 @@ extension Compiler {
     }
 
     try self.visitExpression(expr)
-    try self.codeObject.appendGetYieldFromIter(at: location)
-    try self.codeObject.appendNone(at: location)
-    try self.codeObject.appendYieldFrom(at: location)
+    try self.builder.appendGetYieldFromIter(at: location)
+    try self.builder.appendNone(at: location)
+    try self.builder.appendYieldFrom(at: location)
   }
 }

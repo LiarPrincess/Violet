@@ -12,26 +12,6 @@ import Core
 // swiftlint:disable trailing_newline
 // swiftlint:disable vertical_whitespace_closing_braces
 
-public enum VarNum {
-  case notImplemented
-
-}
-
-public enum Item {
-  case notImplemented
-
-}
-
-public enum Delta {
-  case notImplemented
-
-}
-
-public enum Target {
-  case notImplemented
-
-}
-
 public enum Constant {
   case `true`
   case `false`
@@ -265,13 +245,13 @@ public enum Instruction {
   case buildConstKeyMap(elementCount: UInt8)
   /// Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
   /// Used to implement set comprehensions.
-  case setAdd(Item)
+  case setAdd(UInt8)
   /// Calls `list.append(TOS[-i], TOS)`. Container object remains on the stack.
   /// Used to implement list comprehensions.
-  case listAppend(Item)
+  case listAppend(UInt8)
   /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`. Container object remains on the stack.
   /// Used to implement dict comprehensions.
-  case mapAdd(Item)
+  case mapAdd(UInt8)
   /// Pops count iterables from the stack, joins them in a single tuple,
   /// and pushes the result.
   /// Implements iterable unpacking in tuple displays `(*x, *y, *z)`.

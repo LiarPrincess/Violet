@@ -1,6 +1,6 @@
 import Core
 
-extension CodeObject {
+extension CodeObjectBuilder {
 
   /// Append a `popExcept` instruction to this code object.
   public func appendPopExcept(at location: SourceLocation) throws {

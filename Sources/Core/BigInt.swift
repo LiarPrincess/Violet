@@ -24,6 +24,9 @@ public struct BigInt: Equatable, Hashable {
     self.value = value
   }
 
+  public var isZero: Bool { return self.value == 0 }
+  public var isOne:  Bool { return self.value == 1 }
+
   /// This should be used only by the lexer!
   public init?<S>(_ text: S, radix: Int = 10) where S : StringProtocol {
     guard let value = Int64(text, radix: radix) else {

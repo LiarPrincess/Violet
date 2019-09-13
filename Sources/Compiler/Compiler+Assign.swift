@@ -33,7 +33,7 @@ extension Compiler {
     for (index, t) in targets.enumerated() {
       let isLast = index == targets.count - 1
       if !isLast {
-        try self.codeObject.appendDupTop(at: location)
+        try self.builder.appendDupTop(at: location)
       }
 
       try self.visitExpression(t, context: .store)
@@ -60,10 +60,10 @@ extension Compiler {
     switch target.kind {
     case let .identifier(name):
       let mangled = self.mangleName(name)
-      try self.codeObject.appendLoadName(mangled, at: location)
+      try self.builder.appendLoadName(mangled, at: location)
       try self.visitExpression(value)
-      try self.codeObject.appendInplaceOperator(op, at: location)
-      try self.codeObject.appendStoreName(mangled, at: location)
+      try self.builder.appendInplaceOperator(op, at: location)
+      try self.builder.appendStoreName(mangled, at: location)
 
     case let .attribute(object, name: name):
       func visitAttribute(context: ExpressionContext) throws {
@@ -76,7 +76,7 @@ extension Compiler {
 
       try visitAttribute(context: .load)
       try self.visitExpression(value)
-      try self.codeObject.appendInplaceOperator(op, at: location)
+      try self.builder.appendInplaceOperator(op, at: location)
       try visitAttribute(context: .store)
 
     case let .subscript(object, slice: slice):
@@ -90,7 +90,7 @@ extension Compiler {
 
       try visitSubscript(context: .load)
       try self.visitExpression(value)
-      try self.codeObject.appendInplaceOperator(op, at: location)
+      try self.builder.appendInplaceOperator(op, at: location)
       try visitSubscript(context: .store)
 
     default:
@@ -144,9 +144,9 @@ extension Compiler {
       let __annotations__ = SpecialIdentifiers.__annotations__
       let mangled = self.mangleName(name)
 
-      try self.codeObject.appendLoadName(__annotations__, at: location)
-      try self.codeObject.appendString(mangled, at: location)
-      try self.codeObject.appendStoreSubscr(at: location)
+      try self.builder.appendLoadName(__annotations__, at: location)
+      try self.builder.appendString(mangled, at: location)
+      try self.builder.appendStoreSubscr(at: location)
 
     case let .attribute(obj, name: _):
       if value == nil {
@@ -171,7 +171,7 @@ extension Compiler {
   /// check_ann_expr(struct compiler *c, expr_ty e)
   private func checkAnnExpr(_ expr: Expression, location: SourceLocation) throws {
     try self.visitExpression(expr)
-    try self.codeObject.appendPopTop(at: location)
+    try self.builder.appendPopTop(at: location)
   }
 
   /// check_ann_subscr(struct compiler *c, slice_ty sl)
@@ -222,6 +222,6 @@ extension Compiler {
                              location: SourceLocation) throws {
     // TODO: We should use proper 'ast_unparse' implementation
     let string = String(describing: annotation)
-    try self.codeObject.appendString(string, at: location)
+    try self.builder.appendString(string, at: location)
   }
 }

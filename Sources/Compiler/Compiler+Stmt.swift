@@ -139,10 +139,10 @@ extension Compiler {
 
       try self.visitExpression(v)
     } else {
-      try self.codeObject.appendNone(at: location)
+      try self.builder.appendNone(at: location)
     }
 
-    try self.codeObject.appendReturn(at: location)
+    try self.builder.appendReturn(at: location)
   }
 
   // MARK: - Assert
@@ -159,23 +159,23 @@ extension Compiler {
       self.warn(.assertionWithTuple, location: location)
     }
 
-    let end = self.codeObject.createLabel()
+    let end = self.builder.createLabel()
     try self.visitExpression(test,
                              andJumpTo: end,
                              ifBooleanValueIs: true,
                              location: location)
 
     let id = SpecialIdentifiers.assertionError
-    try self.codeObject.appendLoadGlobal(id, at: location)
+    try self.builder.appendLoadGlobal(id, at: location)
 
     if let message = msg {
       // Call 'AssertionError' with single argument
       try self.visitExpression(message)
-      try self.codeObject.appendCallFunction(argumentCount: 1, at: location)
+      try self.builder.appendCallFunction(argumentCount: 1, at: location)
     }
 
-    try self.codeObject.appendRaiseVarargs(arg: .exceptionOnly, at: location)
-    self.codeObject.setLabel(end)
+    try self.builder.appendRaiseVarargs(arg: .exceptionOnly, at: location)
+    self.builder.setLabel(end)
   }
 
   // MARK: - Expression statement
@@ -185,11 +185,11 @@ extension Compiler {
                                         location: SourceLocation) throws {
     if self.isInteractive && self.nestLevel <= 1 {
       try self.visitExpression(expr)
-      try self.codeObject.appendPrintExpr(at: location)
+      try self.builder.appendPrintExpr(at: location)
       return
     }
 
     try self.visitExpression(expr)
-    try self.codeObject.appendPopTop(at: location)
+    try self.builder.appendPopTop(at: location)
   }
 }

@@ -20,12 +20,7 @@ properties of `CodeObject`.
 @alias LabelIndex = UInt8
 @alias NameIndex = UInt8
 @alias ConstantIndex = UInt8
-
-{- TODO: Real types -}
-@enum VarNum = NotImplemented
-@enum Item = NotImplemented
-@enum Delta = NotImplemented
-@enum Target = NotImplemented
+@alias Item = UInt8
 
 @enum Constant =
   True
@@ -86,8 +81,6 @@ properties of `CodeObject`.
   | NotIn
   -- Does the exception has specified type?
   | ExceptionMatch
-  {- TODO: those -}
-  {- | Bad -}
 
 @enum SliceArg =
     LowerUpper

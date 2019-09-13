@@ -1,6 +1,6 @@
 import Core
 
-extension CodeObject {
+extension CodeObjectBuilder {
 
   /// Append a `loadBuildClass` instruction to this code object.
   public func appendLoadBuildClass(at location: SourceLocation) throws {

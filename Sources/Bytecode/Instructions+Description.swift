@@ -7,42 +7,6 @@ import Core
 
 // swiftlint:disable file_length
 
-extension VarNum: CustomStringConvertible {
-  public var description: String {
-    switch self {
-    case .notImplemented:
-      return "notImplemented"
-    }
-  }
-}
-
-extension Item: CustomStringConvertible {
-  public var description: String {
-    switch self {
-    case .notImplemented:
-      return "notImplemented"
-    }
-  }
-}
-
-extension Delta: CustomStringConvertible {
-  public var description: String {
-    switch self {
-    case .notImplemented:
-      return "notImplemented"
-    }
-  }
-}
-
-extension Target: CustomStringConvertible {
-  public var description: String {
-    switch self {
-    case .notImplemented:
-      return "notImplemented"
-    }
-  }
-}
-
 extension Constant: CustomStringConvertible {
   public var description: String {
     switch self {
@@ -250,11 +214,11 @@ extension Instruction: CustomStringConvertible {
     case let .buildConstKeyMap(elementCount: value0):
       return "buildConstKeyMap(elementCount: \(hex(value0)))"
     case let .setAdd(value0):
-      return "setAdd(\(value0))"
+      return "setAdd(\(hex(value0)))"
     case let .listAppend(value0):
-      return "listAppend(\(value0))"
+      return "listAppend(\(hex(value0)))"
     case let .mapAdd(value0):
-      return "mapAdd(\(value0))"
+      return "mapAdd(\(hex(value0)))"
     case let .buildTupleUnpack(elementCount: value0):
       return "buildTupleUnpack(elementCount: \(hex(value0)))"
     case let .buildTupleUnpackWithCall(elementCount: value0):

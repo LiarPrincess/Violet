@@ -70,11 +70,11 @@ extension Compiler {
                          index: Int,
                          location: SourceLocation) throws {
     let item = items[index]
-    let afterBody = self.codeObject.createLabel()
+    let afterBody = self.builder.createLabel()
 
     // Evaluate EXPR
     try self.visitExpression(item.contextExpr)
-    try self.codeObject.appendSetupWith(afterBody: afterBody, at: location)
+    try self.builder.appendSetupWith(afterBody: afterBody, at: location)
 
     // SETUP_WITH pushes a finally block.
     try self.inBlock(.finallyTry) {
@@ -82,7 +82,7 @@ extension Compiler {
         try self.visitExpression(o, context: .store)
       } else {
         // Discard result from context.__enter__()
-        try self.codeObject.appendPopTop(at: location)
+        try self.builder.appendPopTop(at: location)
       }
 
       let nextIndex = index + 1
@@ -97,20 +97,20 @@ extension Compiler {
       }
 
       // End of try block; start the finally block
-      try self.codeObject.appendPopBlock(at: location)
+      try self.builder.appendPopBlock(at: location)
     }
 
-    try self.codeObject.appendNone(at: location)
-    self.codeObject.setLabel(afterBody)
+    try self.builder.appendNone(at: location)
+    self.builder.setLabel(afterBody)
 
     try self.inBlock(.finallyEnd) {
       // Finally block starts; context.__exit__ is on the stack under
       // the exception or return information. Just issue our magic opcode.
-      try self.codeObject.appendWithCleanupStart(at: location)
-      try self.codeObject.appendWithCleanupFinish(at: location)
+      try self.builder.appendWithCleanupStart(at: location)
+      try self.builder.appendWithCleanupFinish(at: location)
 
       // Finally block ends.
-      try self.codeObject.appendEndFinally(at: location)
+      try self.builder.appendEndFinally(at: location)
     }
   }
 }

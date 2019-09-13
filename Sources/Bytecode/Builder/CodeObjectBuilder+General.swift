@@ -7,7 +7,7 @@ public enum ClosureVariable {
   case free(MangledName)
 }
 
-extension CodeObject {
+extension CodeObjectBuilder {
 
   /// Append a `nop` instruction to this code object.
   public func appendNop(at location: SourceLocation) throws {

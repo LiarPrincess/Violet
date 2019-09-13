@@ -1,6 +1,6 @@
 import Core
 
-extension CodeObject {
+extension CodeObjectBuilder {
 
   /// Append a `formatValue` instruction to this code object.
   public func appendFormatValue(conversion: StringConversion,

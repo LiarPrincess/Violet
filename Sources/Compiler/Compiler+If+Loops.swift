@@ -39,8 +39,8 @@ extension Compiler {
                         body:   NonEmptyArray<Statement>,
                         orElse: [Statement],
                         location: SourceLocation) throws {
-    let end = self.codeObject.createLabel()
-    let orElseStart = orElse.any ? self.codeObject.createLabel() : end
+    let end = self.builder.createLabel()
+    let orElseStart = orElse.any ? self.builder.createLabel() : end
 
     try self.visitExpression(test,
                              andJumpTo: orElseStart,
@@ -50,12 +50,12 @@ extension Compiler {
     try self.visitStatements(body)
 
     if orElse.any {
-      try self.codeObject.appendJumpAbsolute(to: end, at: location)
-      self.codeObject.setLabel(orElseStart)
+      try self.builder.appendJumpAbsolute(to: end, at: location)
+      self.builder.setLabel(orElseStart)
       try self.visitStatements(orElse)
     }
 
-    self.codeObject.setLabel(end)
+    self.builder.setLabel(end)
   }
 
   // MARK: - For
@@ -92,29 +92,29 @@ extension Compiler {
                          orElse: [Statement],
                          location: SourceLocation) throws {
 
-    let iterationStart = self.codeObject.createLabel()
-    let cleanup = self.codeObject.createLabel()
-    let end = self.codeObject.createLabel()
+    let iterationStart = self.builder.createLabel()
+    let cleanup = self.builder.createLabel()
+    let end = self.builder.createLabel()
 
-    try self.codeObject.appendSetupLoop(loopEnd: end, at: location)
+    try self.builder.appendSetupLoop(loopEnd: end, at: location)
 
     // 'continue' will jump to 'startLabel'
     try self.inBlock(.loop(continueTarget: iterationStart)) {
       try self.visitExpression(iter)
-      try self.codeObject.appendGetIter(at: location)
+      try self.builder.appendGetIter(at: location)
 
-      self.codeObject.setLabel(iterationStart)
-      try self.codeObject.appendForIter(ifEmpty: cleanup, at: location)
+      self.builder.setLabel(iterationStart)
+      try self.builder.appendForIter(ifEmpty: cleanup, at: location)
       try self.visitExpression(target, context: .store)
       try self.visitStatements(body)
-      try self.codeObject.appendJumpAbsolute(to: iterationStart, at: location)
+      try self.builder.appendJumpAbsolute(to: iterationStart, at: location)
 
-      self.codeObject.setLabel(cleanup)
-      try self.codeObject.appendPopBlock(at: location)
+      self.builder.setLabel(cleanup)
+      try self.builder.appendPopBlock(at: location)
     }
 
     try self.visitStatements(orElse)
-    self.codeObject.setLabel(end)
+    self.builder.setLabel(end)
   }
 
   // MARK: - While
@@ -148,13 +148,13 @@ extension Compiler {
                            orElse: [Statement],
                            location: SourceLocation) throws {
 
-    let iterationStart = self.codeObject.createLabel()
-    let cleanup = self.codeObject.createLabel()
-    let end = self.codeObject.createLabel()
+    let iterationStart = self.builder.createLabel()
+    let cleanup = self.builder.createLabel()
+    let end = self.builder.createLabel()
 
-    try self.codeObject.appendSetupLoop(loopEnd: end, at: location)
+    try self.builder.appendSetupLoop(loopEnd: end, at: location)
 
-    self.codeObject.setLabel(iterationStart)
+    self.builder.setLabel(iterationStart)
 
     // 'continue' will jump to 'startLabel'
     try self.inBlock(.loop(continueTarget: iterationStart)) {
@@ -164,14 +164,14 @@ extension Compiler {
                                location: location)
 
       try self.visitStatements(body)
-      try self.codeObject.appendJumpAbsolute(to: iterationStart, at: location)
+      try self.builder.appendJumpAbsolute(to: iterationStart, at: location)
 
-      self.codeObject.setLabel(cleanup)
-      try self.codeObject.appendPopBlock(at: location)
+      self.builder.setLabel(cleanup)
+      try self.builder.appendPopBlock(at: location)
     }
 
     try self.visitStatements(orElse)
-    self.codeObject.setLabel(end)
+    self.builder.setLabel(end)
   }
 
   // MARK: - Continue, break
@@ -184,14 +184,14 @@ extension Compiler {
 
     switch blockType {
     case let .loop(continueTarget):
-      try self.codeObject.appendJumpAbsolute(to: continueTarget, at: location)
+      try self.builder.appendJumpAbsolute(to: continueTarget, at: location)
     case .except,
          .finallyTry:
       // Try to find the previous loop.
       for block in self.blockStack.reversed() {
         switch block {
         case let .loop(continueTarget):
-          try self.codeObject.appendJumpAbsolute(to: continueTarget, at: location)
+          try self.builder.appendJumpAbsolute(to: continueTarget, at: location)
           return
         case .except,
              .finallyTry:
@@ -211,6 +211,6 @@ extension Compiler {
       throw self.error(.breakOutsideLoop, location: location)
     }
 
-    try self.codeObject.appendBreak(at: location)
+    try self.builder.appendBreak(at: location)
   }
 }

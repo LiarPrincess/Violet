@@ -26,11 +26,11 @@ extension Compiler {
 
     let codeObject = try self.inNewCodeObject(node: expression, type: .lambda) {
       // Make None the first constant, so the lambda can't have a docstring.
-      try self.codeObject.appendNone(at: location)
+      try self.builder.appendNone(at: location)
 
       try self.visitExpression(body)
       if !self.currentScope.isGenerator {
-        try self.codeObject.appendReturn(at: location)
+        try self.builder.appendReturn(at: location)
       }
     }
 
@@ -62,24 +62,24 @@ extension Compiler {
     let codeObject = try self.inNewCodeObject(node: statement, type: .function) {
       let optimizationLevel = self.options.optimizationLevel
       if let docString = body.first.getDocString(), optimizationLevel < 2 {
-        try self.codeObject.appendString(docString, at: location)
+        try self.builder.appendString(docString, at: location)
       }
 
       try self.visitStatements(body)
 
       if !self.currentScope.hasReturnValue {
-        try self.codeObject.appendNone(at: location)
-        try self.codeObject.appendReturn(at: location)
+        try self.builder.appendNone(at: location)
+        try self.builder.appendReturn(at: location)
       }
     }
 
     try self.makeClosure(codeObject: codeObject, flags: flags, location: location)
 
     for _ in decorators {
-      try self.codeObject.appendCallFunction(argumentCount: 1, at: location)
+      try self.builder.appendCallFunction(argumentCount: 1, at: location)
     }
 
-    try self.codeObject.appendStoreName(name, at: location)
+    try self.builder.appendStoreName(name, at: location)
   }
 
   // MARK: - Decorators
@@ -99,8 +99,7 @@ extension Compiler {
     if args.defaults.any {
       flags.formUnion(.hasPositionalArgDefaults)
       try self.visitExpressions(args.defaults)
-      try self.codeObject.appendBuildTuple(elementCount: args.defaults.count,
-                                           at: location)
+      try self.builder.appendBuildTuple(elementCount: args.defaults.count, at: location)
     }
 
     if args.kwOnlyArgs.any {
@@ -132,9 +131,8 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasKwOnlyArgDefaults)
       let elements = names.map { Constant.string($0.value) }
-      try self.codeObject.appendTuple(elements, at: location)
-      try self.codeObject.appendBuildConstKeyMap(elementCount: names.count,
-                                                 at: location)
+      try self.builder.appendTuple(elements, at: location)
+      try self.builder.appendBuildConstKeyMap(elementCount: names.count, at: location)
     }
   }
 
@@ -176,9 +174,8 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasAnnotations)
       let elements = names.map { Constant.string($0.value) }
-      try self.codeObject.appendTuple(elements, at: location)
-      try self.codeObject.appendBuildConstKeyMap(elementCount: names.count,
-                                                 at: location)
+      try self.builder.appendTuple(elements, at: location)
+      try self.builder.appendBuildConstKeyMap(elementCount: names.count, at: location)
     }
   }
 
@@ -235,17 +232,17 @@ extension Compiler {
         let variable: ClosureVariable =
           flags.contains(.cell) ? .cell(name) : .free(name)
 
-        try self.codeObject.appendLoadClosure(variable, at: location)
+        try self.builder.appendLoadClosure(variable, at: location)
       }
 
       let count = codeObject.freeVars.count
-      try self.codeObject.appendBuildTuple(elementCount: count, at: location)
+      try self.builder.appendBuildTuple(elementCount: count, at: location)
       makeFunctionFlags.formUnion(.hasFreeVariables)
     }
 
-    try self.codeObject.appendCode(codeObject, at: location)
-    try self.codeObject.appendString(qualifiedName, at: location)
-    try self.codeObject.appendMakeFunction(flags: makeFunctionFlags, at: location)
+    try self.builder.appendCode(codeObject, at: location)
+    try self.builder.appendString(qualifiedName, at: location)
+    try self.builder.appendMakeFunction(flags: makeFunctionFlags, at: location)
   }
 
   private func getRefType(name: MangledName,

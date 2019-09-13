@@ -29,36 +29,36 @@ extension Compiler {
 
     switch expr.kind {
     case .true:
-      try self.codeObject.appendTrue(at: location)
+      try self.builder.appendTrue(at: location)
     case .false:
-      try self.codeObject.appendFalse(at: location)
+      try self.builder.appendFalse(at: location)
     case .none:
-      try self.codeObject.appendNone(at: location)
+      try self.builder.appendNone(at: location)
     case .ellipsis:
-      try self.codeObject.appendEllipsis(at: location)
+      try self.builder.appendEllipsis(at: location)
 
     case let .identifier(value):
       try self.visitIdentifier(value, context: context, location: location)
 
     case let .bytes(value):
-      try self.codeObject.appendBytes(value, at: location)
+      try self.builder.appendBytes(value, at: location)
     case let .string(string):
       try self.visitString(string, location: location)
 
     case let .int(value):
-      try self.codeObject.appendInteger(value, at: location)
+      try self.builder.appendInteger(value, at: location)
     case let .float(value):
-      try self.codeObject.appendFloat(value, at: location)
+      try self.builder.appendFloat(value, at: location)
     case let .complex(real, imag):
-      try self.codeObject.appendComplex(real: real, imag: imag, at: location)
+      try self.builder.appendComplex(real: real, imag: imag, at: location)
 
     case let .unaryOp(op, right):
       try self.visitExpression(right)
-      try self.codeObject.appendUnaryOperator(op, at: location)
+      try self.builder.appendUnaryOperator(op, at: location)
     case let .binaryOp(op, left, right):
       try self.visitExpression(left)
       try self.visitExpression(right)
-      try self.codeObject.appendBinaryOperator(op, at: location)
+      try self.builder.appendBinaryOperator(op, at: location)
     case let .boolOp(op, left, right):
       try self.visitBoolOp(op, left: left, right: right, location: location)
     case let .compare(left, elements):
@@ -166,7 +166,7 @@ extension Compiler {
     case let .boolOp(op, left, right):
       let isOr = op == .or
       let hasLabel = cond != isOr
-      let next2 = hasLabel ? self.codeObject.createLabel() : next
+      let next2 = hasLabel ? self.builder.createLabel() : next
 
       try self.visitExpression(left,
                                andJumpTo: next2,
@@ -178,13 +178,13 @@ extension Compiler {
                                location: location)
 
       if hasLabel {
-        self.codeObject.setLabel(next2)
+        self.builder.setLabel(next2)
       }
       return
 
     case let .ifExpression(test, body, orElse):
-      let end   = self.codeObject.createLabel()
-      let next2 = self.codeObject.createLabel()
+      let end   = self.builder.createLabel()
+      let next2 = self.builder.createLabel()
 
       try self.visitExpression(test,
                                andJumpTo: next2,
@@ -194,13 +194,13 @@ extension Compiler {
                                andJumpTo: next,
                                ifBooleanValueIs: cond,
                                location: location)
-      try self.codeObject.appendJumpAbsolute(to: end, at: location)
-      self.codeObject.setLabel(next2)
+      try self.builder.appendJumpAbsolute(to: end, at: location)
+      self.builder.setLabel(next2)
       try self.visitExpression(orElse,
                                andJumpTo: next,
                                ifBooleanValueIs: cond,
                                location: location)
-      self.codeObject.setLabel(end)
+      self.builder.setLabel(end)
 
     case let .compare(left, elements):
       guard elements.count > 1 else {
@@ -209,34 +209,34 @@ extension Compiler {
 
       try self.visitExpression(left)
 
-      let end     = self.codeObject.createLabel()
-      let cleanup = self.codeObject.createLabel()
+      let end     = self.builder.createLabel()
+      let cleanup = self.builder.createLabel()
 
       for element in elements.dropLast() {
         try self.visitExpression(element.right)
-        try self.codeObject.appendDupTop(at: location)
-        try self.codeObject.appendRotThree(at: location)
-        try self.codeObject.appendCompareOp(element.op, at: location)
-        try self.codeObject.appendJumpIfFalseOrPop(to: cleanup, at: location)
+        try self.builder.appendDupTop(at: location)
+        try self.builder.appendRotThree(at: location)
+        try self.builder.appendCompareOp(element.op, at: location)
+        try self.builder.appendJumpIfFalseOrPop(to: cleanup, at: location)
       }
 
       let last = elements.last
       try self.visitExpression(last.right)
-      try self.codeObject.appendCompareOp(last.op, at: location)
+      try self.builder.appendCompareOp(last.op, at: location)
 
       switch cond {
-      case true:  try self.codeObject.appendPopJumpIfTrue (to: next, at: location)
-      case false: try self.codeObject.appendPopJumpIfFalse(to: next, at: location)
+      case true:  try self.builder.appendPopJumpIfTrue (to: next, at: location)
+      case false: try self.builder.appendPopJumpIfFalse(to: next, at: location)
       }
 
-      try self.codeObject.appendJumpAbsolute(to: end, at: location)
-      self.codeObject.setLabel(cleanup)
-      try self.codeObject.appendPopTop(at: location)
+      try self.builder.appendJumpAbsolute(to: end, at: location)
+      self.builder.setLabel(cleanup)
+      try self.builder.appendPopTop(at: location)
 
       if !cond {
-        try self.codeObject.appendJumpAbsolute(to: next, at: location)
+        try self.builder.appendJumpAbsolute(to: next, at: location)
       }
-      self.codeObject.setLabel(end)
+      self.builder.setLabel(end)
       return
 
     default:
@@ -245,8 +245,8 @@ extension Compiler {
 
     try self.visitExpression(expr)
     switch cond {
-    case true:  try self.codeObject.appendPopJumpIfTrue (to: next, at: location)
-    case false: try self.codeObject.appendPopJumpIfFalse(to: next, at: location)
+    case true:  try self.builder.appendPopJumpIfTrue (to: next, at: location)
+    case false: try self.builder.appendPopJumpIfFalse(to: next, at: location)
     }
   }
 
@@ -291,20 +291,20 @@ extension Compiler {
     case .deref:
       switch context {
       case .store:
-        try self.codeObject.appendStoreDeref(mangled, at: location)
+        try self.builder.appendStoreDeref(mangled, at: location)
       case .load where self.currentScope.type == .class:
-        try self.codeObject.appendLoadClassDeref(mangled, at: location)
+        try self.builder.appendLoadClassDeref(mangled, at: location)
       case .load:
-        try self.codeObject.appendLoadDeref(mangled, at: location)
+        try self.builder.appendLoadDeref(mangled, at: location)
       case .del:
-        try self.codeObject.appendDeleteDeref(mangled, at: location)
+        try self.builder.appendDeleteDeref(mangled, at: location)
       }
     case .fast:
-      try self.codeObject.appendFast(name: mangled, context: context, at: location)
+      try self.builder.appendFast(name: mangled, context: context, at: location)
     case .global:
-      try self.codeObject.appendGlobal(name: mangled, context: context, at: location)
+      try self.builder.appendGlobal(name: mangled, context: context, at: location)
     case .name:
-      try self.codeObject.appendName(name: mangled, context: context, at: location)
+      try self.builder.appendName(name: mangled, context: context, at: location)
     }
   }
 
@@ -315,7 +315,7 @@ extension Compiler {
   private func visitString(_ group: StringGroup, location: SourceLocation) throws {
     switch group {
     case let .literal(s):
-      try self.codeObject.appendString(s, at: location)
+      try self.builder.appendString(s, at: location)
 
     case let .formattedValue(expr, conversion: conv, spec: spec):
       try self.visitExpression(expr)
@@ -331,12 +331,12 @@ extension Compiler {
       var hasFormat = false
       if let s = spec {
         hasFormat = true
-        try self.codeObject.appendString(s, at: location)
+        try self.builder.appendString(s, at: location)
       }
 
-      try self.codeObject.appendFormatValue(conversion: conversion,
-                                            hasFormat: hasFormat,
-                                            at: location)
+      try self.builder.appendFormatValue(conversion: conversion,
+                                         hasFormat: hasFormat,
+                                         at: location)
 
     case let .joined(groups):
       for g in groups {
@@ -344,7 +344,7 @@ extension Compiler {
       }
 
       if groups.count > 1 {
-        try self.codeObject.appendBuildString(count: groups.count, at: location)
+        try self.builder.appendBuildString(count: groups.count, at: location)
       }
     }
   }
@@ -364,17 +364,17 @@ extension Compiler {
                            left:  Expression,
                            right: Expression,
                            location: SourceLocation) throws {
-    let end = self.codeObject.createLabel()
+    let end = self.builder.createLabel()
 
     try self.visitExpression(left)
 
     switch op {
-    case .and: try self.codeObject.appendJumpIfFalseOrPop(to: end, at: location)
-    case .or:  try self.codeObject.appendJumpIfTrueOrPop (to: end, at: location)
+    case .and: try self.builder.appendJumpIfFalseOrPop(to: end, at: location)
+    case .or:  try self.builder.appendJumpIfTrueOrPop (to: end, at: location)
     }
 
     try self.visitExpression(right)
-    self.codeObject.setLabel(end)
+    self.builder.setLabel(end)
   }
 
   /// compiler_compare(struct compiler *c, expr_ty e)
@@ -403,28 +403,28 @@ extension Compiler {
     if elements.count == 1 {
       let first = elements.first
       try self.visitExpression(first.right)
-      try self.codeObject.appendCompareOp(first.op, at: location)
+      try self.builder.appendCompareOp(first.op, at: location)
     } else {
-      let end = self.codeObject.createLabel()
-      let cleanup = self.codeObject.createLabel()
+      let end = self.builder.createLabel()
+      let cleanup = self.builder.createLabel()
 
       for element in elements.dropLast() {
         try self.visitExpression(element.right)
-        try self.codeObject.appendDupTop(at: location)
-        try self.codeObject.appendRotThree(at: location)
-        try self.codeObject.appendCompareOp(element.op, at: location)
-        try self.codeObject.appendJumpIfFalseOrPop(to: cleanup, at: location)
+        try self.builder.appendDupTop(at: location)
+        try self.builder.appendRotThree(at: location)
+        try self.builder.appendCompareOp(element.op, at: location)
+        try self.builder.appendJumpIfFalseOrPop(to: cleanup, at: location)
       }
 
       let last = elements.last
       try self.visitExpression(last.right)
-      try self.codeObject.appendCompareOp(last.op, at: location)
+      try self.builder.appendCompareOp(last.op, at: location)
 
-      try self.codeObject.appendJumpAbsolute(to: end, at: location)
-      self.codeObject.setLabel(cleanup)
-      try self.codeObject.appendRotTwo(at: location)
-      try self.codeObject.appendPopTop(at: location)
-      self.codeObject.setLabel(end)
+      try self.builder.appendJumpAbsolute(to: end, at: location)
+      self.builder.setLabel(cleanup)
+      try self.builder.appendRotTwo(at: location)
+      try self.builder.appendPopTop(at: location)
+      self.builder.setLabel(end)
     }
   }
 
@@ -445,8 +445,8 @@ extension Compiler {
                                  body:   Expression,
                                  orElse: Expression,
                                  location: SourceLocation) throws {
-    let end = self.codeObject.createLabel()
-    let orElseStart = self.codeObject.createLabel()
+    let end = self.builder.createLabel()
+    let orElseStart = self.builder.createLabel()
 
     try self.visitExpression(test,
                              andJumpTo: orElseStart,
@@ -454,10 +454,10 @@ extension Compiler {
                              location: location)
 
     try self.visitExpression(body)
-    try self.codeObject.appendJumpAbsolute(to: end, at: location)
-    self.codeObject.setLabel(orElseStart)
+    try self.builder.appendJumpAbsolute(to: end, at: location)
+    self.builder.setLabel(orElseStart)
     try self.visitExpression(orElse)
-    self.codeObject.setLabel(end)
+    self.builder.setLabel(end)
   }
 
   // MARK: - Attribute
@@ -478,17 +478,17 @@ extension Compiler {
     switch context {
     case .store:
       if isAugumented {
-        try self.codeObject.appendRotTwo(at: location)
+        try self.builder.appendRotTwo(at: location)
       }
-      try self.codeObject.appendStoreAttribute(mangled, at: location)
+      try self.builder.appendStoreAttribute(mangled, at: location)
     case .load:
       if isAugumented {
-        try self.codeObject.appendDupTop(at: location)
+        try self.builder.appendDupTop(at: location)
       }
-      try self.codeObject.appendLoadAttribute(mangled, at: location)
+      try self.builder.appendLoadAttribute(mangled, at: location)
     case .del:
       assert(!isAugumented)
-      try self.codeObject.appendDeleteAttribute(mangled, at: location)
+      try self.builder.appendDeleteAttribute(mangled, at: location)
     }
   }
 
@@ -532,25 +532,24 @@ extension Compiler {
         for s in slices {
           try self.visitNestedSlice(slice: s, context: context)
         }
-        try self.codeObject.appendBuildTuple(elementCount: slices.count,
-                                             at: location)
+        try self.builder.appendBuildTuple(elementCount: slices.count, at: location)
       }
     }
 
     switch context {
     case .store:
       if isAugumented {
-        try self.codeObject.appendRotThree(at: location)
+        try self.builder.appendRotThree(at: location)
       }
-      try self.codeObject.appendStoreSubscr(at: location)
+      try self.builder.appendStoreSubscr(at: location)
     case .load:
       if isAugumented {
-        try self.codeObject.appendDupTopTwo(at: location)
+        try self.builder.appendDupTopTwo(at: location)
       }
-      try self.codeObject.appendBinarySubscr(at: location)
+      try self.builder.appendBinarySubscr(at: location)
     case .del:
       assert(!isAugumented)
-      try self.codeObject.appendDeleteSubscr(at: location)
+      try self.builder.appendDeleteSubscr(at: location)
     }
   }
 
@@ -582,13 +581,13 @@ extension Compiler {
     if let l = lower {
       try self.visitExpression(l)
     } else {
-      try self.codeObject.appendNone(at: location)
+      try self.builder.appendNone(at: location)
     }
 
     if let u = upper {
       try self.visitExpression(u)
     } else {
-      try self.codeObject.appendNone(at: location)
+      try self.builder.appendNone(at: location)
     }
 
     var type = SliceArg.lowerUpper
@@ -597,6 +596,6 @@ extension Compiler {
       try self.visitExpression(s)
     }
 
-    try self.codeObject.appendBuildSlice(type, at: location)
+    try self.builder.appendBuildSlice(type, at: location)
   }
 }

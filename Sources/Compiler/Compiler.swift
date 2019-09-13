@@ -52,13 +52,19 @@ public final class Compiler {
   /// Code object that we are currently filling (top of the `self.codeObjectStack`).
   internal var codeObject: CodeObject {
     if let last = self.unitStack.last { return last.codeObject }
-    fatalError("[BUG] Compiler: Using nil current code object.")
+    fatalError("[BUG] Compiler: Using `codeObject` with empty `unitStack`.")
+  }
+
+  /// Code object builder for `self.codeObject`.
+  internal var builder: CodeObjectBuilder {
+    if let last = self.unitStack.last { return last.builder }
+    fatalError("[BUG] Compiler: Using `builder` with empty `unitStack`.")
   }
 
   /// Scope that we are currently filling (top of the `self.scopeStack`).
   internal var currentScope: SymbolScope {
     if let last = self.unitStack.last { return last.scope }
-    fatalError("[BUG] Compiler: Using nil current scope.")
+    fatalError("[BUG] Compiler: Using `currentScope` with empty `unitStack`.")
   }
 
   /// How far are we inside module/class/function scopes.
@@ -105,7 +111,7 @@ public final class Compiler {
     switch self.ast.kind {
     case let .interactive(stmts):
       if self.hasAnnotations(stmts) {
-        try self.codeObject.appendSetupAnnotations(at: self.ast.start)
+        try self.builder.appendSetupAnnotations(at: self.ast.start)
       }
       try self.visitStatements(stmts)
     case let .module(stmts):
@@ -117,9 +123,9 @@ public final class Compiler {
     // Emit epilog (because we may be a jump target).
     if !self.currentScope.hasReturnValue {
       if !self.ast.kind.isExpression {
-        try self.codeObject.appendNone(at: self.ast.end)
+        try self.builder.appendNone(at: self.ast.end)
       }
-      try self.codeObject.appendReturn(at: self.ast.end)
+      try self.builder.appendReturn(at: self.ast.end)
     }
 
     assert(self.unitStack.count == 1)
@@ -132,7 +138,7 @@ public final class Compiler {
   /// compiler_body(struct compiler *c, asdl_seq *stmts)
   private func visitBody(_ stmts: [Statement]) throws {
     if self.hasAnnotations(stmts) {
-      try self.codeObject.appendSetupAnnotations(at: self.ast.start)
+      try self.builder.appendSetupAnnotations(at: self.ast.start)
     }
 
     guard let first = stmts.first else {
@@ -141,8 +147,8 @@ public final class Compiler {
 
     if let doc = first.getDocString(), self.options.optimizationLevel < 2 {
       let __doc__ = SpecialIdentifiers.__doc__
-      try self.codeObject.appendString(doc, at: first.start)
-      try self.codeObject.appendStoreName(__doc__, at: first.start)
+      try self.builder.appendString(doc, at: first.start)
+      try self.builder.appendStoreName(__doc__, at: first.start)
 
       try self.visitStatements(stmts.dropFirst())
     } else {
@@ -235,10 +241,7 @@ public final class Compiler {
                             line: node.start.line)
 
     let className = type == .class ? name : nil
-    let unit = CompilerUnit(codeObject: object,
-                            scope: scope,
-                            className: className)
-
+    let unit = CompilerUnit(scope: scope, codeObject: object, className: className)
     self.unitStack.append(unit)
   }
 
