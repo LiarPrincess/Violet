@@ -8,7 +8,7 @@ let package = Package(
     .macOS(.v10_11)
   ],
   products: [
-    .library(name: "LibViolet", targets: ["Core", "Lexer", "Parser", "Compiler", "Bytecode"]),
+    .library(name: "LibViolet", targets: ["VM"]),
     .executable(name: "Violet", targets: ["Main"]),
 
     .executable(name: "Elsa", targets: ["Elsa"])
@@ -22,17 +22,21 @@ let package = Package(
     .target(name: "Lexer", dependencies: ["Core"]),
     .testTarget(name: "LexerTests", dependencies: ["Core", "Lexer"]),
 
-    .target(name: "Parser", dependencies: ["Core", "Lexer"]),
-    .testTarget(name: "ParserTests", dependencies: ["Core", "Lexer", "Parser"]),
+    .target(name: "Parser", dependencies: ["Lexer"]),
+    .testTarget(name: "ParserTests", dependencies: ["Parser"]),
 
-    .target(name: "Compiler", dependencies: ["Core", "Parser", "Bytecode"]),
-    .testTarget(name: "CompilerTests", dependencies: ["Core", "Parser", "Compiler"]),
+    .target(name: "Compiler", dependencies: ["Parser", "Bytecode"]),
+    .testTarget(name: "CompilerTests", dependencies: ["Compiler"]),
 
     .target(name: "Bytecode", dependencies: ["Core"]),
 
-    .target(name: "Main", dependencies: ["Core", "Lexer"]),
+    .target(name: "Objects", dependencies: ["Core"]),
+    .testTarget(name: "ObjectsTests", dependencies: ["Objects"]),
 
-    // -- Tools --
+    .target(name: "VM", dependencies: ["Compiler", "Objects"]),
+    .testTarget(name: "VMTests", dependencies: ["VM"]),
+
+    .target(name: "Main", dependencies: ["VM"]),
 
     // Elsa is our code generation tool.
     .target(name: "Elsa")
