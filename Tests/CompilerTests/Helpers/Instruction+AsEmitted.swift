@@ -2,8 +2,6 @@ import Foundation
 import Core
 import Bytecode
 
-// swiftlint:disable cyclomatic_complexity
-// swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
 extension CodeObject {
@@ -13,6 +11,7 @@ extension CodeObject {
     return self.instructions.map(self.asEmittedInstruction)
   }
 
+  // swiftlint:disable:next function_body_length
   private func asEmittedInstruction(_ instruction: Instruction) -> EmittedInstruction {
     switch instruction {
     case .nop:

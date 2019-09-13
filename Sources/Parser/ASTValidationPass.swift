@@ -2,9 +2,8 @@ import Foundation
 import Core
 import Lexer
 
-// swiftlint:disable function_body_length
-// swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
+// swiftlint:disable function_body_length
 
 // In CPython:
 // Python -> ast.c
@@ -261,7 +260,7 @@ public struct ASTValidationPass: ASTPass {
   private func visitComparisonElements(
     _ elements: NonEmptyArray<ComparisonElement>) throws {
 
-    for e in elements{
+    for e in elements {
       try self.visitExpression(e.right)
     }
   }
@@ -289,7 +288,7 @@ public struct ASTValidationPass: ASTPass {
     case let .slice(lower, upper, step):
       if let lower = lower { try self.visitExpression(lower) }
       if let upper = upper { try self.visitExpression(upper) }
-      if let step  = step  { try self.visitExpression(step) }
+      if let step  = step { try self.visitExpression(step) }
 
     case let .extSlice(dims):
       // we don't have to check .isEmpty because of NonEmptyArray

@@ -3,9 +3,8 @@ import Core
 import Parser
 @testable import Compiler
 
-// swiftlint:disable function_body_length
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
+// swiftlint:disable function_body_length
 
 /// Use 'Tools/dump_symtable.py' for reference.
 class STFunction: XCTestCase, CommonSymbolTable {
@@ -202,7 +201,10 @@ class STFunction: XCTestCase, CommonSymbolTable {
       guard top.children.count == 1 else { return }
 
       let nested = top.children[0]
-      XCTAssertScope(nested, name: "let_it_go", type: .function, flags: [.isNested, .hasVarKeywords])
+      XCTAssertScope(nested,
+                     name: "let_it_go",
+                     type: .function,
+                     flags: [.isNested, .hasVarKeywords])
       XCTAssert(nested.children.isEmpty)
 
       XCTAssertEqual(nested.varNames.count, 1)

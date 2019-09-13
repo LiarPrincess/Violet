@@ -140,7 +140,7 @@ class ParseString: XCTestCase, Common, ExpressionMatcher, StringMatcher {
     }
   }
 
-  // swiftlint:disable:next function_body_length cyclomatic_complexity
+  // swiftlint:disable:next cyclomatic_complexity
   func test_fstring_concat() throws {
     var parser = self.createExprParser(
       self.token(.string("Let "),          start: loc0, end: loc1),

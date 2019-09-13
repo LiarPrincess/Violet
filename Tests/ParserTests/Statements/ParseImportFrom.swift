@@ -3,8 +3,6 @@ import Core
 import Lexer
 @testable import Parser
 
-// swiftlint:disable file_length
-
 class ParseImportFrom: XCTestCase, Common, StatementMatcher {
 
   /// from Tangled import Rapunzel

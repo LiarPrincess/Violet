@@ -17,9 +17,11 @@ extension Compiler {
     }
   }
 
+// swiftlint:disable function_body_length
+
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
   internal func visitStatement(_ stmt: Statement) throws {
-    // swiftlint:disable:previous function_body_length cyclomatic_complexity
+// swiftlint:enable function_body_length
     self.setAppendLocation(stmt)
 
     switch stmt.kind {

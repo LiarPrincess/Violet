@@ -1,10 +1,6 @@
 import Foundation
 import Core
 
-// swiftlint:disable file_length
-// swiftlint:disable function_body_length
-// swiftlint:disable cyclomatic_complexity
-
 // https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals
 
 private enum QuoteType {
@@ -60,7 +56,6 @@ extension Lexer {
   }
 
   private mutating func readString(prefix: StringPrefix) throws -> [UnicodeScalar] {
-
     assert(self.peek == "\"" || self.peek == "'")
 
     guard let quote = self.peek else {
@@ -133,6 +128,7 @@ extension Lexer {
     case notEscapeCharacter
   }
 
+  // swiftlint:disable:next function_body_length
   private mutating func readEscaped(_ prefix: StringPrefix,
                                     _ quoteType: QuoteType) throws -> EscapeResult {
     assert(self.peek == "\\")

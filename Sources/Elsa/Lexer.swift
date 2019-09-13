@@ -71,7 +71,7 @@ public class Lexer {
 
   // MARK: - Get token
 
-  // swiftlint:disable:next function_body_length cyclomatic_complexity
+  // swiftlint:disable:next function_body_length
   public func getToken() -> Token {
     while true {
       guard let peek = self.peek else {

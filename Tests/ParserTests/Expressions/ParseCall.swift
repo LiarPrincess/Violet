@@ -4,7 +4,6 @@ import Lexer
 @testable import Parser
 
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
 
 class ParseCall: XCTestCase, Common, ExpressionMatcher {
 

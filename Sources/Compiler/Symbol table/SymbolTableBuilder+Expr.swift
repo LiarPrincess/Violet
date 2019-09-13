@@ -4,10 +4,6 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
-// swiftlint:disable function_body_length
-// swiftlint:disable cyclomatic_complexity
-// swiftlint:disable file_length
-
 extension SymbolTableBuilder {
 
   // MARK: - Expression
@@ -30,9 +26,13 @@ extension SymbolTableBuilder {
     }
   }
 
+// swiftlint:disable function_body_length
+
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
   internal func visitExpression(_ expr: Expression,
                                 context: ExpressionContext = .load) throws {
+// swiftlint:enable function_body_length
+
     switch expr.kind {
     case .true, .false, .none, .ellipsis:
       break

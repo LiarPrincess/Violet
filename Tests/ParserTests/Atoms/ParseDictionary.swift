@@ -131,8 +131,6 @@ class ParseDictionary: XCTestCase, Common, ExpressionMatcher {
 
   /// { rapunzel:eugene for cassandra in [] }
   func test_comprehension() {
-    // swiftlint:disable:previous function_body_length
-
     var parser = self.createExprParser(
       self.token(.leftBrace,                   start: loc0, end: loc1),
       self.token(.identifier("rapunzel"),      start: loc2, end: loc3),

@@ -161,7 +161,7 @@ public final class Compiler {
   /// find_ann(asdl_seq *stmts)
   private func hasAnnotations<S: Sequence>(_ stmts: S) -> Bool
     where S.Element == Statement {
-    return stmts.contains{ [unowned self] in self.hasAnnotations($0) }
+    return stmts.contains { [unowned self] in self.hasAnnotations($0) }
   }
 
   /// Search if variable annotations are present statically in a block.

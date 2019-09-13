@@ -6,8 +6,6 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
-// swiftlint:disable function_body_length
-
 extension Compiler {
 
   // MARK: - Assign
@@ -204,7 +202,7 @@ extension Compiler {
                              step:  Expression?) throws {
     if let l = lower { try self.checkAnnExpr(l) }
     if let u = upper { try self.checkAnnExpr(u) }
-    if let s = step  { try self.checkAnnExpr(s) }
+    if let s = step { try self.checkAnnExpr(s) }
   }
 
   /// compiler_visit_annexpr(struct compiler *c, expr_ty annotation)

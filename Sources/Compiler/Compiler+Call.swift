@@ -7,7 +7,7 @@ import Bytecode
 // Python -> compile.c
 
 // swiftlint:disable function_body_length
-// swiftlint:disable cyclomatic_complexity
+// TODO: ^ Remove this
 
 extension Compiler {
 
@@ -63,7 +63,7 @@ extension Compiler {
   ///                      asdl_seq *args,
   ///                      asdl_seq *keywords)
   /// ```
-  internal func callHelper(args:     [Expression],
+  internal func callHelper(args: [Expression],
                            keywords: [Keyword],
                            context:  ExpressionContext,
                            alreadyPushedArgs: Int) throws {

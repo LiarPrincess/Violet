@@ -10,9 +10,6 @@
 // - func matchFileInput (_ ast: AST, file: StaticString, line: UInt) -> ([Statement])?
 // - func matchExpression(_ ast: AST, file: StaticString, line: UInt) -> Expression?
 
-// swiftlint:disable function_body_length
-// swiftlint:disable file_length
-
 /// Extract associated values from enums. For unit tests.
 public final class AstPatternMatchingEmitter: EmitterBase {
 
@@ -161,6 +158,7 @@ public final class AstPatternMatchingEmitter: EmitterBase {
     self.write()
   }
 
+  // swiftlint:disable:next function_body_length
   private func emitSliceMatcher(_ enumDef: EnumDef) {
     self.write("// MARK: - SliceMatcher")
     self.write()

@@ -3,7 +3,6 @@ import Core
 @testable import Lexer
 
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
 
 // Use this to generate:
 // for (name, kind) in namedKinds { // e.g. name: "leftParen", kind: .leftParen

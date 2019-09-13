@@ -11,7 +11,6 @@ public final class CodeEmitter: EmitterBase {
     self.write()
 
     self.write("// swiftlint:disable superfluous_disable_command")
-    self.write("// swiftlint:disable type_body_length")
     self.write("// swiftlint:disable line_length")
     self.write("// swiftlint:disable file_length")
     self.write("// swiftlint:disable trailing_newline")

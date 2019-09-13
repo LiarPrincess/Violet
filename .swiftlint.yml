@@ -1,21 +1,24 @@
 line_length:
-  warning: 120
-  error:   140
+  warning: 100
+  error:   120
 
 function_body_length:
-  warning: 25
-  error:   30
-
-type_body_length:
-  warning: 250
-  error:   300
+  warning: 30
+  error:   35
 
 file_length:
-  warning: 250
-  error:   300
+  warning: 300
+  error:   350
 
-force_cast:
-  severity: warning
+# It is compiler after all:
+cyclomatic_complexity:
+  ignores_case_statements: true
+
+disabled_rules:
+  - identifier_name # annoying
+  - colon # align properties
+  - comma # align func params
+  - type_body_length # we are using 'file_length' rule
 
 # This may seem like a lot, but basically I like to write some code
 # and then enable all of the optional rules that do not break the project.
@@ -56,7 +59,7 @@ opt_in_rules:
   - empty_string
   - empty_xctest_method
   - explicit_enum_raw_value
-  # - fallthrough
+  - fallthrough
   - file_header
   - force_unwrapping
   - function_default_parameter_at_end
@@ -76,7 +79,6 @@ opt_in_rules:
   - required_enum_case
   - sorted_first_last
   - static_operator
-  # - strict_fileprivate
   - toggle_bool
   - trailing_closure
   - unavailable_function
@@ -84,21 +86,43 @@ opt_in_rules:
   - unused_private_declaration
   - vertical_whitespace_closing_braces
   - yoda_condition
-  # - explicit_acl
-  # - explicit_top_level_acl
   - no_extension_access_modifier
+  - contains_over_filter_count
+  - contains_over_filter_is_empty
+  - empty_collection_literal
+  - last_where
+  - legacy_multiple
+  - modifier_order
+  - reduce_into
+  - unused_declaration
 
-disabled_rules:
-  - identifier_name # annoying
+  # Maybe later:
+  # - missing_docs
 
-  - colon                   # align properties
-  - comma                   # align func params
-  - return_arrow_whitespace # align return type
-
-  - opening_brace      # if true { ... }
-  - statement_position # else    { ... }
-
-  - redundant_optional_initialization # I like it that way
-
-excluded:
-  - Package.swift
+  # Following optional rules are disabled:
+  # - strict_fileprivate # this one does not work properly?
+  # - explicit_acl # we don't need acl in tests
+  # - explicit_top_level_acl # this one requires us to put acl before 'extension XXX'
+  # - conditional_returns_on_newline
+  # - explicit_type_interface # this is weird
+  # - extension_access_modifier
+  # - file_name # we heavily use extensions for single type
+  # - file_types_order # declare helper type near usage
+  # - let_var_whitespace # weird, but does not trigger
+  # - multiline_arguments_brackets
+  # - multiline_parameters_brackets
+  # - no_grouping_extension
+  # - nslocalizedstring_key # is is not iOS
+  # - nslocalizedstring_require_bundle # is is not iOS
+  # - strong_iboutlet  # is is not iOS
+  # - operator_usage_whitespace # sometimes we align stuff
+  # - prefixed_toplevel_constant
+  # - required_deinit
+  # - sorted_imports
+  # - switch_case_on_newline
+  # - type_contents_order
+  # - unowned_variable_capture
+  # - untyped_error_in_catch
+  # - vertical_whitespace_between_cases
+  # - vertical_whitespace_opening_braces
+  # - xct_specific_matcher

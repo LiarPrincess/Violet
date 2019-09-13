@@ -3,7 +3,6 @@ import Core
 import Lexer
 
 // swiftlint:disable file_length
-// swiftlint:disable function_parameter_count
 
 // MARK: - Helpers
 

@@ -3,8 +3,8 @@ import Core
 import Lexer
 @testable import Parser
 
-// swiftlint:disable function_body_length
 // swiftlint:disable file_length
+// swiftlint:disable function_body_length
 
 class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 

@@ -104,8 +104,6 @@ class CompileIfStmt: XCTestCase, CommonCompiler {
   /// 24 LOAD_CONST               0 (None)
   /// 26 RETURN_VALUE
   func test_multiple() {
-    // swiftlint:disable:previous function_body_length
-
     let stmt = self.statement(.if(
       test: self.identifierExpr("eat_me"),
       body: NonEmptyArray(first:

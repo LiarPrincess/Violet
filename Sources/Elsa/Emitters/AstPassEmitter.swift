@@ -37,8 +37,8 @@ public final class AstPassEmitter: EmitterBase {
     self.write("import Lexer")
     self.write()
 
-    self.write("// swiftlint:disable function_body_length")
-    self.write("// swiftlint:disable cyclomatic_complexity")
+    self.write("")
+    self.write("")
     self.write("// swiftlint:disable file_length")
     self.write()
 
@@ -70,7 +70,9 @@ public final class AstPassEmitter: EmitterBase {
     let pascalName = pascalCase(enumDef.name)
     let argName = argNames[enumDef.name] ?? camelCase(enumDef.name)
     let accessModifier = enumDef.name == "AST" ? "public" : "private"
-    self.write("  \(accessModifier) func visit\(pascalName)(_ \(argName): \(enumDef.name)) throws {")
+    self.write(
+      "  \(accessModifier) func visit\(pascalName)(_ \(argName): \(enumDef.name)) throws {"
+    )
 
     self.write("    switch \(argName) {")
     for caseDef in enumDef.cases {

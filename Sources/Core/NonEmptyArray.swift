@@ -1,5 +1,3 @@
-// swiftlint:disable force_unwrapping
-
 /// Array that has at least 1 element.
 ///
 /// Do not add 'ExpressibleByArrayLiteral' - it may break our invariant.
@@ -12,9 +10,11 @@ public struct NonEmptyArray<Element>: Sequence,
 
   /// The first element of the collection.
   public var first: Element { return self.elements.first! }
+  // swiftlint:disable:previous force_unwrapping
 
   /// The last element of the collection.
   public var last: Element { return self.elements.last! }
+  // swiftlint:disable:previous force_unwrapping
 
   public init(first: Element) {
     self.init(first: first, rest: [])
@@ -72,7 +72,7 @@ public struct NonEmptyArray<Element>: Sequence,
 // MARK: - Conditional conformance
 
 extension NonEmptyArray: Equatable where Element: Equatable { }
-extension NonEmptyArray: Hashable  where Element: Hashable  { }
+extension NonEmptyArray: Hashable  where Element: Hashable { }
 
 // MARK: - To array
 

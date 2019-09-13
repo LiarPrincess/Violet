@@ -6,8 +6,6 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
-// swiftlint:disable function_body_length
-// swiftlint:disable cyclomatic_complexity
 // swiftlint:disable file_length
 
 extension Compiler {
@@ -22,9 +20,12 @@ extension Compiler {
     }
   }
 
+// swiftlint:disable function_body_length
+
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visitExpression(_ expr: Expression,
                                 context: ExpressionContext = .load) throws {
+// swiftlint:enable function_body_length
     self.setAppendLocation(expr)
 
     switch expr.kind {
@@ -118,10 +119,13 @@ extension Compiler {
     }
   }
 
+// swiftlint:disable function_body_length
+
   /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
   internal func visitExpression(_ expr:  Expression,
                                 andJumpTo next: Label,
                                 ifBooleanValueIs cond: Bool) throws {
+// swiftlint:enable function_body_length
     self.setAppendLocation(expr)
 
     switch expr.kind {

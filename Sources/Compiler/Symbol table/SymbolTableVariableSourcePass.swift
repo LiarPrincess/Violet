@@ -8,7 +8,6 @@ import Bytecode
 // This is basically 1:1 translation from CPython.
 // It is quite complicated (but it does make sense if you spend some time with it).
 
-// swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
 /// Structure that represents outer scope
@@ -72,7 +71,6 @@ internal final class SymbolTableVariableSourcePass {
   /// analyze_block(PySTEntryObject *ste, PyObject *bound, PyObject *free, ...)
   private func analyzeBlock(scope: SymbolScope,
                             outerContext: OuterContext?) throws {
-
     let context = ScopeContext()
 
     // Classes are 'transparent' for variable definitions
@@ -84,7 +82,7 @@ internal final class SymbolTableVariableSourcePass {
     // Analyze current scope symbols
     for (name, info) in scope.symbols {
       try self.analyzeName(name,
-                           info:  info,
+                           info: info,
                            scope: scope,
                            scopeContext: context,
                            outerContext: outerContext)
@@ -138,8 +136,7 @@ internal final class SymbolTableVariableSourcePass {
 
   private func mergeFree(target: inout [MangledName: SymbolInfo],
                          src:          [MangledName: SymbolInfo]) {
-    // swiftlint:disable:next trailing_closure
-    target.merge(src, uniquingKeysWith: { lhs, _ in lhs })
+    target.merge(src) { lhs, _ in lhs }
   }
 
   /// Decide on scope of name, given flags.

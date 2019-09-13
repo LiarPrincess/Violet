@@ -5,8 +5,6 @@ import Parser
 import Bytecode
 import Compiler
 
-// swiftlint:disable multiline_arguments
-
 internal func XCTAssertCode(_ code: CodeObject,
                             name: String,
                             qualified: String,
@@ -35,8 +33,11 @@ internal func XCTAssertInstructions(_ code: CodeObject,
                                     file: StaticString = #file,
                                     line: UInt         = #line) {
 
-  XCTAssertEqual(code.instructions.count, expected.count,
-                 "\(message) (count)", file: file, line: line)
+  XCTAssertEqual(code.instructions.count,
+                 expected.count,
+                 "\(message) (count)",
+                 file: file,
+                 line: line)
 
   var index = 0
   for (emitted, exp) in zip(code.emittedInstructions, expected) {

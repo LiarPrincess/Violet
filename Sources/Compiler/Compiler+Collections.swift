@@ -6,8 +6,6 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
-// swiftlint:disable file_length
-
 /// Helper for `emitLoadWithPossibleUnpack` method.
 /// We could pass clojures with `self`, but this is more self-documenting.
 private protocol CollectionLoadAdapter {

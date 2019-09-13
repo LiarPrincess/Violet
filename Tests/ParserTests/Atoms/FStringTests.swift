@@ -9,7 +9,6 @@ import Lexer
 // The beginning it rather discouraging, but it gets easier later.
 
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
 
 class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
 

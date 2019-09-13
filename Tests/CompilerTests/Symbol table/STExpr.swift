@@ -3,9 +3,7 @@ import Core
 import Parser
 @testable import Compiler
 
-// swiftlint:disable function_body_length
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
 
 /// Basic checks for expressions, without nested scopes.
 /// Just so we know that we visit all childs.

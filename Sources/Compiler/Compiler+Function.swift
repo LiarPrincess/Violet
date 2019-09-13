@@ -6,10 +6,6 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
-// swiftlint:disable file_length
-// swiftlint:disable function_parameter_count
-// swiftlint:disable function_body_length
-
 extension Compiler {
 
   // MARK: - Lambda

@@ -1,7 +1,5 @@
 import Foundation
 
-// swiftlint:disable force_unwrapping
-
 public class EmitterBase {
 
   private let input: URL
@@ -30,7 +28,9 @@ public class EmitterBase {
   public func write<S: CustomStringConvertible>(_ s: S,
                                                 terminator: String = "\n") {
     let line = String(describing: s) + terminator
-    let data = line.data(using: .utf8)!
+    guard let data = line.data(using: .utf8) else {
+      fatalError("Unable to convert '\(s)' to Data.")
+    }
     self.outputHandle.write(data)
   }
 

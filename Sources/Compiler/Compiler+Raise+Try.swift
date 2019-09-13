@@ -7,6 +7,7 @@ import Bytecode
 // Python -> compile.c
 
 // swiftlint:disable function_body_length
+// TODO: ^ Remove this
 
 extension Compiler {
 

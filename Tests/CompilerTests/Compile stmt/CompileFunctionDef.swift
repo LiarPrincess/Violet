@@ -4,9 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-// swiftlint:disable function_body_length
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
 
 /// Use 'Scripts/dump_dis.py' for reference.
 class CompileFunctionDef: XCTestCase, CommonCompiler {

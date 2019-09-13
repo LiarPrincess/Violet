@@ -4,9 +4,6 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
-// swiftlint:disable function_body_length
-// swiftlint:disable cyclomatic_complexity
-
 extension SymbolTableBuilder {
 
   // MARK: - Statement
@@ -20,8 +17,12 @@ extension SymbolTableBuilder {
     }
   }
 
+// swiftlint:disable cyclomatic_complexity function_body_length
+
   /// symtable_visit_stmt(struct symtable *st, stmt_ty s)
   internal func visitStatement(_ stmt: Statement) throws {
+// swiftlint:enable cyclomatic_complexity function_body_length
+
     switch stmt.kind {
     case let .functionDef(name, args, body, decorators, returns),
          let .asyncFunctionDef(name, args, body, decorators, returns):

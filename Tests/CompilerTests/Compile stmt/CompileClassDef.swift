@@ -6,7 +6,6 @@ import Bytecode
 
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
 
 /// Use 'Scripts/dump_dis.py' for reference.
 class CompileClassDef: XCTestCase, CommonCompiler {

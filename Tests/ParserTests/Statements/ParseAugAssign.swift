@@ -10,8 +10,6 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
 
   /// Ariel += "legs"
   func test_simple() {
-    // swiftlint:disable:previous function_body_length
-
     let augAssign: [TokenKind:BinaryOperator] = [
       .plusEqual: .add, // +=
       .minusEqual: .sub, // -=

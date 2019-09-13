@@ -7,7 +7,6 @@ import Core
 import Lexer
 
 // swiftlint:disable superfluous_disable_command
-// swiftlint:disable type_body_length
 // swiftlint:disable line_length
 // swiftlint:disable file_length
 // swiftlint:disable trailing_newline

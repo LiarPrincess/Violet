@@ -5,8 +5,6 @@ import Lexer
 // Python -> ast.c
 //  ast_for_stmt(struct compiling *c, const node *n)
 
-// swiftlint:disable file_length
-
 extension Parser {
 
   /// ```c

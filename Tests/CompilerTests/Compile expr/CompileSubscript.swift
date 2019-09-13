@@ -4,8 +4,6 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-// swiftlint:disable file_length
-
 /// Use 'Scripts/dump_dis.py' for reference.
 class CompileSubscript: XCTestCase, CommonCompiler {
 

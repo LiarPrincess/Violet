@@ -3,8 +3,8 @@ import Core
 import Parser
 @testable import Compiler
 
-// swiftlint:disable function_body_length
 // swiftlint:disable file_length
+// swiftlint:disable function_body_length
 
 /// Basic checks for statements, without nested scopes.
 /// Just so we know that we visit all childs.
@@ -74,7 +74,10 @@ class STStmt: XCTestCase, CommonSymbolTable {
       guard top.children.count == 1 else { return }
 
       let bodyScope = top.children[0]
-      XCTAssertScope(bodyScope, name: "let_it_go", type: .function, flags: [.hasReturnValue, .isNested])
+      XCTAssertScope(bodyScope,
+                     name: "let_it_go",
+                     type: .function,
+                     flags: [.hasReturnValue, .isNested])
       XCTAssert(bodyScope.children.isEmpty)
 
       XCTAssertEqual(bodyScope.varNames.count, 1)

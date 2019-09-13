@@ -50,7 +50,6 @@ public final class CodeObject {
   public internal(set) var instructions = [Instruction]()
   /// Instruction locations.
   public internal(set) var instructionLines = [SourceLine]()
-  // TODO: ^ Use struct InstructionLocation = (index, line) - Objects/lnotab_notes
 
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.

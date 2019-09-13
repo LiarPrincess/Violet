@@ -5,8 +5,6 @@ import Parser
 import Bytecode
 import Compiler
 
-// swiftlint:disable multiline_arguments
-
 internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
                                       name: String,
                                       flags: SymbolFlags,
@@ -18,7 +16,8 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
 
   XCTAssertNotNil(scope.symbols[mangled],
                   "\(message) (symbol is not present)",
-                  file: file, line: line)
+                  file: file,
+                  line: line)
 
   guard let info = scope.symbols[mangled] else { return }
 
@@ -46,7 +45,8 @@ internal func XCTAssertContainsSymbol(_ scope: SymbolScope,
     XCTAssertEqual(contains,
                    shouldContain,
                    "\(message) (\(additionalMissing) flag: 1<<\(shift))",
-                   file: file, line: line)
+                   file: file,
+                   line: line)
   }
 }
 
@@ -58,7 +58,8 @@ internal func XCTAssertContainsParameter(_ scope: SymbolScope,
   let mangled = MangledName(from: name)
   XCTAssertTrue(scope.varNames.contains(mangled),
                 "\(message) (missing \(name))",
-                file: file, line: line)
+                file: file,
+                line: line)
 }
 
 internal struct ScopeFeatures: OptionSet {
@@ -73,6 +74,7 @@ internal struct ScopeFeatures: OptionSet {
   static let needsClassClosure = ScopeFeatures(rawValue: 1 << 8)
 }
 
+// swiftlint:disable:next function_body_length
 internal func XCTAssertScope(_ scope: SymbolScope,
                              name: String,
                              type: ScopeType,
@@ -84,24 +86,45 @@ internal func XCTAssertScope(_ scope: SymbolScope,
   XCTAssertEqual(scope.name, name, message, file: file, line: line)
   XCTAssertEqual(scope.type, type, message, file: file, line: line)
 
-  XCTAssertEqual(scope.isNested, flags.contains(.isNested),
-                 "\(message) (isNested)", file: file, line: line)
+  XCTAssertEqual(scope.isNested,
+                 flags.contains(.isNested),
+                 "\(message) (isNested)",
+                 file: file,
+                 line: line)
 
-  XCTAssertEqual(scope.isGenerator, flags.contains(.isGenerator),
-                 "\(message) (isGenerator)", file: file, line: line)
+  XCTAssertEqual(scope.isGenerator,
+                 flags.contains(.isGenerator),
+                 "\(message) (isGenerator)",
+                 file: file,
+                 line: line)
 
-  XCTAssertEqual(scope.isCoroutine, flags.contains(.isCoroutine),
-                 "\(message) (isCoroutine)", file: file, line: line)
+  XCTAssertEqual(scope.isCoroutine,
+                 flags.contains(.isCoroutine),
+                 "\(message) (isCoroutine)",
+                 file: file,
+                 line: line)
 
-  XCTAssertEqual(scope.hasVarargs, flags.contains(.hasVarargs),
-                 "\(message) (hasVarargs)", file: file, line: line)
+  XCTAssertEqual(scope.hasVarargs,
+                 flags.contains(.hasVarargs),
+                 "\(message) (hasVarargs)",
+                 file: file,
+                 line: line)
 
-  XCTAssertEqual(scope.hasVarKeywords, flags.contains(.hasVarKeywords),
-                 "\(message) (hasVarKeywords)", file: file, line: line)
+  XCTAssertEqual(scope.hasVarKeywords,
+                 flags.contains(.hasVarKeywords),
+                 "\(message) (hasVarKeywords)",
+                 file: file,
+                 line: line)
 
-  XCTAssertEqual(scope.hasReturnValue, flags.contains(.hasReturnValue),
-                 "\(message) (hasReturnValue)", file: file, line: line)
+  XCTAssertEqual(scope.hasReturnValue,
+                 flags.contains(.hasReturnValue),
+                 "\(message) (hasReturnValue)",
+                 file: file,
+                 line: line)
 
-  XCTAssertEqual(scope.needsClassClosure, flags.contains(.needsClassClosure),
-                 "\(message) (needsClassClosure)", file: file, line: line)
+  XCTAssertEqual(scope.needsClassClosure,
+                 flags.contains(.needsClassClosure),
+                 "\(message) (needsClassClosure)",
+                 file: file,
+                 line: line)
 }

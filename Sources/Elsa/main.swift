@@ -1,5 +1,3 @@
-// swiftlint:disable force_try
-
 import Foundation
 
 let elsaDir = URL(fileURLWithPath: #file).deletingLastPathComponent()
@@ -13,7 +11,8 @@ let testsDir = rootDir .appendingPathComponent("Tests")
 let parserTestsDir = testsDir.appendingPathComponent("ParserTests")
 let compilerTestsDir = testsDir .appendingPathComponent("CompilerTests")
 
-private func parseLetItGo(file: URL)  -> [Entity] {
+private func parseLetItGo(file: URL) -> [Entity] {
+  // swiftlint:disable:next force_try
   let content = try! String(contentsOf: file, encoding: .utf8)
   let lexer = Lexer(source: content)
   let parser = Parser(lexer: lexer)

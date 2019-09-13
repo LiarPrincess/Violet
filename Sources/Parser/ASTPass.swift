@@ -26,7 +26,7 @@ private final class ASTPassBox<Base: ASTPass>: AnyASTPassBoxBase<Base.PassResult
     self._base = base
   }
 
-  fileprivate override func visit(_ ast: AST) throws -> Base.PassResult {
+  override fileprivate func visit(_ ast: AST) throws -> Base.PassResult {
     return try self._base.visit(ast)
   }
 }

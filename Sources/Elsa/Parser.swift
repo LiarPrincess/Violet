@@ -1,7 +1,5 @@
 import Foundation
 
-// swiftlint:disable file_length
-
 internal class Parser {
 
   private var lexer: Lexer
@@ -9,7 +7,7 @@ internal class Parser {
   private var location = SourceLocation.start
 
   private var aliases = [String:String]()
-  private var collectedDoc: String? = nil
+  private var collectedDoc: String?
 
   internal init(lexer: Lexer) {
     self.lexer = lexer
@@ -162,7 +160,7 @@ internal class Parser {
       let kind = self.consumePropertyKind()
 
       // name is optional
-      var name: String? = nil
+      var name: String?
       if case let TokenKind.name(nameValue) = self.token.kind {
         self.advance() // name
         name = nameValue
@@ -236,9 +234,9 @@ internal class Parser {
   }
 
   private func consumePropertyKind() -> PropertyKind {
-    if self.consumeIfEqual(kind: .star)   { return .many }
+    if self.consumeIfEqual(kind: .star) { return .many }
     if self.consumeIfEqual(kind: .option) { return .optional }
-    if self.consumeIfEqual(kind: .plus)   { return .min1 }
+    if self.consumeIfEqual(kind: .plus) { return .min1 }
     return .single
   }
 

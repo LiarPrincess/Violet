@@ -64,7 +64,6 @@ class IndentSpaceTests: XCTestCase, Common {
   ///   Gaston    | indent1 (2 spaces)
   ///        Best | indent2 (7 spaces)
   /// Waifu       | dedent1 dedent2
-  // swiftlint:disable:next function_body_length
   func test_indent_indent_doubleDedent() {
     let s = """
       Gaston

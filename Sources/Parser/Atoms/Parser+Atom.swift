@@ -29,8 +29,6 @@ extension Parser {
   ///  - NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False'
   /// ```
   internal mutating func atom() throws -> Expression {
-    // swiftlint:disable:previous function_body_length cyclomatic_complexity
-
     let token = self.peek
 
     switch token.kind {

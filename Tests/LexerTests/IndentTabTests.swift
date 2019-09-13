@@ -64,7 +64,6 @@ class IndentTabTests: XCTestCase, Common {
   ///   Gaston | indent1
   ///     Best | indent2
   /// Waifu    | dedent1 dedent2
-  // swiftlint:disable:next function_body_length
   func test_indent_indent_doubleDedent() {
     let s = """
     \tGaston

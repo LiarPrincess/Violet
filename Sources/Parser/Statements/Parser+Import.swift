@@ -165,7 +165,7 @@ extension Parser {
     return self.statement(kind, start: start, end: ir.end)
   }
 
-  private func getStatementKind(from ir: ImportFromIR) -> StatementKind{
+  private func getStatementKind(from ir: ImportFromIR) -> StatementKind {
     switch ir.values {
     case .all:
       return .importFromStar(moduleName: ir.module, level: ir.level)

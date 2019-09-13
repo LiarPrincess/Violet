@@ -22,7 +22,7 @@ private struct ArgumentsIR {
   /// Default values for keyword-only arguments.
   fileprivate var kwOnlyDefaults: [Expression] = []
   /// Keyworded (named) variable length arguments.
-  fileprivate var kwarg: Arg? = nil
+  fileprivate var kwarg: Arg?
 
   fileprivate var start: SourceLocation
   fileprivate var end:   SourceLocation
@@ -113,7 +113,7 @@ extension Parser {
     try parser.checkForbiddenName(name, location: token.start)
 
     // annotation is optional
-    var annotation: Expression? = nil
+    var annotation: Expression?
     if parser.peek.kind == .colon {
       try parser.advance() // :
       annotation = try parser.test()
@@ -169,7 +169,7 @@ extension Parser {
     let argument = try parseArg(&self)
     ir.end = argument.end
 
-    var defaultValue: Expression? = nil
+    var defaultValue: Expression?
     if try self.consumeIf(.equal) {
       let value = try self.test()
       defaultValue = value

@@ -11,7 +11,6 @@ import Foundation
 // It is FString, so normal rules do not apply:
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
-// swiftlint:disable cyclomatic_complexity
 
 private enum FStringFragment {
   /// String literal (the part NOT between '{' and '}').

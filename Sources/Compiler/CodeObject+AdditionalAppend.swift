@@ -37,7 +37,6 @@ extension CodeObjectBuilder {
     }
   }
 
-  // swiftlint:disable:next cyclomatic_complexity
   public func appendBinaryOperator(_ op: BinaryOperator) {
     switch op {
     case .add:        self.appendBinaryAdd()
@@ -56,7 +55,6 @@ extension CodeObjectBuilder {
     }
   }
 
-  // swiftlint:disable:next cyclomatic_complexity
   public func appendInplaceOperator(_ op: BinaryOperator) {
     switch op {
     case .add:        self.appendInplaceAdd()

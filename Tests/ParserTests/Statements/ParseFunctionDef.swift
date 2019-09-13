@@ -4,7 +4,6 @@ import Lexer
 @testable import Parser
 
 // swiftlint:disable file_length
-// swiftlint:disable type_body_length
 // swiftlint:disable function_body_length
 
 class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
@@ -673,7 +672,10 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       guard d.body.count == 1 else { return }
       XCTAssertStatement(d.body[0], "'Ratatouille'")
 
-      XCTAssertStatement(stmt, "(def cook(zucchini *tomato pepper=None **eggplant) do: 'Ratatouille')")
+      XCTAssertStatement(
+        stmt,
+        "(def cook(zucchini *tomato pepper=None **eggplant) do: 'Ratatouille')"
+      )
       XCTAssertEqual(stmt.start, loc0)
       XCTAssertEqual(stmt.end,   loc29)
     }
