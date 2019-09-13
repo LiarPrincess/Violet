@@ -19,26 +19,24 @@ extension Compiler {
   ///  8 LOAD_CONST               1 (None)
   /// 10 RETURN_VALUE
   /// ```
-  internal func visitImport(aliases:  NonEmptyArray<Alias>,
-                            location: SourceLocation) throws {
-    // The Import node stores a module name like a.b.c as a single string.
-
+  internal func visitImport(aliases: NonEmptyArray<Alias>) throws {
     for alias in aliases {
-      try self.builder.appendInteger(BigInt(0), at: location)
-      try self.builder.appendNone(at: location)
-      try self.builder.appendImportName(name: alias.name, at: location)
+      self.setAppendLocation(alias)
+
+      // The Import node stores a module name like a.b.c as a single string.
+      try self.builder.appendInteger(BigInt(0))
+      try self.builder.appendNone()
+      try self.builder.appendImportName(name: alias.name)
 
       if let asName = alias.asName {
-        try self.emitImportAs(name: alias.name,
-                              asName: asName,
-                              location: location)
+        try self.emitImportAs(name: alias.name, asName: asName)
       } else {
         var name = alias.name
         if let dotIndex = alias.name.firstIndex(of: ".") {
           name = String(alias.name.prefix(upTo: dotIndex))
         }
 
-        try self.builder.appendStoreName(name, at: location)
+        try self.builder.appendStoreName(name)
       }
     }
   }
@@ -56,17 +54,13 @@ extension Compiler {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
-  internal func visitImportFromStar(module:   String?,
-                                    level:    UInt8,
+  internal func visitImportFromStar(module: String?,
+                                    level: UInt8,
                                     location: SourceLocation) throws {
-
     try self.checkLateFuture(module: module, location: location)
-    try self.appendImportFromProlog(module: module,
-                                    names: ["*"],
-                                    level: level,
-                                    location: location)
-    try self.builder.appendImportStar(at: location)
-    try self.builder.appendPopTop(at: location)
+    try self.appendImportFromProlog(module: module, names: ["*"], level: level)
+    try self.builder.appendImportStar()
+    try self.builder.appendPopTop()
   }
 
   /// compiler_from_import(struct compiler *c, stmt_ty s)
@@ -81,54 +75,51 @@ extension Compiler {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
-  internal func visitImportFrom(module:   String?,
-                                aliases:  NonEmptyArray<Alias>,
-                                level:    UInt8,
+  internal func visitImportFrom(module:  String?,
+                                aliases: NonEmptyArray<Alias>,
+                                level:   UInt8,
                                 location: SourceLocation) throws {
 
     try self.checkLateFuture(module: module, location: location)
     try self.appendImportFromProlog(module: module,
                                     names: aliases.map { $0.name },
-                                    level: level,
-                                    location: location)
+                                    level: level)
 
     for alias in aliases {
       if alias.name == "*" {
-        throw self.error(.unexpectedStarImport, location: location)
+        throw self.error(.unexpectedStarImport)
       }
 
       let storeName = alias.asName ?? alias.name
-      try self.builder.appendImportFrom(name: alias.name, at: location)
-      try self.builder.appendStoreName(storeName, at: location)
+      self.setAppendLocation(alias)
+      try self.builder.appendImportFrom(name: alias.name)
+      try self.builder.appendStoreName(storeName)
     }
 
-    try self.builder.appendPopTop(at: location)
+    try self.builder.appendPopTop()
   }
 
   /// Common code for 'visitImportFromStar' and 'visitImportFrom'
   private func appendImportFromProlog(module: String?,
-                                      names:  [String],
-                                      level:  UInt8,
-                                      location: SourceLocation) throws {
+                                      names: [String],
+                                      level: UInt8) throws {
     let importName = module ?? ""
     let nameTuple = names.map { Constant.string($0) }
 
-    try self.builder.appendInteger(BigInt(level), at: location)
-    try self.builder.appendTuple(nameTuple, at: location)
-    try self.builder.appendImportName(name: importName, at: location)
+    try self.builder.appendInteger(BigInt(level))
+    try self.builder.appendTuple(nameTuple)
+    try self.builder.appendImportName(name: importName)
   }
 
   private func checkLateFuture(module: String?, location: SourceLocation) throws {
     let futureModule = SpecialIdentifiers.__future__
     if module == futureModule && location.line > self.future.lastLine {
-      throw self.error(.lateFuture, location: location)
+      throw self.error(.lateFuture)
     }
   }
 
   /// compiler_import_as(struct compiler *c, identifier name, identifier asname)
-  private func emitImportAs(name:     String,
-                            asName:   String,
-                            location: SourceLocation) throws {
+  private func emitImportAs(name: String, asName: String) throws {
     // The IMPORT_NAME opcode was already generated.
     // This function merely needs to bind the result to a name.
 
@@ -140,24 +131,24 @@ extension Compiler {
     let hasAttributes = slices.count > 1
     guard hasAttributes else {
       // for example: import elsa as queen
-      try self.builder.appendStoreName(asName, at: location)
+      try self.builder.appendStoreName(asName)
       return
     }
 
     // for example: import frozen.elsa as queen ('elsa' is an attribute)
     let attributes = slices[1...]
     for (index, attr) in attributes.enumerated() {
-      try self.builder.appendImportFrom(name: String(attr), at: location)
+      try self.builder.appendImportFrom(name: String(attr))
 
       let isLast = index == attributes.count - 1
       if !isLast {
-        try self.builder.appendRotTwo(at: location)
-        try self.builder.appendPopTop(at: location)
+        try self.builder.appendRotTwo()
+        try self.builder.appendPopTop()
       }
     }
 
     // final store using 'asName'
-    try self.builder.appendStoreName(asName, at: location)
-    try self.builder.appendPopTop(at: location)
+    try self.builder.appendStoreName(asName)
+    try self.builder.appendPopTop()
   }
 }

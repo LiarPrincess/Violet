@@ -23,6 +23,12 @@ public class CodeObjectBuilder {
   /// `CodeObject` that we are adding instructions to.
   internal let codeObject: CodeObject
 
+  /// Location on which next `append` occurs.
+  private var appendLocation = SourceLocation.start
+
+  /// Indices of already added constants (so that we don't store duplicates).
+  internal var cachedIndices = CachedIndices()
+
   internal var instructions: [Instruction] {
     _read { yield self.codeObject.instructions }
     _modify { yield &self.codeObject.instructions }
@@ -32,9 +38,6 @@ public class CodeObjectBuilder {
     _read { yield self.codeObject.instructionLines }
     _modify { yield &self.codeObject.instructionLines }
   }
-
-  /// Indices of already added constants (so that we don't store duplicates).
-  internal var cachedIndices = CachedIndices()
 
   public init(codeObject: CodeObject) {
     self.codeObject = codeObject
@@ -67,18 +70,28 @@ public class CodeObjectBuilder {
     }
   }
 
-  // MARK: - Emit
+  // MARK: - Append
 
   // This function does not throw, but we will mark it as one for the future.
   // Also some of the 'append' functions throw
   // and it would be weird to use 'try' only on some of the functions in api.
-  internal func append(_ instruction: Instruction, at location: SourceLocation) throws {
+  internal func append(_ instruction: Instruction) throws {
     self.instructions.append(instruction)
 
-    let lastLine = self.instructionLines.last ?? SourceLocation.start.line
-    self.instructionLines.append(max(lastLine, location.line))
+    var line = self.appendLocation.line
+    if let lastLine = self.instructionLines.last, lastLine > line {
+      // We have to check this, because there may be some other builder
+      // working on the same CodeObject.
+      line = lastLine
+    }
 
+    self.instructionLines.append(line)
     assert(self.instructions.count == self.instructionLines.count)
+  }
+
+  /// Set location on which next `append` occurs.
+  public func setAppendLocation(_ location: SourceLocation) {
+    self.appendLocation = location
   }
 
   // MARK: - Label
@@ -102,24 +115,18 @@ public class CodeObjectBuilder {
 
   // MARK: - Extended arg
 
-  internal func addNameWithExtendedArgIfNeeded<S: ConstantString>(
-    name constantName: S,
-    at location: SourceLocation) throws -> UInt8 {
-
-    let name = constantName.constant
+  internal func addNameWithExtendedArgIfNeeded<S: ConstantString>(name: S) throws -> UInt8 {
+    let c = name.constant
 
     // If this name was already used then reuse this index.
-    let index = self.cachedIndices.names[name] ?? self.codeObject.names.endIndex
-    let arg = try self.appendExtendedArgIfNeeded(index, at: location)
-    self.codeObject.names.append(name)
+    let index = self.cachedIndices.names[c] ?? self.codeObject.names.endIndex
+    let arg = try self.appendExtendedArgIfNeeded(index)
+    self.codeObject.names.append(c)
     return arg
   }
 
-  internal func addLabelWithExtendedArgIfNeeded(
-    _ label: Label,
-    at location: SourceLocation) throws -> UInt8 {
-
-    return try self.appendExtendedArgIfNeeded(label.index, at: location)
+  internal func addLabelWithExtendedArgIfNeeded(_ label: Label) throws -> UInt8 {
+    return try self.appendExtendedArgIfNeeded(label.index)
   }
 
   /// If the arg is `>255` then it can't be stored directly in instruction.
@@ -134,13 +141,10 @@ public class CodeObjectBuilder {
   /// ```
   /// - Returns:
   /// Value that should be used in instruction.
-  internal func appendExtendedArgIfNeeded(
-    _ arg: Int,
-    at location: SourceLocation) throws -> UInt8 {
-
+  internal func appendExtendedArgIfNeeded(_ arg: Int) throws -> UInt8 {
     assert(arg >= 0)
     if arg > Instruction.maxArgument {
-      throw self.error(.instructionArgumentTooBig, location: location)
+      throw self.error(.instructionArgumentTooBig, location: self.appendLocation)
     }
 
     let ffMask = 0xff
@@ -151,7 +155,7 @@ public class CodeObjectBuilder {
 
     let emit1 = value > 0
     if emit1 {
-      try self.append(.extendedArg(value), at: location)
+      try self.append(.extendedArg(value))
     }
 
     shift = 16
@@ -160,7 +164,7 @@ public class CodeObjectBuilder {
 
     let emit2 = emit1 || value > 0
     if emit2 {
-      try self.append(.extendedArg(value), at: location)
+      try self.append(.extendedArg(value))
     }
 
     shift = 8
@@ -169,7 +173,7 @@ public class CodeObjectBuilder {
 
     let emit3 = emit2 || value > 0
     if emit3 {
-      try self.append(.extendedArg(value), at: location)
+      try self.append(.extendedArg(value))
     }
 
     return UInt8(arg & ffMask)

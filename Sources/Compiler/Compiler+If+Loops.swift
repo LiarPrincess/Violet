@@ -35,22 +35,17 @@ extension Compiler {
   /// 14 LOAD_CONST               0 (None)
   /// 16 RETURN_VALUE
   /// ```
-  internal func visitIf(test:   Expression,
-                        body:   NonEmptyArray<Statement>,
-                        orElse: [Statement],
-                        location: SourceLocation) throws {
+  internal func visitIf(test: Expression,
+                        body: NonEmptyArray<Statement>,
+                        orElse: [Statement]) throws {
     let end = self.builder.createLabel()
     let orElseStart = orElse.any ? self.builder.createLabel() : end
 
-    try self.visitExpression(test,
-                             andJumpTo: orElseStart,
-                             ifBooleanValueIs: false,
-                             location: location)
-
+    try self.visitExpression(test, andJumpTo: orElseStart, ifBooleanValueIs: false)
     try self.visitStatements(body)
 
     if orElse.any {
-      try self.builder.appendJumpAbsolute(to: end, at: location)
+      try self.builder.appendJumpAbsolute(to: end)
       self.builder.setLabel(orElseStart)
       try self.visitStatements(orElse)
     }
@@ -89,28 +84,27 @@ extension Compiler {
   internal func visitFor(target: Expression,
                          iter:   Expression,
                          body:   NonEmptyArray<Statement>,
-                         orElse: [Statement],
-                         location: SourceLocation) throws {
+                         orElse: [Statement]) throws {
 
     let iterationStart = self.builder.createLabel()
     let cleanup = self.builder.createLabel()
     let end = self.builder.createLabel()
 
-    try self.builder.appendSetupLoop(loopEnd: end, at: location)
+    try self.builder.appendSetupLoop(loopEnd: end)
 
     // 'continue' will jump to 'startLabel'
     try self.inBlock(.loop(continueTarget: iterationStart)) {
       try self.visitExpression(iter)
-      try self.builder.appendGetIter(at: location)
+      try self.builder.appendGetIter()
 
       self.builder.setLabel(iterationStart)
-      try self.builder.appendForIter(ifEmpty: cleanup, at: location)
+      try self.builder.appendForIter(ifEmpty: cleanup)
       try self.visitExpression(target, context: .store)
       try self.visitStatements(body)
-      try self.builder.appendJumpAbsolute(to: iterationStart, at: location)
+      try self.builder.appendJumpAbsolute(to: iterationStart)
 
       self.builder.setLabel(cleanup)
-      try self.builder.appendPopBlock(at: location)
+      try self.builder.appendPopBlock()
     }
 
     try self.visitStatements(orElse)
@@ -145,29 +139,24 @@ extension Compiler {
   /// ```
   internal func visitWhile(test:   Expression,
                            body:   NonEmptyArray<Statement>,
-                           orElse: [Statement],
-                           location: SourceLocation) throws {
+                           orElse: [Statement]) throws {
 
     let iterationStart = self.builder.createLabel()
     let cleanup = self.builder.createLabel()
     let end = self.builder.createLabel()
 
-    try self.builder.appendSetupLoop(loopEnd: end, at: location)
+    try self.builder.appendSetupLoop(loopEnd: end)
 
     self.builder.setLabel(iterationStart)
 
     // 'continue' will jump to 'startLabel'
     try self.inBlock(.loop(continueTarget: iterationStart)) {
-      try self.visitExpression(test,
-                               andJumpTo: cleanup,
-                               ifBooleanValueIs: false,
-                               location: location)
-
+      try self.visitExpression(test, andJumpTo: cleanup, ifBooleanValueIs: false)
       try self.visitStatements(body)
-      try self.builder.appendJumpAbsolute(to: iterationStart, at: location)
+      try self.builder.appendJumpAbsolute(to: iterationStart)
 
       self.builder.setLabel(cleanup)
-      try self.builder.appendPopBlock(at: location)
+      try self.builder.appendPopBlock()
     }
 
     try self.visitStatements(orElse)
@@ -177,40 +166,40 @@ extension Compiler {
   // MARK: - Continue, break
 
   /// compiler_continue(struct compiler *c)
-  internal func visitContinue(location: SourceLocation) throws {
+  internal func visitContinue() throws {
     guard let blockType = self.blockStack.last else {
-      throw self.error(.continueOutsideLoop, location: location)
+      throw self.error(.continueOutsideLoop)
     }
 
     switch blockType {
     case let .loop(continueTarget):
-      try self.builder.appendJumpAbsolute(to: continueTarget, at: location)
+      try self.builder.appendJumpAbsolute(to: continueTarget)
     case .except,
          .finallyTry:
       // Try to find the previous loop.
       for block in self.blockStack.reversed() {
         switch block {
         case let .loop(continueTarget):
-          try self.builder.appendJumpAbsolute(to: continueTarget, at: location)
+          try self.builder.appendJumpAbsolute(to: continueTarget)
           return
         case .except,
              .finallyTry:
           break
         case .finallyEnd:
-          throw self.error(.continueInsideFinally, location: location)
+          throw self.error(.continueInsideFinally)
         }
       }
     case .finallyEnd:
-      throw self.error(.continueInsideFinally, location: location)
+      throw self.error(.continueInsideFinally)
     }
   }
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
-  internal func visitBreak(location: SourceLocation) throws {
+  internal func visitBreak() throws {
     if !self.isInLoop {
-      throw self.error(.breakOutsideLoop, location: location)
+      throw self.error(.breakOutsideLoop)
     }
 
-    try self.builder.appendBreak(at: location)
+    try self.builder.appendBreak()
   }
 }

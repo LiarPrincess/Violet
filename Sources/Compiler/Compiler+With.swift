@@ -32,12 +32,8 @@ extension Compiler {
   ///     exit(*exc)
   /// ```
   internal func visitWith(items: NonEmptyArray<WithItem>,
-                          body:   NonEmptyArray<Statement>,
-                          location: SourceLocation) throws {
-    try self.visitWith(items: items,
-                       body:  body,
-                       index: 0,
-                       location: location)
+                          body:  NonEmptyArray<Statement>) throws {
+    try self.visitWith(items: items, body: body, index: 0)
   }
 
   /// compiler_with(struct compiler *c, stmt_ty s, int pos)
@@ -67,14 +63,13 @@ extension Compiler {
   /// ```
   private func visitWith(items: NonEmptyArray<WithItem>,
                          body:  NonEmptyArray<Statement>,
-                         index: Int,
-                         location: SourceLocation) throws {
+                         index: Int) throws {
     let item = items[index]
     let afterBody = self.builder.createLabel()
 
     // Evaluate EXPR
     try self.visitExpression(item.contextExpr)
-    try self.builder.appendSetupWith(afterBody: afterBody, at: location)
+    try self.builder.appendSetupWith(afterBody: afterBody)
 
     // SETUP_WITH pushes a finally block.
     try self.inBlock(.finallyTry) {
@@ -82,7 +77,7 @@ extension Compiler {
         try self.visitExpression(o, context: .store)
       } else {
         // Discard result from context.__enter__()
-        try self.builder.appendPopTop(at: location)
+        try self.builder.appendPopTop()
       }
 
       let nextIndex = index + 1
@@ -90,27 +85,24 @@ extension Compiler {
         // BLOCK code
         try self.visitStatements(body)
       } else {
-        try self.visitWith(items: items,
-                           body: body,
-                           index: nextIndex,
-                           location: location)
+        try self.visitWith(items: items, body: body, index: nextIndex)
       }
 
       // End of try block; start the finally block
-      try self.builder.appendPopBlock(at: location)
+      try self.builder.appendPopBlock()
     }
 
-    try self.builder.appendNone(at: location)
+    try self.builder.appendNone()
     self.builder.setLabel(afterBody)
 
     try self.inBlock(.finallyEnd) {
       // Finally block starts; context.__exit__ is on the stack under
       // the exception or return information. Just issue our magic opcode.
-      try self.builder.appendWithCleanupStart(at: location)
-      try self.builder.appendWithCleanupFinish(at: location)
+      try self.builder.appendWithCleanupStart()
+      try self.builder.appendWithCleanupFinish()
 
       // Finally block ends.
-      try self.builder.appendEndFinally(at: location)
+      try self.builder.appendEndFinally()
     }
   }
 }

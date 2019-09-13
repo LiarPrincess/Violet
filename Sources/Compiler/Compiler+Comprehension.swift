@@ -7,28 +7,29 @@ import Bytecode
 // Python -> compile.c
 
 extension Compiler {
-  internal func visitGeneratorExpression(elt: Expression,
-                                         generators: NonEmptyArray<Comprehension>,
-                                         location: SourceLocation) throws {
+  internal func visitGeneratorExpression(
+    elt: Expression,
+    generators: NonEmptyArray<Comprehension>) throws {
+    // Remember about self.setAppendLocation(ASTNode)!
     throw self.notImplementedComprehension()
   }
 
-  internal func visitListComprehension(elt: Expression,
-                                       generators: NonEmptyArray<Comprehension>,
-                                       location: SourceLocation) throws {
+  internal func visitListComprehension(
+    elt: Expression,
+    generators: NonEmptyArray<Comprehension>) throws {
     throw self.notImplementedComprehension()
   }
 
-  internal func visitSetComprehension(elt: Expression,
-                                      generators: NonEmptyArray<Comprehension>,
-                                      location: SourceLocation) throws {
+  internal func visitSetComprehension(
+    elt: Expression,
+    generators: NonEmptyArray<Comprehension>) throws {
     throw self.notImplementedComprehension()
   }
 
-  internal func visitDictionaryComprehension(key: Expression,
-                                             value: Expression,
-                                             generators: NonEmptyArray<Comprehension>,
-                                             location: SourceLocation) throws {
+  internal func visitDictionaryComprehension(
+    key: Expression,
+    value: Expression,
+    generators: NonEmptyArray<Comprehension>) throws {
     throw self.notImplementedComprehension()
   }
 }

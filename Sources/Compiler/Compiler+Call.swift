@@ -15,14 +15,12 @@ extension Compiler {
   internal func visitCall(function: Expression,
                           args:     [Expression],
                           keywords: [Keyword],
-                          context:  ExpressionContext,
-                          location: SourceLocation) throws {
+                          context:  ExpressionContext) throws {
 
     if try self.emitOptimizedMethodCall(function: function,
                                         args: args,
                                         keywords: keywords,
-                                        context: context,
-                                        location: location) {
+                                        context: context) {
       return
     }
 
@@ -30,16 +28,14 @@ extension Compiler {
     try self.callHelper(args:     args,
                         keywords: keywords,
                         context:  context,
-                        alreadyPushedArgs: 0,
-                        location: location)
+                        alreadyPushedArgs: 0)
   }
 
   /// maybe_optimize_method_call(struct compiler *c, expr_ty e)
   private func emitOptimizedMethodCall(function: Expression,
                                        args:     [Expression],
                                        keywords: [Keyword],
-                                       context:  ExpressionContext,
-                                       location: SourceLocation) throws -> Bool {
+                                       context:  ExpressionContext) throws -> Bool {
 
     // Check if it is an method
     guard case let .attribute(object, name: methodName) = function.kind,
@@ -53,9 +49,9 @@ extension Compiler {
     }
 
     try self.visitExpression(object)
-    try self.builder.appendLoadMethod(name: methodName, at: location)
+    try self.builder.appendLoadMethod(name: methodName)
     try self.visitExpressions(args)
-    try self.builder.appendCallMethod(argumentCount: args.count, at: location)
+    try self.builder.appendCallMethod(argumentCount: args.count)
     return true
   }
 
@@ -70,8 +66,7 @@ extension Compiler {
   internal func callHelper(args:     [Expression],
                            keywords: [Keyword],
                            context:  ExpressionContext,
-                           alreadyPushedArgs: Int,
-                           location: SourceLocation) throws {
+                           alreadyPushedArgs: Int) throws {
 
     var nSeen = alreadyPushedArgs
     var nSubArgs = 0
@@ -82,7 +77,7 @@ extension Compiler {
       case let .starred(inner):
         // If we've seen positional arguments, then pack them into a tuple.
         if nSeen > 0 {
-          try self.builder.appendBuildTuple(elementCount: nSeen, at: location)
+          try self.builder.appendBuildTuple(elementCount: nSeen)
           nSeen = 0
           nSubArgs += 1
         }
@@ -100,18 +95,17 @@ extension Compiler {
     if nSubArgs > 0 || hasDictionaryUnpack {
       // Pack up any trailing positional arguments.
       if nSeen > 0 {
-        try self.builder.appendBuildTuple(elementCount: nSeen, at: location)
+        try self.builder.appendBuildTuple(elementCount: nSeen)
         nSubArgs += 1
       }
 
       // If we ended up with more than one stararg,
       // we need to concatenate them into a single sequence.
       if nSubArgs > 1 {
-        try self.builder.appendBuildTupleUnpackWithCall(elementCount: nSubArgs,
-                                                        at: location)
+        try self.builder.appendBuildTupleUnpackWithCall(elementCount: nSubArgs)
       } else if nSubArgs == 0 {
         // We don't have normal args, fake one.
-        try self.builder.appendBuildTuple(elementCount: 0, at: location)
+        try self.builder.appendBuildTuple(elementCount: 0)
       } // Else it is 1, so exactly as we need it
 
       nSeen = 0
@@ -140,23 +134,21 @@ extension Compiler {
       }
 
       if nSubKwArgs > 1 {
-        try self.builder.appendBuildMapUnpackWithCall(elementCount: nSubKwArgs,
-                                                      at: location)
+        try self.builder.appendBuildMapUnpackWithCall(elementCount: nSubKwArgs)
       }
 
-      try self.builder.appendCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0,
-                                            at: location)
+      try self.builder.appendCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0)
     } else if keywords.any {
 
       let names = self.getNames(keywords: keywords)
       let argCount = alreadyPushedArgs + args.count + keywords.count
 
       try self.visitKeywords(keywords: keywords)
-      try self.builder.appendTuple(names, at: location)
-      try self.builder.appendCallFunctionKw(argumentCount: argCount, at: location)
+      try self.builder.appendTuple(names)
+      try self.builder.appendCallFunctionKw(argumentCount: argCount)
     } else {
       let argCount = alreadyPushedArgs + args.count
-      try self.builder.appendCallFunction(argumentCount: argCount, at: location)
+      try self.builder.appendCallFunction(argumentCount: argCount)
     }
   }
 
@@ -187,15 +179,14 @@ extension Compiler {
     if keywords.count == 1 {
       // swiftlint:disable:next force_unwrapping
       let keyword = keywords.first!
-      let location = keyword.start
 
       guard case let KeywordKind.named(name) = keyword.kind else {
         fatalError("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
       }
 
-      try self.builder.appendString(name, at: location)
+      try self.builder.appendString(name)
       try self.visitExpression(keyword.value)
-      try self.builder.appendBuildMap(elementCount: 1, at: location)
+      try self.builder.appendBuildMap(elementCount: 1)
     } else {
       var names = [Constant]()
       for keyword in keywords {
@@ -207,11 +198,8 @@ extension Compiler {
         names.append(.string(name))
       }
 
-      // swiftlint:disable:next force_unwrapping
-      let location = keywords.first!.start
-
-      try self.builder.appendTuple(names, at: location)
-      try self.builder.appendBuildConstKeyMap(elementCount: names.count, at: location)
+      try self.builder.appendTuple(names)
+      try self.builder.appendBuildConstKeyMap(elementCount: names.count)
     }
   }
 }

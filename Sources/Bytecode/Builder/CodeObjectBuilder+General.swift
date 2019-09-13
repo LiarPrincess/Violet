@@ -10,61 +10,59 @@ public enum ClosureVariable {
 extension CodeObjectBuilder {
 
   /// Append a `nop` instruction to this code object.
-  public func appendNop(at location: SourceLocation) throws {
-    try self.append(.nop, at: location)
+  public func appendNop() throws {
+    try self.append(.nop)
   }
 
   /// Append a `popTop` instruction to this code object.
-  public func appendPopTop(at location: SourceLocation) throws {
-    try self.append(.popTop, at: location)
+  public func appendPopTop() throws {
+    try self.append(.popTop)
   }
 
   /// Append a `rotTwo` instruction to this code object.
-  public func appendRotTwo(at location: SourceLocation) throws {
-    try self.append(.rotTwo, at: location)
+  public func appendRotTwo() throws {
+    try self.append(.rotTwo)
   }
 
   /// Append a `rotThree` instruction to this code object.
-  public func appendRotThree(at location: SourceLocation) throws {
-    try self.append(.rotThree, at: location)
+  public func appendRotThree() throws {
+    try self.append(.rotThree)
   }
 
   /// Append a `dupTop` instruction to this code object.
-  public func appendDupTop(at location: SourceLocation) throws {
-    try self.append(.dupTop, at: location)
+  public func appendDupTop() throws {
+    try self.append(.dupTop)
   }
 
   /// Append a `dupTopTwo` instruction to this code object.
-  public func appendDupTopTwo(at location: SourceLocation) throws {
-    try self.append(.dupTopTwo, at: location)
+  public func appendDupTopTwo() throws {
+    try self.append(.dupTopTwo)
   }
 
   /// Append a `printExpr` instruction to this code object.
-  public func appendPrintExpr(at location: SourceLocation) throws {
-    try self.append(.printExpr, at: location)
+  public func appendPrintExpr() throws {
+    try self.append(.printExpr)
   }
 
   /// Append an `extendedArg` instruction to this code object.
-  public func appendExtendedArg(value: UInt8,
-                                at location: SourceLocation) throws {
-    // try self.append(.extendedArg, at: location)
+  public func appendExtendedArg(value: UInt8) throws {
+    // try self.append(.extendedArg)
     throw self.unimplemented()
   }
 
   /// Append a `setupAnnotations` instruction to this code object.
-  public func appendSetupAnnotations(at location: SourceLocation) throws {
-    try self.append(.setupAnnotations, at: location)
+  public func appendSetupAnnotations() throws {
+    try self.append(.setupAnnotations)
   }
 
   /// Append a `popBlock` instruction to this code object.
-  public func appendPopBlock(at location: SourceLocation) throws {
-    try self.append(.popBlock, at: location)
+  public func appendPopBlock() throws {
+    try self.append(.popBlock)
   }
 
   /// Append a `loadClosure` instruction to this code object.
-  public func appendLoadClosure(_ variable: ClosureVariable,
-                                at location: SourceLocation) throws {
-    // try self.append(.loadClosure, at: location)
+  public func appendLoadClosure(_ variable: ClosureVariable) throws {
+    // try self.append(.loadClosure)
     //    if let i = codeObject.cellVars.firstIndex(of: name) {
     //      index = .cell(name)
     //    } else {
@@ -84,8 +82,7 @@ extension CodeObjectBuilder {
   }
 
   /// Append a `buildSlice` instruction to this code object.
-  public func appendBuildSlice(_ arg: SliceArg,
-                               at location: SourceLocation) throws {
-    try self.append(.buildSlice(arg), at: location)
+  public func appendBuildSlice(_ arg: SliceArg) throws {
+    try self.append(.buildSlice(arg))
   }
 }

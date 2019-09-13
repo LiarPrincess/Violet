@@ -3,29 +3,28 @@ import Core
 extension CodeObjectBuilder {
 
   /// Append a `setupWith` instruction to this code object.
-  public func appendSetupWith(afterBody: Label,
-                              at location: SourceLocation) throws {
-    let arg = try self.addLabelWithExtendedArgIfNeeded(afterBody, at: location)
-    try self.append(.setupWith(afterBodyLabel: arg), at: location)
+  public func appendSetupWith(afterBody: Label) throws {
+    let arg = try self.addLabelWithExtendedArgIfNeeded(afterBody)
+    try self.append(.setupWith(afterBodyLabel: arg))
   }
 
   /// Append a `withCleanupStart` instruction to this code object.
-  public func appendWithCleanupStart(at location: SourceLocation) throws {
-    try self.append(.withCleanupStart, at: location)
+  public func appendWithCleanupStart() throws {
+    try self.append(.withCleanupStart)
   }
 
   /// Append a `withCleanupFinish` instruction to this code object.
-  public func appendWithCleanupFinish(at location: SourceLocation) throws {
-    try self.append(.withCleanupFinish, at: location)
+  public func appendWithCleanupFinish() throws {
+    try self.append(.withCleanupFinish)
   }
 
   /// Append a `beforeAsyncWith` instruction to this code object.
-  public func appendBeforeAsyncWith(at location: SourceLocation) throws {
-    try self.append(.beforeAsyncWith, at: location)
+  public func appendBeforeAsyncWith() throws {
+    try self.append(.beforeAsyncWith)
   }
 
   /// Append a `setupAsyncWith` instruction to this code object.
-  public func appendSetupAsyncWith(at location: SourceLocation) throws {
-    try self.append(.setupAsyncWith, at: location)
+  public func appendSetupAsyncWith() throws {
+    try self.append(.setupAsyncWith)
   }
 }

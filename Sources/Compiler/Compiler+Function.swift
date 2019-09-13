@@ -26,11 +26,11 @@ extension Compiler {
 
     let codeObject = try self.inNewCodeObject(node: expression, type: .lambda) {
       // Make None the first constant, so the lambda can't have a docstring.
-      try self.builder.appendNone(at: location)
+      try self.builder.appendNone()
 
       try self.visitExpression(body)
       if !self.currentScope.isGenerator {
-        try self.builder.appendReturn(at: location)
+        try self.builder.appendReturn()
       }
     }
 
@@ -62,24 +62,24 @@ extension Compiler {
     let codeObject = try self.inNewCodeObject(node: statement, type: .function) {
       let optimizationLevel = self.options.optimizationLevel
       if let docString = body.first.getDocString(), optimizationLevel < 2 {
-        try self.builder.appendString(docString, at: location)
+        try self.builder.appendString(docString)
       }
 
       try self.visitStatements(body)
 
       if !self.currentScope.hasReturnValue {
-        try self.builder.appendNone(at: location)
-        try self.builder.appendReturn(at: location)
+        try self.builder.appendNone()
+        try self.builder.appendReturn()
       }
     }
 
     try self.makeClosure(codeObject: codeObject, flags: flags, location: location)
 
     for _ in decorators {
-      try self.builder.appendCallFunction(argumentCount: 1, at: location)
+      try self.builder.appendCallFunction(argumentCount: 1)
     }
 
-    try self.builder.appendStoreName(name, at: location)
+    try self.builder.appendStoreName(name)
   }
 
   // MARK: - Decorators
@@ -99,7 +99,7 @@ extension Compiler {
     if args.defaults.any {
       flags.formUnion(.hasPositionalArgDefaults)
       try self.visitExpressions(args.defaults)
-      try self.builder.appendBuildTuple(elementCount: args.defaults.count, at: location)
+      try self.builder.appendBuildTuple(elementCount: args.defaults.count)
     }
 
     if args.kwOnlyArgs.any {
@@ -131,8 +131,8 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasKwOnlyArgDefaults)
       let elements = names.map { Constant.string($0.value) }
-      try self.builder.appendTuple(elements, at: location)
-      try self.builder.appendBuildConstKeyMap(elementCount: names.count, at: location)
+      try self.builder.appendTuple(elements)
+      try self.builder.appendBuildConstKeyMap(elementCount: names.count)
     }
   }
 
@@ -174,8 +174,8 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasAnnotations)
       let elements = names.map { Constant.string($0.value) }
-      try self.builder.appendTuple(elements, at: location)
-      try self.builder.appendBuildConstKeyMap(elementCount: names.count, at: location)
+      try self.builder.appendTuple(elements)
+      try self.builder.appendBuildConstKeyMap(elementCount: names.count)
     }
   }
 
@@ -201,7 +201,7 @@ extension Compiler {
     }
 
     if self.future.flags.contains(.annotations) {
-      try self.visitAnnExpr(ann, location: location)
+      try self.visitAnnExpr(ann)
     } else {
       try self.visitExpression(ann)
     }
@@ -232,17 +232,17 @@ extension Compiler {
         let variable: ClosureVariable =
           flags.contains(.cell) ? .cell(name) : .free(name)
 
-        try self.builder.appendLoadClosure(variable, at: location)
+        try self.builder.appendLoadClosure(variable)
       }
 
       let count = codeObject.freeVars.count
-      try self.builder.appendBuildTuple(elementCount: count, at: location)
+      try self.builder.appendBuildTuple(elementCount: count)
       makeFunctionFlags.formUnion(.hasFreeVariables)
     }
 
-    try self.builder.appendCode(codeObject, at: location)
-    try self.builder.appendString(qualifiedName, at: location)
-    try self.builder.appendMakeFunction(flags: makeFunctionFlags, at: location)
+    try self.builder.appendCode(codeObject)
+    try self.builder.appendString(qualifiedName)
+    try self.builder.appendMakeFunction(flags: makeFunctionFlags)
   }
 
   private func getRefType(name: MangledName,

@@ -49,7 +49,7 @@ public final class Compiler {
   /// top -> class -> elsa
   private var unitStack = [CompilerUnit]()
 
-  /// Code object that we are currently filling (top of the `self.codeObjectStack`).
+  /// Code object that we are currently filling.
   internal var codeObject: CodeObject {
     if let last = self.unitStack.last { return last.codeObject }
     fatalError("[BUG] Compiler: Using `codeObject` with empty `unitStack`.")
@@ -61,7 +61,7 @@ public final class Compiler {
     fatalError("[BUG] Compiler: Using `builder` with empty `unitStack`.")
   }
 
-  /// Scope that we are currently filling (top of the `self.scopeStack`).
+  /// Scope that we are currently filling.
   internal var currentScope: SymbolScope {
     if let last = self.unitStack.last { return last.scope }
     fatalError("[BUG] Compiler: Using `currentScope` with empty `unitStack`.")
@@ -107,11 +107,12 @@ public final class Compiler {
     }
 
     self.enterScope(node: ast, type: .module)
+    self.setAppendLocation(ast)
 
     switch self.ast.kind {
     case let .interactive(stmts):
       if self.hasAnnotations(stmts) {
-        try self.builder.appendSetupAnnotations(at: self.ast.start)
+        try self.builder.appendSetupAnnotations()
       }
       try self.visitStatements(stmts)
     case let .module(stmts):
@@ -123,9 +124,9 @@ public final class Compiler {
     // Emit epilog (because we may be a jump target).
     if !self.currentScope.hasReturnValue {
       if !self.ast.kind.isExpression {
-        try self.builder.appendNone(at: self.ast.end)
+        try self.builder.appendNone()
       }
-      try self.builder.appendReturn(at: self.ast.end)
+      try self.builder.appendReturn()
     }
 
     assert(self.unitStack.count == 1)
@@ -138,7 +139,7 @@ public final class Compiler {
   /// compiler_body(struct compiler *c, asdl_seq *stmts)
   private func visitBody(_ stmts: [Statement]) throws {
     if self.hasAnnotations(stmts) {
-      try self.builder.appendSetupAnnotations(at: self.ast.start)
+      try self.builder.appendSetupAnnotations()
     }
 
     guard let first = stmts.first else {
@@ -146,9 +147,8 @@ public final class Compiler {
     }
 
     if let doc = first.getDocString(), self.options.optimizationLevel < 2 {
-      let __doc__ = SpecialIdentifiers.__doc__
-      try self.builder.appendString(doc, at: first.start)
-      try self.builder.appendStoreName(__doc__, at: first.start)
+      try self.builder.appendString(doc)
+      try self.builder.appendStoreName(SpecialIdentifiers.__doc__)
 
       try self.visitStatements(stmts.dropFirst())
     } else {
@@ -395,17 +395,33 @@ public final class Compiler {
     return MangledName(className: unit?.className, name: name)
   }
 
+  private var appendLocation = SourceLocation.start
+
+  /// Set location on which next `append` occurs.
+  ///
+  /// Called before entering:
+  /// - AST
+  /// - Expression
+  /// - Statement
+  /// - Alias
+  /// - ExceptHandler
+  internal func setAppendLocation<N: ASTNode>(_ node: N) {
+    self.appendLocation = node.start
+    for unit in self.unitStack {
+      unit.builder.setAppendLocation(self.appendLocation)
+    }
+  }
+
   // MARK: - Error/warning
 
   /// Create parser warning
-  internal func warn(_ warning: CompilerWarning, location:  SourceLocation) {
+  internal func warn(_ warning: CompilerWarning) {
     // uh... oh... well that's embarrassing...
   }
 
   /// Create compiler error
-  internal func error(_ kind: CompilerErrorKind,
-                      location: SourceLocation) -> CompilerError {
-    return CompilerError(kind, location: location)
+  internal func error(_ kind: CompilerErrorKind) -> CompilerError {
+    return CompilerError(kind, location: self.appendLocation)
   }
 
   // MARK: - Not implemented

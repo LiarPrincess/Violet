@@ -5,29 +5,29 @@ extension CodeObjectBuilder {
   // MARK: - Generators
 
   /// Append a `yieldValue` instruction to this code object.
-  public func appendYieldValue(at location: SourceLocation) throws {
-    try self.append(.yieldValue, at: location)
+  public func appendYieldValue() throws {
+    try self.append(.yieldValue)
   }
 
   /// Append a `yieldFrom` instruction to this code object.
-  public func appendYieldFrom(at location: SourceLocation) throws {
-    try self.append(.yieldFrom, at: location)
+  public func appendYieldFrom() throws {
+    try self.append(.yieldFrom)
   }
 
   // MARK: - Coroutine
 
   /// Append a `getAwaitable` instruction to this code object.
-  public func appendGetAwaitable(at location: SourceLocation) throws {
-    try self.append(.getAwaitable, at: location)
+  public func appendGetAwaitable() throws {
+    try self.append(.getAwaitable)
   }
 
   /// Append a `getAIter` instruction to this code object.
-  public func appendGetAIter(at location: SourceLocation) throws {
-    try self.append(.getAIter, at: location)
+  public func appendGetAIter() throws {
+    try self.append(.getAIter)
   }
 
   /// Append a `getANext` instruction to this code object.
-  public func appendGetANext(at location: SourceLocation) throws {
-    try self.append(.getANext, at: location)
+  public func appendGetANext() throws {
+    try self.append(.getANext)
   }
 }

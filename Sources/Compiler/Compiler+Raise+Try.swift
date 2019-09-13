@@ -13,9 +13,7 @@ extension Compiler {
   // MARK: - Raise
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
-  internal func visitRaise(exception: Expression?,
-                           cause:     Expression?,
-                           location:  SourceLocation) throws {
+  internal func visitRaise(exception: Expression?, cause: Expression?) throws {
     var arg = RaiseArg.reRaise
     if let exc = exception {
       try self.visitExpression(exc)
@@ -27,7 +25,7 @@ extension Compiler {
       }
     }
 
-    try self.builder.appendRaiseVarargs(arg: arg, at: location)
+    try self.builder.appendRaiseVarargs(arg: arg)
   }
 
   // MARK: - Try
@@ -35,19 +33,14 @@ extension Compiler {
   internal func visitTry(body: NonEmptyArray<Statement>,
                          handlers: [ExceptHandler],
                          orElse:   [Statement],
-                         finally:  [Statement],
-                         location: SourceLocation) throws {
+                         finally:  [Statement]) throws {
     if finally.any {
       try self.visitTryFinally(body: body,
                                handlers: handlers,
-                               orElse:   orElse,
-                               finally:  finally,
-                               location:  location)
+                               orElse: orElse,
+                               finally: finally)
     } else {
-      try self.visitTryExcept(body: body,
-                              handlers: handlers,
-                              orElse:   orElse,
-                              location: location)
+      try self.visitTryExcept(body: body, handlers: handlers, orElse: orElse)
     }
   }
 
@@ -82,32 +75,28 @@ extension Compiler {
   private func visitTryFinally(body: NonEmptyArray<Statement>,
                                handlers: [ExceptHandler],
                                orElse:   [Statement],
-                               finally:  [Statement],
-                               location: SourceLocation) throws {
+                               finally:  [Statement]) throws {
     let finallyStart = self.builder.createLabel()
 
     // body
-    try self.builder.appendSetupFinally(finallyStart: finallyStart, at: location)
+    try self.builder.appendSetupFinally(finallyStart: finallyStart)
     try self.inBlock(.finallyTry) {
       if handlers.any {
-        try self.visitTryExcept(body: body,
-                                handlers: handlers,
-                                orElse:   orElse,
-                                location: location)
+        try self.visitTryExcept(body: body, handlers: handlers, orElse: orElse)
       } else {
         try self.visitStatements(body)
       }
 
-      try self.builder.appendPopBlock(at: location)
+      try self.builder.appendPopBlock()
     }
 
-    try self.builder.appendNone(at: location)
+    try self.builder.appendNone()
 
     // finally
     self.builder.setLabel(finallyStart)
     try self.inBlock(.finallyEnd) {
       try self.visitStatements(finally)
-      try self.builder.appendEndFinally(at: location)
+      try self.builder.appendEndFinally()
     }
   }
 
@@ -144,42 +133,42 @@ extension Compiler {
   /// Of course, parts are not generated if Vi or Ei is not present.
   private func visitTryExcept(body: NonEmptyArray<Statement>,
                               handlers: [ExceptHandler],
-                              orElse:   [Statement],
-                              location: SourceLocation) throws {
+                              orElse:   [Statement]) throws {
     let firstExcept = self.builder.createLabel()
     let orElseStart = self.builder.createLabel()
     let end = self.builder.createLabel()
 
     // body
-    try self.builder.appendSetupExcept(firstExcept: firstExcept, at: location)
+    try self.builder.appendSetupExcept(firstExcept: firstExcept)
     try self.inBlock(.except) {
       try self.visitStatements(body)
-      try self.builder.appendPopBlock(at: location)
+      try self.builder.appendPopBlock()
     }
     // if no exception happened then go to 'orElse'
-    try self.builder.appendJumpAbsolute(to: orElseStart, at: location)
+    try self.builder.appendJumpAbsolute(to: orElseStart)
 
     // except
     self.builder.setLabel(firstExcept)
     for (index, handler) in handlers.enumerated() {
       let isLast = index == handlers.count - 1
       if handler.kind == .default && !isLast {
-        throw self.error(.defaultExceptNotLast, location: location)
+        throw self.error(.defaultExceptNotLast)
       }
 
+      self.setAppendLocation(handler)
       let nextExcept = self.builder.createLabel()
 
       if case let .typed(type: type, asName: _) = handler.kind {
-        try self.builder.appendDupTop(at: location)
+        try self.builder.appendDupTop()
         try self.visitExpression(type)
-        try self.builder.appendCompareOp(.exceptionMatch, at: location)
-        try self.builder.appendPopJumpIfFalse(to: nextExcept, at: location)
+        try self.builder.appendCompareOp(.exceptionMatch)
+        try self.builder.appendPopJumpIfFalse(to: nextExcept)
       }
-      try self.builder.appendPopTop(at: location)
+      try self.builder.appendPopTop()
 
       if case let .typed(type: _, asName: asName) = handler.kind, let name = asName {
-        try self.builder.appendStoreName(name, at: location)
-        try self.builder.appendPopTop(at: location)
+        try self.builder.appendStoreName(name)
+        try self.builder.appendPopTop()
 
         // try:
         //     # body
@@ -192,41 +181,41 @@ extension Compiler {
 
         // second try:
         let cleanupEnd = self.builder.createLabel()
-        try self.builder.appendSetupFinally(finallyStart: cleanupEnd, at: location)
+        try self.builder.appendSetupFinally(finallyStart: cleanupEnd)
         try self.inBlock(.finallyTry) {
           try self.visitStatements(handler.body)
-          try self.builder.appendPopBlock(at: location)
+          try self.builder.appendPopBlock()
         }
 
         // finally:
-        try self.builder.appendNone(at: location)
+        try self.builder.appendNone()
         self.builder.setLabel(cleanupEnd)
 
         try self.inBlock(.finallyEnd) {
           // name = None
-          try self.builder.appendNone(at: location)
-          try self.builder.appendStoreName(name, at: location)
+          try self.builder.appendNone()
+          try self.builder.appendStoreName(name)
           // del name
-          try self.builder.appendDeleteName(name, at: location)
+          try self.builder.appendDeleteName(name)
           // cleanup
-          try self.builder.appendEndFinally(at: location)
-          try self.builder.appendPopExcept(at: location)
+          try self.builder.appendEndFinally()
+          try self.builder.appendPopExcept()
         }
       } else {
-        try self.builder.appendPopTop(at: location)
-        try self.builder.appendPopTop(at: location)
+        try self.builder.appendPopTop()
+        try self.builder.appendPopTop()
 
         try self.inBlock(.finallyTry) {
           try self.visitStatements(handler.body)
-          try self.builder.appendPopExcept(at: location)
+          try self.builder.appendPopExcept()
         }
       }
 
-      try self.builder.appendJumpAbsolute(to: end, at: location)
+      try self.builder.appendJumpAbsolute(to: end)
       self.builder.setLabel(nextExcept)
     }
 
-    try self.builder.appendEndFinally(at: location)
+    try self.builder.appendEndFinally()
     self.builder.setLabel(orElseStart)
     try self.visitStatements(orElse)
     self.builder.setLabel(end)

@@ -25,15 +25,13 @@ extension Compiler {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   /// ```
-  internal func visitAssign(targets:  NonEmptyArray<Expression>,
-                            value:    Expression,
-                            location: SourceLocation) throws {
-
+  internal func visitAssign(targets: NonEmptyArray<Expression>,
+                            value: Expression) throws {
     try self.visitExpression(value)
     for (index, t) in targets.enumerated() {
       let isLast = index == targets.count - 1
       if !isLast {
-        try self.builder.appendDupTop(at: location)
+        try self.builder.appendDupTop()
       }
 
       try self.visitExpression(t, context: .store)
@@ -55,28 +53,26 @@ extension Compiler {
   /// ```
   internal func visitAugAssign(target: Expression,
                                op:     BinaryOperator,
-                               value:  Expression,
-                               location: SourceLocation) throws {
+                               value:  Expression) throws {
     switch target.kind {
     case let .identifier(name):
       let mangled = self.mangleName(name)
-      try self.builder.appendLoadName(mangled, at: location)
+      try self.builder.appendLoadName(mangled)
       try self.visitExpression(value)
-      try self.builder.appendInplaceOperator(op, at: location)
-      try self.builder.appendStoreName(mangled, at: location)
+      try self.builder.appendInplaceOperator(op)
+      try self.builder.appendStoreName(mangled)
 
     case let .attribute(object, name: name):
       func visitAttribute(context: ExpressionContext) throws {
         try self.visitAttribute(object: object,
                                 name: name,
                                 context: context,
-                                location: location,
                                 isAugumented: true)
       }
 
       try visitAttribute(context: .load)
       try self.visitExpression(value)
-      try self.builder.appendInplaceOperator(op, at: location)
+      try self.builder.appendInplaceOperator(op)
       try visitAttribute(context: .store)
 
     case let .subscript(object, slice: slice):
@@ -84,17 +80,16 @@ extension Compiler {
         try self.visitSubscript(object: object,
                                 slice: slice,
                                 context: context,
-                                location: location,
                                 isAugumented: true)
       }
 
       try visitSubscript(context: .load)
       try self.visitExpression(value)
-      try self.builder.appendInplaceOperator(op, at: location)
+      try self.builder.appendInplaceOperator(op)
       try visitSubscript(context: .store)
 
     default:
-      throw self.error(.invalidTargetForAugmentedAssignment, location: location)
+      throw self.error(.invalidTargetForAugmentedAssignment)
     }
   }
 
@@ -118,8 +113,7 @@ extension Compiler {
   internal func visitAnnAssign(target:     Expression,
                                annotation: Expression,
                                value:    Expression?,
-                               isSimple: Bool,
-                               location: SourceLocation) throws {
+                               isSimple: Bool) throws {
     // Assignment first
     if let v = value {
       try self.visitExpression(v)
@@ -136,7 +130,7 @@ extension Compiler {
       }
 
       if self.future.flags.contains(.annotations) {
-        try self.visitAnnExpr(annotation, location: location)
+        try self.visitAnnExpr(annotation)
       } else {
         try self.visitExpression(annotation)
       }
@@ -144,84 +138,81 @@ extension Compiler {
       let __annotations__ = SpecialIdentifiers.__annotations__
       let mangled = self.mangleName(name)
 
-      try self.builder.appendLoadName(__annotations__, at: location)
-      try self.builder.appendString(mangled, at: location)
-      try self.builder.appendStoreSubscr(at: location)
+      try self.builder.appendLoadName(__annotations__)
+      try self.builder.appendString(mangled)
+      try self.builder.appendStoreSubscr()
 
     case let .attribute(obj, name: _):
       if value == nil {
-        try self.checkAnnExpr(obj, location: location)
+        try self.checkAnnExpr(obj)
       }
 
     case let .subscript(obj, slice: slice):
       if value == nil {
-        try self.checkAnnExpr(obj, location: location)
-        try self.checktAnnSlice(slice, location: location)
+        try self.checkAnnExpr(obj)
+        try self.checktAnnSlice(slice)
       }
 
     default:
-      throw self.error(.invalidTargetForAnnotatedAssignment, location: location)
+      throw self.error(.invalidTargetForAnnotatedAssignment)
     }
 
     if !isSimple && isModuleOrClass {
-      try self.checkAnnExpr(annotation, location: location)
+      try self.checkAnnExpr(annotation)
     }
   }
 
   /// check_ann_expr(struct compiler *c, expr_ty e)
-  private func checkAnnExpr(_ expr: Expression, location: SourceLocation) throws {
+  private func checkAnnExpr(_ expr: Expression) throws {
     try self.visitExpression(expr)
-    try self.builder.appendPopTop(at: location)
+    try self.builder.appendPopTop()
   }
 
   /// check_ann_subscr(struct compiler *c, slice_ty sl)
-  private func checktAnnSlice(_ slice: Slice, location: SourceLocation) throws {
+  private func checktAnnSlice(_ slice: Slice) throws {
     // We check that everything in a subscript is defined at runtime.
     switch slice.kind {
     case let .index(i):
-      try self.checkAnnSliceIndex(i, location: location)
+      try self.checkAnnSliceIndex(i)
 
     case let .slice(lower: l, upper: u, step: s):
-      try self.visitAnnSlice(lower: l, upper: u, step: s, location: location)
+      try self.visitAnnSlice(lower: l, upper: u, step: s)
 
     case let .extSlice(slices):
       for s in slices {
         switch s.kind {
         case let .index(i):
-          try self.checkAnnSliceIndex(i, location: location)
+          try self.checkAnnSliceIndex(i)
 
         case let .slice(lower: l, upper: u, step: s):
-          try self.visitAnnSlice(lower: l, upper: u, step: s, location: location)
+          try self.visitAnnSlice(lower: l, upper: u, step: s)
 
         case .extSlice:
           let kind = CompilerErrorKind.extendedSliceNestedInsideExtendedSlice
-          throw self.error(kind, location: location)
+          throw self.error(kind)
         }
       }
     }
   }
 
   /// check_ann_slice(struct compiler *c, slice_ty sl)
-  private func checkAnnSliceIndex(_ index: Expression,
-                                  location: SourceLocation) throws {
-    try self.checkAnnExpr(index, location: location)
+  private func checkAnnSliceIndex(_ index: Expression) throws {
+    try self.checkAnnExpr(index)
   }
 
   /// check_ann_slice(struct compiler *c, slice_ty sl)
   private func visitAnnSlice(lower: Expression?,
                              upper: Expression?,
-                             step:  Expression?,
-                             location: SourceLocation) throws {
-    if let l = lower { try self.checkAnnExpr(l, location: location) }
-    if let u = upper { try self.checkAnnExpr(u, location: location) }
-    if let s = step  { try self.checkAnnExpr(s, location: location) }
+                             step:  Expression?) throws {
+    if let l = lower { try self.checkAnnExpr(l) }
+    if let u = upper { try self.checkAnnExpr(u) }
+    if let s = step  { try self.checkAnnExpr(s) }
   }
 
   /// compiler_visit_annexpr(struct compiler *c, expr_ty annotation)
-  internal func visitAnnExpr(_ annotation: Expression,
-                             location: SourceLocation) throws {
+  internal func visitAnnExpr(_ annotation: Expression) throws {
     // TODO: We should use proper 'ast_unparse' implementation
     let string = String(describing: annotation)
-    try self.builder.appendString(string, at: location)
+    try self.builder.appendString(string)
   }
 }

@@ -5,164 +5,163 @@ extension CodeObjectBuilder {
   // MARK: - Unary
 
   /// Append an `unaryPositive` instruction to this code object.
-  public func appendUnaryPositive(at location: SourceLocation) throws {
-    try self.append(.unaryPositive, at: location)
+  public func appendUnaryPositive() throws {
+    try self.append(.unaryPositive)
   }
 
   /// Append an `unaryNegative` instruction to this code object.
-  public func appendUnaryNegative(at location: SourceLocation) throws {
-    try self.append(.unaryNegative, at: location)
+  public func appendUnaryNegative() throws {
+    try self.append(.unaryNegative)
   }
 
   /// Append an `unaryNot` instruction to this code object.
-  public func appendUnaryNot(at location: SourceLocation) throws {
-    try self.append(.unaryNot, at: location)
+  public func appendUnaryNot() throws {
+    try self.append(.unaryNot)
   }
 
   /// Append an `unaryInvert` instruction to this code object.
-  public func appendUnaryInvert(at location: SourceLocation) throws {
-    try self.append(.unaryInvert, at: location)
+  public func appendUnaryInvert() throws {
+    try self.append(.unaryInvert)
   }
 
   // MARK: - Binary
 
   /// Append a `binaryPower` instruction to this code object.
-  public func appendBinaryPower(at location: SourceLocation) throws {
-    try self.append(.binaryPower, at: location)
+  public func appendBinaryPower() throws {
+    try self.append(.binaryPower)
   }
 
   /// Append a `binaryMultiply` instruction to this code object.
-  public func appendBinaryMultiply(at location: SourceLocation) throws {
-    try self.append(.binaryMultiply, at: location)
+  public func appendBinaryMultiply() throws {
+    try self.append(.binaryMultiply)
   }
 
   /// Append a `binaryMatrixMultiply` instruction to this code object.
-  public func appendBinaryMatrixMultiply(at location: SourceLocation) throws {
-    try self.append(.binaryMatrixMultiply, at: location)
+  public func appendBinaryMatrixMultiply() throws {
+    try self.append(.binaryMatrixMultiply)
   }
 
   /// Append a `binaryFloorDivide` instruction to this code object.
-  public func appendBinaryFloorDivide(at location: SourceLocation) throws {
-    try self.append(.binaryFloorDivide, at: location)
+  public func appendBinaryFloorDivide() throws {
+    try self.append(.binaryFloorDivide)
   }
 
   /// Append a `binaryTrueDivide` instruction to this code object.
-  public func appendBinaryTrueDivide(at location: SourceLocation) throws {
-    try self.append(.binaryTrueDivide, at: location)
+  public func appendBinaryTrueDivide() throws {
+    try self.append(.binaryTrueDivide)
   }
 
   /// Append a `binaryModulo` instruction to this code object.
-  public func appendBinaryModulo(at location: SourceLocation) throws {
-    try self.append(.binaryModulo, at: location)
+  public func appendBinaryModulo() throws {
+    try self.append(.binaryModulo)
   }
 
   /// Append a `binaryAdd` instruction to this code object.
-  public func appendBinaryAdd(at location: SourceLocation) throws {
-    try self.append(.binaryAdd, at: location)
+  public func appendBinaryAdd() throws {
+    try self.append(.binaryAdd)
   }
 
   /// Append a `binarySubtract` instruction to this code object.
-  public func appendBinarySubtract(at location: SourceLocation) throws {
-    try self.append(.binarySubtract, at: location)
+  public func appendBinarySubtract() throws {
+    try self.append(.binarySubtract)
   }
 
   /// Append a `binaryLShift` instruction to this code object.
-  public func appendBinaryLShift(at location: SourceLocation) throws {
-    try self.append(.binaryLShift, at: location)
+  public func appendBinaryLShift() throws {
+    try self.append(.binaryLShift)
   }
 
   /// Append a `binaryRShift` instruction to this code object.
-  public func appendBinaryRShift(at location: SourceLocation) throws {
-    try self.append(.binaryRShift, at: location)
+  public func appendBinaryRShift() throws {
+    try self.append(.binaryRShift)
   }
 
   /// Append a `binaryAnd` instruction to this code object.
-  public func appendBinaryAnd(at location: SourceLocation) throws {
-    try self.append(.binaryAnd, at: location)
+  public func appendBinaryAnd() throws {
+    try self.append(.binaryAnd)
   }
 
   /// Append a `binaryXor` instruction to this code object.
-  public func appendBinaryXor(at location: SourceLocation) throws {
-    try self.append(.binaryXor, at: location)
+  public func appendBinaryXor() throws {
+    try self.append(.binaryXor)
   }
 
   /// Append a `binaryOr` instruction to this code object.
-  public func appendBinaryOr(at location: SourceLocation) throws {
-    try self.append(.binaryOr, at: location)
+  public func appendBinaryOr() throws {
+    try self.append(.binaryOr)
   }
 
   // MARK: - In-place
 
   /// Append an `inplacePower` instruction to this code object.
-  public func appendInplacePower(at location: SourceLocation) throws {
-    try self.append(.inplacePower, at: location)
+  public func appendInplacePower() throws {
+    try self.append(.inplacePower)
   }
 
   /// Append an `inplaceMultiply` instruction to this code object.
-  public func appendInplaceMultiply(at location: SourceLocation) throws {
-    try self.append(.inplaceMultiply, at: location)
+  public func appendInplaceMultiply() throws {
+    try self.append(.inplaceMultiply)
   }
 
   /// Append an `inplaceMatrixMultiply` instruction to this code object.
-  public func appendInplaceMatrixMultiply(at location: SourceLocation) throws {
-    try self.append(.inplaceMatrixMultiply, at: location)
+  public func appendInplaceMatrixMultiply() throws {
+    try self.append(.inplaceMatrixMultiply)
   }
 
   /// Append an `inplaceFloorDivide` instruction to this code object.
-  public func appendInplaceFloorDivide(at location: SourceLocation) throws {
-    try self.append(.inplaceFloorDivide, at: location)
+  public func appendInplaceFloorDivide() throws {
+    try self.append(.inplaceFloorDivide)
   }
 
   /// Append an `inplaceTrueDivide` instruction to this code object.
-  public func appendInplaceTrueDivide(at location: SourceLocation) throws {
-    try self.append(.inplaceTrueDivide, at: location)
+  public func appendInplaceTrueDivide() throws {
+    try self.append(.inplaceTrueDivide)
   }
 
   /// Append an `inplaceModulo` instruction to this code object.
-  public func appendInplaceModulo(at location: SourceLocation) throws {
-    try self.append(.inplaceModulo, at: location)
+  public func appendInplaceModulo() throws {
+    try self.append(.inplaceModulo)
   }
 
   /// Append an `inplaceAdd` instruction to this code object.
-  public func appendInplaceAdd(at location: SourceLocation) throws {
-    try self.append(.inplaceAdd, at: location)
+  public func appendInplaceAdd() throws {
+    try self.append(.inplaceAdd)
   }
 
   /// Append an `inplaceSubtract` instruction to this code object.
-  public func appendInplaceSubtract(at location: SourceLocation) throws {
-    try self.append(.inplaceSubtract, at: location)
+  public func appendInplaceSubtract() throws {
+    try self.append(.inplaceSubtract)
   }
 
   /// Append an `inplaceLShift` instruction to this code object.
-  public func appendInplaceLShift(at location: SourceLocation) throws {
-    try self.append(.inplaceLShift, at: location)
+  public func appendInplaceLShift() throws {
+    try self.append(.inplaceLShift)
   }
 
   /// Append an `inplaceRShift` instruction to this code object.
-  public func appendInplaceRShift(at location: SourceLocation) throws {
-    try self.append(.inplaceRShift, at: location)
+  public func appendInplaceRShift() throws {
+    try self.append(.inplaceRShift)
   }
 
   /// Append an `inplaceAnd` instruction to this code object.
-  public func appendInplaceAnd(at location: SourceLocation) throws {
-    try self.append(.inplaceAnd, at: location)
+  public func appendInplaceAnd() throws {
+    try self.append(.inplaceAnd)
   }
 
   /// Append an `inplaceXor` instruction to this code object.
-  public func appendInplaceXor(at location: SourceLocation) throws {
-    try self.append(.inplaceXor, at: location)
+  public func appendInplaceXor() throws {
+    try self.append(.inplaceXor)
   }
 
   /// Append an `inplaceOr` instruction to this code object.
-  public func appendInplaceOr(at location: SourceLocation) throws {
-    try self.append(.inplaceOr, at: location)
+  public func appendInplaceOr() throws {
+    try self.append(.inplaceOr)
   }
 
   // MARK: - Comparison
 
   /// Append a `compareOp` instruction to this code object.
-  public func appendCompareOp(_ op: ComparisonOpcode,
-                              at location: SourceLocation) throws {
-    try self.append(.compareOp(op), at: location)
+  public func appendCompareOp(_ op: ComparisonOpcode) throws {
+    try self.append(.compareOp(op))
   }
 }

@@ -3,32 +3,29 @@ import Core
 extension CodeObjectBuilder {
 
   /// Append a `popExcept` instruction to this code object.
-  public func appendPopExcept(at location: SourceLocation) throws {
-    try self.append(.popExcept, at: location)
+  public func appendPopExcept() throws {
+    try self.append(.popExcept)
   }
 
   /// Append an `endFinally` instruction to this code object.
-  public func appendEndFinally(at location: SourceLocation) throws {
-    try self.append(.endFinally, at: location)
+  public func appendEndFinally() throws {
+    try self.append(.endFinally)
   }
 
   /// Append a `setupExcept` instruction to this code object.
-  public func appendSetupExcept(firstExcept: Label,
-                                at location: SourceLocation) throws {
-    let arg = try self.addLabelWithExtendedArgIfNeeded(firstExcept, at: location)
-    try self.append(.setupExcept(firstExceptLabel: arg), at: location)
+  public func appendSetupExcept(firstExcept: Label) throws {
+    let arg = try self.addLabelWithExtendedArgIfNeeded(firstExcept)
+    try self.append(.setupExcept(firstExceptLabel: arg))
   }
 
   /// Append a `setupFinally` instruction to this code object.
-  public func appendSetupFinally(finallyStart: Label,
-                                 at location: SourceLocation) throws {
-    let arg = try self.addLabelWithExtendedArgIfNeeded(finallyStart, at: location)
-    try self.append(.setupFinally(finallyStartLabel: arg), at: location)
+  public func appendSetupFinally(finallyStart: Label) throws {
+    let arg = try self.addLabelWithExtendedArgIfNeeded(finallyStart)
+    try self.append(.setupFinally(finallyStartLabel: arg))
   }
 
   /// Append a `raiseVarargs` instruction to this code object.
-  public func appendRaiseVarargs(arg: RaiseArg,
-                                 at location: SourceLocation) throws {
-    try self.append(.raiseVarargs(arg), at: location)
+  public func appendRaiseVarargs(arg: RaiseArg) throws {
+    try self.append(.raiseVarargs(arg))
   }
 }
