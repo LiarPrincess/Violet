@@ -45,7 +45,7 @@ extension Compiler {
     try self.visitStatements(body)
 
     if orElse.any {
-      try self.builder.appendJumpAbsolute(to: end)
+      self.builder.appendJumpAbsolute(to: end)
       self.builder.setLabel(orElseStart)
       try self.visitStatements(orElse)
     }
@@ -90,21 +90,21 @@ extension Compiler {
     let cleanup = self.builder.createLabel()
     let end = self.builder.createLabel()
 
-    try self.builder.appendSetupLoop(loopEnd: end)
+    self.builder.appendSetupLoop(loopEnd: end)
 
     // 'continue' will jump to 'startLabel'
     try self.inBlock(.loop(continueTarget: iterationStart)) {
       try self.visitExpression(iter)
-      try self.builder.appendGetIter()
+      self.builder.appendGetIter()
 
       self.builder.setLabel(iterationStart)
-      try self.builder.appendForIter(ifEmpty: cleanup)
+      self.builder.appendForIter(ifEmpty: cleanup)
       try self.visitExpression(target, context: .store)
       try self.visitStatements(body)
-      try self.builder.appendJumpAbsolute(to: iterationStart)
+      self.builder.appendJumpAbsolute(to: iterationStart)
 
       self.builder.setLabel(cleanup)
-      try self.builder.appendPopBlock()
+      self.builder.appendPopBlock()
     }
 
     try self.visitStatements(orElse)
@@ -145,7 +145,7 @@ extension Compiler {
     let cleanup = self.builder.createLabel()
     let end = self.builder.createLabel()
 
-    try self.builder.appendSetupLoop(loopEnd: end)
+    self.builder.appendSetupLoop(loopEnd: end)
 
     self.builder.setLabel(iterationStart)
 
@@ -153,10 +153,10 @@ extension Compiler {
     try self.inBlock(.loop(continueTarget: iterationStart)) {
       try self.visitExpression(test, andJumpTo: cleanup, ifBooleanValueIs: false)
       try self.visitStatements(body)
-      try self.builder.appendJumpAbsolute(to: iterationStart)
+      self.builder.appendJumpAbsolute(to: iterationStart)
 
       self.builder.setLabel(cleanup)
-      try self.builder.appendPopBlock()
+      self.builder.appendPopBlock()
     }
 
     try self.visitStatements(orElse)
@@ -173,14 +173,14 @@ extension Compiler {
 
     switch blockType {
     case let .loop(continueTarget):
-      try self.builder.appendJumpAbsolute(to: continueTarget)
+      self.builder.appendJumpAbsolute(to: continueTarget)
     case .except,
          .finallyTry:
       // Try to find the previous loop.
       for block in self.blockStack.reversed() {
         switch block {
         case let .loop(continueTarget):
-          try self.builder.appendJumpAbsolute(to: continueTarget)
+          self.builder.appendJumpAbsolute(to: continueTarget)
           return
         case .except,
              .finallyTry:
@@ -200,6 +200,6 @@ extension Compiler {
       throw self.error(.breakOutsideLoop)
     }
 
-    try self.builder.appendBreak()
+    self.builder.appendBreak()
   }
 }

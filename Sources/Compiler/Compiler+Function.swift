@@ -26,11 +26,11 @@ extension Compiler {
 
     let codeObject = try self.inNewCodeObject(node: expression, type: .lambda) {
       // Make None the first constant, so the lambda can't have a docstring.
-      try self.builder.appendNone()
+      self.builder.appendNone()
 
       try self.visitExpression(body)
       if !self.currentScope.isGenerator {
-        try self.builder.appendReturn()
+        self.builder.appendReturn()
       }
     }
 
@@ -62,24 +62,24 @@ extension Compiler {
     let codeObject = try self.inNewCodeObject(node: statement, type: .function) {
       let optimizationLevel = self.options.optimizationLevel
       if let docString = body.first.getDocString(), optimizationLevel < 2 {
-        try self.builder.appendString(docString)
+        self.builder.appendString(docString)
       }
 
       try self.visitStatements(body)
 
       if !self.currentScope.hasReturnValue {
-        try self.builder.appendNone()
-        try self.builder.appendReturn()
+        self.builder.appendNone()
+        self.builder.appendReturn()
       }
     }
 
     try self.makeClosure(codeObject: codeObject, flags: flags, location: location)
 
     for _ in decorators {
-      try self.builder.appendCallFunction(argumentCount: 1)
+      self.builder.appendCallFunction(argumentCount: 1)
     }
 
-    try self.builder.appendStoreName(name)
+    self.builder.appendStoreName(name)
   }
 
   // MARK: - Decorators
@@ -99,7 +99,7 @@ extension Compiler {
     if args.defaults.any {
       flags.formUnion(.hasPositionalArgDefaults)
       try self.visitExpressions(args.defaults)
-      try self.builder.appendBuildTuple(elementCount: args.defaults.count)
+      self.builder.appendBuildTuple(elementCount: args.defaults.count)
     }
 
     if args.kwOnlyArgs.any {
@@ -131,8 +131,8 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasKwOnlyArgDefaults)
       let elements = names.map { Constant.string($0.value) }
-      try self.builder.appendTuple(elements)
-      try self.builder.appendBuildConstKeyMap(elementCount: names.count)
+      self.builder.appendTuple(elements)
+      self.builder.appendBuildConstKeyMap(elementCount: names.count)
     }
   }
 
@@ -174,8 +174,8 @@ extension Compiler {
     if names.any {
       flags.formUnion(.hasAnnotations)
       let elements = names.map { Constant.string($0.value) }
-      try self.builder.appendTuple(elements)
-      try self.builder.appendBuildConstKeyMap(elementCount: names.count)
+      self.builder.appendTuple(elements)
+      self.builder.appendBuildConstKeyMap(elementCount: names.count)
     }
   }
 
@@ -232,17 +232,16 @@ extension Compiler {
         let variable: ClosureVariable =
           flags.contains(.cell) ? .cell(name) : .free(name)
 
-        try self.builder.appendLoadClosure(variable)
+        self.builder.appendLoadClosure(variable)
       }
 
-      let count = codeObject.freeVars.count
-      try self.builder.appendBuildTuple(elementCount: count)
+      self.builder.appendBuildTuple(elementCount: codeObject.freeVars.count)
       makeFunctionFlags.formUnion(.hasFreeVariables)
     }
 
-    try self.builder.appendCode(codeObject)
-    try self.builder.appendString(qualifiedName)
-    try self.builder.appendMakeFunction(flags: makeFunctionFlags)
+    self.builder.appendCode(codeObject)
+    self.builder.appendString(qualifiedName)
+    self.builder.appendMakeFunction(flags: makeFunctionFlags)
   }
 
   private func getRefType(name: MangledName,
@@ -256,7 +255,6 @@ extension Compiler {
       return scope.flags
     }
 
-    fatalError(
-      "[BUG] Compiler: Unknown scope for '\(name)' inside '\(qualifiedName)'.")
+    fatalError("[BUG] Compiler: Unknown scope for '\(name)' inside '\(qualifiedName)'.")
   }
 }

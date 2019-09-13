@@ -24,9 +24,9 @@ extension Compiler {
       self.setAppendLocation(alias)
 
       // The Import node stores a module name like a.b.c as a single string.
-      try self.builder.appendInteger(BigInt(0))
-      try self.builder.appendNone()
-      try self.builder.appendImportName(name: alias.name)
+      self.builder.appendInteger(BigInt(0))
+      self.builder.appendNone()
+      self.builder.appendImportName(name: alias.name)
 
       if let asName = alias.asName {
         try self.emitImportAs(name: alias.name, asName: asName)
@@ -36,7 +36,7 @@ extension Compiler {
           name = String(alias.name.prefix(upTo: dotIndex))
         }
 
-        try self.builder.appendStoreName(name)
+        self.builder.appendStoreName(name)
       }
     }
   }
@@ -59,8 +59,8 @@ extension Compiler {
                                     location: SourceLocation) throws {
     try self.checkLateFuture(module: module, location: location)
     try self.appendImportFromProlog(module: module, names: ["*"], level: level)
-    try self.builder.appendImportStar()
-    try self.builder.appendPopTop()
+    self.builder.appendImportStar()
+    self.builder.appendPopTop()
   }
 
   /// compiler_from_import(struct compiler *c, stmt_ty s)
@@ -92,11 +92,11 @@ extension Compiler {
 
       let storeName = alias.asName ?? alias.name
       self.setAppendLocation(alias)
-      try self.builder.appendImportFrom(name: alias.name)
-      try self.builder.appendStoreName(storeName)
+      self.builder.appendImportFrom(name: alias.name)
+      self.builder.appendStoreName(storeName)
     }
 
-    try self.builder.appendPopTop()
+    self.builder.appendPopTop()
   }
 
   /// Common code for 'visitImportFromStar' and 'visitImportFrom'
@@ -106,9 +106,9 @@ extension Compiler {
     let importName = module ?? ""
     let nameTuple = names.map { Constant.string($0) }
 
-    try self.builder.appendInteger(BigInt(level))
-    try self.builder.appendTuple(nameTuple)
-    try self.builder.appendImportName(name: importName)
+    self.builder.appendInteger(BigInt(level))
+    self.builder.appendTuple(nameTuple)
+    self.builder.appendImportName(name: importName)
   }
 
   private func checkLateFuture(module: String?, location: SourceLocation) throws {
@@ -131,24 +131,24 @@ extension Compiler {
     let hasAttributes = slices.count > 1
     guard hasAttributes else {
       // for example: import elsa as queen
-      try self.builder.appendStoreName(asName)
+      self.builder.appendStoreName(asName)
       return
     }
 
     // for example: import frozen.elsa as queen ('elsa' is an attribute)
     let attributes = slices[1...]
     for (index, attr) in attributes.enumerated() {
-      try self.builder.appendImportFrom(name: String(attr))
+      self.builder.appendImportFrom(name: String(attr))
 
       let isLast = index == attributes.count - 1
       if !isLast {
-        try self.builder.appendRotTwo()
-        try self.builder.appendPopTop()
+        self.builder.appendRotTwo()
+        self.builder.appendPopTop()
       }
     }
 
     // final store using 'asName'
-    try self.builder.appendStoreName(asName)
-    try self.builder.appendPopTop()
+    self.builder.appendStoreName(asName)
+    self.builder.appendPopTop()
   }
 }

@@ -69,7 +69,7 @@ extension Compiler {
 
     // Evaluate EXPR
     try self.visitExpression(item.contextExpr)
-    try self.builder.appendSetupWith(afterBody: afterBody)
+    self.builder.appendSetupWith(afterBody: afterBody)
 
     // SETUP_WITH pushes a finally block.
     try self.inBlock(.finallyTry) {
@@ -77,7 +77,7 @@ extension Compiler {
         try self.visitExpression(o, context: .store)
       } else {
         // Discard result from context.__enter__()
-        try self.builder.appendPopTop()
+        self.builder.appendPopTop()
       }
 
       let nextIndex = index + 1
@@ -89,20 +89,20 @@ extension Compiler {
       }
 
       // End of try block; start the finally block
-      try self.builder.appendPopBlock()
+      self.builder.appendPopBlock()
     }
 
-    try self.builder.appendNone()
+    self.builder.appendNone()
     self.builder.setLabel(afterBody)
 
-    try self.inBlock(.finallyEnd) {
+    self.inBlock(.finallyEnd) {
       // Finally block starts; context.__exit__ is on the stack under
       // the exception or return information. Just issue our magic opcode.
-      try self.builder.appendWithCleanupStart()
-      try self.builder.appendWithCleanupFinish()
+      self.builder.appendWithCleanupStart()
+      self.builder.appendWithCleanupFinish()
 
       // Finally block ends.
-      try self.builder.appendEndFinally()
+      self.builder.appendEndFinally()
     }
   }
 }

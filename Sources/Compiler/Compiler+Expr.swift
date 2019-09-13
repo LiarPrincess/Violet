@@ -29,36 +29,36 @@ extension Compiler {
 
     switch expr.kind {
     case .true:
-      try self.builder.appendTrue()
+      self.builder.appendTrue()
     case .false:
-      try self.builder.appendFalse()
+      self.builder.appendFalse()
     case .none:
-      try self.builder.appendNone()
+      self.builder.appendNone()
     case .ellipsis:
-      try self.builder.appendEllipsis()
+      self.builder.appendEllipsis()
 
     case let .identifier(value):
       try self.visitIdentifier(value, context: context)
 
     case let .bytes(value):
-      try self.builder.appendBytes(value)
+      self.builder.appendBytes(value)
     case let .string(string):
       try self.visitString(string)
 
     case let .int(value):
-      try self.builder.appendInteger(value)
+      self.builder.appendInteger(value)
     case let .float(value):
-      try self.builder.appendFloat(value)
+      self.builder.appendFloat(value)
     case let .complex(real, imag):
-      try self.builder.appendComplex(real: real, imag: imag)
+      self.builder.appendComplex(real: real, imag: imag)
 
     case let .unaryOp(op, right):
       try self.visitExpression(right)
-      try self.builder.appendUnaryOperator(op)
+      self.builder.appendUnaryOperator(op)
     case let .binaryOp(op, left, right):
       try self.visitExpression(left)
       try self.visitExpression(right)
-      try self.builder.appendBinaryOperator(op)
+      self.builder.appendBinaryOperator(op)
     case let .boolOp(op, left, right):
       try self.visitBoolOp(op, left: left, right: right)
     case let .compare(left, elements):
@@ -153,7 +153,7 @@ extension Compiler {
 
       try self.visitExpression(test, andJumpTo: next2, ifBooleanValueIs: false)
       try self.visitExpression(body, andJumpTo: next,  ifBooleanValueIs: cond)
-      try self.builder.appendJumpAbsolute(to: end)
+      self.builder.appendJumpAbsolute(to: end)
       self.builder.setLabel(next2)
       try self.visitExpression(orElse, andJumpTo: next, ifBooleanValueIs: cond)
       self.builder.setLabel(end)
@@ -170,27 +170,27 @@ extension Compiler {
 
       for element in elements.dropLast() {
         try self.visitExpression(element.right)
-        try self.builder.appendDupTop()
-        try self.builder.appendRotThree()
-        try self.builder.appendCompareOp(element.op)
-        try self.builder.appendJumpIfFalseOrPop(to: cleanup)
+        self.builder.appendDupTop()
+        self.builder.appendRotThree()
+        self.builder.appendCompareOp(element.op)
+        self.builder.appendJumpIfFalseOrPop(to: cleanup)
       }
 
       let last = elements.last
       try self.visitExpression(last.right)
-      try self.builder.appendCompareOp(last.op)
+      self.builder.appendCompareOp(last.op)
 
       switch cond {
-      case true:  try self.builder.appendPopJumpIfTrue (to: next)
-      case false: try self.builder.appendPopJumpIfFalse(to: next)
+      case true:  self.builder.appendPopJumpIfTrue(to: next)
+      case false: self.builder.appendPopJumpIfFalse(to: next)
       }
 
-      try self.builder.appendJumpAbsolute(to: end)
+      self.builder.appendJumpAbsolute(to: end)
       self.builder.setLabel(cleanup)
-      try self.builder.appendPopTop()
+      self.builder.appendPopTop()
 
       if !cond {
-        try self.builder.appendJumpAbsolute(to: next)
+        self.builder.appendJumpAbsolute(to: next)
       }
       self.builder.setLabel(end)
       return
@@ -201,8 +201,8 @@ extension Compiler {
 
     try self.visitExpression(expr)
     switch cond {
-    case true:  try self.builder.appendPopJumpIfTrue (to: next)
-    case false: try self.builder.appendPopJumpIfFalse(to: next)
+    case true:  self.builder.appendPopJumpIfTrue(to: next)
+    case false: self.builder.appendPopJumpIfFalse(to: next)
     }
   }
 
@@ -244,20 +244,20 @@ extension Compiler {
     case .deref:
       switch context {
       case .store:
-        try self.builder.appendStoreDeref(mangled)
+        self.builder.appendStoreDeref(mangled)
       case .load where self.currentScope.type == .class:
-        try self.builder.appendLoadClassDeref(mangled)
+        self.builder.appendLoadClassDeref(mangled)
       case .load:
-        try self.builder.appendLoadDeref(mangled)
+        self.builder.appendLoadDeref(mangled)
       case .del:
-        try self.builder.appendDeleteDeref(mangled)
+        self.builder.appendDeleteDeref(mangled)
       }
     case .fast:
-      try self.builder.appendFast(name: mangled, context: context)
+      self.builder.appendFast(name: mangled, context: context)
     case .global:
-      try self.builder.appendGlobal(name: mangled, context: context)
+      self.builder.appendGlobal(name: mangled, context: context)
     case .name:
-      try self.builder.appendName(name: mangled, context: context)
+      self.builder.appendName(name: mangled, context: context)
     }
   }
 
@@ -268,7 +268,7 @@ extension Compiler {
   private func visitString(_ group: StringGroup) throws {
     switch group {
     case let .literal(s):
-      try self.builder.appendString(s)
+      self.builder.appendString(s)
 
     case let .formattedValue(expr, conversion: conv, spec: spec):
       try self.visitExpression(expr)
@@ -284,10 +284,10 @@ extension Compiler {
       var hasFormat = false
       if let s = spec {
         hasFormat = true
-        try self.builder.appendString(s)
+        self.builder.appendString(s)
       }
 
-      try self.builder.appendFormatValue(conversion: conversion, hasFormat: hasFormat)
+      self.builder.appendFormatValue(conversion: conversion, hasFormat: hasFormat)
 
     case let .joined(groups):
       for g in groups {
@@ -295,7 +295,7 @@ extension Compiler {
       }
 
       if groups.count > 1 {
-        try self.builder.appendBuildString(count: groups.count)
+        self.builder.appendBuildString(count: groups.count)
       }
     }
   }
@@ -319,8 +319,8 @@ extension Compiler {
     try self.visitExpression(left)
 
     switch op {
-    case .and: try self.builder.appendJumpIfFalseOrPop(to: end)
-    case .or:  try self.builder.appendJumpIfTrueOrPop (to: end)
+    case .and: self.builder.appendJumpIfFalseOrPop(to: end)
+    case .or:  self.builder.appendJumpIfTrueOrPop(to: end)
     }
 
     try self.visitExpression(right)
@@ -352,27 +352,27 @@ extension Compiler {
     if elements.count == 1 {
       let first = elements.first
       try self.visitExpression(first.right)
-      try self.builder.appendCompareOp(first.op)
+      self.builder.appendCompareOp(first.op)
     } else {
       let end = self.builder.createLabel()
       let cleanup = self.builder.createLabel()
 
       for element in elements.dropLast() {
         try self.visitExpression(element.right)
-        try self.builder.appendDupTop()
-        try self.builder.appendRotThree()
-        try self.builder.appendCompareOp(element.op)
-        try self.builder.appendJumpIfFalseOrPop(to: cleanup)
+        self.builder.appendDupTop()
+        self.builder.appendRotThree()
+        self.builder.appendCompareOp(element.op)
+        self.builder.appendJumpIfFalseOrPop(to: cleanup)
       }
 
       let last = elements.last
       try self.visitExpression(last.right)
-      try self.builder.appendCompareOp(last.op)
+      self.builder.appendCompareOp(last.op)
 
-      try self.builder.appendJumpAbsolute(to: end)
+      self.builder.appendJumpAbsolute(to: end)
       self.builder.setLabel(cleanup)
-      try self.builder.appendRotTwo()
-      try self.builder.appendPopTop()
+      self.builder.appendRotTwo()
+      self.builder.appendPopTop()
       self.builder.setLabel(end)
     }
   }
@@ -398,7 +398,7 @@ extension Compiler {
 
     try self.visitExpression(test, andJumpTo: orElseStart, ifBooleanValueIs: false)
     try self.visitExpression(body)
-    try self.builder.appendJumpAbsolute(to: end)
+    self.builder.appendJumpAbsolute(to: end)
     self.builder.setLabel(orElseStart)
     try self.visitExpression(orElse)
     self.builder.setLabel(end)
@@ -421,17 +421,17 @@ extension Compiler {
     switch context {
     case .store:
       if isAugumented {
-        try self.builder.appendRotTwo()
+        self.builder.appendRotTwo()
       }
-      try self.builder.appendStoreAttribute(mangled)
+      self.builder.appendStoreAttribute(mangled)
     case .load:
       if isAugumented {
-        try self.builder.appendDupTop()
+        self.builder.appendDupTop()
       }
-      try self.builder.appendLoadAttribute(mangled)
+      self.builder.appendLoadAttribute(mangled)
     case .del:
       assert(!isAugumented)
-      try self.builder.appendDeleteAttribute(mangled)
+      self.builder.appendDeleteAttribute(mangled)
     }
   }
 
@@ -467,24 +467,24 @@ extension Compiler {
         for s in slices {
           try self.visitNestedSlice(slice: s, context: context)
         }
-        try self.builder.appendBuildTuple(elementCount: slices.count)
+        self.builder.appendBuildTuple(elementCount: slices.count)
       }
     }
 
     switch context {
     case .store:
       if isAugumented {
-        try self.builder.appendRotThree()
+        self.builder.appendRotThree()
       }
-      try self.builder.appendStoreSubscr()
+      self.builder.appendStoreSubscr()
     case .load:
       if isAugumented {
-        try self.builder.appendDupTopTwo()
+        self.builder.appendDupTopTwo()
       }
-      try self.builder.appendBinarySubscr()
+      self.builder.appendBinarySubscr()
     case .del:
       assert(!isAugumented)
-      try self.builder.appendDeleteSubscr()
+      self.builder.appendDeleteSubscr()
     }
   }
 
@@ -509,13 +509,13 @@ extension Compiler {
     if let l = lower {
       try self.visitExpression(l)
     } else {
-      try self.builder.appendNone()
+      self.builder.appendNone()
     }
 
     if let u = upper {
       try self.visitExpression(u)
     } else {
-      try self.builder.appendNone()
+      self.builder.appendNone()
     }
 
     var type = SliceArg.lowerUpper
@@ -524,6 +524,6 @@ extension Compiler {
       try self.visitExpression(s)
     }
 
-    try self.builder.appendBuildSlice(type)
+    self.builder.appendBuildSlice(type)
   }
 }

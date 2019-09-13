@@ -4,13 +4,13 @@ extension CodeObjectBuilder {
 
   /// Append a `formatValue` instruction to this code object.
   public func appendFormatValue(conversion: StringConversion,
-                                hasFormat:  Bool) throws {
-    try self.append(.formatValue(conversion: conversion, hasFormat: hasFormat))
+                                hasFormat:  Bool) {
+    self.append(.formatValue(conversion: conversion, hasFormat: hasFormat))
   }
 
   /// Append a `buildString` instruction to this code object.
-  public func appendBuildString(count: Int) throws {
-    let arg = try self.appendExtendedArgIfNeeded(count)
-    try self.append(.buildString(arg))
+  public func appendBuildString(count: Int) {
+    let arg = self.appendExtendedArgIfNeeded(count)
+    self.append(.buildString(arg))
   }
 }

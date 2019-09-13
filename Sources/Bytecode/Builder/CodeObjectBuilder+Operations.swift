@@ -5,163 +5,163 @@ extension CodeObjectBuilder {
   // MARK: - Unary
 
   /// Append an `unaryPositive` instruction to this code object.
-  public func appendUnaryPositive() throws {
-    try self.append(.unaryPositive)
+  public func appendUnaryPositive() {
+    self.append(.unaryPositive)
   }
 
   /// Append an `unaryNegative` instruction to this code object.
-  public func appendUnaryNegative() throws {
-    try self.append(.unaryNegative)
+  public func appendUnaryNegative() {
+    self.append(.unaryNegative)
   }
 
   /// Append an `unaryNot` instruction to this code object.
-  public func appendUnaryNot() throws {
-    try self.append(.unaryNot)
+  public func appendUnaryNot() {
+    self.append(.unaryNot)
   }
 
   /// Append an `unaryInvert` instruction to this code object.
-  public func appendUnaryInvert() throws {
-    try self.append(.unaryInvert)
+  public func appendUnaryInvert() {
+    self.append(.unaryInvert)
   }
 
   // MARK: - Binary
 
   /// Append a `binaryPower` instruction to this code object.
-  public func appendBinaryPower() throws {
-    try self.append(.binaryPower)
+  public func appendBinaryPower() {
+    self.append(.binaryPower)
   }
 
   /// Append a `binaryMultiply` instruction to this code object.
-  public func appendBinaryMultiply() throws {
-    try self.append(.binaryMultiply)
+  public func appendBinaryMultiply() {
+    self.append(.binaryMultiply)
   }
 
   /// Append a `binaryMatrixMultiply` instruction to this code object.
-  public func appendBinaryMatrixMultiply() throws {
-    try self.append(.binaryMatrixMultiply)
+  public func appendBinaryMatrixMultiply() {
+    self.append(.binaryMatrixMultiply)
   }
 
   /// Append a `binaryFloorDivide` instruction to this code object.
-  public func appendBinaryFloorDivide() throws {
-    try self.append(.binaryFloorDivide)
+  public func appendBinaryFloorDivide() {
+    self.append(.binaryFloorDivide)
   }
 
   /// Append a `binaryTrueDivide` instruction to this code object.
-  public func appendBinaryTrueDivide() throws {
-    try self.append(.binaryTrueDivide)
+  public func appendBinaryTrueDivide() {
+    self.append(.binaryTrueDivide)
   }
 
   /// Append a `binaryModulo` instruction to this code object.
-  public func appendBinaryModulo() throws {
-    try self.append(.binaryModulo)
+  public func appendBinaryModulo() {
+    self.append(.binaryModulo)
   }
 
   /// Append a `binaryAdd` instruction to this code object.
-  public func appendBinaryAdd() throws {
-    try self.append(.binaryAdd)
+  public func appendBinaryAdd() {
+    self.append(.binaryAdd)
   }
 
   /// Append a `binarySubtract` instruction to this code object.
-  public func appendBinarySubtract() throws {
-    try self.append(.binarySubtract)
+  public func appendBinarySubtract() {
+    self.append(.binarySubtract)
   }
 
   /// Append a `binaryLShift` instruction to this code object.
-  public func appendBinaryLShift() throws {
-    try self.append(.binaryLShift)
+  public func appendBinaryLShift() {
+    self.append(.binaryLShift)
   }
 
   /// Append a `binaryRShift` instruction to this code object.
-  public func appendBinaryRShift() throws {
-    try self.append(.binaryRShift)
+  public func appendBinaryRShift() {
+    self.append(.binaryRShift)
   }
 
   /// Append a `binaryAnd` instruction to this code object.
-  public func appendBinaryAnd() throws {
-    try self.append(.binaryAnd)
+  public func appendBinaryAnd() {
+    self.append(.binaryAnd)
   }
 
   /// Append a `binaryXor` instruction to this code object.
-  public func appendBinaryXor() throws {
-    try self.append(.binaryXor)
+  public func appendBinaryXor() {
+    self.append(.binaryXor)
   }
 
   /// Append a `binaryOr` instruction to this code object.
-  public func appendBinaryOr() throws {
-    try self.append(.binaryOr)
+  public func appendBinaryOr() {
+    self.append(.binaryOr)
   }
 
   // MARK: - In-place
 
   /// Append an `inplacePower` instruction to this code object.
-  public func appendInplacePower() throws {
-    try self.append(.inplacePower)
+  public func appendInplacePower() {
+    self.append(.inplacePower)
   }
 
   /// Append an `inplaceMultiply` instruction to this code object.
-  public func appendInplaceMultiply() throws {
-    try self.append(.inplaceMultiply)
+  public func appendInplaceMultiply() {
+    self.append(.inplaceMultiply)
   }
 
   /// Append an `inplaceMatrixMultiply` instruction to this code object.
-  public func appendInplaceMatrixMultiply() throws {
-    try self.append(.inplaceMatrixMultiply)
+  public func appendInplaceMatrixMultiply() {
+    self.append(.inplaceMatrixMultiply)
   }
 
   /// Append an `inplaceFloorDivide` instruction to this code object.
-  public func appendInplaceFloorDivide() throws {
-    try self.append(.inplaceFloorDivide)
+  public func appendInplaceFloorDivide() {
+    self.append(.inplaceFloorDivide)
   }
 
   /// Append an `inplaceTrueDivide` instruction to this code object.
-  public func appendInplaceTrueDivide() throws {
-    try self.append(.inplaceTrueDivide)
+  public func appendInplaceTrueDivide() {
+    self.append(.inplaceTrueDivide)
   }
 
   /// Append an `inplaceModulo` instruction to this code object.
-  public func appendInplaceModulo() throws {
-    try self.append(.inplaceModulo)
+  public func appendInplaceModulo() {
+    self.append(.inplaceModulo)
   }
 
   /// Append an `inplaceAdd` instruction to this code object.
-  public func appendInplaceAdd() throws {
-    try self.append(.inplaceAdd)
+  public func appendInplaceAdd() {
+    self.append(.inplaceAdd)
   }
 
   /// Append an `inplaceSubtract` instruction to this code object.
-  public func appendInplaceSubtract() throws {
-    try self.append(.inplaceSubtract)
+  public func appendInplaceSubtract() {
+    self.append(.inplaceSubtract)
   }
 
   /// Append an `inplaceLShift` instruction to this code object.
-  public func appendInplaceLShift() throws {
-    try self.append(.inplaceLShift)
+  public func appendInplaceLShift() {
+    self.append(.inplaceLShift)
   }
 
   /// Append an `inplaceRShift` instruction to this code object.
-  public func appendInplaceRShift() throws {
-    try self.append(.inplaceRShift)
+  public func appendInplaceRShift() {
+    self.append(.inplaceRShift)
   }
 
   /// Append an `inplaceAnd` instruction to this code object.
-  public func appendInplaceAnd() throws {
-    try self.append(.inplaceAnd)
+  public func appendInplaceAnd() {
+    self.append(.inplaceAnd)
   }
 
   /// Append an `inplaceXor` instruction to this code object.
-  public func appendInplaceXor() throws {
-    try self.append(.inplaceXor)
+  public func appendInplaceXor() {
+    self.append(.inplaceXor)
   }
 
   /// Append an `inplaceOr` instruction to this code object.
-  public func appendInplaceOr() throws {
-    try self.append(.inplaceOr)
+  public func appendInplaceOr() {
+    self.append(.inplaceOr)
   }
 
   // MARK: - Comparison
 
   /// Append a `compareOp` instruction to this code object.
-  public func appendCompareOp(_ op: ComparisonOpcode) throws {
-    try self.append(.compareOp(op))
+  public func appendCompareOp(_ op: ComparisonOpcode) {
+    self.append(.compareOp(op))
   }
 }

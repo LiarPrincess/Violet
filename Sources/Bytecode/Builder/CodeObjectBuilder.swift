@@ -72,10 +72,7 @@ public class CodeObjectBuilder {
 
   // MARK: - Append
 
-  // This function does not throw, but we will mark it as one for the future.
-  // Also some of the 'append' functions throw
-  // and it would be weird to use 'try' only on some of the functions in api.
-  internal func append(_ instruction: Instruction) throws {
+  internal func append(_ instruction: Instruction) {
     self.instructions.append(instruction)
 
     var line = self.appendLocation.line
@@ -115,18 +112,18 @@ public class CodeObjectBuilder {
 
   // MARK: - Extended arg
 
-  internal func addNameWithExtendedArgIfNeeded<S: ConstantString>(name: S) throws -> UInt8 {
+  internal func addNameWithExtendedArgIfNeeded<S: ConstantString>(name: S) -> UInt8 {
     let c = name.constant
 
     // If this name was already used then reuse this index.
     let index = self.cachedIndices.names[c] ?? self.codeObject.names.endIndex
-    let arg = try self.appendExtendedArgIfNeeded(index)
+    let arg = self.appendExtendedArgIfNeeded(index)
     self.codeObject.names.append(c)
     return arg
   }
 
-  internal func addLabelWithExtendedArgIfNeeded(_ label: Label) throws -> UInt8 {
-    return try self.appendExtendedArgIfNeeded(label.index)
+  internal func addLabelWithExtendedArgIfNeeded(_ label: Label) -> UInt8 {
+    return self.appendExtendedArgIfNeeded(label.index)
   }
 
   /// If the arg is `>255` then it can't be stored directly in instruction.
@@ -141,10 +138,13 @@ public class CodeObjectBuilder {
   /// ```
   /// - Returns:
   /// Value that should be used in instruction.
-  internal func appendExtendedArgIfNeeded(_ arg: Int) throws -> UInt8 {
+  internal func appendExtendedArgIfNeeded(_ arg: Int) -> UInt8 {
     assert(arg >= 0)
-    if arg > Instruction.maxArgument {
-      throw self.error(.instructionArgumentTooBig, location: self.appendLocation)
+    if arg > Instruction.maxExtendedArgument3 {
+      fatalError(
+        "[BUG] CodeObjectBuilder: Cannot create instruction with argument greater " +
+        "than '\(Instruction.maxExtendedArgument3)' (at \(self.appendLocation))."
+      )
     }
 
     let ffMask = 0xff
@@ -155,7 +155,7 @@ public class CodeObjectBuilder {
 
     let emit1 = value > 0
     if emit1 {
-      try self.append(.extendedArg(value))
+      self.append(.extendedArg(value))
     }
 
     shift = 16
@@ -164,7 +164,7 @@ public class CodeObjectBuilder {
 
     let emit2 = emit1 || value > 0
     if emit2 {
-      try self.append(.extendedArg(value))
+      self.append(.extendedArg(value))
     }
 
     shift = 8
@@ -173,37 +173,16 @@ public class CodeObjectBuilder {
 
     let emit3 = emit2 || value > 0
     if emit3 {
-      try self.append(.extendedArg(value))
+      self.append(.extendedArg(value))
     }
 
     return UInt8(arg & ffMask)
   }
 
-  // MARK: - Error
-
-  /// Create code object error
-  internal func error(_ kind: CodeObjectErrorKind,
-                      location: SourceLocation) -> CodeObjectError {
-    return CodeObjectError(kind, location: location)
-  }
-
   // MARK: - Unimplemented
 
   // TODO: remove this
-  internal func unimplemented(fn: StaticString = #function) -> Error {
-    return UnimplementedError(fn: fn)
-  }
-}
-
-internal struct UnimplementedError: Error, CustomStringConvertible {
-
-  private let fn: StaticString
-
-  internal init(fn: StaticString) {
-    self.fn = fn
-  }
-
-  internal var description: String {
-    return "Unimplemented: " + self.fn.description
+  internal func unimplemented(fn: StaticString = #function) {
+    precondition(false, "Unimplemented: \(fn)")
   }
 }

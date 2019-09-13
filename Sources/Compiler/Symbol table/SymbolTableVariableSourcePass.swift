@@ -263,7 +263,8 @@ internal final class SymbolTableVariableSourcePass {
     for (name, info) in scope.symbols {
       guard let srcFlags = scopeContext.symbolSources[name] else {
         fatalError("[BUG] Source for variable '\(name.base)' was not found, " +
-          "and thus cannot be set.")
+                   "and thus cannot be set."
+        )
       }
 
       var flags = info.flags

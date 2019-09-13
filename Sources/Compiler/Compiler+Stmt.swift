@@ -131,10 +131,10 @@ extension Compiler {
 
       try self.visitExpression(v)
     } else {
-      try self.builder.appendNone()
+      self.builder.appendNone()
     }
 
-    try self.builder.appendReturn()
+    self.builder.appendReturn()
   }
 
   // MARK: - Assert
@@ -151,15 +151,15 @@ extension Compiler {
 
     let end = self.builder.createLabel()
     try self.visitExpression(test, andJumpTo: end, ifBooleanValueIs: true)
-    try self.builder.appendLoadGlobal(SpecialIdentifiers.assertionError)
+    self.builder.appendLoadGlobal(SpecialIdentifiers.assertionError)
 
     if let message = msg {
       // Call 'AssertionError' with single argument
       try self.visitExpression(message)
-      try self.builder.appendCallFunction(argumentCount: 1)
+      self.builder.appendCallFunction(argumentCount: 1)
     }
 
-    try self.builder.appendRaiseVarargs(arg: .exceptionOnly)
+    self.builder.appendRaiseVarargs(arg: .exceptionOnly)
     self.builder.setLabel(end)
   }
 
@@ -169,11 +169,11 @@ extension Compiler {
   private func visitExpressionStatement(_ expr: Expression) throws {
     if self.isInteractive && self.nestLevel <= 1 {
       try self.visitExpression(expr)
-      try self.builder.appendPrintExpr()
+      self.builder.appendPrintExpr()
       return
     }
 
     try self.visitExpression(expr)
-    try self.builder.appendPopTop()
+    self.builder.appendPopTop()
   }
 }

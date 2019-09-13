@@ -25,7 +25,7 @@ extension Compiler {
       }
     }
 
-    try self.builder.appendRaiseVarargs(arg: arg)
+    self.builder.appendRaiseVarargs(arg: arg)
   }
 
   // MARK: - Try
@@ -79,7 +79,7 @@ extension Compiler {
     let finallyStart = self.builder.createLabel()
 
     // body
-    try self.builder.appendSetupFinally(finallyStart: finallyStart)
+    self.builder.appendSetupFinally(finallyStart: finallyStart)
     try self.inBlock(.finallyTry) {
       if handlers.any {
         try self.visitTryExcept(body: body, handlers: handlers, orElse: orElse)
@@ -87,16 +87,16 @@ extension Compiler {
         try self.visitStatements(body)
       }
 
-      try self.builder.appendPopBlock()
+      self.builder.appendPopBlock()
     }
 
-    try self.builder.appendNone()
+    self.builder.appendNone()
 
     // finally
     self.builder.setLabel(finallyStart)
     try self.inBlock(.finallyEnd) {
       try self.visitStatements(finally)
-      try self.builder.appendEndFinally()
+      self.builder.appendEndFinally()
     }
   }
 
@@ -139,13 +139,13 @@ extension Compiler {
     let end = self.builder.createLabel()
 
     // body
-    try self.builder.appendSetupExcept(firstExcept: firstExcept)
+    self.builder.appendSetupExcept(firstExcept: firstExcept)
     try self.inBlock(.except) {
       try self.visitStatements(body)
-      try self.builder.appendPopBlock()
+      self.builder.appendPopBlock()
     }
     // if no exception happened then go to 'orElse'
-    try self.builder.appendJumpAbsolute(to: orElseStart)
+    self.builder.appendJumpAbsolute(to: orElseStart)
 
     // except
     self.builder.setLabel(firstExcept)
@@ -159,16 +159,16 @@ extension Compiler {
       let nextExcept = self.builder.createLabel()
 
       if case let .typed(type: type, asName: _) = handler.kind {
-        try self.builder.appendDupTop()
+        self.builder.appendDupTop()
         try self.visitExpression(type)
-        try self.builder.appendCompareOp(.exceptionMatch)
-        try self.builder.appendPopJumpIfFalse(to: nextExcept)
+        self.builder.appendCompareOp(.exceptionMatch)
+        self.builder.appendPopJumpIfFalse(to: nextExcept)
       }
-      try self.builder.appendPopTop()
+      self.builder.appendPopTop()
 
       if case let .typed(type: _, asName: asName) = handler.kind, let name = asName {
-        try self.builder.appendStoreName(name)
-        try self.builder.appendPopTop()
+        self.builder.appendStoreName(name)
+        self.builder.appendPopTop()
 
         // try:
         //     # body
@@ -181,41 +181,41 @@ extension Compiler {
 
         // second try:
         let cleanupEnd = self.builder.createLabel()
-        try self.builder.appendSetupFinally(finallyStart: cleanupEnd)
+        self.builder.appendSetupFinally(finallyStart: cleanupEnd)
         try self.inBlock(.finallyTry) {
           try self.visitStatements(handler.body)
-          try self.builder.appendPopBlock()
+          self.builder.appendPopBlock()
         }
 
         // finally:
-        try self.builder.appendNone()
+        self.builder.appendNone()
         self.builder.setLabel(cleanupEnd)
 
-        try self.inBlock(.finallyEnd) {
+        self.inBlock(.finallyEnd) {
           // name = None
-          try self.builder.appendNone()
-          try self.builder.appendStoreName(name)
+          self.builder.appendNone()
+          self.builder.appendStoreName(name)
           // del name
-          try self.builder.appendDeleteName(name)
+          self.builder.appendDeleteName(name)
           // cleanup
-          try self.builder.appendEndFinally()
-          try self.builder.appendPopExcept()
+          self.builder.appendEndFinally()
+          self.builder.appendPopExcept()
         }
       } else {
-        try self.builder.appendPopTop()
-        try self.builder.appendPopTop()
+        self.builder.appendPopTop()
+        self.builder.appendPopTop()
 
         try self.inBlock(.finallyTry) {
           try self.visitStatements(handler.body)
-          try self.builder.appendPopExcept()
+          self.builder.appendPopExcept()
         }
       }
 
-      try self.builder.appendJumpAbsolute(to: end)
+      self.builder.appendJumpAbsolute(to: end)
       self.builder.setLabel(nextExcept)
     }
 
-    try self.builder.appendEndFinally()
+    self.builder.appendEndFinally()
     self.builder.setLabel(orElseStart)
     try self.visitStatements(orElse)
     self.builder.setLabel(end)

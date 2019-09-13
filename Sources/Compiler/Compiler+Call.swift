@@ -49,9 +49,9 @@ extension Compiler {
     }
 
     try self.visitExpression(object)
-    try self.builder.appendLoadMethod(name: methodName)
+    self.builder.appendLoadMethod(name: methodName)
     try self.visitExpressions(args)
-    try self.builder.appendCallMethod(argumentCount: args.count)
+    self.builder.appendCallMethod(argumentCount: args.count)
     return true
   }
 
@@ -77,7 +77,7 @@ extension Compiler {
       case let .starred(inner):
         // If we've seen positional arguments, then pack them into a tuple.
         if nSeen > 0 {
-          try self.builder.appendBuildTuple(elementCount: nSeen)
+          self.builder.appendBuildTuple(elementCount: nSeen)
           nSeen = 0
           nSubArgs += 1
         }
@@ -95,17 +95,17 @@ extension Compiler {
     if nSubArgs > 0 || hasDictionaryUnpack {
       // Pack up any trailing positional arguments.
       if nSeen > 0 {
-        try self.builder.appendBuildTuple(elementCount: nSeen)
+        self.builder.appendBuildTuple(elementCount: nSeen)
         nSubArgs += 1
       }
 
       // If we ended up with more than one stararg,
       // we need to concatenate them into a single sequence.
       if nSubArgs > 1 {
-        try self.builder.appendBuildTupleUnpackWithCall(elementCount: nSubArgs)
+        self.builder.appendBuildTupleUnpackWithCall(elementCount: nSubArgs)
       } else if nSubArgs == 0 {
         // We don't have normal args, fake one.
-        try self.builder.appendBuildTuple(elementCount: 0)
+        self.builder.appendBuildTuple(elementCount: 0)
       } // Else it is 1, so exactly as we need it
 
       nSeen = 0
@@ -134,21 +134,21 @@ extension Compiler {
       }
 
       if nSubKwArgs > 1 {
-        try self.builder.appendBuildMapUnpackWithCall(elementCount: nSubKwArgs)
+        self.builder.appendBuildMapUnpackWithCall(elementCount: nSubKwArgs)
       }
 
-      try self.builder.appendCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0)
+      self.builder.appendCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0)
     } else if keywords.any {
 
       let names = self.getNames(keywords: keywords)
       let argCount = alreadyPushedArgs + args.count + keywords.count
 
       try self.visitKeywords(keywords: keywords)
-      try self.builder.appendTuple(names)
-      try self.builder.appendCallFunctionKw(argumentCount: argCount)
+      self.builder.appendTuple(names)
+      self.builder.appendCallFunctionKw(argumentCount: argCount)
     } else {
       let argCount = alreadyPushedArgs + args.count
-      try self.builder.appendCallFunction(argumentCount: argCount)
+      self.builder.appendCallFunction(argumentCount: argCount)
     }
   }
 
@@ -184,9 +184,9 @@ extension Compiler {
         fatalError("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
       }
 
-      try self.builder.appendString(name)
+      self.builder.appendString(name)
       try self.visitExpression(keyword.value)
-      try self.builder.appendBuildMap(elementCount: 1)
+      self.builder.appendBuildMap(elementCount: 1)
     } else {
       var names = [Constant]()
       for keyword in keywords {
@@ -198,8 +198,8 @@ extension Compiler {
         names.append(.string(name))
       }
 
-      try self.builder.appendTuple(names)
-      try self.builder.appendBuildConstKeyMap(elementCount: names.count)
+      self.builder.appendTuple(names)
+      self.builder.appendBuildConstKeyMap(elementCount: names.count)
     }
   }
 }

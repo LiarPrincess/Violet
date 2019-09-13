@@ -112,7 +112,7 @@ public final class Compiler {
     switch self.ast.kind {
     case let .interactive(stmts):
       if self.hasAnnotations(stmts) {
-        try self.builder.appendSetupAnnotations()
+        self.builder.appendSetupAnnotations()
       }
       try self.visitStatements(stmts)
     case let .module(stmts):
@@ -124,9 +124,9 @@ public final class Compiler {
     // Emit epilog (because we may be a jump target).
     if !self.currentScope.hasReturnValue {
       if !self.ast.kind.isExpression {
-        try self.builder.appendNone()
+        self.builder.appendNone()
       }
-      try self.builder.appendReturn()
+      self.builder.appendReturn()
     }
 
     assert(self.unitStack.count == 1)
@@ -139,7 +139,7 @@ public final class Compiler {
   /// compiler_body(struct compiler *c, asdl_seq *stmts)
   private func visitBody(_ stmts: [Statement]) throws {
     if self.hasAnnotations(stmts) {
-      try self.builder.appendSetupAnnotations()
+      self.builder.appendSetupAnnotations()
     }
 
     guard let first = stmts.first else {
@@ -147,8 +147,8 @@ public final class Compiler {
     }
 
     if let doc = first.getDocString(), self.options.optimizationLevel < 2 {
-      try self.builder.appendString(doc)
-      try self.builder.appendStoreName(SpecialIdentifiers.__doc__)
+      self.builder.appendString(doc)
+      self.builder.appendStoreName(SpecialIdentifiers.__doc__)
 
       try self.visitStatements(stmts.dropFirst())
     } else {
