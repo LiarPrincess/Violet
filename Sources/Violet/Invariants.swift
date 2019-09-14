@@ -4,6 +4,7 @@ import Lexer
 import Parser
 import Bytecode
 import Compiler
+import VM
 
 /// Check the memory footprint of a given type.
 ///
@@ -16,7 +17,7 @@ private func checkMemorySize<T>(of type: T.Type, expectedSize: Int) {
     let typeName = String(describing: type)
     fatalError(
       "[Invariant] \(typeName) has size \(size) instead of expected \(expectedSize) " +
-      "(although it may be ok, as long as the stride is the same, " +
+        "(although it may be ok, as long as the stride is the same, " +
       "in that case just fix this test)."
     )
   }
@@ -77,5 +78,3 @@ private func checkInvariants() {
 
   checkMemorySize(of: CodeObject.self, expectedSize: 184)
 }
-
-checkInvariants()

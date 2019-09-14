@@ -1,3 +1,7 @@
+included:
+  - Sources
+  - Tests
+
 line_length:
   warning: 100
   error:   120
@@ -82,8 +86,6 @@ opt_in_rules:
   - toggle_bool
   - trailing_closure
   - unavailable_function
-  - unused_import
-  - unused_private_declaration
   - vertical_whitespace_closing_braces
   - yoda_condition
   - no_extension_access_modifier
@@ -94,6 +96,8 @@ opt_in_rules:
   - legacy_multiple
   - modifier_order
   - reduce_into
+  - unused_import
+  - unused_private_declaration
   - unused_declaration
 
   # Maybe later:

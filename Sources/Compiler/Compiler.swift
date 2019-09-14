@@ -28,8 +28,8 @@ public final class Compiler {
   /// Compilation options.
   internal let options: CompilerOptions
 
-  /// We have to scan '\_\_future\_\_' (as weird as it sounds), to block any
-  /// potential '\_\_future\_\_' imports that occur later in file.
+  /// We have to scan `__future__` (as weird as it sounds), to block any
+  /// potential `__future__` imports that occur later in file.
   internal let future: FutureFeatures
 
   /// Symbol table assiciated with `self.ast`.

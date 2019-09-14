@@ -131,12 +131,6 @@ public enum PropertyKind {
   case optional
 }
 
-// MARK: - Helpers
-
-private func fixDocNewLines(_ doc: String?) -> String? {
-  return doc?.replacingOccurrences(of: "\\n", with: "\n")
-}
-
 private func getType(baseType type: String, kind: PropertyKind) -> String {
   switch kind {
   case .single:   return type
@@ -144,4 +138,10 @@ private func getType(baseType type: String, kind: PropertyKind) -> String {
   case .many:     return "[" + type + "]"
   case .optional: return type + "?"
   }
+}
+
+// MARK: - Helpers
+
+private func fixDocNewLines(_ doc: String?) -> String? {
+  return doc?.replacingOccurrences(of: "\\n", with: "\n")
 }

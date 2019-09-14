@@ -16,7 +16,7 @@ extension Compiler {
   /// ```
   /// where:
   /// - `<func>` is a function/closure created from the class body;
-  ///        it has a single argument (\_\_locals\_\_) where the dict
+  ///        it has a single argument (`__locals__`) where the dict
   ///        (or MutableSequence) representing the locals is passed
   /// - `<name>` is the class name
   /// - `<bases>` is the positional arguments and *varargs argument

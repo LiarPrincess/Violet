@@ -28,10 +28,7 @@ public class EmitterBase {
   public func write<S: CustomStringConvertible>(_ s: S,
                                                 terminator: String = "\n") {
     let line = String(describing: s) + terminator
-    guard let data = line.data(using: .utf8) else {
-      fatalError("Unable to convert '\(s)' to Data.")
-    }
-    self.outputHandle.write(data)
+    self.outputHandle.write(Data(line.utf8))
   }
 
   public func writeHeader(command: String) {
