@@ -8,8 +8,8 @@ let package = Package(
     .macOS(.v10_11)
   ],
   products: [
-    .library(name: "LibViolet", targets: ["VM"]),
     .executable(name: "Violet", targets: ["Main"]),
+    .library(name: "VioletFramework", targets: ["VM"]),
 
     .executable(name: "Elsa", targets: ["Elsa"])
   ],
@@ -29,6 +29,7 @@ let package = Package(
     .testTarget(name: "CompilerTests", dependencies: ["Compiler"]),
 
     .target(name: "Bytecode", dependencies: ["Core"]),
+    .testTarget(name: "BytecodeTests", dependencies: ["Bytecode"]),
 
     .target(name: "Objects", dependencies: ["Core"]),
     .testTarget(name: "ObjectsTests", dependencies: ["Objects"]),

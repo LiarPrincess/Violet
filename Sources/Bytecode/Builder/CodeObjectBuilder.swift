@@ -9,9 +9,9 @@ internal struct CachedIndices {
   internal var ellipsis: Int?
   internal var zero: Int?
   internal var one: Int?
-  /// Constant string
+  /// CodeObject.constants -> string
   internal var strings = [String:Int]()
-  /// Names
+  /// CodeObject.names
   internal var names = [String:Int]()
 }
 
@@ -113,13 +113,18 @@ public class CodeObjectBuilder {
   // MARK: - Extended arg
 
   internal func addNameWithExtendedArgIfNeeded<S: ConstantString>(name: S) -> UInt8 {
-    let c = name.constant
+    let index = self.getNameIndex(name.constant)
+    return self.appendExtendedArgIfNeeded(index)
+  }
 
-    // If this name was already used then reuse this index.
-    let index = self.cachedIndices.names[c] ?? self.codeObject.names.endIndex
-    let arg = self.appendExtendedArgIfNeeded(index)
-    self.codeObject.names.append(c)
-    return arg
+  private func getNameIndex(_ name: String) -> Int {
+    if let cachedIndex = self.cachedIndices.names[name] {
+      return cachedIndex
+    }
+
+    let index = self.codeObject.names.endIndex
+    self.codeObject.names.append(name)
+    return index
   }
 
   internal func addLabelWithExtendedArgIfNeeded(_ label: Label) -> UInt8 {
