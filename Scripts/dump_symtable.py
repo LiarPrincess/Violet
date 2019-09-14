@@ -1,5 +1,7 @@
-# Extract symbol table from file.
-# This tool should be used with CPython!
+'''
+Extract symbol table from file.
+This tool should be used with CPython!
+'''
 
 import sys
 import symtable
@@ -56,7 +58,7 @@ def dumpTable(table: symtable.SymbolTable, level = 0):
 
 if __name__ == '__main__':
   # if len(sys.argv) < 2:
-  #   print("Usage: 'python3 dump_symtable.py <file.py>'")
+  #   print("Usage: 'python3 dump_symtable.py [FILE]'")
   #   sys.exit(1)
 
   # filename = sys.argv[1]

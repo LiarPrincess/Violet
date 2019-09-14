@@ -1,3 +1,8 @@
+'''
+Helper for creating unit tests for compiler.
+Use 'python3 ./dump_dis_print_test.sh' instead of manually running this file.
+'''
+
 import re
 import sys
 
@@ -62,14 +67,8 @@ def to_camel_case(snake_str):
     return components[0].lower() + ''.join(x.title() for x in components[1:])
 
 if __name__ == '__main__':
-  if len(sys.argv) < 2:
-    print("Usage: 'python3 dump_dis_post.py <file.py>'")
-    sys.exit(1)
+  lines = [l.replace('\n', '') for l in sys.stdin]
 
-  filename = sys.argv[1]
-  code = open(filename).read()
-
-  lines = code.split('\n')
   print_docs(lines)
   print('-----------------')
   print_expected(lines)

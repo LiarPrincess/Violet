@@ -43,7 +43,7 @@ def printNode(node, level = 0):
 
 if __name__ == '__main__':
   # if len(sys.argv) < 2:
-  #   print("Usage: 'python3 dump_ast.py <file.py>'")
+  #   print("Usage: 'python3 dump_ast.py [FILE]'")
   #   sys.exit(1)
 
   # filename = sys.argv[1]
