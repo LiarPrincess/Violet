@@ -61,12 +61,12 @@ public final class CodeObject {
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
   public internal(set) var labels = [Int]()
 
-  /// List of local variable names
-  public var varNames = [MangledName]()
-  /// List of free variable names
-  public var freeVars = [MangledName]()
-  /// List of cell variable names
-  public var cellVars = [MangledName]()
+  /// List of local variable names (from SymbolTable).
+  public let varNames: [MangledName]
+  /// List of free variable names (from SymbolTable).
+  public let freeVars: [MangledName]
+  /// List of cell variable names (from SymbolTable).
+  public let cellVars: [MangledName]
 
   public init(name: String,
               qualifiedName: String,
@@ -74,10 +74,13 @@ public final class CodeObject {
               varNames: [MangledName],
               freeVars: [MangledName],
               cellVars: [MangledName],
-              line: SourceLine) {
+              firstLine: SourceLine) {
     self.name = name
     self.qualifiedName = qualifiedName
     self.type = type
-    self.firstLine = line
+    self.varNames = varNames
+    self.freeVars = freeVars
+    self.cellVars = cellVars
+    self.firstLine = firstLine
   }
 }

@@ -238,7 +238,7 @@ public final class Compiler {
                             varNames: varNames,
                             freeVars: freeVars,
                             cellVars: cellVars,
-                            line: node.start.line)
+                            firstLine: node.start.line)
 
     let className = type == .class ? name : nil
     let unit = CompilerUnit(scope: scope, codeObject: object, className: className)

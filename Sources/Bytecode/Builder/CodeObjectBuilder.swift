@@ -68,6 +68,10 @@ public class CodeObjectBuilder {
         break
       }
     }
+
+    for (index, name) in self.codeObject.names.enumerated() {
+      self.cachedIndices.names[name] = index
+    }
   }
 
   // MARK: - Append
