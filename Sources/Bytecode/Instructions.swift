@@ -443,7 +443,8 @@ public enum Instruction {
   /// This opcode performs several operations before a `with` block starts.
   /// 
   /// It does following operations:
-  /// 1.loads `Exit()` from the context manager and pushes it onto the stack for later use by `WithCleanup`.
+  /// 1.loads `Exit()` from the context manager and pushes it onto the stack
+  /// for later use by `WithCleanup`.
   /// 2. calls `Enter()`
   /// 3. block staring at to `afterBodyLabel` is pushed.
   /// 4. the result of calling the enter method is pushed onto the stack.
@@ -466,7 +467,8 @@ public enum Instruction {
   /// Pops exception type and result of ‘exit’ function call from the stack.
   /// 
   /// If the stack represents an exception, and the function call returns a ‘true’ value,
-  /// this information is “zapped” and replaced with a single WhySilenced to prevent EndFinally from re-raising the exception.
+  /// this information is “zapped” and replaced with a single WhySilenced
+  /// to prevent EndFinally from re-raising the exception.
   /// (But non-local gotos will still be resumed.)
   case withCleanupFinish
   /// Resolves `AEnter` and `AExit` from the object on top of the stack.
