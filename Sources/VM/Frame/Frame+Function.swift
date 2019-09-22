@@ -71,7 +71,7 @@ extension Frame {
   }
 
   /// Returns with TOS to the caller of the function.
-  internal func `return`() throws {
+  internal func doReturn() throws {
     self.unimplemented()
   }
 }

@@ -2,36 +2,43 @@ import Bytecode
 
 extension Frame {
 
-  /// Do nothing code.
-  internal func nop() throws {
-    self.unimplemented()
-  }
-
   /// Removes the top-of-stack (TOS) item.
   internal func popTop() throws {
-    self.unimplemented()
+    _ = self.pop()
   }
 
   /// Swaps the two top-most stack items.
   internal func rotTwo() throws {
-    self.unimplemented()
+    let top = self.top
+    let second = self.second
+    self.setTop(second)
+    self.setSecond(top)
   }
 
   /// Lifts second and third stack item one position up,
   /// moves top down to position three.
   internal func rotThree() throws {
-    self.unimplemented()
+    let top = self.top
+    let second = self.second
+    let third = self.third
+    self.setTop(second)
+    self.setSecond(third)
+    self.setThird(top)
   }
 
   /// Duplicates the reference on top of the stack.
   internal func dupTop() throws {
-    self.unimplemented()
+    let top = self.top
+    self.push(top)
   }
 
   /// Duplicates the two references on top of the stack,
   /// leaving them in the same order.
   internal func dupTopTwo() throws {
-    self.unimplemented()
+    let top = self.top
+    let second = self.second
+    self.push(second)
+    self.push(top)
   }
 
   /// Implements the expression statement for the interactive mode.

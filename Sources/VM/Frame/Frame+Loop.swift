@@ -27,7 +27,7 @@ extension Frame {
   }
 
   /// Terminates a loop due to a break statement.
-  internal func `break`() throws {
+  internal func doBreak() throws {
     self.unimplemented()
   }
 }

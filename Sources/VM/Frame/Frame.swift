@@ -1,13 +1,20 @@
 import Bytecode
 import Objects
 
-internal class Frame {
+// In CPython:
+// Python -> ceval.c
+
+// swiftlint:disable file_length
+
+internal class Frame: ContextOwner {
 
   /// Code to run.
   private let code: CodeObject
 
+  internal let context: Context
+
   /// The main data frame of the stack machine.
-  private var stack = [PyObject]()
+  internal var stack = [PyObject]()
 
   /// Index of the next instruction to run.
   private var nextInstructionIndex = 0
@@ -17,8 +24,45 @@ internal class Frame {
   /// Variables
   // pub scope: Scope
 
-  internal init(code: CodeObject) {
+  internal init(code: CodeObject, context: Context) {
     self.code = code
+    self.context = context
+  }
+
+  // MARK: - Stack operations
+
+  // TODO: rename isEmpty
+  internal var empty: Bool { return self.stack.isEmpty }
+  internal var stackLevel: Int { fatalError() }
+
+  internal var top:    PyObject { return self.peek(1) }
+  internal var second: PyObject { return self.peek(2) }
+  internal var third:  PyObject { return self.peek(3) }
+  internal var fourth: PyObject { return self.peek(4) }
+
+  private func peek(_ n: Int) -> PyObject {
+    return self.stack[self.stack.count - n]
+  }
+
+  internal func setTop   (_ value: PyObject) { self.setValue(1, value) }
+  internal func setSecond(_ value: PyObject) { self.setValue(2, value) }
+  internal func setThird (_ value: PyObject) { self.setValue(3, value) }
+  internal func setFourth(_ value: PyObject) { self.setValue(4, value) }
+
+  private func setValue(_ n: Int, _ value: PyObject) {
+    self.stack[self.stack.count - n] = value
+  }
+
+  internal func pop() -> PyObject {
+    return self.stack.popLast()!
+  }
+
+  internal func push(_ value: PyObject) {
+    self.stack.push(value)
+  }
+
+  internal func adjust(_ n: Int) {
+    // #define BASIC_STACKADJ(n) (stack_pointer += n)
   }
 
   // MARK: - Run
@@ -44,9 +88,12 @@ internal class Frame {
   private func executeInstruction(extendedArg: Int = 0) throws {
     let instruction = self.fetchInstruction()
 
+    // According to CPython doing single switch will trash our jump prediction
+    // (unles you have the same opcode multiple times in a row)
+    // we don't care about this (for now).
     switch instruction {
     case .nop:
-      try self.nop()
+      break
     case .popTop:
       try self.popTop()
     case .rotTwo:
@@ -141,7 +188,7 @@ internal class Frame {
     case .getYieldFromIter:
       try self.getYieldFromIter()
     case .`break`:
-      try self.`break`()
+      try self.doBreak()
     case let .buildTuple(elementCount):
       try self.buildTuple(elementCount: extendedArg + Int(elementCount))
     case let .buildList(elementCount):
@@ -225,7 +272,7 @@ internal class Frame {
       assert(extendedArg == 0)
       try self.callFunctionEx(hasKeywordArguments: hasKeywordArguments)
     case .`return`:
-      try self.`return`()
+      try self.doReturn()
     case .loadBuildClass:
       try self.loadBuildClass()
     case let .loadMethod(nameIndex):
