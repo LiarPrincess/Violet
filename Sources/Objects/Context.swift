@@ -25,7 +25,7 @@ public class ContextTypes {
   public lazy var number  = PyNumberType()
   public lazy var unicode = PyUnicodeType()
   public lazy var tuple   = PyTupleType()
-  public lazy var int     = PyIntType()
+  public lazy var int     = PyIntType(context: self.context)
   public lazy var float   = PyFloatType(context: self.context)
 
   fileprivate init(context: Context) {

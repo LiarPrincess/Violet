@@ -1,4 +1,15 @@
 public enum ObjectError: Error {
+
+  /// PyErr_SetString(PyExc_ValueError, "negative shift count");
+  case negativeShiftCount
+
+  // PyErr_SetString(PyExc_ZeroDivisionError, "float division by zero");
+  case intDivisionByZero
+  // PyErr_SetString(PyExc_ZeroDivisionError, "float modulo");
+  case intModuloZero
+  // PyErr_SetString(PyExc_ZeroDivisionError, "float divmod()");
+  case intDivModZero
+
   // PyErr_SetString(PyExc_ZeroDivisionError, "float division by zero");
   case floatDivisionByZero
   // PyErr_SetString(PyExc_ZeroDivisionError, "float modulo");

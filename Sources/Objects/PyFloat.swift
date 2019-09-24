@@ -1,3 +1,4 @@
+import Foundation
 import Core
 
 // In CPython:
@@ -15,15 +16,15 @@ public final class PyFloat: PyObject {
 }
 
 public final class PyFloatType: PyType, ContextOwner,
-ReprConvertibleTypeClass, StrConvertibleTypeClass,
-ComparableTypeClass, HashableTypeClass,
+  ReprConvertibleTypeClass, StrConvertibleTypeClass,
+  ComparableTypeClass, HashableTypeClass,
 
-SignedNumberTypeClass,
-AbsoluteNumberTypeClass,
-AdditiveTypeClass, SubtractiveTypeClass,
-MultiplicativeTypeClass, PowerTypeClass,
-DividableTypeClass, FloorDividableTypeClass, RemainderTypeClass, DivModTypeClass,
-PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
+  SignedNumberTypeClass,
+  AbsoluteNumberTypeClass,
+  AdditiveTypeClass, SubtractiveTypeClass,
+  MultiplicativeTypeClass, PowerTypeClass,
+  DividableTypeClass, FloorDividableTypeClass, RemainderTypeClass, DivModTypeClass,
+  PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
 
   public let name: String  = "float"
   public let base: PyType? = nil
@@ -41,7 +42,7 @@ Convert a string or number to a floating point number, if possible.
 
   // MARK: - Ctors
 
-  private func new(_ value: Double) -> PyFloat {
+  public func new(_ value: Double) -> PyFloat {
     return PyFloat(type: self, value: value)
   }
 
@@ -67,17 +68,6 @@ Convert a string or number to a floating point number, if possible.
     fatalError()
   }
 
-  // MARK: - Signed number
-
-  public func positive(value: PyObject) throws -> PyObject {
-    return try self.matchType(value)
-  }
-
-  public func negative(value: PyObject) throws -> PyObject {
-    let v = try self.extractDouble(value)
-    return self.new(-v)
-  }
-
   // MARK: - Conversion
 
   public func bool(value: PyObject) throws -> PyBool {
@@ -93,6 +83,17 @@ Convert a string or number to a floating point number, if possible.
 
   public func float(value: PyObject) throws -> PyFloat {
     return try self.matchType(value)
+  }
+
+  // MARK: - Signed number
+
+  public func positive(value: PyObject) throws -> PyObject {
+    return try self.matchType(value)
+  }
+
+  public func negative(value: PyObject) throws -> PyObject {
+    let v = try self.extractDouble(value)
+    return self.new(-v)
   }
 
   // MARK: - Add, sub
@@ -131,7 +132,6 @@ Convert a string or number to a floating point number, if possible.
       throw ObjectError.floatDivisionByZero
     }
 
-    // this is wrong, but should be enough for now
     return self.new(l / r)
   }
 
@@ -144,11 +144,8 @@ Convert a string or number to a floating point number, if possible.
       throw ObjectError.floatModuloZero
     }
 
-    var result = l.remainder(dividingBy: r)
-    if result.isZero {
-      result = Double(signOf: r, magnitudeOf: result)
-    }
-    return self.new(result)
+    let remainder = l.remainder(dividingBy: r)
+    return self.new(remainder)
   }
 
   /// static PyObject * float_divmod(PyObject *v, PyObject *w)
@@ -160,10 +157,7 @@ Convert a string or number to a floating point number, if possible.
       throw ObjectError.floatDivModZero
     }
 
-    var remainder = l.remainder(dividingBy: r)
-    if remainder.isZero {
-      remainder = Double(signOf: r, magnitudeOf: remainder)
-    }
+    let remainder = l.remainder(dividingBy: r)
 
     var quotient = (l - remainder) / r
     if quotient.isZero {
@@ -191,8 +185,10 @@ Convert a string or number to a floating point number, if possible.
   // MARK: - Power
 
   /// static PyObject* float_pow(PyObject *v, PyObject *w, PyObject *z)
-  public func power(left: PyObject, right: PyObject, x: PyObject) throws -> PyObject {
-    fatalError()
+  public func pow(left: PyObject, right: PyObject) throws -> PyObject {
+    let l = try self.extractDouble(left)
+    let r = try self.extractDouble(right)
+    return self.new(Foundation.pow(l, r))
   }
 
   // MARK: - Helpers

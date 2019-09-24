@@ -13,6 +13,10 @@ public protocol AbsoluteNumberTypeClass: TypeClass {
   func abs(value: PyObject) throws -> PyObject
 }
 
+public protocol InvertNumberTypeClass: TypeClass {
+  func invert(value: PyObject) throws -> PyObject
+}
+
 // MARK: - Convertible
 
 public protocol PyBoolConvertibleTypeClass: TypeClass {
@@ -96,13 +100,13 @@ public protocol DivModTypeClass: TypeClass {
 // MARK: - Shift
 
 public protocol ShiftableTypeClass: TypeClass {
-  func lshift(left: PyObject, right: PyObject) throws -> PyObject
-  func rshift(left: PyObject, right: PyObject) throws -> PyObject
+  func lShift(left: PyObject, right: PyObject) throws -> PyObject
+  func rShift(left: PyObject, right: PyObject) throws -> PyObject
 }
 
 public protocol InPlaceShiftableTypeClass: TypeClass {
-  func lshiftInPlace(left: PyObject, right: PyObject) throws -> PyObject
-  func rshiftInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func lShiftInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func rShiftInPlace(left: PyObject, right: PyObject) throws -> PyObject
 }
 
 // MARK: - Binary
@@ -122,9 +126,9 @@ public protocol InPlaceBinaryTypeClass: TypeClass {
 // MARK: - Power
 
 public protocol PowerTypeClass: TypeClass {
-  func power(left: PyObject, right: PyObject, x: PyObject) throws -> PyObject
+  func pow(left: PyObject, right: PyObject) throws -> PyObject
 }
 
 public protocol InPlacePowerTypeClass: TypeClass {
-  func powerInPlace(left: PyObject, right: PyObject, x: PyObject) throws -> PyObject
+  func powInPlace(left: PyObject, right: PyObject) throws -> PyObject
 }
