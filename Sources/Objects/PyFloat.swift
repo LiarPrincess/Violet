@@ -15,12 +15,22 @@ public final class PyFloat: PyObject {
 }
 
 public final class PyFloatType: PyType, ContextOwner,
+ReprConvertibleTypeClass, StrConvertibleTypeClass,
+ComparableTypeClass, HashableTypeClass,
 SignedNumberTypeClass,
 AbsoluteNumberTypeClass,
 AdditiveTypeClass, SubtractiveTypeClass,
 MultiplicativeTypeClass, PowerTypeClass,
 DividableTypeClass, FloorDividableTypeClass, RemainderTypeClass, DivModTypeClass,
 PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
+
+  public let name = "float"
+  public let base: PyType? = nil
+  public let doc = """
+float(x) -> floating point number
+
+Convert a string or number to a floating point number, if possible.
+"""
 
   public unowned let context: Context
 
@@ -32,6 +42,28 @@ PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeCla
 
   private func new(_ value: Double) -> PyFloat {
     return PyFloat(type: self, value: value)
+  }
+
+  // MARK: - String
+
+  public func repr(value: PyObject) throws -> String {
+    let v = try  self.extractDouble(value)
+    return String(describing: v)
+  }
+
+  public func str(value: PyObject) throws -> String {
+    let v = try  self.extractDouble(value)
+    return String(describing: v)
+  }
+
+  // MARK: - Equatable, hashable
+
+  public func compare(left: PyObject, right: PyObject, x: Int) throws -> PyObject {
+    fatalError()
+  }
+
+  public func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
+    fatalError()
   }
 
   // MARK: - Signed number
