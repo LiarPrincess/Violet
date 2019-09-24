@@ -10,7 +10,7 @@ public struct BigInt: Equatable, Hashable {
   public static let min = BigInt(-Int64.max)
   public static let max = BigInt(Int64.max)
 
-  private let value: Int64
+  fileprivate let value: Int64
 
   public init(_ value: Int) {
     self.value = Int64(value)
@@ -22,6 +22,10 @@ public struct BigInt: Equatable, Hashable {
 
   public init(_ value: Int64) {
     self.value = value
+  }
+
+  public init(_ value: Double) {
+    self.value = Int64(value)
   }
 
   public var isZero: Bool { return self.value == 0 }
@@ -39,5 +43,11 @@ public struct BigInt: Equatable, Hashable {
 extension BigInt: CustomStringConvertible {
   public var description: String {
     return String(describing: self.value)
+  }
+}
+
+extension Double {
+  public init(_ value: BigInt) {
+    self = Double(integerLiteral: value.value)
   }
 }

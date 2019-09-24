@@ -6,14 +6,14 @@ extension Frame {
   /// Implements `TOS = +TOS`.
   internal func unaryPositive() throws {
     let value = self.top
-    let result = self.numberType.positive(value)
+    let result = self.types.number.positive(value)
     self.setTop(result)
   }
 
   /// Implements `TOS = -TOS`.
   internal func unaryNegative() throws {
     let value = self.top
-    let result = self.numberType.negative(value)
+    let result = self.types.number.negative(value)
     self.setTop(result)
   }
 
@@ -22,9 +22,9 @@ extension Frame {
     let value = self.top
     switch self.PyObject_IsTrue(value) {
     case true:
-      self.setTop(self.Py_False)
+      self.setTop(self.context.false)
     case false:
-      self.setTop(self.Py_True)
+      self.setTop(self.context.true)
     }
     self.adjust(-1)
   }
@@ -32,7 +32,7 @@ extension Frame {
   /// Implements `TOS = ~TOS`.
   internal func unaryInvert() throws {
     let value = self.top
-    let result = self.numberType.invert(value)
+    let result = self.types.number.invert(value)
     self.setTop(result)
   }
 }
