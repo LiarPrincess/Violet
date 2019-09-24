@@ -17,6 +17,7 @@ public final class PyFloat: PyObject {
 public final class PyFloatType: PyType, ContextOwner,
 ReprConvertibleTypeClass, StrConvertibleTypeClass,
 ComparableTypeClass, HashableTypeClass,
+
 SignedNumberTypeClass,
 AbsoluteNumberTypeClass,
 AdditiveTypeClass, SubtractiveTypeClass,
@@ -24,9 +25,9 @@ MultiplicativeTypeClass, PowerTypeClass,
 DividableTypeClass, FloorDividableTypeClass, RemainderTypeClass, DivModTypeClass,
 PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
 
-  public let name = "float"
+  public let name: String  = "float"
   public let base: PyType? = nil
-  public let doc = """
+  public let doc:  String  = """
 float(x) -> floating point number
 
 Convert a string or number to a floating point number, if possible.

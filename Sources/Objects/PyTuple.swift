@@ -10,7 +10,18 @@ public final class PyTuple: PyObject {
   }
 }
 
-public final class PyTupleType: PyType {
+public final class PyTupleType: PyType,
+ReprConvertibleTypeClass,
+ComparableTypeClass, HashableTypeClass {
+
+  public let name: String = "tuple"
+  public let base: PyType? = nil
+  public let doc:  String = """
+tuple() -> an empty tuple
+tuple(sequence) -> tuple initialized from sequence's items
+
+If the argument is a tuple, the return value is the same object.
+"""
 
   // MARK: - Ctor
 
@@ -27,6 +38,51 @@ public final class PyTupleType: PyType {
   /// PyObject * PyTuple_Pack(Py_ssize_t n, ...)
   public func new(_ elements: PyObject...) -> PyTuple {
     return PyTuple(type: self, elements: elements)
+  }
+
+  // MARK: - Equatable, hashable
+
+  public func compare(left: PyObject, right: PyObject, x: Int) throws -> PyObject {
+    fatalError()
+  }
+
+  public func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
+    fatalError()
+  }
+
+  // MARK: - String
+
+  /// static PyObject * tuplerepr(PyTupleObject *v)
+  public func repr(value: PyObject) throws -> String {
+    //    let tuple = try self.matchTuple(object)
+    //
+    //    if tuple.elements.isEmpty {
+    //      return "()"
+    //    }
+    //
+    //    // While not mutable, it is still possible to end up with a cycle in a tuple
+    //    // through an object that stores itself within a tuple (and thus infinitely
+    //    // asks for the repr of itself).
+    //    let isRecursive = self.reprEnter(object: tuple)
+    //    defer { self.reprLeave(object: tuple) }
+    //
+    //    if isRecursive {
+    //      return "(...)"
+    //    }
+    //
+    //    var result = "("
+    //    for (index, element) in tuple.elements.enumerated() {
+    //      if index > 0 {
+    //        result += ", " // so that we don't have ', )'.
+    //      }
+    //
+    //      // PyObject_Repr(v->ob_item[i]); <-- ?
+    //      result += element.repr
+    //    }
+    //
+    //    result += tuple.elements.count > 1 ? ")" : ",)"
+    //    return result
+    fatalError()
   }
 
   // MARK: - Methods
@@ -179,41 +235,6 @@ public final class PyTupleType: PyType {
   //  static PyObject * tuple_subtype_new(PyTypeObject *type, PyObject *iterable)
   //  static PyObject* tuplesubscript(PyTupleObject* self, PyObject* item)
   //  static PyObject * tuple___getnewargs___impl(PyTupleObject *self)
-
-  // MARK: - String
-
-  /// static PyObject * tuplerepr(PyTupleObject *v)
-  public func repr(_ object: PyObject) throws -> String {
-//    let tuple = try self.matchTuple(object)
-//
-//    if tuple.elements.isEmpty {
-//      return "()"
-//    }
-//
-//    // While not mutable, it is still possible to end up with a cycle in a tuple
-//    // through an object that stores itself within a tuple (and thus infinitely
-//    // asks for the repr of itself).
-//    let isRecursive = self.reprEnter(object: tuple)
-//    defer { self.reprLeave(object: tuple) }
-//
-//    if isRecursive {
-//      return "(...)"
-//    }
-//
-//    var result = "("
-//    for (index, element) in tuple.elements.enumerated() {
-//      if index > 0 {
-//        result += ", " // so that we don't have ', )'.
-//      }
-//
-//      // PyObject_Repr(v->ob_item[i]); <-- ?
-//      result += element.repr
-//    }
-//
-//    result += tuple.elements.count > 1 ? ")" : ",)"
-//    return result
-    fatalError()
-  }
 
   // MARK: - Helpers
 
