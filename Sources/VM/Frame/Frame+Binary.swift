@@ -68,7 +68,7 @@ extension Frame {
     let isConcat = self.types.unicode.checkExact(left) && self.types.unicode.checkExact(right)
     let result = isConcat ?
       self.types.unicode.unicode_concatenate(left: left, right: right) :
-      self.types.number.add(left: left, right: right)
+      try self.types.number.add(left: left, right: right)
 
     self.setTop(result)
   }

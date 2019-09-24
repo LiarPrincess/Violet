@@ -1,6 +1,11 @@
 // Method table for single type.
 public class PyType {
 
+  /// int PyType_IsSubtype(PyTypeObject *a, PyTypeObject *b)
+  public func isSubtype(of parent: PyType) -> Bool {
+    fatalError()
+  }
+
   // MARK: - Repr
 
   // TODO: Performance (move it to PyObject as bit?)
