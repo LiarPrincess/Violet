@@ -6,14 +6,14 @@ extension Frame {
   /// Implements `TOS = +TOS`.
   internal func unaryPositive() throws {
     let value = self.top
-    let result = self.types.number.positive(value)
+    let result = try self.context.positive(value)
     self.setTop(result)
   }
 
   /// Implements `TOS = -TOS`.
   internal func unaryNegative() throws {
     let value = self.top
-    let result = self.types.number.negative(value)
+    let result = try self.context.negative(value)
     self.setTop(result)
   }
 
@@ -32,7 +32,7 @@ extension Frame {
   /// Implements `TOS = ~TOS`.
   internal func unaryInvert() throws {
     let value = self.top
-    let result = self.types.number.invert(value)
+    let result = try self.context.invert(value)
     self.setTop(result)
   }
 }

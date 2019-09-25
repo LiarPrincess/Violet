@@ -3,7 +3,7 @@ import Core
 
 // TODO: Add predefined values (-5, 257) + other types
 
-public class PyInt: PyObject {
+internal class PyInt: PyObject {
 
   internal var value: BigInt
 
@@ -13,7 +13,7 @@ public class PyInt: PyObject {
   }
 }
 
-public class PyIntType: PyType, ContextOwner,
+internal class PyIntType: PyType,
   ReprConvertibleTypeClass, StrConvertibleTypeClass,
   ComparableTypeClass, HashableTypeClass,
 
@@ -23,13 +23,13 @@ public class PyIntType: PyType, ContextOwner,
   MultiplicativeTypeClass, PowerTypeClass,
   DividableTypeClass, FloorDividableTypeClass, RemainderTypeClass, DivModTypeClass,
   PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass,
-  InvertNumberTypeClass,
+  InvertibleNumberTypeClass,
   ShiftableTypeClass,
   BinaryTypeClass {
 
-  public var name: String  { return "int" }
-  public var base: PyType? { return nil }
-  public var doc:  String? { return """
+  internal var name: String { return "int" }
+  internal var base: PyType? { return nil }
+  internal var doc:  String? { return """
 int([x]) -> integer
 int(x, base=10) -> integer
 
@@ -46,75 +46,75 @@ Base 0 means to interpret the base from the string as an integer literal.
 4
 """ }
 
-  public unowned let context: Context
+  internal unowned let context: PyContext
 
-  public init(context: Context) {
+  internal init(context: PyContext) {
     self.context = context
   }
 
   // MARK: - Ctors
 
-  public func new(_ value: BigInt) -> PyInt {
+  internal func new(_ value: BigInt) -> PyInt {
     return PyInt(type: self, value: value)
   }
 
   // MARK: - String
 
-  public func repr(value: PyObject) throws -> String {
+  internal func repr(value: PyObject) throws -> String {
     let v = try self.extractInt(value)
     return String(describing: v)
   }
 
-  public func str(value: PyObject) throws -> String {
+  internal func str(value: PyObject) throws -> String {
     return try self.repr(value: value)
   }
 
   // MARK: - Equatable, hashable
 
-  public func compare(left: PyObject, right: PyObject, x: Int) throws -> PyObject {
+  internal func compare(left: PyObject, right: PyObject, x: Int) throws -> PyObject {
     fatalError()
   }
 
-  public func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
+  internal func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
     fatalError()
   }
 
   // MARK: - Conversion
 
-  public func bool(value: PyObject) throws -> PyBool {
+  internal func bool(value: PyObject) throws -> PyBool {
     let v = try self.extractInt(value)
-    return v.isZero ? self.context.false : self.context.true
+    return self.context.types.bool.new(!v.isZero)
   }
 
-  public func int(value: PyObject) throws -> PyInt {
+  internal func int(value: PyObject) throws -> PyInt {
     return try self.matchType(value)
   }
 
-  public func float(value: PyObject) throws -> PyFloat {
+  internal func float(value: PyObject) throws -> PyFloat {
     let v = try self.extractInt(value)
-    return self.types.float.new(Double(v))
+    return self.context.types.float.new(Double(v))
   }
 
   // MARK: - Signed number
 
-  public func positive(value: PyObject) throws -> PyObject {
+  internal func positive(value: PyObject) throws -> PyObject {
     return try self.matchType(value)
   }
 
-  public func negative(value: PyObject) throws -> PyObject {
+  internal func negative(value: PyObject) throws -> PyObject {
     let v = try self.extractInt(value)
     return self.new(-v)
   }
 
   // MARK: - Add, sub
 
-  public func add(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func add(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
     return self.new(l + r)
   }
 
-  public func sub(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func sub(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
     return self.new(l - r)
@@ -122,7 +122,7 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   // MARK: - Mul
 
-  public func mul(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func mul(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
     return self.new(l * r)
@@ -130,84 +130,84 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   // MARK: - Div
 
-  public func div(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func div(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
     if r.isZero {
-      throw ObjectError.intDivisionByZero
+      throw PyContextError.intDivisionByZero
     }
 
-    return self.types.float.new(Double(l) / Double(r))
+    return self.context.types.float.new(Double(l) / Double(r))
   }
 
-  public func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
     if r.isZero {
-      throw ObjectError.intDivisionByZero
+      throw PyContextError.intDivisionByZero
     }
 
     return self.new(l / r)
   }
 
-  public func remainder(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func remainder(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
     if r.isZero {
-      throw ObjectError.intModuloZero
+      throw PyContextError.intModuloZero
     }
 
     return self.new(l % r)
   }
 
-  public func divMod(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func divMod(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
     if r.isZero {
-      throw ObjectError.intDivModZero
+      throw PyContextError.intDivModZero
     }
 
     let remainder = l % r
     let quotient = l / r
-    return self.types.tuple.new(self.new(quotient), self.new(remainder))
+    return self.context.types.tuple.new(self.new(quotient), self.new(remainder))
   }
 
   // MARK: - Abs
 
-  public func abs(value: PyObject) throws -> PyObject {
+  internal func abs(value: PyObject) throws -> PyObject {
     let v = try self.extractInt(value)
     return self.new(Swift.abs(v))
   }
 
   // MARK: - Power
 
-  public func pow(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func pow(left: PyObject, right: PyObject) throws -> PyObject {
     fatalError()
   }
 
   // MARK: - Shift
 
-  public func lShift(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func lShift(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
     guard r > 0 else {
-      throw ObjectError.negativeShiftCount
+      throw PyContextError.negativeShiftCount
     }
 
     return self.new(l << r)
   }
 
-  public func rShift(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func rShift(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
     guard r > 0 else {
-      throw ObjectError.negativeShiftCount
+      throw PyContextError.negativeShiftCount
     }
 
     return self.new(l >> r)
@@ -215,25 +215,25 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   // MARK: - Binary
 
-  public func and(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func and(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
     return self.new(l & r)
   }
 
-  public func or(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func or(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
     return self.new(l | r)
   }
 
-  public func xor(left: PyObject, right: PyObject) throws -> PyObject {
+  internal func xor(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
     return self.new(l ^ r)
   }
 
-  public func invert(value: PyObject) throws -> PyObject {
+  internal func invert(value: PyObject) throws -> PyObject {
     let v = try self.extractInt(value)
     return self.new(~v)
   }
@@ -245,7 +245,7 @@ Base 0 means to interpret the base from the string as an integer literal.
       return int
     }
 
-    throw ObjectError.invalidTypeConversion(object: object, to: self)
+    throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
 
   internal func extractIntOrNil(_ object: PyObject) -> BigInt? {
@@ -258,6 +258,6 @@ Base 0 means to interpret the base from the string as an integer literal.
       return i.value
     }
 
-    throw ObjectError.invalidTypeConversion(object: object, to: self)
+    throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
 }

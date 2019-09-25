@@ -1,4 +1,4 @@
-public protocol TypeClass {
+internal protocol TypeClass {
   var name: String { get }
   var base: PyType? { get }
   var doc:  String? { get }
@@ -6,11 +6,11 @@ public protocol TypeClass {
 
 // MARK: - Equatable
 
-public protocol ComparableTypeClass: TypeClass {
+internal protocol ComparableTypeClass: TypeClass {
   func compare(left: PyObject, right: PyObject, x: Int) throws -> PyObject
 }
 
-public protocol HashableTypeClass: TypeClass {
+internal protocol HashableTypeClass: TypeClass {
   func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject
 }
 
@@ -18,11 +18,11 @@ public protocol HashableTypeClass: TypeClass {
 
 //  printfunc tp_print;
 
-public protocol ReprConvertibleTypeClass: TypeClass {
+internal protocol ReprConvertibleTypeClass: TypeClass {
   func repr(value: PyObject) throws -> String
 }
 
-public protocol StrConvertibleTypeClass: TypeClass {
+internal protocol StrConvertibleTypeClass: TypeClass {
   func str(value: PyObject) throws -> String
 }
 

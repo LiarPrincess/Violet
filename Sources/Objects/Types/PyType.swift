@@ -1,8 +1,8 @@
 // Method table for single type.
-public class PyType {
+internal class PyType {
 
   /// int PyType_IsSubtype(PyTypeObject *a, PyTypeObject *b)
-  public func isSubtype(of parent: PyType) -> Bool {
+  internal func isSubtype(of parent: PyType) -> Bool {
     fatalError()
   }
 

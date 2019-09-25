@@ -1,6 +1,6 @@
 // swiftlint:disable yoda_condition
 
-public final class PyTuple: PyObject {
+internal final class PyTuple: PyObject {
 
   internal var elements: [PyObject]
 
@@ -10,13 +10,13 @@ public final class PyTuple: PyObject {
   }
 }
 
-public final class PyTupleType: PyType,
+internal final class PyTupleType: PyType,
 ReprConvertibleTypeClass,
 ComparableTypeClass, HashableTypeClass {
 
-  public let name: String = "tuple"
-  public let base: PyType? = nil
-  public let doc:  String? = """
+  internal let name: String = "tuple"
+  internal let base: PyType? = nil
+  internal let doc:  String? = """
 tuple() -> an empty tuple
 tuple(sequence) -> tuple initialized from sequence's items
 
@@ -26,34 +26,34 @@ If the argument is a tuple, the return value is the same object.
   // MARK: - Ctor
 
   /// PyObject* PyTuple_New(Py_ssize_t size)
-  public func new() -> PyTuple {
+  internal func new() -> PyTuple {
     return PyTuple(type: self, elements: [])
   }
 
   /// PyObject * PyTuple_Pack(Py_ssize_t n, ...)
-  public func new(_ elements: [PyObject]) -> PyTuple {
+  internal func new(_ elements: [PyObject]) -> PyTuple {
     return PyTuple(type: self, elements: elements)
   }
 
   /// PyObject * PyTuple_Pack(Py_ssize_t n, ...)
-  public func new(_ elements: PyObject...) -> PyTuple {
+  internal func new(_ elements: PyObject...) -> PyTuple {
     return PyTuple(type: self, elements: elements)
   }
 
   // MARK: - Equatable, hashable
 
-  public func compare(left: PyObject, right: PyObject, x: Int) throws -> PyObject {
+  internal func compare(left: PyObject, right: PyObject, x: Int) throws -> PyObject {
     fatalError()
   }
 
-  public func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
+  internal func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
     fatalError()
   }
 
   // MARK: - String
 
   /// static PyObject * tuplerepr(PyTupleObject *v)
-  public func repr(value: PyObject) throws -> String {
+  internal func repr(value: PyObject) throws -> String {
     //    let tuple = try self.matchTuple(object)
     //
     //    if tuple.elements.isEmpty {
@@ -88,40 +88,40 @@ If the argument is a tuple, the return value is the same object.
   // MARK: - Methods
 
   /// Py_ssize_t PyTuple_Size(PyObject *op)
-  public func size(_ object: PyObject) throws -> Int {
+  internal func size(_ object: PyObject) throws -> Int {
     let tuple = try self.matchType(object)
     return tuple.elements.count
   }
 
   /// PyObject* PyTuple_GetItem(PyObject *op, Py_ssize_t i)
-  public func getItem(_ object: PyObject, at index: Int) throws -> PyObject {
+  internal func getItem(_ object: PyObject, at index: Int) throws -> PyObject {
     let tuple = try self.matchType(object)
 
     guard 0 <= index && index < tuple.elements.count else {
-      throw ObjectError.tupleIndexOutOfRange
+      throw PyContextError.tupleIndexOutOfRange
     }
 
     return tuple.elements[index]
   }
 
   /// int PyTuple_SetItem(PyObject *op, Py_ssize_t i, PyObject *newitem)
-  public func setItem(_ object: PyObject, at index: Int, to item: PyObject) throws {
+  internal func setItem(_ object: PyObject, at index: Int, to item: PyObject) throws {
     let tuple = try self.matchType(object)
 
     guard 0 <= index && index < tuple.elements.count else {
-      throw ObjectError.tupleAssignmentIndexOutOfRange
+      throw PyContextError.tupleAssignmentIndexOutOfRange
     }
 
     tuple.elements[index] = item
   }
 
   /// static int tuplecontains(PyTupleObject *a, PyObject *el)
-  public func contains(_ object: PyObject, element: PyObject) throws -> Bool {
+  internal func contains(_ object: PyObject, element: PyObject) throws -> Bool {
     fatalError()
   }
 
   /// PyObject * PyTuple_GetSlice(PyObject *op, Py_ssize_t i, Py_ssize_t j)
-  public func slice(_ object: PyObject, low: Int, high: Int) throws -> PyObject {
+  internal func slice(_ object: PyObject, low: Int, high: Int) throws -> PyObject {
     let tuple = try self.matchType(object)
 
     var low = max(low, 0)
@@ -140,7 +140,7 @@ If the argument is a tuple, the return value is the same object.
   }
 
   /// static PyObject * tupleconcat(PyTupleObject *a, PyObject *bb)
-  public func concat(_ object: PyObject, adding other: PyObject) throws -> PyObject {
+  internal func concat(_ object: PyObject, adding other: PyObject) throws -> PyObject {
     let tuple = try self.matchType(object)
 
     if tuple.elements.isEmpty {
@@ -148,7 +148,7 @@ If the argument is a tuple, the return value is the same object.
     }
 
     guard let otherTuple = self.matchTypeOrNil(other) else {
-      throw ObjectError.tupleInvalidAddendType(addend: other)
+      throw PyContextError.tupleInvalidAddendType(addend: other)
     }
 
     if otherTuple.elements.isEmpty {
@@ -160,7 +160,7 @@ If the argument is a tuple, the return value is the same object.
   }
 
   /// static PyObject * tuplerepeat(PyTupleObject *a, Py_ssize_t n)
-  public func `repeat`(_ object: PyObject, count: Int) throws -> PyTuple {
+  internal func `repeat`(_ object: PyObject, count: Int) throws -> PyTuple {
     let tuple = try self.matchType(object)
     let count = max(count, 0)
 
@@ -179,10 +179,10 @@ If the argument is a tuple, the return value is the same object.
   }
 
   /// static PyObject* tuple_index_impl(PyTupleObject *self, PyObject *value, ...)
-  public func indexOf(_ object: PyObject,
-                      item: PyObject,
-                      start: Int,
-                      stop:  Int) throws -> PyObject {
+  internal func indexOf(_ object: PyObject,
+                        item: PyObject,
+                        start: Int,
+                        stop:  Int) throws -> PyObject {
 //    let tuple = try self.matchTuple(object)
 //
 //    var start = start
@@ -215,7 +215,7 @@ If the argument is a tuple, the return value is the same object.
   /// Return number of occurrences of value.
   ///
   /// static PyObject * tuple_count(PyTupleObject *self, PyObject *value)
-  public func countOf(_ object: PyObject, item: PyObject) -> PyObject {
+  internal func countOf(_ object: PyObject, item: PyObject) -> PyObject {
 //    let tuple = try self.matchTuple(object)
 
 //    var result = 0
@@ -251,6 +251,6 @@ If the argument is a tuple, the return value is the same object.
       return tuple
     }
 
-    throw ObjectError.invalidTypeConversion(object: object, to: self)
+    throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
 }

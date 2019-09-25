@@ -1,8 +1,8 @@
 public class PyObject {
 
-  public let type: PyType
+  internal let type: PyType
 
-  public init(type: PyType) {
+  internal init(type: PyType) {
     self.type = type
   }
 }

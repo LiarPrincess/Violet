@@ -9,7 +9,7 @@ extension Frame {
   internal func binaryPower() throws {
     let exp = self.pop()
     let base = self.top
-    let result = self.types.number.power(base: base, exp: exp, z: self.context.none)
+    let result = try self.context.pow(left: base, right: exp)
     self.setTop(result)
   }
 
@@ -17,7 +17,7 @@ extension Frame {
   internal func binaryMultiply() throws {
     let right = self.pop()
     let left = self.top
-    let result = self.types.number.multiply(left: left, right: right)
+    let result = try self.context.mul(left: left, right: right)
     self.setTop(result)
   }
 
@@ -25,7 +25,7 @@ extension Frame {
   internal func binaryMatrixMultiply() throws {
     let right = self.pop()
     let left = self.top
-    let result = self.types.number.matrixMultiply(left: left, right: right)
+    let result = try self.context.matrixMul(left: left, right: right)
     self.setTop(result)
   }
 
@@ -33,7 +33,7 @@ extension Frame {
   internal func binaryFloorDivide() throws {
     let divisor = self.pop()
     let dividend = self.top
-    let quotient = self.types.number.floorDivide(dividend: dividend, divisor: divisor)
+    let quotient = try self.context.divFloor(left: dividend, right: divisor)
     self.setTop(quotient)
   }
 
@@ -41,7 +41,7 @@ extension Frame {
   internal func binaryTrueDivide() throws {
     let divisor = self.pop()
     let dividend = self.top
-    let quotient = self.types.number.trueDivide(dividend: dividend, divisor: divisor)
+    let quotient = try self.context.div(left: dividend, right: divisor)
     self.setTop(quotient)
   }
 
@@ -50,12 +50,12 @@ extension Frame {
     let divisor = self.pop()
     let dividend = self.top
 
-    let isStringFormat = self.types.unicode.checkExact(dividend)
-      && (self.types.unicode.check(divisor) || self.types.unicode.checkExact(divisor))
+    let isStringFormat = self.context.unicode.checkExact(dividend)
+      && (self.context.unicode.check(divisor) || self.context.unicode.checkExact(divisor))
 
     let result = isStringFormat ?
-      self.types.unicode.format(dividend: dividend, divisor: divisor) :
-      self.types.number.remainder(dividend: dividend, divisor: divisor)
+      self.context.unicode.format(dividend: dividend, divisor: divisor) :
+      try self.context.remainder(left: dividend, right: divisor)
 
     self.setTop(result)
   }
@@ -65,10 +65,10 @@ extension Frame {
     let right = self.pop()
     let left = self.top
 
-    let isConcat = self.types.unicode.checkExact(left) && self.types.unicode.checkExact(right)
+    let isConcat = self.context.unicode.checkExact(left) && self.context.unicode.checkExact(right)
     let result = isConcat ?
-      self.types.unicode.unicode_concatenate(left: left, right: right) :
-      try self.types.number.add(left: left, right: right)
+      self.context.unicode.unicode_concatenate(left: left, right: right) :
+      try self.context.add(left: left, right: right)
 
     self.setTop(result)
   }
@@ -77,7 +77,7 @@ extension Frame {
   internal func binarySubtract() throws {
     let right = self.pop()
     let left = self.top
-    let result = self.types.number.subtract(left: left, right: right)
+    let result = try self.context.sub(left: left, right: right)
     self.setTop(result)
   }
 
@@ -87,7 +87,7 @@ extension Frame {
   internal func binaryLShift() throws {
     let right = self.pop()
     let left = self.top
-    let result = self.types.number.lShift(left: left, right: right)
+    let result = try self.context.lShift(left: left, right: right)
     self.setTop(result)
   }
 
@@ -95,7 +95,7 @@ extension Frame {
   internal func binaryRShift() throws {
     let right = self.pop()
     let left = self.top
-    let result = self.types.number.rShift(left: left, right: right)
+    let result = try self.context.rShift(left: left, right: right)
     self.setTop(result)
   }
 
@@ -105,7 +105,7 @@ extension Frame {
   internal func binaryAnd() throws {
     let right = self.pop()
     let left = self.top
-    let result = self.types.number.and(left: left, right: right)
+    let result = try self.context.and(left: left, right: right)
     self.setTop(result)
   }
 
@@ -113,7 +113,7 @@ extension Frame {
   internal func binaryXor() throws {
     let right = self.pop()
     let left = self.top
-    let result = self.types.number.xor(left: left, right: right)
+    let result = try self.context.xor(left: left, right: right)
     self.setTop(result)
   }
 
@@ -121,7 +121,7 @@ extension Frame {
   internal func binaryOr() throws {
     let right = self.pop()
     let left = self.top
-    let result = self.types.number.or(left: left, right: right)
+    let result = try self.context.or(left: left, right: right)
     self.setTop(result)
   }
 

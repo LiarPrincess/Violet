@@ -1,6 +1,10 @@
+extension PyContext {
+  public var unicode: PyUnicodeType { return PyUnicodeType() }
+}
+
 public final class PyUnicodeType {
 
-  public init() { }
+  fileprivate init() { }
 
   public func checkExact(_ value: PyObject) -> Bool {
     return false

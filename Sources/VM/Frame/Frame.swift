@@ -6,12 +6,12 @@ import Objects
 
 // swiftlint:disable file_length
 
-internal class Frame: ContextOwner {
+internal class Frame {
 
   /// Code to run.
   private let code: CodeObject
 
-  internal let context: Context
+  internal let context: PyContext
 
   /// The main data frame of the stack machine.
   internal var stack = [PyObject]()
@@ -24,7 +24,7 @@ internal class Frame: ContextOwner {
   /// Variables
   // pub scope: Scope
 
-  internal init(code: CodeObject, context: Context) {
+  internal init(code: CodeObject, context: PyContext) {
     self.code = code
     self.context = context
   }
