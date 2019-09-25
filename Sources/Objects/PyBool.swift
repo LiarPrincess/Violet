@@ -24,14 +24,18 @@ The class bool is a subclass of the class int, and cannot be subclassed
   public lazy var `false`: PyBool = PyBool(type: self, value: BigInt(0))
 
   override public func new(_ value: BigInt) -> PyBool {
-    return value.isZero ? self.false : self.true
+    return self.new(self.isTrue(value))
+  }
+
+  public func new(_ value: Bool) -> PyBool {
+    return value ? self.true : self.false
   }
 
   // MARK: - String
 
   override public func repr(value: PyObject) throws -> String {
     let value = try self.extractInt(value)
-    return value.isZero ? "False" : "True"
+    return self.isTrue(value) ? "True" : "False"
   }
 
   override public func str(value: PyObject) throws -> String {
@@ -45,7 +49,8 @@ The class bool is a subclass of the class int, and cannot be subclassed
           let r = self.extractIntOrNil(right) else {
         return try super.and(left: left, right: right)
     }
-    return self.new(l & r)
+
+    return self.new(self.isTrue(l) && self.isTrue(r))
   }
 
   override public func or(left: PyObject, right: PyObject) throws -> PyObject {
@@ -53,7 +58,7 @@ The class bool is a subclass of the class int, and cannot be subclassed
           let r = self.extractIntOrNil(right) else {
         return try super.and(left: left, right: right)
     }
-    return self.new(l | r)
+    return self.new(self.isTrue(l) || self.isTrue(r))
   }
 
   override public func xor(left: PyObject, right: PyObject) throws -> PyObject {
@@ -61,6 +66,12 @@ The class bool is a subclass of the class int, and cannot be subclassed
           let r = self.extractIntOrNil(right) else {
         return try super.and(left: left, right: right)
     }
-    return self.new(l ^ r)
+    return self.new(self.isTrue(l) != self.isTrue(r))
+  }
+
+  // MARK: - Helpers
+
+  private func isTrue(_ value: BigInt) -> Bool {
+    return !value.isZero
   }
 }

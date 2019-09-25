@@ -1,7 +1,7 @@
 public protocol TypeClass {
   var name: String { get }
   var base: PyType? { get }
-  var doc:  String { get }
+  var doc:  String? { get }
 }
 
 // MARK: - Equatable

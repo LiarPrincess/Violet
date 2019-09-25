@@ -29,7 +29,7 @@ public class PyIntType: PyType, ContextOwner,
 
   public var name: String  { return "int" }
   public var base: PyType? { return nil }
-  public var doc:  String  { return """
+  public var doc:  String? { return """
 int([x]) -> integer
 int(x, base=10) -> integer
 

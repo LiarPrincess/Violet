@@ -28,7 +28,7 @@ public final class PyFloatType: PyType, ContextOwner,
 
   public let name: String  = "float"
   public let base: PyType? = nil
-  public let doc:  String  = """
+  public let doc:  String? = """
 float(x) -> floating point number
 
 Convert a string or number to a floating point number, if possible.

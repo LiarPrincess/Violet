@@ -20,6 +20,7 @@ public final class PyNumberType {
 
   /// PyObject * PyNumber_Add(PyObject *v, PyObject *w)
   public func add(left: PyObject, right: PyObject) throws -> PyObject {
+    // TODO: this will not work for: Int + Double -> Double
     let type: AdditiveTypeClass =
       try self.getBinaryOperationOwner(op: "+", left: left, right: right)
     return try type.add(left: left, right: right)

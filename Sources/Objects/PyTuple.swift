@@ -16,7 +16,7 @@ ComparableTypeClass, HashableTypeClass {
 
   public let name: String = "tuple"
   public let base: PyType? = nil
-  public let doc:  String = """
+  public let doc:  String? = """
 tuple() -> an empty tuple
 tuple(sequence) -> tuple initialized from sequence's items
 
