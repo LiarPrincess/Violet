@@ -3,17 +3,17 @@ import Core
 
 // TODO: Add predefined values (-5, 257) + other types
 
-public final class PyInt: PyObject {
+public class PyInt: PyObject {
 
   internal var value: BigInt
 
-  fileprivate init(type: PyIntType, value: BigInt) {
+  internal init(type: PyIntType, value: BigInt) {
     self.value = value
     super.init(type: type)
   }
 }
 
-public final class PyIntType: PyType, ContextOwner,
+public class PyIntType: PyType, ContextOwner,
   ReprConvertibleTypeClass, StrConvertibleTypeClass,
   ComparableTypeClass, HashableTypeClass,
 
@@ -27,9 +27,9 @@ public final class PyIntType: PyType, ContextOwner,
   ShiftableTypeClass,
   BinaryTypeClass {
 
-  public let name: String  = "int"
-  public let base: PyType? = nil
-  public let doc:  String  = """
+  public var name: String  { return "int" }
+  public var base: PyType? { return nil }
+  public var doc:  String  { return """
 int([x]) -> integer
 int(x, base=10) -> integer
 
@@ -44,7 +44,7 @@ by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
 Base 0 means to interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
-"""
+""" }
 
   public unowned let context: Context
 
@@ -60,14 +60,13 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   // MARK: - String
 
-  public func str(value: PyObject) throws -> String {
+  public func repr(value: PyObject) throws -> String {
     let v = try self.extractInt(value)
     return String(describing: v)
   }
 
-  public func repr(value: PyObject) throws -> String {
-    let v = try self.extractInt(value)
-    return String(describing: v)
+  public func str(value: PyObject) throws -> String {
+    return try self.repr(value: value)
   }
 
   // MARK: - Equatable, hashable
@@ -249,7 +248,12 @@ Base 0 means to interpret the base from the string as an integer literal.
     throw ObjectError.invalidTypeConversion(object: object, to: self)
   }
 
-  private func extractInt(_ object: PyObject) throws -> BigInt {
+  internal func extractIntOrNil(_ object: PyObject) -> BigInt? {
+    let i = object as? PyInt
+    return i.map { $0.value }
+  }
+
+  internal func extractInt(_ object: PyObject) throws -> BigInt {
     if let i = object as? PyInt {
       return i.value
     }

@@ -1,14 +1,3 @@
-public final class PyBoolType: PyType { }
-
-public final class PyBool: PyObject {
-  private let value: Bool
-
-  public init(_ value: Bool) {
-    self.value = value
-    super.init(type: PyBoolType())
-  }
-}
-
 public final class PyUnicodeType {
 
   public init() { }

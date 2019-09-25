@@ -4,8 +4,8 @@ public class DummyType: PyType { }
 
 public class Context {
 
-  public var `true`:  PyBool { return PyBool(true) }
-  public var `false`: PyBool { return PyBool(false) }
+  public var `true`:  PyBool { return self.types.bool.true }
+  public var `false`: PyBool { return self.types.bool.false }
 
   public var none:       PyObject { return PyObject(type: DummyType()) }
   public var emptyTuple: PyObject { return PyObject(type: DummyType()) }
@@ -25,8 +25,9 @@ public class ContextTypes {
   public lazy var number  = PyNumberType()
   public lazy var unicode = PyUnicodeType()
   public lazy var tuple   = PyTupleType()
-  public lazy var int     = PyIntType(context: self.context)
+  public lazy var int     = PyIntType  (context: self.context)
   public lazy var float   = PyFloatType(context: self.context)
+  public lazy var bool    = PyBoolType (context: self.context)
 
   fileprivate init(context: Context) {
     self.context = context

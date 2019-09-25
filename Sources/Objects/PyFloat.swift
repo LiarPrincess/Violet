@@ -54,8 +54,7 @@ Convert a string or number to a floating point number, if possible.
   }
 
   public func str(value: PyObject) throws -> String {
-    let v = try  self.extractDouble(value)
-    return String(describing: v)
+    return try self.repr(value: value)
   }
 
   // MARK: - Equatable, hashable
