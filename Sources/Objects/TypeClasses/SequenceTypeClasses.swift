@@ -1,19 +1,40 @@
-//  lenfunc sq_length;
+// MARK: - Length
 
-internal protocol ConcatenableTypeClass: TypeClass {
+internal protocol LengthTypeClass: TypeClass {
+  func length(value: PyObject) throws -> PyInt
+}
+
+// MARK: - Concat
+
+internal protocol ConcatTypeClass: TypeClass {
   func concat(left: PyObject, right: PyObject) throws -> PyObject
 }
 
-internal protocol RepeatableTypeClass: TypeClass {
+internal protocol ConcatInPlaceTypeClass: TypeClass {
+  func concatInPlace(left: PyObject, right: PyObject) throws -> PyObject
+}
+
+// MARK: - Repeat
+
+internal protocol RepeatTypeClass: TypeClass {
   func `repeat`(value: PyObject, count: PyInt) throws -> PyObject
 }
 
-//  ssizeargfunc sq_item;
+internal protocol RepeatInPlaceTypeClass: TypeClass {
+  func repeatInPlace(value: PyObject, count: PyInt) throws -> PyObject
+}
+
+// MARK: - Items
+
+internal protocol GetItemTypeClass: TypeClass {
+  func getItem(from: PyObject, at index: Int) throws -> PyObject
+}
+
+internal protocol ContainsTypeClass: TypeClass {
+  func contains(owner: PyObject, element: PyObject) throws -> Bool
+}
+
+// MARK: - Slice
+
 //  void *was_sq_slice;
-//  ssizeobjargproc sq_ass_item;
 //  void *was_sq_ass_slice;
-//  objobjproc sq_contains;
-//
-//  binaryfunc sq_inplace_concat;
-//  ssizeargfunc sq_inplace_repeat;
-//} PySequenceMethods;
