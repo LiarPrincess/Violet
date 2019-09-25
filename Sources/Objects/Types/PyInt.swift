@@ -17,14 +17,14 @@ internal class PyIntType: PyType,
   ReprConvertibleTypeClass, StrConvertibleTypeClass,
   ComparableTypeClass, HashableTypeClass,
 
-  SignedNumberTypeClass,
-  AbsoluteNumberTypeClass,
-  AdditiveTypeClass, SubtractiveTypeClass,
-  MultiplicativeTypeClass, PowerTypeClass,
-  DividableTypeClass, FloorDividableTypeClass, RemainderTypeClass, DivModTypeClass,
+  SignedTypeClass,
+  AbsTypeClass,
+  AddTypeClass, SubTypeClass,
+  MulTypeClass, PowTypeClass,
+  DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
   PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass,
-  InvertibleNumberTypeClass,
-  ShiftableTypeClass,
+  InvertTypeClass,
+  ShiftTypeClass,
   BinaryTypeClass {
 
   internal var name: String { return "int" }
@@ -54,6 +54,10 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   // MARK: - Ctors
 
+  internal func new(_ value: Int) -> PyInt {
+    return self.new(BigInt(value))
+  }
+
   internal func new(_ value: BigInt) -> PyInt {
     return PyInt(type: self, value: value)
   }
@@ -71,7 +75,7 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   // MARK: - Equatable, hashable
 
-  internal func compare(left: PyObject, right: PyObject, x: Int) throws -> PyObject {
+  func compare(left: PyObject, right: PyObject, mode: CompareMode) throws -> PyObject {
     fatalError()
   }
 

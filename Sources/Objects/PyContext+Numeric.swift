@@ -3,7 +3,7 @@ extension PyContext {
   // MARK: - Unary
 
   public func positive(_ value: PyObject) throws -> PyObject {
-    if let signed = value.type as? SignedNumberTypeClass {
+    if let signed = value.type as? SignedTypeClass {
       return try signed.positive(value: value)
     }
 
@@ -11,7 +11,7 @@ extension PyContext {
   }
 
   public func negative(_ value: PyObject) throws -> PyObject {
-    if let signed = value.type as? SignedNumberTypeClass {
+    if let signed = value.type as? SignedTypeClass {
       return try signed.negative(value: value)
     }
 
@@ -19,7 +19,7 @@ extension PyContext {
   }
 
   public func invert(_ value: PyObject) throws -> PyObject {
-    if let type = value.type as? InvertibleNumberTypeClass {
+    if let type = value.type as? InvertTypeClass {
       return try type.invert(value: value)
     }
 
@@ -27,7 +27,7 @@ extension PyContext {
   }
 
   public func abs(_ value: PyObject) throws -> PyObject {
-    if let type = value.type as? AbsoluteNumberTypeClass {
+    if let type = value.type as? AbsTypeClass {
       return try type.abs(value: value)
     }
 
@@ -39,12 +39,12 @@ extension PyContext {
   /// PyObject * PyNumber_Add(PyObject *v, PyObject *w)
   public func add(left: PyObject, right: PyObject) throws -> PyObject {
     // TODO: this will not work for: Int + Double -> Double
-    if let additive: AdditiveTypeClass =
+    if let additive: AddTypeClass =
       self.getTypeClassOrNil(left: left, right: right) {
       return try additive.add(left: left, right: right)
     }
 
-    if let concatenable: ConcatenableTypeClass =
+    if let concatenable: ConcatTypeClass =
       self.getTypeClassOrNil(left: left, right: right) {
       return try concatenable.concat(left: left, right: right)
     }
@@ -55,7 +55,7 @@ extension PyContext {
   }
 
   public func sub(left: PyObject, right: PyObject) throws -> PyObject {
-    let subtractive: SubtractiveTypeClass =
+    let subtractive: SubTypeClass =
       try self.getTypeClass(op: "-", left: left, right: right)
 
     return try subtractive.sub(left: left, right: right)
@@ -64,19 +64,19 @@ extension PyContext {
   // MARK: - Mul
 
   public func mul(left: PyObject, right: PyObject) throws -> PyObject {
-    if let multiplicative: MultiplicativeTypeClass =
+    if let multiplicative: MulTypeClass =
       self.getTypeClassOrNil(left: left, right: right) {
       return try multiplicative.mul(left: left, right: right)
     }
 
     // [1] * 2 -> [1, 1] (or you know: [1] * True -> [1], because True is Int)
-    if let leftRepeat = left.type as? RepeatableTypeClass {
+    if let leftRepeat = left.type as? RepeatTypeClass {
       let count = try self.asRepeatCount(right)
       return try leftRepeat.repeat(value: left, count: count)
     }
 
     // 2 * [1] -> [1, 1]
-    if let rightRepeat = right.type as? RepeatableTypeClass {
+    if let rightRepeat = right.type as? RepeatTypeClass {
       let count = try self.asRepeatCount(left)
       return try rightRepeat.repeat(value: right, count: count)
     }
@@ -94,7 +94,7 @@ extension PyContext {
   }
 
   public func matrixMul(left: PyObject, right: PyObject) throws -> PyObject {
-    let multiplicative: MatrixMultiplicativeTypeClass =
+    let multiplicative: MatrixMulTypeClass =
       try self.getTypeClass(op: "@", left: left, right: right)
 
     return try multiplicative.matrixMul(left: left, right: right)
@@ -103,14 +103,14 @@ extension PyContext {
   // MARK: - Div
 
   public func div(left: PyObject, right: PyObject) throws -> PyObject {
-    let dividable: DividableTypeClass =
+    let dividable: DivTypeClass =
       try self.getTypeClass(op: "/", left: left, right: right)
 
     return try dividable.div(left: left, right: right)
   }
 
   public func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
-    let dividable: FloorDividableTypeClass =
+    let dividable: DivFloorTypeClass =
       try self.getTypeClass(op: "//", left: left, right: right)
 
     return try dividable.divFloor(left: left, right: right)
@@ -133,7 +133,7 @@ extension PyContext {
   // MARK: - Power
 
   public func pow(left: PyObject, right: PyObject) throws -> PyObject {
-    let type: PowerTypeClass =
+    let type: PowTypeClass =
       try self.getTypeClass(op: "** or pow()", left: left, right: right)
 
     return try type.pow(left: left, right: right)
@@ -142,14 +142,14 @@ extension PyContext {
   // MARK: - Shift
 
   public func lShift(left: PyObject, right: PyObject) throws -> PyObject {
-    let type: ShiftableTypeClass =
+    let type: ShiftTypeClass =
       try self.getTypeClass(op: "<<", left: left, right: right)
 
     return try type.lShift(left: left, right: right)
   }
 
   public func rShift(left: PyObject, right: PyObject) throws -> PyObject {
-    let type: ShiftableTypeClass =
+    let type: ShiftTypeClass =
       try self.getTypeClass(op: ">>", left: left, right: right)
 
     return try type.rShift(left: left, right: right)

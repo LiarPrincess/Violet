@@ -49,7 +49,6 @@ The class bool is a subclass of the class int, and cannot be subclassed
           let r = self.extractIntOrNil(right) else {
         return try super.and(left: left, right: right)
     }
-
     return self.new(self.isTrue(l) && self.isTrue(r))
   }
 

@@ -26,7 +26,7 @@ internal class PyContextTypes {
   internal lazy var float = PyFloatType(context: self.context)
   internal lazy var bool  = PyBoolType(context: self.context)
 
-  internal lazy var tuple = PyTupleType()
+  internal lazy var tuple = PyTupleType(context: self.context)
 
   fileprivate init(context: PyContext) {
     self.context = context

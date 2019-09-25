@@ -129,9 +129,10 @@ extension Frame {
 
   /// Performs a `Boolean` operation.
   internal func compareOp(comparison: ComparisonOpcode) throws {
-    let right = self.pop()
-    let left = self.top
-    let result = self.cmp_outcome(comparison: comparison, left: left, right: right)
-    self.setTop(result)
+//    let right = self.pop()
+//    let left = self.top
+//    let result = self.cmp_outcome(comparison: comparison, left: left, right: right)
+//    self.setTop(result)
+    fatalError()
   }
 }

@@ -19,11 +19,11 @@ internal final class PyFloatType: PyType,
   ReprConvertibleTypeClass, StrConvertibleTypeClass,
   ComparableTypeClass, HashableTypeClass,
 
-  SignedNumberTypeClass,
-  AbsoluteNumberTypeClass,
-  AdditiveTypeClass, SubtractiveTypeClass,
-  MultiplicativeTypeClass, PowerTypeClass,
-  DividableTypeClass, FloorDividableTypeClass, RemainderTypeClass, DivModTypeClass,
+  SignedTypeClass,
+  AbsTypeClass,
+  AddTypeClass, SubTypeClass,
+  MulTypeClass, PowTypeClass,
+  DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
   PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
 
   internal let name: String  = "float"
@@ -59,7 +59,7 @@ Convert a string or number to a floating point number, if possible.
 
   // MARK: - Equatable, hashable
 
-  internal func compare(left: PyObject, right: PyObject, x: Int) throws -> PyObject {
+  func compare(left: PyObject, right: PyObject, mode: CompareMode) throws -> PyObject {
     fatalError()
   }
 
@@ -171,7 +171,7 @@ Convert a string or number to a floating point number, if possible.
   /// static PyObject* float_floor_div(PyObject *v, PyObject *w)
   internal func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
     let divMod = try self.divMod(left: left, right: right)
-    return try self.context.types.tuple.getItem(divMod, at: 0)
+    return try self.context.types.tuple.getItem(from: divMod, at: 0)
   }
 
   // MARK: - Abs
