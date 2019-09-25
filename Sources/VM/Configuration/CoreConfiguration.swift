@@ -11,13 +11,6 @@ import Foundation
 // Modules -> getpath.c
 //   calculate_program_full_path(const _PyCoreConfig *core_config, ...)  <- executable
 
-public func ala(arguments: Arguments,
-                environment: Environment = Environment()) {
-
-  let conf = CoreConfiguration(arguments: arguments, environment: environment)
-  conf.dump()
-}
-
 internal protocol CoreConfigurationDeps {
   var bundleURL: URL { get }
   var executablePath: String? { get }
@@ -221,7 +214,7 @@ private func getModuleSearchPaths(environment: Environment?,
   }
 
   // Search from bundleURL (this will add 'Lib' directory in our repository
-  // root, it is more similiar to how Node resolves modules, but whatever...).
+  // root, it is more similiar to how PyPy locates stdlib, but whatever...).
   var url = dependencies.bundleURL
 
   var depth = 0

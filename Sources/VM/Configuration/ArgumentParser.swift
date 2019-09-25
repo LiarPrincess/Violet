@@ -26,7 +26,7 @@ internal class ArgumentParser {
     self.addFlag(
       option: "--version",
       shortName: "-v",
-      usage: "print the Violet version number and exit (also --version)",
+      usage: "print the Python version number and exit (also --version)",
       to: { $0.printVersion = $1 }
     )
 

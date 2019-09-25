@@ -11,4 +11,6 @@ internal enum Constants {
   internal static let PATHSep: Character = ":"
   /// Search path entry delimiter (':')
   internal static let delim: Character = ":"
+
+  internal static let pythonVersion = "3.7"
 }

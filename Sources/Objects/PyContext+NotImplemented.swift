@@ -10,7 +10,7 @@ public enum CompareMode {
 extension PyContext {
   public var unicode: PyUnicodeType { return PyUnicodeType() }
 
-  public func isTrue(_ value: PyObject) -> Bool {
+  public func pyObject_IsTrue(_ value: PyObject) -> Bool {
     return false
   }
 
@@ -23,6 +23,10 @@ extension PyContext {
 
   public func repr(value: PyObject) throws -> String {
     return ""
+  }
+
+  public func pySlice_New(start: PyObject, stop: PyObject, step: PyObject?) -> PyObject {
+    return start
   }
 }
 

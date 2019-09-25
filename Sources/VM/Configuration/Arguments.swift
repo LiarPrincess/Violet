@@ -108,4 +108,9 @@ public struct Arguments: Equatable {
     let parser = ArgumentParser()
     self = try parser.parse(arguments: arguments)
   }
+
+  internal func getUsage() -> String {
+    let parser = ArgumentParser()
+    return parser.getUsage()
+  }
 }

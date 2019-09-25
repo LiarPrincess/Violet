@@ -1,3 +1,4 @@
+import Objects
 import Bytecode
 
 extension Frame {
@@ -48,15 +49,6 @@ extension Frame {
     self.unimplemented()
   }
 
-  /// Prefixes any opcode which has an argument too big to fit into the default one byte.
-  ///
-  /// `ext` holds an additional byte which act as higher bits in the argument.
-  /// For each opcode, at most three prefixal `ExtendedArg` are allowed,
-  /// forming an argument from two-byte to four-byte.
-  internal func extendedArg(value: Int) throws {
-    self.unimplemented()
-  }
-
   /// Checks whether Annotations is defined in locals(),
   /// if not it is set up to an empty dict.
   /// This opcode is only emitted if a class or module body contains variable
@@ -81,6 +73,20 @@ extension Frame {
 
   /// Pushes a slice object on the stack.
   internal func buildSlice(arg: SliceArg) throws {
-    self.unimplemented()
+    let step = self.getSliceStep(arg: arg)
+    let stop = self.pop()
+    let start = self.top
+
+    let slice = self.context.pySlice_New(start: start, stop: stop, step: step)
+    self.setTop(slice)
+  }
+
+  private func getSliceStep(arg: SliceArg) -> PyObject? {
+    switch arg {
+    case .lowerUpper:
+      return nil
+    case .lowerUpperStep:
+      return self.pop()
+    }
   }
 }
