@@ -35,6 +35,11 @@ public enum PyContextError: Error {
   ///   "can only concatenate tuple (not \"%.200s\") to tuple",
   ///   Py_TYPE(bb)->tp_name);
   case tupleInvalidAddendType(addend: PyObject)
+  /// PyErr_Format(
+  ///   PyExc_TypeError,
+  ///   "tuple indices must be integers or slices, not %.200s",
+  ///   Py_TYPE(item)->tp_name);
+  case tupleInvalidSubscriptIndex(index: PyObject)
 
   /// indexerr = PyUnicode_FromString("list index out of range");
   case listIndexOutOfRange(list: PyObject, index: Int)

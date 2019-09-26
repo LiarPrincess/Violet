@@ -2,28 +2,30 @@ import Core
 
 // In CPython:
 // Objects -> listobject.c
+// https://docs.python.org/3.7/c-api/list.html
 
 // TODO: List
-// - PyObject_GenericGetAttr,                    /* tp_getattro */
-// - (traverseproc)list_traverse,                /* tp_traverse */
-// - list_iter,                                  /* tp_iter */
-// - {"__getitem__", (PyCFunction)list_subscript, METH_O|METH_COEXIST, ...},
-// - LIST___REVERSED___METHODDEF
-// - LIST___SIZEOF___METHODDEF
-// - LIST_CLEAR_METHODDEF
-// - LIST_COPY_METHODDEF
-// - LIST_APPEND_METHODDEF
-// - LIST_INSERT_METHODDEF
-// - LIST_EXTEND_METHODDEF
-// - LIST_POP_METHODDEF
-// - LIST_REMOVE_METHODDEF
-// - LIST_INDEX_METHODDEF
-// - LIST_COUNT_METHODDEF
-// - LIST_REVERSE_METHODDEF
-// - LIST_SORT_METHODDEF
+// PyObject_GenericGetAttr,                    /* tp_getattro */
+// (traverseproc)list_traverse,                /* tp_traverse */
+// list_iter,                                  /* tp_iter */
+// {"__getitem__", (PyCFunction)list_subscript, METH_O|METH_COEXIST, ...},
+// LIST___REVERSED___METHODDEF
+// LIST___SIZEOF___METHODDEF
+// LIST_CLEAR_METHODDEF
+// LIST_COPY_METHODDEF
+// LIST_APPEND_METHODDEF
+// LIST_INSERT_METHODDEF
+// LIST_EXTEND_METHODDEF
+// LIST_POP_METHODDEF
+// LIST_REMOVE_METHODDEF
+// LIST_INDEX_METHODDEF
+// LIST_COUNT_METHODDEF
+// LIST_REVERSE_METHODDEF
+// LIST_SORT_METHODDEF
 
 // swiftlint:disable yoda_condition
 
+/// This subtype of PyObject represents a Python list object.
 internal final class PyList: PyObject {
 
   internal var elements: [PyObject]
@@ -56,6 +58,8 @@ If no argument is given, the constructor creates a new empty list.
 The argument must be an iterable if specified.
 """
 
+  internal lazy var empty = PyList(type: self, elements: [])
+
   internal unowned let context: PyContext
 
   internal init(context: PyContext) {
@@ -63,10 +67,6 @@ The argument must be an iterable if specified.
   }
 
   // MARK: - Ctor
-
-  internal func new() -> PyList {
-    return PyList(type: self, elements: [])
-  }
 
   internal func new(_ elements: [PyObject]) -> PyList {
     return PyList(type: self, elements: elements)
@@ -78,7 +78,9 @@ The argument must be an iterable if specified.
 
   // MARK: - Equatable, hashable
 
-  internal func compare(left: PyObject, right: PyObject, mode: CompareMode) throws -> PyObject {
+  internal func compare(left: PyObject,
+                        right: PyObject,
+                        mode: CompareMode) throws -> PyObject {
     fatalError()
   }
 

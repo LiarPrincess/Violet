@@ -3,8 +3,25 @@ import Core
 
 // In CPython:
 // Objects -> floatobject.c
+// https://docs.python.org/3.7/c-api/float.html
 
-/// PyFloatObject represents a (double precision) floating point number.
+// TODO: Float
+// PyObject* PyFloat_FromString(PyObject *str)
+// PyObject_GenericGetAttr,                    /* tp_getattro */
+// FLOAT_CONJUGATE_METHODDEF
+// FLOAT___TRUNC___METHODDEF
+// FLOAT___ROUND___METHODDEF
+// FLOAT_AS_INTEGER_RATIO_METHODDEF
+// FLOAT_FROMHEX_METHODDEF
+// FLOAT_HEX_METHODDEF
+// FLOAT_IS_INTEGER_METHODDEF
+// FLOAT___GETNEWARGS___METHODDEF
+// FLOAT___GETFORMAT___METHODDEF
+// FLOAT___SET_FORMAT___METHODDEF
+// FLOAT___FORMAT___METHODDEF
+// {"real", float_getreal, (setter)NULL, "the real part of a complex number", NULL},
+// {"imag", float_getimag, (setter)NULL, "the imaginary part of a complex number", NULL},
+
 internal final class PyFloat: PyObject {
 
   internal let value: Double
@@ -15,6 +32,7 @@ internal final class PyFloat: PyObject {
   }
 }
 
+/// This subtype of PyObject represents a Python floating point object.
 internal final class PyFloatType: PyType,
   ReprTypeClass, StrTypeClass,
   ComparableTypeClass, HashableTypeClass,

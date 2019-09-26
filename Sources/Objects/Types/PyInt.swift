@@ -1,7 +1,28 @@
 import Foundation
 import Core
 
+// In CPython:
+// Objects -> longobject.c
+// https://docs.python.org/3.7/c-api/long.html
+
 // TODO: Add predefined values (-5, 257) + other types
+// TODO: Int
+// PyObject_GenericGetAttr,                    /* tp_getattro */
+// {"conjugate", (PyCFunction)long_long, METH_NOARGS, "Returns self, the ... }
+// INT_BIT_LENGTH_METHODDEF
+// INT_TO_BYTES_METHODDEF
+// INT_FROM_BYTES_METHODDEF
+// {"__trunc__",       (PyCFunction)long_long, METH_NOARGS, "Truncating an ... }
+// {"__floor__",       (PyCFunction)long_long, METH_NOARGS, "Flooring an  ... }
+// {"__ceil__",        (PyCFunction)long_long, METH_NOARGS, "Ceiling of an ... }
+// {"__round__",       (PyCFunction)long_round, METH_VARARGS, "Rounding ... },
+// INT___GETNEWARGS___METHODDEF
+// INT___FORMAT___METHODDEF
+// INT___SIZEOF___METHODDEF
+// {"real", (getter)long_long, (setter)NULL, "the real part of a complex number"},
+// {"imag", (getter)long_get0, (setter)NULL, "the imaginary part of a complex ..." },
+// {"numerator", (getter)long_long, (setter)NULL, "the numerator of a rational ... }
+// {"denominator", (getter)long_get1, (setter)NULL, "the denominator of a  ... }
 
 internal class PyInt: PyObject {
 
