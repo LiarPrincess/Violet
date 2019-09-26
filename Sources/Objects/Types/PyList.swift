@@ -36,6 +36,7 @@ internal final class PyList: PyObject {
   }
 }
 
+/// This subtype of PyObject represents a Python list object.
 internal final class PyListType: PyType,
 ReprTypeClass,
 ComparableTypeClass, HashableTypeClass,

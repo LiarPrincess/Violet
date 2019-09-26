@@ -8,6 +8,8 @@ internal final class PyNotImplemented: PyObject {
   }
 }
 
+/// `NotImplemented` is an object that can be used to signal that an
+/// operation is not implemented for the given type combination.
 internal final class PyNotImplementedType: PyType, ReprTypeClass {
 
   internal let name: String  = "NotImplementedType"

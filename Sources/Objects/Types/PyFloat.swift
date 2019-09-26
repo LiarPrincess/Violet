@@ -22,6 +22,7 @@ import Core
 // {"real", float_getreal, (setter)NULL, "the real part of a complex number", NULL},
 // {"imag", float_getimag, (setter)NULL, "the imaginary part of a complex number", NULL},
 
+/// This subtype of PyObject represents a Python floating point object.
 internal final class PyFloat: PyObject {
 
   internal let value: Double

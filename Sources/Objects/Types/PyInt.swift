@@ -24,6 +24,7 @@ import Core
 // {"numerator", (getter)long_long, (setter)NULL, "the numerator of a rational ... }
 // {"denominator", (getter)long_get1, (setter)NULL, "the denominator of a  ... }
 
+/// All integers are implemented as “long” integer objects of arbitrary size.
 internal class PyInt: PyObject {
 
   internal var value: BigInt
@@ -34,6 +35,7 @@ internal class PyInt: PyObject {
   }
 }
 
+/// All integers are implemented as “long” integer objects of arbitrary size.
 internal class PyIntType: PyType,
   ReprTypeClass, StrTypeClass,
   ComparableTypeClass, HashableTypeClass,

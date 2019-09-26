@@ -1,5 +1,6 @@
 import Core
 
+/// The Python None object, denoting lack of value. This object has no methods.
 internal final class PyNone: PyObject {
   fileprivate init(type: PyNoneType) {
     super.init(type: type)

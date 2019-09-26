@@ -14,6 +14,8 @@ import Core
 
 // swiftlint:disable yoda_condition
 
+/// This instance of PyTypeObject represents the Python tuple type;
+/// it is the same object as tuple in the Python layer.
 internal final class PyTuple: PyObject {
 
   internal var elements: [PyObject]

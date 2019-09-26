@@ -4,10 +4,9 @@ public class PyContext {
   public var `false`: PyObject { return self.types.bool.false }
 
   public var none: PyObject { return self.types.none.value }
+  public var ellipsis: PyObject { return self.types.ellipsis.value }
+  public var emptyTuple: PyObject { return self.types.tuple.empty }
   public var notImplemented: PyObject { return self.types.notImplemented.value }
-
-    public var emptyTuple: PyObject { return self.types.tuple.empty }
-  //  public var ellipsis:   PyObject { return PyObject(type: DummyType()) }
 
   internal lazy var types = PyContextTypes(context: self)
   //    pub exceptions: exceptions::ExceptionZoo,
@@ -27,6 +26,10 @@ internal class PyContextTypes {
   internal lazy var bool  = PyBoolType(context: self.context)
 
   internal lazy var tuple = PyTupleType(context: self.context)
+  internal lazy var list  = PyListType(context: self.context)
+
+  internal lazy var slice = PySliceType(context: self.context)
+  internal lazy var ellipsis = PyEllipsisType(context: self.context)
 
   fileprivate init(context: PyContext) {
     self.context = context
