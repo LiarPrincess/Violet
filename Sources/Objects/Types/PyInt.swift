@@ -14,7 +14,7 @@ internal class PyInt: PyObject {
 }
 
 internal class PyIntType: PyType,
-  ReprConvertibleTypeClass, StrConvertibleTypeClass,
+  ReprTypeClass, StrTypeClass,
   ComparableTypeClass, HashableTypeClass,
 
   SignedTypeClass,
@@ -87,7 +87,7 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   internal func bool(value: PyObject) throws -> PyBool {
     let v = try self.extractInt(value)
-    return self.context.types.bool.new(!v.isZero)
+    return self.context.types.bool.new(v)
   }
 
   internal func int(value: PyObject) throws -> PyInt {
@@ -138,7 +138,7 @@ Base 0 means to interpret the base from the string as an integer literal.
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
-    if r.isZero {
+    if r == 0 {
       throw PyContextError.intDivisionByZero
     }
 
@@ -149,7 +149,7 @@ Base 0 means to interpret the base from the string as an integer literal.
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
-    if r.isZero {
+    if r == 0 {
       throw PyContextError.intDivisionByZero
     }
 
@@ -160,7 +160,7 @@ Base 0 means to interpret the base from the string as an integer literal.
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
-    if r.isZero {
+    if r == 0 {
       throw PyContextError.intModuloZero
     }
 
@@ -171,7 +171,7 @@ Base 0 means to interpret the base from the string as an integer literal.
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
-    if r.isZero {
+    if r == 0 {
       throw PyContextError.intDivModZero
     }
 

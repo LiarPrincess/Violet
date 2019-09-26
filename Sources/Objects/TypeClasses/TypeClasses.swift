@@ -2,6 +2,7 @@ internal protocol TypeClass {
   var name: String { get }
   var base: PyType? { get }
   var doc:  String? { get }
+  var context: PyContext { get }
 }
 
 // MARK: - Equatable
@@ -18,11 +19,12 @@ internal protocol HashableTypeClass: TypeClass {
 
 //  printfunc tp_print;
 
-internal protocol ReprConvertibleTypeClass: TypeClass {
+// TODO: remove this if all types implement
+internal protocol ReprTypeClass: TypeClass {
   func repr(value: PyObject) throws -> String
 }
 
-internal protocol StrConvertibleTypeClass: TypeClass {
+internal protocol StrTypeClass: TypeClass {
   func str(value: PyObject) throws -> String
 }
 
@@ -46,9 +48,12 @@ internal protocol StrConvertibleTypeClass: TypeClass {
 //  /* Assigned meaning in release 2.0 */
 //  /* call function for all accessible objects */
 //  traverseproc tp_traverse;
-//
-//  /* delete references to contained objects */
-//  inquiry tp_clear;
+
+/// Delete references to contained objects
+internal protocol ClearTypeClass: TypeClass {
+  func clear(value: PyObject) throws
+}
+
 //
 //  /* weak reference enabler */
 //  Py_ssize_t tp_weaklistoffset;

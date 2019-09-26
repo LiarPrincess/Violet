@@ -20,7 +20,7 @@ internal class PyContextTypes {
   private unowned let context: PyContext
 
   internal lazy var none = PyNoneType(context: self.context)
-  internal lazy var notImplemented = PyNotImplementedType()
+  internal lazy var notImplemented = PyNotImplementedType(context: self.context)
 
   internal lazy var int   = PyIntType(context: self.context)
   internal lazy var float = PyFloatType(context: self.context)

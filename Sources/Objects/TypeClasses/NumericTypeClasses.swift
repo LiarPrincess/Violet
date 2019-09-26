@@ -1,5 +1,3 @@
-// TODO: unaryfunc nb_index
-
 // MARK: - Unary
 
 internal protocol SignedTypeClass: TypeClass {
@@ -15,6 +13,10 @@ internal protocol AbsTypeClass: TypeClass {
 
 internal protocol InvertTypeClass: TypeClass {
   func invert(value: PyObject) throws -> PyObject
+}
+
+internal protocol IndexTypeClass: TypeClass {
+  func index(value: PyObject) throws -> PyObject
 }
 
 // MARK: - Add, sub

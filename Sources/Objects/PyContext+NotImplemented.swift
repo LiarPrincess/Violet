@@ -21,6 +21,12 @@ extension PyContext {
     return left
   }
 
+  public func PyObject_RichCompareBool(left:  PyObject,
+                                       right: PyObject,
+                                       mode:  CompareMode) -> Bool {
+    return false
+  }
+
   public func repr(value: PyObject) throws -> String {
     return ""
   }

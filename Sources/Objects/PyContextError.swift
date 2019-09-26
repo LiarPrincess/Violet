@@ -27,7 +27,7 @@ public enum PyContextError: Error {
   case invalidOperandForAbs(PyObject)
 
   /// PyErr_SetString(PyExc_IndexError, "tuple index out of range");
-  case tupleIndexOutOfRange
+  case tupleIndexOutOfRange(tuple: PyObject, index: Int)
   /// PyErr_SetString(PyExc_IndexError, "tuple assignment index out of range");
   case tupleAssignmentIndexOutOfRange
   /// PyErr_Format(
@@ -35,6 +35,21 @@ public enum PyContextError: Error {
   ///   "can only concatenate tuple (not \"%.200s\") to tuple",
   ///   Py_TYPE(bb)->tp_name);
   case tupleInvalidAddendType(addend: PyObject)
+
+  /// indexerr = PyUnicode_FromString("list index out of range");
+  case listIndexOutOfRange(list: PyObject, index: Int)
+  /// PyErr_SetString(PyExc_IndexError, "list assignment index out of range");
+  case listAssignmentIndexOutOfRange(list: PyObject, index: Int)
+  /// PyErr_Format(
+  ///   PyExc_TypeError,
+  ///   "can only concatenate list (not \"%.200s\") to list",
+  ///   bb->ob_type->tp_name);
+  case listInvalidAddendType(addend: PyObject)
+  /// PyErr_Format(
+  ///   PyExc_TypeError,
+  ///   "list indices must be integers or slices, not %.200s",
+  ///   item->ob_type->tp_name);
+  case listInvalidSubscriptIndex(index: PyObject)
 
   /// return type_error("can't multiply sequence by non-int of type '%.200s'", n);
   case sequenceRepeatWithNonInt(PyObject)
@@ -48,6 +63,9 @@ public enum PyContextError: Error {
   case unsupportedBinaryOperandType(operation: String,
                                     left:  PyObject,
                                     right: PyObject)
+
+  /// PyErr_Format(PyExc_TypeError, "unhashable type: '%.200s'", Py_TYPE(v)->tp_name);
+  case unhashableType(object: PyObject)
 
   // TODO: Remove and use NotImplemented
   case invalidTypeConversion(object: PyObject, to: Any)

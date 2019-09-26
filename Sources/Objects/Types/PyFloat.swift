@@ -16,7 +16,7 @@ internal final class PyFloat: PyObject {
 }
 
 internal final class PyFloatType: PyType,
-  ReprConvertibleTypeClass, StrConvertibleTypeClass,
+  ReprTypeClass, StrTypeClass,
   ComparableTypeClass, HashableTypeClass,
 
   SignedTypeClass,
@@ -171,7 +171,7 @@ Convert a string or number to a floating point number, if possible.
   /// static PyObject* float_floor_div(PyObject *v, PyObject *w)
   internal func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
     let divMod = try self.divMod(left: left, right: right)
-    return try self.context.types.tuple.getItem(from: divMod, at: 0)
+    return try self.context.types.tuple.item(owner: divMod, at: 0)
   }
 
   // MARK: - Abs

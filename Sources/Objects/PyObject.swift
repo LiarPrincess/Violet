@@ -13,7 +13,7 @@ internal struct PyObjectFlags: OptionSet {
 public class PyObject {
 
   internal var flags: PyObjectFlags
-  internal let type: PyType
+  internal let type:  PyType
 
   internal init(type: PyType) {
     self.flags = []
@@ -22,10 +22,14 @@ public class PyObject {
 
   // MARK: - Repr
 
+  /// This flag is used to control infinite recursion in `repr`, `str`, `print`
+  /// etc.
   internal var hasReprLock: Bool {
     return self.flags.contains(.reprLock)
   }
 
+  /// Set flag that is used to control infinite recursion in `repr`, `str`,
+  /// `print` etc.
   internal func withReprLock<T>(body: () throws -> T) rethrows -> T {
     self.flags.formUnion(.reprLock)
     defer { _ = self.flags.subtracting(.reprLock) }

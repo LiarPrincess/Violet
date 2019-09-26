@@ -45,14 +45,14 @@ extension CodeObjectBuilder {
 
   /// Append a `loadConst(Integer)` instruction to this code object.
   public func appendInteger(_ value: BigInt) {
-    if value.isZero {
+    if value == 0 {
       if let index = self.cachedIndices.zero {
         self.appendExistingConstant(index: index)
       } else {
         let index = self.appendNewConstant(.integer(value))
         self.cachedIndices.zero = index
       }
-    } else if value.isOne {
+    } else if value == 1 {
       if let index = self.cachedIndices.one {
         self.appendExistingConstant(index: index)
       } else {

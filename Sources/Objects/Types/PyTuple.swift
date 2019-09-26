@@ -17,11 +17,10 @@ internal final class PyTuple: PyObject {
 }
 
 internal final class PyTupleType: PyType,
-ReprConvertibleTypeClass,
+ReprTypeClass,
 ComparableTypeClass, HashableTypeClass,
-
 LengthTypeClass, ConcatTypeClass, RepeatTypeClass,
-GetItemTypeClass, ContainsTypeClass {
+ItemTypeClass, ContainsTypeClass {
 
   internal let name: String = "tuple"
   internal let base: PyType? = nil
@@ -102,7 +101,7 @@ If the argument is a tuple, the return value is the same object.
     }
   }
 
-  // MARK: - Methods
+  // MARK: - Length
 
   /// Py_ssize_t PyTuple_Size(PyObject *op)
   internal func length(value: PyObject) throws -> PyInt {
@@ -110,62 +109,21 @@ If the argument is a tuple, the return value is the same object.
     return self.context.types.int.new(tuple.elements.count)
   }
 
-  /// PyObject* PyTuple_GetItem(PyObject *op, Py_ssize_t i)
-  internal func getItem(from owner: PyObject, at index: Int) throws -> PyObject {
-    let tuple = try self.matchType(owner)
+  // MARK: - Concat
 
-    guard 0 <= index && index < tuple.elements.count else {
-      throw PyContextError.tupleIndexOutOfRange
-    }
-
-    return tuple.elements[index]
-  }
-
-  /// static int tuplecontains(PyTupleObject *a, PyObject *el)
-  internal func contains(owner: PyObject, element: PyObject) throws -> Bool {
-    fatalError()
-  }
-
-  /// PyObject * PyTuple_GetSlice(PyObject *op, Py_ssize_t i, Py_ssize_t j)
-  internal func slice(_ object: PyObject, low: Int, high: Int) throws -> PyObject {
-    let tuple = try self.matchType(object)
-
-    var low = max(low, 0)
-    var high = min(high, tuple.elements.count)
-
-    if low > high {
-      (low, high) = (high, low)
-    }
-
-    if low == 0 && high == tuple.elements.count {
-      return tuple
-    }
-
-    let result = tuple.elements[low..<high]
-    return self.new(Array(result))
-  }
-
-  /// static PyObject * tupleconcat(PyTupleObject *a, PyObject *bb)
   internal func concat(left: PyObject, right: PyObject) throws -> PyObject {
-    let tuple = try self.matchType(left)
+    let l = try self.matchType(left)
 
-    if tuple.elements.isEmpty {
-      return right
-    }
-
-    guard let otherTuple = self.matchTypeOrNil(right) else {
+    guard let r = self.matchTypeOrNil(right) else {
       throw PyContextError.tupleInvalidAddendType(addend: right)
     }
 
-    if otherTuple.elements.isEmpty {
-      return tuple
-    }
-
-    let result = tuple.elements + otherTuple.elements
+    let result = l.elements + r.elements
     return self.new(Array(result))
   }
 
-  /// static PyObject * tuplerepeat(PyTupleObject *a, Py_ssize_t n)
+  // MARK: - Repeat
+
   internal func `repeat`(value: PyObject, count: PyInt) throws -> PyObject {
     let tuple = try self.matchType(value)
     let countRaw = try self.context.types.int.extractInt(count)
@@ -173,7 +131,7 @@ If the argument is a tuple, the return value is the same object.
     let count = max(countRaw, 0)
 
     if tuple.elements.isEmpty || count == 1 {
-      return tuple
+      return self.new(tuple.elements)
     }
 
     var i: BigInt = 0
@@ -184,6 +142,23 @@ If the argument is a tuple, the return value is the same object.
     }
 
     return self.new(result)
+  }
+
+  // MARK: - Item
+
+  internal func item(owner: PyObject, at index: Int) throws -> PyObject {
+    let tuple = try self.matchType(owner)
+
+    guard 0 <= index && index < tuple.elements.count else {
+      throw PyContextError.tupleIndexOutOfRange(tuple: tuple, index: index)
+    }
+
+    return tuple.elements[index]
+  }
+
+  /// static int tuplecontains(PyTupleObject *a, PyObject *el)
+  internal func contains(owner: PyObject, element: PyObject) throws -> Bool {
+    fatalError()
   }
 
   /// static PyObject* tuple_index_impl(PyTupleObject *self, PyObject *value, ...)
@@ -236,6 +211,27 @@ If the argument is a tuple, the return value is the same object.
 //    }
 
     fatalError()
+  }
+
+  // MARK: - Slice
+
+  /// PyObject * PyTuple_GetSlice(PyObject *op, Py_ssize_t i, Py_ssize_t j)
+  internal func slice(_ object: PyObject, low: Int, high: Int) throws -> PyObject {
+    let tuple = try self.matchType(object)
+
+    var low = max(low, 0)
+    var high = min(high, tuple.elements.count)
+
+    if low > high {
+      (low, high) = (high, low)
+    }
+
+    if low == 0 && high == tuple.elements.count {
+      return tuple
+    }
+
+    let result = tuple.elements[low..<high]
+    return self.new(Array(result))
   }
 
   // MARK: - Helpers

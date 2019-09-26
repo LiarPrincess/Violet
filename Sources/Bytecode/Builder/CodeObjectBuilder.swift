@@ -59,9 +59,9 @@ public class CodeObjectBuilder {
       case let .string(s):
         self.cachedIndices.strings[s] = index
 
-      case let .integer(i) where i.isZero:
+      case let .integer(i) where i == 0:
         self.cachedIndices.zero = index
-      case let .integer(i) where i.isOne:
+      case let .integer(i) where i == 1:
         self.cachedIndices.one = index
 
       case .integer, .float, .complex, .bytes, .code, .tuple:

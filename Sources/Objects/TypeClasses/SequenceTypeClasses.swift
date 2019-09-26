@@ -11,7 +11,7 @@ internal protocol ConcatTypeClass: TypeClass {
 }
 
 internal protocol ConcatInPlaceTypeClass: TypeClass {
-  func concatInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func concatInPlace(left: PyObject, right: PyObject) throws
 }
 
 // MARK: - Repeat
@@ -21,13 +21,17 @@ internal protocol RepeatTypeClass: TypeClass {
 }
 
 internal protocol RepeatInPlaceTypeClass: TypeClass {
-  func repeatInPlace(value: PyObject, count: PyInt) throws -> PyObject
+  func repeatInPlace(value: PyObject, count: PyInt) throws
 }
 
 // MARK: - Items
 
-internal protocol GetItemTypeClass: TypeClass {
-  func getItem(from: PyObject, at index: Int) throws -> PyObject
+internal protocol ItemTypeClass: TypeClass {
+  func item(owner: PyObject, at index: Int) throws -> PyObject
+}
+
+internal protocol ItemAssignTypeClass: TypeClass {
+  func itemAssign(owner: PyObject, at index: Int, to value: PyObject) throws
 }
 
 internal protocol ContainsTypeClass: TypeClass {

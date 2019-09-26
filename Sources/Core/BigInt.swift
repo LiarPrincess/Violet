@@ -4,15 +4,27 @@
 //   from what can be stored in available memory.
 // We don't have that in Swift, so we will aproximate:
 
+// TODOL Maybe use: https://github.com/apple/swift/blob/master/test/Prototypes/BigInt.swift
+
 extension Double {
   public init(_ value: BigInt) {
     self = Double(value.value)
   }
 }
 
+extension Int {
+  public init?(exactly value: BigInt) {
+    guard let v = Int(exactly: value.value) else {
+      return nil
+    }
+
+    self = v
+  }
+}
+
 public struct BigInt:
-  Equatable, Hashable,
-  Comparable, SignedNumeric,
+  Equatable, Hashable, Comparable, Strideable,
+  SignedNumeric,
   CustomStringConvertible {
 
   /// The maximum representable integer in this type
@@ -26,9 +38,6 @@ public struct BigInt:
   fileprivate var value: Int64
 
   public var magnitude: UInt64 { return self.value.magnitude }
-
-  public var isZero: Bool { return self.value == 0 }
-  public var isOne:  Bool { return self.value == 1 }
 
   public var description: String {
     return String(describing: self.value)
@@ -200,5 +209,15 @@ public struct BigInt:
 
   public static func ^ (lhs: BigInt, rhs: BigInt) -> BigInt {
     return BigInt(lhs.value ^ rhs.value)
+  }
+
+  // MARK: - Strideable
+
+  public func distance(to other: BigInt) -> BigInt {
+    return other - self
+  }
+
+  public func advanced(by n: BigInt) -> BigInt {
+    return self + n
   }
 }

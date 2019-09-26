@@ -7,7 +7,7 @@ internal final class PyNone: PyObject {
 }
 
 internal final class PyNoneType: PyType,
-ReprConvertibleTypeClass, PyBoolConvertibleTypeClass {
+ReprTypeClass, PyBoolConvertibleTypeClass {
 
   internal let name: String  = "NoneType"
   internal let base: PyType? = nil

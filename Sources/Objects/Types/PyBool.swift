@@ -71,6 +71,6 @@ The class bool is a subclass of the class int, and cannot be subclassed
   // MARK: - Helpers
 
   private func isTrue(_ value: BigInt) -> Bool {
-    return !value.isZero
+    return value != 0
   }
 }
