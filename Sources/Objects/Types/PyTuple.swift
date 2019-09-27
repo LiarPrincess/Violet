@@ -63,9 +63,9 @@ If the argument is a tuple, the return value is the same object.
 
   // MARK: - Equatable, hashable
 
-  func compare(left: PyObject,
-               right: PyObject,
-               mode: CompareMode) throws -> PyObject {
+  internal func compare(left: PyObject,
+                        right: PyObject,
+                        mode: CompareMode) throws -> PyObject {
 //    guard let l = self.matchTypeOrNil(left),
 //          let r = self.matchTypeOrNil(right) else {
 //        return self.context.notImplemented
@@ -100,7 +100,7 @@ If the argument is a tuple, the return value is the same object.
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.repr(value: element)
+        result += try self.context.PyObject_Repr(value: element)
       }
 
       result += tuple.elements.count > 1 ? ")" : ",)"
@@ -113,6 +113,11 @@ If the argument is a tuple, the return value is the same object.
   internal func length(value: PyObject) throws -> PyInt {
     let tuple = try self.matchType(value)
     return self.context.types.int.new(tuple.elements.count)
+  }
+
+  internal func lengthInt(value: PyObject) throws -> Int {
+    let tuple = try self.matchType(value)
+    return tuple.elements.count
   }
 
   // MARK: - Concat
@@ -220,11 +225,11 @@ If the argument is a tuple, the return value is the same object.
 
   // MARK: - Subscript
 
-  func subscriptLength(value: PyObject) throws -> PyObject {
+  internal func subscriptLength(value: PyObject) throws -> PyObject {
     return try self.length(value: value)
   }
 
-  func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
+  internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
     let tuple = try self.matchType(owner)
 
     if var i = try self.extractIndex(value: index) {

@@ -33,7 +33,25 @@ extension PyContext {
     return left
   }
 
-  public func repr(value: PyObject) throws -> String {
+  internal func _PyType_Name(value: PyType) -> String {
+    return ""
+  }
+
+  internal func PyType_IsSubtype(parent: PyType, subtype: PyType) -> Bool {
+    return false
+  }
+
+  internal func PyUnicode_FromFormat(format: String, args: Any...) -> String {
+    return ""
+  }
+
+  public func Py_CLEAR(value: PyObject) throws { }
+
+  public func PyObject_Repr(value: PyObject) throws -> String {
+    return ""
+  }
+
+  public func PyObject_Str(value: PyObject) throws -> String {
     return ""
   }
 
@@ -44,7 +62,7 @@ extension PyContext {
 
 public final class PyUnicodeType {
 
-  fileprivate init() { }
+  internal init() { }
 
   public func checkExact(_ value: PyObject) -> Bool {
     return false
@@ -56,6 +74,10 @@ public final class PyUnicodeType {
 
   public func format(dividend: PyObject, divisor: PyObject) -> PyObject {
     return dividend
+  }
+
+  public func extract(value: PyObject) -> String? {
+    return ""
   }
 
   public func unicode_concatenate(left: PyObject, right: PyObject) -> PyObject {

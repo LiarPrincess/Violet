@@ -99,9 +99,9 @@ This is used for extended slicing (e.g. a[0:10:2]).
 
   internal func repr(value: PyObject) throws -> String {
     let slice = try self.matchType(value)
-    let start = try self.context.repr(value:slice.start)
-    let stop  = try self.context.repr(value:slice.stop)
-    let step  = try self.context.repr(value:slice.step)
+    let start = try self.context.PyObject_Repr(value:slice.start)
+    let stop  = try self.context.PyObject_Repr(value:slice.stop)
+    let step  = try self.context.PyObject_Repr(value:slice.step)
     return "slice(\(start), \(stop), \(step))"
   }
 

@@ -195,7 +195,9 @@ extension PyContext {
 
       // If right also implements this operation and it is a subtype
       // then use overloaded operator
-      let isSubtype = left.type !== right.type && right.type.isSubtype(of: left.type)
+      let isSubtype = left.type !== right.type &&
+        self.PyType_IsSubtype(parent: right.type, subtype: left.type)
+
       if let subOp = right.type as? TC, isSubtype {
         return subOp
       }

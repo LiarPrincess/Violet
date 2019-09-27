@@ -109,7 +109,7 @@ The argument must be an iterable if specified.
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.repr(value: element)
+        result += try self.context.PyObject_Repr(value: element)
       }
 
       result += list.elements.count > 1 ? "]" : ",]"
@@ -228,11 +228,11 @@ The argument must be an iterable if specified.
 
   // MARK: - Subscript
 
-  func subscriptLength(value: PyObject) throws -> PyObject {
+  internal func subscriptLength(value: PyObject) throws -> PyObject {
     return try self.length(value: value)
   }
 
-  func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
+  internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
     let list = try self.matchType(owner)
 
     if var i = try self.extractIndex(value: index) {
@@ -245,7 +245,7 @@ The argument must be an iterable if specified.
     throw PyContextError.listInvalidSubscriptIndex(index: index)
   }
 
-  func subscriptAssign(owner: PyObject, index: PyObject, value: PyObject) throws {
+  internal func subscriptAssign(owner: PyObject, index: PyObject, value: PyObject) throws {
     let list = try self.matchType(owner)
 
     if var i = try self.extractIndex(value: index) {
