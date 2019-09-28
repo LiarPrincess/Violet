@@ -98,7 +98,9 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   // MARK: - Equatable, hashable
 
-  func compare(left: PyObject, right: PyObject, mode: CompareMode) throws -> PyObject {
+  internal func compare(left: PyObject,
+                        right: PyObject,
+                        mode: CompareMode) throws -> PyObject {
     fatalError()
   }
 
@@ -155,6 +157,10 @@ Base 0 means to interpret the base from the string as an integer literal.
     return self.new(l * r)
   }
 
+  internal func pow(value: PyObject, exponent: PyObject) throws -> PyObject {
+    fatalError()
+  }
+
   // MARK: - Div
 
   internal func div(left: PyObject, right: PyObject) throws -> PyObject {
@@ -208,12 +214,6 @@ Base 0 means to interpret the base from the string as an integer literal.
   internal func abs(value: PyObject) throws -> PyObject {
     let v = try self.extractInt(value)
     return self.new(Swift.abs(v))
-  }
-
-  // MARK: - Power
-
-  internal func pow(left: PyObject, right: PyObject) throws -> PyObject {
-    fatalError()
   }
 
   // MARK: - Shift

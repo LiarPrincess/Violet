@@ -132,11 +132,11 @@ extension PyContext {
 
   // MARK: - Power
 
-  public func pow(left: PyObject, right: PyObject) throws -> PyObject {
+  public func pow(value: PyObject, exponent: PyObject) throws -> PyObject {
     let type: PowTypeClass =
-      try self.getTypeClass(op: "** or pow()", left: left, right: right)
+      try self.getTypeClass(op: "** or pow()", left: value, right: exponent)
 
-    return try type.pow(left: left, right: right)
+    return try type.pow(value: value, exponent: exponent)
   }
 
   // MARK: - Shift

@@ -191,7 +191,7 @@ internal protocol PowTypeClass: TypeClass {
   /// See the built-in function pow(). Returns NULL on failure.
   /// This is the equivalent of the Python expression pow(o1, o2, o3),
   /// where o3 is optional.
-  func pow(left: PyObject, right: PyObject) throws -> PyObject
+  func pow(value: PyObject, exponent: PyObject) throws -> PyObject
 }
 
 internal protocol PowInPlaceTypeClass: TypeClass {
@@ -201,5 +201,5 @@ internal protocol PowInPlaceTypeClass: TypeClass {
   /// or an in-place variant of pow(o1, o2, o3) otherwise.
   /// If o3 is to be ignored, pass Py_None in its place
   /// (passing NULL for o3 would cause an illegal memory access).
-  func powInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func powInPlace(value: PyObject, exponent: PyObject) throws -> PyObject
 }

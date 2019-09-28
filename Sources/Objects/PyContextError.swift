@@ -17,6 +17,21 @@ public enum PyContextError: Error {
   /// PyErr_SetString(PyExc_ZeroDivisionError, "float divmod()");
   case floatDivModZero
 
+  /// PyErr_SetString(PyExc_TypeError, "can't convert complex to int");
+  case complexInvalidToInt
+  /// PyErr_SetString(PyExc_TypeError, "can't convert complex to float");
+  case complexInvalidToFloat
+  /// PyErr_SetString(PyExc_ZeroDivisionError, "complex division by zero");
+  case complexDivisionByZero
+  /// PyErr_SetString(PyExc_ZeroDivisionError, "0.0 to a negative or complex power");
+  case complexZeroToNegativeOrComplexPower
+  /// PyErr_SetString(PyExc_TypeError, "can't take floor of complex number.");
+  case complexInvalidDivFloor
+  /// PyErr_SetString(PyExc_TypeError, "can't mod complex numbers.");
+  case complexInvalidModulo
+  /// PyErr_SetString(PyExc_TypeError, "can't take floor or mod of complex number.");
+  case complexInvalidDivMod
+
   /// return type_error("bad operand type for unary +: '%.200s'", o);
   case invalidOperandForUnaryPositive(PyObject)
   /// return type_error("bad operand type for unary -: '%.200s'", o);

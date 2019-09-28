@@ -37,9 +37,7 @@ internal final class PyFloat: PyObject {
 internal final class PyFloatType: PyType,
   ReprTypeClass, StrTypeClass,
   ComparableTypeClass, HashableTypeClass,
-
-  SignedTypeClass,
-  AbsTypeClass,
+  SignedTypeClass, AbsTypeClass,
   AddTypeClass, SubTypeClass,
   MulTypeClass, PowTypeClass,
   DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
@@ -52,6 +50,8 @@ float(x) -> floating point number
 
 Convert a string or number to a floating point number, if possible.
 """
+
+  internal lazy var nan = self.new(Double.nan)
 
   internal unowned let context: PyContext
 
@@ -68,7 +68,7 @@ Convert a string or number to a floating point number, if possible.
   // MARK: - String
 
   internal func repr(value: PyObject) throws -> String {
-    let v = try  self.extractDouble(value)
+    let v = try self.extractDouble(value)
     return String(describing: v)
   }
 
@@ -78,7 +78,9 @@ Convert a string or number to a floating point number, if possible.
 
   // MARK: - Equatable, hashable
 
-  func compare(left: PyObject, right: PyObject, mode: CompareMode) throws -> PyObject {
+  internal func compare(left: PyObject,
+                        right: PyObject,
+                        mode: CompareMode) throws -> PyObject {
     fatalError()
   }
 
@@ -93,7 +95,6 @@ Convert a string or number to a floating point number, if possible.
     return self.context.types.bool.new(!v.isZero)
   }
 
-  /// static PyObject * float___trunc___impl(PyObject *self)
   internal func int(value: PyObject) throws -> PyInt {
     let v = try self.extractDouble(value)
     return self.context.types.int.new(BigInt(v))
@@ -116,14 +117,12 @@ Convert a string or number to a floating point number, if possible.
 
   // MARK: - Add, sub
 
-  /// static PyObject* float_add(PyObject *v, PyObject *w)
   internal func add(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractDouble(left)
     let r = try self.extractDouble(right)
     return self.new(l + r)
   }
 
-  /// static PyObject* float_sub(PyObject *v, PyObject *w)
   internal func sub(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractDouble(left)
     let r = try self.extractDouble(right)
@@ -132,11 +131,16 @@ Convert a string or number to a floating point number, if possible.
 
   // MARK: - Mul
 
-  /// static PyObject* float_mul(PyObject *v, PyObject *w)
   internal func mul(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractDouble(left)
     let r = try self.extractDouble(right)
     return self.new(l * r)
+  }
+
+  internal func pow(value: PyObject, exponent: PyObject) throws -> PyObject {
+    let l = try self.extractDouble(value)
+    let r = try self.extractDouble(exponent)
+    return self.new(Foundation.pow(l, r))
   }
 
   // MARK: - Div
@@ -153,7 +157,6 @@ Convert a string or number to a floating point number, if possible.
     return self.new(l / r)
   }
 
-  /// static PyObject* float_rem(PyObject *v, PyObject *w)
   internal func remainder(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractDouble(left)
     let r = try self.extractDouble(right)
@@ -166,7 +169,6 @@ Convert a string or number to a floating point number, if possible.
     return self.new(remainder)
   }
 
-  /// static PyObject * float_divmod(PyObject *v, PyObject *w)
   internal func divMod(left: PyObject, right: PyObject) throws -> PyObject {
     let l = try self.extractDouble(left)
     let r = try self.extractDouble(right)
@@ -187,7 +189,6 @@ Convert a string or number to a floating point number, if possible.
     return self.context.types.tuple.new(self.new(quotient), self.new(remainder))
   }
 
-  /// static PyObject* float_floor_div(PyObject *v, PyObject *w)
   internal func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
     let divMod = try self.divMod(left: left, right: right)
     return try self.context.types.tuple.item(owner: divMod, at: 0)
@@ -200,18 +201,9 @@ Convert a string or number to a floating point number, if possible.
     return self.new(Swift.abs(v))
   }
 
-  // MARK: - Power
-
-  /// static PyObject* float_pow(PyObject *v, PyObject *w, PyObject *z)
-  internal func pow(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractDouble(left)
-    let r = try self.extractDouble(right)
-    return self.new(Foundation.pow(l, r))
-  }
-
   // MARK: - Helpers
 
-  private func matchType(_ object: PyObject) throws -> PyFloat {
+  internal func matchType(_ object: PyObject) throws -> PyFloat {
     if let float = object as? PyFloat {
       return float
     }
@@ -219,7 +211,19 @@ Convert a string or number to a floating point number, if possible.
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
 
-  private func extractDouble(_ object: PyObject) throws -> Double {
+  internal func extractDoubleOrNil(_ object: PyObject) -> Double? {
+    if let f = object as? PyFloat {
+      return f.value
+    }
+
+    if let i = object as? PyInt {
+      return Double(i.value)
+    }
+
+    return nil
+  }
+
+  internal func extractDouble(_ object: PyObject) throws -> Double {
     if let f = object as? PyFloat {
       return f.value
     }

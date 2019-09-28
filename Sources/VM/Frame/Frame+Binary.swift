@@ -7,9 +7,9 @@ extension Frame {
 
   /// Implements `TOS = TOS1 ** TOS`.
   internal func binaryPower() throws {
-    let exp = self.pop()
-    let base = self.top
-    let result = try self.context.pow(left: base, right: exp)
+    let exponent = self.pop()
+    let value = self.top
+    let result = try self.context.pow(value: value, exponent: exponent)
     self.setTop(result)
   }
 
