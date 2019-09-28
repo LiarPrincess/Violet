@@ -85,7 +85,7 @@ The argument must be an iterable if specified.
     fatalError()
   }
 
-  internal func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
+  internal func hash(value: PyObject) throws -> PyHash {
     throw PyContextError.unhashableType(object: value)
   }
 

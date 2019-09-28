@@ -73,29 +73,44 @@ If the argument is a tuple, the return value is the same object.
     fatalError()
   }
 
-  internal func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
-    fatalError()
+  internal func hash(value: PyObject) throws -> PyHash {
+    let hasher = self.context.hasher
+    let v = try self.matchType(value)
+
+    var x: PyHash = 0x345678
+    var mult = hasher._PyHASH_MULTIPLIER
+    for element in v.elements {
+      let y = try self.context.hash(value: element)
+      x = (x ^ y) * mult
+      mult += 82_520 + PyHash(2 * v.elements.count)
+    }
+
+    x += 97_531
+    if x == -1 {
+      x = -2
+    }
+    return x
   }
 
   // MARK: - String
 
   internal func repr(value: PyObject) throws -> String {
-    let tuple = try self.matchType(value)
+    let v = try self.matchType(value)
 
-    if tuple.elements.isEmpty {
+    if v.elements.isEmpty {
       return "()"
     }
 
     // While not mutable, it is still possible to end up with a cycle in a tuple
     // through an object that stores itself within a tuple (and thus infinitely
     // asks for the repr of itself).
-    if tuple.hasReprLock {
+    if v.hasReprLock {
       return "(...)"
     }
 
-    return try tuple.withReprLock {
+    return try v.withReprLock {
       var result = "("
-      for (index, element) in tuple.elements.enumerated() {
+      for (index, element) in v.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ', )'.
         }
@@ -103,7 +118,7 @@ If the argument is a tuple, the return value is the same object.
         result += try self.context.PyObject_Repr(value: element)
       }
 
-      result += tuple.elements.count > 1 ? ")" : ",)"
+      result += v.elements.count > 1 ? ")" : ",)"
       return result
     }
   }
@@ -111,13 +126,13 @@ If the argument is a tuple, the return value is the same object.
   // MARK: - Length
 
   internal func length(value: PyObject) throws -> PyInt {
-    let tuple = try self.matchType(value)
-    return self.context.types.int.new(tuple.elements.count)
+    let v = try self.matchType(value)
+    return self.context.types.int.new(v.elements.count)
   }
 
   internal func lengthInt(value: PyObject) throws -> Int {
-    let tuple = try self.matchType(value)
-    return tuple.elements.count
+    let v = try self.matchType(value)
+    return v.elements.count
   }
 
   // MARK: - Concat

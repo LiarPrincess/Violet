@@ -12,9 +12,9 @@ extension Double {
   }
 }
 
-extension Int {
+extension BinaryInteger {
   public init?(exactly value: BigInt) {
-    guard let v = Int(exactly: value.value) else {
+    guard let v = Self(exactly: value.value) else {
       return nil
     }
 

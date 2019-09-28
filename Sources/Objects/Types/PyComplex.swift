@@ -90,8 +90,18 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
     fatalError()
   }
 
-  internal func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
-    fatalError()
+  internal func hash(value: PyObject) throws -> PyHash {
+    let v = try self.matchType(value)
+
+    let hasher = self.context.hasher
+    let realHash = hasher.hash(v.real)
+    let imagHash = hasher.hash(v.imag)
+
+    var combined = realHash + hasher._PyHASH_IMAG * imagHash
+    if combined == -1 {
+      combined = -2
+    }
+    return combined
   }
 
   // MARK: - Conversion

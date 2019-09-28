@@ -21,6 +21,10 @@ extension PyContext {
     return left
   }
 
+  internal func hash(value: PyObject) throws -> PyHash {
+    return 0
+  }
+
   public func PyObject_RichCompareBool(left:  PyObject,
                                        right: PyObject,
                                        mode:  CompareMode) -> Bool {

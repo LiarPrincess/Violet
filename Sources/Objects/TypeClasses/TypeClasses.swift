@@ -12,7 +12,7 @@ internal protocol ComparableTypeClass: TypeClass {
 }
 
 internal protocol HashableTypeClass: TypeClass {
-  func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject
+  func hash(value: PyObject) throws -> PyHash
 }
 
 // MARK: - String

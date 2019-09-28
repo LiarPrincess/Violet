@@ -104,8 +104,9 @@ Base 0 means to interpret the base from the string as an integer literal.
     fatalError()
   }
 
-  internal func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
-    fatalError()
+  internal func hash(value: PyObject) throws -> PyHash {
+    let v = try self.extractInt(value)
+    return self.context.hasher.hash(v)
   }
 
   // MARK: - Conversion

@@ -84,8 +84,9 @@ Convert a string or number to a floating point number, if possible.
     fatalError()
   }
 
-  internal func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
-    fatalError()
+  internal func hash(value: PyObject) throws -> PyHash {
+    let v = try self.extractDouble(value)
+    return self.context.hasher.hash(v)
   }
 
   // MARK: - Conversion

@@ -91,7 +91,7 @@ This is used for extended slicing (e.g. a[0:10:2]).
     return self.context.PyObject_RichCompare(left: tl, right: tr, mode: mode)
   }
 
-  internal func hash(value: PyObject, into hasher: inout Hasher) throws -> PyObject {
+  internal func hash(value: PyObject) throws -> PyHash {
     throw PyContextError.unhashableType(object: value)
   }
 
