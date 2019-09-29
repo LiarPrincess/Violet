@@ -25,6 +25,32 @@ extension PyContext {
     return 0
   }
 
+  internal func Py_RETURN_RICHCOMPARE(lhs: Int,
+                                      rhs: Int64,
+                                      mode: CompareMode) -> PyBool {
+    switch mode {
+    case .equal:    return self.types.bool.new(lhs == rhs)
+    case .notEqual: return self.types.bool.new(lhs != rhs)
+    case .less:      return self.types.bool.new(lhs < rhs)
+    case .lessEqual: return self.types.bool.new(lhs <= rhs)
+    case .greater:      return self.types.bool.new(lhs > rhs)
+    case .greaterEqual: return self.types.bool.new(lhs >= rhs)
+    }
+  }
+
+  internal func Py_RETURN_RICHCOMPARE(lhs: Double,
+                                      rhs: Double,
+                                      mode: CompareMode) -> PyBool {
+    switch mode {
+    case .equal:    return self.types.bool.new(lhs == rhs)
+    case .notEqual: return self.types.bool.new(lhs != rhs)
+    case .less:      return self.types.bool.new(lhs < rhs)
+    case .lessEqual: return self.types.bool.new(lhs <= rhs)
+    case .greater:      return self.types.bool.new(lhs > rhs)
+    case .greaterEqual: return self.types.bool.new(lhs >= rhs)
+    }
+  }
+
   public func PyObject_RichCompareBool(left:  PyObject,
                                        right: PyObject,
                                        mode:  CompareMode) -> Bool {

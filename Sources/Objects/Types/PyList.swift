@@ -82,7 +82,50 @@ The argument must be an iterable if specified.
   internal func compare(left: PyObject,
                         right: PyObject,
                         mode: CompareMode) throws -> PyObject {
-    fatalError()
+    guard let l = self.matchTypeOrNil(left),
+          let r = self.matchTypeOrNil(right) else {
+        fatalError()
+    }
+
+    // short path when length does not equal
+    let isCountEqual = l.elements.count == r.elements.count
+    if mode == .equal && !isCountEqual {
+      return self.context.false
+    }
+
+    if mode == .notEqual && !isCountEqual {
+      return self.context.true
+    }
+
+    // try to finc first item that differs
+    for (lElem, rElem) in zip(l.elements, r.elements) {
+      let areEqual = self.context.PyObject_RichCompareBool(left: lElem,
+                                                           right: rElem,
+                                                           mode: .equal)
+
+      if !areEqual {
+        switch mode {
+        case .equal:
+          return self.context.false
+        case .notEqual:
+          return self.context.true
+        case .less,
+             .lessEqual,
+             .greater,
+             .greaterEqual:
+          return self.context.PyObject_RichCompare(left: left,
+                                                   right: right,
+                                                   mode: mode)
+        }
+      }
+    }
+
+    // collections are equal up to to shorter list count, compare count
+    let lCount = self.context.types.int.new(l.elements.count)
+    let rCount = self.context.types.int.new(r.elements.count)
+    return self.context.PyObject_RichCompare(left: lCount,
+                                             right: rCount,
+                                             mode: mode)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {

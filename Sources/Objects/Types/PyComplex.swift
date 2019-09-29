@@ -87,6 +87,43 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
   internal func compare(left:  PyObject,
                         right: PyObject,
                         mode: CompareMode) throws -> PyObject {
+    let l = try self.matchType(left)
+
+    switch mode {
+    case .equal:
+      let isEqual = try self.isEqual(left: l, right: right)
+      return self.context.types.bool.new(isEqual)
+    case .notEqual:
+      let isEqual = try self.isEqual(left: l, right: right)
+      return self.context.types.bool.new(!isEqual)
+    case .less,
+         .lessEqual,
+         .greater,
+         .greaterEqual:
+      fatalError()
+    }
+  }
+
+  private func isEqual(left: PyComplex, right: PyObject) throws -> Bool {
+    if let r = right as? PyComplex {
+      return left.real == r.real && left.imag == r.imag
+    }
+
+    if let r = right as? PyFloat {
+      return left.real == r.value && left.imag == 0
+    }
+
+    if let r = right as? PyInt {
+      guard left.imag.isZero else {
+        return false
+      }
+
+      let real = self.context.types.float.new(left.real)
+      return self.context.PyObject_RichCompareBool(left: real,
+                                                   right: r,
+                                                   mode: .equal)
+    }
+
     fatalError()
   }
 

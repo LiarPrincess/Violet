@@ -5,7 +5,6 @@ import Core
 // Objects -> longobject.c
 // https://docs.python.org/3.7/c-api/long.html
 
-// TODO: Add predefined values (-5, 257) + other types
 // TODO: Int
 // PyObject_GenericGetAttr,                    /* tp_getattro */
 // {"conjugate", (PyCFunction)long_long, METH_NOARGS, "Returns self, the ... }
@@ -101,7 +100,16 @@ Base 0 means to interpret the base from the string as an integer literal.
   internal func compare(left: PyObject,
                         right: PyObject,
                         mode: CompareMode) throws -> PyObject {
-    fatalError()
+    let l = try self.extractInt(left)
+    let r = try self.extractInt(right)
+
+    let sign = l - r
+    let result =
+      sign < 0 ? -1 :
+      sign > 0 ? 1 :
+      0
+
+    return self.context.Py_RETURN_RICHCOMPARE(lhs: result, rhs: 0, mode: mode)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
