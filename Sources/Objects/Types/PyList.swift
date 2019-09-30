@@ -47,7 +47,7 @@ ItemTypeClass, ItemAssignTypeClass,
 SubscriptTypeClass, SubscriptAssignTypeClass,
 ContainsTypeClass {
 
-  internal let name: String = "list"
+  override internal var name: String { return "list" }
   internal let base: PyType? = nil
   internal let doc:  String? = """
 list(iterable=(), /)
@@ -148,7 +148,7 @@ The argument must be an iterable if specified.
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.PyObject_Repr(value: element)
+        result += try self.context.repr(value: element)
       }
 
       result += list.elements.count > 1 ? "]" : ",]"

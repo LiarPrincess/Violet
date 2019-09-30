@@ -51,7 +51,7 @@ extension PyContext {
   }
 
   internal func _PyType_Name(value: PyType) -> String {
-    return ""
+    return value.name
   }
 
   internal func PyType_IsSubtype(parent: PyType, subtype: PyType) -> Bool {
@@ -63,14 +63,6 @@ extension PyContext {
   }
 
   public func Py_CLEAR(value: PyObject) throws { }
-
-  public func PyObject_Repr(value: PyObject) throws -> String {
-    return ""
-  }
-
-  public func PyObject_Str(value: PyObject) throws -> String {
-    return ""
-  }
 
   public func pySlice_New(start: PyObject, stop: PyObject, step: PyObject?) -> PyObject {
     return start

@@ -12,7 +12,7 @@ internal final class PyNotImplemented: PyObject {
 /// operation is not implemented for the given type combination.
 internal final class PyNotImplementedType: PyType, ReprTypeClass {
 
-  internal let name: String  = "NotImplementedType"
+  override internal var name: String { return "NotImplementedType" }
   internal let base: PyType? = nil
   internal let doc:  String? = nil
 

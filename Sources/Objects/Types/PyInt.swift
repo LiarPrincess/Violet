@@ -38,7 +38,6 @@ internal class PyInt: PyObject {
 internal class PyIntType: PyType,
   ReprTypeClass, StrTypeClass,
   ComparableTypeClass, HashableTypeClass,
-
   SignedTypeClass,
   AbsTypeClass,
   AddTypeClass, SubTypeClass,
@@ -49,7 +48,7 @@ internal class PyIntType: PyType,
   ShiftTypeClass,
   BinaryTypeClass {
 
-  internal var name: String { return "int" }
+  override internal var name: String { return "int" }
   internal var base: PyType? { return nil }
   internal var doc:  String? { return """
 int([x]) -> integer

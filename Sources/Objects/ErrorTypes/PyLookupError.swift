@@ -31,7 +31,7 @@ internal final class PyKeyErrorType: PyLookupErrorType {
     switch size {
     case 1:
       let item = try tupleType.item(owner: e.args, at: 0)
-      return try self.context.PyObject_Repr(value: item)
+      return try self.context.repr(value: item)
     default:
       return try super.str(value: value)
     }

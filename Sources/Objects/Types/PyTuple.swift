@@ -34,7 +34,7 @@ ComparableTypeClass, HashableTypeClass,
 LengthTypeClass, ConcatTypeClass, RepeatTypeClass,
 ItemTypeClass, ContainsTypeClass, SubscriptTypeClass {
 
-  internal let name: String = "tuple"
+  override internal var name: String { return "tuple" }
   internal let base: PyType? = nil
   internal let doc:  String? = """
 tuple() -> an empty tuple
@@ -140,7 +140,7 @@ If the argument is a tuple, the return value is the same object.
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.PyObject_Repr(value: element)
+        result += try self.context.repr(value: element)
       }
 
       result += v.elements.count > 1 ? ")" : ",)"

@@ -20,7 +20,7 @@ internal final class PyEllipsis: PyObject {
 /// This is the same as slice in the Python layer.
 internal final class PyEllipsisType: PyType, ReprTypeClass {
 
-  internal let name: String = "ellipsis"
+  override internal var name: String { return "ellipsis" }
   internal let base: PyType? = nil
   internal let doc:  String? = nil
 

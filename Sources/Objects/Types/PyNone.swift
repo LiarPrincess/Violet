@@ -11,7 +11,7 @@ internal final class PyNone: PyObject {
 internal final class PyNoneType: PyType,
 ReprTypeClass, PyBoolConvertibleTypeClass {
 
-  internal let name: String  = "NoneType"
+  override internal var name: String { return "NoneType" }
   internal let base: PyType? = nil
   internal let doc:  String? = nil
 

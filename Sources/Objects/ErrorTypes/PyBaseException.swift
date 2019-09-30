@@ -45,7 +45,7 @@ internal class PyBaseException: PyObject {
 internal class PyBaseExceptionType: PyType,
 ReprTypeClass, StrTypeClass, ClearTypeClass {
 
-  internal var name: String { return "BaseException" }
+  override internal var name: String { return "BaseException" }
   internal var base: PyType? { return nil }
   internal var doc: String? { return "Common base class for all exceptions" }
 
@@ -82,9 +82,9 @@ ReprTypeClass, StrTypeClass, ClearTypeClass {
       return ""
     case 1:
       let item = try tupleType.item(owner: e.args, at: 0)
-      return try self.context.PyObject_Str(value: item)
+      return try self.context.str(value: item)
     default:
-      return try self.context.PyObject_Str(value: e.args)
+      return try self.context.str(value: e.args)
     }
   }
 

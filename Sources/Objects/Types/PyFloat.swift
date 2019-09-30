@@ -43,7 +43,7 @@ internal final class PyFloatType: PyType,
   DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
   PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
 
-  internal let name: String  = "float"
+  override internal var name: String { return "float" }
   internal let base: PyType? = nil
   internal let doc:  String? = """
 float(x) -> floating point number

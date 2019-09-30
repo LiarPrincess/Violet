@@ -36,7 +36,7 @@ internal final class PyComplexType: PyType,
   DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
   PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
 
-  internal let name: String  = "complex"
+  override internal var name: String { return "complex" }
   internal let base: PyType? = nil
   internal let doc:  String? = """
 complex(real=0, imag=0)
