@@ -65,7 +65,9 @@ extension Frame {
     let right = self.pop()
     let left = self.top
 
-    let isConcat = self.context.unicode.checkExact(left) && self.context.unicode.checkExact(right)
+    let isConcat = self.context.unicode.checkExact(left)
+                && self.context.unicode.checkExact(right)
+
     let result = isConcat ?
       self.context.unicode.unicode_concatenate(left: left, right: right) :
       try self.context.add(left: left, right: right)
@@ -129,10 +131,41 @@ extension Frame {
 
   /// Performs a `Boolean` operation.
   internal func compareOp(comparison: ComparisonOpcode) throws {
-//    let right = self.pop()
-//    let left = self.top
-//    let result = self.cmp_outcome(comparison: comparison, left: left, right: right)
-//    self.setTop(result)
-    fatalError()
+    let right = self.pop()
+    let left = self.top
+    let result = try self.compare(left: left, right: right, comparison: comparison)
+    self.setTop(result)
+  }
+
+  private func compare(left: PyObject,
+                       right: PyObject,
+                       comparison: ComparisonOpcode) throws -> PyObject {
+    switch comparison {
+    case .equal:
+      return self.context.richCompare(left: left, right: right, mode: .equal)
+    case .notEqual:
+      return self.context.richCompare(left: left, right: right, mode: .notEqual)
+    case .less:
+      return self.context.richCompare(left: left, right: right, mode: .less)
+    case .lessEqual:
+      return self.context.richCompare(left: left, right: right, mode: .lessEqual)
+    case .greater:
+      return self.context.richCompare(left: left, right: right, mode: .greater)
+    case .greaterEqual:
+      return self.context.richCompare(left: left, right: right, mode: .greaterEqual)
+    case .is:
+      return self.context.is(left: left, right: right)
+    case .isNot:
+      let isReferenceEqual = self.context.is(left: left, right: right)
+      return try self.context.not(value: isReferenceEqual)
+    case .in:
+      return self.context.contains(sequence: left, value: right)
+    case .notIn:
+      let contains = self.context.contains(sequence: left, value: right)
+      return try self.context.not(value: contains)
+    case .exceptionMatch:
+      // ceval.c -> case PyCmp_EXC_MATCH:
+      fatalError()
+    }
   }
 }

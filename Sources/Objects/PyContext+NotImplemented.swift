@@ -7,7 +7,23 @@ public enum CompareMode {
   case greaterEqual
 }
 
+public class CreateDictionaryArg {
+  public let key: PyObject
+  public let value: PyObject
+
+  public init(key: PyObject, value: PyObject) {
+    self.key = key
+    self.value = value
+  }
+}
+
+
 extension PyContext {
+
+  /// `is` will return `True` if two variables point to the same object.
+  public func `is`(left: PyObject, right: PyObject) -> PyObject {
+    return self.types.bool.new(left === right)
+  }
 
   /// Test a value used as condition, e.g., in a for or if statement.
   public func isTrue(value: PyObject) throws -> Bool {
@@ -35,19 +51,62 @@ extension PyContext {
     return true
   }
 
+  public func createTuple(elements: [PyObject] = []) -> PyObject {
+    return elements.isEmpty ? self.emptyTuple : self.types.tuple.new(elements)
+  }
+
+  public func createTuple(list: PyObject) -> PyObject {
+    fatalError()
+  }
+
+  public func createList(elements: [PyObject] = []) -> PyObject {
+    return self.types.list.new(elements)
+  }
+
+  public func createSet(elements: [PyObject] = []) -> PyObject {
+    fatalError()
+  }
+
+  public func createDictionary(elements: [CreateDictionaryArg] = []) -> PyObject {
+    fatalError()
+  }
+
+  public func createConstDictionary(keys: PyObject,
+                                    elements: [PyObject]) -> PyObject {
+    // check keys.count == elements.count
+    fatalError()
+  }
+
+  public func _PyList_Extend(list: PyObject, iterable: PyObject) { }
+
+  public func _PySet_Update(set: PyObject, iterable: PyObject) { }
+
+  public func PyDict_Update(dictionary: PyObject, iterable: PyObject) { }
+
+  public func dictionaryAdd(dictionary: PyObject, key: PyObject, value: PyObject) { }
+
+  public func setAdd(set: PyObject, value: PyObject) { }
+
+  public func listAdd(list: PyObject, value: PyObject) { }
+
   // MARK: - TODO
+
+  public func getSizeInt(value: PyObject) -> Int {
+    return 0
+  }
+
+  public func not(value: PyObject) throws -> PyObject {
+    return value
+  }
 
   public var unicode: PyUnicodeType { return PyUnicodeType() }
 
-  public func cmp_outcome(mode: CompareMode,
-                          left:  PyObject,
-                          right: PyObject) -> PyObject {
-    // remember to fix enum in caller
-    return left
-  }
-
   internal func hash(value: PyObject) throws -> PyHash {
     return 0
+  }
+
+  public func contains(sequence: PyObject, value: PyObject) -> PyObject {
+    return sequence
   }
 
   internal func _PyType_Name(value: PyType) -> String {

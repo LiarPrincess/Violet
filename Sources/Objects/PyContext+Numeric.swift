@@ -50,8 +50,8 @@ extension PyContext {
     }
 
     throw PyContextError.unsupportedBinaryOperandType(operation: "+",
-                                                   left: left,
-                                                   right: right)
+                                                      left: left,
+                                                      right: right)
   }
 
   public func sub(left: PyObject, right: PyObject) throws -> PyObject {
@@ -82,8 +82,8 @@ extension PyContext {
     }
 
     throw PyContextError.unsupportedBinaryOperandType(operation: "*",
-                                                   left: left,
-                                                   right: right)
+                                                      left: left,
+                                                      right: right)
   }
 
   private func asRepeatCount(_ value: PyObject) throws -> PyInt {
@@ -231,7 +231,7 @@ extension PyContext {
     }
 
     throw PyContextError.unsupportedBinaryOperandType(operation: op,
-                                                   left: left,
-                                                   right: right)
+                                                      left: left,
+                                                      right: right)
   }
 }
