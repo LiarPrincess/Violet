@@ -134,7 +134,7 @@ If the argument is a tuple, the return value is the same object.
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.repr(value: element)
+        result += try self.context.reprString(value: element)
       }
 
       result += v.elements.count > 1 ? ")" : ",)"

@@ -65,6 +65,18 @@ internal class Frame {
     // #define BASIC_STACKADJ(n) (stack_pointer += n)
   }
 
+  // MARK: - Common
+
+  internal func popElements(count: Int) -> [PyObject] {
+    var elements = [PyObject]()
+    for _ in 0..<count {
+      elements.push(self.pop())
+    }
+
+    // Elements on stack are in reverse order
+    return elements.reversed()
+  }
+
   // MARK: - Run
 
   internal func run() throws {
@@ -320,7 +332,7 @@ internal class Frame {
       assert(extendedArg == 0)
       try self.formatValue(conversion: conversion, hasFormat: hasFormat)
     case let .buildString(value):
-      try self.buildString(value: extendedArg + Int(value))
+      try self.buildString(count: extendedArg + Int(value))
     case let .extendedArg(value):
       let arg = extendedArg << 8 | Int(value)
       try self.executeInstruction(extendedArg: arg)
@@ -332,6 +344,6 @@ internal class Frame {
       try self.loadClosure(cellOrFreeIndex: extendedArg + Int(cellOrFreeIndex))
     case let .buildSlice(arg):
       try self.buildSlice(arg: arg)
-   }
+    }
   }
 }

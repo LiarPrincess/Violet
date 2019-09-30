@@ -56,16 +56,6 @@ extension Frame {
     self.push(collection)
   }
 
-  private func popElements(count: Int) -> [PyObject] {
-    var elements = [PyObject]()
-    for _ in 0..<count {
-      elements.push(self.pop())
-    }
-
-    // Elements on stack are in reverse order
-    return elements.reversed()
-  }
-
   private func popDictionaryElements(count: Int) -> [CreateDictionaryArg] {
     var elements = [CreateDictionaryArg]()
     for _ in 0..<count {

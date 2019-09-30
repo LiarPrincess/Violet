@@ -89,6 +89,14 @@ extension PyContext {
 
   public func listAdd(list: PyObject, value: PyObject) { }
 
+  public func _PyUnicode_JoinArray(elements: [PyObject]) -> PyObject {
+    fatalError()
+  }
+
+  public func PyObject_ASCII(value: PyObject) throws -> PyObject {
+    fatalError()
+  }
+
   // MARK: - TODO
 
   public func getSizeInt(value: PyObject) -> Int {
@@ -119,6 +127,10 @@ extension PyContext {
 
   internal func PyUnicode_FromFormat(format: String, args: Any...) -> String {
     return ""
+  }
+
+  public func PyObject_Format(value: PyObject, format: PyObject) -> PyObject {
+    fatalError()
   }
 
   public func Py_CLEAR(value: PyObject) throws { }

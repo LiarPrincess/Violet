@@ -142,7 +142,7 @@ The argument must be an iterable if specified.
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.repr(value: element)
+        result += try self.context.reprString(value: element)
       }
 
       result += list.elements.count > 1 ? "]" : ",]"

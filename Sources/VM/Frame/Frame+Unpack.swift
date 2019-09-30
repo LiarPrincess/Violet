@@ -90,14 +90,4 @@ extension Frame {
 
     return result
   }
-
-  private func popElements(count: Int) -> [PyObject] {
-    var elements = [PyObject]()
-    for _ in 0..<count {
-      elements.push(self.pop())
-    }
-
-    // Elements on stack are in reverse order
-    return elements.reversed()
-  }
 }

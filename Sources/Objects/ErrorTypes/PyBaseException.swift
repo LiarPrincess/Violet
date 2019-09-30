@@ -80,9 +80,9 @@ ReprTypeClass, StrTypeClass, ClearTypeClass {
       return ""
     case 1:
       let item = try tupleType.item(owner: e.args, at: 0)
-      return try self.context.str(value: item)
+      return try self.context.strString(value: item)
     default:
-      return try self.context.str(value: e.args)
+      return try self.context.strString(value: e.args)
     }
   }
 
