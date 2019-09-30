@@ -36,8 +36,9 @@ internal final class PyImportError: PyBaseException {
 }
 
 internal class PyImportErrorType: PyExceptionType {
+
   override internal var name: String { return "ImportError" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Import can't find module, or can't find name in module"
   }
@@ -71,6 +72,8 @@ internal class PyImportErrorType: PyExceptionType {
 
 internal final class PyModuleNotFoundErrorType: PyImportErrorType {
   override internal var name: String { return "ModuleNotFoundError" }
-  override internal var base: PyType? { return self.context.errors.import }
-  override internal var doc: String? { return "Module not found." }
+  override internal var base: PyType? { return self.context.errorTypes.import }
+  override internal var doc: String? {
+    return "Module not found."
+  }
 }

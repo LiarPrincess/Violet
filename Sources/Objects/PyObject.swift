@@ -13,7 +13,7 @@ internal struct PyObjectFlags: OptionSet {
 public class PyObject {
 
   internal var flags: PyObjectFlags
-  internal let type:  PyType
+  internal let type: PyType
 
   internal init(type: PyType) {
     self.flags = []

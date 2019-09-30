@@ -37,8 +37,7 @@ internal final class PyComplexType: PyType,
   PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
 
   override internal var name: String { return "complex" }
-  internal let base: PyType? = nil
-  internal let doc:  String? = """
+  override internal var doc: String? { return """
 complex(real=0, imag=0)
 --
 
@@ -46,15 +45,10 @@ Create a complex number from a real part and an optional imaginary part.
 
 This is equivalent to (real + imag*1j) where imag defaults to 0.
 """
+  }
 
   private var floatType: PyFloatType {
     return self.context.types.float
-  }
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
   }
 
   // MARK: - Ctors

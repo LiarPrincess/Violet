@@ -48,8 +48,7 @@ SubscriptTypeClass, SubscriptAssignTypeClass,
 ContainsTypeClass {
 
   override internal var name: String { return "list" }
-  internal let base: PyType? = nil
-  internal let doc:  String? = """
+  override internal var doc: String? { return """
 list(iterable=(), /)
 --
 
@@ -58,14 +57,9 @@ Built-in mutable sequence.
 If no argument is given, the constructor creates a new empty list.
 The argument must be an iterable if specified.
 """
+  }
 
   internal lazy var empty = PyList(type: self, elements: [])
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
-  }
 
   // MARK: - Ctor
 

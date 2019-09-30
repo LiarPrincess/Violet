@@ -9,23 +9,11 @@ internal final class PyNone: PyObject {
 
 /// The Python None object, denoting lack of value. This object has no methods.
 internal final class PyNoneType: PyType,
-ReprTypeClass, PyBoolConvertibleTypeClass {
+  ReprTypeClass, PyBoolConvertibleTypeClass {
 
   override internal var name: String { return "NoneType" }
-  internal let base: PyType? = nil
-  internal let doc:  String? = nil
 
   internal lazy var value = PyNone(type: self)
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
-  }
-
-  internal func new() -> PyNone {
-    return self.value
-  }
 
   internal func repr(value: PyObject) throws -> String {
     return "None"

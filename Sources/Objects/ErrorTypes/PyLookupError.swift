@@ -5,24 +5,26 @@
 
 internal class PyLookupErrorType: PyExceptionType {
   override internal var name: String { return "LookupError" }
-  override internal var base: PyType? { return self.exceptionType }
-  override internal var doc: String? { return "Base class for lookup errors." }
-
-  fileprivate var lookupError: PyType {
-    return self.context.errors.lookup
+  override internal var base: PyType? { return self.context.errorTypes.exception }
+  override internal var doc: String? {
+    return "Base class for lookup errors."
   }
 }
 
 internal final class PyIndexErrorType: PyLookupErrorType {
   override internal var name: String { return "IndexError" }
-  override internal var base: PyType? { return self.lookupError }
-  override internal var doc: String? { return "Sequence index out of range." }
+  override internal var base: PyType? { return self.context.errorTypes.lookup }
+  override internal var doc: String? {
+    return "Sequence index out of range."
+  }
 }
 
 internal final class PyKeyErrorType: PyLookupErrorType {
-  override internal var name: String { return "IndexError" }
-  override internal var base: PyType? { return self.lookupError }
-  override internal var doc: String? { return "Mapping key not found." }
+  override internal var name: String { return "KeyError" }
+  override internal var base: PyType? { return self.context.errorTypes.lookup }
+  override internal var doc: String? {
+    return "Mapping key not found."
+  }
 
   override internal func str(value: PyObject) throws -> String {
     let e = try self.matchBaseException(value)

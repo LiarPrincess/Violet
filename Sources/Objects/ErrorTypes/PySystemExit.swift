@@ -32,9 +32,8 @@ internal final class PySystemExit: PyBaseException {
 }
 
 internal final class PySystemExitType: PyBaseExceptionType {
-
   override internal var name: String { return "SystemExit" }
-  override internal var base: PyType? { return self.context.errors.base }
+  override internal var base: PyType? { return self.context.errorTypes.base }
   override internal var doc: String? {
     return "Request to exit from the interpreter."
   }

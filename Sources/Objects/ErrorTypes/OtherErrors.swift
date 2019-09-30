@@ -5,7 +5,7 @@
 
 internal final class PyBufferErrorType: PyExceptionType {
   override internal var name: String { return "BufferError" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Buffer error."
   }
@@ -13,7 +13,7 @@ internal final class PyBufferErrorType: PyExceptionType {
 
 internal final class PyEOFErrorType: PyExceptionType {
   override internal var name: String { return "EOFError" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Read beyond end of file."
   }
@@ -21,7 +21,7 @@ internal final class PyEOFErrorType: PyExceptionType {
 
 internal final class PyAttributeErrorType: PyExceptionType {
   override internal var name: String { return "AttributeError" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Attribute not found."
   }
@@ -29,7 +29,7 @@ internal final class PyAttributeErrorType: PyExceptionType {
 
 internal final class PyAssertionErrorType: PyExceptionType {
   override internal var name: String { return "AssertionError" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Assertion failed."
   }
@@ -37,7 +37,7 @@ internal final class PyAssertionErrorType: PyExceptionType {
 
 internal final class PyReferenceErrorType: PyExceptionType {
   override internal var name: String { return "ReferenceError" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Weak ref proxy used after referent went away."
   }
@@ -45,7 +45,7 @@ internal final class PyReferenceErrorType: PyExceptionType {
 
 internal final class PyTypeErrorType: PyExceptionType {
   override internal var name: String { return "TypeError" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Inappropriate argument type."
   }
@@ -53,7 +53,7 @@ internal final class PyTypeErrorType: PyExceptionType {
 
 internal final class PySystemErrorType: PyExceptionType {
   override internal var name: String { return "SystemError" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return """
 Internal error in the Python interpreter

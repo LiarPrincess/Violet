@@ -49,8 +49,7 @@ internal class PyIntType: PyType,
   BinaryTypeClass {
 
   override internal var name: String { return "int" }
-  internal var base: PyType? { return nil }
-  internal var doc:  String? { return """
+  override internal var doc: String? { return """
 int([x]) -> integer
 int(x, base=10) -> integer
 
@@ -66,12 +65,6 @@ Base 0 means to interpret the base from the string as an integer literal.
 >>> int('0b100', base=0)
 4
 """ }
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
-  }
 
   // MARK: - Ctors
 

@@ -49,8 +49,10 @@ internal final class PySyntaxError: PyBaseException {
 
 internal class PySyntaxErrorType: PyExceptionType {
   override internal var name: String { return "SyntaxError" }
-  override internal var base: PyType? { return self.exceptionType }
-  override internal var doc: String? { return "Invalid syntax." }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
+  override internal var doc: String? {
+    return "Invalid syntax."
+  }
 
   override internal func clear(value: PyObject) throws {
     let e = try self.matchSyntaxError(value)
@@ -74,12 +76,16 @@ internal class PySyntaxErrorType: PyExceptionType {
 
 internal class PyIndentationErrorType: PySyntaxErrorType {
   override internal var name: String { return "IndentationError" }
-  override internal var base: PyType? { return self.context.errors.syntax }
-  override internal var doc: String? { return "Improper indentation." }
+  override internal var base: PyType? { return self.context.errorTypes.syntax }
+  override internal var doc: String? {
+    return "Improper indentation."
+  }
 }
 
 internal class PyTabErrorType: PySyntaxErrorType {
   override internal var name: String { return "TabError" }
-  override internal var base: PyType? { return self.context.errors.indentation }
-  override internal var doc: String? { return "Improper mixture of spaces and tabs." }
+  override internal var base: PyType? { return self.context.errorTypes.syntax }
+  override internal var doc: String? {
+    return "Improper mixture of spaces and tabs."
+  }
 }

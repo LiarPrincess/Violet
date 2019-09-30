@@ -21,20 +21,8 @@ internal final class PyEllipsis: PyObject {
 internal final class PyEllipsisType: PyType, ReprTypeClass {
 
   override internal var name: String { return "ellipsis" }
-  internal let base: PyType? = nil
-  internal let doc:  String? = nil
 
   internal lazy var value = PyEllipsis(type: self)
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
-  }
-
-  internal func new() -> PyEllipsis {
-    return self.value
-  }
 
   internal func repr(value: PyObject) throws -> String {
     return "Ellipsis"

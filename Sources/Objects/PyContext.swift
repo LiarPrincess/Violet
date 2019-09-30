@@ -9,8 +9,8 @@ public class PyContext {
   public var notImplemented: PyObject { return self.types.notImplemented.value }
 
   internal lazy var types = PyContextTypes(context: self)
-  internal lazy var errors = PyContextErrorTypes(context: self)
-  internal lazy var warnings = PyContextWarningTypes(context: self)
+  internal lazy var errorTypes = PyContextErrorTypes(context: self)
+  internal lazy var warningTypes = PyContextWarningTypes(context: self)
 
   internal let hasher = Hasher()
 
@@ -87,8 +87,7 @@ internal final class PyContextErrorTypes {
 //  internal lazy var permission = PyPermissionErrorType(context: self.context)
 //  internal lazy var processLookup = PyProcessLookupErrorType(context: self.context)
 //  internal lazy var timeout = PyTimeoutErrorType(context: self.context)
-  internal lazy var referenceError = PyReferenceErrorType(context: self.context)
-  internal lazy var runtimeError = PyRuntimeErrorType(context: self.context)
+  internal lazy var reference = PyReferenceErrorType(context: self.context)
   internal lazy var runtime = PyRuntimeErrorType(context: self.context)
   internal lazy var notImplemented = PyNotImplementedErrorType(context: self.context)
   internal lazy var recursion = PyRecursionErrorType(context: self.context)

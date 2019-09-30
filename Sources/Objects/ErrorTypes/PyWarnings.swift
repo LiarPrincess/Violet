@@ -5,13 +5,13 @@
 
 internal class PyWarningType: PyExceptionType {
   override internal var name: String { return "Warning" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Base class for warning categories."
   }
 
   fileprivate var warningType: PyType {
-    return self.context.warnings.base
+    return self.context.warningTypes.base
   }
 }
 

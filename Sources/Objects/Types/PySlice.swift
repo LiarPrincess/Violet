@@ -41,19 +41,13 @@ internal final class PySliceType: PyType,
   PyBoolConvertibleTypeClass {
 
   override internal var name: String { return "slice" }
-  internal let base: PyType? = nil
-  internal let doc:  String? = """
+  override internal var doc: String? { return """
 slice(stop)
 slice(start, stop[, step])
 
 Create a slice object.
 This is used for extended slicing (e.g. a[0:10:2]).
 """
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
   }
 
   // MARK: - Ctor

@@ -35,21 +35,15 @@ LengthTypeClass, ConcatTypeClass, RepeatTypeClass,
 ItemTypeClass, ContainsTypeClass, SubscriptTypeClass {
 
   override internal var name: String { return "tuple" }
-  internal let base: PyType? = nil
-  internal let doc:  String? = """
+  override internal var doc: String? { return """
 tuple() -> an empty tuple
 tuple(sequence) -> tuple initialized from sequence's items
 
 If the argument is a tuple, the return value is the same object.
 """
+  }
 
   internal lazy var empty = PyTuple(type: self, elements: [])
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
-  }
 
   // MARK: - Ctor
 

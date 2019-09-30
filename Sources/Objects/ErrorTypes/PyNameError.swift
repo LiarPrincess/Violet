@@ -5,17 +5,15 @@
 
 internal class PyNameErrorType: PyExceptionType {
   override internal var name: String { return "NameError" }
-  override internal var base: PyType? { return self.exceptionType }
-  override internal var doc: String? { return "Name not found globally." }
-
-  fileprivate var nameErrorType: PyType {
-    return self.context.errors.name
+  override internal var base: PyType? { return self.context.errorTypes.exception }
+  override internal var doc: String? {
+    return "Name not found globally."
   }
 }
 
 internal final class PyUnboundLocalErrorType: PyNameErrorType {
   override internal var name: String { return "UnboundLocalError" }
-  override internal var base: PyType? { return self.nameErrorType }
+  override internal var base: PyType? { return self.context.errorTypes.name }
   override internal var doc: String? {
     return "Local name referenced but not bound to a value."
   }

@@ -26,7 +26,7 @@ internal final class PyBoolType: PyIntType {
 
   override internal var name: String { return "bool" }
   override internal var base: PyType? { return self.context.types.int }
-  override internal var doc:  String { return """
+  override internal var doc: String { return """
 bool(x) -> bool
 
 Returns True when the argument x is true, False otherwise.

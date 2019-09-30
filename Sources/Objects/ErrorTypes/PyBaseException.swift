@@ -45,18 +45,16 @@ internal class PyBaseException: PyObject {
 internal class PyBaseExceptionType: PyType,
 ReprTypeClass, StrTypeClass, ClearTypeClass {
 
-  override internal var name: String { return "BaseException" }
-  internal var base: PyType? { return nil }
-  internal var doc: String? { return "Common base class for all exceptions" }
+  override internal var name: String {
+    return "BaseException"
+  }
+
+  override internal var doc: String? {
+    return "Common base class for all exceptions"
+  }
 
   internal var tupleType: PyTupleType {
     return self.context.types.tuple
-  }
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
   }
 
   internal func repr(value: PyObject) throws -> String {

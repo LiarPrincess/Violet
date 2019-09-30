@@ -30,7 +30,7 @@ internal final class PyStopIteration: PyBaseException {
 
 internal class PyStopIterationType: PyExceptionType {
   override internal var name: String { return "StopIteration" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Signal the end from iterator.__next__()."
   }
@@ -52,7 +52,7 @@ internal class PyStopIterationType: PyExceptionType {
 
 internal class PyStopAsyncIterationType: PyExceptionType {
   override internal var name: String { return "StopAsyncIteration" }
-  override internal var base: PyType? { return self.exceptionType }
+  override internal var base: PyType? { return self.context.errorTypes.exception }
   override internal var doc: String? {
     return "Signal the end from iterator.__anext__()."
   }

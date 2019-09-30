@@ -44,20 +44,14 @@ internal final class PyFloatType: PyType,
   PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
 
   override internal var name: String { return "float" }
-  internal let base: PyType? = nil
-  internal let doc:  String? = """
+  override internal var doc: String? { return """
 float(x) -> floating point number
 
 Convert a string or number to a floating point number, if possible.
 """
+  }
 
   internal lazy var nan = self.new(Double.nan)
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
-  }
 
   // MARK: - Ctors
 

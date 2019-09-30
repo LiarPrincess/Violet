@@ -13,20 +13,8 @@ internal final class PyNotImplemented: PyObject {
 internal final class PyNotImplementedType: PyType, ReprTypeClass {
 
   override internal var name: String { return "NotImplementedType" }
-  internal let base: PyType? = nil
-  internal let doc:  String? = nil
 
   internal lazy var value = PyNotImplemented(type: self)
-
-  internal unowned let context: PyContext
-
-  internal init(context: PyContext) {
-    self.context = context
-  }
-
-  internal func new() -> PyNotImplemented {
-    return self.value
-  }
 
   internal func repr(value: PyObject) throws -> String {
     return "NotImplemented"
