@@ -99,9 +99,9 @@ The argument must be an iterable if specified.
 
     // try to finc first item that differs
     for (lElem, rElem) in zip(l.elements, r.elements) {
-      let areEqual = self.context.PyObject_RichCompareBool(left: lElem,
-                                                           right: rElem,
-                                                           mode: .equal)
+      let areEqual = self.context.richCompareBool(left: lElem,
+                                                  right: rElem,
+                                                  mode: .equal)
 
       if !areEqual {
         switch mode {
@@ -113,9 +113,7 @@ The argument must be an iterable if specified.
              .lessEqual,
              .greater,
              .greaterEqual:
-          return self.context.PyObject_RichCompare(left: left,
-                                                   right: right,
-                                                   mode: mode)
+          return self.context.richCompare(left: left, right: right, mode: mode)
         }
       }
     }
@@ -123,9 +121,7 @@ The argument must be an iterable if specified.
     // collections are equal up to to shorter list count, compare count
     let lCount = self.context.types.int.new(l.elements.count)
     let rCount = self.context.types.int.new(r.elements.count)
-    return self.context.PyObject_RichCompare(left: lCount,
-                                             right: rCount,
-                                             mode: mode)
+    return self.context.richCompare(left: lCount, right: rCount, mode: mode)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -257,9 +253,9 @@ The argument must be an iterable if specified.
     let list = try self.matchType(owner)
 
     for candidate in list.elements {
-      let isEqual = self.context.PyObject_RichCompareBool(left: element,
-                                                          right: candidate,
-                                                          mode: .equal)
+      let isEqual = self.context.richCompareBool(left: element,
+                                                 right: candidate,
+                                                 mode: .equal)
 
       if isEqual {
         return true
@@ -271,7 +267,7 @@ The argument must be an iterable if specified.
 
   // MARK: - Subscript
 
-  internal func subscriptLength(value: PyObject) throws -> PyObject {
+  internal func subscriptLength(value: PyObject) throws -> PyInt {
     return try self.length(value: value)
   }
 

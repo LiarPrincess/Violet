@@ -1,5 +1,5 @@
 internal protocol SubscriptLengthTypeClass: TypeClass {
-  func subscriptLength(value: PyObject) throws -> PyObject
+  func subscriptLength(value: PyObject) throws -> PyInt
 }
 
 internal protocol SubscriptTypeClass: SubscriptLengthTypeClass {

@@ -86,11 +86,11 @@ Convert a string or number to a floating point number, if possible.
     let l = try self.extractDouble(left)
 
     if let r = right as? PyFloat {
-      return self.context.Py_RETURN_RICHCOMPARE(lhs: l, rhs: r.value, mode: mode)
+      return self.context.richCompare(lhs: l, rhs: r.value, mode: mode)
     }
 
     if let r = self.context.types.int.extractIntOrNil(right) {
-      return self.context.Py_RETURN_RICHCOMPARE(lhs: l, rhs: Double(r), mode: mode)
+      return self.context.richCompare(lhs: l, rhs: Double(r), mode: mode)
     }
 
     fatalError()

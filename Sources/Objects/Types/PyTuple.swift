@@ -73,9 +73,9 @@ If the argument is a tuple, the return value is the same object.
 
     // try to finc first item that differs
     for (lElem, rElem) in zip(l.elements, r.elements) {
-      let areEqual = self.context.PyObject_RichCompareBool(left: lElem,
-                                                           right: rElem,
-                                                           mode: .equal)
+      let areEqual = self.context.richCompareBool(left: lElem,
+                                                  right: rElem,
+                                                  mode: .equal)
 
       if !areEqual {
         switch mode {
@@ -87,9 +87,7 @@ If the argument is a tuple, the return value is the same object.
              .lessEqual,
              .greater,
              .greaterEqual:
-          return self.context.PyObject_RichCompare(left: left,
-                                                   right: right,
-                                                   mode: mode)
+          return self.context.richCompare(left: left, right: right, mode: mode)
         }
       }
     }
@@ -97,9 +95,7 @@ If the argument is a tuple, the return value is the same object.
     // collections are equal up to to shorter tuple count, compare count
     let lCount = self.context.types.int.new(l.elements.count)
     let rCount = self.context.types.int.new(r.elements.count)
-    return self.context.PyObject_RichCompare(left: lCount,
-                                             right: rCount,
-                                             mode: mode)
+    return self.context.richCompare(left: lCount, right: rCount, mode: mode)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -269,7 +265,7 @@ If the argument is a tuple, the return value is the same object.
 
   // MARK: - Subscript
 
-  internal func subscriptLength(value: PyObject) throws -> PyObject {
+  internal func subscriptLength(value: PyObject) throws -> PyInt {
     return try self.length(value: value)
   }
 

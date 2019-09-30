@@ -4,6 +4,12 @@ import Core
 // Objects -> boolobject.c
 // https://docs.python.org/3.7/c-api/bool.html
 
+extension BigInt {
+  internal var isTrue: Bool {
+    return self != 0
+  }
+}
+
 /// Booleans in Python are implemented as a subclass of integers.
 /// There are only two booleans, Py_False and Py_True.
 /// As such, the normal creation and deletion functions don’t apply to booleans.
@@ -38,14 +44,14 @@ The class bool is a subclass of the class int, and cannot be subclassed
   }
 
   override internal func new(_ value: BigInt) -> PyBool {
-    return self.new(self.isTrue(value))
+    return self.new(value.isTrue)
   }
 
   // MARK: - String
 
   override internal func repr(value: PyObject) throws -> String {
     let value = try self.extractInt(value)
-    return self.isTrue(value) ? "True" : "False"
+    return value.isTrue ? "True" : "False"
   }
 
   override internal func str(value: PyObject) throws -> String {
@@ -59,7 +65,7 @@ The class bool is a subclass of the class int, and cannot be subclassed
           let r = self.extractIntOrNil(right) else {
         return try super.and(left: left, right: right)
     }
-    return self.new(self.isTrue(l) && self.isTrue(r))
+    return self.new(l.isTrue && r.isTrue)
   }
 
   override internal func or(left: PyObject, right: PyObject) throws -> PyObject {
@@ -67,7 +73,7 @@ The class bool is a subclass of the class int, and cannot be subclassed
           let r = self.extractIntOrNil(right) else {
         return try super.and(left: left, right: right)
     }
-    return self.new(self.isTrue(l) || self.isTrue(r))
+    return self.new(l.isTrue || r.isTrue)
   }
 
   override internal func xor(left: PyObject, right: PyObject) throws -> PyObject {
@@ -75,12 +81,6 @@ The class bool is a subclass of the class int, and cannot be subclassed
           let r = self.extractIntOrNil(right) else {
         return try super.and(left: left, right: right)
     }
-    return self.new(self.isTrue(l) != self.isTrue(r))
-  }
-
-  // MARK: - Helpers
-
-  private func isTrue(_ value: BigInt) -> Bool {
-    return value != 0
+    return self.new(l.isTrue != r.isTrue)
   }
 }

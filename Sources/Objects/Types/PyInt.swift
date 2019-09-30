@@ -109,7 +109,7 @@ Base 0 means to interpret the base from the string as an integer literal.
       sign > 0 ? 1 :
       0
 
-    return self.context.Py_RETURN_RICHCOMPARE(lhs: result, rhs: 0, mode: mode)
+    return self.context.richCompare(lhs: result, rhs: 0, mode: mode)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {

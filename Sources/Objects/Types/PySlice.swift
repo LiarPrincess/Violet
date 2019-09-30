@@ -37,7 +37,8 @@ internal final class PySlice: PyObject {
 /// This is the same as slice in the Python layer.
 internal final class PySliceType: PyType,
   ReprTypeClass,
-  ComparableTypeClass, HashableTypeClass {
+  ComparableTypeClass, HashableTypeClass,
+  PyBoolConvertibleTypeClass {
 
   internal let name: String = "slice"
   internal let base: PyType? = nil
@@ -88,7 +89,7 @@ This is used for extended slicing (e.g. a[0:10:2]).
     let tupleType = self.context.types.tuple
     let tl = tupleType.new(l.start, l.stop, l.step)
     let tr = tupleType.new(r.start, r.stop, r.step)
-    return self.context.PyObject_RichCompare(left: tl, right: tr, mode: mode)
+    return self.context.richCompare(left: tl, right: tr, mode: mode)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -103,6 +104,12 @@ This is used for extended slicing (e.g. a[0:10:2]).
     let stop  = try self.context.PyObject_Repr(value:slice.stop)
     let step  = try self.context.PyObject_Repr(value:slice.step)
     return "slice(\(start), \(stop), \(step))"
+  }
+
+  // MARK: - Bool
+
+  internal func bool(value: PyObject) throws -> PyBool {
+    return self.context.types.bool.false
   }
 
   // MARK: - Helpers

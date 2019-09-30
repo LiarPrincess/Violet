@@ -20,7 +20,9 @@ extension Frame {
   /// Implements `TOS = not TOS`.
   internal func unaryNot() throws {
     let value = self.top
-    switch self.context.pyObject_IsTrue(value) {
+    let boolValue = try self.context.isTrue(value: value)
+
+    switch boolValue {
     case true:
       self.setTop(self.context.false)
     case false:

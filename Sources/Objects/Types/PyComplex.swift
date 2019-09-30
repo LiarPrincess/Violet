@@ -119,9 +119,7 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
       }
 
       let real = self.context.types.float.new(left.real)
-      return self.context.PyObject_RichCompareBool(left: real,
-                                                   right: r,
-                                                   mode: .equal)
+      return self.context.richCompareBool(left: real, right: r, mode: .equal)
     }
 
     fatalError()

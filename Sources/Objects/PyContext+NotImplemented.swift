@@ -8,11 +8,36 @@ public enum CompareMode {
 }
 
 extension PyContext {
-  public var unicode: PyUnicodeType { return PyUnicodeType() }
 
-  public func pyObject_IsTrue(_ value: PyObject) -> Bool {
-    return false
+  /// Test a value used as condition, e.g., in a for or if statement.
+  public func isTrue(value: PyObject) throws -> Bool {
+    // PyObject_IsTrue(PyObject *v)
+
+    if let bool = value as? PyBool {
+      return bool.value.isTrue
+    }
+
+    if let boolType = value as? PyBoolConvertibleTypeClass {
+      let result = try boolType.bool(value: value)
+      return result.value.isTrue
+    }
+
+    if let subscriptType = value as? SubscriptLengthTypeClass {
+      let length = try subscriptType.subscriptLength(value: value)
+      return length.value.isTrue
+    }
+
+    if let lengthType = value as? LengthTypeClass {
+      let length = try lengthType.length(value: value)
+      return length.value.isTrue
+    }
+
+    return true
   }
+
+  // MARK: - TODO
+
+  public var unicode: PyUnicodeType { return PyUnicodeType() }
 
   public func cmp_outcome(mode: CompareMode,
                           left:  PyObject,
@@ -23,44 +48,6 @@ extension PyContext {
 
   internal func hash(value: PyObject) throws -> PyHash {
     return 0
-  }
-
-  internal func Py_RETURN_RICHCOMPARE(lhs: Int,
-                                      rhs: Int64,
-                                      mode: CompareMode) -> PyBool {
-    switch mode {
-    case .equal:    return self.types.bool.new(lhs == rhs)
-    case .notEqual: return self.types.bool.new(lhs != rhs)
-    case .less:      return self.types.bool.new(lhs < rhs)
-    case .lessEqual: return self.types.bool.new(lhs <= rhs)
-    case .greater:      return self.types.bool.new(lhs > rhs)
-    case .greaterEqual: return self.types.bool.new(lhs >= rhs)
-    }
-  }
-
-  internal func Py_RETURN_RICHCOMPARE(lhs: Double,
-                                      rhs: Double,
-                                      mode: CompareMode) -> PyBool {
-    switch mode {
-    case .equal:    return self.types.bool.new(lhs == rhs)
-    case .notEqual: return self.types.bool.new(lhs != rhs)
-    case .less:      return self.types.bool.new(lhs < rhs)
-    case .lessEqual: return self.types.bool.new(lhs <= rhs)
-    case .greater:      return self.types.bool.new(lhs > rhs)
-    case .greaterEqual: return self.types.bool.new(lhs >= rhs)
-    }
-  }
-
-  public func PyObject_RichCompareBool(left:  PyObject,
-                                       right: PyObject,
-                                       mode:  CompareMode) -> Bool {
-    return false
-  }
-
-  public func PyObject_RichCompare(left:  PyObject,
-                                   right: PyObject,
-                                   mode:  CompareMode) -> PyObject {
-    return left
   }
 
   internal func _PyType_Name(value: PyType) -> String {
