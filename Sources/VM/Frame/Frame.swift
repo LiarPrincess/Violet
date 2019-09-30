@@ -9,7 +9,7 @@ import Objects
 internal class Frame {
 
   /// Code to run.
-  private let code: CodeObject
+  internal let code: CodeObject
 
   internal let context: PyContext
 
@@ -17,7 +17,7 @@ internal class Frame {
   internal var stack = [PyObject]()
 
   /// Index of the next instruction to run.
-  private var nextInstructionIndex = 0
+  internal var nextInstructionIndex = 0
 
   /// Block frames, for controlling loops and exceptions
   // blocks: RefCell<Vec<Block>>
