@@ -99,7 +99,7 @@ internal protocol DivInPlaceTypeClass: TypeClass {
   /// are approximate; it is not possible to represent all real numbers in base two.
   /// This function can return a floating point value when passed two integers.
   /// The operation is done in-place when o1 supports it.
-  func divInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func divInPlace(left: PyObject, right: PyObject) throws
 }
 
 internal protocol DivFloorTypeClass: TypeClass {
@@ -112,7 +112,7 @@ internal protocol DivFloorInPlaceTypeClass: TypeClass {
   /// Returns the mathematical floor of dividing o1 by o2..
   /// The operation is done in-place when o1 supports it.
   /// This is the equivalent of the Python statement o1 //= o2.
-  func divFloorInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func divFloorInPlace(left: PyObject, right: PyObject) throws
 }
 
 internal protocol RemainderTypeClass: TypeClass {
@@ -149,11 +149,11 @@ internal protocol ShiftInPlaceTypeClass: TypeClass {
   /// Returns the result of left shifting o1 by o2 on success..
   /// The operation is done in-place when o1 supports it.
   /// This is the equivalent of the Python statement o1 <<= o2.
-  func lShiftInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func lShiftInPlace(left: PyObject, right: PyObject) throws
   /// Returns the result of right shifting o1 by o2 on success..
   /// The operation is done in-place when o1 supports it.
   /// This is the equivalent of the Python statement o1 >>= o2.
-  func rShiftInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func rShiftInPlace(left: PyObject, right: PyObject) throws
 }
 
 // MARK: - Binary
@@ -174,15 +174,15 @@ internal protocol BinaryInPlaceTypeClass: TypeClass {
   /// Returns the “bitwise and” of o1 and o2 on success..
   /// The operation is done in-place when o1 supports it.
   /// This is the equivalent of the Python statement o1 &= o2.
-  func andInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func andInPlace(left: PyObject, right: PyObject) throws
   /// Returns the “bitwise or” of o1 and o2 on success..
   /// The operation is done in-place when o1 supports it.
   /// This is the equivalent of the Python statement o1 |= o2.
-  func orInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func orInPlace(left: PyObject, right: PyObject) throws
   /// Returns the “bitwise exclusive or” of o1 by o2 on success..
   /// The operation is done in-place when o1 supports it.
   /// This is the equivalent of the Python statement o1 ^= o2.
-  func xorInPlace(left: PyObject, right: PyObject) throws -> PyObject
+  func xorInPlace(left: PyObject, right: PyObject) throws
 }
 
 // MARK: - Power
@@ -201,5 +201,5 @@ internal protocol PowInPlaceTypeClass: TypeClass {
   /// or an in-place variant of pow(o1, o2, o3) otherwise.
   /// If o3 is to be ignored, pass Py_None in its place
   /// (passing NULL for o3 would cause an illegal memory access).
-  func powInPlace(value: PyObject, exponent: PyObject) throws -> PyObject
+  func powInPlace(value: PyObject, exponent: PyObject) throws
 }

@@ -92,10 +92,6 @@ extension PyContext {
     fatalError()
   }
 
-  public func PyObject_ASCII(value: PyObject) throws -> PyObject {
-    fatalError()
-  }
-
   // MARK: - TODO
 
   public func getSizeInt(value: PyObject) -> Int {
