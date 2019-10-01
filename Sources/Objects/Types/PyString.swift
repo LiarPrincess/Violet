@@ -258,10 +258,6 @@ internal final class PyStringType: PyType,
 
   // MARK: - Subscript
 
-  internal func subscriptLength(value: PyObject) throws -> PyInt {
-    return try self.length(value: value)
-  }
-
   internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
     let bigInt = try self.types.int.extractInt(index)
     guard let int = Int(exactly: bigInt) else {

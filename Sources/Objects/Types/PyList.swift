@@ -263,10 +263,6 @@ The argument must be an iterable if specified.
 
   // MARK: - Subscript
 
-  internal func subscriptLength(value: PyObject) throws -> PyInt {
-    return try self.length(value: value)
-  }
-
   internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
     let list = try self.matchType(owner)
 

@@ -18,14 +18,14 @@ import Core
 internal final class PySlice: PyObject {
 
   // start, stop, and step are python objects with None indicating no index is present.
-  internal var start: PyObject
-  internal var stop:  PyObject
-  internal var step:  PyObject
+  internal var start: Int?
+  internal var stop:  Int?
+  internal var step:  Int?
 
   fileprivate init(type:  PySliceType,
-                   start: PyObject,
-                   stop:  PyObject,
-                   step:  PyObject) {
+                   start: Int?,
+                   stop:  Int?,
+                   step:  Int?) {
     self.start = start
     self.stop = stop
     self.step = step
@@ -52,13 +52,8 @@ This is used for extended slicing (e.g. a[0:10:2]).
 
   // MARK: - Ctor
 
-  internal func new(start: PyObject?, stop: PyObject?, step: PyObject?) -> PySlice {
-    return PySlice(
-      type:  self,
-      start: start ?? self.context.none,
-      stop:  stop  ?? self.context.none,
-      step:  step  ?? self.context.none
-    )
+  internal func new(start: Int?, stop: Int?, step: Int? = nil) -> PySlice {
+    return PySlice(type: self, start: start, stop: stop, step: step)
   }
 
   // MARK: - Equatable, hashable
@@ -80,11 +75,17 @@ This is used for extended slicing (e.g. a[0:10:2]).
         fatalError()
     }
 
-    let tupleType = self.types.tuple
-    let leftTuple = tupleType.new(l.start, l.stop, l.step)
-    let rightTuple = tupleType.new(r.start, r.stop, r.step)
-    let result = self.context.richCompareBool(left: leftTuple, right: rightTuple, mode: mode)
+    let lt = self.toTuple(l)
+    let rt = self.toTuple(r)
+    let result = self.context.richCompareBool(left: lt, right: rt, mode: mode)
     return self.types.bool.new(result)
+  }
+
+  private func toTuple(_ slice: PySlice) -> PyTuple {
+    let start = slice.start.map { self.types.int.new($0) } ?? self.context.none
+    let stop  = slice.stop.map { self.types.int.new($0) } ?? self.context.none
+    let step  = slice.step.map { self.types.int.new($0) } ?? self.context.none
+    return self.types.tuple.new([start, stop, step])
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -94,10 +95,12 @@ This is used for extended slicing (e.g. a[0:10:2]).
   // MARK: - String
 
   internal func repr(value: PyObject) throws -> String {
+    let noneDescr = try self.types.none.repr(value: self.context.none)
+
     let slice = try self.matchType(value)
-    let start = try self.context.repr(value:slice.start)
-    let stop  = try self.context.repr(value:slice.stop)
-    let step  = try self.context.repr(value:slice.step)
+    let start = slice.start.map { String(describing: $0) } ?? noneDescr
+    let stop  = slice.stop.map { String(describing: $0) } ?? noneDescr
+    let step  = slice.step.map { String(describing: $0) } ?? noneDescr
     return "slice(\(start), \(stop), \(step))"
   }
 
@@ -109,7 +112,52 @@ This is used for extended slicing (e.g. a[0:10:2]).
 
   // MARK: - Helpers
 
-  private func matchTypeOrNil(_ object: PyObject) -> PySlice? {
+  internal struct AdjustedIndices {
+    internal var start:  Int
+    internal var stop:   Int
+    internal var step:   Int
+    internal let length: Int
+  }
+
+  internal func adjustIndices(value: PySlice, to length: Int) -> AdjustedIndices {
+    var start = value.start ?? 0
+    var stop = value.stop ?? Int.max
+    let step = value.step ?? 1
+    let goingDown = step < 0
+
+    if start < 0 {
+      start += length
+      if start < 0 {
+        start = goingDown ? -1 : 0
+      }
+    } else if start >= length {
+      start = goingDown ? length - 1 : length
+    }
+
+    if stop < 0 {
+      stop += length
+      if stop < 0 {
+        stop = goingDown ? -1 : 0
+      }
+    } else if stop >= length {
+      stop = goingDown ? length - 1 : length
+    }
+
+    var length = length
+    if goingDown {
+      if stop < start {
+        length = (start - stop - 1) / (-step) + 1
+      }
+    } else {
+      if start < stop {
+        length = (stop - start - 1) / step + 1
+      }
+    }
+
+    return AdjustedIndices(start: start, stop: stop, step: step, length: length)
+  }
+
+  internal func matchTypeOrNil(_ object: PyObject) -> PySlice? {
     if let slice = object as? PySlice {
       return slice
     }
@@ -117,7 +165,7 @@ This is used for extended slicing (e.g. a[0:10:2]).
     return nil
   }
 
-  private func matchType(_ object: PyObject) throws -> PySlice {
+  internal func matchType(_ object: PyObject) throws -> PySlice {
     if let slice = object as? PySlice {
       return slice
     }

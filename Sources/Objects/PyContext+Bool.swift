@@ -17,11 +17,6 @@ extension PyContext {
       return result.value.isTrue
     }
 
-    if let subscriptType = value as? SubscriptLengthTypeClass {
-      let length = try subscriptType.subscriptLength(value: value)
-      return length.value.isTrue
-    }
-
     if let lengthType = value as? LengthTypeClass {
       let length = try lengthType.length(value: value)
       return length.value.isTrue

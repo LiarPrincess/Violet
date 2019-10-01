@@ -13,6 +13,7 @@ import Core
 // TUPLE_COUNT_METHODDEF
 
 // swiftlint:disable yoda_condition
+// swiftlint:disable file_length
 
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
@@ -62,7 +63,8 @@ If the argument is a tuple, the return value is the same object.
                         mode: CompareMode) throws -> PyBool {
     guard let l = self.matchTypeOrNil(left),
           let r = self.matchTypeOrNil(right) else {
-        fatalError()
+      // Py_RETURN_NOTIMPLEMENTED;
+      fatalError()
     }
 
     // try to finc first item that differs
@@ -204,66 +206,71 @@ If the argument is a tuple, the return value is the same object.
   }
 
   internal func contains(owner: PyObject, element: PyObject) throws -> Bool {
-    // static int tuplecontains(PyTupleObject *a, PyObject *el)
-    fatalError()
+    let tuple = try self.matchType(owner)
+
+    for e in tuple.elements {
+      let isEqual = self.context.richCompareBool(left: e,
+                                                 right: element,
+                                                 mode: .equal)
+      if isEqual {
+        return true
+      }
+    }
+
+    return false
   }
 
-
   internal func indexOf(owner: PyObject,
-                        item:  PyObject,
+                        element: PyObject,
                         start: Int,
-                        stop:  Int) throws -> PyObject {
-// static PyObject* tuple_index_impl(PyTupleObject *self, PyObject *value, ...)
-//    let tuple = try self.matchTuple(object)
-//
-//    var start = start
-//    if start < 0 {
-//      start += tuple.elements.count
-//      if start < 0 {
-//        start = 0
-//      }
-//    }
-//
-//    var stop = stop
-//    if stop < 0 {
-//      stop += tuple.elements.count
-//    } else if stop > tuple.elements.count {
-//      stop = tuple.elements.count
-//    }
+                        stop:  Int) throws -> PyInt {
+    let tuple = try self.matchType(owner)
 
-//    for i in start..<stop {
-      //      int cmp = PyObject_RichCompareBool(self->ob_item[i], value, Py_EQ);
-      //      if (cmp > 0)
-      //        return PyLong_FromSsize_t(i);
-      //      else if (cmp < 0)
-      //        return NULL;
-//    }
+    var start = start
+    if start < 0 {
+      start += tuple.elements.count
+      if start < 0 {
+        start = 0
+      }
+    }
+
+    var stop = stop
+    if stop < 0 {
+      stop += tuple.elements.count
+    } else if stop > tuple.elements.count {
+      stop = tuple.elements.count
+    }
+
+    for i in start..<stop {
+      let isEqual = self.context.richCompareBool(left: tuple.elements[i],
+                                                 right: element,
+                                                 mode: .equal)
+      if isEqual {
+        return self.types.int.new(i)
+      }
+    }
 
     // PyErr_SetString(PyExc_ValueError, "tuple.index(x): x not in tuple");
     fatalError()
   }
 
-  internal func countOf(owner: PyObject, item: PyObject) -> PyObject {
-// static PyObject * tuple_count(PyTupleObject *self, PyObject *value)
-//    let tuple = try self.matchTuple(object)
+  internal func countOf(owner: PyObject, element: PyObject) throws -> PyObject {
+    let tuple = try self.matchType(owner)
 
-//    var result = 0
-//    for element in tuple.elements {
-//      int cmp = PyObject_RichCompareBool(self->ob_item[i], value, Py_EQ);
-//      if (cmp > 0)
-//      count++;
-//      else if (cmp < 0)
-//      return NULL;
-//    }
+    var result = 0
+    for e in tuple.elements {
+      let isEqual = self.context.richCompareBool(left: e,
+                                                 right: element,
+                                                 mode: .equal)
+      if isEqual {
+        result += 1
+      }
+    }
 
-    fatalError()
+    return self.types.int.new(result)
   }
 
   // MARK: - Subscript
-
-  internal func subscriptLength(value: PyObject) throws -> PyInt {
-    return try self.length(value: value)
-  }
 
   internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
     let tuple = try self.matchType(owner)
@@ -273,7 +280,25 @@ If the argument is a tuple, the return value is the same object.
       return try self.item(owner: tuple, at: i)
     }
 
-    // TODO: Add slice as in 'tuplesubscript(PyTupleObject* self, PyObject* item)'
+    if let slice = index as? PySlice {
+      let count = tuple.elements.count
+      let adjusted = self.types.slice.adjustIndices(value: slice, to: count)
+
+      if adjusted.length <= 0 {
+        return self.empty
+      }
+
+      if adjusted.start == 0 && adjusted.step == 1 && adjusted.length == count {
+        return tuple
+      }
+
+      var elements = [PyObject]()
+      for i in 0..<adjusted.length {
+        let index = adjusted.start + i * adjusted.step
+        elements.append(tuple.elements[index])
+      }
+      return self.new(elements)
+    }
 
     throw PyContextError.tupleInvalidSubscriptIndex(index: index)
   }
