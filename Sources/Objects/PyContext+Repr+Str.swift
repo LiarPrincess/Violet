@@ -1,17 +1,8 @@
-internal class PyString: PyObject {
-
-  internal var value: String
-
-  internal init(type: PyIntType, value: String) {
-    fatalError()
-  }
-}
-
 extension PyContext {
 
   public func repr(value: PyObject) throws -> PyObject {
     let raw = try self.reprString(value: value)
-    return self.createString(raw)
+    return self.types.string.new(raw)
   }
 
   internal func reprString(value: PyObject) throws -> String {
@@ -24,7 +15,7 @@ extension PyContext {
 
   public func str(value: PyObject) throws -> PyObject {
     let raw = try self.strString(value: value)
-    return self.createString(raw)
+    return self.types.string.new(raw)
   }
 
   internal func strString(value: PyObject) throws -> String {
@@ -43,9 +34,5 @@ extension PyContext {
 
   private func genericRepr(value: PyObject) -> String {
     return "<\(value.type.name) object>"
-  }
-
-  internal func createString(_ value: String) -> PyString {
-    return PyString(type: self.types.int, value: value)
   }
 }

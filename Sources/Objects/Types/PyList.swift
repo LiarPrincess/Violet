@@ -75,7 +75,7 @@ The argument must be an iterable if specified.
 
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyObject {
+                        mode: CompareMode) throws -> PyBool {
     guard let l = self.matchTypeOrNil(left),
           let r = self.matchTypeOrNil(right) else {
         fatalError()
@@ -84,11 +84,11 @@ The argument must be an iterable if specified.
     // short path when length does not equal
     let isCountEqual = l.elements.count == r.elements.count
     if mode == .equal && !isCountEqual {
-      return self.context.false
+      return self.context.types.bool.false
     }
 
     if mode == .notEqual && !isCountEqual {
-      return self.context.true
+      return self.context.types.bool.true
     }
 
     // try to finc first item that differs
@@ -100,14 +100,15 @@ The argument must be an iterable if specified.
       if !areEqual {
         switch mode {
         case .equal:
-          return self.context.false
+          return self.context.types.bool.false
         case .notEqual:
-          return self.context.true
+          return self.context.types.bool.true
         case .less,
              .lessEqual,
              .greater,
              .greaterEqual:
-          return self.context.richCompare(left: left, right: right, mode: mode)
+          let result = self.context.richCompareBool(left: left, right: right, mode: mode)
+          return self.context.types.bool.new(result)
         }
       }
     }
@@ -115,7 +116,8 @@ The argument must be an iterable if specified.
     // collections are equal up to to shorter list count, compare count
     let lCount = self.context.types.int.new(l.elements.count)
     let rCount = self.context.types.int.new(r.elements.count)
-    return self.context.richCompare(left: lCount, right: rCount, mode: mode)
+    let result = self.context.richCompareBool(left: lCount, right: rCount, mode: mode)
+    return self.context.types.bool.new(result)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -181,8 +183,8 @@ The argument must be an iterable if specified.
 
   internal func `repeat`(value: PyObject, count: PyInt) throws -> PyObject {
     let list = try self.matchType(value)
-    let countRaw = try self.context.types.int.extractInt(count)
 
+    let countRaw = try self.context.types.int.extractInt(count)
     let count = max(countRaw, 0)
 
     if list.elements.isEmpty || count == 1 {

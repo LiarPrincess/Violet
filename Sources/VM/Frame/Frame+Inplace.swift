@@ -56,15 +56,7 @@ extension Frame {
   internal func inplaceAdd() throws {
     let right = self.pop()
     let left = self.top
-
-    // TODO: ceval.c -> sum = unicode_concatenate(left, right, f, next_instr);
-    let isConcat = self.context.unicode.checkExact(left)
-                && self.context.unicode.checkExact(right)
-
-    let result = isConcat ?
-      self.context.unicode.unicode_concatenate(left: left, right: right) :
-      try self.context.addInPlace(left: left, right: right)
-
+    let result = try self.context.addInPlace(left: left, right: right)
     self.setTop(result)
   }
 

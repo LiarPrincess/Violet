@@ -49,14 +49,7 @@ extension Frame {
   internal func binaryModulo() throws {
     let divisor = self.pop()
     let dividend = self.top
-
-    let isStringFormat = self.context.unicode.checkExact(dividend)
-      && (self.context.unicode.check(divisor) || self.context.unicode.checkExact(divisor))
-
-    let result = isStringFormat ?
-      self.context.unicode.format(dividend: dividend, divisor: divisor) :
-      try self.context.remainder(left: dividend, right: divisor)
-
+    let result = try self.context.remainder(left: dividend, right: divisor)
     self.setTop(result)
   }
 
@@ -64,14 +57,7 @@ extension Frame {
   internal func binaryAdd() throws {
     let right = self.pop()
     let left = self.top
-
-    let isConcat = self.context.unicode.checkExact(left)
-                && self.context.unicode.checkExact(right)
-
-    let result = isConcat ?
-      self.context.unicode.unicode_concatenate(left: left, right: right) :
-      try self.context.add(left: left, right: right)
-
+    let result = try self.context.add(left: left, right: right)
     self.setTop(result)
   }
 

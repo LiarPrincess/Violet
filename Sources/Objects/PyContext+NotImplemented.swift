@@ -17,7 +17,6 @@ public class CreateDictionaryArg {
   }
 }
 
-
 extension PyContext {
 
   /// `is` will return `True` if two variables point to the same object.
@@ -107,8 +106,6 @@ extension PyContext {
     return value
   }
 
-  public var unicode: PyUnicodeType { return PyUnicodeType() }
-
   internal func hash(value: PyObject) throws -> PyHash {
     return 0
   }
@@ -137,30 +134,5 @@ extension PyContext {
 
   public func pySlice_New(start: PyObject, stop: PyObject, step: PyObject?) -> PyObject {
     return start
-  }
-}
-
-public final class PyUnicodeType {
-
-  internal init() { }
-
-  public func checkExact(_ value: PyObject) -> Bool {
-    return false
-  }
-
-  public func check(_ value: PyObject) -> Bool {
-    return false
-  }
-
-  public func format(dividend: PyObject, divisor: PyObject) -> PyObject {
-    return dividend
-  }
-
-  public func extract(value: PyObject) -> String? {
-    return ""
-  }
-
-  public func unicode_concatenate(left: PyObject, right: PyObject) -> PyObject {
-    return left
   }
 }

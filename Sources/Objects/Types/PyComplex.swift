@@ -80,7 +80,7 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
 
   internal func compare(left:  PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyObject {
+                        mode: CompareMode) throws -> PyBool {
     let l = try self.matchType(left)
 
     switch mode {

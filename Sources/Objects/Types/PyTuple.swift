@@ -59,7 +59,7 @@ If the argument is a tuple, the return value is the same object.
 
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyObject {
+                        mode: CompareMode) throws -> PyBool {
     guard let l = self.matchTypeOrNil(left),
           let r = self.matchTypeOrNil(right) else {
         fatalError()
@@ -74,14 +74,15 @@ If the argument is a tuple, the return value is the same object.
       if !areEqual {
         switch mode {
         case .equal:
-          return self.context.false
+          return self.context.types.bool.false
         case .notEqual:
-          return self.context.true
+          return self.context.types.bool.true
         case .less,
              .lessEqual,
              .greater,
              .greaterEqual:
-          return self.context.richCompare(left: left, right: right, mode: mode)
+          let result = self.context.richCompareBool(left: left, right: right, mode: mode)
+          return self.context.types.bool.new(result)
         }
       }
     }
@@ -89,7 +90,8 @@ If the argument is a tuple, the return value is the same object.
     // collections are equal up to to shorter tuple count, compare count
     let lCount = self.context.types.int.new(l.elements.count)
     let rCount = self.context.types.int.new(r.elements.count)
-    return self.context.richCompare(left: lCount, right: rCount, mode: mode)
+    let result =  self.context.richCompareBool(left: lCount, right: rCount, mode: mode)
+    return self.context.types.bool.new(result)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {

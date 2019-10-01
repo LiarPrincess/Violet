@@ -76,7 +76,7 @@ Convert a string or number to a floating point number, if possible.
   // 'static PyObject* float_richcompare(PyObject *v, PyObject *w, int op)' for details).
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyObject {
+                        mode: CompareMode) throws -> PyBool {
     let l = try self.extractDouble(left)
 
     if let r = right as? PyFloat {

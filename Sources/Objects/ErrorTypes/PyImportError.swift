@@ -54,7 +54,7 @@ internal class PyImportErrorType: PyExceptionType {
   override internal func str(value: PyObject) throws -> String {
     let e = try self.matchImportError(value)
 
-    if let msg = self.context.types.unicode.extract(value: e.msg) {
+    if let msg = self.context.types.string.extractOrNil(e.msg) {
       return msg
     }
 

@@ -65,25 +65,26 @@ This is used for extended slicing (e.g. a[0:10:2]).
 
   internal func compare(left:  PyObject,
                         right: PyObject,
-                        mode:  CompareMode) throws -> PyObject {
+                        mode:  CompareMode) throws -> PyBool {
     if left === right {
       switch mode {
       case .equal, .lessEqual, .greaterEqual:
-        return self.context.true
+        return self.context.types.bool.true
       case .notEqual, .less, .greater:
-        return self.context.false
+        return self.context.types.bool.false
       }
     }
 
     guard let l = self.matchTypeOrNil(left),
           let r = self.matchTypeOrNil(right) else {
-        return self.context.none
+        fatalError()
     }
 
     let tupleType = self.context.types.tuple
-    let tl = tupleType.new(l.start, l.stop, l.step)
-    let tr = tupleType.new(r.start, r.stop, r.step)
-    return self.context.richCompare(left: tl, right: tr, mode: mode)
+    let leftTuple = tupleType.new(l.start, l.stop, l.step)
+    let rightTuple = tupleType.new(r.start, r.stop, r.step)
+    let result = self.context.richCompareBool(left: leftTuple, right: rightTuple, mode: mode)
+    return self.context.types.bool.new(result)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {

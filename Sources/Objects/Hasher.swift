@@ -95,4 +95,8 @@ internal struct Hasher {
     }
     return x
   }
+
+  internal func hash(_ value: String) -> PyHash {
+    fatalError()
+  }
 }

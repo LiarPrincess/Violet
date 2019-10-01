@@ -6,6 +6,7 @@ public class PyContext {
   public var none: PyObject { return self.types.none.value }
   public var ellipsis: PyObject { return self.types.ellipsis.value }
   public var emptyTuple: PyObject { return self.types.tuple.empty }
+  public var emptyString: PyObject { return self.types.string.empty }
   public var notImplemented: PyObject { return self.types.notImplemented.value }
 
   internal lazy var types = PyContextTypes(context: self)
@@ -34,7 +35,7 @@ internal final class PyContextTypes {
   internal lazy var slice = PySliceType(context: self.context)
   internal lazy var ellipsis = PyEllipsisType(context: self.context)
 
-  internal lazy var unicode = PyUnicodeType()
+  internal lazy var string = PyStringType(context: self.context)
 
   private unowned let context: PyContext
 

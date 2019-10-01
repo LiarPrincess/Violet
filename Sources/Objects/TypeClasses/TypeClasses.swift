@@ -8,7 +8,7 @@ internal protocol TypeClass {
 // MARK: - Equatable
 
 internal protocol ComparableTypeClass: TypeClass {
-  func compare(left: PyObject, right: PyObject, mode: CompareMode) throws -> PyObject
+  func compare(left: PyObject, right: PyObject, mode: CompareMode) throws -> PyBool
 }
 
 internal protocol HashableTypeClass: TypeClass {
