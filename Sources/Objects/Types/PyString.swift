@@ -192,7 +192,7 @@ internal final class PyStringType: PyType,
   internal func length(value: PyObject) throws -> PyInt {
     let v = try self.extract(value)
     let count = v.unicodeScalars.count
-    return self.context.types.int.new(count)
+    return self.types.int.new(count)
   }
 
   internal func remainder(left: PyObject, right: PyObject) throws -> PyObject {
@@ -223,7 +223,7 @@ internal final class PyStringType: PyType,
   internal func `repeat`(value: PyObject, count: PyInt) throws -> PyObject {
     let v = try self.extract(value)
 
-    let countRaw = try self.context.types.int.extractInt(count)
+    let countRaw = try self.types.int.extractInt(count)
     let count = max(countRaw, 0)
 
     if v.isEmpty || count == 1 {
@@ -263,7 +263,7 @@ internal final class PyStringType: PyType,
   }
 
   internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
-    let bigInt = try self.context.types.int.extractInt(index)
+    let bigInt = try self.types.int.extractInt(index)
     guard let int = Int(exactly: bigInt) else {
       fatalError()
     }

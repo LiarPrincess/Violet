@@ -113,7 +113,7 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   internal func bool(value: PyObject) throws -> PyBool {
     let v = try self.extractInt(value)
-    return self.context.types.bool.new(v)
+    return self.types.bool.new(v)
   }
 
   internal func int(value: PyObject) throws -> PyInt {
@@ -122,7 +122,7 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   internal func float(value: PyObject) throws -> PyFloat {
     let v = try self.extractInt(value)
-    return self.context.types.float.new(Double(v))
+    return self.types.float.new(Double(v))
   }
 
   // MARK: - Signed number
@@ -172,7 +172,7 @@ Base 0 means to interpret the base from the string as an integer literal.
       throw PyContextError.intDivisionByZero
     }
 
-    return self.context.types.float.new(Double(l) / Double(r))
+    return self.types.float.new(Double(l) / Double(r))
   }
 
   internal func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
@@ -207,7 +207,7 @@ Base 0 means to interpret the base from the string as an integer literal.
 
     let remainder = l % r
     let quotient = l / r
-    return self.context.types.tuple.new(self.new(quotient), self.new(remainder))
+    return self.types.tuple.new(self.new(quotient), self.new(remainder))
   }
 
   // MARK: - Abs

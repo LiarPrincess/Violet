@@ -20,6 +20,6 @@ internal final class PyNoneType: PyType,
   }
 
   internal func bool(value: PyObject) throws -> PyBool {
-    return self.context.types.bool.false
+    return self.types.bool.false
   }
 }

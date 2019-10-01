@@ -84,11 +84,11 @@ The argument must be an iterable if specified.
     // short path when length does not equal
     let isCountEqual = l.elements.count == r.elements.count
     if mode == .equal && !isCountEqual {
-      return self.context.types.bool.false
+      return self.types.bool.false
     }
 
     if mode == .notEqual && !isCountEqual {
-      return self.context.types.bool.true
+      return self.types.bool.true
     }
 
     // try to finc first item that differs
@@ -100,24 +100,24 @@ The argument must be an iterable if specified.
       if !areEqual {
         switch mode {
         case .equal:
-          return self.context.types.bool.false
+          return self.types.bool.false
         case .notEqual:
-          return self.context.types.bool.true
+          return self.types.bool.true
         case .less,
              .lessEqual,
              .greater,
              .greaterEqual:
           let result = self.context.richCompareBool(left: left, right: right, mode: mode)
-          return self.context.types.bool.new(result)
+          return self.types.bool.new(result)
         }
       }
     }
 
     // collections are equal up to to shorter list count, compare count
-    let lCount = self.context.types.int.new(l.elements.count)
-    let rCount = self.context.types.int.new(r.elements.count)
+    let lCount = self.types.int.new(l.elements.count)
+    let rCount = self.types.int.new(r.elements.count)
     let result = self.context.richCompareBool(left: lCount, right: rCount, mode: mode)
-    return self.context.types.bool.new(result)
+    return self.types.bool.new(result)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -156,7 +156,7 @@ The argument must be an iterable if specified.
 
   internal func length(value: PyObject) throws -> PyInt {
     let list = try self.matchType(value)
-    return self.context.types.int.new(list.elements.count)
+    return self.types.int.new(list.elements.count)
   }
 
   // MARK: - Concat
@@ -184,7 +184,7 @@ The argument must be an iterable if specified.
   internal func `repeat`(value: PyObject, count: PyInt) throws -> PyObject {
     let list = try self.matchType(value)
 
-    let countRaw = try self.context.types.int.extractInt(count)
+    let countRaw = try self.types.int.extractInt(count)
     let count = max(countRaw, 0)
 
     if list.elements.isEmpty || count == 1 {
@@ -203,7 +203,7 @@ The argument must be an iterable if specified.
 
   internal func repeatInPlace(value: PyObject, count: PyInt) throws {
     let list = try self.matchType(value)
-    let countRaw = try self.context.types.int.extractInt(count)
+    let countRaw = try self.types.int.extractInt(count)
 
     if countRaw == 0 || countRaw == 1 {
       return

@@ -5,7 +5,7 @@
 
 internal final class PyGeneratorExitType: PyBaseExceptionType {
   override internal var name: String { return "GeneratorExit" }
-  override internal var base: PyType? { return self.context.errorTypes.base }
+  override internal var base: PyType? { return self.errorTypes.base }
   override internal var doc: String? {
     return "Request that a generator exit."
   }

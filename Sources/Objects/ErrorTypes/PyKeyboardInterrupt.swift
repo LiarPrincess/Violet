@@ -5,7 +5,7 @@
 
 internal final class PyKeyboardInterruptType: PyBaseExceptionType {
   override internal var name: String { return "KeyboardInterrupt" }
-  override internal var base: PyType? { return self.context.errorTypes.base }
+  override internal var base: PyType? { return self.errorTypes.base }
   override internal var doc: String? {
     return "Program interrupted by user."
   }

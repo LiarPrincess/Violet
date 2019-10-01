@@ -5,11 +5,11 @@
 
 internal class PyArithmeticErrorType: PyExceptionType {
   override internal var name: String { return "ArithmeticError" }
-  override internal var base: PyType? { return self.context.errorTypes.exception }
+  override internal var base: PyType? { return self.errorTypes.exception }
   override internal var doc: String? { return "Base class for arithmetic errors." }
 
   fileprivate var arithmeticErrorType: PyType {
-    return self.context.errorTypes.arithmetic
+    return self.errorTypes.arithmetic
   }
 }
 

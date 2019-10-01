@@ -54,7 +54,7 @@ ReprTypeClass, StrTypeClass, ClearTypeClass {
   }
 
   internal var tupleType: PyTupleType {
-    return self.context.types.tuple
+    return self.types.tuple
   }
 
   internal func repr(value: PyObject) throws -> String {

@@ -48,7 +48,7 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
   }
 
   private var floatType: PyFloatType {
-    return self.context.types.float
+    return self.types.float
   }
 
   // MARK: - Ctors
@@ -86,10 +86,10 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
     switch mode {
     case .equal:
       let isEqual = try self.isEqual(left: l, right: right)
-      return self.context.types.bool.new(isEqual)
+      return self.types.bool.new(isEqual)
     case .notEqual:
       let isEqual = try self.isEqual(left: l, right: right)
-      return self.context.types.bool.new(!isEqual)
+      return self.types.bool.new(!isEqual)
     case .less,
          .lessEqual,
          .greater,
@@ -112,7 +112,7 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
         return false
       }
 
-      let real = self.context.types.float.new(left.real)
+      let real = self.types.float.new(left.real)
       return self.context.richCompareBool(left: real, right: r, mode: .equal)
     }
 
@@ -138,7 +138,7 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
   internal func bool(value: PyObject) throws -> PyBool {
     let v = try self.matchType(value)
     let bothZero = v.real.isZero && v.imag.isZero
-    return self.context.types.bool.new(!bothZero)
+    return self.types.bool.new(!bothZero)
   }
 
   internal func int(value: PyObject) throws -> PyInt {
@@ -274,11 +274,11 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
       return complex
     }
 
-    if let i = self.context.types.int.extractIntOrNil(object) {
+    if let i = self.types.int.extractIntOrNil(object) {
       return self.new(real: Double(i), imag: 0.0)
     }
 
-    if let f = self.context.types.float.extractDoubleOrNil(object) {
+    if let f = self.types.float.extractDoubleOrNil(object) {
       return self.new(real: f, imag: 0.0)
     }
 

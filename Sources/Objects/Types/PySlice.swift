@@ -69,9 +69,9 @@ This is used for extended slicing (e.g. a[0:10:2]).
     if left === right {
       switch mode {
       case .equal, .lessEqual, .greaterEqual:
-        return self.context.types.bool.true
+        return self.types.bool.true
       case .notEqual, .less, .greater:
-        return self.context.types.bool.false
+        return self.types.bool.false
       }
     }
 
@@ -80,11 +80,11 @@ This is used for extended slicing (e.g. a[0:10:2]).
         fatalError()
     }
 
-    let tupleType = self.context.types.tuple
+    let tupleType = self.types.tuple
     let leftTuple = tupleType.new(l.start, l.stop, l.step)
     let rightTuple = tupleType.new(r.start, r.stop, r.step)
     let result = self.context.richCompareBool(left: leftTuple, right: rightTuple, mode: mode)
-    return self.context.types.bool.new(result)
+    return self.types.bool.new(result)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -104,7 +104,7 @@ This is used for extended slicing (e.g. a[0:10:2]).
   // MARK: - Bool
 
   internal func bool(value: PyObject) throws -> PyBool {
-    return self.context.types.bool.false
+    return self.types.bool.false
   }
 
   // MARK: - Helpers

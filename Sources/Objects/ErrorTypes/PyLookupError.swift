@@ -5,7 +5,7 @@
 
 internal class PyLookupErrorType: PyExceptionType {
   override internal var name: String { return "LookupError" }
-  override internal var base: PyType? { return self.context.errorTypes.exception }
+  override internal var base: PyType? { return self.errorTypes.exception }
   override internal var doc: String? {
     return "Base class for lookup errors."
   }
@@ -13,7 +13,7 @@ internal class PyLookupErrorType: PyExceptionType {
 
 internal final class PyIndexErrorType: PyLookupErrorType {
   override internal var name: String { return "IndexError" }
-  override internal var base: PyType? { return self.context.errorTypes.lookup }
+  override internal var base: PyType? { return self.errorTypes.lookup }
   override internal var doc: String? {
     return "Sequence index out of range."
   }
@@ -21,7 +21,7 @@ internal final class PyIndexErrorType: PyLookupErrorType {
 
 internal final class PyKeyErrorType: PyLookupErrorType {
   override internal var name: String { return "KeyError" }
-  override internal var base: PyType? { return self.context.errorTypes.lookup }
+  override internal var base: PyType? { return self.errorTypes.lookup }
   override internal var doc: String? {
     return "Mapping key not found."
   }

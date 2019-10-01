@@ -49,7 +49,7 @@ internal final class PySyntaxError: PyBaseException {
 
 internal class PySyntaxErrorType: PyExceptionType {
   override internal var name: String { return "SyntaxError" }
-  override internal var base: PyType? { return self.context.errorTypes.exception }
+  override internal var base: PyType? { return self.errorTypes.exception }
   override internal var doc: String? {
     return "Invalid syntax."
   }
@@ -76,7 +76,7 @@ internal class PySyntaxErrorType: PyExceptionType {
 
 internal class PyIndentationErrorType: PySyntaxErrorType {
   override internal var name: String { return "IndentationError" }
-  override internal var base: PyType? { return self.context.errorTypes.syntax }
+  override internal var base: PyType? { return self.errorTypes.syntax }
   override internal var doc: String? {
     return "Improper indentation."
   }
@@ -84,7 +84,7 @@ internal class PyIndentationErrorType: PySyntaxErrorType {
 
 internal class PyTabErrorType: PySyntaxErrorType {
   override internal var name: String { return "TabError" }
-  override internal var base: PyType? { return self.context.errorTypes.syntax }
+  override internal var base: PyType? { return self.errorTypes.syntax }
   override internal var doc: String? {
     return "Improper mixture of spaces and tabs."
   }

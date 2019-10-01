@@ -83,7 +83,7 @@ Convert a string or number to a floating point number, if possible.
       return self.context.richCompare(lhs: l, rhs: r.value, mode: mode)
     }
 
-    if let r = self.context.types.int.extractIntOrNil(right) {
+    if let r = self.types.int.extractIntOrNil(right) {
       return self.context.richCompare(lhs: l, rhs: Double(r), mode: mode)
     }
 
@@ -99,12 +99,12 @@ Convert a string or number to a floating point number, if possible.
 
   internal func bool(value: PyObject) throws -> PyBool {
     let v = try self.extractDouble(value)
-    return self.context.types.bool.new(!v.isZero)
+    return self.types.bool.new(!v.isZero)
   }
 
   internal func int(value: PyObject) throws -> PyInt {
     let v = try self.extractDouble(value)
-    return self.context.types.int.new(BigInt(v))
+    return self.types.int.new(BigInt(v))
   }
 
   internal func float(value: PyObject) throws -> PyFloat {
@@ -193,12 +193,12 @@ Convert a string or number to a floating point number, if possible.
       quotient.round()
     }
 
-    return self.context.types.tuple.new(self.new(quotient), self.new(remainder))
+    return self.types.tuple.new(self.new(quotient), self.new(remainder))
   }
 
   internal func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
     let divMod = try self.divMod(left: left, right: right)
-    return try self.context.types.tuple.item(owner: divMod, at: 0)
+    return try self.types.tuple.item(owner: divMod, at: 0)
   }
 
   // MARK: - Abs

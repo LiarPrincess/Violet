@@ -5,7 +5,7 @@
 
 internal class PyExceptionType: PyBaseExceptionType {
   override internal var name: String { return "Exception" }
-  override internal var base: PyType? { return self.context.errorTypes.base }
+  override internal var base: PyType? { return self.errorTypes.base }
   override internal var doc: String? {
     return "Common base class for all non-exit exceptions."
   }

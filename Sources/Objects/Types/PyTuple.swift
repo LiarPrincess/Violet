@@ -74,24 +74,24 @@ If the argument is a tuple, the return value is the same object.
       if !areEqual {
         switch mode {
         case .equal:
-          return self.context.types.bool.false
+          return self.types.bool.false
         case .notEqual:
-          return self.context.types.bool.true
+          return self.types.bool.true
         case .less,
              .lessEqual,
              .greater,
              .greaterEqual:
           let result = self.context.richCompareBool(left: left, right: right, mode: mode)
-          return self.context.types.bool.new(result)
+          return self.types.bool.new(result)
         }
       }
     }
 
     // collections are equal up to to shorter tuple count, compare count
-    let lCount = self.context.types.int.new(l.elements.count)
-    let rCount = self.context.types.int.new(r.elements.count)
+    let lCount = self.types.int.new(l.elements.count)
+    let rCount = self.types.int.new(r.elements.count)
     let result =  self.context.richCompareBool(left: lCount, right: rCount, mode: mode)
-    return self.context.types.bool.new(result)
+    return self.types.bool.new(result)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -148,7 +148,7 @@ If the argument is a tuple, the return value is the same object.
 
   internal func length(value: PyObject) throws -> PyInt {
     let v = try self.matchType(value)
-    return self.context.types.int.new(v.elements.count)
+    return self.types.int.new(v.elements.count)
   }
 
   internal func lengthInt(value: PyObject) throws -> Int {
@@ -173,7 +173,7 @@ If the argument is a tuple, the return value is the same object.
 
   internal func `repeat`(value: PyObject, count: PyInt) throws -> PyObject {
     let tuple = try self.matchType(value)
-    let countRaw = try self.context.types.int.extractInt(count)
+    let countRaw = try self.types.int.extractInt(count)
 
     let count = max(countRaw, 0)
 
