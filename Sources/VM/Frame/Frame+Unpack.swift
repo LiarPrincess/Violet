@@ -8,7 +8,7 @@ extension Frame {
   /// Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
   internal func buildTupleUnpack(elementCount: Int) throws {
     let list = self.unpackList(elementCount: elementCount)
-    let tuple = self.context.createTuple(list: list)
+    let tuple = try self.context.createTuple(list: list)
     self.push(tuple)
   }
 

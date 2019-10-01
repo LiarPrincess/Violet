@@ -4,8 +4,8 @@ extension PyContext {
 
   /// PyObject * PyNumber_Positive(PyObject *o)
   public func positive(_ value: PyObject) throws -> PyObject {
-    if let signed = value.type as? SignedTypeClass {
-      return try signed.positive(value: value)
+    if let type = value.type as? SignedTypeClass {
+      return try type.positive(value: value)
     }
 
     throw PyContextError.invalidOperandForUnaryPositive(value)
@@ -13,8 +13,8 @@ extension PyContext {
 
   /// PyObject * PyNumber_Negative(PyObject *o)
   public func negative(_ value: PyObject) throws -> PyObject {
-    if let signed = value.type as? SignedTypeClass {
-      return try signed.negative(value: value)
+    if let type = value.type as? SignedTypeClass {
+      return try type.negative(value: value)
     }
 
     throw PyContextError.invalidOperandForUnaryNegative(value)
@@ -138,8 +138,8 @@ extension PyContext {
   }
 
   internal func div(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let dividable: DivTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try dividable.div(left: left, right: right)
+    let type: DivTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+    return try type.div(left: left, right: right)
   }
 
   // MARK: - Div floor
@@ -150,8 +150,8 @@ extension PyContext {
   }
 
   internal func divFloor(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let dividable: DivFloorTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try dividable.divFloor(left: left, right: right)
+    let type: DivFloorTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+    return try type.divFloor(left: left, right: right)
   }
 
   // MARK: - Remainder

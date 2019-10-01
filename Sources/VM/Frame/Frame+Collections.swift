@@ -85,7 +85,7 @@ extension Frame {
   internal func listAppend(value: Int) throws {
     let value = self.pop()
     let list = self.top
-    self.context.listAdd(list: list, value: value)
+    self.context.PyList_Append(list: list, value: value)
   }
 
   /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`.

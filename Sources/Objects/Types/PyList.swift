@@ -301,7 +301,7 @@ The argument must be an iterable if specified.
 
   // MARK: - Helpers
 
-  private func matchTypeOrNil(_ object: PyObject) -> PyList? {
+  internal func matchTypeOrNil(_ object: PyObject) -> PyList? {
     if let tuple = object as? PyList {
       return tuple
     }
@@ -309,7 +309,7 @@ The argument must be an iterable if specified.
     return nil
   }
 
-  private func matchType(_ object: PyObject) throws -> PyList {
+  internal func matchType(_ object: PyObject) throws -> PyList {
     if let tuple = object as? PyList {
       return tuple
     }
