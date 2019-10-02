@@ -31,26 +31,29 @@ extension PyContext {
   }
 
   /// int PyList_Append(PyObject *op, PyObject *newitem)
-  public func append(list: PyObject, element: PyObject) throws {
+  public func add(list: PyObject, element: PyObject) throws {
     try self.types.list.add(owner: list, element: element)
   }
 
   /// PyObject * _PyList_Extend(PyListObject *self, PyObject *iterable)
-  public func append(list: PyObject, iterable: PyObject) throws {
+  public func extent(list: PyObject, iterable: PyObject) throws {
     try self.types.list.extend(owner: list, iterable: iterable)
   }
 
   // MARK: - Set
 
-  public func set(elements: [PyObject] = []) -> PyObject {
-    return self.unimplemented()
+  /// PyObject * PySet_New(PyObject *iterable)
+  public func set(elements: [PyObject] = []) throws -> PyObject {
+    return try self.types.set.new(elements: elements)
   }
 
-  public func setAdd(set: PyObject, value: PyObject) {
-    self.unimplemented()
+  /// int PySet_Add(PyObject *anyset, PyObject *key)
+  public func add(set: PyObject, value: PyObject) throws {
+    try self.types.set.add(owner: set, element: value)
   }
 
-  public func _PySet_Update(set: PyObject, iterable: PyObject) {
+  /// int _PySet_Update(PyObject *set, PyObject *iterable)
+  public func extend(set: PyObject, iterable: PyObject) throws {
     self.unimplemented()
   }
 

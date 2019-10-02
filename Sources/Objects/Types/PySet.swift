@@ -5,7 +5,6 @@ import Core
 // https://docs.python.org/3.7/c-api/set.html
 
 // TODO: Set
-// {"add",             (PyCFunction)set_add,             METH_O, add_doc},
 // {"clear",           (PyCFunction)set_clear,           METH_NOARGS, clear_doc},
 // {"__contains__",    (PyCFunction)set_direct_contains, METH_O | METH_COEXIST, ... },
 // {"copy",            (PyCFunction)set_copy,            METH_NOARGS, copy_doc},
@@ -29,6 +28,9 @@ import Core
 // (traverseproc)set_traverse,         /* tp_traverse */
 // (inquiry)set_clear_internal,        /* tp_clear */
 // (getiterfunc)set_iter,              /* tp_iter */
+// Done: add
+// TODO: Frozen set
+#warning("This is not a correct implementation, it will fail on collision!")
 
 // swiftlint:disable file_length
 
@@ -51,7 +53,8 @@ internal final class PySetType: PyType,
   ComparableTypeClass, HashableTypeClass,
   SubTypeClass, SubInPlaceTypeClass,
   BinaryTypeClass, BinaryInPlaceTypeClass,
-LengthTypeClass, ContainsTypeClass {
+  LengthTypeClass, ContainsTypeClass,
+  ClearTypeClass {
 
   override internal var name: String { return "set" }
   override internal var doc: String? { return """
@@ -65,6 +68,15 @@ LengthTypeClass, ContainsTypeClass {
   internal lazy var empty = PySet(type: self, elements: [:])
 
   // MARK: - Ctor
+
+  internal func new(elements: [PyObject]) throws -> PySet {
+    var dict = [PyHash: PyObject]()
+    for e in elements {
+      let hash = try self.context.hash(value: e)
+      dict[hash] = e
+    }
+    return PySet(type: self, elements: dict)
+  }
 
   internal func new(elements: [PyHash: PyObject] = [:]) -> PySet {
     return PySet(type: self, elements: elements)
@@ -149,8 +161,12 @@ LengthTypeClass, ContainsTypeClass {
 
   // MARK: - Items
 
-  /// Return the difference of two or more sets as a new set.
-  /// (i.e. all elements that are in this set but not the others.).
+  internal func add(owner: PyObject, element: PyObject) throws {
+    let o = try self.matchType(owner)
+    let hash = try self.context.hash(value: element)
+    o.elements[hash] = element
+  }
+
   internal func sub(left: PyObject, right: PyObject) throws -> PyObject {
     return try self.difference(left: left, right: right)
   }
@@ -170,6 +186,11 @@ LengthTypeClass, ContainsTypeClass {
     let v = try self.matchType(owner)
     let hash = try self.context.hash(value: element)
     return v.elements.contains { h, _ in h == hash }
+  }
+
+  internal func clear(value: PyObject) throws {
+    let v = try self.matchType(value)
+    v.elements.removeAll()
   }
 
   // MARK: - Subset/superset
@@ -302,16 +323,16 @@ LengthTypeClass, ContainsTypeClass {
   // MARK: - Helpers
 
   internal func matchTypeOrNil(_ object: PyObject) -> PySet? {
-    if let set = object as? PySet {
-      return set
+    if let o = object as? PySet {
+      return o
     }
 
     return nil
   }
 
   internal func matchType(_ object: PyObject) throws -> PySet {
-    if let set = object as? PySet {
-      return set
+    if let o = object as? PySet {
+      return o
     }
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)

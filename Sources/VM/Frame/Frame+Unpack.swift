@@ -28,11 +28,11 @@ extension Frame {
   /// This is similar to `BuildTupleUnpack`, but pushes a set instead of tuple.
   /// Implements iterable unpacking in set displays `{*x, *y, *z}`.
   internal func buildSetUnpack(elementCount: Int) throws {
-    let set = self.context.set()
+    let set = try self.context.set()
     let elements = self.popElements(count: elementCount)
 
     for iterable in elements {
-      self.context._PySet_Update(set: set, iterable: iterable)
+      try self.context.extend(set: set, iterable: iterable)
     }
 
     self.push(set)
@@ -85,7 +85,7 @@ extension Frame {
     let elements = self.popElements(count: elementCount)
 
     for iterable in elements {
-      try self.context.append(list: result, iterable: iterable)
+      try self.context.extent(list: result, iterable: iterable)
     }
 
     return result

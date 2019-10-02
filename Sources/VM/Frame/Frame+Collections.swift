@@ -25,7 +25,7 @@ extension Frame {
   /// and pushes the resulting set onto the stack.
   internal func buildSet(elementCount: Int) throws {
     let elements = self.popElements(count: elementCount)
-    let collection = self.context.set(elements: elements)
+    let collection = try self.context.set(elements: elements)
     self.push(collection)
   }
 
@@ -74,7 +74,7 @@ extension Frame {
   internal func setAdd(value: Int) throws {
     let element = self.pop()
     let set = self.top
-    self.context.setAdd(set: set, value: element)
+    try self.context.add(set: set, value: element)
   }
 
   /// Calls `list.append(TOS[-i], TOS)`.
@@ -83,7 +83,7 @@ extension Frame {
   internal func listAppend(value: Int) throws {
     let element = self.pop()
     let list = self.top
-    try self.context.append(list: list, element: element)
+    try self.context.add(list: list, element: element)
   }
 
   /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`.
