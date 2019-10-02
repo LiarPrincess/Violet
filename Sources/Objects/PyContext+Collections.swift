@@ -1,3 +1,13 @@
+public class CreateDictionaryArg {
+  public let key: PyObject
+  public let value: PyObject
+
+  public init(key: PyObject, value: PyObject) {
+    self.key = key
+    self.value = value
+  }
+}
+
 extension PyContext {
 
   // MARK: - Tuple

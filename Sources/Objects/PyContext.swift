@@ -28,6 +28,7 @@ internal final class PyContextTypes {
   internal lazy var int   = PyIntType(context: self.context)
   internal lazy var float = PyFloatType(context: self.context)
   internal lazy var bool  = PyBoolType(context: self.context)
+  internal lazy var complex = PyComplexType(context: self.context)
 
   internal lazy var tuple = PyTupleType(context: self.context)
   internal lazy var list  = PyListType(context: self.context)

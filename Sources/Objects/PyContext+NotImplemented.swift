@@ -1,3 +1,5 @@
+import Core
+
 public enum CompareMode {
   case equal
   case notEqual
@@ -5,16 +7,6 @@ public enum CompareMode {
   case lessEqual
   case greater
   case greaterEqual
-}
-
-public class CreateDictionaryArg {
-  public let key: PyObject
-  public let value: PyObject
-
-  public init(key: PyObject, value: PyObject) {
-    self.key = key
-    self.value = value
-  }
 }
 
 extension PyContext {
