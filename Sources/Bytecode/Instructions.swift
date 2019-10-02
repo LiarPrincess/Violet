@@ -310,8 +310,17 @@ public enum Instruction {
   case loadGlobal(nameIndex: UInt8)
   /// Works as DeleteName, but deletes a global name.
   case deleteGlobal(nameIndex: UInt8)
+  /// Used for local function variables. Currently it works similar to 'LoadName'.
+  /// In the future it may be reimplemented to use frame slots with int index.
+  /// Pushes a reference to the local names[nameIndex] onto the stack.
   case loadFast(nameIndex: UInt8)
+  /// Used for local function variables. Currently it works similar to 'StoreName'.
+  /// In the future it may be reimplemented to use frame slots with int index.
+  /// Stores TOS into the local names[nameIndex].
   case storeFast(nameIndex: UInt8)
+  /// Used for local function variables. Currently it works similar to 'DeleteName'.
+  /// In the future it may be reimplemented to use frame slots with int index.
+  /// Deletes local names[nameIndex].
   case deleteFast(nameIndex: UInt8)
   /// Loads the cell contained in slot i of the cell and free variable storage.
   /// Pushes a reference to the object the cell contains on the stack.

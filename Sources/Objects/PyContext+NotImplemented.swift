@@ -49,4 +49,38 @@ extension PyContext {
   public func pySlice_New(start: PyObject, stop: PyObject, step: PyObject?) -> PyObject {
     return start
   }
+
+  // MARK: - Attribute
+
+  /// PyObject_SetAttr
+  public func setAttribute(object: PyObject, name: String, value: PyObject) throws {
+    self.unimplemented()
+  }
+
+  public func deleteAttribute(object: PyObject, name: String) throws {
+    // err = PyObject_SetAttr(owner, name, (PyObject *)NULL);
+    self.unimplemented()
+  }
+
+  /// PyObject_GetAttr
+  public func getAttribute(object: PyObject, name: String) throws -> PyObject {
+    return object
+  }
+
+  // MARK: - Subscript
+
+  /// PyObject_GetItem
+  public func getItem(object: PyObject, index: PyObject) throws -> PyObject {
+    return object
+  }
+
+  /// PyObject_SetItem
+  public func setItem(object: PyObject, index: PyObject, value: PyObject) throws {
+    self.unimplemented()
+  }
+
+  /// PyObject_DelItem
+  public func deleteItem(object: PyObject, index: PyObject) throws {
+    self.unimplemented()
+  }
 }

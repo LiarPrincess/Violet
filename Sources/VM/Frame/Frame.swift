@@ -11,18 +11,23 @@ internal class Frame {
   /// Code to run.
   internal let code: CodeObject
 
+  /// Python state.
   internal let context: PyContext
 
   /// The main data frame of the stack machine.
   internal var stack = [PyObject]()
 
+  /// Local symbol table.
+  internal var locals = [String: PyObject]()
+  /// Global symbol table.
+  internal var globals = [String: PyObject]()
+  /// Builtin symbol table.
+  internal var builtins = [String: PyObject]()
+  /// Free variables.
+  internal var free = [String: PyObject]()
+
   /// Index of the next instruction to run.
   internal var nextInstructionIndex = 0
-
-  /// Block frames, for controlling loops and exceptions
-  // blocks: RefCell<Vec<Block>>
-  /// Variables
-  // pub scope: Scope
 
   internal init(code: CodeObject, context: PyContext) {
     self.code = code

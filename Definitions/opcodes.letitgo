@@ -393,11 +393,17 @@ properties of `CodeObject`.
   -- Works as DeleteName, but deletes a global name.
   | DeleteGlobal(NameIndex nameIndex)
 
-  {- Pushes a reference to the local names[nameIndex] onto the stack. -}
+  -- Used for local function variables. Currently it works similar to 'LoadName'.
+  -- In the future it may be reimplemented to use frame slots with int index.
+  -- Pushes a reference to the local names[nameIndex] onto the stack.
   | LoadFast(NameIndex nameIndex)
-  {- Stores TOS into the local names[nameIndex]. -}
+  -- Used for local function variables. Currently it works similar to 'StoreName'.
+  -- In the future it may be reimplemented to use frame slots with int index.
+  -- Stores TOS into the local names[nameIndex].
   | StoreFast(NameIndex nameIndex)
-  {- Deletes local names[nameIndex]. -}
+  -- Used for local function variables. Currently it works similar to 'DeleteName'.
+  -- In the future it may be reimplemented to use frame slots with int index.
+  -- Deletes local names[nameIndex].
   | DeleteFast(NameIndex nameIndex)
 
   -- Loads the cell contained in slot i of the cell and free variable storage.
