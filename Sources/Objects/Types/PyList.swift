@@ -20,8 +20,10 @@ import Core
 // LIST_COUNT_METHODDEF
 // LIST_REVERSE_METHODDEF
 // LIST_SORT_METHODDEF
+// Done: append, extend
 
 // swiftlint:disable yoda_condition
+// swiftlint:disable file_length
 
 /// This subtype of PyObject represents a Python list object.
 internal final class PyList: PyObject {
@@ -36,14 +38,14 @@ internal final class PyList: PyObject {
 
 /// This subtype of PyObject represents a Python list object.
 internal final class PyListType: PyType,
-ReprTypeClass,
-ComparableTypeClass, HashableTypeClass,
-LengthTypeClass, ClearTypeClass,
-ConcatTypeClass, ConcatInPlaceTypeClass,
-RepeatTypeClass, RepeatInPlaceTypeClass,
-ItemTypeClass, ItemAssignTypeClass,
-SubscriptTypeClass, SubscriptAssignTypeClass,
-ContainsTypeClass {
+  ReprTypeClass,
+  ComparableTypeClass, HashableTypeClass,
+  LengthTypeClass, ClearTypeClass,
+  ConcatTypeClass, ConcatInPlaceTypeClass,
+  RepeatTypeClass, RepeatInPlaceTypeClass,
+  ItemTypeClass, ItemAssignTypeClass,
+  SubscriptTypeClass, SubscriptAssignTypeClass,
+  ContainsTypeClass {
 
   override internal var name: String { return "list" }
   override internal var doc: String? { return """
