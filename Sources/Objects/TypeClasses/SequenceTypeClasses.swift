@@ -60,3 +60,9 @@ internal protocol ContainsTypeClass: TypeClass {
 
 //  void *was_sq_slice;
 //  void *was_sq_ass_slice;
+
+// MARK: - Iterable
+
+internal protocol IterableTypeClass {
+  func getIterator(owner: PyObject) -> AnySequence<PyObject>
+}

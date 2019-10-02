@@ -1,13 +1,17 @@
 extension PyContext {
 
+  /// int PyObject_Not(PyObject *v)
+  ///
+  /// Equivalent of 'not v'.
   public func not(value: PyObject) throws -> PyObject {
-    return self.unimplemented()
+    let isTrue = try self.isTrue(value: value)
+    return self.types.bool.new(!isTrue)
   }
 
+  /// PyObject_IsTrue(PyObject *v)
+  ///
   /// Test a value used as condition, e.g., in a for or if statement.
   public func isTrue(value: PyObject) throws -> Bool {
-    // PyObject_IsTrue(PyObject *v)
-
     if let bool = value as? PyBool {
       return bool.value.isTrue
     }

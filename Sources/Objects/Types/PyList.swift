@@ -13,9 +13,7 @@ import Core
 // LIST___SIZEOF___METHODDEF
 // LIST_CLEAR_METHODDEF
 // LIST_COPY_METHODDEF
-// LIST_APPEND_METHODDEF
 // LIST_INSERT_METHODDEF
-// LIST_EXTEND_METHODDEF
 // LIST_POP_METHODDEF
 // LIST_REMOVE_METHODDEF
 // LIST_INDEX_METHODDEF
@@ -222,6 +220,22 @@ The argument must be an iterable if specified.
   }
 
   // MARK: - Item
+
+  internal func add(owner: PyObject, element: PyObject) throws {
+    let list = try self.matchType(owner)
+    list.elements.append(element)
+  }
+
+  internal func extend(owner: PyObject, iterable: PyObject) throws {
+    let list = try self.matchType(owner)
+
+    guard let iterableType = iterable.type as? IterableTypeClass else {
+      fatalError()
+    }
+
+    let other = iterableType.getIterator(owner: iterable)
+    list.elements.append(contentsOf: other)
+  }
 
   internal func item(owner: PyObject, at index: Int) throws -> PyObject {
     let list = try self.matchType(owner)

@@ -9,7 +9,7 @@ extension Frame {
   /// and pushes the resulting tuple onto the stack.
   internal func buildTuple(elementCount: Int) throws {
     let elements = self.popElements(count: elementCount)
-    let collection = self.context.createTuple(elements: elements)
+    let collection = self.context.tuple(elements: elements)
     self.push(collection)
   }
 
@@ -17,7 +17,7 @@ extension Frame {
   /// and pushes the resulting list onto the stack.
   internal func buildList(elementCount: Int) throws {
     let elements = self.popElements(count: elementCount)
-    let collection = self.context.createList(elements: elements)
+    let collection = self.context.list(elements: elements)
     self.push(collection)
   }
 
@@ -25,7 +25,7 @@ extension Frame {
   /// and pushes the resulting set onto the stack.
   internal func buildSet(elementCount: Int) throws {
     let elements = self.popElements(count: elementCount)
-    let collection = self.context.createSet(elements: elements)
+    let collection = self.context.set(elements: elements)
     self.push(collection)
   }
 
@@ -34,7 +34,7 @@ extension Frame {
   /// {..., TOS3: TOS2, TOS1: TOS}.
   internal func buildMap(elementCount: Int) throws {
     let elements = self.popDictionaryElements(count: elementCount)
-    let collection = self.context.createDictionary(elements: elements)
+    let collection = self.context.dictionary(elements: elements)
     self.push(collection)
   }
 
@@ -50,9 +50,7 @@ extension Frame {
     }
 
     let elements = self.popElements(count: count)
-    let collection = self.context.createConstDictionary(keys: keys,
-                                                        elements: elements)
-
+    let collection = self.context.dictionary(keyTuple: keys, elements: elements)
     self.push(collection)
   }
 
@@ -74,18 +72,18 @@ extension Frame {
   /// Container object remains on the stack.
   /// Used to implement set comprehensions.
   internal func setAdd(value: Int) throws {
-    let value = self.pop()
+    let element = self.pop()
     let set = self.top
-    self.context.setAdd(set: set, value: value)
+    self.context.setAdd(set: set, value: element)
   }
 
   /// Calls `list.append(TOS[-i], TOS)`.
   /// Container object remains on the stack.
   /// Used to implement list comprehensions.
   internal func listAppend(value: Int) throws {
-    let value = self.pop()
+    let element = self.pop()
     let list = self.top
-    self.context.PyList_Append(list: list, value: value)
+    try self.context.append(list: list, element: element)
   }
 
   /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`.

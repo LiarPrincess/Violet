@@ -7,8 +7,8 @@ extension Frame {
   /// and pushes the result.
   /// Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
   internal func buildTupleUnpack(elementCount: Int) throws {
-    let list = self.unpackList(elementCount: elementCount)
-    let tuple = try self.context.createTuple(list: list)
+    let list = try self.unpackList(elementCount: elementCount)
+    let tuple = try self.context.tuple(list: list)
     self.push(tuple)
   }
 
@@ -21,14 +21,14 @@ extension Frame {
   /// This is similar to `BuildTupleUnpack`, but pushes a list instead of tuple.
   /// Implements iterable unpacking in list displays `[*x, *y, *z]`.
   internal func buildListUnpack(elementCount: Int) throws {
-    let list = self.unpackList(elementCount: elementCount)
+    let list = try self.unpackList(elementCount: elementCount)
     self.push(list)
   }
 
   /// This is similar to `BuildTupleUnpack`, but pushes a set instead of tuple.
   /// Implements iterable unpacking in set displays `{*x, *y, *z}`.
   internal func buildSetUnpack(elementCount: Int) throws {
-    let set = self.context.createSet()
+    let set = self.context.set()
     let elements = self.popElements(count: elementCount)
 
     for iterable in elements {
@@ -42,7 +42,7 @@ extension Frame {
   /// and pushes the result.
   /// Implements dictionary unpacking in dictionary displays `{**x, **y, **z}`.
   internal func buildMapUnpack(elementCount: Int) throws {
-    let dict = self.context.createDictionary()
+    let dict = self.context.dictionary()
     let elements = self.popElements(count: elementCount)
 
     for iterable in elements {
@@ -80,12 +80,12 @@ extension Frame {
 
   // MARK: - Helpers
 
-  private func unpackList(elementCount: Int) -> PyObject {
-    let result = self.context.createList()
+  private func unpackList(elementCount: Int) throws -> PyObject {
+    let result = self.context.list()
     let elements = self.popElements(count: elementCount)
 
     for iterable in elements {
-      self.context._PyList_Extend(list: result, iterable: iterable)
+      try self.context.append(list: result, iterable: iterable)
     }
 
     return result
