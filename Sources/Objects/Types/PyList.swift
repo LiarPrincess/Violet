@@ -233,8 +233,9 @@ The argument must be an iterable if specified.
       fatalError()
     }
 
-    let other = iterableType.getIterator(owner: iterable)
-    list.elements.append(contentsOf: other)
+    fatalError()
+//    let other = iterableType.getIterator(owner: iterable)
+//    list.elements.append(contentsOf: other)
   }
 
   internal func item(owner: PyObject, at index: Int) throws -> PyObject {

@@ -9,6 +9,10 @@ public enum CompareMode {
   case greaterEqual
 }
 
+internal protocol CGVisitor {
+  func visit(_ object: PyObject)
+}
+
 extension PyContext {
 
   @discardableResult
@@ -26,6 +30,10 @@ extension PyContext {
 
   internal func hash(value: PyObject) throws -> PyHash {
     return 0
+  }
+
+  internal func PyObject_GetIter(value: PyObject) -> PyObject {
+    return value
   }
 
   internal func _PyType_Name(value: PyType) -> String {

@@ -4,24 +4,6 @@ internal protocol LengthTypeClass: TypeClass {
   func length(value: PyObject) throws -> PyInt
 }
 
-// TODO: This is not finished
-extension LengthTypeClass {
-  internal func extractIndex(value: PyObject) throws -> Int? {
-    guard let indexType = value.type as? IndexTypeClass else {
-      return nil
-    }
-
-    let index = try indexType.index(value: value)
-    let bigInt = try self.context.types.int.extractInt(index)
-    guard let result = Int(exactly: bigInt) else {
-      // i = PyNumber_AsSsize_t(item, PyExc_IndexError);
-      fatalError()
-    }
-
-    return result
-  }
-}
-
 // MARK: - Concat
 
 internal protocol ConcatTypeClass: TypeClass {
@@ -64,5 +46,5 @@ internal protocol ContainsTypeClass: TypeClass {
 // MARK: - Iterable
 
 internal protocol IterableTypeClass {
-  func getIterator(owner: PyObject) -> AnySequence<PyObject>
+  func next(value: PyObject) throws -> PyObject
 }
