@@ -17,7 +17,6 @@ import Core
 /// This is the same as slice in the Python layer.
 internal final class PySlice: PyObject {
 
-  // start, stop, and step are python objects with None indicating no index is present.
   internal var start: Int?
   internal var stop:  Int?
   internal var step:  Int?
@@ -158,16 +157,16 @@ This is used for extended slicing (e.g. a[0:10:2]).
   }
 
   internal func matchTypeOrNil(_ object: PyObject) -> PySlice? {
-    if let slice = object as? PySlice {
-      return slice
+    if let o = object as? PySlice {
+      return o
     }
 
     return nil
   }
 
   internal func matchType(_ object: PyObject) throws -> PySlice {
-    if let slice = object as? PySlice {
-      return slice
+    if let o = object as? PySlice {
+      return o
     }
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)

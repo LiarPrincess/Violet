@@ -6,9 +6,6 @@ public class PyContext {
   public var none: PyObject { return self.types.none.value }
   public var ellipsis: PyObject { return self.types.ellipsis.value }
   public var emptyTuple: PyObject { return self.types.tuple.empty }
-  public var emptyList: PyObject { return self.types.list.empty }
-  public var emptySet: PyObject { return self.types.set.empty }
-  public var emptyString: PyObject { return self.types.string.empty }
   public var notImplemented: PyObject { return self.types.notImplemented.value }
 
   internal lazy var types = PyContextTypes(context: self)

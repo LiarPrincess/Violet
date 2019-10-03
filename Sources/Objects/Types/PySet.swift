@@ -65,8 +65,6 @@ internal final class PySetType: PyType,
     """
   }
 
-  internal lazy var empty = PySet(type: self, elements: [:])
-
   // MARK: - Ctor
 
   internal func new(elements: [PyObject]) throws -> PySet {

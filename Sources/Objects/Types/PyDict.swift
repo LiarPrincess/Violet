@@ -70,8 +70,6 @@ internal final class PyDictType: PyType,
     """
   }
 
-  internal lazy var empty = PyDict(type: self, elements: [:])
-
   // MARK: - Ctor
 
   // MARK: - Equatable, hashable

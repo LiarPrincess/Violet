@@ -59,8 +59,6 @@ The argument must be an iterable if specified.
 """
   }
 
-  internal lazy var empty = PyList(type: self, elements: [])
-
   // MARK: - Ctor
 
   internal func new(_ elements: [PyObject]) -> PyList {

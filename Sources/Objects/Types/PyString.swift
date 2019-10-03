@@ -43,8 +43,6 @@ internal final class PyStringType: PyType,
     """
   }
 
-  internal lazy var empty = PyString(type: self, value: "")
-
   // MARK: - Ctors
 
   internal func new(_ value: String) -> PyString {
