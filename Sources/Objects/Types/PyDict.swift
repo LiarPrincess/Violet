@@ -80,27 +80,26 @@ internal final class PyDictType: PyType,
 
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyBool {
+                        mode: CompareMode) throws -> Bool {
     let l = try self.matchType(left)
     let r = try self.matchType(right)
 
     switch mode {
     case .equal:
-      let isEqual = self.isEqual(left: l, right: r)
-      return self.types.bool.new(isEqual)
+      let isEqual = try self.isEqual(left: l, right: r)
+      return isEqual
     case .notEqual:
-      let isEqual = self.isEqual(left: l, right: r)
-      return self.types.bool.new(!isEqual)
+      let isEqual = try self.isEqual(left: l, right: r)
+      return !isEqual
     case .less,
          .lessEqual,
          .greater,
          .greaterEqual:
-      // res = Py_NotImplemented;
-      fatalError()
+      throw ComparableNotImplemented(left: left, right: right)
     }
   }
 
-  private func isEqual(left: PyDict, right: PyDict) -> Bool {
+  private func isEqual(left: PyDict, right: PyDict) throws -> Bool {
     guard left.elements.count == right.elements.count else {
       return false
     }
@@ -110,7 +109,7 @@ internal final class PyDictType: PyType,
         return false
       }
 
-      let areEqual = self.context.richCompareBool(left: l, right: r, mode: .equal)
+      let areEqual = try self.context.richCompareBool(left: l, right: r, mode: .equal)
       if !areEqual {
         return false
       }

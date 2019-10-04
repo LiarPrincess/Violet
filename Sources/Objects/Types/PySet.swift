@@ -84,32 +84,31 @@ internal final class PySetType: PyType,
 
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyBool {
+                        mode: CompareMode) throws -> Bool {
     let l = try self.matchType(left)
     let r = try self.matchType(right)
 
     switch mode {
     case .equal:
       guard l.elements.count == r.elements.count else {
-        return self.types.bool.false
+        return false
       }
 
       let lHash = try self.hash(value: left)
       let rHash = try self.hash(value: right)
       guard lHash == rHash else {
-        return self.types.bool.false
+        return false
       }
 
       return try self.isSubset(set: left, of: right)
 
     case .notEqual:
       let cmp = try self.compare(left: left, right: right, mode: .equal)
-      let isCmpTrue = try self.context.isTrue(value: cmp)
-      return self.types.bool.new(!isCmpTrue)
+      return !cmp
 
     case .less:
       guard l.elements.count == r.elements.count else {
-        return self.types.bool.false
+        return false
       }
       return try self.isSubset(set: left, of: right)
     case .lessEqual:
@@ -117,7 +116,7 @@ internal final class PySetType: PyType,
 
     case .greater:
       guard l.elements.count == r.elements.count else {
-        return self.types.bool.false
+        return false
       }
       return try self.isSuperset(set: left, of: right)
     case .greaterEqual:
@@ -193,38 +192,38 @@ internal final class PySetType: PyType,
 
   // MARK: - Subset/superset
 
-  private func isSubset(set: PyObject, of superset: PyObject) throws -> PyBool {
+  private func isSubset(set: PyObject, of superset: PyObject) throws -> Bool {
     let set = try self.matchType(set)
     let superset = try self.matchType(superset)
 
     guard superset.elements.count > set.elements.count else {
-      return self.types.bool.false
+      return false
     }
 
     for (hash, _) in set.elements {
       if !superset.elements.contains(hash) {
-        return self.types.bool.false
+        return false
       }
     }
 
-    return self.types.bool.true
+    return true
   }
 
-  private func isSuperset(set superset: PyObject, of subset: PyObject) throws -> PyBool {
+  private func isSuperset(set superset: PyObject, of subset: PyObject) throws -> Bool {
     let superset = try self.matchType(superset)
     let subset = try self.matchType(subset)
 
     guard superset.elements.count > subset.elements.count else {
-      return self.types.bool.false
+      return false
     }
 
     for (hash, _) in subset.elements {
       if !superset.elements.contains(hash) {
-        return self.types.bool.false
+        return false
       }
     }
 
-    return self.types.bool.true
+    return true
   }
 
   // MARK: - Binary

@@ -1,40 +1,105 @@
+public enum CompareMode {
+  case equal
+  case notEqual
+  case less
+  case lessEqual
+  case greater
+  case greaterEqual
+
+  fileprivate var reverse: CompareMode {
+    switch self {
+    case .equal:    return .notEqual
+    case .notEqual: return .equal
+    case .less:      return .greaterEqual
+    case .lessEqual: return .greater
+    case .greater:      return .lessEqual
+    case .greaterEqual: return .less
+    }
+  }
+}
+
 extension PyContext {
 
   /// PyObject * PyObject_RichCompare(PyObject *v, PyObject *w, int op)
-  public func richCompare(left:  PyObject,
+  public func richCompare(left: PyObject,
                           right: PyObject,
-                          mode: CompareMode) -> PyObject {
-    return left
+                          mode: CompareMode) throws -> PyObject {
+    let bool = try self.richCompareBool(left: left, right: right, mode: mode)
+    return self.types.bool.new(bool)
   }
 
   /// int PyObject_RichCompareBool(PyObject *v, PyObject *w, int op)
-  internal func richCompareBool(left:  PyObject,
+  internal func richCompareBool(left: PyObject,
                                 right: PyObject,
-                                mode:  CompareMode) -> Bool {
-    return false
-  }
+                                mode: CompareMode) throws -> Bool {
 
-  /// Source: Py_RETURN_RICHCOMPARE
-  internal func richCompare(lhs: Int, rhs: Int, mode: CompareMode) -> PyBool {
+    var checkedReverse = false
+
+    // Check if right is subtype of left, if so then use right overload
+    if left.type !== right.type &&
+      self.PyType_IsSubtype(parent: right.type, subtype: left.type) {
+
+      if let cmpType = right.type as? ComparableTypeClass {
+        do {
+          checkedReverse = true
+          return try cmpType.compare(left: right, right: left, mode: mode.reverse)
+        } catch is ComparableNotImplemented { }
+      }
+    }
+
+    // Check if left is comparable (default path)
+    if let cmpType = left.type as? ComparableTypeClass {
+      do {
+        return try cmpType.compare(left: left, right: right, mode: mode)
+      } catch is ComparableNotImplemented { }
+    }
+
+    // Check if right is comparable
+    if let cmpType = right.type as? ComparableTypeClass, !checkedReverse {
+      do {
+        return try cmpType.compare(left: right, right: left, mode: mode.reverse)
+      } catch is ComparableNotImplemented { }
+    }
+
     switch mode {
-    case .equal:    return self.types.bool.new(lhs == rhs)
-    case .notEqual: return self.types.bool.new(lhs != rhs)
-    case .less:      return self.types.bool.new(lhs < rhs)
-    case .lessEqual: return self.types.bool.new(lhs <= rhs)
-    case .greater:      return self.types.bool.new(lhs > rhs)
-    case .greaterEqual: return self.types.bool.new(lhs >= rhs)
+    case .equal:
+      return left === right
+    case .notEqual:
+      return left !== right
+    case .less,
+         .lessEqual,
+         .greater,
+         .greaterEqual:
+      // PyErr_Format(PyExc_TypeError,
+      //              "'%s' not supported between instances of '%.100s' and '%.100s'",
+      //              opstrings[op],
+      //              v->ob_type->tp_name,
+      //              w->ob_type->tp_name);
+      fatalError()
     }
   }
 
   /// Source: Py_RETURN_RICHCOMPARE
-  internal func richCompare(lhs: Double, rhs: Double, mode: CompareMode) -> PyBool {
+  internal func richCompare(left: Int, right: Int, mode: CompareMode) -> Bool {
     switch mode {
-    case .equal:    return self.types.bool.new(lhs == rhs)
-    case .notEqual: return self.types.bool.new(lhs != rhs)
-    case .less:      return self.types.bool.new(lhs < rhs)
-    case .lessEqual: return self.types.bool.new(lhs <= rhs)
-    case .greater:      return self.types.bool.new(lhs > rhs)
-    case .greaterEqual: return self.types.bool.new(lhs >= rhs)
+    case .equal:    return left == right
+    case .notEqual: return left != right
+    case .less:      return left < right
+    case .lessEqual: return left <= right
+    case .greater:      return left > right
+    case .greaterEqual: return left >= right
+    }
+  }
+
+  /// Source: Py_RETURN_RICHCOMPARE
+  internal func richCompare(left: Double, right: Double, mode: CompareMode) -> Bool {
+    switch mode {
+    case .equal:    return left == right
+    case .notEqual: return left != right
+    case .less:      return left < right
+    case .lessEqual: return left <= right
+    case .greater:      return left > right
+    case .greaterEqual: return left >= right
     }
   }
 }

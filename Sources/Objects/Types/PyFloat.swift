@@ -76,18 +76,18 @@ Convert a string or number to a floating point number, if possible.
   // 'static PyObject* float_richcompare(PyObject *v, PyObject *w, int op)' for details).
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyBool {
+                        mode: CompareMode) throws -> Bool {
     let l = try self.extractDouble(left)
 
     if let r = right as? PyFloat {
-      return self.context.richCompare(lhs: l, rhs: r.value, mode: mode)
+      return self.context.richCompare(left: l, right: r.value, mode: mode)
     }
 
     if let r = self.types.int.extractIntOrNil(right) {
-      return self.context.richCompare(lhs: l, rhs: Double(r), mode: mode)
+      return self.context.richCompare(left: l, right: Double(r), mode: mode)
     }
 
-    fatalError()
+    throw ComparableNotImplemented(left: left, right: right)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {

@@ -142,23 +142,20 @@ internal final class PyRangeType: PyType,
 
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyBool {
+                        mode: CompareMode) throws -> Bool {
     let l = try self.matchType(left)
     let r = try self.matchType(right)
 
     switch mode {
     case .equal:
-      let isEqual = self.isEqual(left: l, right: r)
-      return self.types.bool.new(isEqual)
+      return self.isEqual(left: l, right: r)
     case .notEqual:
-      let isEqual = self.isEqual(left: l, right: r)
-      return self.types.bool.new(!isEqual)
+      return !self.isEqual(left: l, right: r)
     case .less,
          .lessEqual,
          .greater,
          .greaterEqual:
-      // Py_RETURN_NOTIMPLEMENTED;
-      fatalError()
+      throw ComparableNotImplemented(left: left, right: right)
     }
   }
 

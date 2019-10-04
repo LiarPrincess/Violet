@@ -59,25 +59,24 @@ This is used for extended slicing (e.g. a[0:10:2]).
 
   internal func compare(left:  PyObject,
                         right: PyObject,
-                        mode:  CompareMode) throws -> PyBool {
+                        mode:  CompareMode) throws -> Bool {
     if left === right {
       switch mode {
       case .equal, .lessEqual, .greaterEqual:
-        return self.types.bool.true
+        return true
       case .notEqual, .less, .greater:
-        return self.types.bool.false
+        return false
       }
     }
 
     guard let l = self.matchTypeOrNil(left),
           let r = self.matchTypeOrNil(right) else {
-        fatalError()
+      throw ComparableNotImplemented(left: left, right: right)
     }
 
     let lt = self.toTuple(l)
     let rt = self.toTuple(r)
-    let result = self.context.richCompareBool(left: lt, right: rt, mode: mode)
-    return self.types.bool.new(result)
+    return try self.context.richCompareBool(left: lt, right: rt, mode: mode)
   }
 
   private func toTuple(_ slice: PySlice) -> PyTuple {

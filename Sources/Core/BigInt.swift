@@ -30,6 +30,7 @@ public struct BigInt:
   /// The maximum representable integer in this type
   /// (`-Int64.max` due to '-' being unary operator).
   public static let min = BigInt(-Int64.max)
+
   /// The minimum representable integer in this type (`Int64.max`).
   public static let max = BigInt(Int64.max)
 
@@ -37,7 +38,19 @@ public struct BigInt:
 
   fileprivate var value: Int64
 
+  /// The magnitude of this value.
+  ///
+  /// For any numeric value `x`, `x.magnitude` is the absolute value of `x`.
   public var magnitude: UInt64 { return self.value.magnitude }
+
+  /// Returns `-1` if this value is negative
+  /// and `1` if it's positive;
+  /// otherwise, `0`.
+  public func signum() -> Int {
+    if self.value > 0 { return 1 }
+    if self.value < 0 { return -1 }
+    return 0
+  }
 
   public var description: String {
     return String(describing: self.value)

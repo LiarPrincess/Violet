@@ -1,14 +1,5 @@
 import Core
 
-public enum CompareMode {
-  case equal
-  case notEqual
-  case less
-  case lessEqual
-  case greater
-  case greaterEqual
-}
-
 internal protocol CGVisitor {
   func visit(_ object: PyObject)
 }

@@ -111,41 +111,36 @@ internal final class PyStringType: PyType,
 
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyBool {
+                        mode: CompareMode) throws -> Bool {
     guard let l = self.extractOrNil(left),
           let r = self.extractOrNil(right) else {
-      // Py_RETURN_NOTIMPLEMENTED;
-      fatalError()
+      throw ComparableNotImplemented(left: left, right: right)
     }
 
     if left === right {
       switch mode {
-      case .equal, .lessEqual, .greaterEqual:
-        return self.types.bool.true
-      case .notEqual, .less, .greater:
-        return self.types.bool.false
+      case .equal, .lessEqual, .greaterEqual: return true
+      case .notEqual, .less, .greater: return false
       }
     }
 
     switch mode {
     case .equal:
-      let result = self.isEqual(left: l, right: r)
-      return self.types.bool.new(result)
+      return self.isEqual(left: l, right: r)
     case .notEqual:
-      let result = self.isEqual(left: l, right: r)
-      return self.types.bool.new(!result)
+      return !self.isEqual(left: l, right: r)
     case .less:
       let result = self.compare(left: l, right: r)
-      return self.types.bool.new(result == .less)
+      return result == .less
     case .lessEqual:
       let result = self.compare(left: l, right: r)
-      return self.types.bool.new(result == .less || result == .equal)
+      return result == .less || result == .equal
     case .greater:
       let result = self.compare(left: l, right: r)
-      return self.types.bool.new(result == .greater)
+      return result == .greater
     case .greaterEqual:
       let result = self.compare(left: l, right: r)
-      return self.types.bool.new(result == .greater || result == .equal)
+      return result == .greater || result == .equal
     }
   }
 

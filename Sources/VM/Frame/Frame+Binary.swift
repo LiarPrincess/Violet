@@ -128,17 +128,17 @@ extension Frame {
                        comparison: ComparisonOpcode) throws -> PyObject {
     switch comparison {
     case .equal:
-      return self.context.richCompare(left: left, right: right, mode: .equal)
+      return try self.context.richCompare(left: left, right: right, mode: .equal)
     case .notEqual:
-      return self.context.richCompare(left: left, right: right, mode: .notEqual)
+      return try self.context.richCompare(left: left, right: right, mode: .notEqual)
     case .less:
-      return self.context.richCompare(left: left, right: right, mode: .less)
+      return try self.context.richCompare(left: left, right: right, mode: .less)
     case .lessEqual:
-      return self.context.richCompare(left: left, right: right, mode: .lessEqual)
+      return try self.context.richCompare(left: left, right: right, mode: .lessEqual)
     case .greater:
-      return self.context.richCompare(left: left, right: right, mode: .greater)
+      return try self.context.richCompare(left: left, right: right, mode: .greater)
     case .greaterEqual:
-      return self.context.richCompare(left: left, right: right, mode: .greaterEqual)
+      return try self.context.richCompare(left: left, right: right, mode: .greaterEqual)
     case .is:
       return self.context.is(left: left, right: right)
     case .isNot:

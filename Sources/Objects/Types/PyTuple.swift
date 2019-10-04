@@ -30,10 +30,10 @@ internal final class PyTuple: PyObject {
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
 internal final class PyTupleType: PyType,
-ReprTypeClass,
-ComparableTypeClass, HashableTypeClass,
-LengthTypeClass, ConcatTypeClass, RepeatTypeClass,
-ItemTypeClass, ContainsTypeClass, SubscriptTypeClass {
+  ReprTypeClass,
+  ComparableTypeClass, HashableTypeClass,
+  LengthTypeClass, ConcatTypeClass, RepeatTypeClass,
+  ItemTypeClass, ContainsTypeClass, SubscriptTypeClass {
 
   override internal var name: String { return "tuple" }
   override internal var doc: String? { return """
@@ -60,31 +60,28 @@ If the argument is a tuple, the return value is the same object.
 
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyBool {
+                        mode: CompareMode) throws -> Bool {
     guard let l = self.matchTypeOrNil(left),
           let r = self.matchTypeOrNil(right) else {
-      // Py_RETURN_NOTIMPLEMENTED;
-      fatalError()
+      throw ComparableNotImplemented(left: left, right: right)
     }
 
     // try to finc first item that differs
     for (lElem, rElem) in zip(l.elements, r.elements) {
-      let areEqual = self.context.richCompareBool(left: lElem,
-                                                  right: rElem,
-                                                  mode: .equal)
-
+      let areEqual = try self.context.richCompareBool(left: lElem,
+                                                      right: rElem,
+                                                      mode: .equal)
       if !areEqual {
         switch mode {
         case .equal:
-          return self.types.bool.false
+          return false
         case .notEqual:
-          return self.types.bool.true
+          return true
         case .less,
              .lessEqual,
              .greater,
              .greaterEqual:
-          let result = self.context.richCompareBool(left: left, right: right, mode: mode)
-          return self.types.bool.new(result)
+          return try self.context.richCompareBool(left: left, right: right, mode: mode)
         }
       }
     }
@@ -92,8 +89,7 @@ If the argument is a tuple, the return value is the same object.
     // collections are equal up to to shorter tuple count, compare count
     let lCount = self.types.int.new(l.elements.count)
     let rCount = self.types.int.new(r.elements.count)
-    let result =  self.context.richCompareBool(left: lCount, right: rCount, mode: mode)
-    return self.types.bool.new(result)
+    return try self.context.richCompareBool(left: lCount, right: rCount, mode: mode)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -209,9 +205,9 @@ If the argument is a tuple, the return value is the same object.
     let tuple = try self.matchType(owner)
 
     for e in tuple.elements {
-      let isEqual = self.context.richCompareBool(left: e,
-                                                 right: element,
-                                                 mode: .equal)
+      let isEqual = try self.context.richCompareBool(left: e,
+                                                     right: element,
+                                                     mode: .equal)
       if isEqual {
         return true
       }
@@ -242,9 +238,9 @@ If the argument is a tuple, the return value is the same object.
     }
 
     for i in start..<stop {
-      let isEqual = self.context.richCompareBool(left: tuple.elements[i],
-                                                 right: element,
-                                                 mode: .equal)
+      let isEqual = try self.context.richCompareBool(left: tuple.elements[i],
+                                                     right: element,
+                                                     mode: .equal)
       if isEqual {
         return self.types.int.new(i)
       }
@@ -259,9 +255,9 @@ If the argument is a tuple, the return value is the same object.
 
     var result = 0
     for e in tuple.elements {
-      let isEqual = self.context.richCompareBool(left: e,
-                                                 right: element,
-                                                 mode: .equal)
+      let isEqual = try self.context.richCompareBool(left: e,
+                                                     right: element,
+                                                     mode: .equal)
       if isEqual {
         result += 1
       }

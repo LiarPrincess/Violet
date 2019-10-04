@@ -7,8 +7,15 @@ internal protocol TypeClass {
 
 // MARK: - Equatable
 
+internal struct ComparableNotImplemented: Error {
+  internal let left: PyObject
+  internal let right: PyObject
+}
+
 internal protocol ComparableTypeClass: TypeClass {
-  func compare(left: PyObject, right: PyObject, mode: CompareMode) throws -> PyBool
+  func compare(left: PyObject,
+               right: PyObject,
+               mode: CompareMode) throws -> Bool
 }
 
 internal protocol HashableTypeClass: TypeClass {

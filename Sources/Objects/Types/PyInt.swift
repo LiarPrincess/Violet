@@ -91,17 +91,13 @@ Base 0 means to interpret the base from the string as an integer literal.
 
   internal func compare(left: PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyBool {
+                        mode: CompareMode) throws -> Bool {
     let l = try self.extractInt(left)
     let r = try self.extractInt(right)
 
-    let sign = l - r
-    let result =
-      sign < 0 ? -1 :
-      sign > 0 ? 1 :
-      0
-
-    return self.context.richCompare(lhs: result, rhs: 0, mode: mode)
+    let diff = l - r
+    let sign = diff.signum()
+    return self.context.richCompare(left: sign, right: 0, mode: mode)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {

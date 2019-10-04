@@ -80,21 +80,20 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
 
   internal func compare(left:  PyObject,
                         right: PyObject,
-                        mode: CompareMode) throws -> PyBool {
+                        mode: CompareMode) throws -> Bool {
     let l = try self.matchType(left)
 
     switch mode {
     case .equal:
-      let isEqual = try self.isEqual(left: l, right: right)
-      return self.types.bool.new(isEqual)
+      return try self.isEqual(left: l, right: right)
     case .notEqual:
       let isEqual = try self.isEqual(left: l, right: right)
-      return self.types.bool.new(!isEqual)
+      return !isEqual
     case .less,
          .lessEqual,
          .greater,
          .greaterEqual:
-      fatalError()
+      throw ComparableNotImplemented(left: left, right: right)
     }
   }
 
@@ -113,10 +112,10 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
       }
 
       let real = self.types.float.new(left.real)
-      return self.context.richCompareBool(left: real, right: r, mode: .equal)
+      return try self.context.richCompareBool(left: real, right: r, mode: .equal)
     }
 
-    fatalError()
+    throw ComparableNotImplemented(left: left, right: right)
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
