@@ -1,3 +1,4 @@
+import Foundation
 import Objects
 import Bytecode
 
@@ -46,7 +47,8 @@ extension Frame {
   /// TOS is removed from the stack and printed.
   /// In non-interactive mode, an expression statement is terminated with PopTop.
   internal func printExpr() throws {
-    self.unimplemented()
+    let value = self.pop()
+    try self.context.print(value: value, file: self.standardOutput, raw: true)
   }
 
   /// Checks whether Annotations is defined in locals(),

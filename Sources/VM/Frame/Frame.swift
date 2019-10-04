@@ -1,3 +1,4 @@
+import Foundation
 import Bytecode
 import Objects
 
@@ -25,6 +26,10 @@ internal class Frame {
   internal var builtins = [String: PyObject]()
   /// Free variables.
   internal var free = [String: PyObject]()
+
+  internal var standardOutput: FileHandle {
+    return FileHandle.standardOutput
+  }
 
   /// Index of the next instruction to run.
   internal var nextInstructionIndex = 0
