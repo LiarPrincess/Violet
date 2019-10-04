@@ -19,10 +19,6 @@ extension PyContext {
     return 0
   }
 
-  internal func hash(value: PyObject) throws -> PyHash {
-    return 0
-  }
-
   internal func PyObject_GetIter(value: PyObject) -> PyObject {
     return value
   }

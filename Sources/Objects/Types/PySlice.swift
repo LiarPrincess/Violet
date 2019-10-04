@@ -87,7 +87,7 @@ This is used for extended slicing (e.g. a[0:10:2]).
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
-    throw PyContextError.unhashableType(object: value)
+    throw HashableNotImplemented(value: value)
   }
 
   // MARK: - String

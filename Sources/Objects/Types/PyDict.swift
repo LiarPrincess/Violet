@@ -75,7 +75,7 @@ internal final class PyDictType: PyType,
   // MARK: - Equatable, hashable
 
   internal func hash(value: PyObject) throws -> PyHash {
-    throw PyContextError.unhashableType(object: value)
+    throw HashableNotImplemented(value: value)
   }
 
   internal func compare(left: PyObject,

@@ -84,9 +84,6 @@ public enum PyContextError: Error {
                                     left:  PyObject,
                                     right: PyObject)
 
-  /// PyErr_Format(PyExc_TypeError, "unhashable type: '%.200s'", Py_TYPE(v)->tp_name);
-  case unhashableType(object: PyObject)
-
   // TODO: Remove and use NotImplemented
   case invalidTypeConversion(object: PyObject, to: Any)
 }

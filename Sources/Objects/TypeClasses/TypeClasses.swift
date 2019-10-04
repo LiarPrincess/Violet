@@ -5,8 +5,9 @@ internal protocol TypeClass {
   var context: PyContext { get }
 }
 
-// MARK: - Equatable
+// MARK: - Comparable
 
+/// Use to unwind comparable
 internal struct ComparableNotImplemented: Error {
   internal let left: PyObject
   internal let right: PyObject
@@ -16,6 +17,13 @@ internal protocol ComparableTypeClass: TypeClass {
   func compare(left: PyObject,
                right: PyObject,
                mode: CompareMode) throws -> Bool
+}
+
+// MARK: - Hashable
+
+/// Use to unwind hashable
+internal struct HashableNotImplemented: Error {
+  internal let value: PyObject
 }
 
 internal protocol HashableTypeClass: TypeClass {

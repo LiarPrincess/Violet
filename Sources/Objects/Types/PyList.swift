@@ -117,7 +117,7 @@ The argument must be an iterable if specified.
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
-    throw PyContextError.unhashableType(object: value)
+    throw HashableNotImplemented(value: value)
   }
 
   // MARK: - String

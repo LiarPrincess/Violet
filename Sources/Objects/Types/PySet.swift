@@ -125,7 +125,7 @@ internal final class PySetType: PyType,
   }
 
   internal func hash(value: PyObject) throws -> PyHash {
-    throw PyContextError.unhashableType(object: value)
+    throw HashableNotImplemented(value: value)
   }
 
   // MARK: - String
