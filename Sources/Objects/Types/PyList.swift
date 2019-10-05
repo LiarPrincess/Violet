@@ -37,7 +37,7 @@ internal final class PyList: PyObject {
 }
 
 /// This subtype of PyObject represents a Python list object.
-internal final class PyListType: PyType,
+internal final class PyListType: PyType /* ,
   ReprTypeClass,
   ComparableTypeClass, HashableTypeClass,
   LengthTypeClass, ClearTypeClass,
@@ -45,7 +45,7 @@ internal final class PyListType: PyType,
   RepeatTypeClass, RepeatInPlaceTypeClass,
   ItemTypeClass, ItemAssignTypeClass,
   SubscriptTypeClass, SubscriptAssignTypeClass,
-  ContainsTypeClass {
+  ContainsTypeClass */ {
 
   override internal var name: String { return "list" }
   override internal var doc: String? { return """

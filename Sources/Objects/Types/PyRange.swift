@@ -90,12 +90,12 @@ internal final class PyRange: PyObject {
 ///
 /// Range objects behave like the corresponding tuple objects except that
 /// they are represented by a start, stop, and step datamembers.
-internal final class PyRangeType: PyType,
+internal final class PyRangeType: PyType /* ,
   ReprTypeClass,
   HashableTypeClass, ComparableTypeClass,
   PyBoolConvertibleTypeClass,
   LengthTypeClass, ItemTypeClass, ContainsTypeClass,
-  SubscriptTypeClass {
+  SubscriptTypeClass */ {
 
   override internal var name: String { return "range" }
   override internal var doc: String? { return """

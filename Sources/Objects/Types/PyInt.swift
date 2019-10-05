@@ -35,7 +35,7 @@ internal class PyInt: PyObject {
 }
 
 /// All integers are implemented as “long” integer objects of arbitrary size.
-internal class PyIntType: PyType,
+internal class PyIntType: PyType /*,
   ReprTypeClass, StrTypeClass,
   ComparableTypeClass, HashableTypeClass,
   SignedTypeClass,
@@ -46,7 +46,7 @@ internal class PyIntType: PyType,
   PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass,
   InvertTypeClass,
   ShiftTypeClass,
-  BinaryTypeClass {
+  BinaryTypeClass */ {
 
   override internal var name: String { return "int" }
   override internal var doc: String? { return """

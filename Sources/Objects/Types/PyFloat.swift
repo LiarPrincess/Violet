@@ -34,14 +34,14 @@ internal final class PyFloat: PyObject {
 }
 
 /// This subtype of PyObject represents a Python floating point object.
-internal final class PyFloatType: PyType,
+internal final class PyFloatType: PyType /*,
   ReprTypeClass, StrTypeClass,
   ComparableTypeClass, HashableTypeClass,
   SignedTypeClass, AbsTypeClass,
   AddTypeClass, SubTypeClass,
   MulTypeClass, PowTypeClass,
   DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
-  PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
+  PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass */ {
 
   override internal var name: String { return "float" }
   override internal var doc: String? { return """

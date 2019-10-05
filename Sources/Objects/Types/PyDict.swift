@@ -50,11 +50,11 @@ internal struct PyDictKey: Equatable, Hashable {
 }
 
 /// This subtype of PyObject represents a Python dictionary object.
-internal final class PyDictType: PyType,
+internal final class PyDictType: PyType /* ,
   ReprTypeClass,
   HashableTypeClass, ComparableTypeClass,
   ClearTypeClass, ContainsTypeClass,
-  LengthTypeClass, SubscriptTypeClass, SubscriptAssignTypeClass {
+  LengthTypeClass, SubscriptTypeClass, SubscriptAssignTypeClass */ {
 
   override internal var name: String { return "dict" }
   override internal var doc: String? { return """

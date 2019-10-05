@@ -10,7 +10,7 @@ internal final class PyNotImplemented: PyObject {
 
 /// `NotImplemented` is an object that can be used to signal that an
 /// operation is not implemented for the given type combination.
-internal final class PyNotImplementedType: PyType, ReprTypeClass {
+internal final class PyNotImplementedType: PyType /* , ReprTypeClass */ {
 
   override internal var name: String { return "NotImplementedType" }
 

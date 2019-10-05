@@ -20,13 +20,13 @@ internal class PyString: PyObject {
   }
 }
 
-internal final class PyStringType: PyType,
+internal final class PyStringType: PyType /* ,
   ReprTypeClass, StrTypeClass,
   HashableTypeClass, ComparableTypeClass,
   RemainderTypeClass,
   LengthTypeClass,
   ConcatTypeClass, RepeatTypeClass, ItemTypeClass, ContainsTypeClass,
-  SubscriptTypeClass {
+  SubscriptTypeClass */ {
 
   override internal var name: String { return "str" }
   override internal var doc: String? { return """

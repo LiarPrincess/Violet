@@ -29,11 +29,11 @@ internal final class PyTuple: PyObject {
 
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-internal final class PyTupleType: PyType,
+internal final class PyTupleType: PyType /* ,
   ReprTypeClass,
   ComparableTypeClass, HashableTypeClass,
   LengthTypeClass, ConcatTypeClass, RepeatTypeClass,
-  ItemTypeClass, ContainsTypeClass, SubscriptTypeClass {
+  ItemTypeClass, ContainsTypeClass, SubscriptTypeClass */ {
 
   override internal var name: String { return "tuple" }
   override internal var doc: String? { return """

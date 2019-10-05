@@ -27,14 +27,14 @@ internal final class PyComplex: PyObject {
 }
 
 /// This subtype of PyObject represents a Python complex number object.
-internal final class PyComplexType: PyType,
+internal final class PyComplexType: PyType /*,
   ReprTypeClass, StrTypeClass,
   ComparableTypeClass, HashableTypeClass,
   SignedTypeClass, AbsTypeClass,
   AddTypeClass, SubTypeClass,
   MulTypeClass, PowTypeClass,
   DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
-  PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass {
+  PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass */ {
 
   override internal var name: String { return "complex" }
   override internal var doc: String? { return """

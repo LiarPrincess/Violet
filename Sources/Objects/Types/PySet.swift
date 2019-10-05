@@ -48,13 +48,13 @@ internal final class PySet: PyObject {
 
 /// This subtype of PyObject is used to hold the internal data for both set
 /// and frozenset objects.
-internal final class PySetType: PyType,
+internal final class PySetType: PyType /* ,
   ReprTypeClass,
   ComparableTypeClass, HashableTypeClass,
   SubTypeClass, SubInPlaceTypeClass,
   BinaryTypeClass, BinaryInPlaceTypeClass,
   LengthTypeClass, ContainsTypeClass,
-  ClearTypeClass {
+  ClearTypeClass */ {
 
   override internal var name: String { return "set" }
   override internal var doc: String? { return """

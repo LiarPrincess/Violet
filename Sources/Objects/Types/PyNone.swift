@@ -8,8 +8,8 @@ internal final class PyNone: PyObject {
 }
 
 /// The Python None object, denoting lack of value. This object has no methods.
-internal final class PyNoneType: PyType,
-  ReprTypeClass, PyBoolConvertibleTypeClass {
+internal final class PyNoneType: PyType /* ,
+  ReprTypeClass, PyBoolConvertibleTypeClass */ {
 
   override internal var name: String { return "NoneType" }
 

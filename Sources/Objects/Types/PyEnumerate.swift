@@ -36,8 +36,8 @@ internal final class PyEnumerate: PyObject {
 
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.
-internal final class PyEnumerateType: PyType,
-  IterableTypeClass {
+internal final class PyEnumerateType: PyType /* ,
+  IterableTypeClass */ {
 
   override internal var name: String { return "enumerate" }
   override internal var doc: String? { return """

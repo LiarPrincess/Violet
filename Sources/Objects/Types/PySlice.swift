@@ -34,10 +34,10 @@ internal final class PySlice: PyObject {
 
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
-internal final class PySliceType: PyType,
+internal final class PySliceType: PyType /* ,
   ReprTypeClass,
   ComparableTypeClass, HashableTypeClass,
-  PyBoolConvertibleTypeClass {
+  PyBoolConvertibleTypeClass */ {
 
   override internal var name: String { return "slice" }
   override internal var doc: String? { return """
