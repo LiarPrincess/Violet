@@ -38,7 +38,7 @@ internal final class PyRange: PyObject,
 
   // MARK: - Init
 
-  /// Result of calling `PyRange.new`.
+  /// Result of calling `new`.
   internal typealias NewResult = Either<PyRange, PyErrorEnum>
 
   internal static func new(_ context: PyContext, stop: PyInt) -> NewResult {
@@ -277,7 +277,7 @@ internal final class PyRange: PyObject,
 
   internal func index(of element: PyObject) -> IndexResult {
     guard let int = element as? PyInt, self.contains(int) else {
-      let str = self.context.str(value: element)
+      let str = self.context.strString(value: element)
       return .error(.valueError("\(str) is not in range"))
     }
 

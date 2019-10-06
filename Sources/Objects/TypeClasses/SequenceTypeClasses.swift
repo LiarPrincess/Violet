@@ -66,5 +66,5 @@ internal protocol IndexOfTypeClass: TypeClass {
 // MARK: - Iterable
 
 internal protocol IterableTypeClass {
-  func next(value: PyObject) throws -> PyObject
+  func next() -> PyObject
 }

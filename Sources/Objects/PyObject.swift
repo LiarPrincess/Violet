@@ -53,6 +53,14 @@ public class PyObject {
     return self.types.int.new(value)
   }
 
+  internal func pyInt(_ value: Int) -> PyInt {
+    return self.types.int.new(value)
+  }
+
+  internal func pyTuple(_ elements: [PyObject]) -> PyTuple {
+    return self.types.tuple.new(elements)
+  }
+
   internal func extractInt(_ object: PyObject) -> PyInt? {
     return object as? PyInt
   }
