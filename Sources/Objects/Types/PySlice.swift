@@ -17,14 +17,14 @@ import Core
 /// This is the same as slice in the Python layer.
 internal final class PySlice: PyObject {
 
-  internal var start: Int?
-  internal var stop:  Int?
-  internal var step:  Int?
+  internal var start: PyInt?
+  internal var stop:  PyInt?
+  internal var step:  PyInt?
 
   fileprivate init(type:  PySliceType,
-                   start: Int?,
-                   stop:  Int?,
-                   step:  Int?) {
+                   start: PyInt?,
+                   stop:  PyInt?,
+                   step:  PyInt?) {
     self.start = start
     self.stop = stop
     self.step = step
@@ -52,7 +52,14 @@ This is used for extended slicing (e.g. a[0:10:2]).
   // MARK: - Ctor
 
   internal func new(start: Int?, stop: Int?, step: Int? = nil) -> PySlice {
-    return PySlice(type: self, start: start, stop: stop, step: step)
+    return PySlice(type: self,
+                   start: start.map(self.pyInt),
+                   stop: stop.map(self.pyInt),
+                   step: step.map(self.pyInt))
+  }
+
+  private func pyInt(_ value: Int) -> PyInt {
+    return self.types.int.new(value)
   }
 
   // MARK: - Equatable, hashable

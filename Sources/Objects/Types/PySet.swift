@@ -70,7 +70,7 @@ internal final class PySetType: PyType /* ,
   internal func new(elements: [PyObject]) throws -> PySet {
     var dict = [PyHash: PyObject]()
     for e in elements {
-      let hash = try self.context.hash(value: e)
+      let hash = self.context.hash(value: e)
       dict[hash] = e
     }
     return PySet(type: self, elements: dict)

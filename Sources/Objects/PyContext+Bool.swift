@@ -16,14 +16,12 @@ extension PyContext {
       return bool.value.isTrue
     }
 
-    if let boolType = value as? PyBoolConvertibleTypeClass {
-      let result = try boolType.asBool()
-      return result.value.isTrue
+    if let boolType = value as? BoolConvertibleTypeClass {
+      return boolType.asBool.value.isTrue
     }
 
     if let lengthType = value as? LengthTypeClass {
-      let length = try lengthType.getLength()
-      return length.value.isTrue
+      return lengthType.length.value.isTrue
     }
 
     return true

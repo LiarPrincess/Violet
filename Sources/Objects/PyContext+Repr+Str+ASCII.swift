@@ -10,7 +10,7 @@ extension PyContext {
 
   internal func reprString(value: PyObject) throws -> String {
     if let reprType = value as? ReprTypeClass {
-      return try reprType.repr()
+      return reprType.repr
     }
 
     return self.genericRepr(value: value)
@@ -19,22 +19,22 @@ extension PyContext {
   // MARK: - Str
 
   /// PyObject * PyObject_Str(PyObject *v)
-  public func str(value: PyObject) throws -> PyObject {
-    let raw = try self.strString(value: value)
+  public func str(value: PyObject) -> PyObject {
+    let raw = self.strString(value: value)
     return self.types.string.new(raw)
   }
 
-  internal func strString(value: PyObject) throws -> String {
+  internal func strString(value: PyObject) -> String {
     if let str = value as? PyString {
       return str.value
     }
 
     if let strType = value as? StrTypeClass {
-      return try strType.str()
+      return strType.str
     }
 
     if let reprType = value as? ReprTypeClass {
-      return try reprType.repr()
+      return reprType.repr
     }
 
     return self.genericRepr(value: value)

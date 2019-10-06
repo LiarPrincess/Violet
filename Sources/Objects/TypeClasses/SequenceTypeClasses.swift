@@ -1,41 +1,61 @@
+import Core
+
 // MARK: - Length
 
 internal protocol LengthTypeClass: TypeClass {
-  func getLength() throws -> PyInt
+  var length: PyInt { get }
 }
 
 // MARK: - Concat
 
-internal protocol ConcatTypeClass: TypeClass {
-  func concat(left: PyObject, right: PyObject) throws -> PyObject
-}
-
-internal protocol ConcatInPlaceTypeClass: TypeClass {
-  func concatInPlace(left: PyObject, right: PyObject) throws
-}
+//internal protocol ConcatTypeClass: TypeClass {
+//  func concat(_ other: PyObject) throws -> PyObject
+//}
+//
+//internal protocol ConcatInPlaceTypeClass: TypeClass {
+//  func concatInPlace(_ other: PyObject) throws
+//}
 
 // MARK: - Repeat
 
-internal protocol RepeatTypeClass: TypeClass {
-  func `repeat`(count: PyInt) throws -> PyObject
+//internal protocol RepeatTypeClass: TypeClass {
+//  func `repeat`(count: PyInt) throws -> PyObject
+//}
+//
+//internal protocol RepeatInPlaceTypeClass: TypeClass {
+//  func repeatInPlace(count: PyInt) throws
+//}
+
+// MARK: - Get/set item
+
+internal typealias GetItemResult<T> = Either<T, PyErrorEnum>
+
+internal protocol GetItemTypeClass: TypeClass {
+  func getItem(at index: PyObject) -> GetItemResult<PyObject>
 }
 
-internal protocol RepeatInPlaceTypeClass: TypeClass {
-  func repeatInPlace(count: PyInt) throws
+internal protocol SetItemTypeClass: TypeClass {
+  func setItem(at index: PyObject, to value: PyObject) -> PyErrorEnum?
 }
 
-// MARK: - Items
-
-internal protocol ItemTypeClass: TypeClass {
-  func item(owner: PyObject, at index: Int) throws -> PyObject
-}
-
-internal protocol ItemAssignTypeClass: TypeClass {
-  func itemAssign(owner: PyObject, at index: Int, to value: PyObject) throws
-}
+// MARK: - Contains
 
 internal protocol ContainsTypeClass: TypeClass {
-  func contains(owner: PyObject, element: PyObject) throws -> Bool
+  func contains(_ element: PyObject) -> Bool
+}
+
+// MARK: - Count
+
+internal protocol CountTypeClass: TypeClass {
+  func count(_ element: PyObject) -> BigInt
+}
+
+// MARK: - Index
+
+internal typealias IndexOfResult = Either<BigInt, PyErrorEnum>
+
+internal protocol IndexOfTypeClass: TypeClass {
+  func index(of element: PyObject) -> IndexOfResult
 }
 
 // MARK: - Slice

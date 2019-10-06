@@ -32,6 +32,30 @@ internal class PyInt: PyObject {
     self.value = value
     super.init(type: type)
   }
+
+  internal var repr: String {
+    return ""
+  }
+
+  internal func isEqual(_ other: PyInt) -> Bool {
+    return self.value == other.value
+  }
+
+  internal func isLess(_ other: PyInt) -> Bool {
+    return false
+  }
+
+  internal func isLessEqual(_ other: PyInt) -> Bool {
+    return false
+  }
+
+  internal func isGreater(_ other: PyInt) -> Bool {
+    return false
+  }
+
+  internal func isGreaterEqual(_ other: PyInt) -> Bool {
+    return false
+  }
 }
 
 /// All integers are implemented as “long” integer objects of arbitrary size.

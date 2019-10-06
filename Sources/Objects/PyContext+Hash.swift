@@ -1,7 +1,7 @@
 extension PyContext {
 
   /// Py_hash_t PyObject_Hash(PyObject *v)
-  internal func hash(value: PyObject) throws -> PyHash {
+  internal func hash(value: PyObject) -> PyHash {
 //    if let h = value.type as? HashableTypeClass {
 //      do {
 //        return try h.hash(value: value)

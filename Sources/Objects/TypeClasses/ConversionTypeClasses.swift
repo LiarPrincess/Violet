@@ -1,15 +1,15 @@
-internal protocol PyBoolConvertibleTypeClass: TypeClass {
-  func asBool() throws -> PyBool
+internal protocol BoolConvertibleTypeClass: TypeClass {
+  var asBool: PyBool { get }
 }
 
-internal protocol PyIntConvertibleTypeClass: TypeClass {
+internal protocol IntConvertibleTypeClass: TypeClass {
   /// Returns the o converted to an integer object on success.
   /// This is the equivalent of the Python expression int(o).
-  func asInt() throws -> PyInt
+  var asInt: PyInt { get }
 }
 
-internal protocol PyFloatConvertibleTypeClass: TypeClass {
+internal protocol FloatConvertibleTypeClass: TypeClass {
   /// Returns the o converted to a float object on success.
   /// This is the equivalent of the Python expression float(o).
-  func asFloat() throws -> PyFloat
+  var asFloat: PyFloat { get }
 }

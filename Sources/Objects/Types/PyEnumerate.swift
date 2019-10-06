@@ -60,18 +60,19 @@ internal final class PyEnumerateType: PyType /* ,
   // MARK: - Ctor
 
   internal func new(iterable: PyObject, start: PyObject?) throws -> PyEnumerate {
-    var index = -1
-
-    if let s = start, let i = try self.extractIndex(value: s) {
-      index = i
-    }
-
-    let none = self.types.none.value
-    let iterable = self.context.PyObject_GetIter(value: iterable)
-    return PyEnumerate(type: self,
-                       iterable: iterable,
-                       startIndex: index,
-                       none: none)
+//    var index = -1
+//
+//    if let s = start, let i = self.extractIndex(value: s) {
+//      index = i
+//    }
+//
+//    let none = self.types.none.value
+//    let iterable = self.context.PyObject_GetIter(value: iterable)
+//    return PyEnumerate(type: self,
+//                       iterable: iterable,
+//                       startIndex: index,
+//                       none: none)
+    fatalError()
   }
 
   // MARK: - Methods

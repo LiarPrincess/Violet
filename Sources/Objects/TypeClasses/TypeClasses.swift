@@ -42,17 +42,17 @@ internal protocol ComparableTypeClass: EquatableTypeClass {
 /// Use to unwind hashable
 
 internal protocol HashableTypeClass: TypeClass {
-  func hash() throws -> PyHash
+  var hash: PyHash { get }
 }
 
 // MARK: - String
 
 internal protocol ReprTypeClass: TypeClass {
-  func repr() throws -> String
+  var repr: String { get }
 }
 
 internal protocol StrTypeClass: TypeClass {
-  func str() throws -> String
+  var str: String { get }
 }
 
 // MARK: - Attributes

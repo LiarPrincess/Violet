@@ -1,3 +1,5 @@
+import Core
+
 internal struct PyObjectFlags: OptionSet {
   let rawValue: UInt8
 
@@ -17,6 +19,10 @@ public class PyObject {
 
   internal var context: PyContext {
     return self.type.context
+  }
+
+  internal var types: PyContextTypes {
+    return self.context.types
   }
 
   internal init(type: PyType) {
@@ -39,5 +45,33 @@ public class PyObject {
     defer { _ = self.flags.subtracting(.reprLock) }
 
     return try body()
+  }
+
+  // MARK: - TODO: Remove
+
+  internal func pyInt(_ value: BigInt) -> PyInt {
+    return self.types.int.new(value)
+  }
+
+  internal func extractInt(_ object: PyObject) -> PyInt? {
+    return object as? PyInt
+  }
+
+  /// PyLong_FromSsize_t
+  internal func extractIndex(value: PyObject) -> BigInt? {
+    //    guard let indexType = value.type as? IndexTypeClass else {
+    //      return nil
+    //    }
+
+    //    let index = try indexType.index(value: value)
+    //    let bigInt = try self.context.types.int.extractInt(index)
+    //    guard let result = Int(exactly: bigInt) else {
+    //      // i = PyNumber_AsSsize_t(item, PyExc_IndexError);
+    //      fatalError()
+    //    }
+
+    //    return result
+    //    return nil
+    fatalError()
   }
 }
