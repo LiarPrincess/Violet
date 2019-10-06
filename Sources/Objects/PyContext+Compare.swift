@@ -36,30 +36,30 @@ extension PyContext {
     var checkedReverse = false
 
     // Check if right is subtype of left, if so then use right overload
-    if left.type !== right.type &&
-      self.PyType_IsSubtype(parent: right.type, subtype: left.type) {
-
-      if let cmpType = right.type as? ComparableTypeClass {
-        do {
-          checkedReverse = true
-          return try cmpType.compare(left: right, right: left, mode: mode.reverse)
-        } catch is ComparableNotImplemented { }
-      }
-    }
-
-    // Check if left is comparable (default path)
-    if let cmpType = left.type as? ComparableTypeClass {
-      do {
-        return try cmpType.compare(left: left, right: right, mode: mode)
-      } catch is ComparableNotImplemented { }
-    }
-
-    // Check if right is comparable
-    if let cmpType = right.type as? ComparableTypeClass, !checkedReverse {
-      do {
-        return try cmpType.compare(left: right, right: left, mode: mode.reverse)
-      } catch is ComparableNotImplemented { }
-    }
+//    if left.type !== right.type &&
+//      self.PyType_IsSubtype(parent: right.type, subtype: left.type) {
+//
+//      if let cmpType = right.type as? ComparableTypeClass {
+//        do {
+//          checkedReverse = true
+//          return try cmpType.compare(left: right, right: left, mode: mode.reverse)
+//        } catch is ComparableNotImplemented { }
+//      }
+//    }
+//
+//    // Check if left is comparable (default path)
+//    if let cmpType = left.type as? ComparableTypeClass {
+//      do {
+//        return try cmpType.compare(left: left, right: right, mode: mode)
+//      } catch is ComparableNotImplemented { }
+//    }
+//
+//    // Check if right is comparable
+//    if let cmpType = right.type as? ComparableTypeClass, !checkedReverse {
+//      do {
+//        return try cmpType.compare(left: right, right: left, mode: mode.reverse)
+//      } catch is ComparableNotImplemented { }
+//    }
 
     switch mode {
     case .equal:

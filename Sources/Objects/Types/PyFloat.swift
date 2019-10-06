@@ -58,7 +58,7 @@ Convert a string or number to a floating point number, if possible.
   internal func new(_ value: Double) -> PyFloat {
     return PyFloat(type: self, value: value)
   }
-
+/*
   // MARK: - String
 
   internal func repr(value: PyObject) throws -> String {
@@ -241,4 +241,5 @@ Convert a string or number to a floating point number, if possible.
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+ */
 }

@@ -56,7 +56,7 @@ This is used for extended slicing (e.g. a[0:10:2]).
   }
 
   // MARK: - Equatable, hashable
-
+/*
   internal func compare(left:  PyObject,
                         right: PyObject,
                         mode:  CompareMode) throws -> Bool {
@@ -170,4 +170,5 @@ This is used for extended slicing (e.g. a[0:10:2]).
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }

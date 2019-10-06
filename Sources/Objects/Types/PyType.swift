@@ -24,17 +24,18 @@ internal class PyType: TypeClass {
   // MARK: - Shared
 
   internal func extractIndex(value: PyObject) throws -> Int? {
-    guard let indexType = value.type as? IndexTypeClass else {
-      return nil
-    }
+//    guard let indexType = value.type as? IndexTypeClass else {
+//      return nil
+//    }
 
-    let index = try indexType.index(value: value)
-    let bigInt = try self.context.types.int.extractInt(index)
-    guard let result = Int(exactly: bigInt) else {
-      // i = PyNumber_AsSsize_t(item, PyExc_IndexError);
-      fatalError()
-    }
+//    let index = try indexType.index(value: value)
+//    let bigInt = try self.context.types.int.extractInt(index)
+//    guard let result = Int(exactly: bigInt) else {
+//      // i = PyNumber_AsSsize_t(item, PyExc_IndexError);
+//      fatalError()
+//    }
 
-    return result
+//    return result
+    return nil
   }
 }

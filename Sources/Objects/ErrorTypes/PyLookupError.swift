@@ -27,15 +27,16 @@ internal final class PyKeyErrorType: PyLookupErrorType {
   }
 
   override internal func str(value: PyObject) throws -> String {
-    let e = try self.matchBaseException(value)
-    let size = try self.tupleType.lengthInt(value: e.args)
-
-    switch size {
-    case 1:
-      let item = try tupleType.item(owner: e.args, at: 0)
-      return try self.context.reprString(value: item)
-    default:
-      return try super.str(value: value)
-    }
+//    let e = try self.matchBaseException(value)
+//    let size = try self.tupleType.lengthInt(value: e.args)
+//
+//    switch size {
+//    case 1:
+//      let item = try tupleType.item(owner: e.args, at: 0)
+//      return try self.context.reprString(value: item)
+//    default:
+//      return try super.str(value: value)
+//    }
+    return ""
   }
 }

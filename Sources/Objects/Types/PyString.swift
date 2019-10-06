@@ -54,7 +54,7 @@ internal final class PyStringType: PyType /* ,
   }
 
   // MARK: - String
-
+/*
   internal func repr(value: PyObject) throws -> String {
     let rawString = try self.extract(value)
 
@@ -289,4 +289,5 @@ internal final class PyStringType: PyType /* ,
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }

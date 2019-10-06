@@ -48,7 +48,7 @@ The class bool is a subclass of the class int, and cannot be subclassed
   }
 
   // MARK: - String
-
+/*
   override internal func repr(value: PyObject) throws -> String {
     let value = try self.extractInt(value)
     return value.isTrue ? "True" : "False"
@@ -83,4 +83,5 @@ The class bool is a subclass of the class int, and cannot be subclassed
     }
     return self.new(l.isTrue != r.isTrue)
   }
+ */
 }

@@ -2,11 +2,11 @@ extension PyContext {
 
   /// Py_hash_t PyObject_Hash(PyObject *v)
   internal func hash(value: PyObject) throws -> PyHash {
-    if let h = value.type as? HashableTypeClass {
-      do {
-        return try h.hash(value: value)
-      } catch is HashableNotImplemented { }
-    }
+//    if let h = value.type as? HashableTypeClass {
+//      do {
+//        return try h.hash(value: value)
+//      } catch is HashableNotImplemented { }
+//    }
 
     // TODO: This
     /* To keep to the general practice that inheriting

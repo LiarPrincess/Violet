@@ -15,11 +15,11 @@ internal final class PyNoneType: PyType /* ,
 
   internal lazy var value = PyNone(type: self)
 
-  internal func repr(value: PyObject) throws -> String {
-    return "None"
-  }
-
-  internal func bool(value: PyObject) throws -> PyBool {
-    return self.types.bool.false
-  }
+//  internal func repr(value: PyObject) throws -> String {
+//    return "None"
+//  }
+//
+//  internal func bool(value: PyObject) throws -> PyBool {
+//    return self.types.bool.false
+//  }
 }

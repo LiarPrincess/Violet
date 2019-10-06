@@ -77,7 +77,7 @@ Base 0 means to interpret the base from the string as an integer literal.
   }
 
   // MARK: - String
-
+/*
   internal func repr(value: PyObject) throws -> String {
     let v = try self.extractInt(value)
     return String(describing: v)
@@ -284,4 +284,5 @@ Base 0 means to interpret the base from the string as an integer literal.
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }

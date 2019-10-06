@@ -1,3 +1,4 @@
+/*
 internal protocol SubscriptTypeClass: LengthTypeClass {
   func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject
 }
@@ -5,3 +6,4 @@ internal protocol SubscriptTypeClass: LengthTypeClass {
 internal protocol SubscriptAssignTypeClass: LengthTypeClass {
   func subscriptAssign(owner: PyObject, index: PyObject, value: PyObject) throws
 }
+*/

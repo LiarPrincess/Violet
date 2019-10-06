@@ -1,46 +1,58 @@
 internal protocol TypeClass {
-  var name: String { get }
-  var base: PyType? { get }
-  var doc:  String? { get }
   var context: PyContext { get }
+}
+
+// MARK: - Equatable
+
+internal enum EquatableResult {
+  case value(Bool)
+  case notImplemented
+}
+
+internal protocol EquatableTypeClass: TypeClass {
+  func isEqual(_ other: PyObject) -> EquatableResult
+  func isNotEqual(_ other: PyObject) -> EquatableResult
+}
+
+extension EquatableTypeClass {
+  func isNotEqual(_ other: PyObject) -> EquatableResult {
+    switch self.isEqual(other) {
+    case let .value(b): return .value(!b)
+    case .notImplemented: return .notImplemented
+    }
+  }
 }
 
 // MARK: - Comparable
 
-/// Use to unwind comparable
-internal struct ComparableNotImplemented: Error {
-  internal let left: PyObject
-  internal let right: PyObject
+internal enum ComparableResult {
+  case value(Bool)
+  case notImplemented
 }
 
-internal protocol ComparableTypeClass: TypeClass {
-  func compare(left: PyObject,
-               right: PyObject,
-               mode: CompareMode) throws -> Bool
+internal protocol ComparableTypeClass: EquatableTypeClass {
+  func isLess(_ other: PyObject) throws -> ComparableResult
+  func isLessEqual(_ other: PyObject) throws -> ComparableResult
+  func isGreater(_ other: PyObject) throws -> ComparableResult
+  func isGreaterEqual(_ other: PyObject) throws -> ComparableResult
 }
 
 // MARK: - Hashable
 
 /// Use to unwind hashable
-internal struct HashableNotImplemented: Error {
-  internal let value: PyObject
-}
 
 internal protocol HashableTypeClass: TypeClass {
-  func hash(value: PyObject) throws -> PyHash
+  func hash() throws -> PyHash
 }
 
 // MARK: - String
 
-//  printfunc tp_print;
-
-// TODO: remove this if all types implement
 internal protocol ReprTypeClass: TypeClass {
-  func repr(value: PyObject) throws -> String
+  func repr() throws -> String
 }
 
 internal protocol StrTypeClass: TypeClass {
-  func str(value: PyObject) throws -> String
+  func str() throws -> String
 }
 
 // MARK: - Attributes
@@ -65,9 +77,9 @@ internal protocol StrTypeClass: TypeClass {
 //  traverseproc tp_traverse;
 
 /// Delete references to contained objects
-internal protocol ClearTypeClass: TypeClass {
-  func clear(value: PyObject) throws
-}
+//internal protocol ClearTypeClass: TypeClass {
+//  func clear(value: PyObject) throws
+//}
 
 //
 //  /* weak reference enabler */

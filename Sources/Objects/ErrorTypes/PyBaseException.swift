@@ -23,7 +23,7 @@ internal class PyBaseException: PyObject {
 
   internal var args: PyTuple
   internal var traceback: PyObject
-  internal var context: PyObject
+  internal var contextTTT: PyObject
   internal var cause: PyObject
   internal var suppressContext: Bool
 
@@ -35,15 +35,15 @@ internal class PyBaseException: PyObject {
                 suppressContext: Bool) {
     self.args = args
     self.traceback = traceback
-    self.context = context
+    self.contextTTT = context
     self.cause = cause
     self.suppressContext = suppressContext
     super.init(type: type)
   }
 }
 
-internal class PyBaseExceptionType: PyType,
-ReprTypeClass, StrTypeClass, ClearTypeClass {
+internal class PyBaseExceptionType: PyType/*,
+ReprTypeClass, StrTypeClass, ClearTypeClass */{
 
   override internal var name: String {
     return "BaseException"
@@ -58,32 +58,34 @@ ReprTypeClass, StrTypeClass, ClearTypeClass {
   }
 
   internal func repr(value: PyObject) throws -> String {
-    let e = try self.matchBaseException(value)
-    let size = try self.tupleType.lengthInt(value: e.args)
-    let name = self.context._PyType_Name(value: value.type)
-
-    switch size {
-    case 1:
-      let item = try tupleType.item(owner: e.args, at: 0)
-      return self.context.PyUnicode_FromFormat(format: "%s(%R)", args: name, item)
-    default:
-      return self.context.PyUnicode_FromFormat(format: "%s%R", args: name, e.args)
-    }
+//    let e = try self.matchBaseException(value)
+//    let size = try self.tupleType.lengthInt(value: e.args)
+//    let name = self.context._PyType_Name(value: value.type)
+//
+//    switch size {
+//    case 1:
+//      let item = try tupleType.item(owner: e.args, at: 0)
+//      return self.context.PyUnicode_FromFormat(format: "%s(%R)", args: name, item)
+//    default:
+//      return self.context.PyUnicode_FromFormat(format: "%s%R", args: name, e.args)
+//    }
+    return ""
   }
 
   internal func str(value: PyObject) throws -> String {
-    let e = try self.matchBaseException(value)
-    let size = try self.tupleType.lengthInt(value: e.args)
-
-    switch size {
-    case 0:
-      return ""
-    case 1:
-      let item = try tupleType.item(owner: e.args, at: 0)
-      return try self.context.strString(value: item)
-    default:
-      return try self.context.strString(value: e.args)
-    }
+//    let e = try self.matchBaseException(value)
+//    let size = try self.tupleType.lengthInt(value: e.args)
+//
+//    switch size {
+//    case 0:
+//      return ""
+//    case 1:
+//      let item = try tupleType.item(owner: e.args, at: 0)
+//      return try self.context.strString(value: item)
+//    default:
+//      return try self.context.strString(value: e.args)
+//    }
+    return ""
   }
 
   internal func clear(value: PyObject) throws {
@@ -91,7 +93,7 @@ ReprTypeClass, StrTypeClass, ClearTypeClass {
     try self.context.Py_CLEAR(value: e.args)
     try self.context.Py_CLEAR(value: e.traceback)
     try self.context.Py_CLEAR(value: e.cause)
-    try self.context.Py_CLEAR(value: e.context)
+    try self.context.Py_CLEAR(value: e.contextTTT)
   }
 
   internal func matchBaseException(_ object: PyObject) throws -> PyBaseException {

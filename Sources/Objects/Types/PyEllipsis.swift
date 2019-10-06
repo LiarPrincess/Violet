@@ -18,13 +18,13 @@ internal final class PyEllipsis: PyObject {
 
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
-internal final class PyEllipsisType: PyType, ReprTypeClass {
+internal final class PyEllipsisType: PyType /*, ReprTypeClass */ {
 
   override internal var name: String { return "ellipsis" }
 
   internal lazy var value = PyEllipsis(type: self)
 
-  internal func repr(value: PyObject) throws -> String {
-    return "Ellipsis"
-  }
+//  internal func repr(value: PyObject) throws -> String {
+//    return "Ellipsis"
+//  }
 }

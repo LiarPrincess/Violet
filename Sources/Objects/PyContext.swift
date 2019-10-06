@@ -35,6 +35,7 @@ internal final class PyContextTypes {
 
   internal lazy var slice = PySliceType(context: self.context)
   internal lazy var ellipsis = PyEllipsisType(context: self.context)
+  internal lazy var range = PyRangeType(context: self.context)
 
   internal lazy var string = PyStringType(context: self.context)
 

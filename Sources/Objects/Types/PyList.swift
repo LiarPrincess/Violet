@@ -70,7 +70,7 @@ The argument must be an iterable if specified.
   }
 
   // MARK: - Equatable, hashable
-
+/*
   internal func compare(left: PyObject,
                         right: PyObject,
                         mode: CompareMode) throws -> Bool {
@@ -325,4 +325,5 @@ The argument must be an iterable if specified.
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }

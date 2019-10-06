@@ -79,7 +79,7 @@ internal final class PySetType: PyType /* ,
   internal func new(elements: [PyHash: PyObject] = [:]) -> PySet {
     return PySet(type: self, elements: elements)
   }
-
+/*
   // MARK: - Equatable, hashable
 
   internal func compare(left: PyObject,
@@ -334,4 +334,5 @@ internal final class PySetType: PyType /* ,
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }

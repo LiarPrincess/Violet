@@ -4,38 +4,42 @@ extension PyContext {
 
   /// PyObject * PyNumber_Positive(PyObject *o)
   public func positive(_ value: PyObject) throws -> PyObject {
-    if let type = value.type as? SignedTypeClass {
-      return try type.positive(value: value)
-    }
-
-    throw PyContextError.invalidOperandForUnaryPositive(value)
+    return self.unimplemented()
+//    if let v = value as? SignedTypeClass {
+//      return try v.positive()
+//    }
+//
+//    throw PyContextError.invalidOperandForUnaryPositive(value)
   }
 
   /// PyObject * PyNumber_Negative(PyObject *o)
   public func negative(_ value: PyObject) throws -> PyObject {
-    if let type = value.type as? SignedTypeClass {
-      return try type.negative(value: value)
-    }
-
-    throw PyContextError.invalidOperandForUnaryNegative(value)
+      return self.unimplemented()
+//    if let v = value as? SignedTypeClass {
+//      return try v.negative()
+//    }
+//
+//    throw PyContextError.invalidOperandForUnaryNegative(value)
   }
 
   /// PyObject * PyNumber_Invert(PyObject *o)
   public func invert(_ value: PyObject) throws -> PyObject {
-    if let type = value.type as? InvertTypeClass {
-      return try type.invert(value: value)
-    }
-
-    throw PyContextError.invalidOperandForUnaryInvert(value)
+    return self.unimplemented()
+//    if let v = value as? InvertTypeClass {
+//      return try v.invert()
+//    }
+//
+//    throw PyContextError.invalidOperandForUnaryInvert(value)
   }
 
   /// PyObject * PyNumber_Absolute(PyObject *o)
   public func abs(_ value: PyObject) throws -> PyObject {
-    if let type = value.type as? AbsTypeClass {
-      return try type.abs(value: value)
-    }
-
-    throw PyContextError.invalidOperandForAbs(value)
+    return self.unimplemented()
+//    if let v = value as? AbsTypeClass {
+//      return try v.abs()
+//    }
+//
+//    throw PyContextError.invalidOperandForAbs(value)
   }
 
   // MARK: - Add
@@ -47,16 +51,21 @@ extension PyContext {
 
   internal func add(left: PyObject, right: PyObject, op: String) throws -> PyObject {
     // TODO: this will not work for: Int + Double -> Double
-    if let type: AddTypeClass = self.getTypeClassOrNil(left: left, right: right) {
-      return try type.add(left: left, right: right)
-    }
-
-    if let type: ConcatTypeClass = self.getTypeClassOrNil(left: left, right: right) {
-      return try type.concat(left: left, right: right)
-    }
-
-    throw PyContextError
-      .unsupportedBinaryOperandType(operation: op, left: left, right: right)
+//    let type: AddTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.sub(left: left, right: right)
+//
+//
+//    if let type: AddTypeClass = self.getTypeClassOrNil(left: left, right: right) {
+//      return try type.add(left: left, right: right)
+//    }
+//
+//    if let type: ConcatTypeClass = self.getTypeClassOrNil(left: left, right: right) {
+//      return try type.concat(left: left, right: right)
+//    }
+//
+//    throw PyContextError
+//      .unsupportedBinaryOperandType(operation: op, left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Sub
@@ -67,8 +76,9 @@ extension PyContext {
   }
 
   internal func sub(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: SubTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.sub(left: left, right: right)
+//    let type: SubTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.sub(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Mul
@@ -79,24 +89,25 @@ extension PyContext {
   }
 
   internal func mul(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    if let type: MulTypeClass = self.getTypeClassOrNil(left: left, right: right) {
-      return try type.mul(left: left, right: right)
-    }
-
-    // [1] * 2 -> [1, 1] (or you know: [1] * True -> [1], because True is Int)
-    if let leftRepeat = left.type as? RepeatTypeClass {
-      let count = try self.asRepeatCount(right)
-      return try leftRepeat.repeat(value: left, count: count)
-    }
-
-    // 2 * [1] -> [1, 1]
-    if let rightRepeat = right.type as? RepeatTypeClass {
-      let count = try self.asRepeatCount(left)
-      return try rightRepeat.repeat(value: right, count: count)
-    }
-
-    throw PyContextError
-      .unsupportedBinaryOperandType(operation: op, left: left, right: right)
+//    if let type: MulTypeClass = self.getTypeClassOrNil(left: left, right: right) {
+//      return try type.mul(left: left, right: right)
+//    }
+//
+//    // [1] * 2 -> [1, 1] (or you know: [1] * True -> [1], because True is Int)
+//    if let leftRepeat = left.type as? RepeatTypeClass {
+//      let count = try self.asRepeatCount(right)
+//      return try leftRepeat.repeat(value: left, count: count)
+//    }
+//
+//    // 2 * [1] -> [1, 1]
+//    if let rightRepeat = right.type as? RepeatTypeClass {
+//      let count = try self.asRepeatCount(left)
+//      return try rightRepeat.repeat(value: right, count: count)
+//    }
+//
+//    throw PyContextError
+//      .unsupportedBinaryOperandType(operation: op, left: left, right: right)
+    return self.unimplemented()
   }
 
   internal func asRepeatCount(_ value: PyObject) throws -> PyInt {
@@ -114,8 +125,9 @@ extension PyContext {
   }
 
   internal func matrixMul(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: MatrixMulTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.matrixMul(left: left, right: right)
+//    let type: MatrixMulTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.matrixMul(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Pow
@@ -126,8 +138,9 @@ extension PyContext {
   }
 
   internal func pow(value: PyObject, exponent: PyObject, op: String) throws -> PyObject {
-    let type: PowTypeClass = try self.getTypeClass(op: op, left: value, right: exponent)
-    return try type.pow(value: value, exponent: exponent)
+//    let type: PowTypeClass = try self.getTypeClass(op: op, left: value, right: exponent)
+//    return try type.pow(value: value, exponent: exponent)
+    return self.unimplemented()
   }
 
   // MARK: - Div
@@ -138,8 +151,9 @@ extension PyContext {
   }
 
   internal func div(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: DivTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.div(left: left, right: right)
+//    let type: DivTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.div(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Div floor
@@ -150,8 +164,9 @@ extension PyContext {
   }
 
   internal func divFloor(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: DivFloorTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.divFloor(left: left, right: right)
+//    let type: DivFloorTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.divFloor(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Remainder
@@ -162,8 +177,9 @@ extension PyContext {
   }
 
   internal func remainder(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: RemainderTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.remainder(left: left, right: right)
+//    let type: RemainderTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.remainder(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Div mod
@@ -174,8 +190,9 @@ extension PyContext {
   }
 
   internal func divMod(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: DivModTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.divMod(left: left, right: right)
+//    let type: DivModTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.divMod(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Left shift
@@ -186,8 +203,9 @@ extension PyContext {
   }
 
   internal func lShift(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: ShiftTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.lShift(left: left, right: right)
+//    let type: ShiftTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.lShift(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Right shift
@@ -198,8 +216,9 @@ extension PyContext {
   }
 
   internal func rShift(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: ShiftTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.rShift(left: left, right: right)
+//    let type: ShiftTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.rShift(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Binary - and
@@ -210,8 +229,9 @@ extension PyContext {
   }
 
   internal func and(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: BinaryTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.and(left: left, right: right)
+//    let type: BinaryTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.and(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Binary - or
@@ -222,8 +242,9 @@ extension PyContext {
   }
 
   internal func or(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: BinaryTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.or(left: left, right: right)
+//    let type: BinaryTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.or(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Binary - xor
@@ -234,8 +255,9 @@ extension PyContext {
   }
 
   internal func xor(left: PyObject, right: PyObject, op: String) throws -> PyObject {
-    let type: BinaryTypeClass = try self.getTypeClass(op: op, left: left, right: right)
-    return try type.xor(left: left, right: right)
+//    let type: BinaryTypeClass = try self.getTypeClass(op: op, left: left, right: right)
+//    return try type.xor(left: left, right: right)
+    return self.unimplemented()
   }
 
   // MARK: - Helpers
@@ -251,23 +273,23 @@ extension PyContext {
   /// and `right.type` is a subclass of `left.type`.
   internal func getTypeClassOrNil<TC>(left: PyObject, right: PyObject) -> TC? {
     // Check if left has given operation
-    if let op = left.type as? TC {
+    if let l = left as? TC {
 
       // If right also implements this operation and it is a subtype
       // then use overloaded operator
       let isSubtype = left.type !== right.type &&
         self.PyType_IsSubtype(parent: right.type, subtype: left.type)
 
-      if let subOp = right.type as? TC, isSubtype {
-        return subOp
+      if let r = right as? TC, isSubtype {
+        return r
       }
 
-      return op
+      return l
     }
 
     // Check if right has given operation
-    if let op = right.type as? TC {
-      return op
+    if let r = right as? TC {
+      return r
     }
 
     return nil

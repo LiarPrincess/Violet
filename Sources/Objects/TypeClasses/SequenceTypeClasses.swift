@@ -1,7 +1,7 @@
 // MARK: - Length
 
 internal protocol LengthTypeClass: TypeClass {
-  func length(value: PyObject) throws -> PyInt
+  func getLength() throws -> PyInt
 }
 
 // MARK: - Concat
@@ -17,11 +17,11 @@ internal protocol ConcatInPlaceTypeClass: TypeClass {
 // MARK: - Repeat
 
 internal protocol RepeatTypeClass: TypeClass {
-  func `repeat`(value: PyObject, count: PyInt) throws -> PyObject
+  func `repeat`(count: PyInt) throws -> PyObject
 }
 
 internal protocol RepeatInPlaceTypeClass: TypeClass {
-  func repeatInPlace(value: PyObject, count: PyInt) throws
+  func repeatInPlace(count: PyInt) throws
 }
 
 // MARK: - Items

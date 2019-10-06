@@ -16,7 +16,7 @@ internal final class PyNotImplementedType: PyType /* , ReprTypeClass */ {
 
   internal lazy var value = PyNotImplemented(type: self)
 
-  internal func repr(value: PyObject) throws -> String {
-    return "NotImplemented"
-  }
+//  internal func repr(value: PyObject) throws -> String {
+//    return "NotImplemented"
+//  }
 }

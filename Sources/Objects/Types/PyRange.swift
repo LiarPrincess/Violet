@@ -15,73 +15,54 @@ import Core
 // {"stop",    T_OBJECT_EX,    offsetof(rangeobject, stop),    READONLY},
 // {"step",    T_OBJECT_EX,    offsetof(rangeobject, step),    READONLY},
 
-internal enum PyRangeStep: Equatable {
-  case implicit(BigInt)
-  case explicit(BigInt)
-
-  internal var value: BigInt {
-    switch self {
-    case let .implicit(v): return v
-    case let .explicit(v): return v
-    }
-  }
-
-  internal var isGoingUp: Bool {
-    return self.value > 0
-  }
-}
-
-/// A range object represents an integer range.
-/// This is an immutable object; a range cannot change its value after creation.
-///
-/// Range objects behave like the corresponding tuple objects except that
-/// they are represented by a start, stop, and step datamembers.
+/// The range type represents an immutable sequence of numbers
+/// and is commonly used for looping a specific number of times in for loops.
 internal final class PyRange: PyObject {
 
-  internal let start: BigInt
-  internal let stop:  BigInt
-  internal let step:  PyRangeStep
-  internal let length: BigInt
+  internal let start: PyInt
+  internal let stop: PyInt
+  internal let step: PyInt
 
-  fileprivate init(type:  PyRangeType,
-                   start: BigInt,
-                   stop:  BigInt,
-                   step:  BigInt?) {
-    let stepEnum = PyRange.calculateStep(start: start, stop: stop, step: step)
-
-    self.start = start
-    self.stop = stop
-    self.step = stepEnum
-    self.length = PyRange.calculateLength(start: start, stop: stop, step: stepEnum)
-    super.init(type: type)
+  fileprivate var isGoingUp: Bool {
+    return self.start.value < self.stop.value
   }
 
-  private static func calculateStep(start: BigInt,
-                                    stop:  BigInt,
-                                    step:  BigInt?) -> PyRangeStep {
-    if let step = step {
-      return .explicit(step)
-    }
-
-    let isGrowing = start < stop
-    return .implicit(isGrowing ? 1 : -1)
-  }
-
-  private static func calculateLength(start: BigInt,
-                                      stop:  BigInt,
-                                      step:  PyRangeStep) -> BigInt {
-    let isGoingUp = step.isGoingUp
-    let low  = isGoingUp ? start : stop
-    let high = isGoingUp ? stop : start
-    let step = isGoingUp ? step.value : -step.value
+  /// Number of elements in range, use this instead of enumerating from
+  /// start -> stop to be sure that this series converge.
+  /// Any element can be counted as `start + index * step` given that
+  /// `index < length`.
+  fileprivate var length: BigInt {
+    let low  = self.isGoingUp ? start : stop
+    let high = self.isGoingUp ? stop : start
 
     // len(range(0, 3, -1)) -> 0
-    if low >= high {
+    guard low.value < high.value else {
       return 0
     }
 
-    let diff = (high - low) - 1
-    return (diff / step) + 1
+    let diff = (high.value - low.value) - 1
+    return (diff / abs(self.step.value)) + 1
+  }
+
+  internal convenience init(_ context: PyContext, stop: PyInt) {
+    let zero = context.types.int.new(0)
+    self.init(context, start: zero, stop: stop, step: nil)
+  }
+
+  internal init(_ context: PyContext, start: PyInt, stop:  PyInt, step: PyInt?) {
+    self.start = start
+    self.stop = stop
+
+    let isGoingUp = start.value < stop.value
+
+    self.step = {
+      if let s = step {
+        return s
+      }
+      return context.types.int.new(isGoingUp ? 1 : -1)
+    }()
+
+    super.init(type: context.types.range)
   }
 }
 
@@ -96,7 +77,7 @@ internal final class PyRangeType: PyType /* ,
   PyBoolConvertibleTypeClass,
   LengthTypeClass, ItemTypeClass, ContainsTypeClass,
   SubscriptTypeClass */ {
-
+/*
   override internal var name: String { return "range" }
   override internal var doc: String? { return """
     range(stop) -> range object
@@ -280,4 +261,5 @@ internal final class PyRangeType: PyType /* ,
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }

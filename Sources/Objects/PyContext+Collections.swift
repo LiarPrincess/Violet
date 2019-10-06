@@ -19,8 +19,9 @@ extension PyContext {
 
   /// PyObject * PyList_AsTuple(PyObject *v)
   public func tuple(list: PyObject) throws -> PyObject {
-    let l = try self.types.list.matchType(list)
-    return self.tuple(elements: l.elements)
+//    let l = try self.types.list.matchType(list)
+//    return self.tuple(elements: l.elements)
+    return self.unimplemented()
   }
 
   // MARK: - List
@@ -32,12 +33,12 @@ extension PyContext {
 
   /// int PyList_Append(PyObject *op, PyObject *newitem)
   public func add(list: PyObject, element: PyObject) throws {
-    try self.types.list.add(owner: list, element: element)
+//    try self.types.list.add(owner: list, element: element)
   }
 
   /// PyObject * _PyList_Extend(PyListObject *self, PyObject *iterable)
   public func extent(list: PyObject, iterable: PyObject) throws {
-    try self.types.list.extend(owner: list, iterable: iterable)
+//    try self.types.list.extend(owner: list, iterable: iterable)
   }
 
   // MARK: - Set
@@ -49,7 +50,7 @@ extension PyContext {
 
   /// int PySet_Add(PyObject *anyset, PyObject *key)
   public func add(set: PyObject, value: PyObject) throws {
-    try self.types.set.add(owner: set, element: value)
+//    try self.types.set.add(owner: set, element: value)
   }
 
   /// int _PySet_Update(PyObject *set, PyObject *iterable)

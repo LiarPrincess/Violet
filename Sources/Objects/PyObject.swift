@@ -15,6 +15,10 @@ public class PyObject {
   internal var flags: PyObjectFlags
   internal let type: PyType
 
+  internal var context: PyContext {
+    return self.type.context
+  }
+
   internal init(type: PyType) {
     self.flags = []
     self.type = type

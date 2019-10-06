@@ -75,7 +75,7 @@ internal final class PyEnumerateType: PyType /* ,
   }
 
   // MARK: - Methods
-
+/*
   internal func next(value: PyObject) throws -> PyObject {
     let v = try self.matchType(value)
 
@@ -128,4 +128,5 @@ internal final class PyEnumerateType: PyType /* ,
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }

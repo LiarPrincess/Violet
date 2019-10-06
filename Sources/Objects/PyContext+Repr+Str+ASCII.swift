@@ -10,7 +10,7 @@ extension PyContext {
 
   internal func reprString(value: PyObject) throws -> String {
     if let reprType = value as? ReprTypeClass {
-      return try reprType.repr(value: value)
+      return try reprType.repr()
     }
 
     return self.genericRepr(value: value)
@@ -30,11 +30,11 @@ extension PyContext {
     }
 
     if let strType = value as? StrTypeClass {
-      return try strType.str(value: value)
+      return try strType.str()
     }
 
     if let reprType = value as? ReprTypeClass {
-      return try reprType.repr(value: value)
+      return try reprType.repr()
     }
 
     return self.genericRepr(value: value)

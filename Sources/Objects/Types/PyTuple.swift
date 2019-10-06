@@ -55,7 +55,7 @@ If the argument is a tuple, the return value is the same object.
   internal func new(_ elements: PyObject...) -> PyTuple {
     return PyTuple(type: self, elements: elements)
   }
-
+/*
   // MARK: - Equatable, hashable
 
   internal func compare(left: PyObject,
@@ -336,4 +336,5 @@ If the argument is a tuple, the return value is the same object.
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }

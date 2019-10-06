@@ -56,7 +56,7 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
   internal func new(real: Double, imag: Double) -> PyComplex {
     return PyComplex(type: self, real: real, imag: imag)
   }
-
+/*
   // MARK: - String
 
   internal func repr(value: PyObject) throws -> String {
@@ -283,4 +283,5 @@ This is equivalent to (real + imag*1j) where imag defaults to 0.
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }

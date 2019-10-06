@@ -71,7 +71,7 @@ internal final class PyDictType: PyType /* ,
   }
 
   // MARK: - Ctor
-
+/*
   // MARK: - Equatable, hashable
 
   internal func hash(value: PyObject) throws -> PyHash {
@@ -204,4 +204,5 @@ internal final class PyDictType: PyType /* ,
 
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
+*/
 }
