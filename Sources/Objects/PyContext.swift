@@ -3,7 +3,6 @@ public class PyContext {
   public var `true`:  PyObject { return self.types.bool.true }
   public var `false`: PyObject { return self.types.bool.false }
 
-  // TODO: Do something with this (see PyTuple for additional TODOs)
   public lazy var none: PyObject = PyNone.new(self)
   public lazy var ellipsis: PyObject = PyEllipsis.new(self)
   public lazy var notImplemented: PyObject = PyNotImplemented.new(self)

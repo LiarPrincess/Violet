@@ -36,10 +36,10 @@ internal protocol ComparableTypeClass: EquatableTypeClass {
 
 // MARK: - Hashable
 
-/// Use to unwind hashable
+internal typealias HashableResult = PyResultOrNot<PyHash>
 
 internal protocol HashableTypeClass: TypeClass {
-  var hash: PyHash { get }
+  var hash: HashableResult { get }
 }
 
 // MARK: - String

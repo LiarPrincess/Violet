@@ -46,40 +46,4 @@ public class PyObject {
 
     return body()
   }
-
-  // MARK: - TODO: Remove
-
-  internal func pyInt(_ value: BigInt) -> PyInt {
-    return self.types.int.new(value)
-  }
-
-  internal func pyInt(_ value: Int) -> PyInt {
-    return self.types.int.new(value)
-  }
-
-  internal func pyTuple(_ elements: [PyObject]) -> PyTuple {
-    return PyTuple.new(self.context, elements)
-  }
-
-  internal func extractInt(_ object: PyObject) -> PyInt? {
-    return object as? PyInt
-  }
-
-  /// PyLong_FromSsize_t
-  internal func extractIndex(value: PyObject) -> BigInt? {
-    //    guard let indexType = value.type as? IndexTypeClass else {
-    //      return nil
-    //    }
-
-    //    let index = try indexType.index(value: value)
-    //    let bigInt = try self.context.types.int.extractInt(index)
-    //    guard let result = Int(exactly: bigInt) else {
-    //      // i = PyNumber_AsSsize_t(item, PyExc_IndexError);
-    //      fatalError()
-    //    }
-
-    //    return result
-    //    return nil
-    fatalError()
-  }
 }

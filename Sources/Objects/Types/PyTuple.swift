@@ -6,21 +6,18 @@ import Core
 
 // TODO: Tuple
 // def __init__(self, iterable: Iterable[_T_co] = ...): ...
-// def __iter__(self) -> Iterator[_T_co]: ...
-
-// swiftlint:disable yoda_condition
-// swiftlint:disable file_length
+// def __iter__(self) -> Iterator[_T_co]: ... < IterTC
 
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
 internal final class PyTuple: PyObject,
   ReprTypeClass,
-  EquatableTypeClass, ComparableTypeClass,
-  HashableTypeClass,
+  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
   BoolConvertibleTypeClass,
   LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
   AddTypeClass, MulTypeClass, RMulTypeClass {
 
+  // TODO: Make this 'let'?
   internal var elements: [PyObject]
 
   // MARK: - Init
@@ -45,109 +42,60 @@ internal final class PyTuple: PyObject,
   // MARK: - Equatable
 
   internal func isEqual(_ other: PyObject) -> EquatableResult {
-    return (other as? PyTuple)
-      .map(self.isEqual)
-      .flatMap(EquatableResult.value) ?? .notImplemented
-  }
-
-  internal func isEqual(_ other: PyTuple) -> EquatableResult {
-    guard self.elements.count == other.elements.count else {
-      return .value(false)
+    guard let other = other as? PyTuple else {
+      return .notImplemented
     }
 
-    for (l, r) in zip(self.elements, other.elements) {
-      switch self.context.isEqual(left: l, right: r) {
-      case .value(true): break // go to next element
-      case .value(false): return .value(false)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
-      }
-    }
-
-    return .value(true)
+    return SequenceHelper.isEqual(context: self.context,
+                                  left: self.elements,
+                                  right: other.elements)
   }
 
   // MARK: - Comparable
 
   internal func isLess(_ other: PyObject) -> ComparableResult {
-    return (other as? PyTuple)
-      .map(self.isLess)
-      .flatMap(ComparableResult.value) ?? .notImplemented
-  }
-
-  internal func isLess(_ other: PyTuple) -> ComparableResult {
-    for (l, r) in zip(self.elements, other.elements) {
-      switch self.context.isEqual(left: l, right: r) {
-      case .value(true): break // go to next element
-      case .value(false): return self.context.isLess(left: l, right: r)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
-      }
+    guard let other = other as? PyTuple else {
+      return .notImplemented
     }
 
-    return .value(self.elements.count < other.elements.count)
+    return SequenceHelper.isLess(context: self.context,
+                                 left: self.elements,
+                                 right: other.elements)
   }
 
   internal func isLessEqual(_ other: PyObject) -> ComparableResult {
-    return (other as? PyTuple)
-      .map(self.isLessEqual)
-      .flatMap(ComparableResult.value) ?? .notImplemented
-  }
-
-  internal func isLessEqual(_ other: PyTuple) -> ComparableResult {
-    for (l, r) in zip(self.elements, other.elements) {
-      switch self.context.isEqual(left: l, right: r) {
-      case .value(true): break // go to next element
-      case .value(false): return self.context.isLessEqual(left: l, right: r)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
-      }
+    guard let other = other as? PyTuple else {
+      return .notImplemented
     }
 
-    return .value(self.elements.count <= other.elements.count)
+    return SequenceHelper.isLessEqual(context: self.context,
+                                      left: self.elements,
+                                      right: other.elements)
   }
 
   internal func isGreater(_ other: PyObject) -> ComparableResult {
-    return (other as? PyTuple)
-      .map(self.isGreater)
-      .flatMap(ComparableResult.value) ?? .notImplemented
-  }
-
-  internal func isGreater(_ other: PyTuple) -> ComparableResult {
-    for (l, r) in zip(self.elements, other.elements) {
-      switch self.context.isEqual(left: l, right: r) {
-      case .value(true): break // go to next element
-      case .value(false): return self.context.isGreater(left: l, right: r)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
-      }
+    guard let other = other as? PyTuple else {
+      return .notImplemented
     }
 
-    return .value(self.elements.count > other.elements.count)
+    return SequenceHelper.isGreater(context: self.context,
+                                    left: self.elements,
+                                    right: other.elements)
   }
 
   internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
-    return (other as? PyTuple)
-      .map(self.isGreaterEqual)
-      .flatMap(ComparableResult.value) ?? .notImplemented
-  }
-
-  internal func isGreaterEqual(_ other: PyTuple) -> ComparableResult {
-    for (l, r) in zip(self.elements, other.elements) {
-      switch self.context.isEqual(left: l, right: r) {
-      case .value(true): break // go to next element
-      case .value(false): return self.context.isGreaterEqual(left: l, right: r)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
-      }
+    guard let other = other as? PyTuple else {
+      return .notImplemented
     }
 
-    return .value(self.elements.count >= other.elements.count)
+    return SequenceHelper.isGreaterEqual(context: self.context,
+                                         left: self.elements,
+                                         right: other.elements)
   }
 
   // MARK: - Hashable
 
-  internal var hash: PyHash {
+  internal var hash: HashableResult {
     let hasher = self.context.hasher
 
     var x: PyHash = 0x345678
@@ -158,7 +106,7 @@ internal final class PyTuple: PyObject,
       mult += 82_520 + PyHash(2 * self.elements.count)
     }
 
-    return x + 97_531
+    return .value(x + 97_531)
   }
 
   // MARK: - String
@@ -196,134 +144,40 @@ internal final class PyTuple: PyObject,
     return self.types.bool.new(self.elements.any)
   }
 
-  // MARK: - Length
+  // MARK: - Sequence
 
   internal var length: PyInt {
-    return self.pyInt(self.elements.count)
+    return GeneralHelpers.pyInt(self.elements.count)
   }
-
-  // MARK: - Contains
 
   internal func contains(_ element: PyObject) -> Bool {
-    for e in self.elements {
-      let isEqual = self.context.isEqual(left: e, right: element)
-      switch isEqual {
-      case .value(true):
-        return true
-      case .value(false),
-           .error,
-           .notImplemented:
-        break // go to next element
-      }
-    }
-
-    return false
+    return SequenceHelper.contains(context: self.context,
+                                   elements: self.elements,
+                                   element: element)
   }
-
-  // MARK: - Get item
 
   internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
-    if let index = self.extractIndex(value: index) {
-      return self.getItem(at: index, canIndexFromEnd: true)
-    }
-
-    if let slice = index as? PySlice {
-      let result = self.getItem(at: slice)
-      return result.flatMap { GetItemResult<PyObject>.value($0) }
-    }
-
-    let indexType = index.type.name
-    return .error(
-      .typeError("\(self.type.name) indices must be integers or slices, not \(indexType)")
-    )
+    return SequenceHelper.getItem(context: self.context,
+                                  elements: self.elements,
+                                  index: index,
+                                  canIndexFromEnd: true,
+                                  typeName: "tuple")
   }
-
-  /// Use `canIndexFromEnd` for `tuple[-1]`.
-  internal func getItem(at index: PyInt,
-                        canIndexFromEnd: Bool) -> GetItemResult<PyObject> {
-    return self.getItem(at: index.value, canIndexFromEnd: canIndexFromEnd)
-  }
-
-  /// Use `canIndexFromEnd` for `tuple[-1]`.
-  internal func getItem(at index: BigInt,
-                        canIndexFromEnd: Bool) -> GetItemResult<PyObject> {
-    var index = index
-    if index < 0, canIndexFromEnd {
-      index += BigInt(self.elements.count)
-    }
-
-    guard let indexInt = Int(exactly: index) else {
-      return .error(.indexError("\(self.type.name) index out of range"))
-    }
-
-    guard 0 <= indexInt && indexInt < self.elements.count else {
-      return .error(.indexError("\(self.type.name) index out of range"))
-    }
-
-    return .value(self.elements[indexInt])
-  }
-
-  internal func getItem(at slice: PySlice) -> GetItemResult<PyTuple> {
-    let count = self.elements.count
-    let adjusted = self.types.slice.adjustIndices(value: slice, to: count)
-
-    if adjusted.length <= 0 {
-      // TODO: Use singleton
-      return .value(PyTuple.new(self.context, []))
-    }
-
-    // Small otimization, so we don't allocate new object
-    if adjusted.start == 0 && adjusted.step == 1 && adjusted.length == count {
-      return .value(self)
-    }
-
-    // TODO: RustPython does it differently (objsequence -> fn get_slice_items)
-    var elements = [PyObject]()
-    for i in 0..<adjusted.length {
-      let index = adjusted.start + i * adjusted.step
-      elements.append(self.elements[index])
-    }
-
-    return .value(PyTuple.new(self.context, elements))
-  }
-
-  // MARK: - Count
 
   internal func count(_ element: PyObject) -> CountResult {
-    var result: BigInt = 0
-
-    for e in self.elements {
-      switch self.context.isEqual(left: e, right: element) {
-      case .value(true):
-        result += 1
-      case .value(false),
-           .error,
-           .notImplemented:
-        break // go to next element
-      }
-    }
-
-    return .value(result)
+    return SequenceHelper.count(context: self.context,
+                                elements: self.elements,
+                                element: element)
   }
-
-  // MARK: - Index
 
   internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
-    for (index, e) in self.elements.enumerated() {
-      switch self.context.isEqual(left: e, right: element) {
-      case .value(true):
-        return .value(BigInt(index))
-      case .value(false),
-           .error,
-           .notImplemented:
-        break // go to next element
-      }
-    }
-
-    return .error(.valueError("tuple.index(x): x not in tuple"))
+    return SequenceHelper.getIndex(context: self.context,
+                                   elements: self.elements,
+                                   element: element,
+                                   typeName: "tuple")
   }
 
-  // MARK: - Add
+  // MARK: - Add, mul
 
   internal func add(_ other: PyObject) -> AddResult<PyObject> {
     if self.elements.isEmpty {
@@ -337,61 +191,28 @@ internal final class PyTuple: PyObject,
       )
     }
 
-    return self.add(otherTuple)
-  }
-
-  internal func add(_ other: PyTuple) -> AddResult<PyTuple> {
-    if self.elements.isEmpty {
-      return .value(other)
-    }
-
-    if other.elements.isEmpty {
+    if otherTuple.elements.isEmpty {
       return .value(self)
     }
 
-    let result = self.elements + other.elements
+    let result = self.elements + otherTuple.elements
     return .value(PyTuple.new(self.context, result))
   }
 
-  // MARK: - Mul
-
   internal func mul(_ other: PyObject) -> MulResult<PyObject> {
-    guard let otherInt = other as? PyInt else {
-      return .notImplemented
-    }
-
-    return self.mul(otherInt)
+    return SequenceHelper
+      .mul(elements: self.elements, count: other)
+      .map { elements -> PyTuple in
+        elements.isEmpty ?
+          GeneralHelpers.emptyTuple :
+          PyTuple.new(self.context, elements)
+      }
   }
 
   internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
-    guard let otherInt = other as? PyInt else {
-      return .notImplemented
-    }
-
-    return self.mul(otherInt)
-  }
-
-  internal func mul(_ other: PyInt) -> MulResult<PyTuple> {
-    let count = max(other.value, 0)
-
-    // swiftlint:disable:next empty_count
-    if count == 0 {
-      // TODO: Empty tuple
-      return .value(PyTuple.new(self.context, []))
-    }
-
-    if self.elements.isEmpty || count == 1 {
-      return .value(self)
-    }
-
-    var i: BigInt = 0
-    var result = [PyObject]()
-    while i < count {
-      result.append(contentsOf: self.elements)
-      i += 1
-    }
-
-    return .value(PyTuple.new(self.context, result))
+    return SequenceHelper
+      .rmul(elements: self.elements, count: other)
+      .map { PyTuple.new(self.context, $0) }
   }
 }
 

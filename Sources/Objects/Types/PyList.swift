@@ -4,326 +4,279 @@ import Core
 // Objects -> listobject.c
 // https://docs.python.org/3.7/c-api/list.html
 
-// TODO: List
-// PyObject_GenericGetAttr,                    /* tp_getattro */
-// (traverseproc)list_traverse,                /* tp_traverse */
-// list_iter,                                  /* tp_iter */
-// {"__getitem__", (PyCFunction)list_subscript, METH_O|METH_COEXIST, ...},
-// LIST___REVERSED___METHODDEF
-// LIST___SIZEOF___METHODDEF
-// LIST_CLEAR_METHODDEF
-// LIST_COPY_METHODDEF
-// LIST_INSERT_METHODDEF
-// LIST_POP_METHODDEF
-// LIST_REMOVE_METHODDEF
-// LIST_INDEX_METHODDEF
-// LIST_COUNT_METHODDEF
-// LIST_REVERSE_METHODDEF
-// LIST_SORT_METHODDEF
-// Done: append, extend
+// TODO: List (remember to add TypeClasses)
+// def __init__(self, iterable: Iterable[_T]) -> None: ...
+// def extend(self, iterable: Iterable[_T]) -> None: ...
+// def insert(self, index: int, object: _T) -> None: ...
+// def remove(self, object: _T) -> None: ...
+// def reverse(self) -> None: ... < ReversedTC
+// def sort(self, *, key: Optional[Callable[[_T], Any]] = ..., reverse: bool = ...) -> None: ...
+// def __iter__(self) -> Iterator[_T]: ... < IteratorTC
+// @overload
+// def __setitem__(self, i: int, o: _T) -> None: ...
+// @overload
+// def __setitem__(self, s: slice, o: Iterable[_T]) -> None: ... < SetItemTC
+// def __delitem__(self, i: Union[int, slice]) -> None: ... < SetItemTC
 
 // swiftlint:disable yoda_condition
-// swiftlint:disable file_length
 
 /// This subtype of PyObject represents a Python list object.
-internal final class PyList: PyObject {
+internal final class PyList: PyObject,
+  ReprTypeClass, StrTypeClass,
+  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
+  BoolConvertibleTypeClass,
+  LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
+  AddTypeClass, AddInPlaceTypeClass, MulTypeClass, RMulTypeClass, MulInPlaceTypeClass {
 
   internal var elements: [PyObject]
 
-  fileprivate init(type: PyListType, elements: [PyObject]) {
+  // MARK: - Init
+
+  internal static func new(_ context: PyContext) -> PyList {
+    let listType = context.types.list
+    return PyList(type: listType, elements: [])
+  }
+
+  internal static func new(_ context: PyContext,
+                           _ elements: [PyObject]) -> PyList {
+    let listType = context.types.list
+    return PyList(type: listType, elements: elements)
+  }
+
+  internal static func new(_ context: PyContext,
+                           _ elements: PyObject...) -> PyList {
+    let listType = context.types.list
+    return PyList(type: listType, elements: elements)
+  }
+
+  private init(type: PyListType, elements: [PyObject]) {
     self.elements = elements
     super.init(type: type)
   }
-}
 
-/// This subtype of PyObject represents a Python list object.
-internal final class PyListType: PyType /* ,
-  ReprTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  LengthTypeClass, ClearTypeClass,
-  ConcatTypeClass, ConcatInPlaceTypeClass,
-  RepeatTypeClass, RepeatInPlaceTypeClass,
-  ItemTypeClass, ItemAssignTypeClass,
-  SubscriptTypeClass, SubscriptAssignTypeClass,
-  ContainsTypeClass */ {
+  // MARK: - Equatable
 
-  override internal var name: String { return "list" }
-  override internal var doc: String? { return """
-list(iterable=(), /)
---
-
-Built-in mutable sequence.
-
-If no argument is given, the constructor creates a new empty list.
-The argument must be an iterable if specified.
-"""
-  }
-
-  // MARK: - Ctor
-
-  internal func new(_ elements: [PyObject]) -> PyList {
-    return PyList(type: self, elements: elements)
-  }
-
-  internal func new(_ elements: PyObject...) -> PyList {
-    return PyList(type: self, elements: elements)
-  }
-
-  // MARK: - Equatable, hashable
-/*
-  internal func compare(left: PyObject,
-                        right: PyObject,
-                        mode: CompareMode) throws -> Bool {
-    guard let l = self.matchTypeOrNil(left),
-          let r = self.matchTypeOrNil(right) else {
-      throw ComparableNotImplemented(left: left, right: right)
+  internal func isEqual(_ other: PyObject) -> EquatableResult {
+    guard let other = other as? PyList else {
+      return .notImplemented
     }
 
-    // short path when length does not equal
-    let isCountEqual = l.elements.count == r.elements.count
-    if mode == .equal && !isCountEqual {
-      return false
-    }
-
-    if mode == .notEqual && !isCountEqual {
-      return true
-    }
-
-    // try to finc first item that differs
-    for (lElem, rElem) in zip(l.elements, r.elements) {
-      let areEqual = try self.context.richCompareBool(left: lElem,
-                                                      right: rElem,
-                                                      mode: .equal)
-
-      if !areEqual {
-        switch mode {
-        case .equal:
-          return false
-        case .notEqual:
-          return true
-        case .less,
-             .lessEqual,
-             .greater,
-             .greaterEqual:
-          return try self.context.richCompareBool(left: lElem, right: rElem, mode: mode)
-        }
-      }
-    }
-
-    // collections are equal up to to shorter list count, compare count
-    let lCount = self.types.int.new(l.elements.count)
-    let rCount = self.types.int.new(r.elements.count)
-    return try self.context.richCompareBool(left: lCount, right: rCount, mode: mode)
+    return SequenceHelper.isEqual(context: self.context,
+                                  left: self.elements,
+                                  right: other.elements)
   }
 
-  internal func hash(value: PyObject) throws -> PyHash {
-    throw HashableNotImplemented(value: value)
+  // MARK: - Comparable
+
+  internal func isLess(_ other: PyObject) -> ComparableResult {
+    guard let other = other as? PyList else {
+      return .notImplemented
+    }
+
+    return SequenceHelper.isLess(context: self.context,
+                                 left: self.elements,
+                                 right: other.elements)
+  }
+
+  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+    guard let other = other as? PyList else {
+      return .notImplemented
+    }
+
+    return SequenceHelper.isLessEqual(context: self.context,
+                                      left: self.elements,
+                                      right: other.elements)
+  }
+
+  internal func isGreater(_ other: PyObject) -> ComparableResult {
+    guard let other = other as? PyList else {
+      return .notImplemented
+    }
+
+    return SequenceHelper.isGreater(context: self.context,
+                                    left: self.elements,
+                                    right: other.elements)
+  }
+
+  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+    guard let other = other as? PyList else {
+      return .notImplemented
+    }
+
+    return SequenceHelper.isGreaterEqual(context: self.context,
+                                         left: self.elements,
+                                         right: other.elements)
+  }
+
+  // MARK: - Hashable
+
+  internal var hash: HashableResult {
+    // Member exists, but always return .notImplemented.
+    return .notImplemented
   }
 
   // MARK: - String
 
-  internal func repr(value: PyObject) throws -> String {
-    let list = try self.matchType(value)
-
-    if list.elements.isEmpty {
+  internal var repr: String {
+    if self.elements.isEmpty {
       return "[]"
     }
 
-    if list.hasReprLock {
+    if self.hasReprLock {
       return "[...]"
     }
 
-    return try list.withReprLock {
+    return self.withReprLock {
       var result = "["
-      for (index, element) in list.elements.enumerated() {
+      for (index, element) in self.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.reprString(value: element)
+        result += self.context.reprString(value: element)
       }
 
-      result += list.elements.count > 1 ? "]" : ",]"
+      result += self.elements.count > 1 ? "]" : ",]"
       return result
     }
   }
 
-  // MARK: - Length
-
-  internal func length(value: PyObject) throws -> PyInt {
-    let list = try self.matchType(value)
-    return self.types.int.new(list.elements.count)
+  internal var str: String {
+    return self.repr
   }
 
-  // MARK: - Concat
+  // MARK: - Convertible
 
-  internal func concat(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.matchType(left)
-
-    guard let r = self.matchTypeOrNil(right) else {
-      throw PyContextError.listInvalidAddendType(addend: right)
-    }
-
-    let result = l.elements + r.elements
-    return self.new(result)
+  internal var asBool: PyBool {
+    return self.types.bool.new(self.elements.any)
   }
 
-  internal func concatInPlace(left: PyObject, right: PyObject) throws {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
+  // MARK: - Sequence
 
-    l.elements.append(contentsOf: r.elements)
+  internal var length: PyInt {
+    return GeneralHelpers.pyInt(self.elements.count)
   }
 
-  // MARK: - Repeat
-
-  internal func `repeat`(value: PyObject, count: PyInt) throws -> PyObject {
-    let list = try self.matchType(value)
-
-    let countRaw = try self.types.int.extractInt(count)
-    let count = max(countRaw, 0)
-
-    if list.elements.isEmpty || count == 1 {
-      return self.new(list.elements)
-    }
-
-    var i: BigInt = 0
-    var result = [PyObject]()
-    while i < count {
-      result.append(contentsOf: list.elements)
-      i += 1
-    }
-
-    return self.new(result)
+  internal func contains(_ element: PyObject) -> Bool {
+    return SequenceHelper.contains(context: self.context,
+                                   elements: self.elements,
+                                   element: element)
   }
 
-  internal func repeatInPlace(value: PyObject, count: PyInt) throws {
-    let list = try self.matchType(value)
-    let countRaw = try self.types.int.extractInt(count)
-
-    if countRaw == 0 || countRaw == 1 {
-      return
-    }
-
-    if countRaw < 0 {
-      try self.clear(value: list)
-      return
-    }
-
-    var i: BigInt = 1 // we already have 1!
-    while i < countRaw {
-      list.elements.append(contentsOf: list.elements)
-      i += 1
-    }
+  internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
+    return SequenceHelper.getItem(context: self.context,
+                                  elements: self.elements,
+                                  index: index,
+                                  canIndexFromEnd: true,
+                                  typeName: "list")
   }
 
-  // MARK: - Item
-
-  internal func add(owner: PyObject, element: PyObject) throws {
-    let list = try self.matchType(owner)
-    list.elements.append(element)
+  internal func count(_ element: PyObject) -> CountResult {
+    return SequenceHelper.count(context: self.context,
+                                elements: self.elements,
+                                element: element)
   }
 
-  internal func extend(owner: PyObject, iterable: PyObject) throws {
-    let list = try self.matchType(owner)
+  internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
+    return SequenceHelper.getIndex(context: self.context,
+                                   elements: self.elements,
+                                   element: element,
+                                   typeName: "list")
+  }
 
-    guard let iterableType = iterable.type as? IterableTypeClass else {
-      fatalError()
+  internal func append(_ element: PyObject) {
+    self.elements.append(element)
+  }
+
+  internal func extend(_ iterator: PyObject) {
+    // Check if implementatio is OK with 'addInPlace'
+    // TODO: Write this - list_extend(PyListObject *self, PyObject *iterable)
+  }
+
+  internal func pop(index: BigInt = -1) -> PyResult<PyObject> {
+    if self.elements.isEmpty {
+      return .error(.indexError("pop from empty list"))
     }
 
-    fatalError()
-//    let other = iterableType.getIterator(owner: iterable)
-//    list.elements.append(contentsOf: other)
-  }
-
-  internal func item(owner: PyObject, at index: Int) throws -> PyObject {
-    let list = try self.matchType(owner)
-
-    guard 0 <= index && index < list.elements.count else {
-      throw PyContextError.listIndexOutOfRange(list: list, index: index)
+    var index = index
+    if index < 0 {
+      index += BigInt(self.elements.count)
     }
 
-    return list.elements[index]
-  }
-
-  internal func itemAssign(owner: PyObject, at index: Int, to value: PyObject) throws {
-    let list = try self.matchType(owner)
-
-    guard 0 <= index && index < list.elements.count else {
-      throw PyContextError.listAssignmentIndexOutOfRange(list: list, index: index)
+    guard let indexInt = Int(exactly: index) else {
+      return .error(.indexError("pop index out of range"))
     }
 
-    // TODO: if (v == NULL) return list_ass_slice(a, i, i+1, v);
+    guard 0 <= indexInt && indexInt < self.elements.count else {
+      return .error(.indexError("pop index out of range"))
+    }
 
-    list.elements[index] = value
+    guard let last = self.elements.popLast() else {
+      return .error(.indexError("pop index out of range"))
+    }
+
+    return .value(last)
   }
 
-  internal func contains(owner: PyObject, element: PyObject) throws -> Bool {
-    let list = try self.matchType(owner)
+  internal func clear() {
+    self.elements.removeAll()
+  }
 
-    for candidate in list.elements {
-      let isEqual = try self.context.richCompareBool(left: element,
-                                                     right: candidate,
-                                                     mode: .equal)
+  internal func copy() -> PyList {
+    return PyList.new(self.context, self.elements)
+  }
 
-      if isEqual {
-        return true
+  // MARK: - Add, mul
+
+  internal func add(_ other: PyObject) -> AddResult<PyObject> {
+    guard let otherList = other as? PyList else {
+      let typeName = other.type.name
+      return .error(
+        .typeError("can only concatenate list (not \"\(typeName)\") to list")
+      )
+    }
+
+    let result = self.elements + otherList.elements
+    return .value(PyList.new(self.context, result))
+  }
+
+  internal func addInPlace(_ other: PyObject) -> AddResult<PyObject> {
+    self.extend(other)
+    return .value(self)
+  }
+
+  internal func mul(_ other: PyObject) -> MulResult<PyObject> {
+    return SequenceHelper
+      .mul(elements: self.elements, count: other)
+      .map { PyList.new(self.context, $0) }
+  }
+
+  internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
+    return SequenceHelper
+      .rmul(elements: self.elements, count: other)
+      .map { PyList.new(self.context, $0) }
+  }
+
+  internal func mulInPlace(_ other: PyObject) -> MulResult<PyObject> {
+    return SequenceHelper
+      .mul(elements: self.elements, count: other)
+      .map { elements -> PyList in
+        self.elements = elements
+        return self
       }
-    }
-
-    return false
   }
+}
 
-  // MARK: - Subscript
-
-  internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
-    let list = try self.matchType(owner)
-
-    if var i = try self.extractIndex(value: index) {
-      if i < 0 { i += list.elements.count }
-      return try self.item(owner: list, at: i)
-    }
-
-    // TODO: Add slice as in 'list_subscript(PyListObject* self, PyObject* item)'
-
-    throw PyContextError.listInvalidSubscriptIndex(index: index)
-  }
-
-  internal func subscriptAssign(owner: PyObject, index: PyObject, value: PyObject) throws {
-    let list = try self.matchType(owner)
-
-    if var i = try self.extractIndex(value: index) {
-      if i < 0 { i += list.elements.count }
-      try self.itemAssign(owner: list, at: i, to: value)
-    }
-
-    // TODO: Add slice as in 'list_ass_subscript(PyListObject* self, PyObject* item, ...)'
-    throw PyContextError.listInvalidSubscriptIndex(index: index)
-  }
-
-  // MARK: - Clear
-
-  internal func clear(value: PyObject) throws {
-    let list = try self.matchType(value)
-    list.elements.removeAll()
-  }
-
-  // MARK: - Helpers
-
-  internal func matchTypeOrNil(_ object: PyObject) -> PyList? {
-    if let tuple = object as? PyList {
-      return tuple
-    }
-
-    return nil
-  }
-
-  internal func matchType(_ object: PyObject) throws -> PyList {
-    if let tuple = object as? PyList {
-      return tuple
-    }
-
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
-  }
-*/
+internal final class PyListType: PyType {
+//  override internal var name: String { return "list" }
+//  override internal var doc: String? { return """
+//    list(iterable=(), /)
+//    --
+//
+//    Built-in mutable sequence.
+//
+//    If no argument is given, the constructor creates a new empty list.
+//    The argument must be an iterable if specified.
+//    """
+//  }
 }

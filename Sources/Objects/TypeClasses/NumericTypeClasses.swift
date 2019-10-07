@@ -27,7 +27,7 @@ internal protocol IndexTypeClass: TypeClass {
   func index(value: PyObject) -> PyInt
 }
 
-// MARK: - Add, sub
+// MARK: - Add
 
 internal typealias AddResult<T> = PyResultOrNot<T>
 
@@ -41,8 +41,10 @@ internal protocol AddInPlaceTypeClass: TypeClass {
   /// Returns the result of adding o1 and o2..
   /// The operation is done in-place when o1 supports it.
   /// This is the equivalent of the Python statement o1 += o2.
-  func addInPlace(_ other: PyObject)
+  func addInPlace(_ other: PyObject) -> AddResult<PyObject>
 }
+
+// MARK: - Sub
 
 internal protocol SubTypeClass: TypeClass {
   /// Returns the result of subtracting o2 from o1.
@@ -77,7 +79,7 @@ internal protocol MulInPlaceTypeClass: TypeClass {
   /// Returns the result of multiplying o1 and o2..
   /// The operation is done in-place when o1 supports it.
   /// This is the equivalent of the Python statement o1 *= o2.
-  func mulInPlace(_ other: PyObject)
+  func mulInPlace(_ other: PyObject) -> MulResult<PyObject>
 }
 
 // MARK: - Matrix multiply

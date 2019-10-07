@@ -53,9 +53,9 @@ internal final class PyEnumerate: PyObject, IterableTypeClass {
     self.item = self.iterable.next()
 
     let index = self.advanceIndex()
-    let pyIndex = self.pyInt(index)
+    let pyIndex = GeneralHelpers.pyInt(index)
 
-    return self.pyTuple([pyIndex, self.item])
+    return GeneralHelpers.pyTuple([pyIndex, self.item])
   }
 
   private func advanceIndex() -> Int {

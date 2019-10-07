@@ -6,7 +6,7 @@ import Core
 
 // TODO: PyRange
 // def __iter__(self) -> Iterator[int]: ...
-// def __reversed__(self) -> Iterator[int]: ...
+// def __reversed__(self) -> Iterator[int]: ... < ReversedTC
 
 // swiftlint:disable yoda_condition
 
@@ -128,13 +128,14 @@ internal final class PyRange: PyObject,
 
   // MARK: - Hashable
 
-  internal var hash: PyHash {
+  internal var hash: HashableResult {
     let none = self.context.none
-    let lengthInt = self.pyInt(self.length.value)
+    let lengthInt = GeneralHelpers.pyInt(self.length.value)
     let tuple = PyTuple.new(self.context, lengthInt, none, none)
 
     if self.length.value == 0 {
-      return self.context.hash(value: tuple)
+      let result = self.context.hash(value: tuple)
+      return .value(result)
     }
 
     tuple.elements[1] = self.start
@@ -142,7 +143,8 @@ internal final class PyRange: PyObject,
       tuple.elements[2] = self.step
     }
 
-    return self.context.hash(value: tuple)
+    let result = self.context.hash(value: tuple)
+    return .value(result)
   }
 
   // MARK: - String
@@ -168,7 +170,7 @@ internal final class PyRange: PyObject,
   // MARK: - Contains
 
   internal func contains(_ element: PyObject) -> Bool {
-    guard let int = self.extractInt(element) else {
+    guard let int = GeneralHelpers.extractInt(element) else {
       return false
     }
 
@@ -199,7 +201,7 @@ internal final class PyRange: PyObject,
   // MARK: - Get item
 
   internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
-    if let index = self.extractIndex(value: index) {
+    if let index = GeneralHelpers.extractIndex(value: index) {
       let result = self.getItem(at: index)
       return result.flatMap { GetItemResult<PyObject>.value($0) }
     }
@@ -230,7 +232,7 @@ internal final class PyRange: PyObject,
     }
 
     let result = self.start.value + self.step.value * index
-    return .value(self.pyInt(result))
+    return .value(GeneralHelpers.pyInt(result))
   }
 
   internal func getItem(at slice: PySlice) -> GetItemResult<PyRange> {
@@ -251,7 +253,7 @@ internal final class PyRange: PyObject,
     }
 
     let sliceStep = slice.step?.value ?? 1
-    let step = self.pyInt(sliceStep * self.step.value)
+    let step = GeneralHelpers.pyInt(sliceStep * self.step.value)
 
     let result = PyRange.new(self.context, start: start, stop: stop, step: step)
     return result.flatMap { .value($0) }
