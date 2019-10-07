@@ -4,6 +4,7 @@ internal enum PyErrorEnum {
   case typeError(String)
   case valueError(String)
   case indexError(String)
+  case zeroDivisionError(String)
 }
 
 // MARK: - PyResult

@@ -4,242 +4,423 @@ import Core
 // In CPython:
 // Objects -> floatobject.c
 // https://docs.python.org/3.7/c-api/float.html
+// https://developer.apple.com/documentation/swift/double/floating-point_operators_for_double
 
 // TODO: Float
-// PyObject* PyFloat_FromString(PyObject *str)
-// PyObject_GenericGetAttr,                    /* tp_getattro */
-// FLOAT_CONJUGATE_METHODDEF
-// FLOAT___TRUNC___METHODDEF
-// FLOAT___ROUND___METHODDEF
-// FLOAT_AS_INTEGER_RATIO_METHODDEF
-// FLOAT_FROMHEX_METHODDEF
-// FLOAT_HEX_METHODDEF
-// FLOAT_IS_INTEGER_METHODDEF
-// FLOAT___GETNEWARGS___METHODDEF
-// FLOAT___GETFORMAT___METHODDEF
-// FLOAT___SET_FORMAT___METHODDEF
-// FLOAT___FORMAT___METHODDEF
-// {"real", float_getreal, (setter)NULL, "the real part of a complex number", NULL},
-// {"imag", float_getimag, (setter)NULL, "the imaginary part of a complex number", NULL},
+// def __init__(self, x: Union[SupportsFloat, Text, bytes, bytearray] = ...)
+// def __getnewargs__(self) -> Tuple[float]: ...
+// def hex(self) -> str: ...
+// @classmethod
+// def fromhex(cls, s: str) -> float: ...
+// def is_integer(self) -> bool: ...
+// def as_integer_ratio(self) -> Tuple[int, int]: ...
+
+// swiftlint:disable file_length
 
 /// This subtype of PyObject represents a Python floating point object.
-internal final class PyFloat: PyObject {
+internal final class PyFloat: PyObject,
+  ReprTypeClass, StrTypeClass,
+  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
+  BoolConvertibleTypeClass, IntConvertibleTypeClass, FloatConvertibleTypeClass,
+  SignedTypeClass, AbsTypeClass,
+  AddTypeClass, RAddTypeClass,
+  SubTypeClass, RSubTypeClass,
+  MulTypeClass, RMulTypeClass,
+  PowTypeClass, RPowTypeClass,
+  TrueDivTypeClass, RTrueDivTypeClass,
+  FloorDivTypeClass, RFloorDivTypeClass,
+  ModTypeClass, RModTypeClass,
+  DivModTypeClass, RDivModTypeClass {
 
   internal let value: Double
 
-  fileprivate init(type: PyFloatType, value: Double) {
+  // MARK: - Init
+
+  internal static func new(_ context: PyContext, _ value: Double) -> PyFloat {
+    return PyFloat(type: context.types.float, value: value)
+  }
+
+  private init(type: PyFloatType, value: Double) {
     self.value = value
     super.init(type: type)
   }
-}
 
-/// This subtype of PyObject represents a Python floating point object.
-internal final class PyFloatType: PyType /*,
-  ReprTypeClass, StrTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  SignedTypeClass, AbsTypeClass,
-  AddTypeClass, SubTypeClass,
-  MulTypeClass, PowTypeClass,
-  DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
-  PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass */ {
-
-  override internal var name: String { return "float" }
-  override internal var doc: String? { return """
-float(x) -> floating point number
-
-Convert a string or number to a floating point number, if possible.
-"""
-  }
-
-  internal lazy var nan = self.new(Double.nan)
-
-  // MARK: - Ctors
-
-  internal func new(_ value: Double) -> PyFloat {
-    return PyFloat(type: self, value: value)
-  }
-/*
-  // MARK: - String
-
-  internal func repr(value: PyObject) throws -> String {
-    let v = try self.extractDouble(value)
-    return String(describing: v)
-  }
-
-  internal func str(value: PyObject) throws -> String {
-    return try self.repr(value: value)
-  }
-
-  // MARK: - Equatable, hashable
+  // MARK: - Equatable
 
   /// This is nightmare, whatever we do is wrong (see CPython comment above
-  // 'static PyObject* float_richcompare(PyObject *v, PyObject *w, int op)' for details).
-  internal func compare(left: PyObject,
-                        right: PyObject,
-                        mode: CompareMode) throws -> Bool {
-    let l = try self.extractDouble(left)
-
-    if let r = right as? PyFloat {
-      return self.context.richCompare(left: l, right: r.value, mode: mode)
+  /// 'static PyObject* float_richcompare(PyObject *v, PyObject *w, int op)'
+  /// for details).
+  internal func isEqual(_ other: PyObject) -> EquatableResult {
+    if let pyFloat = other as? PyFloat {
+      return .value(self.value == pyFloat.value)
     }
 
-    if let r = self.types.int.extractIntOrNil(right) {
-      return self.context.richCompare(left: l, right: Double(r), mode: mode)
+    if let pyInt = other as? PyInt {
+      let float = Double(pyInt.value)
+      return .value(self.value == float)
     }
 
-    throw ComparableNotImplemented(left: left, right: right)
+    return .notImplemented
   }
 
-  internal func hash(value: PyObject) throws -> PyHash {
-    let v = try self.extractDouble(value)
-    return self.context.hasher.hash(v)
-  }
+  // MARK: - Comparable
 
-  // MARK: - Conversion
-
-  internal func bool(value: PyObject) throws -> PyBool {
-    let v = try self.extractDouble(value)
-    return self.types.bool.new(!v.isZero)
-  }
-
-  internal func int(value: PyObject) throws -> PyInt {
-    let v = try self.extractDouble(value)
-    return self.types.int.new(BigInt(v))
-  }
-
-  internal func float(value: PyObject) throws -> PyFloat {
-    return try self.matchType(value)
-  }
-
-  // MARK: - Signed number
-
-  internal func positive(value: PyObject) throws -> PyObject {
-    return try self.matchType(value)
-  }
-
-  internal func negative(value: PyObject) throws -> PyObject {
-    let v = try self.extractDouble(value)
-    return self.new(-v)
-  }
-
-  // MARK: - Add, sub
-
-  internal func add(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractDouble(left)
-    let r = try self.extractDouble(right)
-    return self.new(l + r)
-  }
-
-  internal func sub(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractDouble(left)
-    let r = try self.extractDouble(right)
-    return self.new(l - r)
-  }
-
-  // MARK: - Mul
-
-  internal func mul(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractDouble(left)
-    let r = try self.extractDouble(right)
-    return self.new(l * r)
-  }
-
-  internal func pow(value: PyObject, exponent: PyObject) throws -> PyObject {
-    let l = try self.extractDouble(value)
-    let r = try self.extractDouble(exponent)
-    return self.new(Foundation.pow(l, r))
-  }
-
-  // MARK: - Div
-
-  /// static PyObject* float_div(PyObject *v, PyObject *w)
-  internal func div(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractDouble(left)
-    let r = try self.extractDouble(right)
-
-    if r.isZero {
-      throw PyContextError.floatDivisionByZero
+  internal func isLess(_ other: PyObject) -> ComparableResult {
+    if let pyFloat = other as? PyFloat {
+      return .value(self.value < pyFloat.value)
     }
 
-    return self.new(l / r)
-  }
-
-  internal func remainder(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractDouble(left)
-    let r = try self.extractDouble(right)
-
-    if r.isZero {
-      throw PyContextError.floatModuloZero
+    if let pyInt = other as? PyInt {
+      let float = Double(pyInt.value)
+      return .value(self.value < float)
     }
 
-    let remainder = l.remainder(dividingBy: r)
-    return self.new(remainder)
+    return .notImplemented
   }
 
-  internal func divMod(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractDouble(left)
-    let r = try self.extractDouble(right)
-
-    if r.isZero {
-      throw PyContextError.floatDivModZero
+  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+    if let pyFloat = other as? PyFloat {
+      return .value(self.value <= pyFloat.value)
     }
 
-    let remainder = l.remainder(dividingBy: r)
-
-    var quotient = (l - remainder) / r
-    if quotient.isZero {
-      quotient = Double(signOf: l / r, magnitudeOf: quotient)
-    } else {
-      quotient.round()
+    if let pyInt = other as? PyInt {
+      let float = Double(pyInt.value)
+      return .value(self.value <= float)
     }
 
-    return self.types.tuple.new(self.new(quotient), self.new(remainder))
+    return .notImplemented
   }
 
-  internal func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
-    let divMod = try self.divMod(left: left, right: right)
-    return try self.types.tuple.item(owner: divMod, at: 0)
+  internal func isGreater(_ other: PyObject) -> ComparableResult {
+    if let pyFloat = other as? PyFloat {
+      return .value(self.value > pyFloat.value)
+    }
+
+    if let pyInt = other as? PyInt {
+      let float = Double(pyInt.value)
+      return .value(self.value > float)
+    }
+
+    return .notImplemented
+  }
+
+  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+    if let pyFloat = other as? PyFloat {
+      return .value(self.value >= pyFloat.value)
+    }
+
+    if let pyInt = other as? PyInt {
+      let float = Double(pyInt.value)
+      return .value(self.value >= float)
+    }
+
+    return .notImplemented
+  }
+
+  // MARK: - Hashable
+
+  internal var hash: HashableResult {
+    return .value(self.context.hasher.hash(self.value))
+  }
+
+  // MARK: - String
+
+  internal var repr: String {
+    return String(describing: self.value)
+  }
+
+  internal var str: String {
+    return String(describing: self.value)
+  }
+
+  // MARK: - Convertible
+
+  internal var asBool: PyBool {
+    return self.types.bool.new(!self.value.isZero)
+  }
+
+  internal var asInt: PyInt {
+    return self.types.int.new(BigInt(self.value))
+  }
+
+  internal var asFloat: PyFloat {
+    return GeneralHelpers.pyFloat(self.value)
+  }
+
+  // MARK: - Imaginary
+
+  internal var real: PyFloat {
+    return self
+  }
+
+  internal var imag: PyFloat {
+    return GeneralHelpers.pyFloat(0.0)
+  }
+
+  /// float.conjugate
+  /// Return self, the complex conjugate of any float.
+  internal var conjugate: PyFloat {
+    return self
+  }
+
+  // MARK: - Sign
+
+  internal var positive: PyObject {
+    return self
+  }
+
+  internal var negative: PyObject {
+    return GeneralHelpers.pyFloat(-self.value)
   }
 
   // MARK: - Abs
 
-  internal func abs(value: PyObject) throws -> PyObject {
-    let v = try self.extractDouble(value)
-    return self.new(Swift.abs(v))
+  internal var abs: PyObject {
+    return GeneralHelpers.pyFloat(Swift.abs(self.value))
+  }
+
+  // MARK: - Add
+
+  internal func add(_ other: PyObject) -> AddResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return .value(GeneralHelpers.pyFloat(self.value + other))
+  }
+
+  internal func radd(_ other: PyObject) -> AddResult<PyObject> {
+    return self.add(other)
+  }
+
+  // MARK: - Sub
+
+  internal func sub(_ other: PyObject) -> SubResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return .value(GeneralHelpers.pyFloat(self.value - other))
+  }
+
+  internal func rsub(_ other: PyObject) -> SubResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return .value(GeneralHelpers.pyFloat(other - self.value))
+  }
+
+  // MARK: - Mul
+
+  internal func mul(_ other: PyObject) -> MulResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return .value(GeneralHelpers.pyFloat(self.value * other))
+  }
+
+  internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
+    return self.mul(other)
+  }
+
+  // MARK: - Pow
+
+  internal func pow(_ other: PyObject) -> PowResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    let result = Foundation.pow(self.value, other)
+    return .value(GeneralHelpers.pyFloat(result))
+  }
+
+  internal func rpow(_ other: PyObject) -> PowResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    let result = Foundation.pow(other, self.value)
+    return .value(GeneralHelpers.pyFloat(result))
+  }
+
+  // MARK: - True div
+
+  internal func trueDiv(_ other: PyObject) -> TrueDivResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return self.trueDiv(left: self.value, right: other)
+  }
+
+  internal func rtrueDiv(_ other: PyObject) -> TrueDivResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return self.trueDiv(left: other, right: self.value)
+  }
+
+  private func trueDiv(left: Double, right: Double) -> TrueDivResult<PyObject> {
+    if right.isZero {
+      return .error(.zeroDivisionError("float division by zero"))
+    }
+
+    return .value(GeneralHelpers.pyFloat(left / right))
+  }
+
+  // MARK: - Floor div
+
+  internal func floorDiv(_ other: PyObject) -> FloorDivResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return self.floorDiv(left: self.value, right: other)
+  }
+
+  internal func rfloorDiv(_ other: PyObject) -> FloorDivResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return self.floorDiv(left: other, right: self.value)
+  }
+
+  private func floorDiv(left: Double, right: Double) -> TrueDivResult<PyObject> {
+    if right.isZero {
+      return .error(.zeroDivisionError("float floor division by zero"))
+    }
+
+    let result = self.floorDivRaw(left: left, right: right)
+    return .value(GeneralHelpers.pyFloat(result))
+  }
+
+  private func floorDivRaw(left: Double, right: Double) -> Double {
+    return Foundation.floor(left / right)
+  }
+
+  // MARK: - Mod
+
+  internal func mod(_ other: PyObject) -> ModResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return self.mod(left: self.value, right: other)
+  }
+
+  internal func rmod(_ other: PyObject) -> ModResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return self.mod(left: other, right: self.value)
+  }
+
+  private func mod(left: Double, right: Double) -> TrueDivResult<PyObject> {
+    if right.isZero {
+      return .error(.zeroDivisionError("float modulo"))
+    }
+
+    let result = self.modRaw(left: left, right: right)
+    return .value(GeneralHelpers.pyFloat(result))
+  }
+
+  private func modRaw(left: Double, right: Double) -> Double {
+    return left.remainder(dividingBy: right)
+  }
+
+  // MARK: - Div mod
+
+  internal func divMod(_ other: PyObject) -> DivModResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return self.divMod(left: self.value, right: other)
+  }
+
+  internal func rdivMod(_ other: PyObject) -> DivModResult<PyObject> {
+    guard let other = self.asDouble(other) else {
+      return .notImplemented
+    }
+
+    return self.divMod(left: other, right: self.value)
+  }
+
+  private func divMod(left: Double, right: Double) -> TrueDivResult<PyObject> {
+    if right.isZero {
+      return .error(.zeroDivisionError("float divmod()"))
+    }
+
+    let div = self.floorDivRaw(left: left, right: right)
+    let mod = self.modRaw(left: left, right: right)
+
+    return .value(GeneralHelpers.pyTuple([
+      GeneralHelpers.pyFloat(div),
+      GeneralHelpers.pyFloat(mod)
+    ]))
+  }
+
+  // MARK: - Round
+
+  internal func round() -> PyResultOrNot<PyFloat> {
+    return self.round(nDigits: GeneralHelpers.none)
+  }
+
+  /// Round a Python float v to the closest multiple of 10**-ndigits
+  ///
+  /// Return the Integral closest to x, rounding half toward even.
+  /// When an argument is passed, work like built-in round(x, ndigits).
+  internal func round(nDigits: PyObject) -> PyResultOrNot<PyFloat> {
+    var digitCount: BigInt?
+
+    if nDigits is PyNone {
+      digitCount = 0
+    }
+
+    if let int = nDigits as? PyInt {
+      digitCount = int.value
+    }
+
+    switch digitCount {
+    case .some(0):
+      // round to nearest integer
+      return .value(GeneralHelpers.pyFloat(self.value.rounded()))
+    case .some:
+      // TODO: Implement float rounding to arbitrary precision
+      return .notImplemented
+    case .none:
+      return .error(
+        .typeError("'\(nDigits.type.name)' object cannot be interpreted as an integer")
+      )
+    }
   }
 
   // MARK: - Helpers
 
-  internal func matchType(_ object: PyObject) throws -> PyFloat {
-    if let float = object as? PyFloat {
-      return float
+  private func asDouble(_ object: PyObject) -> Double? {
+    if let pyFloat = object as? PyFloat {
+      return pyFloat.value
     }
 
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
-  }
-
-  internal func extractDoubleOrNil(_ object: PyObject) -> Double? {
-    if let f = object as? PyFloat {
-      return f.value
-    }
-
-    if let i = object as? PyInt {
-      return Double(i.value)
+    if let pyInt = object as? PyInt {
+      return Double(pyInt.value)
     }
 
     return nil
   }
+}
 
-  internal func extractDouble(_ object: PyObject) throws -> Double {
-    if let f = object as? PyFloat {
-      return f.value
-    }
-
-    if let i = object as? PyInt {
-      return Double(i.value)
-    }
-
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
-  }
- */
+internal final class PyFloatType: PyType {
+  //  override internal var name: String { return "float" }
+  //  override internal var doc: String? { return """
+  //    float(x) -> floating point number
+  //
+  //    Convert a string or number to a floating point number, if possible.
+  //    """
+  //  }
 }

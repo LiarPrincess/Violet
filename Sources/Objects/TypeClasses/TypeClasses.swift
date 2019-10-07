@@ -61,6 +61,12 @@ internal protocol StrTypeClass: TypeClass {
 
 // MARK: - Other
 
+//internal protocol IndexTypeClass: TypeClass {
+//  /// Returns the o converted to a Python int on success
+//  /// or TypeError exception raised on failure.
+//  func index(value: PyObject) -> PyInt
+//}
+
 //  /* More standard operations (here for binary compatibility) */
 //
 

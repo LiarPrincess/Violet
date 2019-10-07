@@ -177,7 +177,7 @@ internal final class PyTuple: PyObject,
                                    typeName: "tuple")
   }
 
-  // MARK: - Add, mul
+  // MARK: - Add
 
   internal func add(_ other: PyObject) -> AddResult<PyObject> {
     if self.elements.isEmpty {
@@ -198,6 +198,8 @@ internal final class PyTuple: PyObject,
     let result = self.elements + otherTuple.elements
     return .value(PyTuple.new(self.context, result))
   }
+
+  // MARK: - Mul
 
   internal func mul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper

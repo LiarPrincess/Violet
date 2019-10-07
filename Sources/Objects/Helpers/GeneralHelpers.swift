@@ -64,6 +64,11 @@ internal enum GeneralHelpers {
     fatalError()
   }
 
+  internal static func pyFloat(_ value: Double) -> PyFloat {
+    //    return self.types.int.new(value)
+    fatalError()
+  }
+
   internal static func pyTuple(_ elements: [PyObject]) -> PyTuple {
 //    return PyTuple.new(self.context, elements)
     fatalError()
@@ -93,6 +98,10 @@ internal enum GeneralHelpers {
 
     //    return result
     //    return nil
+    fatalError()
+  }
+
+  internal static var nan: PyFloat {
     fatalError()
   }
 

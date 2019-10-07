@@ -224,7 +224,7 @@ internal final class PyList: PyObject,
     return PyList.new(self.context, self.elements)
   }
 
-  // MARK: - Add, mul
+  // MARK: - Add
 
   internal func add(_ other: PyObject) -> AddResult<PyObject> {
     guard let otherList = other as? PyList else {
@@ -242,6 +242,8 @@ internal final class PyList: PyObject,
     self.extend(other)
     return .value(self)
   }
+
+  // MARK: - Mul
 
   internal func mul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
