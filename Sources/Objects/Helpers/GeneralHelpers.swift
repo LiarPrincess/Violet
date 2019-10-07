@@ -74,6 +74,10 @@ internal enum GeneralHelpers {
     fatalError()
   }
 
+  internal static var none: PyNone {
+    fatalError()
+  }
+
   /// PyLong_FromSsize_t
   internal static func extractIndex(value: PyObject) -> BigInt? {
     //    guard let indexType = value.type as? IndexTypeClass else {

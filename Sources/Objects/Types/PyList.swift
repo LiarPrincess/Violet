@@ -17,6 +17,7 @@ import Core
 // @overload
 // def __setitem__(self, s: slice, o: Iterable[_T]) -> None: ... < SetItemTC
 // def __delitem__(self, i: Union[int, slice]) -> None: ... < SetItemTC
+// def __reversed__(self) -> Iterator[_T]: ...
 
 // swiftlint:disable yoda_condition
 
@@ -33,20 +34,17 @@ internal final class PyList: PyObject,
   // MARK: - Init
 
   internal static func new(_ context: PyContext) -> PyList {
-    let listType = context.types.list
-    return PyList(type: listType, elements: [])
+    return PyList(type: context.types.list, elements: [])
   }
 
   internal static func new(_ context: PyContext,
                            _ elements: [PyObject]) -> PyList {
-    let listType = context.types.list
-    return PyList(type: listType, elements: elements)
+    return PyList(type: context.types.list, elements: elements)
   }
 
   internal static func new(_ context: PyContext,
                            _ elements: PyObject...) -> PyList {
-    let listType = context.types.list
-    return PyList(type: listType, elements: elements)
+    return PyList(type: context.types.list, elements: elements)
   }
 
   private init(type: PyListType, elements: [PyObject]) {
