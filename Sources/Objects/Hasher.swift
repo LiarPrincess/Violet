@@ -63,11 +63,7 @@ internal struct Hasher {
     e = e >= 0 ? e % BITS32 : BITS32 - 1 - ((-1 - e) % BITS32)
     x = ((x << e) & _PyHASH_MODULUS) | x >> (BITS32 - e)
 
-    x *= sign
-    if x == -1 {
-      x = -2
-    }
-    return x
+    return sign * x
   }
 
   internal func hash(_ value: BigInt) -> PyHash {
@@ -89,11 +85,7 @@ internal struct Hasher {
       i = i / 10
     }
 
-    x *= sign
-    if x == -1 {
-      x = -2
-    }
-    return x
+    return sign * x
   }
 
   internal func hash(_ value: String) -> PyHash {

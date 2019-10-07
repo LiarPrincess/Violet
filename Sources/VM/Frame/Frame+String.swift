@@ -23,9 +23,9 @@ extension Frame {
                        conversion: StringConversion) throws -> PyObject {
     switch conversion {
     case .none:  return value
-    case .str:   return try self.context.str(value: value)
-    case .repr:  return try self.context.repr(value: value)
-    case .ascii: return try self.context.ascii(value: value)
+    case .str:   return self.context.str(value: value)
+    case .repr:  return self.context.repr(value: value)
+    case .ascii: return self.context.ascii(value: value)
     }
   }
 

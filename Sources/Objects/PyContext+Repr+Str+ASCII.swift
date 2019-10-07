@@ -3,12 +3,12 @@ extension PyContext {
   // MARK: - Repr
 
   /// PyObject * PyObject_Repr(PyObject *v)
-  public func repr(value: PyObject) throws -> PyObject {
-    let raw = try self.reprString(value: value)
+  public func repr(value: PyObject) -> PyObject {
+    let raw = self.reprString(value: value)
     return self.types.string.new(raw)
   }
 
-  internal func reprString(value: PyObject) throws -> String {
+  internal func reprString(value: PyObject) -> String {
     if let reprType = value as? ReprTypeClass {
       return reprType.repr
     }
@@ -43,13 +43,13 @@ extension PyContext {
   // MARK: - ASCII
 
   /// PyObject * PyObject_ASCII(PyObject *v)
-  public func ascii(value: PyObject) throws -> PyObject {
+  public func ascii(value: PyObject) -> PyObject {
     let raw = try self.asciiStr(value: value)
     return self.types.string.new(raw)
   }
 
-  internal func asciiStr(value: PyObject) throws -> String {
-    let repr = try self.reprString(value: value)
+  internal func asciiStr(value: PyObject) -> String {
+    let repr = self.reprString(value: value)
     let scalars = repr.unicodeScalars
 
     let allASCII = scalars.allSatisfy { $0.isASCII }

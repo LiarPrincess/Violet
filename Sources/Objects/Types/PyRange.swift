@@ -9,14 +9,13 @@ import Core
 // def __reversed__(self) -> Iterator[int]: ...
 
 // swiftlint:disable yoda_condition
-// swiftlint:disable file_length
 
 /// The range type represents an immutable sequence of numbers
 /// and is commonly used for looping a specific number of times in for loops.
 internal final class PyRange: PyObject,
   ReprTypeClass, EquatableTypeClass, HashableTypeClass,
   BoolConvertibleTypeClass,
-  LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, IndexOfTypeClass {
+  LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass {
 
   internal let start: PyInt
   internal let stop: PyInt
@@ -38,10 +37,7 @@ internal final class PyRange: PyObject,
 
   // MARK: - Init
 
-  /// Result of calling `new`.
-  internal typealias NewResult = Either<PyRange, PyErrorEnum>
-
-  internal static func new(_ context: PyContext, stop: PyInt) -> NewResult {
+  internal static func new(_ context: PyContext, stop: PyInt) -> PyResult<PyRange> {
     let zero = context.types.int.new(0)
     return new(context, start: zero, stop: stop, step: nil)
   }
@@ -49,7 +45,7 @@ internal final class PyRange: PyObject,
   internal static func new(_ context: PyContext,
                            start: PyInt,
                            stop:  PyInt,
-                           step: PyInt?) -> NewResult {
+                           step: PyInt?) -> PyResult<PyRange> {
     if let s = step, s.value == 0 {
       return .error(.valueError("range() arg 3 must not be zero"))
     }
@@ -135,7 +131,7 @@ internal final class PyRange: PyObject,
   internal var hash: PyHash {
     let none = self.context.none
     let lengthInt = self.pyInt(self.length.value)
-    let tuple = self.types.tuple.new([lengthInt, none, none])
+    let tuple = PyTuple.new(self.context, lengthInt, none, none)
 
     if self.length.value == 0 {
       return self.context.hash(value: tuple)
@@ -263,19 +259,17 @@ internal final class PyRange: PyObject,
 
   // MARK: - Count
 
-  internal func count(_ element: PyObject) -> BigInt {
+  internal func count(_ element: PyObject) -> CountResult {
     if let int = element as? PyInt {
-      return self.contains(int) ? 1 : 0
+      return .value(self.contains(int) ? 1 : 0)
     }
 
-    return 0
+    return .value(0)
   }
 
   // MARK: - Index
 
-  internal typealias IndexResult = Either<BigInt, PyErrorEnum>
-
-  internal func index(of element: PyObject) -> IndexResult {
+  internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
     guard let int = element as? PyInt, self.contains(int) else {
       let str = self.context.strString(value: element)
       return .error(.valueError("\(str) is not in range"))

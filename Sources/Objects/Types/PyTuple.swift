@@ -5,336 +5,403 @@ import Core
 // https://docs.python.org/3.7/c-api/tuple.html
 
 // TODO: Tuple
-// PyObject_GenericGetAttr,                    /* tp_getattro */
-// (traverseproc)tupletraverse,                /* tp_traverse */
-// tuple_iter,                                 /* tp_iter */
-// TUPLE___GETNEWARGS___METHODDEF
-// TUPLE_INDEX_METHODDEF
-// TUPLE_COUNT_METHODDEF
+// def __init__(self, iterable: Iterable[_T_co] = ...): ...
+// def __iter__(self) -> Iterator[_T_co]: ...
 
 // swiftlint:disable yoda_condition
 // swiftlint:disable file_length
 
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-internal final class PyTuple: PyObject {
+internal final class PyTuple: PyObject,
+  ReprTypeClass,
+  EquatableTypeClass, ComparableTypeClass,
+  HashableTypeClass,
+  BoolConvertibleTypeClass,
+  LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
+  AddTypeClass, MulTypeClass, RMulTypeClass {
 
   internal var elements: [PyObject]
 
-  fileprivate init(type: PyTupleType, elements: [PyObject]) {
+  // MARK: - Init
+
+  internal static func new(_ context: PyContext,
+                           _ elements: [PyObject]) -> PyTuple {
+    let tupleTupe = context.types.tuple
+    return PyTuple(type: tupleTupe, elements: elements)
+  }
+
+  internal static func new(_ context: PyContext,
+                           _ elements: PyObject...) -> PyTuple {
+    let tupleTupe = context.types.tuple
+    return PyTuple(type: tupleTupe, elements: elements)
+  }
+
+  private init(type: PyTupleType, elements: [PyObject]) {
     self.elements = elements
     super.init(type: type)
   }
-}
 
-/// This instance of PyTypeObject represents the Python tuple type;
-/// it is the same object as tuple in the Python layer.
-internal final class PyTupleType: PyType /* ,
-  ReprTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  LengthTypeClass, ConcatTypeClass, RepeatTypeClass,
-  ItemTypeClass, ContainsTypeClass, SubscriptTypeClass */ {
+  // MARK: - Equatable
 
-  override internal var name: String { return "tuple" }
-  override internal var doc: String? { return """
-tuple() -> an empty tuple
-tuple(sequence) -> tuple initialized from sequence's items
-
-If the argument is a tuple, the return value is the same object.
-"""
+  internal func isEqual(_ other: PyObject) -> EquatableResult {
+    return (other as? PyTuple)
+      .map(self.isEqual)
+      .flatMap(EquatableResult.value) ?? .notImplemented
   }
 
-  internal lazy var empty = PyTuple(type: self, elements: [])
-
-  // MARK: - Ctor
-
-  internal func new(_ elements: [PyObject]) -> PyTuple {
-    return PyTuple(type: self, elements: elements)
-  }
-
-  internal func new(_ elements: PyObject...) -> PyTuple {
-    return PyTuple(type: self, elements: elements)
-  }
-/*
-  // MARK: - Equatable, hashable
-
-  internal func compare(left: PyObject,
-                        right: PyObject,
-                        mode: CompareMode) throws -> Bool {
-    guard let l = self.matchTypeOrNil(left),
-          let r = self.matchTypeOrNil(right) else {
-      throw ComparableNotImplemented(left: left, right: right)
+  internal func isEqual(_ other: PyTuple) -> EquatableResult {
+    guard self.elements.count == other.elements.count else {
+      return .value(false)
     }
 
-    // try to finc first item that differs
-    for (lElem, rElem) in zip(l.elements, r.elements) {
-      let areEqual = try self.context.richCompareBool(left: lElem,
-                                                      right: rElem,
-                                                      mode: .equal)
-      if !areEqual {
-        switch mode {
-        case .equal:
-          return false
-        case .notEqual:
-          return true
-        case .less,
-             .lessEqual,
-             .greater,
-             .greaterEqual:
-          return try self.context.richCompareBool(left: left, right: right, mode: mode)
-        }
+    for (l, r) in zip(self.elements, other.elements) {
+      switch self.context.isEqual(left: l, right: r) {
+      case .value(true): break // go to next element
+      case .value(false): return .value(false)
+      case .error(let msg): return .error(msg)
+      case .notImplemented: return .notImplemented
       }
     }
 
-    // collections are equal up to to shorter tuple count, compare count
-    let lCount = self.types.int.new(l.elements.count)
-    let rCount = self.types.int.new(r.elements.count)
-    return try self.context.richCompareBool(left: lCount, right: rCount, mode: mode)
+    return .value(true)
   }
 
-  internal func hash(value: PyObject) throws -> PyHash {
+  // MARK: - Comparable
+
+  internal func isLess(_ other: PyObject) -> ComparableResult {
+    return (other as? PyTuple)
+      .map(self.isLess)
+      .flatMap(ComparableResult.value) ?? .notImplemented
+  }
+
+  internal func isLess(_ other: PyTuple) -> ComparableResult {
+    for (l, r) in zip(self.elements, other.elements) {
+      switch self.context.isEqual(left: l, right: r) {
+      case .value(true): break // go to next element
+      case .value(false): return self.context.isLess(left: l, right: r)
+      case .error(let msg): return .error(msg)
+      case .notImplemented: return .notImplemented
+      }
+    }
+
+    return .value(self.elements.count < other.elements.count)
+  }
+
+  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+    return (other as? PyTuple)
+      .map(self.isLessEqual)
+      .flatMap(ComparableResult.value) ?? .notImplemented
+  }
+
+  internal func isLessEqual(_ other: PyTuple) -> ComparableResult {
+    for (l, r) in zip(self.elements, other.elements) {
+      switch self.context.isEqual(left: l, right: r) {
+      case .value(true): break // go to next element
+      case .value(false): return self.context.isLessEqual(left: l, right: r)
+      case .error(let msg): return .error(msg)
+      case .notImplemented: return .notImplemented
+      }
+    }
+
+    return .value(self.elements.count <= other.elements.count)
+  }
+
+  internal func isGreater(_ other: PyObject) -> ComparableResult {
+    return (other as? PyTuple)
+      .map(self.isGreater)
+      .flatMap(ComparableResult.value) ?? .notImplemented
+  }
+
+  internal func isGreater(_ other: PyTuple) -> ComparableResult {
+    for (l, r) in zip(self.elements, other.elements) {
+      switch self.context.isEqual(left: l, right: r) {
+      case .value(true): break // go to next element
+      case .value(false): return self.context.isGreater(left: l, right: r)
+      case .error(let msg): return .error(msg)
+      case .notImplemented: return .notImplemented
+      }
+    }
+
+    return .value(self.elements.count > other.elements.count)
+  }
+
+  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+    return (other as? PyTuple)
+      .map(self.isGreaterEqual)
+      .flatMap(ComparableResult.value) ?? .notImplemented
+  }
+
+  internal func isGreaterEqual(_ other: PyTuple) -> ComparableResult {
+    for (l, r) in zip(self.elements, other.elements) {
+      switch self.context.isEqual(left: l, right: r) {
+      case .value(true): break // go to next element
+      case .value(false): return self.context.isGreaterEqual(left: l, right: r)
+      case .error(let msg): return .error(msg)
+      case .notImplemented: return .notImplemented
+      }
+    }
+
+    return .value(self.elements.count >= other.elements.count)
+  }
+
+  // MARK: - Hashable
+
+  internal var hash: PyHash {
     let hasher = self.context.hasher
-    let v = try self.matchType(value)
 
     var x: PyHash = 0x345678
     var mult = hasher._PyHASH_MULTIPLIER
-    for element in v.elements {
-      let y = try self.context.hash(value: element)
+    for e in self.elements {
+      let y = self.context.hash(value: e)
       x = (x ^ y) * mult
-      mult += 82_520 + PyHash(2 * v.elements.count)
+      mult += 82_520 + PyHash(2 * self.elements.count)
     }
 
-    x += 97_531
-    if x == -1 {
-      x = -2
-    }
-    return x
+    return x + 97_531
   }
 
   // MARK: - String
 
-  internal func repr(value: PyObject) throws -> String {
-    let v = try self.matchType(value)
-
-    if v.elements.isEmpty {
+  internal var repr: String {
+    if self.elements.isEmpty {
       return "()"
     }
 
     // While not mutable, it is still possible to end up with a cycle in a tuple
     // through an object that stores itself within a tuple (and thus infinitely
     // asks for the repr of itself).
-    if v.hasReprLock {
+    if self.hasReprLock {
       return "(...)"
     }
 
-    return try v.withReprLock {
+    return self.withReprLock {
       var result = "("
-      for (index, element) in v.elements.enumerated() {
+      for (index, element) in self.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.reprString(value: element)
+        result += self.context.reprString(value: element)
       }
 
-      result += v.elements.count > 1 ? ")" : ",)"
+      result += self.elements.count > 1 ? ")" : ",)"
       return result
     }
   }
 
+  // MARK: - Convertible
+
+  internal var asBool: PyBool {
+    return self.types.bool.new(self.elements.any)
+  }
+
   // MARK: - Length
 
-  internal func length(value: PyObject) throws -> PyInt {
-    let v = try self.matchType(value)
-    return self.types.int.new(v.elements.count)
+  internal var length: PyInt {
+    return self.pyInt(self.elements.count)
   }
 
-  internal func lengthInt(value: PyObject) throws -> Int {
-    let v = try self.matchType(value)
-    return v.elements.count
-  }
+  // MARK: - Contains
 
-  // MARK: - Concat
-
-  internal func concat(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.matchType(left)
-
-    guard let r = self.matchTypeOrNil(right) else {
-      throw PyContextError.tupleInvalidAddendType(addend: right)
-    }
-
-    let result = l.elements + r.elements
-    return self.new(Array(result))
-  }
-
-  // MARK: - Repeat
-
-  internal func `repeat`(value: PyObject, count: PyInt) throws -> PyObject {
-    let tuple = try self.matchType(value)
-    let countRaw = try self.types.int.extractInt(count)
-
-    let count = max(countRaw, 0)
-
-    if tuple.elements.isEmpty || count == 1 {
-      return self.new(tuple.elements)
-    }
-
-    var i: BigInt = 0
-    var result = [PyObject]()
-    while i < count {
-      result.append(contentsOf: tuple.elements)
-      i += 1
-    }
-
-    return self.new(result)
-  }
-
-  // MARK: - Item
-
-  internal func item(owner: PyObject, at index: Int) throws -> PyObject {
-    let tuple = try self.matchType(owner)
-
-    guard 0 <= index && index < tuple.elements.count else {
-      throw PyContextError.tupleIndexOutOfRange(tuple: tuple, index: index)
-    }
-
-    return tuple.elements[index]
-  }
-
-  internal func contains(owner: PyObject, element: PyObject) throws -> Bool {
-    let tuple = try self.matchType(owner)
-
-    for e in tuple.elements {
-      let isEqual = try self.context.richCompareBool(left: e,
-                                                     right: element,
-                                                     mode: .equal)
-      if isEqual {
+  internal func contains(_ element: PyObject) -> Bool {
+    for e in self.elements {
+      let isEqual = self.context.isEqual(left: e, right: element)
+      switch isEqual {
+      case .value(true):
         return true
+      case .value(false),
+           .error,
+           .notImplemented:
+        break // go to next element
       }
     }
 
     return false
   }
 
-  internal func indexOf(owner: PyObject,
-                        element: PyObject,
-                        start: Int,
-                        stop:  Int) throws -> PyInt {
-    let tuple = try self.matchType(owner)
+  // MARK: - Get item
 
-    var start = start
-    if start < 0 {
-      start += tuple.elements.count
-      if start < 0 {
-        start = 0
-      }
-    }
-
-    var stop = stop
-    if stop < 0 {
-      stop += tuple.elements.count
-    } else if stop > tuple.elements.count {
-      stop = tuple.elements.count
-    }
-
-    for i in start..<stop {
-      let isEqual = try self.context.richCompareBool(left: tuple.elements[i],
-                                                     right: element,
-                                                     mode: .equal)
-      if isEqual {
-        return self.types.int.new(i)
-      }
-    }
-
-    // PyErr_SetString(PyExc_ValueError, "tuple.index(x): x not in tuple");
-    fatalError()
-  }
-
-  internal func countOf(owner: PyObject, element: PyObject) throws -> PyObject {
-    let tuple = try self.matchType(owner)
-
-    var result = 0
-    for e in tuple.elements {
-      let isEqual = try self.context.richCompareBool(left: e,
-                                                     right: element,
-                                                     mode: .equal)
-      if isEqual {
-        result += 1
-      }
-    }
-
-    return self.types.int.new(result)
-  }
-
-  // MARK: - Subscript
-
-  internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
-    let tuple = try self.matchType(owner)
-
-    if var i = try self.extractIndex(value: index) {
-      if i < 0 { i += tuple.elements.count }
-      return try self.item(owner: tuple, at: i)
+  internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
+    if let index = self.extractIndex(value: index) {
+      return self.getItem(at: index, canIndexFromEnd: true)
     }
 
     if let slice = index as? PySlice {
-      let count = tuple.elements.count
-      let adjusted = self.types.slice.adjustIndices(value: slice, to: count)
+      let result = self.getItem(at: slice)
+      return result.flatMap { GetItemResult<PyObject>.value($0) }
+    }
 
-      if adjusted.length <= 0 {
-        return self.empty
+    let indexType = index.type.name
+    return .error(
+      .typeError("\(self.type.name) indices must be integers or slices, not \(indexType)")
+    )
+  }
+
+  /// Use `canIndexFromEnd` for `tuple[-1]`.
+  internal func getItem(at index: PyInt,
+                        canIndexFromEnd: Bool) -> GetItemResult<PyObject> {
+    return self.getItem(at: index.value, canIndexFromEnd: canIndexFromEnd)
+  }
+
+  /// Use `canIndexFromEnd` for `tuple[-1]`.
+  internal func getItem(at index: BigInt,
+                        canIndexFromEnd: Bool) -> GetItemResult<PyObject> {
+    var index = index
+    if index < 0, canIndexFromEnd {
+      index += BigInt(self.elements.count)
+    }
+
+    guard let indexInt = Int(exactly: index) else {
+      return .error(.indexError("\(self.type.name) index out of range"))
+    }
+
+    guard 0 <= indexInt && indexInt < self.elements.count else {
+      return .error(.indexError("\(self.type.name) index out of range"))
+    }
+
+    return .value(self.elements[indexInt])
+  }
+
+  internal func getItem(at slice: PySlice) -> GetItemResult<PyTuple> {
+    let count = self.elements.count
+    let adjusted = self.types.slice.adjustIndices(value: slice, to: count)
+
+    if adjusted.length <= 0 {
+      // TODO: Use singleton
+      return .value(PyTuple.new(self.context, []))
+    }
+
+    // Small otimization, so we don't allocate new object
+    if adjusted.start == 0 && adjusted.step == 1 && adjusted.length == count {
+      return .value(self)
+    }
+
+    // TODO: RustPython does it differently (objsequence -> fn get_slice_items)
+    var elements = [PyObject]()
+    for i in 0..<adjusted.length {
+      let index = adjusted.start + i * adjusted.step
+      elements.append(self.elements[index])
+    }
+
+    return .value(PyTuple.new(self.context, elements))
+  }
+
+  // MARK: - Count
+
+  internal func count(_ element: PyObject) -> CountResult {
+    var result: BigInt = 0
+
+    for e in self.elements {
+      switch self.context.isEqual(left: e, right: element) {
+      case .value(true):
+        result += 1
+      case .value(false),
+           .error,
+           .notImplemented:
+        break // go to next element
       }
+    }
 
-      if adjusted.start == 0 && adjusted.step == 1 && adjusted.length == count {
-        return tuple
+    return .value(result)
+  }
+
+  // MARK: - Index
+
+  internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
+    for (index, e) in self.elements.enumerated() {
+      switch self.context.isEqual(left: e, right: element) {
+      case .value(true):
+        return .value(BigInt(index))
+      case .value(false),
+           .error,
+           .notImplemented:
+        break // go to next element
       }
-
-      var elements = [PyObject]()
-      for i in 0..<adjusted.length {
-        let index = adjusted.start + i * adjusted.step
-        elements.append(tuple.elements[index])
-      }
-      return self.new(elements)
     }
 
-    throw PyContextError.tupleInvalidSubscriptIndex(index: index)
+    return .error(.valueError("tuple.index(x): x not in tuple"))
   }
 
-  // MARK: - Slice
+  // MARK: - Add
 
-  internal func slice(_ object: PyObject, low: Int, high: Int) throws -> PyObject {
-    let tuple = try self.matchType(object)
-
-    var low = max(low, 0)
-    var high = min(high, tuple.elements.count)
-
-    if low > high {
-      (low, high) = (high, low)
+  internal func add(_ other: PyObject) -> AddResult<PyObject> {
+    if self.elements.isEmpty {
+      return .value(other)
     }
 
-    if low == 0 && high == tuple.elements.count {
-      return self.new(tuple.elements)
+    guard let otherTuple = other as? PyTuple else {
+      let typeName = other.type.name
+      return .error(
+        .typeError("can only concatenate tuple (not \"\(typeName)\") to tuple")
+      )
     }
 
-    let result = tuple.elements[low..<high]
-    return self.new(Array(result))
+    return self.add(otherTuple)
   }
 
-  // MARK: - Helpers
-
-  private func matchTypeOrNil(_ object: PyObject) -> PyTuple? {
-    if let tuple = object as? PyTuple {
-      return tuple
+  internal func add(_ other: PyTuple) -> AddResult<PyTuple> {
+    if self.elements.isEmpty {
+      return .value(other)
     }
 
-    return nil
-  }
-
-  private func matchType(_ object: PyObject) throws -> PyTuple {
-    if let tuple = object as? PyTuple {
-      return tuple
+    if other.elements.isEmpty {
+      return .value(self)
     }
 
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
+    let result = self.elements + other.elements
+    return .value(PyTuple.new(self.context, result))
   }
-*/
+
+  // MARK: - Mul
+
+  internal func mul(_ other: PyObject) -> MulResult<PyObject> {
+    guard let otherInt = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.mul(otherInt)
+  }
+
+  internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
+    guard let otherInt = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.mul(otherInt)
+  }
+
+  internal func mul(_ other: PyInt) -> MulResult<PyTuple> {
+    let count = max(other.value, 0)
+
+    // swiftlint:disable:next empty_count
+    if count == 0 {
+      // TODO: Empty tuple
+      return .value(PyTuple.new(self.context, []))
+    }
+
+    if self.elements.isEmpty || count == 1 {
+      return .value(self)
+    }
+
+    var i: BigInt = 0
+    var result = [PyObject]()
+    while i < count {
+      result.append(contentsOf: self.elements)
+      i += 1
+    }
+
+    return .value(PyTuple.new(self.context, result))
+  }
+}
+
+internal final class PyTupleType: PyType {
+//  override internal var name: String { return "tuple" }
+//  override internal var doc: String? { return """
+//    tuple() -> an empty tuple
+//    tuple(sequence) -> tuple initialized from sequence's items
+//
+//    If the argument is a tuple, the return value is the same object.
+//    """
+//  }
 }

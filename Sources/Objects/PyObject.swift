@@ -40,11 +40,11 @@ public class PyObject {
 
   /// Set flag that is used to control infinite recursion in `repr`, `str`,
   /// `print` etc.
-  internal func withReprLock<T>(body: () throws -> T) rethrows -> T {
+  internal func withReprLock<T>(body: () -> T) -> T {
     self.flags.formUnion(.reprLock)
     defer { _ = self.flags.subtracting(.reprLock) }
 
-    return try body()
+    return body()
   }
 
   // MARK: - TODO: Remove
@@ -58,7 +58,7 @@ public class PyObject {
   }
 
   internal func pyTuple(_ elements: [PyObject]) -> PyTuple {
-    return self.types.tuple.new(elements)
+    return PyTuple.new(self.context, elements)
   }
 
   internal func extractInt(_ object: PyObject) -> PyInt? {

@@ -20,6 +20,26 @@ public enum CompareMode {
 
 extension PyContext {
 
+  internal func isEqual(left: PyObject, right: PyObject) -> EquatableResult {
+    return .notImplemented
+  }
+  internal func isNotEqual(left: PyObject, right: PyObject) -> EquatableResult {
+    return .notImplemented
+  }
+
+  internal func isLess(left: PyObject, right: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+  internal func isLessEqual(left: PyObject, right: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+  internal func isGreater(left: PyObject, right: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+  internal func isGreaterEqual(left: PyObject, right: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+
   /// PyObject * PyObject_RichCompare(PyObject *v, PyObject *w, int op)
   public func richCompare(left: PyObject,
                           right: PyObject,

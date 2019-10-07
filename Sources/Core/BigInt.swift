@@ -43,13 +43,16 @@ public struct BigInt:
   /// For any numeric value `x`, `x.magnitude` is the absolute value of `x`.
   public var magnitude: UInt64 { return self.value.magnitude }
 
-  /// Returns `-1` if this value is negative
-  /// and `1` if it's positive;
-  /// otherwise, `0`.
-  public func signum() -> Int {
-    if self.value > 0 { return 1 }
-    if self.value < 0 { return -1 }
-    return 0
+  public var sign: Sign {
+    if self.value > 0 { return .positive }
+    if self.value < 0 { return .negative }
+    return .zero
+  }
+
+  public enum Sign {
+    case zero
+    case positive
+    case negative
   }
 
   public var description: String {

@@ -3,10 +3,11 @@ public class PyContext {
   public var `true`:  PyObject { return self.types.bool.true }
   public var `false`: PyObject { return self.types.bool.false }
 
+  // TODO: Do something with this (see PyTuple for additional TODOs)
   public lazy var none: PyObject = PyNone.new(self)
   public lazy var ellipsis: PyObject = PyEllipsis.new(self)
-  public var emptyTuple: PyObject { return self.types.tuple.empty }
   public lazy var notImplemented: PyObject = PyNotImplemented.new(self)
+  public lazy var emptyTuple: PyObject = PyTuple.new(self, [])
 
   internal lazy var types = PyContextTypes(context: self)
   internal lazy var errorTypes = PyContextErrorTypes(context: self)

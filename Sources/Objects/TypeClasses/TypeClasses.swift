@@ -4,10 +4,7 @@ internal protocol TypeClass {
 
 // MARK: - Equatable
 
-internal enum EquatableResult {
-  case value(Bool)
-  case notImplemented
-}
+internal typealias EquatableResult = PyResultOrNot<Bool>
 
 internal protocol EquatableTypeClass: TypeClass {
   func isEqual(_ other: PyObject) -> EquatableResult
@@ -18,6 +15,7 @@ extension EquatableTypeClass {
   func isNotEqual(_ other: PyObject) -> EquatableResult {
     switch self.isEqual(other) {
     case let .value(b): return .value(!b)
+    case let .error(msg): return .error(msg)
     case .notImplemented: return .notImplemented
     }
   }
@@ -25,16 +23,15 @@ extension EquatableTypeClass {
 
 // MARK: - Comparable
 
-internal enum ComparableResult {
-  case value(Bool)
-  case notImplemented
-}
+internal typealias ComparableResult = PyResultOrNot<Bool>
 
+// DO NOT add default implementations!
+// In Python 'a < b' does not imply 'not(a >= b)'.
 internal protocol ComparableTypeClass: EquatableTypeClass {
-  func isLess(_ other: PyObject) throws -> ComparableResult
-  func isLessEqual(_ other: PyObject) throws -> ComparableResult
-  func isGreater(_ other: PyObject) throws -> ComparableResult
-  func isGreaterEqual(_ other: PyObject) throws -> ComparableResult
+  func isLess(_ other: PyObject) -> ComparableResult
+  func isLessEqual(_ other: PyObject) -> ComparableResult
+  func isGreater(_ other: PyObject) -> ComparableResult
+  func isGreaterEqual(_ other: PyObject) -> ComparableResult
 }
 
 // MARK: - Hashable

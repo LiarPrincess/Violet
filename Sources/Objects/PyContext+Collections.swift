@@ -14,7 +14,7 @@ extension PyContext {
 
   /// PyObject * PyTuple_New(Py_ssize_t size)
   public func tuple(elements: [PyObject] = []) -> PyObject {
-    return elements.isEmpty ? self.emptyTuple : self.types.tuple.new(elements)
+    return elements.isEmpty ? self.emptyTuple : PyTuple.new(self, elements)
   }
 
   /// PyObject * PyList_AsTuple(PyObject *v)
