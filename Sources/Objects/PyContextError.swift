@@ -1,3 +1,4 @@
+// TODO: Remove this
 public enum PyContextError: Error {
 
   /// PyErr_SetString(PyExc_ValueError, "negative shift count");

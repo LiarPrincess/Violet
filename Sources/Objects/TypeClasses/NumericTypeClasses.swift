@@ -239,6 +239,15 @@ internal protocol ShiftTypeClass: TypeClass {
   func rShift(_ other: PyObject) -> ShiftResult<PyObject>
 }
 
+internal protocol RShiftTypeClass: TypeClass {
+  /// Returns the result of left shifting o1 by o2 on success.
+  /// This is the equivalent of the Python expression o1 << o2.
+  func rlShift(_ other: PyObject) -> ShiftResult<PyObject>
+  /// Returns the result of right shifting o1 by o2 on success.
+  /// This is the equivalent of the Python expression o1 >> o2.
+  func rrShift(_ other: PyObject) -> ShiftResult<PyObject>
+}
+
 internal protocol ShiftInPlaceTypeClass: TypeClass {
   /// Returns the result of left shifting o1 by o2 on success..
   /// The operation is done in-place when o1 supports it.
@@ -264,6 +273,18 @@ internal protocol BinaryTypeClass: TypeClass {
   /// Returns the “bitwise exclusive or” of o1 by o2 on success.
   /// This is the equivalent of the Python expression o1 ^ o2.
   func xor(_ other: PyObject) -> BinaryResult<PyObject>
+}
+
+internal protocol RBinaryTypeClass: TypeClass {
+  /// Returns the “bitwise and” of o1 and o2 on success..
+  /// This is the equivalent of the Python expression o1 & o2.
+  func rand(_ other: PyObject) -> BinaryResult<PyObject>
+  /// Returns the “bitwise or” of o1 and o2 on success.
+  /// This is the equivalent of the Python expression o1 | o2.
+  func ror(_ other: PyObject) -> BinaryResult<PyObject>
+  /// Returns the “bitwise exclusive or” of o1 by o2 on success.
+  /// This is the equivalent of the Python expression o1 ^ o2.
+  func rxor(_ other: PyObject) -> BinaryResult<PyObject>
 }
 
 internal protocol BinaryInPlaceTypeClass: TypeClass {

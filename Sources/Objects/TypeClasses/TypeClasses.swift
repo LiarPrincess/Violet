@@ -60,14 +60,6 @@ internal protocol StrTypeClass: TypeClass {
 //  getattrofunc tp_getattro;
 //  setattrofunc tp_setattro;
 
-// MARK: - Other
-
-//internal protocol IndexTypeClass: TypeClass {
-//  /// Returns the o converted to a Python int on success
-//  /// or TypeError exception raised on failure.
-//  func index(value: PyObject) -> PyInt
-//}
-
 //  /* More standard operations (here for binary compatibility) */
 //
 

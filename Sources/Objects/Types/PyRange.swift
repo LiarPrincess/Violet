@@ -38,7 +38,7 @@ internal final class PyRange: PyObject,
   // MARK: - Init
 
   internal static func new(_ context: PyContext, stop: PyInt) -> PyResult<PyRange> {
-    let zero = context.types.int.new(0)
+    let zero = GeneralHelpers.pyInt(0)
     return new(context, start: zero, stop: stop, step: nil)
   }
 
@@ -56,7 +56,7 @@ internal final class PyRange: PyObject,
       if let s = step {
         return s
       }
-      return context.types.int.new(isGoingUp ? 1 : -1)
+      return GeneralHelpers.pyInt(isGoingUp ? 1 : -1)
     }()
 
     let length: BigInt = {
@@ -79,7 +79,7 @@ internal final class PyRange: PyObject,
         stop: stop,
         step: unwrappedStep,
         stepType: step == nil ? .implicit: .explicit,
-        length: context.types.int.new(length)
+        length: GeneralHelpers.pyInt(length)
       )
     )
   }

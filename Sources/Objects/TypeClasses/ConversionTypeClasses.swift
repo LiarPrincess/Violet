@@ -19,3 +19,9 @@ internal protocol ComplexConvertibleTypeClass: TypeClass {
   /// This is the equivalent of the Python expression complex(o).
   var asComplex: PyResult<PyComplex> { get }
 }
+
+internal protocol IndexConvertibleTypeClass: TypeClass {
+  /// Returns the o converted to a Python int on success
+  /// or TypeError exception raised on failure.
+  var asIndex: PyInt { get }
+}

@@ -43,7 +43,7 @@ The class bool is a subclass of the class int, and cannot be subclassed
     return value ? self.true : self.false
   }
 
-  override internal func new(_ value: BigInt) -> PyBool {
+  internal func new(_ value: BigInt) -> PyBool {
     return self.new(value.isTrue)
   }
 

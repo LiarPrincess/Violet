@@ -6,307 +6,563 @@ import Core
 // https://docs.python.org/3.7/c-api/long.html
 
 // TODO: Int
-// PyObject_GenericGetAttr,                    /* tp_getattro */
-// {"conjugate", (PyCFunction)long_long, METH_NOARGS, "Returns self, the ... }
-// INT_BIT_LENGTH_METHODDEF
-// INT_TO_BYTES_METHODDEF
-// INT_FROM_BYTES_METHODDEF
-// {"__trunc__",       (PyCFunction)long_long, METH_NOARGS, "Truncating an ... }
-// {"__floor__",       (PyCFunction)long_long, METH_NOARGS, "Flooring an  ... }
-// {"__ceil__",        (PyCFunction)long_long, METH_NOARGS, "Ceiling of an ... }
-// {"__round__",       (PyCFunction)long_round, METH_VARARGS, "Rounding ... },
-// INT___GETNEWARGS___METHODDEF
-// INT___FORMAT___METHODDEF
-// INT___SIZEOF___METHODDEF
-// {"real", (getter)long_long, (setter)NULL, "the real part of a complex number"},
-// {"imag", (getter)long_get0, (setter)NULL, "the imaginary part of a complex ..." },
-// {"numerator", (getter)long_long, (setter)NULL, "the numerator of a rational ... }
-// {"denominator", (getter)long_get1, (setter)NULL, "the denominator of a  ... }
+// @overload
+// def __init__(self, x: Union[Text, bytes, SupportsInt] = ...) -> None: ...
+// @overload
+// def __init__(self, x: Union[Text, bytes, bytearray], base: int) -> None: ...
+// def __getnewargs__(self) -> Tuple[int]: ...
+// def bit_length(self) -> int: ...
+// def to_bytes(self, length: int, byteorder: str, *, signed: bool = ...) -> bytes: ...
+// @classmethod
+// def from_bytes(cls, bytes: Sequence[int], byteorder: str, *, signed: bool = ...)
+
+// swiftlint:disable file_length
 
 /// All integers are implemented as “long” integer objects of arbitrary size.
-internal class PyInt: PyObject {
+internal class PyInt: PyObject,
+  ReprTypeClass, StrTypeClass,
+  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
+  BoolConvertibleTypeClass, IntConvertibleTypeClass,
+  FloatConvertibleTypeClass, ComplexConvertibleTypeClass,
+  IndexConvertibleTypeClass,
+  SignedTypeClass, AbsTypeClass, InvertTypeClass,
+  AddTypeClass, RAddTypeClass,
+  SubTypeClass, RSubTypeClass,
+  MulTypeClass, RMulTypeClass,
+  PowTypeClass, RPowTypeClass,
+  TrueDivTypeClass, RTrueDivTypeClass,
+  FloorDivTypeClass, RFloorDivTypeClass,
+  ModTypeClass, RModTypeClass,
+  DivModTypeClass, RDivModTypeClass,
+  ShiftTypeClass, RShiftTypeClass,
+  BinaryTypeClass, RBinaryTypeClass {
 
   internal var value: BigInt
+
+  // MARK: - Init
+
+  internal static func new(_ context: PyContext, _ value: Int) -> PyInt {
+    return PyInt(type: context.types.int, value: BigInt(value))
+  }
+
+  internal static func new(_ context: PyContext, _ value: BigInt) -> PyInt {
+    return PyInt(type: context.types.int, value: value)
+  }
 
   internal init(type: PyIntType, value: BigInt) {
     self.value = value
     super.init(type: type)
   }
 
-  internal var repr: String {
-    return ""
+  // MARK: - Equatable
+
+  internal func isEqual(_ other: PyObject) -> EquatableResult {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return .value(self.isEqual(other))
   }
 
   internal func isEqual(_ other: PyInt) -> Bool {
     return self.value == other.value
   }
 
-  internal func isLess(_ other: PyInt) -> Bool {
-    return false
+  // MARK: - Comparable
+
+  internal func isLess(_ other: PyObject) -> ComparableResult {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return .value(self.value < other.value)
   }
 
-  internal func isLessEqual(_ other: PyInt) -> Bool {
-    return false
+  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return .value(self.value <= other.value)
   }
 
-  internal func isGreater(_ other: PyInt) -> Bool {
-    return false
+  internal func isGreater(_ other: PyObject) -> ComparableResult {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return .value(self.value > other.value)
   }
 
-  internal func isGreaterEqual(_ other: PyInt) -> Bool {
-    return false
-  }
-}
+  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
 
-/// All integers are implemented as “long” integer objects of arbitrary size.
-internal class PyIntType: PyType /*,
-  ReprTypeClass, StrTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  SignedTypeClass,
-  AbsTypeClass,
-  AddTypeClass, SubTypeClass,
-  MulTypeClass, PowTypeClass,
-  DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
-  PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass,
-  InvertTypeClass,
-  ShiftTypeClass,
-  BinaryTypeClass */ {
-
-  override internal var name: String { return "int" }
-  override internal var doc: String? { return """
-int([x]) -> integer
-int(x, base=10) -> integer
-
-Convert a number or string to an integer, or return 0 if no arguments
-are given.  If x is a number, return x.__int__().  For floating point
-numbers, this truncates towards zero.
-
-If x is not a number or if base is given, then x must be a string,
-bytes, or bytearray instance representing an integer literal in the
-given base.  The literal can be preceded by '+' or '-' and be surrounded
-by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
-Base 0 means to interpret the base from the string as an integer literal.
->>> int('0b100', base=0)
-4
-""" }
-
-  // MARK: - Ctors
-
-  internal func new(_ value: Int) -> PyInt {
-    return self.new(BigInt(value))
+    return .value(self.value >= other.value)
   }
 
-  internal func new(_ value: BigInt) -> PyInt {
-    return PyInt(type: self, value: value)
+  // MARK: - Hashable
+
+  internal var hash: HashableResult {
+    return .value(self.context.hasher.hash(self.value))
   }
 
   // MARK: - String
-/*
-  internal func repr(value: PyObject) throws -> String {
-    let v = try self.extractInt(value)
-    return String(describing: v)
+
+  internal var repr: String {
+    return String(describing: self.value)
   }
 
-  internal func str(value: PyObject) throws -> String {
-    return try self.repr(value: value)
+  internal var str: String {
+    return self.repr
   }
 
-  // MARK: - Equatable, hashable
+  // MARK: - Convertible
 
-  internal func compare(left: PyObject,
-                        right: PyObject,
-                        mode: CompareMode) throws -> Bool {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-
-    let diff = l - r
-    let sign = diff.signum()
-    return self.context.richCompare(left: sign, right: 0, mode: mode)
+  internal var asBool: PyResult<Bool> {
+    return .value(self.value != 0)
   }
 
-  internal func hash(value: PyObject) throws -> PyHash {
-    let v = try self.extractInt(value)
-    return self.context.hasher.hash(v)
+  internal var asInt: PyResult<PyInt> {
+    return .value(self)
   }
 
-  // MARK: - Conversion
-
-  internal func bool(value: PyObject) throws -> PyBool {
-    let v = try self.extractInt(value)
-    return self.types.bool.new(v)
+  internal var asFloat: PyResult<PyFloat> {
+    return .value(GeneralHelpers.pyFloat(Double(self.value)))
   }
 
-  internal func int(value: PyObject) throws -> PyInt {
-    return try self.matchType(value)
+  internal var asIndex: PyInt {
+    return self
   }
 
-  internal func float(value: PyObject) throws -> PyFloat {
-    let v = try self.extractInt(value)
-    return self.types.float.new(Double(v))
+  // MARK: - Imaginary
+
+  internal var real: PyInt {
+    return self
   }
 
-  // MARK: - Signed number
-
-  internal func positive(value: PyObject) throws -> PyObject {
-    return try self.matchType(value)
+  internal var imag: PyInt {
+    return GeneralHelpers.pyInt(0)
   }
 
-  internal func negative(value: PyObject) throws -> PyObject {
-    let v = try self.extractInt(value)
-    return self.new(-v)
+  internal var asComplex: PyResult<PyComplex> {
+    let real = Double(self.value)
+    return .value(GeneralHelpers.pyComplex(real: real, imag: 0.0))
   }
 
-  // MARK: - Add, sub
-
-  internal func add(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-    return self.new(l + r)
+  /// int.conjugate
+  /// Return self, the complex conjugate of any int.
+  internal var conjugate: PyInt {
+    return self
   }
 
-  internal func sub(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-    return self.new(l - r)
+  internal var numerator: PyInt {
+    return self
   }
 
-  // MARK: - Mul
-
-  internal func mul(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-    return self.new(l * r)
+  internal var denominator: PyInt {
+    return GeneralHelpers.pyInt(1)
   }
 
-  internal func pow(value: PyObject, exponent: PyObject) throws -> PyObject {
-    fatalError()
+  // MARK: - Sign
+
+  internal var positive: PyObject {
+    return self
   }
 
-  // MARK: - Div
-
-  internal func div(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-
-    if r == 0 {
-      throw PyContextError.intDivisionByZero
-    }
-
-    return self.types.float.new(Double(l) / Double(r))
-  }
-
-  internal func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-
-    if r == 0 {
-      throw PyContextError.intDivisionByZero
-    }
-
-    return self.new(l / r)
-  }
-
-  internal func remainder(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-
-    if r == 0 {
-      throw PyContextError.intModuloZero
-    }
-
-    return self.new(l % r)
-  }
-
-  internal func divMod(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-
-    if r == 0 {
-      throw PyContextError.intDivModZero
-    }
-
-    let remainder = l % r
-    let quotient = l / r
-    return self.types.tuple.new(self.new(quotient), self.new(remainder))
+  internal var negative: PyObject {
+    return GeneralHelpers.pyInt(-self.value)
   }
 
   // MARK: - Abs
 
-  internal func abs(value: PyObject) throws -> PyObject {
-    let v = try self.extractInt(value)
-    return self.new(Swift.abs(v))
+  internal var abs: PyObject {
+    return GeneralHelpers.pyInt(Swift.abs(self.value))
   }
 
-  // MARK: - Shift
+  // MARK: - Add
 
-  internal func lShift(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-
-    guard r > 0 else {
-      throw PyContextError.negativeShiftCount
+  internal func add(_ other: PyObject) -> AddResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
     }
 
-    return self.new(l << r)
+    return .value(GeneralHelpers.pyInt(self.value + other.value))
   }
 
-  internal func rShift(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
+  internal func radd(_ other: PyObject) -> AddResult<PyObject> {
+    return self.add(other)
+  }
 
-    guard r > 0 else {
-      throw PyContextError.negativeShiftCount
+  // MARK: - Sub
+
+  internal func sub(_ other: PyObject) -> SubResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
     }
 
-    return self.new(l >> r)
+    return .value(GeneralHelpers.pyInt(self.value - other.value))
   }
 
-  // MARK: - Binary
-
-  internal func and(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-    return self.new(l & r)
-  }
-
-  internal func or(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-    return self.new(l | r)
-  }
-
-  internal func xor(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extractInt(left)
-    let r = try self.extractInt(right)
-    return self.new(l ^ r)
-  }
-
-  internal func invert(value: PyObject) throws -> PyObject {
-    let v = try self.extractInt(value)
-    return self.new(~v)
-  }
-
-  // MARK: - Helpers
-
-  private func matchType(_ object: PyObject) throws -> PyInt {
-    if let int = object as? PyInt {
-      return int
+  internal func rsub(_ other: PyObject) -> SubResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
     }
 
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
+    return .value(GeneralHelpers.pyInt(other.value - self.value))
   }
 
-  internal func extractIntOrNil(_ object: PyObject) -> BigInt? {
-    let i = object as? PyInt
-    return i.map { $0.value }
-  }
+  // MARK: - Mul
 
-  internal func extractInt(_ object: PyObject) throws -> BigInt {
-    if let i = object as? PyInt {
-      return i.value
+  internal func mul(_ other: PyObject) -> MulResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
     }
 
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
+    return .value(GeneralHelpers.pyInt(self.value * other.value))
   }
-*/
+
+  internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
+    return self.mul(other)
+  }
+
+  // MARK: - Pow
+
+  internal func pow(_ other: PyObject) -> PowResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    let result = self.pow(left: self.value, right: other.value)
+    return .value(result.asObject())
+  }
+
+  internal func rpow(_ other: PyObject) -> PowResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    let result = self.pow(left: other.value, right: self.value)
+    return .value(result.asObject())
+  }
+
+  private enum InnerPowResult {
+    case int(BigInt)
+    case fraction(Double)
+
+    fileprivate func asObject() -> PyObject {
+      switch self {
+      case let .int(i): return GeneralHelpers.pyInt(i)
+      case let .fraction(f): return GeneralHelpers.pyFloat(f)
+      }
+    }
+  }
+
+  private func pow(left: BigInt, right: BigInt) -> InnerPowResult {
+    if right == 0 {
+      return .int(1)
+    }
+
+    if right == 1 {
+      return .int(left)
+    }
+
+    let result = expBySq(1, left, Swift.abs(right))
+
+    return right > 0 ?
+      .int(result) :
+      .fraction(Double(1.0) / Double(result))
+  }
+
+  // swiftlint:disable line_length
+
+  /// Source:
+  /// https://en.wikipedia.org/wiki/Exponentiation_by_squaring#Basic_method
+  /// https://stackoverflow.com/questions/24196689/how-to-get-the-power-of-some-integer-in-swift-language
+  private func expBySq(_ y: BigInt, _ x: BigInt, _ n: BigInt) -> BigInt {
+    // swiftlint:enable line_length
+
+    precondition(n >= 0)
+
+    if n == 0 {
+      return y
+    }
+
+    if n == 1 {
+      return y * x
+    }
+
+    // swiftlint:disable:next legacy_multiple
+    let isMultipleOf2 = n % 2 == 0
+    return isMultipleOf2 ?
+      expBySq(y, x * x, n / 2) :
+      expBySq(y * x, x * x, (n - 1) / 2)
+  }
+
+  // MARK: - True div
+
+  internal func trueDiv(_ other: PyObject) -> TrueDivResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.trueDiv(left: self.value, right: other.value)
+  }
+
+  internal func rtrueDiv(_ other: PyObject) -> TrueDivResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.trueDiv(left: other.value, right: self.value)
+  }
+
+  private func trueDiv(left: BigInt, right: BigInt) -> TrueDivResult<PyObject> {
+    if right == 0 {
+      return .error(.zeroDivisionError("division by zero"))
+    }
+
+    return .value(GeneralHelpers.pyFloat(Double(left) / Double(right)))
+  }
+
+  // MARK: - Floor div
+
+  internal func floorDiv(_ other: PyObject) -> FloorDivResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.floorDiv(left: self.value, right: other.value)
+  }
+
+  internal func rfloorDiv(_ other: PyObject) -> FloorDivResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.floorDiv(left: other.value, right: self.value)
+  }
+
+  private func floorDiv(left: BigInt, right: BigInt) -> FloorDivResult<PyObject> {
+    if right == 0 {
+      return .error(.zeroDivisionError("division by zero"))
+    }
+
+    let result = self.floorDivRaw(left: left, right: right)
+    return .value(GeneralHelpers.pyInt(result))
+  }
+
+  private func floorDivRaw(left: BigInt, right: BigInt) -> BigInt {
+    return left / right
+  }
+
+  // MARK: - Mod
+
+  internal func mod(_ other: PyObject) -> ModResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.mod(left: self.value, right: other.value)
+  }
+
+  internal func rmod(_ other: PyObject) -> ModResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.mod(left: other.value, right: self.value)
+  }
+
+  private func mod(left: BigInt, right: BigInt) -> ModResult<PyObject> {
+    if right == 0 {
+      return .error(.zeroDivisionError("modulo by zero"))
+    }
+
+    let result = self.modRaw(left: left, right: right)
+    return .value(GeneralHelpers.pyInt(result))
+  }
+
+  private func modRaw(left: BigInt, right: BigInt) -> BigInt {
+    return left % right
+  }
+
+  // MARK: - Div mod
+
+  internal func divMod(_ other: PyObject) -> DivModResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.divMod(left: self.value, right: other.value)
+  }
+
+  internal func rdivMod(_ other: PyObject) -> DivModResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.divMod(left: other.value, right: self.value)
+  }
+
+  private func divMod(left: BigInt, right: BigInt) -> DivModResult<PyObject> {
+    if right == 0 {
+      return .error(.zeroDivisionError("divmod() by zero"))
+    }
+
+    let div = self.floorDivRaw(left: left, right: right)
+    let mod = self.modRaw(left: left, right: right)
+
+    return .value(GeneralHelpers.pyTuple([
+      GeneralHelpers.pyInt(div),
+      GeneralHelpers.pyInt(mod)
+    ]))
+  }
+
+  // MARK: - LShift
+
+  internal func lShift(_ other: PyObject) -> ShiftResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.lShift(left: self.value, right: other.value)
+  }
+
+  internal func rlShift(_ other: PyObject) -> ShiftResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.lShift(left: other.value, right: self.value)
+  }
+
+  private func lShift(left: BigInt, right: BigInt) -> ShiftResult<PyObject> {
+    if right < 0 {
+      return .error(.valueError("negative shift count"))
+    }
+
+    return .value(GeneralHelpers.pyInt(left << right))
+  }
+
+  // MARK: - RShift
+
+  internal func rShift(_ other: PyObject) -> ShiftResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.rShift(left: self.value, right: other.value)
+  }
+
+  internal func rrShift(_ other: PyObject) -> ShiftResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return self.rShift(left: other.value, right: self.value)
+  }
+
+  private func rShift(left: BigInt, right: BigInt) -> ShiftResult<PyObject> {
+    if right < 0 {
+      return .error(.valueError("negative shift count"))
+    }
+
+    return .value(GeneralHelpers.pyInt(left >> right))
+  }
+
+  // MARK: - And
+
+  internal func and(_ other: PyObject) -> BinaryResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return .value(GeneralHelpers.pyInt(self.value & other.value))
+  }
+
+  internal func rand(_ other: PyObject) -> BinaryResult<PyObject> {
+    return self.and(other)
+  }
+
+  // MARK: - Or
+
+  internal func or(_ other: PyObject) -> BinaryResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return .value(GeneralHelpers.pyInt(self.value | other.value))
+  }
+
+  internal func ror(_ other: PyObject) -> BinaryResult<PyObject> {
+    return self.or(other)
+  }
+
+  // MARK: - Xor
+
+  internal func xor(_ other: PyObject) -> BinaryResult<PyObject> {
+    guard let other = other as? PyInt else {
+      return .notImplemented
+    }
+
+    return .value(GeneralHelpers.pyInt(self.value ^ other.value))
+  }
+
+  internal func rxor(_ other: PyObject) -> BinaryResult<PyObject> {
+    return self.xor(other)
+  }
+
+  // MARK: - Invert
+
+  internal var invert: PyObject {
+    return GeneralHelpers.pyInt(~self.value)
+  }
+
+  // MARK: - Round
+
+  internal func round() -> PyResultOrNot<PyInt> {
+    return .value(self)
+  }
+
+  /// Round an integer m to the nearest 10**n (n positive)
+  ///
+  /// ```
+  /// int.__round__(12345,  2) -> 12345
+  /// int.__round__(12345, -2) -> 12300
+  /// ```
+  internal func round(nDigits: PyObject) -> PyResultOrNot<PyInt> {
+    guard let nDigits = GeneralHelpers.extractIndex(value: nDigits) else {
+      fatalError()
+    }
+
+    // if ndigits >= 0 then no rounding is necessary; return self unchanged
+    if nDigits >= 0 {
+      return .value(self)
+    }
+
+    // TODO: Implement int rounding to arbitrary precision
+    return .notImplemented
+  }
+}
+
+internal class PyIntType: PyType {
+//  override internal var name: String { return "int" }
+//  override internal var doc: String? { return """
+//int([x]) -> integer
+//int(x, base=10) -> integer
+//
+//Convert a number or string to an integer, or return 0 if no arguments
+//are given.  If x is a number, return x.__int__().  For floating point
+//numbers, this truncates towards zero.
+//
+//If x is not a number or if base is given, then x must be a string,
+//bytes, or bytearray instance representing an integer literal in the
+//given base.  The literal can be preceded by '+' or '-' and be surrounded
+//by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
+//Base 0 means to interpret the base from the string as an integer literal.
+//>>> int('0b100', base=0)
+//4
+//""" }
 }

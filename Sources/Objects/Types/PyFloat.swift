@@ -140,7 +140,7 @@ internal final class PyFloat: PyObject,
   }
 
   internal var asInt: PyResult<PyInt> {
-    return .value(self.types.int.new(BigInt(self.value)))
+    return .value(GeneralHelpers.pyInt(BigInt(self.value)))
   }
 
   internal var asFloat: PyResult<PyFloat> {
@@ -289,7 +289,7 @@ internal final class PyFloat: PyObject,
     return self.floorDiv(left: other, right: self.value)
   }
 
-  private func floorDiv(left: Double, right: Double) -> TrueDivResult<PyObject> {
+  private func floorDiv(left: Double, right: Double) -> FloorDivResult<PyObject> {
     if right.isZero {
       return .error(.zeroDivisionError("float floor division by zero"))
     }
@@ -320,9 +320,9 @@ internal final class PyFloat: PyObject,
     return self.mod(left: other, right: self.value)
   }
 
-  private func mod(left: Double, right: Double) -> TrueDivResult<PyObject> {
+  private func mod(left: Double, right: Double) -> ModResult<PyObject> {
     if right.isZero {
-      return .error(.zeroDivisionError("float modulo"))
+      return .error(.zeroDivisionError("float modulo by zero"))
     }
 
     let result = self.modRaw(left: left, right: right)
@@ -351,9 +351,9 @@ internal final class PyFloat: PyObject,
     return self.divMod(left: other, right: self.value)
   }
 
-  private func divMod(left: Double, right: Double) -> TrueDivResult<PyObject> {
+  private func divMod(left: Double, right: Double) -> DivModResult<PyObject> {
     if right.isZero {
-      return .error(.zeroDivisionError("float divmod()"))
+      return .error(.zeroDivisionError("float divmod() by zero"))
     }
 
     let div = self.floorDivRaw(left: left, right: right)

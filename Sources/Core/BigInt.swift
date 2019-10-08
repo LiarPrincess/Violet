@@ -10,6 +10,13 @@ extension Double {
   public init(_ value: BigInt) {
     self = Double(value.value)
   }
+
+  public init?(exactly: BigInt) {
+    guard let d = Double(exactly: exactly.value) else {
+      return nil
+    }
+    self = d
+  }
 }
 
 extension BinaryInteger {

@@ -268,7 +268,7 @@ internal final class PyComplex: PyObject,
 
     if left.real.isZero && left.imag.isZero {
       if right.real < 0.0 || right.imag != 0.0 {
-        return .error(.valueError("complex zero to invalid power"))
+        return .error(.valueError("complex zero to negative or complex power"))
       }
 
       return .value(GeneralHelpers.pyComplex(real: 0.0, imag: 0.0))

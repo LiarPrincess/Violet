@@ -89,6 +89,8 @@ internal enum GeneralHelpers {
 
   /// PyLong_FromSsize_t
   internal static func extractIndex(value: PyObject) -> BigInt? {
+    // This should return precise error
+
     //    guard let indexType = value.type as? IndexTypeClass else {
     //      return nil
     //    }
