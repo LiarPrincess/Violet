@@ -118,8 +118,8 @@ internal final class PySlice: PyObject,
 
   // MARK: - Convertible
 
-  internal var asBool: PyBool {
-    return self.types.bool.new(false)
+  internal var asBool: PyResult<Bool> {
+    return .value(false)
   }
 
   // MARK: - Indices

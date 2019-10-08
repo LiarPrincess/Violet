@@ -25,8 +25,8 @@ internal final class PyNone: PyObject, ReprTypeClass, BoolConvertibleTypeClass {
 
   // MARK: - Convertible
 
-  internal var asBool: PyBool {
-    return self.context.types.bool.false
+  internal var asBool: PyResult<Bool> {
+    return .value(false)
   }
 }
 

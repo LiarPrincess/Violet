@@ -6,282 +6,390 @@ import Core
 // https://docs.python.org/3.7/c-api/complex.html
 
 // TODO: Complex
-// {"conjugate",       (PyCFunction)complex_conjugate, METH_NOARGS, ... },
-// {"__getnewargs__",  (PyCFunction)complex_getnewargs, METH_NOARGS ... },
-// {"__format__",      (PyCFunction)complex__format__, METH_VARARGS, ... },
-// {"real", T_DOUBLE, offsetof(PyComplexObject, cval.real), READONLY, ... },
-// {"imag", T_DOUBLE, offsetof(PyComplexObject, cval.imag), READONLY, ... },
-// PyObject_GenericGetAttr,                    /* tp_getattro */
+// @overload
+// def __init__(self, s: str) -> None: ...
+// @overload
+// def __init__(self, s: SupportsComplex) -> None: ...
+// #[pymethod(name = "__getnewargs__")]
+
+// swiftlint:disable file_length
 
 /// This subtype of PyObject represents a Python complex number object.
-internal final class PyComplex: PyObject {
+internal final class PyComplex: PyObject,
+  ReprTypeClass, StrTypeClass,
+  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
+  BoolConvertibleTypeClass, IntConvertibleTypeClass,
+  FloatConvertibleTypeClass, ComplexConvertibleTypeClass,
+  SignedTypeClass, AbsTypeClass,
+  AddTypeClass, RAddTypeClass,
+  SubTypeClass, RSubTypeClass,
+  MulTypeClass, RMulTypeClass,
+  PowTypeClass, RPowTypeClass,
+  TrueDivTypeClass, RTrueDivTypeClass,
+  FloorDivTypeClass, RFloorDivTypeClass,
+  ModTypeClass, RModTypeClass,
+  DivModTypeClass, RDivModTypeClass {
 
   internal let real: Double
   internal let imag: Double
 
-  fileprivate init(type: PyComplexType, real: Double, imag: Double) {
+  // MARK: - Init
+
+  internal static func new(_ context: PyContext,
+                           real: Double,
+                           imag: Double) -> PyComplex {
+    return PyComplex(type: context.types.complex, real: real, imag: imag)
+  }
+
+  private init(type: PyComplexType, real: Double, imag: Double) {
     self.real = real
     self.imag = imag
     super.init(type: type)
   }
-}
 
-/// This subtype of PyObject represents a Python complex number object.
-internal final class PyComplexType: PyType /*,
-  ReprTypeClass, StrTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  SignedTypeClass, AbsTypeClass,
-  AddTypeClass, SubTypeClass,
-  MulTypeClass, PowTypeClass,
-  DivTypeClass, DivFloorTypeClass, RemainderTypeClass, DivModTypeClass,
-  PyBoolConvertibleTypeClass, PyIntConvertibleTypeClass, PyFloatConvertibleTypeClass */ {
+  // MARK: - Equatable
 
-  override internal var name: String { return "complex" }
-  override internal var doc: String? { return """
-complex(real=0, imag=0)
---
+  internal func isEqual(_ other: PyObject) -> EquatableResult {
+    if let o = other as? PyComplex {
+      return .value(self.real == o.real && self.imag == o.imag)
+    }
 
-Create a complex number from a real part and an optional imaginary part.
+    if let o = other as? PyFloat {
+      return .value(self.real == o.value && self.imag == 0)
+    }
 
-This is equivalent to (real + imag*1j) where imag defaults to 0.
-"""
+    if let o = other as? PyInt {
+      return .value(self.imag.isZero && Double(o.value) == self.real)
+    }
+
+    return .notImplemented
   }
 
-  private var floatType: PyFloatType {
-    return self.types.float
+  // MARK: - Comparable
+
+  internal func isLess(_ other: PyObject) -> ComparableResult {
+    return .notImplemented
   }
 
-  // MARK: - Ctors
-
-  internal func new(real: Double, imag: Double) -> PyComplex {
-    return PyComplex(type: self, real: real, imag: imag)
+  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+    return .notImplemented
   }
-/*
+
+  internal func isGreater(_ other: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+
+  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+
+  // MARK: - Hashable
+
+  internal var hash: HashableResult {
+    let hasher = self.context.hasher
+    let realHash = hasher.hash(self.real)
+    let imagHash = hasher.hash(self.imag)
+    return .value(realHash + hasher._PyHASH_IMAG * imagHash)
+  }
+
   // MARK: - String
 
-  internal func repr(value: PyObject) throws -> String {
-    let v = try self.matchType(value)
-
-    if v.real.isZero {
-      return String(describing: v.imag) + "j"
-    } else {
-      let real = String(describing: v.real)
-      let sign = v.imag >= 0 ? "+" : ""
-      let imag = String(describing: v.imag)
-      return "(\(real)\(sign)\(imag)j)"
-    }
-  }
-
-  internal func str(value: PyObject) throws -> String {
-    return try self.repr(value: value)
-  }
-
-  // MARK: - Equatable, hashable
-
-  internal func compare(left:  PyObject,
-                        right: PyObject,
-                        mode: CompareMode) throws -> Bool {
-    let l = try self.matchType(left)
-
-    switch mode {
-    case .equal:
-      return try self.isEqual(left: l, right: right)
-    case .notEqual:
-      let isEqual = try self.isEqual(left: l, right: right)
-      return !isEqual
-    case .less,
-         .lessEqual,
-         .greater,
-         .greaterEqual:
-      throw ComparableNotImplemented(left: left, right: right)
-    }
-  }
-
-  private func isEqual(left: PyComplex, right: PyObject) throws -> Bool {
-    if let r = right as? PyComplex {
-      return left.real == r.real && left.imag == r.imag
+  internal var repr: String {
+    if self.real.isZero {
+      return String(describing: self.imag) + "j"
     }
 
-    if let r = right as? PyFloat {
-      return left.real == r.value && left.imag == 0
-    }
-
-    if let r = right as? PyInt {
-      guard left.imag.isZero else {
-        return false
-      }
-
-      let real = self.types.float.new(left.real)
-      return try self.context.richCompareBool(left: real, right: r, mode: .equal)
-    }
-
-    throw ComparableNotImplemented(left: left, right: right)
+    let sign = self.imag >= 0 ? "+" : ""
+    let real = String(describing: self.real)
+    let imag = String(describing: self.imag)
+    return "(\(real)\(sign)\(imag)j)"
   }
 
-  internal func hash(value: PyObject) throws -> PyHash {
-    let v = try self.matchType(value)
-
-    let hasher = self.context.hasher
-    let realHash = hasher.hash(v.real)
-    let imagHash = hasher.hash(v.imag)
-
-    var combined = realHash + hasher._PyHASH_IMAG * imagHash
-    if combined == -1 {
-      combined = -2
-    }
-    return combined
+  internal var str: String {
+    return self.repr
   }
 
-  // MARK: - Conversion
+  // MARK: - Convertible
 
-  internal func bool(value: PyObject) throws -> PyBool {
-    let v = try self.matchType(value)
-    let bothZero = v.real.isZero && v.imag.isZero
-    return self.types.bool.new(!bothZero)
+  internal var asBool: PyResult<Bool> {
+    let bothZero = self.real.isZero && self.imag.isZero
+    return .value(!bothZero)
   }
 
-  internal func int(value: PyObject) throws -> PyInt {
-    throw PyContextError.complexInvalidToInt
+  internal var asInt: PyResult<PyInt> {
+    return .error(.typeError("can't convert complex to int"))
   }
 
-  internal func float(value: PyObject) throws -> PyFloat {
-    throw PyContextError.complexInvalidToFloat
+  internal var asFloat: PyResult<PyFloat> {
+    return .error(.typeError("can't convert complex to float"))
   }
 
-  // MARK: - Signed number
-
-  internal func positive(value: PyObject) throws -> PyObject {
-    let v = try self.matchType(value)
-    return self.new(real: v.real, imag: v.imag)
+  internal var asComplex: PyResult<PyComplex> {
+    return .value(self)
   }
 
-  internal func negative(value: PyObject) throws -> PyObject {
-    let v = try self.matchType(value)
-    return self.new(real: -v.real, imag: -v.imag)
+  // MARK: - Imaginary
+
+  /// float.conjugate
+  /// Return self, the complex conjugate of any float.
+  internal var conjugate: PyComplex {
+    return GeneralHelpers.pyComplex(real: self.real, imag: -self.imag)
   }
 
-  // MARK: - Add, sub
+  // MARK: - Sign
 
-  internal func add(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
-    return self.new(real: l.real + r.real, imag: l.imag + r.imag)
+  internal var positive: PyObject {
+    return self
   }
 
-  internal func sub(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
-    return self.new(real: l.real - r.real, imag: l.imag - r.imag)
-  }
-
-  // MARK: - Mul
-
-  internal func mul(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
-    let real = l.real * r.real - l.imag * r.imag
-    let imag = l.real * r.imag + l.imag * r.real
-    return self.new(real: real, imag: imag)
-  }
-
-  internal func pow(value: PyObject, exponent: PyObject) throws -> PyObject {
-    let a = try self.matchType(value)
-    let b = try self.matchType(exponent)
-
-    if b.real.isZero && b.real.isZero {
-      return self.new(real: 1, imag: 0)
-    }
-
-    if a.real.isZero && a.imag.isZero {
-      if b.imag != 0.0 || b.real < 0 {
-        throw PyContextError.complexZeroToNegativeOrComplexPower
-      }
-
-      return self.new(real: 0, imag: 0)
-    }
-
-    let vabs = Foundation.hypot(a.real, a.imag)
-    var len = Foundation.pow(vabs, b.real)
-    let at = Foundation.atan2(a.imag, a.real)
-    var phase = at * b.real
-
-    if !b.imag.isZero {
-      len /= Foundation.exp(at * b.imag)
-      phase += b.imag * Foundation.log(vabs)
-    }
-
-    return self.new(
-      real: len * cos(phase),
-      imag: len * sin(phase)
-    )
-  }
-
-  // MARK: - Div
-
-  internal func div(left: PyObject, right: PyObject) throws -> PyObject {
-    // We implement the 'incorrect' version because it is simpler
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
-
-    let d = r.real * r.real + r.imag * r.imag
-    if d.isZero {
-      throw PyContextError.complexDivisionByZero
-    }
-
-    let real = (l.real * r.real + l.imag * r.imag) / d
-    let imag = (l.imag * r.real - l.real * r.imag) / d
-    return self.new(real: real, imag: imag)
-  }
-
-  internal func divFloor(left: PyObject, right: PyObject) throws -> PyObject {
-    throw PyContextError.complexInvalidDivFloor
-  }
-
-  internal func remainder(left: PyObject, right: PyObject) throws -> PyObject {
-    throw PyContextError.complexInvalidModulo
-  }
-
-  internal func divMod(left: PyObject, right: PyObject) throws -> PyObject {
-    throw PyContextError.complexInvalidDivMod
+  internal var negative: PyObject {
+    return GeneralHelpers.pyComplex(real: -self.real, imag: -self.imag)
   }
 
   // MARK: - Abs
 
-  internal func abs(value: PyObject) throws -> PyObject {
-    let v = try self.matchType(value)
-
-    let bothFinite = v.real.isFinite && v.imag.isFinite
+  internal var abs: PyObject {
+    let bothFinite = self.real.isFinite && self.imag.isFinite
     guard bothFinite else {
-      if v.real.isInfinite {
-        return self.floatType.new(Swift.abs(v.real))
+      if self.real.isInfinite {
+        return GeneralHelpers.pyFloat(Swift.abs(self.real))
       }
 
-      if v.imag.isInfinite {
-        return self.floatType.new(Swift.abs(v.imag))
+      if self.imag.isInfinite {
+        return GeneralHelpers.pyFloat(Swift.abs(self.imag))
       }
 
-      return self.floatType.nan
+      return GeneralHelpers.nan
     }
 
-    return self.floatType.new(hypot(v.real, v.imag))
+    let result = hypot(self.real, self.imag)
+    return GeneralHelpers.pyFloat(result)
+  }
+
+  // MARK: - Add
+
+  internal func add(_ other: PyObject) -> AddResult<PyObject> {
+    guard let other = self.asComplex(other) else {
+      return .notImplemented
+    }
+
+    return .value(
+      GeneralHelpers.pyComplex(
+        real: self.real + other.real,
+        imag: self.imag + other.real
+      )
+    )
+  }
+
+  internal func radd(_ other: PyObject) -> AddResult<PyObject> {
+    return self.add(other)
+  }
+
+  // MARK: - Sub
+
+  internal func sub(_ other: PyObject) -> SubResult<PyObject> {
+    guard let other = self.asComplex(other) else {
+      return .notImplemented
+    }
+
+    let zelf = RawComplex(real: self.real, imag: self.imag)
+    return .value(self.sub(left: zelf, right: other))
+  }
+
+  internal func rsub(_ other: PyObject) -> SubResult<PyObject> {
+    guard let other = self.asComplex(other) else {
+      return .notImplemented
+    }
+
+    let zelf = RawComplex(real: self.real, imag: self.imag)
+    return .value(self.sub(left: other, right: zelf))
+  }
+
+  private func sub(left: RawComplex, right: RawComplex) -> PyComplex {
+    return GeneralHelpers.pyComplex(
+      real: left.real - right.real,
+      imag: left.imag - right.real
+    )
+  }
+
+  // MARK: - Mul
+
+  internal func mul(_ other: PyObject) -> MulResult<PyObject> {
+    guard let other = self.asComplex(other) else {
+      return .notImplemented
+    }
+
+    let zelf = RawComplex(real: self.real, imag: self.imag)
+    return .value(self.mul(left: zelf, right: other))
+  }
+
+  internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
+    guard let other = self.asComplex(other) else {
+      return .notImplemented
+    }
+
+    let zelf = RawComplex(real: self.real, imag: self.imag)
+    return .value(self.mul(left: other, right: zelf))
+  }
+
+  private func mul(left: RawComplex, right: RawComplex) -> PyComplex {
+    return GeneralHelpers.pyComplex(
+      real: left.real * right.real - left.imag * right.imag,
+      imag: left.real * right.imag + left.imag * right.real
+    )
+  }
+
+  // MARK: - Pow
+
+  internal func pow(_ other: PyObject) -> PowResult<PyObject> {
+    guard let other = self.asComplex(other) else {
+      return .notImplemented
+    }
+
+    let zelf = RawComplex(real: self.real, imag: self.imag)
+    return self.pow(left: zelf, right: other)
+      .flatMap { PowResult<PyObject>.value($0) }
+  }
+
+  internal func rpow(_ other: PyObject) -> PowResult<PyObject> {
+    guard let other = self.asComplex(other) else {
+      return .notImplemented
+    }
+
+    let zelf = RawComplex(real: self.real, imag: self.imag)
+    return self.pow(left: other, right: zelf)
+      .flatMap { PowResult<PyObject>.value($0) }
+  }
+
+  private func pow(left: RawComplex, right: RawComplex) -> PowResult<PyComplex> {
+    if right.real.isZero && right.real.isZero {
+      return .value(GeneralHelpers.pyComplex(real: 1.0, imag: 0.0))
+    }
+
+    if left.real.isZero && left.imag.isZero {
+      if right.real < 0.0 || right.imag != 0.0 {
+        return .error(.valueError("complex zero to invalid power"))
+      }
+
+      return .value(GeneralHelpers.pyComplex(real: 0.0, imag: 0.0))
+    }
+
+    let vabs = Foundation.hypot(left.real, left.imag)
+    var len = Foundation.pow(vabs, right.real)
+    let at = Foundation.atan2(left.imag, left.real)
+    var phase = at * right.real
+
+    if !right.imag.isZero {
+      len /= Foundation.exp(at * right.imag)
+      phase += right.imag * Foundation.log(vabs)
+    }
+
+    return .value(
+      GeneralHelpers.pyComplex(
+        real: len * cos(phase),
+        imag: len * sin(phase)
+      )
+    )
+  }
+
+  // MARK: - True div
+
+  internal func trueDiv(_ other: PyObject) -> TrueDivResult<PyObject> {
+    guard let other = self.asComplex(other) else {
+      return .notImplemented
+    }
+
+    let zelf = RawComplex(real: self.real, imag: self.imag)
+    return self.trueDiv(left: zelf, right: other)
+      .flatMap { PowResult<PyObject>.value($0) }
+  }
+
+  internal func rtrueDiv(_ other: PyObject) -> TrueDivResult<PyObject> {
+    guard let other = self.asComplex(other) else {
+      return .notImplemented
+    }
+
+    let zelf = RawComplex(real: self.real, imag: self.imag)
+    return self.trueDiv(left: other, right: zelf)
+      .flatMap { PowResult<PyObject>.value($0) }
+  }
+
+  private func trueDiv(left: RawComplex, right: RawComplex) -> TrueDivResult<PyComplex> {
+    // We implement the 'incorrect' version because it is simpler.
+    // See comment in 'Py_complex _Py_c_quot(Py_complex a, Py_complex b)' for details.
+
+    let d = right.real * right.real + right.imag * right.imag
+    if d.isZero {
+      return .error(.zeroDivisionError("complex division by zero"))
+    }
+
+    return .value(
+      GeneralHelpers.pyComplex(
+        real: (left.real * right.real + left.imag * right.imag) / d,
+        imag: (left.imag * right.real - left.real * right.imag) / d
+      )
+    )
+  }
+
+  // MARK: - Floor div
+
+  internal func floorDiv(_ other: PyObject) -> FloorDivResult<PyObject> {
+    return .error(.typeError("can't take floor of complex number."))
+  }
+
+  internal func rfloorDiv(_ other: PyObject) -> FloorDivResult<PyObject> {
+    return self.floorDiv(other)
+  }
+
+  // MARK: - Mod
+
+  internal func mod(_ other: PyObject) -> ModResult<PyObject> {
+    return .error(.typeError("can't mod complex numbers."))
+  }
+
+  internal func rmod(_ other: PyObject) -> ModResult<PyObject> {
+    return self.mod(other)
+  }
+
+  // MARK: - Div mod
+
+  internal func divMod(_ other: PyObject) -> DivModResult<PyObject> {
+    return .error(.typeError("can't take floor or mod of complex number."))
+  }
+
+  internal func rdivMod(_ other: PyObject) -> DivModResult<PyObject> {
+    return self.divMod(other)
   }
 
   // MARK: - Helpers
 
-  private func matchType(_ object: PyObject) throws -> PyComplex {
-    if let complex = object as? PyComplex {
-      return complex
-    }
-
-    if let i = self.types.int.extractIntOrNil(object) {
-      return self.new(real: Double(i), imag: 0.0)
-    }
-
-    if let f = self.types.float.extractDoubleOrNil(object) {
-      return self.new(real: f, imag: 0.0)
-    }
-
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
+  private struct RawComplex {
+    fileprivate let real: Double
+    fileprivate let imag: Double
   }
-*/
+
+  private func asComplex(_ object: PyObject) -> RawComplex? {
+    if let pyFloat = object as? PyFloat {
+      return RawComplex(real: pyFloat.value, imag: 0)
+    }
+
+    if let pyInt = object as? PyInt {
+      return RawComplex(real: Double(pyInt.value), imag: 0)
+    }
+
+    return nil
+  }
+}
+
+internal final class PyComplexType: PyType {
+//  override internal var name: String { return "complex" }
+//  override internal var doc: String? { return """
+//    complex(real=0, imag=0)
+//    --
+//
+//    Create a complex number from a real part and an optional imaginary part.
+//
+//    This is equivalent to (real + imag*1j) where imag defaults to 0.
+//    """
+//  }
 }

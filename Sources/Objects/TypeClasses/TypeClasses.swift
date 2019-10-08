@@ -23,6 +23,7 @@ extension EquatableTypeClass {
 
 // MARK: - Comparable
 
+// TODO: Merge it to Equatable, and return .notImplemented
 internal typealias ComparableResult = PyResultOrNot<Bool>
 
 // DO NOT add default implementations!

@@ -135,16 +135,16 @@ internal final class PyFloat: PyObject,
 
   // MARK: - Convertible
 
-  internal var asBool: PyBool {
-    return self.types.bool.new(!self.value.isZero)
+  internal var asBool: PyResult<Bool> {
+    return .value(!self.value.isZero)
   }
 
-  internal var asInt: PyInt {
-    return self.types.int.new(BigInt(self.value))
+  internal var asInt: PyResult<PyInt> {
+    return .value(self.types.int.new(BigInt(self.value)))
   }
 
-  internal var asFloat: PyFloat {
-    return GeneralHelpers.pyFloat(self.value)
+  internal var asFloat: PyResult<PyFloat> {
+    return .value(GeneralHelpers.pyFloat(self.value))
   }
 
   // MARK: - Imaginary

@@ -145,8 +145,8 @@ internal final class PyList: PyObject,
 
   // MARK: - Convertible
 
-  internal var asBool: PyBool {
-    return self.types.bool.new(self.elements.any)
+  internal var asBool: PyResult<Bool> {
+    return .value(self.elements.any)
   }
 
   // MARK: - Sequence

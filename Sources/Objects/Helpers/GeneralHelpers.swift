@@ -69,6 +69,10 @@ internal enum GeneralHelpers {
     fatalError()
   }
 
+  internal static func pyComplex(real: Double, imag: Double) -> PyComplex {
+    fatalError()
+  }
+
   internal static func pyTuple(_ elements: [PyObject]) -> PyTuple {
 //    return PyTuple.new(self.context, elements)
     fatalError()

@@ -163,8 +163,8 @@ internal final class PyRange: PyObject,
 
   // MARK: - Convertible
 
-  internal var asBool: PyBool {
-    return self.types.bool.new(self.length.value)
+  internal var asBool: PyResult<Bool> {
+    return .value(self.length.value > 0)
   }
 
   // MARK: - Contains
