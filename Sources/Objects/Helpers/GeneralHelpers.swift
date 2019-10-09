@@ -54,11 +54,6 @@ internal enum GeneralHelpers {
     fatalError()
   }
 
-  internal static func extractInt(_ object: PyObject) -> PyInt? {
-//    return object as? PyInt
-    fatalError()
-  }
-
   /// PyLong_FromSsize_t
   internal static func extractIndex(value: PyObject) -> BigInt? {
     // This should return precise error

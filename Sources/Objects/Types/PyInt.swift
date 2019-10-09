@@ -559,7 +559,7 @@ internal class PyIntType: PyType {
 //4
 //""" }
 
-  // TODO: Cahce <-10, 255> values
+  // TODO: Cache <-10, 255> values
 
   internal func new(_ value: Int) -> PyInt {
     return PyInt(type: self, value: BigInt(value))

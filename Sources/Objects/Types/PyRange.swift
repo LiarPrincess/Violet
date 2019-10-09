@@ -141,7 +141,7 @@ internal final class PyRange: PyObject,
   // MARK: - Contains
 
   internal func contains(_ element: PyObject) -> Bool {
-    guard let int = GeneralHelpers.extractInt(element) else {
+    guard let int = element as? PyInt else {
       return false
     }
 

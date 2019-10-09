@@ -9,7 +9,7 @@ extension Frame {
   /// and pushes the resulting tuple onto the stack.
   internal func buildTuple(elementCount: Int) throws {
     let elements = self.popElements(count: elementCount)
-    let collection = self.context.tuple(elements: elements)
+    let collection = self.context.tuple(elements)
     self.push(collection)
   }
 
@@ -17,7 +17,7 @@ extension Frame {
   /// and pushes the resulting list onto the stack.
   internal func buildList(elementCount: Int) throws {
     let elements = self.popElements(count: elementCount)
-    let collection = self.context.list(elements: elements)
+    let collection = self.context.list(elements)
     self.push(collection)
   }
 

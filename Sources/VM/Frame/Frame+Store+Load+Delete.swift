@@ -18,17 +18,17 @@ extension Frame {
     case .false: return self.context.false
     case .none: return self.context.none
     case .ellipsis: return self.context.ellipsis
-    case let .integer(arg): return self.context.int(value: arg)
-    case let .float(arg): return self.context.float(value: arg)
+    case let .integer(arg): return self.context.int(arg)
+    case let .float(arg): return self.context.float(arg)
     case let .complex(real, imag): return self.context.complex(real: real, imag: imag)
-    case let .string(arg): return self.context.string(value: arg)
+    case let .string(arg): return self.context.string(arg)
     case .bytes: // let .bytes(arg):
       fatalError()
     case .code: // let .code(arg):
       fatalError()
     case let .tuple(args):
       let elements = args.map { self.toObject($0) }
-      return self.context.tuple(elements: elements)
+      return self.context.tuple(elements)
     }
   }
 
