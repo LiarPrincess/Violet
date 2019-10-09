@@ -9,8 +9,8 @@ public class PyContext {
   public lazy var emptyTuple: PyObject = PyTuple.new(self, [])
 
   internal lazy var types = PyContextTypes(context: self)
-  internal lazy var errorTypes = PyContextErrorTypes(context: self)
-  internal lazy var warningTypes = PyContextWarningTypes(context: self)
+//  internal lazy var errorTypes = PyContextErrorTypes(context: self)
+//  internal lazy var warningTypes = PyContextWarningTypes(context: self)
 
   internal let hasher = Hasher()
 
@@ -46,7 +46,7 @@ internal final class PyContextTypes {
     self.context = context
   }
 }
-
+/*
 internal final class PyContextErrorTypes {
 
   internal lazy var base = PyBaseExceptionType(context: self.context)
@@ -135,3 +135,4 @@ internal final class PyContextWarningTypes {
     self.context = context
   }
 }
+*/

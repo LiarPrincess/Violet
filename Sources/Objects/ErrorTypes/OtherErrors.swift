@@ -2,7 +2,7 @@
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
-
+/*
 internal final class PyBufferErrorType: PyExceptionType {
   override internal var name: String { return "BufferError" }
   override internal var base: PyType? { return self.errorTypes.exception }
@@ -63,3 +63,4 @@ the Python version, and the hardware/OS platform and version.
 """
   }
 }
+*/

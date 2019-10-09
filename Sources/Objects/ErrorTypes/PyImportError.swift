@@ -2,7 +2,7 @@
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
-
+/*
 // TODO: PyImportErrorType
 // {"msg", T_OBJECT, offsetof(PyImportErrorObject, msg), 0, PyDoc_STR ...},
 // {"name", T_OBJECT, offsetof(PyImportErrorObject, name), 0, PyDoc_STR ...},
@@ -77,3 +77,4 @@ internal final class PyModuleNotFoundErrorType: PyImportErrorType {
     return "Module not found."
   }
 }
+*/

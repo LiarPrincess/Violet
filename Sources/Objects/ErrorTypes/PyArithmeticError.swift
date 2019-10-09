@@ -2,7 +2,7 @@
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
-
+/*
 internal class PyArithmeticErrorType: PyExceptionType {
   override internal var name: String { return "ArithmeticError" }
   override internal var base: PyType? { return self.errorTypes.exception }
@@ -36,3 +36,4 @@ internal final class PyZeroDivisionErrorType: PyArithmeticErrorType {
     return "Second argument to a division or modulo operation was zero."
   }
 }
+*/

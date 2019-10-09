@@ -1,5 +1,5 @@
 import Core
-
+/*
 // In CPython:
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
@@ -52,3 +52,4 @@ internal final class PySystemExitType: PyBaseExceptionType {
     throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
 }
+*/

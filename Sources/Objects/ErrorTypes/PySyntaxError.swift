@@ -2,7 +2,7 @@
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
-
+/*
 // TODO: PySyntaxErrorType
 // {"msg", T_OBJECT, offsetof(PySyntaxErrorObject, msg), 0, PyDoc_STR ... },
 // {"filename", T_OBJECT, offsetof(PySyntaxErrorObject, filename), 0, PyDoc_STR ... },
@@ -89,3 +89,4 @@ internal class PyTabErrorType: PySyntaxErrorType {
     return "Improper mixture of spaces and tabs."
   }
 }
+*/

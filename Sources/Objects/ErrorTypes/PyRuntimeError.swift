@@ -2,7 +2,7 @@
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
-
+/*
 internal class PyRuntimeErrorType: PyExceptionType {
   override internal var name: String { return "RuntimeError" }
   override internal var base: PyType? { return self.errorTypes.exception }
@@ -26,3 +26,4 @@ internal final class PyNotImplementedErrorType: PyRuntimeErrorType {
     return "Method or function hasn't been implemented yet."
   }
 }
+*/

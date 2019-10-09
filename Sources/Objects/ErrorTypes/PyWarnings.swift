@@ -2,7 +2,7 @@
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
-
+/*
 internal class PyWarningType: PyExceptionType {
   override internal var name: String { return "Warning" }
   override internal var base: PyType? { return self.errorTypes.exception }
@@ -98,3 +98,4 @@ internal final class PyResourceWarningType: PyWarningType {
     return "Base class for warnings about resource usage."
   }
 }
+*/

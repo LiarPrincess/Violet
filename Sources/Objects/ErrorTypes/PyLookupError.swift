@@ -2,7 +2,7 @@
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
-
+/*
 internal class PyLookupErrorType: PyExceptionType {
   override internal var name: String { return "LookupError" }
   override internal var base: PyType? { return self.errorTypes.exception }
@@ -40,3 +40,4 @@ internal final class PyKeyErrorType: PyLookupErrorType {
     return ""
   }
 }
+*/

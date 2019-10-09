@@ -6,7 +6,7 @@
 // TODO: PyStopIterationType
 // {"value", T_OBJECT, offsetof(PyStopIterationObject, value), 0, PyDoc_STR("... ")},
 // StopIteration_init(PyStopIterationObject *self, PyObject *args, PyObject *kwds)
-
+/*
 internal final class PyStopIteration: PyBaseException {
 
   internal var value: PyObject
@@ -57,3 +57,4 @@ internal class PyStopAsyncIterationType: PyExceptionType {
     return "Signal the end from iterator.__anext__()."
   }
 }
+*/
