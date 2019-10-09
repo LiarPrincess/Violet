@@ -4,8 +4,9 @@ extension PyContext {
   ///
   /// Equivalent of 'not v'.
   public func not(value: PyObject) throws -> PyObject {
-    let isTrue = try self.isTrue(value: value)
-    return self.types.bool.new(!isTrue)
+//    let isTrue = try self.isTrue(value: value)
+//    return self.types.bool.new(!isTrue)
+    fatalError()
   }
 
   /// PyObject_IsTrue(PyObject *v)
@@ -33,6 +34,7 @@ extension PyContext {
 
   /// `is` will return `True` if two variables point to the same object.
   public func `is`(left: PyObject, right: PyObject) -> PyObject {
-    return self.types.bool.new(left === right)
+//    return self.types.bool.new(left === right)
+    fatalError()
   }
 }

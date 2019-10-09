@@ -1,7 +1,7 @@
 public class PyContext {
 
-  public var `true`:  PyObject { return self.types.bool.true }
-  public var `false`: PyObject { return self.types.bool.false }
+  public var `true`:  PyObject { return GeneralHelpers.true }
+  public var `false`: PyObject { return GeneralHelpers.false }
 
   public lazy var none: PyObject = PyNone.new(self)
   public lazy var ellipsis: PyObject = PyEllipsis.new(self)

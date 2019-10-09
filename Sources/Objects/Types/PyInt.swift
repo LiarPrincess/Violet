@@ -15,6 +15,11 @@ import Core
 // def to_bytes(self, length: int, byteorder: str, *, signed: bool = ...) -> bytes: ...
 // @classmethod
 // def from_bytes(cls, bytes: Sequence[int], byteorder: str, *, signed: bool = ...)
+// #[pymethod(name = "__trunc__")]
+// #[pymethod(name = "__floor__")]
+// #[pymethod(name = "__ceil__")]
+// #[pymethod(name = "__index__")]
+// #[pymethod(name = "__format__")]
 
 // swiftlint:disable file_length
 
