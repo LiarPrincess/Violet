@@ -53,24 +53,4 @@ internal enum GeneralHelpers {
     //    return AdjustedIndices(start: start, stop: stop, step: step, length: length)
     fatalError()
   }
-
-  /// PyLong_FromSsize_t
-  internal static func extractIndex(value: PyObject) -> BigInt? {
-    // This should return precise error
-
-    //    guard let indexType = value.type as? IndexTypeClass else {
-    //      return nil
-    //    }
-
-    //    let index = try indexType.index(value: value)
-    //    let bigInt = try self.context.types.int.extractInt(index)
-    //    guard let result = Int(exactly: bigInt) else {
-    //      // i = PyNumber_AsSsize_t(item, PyExc_IndexError);
-    //      fatalError()
-    //    }
-
-    //    return result
-    //    return nil
-    fatalError()
-  }
 }

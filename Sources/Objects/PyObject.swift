@@ -22,6 +22,14 @@ public class PyObject {
     return self._type
   }
 
+  internal var context: PyContext {
+    return self.type.context
+  }
+
+  internal var types: PyContextTypes {
+    return self.context.types
+  }
+
   // MARK: - Init
 
   /// NEVER EVER use this ctor! It is reserved for PyType!
@@ -34,15 +42,7 @@ public class PyObject {
     self._type = type
   }
 
-  // MARK: - Shared helpers
-
-  internal var context: PyContext {
-    return self.type.context
-  }
-
-  internal var types: PyContextTypes {
-    return self.context.types
-  }
+  // MARK: - Ctors
 
   internal func int(_ value: BigInt) -> PyInt {
     return self.types.int.new(value)

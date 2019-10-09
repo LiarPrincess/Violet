@@ -172,7 +172,7 @@ internal final class PyRange: PyObject,
   // MARK: - Get item
 
   internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
-    if let index = GeneralHelpers.extractIndex(value: index) {
+    if let index = SequenceHelper.extractIndex(index) {
       let result = self.getItem(at: index)
       return result.flatMap { GetItemResult<PyObject>.value($0) }
     }

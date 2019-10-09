@@ -129,8 +129,8 @@ internal class PyInt: PyObject,
     return .value(self.float(Double(self.value)))
   }
 
-  internal var asIndex: PyInt {
-    return self
+  internal var asIndex: BigInt {
+    return self.value
   }
 
   // MARK: - Imaginary
@@ -258,7 +258,7 @@ internal class PyInt: PyObject,
       return .int(left)
     }
 
-    let result = expBySq(1, left, Swift.abs(right))
+    let result = self.exponentiationBySquaring(1, left, Swift.abs(right))
 
     return right > 0 ?
       .int(result) :
@@ -272,14 +272,12 @@ internal class PyInt: PyObject,
     }
   }
 
-  // swiftlint:disable line_length
-
   /// Source:
+  /// https://stackoverflow.com/questions/24196689
   /// https://en.wikipedia.org/wiki/Exponentiation_by_squaring#Basic_method
-  /// https://stackoverflow.com/questions/24196689/how-to-get-the-power-of-some-integer-in-swift-language
-  private func expBySq(_ y: BigInt, _ x: BigInt, _ n: BigInt) -> BigInt {
-    // swiftlint:enable line_length
-
+  private func exponentiationBySquaring(_ y: BigInt,
+                                        _ x: BigInt,
+                                        _ n: BigInt) -> BigInt {
     precondition(n >= 0)
 
     if n == 0 {
@@ -293,8 +291,8 @@ internal class PyInt: PyObject,
     // swiftlint:disable:next legacy_multiple
     let isMultipleOf2 = n % 2 == 0
     return isMultipleOf2 ?
-      expBySq(y, x * x, n / 2) :
-      expBySq(y * x, x * x, (n - 1) / 2)
+      self.exponentiationBySquaring(y, x * x, n / 2) :
+      self.exponentiationBySquaring(y * x, x * x, (n - 1) / 2)
   }
 
   // MARK: - True div
@@ -526,12 +524,18 @@ internal class PyInt: PyObject,
   /// int.__round__(12345, -2) -> 12300
   /// ```
   internal func round(nDigits: PyObject) -> PyResultOrNot<PyInt> {
-    guard let nDigits = GeneralHelpers.extractIndex(value: nDigits) else {
-      fatalError()
+    var digitCount: BigInt?
+
+    if nDigits is PyNone {
+      digitCount = 0
     }
 
-    // if ndigits >= 0 then no rounding is necessary; return self unchanged
-    if nDigits >= 0 {
+    if let int = nDigits as? PyInt {
+      digitCount = int.value
+    }
+
+    // if digits >= 0 then no rounding is necessary; return self unchanged
+    if let dc = digitCount, dc >= 0 {
       return .value(self)
     }
 

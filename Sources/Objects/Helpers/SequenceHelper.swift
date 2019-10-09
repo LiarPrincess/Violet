@@ -108,13 +108,25 @@ internal enum SequenceHelper {
     return false
   }
 
+  // MARK: - Extract index
+
+  /// PyLong_FromSsize_t
+  internal static func extractIndex(_ value: PyObject) -> BigInt? {
+    guard let indexType = value.type as? IndexConvertibleTypeClass else {
+      return nil
+    }
+
+    return indexType.asIndex
+  }
+
   // MARK: - Get item
+
   internal static func getItem(context: PyContext,
                                elements: [PyObject],
                                index: PyObject,
                                canIndexFromEnd: Bool,
                                typeName: String) -> GetItemResult<PyObject> {
-    if let index = GeneralHelpers.extractIndex(value: index) {
+    if let index = extractIndex(index) {
       return getItem(context: context,
                      elements: elements,
                      index: index,
@@ -123,7 +135,6 @@ internal enum SequenceHelper {
     }
 
     if let slice = index as? PySlice {
-
       return SequenceHelper
         .getItem(context: context, elements: elements, slice: slice)
         .map(context.types.tuple.new)

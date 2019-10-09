@@ -1,3 +1,5 @@
+import Core
+
 internal protocol BoolConvertibleTypeClass: TypeClass {
   var asBool: PyResult<Bool> { get }
 }
@@ -23,5 +25,5 @@ internal protocol ComplexConvertibleTypeClass: TypeClass {
 internal protocol IndexConvertibleTypeClass: TypeClass {
   /// Returns the o converted to a Python int on success
   /// or TypeError exception raised on failure.
-  var asIndex: PyInt { get }
+  var asIndex: BigInt { get }
 }

@@ -117,7 +117,7 @@ internal final class PySlice: PyObject,
   /// Out of bounds indices are clipped in a manner consistent with the
   /// handling of normal slices.
   internal func indices(length: PyObject) -> PyResultOrNot<PyObject> {
-    guard let length = GeneralHelpers.extractIndex(value: length) else {
+    guard let length = SequenceHelper.extractIndex(length) else {
       return .notImplemented
     }
 
