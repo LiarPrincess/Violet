@@ -35,13 +35,7 @@ internal final class PyComplex: PyObject,
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext,
-                           real: Double,
-                           imag: Double) -> PyComplex {
-    return PyComplex(type: context.types.complex, real: real, imag: imag)
-  }
-
-  private init(type: PyComplexType, real: Double, imag: Double) {
+  fileprivate init(type: PyComplexType, real: Double, imag: Double) {
     self.real = real
     self.imag = imag
     super.init(type: type)
@@ -133,7 +127,7 @@ internal final class PyComplex: PyObject,
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
   internal var conjugate: PyComplex {
-    return GeneralHelpers.pyComplex(real: self.real, imag: -self.imag)
+    return self.complex(real: self.real, imag: -self.imag)
   }
 
   // MARK: - Sign
@@ -143,7 +137,7 @@ internal final class PyComplex: PyObject,
   }
 
   internal var negative: PyObject {
-    return GeneralHelpers.pyComplex(real: -self.real, imag: -self.imag)
+    return self.complex(real: -self.real, imag: -self.imag)
   }
 
   // MARK: - Abs
@@ -152,18 +146,18 @@ internal final class PyComplex: PyObject,
     let bothFinite = self.real.isFinite && self.imag.isFinite
     guard bothFinite else {
       if self.real.isInfinite {
-        return GeneralHelpers.pyFloat(Swift.abs(self.real))
+        return self.float(Swift.abs(self.real))
       }
 
       if self.imag.isInfinite {
-        return GeneralHelpers.pyFloat(Swift.abs(self.imag))
+        return self.float(Swift.abs(self.imag))
       }
 
-      return GeneralHelpers.nan
+      return self.float(.nan)
     }
 
     let result = hypot(self.real, self.imag)
-    return GeneralHelpers.pyFloat(result)
+    return self.float(result)
   }
 
   // MARK: - Add
@@ -174,7 +168,7 @@ internal final class PyComplex: PyObject,
     }
 
     return .value(
-      GeneralHelpers.pyComplex(
+      self.complex(
         real: self.real + other.real,
         imag: self.imag + other.real
       )
@@ -206,7 +200,7 @@ internal final class PyComplex: PyObject,
   }
 
   private func sub(left: RawComplex, right: RawComplex) -> PyComplex {
-    return GeneralHelpers.pyComplex(
+    return self.complex(
       real: left.real - right.real,
       imag: left.imag - right.real
     )
@@ -233,7 +227,7 @@ internal final class PyComplex: PyObject,
   }
 
   private func mul(left: RawComplex, right: RawComplex) -> PyComplex {
-    return GeneralHelpers.pyComplex(
+    return self.complex(
       real: left.real * right.real - left.imag * right.imag,
       imag: left.real * right.imag + left.imag * right.real
     )
@@ -263,7 +257,7 @@ internal final class PyComplex: PyObject,
 
   private func pow(left: RawComplex, right: RawComplex) -> PowResult<PyComplex> {
     if right.real.isZero && right.real.isZero {
-      return .value(GeneralHelpers.pyComplex(real: 1.0, imag: 0.0))
+      return .value(self.complex(real: 1.0, imag: 0.0))
     }
 
     if left.real.isZero && left.imag.isZero {
@@ -271,7 +265,7 @@ internal final class PyComplex: PyObject,
         return .error(.valueError("complex zero to negative or complex power"))
       }
 
-      return .value(GeneralHelpers.pyComplex(real: 0.0, imag: 0.0))
+      return .value(self.complex(real: 0.0, imag: 0.0))
     }
 
     let vabs = Foundation.hypot(left.real, left.imag)
@@ -285,7 +279,7 @@ internal final class PyComplex: PyObject,
     }
 
     return .value(
-      GeneralHelpers.pyComplex(
+      self.complex(
         real: len * cos(phase),
         imag: len * sin(phase)
       )
@@ -324,7 +318,7 @@ internal final class PyComplex: PyObject,
     }
 
     return .value(
-      GeneralHelpers.pyComplex(
+      self.complex(
         real: (left.real * right.real + left.imag * right.imag) / d,
         imag: (left.imag * right.real - left.real * right.imag) / d
       )
@@ -392,4 +386,8 @@ internal final class PyComplexType: PyType {
 //    This is equivalent to (real + imag*1j) where imag defaults to 0.
 //    """
 //  }
+
+  internal func new(real: Double, imag: Double) -> PyComplex {
+    return PyComplex(type: self, real: real, imag: imag)
+  }
 }

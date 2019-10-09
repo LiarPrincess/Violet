@@ -123,13 +123,10 @@ internal enum SequenceHelper {
     }
 
     if let slice = index as? PySlice {
+
       return SequenceHelper
         .getItem(context: context, elements: elements, slice: slice)
-        .map { elements in
-          elements.isEmpty ?
-            GeneralHelpers.emptyTuple :
-            PyTuple.new(context, elements)
-        }
+        .map(context.types.tuple.new)
         .flatMap { GetItemResult<PyObject>.value($0) }
     }
 

@@ -17,21 +17,7 @@ internal final class PySlice: PyObject,
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext, stop: PyInt?) -> PySlice {
-    return new(context, start: nil, stop: stop)
-  }
-
-  internal static func new(_ context: PyContext,
-                           start: PyInt?,
-                           stop:  PyInt?,
-                           step:  PyInt? = nil) -> PySlice {
-    return PySlice(type: context.types.slice, start: start, stop: stop, step: step)
-  }
-
-  private init(type:  PySliceType,
-               start: PyInt?,
-               stop:  PyInt?,
-               step:  PyInt?) {
+  fileprivate init(type: PySliceType, start: PyInt?, stop: PyInt?, step: PyInt?) {
     self.start = start
     self.stop = stop
     self.step = step
@@ -109,7 +95,7 @@ internal final class PySlice: PyObject,
   // MARK: - String
 
   internal var repr: String {
-    let none = GeneralHelpers.none.repr
+    let none = self.context._none.repr
     let start = self.start.map { self.context.reprString(value: $0) } ?? none
     let stop  = self.stop.map { self.context.reprString(value: $0) } ?? none
     let step  = self.step.map { self.context.reprString(value: $0) } ?? none
@@ -141,10 +127,10 @@ internal final class PySlice: PyObject,
 
     switch self.getLongIndices(length: length) {
     case let .value(v):
-      let start = GeneralHelpers.pyInt(v.start)
-      let stop = GeneralHelpers.pyInt(v.stop)
-      let step = GeneralHelpers.pyInt(v.step)
-      return .value(PyTuple.new(self.context, start, stop, step))
+      let start = self.int(v.start)
+      let stop = self.int(v.stop)
+      let step = self.int(v.step)
+      return .value(self.tuple(start, stop, step))
     case let .error(e):
       return .error(e)
     }
@@ -219,4 +205,12 @@ internal final class PySliceType: PyType {
 //    This is used for extended slicing (e.g. a[0:10:2]).
 //    """
 //  }
+
+  internal func new(stop: PyInt?) -> PySlice {
+    return PySlice(type: self, start: nil, stop: stop, step: nil)
+  }
+
+  internal func new(start: PyInt?, stop: PyInt?, step: PyInt? = nil) -> PySlice {
+    return PySlice(type: self, start: start, stop: stop, step: step)
+  }
 }

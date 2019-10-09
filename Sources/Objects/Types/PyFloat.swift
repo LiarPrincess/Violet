@@ -36,11 +36,7 @@ internal final class PyFloat: PyObject,
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext, _ value: Double) -> PyFloat {
-    return PyFloat(type: context.types.float, value: value)
-  }
-
-  private init(type: PyFloatType, value: Double) {
+  fileprivate init(type: PyFloatType, value: Double) {
     self.value = value
     super.init(type: type)
   }
@@ -140,11 +136,11 @@ internal final class PyFloat: PyObject,
   }
 
   internal var asInt: PyResult<PyInt> {
-    return .value(GeneralHelpers.pyInt(BigInt(self.value)))
+    return .value(self.int(BigInt(self.value)))
   }
 
   internal var asFloat: PyResult<PyFloat> {
-    return .value(GeneralHelpers.pyFloat(self.value))
+    return .value(self.float(self.value))
   }
 
   // MARK: - Imaginary
@@ -154,7 +150,7 @@ internal final class PyFloat: PyObject,
   }
 
   internal var imag: PyFloat {
-    return GeneralHelpers.pyFloat(0.0)
+    return self.float(0.0)
   }
 
   /// float.conjugate
@@ -170,13 +166,13 @@ internal final class PyFloat: PyObject,
   }
 
   internal var negative: PyObject {
-    return GeneralHelpers.pyFloat(-self.value)
+    return self.float(-self.value)
   }
 
   // MARK: - Abs
 
   internal var abs: PyObject {
-    return GeneralHelpers.pyFloat(Swift.abs(self.value))
+    return self.float(Swift.abs(self.value))
   }
 
   // MARK: - Add
@@ -186,7 +182,7 @@ internal final class PyFloat: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyFloat(self.value + other))
+    return .value(self.float(self.value + other))
   }
 
   internal func radd(_ other: PyObject) -> AddResult<PyObject> {
@@ -200,7 +196,7 @@ internal final class PyFloat: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyFloat(self.value - other))
+    return .value(self.float(self.value - other))
   }
 
   internal func rsub(_ other: PyObject) -> SubResult<PyObject> {
@@ -208,7 +204,7 @@ internal final class PyFloat: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyFloat(other - self.value))
+    return .value(self.float(other - self.value))
   }
 
   // MARK: - Mul
@@ -218,7 +214,7 @@ internal final class PyFloat: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyFloat(self.value * other))
+    return .value(self.float(self.value * other))
   }
 
   internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
@@ -233,7 +229,7 @@ internal final class PyFloat: PyObject,
     }
 
     let result = Foundation.pow(self.value, other)
-    return .value(GeneralHelpers.pyFloat(result))
+    return .value(self.float(result))
   }
 
   internal func rpow(_ other: PyObject) -> PowResult<PyObject> {
@@ -242,7 +238,7 @@ internal final class PyFloat: PyObject,
     }
 
     let result = Foundation.pow(other, self.value)
-    return .value(GeneralHelpers.pyFloat(result))
+    return .value(self.float(result))
   }
 
   // MARK: - True div
@@ -268,7 +264,7 @@ internal final class PyFloat: PyObject,
       return .error(.zeroDivisionError("float division by zero"))
     }
 
-    return .value(GeneralHelpers.pyFloat(left / right))
+    return .value(self.float(left / right))
   }
 
   // MARK: - Floor div
@@ -295,7 +291,7 @@ internal final class PyFloat: PyObject,
     }
 
     let result = self.floorDivRaw(left: left, right: right)
-    return .value(GeneralHelpers.pyFloat(result))
+    return .value(self.float(result))
   }
 
   private func floorDivRaw(left: Double, right: Double) -> Double {
@@ -326,7 +322,7 @@ internal final class PyFloat: PyObject,
     }
 
     let result = self.modRaw(left: left, right: right)
-    return .value(GeneralHelpers.pyFloat(result))
+    return .value(self.float(result))
   }
 
   private func modRaw(left: Double, right: Double) -> Double {
@@ -358,17 +354,13 @@ internal final class PyFloat: PyObject,
 
     let div = self.floorDivRaw(left: left, right: right)
     let mod = self.modRaw(left: left, right: right)
-
-    return .value(GeneralHelpers.pyTuple([
-      GeneralHelpers.pyFloat(div),
-      GeneralHelpers.pyFloat(mod)
-    ]))
+    return .value(self.tuple(self.float(div), self.float(mod)))
   }
 
   // MARK: - Round
 
   internal func round() -> PyResultOrNot<PyFloat> {
-    return self.round(nDigits: GeneralHelpers.none)
+    return self.round(nDigits: self.context._none)
   }
 
   /// Round a Python float v to the closest multiple of 10**-ndigits
@@ -389,7 +381,7 @@ internal final class PyFloat: PyObject,
     switch digitCount {
     case .some(0):
       // round to nearest integer
-      return .value(GeneralHelpers.pyFloat(self.value.rounded()))
+      return .value(self.float(self.value.rounded()))
     case .some:
       // TODO: Implement float rounding to arbitrary precision
       return .notImplemented
@@ -423,4 +415,8 @@ internal final class PyFloatType: PyType {
   //    Convert a string or number to a floating point number, if possible.
   //    """
   //  }
+
+  internal func new(_ value: Double) -> PyFloat {
+    return PyFloat(type: self, value: value)
+  }
 }

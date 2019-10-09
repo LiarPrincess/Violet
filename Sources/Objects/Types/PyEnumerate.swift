@@ -25,37 +25,21 @@ internal final class PyEnumerate: PyObject, IterableTypeClass {
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext,
-                           iterable: PyObject,
-                           startIndex: Int) -> PyResult<PyEnumerate> {
-    guard let source = iterable as? PyEnumerateSource else {
-      let str = context.strString(value: iterable)
-      return .error(.typeError("'\(str)' object is not iterable"))
-    }
-
-    return .value(
-      PyEnumerate(context, iterable: source, startIndex: startIndex)
-    )
-  }
-
-  private init(_ context: PyContext,
-               iterable: PyEnumerateSource,
-               startIndex: Int) {
+  fileprivate init(type: PyEnumerateType,
+                   iterable: PyEnumerateSource,
+                   startIndex: Int) {
     self.iterable = iterable
     self.index = .notStarted(startingIndex: startIndex)
-    self.item = context.none
-    super.init(type: context.types.enumerate)
+    self.item = type.context.none
+    super.init(type: type)
   }
 
   // MARK: - Next
 
   internal func next() -> PyObject {
     self.item = self.iterable.next()
-
     let index = self.advanceIndex()
-    let pyIndex = GeneralHelpers.pyInt(index)
-
-    return GeneralHelpers.pyTuple([pyIndex, self.item])
+    return self.tuple(self.int(index), self.item)
   }
 
   private func advanceIndex() -> Int {
@@ -89,4 +73,15 @@ internal final class PyEnumerateType: PyType {
 //    (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
 //    """
 //  }
+
+  internal func new(iterable: PyObject, startIndex: Int) -> PyResult<PyEnumerate> {
+    guard let source = iterable as? PyEnumerateSource else {
+      let str = context.strString(value: iterable)
+      return .error(.typeError("'\(str)' object is not iterable"))
+    }
+
+    return .value(
+      PyEnumerate(type: self, iterable: source, startIndex: startIndex)
+    )
+  }
 }

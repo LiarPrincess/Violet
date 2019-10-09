@@ -13,6 +13,12 @@ extension BigInt {
   }
 }
 
+extension Int {
+  internal var isTrue: Bool {
+    return self != 0
+  }
+}
+
 /// Booleans in Python are implemented as a subclass of integers.
 /// There are only two booleans, Py_False and Py_True.
 /// As such, the normal creation and deletion functions don’t apply to booleans.
@@ -20,15 +26,7 @@ internal final class PyBool: PyInt {
 
   // MARK: - Init
 
-  internal static func new(_ value: Bool) -> PyBool {
-    return value ? GeneralHelpers.true : GeneralHelpers.false
-  }
-
-  private static func new(_ value: BigInt) -> PyBool {
-    return self.new(value.isTrue)
-  }
-
-  private init(type: PyBoolType, value: BigInt) {
+  fileprivate init(type: PyBoolType, value: BigInt) {
     super.init(type: type, value: value)
   }
 
@@ -47,7 +45,7 @@ internal final class PyBool: PyInt {
   override internal func and(_ other: PyObject) -> BinaryResult<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue && other.value.isTrue
-      return .value(GeneralHelpers.pyBool(result))
+      return .value(self.bool(result))
     }
 
     return super.and(other)
@@ -62,7 +60,7 @@ internal final class PyBool: PyInt {
   override internal func or(_ other: PyObject) -> BinaryResult<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue || other.value.isTrue
-      return .value(GeneralHelpers.pyBool(result))
+      return .value(self.bool(result))
     }
 
     return super.and(other)
@@ -77,7 +75,7 @@ internal final class PyBool: PyInt {
   override internal func xor(_ other: PyObject) -> BinaryResult<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue != other.value.isTrue
-      return .value(GeneralHelpers.pyBool(result))
+      return .value(self.bool(result))
     }
 
     return super.and(other)
@@ -99,4 +97,19 @@ internal final class PyBoolType: PyIntType {
 //    The class bool is a subclass of the class int, and cannot be subclassed
 //    """
 //  }
+
+  private lazy var `true`  = PyBool(type: self, value: BigInt(1))
+  private lazy var `false` = PyBool(type: self, value: BigInt(0))
+
+  internal func new(_ value: Bool) -> PyBool {
+    return value ? self.true : self.false
+  }
+
+  internal override func new(_ value: BigInt) -> PyBool {
+    return self.new(value.isTrue)
+  }
+
+  internal override func new(_ value: Int) -> PyBool {
+    return self.new(value.isTrue)
+  }
 }

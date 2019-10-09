@@ -22,10 +22,6 @@ public class PyObject {
     return self._type
   }
 
-  internal var context: PyContext {
-    return self.type.context
-  }
-
   // MARK: - Init
 
   /// NEVER EVER use this ctor! It is reserved for PyType!
@@ -36,6 +32,60 @@ public class PyObject {
 
   internal init(type: PyType) {
     self._type = type
+  }
+
+  // MARK: - Shared helpers
+
+  internal var context: PyContext {
+    return self.type.context
+  }
+
+  internal var types: PyContextTypes {
+    return self.context.types
+  }
+
+  internal func int(_ value: BigInt) -> PyInt {
+    return self.types.int.new(value)
+  }
+
+  internal func int(_ value: Int) -> PyInt {
+    return self.types.int.new(value)
+  }
+
+  internal func bool(_ value: Bool) -> PyBool {
+    return self.types.bool.new(value)
+  }
+
+  internal func float(_ value: Double) -> PyFloat {
+    return self.types.float.new(value)
+  }
+
+  internal func complex(real: Double, imag: Double) -> PyComplex {
+    return self.types.complex.new(real: real, imag: imag)
+  }
+
+  internal func tuple(_ elements: PyObject...) -> PyTuple {
+    return self.types.tuple.new(elements)
+  }
+
+  internal func tuple(_ elements: [PyObject]) -> PyTuple {
+    return self.types.tuple.new(elements)
+  }
+
+  internal func list(_ elements: PyObject...) -> PyList {
+    return self.types.list.new(elements)
+  }
+
+  internal func list(_ elements: [PyObject]) -> PyList {
+    return self.types.list.new(elements)
+  }
+
+  internal func range(stop: PyInt) -> PyResult<PyRange> {
+    return self.types.range.new(stop: stop)
+  }
+
+  internal func range(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
+    return self.types.range.new(start: start, stop: stop, step: step)
   }
 
   // MARK: - Repr

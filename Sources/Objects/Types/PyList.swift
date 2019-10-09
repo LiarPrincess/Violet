@@ -33,21 +33,7 @@ internal final class PyList: PyObject,
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext) -> PyList {
-    return PyList(type: context.types.list, elements: [])
-  }
-
-  internal static func new(_ context: PyContext,
-                           _ elements: [PyObject]) -> PyList {
-    return PyList(type: context.types.list, elements: elements)
-  }
-
-  internal static func new(_ context: PyContext,
-                           _ elements: PyObject...) -> PyList {
-    return PyList(type: context.types.list, elements: elements)
-  }
-
-  private init(type: PyListType, elements: [PyObject]) {
+  fileprivate init(type: PyListType, elements: [PyObject]) {
     self.elements = elements
     super.init(type: type)
   }
@@ -152,7 +138,7 @@ internal final class PyList: PyObject,
   // MARK: - Sequence
 
   internal var length: PyInt {
-    return GeneralHelpers.pyInt(self.elements.count)
+    return self.int(self.elements.count)
   }
 
   internal func contains(_ element: PyObject) -> Bool {
@@ -221,7 +207,7 @@ internal final class PyList: PyObject,
   }
 
   internal func copy() -> PyList {
-    return PyList.new(self.context, self.elements)
+    return self.list(self.elements)
   }
 
   // MARK: - Add
@@ -235,7 +221,7 @@ internal final class PyList: PyObject,
     }
 
     let result = self.elements + otherList.elements
-    return .value(PyList.new(self.context, result))
+    return .value(self.list(result))
   }
 
   internal func addInPlace(_ other: PyObject) -> AddResult<PyObject> {
@@ -248,13 +234,13 @@ internal final class PyList: PyObject,
   internal func mul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)
-      .map { PyList.new(self.context, $0) }
+      .map(self.list)
   }
 
   internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
       .rmul(elements: self.elements, count: other)
-      .map { PyList.new(self.context, $0) }
+      .map(self.list)
   }
 
   internal func mulInPlace(_ other: PyObject) -> MulResult<PyObject> {
@@ -279,4 +265,8 @@ internal final class PyListType: PyType {
 //    The argument must be an iterable if specified.
 //    """
 //  }
+
+  internal func new(_ elements: [PyObject]) -> PyList {
+    return PyList(type: context.types.list, elements: elements)
+  }
 }

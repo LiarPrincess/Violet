@@ -10,11 +10,7 @@ internal final class PyEllipsis: PyObject, ReprTypeClass {
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext) -> PyEllipsis {
-    return PyEllipsis(type: context.types.ellipsis)
-  }
-
-  private init(type: PyEllipsisType) {
+  fileprivate init(type: PyEllipsisType) {
     super.init(type: type)
   }
 
@@ -33,4 +29,10 @@ internal final class PyEllipsis: PyObject, ReprTypeClass {
 
 internal final class PyEllipsisType: PyType {
 //  override internal var name: String { return "ellipsis" }
+
+  private lazy var value = PyEllipsis(type: self)
+
+  internal func new() -> PyEllipsis {
+    return self.value
+  }
 }

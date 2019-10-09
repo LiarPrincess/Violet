@@ -9,11 +9,7 @@ internal final class PyNotImplemented: PyObject, ReprTypeClass {
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext) -> PyNotImplemented {
-    return PyNotImplemented(type: context.types.notImplemented)
-  }
-
-  private init(type: PyNotImplementedType) {
+  fileprivate init(type: PyNotImplementedType) {
     super.init(type: type)
   }
 
@@ -32,4 +28,10 @@ internal final class PyNotImplemented: PyObject, ReprTypeClass {
 
 internal final class PyNotImplementedType: PyType {
 //  override internal var name: String { return "NotImplementedType" }
+
+  private lazy var value = PyNotImplemented(type: self)
+
+  internal func new() -> PyNotImplemented {
+    return self.value
+  }
 }

@@ -54,41 +54,8 @@ internal enum GeneralHelpers {
     fatalError()
   }
 
-  internal static func pyInt(_ value: BigInt) -> PyInt {
-//    return self.types.int.new(value)
-    fatalError()
-  }
-
-  internal static func pyInt(_ value: Int) -> PyInt {
-//    return self.types.int.new(value)
-    fatalError()
-  }
-
-  internal static func pyBool(_ value: Bool) -> PyBool {
-    //    return PyTuple.new(self.context, elements)
-    fatalError()
-  }
-
-  internal static func pyFloat(_ value: Double) -> PyFloat {
-    //    return self.types.int.new(value)
-    fatalError()
-  }
-
-  internal static func pyComplex(real: Double, imag: Double) -> PyComplex {
-    fatalError()
-  }
-
-  internal static func pyTuple(_ elements: [PyObject]) -> PyTuple {
-//    return PyTuple.new(self.context, elements)
-    fatalError()
-  }
-
   internal static func extractInt(_ object: PyObject) -> PyInt? {
 //    return object as? PyInt
-    fatalError()
-  }
-
-  internal static var none: PyNone {
     fatalError()
   }
 
@@ -109,25 +76,6 @@ internal enum GeneralHelpers {
 
     //    return result
     //    return nil
-    fatalError()
-  }
-
-  internal static var nan: PyFloat {
-    fatalError()
-  }
-
-  internal static var `true`: PyBool {
-    //PyBool(type: self, value: BigInt(1))
-    fatalError()
-  }
-
-  internal static var `false`: PyBool {
-    //PyBool(type: self, value: BigInt(0))
-    fatalError()
-  }
-
-  internal static var emptyTuple: PyTuple {
-    // Make it let inside class
     fatalError()
   }
 }

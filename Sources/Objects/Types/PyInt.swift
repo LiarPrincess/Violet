@@ -46,14 +46,6 @@ internal class PyInt: PyObject,
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext, _ value: Int) -> PyInt {
-    return PyInt(type: context.types.int, value: BigInt(value))
-  }
-
-  internal static func new(_ context: PyContext, _ value: BigInt) -> PyInt {
-    return PyInt(type: context.types.int, value: value)
-  }
-
   internal init(type: PyIntType, value: BigInt) {
     self.value = value
     super.init(type: type)
@@ -134,7 +126,7 @@ internal class PyInt: PyObject,
   }
 
   internal var asFloat: PyResult<PyFloat> {
-    return .value(GeneralHelpers.pyFloat(Double(self.value)))
+    return .value(self.float(Double(self.value)))
   }
 
   internal var asIndex: PyInt {
@@ -148,12 +140,12 @@ internal class PyInt: PyObject,
   }
 
   internal var imag: PyInt {
-    return GeneralHelpers.pyInt(0)
+    return self.int(0)
   }
 
   internal var asComplex: PyResult<PyComplex> {
     let real = Double(self.value)
-    return .value(GeneralHelpers.pyComplex(real: real, imag: 0.0))
+    return .value(self.complex(real: real, imag: 0.0))
   }
 
   /// int.conjugate
@@ -167,7 +159,7 @@ internal class PyInt: PyObject,
   }
 
   internal var denominator: PyInt {
-    return GeneralHelpers.pyInt(1)
+    return self.int(1)
   }
 
   // MARK: - Sign
@@ -177,13 +169,13 @@ internal class PyInt: PyObject,
   }
 
   internal var negative: PyObject {
-    return GeneralHelpers.pyInt(-self.value)
+    return self.int(-self.value)
   }
 
   // MARK: - Abs
 
   internal var abs: PyObject {
-    return GeneralHelpers.pyInt(Swift.abs(self.value))
+    return self.int(Swift.abs(self.value))
   }
 
   // MARK: - Add
@@ -193,7 +185,7 @@ internal class PyInt: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyInt(self.value + other.value))
+    return .value(self.int(self.value + other.value))
   }
 
   internal func radd(_ other: PyObject) -> AddResult<PyObject> {
@@ -207,7 +199,7 @@ internal class PyInt: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyInt(self.value - other.value))
+    return .value(self.int(self.value - other.value))
   }
 
   internal func rsub(_ other: PyObject) -> SubResult<PyObject> {
@@ -215,7 +207,7 @@ internal class PyInt: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyInt(other.value - self.value))
+    return .value(self.int(other.value - self.value))
   }
 
   // MARK: - Mul
@@ -225,7 +217,7 @@ internal class PyInt: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyInt(self.value * other.value))
+    return .value(self.int(self.value * other.value))
   }
 
   internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
@@ -240,7 +232,7 @@ internal class PyInt: PyObject,
     }
 
     let result = self.pow(left: self.value, right: other.value)
-    return .value(result.asObject())
+    return .value(self.asObject(result))
   }
 
   internal func rpow(_ other: PyObject) -> PowResult<PyObject> {
@@ -249,19 +241,12 @@ internal class PyInt: PyObject,
     }
 
     let result = self.pow(left: other.value, right: self.value)
-    return .value(result.asObject())
+    return .value(self.asObject(result))
   }
 
   private enum InnerPowResult {
     case int(BigInt)
     case fraction(Double)
-
-    fileprivate func asObject() -> PyObject {
-      switch self {
-      case let .int(i): return GeneralHelpers.pyInt(i)
-      case let .fraction(f): return GeneralHelpers.pyFloat(f)
-      }
-    }
   }
 
   private func pow(left: BigInt, right: BigInt) -> InnerPowResult {
@@ -278,6 +263,13 @@ internal class PyInt: PyObject,
     return right > 0 ?
       .int(result) :
       .fraction(Double(1.0) / Double(result))
+  }
+
+  private func asObject(_ result: InnerPowResult) -> PyObject {
+    switch result {
+    case let .int(i): return self.int(i)
+    case let .fraction(f): return self.float(f)
+    }
   }
 
   // swiftlint:disable line_length
@@ -328,7 +320,7 @@ internal class PyInt: PyObject,
       return .error(.zeroDivisionError("division by zero"))
     }
 
-    return .value(GeneralHelpers.pyFloat(Double(left) / Double(right)))
+    return .value(self.float(Double(left) / Double(right)))
   }
 
   // MARK: - Floor div
@@ -355,7 +347,7 @@ internal class PyInt: PyObject,
     }
 
     let result = self.floorDivRaw(left: left, right: right)
-    return .value(GeneralHelpers.pyInt(result))
+    return .value(self.int(result))
   }
 
   private func floorDivRaw(left: BigInt, right: BigInt) -> BigInt {
@@ -386,7 +378,7 @@ internal class PyInt: PyObject,
     }
 
     let result = self.modRaw(left: left, right: right)
-    return .value(GeneralHelpers.pyInt(result))
+    return .value(self.int(result))
   }
 
   private func modRaw(left: BigInt, right: BigInt) -> BigInt {
@@ -418,11 +410,7 @@ internal class PyInt: PyObject,
 
     let div = self.floorDivRaw(left: left, right: right)
     let mod = self.modRaw(left: left, right: right)
-
-    return .value(GeneralHelpers.pyTuple([
-      GeneralHelpers.pyInt(div),
-      GeneralHelpers.pyInt(mod)
-    ]))
+    return .value(self.tuple(self.int(div), self.int(mod)))
   }
 
   // MARK: - LShift
@@ -448,7 +436,7 @@ internal class PyInt: PyObject,
       return .error(.valueError("negative shift count"))
     }
 
-    return .value(GeneralHelpers.pyInt(left << right))
+    return .value(self.int(left << right))
   }
 
   // MARK: - RShift
@@ -474,7 +462,7 @@ internal class PyInt: PyObject,
       return .error(.valueError("negative shift count"))
     }
 
-    return .value(GeneralHelpers.pyInt(left >> right))
+    return .value(self.int(left >> right))
   }
 
   // MARK: - And
@@ -484,7 +472,7 @@ internal class PyInt: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyInt(self.value & other.value))
+    return .value(self.int(self.value & other.value))
   }
 
   internal func rand(_ other: PyObject) -> BinaryResult<PyObject> {
@@ -498,7 +486,7 @@ internal class PyInt: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyInt(self.value | other.value))
+    return .value(self.int(self.value | other.value))
   }
 
   internal func ror(_ other: PyObject) -> BinaryResult<PyObject> {
@@ -512,7 +500,7 @@ internal class PyInt: PyObject,
       return .notImplemented
     }
 
-    return .value(GeneralHelpers.pyInt(self.value ^ other.value))
+    return .value(self.int(self.value ^ other.value))
   }
 
   internal func rxor(_ other: PyObject) -> BinaryResult<PyObject> {
@@ -522,7 +510,7 @@ internal class PyInt: PyObject,
   // MARK: - Invert
 
   internal var invert: PyObject {
-    return GeneralHelpers.pyInt(~self.value)
+    return self.int(~self.value)
   }
 
   // MARK: - Round
@@ -570,4 +558,14 @@ internal class PyIntType: PyType {
 //>>> int('0b100', base=0)
 //4
 //""" }
+
+  // TODO: Cahce <-10, 255> values
+
+  internal func new(_ value: Int) -> PyInt {
+    return PyInt(type: self, value: BigInt(value))
+  }
+
+  internal func new(_ value: BigInt) -> PyInt {
+    return PyInt(type: self, value: value)
+  }
 }

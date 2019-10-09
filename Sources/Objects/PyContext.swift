@@ -1,12 +1,20 @@
 public class PyContext {
 
-  public var `true`:  PyObject { return GeneralHelpers.true }
-  public var `false`: PyObject { return GeneralHelpers.false }
+  // Internal typed values
+  internal lazy var _true:  PyBool = self.types.bool.new(true)
+  internal lazy var _false: PyBool = self.types.bool.new(false)
+  internal lazy var _none:  PyNone = self.types.none.new()
+  internal lazy var _ellipsis: PyEllipsis = self.types.ellipsis.new()
+  internal lazy var _notImplemented: PyNotImplemented = self.types.notImplemented.new()
+  internal lazy var _emptyTuple: PyTuple = self.types.tuple.new([])
 
-  public lazy var none: PyObject = PyNone.new(self)
-  public lazy var ellipsis: PyObject = PyEllipsis.new(self)
-  public lazy var notImplemented: PyObject = PyNotImplemented.new(self)
-  public lazy var emptyTuple: PyObject = PyTuple.new(self, [])
+  // Public PyObject values
+  public var `true`:   PyObject { return self._true }
+  public var `false`:  PyObject { return self._false }
+  public var none:     PyObject { return self._none }
+  public var ellipsis: PyObject { return self._ellipsis }
+  public var notImplemented: PyObject { return self._notImplemented }
+  public var emptyTuple: PyObject { return self._emptyTuple }
 
   internal lazy var types = PyContextTypes(context: self)
 //  internal lazy var errorTypes = PyContextErrorTypes(context: self)

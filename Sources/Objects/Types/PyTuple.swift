@@ -17,24 +17,11 @@ internal final class PyTuple: PyObject,
   LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
   AddTypeClass, MulTypeClass, RMulTypeClass {
 
-  // TODO: Make this 'let'?
-  internal var elements: [PyObject]
+  internal let elements: [PyObject]
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext,
-                           _ elements: [PyObject]) -> PyTuple {
-    let tupleTupe = context.types.tuple
-    return PyTuple(type: tupleTupe, elements: elements)
-  }
-
-  internal static func new(_ context: PyContext,
-                           _ elements: PyObject...) -> PyTuple {
-    let tupleTupe = context.types.tuple
-    return PyTuple(type: tupleTupe, elements: elements)
-  }
-
-  private init(type: PyTupleType, elements: [PyObject]) {
+  fileprivate init(type: PyTupleType, elements: [PyObject]) {
     self.elements = elements
     super.init(type: type)
   }
@@ -147,7 +134,7 @@ internal final class PyTuple: PyObject,
   // MARK: - Sequence
 
   internal var length: PyInt {
-    return GeneralHelpers.pyInt(self.elements.count)
+    return self.int(self.elements.count)
   }
 
   internal func contains(_ element: PyObject) -> Bool {
@@ -196,7 +183,7 @@ internal final class PyTuple: PyObject,
     }
 
     let result = self.elements + otherTuple.elements
-    return .value(PyTuple.new(self.context, result))
+    return .value(self.tuple(result))
   }
 
   // MARK: - Mul
@@ -204,17 +191,13 @@ internal final class PyTuple: PyObject,
   internal func mul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)
-      .map { elements -> PyTuple in
-        elements.isEmpty ?
-          GeneralHelpers.emptyTuple :
-          PyTuple.new(self.context, elements)
-      }
+      .map(self.tuple)
   }
 
   internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
       .rmul(elements: self.elements, count: other)
-      .map { PyTuple.new(self.context, $0) }
+      .map(self.tuple)
   }
 }
 
@@ -227,4 +210,10 @@ internal final class PyTupleType: PyType {
 //    If the argument is a tuple, the return value is the same object.
 //    """
 //  }
+
+  private lazy var empty = PyTuple(type: self, elements: [])
+
+  internal func new(_ elements: [PyObject]) -> PyTuple {
+    return PyTuple(type: self, elements: elements)
+  }
 }

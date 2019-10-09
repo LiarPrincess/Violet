@@ -15,7 +15,8 @@ import Core
 internal final class PyRange: PyObject,
   ReprTypeClass, EquatableTypeClass, HashableTypeClass,
   BoolConvertibleTypeClass,
-  LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass {
+  LengthTypeClass, ContainsTypeClass, GetItemTypeClass,
+  CountTypeClass, GetIndexOfTypeClass {
 
   internal let start: PyInt
   internal let stop: PyInt
@@ -37,26 +38,14 @@ internal final class PyRange: PyObject,
 
   // MARK: - Init
 
-  internal static func new(_ context: PyContext, stop: PyInt) -> PyResult<PyRange> {
-    let zero = GeneralHelpers.pyInt(0)
-    return new(context, start: zero, stop: stop, step: nil)
-  }
-
-  internal static func new(_ context: PyContext,
-                           start: PyInt,
-                           stop:  PyInt,
-                           step: PyInt?) -> PyResult<PyRange> {
-    if let s = step, s.value == 0 {
-      return .error(.valueError("range() arg 3 must not be zero"))
-    }
-
+  fileprivate init(type: PyRangeType, start: PyInt, stop: PyInt, step: PyInt?) {
     let isGoingUp = start.value < stop.value
 
     let unwrappedStep: PyInt = {
       if let s = step {
         return s
       }
-      return GeneralHelpers.pyInt(isGoingUp ? 1 : -1)
+      return type.context.types.int.new(isGoingUp ? 1 : -1)
     }()
 
     let length: BigInt = {
@@ -72,30 +61,13 @@ internal final class PyRange: PyObject,
       return (diff / abs(unwrappedStep.value)) + 1
     }()
 
-    return .value(
-      PyRange(
-        context,
-        start: start,
-        stop: stop,
-        step: unwrappedStep,
-        stepType: step == nil ? .implicit: .explicit,
-        length: GeneralHelpers.pyInt(length)
-      )
-    )
-  }
-
-  private init(_ context: PyContext,
-               start: PyInt,
-               stop: PyInt,
-               step: PyInt,
-               stepType: StepType,
-               length: PyInt) {
     self.start = start
     self.stop = stop
-    self.step = step
-    self.stepType = stepType
-    self.length = length
-    super.init(type: context.types.range)
+    self.step = unwrappedStep
+    self.stepType = step == nil ? .implicit: .explicit
+    self.length = type.context.types.int.new(length)
+
+    super.init(type: type)
   }
 
   // MARK: - Equatable
@@ -130,20 +102,19 @@ internal final class PyRange: PyObject,
 
   internal var hash: HashableResult {
     let none = self.context.none
-    let lengthInt = GeneralHelpers.pyInt(self.length.value)
-    let tuple = PyTuple.new(self.context, lengthInt, none, none)
+    var tuple = [self.length, none, none]
 
     if self.length.value == 0 {
-      let result = self.context.hash(value: tuple)
+      let result = self.context.hash(value: self.tuple(type))
       return .value(result)
     }
 
-    tuple.elements[1] = self.start
+    tuple[1] = self.start
     if self.length.value != 1 {
-      tuple.elements[2] = self.step
+      tuple[2] = self.step
     }
 
-    let result = self.context.hash(value: tuple)
+    let result = self.context.hash(value: self.tuple(type))
     return .value(result)
   }
 
@@ -232,7 +203,7 @@ internal final class PyRange: PyObject,
     }
 
     let result = self.start.value + self.step.value * index
-    return .value(GeneralHelpers.pyInt(result))
+    return .value(self.int(result))
   }
 
   internal func getItem(at slice: PySlice) -> GetItemResult<PyRange> {
@@ -253,9 +224,9 @@ internal final class PyRange: PyObject,
     }
 
     let sliceStep = slice.step?.value ?? 1
-    let step = GeneralHelpers.pyInt(sliceStep * self.step.value)
+    let step = self.int(sliceStep * self.step.value)
 
-    let result = PyRange.new(self.context, start: start, stop: stop, step: step)
+    let result = self.range(start: start, stop: stop, step: step)
     return result.flatMap { .value($0) }
   }
 
@@ -296,4 +267,17 @@ internal final class PyRangeType: PyType {
 //    When step is given, it specifies the increment (or decrement).
 //    """
 //  }
+
+  internal func new(stop: PyInt) -> PyResult<PyRange> {
+    let zero = self.int(0)
+    return self.new(start: zero, stop: stop, step: nil)
+  }
+
+  internal func new(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
+    if let s = step, s.value == 0 {
+      return .error(.valueError("range() arg 3 must not be zero"))
+    }
+
+    return .value(PyRange(type: self, start: start, stop: stop, step: step))
+  }
 }
