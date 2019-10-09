@@ -14,20 +14,28 @@ internal struct PyObjectFlags: OptionSet {
 
 public class PyObject {
 
-  internal var flags: PyObjectFlags
-  internal let type: PyType
+  internal var flags: PyObjectFlags = []
+
+  // swiftlint:disable:next implicitly_unwrapped_optional
+  private let _type: PyType!
+  internal var type: PyType {
+    return self._type
+  }
 
   internal var context: PyContext {
     return self.type.context
   }
 
-  internal var types: PyContextTypes {
-    return self.context.types
+  // MARK: - Init
+
+  /// NEVER EVER use this ctor! It is reserved for PyType!
+  /// Use version with 'type: PyType' parameter.
+  internal init() {
+    self._type = nil
   }
 
   internal init(type: PyType) {
-    self.flags = []
-    self.type = type
+    self._type = type
   }
 
   // MARK: - Repr

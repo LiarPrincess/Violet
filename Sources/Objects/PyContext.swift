@@ -40,6 +40,11 @@ internal final class PyContextTypes {
 
   internal lazy var string = PyStringType(context: self.context)
 
+  // TODO: internal lazy var typeType = PyType2(self)
+  internal var typeType: PyType {
+    fatalError()
+  }
+
   private unowned let context: PyContext
 
   fileprivate init(context: PyContext) {

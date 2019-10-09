@@ -56,14 +56,14 @@ internal final class PySetType: PyType /* ,
   LengthTypeClass, ContainsTypeClass,
   ClearTypeClass */ {
 
-  override internal var name: String { return "set" }
-  override internal var doc: String? { return """
-    set() -> new empty set object
-    set(iterable) -> new set object
-
-    Build an unordered collection of unique elements.
-    """
-  }
+//  override internal var name: String { return "set" }
+//  override internal var doc: String? { return """
+//    set() -> new empty set object
+//    set(iterable) -> new set object
+//
+//    Build an unordered collection of unique elements.
+//    """
+//  }
 
   // MARK: - Ctor
 
@@ -174,7 +174,7 @@ internal final class PySetType: PyType /* ,
     l.elements = diff.elements
   }
 
-  func length(value: PyObject) throws -> PyInt {
+  internal func length(value: PyObject) throws -> PyInt {
     let v = try self.matchType(value)
     return self.types.int.new(v.elements.count)
   }

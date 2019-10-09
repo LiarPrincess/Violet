@@ -116,10 +116,11 @@ internal enum GeneralHelpers {
     fatalError()
   }
 
-  internal static var `true`: PyBool  {
+  internal static var `true`: PyBool {
     //PyBool(type: self, value: BigInt(1))
     fatalError()
   }
+
   internal static var `false`: PyBool {
     //PyBool(type: self, value: BigInt(0))
     fatalError()

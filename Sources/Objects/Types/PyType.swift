@@ -1,23 +1,24 @@
-internal class PyType: TypeClass {
+internal class PyType: PyObject {
 
-  internal var name: String { return "" }
-  internal var base: PyType? { return nil }
-  internal var doc: String? { return nil }
-  internal unowned let context: PyContext
+  internal let name: String = ""
+  internal let base: PyType? = nil
+  internal let subclasses: String = "" // weak
 
-  internal var types: PyContextTypes {
-    return self.context.types
+  internal let doc: String? = nil
+  internal let mro: String = ""
+  internal let dict: [String:Any] = [:]
+
+  private unowned let _context: PyContext
+  override internal var context: PyContext {
+    return self._context
   }
 
-  internal var errorTypes: PyContextErrorTypes {
-    return self.context.errorTypes
-  }
-
-  internal var warningTypes: PyContextWarningTypes {
-    return self.context.warningTypes
+  override internal var type: PyType {
+    return self.context.types.typeType
   }
 
   internal init(context: PyContext) {
-    self.context = context
+    self._context = context
+    super.init()
   }
 }
