@@ -4,9 +4,6 @@ import Core
 // Objects -> boolobject.c
 // https://docs.python.org/3.7/c-api/bool.html
 
-// TODO: Bool
-// def __getnewargs__(self) -> Tuple[int]: ...
-
 extension BigInt {
   internal var isTrue: Bool {
     return self != 0
@@ -19,6 +16,7 @@ extension Int {
   }
 }
 
+#warning("Do something with bool")
 // sourcery: pytype = bool
 /// Booleans in Python are implemented as a subclass of integers.
 /// There are only two booleans, Py_False and Py_True.

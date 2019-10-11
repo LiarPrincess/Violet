@@ -5,21 +5,10 @@ import Core
 // https://docs.python.org/3/library/stdtypes.html#range
 
 // TODO: PyRange
-// __class__
-// __delattr__
-// __dir__
-// __format__
 // __getattribute__
-// __init__
-// __init_subclass__
 // __iter__
-// __new__
 // __reduce__
-// __reduce_ex__
 // __reversed__
-// __setattr__
-// __sizeof__
-// __subclasshook__
 // start
 // step
 // stop
@@ -30,7 +19,7 @@ import Core
 /// The range type represents an immutable sequence of numbers
 /// and is commonly used for looping a specific number of times in for loops.
 internal final class PyRange: PyObject,
-  ReprTypeClass, StrTypeClass,
+  ReprTypeClass,
   ComparableTypeClass, HashableTypeClass,
   BoolConvertibleTypeClass,
   LengthTypeClass, ContainsTypeClass, GetItemTypeClass,
@@ -177,10 +166,6 @@ internal final class PyRange: PyObject,
     case .explicit:
       return "range(\(start), \(stop), \(self.step.repr()))"
     }
-  }
-
-  internal func str() -> String {
-    return self.repr()
   }
 
   // MARK: - Convertible

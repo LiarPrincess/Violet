@@ -5,25 +5,13 @@ import Core
 // https://docs.python.org/3.7/c-api/list.html
 
 // TODO: List
-// __class__
-// __delattr__
+// def __init__(self, iterable: Iterable[_T]) -> None: ...
 // __delitem__
-// __dir__
-// __doc__
-// __format__
 // __getattribute__
 // __init__
-// __init_subclass__
 // __iter__
-// __new__
-// __reduce__
-// __reduce_ex__
 // __reversed__
-// __setattr__
 // __setitem__
-// __sizeof__
-// __subclasshook__
-// extend
 // insert
 // pop
 // remove
@@ -188,6 +176,7 @@ internal final class PyList: PyObject,
     self.elements.append(element)
   }
 
+  // sourcery: pymethod = extend
   internal func extend(_ iterator: PyObject) {
     // Check if implementatio is OK with 'addInPlace'
     // TODO: Write this - list_extend(PyListObject *self, PyObject *iterable)

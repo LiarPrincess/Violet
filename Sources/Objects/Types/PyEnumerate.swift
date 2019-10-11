@@ -1,30 +1,10 @@
 import Core
 
 // TODO: Enumerate
-// __eq__
-// __ne__
-// __lt__
-// __le__
-// __gt__
-// __ge__
-// __repr__
-// __str__
-// __class__
-// __hash__
-// __delattr__
-// __dir__
-// __format__
 // __getattribute__
-// __init__
-// __init_subclass__
 // __iter__
-// __new__
 // __next__
 // __reduce__
-// __reduce_ex__
-// __setattr__
-// __sizeof__
-// __subclasshook__
 
 internal typealias PyEnumerateSource = PyObject & IterableTypeClass
 

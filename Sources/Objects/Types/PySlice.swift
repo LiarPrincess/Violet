@@ -5,20 +5,8 @@ import Core
 // https://docs.python.org/3.7/c-api/slice.html
 
 // MARK: - Slice
-// __class__
-// __delattr__
-// __dir__
-// __doc__
-// __format__
 // __getattribute__
-// __init__
-// __init_subclass__
-// __new__
 // __reduce__
-// __reduce_ex__
-// __setattr__
-// __sizeof__
-// __subclasshook__
 // indices
 // start
 // step
@@ -28,7 +16,7 @@ import Core
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
 internal final class PySlice: PyObject,
-  ReprTypeClass, StrTypeClass,
+  ReprTypeClass,
   ComparableTypeClass, HashableTypeClass {
 
   internal static let doc: String = """
@@ -128,10 +116,6 @@ internal final class PySlice: PyObject,
     let stop  = self.stop.map(self.context.reprString) ?? noneRepr
     let step  = self.step.map(self.context.reprString) ?? noneRepr
     return "slice(\(start), \(stop), \(step))"
-  }
-
-  internal func str() -> String {
-    return self.repr()
   }
 
   // MARK: - Indices

@@ -6,20 +6,13 @@ import Core
 // https://docs.python.org/3.7/c-api/complex.html
 
 // TODO: Complex
-// __class__
-// __delattr__
-// __dir__
+// @overload
+// def __init__(self, s: str) -> None: ...
+// @overload
+// def __init__(self, s: SupportsComplex) -> None: ...
 // __format__
 // __getattribute__
 // __getnewargs__
-// __init__
-// __init_subclass__
-// __new__
-// __reduce__
-// __reduce_ex__
-// __setattr__
-// __sizeof__
-// __subclasshook__
 
 // swiftlint:disable file_length
 

@@ -6,25 +6,19 @@ import Core
 // https://docs.python.org/3.7/c-api/long.html
 
 // TODO: Int
-// __class__
-// __delattr__
-// __dir__
+// @overload
+// def __init__(self, x: Union[Text, bytes, SupportsInt] = ...) -> None: ...
+// @overload
+// def __init__(self, x: Union[Text, bytes, bytearray], base: int) -> None: ...
 // __ceil__
 // __floor__
 // __format__
 // __getattribute__
 // __getnewargs__
-// __init__
-// __init_subclass__
-// __new__
-// __reduce__
-// __reduce_ex__
-// __setattr__
-// __sizeof__
-// __subclasshook__
+// __lshift__
+// __rshift__
 // __trunc__
 // bit_length
-// from_bytes
 // to_bytes
 
 // swiftlint:disable file_length

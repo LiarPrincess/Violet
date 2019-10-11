@@ -5,23 +5,9 @@ import Core
 // https://docs.python.org/3.7/c-api/tuple.html
 
 // TODO: Tuple
-// def __init__(self, iterable: Iterable[_T_co] = ...): ...
-// def __iter__(self) -> Iterator[_T_co]: ... < IterTC
-// __class__
-// __delattr__
-// __dir__
-// __format__
 // __getattribute__
 // __getnewargs__
-// __init__
-// __init_subclass__
 // __iter__
-// __new__
-// __reduce__
-// __reduce_ex__
-// __setattr__
-// __sizeof__
-// __subclasshook__
 
 // sourcery: pytype = tuple
 /// This instance of PyTypeObject represents the Python tuple type;

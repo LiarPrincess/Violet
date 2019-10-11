@@ -7,26 +7,16 @@ import Core
 // https://developer.apple.com/documentation/swift/double/floating-point_operators_for_double
 
 // TODO: Float
-// __class__
-// __delattr__
-// __dir__
+// def __init__(self, x: Union[SupportsFloat, Text, bytes, bytearray] = ...)
 // __format__
 // __getattribute__
-// __getformat__
 // __getnewargs__
-// __init__
-// __init_subclass__
-// __new__
-// __reduce__
-// __reduce_ex__
-// __set_format__
-// __setattr__
-// __sizeof__
-// __subclasshook__
 // __trunc__
-// fromhex
+// as_integer_ratio
 // hex
-// is_integer
+// @classmethod
+// def fromhex(cls, s: str) -> float: ...
+// as_integer_ratio
 
 // swiftlint:disable file_length
 

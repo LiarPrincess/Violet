@@ -237,6 +237,7 @@ extension PyType {
     // result.__doc__ = PyList.doc
 
     // result.append = PyList.append(_ element: PyObject)
+    // result.extend = PyList.extend(_ iterator: PyObject)
     // result.clear = PyList.clear()
     // result.copy = PyList.copy()
     // result.__iadd__ = PyList.addInPlace(_ other: PyObject)
@@ -300,7 +301,6 @@ extension PyType {
     // result.__hash__ = PyRange.hash()
     // result.__len__ = PyRange.getLength()
     // result.__repr__ = PyRange.repr()
-    // result.__str__ = PyRange.str()
 
     return result
   }
@@ -318,7 +318,6 @@ extension PyType {
     // result.__ge__ = PySlice.isGreaterEqual(_ other: PyObject)
     // result.__hash__ = PySlice.hash()
     // result.__repr__ = PySlice.repr()
-    // result.__str__ = PySlice.str()
 
     return result
   }

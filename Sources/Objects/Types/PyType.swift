@@ -26,7 +26,7 @@ internal class PyType: PyObject {
 
   // MARK: - Init
 
-  convenience internal init(_ context: PyContext,
+  internal convenience init(_ context: PyContext,
                             name: String,
                             type: PyType,
                             base: PyType?) {
@@ -162,7 +162,7 @@ internal class PyType: PyObject {
 
       let anyTailContains = mros.contains { classList in
         let tail = classList.dropFirst()
-        return tail.contains(where: { $0 === head })
+        return tail.contains { $0 === head }
       }
 
       if anyTailContains {
