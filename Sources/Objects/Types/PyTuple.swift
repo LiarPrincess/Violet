@@ -13,7 +13,7 @@ import Core
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
 internal final class PyTuple: PyObject,
-  ReprTypeClass, StrTypeClass,
+  ReprTypeClass,
   ComparableTypeClass, HashableTypeClass,
   LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
   AddTypeClass, MulTypeClass, RMulTypeClass {
@@ -131,10 +131,6 @@ internal final class PyTuple: PyObject,
       result += self.elements.count > 1 ? ")" : ",)"
       return result
     }
-  }
-
-  internal func str() -> String {
-    return self.repr()
   }
 
   // MARK: - Sequence

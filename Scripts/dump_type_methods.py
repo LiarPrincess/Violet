@@ -54,7 +54,7 @@ for t in implemented.types:
 
     if implemented_extra:
       print('  Please remind me why do we even have this method?')
-      for m in implemented_methods:
+      for m in implemented_extra:
         print('   ', m)
 
   if print_derived_members:

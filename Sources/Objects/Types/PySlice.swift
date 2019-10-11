@@ -15,9 +15,7 @@ import Core
 // sourcery: pytype = slice
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
-internal final class PySlice: PyObject,
-  ReprTypeClass,
-  ComparableTypeClass, HashableTypeClass {
+internal final class PySlice: PyObject, ReprTypeClass, ComparableTypeClass {
 
   internal static let doc: String = """
     slice(stop)
@@ -100,12 +98,6 @@ internal final class PySlice: PyObject,
     return SequenceHelper.isGreaterEqual(context: self.context,
                                          left: self.asObjectArray,
                                          right: other.asObjectArray)
-  }
-
-  // MARK: - Hashable
-
-  internal func hash() -> HashableResult {
-    return .notImplemented
   }
 
   // MARK: - String

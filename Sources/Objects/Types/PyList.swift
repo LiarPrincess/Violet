@@ -23,8 +23,8 @@ import Core
 // sourcery: pytype = list
 /// This subtype of PyObject represents a Python list object.
 internal final class PyList: PyObject,
-  ReprTypeClass, StrTypeClass,
-  ComparableTypeClass, HashableTypeClass,
+  ReprTypeClass,
+  ComparableTypeClass,
   LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
   AddTypeClass, AddInPlaceTypeClass, MulTypeClass, RMulTypeClass, MulInPlaceTypeClass {
 
@@ -101,13 +101,6 @@ internal final class PyList: PyObject,
                                          right: other.elements)
   }
 
-  // MARK: - Hashable
-
-  internal func hash() -> HashableResult {
-    // Member exists, but always return .notImplemented.
-    return .notImplemented
-  }
-
   // MARK: - String
 
   internal func repr() -> String {
@@ -132,10 +125,6 @@ internal final class PyList: PyObject,
       result += self.elements.count > 1 ? "]" : ",]"
       return result
     }
-  }
-
-  internal func str() -> String {
-    return self.repr()
   }
 
   // MARK: - Sequence

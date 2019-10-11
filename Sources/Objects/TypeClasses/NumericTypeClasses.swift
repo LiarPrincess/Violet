@@ -188,9 +188,9 @@ internal protocol RDivModTypeClass: TypeClass {
 internal typealias ShiftResult<T> = PyResultOrNot<T>
 
 internal protocol ShiftTypeClass: TypeClass {
-  // sourcery: pymethod = __lShift__
+  // sourcery: pymethod = __lshift__
   func lShift(_ other: PyObject) -> ShiftResult<PyObject>
-  // sourcery: pymethod = __rShift__
+  // sourcery: pymethod = __rshift__
   func rShift(_ other: PyObject) -> ShiftResult<PyObject>
 }
 

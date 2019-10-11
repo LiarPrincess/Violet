@@ -7,7 +7,8 @@ extension PyType {
 {% for type in types.classes|annotated:"pytype" %}
 
   internal static func {{ type.annotations.pytype }}(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    {% if not type.isFinal %}
+    {# All types (except for PyInt) have to be marked final, stencil has problem with: 'not (type.isFinal or type.name == "PyInt")'#}
+    {% if not type.isFinal and type.name != "PyInt" %}
     #warning("Type {{ type.name }} should be marked final.")
     {% endif %}
     let result = PyType(context, name: "{{ type.annotations.pytype }}", type: type, base: base)
@@ -16,9 +17,16 @@ extension PyType {
     // result.__doc__ = {{ type.name }}.{{ variable.name }}
     {% endfor %}
 
-    {% for method in type.allMethods|annotated:"pymethod" %}
+    {# Bool is subclass of Int, only Bool methods should be emitted, otherwise allMethods #}
+    {% if type.annotations.pytype == "bool" %}
+      {% for method in type.methods|annotated:"pymethod" %}
     // result.{{ method.annotations.pymethod }} = {{ type.name }}.{{ method.name }}
-    {% endfor %}
+      {% endfor %}
+    {% else %}
+      {% for method in type.allMethods|annotated:"pymethod" %}
+    // result.{{ method.annotations.pymethod }} = {{ type.name }}.{{ method.name }}
+      {% endfor %}
+    {% endif %}
 
     return result
   }

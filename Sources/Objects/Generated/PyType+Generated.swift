@@ -14,55 +14,14 @@ extension PyType {
 
     // result.__doc__ = PyBool.doc
 
-    // result.numerator = PyBool.numerator()
-    // result.denominator = PyBool.denominator()
-    // result.__abs__ = PyBool.abs()
-    // result.__add__ = PyBool.add(_ other: PyObject)
-    // result.__and__ = PyBool.and(_ other: PyObject)
-    // result.__or__ = PyBool.or(_ other: PyObject)
-    // result.__xor__ = PyBool.xor(_ other: PyObject)
-    // result.__bool__ = PyBool.asBool()
-    // result.__eq__ = PyBool.isEqual(_ other: PyObject)
-    // result.__ne__ = PyBool.isNotEqual(_ other: PyObject)
-    // result.__lt__ = PyBool.isLess(_ other: PyObject)
-    // result.__le__ = PyBool.isLessEqual(_ other: PyObject)
-    // result.__gt__ = PyBool.isGreater(_ other: PyObject)
-    // result.__ge__ = PyBool.isGreaterEqual(_ other: PyObject)
-    // result.conjugate = PyBool.conjugate()
-    // result.__divmod__ = PyBool.divMod(_ other: PyObject)
-    // result.__float__ = PyBool.asFloat()
-    // result.__floordiv__ = PyBool.floorDiv(_ other: PyObject)
-    // result.__hash__ = PyBool.hash()
-    // result.imag = PyBool.asImag()
-    // result.__index__ = PyBool.asIndex()
-    // result.__int__ = PyBool.asInt()
-    // result.__invert__ = PyBool.invert()
-    // result.__mod__ = PyBool.mod(_ other: PyObject)
-    // result.__mul__ = PyBool.mul(_ other: PyObject)
-    // result.__pow__ = PyBool.pow(_ other: PyObject)
-    // result.__radd__ = PyBool.radd(_ other: PyObject)
-    // result.__rand__ = PyBool.rand(_ other: PyObject)
-    // result.__ror__ = PyBool.ror(_ other: PyObject)
-    // result.__rxor__ = PyBool.rxor(_ other: PyObject)
-    // result.__rdivmod__ = PyBool.rdivMod(_ other: PyObject)
-    // result.__rfloordiv__ = PyBool.rfloorDiv(_ other: PyObject)
-    // result.__rmod__ = PyBool.rmod(_ other: PyObject)
-    // result.__rmul__ = PyBool.rmul(_ other: PyObject)
-    // result.__rpow__ = PyBool.rpow(_ other: PyObject)
-    // result.__rlshift__ = PyBool.rlShift(_ other: PyObject)
-    // result.__rrshift__ = PyBool.rrShift(_ other: PyObject)
-    // result.__rsub__ = PyBool.rsub(_ other: PyObject)
-    // result.__rtruediv__ = PyBool.rtrueDiv(_ other: PyObject)
-    // result.real = PyBool.asReal()
     // result.__repr__ = PyBool.repr()
-    // result.__round__ = PyBool.round(nDigits: PyObject?)
-    // result.__lShift__ = PyBool.lShift(_ other: PyObject)
-    // result.__rShift__ = PyBool.rShift(_ other: PyObject)
-    // result.__pos__ = PyBool.positive()
-    // result.__neg__ = PyBool.negative()
     // result.__str__ = PyBool.str()
-    // result.__sub__ = PyBool.sub(_ other: PyObject)
-    // result.__truediv__ = PyBool.trueDiv(_ other: PyObject)
+    // result.__and__ = PyBool.and(_ other: PyObject)
+    // result.__rand__ = PyBool.rand(_ other: PyObject)
+    // result.__or__ = PyBool.or(_ other: PyObject)
+    // result.__ror__ = PyBool.ror(_ other: PyObject)
+    // result.__xor__ = PyBool.xor(_ other: PyObject)
+    // result.__rxor__ = PyBool.rxor(_ other: PyObject)
 
     return result
   }
@@ -173,7 +132,6 @@ extension PyType {
   }
 
   internal static func int(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    #warning("Type PyInt should be marked final.")
     let result = PyType(context, name: "int", type: type, base: base)
 
     // result.__doc__ = PyInt.doc
@@ -220,8 +178,8 @@ extension PyType {
     // result.real = PyInt.asReal()
     // result.__repr__ = PyInt.repr()
     // result.__round__ = PyInt.round(nDigits: PyObject?)
-    // result.__lShift__ = PyInt.lShift(_ other: PyObject)
-    // result.__rShift__ = PyInt.rShift(_ other: PyObject)
+    // result.__lshift__ = PyInt.lShift(_ other: PyObject)
+    // result.__rshift__ = PyInt.rShift(_ other: PyObject)
     // result.__pos__ = PyInt.positive()
     // result.__neg__ = PyInt.negative()
     // result.__str__ = PyInt.str()
@@ -252,13 +210,11 @@ extension PyType {
     // result.count = PyList.count(_ element: PyObject)
     // result.index = PyList.getIndex(of element: PyObject)
     // result.__getitem__ = PyList.getItem(at index: PyObject)
-    // result.__hash__ = PyList.hash()
     // result.__len__ = PyList.getLength()
     // result.__imul__ = PyList.mulInPlace(_ other: PyObject)
     // result.__mul__ = PyList.mul(_ other: PyObject)
     // result.__rmul__ = PyList.rmul(_ other: PyObject)
     // result.__repr__ = PyList.repr()
-    // result.__str__ = PyList.str()
 
     return result
   }
@@ -316,7 +272,6 @@ extension PyType {
     // result.__le__ = PySlice.isLessEqual(_ other: PyObject)
     // result.__gt__ = PySlice.isGreater(_ other: PyObject)
     // result.__ge__ = PySlice.isGreaterEqual(_ other: PyObject)
-    // result.__hash__ = PySlice.hash()
     // result.__repr__ = PySlice.repr()
 
     return result
@@ -343,7 +298,6 @@ extension PyType {
     // result.__mul__ = PyTuple.mul(_ other: PyObject)
     // result.__rmul__ = PyTuple.rmul(_ other: PyObject)
     // result.__repr__ = PyTuple.repr()
-    // result.__str__ = PyTuple.str()
 
     return result
   }
