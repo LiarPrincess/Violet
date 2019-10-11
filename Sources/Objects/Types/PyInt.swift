@@ -6,31 +6,38 @@ import Core
 // https://docs.python.org/3.7/c-api/long.html
 
 // TODO: Int
-// @overload
-// def __init__(self, x: Union[Text, bytes, SupportsInt] = ...) -> None: ...
-// @overload
-// def __init__(self, x: Union[Text, bytes, bytearray], base: int) -> None: ...
-// def __getnewargs__(self) -> Tuple[int]: ...
-// def bit_length(self) -> int: ...
-// def to_bytes(self, length: int, byteorder: str, *, signed: bool = ...) -> bytes: ...
-// @classmethod
-// def from_bytes(cls, bytes: Sequence[int], byteorder: str, *, signed: bool = ...)
-// #[pymethod(name = "__trunc__")]
-// #[pymethod(name = "__floor__")]
-// #[pymethod(name = "__ceil__")]
-// #[pymethod(name = "__index__")]
-// #[pymethod(name = "__format__")]
+// __class__
+// __delattr__
+// __dir__
+// __ceil__
+// __floor__
+// __format__
+// __getattribute__
+// __getnewargs__
+// __init__
+// __init_subclass__
+// __new__
+// __reduce__
+// __reduce_ex__
+// __setattr__
+// __sizeof__
+// __subclasshook__
+// __trunc__
+// bit_length
+// from_bytes
+// to_bytes
 
 // swiftlint:disable file_length
 
+// sourcery: pytype = int
 /// All integers are implemented as “long” integer objects of arbitrary size.
 internal class PyInt: PyObject,
   ReprTypeClass, StrTypeClass,
-  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
-  BoolConvertibleTypeClass, IntConvertibleTypeClass,
-  FloatConvertibleTypeClass, ComplexConvertibleTypeClass,
+  ComparableTypeClass, HashableTypeClass,
+  BoolConvertibleTypeClass, IntConvertibleTypeClass, FloatConvertibleTypeClass,
+  RealConvertibleTypeClass, ImagConvertibleTypeClass, ConjugateTypeClass,
   IndexConvertibleTypeClass,
-  SignedTypeClass, AbsTypeClass, InvertTypeClass,
+  SignedTypeClass, AbsTypeClass, InvertTypeClass, RoundTypeClass,
   AddTypeClass, RAddTypeClass,
   SubTypeClass, RSubTypeClass,
   MulTypeClass, RMulTypeClass,
@@ -41,6 +48,24 @@ internal class PyInt: PyObject,
   DivModTypeClass, RDivModTypeClass,
   ShiftTypeClass, RShiftTypeClass,
   BinaryTypeClass, RBinaryTypeClass {
+
+  internal class var doc: String { return """
+    int([x]) -> integer
+    int(x, base=10) -> integer
+
+    Convert a number or string to an integer, or return 0 if no arguments
+    are given.  If x is a number, return x.__int__().  For floating point
+    numbers, this truncates towards zero.
+
+    If x is not a number or if base is given, then x must be a string,
+    bytes, or bytearray instance representing an integer literal in the
+    given base.  The literal can be preceded by '+' or '-' and be surrounded
+    by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
+    Base 0 means to interpret the base from the string as an integer literal.
+    >>> int('0b100', base=0)
+    4
+    """
+  }
 
   internal var value: BigInt
 
@@ -109,80 +134,77 @@ internal class PyInt: PyObject,
 
   // MARK: - Hashable
 
-  internal var hash: HashableResult {
+  internal func hash() -> HashableResult {
     return .value(self.context.hasher.hash(self.value))
   }
 
   // MARK: - String
 
-  internal var repr: String {
+  internal func repr() -> String {
     return String(describing: self.value)
   }
 
-  internal var str: String {
-    return self.repr
+  internal func str() -> String {
+    return self.repr()
   }
 
   // MARK: - Convertible
 
-  internal var asBool: PyResult<Bool> {
+  internal func asBool() -> PyResult<Bool> {
     return .value(self.value != 0)
   }
 
-  internal var asInt: PyResult<PyInt> {
+  internal func asInt() -> PyResult<PyInt> {
     return .value(self)
   }
 
-  internal var asFloat: PyResult<PyFloat> {
+  internal func asFloat() -> PyResult<PyFloat> {
     return .value(self.float(Double(self.value)))
   }
 
-  internal var asIndex: BigInt {
+  internal func asIndex() -> BigInt {
     return self.value
   }
 
   // MARK: - Imaginary
 
-  internal var real: PyInt {
+  internal func asReal() -> PyObject {
     return self
   }
 
-  internal var imag: PyInt {
+  internal func asImag() -> PyObject {
     return self.int(0)
-  }
-
-  internal var asComplex: PyResult<PyComplex> {
-    let real = Double(self.value)
-    return .value(self.complex(real: real, imag: 0.0))
   }
 
   /// int.conjugate
   /// Return self, the complex conjugate of any int.
-  internal var conjugate: PyInt {
+  internal func conjugate() -> PyObject {
     return self
   }
 
-  internal var numerator: PyInt {
+  // sourcery: pymethod = numerator
+  internal func numerator() -> PyInt {
     return self
   }
 
-  internal var denominator: PyInt {
+  // sourcery: pymethod = denominator
+  internal func denominator() -> PyInt {
     return self.int(1)
   }
 
   // MARK: - Sign
 
-  internal var positive: PyObject {
+  internal func positive() -> PyObject {
     return self
   }
 
-  internal var negative: PyObject {
+  internal func negative() -> PyObject {
     return self.int(-self.value)
   }
 
   // MARK: - Abs
 
-  internal var abs: PyObject {
+  internal func abs() -> PyObject {
     return self.int(Swift.abs(self.value))
   }
 
@@ -515,15 +537,11 @@ internal class PyInt: PyObject,
 
   // MARK: - Invert
 
-  internal var invert: PyObject {
+  internal func invert() -> PyObject {
     return self.int(~self.value)
   }
 
   // MARK: - Round
-
-  internal func round() -> PyResultOrNot<PyInt> {
-    return .value(self)
-  }
 
   /// Round an integer m to the nearest 10**n (n positive)
   ///
@@ -531,7 +549,9 @@ internal class PyInt: PyObject,
   /// int.__round__(12345,  2) -> 12345
   /// int.__round__(12345, -2) -> 12300
   /// ```
-  internal func round(nDigits: PyObject) -> PyResultOrNot<PyInt> {
+  internal func round(nDigits: PyObject?) -> RoundResult<PyObject> {
+    let nDigits = nDigits ?? self.context._none
+
     var digitCount: BigInt?
 
     if nDigits is PyNone {
@@ -550,24 +570,4 @@ internal class PyInt: PyObject,
     // TODO: Implement int rounding to arbitrary precision
     return .notImplemented
   }
-}
-
-internal class PyIntType: PyType {
-//  override internal var name: String { return "int" }
-//  override internal var doc: String? { return """
-//int([x]) -> integer
-//int(x, base=10) -> integer
-//
-//Convert a number or string to an integer, or return 0 if no arguments
-//are given.  If x is a number, return x.__int__().  For floating point
-//numbers, this truncates towards zero.
-//
-//If x is not a number or if base is given, then x must be a string,
-//bytes, or bytearray instance representing an integer literal in the
-//given base.  The literal can be preceded by '+' or '-' and be surrounded
-//by whitespace.  The base defaults to 10.  Valid bases are 0 and 2-36.
-//Base 0 means to interpret the base from the string as an integer literal.
-//>>> int('0b100', base=0)
-//4
-//""" }
 }

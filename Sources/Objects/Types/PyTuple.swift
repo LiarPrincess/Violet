@@ -7,15 +7,37 @@ import Core
 // TODO: Tuple
 // def __init__(self, iterable: Iterable[_T_co] = ...): ...
 // def __iter__(self) -> Iterator[_T_co]: ... < IterTC
+// __class__
+// __delattr__
+// __dir__
+// __format__
+// __getattribute__
+// __getnewargs__
+// __init__
+// __init_subclass__
+// __iter__
+// __new__
+// __reduce__
+// __reduce_ex__
+// __setattr__
+// __sizeof__
+// __subclasshook__
 
+// sourcery: pytype = tuple
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
 internal final class PyTuple: PyObject,
-  ReprTypeClass,
-  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
-  BoolConvertibleTypeClass,
+  ReprTypeClass, StrTypeClass,
+  ComparableTypeClass, HashableTypeClass,
   LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
   AddTypeClass, MulTypeClass, RMulTypeClass {
+
+  internal static let doc: String = """
+    tuple() -> an empty tuple
+    tuple(sequence) -> tuple initialized from sequence's items
+
+    If the argument is a tuple, the return value is the same object.
+    """
 
   internal let elements: [PyObject]
 
@@ -37,8 +59,6 @@ internal final class PyTuple: PyObject,
                                   left: self.elements,
                                   right: other.elements)
   }
-
-  //TODO: Not equal
 
   // MARK: - Comparable
 
@@ -84,7 +104,7 @@ internal final class PyTuple: PyObject,
 
   // MARK: - Hashable
 
-  internal var hash: HashableResult {
+  internal func hash() -> HashableResult {
     let hasher = self.context.hasher
 
     var x: PyHash = 0x345678
@@ -100,7 +120,7 @@ internal final class PyTuple: PyObject,
 
   // MARK: - String
 
-  internal var repr: String {
+  internal func repr() -> String {
     if self.elements.isEmpty {
       return "()"
     }
@@ -127,16 +147,14 @@ internal final class PyTuple: PyObject,
     }
   }
 
-  // MARK: - Convertible
-
-  internal var asBool: PyResult<Bool> {
-    return .value(self.elements.any)
+  internal func str() -> String {
+    return self.repr()
   }
 
   // MARK: - Sequence
 
-  internal var length: PyInt {
-    return self.int(self.elements.count)
+  internal func getLength() -> BigInt {
+    return BigInt(self.elements.count)
   }
 
   internal func contains(_ element: PyObject) -> Bool {
@@ -201,15 +219,4 @@ internal final class PyTuple: PyObject,
       .rmul(elements: self.elements, count: other)
       .map(self.tuple)
   }
-}
-
-internal final class PyTupleType: PyType {
-//  override internal var name: String { return "tuple" }
-//  override internal var doc: String? { return """
-//    tuple() -> an empty tuple
-//    tuple(sequence) -> tuple initialized from sequence's items
-//
-//    If the argument is a tuple, the return value is the same object.
-//    """
-//  }
 }

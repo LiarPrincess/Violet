@@ -1,24 +1,20 @@
 // MARK: - Unary
 
 internal protocol SignedTypeClass: TypeClass {
-  /// Returns o on success.
-  /// This is the equivalent of the Python expression +o.
-  var positive: PyObject { get }
-  /// Returns the negation of o on success.
-  /// This is the equivalent of the Python expression -o.
-  var negative: PyObject { get }
+  // sourcery: pymethod = __pos__
+  func positive() -> PyObject
+  // sourcery: pymethod = __neg__
+  func negative() -> PyObject
 }
 
 internal protocol AbsTypeClass: TypeClass {
-  /// Returns the absolute value of o.
-  /// This is the equivalent of the Python expression abs(o).
-  var abs: PyObject { get }
+  // sourcery: pymethod = __abs__
+  func abs() -> PyObject
 }
 
 internal protocol InvertTypeClass: TypeClass {
-  /// Returns the bitwise negation of o on success.
-  /// This is the equivalent of the Python expression ~o.
-  var invert: PyObject { get }
+  // sourcery: pymethod = __invert__
+  func invert() -> PyObject
 }
 
 // MARK: - Add
@@ -26,21 +22,17 @@ internal protocol InvertTypeClass: TypeClass {
 internal typealias AddResult<T> = PyResultOrNot<T>
 
 internal protocol AddTypeClass: TypeClass {
-  /// Returns the result of adding o1 and o2.
-  /// This is the equivalent of the Python expression o1 + o2.
+  // sourcery: pymethod = __add__
   func add(_ other: PyObject) -> AddResult<PyObject>
 }
 
 internal protocol RAddTypeClass: TypeClass {
-  /// Returns the result of adding o1 and o2.
-  /// This is the equivalent of the Python expression o1 + o2.
+  // sourcery: pymethod = __radd__
   func radd(_ other: PyObject) -> AddResult<PyObject>
 }
 
 internal protocol AddInPlaceTypeClass: TypeClass {
-  /// Returns the result of adding o1 and o2..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 += o2.
+  // sourcery: pymethod = __iadd__
   func addInPlace(_ other: PyObject) -> AddResult<PyObject>
 }
 
@@ -49,21 +41,17 @@ internal protocol AddInPlaceTypeClass: TypeClass {
 internal typealias SubResult<T> = PyResultOrNot<T>
 
 internal protocol SubTypeClass: TypeClass {
-  /// Returns the result of subtracting o2 from o1.
-  /// This is the equivalent of the Python expression o1 - o2.
+  // sourcery: pymethod = __sub__
   func sub(_ other: PyObject) -> SubResult<PyObject>
 }
 
 internal protocol RSubTypeClass: TypeClass {
-  /// Returns the result of subtracting o2 from o1.
-  /// This is the equivalent of the Python expression o1 - o2.
+  // sourcery: pymethod = __rsub__
   func rsub(_ other: PyObject) -> SubResult<PyObject>
 }
 
 internal protocol SubInPlaceTypeClass: TypeClass {
-  /// Returns the result of subtracting o2 from o1..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 -= o2.
+  // sourcery: pymethod = __isub__
   func subInPlace(_ other: PyObject) -> SubResult<PyObject>
 }
 
@@ -72,21 +60,17 @@ internal protocol SubInPlaceTypeClass: TypeClass {
 internal typealias MulResult<T> = PyResultOrNot<T>
 
 internal protocol MulTypeClass: TypeClass {
-  /// Returns the result of multiplying o1 and o2.
-  /// This is the equivalent of the Python expression o1 * o2.
+  // sourcery: pymethod = __mul__
   func mul(_ other: PyObject) -> MulResult<PyObject>
 }
 
 internal protocol RMulTypeClass: TypeClass {
-  /// Returns the result of multiplying o1 and o2.
-  /// This is the equivalent of the Python expression o1 * o2.
+  // sourcery: pymethod = __rmul__
   func rmul(_ other: PyObject) -> MulResult<PyObject>
 }
 
 internal protocol MulInPlaceTypeClass: TypeClass {
-  /// Returns the result of multiplying o1 and o2..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 *= o2.
+  // sourcery: pymethod = __imul__
   func mulInPlace(_ other: PyObject) -> MulResult<PyObject>
 }
 
@@ -95,15 +79,17 @@ internal protocol MulInPlaceTypeClass: TypeClass {
 internal typealias MatrixMulResult<T> = PyResultOrNot<T>
 
 internal protocol MatrixMulTypeClass: TypeClass {
-  /// Returns the result of matrix multiplication on o1 and o2.
-  /// This is the equivalent of the Python expression o1 @ o2.
+  // sourcery: pymethod = __matmul__
   func matrixMul(_ other: PyObject) -> MatrixMulResult<PyObject>
 }
 
+internal protocol RMatrixMulTypeClass: TypeClass {
+  // sourcery: pymethod = __rmatmul__
+  func rmatrixMul(_ other: PyObject) -> MatrixMulResult<PyObject>
+}
+
 internal protocol MatrixMulInPlaceTypeClass: TypeClass {
-  /// Returns the result of matrix multiplication on o1 and o2..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 @= o2.
+  // sourcery: pymethod = __imatmul__
   func matrixMulInPlace(_ other: PyObject) -> MatrixMulResult<PyObject>
 }
 
@@ -112,26 +98,17 @@ internal protocol MatrixMulInPlaceTypeClass: TypeClass {
 internal typealias PowResult<T> = PyResultOrNot<T>
 
 internal protocol PowTypeClass: TypeClass {
-  /// See the built-in function pow(). Returns NULL on failure.
-  /// This is the equivalent of the Python expression pow(o1, o2, o3),
-  /// where o3 is optional.
+  // sourcery: pymethod = __pow__
   func pow(_ other: PyObject) -> PowResult<PyObject>
 }
 
 internal protocol RPowTypeClass: TypeClass {
-  /// See the built-in function pow(). Returns NULL on failure.
-  /// This is the equivalent of the Python expression pow(o1, o2, o3),
-  /// where o3 is optional.
+  // sourcery: pymethod = __rpow__
   func rpow(_ other: PyObject) -> PowResult<PyObject>
 }
 
 internal protocol PowInPlaceTypeClass: TypeClass {
-  /// See the built-in function pow(). Returns NULL on failure.
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 **= o2 when o3 is Py_None,
-  /// or an in-place variant of pow(o1, o2, o3) otherwise.
-  /// If o3 is to be ignored, pass Py_None in its place
-  /// (passing NULL for o3 would cause an illegal memory access).
+  // sourcery: pymethod = __ipow__
   func powInPlace(_ other: PyObject) -> PowResult<PyObject>
 }
 
@@ -140,27 +117,17 @@ internal protocol PowInPlaceTypeClass: TypeClass {
 internal typealias TrueDivResult<T> = PyResultOrNot<T>
 
 internal protocol TrueDivTypeClass: TypeClass {
-  /// Return a reasonable approximation for the mathematical value of o1 divided by o2.
-  /// The return value is “approximate” because binary floating point numbers
-  /// are approximate; it is not possible to represent all real numbers in base two.
-  /// This function can return a floating point value when passed two integers.
+  // sourcery: pymethod = __truediv__
   func trueDiv(_ other: PyObject) -> TrueDivResult<PyObject>
 }
 
 internal protocol RTrueDivTypeClass: TypeClass {
-  /// Return a reasonable approximation for the mathematical value of o1 divided by o2.
-  /// The return value is “approximate” because binary floating point numbers
-  /// are approximate; it is not possible to represent all real numbers in base two.
-  /// This function can return a floating point value when passed two integers.
+  // sourcery: pymethod = __rtruediv__
   func rtrueDiv(_ other: PyObject) -> TrueDivResult<PyObject>
 }
 
 internal protocol TrueDivInPlaceTypeClass: TypeClass {
-  /// Return a reasonable approximation for the mathematical value of o1 divided by o2..
-  /// The return value is “approximate” because binary floating point numbers
-  /// are approximate; it is not possible to represent all real numbers in base two.
-  /// This function can return a floating point value when passed two integers.
-  /// The operation is done in-place when o1 supports it.
+  // sourcery: pymethod = __itruediv__
   func trueDivInPlace(_ other: PyObject) -> TrueDivResult<PyObject>
 }
 
@@ -169,21 +136,17 @@ internal protocol TrueDivInPlaceTypeClass: TypeClass {
 internal typealias FloorDivResult<T> = PyResultOrNot<T>
 
 internal protocol FloorDivTypeClass: TypeClass {
-  /// Return the floor of o1 divided by o2.
-  /// This is equivalent to the “classic” division of integers.
+  // sourcery: pymethod = __floordiv__
   func floorDiv(_ other: PyObject) -> FloorDivResult<PyObject>
 }
 
 internal protocol RFloorDivTypeClass: TypeClass {
-  /// Return the floor of o1 divided by o2.
-  /// This is equivalent to the “classic” division of integers.
+  // sourcery: pymethod = __rfloordiv__
   func rfloorDiv(_ other: PyObject) -> FloorDivResult<PyObject>
 }
 
 internal protocol FloorDivInPlaceTypeClass: TypeClass {
-  /// Returns the mathematical floor of dividing o1 by o2..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 //= o2.
+  // sourcery: pymethod = __ifloordiv__
   func floorDivInPlace(_ other: PyObject) -> FloorDivResult<PyObject>
 }
 
@@ -192,21 +155,17 @@ internal protocol FloorDivInPlaceTypeClass: TypeClass {
 internal typealias ModResult<T> = PyResultOrNot<T>
 
 internal protocol ModTypeClass: TypeClass {
-  /// Returns the remainder of dividing o1 by o2.
-  /// This is the equivalent of the Python expression o1 % o2.
+  // sourcery: pymethod = __mod__
   func mod(_ other: PyObject) -> ModResult<PyObject>
 }
 
 internal protocol RModTypeClass: TypeClass {
-  /// Returns the remainder of dividing o1 by o2.
-  /// This is the equivalent of the Python expression o1 % o2.
+  // sourcery: pymethod = __rmod__
   func rmod(_ other: PyObject) -> ModResult<PyObject>
 }
 
 internal protocol ModInPlaceTypeClass: TypeClass {
-  /// Returns the remainder of dividing o1 by o2..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 %= o2.
+  // sourcery: pymethod = __imod__
   func modInPlace(_ other: PyObject) -> ModResult<PyObject>
 }
 
@@ -215,14 +174,12 @@ internal protocol ModInPlaceTypeClass: TypeClass {
 internal typealias DivModResult<T> = PyResultOrNot<T>
 
 internal protocol DivModTypeClass: TypeClass {
-  /// See the built-in function divmod(). Returns NULL on failure.
-  /// This is the equivalent of the Python expression divmod(o1, o2).
+  // sourcery: pymethod = __divmod__
   func divMod(_ other: PyObject) -> DivModResult<PyObject>
 }
 
 internal protocol RDivModTypeClass: TypeClass {
-  /// See the built-in function divmod(). Returns NULL on failure.
-  /// This is the equivalent of the Python expression divmod(o1, o2).
+  // sourcery: pymethod = __rdivmod__
   func rdivMod(_ other: PyObject) -> DivModResult<PyObject>
 }
 
@@ -231,31 +188,23 @@ internal protocol RDivModTypeClass: TypeClass {
 internal typealias ShiftResult<T> = PyResultOrNot<T>
 
 internal protocol ShiftTypeClass: TypeClass {
-  /// Returns the result of left shifting o1 by o2 on success.
-  /// This is the equivalent of the Python expression o1 << o2.
+  // sourcery: pymethod = __lShift__
   func lShift(_ other: PyObject) -> ShiftResult<PyObject>
-  /// Returns the result of right shifting o1 by o2 on success.
-  /// This is the equivalent of the Python expression o1 >> o2.
+  // sourcery: pymethod = __rShift__
   func rShift(_ other: PyObject) -> ShiftResult<PyObject>
 }
 
 internal protocol RShiftTypeClass: TypeClass {
-  /// Returns the result of left shifting o1 by o2 on success.
-  /// This is the equivalent of the Python expression o1 << o2.
+  // sourcery: pymethod = __rlshift__
   func rlShift(_ other: PyObject) -> ShiftResult<PyObject>
-  /// Returns the result of right shifting o1 by o2 on success.
-  /// This is the equivalent of the Python expression o1 >> o2.
+  // sourcery: pymethod = __rrshift__
   func rrShift(_ other: PyObject) -> ShiftResult<PyObject>
 }
 
 internal protocol ShiftInPlaceTypeClass: TypeClass {
-  /// Returns the result of left shifting o1 by o2 on success..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 <<= o2.
+  // sourcery: pymethod = __ilshift__
   func lShiftInPlace(_ other: PyObject) -> ShiftResult<PyObject>
-  /// Returns the result of right shifting o1 by o2 on success..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 >>= o2.
+  // sourcery: pymethod = __irshift__
   func rShiftInPlace(_ other: PyObject) -> ShiftResult<PyObject>
 }
 
@@ -264,40 +213,60 @@ internal protocol ShiftInPlaceTypeClass: TypeClass {
 internal typealias BinaryResult<T> = PyResultOrNot<T>
 
 internal protocol BinaryTypeClass: TypeClass {
-  /// Returns the “bitwise and” of o1 and o2 on success..
-  /// This is the equivalent of the Python expression o1 & o2.
+  // sourcery: pymethod = __and__
   func and(_ other: PyObject) -> BinaryResult<PyObject>
-  /// Returns the “bitwise or” of o1 and o2 on success.
-  /// This is the equivalent of the Python expression o1 | o2.
+  // sourcery: pymethod = __or__
   func or(_ other: PyObject) -> BinaryResult<PyObject>
-  /// Returns the “bitwise exclusive or” of o1 by o2 on success.
-  /// This is the equivalent of the Python expression o1 ^ o2.
+  // sourcery: pymethod = __xor__
   func xor(_ other: PyObject) -> BinaryResult<PyObject>
 }
 
 internal protocol RBinaryTypeClass: TypeClass {
-  /// Returns the “bitwise and” of o1 and o2 on success..
-  /// This is the equivalent of the Python expression o1 & o2.
+  // sourcery: pymethod = __rand__
   func rand(_ other: PyObject) -> BinaryResult<PyObject>
-  /// Returns the “bitwise or” of o1 and o2 on success.
-  /// This is the equivalent of the Python expression o1 | o2.
+  // sourcery: pymethod = __ror__
   func ror(_ other: PyObject) -> BinaryResult<PyObject>
-  /// Returns the “bitwise exclusive or” of o1 by o2 on success.
-  /// This is the equivalent of the Python expression o1 ^ o2.
+  // sourcery: pymethod = __rxor__
   func rxor(_ other: PyObject) -> BinaryResult<PyObject>
 }
 
 internal protocol BinaryInPlaceTypeClass: TypeClass {
-  /// Returns the “bitwise and” of o1 and o2 on success..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 &= o2.
+  // sourcery: pymethod = __iand__
   func andInPlace(_ other: PyObject) -> BinaryResult<PyObject>
-  /// Returns the “bitwise or” of o1 and o2 on success..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 |= o2.
+  // sourcery: pymethod = __ior__
   func orInPlace(_ other: PyObject) -> BinaryResult<PyObject>
-  /// Returns the “bitwise exclusive or” of o1 by o2 on success..
-  /// The operation is done in-place when o1 supports it.
-  /// This is the equivalent of the Python statement o1 ^= o2.
+  // sourcery: pymethod = __ixor__
   func xorInPlace(_ other: PyObject) -> BinaryResult<PyObject>
+}
+
+// MARK: - Other
+
+internal typealias RoundResult<T> = PyResultOrNot<T>
+internal typealias TruncResult<T> = PyResultOrNot<T>
+internal typealias FloorResult<T> = PyResultOrNot<T>
+internal typealias CeilResult<T> = PyResultOrNot<T>
+
+internal protocol RoundTypeClass: TypeClass {
+  // sourcery: pymethod = __round__
+  func round(nDigits: PyObject?) -> RoundResult<PyObject>
+}
+
+internal protocol TruncTypeClass: TypeClass {
+  // sourcery: pymethod = __trunc__
+  func trunc() -> TruncResult<PyObject>
+}
+
+internal protocol FloorTypeClass: TypeClass {
+  // sourcery: pymethod = __floor__
+  func floor() -> FloorResult<PyObject>
+}
+
+internal protocol CeilTypeClass: TypeClass {
+  // sourcery: pymethod = __ceil__
+  func ceil() -> CeilResult<PyObject>
+}
+
+internal protocol ConjugateTypeClass: TypeClass {
+  // sourcery: pymethod = conjugate
+  func conjugate() -> PyObject
 }

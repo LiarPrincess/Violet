@@ -6,20 +6,30 @@ import Core
 // https://docs.python.org/3.7/c-api/complex.html
 
 // TODO: Complex
-// @overload
-// def __init__(self, s: str) -> None: ...
-// @overload
-// def __init__(self, s: SupportsComplex) -> None: ...
-// #[pymethod(name = "__getnewargs__")]
+// __class__
+// __delattr__
+// __dir__
+// __format__
+// __getattribute__
+// __getnewargs__
+// __init__
+// __init_subclass__
+// __new__
+// __reduce__
+// __reduce_ex__
+// __setattr__
+// __sizeof__
+// __subclasshook__
 
 // swiftlint:disable file_length
 
+// sourcery: pytype = complex
 /// This subtype of PyObject represents a Python complex number object.
 internal final class PyComplex: PyObject,
   ReprTypeClass, StrTypeClass,
-  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
-  BoolConvertibleTypeClass, IntConvertibleTypeClass,
-  FloatConvertibleTypeClass, ComplexConvertibleTypeClass,
+  ComparableTypeClass, HashableTypeClass,
+  BoolConvertibleTypeClass, IntConvertibleTypeClass, FloatConvertibleTypeClass,
+  RealConvertibleTypeClass, ImagConvertibleTypeClass, ConjugateTypeClass,
   SignedTypeClass, AbsTypeClass,
   AddTypeClass, RAddTypeClass,
   SubTypeClass, RSubTypeClass,
@@ -29,6 +39,15 @@ internal final class PyComplex: PyObject,
   FloorDivTypeClass, RFloorDivTypeClass,
   ModTypeClass, RModTypeClass,
   DivModTypeClass, RDivModTypeClass {
+
+  internal static let doc: String = """
+    complex(real=0, imag=0)
+    --
+
+    Create a complex number from a real part and an optional imaginary part.
+
+    This is equivalent to (real + imag*1j) where imag defaults to 0.
+    """
 
   internal let real: Double
   internal let imag: Double
@@ -79,7 +98,7 @@ internal final class PyComplex: PyObject,
 
   // MARK: - Hashable
 
-  internal var hash: HashableResult {
+  internal func hash() -> HashableResult {
     let hasher = self.context.hasher
     let realHash = hasher.hash(self.real)
     let imagHash = hasher.hash(self.imag)
@@ -88,7 +107,7 @@ internal final class PyComplex: PyObject,
 
   // MARK: - String
 
-  internal var repr: String {
+  internal func repr() -> String {
     if self.real.isZero {
       return String(describing: self.imag) + "j"
     }
@@ -99,50 +118,54 @@ internal final class PyComplex: PyObject,
     return "(\(real)\(sign)\(imag)j)"
   }
 
-  internal var str: String {
-    return self.repr
+  internal func str() -> String {
+    return self.repr()
   }
 
   // MARK: - Convertible
 
-  internal var asBool: PyResult<Bool> {
+  internal func asBool() -> PyResult<Bool> {
     let bothZero = self.real.isZero && self.imag.isZero
     return .value(!bothZero)
   }
 
-  internal var asInt: PyResult<PyInt> {
+  internal func asInt() -> PyResult<PyInt> {
     return .error(.typeError("can't convert complex to int"))
   }
 
-  internal var asFloat: PyResult<PyFloat> {
+  internal func asFloat() -> PyResult<PyFloat> {
     return .error(.typeError("can't convert complex to float"))
   }
 
-  internal var asComplex: PyResult<PyComplex> {
-    return .value(self)
+  internal func asReal() -> PyObject {
+    return self.float(self.real)
+  }
+
+  internal func asImag() -> PyObject {
+    return self.float(self.imag)
   }
 
   // MARK: - Imaginary
 
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
-  internal var conjugate: PyComplex {
+  internal func conjugate() -> PyObject {
     return self.complex(real: self.real, imag: -self.imag)
   }
 
   // MARK: - Sign
 
-  internal var positive: PyObject {
+  internal func positive() -> PyObject {
     return self
   }
 
-  internal var negative: PyObject {
+  internal func negative() -> PyObject {
     return self.complex(real: -self.real, imag: -self.imag)
   }
 
   // MARK: - Abs
 
-  internal var abs: PyObject {
+  internal func abs() -> PyObject {
     let bothFinite = self.real.isFinite && self.imag.isFinite
     guard bothFinite else {
       if self.real.isInfinite {
@@ -373,17 +396,4 @@ internal final class PyComplex: PyObject,
 
     return nil
   }
-}
-
-internal final class PyComplexType: PyType {
-//  override internal var name: String { return "complex" }
-//  override internal var doc: String? { return """
-//    complex(real=0, imag=0)
-//    --
-//
-//    Create a complex number from a real part and an optional imaginary part.
-//
-//    This is equivalent to (real + imag*1j) where imag defaults to 0.
-//    """
-//  }
 }

@@ -4,30 +4,51 @@ import Core
 // Objects -> listobject.c
 // https://docs.python.org/3.7/c-api/list.html
 
-// TODO: List (remember to add TypeClasses)
-// def __init__(self, iterable: Iterable[_T]) -> None: ...
-// def extend(self, iterable: Iterable[_T]) -> None: ...
-// def insert(self, index: int, object: _T) -> None: ...
-// def remove(self, object: _T) -> None: ...
-// def reverse(self) -> None: ... < ReversedTC
-// def sort(self, *, key: Optional[Callable[[_T], Any]] = ..., reverse: bool = ...) -> None: ...
-// def __iter__(self) -> Iterator[_T]: ... < IteratorTC
-// @overload
-// def __setitem__(self, i: int, o: _T) -> None: ...
-// @overload
-// def __setitem__(self, s: slice, o: Iterable[_T]) -> None: ... < SetItemTC
-// def __delitem__(self, i: Union[int, slice]) -> None: ... < SetItemTC
-// def __reversed__(self) -> Iterator[_T]: ...
+// TODO: List
+// __class__
+// __delattr__
+// __delitem__
+// __dir__
+// __doc__
+// __format__
+// __getattribute__
+// __init__
+// __init_subclass__
+// __iter__
+// __new__
+// __reduce__
+// __reduce_ex__
+// __reversed__
+// __setattr__
+// __setitem__
+// __sizeof__
+// __subclasshook__
+// extend
+// insert
+// pop
+// remove
+// reverse
+// sort
 
 // swiftlint:disable yoda_condition
 
+// sourcery: pytype = list
 /// This subtype of PyObject represents a Python list object.
 internal final class PyList: PyObject,
   ReprTypeClass, StrTypeClass,
-  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
-  BoolConvertibleTypeClass,
+  ComparableTypeClass, HashableTypeClass,
   LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
   AddTypeClass, AddInPlaceTypeClass, MulTypeClass, RMulTypeClass, MulInPlaceTypeClass {
+
+  internal static let doc: String = """
+    list(iterable=(), /)
+    --
+
+    Built-in mutable sequence.
+
+    If no argument is given, the constructor creates a new empty list.
+    The argument must be an iterable if specified.
+    """
 
   internal var elements: [PyObject]
 
@@ -94,14 +115,14 @@ internal final class PyList: PyObject,
 
   // MARK: - Hashable
 
-  internal var hash: HashableResult {
+  internal func hash() -> HashableResult {
     // Member exists, but always return .notImplemented.
     return .notImplemented
   }
 
   // MARK: - String
 
-  internal var repr: String {
+  internal func repr() -> String {
     if self.elements.isEmpty {
       return "[]"
     }
@@ -125,20 +146,14 @@ internal final class PyList: PyObject,
     }
   }
 
-  internal var str: String {
-    return self.repr
-  }
-
-  // MARK: - Convertible
-
-  internal var asBool: PyResult<Bool> {
-    return .value(self.elements.any)
+  internal func str() -> String {
+    return self.repr()
   }
 
   // MARK: - Sequence
 
-  internal var length: PyInt {
-    return self.int(self.elements.count)
+  internal func getLength() -> BigInt {
+    return BigInt(self.elements.count)
   }
 
   internal func contains(_ element: PyObject) -> Bool {
@@ -168,6 +183,7 @@ internal final class PyList: PyObject,
                                    typeName: "list")
   }
 
+  // sourcery: pymethod = append
   internal func append(_ element: PyObject) {
     self.elements.append(element)
   }
@@ -202,10 +218,12 @@ internal final class PyList: PyObject,
     return .value(last)
   }
 
+  // sourcery: pymethod = clear
   internal func clear() {
     self.elements.removeAll()
   }
 
+  // sourcery: pymethod = copy
   internal func copy() -> PyList {
     return self.list(self.elements)
   }
@@ -251,18 +269,4 @@ internal final class PyList: PyObject,
         return self
       }
   }
-}
-
-internal final class PyListType: PyType {
-//  override internal var name: String { return "list" }
-//  override internal var doc: String? { return """
-//    list(iterable=(), /)
-//    --
-//
-//    Built-in mutable sequence.
-//
-//    If no argument is given, the constructor creates a new empty list.
-//    The argument must be an iterable if specified.
-//    """
-//  }
 }

@@ -5,18 +5,47 @@ import Core
 // https://docs.python.org/3/library/stdtypes.html#range
 
 // TODO: PyRange
-// def __iter__(self) -> Iterator[int]: ...
-// def __reversed__(self) -> Iterator[int]: ... < ReversedTC
+// __class__
+// __delattr__
+// __dir__
+// __format__
+// __getattribute__
+// __init__
+// __init_subclass__
+// __iter__
+// __new__
+// __reduce__
+// __reduce_ex__
+// __reversed__
+// __setattr__
+// __sizeof__
+// __subclasshook__
+// start
+// step
+// stop
 
 // swiftlint:disable yoda_condition
 
+// sourcery: pytype = range
 /// The range type represents an immutable sequence of numbers
 /// and is commonly used for looping a specific number of times in for loops.
 internal final class PyRange: PyObject,
-  ReprTypeClass, EquatableTypeClass, HashableTypeClass,
+  ReprTypeClass, StrTypeClass,
+  ComparableTypeClass, HashableTypeClass,
   BoolConvertibleTypeClass,
   LengthTypeClass, ContainsTypeClass, GetItemTypeClass,
   CountTypeClass, GetIndexOfTypeClass {
+
+  internal static let doc: String = """
+    range(stop) -> range object
+    range(start, stop[, step]) -> range object
+
+    Return an object that produces a sequence of integers from start (inclusive)
+    to stop (exclusive) by step.  range(i, j) produces i, i+1, i+2, ..., j-1.
+    start defaults to 0, and stop is omitted!  range(4) produces 0, 1, 2, 3.
+    These are exactly the valid indices for a list of 4 elements.
+    When step is given, it specifies the increment (or decrement).
+    """
 
   internal let start: PyInt
   internal let stop: PyInt
@@ -98,9 +127,27 @@ internal final class PyRange: PyObject,
     return self.step.isEqual(other.step)
   }
 
+  // MARK: - Comparable
+
+  internal func isLess(_ other: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+
+  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+
+  internal func isGreater(_ other: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+
+  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+    return .notImplemented
+  }
+
   // MARK: - Hashable
 
-  internal var hash: HashableResult {
+  internal func hash() -> HashableResult {
     let none = self.context.none
     var tuple = [self.length, none, none]
 
@@ -120,22 +167,32 @@ internal final class PyRange: PyObject,
 
   // MARK: - String
 
-  internal var repr: String {
-    let start = self.start.repr
-    let stop = self.stop.repr
+  internal func repr() -> String {
+    let start = self.start.repr()
+    let stop = self.stop.repr()
 
     switch self.stepType {
     case .implicit:
       return "range(\(start), \(stop))"
     case .explicit:
-      return "range(\(start), \(stop), \(self.step.repr))"
+      return "range(\(start), \(stop), \(self.step.repr()))"
     }
+  }
+
+  internal func str() -> String {
+    return self.repr()
   }
 
   // MARK: - Convertible
 
-  internal var asBool: PyResult<Bool> {
+  internal func asBool() -> PyResult<Bool> {
     return .value(self.length.value > 0)
+  }
+
+  // MARK: - Length
+
+  internal func getLength() -> BigInt {
+    return self.length.value
   }
 
   // MARK: - Contains
@@ -252,19 +309,4 @@ internal final class PyRange: PyObject,
     let result = tmp / self.step.value
     return .value(result)
   }
-}
-
-internal final class PyRangeType: PyType {
-//  override internal var name: String { return "range" }
-//  override internal var doc: String? { return """
-//    range(stop) -> range object
-//    range(start, stop[, step]) -> range object
-//
-//    Return an object that produces a sequence of integers from start (inclusive)
-//    to stop (exclusive) by step.  range(i, j) produces i, i+1, i+2, ..., j-1.
-//    start defaults to 0, and stop is omitted!  range(4) produces 0, 1, 2, 3.
-//    These are exactly the valid indices for a list of 4 elements.
-//    When step is given, it specifies the increment (or decrement).
-//    """
-//  }
 }

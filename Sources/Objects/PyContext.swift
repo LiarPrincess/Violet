@@ -62,24 +62,23 @@ internal final class PyContextTypes {
     self.object = PyType.createTypeWithoutTypeProperty(context, name: "object", base: nil)
     self.type   = PyType.createTypeWithoutTypeProperty(context, name: "type",   base: nil)
 
-    self.none     = PyType(context, name: "none",     type: self.type, base: self.object)
-    self.ellipsis = PyType(context, name: "ellipsis", type: self.type, base: self.object)
-    self.notImplemented =
-      PyType(context, name: "notImplemented", type: self.type, base: self.object)
+    self.none     = PyType.NoneType(context, type: self.type, base: self.object)
+    self.ellipsis = PyType.ellipsis(context, type: self.type, base: self.object)
+    self.notImplemented = PyType.NotImplementedType(context, type: self.type, base: self.object)
 
-    self.int     = PyType(context, name: "int",     type: self.type, base: self.object)
-    self.float   = PyType(context, name: "float",   type: self.type, base: self.object)
-    self.bool    = PyType(context, name: "bool",    type: self.type, base: self.int)
-    self.complex = PyType(context, name: "complex", type: self.type, base: self.object)
+    self.int     = PyType.int(context,     type: self.type, base: self.object)
+    self.float   = PyType.float(context,   type: self.type, base: self.object)
+    self.bool    = PyType.bool(context,    type: self.type, base: self.int)
+    self.complex = PyType.complex(context, type: self.type, base: self.object)
 
-    self.tuple = PyType(context, name: "tuple", type: self.type, base: self.object)
-    self.list  = PyType(context, name: "list",  type: self.type, base: self.object)
+    self.tuple = PyType.tuple(context, type: self.type, base: self.object)
+    self.list  = PyType.list(context,  type: self.type, base: self.object)
     self.set   = PyType(context, name: "set",   type: self.type, base: self.object)
     self.dict  = PyType(context, name: "dict",  type: self.type, base: self.object)
 
-    self.slice = PyType(context, name: "slice", type: self.type, base: self.object)
-    self.range = PyType(context, name: "range", type: self.type, base: self.object)
-    self.enumerate = PyType(context, name: "enumerate", type: self.type, base: self.object)
+    self.slice = PyType.slice(context, type: self.type, base: self.object)
+    self.range = PyType.range(context, type: self.type, base: self.object)
+    self.enumerate = PyType.enumerate(context, type: self.type, base: self.object)
     self.string = PyType(context, name: "string", type: self.type, base: self.object)
 
     PyType.setTypeProperty(type: self.object, setting: self.type)

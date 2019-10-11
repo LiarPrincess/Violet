@@ -116,7 +116,7 @@ internal enum SequenceHelper {
       return nil
     }
 
-    return indexType.asIndex
+    return indexType.asIndex()
   }
 
   // MARK: - Get item

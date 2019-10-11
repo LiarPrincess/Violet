@@ -4,12 +4,40 @@ import Core
 // Objects -> sliceobject.c
 // https://docs.python.org/3.7/c-api/slice.html
 
+// MARK: - Slice
+// __class__
+// __delattr__
+// __dir__
+// __doc__
+// __format__
+// __getattribute__
+// __init__
+// __init_subclass__
+// __new__
+// __reduce__
+// __reduce_ex__
+// __setattr__
+// __sizeof__
+// __subclasshook__
+// indices
+// start
+// step
+// stop
+
+// sourcery: pytype = slice
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
 internal final class PySlice: PyObject,
-  ReprTypeClass,
-  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
-  BoolConvertibleTypeClass {
+  ReprTypeClass, StrTypeClass,
+  ComparableTypeClass, HashableTypeClass {
+
+  internal static let doc: String = """
+    slice(stop)
+    slice(start, stop[, step])
+
+    Create a slice object.
+    This is used for extended slicing (e.g. a[0:10:2]).
+    """
 
   internal var start: PyInt?
   internal var stop:  PyInt?
@@ -17,11 +45,11 @@ internal final class PySlice: PyObject,
 
   // MARK: - Init
 
-  fileprivate init(type: PySliceType, start: PyInt?, stop: PyInt?, step: PyInt?) {
+  internal init(_ context: PyContext, start: PyInt?, stop: PyInt?, step: PyInt?) {
     self.start = start
     self.stop = stop
     self.step = step
-    super.init(type: type)
+    super.init(type: context.types.slice)
   }
 
   // MARK: - Equatable
@@ -88,24 +116,22 @@ internal final class PySlice: PyObject,
 
   // MARK: - Hashable
 
-  internal var hash: HashableResult {
+  internal func hash() -> HashableResult {
     return .notImplemented
   }
 
   // MARK: - String
 
-  internal var repr: String {
-    let none = self.context._none.repr
-    let start = self.start.map { self.context.reprString(value: $0) } ?? none
-    let stop  = self.stop.map { self.context.reprString(value: $0) } ?? none
-    let step  = self.step.map { self.context.reprString(value: $0) } ?? none
+  internal func repr() -> String {
+    let noneRepr = self.context._none.repr()
+    let start = self.start.map(self.context.reprString) ?? noneRepr
+    let stop  = self.stop.map(self.context.reprString) ?? noneRepr
+    let step  = self.step.map(self.context.reprString) ?? noneRepr
     return "slice(\(start), \(stop), \(step))"
   }
 
-  // MARK: - Convertible
-
-  internal var asBool: PyResult<Bool> {
-    return .value(false)
+  internal func str() -> String {
+    return self.repr()
   }
 
   // MARK: - Indices
@@ -116,7 +142,7 @@ internal final class PySlice: PyObject,
   /// indices, and the stride length of the extended slice described by S.
   /// Out of bounds indices are clipped in a manner consistent with the
   /// handling of normal slices.
-  internal func indices(length: PyObject) -> PyResultOrNot<PyObject> {
+  internal func indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject> {
     guard let length = SequenceHelper.extractIndex(length) else {
       return .notImplemented
     }
@@ -192,25 +218,5 @@ internal final class PySlice: PyObject,
     }
 
     return .value(result)
-  }
-}
-
-internal final class PySliceType: PyType {
-//  override internal var name: String { return "slice" }
-//  override internal var doc: String? { return """
-//    slice(stop)
-//    slice(start, stop[, step])
-//
-//    Create a slice object.
-//    This is used for extended slicing (e.g. a[0:10:2]).
-//    """
-//  }
-
-  internal func new(stop: PyInt?) -> PySlice {
-    return PySlice(type: self, start: nil, stop: stop, step: nil)
-  }
-
-  internal func new(start: PyInt?, stop: PyInt?, step: PyInt? = nil) -> PySlice {
-    return PySlice(type: self, start: start, stop: stop, step: step)
   }
 }

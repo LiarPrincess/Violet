@@ -2,16 +2,31 @@ internal protocol TypeClass {
   var context: PyContext { get }
 }
 
-// MARK: - Equatable
+// MARK: - Comparable
 
 internal typealias EquatableResult = PyResultOrNot<Bool>
+internal typealias ComparableResult = PyResultOrNot<Bool>
 
-internal protocol EquatableTypeClass: TypeClass {
+internal protocol ComparableTypeClass: TypeClass {
+  // sourcery: pymethod = __eq__
   func isEqual(_ other: PyObject) -> EquatableResult
+  // sourcery: pymethod = __ne__
   func isNotEqual(_ other: PyObject) -> EquatableResult
+
+  // sourcery: pymethod = __lt__
+  func isLess(_ other: PyObject) -> ComparableResult
+  // sourcery: pymethod = __le__
+  func isLessEqual(_ other: PyObject) -> ComparableResult
+
+  // sourcery: pymethod = __gt__
+  func isGreater(_ other: PyObject) -> ComparableResult
+  // sourcery: pymethod = __ge__
+  func isGreaterEqual(_ other: PyObject) -> ComparableResult
 }
 
-extension EquatableTypeClass {
+// DO NOT add default implementations for other methods!
+// In Python 'a < b' does not imply 'not(a >= b)'.
+extension ComparableTypeClass {
   func isNotEqual(_ other: PyObject) -> EquatableResult {
     switch self.isEqual(other) {
     case let .value(b): return .value(!b)
@@ -21,36 +36,25 @@ extension EquatableTypeClass {
   }
 }
 
-// MARK: - Comparable
-
-// TODO: Merge it to Equatable, and return .notImplemented
-internal typealias ComparableResult = PyResultOrNot<Bool>
-
-// DO NOT add default implementations!
-// In Python 'a < b' does not imply 'not(a >= b)'.
-internal protocol ComparableTypeClass: EquatableTypeClass {
-  func isLess(_ other: PyObject) -> ComparableResult
-  func isLessEqual(_ other: PyObject) -> ComparableResult
-  func isGreater(_ other: PyObject) -> ComparableResult
-  func isGreaterEqual(_ other: PyObject) -> ComparableResult
-}
-
 // MARK: - Hashable
 
 internal typealias HashableResult = PyResultOrNot<PyHash>
 
 internal protocol HashableTypeClass: TypeClass {
-  var hash: HashableResult { get }
+  // sourcery: pymethod = __hash__
+  func hash() -> HashableResult
 }
 
 // MARK: - String
 
 internal protocol ReprTypeClass: TypeClass {
-  var repr: String { get }
+  // sourcery: pymethod = __repr__
+  func repr() -> String
 }
 
 internal protocol StrTypeClass: TypeClass {
-  var str: String { get }
+  // sourcery: pymethod = __str__
+  func str() -> String
 }
 
 // MARK: - Attributes

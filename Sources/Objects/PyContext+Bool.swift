@@ -26,7 +26,7 @@ extension PyContext {
 //    }
 
     if let lengthType = value as? LengthTypeClass {
-      return lengthType.length.value.isTrue
+      return lengthType.getLength().isTrue
     }
 
     return true

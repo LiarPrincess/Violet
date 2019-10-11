@@ -7,22 +7,37 @@ import Core
 // https://developer.apple.com/documentation/swift/double/floating-point_operators_for_double
 
 // TODO: Float
-// def __init__(self, x: Union[SupportsFloat, Text, bytes, bytearray] = ...)
-// def __getnewargs__(self) -> Tuple[float]: ...
-// def hex(self) -> str: ...
-// @classmethod
-// def fromhex(cls, s: str) -> float: ...
-// def is_integer(self) -> bool: ...
-// def as_integer_ratio(self) -> Tuple[int, int]: ...
+// __class__
+// __delattr__
+// __dir__
+// __format__
+// __getattribute__
+// __getformat__
+// __getnewargs__
+// __init__
+// __init_subclass__
+// __new__
+// __reduce__
+// __reduce_ex__
+// __set_format__
+// __setattr__
+// __sizeof__
+// __subclasshook__
+// __trunc__
+// fromhex
+// hex
+// is_integer
 
 // swiftlint:disable file_length
 
+// sourcery: pytype = float
 /// This subtype of PyObject represents a Python floating point object.
 internal final class PyFloat: PyObject,
   ReprTypeClass, StrTypeClass,
-  EquatableTypeClass, ComparableTypeClass, HashableTypeClass,
+  ComparableTypeClass, HashableTypeClass,
   BoolConvertibleTypeClass, IntConvertibleTypeClass, FloatConvertibleTypeClass,
-  SignedTypeClass, AbsTypeClass,
+  RealConvertibleTypeClass, ImagConvertibleTypeClass, ConjugateTypeClass,
+  SignedTypeClass, AbsTypeClass, RoundTypeClass,
   AddTypeClass, RAddTypeClass,
   SubTypeClass, RSubTypeClass,
   MulTypeClass, RMulTypeClass,
@@ -31,6 +46,12 @@ internal final class PyFloat: PyObject,
   FloorDivTypeClass, RFloorDivTypeClass,
   ModTypeClass, RModTypeClass,
   DivModTypeClass, RDivModTypeClass {
+
+  internal static let doc: String = """
+    float(x) -> floating point number
+
+    Convert a string or number to a floating point number, if possible.
+    """
 
   internal let value: Double
 
@@ -115,63 +136,63 @@ internal final class PyFloat: PyObject,
 
   // MARK: - Hashable
 
-  internal var hash: HashableResult {
+  internal func hash() -> HashableResult {
     return .value(self.context.hasher.hash(self.value))
   }
 
   // MARK: - String
 
-  internal var repr: String {
+  internal func repr() -> String {
     return String(describing: self.value)
   }
 
-  internal var str: String {
+  internal func str() -> String {
     return String(describing: self.value)
   }
 
   // MARK: - Convertible
 
-  internal var asBool: PyResult<Bool> {
+  internal func asBool() -> PyResult<Bool> {
     return .value(!self.value.isZero)
   }
 
-  internal var asInt: PyResult<PyInt> {
+  internal func asInt() -> PyResult<PyInt> {
     return .value(self.int(BigInt(self.value)))
   }
 
-  internal var asFloat: PyResult<PyFloat> {
+  internal func asFloat() -> PyResult<PyFloat> {
     return .value(self.float(self.value))
+  }
+
+  internal func asReal() -> PyObject {
+    return self
+  }
+
+  internal func asImag() -> PyObject {
+    return self.float(0.0)
   }
 
   // MARK: - Imaginary
 
-  internal var real: PyFloat {
-    return self
-  }
-
-  internal var imag: PyFloat {
-    return self.float(0.0)
-  }
-
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
-  internal var conjugate: PyFloat {
+  internal func conjugate() -> PyObject {
     return self
   }
 
   // MARK: - Sign
 
-  internal var positive: PyObject {
+  internal func positive() -> PyObject {
     return self
   }
 
-  internal var negative: PyObject {
+  internal func negative() -> PyObject {
     return self.float(-self.value)
   }
 
   // MARK: - Abs
 
-  internal var abs: PyObject {
+  internal func abs() -> PyObject {
     return self.float(Swift.abs(self.value))
   }
 
@@ -359,15 +380,13 @@ internal final class PyFloat: PyObject,
 
   // MARK: - Round
 
-  internal func round() -> PyResultOrNot<PyFloat> {
-    return self.round(nDigits: self.context._none)
-  }
-
   /// Round a Python float v to the closest multiple of 10**-ndigits
   ///
   /// Return the Integral closest to x, rounding half toward even.
   /// When an argument is passed, work like built-in round(x, ndigits).
-  internal func round(nDigits: PyObject) -> PyResultOrNot<PyFloat> {
+  internal func round(nDigits: PyObject?) -> RoundResult<PyObject> {
+    let nDigits = nDigits ?? self.context._none
+
     var digitCount: BigInt?
 
     if nDigits is PyNone {
@@ -405,14 +424,4 @@ internal final class PyFloat: PyObject,
 
     return nil
   }
-}
-
-internal final class PyFloatType: PyType {
-  //  override internal var name: String { return "float" }
-  //  override internal var doc: String? { return """
-  //    float(x) -> floating point number
-  //
-  //    Convert a string or number to a floating point number, if possible.
-  //    """
-  //  }
 }

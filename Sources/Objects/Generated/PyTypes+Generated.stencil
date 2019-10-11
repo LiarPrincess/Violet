@@ -1,0 +1,26 @@
+// swiftlint:disable:previous vertical_whitespace
+// swiftlint:disable vertical_whitespace
+// swiftlint:disable line_length
+// swiftlint:disable file_length
+
+extension PyType {
+{% for type in types.classes|annotated:"pytype" %}
+
+  internal static func {{ type.annotations.pytype }}(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    {% if not type.isFinal %}
+    #warning("Type {{ type.name }} should be marked final.")
+    {% endif %}
+    let result = PyType(context, name: "{{ type.annotations.pytype }}", type: type, base: base)
+
+    {% for variable in type.staticVariables where variable.name == "doc" %}
+    // result.__doc__ = {{ type.name }}.{{ variable.name }}
+    {% endfor %}
+
+    {% for method in type.allMethods|annotated:"pymethod" %}
+    // result.{{ method.annotations.pymethod }} = {{ type.name }}.{{ method.name }}
+    {% endfor %}
+
+    return result
+  }
+{% endfor %}
+}

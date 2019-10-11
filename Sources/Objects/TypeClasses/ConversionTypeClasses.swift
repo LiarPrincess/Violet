@@ -1,29 +1,36 @@
 import Core
 
 internal protocol BoolConvertibleTypeClass: TypeClass {
-  var asBool: PyResult<Bool> { get }
+  // sourcery: pymethod = __bool__
+  func asBool() -> PyResult<Bool>
 }
 
 internal protocol IntConvertibleTypeClass: TypeClass {
-  /// Returns the o converted to an integer object on success.
-  /// This is the equivalent of the Python expression int(o).
-  var asInt: PyResult<PyInt> { get }
+  // sourcery: pymethod = __int__
+  func asInt() -> PyResult<PyInt>
 }
 
 internal protocol FloatConvertibleTypeClass: TypeClass {
-  /// Returns the o converted to a float object on success.
-  /// This is the equivalent of the Python expression float(o).
-  var asFloat: PyResult<PyFloat> { get }
+  // sourcery: pymethod = __float__
+  func asFloat() -> PyResult<PyFloat>
 }
 
 internal protocol ComplexConvertibleTypeClass: TypeClass {
-  /// Returns the o converted to a complex object on success.
-  /// This is the equivalent of the Python expression complex(o).
-  var asComplex: PyResult<PyComplex> { get }
+  // sourcery: pymethod = __complex__
+  func asComplex() -> PyResult<PyComplex>
+}
+
+internal protocol RealConvertibleTypeClass: TypeClass {
+  // sourcery: pymethod = real
+  func asReal() -> PyObject
+}
+
+internal protocol ImagConvertibleTypeClass: TypeClass {
+  // sourcery: pymethod = imag
+  func asImag() -> PyObject
 }
 
 internal protocol IndexConvertibleTypeClass: TypeClass {
-  /// Returns the o converted to a Python int on success
-  /// or TypeError exception raised on failure.
-  var asIndex: BigInt { get }
+  // sourcery: pymethod = __index__
+  func asIndex() -> BigInt
 }

@@ -19,10 +19,22 @@ extension Int {
   }
 }
 
+// sourcery: pytype = bool
 /// Booleans in Python are implemented as a subclass of integers.
 /// There are only two booleans, Py_False and Py_True.
 /// As such, the normal creation and deletion functions don’t apply to booleans.
 internal final class PyBool: PyInt {
+
+//  #warning("internal var base: PyType? { return self.types.int }")
+
+  override internal class var doc: String { return """
+    bool(x) -> bool
+
+    Returns True when the argument x is true, False otherwise.
+    The builtins True and False are the only two instances of the class bool.
+    The class bool is a subclass of the class int, and cannot be subclassed
+    """
+  }
 
   // MARK: - Init
 
@@ -32,12 +44,12 @@ internal final class PyBool: PyInt {
 
   // MARK: - String
 
-  override internal var repr: String {
+  override internal func repr() -> String {
     return self.value.isTrue ? "True" : "False"
   }
 
-  override internal var str: String {
-    return self.repr
+  override internal func str() -> String {
+    return self.repr()
   }
 
   // MARK: - And
@@ -84,17 +96,4 @@ internal final class PyBool: PyInt {
   override internal func rxor(_ other: PyObject) -> BinaryResult<PyObject> {
     return self.xor(other)
   }
-}
-
-internal final class PyBoolType: PyIntType {
-//  override internal var name: String { return "bool" }
-//  override internal var base: PyType? { return self.types.int }
-//  override internal var doc: String { return """
-//    bool(x) -> bool
-//
-//    Returns True when the argument x is true, False otherwise.
-//    The builtins True and False are the only two instances of the class bool.
-//    The class bool is a subclass of the class int, and cannot be subclassed
-//    """
-//  }
 }

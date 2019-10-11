@@ -1,13 +1,53 @@
 import Core
 
 // TODO: Enumerate
-// def __iter__(self) -> Iterator[Tuple[int, _T]]: ...
+// __eq__
+// __ne__
+// __lt__
+// __le__
+// __gt__
+// __ge__
+// __repr__
+// __str__
+// __class__
+// __hash__
+// __delattr__
+// __dir__
+// __format__
+// __getattribute__
+// __init__
+// __init_subclass__
+// __iter__
+// __new__
+// __next__
+// __reduce__
+// __reduce_ex__
+// __setattr__
+// __sizeof__
+// __subclasshook__
 
 internal typealias PyEnumerateSource = PyObject & IterableTypeClass
 
+// sourcery: pytype = enumerate
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.
 internal final class PyEnumerate: PyObject, IterableTypeClass {
+
+  internal static let doc: String = """
+    enumerate(iterable, start=0)
+    --
+
+    Return an enumerate object.
+
+    iterable
+    an object supporting iteration
+
+    The enumerate object yields pairs containing a count (from start, which
+    defaults to zero) and a value yielded by the iterable argument.
+
+    enumerate is useful for obtaining an indexed list:
+    (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
+    """
 
   /// Secondary iterator of enumeration
   internal let iterable: PyEnumerateSource
@@ -25,13 +65,11 @@ internal final class PyEnumerate: PyObject, IterableTypeClass {
 
   // MARK: - Init
 
-  fileprivate init(type: PyEnumerateType,
-                   iterable: PyEnumerateSource,
-                   startIndex: Int) {
+  internal init(_ context: PyContext, iterable: PyEnumerateSource, startIndex: Int) {
     self.iterable = iterable
     self.index = .notStarted(startingIndex: startIndex)
-    self.item = type.context.none
-    super.init(type: type)
+    self.item = context._none
+    super.init(type: context.types.enumerate)
   }
 
   // MARK: - Next
@@ -52,36 +90,5 @@ internal final class PyEnumerate: PyObject, IterableTypeClass {
       self.index = .started(nextIndex)
       return nextIndex
     }
-  }
-}
-
-internal final class PyEnumerateType: PyType {
-//  override internal var name: String { return "enumerate" }
-//  override internal var doc: String? { return """
-//    enumerate(iterable, start=0)
-//    --
-//
-//    Return an enumerate object.
-//
-//    iterable
-//    an object supporting iteration
-//
-//    The enumerate object yields pairs containing a count (from start, which
-//    defaults to zero) and a value yielded by the iterable argument.
-//
-//    enumerate is useful for obtaining an indexed list:
-//    (0, seq[0]), (1, seq[1]), (2, seq[2]), ...
-//    """
-//  }
-
-  internal func new(iterable: PyObject, startIndex: Int) -> PyResult<PyEnumerate> {
-    guard let source = iterable as? PyEnumerateSource else {
-      let str = context.strString(value: iterable)
-      return .error(.typeError("'\(str)' object is not iterable"))
-    }
-
-    return .value(
-      PyEnumerate(type: self, iterable: source, startIndex: startIndex)
-    )
   }
 }

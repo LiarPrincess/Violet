@@ -120,4 +120,25 @@ extension PyContext {
   public func contains(sequence: PyObject, value: PyObject) -> PyObject {
     return self.unimplemented()
   }
+
+  // MARK: - Enumerate
+
+  internal func _enumerate(iterable: PyObject, startIndex: Int) -> PyResult<PyEnumerate> {
+    guard let source = iterable as? PyEnumerateSource else {
+      let str = self.strString(value: iterable)
+      return .error(.typeError("'\(str)' object is not iterable"))
+    }
+
+    return .value(PyEnumerate(self, iterable: source, startIndex: startIndex))
+  }
+
+  // MARK: - Slice
+
+  internal func slice(stop: PyInt?) -> PySlice {
+    return PySlice(self, start: nil, stop: stop, step: nil)
+  }
+
+  internal func slice(start: PyInt?, stop: PyInt?, step: PyInt? = nil) -> PySlice {
+    return PySlice(self, start: start, stop: stop, step: step)
+  }
 }
