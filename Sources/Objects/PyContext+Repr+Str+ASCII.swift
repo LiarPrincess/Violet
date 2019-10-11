@@ -5,7 +5,7 @@ extension PyContext {
   /// PyObject * PyObject_Repr(PyObject *v)
   public func repr(value: PyObject) -> PyObject {
     let raw = self.reprString(value: value)
-    return self.types.string.new(raw)
+    return PyString(self, value: raw)
   }
 
   internal func reprString(value: PyObject) -> String {
@@ -21,7 +21,7 @@ extension PyContext {
   /// PyObject * PyObject_Str(PyObject *v)
   public func str(value: PyObject) -> PyObject {
     let raw = self.strString(value: value)
-    return self.types.string.new(raw)
+    return PyString(self, value: raw)
   }
 
   internal func strString(value: PyObject) -> String {
@@ -45,7 +45,7 @@ extension PyContext {
   /// PyObject * PyObject_ASCII(PyObject *v)
   public func ascii(value: PyObject) -> PyObject {
     let raw = try self.asciiStr(value: value)
-    return self.types.string.new(raw)
+    return PyString(self, value: raw)
   }
 
   internal func asciiStr(value: PyObject) -> String {

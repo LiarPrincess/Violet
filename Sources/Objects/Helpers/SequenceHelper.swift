@@ -137,7 +137,7 @@ internal enum SequenceHelper {
     if let slice = index as? PySlice {
       return SequenceHelper
         .getItem(context: context, elements: elements, slice: slice)
-        .map(context.types.tuple.new)
+        .map(context._tuple)
         .flatMap { GetItemResult<PyObject>.value($0) }
     }
 

@@ -46,7 +46,15 @@ internal class PyInt: PyObject,
 
   // MARK: - Init
 
-  internal init(type: PyIntType, value: BigInt) {
+  // TODO: Cache <-10, 255> values
+
+  internal init(_ context: PyContext, value: BigInt) {
+    self.value = value
+    super.init(type: context.types.int)
+  }
+
+  /// Only for PyBool use!
+  internal init(type: PyType, value: BigInt) {
     self.value = value
     super.init(type: type)
   }
@@ -562,14 +570,4 @@ internal class PyIntType: PyType {
 //>>> int('0b100', base=0)
 //4
 //""" }
-
-  // TODO: Cache <-10, 255> values
-
-  internal func new(_ value: Int) -> PyInt {
-    return PyInt(type: self, value: BigInt(value))
-  }
-
-  internal func new(_ value: BigInt) -> PyInt {
-    return PyInt(type: self, value: value)
-  }
 }

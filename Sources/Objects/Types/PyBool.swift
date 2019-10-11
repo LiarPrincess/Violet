@@ -26,8 +26,8 @@ internal final class PyBool: PyInt {
 
   // MARK: - Init
 
-  fileprivate init(type: PyBoolType, value: BigInt) {
-    super.init(type: type, value: value)
+  internal init(_ context: PyContext, value: Bool) {
+    super.init(type: context.types.bool, value: BigInt(value ? 1 : 0))
   }
 
   // MARK: - String
@@ -97,19 +97,4 @@ internal final class PyBoolType: PyIntType {
 //    The class bool is a subclass of the class int, and cannot be subclassed
 //    """
 //  }
-
-  private lazy var `true`  = PyBool(type: self, value: BigInt(1))
-  private lazy var `false` = PyBool(type: self, value: BigInt(0))
-
-  internal func new(_ value: Bool) -> PyBool {
-    return value ? self.true : self.false
-  }
-
-  internal override func new(_ value: BigInt) -> PyBool {
-    return self.new(value.isTrue)
-  }
-
-  internal override func new(_ value: Int) -> PyBool {
-    return self.new(value.isTrue)
-  }
 }

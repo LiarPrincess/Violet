@@ -21,9 +21,9 @@ internal final class PyTuple: PyObject,
 
   // MARK: - Init
 
-  fileprivate init(type: PyTupleType, elements: [PyObject]) {
+  internal init(_ context: PyContext, elements: [PyObject]) {
     self.elements = elements
-    super.init(type: type)
+    super.init(type: context.types.tuple)
   }
 
   // MARK: - Equatable
@@ -37,6 +37,8 @@ internal final class PyTuple: PyObject,
                                   left: self.elements,
                                   right: other.elements)
   }
+
+  //TODO: Not equal
 
   // MARK: - Comparable
 
@@ -210,10 +212,4 @@ internal final class PyTupleType: PyType {
 //    If the argument is a tuple, the return value is the same object.
 //    """
 //  }
-
-  private lazy var empty = PyTuple(type: self, elements: [])
-
-  internal func new(_ elements: [PyObject]) -> PyTuple {
-    return PyTuple(type: self, elements: elements)
-  }
 }

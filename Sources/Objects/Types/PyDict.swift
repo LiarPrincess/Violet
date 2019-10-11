@@ -29,9 +29,9 @@ internal final class PyDict: PyObject {
 
   internal var elements: [PyDictKey: PyObject]
 
-  fileprivate init(type: PyDictType, elements: [PyDictKey: PyObject]) {
+  internal init(_ context: PyContext, elements: [PyDictKey: PyObject]) {
     self.elements = elements
-    super.init(type: type)
+    super.init(type: context.types.dict)
   }
 }
 

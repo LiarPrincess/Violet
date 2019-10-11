@@ -35,10 +35,10 @@ internal final class PyComplex: PyObject,
 
   // MARK: - Init
 
-  fileprivate init(type: PyComplexType, real: Double, imag: Double) {
+  internal init(_ context: PyContext, real: Double, imag: Double) {
     self.real = real
     self.imag = imag
-    super.init(type: type)
+    super.init(type: context.types.complex)
   }
 
   // MARK: - Equatable
@@ -386,8 +386,4 @@ internal final class PyComplexType: PyType {
 //    This is equivalent to (real + imag*1j) where imag defaults to 0.
 //    """
 //  }
-
-  internal func new(real: Double, imag: Double) -> PyComplex {
-    return PyComplex(type: self, real: real, imag: imag)
-  }
 }

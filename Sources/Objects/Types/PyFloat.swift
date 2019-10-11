@@ -36,9 +36,9 @@ internal final class PyFloat: PyObject,
 
   // MARK: - Init
 
-  fileprivate init(type: PyFloatType, value: Double) {
+  internal init(_ context: PyContext, value: Double) {
     self.value = value
-    super.init(type: type)
+    super.init(type: context.types.float)
   }
 
   // MARK: - Equatable
@@ -415,8 +415,4 @@ internal final class PyFloatType: PyType {
   //    Convert a string or number to a floating point number, if possible.
   //    """
   //  }
-
-  internal func new(_ value: Double) -> PyFloat {
-    return PyFloat(type: self, value: value)
-  }
 }

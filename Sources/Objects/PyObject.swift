@@ -1,6 +1,7 @@
 import Core
 
 internal struct PyObjectFlags: OptionSet {
+
   let rawValue: UInt8
 
   /// This flag is used to control infinite recursion in `repr`, `str`, `print`
@@ -17,75 +18,75 @@ public class PyObject {
   internal var flags: PyObjectFlags = []
 
   // swiftlint:disable:next implicitly_unwrapped_optional
-  private let _type: PyType!
-  internal var type: PyType {
-    return self._type
+  internal private(set) var type: PyType!
+
+  // MARK: - Init
+
+  /// NEVER EVER use this ctor!
+  /// This is a reserved for `objectType` and `typeType`.
+  /// Use version with 'type: PyType' parameter.
+  internal init() {
+    self.type = nil
   }
+
+  internal init(type: PyType) {
+    self.type = type
+  }
+
+  /// NEVER EVER use this function!
+  /// This is a reserved for `objectType` and `typeType`.
+  internal func setType(to type: PyType) {
+    self.type = type
+  }
+
+  // MARK: - Helpers
 
   internal var context: PyContext {
     return self.type.context
   }
 
-  internal var types: PyContextTypes {
-    return self.context.types
-  }
-
-  // MARK: - Init
-
-  /// NEVER EVER use this ctor! It is reserved for PyType!
-  /// Use version with 'type: PyType' parameter.
-  internal init() {
-    self._type = nil
-  }
-
-  internal init(type: PyType) {
-    self._type = type
-  }
-
-  // MARK: - Ctors
-
   internal func int(_ value: BigInt) -> PyInt {
-    return self.types.int.new(value)
+    return self.context._int(value)
   }
 
   internal func int(_ value: Int) -> PyInt {
-    return self.types.int.new(value)
+    return self.context._int(value)
   }
 
   internal func bool(_ value: Bool) -> PyBool {
-    return self.types.bool.new(value)
+    return value ? self.context._true : self.context._false
   }
 
   internal func float(_ value: Double) -> PyFloat {
-    return self.types.float.new(value)
+    return self.context._float(value)
   }
 
   internal func complex(real: Double, imag: Double) -> PyComplex {
-    return self.types.complex.new(real: real, imag: imag)
+    return self.context._complex(real: real, imag: imag)
   }
 
   internal func tuple(_ elements: PyObject...) -> PyTuple {
-    return self.types.tuple.new(elements)
+    return self.context._tuple(elements)
   }
 
   internal func tuple(_ elements: [PyObject]) -> PyTuple {
-    return self.types.tuple.new(elements)
+    return self.context._tuple(elements)
   }
 
   internal func list(_ elements: PyObject...) -> PyList {
-    return self.types.list.new(elements)
+    return self.context._list(elements)
   }
 
   internal func list(_ elements: [PyObject]) -> PyList {
-    return self.types.list.new(elements)
+    return self.context._list(elements)
   }
 
   internal func range(stop: PyInt) -> PyResult<PyRange> {
-    return self.types.range.new(stop: stop)
+    return self.context._range(stop: stop)
   }
 
   internal func range(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
-    return self.types.range.new(start: start, stop: stop, step: step)
+    return self.context._range(start: start, stop: stop, step: step)
   }
 
   // MARK: - Repr

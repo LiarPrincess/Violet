@@ -9,8 +9,8 @@ internal final class PyNone: PyObject, ReprTypeClass, BoolConvertibleTypeClass {
 
   // MARK: - Init
 
-  internal init(type: PyNoneType) {
-    super.init(type: type)
+  internal init(_ context: PyContext) {
+    super.init(type: context.types.none)
   }
 
   // MARK: - String
@@ -29,10 +29,4 @@ internal final class PyNone: PyObject, ReprTypeClass, BoolConvertibleTypeClass {
 internal final class PyNoneType: PyType {
   // TODO: Do we need custom '__getattribute__' as RustPython?
 //  override internal var name: String { return "NoneType" }
-
-  private lazy var value = PyNone(type: self)
-
-  internal func new() -> PyNone {
-    return self.value
-  }
 }

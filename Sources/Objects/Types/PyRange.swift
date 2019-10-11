@@ -38,14 +38,14 @@ internal final class PyRange: PyObject,
 
   // MARK: - Init
 
-  fileprivate init(type: PyRangeType, start: PyInt, stop: PyInt, step: PyInt?) {
+  internal init(_ context: PyContext, start: PyInt, stop: PyInt, step: PyInt?) {
     let isGoingUp = start.value < stop.value
 
     let unwrappedStep: PyInt = {
       if let s = step {
         return s
       }
-      return type.context.types.int.new(isGoingUp ? 1 : -1)
+      return context._int(isGoingUp ? 1 : -1)
     }()
 
     let length: BigInt = {
@@ -65,9 +65,9 @@ internal final class PyRange: PyObject,
     self.stop = stop
     self.step = unwrappedStep
     self.stepType = step == nil ? .implicit: .explicit
-    self.length = type.context.types.int.new(length)
+    self.length = context._int(length)
 
-    super.init(type: type)
+    super.init(type: context.types.range)
   }
 
   // MARK: - Equatable
@@ -267,17 +267,4 @@ internal final class PyRangeType: PyType {
 //    When step is given, it specifies the increment (or decrement).
 //    """
 //  }
-
-  internal func new(stop: PyInt) -> PyResult<PyRange> {
-    let zero = self.int(0)
-    return self.new(start: zero, stop: stop, step: nil)
-  }
-
-  internal func new(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
-    if let s = step, s.value == 0 {
-      return .error(.valueError("range() arg 3 must not be zero"))
-    }
-
-    return .value(PyRange(type: self, start: start, stop: stop, step: step))
-  }
 }

@@ -33,9 +33,9 @@ internal final class PyList: PyObject,
 
   // MARK: - Init
 
-  fileprivate init(type: PyListType, elements: [PyObject]) {
+  internal init(_ context: PyContext, elements: [PyObject]) {
     self.elements = elements
-    super.init(type: type)
+    super.init(type: context.types.list)
   }
 
   // MARK: - Equatable
@@ -265,8 +265,4 @@ internal final class PyListType: PyType {
 //    The argument must be an iterable if specified.
 //    """
 //  }
-
-  internal func new(_ elements: [PyObject]) -> PyList {
-    return PyList(type: context.types.list, elements: elements)
-  }
 }

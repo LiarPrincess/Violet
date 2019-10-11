@@ -14,9 +14,9 @@ internal class PyString: PyObject {
 
   internal var value: String
 
-  fileprivate init(type: PyStringType, value: String) {
+  internal init(_ context: PyContext, value: String) {
     self.value = value
-    super.init(type: type)
+    super.init(type: context.types.string)
   }
 }
 
@@ -42,16 +42,6 @@ internal final class PyStringType: PyType /* ,
 //    errors defaults to 'strict'.
 //    """
 //  }
-
-  // MARK: - Ctors
-
-  internal func new(_ value: String) -> PyString {
-    return PyString(type: self, value: value)
-  }
-
-  internal func new(_ value: UnicodeScalar) -> PyString {
-    return self.new(String([value]))
-  }
 
   // MARK: - String
 /*

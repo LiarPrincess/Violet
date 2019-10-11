@@ -1,12 +1,12 @@
 public class PyContext {
 
   // Internal typed values
-  internal lazy var _true:  PyBool = self.types.bool.new(true)
-  internal lazy var _false: PyBool = self.types.bool.new(false)
-  internal lazy var _none:  PyNone = self.types.none.new()
-  internal lazy var _ellipsis: PyEllipsis = self.types.ellipsis.new()
-  internal lazy var _notImplemented: PyNotImplemented = self.types.notImplemented.new()
-  internal lazy var _emptyTuple: PyTuple = self.types.tuple.new([])
+  internal lazy var _true  = PyBool(self, value: true)
+  internal lazy var _false = PyBool(self, value: false)
+  internal lazy var _none  = PyNone(self)
+  internal lazy var _ellipsis = PyEllipsis(self)
+  internal lazy var _notImplemented = PyNotImplemented(self)
+  internal lazy var _emptyTuple = PyTuple(self, elements: [])
 
   // Public PyObject values
   public var `true`:   PyObject { return self._true }
@@ -29,34 +29,61 @@ public class PyContext {
 
 internal final class PyContextTypes {
 
-  internal lazy var none = PyNoneType(context: self.context)
-  internal lazy var notImplemented = PyNotImplementedType(context: self.context)
+  /// Root of the type hierarchy
+  internal let object: PyType
+  /// Type which is set as `type` on all of the `PyType` objects
+  internal let type: PyType
 
-  internal lazy var int   = PyIntType(context: self.context)
-  internal lazy var float = PyFloatType(context: self.context)
-  internal lazy var bool  = PyBoolType(context: self.context)
-  internal lazy var complex = PyComplexType(context: self.context)
+  internal let none: PyType
+  internal let ellipsis: PyType
+  internal let notImplemented: PyType
 
-  internal lazy var tuple = PyTupleType(context: self.context)
-  internal lazy var list  = PyListType(context: self.context)
-  internal lazy var set   = PySetType(context: self.context)
+  internal let int: PyType
+  internal let float: PyType
+  internal let bool: PyType
+  internal let complex: PyType
 
-  internal lazy var slice = PySliceType(context: self.context)
-  internal lazy var ellipsis = PyEllipsisType(context: self.context)
-  internal lazy var range = PyRangeType(context: self.context)
-  internal lazy var enumerate = PyEnumerateType(context: self.context)
+  internal let tuple: PyType
+  internal let list: PyType
+  internal let set: PyType
+  internal let dict: PyType
 
-  internal lazy var string = PyStringType(context: self.context)
-
-  // TODO: internal lazy var typeType = PyType2(self)
-  internal var typeType: PyType {
-    fatalError()
-  }
-
-  private unowned let context: PyContext
+  internal let slice: PyType
+  internal let range: PyType
+  internal let enumerate: PyType
+  internal let string: PyType
 
   fileprivate init(context: PyContext) {
-    self.context = context
+    // 1. `type` inherits from `object`
+    // 2. both `type` and `object are instances of `type`.
+    // to produce this circular dependency, we need to do small hack.
+    // (and yes, this will never get dropped. TODO?)
+
+    self.object = PyType.createTypeWithoutTypeProperty(context, name: "object", base: nil)
+    self.type   = PyType.createTypeWithoutTypeProperty(context, name: "type",   base: nil)
+
+    self.none     = PyType(context, name: "none",     type: self.type, base: self.object)
+    self.ellipsis = PyType(context, name: "ellipsis", type: self.type, base: self.object)
+    self.notImplemented =
+      PyType(context, name: "notImplemented", type: self.type, base: self.object)
+
+    self.int     = PyType(context, name: "int",     type: self.type, base: self.object)
+    self.float   = PyType(context, name: "float",   type: self.type, base: self.object)
+    self.bool    = PyType(context, name: "bool",    type: self.type, base: self.int)
+    self.complex = PyType(context, name: "complex", type: self.type, base: self.object)
+
+    self.tuple = PyType(context, name: "tuple", type: self.type, base: self.object)
+    self.list  = PyType(context, name: "list",  type: self.type, base: self.object)
+    self.set   = PyType(context, name: "set",   type: self.type, base: self.object)
+    self.dict  = PyType(context, name: "dict",  type: self.type, base: self.object)
+
+    self.slice = PyType(context, name: "slice", type: self.type, base: self.object)
+    self.range = PyType(context, name: "range", type: self.type, base: self.object)
+    self.enumerate = PyType(context, name: "enumerate", type: self.type, base: self.object)
+    self.string = PyType(context, name: "string", type: self.type, base: self.object)
+
+    PyType.setTypeProperty(type: self.object, setting: self.type)
+    PyType.setTypeProperty(type: self.type, setting: self.type)
   }
 }
 /*

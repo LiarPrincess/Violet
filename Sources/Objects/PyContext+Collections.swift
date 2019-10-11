@@ -13,8 +13,19 @@ extension PyContext {
   // MARK: - Tuple
 
   /// PyObject * PyTuple_New(Py_ssize_t size)
-  public func tuple(elements: [PyObject] = []) -> PyObject {
-    return elements.isEmpty ? self.emptyTuple : PyTuple.new(self, elements)
+  public func tuple(_ elements: PyObject...) -> PyObject {
+    return self._tuple(elements)
+  }
+
+  /// PyObject * PyTuple_New(Py_ssize_t size)
+  public func tuple(_ elements: [PyObject]) -> PyObject {
+    return self._tuple(elements)
+  }
+
+  internal func _tuple(_ elements: [PyObject]) -> PyTuple {
+    return elements.isEmpty ?
+      self._emptyTuple :
+      PyTuple(self, elements: elements)
   }
 
   /// PyObject * PyList_AsTuple(PyObject *v)
@@ -27,8 +38,17 @@ extension PyContext {
   // MARK: - List
 
   /// PyObject * PyList_New(Py_ssize_t size)
-  public func list(elements: [PyObject] = []) -> PyObject {
-    return self.types.list.new(elements)
+  public func list(_ elements: PyObject...) -> PyObject {
+    return self._list(elements)
+  }
+
+  /// PyObject * PyList_New(Py_ssize_t size)
+  public func list(_ elements: [PyObject]) -> PyObject {
+    return self._list(elements)
+  }
+
+  internal func _list(_ elements: [PyObject]) -> PyList {
+    return PyList(self, elements: elements)
   }
 
   /// int PyList_Append(PyObject *op, PyObject *newitem)
@@ -45,7 +65,8 @@ extension PyContext {
 
   /// PyObject * PySet_New(PyObject *iterable)
   public func set(elements: [PyObject] = []) throws -> PyObject {
-    return try self.types.set.new(elements: elements)
+//    return try self.types.set.new(elements: elements)
+    return self.unimplemented()
   }
 
   /// int PySet_Add(PyObject *anyset, PyObject *key)
@@ -75,6 +96,23 @@ extension PyContext {
 
   public func PyDict_Update(dictionary: PyObject, iterable: PyObject) {
     self.unimplemented()
+  }
+
+  // MARK: - Range
+
+  internal func _range(stop: PyInt) -> PyResult<PyRange> {
+    let zero = self._int(0)
+    return self._range(start: zero, stop: stop, step: nil)
+  }
+
+  internal func _range(start: PyInt,
+                       stop: PyInt,
+                       step: PyInt?) -> PyResult<PyRange> {
+    if let s = step, s.value == 0 {
+      return .error(.valueError("range() arg 3 must not be zero"))
+    }
+
+    return .value(PyRange(self, start: start, stop: stop, step: step))
   }
 
   // MARK: - Shared

@@ -40,9 +40,9 @@ internal final class PySet: PyObject {
 
   internal var elements: [PyHash: PyObject]
 
-  fileprivate init(type: PySetType, elements: [PyHash: PyObject]) {
+  internal init(_ context: PyContext, elements: [PyHash:PyObject]) {
     self.elements = elements
-    super.init(type: type)
+    super.init(type: context.types.set)
   }
 }
 
@@ -66,19 +66,6 @@ internal final class PySetType: PyType /* ,
 //  }
 
   // MARK: - Ctor
-
-  internal func new(elements: [PyObject]) throws -> PySet {
-    var dict = [PyHash: PyObject]()
-    for e in elements {
-      let hash = self.context.hash(value: e)
-      dict[hash] = e
-    }
-    return PySet(type: self, elements: dict)
-  }
-
-  internal func new(elements: [PyHash: PyObject] = [:]) -> PySet {
-    return PySet(type: self, elements: elements)
-  }
 /*
   // MARK: - Equatable, hashable
 
