@@ -17,7 +17,30 @@
 # }
 
 types = {
+  object: [
+    '__format__',
+    '__dir__',
+    '__subclasshook__',
+    '__init_subclass__',
+    '__eq__',
+    '__ne__',
+    '__lt__',
+    '__le__',
+    '__gt__',
+    '__ge__',
+    '__hash__',
+    '__repr__',
+    '__str__',
+  ],
   bool: [
+    '__repr__',
+    '__str__',
+    '__and__',
+    '__rand__',
+    '__or__',
+    '__ror__',
+    '__xor__',
+    '__rxor__',
     'numerator',
     'denominator',
     '__abs__',

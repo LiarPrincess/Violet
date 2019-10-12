@@ -286,7 +286,7 @@ internal final class PyRange: PyObject,
 
   internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
     guard let int = element as? PyInt, self.contains(int) else {
-      let str = self.context.strString(value: element)
+      let str = self.context._str(value: element)
       return .error(.valueError("\(str) is not in range"))
     }
 

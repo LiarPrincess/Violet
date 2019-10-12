@@ -59,8 +59,9 @@ internal final class PyContextTypes {
     // to produce this circular dependency, we need to do small hack.
     // (and yes, this will never get dropped. TODO?)
 
+    // TODO: How does Sourcery + our class work here?
     self.object = PyType.createTypeWithoutTypeProperty(context, name: "object", base: nil)
-    self.type   = PyType.createTypeWithoutTypeProperty(context, name: "type",   base: nil)
+    self.type   = PyType.createTypeWithoutTypeProperty(context, name: "type",   base: self.object)
 
     self.none     = PyType.NoneType(context, type: self.type, base: self.object)
     self.ellipsis = PyType.ellipsis(context, type: self.type, base: self.object)

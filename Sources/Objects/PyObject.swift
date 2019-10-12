@@ -18,25 +18,36 @@ public class PyObject {
   internal var flags: PyObjectFlags = []
 
   // swiftlint:disable:next implicitly_unwrapped_optional
-  internal private(set) var type: PyType!
+  private var _type: PyType!
+  internal var type: PyType {
+    return self._type
+  }
+
+  internal var ptrString: String {
+    // This may not work exactly as in CPython, but that does not matter.
+    return String(describing: Unmanaged.passUnretained(self).toOpaque())
+  }
 
   // MARK: - Init
+
+  internal init(type: PyType) {
+    self._type = type
+  }
+
+  // MARK: - BaseObject and Type
 
   /// NEVER EVER use this ctor!
   /// This is a reserved for `objectType` and `typeType`.
   /// Use version with 'type: PyType' parameter.
   internal init() {
-    self.type = nil
-  }
-
-  internal init(type: PyType) {
-    self.type = type
+    self._type = nil
   }
 
   /// NEVER EVER use this function!
   /// This is a reserved for `objectType` and `typeType`.
   internal func setType(to type: PyType) {
-    self.type = type
+    assert(self._type == nil)
+    self._type = type
   }
 
   // MARK: - Helpers

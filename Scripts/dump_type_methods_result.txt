@@ -1,3 +1,28 @@
+object
+  Implemented:
+    __dir__
+    __eq__
+    __format__
+    __ge__
+    __gt__
+    __hash__
+    __le__
+    __lt__
+    __ne__
+    __repr__
+    __str__
+  Unimplemented:
+    __delattr__
+    __getattribute__
+    __init__
+    __reduce__
+    __reduce_ex__
+    __setattr__
+    __sizeof__
+  Please remind me why do we even have this method?
+    __subclasshook__
+    __init_subclass__
+
 bool
   Implemented:
     __and__

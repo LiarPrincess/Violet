@@ -9,6 +9,28 @@
 
 extension PyType {
 
+  internal static func object(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    let result = PyType(context, name: "object", type: type, base: base)
+
+    // result.__doc__ = PyBaseObject.doc
+
+    // result.__format__ = PyBaseObject.format(spec: PyObject)
+    // result.__dir__ = PyBaseObject.dir()
+    // result.__subclasshook__ = PyBaseObject.subclasshook()
+    // result.__init_subclass__ = PyBaseObject.initSubclass()
+    // result.__eq__ = PyBaseObject.isEqual(_ other: PyObject)
+    // result.__ne__ = PyBaseObject.isNotEqual(_ other: PyObject)
+    // result.__lt__ = PyBaseObject.isLess(_ other: PyObject)
+    // result.__le__ = PyBaseObject.isLessEqual(_ other: PyObject)
+    // result.__gt__ = PyBaseObject.isGreater(_ other: PyObject)
+    // result.__ge__ = PyBaseObject.isGreaterEqual(_ other: PyObject)
+    // result.__hash__ = PyBaseObject.hash()
+    // result.__repr__ = PyBaseObject.repr()
+    // result.__str__ = PyBaseObject.str()
+
+    return result
+  }
+
   internal static func bool(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
     let result = PyType(context, name: "bool", type: type, base: base)
 

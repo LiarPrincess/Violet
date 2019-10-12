@@ -104,9 +104,9 @@ internal final class PySlice: PyObject, ReprTypeClass, ComparableTypeClass {
 
   internal func repr() -> String {
     let noneRepr = self.context._none.repr()
-    let start = self.start.map(self.context.reprString) ?? noneRepr
-    let stop  = self.stop.map(self.context.reprString) ?? noneRepr
-    let step  = self.step.map(self.context.reprString) ?? noneRepr
+    let start = self.start.map(self.context._repr) ?? noneRepr
+    let stop  = self.stop.map(self.context._repr) ?? noneRepr
+    let step  = self.step.map(self.context._repr) ?? noneRepr
     return "slice(\(start), \(stop), \(step))"
   }
 

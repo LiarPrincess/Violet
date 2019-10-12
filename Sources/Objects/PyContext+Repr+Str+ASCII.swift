@@ -4,11 +4,11 @@ extension PyContext {
 
   /// PyObject * PyObject_Repr(PyObject *v)
   public func repr(value: PyObject) -> PyObject {
-    let raw = self.reprString(value: value)
+    let raw = self._repr(value: value)
     return PyString(self, value: raw)
   }
 
-  internal func reprString(value: PyObject) -> String {
+  internal func _repr(value: PyObject) -> String {
     if let reprType = value as? ReprTypeClass {
       return reprType.repr()
     }
@@ -20,11 +20,11 @@ extension PyContext {
 
   /// PyObject * PyObject_Str(PyObject *v)
   public func str(value: PyObject) -> PyObject {
-    let raw = self.strString(value: value)
+    let raw = self._str(value: value)
     return PyString(self, value: raw)
   }
 
-  internal func strString(value: PyObject) -> String {
+  internal func _str(value: PyObject) -> String {
     if let str = value as? PyString {
       return str.value
     }
@@ -44,12 +44,12 @@ extension PyContext {
 
   /// PyObject * PyObject_ASCII(PyObject *v)
   public func ascii(value: PyObject) -> PyObject {
-    let raw = try self.asciiStr(value: value)
+    let raw = self.asciiStr(value: value)
     return PyString(self, value: raw)
   }
 
   internal func asciiStr(value: PyObject) -> String {
-    let repr = self.reprString(value: value)
+    let repr = self._repr(value: value)
     let scalars = repr.unicodeScalars
 
     let allASCII = scalars.allSatisfy { $0.isASCII }
@@ -81,6 +81,6 @@ extension PyContext {
   // MARK: - Helpers
 
   private func genericRepr(value: PyObject) -> String {
-    return "<\(value.type.name) object>"
+    return "<\(value.type.name) object at \(value.ptrString)>"
   }
 }

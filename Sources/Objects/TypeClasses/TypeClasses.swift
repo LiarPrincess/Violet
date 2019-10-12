@@ -2,6 +2,12 @@ internal protocol TypeClass {
   var context: PyContext { get }
 }
 
+// MARK: - Dict owner
+
+internal protocol DictOwnerTypeClass {
+  var dict: [String:PyObject] { get set }
+}
+
 // MARK: - Comparable
 
 internal typealias EquatableResult = PyResultOrNot<Bool>
@@ -38,6 +44,7 @@ extension ComparableTypeClass {
 
 // MARK: - Hashable
 
+// TODO: Can we remove 'PyResultOrNot'?
 internal typealias HashableResult = PyResultOrNot<PyHash>
 
 internal protocol HashableTypeClass: TypeClass {

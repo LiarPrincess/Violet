@@ -7,7 +7,7 @@ private class PyTypeWeakRef {
   }
 }
 
-internal class PyType: PyObject {
+internal class PyType: PyObject, DictOwnerTypeClass {
 
   internal let name: String
   private let doc: String? = nil
@@ -17,7 +17,7 @@ internal class PyType: PyObject {
   /// https://www.python.org/download/releases/2.3/mro/
   private let mro: [PyType] = []
 
-  private let dict: [String:Any] = [:]
+  internal var dict: [String:PyObject] = [:]
 
   private unowned let _context: PyContext
   override internal var context: PyContext {
@@ -88,7 +88,48 @@ internal class PyType: PyObject {
     return self.mro.contains { $0 === type }
   }
 
+  // MARK: - Bases
+
+  internal var bases: [PyType] {
+    return []
+  }
+
   // TODO: Check _PyType_Lookup(PyTypeObject *type, PyObject *name)
+
+  // MARK: - Qualname
+
+  internal var qualname: String {
+    fatalError()
+  }
+
+  /// PyObject *
+  /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
+  internal func lookup(name: String) -> PyObject {
+    fatalError()
+  }
+
+  // MARK: - Module
+
+  internal enum Module {
+    case external(String)
+    case builtins
+  }
+
+  internal var module: Module {
+    if let dictValue = self.dict["__module__"] {
+      if let str = dictValue as? PyString {
+        return .external(str.value)
+      }
+
+      return .external(self.context._repr(value: dictValue))
+    }
+
+    if let dotIndex = self.name.firstIndex(of: ".") {
+      return .external(String(self.name.prefix(upTo: dotIndex)))
+    }
+
+    return .builtins
+  }
 
   // MARK: - MRO
 

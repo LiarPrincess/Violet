@@ -125,7 +125,7 @@ extension PyContext {
 
   internal func _enumerate(iterable: PyObject, startIndex: Int) -> PyResult<PyEnumerate> {
     guard let source = iterable as? PyEnumerateSource else {
-      let str = self.strString(value: iterable)
+      let str = self._str(value: iterable)
       return .error(.typeError("'\(str)' object is not iterable"))
     }
 

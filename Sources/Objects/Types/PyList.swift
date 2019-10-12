@@ -119,7 +119,7 @@ internal final class PyList: PyObject,
           result += ", " // so that we don't have ', )'.
         }
 
-        result += self.context.reprString(value: element)
+        result += self.context._repr(value: element)
       }
 
       result += self.elements.count > 1 ? "]" : ",]"
