@@ -3,24 +3,6 @@
 // swiftlint:disable line_length
 // swiftlint:disable file_length
 
-types = {
-{% for type in types.classes|annotated:"pytype" %}
-  {% if type.annotations.pytype == "NoneType" %}
-  type(None): [
-  {% elif type.annotations.pytype == "NotImplementedType" %}
-  type(NotImplemented): [
-  {% elif type.annotations.pytype == "ellipsis" %}
-  type(...): [
-  {% else %}
-  {{ type.annotations.pytype }}: [
-  {% endif %}
-  {% for method in type.allMethods|annotated:"pymethod" %}
-    '{{ method.annotations.pymethod }}',
-  {% endfor %}
-  ],
-{% endfor %}
-}
-
 extension PyType {
 {% for type in types.classes|annotated:"pytype" %}
 

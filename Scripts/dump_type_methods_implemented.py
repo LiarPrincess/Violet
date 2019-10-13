@@ -16,6 +16,8 @@
 # {% endfor %}
 # }
 
+def f(): pass
+code = type(f.__code__)
 
 types = {
   object: [
@@ -91,6 +93,16 @@ types = {
     '__str__',
     '__sub__',
     '__truediv__',
+  ],
+  code: [
+    '__eq__',
+    '__ne__',
+    '__lt__',
+    '__le__',
+    '__gt__',
+    '__ge__',
+    '__hash__',
+    '__repr__',
   ],
   complex: [
     '__abs__',

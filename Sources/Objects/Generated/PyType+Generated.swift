@@ -48,6 +48,23 @@ extension PyType {
     return result
   }
 
+  internal static func code(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    let result = PyType(context, name: "code", type: type, base: base)
+
+    // result.__doc__ = PyCode.doc
+
+    // result.__eq__ = PyCode.isEqual(_ other: PyObject)
+    // result.__ne__ = PyCode.isNotEqual(_ other: PyObject)
+    // result.__lt__ = PyCode.isLess(_ other: PyObject)
+    // result.__le__ = PyCode.isLessEqual(_ other: PyObject)
+    // result.__gt__ = PyCode.isGreater(_ other: PyObject)
+    // result.__ge__ = PyCode.isGreaterEqual(_ other: PyObject)
+    // result.__hash__ = PyCode.hash()
+    // result.__repr__ = PyCode.repr()
+
+    return result
+  }
+
   internal static func complex(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
     let result = PyType(context, name: "complex", type: type, base: base)
 

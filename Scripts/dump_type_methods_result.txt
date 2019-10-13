@@ -83,6 +83,38 @@ bool
     __sub__
     __truediv__
 
+code
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
+  Implemented:
+    __eq__
+    __ge__
+    __gt__
+    __hash__
+    __le__
+    __lt__
+    __ne__
+    __repr__
+  Unimplemented:
+    __getattribute__
+    __sizeof__
+    co_argcount
+    co_cellvars
+    co_code
+    co_consts
+    co_filename
+    co_firstlineno
+    co_flags
+    co_freevars
+    co_kwonlyargcount
+    co_lnotab
+    co_name
+    co_names
+    co_nlocals
+    co_stacksize
+    co_varnames
+
 complex
   __init_subclass__ - <class 'builtin_function_or_method'>
   __new__ - <class 'builtin_function_or_method'>
