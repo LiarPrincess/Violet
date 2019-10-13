@@ -70,7 +70,7 @@ internal final class PyBaseObject: PyObject,
   // MARK: - String
 
   internal func repr() -> String {
-    switch self.type.module {
+    switch self.type.getModule() {
     case .builtins:
       return "<\(self.type.name) object at \(self.ptrString)>"
     case let .external(module):

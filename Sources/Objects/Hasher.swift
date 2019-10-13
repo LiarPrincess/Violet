@@ -6,6 +6,8 @@ import Core
 // Objects -> longobject.c
 // https://docs.python.org/3.7/c-api/complex.html
 
+// TODO: Move this to Hashable extension
+
 internal typealias PyHash = Int64
 
 // For numeric types, the hash of a number x is based on the reduction
@@ -89,6 +91,19 @@ internal struct Hasher {
   }
 
   internal func hash(_ value: String) -> PyHash {
+    fatalError()
+  }
+
+  internal func hash(_ value: ObjectIdentifier) -> PyHash {
+//    Py_hash_t x;
+//    size_t y = (size_t)p;
+//    /* bottom 3 or 4 bits are likely to be 0; rotate y by 4 to avoid
+//     excessive hash collisions for dicts and sets */
+//    y = (y >> 4) | (y << (8 * SIZEOF_VOID_P - 4));
+//    x = (Py_hash_t)y;
+//    if (x == -1)
+//    x = -2;
+//    return x;
     fatalError()
   }
 }

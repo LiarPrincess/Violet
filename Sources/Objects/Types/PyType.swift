@@ -1,3 +1,21 @@
+// In CPython:
+// Objects -> typeobject.c
+
+// TODO: Type
+//__abstractmethods__
+//__call__
+//__repr__
+//__getattribute__
+//__delattr__
+//__setattr__
+//__dir__
+//__init__
+//__sizeof__
+//__instancecheck__
+//__subclasscheck__
+//__subclasses__
+//mro
+
 private class PyTypeWeakRef {
 
   fileprivate weak var value: PyType?
@@ -7,9 +25,16 @@ private class PyTypeWeakRef {
   }
 }
 
+// sourcery: pytype = type
 internal class PyType: PyObject, DictOwnerTypeClass {
 
-  internal let name: String
+  internal static let doc: String = """
+    type(object_or_name, bases, dict)
+    type(object) -> the object's type
+    type(name, bases, dict) -> a new type
+    """
+
+  internal var name: String
   private let doc: String? = nil
   private var subclasses: [PyTypeWeakRef] = []
 
@@ -68,14 +93,88 @@ internal class PyType: PyObject, DictOwnerTypeClass {
     return PyType(context, name: name, base: base)
   }
 
-  /// NEVER EVER use this function!
-  /// This is a reserved for `objectType` and `typeType`.
-  internal static func setTypeProperty(
-    type: PyType,
-    setting typeType: PyType) {
+  // MARK: - Name
 
-    assert(type.type == nil, "Type is already assigned!")
-    type.setType(to: typeType)
+  internal func getName() -> String {
+    return self.name
+  }
+
+  internal func setName(_ value: PyObject) -> PyResult<()> {
+    guard let valueStr = value as? PyString else {
+      let typeName = value.type.name
+      return .error(
+        .typeError(
+          "can only assign string to \(self.name).__name__, not '\(typeName)'"
+        )
+      )
+    }
+
+    self.name = valueStr.value
+    return .value(())
+  }
+
+  // MARK: - Qualname
+
+  internal func getQualname() -> String {
+//    if let result = self.dict["__qualname__"] {
+//      return result
+//    }
+    fatalError()
+  }
+
+  internal func setQualname(_ value: PyObject) -> PyResult<()> {
+    guard let valueStr = value as? PyString else {
+      let typeName = value.type.name
+      return .error(
+        .typeError(
+          "can only assign string to \(self.name).__qualname__, not '\(typeName)'"
+        )
+      )
+    }
+
+    fatalError()
+  }
+
+  // MARK: - Module
+
+  internal enum Module {
+    case external(String)
+    case builtins
+  }
+
+  internal func getModule() -> Module {
+    // type_module(PyTypeObject *type, void *context)
+    if let dictValue = self.dict["__module__"] {
+      if let str = dictValue as? PyString {
+        return .external(str.value)
+      }
+
+      return .external(self.context._repr(value: dictValue))
+    }
+
+    if let dotIndex = self.name.firstIndex(of: ".") {
+      return .external(String(self.name.prefix(upTo: dotIndex)))
+    }
+
+    return .builtins
+  }
+
+  internal func setModule(_ value: PyObject) -> PyResult<()> {
+    // type_set_module(PyTypeObject *type, PyObject *value, void *context)
+    fatalError()
+  }
+
+  // MARK: - Bases
+
+  // MARK: - String
+
+  internal func repr() -> String {
+    switch self.type.getModule() {
+    case .builtins:
+      return "<class '\(self.name)'>"
+    case let .external(module):
+      return "<class '\(module).\(self.name)'>"
+    }
   }
 
   // MARK: - Subtype
@@ -96,39 +195,10 @@ internal class PyType: PyObject, DictOwnerTypeClass {
 
   // TODO: Check _PyType_Lookup(PyTypeObject *type, PyObject *name)
 
-  // MARK: - Qualname
-
-  internal var qualname: String {
-    fatalError()
-  }
-
   /// PyObject *
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
   internal func lookup(name: String) -> PyObject {
     fatalError()
-  }
-
-  // MARK: - Module
-
-  internal enum Module {
-    case external(String)
-    case builtins
-  }
-
-  internal var module: Module {
-    if let dictValue = self.dict["__module__"] {
-      if let str = dictValue as? PyString {
-        return .external(str.value)
-      }
-
-      return .external(self.context._repr(value: dictValue))
-    }
-
-    if let dotIndex = self.name.firstIndex(of: ".") {
-      return .external(String(self.name.prefix(upTo: dotIndex)))
-    }
-
-    return .builtins
   }
 
   // MARK: - MRO

@@ -28,7 +28,7 @@ for t in implemented.types:
       else:
         derived_members.append(member)
     else:
-      # print(' ', name, '-', type(member))
+      print(' ', name, '-', type(member))
       pass
 
   implemented_extra = []

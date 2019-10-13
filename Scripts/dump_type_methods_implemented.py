@@ -16,6 +16,7 @@
 # {% endfor %}
 # }
 
+
 types = {
   object: [
     '__format__',
@@ -292,5 +293,7 @@ types = {
     '__mul__',
     '__rmul__',
     '__repr__',
+  ],
+  type: [
   ],
 }

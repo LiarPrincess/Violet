@@ -323,4 +323,14 @@ extension PyType {
 
     return result
   }
+
+  internal static func type(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    #warning("Type PyType should be marked final.")
+    let result = PyType(context, name: "type", type: type, base: base)
+
+    // result.__doc__ = PyType.doc
+
+
+    return result
+  }
 }

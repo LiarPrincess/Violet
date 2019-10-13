@@ -1,4 +1,7 @@
 object
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Implemented:
     __dir__
     __eq__
@@ -24,6 +27,10 @@ object
     __init_subclass__
 
 bool
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
+  from_bytes - <class 'builtin_function_or_method'>
   Implemented:
     __and__
     __or__
@@ -33,8 +40,53 @@ bool
     __rxor__
     __str__
     __xor__
+  Please remind me why do we even have this method?
+    numerator
+    denominator
+    __abs__
+    __add__
+    __bool__
+    __eq__
+    __ne__
+    __lt__
+    __le__
+    __gt__
+    __ge__
+    conjugate
+    __divmod__
+    __float__
+    __floordiv__
+    __hash__
+    imag
+    __index__
+    __int__
+    __invert__
+    __mod__
+    __mul__
+    __pow__
+    __radd__
+    __rdivmod__
+    __rfloordiv__
+    __rmod__
+    __rmul__
+    __rpow__
+    __rlshift__
+    __rrshift__
+    __rsub__
+    __rtruediv__
+    real
+    __round__
+    __lshift__
+    __rshift__
+    __pos__
+    __neg__
+    __sub__
+    __truediv__
 
 complex
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Implemented:
     __abs__
     __add__
@@ -76,6 +128,9 @@ complex
     __getnewargs__
 
 ellipsis
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Implemented:
     __repr__
   Unimplemented:
@@ -83,6 +138,9 @@ ellipsis
     __reduce__
 
 enumerate
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Unimplemented:
     __getattribute__
     __iter__
@@ -90,6 +148,12 @@ enumerate
     __reduce__
 
 float
+  __getformat__ - <class 'builtin_function_or_method'>
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __set_format__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
+  fromhex - <class 'builtin_function_or_method'>
   Implemented:
     __abs__
     __add__
@@ -136,6 +200,10 @@ float
     is_integer
 
 int
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
+  from_bytes - <class 'builtin_function_or_method'>
   Implemented:
     __abs__
     __add__
@@ -198,6 +266,10 @@ int
     to_bytes
 
 list
+  __hash__ - <class 'NoneType'>
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Implemented:
     __add__
     __contains__
@@ -235,17 +307,26 @@ list
     sort
 
 NoneType
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Implemented:
     __bool__
     __repr__
 
 NotImplementedType
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Implemented:
     __repr__
   Unimplemented:
     __reduce__
 
 range
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Implemented:
     __bool__
     __contains__
@@ -271,6 +352,10 @@ range
     stop
 
 slice
+  __hash__ - <class 'NoneType'>
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Implemented:
     __eq__
     __ge__
@@ -288,6 +373,9 @@ slice
     stop
 
 tuple
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __new__ - <class 'builtin_function_or_method'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
   Implemented:
     __add__
     __contains__
@@ -309,4 +397,37 @@ tuple
     __getattribute__
     __getnewargs__
     __iter__
+
+type
+  __base__ - <class 'type'>
+  __bases__ - <class 'tuple'>
+  __basicsize__ - <class 'int'>
+  __dict__ - <class 'mappingproxy'>
+  __dictoffset__ - <class 'int'>
+  __flags__ - <class 'int'>
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __itemsize__ - <class 'int'>
+  __module__ - <class 'str'>
+  __mro__ - <class 'tuple'>
+  __name__ - <class 'str'>
+  __new__ - <class 'builtin_function_or_method'>
+  __prepare__ - <class 'builtin_function_or_method'>
+  __qualname__ - <class 'str'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
+  __text_signature__ - <class 'NoneType'>
+  __weakrefoffset__ - <class 'int'>
+  Unimplemented:
+    __abstractmethods__
+    __call__
+    __delattr__
+    __dir__
+    __getattribute__
+    __init__
+    __instancecheck__
+    __repr__
+    __setattr__
+    __sizeof__
+    __subclasscheck__
+    __subclasses__
+    mro
 

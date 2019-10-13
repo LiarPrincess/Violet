@@ -46,7 +46,7 @@ public class PyObject {
   /// NEVER EVER use this function!
   /// This is a reserved for `objectType` and `typeType`.
   internal func setType(to type: PyType) {
-    assert(self._type == nil)
+    assert(self._type == nil, "Type is already assigned!")
     self._type = type
   }
 
