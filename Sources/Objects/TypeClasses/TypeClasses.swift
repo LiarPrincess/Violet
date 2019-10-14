@@ -64,6 +64,13 @@ internal protocol StrTypeClass: TypeClass {
   func str() -> String
 }
 
+// MARK: - Call
+
+internal protocol CallTypeClass: TypeClass {
+  // sourcery: pymethod = __call__
+  func call() -> PyResult<PyObject>
+}
+
 // MARK: - Attributes
 
 //  getattrfunc tp_getattr;
@@ -72,9 +79,6 @@ internal protocol StrTypeClass: TypeClass {
 //  setattrofunc tp_setattro;
 
 //  /* More standard operations (here for binary compatibility) */
-//
-
-//  ternaryfunc tp_call;
 //
 //  /* Functions to access object as input/output buffer */
 //  PyBufferProcs *tp_as_buffer;

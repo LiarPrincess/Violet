@@ -6,6 +6,8 @@
 #   type(NotImplemented): [
 #   {% elif type.annotations.pytype == "ellipsis" %}
 #   type(...): [
+#   {% elif type.annotations.pytype == "function" %}
+#   type(f): [
 #   {% else %}
 #   {{ type.annotations.pytype }}: [
 #   {% endif %}
@@ -307,5 +309,7 @@ types = {
     '__repr__',
   ],
   type: [
+  ],
+  type(f): [
   ],
 }

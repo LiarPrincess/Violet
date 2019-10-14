@@ -463,3 +463,22 @@ type
     __subclasses__
     mro
 
+function
+  __dict__ - <class 'mappingproxy'>
+  __init_subclass__ - <class 'builtin_function_or_method'>
+  __module__ - <class 'str'>
+  __name__ - <class 'str'>
+  __new__ - <class 'builtin_function_or_method'>
+  __qualname__ - <class 'str'>
+  __subclasshook__ - <class 'builtin_function_or_method'>
+  Unimplemented:
+    __annotations__
+    __call__
+    __closure__
+    __code__
+    __defaults__
+    __get__
+    __globals__
+    __kwdefaults__
+    __repr__
+
