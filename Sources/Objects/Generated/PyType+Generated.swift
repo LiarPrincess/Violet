@@ -170,6 +170,26 @@ extension PyType {
     return result
   }
 
+  internal static func function(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    let result = PyType(context, name: "function", type: type, base: base)
+
+    // result.__doc__ = PyFunction.doc
+
+    // result.__call__ = PyFunction.call()
+    // result.__repr__ = PyFunction.repr()
+
+    return result
+  }
+
+  internal static func instancemethod(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    let result = PyType(context, name: "instancemethod", type: type, base: base)
+
+    // result.__doc__ = PyInstanceMethod.doc
+
+
+    return result
+  }
+
   internal static func int(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
     let result = PyType(context, name: "int", type: type, base: base)
 
@@ -254,6 +274,24 @@ extension PyType {
     // result.__mul__ = PyList.mul(_ other: PyObject)
     // result.__rmul__ = PyList.rmul(_ other: PyObject)
     // result.__repr__ = PyList.repr()
+
+    return result
+  }
+
+  internal static func method(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    let result = PyType(context, name: "method", type: type, base: base)
+
+    // result.__doc__ = PyMethod.doc
+
+
+    return result
+  }
+
+  internal static func nodule(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    let result = PyType(context, name: "nodule", type: type, base: base)
+
+    // result.__doc__ = PyModule.doc
+
 
     return result
   }

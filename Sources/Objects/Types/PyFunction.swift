@@ -31,7 +31,7 @@ internal final class PyFunction: PyObject, ReprTypeClass, CallTypeClass {
   /// The qualified name
   private let _qualname: String
   /// The __dict__ attribute, a dict or NULL
-  private let _dict: PyObject?
+  internal let _dict: [String:PyObject]?
   /// The __module__ attribute, can be anything
   private let _module: PyObject?
 
