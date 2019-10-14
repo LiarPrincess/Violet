@@ -1,6 +1,7 @@
 import Bytecode
 
-internal final class PyModule: PyObject { }
+// In CPython:
+// Objects -> funcobject.c
 
 // sourcery: pytype = function
 internal final class PyFunction: PyObject, ReprTypeClass, CallTypeClass {
@@ -32,7 +33,7 @@ internal final class PyFunction: PyObject, ReprTypeClass, CallTypeClass {
   /// The __dict__ attribute, a dict or NULL
   private let _dict: PyObject?
   /// The __module__ attribute, can be anything
-  private let _module: PyModule?
+  private let _module: PyObject?
 
   /// A code object, the __code__ attribute
   private let _code: PyCode
