@@ -69,6 +69,13 @@ internal final class PyFunction: PyObject, ReprTypeClass, CallTypeClass {
     super.init()
   }
 
+  // MARK: - Name
+
+  // TODO: finish this
+  internal func getName() -> String {
+    return self._name
+  }
+
   // MARK: - String
 
   internal func repr() -> String {
