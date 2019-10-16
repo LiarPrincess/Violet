@@ -1,5 +1,8 @@
 import Bytecode
 
+// In CPython:
+// Objects -> codeobject.c
+
 // TODO: Code
 // __getattribute__
 // __sizeof__
