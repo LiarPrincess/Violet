@@ -30,9 +30,7 @@ extension Parser {
   ///   'import' ('*' | '(' import_as_names ')' | import_as_names)
   /// )
   /// ```
-  internal mutating func importStmt(closingTokens: [TokenKind])
-    throws -> Statement {
-
+  internal func importStmt(closingTokens: [TokenKind]) throws -> Statement {
     assert(self.isImportStmt())
 
     switch self.peek.kind {
@@ -49,7 +47,7 @@ extension Parser {
   // MARK: - Import
 
   /// `import_name: 'import' dotted_as_names`
-  private mutating func parseImport() throws -> Statement {
+  private func parseImport() throws -> Statement {
     assert(self.peek.kind == .import)
 
     let start = self.peek.start
@@ -63,7 +61,7 @@ extension Parser {
   // MARK: - Dotted names
 
   /// `dotted_as_name: dotted_name ['as' NAME]`
-  private mutating func dottedAsName() throws -> Alias {
+  private func dottedAsName() throws -> Alias {
     let base = try self.dottedName()
 
     var asName: String?
@@ -84,7 +82,7 @@ extension Parser {
   }
 
   /// `dotted_as_names: dotted_as_name (',' dotted_as_name)*`
-  private mutating func dottedAsNames() throws -> NonEmptyArray<Alias> {
+  private func dottedAsNames() throws -> NonEmptyArray<Alias> {
     let first = try self.dottedAsName()
 
     var additionalElements = [Alias]()
@@ -105,7 +103,7 @@ extension Parser {
   }
 
   /// `dotted_name: NAME ('.' NAME)*`
-  private mutating func dottedName() throws -> DottedName {
+  private func dottedName() throws -> DottedName {
     let start = self.peek.start
     var end = self.peek.end
     let first = try self.consumeIdentifierOrThrow()
@@ -150,9 +148,7 @@ extension Parser {
   ///   'import' ('*' | '(' import_as_names ')' | import_as_names)
   /// )
   /// ```
-  private mutating func parseImportFrom(closingTokens: [TokenKind])
-    throws -> Statement {
-
+  private func parseImportFrom(closingTokens: [TokenKind]) throws -> Statement {
     assert(self.peek.kind == .from)
 
     let start = self.peek.start
@@ -180,7 +176,7 @@ extension Parser {
   ///   'import' ('*' | '(' import_as_names ')' | import_as_names)
   /// )
   /// ```
-  private mutating func parseImportFromModule(into ir: inout ImportFromIR) throws {
+  private func parseImportFromModule(into ir: inout ImportFromIR) throws {
     try self.consumeOrThrow(.from)
 
     ir.level = try self.consumeDots()
@@ -197,7 +193,7 @@ extension Parser {
     }
   }
 
-  private mutating func consumeDots() throws -> UInt8 {
+  private func consumeDots() throws -> UInt8 {
     var count: UInt8 = 0
 
     while self.peek.kind == .dot || self.peek.kind == .ellipsis {
@@ -219,8 +215,8 @@ extension Parser {
   ///   'import' ('*' | '(' import_as_names ')' | import_as_names) <- THIS
   /// )
   /// ```
-  private mutating func parseImportFromNames(into ir: inout ImportFromIR,
-                                             closingTokens: [TokenKind]) throws {
+  private func parseImportFromNames(into ir: inout ImportFromIR,
+                                    closingTokens: [TokenKind]) throws {
 
     try self.consumeOrThrow(.import)
 
@@ -258,7 +254,7 @@ extension Parser {
   // MARK: - Import as names
 
   // `import_as_names: import_as_name (',' import_as_name)* [',']`
-  private mutating func importAsNames(closingTokens: [TokenKind]) throws ->
+  private func importAsNames(closingTokens: [TokenKind]) throws ->
     (aliases: NonEmptyArray<Alias>, hasTrailingComma: Bool) {
 
     let first = try self.importAsName()
@@ -281,7 +277,7 @@ extension Parser {
   }
 
   // `import_as_name: NAME ['as' NAME]`
-  private mutating func importAsName() throws -> Alias {
+  private func importAsName() throws -> Alias {
     let start = self.peek.start
     var end = self.peek.end
     let name = try self.consumeIdentifierOrThrow()

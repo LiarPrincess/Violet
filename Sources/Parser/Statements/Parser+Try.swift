@@ -31,7 +31,7 @@ extension Parser {
   ///  )
   ///  except_clause: 'except' [test ['as' NAME]]
   /// ```
-  internal mutating func tryStmt() throws -> Statement {
+  internal func tryStmt() throws -> Statement {
     assert(self.peek.kind == .try)
 
     let start = self.peek.start
@@ -65,7 +65,7 @@ extension Parser {
   /// (except_clause ':' suite)+
   /// except_clause: 'except' [test ['as' NAME]]
   /// ```
-  private mutating func parseExceptClauses(into ir: inout TryIR) throws {
+  private func parseExceptClauses(into ir: inout TryIR) throws {
     while self.peek.kind == .except {
       let start = self.peek.start
       try self.advance() // except
@@ -85,7 +85,7 @@ extension Parser {
   }
 
   /// [test ['as' NAME]] | <empty>
-  private mutating func parseExceptHandlerKind() throws -> ExceptHandlerKind {
+  private func parseExceptHandlerKind() throws -> ExceptHandlerKind {
     guard self.peek.kind != .colon else {
       return .default
     }
@@ -102,8 +102,7 @@ extension Parser {
   }
 
   /// `['else' ':' suite]`
-  private mutating func parseElse(into ir: inout TryIR) throws {
-
+  private func parseElse(into ir: inout TryIR) throws {
     guard self.peek.kind == .else else {
       return
     }
@@ -117,8 +116,7 @@ extension Parser {
   }
 
   /// `'finally' ':' suite`
-  private mutating func parseFinally(into ir: inout TryIR) throws {
-
+  private func parseFinally(into ir: inout TryIR) throws {
     guard self.peek.kind == .finally else {
       return
     }

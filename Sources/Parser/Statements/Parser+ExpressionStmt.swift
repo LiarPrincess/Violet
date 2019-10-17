@@ -18,7 +18,7 @@ extension Parser {
   /// augassign: ('+=' | '-=' | '*=' | '@=' | '/=' | '%=' | '&=' | '|=' | '^=' |
   /// '<<=' | '>>=' | '**=' | '//=')
   /// ```
-  internal mutating func exprStmt(closingTokens: [TokenKind]) throws -> Statement {
+  internal func exprStmt(closingTokens: [TokenKind]) throws -> Statement {
     // FIRST(n) == '('
     let isFirstInParen = self.peek.kind == .leftParen
 
@@ -53,10 +53,8 @@ extension Parser {
   /// )
   /// annassign: ':' test ['=' test]
   /// ```
-  private mutating func parseAnnAssign(
-    target: Expression,
-    isTargetInParen: Bool) throws -> Statement {
-
+  private func parseAnnAssign(target: Expression,
+                              isTargetInParen: Bool) throws -> Statement {
     try self.checkAnnAssignTarget(target)
 
     let isTargetIdentifier = self.isIdentifierExpr(target)
@@ -137,9 +135,8 @@ extension Parser {
   ]
 
   /// expr_stmt: testlist_star_expr augassign (yield_expr|testlist)
-  private mutating func parseAugAssign(
-    target: Expression,
-    closingTokens: [TokenKind]) throws -> Statement {
+  private func parseAugAssign(target: Expression,
+                              closingTokens: [TokenKind]) throws -> Statement {
 
     try self.checkAugAssignTarget(target)
 
@@ -166,9 +163,7 @@ extension Parser {
   }
 
   /// `yield_expr|testlist`
-  private mutating func parseAugAssignValue(closingTokens: [TokenKind])
-    throws -> Expression {
-
+  private func parseAugAssignValue(closingTokens: [TokenKind]) throws -> Expression {
     if let e = try self.yieldExprOrNop(closingTokens: closingTokens) {
       return e
     }
@@ -181,9 +176,8 @@ extension Parser {
   // MARK: - Normal assignment
 
   /// `expr_stmt: testlist_star_expr ('=' (yield_expr|testlist_star_expr))*
-  private mutating func parseNormalAssign(
-    firstTarget: Expression,
-    closingTokens: [TokenKind]) throws -> Statement {
+  private func parseNormalAssign(firstTarget: Expression,
+                                 closingTokens: [TokenKind]) throws -> Statement {
 
     var elements = [Expression]()
 
@@ -224,9 +218,7 @@ extension Parser {
     return false
   }
 
-  private func checkNormalAssignTargets(
-    _ targets: NonEmptyArray<Expression>) throws {
-
+  private func checkNormalAssignTargets(_ targets: NonEmptyArray<Expression>) throws {
     for expr in targets {
       if self.isYieldExpr(expr) {
         throw self.error(.assignmentToYield, location: expr.start)

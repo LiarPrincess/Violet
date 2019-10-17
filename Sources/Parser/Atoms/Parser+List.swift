@@ -11,7 +11,7 @@ extension Parser {
   ///   '[' [testlist_comp] ']'
   ///    and other stuff...
   /// ```
-  internal mutating func atomList() throws -> Expression {
+  internal func atomList() throws -> Expression {
     assert(self.peek.kind == .leftSqb)
 
     let start = self.peek.start

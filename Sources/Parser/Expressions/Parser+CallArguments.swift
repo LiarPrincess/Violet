@@ -39,9 +39,8 @@ extension Parser {
   // MARK: - Call
 
   /// `arglist: argument (',' argument)*  [',']`
-  internal mutating func argList(closingToken: TokenKind,
-                                 isBaseClass: Bool = false) throws -> CallIR {
-
+  internal func argList(closingToken: TokenKind,
+                        isBaseClass: Bool = false) throws -> CallIR {
     var ir = CallIR(isBaseClass: isBaseClass)
 
     guard self.peek.kind != closingToken else { // no args
@@ -68,8 +67,7 @@ extension Parser {
   ///             '**' test |
   ///             '*' test )
   /// ```
-  private mutating func argument(into ir: inout CallIR,
-                                 closingToken: TokenKind) throws {
+  private func argument(into ir: inout CallIR, closingToken: TokenKind) throws {
     switch self.peek.kind {
 
     // '*' test
@@ -99,7 +97,7 @@ extension Parser {
   }
 
   /// '*' test
-  private mutating func parseStarArgument(into ir: inout CallIR) throws {
+  private func parseStarArgument(into ir: inout CallIR) throws {
     if ir.hasStarStar {
       throw self.error(.callWithIterableArgumentAfterKeywordUnpacking)
     }
@@ -114,7 +112,7 @@ extension Parser {
   }
 
   /// '**' test
-  private mutating func parseStarStarArgument(into ir: inout CallIR) throws {
+  private func parseStarStarArgument(into ir: inout CallIR) throws {
     assert(self.peek.kind == .starStar)
     let start = self.peek.start
     try self.advance() // **
@@ -129,8 +127,8 @@ extension Parser {
   }
 
   /// test '=' test |
-  private mutating func parseKeywordArgument(name nameToken: Token,
-                                             into ir: inout CallIR) throws {
+  private func parseKeywordArgument(name nameToken: Token,
+                                    into ir: inout CallIR) throws {
     assert(self.peek.kind == .equal)
 
     switch nameToken.kind {
@@ -170,9 +168,9 @@ extension Parser {
   }
 
   /// test [comp_for]
-  private mutating func parsePositionalArgument(test: Expression,
-                                                closingToken: TokenKind,
-                                                into ir: inout CallIR) throws {
+  private func parsePositionalArgument(test: Expression,
+                                       closingToken: TokenKind,
+                                       into ir: inout CallIR) throws {
 
     if ir.isBaseClass && self.isCompFor() {
       throw self.error(.baseClassWithGenerator, location: test.start)

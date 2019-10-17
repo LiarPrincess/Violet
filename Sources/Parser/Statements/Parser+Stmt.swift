@@ -4,7 +4,7 @@ import Lexer
 extension Parser {
 
   /// stmt: simple_stmt | compound_stmt
-  internal mutating func stmt() throws -> NonEmptyArray<Statement> {
+  internal func stmt() throws -> NonEmptyArray<Statement> {
     if let stmt = try self.compoundStmtOrNop() {
       return NonEmptyArray(first: stmt)
     }
@@ -13,7 +13,7 @@ extension Parser {
   }
 
   /// simple_stmt: small_stmt (';' small_stmt)* [';'] NEWLINE
-  internal mutating func simpleStmt() throws -> NonEmptyArray<Statement> {
+  internal func simpleStmt() throws -> NonEmptyArray<Statement> {
     let ruleClosing: [TokenKind] = [.newLine, .eof]
     let smallStmtClosing: [TokenKind] = [.semicolon, .newLine, .eof]
 
@@ -41,7 +41,7 @@ extension Parser {
   }
 
   /// suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT`
-  internal mutating func suite() throws -> NonEmptyArray<Statement> {
+  internal func suite() throws -> NonEmptyArray<Statement> {
     if try self.consumeIf(.newLine) {
       try self.consumeOrThrow(.indent)
 

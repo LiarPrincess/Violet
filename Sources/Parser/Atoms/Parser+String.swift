@@ -9,7 +9,7 @@ extension Parser {
 
   // MARK: - Bytes
 
-  internal mutating func bytesPlus() throws -> Expression {
+  internal func bytesPlus() throws -> Expression {
     assert(self.isBytes(self.peek))
 
     let start = self.peek.start
@@ -36,7 +36,7 @@ extension Parser {
   /// - String - no f-strings.
   /// - FormattedValue - just an f-string (with no leading or trailing literals).
   /// - JoinedStr - if there are multiple f-strings or any literals involved.
-  internal mutating func strPlus() throws -> Expression {
+  internal func strPlus() throws -> Expression {
     assert(self.isString(self.peek) || self.isFormatString(self.peek))
 
     let start = self.peek.start

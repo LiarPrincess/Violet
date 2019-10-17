@@ -22,7 +22,7 @@ private enum ParserState {
   case error(Error)
 }
 
-public struct Parser {
+public class Parser {
 
   /// Token source.
   internal var lexer: LexerType
@@ -48,7 +48,7 @@ public struct Parser {
   internal var peekNext = Token(.eof, start: .start, end: .start)
 
   @discardableResult
-  internal mutating func advance() throws -> Token? {
+  internal func advance() throws -> Token? {
     // EOF should be handled before we ask for next token.
     // Consuming 'EOF' should not be a thing.
     assert(self.peek.kind != .eof)
@@ -68,7 +68,7 @@ public struct Parser {
 
   // MARK: - Parse
 
-  public mutating func parse() throws -> AST {
+  public func parse() throws -> AST {
     switch self.state {
     case .notStarted:
 
@@ -94,7 +94,7 @@ public struct Parser {
     }
   }
 
-  private mutating func parseByMode() throws -> AST {
+  private func parseByMode() throws -> AST {
     switch self.mode {
     case .interactive: return try self.interactiveInput()
     case .fileInput: return try self.fileInput()
@@ -108,7 +108,7 @@ public struct Parser {
   }
 
   /// single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE
-  internal mutating func interactiveInput() throws -> AST {
+  internal func interactiveInput() throws -> AST {
     let start = self.peek.start
 
     if self.peek.kind == .newLine {
@@ -127,7 +127,7 @@ public struct Parser {
   }
 
   /// file_input: (NEWLINE | stmt)* ENDMARKER
-  internal mutating func fileInput() throws -> AST {
+  internal func fileInput() throws -> AST {
     let first = self.peek
     var result = [Statement]()
 
@@ -147,7 +147,7 @@ public struct Parser {
   }
 
   /// eval_input: testlist NEWLINE* ENDMARKER
-  internal mutating func evalInput() throws -> AST {
+  internal func evalInput() throws -> AST {
     let start = self.peek.start
     let list = try self.testList(closingTokens: [.newLine, .eof])
 
@@ -180,7 +180,7 @@ public struct Parser {
 
   // MARK: - Consume
 
-  internal mutating func consumeIdentifierOrThrow() throws -> String {
+  internal func consumeIdentifierOrThrow() throws -> String {
     if case let TokenKind.identifier(value) = self.peek.kind {
       try self.advance() // identifier
       return value
@@ -189,14 +189,14 @@ public struct Parser {
     throw self.unexpectedToken(expected: [.identifier])
   }
 
-  internal mutating func consumeOrThrow(_ kind: TokenKind) throws {
+  internal func consumeOrThrow(_ kind: TokenKind) throws {
     guard try self.consumeIf(kind) else {
       throw self.unexpectedToken(expected: [kind.expected])
     }
   }
 
   @discardableResult
-  internal mutating func consumeIf(_ kind: TokenKind) throws -> Bool {
+  internal func consumeIf(_ kind: TokenKind) throws -> Bool {
     if self.peek.kind == kind {
       try self.advance()
       return true
@@ -220,8 +220,7 @@ public struct Parser {
   }
 
   /// Create parser warning
-  internal mutating func warn(_ warning: ParserWarning,
-                              location:  SourceLocation? = nil) {
+  internal func warn(_ warning: ParserWarning, location:  SourceLocation? = nil) {
     // uh... oh... well that's embarrassing...
   }
 

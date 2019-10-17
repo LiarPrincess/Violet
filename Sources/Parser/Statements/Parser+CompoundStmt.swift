@@ -16,9 +16,7 @@ extension Parser {
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal mutating func compoundStmtOrNop()
-    throws -> Statement? {
-
+  internal func compoundStmtOrNop() throws -> Statement? {
     switch self.peek.kind {
     case .if:
       return try self.ifStmt()
@@ -58,7 +56,7 @@ extension Parser {
   ///   ('elif' test ':' suite)*
   ///   ['else' ':' suite]
   /// ```
-  internal mutating func ifStmt() throws -> Statement {
+  internal func ifStmt() throws -> Statement {
     assert(self.peek.kind == .if)
 
     let start = self.peek.start
@@ -134,7 +132,7 @@ extension Parser {
   ///   'while' test ':' suite
   ///   ['else' ':' suite]
   /// ```
-  internal mutating func whileStmt() throws -> Statement {
+  internal func whileStmt() throws -> Statement {
     assert(self.peek.kind == .while)
 
     let start = self.peek.start
@@ -163,9 +161,8 @@ extension Parser {
   ///   'for' exprlist 'in' testlist ':' suite
   ///   ['else' ':' suite]
   /// ```
-  internal mutating func forStmt(isAsync: Bool = false,
-                                 start: SourceLocation? = nil) throws -> Statement {
-
+  internal func forStmt(isAsync: Bool = false,
+                        start: SourceLocation? = nil) throws -> Statement {
     assert(self.peek.kind == .for)
 
     let forStart = start ?? self.peek.start
@@ -202,8 +199,8 @@ extension Parser {
   // MARK: - With
 
   /// `with_stmt: 'with' with_item (',' with_item)*  ':' suite`
-  internal mutating func withStmt(isAsync: Bool = false,
-                                  start:   SourceLocation? = nil) throws -> Statement {
+  internal func withStmt(isAsync: Bool = false,
+                         start:   SourceLocation? = nil) throws -> Statement {
 
     assert(self.peek.kind == .with)
 
@@ -231,7 +228,7 @@ extension Parser {
   }
 
   /// `with_item: test ['as' expr]`
-  private mutating func withItem() throws -> WithItem {
+  private func withItem() throws -> WithItem {
     let token = self.peek
     let context = try self.test()
 
@@ -249,7 +246,7 @@ extension Parser {
   // MARK: - Async
 
   /// async_stmt: 'async' (funcdef | with_stmt | for_stmt)
-  internal mutating func asyncStmt() throws -> Statement {
+  internal func asyncStmt() throws -> Statement {
     assert(self.peek.kind == .async)
 
     let start = self.peek.start

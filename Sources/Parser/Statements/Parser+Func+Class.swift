@@ -11,11 +11,9 @@ extension Parser {
   // MARK: - Function
 
   /// `funcdef: 'def' NAME parameters ['->' test] ':' suite`
-  internal mutating func funcDef(
-    isAsync:    Bool = false,
-    start:      SourceLocation? = nil,
-    decorators: [Expression] = []) throws -> Statement {
-
+  internal func funcDef(isAsync:    Bool = false,
+                        start:      SourceLocation? = nil,
+                        decorators: [Expression] = []) throws -> Statement {
     assert(self.peek.kind == .def)
 
     let start = start ?? self.peek.start
@@ -47,10 +45,8 @@ extension Parser {
   // MARK: - Class
 
   /// `classdef: 'class' NAME ['(' [arglist] ')'] ':' suite`
-  internal mutating func classDef(
-    start:      SourceLocation? = nil,
-    decorators: [Expression] = []) throws -> Statement {
-
+  internal func classDef(start:      SourceLocation? = nil,
+                         decorators: [Expression] = []) throws -> Statement {
     assert(self.peek.kind == .class)
 
     let start = start ?? self.peek.start
@@ -74,7 +70,7 @@ extension Parser {
     return self.statement(kind, start: start, end: end)
   }
 
-  private mutating func parseBaseClass() throws -> CallIR? {
+  private func parseBaseClass() throws -> CallIR? {
     guard self.peek.kind == .leftParen else {
       return nil
     }

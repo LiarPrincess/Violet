@@ -18,7 +18,7 @@ extension Parser {
   /// ```
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal mutating func trailerOrNop(for leftExpr: Expression) throws -> Expression? {
+  internal func trailerOrNop(for leftExpr: Expression) throws -> Expression? {
     switch self.peek.kind {
     case .leftParen:
       try self.advance() // (
@@ -60,7 +60,7 @@ extension Parser {
   // MARK: - Subscript
 
   /// `subscriptlist: subscript (',' subscript)* [',']`
-  private mutating func subscriptList(closingToken: TokenKind) throws -> SliceKind {
+  private func subscriptList(closingToken: TokenKind) throws -> SliceKind {
     let first = try self.subscript(closingTokens: closingToken, .comma)
     var elements = NonEmptyArray<Slice>(first: first)
 
@@ -113,7 +113,7 @@ extension Parser {
   /// subscript: test | [test] ':' [test] [sliceop]
   /// sliceop: ':' [test]
   /// ```
-  private mutating func `subscript`(closingTokens: TokenKind...) throws -> Slice {
+  private func `subscript`(closingTokens: TokenKind...) throws -> Slice {
     let start = self.peek.start
     var lower, upper, step: Expression?
 

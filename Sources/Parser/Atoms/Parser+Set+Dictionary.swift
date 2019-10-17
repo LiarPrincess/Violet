@@ -25,7 +25,7 @@ extension Parser {
   ///   )
   /// )
   /// ```
-  internal mutating func atomSetDictionary() throws -> Expression {
+  internal func atomSetDictionary() throws -> Expression {
     // swiftlint:disable:previous function_body_length
     assert(self.peek.kind == .leftBrace)
 
@@ -115,10 +115,9 @@ extension Parser {
   }
 
   /// `(comp_for | (',' (test | star_expr))* [','])`
-  private mutating func setDisplay(first: Expression,
-                                   start: SourceLocation,
-                                   closingToken: TokenKind) throws -> Expression {
-
+  private func setDisplay(first: Expression,
+                          start: SourceLocation,
+                          closingToken: TokenKind) throws -> Expression {
     var elements = [Expression]()
     elements.append(first)
 
@@ -139,9 +138,9 @@ extension Parser {
   }
 
   /// `(comp_for | (',' (test ':' test | '**' expr))* [','])`
-  private mutating func dictionaryDisplay(first: DictionaryElement,
-                                          start: SourceLocation,
-                                          closingToken: TokenKind) throws -> Expression {
+  private func dictionaryDisplay(first: DictionaryElement,
+                                 start: SourceLocation,
+                                 closingToken: TokenKind) throws -> Expression {
 
     var elements = [DictionaryElement]()
     elements.append(first)

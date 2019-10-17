@@ -47,7 +47,7 @@ private struct ArgumentsIR {
 extension Parser {
 
   /// `parameters: '(' [typedargslist] ')'`
-  internal mutating func parameters() throws -> Arguments {
+  internal func parameters() throws -> Arguments {
     try self.consumeOrThrow(.leftParen)
     let args = try self.typedArgsList(closingToken: .rightParen)
     try self.consumeOrThrow(.rightParen)
@@ -70,7 +70,7 @@ extension Parser {
   ///
   /// tfpdef: NAME [':' test]
   /// ```
-  internal mutating func typedArgsList(closingToken: TokenKind) throws -> Arguments {
+  internal func typedArgsList(closingToken: TokenKind) throws -> Arguments {
     return try self.argsList(parseArg: Parser.tfpdef,
                              closingToken: closingToken)
   }
@@ -90,16 +90,17 @@ extension Parser {
   ///   )
   /// vfpdef: NAME
   /// ```
-  internal mutating func varArgsList(closingToken: TokenKind) throws -> Arguments {
-
+  internal func varArgsList(closingToken: TokenKind) throws -> Arguments {
     return try self.argsList(parseArg: Parser.vfpdef,
                              closingToken: closingToken)
   }
 
-  // MARK: - Arguments
+  // MARK: - Arg factory
+
+  private typealias ArgFactory = (Parser) throws -> Arg
 
   /// `vfpdef: NAME`
-  private static func vfpdef(_ parser: inout Parser) throws -> Arg {
+  private static func vfpdef(_ parser: Parser) throws -> Arg {
     let token = parser.peek
     let name = try parser.consumeIdentifierOrThrow()
     try parser.checkForbiddenName(name, location: token.start)
@@ -107,7 +108,7 @@ extension Parser {
   }
 
   /// `tfpdef: NAME [':' test]`
-  private static func tfpdef(_ parser: inout Parser) throws -> Arg {
+  private static func tfpdef(_ parser: Parser) throws -> Arg {
     let token = parser.peek
     let name = try parser.consumeIdentifierOrThrow()
     try parser.checkForbiddenName(name, location: token.start)
@@ -125,10 +126,8 @@ extension Parser {
 
   // MARK: - Args list
 
-  private typealias ArgFactory = (inout Parser) throws -> Arg
-
-  private mutating func argsList(parseArg: ArgFactory,
-                                 closingToken: TokenKind) throws -> Arguments {
+  private func argsList(parseArg: ArgFactory,
+                        closingToken: TokenKind) throws -> Arguments {
     let loc = self.peek.start
     var ir = ArgumentsIR(start: loc, end: loc)
 
@@ -159,14 +158,12 @@ extension Parser {
   }
 
   /// `vfpdef/tfpdef ['=' test]`
-  private mutating func parseArgument(ir: inout ArgumentsIR,
-                                      parseArg: ArgFactory) throws {
-
+  private func parseArgument(ir: inout ArgumentsIR, parseArg: ArgFactory) throws {
     guard ir.kwarg == nil else {
       throw self.error(.argsAfterKwargs)
     }
 
-    let argument = try parseArg(&self)
+    let argument = try parseArg(self)
     ir.end = argument.end
 
     var defaultValue: Expression?
@@ -198,8 +195,7 @@ extension Parser {
   }
 
   /// `'*' [vfpdef]`
-  private mutating func parseVarargs(ir: inout ArgumentsIR,
-                                     parseArg: ArgFactory) throws {
+  private func parseVarargs(ir: inout ArgumentsIR, parseArg: ArgFactory) throws {
     assert(self.peek.kind == .star)
 
     guard ir.kwarg == nil else {
@@ -215,7 +211,7 @@ extension Parser {
 
     switch self.peek.kind {
     case .identifier:
-      let value = try parseArg(&self)
+      let value = try parseArg(self)
       ir.vararg = .named(value)
       ir.end = value.end
     default:
@@ -226,8 +222,7 @@ extension Parser {
   }
 
   /// `'**' vfpdef`
-  private mutating func parseKwargs(ir: inout ArgumentsIR,
-                                    parseArg: ArgFactory) throws {
+  private func parseKwargs(ir: inout ArgumentsIR, parseArg: ArgFactory) throws {
     assert(self.peek.kind == .starStar)
 
     guard ir.kwarg == nil else {
@@ -235,7 +230,7 @@ extension Parser {
     }
 
     try self.advance() // **
-    let value = try parseArg(&self)
+    let value = try parseArg(self)
     ir.kwarg = value
     ir.end = value.end
   }

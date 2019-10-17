@@ -7,7 +7,7 @@ import Lexer
 extension Parser {
 
   /// `atom_expr: [AWAIT] atom trailer*`
-  internal mutating func atomExpr() throws -> Expression {
+  internal func atomExpr() throws -> Expression {
     let start = self.peek.start
     let isAwait = try self.consumeIf(.await)
 
@@ -28,7 +28,7 @@ extension Parser {
   ///  - '{' [dictorsetmaker] '}'
   ///  - NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False'
   /// ```
-  internal mutating func atom() throws -> Expression {
+  internal func atom() throws -> Expression {
     let token = self.peek
 
     switch token.kind {
@@ -68,8 +68,8 @@ extension Parser {
     }
   }
 
-  private mutating func simpleAtom(_ kind: ExpressionKind,
-                                   from token: Token) throws -> Expression {
+  private func simpleAtom(_ kind: ExpressionKind,
+                          from token: Token) throws -> Expression {
     try self.advance()
     return self.expression(kind, start: token.start, end: token.end)
   }

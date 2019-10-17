@@ -170,7 +170,7 @@ public class VM {
 
   private func compile(source: String, mode: ParserMode) throws -> CodeObject {
     let lexer = Lexer(for: source)
-    var parser = Parser(mode: mode, tokenSource: lexer)
+    let parser = Parser(mode: mode, tokenSource: lexer)
     let ast = try parser.parse()
 
     let optimizationLevel = self.coreConfiguration.optimization

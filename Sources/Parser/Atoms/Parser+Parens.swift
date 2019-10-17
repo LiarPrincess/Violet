@@ -17,7 +17,7 @@ extension Parser {
   /// - tuple
   /// - yield (in parens)
   /// - generator
-  internal mutating func atomParens() throws -> Expression {
+  internal func atomParens() throws -> Expression {
     assert(self.peek.kind == .leftParen)
 
     let start = self.peek.start

@@ -11,7 +11,7 @@ extension Parser {
 
   /// decorated: decorators (classdef | funcdef | async_funcdef)
   /// async_funcdef: 'async' funcdef
-  internal mutating func decorated() throws -> Statement {
+  internal func decorated() throws -> Statement {
     assert(self.peek.kind == .at)
 
     let start = self.peek.start
@@ -44,7 +44,7 @@ extension Parser {
   }
 
   /// decorators: decorator+
-  internal mutating func decorators() throws -> NonEmptyArray<Expression> {
+  internal func decorators() throws -> NonEmptyArray<Expression> {
     assert(self.peek.kind == .at)
 
     let first = try self.decorator()
@@ -59,7 +59,7 @@ extension Parser {
   }
 
   /// decorator: '@' dotted_name [ '(' [arglist] ')' ] NEWLINE
-  internal mutating func decorator() throws -> Expression {
+  internal func decorator() throws -> Expression {
     assert(self.peek.kind == .at)
 
     try self.advance() // @
@@ -74,7 +74,7 @@ extension Parser {
   /// dotted_name: NAME ('.' NAME)*
   /// It is different implementation of `dotted_name` than in import!
   /// Even though it is using the same grammar rule (CPython does the same).
-  internal mutating func dottedNameForDecorator() throws -> Expression {
+  internal func dottedNameForDecorator() throws -> Expression {
     // We cannot set start location at '@' because AST does not contain '@'
     // symbol and we would end up with malformed source range!
 
@@ -98,7 +98,7 @@ extension Parser {
     return result
   }
 
-  private mutating func parseCall(to left: Expression) throws -> Expression {
+  private func parseCall(to left: Expression) throws -> Expression {
     // no parens -> no call
     guard self.peek.kind == .leftParen else {
       return left

@@ -8,7 +8,7 @@ extension Parser {
   // MARK: - Test
 
   /// `test: or_test ['if' or_test 'else' test] | lambdef`
-  internal mutating func test() throws -> Expression {
+  internal func test() throws -> Expression {
     // we will start from lambdef, becuse it is simpler
 
     if let lambda = try self.lambDefOrNop() {
@@ -32,7 +32,7 @@ extension Parser {
   }
 
   /// `test_nocond: or_test | lambdef_nocond`
-  internal mutating func testNoCond() throws -> Expression {
+  internal func testNoCond() throws -> Expression {
     // we will start from lambdef_nocond, becuse it is simpler
 
     if let lambda = try self.lambDefNoCondOrNop() {
@@ -48,7 +48,7 @@ extension Parser {
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal mutating func lambDefOrNop() throws -> Expression? {
+  internal func lambDefOrNop() throws -> Expression? {
     guard self.peek.kind == .lambda else {
       return nil
     }
@@ -68,7 +68,7 @@ extension Parser {
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal mutating func lambDefNoCondOrNop() throws -> Expression? {
+  internal func lambDefNoCondOrNop() throws -> Expression? {
     guard self.peek.kind == .lambda else {
       return nil
     }
@@ -87,7 +87,7 @@ extension Parser {
   // MARK: - Or test
 
   /// `or_test: and_test ('or' and_test)*`
-  internal mutating func orTest() throws -> Expression {
+  internal func orTest() throws -> Expression {
     var left = try self.andTest()
 
     while self.peek.kind == .or {
@@ -104,7 +104,7 @@ extension Parser {
   // MARK: - And test
 
   /// `and_test: not_test ('and' not_test)*`
-  internal mutating func andTest() throws -> Expression {
+  internal func andTest() throws -> Expression {
     var left = try self.notTest()
 
     while self.peek.kind == .and {
@@ -121,7 +121,7 @@ extension Parser {
   // MARK: - Not test
 
   /// `not_test: 'not' not_test | comparison`
-  internal mutating func notTest() throws -> Expression {
+  internal func notTest() throws -> Expression {
     let token = self.peek
     if token.kind == .not {
       try self.advance() // not
@@ -152,7 +152,7 @@ extension Parser {
   ]
 
   /// `comparison: expr (comp_op expr)*`
-  internal mutating func comparison() throws -> Expression {
+  internal func comparison() throws -> Expression {
     let left = try self.expr()
 
     var elements = [ComparisonElement]()
@@ -191,7 +191,7 @@ extension Parser {
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal mutating func starExprOrNop() throws -> Expression? {
+  internal func starExprOrNop() throws -> Expression? {
     let token = self.peek
     switch token.kind {
     case .star:
@@ -207,7 +207,7 @@ extension Parser {
   // MARK: - Expr
 
   /// `expr: xor_expr ('|' xor_expr)*`
-  internal mutating func expr() throws -> Expression {
+  internal func expr() throws -> Expression {
     var left = try self.xorExpr()
 
     while self.peek.kind == .vbar {
@@ -224,7 +224,7 @@ extension Parser {
   // MARK: - Xor expr
 
   /// `xor_expr: and_expr ('^' and_expr)*`
-  internal mutating func xorExpr() throws -> Expression {
+  internal func xorExpr() throws -> Expression {
     var left = try self.andExpr()
 
     while self.peek.kind == .circumflex {
@@ -241,7 +241,7 @@ extension Parser {
   // MARK: - And expr
 
   /// `and_expr: shift_expr ('&' shift_expr)*`
-  internal mutating func andExpr() throws -> Expression {
+  internal func andExpr() throws -> Expression {
     var left = try self.shiftExpr()
 
     while self.peek.kind == .amper {
@@ -263,7 +263,7 @@ extension Parser {
   ]
 
   /// `shift_expr: arith_expr (('<<'|'>>') arith_expr)*`
-  internal mutating func shiftExpr() throws -> Expression {
+  internal func shiftExpr() throws -> Expression {
     var left = try self.arithExpr()
 
     while let op = Parser.shiftExprOperators[self.peek.kind] {
@@ -285,7 +285,7 @@ extension Parser {
   ]
 
   /// `arith_expr: term (('+'|'-') term)*`
-  internal mutating func arithExpr() throws -> Expression {
+  internal func arithExpr() throws -> Expression {
     var left = try self.term()
 
     while let op = Parser.arithExprOperators[self.peek.kind] {
@@ -310,7 +310,7 @@ extension Parser {
   ]
 
   /// `term: factor (('*'|'@'|'/'|'%'|'//') factor)*`
-  internal mutating func term() throws -> Expression {
+  internal func term() throws -> Expression {
     var left = try self.factor()
 
     while let op = Parser.termOperators[self.peek.kind] {
@@ -327,7 +327,7 @@ extension Parser {
   // MARK: - Factor
 
   /// `factor: ('+'|'-'|'~') factor | power`
-  internal mutating func factor() throws -> Expression {
+  internal func factor() throws -> Expression {
     let token = self.peek
 
     switch self.peek.kind {
@@ -357,7 +357,7 @@ extension Parser {
   // MARK: - Power
 
   /// `power: atom_expr ['**' factor]`
-  internal mutating func power() throws -> Expression {
+  internal func power() throws -> Expression {
     let atomExpr = try self.atomExpr()
 
     if try self.consumeIf(.starStar) {
@@ -373,7 +373,7 @@ extension Parser {
 
   /// Star expression if possible else test.
   /// There is no rule for this, but it is commonly used.
-  internal mutating func testOrStarExpr() throws -> Expression {
+  internal func testOrStarExpr() throws -> Expression {
     return try self.starExprOrNop() ?? self.test()
   }
 }

@@ -21,11 +21,9 @@ extension Parser {
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal mutating func yieldExprOrNop(closingTokens: [TokenKind])
-    throws -> Expression? {
-
-      return self.isYieldExpr() ?
-        try self.yieldExpr(closingTokens: closingTokens) :
+  internal func yieldExprOrNop(closingTokens: [TokenKind]) throws -> Expression? {
+    return self.isYieldExpr() ?
+      try self.yieldExpr(closingTokens: closingTokens) :
       nil
   }
 
@@ -33,9 +31,7 @@ extension Parser {
   /// yield_expr: 'yield' [yield_arg]
   /// yield_arg: 'from' test | testlist
   /// ```
-  internal mutating func yieldExpr(closingTokens: [TokenKind])
-    throws -> Expression {
-
+  internal func yieldExpr(closingTokens: [TokenKind]) throws -> Expression {
       let yieldToken = self.peek
       try self.advance() // yield
 

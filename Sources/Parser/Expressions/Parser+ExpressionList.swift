@@ -20,34 +20,32 @@ extension Parser {
   }
 
   /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
-  internal mutating func exprList(closingTokens: [TokenKind])
-    throws -> ExprListResult {
+  internal func exprList(closingTokens: [TokenKind]) throws -> ExprListResult {
+    let first = try self.starExprOrNop() ?? self.expr()
+    var end = first.end
 
-      let first = try self.starExprOrNop() ?? self.expr()
-      var end = first.end
+    var additionalElements = [Expression]()
+    while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
+      try self.advance() // ,
 
-      var additionalElements = [Expression]()
-      while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
-        try self.advance() // ,
+      let test = try self.starExprOrNop() ?? self.expr()
+      additionalElements.append(test)
+      end = test.end
+    }
 
-        let test = try self.starExprOrNop() ?? self.expr()
-        additionalElements.append(test)
-        end = test.end
-      }
+    let hasTrailingComma = self.peek.kind == .comma
+    if hasTrailingComma {
+      end = self.peek.end
+      try self.advance() // ,
+    }
 
-      let hasTrailingComma = self.peek.kind == .comma
-      if hasTrailingComma {
-        end = self.peek.end
-        try self.advance() // ,
-      }
+    // if we have coma then it is a tuple! (even if it has only 1 element!)
+    if additionalElements.isEmpty && !hasTrailingComma {
+      return .single(first)
+    }
 
-      // if we have coma then it is a tuple! (even if it has only 1 element!)
-      if additionalElements.isEmpty && !hasTrailingComma {
-        return .single(first)
-      }
-
-      let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-      return .tuple(array, end: end)
+    let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
+    return .tuple(array, end: end)
   }
 
   // MARK: - Test list
@@ -67,33 +65,31 @@ extension Parser {
   }
 
   /// `testlist: test (',' test)* [',']`
-  internal mutating func testList(closingTokens: [TokenKind])
-    throws -> TestListResult {
+  internal func testList(closingTokens: [TokenKind]) throws -> TestListResult {
+    let first = try self.test()
+    var end = first.end
 
-      let first = try self.test()
-      var end = first.end
+    var additionalElements = [Expression]()
+    while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
+      try self.advance() // ,
 
-      var additionalElements = [Expression]()
-      while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
-        try self.advance() // ,
+      let test = try self.test()
+      additionalElements.append(test)
+      end = test.end
+    }
 
-        let test = try self.test()
-        additionalElements.append(test)
-        end = test.end
-      }
+    let hasTrailingComma = self.peek.kind == .comma
+    if hasTrailingComma {
+      end = self.peek.end
+      try self.advance() // ,
+    }
 
-      let hasTrailingComma = self.peek.kind == .comma
-      if hasTrailingComma {
-        end = self.peek.end
-        try self.advance() // ,
-      }
+    if additionalElements.isEmpty && !hasTrailingComma {
+      return .single(first)
+    }
 
-      if additionalElements.isEmpty && !hasTrailingComma {
-        return .single(first)
-      }
-
-      let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-      return .tuple(array, end: end)
+    let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
+    return .tuple(array, end: end)
   }
 
   // MARK: - Test list comprehension
@@ -109,37 +105,35 @@ extension Parser {
   ///   (test|star_expr) ( comp_for
   ///                    | (',' (test|star_expr))* [','])
   /// ```
-  internal mutating func testListComp(closingToken: TokenKind)
-    throws -> TestListCompResult {
+  internal func testListComp(closingToken: TokenKind) throws -> TestListCompResult {
+    let first = try self.testOrStarExpr()
 
-      let first = try self.testOrStarExpr()
+    if let generators = try self.compForOrNop(closingTokens: [closingToken]) {
+      return .listComprehension(elt: first, generators: generators)
+    }
 
-      if let generators = try self.compForOrNop(closingTokens: [closingToken]) {
-        return .listComprehension(elt: first, generators: generators)
-      }
+    var elements = [Expression]()
+    elements.append(first)
 
-      var elements = [Expression]()
-      elements.append(first)
+    // (',' (test|star_expr))* [',']
+    while self.peek.kind == .comma && self.peekNext.kind != closingToken {
+      try self.advance() // ,
 
-      // (',' (test|star_expr))* [',']
-      while self.peek.kind == .comma && self.peekNext.kind != closingToken {
-        try self.advance() // ,
+      let test = try self.testOrStarExpr()
+      elements.append(test)
+    }
 
-        let test = try self.testOrStarExpr()
-        elements.append(test)
-      }
+    let hasTrailingComma = self.peek.kind == .comma
+    if hasTrailingComma {
+      try self.advance() // ,
+    }
 
-      let hasTrailingComma = self.peek.kind == .comma
-      if hasTrailingComma {
-        try self.advance() // ,
-      }
+    // if we have coma then it is a tuple! (even if it has only 1 element!)
+    if elements.count == 1 && !hasTrailingComma {
+      return .single(first)
+    }
 
-      // if we have coma then it is a tuple! (even if it has only 1 element!)
-      if elements.count == 1 && !hasTrailingComma {
-        return .single(first)
-      }
-
-      return .multiple(elements)
+    return .multiple(elements)
   }
 
   // MARK: - Test list star expr
@@ -159,32 +153,30 @@ extension Parser {
   }
 
   /// `testlist_star_expr: (test|star_expr) (',' (test|star_expr))* [',']`
-  internal mutating func testListStarExpr(closingTokens: [TokenKind])
-    throws -> TestListStarExprResult {
+  internal func testListStarExpr(closingTokens: [TokenKind]) throws -> TestListStarExprResult {
+    let first = try self.testOrStarExpr()
+    var end = first.end
 
-      let first = try self.testOrStarExpr()
-      var end = first.end
+    var additionalElements = [Expression]()
+    while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
+      try self.advance() // ,
 
-      var additionalElements = [Expression]()
-      while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
-        try self.advance() // ,
+      let element = try self.testOrStarExpr()
+      additionalElements.append(element)
+      end = element.end
+    }
 
-        let element = try self.testOrStarExpr()
-        additionalElements.append(element)
-        end = element.end
-      }
+    let hasTrailingComma = self.peek.kind == .comma
+    if hasTrailingComma {
+      end = self.peek.end
+      try self.advance() // ,
+    }
 
-      let hasTrailingComma = self.peek.kind == .comma
-      if hasTrailingComma {
-        end = self.peek.end
-        try self.advance() // ,
-      }
+    if additionalElements.isEmpty && !hasTrailingComma {
+      return .single(first)
+    }
 
-      if additionalElements.isEmpty && !hasTrailingComma {
-        return .single(first)
-      }
-
-      let array = NonEmptyArray(first: first, rest: additionalElements)
-      return .tuple(array, end: end)
+    let array = NonEmptyArray(first: first, rest: additionalElements)
+    return .tuple(array, end: end)
   }
 }
