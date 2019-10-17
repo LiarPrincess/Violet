@@ -1,6 +1,6 @@
 import Lexer
 
-internal struct FakeLexer: LexerType {
+internal class FakeLexer: LexerType {
 
   private var index = 0
   private let tokens: [Token]
@@ -15,7 +15,7 @@ internal struct FakeLexer: LexerType {
     // }
   }
 
-  internal mutating func getToken() throws -> Token {
+  internal func getToken() throws -> Token {
     if self.index == self.tokens.count {
       let eofLocation = self.tokens.last?.end ?? loc0
       return Token(.eof, start: eofLocation, end: eofLocation)

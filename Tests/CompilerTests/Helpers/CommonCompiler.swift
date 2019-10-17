@@ -26,7 +26,7 @@ extension CommonCompiler {
   }
 
   internal func compile(stmt: Statement,
-                        optimizationLevel: UInt8 = 0,
+                        optimizationLevel: OptimizationLevel = .none,
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
     let ast = self.ast(.module([stmt]))
@@ -51,7 +51,7 @@ extension CommonCompiler {
   }
 
   private func compile(ast: AST,
-                       optimizationLevel: UInt8 = 0,
+                       optimizationLevel: OptimizationLevel = .none,
                        file: StaticString = #file,
                        line: UInt         = #line) -> CodeObject? {
     do {

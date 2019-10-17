@@ -81,7 +81,7 @@ class CompileAssert: XCTestCase, CommonCompiler {
       .init(.return)
     ]
 
-    if let code = self.compile(stmt: stmt, optimizationLevel: 1) {
+    if let code = self.compile(stmt: stmt, optimizationLevel: .O) {
       XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
       XCTAssertInstructions(code, expected)
     }

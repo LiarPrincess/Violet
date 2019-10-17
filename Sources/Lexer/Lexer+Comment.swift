@@ -16,7 +16,7 @@ private let encodingMaxLine = startLine + 2
 
 extension Lexer {
 
-  internal mutating func comment() throws -> Token {
+  internal func comment() throws -> Token {
     let start = self.location
     let index = self.sourceIndex
 

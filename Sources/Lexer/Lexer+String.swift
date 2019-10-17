@@ -24,14 +24,12 @@ private enum QuoteType {
 
 extension Lexer {
 
-  internal mutating func string() throws -> Token {
+  internal func string() throws -> Token {
     let prefix = StringPrefix()
     return try self.string(prefix: prefix, start: self.location)
   }
 
-  internal mutating func string(prefix: StringPrefix,
-                                start:  SourceLocation) throws -> Token {
-
+  internal func string(prefix: StringPrefix, start:  SourceLocation) throws -> Token {
     let scalars = try readString(prefix: prefix)
     let end = self.location
 
@@ -55,7 +53,7 @@ extension Lexer {
     return self.token(kind, start: start, end: end)
   }
 
-  private mutating func readString(prefix: StringPrefix) throws -> [UnicodeScalar] {
+  private func readString(prefix: StringPrefix) throws -> [UnicodeScalar] {
     assert(self.peek == "\"" || self.peek == "'")
 
     guard let quote = self.peek else {
@@ -129,8 +127,8 @@ extension Lexer {
   }
 
   // swiftlint:disable:next function_body_length
-  private mutating func readEscaped(_ prefix: StringPrefix,
-                                    _ quoteType: QuoteType) throws -> EscapeResult {
+  private func readEscaped(_ prefix: StringPrefix,
+                           _ quoteType: QuoteType) throws -> EscapeResult {
     assert(self.peek == "\\")
 
     if prefix.r {
@@ -186,13 +184,13 @@ extension Lexer {
     }
   }
 
-  private mutating func simpleEscaped(_ c: UnicodeScalar) -> EscapeResult {
+  private func simpleEscaped(_ c: UnicodeScalar) -> EscapeResult {
     self.advance() // backslash
     self.advance() // escaped character
     return .escaped(c)
   }
 
-  private mutating func readOctal(_ quoteType: QuoteType) throws -> UnicodeScalar {
+  private func readOctal(_ quoteType: QuoteType) throws -> UnicodeScalar {
     let start = self.location
     self.advance() // backslash
 
@@ -215,8 +213,7 @@ extension Lexer {
     return try self.decodeScalar(scalars, radix: 8, start: start)
   }
 
-  private mutating func readHex(_ quoteType: QuoteType,
-                                count: Int) throws -> UnicodeScalar {
+  private func readHex(_ quoteType: QuoteType, count: Int) throws -> UnicodeScalar {
     let start = self.location
     self.advance() // backslash
     self.advance() // xuU

@@ -43,7 +43,7 @@ internal let keywords: [String:TokenKind] = [
 
 extension Lexer {
 
-  internal mutating func identifierOrString() throws -> Token {
+  internal func identifierOrString() throws -> Token {
     assert(self.peek != nil)
     assert(self.isIdentifierStart(self.peek ?? " "))
 

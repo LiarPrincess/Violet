@@ -3,7 +3,7 @@ import Core
 
 // https://docs.python.org/3/reference/lexical_analysis.html
 
-public struct Lexer: LexerType {
+public class Lexer: LexerType {
 
   /// Text input to lex.
   /// Scalars because 'Python reads program text as Unicode code points' (quote
@@ -48,7 +48,7 @@ public struct Lexer: LexerType {
 
   /// Consumes current character.
   @discardableResult
-  internal mutating func advance() -> UnicodeScalar? {
+  internal func advance() -> UnicodeScalar? {
     guard self.sourceIndex < self.source.endIndex else {
       return nil
     }
@@ -70,7 +70,7 @@ public struct Lexer: LexerType {
     return self.peek
   }
 
-  internal mutating func advanceIf(_ expected: UnicodeScalar) -> Bool {
+  internal func advanceIf(_ expected: UnicodeScalar) -> Bool {
     guard let next = self.peek else {
       return false
     }
@@ -86,17 +86,16 @@ public struct Lexer: LexerType {
   // MARK: - Creation helpers (always use them!)
 
   /// Create token
-  internal mutating func token(_ kind: TokenKind,
-                               start:  SourceLocation? = nil,
-                               end:    SourceLocation? = nil) -> Token {
+  internal func token(_ kind: TokenKind,
+                      start:  SourceLocation? = nil,
+                      end:    SourceLocation? = nil) -> Token {
     let s = start ?? self.location
     let e = end ?? self.location
     return Token(kind, start: s, end: e)
   }
 
   /// Create lexer warning
-  internal mutating func warn(_ warning: LexerWarning,
-                              location:  SourceLocation? = nil) {
+  internal func warn(_ warning: LexerWarning, location:  SourceLocation? = nil) {
     // uh... oh... well that's embarrassing...
   }
 

@@ -1,7 +1,7 @@
 extension Lexer {
 
   // swiftlint:disable:next cyclomatic_complexity function_body_length
-  public mutating func getToken() throws -> Token {
+  public func getToken() throws -> Token {
     while true {
       if self.isAtBeginOfLine {
         self.isAtBeginOfLine = false

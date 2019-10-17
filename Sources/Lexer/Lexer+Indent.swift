@@ -29,7 +29,7 @@ internal struct IndentState {
 
 extension Lexer {
 
-  internal mutating func calculateIndent() throws {
+  internal func calculateIndent() throws {
     let start = self.location
     let indent = self.calculateIndentColumn()
 
@@ -70,7 +70,7 @@ extension Lexer {
     }
   }
 
-  private mutating func calculateIndentColumn() -> Int {
+  private func calculateIndentColumn() -> Int {
     var column = 0
 
     while true {

@@ -13,7 +13,6 @@ extension Common {
                              _ expected: Int64,
                              file: StaticString = #file,
                              line: UInt         = #line) {
-
     let pyExpected = BigInt(expected)
     XCTAssertEqual(kind, .int(pyExpected), file: file, line: line)
   }

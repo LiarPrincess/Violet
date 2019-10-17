@@ -9,7 +9,7 @@ extension Lexer {
     return DecimalNumber.isDigit(c)
   }
 
-  internal mutating func number() throws -> Token {
+  internal func number() throws -> Token {
     assert(self.peek != nil)
     assert(DecimalNumber.isDigit(self.peek ?? " ") || self.peek == ".")
 
@@ -37,8 +37,8 @@ extension Lexer {
     return try self.decimalIntegerOrFloat(start)
   }
 
-  private mutating func integer<T: NumberBase>(_ start: SourceLocation,
-                                               base: T.Type) throws -> Token {
+  private func integer<T: NumberBase>(_ start: SourceLocation,
+                                      base: T.Type) throws -> Token {
     let startIndex = self.sourceIndex
     repeat {
       if self.peek == "_" {
@@ -64,7 +64,7 @@ extension Lexer {
     return self.token(.int(value), start: start)
   }
 
-  private mutating func decimalIntegerOrFloat(_ start: SourceLocation) throws -> Token {
+  private func decimalIntegerOrFloat(_ start: SourceLocation) throws -> Token {
     // it can't be nil, otherwise we would never call self.number().
     guard let first = self.peek else { throw self.error(.eof) }
 
@@ -109,7 +109,7 @@ extension Lexer {
     return self.token(.float(value), start: start)
   }
 
-  private mutating func advanceDecimals() throws {
+  private func advanceDecimals() throws {
     let type = DecimalNumber.self
 
     guard let first = self.peek, type.isDigit(first) else {

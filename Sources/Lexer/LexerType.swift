@@ -1,6 +1,6 @@
-public protocol LexerType {
+public protocol LexerType: AnyObject {
 
   /// Get nex token to parse.
   /// If we reached EOF then it should return EOF token.
-  mutating func getToken() throws -> Token
+  func getToken() throws -> Token
 }
