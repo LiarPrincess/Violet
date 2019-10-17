@@ -243,4 +243,13 @@ public struct BigInt:
   public func advanced(by n: BigInt) -> BigInt {
     return self + n
   }
+
+  // MARK: - Equatable
+
+  // If we use default provided by Swift, then it will crash on
+  // `if x == 0 { things... }`, where `x` is BigInt.
+  // We have such cases in our unit tests. :/
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    return lhs.value == rhs.value
+  }
 }
