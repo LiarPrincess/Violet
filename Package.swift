@@ -34,7 +34,7 @@ let package = Package(
     .target(name: "Bytecode", dependencies: ["Core"]),
     .testTarget(name: "BytecodeTests", dependencies: ["Bytecode"]),
 
-    .target(name: "Objects", dependencies: ["Core"]),
+    .target(name: "Objects", dependencies: ["Core", "Bytecode"]),
     .testTarget(name: "ObjectsTests", dependencies: ["Objects"]),
 
     .target(name: "VM", dependencies: ["Compiler", "Objects", "SPMUtility"]),

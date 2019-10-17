@@ -8,21 +8,21 @@ class EnvironmentTests: XCTestCase {
   // MARK: - PATH
 
   func test_PATH_single() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PATH": "All those days, chasing down a daydream"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.PATH = ["All those days, chasing down a daydream"]
     self.assertEqual(env, expected)
   }
 
   func test_PATH_multiple() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PATH": "All those years:living in a blur"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.PATH = ["All those years", "living in a blur"]
     self.assertEqual(env, expected)
   }
@@ -32,9 +32,9 @@ class EnvironmentTests: XCTestCase {
       "PATH": "All that time:never truly seeing:"
     ]
 
-    let env = VM.Environment(from: dict)
+    let env = Environment(from: dict)
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.PATH = ["All that time", "never truly seeing"]
     self.assertEqual(env, expected)
   }
@@ -42,31 +42,31 @@ class EnvironmentTests: XCTestCase {
   // MARK: - Violet path
 
   func test_violetPath_single() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "VIOLETPATH": "Things the way they were"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.violetPath = ["Things the way they were"]
     self.assertEqual(env, expected)
   }
 
   func test_violetPath_multiple() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "VIOLETPATH": "Now she's here:shining in the starlight"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.violetPath = ["Now she's here", "shining in the starlight"]
     self.assertEqual(env, expected)
   }
 
   func test_violetPath_multiple_endingWithColon() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "VIOLETPATH": "Now she's here:suddenly I know:"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.violetPath = ["Now she's here", "suddenly I know"]
     self.assertEqual(env, expected)
   }
@@ -74,31 +74,31 @@ class EnvironmentTests: XCTestCase {
   // MARK: - PYTHONPATH
 
   func test_pythonPath_single() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONPATH": "If she's here, it's crystal clear"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonPath = ["If she's here, it's crystal clear"]
     self.assertEqual(env, expected)
   }
 
   func test_pythonPath_multiple() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONPATH": "I'm where:I'm meant to go"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonPath = ["I'm where", "I'm meant to go"]
     self.assertEqual(env, expected)
   }
 
   func test_pythonPath_multiple_endingWithColon() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONPATH": "And at last:I see the light:"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonPath = ["And at last", "I see the light"]
     self.assertEqual(env, expected)
   }
@@ -106,21 +106,21 @@ class EnvironmentTests: XCTestCase {
   // MARK: - Optimize
 
   func test_optimize_O() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONOPTIMIZE": "And it's like the fog has lifted"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonOptimize = .O
     self.assertEqual(env, expected)
   }
 
   func test_optimize_OO() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONOPTIMIZE": "2010"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonOptimize = .OO
     self.assertEqual(env, expected)
   }
@@ -138,32 +138,32 @@ class EnvironmentTests: XCTestCase {
     ]
 
     for (value, warning) in presets {
-      let env = VM.Environment(from: [
+      let env = Environment(from: [
         "PYTHONWARNINGS": value
       ])
 
-      var expected = VM.Environment()
+      var expected = Environment()
       expected.pythonWarnings = [warning]
       self.assertEqual(env, expected)
     }
   }
 
   func test_warnings_multiple() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONWARNINGS": "default,error,always,module,once,ignore"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonWarnings = [.default, .error, .always, .module, .once, .ignore]
     self.assertEqual(env, expected)
   }
 
   func test_warnings_unknown_isIgnored() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONWARNINGS": "And at last, I see the light"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonWarnings = []
     self.assertEqual(env, expected)
   }
@@ -171,31 +171,31 @@ class EnvironmentTests: XCTestCase {
   // MARK: - Debug, inspect and noUserSite
 
   func test_debug() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONDEBUG": "And at last, I see the light"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonDebug = true
     self.assertEqual(env, expected)
   }
 
   func test_inspect() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONINSPECT": "And it's like the sky is new"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonInspectInteractively = true
     self.assertEqual(env, expected)
   }
 
   func test_noUserSite() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "PYTHONNOUSERSITE": "And it's warm and real and bright"
     ])
 
-    var expected = VM.Environment()
+    var expected = Environment()
     expected.pythonNoUserSite = true
     self.assertEqual(env, expected)
   }
@@ -203,18 +203,18 @@ class EnvironmentTests: XCTestCase {
   // MARK: - Other
 
   func test_other_isIgnored() {
-    let env = VM.Environment(from: [
+    let env = Environment(from: [
       "TANGLED": "I'm where I'm meant to be"
     ])
 
-    let expected = VM.Environment()
+    let expected = Environment()
     self.assertEqual(env, expected)
   }
 
   // MARK: - Helpers
 
-  private func assertEqual(_ lhs: VM.Environment,
-                           _ rhs: VM.Environment,
+  private func assertEqual(_ lhs: Environment,
+                           _ rhs: Environment,
                            file:  StaticString = #file,
                            line:  UInt         = #line) {
     XCTAssertEqual(lhs.PATH, rhs.PATH, "PATH", file: file, line: line)

@@ -11,7 +11,7 @@ public struct CompilerOptions {
 // MARK: - OptimizationLevel
 
 /// Controls various sorts of optimizations
-public enum OptimizationLevel: Equatable, Comparable { 
+public enum OptimizationLevel: Equatable, Comparable {
   /// No optimizations.
   case none
   /// Remove assert statements and any code conditional on the value of `__debug__`.

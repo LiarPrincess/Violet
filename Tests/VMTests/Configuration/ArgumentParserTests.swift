@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+import Compiler
 @testable import VM
 
 // swiftlint:disable file_length

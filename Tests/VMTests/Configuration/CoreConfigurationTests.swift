@@ -1,5 +1,6 @@
 import Foundation
 import XCTest
+import Compiler
 @testable import VM
 
 // swiftlint:disable file_length
@@ -23,7 +24,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_programName() {
     var args = Arguments()
-    let env = VM.Environment(from: [:])
+    let env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.raw = ["Violet"]
@@ -36,7 +37,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_executable_withBundle() {
     let args = Arguments()
-    let env = VM.Environment(from: [:])
+    let env = Environment(from: [:])
     let deps = FakeDeps()
 
     deps.executablePath = "The-Little-Mermaid/Ariel"
@@ -47,7 +48,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_executable_withoutBundle() {
     var args = Arguments()
-    let env = VM.Environment(from: [:])
+    let env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.raw = ["./The-Little-Mermaid/Ariel"]
@@ -60,7 +61,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_moduleSearchPaths() {
     var args = Arguments()
-    var env = VM.Environment(from: [:])
+    var env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.ignoreEnvironment = false
@@ -81,7 +82,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_moduleSearchPaths_ignoreEnv() {
     var args = Arguments()
-    var env = VM.Environment(from: [:])
+    var env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.ignoreEnvironment = true
@@ -102,7 +103,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_warnings() {
     var args = Arguments()
-    var env = VM.Environment(from: [:])
+    var env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.ignoreEnvironment = false
@@ -117,7 +118,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_warnings_ignoreEnv() {
     var args = Arguments()
-    var env = VM.Environment(from: [:])
+    var env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.ignoreEnvironment = true
@@ -135,7 +136,7 @@ class CoreConfigurationTests: XCTestCase {
 
     for value in presets {
       var args = Arguments()
-      let env = VM.Environment(from: [:])
+      let env = Environment(from: [:])
       let deps = FakeDeps()
 
       args.bytesWarning = value
@@ -152,7 +153,7 @@ class CoreConfigurationTests: XCTestCase {
 
     for value in presets {
       var args = Arguments()
-      var env = VM.Environment(from: [:])
+      var env = Environment(from: [:])
       let deps = FakeDeps()
 
       args.ignoreEnvironment = false
@@ -169,7 +170,7 @@ class CoreConfigurationTests: XCTestCase {
 
     for value in presets {
       var args = Arguments()
-      var env = VM.Environment(from: [:])
+      var env = Environment(from: [:])
       let deps = FakeDeps()
 
       args.ignoreEnvironment = false
@@ -183,7 +184,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_optimizations_arg_setToO_withEnv_setToOO_isOO() {
     var args = Arguments()
-    var env = VM.Environment(from: [:])
+    var env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.ignoreEnvironment = false
@@ -199,7 +200,7 @@ class CoreConfigurationTests: XCTestCase {
 
     for value in presets {
       var args = Arguments()
-      var env = VM.Environment(from: [:])
+      var env = Environment(from: [:])
       let deps = FakeDeps()
 
       args.ignoreEnvironment = false
@@ -216,7 +217,7 @@ class CoreConfigurationTests: XCTestCase {
 
     for value in presets {
       var args = Arguments()
-      let env = VM.Environment(from: [:])
+      let env = Environment(from: [:])
       let deps = FakeDeps()
 
       args.ignoreEnvironment = true
@@ -231,7 +232,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_inspectInteractively() {
     var args = Arguments()
-    let env = VM.Environment(from: [:])
+    let env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.inspectInteractively = true
@@ -242,7 +243,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_ignoreEnvironment() {
     var args = Arguments()
-    let env = VM.Environment(from: [:])
+    let env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.ignoreEnvironment = true
@@ -253,7 +254,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_isolated() {
     var args = Arguments()
-    let env = VM.Environment(from: [:])
+    let env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.isolated = true
@@ -264,7 +265,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_noSite() {
     var args = Arguments()
-    let env = VM.Environment(from: [:])
+    let env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.noSite = true
@@ -275,7 +276,7 @@ class CoreConfigurationTests: XCTestCase {
 
   func test_noUserSite() {
     var args = Arguments()
-    let env = VM.Environment(from: [:])
+    let env = Environment(from: [:])
     let deps = FakeDeps()
 
     args.noUserSite = true
@@ -288,7 +289,7 @@ class CoreConfigurationTests: XCTestCase {
 
   private func createDefaultConfiguration() -> CoreConfiguration {
     let args = Arguments()
-    let env = VM.Environment(from: [:])
+    let env = Environment(from: [:])
     let deps = FakeDeps()
     return CoreConfiguration(arguments: args, environment: env, dependencies: deps)
   }

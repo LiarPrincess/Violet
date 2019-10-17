@@ -73,11 +73,8 @@ public struct Environment {
   /// force inspect mode on program termination.
   public var pythonInspectInteractively: Bool = false
 
-  /// Use default environment (from `ProcessInfo.environment`).
-  public init() {
-    let environment = ProcessInfo.processInfo.environment
-    self.init(from: environment)
-  }
+  /// Use default environment.
+  public init() { }
 
   /// Create environment parsed from given dictionary.
   public init(from environment: [String: String]) {

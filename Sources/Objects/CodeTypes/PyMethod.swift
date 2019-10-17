@@ -76,7 +76,6 @@ internal final class PyInstanceMethod: PyObject {
     super.init()
   }
 
-
   // MARK: - String
 
   internal func repr() -> String {
