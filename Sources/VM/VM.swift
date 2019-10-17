@@ -168,25 +168,15 @@ public class VM {
 
   // MARK: - Compile
 
-  // TODO: Use the same optimization enum in VM and in compiler
-  private var compilerOptions: CompilerOptions {
-    let optimizationLevel: UInt8 = {
-      switch self.coreConfiguration.optimization {
-      case .none: return 0
-      case .O: return 1
-      case .OO: return 2
-      }
-    }()
-
-    return CompilerOptions(optimizationLevel: optimizationLevel)
-  }
-
   private func compile(source: String, mode: ParserMode) throws -> CodeObject {
     let lexer = Lexer(for: source)
     var parser = Parser(mode: mode, tokenSource: lexer)
     let ast = try parser.parse()
 
-    let compiler = try Compiler(ast: ast, options: self.compilerOptions)
+    let optimizationLevel = self.coreConfiguration.optimization
+    let compilerOptions = CompilerOptions(optimizationLevel: optimizationLevel)
+    let compiler = try Compiler(ast: ast, options: compilerOptions)
+
     return try compiler.run()
   }
 

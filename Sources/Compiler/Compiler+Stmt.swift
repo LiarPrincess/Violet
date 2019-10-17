@@ -143,7 +143,7 @@ extension Compiler {
 
   /// compiler_assert(struct compiler *c, stmt_ty s)
   private func visitAssert(test: Expression, msg:  Expression?) throws {
-    if self.options.optimizationLevel > 0 {
+    guard self.options.optimizationLevel == .none else {
       return
     }
 

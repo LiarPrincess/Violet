@@ -57,7 +57,7 @@ extension Compiler {
 
     let codeObject = try self.inNewCodeObject(node: statement, type: .function) {
       let optimizationLevel = self.options.optimizationLevel
-      if let docString = body.first.getDocString(), optimizationLevel < 2 {
+      if let docString = body.first.getDocString(), optimizationLevel < .OO {
         self.builder.appendString(docString)
       }
 

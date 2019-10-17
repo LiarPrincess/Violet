@@ -1,14 +1,3 @@
-public enum OptimizationLevel: Equatable {
-  /// No optimizations.
-  case none
-  /// Remove assert statements and any code conditional on the value of `__debug__`.
-  /// Command line: `-O`.
-  case O
-  /// Do `-O` and also discard `docstrings`.
-  /// Command line: `-OO`.
-  case OO
-}
-
 public enum WarningOption: Equatable {
   /// `-Wdefault` - Warn once per call location
   case `default`

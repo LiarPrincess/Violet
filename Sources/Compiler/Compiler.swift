@@ -7,20 +7,6 @@ import Bytecode
 
 // swiftlint:disable file_length
 
-public struct CompilerOptions {
-
-  /// Controls various sorts of optimizations
-  ///
-  /// Possible values:
-  /// - 0 - no optimizations (default)
-  /// - 1 or more - optimize. Tries to reduce code size and execution time.
-  public let optimizationLevel: UInt8
-
-  public init(optimizationLevel: UInt8 = 0) {
-    self.optimizationLevel = optimizationLevel
-  }
-}
-
 public final class Compiler {
 
   /// Program that we are compiling.
@@ -146,10 +132,9 @@ public final class Compiler {
       return
     }
 
-    if let doc = first.getDocString(), self.options.optimizationLevel < 2 {
+    if let doc = first.getDocString(), self.options.optimizationLevel < .OO {
       self.builder.appendString(doc)
       self.builder.appendStoreName(SpecialIdentifiers.__doc__)
-
       try self.visitStatements(stmts.dropFirst())
     } else {
       try self.visitStatements(stmts)
