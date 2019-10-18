@@ -7,120 +7,120 @@ extension Frame {
 
   /// Implements `TOS = TOS1 ** TOS`.
   internal func binaryPower() throws {
-    let exponent = self.pop()
-    let value = self.top
+    let exponent = self.stack.pop()
+    let value = self.stack.top
     let result = try self.context.pow(value: value, exponent: exponent)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `TOS = TOS1 * TOS`.
   internal func binaryMultiply() throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.context.mul(left: left, right: right)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `TOS = TOS1 @ TOS`.
   internal func binaryMatrixMultiply() throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.context.matrixMul(left: left, right: right)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `TOS = TOS1 // TOS`.
   internal func binaryFloorDivide() throws {
-    let divisor = self.pop()
-    let dividend = self.top
+    let divisor = self.stack.pop()
+    let dividend = self.stack.top
     let quotient = try self.context.divFloor(left: dividend, right: divisor)
-    self.setTop(quotient)
+    self.stack.top = quotient
   }
 
   /// Implements `TOS = TOS1 / TOS`.
   internal func binaryTrueDivide() throws {
-    let divisor = self.pop()
-    let dividend = self.top
+    let divisor = self.stack.pop()
+    let dividend = self.stack.top
     let quotient = try self.context.div(left: dividend, right: divisor)
-    self.setTop(quotient)
+    self.stack.top = quotient
   }
 
   /// Implements `TOS = TOS1 % TOS`.
   internal func binaryModulo() throws {
-    let divisor = self.pop()
-    let dividend = self.top
+    let divisor = self.stack.pop()
+    let dividend = self.stack.top
     let result = try self.context.remainder(left: dividend, right: divisor)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `TOS = TOS1 + TOS`.
   internal func binaryAdd() throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.context.add(left: left, right: right)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `TOS = TOS1 - TOS`.
   internal func binarySubtract() throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.context.sub(left: left, right: right)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   // MARK: - Shifts
 
   /// Implements `TOS = TOS1 << TOS`.
   internal func binaryLShift() throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.context.lShift(left: left, right: right)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `TOS = TOS1 >> TOS`.
   internal func binaryRShift() throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.context.rShift(left: left, right: right)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   // MARK: - Binary
 
   /// Implements `TOS = TOS1 & TOS`.
   internal func binaryAnd() throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.context.and(left: left, right: right)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `TOS = TOS1 ^ TOS`.
   internal func binaryXor() throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.context.xor(left: left, right: right)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `TOS = TOS1 | TOS`.
   internal func binaryOr() throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.context.or(left: left, right: right)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   // MARK: - Compare
 
   /// Performs a `Boolean` operation.
   internal func compareOp(comparison: ComparisonOpcode) throws {
-    let right = self.pop()
-    let left = self.top
+    let right = self.stack.pop()
+    let left = self.stack.top
     let result = try self.compare(left: left, right: right, comparison: comparison)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   private func compare(left: PyObject,

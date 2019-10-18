@@ -216,7 +216,7 @@ internal struct FString {
 
     do {
       let lexer = Lexer(for: s)
-      var parser = Parser(mode: .eval, tokenSource: lexer)
+      let parser = Parser(mode: .eval, tokenSource: lexer)
       let ast = try parser.parse()
 
       switch ast.kind {

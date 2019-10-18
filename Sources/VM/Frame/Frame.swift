@@ -16,7 +16,7 @@ internal class Frame {
   internal let context: PyContext
 
   /// The main data frame of the stack machine.
-  internal var stack = [PyObject]()
+  internal var stack = ObjectStack()
 
   /// Local symbol table.
   internal var locals = [String: PyObject]()
@@ -37,54 +37,6 @@ internal class Frame {
   internal init(code: CodeObject, context: PyContext) {
     self.code = code
     self.context = context
-  }
-
-  // MARK: - Stack operations
-
-  // TODO: rename isEmpty
-  internal var empty: Bool { return self.stack.isEmpty }
-  internal var stackLevel: Int { fatalError() }
-
-  internal var top:    PyObject { return self.peek(1) }
-  internal var second: PyObject { return self.peek(2) }
-  internal var third:  PyObject { return self.peek(3) }
-  internal var fourth: PyObject { return self.peek(4) }
-
-  private func peek(_ n: Int) -> PyObject {
-    return self.stack[self.stack.count - n]
-  }
-
-  internal func setTop   (_ value: PyObject) { self.setValue(1, value) }
-  internal func setSecond(_ value: PyObject) { self.setValue(2, value) }
-  internal func setThird (_ value: PyObject) { self.setValue(3, value) }
-  internal func setFourth(_ value: PyObject) { self.setValue(4, value) }
-
-  private func setValue(_ n: Int, _ value: PyObject) {
-    self.stack[self.stack.count - n] = value
-  }
-
-  internal func pop() -> PyObject {
-    return self.stack.popLast()!
-  }
-
-  internal func push(_ value: PyObject) {
-    self.stack.push(value)
-  }
-
-  internal func adjust(_ n: Int) {
-    // #define BASIC_STACKADJ(n) (stack_pointer += n)
-  }
-
-  // MARK: - Common
-
-  internal func popElements(count: Int) -> [PyObject] {
-    var elements = [PyObject]()
-    for _ in 0..<count {
-      elements.push(self.pop())
-    }
-
-    // Elements on stack are in reverse order
-    return elements.reversed()
   }
 
   // MARK: - Run

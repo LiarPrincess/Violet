@@ -9,7 +9,7 @@ extension Frame {
   internal func buildTupleUnpack(elementCount: Int) throws {
     let list = try self.unpackList(elementCount: elementCount)
     let tuple = try self.context.tuple(list: list)
-    self.push(tuple)
+    self.stack.push(tuple)
   }
 
   /// This is similar to `BuildTupleUnpack`, but is used for `f(*x, *y, *z)` call syntax.
@@ -22,20 +22,20 @@ extension Frame {
   /// Implements iterable unpacking in list displays `[*x, *y, *z]`.
   internal func buildListUnpack(elementCount: Int) throws {
     let list = try self.unpackList(elementCount: elementCount)
-    self.push(list)
+    self.stack.push(list)
   }
 
   /// This is similar to `BuildTupleUnpack`, but pushes a set instead of tuple.
   /// Implements iterable unpacking in set displays `{*x, *y, *z}`.
   internal func buildSetUnpack(elementCount: Int) throws {
     let set = try self.context.set()
-    let elements = self.popElements(count: elementCount)
+    let elements = self.stack.popElementsInPushOrder(count: elementCount)
 
     for iterable in elements {
       try self.context.extend(set: set, iterable: iterable)
     }
 
-    self.push(set)
+    self.stack.push(set)
   }
 
   /// Pops count mappings from the stack, merges them into a single dictionary,
@@ -43,14 +43,14 @@ extension Frame {
   /// Implements dictionary unpacking in dictionary displays `{**x, **y, **z}`.
   internal func buildMapUnpack(elementCount: Int) throws {
     let dict = self.context.dictionary()
-    let elements = self.popElements(count: elementCount)
+    let elements = self.stack.popElementsInPushOrder(count: elementCount)
 
     for iterable in elements {
       self.context.PyDict_Update(dictionary: dict, iterable: iterable)
       // TODO: if (PyErr_ExceptionMatches(PyExc_AttributeError)) {
     }
 
-    self.push(dict)
+    self.stack.push(dict)
   }
 
   /// This is similar to `BuildMapUnpack`, but is used for `f(**x, **y, **z)` call syntax.
@@ -82,7 +82,7 @@ extension Frame {
 
   private func unpackList(elementCount: Int) throws -> PyObject {
     let result = self.context.list()
-    let elements = self.popElements(count: elementCount)
+    let elements = self.stack.popElementsInPushOrder(count: elementCount)
 
     for iterable in elements {
       try self.context.extent(list: result, iterable: iterable)

@@ -9,7 +9,7 @@ extension Frame {
   internal func loadConst(index: Int) throws {
     let value = self.code.constants[index]
     let object = self.toObject(value)
-    self.push(object)
+    self.stack.push(object)
   }
 
   private func toObject(_ value: Constant) -> PyObject {
@@ -37,7 +37,7 @@ extension Frame {
   /// Implements `name = TOS`.
   internal func storeName(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let value = self.pop()
+    let value = self.stack.pop()
     self.locals[name] = value
   }
 
@@ -46,17 +46,17 @@ extension Frame {
     let name = self.code.names[nameIndex]
 
     if let local = self.locals[name] {
-      self.push(local)
+      self.stack.push(local)
       return
     }
 
     if let global = self.globals[name] {
-      self.push(global)
+      self.stack.push(global)
       return
     }
 
     if let builtin = self.builtins[name] {
-      self.push(builtin)
+      self.stack.push(builtin)
       return
     }
 
@@ -80,23 +80,23 @@ extension Frame {
   /// Implements `TOS.name = TOS1`.
   internal func storeAttribute(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let object = self.pop()
-    let value = self.pop()
+    let object = self.stack.pop()
+    let value = self.stack.pop()
     try self.context.setAttribute(object: object, name: name, value: value)
   }
 
   /// Replaces TOS with `getAttr(TOS, name)`.
   internal func loadAttribute(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let object = self.top
+    let object = self.stack.top
     let result = try self.context.getAttribute(object: object, name: name)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `del TOS.name`.
   internal func deleteAttribute(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let object = self.pop()
+    let object = self.stack.pop()
     try self.context.deleteAttribute(object: object, name: name)
   }
 
@@ -104,24 +104,24 @@ extension Frame {
 
   /// Implements `TOS = TOS1[TOS]`.
   internal func binarySubscript() throws {
-    let index = self.pop()
-    let object = self.top
+    let index = self.stack.pop()
+    let object = self.stack.top
     let result = try self.context.getItem(object: object, index: index)
-    self.setTop(result)
+    self.stack.top = result
   }
 
   /// Implements `TOS1[TOS] = TOS2`.
   internal func storeSubscript() throws {
-    let index = self.pop()
-    let object = self.pop()
-    let value = self.pop()
+    let index = self.stack.pop()
+    let object = self.stack.pop()
+    let value = self.stack.pop()
     try self.context.setItem(object: object, index: index, value: value)
   }
 
   /// Implements `del TOS1[TOS]`.
   internal func deleteSubscript() throws {
-    let index = self.pop()
-    let object = self.pop()
+    let index = self.stack.pop()
+    let object = self.stack.pop()
     try self.context.deleteItem(object: object, index: index)
   }
 
@@ -130,7 +130,7 @@ extension Frame {
   /// Works as StoreName, but stores the name as a global.
   internal func storeGlobal(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let value = self.pop()
+    let value = self.stack.pop()
     self.globals[name] = value
   }
 
@@ -139,12 +139,12 @@ extension Frame {
     let name = self.code.names[nameIndex]
 
     if let global = self.globals[name] {
-      self.push(global)
+      self.stack.push(global)
       return
     }
 
     if let builtin = self.builtins[name] {
-      self.push(builtin)
+      self.stack.push(builtin)
       return
     }
 
@@ -169,7 +169,7 @@ extension Frame {
     let name = self.code.names[nameIndex]
 
     if let local = self.locals[name] {
-      self.push(local)
+      self.stack.push(local)
       return
     }
 
@@ -181,7 +181,7 @@ extension Frame {
 
   internal func storeFast(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let value = self.pop()
+    let value = self.stack.pop()
     self.locals[name] = value
   }
 
@@ -204,7 +204,7 @@ extension Frame {
   internal func loadDeref(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
     if let value = self.free[name] {
-      self.push(value)
+      self.stack.push(value)
       return
     }
 
@@ -216,7 +216,7 @@ extension Frame {
   /// and free variable storage.
   internal func storeDeref(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let value = self.pop()
+    let value = self.stack.pop()
     self.free[name] = value
   }
 

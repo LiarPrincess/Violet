@@ -6,48 +6,48 @@ extension Frame {
 
   /// Removes the top-of-stack (TOS) item.
   internal func popTop() throws {
-    _ = self.pop()
+    _ = self.stack.pop()
   }
 
   /// Swaps the two top-most stack items.
   internal func rotTwo() throws {
-    let top = self.top
-    let second = self.second
-    self.setTop(second)
-    self.setSecond(top)
+    let top = self.stack.top
+    let second = self.stack.second
+    self.stack.top = second
+    self.stack.second = top
   }
 
   /// Lifts second and third stack item one position up,
   /// moves top down to position three.
   internal func rotThree() throws {
-    let top = self.top
-    let second = self.second
-    let third = self.third
-    self.setTop(second)
-    self.setSecond(third)
-    self.setThird(top)
+    let top = self.stack.top
+    let second = self.stack.second
+    let third = self.stack.third
+    self.stack.top = second
+    self.stack.second = third
+    self.stack.third = top
   }
 
   /// Duplicates the reference on top of the stack.
   internal func dupTop() throws {
-    let top = self.top
-    self.push(top)
+    let top = self.stack.top
+    self.stack.push(top)
   }
 
   /// Duplicates the two references on top of the stack,
   /// leaving them in the same order.
   internal func dupTopTwo() throws {
-    let top = self.top
-    let second = self.second
-    self.push(second)
-    self.push(top)
+    let top = self.stack.top
+    let second = self.stack.second
+    self.stack.push(second)
+    self.stack.push(top)
   }
 
   /// Implements the expression statement for the interactive mode.
   /// TOS is removed from the stack and printed.
   /// In non-interactive mode, an expression statement is terminated with PopTop.
   internal func printExpr() throws {
-    let value = self.pop()
+    let value = self.stack.pop()
     try self.context.print(value: value, file: self.standardOutput, raw: true)
   }
 
@@ -76,11 +76,11 @@ extension Frame {
   /// Pushes a slice object on the stack.
   internal func buildSlice(arg: SliceArg) throws {
     let step = self.getSliceStep(arg: arg)
-    let stop = self.pop()
-    let start = self.top
+    let stop = self.stack.pop()
+    let start = self.stack.top
 
     let slice = self.context.pySlice_New(start: start, stop: stop, step: step)
-    self.setTop(slice)
+    self.stack.top = slice
   }
 
   private func getSliceStep(arg: SliceArg) -> PyObject? {
@@ -88,7 +88,7 @@ extension Frame {
     case .lowerUpper:
       return nil
     case .lowerUpperStep:
-      return self.pop()
+      return self.stack.pop()
     }
   }
 }
