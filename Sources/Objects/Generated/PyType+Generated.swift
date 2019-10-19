@@ -287,8 +287,8 @@ extension PyType {
     return result
   }
 
-  internal static func nodule(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "nodule", type: type, base: base)
+  internal static func module(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    let result = PyType(context, name: "module", type: type, base: base)
 
     // result.__doc__ = PyModule.doc
 
@@ -311,6 +311,15 @@ extension PyType {
 
 
     // result.__repr__ = PyNotImplemented.repr()
+
+    return result
+  }
+
+  internal static func property(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
+    let result = PyType(context, name: "property", type: type, base: base)
+
+    // result.__doc__ = PyProperty.doc
+
 
     return result
   }

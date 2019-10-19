@@ -57,7 +57,7 @@ internal final class PyMethod: PyObject {
 }
 
 // MARK: - InstanceMethod
-
+/*
 // sourcery: pytype = instancemethod
 internal final class PyInstanceMethod: PyObject {
 
@@ -96,3 +96,4 @@ internal final class PyInstanceMethod: PyObject {
     fatalError()
   }
 }
+*/

@@ -10,7 +10,7 @@
 //static PyMemberDef meth_members[] = {
 //{"__module__",    T_OBJECT,     OFF(m_module), PY_WRITE_RESTRICTED},
 
-// sourcery: pytype = method
+// sourcery: pytype = builtinFunction
 internal final class PyBuiltinFunctionOrMethod: PyObject {
 
   /// The callable object implementing the method

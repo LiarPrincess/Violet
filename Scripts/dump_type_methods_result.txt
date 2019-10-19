@@ -1,19 +1,4 @@
 object
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
-    __dir__
-    __eq__
-    __format__
-    __ge__
-    __gt__
-    __hash__
-    __le__
-    __lt__
-    __ne__
-    __repr__
-    __str__
   Unimplemented:
     __delattr__
     __getattribute__
@@ -27,19 +12,7 @@ object
     __init_subclass__
 
 bool
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
   from_bytes - <class 'builtin_function_or_method'>
-  Implemented:
-    __and__
-    __or__
-    __rand__
-    __repr__
-    __ror__
-    __rxor__
-    __str__
-    __xor__
   Please remind me why do we even have this method?
     numerator
     denominator
@@ -83,19 +56,26 @@ bool
     __sub__
     __truediv__
 
-code
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
+builtin_function_or_method
+  __module__ - <class 'str'>
+  __name__ - <class 'str'>
+  __qualname__ - <class 'str'>
+  __text_signature__ - <class 'NoneType'>
+  Unimplemented:
+    __call__
     __eq__
     __ge__
+    __getattribute__
     __gt__
     __hash__
     __le__
     __lt__
     __ne__
+    __reduce__
     __repr__
+    __self__
+
+code
   Unimplemented:
     __getattribute__
     __sizeof__
@@ -116,63 +96,17 @@ code
     co_varnames
 
 complex
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
-    __abs__
-    __add__
-    __bool__
-    __divmod__
-    __eq__
-    __float__
-    __floordiv__
-    __ge__
-    __gt__
-    __hash__
-    __int__
-    __le__
-    __lt__
-    __mod__
-    __mul__
-    __ne__
-    __neg__
-    __pos__
-    __pow__
-    __radd__
-    __rdivmod__
-    __repr__
-    __rfloordiv__
-    __rmod__
-    __rmul__
-    __rpow__
-    __rsub__
-    __rtruediv__
-    __str__
-    __sub__
-    __truediv__
-    conjugate
-    imag
-    real
   Unimplemented:
     __format__
     __getattribute__
     __getnewargs__
 
 ellipsis
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
-    __repr__
   Unimplemented:
     __getattribute__
     __reduce__
 
 enumerate
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
   Unimplemented:
     __getattribute__
     __iter__
@@ -181,47 +115,8 @@ enumerate
 
 float
   __getformat__ - <class 'builtin_function_or_method'>
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
   __set_format__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
   fromhex - <class 'builtin_function_or_method'>
-  Implemented:
-    __abs__
-    __add__
-    __bool__
-    __divmod__
-    __eq__
-    __float__
-    __floordiv__
-    __ge__
-    __gt__
-    __hash__
-    __int__
-    __le__
-    __lt__
-    __mod__
-    __mul__
-    __ne__
-    __neg__
-    __pos__
-    __pow__
-    __radd__
-    __rdivmod__
-    __repr__
-    __rfloordiv__
-    __rmod__
-    __rmul__
-    __round__
-    __rpow__
-    __rsub__
-    __rtruediv__
-    __str__
-    __sub__
-    __truediv__
-    conjugate
-    imag
-    real
   Unimplemented:
     __format__
     __getattribute__
@@ -231,61 +126,22 @@ float
     hex
     is_integer
 
+function
+  __dict__ - <class 'mappingproxy'>
+  __module__ - <class 'str'>
+  __name__ - <class 'str'>
+  __qualname__ - <class 'str'>
+  Unimplemented:
+    __annotations__
+    __closure__
+    __code__
+    __defaults__
+    __get__
+    __globals__
+    __kwdefaults__
+
 int
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
   from_bytes - <class 'builtin_function_or_method'>
-  Implemented:
-    __abs__
-    __add__
-    __and__
-    __bool__
-    __divmod__
-    __eq__
-    __float__
-    __floordiv__
-    __ge__
-    __gt__
-    __hash__
-    __index__
-    __int__
-    __invert__
-    __le__
-    __lshift__
-    __lt__
-    __mod__
-    __mul__
-    __ne__
-    __neg__
-    __or__
-    __pos__
-    __pow__
-    __radd__
-    __rand__
-    __rdivmod__
-    __repr__
-    __rfloordiv__
-    __rlshift__
-    __rmod__
-    __rmul__
-    __ror__
-    __round__
-    __rpow__
-    __rrshift__
-    __rshift__
-    __rsub__
-    __rtruediv__
-    __rxor__
-    __str__
-    __sub__
-    __truediv__
-    __xor__
-    conjugate
-    denominator
-    imag
-    numerator
-    real
   Unimplemented:
     __ceil__
     __floor__
@@ -299,31 +155,6 @@ int
 
 list
   __hash__ - <class 'NoneType'>
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
-    __add__
-    __contains__
-    __eq__
-    __ge__
-    __getitem__
-    __gt__
-    __iadd__
-    __imul__
-    __le__
-    __len__
-    __lt__
-    __mul__
-    __ne__
-    __repr__
-    __rmul__
-    append
-    clear
-    copy
-    count
-    extend
-    index
   Unimplemented:
     __delitem__
     __getattribute__
@@ -338,42 +169,54 @@ list
     reverse
     sort
 
-NoneType
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
-    __bool__
-    __repr__
-
-NotImplementedType
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
-    __repr__
+method
   Unimplemented:
-    __reduce__
-
-range
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
-    __bool__
-    __contains__
+    __call__
+    __delattr__
     __eq__
+    __func__
     __ge__
-    __getitem__
+    __get__
+    __getattribute__
     __gt__
     __hash__
     __le__
-    __len__
     __lt__
     __ne__
+    __reduce__
     __repr__
-    count
-    index
+    __self__
+    __setattr__
+
+module
+  __dict__ - <class 'mappingproxy'>
+  Unimplemented:
+    __init__
+  Please remind me why do we even have this method?
+    __dict__
+
+NoneType
+
+NotImplementedType
+  Unimplemented:
+    __reduce__
+
+property
+  Unimplemented:
+    __delete__
+    __get__
+    __getattribute__
+    __init__
+    __isabstractmethod__
+    __set__
+    deleter
+    fdel
+    fget
+    fset
+    getter
+    setter
+
+range
   Unimplemented:
     __getattribute__
     __iter__
@@ -385,17 +228,6 @@ range
 
 slice
   __hash__ - <class 'NoneType'>
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
-    __eq__
-    __ge__
-    __gt__
-    __le__
-    __lt__
-    __ne__
-    __repr__
   Unimplemented:
     __getattribute__
     __reduce__
@@ -405,26 +237,6 @@ slice
     stop
 
 tuple
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __new__ - <class 'builtin_function_or_method'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Implemented:
-    __add__
-    __contains__
-    __eq__
-    __ge__
-    __getitem__
-    __gt__
-    __hash__
-    __le__
-    __len__
-    __lt__
-    __mul__
-    __ne__
-    __repr__
-    __rmul__
-    count
-    index
   Unimplemented:
     __getattribute__
     __getnewargs__
@@ -437,15 +249,12 @@ type
   __dict__ - <class 'mappingproxy'>
   __dictoffset__ - <class 'int'>
   __flags__ - <class 'int'>
-  __init_subclass__ - <class 'builtin_function_or_method'>
   __itemsize__ - <class 'int'>
   __module__ - <class 'str'>
   __mro__ - <class 'tuple'>
   __name__ - <class 'str'>
-  __new__ - <class 'builtin_function_or_method'>
   __prepare__ - <class 'builtin_function_or_method'>
   __qualname__ - <class 'str'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
   __text_signature__ - <class 'NoneType'>
   __weakrefoffset__ - <class 'int'>
   Unimplemented:
@@ -462,23 +271,4 @@ type
     __subclasscheck__
     __subclasses__
     mro
-
-function
-  __dict__ - <class 'mappingproxy'>
-  __init_subclass__ - <class 'builtin_function_or_method'>
-  __module__ - <class 'str'>
-  __name__ - <class 'str'>
-  __new__ - <class 'builtin_function_or_method'>
-  __qualname__ - <class 'str'>
-  __subclasshook__ - <class 'builtin_function_or_method'>
-  Unimplemented:
-    __annotations__
-    __call__
-    __closure__
-    __code__
-    __defaults__
-    __get__
-    __globals__
-    __kwdefaults__
-    __repr__
 

@@ -14,8 +14,9 @@ for t in implemented.types:
   derived_members = []
   implemented_methods = implemented.types[t]
 
+  ignored = ['__new__', '__class__', '__init_subclass__', '__subclasshook__']
   for name, member in inspect.getmembers(t):
-    if name == '__class__':
+    if name in ignored:
       continue
     elif name == '__doc__':
       doc = member
@@ -41,11 +42,11 @@ for t in implemented.types:
   print_derived_members = 0
 
   if print_own_members:
-    if own_implemented:
-      print('  Implemented:')
-      for m in own_implemented:
-        doc = '' # if m.__doc__ is None else '"' + m.__doc__ + '"'
-        print('   ', m.__name__)
+    # if own_implemented:
+    #   print('  Implemented:')
+    #   for m in own_implemented:
+    #     doc = '' # if m.__doc__ is None else '"' + m.__doc__ + '"'
+    #     print('   ', m.__name__)
 
     if own_unimplemented:
       print('  Unimplemented:')

@@ -1,0 +1,24 @@
+import types as t
+
+types = {
+{% for type in types.classes|annotated:"pytype" %}
+  {% if type.annotations.pytype == "NoneType" %}type(None): [
+  {% elif type.annotations.pytype == "NotImplementedType" %}type(NotImplemented): [
+  {% elif type.annotations.pytype == "ellipsis" %}type(...): [
+  {% elif type.annotations.pytype == "code" %}t.CodeType: [
+  {% elif type.annotations.pytype == "module" %}t.ModuleType: [
+  {% elif type.annotations.pytype == "function" %}t.FunctionType: [
+  {% elif type.annotations.pytype == "method" %}t.MethodType: [
+  {% elif type.annotations.pytype == "builtinFunction" %}t.BuiltinFunctionType: [
+  {% elif type.annotations.pytype == "builtinMethod" %}t.BuiltinMethodType: [
+  {% else %}{{ type.annotations.pytype }}: [
+  {% endif %}
+  {% for prop in type.allVariables|annotated:"pyproperty" %}
+    '{{ prop.annotations.pyproperty }}',
+  {% endfor %}
+  {% for method in type.allMethods|annotated:"pymethod" %}
+    '{{ method.annotations.pymethod }}',
+  {% endfor %}
+  ],
+{% endfor %}
+}

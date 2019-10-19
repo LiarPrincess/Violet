@@ -2,11 +2,6 @@ import Objects
 
 extension VM {
 
-  /// PyImport_AddModule
-  internal func addModule(_ name: String) -> PyObject {
-    self.unimplemented()
-  }
-
   /// PyImport_ImportModule
   internal func importModule(_ name: String) -> PyObject {
     self.unimplemented()

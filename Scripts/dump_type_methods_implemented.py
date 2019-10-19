@@ -1,25 +1,5 @@
-# types = {
-# {% for type in types.classes|annotated:"pytype" %}
-#   {% if type.annotations.pytype == "NoneType" %}
-#   type(None): [
-#   {% elif type.annotations.pytype == "NotImplementedType" %}
-#   type(NotImplemented): [
-#   {% elif type.annotations.pytype == "ellipsis" %}
-#   type(...): [
-#   {% elif type.annotations.pytype == "function" %}
-#   type(f): [
-#   {% else %}
-#   {{ type.annotations.pytype }}: [
-#   {% endif %}
-#   {% for method in type.allMethods|annotated:"pymethod" %}
-#     '{{ method.annotations.pymethod }}',
-#   {% endfor %}
-#   ],
-# {% endfor %}
-# }
 
-def f(): pass
-code = type(f.__code__)
+import types as t
 
 types = {
   object: [
@@ -96,7 +76,9 @@ types = {
     '__sub__',
     '__truediv__',
   ],
-  code: [
+  t.BuiltinFunctionType: [
+  ],
+  t.CodeType: [
     '__eq__',
     '__ne__',
     '__lt__',
@@ -184,6 +166,10 @@ types = {
     '__sub__',
     '__truediv__',
   ],
+  t.FunctionType: [
+    '__call__',
+    '__repr__',
+  ],
   int: [
     'numerator',
     'denominator',
@@ -258,12 +244,24 @@ types = {
     '__rmul__',
     '__repr__',
   ],
+  t.MethodType: [
+  ],
+  t.ModuleType: [
+    '__dict__',
+    '__repr__',
+    '__getattribute__',
+    '__setattr__',
+    '__delattr__',
+    '__dir__',
+  ],
   type(None): [
     '__bool__',
     '__repr__',
   ],
   type(NotImplemented): [
     '__repr__',
+  ],
+  property: [
   ],
   range: [
     '__bool__',
@@ -309,7 +307,5 @@ types = {
     '__repr__',
   ],
   type: [
-  ],
-  type(f): [
   ],
 }

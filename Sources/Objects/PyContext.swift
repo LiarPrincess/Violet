@@ -53,6 +53,8 @@ internal final class PyContextTypes {
   internal let enumerate: PyType
   internal let string: PyType
 
+  internal let module: PyType
+
   fileprivate init(context: PyContext) {
     // 1. `type` inherits from `object`
     // 2. both `type` and `object are instances of `type`.
@@ -74,6 +76,7 @@ internal final class PyContextTypes {
     self.bool    = PyType.bool(context,    type: self.type, base: self.int)
     self.complex = PyType.complex(context, type: self.type, base: self.object)
 
+    // TODO: set, dict, string
     self.tuple = PyType.tuple(context, type: self.type, base: self.object)
     self.list  = PyType.list(context,  type: self.type, base: self.object)
     self.set   = PyType(context, name: "set",   type: self.type, base: self.object)
@@ -83,6 +86,8 @@ internal final class PyContextTypes {
     self.range = PyType.range(context, type: self.type, base: self.object)
     self.enumerate = PyType.enumerate(context, type: self.type, base: self.object)
     self.string = PyType(context, name: "string", type: self.type, base: self.object)
+
+    self.module = PyType.module(context, type: self.type, base: self.object)
   }
 }
 /*
