@@ -36,6 +36,7 @@ internal final class PyTuple: PyObject,
 
   // MARK: - Equatable
 
+  // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> EquatableResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
@@ -48,6 +49,7 @@ internal final class PyTuple: PyObject,
 
   // MARK: - Comparable
 
+  // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
@@ -58,6 +60,7 @@ internal final class PyTuple: PyObject,
                                  right: other.elements)
   }
 
+  // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
@@ -68,6 +71,7 @@ internal final class PyTuple: PyObject,
                                       right: other.elements)
   }
 
+  // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
@@ -78,6 +82,7 @@ internal final class PyTuple: PyObject,
                                     right: other.elements)
   }
 
+  // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
@@ -90,6 +95,7 @@ internal final class PyTuple: PyObject,
 
   // MARK: - Hashable
 
+  // sourcery: pymethod = __hash__
   internal func hash() -> HashableResult {
     let hasher = self.context.hasher
 
@@ -106,6 +112,7 @@ internal final class PyTuple: PyObject,
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     if self.elements.isEmpty {
       return "()"
@@ -135,16 +142,19 @@ internal final class PyTuple: PyObject,
 
   // MARK: - Sequence
 
+  // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
     return BigInt(self.elements.count)
   }
 
+  // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> Bool {
     return SequenceHelper.contains(context: self.context,
                                    elements: self.elements,
                                    element: element)
   }
 
+  // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
     return SequenceHelper.getItem(context: self.context,
                                   elements: self.elements,
@@ -153,12 +163,14 @@ internal final class PyTuple: PyObject,
                                   typeName: "tuple")
   }
 
+  // sourcery: pymethod = count
   internal func count(_ element: PyObject) -> CountResult {
     return SequenceHelper.count(context: self.context,
                                 elements: self.elements,
                                 element: element)
   }
 
+  // sourcery: pymethod = index
   internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
     return SequenceHelper.getIndex(context: self.context,
                                    elements: self.elements,
@@ -168,6 +180,7 @@ internal final class PyTuple: PyObject,
 
   // MARK: - Add
 
+  // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> AddResult<PyObject> {
     if self.elements.isEmpty {
       return .value(other)
@@ -190,12 +203,14 @@ internal final class PyTuple: PyObject,
 
   // MARK: - Mul
 
+  // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)
       .map(self.tuple)
   }
 
+  // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
       .rmul(elements: self.elements, count: other)

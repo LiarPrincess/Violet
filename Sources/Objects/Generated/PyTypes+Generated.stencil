@@ -17,16 +17,13 @@ extension PyType {
     // result.__doc__ = {{ type.name }}.{{ variable.name }}
     {% endfor %}
 
-    {# Bool is subclass of Int, only Bool methods should be emitted, otherwise allMethods #}
-    {% if type.annotations.pytype == "bool" %}
-      {% for method in type.methods|annotated:"pymethod" %}
+    {% for prop in type.variables|annotated:"pyproperty" %}
+    // result.{{ prop.annotations.pyproperty }} = {{ type.name }}.{{ prop.name }}
+    {% endfor %}
+
+    {% for method in type.methods|annotated:"pymethod" %}
     // result.{{ method.annotations.pymethod }} = {{ type.name }}.{{ method.name }}
-      {% endfor %}
-    {% else %}
-      {% for method in type.allMethods|annotated:"pymethod" %}
-    // result.{{ method.annotations.pymethod }} = {{ type.name }}.{{ method.name }}
-      {% endfor %}
-    {% endif %}
+    {% endfor %}
 
     return result
   }

@@ -49,6 +49,7 @@ internal final class PyList: PyObject,
 
   // MARK: - Equatable
 
+  // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> EquatableResult {
     guard let other = other as? PyList else {
       return .notImplemented
@@ -61,6 +62,7 @@ internal final class PyList: PyObject,
 
   // MARK: - Comparable
 
+  // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PyList else {
       return .notImplemented
@@ -71,6 +73,7 @@ internal final class PyList: PyObject,
                                  right: other.elements)
   }
 
+  // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PyList else {
       return .notImplemented
@@ -81,6 +84,7 @@ internal final class PyList: PyObject,
                                       right: other.elements)
   }
 
+  // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PyList else {
       return .notImplemented
@@ -91,6 +95,7 @@ internal final class PyList: PyObject,
                                     right: other.elements)
   }
 
+  // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PyList else {
       return .notImplemented
@@ -103,6 +108,7 @@ internal final class PyList: PyObject,
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     if self.elements.isEmpty {
       return "[]"
@@ -129,16 +135,19 @@ internal final class PyList: PyObject,
 
   // MARK: - Sequence
 
+  // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
     return BigInt(self.elements.count)
   }
 
+  // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> Bool {
     return SequenceHelper.contains(context: self.context,
                                    elements: self.elements,
                                    element: element)
   }
 
+  // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
     return SequenceHelper.getItem(context: self.context,
                                   elements: self.elements,
@@ -147,12 +156,14 @@ internal final class PyList: PyObject,
                                   typeName: "list")
   }
 
+  // sourcery: pymethod = count
   internal func count(_ element: PyObject) -> CountResult {
     return SequenceHelper.count(context: self.context,
                                 elements: self.elements,
                                 element: element)
   }
 
+  // sourcery: pymethod = index
   internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
     return SequenceHelper.getIndex(context: self.context,
                                    elements: self.elements,
@@ -208,6 +219,7 @@ internal final class PyList: PyObject,
 
   // MARK: - Add
 
+  // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> AddResult<PyObject> {
     guard let otherList = other as? PyList else {
       let typeName = other.type.name
@@ -220,6 +232,7 @@ internal final class PyList: PyObject,
     return .value(self.list(result))
   }
 
+  // sourcery: pymethod = __iadd__
   internal func addInPlace(_ other: PyObject) -> AddResult<PyObject> {
     self.extend(other)
     return .value(self)
@@ -227,18 +240,21 @@ internal final class PyList: PyObject,
 
   // MARK: - Mul
 
+  // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)
       .map(self.list)
   }
 
+  // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
       .rmul(elements: self.elements, count: other)
       .map(self.list)
   }
 
+  // sourcery: pymethod = __imul__
   internal func mulInPlace(_ other: PyObject) -> MulResult<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)

@@ -78,12 +78,14 @@ internal final class PyFunction: PyObject, ReprTypeClass, CallTypeClass {
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     return "<function \(self._qualname) at \(self.ptrString)>"
   }
 
   // MARK: - Call
 
+  // sourcery: pymethod = __call__
   internal func call() -> PyResult<PyObject> {
     fatalError()
   }

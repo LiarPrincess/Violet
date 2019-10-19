@@ -75,6 +75,7 @@ extension PyContext {
     return try self.sub(left: left, right: right, op: "-")
   }
 
+  // sourcery: pymethod = __sub__
   internal func sub(left: PyObject, right: PyObject, op: String) throws -> PyObject {
 //    let type: SubTypeClass = try self.getTypeClass(op: op, left: left, right: right)
 //    return try type.sub(left: left, right: right)
@@ -88,6 +89,7 @@ extension PyContext {
     return try self.mul(left: left, right: right, op: "*")
   }
 
+  // sourcery: pymethod = __mul__
   internal func mul(left: PyObject, right: PyObject, op: String) throws -> PyObject {
 //    if let type: MulTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      return try type.mul(left: left, right: right)
@@ -137,6 +139,7 @@ extension PyContext {
     return try self.pow(value: value, exponent: exponent, op: "** or pow()")
   }
 
+  // sourcery: pymethod = __pow__
   internal func pow(value: PyObject, exponent: PyObject, op: String) throws -> PyObject {
 //    let type: PowTypeClass = try self.getTypeClass(op: op, left: value, right: exponent)
 //    return try type.pow(value: value, exponent: exponent)
@@ -189,6 +192,7 @@ extension PyContext {
     return try self.divMod(left: left, right: right, op: "divmod()")
   }
 
+  // sourcery: pymethod = __divmod__
   internal func divMod(left: PyObject, right: PyObject, op: String) throws -> PyObject {
 //    let type: DivModTypeClass = try self.getTypeClass(op: op, left: left, right: right)
 //    return try type.divMod(left: left, right: right)
@@ -202,6 +206,7 @@ extension PyContext {
     return try self.lShift(left: left, right: right, op: "<<")
   }
 
+  // sourcery: pymethod = __lshift__
   internal func lShift(left: PyObject, right: PyObject, op: String) throws -> PyObject {
 //    let type: ShiftTypeClass = try self.getTypeClass(op: op, left: left, right: right)
 //    return try type.lShift(left: left, right: right)
@@ -215,6 +220,7 @@ extension PyContext {
     return try self.rShift(left: left, right: right, op: ">>")
   }
 
+  // sourcery: pymethod = __rshift__
   internal func rShift(left: PyObject, right: PyObject, op: String) throws -> PyObject {
 //    let type: ShiftTypeClass = try self.getTypeClass(op: op, left: left, right: right)
 //    return try type.rShift(left: left, right: right)

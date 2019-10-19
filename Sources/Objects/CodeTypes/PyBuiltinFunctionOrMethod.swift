@@ -27,6 +27,7 @@ internal final class PyBuiltinFunctionOrMethod: PyObject {
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     let name = self._func.getName()
 

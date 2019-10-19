@@ -20,6 +20,7 @@ internal final class PyEllipsis: PyObject, ReprTypeClass {
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     return "Ellipsis"
   }

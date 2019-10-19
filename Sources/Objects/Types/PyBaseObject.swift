@@ -38,30 +38,36 @@ internal final class PyBaseObject: PyObject,
 
   // MARK: - Equatable
 
+  // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> EquatableResult {
     return self === other ? .value(true) : .notImplemented
   }
 
   // MARK: - Comparable
 
+  // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
   // MARK: - Hashable
 
+  // sourcery: pymethod = __hash__
   internal func hash() -> HashableResult {
     let id = ObjectIdentifier(self)
     return .value(self.context.hasher.hash(id))
@@ -69,6 +75,7 @@ internal final class PyBaseObject: PyObject,
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     switch self.type.getModule() {
     case .builtins:
@@ -78,6 +85,7 @@ internal final class PyBaseObject: PyObject,
     }
   }
 
+  // sourcery: pymethod = __str__
   internal func str() -> String {
     return self.repr()
   }

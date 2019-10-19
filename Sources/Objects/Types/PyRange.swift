@@ -90,6 +90,7 @@ internal final class PyRange: PyObject,
 
   // MARK: - Equatable
 
+  // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> EquatableResult {
     return (other as? PyRange)
       .map(self.isEqual)
@@ -118,24 +119,29 @@ internal final class PyRange: PyObject,
 
   // MARK: - Comparable
 
+  // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
   // MARK: - Hashable
 
+  // sourcery: pymethod = __hash__
   internal func hash() -> HashableResult {
     let none = self.context.none
     var tuple = [self.length, none, none]
@@ -156,6 +162,7 @@ internal final class PyRange: PyObject,
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     let start = self.start.repr()
     let stop = self.stop.repr()
@@ -170,18 +177,21 @@ internal final class PyRange: PyObject,
 
   // MARK: - Convertible
 
+  // sourcery: pymethod = __bool__
   internal func asBool() -> PyResult<Bool> {
     return .value(self.length.value > 0)
   }
 
   // MARK: - Length
 
+  // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
     return self.length.value
   }
 
   // MARK: - Contains
 
+  // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> Bool {
     guard let int = element as? PyInt else {
       return false
@@ -213,6 +223,7 @@ internal final class PyRange: PyObject,
 
   // MARK: - Get item
 
+  // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
     if let index = SequenceHelper.extractIndex(index) {
       let result = self.getItem(at: index)
@@ -274,6 +285,7 @@ internal final class PyRange: PyObject,
 
   // MARK: - Count
 
+  // sourcery: pymethod = count
   internal func count(_ element: PyObject) -> CountResult {
     if let int = element as? PyInt {
       return .value(self.contains(int) ? 1 : 0)
@@ -284,6 +296,7 @@ internal final class PyRange: PyObject,
 
   // MARK: - Index
 
+  // sourcery: pymethod = index
   internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
     guard let int = element as? PyInt, self.contains(int) else {
       let str = self.context._str(value: element)

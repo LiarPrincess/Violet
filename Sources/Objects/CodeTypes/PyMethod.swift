@@ -35,6 +35,7 @@ internal final class PyMethod: PyObject {
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     let funcNameObject = self._func._dict?["__qualname__"] ??
                          self._func._dict?["__name__"]
@@ -51,6 +52,7 @@ internal final class PyMethod: PyObject {
 
   // MARK: - Call
 
+  // sourcery: pymethod = __call__
   internal func call() -> PyResult<PyObject> {
     fatalError()
   }
@@ -78,6 +80,7 @@ internal final class PyInstanceMethod: PyObject {
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     let funcNameObject = self._func._dict?["__name__"]
 
@@ -91,6 +94,7 @@ internal final class PyInstanceMethod: PyObject {
 
   // MARK: - Call
 
+  // sourcery: pymethod = __call__
   internal func call() -> PyResult<PyObject> {
     // instancemethod_call(PyObject *self, PyObject *arg, PyObject *kw)
     fatalError()

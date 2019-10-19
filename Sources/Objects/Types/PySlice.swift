@@ -40,6 +40,7 @@ internal final class PySlice: PyObject, ReprTypeClass, ComparableTypeClass {
 
   // MARK: - Equatable
 
+  // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> EquatableResult {
     guard let other = other as? PySlice else {
       return .notImplemented
@@ -60,6 +61,7 @@ internal final class PySlice: PyObject, ReprTypeClass, ComparableTypeClass {
 
   // MARK: - Comparable
 
+  // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PySlice else {
       return .notImplemented
@@ -70,6 +72,7 @@ internal final class PySlice: PyObject, ReprTypeClass, ComparableTypeClass {
                                  right: other.asObjectArray)
   }
 
+  // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PySlice else {
       return .notImplemented
@@ -80,6 +83,7 @@ internal final class PySlice: PyObject, ReprTypeClass, ComparableTypeClass {
                                       right: other.asObjectArray)
   }
 
+  // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PySlice else {
       return .notImplemented
@@ -90,6 +94,7 @@ internal final class PySlice: PyObject, ReprTypeClass, ComparableTypeClass {
                                     right: other.asObjectArray)
   }
 
+  // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
     guard let other = other as? PySlice else {
       return .notImplemented
@@ -102,6 +107,7 @@ internal final class PySlice: PyObject, ReprTypeClass, ComparableTypeClass {
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     let noneRepr = self.context._none.repr()
     let start = self.start.map(self.context._repr) ?? noneRepr

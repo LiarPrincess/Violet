@@ -43,30 +43,36 @@ internal final class PyCode: PyObject,
 
   // MARK: - Equatable
 
+  // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> EquatableResult {
     return .value(self === other)
   }
 
   // MARK: - Comparable
 
+  // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
+  // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
     return .notImplemented
   }
 
   // MARK: - Hashable
 
+  // sourcery: pymethod = __hash__
   internal func hash() -> HashableResult {
     // Not the best, but PyCodes are not used often
     let hasher = self.context.hasher
@@ -77,6 +83,7 @@ internal final class PyCode: PyObject,
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     return "<code object \(self._code.name) at \(self.ptrString), " +
            "file '\(self.filename)', line \(self._code.firstLine)>"

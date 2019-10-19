@@ -44,8 +44,9 @@ extension PyContext {
   public func richCompare(left: PyObject,
                           right: PyObject,
                           mode: CompareMode) throws -> PyObject {
-    let bool = try self.richCompareBool(left: left, right: right, mode: mode)
-    return self.types.bool.new(bool)
+//    let bool = try self.richCompareBool(left: left, right: right, mode: mode)
+//    return self.types.bool.new(bool)
+    fatalError()
   }
 
   /// int PyObject_RichCompareBool(PyObject *v, PyObject *w, int op)
@@ -53,7 +54,7 @@ extension PyContext {
                                 right: PyObject,
                                 mode: CompareMode) throws -> Bool {
 
-    var checkedReverse = false
+//    var checkedReverse = false
 
     // Check if right is subtype of left, if so then use right overload
 //    if left.type !== right.type &&

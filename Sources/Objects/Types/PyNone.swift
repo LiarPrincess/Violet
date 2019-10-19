@@ -18,12 +18,14 @@ internal final class PyNone: PyObject, ReprTypeClass, BoolConvertibleTypeClass {
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     return "None"
   }
 
   // MARK: - Convertible
 
+  // sourcery: pymethod = __bool__
   internal func asBool() -> PyResult<Bool> {
     return .value(false)
   }

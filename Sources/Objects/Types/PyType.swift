@@ -168,6 +168,7 @@ internal class PyType: PyObject, DictOwnerTypeClass {
 
   // MARK: - String
 
+  // sourcery: pymethod = __repr__
   internal func repr() -> String {
     switch self.type.getModule() {
     case .builtins:

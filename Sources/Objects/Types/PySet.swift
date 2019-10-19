@@ -151,10 +151,12 @@ internal final class PySetType: PyType /* ,
     o.elements[hash] = element
   }
 
+  // sourcery: pymethod = __sub__
   internal func sub(left: PyObject, right: PyObject) throws -> PyObject {
     return try self.difference(left: left, right: right)
   }
 
+  // sourcery: pymethod = __isub__
   internal func subInPlace(left: PyObject, right: PyObject) throws {
     let l = try self.matchType(left)
     let diff = try self.difference(left: left, right: right)
