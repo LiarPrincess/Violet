@@ -5,43 +5,11 @@ import Core
 // Objects -> longobject.c
 // https://docs.python.org/3.7/c-api/long.html
 
-// TODO: Int
-// @overload
-// def __init__(self, x: Union[Text, bytes, SupportsInt] = ...) -> None: ...
-// @overload
-// def __init__(self, x: Union[Text, bytes, bytearray], base: int) -> None: ...
-// __ceil__
-// __floor__
-// __format__
-// __getattribute__
-// __getnewargs__
-// __lshift__
-// __rshift__
-// __trunc__
-// bit_length
-// to_bytes
-
 // swiftlint:disable file_length
 
 // sourcery: pytype = int
 /// All integers are implemented as “long” integer objects of arbitrary size.
-internal class PyInt: PyObject,
-  ReprTypeClass, StrTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  BoolConvertibleTypeClass, IntConvertibleTypeClass, FloatConvertibleTypeClass,
-  RealConvertibleTypeClass, ImagConvertibleTypeClass, ConjugateTypeClass,
-  IndexConvertibleTypeClass,
-  SignedTypeClass, AbsTypeClass, InvertTypeClass, RoundTypeClass,
-  AddTypeClass, RAddTypeClass,
-  SubTypeClass, RSubTypeClass,
-  MulTypeClass, RMulTypeClass,
-  PowTypeClass, RPowTypeClass,
-  TrueDivTypeClass, RTrueDivTypeClass,
-  FloorDivTypeClass, RFloorDivTypeClass,
-  ModTypeClass, RModTypeClass,
-  DivModTypeClass, RDivModTypeClass,
-  ShiftTypeClass, RShiftTypeClass,
-  BinaryTypeClass, RBinaryTypeClass {
+internal class PyInt: PyObject {
 
   internal class var doc: String { return """
     int([x]) -> integer

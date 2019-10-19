@@ -1,21 +1,6 @@
 // In CPython:
 // Objects -> typeobject.c
 
-// TODO: Type
-//__abstractmethods__
-//__call__
-//__repr__
-//__getattribute__
-//__delattr__
-//__setattr__
-//__dir__
-//__init__
-//__sizeof__
-//__instancecheck__
-//__subclasscheck__
-//__subclasses__
-//mro
-
 private class PyTypeWeakRef {
 
   fileprivate weak var value: PyType?
@@ -26,7 +11,7 @@ private class PyTypeWeakRef {
 }
 
 // sourcery: pytype = type
-internal class PyType: PyObject, DictOwnerTypeClass {
+internal final class PyType: PyObject {
 
   internal static let doc: String = """
     type(object_or_name, bases, dict)

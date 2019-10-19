@@ -6,7 +6,7 @@ import Core
 // sourcery: pytype = NotImplementedType
 /// `NotImplemented` is an object that can be used to signal that an
 /// operation is not implemented for the given type combination.
-internal final class PyNotImplemented: PyObject, ReprTypeClass {
+internal final class PyNotImplemented: PyObject {
 
   // MARK: - Init
 

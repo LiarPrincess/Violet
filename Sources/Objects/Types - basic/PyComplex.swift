@@ -5,33 +5,11 @@ import Core
 // Objects -> complexobject.c
 // https://docs.python.org/3.7/c-api/complex.html
 
-// TODO: Complex
-// @overload
-// def __init__(self, s: str) -> None: ...
-// @overload
-// def __init__(self, s: SupportsComplex) -> None: ...
-// __format__
-// __getattribute__
-// __getnewargs__
-
 // swiftlint:disable file_length
 
 // sourcery: pytype = complex
 /// This subtype of PyObject represents a Python complex number object.
-internal final class PyComplex: PyObject,
-  ReprTypeClass, StrTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  BoolConvertibleTypeClass, IntConvertibleTypeClass, FloatConvertibleTypeClass,
-  RealConvertibleTypeClass, ImagConvertibleTypeClass, ConjugateTypeClass,
-  SignedTypeClass, AbsTypeClass,
-  AddTypeClass, RAddTypeClass,
-  SubTypeClass, RSubTypeClass,
-  MulTypeClass, RMulTypeClass,
-  PowTypeClass, RPowTypeClass,
-  TrueDivTypeClass, RTrueDivTypeClass,
-  FloorDivTypeClass, RFloorDivTypeClass,
-  ModTypeClass, RModTypeClass,
-  DivModTypeClass, RDivModTypeClass {
+internal final class PyComplex: PyObject {
 
   internal static let doc: String = """
     complex(real=0, imag=0)

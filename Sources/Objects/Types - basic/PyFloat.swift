@@ -6,36 +6,11 @@ import Core
 // https://docs.python.org/3.7/c-api/float.html
 // https://developer.apple.com/documentation/swift/double/floating-point_operators_for_double
 
-// TODO: Float
-// def __init__(self, x: Union[SupportsFloat, Text, bytes, bytearray] = ...)
-// __format__
-// __getattribute__
-// __getnewargs__
-// __trunc__
-// as_integer_ratio
-// hex
-// @classmethod
-// def fromhex(cls, s: str) -> float: ...
-// as_integer_ratio
-
 // swiftlint:disable file_length
 
 // sourcery: pytype = float
 /// This subtype of PyObject represents a Python floating point object.
-internal final class PyFloat: PyObject,
-  ReprTypeClass, StrTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  BoolConvertibleTypeClass, IntConvertibleTypeClass, FloatConvertibleTypeClass,
-  RealConvertibleTypeClass, ImagConvertibleTypeClass, ConjugateTypeClass,
-  SignedTypeClass, AbsTypeClass, RoundTypeClass,
-  AddTypeClass, RAddTypeClass,
-  SubTypeClass, RSubTypeClass,
-  MulTypeClass, RMulTypeClass,
-  PowTypeClass, RPowTypeClass,
-  TrueDivTypeClass, RTrueDivTypeClass,
-  FloorDivTypeClass, RFloorDivTypeClass,
-  ModTypeClass, RModTypeClass,
-  DivModTypeClass, RDivModTypeClass {
+internal final class PyFloat: PyObject {
 
   internal static let doc: String = """
     float(x) -> floating point number

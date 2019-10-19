@@ -3,28 +3,8 @@ import Bytecode
 // In CPython:
 // Objects -> codeobject.c
 
-// TODO: Code
-// __getattribute__
-// __sizeof__
-// co_argcount
-// co_cellvars
-// co_code
-// co_consts
-// co_filename
-// co_firstlineno
-// co_flags
-// co_freevars
-// co_kwonlyargcount
-// co_lnotab
-// co_name
-// co_names
-// co_nlocals
-// co_stacksize
-// co_varnames
-
 // sourcery: pytype = code
-internal final class PyCode: PyObject,
-  ComparableTypeClass, HashableTypeClass, ReprTypeClass {
+internal final class PyCode: PyObject {
 
   internal static let doc: String = """
     Create a code object. Not for the faint of heart.

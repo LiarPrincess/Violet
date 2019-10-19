@@ -4,31 +4,6 @@ import Core
 // Objects -> listobject.c
 // https://docs.python.org/3.7/c-api/set.html
 
-// TODO: Set
-// {"clear",           (PyCFunction)set_clear,           METH_NOARGS, clear_doc},
-// {"__contains__",    (PyCFunction)set_direct_contains, METH_O | METH_COEXIST, ... },
-// {"copy",            (PyCFunction)set_copy,            METH_NOARGS, copy_doc},
-// {"discard",         (PyCFunction)set_discard,         METH_O, discard_doc},
-// {"difference",         (PyCFunction)set_difference_multi,  METH_VARARGS, ... },
-// {"difference_update",  (PyCFunction)set_difference_update, METH_VARARGS, ... },
-// {"intersection",       (PyCFunction)set_intersection_multi,        ... }
-// {"intersection_update",(PyCFunction)set_intersection_update_multi, ... }
-// {"isdisjoint",      (PyCFunction)set_isdisjoint,    METH_O, isdisjoint_doc},
-// {"issubset",        (PyCFunction)set_issubset,      METH_O, issubset_doc},
-// {"issuperset",      (PyCFunction)set_issuperset,    METH_O, issuperset_doc},
-// {"pop",             (PyCFunction)set_pop,           METH_NOARGS, pop_doc},
-// {"__reduce__",      (PyCFunction)set_reduce,        METH_NOARGS, reduce_doc},
-// {"remove",          (PyCFunction)set_remove,        METH_O, remove_doc},
-// {"__sizeof__",      (PyCFunction)set_sizeof,        METH_NOARGS, sizeof_doc},
-// {"symmetric_difference",       (PyCFunction)set_symmetric_difference,        ... }
-// {"symmetric_difference_update",(PyCFunction)set_symmetric_difference_update, ... }
-// {"union",           (PyCFunction)set_union,         METH_VARARGS, union_doc},
-// {"update",          (PyCFunction)set_update,        METH_VARARGS, update_doc},
-// PyObject_GenericGetAttr,            /* tp_getattro */
-// (traverseproc)set_traverse,         /* tp_traverse */
-// (inquiry)set_clear_internal,        /* tp_clear */
-// (getiterfunc)set_iter,              /* tp_iter */
-// Done: add
 // TODO: Frozen set
 #warning("This is not a correct implementation, it will fail on collision!")
 
@@ -48,7 +23,7 @@ internal final class PySet: PyObject {
 
 /// This subtype of PyObject is used to hold the internal data for both set
 /// and frozenset objects.
-internal final class PySetType: PyType /* ,
+internal final class PySetType: PyObject /* ,
   ReprTypeClass,
   ComparableTypeClass, HashableTypeClass,
   SubTypeClass, SubInPlaceTypeClass,

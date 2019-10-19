@@ -4,19 +4,10 @@ import Core
 // Objects -> tupleobject.c
 // https://docs.python.org/3.7/c-api/tuple.html
 
-// TODO: Tuple
-// __getattribute__
-// __getnewargs__
-// __iter__
-
 // sourcery: pytype = tuple
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-internal final class PyTuple: PyObject,
-  ReprTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
-  AddTypeClass, MulTypeClass, RMulTypeClass {
+internal final class PyTuple: PyObject {
 
   internal static let doc: String = """
     tuple() -> an empty tuple

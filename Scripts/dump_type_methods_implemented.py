@@ -76,8 +76,6 @@ types = {
   type(...): [
     '__repr__',
   ],
-  enumerate: [
-  ],
   float: [
     '__eq__',
     '__lt__',

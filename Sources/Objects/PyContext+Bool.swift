@@ -25,9 +25,9 @@ extension PyContext {
 ////      return boolType.asBool.value.isTrue
 //    }
 
-    if let lengthType = value as? LengthTypeClass {
-      return lengthType.getLength().isTrue
-    }
+//    if let lengthType = value as? LengthTypeClass {
+//      return lengthType.getLength().isTrue
+//    }
 
     return true
   }

@@ -66,13 +66,6 @@ ellipsis
     __getattribute__
     __reduce__
 
-enumerate
-  Unimplemented:
-    __getattribute__
-    __iter__
-    __next__
-    __reduce__
-
 float
   __getformat__ - <class 'builtin_function_or_method'>
   __set_format__ - <class 'builtin_function_or_method'>

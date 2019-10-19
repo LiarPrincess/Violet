@@ -129,16 +129,6 @@ extension PyType {
     return result
   }
 
-  internal static func enumerate(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "enumerate", type: type, base: base)
-
-    // result.__doc__ = PyEnumerate.doc
-
-
-
-    return result
-  }
-
   internal static func float(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
     let result = PyType(context, name: "float", type: type, base: base)
 
@@ -407,7 +397,6 @@ extension PyType {
   }
 
   internal static func type(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    #warning("Type PyType should be marked final.")
     let result = PyType(context, name: "type", type: type, base: base)
 
     // result.__doc__ = PyType.doc

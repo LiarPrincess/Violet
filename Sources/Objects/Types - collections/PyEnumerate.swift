@@ -1,17 +1,10 @@
 import Core
 
-// TODO: Enumerate
-// __getattribute__
-// __iter__
-// __next__
-// __reduce__
-
-internal typealias PyEnumerateSource = PyObject & IterableTypeClass
-
+/*
 // sourcery: pytype = enumerate
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.
-internal final class PyEnumerate: PyObject, IterableTypeClass {
+internal final class PyEnumerate: PyObject {
 
   internal static let doc: String = """
     enumerate(iterable, start=0)
@@ -72,3 +65,4 @@ internal final class PyEnumerate: PyObject, IterableTypeClass {
     }
   }
 }
+*/

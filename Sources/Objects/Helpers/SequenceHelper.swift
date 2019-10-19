@@ -112,11 +112,12 @@ internal enum SequenceHelper {
 
   /// PyLong_FromSsize_t
   internal static func extractIndex(_ value: PyObject) -> BigInt? {
-    guard let indexType = value.type as? IndexConvertibleTypeClass else {
-      return nil
-    }
+//    guard let indexType = value.type as? IndexConvertibleTypeClass else {
+//      return nil
+//    }
 
-    return indexType.asIndex()
+//    return indexType.asIndex()
+    fatalError()
   }
 
   // MARK: - Get item

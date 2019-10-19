@@ -4,18 +4,10 @@ import Core
 // Objects -> sliceobject.c
 // https://docs.python.org/3.7/c-api/slice.html
 
-// MARK: - Slice
-// __getattribute__
-// __reduce__
-// indices
-// start
-// step
-// stop
-
 // sourcery: pytype = slice
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
-internal final class PySlice: PyObject, ReprTypeClass, ComparableTypeClass {
+internal final class PySlice: PyObject {
 
   internal static let doc: String = """
     slice(stop)

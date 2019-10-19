@@ -4,26 +4,12 @@ import Core
 // Objects -> rangeobject.c
 // https://docs.python.org/3/library/stdtypes.html#range
 
-// TODO: PyRange
-// __getattribute__
-// __iter__
-// __reduce__
-// __reversed__
-// start
-// step
-// stop
-
 // swiftlint:disable yoda_condition
 
 // sourcery: pytype = range
 /// The range type represents an immutable sequence of numbers
 /// and is commonly used for looping a specific number of times in for loops.
-internal final class PyRange: PyObject,
-  ReprTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  BoolConvertibleTypeClass,
-  LengthTypeClass, ContainsTypeClass, GetItemTypeClass,
-  CountTypeClass, GetIndexOfTypeClass {
+internal final class PyRange: PyObject {
 
   internal static let doc: String = """
     range(stop) -> range object

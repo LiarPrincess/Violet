@@ -4,29 +4,11 @@ import Core
 // Objects -> listobject.c
 // https://docs.python.org/3.7/c-api/list.html
 
-// TODO: List
-// def __init__(self, iterable: Iterable[_T]) -> None: ...
-// __delitem__
-// __getattribute__
-// __init__
-// __iter__
-// __reversed__
-// __setitem__
-// insert
-// pop
-// remove
-// reverse
-// sort
-
 // swiftlint:disable yoda_condition
 
 // sourcery: pytype = list
 /// This subtype of PyObject represents a Python list object.
-internal final class PyList: PyObject,
-  ReprTypeClass,
-  ComparableTypeClass,
-  LengthTypeClass, ContainsTypeClass, GetItemTypeClass, CountTypeClass, GetIndexOfTypeClass,
-  AddTypeClass, AddInPlaceTypeClass, MulTypeClass, RMulTypeClass, MulInPlaceTypeClass {
+internal final class PyList: PyObject {
 
   internal static let doc: String = """
     list(iterable=(), /)

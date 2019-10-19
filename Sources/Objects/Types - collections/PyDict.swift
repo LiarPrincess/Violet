@@ -4,24 +4,6 @@ import Core
 // Objects -> listobject.c
 // https://docs.python.org/3.7/c-api/dict.html
 
-// TODO: Dict
-// PyObject_GenericGetAttr,                    /* tp_getattro */
-// dict_traverse,                              /* tp_traverse */
-// (getiterfunc)dict_iter,                     /* tp_iter */
-// DICT___CONTAINS___METHODDEF
-// {"__getitem__", (PyCFunction)dict_subscript,        METH_O | METH_COEXIST, ...},
-// {"__sizeof__",      (PyCFunction)dict_sizeof,       METH_NOARGS, sizeof__doc__},
-// DICT_GET_METHODDEF
-// DICT_SETDEFAULT_METHODDEF
-// {"pop",         (PyCFunction)dict_pop,          METH_VARARGS, pop__doc__},
-// {"popitem",         (PyCFunction)dict_popitem,      METH_NOARGS, popitem__doc__},
-// {"keys",            (PyCFunction)dictkeys_new,      METH_NOARGS, keys__doc__},
-// {"items",           (PyCFunction)dictitems_new,     METH_NOARGS, items__doc__},
-// {"values",          (PyCFunction)dictvalues_new,    METH_NOARGS, values__doc__},
-// {"update",          (PyCFunction)dict_update,       METH_VARARGS | METH_KEYWORDS, ...},
-// DICT_FROMKEYS_METHODDEF
-// {"clear",           (PyCFunction)dict_clear,        METH_NOARGS, clear__doc__},
-// {"copy",            (PyCFunction)dict_copy,         METH_NOARGS, copy__doc__},
 #warning("This is not a correct implementation, it will fail on collision!")
 
 /// This subtype of PyObject represents a Python dictionary object.
@@ -50,7 +32,7 @@ internal struct PyDictKey: Equatable, Hashable {
 }
 
 /// This subtype of PyObject represents a Python dictionary object.
-internal final class PyDictType: PyType /* ,
+internal final class PyDictType: PyObject /* ,
   ReprTypeClass,
   HashableTypeClass, ComparableTypeClass,
   ClearTypeClass, ContainsTypeClass,

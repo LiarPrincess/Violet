@@ -4,12 +4,6 @@ import Core
 // Objects -> unicodeobject.c
 // https://docs.python.org/3.7/c-api/tuple.html
 
-// TODO: PyUnicode
-// PyObject_GenericGetAttr,        /* tp_getattro */
-// unicode_iter,           /* tp_iter */
-// unicode_methods,            /* tp_methods */
-// &PyBaseObject_Type,         /* tp_base */
-
 internal class PyString: PyObject {
 
   internal var value: String
@@ -20,13 +14,7 @@ internal class PyString: PyObject {
   }
 }
 
-internal final class PyStringType: PyType /* ,
-  ReprTypeClass, StrTypeClass,
-  HashableTypeClass, ComparableTypeClass,
-  RemainderTypeClass,
-  LengthTypeClass,
-  ConcatTypeClass, RepeatTypeClass, ItemTypeClass, ContainsTypeClass,
-  SubscriptTypeClass */ {
+internal final class PyStringType: PyObject {
 
 //  override internal var name: String { return "str" }
 //  override internal var doc: String? { return """

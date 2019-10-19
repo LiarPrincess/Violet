@@ -4,20 +4,9 @@ import Core
 // In CPython:
 // Objects -> typeobject.c
 
-// TODO: PyBaseObject
-// __getattribute__
-// __setattr__
-// __delattr__
-// __init__
-// __reduce__
-// __reduce_ex__
-// __sizeof__
-
 // sourcery: pytype = object
 /// Root of the Object hierarchy (kind of important thingie).
-internal final class PyBaseObject: PyObject,
-  ComparableTypeClass, HashableTypeClass,
-  ReprTypeClass, StrTypeClass {
+internal final class PyBaseObject: PyObject {
 
   internal static let doc: String = """
     object()
@@ -120,9 +109,10 @@ internal final class PyBaseObject: PyObject,
     var result = [String:PyObject]()
 
     // Our own dict
-    if let dictOwner = self as? DictOwnerTypeClass {
-      result.merge(dictOwner.dict, uniquingKeysWith: leaveCurrent)
-    }
+    // TODO: This
+//    if let dictOwner = self as? DictOwnerTypeClass {
+//      result.merge(dictOwner.dict, uniquingKeysWith: leaveCurrent)
+//    }
 
     // Class dict
     result.merge(self.type.dict, uniquingKeysWith: leaveCurrent)

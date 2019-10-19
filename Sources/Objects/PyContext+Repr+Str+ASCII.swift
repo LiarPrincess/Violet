@@ -9,11 +9,12 @@ extension PyContext {
   }
 
   internal func _repr(value: PyObject) -> String {
-    if let reprType = value as? ReprTypeClass {
-      return reprType.repr()
-    }
-
-    return self.genericRepr(value: value)
+//    if let reprType = value as? ReprTypeClass {
+//      return reprType.repr()
+//    }
+//
+//    return self.genericRepr(value: value)
+    return ""
   }
 
   // MARK: - Str
@@ -25,19 +26,20 @@ extension PyContext {
   }
 
   internal func _str(value: PyObject) -> String {
-    if let str = value as? PyString {
-      return str.value
-    }
-
-    if let strType = value as? StrTypeClass {
-      return strType.str()
-    }
-
-    if let reprType = value as? ReprTypeClass {
-      return reprType.repr()
-    }
-
-    return self.genericRepr(value: value)
+//    if let str = value as? PyString {
+//      return str.value
+//    }
+//
+//    if let strType = value as? StrTypeClass {
+//      return strType.str()
+//    }
+//
+//    if let reprType = value as? ReprTypeClass {
+//      return reprType.repr()
+//    }
+//
+//    return self.genericRepr(value: value)
+    return ""
   }
 
   // MARK: - ASCII
