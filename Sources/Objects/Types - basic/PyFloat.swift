@@ -10,7 +10,7 @@ import Core
 
 // sourcery: pytype = float
 /// This subtype of PyObject represents a Python floating point object.
-internal final class PyFloat: PyObject {
+internal final class PyFloat: PyObject, GenericNotEqual {
 
   internal static let doc: String = """
     float(x) -> floating point number
@@ -44,6 +44,11 @@ internal final class PyFloat: PyObject {
     }
 
     return .notImplemented
+  }
+
+  // sourcery: pymethod = __ne__
+  func isNotEqual(_ other: PyObject) -> EquatableResult {
+    return self.genericIsNotEqual(other)
   }
 
   // MARK: - Comparable

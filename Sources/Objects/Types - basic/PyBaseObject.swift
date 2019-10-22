@@ -6,7 +6,7 @@ import Core
 
 // sourcery: pytype = object
 /// Root of the Object hierarchy (kind of important thingie).
-internal final class PyBaseObject: PyObject {
+internal final class PyBaseObject: PyObject, GenericNotEqual {
 
   internal static let doc: String = """
     object()
@@ -30,6 +30,11 @@ internal final class PyBaseObject: PyObject {
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> EquatableResult {
     return self === other ? .value(true) : .notImplemented
+  }
+
+  // sourcery: pymethod = __ne__
+  func isNotEqual(_ other: PyObject) -> EquatableResult {
+    return self.genericIsNotEqual(other)
   }
 
   // MARK: - Comparable

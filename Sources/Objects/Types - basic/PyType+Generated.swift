@@ -14,6 +14,7 @@ extension PyType {
 
 
     // result.__eq__ = PyBaseObject.isEqual(_ other: PyObject)
+    // result.__ne__ = PyBaseObject.isNotEqual(_ other: PyObject)
     // result.__lt__ = PyBaseObject.isLess(_ other: PyObject)
     // result.__le__ = PyBaseObject.isLessEqual(_ other: PyObject)
     // result.__gt__ = PyBaseObject.isGreater(_ other: PyObject)
@@ -74,6 +75,7 @@ extension PyType {
 
 
     // result.__eq__ = PyComplex.isEqual(_ other: PyObject)
+    // result.__ne__ = PyComplex.isNotEqual(_ other: PyObject)
     // result.__lt__ = PyComplex.isLess(_ other: PyObject)
     // result.__le__ = PyComplex.isLessEqual(_ other: PyObject)
     // result.__gt__ = PyComplex.isGreater(_ other: PyObject)
@@ -124,6 +126,7 @@ extension PyType {
 
 
     // result.__eq__ = PyFloat.isEqual(_ other: PyObject)
+    // result.__ne__ = PyFloat.isNotEqual(_ other: PyObject)
     // result.__lt__ = PyFloat.isLess(_ other: PyObject)
     // result.__le__ = PyFloat.isLessEqual(_ other: PyObject)
     // result.__gt__ = PyFloat.isGreater(_ other: PyObject)
@@ -176,6 +179,7 @@ extension PyType {
 
 
     // result.__eq__ = PyInt.isEqual(_ other: PyObject)
+    // result.__ne__ = PyInt.isNotEqual(_ other: PyObject)
     // result.__lt__ = PyInt.isLess(_ other: PyObject)
     // result.__le__ = PyInt.isLessEqual(_ other: PyObject)
     // result.__gt__ = PyInt.isGreater(_ other: PyObject)
@@ -232,6 +236,7 @@ extension PyType {
 
 
     // result.__eq__ = PyList.isEqual(_ other: PyObject)
+    // result.__ne__ = PyList.isNotEqual(_ other: PyObject)
     // result.__lt__ = PyList.isLess(_ other: PyObject)
     // result.__le__ = PyList.isLessEqual(_ other: PyObject)
     // result.__gt__ = PyList.isGreater(_ other: PyObject)
@@ -311,6 +316,7 @@ extension PyType {
 
 
     // result.__eq__ = PyRange.isEqual(_ other: PyObject)
+    // result.__ne__ = PyRange.isNotEqual(_ other: PyObject)
     // result.__lt__ = PyRange.isLess(_ other: PyObject)
     // result.__le__ = PyRange.isLessEqual(_ other: PyObject)
     // result.__gt__ = PyRange.isGreater(_ other: PyObject)
@@ -332,6 +338,7 @@ extension PyType {
 
 
     // result.__eq__ = PySlice.isEqual(_ other: PyObject)
+    // result.__ne__ = PySlice.isNotEqual(_ other: PyObject)
     // result.__lt__ = PySlice.isLess(_ other: PyObject)
     // result.__le__ = PySlice.isLessEqual(_ other: PyObject)
     // result.__gt__ = PySlice.isGreater(_ other: PyObject)
@@ -346,6 +353,7 @@ extension PyType {
 
 
     // result.__eq__ = PyTuple.isEqual(_ other: PyObject)
+    // result.__ne__ = PyTuple.isNotEqual(_ other: PyObject)
     // result.__lt__ = PyTuple.isLess(_ other: PyObject)
     // result.__le__ = PyTuple.isLessEqual(_ other: PyObject)
     // result.__gt__ = PyTuple.isGreater(_ other: PyObject)

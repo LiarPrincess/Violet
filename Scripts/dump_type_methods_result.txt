@@ -5,7 +5,6 @@ object
     __delattr__
     __getattribute__
     __init__
-    __ne__
     __reduce__
     __reduce_ex__
     __setattr__
@@ -66,7 +65,6 @@ complex
     __format__
     __getattribute__
     __getnewargs__
-    __ne__
 
 ellipsis
   Unimplemented:
@@ -85,7 +83,6 @@ float
     __format__
     __getattribute__
     __getnewargs__
-    __ne__
     __trunc__
     as_integer_ratio
     hex
@@ -117,7 +114,6 @@ int
     __format__
     __getattribute__
     __getnewargs__
-    __ne__
     __sizeof__
     __trunc__
     bit_length
@@ -132,7 +128,6 @@ list
     __getattribute__
     __init__
     __iter__
-    __ne__
     __reversed__
     __setitem__
     __sizeof__
@@ -198,7 +193,6 @@ range
     __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __iter__
-    __ne__
     __reduce__
     __reversed__
     start
@@ -211,7 +205,6 @@ slice
     __hash__ - <class 'NoneType'>
     __new__ - <class 'builtin_function_or_method'>
     __getattribute__
-    __ne__
     __reduce__
     indices
     start
@@ -225,7 +218,6 @@ tuple
     __getattribute__
     __getnewargs__
     __iter__
-    __ne__
 
 type
   Unimplemented:

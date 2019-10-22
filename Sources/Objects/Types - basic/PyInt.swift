@@ -9,7 +9,7 @@ import Core
 
 // sourcery: pytype = int
 /// All integers are implemented as “long” integer objects of arbitrary size.
-internal class PyInt: PyObject {
+internal class PyInt: PyObject, GenericNotEqual {
 
   internal class var doc: String { return """
     int([x]) -> integer
@@ -59,6 +59,11 @@ internal class PyInt: PyObject {
 
   internal func isEqual(_ other: PyInt) -> Bool {
     return self.value == other.value
+  }
+
+  // sourcery: pymethod = __ne__
+  func isNotEqual(_ other: PyObject) -> EquatableResult {
+    return self.genericIsNotEqual(other)
   }
 
   // MARK: - Comparable

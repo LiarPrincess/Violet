@@ -8,7 +8,7 @@ import Core
 
 // sourcery: pytype = list
 /// This subtype of PyObject represents a Python list object.
-internal final class PyList: PyObject {
+internal final class PyList: PyObject, GenericNotEqual {
 
   internal static let doc: String = """
     list(iterable=(), /)
@@ -40,6 +40,11 @@ internal final class PyList: PyObject {
     return SequenceHelper.isEqual(context: self.context,
                                   left: self.elements,
                                   right: other.elements)
+  }
+
+  // sourcery: pymethod = __ne__
+  func isNotEqual(_ other: PyObject) -> EquatableResult {
+    return self.genericIsNotEqual(other)
   }
 
   // MARK: - Comparable

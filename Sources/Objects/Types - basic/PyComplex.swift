@@ -9,7 +9,7 @@ import Core
 
 // sourcery: pytype = complex
 /// This subtype of PyObject represents a Python complex number object.
-internal final class PyComplex: PyObject {
+internal final class PyComplex: PyObject, GenericNotEqual {
 
   internal static let doc: String = """
     complex(real=0, imag=0)
@@ -48,6 +48,11 @@ internal final class PyComplex: PyObject {
     }
 
     return .notImplemented
+  }
+
+  // sourcery: pymethod = __ne__
+  func isNotEqual(_ other: PyObject) -> EquatableResult {
+    return self.genericIsNotEqual(other)
   }
 
   // MARK: - Comparable

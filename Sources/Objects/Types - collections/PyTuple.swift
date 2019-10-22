@@ -7,7 +7,7 @@ import Core
 // sourcery: pytype = tuple
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-internal final class PyTuple: PyObject {
+internal final class PyTuple: PyObject, GenericNotEqual {
 
   internal static let doc: String = """
     tuple() -> an empty tuple
@@ -36,6 +36,11 @@ internal final class PyTuple: PyObject {
     return SequenceHelper.isEqual(context: self.context,
                                   left: self.elements,
                                   right: other.elements)
+  }
+
+  // sourcery: pymethod = __ne__
+  func isNotEqual(_ other: PyObject) -> EquatableResult {
+    return self.genericIsNotEqual(other)
   }
 
   // MARK: - Comparable
