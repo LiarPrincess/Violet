@@ -11,8 +11,8 @@ extension PyContext {
     return self.none
   }
 
-  internal func call(fn: PyObject, args: [PyObject?]) -> PyObject {
-    return self.unimplemented()
+  internal func call(_ fn: PyObject, args: [PyObject?]) -> PyResult<PyObject> {
+    return .value(self.unimplemented())
   }
 
   public func _PyUnicode_JoinArray(elements: [PyObject]) -> PyObject {

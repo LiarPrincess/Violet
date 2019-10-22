@@ -73,7 +73,7 @@ public class PyModule: PyObject {
 
   // sourcery: pymethod = __setattr__
   public func setAttribute(name: String, value: PyObject) {
-    self._attributes.set(key: name, value: value)
+    self._attributes.set(key: name, to: value)
   }
 
   // sourcery: pymethod = __delattr__

@@ -23,7 +23,7 @@ public final class Attributes {
   }
 
   /// Use this for `__setattr__` implementation
-  public func set(key: String, value: PyObject) {
+  public func set(key: String, to value: PyObject) {
     self._values[key] = value
   }
 

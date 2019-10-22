@@ -44,12 +44,18 @@ public enum PyResult<V> {
   }
 }
 
+extension PyResult where V == Void {
+  public static func value() -> PyResult {
+    return PyResult.value(())
+  }
+}
+
 // MARK: - PyResultOrNot
 
 /// Basically `PyResult` + notImplemented.
 ///
 /// This is soooo... bad name for an enum, I love it!
-internal enum PyResultOrNot<V> {
+public enum PyResultOrNot<V> {
   case value(V)
   case error(PyErrorEnum)
   case notImplemented
@@ -94,6 +100,12 @@ internal enum PyResultOrNot<V> {
     case .notImplemented:
       return .notImplemented
     }
+  }
+}
+
+extension PyResultOrNot where V == Void {
+  public static func value() -> PyResultOrNot {
+    return PyResultOrNot.value(())
   }
 }
 

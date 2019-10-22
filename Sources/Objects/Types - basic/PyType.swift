@@ -210,7 +210,7 @@ internal final class PyType: PyObject {
   }
 
   // sourcery: pymethod = __instancecheck__
-  internal func isInstance(of type: PyObject) -> PyResult<PyBool> {
+  internal func isInstance(of type: PyObject) -> PyResult<Bool> {
     guard let type = type as? PyType else {
       return .error(
         .typeError("isinstance() arg 2 must be a type or tuple of types")
@@ -218,7 +218,7 @@ internal final class PyType: PyObject {
     }
 
     if self.type === type || self.type.isSubtype(of: type) {
-      return .value(self.context._true)
+      return .value(true)
     }
 
     // Add:
@@ -228,14 +228,14 @@ internal final class PyType: PyObject {
   }
 
   // sourcery: pymethod = __subclasscheck__
-  internal func isSubclass(of type: PyObject) -> PyResult<PyBool> {
+  internal func isSubclass(of type: PyObject) -> PyResult<Bool> {
     guard let type = type as? PyType else {
       return .error(
         .typeError("issubclass() arg 2 must be a class or tuple of classes")
       )
     }
 
-    return .value(self.bool(self.isSubtype(of: type)))
+    return .value(self.isSubtype(of: type))
   }
 
   // MARK: - Attributes
@@ -262,7 +262,7 @@ internal final class PyType: PyObject {
       // TODO: Also check if 'PyDescr_IsData(meta_attribute))'
       if let metaGet = metaGet {
         let args = [metaAttribute, self, metaType]
-        return .value(self.context.call(fn: metaGet, args: args))
+        return self.context.call(metaGet, args: args)
       }
     }
 
@@ -270,7 +270,7 @@ internal final class PyType: PyObject {
     if let attribute = self.lookup(name: name) {
       if let localGet = attribute.type.lookup(name: "__get__") {
         let args = [attribute, nil, self]
-        return .value(self.context.call(fn: localGet, args: args))
+        return self.context.call(localGet, args: args)
       }
 
       return .value(attribute)
@@ -279,7 +279,7 @@ internal final class PyType: PyObject {
     // No attribute found in __dict__ (or bases): use the descriptor from the metatype
     if let metaGet = metaGet {
       let args = [metaAttribute, self, metaType]
-      return .value(self.context.call(fn: metaGet, args: args))
+      return self.context.call(metaGet, args: args)
     }
 
     // If an ordinary attribute was found on the metatype, return it now
@@ -306,7 +306,7 @@ internal final class PyType: PyObject {
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: String) -> PyResult<()> {
+  internal func delAttribute(name: PyObject) -> PyResult<()> {
     return self.setAttribute(name: name, value: self.context.none)
   }
 

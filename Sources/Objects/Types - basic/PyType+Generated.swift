@@ -24,6 +24,9 @@ extension PyType {
     // result.__str__ = PyBaseObject.str()
     // result.__format__ = PyBaseObject.format(spec: PyObject)
     // result.__dir__ = PyBaseObject.dir()
+    // result.__getattribute__ = PyBaseObject.getAttribute(name: PyObject)
+    // result.__setattr__ = PyBaseObject.setAttribute(name: PyObject, value: PyObject)
+    // result.__delattr__ = PyBaseObject.delAttribute(name: PyObject)
     // result.__subclasshook__ = PyBaseObject.subclasshook()
     // result.__init_subclass__ = PyBaseObject.initSubclass()
 
@@ -387,7 +390,7 @@ extension PyType {
     // result.__subclasscheck__ = PyType.isSubclass(of type: PyObject)
     // result.__getattribute__ = PyType.getAttribute(name: PyObject)
     // result.__setattr__ = PyType.setAttribute(name: PyObject, value: PyObject)
-    // result.__delattr__ = PyType.delAttribute(name: String)
+    // result.__delattr__ = PyType.delAttribute(name: PyObject)
     // result.__dir__ = PyType.dir()
 
     return result

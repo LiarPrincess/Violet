@@ -2,12 +2,9 @@ object
   Unimplemented:
     __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
-    __delattr__
-    __getattribute__
     __init__
     __reduce__
     __reduce_ex__
-    __setattr__
     __sizeof__
   Why do we even have this?
     __subclasshook__

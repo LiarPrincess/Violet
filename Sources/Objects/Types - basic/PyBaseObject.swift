@@ -6,7 +6,8 @@ import Core
 
 // sourcery: pytype = object
 /// Root of the Object hierarchy (kind of important thingie).
-internal final class PyBaseObject: PyObject, GenericNotEqual {
+internal final class PyBaseObject: PyObject,
+  GenericNotEqual, GenericGetAttribute, GenericSetAttribute {
 
   internal static let doc: String = """
     object()
@@ -97,16 +98,6 @@ internal final class PyBaseObject: PyObject, GenericNotEqual {
     )
   }
 
-  // MARK: - Class
-
-  internal func getClass() -> PyType {
-    return self.type
-  }
-
-  internal func setClass() {
-    // TODO: implement this
-  }
-
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
@@ -129,6 +120,23 @@ internal final class PyBaseObject: PyObject, GenericNotEqual {
     }
 
     return result
+  }
+
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return self.genericGetAttributeWithDict(name: name, dict: nil)
+  }
+
+  // sourcery: pymethod = __setattr__
+  internal func setAttribute(name: PyObject, value: PyObject) -> PyResult<()> {
+    return self.genericSetAttributeWithDict(name: name, value: value, dict: nil)
+  }
+
+  // sourcery: pymethod = __delattr__
+  internal func delAttribute(name: PyObject) -> PyResult<()> {
+    return self.setAttribute(name: name, value: self.context.none)
   }
 
   // MARK: - Subclasshook
