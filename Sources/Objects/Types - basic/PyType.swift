@@ -1,7 +1,12 @@
 // In CPython:
 // Objects -> typeobject.c
 
-private class PyTypeWeakRef {
+// TODO: Heaptype
+// TODO: PyType_Ready(PyTypeObject *type)
+
+// swiftlint:disable file_length
+
+internal class PyTypeWeakRef {
 
   fileprivate weak var value: PyType?
 
@@ -19,16 +24,13 @@ internal final class PyType: PyObject {
     type(name, bases, dict) -> a new type
     """
 
-  internal var name: String
-  private let doc: String? = nil
-  private var subclasses: [PyTypeWeakRef] = []
+  internal var _name: String
+  internal var _bases: [PyType]
+  internal var _mro:   [PyType]
+  internal var _subclasses: [PyTypeWeakRef] = []
+  internal var _attributes = Attributes()
 
-  /// Method Resolution Order
-  /// https://www.python.org/download/releases/2.3/mro/
-  private let mro: [PyType] = []
-
-  internal var dict: [String:PyObject] = [:]
-
+  // Special hack for cyclic referency
   private unowned let _context: PyContext
   override internal var context: PyContext {
     return self._context
@@ -38,237 +40,315 @@ internal final class PyType: PyObject {
 
   internal convenience init(_ context: PyContext,
                             name: String,
+                            doc:  String?,
                             type: PyType,
-                            base: PyType?) {
-    self.init(context,
-              name: name,
-              type: type,
-              bases: base.map { [$0] } ?? [])
+                            base: PyType) {
+    let mro = PyType.linearizeMRO(baseClass: base)
+    self.init(context, name: name, doc: doc, type: type, mro: mro)
   }
 
-  internal init(_ context: PyContext,
-                name: String,
-                type: PyType,
-                bases: [PyType]) {
-    // creation of bases is complicated! add self at [0]
-   // TODO: Do we have custom mro? (mro_invoke(PyTypeObject *type))
-   // TODO: PyErr_SetString(PyExc_TypeError, "bases must be types");
-   //    self.mro = PyClass.lineariseMRO(bases)
-
-    self.name = name
-    self._context = context
-    super.init(type: context.types.type)
+  internal convenience init(_ context: PyContext,
+                            name: String,
+                            doc:  String?,
+                            type: PyType,
+                            mro:  MRO) {
+    self.init(context, name: name, doc: doc, mro: mro)
+    self.setType(to: type)
   }
 
-  // MARK: - Unsafe `objectType` and `typeType`
+  // MARK: - Unsafe `objectType` and `typeType` init
 
-  private init(_ context: PyContext, name: String, base: PyType?) {
-    self.name = name
+  /// Unsafe init without `type` property filled.
+  private init(_ context: PyContext, name: String, doc: String?, mro: MRO?) {
+    self._name = name
+    self._bases = mro?.baseClasses ?? []
+    self._mro = [] // temporary, until we get to 2nd phase (we need to use self)
     self._context = context
+
     super.init()
+
+    // proper mro (with self at 1st place)
+    if let mro = mro {
+      self._mro = [self] + mro.resolutionOrder
+
+      for base in mro.baseClasses {
+        base._subclasses.append(PyTypeWeakRef(self))
+      }
+    } else {
+      self._mro = [self]
+    }
+
+    if let doc = self.getDocWithoutSignature(doc) {
+      self._attributes["__doc__"] = context._string(doc)
+    } else {
+      self._attributes["__doc__"] = context._none
+    }
   }
 
   /// NEVER EVER use this function!
   /// This is a reserved for `objectType` and `typeType`.
-  internal static func createTypeWithoutTypeProperty(
-    _ context: PyContext,
-    name: String,
-    base: PyType?) -> PyType {
+  internal static func createTypeWithoutTypeProperty(_ context: PyContext,
+                                                     name: String,
+                                                     doc:  String,
+                                                     base: PyType?) -> PyType {
+    let mro = base.map(PyType.linearizeMRO)
+    return PyType(context, name: name, doc: doc, mro: mro)
+  }
 
-    return PyType(context, name: name, base: base)
+  /// static const char *
+  /// _PyType_DocWithoutSignature(const char *name, const char *internal_doc)
+  private func getDocWithoutSignature(_ doc: String?) -> String? {
+    guard let doc = doc else {
+      return nil
+    }
+
+    let signatureEndMarker = ")\n--\n\n"
+    let signatureEnd = doc.range(of: signatureEndMarker)?.upperBound
+    return signatureEnd.map { doc.suffix(from: $0) }.map(String.init)
   }
 
   // MARK: - Name
 
+  // sourcery: pyproperty = __name__, setter = setName
   internal func getName() -> String {
-    return self.name
+    switch self._name.lastIndex(of: ".") {
+    case let .some(index):
+      return String(self._name.suffix(from: index))
+    case .none:
+      return self._name
+    }
   }
 
   internal func setName(_ value: PyObject) -> PyResult<()> {
-    guard let valueStr = value as? PyString else {
-      let typeName = value.type.name
-      return .error(
-        .typeError(
-          "can only assign string to \(self.name).__name__, not '\(typeName)'"
-        )
-      )
-    }
-
-    self.name = valueStr.value
-    return .value(())
+    return .error(.typeError("can't set \(self._name).__name__"))
   }
 
   // MARK: - Qualname
 
+  // sourcery: pyproperty = __qualname__, setter = setQualname
   internal func getQualname() -> String {
-//    if let result = self.dict["__qualname__"] {
-//      return result
-//    }
-    fatalError()
+    return self.getName()
   }
 
   internal func setQualname(_ value: PyObject) -> PyResult<()> {
-    guard let valueStr = value as? PyString else {
-      let typeName = value.type.name
-      return .error(
-        .typeError(
-          "can only assign string to \(self.name).__qualname__, not '\(typeName)'"
-        )
-      )
-    }
-
-    fatalError()
+    return .error(.typeError("can't set \(self._name).__qualname__"))
   }
 
   // MARK: - Module
 
-  internal enum Module {
+  internal enum GetModuleResult {
     case external(String)
     case builtins
   }
 
-  internal func getModule() -> Module {
-    // type_module(PyTypeObject *type, void *context)
-    if let dictValue = self.dict["__module__"] {
-      if let str = dictValue as? PyString {
-        return .external(str.value)
-      }
-
-      return .external(self.context._repr(value: dictValue))
+  // sourcery: pyproperty = __module__, setter = setModule
+  internal func getModule() -> String {
+    switch self.getModuleRaw() {
+    case let .external(e): return e
+    case .builtins: return "__builtins__"
     }
+  }
 
-    if let dotIndex = self.name.firstIndex(of: ".") {
-      return .external(String(self.name.prefix(upTo: dotIndex)))
+  internal func getModuleRaw() -> GetModuleResult {
+    if let dotIndex = self._name.firstIndex(of: ".") {
+      return .external(String(self._name.prefix(upTo: dotIndex)))
     }
 
     return .builtins
   }
 
   internal func setModule(_ value: PyObject) -> PyResult<()> {
-    // type_set_module(PyTypeObject *type, PyObject *value, void *context)
-    fatalError()
+    return .error(.typeError("can't set \(self._name).__module__"))
   }
 
-  // MARK: - Bases
+  // MARK: - Base
+
+  // sourcery: pyproperty = __bases__, setter = setBases
+  internal func getBases() -> [PyType] {
+    return self._bases
+  }
+
+  internal func setBases(_ value: PyObject) -> PyResult<()> {
+    return .error(.typeError("can't set \(self._name).__bases__"))
+  }
+
+  // MARK: - Dict
+
+  // sourcery: pyproperty = __dict__
+  // sourcery: pydoc = "dictionary for instance variables (if defined)"
+  internal func dict() -> Attributes {
+    return self._attributes
+  }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
   internal func repr() -> String {
-    switch self.type.getModule() {
+    switch self.type.getModuleRaw() {
     case .builtins:
-      return "<class '\(self.name)'>"
+      return "<class '\(self._name)'>"
     case let .external(module):
-      return "<class '\(module).\(self.name)'>"
+      return "<class '\(module).\(self._name)'>"
     }
   }
 
-  // MARK: - Subtype
+  // MARK: - Subtypes
 
-  internal func isSubtype(_ type: PyObject) -> Bool {
+  internal func isSubtype(of type: PyType) -> Bool {
+    return self._mro.contains { $0 === type }
+  }
+
+  // sourcery: pymethod = __subclasses__
+  internal func subclasses() -> [PyType] {
+    var result = [PyType]()
+    for subclassRef in self._subclasses {
+      if let subclass = subclassRef.value {
+        result.append(subclass)
+      }
+    }
+    return result
+  }
+
+  // sourcery: pymethod = __instancecheck__
+  internal func isInstance(of type: PyObject) -> PyResult<PyBool> {
     guard let type = type as? PyType else {
-      fatalError()
+      return .error(
+        .typeError("isinstance() arg 2 must be a type or tuple of types")
+      )
     }
 
-    return self.mro.contains { $0 === type }
-  }
+    if self.type === type || self.type.isSubtype(of: type) {
+      return .value(self.context._true)
+    }
 
-  // MARK: - Bases
-
-  internal var bases: [PyType] {
-    return []
-  }
-
-  // TODO: Check _PyType_Lookup(PyTypeObject *type, PyObject *name)
-
-  /// PyObject *
-  /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
-  internal func lookup(name: String) -> PyObject {
+    // Add:
+    // abstract.c -> recursive_isinstance(PyObject *inst, PyObject *cls) ->
+    // retval = _PyObject_LookupAttrId(inst, &PyId___class__, &icls);
     fatalError()
   }
 
-  // MARK: - MRO
-
-  /// It will not take into account `self` class (which should be 1st in MRO).
-  private static func lineariseMRO(_ baseClasses: [PyType]) -> PyResult<[PyType]> {
-    // No base classes? Empty MRO.
-    if baseClasses.isEmpty {
-      return .value([])
+  // sourcery: pymethod = __subclasscheck__
+  internal func isSubclass(of type: PyObject) -> PyResult<PyBool> {
+    guard let type = type as? PyType else {
+      return .error(
+        .typeError("issubclass() arg 2 must be a class or tuple of classes")
+      )
     }
 
-    // Fast path: if there is a single base, constructing the MRO is trivial.
-    if baseClasses.count == 1 {
-      return .value(baseClasses[0].mro)
-    }
-
-    // Sanity check.
-    if let duplicate = getDuplicateBaseClassName(baseClasses) {
-      return .error(.typeError("duplicate base class \(duplicate)"))
-    }
-
-    // Perform C3 linearisation.
-    var result = [PyType]()
-    let mros = baseClasses.map { $0.mro } + [baseClasses]
-
-    while hasAnyClassRemaining(mros) {
-      guard let base = self.getNextBase(mros) else {
-        return .error(
-          .valueError(
-            "Cannot create a consistent method resolution order (MRO) for bases"
-          )
-        )
-      }
-
-      result.append(base)
-
-      for var m in mros {
-        m.removeAll { $0 === base }
-      }
-    }
-
-    return .value(result)
+    return .value(self.bool(self.isSubtype(of: type)))
   }
 
-  private static func getDuplicateBaseClassName(_ baseClasses: [PyType]) -> String? {
-    var processedNames = Set<String>()
+  // MARK: - Attributes
 
-    for base in baseClasses {
-      let name = base.name
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    guard let nameString = name as? PyString else {
+      return .error(
+        .typeError("attribute name must be string, not '\(name.typeName)'")
+      )
+    }
 
-      if processedNames.contains(name) {
-        return name
+    return self.getAttribute(name: nameString.value)
+  }
+
+  internal func getAttribute(name: String) -> PyResult<PyObject> {
+    let metaType = self.type
+    let metaAttribute = metaType.lookup(name: name)
+    var metaGet: PyObject?
+
+    // Look for the attribute in the metatype
+    if let metaAttribute = metaAttribute {
+      metaGet = metaAttribute.type.lookup(name: "__get__")
+      // TODO: Also check if 'PyDescr_IsData(meta_attribute))'
+      if let metaGet = metaGet {
+        let args = [metaAttribute, self, metaType]
+        return .value(self.context.call(fn: metaGet, args: args))
+      }
+    }
+
+    // No data descriptor found on metatype. Look in __dict__ of this type and its bases
+    if let attribute = self.lookup(name: name) {
+      if let localGet = attribute.type.lookup(name: "__get__") {
+        let args = [attribute, nil, self]
+        return .value(self.context.call(fn: localGet, args: args))
       }
 
-      processedNames.insert(name)
+      return .value(attribute)
+    }
+
+    // No attribute found in __dict__ (or bases): use the descriptor from the metatype
+    if let metaGet = metaGet {
+      let args = [metaAttribute, self, metaType]
+      return .value(self.context.call(fn: metaGet, args: args))
+    }
+
+    // If an ordinary attribute was found on the metatype, return it now
+    if let metaAttribute = metaAttribute {
+      return .value(metaAttribute)
+    }
+
+    return .error(
+      .attributeError("type object '\(self.typeName)' has no attribute '\(name)'")
+    )
+  }
+
+  // sourcery: pymethod = __setattr__
+  internal func setAttribute(name: PyObject, value: PyObject) -> PyResult<()> {
+    return .error(
+      .typeError("can't set attributes of built-in/extension type '\(self.typeName)'")
+    )
+  }
+
+  internal func setAttribute(name: String, value: PyObject) -> PyResult<()> {
+    return .error(
+      .typeError("can't set attributes of built-in/extension type '\(self.typeName)'")
+    )
+  }
+
+  // sourcery: pymethod = __delattr__
+  internal func delAttribute(name: String) -> PyResult<()> {
+    return self.setAttribute(name: name, value: self.context.none)
+  }
+
+  // MARK: - Dir
+
+  // sourcery: pymethod = __dir__
+  /// __dir__ for type objects: returns __dict__ and __bases__.
+  ///
+  /// We deliberately don't suck up its __class__, as methods belonging to the
+  /// metaclass would probably be more confusing than helpful.
+  internal func dir() -> [String: PyObject] {
+    var result = [String: PyObject]()
+    self.mergeClassDict(type: self, into: &result)
+    return result
+  }
+
+  private func mergeClassDict(type: PyType, into result: inout [String: PyObject]) {
+    let dict = self._attributes.asDictionary
+    result.merge(dict, uniquingKeysWith: leaveCurrent)
+
+    for base in self.getBases() {
+      self.mergeClassDict(type: base, into: &result)
+    }
+  }
+
+  // MARK: - Helpers
+
+  /// Internal API to look for a name through the MRO.
+  ///
+  /// PyObject *
+  /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
+  internal func lookup(name: String) -> PyObject? {
+    for base in self._mro {
+      if let result = base._attributes[name] {
+        return result
+      }
     }
 
     return nil
   }
+}
 
-  private static func hasAnyClassRemaining(_ mros: [[PyType]]) -> Bool {
-    return mros.contains { classList in
-      classList.any
-    }
-  }
-
-  private static func getNextBase(_ mros: [[PyType]]) -> PyType? {
-    for baseClassMro in mros {
-      guard let head = baseClassMro.first else {
-        continue
-      }
-
-      let anyTailContains = mros.contains { classList in
-        let tail = classList.dropFirst()
-        return tail.contains { $0 === head }
-      }
-
-      if anyTailContains {
-        continue
-      }
-
-      return head
-    }
-
-    return nil
-  }
+private func leaveCurrent<Value>(_ current: Value, _ new: Value) -> Value {
+  return current
 }

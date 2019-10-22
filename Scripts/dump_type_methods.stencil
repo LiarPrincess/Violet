@@ -13,7 +13,7 @@ types = {
   {% elif type.annotations.pytype == "builtinMethod" %}t.BuiltinMethodType: [
   {% else %}{{ type.annotations.pytype }}: [
   {% endif %}
-  {% for prop in type.variables|annotated:"pyproperty" %}
+  {% for prop in type.methods|annotated:"pyproperty" %}
     '{{ prop.annotations.pyproperty }}',
   {% endfor %}
   {% for method in type.methods|annotated:"pymethod" %}

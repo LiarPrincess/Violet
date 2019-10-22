@@ -9,10 +9,8 @@
 
 extension PyType {
 
-  internal static func object(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "object", type: type, base: base)
-
-    // result.__doc__ = PyBaseObject.doc
+  internal static func object(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "object", doc: PyBaseObject.doc, type: type, base: base)
 
 
     // result.__eq__ = PyBaseObject.isEqual(_ other: PyObject)
@@ -31,10 +29,8 @@ extension PyType {
     return result
   }
 
-  internal static func bool(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "bool", type: type, base: base)
-
-    // result.__doc__ = PyBool.doc
+  internal static func bool(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "bool", doc: PyBool.doc, type: type, base: base)
 
 
     // result.__repr__ = PyBool.repr()
@@ -49,9 +45,8 @@ extension PyType {
     return result
   }
 
-  internal static func builtinFunction(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "builtinFunction", type: type, base: base)
-
+  internal static func builtinFunction(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "builtinFunction", doc: nil, type: type, base: base)
 
 
     // result.__repr__ = PyBuiltinFunctionOrMethod.repr()
@@ -59,10 +54,8 @@ extension PyType {
     return result
   }
 
-  internal static func code(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "code", type: type, base: base)
-
-    // result.__doc__ = PyCode.doc
+  internal static func code(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "code", doc: PyCode.doc, type: type, base: base)
 
 
     // result.__eq__ = PyCode.isEqual(_ other: PyObject)
@@ -76,10 +69,8 @@ extension PyType {
     return result
   }
 
-  internal static func complex(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "complex", type: type, base: base)
-
-    // result.__doc__ = PyComplex.doc
+  internal static func complex(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "complex", doc: PyComplex.doc, type: type, base: base)
 
 
     // result.__eq__ = PyComplex.isEqual(_ other: PyObject)
@@ -119,9 +110,8 @@ extension PyType {
     return result
   }
 
-  internal static func ellipsis(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "ellipsis", type: type, base: base)
-
+  internal static func ellipsis(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "ellipsis", doc: nil, type: type, base: base)
 
 
     // result.__repr__ = PyEllipsis.repr()
@@ -129,10 +119,8 @@ extension PyType {
     return result
   }
 
-  internal static func float(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "float", type: type, base: base)
-
-    // result.__doc__ = PyFloat.doc
+  internal static func float(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "float", doc: PyFloat.doc, type: type, base: base)
 
 
     // result.__eq__ = PyFloat.isEqual(_ other: PyObject)
@@ -173,10 +161,8 @@ extension PyType {
     return result
   }
 
-  internal static func function(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "function", type: type, base: base)
-
-    // result.__doc__ = PyFunction.doc
+  internal static func function(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "function", doc: PyFunction.doc, type: type, base: base)
 
 
     // result.__repr__ = PyFunction.repr()
@@ -185,10 +171,8 @@ extension PyType {
     return result
   }
 
-  internal static func int(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "int", type: type, base: base)
-
-    // result.__doc__ = PyInt.doc
+  internal static func int(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "int", doc: PyInt.doc, type: type, base: base)
 
 
     // result.__eq__ = PyInt.isEqual(_ other: PyObject)
@@ -243,10 +227,8 @@ extension PyType {
     return result
   }
 
-  internal static func list(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "list", type: type, base: base)
-
-    // result.__doc__ = PyList.doc
+  internal static func list(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "list", doc: PyList.doc, type: type, base: base)
 
 
     // result.__eq__ = PyList.isEqual(_ other: PyObject)
@@ -273,10 +255,8 @@ extension PyType {
     return result
   }
 
-  internal static func method(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "method", type: type, base: base)
-
-    // result.__doc__ = PyMethod.doc
+  internal static func method(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "method", doc: PyMethod.doc, type: type, base: base)
 
 
     // result.__repr__ = PyMethod.repr()
@@ -285,25 +265,22 @@ extension PyType {
     return result
   }
 
-  internal static func module(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "module", type: type, base: base)
+  internal static func module(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "module", doc: PyModule.doc, type: type, base: base)
 
-    // result.__doc__ = PyModule.doc
-
-    // result.__dict__ = PyModule.dict
+    // result.__dict__ = PyModule.dict()
 
     // result.__repr__ = PyModule.repr()
-    // result.__getattribute__ = PyModule.getAttribute(key: String)
-    // result.__setattr__ = PyModule.setAttribute(key: String, value: PyObject)
-    // result.__delattr__ = PyModule.delAttribute(key: String)
+    // result.__getattribute__ = PyModule.getAttribute(name: String)
+    // result.__setattr__ = PyModule.setAttribute(name: String, value: PyObject)
+    // result.__delattr__ = PyModule.delAttribute(name: String)
     // result.__dir__ = PyModule.dir()
 
     return result
   }
 
-  internal static func NoneType(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "NoneType", type: type, base: base)
-
+  internal static func NoneType(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "NoneType", doc: nil, type: type, base: base)
 
 
     // result.__repr__ = PyNone.repr()
@@ -312,9 +289,8 @@ extension PyType {
     return result
   }
 
-  internal static func NotImplementedType(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "NotImplementedType", type: type, base: base)
-
+  internal static func NotImplementedType(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "NotImplementedType", doc: nil, type: type, base: base)
 
 
     // result.__repr__ = PyNotImplemented.repr()
@@ -322,20 +298,16 @@ extension PyType {
     return result
   }
 
-  internal static func property(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "property", type: type, base: base)
-
-    // result.__doc__ = PyProperty.doc
+  internal static func property(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "property", doc: PyProperty.doc, type: type, base: base)
 
 
 
     return result
   }
 
-  internal static func range(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "range", type: type, base: base)
-
-    // result.__doc__ = PyRange.doc
+  internal static func range(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "range", doc: PyRange.doc, type: type, base: base)
 
 
     // result.__eq__ = PyRange.isEqual(_ other: PyObject)
@@ -355,10 +327,8 @@ extension PyType {
     return result
   }
 
-  internal static func slice(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "slice", type: type, base: base)
-
-    // result.__doc__ = PySlice.doc
+  internal static func slice(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "slice", doc: PySlice.doc, type: type, base: base)
 
 
     // result.__eq__ = PySlice.isEqual(_ other: PyObject)
@@ -371,10 +341,8 @@ extension PyType {
     return result
   }
 
-  internal static func tuple(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "tuple", type: type, base: base)
-
-    // result.__doc__ = PyTuple.doc
+  internal static func tuple(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "tuple", doc: PyTuple.doc, type: type, base: base)
 
 
     // result.__eq__ = PyTuple.isEqual(_ other: PyObject)
@@ -396,13 +364,23 @@ extension PyType {
     return result
   }
 
-  internal static func type(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    let result = PyType(context, name: "type", type: type, base: base)
+  internal static func type(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "type", doc: PyType.doc, type: type, base: base)
 
-    // result.__doc__ = PyType.doc
-
+    // result.__name__ = PyType.getName(), setter: PyType.setName
+    // result.__qualname__ = PyType.getQualname(), setter: PyType.setQualname
+    // result.__module__ = PyType.getModule(), setter: PyType.setModule
+    // result.__bases__ = PyType.getBases(), setter: PyType.setBases
+    // result.__dict__ = PyType.dict()
 
     // result.__repr__ = PyType.repr()
+    // result.__subclasses__ = PyType.subclasses()
+    // result.__instancecheck__ = PyType.isInstance(of type: PyObject)
+    // result.__subclasscheck__ = PyType.isSubclass(of type: PyObject)
+    // result.__getattribute__ = PyType.getAttribute(name: PyObject)
+    // result.__setattr__ = PyType.setAttribute(name: PyObject, value: PyObject)
+    // result.__delattr__ = PyType.delAttribute(name: String)
+    // result.__dir__ = PyType.dir()
 
     return result
   }

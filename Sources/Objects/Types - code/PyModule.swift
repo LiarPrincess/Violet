@@ -2,7 +2,7 @@
 // Objects -> moduleobject.c
 
 // sourcery: pytype = module
-public final class PyModule: PyObject {
+public class PyModule: PyObject {
 
   public static let doc: String = """
     module(name, doc=None)
@@ -11,10 +11,10 @@ public final class PyModule: PyObject {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  private var _attributes = Attributes()
+  internal var _attributes = Attributes()
 
   private var name: String {
-    guard let obj = self.dict["__name__"] else {
+    guard let obj = self._attributes["__name__"] else {
       return "module"
     }
 
@@ -26,8 +26,8 @@ public final class PyModule: PyObject {
   }
 
   public convenience init(_ context: PyContext, name: String, doc: String? = nil) {
-    let n = PyString(context, value: name)
-    let d = doc.map { PyString(context, value: $0) }
+    let n = context._string(name)
+    let d = doc.map(context._string)
     self.init(context, name: n, doc: d)
   }
 
@@ -43,7 +43,7 @@ public final class PyModule: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public var dict: Attributes {
+  public func dict() -> Attributes {
     return self._attributes
   }
 
@@ -57,27 +57,34 @@ public final class PyModule: PyObject {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(key: String) -> GetAttributeResult {
-    switch self._attributes.getAttribute(key: key) {
-    case let .some(v):
-      return .value(v)
-    case .none:
-      return .attributeError("module '\(self.name)' has no attribute '\(key)'")
+  public func getAttribute(name: String) -> PyResult<PyObject> {
+    if let value = self._attributes.get(key: name) {
+      return .value(value)
     }
+
+    if case let .value(v) = self.type.getAttribute(name: name) {
+      return .value(v)
+    }
+
+    return .error(
+      .attributeError("module '\(self.name)' has no attribute '\(name)'")
+    )
   }
 
   // sourcery: pymethod = __setattr__
-  public func setAttribute(key: String, value: PyObject) {
-    self._attributes.setAttribute(key: key, value: value)
+  public func setAttribute(name: String, value: PyObject) {
+    self._attributes.set(key: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
-  public func delAttribute(key: String) -> DelAttributeResult {
-    switch self._attributes.delAttribute(key: key) {
+  public func delAttribute(name: String) -> PyResult<PyObject> {
+    switch self._attributes.del(key: name) {
     case let .some(v):
       return .value(v)
     case .none:
-      return .attributeError("module '\(self.name)' has no attribute '\(key)'")
+      return .error(
+        .attributeError("module '\(self.name)' has no attribute '\(name)'")
+      )
     }
   }
 

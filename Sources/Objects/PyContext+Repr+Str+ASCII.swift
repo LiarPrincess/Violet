@@ -83,6 +83,6 @@ extension PyContext {
   // MARK: - Helpers
 
   private func genericRepr(value: PyObject) -> String {
-    return "<\(value.type.name) object at \(value.ptrString)>"
+    return "<\(value.typeName) object at \(value.ptrString)>"
   }
 }

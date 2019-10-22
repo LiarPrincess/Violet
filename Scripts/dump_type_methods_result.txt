@@ -1,5 +1,7 @@
 object
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __delattr__
     __getattribute__
     __init__
@@ -8,19 +10,20 @@ object
     __reduce_ex__
     __setattr__
     __sizeof__
-  Please remind me why do we even have this method?
+  Why do we even have this?
     __subclasshook__
     __init_subclass__
 
 bool
-  from_bytes - <class 'builtin_function_or_method'>
 
 builtin_function_or_method
-  __module__ - <class 'str'>
-  __name__ - <class 'str'>
-  __qualname__ - <class 'str'>
-  __text_signature__ - <class 'NoneType'>
   Unimplemented:
+    __class__ - <class 'type'>
+    __module__ - <class 'str'>
+    __name__ - <class 'str'>
+    __new__ - <class 'builtin_function_or_method'>
+    __qualname__ - <class 'str'>
+    __text_signature__ - <class 'NoneType'>
     __call__
     __eq__
     __ge__
@@ -35,6 +38,8 @@ builtin_function_or_method
 
 code
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __ne__
     __sizeof__
@@ -56,6 +61,8 @@ code
 
 complex
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __format__
     __getattribute__
     __getnewargs__
@@ -63,14 +70,18 @@ complex
 
 ellipsis
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __reduce__
 
 float
-  __getformat__ - <class 'builtin_function_or_method'>
-  __set_format__ - <class 'builtin_function_or_method'>
-  fromhex - <class 'builtin_function_or_method'>
   Unimplemented:
+    __class__ - <class 'type'>
+    __getformat__ - <class 'builtin_function_or_method'>
+    __new__ - <class 'builtin_function_or_method'>
+    __set_format__ - <class 'builtin_function_or_method'>
+    fromhex - <class 'builtin_function_or_method'>
     __format__
     __getattribute__
     __getnewargs__
@@ -81,11 +92,13 @@ float
     is_integer
 
 function
-  __dict__ - <class 'mappingproxy'>
-  __module__ - <class 'str'>
-  __name__ - <class 'str'>
-  __qualname__ - <class 'str'>
   Unimplemented:
+    __class__ - <class 'type'>
+    __dict__ - <class 'mappingproxy'>
+    __module__ - <class 'str'>
+    __name__ - <class 'str'>
+    __new__ - <class 'builtin_function_or_method'>
+    __qualname__ - <class 'str'>
     __annotations__
     __closure__
     __code__
@@ -95,8 +108,10 @@ function
     __kwdefaults__
 
 int
-  from_bytes - <class 'builtin_function_or_method'>
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    from_bytes - <class 'builtin_function_or_method'>
     __ceil__
     __floor__
     __format__
@@ -109,8 +124,10 @@ int
     to_bytes
 
 list
-  __hash__ - <class 'NoneType'>
   Unimplemented:
+    __class__ - <class 'type'>
+    __hash__ - <class 'NoneType'>
+    __new__ - <class 'builtin_function_or_method'>
     __delitem__
     __getattribute__
     __init__
@@ -127,6 +144,8 @@ list
 
 method
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __delattr__
     __eq__
     __func__
@@ -143,20 +162,23 @@ method
     __setattr__
 
 module
-  __dict__ - <class 'mappingproxy'>
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __init__
-  Please remind me why do we even have this method?
-    __dict__
 
 NoneType
 
 NotImplementedType
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __reduce__
 
 property
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __delete__
     __get__
     __getattribute__
@@ -172,6 +194,8 @@ property
 
 range
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __iter__
     __ne__
@@ -182,8 +206,10 @@ range
     stop
 
 slice
-  __hash__ - <class 'NoneType'>
   Unimplemented:
+    __class__ - <class 'type'>
+    __hash__ - <class 'NoneType'>
+    __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __ne__
     __reduce__
@@ -194,37 +220,29 @@ slice
 
 tuple
   Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __getnewargs__
     __iter__
     __ne__
 
 type
-  __base__ - <class 'type'>
-  __bases__ - <class 'tuple'>
-  __basicsize__ - <class 'int'>
-  __dict__ - <class 'mappingproxy'>
-  __dictoffset__ - <class 'int'>
-  __flags__ - <class 'int'>
-  __itemsize__ - <class 'int'>
-  __module__ - <class 'str'>
-  __mro__ - <class 'tuple'>
-  __name__ - <class 'str'>
-  __prepare__ - <class 'builtin_function_or_method'>
-  __qualname__ - <class 'str'>
-  __text_signature__ - <class 'NoneType'>
-  __weakrefoffset__ - <class 'int'>
   Unimplemented:
+    __base__ - <class 'type'>
+    __basicsize__ - <class 'int'>
+    __class__ - <class 'type'>
+    __dictoffset__ - <class 'int'>
+    __flags__ - <class 'int'>
+    __itemsize__ - <class 'int'>
+    __mro__ - <class 'tuple'>
+    __new__ - <class 'builtin_function_or_method'>
+    __prepare__ - <class 'builtin_function_or_method'>
+    __text_signature__ - <class 'NoneType'>
+    __weakrefoffset__ - <class 'int'>
     __abstractmethods__
     __call__
-    __delattr__
-    __dir__
-    __getattribute__
     __init__
-    __instancecheck__
-    __setattr__
     __sizeof__
-    __subclasscheck__
-    __subclasses__
     mro
 

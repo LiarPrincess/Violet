@@ -204,9 +204,8 @@ internal final class PyList: PyObject {
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> AddResult<PyObject> {
     guard let otherList = other as? PyList else {
-      let typeName = other.type.name
       return .error(
-        .typeError("can only concatenate list (not \"\(typeName)\") to list")
+        .typeError("can only concatenate list (not '\(other.typeName)') to list")
       )
     }
 

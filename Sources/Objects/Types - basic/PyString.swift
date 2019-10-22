@@ -10,7 +10,8 @@ internal class PyString: PyObject {
 
   internal init(_ context: PyContext, value: String) {
     self.value = value
-    super.init(type: context.types.string)
+    // TOOD: add to context
+    super.init()
   }
 }
 

@@ -2,16 +2,17 @@ import Core
 
 // MARK: - PyErrorEnum
 
-internal enum PyErrorEnum {
+public enum PyErrorEnum {
   case typeError(String)
   case valueError(String)
   case indexError(String)
+  case attributeError(String)
   case zeroDivisionError(String)
 }
 
 // MARK: - PyResult
 
-internal enum PyResult<V> {
+public enum PyResult<V> {
   case value(V)
   case error(PyErrorEnum)
 
@@ -145,16 +146,6 @@ extension Optional {
 }
 
 // MARK: - Instances
-
-public enum GetAttributeResult {
-  case value(PyObject)
-  case attributeError(String)
-}
-
-public enum DelAttributeResult {
-  case value(PyObject)
-  case attributeError(String)
-}
 
 internal typealias EquatableResult = PyResultOrNot<Bool>
 internal typealias ComparableResult = PyResultOrNot<Bool>

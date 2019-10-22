@@ -46,7 +46,7 @@ internal final class PyMethod: PyObject {
     }
 
     let ptr = self._self.ptrString
-    let type = self._self.type.name
+    let type = self._self.typeName
     return "<bound method \(funcName) of \(type) object at \(ptr)>"
   }
 

@@ -6,19 +6,18 @@
 extension PyType {
 {% for type in types.classes|annotated:"pytype" %}
 
-  internal static func {{ type.annotations.pytype }}(_ context: PyContext, type: PyType, base: PyType?) -> PyType {
-    {# All types (except for PyInt) have to be marked final, stencil has problem with: 'not (type.isFinal or type.name == "PyInt")'#}
-    {% if not type.isFinal and type.name != "PyInt" %}
-    #warning("Type {{ type.name }} should be marked final.")
-    {% endif %}
-    let result = PyType(context, name: "{{ type.annotations.pytype }}", type: type, base: base)
+  internal static func {{ type.annotations.pytype }}(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
+    {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
+    {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
+    let result = PyType(context, name: "{{ type.annotations.pytype }}", doc: {{ docOrNil }}, type: type, base: base)
 
-    {% for variable in type.staticVariables where variable.name == "doc" %}
-    // result.__doc__ = {{ type.name }}.{{ variable.name }}
-    {% endfor %}
-
-    {% for prop in type.variables|annotated:"pyproperty" %}
+    {% for prop in type.methods|annotated:"pyproperty" %}
+    {% if prop.annotations.setter %}
+    // result.{{ prop.annotations.pyproperty }} = {{ type.name }}.{{ prop.name }}, setter: {{ type.name }}.{{ prop.annotations.setter }}
+    {% else %}
     // result.{{ prop.annotations.pyproperty }} = {{ type.name }}.{{ prop.name }}
+    {% endif %}
     {% endfor %}
 
     {% for method in type.methods|annotated:"pymethod" %}
@@ -26,6 +25,11 @@ extension PyType {
     {% endfor %}
 
     return result
+    {# All types (except for PyInt) have to be marked final #}
+    {# Btw. stencil has problem with: 'not (type.isFinal or type.name == "PyInt")' #}
+    {% if not type.isFinal and type.name != "PyInt" and type.name != "PyModule" %}
+    #warning("Type {{ type.name }} should be marked final.")
+    {% endif %}
   }
 {% endfor %}
 }

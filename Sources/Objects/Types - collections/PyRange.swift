@@ -222,7 +222,7 @@ internal final class PyRange: PyObject {
     }
 
     return .error(
-      .typeError("range indices must be integers or slices, not \(index.type.name)")
+      .typeError("range indices must be integers or slices, not \(index.typeName)")
     )
   }
 

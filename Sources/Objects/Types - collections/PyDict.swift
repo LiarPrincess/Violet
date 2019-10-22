@@ -13,7 +13,8 @@ internal final class PyDict: PyObject {
 
   internal init(_ context: PyContext, elements: [PyDictKey: PyObject]) {
     self.elements = elements
-    super.init(type: context.types.dict)
+    // TOOD: add to context
+    super.init()
   }
 }
 

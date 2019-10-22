@@ -17,7 +17,8 @@ internal final class PySet: PyObject {
 
   internal init(_ context: PyContext, elements: [PyHash:PyObject]) {
     self.elements = elements
-    super.init(type: context.types.set)
+    // TOOD: add to context
+    super.init()
   }
 }
 

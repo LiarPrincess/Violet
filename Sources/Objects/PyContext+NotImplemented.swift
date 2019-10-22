@@ -11,6 +11,10 @@ extension PyContext {
     return self.none
   }
 
+  internal func call(fn: PyObject, args: [PyObject?]) -> PyObject {
+    return self.unimplemented()
+  }
+
   public func _PyUnicode_JoinArray(elements: [PyObject]) -> PyObject {
     return self.unimplemented()
   }
@@ -24,7 +28,7 @@ extension PyContext {
   }
 
   internal func _PyType_Name(value: PyType) -> String {
-    return value.name
+    return value._name
   }
 
   internal func PyType_IsSubtype(parent: PyType, subtype: PyType) -> Bool {

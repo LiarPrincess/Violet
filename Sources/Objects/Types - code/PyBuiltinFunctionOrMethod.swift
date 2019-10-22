@@ -36,7 +36,7 @@ internal final class PyBuiltinFunctionOrMethod: PyObject {
     }
 
     let ptr = self._self.ptrString
-    let type = self._self.type.name
+    let type = self._self.typeName
     return "<built-in method \(name) of \(type) object at \(ptr)>"
   }
 }

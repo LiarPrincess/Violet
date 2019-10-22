@@ -405,7 +405,7 @@ internal final class PyFloat: PyObject {
       return .notImplemented
     case .none:
       return .error(
-        .typeError("'\(nDigits.type.name)' object cannot be interpreted as an integer")
+        .typeError("'\(nDigits.typeName)' object cannot be interpreted as an integer")
       )
     }
   }

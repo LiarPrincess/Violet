@@ -9,12 +9,14 @@ for t in implemented.types:
   print(t.__name__)
 
   doc = None
-  own_implemented = []
-  own_unimplemented = []
-  derived_members = []
-  implemented_methods = implemented.types[t]
+  properties_implemented = []
+  properties_unimplemented = []
+  methods_implemented = []
+  methods_unimplemented = []
+  methods_derived = []
+  members_from_sourcery = implemented.types[t]
 
-  ignored = ['__new__', '__class__', '__init_subclass__', '__subclasshook__']
+  ignored = ['__init_subclass__', '__subclasshook__']
   for name, member in inspect.getmembers(t):
     if name in ignored:
       continue
@@ -22,45 +24,55 @@ for t in implemented.types:
       doc = member
     elif hasattr(member, '__objclass__'):
       if member.__objclass__ == t:
-        if member.__name__ in implemented_methods:
-          own_implemented.append(member)
+        if name in members_from_sourcery:
+          methods_implemented.append(member)
         else:
-          own_unimplemented.append(member)
+          methods_unimplemented.append(member)
       else:
-        derived_members.append(member)
+        methods_derived.append(member)
     else:
-      print(' ', name, '-', type(member))
-      pass
+      tpl = name, member
+      if name in members_from_sourcery:
+        properties_implemented.append(tpl)
+      else:
+        properties_unimplemented.append(tpl)
 
-  implemented_extra = []
-  own_member_names = list(map(lambda m: m.__name__, own_implemented + own_unimplemented))
-  for m in implemented_methods:
-    if not (m in own_member_names):
-      implemented_extra.append(m)
+  why_is_this_even_implemented = []
+  own_property_names = list(map(lambda m: m[0], properties_implemented + properties_unimplemented))
+  own_methods_names = list(map(lambda m: m.__name__, methods_implemented + methods_unimplemented))
+  own_names = own_methods_names + own_property_names
+  for m in members_from_sourcery:
+    if m not in own_names:
+      why_is_this_even_implemented.append(m)
 
-  print_own_members = 1
-  print_derived_members = 0
+  print_implemented = 0
+  print_unimplemented = 1
+  print_why_is_this_even_implemented = 1
+  print_derived = 0
 
-  if print_own_members:
-    # if own_implemented:
-    #   print('  Implemented:')
-    #   for m in own_implemented:
-    #     doc = '' # if m.__doc__ is None else '"' + m.__doc__ + '"'
-    #     print('   ', m.__name__)
+  if print_implemented and (methods_implemented):
+    print('  Implemented:')
+    for name, member in properties_implemented:
+      print('   ', name, '-', type(member))
+    for m in methods_implemented:
+      doc = '' # if m.__doc__ is None else '"' + m.__doc__ + '"'
+      print('   ', m.__name__)
 
-    if own_unimplemented:
-      print('  Unimplemented:')
-      for m in own_unimplemented:
-        print('   ', m.__name__)
+  if print_unimplemented and (methods_unimplemented):
+    print('  Unimplemented:')
+    for name, member in properties_unimplemented:
+      print('   ', name, '-', type(member))
+    for m in methods_unimplemented:
+      print('   ', m.__name__)
 
-    if implemented_extra:
-      print('  Please remind me why do we even have this method?')
-      for m in implemented_extra:
-        print('   ', m)
+  if print_why_is_this_even_implemented and why_is_this_even_implemented:
+    print('  Why do we even have this?')
+    for m in why_is_this_even_implemented:
+      print('   ', m)
 
-  if print_derived_members:
+  if print_derived and methods_derived:
     print('  Derived members:')
-    for m in derived_members:
+    for m in methods_derived:
       owner = m.__objclass__.__name__
       print('   ', m.__name__, 'from', owner)
 

@@ -45,25 +45,33 @@ internal final class PyContextTypes {
 
   internal let tuple: PyType
   internal let list: PyType
-  internal let set: PyType
-  internal let dict: PyType
+//  internal let set: PyType
+//  internal let dict: PyType
 
   internal let slice: PyType
   internal let range: PyType
 //  internal let enumerate: PyType
-  internal let string: PyType
+//  internal let string: PyType
 
   internal let module: PyType
 
   fileprivate init(context: PyContext) {
     // 1. `type` inherits from `object`
     // 2. both `type` and `object are instances of `type`.
-    // to produce this circular dependency, we need to do small hack.
-    // (and yes, this will never get dropped. TODO?)
 
     // TODO: How does Sourcery + our class work here? maybe manually create dict?
-    self.object = PyType.createTypeWithoutTypeProperty(context, name: "object", base: nil)
-    self.type   = PyType.createTypeWithoutTypeProperty(context, name: "type",   base: self.object)
+    self.object = PyType.createTypeWithoutTypeProperty(
+      context,
+      name: "object",
+      doc: PyBaseObject.doc,
+      base: nil
+    )
+    self.type = PyType.createTypeWithoutTypeProperty(
+      context,
+      name: "type",
+      doc: PyType.doc,
+      base: self.object
+    )
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
@@ -79,13 +87,13 @@ internal final class PyContextTypes {
     // TODO: set, dict, string
     self.tuple = PyType.tuple(context, type: self.type, base: self.object)
     self.list  = PyType.list(context,  type: self.type, base: self.object)
-    self.set   = PyType(context, name: "set",   type: self.type, base: self.object)
-    self.dict  = PyType(context, name: "dict",  type: self.type, base: self.object)
+//    self.set   = PyType(context, name: "set",   type: self.type, base: self.object)
+//    self.dict  = PyType(context, name: "dict",  type: self.type, base: self.object)
 
     self.slice = PyType.slice(context, type: self.type, base: self.object)
     self.range = PyType.range(context, type: self.type, base: self.object)
 //    self.enumerate = PyType.enumerate(context, type: self.type, base: self.object)
-    self.string = PyType(context, name: "string", type: self.type, base: self.object)
+//    self.string = PyType(context, name: "string", type: self.type, base: self.object)
 
     self.module = PyType.module(context, type: self.type, base: self.object)
   }

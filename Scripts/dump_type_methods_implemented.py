@@ -250,6 +250,18 @@ types = {
     '__rmul__',
   ],
   type: [
+    '__name__',
+    '__qualname__',
+    '__module__',
+    '__bases__',
+    '__dict__',
     '__repr__',
+    '__subclasses__',
+    '__instancecheck__',
+    '__subclasscheck__',
+    '__getattribute__',
+    '__setattr__',
+    '__delattr__',
+    '__dir__',
   ],
 }

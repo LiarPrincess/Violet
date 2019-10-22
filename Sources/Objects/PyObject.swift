@@ -23,6 +23,10 @@ public class PyObject {
     return self._type
   }
 
+  internal var typeName: String {
+    return self.type.getName()
+  }
+
   internal var ptrString: String {
     // This may not work exactly as in CPython, but that does not matter.
     return String(describing: Unmanaged.passUnretained(self).toOpaque())

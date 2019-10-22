@@ -66,11 +66,11 @@ internal final class PyBaseObject: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> String {
-    switch self.type.getModule() {
+    switch self.type.getModuleRaw() {
     case .builtins:
-      return "<\(self.type.name) object at \(self.ptrString)>"
+      return "<\(self.typeName) object at \(self.ptrString)>"
     case let .external(module):
-      return "<\(module).\(self.type.name) object at \(self.ptrString)>"
+      return "<\(module).\(self.typeName) object at \(self.ptrString)>"
     }
   }
 
@@ -87,7 +87,7 @@ internal final class PyBaseObject: PyObject {
 
     return .error(
       .typeError(
-        "unsupported format string passed to \(self.type.name).__format__"
+        "unsupported format string passed to \(self.typeName).__format__"
       )
     )
   }
@@ -115,10 +115,12 @@ internal final class PyBaseObject: PyObject {
 //    }
 
     // Class dict
-    result.merge(self.type.dict, uniquingKeysWith: leaveCurrent)
+    let typeDict = self.type._attributes.asDictionary
+    result.merge(typeDict, uniquingKeysWith: leaveCurrent)
 
-    for base in self.type.bases {
-      result.merge(base.dict, uniquingKeysWith: leaveCurrent)
+    for base in self.type._bases {
+      let baseDict = base._attributes.asDictionary
+      result.merge(baseDict, uniquingKeysWith: leaveCurrent)
     }
 
     return result

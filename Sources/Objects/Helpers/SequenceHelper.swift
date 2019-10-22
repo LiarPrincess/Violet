@@ -142,9 +142,8 @@ internal enum SequenceHelper {
         .flatMap { GetItemResult<PyObject>.value($0) }
     }
 
-    let indexType = index.type.name
     return .error(
-      .typeError("\(typeName) indices must be integers or slices, not \(indexType)")
+      .typeError("\(typeName) indices must be integers or slices, not \(index.typeName)")
     )
   }
 
