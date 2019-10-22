@@ -1,6 +1,5 @@
 object
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __init__
     __reduce__
@@ -14,7 +13,6 @@ bool
 
 builtin_function_or_method
   Unimplemented:
-    __class__ - <class 'type'>
     __module__ - <class 'str'>
     __name__ - <class 'str'>
     __new__ - <class 'builtin_function_or_method'>
@@ -34,7 +32,6 @@ builtin_function_or_method
 
 code
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __ne__
@@ -57,7 +54,6 @@ code
 
 complex
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __format__
     __getattribute__
@@ -65,14 +61,12 @@ complex
 
 ellipsis
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __reduce__
 
 float
   Unimplemented:
-    __class__ - <class 'type'>
     __getformat__ - <class 'builtin_function_or_method'>
     __new__ - <class 'builtin_function_or_method'>
     __set_format__ - <class 'builtin_function_or_method'>
@@ -87,7 +81,6 @@ float
 
 function
   Unimplemented:
-    __class__ - <class 'type'>
     __dict__ - <class 'mappingproxy'>
     __module__ - <class 'str'>
     __name__ - <class 'str'>
@@ -103,7 +96,6 @@ function
 
 int
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     from_bytes - <class 'builtin_function_or_method'>
     __ceil__
@@ -118,7 +110,6 @@ int
 
 list
   Unimplemented:
-    __class__ - <class 'type'>
     __hash__ - <class 'NoneType'>
     __new__ - <class 'builtin_function_or_method'>
     __delitem__
@@ -136,7 +127,6 @@ list
 
 method
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __delattr__
     __eq__
@@ -155,7 +145,6 @@ method
 
 module
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __init__
 
@@ -163,13 +152,11 @@ NoneType
 
 NotImplementedType
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __reduce__
 
 property
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __delete__
     __get__
@@ -186,7 +173,6 @@ property
 
 range
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __iter__
@@ -198,7 +184,6 @@ range
 
 slice
   Unimplemented:
-    __class__ - <class 'type'>
     __hash__ - <class 'NoneType'>
     __new__ - <class 'builtin_function_or_method'>
     __getattribute__
@@ -210,7 +195,6 @@ slice
 
 tuple
   Unimplemented:
-    __class__ - <class 'type'>
     __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __getnewargs__
@@ -220,7 +204,6 @@ type
   Unimplemented:
     __base__ - <class 'type'>
     __basicsize__ - <class 'int'>
-    __class__ - <class 'type'>
     __dictoffset__ - <class 'int'>
     __flags__ - <class 'int'>
     __itemsize__ - <class 'int'>
@@ -234,4 +217,24 @@ type
     __init__
     __sizeof__
     mro
+
+BaseException
+  Unimplemented:
+    __class__ - <class 'type'>
+    __dict__ - <class 'mappingproxy'>
+    __new__ - <class 'builtin_function_or_method'>
+    __cause__
+    __context__
+    __delattr__
+    __getattribute__
+    __init__
+    __reduce__
+    __repr__
+    __setattr__
+    __setstate__
+    __str__
+    __suppress_context__
+    __traceback__
+    args
+    with_traceback
 

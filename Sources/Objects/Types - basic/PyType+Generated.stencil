@@ -14,14 +14,15 @@ extension PyType {
 
     {% for prop in type.methods|annotated:"pyproperty" %}
     {% if prop.annotations.setter %}
-    // result.{{ prop.annotations.pyproperty }} = {{ type.name }}.{{ prop.name }}, setter: {{ type.name }}.{{ prop.annotations.setter }}
+    // result.{{ prop.annotations.pyproperty }} = {{ type.name }}.{{ prop.name }}, setter: {{ type.name }}.{{ prop.annotations.setter }} -> {{ prop.returnTypeName }}
     {% else %}
-    // result.{{ prop.annotations.pyproperty }} = {{ type.name }}.{{ prop.name }}
+    // result.{{ prop.annotations.pyproperty }} = {{ type.name }}.{{ prop.name }} -> {{ prop.returnTypeName }}
     {% endif %}
     {% endfor %}
+    // result.__class__ = PyObject.getClass -> PyType
 
     {% for method in type.methods|annotated:"pymethod" %}
-    // result.{{ method.annotations.pymethod }} = {{ type.name }}.{{ method.name }}
+    // result.{{ method.annotations.pymethod }} = {{ type.name }}.{{ method.name }} -> {{ method.returnTypeName }}
     {% endfor %}
 
     return result

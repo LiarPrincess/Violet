@@ -16,6 +16,7 @@ types = {
   {% for prop in type.methods|annotated:"pyproperty" %}
     '{{ prop.annotations.pyproperty }}',
   {% endfor %}
+    '__class__',
   {% for method in type.methods|annotated:"pymethod" %}
     '{{ method.annotations.pymethod }}',
   {% endfor %}

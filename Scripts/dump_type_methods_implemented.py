@@ -3,6 +3,7 @@ import types as t
 
 types = {
   object: [
+    '__class__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -21,6 +22,7 @@ types = {
     '__init_subclass__',
   ],
   bool: [
+    '__class__',
     '__repr__',
     '__str__',
     '__and__',
@@ -31,9 +33,11 @@ types = {
     '__rxor__',
   ],
   t.BuiltinFunctionType: [
+    '__class__',
     '__repr__',
   ],
   t.CodeType: [
+    '__class__',
     '__eq__',
     '__lt__',
     '__le__',
@@ -43,6 +47,7 @@ types = {
     '__repr__',
   ],
   complex: [
+    '__class__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -79,9 +84,11 @@ types = {
     '__rdivmod__',
   ],
   type(...): [
+    '__class__',
     '__repr__',
   ],
   float: [
+    '__class__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -119,10 +126,12 @@ types = {
     '__round__',
   ],
   t.FunctionType: [
+    '__class__',
     '__repr__',
     '__call__',
   ],
   int: [
+    '__class__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -174,6 +183,7 @@ types = {
     '__round__',
   ],
   list: [
+    '__class__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -197,11 +207,13 @@ types = {
     '__imul__',
   ],
   t.MethodType: [
+    '__class__',
     '__repr__',
     '__call__',
   ],
   t.ModuleType: [
     '__dict__',
+    '__class__',
     '__repr__',
     '__getattribute__',
     '__setattr__',
@@ -209,15 +221,19 @@ types = {
     '__dir__',
   ],
   type(None): [
+    '__class__',
     '__repr__',
     '__bool__',
   ],
   type(NotImplemented): [
+    '__class__',
     '__repr__',
   ],
   property: [
+    '__class__',
   ],
   range: [
+    '__class__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -234,6 +250,7 @@ types = {
     'index',
   ],
   slice: [
+    '__class__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -243,6 +260,7 @@ types = {
     '__repr__',
   ],
   tuple: [
+    '__class__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -266,6 +284,7 @@ types = {
     '__module__',
     '__bases__',
     '__dict__',
+    '__class__',
     '__repr__',
     '__subclasses__',
     '__instancecheck__',
@@ -275,4 +294,5 @@ types = {
     '__delattr__',
     '__dir__',
   ],
+  BaseException: []
 }
