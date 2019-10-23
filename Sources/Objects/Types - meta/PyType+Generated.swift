@@ -130,6 +130,7 @@ extension PyType {
     // result.real = PyComplex.asReal() -> PyObject
     // result.imag = PyComplex.asImag() -> PyObject
     // result.conjugate = PyComplex.conjugate() -> PyObject
+    // result.__getattribute__ = PyComplex.getAttribute(name: PyObject) -> PyResult<PyObject>
     // result.__pos__ = PyComplex.positive() -> PyObject
     // result.__neg__ = PyComplex.negative() -> PyObject
     // result.__abs__ = PyComplex.abs() -> PyObject
@@ -159,6 +160,7 @@ extension PyType {
 
 
     // result.__repr__ = PyEllipsis.repr() -> String
+    // result.__getattribute__ = PyEllipsis.getAttribute(name: PyObject) -> PyResult<PyObject>
     // result.__class__ = PyObject.getClass -> PyType
 
     return result
@@ -183,6 +185,7 @@ extension PyType {
     // result.real = PyFloat.asReal() -> PyObject
     // result.imag = PyFloat.asImag() -> PyObject
     // result.conjugate = PyFloat.conjugate() -> PyObject
+    // result.__getattribute__ = PyFloat.getAttribute(name: PyObject) -> PyResult<PyObject>
     // result.__pos__ = PyFloat.positive() -> PyObject
     // result.__neg__ = PyFloat.negative() -> PyObject
     // result.__abs__ = PyFloat.abs() -> PyObject
@@ -241,6 +244,7 @@ extension PyType {
     // result.conjugate = PyInt.conjugate() -> PyObject
     // result.numerator = PyInt.numerator() -> PyInt
     // result.denominator = PyInt.denominator() -> PyInt
+    // result.__getattribute__ = PyInt.getAttribute(name: PyObject) -> PyResult<PyObject>
     // result.__pos__ = PyInt.positive() -> PyObject
     // result.__neg__ = PyInt.negative() -> PyObject
     // result.__abs__ = PyInt.abs() -> PyObject
@@ -288,6 +292,7 @@ extension PyType {
     // result.__gt__ = PyList.isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__ge__ = PyList.isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__repr__ = PyList.repr() -> String
+    // result.__getattribute__ = PyList.getAttribute(name: PyObject) -> PyResult<PyObject>
     // result.__len__ = PyList.getLength() -> BigInt
     // result.__contains__ = PyList.contains(_ element: PyObject) -> Bool
     // result.__getitem__ = PyList.getItem(at index: PyObject) -> PyResult<PyObject>
@@ -377,6 +382,7 @@ extension PyType {
     // result.__repr__ = PyRange.repr() -> String
     // result.__bool__ = PyRange.asBool() -> PyResult<Bool>
     // result.__len__ = PyRange.getLength() -> BigInt
+    // result.__getattribute__ = PyRange.getAttribute(name: PyObject) -> PyResult<PyObject>
     // result.__contains__ = PyRange.contains(_ element: PyObject) -> Bool
     // result.__getitem__ = PyRange.getItem(at index: PyObject) -> PyResult<PyObject>
     // result.count = PyRange.count(_ element: PyObject) -> PyResult<BigInt>
@@ -397,6 +403,7 @@ extension PyType {
     // result.__gt__ = PySlice.isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__ge__ = PySlice.isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__repr__ = PySlice.repr() -> String
+    // result.__getattribute__ = PySlice.getAttribute(name: PyObject) -> PyResult<PyObject>
     // result.__class__ = PyObject.getClass -> PyType
 
     return result
@@ -414,6 +421,7 @@ extension PyType {
     // result.__ge__ = PyTuple.isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__hash__ = PyTuple.hash() -> PyResultOrNot<PyHash>
     // result.__repr__ = PyTuple.repr() -> String
+    // result.__getattribute__ = PyTuple.getAttribute(name: PyObject) -> PyResult<PyObject>
     // result.__len__ = PyTuple.getLength() -> BigInt
     // result.__contains__ = PyTuple.contains(_ element: PyObject) -> Bool
     // result.__getitem__ = PyTuple.getItem(at index: PyObject) -> PyResult<PyObject>

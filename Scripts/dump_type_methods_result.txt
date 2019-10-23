@@ -75,13 +75,11 @@ complex
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
     __format__
-    __getattribute__
     __getnewargs__
 
 ellipsis
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
-    __getattribute__
     __reduce__
 
 float
@@ -91,7 +89,6 @@ float
     __set_format__ - <class 'builtin_function_or_method'>
     fromhex - <class 'builtin_function_or_method'>
     __format__
-    __getattribute__
     __getnewargs__
     __trunc__
     as_integer_ratio
@@ -120,7 +117,6 @@ int
     __ceil__
     __floor__
     __format__
-    __getattribute__
     __getnewargs__
     __sizeof__
     __trunc__
@@ -132,7 +128,6 @@ list
     __hash__ - <class 'NoneType'>
     __new__ - <class 'builtin_function_or_method'>
     __delitem__
-    __getattribute__
     __init__
     __iter__
     __reversed__
@@ -193,7 +188,6 @@ property
 range
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
-    __getattribute__
     __iter__
     __reduce__
     __reversed__
@@ -205,7 +199,6 @@ slice
   Unimplemented:
     __hash__ - <class 'NoneType'>
     __new__ - <class 'builtin_function_or_method'>
-    __getattribute__
     __reduce__
     indices
     start
@@ -215,7 +208,6 @@ slice
 tuple
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
-    __getattribute__
     __getnewargs__
     __iter__
 

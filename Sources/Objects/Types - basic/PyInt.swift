@@ -174,6 +174,13 @@ internal class PyInt: PyObject {
     return self.int(1)
   }
 
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(zelf: self, name: name)
+  }
+
   // MARK: - Sign
 
   // sourcery: pymethod = __pos__

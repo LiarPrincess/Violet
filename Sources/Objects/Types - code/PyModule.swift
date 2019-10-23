@@ -96,6 +96,7 @@ public final class PyModule: PyObject, AttributesOwner {
 
   // sourcery: pymethod = __dir__
   internal func dir() -> DirResult {
+    // Do not add `self.type` dir!
     if let dirFunc = self.attributes["__dir__"] {
       return self.context.callDir(dirFunc, args: [])
     } else {

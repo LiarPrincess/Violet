@@ -320,16 +320,8 @@ internal final class PyType: PyObject, AttributesOwner {
   /// We deliberately don't suck up its __class__, as methods belonging to the
   /// metaclass would probably be more confusing than helpful.
   internal func dir() -> DirResult {
-    var result = DirResult()
-    self.mergeClassDict(type: self, into: &result)
-    return result
-  }
-
-  private func mergeClassDict(type: PyType, into result: inout DirResult) {
-    result.append(contentsOf: self._attributes.keys)
-
-    for base in self.getBases() {
-      self.mergeClassDict(type: base, into: &result)
+    return self._mro.reduce(into: DirResult()) { acc, base in
+      acc.append(contentsOf: base.attributes.keys)
     }
   }
 

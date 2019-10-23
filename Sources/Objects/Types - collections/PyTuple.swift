@@ -134,6 +134,13 @@ internal final class PyTuple: PyObject {
     }
   }
 
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(zelf: self, name: name)
+  }
+
   // MARK: - Sequence
 
   // sourcery: pymethod = __len__

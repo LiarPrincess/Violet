@@ -123,26 +123,20 @@ internal enum PyBaseObject {
   // sourcery: pymethod = __getattribute__
   internal static func getAttribute(zelf: PyObject,
                                     name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.genericGetAttributeWithDict(zelf: zelf,
-                                                       name: name,
-                                                       dict: nil)
+    return AttributeHelper.getAttribute(zelf: zelf, name: name)
   }
 
   // sourcery: pymethod = __setattr__
   internal static func setAttribute(zelf: PyObject,
                                     name: PyObject,
                                     value: PyObject) -> PyResult<()> {
-    return AttributeHelper.genericSetAttributeWithDict(zelf: zelf,
-                                                       name: name,
-                                                       value: value,
-                                                       dict: nil)
+    return AttributeHelper.setAttribute(zelf: zelf, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
   internal static func delAttribute(zelf: PyObject,
                                     name: PyObject) -> PyResult<()> {
-    let none = zelf.context.none
-    return PyBaseObject.setAttribute(zelf: zelf, name: name, value: none)
+    return AttributeHelper.delAttribute(zelf: zelf, name: name)
   }
 
   // MARK: - Subclasshook

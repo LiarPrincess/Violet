@@ -180,6 +180,13 @@ internal final class PyRange: PyObject {
     return self.length.value
   }
 
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(zelf: self, name: name)
+  }
+
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
