@@ -13,6 +13,10 @@ internal class PyString: PyObject {
     // TOOD: add to context
     super.init()
   }
+
+  internal func str() -> String {
+    return self.value
+  }
 }
 
 internal final class PyStringType: PyObject {
