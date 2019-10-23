@@ -32,7 +32,7 @@ internal final class PyList: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> EquatableResult {
+  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PyList else {
       return .notImplemented
     }
@@ -43,14 +43,14 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> EquatableResult {
+  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> ComparableResult {
+  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PyList else {
       return .notImplemented
     }
@@ -61,7 +61,7 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PyList else {
       return .notImplemented
     }
@@ -72,7 +72,7 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> ComparableResult {
+  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PyList else {
       return .notImplemented
     }
@@ -83,7 +83,7 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PyList else {
       return .notImplemented
     }
@@ -135,7 +135,7 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = __getitem__
-  internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
+  internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     return SequenceHelper.getItem(context: self.context,
                                   elements: self.elements,
                                   index: index,
@@ -144,7 +144,7 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = count
-  internal func count(_ element: PyObject) -> CountResult {
+  internal func count(_ element: PyObject) -> PyResult<BigInt> {
     return SequenceHelper.count(context: self.context,
                                 elements: self.elements,
                                 element: element)
@@ -207,7 +207,7 @@ internal final class PyList: PyObject {
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> AddResult<PyObject> {
+  internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let otherList = other as? PyList else {
       return .error(
         .typeError("can only concatenate list (not '\(other.typeName)') to list")
@@ -219,7 +219,7 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = __iadd__
-  internal func addInPlace(_ other: PyObject) -> AddResult<PyObject> {
+  internal func addInPlace(_ other: PyObject) -> PyResultOrNot<PyObject> {
     self.extend(other)
     return .value(self)
   }
@@ -227,21 +227,21 @@ internal final class PyList: PyObject {
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> MulResult<PyObject> {
+  internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)
       .map(self.list)
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> MulResult<PyObject> {
+  internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return SequenceHelper
       .rmul(elements: self.elements, count: other)
       .map(self.list)
   }
 
   // sourcery: pymethod = __imul__
-  internal func mulInPlace(_ other: PyObject) -> MulResult<PyObject> {
+  internal func mulInPlace(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)
       .map { elements -> PyList in

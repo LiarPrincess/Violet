@@ -19,13 +19,13 @@ internal enum PyBaseObject {
 
   // sourcery: pymethod = __eq__
   internal static func isEqual(zelf: PyObject,
-                               other: PyObject) -> EquatableResult {
+                               other: PyObject) -> PyResultOrNot<Bool> {
     return zelf === other ? .value(true) : .notImplemented
   }
 
   // sourcery: pymethod = __ne__
   internal static func isNotEqual(zelf: PyObject,
-                                  other: PyObject) -> EquatableResult {
+                                  other: PyObject) -> PyResultOrNot<Bool> {
     let isEqual = PyBaseObject.isEqual(zelf: zelf, other: other)
     return NotEqualHelper.fromIsEqual(isEqual)
   }
@@ -34,32 +34,32 @@ internal enum PyBaseObject {
 
   // sourcery: pymethod = __lt__
   internal static func isLess(zelf: PyObject,
-                              other: PyObject) -> ComparableResult {
+                              other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
   internal static func isLessEqual(zelf: PyObject,
-                                   other: PyObject) -> ComparableResult {
+                                   other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
   internal static func isGreater(zelf: PyObject,
-                                 other: PyObject) -> ComparableResult {
+                                 other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
   internal static func isGreaterEqual(zelf: PyObject,
-                                      other: PyObject) -> ComparableResult {
+                                      other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal static func hash(zelf: PyObject) -> HashableResult {
+  internal static func hash(zelf: PyObject) -> PyResultOrNot<PyHash> {
     let id = ObjectIdentifier(zelf)
     return .value(HashHelper.hash(id))
   }

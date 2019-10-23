@@ -77,10 +77,10 @@ internal final class PyRange: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> EquatableResult {
+  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     return (other as? PyRange)
       .map(self.isEqual)
-      .map(EquatableResult.value) ?? .notImplemented
+      .map(PyResultOrNot<Bool>.value) ?? .notImplemented
   }
 
   internal func isEqual(_ other: PyRange) -> Bool {
@@ -104,36 +104,36 @@ internal final class PyRange: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> EquatableResult {
+  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> ComparableResult {
+  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> ComparableResult {
+  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashableResult {
+  internal func hash() -> PyResultOrNot<PyHash> {
     let none = self.context.none
     var tuple = [self.length, none, none]
 
@@ -215,15 +215,15 @@ internal final class PyRange: PyObject {
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
-  internal func getItem(at index: PyObject) -> GetItemResult<PyObject> {
+  internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     if let index = SequenceHelper.extractIndex(index) {
       let result = self.getItem(at: index)
-      return result.flatMap { GetItemResult<PyObject>.value($0) }
+      return result.flatMap { PyResult<PyObject>.value($0) }
     }
 
     if let slice = index as? PySlice {
       let result = self.getItem(at: slice)
-      return result.flatMap { GetItemResult<PyObject>.value($0) }
+      return result.flatMap { PyResult<PyObject>.value($0) }
     }
 
     return .error(
@@ -231,11 +231,11 @@ internal final class PyRange: PyObject {
     )
   }
 
-  internal func getItem(at index: PyInt) -> GetItemResult<PyInt> {
+  internal func getItem(at index: PyInt) -> PyResult<PyInt> {
     return self.getItem(at: index.value)
   }
 
-  internal func getItem(at index: BigInt) -> GetItemResult<PyInt> {
+  internal func getItem(at index: BigInt) -> PyResult<PyInt> {
     var index = index
 
     if index < 0 {
@@ -250,7 +250,7 @@ internal final class PyRange: PyObject {
     return .value(self.int(result))
   }
 
-  internal func getItem(at slice: PySlice) -> GetItemResult<PyRange> {
+  internal func getItem(at slice: PySlice) -> PyResult<PyRange> {
     var start = self.start
     if let sliceStart = slice.start {
       switch self.getItem(at: sliceStart) {
@@ -277,7 +277,7 @@ internal final class PyRange: PyObject {
   // MARK: - Count
 
   // sourcery: pymethod = count
-  internal func count(_ element: PyObject) -> CountResult {
+  internal func count(_ element: PyObject) -> PyResult<BigInt> {
     if let int = element as? PyInt {
       return .value(self.contains(int) ? 1 : 0)
     }

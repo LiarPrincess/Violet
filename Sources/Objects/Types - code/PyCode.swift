@@ -24,36 +24,36 @@ internal final class PyCode: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> EquatableResult {
+  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     return .value(self === other)
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> ComparableResult {
+  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> ComparableResult {
+  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashableResult {
+  internal func hash() -> PyResultOrNot<PyHash> {
     // Not the best, but PyCodes are not used often
     let name = HashHelper.hash(self._code.name)
     let qualifiedName = HashHelper.hash(self._code.qualifiedName)

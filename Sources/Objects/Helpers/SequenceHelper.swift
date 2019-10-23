@@ -8,7 +8,7 @@ internal enum SequenceHelper {
 
   internal static func isEqual(context: PyContext,
                                left: [PyObject],
-                               right: [PyObject]) -> EquatableResult {
+                               right: [PyObject]) -> PyResultOrNot<Bool> {
     guard left.count == right.count else {
       return .value(false)
     }
@@ -29,7 +29,7 @@ internal enum SequenceHelper {
 
   internal static func isLess(context: PyContext,
                               left: [PyObject],
-                              right: [PyObject]) -> ComparableResult {
+                              right: [PyObject]) -> PyResultOrNot<Bool> {
     for (l, r) in zip(left, right) {
       switch context.isEqual(left: l, right: r) {
       case .value(true): break // go to next element
@@ -44,7 +44,7 @@ internal enum SequenceHelper {
 
   internal static func isLessEqual(context: PyContext,
                                    left: [PyObject],
-                                   right: [PyObject]) -> ComparableResult {
+                                   right: [PyObject]) -> PyResultOrNot<Bool> {
     for (l, r) in zip(left, right) {
       switch context.isEqual(left: l, right: r) {
       case .value(true): break // go to next element
@@ -59,7 +59,7 @@ internal enum SequenceHelper {
 
   internal static func isGreater(context: PyContext,
                                  left: [PyObject],
-                                 right: [PyObject]) -> ComparableResult {
+                                 right: [PyObject]) -> PyResultOrNot<Bool> {
     for (l, r) in zip(left, right) {
       switch context.isEqual(left: l, right: r) {
       case .value(true): break // go to next element
@@ -74,7 +74,7 @@ internal enum SequenceHelper {
 
   internal static func isGreaterEqual(context: PyContext,
                                       left: [PyObject],
-                                      right: [PyObject]) -> ComparableResult {
+                                      right: [PyObject]) -> PyResultOrNot<Bool> {
     for (l, r) in zip(left, right) {
       switch context.isEqual(left: l, right: r) {
       case .value(true): break // go to next element
@@ -125,7 +125,7 @@ internal enum SequenceHelper {
                                elements: [PyObject],
                                index: PyObject,
                                canIndexFromEnd: Bool,
-                               typeName: String) -> GetItemResult<PyObject> {
+                               typeName: String) -> PyResult<PyObject> {
     if let index = extractIndex(index) {
       return getItem(context: context,
                      elements: elements,
@@ -138,7 +138,7 @@ internal enum SequenceHelper {
       return SequenceHelper
         .getItem(context: context, elements: elements, slice: slice)
         .map(context._tuple)
-        .flatMap { GetItemResult<PyObject>.value($0) }
+        .flatMap { PyResult<PyObject>.value($0) }
     }
 
     return .error(
@@ -151,7 +151,7 @@ internal enum SequenceHelper {
                                elements: [PyObject],
                                index: PyInt,
                                canIndexFromEnd: Bool,
-                               typeName: String) -> GetItemResult<PyObject> {
+                               typeName: String) -> PyResult<PyObject> {
     return getItem(context: context,
                    elements: elements,
                    index: index.value,
@@ -164,7 +164,7 @@ internal enum SequenceHelper {
                                elements: [PyObject],
                                index: BigInt,
                                canIndexFromEnd: Bool,
-                               typeName: String) -> GetItemResult<PyObject> {
+                               typeName: String) -> PyResult<PyObject> {
     var index = index
     if index < 0, canIndexFromEnd {
       index += BigInt(elements.count)
@@ -183,7 +183,7 @@ internal enum SequenceHelper {
 
   internal static func getItem(context: PyContext,
                                elements: [PyObject],
-                               slice: PySlice) -> GetItemResult<[PyObject]> {
+                               slice: PySlice) -> PyResult<[PyObject]> {
     let count = elements.count
     let adjusted = GeneralHelpers.adjustIndices(value: slice, to: count)
 
@@ -210,7 +210,7 @@ internal enum SequenceHelper {
 
   internal static func count(context: PyContext,
                              elements: [PyObject],
-                             element: PyObject) -> CountResult {
+                             element: PyObject) -> PyResult<BigInt> {
     var result: BigInt = 0
 
     for e in elements {
@@ -250,7 +250,7 @@ internal enum SequenceHelper {
   // MARK: - Mul
 
   internal static func mul(elements: [PyObject],
-                           count: PyObject) -> MulResult<[PyObject]> {
+                           count: PyObject) -> PyResultOrNot<[PyObject]> {
     guard let countInt = count as? PyInt else {
       return .notImplemented
     }
@@ -259,7 +259,7 @@ internal enum SequenceHelper {
   }
 
   internal static func mul(elements: [PyObject],
-                           count: PyInt) -> MulResult<[PyObject]> {
+                           count: PyInt) -> PyResultOrNot<[PyObject]> {
     let count = max(count.value, 0)
 
     // swiftlint:disable:next empty_count
@@ -282,7 +282,7 @@ internal enum SequenceHelper {
   }
 
   internal static func rmul(elements: [PyObject],
-                            count: PyObject) -> MulResult<[PyObject]> {
+                            count: PyObject) -> PyResultOrNot<[PyObject]> {
     guard let countInt = count as? PyInt else {
       return .notImplemented
     }

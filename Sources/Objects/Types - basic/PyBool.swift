@@ -52,7 +52,7 @@ internal final class PyBool: PyInt {
   // MARK: - And
 
   // sourcery: pymethod = __and__
-  override internal func and(_ other: PyObject) -> BinaryResult<PyObject> {
+  override internal func and(_ other: PyObject) -> PyResultOrNot<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue && other.value.isTrue
       return .value(self.bool(result))
@@ -62,14 +62,14 @@ internal final class PyBool: PyInt {
   }
 
   // sourcery: pymethod = __rand__
-  override internal func rand(_ other: PyObject) -> BinaryResult<PyObject> {
+  override internal func rand(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return self.and(other)
   }
 
   // MARK: - Or
 
   // sourcery: pymethod = __or__
-  override internal func or(_ other: PyObject) -> BinaryResult<PyObject> {
+  override internal func or(_ other: PyObject) -> PyResultOrNot<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue || other.value.isTrue
       return .value(self.bool(result))
@@ -79,14 +79,14 @@ internal final class PyBool: PyInt {
   }
 
   // sourcery: pymethod = __ror__
-  override internal func ror(_ other: PyObject) -> BinaryResult<PyObject> {
+  override internal func ror(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return self.or(other)
   }
 
   // MARK: - Xor
 
   // sourcery: pymethod = __xor__
-  override internal func xor(_ other: PyObject) -> BinaryResult<PyObject> {
+  override internal func xor(_ other: PyObject) -> PyResultOrNot<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue != other.value.isTrue
       return .value(self.bool(result))
@@ -96,7 +96,7 @@ internal final class PyBool: PyInt {
   }
 
   // sourcery: pymethod = __rxor__
-  override internal func rxor(_ other: PyObject) -> BinaryResult<PyObject> {
+  override internal func rxor(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return self.xor(other)
   }
 }

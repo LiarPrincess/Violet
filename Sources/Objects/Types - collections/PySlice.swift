@@ -33,7 +33,7 @@ internal final class PySlice: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> EquatableResult {
+  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PySlice else {
       return .notImplemented
     }
@@ -52,14 +52,14 @@ internal final class PySlice: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> EquatableResult {
+  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> ComparableResult {
+  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PySlice else {
       return .notImplemented
     }
@@ -70,7 +70,7 @@ internal final class PySlice: PyObject {
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> ComparableResult {
+  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PySlice else {
       return .notImplemented
     }
@@ -81,7 +81,7 @@ internal final class PySlice: PyObject {
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> ComparableResult {
+  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PySlice else {
       return .notImplemented
     }
@@ -92,7 +92,7 @@ internal final class PySlice: PyObject {
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> ComparableResult {
+  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
     guard let other = other as? PySlice else {
       return .notImplemented
     }

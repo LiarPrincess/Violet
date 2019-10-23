@@ -54,7 +54,7 @@ extension PyResult where V == Void {
 
 /// Basically `PyResult` + notImplemented.
 ///
-/// This is soooo... bad name for an enum, I love it!
+/// This is really good name or really bad name, depending on how you see it.
 public enum PyResultOrNot<V> {
   case value(V)
   case error(PyErrorEnum)
@@ -156,27 +156,3 @@ extension Optional {
       }
   }
 }
-
-// MARK: - Instances
-
-internal typealias EquatableResult = PyResultOrNot<Bool>
-internal typealias ComparableResult = PyResultOrNot<Bool>
-internal typealias HashableResult = PyResultOrNot<PyHash>
-internal typealias GetItemResult<T> = PyResult<T>
-internal typealias CountResult = PyResult<BigInt>
-internal typealias IndexOfResult = PyResult<BigInt>
-internal typealias AddResult<T> = PyResultOrNot<T>
-internal typealias SubResult<T> = PyResultOrNot<T>
-internal typealias MulResult<T> = PyResultOrNot<T>
-internal typealias MatrixMulResult<T> = PyResultOrNot<T>
-internal typealias PowResult<T> = PyResultOrNot<T>
-internal typealias TrueDivResult<T> = PyResultOrNot<T>
-internal typealias FloorDivResult<T> = PyResultOrNot<T>
-internal typealias ModResult<T> = PyResultOrNot<T>
-internal typealias DivModResult<T> = PyResultOrNot<T>
-internal typealias ShiftResult<T> = PyResultOrNot<T>
-internal typealias BinaryResult<T> = PyResultOrNot<T>
-internal typealias RoundResult<T> = PyResultOrNot<T>
-internal typealias TruncResult<T> = PyResultOrNot<T>
-internal typealias FloorResult<T> = PyResultOrNot<T>
-internal typealias CeilResult<T> = PyResultOrNot<T>
