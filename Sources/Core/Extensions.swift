@@ -35,6 +35,22 @@ extension Dictionary {
   public func contains(_ key: Key) -> Bool {
     return self[key] != nil
   }
+
+  public enum UniquingKeysWithStrategy {
+    case takeExisting
+  }
+
+  public mutating func merge(_ other: [Key : Value],
+                             uniquingKeysWith: UniquingKeysWithStrategy) {
+    switch uniquingKeysWith {
+    case .takeExisting:
+      self.merge(other, uniquingKeysWith: takeExisting)
+    }
+  }
+}
+
+private func takeExisting<Value>(_ existing: Value, _ new: Value) -> Value {
+  return existing
 }
 
 extension String {

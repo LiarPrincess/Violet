@@ -15,6 +15,10 @@ extension PyContext {
     return .value(self.unimplemented())
   }
 
+  internal func callDir(_ fn: PyObject, args: [PyObject?]) -> DirResult {
+    return DirResult()
+  }
+
   public func _PyUnicode_JoinArray(elements: [PyObject]) -> PyObject {
     return self.unimplemented()
   }

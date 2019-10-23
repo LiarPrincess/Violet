@@ -1,3 +1,8 @@
+/// For types that have `__dict__`.
+internal protocol AttributesOwner {
+  var attributes: Attributes { get }
+}
+
 /// Dictionary used for `__dict__`.
 /// Basically a Swift Dictionary, but as a reference type.
 public final class Attributes {
@@ -33,7 +38,10 @@ public final class Attributes {
     return self._values.removeValue(forKey: key)
   }
 
-  public var keys: [String] {
-    return Array(self._values.keys)
+  // Technically thats an implementaton detail
+  internal typealias KeysType = Dictionary<String, PyObject>.Keys
+
+  internal var keys: KeysType {
+    return self._values.keys
   }
 }

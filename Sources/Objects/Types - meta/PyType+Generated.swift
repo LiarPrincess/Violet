@@ -30,7 +30,7 @@ extension PyType {
     // result.__str__ = PyBaseObject.str(zelf: PyObject) -> String
     // result.__format__ = PyBaseObject.format(zelf: PyObject, spec: PyObject) -> PyResult<String>
     // result.__class_ = PyBaseObject.getClass(zelf: PyObject) -> PyType
-    // result.__dir__ = PyBaseObject.dir(zelf: PyObject) -> [String:PyObject]
+    // result.__dir__ = PyBaseObject.dir(zelf: PyObject) -> DirResult
     // result.__getattribute__ = PyBaseObject.getAttribute(zelf: PyObject,                                    name: PyObject) -> PyResult<PyObject>
     // result.__setattr__ = PyBaseObject.setAttribute(zelf: PyObject,                                    name: PyObject,                                    value: PyObject) -> PyResult<()>
     // result.__delattr__ = PyBaseObject.delAttribute(zelf: PyObject,                                    name: PyObject) -> PyResult<()>
@@ -60,7 +60,7 @@ extension PyType {
     // result.__getattribute__ = PyType.getAttribute(name: PyObject) -> PyResult<PyObject>
     // result.__setattr__ = PyType.setAttribute(name: PyObject, value: PyObject) -> PyResult<()>
     // result.__delattr__ = PyType.delAttribute(name: PyObject) -> PyResult<()>
-    // result.__dir__ = PyType.dir() -> [String: PyObject]
+    // result.__dir__ = PyType.dir() -> DirResult
     // result.__class__ = PyObject.getClass -> PyType
 
     return result
@@ -327,11 +327,10 @@ extension PyType {
     // result.__getattribute__ = PyModule.getAttribute(name: String) -> PyResult<PyObject>
     // result.__setattr__ = PyModule.setAttribute(name: String, value: PyObject) -> Void
     // result.__delattr__ = PyModule.delAttribute(name: String) -> PyResult<PyObject>
-    // result.__dir__ = PyModule.dir() -> [String]
+    // result.__dir__ = PyModule.dir() -> DirResult
     // result.__class__ = PyObject.getClass -> PyType
 
     return result
-    #warning("Type PyModule should be marked final.")
   }
 
   internal static func NoneType(_ context: PyContext, type: PyType, base: PyType) -> PyType {

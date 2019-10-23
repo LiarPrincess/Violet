@@ -15,7 +15,7 @@ internal class PyTypeWeakRef {
   }
 }
 
-internal final class PyType: PyObject {
+internal final class PyType: PyObject, AttributesOwner {
 
   internal static let doc: String = """
     type(object_or_name, bases, dict)
@@ -23,11 +23,15 @@ internal final class PyType: PyObject {
     type(name, bases, dict) -> a new type
     """
 
-  internal var _name: String
-  internal var _bases: [PyType]
+  internal let _name: String
+  internal let _bases: [PyType]
   internal var _mro:   [PyType]
   internal var _subclasses: [PyTypeWeakRef] = []
-  internal var _attributes = Attributes()
+  internal let _attributes = Attributes()
+
+  internal var attributes: Attributes {
+    return self._attributes
+  }
 
   // Special hack for cyclic referency
   private unowned let _context: PyContext
@@ -174,7 +178,6 @@ internal final class PyType: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  // sourcery: pydoc = "dictionary for instance variables (if defined)"
   internal func dict() -> Attributes {
     return self._attributes
   }
@@ -316,15 +319,14 @@ internal final class PyType: PyObject {
   ///
   /// We deliberately don't suck up its __class__, as methods belonging to the
   /// metaclass would probably be more confusing than helpful.
-  internal func dir() -> [String: PyObject] {
-    var result = [String: PyObject]()
+  internal func dir() -> DirResult {
+    var result = DirResult()
     self.mergeClassDict(type: self, into: &result)
     return result
   }
 
-  private func mergeClassDict(type: PyType, into result: inout [String: PyObject]) {
-    let dict = self._attributes.asDictionary
-    result.merge(dict, uniquingKeysWith: leaveCurrent)
+  private func mergeClassDict(type: PyType, into result: inout DirResult) {
+    result.append(contentsOf: self._attributes.keys)
 
     for base in self.getBases() {
       self.mergeClassDict(type: base, into: &result)
@@ -346,8 +348,4 @@ internal final class PyType: PyObject {
 
     return nil
   }
-}
-
-private func leaveCurrent<Value>(_ current: Value, _ new: Value) -> Value {
-  return current
 }

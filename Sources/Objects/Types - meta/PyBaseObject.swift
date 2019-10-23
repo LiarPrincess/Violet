@@ -102,9 +102,20 @@ internal enum PyBaseObject {
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  internal static func dir(zelf: PyObject) -> [String:PyObject] {
-    // TODO: Finish this (add own attributes)
-    return zelf.type.dir()
+  internal static func dir(zelf: PyObject) -> DirResult {
+    var result = DirResult()
+
+    if let attribOwner = zelf as? AttributesOwner {
+      if let dirFunc = attribOwner.attributes["__dir__"] {
+        let dir = zelf.context.callDir(dirFunc, args: [])
+        result.append(contentsOf: dir)
+      } else {
+        result.append(contentsOf: attribOwner.attributes.keys)
+      }
+    }
+
+    result.append(contentsOf: zelf.type.dir())
+    return result
   }
 
   // MARK: - Attributes

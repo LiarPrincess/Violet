@@ -2,7 +2,7 @@
 // Objects -> moduleobject.c
 
 // sourcery: pytype = module
-public class PyModule: PyObject {
+public final class PyModule: PyObject, AttributesOwner {
 
   public static let doc: String = """
     module(name, doc=None)
@@ -11,7 +11,11 @@ public class PyModule: PyObject {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  internal var _attributes = Attributes()
+  internal let _attributes = Attributes()
+
+  internal var attributes: Attributes {
+    return self._attributes
+  }
 
   private var name: String {
     guard let obj = self._attributes["__name__"] else {
@@ -91,8 +95,11 @@ public class PyModule: PyObject {
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  // sourcery: pydoc = "__dir__() -> list\nspecialized dir() implementation"
-  public func dir() -> [String] {
-    return self._attributes.keys
+  internal func dir() -> DirResult {
+    if let dirFunc = self.attributes["__dir__"] {
+      return self.context.callDir(dirFunc, args: [])
+    } else {
+      return DirResult(self.attributes.keys)
+    }
   }
 }
