@@ -20,8 +20,6 @@ public class PyContext {
 //  internal lazy var errorTypes = PyContextErrorTypes(context: self)
 //  internal lazy var warningTypes = PyContextWarningTypes(context: self)
 
-  internal let hasher = Hasher()
-
   public init() { }
 }
 

@@ -108,7 +108,7 @@ internal class PyInt: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashableResult {
-    return .value(self.context.hasher.hash(self.value))
+    return .value(HashHelper.hash(self.value))
   }
 
   // MARK: - String

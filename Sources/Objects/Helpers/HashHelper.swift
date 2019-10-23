@@ -6,28 +6,26 @@ import Core
 // Objects -> longobject.c
 // https://docs.python.org/3.7/c-api/complex.html
 
-// TODO: Move this to Hashable extension
-
 internal typealias PyHash = Int64
 
 // For numeric types, the hash of a number x is based on the reduction
 // of x modulo the prime P = 2**_PyHASH_BITS - 1.
 // It's designed so that hash(x) == hash(y) whenever x and y are numerically
 // equal, even if x and y have different types.
-internal struct Hasher {
+internal enum HashHelper {
 
   /// Prime multiplier used in string and various other hashes (0xf4243).
-  internal let _PyHASH_MULTIPLIER: PyHash = 1_000_003
+  internal static let _PyHASH_MULTIPLIER: PyHash = 1_000_003
   /// Numeric hashes are based on reduction modulo the prime 2**_BITS - 1
-  internal let _PyHASH_BITS: PyHash = 61
+  internal static let _PyHASH_BITS: PyHash = 61
 
-  internal var _PyHASH_MODULUS: PyHash { return ((1 << _PyHASH_BITS) - 1) }
-  internal var _PyHASH_INF:     PyHash { return 314_159 }
-  internal var _PyHASH_NAN:     PyHash { return 0 }
-  internal var _PyHASH_IMAG:    PyHash { return _PyHASH_MULTIPLIER }
-  internal var PyLong_SHIFT:    PyHash { return 30 }
+  internal static var _PyHASH_MODULUS: PyHash { return ((1 << _PyHASH_BITS) - 1) }
+  internal static var _PyHASH_INF:     PyHash { return 314_159 }
+  internal static var _PyHASH_NAN:     PyHash { return 0 }
+  internal static var _PyHASH_IMAG:    PyHash { return _PyHASH_MULTIPLIER }
+  internal static var PyLong_SHIFT:    PyHash { return 30 }
 
-  internal func hash(_ value: Double) -> PyHash {
+  internal static func hash(_ value: Double) -> PyHash {
     if !value.isFinite {
       if value.isInfinite {
         return value > 0 ? _PyHASH_INF : -_PyHASH_INF
@@ -68,7 +66,7 @@ internal struct Hasher {
     return sign * x
   }
 
-  internal func hash(_ value: BigInt) -> PyHash {
+  internal static func hash(_ value: BigInt) -> PyHash {
     let sign: PyHash = value < 0 ? -1 : 1
     var x: PyHash = 0
     var i = abs(value)
@@ -90,11 +88,12 @@ internal struct Hasher {
     return sign * x
   }
 
-  internal func hash(_ value: String) -> PyHash {
+  // TODO: Implement this
+  internal static func hash(_ value: String) -> PyHash {
     fatalError()
   }
 
-  internal func hash(_ value: ObjectIdentifier) -> PyHash {
+  internal static func hash(_ value: ObjectIdentifier) -> PyHash {
 //    Py_hash_t x;
 //    size_t y = (size_t)p;
 //    /* bottom 3 or 4 bits are likely to be 0; rotate y by 4 to avoid

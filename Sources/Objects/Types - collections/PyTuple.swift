@@ -93,10 +93,8 @@ internal final class PyTuple: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashableResult {
-    let hasher = self.context.hasher
-
     var x: PyHash = 0x345678
-    var mult = hasher._PyHASH_MULTIPLIER
+    var mult = HashHelper._PyHASH_MULTIPLIER
     for e in self.elements {
       let y = self.context.hash(value: e)
       x = (x ^ y) * mult

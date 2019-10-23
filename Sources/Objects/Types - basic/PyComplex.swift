@@ -81,10 +81,9 @@ internal final class PyComplex: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashableResult {
-    let hasher = self.context.hasher
-    let realHash = hasher.hash(self.real)
-    let imagHash = hasher.hash(self.imag)
-    return .value(realHash + hasher._PyHASH_IMAG * imagHash)
+    let realHash = HashHelper.hash(self.real)
+    let imagHash = HashHelper.hash(self.imag)
+    return .value(realHash + HashHelper._PyHASH_IMAG * imagHash)
   }
 
   // MARK: - String

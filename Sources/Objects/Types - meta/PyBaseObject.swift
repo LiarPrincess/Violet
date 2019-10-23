@@ -61,7 +61,7 @@ internal enum PyBaseObject {
   // sourcery: pymethod = __hash__
   internal static func hash(zelf: PyObject) -> HashableResult {
     let id = ObjectIdentifier(zelf)
-    return .value(zelf.context.hasher.hash(id))
+    return .value(HashHelper.hash(id))
   }
 
   // MARK: - String
