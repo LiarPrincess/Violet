@@ -104,13 +104,6 @@ public class PyObject {
     return self.context._range(start: start, stop: stop, step: step)
   }
 
-  // MARK: - Class
-
-  // sourcery: pymethod = __class_
-  internal func getClass() -> PyType {
-    return self.type
-  }
-
   // MARK: - Repr
 
   /// This flag is used to control infinite recursion in `repr`, `str`, `print`

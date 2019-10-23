@@ -15,7 +15,6 @@ internal class PyTypeWeakRef {
   }
 }
 
-// sourcery: pytype = type
 internal final class PyType: PyObject {
 
   internal static let doc: String = """
@@ -87,10 +86,10 @@ internal final class PyType: PyObject {
 
   /// NEVER EVER use this function!
   /// This is a reserved for `objectType` and `typeType`.
-  internal static func createTypeWithoutTypeProperty(_ context: PyContext,
-                                                     name: String,
-                                                     doc:  String,
-                                                     base: PyType?) -> PyType {
+  internal static func initWithoutType(_ context: PyContext,
+                                       name: String,
+                                       doc:  String,
+                                       base: PyType?) -> PyType {
     let mro = base.map(PyType.linearizeMRO)
     return PyType(context, name: name, doc: doc, mro: mro)
   }

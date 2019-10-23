@@ -9,7 +9,7 @@ import Core
 // sourcery: pytype = range
 /// The range type represents an immutable sequence of numbers
 /// and is commonly used for looping a specific number of times in for loops.
-internal final class PyRange: PyObject, GenericNotEqual {
+internal final class PyRange: PyObject {
 
   internal static let doc: String = """
     range(stop) -> range object
@@ -104,8 +104,8 @@ internal final class PyRange: PyObject, GenericNotEqual {
   }
 
   // sourcery: pymethod = __ne__
-  func isNotEqual(_ other: PyObject) -> EquatableResult {
-    return self.genericIsNotEqual(other)
+  internal func isNotEqual(_ other: PyObject) -> EquatableResult {
+    return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable

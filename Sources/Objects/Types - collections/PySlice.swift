@@ -7,7 +7,7 @@ import Core
 // sourcery: pytype = slice
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
-internal final class PySlice: PyObject, GenericNotEqual {
+internal final class PySlice: PyObject {
 
   internal static let doc: String = """
     slice(stop)
@@ -52,8 +52,8 @@ internal final class PySlice: PyObject, GenericNotEqual {
   }
 
   // sourcery: pymethod = __ne__
-  func isNotEqual(_ other: PyObject) -> EquatableResult {
-    return self.genericIsNotEqual(other)
+  internal func isNotEqual(_ other: PyObject) -> EquatableResult {
+    return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable

@@ -2,7 +2,6 @@ import Core
 
 // swiftlint:disable yoda_condition
 
-// TODO: Move this to extension? + fancy griuping in extensions
 internal enum SequenceHelper {
 
   // MARK: - Equatable

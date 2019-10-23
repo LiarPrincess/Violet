@@ -1,6 +1,32 @@
 import types as t
 
+{% macro printProperties properties %}
+  {% for prop in properties|annotated:"pyproperty" %}
+    '{{ prop.annotations.pyproperty }}',
+  {% endfor %}
+{% endmacro %}
+
+{% macro printMethods methods %}
+  {% for method in methods|annotated:"pymethod" %}
+    '{{ method.annotations.pymethod }}',
+  {% endfor %}
+{% endmacro %}
+
 types = {
+{% for type in types.enums where type.name == "PyBaseObject" %}
+  object: [
+    '__class__',
+    {% call printProperties type.staticMethods %}
+    {% call printMethods type.staticMethods %}
+  ],
+{% endfor %}
+{% for type in types.classes where type.name == "PyType" %}
+  type: [
+    '__class__',
+    {% call printProperties type.methods %}
+    {% call printMethods type.methods %}
+  ],
+{% endfor %}
 {% for type in types.classes|annotated:"pytype" %}
   {% if type.annotations.pytype == "NoneType" %}type(None): [
   {% elif type.annotations.pytype == "NotImplementedType" %}type(NotImplemented): [
@@ -13,13 +39,9 @@ types = {
   {% elif type.annotations.pytype == "builtinMethod" %}t.BuiltinMethodType: [
   {% else %}{{ type.annotations.pytype }}: [
   {% endif %}
-  {% for prop in type.methods|annotated:"pyproperty" %}
-    '{{ prop.annotations.pyproperty }}',
-  {% endfor %}
     '__class__',
-  {% for method in type.methods|annotated:"pymethod" %}
-    '{{ method.annotations.pymethod }}',
-  {% endfor %}
+    {% call printProperties type.methods %}
+    {% call printMethods type.methods %}
   ],
 {% endfor %}
 }

@@ -1,6 +1,8 @@
 
 import types as t
 
+
+
 types = {
   object: [
     '__class__',
@@ -14,12 +16,29 @@ types = {
     '__repr__',
     '__str__',
     '__format__',
+    '__class_',
     '__dir__',
     '__getattribute__',
     '__setattr__',
     '__delattr__',
     '__subclasshook__',
     '__init_subclass__',
+  ],
+  type: [
+    '__class__',
+    '__name__',
+    '__qualname__',
+    '__module__',
+    '__bases__',
+    '__dict__',
+    '__repr__',
+    '__subclasses__',
+    '__instancecheck__',
+    '__subclasscheck__',
+    '__getattribute__',
+    '__setattr__',
+    '__delattr__',
+    '__dir__',
   ],
   bool: [
     '__class__',
@@ -212,8 +231,8 @@ types = {
     '__call__',
   ],
   t.ModuleType: [
-    '__dict__',
     '__class__',
+    '__dict__',
     '__repr__',
     '__getattribute__',
     '__setattr__',
@@ -278,21 +297,4 @@ types = {
     '__mul__',
     '__rmul__',
   ],
-  type: [
-    '__name__',
-    '__qualname__',
-    '__module__',
-    '__bases__',
-    '__dict__',
-    '__class__',
-    '__repr__',
-    '__subclasses__',
-    '__instancecheck__',
-    '__subclasscheck__',
-    '__getattribute__',
-    '__setattr__',
-    '__delattr__',
-    '__dir__',
-  ],
-  BaseException: []
 }

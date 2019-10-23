@@ -56,22 +56,13 @@ internal final class PyContextTypes {
   internal let module: PyType
 
   fileprivate init(context: PyContext) {
+    // Requirements:
     // 1. `type` inherits from `object`
-    // 2. both `type` and `object are instances of `type`.
+    // 2. both `type` and `object` are instances of `type`
+    // And yes, it is a cycle that will never be deallocated
 
-    // TODO: How does Sourcery + our class work here? maybe manually create dict?
-    self.object = PyType.createTypeWithoutTypeProperty(
-      context,
-      name: "object",
-      doc: PyBaseObject.doc,
-      base: nil
-    )
-    self.type = PyType.createTypeWithoutTypeProperty(
-      context,
-      name: "type",
-      doc: PyType.doc,
-      base: self.object
-    )
+    self.object = PyType.objectWithoutType(context)
+    self.type = PyType.typeWithoutType(context, base: self.object)
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
@@ -84,7 +75,6 @@ internal final class PyContextTypes {
     self.bool    = PyType.bool(context,    type: self.type, base: self.int)
     self.complex = PyType.complex(context, type: self.type, base: self.object)
 
-    // TODO: set, dict, string
     self.tuple = PyType.tuple(context, type: self.type, base: self.object)
     self.list  = PyType.list(context,  type: self.type, base: self.object)
 //    self.set   = PyType(context, name: "set",   type: self.type, base: self.object)

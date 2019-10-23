@@ -6,8 +6,27 @@ object
     __reduce_ex__
     __sizeof__
   Why do we even have this?
+    __class_
     __subclasshook__
     __init_subclass__
+
+type
+  Unimplemented:
+    __base__ - <class 'type'>
+    __basicsize__ - <class 'int'>
+    __dictoffset__ - <class 'int'>
+    __flags__ - <class 'int'>
+    __itemsize__ - <class 'int'>
+    __mro__ - <class 'tuple'>
+    __new__ - <class 'builtin_function_or_method'>
+    __prepare__ - <class 'builtin_function_or_method'>
+    __text_signature__ - <class 'NoneType'>
+    __weakrefoffset__ - <class 'int'>
+    __abstractmethods__
+    __call__
+    __init__
+    __sizeof__
+    mro
 
 bool
 
@@ -199,42 +218,4 @@ tuple
     __getattribute__
     __getnewargs__
     __iter__
-
-type
-  Unimplemented:
-    __base__ - <class 'type'>
-    __basicsize__ - <class 'int'>
-    __dictoffset__ - <class 'int'>
-    __flags__ - <class 'int'>
-    __itemsize__ - <class 'int'>
-    __mro__ - <class 'tuple'>
-    __new__ - <class 'builtin_function_or_method'>
-    __prepare__ - <class 'builtin_function_or_method'>
-    __text_signature__ - <class 'NoneType'>
-    __weakrefoffset__ - <class 'int'>
-    __abstractmethods__
-    __call__
-    __init__
-    __sizeof__
-    mro
-
-BaseException
-  Unimplemented:
-    __class__ - <class 'type'>
-    __dict__ - <class 'mappingproxy'>
-    __new__ - <class 'builtin_function_or_method'>
-    __cause__
-    __context__
-    __delattr__
-    __getattribute__
-    __init__
-    __reduce__
-    __repr__
-    __setattr__
-    __setstate__
-    __str__
-    __suppress_context__
-    __traceback__
-    args
-    with_traceback
 
