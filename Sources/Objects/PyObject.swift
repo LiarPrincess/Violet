@@ -60,6 +60,10 @@ public class PyObject {
     return self.type.context
   }
 
+  internal var builtins: Builtins {
+    return self.context.builtins
+  }
+
   internal func int(_ value: BigInt) -> PyInt {
     return self.context._int(value)
   }

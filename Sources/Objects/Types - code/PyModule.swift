@@ -2,7 +2,7 @@
 // Objects -> moduleobject.c
 
 // sourcery: pytype = module
-public final class PyModule: PyObject, AttributesOwner {
+public class PyModule: PyObject, AttributesOwner {
 
   public static let doc: String = """
     module(name, doc=None)
@@ -62,54 +62,42 @@ public final class PyModule: PyObject, AttributesOwner {
 
   // sourcery: pymethod = __getattribute__
   public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    let m = self
+    let attr = AttributeHelper.getAttribute(zelf: m, name: name)
+
+    switch attr {
+    case let .value(v):
+      return .value(v)
+    case let .error(e):
+      switch e {
+      case .attributeError: break // attr error -> there is still hope!
+      default: return attr // normal error -> end with error
+      }
+    }
+
     guard let nameString = name as? PyString else {
       return .error(
         .typeError("attribute name must be string, not '\(name.typeName)'")
       )
     }
 
-    return self.getAttribute(name: nameString.value)
-  }
-
-  public func getAttribute(name: String) -> PyResult<PyObject> {
-    if let value = self._attributes.get(key: name) {
-      return .value(value)
-    }
-
-    if case let .value(v) = self.type.getAttribute(name: name) {
-      return .value(v)
+    if let getAttr = self._attributes["__getattr__"] {
+      return self.builtins.call(getAttr, args: [self, name])
     }
 
     return .error(
-      .attributeError("module '\(self.name)' has no attribute '\(name)'")
+      .attributeError("module \(self.name) has no attribute '\(nameString.value)'")
     )
   }
 
   // sourcery: pymethod = __setattr__
   public func setAttribute(name: PyObject, value: PyObject) -> PyResult<()> {
-    guard let nameString = name as? PyString else {
-      return .error(
-        .typeError("attribute name must be string, not '\(name.typeName)'")
-      )
-    }
-
-    return self.setAttribute(name: nameString.value, value: value)
-  }
-
-  public func setAttribute(name: String, value: PyObject) -> PyResult<()> {
-    self._attributes.set(key: name, to: value)
-    return .value()
+    return AttributeHelper.setAttribute(zelf: self, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
   public func delAttribute(name: PyObject) -> PyResult<()> {
-    guard let nameString = name as? PyString else {
-      return .error(
-        .typeError("attribute name must be string, not '\(name.typeName)'")
-      )
-    }
-
-    return self.delAttribute(name: nameString.value)
+    return AttributeHelper.delAttribute(zelf: self, name: name)
   }
 
   public func delAttribute(name: String) -> PyResult<()> {
