@@ -341,9 +341,9 @@ extension PyType {
     // result.__class__ = PyModule.getClass() -> PyType
 
     // result.__repr__ = PyModule.repr() -> String
-    // result.__getattribute__ = PyModule.getAttribute(name: String) -> PyResult<PyObject>
-    // result.__setattr__ = PyModule.setAttribute(name: String, value: PyObject) -> Void
-    // result.__delattr__ = PyModule.delAttribute(name: String) -> PyResult<PyObject>
+    // result.__getattribute__ = PyModule.getAttribute(name: PyObject) -> PyResult<PyObject>
+    // result.__setattr__ = PyModule.setAttribute(name: PyObject, value: PyObject) -> PyResult<()>
+    // result.__delattr__ = PyModule.delAttribute(name: PyObject) -> PyResult<()>
     // result.__dir__ = PyModule.dir() -> DirResult
     // result.__class__ = PyObject.getClass -> PyType
 

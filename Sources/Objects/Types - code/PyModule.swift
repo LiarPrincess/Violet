@@ -61,6 +61,16 @@ public final class PyModule: PyObject, AttributesOwner {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    guard let nameString = name as? PyString else {
+      return .error(
+        .typeError("attribute name must be string, not '\(name.typeName)'")
+      )
+    }
+
+    return self.getAttribute(name: nameString.value)
+  }
+
   public func getAttribute(name: String) -> PyResult<PyObject> {
     if let value = self._attributes.get(key: name) {
       return .value(value)
@@ -76,15 +86,36 @@ public final class PyModule: PyObject, AttributesOwner {
   }
 
   // sourcery: pymethod = __setattr__
-  public func setAttribute(name: String, value: PyObject) {
+  public func setAttribute(name: PyObject, value: PyObject) -> PyResult<()> {
+    guard let nameString = name as? PyString else {
+      return .error(
+        .typeError("attribute name must be string, not '\(name.typeName)'")
+      )
+    }
+
+    return self.setAttribute(name: nameString.value, value: value)
+  }
+
+  public func setAttribute(name: String, value: PyObject) -> PyResult<()> {
     self._attributes.set(key: name, to: value)
+    return .value()
   }
 
   // sourcery: pymethod = __delattr__
-  public func delAttribute(name: String) -> PyResult<PyObject> {
+  public func delAttribute(name: PyObject) -> PyResult<()> {
+    guard let nameString = name as? PyString else {
+      return .error(
+        .typeError("attribute name must be string, not '\(name.typeName)'")
+      )
+    }
+
+    return self.delAttribute(name: nameString.value)
+  }
+
+  public func delAttribute(name: String) -> PyResult<()> {
     switch self._attributes.del(key: name) {
-    case let .some(v):
-      return .value(v)
+    case .some:
+      return .value()
     case .none:
       return .error(
         .attributeError("module '\(self.name)' has no attribute '\(name)'")
