@@ -5,7 +5,7 @@ internal protocol AttributesOwner {
 
 /// Dictionary used for `__dict__`.
 /// Basically a Swift Dictionary, but as a reference type.
-public final class Attributes {
+public final class Attributes: Equatable {
 
   private var _values = [String:PyObject]()
 
@@ -43,5 +43,31 @@ public final class Attributes {
 
   internal var keys: KeysType {
     return self._values.keys
+  }
+
+  // MARK: - Equatable
+
+  public static func == (lhs: Attributes, rhs: Attributes) -> Bool {
+    guard lhs._values.count == rhs._values.count else {
+      return false
+    }
+
+    for (key, lhsObject) in lhs._values {
+      guard let rhsObject = rhs._values[key] else {
+        return false
+      }
+
+      let context = lhsObject.context
+      switch context.isEqual(left: lhsObject, right: rhsObject) {
+      case .value(true):
+        break // next one please!
+      case .value(false),
+           .notImplemented,
+           .error:
+        return false
+      }
+    }
+
+    return true
   }
 }

@@ -54,6 +54,7 @@ internal final class PyContextTypes {
 //  internal let string: PyType
 
   internal let module: PyType
+  internal let namespace: PyType
 
   fileprivate init(context: PyContext) {
     // Requirements:
@@ -66,9 +67,9 @@ internal final class PyContextTypes {
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
-    self.none     = PyType.NoneType(context, type: self.type, base: self.object)
+    self.none     = PyType.none(context, type: self.type, base: self.object)
     self.ellipsis = PyType.ellipsis(context, type: self.type, base: self.object)
-    self.notImplemented = PyType.NotImplementedType(context, type: self.type, base: self.object)
+    self.notImplemented = PyType.notImplemented(context, type: self.type, base: self.object)
 
     self.int     = PyType.int(context,     type: self.type, base: self.object)
     self.float   = PyType.float(context,   type: self.type, base: self.object)
@@ -86,6 +87,7 @@ internal final class PyContextTypes {
 //    self.string = PyType(context, name: "string", type: self.type, base: self.object)
 
     self.module = PyType.module(context, type: self.type, base: self.object)
+    self.namespace = PyType.simpleNamespace(context, type: self.type, base: self.object)
   }
 }
 /*

@@ -348,9 +348,30 @@ extension PyType {
     // result.__class__ = PyObject.getClass -> PyType
 
     return result
+    #warning("Type PyModule should be marked final.")
   }
 
-  internal static func NoneType(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+  internal static func simpleNamespace(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "types.SimpleNamespace", doc: PyNamespace.doc, type: type, base: base)
+
+    // result.__dict__ = PyNamespace.dict() -> Attributes
+
+    // result.__eq__ = PyNamespace.isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+    // result.__ne__ = PyNamespace.isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+    // result.__lt__ = PyNamespace.isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+    // result.__le__ = PyNamespace.isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+    // result.__gt__ = PyNamespace.isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+    // result.__ge__ = PyNamespace.isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+    // result.__repr__ = PyNamespace.repr() -> String
+    // result.__getattribute__ = PyNamespace.getAttribute(name: PyObject) -> PyResult<PyObject>
+    // result.__setattr__ = PyNamespace.setAttribute(name: PyObject, value: PyObject) -> PyResult<()>
+    // result.__delattr__ = PyNamespace.delAttribute(name: PyObject) -> PyResult<()>
+    // result.__class__ = PyObject.getClass -> PyType
+
+    return result
+  }
+
+  internal static func none(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NoneType", doc: nil, type: type, base: base)
 
     // result.__class__ = PyNone.getClass() -> PyType
@@ -362,7 +383,7 @@ extension PyType {
     return result
   }
 
-  internal static func NotImplementedType(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+  internal static func notImplemented(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NotImplementedType", doc: nil, type: type, base: base)
 
     // result.__class__ = PyNotImplemented.getClass() -> PyType

@@ -35,6 +35,7 @@ types = {
   {% elif type.annotations.pytype == "method" %}t.MethodType: [
   {% elif type.annotations.pytype == "builtinFunction" %}t.BuiltinFunctionType: [
   {% elif type.annotations.pytype == "builtinMethod" %}t.BuiltinMethodType: [
+  {% elif type.annotations.pytype == "types.SimpleNamespace" %}t.SimpleNamespace: [
   {% else %}{{ type.annotations.pytype }}: [
   {% endif %}
     {% call printProperties type.methods %}

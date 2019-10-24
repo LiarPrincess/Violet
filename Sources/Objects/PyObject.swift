@@ -110,17 +110,29 @@ public class PyObject {
 
   // MARK: - Repr
 
-  /// This flag is used to control infinite recursion in `repr`, `str`, `print`
-  /// etc.
+  /// This flag is used to control infinite recursion
+  /// in `repr`, `str`, `print` etc.
   internal var hasReprLock: Bool {
     return self.flags.contains(.reprLock)
   }
 
-  /// Set flag that is used to control infinite recursion in `repr`, `str`,
-  /// `print` etc.
-  internal func withReprLock<T>(body: () -> T) -> T {
+  /// Set flag that is used to control infinite recursion
+  /// in `repr`, `str`, `print` etc.
+  internal func enterReprLock() {
     self.flags.formUnion(.reprLock)
-    defer { _ = self.flags.subtracting(.reprLock) }
+  }
+
+  /// Unset flag that is used to control infinite recursion
+  /// in `repr`, `str`, `print` etc.
+  internal func leaveReprLock() {
+    _ = self.flags.subtracting(.reprLock)
+  }
+
+  /// Set flag that is used to control infinite recursion
+  /// in `repr`, `str`, `print` etc.
+  internal func withReprLock<T>(body: () -> T) -> T {
+    self.enterReprLock()
+    defer { self.leaveReprLock() }
 
     return body()
   }

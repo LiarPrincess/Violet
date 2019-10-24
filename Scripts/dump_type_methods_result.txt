@@ -161,6 +161,14 @@ module
     __new__ - <class 'builtin_function_or_method'>
     __init__
 
+SimpleNamespace
+  Unimplemented:
+    __class__ - <class 'type'>
+    __hash__ - <class 'NoneType'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+    __reduce__
+
 NoneType
 
 NotImplementedType

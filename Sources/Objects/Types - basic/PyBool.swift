@@ -52,7 +52,7 @@ internal final class PyBool: PyInt {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  override internal func getClass() -> PyType {
     return self.type
   }
 
