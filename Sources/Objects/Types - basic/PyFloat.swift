@@ -171,6 +171,13 @@ internal final class PyFloat: PyObject {
     return AttributeHelper.getAttribute(zelf: self, name: name)
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Sign
 
   // sourcery: pymethod = __pos__

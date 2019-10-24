@@ -6,7 +6,6 @@ object
     __reduce_ex__
     __sizeof__
   Why do we even have this?
-    __class_
     __subclasshook__
     __init_subclass__
 

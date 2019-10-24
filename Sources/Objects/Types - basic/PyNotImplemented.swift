@@ -21,6 +21,13 @@ internal final class PyNotImplemented: PyObject {
     return "NotImplemented"
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Reduce
 
   internal var reduce: String {

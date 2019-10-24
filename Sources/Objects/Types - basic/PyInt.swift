@@ -145,6 +145,13 @@ internal class PyInt: PyObject {
     return self.value
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Imaginary
 
   // sourcery: pymethod = real

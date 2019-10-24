@@ -92,6 +92,13 @@ public final class PyModule: PyObject, AttributesOwner {
     }
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__

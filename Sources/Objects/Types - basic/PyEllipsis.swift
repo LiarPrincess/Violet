@@ -22,6 +22,13 @@ internal final class PyEllipsis: PyObject {
     return "Ellipsis"
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Reduce
 
   // sourcery: pymethod = __reduce__

@@ -67,4 +67,11 @@ internal final class PyCode: PyObject {
     return "<code object \(self._code.name) at \(self.ptrString), " +
            "file '\(self.filename)', line \(self._code.firstLine)>"
   }
+
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
 }

@@ -182,6 +182,13 @@ internal final class PyType: PyObject, AttributesOwner {
     return self._attributes
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__

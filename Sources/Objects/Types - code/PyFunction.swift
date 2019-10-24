@@ -83,6 +83,13 @@ internal final class PyFunction: PyObject {
     return "<function \(self._qualname) at \(self.ptrString)>"
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Call
 
   // sourcery: pymethod = __call__

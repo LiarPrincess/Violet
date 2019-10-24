@@ -50,6 +50,13 @@ internal final class PyMethod: PyObject {
     return "<bound method \(funcName) of \(type) object at \(ptr)>"
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Call
 
   // sourcery: pymethod = __call__

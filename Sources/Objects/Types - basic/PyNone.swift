@@ -29,4 +29,11 @@ internal final class PyNone: PyObject {
   internal func asBool() -> PyResult<Bool> {
     return .value(false)
   }
+
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
 }

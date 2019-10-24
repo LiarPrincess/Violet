@@ -29,7 +29,7 @@ extension PyType {
     // result.__repr__ = PyBaseObject.repr(zelf: PyObject) -> String
     // result.__str__ = PyBaseObject.str(zelf: PyObject) -> String
     // result.__format__ = PyBaseObject.format(zelf: PyObject, spec: PyObject) -> PyResult<String>
-    // result.__class_ = PyBaseObject.getClass(zelf: PyObject) -> PyType
+    // result.__class__ = PyBaseObject.getClass(zelf: PyObject) -> PyType
     // result.__dir__ = PyBaseObject.dir(zelf: PyObject) -> DirResult
     // result.__getattribute__ = PyBaseObject.getAttribute(zelf: PyObject,                                    name: PyObject) -> PyResult<PyObject>
     // result.__setattr__ = PyBaseObject.setAttribute(zelf: PyObject,                                    name: PyObject,                                    value: PyObject) -> PyResult<()>
@@ -52,6 +52,7 @@ extension PyType {
     // result.__module__ = PyType.getModule(), setter: PyType.setModule -> String
     // result.__bases__ = PyType.getBases(), setter: PyType.setBases -> [PyType]
     // result.__dict__ = PyType.dict() -> Attributes
+    // result.__class__ = PyType.getClass() -> PyType
 
     // result.__repr__ = PyType.repr() -> String
     // result.__subclasses__ = PyType.subclasses() -> [PyType]
@@ -71,6 +72,7 @@ extension PyType {
   internal static func bool(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "bool", doc: PyBool.doc, type: type, base: base)
 
+    // result.__class__ = PyBool.getClass() -> PyType
 
     // result.__repr__ = PyBool.repr() -> String
     // result.__str__ = PyBool.str() -> String
@@ -88,6 +90,7 @@ extension PyType {
   internal static func builtinFunction(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "builtinFunction", doc: nil, type: type, base: base)
 
+    // result.__class__ = PyBuiltinFunctionOrMethod.getClass() -> PyType
 
     // result.__repr__ = PyBuiltinFunctionOrMethod.repr() -> String
     // result.__class__ = PyObject.getClass -> PyType
@@ -98,6 +101,7 @@ extension PyType {
   internal static func code(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "code", doc: PyCode.doc, type: type, base: base)
 
+    // result.__class__ = PyCode.getClass() -> PyType
 
     // result.__eq__ = PyCode.isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__lt__ = PyCode.isLess(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -114,6 +118,7 @@ extension PyType {
   internal static func complex(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "complex", doc: PyComplex.doc, type: type, base: base)
 
+    // result.__class__ = PyComplex.getClass() -> PyType
 
     // result.__eq__ = PyComplex.isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__ne__ = PyComplex.isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -158,6 +163,7 @@ extension PyType {
   internal static func ellipsis(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ellipsis", doc: nil, type: type, base: base)
 
+    // result.__class__ = PyEllipsis.getClass() -> PyType
 
     // result.__repr__ = PyEllipsis.repr() -> String
     // result.__getattribute__ = PyEllipsis.getAttribute(name: PyObject) -> PyResult<PyObject>
@@ -169,6 +175,7 @@ extension PyType {
   internal static func float(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "float", doc: PyFloat.doc, type: type, base: base)
 
+    // result.__class__ = PyFloat.getClass() -> PyType
 
     // result.__eq__ = PyFloat.isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__ne__ = PyFloat.isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -214,6 +221,7 @@ extension PyType {
   internal static func function(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "function", doc: PyFunction.doc, type: type, base: base)
 
+    // result.__class__ = PyFunction.getClass() -> PyType
 
     // result.__repr__ = PyFunction.repr() -> String
     // result.__call__ = PyFunction.call() -> PyResult<PyObject>
@@ -225,6 +233,7 @@ extension PyType {
   internal static func int(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "int", doc: PyInt.doc, type: type, base: base)
 
+    // result.__class__ = PyInt.getClass() -> PyType
 
     // result.__eq__ = PyInt.isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__ne__ = PyInt.isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -284,6 +293,7 @@ extension PyType {
   internal static func list(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "list", doc: PyList.doc, type: type, base: base)
 
+    // result.__class__ = PyList.getClass() -> PyType
 
     // result.__eq__ = PyList.isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__ne__ = PyList.isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -315,6 +325,7 @@ extension PyType {
   internal static func method(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "method", doc: PyMethod.doc, type: type, base: base)
 
+    // result.__class__ = PyMethod.getClass() -> PyType
 
     // result.__repr__ = PyMethod.repr() -> String
     // result.__call__ = PyMethod.call() -> PyResult<PyObject>
@@ -327,6 +338,7 @@ extension PyType {
     let result = PyType(context, name: "module", doc: PyModule.doc, type: type, base: base)
 
     // result.__dict__ = PyModule.dict() -> Attributes
+    // result.__class__ = PyModule.getClass() -> PyType
 
     // result.__repr__ = PyModule.repr() -> String
     // result.__getattribute__ = PyModule.getAttribute(name: String) -> PyResult<PyObject>
@@ -341,6 +353,7 @@ extension PyType {
   internal static func NoneType(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NoneType", doc: nil, type: type, base: base)
 
+    // result.__class__ = PyNone.getClass() -> PyType
 
     // result.__repr__ = PyNone.repr() -> String
     // result.__bool__ = PyNone.asBool() -> PyResult<Bool>
@@ -352,6 +365,7 @@ extension PyType {
   internal static func NotImplementedType(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NotImplementedType", doc: nil, type: type, base: base)
 
+    // result.__class__ = PyNotImplemented.getClass() -> PyType
 
     // result.__repr__ = PyNotImplemented.repr() -> String
     // result.__class__ = PyObject.getClass -> PyType
@@ -362,6 +376,7 @@ extension PyType {
   internal static func property(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "property", doc: PyProperty.doc, type: type, base: base)
 
+    // result.__class__ = PyProperty.getClass() -> PyType
 
     // result.__class__ = PyObject.getClass -> PyType
 
@@ -371,6 +386,7 @@ extension PyType {
   internal static func range(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "range", doc: PyRange.doc, type: type, base: base)
 
+    // result.__class__ = PyRange.getClass() -> PyType
 
     // result.__eq__ = PyRange.isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__ne__ = PyRange.isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -395,6 +411,7 @@ extension PyType {
   internal static func slice(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "slice", doc: PySlice.doc, type: type, base: base)
 
+    // result.__class__ = PySlice.getClass() -> PyType
 
     // result.__eq__ = PySlice.isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__ne__ = PySlice.isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -412,6 +429,7 @@ extension PyType {
   internal static func tuple(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "tuple", doc: PyTuple.doc, type: type, base: base)
 
+    // result.__class__ = PyTuple.getClass() -> PyType
 
     // result.__eq__ = PyTuple.isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
     // result.__ne__ = PyTuple.isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>

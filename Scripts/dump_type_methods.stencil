@@ -15,14 +15,12 @@ import types as t
 types = {
 {% for type in types.enums where type.name == "PyBaseObject" %}
   object: [
-    '__class__',
     {% call printProperties type.staticMethods %}
     {% call printMethods type.staticMethods %}
   ],
 {% endfor %}
 {% for type in types.classes where type.name == "PyType" %}
   type: [
-    '__class__',
     {% call printProperties type.methods %}
     {% call printMethods type.methods %}
   ],
@@ -39,7 +37,6 @@ types = {
   {% elif type.annotations.pytype == "builtinMethod" %}t.BuiltinMethodType: [
   {% else %}{{ type.annotations.pytype }}: [
   {% endif %}
-    '__class__',
     {% call printProperties type.methods %}
     {% call printMethods type.methods %}
   ],

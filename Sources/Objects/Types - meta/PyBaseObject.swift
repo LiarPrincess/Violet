@@ -94,7 +94,7 @@ internal enum PyBaseObject {
 
   // MARK: - Class
 
-  // sourcery: pymethod = __class_
+  // sourcery: pymethod = __class__
   internal static func getClass(zelf: PyObject) -> PyType {
     return zelf.type
   }

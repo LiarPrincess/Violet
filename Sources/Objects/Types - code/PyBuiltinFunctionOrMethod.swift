@@ -39,4 +39,11 @@ internal final class PyBuiltinFunctionOrMethod: PyObject {
     let type = self._self.typeName
     return "<built-in method \(name) of \(type) object at \(ptr)>"
   }
+
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
 }

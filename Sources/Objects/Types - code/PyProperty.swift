@@ -64,4 +64,11 @@ internal final class PyProperty: PyObject {
     #warning("Add to PyContext")
     super.init()
   }
+
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
 }

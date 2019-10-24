@@ -49,6 +49,13 @@ internal final class PyBool: PyInt {
     return self.repr()
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - And
 
   // sourcery: pymethod = __and__

@@ -120,6 +120,13 @@ internal final class PySlice: PyObject {
     return AttributeHelper.getAttribute(zelf: self, name: name)
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Indices
 
   /// S.indices(len) -> (start, stop, stride)

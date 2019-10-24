@@ -142,6 +142,13 @@ internal final class PyComplex: PyObject {
     return self.complex(real: self.real, imag: -self.imag)
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__

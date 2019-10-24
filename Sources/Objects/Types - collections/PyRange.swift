@@ -173,6 +173,13 @@ internal final class PyRange: PyObject {
     return .value(self.length.value > 0)
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
   // MARK: - Length
 
   // sourcery: pymethod = __len__
