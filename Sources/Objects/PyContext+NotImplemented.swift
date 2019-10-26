@@ -32,7 +32,7 @@ extension PyContext {
   }
 
   internal func _PyType_Name(value: PyType) -> String {
-    return value._name
+    return value.getName()
   }
 
   internal func PyType_IsSubtype(parent: PyType, subtype: PyType) -> Bool {

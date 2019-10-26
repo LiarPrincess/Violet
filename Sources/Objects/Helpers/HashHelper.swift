@@ -88,7 +88,6 @@ internal enum HashHelper {
     return sign * x
   }
 
-  // TODO: Implement this
   internal static func hash(_ value: String) -> PyHash {
     fatalError()
   }
