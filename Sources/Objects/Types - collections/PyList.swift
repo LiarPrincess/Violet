@@ -173,14 +173,16 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = append
-  internal func append(_ element: PyObject) {
+  internal func append(_ element: PyObject) -> PyResult<PyNone> {
     self.elements.append(element)
+    return .value(self.context._none)
   }
 
   // sourcery: pymethod = extend
-  internal func extend(_ iterator: PyObject) {
+  internal func extend(_ iterator: PyObject) -> PyResult<PyNone> {
     // Check if implementatio is OK with 'addInPlace'
     // TODO: Write this - list_extend(PyListObject *self, PyObject *iterable)
+    return .value(self.context._none)
   }
 
   internal func pop(index: BigInt = -1) -> PyResult<PyObject> {
@@ -209,8 +211,9 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = clear
-  internal func clear() {
+  internal func clear() -> PyResult<PyNone> {
     self.elements.removeAll()
+    return .value(self.context._none)
   }
 
   // sourcery: pymethod = copy

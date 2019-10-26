@@ -100,12 +100,12 @@ public final class PyNamespace: PyObject, AttributesOwner {
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject) -> PyResult<()> {
+  internal func setAttribute(name: PyObject, value: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(zelf: self, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<()> {
+  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
       return AttributeHelper.delAttribute(zelf: self, name: name)
   }
 }

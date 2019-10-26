@@ -208,7 +208,7 @@ internal final class PyType: PyObject, AttributesOwner {
   }
 
   // sourcery: pymethod = __subclasses__
-  internal func subclasses() -> [PyType] {
+  internal func getSubclasses() -> [PyType] {
     var result = [PyType]()
     for subclassRef in self._subclasses {
       if let subclass = subclassRef.value {
@@ -302,20 +302,20 @@ internal final class PyType: PyObject, AttributesOwner {
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject) -> PyResult<()> {
+  internal func setAttribute(name: PyObject, value: PyObject) -> PyResult<PyNone> {
     return .error(
       .typeError("can't set attributes of built-in/extension type '\(self.typeName)'")
     )
   }
 
-  internal func setAttribute(name: String, value: PyObject) -> PyResult<()> {
+  internal func setAttribute(name: String, value: PyObject) -> PyResult<PyNone> {
     return .error(
       .typeError("can't set attributes of built-in/extension type '\(self.typeName)'")
     )
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<()> {
+  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return self.setAttribute(name: name, value: self.context.none)
   }
 

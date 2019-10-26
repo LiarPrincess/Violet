@@ -58,7 +58,7 @@ internal enum AttributeHelper {
   ///                                  PyObject *dict)
   internal static func setAttribute(zelf: PyObject,
                                     name: PyObject,
-                                    value: PyObject) -> PyResult<()> {
+                                    value: PyObject) -> PyResult<PyNone> {
     guard let nameString = name as? PyString else {
       return .error(
         .typeError("attribute name must be string, not '\(name.typeName)'")
@@ -76,7 +76,8 @@ internal enum AttributeHelper {
 
       if let descrSet = descrSet {
         let args = [descr, zelf, value]
-        return zelf.context.call(descrSet, args: args).map { _ in () }
+        _ = zelf.context.call(descrSet, args: args)
+        return .value(zelf.context._none)
       }
     }
 
@@ -87,7 +88,7 @@ internal enum AttributeHelper {
         attribOwner.attributes.set(key: name, to: value)
       }
 
-      return .value()
+      return .value(zelf.context._none)
     }
 
     let msg = descr == nil ?
@@ -99,10 +100,10 @@ internal enum AttributeHelper {
 
   // MARK: - Del
 
-  /// Basically: `PyBaseObject.setAttribute` with `None` as value
+  /// Basically: `AttributeHelper.setAttribute` with `None` as value
   internal static func delAttribute(zelf: PyObject,
-                                    name: PyObject) -> PyResult<()> {
+                                    name: PyObject) -> PyResult<PyNone> {
     let none = zelf.context.none
-    return PyBaseObject.setAttribute(zelf: zelf, name: name, value: none)
+    return AttributeHelper.setAttribute(zelf: zelf, name: name, value: none)
   }
 }

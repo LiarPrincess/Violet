@@ -2,45 +2,49 @@
 // swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable file_length
-
-{% macro printProperties properties %}
-    {% for prop in properties|annotated:"pyproperty" %}
-    {% if prop.annotations.setter %}
-    // result.{{ prop.annotations.pyproperty }} = {{ type.name }}.{{ prop.name }}, setter: {{ type.name }}.{{ prop.annotations.setter }} -> {{ prop.returnTypeName }}
-    {% else %}
-    // result.{{ prop.annotations.pyproperty }} = {{ type.name }}.{{ prop.name }} -> {{ prop.returnTypeName }}
-    {% endif %}
-    {% endfor %}
-{% endmacro %}
-
-{% macro printMethods methods %}
-    {% for method in methods|annotated:"pymethod" %}
-    // result.{{ method.annotations.pymethod }} = {{ type.name }}.{{ method.name }} -> {{ method.returnTypeName }}
-    {% endfor %}
-    // result.__class__ = PyObject.getClass -> PyType
-{% endmacro %}
+// swiftlint:disable function_body_length
 
 {% macro warnIfNotFinal type %}
     {# All types (except for PyInt) have to be marked final #}
     {# Btw. stencil has problem with: 'not (type.isFinal or type.name == "PyInt")' #}
-    {% if not type.isFinal and type.name != "PyInt" %}
+    {% if not type.isFinal and type.name != "PyInt" and type.name != "PyModule" %}
     #warning("Type {{ type.name }} should be marked final.")
     {% endif %}
 {% endmacro %}
 
+{% macro fillDict type %}
+{#
+    {% for prop in methods|annotated:"pyproperty" %}
+    {% if prop.annotations.setter %}
+    {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
+    // result.{{ attribute }} = {{ type.name }}.{{ prop.name }}, setter: {{ type.name }}.{{ prop.annotations.setter }} -> {{ prop.returnTypeName }}
+    {% else %}
+    // result.{{ attribute }} = {{ type.name }}.{{ prop.name }} -> {{ prop.returnTypeName }}
+    {% endif %}
+    {% endfor %}
+ #}
+    {% for method in type.staticMethods|annotated:"pymethod" %}
+    {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
+    result.attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }})
+    {% endfor %}
+
+    {% for method in type.instanceMethods|annotated:"pymethod" %}
+    {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
+    {# {% set castSelf %}selfAs{{ type.annotations.pytype|default:"TODO"|replace:"Type",""|replace:"types",""|replace:".",""|upperFirstLetter }}{% endset %} #}
+    {% set castSelf %}selfAs{{ type.name }}{% endset %}
+    result.attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }}, castSelf: PyType.{{ castSelf }})
+    {% endfor %}
+{% endmacro %}
+
 extension PyType {
 
-  // MARK: - Object
+  // MARK: - Base object
 {% for type in types.enums where type.name == "PyBaseObject" %}
 
   /// Create `object` type without assigning `type` property.
   internal static func objectWithoutType(_ context: PyContext) -> PyType {
     let result = PyType.initWithoutType(context, name: "object", doc: PyBaseObject.doc, base: nil)
-
-    {% call printProperties type.staticMethods %}
-
-    {% call printMethods type.staticMethods %}
-
+    {% call fillDict type %}
     return result
   }
 {% endfor %}
@@ -50,33 +54,25 @@ extension PyType {
 
   /// Create `type` type without assigning `type` property.
   internal static func typeWithoutType(_ context: PyContext, base: PyType) -> PyType {
-    let result = PyType.initWithoutType(context, name: "type", doc: PyType.doc, base: base)
-
-    {% call printProperties type.methods %}
-
-    {% call printMethods type.methods %}
-
-    return result
     {% call warnIfNotFinal type %}
+    let result = PyType.initWithoutType(context, name: "type", doc: PyType.doc, base: base)
+    {% call fillDict type %}
+    return result
   }
 {% endfor %}
 
   // MARK: - Ordinary types
 {% for type in types.classes|annotated:"pytype" %}
 
+  {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
+  {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
+  {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
   {% set fnName %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
   internal static func {{ fnName }}(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
-    {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
-    {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
-    let result = PyType(context, name: "{{ type.annotations.pytype }}", doc: {{ docOrNil }}, type: type, base: base)
-
-    {% call printProperties type.methods %}
-
-    {% call printMethods type.methods %}
-
-    return result
     {% call warnIfNotFinal type %}
+    let result = PyType(context, name: "{{ type.annotations.pytype }}", doc: {{ docOrNil }}, type: type, base: base)
+    {% call fillDict type %}
+    return result
   }
 {% endfor %}
 }

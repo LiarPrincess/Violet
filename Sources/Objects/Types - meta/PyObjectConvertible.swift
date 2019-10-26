@@ -6,55 +6,56 @@ internal protocol PyObjectConvertible {
   func toPyObject(in context: PyContext) -> PyObject
 }
 
-extension BigInt {
+extension BigInt: PyObjectConvertible {
   internal func toPyObject(in context: PyContext) -> PyObject {
     return context.int(self)
   }
 }
 
-extension Bool {
+extension Bool: PyObjectConvertible {
   internal func toPyObject(in context: PyContext) -> PyObject {
     return self ? context.true : context.false
   }
 }
 
-extension Attributes {
+extension Attributes: PyObjectConvertible {
   internal func toPyObject(in context: PyContext) -> PyObject {
     fatalError()
   }
 }
 
-extension DirResult {
+extension DirResult: PyObjectConvertible {
   internal func toPyObject(in context: PyContext) -> PyObject {
     fatalError()
   }
 }
 
-extension String {
+extension String: PyObjectConvertible {
   internal func toPyObject(in context: PyContext) -> PyObject {
     return context.string(self)
   }
 }
 
-extension Array where Element == PyObject {
+extension Array: PyObjectConvertible where Element: PyObject {
   internal func toPyObject(in context: PyContext) -> PyObject {
-    return context.list(self)
+    let array = self.map { $0.toPyObject(in: context) }
+    return context.list(array)
   }
 }
 
-//extension Void {
-//  internal func toPyObject(in context: PyContext) -> PyObject {
-//    return context.none
-//  }
-//}
+extension PyHash: PyObjectConvertible {
+  internal func toPyObject(in context: PyContext) -> PyObject {
+    return context.int(BigInt(self))
+  }
+}
 
-extension PyObject {
+extension PyObject: PyObjectConvertible {
   internal func toPyObject(in context: PyContext) -> PyObject {
     return self
   }
 }
 
-extension PyResult where V: PyObjectConvertible {
+extension PyResult: PyObjectConvertible where V: PyObjectConvertible {
   internal func toPyObject(in context: PyContext) -> PyObject {
     switch self {
     case let .value(v): return v.toPyObject(in: context)
@@ -63,7 +64,7 @@ extension PyResult where V: PyObjectConvertible {
   }
 }
 
-extension PyResultOrNot where V: PyObjectConvertible {
+extension PyResultOrNot: PyObjectConvertible where V: PyObjectConvertible {
   internal func toPyObject(in context: PyContext) -> PyObject {
     switch self {
     case let .value(v): return v.toPyObject(in: context)

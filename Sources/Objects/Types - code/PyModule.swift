@@ -11,10 +11,14 @@ public class PyModule: PyObject, AttributesOwner {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  internal let attributes = Attributes()
+  internal let _attributes = Attributes()
+
+  internal var attributes: Attributes {
+    return self._attributes
+  }
 
   private var name: String {
-    guard let obj = self.attributes["__name__"] else {
+    guard let obj = self._attributes["__name__"] else {
       return "module"
     }
 
@@ -33,18 +37,18 @@ public class PyModule: PyObject, AttributesOwner {
 
   public init(_ context: PyContext, name: PyObject, doc: PyObject? = nil) {
     super.init(type: context.types.module)
-    self.attributes["__name__"] = name
-    self.attributes["__doc__"] = doc
-    self.attributes["__package__"] = context._none
-    self.attributes["__loader__"] = context._none
-    self.attributes["__spec__"] = context._none
+    self._attributes["__name__"] = name
+    self._attributes["__doc__"] = doc
+    self._attributes["__package__"] = context._none
+    self._attributes["__loader__"] = context._none
+    self._attributes["__spec__"] = context._none
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
   public func dict() -> Attributes {
-    return self.attributes
+    return self._attributes
   }
 
   // MARK: - String
@@ -77,7 +81,7 @@ public class PyModule: PyObject, AttributesOwner {
       )
     }
 
-    if let getAttr = self.attributes["__getattr__"] {
+    if let getAttr = self._attributes["__getattr__"] {
       return self.builtins.call(getAttr, args: [self, name])
     }
 
@@ -87,17 +91,17 @@ public class PyModule: PyObject, AttributesOwner {
   }
 
   // sourcery: pymethod = __setattr__
-  public func setAttribute(name: PyObject, value: PyObject) -> PyResult<()> {
+  public func setAttribute(name: PyObject, value: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(zelf: self, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
-  public func delAttribute(name: PyObject) -> PyResult<()> {
+  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(zelf: self, name: name)
   }
 
   public func delAttribute(name: String) -> PyResult<()> {
-    switch self.attributes.del(key: name) {
+    switch self._attributes.del(key: name) {
     case .some:
       return .value()
     case .none:
@@ -119,10 +123,10 @@ public class PyModule: PyObject, AttributesOwner {
   // sourcery: pymethod = __dir__
   internal func dir() -> DirResult {
     // Do not add `self.type` dir!
-    if let dirFunc = self.attributes["__dir__"] {
+    if let dirFunc = self._attributes["__dir__"] {
       return self.context.callDir(dirFunc, args: [])
     } else {
-      return DirResult(self.attributes.keys)
+      return DirResult(self._attributes.keys)
     }
   }
 }
