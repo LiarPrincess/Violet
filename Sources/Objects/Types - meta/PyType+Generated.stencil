@@ -13,8 +13,7 @@
 {% endmacro %}
 
 {% macro fillDict type %}
-{#
-    {% for prop in methods|annotated:"pyproperty" %}
+    {% for prop in type.instanceMethods|annotated:"pyproperty" %}
     {% if prop.annotations.setter %}
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     // result.{{ attribute }} = {{ type.name }}.{{ prop.name }}, setter: {{ type.name }}.{{ prop.annotations.setter }} -> {{ prop.returnTypeName }}
@@ -22,7 +21,7 @@
     // result.{{ attribute }} = {{ type.name }}.{{ prop.name }} -> {{ prop.returnTypeName }}
     {% endif %}
     {% endfor %}
- #}
+
     {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
     result.attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }})
@@ -60,9 +59,9 @@ extension PyType {
     return result
   }
 {% endfor %}
-
-  // MARK: - Ordinary types
 {% for type in types.classes|annotated:"pytype" %}
+
+  // MARK: - {{ type.name|replace:"Py","" }}
 
   {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
   {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}

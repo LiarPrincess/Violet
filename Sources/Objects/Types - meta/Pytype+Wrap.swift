@@ -106,6 +106,7 @@ extension PyType {
     name: String,
     doc: String?,
     func fn: @escaping (PyObject, PyObject, PyObject) -> R) -> PyBuiltinFunction {
+
     return PyBuiltinFunction(
       context,
       name: name,

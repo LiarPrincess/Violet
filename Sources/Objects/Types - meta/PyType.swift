@@ -81,11 +81,9 @@ internal final class PyType: PyObject, AttributesOwner {
       self._mro = [self]
     }
 
-    if let doc = self.getDocWithoutSignature(doc) {
-      self._attributes["__doc__"] = context._string(doc)
-    } else {
-      self._attributes["__doc__"] = context._none
-    }
+    self._attributes["__doc__"] = doc
+      .map(DocHelper.getDocWithoutSignature)
+      .map(context._string) ?? context._none
   }
 
   /// NEVER EVER use this function!
@@ -96,18 +94,6 @@ internal final class PyType: PyObject, AttributesOwner {
                                        base: PyType?) -> PyType {
     let mro = base.map(PyType.linearizeMRO)
     return PyType(context, name: name, doc: doc, mro: mro)
-  }
-
-  /// static const char *
-  /// _PyType_DocWithoutSignature(const char *name, const char *internal_doc)
-  private func getDocWithoutSignature(_ doc: String?) -> String? {
-    guard let doc = doc else {
-      return nil
-    }
-
-    let signatureEndMarker = ")\n--\n\n"
-    let signatureEnd = doc.range(of: signatureEndMarker)?.upperBound
-    return signatureEnd.map { doc.suffix(from: $0) }.map(String.init)
   }
 
   // MARK: - Name

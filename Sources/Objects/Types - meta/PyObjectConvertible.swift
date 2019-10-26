@@ -30,6 +30,17 @@ extension DirResult: PyObjectConvertible {
   }
 }
 
+extension Optional: PyObjectConvertible where Wrapped: PyObjectConvertible {
+  internal func toPyObject(in context: PyContext) -> PyObject {
+    switch self {
+    case let .some(v):
+      return v.toPyObject(in: context)
+    default:
+      return context.none
+    }
+  }
+}
+
 extension String: PyObjectConvertible {
   internal func toPyObject(in context: PyContext) -> PyObject {
     return context.string(self)

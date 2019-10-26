@@ -32,21 +32,9 @@ bool
 builtin_function_or_method
   Unimplemented:
     __module__ - <class 'str'>
-    __name__ - <class 'str'>
     __new__ - <class 'builtin_function_or_method'>
-    __qualname__ - <class 'str'>
-    __text_signature__ - <class 'NoneType'>
     __call__
-    __eq__
-    __ge__
-    __getattribute__
-    __gt__
-    __hash__
-    __le__
-    __lt__
-    __ne__
     __reduce__
-    __self__
 
 code
   Unimplemented:
