@@ -10,7 +10,7 @@ public final class PyNamespace: PyObject, AttributesOwner {
     SimpleNamespace(**kwargs)
     """
 
-  internal let attributes = Attributes()
+  internal let _attributes = Attributes()
 
   internal init(_ context: PyContext, name: PyObject, doc: PyObject? = nil) {
     super.init(type: context.types.namespace)
@@ -28,7 +28,7 @@ public final class PyNamespace: PyObject, AttributesOwner {
   }
 
   internal func isEqual(_ other: PyNamespace) -> Bool {
-    return self.attributes == other.attributes
+    return self._attributes == other._attributes
   }
 
   // sourcery: pymethod = __ne__
@@ -62,7 +62,7 @@ public final class PyNamespace: PyObject, AttributesOwner {
 
   // sourcery: pyproperty = __dict__
   public func dict() -> Attributes {
-    return self.attributes
+    return self._attributes
   }
 
   // MARK: - String
@@ -78,8 +78,8 @@ public final class PyNamespace: PyObject, AttributesOwner {
 
     return self.withReprLock {
       var list = [String]()
-      for key in self.attributes.keys.sorted() {
-        guard let value = self.attributes[key] else {
+      for key in self._attributes.keys.sorted() {
+        guard let value = self._attributes[key] else {
           continue // just, so that Swift does not shout at us
         }
 

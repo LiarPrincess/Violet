@@ -106,11 +106,11 @@ internal enum PyBaseObject {
     var result = DirResult()
 
     if let attribOwner = zelf as? AttributesOwner {
-      if let dirFunc = attribOwner.attributes["__dir__"] {
+      if let dirFunc = attribOwner._attributes["__dir__"] {
         let dir = zelf.context.callDir(dirFunc, args: [])
         result.append(contentsOf: dir)
       } else {
-        result.append(contentsOf: attribOwner.attributes.keys)
+        result.append(contentsOf: attribOwner._attributes.keys)
       }
     }
 

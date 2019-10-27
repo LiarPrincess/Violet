@@ -239,10 +239,16 @@ extension PyType {
     let result = PyType(context, name: "function", doc: PyFunction.doc, type: type, base: base)
 
     result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyFunction.getClass, castSelf: PyType.selfAsPyFunction)
+    result.attributes["__name__"] = PyType.createProperty(context, name: "__name__", doc: nil, get: PyFunction.getName, set: PyFunction.setName, castSelf: PyType.selfAsPyFunction)
+    result.attributes["__qualname__"] = PyType.createProperty(context, name: "__qualname__", doc: nil, get: PyFunction.getQualname, set: PyFunction.setQualname, castSelf: PyType.selfAsPyFunction)
+    result.attributes["__code__"] = PyType.createProperty(context, name: "__code__", doc: nil, get: PyFunction.getCode, castSelf: PyType.selfAsPyFunction)
+    result.attributes["__doc__"] = PyType.createProperty(context, name: "__doc__", doc: nil, get: PyFunction.getDoc, castSelf: PyType.selfAsPyFunction)
+    result.attributes["__module__"] = PyType.createProperty(context, name: "__module__", doc: nil, get: PyFunction.getModule, castSelf: PyType.selfAsPyFunction)
+    result.attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyFunction.dict, castSelf: PyType.selfAsPyFunction)
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyFunction.repr, castSelf: PyType.selfAsPyFunction)
-    result.attributes["__call__"] = PyType.wrapMethod(context, name: "__call__", doc: nil, func: PyFunction.call, castSelf: PyType.selfAsPyFunction)
+    result.attributes["__get__"] = PyType.wrapMethod(context, name: "__get__", doc: nil, func: PyFunction.callGet(object:), castSelf: PyType.selfAsPyFunction)
     return result
   }
 

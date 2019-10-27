@@ -13,10 +13,6 @@ public class PyModule: PyObject, AttributesOwner {
 
   internal let _attributes = Attributes()
 
-  internal var attributes: Attributes {
-    return self._attributes
-  }
-
   private var name: String {
     guard let obj = self._attributes["__name__"] else {
       return "module"

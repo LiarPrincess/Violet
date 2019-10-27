@@ -33,7 +33,7 @@ internal enum AttributeHelper {
     }
 
     if let attribOwner = zelf as? AttributesOwner,
-      let value = attribOwner.attributes.get(key: name) {
+      let value = attribOwner._attributes.get(key: name) {
       return .value(value)
     }
 
@@ -83,9 +83,9 @@ internal enum AttributeHelper {
 
     if let attribOwner = zelf as? AttributesOwner {
       if value is PyNone {
-        attribOwner.attributes.del(key: name)
+        attribOwner._attributes.del(key: name)
       } else {
-        attribOwner.attributes.set(key: name, to: value)
+        attribOwner._attributes.set(key: name, to: value)
       }
 
       return .value(zelf.context._none)

@@ -1,6 +1,6 @@
 /// For types that have `__dict__`.
 internal protocol AttributesOwner {
-  var attributes: Attributes { get }
+  var _attributes: Attributes { get }
 }
 
 /// Dictionary used for `__dict__`.

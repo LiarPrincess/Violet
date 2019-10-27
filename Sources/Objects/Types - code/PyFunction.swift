@@ -4,7 +4,7 @@ import Bytecode
 // Objects -> funcobject.c
 
 // sourcery: pytype = function
-internal final class PyFunction: PyObject {
+internal final class PyFunction: PyObject, AttributesOwner {
 
   internal static let doc: String = """
     function(code, globals, name=None, argdefs=None, closure=None)
@@ -24,36 +24,34 @@ internal final class PyFunction: PyObject {
     a tuple that supplies the bindings for free variables
     """
 
-  /// The __doc__ attribute, can be anything
-  private let _doc: String?
   /// The __name__ attribute, a string object
-  private let _name: String
+  internal var _name: String
   /// The qualified name
-  private let _qualname: String
+  internal var _qualname: String
+  /// The __doc__ attribute, can be anything
+  internal let _doc: String?
   /// The __dict__ attribute, a dict or NULL
-  internal let _dict: [String:PyObject]?
+  internal let _attributes = Attributes()
   /// The __module__ attribute, can be anything
-  private let _module: PyObject?
-
+  internal let _module: PyObject
   /// A code object, the __code__ attribute
-  private let _code: PyCode
+  internal let _code: PyCode
 
-  private let _globals: PyDict
-  private let _defaults: PyTuple?
-  private let _kwdefaults: PyDict?
-  private let _closure: PyTuple?
+  internal let _globals: Attributes
+  internal let _defaults: PyTuple?
+  internal let _kwdefaults: PyDict?
+  internal let _closure: PyTuple?
 
   internal init(_ context: PyContext,
                 qualname: String?,
                 code: PyCode,
-                globals: PyDict) {
+                globals: Attributes) {
     self._name = code._code.name
     self._qualname = qualname ?? code._code.name
-    // TODO: Add module
-    self._module = nil // globals.elements["__name__"] as? PyModule
-    self._dict = nil
-
     self._code = code
+
+    // __module__: If module name is in globals, use it. Otherwise, use None.
+    self._module = globals["__name__"] ?? context.none
 
     self._globals = globals
     self._defaults = nil
@@ -65,15 +63,7 @@ internal final class PyFunction: PyObject {
     default: self._doc = nil
     }
 
-    #warning("Add to PyContext")
-    super.init()
-  }
-
-  // MARK: - Name
-
-  // TODO: finish this
-  internal func getName() -> String {
-    return self._name
+    super.init(type: context.types.function)
   }
 
   // MARK: - String
@@ -90,10 +80,65 @@ internal final class PyFunction: PyObject {
     return self.type
   }
 
+  // MARK: - Properties
+
+  // sourcery: pyproperty = __name__, setter = setName
+  internal func getName() -> String {
+    return self._name
+  }
+
+  internal func setName(_ value: PyObject) -> PyResult<()> {
+    guard let value = value as? PyString else {
+      return .error(.typeError("__name__ must be set to a string object"))
+    }
+
+    self._name = value.value
+    return .value()
+  }
+
+  // sourcery: pyproperty = __qualname__, setter = setQualname
+  internal func getQualname() -> String {
+    return self._qualname
+  }
+
+  internal func setQualname(_ value: PyObject) -> PyResult<()> {
+    guard let value = value as? PyString else {
+      return .error(.typeError("__qualname__ must be set to a string object"))
+    }
+
+    self._qualname = value.value
+    return .value()
+  }
+
+  // sourcery: pyproperty = __code__
+  internal func getCode() -> PyCode {
+    return self._code
+  }
+
+  // sourcery: pyproperty = __doc__
+  internal func getDoc() -> String? {
+    return self._doc
+  }
+
+  // sourcery: pyproperty = __module__
+  internal func getModule() -> PyObject {
+    return self._module
+  }
+
+  // sourcery: pyproperty = __dict__
+  internal func dict() -> Attributes {
+    return self._attributes
+  }
+
   // MARK: - Call
 
-  // sourcery: pymethod = __call__
-  internal func call() -> PyResult<PyObject> {
+  // sourcery: pymethod = __get__
+  internal func callGet(object: PyObject) -> PyResult<PyObject> {
+    if object is PyNone {
+      return .value(self)
+    }
+
+    // return PyMethod_New(func, obj);
     fatalError()
   }
 }

@@ -161,8 +161,14 @@ types = {
   ],
   t.FunctionType: [
     '__class__',
+    '__name__',
+    '__qualname__',
+    '__code__',
+    '__doc__',
+    '__module__',
+    '__dict__',
     '__repr__',
-    '__call__',
+    '__get__',
   ],
   int: [
     '__class__',

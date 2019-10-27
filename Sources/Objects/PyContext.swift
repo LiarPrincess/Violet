@@ -57,6 +57,7 @@ internal final class PyContextTypes {
   internal let namespace: PyType
   internal let builtinFunction: PyType
   internal let property: PyType
+  internal let function: PyType
 
   fileprivate init(context: PyContext) {
     // Requirements:
@@ -92,6 +93,7 @@ internal final class PyContextTypes {
     self.namespace = PyType.simpleNamespace(context, type: self.type, base: self.object)
     self.builtinFunction = PyType.builtinFunction(context, type: self.type, base: self.object)
     self.property = PyType.property(context, type: self.type, base: self.object)
+    self.function = PyType.function(context, type: self.type, base: self.object)
   }
 }
 /*
