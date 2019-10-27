@@ -18,6 +18,7 @@ extension PyType {
   internal static func objectWithoutType(_ context: PyContext) -> PyType {
     let result = PyType.initWithoutType(context, name: "object", doc: PyBaseObject.doc, base: nil)
 
+
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyBaseObject.isEqual(zelf:other:))
     result.attributes["__ne__"] = PyType.wrapMethod(context, name: "__ne__", doc: nil, func: PyBaseObject.isNotEqual(zelf:other:))
     result.attributes["__lt__"] = PyType.wrapMethod(context, name: "__lt__", doc: nil, func: PyBaseObject.isLess(zelf:other:))
@@ -44,12 +45,13 @@ extension PyType {
   /// Create `type` type without assigning `type` property.
   internal static func typeWithoutType(_ context: PyContext, base: PyType) -> PyType {
     let result = PyType.initWithoutType(context, name: "type", doc: PyType.doc, base: base)
-    // result.__name__ = PyType.getName(), setter: PyType.setName -> String
-    // result.__qualname__ = PyType.getQualname(), setter: PyType.setQualname -> String
-    // result.__module__ = PyType.getModule(), setter: PyType.setModule -> String
-    // result.__bases__ = PyType.getBases(), setter: PyType.setBases -> [PyType]
-    // result. = PyType.dict() -> Attributes
-    // result. = PyType.getClass() -> PyType
+
+    result.attributes["__name__"] = PyType.createProperty(context, name: "__name__", doc: nil, get: PyType.getName, set: PyType.setName, castSelf: PyType.selfAsPyType)
+    result.attributes["__qualname__"] = PyType.createProperty(context, name: "__qualname__", doc: nil, get: PyType.getQualname, set: PyType.setQualname, castSelf: PyType.selfAsPyType)
+    result.attributes["__module__"] = PyType.createProperty(context, name: "__module__", doc: nil, get: PyType.getModule, set: PyType.setModule, castSelf: PyType.selfAsPyType)
+    result.attributes["__bases__"] = PyType.createProperty(context, name: "__bases__", doc: nil, get: PyType.getBases, set: PyType.setBases, castSelf: PyType.selfAsPyType)
+    result.attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyType.dict, castSelf: PyType.selfAsPyType)
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyType.getClass, castSelf: PyType.selfAsPyType)
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyType.repr, castSelf: PyType.selfAsPyType)
@@ -67,7 +69,8 @@ extension PyType {
 
   internal static func bool(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "bool", doc: PyBool.doc, type: type, base: base)
-    // result. = PyBool.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyBool.getClass, castSelf: PyType.selfAsPyBool)
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyBool.repr, castSelf: PyType.selfAsPyBool)
@@ -85,12 +88,13 @@ extension PyType {
 
   internal static func builtinFunction(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "builtinFunction", doc: nil, type: type, base: base)
-    // result. = PyBuiltinFunction.getClass() -> PyType
-    // result. = PyBuiltinFunction.getName() -> String
-    // result. = PyBuiltinFunction.getQualname() -> String
-    // result. = PyBuiltinFunction.getTextSignature() -> String?
-    // result. = PyBuiltinFunction.getModule() -> String
-    // result. = PyBuiltinFunction.getSelf() -> PyObject
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyBuiltinFunction.getClass, castSelf: PyType.selfAsPyBuiltinFunction)
+    result.attributes["__name__"] = PyType.createProperty(context, name: "__name__", doc: nil, get: PyBuiltinFunction.getName, castSelf: PyType.selfAsPyBuiltinFunction)
+    result.attributes["__qualname__"] = PyType.createProperty(context, name: "__qualname__", doc: nil, get: PyBuiltinFunction.getQualname, castSelf: PyType.selfAsPyBuiltinFunction)
+    result.attributes["__text_signature__"] = PyType.createProperty(context, name: "__text_signature__", doc: nil, get: PyBuiltinFunction.getTextSignature, castSelf: PyType.selfAsPyBuiltinFunction)
+    result.attributes["__module__"] = PyType.createProperty(context, name: "__module__", doc: nil, get: PyBuiltinFunction.getModule, castSelf: PyType.selfAsPyBuiltinFunction)
+    result.attributes["__self__"] = PyType.createProperty(context, name: "__self__", doc: nil, get: PyBuiltinFunction.getSelf, castSelf: PyType.selfAsPyBuiltinFunction)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyBuiltinFunction.isEqual(_:), castSelf: PyType.selfAsPyBuiltinFunction)
@@ -109,7 +113,8 @@ extension PyType {
 
   internal static func code(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "code", doc: PyCode.doc, type: type, base: base)
-    // result. = PyCode.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyCode.getClass, castSelf: PyType.selfAsPyCode)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyCode.isEqual(_:), castSelf: PyType.selfAsPyCode)
@@ -126,7 +131,8 @@ extension PyType {
 
   internal static func complex(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "complex", doc: PyComplex.doc, type: type, base: base)
-    // result. = PyComplex.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyComplex.getClass, castSelf: PyType.selfAsPyComplex)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyComplex.isEqual(_:), castSelf: PyType.selfAsPyComplex)
@@ -171,7 +177,8 @@ extension PyType {
 
   internal static func ellipsis(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ellipsis", doc: nil, type: type, base: base)
-    // result. = PyEllipsis.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyEllipsis.getClass, castSelf: PyType.selfAsPyEllipsis)
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyEllipsis.repr, castSelf: PyType.selfAsPyEllipsis)
@@ -183,7 +190,8 @@ extension PyType {
 
   internal static func float(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "float", doc: PyFloat.doc, type: type, base: base)
-    // result. = PyFloat.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyFloat.getClass, castSelf: PyType.selfAsPyFloat)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyFloat.isEqual(_:), castSelf: PyType.selfAsPyFloat)
@@ -229,7 +237,8 @@ extension PyType {
 
   internal static func function(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "function", doc: PyFunction.doc, type: type, base: base)
-    // result. = PyFunction.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyFunction.getClass, castSelf: PyType.selfAsPyFunction)
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyFunction.repr, castSelf: PyType.selfAsPyFunction)
@@ -241,7 +250,8 @@ extension PyType {
 
   internal static func int(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "int", doc: PyInt.doc, type: type, base: base)
-    // result. = PyInt.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyInt.getClass, castSelf: PyType.selfAsPyInt)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyInt.isEqual(_:), castSelf: PyType.selfAsPyInt)
@@ -301,7 +311,8 @@ extension PyType {
 
   internal static func list(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "list", doc: PyList.doc, type: type, base: base)
-    // result. = PyList.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyList.getClass, castSelf: PyType.selfAsPyList)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyList.isEqual(_:), castSelf: PyType.selfAsPyList)
@@ -333,7 +344,8 @@ extension PyType {
 
   internal static func method(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "method", doc: PyMethod.doc, type: type, base: base)
-    // result. = PyMethod.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: PyType.selfAsPyMethod)
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyMethod.repr, castSelf: PyType.selfAsPyMethod)
@@ -345,8 +357,9 @@ extension PyType {
 
   internal static func module(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "module", doc: PyModule.doc, type: type, base: base)
-    // result. = PyModule.dict() -> Attributes
-    // result. = PyModule.getClass() -> PyType
+
+    result.attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyModule.dict, castSelf: PyType.selfAsPyModule)
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyModule.getClass, castSelf: PyType.selfAsPyModule)
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyModule.repr, castSelf: PyType.selfAsPyModule)
@@ -361,7 +374,8 @@ extension PyType {
 
   internal static func simpleNamespace(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "types.SimpleNamespace", doc: PyNamespace.doc, type: type, base: base)
-    // result. = PyNamespace.dict() -> Attributes
+
+    result.attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyNamespace.dict, castSelf: PyType.selfAsPyNamespace)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyNamespace.isEqual(_:), castSelf: PyType.selfAsPyNamespace)
@@ -381,7 +395,8 @@ extension PyType {
 
   internal static func none(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NoneType", doc: nil, type: type, base: base)
-    // result. = PyNone.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyNone.getClass, castSelf: PyType.selfAsPyNone)
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyNone.repr, castSelf: PyType.selfAsPyNone)
@@ -393,7 +408,8 @@ extension PyType {
 
   internal static func notImplemented(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NotImplementedType", doc: nil, type: type, base: base)
-    // result. = PyNotImplemented.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyNotImplemented.getClass, castSelf: PyType.selfAsPyNotImplemented)
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyNotImplemented.repr, castSelf: PyType.selfAsPyNotImplemented)
@@ -404,10 +420,11 @@ extension PyType {
 
   internal static func property(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "property", doc: PyProperty.doc, type: type, base: base)
-    // result. = PyProperty.getClass() -> PyType
-    // result. = PyProperty.getFGet() -> PyObject
-    // result. = PyProperty.getFSet() -> PyObject
-    // result. = PyProperty.getFDel() -> PyObject
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyProperty.getClass, castSelf: PyType.selfAsPyProperty)
+    result.attributes["fget"] = PyType.createProperty(context, name: "fget", doc: nil, get: PyProperty.getFGet, castSelf: PyType.selfAsPyProperty)
+    result.attributes["fset"] = PyType.createProperty(context, name: "fset", doc: nil, get: PyProperty.getFSet, castSelf: PyType.selfAsPyProperty)
+    result.attributes["fdel"] = PyType.createProperty(context, name: "fdel", doc: nil, get: PyProperty.getFDel, castSelf: PyType.selfAsPyProperty)
 
 
     result.attributes["__getattribute__"] = PyType.wrapMethod(context, name: "__getattribute__", doc: nil, func: PyProperty.getAttribute(name:), castSelf: PyType.selfAsPyProperty)
@@ -421,7 +438,8 @@ extension PyType {
 
   internal static func range(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "range", doc: PyRange.doc, type: type, base: base)
-    // result. = PyRange.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyRange.getClass, castSelf: PyType.selfAsPyRange)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyRange.isEqual(_:), castSelf: PyType.selfAsPyRange)
@@ -446,7 +464,8 @@ extension PyType {
 
   internal static func slice(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "slice", doc: PySlice.doc, type: type, base: base)
-    // result. = PySlice.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PySlice.getClass, castSelf: PyType.selfAsPySlice)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PySlice.isEqual(_:), castSelf: PyType.selfAsPySlice)
@@ -464,7 +483,8 @@ extension PyType {
 
   internal static func tuple(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "tuple", doc: PyTuple.doc, type: type, base: base)
-    // result. = PyTuple.getClass() -> PyType
+
+    result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: PyType.selfAsPyTuple)
 
 
     result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyTuple.isEqual(_:), castSelf: PyType.selfAsPyTuple)

@@ -79,6 +79,7 @@ private func linearize(baseClasses: [PyObject]) -> LinearizationResult {
   return .value(MRO(baseClasses: baseClasses, resolutionOrder: result))
 }
 
+// swiftlint:disable:next discouraged_optional_collection
 private func asPyTypes(_ baseClasses: [PyObject]) -> [PyType]? {
   var result = [PyType]()
   for base in baseClasses {

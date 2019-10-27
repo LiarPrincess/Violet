@@ -5,7 +5,7 @@
 // swiftlint:disable function_body_length
 
 {% macro warnIfNotFinal type %}
-    {# All types (except for PyInt) have to be marked final #}
+    {# (Almost) All types have to be marked final #}
     {# Btw. stencil has problem with: 'not (type.isFinal or type.name == "PyInt")' #}
     {% if not type.isFinal and type.name != "PyInt" and type.name != "PyModule" %}
     #warning("Type {{ type.name }} should be marked final.")
@@ -13,12 +13,15 @@
 {% endmacro %}
 
 {% macro fillDict type %}
-    {% for prop in type.instanceMethods|annotated:"pyproperty" %}
-    {% if prop.annotations.setter %}
+  {% set castSelf %}selfAs{{ type.name }}{% endset %}
+
+  {% for prop in type.instanceMethods|annotated:"pyproperty" %}
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
-    // result.{{ attribute }} = {{ type.name }}.{{ prop.name }}, setter: {{ type.name }}.{{ prop.annotations.setter }} -> {{ prop.returnTypeName }}
+    {% set getter %}{{ type.name }}.{{ prop.selectorName }}{% endset %}
+    {% if prop.annotations.setter %}
+    result.attributes["{{ attribute }}"] = PyType.createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: PyType.{{ castSelf }})
     {% else %}
-    // result.{{ attribute }} = {{ type.name }}.{{ prop.name }} -> {{ prop.returnTypeName }}
+    result.attributes["{{ attribute }}"] = PyType.createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: PyType.{{ castSelf }})
     {% endif %}
     {% endfor %}
 
@@ -29,10 +32,8 @@
 
     {% for method in type.instanceMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    {# {% set castSelf %}selfAs{{ type.annotations.pytype|default:"TODO"|replace:"Type",""|replace:"types",""|replace:".",""|upperFirstLetter }}{% endset %} #}
-    {% set castSelf %}selfAs{{ type.name }}{% endset %}
     result.attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }}, castSelf: PyType.{{ castSelf }})
-    {% endfor %}
+  {% endfor %}
 {% endmacro %}
 
 extension PyType {
