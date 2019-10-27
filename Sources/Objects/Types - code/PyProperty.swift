@@ -94,7 +94,7 @@ internal final class PyProperty: PyObject {
   // MARK: - Call
 
   // sourcery: pymethod = __get__
-  internal func callGet(object: PyObject) -> PyResult<PyObject> {
+  internal func get(object: PyObject) -> PyResult<PyObject> {
     if object is PyNone {
       return .value(self)
     }
@@ -107,7 +107,7 @@ internal final class PyProperty: PyObject {
   }
 
   // sourcery: pymethod = __set__
-  internal func callSet(object: PyObject, value: PyObject) -> PyResult<PyObject> {
+  internal func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
     let isDelete = value is PyNone
     let fnOrNil = isDelete ? self._deleter : self._setter
 
@@ -120,7 +120,7 @@ internal final class PyProperty: PyObject {
   }
 
   // sourcery: pymethod = __delete__
-  internal func callDel(object: PyObject) -> PyResult<PyObject> {
-    self.callSet(object: object, value: self.context.none)
+  internal func del(object: PyObject) -> PyResult<PyObject> {
+    self.set(object: object, value: self.context.none)
   }
 }

@@ -133,12 +133,11 @@ internal final class PyFunction: PyObject, AttributesOwner {
   // MARK: - Call
 
   // sourcery: pymethod = __get__
-  internal func callGet(object: PyObject) -> PyResult<PyObject> {
+  internal func get(object: PyObject) -> PyResult<PyObject> {
     if object is PyNone {
       return .value(self)
     }
 
-    // return PyMethod_New(func, obj);
-    fatalError()
+    return .value(PyMethod(context, func: self, zelf: object))
   }
 }

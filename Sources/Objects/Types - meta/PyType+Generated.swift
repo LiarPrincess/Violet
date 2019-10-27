@@ -248,7 +248,7 @@ extension PyType {
 
 
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyFunction.repr, castSelf: PyType.selfAsPyFunction)
-    result.attributes["__get__"] = PyType.wrapMethod(context, name: "__get__", doc: nil, func: PyFunction.callGet(object:), castSelf: PyType.selfAsPyFunction)
+    result.attributes["__get__"] = PyType.wrapMethod(context, name: "__get__", doc: nil, func: PyFunction.get(object:), castSelf: PyType.selfAsPyFunction)
     return result
   }
 
@@ -354,8 +354,20 @@ extension PyType {
     result.attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: PyType.selfAsPyMethod)
 
 
+    result.attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyMethod.isEqual(_:), castSelf: PyType.selfAsPyMethod)
+    result.attributes["__ne__"] = PyType.wrapMethod(context, name: "__ne__", doc: nil, func: PyMethod.isNotEqual(_:), castSelf: PyType.selfAsPyMethod)
+    result.attributes["__lt__"] = PyType.wrapMethod(context, name: "__lt__", doc: nil, func: PyMethod.isLess(_:), castSelf: PyType.selfAsPyMethod)
+    result.attributes["__le__"] = PyType.wrapMethod(context, name: "__le__", doc: nil, func: PyMethod.isLessEqual(_:), castSelf: PyType.selfAsPyMethod)
+    result.attributes["__gt__"] = PyType.wrapMethod(context, name: "__gt__", doc: nil, func: PyMethod.isGreater(_:), castSelf: PyType.selfAsPyMethod)
+    result.attributes["__ge__"] = PyType.wrapMethod(context, name: "__ge__", doc: nil, func: PyMethod.isGreaterEqual(_:), castSelf: PyType.selfAsPyMethod)
     result.attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyMethod.repr, castSelf: PyType.selfAsPyMethod)
-    result.attributes["__call__"] = PyType.wrapMethod(context, name: "__call__", doc: nil, func: PyMethod.call, castSelf: PyType.selfAsPyMethod)
+    result.attributes["__hash__"] = PyType.wrapMethod(context, name: "__hash__", doc: nil, func: PyMethod.hash, castSelf: PyType.selfAsPyMethod)
+    result.attributes["__getattribute__"] = PyType.wrapMethod(context, name: "__getattribute__", doc: nil, func: PyMethod.getAttribute(name:), castSelf: PyType.selfAsPyMethod)
+    result.attributes["__setattr__"] = PyType.wrapMethod(context, name: "__setattr__", doc: nil, func: PyMethod.setAttribute(name:value:), castSelf: PyType.selfAsPyMethod)
+    result.attributes["__delattr__"] = PyType.wrapMethod(context, name: "__delattr__", doc: nil, func: PyMethod.delAttribute(name:), castSelf: PyType.selfAsPyMethod)
+    result.attributes["__func__"] = PyType.wrapMethod(context, name: "__func__", doc: nil, func: PyMethod.getFunc, castSelf: PyType.selfAsPyMethod)
+    result.attributes["__self__"] = PyType.wrapMethod(context, name: "__self__", doc: nil, func: PyMethod.getSelf, castSelf: PyType.selfAsPyMethod)
+    result.attributes["__get__"] = PyType.wrapMethod(context, name: "__get__", doc: nil, func: PyMethod.get(object:), castSelf: PyType.selfAsPyMethod)
     return result
   }
 
@@ -434,9 +446,9 @@ extension PyType {
 
 
     result.attributes["__getattribute__"] = PyType.wrapMethod(context, name: "__getattribute__", doc: nil, func: PyProperty.getAttribute(name:), castSelf: PyType.selfAsPyProperty)
-    result.attributes["__get__"] = PyType.wrapMethod(context, name: "__get__", doc: nil, func: PyProperty.callGet(object:), castSelf: PyType.selfAsPyProperty)
-    result.attributes["__set__"] = PyType.wrapMethod(context, name: "__set__", doc: nil, func: PyProperty.callSet(object:value:), castSelf: PyType.selfAsPyProperty)
-    result.attributes["__delete__"] = PyType.wrapMethod(context, name: "__delete__", doc: nil, func: PyProperty.callDel(object:), castSelf: PyType.selfAsPyProperty)
+    result.attributes["__get__"] = PyType.wrapMethod(context, name: "__get__", doc: nil, func: PyProperty.get(object:), castSelf: PyType.selfAsPyProperty)
+    result.attributes["__set__"] = PyType.wrapMethod(context, name: "__set__", doc: nil, func: PyProperty.set(object:value:), castSelf: PyType.selfAsPyProperty)
+    result.attributes["__delete__"] = PyType.wrapMethod(context, name: "__delete__", doc: nil, func: PyProperty.del(object:), castSelf: PyType.selfAsPyProperty)
     return result
   }
 
