@@ -31,7 +31,6 @@ bool
 
 builtin_function_or_method
   Unimplemented:
-    __module__ - <class 'str'>
     __new__ - <class 'builtin_function_or_method'>
     __call__
     __reduce__
@@ -167,16 +166,9 @@ NotImplementedType
 property
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
-    __delete__
-    __get__
-    __getattribute__
     __init__
     __isabstractmethod__
-    __set__
     deleter
-    fdel
-    fget
-    fset
     getter
     setter
 

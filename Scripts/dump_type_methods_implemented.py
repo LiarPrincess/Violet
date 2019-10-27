@@ -55,7 +55,7 @@ types = {
     '__name__',
     '__qualname__',
     '__text_signature__',
-    '__class__',
+    '__module__',
     '__self__',
     '__eq__',
     '__ne__',
@@ -280,6 +280,13 @@ types = {
   ],
   property: [
     '__class__',
+    'fget',
+    'fset',
+    'fdel',
+    '__getattribute__',
+    '__get__',
+    '__set__',
+    '__delete__',
   ],
   range: [
     '__class__',

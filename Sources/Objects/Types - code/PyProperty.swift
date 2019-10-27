@@ -1,12 +1,8 @@
 // In CPython:
 // Objects -> descrobject.c
 
-//static PyMethodDef property_methods[] = {
-//  {"getter", property_getter, METH_O, getter_doc},
-//  {"setter", property_setter, METH_O, setter_doc},
-//  {"deleter", property_deleter, METH_O, deleter_doc},
-
 // sourcery: pytype = property
+/// Native property implemented in Swift.
 internal final class PyProperty: PyObject {
 
   internal static let doc: String = """
@@ -61,8 +57,7 @@ internal final class PyProperty: PyObject {
     self._deleter = deleter is PyNone ? nil : deleter
     self._doc = nil
 
-    #warning("Add to PyContext")
-    super.init()
+    super.init(type: context.types.property)
   }
 
   // MARK: - Class
@@ -70,5 +65,62 @@ internal final class PyProperty: PyObject {
   // sourcery: pyproperty = __class__
   internal func getClass() -> PyType {
     return self.type
+  }
+
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    AttributeHelper.getAttribute(zelf: self, name: name)
+  }
+
+  // MARK: - Getters
+
+  // sourcery: pyproperty = fget
+  internal func getFGet() -> PyObject {
+    return self._getter ?? self.context.none
+  }
+
+  // sourcery: pyproperty = fset
+  internal func getFSet() -> PyObject {
+    return self._setter ?? self.context.none
+  }
+
+  // sourcery: pyproperty = fdel
+  internal func getFDel() -> PyObject {
+    return self._deleter ?? self.context.none
+  }
+
+  // MARK: - Call
+
+  // sourcery: pymethod = __get__
+  internal func callGet(object: PyObject) -> PyResult<PyObject> {
+    if object is PyNone {
+      return .value(self)
+    }
+
+    guard let propGet = self._getter else {
+      return .error(.attributeError("unreadable attribute"))
+    }
+
+    return self.context.call(propGet, args: [object])
+  }
+
+  // sourcery: pymethod = __set__
+  internal func callSet(object: PyObject, value: PyObject) -> PyResult<PyObject> {
+    let isDelete = value is PyNone
+    let fnOrNil = isDelete ? self._deleter : self._setter
+
+    guard let fn = fnOrNil else {
+      let msg = isDelete ? "can't delete attribute" : "can't set attribute"
+      return .error(.attributeError(msg))
+    }
+
+    return self.context.call(fn, args: [object, value])
+  }
+
+  // sourcery: pymethod = __delete__
+  internal func callDel(object: PyObject) -> PyResult<PyObject> {
+    self.callSet(object: object, value: self.context.none)
   }
 }

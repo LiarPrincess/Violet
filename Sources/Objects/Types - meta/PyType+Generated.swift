@@ -405,8 +405,15 @@ extension PyType {
   internal static func property(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "property", doc: PyProperty.doc, type: type, base: base)
     // result. = PyProperty.getClass() -> PyType
+    // result. = PyProperty.getFGet() -> PyObject
+    // result. = PyProperty.getFSet() -> PyObject
+    // result. = PyProperty.getFDel() -> PyObject
 
 
+    result.attributes["__getattribute__"] = PyType.wrapMethod(context, name: "__getattribute__", doc: nil, func: PyProperty.getAttribute(name:), castSelf: PyType.selfAsPyProperty)
+    result.attributes["__get__"] = PyType.wrapMethod(context, name: "__get__", doc: nil, func: PyProperty.callGet(object:), castSelf: PyType.selfAsPyProperty)
+    result.attributes["__set__"] = PyType.wrapMethod(context, name: "__set__", doc: nil, func: PyProperty.callSet(object:value:), castSelf: PyType.selfAsPyProperty)
+    result.attributes["__delete__"] = PyType.wrapMethod(context, name: "__delete__", doc: nil, func: PyProperty.callDel(object:), castSelf: PyType.selfAsPyProperty)
     return result
   }
 

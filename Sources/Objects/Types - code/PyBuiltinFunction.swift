@@ -107,16 +107,17 @@ internal final class PyBuiltinFunction: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> String {
-//    let name = self._func.getName()
-//
-//    if self._self is PyModule {
-//      return "<built-in function \(name)>"
-//    }
-//
-//    let ptr = self._self.ptrString
-//    let type = self._self.typeName
-//    return "<built-in method \(name) of \(type) object at \(ptr)>"
-    return ""
+    guard let zelf = self._self else {
+      return "<built-in function \(self._name)>"
+    }
+
+    if self._self is PyModule {
+      return "<built-in function \(self._name)>"
+    }
+
+    let ptr = zelf.ptrString
+    let type = zelf.typeName
+    return "<built-in method \(self._name) of \(type) object at \(ptr)>"
   }
 
   // MARK: - Attributes
@@ -173,7 +174,7 @@ internal final class PyBuiltinFunction: PyObject {
     return self._doc.map(DocHelper.getSignature)
   }
 
-  // sourcery: pyproperty = __class__
+  // sourcery: pyproperty = __module__
   internal func getModule() -> String {
     return "builtins"
   }
