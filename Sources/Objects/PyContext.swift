@@ -53,6 +53,7 @@ internal final class PyContextTypes {
 //  internal let enumerate: PyType
 //  internal let string: PyType
 
+  internal let code: PyType
   internal let module: PyType
   internal let namespace: PyType
   internal let builtinFunction: PyType
@@ -89,6 +90,7 @@ internal final class PyContextTypes {
 //    self.enumerate = PyType.enumerate(context, type: self.type, base: self.object)
 //    self.string = PyType(context, name: "string", type: self.type, base: self.object)
 
+    self.code = PyType.code(context, type: self.type, base: self.object)
     self.module = PyType.module(context, type: self.type, base: self.object)
     self.namespace = PyType.simpleNamespace(context, type: self.type, base: self.object)
     self.builtinFunction = PyType.builtinFunction(context, type: self.type, base: self.object)

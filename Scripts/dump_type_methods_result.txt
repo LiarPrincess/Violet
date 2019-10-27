@@ -2,8 +2,6 @@ object
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
     __init__
-    __reduce__
-    __reduce_ex__
     __sizeof__
   Why do we even have this?
     __subclasshook__
@@ -33,7 +31,6 @@ builtin_function_or_method
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
     __call__
-    __reduce__
 
 code
   Unimplemented:
@@ -64,9 +61,6 @@ complex
     __getnewargs__
 
 ellipsis
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __reduce__
 
 float
   Unimplemented:
@@ -136,7 +130,6 @@ method
     __le__
     __lt__
     __ne__
-    __reduce__
     __self__
     __setattr__
 
@@ -151,14 +144,10 @@ SimpleNamespace
     __hash__ - <class 'NoneType'>
     __new__ - <class 'builtin_function_or_method'>
     __init__
-    __reduce__
 
 NoneType
 
 NotImplementedType
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __reduce__
 
 property
   Unimplemented:
@@ -173,7 +162,6 @@ range
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
     __iter__
-    __reduce__
     __reversed__
     start
     step
@@ -183,7 +171,6 @@ slice
   Unimplemented:
     __hash__ - <class 'NoneType'>
     __new__ - <class 'builtin_function_or_method'>
-    __reduce__
     indices
     start
     step

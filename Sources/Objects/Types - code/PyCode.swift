@@ -11,14 +11,11 @@ internal final class PyCode: PyObject {
     """
 
   internal let _code: CodeObject
-
-  // TODO: Add 'filename' to CodeObject
-  private let filename: String = ""
+  internal let _filename = "" // TODO: Add 'filename' to CodeObject
 
   internal init(_ context: PyContext, code: CodeObject) {
     self._code = code
-    #warning("Add to PyContext")
-    super.init()
+    super.init(type: context.types.code)
   }
 
   // MARK: - Equatable
@@ -65,7 +62,7 @@ internal final class PyCode: PyObject {
   // sourcery: pymethod = __repr__
   internal func repr() -> String {
     return "<code object \(self._code.name) at \(self.ptrString), " +
-           "file '\(self.filename)', line \(self._code.firstLine)>"
+           "file '\(self._filename)', line \(self._code.firstLine)>"
   }
 
   // MARK: - Class
