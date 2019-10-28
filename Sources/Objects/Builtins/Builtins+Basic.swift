@@ -4,8 +4,6 @@ import Core
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-// TODO: Cache <-10, 255> values
-
 extension Builtins {
 
   // MARK: - Int
@@ -15,6 +13,9 @@ extension Builtins {
   }
 
   public func newInt(_ value: BigInt) -> PyInt {
+    if let cached = self.cachedInts[value] {
+      return cached
+    }
     return PyInt(self.context, value: value)
   }
 

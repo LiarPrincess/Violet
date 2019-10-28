@@ -19,11 +19,25 @@ public final class Builtins {
   public lazy var emptyTuple = PyTuple(self.context, elements: [])
   public lazy var notImplemented = PyNotImplemented(self.context)
 
+  internal var cachedInts = [BigInt: PyInt]()
+
   public let types: BuiltinTypes
   internal unowned let context: PyContext
 
   internal init(context: PyContext) {
     self.context = context
     self.types = BuiltinTypes(context: context)
+
+    self.cacheIntegers()
+  }
+
+  private func cacheIntegers() {
+    let min = -10
+    let max = 255
+
+    for int in min...max {
+      let bigInt = BigInt(int)
+      self.cachedInts[bigInt] = PyInt(self.context, value: bigInt)
+    }
   }
 }
