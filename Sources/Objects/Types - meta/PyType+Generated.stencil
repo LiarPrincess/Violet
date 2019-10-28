@@ -7,7 +7,7 @@
 {% macro warnIfNotFinal type %}
     {# (Almost) All types have to be marked final #}
     {# Btw. stencil has problem with: 'not (type.isFinal or type.name == "PyInt")' #}
-    {% if not type.isFinal and type.name != "PyInt" and type.name != "PyModule" %}
+    {% if not type.isFinal and type.name != "PyInt" %}
     #warning("Type {{ type.name }} should be marked final.")
     {% endif %}
 {% endmacro %}

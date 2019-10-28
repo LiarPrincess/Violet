@@ -20,7 +20,7 @@ public class PyContext {
 //  internal lazy var errorTypes = PyContextErrorTypes(context: self)
 //  internal lazy var warningTypes = PyContextWarningTypes(context: self)
 
-  public lazy var builtins = Builtins(self)
+  public lazy var builtins = Builtins()
 
   public init() { }
 }
