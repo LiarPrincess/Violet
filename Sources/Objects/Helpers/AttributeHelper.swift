@@ -25,8 +25,7 @@ internal enum AttributeHelper {
 
     if let descr = descr {
       descrGet = descr.type.lookup(name: "__get__")
-      // TODO: Also check if 'PyDescr_IsData(descr)'
-      if let descrGet = descrGet {
+      if let descrGet = descrGet, DescriptorHelper.isData(descr) {
         let args = [descr, zelf, zelf.type]
         return zelf.context.call(descrGet, args: args)
       }

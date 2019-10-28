@@ -254,8 +254,7 @@ public final class PyType: PyObject, AttributesOwner {
     // Look for the attribute in the metatype
     if let metaAttribute = metaAttribute {
       metaGet = metaAttribute.type.lookup(name: "__get__")
-      // TODO: Also check if 'PyDescr_IsData(meta_attribute))'
-      if let metaGet = metaGet {
+      if let metaGet = metaGet, DescriptorHelper.isData(metaAttribute) {
         let args = [metaAttribute, self, metaType]
         return self.context.call(metaGet, args: args)
       }
