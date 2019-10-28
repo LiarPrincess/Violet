@@ -4,7 +4,7 @@ import Core
 // Objects -> unicodeobject.c
 // https://docs.python.org/3.7/c-api/tuple.html
 
-internal class PyString: PyObject {
+public class PyString: PyObject {
 
   internal var value: String
 

@@ -9,7 +9,7 @@ import Core
 
 // sourcery: pytype = complex
 /// This subtype of PyObject represents a Python complex number object.
-internal final class PyComplex: PyObject {
+public final class PyComplex: PyObject {
 
   internal static let doc: String = """
     complex(real=0, imag=0)

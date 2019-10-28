@@ -7,7 +7,7 @@ import Core
 // sourcery: pytype = tuple
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
-internal final class PyTuple: PyObject {
+public final class PyTuple: PyObject {
 
   internal static let doc: String = """
     tuple() -> an empty tuple

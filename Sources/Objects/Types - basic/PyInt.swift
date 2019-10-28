@@ -9,7 +9,7 @@ import Core
 
 // sourcery: pytype = int
 /// All integers are implemented as “long” integer objects of arbitrary size.
-internal class PyInt: PyObject {
+public class PyInt: PyObject {
 
   internal class var doc: String { return """
     int([x]) -> integer
@@ -29,11 +29,10 @@ internal class PyInt: PyObject {
     """
   }
 
-  internal var value: BigInt
+  // This has to be `let` because we cache most used ints!
+  internal let value: BigInt
 
   // MARK: - Init
-
-  // TODO: Cache <-10, 255> values
 
   internal init(_ context: PyContext, value: BigInt) {
     self.value = value

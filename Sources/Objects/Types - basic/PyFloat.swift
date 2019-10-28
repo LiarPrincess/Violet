@@ -10,7 +10,7 @@ import Core
 
 // sourcery: pytype = float
 /// This subtype of PyObject represents a Python floating point object.
-internal final class PyFloat: PyObject {
+public final class PyFloat: PyObject {
 
   internal static let doc: String = """
     float(x) -> floating point number
