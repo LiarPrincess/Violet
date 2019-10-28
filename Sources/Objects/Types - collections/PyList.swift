@@ -237,7 +237,7 @@ internal final class PyList: PyObject {
 
   // sourcery: pymethod = __iadd__
   internal func addInPlace(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    self.extend(other)
+    _ = self.extend(other)
     return .value(self)
   }
 

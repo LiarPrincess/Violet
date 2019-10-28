@@ -14,7 +14,6 @@ extension Builtins {
       return .value("")
     }
 
-    // Fast path
     if let reprOwner = object as? __repr__Owner {
       return .value(reprOwner.repr())
     }

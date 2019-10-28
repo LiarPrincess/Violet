@@ -125,13 +125,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: hash
-  /// hash(object)
-  /// See [this](https://docs.python.org/3/library/functions.html#hash)
-  public func hash() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: help
   /// help([object])
   /// See [this](https://docs.python.org/3/library/functions.html#help)

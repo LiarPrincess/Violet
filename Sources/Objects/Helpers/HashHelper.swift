@@ -6,7 +6,7 @@ import Core
 // Objects -> longobject.c
 // https://docs.python.org/3.7/c-api/complex.html
 
-internal typealias PyHash = Int64
+public typealias PyHash = Int64
 
 // For numeric types, the hash of a number x is based on the reduction
 // of x modulo the prime P = 2**_PyHASH_BITS - 1.

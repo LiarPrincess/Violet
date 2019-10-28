@@ -11,14 +11,14 @@ extension Frame {
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfTrue(labelIndex: Int) throws {
     let top = self.stack.pop()
-    let isTrue = try self.context.isTrue(value: top)
+    let isTrue = self.context.isTrue(value: top)
     self.popJumpIf(isTrue, to: labelIndex)
   }
 
   /// If TOS is false, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfFalse(labelIndex: Int) throws {
     let top = self.stack.pop()
-    let isTrue = try self.context.isTrue(value: top)
+    let isTrue = self.context.isTrue(value: top)
     self.popJumpIf(!isTrue, to: labelIndex)
   }
 
@@ -26,7 +26,7 @@ extension Frame {
   /// Otherwise (TOS is false), TOS is popped.
   internal func jumpIfTrueOrPop(labelIndex: Int) throws {
     let top = self.stack.top
-    let isTrue = try self.context.isTrue(value: top)
+    let isTrue = self.context.isTrue(value: top)
     self.jumpIfOrPop(isTrue, to: labelIndex)
   }
 
@@ -34,7 +34,7 @@ extension Frame {
   /// Otherwise (TOS is true), TOS is popped.
   internal func jumpIfFalseOrPop(labelIndex: Int) throws {
     let top = self.stack.top
-    let isTrue = try self.context.isTrue(value: top)
+    let isTrue = self.context.isTrue(value: top)
     self.jumpIfOrPop(!isTrue, to: labelIndex)
   }
 
