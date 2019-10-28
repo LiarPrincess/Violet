@@ -16,7 +16,7 @@ public enum PyResult<V> {
   case value(V)
   case error(PyErrorEnum)
 
-  internal func map<A>(_ f: (V) -> A) -> PyResult<A> {
+  public func map<A>(_ f: (V) -> A) -> PyResult<A> {
     switch self {
     case let .value(v):
       return .value(f(v))
@@ -25,7 +25,7 @@ public enum PyResult<V> {
     }
   }
 
-  internal func flatMap<A>(_ f: (V) -> PyResult<A>) -> PyResult<A> {
+  public func flatMap<A>(_ f: (V) -> PyResult<A>) -> PyResult<A> {
     switch self {
     case let .value(v):
       return f(v)
@@ -34,7 +34,7 @@ public enum PyResult<V> {
     }
   }
 
-  internal func mapError(_ f: (PyErrorEnum) -> PyErrorEnum) -> PyResult<V> {
+  public func mapError(_ f: (PyErrorEnum) -> PyErrorEnum) -> PyResult<V> {
     switch self {
     case let .value(v):
       return .value(v)
@@ -60,7 +60,7 @@ public enum PyResultOrNot<V> {
   case error(PyErrorEnum)
   case notImplemented
 
-  internal var isNotImplemented: Bool {
+  public var isNotImplemented: Bool {
     switch self {
     case .notImplemented:
       return true
@@ -69,7 +69,7 @@ public enum PyResultOrNot<V> {
     }
   }
 
-  internal func map<A>(_ f: (V) -> A) -> PyResultOrNot<A> {
+  public func map<A>(_ f: (V) -> A) -> PyResultOrNot<A> {
     switch self {
     case let .value(v):
       return .value(f(v))
@@ -80,7 +80,7 @@ public enum PyResultOrNot<V> {
     }
   }
 
-  internal func flatMap<A>(_ f: (V) -> PyResultOrNot<A>) -> PyResultOrNot<A> {
+  public func flatMap<A>(_ f: (V) -> PyResultOrNot<A>) -> PyResultOrNot<A> {
     switch self {
     case let .value(v):
       return f(v)
@@ -91,7 +91,7 @@ public enum PyResultOrNot<V> {
     }
   }
 
-  internal func mapError(_ f: (PyErrorEnum) -> PyErrorEnum) -> PyResultOrNot<V> {
+  public func mapError(_ f: (PyErrorEnum) -> PyErrorEnum) -> PyResultOrNot<V> {
     switch self {
     case let .value(v):
       return .value(v)
@@ -112,7 +112,7 @@ extension PyResultOrNot where V == Void {
 // MARK: - Optional transformer
 
 extension Optional {
-  internal func map<V, A>(_ f: (V) -> A) -> PyResult<A>?
+  public func map<V, A>(_ f: (V) -> A) -> PyResult<A>?
     where Wrapped == PyResult<V> {
 
       switch self {
@@ -123,7 +123,7 @@ extension Optional {
       }
   }
 
-  internal func flatMap<V, A>(_ f: (V) -> PyResult<A>) -> PyResult<A>?
+  public func flatMap<V, A>(_ f: (V) -> PyResult<A>) -> PyResult<A>?
     where Wrapped == PyResult<V> {
 
       switch self {
@@ -134,7 +134,7 @@ extension Optional {
       }
   }
 
-  internal func map<V, A>(_ f: (V) -> A) -> PyResultOrNot<A>?
+  public func map<V, A>(_ f: (V) -> A) -> PyResultOrNot<A>?
     where Wrapped == PyResultOrNot<V> {
 
       switch self {
@@ -145,7 +145,7 @@ extension Optional {
       }
   }
 
-  internal func flatMap<V, A>(_ f: (V) -> PyResultOrNot<A>) -> PyResultOrNot<A>?
+  public func flatMap<V, A>(_ f: (V) -> PyResultOrNot<A>) -> PyResultOrNot<A>?
     where Wrapped == PyResultOrNot<V> {
 
       switch self {

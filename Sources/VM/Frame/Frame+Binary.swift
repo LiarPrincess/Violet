@@ -120,37 +120,36 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
     let result = try self.compare(left: left, right: right, comparison: comparison)
-    self.stack.top = result
+    self.stack.top = result.toPyObject(in: self.context)
   }
 
   private func compare(left: PyObject,
                        right: PyObject,
-                       comparison: ComparisonOpcode) throws -> PyObject {
+                       comparison: ComparisonOpcode) -> PyResultOrNot<Bool> {
     switch comparison {
     case .equal:
-      return try self.context.richCompare(left: left, right: right, mode: .equal)
+      return self.context.isEqual(left: left, right: right)
     case .notEqual:
-      return try self.context.richCompare(left: left, right: right, mode: .notEqual)
+      return self.context.isNotEqual(left: left, right: right)
     case .less:
-      return try self.context.richCompare(left: left, right: right, mode: .less)
+      return self.context.isLess(left: left, right: right)
     case .lessEqual:
-      return try self.context.richCompare(left: left, right: right, mode: .lessEqual)
+      return self.context.isLessEqual(left: left, right: right)
     case .greater:
-      return try self.context.richCompare(left: left, right: right, mode: .greater)
+      return self.context.isGreater(left: left, right: right)
     case .greaterEqual:
-      return try self.context.richCompare(left: left, right: right, mode: .greaterEqual)
+      return self.context.isGreaterEqual(left: left, right: right)
     case .is:
-      let result = self.context.is(left: left, right: right)
-      return result.toPyObject(in: self.context)
+      let iss = self.context.is(left: left, right: right)
+      return .value(iss)
     case .isNot:
-      let isNot = !self.context.is(left: left, right: right)
-      return isNot.toPyObject(in: self.context)
+      let iss = self.context.is(left: left, right: right)
+      return .value(!iss)
     case .in:
       return self.context.contains(sequence: left, value: right)
     case .notIn:
       let contains = self.context.contains(sequence: left, value: right)
-      let notContains = self.context.not(value: contains)
-      return notContains.toPyObject(in: self.context)
+      return contains.map { !$0 }
     case .exceptionMatch:
       // ceval.c -> case PyCmp_EXC_MATCH:
       fatalError()

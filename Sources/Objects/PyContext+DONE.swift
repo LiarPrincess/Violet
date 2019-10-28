@@ -131,4 +131,31 @@ extension PyContext {
   internal func hash(value: PyObject) -> PyHash {
     return 0
   }
+
+  // MARK: - Compare
+
+
+  public func isEqual(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
+
+  public func isNotEqual(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
+
+  public func isLess(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
+
+  public func isLessEqual(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
+
+  public func isGreater(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
+
+  public func isGreaterEqual(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
 }

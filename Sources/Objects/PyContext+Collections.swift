@@ -117,8 +117,8 @@ extension PyContext {
 
   // MARK: - Shared
 
-  public func contains(sequence: PyObject, value: PyObject) -> PyObject {
-    return self.unimplemented()
+  public func contains(sequence: PyObject, value: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
   }
 
   // MARK: - Enumerate
