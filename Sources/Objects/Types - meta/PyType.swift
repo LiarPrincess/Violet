@@ -15,7 +15,7 @@ internal class PyTypeWeakRef {
   }
 }
 
-internal final class PyType: PyObject, AttributesOwner {
+public final class PyType: PyObject, AttributesOwner {
 
   internal static let doc: String = """
     type(object_or_name, bases, dict)

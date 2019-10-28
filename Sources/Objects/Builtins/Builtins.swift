@@ -12,71 +12,71 @@ public final class Builtins {
     Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices.
     """
 
-/*
   // sourcery: pytype: bool
   /// class bool([x])
-  internal let bool: PyType
+  public var bool: PyType { return self.types.bool }
 
   // sourcery: pytype: bytearray
   /// class bytearray([source[, encoding[, errors]]])
-  internal let bytearray: PyType
+//  public var bytearray: PyType { return self.types.bytearray }
 
   // sourcery: pytype: bytes
   /// class bytes([source[, encoding[, errors]]])
-  internal let bytes: PyType
+//  public var bytes: PyType { return self.types.bytes }
 
   // sourcery: pytype: complex
   /// class complex([real[, imag]])
-  internal let complex: PyType
+  public var complex: PyType { return self.types.complex }
 
   // sourcery: pytype: dict
   /// class dict(**kwarg)
-  internal let dict: PyType
+//  public var dict: PyType { return self.types.dict }
 
   // sourcery: pytype: float
   /// class float([x])
-  internal let float: PyType
+  public var float: PyType { return self.types.float }
 
   // sourcery: pytype: frozenset
   /// class frozenset([iterable])
-  internal let frozenset: PyType
+//  public var frozenset: PyType { return self.types.frozenset }
 
   // sourcery: pytype: int
   /// class int([x])
-  internal let int: PyType
+  public var int: PyType { return self.types.int }
 
   // sourcery: pytype: list
   /// class list([iterable])
-  internal let list: PyType
+  public var list: PyType { return self.types.list }
 
   // sourcery: pytype: object
   /// class object
-  internal let object: PyType
+  public var object: PyType { return self.types.object }
 
   // sourcery: pytype: property
-  /// class property(fget=None, fset=None, fdel=None, doc=None)
-  internal let property: PyType
+  /// class property(fget=None, fset=None, fdel=None, docne) */
+  public var property: PyType { return self.types.property }
 
   // sourcery: pytype: set
   /// class set([iterable])
-  internal let set: PyType
+//  public var set: PyType { return self.types.set }
 
   // sourcery: pytype: slice
   /// class slice(stop)
-  internal let slice: PyType
+  public var slice: PyType { return self.types.slice }
 
   // sourcery: pytype: str
   /// class str(object='')
-  internal let str: PyType
+//  public var str: PyType { return self.types.str }
 
   // sourcery: pytype: type
   /// class type(object)
-  internal let type: PyType
-*/
+  public var type: PyType { return self.types.type }
 
+  public let types: BuiltinTypes
   internal unowned let context: PyContext
 
   internal init(context: PyContext) {
     self.context = context
+    self.types = BuiltinTypes(context: context)
   }
 }
