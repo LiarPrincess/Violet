@@ -140,15 +140,17 @@ extension Frame {
     case .greaterEqual:
       return try self.context.richCompare(left: left, right: right, mode: .greaterEqual)
     case .is:
-      return self.context.is(left: left, right: right)
+      let result = self.context.is(left: left, right: right)
+      return result.toPyObject(in: self.context)
     case .isNot:
-      let isReferenceEqual = self.context.is(left: left, right: right)
-      return try self.context.not(value: isReferenceEqual)
+      let isNot = !self.context.is(left: left, right: right)
+      return isNot.toPyObject(in: self.context)
     case .in:
       return self.context.contains(sequence: left, value: right)
     case .notIn:
       let contains = self.context.contains(sequence: left, value: right)
-      return try self.context.not(value: contains)
+      let notContains = self.context.not(value: contains)
+      return notContains.toPyObject(in: self.context)
     case .exceptionMatch:
       // ceval.c -> case PyCmp_EXC_MATCH:
       fatalError()

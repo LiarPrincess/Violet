@@ -49,4 +49,18 @@ extension PyContext {
   internal func _string(_ value: String) -> PyString {
     return PyString(self, value: value)
   }
+
+  // MARK: - Bool
+
+  public func not(value: PyObject) -> Bool {
+    return false
+  }
+
+  public func isTrue(value: PyObject) -> Bool {
+    return true
+  }
+
+  public func `is`(left: PyObject, right: PyObject) -> Bool {
+    return false
+  }
 }
