@@ -14,7 +14,7 @@ extension Builtins {
 
   // sourcery: pymethod: getattr, doc = getAttributeDoc
   /// getattr(object, name[, default])
-  /// See [this](https://docs.python.org/3/library/functions.html#getattr).
+  /// See [this](https://docs.python.org/3/library/functions.html#getattr)
   public func getAttribute(_ object: PyObject,
                            name: PyObject,
                            default: PyObject? = nil) -> PyResult<PyObject> {

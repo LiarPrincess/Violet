@@ -6,9 +6,9 @@ extension Builtins {
 
   // MARK: - Repr
 
-  /// repr(object)
   // sourcery: pymethod: repr
-  /// See [this](https://docs.python.org/3/library/functions.html#repr).
+  /// repr(object)
+  /// See [this](https://docs.python.org/3/library/functions.html#repr)
   public func repr(_ object: PyObject) -> PyResult<String> {
     if object.hasReprLock {
       return .value("")
@@ -34,6 +34,9 @@ extension Builtins {
 
   // MARK: - ASCII
 
+  // sourcery: pymethod: ascii
+  /// ascii(object)
+  /// See [this](https://docs.python.org/3/library/functions.html#ascii)
   public func ascii(_ object: PyObject) -> String {
     guard case let PyResult.value(repr) = self.repr(object) else {
       return ""
