@@ -2,6 +2,7 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
+// TODO: Fast path
 extension Builtins {
 
   internal static let getAttributeDoc = """

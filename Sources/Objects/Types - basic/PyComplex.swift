@@ -108,9 +108,9 @@ public final class PyComplex: PyObject {
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> PyResult<Bool> {
+  internal func asBool() -> Bool {
     let bothZero = self.real.isZero && self.imag.isZero
-    return .value(!bothZero)
+    return !bothZero
   }
 
   // sourcery: pymethod = __int__

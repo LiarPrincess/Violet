@@ -26,8 +26,8 @@ public final class PyNone: PyObject {
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> PyResult<Bool> {
-    return .value(false)
+  internal func asBool() -> Bool {
+    return false
   }
 
   // MARK: - Class

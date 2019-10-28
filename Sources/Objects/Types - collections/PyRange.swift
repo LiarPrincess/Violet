@@ -169,8 +169,8 @@ internal final class PyRange: PyObject {
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> PyResult<Bool> {
-    return .value(self.length.value > 0)
+  internal func asBool() -> Bool {
+    return self.length.value > 0
   }
 
   // MARK: - Class

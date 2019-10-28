@@ -131,8 +131,8 @@ public final class PyFloat: PyObject {
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> PyResult<Bool> {
-    return .value(!self.value.isZero)
+  internal func asBool() -> Bool {
+    return !self.value.isZero
   }
 
   // sourcery: pymethod = __int__

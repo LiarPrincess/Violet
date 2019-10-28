@@ -14,6 +14,11 @@ extension Builtins {
       return .value("")
     }
 
+    // Fast path
+    if let reprOwner = object as? __repr__Owner {
+      return .value(reprOwner.repr())
+    }
+
     guard let repr = self.lookup(object, name: "__repr__") else {
       return .value(self.genericRepr(object))
     }
