@@ -177,3 +177,87 @@ BaseException
     __setstate__
     with_traceback
 
+Exception
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+GeneratorExit
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+KeyboardInterrupt
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+BytesWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+DeprecationWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+FutureWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ImportWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+PendingDeprecationWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ResourceWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+RuntimeWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+SyntaxWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+UnicodeWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+UserWarning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+Warning
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+

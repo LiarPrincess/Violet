@@ -547,4 +547,161 @@ extension PyType {
     result._attributes["__delattr__"] = PyType.wrapMethod(context, name: "__delattr__", doc: nil, func: PyBaseException.delAttribute(name:), castSelf: PyType.selfAsPyBaseException)
     return result
   }
+
+  // MARK: - Exception
+
+  internal static func exception(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    #warning("Type PyException should be marked final.")
+    let result = PyType(context, name: "Exception", doc: PyException.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyException.dict, castSelf: PyType.selfAsPyException)
+
+
+    return result
+  }
+
+  // MARK: - GeneratorExit
+
+  internal static func generatorExit(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "GeneratorExit", doc: PyGeneratorExit.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyGeneratorExit.dict, castSelf: PyType.selfAsPyGeneratorExit)
+
+
+    return result
+  }
+
+  // MARK: - KeyboardInterrupt
+
+  internal static func keyboardInterrupt(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "KeyboardInterrupt", doc: PyKeyboardInterrupt.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyKeyboardInterrupt.dict, castSelf: PyType.selfAsPyKeyboardInterrupt)
+
+
+    return result
+  }
+}
+
+  // MARK: - BytesWarning
+
+  internal static func bytesWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "BytesWarning", doc: PyBytesWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyBytesWarning.dict, castSelf: PyType.selfAsPyBytesWarning)
+
+
+    return result
+  }
+
+  // MARK: - DeprecationWarning
+
+  internal static func deprecationWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "DeprecationWarning", doc: PyDeprecationWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyDeprecationWarning.dict, castSelf: PyType.selfAsPyDeprecationWarning)
+
+
+    return result
+  }
+
+  // MARK: - FutureWarning
+
+  internal static func futureWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "FutureWarning", doc: PyFutureWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyFutureWarning.dict, castSelf: PyType.selfAsPyFutureWarning)
+
+
+    return result
+  }
+
+  // MARK: - ImportWarning
+
+  internal static func importWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "ImportWarning", doc: PyImportWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyImportWarning.dict, castSelf: PyType.selfAsPyImportWarning)
+
+
+    return result
+  }
+
+  // MARK: - PendingDeprecationWarning
+
+  internal static func pendingDeprecationWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "PendingDeprecationWarning", doc: PyPendingDeprecationWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyPendingDeprecationWarning.dict, castSelf: PyType.selfAsPyPendingDeprecationWarning)
+
+
+    return result
+  }
+
+  // MARK: - ResourceWarning
+
+  internal static func resourceWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "ResourceWarning", doc: PyResourceWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyResourceWarning.dict, castSelf: PyType.selfAsPyResourceWarning)
+
+
+    return result
+  }
+
+  // MARK: - RuntimeWarning
+
+  internal static func runtimeWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "RuntimeWarning", doc: PyRuntimeWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyRuntimeWarning.dict, castSelf: PyType.selfAsPyRuntimeWarning)
+
+
+    return result
+  }
+
+  // MARK: - SyntaxWarning
+
+  internal static func syntaxWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "SyntaxWarning", doc: PySyntaxWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PySyntaxWarning.dict, castSelf: PyType.selfAsPySyntaxWarning)
+
+
+    return result
+  }
+
+  // MARK: - UnicodeWarning
+
+  internal static func unicodeWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "UnicodeWarning", doc: PyUnicodeWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyUnicodeWarning.dict, castSelf: PyType.selfAsPyUnicodeWarning)
+
+
+    return result
+  }
+
+  // MARK: - UserWarning
+
+  internal static func userWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "UserWarning", doc: PyUserWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyUserWarning.dict, castSelf: PyType.selfAsPyUserWarning)
+
+
+    return result
+  }
+
+  // MARK: - Warning
+
+  internal static func warning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    #warning("Type PyWarning should be marked final.")
+    let result = PyType(context, name: "Warning", doc: PyWarning.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyWarning.dict, castSelf: PyType.selfAsPyWarning)
+
+
+    return result
+  }
 }

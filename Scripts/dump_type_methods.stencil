@@ -48,4 +48,10 @@ types = {
     {% call printMethods type.methods %}
   ],
 {% endfor %}
+{% for type in types.classes|annotated:"pywarningtype" %}
+  {{ type.annotations.pywarningtype }}: [
+    {% call printProperties type.methods %}
+    {% call printMethods type.methods %}
+  ],
+{% endfor %}
 }

@@ -369,4 +369,46 @@ types = {
     '__setattr__',
     '__delattr__',
   ],
+  Exception: [
+    '__dict__',
+  ],
+  GeneratorExit: [
+    '__dict__',
+  ],
+  KeyboardInterrupt: [
+    '__dict__',
+  ],
+  BytesWarning: [
+    '__dict__',
+  ],
+  DeprecationWarning: [
+    '__dict__',
+  ],
+  FutureWarning: [
+    '__dict__',
+  ],
+  ImportWarning: [
+    '__dict__',
+  ],
+  PendingDeprecationWarning: [
+    '__dict__',
+  ],
+  ResourceWarning: [
+    '__dict__',
+  ],
+  RuntimeWarning: [
+    '__dict__',
+  ],
+  SyntaxWarning: [
+    '__dict__',
+  ],
+  UnicodeWarning: [
+    '__dict__',
+  ],
+  UserWarning: [
+    '__dict__',
+  ],
+  Warning: [
+    '__dict__',
+  ],
 }

@@ -40,13 +40,30 @@ public final class BuiltinErrors {
 
 {% for type in types.classes|annotated:"pyerrortype" %}
   {% set name %}{{ type.annotations.pyerrortype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
-  public let {{ name }}: PyType
+  // public let {{ name }}: PyType
 {% endfor %}
 
   internal init(context: PyContext, types: BuiltinTypes) {
     {% for type in types.classes|annotated:"pyerrortype" %}
     {% set name %}{{ type.annotations.pyerrortype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
-    self.{{ name }} = PyType.{{ name }}(context, type: types.type, base: types.object)
+    // self.{{ name }} = PyType.{{ name }}(context, type: types.type, base: types.object)
+    {% endfor %}
+  }
+}
+
+// MARK: - Warnings
+
+public final class BuiltinWarnings {
+
+{% for type in types.classes|annotated:"pywarningtype" %}
+  {% set name %}{{ type.annotations.pywarningtype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+  // public let {{ name }}: PyType
+{% endfor %}
+
+  internal init(context: PyContext, types: BuiltinTypes) {
+    {% for type in types.classes|annotated:"pywarningtype" %}
+    {% set name %}{{ type.annotations.pywarningtype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+    // self.{{ name }} = PyType.{{ name }}(context, type: types.type, base: types.object)
     {% endfor %}
   }
 }
