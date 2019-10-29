@@ -29,10 +29,6 @@ public final class PyType: PyObject, AttributesOwner {
   internal var _subclasses: [PyTypeWeakRef] = []
   internal let _attributes = Attributes()
 
-  internal var attributes: Attributes {
-    return self._attributes
-  }
-
   // Special hack for cyclic referency
   private unowned let _context: PyContext
   override internal var context: PyContext {
@@ -313,7 +309,7 @@ public final class PyType: PyObject, AttributesOwner {
   /// metaclass would probably be more confusing than helpful.
   internal func dir() -> DirResult {
     return self._mro.reduce(into: DirResult()) { acc, base in
-      acc.append(contentsOf: base.attributes.keys)
+      acc.append(contentsOf: base._attributes.keys)
     }
   }
 

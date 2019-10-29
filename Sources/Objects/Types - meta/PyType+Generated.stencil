@@ -19,20 +19,20 @@
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     {% set getter %}{{ type.name }}.{{ prop.selectorName }}{% endset %}
     {% if prop.annotations.setter %}
-    result.attributes["{{ attribute }}"] = PyType.createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: PyType.{{ castSelf }})
+    result._attributes["{{ attribute }}"] = PyType.createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: PyType.{{ castSelf }})
     {% else %}
-    result.attributes["{{ attribute }}"] = PyType.createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: PyType.{{ castSelf }})
+    result._attributes["{{ attribute }}"] = PyType.createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: PyType.{{ castSelf }})
     {% endif %}
     {% endfor %}
 
     {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    result.attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }})
+    result._attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }})
     {% endfor %}
 
     {% for method in type.instanceMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    result.attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }}, castSelf: PyType.{{ castSelf }})
+    result._attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }}, castSelf: PyType.{{ castSelf }})
   {% endfor %}
 {% endmacro %}
 

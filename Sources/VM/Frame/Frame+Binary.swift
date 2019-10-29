@@ -119,7 +119,7 @@ extension Frame {
   internal func compareOp(comparison: ComparisonOpcode) throws {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.compare(left: left, right: right, comparison: comparison)
+    let result = self.compare(left: left, right: right, comparison: comparison)
     self.stack.top = result.toPyObject(in: self.context)
   }
 
