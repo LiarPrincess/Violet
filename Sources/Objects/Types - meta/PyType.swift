@@ -2,7 +2,6 @@
 // Objects -> typeobject.c
 
 // TODO: Heaptype
-// TODO: PyType_Ready(PyTypeObject *type)
 
 // swiftlint:disable file_length
 

@@ -355,4 +355,18 @@ types = {
     '__mul__',
     '__rmul__',
   ],
+  BaseException: [
+    '__dict__',
+    '__class__',
+    'args',
+    '__traceback__',
+    '__cause__',
+    '__context__',
+    '__suppress_context__',
+    '__repr__',
+    '__str__',
+    '__getattribute__',
+    '__setattr__',
+    '__delattr__',
+  ],
 }

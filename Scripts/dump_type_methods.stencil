@@ -42,4 +42,10 @@ types = {
     {% call printMethods type.methods %}
   ],
 {% endfor %}
+{% for type in types.classes|annotated:"pyerrortype" %}
+  {{ type.annotations.pyerrortype }}: [
+    {% call printProperties type.methods %}
+    {% call printMethods type.methods %}
+  ],
+{% endfor %}
 }

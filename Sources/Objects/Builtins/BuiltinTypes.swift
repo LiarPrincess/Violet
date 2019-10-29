@@ -4,6 +4,8 @@
 
 // swiftlint:disable:previous vertical_whitespace
 
+// MARK: - Types
+
 public final class BuiltinTypes {
 
   /// Root of the type hierarchy
@@ -60,5 +62,16 @@ public final class BuiltinTypes {
     self.slice = PyType.slice(context, type: self.type, base: self.object)
     self.tuple = PyType.tuple(context, type: self.type, base: self.object)
     self.bool = PyType.bool(context, type: self.type, base: self.int)
+  }
+}
+
+// MARK: - Errors
+
+public final class BuiltinErrors {
+
+  public let baseException: PyType
+
+  internal init(context: PyContext, types: BuiltinTypes) {
+    self.baseException = PyType.baseException(context, type: types.type, base: types.object)
   }
 }

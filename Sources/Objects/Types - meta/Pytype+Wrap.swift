@@ -3,7 +3,7 @@ import Core
 // swiftlint:disable force_cast
 // swiftlint:disable trailing_closure
 
-// TODO: Better selfAsXXX methods
+// TODO: Better selfAsXXX methods (PyType_Ready(PyTypeObject *type))
 
 extension PyType {
 
@@ -258,5 +258,11 @@ extension PyType {
 
   internal static func selfAsPyTuple(_ value: PyObject) -> PyTuple {
     return value as! PyTuple
+  }
+
+  // MARK: - Cast self - errors
+
+  internal static func selfAsPyBaseException(_ value: PyObject) -> PyBaseException {
+    return value as! PyBaseException
   }
 }

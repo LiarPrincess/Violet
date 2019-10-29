@@ -1,3 +1,5 @@
+// TODO: delete = set attribute to nil
+
 internal enum AttributeHelper {
 
   // MARK: - Get

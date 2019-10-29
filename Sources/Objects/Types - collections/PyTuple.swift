@@ -151,8 +151,8 @@ public final class PyTuple: PyObject {
   // MARK: - Sequence
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
-    return BigInt(self.elements.count)
+  internal func getLength() -> Int {
+    return self.elements.count
   }
 
   // sourcery: pymethod = __contains__

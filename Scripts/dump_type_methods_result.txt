@@ -170,3 +170,10 @@ tuple
     __getnewargs__
     __iter__
 
+BaseException
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+    __setstate__
+    with_traceback
+

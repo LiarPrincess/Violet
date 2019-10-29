@@ -75,4 +75,19 @@ extension PyType {
     return result
   }
 {% endfor %}
+{% for type in types.classes|annotated:"pyerrortype" %}
+
+  // MARK: - {{ type.name|replace:"Py","" }}
+
+  {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
+  {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
+  {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
+  {% set fnName %}{{ type.annotations.pyerrortype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+  internal static func {{ fnName }}(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    {% call warnIfNotFinal type %}
+    let result = PyType(context, name: "{{ type.annotations.pyerrortype }}", doc: {{ docOrNil }}, type: type, base: base)
+    {% call fillDict type %}
+    return result
+  }
+{% endfor %}
 }

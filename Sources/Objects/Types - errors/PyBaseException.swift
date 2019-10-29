@@ -1,107 +1,227 @@
 import Core
-/*
+
 // In CPython:
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
 
-// TODO: PyBaseExceptionType:
-// PyObject_GenericGetAttr,    /*tp_getattro*/
-// PyObject_GenericSetAttr,    /*tp_setattro*/
-// (traverseproc)BaseException_traverse, /* tp_traverse */
-// {"__suppress_context__", T_BOOL, offsetof(PyBaseExceptionObject, ...)},
-// {"__reduce__", (PyCFunction)BaseException_reduce, METH_NOARGS },
-// {"__setstate__", (PyCFunction)BaseException_setstate, METH_O },
-// {"with_traceback", (PyCFunction)BaseException_with_traceback, METH_O, ...},
-// {"__dict__", PyObject_GenericGetDict, PyObject_GenericSetDict},
-// {"args", (getter)BaseException_get_args, (setter)BaseException_set_args},
-// {"__traceback__", (getter)BaseException_get_tb, (setter)BaseException_set_tb},
-// {"__context__", BaseException_get_context, BaseException_set_context, ...},
-// {"__cause__", BaseException_get_cause, BaseException_set_cause, ...},
+// sourcery: pyerrortype = BaseException
+internal class PyBaseException: PyObject, AttributesOwner {
 
-internal class PyBaseException: PyObject {
+  internal static let doc: String = """
+    Common base class for all exceptions
+    """
 
-  internal var args: PyTuple
-  internal var traceback: PyObject
-  internal var contextTTT: PyObject
-  internal var cause: PyObject
-  internal var suppressContext: Bool
+  internal var _args: PyTuple
+  internal var _traceback: PyObject
+  internal var _cause: PyObject?
+  internal var _attributes: Attributes
 
-  internal init(type: PyBaseExceptionType,
+  /// Another exception during whose handling ex was raised.
+  internal var _exceptionContext: PyObject?
+  internal var _suppressExceptionContext: Bool
+
+  // MARK: - Init
+
+  internal init(_ context: PyContext,
                 args: PyTuple,
                 traceback: PyObject,
-                context: PyObject,
-                cause:   PyObject,
-                suppressContext: Bool) {
-    self.args = args
-    self.traceback = traceback
-    self.contextTTT = context
-    self.cause = cause
-    self.suppressContext = suppressContext
-    super.init(type: type)
-  }
-}
-
-internal class PyBaseExceptionType: PyType/*,
-ReprTypeClass, StrTypeClass, ClearTypeClass */{
-
-  override internal var name: String {
-    return "BaseException"
+                cause:   PyObject?,
+                exceptionContext: PyObject?,
+                suppressExceptionContext: Bool) {
+    self._args = args
+    self._traceback = traceback
+    self._cause = cause
+    self._attributes = Attributes()
+    self._exceptionContext = exceptionContext
+    self._suppressExceptionContext = suppressExceptionContext
+    super.init(type: context.builtins.errorTypes.baseException)
   }
 
-  override internal var doc: String? {
-    return "Common base class for all exceptions"
+  // MARK: - String
+
+  // sourcery: pymethod = __repr__
+  internal func repr() -> PyResult<String> {
+    let name = self.typeName
+    let args = self._args
+
+    switch args.getLength() {
+    case 1:
+      let first = args.elements[0]
+      return self.builtins.repr(first).map { name + "(" + $0 + ")" }
+    default:
+      return .value(name + args.repr())
+    }
   }
 
-  internal var tupleType: PyTupleType {
-    return self.types.tuple
+  // sourcery: pymethod = __str__
+  internal func str() -> PyResult<String> {
+    let args = self._args
+
+    switch args.getLength() {
+    case 0:
+      return .value("")
+    case 1:
+      let first = args.elements[0]
+      return self.builtins.repr(first)
+    default:
+      return self.builtins.repr(args)
+    }
   }
 
-  internal func repr(value: PyObject) throws -> String {
-//    let e = try self.matchBaseException(value)
-//    let size = try self.tupleType.lengthInt(value: e.args)
-//    let name = self.context._PyType_Name(value: value.type)
-//
-//    switch size {
-//    case 1:
-//      let item = try tupleType.item(owner: e.args, at: 0)
-//      return self.context.PyUnicode_FromFormat(format: "%s(%R)", args: name, item)
-//    default:
-//      return self.context.PyUnicode_FromFormat(format: "%s%R", args: name, e.args)
-//    }
-    return ""
+  // MARK: - Dict
+
+  // sourcery: pyproperty = __dict__
+  internal func dict() -> Attributes {
+    return self._attributes
   }
 
-  internal func str(value: PyObject) throws -> String {
-//    let e = try self.matchBaseException(value)
-//    let size = try self.tupleType.lengthInt(value: e.args)
-//
-//    switch size {
-//    case 0:
-//      return ""
-//    case 1:
-//      let item = try tupleType.item(owner: e.args, at: 0)
-//      return try self.context.strString(value: item)
-//    default:
-//      return try self.context.strString(value: e.args)
-//    }
-    return ""
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
   }
 
-  internal func clear(value: PyObject) throws {
-    let e = try self.matchBaseException(value)
-    try self.context.Py_CLEAR(value: e.args)
-    try self.context.Py_CLEAR(value: e.traceback)
-    try self.context.Py_CLEAR(value: e.cause)
-    try self.context.Py_CLEAR(value: e.contextTTT)
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(zelf: self, name: name)
   }
 
-  internal func matchBaseException(_ object: PyObject) throws -> PyBaseException {
-    if let e = object as? PyBaseException {
-      return e
+  // sourcery: pymethod = __setattr__
+  internal func setAttribute(name: PyObject, value: PyObject) -> PyResult<PyNone> {
+    return AttributeHelper.setAttribute(zelf: self, name: name, value: value)
+  }
+
+  // sourcery: pymethod = __delattr__
+  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
+    return AttributeHelper.delAttribute(zelf: self, name: name)
+  }
+
+  // MARK: - Args
+
+  // sourcery: pyproperty = args, setter = setArgs
+  internal func getArgs() -> PyObject {
+    return self._args
+  }
+
+  internal func setArgs(_ value: PyObject?) -> PyResult<()> {
+    //    guard let value = value else {
+    //      return .error(.typeError("args may not be deleted"))
+    //    }
+
+    // TODO: seq = PySequence_Tuple(val);
+    //    guard let tuple = value as? PyTuple else {
+    //      return .error(.typeError("__args__ must be a tuple"))
+    //    }
+    //
+    //    self._args = tuple
+    return .value()
+  }
+
+  // MARK: - Traceback
+
+  // sourcery: pyproperty = __traceback__, setter = setTraceback
+  internal func getTraceback() -> PyObject {
+    return self._traceback
+  }
+
+  internal func setTraceback(_ value: PyObject?) -> PyResult<()> {
+    //    guard let value = value else {
+    //      return .error(.typeError("__traceback__ may not be deleted"))
+    //    }
+
+    // TODO: This (but we need PyTraceback first)
+    //    else if (!(tb == Py_None || PyTraceBack_Check(tb))) {
+    //        PyErr_SetString(PyExc_TypeError, "__traceback__ must be a traceback or None");
+    //        return -1;
+    //    }
+
+    //    guard let tuple = value as? PyObject else {
+    //      return .error(.typeError("__traceback__ must be a traceback"))
+    //    }
+    //
+    //    self._traceback = tuple
+    return .value()
+  }
+
+  // MARK: - Cause
+
+  internal static let getCauseDoc = "exception cause"
+
+  // sourcery: pyproperty = __cause__, setter = setCause, doc = getCauseDoc
+  internal func getCause() -> PyObject {
+    return self._cause ?? self.builtins.none
+  }
+
+  internal func setCause(_ value: PyObject?) -> PyResult<()> {
+    guard let value = value else {
+      return .error(.typeError("__cause__ may not be deleted"))
     }
 
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
+    if value is PyNone {
+      self._cause = nil
+      return .value()
+    }
+
+    guard self.isExceptionInstance(value) else {
+      return .error(
+        .typeError("exception cause must be None or derive from BaseException")
+      )
+    }
+
+    self._cause = value
+    return .value()
+  }
+
+  // MARK: - Context
+
+  internal static let getContetDoc = "exception context"
+
+  // sourcery: pyproperty = __context__, setter = setContext, doc = getContetDoc
+  internal func getContext() -> PyObject {
+    return self._exceptionContext ?? self.builtins.none
+  }
+
+  internal func setContext(_ value: PyObject?) -> PyResult<()> {
+    guard let value = value else {
+      return .error(.typeError("__context__ may not be deleted"))
+    }
+
+    if value is PyNone {
+      self._exceptionContext = nil
+      return .value()
+    }
+
+    guard self.isExceptionInstance(value) else {
+      return .error(
+        .typeError("exception context must be None or derive from BaseException")
+      )
+    }
+
+    self._exceptionContext = value
+    return .value()
+  }
+
+  // MARK: - Suppress context
+
+  // sourcery: pyproperty = __suppress_context__, setter = setSuppressContext
+  internal func getSuppressContext() -> PyObject {
+    return self.builtins.newBool(self._suppressExceptionContext)
+  }
+
+  internal func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
+    self._suppressExceptionContext = value.map(self.builtins.isTrue) ?? false
+    return .value()
+  }
+
+  // MARK: - Helpers
+
+  /// PyExceptionInstance_Check
+  internal func isExceptionInstance(_ value: PyObject) -> Bool {
+    let baseException = self.builtins.errorTypes.baseException
+    return value.type.isSubtype(of: baseException)
   }
 }
-*/

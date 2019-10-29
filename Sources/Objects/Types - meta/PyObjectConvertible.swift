@@ -6,6 +6,12 @@ public protocol PyObjectConvertible {
   func toPyObject(in context: PyContext) -> PyObject
 }
 
+extension Int: PyObjectConvertible {
+  public func toPyObject(in context: PyContext) -> PyObject {
+    return context.int(self)
+  }
+}
+
 extension BigInt: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
     return context.int(self)

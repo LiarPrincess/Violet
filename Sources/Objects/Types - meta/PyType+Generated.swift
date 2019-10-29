@@ -524,4 +524,27 @@ extension PyType {
     result._attributes["__rmul__"] = PyType.wrapMethod(context, name: "__rmul__", doc: nil, func: PyTuple.rmul(_:), castSelf: PyType.selfAsPyTuple)
     return result
   }
+
+  // MARK: - BaseException
+
+  internal static func baseException(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    #warning("Type PyBaseException should be marked final.")
+    let result = PyType(context, name: "BaseException", doc: PyBaseException.doc, type: type, base: base)
+
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyBaseException.dict, castSelf: PyType.selfAsPyBaseException)
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyBaseException.getClass, castSelf: PyType.selfAsPyBaseException)
+    result._attributes["args"] = PyType.createProperty(context, name: "args", doc: nil, get: PyBaseException.getArgs, set: PyBaseException.setArgs, castSelf: PyType.selfAsPyBaseException)
+    result._attributes["__traceback__"] = PyType.createProperty(context, name: "__traceback__", doc: nil, get: PyBaseException.getTraceback, set: PyBaseException.setTraceback, castSelf: PyType.selfAsPyBaseException)
+    result._attributes["__cause__"] = PyType.createProperty(context, name: "__cause__", doc: nil, get: PyBaseException.getCause, set: PyBaseException.setCause, castSelf: PyType.selfAsPyBaseException)
+    result._attributes["__context__"] = PyType.createProperty(context, name: "__context__", doc: nil, get: PyBaseException.getContext, set: PyBaseException.setContext, castSelf: PyType.selfAsPyBaseException)
+    result._attributes["__suppress_context__"] = PyType.createProperty(context, name: "__suppress_context__", doc: nil, get: PyBaseException.getSuppressContext, set: PyBaseException.setSuppressContext, castSelf: PyType.selfAsPyBaseException)
+
+
+    result._attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyBaseException.repr, castSelf: PyType.selfAsPyBaseException)
+    result._attributes["__str__"] = PyType.wrapMethod(context, name: "__str__", doc: nil, func: PyBaseException.str, castSelf: PyType.selfAsPyBaseException)
+    result._attributes["__getattribute__"] = PyType.wrapMethod(context, name: "__getattribute__", doc: nil, func: PyBaseException.getAttribute(name:), castSelf: PyType.selfAsPyBaseException)
+    result._attributes["__setattr__"] = PyType.wrapMethod(context, name: "__setattr__", doc: nil, func: PyBaseException.setAttribute(name:value:), castSelf: PyType.selfAsPyBaseException)
+    result._attributes["__delattr__"] = PyType.wrapMethod(context, name: "__delattr__", doc: nil, func: PyBaseException.delAttribute(name:), castSelf: PyType.selfAsPyBaseException)
+    return result
+  }
 }
