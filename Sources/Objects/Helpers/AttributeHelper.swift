@@ -1,5 +1,3 @@
-// TODO: delete = set attribute to nil
-
 internal enum AttributeHelper {
 
   // MARK: - Get
@@ -19,8 +17,11 @@ internal enum AttributeHelper {
       )
     }
 
-    let name = nameString.value
+    return getAttribute(zelf: zelf, name: nameString.value)
+  }
 
+  internal static func getAttribute(zelf: PyObject,
+                                    name: String) -> PyResult<PyObject> {
     let tp = zelf.type
     let descr = tp.lookup(name: name)
     var descrGet: PyObject?
@@ -59,15 +60,19 @@ internal enum AttributeHelper {
   ///                                  PyObject *dict)
   internal static func setAttribute(zelf: PyObject,
                                     name: PyObject,
-                                    value: PyObject) -> PyResult<PyNone> {
+                                    value: PyObject?) -> PyResult<PyNone> {
     guard let nameString = name as? PyString else {
       return .error(
         .typeError("attribute name must be string, not '\(name.typeName)'")
       )
     }
 
-    let name = nameString.value
+    return setAttribute(zelf: zelf, name: nameString.value, value: value)
+  }
 
+  internal static func setAttribute(zelf: PyObject,
+                                    name: String,
+                                    value: PyObject?) -> PyResult<PyNone> {
     let tp = zelf.type
     let descr = tp.lookup(name: name)
     var descrSet: PyObject?
@@ -83,12 +88,11 @@ internal enum AttributeHelper {
     }
 
     if let attribOwner = zelf as? AttributesOwner {
-      if value is PyNone {
-        attribOwner._attributes.del(key: name)
-      } else {
+      if let value = value {
         attribOwner._attributes.set(key: name, to: value)
+      } else {
+        attribOwner._attributes.del(key: name)
       }
-
       return .value(zelf.context._none)
     }
 
@@ -104,7 +108,11 @@ internal enum AttributeHelper {
   /// Basically: `AttributeHelper.setAttribute` with `None` as value
   internal static func delAttribute(zelf: PyObject,
                                     name: PyObject) -> PyResult<PyNone> {
-    let none = zelf.context.none
-    return AttributeHelper.setAttribute(zelf: zelf, name: name, value: none)
+    return AttributeHelper.setAttribute(zelf: zelf, name: name, value: nil)
+  }
+
+  internal static func delAttribute(zelf: PyObject,
+                                    name: String) -> PyResult<PyNone> {
+    return AttributeHelper.setAttribute(zelf: zelf, name: name, value: nil)
   }
 }

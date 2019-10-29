@@ -1,4 +1,4 @@
-internal struct DirResult {
+public struct DirResult {
 
   private var values = Set<String>()
 

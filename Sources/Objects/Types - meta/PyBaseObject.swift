@@ -129,7 +129,7 @@ internal enum PyBaseObject {
   // sourcery: pymethod = __setattr__
   internal static func setAttribute(zelf: PyObject,
                                     name: PyObject,
-                                    value: PyObject) -> PyResult<PyNone> {
+                                    value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(zelf: zelf, name: name, value: value)
   }
 

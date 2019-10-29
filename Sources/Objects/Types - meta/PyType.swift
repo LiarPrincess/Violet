@@ -282,13 +282,13 @@ public final class PyType: PyObject, AttributesOwner {
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject) -> PyResult<PyNone> {
+  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     return .error(
       .typeError("can't set attributes of built-in/extension type '\(self.typeName)'")
     )
   }
 
-  internal func setAttribute(name: String, value: PyObject) -> PyResult<PyNone> {
+  internal func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
     return .error(
       .typeError("can't set attributes of built-in/extension type '\(self.typeName)'")
     )
@@ -296,7 +296,7 @@ public final class PyType: PyObject, AttributesOwner {
 
   // sourcery: pymethod = __delattr__
   internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
-    return self.setAttribute(name: name, value: self.context.none)
+    return self.setAttribute(name: name, value: nil)
   }
 
   // MARK: - Dir

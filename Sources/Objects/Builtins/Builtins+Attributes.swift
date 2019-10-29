@@ -57,7 +57,7 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(_ object: PyObject,
                            name: PyObject,
-                           value: PyObject) -> PyResult<()> {
+                           value: PyObject?) -> PyResult<()> {
     guard let name = name as? PyString else {
       return .error(.typeError("setattr(): attribute name must be string"))
     }
@@ -89,7 +89,6 @@ extension Builtins {
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func delAttribute(_ object: PyObject, name: PyObject) -> PyResult<()> {
-    let none = object.context.none
-    return self.setAttribute(object, name: name, value: none)
+    return self.setAttribute(object, name: name, value: nil)
   }
 }

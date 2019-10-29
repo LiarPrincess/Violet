@@ -46,4 +46,16 @@ extension Builtins {
   public func newString(_ value: String) -> PyString {
     return PyString(self.context, value: value)
   }
+
+  // MARK: - Module
+
+  public func newModule(name: String, doc: String? = nil) -> PyModule {
+    let n = self.newString(name)
+    let d = doc.map(self.newString)
+    return self.newModule(name: n, doc: d)
+  }
+
+  public func newModule(name: PyObject, doc: PyObject? = nil) -> PyModule {
+    return PyModule(self.context, name: name, doc: doc)
+  }
 }

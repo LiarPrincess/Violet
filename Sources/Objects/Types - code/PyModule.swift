@@ -25,13 +25,7 @@ public final class PyModule: PyObject, AttributesOwner {
     return str.value
   }
 
-  public convenience init(_ context: PyContext, name: String, doc: String? = nil) {
-    let n = context._string(name)
-    let d = doc.map(context._string)
-    self.init(context, name: n, doc: d)
-  }
-
-  public init(_ context: PyContext, name: PyObject, doc: PyObject? = nil) {
+  internal init(_ context: PyContext, name: PyObject, doc: PyObject?) {
     super.init(type: context.types.module)
     self._attributes["__name__"] = name
     self._attributes["__doc__"] = doc
@@ -87,7 +81,7 @@ public final class PyModule: PyObject, AttributesOwner {
   }
 
   // sourcery: pymethod = __setattr__
-  public func setAttribute(name: PyObject, value: PyObject) -> PyResult<PyNone> {
+  public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(zelf: self, name: name, value: value)
   }
 
@@ -96,28 +90,21 @@ public final class PyModule: PyObject, AttributesOwner {
     return AttributeHelper.delAttribute(zelf: self, name: name)
   }
 
-  public func delAttribute(name: String) -> PyResult<()> {
-    switch self._attributes.del(key: name) {
-    case .some:
-      return .value()
-    case .none:
-      return .error(
-        .attributeError("module '\(self.name)' has no attribute '\(name)'")
-      )
-    }
+  public func delAttribute(name: String) -> PyResult<PyNone> {
+    return AttributeHelper.delAttribute(zelf: self, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  internal func dir() -> DirResult {
+  public func dir() -> DirResult {
     // Do not add `self.type` dir!
     if let dirFunc = self._attributes["__dir__"] {
       return self.context.callDir(dirFunc, args: [])
