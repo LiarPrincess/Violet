@@ -6,8 +6,6 @@ def dump(obj):
     print("obj.%s = %r" % (attr, getattr(obj, attr)))
 
 for t in implemented.types:
-  print(t.__name__)
-
   doc = None
   properties_implemented = []
   properties_unimplemented = []
@@ -16,7 +14,9 @@ for t in implemented.types:
   methods_derived = []
   members_from_sourcery = implemented.types[t]
 
-  ignored = ['__init_subclass__', '__subclasshook__', '__reduce__', '__reduce_ex__']
+  # TODO: Uncomment when we start '__new__' and '__init__'
+  ignored = ['__new__', '__init__',
+             '__init_subclass__', '__subclasshook__', '__reduce__', '__reduce_ex__']
   for name, member in inspect.getmembers(t):
     if name in ignored:
       continue
@@ -50,6 +50,12 @@ for t in implemented.types:
   print_why_is_this_even_implemented = 1
   print_derived = 0
 
+  # Skip finished types
+  has_something_to_do = methods_unimplemented or why_is_this_even_implemented
+  if not has_something_to_do:
+    continue
+
+  print(t.__name__)
   if print_implemented and (methods_implemented):
     print('  Implemented:')
     for name, member in properties_implemented:
