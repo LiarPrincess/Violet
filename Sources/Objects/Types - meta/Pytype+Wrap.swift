@@ -3,8 +3,6 @@ import Core
 // swiftlint:disable force_cast
 // swiftlint:disable trailing_closure
 
-// TODO: Better selfAsXXX methods (PyType_Ready(PyTypeObject *type))
-
 extension PyType {
 
   // MARK: - Properties
@@ -180,89 +178,5 @@ extension PyType {
       doc: doc,
       func: { arg0, arg1, arg2 in fn(arg0, arg1, arg2).toPyObject(in: arg0.context) },
       zelf: nil)
-  }
-
-  // MARK: - Cast self
-
-  internal static func selfAsPyBool(_ value: PyObject) -> PyBool {
-    return value as! PyBool
-  }
-
-  internal static func selfAsPyBuiltinFunction(_ value: PyObject) -> PyBuiltinFunction {
-    return value as! PyBuiltinFunction
-  }
-
-  internal static func selfAsPyCode(_ value: PyObject) -> PyCode {
-    return value as! PyCode
-  }
-
-  internal static func selfAsPyComplex(_ value: PyObject) -> PyComplex {
-    return value as! PyComplex
-  }
-
-  internal static func selfAsPyEllipsis(_ value: PyObject) -> PyEllipsis {
-    return value as! PyEllipsis
-  }
-
-  internal static func selfAsPyFloat(_ value: PyObject) -> PyFloat {
-    return value as! PyFloat
-  }
-
-  internal static func selfAsPyFunction(_ value: PyObject) -> PyFunction {
-    return value as! PyFunction
-  }
-
-  internal static func selfAsPyInt(_ value: PyObject) -> PyInt {
-    return value as! PyInt
-  }
-
-  internal static func selfAsPyList(_ value: PyObject) -> PyList {
-    return value as! PyList
-  }
-
-  internal static func selfAsPyMethod(_ value: PyObject) -> PyMethod {
-    return value as! PyMethod
-  }
-
-  internal static func selfAsPyModule(_ value: PyObject) -> PyModule {
-    return value as! PyModule
-  }
-
-  internal static func selfAsPyNamespace(_ value: PyObject) -> PyNamespace {
-    return value as! PyNamespace
-  }
-
-  internal static func selfAsPyNone(_ value: PyObject) -> PyNone {
-    return value as! PyNone
-  }
-
-  internal static func selfAsPyNotImplemented(_ value: PyObject) -> PyNotImplemented {
-    return value as! PyNotImplemented
-  }
-
-  internal static func selfAsPyProperty(_ value: PyObject) -> PyProperty {
-    return value as! PyProperty
-  }
-
-  internal static func selfAsPyRange(_ value: PyObject) -> PyRange {
-    return value as! PyRange
-  }
-
-  internal static func selfAsPySlice(_ value: PyObject) -> PySlice {
-    return value as! PySlice
-  }
-
-  internal static func selfAsPyType(_ value: PyObject) -> PyType {
-    return value as! PyType
-  }
-
-  internal static func selfAsPyTuple(_ value: PyObject) -> PyTuple {
-    return value as! PyTuple
-  }
-
-  // MARK: - Cast self - errors
-
-  internal static func selfAsPyBaseException(_ value: PyObject) -> PyBaseException {
-    return value as! PyBaseException
   }
 }

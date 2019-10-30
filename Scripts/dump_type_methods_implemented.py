@@ -355,6 +355,18 @@ types = {
     '__mul__',
     '__rmul__',
   ],
+  ArithmeticError: [
+    '__class__',
+    '__dict__',
+  ],
+  AssertionError: [
+    '__class__',
+    '__dict__',
+  ],
+  AttributeError: [
+    '__class__',
+    '__dict__',
+  ],
   BaseException: [
     '__dict__',
     '__class__',
@@ -369,46 +381,244 @@ types = {
     '__setattr__',
     '__delattr__',
   ],
+  BlockingIOError: [
+    '__class__',
+    '__dict__',
+  ],
+  BrokenPipeError: [
+    '__class__',
+    '__dict__',
+  ],
+  BufferError: [
+    '__class__',
+    '__dict__',
+  ],
+  ChildProcessError: [
+    '__class__',
+    '__dict__',
+  ],
+  ConnectionAbortedError: [
+    '__class__',
+    '__dict__',
+  ],
+  ConnectionError: [
+    '__class__',
+    '__dict__',
+  ],
+  ConnectionRefusedError: [
+    '__class__',
+    '__dict__',
+  ],
+  ConnectionResetError: [
+    '__class__',
+    '__dict__',
+  ],
+  EOFError: [
+    '__class__',
+    '__dict__',
+  ],
   Exception: [
+    '__class__',
+    '__dict__',
+  ],
+  FileExistsError: [
+    '__class__',
+    '__dict__',
+  ],
+  FileNotFoundError: [
+    '__class__',
+    '__dict__',
+  ],
+  FloatingPointError: [
+    '__class__',
     '__dict__',
   ],
   GeneratorExit: [
+    '__class__',
+    '__dict__',
+  ],
+  ImportError: [
+    '__class__',
+    '__dict__',
+  ],
+  IndentationError: [
+    '__class__',
+    '__dict__',
+  ],
+  IndexError: [
+    '__class__',
+    '__dict__',
+  ],
+  InterruptedError: [
+    '__class__',
+    '__dict__',
+  ],
+  IsADirectoryError: [
+    '__class__',
+    '__dict__',
+  ],
+  KeyError: [
+    '__class__',
     '__dict__',
   ],
   KeyboardInterrupt: [
+    '__class__',
+    '__dict__',
+  ],
+  LookupError: [
+    '__class__',
+    '__dict__',
+  ],
+  MemoryError: [
+    '__class__',
+    '__dict__',
+  ],
+  ModuleNotFoundError: [
+    '__class__',
+    '__dict__',
+  ],
+  NameError: [
+    '__class__',
+    '__dict__',
+  ],
+  NotADirectoryError: [
+    '__class__',
+    '__dict__',
+  ],
+  NotImplementedError: [
+    '__class__',
+    '__dict__',
+  ],
+  OSError: [
+    '__class__',
+    '__dict__',
+  ],
+  OverflowError: [
+    '__class__',
+    '__dict__',
+  ],
+  PermissionError: [
+    '__class__',
+    '__dict__',
+  ],
+  ProcessLookupError: [
+    '__class__',
+    '__dict__',
+  ],
+  RecursionError: [
+    '__class__',
+    '__dict__',
+  ],
+  ReferenceError: [
+    '__class__',
+    '__dict__',
+  ],
+  RuntimeError: [
+    '__class__',
+    '__dict__',
+  ],
+  StopAsyncIteration: [
+    '__class__',
+    '__dict__',
+  ],
+  StopIteration: [
+    '__class__',
+    '__dict__',
+  ],
+  SyntaxError: [
+    '__class__',
+    '__dict__',
+  ],
+  SystemError: [
+    '__class__',
+    '__dict__',
+  ],
+  SystemExit: [
+    '__class__',
+    '__dict__',
+  ],
+  TabError: [
+    '__class__',
+    '__dict__',
+  ],
+  TimeoutError: [
+    '__class__',
+    '__dict__',
+  ],
+  TypeError: [
+    '__class__',
+    '__dict__',
+  ],
+  UnboundLocalError: [
+    '__class__',
+    '__dict__',
+  ],
+  UnicodeDecodeError: [
+    '__class__',
+    '__dict__',
+  ],
+  UnicodeEncodeError: [
+    '__class__',
+    '__dict__',
+  ],
+  UnicodeError: [
+    '__class__',
+    '__dict__',
+  ],
+  UnicodeTranslateError: [
+    '__class__',
+    '__dict__',
+  ],
+  ValueError: [
+    '__class__',
+    '__dict__',
+  ],
+  ZeroDivisionError: [
+    '__class__',
     '__dict__',
   ],
   BytesWarning: [
+    '__class__',
     '__dict__',
   ],
   DeprecationWarning: [
+    '__class__',
     '__dict__',
   ],
   FutureWarning: [
+    '__class__',
     '__dict__',
   ],
   ImportWarning: [
+    '__class__',
     '__dict__',
   ],
   PendingDeprecationWarning: [
+    '__class__',
     '__dict__',
   ],
   ResourceWarning: [
+    '__class__',
     '__dict__',
   ],
   RuntimeWarning: [
+    '__class__',
     '__dict__',
   ],
   SyntaxWarning: [
+    '__class__',
     '__dict__',
   ],
   UnicodeWarning: [
+    '__class__',
     '__dict__',
   ],
   UserWarning: [
+    '__class__',
     '__dict__',
   ],
   Warning: [
+    '__class__',
     '__dict__',
   ],
 }

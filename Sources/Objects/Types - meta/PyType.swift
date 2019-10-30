@@ -188,6 +188,12 @@ public final class PyType: PyObject, AttributesOwner {
     return self._mro.contains { $0 === type }
   }
 
+  /// PyExceptionInstance_Check
+  internal var isException: Bool {
+    let baseException = self.builtins.errorTypes.baseException
+    return self.isSubtype(of: baseException)
+  }
+
   // sourcery: pymethod = __subclasses__
   internal func getSubclasses() -> [PyType] {
     var result = [PyType]()

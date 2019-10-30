@@ -4,8 +4,6 @@
 
 // swiftlint:disable:previous vertical_whitespace
 
-// MARK: - Types
-
 public final class BuiltinTypes {
 
   /// Root of the type hierarchy
@@ -62,53 +60,5 @@ public final class BuiltinTypes {
     self.slice = PyType.slice(context, type: self.type, base: self.object)
     self.tuple = PyType.tuple(context, type: self.type, base: self.object)
     self.bool = PyType.bool(context, type: self.type, base: self.int)
-  }
-}
-
-// MARK: - Errors
-
-public final class BuiltinErrors {
-
-  // public let baseException: PyType
-  // public let exception: PyType
-  // public let generatorExit: PyType
-  // public let keyboardInterrupt: PyType
-
-  internal init(context: PyContext, types: BuiltinTypes) {
-    // self.baseException = PyType.baseException(context, type: types.type, base: types.object)
-    // self.exception = PyType.exception(context, type: types.type, base: types.object)
-    // self.generatorExit = PyType.generatorExit(context, type: types.type, base: types.object)
-    // self.keyboardInterrupt = PyType.keyboardInterrupt(context, type: types.type, base: types.object)
-  }
-}
-
-// MARK: - Warnings
-
-public final class BuiltinWarnings {
-
-  // public let bytesWarning: PyType
-  // public let deprecationWarning: PyType
-  // public let futureWarning: PyType
-  // public let importWarning: PyType
-  // public let pendingDeprecationWarning: PyType
-  // public let resourceWarning: PyType
-  // public let runtimeWarning: PyType
-  // public let syntaxWarning: PyType
-  // public let unicodeWarning: PyType
-  // public let userWarning: PyType
-  // public let warning: PyType
-
-  internal init(context: PyContext, types: BuiltinTypes) {
-    // self.bytesWarning = PyType.bytesWarning(context, type: types.type, base: types.object)
-    // self.deprecationWarning = PyType.deprecationWarning(context, type: types.type, base: types.object)
-    // self.futureWarning = PyType.futureWarning(context, type: types.type, base: types.object)
-    // self.importWarning = PyType.importWarning(context, type: types.type, base: types.object)
-    // self.pendingDeprecationWarning = PyType.pendingDeprecationWarning(context, type: types.type, base: types.object)
-    // self.resourceWarning = PyType.resourceWarning(context, type: types.type, base: types.object)
-    // self.runtimeWarning = PyType.runtimeWarning(context, type: types.type, base: types.object)
-    // self.syntaxWarning = PyType.syntaxWarning(context, type: types.type, base: types.object)
-    // self.unicodeWarning = PyType.unicodeWarning(context, type: types.type, base: types.object)
-    // self.userWarning = PyType.userWarning(context, type: types.type, base: types.object)
-    // self.warning = PyType.warning(context, type: types.type, base: types.object)
   }
 }

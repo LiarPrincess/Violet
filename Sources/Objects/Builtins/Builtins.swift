@@ -22,13 +22,18 @@ public final class Builtins {
   internal var cachedInts = [BigInt: PyInt]()
 
   public let types: BuiltinTypes
-  public let errorTypes: BuiltinErrors
+  public let errorTypes: BuiltinErrorTypes
+  public let warningTypes: BuiltinWarningTypes
   internal unowned let context: PyContext
 
   internal init(context: PyContext) {
     self.context = context
     self.types = BuiltinTypes(context: context)
-    self.errorTypes = BuiltinErrors(context: context, types: self.types)
+    self.errorTypes = BuiltinErrorTypes(context: context,
+                                        types: self.types)
+    self.warningTypes = BuiltinWarningTypes(context: context,
+                                            types: self.types,
+                                            errors: self.errorTypes)
 
     self.cacheIntegers()
   }

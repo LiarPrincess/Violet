@@ -8,9 +8,9 @@ import Core
 // sourcery: pyerrortype = BaseException
 internal class PyBaseException: PyObject, AttributesOwner {
 
-  internal static let doc: String = """
-    Common base class for all exceptions
-    """
+  internal class var doc: String {
+    return "Common base class for all exceptions"
+  }
 
   internal var _args: PyTuple
   internal var _traceback: PyObject
@@ -26,7 +26,7 @@ internal class PyBaseException: PyObject, AttributesOwner {
   internal init(_ context: PyContext,
                 args: PyTuple,
                 traceback: PyObject,
-                cause:   PyObject?,
+                cause: PyObject?,
                 exceptionContext: PyObject?,
                 suppressExceptionContext: Bool) {
     self._args = args
@@ -35,7 +35,27 @@ internal class PyBaseException: PyObject, AttributesOwner {
     self._attributes = Attributes()
     self._exceptionContext = exceptionContext
     self._suppressExceptionContext = suppressExceptionContext
-    super.init(type: context.builtins.errorTypes.baseException)
+
+    super.init()
+    self.initType(from: context)
+  }
+
+  /// Override this function in every exception class!
+  ///
+  /// This is a terrible HACK!.
+  /// Our goal is to set proper `type` in each PyObject and to do this we can:
+  /// 1. Have 2 inits in each exception:
+  ///    - convenience (similar to this one), so it can be used in 'normal' code
+  ///    - with `type: PyType` arg, so it can be used in derieved classes to set type
+  ///    But this is a lot of boilerplate.
+  /// 2. Store `context` in each PyObject and have `type` as computed property.
+  ///    This simplifies some stuff, but complicates other
+  ///    (mostly by having different mental model than other VMs).
+  /// 3. Use the same `init` in every exception and inject proper type to assign.
+  ///
+  /// We went with 3 using dynamic dyspatch.
+  internal func initType(from context: PyContext) {
+    self.setType(to: context.builtins.errorTypes.baseException)
   }
 
   // MARK: - String
@@ -166,7 +186,7 @@ internal class PyBaseException: PyObject, AttributesOwner {
       return .value()
     }
 
-    guard self.isExceptionInstance(value) else {
+    guard value.type.isException else {
       return .error(
         .typeError("exception cause must be None or derive from BaseException")
       )
@@ -195,7 +215,7 @@ internal class PyBaseException: PyObject, AttributesOwner {
       return .value()
     }
 
-    guard self.isExceptionInstance(value) else {
+    guard value.type.isException else {
       return .error(
         .typeError("exception context must be None or derive from BaseException")
       )
@@ -215,13 +235,5 @@ internal class PyBaseException: PyObject, AttributesOwner {
   internal func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
     self._suppressExceptionContext = value.map(self.builtins.isTrue) ?? false
     return .value()
-  }
-
-  // MARK: - Helpers
-
-  /// PyExceptionInstance_Check
-  internal func isExceptionInstance(_ value: PyObject) -> Bool {
-    let baseException = self.builtins.errorTypes.baseException
-    return value.type.isSubtype(of: baseException)
   }
 }

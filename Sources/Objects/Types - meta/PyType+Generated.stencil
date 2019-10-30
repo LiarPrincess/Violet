@@ -4,14 +4,6 @@
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-{% macro warnIfNotFinal type %}
-    {# (Almost) All types have to be marked final #}
-    {# Btw. stencil has problem with: 'not (type.isFinal or type.name == "PyInt")' #}
-    {% if not type.isFinal and type.name != "PyInt" %}
-    #warning("Type {{ type.name }} should be marked final.")
-    {% endif %}
-{% endmacro %}
-
 {% macro fillDict type %}
   {% set castSelf %}selfAs{{ type.name }}{% endset %}
 
@@ -54,7 +46,6 @@ extension PyType {
 
   /// Create `type` type without assigning `type` property.
   internal static func typeWithoutType(_ context: PyContext, base: PyType) -> PyType {
-    {% call warnIfNotFinal type %}
     let result = PyType.initWithoutType(context, name: "type", doc: PyType.doc, base: base)
     {% call fillDict type %}
     return result
@@ -69,7 +60,6 @@ extension PyType {
   {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
   {% set fnName %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
   internal static func {{ fnName }}(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    {% call warnIfNotFinal type %}
     let result = PyType(context, name: "{{ type.annotations.pytype }}", doc: {{ docOrNil }}, type: type, base: base)
     {% call fillDict type %}
     return result
@@ -82,15 +72,13 @@ extension PyType {
   {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
   {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
   {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
-  {% set fnName %}{{ type.annotations.pyerrortype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+  {% set fnName %}{{ type.annotations.pyerrortype|lowerFirstWord }}{% endset %}
   internal static func {{ fnName }}(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    {% call warnIfNotFinal type %}
     let result = PyType(context, name: "{{ type.annotations.pyerrortype }}", doc: {{ docOrNil }}, type: type, base: base)
     {% call fillDict type %}
     return result
   }
 {% endfor %}
-}
 {% for type in types.classes|annotated:"pywarningtype" %}
 
   // MARK: - {{ type.name|replace:"Py","" }}
@@ -98,9 +86,8 @@ extension PyType {
   {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
   {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
   {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
-  {% set fnName %}{{ type.annotations.pywarningtype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+  {% set fnName %}{{ type.annotations.pywarningtype|lowerFirstWord }}{% endset %}
   internal static func {{ fnName }}(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    {% call warnIfNotFinal type %}
     let result = PyType(context, name: "{{ type.annotations.pywarningtype }}", doc: {{ docOrNil }}, type: type, base: base)
     {% call fillDict type %}
     return result
