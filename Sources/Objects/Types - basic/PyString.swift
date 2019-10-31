@@ -2,7 +2,9 @@ import Core
 
 // In CPython:
 // Objects -> unicodeobject.c
-// https://docs.python.org/3.7/c-api/tuple.html
+// https://docs.python.org/3/library/stdtypes.html
+
+// swiftlint:disable file_length
 
 // sourcery: pytype = str
 public class PyString: PyObject {
@@ -230,6 +232,202 @@ public class PyString: PyObject {
     case let .error(e):
       return .error(e)
     }
+  }
+
+  // MARK: - Predicates
+
+  // sourcery: pymethod = isalnum
+  /// Return true if all characters in the string are alphanumeric
+  /// and there is at least one characte.
+  /// A character c is alphanumeric if one of the following returns True:
+  /// c.isalpha(), c.isdecimal(), c.isdigit(), or c.isnumeric()
+  /// https://docs.python.org/3/library/stdtypes.html#str.isalnum
+  internal func isAlphaNumeric() -> Bool {
+    return self.scalars.any && self.scalars.allSatisfy { scalar in
+      let properties = scalar.properties
+      return properties.isAlphabetic
+        || properties.generalCategory == .decimalNumber
+        || scalar.properties.numericType != nil
+    }
+  }
+
+  // sourcery: pymethod = isalpha
+  /// Return true if all characters in the string are alphabetic
+  /// and there is at least one character.
+  /// Alphabetic characters are those characters defined in the Unicode character
+  /// database as “Letter”, i.e., those with general category property
+  /// being one of “Lm”, “Lt”, “Lu”, “Ll”, or “Lo”.
+  /// https://docs.python.org/3/library/stdtypes.html#str.isalpha
+  internal func isAlpha() -> Bool {
+    return self.scalars.any &&
+      self.scalars.allSatisfy { $0.properties.isAlphabetic }
+  }
+
+  // sourcery: pymethod = isascii
+  /// Return true if the string is empty or all characters in the string are ASCII.
+  /// ASCII characters have code points in the range U+0000-U+007F.
+  /// https://docs.python.org/3/library/stdtypes.html#str.isascii
+  internal func isAscii() -> Bool {
+    return self.scalars.any && self.scalars.allSatisfy { $0.isASCII }
+  }
+
+  // sourcery: pymethod = isdecimal
+  /// Return true if all characters in the string are decimal characters
+  /// and there is at least one character.
+  /// Formally a decimal character is a character in the Unicode General
+  /// Category “Nd”.
+  /// https://docs.python.org/3/library/stdtypes.html#str.isdecimal
+  internal func isDecimal() -> Bool {
+    return self.scalars.any &&
+      self.scalars.allSatisfy { $0.properties.generalCategory == .decimalNumber }
+  }
+
+  // sourcery: pymethod = isdigit
+  /// Return true if all characters in the string are digits
+  /// and there is at least one character.
+  /// Formally, a digit is a character that has the property value
+  /// Numeric_Type=Digit or Numeric_Type=Decimal.
+  /// https://docs.python.org/3/library/stdtypes.html#str.isdigit
+  internal func isDigit() -> Bool {
+    return self.scalars.any && self.scalars.allSatisfy { scalar in
+      guard let numericType = scalar.properties.numericType else {
+        return false
+      }
+
+      return numericType == .digit || numericType == .decimal
+    }
+  }
+
+  // sourcery: pymethod = isidentifier
+  /// https://docs.python.org/3/library/stdtypes.html#str.isidentifier
+  internal func isIdentifier() -> Bool {
+    switch self.scalars.isValidIdentifier {
+    case .yes:
+      return true
+    case .no, .emptyString:
+      return false
+    }
+  }
+
+  // sourcery: pymethod = islower
+  /// Return true if all cased characters 4 in the string are lowercase
+  /// and there is at least one cased character.
+  /// https://docs.python.org/3/library/stdtypes.html#str.islower
+  internal func isLower() -> Bool {
+    return self.scalars.any &&
+      self.scalars.allSatisfy { $0.properties.isLowercase }
+  }
+
+  // sourcery: pymethod = isnumeric
+  /// Return true if all characters in the string are numeric characters,
+  /// and there is at least one character.
+  /// Formally, numeric characters are those with the property value
+  /// Numeric_Type=Digit, Numeric_Type=Decimal or Numeric_Type=Numeric.
+  /// https://docs.python.org/3/library/stdtypes.html#str.isnumeric
+  internal func isNumeric() -> Bool {
+    return self.scalars.any &&
+      self.scalars.allSatisfy { $0.properties.numericType != nil }
+  }
+
+  // sourcery: pymethod = isprintable
+  /// Return true if all characters in the string are printable
+  /// or the string is empty.
+  ///
+  /// Nonprintable characters are those characters defined in the Unicode
+  /// character database as “Other” or “Separator”,
+  /// excepting the ASCII space (0x20) which is considered printable.
+  ///
+  /// All characters except those characters defined in the Unicode character
+  /// database as following categories are considered printable.
+  ///    * Cc (Other, Control)
+  ///    * Cf (Other, Format)
+  ///    * Cs (Other, Surrogate)
+  ///    * Co (Other, Private Use)
+  ///    * Cn (Other, Not Assigned)
+  ///    * Zl Separator, Line ('\u2028', LINE SEPARATOR)
+  ///    * Zp Separator, Paragraph ('\u2029', PARAGRAPH SEPARATOR)
+  ///    * Zs (Separator, Space) other than ASCII space('\x20').
+  /// https://docs.python.org/3/library/stdtypes.html#str.isprintable
+  internal func isPrintable() -> Bool {
+    return self.scalars.any &&
+      self.scalars.allSatisfy { scalar in
+        let space = 32
+        if scalar.value == space {
+          return true
+        }
+
+        switch scalar.properties.generalCategory {
+        case .control, // Cc
+             .format, // Cf
+             .surrogate, // Cs
+             .privateUse, // Co
+             .unassigned, // Cn
+             .lineSeparator, // Zl
+             .paragraphSeparator, // Zp
+             .spaceSeparator: // Zs
+          return false
+        default:
+          return true
+        }
+      }
+  }
+
+  // sourcery: pymethod = isspace
+  /// Return true if there are only whitespace characters in the string
+  /// and there is at least one character.
+  /// A character is whitespace if in the Unicode character database:
+  /// - its general category is Zs (“Separator, space”)
+  /// - or its bidirectional class is one of WS, B, or S
+  /// https://docs.python.org/3/library/stdtypes.html#str.isspace
+  internal func isSpace() -> Bool {
+    return self.scalars.any &&
+      self.scalars.allSatisfy { $0.properties.isWhitespace }
+  }
+
+  // sourcery: pymethod = istitle
+  /// Return true if the string is a titlecased string and there is at least
+  /// one character, for example uppercase characters may only follow uncased
+  /// characters and lowercase characters only cased ones.
+  /// https://docs.python.org/3/library/stdtypes.html#str.istitle
+  internal func isTitle() -> Bool {
+    guard self.scalars.any else {
+      return false
+    }
+
+    var cased = false
+    var isPreviousCased = false
+    for scalar in self.scalars {
+      let category = scalar.properties.generalCategory
+
+      if category == .uppercaseLetter || category == .titlecaseLetter {
+        if isPreviousCased {
+          return false
+        }
+
+        isPreviousCased = true
+        cased = true
+      } else if category == .lowercaseLetter {
+        if !isPreviousCased {
+          return false
+        }
+
+        isPreviousCased = true
+        cased = true
+      } else {
+        isPreviousCased = false
+      }
+    }
+
+    return cased
+  }
+
+  // sourcery: pymethod = isupper
+  /// Return true if all cased characters 4 in the string are uppercase
+  /// and there is at least one cased character.
+  /// https://docs.python.org/3/library/stdtypes.html#str.isupper
+  internal func isUpper() -> Bool {
+    return self.scalars.any &&
+      self.scalars.allSatisfy { $0.properties.isUppercase }
   }
 
   // MARK: - Add

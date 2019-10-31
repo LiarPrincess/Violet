@@ -49,10 +49,6 @@ extension Dictionary {
   }
 }
 
-private func takeExisting<Value>(_ existing: Value, _ new: Value) -> Value {
-  return existing
-}
-
 extension String {
 
   /// Create String instance from given scalars.
@@ -73,4 +69,68 @@ extension UnicodeScalar {
     let pad = String(repeating: "0", count: 4 - hex.count)
     return "U+\(pad)\(hex)"
   }
+
+  /// Basically `self.properties.isXIDStart` + underscore.
+  ///
+  /// Why underscore?
+  /// I'm glad you asked:
+  /// https://unicode.org/cldr/utility/character.jsp?a=005f
+  public var isIdentifierStart: Bool {
+    return self.properties.isXIDStart || self == "_"
+  }
+
+  /// Basically `self.properties.isXIDContinue`
+  public var isIdentifierContinue: Bool {
+    return self.properties.isXIDContinue
+  }
+}
+
+extension Substring.UnicodeScalarView {
+  public var isValidIdentifier: IsValidIdentifierResult {
+    return isValidIdentifierImpl(self)
+  }
+}
+
+extension String.UnicodeScalarView {
+  public var isValidIdentifier: IsValidIdentifierResult {
+    return isValidIdentifierImpl(self)
+  }
+}
+
+// MARK: - Helpers
+
+private func takeExisting<Value>(_ existing: Value, _ new: Value) -> Value {
+  return existing
+}
+
+public enum IsValidIdentifierResult {
+  case yes
+  case no(scalar: UnicodeScalar, column: SourceColumn)
+  case emptyString
+}
+
+private func isValidIdentifierImpl<C>(_ scalars: C) -> IsValidIdentifierResult
+  where C: Collection, C.Element == UnicodeScalar {
+
+  // Returning single scalar does not make sense (scalars don't have meaning).
+  // We include its index, but not very precise.
+  // Basically everything is 'best efford', because text is hard.
+
+  guard let first = scalars.first else {
+    return .emptyString
+  }
+
+  guard first.isIdentifierStart else {
+    return .no(scalar: first, column: 0)
+  }
+
+  for (index, c) in scalars.dropFirst().enumerated() {
+    guard c.isIdentifierContinue else {
+      let skippedFirst: SourceColumn = 1
+      let column = skippedFirst + SourceColumn(index)
+      return .no(scalar: c, column: column)
+    }
+  }
+
+  return .yes
 }

@@ -147,18 +147,6 @@ str
     format
     format_map
     index
-    isalnum
-    isalpha
-    isascii
-    isdecimal
-    isdigit
-    isidentifier
-    islower
-    isnumeric
-    isprintable
-    isspace
-    istitle
-    isupper
     join
     ljust
     lower

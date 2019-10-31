@@ -104,29 +104,15 @@ extension Lexer {
 
   private func verifyIdentifier(_ identifier: UnicodeScalarView.SubSequence,
                                 start: SourceLocation) throws {
-
-    // Throwing single scalar does not make sense (individual scalars don't
-    // have meaning). We include its location, but not very precise.
-    // Basically everything is 'best efford', because text is hard.
-
-    // This should never happen, how did we even started lexing?
-    guard let first = identifier.first else {
+    switch identifier.isValidIdentifier {
+    case .yes:
+      return
+    case .emptyString:
       throw self.error(.identifier(" "), location: start)
-    }
-
-    // As for the underscore look for 'XID_Start' in:
-    // https://unicode.org/cldr/utility/character.jsp?a=005f
-    guard first.properties.isXIDStart || first == "_" else {
-      throw self.error(.identifier(first), location: start)
-    }
-
-    for (index, c) in identifier.dropFirst().enumerated() {
-      guard c.properties.isXIDContinue else {
-        let skippedFirst: SourceColumn = 1
-        let column   = start.column + skippedFirst + SourceColumn(index)
-        let location = SourceLocation(line: start.line, column: column)
-        throw self.error(.identifier(c), location: location)
-      }
+    case let .no(scalar: scalar, column: column):
+      let column   = start.column + column
+      let location = SourceLocation(line: start.line, column: column)
+      throw self.error(.identifier(scalar), location: location)
     }
   }
 }
