@@ -109,7 +109,19 @@ internal enum SequenceHelper {
 
   // MARK: - Extract index
 
+  internal enum ExtractIndexResult {
+    case none
+    case int(Int)
+    case notIndex
+  }
+
+  internal static func extractIndex2(_ value: PyObject) -> ExtractIndexResult {
+    fatalError()
+  }
+
   /// PyLong_FromSsize_t
+  /// _PyEval_SliceIndex
+  /// _PyEval_SliceIndexNotNone
   internal static func extractIndex(_ value: PyObject) -> BigInt? {
 //    guard let indexType = value.type as? IndexConvertibleTypeClass else {
 //      return nil
@@ -121,24 +133,28 @@ internal enum SequenceHelper {
 
   // MARK: - Get item
 
+  internal enum GetItemResult<E> {
+    case single(E)
+    case slice([E])
+    case error(PyErrorEnum)
+  }
+
   internal static func getItem(context: PyContext,
                                elements: [PyObject],
                                index: PyObject,
-                               canIndexFromEnd: Bool,
-                               typeName: String) -> PyResult<PyObject> {
+                               typeName: String) -> GetItemResult<PyObject> {
     if let index = extractIndex(index) {
-      return getItem(context: context,
-                     elements: elements,
-                     index: index,
-                     canIndexFromEnd: canIndexFromEnd,
-                     typeName: typeName)
+      switch getItem(context: context, elements: elements, index: index, typeName: typeName) {
+      case let .value(v): return .single(v)
+      case let .error(e): return .error(e)
+      }
     }
 
     if let slice = index as? PySlice {
-      return SequenceHelper
-        .getItem(context: context, elements: elements, slice: slice)
-        .map(context._tuple)
-        .flatMap { PyResult<PyObject>.value($0) }
+      switch getItem(context: context, elements: elements, slice: slice) {
+      case let .value(v): return .slice(v)
+      case let .error(e): return .error(e)
+      }
     }
 
     return .error(
@@ -146,27 +162,22 @@ internal enum SequenceHelper {
     )
   }
 
-  /// Use `canIndexFromEnd` for `tuple[-1]`.
-  internal static func getItem(context: PyContext,
-                               elements: [PyObject],
-                               index: PyInt,
-                               canIndexFromEnd: Bool,
-                               typeName: String) -> PyResult<PyObject> {
+  internal static func getItem<E>(context: PyContext,
+                                  elements: [E],
+                                  index: PyInt,
+                                  typeName: String) -> PyResult<E> {
     return getItem(context: context,
                    elements: elements,
                    index: index.value,
-                   canIndexFromEnd: canIndexFromEnd,
                    typeName: typeName)
   }
 
-  /// Use `canIndexFromEnd` for `tuple[-1]`.
-  internal static func getItem(context: PyContext,
-                               elements: [PyObject],
-                               index: BigInt,
-                               canIndexFromEnd: Bool,
-                               typeName: String) -> PyResult<PyObject> {
+  internal static func getItem<E>(context: PyContext,
+                                  elements: [E],
+                                  index: BigInt,
+                                  typeName: String) -> PyResult<E> {
     var index = index
-    if index < 0, canIndexFromEnd {
+    if index < 0 {
       index += BigInt(elements.count)
     }
 
@@ -181,29 +192,52 @@ internal enum SequenceHelper {
     return .value(elements[indexInt])
   }
 
-  internal static func getItem(context: PyContext,
-                               elements: [PyObject],
-                               slice: PySlice) -> PyResult<[PyObject]> {
-    let count = elements.count
-    let adjusted = GeneralHelpers.adjustIndices(value: slice, to: count)
+  internal static func getItem<E, C: RandomAccessCollection>(
+    context: PyContext,
+    elements: C,
+    slice: PySlice) -> PyResult<[E]> where C.Element == E {
 
+    let unpack: PySlice.UnpackedIndices
+    switch slice.unpack() {
+    case let .value(v): unpack = v
+    case let .error(e): return .error(e)
+    }
+
+    let adjusted = slice.adjust(unpack, toLength: elements.count)
     if adjusted.length <= 0 {
       return .value([])
     }
 
-    // Small otimization, so we don't allocate new object
-    if adjusted.start == 0 && adjusted.step == 1 && adjusted.length == count {
-      return .value(elements)
+    if adjusted.step == 0 {
+      return .error(.valueError("slice step cannot be zero"))
     }
 
-    // TODO: RustPython does it differently (objsequence -> fn get_slice_items)
-    var elements = [PyObject]()
-    for i in 0..<adjusted.length {
-      let index = adjusted.start + i * adjusted.step
-      elements.append(elements[index])
+    if adjusted.step == 1 {
+      let result = elements.dropFirst(adjusted.start).prefix(adjusted.length)
+      return .value(Array(result))
     }
 
-    return .value(elements)
+    guard var index = elements.index(elements.startIndex,
+                                     offsetBy: adjusted.start,
+                                     limitedBy: elements.endIndex) else {
+      return .value([])
+    }
+
+    var result = [E]()
+    for _ in 0..<adjusted.length {
+      result.append(elements[index])
+
+      let limit = adjusted.step > 0 ? elements.endIndex : elements.startIndex
+      guard let newIndex = elements.index(index,
+                                          offsetBy: adjusted.step,
+                                          limitedBy: limit) else {
+        return .value(result)
+      }
+
+      index = newIndex
+    }
+
+    return .value(result)
   }
 
   // MARK: - Count

@@ -5,6 +5,7 @@ import Core
 // https://docs.python.org/3/library/stdtypes.html#range
 
 // swiftlint:disable yoda_condition
+// swiftlint:disable file_length
 
 // sourcery: pytype = range
 /// The range type represents an immutable sequence of numbers
@@ -265,27 +266,28 @@ internal final class PyRange: PyObject {
   }
 
   internal func getItem(at slice: PySlice) -> PyResult<PyRange> {
-    var start = self.start
-    if let sliceStart = slice.start {
-      switch self.getItem(at: sliceStart) {
-      case let .value(v): start = v
-      case let .error(e): return .error(e)
-      }
-    }
-
-    var stop = self.stop
-    if let sliceStop = slice.stop {
-      switch self.getItem(at: sliceStop) {
-      case let .value(v): stop = v
-      case let .error(e): return .error(e)
-      }
-    }
-
-    let sliceStep = slice.step?.value ?? 1
-    let step = self.int(sliceStep * self.step.value)
-
-    let result = self.range(start: start, stop: stop, step: step)
-    return result.flatMap { .value($0) }
+//    var start = self.start
+//    if let sliceStart = slice.start {
+//      switch self.getItem(at: sliceStart) {
+//      case let .value(v): start = v
+//      case let .error(e): return .error(e)
+//      }
+//    }
+//
+//    var stop = self.stop
+//    if let sliceStop = slice.stop {
+//      switch self.getItem(at: sliceStop) {
+//      case let .value(v): stop = v
+//      case let .error(e): return .error(e)
+//      }
+//    }
+//
+//    let sliceStep = slice.step?.value ?? 1
+//    let step = self.int(sliceStep * self.step.value)
+//
+//    let result = self.range(start: start, stop: stop, step: step)
+//    return result.flatMap { .value($0) }
+    fatalError()
   }
 
   // MARK: - Count

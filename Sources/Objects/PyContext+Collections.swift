@@ -135,10 +135,20 @@ extension PyContext {
   // MARK: - Slice
 
   internal func slice(stop: PyInt?) -> PySlice {
-    return PySlice(self, start: nil, stop: stop, step: nil)
+    return PySlice(
+      self,
+      start: self.none,
+      stop: stop ?? self.none,
+      step: self.none
+    )
   }
 
   internal func slice(start: PyInt?, stop: PyInt?, step: PyInt? = nil) -> PySlice {
-    return PySlice(self, start: start, stop: stop, step: step)
+    return PySlice(
+      self,
+      start: start ?? self.none,
+      stop: stop ?? self.none,
+      step: step ?? self.none
+    )
   }
 }

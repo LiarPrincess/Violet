@@ -137,8 +137,8 @@ internal final class PyList: PyObject {
   // MARK: - Sequence
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
-    return BigInt(self.elements.count)
+  internal func getLength() -> Int {
+    return self.elements.count
   }
 
   // sourcery: pymethod = __contains__
@@ -150,11 +150,16 @@ internal final class PyList: PyObject {
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    return SequenceHelper.getItem(context: self.context,
-                                  elements: self.elements,
-                                  index: index,
-                                  canIndexFromEnd: true,
-                                  typeName: "list")
+    let result = SequenceHelper.getItem(context: self.context,
+                                        elements: self.elements,
+                                        index: index,
+                                        typeName: "list")
+
+    switch result {
+    case let .single(s): return .value(s)
+    case let .slice(s): return .value(self.context._list(s))
+    case let .error(e): return .error(e)
+    }
   }
 
   // sourcery: pymethod = count

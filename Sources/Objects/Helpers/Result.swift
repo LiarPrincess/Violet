@@ -8,6 +8,7 @@ public enum PyErrorEnum {
   case indexError(String)
   case attributeError(String)
   case zeroDivisionError(String)
+  case overflowError(String)
 }
 
 // MARK: - PyResult

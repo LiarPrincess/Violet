@@ -4,6 +4,8 @@ import Core
 // Objects -> sliceobject.c
 // https://docs.python.org/3.7/c-api/slice.html
 
+// swiftlint:disable file_length
+
 // sourcery: pytype = slice
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
@@ -17,13 +19,19 @@ internal final class PySlice: PyObject {
     This is used for extended slicing (e.g. a[0:10:2]).
     """
 
-  internal var start: PyInt?
-  internal var stop:  PyInt?
-  internal var step:  PyInt?
+  internal var start: PyObject
+  internal var stop:  PyObject
+  internal var step:  PyObject
+
+  private var notAnIndexError: PyErrorEnum {
+    return .typeError(
+      "slice indices must be integers or None or have an __index__ method"
+    )
+  }
 
   // MARK: - Init
 
-  internal init(_ context: PyContext, start: PyInt?, stop: PyInt?, step: PyInt?) {
+  internal init(_ context: PyContext, start: PyObject, stop: PyObject, step: PyObject) {
     self.start = start
     self.stop = stop
     self.step = step
@@ -39,16 +47,12 @@ internal final class PySlice: PyObject {
     }
 
     return SequenceHelper.isEqual(context: self.context,
-                                  left: self.asObjectArray,
-                                  right: other.asObjectArray)
+                                  left: self.asArray,
+                                  right: other.asArray)
   }
 
-  private var asObjectArray: [PyObject] {
-    return [
-      self.start ?? self.context.none,
-      self.stop  ?? self.context.none,
-      self.step  ?? self.context.none
-    ]
+  private var asArray: [PyObject] {
+    return [self.start, self.stop, self.step]
   }
 
   // sourcery: pymethod = __ne__
@@ -65,8 +69,8 @@ internal final class PySlice: PyObject {
     }
 
     return SequenceHelper.isLess(context: self.context,
-                                 left: self.asObjectArray,
-                                 right: other.asObjectArray)
+                                 left: self.asArray,
+                                 right: other.asArray)
   }
 
   // sourcery: pymethod = __le__
@@ -76,8 +80,8 @@ internal final class PySlice: PyObject {
     }
 
     return SequenceHelper.isLessEqual(context: self.context,
-                                      left: self.asObjectArray,
-                                      right: other.asObjectArray)
+                                      left: self.asArray,
+                                      right: other.asArray)
   }
 
   // sourcery: pymethod = __gt__
@@ -87,8 +91,8 @@ internal final class PySlice: PyObject {
     }
 
     return SequenceHelper.isGreater(context: self.context,
-                                    left: self.asObjectArray,
-                                    right: other.asObjectArray)
+                                    left: self.asArray,
+                                    right: other.asArray)
   }
 
   // sourcery: pymethod = __ge__
@@ -98,18 +102,17 @@ internal final class PySlice: PyObject {
     }
 
     return SequenceHelper.isGreaterEqual(context: self.context,
-                                         left: self.asObjectArray,
-                                         right: other.asObjectArray)
+                                         left: self.asArray,
+                                         right: other.asArray)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
   internal func repr() -> String {
-    let noneRepr = self.context._none.repr()
-    let start = self.start.map(self.context._repr) ?? noneRepr
-    let stop  = self.stop.map(self.context._repr) ?? noneRepr
-    let step  = self.step.map(self.context._repr) ?? noneRepr
+    let start = self.context._repr(value: self.start)
+    let stop  = self.context._repr(value: self.stop)
+    let step  = self.context._repr(value: self.step)
     return "slice(\(start), \(stop), \(step))"
   }
 
@@ -140,11 +143,15 @@ internal final class PySlice: PyObject {
       return .notImplemented
     }
 
-    if length < 0 {
+    guard let lengthInt = Int(exactly: length) else {
+      return .error(.indexError("length out of range"))
+    }
+
+    if lengthInt < 0 {
       return .error(.valueError("length should not be negative"))
     }
 
-    switch self.getLongIndices(length: length) {
+    switch self.getLongIndices(length: lengthInt) {
     case let .value(v):
       let start = self.int(v.start)
       let stop = self.int(v.stop)
@@ -156,9 +163,9 @@ internal final class PySlice: PyObject {
   }
 
   private struct GetLongIndicesResult {
-    var start: BigInt = 0
-    var stop:  BigInt = 0
-    var step:  BigInt = 0
+    var start: Int
+    var stop:  Int
+    var step:  Int
   }
 
   /// int _PySlice_GetLongIndices(PySliceObject *self, PyObject *length, ...)
@@ -166,50 +173,163 @@ internal final class PySlice: PyObject {
   /// Compute slice indices given a slice and length.
   /// Return -1 on failure. Used by slice.indices and rangeobject slicing.
   /// Assumes that `len` is a nonnegative instance of PyLong.
-  private func getLongIndices(length: BigInt) -> PyResult<GetLongIndicesResult> {
-    var result = GetLongIndicesResult()
+  private func getLongIndices(length: Int) -> PyResult<GetLongIndicesResult> {
+    // swiftlint:disable:previous function_body_length
 
     // Convert step to an integer; raise for zero step.
-    result.step = 1
-    if let selfStep = self.step {
-      if selfStep.value == 0 {
+    var step = 1
+    switch SequenceHelper.extractIndex2(self.step) {
+    case .none: break
+    case .int(let value):
+      if value == 0 {
         return .error(.valueError("slice step cannot be zero"))
       }
-
-      result.step = selfStep.value
+      step = value
+    case .notIndex:
+      return .error(self.notAnIndexError)
     }
 
     // Find lower and upper bounds for start and stop.
-    let stepIsNegative = result.step < 0
-    let lower: BigInt = stepIsNegative ? -1 : 0
-    let upper: BigInt = stepIsNegative ? length + lower : length
+    let isGoingUp = step > 0
+    let lower = isGoingUp ? 0 : -1
+    let upper = isGoingUp ? length : length - 1
 
     // Compute start.
-    result.start = stepIsNegative ? upper : lower
-    if let selfStart = self.start {
-      result.start = selfStart.value
+    var start = isGoingUp ? lower : upper
+    switch SequenceHelper.extractIndex2(self.start) {
+    case .none: break
+    case .int(let value):
+      start = value
 
-      if result.start < 0 {
-        result.start += length
-        result.start = max(result.start, lower)
+      if start < 0 {
+        start += length
+        start = max(start, lower) // Case when we have high '-1000' index
       } else {
-        result.start = min(result.start, upper)
+        start = min(start, upper)
       }
+    case .notIndex:
+      return .error(self.notAnIndexError)
     }
 
     // Compute stop.
-    result.stop = stepIsNegative ? lower : upper
-    if let selfStop = self.stop {
-      result.stop = selfStop.value
+    var stop = isGoingUp ? upper : lower
+    switch SequenceHelper.extractIndex2(self.stop) {
+    case .none: break
+    case .int(let value):
+      stop = value
 
-      if result.stop < 0 {
-        result.stop += length
-        result.stop = max(result.stop, lower)
+      if stop < 0 {
+        stop += length
+        stop = max(stop, lower) // Case when we have high '-1000' index
       } else {
-        result.stop = min(result.stop, upper)
+        stop = min(stop, upper)
+      }
+    case .notIndex:
+      return .error(self.notAnIndexError)
+    }
+
+    return .value(GetLongIndicesResult(start: start, stop: stop, step: step))
+  }
+
+  // MARK: - Unpack
+
+  internal struct UnpackedIndices {
+    internal var start: Int
+    internal var stop:  Int
+    internal var step:  Int
+  }
+
+  /// int
+  /// PySlice_Unpack(PyObject *_r,
+  ///                Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step)
+  internal func unpack() -> PyResult<UnpackedIndices> {
+    // Prevent trap on "step = -step" (kind of assuming internal int workings)
+    let min = Int.min + 1
+    let max = Int.max
+
+    var step = 1
+    switch SequenceHelper.extractIndex2(self.step) {
+    case .none: break
+    case .int(let value):
+      if value == 0 {
+        return .error(.valueError("slice step cannot be zero"))
+      }
+      step = value
+    case .notIndex:
+      return .error(self.notAnIndexError)
+    }
+
+    var start = step < 0 ? max : 0
+    switch SequenceHelper.extractIndex2(self.start) {
+    case .none: break
+    case .int(let value):
+      start = value
+    case .notIndex:
+      return .error(self.notAnIndexError)
+    }
+
+    var stop = step < 0 ? min : max
+    switch SequenceHelper.extractIndex2(self.stop) {
+    case .none: break
+    case .int(let value):
+      stop = value
+    case .notIndex:
+      return .error(self.notAnIndexError)
+    }
+
+    return .value(UnpackedIndices(start: start, stop: stop, step: step))
+  }
+
+  // MARK: - Adjust indices
+
+  internal struct AdjustedIndices {
+    internal var start:  Int
+    internal var stop:   Int
+    internal var step:   Int
+    internal let length: Int
+  }
+
+  /// Py_ssize_t
+  /// PySlice_AdjustIndices(Py_ssize_t length,
+  ///                       Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t step)
+  internal func adjust(_ unpack: UnpackedIndices,
+                       toLength length: Int) -> AdjustedIndices {
+    var start = unpack.start
+    var stop = unpack.stop
+    let step = unpack.step
+
+    assert(step != 0)
+    let isGoingDown = step < 0
+
+    if start < 0 {
+      start += length
+      if start < 0 {
+        start = isGoingDown ? -1 : 0
+      }
+    } else if start >= length {
+      start = isGoingDown ? length - 1 : length
+    }
+
+    if stop < 0 {
+      stop += length
+      if stop < 0 {
+        stop = isGoingDown ? -1 : 0
+      }
+    } else if stop >= length {
+      stop = isGoingDown ? length - 1 : length
+    }
+
+    var length = 0
+    if isGoingDown {
+      if stop < start {
+        length = (start - stop - 1) / (-step) + 1
+      }
+    } else {
+      if start < stop {
+        length = (stop - start - 1) / step + 1
       }
     }
 
-    return .value(result)
+    return AdjustedIndices(start: start, stop: stop, step: step, length: length)
   }
 }

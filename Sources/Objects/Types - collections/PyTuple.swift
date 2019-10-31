@@ -164,11 +164,16 @@ public final class PyTuple: PyObject {
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    return SequenceHelper.getItem(context: self.context,
-                                  elements: self.elements,
-                                  index: index,
-                                  canIndexFromEnd: true,
-                                  typeName: "tuple")
+    let result = SequenceHelper.getItem(context: self.context,
+                                        elements: self.elements,
+                                        index: index,
+                                        typeName: "tuple")
+
+    switch result {
+    case let .single(s): return .value(s)
+    case let .slice(s): return .value(self.context._tuple(s))
+    case let .error(e): return .error(e)
+    }
   }
 
   // sourcery: pymethod = count
