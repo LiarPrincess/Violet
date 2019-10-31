@@ -4,47 +4,121 @@ import Core
 // Objects -> unicodeobject.c
 // https://docs.python.org/3.7/c-api/tuple.html
 
+// sourcery: pytype = str
 public class PyString: PyObject {
 
-  internal var value: String
+  internal static let doc = """
+    str(object='') -> str
+    str(bytes_or_buffer[, encoding[, errors]]) -> str
+
+    Create a new string object from the given object. If encoding or
+    errors is specified, then the object must expose a data buffer
+    that will be decoded using the given encoding and error handler.
+    Otherwise, returns the result of object.__str__() (if defined)
+    or repr(object).
+    encoding defaults to sys.getdefaultencoding().
+    errors defaults to 'strict'.
+    """
+
+  internal let value: String
+  internal lazy var scalars = self.value.unicodeScalars
+
+  // MARK: - Init
 
   internal init(_ context: PyContext, value: String) {
     self.value = value
-    // TOOD: add to context
-    super.init()
+    super.init(type: context.builtins.types.str)
   }
 
-  internal func str() -> String {
-    return self.value
+  // MARK: - Equatable
+
+  // sourcery: pymethod = __eq__
+  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    if self === other {
+      return .value(true)
+    }
+
+    return self.compare(other).map { $0 == .equal }
   }
-}
 
-internal final class PyStringType: PyObject {
+  // sourcery: pymethod = __ne__
+  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return NotEqualHelper.fromIsEqual(self.isEqual(other))
+  }
 
-//  override internal var name: String { return "str" }
-//  override internal var doc: String? { return """
-//    str(object='') -> str
-//    str(bytes_or_buffer[, encoding[, errors]]) -> str
-//
-//    Create a new string object from the given object. If encoding or
-//    errors is specified, then the object must expose a data buffer
-//    that will be decoded using the given encoding and error handler.
-//    Otherwise, returns the result of object.__str__() (if defined)
-//    or repr(object).
-//    encoding defaults to sys.getdefaultencoding().
-//    errors defaults to 'strict'.
-//    """
-//  }
+  // MARK: - Comparable
+
+  // sourcery: pymethod = __lt__
+  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return self.compare(other).map { $0 == .less }
+  }
+
+  // sourcery: pymethod = __le__
+  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return self.compare(other).map { $0 == .less || $0 == .equal }
+  }
+
+  // sourcery: pymethod = __gt__
+  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return self.compare(other).map { $0 == .greater }
+  }
+
+  // sourcery: pymethod = __ge__
+  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return self.compare(other).map { $0 == .greater || $0 == .equal }
+  }
+
+  private enum CompareResult {
+    case less
+    case greater
+    case equal
+  }
+
+  private func compare(_ other: PyObject) -> PyResultOrNot<CompareResult> {
+    guard let other = other as? PyString else {
+      return .notImplemented
+    }
+
+    return .value(self.compare(other.value))
+  }
+
+  private func compare(_ other: String) -> CompareResult {
+    // "Cafe\u0301" == "Café" (Caf\u00E9) -> False
+    // "Cafe\u0301" <  "Café" (Caf\u00E9) -> True
+    let lScalars = self.scalars
+    let rScalars = other.unicodeScalars
+
+    for (l, r) in zip(lScalars, rScalars) {
+      if l.value < r.value {
+        return .less
+      }
+      if l.value > r.value {
+        return .greater
+      }
+    }
+
+    let lCount = lScalars.count
+    let rCount = rScalars.count
+    return lCount < rCount ? .less :
+           lCount > rCount ? .greater :
+           .equal
+  }
+
+  // MARK: - Hashable
+
+  // sourcery: pymethod = __hash__
+  internal func hash() -> PyResultOrNot<PyHash> {
+    return .value(HashHelper.hash(self.value))
+  }
 
   // MARK: - String
-/*
-  internal func repr(value: PyObject) throws -> String {
-    let rawString = try self.extract(value)
 
+  // sourcery: pymethod = __repr__
+  internal func repr() -> String {
     // Compute length of output, quote characters and maximum character
     var singleQuoteCount = 0
     var doubleQuoteCount = 0
-    for c in rawString {
+    for c in self.value {
       switch c {
       case "'":  singleQuoteCount += 1
       case "\"": doubleQuoteCount += 1
@@ -56,9 +130,9 @@ internal final class PyStringType: PyObject {
     let quote: Character = doubleQuoteCount > singleQuoteCount ? "\"" : "'"
 
     var result = String(quote)
-    result.reserveCapacity(rawString.count)
+    result.reserveCapacity(self.value.count)
 
-    for c in rawString {
+    for c in self.value {
       switch c {
       case quote, "\\":
         result.append("\\")
@@ -81,196 +155,133 @@ internal final class PyStringType: PyObject {
     return result
   }
 
-  internal func str(value: PyObject) throws -> String {
-    return try self.extract(value)
+  // sourcery: pymethod = __str__
+  internal func str() -> String {
+    return self.value
   }
 
-  // MARK: - Equatable, hashable
+  // MARK: - Class
 
-  internal func hash(value: PyObject) throws -> PyHash {
-    let v = try self.extract(value)
-    return self.context.hasher.hash(v)
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
   }
 
-  internal func compare(left: PyObject,
-                        right: PyObject,
-                        mode: CompareMode) throws -> Bool {
-    guard let l = self.extractOrNil(left),
-          let r = self.extractOrNil(right) else {
-      throw ComparableNotImplemented(left: left, right: right)
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(zelf: self, name: name)
+  }
+
+  // MARK: - Length
+
+  // sourcery: pymethod = __len__
+  internal func getLength() -> Int {
+    return self.scalars.count
+  }
+
+  // MARK: - Contains
+
+  // sourcery: pymethod = __contains__
+  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+    // In Python: "\u00E9" in "Cafe\u0301" -> False
+    // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
+    // which is 'e with acute (as a single char)' in 'Cafe{accent}'
+
+    guard let elementString = element as? PyString else {
+      return .error(
+        .typeError(
+          "'in <string>' requires string as left operand, not \(element.typeName)"
+        )
+      )
     }
 
-    if left === right {
-      switch mode {
-      case .equal, .lessEqual, .greaterEqual: return true
-      case .notEqual, .less, .greater: return false
+    // There are many good substring algorithms, and we went with this?
+    var iter = scalars.startIndex
+    let needle = elementString.value.unicodeScalars
+
+    while iter != self.scalars.endIndex {
+      let substring = self.scalars[iter...]
+      if substring.starts(with: needle) {
+        return .value(true)
       }
+
+      self.scalars.formIndex(after: &iter)
     }
 
-    switch mode {
-    case .equal:
-      return self.isEqual(left: l, right: r)
-    case .notEqual:
-      return !self.isEqual(left: l, right: r)
-    case .less:
-      let result = self.compare(left: l, right: r)
-      return result == .less
-    case .lessEqual:
-      let result = self.compare(left: l, right: r)
-      return result == .less || result == .equal
-    case .greater:
-      let result = self.compare(left: l, right: r)
-      return result == .greater
-    case .greaterEqual:
-      let result = self.compare(left: l, right: r)
-      return result == .greater || result == .equal
+    return .value(false)
+  }
+
+  // MARK: - Get item
+
+  // sourcery: pymethod = __getitem__
+  internal func getItem(at index: PyObject) -> PyResult<PyObject> {
+    let result = SequenceHelper.getItem(context: self.context,
+                                        elements: self.scalars,
+                                        index: index,
+                                        typeName: "string")
+
+    switch result {
+    case let .single(scalar):
+      return .value(self.builtins.newString(String(scalar)))
+    case let .slice(scalars):
+      return .value(self.builtins.newString(String(scalars)))
+    case let .error(e):
+      return .error(e)
     }
   }
 
-  private func isEqual(left: String, right: String) -> Bool {
-    // "Cafe\u0301" == "Café" -> False
-    let lScalars = left.unicodeScalars
-    let rScalars = right.unicodeScalars
+  // MARK: - Add
 
-    return lScalars.count == rScalars.count
-        && zip(lScalars, rScalars).allSatisfy { $0 == $1 }
-  }
-
-  private enum CompareResult {
-    case less
-    case greater
-    case equal
-  }
-
-  private func compare(left: String, right: String) -> CompareResult {
-    // "Cafe\u0301" < "Café" -> True
-    let lScalars = left.unicodeScalars
-    let rScalars = right.unicodeScalars
-
-    for (l, r) in zip(lScalars, rScalars) {
-      if l.value < r.value {
-        return .less
-      }
-      if l.value > r.value {
-        return .greater
-      }
+  // sourcery: pymethod = __add__
+  internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    guard let otherStr = other as? PyString else {
+      return .error(
+        .typeError("can only concatenate str (not '\(other.typeName)') to str")
+      )
     }
 
-    let lCount = lScalars.count
-    let rCount = rScalars.count
-    return lCount < rCount ? .less :
-           lCount  > rCount ? .greater :
-           .equal
-  }
-
-  // MARK: - Methods
-
-  internal func length(value: PyObject) throws -> PyInt {
-    let v = try self.extract(value)
-    let count = v.unicodeScalars.count
-    return self.types.int.new(count)
-  }
-
-  internal func remainder(left: PyObject, right: PyObject) throws -> PyObject {
-    // unicode_mod
-    fatalError()
-  }
-
-  internal func concat(left: PyObject, right: PyObject) throws -> PyObject {
-    let l = try self.extract(left)
-    guard let r = self.extractOrNil(right) else {
-//      PyErr_Format(PyExc_TypeError,
-//                   "can only concatenate str (not \"%.200s\") to str",
-//                   right->ob_type->tp_name);
-      fatalError()
+    if self.value.isEmpty {
+      return .value(PyString(self.context, value: otherStr.value))
     }
 
-    if l.isEmpty {
-      return self.new(r)
+    if otherStr.value.isEmpty {
+      return .value(PyString(self.context, value: self.value))
     }
 
-    if r.isEmpty {
-      return self.new(l)
-    }
-
-    return self.new(l + r)
+    let result = self.value + otherStr.value
+    return .value(PyString(self.context, value: result))
   }
 
-  internal func `repeat`(value: PyObject, count: PyInt) throws -> PyObject {
-    let v = try self.extract(value)
+  // MARK: - Mul
 
-    let countRaw = try self.types.int.extractInt(count)
-    let count = max(countRaw, 0)
-
-    if v.isEmpty || count == 1 {
-      return self.new(v)
+  // sourcery: pymethod = __mul__
+  internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    guard let pyInt = other as? PyInt else {
+      return .error(
+        .typeError("can only multiply str and int (not '\(other.typeName)')")
+      )
     }
 
-    var i: BigInt = 0
+    guard let int = Int(exactly: pyInt.value) else {
+      return .error(.overflowError("repeated string is too long"))
+    }
+
+    if self.value.isEmpty || int == 1 {
+      return .value(PyString(self.context, value: self.value))
+    }
+
     var result = ""
-    while i < count {
-      result.append(v)
-      i += 1
+    for _ in 0..<max(int, 0) {
+      result.append(self.value)
     }
 
-    return self.new(result)
+    return .value(PyString(self.context, value: result))
   }
 
-  // MARK: - Items
-
-  internal func item(owner: PyObject, at index: Int) throws -> PyObject {
-    let o = try self.extract(owner)
-    let scalars = o.unicodeScalars
-
-    let iter = scalars.index(scalars.startIndex, offsetBy: index)
-    return self.new(scalars[iter])
+  // sourcery: pymethod = __rmul__
+  internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    return self.mul(other)
   }
-
-  internal func contains(owner: PyObject, element: PyObject) throws -> Bool {
-    let o = try self.extract(owner)
-    let e = try self.extract(element)
-    return o.contains(e)
-  }
-
-  // MARK: - Subscript
-
-  internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
-    let bigInt = try self.types.int.extractInt(index)
-    guard let int = Int(exactly: bigInt) else {
-      fatalError()
-    }
-    return try self.item(owner: owner, at: int)
-  }
-
-  // MARK: - Helpers
-
-  internal func extractOrNil(_ object: PyObject) -> String? {
-    let str = object as? PyString
-    return str.map { $0.value }
-  }
-
-  internal func extract(_ object: PyObject) throws -> String {
-    if let str = object as? PyString {
-      return str.value
-    }
-
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
-  }
-
-  private func matchTypeOrNil(_ object: PyObject) -> PyString? {
-    if let str = object as? PyString {
-      return str
-    }
-
-    return nil
-  }
-
-  private func matchType(_ object: PyObject) throws -> PyString {
-    if let str = object as? PyString {
-      return str
-    }
-
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
-  }
-*/
 }

@@ -496,6 +496,33 @@ extension PyType {
     return result
   }
 
+  // MARK: - String
+
+  internal static func str(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "str", doc: PyString.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyString.getClass, castSelf: PyType.selfAsPyString)
+
+
+    result._attributes["__eq__"] = PyType.wrapMethod(context, name: "__eq__", doc: nil, func: PyString.isEqual(_:), castSelf: PyType.selfAsPyString)
+    result._attributes["__ne__"] = PyType.wrapMethod(context, name: "__ne__", doc: nil, func: PyString.isNotEqual(_:), castSelf: PyType.selfAsPyString)
+    result._attributes["__lt__"] = PyType.wrapMethod(context, name: "__lt__", doc: nil, func: PyString.isLess(_:), castSelf: PyType.selfAsPyString)
+    result._attributes["__le__"] = PyType.wrapMethod(context, name: "__le__", doc: nil, func: PyString.isLessEqual(_:), castSelf: PyType.selfAsPyString)
+    result._attributes["__gt__"] = PyType.wrapMethod(context, name: "__gt__", doc: nil, func: PyString.isGreater(_:), castSelf: PyType.selfAsPyString)
+    result._attributes["__ge__"] = PyType.wrapMethod(context, name: "__ge__", doc: nil, func: PyString.isGreaterEqual(_:), castSelf: PyType.selfAsPyString)
+    result._attributes["__hash__"] = PyType.wrapMethod(context, name: "__hash__", doc: nil, func: PyString.hash, castSelf: PyType.selfAsPyString)
+    result._attributes["__repr__"] = PyType.wrapMethod(context, name: "__repr__", doc: nil, func: PyString.repr, castSelf: PyType.selfAsPyString)
+    result._attributes["__str__"] = PyType.wrapMethod(context, name: "__str__", doc: nil, func: PyString.str, castSelf: PyType.selfAsPyString)
+    result._attributes["__getattribute__"] = PyType.wrapMethod(context, name: "__getattribute__", doc: nil, func: PyString.getAttribute(name:), castSelf: PyType.selfAsPyString)
+    result._attributes["__len__"] = PyType.wrapMethod(context, name: "__len__", doc: nil, func: PyString.getLength, castSelf: PyType.selfAsPyString)
+    result._attributes["__contains__"] = PyType.wrapMethod(context, name: "__contains__", doc: nil, func: PyString.contains(_:), castSelf: PyType.selfAsPyString)
+    result._attributes["__getitem__"] = PyType.wrapMethod(context, name: "__getitem__", doc: nil, func: PyString.getItem(at:), castSelf: PyType.selfAsPyString)
+    result._attributes["__add__"] = PyType.wrapMethod(context, name: "__add__", doc: nil, func: PyString.add(_:), castSelf: PyType.selfAsPyString)
+    result._attributes["__mul__"] = PyType.wrapMethod(context, name: "__mul__", doc: nil, func: PyString.mul(_:), castSelf: PyType.selfAsPyString)
+    result._attributes["__rmul__"] = PyType.wrapMethod(context, name: "__rmul__", doc: nil, func: PyString.rmul(_:), castSelf: PyType.selfAsPyString)
+    return result
+  }
+
   // MARK: - Tuple
 
   internal static func tuple(_ context: PyContext, type: PyType, base: PyType) -> PyType {

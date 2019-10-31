@@ -28,6 +28,7 @@ public final class BuiltinTypes {
   public let property: PyType
   public let range: PyType
   public let slice: PyType
+  public let str: PyType
   public let tuple: PyType
 
   internal init(context: PyContext) {
@@ -58,6 +59,7 @@ public final class BuiltinTypes {
     self.property = PyType.property(context, type: self.type, base: self.object)
     self.range = PyType.range(context, type: self.type, base: self.object)
     self.slice = PyType.slice(context, type: self.type, base: self.object)
+    self.str = PyType.str(context, type: self.type, base: self.object)
     self.tuple = PyType.tuple(context, type: self.type, base: self.object)
     self.bool = PyType.bool(context, type: self.type, base: self.int)
   }

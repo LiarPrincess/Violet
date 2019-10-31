@@ -1,7 +1,8 @@
 import Core
 
 // swiftlint:disable force_cast
-// swiftlint:disable trailing_closure
+// swiftlint:disable line_length
+// swiftlint:disable file_length
 
 // TODO: Better selfAsXXX methods (PyType_Ready(PyTypeObject *type))
 
@@ -75,6 +76,10 @@ extension PyType {
 
   internal static func selfAsPySlice(_ value: PyObject) -> PySlice {
     return value as! PySlice
+  }
+
+  internal static func selfAsPyString(_ value: PyObject) -> PyString {
+    return value as! PyString
   }
 
   internal static func selfAsPyType(_ value: PyObject) -> PyType {

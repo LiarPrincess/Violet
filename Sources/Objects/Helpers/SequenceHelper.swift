@@ -1,6 +1,6 @@
 import Core
 
-// swiftlint:disable yoda_condition
+// swiftlint:disable file_length
 
 internal enum SequenceHelper {
 
@@ -93,8 +93,7 @@ internal enum SequenceHelper {
                                 elements: [PyObject],
                                 element: PyObject) -> Bool {
     for e in elements {
-      let isEqual = context.isEqual(left: e, right: element)
-      switch isEqual {
+      switch context.isEqual(left: e, right: element) {
       case .value(true):
         return true
       case .value(false),
@@ -139,19 +138,25 @@ internal enum SequenceHelper {
     case error(PyErrorEnum)
   }
 
-  internal static func getItem(context: PyContext,
-                               elements: [PyObject],
-                               index: PyObject,
-                               typeName: String) -> GetItemResult<PyObject> {
+  internal static func getItem<C: Collection>(
+    context: PyContext,
+    elements: C,
+    index: PyObject,
+    typeName: String) -> GetItemResult<C.Element> {
+
     if let index = extractIndex(index) {
-      switch getItem(context: context, elements: elements, index: index, typeName: typeName) {
+      let item = getSingleItem(context: context,
+                               elements: elements,
+                               index: index,
+                               typeName: typeName)
+      switch item {
       case let .value(v): return .single(v)
       case let .error(e): return .error(e)
       }
     }
 
     if let slice = index as? PySlice {
-      switch getItem(context: context, elements: elements, slice: slice) {
+      switch getSliceItem(context: context, elements: elements, slice: slice) {
       case let .value(v): return .slice(v)
       case let .error(e): return .error(e)
       }
@@ -162,40 +167,32 @@ internal enum SequenceHelper {
     )
   }
 
-  internal static func getItem<E>(context: PyContext,
-                                  elements: [E],
-                                  index: PyInt,
-                                  typeName: String) -> PyResult<E> {
-    return getItem(context: context,
-                   elements: elements,
-                   index: index.value,
-                   typeName: typeName)
-  }
+  internal static func getSingleItem<C: Collection>(
+    context: PyContext,
+    elements: C,
+    index: BigInt,
+    typeName: String) -> PyResult<C.Element> {
 
-  internal static func getItem<E>(context: PyContext,
-                                  elements: [E],
-                                  index: BigInt,
-                                  typeName: String) -> PyResult<E> {
     var index = index
     if index < 0 {
       index += BigInt(elements.count)
     }
 
-    guard let indexInt = Int(exactly: index) else {
+    let start = elements.startIndex
+    let end = elements.endIndex
+
+    guard let int = Int(exactly: index),
+          let i = elements.index(start, offsetBy: int, limitedBy: end) else {
       return .error(.indexError("\(typeName) index out of range"))
     }
 
-    guard 0 <= indexInt && indexInt < elements.count else {
-      return .error(.indexError("\(typeName) index out of range"))
-    }
-
-    return .value(elements[indexInt])
+    return .value(elements[i])
   }
 
-  internal static func getItem<E, C: RandomAccessCollection>(
+  internal static func getSliceItem<C: Collection>(
     context: PyContext,
     elements: C,
-    slice: PySlice) -> PyResult<[E]> where C.Element == E {
+    slice: PySlice) -> PyResult<[C.Element]> {
 
     let unpack: PySlice.UnpackedIndices
     switch slice.unpack() {
@@ -223,7 +220,7 @@ internal enum SequenceHelper {
       return .value([])
     }
 
-    var result = [E]()
+    var result = [C.Element]()
     for _ in 0..<adjusted.length {
       result.append(elements[index])
 

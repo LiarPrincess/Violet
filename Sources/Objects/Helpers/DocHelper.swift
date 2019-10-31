@@ -15,7 +15,6 @@ internal enum DocHelper {
   /// _PyType_GetTextSignatureFromInternalDoc(const char *name, const char *internal_doc)
   internal static func getSignature(_ doc: String) -> String {
     fatalError()
-    return ""
   }
 
   private static func getSignarureEnd(_ doc: String) -> String.Index? {
