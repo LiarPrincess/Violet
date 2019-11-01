@@ -9,8 +9,59 @@ extension Array {
 extension Collection {
 
   /// A Boolean value that indicates whether the collection has any elements.
+  ///
+  /// `hasAny` would be a better name, but that's what you get if you
+  /// dab too much in .Net.
   public var any: Bool {
     return !self.isEmpty
+  }
+}
+
+extension BidirectionalCollection {
+
+  /// Returns a Boolean value indicating whether the ending elements of the
+  /// collection are the same as the elements in another collection.
+  public func ends<Suffix>(with suffix: Suffix) -> Bool
+    where Suffix: BidirectionalCollection,
+          Suffix.Element == Element,
+          Element: Equatable {
+    // This implementation assumes that `self.index(offsetBy:)` is not efficient
+    // (for example it has to iterate collection from start or something).
+    // Otherwise we would create `Slice` and use `==` on each element,
+    // then we would not require `BidirectionalCollection`, but a `Sequence`.
+
+    if self.isEmpty {
+      return suffix.isEmpty
+    }
+
+    if suffix.isEmpty {
+      return true
+    }
+
+    var selfIndex = self.endIndex
+    var suffixIndex = suffix.endIndex
+
+    // `endIndex` is AFTER the collection
+    self.formIndex(before: &selfIndex)
+    suffix.formIndex(before: &suffixIndex)
+
+    while selfIndex != self.startIndex && suffixIndex != suffix.startIndex {
+      guard self[selfIndex] == suffix[suffixIndex] else {
+        return false
+      }
+
+      // Advance indices (is it still 'advance' when we go back?)
+      self.formIndex(before: &selfIndex)
+      suffix.formIndex(before: &suffixIndex)
+    }
+
+    // Compare first element
+    guard self[selfIndex] == suffix[suffixIndex] else {
+      return false
+    }
+
+    // If it is the suffix that was shorter then it is OK.
+    return suffixIndex == suffix.startIndex
   }
 }
 

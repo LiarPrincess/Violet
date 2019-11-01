@@ -110,11 +110,17 @@ internal enum SequenceHelper {
 
   internal enum ExtractIndexResult {
     case none
-    case int(Int)
-    case notIndex
+    case index(Int)
+    case error(PyErrorEnum)
   }
 
-  internal static func extractIndex2(_ value: PyObject) -> ExtractIndexResult {
+  internal static func extractIndex2(_ value: PyObject,
+                                     typeName: String) -> ExtractIndexResult {
+
+//    return .typeError(
+//      "\(typename) indices must be integers or None or have an __index__ method"
+//    )
+
     fatalError()
   }
 

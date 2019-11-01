@@ -17,6 +17,30 @@ public enum PyResult<V> {
   case value(V)
   case error(PyErrorEnum)
 
+  internal static func typeError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.typeError(msg))
+  }
+
+  internal static func valueError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.valueError(msg))
+  }
+
+  internal static func indexError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.indexError(msg))
+  }
+
+  internal static func attributeError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.attributeError(msg))
+  }
+
+  internal static func zeroDivisionError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.zeroDivisionError(msg))
+  }
+
+  internal static func overflowError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.overflowError(msg))
+  }
+
   public func map<A>(_ f: (V) -> A) -> PyResult<A> {
     switch self {
     case let .value(v):
@@ -68,6 +92,30 @@ public enum PyResultOrNot<V> {
     case .value, .error:
       return false
     }
+  }
+
+  internal static func typeError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.typeError(msg))
+  }
+
+  internal static func valueError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.valueError(msg))
+  }
+
+  internal static func indexError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.indexError(msg))
+  }
+
+  internal static func attributeError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.attributeError(msg))
+  }
+
+  internal static func zeroDivisionError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.zeroDivisionError(msg))
+  }
+
+  internal static func overflowError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.overflowError(msg))
   }
 
   public func map<A>(_ f: (V) -> A) -> PyResultOrNot<A> {

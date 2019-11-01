@@ -23,12 +23,6 @@ internal final class PySlice: PyObject {
   internal var stop:  PyObject
   internal var step:  PyObject
 
-  private var notAnIndexError: PyErrorEnum {
-    return .typeError(
-      "slice indices must be integers or None or have an __index__ method"
-    )
-  }
-
   // MARK: - Init
 
   internal init(_ context: PyContext, start: PyObject, stop: PyObject, step: PyObject) {
@@ -178,15 +172,15 @@ internal final class PySlice: PyObject {
 
     // Convert step to an integer; raise for zero step.
     var step = 1
-    switch SequenceHelper.extractIndex2(self.step) {
+    switch self.extractIndex(self.step) {
     case .none: break
-    case .int(let value):
+    case let .index(value):
       if value == 0 {
         return .error(.valueError("slice step cannot be zero"))
       }
       step = value
-    case .notIndex:
-      return .error(self.notAnIndexError)
+    case let .error(e):
+      return .error(e)
     }
 
     // Find lower and upper bounds for start and stop.
@@ -196,9 +190,9 @@ internal final class PySlice: PyObject {
 
     // Compute start.
     var start = isGoingUp ? lower : upper
-    switch SequenceHelper.extractIndex2(self.start) {
+    switch self.extractIndex(self.start) {
     case .none: break
-    case .int(let value):
+    case let .index(value):
       start = value
 
       if start < 0 {
@@ -207,15 +201,15 @@ internal final class PySlice: PyObject {
       } else {
         start = min(start, upper)
       }
-    case .notIndex:
-      return .error(self.notAnIndexError)
+    case let .error(e):
+      return .error(e)
     }
 
     // Compute stop.
     var stop = isGoingUp ? upper : lower
-    switch SequenceHelper.extractIndex2(self.stop) {
+    switch self.extractIndex(self.stop) {
     case .none: break
-    case .int(let value):
+    case let .index(value):
       stop = value
 
       if stop < 0 {
@@ -224,8 +218,8 @@ internal final class PySlice: PyObject {
       } else {
         stop = min(stop, upper)
       }
-    case .notIndex:
-      return .error(self.notAnIndexError)
+    case let .error(e):
+      return .error(e)
     }
 
     return .value(GetLongIndicesResult(start: start, stop: stop, step: step))
@@ -248,33 +242,28 @@ internal final class PySlice: PyObject {
     let max = Int.max
 
     var step = 1
-    switch SequenceHelper.extractIndex2(self.step) {
+    switch self.extractIndex(self.step) {
     case .none: break
-    case .int(let value):
+    case let .index(value):
       if value == 0 {
         return .error(.valueError("slice step cannot be zero"))
       }
       step = value
-    case .notIndex:
-      return .error(self.notAnIndexError)
+    case let .error(e): return .error(e)
     }
 
     var start = step < 0 ? max : 0
-    switch SequenceHelper.extractIndex2(self.start) {
+    switch self.extractIndex(self.start) {
     case .none: break
-    case .int(let value):
-      start = value
-    case .notIndex:
-      return .error(self.notAnIndexError)
+    case let .index(value): start = value
+    case let .error(e): return .error(e)
     }
 
     var stop = step < 0 ? min : max
-    switch SequenceHelper.extractIndex2(self.stop) {
+    switch self.extractIndex(self.stop) {
     case .none: break
-    case .int(let value):
-      stop = value
-    case .notIndex:
-      return .error(self.notAnIndexError)
+    case let .index(value): stop = value
+    case let .error(e): return .error(e)
     }
 
     return .value(UnpackedIndices(start: start, stop: stop, step: step))
@@ -331,5 +320,11 @@ internal final class PySlice: PyObject {
     }
 
     return AdjustedIndices(start: start, stop: stop, step: step, length: length)
+  }
+
+  // MARK: - Helpers
+
+  private func extractIndex(_ value: PyObject) -> SequenceHelper.ExtractIndexResult {
+    return SequenceHelper.extractIndex2(value, typeName: "slice")
   }
 }

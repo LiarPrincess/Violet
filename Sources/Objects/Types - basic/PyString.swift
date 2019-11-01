@@ -192,10 +192,8 @@ public class PyString: PyObject {
     // which is 'e with acute (as a single char)' in 'Cafe{accent}'
 
     guard let elementString = element as? PyString else {
-      return .error(
-        .typeError(
-          "'in <string>' requires string as left operand, not \(element.typeName)"
-        )
+      return .typeError(
+        "'in <string>' requires string as left operand, not \(element.typeName)"
       )
     }
 
@@ -430,14 +428,120 @@ public class PyString: PyObject {
       self.scalars.allSatisfy { $0.properties.isUppercase }
   }
 
+  // MARK: - Starts/ends with
+
+  internal static let startswithDoc = """
+    S.startswith(prefix[, start[, end]]) -> bool
+
+    Return True if S starts with the specified prefix, False otherwise.
+    With optional start, test S beginning at that position.
+    With optional end, stop comparing S at that position.
+    prefix can also be a tuple of strings to try.
+    """
+
+  // sourcery: pymethod = startswith, doc = startswithDoc
+  internal func startsWith(_ value: PyObject,
+                           start: PyObject,
+                           end: PyObject) -> PyResult<Bool> {
+    var startIndex = self.scalars.startIndex
+    switch self.extractIndex(start) {
+    case .none: break
+    case let .index(index): startIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    var endIndex = self.scalars.endIndex
+    switch self.extractIndex(end) {
+    case .none: break
+    case let .index(index): endIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    let substring = self.scalars[startIndex..<endIndex]
+
+    if let tuple = value as? PyTuple {
+      for element in tuple.elements {
+        guard let string = element as? PyString else {
+          return .typeError(
+            "tuple for startswith must only contain str, not \(element.typeName)"
+          )
+        }
+
+        if substring.starts(with: string.value.unicodeScalars) {
+          return .value(true)
+        }
+      }
+    }
+
+    if let string = value as? PyString,
+      substring.starts(with: string.value.unicodeScalars) {
+      return .value(true)
+    }
+
+    return .typeError(
+      "startswith first arg must be str or a tuple of str, not \(value.typeName)"
+    )
+  }
+
+  internal static let endswithDoc = """
+    S.endswith(suffix[, start[, end]]) -> bool
+
+    Return True if S ends with the specified suffix, False otherwise.
+    With optional start, test S beginning at that position.
+    With optional end, stop comparing S at that position.
+    suffix can also be a tuple of strings to try.
+    """
+
+  // sourcery: pymethod = endswith, doc = endswithDoc
+  internal func endsWith(_ value: PyObject,
+                         start: PyObject,
+                         end: PyObject) -> PyResultOrNot<Bool> {
+    var startIndex = self.scalars.startIndex
+    switch self.extractIndex(start) {
+    case .none: break
+    case let .index(index): startIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    var endIndex = self.scalars.endIndex
+    switch self.extractIndex(end) {
+    case .none: break
+    case let .index(index): endIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    let substring = self.scalars[startIndex..<endIndex]
+
+    if let tuple = value as? PyTuple {
+      for element in tuple.elements {
+        guard let string = element as? PyString else {
+          return .typeError(
+            "tuple for endswith must only contain str, not \(element.typeName)"
+          )
+        }
+
+        if substring.ends(with: string.value.unicodeScalars) {
+          return .value(true)
+        }
+      }
+    }
+
+    if let string = value as? PyString,
+      substring.ends(with: string.value.unicodeScalars) {
+      return .value(true)
+    }
+
+    return .typeError(
+      "endswith first arg must be str or a tuple of str, not \(value.typeName)"
+    )
+  }
+
   // MARK: - Add
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let otherStr = other as? PyString else {
-      return .error(
-        .typeError("can only concatenate str (not '\(other.typeName)') to str")
-      )
+      return .typeError("can only concatenate str (not '\(other.typeName)') to str")
     }
 
     if self.value.isEmpty {
@@ -457,13 +561,11 @@ public class PyString: PyObject {
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let pyInt = other as? PyInt else {
-      return .error(
-        .typeError("can only multiply str and int (not '\(other.typeName)')")
-      )
+      return .typeError("can only multiply str and int (not '\(other.typeName)')")
     }
 
     guard let int = Int(exactly: pyInt.value) else {
-      return .error(.overflowError("repeated string is too long"))
+      return .overflowError("repeated string is too long")
     }
 
     if self.value.isEmpty || int == 1 {
@@ -481,5 +583,37 @@ public class PyString: PyObject {
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return self.mul(other)
+  }
+
+  // MARK: - Helpers
+
+  private enum ExtractIndexResult {
+    case none
+    case index(String.UnicodeScalarIndex)
+    case error(PyErrorEnum)
+  }
+
+  private func extractIndex(_ value: PyObject) -> ExtractIndexResult {
+    switch SequenceHelper.extractIndex2(value, typeName: "str") {
+    case .none:
+      return .none
+    case var .index(index):
+      let count = self.scalars.count
+
+      if index < 0 {
+        index += count
+        if index < 0 {
+          index = 0
+        }
+      }
+
+      let result = self.scalars.index(self.scalars.startIndex,
+                                      offsetBy: index,
+                                      limitedBy: self.scalars.endIndex)
+
+      return .index(result ?? self.scalars.endIndex)
+    case let .error(e):
+      return .error(e)
+    }
   }
 }
