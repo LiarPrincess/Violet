@@ -186,31 +186,23 @@ public class PyString: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+  internal func contains(_ value: PyObject) -> PyResult<Bool> {
     // In Python: "\u00E9" in "Cafe\u0301" -> False
     // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
     // which is 'e with acute (as a single char)' in 'Cafe{accent}'
 
-    guard let elementString = element as? PyString else {
+    guard let valueString = value as? PyString else {
       return .typeError(
-        "'in <string>' requires string as left operand, not \(element.typeName)"
+        "'in <string>' requires string as left operand, not \(value.typeName)"
       )
     }
 
-    // There are many good substring algorithms, and we went with this?
-    var iter = scalars.startIndex
-    let needle = elementString.value.unicodeScalars
-
-    while iter != self.scalars.endIndex {
-      let substring = self.scalars[iter...]
-      if substring.starts(with: needle) {
-        return .value(true)
-      }
-
-      self.scalars.formIndex(after: &iter)
+    switch self.find(in: self.scalars, value: valueString.value) {
+    case .index:
+      return .value(true)
+    case .notFound:
+      return .value(false)
     }
-
-    return .value(false)
   }
 
   // MARK: - Get item
@@ -441,8 +433,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = startswith, doc = startswithDoc
   internal func startsWith(_ value: PyObject,
-                           start: PyObject,
-                           end: PyObject) -> PyResult<Bool> {
+                           start: PyObject?,
+                           end: PyObject?) -> PyResult<Bool> {
     var startIndex = self.scalars.startIndex
     switch self.extractIndex(start) {
     case .none: break
@@ -494,8 +486,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = endswith, doc = endswithDoc
   internal func endsWith(_ value: PyObject,
-                         start: PyObject,
-                         end: PyObject) -> PyResultOrNot<Bool> {
+                         start: PyObject?,
+                         end: PyObject?) -> PyResultOrNot<Bool> {
     var startIndex = self.scalars.startIndex
     switch self.extractIndex(start) {
     case .none: break
@@ -614,6 +606,150 @@ public class PyString: PyObject {
     return String(scalars[index...])
   }
 
+  // MARK: - Find
+
+  internal static let findDoc = """
+    S.find(sub[, start[, end]]) -> int
+
+    Return the lowest index in S where substring sub is found,
+    such that sub is contained within S[start:end].  Optional
+    arguments start and end are interpreted as in slice notation.
+
+    Return -1 on failure.
+    """
+
+  // sourcery: pymethod = find, doc = findDoc
+  internal func find(_ value: PyObject,
+                     start: PyObject?,
+                     end: PyObject?) -> PyResult<Int> {
+    guard let valueString = value as? PyString else {
+      return .typeError("find arg must be str, not \(value.typeName)")
+    }
+
+    var startIndex = self.scalars.startIndex
+    switch self.extractIndex(start) {
+    case .none: break
+    case let .index(index): startIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    var endIndex = self.scalars.endIndex
+    switch self.extractIndex(end) {
+    case .none: break
+    case let .index(index): endIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    let substring = self.scalars[startIndex..<endIndex]
+    let substringView = String.UnicodeScalarView(substring)
+
+    switch self.find(in: substringView, value: valueString.value) {
+    case let .index(index: _, position: position):
+      return .value(position)
+    case .notFound:
+      return .value(-1)
+    }
+  }
+
+  internal static let rfindDoc = """
+    S.rfind(sub[, start[, end]]) -> int
+
+    Return the highest index in S where substring sub is found,
+    such that sub is contained within S[start:end].  Optional
+    arguments start and end are interpreted as in slice notation.
+
+    Return -1 on failure.
+    """
+
+  // sourcery: pymethod = rfind, doc = rfindDoc
+  internal func rfind(_ value: PyObject,
+                      start: PyObject?,
+                      end: PyObject?) -> PyResult<Int> {
+    guard let valueString = value as? PyString else {
+      return .typeError("find arg must be str, not \(value.typeName)")
+    }
+
+    var startIndex = self.scalars.startIndex
+    switch self.extractIndex(start) {
+    case .none: break
+    case let .index(index): startIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    var endIndex = self.scalars.endIndex
+    switch self.extractIndex(end) {
+    case .none: break
+    case let .index(index): endIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    let substring = self.scalars[startIndex..<endIndex]
+    let substringView = String.UnicodeScalarView(substring)
+
+    switch self.rfind(in: substringView, value: valueString.value) {
+    case let .index(index: _, position: position):
+      return .value(position)
+    case .notFound:
+      return .value(-1)
+    }
+  }
+
+  private enum FindResult {
+    case index(index: String.UnicodeScalarIndex, position: Int)
+    case notFound
+  }
+
+  private func find(in scalars: String.UnicodeScalarView,
+                    value: String) -> FindResult {
+    // There are many good substring algorithms, and we went with this?
+    var position = 0
+    var index = scalars.startIndex
+    let needle = value.unicodeScalars
+
+    while index != scalars.endIndex {
+      let substring = scalars[index...]
+      if substring.starts(with: needle) {
+        return .index(index: index, position: position)
+      }
+
+      position += 1
+      scalars.formIndex(after: &index)
+    }
+
+    return .notFound
+  }
+
+  private func rfind(in scalars: String.UnicodeScalarView,
+                     value: String) -> FindResult {
+    if scalars.isEmpty {
+      return .notFound
+    }
+
+    // There are many good substring algorithms, and we went with this?
+    var position = scalars.count - 1
+    var index = scalars.endIndex
+    let needle = value.unicodeScalars
+
+    // `endIndex` is AFTER the collection
+    scalars.formIndex(before: &index)
+
+    while index != scalars.startIndex {
+      let substring = scalars[index...]
+      if substring.starts(with: needle) {
+        return .index(index: index, position: position)
+      }
+
+      position -= 1
+      scalars.formIndex(before: &index)
+    }
+
+    if scalars.starts(with: needle) {
+      return .index(index: index, position: 0)
+    }
+
+    return .notFound
+  }
+
   // MARK: - Add
 
   // sourcery: pymethod = __add__
@@ -671,7 +807,11 @@ public class PyString: PyObject {
     case error(PyErrorEnum)
   }
 
-  private func extractIndex(_ value: PyObject) -> ExtractIndexResult {
+  private func extractIndex(_ value: PyObject?) -> ExtractIndexResult {
+    guard let value = value else {
+      return .none
+    }
+
     switch SequenceHelper.extractIndex2(value, typeName: "str") {
     case .none:
       return .none
