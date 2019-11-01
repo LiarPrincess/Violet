@@ -536,6 +536,84 @@ public class PyString: PyObject {
     )
   }
 
+  // MARK: - Strip
+
+  // TODO: `xStrip` argument is optional
+
+  // sourcery: pymethod = strip
+  internal func strip(_ chars: PyObject) -> PyResult<String> {
+    guard let charsString = chars as? PyString else {
+      return .typeError("strip arg must be str, not \(chars.typeName)")
+    }
+
+    let set = Set(charsString.value.unicodeScalars)
+    let tmp = self.lStrip(value: self.value, chars: set)
+    let result = self.rStrip(value: tmp, chars: set)
+    return .value(result)
+  }
+
+  // sourcery: pymethod = lstrip
+  internal func lStrip(_ chars: PyObject) -> PyResult<String> {
+    guard let charsString = chars as? PyString else {
+      return .typeError("lstrip arg must be str, not \(chars.typeName)")
+    }
+
+    let set = Set(charsString.value.unicodeScalars)
+    let result = self.lStrip(value: self.value, chars: set)
+    return .value(result)
+  }
+
+  private func lStrip(value: String, chars: Set<UnicodeScalar>) -> String {
+    let scalars = value.unicodeScalars
+    var index = scalars.startIndex
+
+    while index != scalars.endIndex {
+      if !chars.contains(scalars[index]) {
+        break
+      }
+
+      scalars.formIndex(after: &index)
+    }
+
+    // Avoid `String` allocation
+    if index == scalars.startIndex {
+      return value
+    }
+
+    return String(scalars[index...])
+  }
+
+  // sourcery: pymethod = rstrip
+  internal func rStrip(_ chars: PyObject) -> PyResult<String> {
+    guard let charsString = chars as? PyString else {
+      return .typeError("rstrip arg must be str, not \(chars.typeName)")
+    }
+
+    let set = Set(charsString.value.unicodeScalars)
+    let result = self.rStrip(value: self.value, chars: set)
+    return .value(result)
+  }
+
+  private func rStrip(value: String, chars: Set<UnicodeScalar>) -> String {
+    let scalars = value.unicodeScalars
+    var index = scalars.endIndex
+
+    while index != scalars.startIndex {
+      if !chars.contains(scalars[index]) {
+        break
+      }
+
+      scalars.formIndex(before: &index)
+    }
+
+    // Avoid `String` allocation
+    if index == scalars.endIndex {
+      return value
+    }
+
+    return String(scalars[index...])
+  }
+
   // MARK: - Add
 
   // sourcery: pymethod = __add__

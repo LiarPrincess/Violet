@@ -176,7 +176,42 @@ extension PyType {
       context,
       name: name,
       doc: doc,
-      func: { arg0, arg1, arg2 in fn(arg0, arg1, arg2).toPyObject(in: arg0.context) },
+      func: { arg0, arg1, arg2 in
+        fn(arg0, arg1, arg2).toPyObject(in: arg0.context)
+      },
+      zelf: nil)
+  }
+
+  // MARK: - Quadratic methods (?), you know the ones with self + 3 other args
+
+  internal static func wrapMethod<Zelf, R: PyObjectConvertible>(
+    _ context: PyContext,
+    name: String,
+    doc: String?,
+    func fn: @escaping (Zelf) -> (PyObject, PyObject, PyObject) -> R,
+    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+
+    return wrapMethod(
+      context,
+      name: name,
+      doc: doc,
+      func: { arg0, arg1, arg2, arg3 in fn(castSelf(arg0))(arg1, arg2, arg3) }
+    )
+  }
+
+  internal static func wrapMethod<R: PyObjectConvertible>(
+    _ context: PyContext,
+    name: String,
+    doc: String?,
+    func fn: @escaping (PyObject, PyObject, PyObject, PyObject) -> R) -> PyBuiltinFunction {
+
+    return PyBuiltinFunction(
+      context,
+      name: name,
+      doc: doc,
+      func: { arg0, arg1, arg2, arg3 in
+        fn(arg0, arg1, arg2, arg3).toPyObject(in: arg0.context)
+      },
       zelf: nil)
   }
 }

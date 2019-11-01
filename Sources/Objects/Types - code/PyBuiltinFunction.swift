@@ -5,6 +5,7 @@
 internal typealias F1 = (PyObject) -> PyObject
 internal typealias F2 = (PyObject, PyObject) -> PyObject
 internal typealias F3 = (PyObject, PyObject, PyObject) -> PyObject
+internal typealias F4 = (PyObject, PyObject, PyObject, PyObject) -> PyObject
 // swiftlint:enable type_name
 
 // sourcery: pytype = builtinFunction
@@ -24,6 +25,7 @@ internal final class PyBuiltinFunction: PyObject {
     case f1(F1)
     case f2(F2)
     case f3(F3)
+    case f4(F4)
   }
 
   internal convenience init(_ context: PyContext,
@@ -48,6 +50,14 @@ internal final class PyBuiltinFunction: PyObject {
                             func fn: @escaping F3,
                             zelf: PyObject?) {
     self.init(context, name: name, doc: doc, func: .f3(fn), zelf: zelf)
+  }
+
+  internal convenience init(_ context: PyContext,
+                            name: String,
+                            doc: String?,
+                            func fn: @escaping F4,
+                            zelf: PyObject?) {
+    self.init(context, name: name, doc: doc, func: .f4(fn), zelf: zelf)
   }
 
   internal init(_ context: PyContext,

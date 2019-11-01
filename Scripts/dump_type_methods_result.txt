@@ -141,7 +141,6 @@ str
     center
     count
     encode
-    endswith
     expandtabs
     find
     format
@@ -150,7 +149,6 @@ str
     join
     ljust
     lower
-    lstrip
     partition
     replace
     rfind
@@ -158,11 +156,8 @@ str
     rjust
     rpartition
     rsplit
-    rstrip
     split
     splitlines
-    startswith
-    strip
     swapcase
     title
     translate
