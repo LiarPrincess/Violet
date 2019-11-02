@@ -441,7 +441,8 @@ public class PyString: PyObject {
   /// https://docs.python.org/3/library/stdtypes.html#str.isupper
   internal func isUpper() -> Bool {
     return self.scalars.any && self.scalars.allSatisfy { scalar in
-      return !scalar.properties.isCased || scalar.properties.isUppercase
+      let properties = scalar.properties
+      return !properties.isCased || properties.isUppercase
     }
   }
 
@@ -880,6 +881,128 @@ public class PyString: PyObject {
 
     let result = self.value + otherStr.value
     return .value(PyString(self.context, value: result))
+  }
+
+  // MARK: - Just
+
+  // sourcery: pymethod = center
+  internal func center(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+    guard let widthInt = width as? PyInt else {
+      return .typeError("ljust width arg must be int, not \(width.typeName)")
+    }
+
+    guard let width = Int(exactly: widthInt.value) else {
+      return .overflowError("ljust width is too large")
+    }
+
+    var fill: UnicodeScalar = " "
+    switch self.parseFillChar(fillChar, fnName: "ljust") {
+    case .default: break
+    case let .value(s): fill  = s
+    case let .error(e): return .error(e)
+    }
+
+    /// CPython: marg
+    let count = width - self.scalars.count
+    guard count > 0 else {
+      // swiftlint:disable:previous empty_count
+      return .value(self.value)
+    }
+
+    let left = count / 2 + (count & width & 1)
+    let right = count - left
+    return .value(self.pad(left: left, right: right, fill: fill))
+  }
+
+  // sourcery: pymethod = ljust
+  internal func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+    guard let widthInt = width as? PyInt else {
+      return .typeError("ljust width arg must be int, not \(width.typeName)")
+    }
+
+    guard let width = Int(exactly: widthInt.value) else {
+      return .overflowError("ljust width is too large")
+    }
+
+    var fill: UnicodeScalar = " "
+    switch self.parseFillChar(fillChar, fnName: "ljust") {
+    case .default: break
+    case let .value(s): fill  = s
+    case let .error(e): return .error(e)
+    }
+
+    let count = width - self.scalars.count
+    return .value(self.pad(left: 0, right: count, fill: fill))
+  }
+
+  // sourcery: pymethod = rjust
+  internal func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+    guard let widthInt = width as? PyInt else {
+      return .typeError("rjust width arg must be int, not \(width.typeName)")
+    }
+
+    guard let width = Int(exactly: widthInt.value) else {
+      return .overflowError("rjust width is too large")
+    }
+
+    var fill: UnicodeScalar = " "
+    switch self.parseFillChar(fillChar, fnName: "rjust") {
+    case .default: break
+    case let .value(s): fill  = s
+    case let .error(e): return .error(e)
+    }
+
+    let count = width - self.scalars.count
+    return .value(self.pad(left: count, right: 0, fill: fill))
+  }
+
+  private enum ParseFillCharResult {
+    case `default`
+    case value(UnicodeScalar)
+    case error(PyErrorEnum)
+  }
+
+  private func parseFillChar(_ fillChar: PyObject?,
+                             fnName: String) -> ParseFillCharResult {
+    guard let fillChar = fillChar else {
+      return .default
+    }
+
+    guard let fillCharString = fillChar as? PyString else {
+      return .error(
+        .typeError("ljust fillchar arg must be str, not \(fillChar.typeName)")
+      )
+    }
+
+    let scalars = fillCharString.value.unicodeScalars
+    guard let first = scalars.first, scalars.count == 1 else {
+      return .error(
+        .typeError("The fill character must be exactly one character long")
+      )
+    }
+
+    return .value(first)
+  }
+
+  private func pad(left: Int, right: Int, fill: UnicodeScalar) -> String {
+    // Fast path to avoid allocation
+    guard left > 0 || right > 0 else {
+      return self.value
+    }
+
+    var result = [UnicodeScalar]()
+
+    if left > 0 {
+      result = Array(repeating: fill, count: left)
+    }
+
+    result.append(contentsOf: self.scalars)
+
+    if right > 0 {
+      result.append(contentsOf: Array(repeating: fill, count: right))
+    }
+
+    return String(result)
   }
 
   // MARK: - Mul
