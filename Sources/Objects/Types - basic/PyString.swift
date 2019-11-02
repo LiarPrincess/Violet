@@ -7,6 +7,14 @@ import Core
 // swiftlint:disable file_length
 
 // sourcery: pytype = str
+/// Textual data in Python is handled with str objects, or strings.
+/// Strings are immutable sequences of Unicode code points.
+///
+/// Everything here is 'best-efford'
+///
+/// We work on scalars (Unicode code points) instead of graphemes because:
+/// - len("Cafe\u0301") = 5 (Swift: "Cafe\u{0301}".unicodeScalars.count)
+/// - len("Café")       = 4 (Swift: "Café".unicodeScalars.count)
 public class PyString: PyObject {
 
   internal static let doc = """
@@ -180,6 +188,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> Int {
+    // len("Cafe\u0301") -> 5
+    // len("Café")       -> 4
     return self.scalars.count
   }
 
@@ -235,11 +245,20 @@ public class PyString: PyObject {
   internal func isAlphaNumeric() -> Bool {
     return self.scalars.any && self.scalars.allSatisfy { scalar in
       let properties = scalar.properties
-      return properties.isAlphabetic
-        || properties.generalCategory == .decimalNumber
-        || scalar.properties.numericType != nil
+      let category = properties.generalCategory
+      return PyString.alphaCategories.contains(category)
+        || category == .decimalNumber
+        || properties.numericType != nil
     }
   }
+
+  private static let alphaCategories: Set<Unicode.GeneralCategory> = Set([
+    .modifierLetter, // Lm
+    .titlecaseLetter, // Lt
+    .uppercaseLetter, // Lu
+    .lowercaseLetter, // Ll
+    .otherLetter // Lo
+  ])
 
   // sourcery: pymethod = isalpha
   /// Return true if all characters in the string are alphabetic
@@ -249,8 +268,10 @@ public class PyString: PyObject {
   /// being one of “Lm”, “Lt”, “Lu”, “Ll”, or “Lo”.
   /// https://docs.python.org/3/library/stdtypes.html#str.isalpha
   internal func isAlpha() -> Bool {
-    return self.scalars.any &&
-      self.scalars.allSatisfy { $0.properties.isAlphabetic }
+    return self.scalars.any && self.scalars.allSatisfy { scalar in
+      let category = scalar.properties.generalCategory
+      return PyString.alphaCategories.contains(category)
+    }
   }
 
   // sourcery: pymethod = isascii
@@ -304,8 +325,12 @@ public class PyString: PyObject {
   /// and there is at least one cased character.
   /// https://docs.python.org/3/library/stdtypes.html#str.islower
   internal func isLower() -> Bool {
-    return self.scalars.any &&
-      self.scalars.allSatisfy { $0.properties.isLowercase }
+    // If the character does not have case then True, for example:
+    // "a\u02B0b".islower() -> True
+    return self.scalars.any && self.scalars.allSatisfy { scalar in
+      let properties = scalar.properties
+      return !properties.isCased || properties.isLowercase
+    }
   }
 
   // sourcery: pymethod = isnumeric
@@ -339,27 +364,26 @@ public class PyString: PyObject {
   ///    * Zs (Separator, Space) other than ASCII space('\x20').
   /// https://docs.python.org/3/library/stdtypes.html#str.isprintable
   internal func isPrintable() -> Bool {
-    return self.scalars.any &&
-      self.scalars.allSatisfy { scalar in
-        let space = 32
-        if scalar.value == space {
-          return true
-        }
-
-        switch scalar.properties.generalCategory {
-        case .control, // Cc
-             .format, // Cf
-             .surrogate, // Cs
-             .privateUse, // Co
-             .unassigned, // Cn
-             .lineSeparator, // Zl
-             .paragraphSeparator, // Zp
-             .spaceSeparator: // Zs
-          return false
-        default:
-          return true
-        }
+    return self.scalars.any && self.scalars.allSatisfy { scalar in
+      let space = 32
+      if scalar.value == space {
+        return true
       }
+
+      switch scalar.properties.generalCategory {
+      case .control, // Cc
+           .format, // Cf
+           .surrogate, // Cs
+           .privateUse, // Co
+           .unassigned, // Cn
+           .lineSeparator, // Zl
+           .paragraphSeparator, // Zp
+           .spaceSeparator: // Zs
+        return false
+      default:
+        return true
+      }
+    }
   }
 
   // sourcery: pymethod = isspace
@@ -370,8 +394,11 @@ public class PyString: PyObject {
   /// - or its bidirectional class is one of WS, B, or S
   /// https://docs.python.org/3/library/stdtypes.html#str.isspace
   internal func isSpace() -> Bool {
-    return self.scalars.any &&
-      self.scalars.allSatisfy { $0.properties.isWhitespace }
+    return self.scalars.any && self.scalars.allSatisfy {
+        $0.properties.generalCategory == .spaceSeparator
+        ||
+        Unicode.bidiClass_ws_b_s.contains($0.value)
+    }
   }
 
   // sourcery: pymethod = istitle
@@ -380,30 +407,27 @@ public class PyString: PyObject {
   /// characters and lowercase characters only cased ones.
   /// https://docs.python.org/3/library/stdtypes.html#str.istitle
   internal func isTitle() -> Bool {
-    guard self.scalars.any else {
-      return false
-    }
-
     var cased = false
     var isPreviousCased = false
     for scalar in self.scalars {
-      let category = scalar.properties.generalCategory
-
-      if category == .uppercaseLetter || category == .titlecaseLetter {
-        if isPreviousCased {
-          return false
-        }
-
-        isPreviousCased = true
-        cased = true
-      } else if category == .lowercaseLetter {
+      switch scalar.properties.generalCategory {
+      case .lowercaseLetter:
         if !isPreviousCased {
           return false
         }
 
         isPreviousCased = true
         cased = true
-      } else {
+
+      case .uppercaseLetter, .titlecaseLetter:
+        if isPreviousCased {
+          return false
+        }
+
+        isPreviousCased = true
+        cased = true
+
+      default:
         isPreviousCased = false
       }
     }
@@ -416,8 +440,9 @@ public class PyString: PyObject {
   /// and there is at least one cased character.
   /// https://docs.python.org/3/library/stdtypes.html#str.isupper
   internal func isUpper() -> Bool {
-    return self.scalars.any &&
-      self.scalars.allSatisfy { $0.properties.isUppercase }
+    return self.scalars.any && self.scalars.allSatisfy { scalar in
+      return !scalar.properties.isCased || scalar.properties.isUppercase
+    }
   }
 
   // MARK: - Starts/ends with
@@ -502,6 +527,7 @@ public class PyString: PyObject {
     case let .error(e): return .error(e)
     }
 
+    // "e\u0301".endswith("é") -> False
     let substring = self.scalars[startIndex..<endIndex]
 
     if let tuple = value as? PyTuple {
@@ -748,6 +774,92 @@ public class PyString: PyObject {
     }
 
     return .notFound
+  }
+
+  // MARK: - Case
+
+  // sourcery: pymethod = lower
+  internal func lower() -> String {
+    return self.value.lowercased()
+  }
+
+  // sourcery: pymethod = upper
+  internal func upper() -> String {
+    return self.value.uppercased()
+  }
+
+  // sourcery: pymethod = title
+  internal func title() -> String {
+    var result = ""
+    var isPreviousCased = false
+
+    for scalar in self.scalars {
+      let properties = scalar.properties
+
+      switch properties.generalCategory {
+      case .lowercaseLetter:
+        if isPreviousCased {
+          result.append(properties.titlecaseMapping)
+        } else {
+          result.append(scalar)
+        }
+        isPreviousCased = true
+
+      case .uppercaseLetter, .titlecaseLetter:
+        if isPreviousCased {
+          result.append(properties.lowercaseMapping)
+        } else {
+          result.append(scalar)
+        }
+        isPreviousCased = true
+
+      default:
+        isPreviousCased = false
+        result.append(scalar)
+      }
+    }
+
+    return result
+  }
+
+  // sourcery: pymethod = swapcase
+  internal func swapcase() -> String {
+    var result = ""
+    for scalar in self.scalars {
+      let properties = scalar.properties
+      if properties.isLowercase {
+        result.append(properties.uppercaseMapping)
+      } else if properties.isUppercase {
+        result.append(properties.lowercaseMapping)
+      } else {
+        result.append(scalar)
+      }
+    }
+    return result
+  }
+
+  // sourcery: pymethod = casefold
+  internal func casefold() -> String {
+    var result = ""
+    for scalar in self.scalars {
+      if let mapping = Unicode.caseFoldMapping[scalar.value] {
+        result.append(mapping)
+      } else {
+        result.append(scalar)
+      }
+    }
+    return result
+  }
+
+  // sourcery: pymethod = capitalize
+  internal func capitalize() -> String {
+    guard let first = self.scalars.first else {
+      return self.value
+    }
+
+    let head = first.properties.titlecaseMapping
+    let tail = String(self.scalars.dropFirst()).lowercased()
+    return head + tail
   }
 
   // MARK: - Add

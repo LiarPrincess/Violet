@@ -3,6 +3,10 @@
 /.build
 /Packages
 
+# It is not like we will include Unicode stuff...
+/Scripts/CaseFolding.txt
+/Scripts/UnicodeData.txt
+
 # mac
 .DS_Store
 /*.xcodeproj

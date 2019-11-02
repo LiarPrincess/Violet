@@ -109,6 +109,10 @@ extension String {
     let view = UnicodeScalarView(scalars)
     self.init(view)
   }
+
+  public mutating func append(_ scalar: UnicodeScalar) {
+    self.unicodeScalars.append(scalar)
+  }
 }
 
 extension UnicodeScalar {
