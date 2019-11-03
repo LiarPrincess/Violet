@@ -6,6 +6,8 @@ import Core
 
 // swiftlint:disable file_length
 
+// TODO: Docs from unicodeobject.c.h
+
 // sourcery: pytype = str
 /// Textual data in Python is handled with str objects, or strings.
 /// Strings are immutable sequences of Unicode code points.
@@ -558,6 +560,7 @@ public class PyString: PyObject {
   // MARK: - Strip
 
   // TODO: `xStrip` argument is optional
+  // TODO: Case convention for l/r prefix. lstrip/lStrip
 
   // sourcery: pymethod = strip
   internal func strip(_ chars: PyObject) -> PyResult<String> {
@@ -854,6 +857,9 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = capitalize
   internal func capitalize() -> String {
+    // Capitalize only first scalar:
+    // list("e\u0301".capitalize()) -> ['E', '́']
+
     guard let first = self.scalars.first else {
       return self.value
     }
@@ -861,26 +867,6 @@ public class PyString: PyObject {
     let head = first.properties.titlecaseMapping
     let tail = String(self.scalars.dropFirst()).lowercased()
     return head + tail
-  }
-
-  // MARK: - Add
-
-  // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    guard let otherStr = other as? PyString else {
-      return .typeError("can only concatenate str (not '\(other.typeName)') to str")
-    }
-
-    if self.value.isEmpty {
-      return .value(PyString(self.context, value: otherStr.value))
-    }
-
-    if otherStr.value.isEmpty {
-      return .value(PyString(self.context, value: self.value))
-    }
-
-    let result = self.value + otherStr.value
-    return .value(PyString(self.context, value: result))
   }
 
   // MARK: - Just
@@ -896,7 +882,7 @@ public class PyString: PyObject {
     }
 
     var fill: UnicodeScalar = " "
-    switch self.parseFillChar(fillChar, fnName: "ljust") {
+    switch self.parseJustFillChar(fillChar, fnName: "ljust") {
     case .default: break
     case let .value(s): fill  = s
     case let .error(e): return .error(e)
@@ -925,7 +911,7 @@ public class PyString: PyObject {
     }
 
     var fill: UnicodeScalar = " "
-    switch self.parseFillChar(fillChar, fnName: "ljust") {
+    switch self.parseJustFillChar(fillChar, fnName: "ljust") {
     case .default: break
     case let .value(s): fill  = s
     case let .error(e): return .error(e)
@@ -946,7 +932,7 @@ public class PyString: PyObject {
     }
 
     var fill: UnicodeScalar = " "
-    switch self.parseFillChar(fillChar, fnName: "rjust") {
+    switch self.parseJustFillChar(fillChar, fnName: "rjust") {
     case .default: break
     case let .value(s): fill  = s
     case let .error(e): return .error(e)
@@ -956,14 +942,13 @@ public class PyString: PyObject {
     return .value(self.pad(left: count, right: 0, fill: fill))
   }
 
-  private enum ParseFillCharResult {
+  private enum JustFillChar {
     case `default`
     case value(UnicodeScalar)
     case error(PyErrorEnum)
   }
 
-  private func parseFillChar(_ fillChar: PyObject?,
-                             fnName: String) -> ParseFillCharResult {
+  private func parseJustFillChar(_ fillChar: PyObject?, fnName: String) -> JustFillChar {
     guard let fillChar = fillChar else {
       return .default
     }
@@ -977,7 +962,7 @@ public class PyString: PyObject {
     let scalars = fillCharString.value.unicodeScalars
     guard let first = scalars.first, scalars.count == 1 else {
       return .error(
-        .typeError("The fill character must be exactly one character long")
+        .valueError("The fill character must be exactly one character long")
       )
     }
 
@@ -1003,6 +988,356 @@ public class PyString: PyObject {
     }
 
     return String(result)
+  }
+
+  // MARK: - Split
+
+  // TODO: Really, really test this. (Objects/stringlib/split.h)
+
+  // sourcery: pymethod = split
+  internal func split(separator: PyObject?,
+                      maxCount: PyObject?) -> PyResult<[String]> {
+    var sep: String
+    switch self.parseSplitSeparator(separator) {
+    case .whitespace: return self.splitWhitespace(maxCount)
+    case let .some(s): sep = s
+    case let .error(e): return .error(e)
+    }
+
+    var splitCounter: Int
+    switch self.parseSplitMaxCount(maxCount) {
+    case let .count(c): splitCounter = c
+    case let .error(e): return .error(e)
+    }
+
+    var result = [String]()
+    var index = self.scalars.startIndex
+
+    let sepScalars = sep.unicodeScalars
+    let sepCount = sepScalars.count
+
+    while splitCounter > 0 {
+      defer { splitCounter -= 1 }
+
+      // Advance index until the end of the group
+      let groupStart = index
+      while index != self.scalars.endIndex || self.scalars[index...].starts(with: sepScalars) {
+          self.scalars.formIndex(after: &index)
+      }
+
+      if index == self.scalars.endIndex {
+        break
+      }
+
+      // If we start with the `sep` then dont add it, just advance
+      if index != self.scalars.startIndex {
+        result.append(String(self.scalars[groupStart..<index]))
+      }
+
+      // Move index after `sep`
+      index = self.scalars.index(index, offsetBy: sepCount)
+    }
+
+    result.append(String(self.scalars[index...]))
+    return .value(result)
+  }
+
+  private func splitWhitespace(_ maxCount: PyObject?) -> PyResult<[String]> {
+    assert(self.scalars.any)
+
+    if self.scalars.isEmpty {
+      return .value([])
+    }
+
+    var splitCounter: Int
+    switch self.parseSplitMaxCount(maxCount) {
+    case let .count(c): splitCounter = c
+    case let .error(e): return .error(e)
+    }
+
+    var result = [String]()
+    var index = self.scalars.startIndex
+
+    while splitCounter > 0 {
+      defer { splitCounter -= 1 }
+
+      // Consume whitespaces
+      while index != self.scalars.endIndex && self.isWhitespace(self.scalars[index]) {
+        self.scalars.formIndex(after: &index)
+      }
+
+      if index == self.scalars.endIndex {
+        break
+      }
+
+      // Consume group
+      let groupStart = index
+      while index != self.scalars.endIndex && !self.isWhitespace(self.scalars[index]) {
+        self.scalars.formIndex(after: &index)
+      }
+
+      let s = index == self.scalars.endIndex ?
+        self.scalars[groupStart...] :
+        self.scalars[groupStart...index]
+
+      result.append(String(s))
+    }
+
+    if index != self.scalars.endIndex {
+      // Only occurs when maxcount was reached
+      // Skip any remaining whitespace and copy to end of string
+      while index != self.scalars.endIndex && self.isWhitespace(self.scalars[index]) {
+        self.scalars.formIndex(after: &index)
+      }
+
+      if index != self.scalars.endIndex {
+        result.append(String(self.scalars[index...]))
+      }
+    }
+
+    return .value(result)
+  }
+
+  // sourcery: pymethod = rsplit
+  internal func rsplit(separator: PyObject?,
+                       maxCount: PyObject?) -> PyResult<[String]> {
+    if self.scalars.isEmpty {
+      return .value([])
+    }
+
+    var sep: String
+    switch self.parseSplitSeparator(separator) {
+    case .whitespace: return self.rsplitWhitespace(maxCount)
+    case let .some(s): sep = s
+    case let .error(e): return .error(e)
+    }
+
+    var splitCounter: Int
+    switch self.parseSplitMaxCount(maxCount) {
+    case let .count(c): splitCounter = c
+    case let .error(e): return .error(e)
+    }
+
+    var result = [String]()
+    var index = self.scalars.endIndex
+    self.scalars.formIndex(before: &index)
+
+    let sepScalars = sep.unicodeScalars
+    let sepCount = sepScalars.count
+
+    while splitCounter > 0 {
+      defer { splitCounter -= 1 }
+
+      // Consume whitespaces
+      let groupEnd = index // Include character at this index!
+      while index != self.scalars.startIndex && !self.scalars[index...].starts(with: sepScalars) {
+        self.scalars.formIndex(before: &index)
+      }
+
+      // Consume group
+      let isAtStartWithSep = index == self.scalars.startIndex
+        && self.scalars[index...].starts(with: sepScalars)
+
+      let groupStart = isAtStartWithSep ?
+        self.scalars.index(index, offsetBy: sepCount) :
+        self.scalars.startIndex
+
+      let s = self.scalars[groupStart...groupEnd]
+      result.append(String(s))
+
+      if index == self.scalars.startIndex {
+        break
+      }
+    }
+
+    return .value(result)
+  }
+
+  private func rsplitWhitespace(_ maxCount: PyObject?) -> PyResult<[String]> {
+    assert(self.scalars.any)
+
+    var splitCounter: Int
+    switch self.parseSplitMaxCount(maxCount) {
+    case let .count(c): splitCounter = c
+    case let .error(e): return .error(e)
+    }
+
+    var result = [String]()
+    var index = self.scalars.endIndex
+    self.scalars.formIndex(before: &index)
+
+    while splitCounter > 0 {
+      defer { splitCounter -= 1 }
+
+      // Consume whitespaces
+      while index != self.scalars.startIndex && self.isWhitespace(self.scalars[index]) {
+       self.scalars.formIndex(before: &index)
+      }
+
+      if index == self.scalars.startIndex {
+        break
+      }
+
+      // Consume group
+      let groupEnd = index // Include character at this index!
+      var groupStart = index
+      while index != self.scalars.startIndex && !self.isWhitespace(self.scalars[index]) {
+        groupStart = index // `groupStart` = index to the right of `index`
+        self.scalars.formIndex(before: &index)
+      }
+
+      /// Index may be non-whitespace when we arrive at startIndex
+      let s = self.isWhitespace(self.scalars[index]) ?
+        self.scalars[groupStart...groupEnd] :
+        self.scalars[index...groupEnd]
+
+       result.append(String(s))
+    }
+
+    if index != self.scalars.startIndex {
+      while index != self.scalars.startIndex && self.isWhitespace(self.scalars[index]) {
+       self.scalars.formIndex(before: &index)
+      }
+
+      // Only occurs when maxcount was reached
+      // Skip any remaining whitespace and copy to end of string
+      result.append(String(self.scalars[...index]))
+    }
+
+    return .value(result)
+  }
+
+  // sourcery: pymethod = splitlines
+  internal func splitLines(keepEnds: PyObject) -> PyResult<[String]> {
+    guard let keepEndsBool = keepEnds as? PyBool else {
+      return .typeError("keepends must be bool, not \(keepEnds.typeName)")
+    }
+
+    let keepEnds = keepEndsBool.asBool()
+
+    var result = [String]()
+    var index = self.scalars.startIndex
+
+    while index != self.scalars.endIndex {
+      let groupStart = index
+
+      // Advance 'till line break
+      while index != self.scalars.endIndex && !self.isLineBreak(self.scalars[index]) {
+        self.scalars.formIndex(after: &index)
+      }
+
+      var eol = index
+      if index != self.scalars.endIndex {
+        // Consume CRLF as one line break
+        if let after = self.scalars.index(index,
+                                          offsetBy: 1,
+                                          limitedBy: self.scalars.endIndex),
+          self.scalars[index] == "\r" && self.scalars[after] == "\n" {
+
+          self.scalars.formIndex(after: &index)
+        }
+
+        self.scalars.formIndex(after: &index)
+        if keepEnds {
+          eol = index
+        }
+      }
+
+      result.append(String(self.scalars[groupStart...eol]))
+    }
+
+    return .value(result)
+  }
+
+  private func isWhitespace(_ scalar: UnicodeScalar) -> Bool {
+    return scalar.properties.isWhitespace
+  }
+
+  private static let lineBreaks: Set<UnicodeScalar> = Set([
+    "\n", // \n - Line Feed
+    "\r", // \r - Carriage Return
+    // \r\n - Carriage Return + Line Feed
+    "\u{000b}", // \v or \x0b - Line Tabulation
+    "\u{000c}", // \f or \x0c - Form Feed
+    "\u{001c}", // \x1c - File Separator
+    "\u{001d}", // \x1d - Group Separator
+    "\u{001e}", // \x1e - Record Separator
+    "\u{0085}", // \x85 - Next Line (C1 Control Code)
+    "\u{2028}", // \u2028 - Line Separator
+    "\u{2029}" // \u2029 - Paragraph Separator
+  ])
+
+  private func isLineBreak(_ scalar: UnicodeScalar) -> Bool {
+    return PyString.lineBreaks.contains(scalar)
+  }
+
+  private enum SplitSeparator {
+    case whitespace
+    case some(String)
+    case error(PyErrorEnum)
+  }
+
+  private func parseSplitSeparator(_ separator: PyObject?) -> SplitSeparator {
+    guard let separator = separator else {
+      return .whitespace
+    }
+
+    if separator is PyNone {
+      return .whitespace
+    }
+
+    guard let sep = separator as? PyString else {
+      return .error(
+        .typeError("sep must be str or None, not \(separator.typeName)")
+      )
+    }
+
+    if sep.value.isEmpty {
+      return .error(.valueError("empty separator"))
+    }
+
+    return .some(sep.value)
+  }
+
+  private enum SplitMaxCount {
+    case count(Int)
+    case error(PyErrorEnum)
+  }
+
+  private func parseSplitMaxCount(_ maxCount: PyObject?) -> SplitMaxCount {
+    guard let maxCount = maxCount else {
+      return .count(Int.max)
+    }
+
+    guard let pyInt = maxCount as? PyInt else {
+      return .error(.typeError("maxsplit must be int, not \(maxCount.typeName)"))
+    }
+
+    guard let int = Int(exactly: pyInt.value) else {
+      return .error(.overflowError("maxsplit is too big"))
+    }
+
+    return .count(int < 0 ? Int.max : int)
+  }
+
+  // MARK: - Add
+
+  // sourcery: pymethod = __add__
+  internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    guard let otherStr = other as? PyString else {
+      return .typeError("can only concatenate str (not '\(other.typeName)') to str")
+    }
+
+    if self.value.isEmpty {
+      return .value(PyString(self.context, value: otherStr.value))
+    }
+
+    if otherStr.value.isEmpty {
+      return .value(PyString(self.context, value: self.value))
+    }
+
+    let result = self.value + otherStr.value
+    return .value(PyString(self.context, value: result))
   }
 
   // MARK: - Mul
