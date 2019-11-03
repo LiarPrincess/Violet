@@ -1476,6 +1476,58 @@ public class PyString: PyObject {
     return PyString(self.context, value: "")
   }
 
+  // MARK: - Expand tabs
+
+  // sourcery: pymethod = expandtabs
+  internal func expandTabs(tabSize: PyObject?) -> PyResult<String> {
+    var tab: Int
+    switch self.parseExpandTabsSize(tabSize) {
+    case let .value(v): tab = v
+    case let .error(e): return .error(e)
+    }
+
+    var linePos = 0
+
+    var result = ""
+    for scalar in self.scalars {
+      switch scalar {
+      case "\t":
+        if tab > 0 {
+
+          let incr = tab - (linePos % tab)
+          linePos += incr
+          result.append(contentsOf: Array(repeating: " ", count: incr))
+        }
+
+      default:
+        linePos += 1
+        result.append(scalar)
+
+        if scalar == "\n" || scalar == "\r" {
+          linePos = 0
+        }
+      }
+    }
+
+    return .value(result)
+  }
+
+  private func parseExpandTabsSize(_ tabSize: PyObject?) -> PyResult<Int> {
+    guard let tabSize = tabSize else {
+      return .value(8)
+    }
+
+    guard let pyInt = tabSize as? PyInt else {
+      return .typeError("tabsize must be int, not \(tabSize.typeName)")
+    }
+
+    guard let int = Int(exactly: pyInt.value) else {
+      return .overflowError("tabsize is too big")
+    }
+
+    return .value(0)
+  }
+
   // MARK: - Add
 
   // sourcery: pymethod = __add__
