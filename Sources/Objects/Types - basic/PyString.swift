@@ -42,6 +42,16 @@ public class PyString: PyObject {
     super.init(type: context.builtins.types.str)
   }
 
+  convenience init(_ context: PyContext,
+                   value: String.UnicodeScalarView) {
+    self.init(context, value: String(value))
+  }
+
+  convenience init(_ context: PyContext,
+                   value: String.UnicodeScalarView.SubSequence) {
+    self.init(context, value: String(value))
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
@@ -1406,6 +1416,64 @@ public class PyString: PyObject {
     }
 
     return .count(int < 0 ? Int.max : int)
+  }
+
+  // MARK: - Partition
+
+  // sourcery: pymethod = partition
+  internal func partition(separator: PyObject) -> PyResult<PyTuple> {
+    guard let separatorString = separator as? PyString else {
+      return .typeError("sep must be string, not \(separator.typeName)")
+    }
+
+    let sep = separatorString.value
+    if sep.isEmpty {
+      return .valueError("empty separator")
+    }
+
+    switch self.find(in: self.scalars, value: sep) {
+    case let .index(index: index, position: _):
+      let sepCount = sep.unicodeScalars.count
+      let afterStart = self.scalars.index(index, offsetBy: sepCount)
+
+      let before = PyString(context, value: self.scalars[..<index])
+      let after  = PyString(context, value: self.scalars[afterStart...])
+      return .value(PyTuple(self.context, elements: [before, separatorString, after]))
+
+    case .notFound:
+      let empty = self.createEmpty()
+      return .value(PyTuple(self.context, elements: [self, empty, empty]))
+    }
+  }
+
+  // sourcery: pymethod = rpartition
+  internal func rpartition(separator: PyObject) -> PyResult<PyTuple> {
+    guard let separatorString = separator as? PyString else {
+      return .typeError("sep must be string, not \(separator.typeName)")
+    }
+
+    let sep = separatorString.value
+    if sep.isEmpty {
+      return .valueError("empty separator")
+    }
+
+    switch self.rfind(in: self.scalars, value: sep) {
+    case let .index(index: index, position: _):
+      let sepCount = sep.unicodeScalars.count
+      let afterStart = self.scalars.index(index, offsetBy: sepCount)
+
+      let before = PyString(context, value: self.scalars[..<index])
+      let after  = PyString(context, value: self.scalars[afterStart...])
+      return .value(PyTuple(self.context, elements: [before, separatorString, after]))
+
+    case .notFound:
+      let empty = self.createEmpty()
+      return .value(PyTuple(self.context, elements: [self, empty, empty]))
+    }
+  }
+
+  private func createEmpty() -> PyString {
+    return PyString(self.context, value: "")
   }
 
   // MARK: - Add
