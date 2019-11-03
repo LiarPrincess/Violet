@@ -473,21 +473,13 @@ public class PyString: PyObject {
   internal func startsWith(_ value: PyObject,
                            start: PyObject?,
                            end: PyObject?) -> PyResult<Bool> {
-    var startIndex = self.scalars.startIndex
-    switch self.extractIndex(start) {
-    case .none: break
-    case let .index(index): startIndex = index
+    // "e\u0301".startswith("é") -> False
+
+    let substring: String.UnicodeScalarView.SubSequence
+    switch self.getSubstring(start: start, end: end) {
+    case let .value(v): substring = v
     case let .error(e): return .error(e)
     }
-
-    var endIndex = self.scalars.endIndex
-    switch self.extractIndex(end) {
-    case .none: break
-    case let .index(index): endIndex = index
-    case let .error(e): return .error(e)
-    }
-
-    let substring = self.scalars[startIndex..<endIndex]
 
     if let tuple = value as? PyTuple {
       for element in tuple.elements {
@@ -526,22 +518,13 @@ public class PyString: PyObject {
   internal func endsWith(_ value: PyObject,
                          start: PyObject?,
                          end: PyObject?) -> PyResultOrNot<Bool> {
-    var startIndex = self.scalars.startIndex
-    switch self.extractIndex(start) {
-    case .none: break
-    case let .index(index): startIndex = index
-    case let .error(e): return .error(e)
-    }
-
-    var endIndex = self.scalars.endIndex
-    switch self.extractIndex(end) {
-    case .none: break
-    case let .index(index): endIndex = index
-    case let .error(e): return .error(e)
-    }
-
     // "e\u0301".endswith("é") -> False
-    let substring = self.scalars[startIndex..<endIndex]
+
+    let substring: String.UnicodeScalarView.SubSequence
+    switch self.getSubstring(start: start, end: end) {
+    case let .value(v): substring = v
+    case let .error(e): return .error(e)
+    }
 
     if let tuple = value as? PyTuple {
       for element in tuple.elements {
@@ -666,24 +649,13 @@ public class PyString: PyObject {
       return .typeError("find arg must be str, not \(value.typeName)")
     }
 
-    var startIndex = self.scalars.startIndex
-    switch self.extractIndex(start) {
-    case .none: break
-    case let .index(index): startIndex = index
+    let substring: String.UnicodeScalarView.SubSequence
+    switch self.getSubstring(start: start, end: end) {
+    case let .value(v): substring = v
     case let .error(e): return .error(e)
     }
 
-    var endIndex = self.scalars.endIndex
-    switch self.extractIndex(end) {
-    case .none: break
-    case let .index(index): endIndex = index
-    case let .error(e): return .error(e)
-    }
-
-    let substring = self.scalars[startIndex..<endIndex]
-    let substringView = String.UnicodeScalarView(substring)
-
-    switch self.find(in: substringView, value: valueString.value) {
+    switch self.find(in: substring, value: valueString.value) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -709,24 +681,13 @@ public class PyString: PyObject {
       return .typeError("find arg must be str, not \(value.typeName)")
     }
 
-    var startIndex = self.scalars.startIndex
-    switch self.extractIndex(start) {
-    case .none: break
-    case let .index(index): startIndex = index
+    let substring: String.UnicodeScalarView.SubSequence
+    switch self.getSubstring(start: start, end: end) {
+    case let .value(v): substring = v
     case let .error(e): return .error(e)
     }
 
-    var endIndex = self.scalars.endIndex
-    switch self.extractIndex(end) {
-    case .none: break
-    case let .index(index): endIndex = index
-    case let .error(e): return .error(e)
-    }
-
-    let substring = self.scalars[startIndex..<endIndex]
-    let substringView = String.UnicodeScalarView(substring)
-
-    switch self.rfind(in: substringView, value: valueString.value) {
+    switch self.rfind(in: substring, value: valueString.value) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -737,6 +698,12 @@ public class PyString: PyObject {
   private enum FindResult {
     case index(index: String.UnicodeScalarIndex, position: Int)
     case notFound
+  }
+
+  private func find(in scalarsSub: String.UnicodeScalarView.SubSequence,
+                    value: String) -> FindResult {
+    let scalars = String.UnicodeScalarView(scalarsSub)
+    return find(in: scalars, value: value)
   }
 
   private func find(in scalars: String.UnicodeScalarView,
@@ -757,6 +724,12 @@ public class PyString: PyObject {
     }
 
     return .notFound
+  }
+
+  private func rfind(in scalarsSub: String.UnicodeScalarView.SubSequence,
+                     value: String) -> FindResult {
+    let scalars = String.UnicodeScalarView(scalarsSub)
+    return rfind(in: scalars, value: value)
   }
 
   private func rfind(in scalars: String.UnicodeScalarView,
@@ -810,24 +783,13 @@ public class PyString: PyObject {
       return .typeError("index arg must be str, not \(value.typeName)")
     }
 
-    var startIndex = self.scalars.startIndex
-    switch self.extractIndex(start) {
-    case .none: break
-    case let .index(index): startIndex = index
+    let substring: String.UnicodeScalarView.SubSequence
+    switch self.getSubstring(start: start, end: end) {
+    case let .value(v): substring = v
     case let .error(e): return .error(e)
     }
 
-    var endIndex = self.scalars.endIndex
-    switch self.extractIndex(end) {
-    case .none: break
-    case let .index(index): endIndex = index
-    case let .error(e): return .error(e)
-    }
-
-    let substring = self.scalars[startIndex..<endIndex]
-    let substringView = String.UnicodeScalarView(substring)
-
-    switch self.find(in: substringView, value: valueString.value) {
+    switch self.find(in: substring, value: valueString.value) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -853,29 +815,18 @@ public class PyString: PyObject {
        return .typeError("rindex arg must be str, not \(value.typeName)")
      }
 
-     var startIndex = self.scalars.startIndex
-     switch self.extractIndex(start) {
-     case .none: break
-     case let .index(index): startIndex = index
-     case let .error(e): return .error(e)
-     }
+    let substring: String.UnicodeScalarView.SubSequence
+    switch self.getSubstring(start: start, end: end) {
+    case let .value(v): substring = v
+    case let .error(e): return .error(e)
+    }
 
-     var endIndex = self.scalars.endIndex
-     switch self.extractIndex(end) {
-     case .none: break
-     case let .index(index): endIndex = index
-     case let .error(e): return .error(e)
-     }
-
-     let substring = self.scalars[startIndex..<endIndex]
-     let substringView = String.UnicodeScalarView(substring)
-
-     switch self.rfind(in: substringView, value: valueString.value) {
-     case let .index(index: _, position: position):
-       return .value(position)
-     case .notFound:
-       return .valueError("substring not found")
-     }
+    switch self.rfind(in: substring, value: valueString.value) {
+    case let .index(index: _, position: position):
+      return .value(position)
+    case .notFound:
+      return .valueError("substring not found")
+    }
   }
 
   // MARK: - Case
@@ -1486,9 +1437,9 @@ public class PyString: PyObject {
     case let .error(e): return .error(e)
     }
 
+    var result = ""
     var linePos = 0
 
-    var result = ""
     for scalar in self.scalars {
       switch scalar {
       case "\t":
@@ -1525,7 +1476,50 @@ public class PyString: PyObject {
       return .overflowError("tabsize is too big")
     }
 
-    return .value(0)
+    return .value(int)
+  }
+
+  // MARK: - Count
+
+  internal static let countDoc = """
+    S.count(sub[, start[, end]]) -> int
+
+    Return the number of non-overlapping occurrences of substring sub in
+    string S[start:end].  Optional arguments start and end are
+    interpreted as in slice notation.
+    """
+
+  // sourcery: pymethod = count, doc = countDoc
+  internal func count(_ value: PyObject,
+                      start: PyObject?,
+                      end: PyObject?) -> PyResult<Int> {
+    guard let valueString = value as? PyString else {
+      return .typeError("sub arg must be str, not \(value.typeName)")
+    }
+
+    let substring: String.UnicodeScalarView.SubSequence
+    switch self.getSubstring(start: start, end: end) {
+    case let .value(v): substring = v
+    case let .error(e): return .error(e)
+    }
+
+    let valueScalars = valueString.scalars
+    let valueCount = valueScalars.count
+
+    var result = 0
+    var index = substring.startIndex
+
+    while index != substring.endIndex {
+      defer { substring.formIndex(after: &index) }
+
+      let s = substring[index...]
+      if s.starts(with: valueScalars) {
+        result += 1
+        index = substring.index(index, offsetBy: valueCount)
+      }
+    }
+
+    return .value(result)
   }
 
   // MARK: - Add
@@ -1578,6 +1572,28 @@ public class PyString: PyObject {
   }
 
   // MARK: - Helpers
+
+  private func getSubstring(
+    start: PyObject?,
+    end: PyObject?) -> PyResult<String.UnicodeScalarView.SubSequence> {
+
+    var startIndex = self.scalars.startIndex
+    switch self.extractIndex(start) {
+    case .none: break
+    case let .index(index): startIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    var endIndex = self.scalars.endIndex
+    switch self.extractIndex(end) {
+    case .none: break
+    case let .index(index): endIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    let result = self.scalars[startIndex..<endIndex]
+    return .value(result)
+  }
 
   private enum ExtractIndexResult {
     case none
