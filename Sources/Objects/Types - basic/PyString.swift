@@ -1522,6 +1522,41 @@ public class PyString: PyObject {
     return .value(result)
   }
 
+  // MARK: - Zfil
+
+  // sourcery: pymethod = zfill
+  internal func zfill(width: PyObject) -> PyResult<String> {
+    guard let widthInt = width as? PyInt else {
+      return .typeError("width must be int, not \(width.typeName)")
+    }
+
+    guard let width = Int(exactly: widthInt.value) else {
+      return .overflowError("width is too big")
+    }
+
+    let fillCount = width - self.scalars.count
+    guard fillCount > 0 else {
+      return .value(self.value)
+    }
+
+    let padding = String(repeating: "0", count: fillCount)
+    guard let first = self.scalars.first else {
+      return .value(padding)
+    }
+
+    var result = ""
+
+    var withoutSign = self.scalars
+    if first == "+" || first == "-" {
+      result.append(first)
+      withoutSign = String.UnicodeScalarView(self.scalars.dropFirst())
+    }
+
+    result.append(padding)
+    result.unicodeScalars.append(contentsOf: withoutSign)
+    return .value(result)
+  }
+
   // MARK: - Add
 
   // sourcery: pymethod = __add__
