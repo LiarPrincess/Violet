@@ -780,6 +780,94 @@ public class PyString: PyObject {
     return .notFound
   }
 
+  // MARK: - Index
+
+  internal static let indexDoc = """
+    S.index(sub[, start[, end]]) -> int
+
+    Return the lowest index in S where substring sub is found,
+    such that sub is contained within S[start:end].  Optional
+    arguments start and end are interpreted as in slice notation.
+
+    Raises ValueError when the substring is not found.
+    """
+
+  // sourcery: pymethod = index, doc = indexDoc
+  internal func index(_ value: PyObject,
+                      start: PyObject?,
+                      end: PyObject?) -> PyResult<Int> {
+    guard let valueString = value as? PyString else {
+      return .typeError("index arg must be str, not \(value.typeName)")
+    }
+
+    var startIndex = self.scalars.startIndex
+    switch self.extractIndex(start) {
+    case .none: break
+    case let .index(index): startIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    var endIndex = self.scalars.endIndex
+    switch self.extractIndex(end) {
+    case .none: break
+    case let .index(index): endIndex = index
+    case let .error(e): return .error(e)
+    }
+
+    let substring = self.scalars[startIndex..<endIndex]
+    let substringView = String.UnicodeScalarView(substring)
+
+    switch self.find(in: substringView, value: valueString.value) {
+    case let .index(index: _, position: position):
+      return .value(position)
+    case .notFound:
+      return .valueError("substring not found")
+    }
+  }
+
+  internal static let rindexDoc = """
+    S.rindex(sub[, start[, end]]) -> int
+
+    Return the highest index in S where substring sub is found,
+    such that sub is contained within S[start:end].  Optional
+    arguments start and end are interpreted as in slice notation.
+
+    Raises ValueError when the substring is not found.
+    """
+
+  // sourcery: pymethod = rindex, doc = rindexDoc
+  internal func rindex(_ value: PyObject,
+                       start: PyObject?,
+                       end: PyObject?) -> PyResult<Int> {
+    guard let valueString = value as? PyString else {
+       return .typeError("rindex arg must be str, not \(value.typeName)")
+     }
+
+     var startIndex = self.scalars.startIndex
+     switch self.extractIndex(start) {
+     case .none: break
+     case let .index(index): startIndex = index
+     case let .error(e): return .error(e)
+     }
+
+     var endIndex = self.scalars.endIndex
+     switch self.extractIndex(end) {
+     case .none: break
+     case let .index(index): endIndex = index
+     case let .error(e): return .error(e)
+     }
+
+     let substring = self.scalars[startIndex..<endIndex]
+     let substringView = String.UnicodeScalarView(substring)
+
+     switch self.rfind(in: substringView, value: valueString.value) {
+     case let .index(index: _, position: position):
+       return .value(position)
+     case .notFound:
+       return .valueError("substring not found")
+     }
+  }
+
   // MARK: - Case
 
   // sourcery: pymethod = lower
@@ -1257,12 +1345,12 @@ public class PyString: PyObject {
     "\n", // \n - Line Feed
     "\r", // \r - Carriage Return
     // \r\n - Carriage Return + Line Feed
-    "\u{000b}", // \v or \x0b - Line Tabulation
-    "\u{000c}", // \f or \x0c - Form Feed
-    "\u{001c}", // \x1c - File Separator
-    "\u{001d}", // \x1d - Group Separator
-    "\u{001e}", // \x1e - Record Separator
-    "\u{0085}", // \x85 - Next Line (C1 Control Code)
+    "\u{0b}", // \v or \x0b - Line Tabulation
+    "\u{0c}", // \f or \x0c - Form Feed
+    "\u{1c}", // \x1c - File Separator
+    "\u{1d}", // \x1d - Group Separator
+    "\u{1e}", // \x1e - Record Separator
+    "\u{85}", // \x85 - Next Line (C1 Control Code)
     "\u{2028}", // \u2028 - Line Separator
     "\u{2029}" // \u2029 - Paragraph Separator
   ])
