@@ -6,8 +6,6 @@ import Core
 
 // swiftlint:disable file_length
 
-// TODO: Docs from unicodeobject.c.h
-
 // sourcery: pytype = str
 /// Textual data in Python is handled with str objects, or strings.
 /// Strings are immutable sequences of Unicode code points.
@@ -248,7 +246,14 @@ public class PyString: PyObject {
 
   // MARK: - Predicates
 
-  // sourcery: pymethod = isalnum
+  internal static let isalnumDoc = """
+    Return True if the string is an alpha-numeric string, False otherwise.
+
+    A string is alpha-numeric if all characters in the string are alpha-numeric and
+    there is at least one character in the string.
+    """
+
+  // sourcery: pymethod = isalnum, doc = isalnumDoc
   /// Return true if all characters in the string are alphanumeric
   /// and there is at least one characte.
   /// A character c is alphanumeric if one of the following returns True:
@@ -272,7 +277,14 @@ public class PyString: PyObject {
     .otherLetter // Lo
   ])
 
-  // sourcery: pymethod = isalpha
+  internal static let isalphaDoc = """
+    Return True if the string is an alphabetic string, False otherwise.
+
+    A string is alphabetic if all characters in the string are alphabetic and there
+    is at least one character in the string.
+    """
+
+  // sourcery: pymethod = isalpha, doc = isalphaDoc
   /// Return true if all characters in the string are alphabetic
   /// and there is at least one character.
   /// Alphabetic characters are those characters defined in the Unicode character
@@ -286,7 +298,14 @@ public class PyString: PyObject {
     }
   }
 
-  // sourcery: pymethod = isascii
+  internal static let isasciiDoc = """
+    Return True if all characters in the string are ASCII, False otherwise.
+
+    ASCII characters have code points in the range U+0000-U+007F.
+    Empty string is ASCII too.
+    """
+
+  // sourcery: pymethod = isascii, doc = isasciiDoc
   /// Return true if the string is empty or all characters in the string are ASCII.
   /// ASCII characters have code points in the range U+0000-U+007F.
   /// https://docs.python.org/3/library/stdtypes.html#str.isascii
@@ -294,7 +313,14 @@ public class PyString: PyObject {
     return self.scalars.any && self.scalars.allSatisfy { $0.isASCII }
   }
 
-  // sourcery: pymethod = isdecimal
+  internal static let isdecimalDoc = """
+    Return True if the string is a decimal string, False otherwise.
+
+    A string is a decimal string if all characters in the string are decimal and
+    there is at least one character in the string.
+    """
+
+  // sourcery: pymethod = isdecimal, doc = isdecimalDoc
   /// Return true if all characters in the string are decimal characters
   /// and there is at least one character.
   /// Formally a decimal character is a character in the Unicode General
@@ -305,7 +331,14 @@ public class PyString: PyObject {
       self.scalars.allSatisfy { $0.properties.generalCategory == .decimalNumber }
   }
 
-  // sourcery: pymethod = isdigit
+  internal static let isdigitDoc = """
+    Return True if the string is a digit string, False otherwise.
+
+    A string is a digit string if all characters in the string are digits and there
+    is at least one character in the string.
+    """
+
+  // sourcery: pymethod = isdigit, doc = isdigitDoc
   /// Return true if all characters in the string are digits
   /// and there is at least one character.
   /// Formally, a digit is a character that has the property value
@@ -321,7 +354,14 @@ public class PyString: PyObject {
     }
   }
 
-  // sourcery: pymethod = isidentifier
+  internal static let isidentifierDoc = """
+    Return True if the string is a valid Python identifier, False otherwise.
+
+    Use keyword.iskeyword() to test for reserved identifiers such as "def" and
+    "class".
+    """
+
+  // sourcery: pymethod = isidentifier, doc = isidentifierDoc
   /// https://docs.python.org/3/library/stdtypes.html#str.isidentifier
   internal func isIdentifier() -> Bool {
     switch self.scalars.isValidIdentifier {
@@ -332,7 +372,14 @@ public class PyString: PyObject {
     }
   }
 
-  // sourcery: pymethod = islower
+  internal static let islowerDoc = """
+    Return True if the string is a lowercase string, False otherwise.
+
+    A string is lowercase if all cased characters in the string are lowercase and
+    there is at least one cased character in the string.
+    """
+
+  // sourcery: pymethod = islower, doc = islowerDoc
   /// Return true if all cased characters 4 in the string are lowercase
   /// and there is at least one cased character.
   /// https://docs.python.org/3/library/stdtypes.html#str.islower
@@ -345,7 +392,14 @@ public class PyString: PyObject {
     }
   }
 
-  // sourcery: pymethod = isnumeric
+  internal static let isnumericDoc = """
+    Return True if the string is a numeric string, False otherwise.
+
+    A string is numeric if all characters in the string are numeric and there is at
+    least one character in the string.
+    """
+
+  // sourcery: pymethod = isnumeric, doc = isnumericDoc
   /// Return true if all characters in the string are numeric characters,
   /// and there is at least one character.
   /// Formally, numeric characters are those with the property value
@@ -356,7 +410,14 @@ public class PyString: PyObject {
       self.scalars.allSatisfy { $0.properties.numericType != nil }
   }
 
-  // sourcery: pymethod = isprintable
+  internal static let isprintableDoc = """
+    Return True if the string is printable, False otherwise.
+
+    A string is printable if all of its characters are considered printable in
+    repr() or if it is empty.
+    """
+
+  // sourcery: pymethod = isprintable, doc = isprintableDoc
   /// Return true if all characters in the string are printable
   /// or the string is empty.
   ///
@@ -398,7 +459,14 @@ public class PyString: PyObject {
     }
   }
 
-  // sourcery: pymethod = isspace
+  internal static let isspaceDoc = """
+    Return True if the string is a whitespace string, False otherwise.
+
+    A string is whitespace if all characters in the string are whitespace and there
+    is at least one character in the string.
+    """
+
+  // sourcery: pymethod = isspace, doc = isspaceDoc
   /// Return true if there are only whitespace characters in the string
   /// and there is at least one character.
   /// A character is whitespace if in the Unicode character database:
@@ -413,7 +481,14 @@ public class PyString: PyObject {
     }
   }
 
-  // sourcery: pymethod = istitle
+  internal static let istitleDoc = """
+    Return True if the string is a title-cased string, False otherwise.
+
+    In a title-cased string, upper- and title-case characters may only
+    follow uncased characters and lowercase characters only cased ones.
+    """
+
+  // sourcery: pymethod = istitle, doc = istitleDoc
   /// Return true if the string is a titlecased string and there is at least
   /// one character, for example uppercase characters may only follow uncased
   /// characters and lowercase characters only cased ones.
@@ -447,7 +522,14 @@ public class PyString: PyObject {
     return cased
   }
 
-  // sourcery: pymethod = isupper
+  internal static let isupperDoc = """
+    Return True if the string is an uppercase string, False otherwise.
+
+    A string is uppercase if all cased characters in the string are uppercase and
+    there is at least one cased character in the string.
+    """
+
+  // sourcery: pymethod = isupper, doc = isupperDoc
   /// Return true if all cased characters 4 in the string are uppercase
   /// and there is at least one cased character.
   /// https://docs.python.org/3/library/stdtypes.html#str.isupper
@@ -552,7 +634,13 @@ public class PyString: PyObject {
 
   // MARK: - Strip
 
-  // sourcery: pymethod = strip
+  internal static let stripDoc = """
+    Return a copy of the string with leading and trailing whitespace remove.
+
+    If chars is given and not None, remove characters in chars instead.
+    """
+
+  // sourcery: pymethod = strip, doc = stripDoc
   internal func strip(_ chars: PyObject?) -> PyResult<String> {
     switch self.parseStripChars(chars, fnName: "strip") {
     case .whitespace:
@@ -568,7 +656,13 @@ public class PyString: PyObject {
     }
   }
 
-  // sourcery: pymethod = lstrip
+  internal static let lstripDoc = """
+    Return a copy of the string with leading whitespace removed.
+
+    If chars is given and not None, remove characters in chars instead.
+    """
+
+  // sourcery: pymethod = lstrip, doc = lstripDoc
   internal func lstrip(_ chars: PyObject) -> PyResult<String> {
     switch self.parseStripChars(chars, fnName: "lstrip") {
     case .whitespace:
@@ -606,7 +700,13 @@ public class PyString: PyObject {
     return String(scalars[index...])
   }
 
-  // sourcery: pymethod = rstrip
+  internal static let rstripDoc = """
+    Return a copy of the string with trailing whitespace removed.
+
+    If chars is given and not None, remove characters in chars instead.
+    """
+
+  // sourcery: pymethod = rstrip, doc = rstripDoc
   internal func rstrip(_ chars: PyObject) -> PyResult<String> {
     switch self.parseStripChars(chars, fnName: "rstrip") {
     case .whitespace:

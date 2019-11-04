@@ -46,9 +46,10 @@ for t in implemented.types:
       why_is_this_even_implemented.append(m)
 
   print_implemented = 0
-  print_unimplemented = 1
-  print_why_is_this_even_implemented = 1
+  print_unimplemented = 0
+  print_why_is_this_even_implemented = 0
   print_derived = 0
+  print_doc = 1
 
   # Skip finished types
   has_something_to_do = methods_unimplemented or why_is_this_even_implemented
@@ -81,5 +82,17 @@ for t in implemented.types:
     for m in methods_derived:
       owner = m.__objclass__.__name__
       print('   ', m.__name__, 'from', owner)
+
+  if print_doc and methods_implemented:
+    for m in methods_implemented:
+      if not m.__doc__:
+        continue
+
+      print(f'  internal static let {m.__name__}Doc = """')
+      print(f'    ' + m.__doc__.replace('\n', '\n    '))
+      print('    """')
+      print()
+      print(f'// sourcery: pymethod = {m.__name__}, doc = {m.__name__}Doc')
+      print('-' * 80)
 
   print()
