@@ -1522,6 +1522,67 @@ public class PyString: PyObject {
     return .value(result)
   }
 
+  // MARK: - Replace
+
+  // sourcery: pymethod = replace
+  internal func replace(old: PyObject,
+                        new: PyObject,
+                        count: PyObject?) -> PyResult<String> {
+    guard let oldString = old as? PyString else {
+      return .typeError("old must be str, not \(old.typeName)")
+    }
+
+    guard let newString = new as? PyString else {
+      return .typeError("new must be str, not \(old.typeName)")
+    }
+
+    var remainingCount: Int
+    switch self.parseReplaceCount(count) {
+    case let .value(c): remainingCount = c
+    case let .error(e): return .error(e)
+    }
+
+    let oldScalars = oldString.scalars
+    let oldCount = oldScalars.count
+
+    var result = ""
+    var index = self.scalars.startIndex
+
+    while index != self.scalars.endIndex {
+      let s = self.scalars[index...]
+      guard s.starts(with: oldScalars) else {
+        result.append(self.scalars[index])
+        continue
+      }
+
+      result.append(contentsOf: newString.value)
+      index = self.scalars.index(index, offsetBy: oldCount)
+
+      remainingCount -= 1
+      if remainingCount <= 0 {
+        break
+      }
+    }
+
+    return .value(result)
+  }
+
+  private func parseReplaceCount(_ count: PyObject?) -> PyResult<Int> {
+    guard let count = count else {
+      return .value(Int.max)
+    }
+
+    guard let pyInt = count as? PyInt else {
+      return .typeError("count must be int, not \(count.typeName)")
+    }
+
+    guard let int = Int(exactly: pyInt.value) else {
+      return .overflowError("count is too big")
+    }
+
+    return .value(int < 0 ? Int.max : int)
+  }
+
   // MARK: - Zfil
 
   // sourcery: pymethod = zfill
