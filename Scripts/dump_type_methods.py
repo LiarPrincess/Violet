@@ -46,10 +46,10 @@ for t in implemented.types:
       why_is_this_even_implemented.append(m)
 
   print_implemented = 0
-  print_unimplemented = 0
-  print_why_is_this_even_implemented = 0
+  print_unimplemented = 1
+  print_why_is_this_even_implemented = 1
   print_derived = 0
-  print_doc = 1
+  print_doc = 0
 
   # Skip finished types
   has_something_to_do = methods_unimplemented or why_is_this_even_implemented

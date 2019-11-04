@@ -136,33 +136,11 @@ str
     __mod__
     __rmod__
     __sizeof__
-    capitalize
-    casefold
-    center
-    count
     encode
-    expandtabs
-    find
     format
     format_map
-    index
     join
-    ljust
-    lower
-    partition
-    replace
-    rfind
-    rindex
-    rjust
-    rpartition
-    rsplit
-    split
-    splitlines
-    swapcase
-    title
     translate
-    upper
-    zfill
 
 tuple
   Unimplemented:

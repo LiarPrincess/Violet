@@ -53,7 +53,7 @@ extension String: PyObjectConvertible {
   }
 }
 
-extension Array: PyObjectConvertible where Element: PyObject {
+extension Array: PyObjectConvertible where Element: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
     let array = self.map { $0.toPyObject(in: context) }
     return context.list(array)

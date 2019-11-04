@@ -1,6 +1,5 @@
 import Core
 
-// swiftlint:disable force_cast
 // swiftlint:disable trailing_closure
 
 extension PyType {
