@@ -63,6 +63,38 @@ extension BidirectionalCollection {
     // If it is the suffix that was shorter then it is OK.
     return suffixIndex == suffix.startIndex
   }
+
+  /// Returns a subsequence by skipping elements (starting from last) while
+  /// `predicate` returns `true` and returning the remaining elements.
+  ///
+  /// - Parameter predicate: A closure that takes an element of the
+  ///   sequence as its argument and returns `true` if the element should
+  ///   be skipped or `false` if it should be included. Once the predicate
+  ///   returns `false` it will not be called again.
+  ///
+  /// - Complexity: O(*n*), where *n* is the length of the collection.
+  public func dropLast(while predicate: (Element) throws -> Bool) rethrows -> SubSequence {
+    if self.isEmpty {
+      return self.emptySubSequence
+    }
+
+    // `endIndex` is AFTER the collection
+    var index = self.endIndex
+    self.formIndex(before: &index)
+
+    while index != self.startIndex {
+      let isSkipped = try predicate(self[index])
+      guard isSkipped else {
+        return self[self.startIndex..<index]
+      }
+    }
+
+    return self.emptySubSequence
+  }
+
+  private var emptySubSequence: SubSequence {
+    return self[self.startIndex..<self.startIndex]
+  }
 }
 
 extension OptionSet {

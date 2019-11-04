@@ -552,33 +552,41 @@ public class PyString: PyObject {
 
   // MARK: - Strip
 
-  // TODO: `xStrip` argument is optional
-  // TODO: Case convention for l/r prefix. lstrip/lStrip
-
   // sourcery: pymethod = strip
-  internal func strip(_ chars: PyObject) -> PyResult<String> {
-    guard let charsString = chars as? PyString else {
-      return .typeError("strip arg must be str, not \(chars.typeName)")
+  internal func strip(_ chars: PyObject?) -> PyResult<String> {
+    switch self.parseStripChars(chars, fnName: "strip") {
+    case .whitespace:
+      let tmp = self.lstripWhitespace(in: self.value)
+      let result = self.rstripWhitespace(in: String(tmp))
+      return .value(String(result))
+    case let .chars(set):
+      let tmp = self.lstrip(value: self.value, chars: set)
+      let result = self.rstrip(value: tmp, chars: set)
+      return .value(result)
+    case let .error(e):
+      return .error(e)
     }
-
-    let set = Set(charsString.value.unicodeScalars)
-    let tmp = self.lStrip(value: self.value, chars: set)
-    let result = self.rStrip(value: tmp, chars: set)
-    return .value(result)
   }
 
   // sourcery: pymethod = lstrip
-  internal func lStrip(_ chars: PyObject) -> PyResult<String> {
-    guard let charsString = chars as? PyString else {
-      return .typeError("lstrip arg must be str, not \(chars.typeName)")
+  internal func lstrip(_ chars: PyObject) -> PyResult<String> {
+    switch self.parseStripChars(chars, fnName: "lstrip") {
+    case .whitespace:
+      let result = self.lstripWhitespace(in: self.value)
+      return .value(String(result))
+    case let .chars(set):
+      let result = self.lstrip(value: self.value, chars: set)
+      return .value(result)
+    case let .error(e):
+      return .error(e)
     }
-
-    let set = Set(charsString.value.unicodeScalars)
-    let result = self.lStrip(value: self.value, chars: set)
-    return .value(result)
   }
 
-  private func lStrip(value: String, chars: Set<UnicodeScalar>) -> String {
+  private func lstripWhitespace(in value: String) -> String.UnicodeScalarView.SubSequence {
+    return value.unicodeScalars.drop { $0.properties.isWhitespace }
+  }
+
+  private func lstrip(value: String, chars: Set<UnicodeScalar>) -> String {
     let scalars = value.unicodeScalars
     var index = scalars.startIndex
 
@@ -599,17 +607,24 @@ public class PyString: PyObject {
   }
 
   // sourcery: pymethod = rstrip
-  internal func rStrip(_ chars: PyObject) -> PyResult<String> {
-    guard let charsString = chars as? PyString else {
-      return .typeError("rstrip arg must be str, not \(chars.typeName)")
+  internal func rstrip(_ chars: PyObject) -> PyResult<String> {
+    switch self.parseStripChars(chars, fnName: "rstrip") {
+    case .whitespace:
+      let result = self.rstripWhitespace(in: self.value)
+      return .value(String(result))
+    case let .chars(set):
+      let result = self.rstrip(value: self.value, chars: set)
+      return .value(result)
+    case let .error(e):
+      return .error(e)
     }
-
-    let set = Set(charsString.value.unicodeScalars)
-    let result = self.rStrip(value: self.value, chars: set)
-    return .value(result)
   }
 
-  private func rStrip(value: String, chars: Set<UnicodeScalar>) -> String {
+  private func rstripWhitespace(in value: String) -> String.UnicodeScalarView.SubSequence {
+    return value.unicodeScalars.dropLast { $0.properties.isWhitespace }
+  }
+
+  private func rstrip(value: String, chars: Set<UnicodeScalar>) -> String {
     let scalars = value.unicodeScalars
     var index = scalars.endIndex
 
@@ -627,6 +642,31 @@ public class PyString: PyObject {
     }
 
     return String(scalars[index...])
+  }
+
+  private enum StripCharsResult {
+    case whitespace
+    case chars(Set<UnicodeScalar>)
+    case error(PyErrorEnum)
+  }
+
+  private func parseStripChars(_ chars: PyObject?,
+                               fnName: String) -> StripCharsResult {
+    guard let chars = chars else {
+      return .whitespace
+    }
+
+    if chars is PyNone {
+      return .whitespace
+    }
+
+    if let charsString = chars as? PyString {
+      return .chars(Set(charsString.value.unicodeScalars))
+    }
+
+    return .error(
+      .typeError("\(fnName) arg must be str or None, not \(chars.typeName)")
+    )
   }
 
   // MARK: - Find
