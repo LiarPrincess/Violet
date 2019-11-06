@@ -60,12 +60,6 @@ extension Array: PyObjectConvertible where Element: PyObjectConvertible {
   }
 }
 
-extension PyHash: PyObjectConvertible {
-  public func toPyObject(in context: PyContext) -> PyObject {
-    return context.int(BigInt(self))
-  }
-}
-
 extension PyObject: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
     return self

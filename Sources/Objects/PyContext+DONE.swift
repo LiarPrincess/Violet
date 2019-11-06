@@ -134,7 +134,6 @@ extension PyContext {
 
   // MARK: - Compare
 
-
   public func isEqual(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
     return .notImplemented
   }
