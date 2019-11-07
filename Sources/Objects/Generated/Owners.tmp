@@ -1,0 +1,662 @@
+
+# Output of 'Owners.stencil'.
+# Used to generate 'OwnerProtocols.swift' and 'OwnerConformance.swift'.
+#
+# Each line describes implemented operation with following attributes:
+# - type_name - name of the type to which operatino belongs to
+# - base_type_name - name of the base type
+# - operation - possible values: get, set, func
+# - python_name - name in python, for example '__eq__'
+# - swift_function - Swift function signature
+
+
+
+PyBool|PyInt|get|__class__|getClass() -> PyType
+
+PyBool|PyInt|func|__repr__|repr() -> PyResult<String>
+PyBool|PyInt|func|__str__|str() -> PyResult<String>
+PyBool|PyInt|func|__and__|and(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyBool|PyInt|func|__rand__|rand(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyBool|PyInt|func|__or__|or(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyBool|PyInt|func|__ror__|ror(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyBool|PyInt|func|__xor__|xor(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyBool|PyInt|func|__rxor__|rxor(_ other: PyObject) -> PyResultOrNot<PyObject>
+
+PyBuiltinFunction|PyObject|get|__class__|getClass() -> PyType
+PyBuiltinFunction|PyObject|get|__name__|getName() -> String
+PyBuiltinFunction|PyObject|get|__qualname__|getQualname() -> String
+PyBuiltinFunction|PyObject|get|__text_signature__|getTextSignature() -> String?
+PyBuiltinFunction|PyObject|get|__module__|getModule() -> String
+PyBuiltinFunction|PyObject|get|__self__|getSelf() -> PyObject
+
+PyBuiltinFunction|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBuiltinFunction|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBuiltinFunction|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBuiltinFunction|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBuiltinFunction|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBuiltinFunction|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBuiltinFunction|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
+PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+
+PyCode|PyObject|get|__class__|getClass() -> PyType
+
+PyCode|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyCode|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyCode|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyCode|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyCode|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyCode|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyCode|PyObject|func|__repr__|repr() -> PyResult<String>
+
+PyComplex|PyObject|get|__class__|getClass() -> PyType
+
+PyComplex|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyComplex|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyComplex|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyComplex|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyComplex|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyComplex|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyComplex|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyComplex|PyObject|func|__repr__|repr() -> PyResult<String>
+PyComplex|PyObject|func|__str__|str() -> PyResult<String>
+PyComplex|PyObject|func|__bool__|asBool() -> Bool
+PyComplex|PyObject|func|__int__|asInt() -> PyResult<PyInt>
+PyComplex|PyObject|func|__float__|asFloat() -> PyResult<PyFloat>
+PyComplex|PyObject|func|real|asReal() -> PyObject
+PyComplex|PyObject|func|imag|asImag() -> PyObject
+PyComplex|PyObject|func|conjugate|conjugate() -> PyObject
+PyComplex|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyComplex|PyObject|func|__pos__|positive() -> PyObject
+PyComplex|PyObject|func|__neg__|negative() -> PyObject
+PyComplex|PyObject|func|__abs__|abs() -> PyObject
+PyComplex|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__radd__|radd(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__pow__|pow(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rpow__|rpow(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__truediv__|trueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rtruediv__|rtrueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__floordiv__|floorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rfloordiv__|rfloorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__mod__|mod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__divmod__|divMod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rdivmod__|rdivMod(_ other: PyObject) -> PyResultOrNot<PyObject>
+
+PyEllipsis|PyObject|get|__class__|getClass() -> PyType
+
+PyEllipsis|PyObject|func|__repr__|repr() -> PyResult<String>
+PyEllipsis|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+
+PyFloat|PyObject|get|__class__|getClass() -> PyType
+
+PyFloat|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFloat|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFloat|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFloat|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFloat|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFloat|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFloat|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyFloat|PyObject|func|__repr__|repr() -> PyResult<String>
+PyFloat|PyObject|func|__str__|str() -> PyResult<String>
+PyFloat|PyObject|func|__bool__|asBool() -> Bool
+PyFloat|PyObject|func|__int__|asInt() -> PyResult<PyInt>
+PyFloat|PyObject|func|__float__|asFloat() -> PyResult<PyFloat>
+PyFloat|PyObject|func|real|asReal() -> PyObject
+PyFloat|PyObject|func|imag|asImag() -> PyObject
+PyFloat|PyObject|func|conjugate|conjugate() -> PyObject
+PyFloat|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyFloat|PyObject|func|__pos__|positive() -> PyObject
+PyFloat|PyObject|func|__neg__|negative() -> PyObject
+PyFloat|PyObject|func|__abs__|abs() -> PyObject
+PyFloat|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__radd__|radd(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__pow__|pow(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rpow__|rpow(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__truediv__|trueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rtruediv__|rtrueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__floordiv__|floorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rfloordiv__|rfloorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__mod__|mod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__divmod__|divMod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rdivmod__|rdivMod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
+
+PyFunction|PyObject|get|__class__|getClass() -> PyType
+PyFunction|PyObject|get|__name__|getName() -> String
+PyFunction|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
+PyFunction|PyObject|get|__qualname__|getQualname() -> String
+PyFunction|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
+PyFunction|PyObject|get|__code__|getCode() -> PyCode
+PyFunction|PyObject|get|__doc__|getDoc() -> String?
+PyFunction|PyObject|get|__module__|getModule() -> String
+PyFunction|PyObject|get|__dict__|dict() -> Attributes
+
+PyFunction|PyObject|func|__repr__|repr() -> PyResult<String>
+PyFunction|PyObject|func|__get__|get(object: PyObject) -> PyResult<PyObject>
+
+PyInt|PyObject|get|__class__|getClass() -> PyType
+
+PyInt|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyInt|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyInt|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyInt|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyInt|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyInt|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyInt|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyInt|PyObject|func|__repr__|repr() -> PyResult<String>
+PyInt|PyObject|func|__str__|str() -> PyResult<String>
+PyInt|PyObject|func|__bool__|asBool() -> Bool
+PyInt|PyObject|func|__int__|asInt() -> PyResult<PyInt>
+PyInt|PyObject|func|__float__|asFloat() -> PyResult<PyFloat>
+PyInt|PyObject|func|__index__|asIndex() -> BigInt
+PyInt|PyObject|func|real|asReal() -> PyObject
+PyInt|PyObject|func|imag|asImag() -> PyObject
+PyInt|PyObject|func|conjugate|conjugate() -> PyObject
+PyInt|PyObject|func|numerator|numerator() -> PyInt
+PyInt|PyObject|func|denominator|denominator() -> PyInt
+PyInt|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyInt|PyObject|func|__pos__|positive() -> PyObject
+PyInt|PyObject|func|__neg__|negative() -> PyObject
+PyInt|PyObject|func|__abs__|abs() -> PyObject
+PyInt|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__radd__|radd(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__pow__|pow(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rpow__|rpow(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__truediv__|trueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rtruediv__|rtrueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__floordiv__|floorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rfloordiv__|rfloorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__mod__|mod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__divmod__|divMod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rdivmod__|rdivMod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__lshift__|lShift(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rlshift__|rlShift(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rshift__|rShift(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rrshift__|rrShift(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__and__|and(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rand__|rand(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__or__|or(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__ror__|ror(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__xor__|xor(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rxor__|rxor(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__invert__|invert() -> PyObject
+PyInt|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
+
+PyList|PyObject|get|__class__|getClass() -> PyType
+
+PyList|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyList|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyList|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyList|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyList|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyList|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyList|PyObject|func|__repr__|repr() -> PyResult<String>
+PyList|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyList|PyObject|func|__len__|getLength() -> BigInt
+PyList|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PyList|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
+PyList|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
+PyList|PyObject|func|index|index(of element: PyObject) -> PyResult<BigInt>
+PyList|PyObject|func|append|append(_ element: PyObject) -> PyResult<PyNone>
+PyList|PyObject|func|extend|extend(_ iterator: PyObject) -> PyResult<PyNone>
+PyList|PyObject|func|clear|clear() -> PyResult<PyNone>
+PyList|PyObject|func|copy|copy() -> PyList
+PyList|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyList|PyObject|func|__iadd__|addInPlace(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyList|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyList|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyList|PyObject|func|__imul__|mulInPlace(_ other: PyObject) -> PyResultOrNot<PyObject>
+
+PyMethod|PyObject|get|__class__|getClass() -> PyType
+
+PyMethod|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyMethod|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyMethod|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyMethod|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyMethod|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyMethod|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyMethod|PyObject|func|__repr__|repr() -> PyResult<String>
+PyMethod|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyMethod|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyMethod|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
+PyMethod|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
+PyMethod|PyObject|func|__func__|getFunc() -> PyObject
+PyMethod|PyObject|func|__self__|getSelf() -> PyObject
+PyMethod|PyObject|func|__get__|get(object: PyObject) -> PyResult<PyObject>
+
+PyModule|PyObject|get|__dict__|dict() -> Attributes
+PyModule|PyObject|get|__class__|getClass() -> PyType
+
+PyModule|PyObject|func|__repr__|repr() -> PyResult<String>
+PyModule|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyModule|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
+PyModule|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
+PyModule|PyObject|func|__dir__|dir() -> DirResult
+
+PyNamespace|PyObject|get|__dict__|dict() -> Attributes
+
+PyNamespace|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyNamespace|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyNamespace|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyNamespace|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyNamespace|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyNamespace|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyNamespace|PyObject|func|__repr__|repr() -> PyResult<String>
+PyNamespace|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyNamespace|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
+PyNamespace|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
+
+PyNone|PyObject|get|__class__|getClass() -> PyType
+
+PyNone|PyObject|func|__repr__|repr() -> PyResult<String>
+PyNone|PyObject|func|__bool__|asBool() -> Bool
+
+PyNotImplemented|PyObject|get|__class__|getClass() -> PyType
+
+PyNotImplemented|PyObject|func|__repr__|repr() -> PyResult<String>
+
+PyProperty|PyObject|get|__class__|getClass() -> PyType
+PyProperty|PyObject|get|fget|getFGet() -> PyObject
+PyProperty|PyObject|get|fset|getFSet() -> PyObject
+PyProperty|PyObject|get|fdel|getFDel() -> PyObject
+
+PyProperty|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyProperty|PyObject|func|__get__|get(object: PyObject) -> PyResult<PyObject>
+PyProperty|PyObject|func|__set__|set(object: PyObject, value: PyObject) -> PyResult<PyObject>
+PyProperty|PyObject|func|__delete__|del(object: PyObject) -> PyResult<PyObject>
+
+PyRange|PyObject|get|__class__|getClass() -> PyType
+
+PyRange|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyRange|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyRange|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyRange|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyRange|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyRange|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyRange|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyRange|PyObject|func|__repr__|repr() -> PyResult<String>
+PyRange|PyObject|func|__bool__|asBool() -> Bool
+PyRange|PyObject|func|__len__|getLength() -> BigInt
+PyRange|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyRange|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PyRange|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
+PyRange|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
+PyRange|PyObject|func|index|index(of element: PyObject) -> PyResult<BigInt>
+
+PySlice|PyObject|get|__class__|getClass() -> PyType
+
+PySlice|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PySlice|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PySlice|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PySlice|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PySlice|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PySlice|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PySlice|PyObject|func|__repr__|repr() -> PyResult<String>
+PySlice|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+
+PyString|PyObject|get|__class__|getClass() -> PyType
+
+PyString|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyString|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyString|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyString|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyString|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyString|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyString|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyString|PyObject|func|__repr__|repr() -> PyResult<String>
+PyString|PyObject|func|__str__|str() -> PyResult<String>
+PyString|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyString|PyObject|func|__len__|getLength() -> BigInt
+PyString|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PyString|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
+PyString|PyObject|func|isalnum|isAlphaNumeric() -> Bool
+PyString|PyObject|func|isalpha|isAlpha() -> Bool
+PyString|PyObject|func|isascii|isAscii() -> Bool
+PyString|PyObject|func|isdecimal|isDecimal() -> Bool
+PyString|PyObject|func|isdigit|isDigit() -> Bool
+PyString|PyObject|func|isidentifier|isIdentifier() -> Bool
+PyString|PyObject|func|islower|isLower() -> Bool
+PyString|PyObject|func|isnumeric|isNumeric() -> Bool
+PyString|PyObject|func|isprintable|isPrintable() -> Bool
+PyString|PyObject|func|isspace|isSpace() -> Bool
+PyString|PyObject|func|istitle|isTitle() -> Bool
+PyString|PyObject|func|isupper|isUpper() -> Bool
+PyString|PyObject|func|startswith|startsWith(_ element: PyObject,                           start: PyObject?,                           end: PyObject?) -> PyResult<Bool>
+PyString|PyObject|func|endswith|endsWith(_ element: PyObject,                         start: PyObject?,                         end: PyObject?) -> PyResultOrNot<Bool>
+PyString|PyObject|func|strip|strip(_ chars: PyObject?) -> PyResult<String>
+PyString|PyObject|func|lstrip|lstrip(_ chars: PyObject) -> PyResult<String>
+PyString|PyObject|func|rstrip|rstrip(_ chars: PyObject) -> PyResult<String>
+PyString|PyObject|func|find|find(_ element: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<Int>
+PyString|PyObject|func|rfind|rfind(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<Int>
+PyString|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyString|PyObject|func|rindex|rindex(_ element: PyObject,                       start: PyObject?,                       end: PyObject?) -> PyResult<Int>
+PyString|PyObject|func|lower|lower() -> String
+PyString|PyObject|func|upper|upper() -> String
+PyString|PyObject|func|title|title() -> String
+PyString|PyObject|func|swapcase|swapcase() -> String
+PyString|PyObject|func|casefold|casefold() -> String
+PyString|PyObject|func|capitalize|capitalize() -> String
+PyString|PyObject|func|center|center(width: PyObject, fillChar: PyObject?) -> PyResult<String>
+PyString|PyObject|func|ljust|ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String>
+PyString|PyObject|func|rjust|rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String>
+PyString|PyObject|func|split|split(separator: PyObject?,                      maxCount: PyObject?) -> PyResult<[String]>
+PyString|PyObject|func|rsplit|rsplit(separator: PyObject?,                       maxCount: PyObject?) -> PyResult<[String]>
+PyString|PyObject|func|splitlines|splitLines(keepEnds: PyObject) -> PyResult<[String]>
+PyString|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTuple>
+PyString|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
+PyString|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<String>
+PyString|PyObject|func|count|count(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyString|PyObject|func|replace|replace(old: PyObject,                        new: PyObject,                        count: PyObject?) -> PyResult<String>
+PyString|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<String>
+PyString|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyString|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyString|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+
+PyTuple|PyObject|get|__class__|getClass() -> PyType
+
+PyTuple|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyTuple|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyTuple|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyTuple|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyTuple|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyTuple|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyTuple|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyTuple|PyObject|func|__repr__|repr() -> PyResult<String>
+PyTuple|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyTuple|PyObject|func|__len__|getLength() -> BigInt
+PyTuple|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PyTuple|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
+PyTuple|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
+PyTuple|PyObject|func|index|index(of element: PyObject) -> PyResult<BigInt>
+PyTuple|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyTuple|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyTuple|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+
+
+PyArithmeticError|PyException|get|__class__|getClass() -> PyType
+PyArithmeticError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyAssertionError|PyException|get|__class__|getClass() -> PyType
+PyAssertionError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyAttributeError|PyException|get|__class__|getClass() -> PyType
+PyAttributeError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyBaseException|PyObject|get|__dict__|dict() -> Attributes
+PyBaseException|PyObject|get|__class__|getClass() -> PyType
+PyBaseException|PyObject|get|args|getArgs() -> PyObject
+PyBaseException|PyObject|set|args|setArgs(_ value: PyObject?) -> PyResult<()>
+PyBaseException|PyObject|get|__traceback__|getTraceback() -> PyObject
+PyBaseException|PyObject|set|__traceback__|setTraceback(_ value: PyObject?) -> PyResult<()>
+PyBaseException|PyObject|get|__cause__|getCause() -> PyObject
+PyBaseException|PyObject|set|__cause__|setCause(_ value: PyObject?) -> PyResult<()>
+PyBaseException|PyObject|get|__context__|getContext() -> PyObject
+PyBaseException|PyObject|set|__context__|setContext(_ value: PyObject?) -> PyResult<()>
+PyBaseException|PyObject|get|__suppress_context__|getSuppressContext() -> PyObject
+PyBaseException|PyObject|set|__suppress_context__|setSuppressContext(_ value: PyObject?) -> PyResult<()>
+
+PyBaseException|PyObject|func|__repr__|repr() -> PyResult<String>
+PyBaseException|PyObject|func|__str__|str() -> PyResult<String>
+PyBaseException|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyBaseException|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
+PyBaseException|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
+
+PyBlockingIOError|PyOSError|get|__class__|getClass() -> PyType
+PyBlockingIOError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyBrokenPipeError|PyConnectionError|get|__class__|getClass() -> PyType
+PyBrokenPipeError|PyConnectionError|get|__dict__|dict() -> Attributes
+
+
+PyBufferError|PyException|get|__class__|getClass() -> PyType
+PyBufferError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyChildProcessError|PyOSError|get|__class__|getClass() -> PyType
+PyChildProcessError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyConnectionAbortedError|PyConnectionError|get|__class__|getClass() -> PyType
+PyConnectionAbortedError|PyConnectionError|get|__dict__|dict() -> Attributes
+
+
+PyConnectionError|PyOSError|get|__class__|getClass() -> PyType
+PyConnectionError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyConnectionRefusedError|PyConnectionError|get|__class__|getClass() -> PyType
+PyConnectionRefusedError|PyConnectionError|get|__dict__|dict() -> Attributes
+
+
+PyConnectionResetError|PyConnectionError|get|__class__|getClass() -> PyType
+PyConnectionResetError|PyConnectionError|get|__dict__|dict() -> Attributes
+
+
+PyEOFError|PyException|get|__class__|getClass() -> PyType
+PyEOFError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyException|PyBaseException|get|__class__|getClass() -> PyType
+PyException|PyBaseException|get|__dict__|dict() -> Attributes
+
+
+PyFileExistsError|PyOSError|get|__class__|getClass() -> PyType
+PyFileExistsError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyFileNotFoundError|PyOSError|get|__class__|getClass() -> PyType
+PyFileNotFoundError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyFloatingPointError|PyArithmeticError|get|__class__|getClass() -> PyType
+PyFloatingPointError|PyArithmeticError|get|__dict__|dict() -> Attributes
+
+
+PyGeneratorExit|PyBaseException|get|__class__|getClass() -> PyType
+PyGeneratorExit|PyBaseException|get|__dict__|dict() -> Attributes
+
+
+PyImportError|PyException|get|__class__|getClass() -> PyType
+PyImportError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyIndentationError|PySyntaxError|get|__class__|getClass() -> PyType
+PyIndentationError|PySyntaxError|get|__dict__|dict() -> Attributes
+
+
+PyIndexError|PyLookupError|get|__class__|getClass() -> PyType
+PyIndexError|PyLookupError|get|__dict__|dict() -> Attributes
+
+
+PyInterruptedError|PyOSError|get|__class__|getClass() -> PyType
+PyInterruptedError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyIsADirectoryError|PyOSError|get|__class__|getClass() -> PyType
+PyIsADirectoryError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyKeyError|PyLookupError|get|__class__|getClass() -> PyType
+PyKeyError|PyLookupError|get|__dict__|dict() -> Attributes
+
+
+PyKeyboardInterrupt|PyBaseException|get|__class__|getClass() -> PyType
+PyKeyboardInterrupt|PyBaseException|get|__dict__|dict() -> Attributes
+
+
+PyLookupError|PyException|get|__class__|getClass() -> PyType
+PyLookupError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyMemoryError|PyException|get|__class__|getClass() -> PyType
+PyMemoryError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyModuleNotFoundError|PyImportError|get|__class__|getClass() -> PyType
+PyModuleNotFoundError|PyImportError|get|__dict__|dict() -> Attributes
+
+
+PyNameError|PyException|get|__class__|getClass() -> PyType
+PyNameError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyNotADirectoryError|PyOSError|get|__class__|getClass() -> PyType
+PyNotADirectoryError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyNotImplementedError|PyRuntimeError|get|__class__|getClass() -> PyType
+PyNotImplementedError|PyRuntimeError|get|__dict__|dict() -> Attributes
+
+
+PyOSError|PyException|get|__class__|getClass() -> PyType
+PyOSError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyOverflowError|PyArithmeticError|get|__class__|getClass() -> PyType
+PyOverflowError|PyArithmeticError|get|__dict__|dict() -> Attributes
+
+
+PyPermissionError|PyOSError|get|__class__|getClass() -> PyType
+PyPermissionError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyProcessLookupError|PyOSError|get|__class__|getClass() -> PyType
+PyProcessLookupError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyRecursionError|PyRuntimeError|get|__class__|getClass() -> PyType
+PyRecursionError|PyRuntimeError|get|__dict__|dict() -> Attributes
+
+
+PyReferenceError|PyException|get|__class__|getClass() -> PyType
+PyReferenceError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyRuntimeError|PyException|get|__class__|getClass() -> PyType
+PyRuntimeError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyStopAsyncIteration|PyException|get|__class__|getClass() -> PyType
+PyStopAsyncIteration|PyException|get|__dict__|dict() -> Attributes
+
+
+PyStopIteration|PyException|get|__class__|getClass() -> PyType
+PyStopIteration|PyException|get|__dict__|dict() -> Attributes
+
+
+PySyntaxError|PyException|get|__class__|getClass() -> PyType
+PySyntaxError|PyException|get|__dict__|dict() -> Attributes
+
+
+PySystemError|PyException|get|__class__|getClass() -> PyType
+PySystemError|PyException|get|__dict__|dict() -> Attributes
+
+
+PySystemExit|PyBaseException|get|__class__|getClass() -> PyType
+PySystemExit|PyBaseException|get|__dict__|dict() -> Attributes
+
+
+PyTabError|PyIndentationError|get|__class__|getClass() -> PyType
+PyTabError|PyIndentationError|get|__dict__|dict() -> Attributes
+
+
+PyTimeoutError|PyOSError|get|__class__|getClass() -> PyType
+PyTimeoutError|PyOSError|get|__dict__|dict() -> Attributes
+
+
+PyTypeError|PyException|get|__class__|getClass() -> PyType
+PyTypeError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyUnboundLocalError|PyNameError|get|__class__|getClass() -> PyType
+PyUnboundLocalError|PyNameError|get|__dict__|dict() -> Attributes
+
+
+PyUnicodeDecodeError|PyUnicodeError|get|__class__|getClass() -> PyType
+PyUnicodeDecodeError|PyUnicodeError|get|__dict__|dict() -> Attributes
+
+
+PyUnicodeEncodeError|PyUnicodeError|get|__class__|getClass() -> PyType
+PyUnicodeEncodeError|PyUnicodeError|get|__dict__|dict() -> Attributes
+
+
+PyUnicodeError|PyValueError|get|__class__|getClass() -> PyType
+PyUnicodeError|PyValueError|get|__dict__|dict() -> Attributes
+
+
+PyUnicodeTranslateError|PyUnicodeError|get|__class__|getClass() -> PyType
+PyUnicodeTranslateError|PyUnicodeError|get|__dict__|dict() -> Attributes
+
+
+PyValueError|PyException|get|__class__|getClass() -> PyType
+PyValueError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyZeroDivisionError|PyArithmeticError|get|__class__|getClass() -> PyType
+PyZeroDivisionError|PyArithmeticError|get|__dict__|dict() -> Attributes
+
+
+
+PyBytesWarning|PyWarning|get|__class__|getClass() -> PyType
+PyBytesWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PyDeprecationWarning|PyWarning|get|__class__|getClass() -> PyType
+PyDeprecationWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PyFutureWarning|PyWarning|get|__class__|getClass() -> PyType
+PyFutureWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PyImportWarning|PyWarning|get|__class__|getClass() -> PyType
+PyImportWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PyPendingDeprecationWarning|PyWarning|get|__class__|getClass() -> PyType
+PyPendingDeprecationWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PyResourceWarning|PyWarning|get|__class__|getClass() -> PyType
+PyResourceWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PyRuntimeWarning|PyWarning|get|__class__|getClass() -> PyType
+PyRuntimeWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PySyntaxWarning|PyWarning|get|__class__|getClass() -> PyType
+PySyntaxWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PyUnicodeWarning|PyWarning|get|__class__|getClass() -> PyType
+PyUnicodeWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PyUserWarning|PyWarning|get|__class__|getClass() -> PyType
+PyUserWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
+PyWarning|PyException|get|__class__|getClass() -> PyType
+PyWarning|PyException|get|__dict__|dict() -> Attributes
+
+

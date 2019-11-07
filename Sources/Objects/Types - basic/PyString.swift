@@ -551,8 +551,12 @@ public class PyString: PyObject {
     prefix can also be a tuple of strings to try.
     """
 
+  internal func startsWith(_ element: PyObject) -> PyResult<Bool> {
+    return self.startsWith(element, start: nil, end: nil)
+  }
+
   // sourcery: pymethod = startswith, doc = startswithDoc
-  internal func startsWith(_ value: PyObject,
+  internal func startsWith(_ element: PyObject,
                            start: PyObject?,
                            end: PyObject?) -> PyResult<Bool> {
     // "e\u0301".startswith("é") -> False
@@ -563,7 +567,7 @@ public class PyString: PyObject {
     case let .error(e): return .error(e)
     }
 
-    if let tuple = value as? PyTuple {
+    if let tuple = element as? PyTuple {
       for element in tuple.elements {
         guard let string = element as? PyString else {
           return .typeError(
@@ -577,13 +581,13 @@ public class PyString: PyObject {
       }
     }
 
-    if let string = value as? PyString,
+    if let string = element as? PyString,
       substring.starts(with: string.value.unicodeScalars) {
       return .value(true)
     }
 
     return .typeError(
-      "startswith first arg must be str or a tuple of str, not \(value.typeName)"
+      "startswith first arg must be str or a tuple of str, not \(element.typeName)"
     )
   }
 
@@ -596,8 +600,12 @@ public class PyString: PyObject {
     suffix can also be a tuple of strings to try.
     """
 
+  internal func endsWith(_ element: PyObject) -> PyResultOrNot<Bool> {
+    return self.endsWith(element, start: nil, end: nil)
+  }
+
   // sourcery: pymethod = endswith, doc = endswithDoc
-  internal func endsWith(_ value: PyObject,
+  internal func endsWith(_ element: PyObject,
                          start: PyObject?,
                          end: PyObject?) -> PyResultOrNot<Bool> {
     // "e\u0301".endswith("é") -> False
@@ -608,7 +616,7 @@ public class PyString: PyObject {
     case let .error(e): return .error(e)
     }
 
-    if let tuple = value as? PyTuple {
+    if let tuple = element as? PyTuple {
       for element in tuple.elements {
         guard let string = element as? PyString else {
           return .typeError(
@@ -622,13 +630,13 @@ public class PyString: PyObject {
       }
     }
 
-    if let string = value as? PyString,
+    if let string = element as? PyString,
       substring.ends(with: string.value.unicodeScalars) {
       return .value(true)
     }
 
     return .typeError(
-      "endswith first arg must be str or a tuple of str, not \(value.typeName)"
+      "endswith first arg must be str or a tuple of str, not \(element.typeName)"
     )
   }
 
@@ -781,12 +789,16 @@ public class PyString: PyObject {
     Return -1 on failure.
     """
 
+  internal func find(_ element: PyObject) -> PyResult<Int> {
+    return self.find(element, start: nil, end: nil)
+  }
+
   // sourcery: pymethod = find, doc = findDoc
-  internal func find(_ value: PyObject,
+  internal func find(_ element: PyObject,
                      start: PyObject?,
                      end: PyObject?) -> PyResult<Int> {
-    guard let valueString = value as? PyString else {
-      return .typeError("find arg must be str, not \(value.typeName)")
+    guard let elementString = element as? PyString else {
+      return .typeError("find arg must be str, not \(element.typeName)")
     }
 
     let substring: String.UnicodeScalarView.SubSequence
@@ -795,7 +807,7 @@ public class PyString: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.find(in: substring, value: valueString.value) {
+    switch self.find(in: substring, value: elementString.value) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -813,12 +825,16 @@ public class PyString: PyObject {
     Return -1 on failure.
     """
 
+  internal func rfind(_ element: PyObject) -> PyResult<Int> {
+    return self.rindex(element, start: nil, end: nil)
+  }
+
   // sourcery: pymethod = rfind, doc = rfindDoc
-  internal func rfind(_ value: PyObject,
+  internal func rfind(_ element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<Int> {
-    guard let valueString = value as? PyString else {
-      return .typeError("find arg must be str, not \(value.typeName)")
+    guard let elementString = element as? PyString else {
+      return .typeError("find arg must be str, not \(element.typeName)")
     }
 
     let substring: String.UnicodeScalarView.SubSequence
@@ -827,7 +843,7 @@ public class PyString: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.rfind(in: substring, value: valueString.value) {
+    switch self.rfind(in: substring, value: elementString.value) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -916,14 +932,14 @@ public class PyString: PyObject {
     """
 
   // Special overload for `IndexOwner` protocol
-  internal func index(of element: PyObject) -> PyResult<Int>{
+  internal func index(of element: PyObject) -> PyResult<BigInt>{
     return self.index(of: element, start: nil, end: nil)
   }
 
   // sourcery: pymethod = index, doc = indexDoc
   internal func index(of element: PyObject,
                       start: PyObject?,
-                      end: PyObject?) -> PyResult<Int> {
+                      end: PyObject?) -> PyResult<BigInt> {
     guard let elementString = element as? PyString else {
       return .typeError("index arg must be str, not \(element.typeName)")
     }
@@ -936,7 +952,7 @@ public class PyString: PyObject {
 
     switch self.find(in: substring, value: elementString.value) {
     case let .index(index: _, position: position):
-      return .value(position)
+      return .value(BigInt(position))
     case .notFound:
       return .valueError("substring not found")
     }
@@ -952,12 +968,16 @@ public class PyString: PyObject {
     Raises ValueError when the substring is not found.
     """
 
+  internal func rindex(_ element: PyObject) -> PyResult<Int> {
+    return self.rindex(element, start: nil, end: nil)
+  }
+
   // sourcery: pymethod = rindex, doc = rindexDoc
-  internal func rindex(_ value: PyObject,
+  internal func rindex(_ element: PyObject,
                        start: PyObject?,
                        end: PyObject?) -> PyResult<Int> {
-    guard let valueString = value as? PyString else {
-       return .typeError("rindex arg must be str, not \(value.typeName)")
+    guard let elementString = element as? PyString else {
+       return .typeError("rindex arg must be str, not \(element.typeName)")
      }
 
     let substring: String.UnicodeScalarView.SubSequence
@@ -966,7 +986,7 @@ public class PyString: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.rfind(in: substring, value: valueString.value) {
+    switch self.rfind(in: substring, value: elementString.value) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:

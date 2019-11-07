@@ -1,0 +1,40 @@
+# Output of 'Owners.stencil'.
+# Used to generate 'OwnerProtocols.swift' and 'OwnerConformance.swift'.
+#
+# Each line describes implemented operation with following attributes:
+# - type_name - name of the type to which operatino belongs to
+# - base_type_name - name of the base type
+# - operation - possible values: get, set, func
+# - python_name - name in python, for example '__eq__'
+# - swift_function - Swift function signature
+
+{% macro line type operation python_name swift_function swift_return %}
+{{ type.name }}|{{ type.supertype.name }}|{{ operation }}|{{ python_name }}|{{ swift_function }} -> {{ swift_return }}
+{% endmacro %}
+
+{% macro printConformance type %}
+  {% for prop in type.instanceMethods|annotated:"pyproperty" %}
+{% call line type "get" prop.annotations.pyproperty prop.name prop.returnTypeName %}
+  {% if prop.annotations.setter %}
+  {% set setter %}{{ prop.annotations.setter}}(_ value: PyObject?){% endset %}
+{% call line type "set" prop.annotations.pyproperty setter "PyResult<()>" %}
+  {% endif %}
+  {% endfor %}
+
+  {% for method in type.methods|annotated:"pymethod" %}
+{% call line type "func" method.annotations.pymethod method.name method.returnTypeName %}
+  {% endfor %}
+
+{% endmacro %}
+
+{% for type in types.classes|annotated:"pytype" %}
+{% call printConformance type %}
+{% endfor %}
+
+{% for type in types.classes|annotated:"pyerrortype" %}
+{% call printConformance type %}
+{% endfor %}
+
+{% for type in types.classes|annotated:"pywarningtype" %}
+{% call printConformance type %}
+{% endfor %}

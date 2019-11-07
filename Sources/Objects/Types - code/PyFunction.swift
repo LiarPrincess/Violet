@@ -87,12 +87,16 @@ internal final class PyFunction: PyObject, AttributesOwner {
     return self._name
   }
 
-  internal func setName(_ value: PyObject) -> PyResult<()> {
-    guard let value = value as? PyString else {
+  internal func setName(_ value: PyObject?) -> PyResult<()> {
+    guard let value = value else {
+      return .value()
+    }
+
+    guard let valueString = value as? PyString else {
       return .error(.typeError("__name__ must be set to a string object"))
     }
 
-    self._name = value.value
+    self._name = valueString.value
     return .value()
   }
 
@@ -101,12 +105,16 @@ internal final class PyFunction: PyObject, AttributesOwner {
     return self._qualname
   }
 
-  internal func setQualname(_ value: PyObject) -> PyResult<()> {
-    guard let value = value as? PyString else {
+  internal func setQualname(_ value: PyObject?) -> PyResult<()> {
+    guard let value = value else {
+      return .value()
+    }
+
+    guard let valueString = value as? PyString else {
       return .error(.typeError("__qualname__ must be set to a string object"))
     }
 
-    self._qualname = value.value
+    self._qualname = valueString.value
     return .value()
   }
 

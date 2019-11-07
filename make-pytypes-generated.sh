@@ -1,3 +1,5 @@
+GENERATED=./Sources/Objects/Generated
+
 # Type definitions
 sourcery \
   --sources ./Sources/Objects \
@@ -10,15 +12,11 @@ sourcery \
   --templates ./Sources/Objects/Builtins/BuiltinTypes.stencil \
   --output ./Sources/Objects/Builtins/BuiltinTypes.swift
 
-# Owner
+# Owner protocols
 sourcery \
   --sources ./Sources/Objects \
-  --templates ./Sources/Objects/Generated/OwnerProtocols.stencil \
-  --output ./Sources/Objects/Generated/OwnerProtocols.tmp
+  --templates ./Sources/Objects/Generated/Owners.stencil \
+  --output ./Sources/Objects/Generated/Owners.tmp
 
-python3 ./Sources/Objects/Generated/OwnerProtocols.py > ./Sources/Objects/Generated/OwnerProtocols.swift
-
-# sourcery \
-#   --sources ./Sources/Objects \
-#   --templates ./Sources/Objects/Generated/Owner+Generated.stencil \
-#   --output ./Sources/Objects/Generated/Owner+Generated.swift
+python3 $GENERATED/Owners.py "protocols" > $GENERATED/OwnerProtocols.swift
+python3 $GENERATED/Owners.py "conformance" > $GENERATED/OwnerConformance.swift
