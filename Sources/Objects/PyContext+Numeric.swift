@@ -116,7 +116,8 @@ extension PyContext {
     if let i = value as? PyInt {
       return i
     }
-    throw PyContextError.sequenceRepeatWithNonInt(value)
+
+    fatalError()
   }
 
   // MARK: - Matrix mul
@@ -317,7 +318,6 @@ extension PyContext {
       return type
     }
 
-    throw PyContextError
-      .unsupportedBinaryOperandType(operation: op, left: left, right: right)
+    fatalError()
   }
 }

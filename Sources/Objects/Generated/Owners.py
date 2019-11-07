@@ -152,9 +152,9 @@ def print_conformance():
         protocols.append(func_protocol_name(python_name))
 
   print('''\
-// swiftlint:disable vertical_whitespace
-// swiftlint:disable line_length
 // swiftlint:disable file_length
+// swiftlint:disable opening_brace
+// swiftlint:disable trailing_newline
 
 // MARK: - BaseObject
 
