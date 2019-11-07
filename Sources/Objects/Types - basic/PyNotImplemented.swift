@@ -17,8 +17,8 @@ public final class PyNotImplemented: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return "NotImplemented"
+  internal func repr() -> PyResult<String> {
+    return .value("NotImplemented")
   }
 
   // MARK: - Class

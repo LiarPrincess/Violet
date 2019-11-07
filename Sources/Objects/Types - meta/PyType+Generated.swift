@@ -332,7 +332,7 @@ extension PyType {
     result._attributes["__contains__"] = PyType.wrapMethod(context, name: "__contains__", doc: nil, func: PyList.contains(_:), castSelf: PyType.selfAsPyList)
     result._attributes["__getitem__"] = PyType.wrapMethod(context, name: "__getitem__", doc: nil, func: PyList.getItem(at:), castSelf: PyType.selfAsPyList)
     result._attributes["count"] = PyType.wrapMethod(context, name: "count", doc: nil, func: PyList.count(_:), castSelf: PyType.selfAsPyList)
-    result._attributes["index"] = PyType.wrapMethod(context, name: "index", doc: nil, func: PyList.getIndex(of:), castSelf: PyType.selfAsPyList)
+    result._attributes["index"] = PyType.wrapMethod(context, name: "index", doc: nil, func: PyList.index(of:), castSelf: PyType.selfAsPyList)
     result._attributes["append"] = PyType.wrapMethod(context, name: "append", doc: nil, func: PyList.append(_:), castSelf: PyType.selfAsPyList)
     result._attributes["extend"] = PyType.wrapMethod(context, name: "extend", doc: nil, func: PyList.extend(_:), castSelf: PyType.selfAsPyList)
     result._attributes["clear"] = PyType.wrapMethod(context, name: "clear", doc: nil, func: PyList.clear, castSelf: PyType.selfAsPyList)
@@ -473,7 +473,7 @@ extension PyType {
     result._attributes["__contains__"] = PyType.wrapMethod(context, name: "__contains__", doc: nil, func: PyRange.contains(_:), castSelf: PyType.selfAsPyRange)
     result._attributes["__getitem__"] = PyType.wrapMethod(context, name: "__getitem__", doc: nil, func: PyRange.getItem(at:), castSelf: PyType.selfAsPyRange)
     result._attributes["count"] = PyType.wrapMethod(context, name: "count", doc: nil, func: PyRange.count(_:), castSelf: PyType.selfAsPyRange)
-    result._attributes["index"] = PyType.wrapMethod(context, name: "index", doc: nil, func: PyRange.getIndex(of:), castSelf: PyType.selfAsPyRange)
+    result._attributes["index"] = PyType.wrapMethod(context, name: "index", doc: nil, func: PyRange.index(of:), castSelf: PyType.selfAsPyRange)
     return result
   }
 
@@ -536,7 +536,7 @@ extension PyType {
     result._attributes["rstrip"] = PyType.wrapMethod(context, name: "rstrip", doc: nil, func: PyString.rstrip(_:), castSelf: PyType.selfAsPyString)
     result._attributes["find"] = PyType.wrapMethod(context, name: "find", doc: nil, func: PyString.find(_:start:end:), castSelf: PyType.selfAsPyString)
     result._attributes["rfind"] = PyType.wrapMethod(context, name: "rfind", doc: nil, func: PyString.rfind(_:start:end:), castSelf: PyType.selfAsPyString)
-    result._attributes["index"] = PyType.wrapMethod(context, name: "index", doc: nil, func: PyString.index(_:start:end:), castSelf: PyType.selfAsPyString)
+    result._attributes["index"] = PyType.wrapMethod(context, name: "index", doc: nil, func: PyString.index(of:start:end:), castSelf: PyType.selfAsPyString)
     result._attributes["rindex"] = PyType.wrapMethod(context, name: "rindex", doc: nil, func: PyString.rindex(_:start:end:), castSelf: PyType.selfAsPyString)
     result._attributes["lower"] = PyType.wrapMethod(context, name: "lower", doc: nil, func: PyString.lower, castSelf: PyType.selfAsPyString)
     result._attributes["upper"] = PyType.wrapMethod(context, name: "upper", doc: nil, func: PyString.upper, castSelf: PyType.selfAsPyString)
@@ -583,7 +583,7 @@ extension PyType {
     result._attributes["__contains__"] = PyType.wrapMethod(context, name: "__contains__", doc: nil, func: PyTuple.contains(_:), castSelf: PyType.selfAsPyTuple)
     result._attributes["__getitem__"] = PyType.wrapMethod(context, name: "__getitem__", doc: nil, func: PyTuple.getItem(at:), castSelf: PyType.selfAsPyTuple)
     result._attributes["count"] = PyType.wrapMethod(context, name: "count", doc: nil, func: PyTuple.count(_:), castSelf: PyType.selfAsPyTuple)
-    result._attributes["index"] = PyType.wrapMethod(context, name: "index", doc: nil, func: PyTuple.getIndex(of:), castSelf: PyType.selfAsPyTuple)
+    result._attributes["index"] = PyType.wrapMethod(context, name: "index", doc: nil, func: PyTuple.index(of:), castSelf: PyType.selfAsPyTuple)
     result._attributes["__add__"] = PyType.wrapMethod(context, name: "__add__", doc: nil, func: PyTuple.add(_:), castSelf: PyType.selfAsPyTuple)
     result._attributes["__mul__"] = PyType.wrapMethod(context, name: "__mul__", doc: nil, func: PyTuple.mul(_:), castSelf: PyType.selfAsPyTuple)
     result._attributes["__rmul__"] = PyType.wrapMethod(context, name: "__rmul__", doc: nil, func: PyTuple.rmul(_:), castSelf: PyType.selfAsPyTuple)

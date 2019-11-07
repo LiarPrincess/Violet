@@ -70,7 +70,8 @@ internal class PyBaseException: PyObject, AttributesOwner {
       let first = args.elements[0]
       return self.builtins.repr(first).map { name + "(" + $0 + ")" }
     default:
-      return .value(name + args.repr())
+      let argsRepr = args.repr()
+      return argsRepr.map { name + $0 }
     }
   }
 

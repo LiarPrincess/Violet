@@ -69,8 +69,8 @@ internal final class PyFunction: PyObject, AttributesOwner {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return "<function \(self._qualname) at \(self.ptrString)>"
+  internal func repr() -> PyResult<String> {
+    return .value("<function \(self._qualname) at \(self.ptrString)>")
   }
 
   // MARK: - Class
@@ -121,8 +121,12 @@ internal final class PyFunction: PyObject, AttributesOwner {
   }
 
   // sourcery: pyproperty = __module__
-  internal func getModule() -> PyObject {
-    return self._module
+  internal func getModule() -> String {
+    if let module = self._module as? PyModule {
+      return module.name
+    }
+
+    return self.context._str(value: self._module)
   }
 
   // sourcery: pyproperty = __dict__

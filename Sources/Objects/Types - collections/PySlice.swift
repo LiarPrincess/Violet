@@ -103,11 +103,11 @@ internal final class PySlice: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     let start = self.context._repr(value: self.start)
     let stop  = self.context._repr(value: self.stop)
     let step  = self.context._repr(value: self.step)
-    return "slice(\(start), \(stop), \(step))"
+    return .value("slice(\(start), \(stop), \(step))")
   }
 
   // MARK: - Attributes

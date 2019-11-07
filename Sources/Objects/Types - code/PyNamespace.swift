@@ -68,12 +68,12 @@ public final class PyNamespace: PyObject, AttributesOwner {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     // TODO: name = (Py_TYPE(ns) == &_PyNamespace_Type) ? "namespace" : ns->ob_type->tp_name;
     let name = "namespace"
 
     if self.hasReprLock {
-      return name + "(...)"
+      return .value(name + "(...)")
     }
 
     return self.withReprLock {
@@ -88,7 +88,7 @@ public final class PyNamespace: PyObject, AttributesOwner {
       }
 
       let listJoined = list.joined(separator: ", ")
-      return "\(name)(\(listJoined))"
+      return .value("\(name)(\(listJoined))")
     }
   }
 

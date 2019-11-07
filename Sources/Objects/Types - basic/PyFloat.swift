@@ -119,13 +119,13 @@ public final class PyFloat: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return String(describing: self.value)
+  internal func repr() -> PyResult<String> {
+    return .value(String(describing: self.value))
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> String {
-    return String(describing: self.value)
+  internal func str() -> PyResult<String> {
+    return .value(String(describing: self.value))
   }
 
   // MARK: - Convertible

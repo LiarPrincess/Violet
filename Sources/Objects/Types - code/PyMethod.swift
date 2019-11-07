@@ -79,7 +79,7 @@ internal final class PyMethod: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     let funcNameObject = self._func._attributes["__qualname__"] ??
                          self._func._attributes["__name__"]
 
@@ -90,7 +90,7 @@ internal final class PyMethod: PyObject {
 
     let ptr = self._self.ptrString
     let type = self._self.typeName
-    return "<bound method \(funcName) of \(type) object at \(ptr)>"
+    return .value("<bound method \(funcName) of \(type) object at \(ptr)>")
   }
 
   // MARK: - Class

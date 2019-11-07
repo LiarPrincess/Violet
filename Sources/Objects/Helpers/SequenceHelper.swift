@@ -266,10 +266,10 @@ internal enum SequenceHelper {
 
   // MARK: - Get index
 
-  internal static func getIndex(context: PyContext,
-                                elements: [PyObject],
-                                element: PyObject,
-                                typeName: String) -> PyResult<BigInt> {
+  internal static func index(context: PyContext,
+                             elements: [PyObject],
+                             element: PyObject,
+                             typeName: String) -> PyResult<BigInt> {
     for (index, e) in elements.enumerated() {
       switch context.isEqual(left: e, right: element) {
       case .value(true):

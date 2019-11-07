@@ -113,12 +113,12 @@ public class PyInt: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return String(describing: self.value)
+  internal func repr() -> PyResult<String> {
+    return .value(String(describing: self.value))
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> String {
+  internal func str() -> PyResult<String> {
     return self.repr()
   }
 

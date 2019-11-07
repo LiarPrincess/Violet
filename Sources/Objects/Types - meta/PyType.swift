@@ -173,12 +173,12 @@ public final class PyType: PyObject, AttributesOwner {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     switch self.type.getModuleRaw() {
     case .builtins:
-      return "<class '\(self._name)'>"
+      return .value("<class '\(self._name)'>")
     case let .external(module):
-      return "<class '\(module).\(self._name)'>"
+      return .value("<class '\(module).\(self._name)'>")
     }
   }
 

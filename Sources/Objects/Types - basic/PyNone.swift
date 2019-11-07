@@ -19,8 +19,8 @@ public final class PyNone: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return "None"
+  internal func repr() -> PyResult<String> {
+    return .value("None")
   }
 
   // MARK: - Convertible

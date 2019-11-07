@@ -107,16 +107,16 @@ public final class PyTuple: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     if self.elements.isEmpty {
-      return "()"
+      return .value("()")
     }
 
     // While not mutable, it is still possible to end up with a cycle in a tuple
     // through an object that stores itself within a tuple (and thus infinitely
     // asks for the repr of itself).
     if self.hasReprLock {
-      return "(...)"
+      return .value("(...)")
     }
 
     return self.withReprLock {
@@ -130,7 +130,7 @@ public final class PyTuple: PyObject {
       }
 
       result += self.elements.count > 1 ? ")" : ",)"
-      return result
+      return .value(result)
     }
   }
 
@@ -151,15 +151,16 @@ public final class PyTuple: PyObject {
   // MARK: - Sequence
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> Int {
-    return self.elements.count
+  internal func getLength() -> BigInt {
+    return BigInt(self.elements.count)
   }
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> Bool {
-    return SequenceHelper.contains(context: self.context,
-                                   elements: self.elements,
-                                   element: element)
+  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+    let result = SequenceHelper.contains(context: self.context,
+                                         elements: self.elements,
+                                         element: element)
+    return .value(result)
   }
 
   // sourcery: pymethod = __getitem__
@@ -184,11 +185,11 @@ public final class PyTuple: PyObject {
   }
 
   // sourcery: pymethod = index
-  internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
-    return SequenceHelper.getIndex(context: self.context,
-                                   elements: self.elements,
-                                   element: element,
-                                   typeName: "tuple")
+  internal func index(of element: PyObject) -> PyResult<BigInt> {
+    return SequenceHelper.index(context: self.context,
+                                elements: self.elements,
+                                element: element,
+                                typeName: "tuple")
   }
 
   // MARK: - Add

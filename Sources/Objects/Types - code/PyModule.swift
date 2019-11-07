@@ -13,7 +13,7 @@ public final class PyModule: PyObject, AttributesOwner {
 
   internal let _attributes = Attributes()
 
-  private var name: String {
+  internal var name: String {
     guard let obj = self._attributes["__name__"] else {
       return "module"
     }
@@ -44,8 +44,8 @@ public final class PyModule: PyObject, AttributesOwner {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> String {
-    return "'\(self.name)'"
+  public func repr() -> PyResult<String> {
+    return .value("'" + self.name + "'")
   }
 
   // MARK: - Attributes

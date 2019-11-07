@@ -155,15 +155,15 @@ internal final class PyRange: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     let start = self.start.repr()
     let stop = self.stop.repr()
 
     switch self.stepType {
     case .implicit:
-      return "range(\(start), \(stop))"
+      return .value("range(\(start), \(stop))")
     case .explicit:
-      return "range(\(start), \(stop), \(self.step.repr()))"
+      return .value("range(\(start), \(stop), \(self.step.repr()))")
     }
   }
 
@@ -198,12 +198,12 @@ internal final class PyRange: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> Bool {
+  internal func contains(_ element: PyObject) -> PyResult<Bool> {
     guard let int = element as? PyInt else {
-      return false
+      return .value(false)
     }
 
-    return self.contains(int)
+    return .value(self.contains(int))
   }
 
   private func contains(_ element: PyInt) -> Bool {
@@ -304,7 +304,7 @@ internal final class PyRange: PyObject {
   // MARK: - Index
 
   // sourcery: pymethod = index
-  internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
+  internal func index(of element: PyObject) -> PyResult<BigInt> {
     guard let int = element as? PyInt, self.contains(int) else {
       let str = self.context._str(value: element)
       return .error(.valueError("\(str) is not in range"))

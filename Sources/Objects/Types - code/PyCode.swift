@@ -60,9 +60,12 @@ internal final class PyCode: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return "<code object \(self._code.name) at \(self.ptrString), " +
-           "file '\(self._filename)', line \(self._code.firstLine)>"
+  internal func repr() -> PyResult<String> {
+    let name = self._code.name
+    let ptr = self.ptrString
+    let file = self._filename
+    let line = self._code.firstLine
+    return .value("<code object \(name) at \(ptr), file '\(file)', line \(line)>")
   }
 
   // MARK: - Class

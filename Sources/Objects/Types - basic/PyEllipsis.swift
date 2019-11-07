@@ -18,8 +18,8 @@ public final class PyEllipsis: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
-    return "Ellipsis"
+  internal func repr() -> PyResult<String> {
+    return .value("Ellipsis")
   }
 
   // MARK: - Class

@@ -96,13 +96,13 @@ internal final class PyList: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     if self.elements.isEmpty {
-      return "[]"
+      return .value("[]")
     }
 
     if self.hasReprLock {
-      return "[...]"
+      return .value("[...]")
     }
 
     return self.withReprLock {
@@ -116,7 +116,7 @@ internal final class PyList: PyObject {
       }
 
       result += self.elements.count > 1 ? "]" : ",]"
-      return result
+      return .value(result)
     }
   }
 
@@ -137,15 +137,16 @@ internal final class PyList: PyObject {
   // MARK: - Sequence
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> Int {
-    return self.elements.count
+  internal func getLength() -> BigInt {
+    return BigInt(self.elements.count)
   }
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> Bool {
-    return SequenceHelper.contains(context: self.context,
-                                   elements: self.elements,
-                                   element: element)
+  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+    let result = SequenceHelper.contains(context: self.context,
+                                         elements: self.elements,
+                                         element: element)
+    return .value(result)
   }
 
   // sourcery: pymethod = __getitem__
@@ -170,11 +171,11 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = index
-  internal func getIndex(of element: PyObject) -> PyResult<BigInt> {
-    return SequenceHelper.getIndex(context: self.context,
-                                   elements: self.elements,
-                                   element: element,
-                                   typeName: "list")
+  internal func index(of element: PyObject) -> PyResult<BigInt> {
+    return SequenceHelper.index(context: self.context,
+                                elements: self.elements,
+                                element: element,
+                                typeName: "list")
   }
 
   // sourcery: pymethod = append

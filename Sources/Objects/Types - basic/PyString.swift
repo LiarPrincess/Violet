@@ -134,7 +134,7 @@ public class PyString: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     // Compute length of output, quote characters and maximum character
     var singleQuoteCount = 0
     var doubleQuoteCount = 0
@@ -172,12 +172,12 @@ public class PyString: PyObject {
     }
     result.append(quote)
 
-    return result
+    return .value(result)
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> String {
-    return self.value
+  internal func str() -> PyResult<String> {
+    return .value(self.value)
   }
 
   // MARK: - Class
@@ -197,27 +197,27 @@ public class PyString: PyObject {
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> Int {
+  internal func getLength() -> BigInt {
     // len("Cafe\u0301") -> 5
     // len("Café")       -> 4
-    return self.scalars.count
+    return BigInt(self.scalars.count)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ value: PyObject) -> PyResult<Bool> {
+  internal func contains(_ element: PyObject) -> PyResult<Bool> {
     // In Python: "\u00E9" in "Cafe\u0301" -> False
     // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
     // which is 'e with acute (as a single char)' in 'Cafe{accent}'
 
-    guard let valueString = value as? PyString else {
+    guard let elementString = element as? PyString else {
       return .typeError(
-        "'in <string>' requires string as left operand, not \(value.typeName)"
+        "'in <string>' requires string as left operand, not \(element.typeName)"
       )
     }
 
-    switch self.find(in: self.scalars, value: valueString.value) {
+    switch self.find(in: self.scalars, value: elementString.value) {
     case .index:
       return .value(true)
     case .notFound:
@@ -915,12 +915,17 @@ public class PyString: PyObject {
     Raises ValueError when the substring is not found.
     """
 
+  // Special overload for `IndexOwner` protocol
+  internal func index(of element: PyObject) -> PyResult<Int>{
+    return self.index(of: element, start: nil, end: nil)
+  }
+
   // sourcery: pymethod = index, doc = indexDoc
-  internal func index(_ value: PyObject,
+  internal func index(of element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<Int> {
-    guard let valueString = value as? PyString else {
-      return .typeError("index arg must be str, not \(value.typeName)")
+    guard let elementString = element as? PyString else {
+      return .typeError("index arg must be str, not \(element.typeName)")
     }
 
     let substring: String.UnicodeScalarView.SubSequence
@@ -929,7 +934,7 @@ public class PyString: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.find(in: substring, value: valueString.value) {
+    switch self.find(in: substring, value: elementString.value) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -1629,12 +1634,17 @@ public class PyString: PyObject {
     interpreted as in slice notation.
     """
 
+  // Special overload for `CountOwner` protocol.
+  internal func count(_ element: PyObject) -> PyResult<BigInt> {
+    return self.count(element, start: nil, end: nil)
+  }
+
   // sourcery: pymethod = count, doc = countDoc
-  internal func count(_ value: PyObject,
+  internal func count(_ element: PyObject,
                       start: PyObject?,
-                      end: PyObject?) -> PyResult<Int> {
-    guard let valueString = value as? PyString else {
-      return .typeError("sub arg must be str, not \(value.typeName)")
+                      end: PyObject?) -> PyResult<BigInt> {
+    guard let elementString = element as? PyString else {
+      return .typeError("sub arg must be str, not \(element.typeName)")
     }
 
     let substring: String.UnicodeScalarView.SubSequence
@@ -1643,8 +1653,8 @@ public class PyString: PyObject {
     case let .error(e): return .error(e)
     }
 
-    let valueScalars = valueString.scalars
-    let valueCount = valueScalars.count
+    let elementScalars = elementString.scalars
+    let elementCount = elementScalars.count
 
     var result = 0
     var index = substring.startIndex
@@ -1653,13 +1663,13 @@ public class PyString: PyObject {
       defer { substring.formIndex(after: &index) }
 
       let s = substring[index...]
-      if s.starts(with: valueScalars) {
+      if s.starts(with: elementScalars) {
         result += 1
-        index = substring.index(index, offsetBy: valueCount)
+        index = substring.index(index, offsetBy: elementCount)
       }
     }
 
-    return .value(result)
+    return .value(BigInt(result))
   }
 
   // MARK: - Replace

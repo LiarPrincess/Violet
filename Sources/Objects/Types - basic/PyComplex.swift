@@ -89,19 +89,19 @@ public final class PyComplex: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     if self.real.isZero {
-      return String(describing: self.imag) + "j"
+      return .value(String(describing: self.imag) + "j")
     }
 
     let sign = self.imag >= 0 ? "+" : ""
     let real = String(describing: self.real)
     let imag = String(describing: self.imag)
-    return "(\(real)\(sign)\(imag)j)"
+    return .value("(\(real)\(sign)\(imag)j)")
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> String {
+  internal func str() -> PyResult<String> {
     return self.repr()
   }
 

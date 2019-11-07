@@ -40,12 +40,12 @@ public final class PyBool: PyInt {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  override internal func repr() -> String {
-    return self.value.isTrue ? "True" : "False"
+  override internal func repr() -> PyResult<String> {
+    return .value(self.value.isTrue ? "True" : "False")
   }
 
   // sourcery: pymethod = __str__
-  override internal func str() -> String {
+  override internal func str() -> PyResult<String> {
     return self.repr()
   }
 

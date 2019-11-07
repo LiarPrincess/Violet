@@ -15,7 +15,7 @@ extension Builtins {
     }
 
     if let reprOwner = object as? __repr__Owner {
-      return .value(reprOwner.repr())
+      return reprOwner.repr()
     }
 
     guard let repr = self.lookup(object, name: "__repr__") else {

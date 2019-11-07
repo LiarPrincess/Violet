@@ -116,18 +116,18 @@ internal final class PyBuiltinFunction: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> String {
+  internal func repr() -> PyResult<String> {
     guard let zelf = self._self else {
-      return "<built-in function \(self._name)>"
+      return .value("<built-in function \(self._name)>")
     }
 
     if self._self is PyModule {
-      return "<built-in function \(self._name)>"
+      return .value("<built-in function \(self._name)>")
     }
 
     let ptr = zelf.ptrString
     let type = zelf.typeName
-    return "<built-in method \(self._name) of \(type) object at \(ptr)>"
+    return .value("<built-in method \(self._name) of \(type) object at \(ptr)>")
   }
 
   // MARK: - Attributes
