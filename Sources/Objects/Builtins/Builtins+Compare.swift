@@ -143,10 +143,10 @@ extension Builtins {
     // >>> c = C()
     // >>> [c] == [''] <-  compare with 'str' returns False
     // False
-    // >>> [c] == [1] <- returns 'Elsa' which is True
+    // >>> [c] == [1] <- element compare returns 'Elsa' which is True
     // True
 
-    return self.isTrue(result)
+    return self.isTrueBool(result)
   }
 
   // MARK: - Actual implementation

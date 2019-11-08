@@ -6,38 +6,84 @@ import Core
 
 extension Builtins {
 
+  // MARK: - Not
+
   /// Equivalent of 'not v'.
   ///
   /// int PyObject_Not(PyObject *v)
-  public func not(_ object: PyObject) -> Bool {
-    let isTrue = self.isTrue(object)
-    return !isTrue
+  public func not(_ object: PyObject) -> PyObject {
+    switch self.isTrueRaw(object) {
+    case let .value(isTrue):
+      return isTrue ? self.false : self.true
+    case let .error(e):
+      return e.toPyObject(in: self.context)
+    }
   }
 
-  /// Test a value used as condition, e.g., in a for or if statement.
+  public func notBool(_ object: PyObject) -> Bool {
+    return !self.isTrueBool(object)
+  }
+
+  // MARK: - Is true
+
+  /// Test a value used as condition, e.g.,  `if`  or `in` statement.
   ///
   /// PyObject_IsTrue(PyObject *v)
-  public func isTrue(_ object: PyObject) -> Bool {
-    if let bool = object as? PyBool {
-      return bool.value.isTrue
+  /// slot_nb_bool(PyObject *self)
+  public func isTrue(_ object: PyObject) -> PyObject {
+    switch self.isTrueRaw(object) {
+    case let .value(isTrue):
+      return isTrue ? self.true : self.false
+    case let .error(e):
+      return e.toPyObject(in: self.context)
     }
+  }
 
+  public func isTrueBool(_ object: PyObject) -> Bool {
+    switch self.isTrueRaw(object) {
+    case .value(let result):
+      return result
+    case .error:
+      // All builtin errors are always `True`
+      return true
+    }
+  }
+
+  private func isTrueRaw(_ object: PyObject) -> PyResult<Bool> {
     if object is PyNone {
-      return false
+      return .value(false)
     }
 
+    // Try __bool__
     if let boolOwner = object as? __bool__Owner {
-      return boolOwner.asBool()
+      return .value(boolOwner.asBool())
     }
 
+    let boolResult = self.callMethod(on: object, selector: "__bool__", args: [])
+    if case let CallResult.value(object) = boolResult {
+      if object.type.isSubtype(of: self.bool) {
+        return .value(self.isTrueBool(object))
+      }
+
+      let typeName = object.typeName
+      return .typeError("__bool__ should return bool, returned '\(typeName)'")
+    }
+
+    // Try __len__
     if let lenOwner = object as? __len__Owner {
       let len = lenOwner.getLength()
-      return len.isTrue
+      return .value(len.isTrue)
     }
 
-    // TODO: Call user `__bool__`
-    return true
+    let lenResult = self.callMethod(on: object, selector: "__len__", args: [])
+    if case let CallResult.value(object) = lenResult {
+      return .value(self.isTrueBool(object))
+    }
+
+    return .value(true)
   }
+
+  // MARK: - Is
 
   /// `is` will return `True` if two variables point to the same object.
   public func `is`(left: PyObject, right: PyObject) -> Bool {

@@ -234,7 +234,12 @@ internal class PyBaseException: PyObject, AttributesOwner {
   }
 
   internal func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
-    self._suppressExceptionContext = value.map(self.builtins.isTrue) ?? false
+    if let value = value {
+      self._suppressExceptionContext = self.builtins.isTrueBool(value)
+    } else {
+      self._suppressExceptionContext = false
+    }
+
     return .value()
   }
 }
