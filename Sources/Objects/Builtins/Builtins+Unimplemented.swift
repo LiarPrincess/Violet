@@ -24,6 +24,7 @@ extension Builtins {
   }
 
   internal func call(_ fn: PyObject, args: [PyObject]) -> PyResult<PyObject> {
+    // Do we need this one? We have 'callMethod'.
     return .value(self.unimplemented)
   }
 

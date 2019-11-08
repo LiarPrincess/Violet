@@ -18,22 +18,16 @@ extension Builtins {
       return reprOwner.repr()
     }
 
-    guard let repr = self.lookup(object, name: "__repr__") else {
+    let callResult = self.callMethod(on: object, selector: "__repr__", args: [])
+    guard case let CallResult.value(result) = callResult else {
       return .value(self.genericRepr(object))
     }
 
-    switch self.call(repr, args: [object]) {
-    case let .value(result):
-      guard let resultStr = result as? PyString else {
-        return .error(
-          .typeError("__repr__ returned non-string (\(result.typeName))")
-        )
-      }
-
-      return .value(resultStr.value)
-    case let .error(e):
-      return .error(e)
+    guard let resultStr = result as? PyString else {
+      return .typeError("__repr__ returned non-string (\(result.typeName))")
     }
+
+    return .value(resultStr.value)
   }
 
   // MARK: - ASCII
