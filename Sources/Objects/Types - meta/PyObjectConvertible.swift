@@ -66,11 +66,17 @@ extension PyObject: PyObjectConvertible {
   }
 }
 
+extension PyErrorEnum: PyObjectConvertible {
+  public func toPyObject(in context: PyContext) -> PyObject {
+    fatalError()
+  }
+}
+
 extension PyResult: PyObjectConvertible where V: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
     switch self {
     case let .value(v): return v.toPyObject(in: context)
-    case .error: fatalError()
+    case let .error(e): return e.toPyObject(in: context)
     }
   }
 }
@@ -79,7 +85,8 @@ extension PyResultOrNot: PyObjectConvertible where V: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
     switch self {
     case let .value(v): return v.toPyObject(in: context)
-    case .error, .notImplemented: fatalError()
+    case let .error(e): return e.toPyObject(in: context)
+    case .notImplemented: return context.notImplemented
     }
   }
 }
