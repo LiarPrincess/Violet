@@ -9,8 +9,8 @@ sourcery \
 # Builtin types
 sourcery \
   --sources ./Sources/Objects \
-  --templates ./Sources/Objects/Builtins/BuiltinTypes.stencil \
-  --output ./Sources/Objects/Builtins/BuiltinTypes.swift
+  --templates $GENERATED/BuiltinTypes.stencil \
+  --output $GENERATED/BuiltinTypes.swift
 
 # Builtin errors
 python3 $GENERATED/Errors.py "class-definitions" > $GENERATED/PyExceptions.swift
