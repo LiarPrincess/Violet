@@ -104,6 +104,51 @@ extension Builtins {
     }
   }
 
+  // MARK: - Bool
+
+  public func isEqualBool(left: PyObject, right: PyObject) -> Bool {
+    return self.compareResultAsBool(self.isEqual(left: left, right: right))
+  }
+
+  public func isNotEqualBool(left: PyObject, right: PyObject) -> Bool {
+    return self.compareResultAsBool(self.isNotEqual(left: left, right: right))
+  }
+
+  public func isLessBool(left: PyObject, right: PyObject) -> Bool {
+    return self.compareResultAsBool(self.isLess(left: left, right: right))
+  }
+
+  public func isLessEqualBool(left: PyObject, right: PyObject) -> Bool {
+    return self.compareResultAsBool(self.isLessEqual(left: left, right: right))
+  }
+
+  public func isGreaterBool(left: PyObject, right: PyObject) -> Bool {
+    return self.compareResultAsBool(self.isGreater(left: left, right: right))
+  }
+
+  public func isGreaterEqualBool(left: PyObject, right: PyObject) -> Bool {
+    return self.compareResultAsBool(self.isGreaterEqual(left: left, right: right))
+  }
+
+  private func compareResultAsBool(_ result: PyObject) -> Bool {
+    // Try this:
+    //
+    // >>> class C():
+    // ...     def __eq__(self, other):
+    // ...             if isinstance(other, str):
+    // ...                     return False
+    // ...             else:
+    // ...                     return 'Elsa' <- or any other 'True' nonsense
+    // ...
+    // >>> c = C()
+    // >>> [c] == [''] <-  compare with 'str' returns False
+    // False
+    // >>> [c] == [1] <- returns 'Elsa' which is True
+    // True
+
+    return self.isTrue(result)
+  }
+
   // MARK: - Actual implementation
 
   /// PyObject *
