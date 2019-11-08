@@ -79,18 +79,4 @@ extension PyType {
     return result
   }
 {% endfor %}
-{% for type in types.classes|annotated:"pywarningtype" %}
-
-  // MARK: - {{ type.name|replace:"Py","" }}
-
-  {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
-  {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
-  {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
-  {% set fnName %}{{ type.annotations.pywarningtype|lowerFirstWord }}{% endset %}
-  internal static func {{ fnName }}(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "{{ type.annotations.pywarningtype }}", doc: {{ docOrNil }}, type: type, base: base)
-    {% call fillDict type %}
-    return result
-  }
-{% endfor %}
 }

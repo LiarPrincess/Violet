@@ -451,6 +451,10 @@ types = {
     '__class__',
     '__dict__',
   ],
+  BytesWarning: [
+    '__class__',
+    '__dict__',
+  ],
   ChildProcessError: [
     '__class__',
     '__dict__',
@@ -468,6 +472,10 @@ types = {
     '__dict__',
   ],
   ConnectionResetError: [
+    '__class__',
+    '__dict__',
+  ],
+  DeprecationWarning: [
     '__class__',
     '__dict__',
   ],
@@ -491,11 +499,19 @@ types = {
     '__class__',
     '__dict__',
   ],
+  FutureWarning: [
+    '__class__',
+    '__dict__',
+  ],
   GeneratorExit: [
     '__class__',
     '__dict__',
   ],
   ImportError: [
+    '__class__',
+    '__dict__',
+  ],
+  ImportWarning: [
     '__class__',
     '__dict__',
   ],
@@ -555,6 +571,10 @@ types = {
     '__class__',
     '__dict__',
   ],
+  PendingDeprecationWarning: [
+    '__class__',
+    '__dict__',
+  ],
   PermissionError: [
     '__class__',
     '__dict__',
@@ -571,7 +591,15 @@ types = {
     '__class__',
     '__dict__',
   ],
+  ResourceWarning: [
+    '__class__',
+    '__dict__',
+  ],
   RuntimeError: [
+    '__class__',
+    '__dict__',
+  ],
+  RuntimeWarning: [
     '__class__',
     '__dict__',
   ],
@@ -584,6 +612,10 @@ types = {
     '__dict__',
   ],
   SyntaxError: [
+    '__class__',
+    '__dict__',
+  ],
+  SyntaxWarning: [
     '__class__',
     '__dict__',
   ],
@@ -627,46 +659,6 @@ types = {
     '__class__',
     '__dict__',
   ],
-  ValueError: [
-    '__class__',
-    '__dict__',
-  ],
-  ZeroDivisionError: [
-    '__class__',
-    '__dict__',
-  ],
-  BytesWarning: [
-    '__class__',
-    '__dict__',
-  ],
-  DeprecationWarning: [
-    '__class__',
-    '__dict__',
-  ],
-  FutureWarning: [
-    '__class__',
-    '__dict__',
-  ],
-  ImportWarning: [
-    '__class__',
-    '__dict__',
-  ],
-  PendingDeprecationWarning: [
-    '__class__',
-    '__dict__',
-  ],
-  ResourceWarning: [
-    '__class__',
-    '__dict__',
-  ],
-  RuntimeWarning: [
-    '__class__',
-    '__dict__',
-  ],
-  SyntaxWarning: [
-    '__class__',
-    '__dict__',
-  ],
   UnicodeWarning: [
     '__class__',
     '__dict__',
@@ -675,7 +667,15 @@ types = {
     '__class__',
     '__dict__',
   ],
+  ValueError: [
+    '__class__',
+    '__dict__',
+  ],
   Warning: [
+    '__class__',
+    '__dict__',
+  ],
+  ZeroDivisionError: [
     '__class__',
     '__dict__',
   ],

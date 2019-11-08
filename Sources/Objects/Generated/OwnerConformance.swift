@@ -495,6 +495,11 @@ extension PyBrokenPipeError { }
 // PyBufferError does not add any new protocols to PyException
 extension PyBufferError { }
 
+// MARK: - BytesWarning
+
+// PyBytesWarning does not add any new protocols to PyWarning
+extension PyBytesWarning { }
+
 // MARK: - ChildProcessError
 
 // PyChildProcessError does not add any new protocols to PyOSError
@@ -519,6 +524,11 @@ extension PyConnectionRefusedError { }
 
 // PyConnectionResetError does not add any new protocols to PyConnectionError
 extension PyConnectionResetError { }
+
+// MARK: - DeprecationWarning
+
+// PyDeprecationWarning does not add any new protocols to PyWarning
+extension PyDeprecationWarning { }
 
 // MARK: - EOFError
 
@@ -545,6 +555,11 @@ extension PyFileNotFoundError { }
 // PyFloatingPointError does not add any new protocols to PyArithmeticError
 extension PyFloatingPointError { }
 
+// MARK: - FutureWarning
+
+// PyFutureWarning does not add any new protocols to PyWarning
+extension PyFutureWarning { }
+
 // MARK: - GeneratorExit
 
 // PyGeneratorExit does not add any new protocols to PyBaseException
@@ -554,6 +569,11 @@ extension PyGeneratorExit { }
 
 // PyImportError does not add any new protocols to PyException
 extension PyImportError { }
+
+// MARK: - ImportWarning
+
+// PyImportWarning does not add any new protocols to PyWarning
+extension PyImportWarning { }
 
 // MARK: - IndentationError
 
@@ -625,6 +645,11 @@ extension PyOSError { }
 // PyOverflowError does not add any new protocols to PyArithmeticError
 extension PyOverflowError { }
 
+// MARK: - PendingDeprecationWarning
+
+// PyPendingDeprecationWarning does not add any new protocols to PyWarning
+extension PyPendingDeprecationWarning { }
+
 // MARK: - PermissionError
 
 // PyPermissionError does not add any new protocols to PyOSError
@@ -645,10 +670,20 @@ extension PyRecursionError { }
 // PyReferenceError does not add any new protocols to PyException
 extension PyReferenceError { }
 
+// MARK: - ResourceWarning
+
+// PyResourceWarning does not add any new protocols to PyWarning
+extension PyResourceWarning { }
+
 // MARK: - RuntimeError
 
 // PyRuntimeError does not add any new protocols to PyException
 extension PyRuntimeError { }
+
+// MARK: - RuntimeWarning
+
+// PyRuntimeWarning does not add any new protocols to PyWarning
+extension PyRuntimeWarning { }
 
 // MARK: - StopAsyncIteration
 
@@ -664,6 +699,11 @@ extension PyStopIteration { }
 
 // PySyntaxError does not add any new protocols to PyException
 extension PySyntaxError { }
+
+// MARK: - SyntaxWarning
+
+// PySyntaxWarning does not add any new protocols to PyWarning
+extension PySyntaxWarning { }
 
 // MARK: - SystemError
 
@@ -715,56 +755,6 @@ extension PyUnicodeError { }
 // PyUnicodeTranslateError does not add any new protocols to PyUnicodeError
 extension PyUnicodeTranslateError { }
 
-// MARK: - ValueError
-
-// PyValueError does not add any new protocols to PyException
-extension PyValueError { }
-
-// MARK: - ZeroDivisionError
-
-// PyZeroDivisionError does not add any new protocols to PyArithmeticError
-extension PyZeroDivisionError { }
-
-// MARK: - BytesWarning
-
-// PyBytesWarning does not add any new protocols to PyWarning
-extension PyBytesWarning { }
-
-// MARK: - DeprecationWarning
-
-// PyDeprecationWarning does not add any new protocols to PyWarning
-extension PyDeprecationWarning { }
-
-// MARK: - FutureWarning
-
-// PyFutureWarning does not add any new protocols to PyWarning
-extension PyFutureWarning { }
-
-// MARK: - ImportWarning
-
-// PyImportWarning does not add any new protocols to PyWarning
-extension PyImportWarning { }
-
-// MARK: - PendingDeprecationWarning
-
-// PyPendingDeprecationWarning does not add any new protocols to PyWarning
-extension PyPendingDeprecationWarning { }
-
-// MARK: - ResourceWarning
-
-// PyResourceWarning does not add any new protocols to PyWarning
-extension PyResourceWarning { }
-
-// MARK: - RuntimeWarning
-
-// PyRuntimeWarning does not add any new protocols to PyWarning
-extension PyRuntimeWarning { }
-
-// MARK: - SyntaxWarning
-
-// PySyntaxWarning does not add any new protocols to PyWarning
-extension PySyntaxWarning { }
-
 // MARK: - UnicodeWarning
 
 // PyUnicodeWarning does not add any new protocols to PyWarning
@@ -775,8 +765,18 @@ extension PyUnicodeWarning { }
 // PyUserWarning does not add any new protocols to PyWarning
 extension PyUserWarning { }
 
+// MARK: - ValueError
+
+// PyValueError does not add any new protocols to PyException
+extension PyValueError { }
+
 // MARK: - Warning
 
 // PyWarning does not add any new protocols to PyException
 extension PyWarning { }
+
+// MARK: - ZeroDivisionError
+
+// PyZeroDivisionError does not add any new protocols to PyArithmeticError
+extension PyZeroDivisionError { }
 

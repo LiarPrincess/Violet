@@ -684,6 +684,18 @@ extension PyType {
     return result
   }
 
+  // MARK: - BytesWarning
+
+  internal static func bytesWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "BytesWarning", doc: PyBytesWarning.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyBytesWarning.getClass, castSelf: PyType.selfAsPyBytesWarning)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyBytesWarning.dict, castSelf: PyType.selfAsPyBytesWarning)
+
+
+    return result
+  }
+
   // MARK: - ChildProcessError
 
   internal static func childProcessError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
@@ -739,6 +751,18 @@ extension PyType {
 
     result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyConnectionResetError.getClass, castSelf: PyType.selfAsPyConnectionResetError)
     result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyConnectionResetError.dict, castSelf: PyType.selfAsPyConnectionResetError)
+
+
+    return result
+  }
+
+  // MARK: - DeprecationWarning
+
+  internal static func deprecationWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "DeprecationWarning", doc: PyDeprecationWarning.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyDeprecationWarning.getClass, castSelf: PyType.selfAsPyDeprecationWarning)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyDeprecationWarning.dict, castSelf: PyType.selfAsPyDeprecationWarning)
 
 
     return result
@@ -804,6 +828,18 @@ extension PyType {
     return result
   }
 
+  // MARK: - FutureWarning
+
+  internal static func futureWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "FutureWarning", doc: PyFutureWarning.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyFutureWarning.getClass, castSelf: PyType.selfAsPyFutureWarning)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyFutureWarning.dict, castSelf: PyType.selfAsPyFutureWarning)
+
+
+    return result
+  }
+
   // MARK: - GeneratorExit
 
   internal static func generatorExit(_ context: PyContext, type: PyType, base: PyType) -> PyType {
@@ -823,6 +859,18 @@ extension PyType {
 
     result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyImportError.getClass, castSelf: PyType.selfAsPyImportError)
     result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyImportError.dict, castSelf: PyType.selfAsPyImportError)
+
+
+    return result
+  }
+
+  // MARK: - ImportWarning
+
+  internal static func importWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "ImportWarning", doc: PyImportWarning.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyImportWarning.getClass, castSelf: PyType.selfAsPyImportWarning)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyImportWarning.dict, castSelf: PyType.selfAsPyImportWarning)
 
 
     return result
@@ -996,6 +1044,18 @@ extension PyType {
     return result
   }
 
+  // MARK: - PendingDeprecationWarning
+
+  internal static func pendingDeprecationWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "PendingDeprecationWarning", doc: PyPendingDeprecationWarning.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyPendingDeprecationWarning.getClass, castSelf: PyType.selfAsPyPendingDeprecationWarning)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyPendingDeprecationWarning.dict, castSelf: PyType.selfAsPyPendingDeprecationWarning)
+
+
+    return result
+  }
+
   // MARK: - PermissionError
 
   internal static func permissionError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
@@ -1044,6 +1104,18 @@ extension PyType {
     return result
   }
 
+  // MARK: - ResourceWarning
+
+  internal static func resourceWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "ResourceWarning", doc: PyResourceWarning.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyResourceWarning.getClass, castSelf: PyType.selfAsPyResourceWarning)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyResourceWarning.dict, castSelf: PyType.selfAsPyResourceWarning)
+
+
+    return result
+  }
+
   // MARK: - RuntimeError
 
   internal static func runtimeError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
@@ -1051,6 +1123,18 @@ extension PyType {
 
     result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyRuntimeError.getClass, castSelf: PyType.selfAsPyRuntimeError)
     result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyRuntimeError.dict, castSelf: PyType.selfAsPyRuntimeError)
+
+
+    return result
+  }
+
+  // MARK: - RuntimeWarning
+
+  internal static func runtimeWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "RuntimeWarning", doc: PyRuntimeWarning.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyRuntimeWarning.getClass, castSelf: PyType.selfAsPyRuntimeWarning)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyRuntimeWarning.dict, castSelf: PyType.selfAsPyRuntimeWarning)
 
 
     return result
@@ -1087,6 +1171,18 @@ extension PyType {
 
     result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PySyntaxError.getClass, castSelf: PyType.selfAsPySyntaxError)
     result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PySyntaxError.dict, castSelf: PyType.selfAsPySyntaxError)
+
+
+    return result
+  }
+
+  // MARK: - SyntaxWarning
+
+  internal static func syntaxWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "SyntaxWarning", doc: PySyntaxWarning.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PySyntaxWarning.getClass, castSelf: PyType.selfAsPySyntaxWarning)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PySyntaxWarning.dict, castSelf: PyType.selfAsPySyntaxWarning)
 
 
     return result
@@ -1212,126 +1308,6 @@ extension PyType {
     return result
   }
 
-  // MARK: - ValueError
-
-  internal static func valueError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "ValueError", doc: PyValueError.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyValueError.getClass, castSelf: PyType.selfAsPyValueError)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyValueError.dict, castSelf: PyType.selfAsPyValueError)
-
-
-    return result
-  }
-
-  // MARK: - ZeroDivisionError
-
-  internal static func zeroDivisionError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "ZeroDivisionError", doc: PyZeroDivisionError.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyZeroDivisionError.getClass, castSelf: PyType.selfAsPyZeroDivisionError)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyZeroDivisionError.dict, castSelf: PyType.selfAsPyZeroDivisionError)
-
-
-    return result
-  }
-
-  // MARK: - BytesWarning
-
-  internal static func bytesWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "BytesWarning", doc: PyBytesWarning.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyBytesWarning.getClass, castSelf: PyType.selfAsPyBytesWarning)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyBytesWarning.dict, castSelf: PyType.selfAsPyBytesWarning)
-
-
-    return result
-  }
-
-  // MARK: - DeprecationWarning
-
-  internal static func deprecationWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "DeprecationWarning", doc: PyDeprecationWarning.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyDeprecationWarning.getClass, castSelf: PyType.selfAsPyDeprecationWarning)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyDeprecationWarning.dict, castSelf: PyType.selfAsPyDeprecationWarning)
-
-
-    return result
-  }
-
-  // MARK: - FutureWarning
-
-  internal static func futureWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "FutureWarning", doc: PyFutureWarning.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyFutureWarning.getClass, castSelf: PyType.selfAsPyFutureWarning)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyFutureWarning.dict, castSelf: PyType.selfAsPyFutureWarning)
-
-
-    return result
-  }
-
-  // MARK: - ImportWarning
-
-  internal static func importWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "ImportWarning", doc: PyImportWarning.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyImportWarning.getClass, castSelf: PyType.selfAsPyImportWarning)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyImportWarning.dict, castSelf: PyType.selfAsPyImportWarning)
-
-
-    return result
-  }
-
-  // MARK: - PendingDeprecationWarning
-
-  internal static func pendingDeprecationWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "PendingDeprecationWarning", doc: PyPendingDeprecationWarning.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyPendingDeprecationWarning.getClass, castSelf: PyType.selfAsPyPendingDeprecationWarning)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyPendingDeprecationWarning.dict, castSelf: PyType.selfAsPyPendingDeprecationWarning)
-
-
-    return result
-  }
-
-  // MARK: - ResourceWarning
-
-  internal static func resourceWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "ResourceWarning", doc: PyResourceWarning.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyResourceWarning.getClass, castSelf: PyType.selfAsPyResourceWarning)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyResourceWarning.dict, castSelf: PyType.selfAsPyResourceWarning)
-
-
-    return result
-  }
-
-  // MARK: - RuntimeWarning
-
-  internal static func runtimeWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "RuntimeWarning", doc: PyRuntimeWarning.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyRuntimeWarning.getClass, castSelf: PyType.selfAsPyRuntimeWarning)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyRuntimeWarning.dict, castSelf: PyType.selfAsPyRuntimeWarning)
-
-
-    return result
-  }
-
-  // MARK: - SyntaxWarning
-
-  internal static func syntaxWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
-    let result = PyType(context, name: "SyntaxWarning", doc: PySyntaxWarning.doc, type: type, base: base)
-
-    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PySyntaxWarning.getClass, castSelf: PyType.selfAsPySyntaxWarning)
-    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PySyntaxWarning.dict, castSelf: PyType.selfAsPySyntaxWarning)
-
-
-    return result
-  }
-
   // MARK: - UnicodeWarning
 
   internal static func unicodeWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
@@ -1356,6 +1332,18 @@ extension PyType {
     return result
   }
 
+  // MARK: - ValueError
+
+  internal static func valueError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "ValueError", doc: PyValueError.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyValueError.getClass, castSelf: PyType.selfAsPyValueError)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyValueError.dict, castSelf: PyType.selfAsPyValueError)
+
+
+    return result
+  }
+
   // MARK: - Warning
 
   internal static func warning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
@@ -1363,6 +1351,18 @@ extension PyType {
 
     result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyWarning.getClass, castSelf: PyType.selfAsPyWarning)
     result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyWarning.dict, castSelf: PyType.selfAsPyWarning)
+
+
+    return result
+  }
+
+  // MARK: - ZeroDivisionError
+
+  internal static func zeroDivisionError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "ZeroDivisionError", doc: PyZeroDivisionError.doc, type: type, base: base)
+
+    result._attributes["__class__"] = PyType.createProperty(context, name: "__class__", doc: nil, get: PyZeroDivisionError.getClass, castSelf: PyType.selfAsPyZeroDivisionError)
+    result._attributes["__dict__"] = PyType.createProperty(context, name: "__dict__", doc: nil, get: PyZeroDivisionError.dict, castSelf: PyType.selfAsPyZeroDivisionError)
 
 
     return result

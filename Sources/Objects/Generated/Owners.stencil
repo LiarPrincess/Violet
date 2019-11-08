@@ -34,7 +34,3 @@
 {% for type in types.classes|annotated:"pyerrortype" %}
 {% call printConformance type %}
 {% endfor %}
-
-{% for type in types.classes|annotated:"pywarningtype" %}
-{% call printConformance type %}
-{% endfor %}

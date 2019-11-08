@@ -431,6 +431,10 @@ PyBufferError|PyException|get|__class__|getClass() -> PyType
 PyBufferError|PyException|get|__dict__|dict() -> Attributes
 
 
+PyBytesWarning|PyWarning|get|__class__|getClass() -> PyType
+PyBytesWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
 PyChildProcessError|PyOSError|get|__class__|getClass() -> PyType
 PyChildProcessError|PyOSError|get|__dict__|dict() -> Attributes
 
@@ -449,6 +453,10 @@ PyConnectionRefusedError|PyConnectionError|get|__dict__|dict() -> Attributes
 
 PyConnectionResetError|PyConnectionError|get|__class__|getClass() -> PyType
 PyConnectionResetError|PyConnectionError|get|__dict__|dict() -> Attributes
+
+
+PyDeprecationWarning|PyWarning|get|__class__|getClass() -> PyType
+PyDeprecationWarning|PyWarning|get|__dict__|dict() -> Attributes
 
 
 PyEOFError|PyException|get|__class__|getClass() -> PyType
@@ -471,12 +479,20 @@ PyFloatingPointError|PyArithmeticError|get|__class__|getClass() -> PyType
 PyFloatingPointError|PyArithmeticError|get|__dict__|dict() -> Attributes
 
 
+PyFutureWarning|PyWarning|get|__class__|getClass() -> PyType
+PyFutureWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
 PyGeneratorExit|PyBaseException|get|__class__|getClass() -> PyType
 PyGeneratorExit|PyBaseException|get|__dict__|dict() -> Attributes
 
 
 PyImportError|PyException|get|__class__|getClass() -> PyType
 PyImportError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyImportWarning|PyWarning|get|__class__|getClass() -> PyType
+PyImportWarning|PyWarning|get|__dict__|dict() -> Attributes
 
 
 PyIndentationError|PySyntaxError|get|__class__|getClass() -> PyType
@@ -535,6 +551,10 @@ PyOverflowError|PyArithmeticError|get|__class__|getClass() -> PyType
 PyOverflowError|PyArithmeticError|get|__dict__|dict() -> Attributes
 
 
+PyPendingDeprecationWarning|PyWarning|get|__class__|getClass() -> PyType
+PyPendingDeprecationWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
 PyPermissionError|PyOSError|get|__class__|getClass() -> PyType
 PyPermissionError|PyOSError|get|__dict__|dict() -> Attributes
 
@@ -551,8 +571,16 @@ PyReferenceError|PyException|get|__class__|getClass() -> PyType
 PyReferenceError|PyException|get|__dict__|dict() -> Attributes
 
 
+PyResourceWarning|PyWarning|get|__class__|getClass() -> PyType
+PyResourceWarning|PyWarning|get|__dict__|dict() -> Attributes
+
+
 PyRuntimeError|PyException|get|__class__|getClass() -> PyType
 PyRuntimeError|PyException|get|__dict__|dict() -> Attributes
+
+
+PyRuntimeWarning|PyWarning|get|__class__|getClass() -> PyType
+PyRuntimeWarning|PyWarning|get|__dict__|dict() -> Attributes
 
 
 PyStopAsyncIteration|PyException|get|__class__|getClass() -> PyType
@@ -565,6 +593,10 @@ PyStopIteration|PyException|get|__dict__|dict() -> Attributes
 
 PySyntaxError|PyException|get|__class__|getClass() -> PyType
 PySyntaxError|PyException|get|__dict__|dict() -> Attributes
+
+
+PySyntaxWarning|PyWarning|get|__class__|getClass() -> PyType
+PySyntaxWarning|PyWarning|get|__dict__|dict() -> Attributes
 
 
 PySystemError|PyException|get|__class__|getClass() -> PyType
@@ -607,47 +639,6 @@ PyUnicodeTranslateError|PyUnicodeError|get|__class__|getClass() -> PyType
 PyUnicodeTranslateError|PyUnicodeError|get|__dict__|dict() -> Attributes
 
 
-PyValueError|PyException|get|__class__|getClass() -> PyType
-PyValueError|PyException|get|__dict__|dict() -> Attributes
-
-
-PyZeroDivisionError|PyArithmeticError|get|__class__|getClass() -> PyType
-PyZeroDivisionError|PyArithmeticError|get|__dict__|dict() -> Attributes
-
-
-
-PyBytesWarning|PyWarning|get|__class__|getClass() -> PyType
-PyBytesWarning|PyWarning|get|__dict__|dict() -> Attributes
-
-
-PyDeprecationWarning|PyWarning|get|__class__|getClass() -> PyType
-PyDeprecationWarning|PyWarning|get|__dict__|dict() -> Attributes
-
-
-PyFutureWarning|PyWarning|get|__class__|getClass() -> PyType
-PyFutureWarning|PyWarning|get|__dict__|dict() -> Attributes
-
-
-PyImportWarning|PyWarning|get|__class__|getClass() -> PyType
-PyImportWarning|PyWarning|get|__dict__|dict() -> Attributes
-
-
-PyPendingDeprecationWarning|PyWarning|get|__class__|getClass() -> PyType
-PyPendingDeprecationWarning|PyWarning|get|__dict__|dict() -> Attributes
-
-
-PyResourceWarning|PyWarning|get|__class__|getClass() -> PyType
-PyResourceWarning|PyWarning|get|__dict__|dict() -> Attributes
-
-
-PyRuntimeWarning|PyWarning|get|__class__|getClass() -> PyType
-PyRuntimeWarning|PyWarning|get|__dict__|dict() -> Attributes
-
-
-PySyntaxWarning|PyWarning|get|__class__|getClass() -> PyType
-PySyntaxWarning|PyWarning|get|__dict__|dict() -> Attributes
-
-
 PyUnicodeWarning|PyWarning|get|__class__|getClass() -> PyType
 PyUnicodeWarning|PyWarning|get|__dict__|dict() -> Attributes
 
@@ -656,7 +647,15 @@ PyUserWarning|PyWarning|get|__class__|getClass() -> PyType
 PyUserWarning|PyWarning|get|__dict__|dict() -> Attributes
 
 
+PyValueError|PyException|get|__class__|getClass() -> PyType
+PyValueError|PyException|get|__dict__|dict() -> Attributes
+
+
 PyWarning|PyException|get|__class__|getClass() -> PyType
 PyWarning|PyException|get|__dict__|dict() -> Attributes
+
+
+PyZeroDivisionError|PyArithmeticError|get|__class__|getClass() -> PyType
+PyZeroDivisionError|PyArithmeticError|get|__dict__|dict() -> Attributes
 
 
