@@ -101,21 +101,15 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
     return self.used
   }
 
+  /// The total number of key-value pairs that the dictionary can contain without
+  /// allocating new storage.
+  public var capacity: Int {
+    return self.size
+  }
+
   /// A Boolean value indicating whether the collection is empty.
   public var isEmpty: Bool {
     return self.used == 0
-  }
-
-  /// A view of a dictionary's values.
-  public var entries: [Entry] {
-    var result = [Entry]()
-    for entry in self._entries {
-      switch entry {
-      case .entry(let e): result.append(e)
-      case .deleted: break
-      }
-    }
-    return result
   }
 
   // MARK: - Init
@@ -148,14 +142,14 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
   /// This *key-based* subscript returns the value for the given key if the key
   /// is found in the dictionary, or `nil` if the key is not found.
   public subscript(key: Key) -> Value? {
-      get { return self.get(key: key) }
-      set {
-          if let newValue = newValue {
-            self.insert(key: key, value: newValue)
-          } else {
-            _ = self.remove(key: key)
-          }
+    get { return self.get(key: key) }
+    set {
+      if let newValue = newValue {
+        self.insert(key: key, value: newValue)
+      } else {
+        _ = self.remove(key: key)
       }
+    }
   }
 
   // MARK: - Get
@@ -275,6 +269,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
       case let .entryIndex(entryIndex):
         guard case let .entry(old) = self._entries[entryIndex] else {
+          assert(false, "Index was deleted, but entry was not.")
           break
         }
 
@@ -301,7 +296,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
   // MARK: - Clear
 
-  internal mutating func clear() {
+  public mutating func clear() {
     self = OrderedDictionary()
   }
 
@@ -427,7 +422,7 @@ private func isPowerOf2(_ value: Int) -> Bool {
 }
 
 private func nextPowerOf2(_ value: Int) -> Int {
-  var result = value
+  var result = 1
   while result < value && result > 0 {
     result <<= 1
   }
@@ -442,14 +437,6 @@ private func nextPowerOf2(_ value: Int) -> Int {
 private func usableFraction(size: Int) -> Int {
   assert(size > 0)
   return (size << 1) / 3
-}
-
-/// ESTIMATE_SIZE is reverse function of USABLE_FRACTION.
-/// This can be used to reserve enough size to insert `n` entries without
-/// resizing.
-private func estimateSize(entryCount: Int) -> Int {
-  assert(entryCount > 0)
-  return (entryCount * 3 + 1) >> 1
 }
 
 /// Bitmask for acceptable index.
