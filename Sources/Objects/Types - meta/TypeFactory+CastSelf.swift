@@ -6,7 +6,7 @@ import Core
 
 // TODO: Better selfAsXXX methods (PyType_Ready(PyTypeObject *type))
 
-extension PyType {
+extension TypeFactory {
 
   // MARK: - Types
 

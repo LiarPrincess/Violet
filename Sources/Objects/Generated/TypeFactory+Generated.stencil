@@ -11,24 +11,24 @@
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     {% set getter %}{{ type.name }}.{{ prop.selectorName }}{% endset %}
     {% if prop.annotations.setter %}
-    result._attributes["{{ attribute }}"] = PyType.createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: PyType.{{ castSelf }})
+    result._attributes["{{ attribute }}"] = createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }})
     {% else %}
-    result._attributes["{{ attribute }}"] = PyType.createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: PyType.{{ castSelf }})
+    result._attributes["{{ attribute }}"] = createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }})
     {% endif %}
     {% endfor %}
 
     {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    result._attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }})
+    result._attributes["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }})
     {% endfor %}
 
     {% for method in type.instanceMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    result._attributes["{{ attribute }}"] = PyType.wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }}, castSelf: PyType.{{ castSelf }})
+    result._attributes["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }})
   {% endfor %}
 {% endmacro %}
 
-extension PyType {
+extension TypeFactory {
 
   // MARK: - Base object
 {% for type in types.enums where type.name == "PyBaseObject" %}

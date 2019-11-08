@@ -167,7 +167,7 @@ public final class BuiltinErrorTypes {
     else:
       base_name = 'self.' + get_builtins_type_property_name(base)
 
-    print(f'    self.{property_name} = PyType.{property_name}(context, type: types.type, base: {base_name})')
+    print(f'    self.{property_name} = TypeFactory.{property_name}(context, type: types.type, base: {base_name})')
 
   print('  }')
   print('}')

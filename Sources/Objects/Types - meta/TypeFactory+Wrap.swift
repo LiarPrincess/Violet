@@ -2,7 +2,7 @@ import Core
 
 // swiftlint:disable trailing_closure
 
-extension PyType {
+extension TypeFactory {
 
   // MARK: - Properties
 
@@ -15,7 +15,7 @@ extension PyType {
 
     return PyProperty(
       context,
-      getter: PyType.wrapGetter(context, get: get, castSelf: castSelf),
+      getter: wrapGetter(context, get: get, castSelf: castSelf),
       setter: nil,
       deleter: nil
     )
@@ -32,8 +32,8 @@ extension PyType {
 
     return PyProperty(
       context,
-      getter: PyType.wrapGetter(context, get: get, castSelf: castSelf),
-      setter: PyType.wrapSetter(context, set: set, castSelf: castSelf),
+      getter: wrapGetter(context, get: get, castSelf: castSelf),
+      setter: wrapSetter(context, set: set, castSelf: castSelf),
       deleter: nil
     )
   }
@@ -43,7 +43,7 @@ extension PyType {
     get: @escaping (Zelf) -> () -> R,
     castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
 
-    return PyType.wrapMethod(
+    return wrapMethod(
       context,
       name: "__get__",
       doc: nil,
@@ -57,7 +57,7 @@ extension PyType {
     set: @escaping (Zelf) -> (PyObject) -> PyResult<()>,
     castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
 
-    return PyType.wrapMethod(
+    return wrapMethod(
       context,
       name: "__set__",
       doc: nil,

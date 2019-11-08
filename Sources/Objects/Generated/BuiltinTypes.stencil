@@ -13,21 +13,21 @@ public final class BuiltinTypes {
 {% endfor %}
 
   internal init(context: PyContext) {
-    // Requirements:
+    // Requirements (for `self.object` and `self.type`):
     // 1. `type` inherits from `object`
     // 2. both `type` and `object` are instances of `type`
     // And yes, it is a cycle that will never be deallocated
 
-    self.object = PyType.objectWithoutType(context)
-    self.type = PyType.typeWithoutType(context, base: self.object)
+    self.object = TypeFactory.objectWithoutType(context)
+    self.type = TypeFactory.typeWithoutType(context, base: self.object)
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
     // `self.bool` has to be last because it uses `self.int` as base!
     {% for type in types.classes|annotated:"pytype" where type.name != "PyBool" %}
     {% set name %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
-    self.{{ name }} = PyType.{{ name }}(context, type: self.type, base: self.object)
+    self.{{ name }} = TypeFactory.{{ name }}(context, type: self.type, base: self.object)
     {% endfor %}
-    self.bool = PyType.bool(context, type: self.type, base: self.int)
+    self.bool = TypeFactory.bool(context, type: self.type, base: self.int)
   }
 }
