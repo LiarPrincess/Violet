@@ -1,5 +1,12 @@
+import os
+import sys
+
+# ---------------
+# Data definition
+# ---------------
+
 data = [
-# name: base: doc
+# (class name, base class, doc)
 ('BaseException', 'Object', "Common base class for all exceptions"),
   ('SystemExit', 'BaseException', "Request to exit from the interpreter."),
   ('KeyboardInterrupt', 'BaseException', "Program interrupted by user."),
@@ -66,6 +73,10 @@ data = [
       ('ResourceWarning', 'Warning', "Base class for warnings about resource usage."),
 ]
 
+# ------
+# Shared
+# ------
+
 def is_final(name):
   'If there exists any exception with us as base then we are not final'
 
@@ -75,124 +86,114 @@ def is_final(name):
 
   return True
 
-def print_class(name, base, doc):
-  type_owner = 'warningTypes' if 'Warning' in name else 'errorTypes'
-  type_variable = name[0].lower() + name[1:]
+def print_header():
+  print('''\
+// In CPython:
+// Objects -> exceptions.c
+// Lib->test->exception_hierarchy.txt <-- this is amazing
+// https://docs.python.org/3.7/c-api/exceptions.html
+''')
 
-  sourcery_type = 'pywarningtype' if 'Warning' in name else 'pyerrortype'
-  final = 'final ' if is_final(name) else ''
-  doc = doc.replace('\n', ' " +\n"')
+# -----------------
+# Class definitions
+# -----------------
 
-  print(f'// sourcery: {sourcery_type} = {name}')
-  print(f'internal {final}class Py{name}: Py{base} {{')
+def print_class_definitions():
+  print_header()
+  print('''\
+// swiftlint:disable file_length
+// swiftlint:disable trailing_newline
+''')
+
+  for name, base, doc in data:
+    if name == 'BaseException':
+      continue
+
+    doc = doc.replace('\n', ' " +\n"')
+    final = 'final ' if is_final(name) else ''
+    builtins_type_variable = get_builtins_type_property_name(name)
+
+    print(f'''\
+// MARK: - {name}
+
+// sourcery: pyerrortype = {name}
+internal {final}class Py{name}: Py{base} {{
+
+  override internal class var doc: String {{
+    return "{doc}"
+  }}
+
+  override internal func initType(from context: PyContext) {{
+    self.setType(to: context.builtins.errorTypes.{builtins_type_variable})
+  }}
+
+   // sourcery: pyproperty = __class__
+   override internal func getClass() -> PyType {{
+     return self.type
+   }}
+
+   // sourcery: pyproperty = __dict__
+   override internal func dict() -> Attributes {{
+     return self._attributes
+   }}
+}}
+''')
+
+# ----------------
+# Type definitions
+# ----------------
+
+def print_type_definitions():
+  print_header()
+  print('''\
+// swiftlint:disable line_length
+// swiftlint:disable function_body_length
+
+public final class BuiltinErrorTypes {
+''')
+
+  for name, base, doc in data:
+    property_name = get_builtins_type_property_name(name)
+    print(f'  public let {property_name}: PyType')
+
   print()
-  print('  override internal class var doc: String {')
-  print(f'    return "{doc}"')
-  print('  }')
-  print()
-  print('  override internal func initType(from context: PyContext) {')
-  print(f'    self.setType(to: context.builtins.{type_owner}.{type_variable})')
-  print('  }')
-  print()
-  print('  // sourcery: pyproperty = __class__')
-  print('  override internal func getClass() -> PyType {')
-  print('    return self.type')
-  print('  }')
-  print()
-  print('  // sourcery: pyproperty = __dict__')
-  print('  override internal func dict() -> Attributes {')
-  print('    return self._attributes')
+  print('  internal init(context: PyContext, types: BuiltinTypes) {')
+
+  for name, base, doc in data:
+    property_name = get_builtins_type_property_name(name)
+
+    if name == 'BaseException':
+      base_name = 'types.object'
+    else:
+      base_name = 'self.' + get_builtins_type_property_name(base)
+
+    print(f'    self.{property_name} = PyType.{property_name}(context, type: types.type, base: {base_name})')
+
   print('  }')
   print('}')
-  print()
 
-def print_builtin_property(name, base):
-  type_variable = name[0].lower() + name[1:]
-  print(f'public let {type_variable}: PyType')
+def get_builtins_type_property_name(name):
+  if name == 'OSError':
+    return 'osError'
 
-def print_builtin_assign(name, base):
-  type_variable = name[0].lower() + name[1:]
-  type_variable_base = base[0].lower() + base[1:]
-  print(f'self.{type_variable} = PyType.{type_variable}(context, type: types.type, base: self.{type_variable_base})')
+  if name == 'EOFError':
+    return 'eofError'
 
-def print_cast_self(name):
-  print(f'internal static func selfAsPy{name}(_ value: PyObject) -> Py{name} {{')
-  print(f'  return value as! Py{name}')
-  print('}')
-  print()
+  return name[0].lower() + name[1:]
 
-for name, base, doc in data:
-  # print_class(name, base, doc)
-  # print_builtin_property(name, base)
-  # print_builtin_assign(name, base)
-  print_cast_self(name)
+# ----
+# Main
+# ----
 
+if __name__ == '__main__':
+  if len(sys.argv) < 2:
+    print("Usage: 'python3 errors.py [protocols|conformance]'")
+    sys.exit(1)
 
-# def print_doc(exception):
-#   doc = exception.__doc__.replace('\n', '\\n')
-#   print(f'{exception.__name__}: {doc}')
-
-# print_doc(BaseException)
-# print_doc(SystemExit)
-# print_doc(KeyboardInterrupt)
-# print_doc(GeneratorExit)
-# print_doc(Exception)
-# print_doc(StopIteration)
-# print_doc(StopAsyncIteration)
-# print_doc(ArithmeticError)
-# print_doc(FloatingPointError)
-# print_doc(OverflowError)
-# print_doc(ZeroDivisionError)
-# print_doc(AssertionError)
-# print_doc(AttributeError)
-# print_doc(BufferError)
-# print_doc(EOFError)
-# print_doc(ImportError)
-# print_doc(ModuleNotFoundError)
-# print_doc(LookupError)
-# print_doc(IndexError)
-# print_doc(KeyError)
-# print_doc(MemoryError)
-# print_doc(NameError)
-# print_doc(UnboundLocalError)
-# print_doc(OSError)
-# print_doc(BlockingIOError)
-# print_doc(ChildProcessError)
-# print_doc(ConnectionError)
-# print_doc(BrokenPipeError)
-# print_doc(ConnectionAbortedError)
-# print_doc(ConnectionRefusedError)
-# print_doc(ConnectionResetError)
-# print_doc(FileExistsError)
-# print_doc(FileNotFoundError)
-# print_doc(InterruptedError)
-# print_doc(IsADirectoryError)
-# print_doc(NotADirectoryError)
-# print_doc(PermissionError)
-# print_doc(ProcessLookupError)
-# print_doc(TimeoutError)
-# print_doc(ReferenceError)
-# print_doc(RuntimeError)
-# print_doc(NotImplementedError)
-# print_doc(RecursionError)
-# print_doc(SyntaxError)
-# print_doc(IndentationError)
-# print_doc(TabError)
-# print_doc(SystemError)
-# print_doc(TypeError)
-# print_doc(ValueError)
-# print_doc(UnicodeError)
-# print_doc(UnicodeDecodeError)
-# print_doc(UnicodeEncodeError)
-# print_doc(UnicodeTranslateError)
-# print_doc(Warning)
-# print_doc(DeprecationWarning)
-# print_doc(PendingDeprecationWarning)
-# print_doc(RuntimeWarning)
-# print_doc(SyntaxWarning)
-# print_doc(UserWarning)
-# print_doc(FutureWarning)
-# print_doc(ImportWarning)
-# print_doc(UnicodeWarning)
-# print_doc(BytesWarning)
-# print_doc(ResourceWarning)
+  mode = sys.argv[1]
+  if mode == 'class-definitions':
+    print_class_definitions()
+  elif mode == 'types':
+    print_type_definitions()
+  else:
+    print(f"Invalid argument '{mode}' passed to 'errors.py'.")

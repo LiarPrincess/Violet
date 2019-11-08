@@ -12,6 +12,10 @@ sourcery \
   --templates ./Sources/Objects/Builtins/BuiltinTypes.stencil \
   --output ./Sources/Objects/Builtins/BuiltinTypes.swift
 
+# Builtin errors
+python3 $GENERATED/Errors.py "class-definitions" > $GENERATED/PyExceptions.swift
+python3 $GENERATED/Errors.py "types" > $GENERATED/BuiltinErrorTypes.swift
+
 # Owner protocols
 sourcery \
   --sources ./Sources/Objects \

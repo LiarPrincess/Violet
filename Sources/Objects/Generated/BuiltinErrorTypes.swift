@@ -1,6 +1,10 @@
-// Most of this file was generatued using 'Scripes/generate_errors.py'.
+// In CPython:
+// Objects -> exceptions.c
+// Lib->test->exception_hierarchy.txt <-- this is amazing
+// https://docs.python.org/3.7/c-api/exceptions.html
 
 // swiftlint:disable line_length
+// swiftlint:disable function_body_length
 
 public final class BuiltinErrorTypes {
 
@@ -57,8 +61,18 @@ public final class BuiltinErrorTypes {
   public let unicodeDecodeError: PyType
   public let unicodeEncodeError: PyType
   public let unicodeTranslateError: PyType
+  public let warning: PyType
+  public let deprecationWarning: PyType
+  public let pendingDeprecationWarning: PyType
+  public let runtimeWarning: PyType
+  public let syntaxWarning: PyType
+  public let userWarning: PyType
+  public let futureWarning: PyType
+  public let importWarning: PyType
+  public let unicodeWarning: PyType
+  public let bytesWarning: PyType
+  public let resourceWarning: PyType
 
-  // swiftlint:disable:next function_body_length
   internal init(context: PyContext, types: BuiltinTypes) {
     self.baseException = PyType.baseException(context, type: types.type, base: types.object)
     self.systemExit = PyType.systemExit(context, type: types.type, base: self.baseException)
@@ -113,5 +127,16 @@ public final class BuiltinErrorTypes {
     self.unicodeDecodeError = PyType.unicodeDecodeError(context, type: types.type, base: self.unicodeError)
     self.unicodeEncodeError = PyType.unicodeEncodeError(context, type: types.type, base: self.unicodeError)
     self.unicodeTranslateError = PyType.unicodeTranslateError(context, type: types.type, base: self.unicodeError)
+    self.warning = PyType.warning(context, type: types.type, base: self.exception)
+    self.deprecationWarning = PyType.deprecationWarning(context, type: types.type, base: self.warning)
+    self.pendingDeprecationWarning = PyType.pendingDeprecationWarning(context, type: types.type, base: self.warning)
+    self.runtimeWarning = PyType.runtimeWarning(context, type: types.type, base: self.warning)
+    self.syntaxWarning = PyType.syntaxWarning(context, type: types.type, base: self.warning)
+    self.userWarning = PyType.userWarning(context, type: types.type, base: self.warning)
+    self.futureWarning = PyType.futureWarning(context, type: types.type, base: self.warning)
+    self.importWarning = PyType.importWarning(context, type: types.type, base: self.warning)
+    self.unicodeWarning = PyType.unicodeWarning(context, type: types.type, base: self.warning)
+    self.bytesWarning = PyType.bytesWarning(context, type: types.type, base: self.warning)
+    self.resourceWarning = PyType.resourceWarning(context, type: types.type, base: self.warning)
   }
 }
