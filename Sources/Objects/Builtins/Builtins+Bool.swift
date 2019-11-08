@@ -58,7 +58,7 @@ extension Builtins {
       return .value(boolOwner.asBool())
     }
 
-    let boolResult = self.callMethod(on: object, selector: "__bool__", args: [])
+    let boolResult = self.callMethod(on: object, selector: "__bool__")
     if case let CallResult.value(object) = boolResult {
       if object.type.isSubtype(of: self.bool) {
         return .value(self.isTrueBool(object))
@@ -74,7 +74,7 @@ extension Builtins {
       return .value(len.isTrue)
     }
 
-    let lenResult = self.callMethod(on: object, selector: "__len__", args: [])
+    let lenResult = self.callMethod(on: object, selector: "__len__")
     if case let CallResult.value(object) = lenResult {
       return .value(self.isTrueBool(object))
     }

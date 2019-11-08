@@ -199,7 +199,7 @@ extension Builtins {
 
     // Try standard Python dispatch
     let selector = mode.selector
-    let pythonResult = self.callMethod(on: left, selector: selector, args: [right])
+    let pythonResult = self.callMethod(on: left, selector: selector, arg: right)
 
     if case let CallResult.value(result) = pythonResult {
       return result is PyNotImplemented ? .notImplemented : .value(result)

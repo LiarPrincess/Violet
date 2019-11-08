@@ -5,7 +5,7 @@
 internal enum CallResult {
   case value(PyObject)
   case noSuchMethod
-  case methodIsNotCallable
+  case methodIsNotCallable(PyErrorEnum)
 }
 
 extension Builtins {
@@ -17,14 +17,23 @@ extension Builtins {
     return object.type.lookup(name: name)
   }
 
-  internal func callMethod(on zelf: PyObject,
-                           selector: String,
-                           args: [PyObject]) -> CallResult {
+  internal func call(_ fn: PyObject, args: [PyObject]) -> PyResult<PyObject> {
     return .value(self.unimplemented)
   }
 
-  internal func call(_ fn: PyObject, args: [PyObject]) -> PyResult<PyObject> {
-    // Do we need this one? We have 'callMethod'.
+  internal func callMethod(on zelf: PyObject, selector: String) -> CallResult {
+    return .value(self.unimplemented)
+  }
+
+  internal func callMethod(on zelf: PyObject,
+                           selector: String,
+                           arg: PyObject) -> CallResult {
+    return .value(self.unimplemented)
+  }
+
+  internal func callMethod(on zelf: PyObject,
+                           selector: String,
+                           args: [PyObject]) -> CallResult {
     return .value(self.unimplemented)
   }
 

@@ -18,7 +18,7 @@ extension Builtins {
       return reprOwner.repr()
     }
 
-    let callResult = self.callMethod(on: object, selector: "__repr__", args: [])
+    let callResult = self.callMethod(on: object, selector: "__repr__")
     guard case let CallResult.value(result) = callResult else {
       return .value(self.genericRepr(object))
     }

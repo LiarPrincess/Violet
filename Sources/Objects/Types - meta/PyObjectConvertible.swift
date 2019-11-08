@@ -68,6 +68,7 @@ extension PyObject: PyObjectConvertible {
 
 extension PyErrorEnum: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
+    // TODO: Put error in TLS
     fatalError()
   }
 }

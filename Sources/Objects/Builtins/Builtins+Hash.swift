@@ -11,7 +11,7 @@ extension Builtins {
       return hashOwner.hash()
     }
 
-    let callResult = self.callMethod(on: object, selector: "__hash__", args: [])
+    let callResult = self.callMethod(on: object, selector: "__hash__")
     guard case let CallResult.value(result) = callResult else {
       return self.hashNotImplemented(object)
     }

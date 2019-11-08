@@ -12,9 +12,7 @@ internal enum AttributeHelper {
   internal static func getAttribute(zelf: PyObject,
                                     name: PyObject) -> PyResult<PyObject> {
     guard let nameString = name as? PyString else {
-      return .error(
-        .typeError("attribute name must be string, not '\(name.typeName)'")
-      )
+      return .typeError("attribute name must be string, not '\(name.typeName)'")
     }
 
     return getAttribute(zelf: zelf, name: nameString.value)
@@ -35,7 +33,7 @@ internal enum AttributeHelper {
     }
 
     if let attribOwner = zelf as? AttributesOwner,
-      let value = attribOwner._attributes.get(key: name) {
+       let value = attribOwner._attributes.get(key: name) {
       return .value(value)
     }
 
@@ -44,9 +42,7 @@ internal enum AttributeHelper {
       return zelf.context.call(descrGet, args: args)
     }
 
-    return .error(
-      .attributeError("\(zelf.typeName) object has no attribute '\(name)'")
-    )
+    return .attributeError("\(zelf.typeName) object has no attribute '\(name)'")
   }
 
   // MARK: - Set
@@ -62,9 +58,7 @@ internal enum AttributeHelper {
                                     name: PyObject,
                                     value: PyObject?) -> PyResult<PyNone> {
     guard let nameString = name as? PyString else {
-      return .error(
-        .typeError("attribute name must be string, not '\(name.typeName)'")
-      )
+      return .typeError("attribute name must be string, not '\(name.typeName)'")
     }
 
     return setAttribute(zelf: zelf, name: nameString.value, value: value)
@@ -100,7 +94,7 @@ internal enum AttributeHelper {
       "'\(zelf.typeName)' object has no attribute '\(name)'" :
       "'\(zelf.typeName)' object attribute '\(name)' is read-only"
 
-    return .error(.attributeError(msg))
+    return .attributeError(msg)
   }
 
   // MARK: - Del

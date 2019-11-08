@@ -2,7 +2,6 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-// TODO: Fast path
 extension Builtins {
 
   internal static let getAttributeDoc = """
@@ -16,22 +15,39 @@ extension Builtins {
   // sourcery: pymethod: getattr, doc = getAttributeDoc
   /// getattr(object, name[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
+  ///
+  /// static PyObject *
+  /// builtin_getattr(PyObject *self, PyObject *const *args, Py_ssize_t nargs)
+  /// static PyObject *
+  /// slot_tp_getattr_hook(PyObject *self, PyObject *name)
+  /// int
+  /// _PyObject_LookupAttr(PyObject *v, PyObject *name, PyObject **result)
   public func getAttribute(_ object: PyObject,
                            name: PyObject,
-                           default: PyObject? = nil) -> PyResult<PyObject> {
+                           default: PyObject? = nil) -> PyObject {
     guard let name = name as? PyString else {
-      return .error(.typeError("getattr(): attribute name must be string"))
+      let msg = "getattr(): attribute name must be string"
+      let error = PyErrorEnum.typeError(msg)
+      return error.toPyObject(in: self.context)
     }
 
-    guard let getAttro = self.lookup(object, name: "__getattribute__") else {
-      return .error(
-        .attributeError("'\(object.typeName)' object has no attribute '\(name.str())'")
-      )
+    // Fast protocol-based path
+    if let getAttributeOwner = object as? __getattribute__Owner {
+      let result = getAttributeOwner.getAttribute(name: name)
+      return result.toPyObject(in: self.context)
     }
 
-    let result = self.call(getAttro, args: [object, name])
-    // TODO: If result is subtype of AttributeError then return default
-    return result
+    // Slow python path
+    // TODO: Recheck this after we have `__call__`
+    switch self.callMethod(on: object, selector: "__getattribute__", arg: name) {
+    case .value(let o):
+      return o
+    case .noSuchMethod:
+      let o = AttributeHelper.getAttribute(zelf: object, name: name.value)
+      return o.toPyObject(in: self.context)
+    case .methodIsNotCallable(let e):
+      return e.toPyObject(in: self.context)
+    }
   }
 
   // sourcery: pymethod: hasattr
@@ -39,15 +55,15 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasAttribute(_ object: PyObject,
                            name: PyObject) -> PyResult<Bool> {
-    guard name is PyString else {
-      return .error(.typeError("hasattr(): attribute name must be string"))
-    }
-
-    guard let getAttro = self.lookup(object, name: "__getattribute__") else {
-      return .value(false)
-    }
-
-    let result = self.call(getAttro, args: [object, name])
+//    guard name is PyString else {
+//      return .typeError("hasattr(): attribute name must be string")
+//    }
+//
+//    guard let getAttro = self.lookup(object, name: "__getattribute__") else {
+//      return .value(false)
+//    }
+//
+//    let result = self.call(getAttro, args: [object, name])
     // TODO: If result is AttributeError then return false
     return .value(true)
   }
@@ -59,7 +75,7 @@ extension Builtins {
                            name: PyObject,
                            value: PyObject?) -> PyResult<()> {
     guard let name = name as? PyString else {
-      return .error(.typeError("setattr(): attribute name must be string"))
+      return .typeError("setattr(): attribute name must be string")
     }
 
     if let setAttr = self.lookup(object, name: "__setattr__") {
@@ -73,13 +89,10 @@ extension Builtins {
 
     switch self.hasAttribute(object, name: name) {
     case .value(true):
-      return .error(
-        .typeError("'\(type)' object has only read-only attributes (\(op) \(nameStr))")
-      )
+      let msg = "'\(type)' object has only read-only attributes (\(op) \(nameStr))"
+      return .typeError(msg)
     case .value(false):
-      return .error(
-        .typeError("'\(type)' object has no attributes (\(op) \(nameStr))")
-      )
+      return .typeError("'\(type)' object has no attributes (\(op) \(nameStr))")
     case let .error(e):
       return .error(e)
     }
@@ -89,6 +102,10 @@ extension Builtins {
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func delAttribute(_ object: PyObject, name: PyObject) -> PyResult<()> {
+    guard let name = name as? PyString else {
+      return .typeError("delattr(): attribute name must be string")
+    }
+
     return self.setAttribute(object, name: name, value: nil)
   }
 }
