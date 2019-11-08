@@ -14,7 +14,7 @@ extension Builtins {
   public func not(_ object: PyObject) -> PyObject {
     switch self.isTrueRaw(object) {
     case let .value(isTrue):
-      return isTrue ? self.false : self.true
+      return self.newBool(!isTrue)
     case let .error(e):
       return e.toPyObject(in: self.context)
     }
@@ -27,13 +27,10 @@ extension Builtins {
   // MARK: - Is true
 
   /// Test a value used as condition, e.g.,  `if`  or `in` statement.
-  ///
-  /// PyObject_IsTrue(PyObject *v)
-  /// slot_nb_bool(PyObject *self)
   public func isTrue(_ object: PyObject) -> PyObject {
     switch self.isTrueRaw(object) {
     case let .value(isTrue):
-      return isTrue ? self.true : self.false
+      return self.newBool(isTrue)
     case let .error(e):
       return e.toPyObject(in: self.context)
     }
@@ -49,6 +46,8 @@ extension Builtins {
     }
   }
 
+  /// PyObject_IsTrue(PyObject *v)
+  /// slot_nb_bool(PyObject *self)
   private func isTrueRaw(_ object: PyObject) -> PyResult<Bool> {
     if object is PyNone {
       return .value(false)

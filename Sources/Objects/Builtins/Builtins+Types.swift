@@ -61,7 +61,7 @@ extension Builtins {
   // sourcery: pytype: str
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
-  //  public var str: PyType { return self.types.str }
+  public var str: PyType { return self.types.str }
 
   // sourcery: pytype: type
   /// class type(object)
