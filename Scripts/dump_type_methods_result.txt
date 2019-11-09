@@ -56,13 +56,8 @@ dict
     fromkeys - <class 'builtin_function_or_method'>
     __iter__
     __sizeof__
-    copy
-    get
     items
     keys
-    pop
-    popitem
-    setdefault
     update
     values
 

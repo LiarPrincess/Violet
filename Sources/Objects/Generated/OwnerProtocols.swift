@@ -92,7 +92,7 @@ protocol casefoldOwner { func casefold() -> String }
 protocol centerOwner { func center(width: PyObject, fillChar: PyObject?) -> PyResult<String> }
 protocol clearOwner { func clear() -> PyResult<PyNone> }
 protocol conjugateOwner { func conjugate() -> PyObject }
-protocol copyOwner { func copy() -> PyList }
+protocol copyOwner { func copy() -> PyObject }
 protocol countOwner { func count(_ element: PyObject) -> PyResult<BigInt> }
 protocol countRangedOwner { func count(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol denominatorOwner { func denominator() -> PyInt }
@@ -102,6 +102,7 @@ protocol expandtabsOwner { func expandTabs(tabSize: PyObject?) -> PyResult<Strin
 protocol extendOwner { func extend(_ iterator: PyObject) -> PyResult<PyNone> }
 protocol findOwner { func find(_ element: PyObject) -> PyResult<Int> }
 protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Int> }
+protocol getOwner { func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
 protocol imagOwner { func asImag() -> PyObject }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
 protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
@@ -122,6 +123,8 @@ protocol lowerOwner { func lower() -> String }
 protocol lstripOwner { func lstrip(_ chars: PyObject) -> PyResult<String> }
 protocol numeratorOwner { func numerator() -> PyInt }
 protocol partitionOwner { func partition(separator: PyObject) -> PyResult<PyTuple> }
+protocol popOwner { func pop(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
+protocol popitemOwner { func popitem() -> PyResult<PyObject> }
 protocol realOwner { func asReal() -> PyObject }
 protocol replaceOwner { func replace(old: PyObject, new: PyObject, count: PyObject?) -> PyResult<String> }
 protocol rfindOwner { func rfind(_ element: PyObject) -> PyResult<Int> }
@@ -132,6 +135,7 @@ protocol rjustOwner { func rjust(width: PyObject, fillChar: PyObject?) -> PyResu
 protocol rpartitionOwner { func rpartition(separator: PyObject) -> PyResult<PyTuple> }
 protocol rsplitOwner { func rsplit(separator: PyObject?, maxCount: PyObject?) -> PyResult<[String]> }
 protocol rstripOwner { func rstrip(_ chars: PyObject) -> PyResult<String> }
+protocol setdefaultOwner { func setDefault(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
 protocol splitOwner { func split(separator: PyObject?, maxCount: PyObject?) -> PyResult<[String]> }
 protocol splitlinesOwner { func splitLines(keepEnds: PyObject) -> PyResult<[String]> }
 protocol startswithOwner { func startsWith(_ element: PyObject) -> PyResult<Bool> }

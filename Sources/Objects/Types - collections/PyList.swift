@@ -223,7 +223,7 @@ internal final class PyList: PyObject {
   }
 
   // sourcery: pymethod = copy
-  internal func copy() -> PyList {
+  internal func copy() -> PyObject {
     return self.list(self.elements)
   }
 

@@ -140,6 +140,25 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
     return self.used == 0
   }
 
+  /// The last inserted element.
+  /// If the dictionary is empty, the value of this property is `nil`.
+  public var last: Entry? {
+    if self.isEmpty {
+      return nil
+    }
+
+    for entry in self.entries.reversed() {
+      switch entry {
+      case .entry(let e):
+        return e
+      case .deleted:
+        break // iterate more
+      }
+    }
+
+    return nil
+  }
+
   // MARK: - Init
 
   public init() {

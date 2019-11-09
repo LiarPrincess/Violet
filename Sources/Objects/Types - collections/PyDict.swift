@@ -4,6 +4,8 @@ import Core
 // Objects -> dictobject.c
 // https://docs.python.org/3.7/c-api/dict.html
 
+// swiftlint:disable file_length
+
 internal struct PyDictKey: VioletHashable {
 
   internal var hash: PyHash
@@ -36,11 +38,14 @@ internal final class PyDict: PyObject {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
-  private var elements = OrderedDictionary<PyDictKey, PyObject>()
+  private typealias OrderedDictionaryType = OrderedDictionary<PyDictKey, PyObject>
+
+  private var elements: OrderedDictionaryType
 
   // MARK: - Init
 
   internal init(_ context: PyContext) {
+    self.elements = OrderedDictionaryType()
     super.init(type: context.builtins.types.dict)
   }
 
@@ -176,7 +181,7 @@ internal final class PyDict: PyObject {
     case .methodIsNotCallable(let e): return .error(e)
     }
 
-    return .keyError(hash: key.hash, key: key.object)
+    return .keyErrorForKey(index)
   }
 
   // sourcery: pymethod = __setitem__
@@ -203,7 +208,7 @@ internal final class PyDict: PyObject {
       return .value(self.builtins.none)
     }
 
-    return .keyError(hash: key.hash, key: key.object)
+    return .keyErrorForKey(index)
   }
 
   // sourcery: pymethod = __contains__
@@ -228,6 +233,110 @@ internal final class PyDict: PyObject {
     return .value(self.builtins.none)
   }
 
+  internal static let getDoc = """
+    get($self, key, default=None, /)
+    --
+
+    Return the value for key if key is in the dictionary, else default.
+    """
+
+  // sourcery: pymethod = get, doc = getDoc
+  internal func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> {
+    let key: PyDictKey
+    switch self.createKey(from: index) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    if let result = self.elements[key] {
+      return .value(result)
+    }
+
+    let result = `default` ?? self.builtins.none
+    return .value(result)
+  }
+
+  internal static let setdefaultDoc = """
+    setdefault($self, key, default=None, /)
+    --
+
+    Insert key with a value of default if key is not in the dictionary.
+
+    Return the value for key if key is in the dictionary, else default.
+    """
+
+  // sourcery: pymethod = setdefault, doc = setdefaultDoc
+  /// If `key` is in the dictionary, return its value.
+  /// If not, insert key with a value of `default` and return `default`.
+  /// `default` defaults to None.
+  internal func setDefault(_ index: PyObject,
+                           default: PyObject?) -> PyResult<PyObject> {
+    let key: PyDictKey
+    switch self.createKey(from: index) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    if let oldValue = self.elements.get(key: key) {
+      return .value(oldValue)
+    }
+
+    let value = `default` ?? self.builtins.none
+    self.elements.insert(key: key, value: value)
+    return .value(value)
+  }
+
+  internal static let copyDoc = "D.copy() -> a shallow copy of D"
+
+  // sourcery: pymethod = copy, doc = copyDoc
+  internal func copy() -> PyObject {
+    let result = PyDict(self.context)
+    result.elements = self.elements
+    return result
+  }
+
+  internal static let popDoc = """
+    D.pop(k[,d]) -> v, remove specified key and return the corresponding value.
+    If key is not found, d is returned if given, otherwise KeyError is raised
+    """
+
+  // sourcery: pymethod = pop, doc = popDoc
+  internal func pop(_ index: PyObject,
+                    default: PyObject?) -> PyResult<PyObject> {
+    let key: PyDictKey
+    switch self.createKey(from: index) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    if let result = self.elements.remove(key: key) {
+      return .value(result)
+    }
+
+    if let def = `default` {
+      return .value(def)
+    }
+
+    return .keyErrorForKey(index)
+  }
+
+  internal static let popitemDoc = """
+    D.popitem() -> (k, v), remove and return some (key, value) pair as a
+    2-tuple; but raise KeyError if D is empty.
+    """
+
+  // sourcery: pymethod = popitem, doc = popitemDoc
+  internal func popitem() -> PyResult<PyObject> {
+    guard let last = self.elements.last else {
+      return .keyError("popitem(): dictionary is empty")
+    }
+
+    let key = last.key.object
+    let value = last.value
+    let result = PyTuple(self.context, elements: [key, value])
+    return .value(result)
+  }
+
   // MARK: - Helpers
 
   private func createKey(from object: PyObject) -> PyResult<PyDictKey> {
@@ -238,15 +347,4 @@ internal final class PyDict: PyObject {
       return .error(e)
     }
   }
-
-/*
-  internal func contains(owner: PyObject, element: PyObject) throws -> Bool {
-    let v = try self.matchType(owner)
-
-    let hash = try self.context.hash(value: element)
-    let key = PyDictKey(hash: hash, object: element)
-
-    return v.elements.contains(key)
-  }
-*/
 }

@@ -109,7 +109,12 @@ extension PyDict:
   __setitem__Owner,
   __delitem__Owner,
   __contains__Owner,
-  clearOwner
+  clearOwner,
+  getOwner,
+  setdefaultOwner,
+  copyOwner,
+  popOwner,
+  popitemOwner
 { }
 
 // MARK: - Ellipsis

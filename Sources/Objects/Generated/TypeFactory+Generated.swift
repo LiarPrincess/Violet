@@ -195,6 +195,11 @@ extension TypeFactory {
     result._attributes["__delitem__"] = wrapMethod(context, name: "__delitem__", doc: nil, func: PyDict.delItem(at:), castSelf: selfAsPyDict)
     result._attributes["__contains__"] = wrapMethod(context, name: "__contains__", doc: nil, func: PyDict.contains(_:), castSelf: selfAsPyDict)
     result._attributes["clear"] = wrapMethod(context, name: "clear", doc: nil, func: PyDict.clear, castSelf: selfAsPyDict)
+    result._attributes["get"] = wrapMethod(context, name: "get", doc: nil, func: PyDict.get(_:default:), castSelf: selfAsPyDict)
+    result._attributes["setdefault"] = wrapMethod(context, name: "setdefault", doc: nil, func: PyDict.setDefault(_:default:), castSelf: selfAsPyDict)
+    result._attributes["copy"] = wrapMethod(context, name: "copy", doc: nil, func: PyDict.copy, castSelf: selfAsPyDict)
+    result._attributes["pop"] = wrapMethod(context, name: "pop", doc: nil, func: PyDict.pop(_:default:), castSelf: selfAsPyDict)
+    result._attributes["popitem"] = wrapMethod(context, name: "popitem", doc: nil, func: PyDict.popitem, castSelf: selfAsPyDict)
     return result
   }
 

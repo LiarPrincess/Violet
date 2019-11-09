@@ -132,6 +132,11 @@ types = {
     '__delitem__',
     '__contains__',
     'clear',
+    'get',
+    'setdefault',
+    'copy',
+    'pop',
+    'popitem',
   ],
   type(...): [
     '__class__',
