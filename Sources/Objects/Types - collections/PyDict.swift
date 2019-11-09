@@ -1,99 +1,71 @@
 import Core
 
 // In CPython:
-// Objects -> listobject.c
+// Objects -> dictobject.c
 // https://docs.python.org/3.7/c-api/dict.html
 
-#warning("This is not a correct implementation, it will fail on collision!")
+internal struct PyDictKey: VioletHashable {
 
+  internal var hash: PyHash
+  internal var object: PyObject
+
+  internal init(hash: PyHash, object: PyObject) {
+    self.hash = hash
+    self.object = object
+  }
+
+  internal func isEqual(to other: PyDictKey) -> Bool {
+    return self.hash == other.hash &&
+      self.object.builtins.isEqualBool(left: self.object, right: other.object)
+  }
+}
+
+// sourcery: pytype = dict
 /// This subtype of PyObject represents a Python dictionary object.
 internal final class PyDict: PyObject {
 
-  internal var elements: [PyDictKey: PyObject]
+  internal static let doc: String = """
+    dict() -> new empty dictionary
+    dict(mapping) -> new dictionary initialized from a mapping object's
+    (key, value) pairs
+    dict(iterable) -> new dictionary initialized as if via:
+    d = {}
+    for k, v in iterable:
+    d[k] = v
+    dict(**kwargs) -> new dictionary initialized with the name=value pairs
+    in the keyword argument list.  For example:  dict(one=1, two=2)
+    """
 
-  internal init(_ context: PyContext, elements: [PyDictKey: PyObject]) {
-    self.elements = elements
-    // TOOD: add to context
-    super.init()
-  }
-}
+  private var elements = OrderedDictionary<PyDictKey, PyObject>()
 
-internal struct PyDictKey: Equatable, Hashable {
+  // MARK: - Init
 
-  fileprivate let hash: PyHash
-  fileprivate let object: PyObject
-
-  internal static func == (lhs: PyDictKey, rhs: PyDictKey) -> Bool {
-    return lhs.hash == rhs.hash
-  }
-
-  internal func hash(into hasher: inout Swift.Hasher) {
-    hasher.combine(self.hash)
-  }
-}
-
-/// This subtype of PyObject represents a Python dictionary object.
-internal final class PyDictType: PyObject /* ,
-  ReprTypeClass,
-  HashableTypeClass, ComparableTypeClass,
-  ClearTypeClass, ContainsTypeClass,
-  LengthTypeClass, SubscriptTypeClass, SubscriptAssignTypeClass */ {
-
-//  override internal var name: String { return "dict" }
-//  override internal var doc: String? { return """
-//    dict() -> new empty dictionary
-//    dict(mapping) -> new dictionary initialized from a mapping object's
-//    (key, value) pairs
-//    dict(iterable) -> new dictionary initialized as if via:
-//    d = {}
-//    for k, v in iterable:
-//    d[k] = v
-//    dict(**kwargs) -> new dictionary initialized with the name=value pairs
-//    in the keyword argument list.  For example:  dict(one=1, two=2)
-//    """
-//  }
-
-  // MARK: - Ctor
-/*
-  // MARK: - Equatable, hashable
-
-  internal func hash(value: PyObject) throws -> PyHash {
-    throw HashableNotImplemented(value: value)
+  internal init(_ context: PyContext) {
+    super.init(type: context.builtins.types.dict)
   }
 
-  internal func compare(left: PyObject,
-                        right: PyObject,
-                        mode: CompareMode) throws -> Bool {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
+  // MARK: - Equatable
 
-    switch mode {
-    case .equal:
-      let isEqual = try self.isEqual(left: l, right: r)
-      return isEqual
-    case .notEqual:
-      let isEqual = try self.isEqual(left: l, right: r)
-      return !isEqual
-    case .less,
-         .lessEqual,
-         .greater,
-         .greaterEqual:
-      throw ComparableNotImplemented(left: left, right: right)
+  // sourcery: pymethod = __eq__
+  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    guard let other = other as? PyDict else {
+      return .notImplemented
     }
+
+    return .value(self.isEqual(other))
   }
 
-  private func isEqual(left: PyDict, right: PyDict) throws -> Bool {
-    guard left.elements.count == right.elements.count else {
+  internal func isEqual(_ other: PyDict) -> Bool {
+    guard self.elements.count == other.elements.count else {
       return false
     }
 
-    for (key, l) in left.elements {
-      guard let r = right.elements[key] else {
+    for entry in self.elements {
+      guard let otherValue = other.elements[entry.key] else {
         return false
       }
 
-      let areEqual = try self.context.richCompareBool(left: l, right: r, mode: .equal)
-      if !areEqual {
+      guard self.builtins.isEqualBool(left: entry.value, right: otherValue) else {
         return false
       }
     }
@@ -101,43 +73,173 @@ internal final class PyDictType: PyObject /* ,
     return true
   }
 
+  // sourcery: pymethod = __ne__
+  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return NotEqualHelper.fromIsEqual(self.isEqual(other))
+  }
+
+  // MARK: - Comparable
+
+  // sourcery: pymethod = __lt__
+  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
+
+  // sourcery: pymethod = __le__
+  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
+
+  // sourcery: pymethod = __gt__
+  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
+
+  // sourcery: pymethod = __ge__
+  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    return .notImplemented
+  }
+
+  // MARK: - Hashable
+
+  // sourcery: pymethod = __hash__
+  internal func hash() -> PyResultOrNot<PyHash> {
+    return .error(self.builtins.hashNotImplemented(self))
+  }
+
   // MARK: - String
 
-  internal func repr(value: PyObject) throws -> String {
-    let v = try self.matchType(value)
-
-    if v.elements.isEmpty {
-      return "{}"
+  // sourcery: pymethod = __repr__
+  internal func repr() -> PyResult<String> {
+    if self.elements.isEmpty {
+      return .value("{}")
     }
 
-    if value.hasReprLock {
-      return "{...}"
+    if self.hasReprLock {
+      return .value("{...}")
     }
 
-    return try value.withReprLock {
+    return self.withReprLock {
       var result = "{"
-      for (index, element) in v.elements.enumerated() {
+      for (index, element) in self.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.reprString(value: element.key.object)
+        result += self.context._repr(value: element.key.object)
         result += ": "
-        result += try self.context.reprString(value: element.value)
+        result += self.context._repr(value: element.value)
       }
 
       result += "}"
-      return result
+      return .value(result)
     }
   }
 
-  // MARK: - Methods
+  // MARK: - Attributes
 
-  internal func clear(value: PyObject) throws {
-    let v = try self.matchType(value)
-    v.elements.removeAll()
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(zelf: self, name: name)
   }
 
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
+  // MARK: - Sequence
+
+  // sourcery: pymethod = __len__
+  internal func getLength() -> BigInt {
+    return BigInt(self.elements.count)
+  }
+
+  // sourcery: pymethod = __getitem__
+  internal func getItem(at index: PyObject) -> PyResult<PyObject> {
+    let key: PyDictKey
+    switch self.createKey(from: index) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    if let result = self.elements[key] {
+      return .value(result)
+    }
+
+    let missing = "__missing__"
+    switch self.builtins.callMethod(on: self, selector: missing, arg: index) {
+    case .value(let o): return .value(o)
+    case .noSuchMethod: break
+    case .methodIsNotCallable(let e): return .error(e)
+    }
+
+    return .keyError(hash: key.hash, key: key.object)
+  }
+
+  // sourcery: pymethod = __setitem__
+  internal func setItem(at index: PyObject, to value: PyObject) -> PyResult<PyNone> {
+    let key: PyDictKey
+    switch self.createKey(from: index) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    self.elements[key] = value
+    return .value(self.builtins.none)
+  }
+
+  // sourcery: pymethod = __delitem__
+  internal func delItem(at index: PyObject) -> PyResult<PyNone> {
+    let key: PyDictKey
+    switch self.createKey(from: index) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    if self.elements.remove(key: key) != nil {
+      return .value(self.builtins.none)
+    }
+
+    return .keyError(hash: key.hash, key: key.object)
+  }
+
+  // sourcery: pymethod = __contains__
+  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+    let key: PyDictKey
+    switch self.createKey(from: element) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    let result = self.elements[key] != nil
+    return .value(result)
+  }
+
+  internal static let clearDoc = """
+    D.clear() -> None.  Remove all items from D.
+    """
+
+  // sourcery: pymethod = clear, doc = clearDoc
+  internal func clear() -> PyResult<PyNone> {
+    self.elements.clear()
+    return .value(self.builtins.none)
+  }
+
+  // MARK: - Helpers
+
+  private func createKey(from object: PyObject) -> PyResult<PyDictKey> {
+    switch self.builtins.hash(object) {
+    case let .value(hash):
+      return .value(PyDictKey(hash: hash, object: object))
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+/*
   internal func contains(owner: PyObject, element: PyObject) throws -> Bool {
     let v = try self.matchType(owner)
 
@@ -145,47 +247,6 @@ internal final class PyDictType: PyObject /* ,
     let key = PyDictKey(hash: hash, object: element)
 
     return v.elements.contains(key)
-  }
-
-  internal func length(value: PyObject) throws -> PyInt {
-    let v = try self.matchType(value)
-    return self.types.int.new(v.elements.count)
-  }
-
-  internal func `subscript`(owner: PyObject, index: PyObject) throws -> PyObject {
-    let v = try self.matchType(owner)
-
-    let hash = try self.context.hash(value: index)
-    let key = PyDictKey(hash: hash, object: index)
-
-    if let result = v.elements[key] {
-      return result
-    }
-
-    // _PyErr_SetKeyError(key);
-    fatalError()
-  }
-
-  internal func subscriptAssign(owner: PyObject, index: PyObject, value: PyObject) throws {
-    fatalError()
-  }
-
-  // MARK: - Helpers
-
-  internal func matchTypeOrNil(_ object: PyObject) -> PyDict? {
-    if let o = object as? PyDict {
-      return o
-    }
-
-    return nil
-  }
-
-  internal func matchType(_ object: PyObject) throws -> PyDict {
-    if let o = object as? PyDict {
-      return o
-    }
-
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
   }
 */
 }

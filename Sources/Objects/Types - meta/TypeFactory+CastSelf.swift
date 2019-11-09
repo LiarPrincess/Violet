@@ -26,6 +26,10 @@ extension TypeFactory {
     return value as! PyComplex
   }
 
+  internal static func selfAsPyDict(_ value: PyObject) -> PyDict {
+    return value as! PyDict
+  }
+
   internal static func selfAsPyEllipsis(_ value: PyObject) -> PyEllipsis {
     return value as! PyEllipsis
   }

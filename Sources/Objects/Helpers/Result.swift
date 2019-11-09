@@ -9,6 +9,7 @@ public enum PyErrorEnum {
   case attributeError(String)
   case zeroDivisionError(String)
   case overflowError(String)
+  case keyError(hash: PyHash, key: PyObject)
 }
 
 // MARK: - PyResult
@@ -39,6 +40,10 @@ public enum PyResult<V> {
 
   internal static func overflowError(_ msg: String) -> PyResult<V> {
     return PyResult.error(.overflowError(msg))
+  }
+
+  internal static func keyError(hash: PyHash, key: PyObject) -> PyResult<V> {
+    return PyResult.error(.keyError(hash: hash, key: key))
   }
 
   public func map<A>(_ f: (V) -> A) -> PyResult<A> {
@@ -116,6 +121,10 @@ public enum PyResultOrNot<V> {
 
   internal static func overflowError(_ msg: String) -> PyResultOrNot<V> {
     return PyResultOrNot.error(.overflowError(msg))
+  }
+
+  internal static func keyError(hash: PyHash, key: PyObject) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.keyError(hash: hash, key: key))
   }
 
   public func map<A>(_ f: (V) -> A) -> PyResultOrNot<A> {

@@ -107,7 +107,11 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    return .value(HashHelper.hash(self.value))
+    return .value(self.hashRaw())
+  }
+
+  internal func hashRaw() -> PyHash {
+    return HashHelper.hash(self.value)
   }
 
   // MARK: - String

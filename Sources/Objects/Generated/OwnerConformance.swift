@@ -91,6 +91,27 @@ extension PyComplex:
   __rdivmod__Owner
 { }
 
+// MARK: - Dict
+
+extension PyDict:
+  __class__GetterOwner,
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __getitem__Owner,
+  __setitem__Owner,
+  __delitem__Owner,
+  __contains__Owner,
+  clearOwner
+{ }
+
 // MARK: - Ellipsis
 
 extension PyEllipsis:

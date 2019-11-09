@@ -6,14 +6,18 @@ extension Builtins {
   ///
   /// Py_hash_t PyObject_Hash(PyObject *v)
   /// slot_tp_hash(PyObject *self)
-  public func hash(_ object: PyObject) -> PyResultOrNot<PyHash> {
+  public func hash(_ object: PyObject) -> PyResult<PyHash> {
     if let hashOwner = object as? __hash__Owner {
-      return hashOwner.hash()
+      switch hashOwner.hash() {
+      case .value(let hash): return .value(hash)
+      case .notImplemented: return .error(self.hashNotImplemented(object))
+      case .error(let e): return .error(e)
+      }
     }
 
     let callResult = self.callMethod(on: object, selector: "__hash__")
     guard case let CallResult.value(result) = callResult else {
-      return self.hashNotImplemented(object)
+      return .error(self.hashNotImplemented(object))
     }
 
     guard let pyint = result as? PyInt else {
@@ -28,11 +32,11 @@ extension Builtins {
     // `result` was not within the range of a Py_hash_t, so we're free to
     // use any sufficiently bit-mixing transformation;
     // long.__hash__ will do nicely.
-    return pyint.hash()
+    return .value(pyint.hashRaw())
   }
 
   /// Py_hash_t PyObject_HashNotImplemented(PyObject *v)
-  public func hashNotImplemented(_ object: PyObject) -> PyResultOrNot<PyHash> {
+  public func hashNotImplemented(_ object: PyObject) -> PyErrorEnum {
     return .typeError("unhashable type: '\(object.typeName)'")
   }
 }

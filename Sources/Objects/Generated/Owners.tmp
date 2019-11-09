@@ -87,6 +87,24 @@ PyComplex|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResultOrNot<PyObje
 PyComplex|PyObject|func|__divmod__|divMod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyComplex|PyObject|func|__rdivmod__|rdivMod(_ other: PyObject) -> PyResultOrNot<PyObject>
 
+PyDict|PyObject|get|__class__|getClass() -> PyType
+
+PyDict|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDict|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDict|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDict|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDict|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDict|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDict|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyDict|PyObject|func|__repr__|repr() -> PyResult<String>
+PyDict|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyDict|PyObject|func|__len__|getLength() -> BigInt
+PyDict|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
+PyDict|PyObject|func|__setitem__|setItem(at index: PyObject, to value: PyObject) -> PyResult<PyNone>
+PyDict|PyObject|func|__delitem__|delItem(at index: PyObject) -> PyResult<PyNone>
+PyDict|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PyDict|PyObject|func|clear|clear() -> PyResult<PyNone>
+
 PyEllipsis|PyObject|get|__class__|getClass() -> PyType
 
 PyEllipsis|PyObject|func|__repr__|repr() -> PyResult<String>

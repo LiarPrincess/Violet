@@ -15,6 +15,7 @@ public final class BuiltinTypes {
   public let builtinFunction: PyType
   public let code: PyType
   public let complex: PyType
+  public let dict: PyType
   public let ellipsis: PyType
   public let float: PyType
   public let function: PyType
@@ -46,6 +47,7 @@ public final class BuiltinTypes {
     self.builtinFunction = TypeFactory.builtinFunction(context, type: self.type, base: self.object)
     self.code = TypeFactory.code(context, type: self.type, base: self.object)
     self.complex = TypeFactory.complex(context, type: self.type, base: self.object)
+    self.dict = TypeFactory.dict(context, type: self.type, base: self.object)
     self.ellipsis = TypeFactory.ellipsis(context, type: self.type, base: self.object)
     self.float = TypeFactory.float(context, type: self.type, base: self.object)
     self.function = TypeFactory.function(context, type: self.type, base: self.object)

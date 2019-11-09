@@ -37,9 +37,9 @@ public protocol VioletHashable {
 public struct OrderedDictionary<Key: VioletHashable, Value> {
 
   public struct Entry {
-    fileprivate let hash: Int
-    fileprivate let key:  Key
-    fileprivate let value: Value
+    public let hash: Int
+    public let key:  Key
+    public let value: Value
 
     fileprivate init(key: Key, value: Value) {
       self.hash = key.hash
@@ -48,11 +48,11 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
     }
   }
 
-  private enum EntryOrDeleted {
+  fileprivate enum EntryOrDeleted {
     /// Proper value in dictionary.
     case entry(Entry)
     /// There was an index here, but it was deleted.
-    /// We can't this index because we need to remember insertion order.
+    /// We can't reuse this index because we need to remember insertion order.
     case deleted
   }
 
@@ -63,12 +63,17 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
   /// If we want to optimize memory footprint further then we could use
   /// 2 different kind of indices: Int8 and Int with 'enum trick'
   /// from Foundation.Data.
-  private struct Index: Equatable {
+  fileprivate struct EntryIndex: Equatable {
 
     /// Slot is free to use.
-    fileprivate static var notAssigned: Index { return Index(unchecked: -1) }
+    fileprivate static var notAssigned: EntryIndex {
+      return EntryIndex(unchecked: -1)
+    }
+
     /// There was an index here, but it was deleted.
-    fileprivate static var deleted: Index { return Index(unchecked: -2) }
+    fileprivate static var deleted: EntryIndex {
+      return EntryIndex(unchecked: -2)
+    }
 
     private let value: Int
 
@@ -78,7 +83,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
       return self.value
     }
 
-    /// Does the slot contains an entry?
+    /// Does the slot contain an entry?
     fileprivate var isArrayIndex: Bool {
       return self.value >= 0
     }
@@ -97,24 +102,24 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
   /// Data held in dictinary.
   /// `nil` means that there was an entry here but it was deleted.
-  private var _entries: [EntryOrDeleted]
+  fileprivate var entries: [EntryOrDeleted]
   /// Actual hash table of `self.size` entries. Holds indices to `self.entries`.
   /// Indices must be: `0 <= indice < usableFraction(self.size)`.
-  private var _indices: [Index]
+  fileprivate var indices: [EntryIndex]
 
   /// Number of used entries in `self.indices`.
   /// Basically number of valid entry indices in `self.indices`.
-  private var used: Int
+  fileprivate var used: Int
   /// Number of usable entries in `self.indices`.
   /// Basically: `usableFraction(self.size) `- number of valid entry indices
   /// in `self.indices`.
-  private var usable: Int
+  fileprivate var usable: Int
   /// Size of the hash table. It must be a power of 2.
   ///
   ///- Warning:
   /// This is not a number of items in dictionary! Use `self.used` for that.
-  private var size: Int {
-    return self._indices.count
+  fileprivate var size: Int {
+    return self.indices.count
   }
 
   /// The number of keys in the dictionary.
@@ -143,17 +148,17 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
   /// static PyDictKeysObject *new_keys_object(Py_ssize_t size)
   public init(size: Int) {
-    let size = max(nextPowerOf2(size), minsize)
+    let size = Swift.max(nextPowerOf2(size), minsize)
     assert(isPowerOf2(size))
 
-    self._entries = [EntryOrDeleted]()
-    self._indices = [Index](repeating: .notAssigned, count: size)
+    self.entries = [EntryOrDeleted]()
+    self.indices = [EntryIndex](repeating: .notAssigned, count: size)
     self.used = 0
     self.usable = usableFraction(size: size)
 
     // Avoid `self.entries` resize.
     // We may still resize when we resize the whole dictionary.
-    self._entries.reserveCapacity(self.usable)
+    self.entries.reserveCapacity(self.usable)
 
     self.checkConsistency()
   }
@@ -200,7 +205,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
     switch self.lookup(key: key) {
     case let .entry(index: _, entryIndex: entryIndex, entry: _):
       // Update existing entry.
-      self._entries[entryIndex] = .entry(Entry(key: key, value: value))
+      self.entries[entryIndex] = .entry(Entry(key: key, value: value))
 
     case .notFound:
       // Try to insert into new slot.
@@ -210,9 +215,9 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
       let hashPos = self.findEmptySlot(hash: key.hash)
 
-      let endIndex = self._entries.endIndex
-      self._entries.append(.entry(Entry(key: key, value: value)))
-      self._indices[hashPos] = Index(endIndex)
+      let endIndex = self.entries.endIndex
+      self.entries.append(.entry(Entry(key: key, value: value)))
+      self.indices[hashPos] = EntryIndex(endIndex)
 
       self.used += 1
       self.usable -= 1
@@ -255,8 +260,8 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
     case let .entry(index: index, entryIndex: entryIndex, entry: entry):
       self.used -= 1
-      self._indices[index] = .deleted
-      self._entries[entryIndex] = .deleted
+      self.indices[index] = .deleted
+      self.entries[entryIndex] = .deleted
 
       self.checkConsistency()
       return entry.value
@@ -293,7 +298,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
         assert(entryIndex.isArrayIndex)
         let arrayIndex = entryIndex.arrayIndex
 
-        guard case let .entry(old) = self._entries[arrayIndex] else {
+        guard case let .entry(old) = self.entries[arrayIndex] else {
           assert(false, "Index was deleted, but entry was not.")
           break
         }
@@ -315,8 +320,8 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
   ///
   /// static inline Py_ssize_t
   /// dk_get_index(PyDictKeysObject *keys, Py_ssize_t i)
-  private func getIndexValue(_ i: Int) -> Index {
-    return self._indices[i]
+  private func getIndexValue(_ i: Int) -> EntryIndex {
+    return self.indices[i]
   }
 
   // MARK: - Clear
@@ -330,7 +335,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
   /// static int
   /// insertion_resize(PyDictObject *mp)
   private mutating func insertionResize() {
-    let newSize = self._entries.count * growthRate
+    let newSize = self.entries.count * growthRate
     self.dictResize(minSize: newSize)
   }
 
@@ -351,28 +356,28 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
     // Take not-deleted entries entries
     var newEntries = [Entry]()
-    for case let EntryOrDeleted.entry(entry) in self._entries {
+    for case let EntryOrDeleted.entry(entry) in self.entries {
       newEntries.append(entry)
     }
 
     // Insert entries to newIndices
-    var newIndices = [Index](repeating: .notAssigned, count: newSize)
+    var newIndices = [EntryIndex](repeating: .notAssigned, count: newSize)
 
     let mask = getIndexMask(size: newSize)
     for (n, entry) in newEntries.enumerated() {
       var perturb = entry.hash
       var index = entry.hash & mask
-      while newIndices[index] != Index.notAssigned {
+      while newIndices[index] != EntryIndex.notAssigned {
         perturb >>= perturbShift
         index = (5 * index + perturb + 1) & mask
       }
 
-      newIndices[index] = Index(n)
+      newIndices[index] = EntryIndex(n)
     }
 
     // Update self
-    self._entries = newEntries.map { EntryOrDeleted.entry($0) }
-    self._indices = newIndices
+    self.entries = newEntries.map { EntryOrDeleted.entry($0) }
+    self.indices = newIndices
     self.used = newEntries.count
     self.usable = usableFraction(size: newSize) - newEntries.count
 
@@ -390,22 +395,51 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
     assert(0 <= self.used && self.used <= usableBySize)
     assert(0 <= self.usable && self.usable <= usableBySize)
-    assert(0 <= self._entries.count && self._entries.count <= usableBySize)
+    assert(0 <= self.entries.count && self.entries.count <= usableBySize)
     assert(self.used + self.usable <= usableBySize)
 
     var indexEntryCount = 0
-    for entryIndex in self._indices where entryIndex.isArrayIndex {
-      assert(entryIndex.arrayIndex <= self._entries.count)
+    for entryIndex in self.indices where entryIndex.isArrayIndex {
+      assert(entryIndex.arrayIndex <= self.entries.count)
       indexEntryCount += 1
     }
 
     var entryCount = 0
-    for case EntryOrDeleted.entry in self._entries {
+    for case EntryOrDeleted.entry in self.entries {
       entryCount += 1
     }
 
     assert(indexEntryCount == entryCount)
     #endif
+  }
+}
+
+// MARK: - Iterator
+
+/// Iterator for `OrderedDictionary` that will skip deleted entries.
+public struct OrderedDictionaryIterator<Key: VioletHashable, Value>: IteratorProtocol {
+
+  public typealias OrderedDictionaryType = OrderedDictionary<Key, Value>
+  public typealias Element = OrderedDictionaryType.Entry
+
+  private var inner: IndexingIterator<[OrderedDictionaryType.EntryOrDeleted]>
+
+  public init(_ dictionary: OrderedDictionaryType) {
+    self.inner = dictionary.entries.makeIterator()
+  }
+
+  public mutating func next() -> Self.Element? {
+    while let entryOrDeleted = self.inner.next() {
+      switch entryOrDeleted {
+      case let .entry(entry):
+        return entry
+      case .deleted:
+        break // Skip deleted
+      }
+    }
+
+    // We reached end, no more entries to return
+    return nil
   }
 }
 
@@ -423,20 +457,23 @@ extension OrderedDictionary: ExpressibleByDictionaryLiteral {
 extension OrderedDictionary: CustomStringConvertible {
   public var description: String {
     var result = ""
-    for entry in self._entries {
-      switch entry {
-      case .entry(let e):
-        result += "\(e.key): \(e.value), "
-      case .deleted:
-        break
-      }
+
+    for entry in self {
+      result += "\(entry.key): \(entry.value), "
     }
 
     // remove trailing ', '
     _ = result.popLast()
     _ = result.popLast()
-
     return "[" + result + "]"
+  }
+}
+
+extension OrderedDictionary: Sequence {
+  public typealias Element = Array<Entry>.Element
+
+  public func makeIterator() -> OrderedDictionaryIterator<Key, Value> {
+    return OrderedDictionaryIterator(self)
   }
 }
 

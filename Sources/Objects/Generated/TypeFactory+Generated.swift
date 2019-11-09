@@ -172,6 +172,32 @@ extension TypeFactory {
     return result
   }
 
+  // MARK: - Dict
+
+  internal static func dict(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "dict", doc: PyDict.doc, type: type, base: base)
+
+    result._attributes["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyDict.getClass, castSelf: selfAsPyDict)
+
+
+    result._attributes["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, func: PyDict.isEqual(_:), castSelf: selfAsPyDict)
+    result._attributes["__ne__"] = wrapMethod(context, name: "__ne__", doc: nil, func: PyDict.isNotEqual(_:), castSelf: selfAsPyDict)
+    result._attributes["__lt__"] = wrapMethod(context, name: "__lt__", doc: nil, func: PyDict.isLess(_:), castSelf: selfAsPyDict)
+    result._attributes["__le__"] = wrapMethod(context, name: "__le__", doc: nil, func: PyDict.isLessEqual(_:), castSelf: selfAsPyDict)
+    result._attributes["__gt__"] = wrapMethod(context, name: "__gt__", doc: nil, func: PyDict.isGreater(_:), castSelf: selfAsPyDict)
+    result._attributes["__ge__"] = wrapMethod(context, name: "__ge__", doc: nil, func: PyDict.isGreaterEqual(_:), castSelf: selfAsPyDict)
+    result._attributes["__hash__"] = wrapMethod(context, name: "__hash__", doc: nil, func: PyDict.hash, castSelf: selfAsPyDict)
+    result._attributes["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, func: PyDict.repr, castSelf: selfAsPyDict)
+    result._attributes["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, func: PyDict.getAttribute(name:), castSelf: selfAsPyDict)
+    result._attributes["__len__"] = wrapMethod(context, name: "__len__", doc: nil, func: PyDict.getLength, castSelf: selfAsPyDict)
+    result._attributes["__getitem__"] = wrapMethod(context, name: "__getitem__", doc: nil, func: PyDict.getItem(at:), castSelf: selfAsPyDict)
+    result._attributes["__setitem__"] = wrapMethod(context, name: "__setitem__", doc: nil, func: PyDict.setItem(at:to:), castSelf: selfAsPyDict)
+    result._attributes["__delitem__"] = wrapMethod(context, name: "__delitem__", doc: nil, func: PyDict.delItem(at:), castSelf: selfAsPyDict)
+    result._attributes["__contains__"] = wrapMethod(context, name: "__contains__", doc: nil, func: PyDict.contains(_:), castSelf: selfAsPyDict)
+    result._attributes["clear"] = wrapMethod(context, name: "clear", doc: nil, func: PyDict.clear, castSelf: selfAsPyDict)
+    return result
+  }
+
   // MARK: - Ellipsis
 
   internal static func ellipsis(_ context: PyContext, type: PyType, base: PyType) -> PyType {
