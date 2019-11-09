@@ -179,7 +179,7 @@ class OrderedDictionary: XCTestCase {
     XCTAssertEqual(dict.count, initialSlots)
     XCTAssertEqual(dict.capacity, 8)
 
-    // 1 resize will give us capacity 16 which means 10 slots
+    // 1st resize will give us capacity 16 which means 10 slots
     let firstResize = 10
     for (year, title) in self.movieData[initialSlots..<firstResize] {
       dict.insert(key: year, value: title)
@@ -192,7 +192,7 @@ class OrderedDictionary: XCTestCase {
     XCTAssertEqual(dict.count, firstResize)
     XCTAssertEqual(dict.capacity, 16)
 
-    // 2 resize will give us capacity 32 which so we can store all of our movies
+    // 2nd resize will give us capacity 32, so now we can store all of our movies
     for (year, title) in self.movieData[firstResize...] {
       dict.insert(key: year, value: title)
     }
@@ -239,6 +239,10 @@ class OrderedDictionary: XCTestCase {
 
     _ = dict.remove(key: 2013)
     XCTAssertEqual(dict.description, "[2010: Tangled, 2019: Frozen II]")
+
+    _ = dict.remove(key: 2010)
+    _ = dict.remove(key: 2019)
+    XCTAssertEqual(dict.description, "[]")
   }
 
   // MARK: - Helpers

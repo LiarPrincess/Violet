@@ -34,10 +34,6 @@ public protocol VioletHashable {
 
 /// A generic collection to store key-value pairs in the order they were
 /// inserted in.
-///
-/// - Warning:
-/// Memory footprint of this sctructure is sub-optimal, but it's internal
-/// implementation type-safe because of that.
 public struct OrderedDictionary<Key: VioletHashable, Value> {
 
   public struct Entry {
@@ -60,14 +56,41 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
     case deleted
   }
 
-  private enum Index: Equatable {
+  /// Custom index with special reserved 'notAssigned' and 'deleted' values
+  ///
+  /// We could use enum but that would cost us 2x more memory.
+  /// (It would be also more type-safe, but nobody cares about that...)
+  /// If we want to optimize memory footprint further then we could use
+  /// 2 different kind of indices: Int8 and Int with 'enum trick'
+  /// from Foundation.Data.
+  private struct Index: Equatable {
+
     /// Slot is free to use.
-    case notAssigned
+    fileprivate static var notAssigned: Index { return Index(unchecked: -1) }
     /// There was an index here, but it was deleted.
-    /// We can't reuse this slot because we need to remember insertion order.
-    case deleted
-    /// Slot contains an entry. Use `self.entries[entryIndex]` to get its value.
-    case entryIndex(Int)
+    fileprivate static var deleted: Index { return Index(unchecked: -2) }
+
+    private let value: Int
+
+    /// Slot contains an entry. Use `self.entries[arrayIndex]` to get its value.
+    fileprivate var arrayIndex: Int {
+      assert(self.isArrayIndex, "Can't index array with 'notAssigned' or 'deleted'")
+      return self.value
+    }
+
+    /// Does the slot contains an entry?
+    fileprivate var isArrayIndex: Bool {
+      return self.value >= 0
+    }
+
+    fileprivate init(_ value: Int) {
+      assert(value >= 0)
+      self.value = value
+    }
+
+    private init(unchecked value: Int) {
+      self.value = value
+    }
   }
 
   // MARK: - Properties
@@ -189,7 +212,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
       let endIndex = self._entries.endIndex
       self._entries.append(.entry(Entry(key: key, value: value)))
-      self._indices[hashPos] = Index.entryIndex(endIndex)
+      self._indices[hashPos] = Index(endIndex)
 
       self.used += 1
       self.usable -= 1
@@ -208,8 +231,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
     var ix = self.getIndexValue(i)
 
     var pertub = hash
-    while case Index.entryIndex = ix {
-      // Try next entry
+    while ix.isArrayIndex {
       pertub >>= perturbShift
       i = (5 * i + pertub + 1) & mask
       ix = self.getIndexValue(i)
@@ -267,14 +289,17 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
       case .deleted:
         break
 
-      case let .entryIndex(entryIndex):
-        guard case let .entry(old) = self._entries[entryIndex] else {
+      case let entryIndex:
+        assert(entryIndex.isArrayIndex)
+        let arrayIndex = entryIndex.arrayIndex
+
+        guard case let .entry(old) = self._entries[arrayIndex] else {
           assert(false, "Index was deleted, but entry was not.")
           break
         }
 
         if hash == old.hash && key.isEqual(to: old.key) {
-          return .entry(index: index, entryIndex: entryIndex, entry: old)
+          return .entry(index: index, entryIndex: arrayIndex, entry: old)
         }
       }
 
@@ -342,7 +367,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
         index = (5 * index + perturb + 1) & mask
       }
 
-      newIndices[index] = .entryIndex(n)
+      newIndices[index] = Index(n)
     }
 
     // Update self
@@ -369,8 +394,8 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
     assert(self.used + self.usable <= usableBySize)
 
     var indexEntryCount = 0
-    for case let Index.entryIndex(entryIndex) in self._indices {
-      assert(entryIndex <= self._entries.count)
+    for entryIndex in self._indices where entryIndex.isArrayIndex {
+      assert(entryIndex.arrayIndex <= self._entries.count)
       indexEntryCount += 1
     }
 
