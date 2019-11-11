@@ -6,16 +6,15 @@ import Core
 
 // swiftlint:disable file_length
 
-// sourcery: pytype = set
-/// This subtype of PyObject is used to hold the internal data for both set
-/// and frozenset objects.
-internal final class PySet: PyObject {
+// sourcery: pytype = frozenset
+/// This is an instance of PyTypeObject representing the Python frozenset type.
+internal final class PyFrozenSet: PyObject {
 
   internal static let doc: String = """
-    set() -> new empty set object
-    set(iterable) -> new set object
+    frozenset() -> empty frozenset object
+    frozenset(iterable) -> frozenset object
 
-    Build an unordered collection of unique elements.
+    Build an immutable unordered collection of unique elements.
     """
 
   internal var elements: PySetData
@@ -24,12 +23,12 @@ internal final class PySet: PyObject {
 
   internal init(_ context: PyContext) {
     self.elements = PySetData()
-    super.init(type: context.builtins.types.set)
+    super.init(type: context.builtins.types.frozenset)
   }
 
   internal init(_ context: PyContext, elements: PySetData) {
     self.elements = elements
-    super.init(type: context.builtins.types.set)
+    super.init(type: context.builtins.types.frozenset)
   }
 
   // MARK: - Equatable
@@ -92,7 +91,19 @@ internal final class PySet: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    return .error(self.builtins.hashNotImplemented(self))
+    // This is hash function from 'tuple', which means that 'frozenset'
+    // and 'tuple' with the same elements (in the same order) will have
+    // the same hash.
+    var x: PyHash = 0x345678
+    var mult = HashHelper._PyHASH_MULTIPLIER
+
+    for entry in self.elements {
+      let y = self.context.hash(value: entry.key.object)
+      x = (x ^ y) * mult
+      mult += 82_520 + PyHash(2 * self.elements.count)
+    }
+
+    return .value(x + 97_531)
   }
 
   // MARK: - String
@@ -320,72 +331,6 @@ internal final class PySet: PyObject {
     return .value(SetHelper.isDisjoint(left: self, right: otherSet))
   }
 
-  // MARK: - Add
-
-  internal static let addDoc = """
-    Add an element to a set.
-
-    This has no effect if the element is already present.
-    """
-
-  // sourcery: pymethod = add, doc = addDoc
-  internal func add(_ value: PyObject) -> PyResult<PyNone> {
-    switch SetHelper.add(self, value: value) {
-    case .none:
-      return .value(self.builtins.none)
-    case .some(let e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Remove
-
-  internal static let removeDoc = """
-    Remove an element from a set; it must be a member.
-
-    If the element is not a member, raise a KeyError.
-    """
-
-  // sourcery: pymethod = remove, doc = removeDoc
-  internal func remove(_ value: PyObject) -> PyResult<PyNone> {
-    switch SetHelper.remove(self, value: value) {
-    case .none:
-      return .value(self.builtins.none)
-    case .some(let e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Discard
-
-  internal static let discardDoc = """
-    Remove an element from a set if it is a member.
-
-    If the element is not a member, do nothing.
-    """
-
-  // sourcery: pymethod = discard, doc = discardDoc
-  internal func discard(_ value: PyObject) -> PyResult<PyNone> {
-    switch SetHelper.discard(self, value: value) {
-    case .none:
-      return .value(self.builtins.none)
-    case .some(let e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Clear
-
-  internal static let clearDoc = """
-    Remove all elements from this set.
-    """
-
-  // sourcery: pymethod = clear, doc = clearDoc
-  internal func clear() -> PyResult<PyNone> {
-    self.elements.clear()
-    return .value(self.builtins.none)
-  }
-
   // MARK: - Copy
 
   internal static let copyDoc = "Return a shallow copy of a set."
@@ -395,35 +340,9 @@ internal final class PySet: PyObject {
     return self.createSet(elements: self.elements)
   }
 
-  // MARK: - Pop
-
-  internal static let popDoc = """
-    Remove and return an arbitrary set element.
-    Raises KeyError if the set is empty.
-    """
-
-  // sourcery: pymethod = pop, doc = popDoc
-  internal func pop() -> PyResult<PyObject> {
-    guard let last = self.elements.last else {
-      return .keyError("pop from an empty set")
-    }
-
-    _ = self.elements.remove(key: last.key)
-    return .value(last.key.object)
-  }
-
   // MARK: - Helpers
 
-  private func createSet(elements: PySetData) -> PySet {
-    return PySet(self.context, elements: elements)
-  }
-
-  private func createKey(from object: PyObject) -> PyResult<PySetElement> {
-    switch self.builtins.hash(object) {
-    case let .value(hash):
-      return .value(PySetElement(hash: hash, object: object))
-    case let .error(e):
-      return .error(e)
-    }
+  private func createSet(elements: PySetData) -> PyFrozenSet {
+    return PyFrozenSet(self.context, elements: elements)
   }
 }

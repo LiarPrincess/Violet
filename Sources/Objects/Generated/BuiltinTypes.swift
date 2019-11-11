@@ -18,6 +18,7 @@ public final class BuiltinTypes {
   public let dict: PyType
   public let ellipsis: PyType
   public let float: PyType
+  public let frozenset: PyType
   public let function: PyType
   public let int: PyType
   public let list: PyType
@@ -51,6 +52,7 @@ public final class BuiltinTypes {
     self.dict = TypeFactory.dict(context, type: self.type, base: self.object)
     self.ellipsis = TypeFactory.ellipsis(context, type: self.type, base: self.object)
     self.float = TypeFactory.float(context, type: self.type, base: self.object)
+    self.frozenset = TypeFactory.frozenset(context, type: self.type, base: self.object)
     self.function = TypeFactory.function(context, type: self.type, base: self.object)
     self.int = TypeFactory.int(context, type: self.type, base: self.object)
     self.list = TypeFactory.list(context, type: self.type, base: self.object)

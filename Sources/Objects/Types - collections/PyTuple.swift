@@ -95,6 +95,7 @@ public final class PyTuple: PyObject {
   internal func hash() -> PyResultOrNot<PyHash> {
     var x: PyHash = 0x345678
     var mult = HashHelper._PyHASH_MULTIPLIER
+
     for e in self.elements {
       let y = self.context.hash(value: e)
       x = (x ^ y) * mult

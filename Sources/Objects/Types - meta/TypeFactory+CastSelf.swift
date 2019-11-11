@@ -38,6 +38,10 @@ extension TypeFactory {
     return value as! PyFloat
   }
 
+  internal static func selfAsPyFrozenSet(_ value: PyObject) -> PyFrozenSet {
+    return value as! PyFrozenSet
+  }
+
   internal static func selfAsPyFunction(_ value: PyObject) -> PyFunction {
     return value as! PyFunction
   }

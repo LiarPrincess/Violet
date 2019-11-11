@@ -166,6 +166,39 @@ extension PyFloat:
   __round__Owner
 { }
 
+// MARK: - FrozenSet
+
+extension PyFrozenSet:
+  __class__GetterOwner,
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __and__Owner,
+  __rand__Owner,
+  __or__Owner,
+  __ror__Owner,
+  __xor__Owner,
+  __rxor__Owner,
+  __sub__Owner,
+  __rsub__Owner,
+  issubsetOwner,
+  issupersetOwner,
+  intersectionOwner,
+  unionOwner,
+  differenceOwner,
+  symmetric_differenceOwner,
+  isdisjointOwner,
+  copyOwner
+{ }
+
 // MARK: - Function
 
 extension PyFunction:
@@ -378,14 +411,14 @@ extension PySet:
   __getattribute__Owner,
   __len__Owner,
   __contains__Owner,
-  __sub__Owner,
-  __rsub__Owner,
   __and__Owner,
   __rand__Owner,
   __or__Owner,
   __ror__Owner,
   __xor__Owner,
   __rxor__Owner,
+  __sub__Owner,
+  __rsub__Owner,
   issubsetOwner,
   issupersetOwner,
   intersectionOwner,

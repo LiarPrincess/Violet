@@ -263,6 +263,44 @@ extension TypeFactory {
     return result
   }
 
+  // MARK: - FrozenSet
+
+  internal static func frozenset(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "frozenset", doc: PyFrozenSet.doc, type: type, base: base)
+
+    result._attributes["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyFrozenSet.getClass, castSelf: selfAsPyFrozenSet)
+
+
+    result._attributes["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, func: PyFrozenSet.isEqual(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__ne__"] = wrapMethod(context, name: "__ne__", doc: nil, func: PyFrozenSet.isNotEqual(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__lt__"] = wrapMethod(context, name: "__lt__", doc: nil, func: PyFrozenSet.isLess(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__le__"] = wrapMethod(context, name: "__le__", doc: nil, func: PyFrozenSet.isLessEqual(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__gt__"] = wrapMethod(context, name: "__gt__", doc: nil, func: PyFrozenSet.isGreater(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__ge__"] = wrapMethod(context, name: "__ge__", doc: nil, func: PyFrozenSet.isGreaterEqual(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__hash__"] = wrapMethod(context, name: "__hash__", doc: nil, func: PyFrozenSet.hash, castSelf: selfAsPyFrozenSet)
+    result._attributes["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, func: PyFrozenSet.repr, castSelf: selfAsPyFrozenSet)
+    result._attributes["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, func: PyFrozenSet.getAttribute(name:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__len__"] = wrapMethod(context, name: "__len__", doc: nil, func: PyFrozenSet.getLength, castSelf: selfAsPyFrozenSet)
+    result._attributes["__contains__"] = wrapMethod(context, name: "__contains__", doc: nil, func: PyFrozenSet.contains(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__and__"] = wrapMethod(context, name: "__and__", doc: nil, func: PyFrozenSet.and(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__rand__"] = wrapMethod(context, name: "__rand__", doc: nil, func: PyFrozenSet.rand(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__or__"] = wrapMethod(context, name: "__or__", doc: nil, func: PyFrozenSet.or(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__ror__"] = wrapMethod(context, name: "__ror__", doc: nil, func: PyFrozenSet.ror(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__xor__"] = wrapMethod(context, name: "__xor__", doc: nil, func: PyFrozenSet.xor(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__rxor__"] = wrapMethod(context, name: "__rxor__", doc: nil, func: PyFrozenSet.rxor(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__sub__"] = wrapMethod(context, name: "__sub__", doc: nil, func: PyFrozenSet.sub(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["__rsub__"] = wrapMethod(context, name: "__rsub__", doc: nil, func: PyFrozenSet.rsub(_:), castSelf: selfAsPyFrozenSet)
+    result._attributes["issubset"] = wrapMethod(context, name: "issubset", doc: nil, func: PyFrozenSet.isSubset(of:), castSelf: selfAsPyFrozenSet)
+    result._attributes["issuperset"] = wrapMethod(context, name: "issuperset", doc: nil, func: PyFrozenSet.isSuperset(of:), castSelf: selfAsPyFrozenSet)
+    result._attributes["intersection"] = wrapMethod(context, name: "intersection", doc: nil, func: PyFrozenSet.intersection(with:), castSelf: selfAsPyFrozenSet)
+    result._attributes["union"] = wrapMethod(context, name: "union", doc: nil, func: PyFrozenSet.union(with:), castSelf: selfAsPyFrozenSet)
+    result._attributes["difference"] = wrapMethod(context, name: "difference", doc: nil, func: PyFrozenSet.difference(with:), castSelf: selfAsPyFrozenSet)
+    result._attributes["symmetric_difference"] = wrapMethod(context, name: "symmetric_difference", doc: nil, func: PyFrozenSet.symmetricDifference(with:), castSelf: selfAsPyFrozenSet)
+    result._attributes["isdisjoint"] = wrapMethod(context, name: "isdisjoint", doc: nil, func: PyFrozenSet.isDisjoint(with:), castSelf: selfAsPyFrozenSet)
+    result._attributes["copy"] = wrapMethod(context, name: "copy", doc: nil, func: PyFrozenSet.copy, castSelf: selfAsPyFrozenSet)
+    return result
+  }
+
   // MARK: - Function
 
   internal static func function(_ context: PyContext, type: PyType, base: PyType) -> PyType {
@@ -527,14 +565,14 @@ extension TypeFactory {
     result._attributes["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, func: PySet.getAttribute(name:), castSelf: selfAsPySet)
     result._attributes["__len__"] = wrapMethod(context, name: "__len__", doc: nil, func: PySet.getLength, castSelf: selfAsPySet)
     result._attributes["__contains__"] = wrapMethod(context, name: "__contains__", doc: nil, func: PySet.contains(_:), castSelf: selfAsPySet)
-    result._attributes["__sub__"] = wrapMethod(context, name: "__sub__", doc: nil, func: PySet.sub(_:), castSelf: selfAsPySet)
-    result._attributes["__rsub__"] = wrapMethod(context, name: "__rsub__", doc: nil, func: PySet.rsub(_:), castSelf: selfAsPySet)
     result._attributes["__and__"] = wrapMethod(context, name: "__and__", doc: nil, func: PySet.and(_:), castSelf: selfAsPySet)
     result._attributes["__rand__"] = wrapMethod(context, name: "__rand__", doc: nil, func: PySet.rand(_:), castSelf: selfAsPySet)
     result._attributes["__or__"] = wrapMethod(context, name: "__or__", doc: nil, func: PySet.or(_:), castSelf: selfAsPySet)
     result._attributes["__ror__"] = wrapMethod(context, name: "__ror__", doc: nil, func: PySet.ror(_:), castSelf: selfAsPySet)
     result._attributes["__xor__"] = wrapMethod(context, name: "__xor__", doc: nil, func: PySet.xor(_:), castSelf: selfAsPySet)
     result._attributes["__rxor__"] = wrapMethod(context, name: "__rxor__", doc: nil, func: PySet.rxor(_:), castSelf: selfAsPySet)
+    result._attributes["__sub__"] = wrapMethod(context, name: "__sub__", doc: nil, func: PySet.sub(_:), castSelf: selfAsPySet)
+    result._attributes["__rsub__"] = wrapMethod(context, name: "__rsub__", doc: nil, func: PySet.rsub(_:), castSelf: selfAsPySet)
     result._attributes["issubset"] = wrapMethod(context, name: "issubset", doc: nil, func: PySet.isSubset(of:), castSelf: selfAsPySet)
     result._attributes["issuperset"] = wrapMethod(context, name: "issuperset", doc: nil, func: PySet.isSuperset(of:), castSelf: selfAsPySet)
     result._attributes["intersection"] = wrapMethod(context, name: "intersection", doc: nil, func: PySet.intersection(with:), castSelf: selfAsPySet)

@@ -97,7 +97,7 @@ protocol copyOwner { func copy() -> PyObject }
 protocol countOwner { func count(_ element: PyObject) -> PyResult<BigInt> }
 protocol countRangedOwner { func count(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol denominatorOwner { func denominator() -> PyInt }
-protocol differenceOwner { func difference(with other: PyObject) -> PyResult<PySet> }
+protocol differenceOwner { func difference(with other: PyObject) -> PyResult<PyObject> }
 protocol discardOwner { func discard(_ value: PyObject) -> PyResult<PyNone> }
 protocol endswithOwner { func endsWith(_ element: PyObject) -> PyResultOrNot<Bool> }
 protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResultOrNot<Bool> }
@@ -109,7 +109,7 @@ protocol getOwner { func get(_ index: PyObject, default: PyObject?) -> PyResult<
 protocol imagOwner { func asImag() -> PyObject }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
 protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
-protocol intersectionOwner { func intersection(with other: PyObject) -> PyResult<PySet> }
+protocol intersectionOwner { func intersection(with other: PyObject) -> PyResult<PyObject> }
 protocol isalnumOwner { func isAlphaNumeric() -> Bool }
 protocol isalphaOwner { func isAlpha() -> Bool }
 protocol isasciiOwner { func isAscii() -> Bool }
@@ -149,8 +149,8 @@ protocol startswithOwner { func startsWith(_ element: PyObject) -> PyResult<Bool
 protocol startswithRangedOwner { func startsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Bool> }
 protocol stripOwner { func strip(_ chars: PyObject?) -> PyResult<String> }
 protocol swapcaseOwner { func swapcase() -> String }
-protocol symmetric_differenceOwner { func symmetricDifference(with other: PyObject) -> PyResult<PySet> }
+protocol symmetric_differenceOwner { func symmetricDifference(with other: PyObject) -> PyResult<PyObject> }
 protocol titleOwner { func title() -> String }
-protocol unionOwner { func union(with other: PyObject) -> PyResult<PySet> }
+protocol unionOwner { func union(with other: PyObject) -> PyResult<PyObject> }
 protocol upperOwner { func upper() -> String }
 protocol zfillOwner { func zfill(width: PyObject) -> PyResult<String> }

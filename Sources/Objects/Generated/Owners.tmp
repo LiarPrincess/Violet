@@ -153,6 +153,36 @@ PyFloat|PyObject|func|__divmod__|divMod(_ other: PyObject) -> PyResultOrNot<PyOb
 PyFloat|PyObject|func|__rdivmod__|rdivMod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
 
+PyFrozenSet|PyObject|get|__class__|getClass() -> PyType
+
+PyFrozenSet|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFrozenSet|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFrozenSet|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFrozenSet|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFrozenSet|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFrozenSet|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyFrozenSet|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyFrozenSet|PyObject|func|__repr__|repr() -> PyResult<String>
+PyFrozenSet|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyFrozenSet|PyObject|func|__len__|getLength() -> BigInt
+PyFrozenSet|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PyFrozenSet|PyObject|func|__and__|and(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFrozenSet|PyObject|func|__rand__|rand(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFrozenSet|PyObject|func|__or__|or(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFrozenSet|PyObject|func|__ror__|ror(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFrozenSet|PyObject|func|__xor__|xor(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFrozenSet|PyObject|func|__rxor__|rxor(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFrozenSet|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFrozenSet|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFrozenSet|PyObject|func|issubset|isSubset(of other: PyObject) -> PyResult<Bool>
+PyFrozenSet|PyObject|func|issuperset|isSuperset(of other: PyObject) -> PyResult<Bool>
+PyFrozenSet|PyObject|func|intersection|intersection(with other: PyObject) -> PyResult<PyObject>
+PyFrozenSet|PyObject|func|union|union(with other: PyObject) -> PyResult<PyObject>
+PyFrozenSet|PyObject|func|difference|difference(with other: PyObject) -> PyResult<PyObject>
+PyFrozenSet|PyObject|func|symmetric_difference|symmetricDifference(with other: PyObject) -> PyResult<PyObject>
+PyFrozenSet|PyObject|func|isdisjoint|isDisjoint(with other: PyObject) -> PyResult<Bool>
+PyFrozenSet|PyObject|func|copy|copy() -> PyObject
+
 PyFunction|PyObject|get|__class__|getClass() -> PyType
 PyFunction|PyObject|get|__name__|getName() -> String
 PyFunction|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
@@ -333,20 +363,20 @@ PySet|PyObject|func|__repr__|repr() -> PyResult<String>
 PySet|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PySet|PyObject|func|__len__|getLength() -> BigInt
 PySet|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
-PySet|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResultOrNot<PyObject>
-PySet|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResultOrNot<PyObject>
 PySet|PyObject|func|__and__|and(_ other: PyObject) -> PyResultOrNot<PyObject>
 PySet|PyObject|func|__rand__|rand(_ other: PyObject) -> PyResultOrNot<PyObject>
 PySet|PyObject|func|__or__|or(_ other: PyObject) -> PyResultOrNot<PyObject>
 PySet|PyObject|func|__ror__|ror(_ other: PyObject) -> PyResultOrNot<PyObject>
 PySet|PyObject|func|__xor__|xor(_ other: PyObject) -> PyResultOrNot<PyObject>
 PySet|PyObject|func|__rxor__|rxor(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResultOrNot<PyObject>
 PySet|PyObject|func|issubset|isSubset(of other: PyObject) -> PyResult<Bool>
 PySet|PyObject|func|issuperset|isSuperset(of other: PyObject) -> PyResult<Bool>
-PySet|PyObject|func|intersection|intersection(with other: PyObject) -> PyResult<PySet>
-PySet|PyObject|func|union|union(with other: PyObject) -> PyResult<PySet>
-PySet|PyObject|func|difference|difference(with other: PyObject) -> PyResult<PySet>
-PySet|PyObject|func|symmetric_difference|symmetricDifference(with other: PyObject) -> PyResult<PySet>
+PySet|PyObject|func|intersection|intersection(with other: PyObject) -> PyResult<PyObject>
+PySet|PyObject|func|union|union(with other: PyObject) -> PyResult<PyObject>
+PySet|PyObject|func|difference|difference(with other: PyObject) -> PyResult<PyObject>
+PySet|PyObject|func|symmetric_difference|symmetricDifference(with other: PyObject) -> PyResult<PyObject>
 PySet|PyObject|func|isdisjoint|isDisjoint(with other: PyObject) -> PyResult<Bool>
 PySet|PyObject|func|add|add(_ value: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|remove|remove(_ value: PyObject) -> PyResult<PyNone>

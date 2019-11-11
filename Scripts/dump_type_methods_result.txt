@@ -73,6 +73,11 @@ float
     hex
     is_integer
 
+frozenset
+  Unimplemented:
+    __iter__
+    __sizeof__
+
 function
   Unimplemented:
     __annotations__
