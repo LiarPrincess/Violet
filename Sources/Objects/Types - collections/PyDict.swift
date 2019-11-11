@@ -219,8 +219,7 @@ internal final class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    let result = self.elements[key] != nil
-    return .value(result)
+    return .value(self.elements.contains(key: key))
   }
 
   internal static let clearDoc = """
@@ -330,6 +329,8 @@ internal final class PyDict: PyObject {
     guard let last = self.elements.last else {
       return .keyError("popitem(): dictionary is empty")
     }
+
+    _ = self.elements.remove(key: last.key)
 
     let key = last.key.object
     let value = last.value

@@ -129,6 +129,19 @@ range
     step
     stop
 
+set
+  Unimplemented:
+    __iand__
+    __ior__
+    __isub__
+    __iter__
+    __ixor__
+    __sizeof__
+    difference_update
+    intersection_update
+    symmetric_difference_update
+    update
+
 slice
   Unimplemented:
     __hash__ - <class 'NoneType'>

@@ -107,7 +107,6 @@ PyDict|PyObject|func|clear|clear() -> PyResult<PyNone>
 PyDict|PyObject|func|get|get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                           default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|copy|copy() -> PyObject
-PyDict|PyObject|func|pop|pop(_ index: PyObject,                    default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|popitem|popitem() -> PyResult<PyObject>
 
 PyEllipsis|PyObject|get|__class__|getClass() -> PyType
@@ -320,6 +319,40 @@ PyRange|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Boo
 PyRange|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
 PyRange|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
 PyRange|PyObject|func|index|index(of element: PyObject) -> PyResult<BigInt>
+
+PySet|PyObject|get|__class__|getClass() -> PyType
+
+PySet|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PySet|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PySet|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PySet|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PySet|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PySet|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PySet|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PySet|PyObject|func|__repr__|repr() -> PyResult<String>
+PySet|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PySet|PyObject|func|__len__|getLength() -> BigInt
+PySet|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PySet|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|__and__|and(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|__rand__|rand(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|__or__|or(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|__ror__|ror(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|__xor__|xor(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|__rxor__|rxor(_ other: PyObject) -> PyResultOrNot<PyObject>
+PySet|PyObject|func|issubset|isSubset(of other: PyObject) -> PyResult<Bool>
+PySet|PyObject|func|issuperset|isSuperset(of other: PyObject) -> PyResult<Bool>
+PySet|PyObject|func|intersection|intersection(with other: PyObject) -> PyResult<PySet>
+PySet|PyObject|func|union|union(with other: PyObject) -> PyResult<PySet>
+PySet|PyObject|func|difference|difference(with other: PyObject) -> PyResult<PySet>
+PySet|PyObject|func|symmetric_difference|symmetricDifference(with other: PyObject) -> PyResult<PySet>
+PySet|PyObject|func|isdisjoint|isDisjoint(with other: PyObject) -> PyResult<Bool>
+PySet|PyObject|func|add|add(_ value: PyObject) -> PyResult<PyNone>
+PySet|PyObject|func|remove|remove(_ value: PyObject) -> PyResult<PyNone>
+PySet|PyObject|func|discard|discard(_ value: PyObject) -> PyResult<PyNone>
+PySet|PyObject|func|clear|clear() -> PyResult<PyNone>
+PySet|PyObject|func|copy|copy() -> PyObject
 
 PySlice|PyObject|get|__class__|getClass() -> PyType
 

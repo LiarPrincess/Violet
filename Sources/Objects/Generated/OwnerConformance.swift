@@ -113,7 +113,6 @@ extension PyDict:
   getOwner,
   setdefaultOwner,
   copyOwner,
-  popOwner,
   popitemOwner
 { }
 
@@ -362,6 +361,43 @@ extension PyRange:
   __getitem__Owner,
   countOwner,
   indexOwner
+{ }
+
+// MARK: - Set
+
+extension PySet:
+  __class__GetterOwner,
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __sub__Owner,
+  __rsub__Owner,
+  __and__Owner,
+  __rand__Owner,
+  __or__Owner,
+  __ror__Owner,
+  __xor__Owner,
+  __rxor__Owner,
+  issubsetOwner,
+  issupersetOwner,
+  intersectionOwner,
+  unionOwner,
+  differenceOwner,
+  symmetric_differenceOwner,
+  isdisjointOwner,
+  addOwner,
+  removeOwner,
+  discardOwner,
+  clearOwner,
+  copyOwner
 { }
 
 // MARK: - Slice

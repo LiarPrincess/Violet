@@ -22,7 +22,10 @@
   {% endfor %}
 
   {% for method in type.methods|annotated:"pymethod" %}
+  {# 'pop' has different definitions in different types #}
+  {% if method.annotations.pymethod != "pop" %}
 {% call line type "func" method.annotations.pymethod method.name method.returnTypeName %}
+  {% endif %}
   {% endfor %}
 
 {% endmacro %}

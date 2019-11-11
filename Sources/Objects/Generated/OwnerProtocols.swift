@@ -86,6 +86,7 @@ protocol __traceback__GetterOwner { func getTraceback() -> PyObject }
 protocol __traceback__SetterOwner { func setTraceback(_ value: PyObject?) -> PyResult<()> }
 protocol __truediv__Owner { func trueDiv(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __xor__Owner { func xor(_ other: PyObject) -> PyResultOrNot<PyObject> }
+protocol addOwner { func add(_ value: PyObject) -> PyResult<PyNone> }
 protocol appendOwner { func append(_ element: PyObject) -> PyResult<PyNone> }
 protocol capitalizeOwner { func capitalize() -> String }
 protocol casefoldOwner { func casefold() -> String }
@@ -96,6 +97,8 @@ protocol copyOwner { func copy() -> PyObject }
 protocol countOwner { func count(_ element: PyObject) -> PyResult<BigInt> }
 protocol countRangedOwner { func count(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol denominatorOwner { func denominator() -> PyInt }
+protocol differenceOwner { func difference(with other: PyObject) -> PyResult<PySet> }
+protocol discardOwner { func discard(_ value: PyObject) -> PyResult<PyNone> }
 protocol endswithOwner { func endsWith(_ element: PyObject) -> PyResultOrNot<Bool> }
 protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResultOrNot<Bool> }
 protocol expandtabsOwner { func expandTabs(tabSize: PyObject?) -> PyResult<String> }
@@ -106,16 +109,20 @@ protocol getOwner { func get(_ index: PyObject, default: PyObject?) -> PyResult<
 protocol imagOwner { func asImag() -> PyObject }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
 protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
+protocol intersectionOwner { func intersection(with other: PyObject) -> PyResult<PySet> }
 protocol isalnumOwner { func isAlphaNumeric() -> Bool }
 protocol isalphaOwner { func isAlpha() -> Bool }
 protocol isasciiOwner { func isAscii() -> Bool }
 protocol isdecimalOwner { func isDecimal() -> Bool }
 protocol isdigitOwner { func isDigit() -> Bool }
+protocol isdisjointOwner { func isDisjoint(with other: PyObject) -> PyResult<Bool> }
 protocol isidentifierOwner { func isIdentifier() -> Bool }
 protocol islowerOwner { func isLower() -> Bool }
 protocol isnumericOwner { func isNumeric() -> Bool }
 protocol isprintableOwner { func isPrintable() -> Bool }
 protocol isspaceOwner { func isSpace() -> Bool }
+protocol issubsetOwner { func isSubset(of other: PyObject) -> PyResult<Bool> }
+protocol issupersetOwner { func isSuperset(of other: PyObject) -> PyResult<Bool> }
 protocol istitleOwner { func isTitle() -> Bool }
 protocol isupperOwner { func isUpper() -> Bool }
 protocol ljustOwner { func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String> }
@@ -123,9 +130,9 @@ protocol lowerOwner { func lower() -> String }
 protocol lstripOwner { func lstrip(_ chars: PyObject) -> PyResult<String> }
 protocol numeratorOwner { func numerator() -> PyInt }
 protocol partitionOwner { func partition(separator: PyObject) -> PyResult<PyTuple> }
-protocol popOwner { func pop(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
 protocol popitemOwner { func popitem() -> PyResult<PyObject> }
 protocol realOwner { func asReal() -> PyObject }
+protocol removeOwner { func remove(_ value: PyObject) -> PyResult<PyNone> }
 protocol replaceOwner { func replace(old: PyObject, new: PyObject, count: PyObject?) -> PyResult<String> }
 protocol rfindOwner { func rfind(_ element: PyObject) -> PyResult<Int> }
 protocol rfindRangedOwner { func rfind(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Int> }
@@ -142,6 +149,8 @@ protocol startswithOwner { func startsWith(_ element: PyObject) -> PyResult<Bool
 protocol startswithRangedOwner { func startsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Bool> }
 protocol stripOwner { func strip(_ chars: PyObject?) -> PyResult<String> }
 protocol swapcaseOwner { func swapcase() -> String }
+protocol symmetric_differenceOwner { func symmetricDifference(with other: PyObject) -> PyResult<PySet> }
 protocol titleOwner { func title() -> String }
+protocol unionOwner { func union(with other: PyObject) -> PyResult<PySet> }
 protocol upperOwner { func upper() -> String }
 protocol zfillOwner { func zfill(width: PyObject) -> PyResult<String> }

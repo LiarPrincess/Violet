@@ -4,7 +4,7 @@ internal enum NotEqualHelper {
 
     switch isEqual {
     case let .value(b): return .value(!b)
-    case let .error(msg): return .error(msg)
+    case let .error(e): return .error(e)
     case .notImplemented: return .notImplemented
     }
   }

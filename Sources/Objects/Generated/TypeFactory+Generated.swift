@@ -508,6 +508,49 @@ extension TypeFactory {
     return result
   }
 
+  // MARK: - Set
+
+  internal static func set(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "set", doc: PySet.doc, type: type, base: base)
+
+    result._attributes["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PySet.getClass, castSelf: selfAsPySet)
+
+
+    result._attributes["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, func: PySet.isEqual(_:), castSelf: selfAsPySet)
+    result._attributes["__ne__"] = wrapMethod(context, name: "__ne__", doc: nil, func: PySet.isNotEqual(_:), castSelf: selfAsPySet)
+    result._attributes["__lt__"] = wrapMethod(context, name: "__lt__", doc: nil, func: PySet.isLess(_:), castSelf: selfAsPySet)
+    result._attributes["__le__"] = wrapMethod(context, name: "__le__", doc: nil, func: PySet.isLessEqual(_:), castSelf: selfAsPySet)
+    result._attributes["__gt__"] = wrapMethod(context, name: "__gt__", doc: nil, func: PySet.isGreater(_:), castSelf: selfAsPySet)
+    result._attributes["__ge__"] = wrapMethod(context, name: "__ge__", doc: nil, func: PySet.isGreaterEqual(_:), castSelf: selfAsPySet)
+    result._attributes["__hash__"] = wrapMethod(context, name: "__hash__", doc: nil, func: PySet.hash, castSelf: selfAsPySet)
+    result._attributes["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, func: PySet.repr, castSelf: selfAsPySet)
+    result._attributes["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, func: PySet.getAttribute(name:), castSelf: selfAsPySet)
+    result._attributes["__len__"] = wrapMethod(context, name: "__len__", doc: nil, func: PySet.getLength, castSelf: selfAsPySet)
+    result._attributes["__contains__"] = wrapMethod(context, name: "__contains__", doc: nil, func: PySet.contains(_:), castSelf: selfAsPySet)
+    result._attributes["__sub__"] = wrapMethod(context, name: "__sub__", doc: nil, func: PySet.sub(_:), castSelf: selfAsPySet)
+    result._attributes["__rsub__"] = wrapMethod(context, name: "__rsub__", doc: nil, func: PySet.rsub(_:), castSelf: selfAsPySet)
+    result._attributes["__and__"] = wrapMethod(context, name: "__and__", doc: nil, func: PySet.and(_:), castSelf: selfAsPySet)
+    result._attributes["__rand__"] = wrapMethod(context, name: "__rand__", doc: nil, func: PySet.rand(_:), castSelf: selfAsPySet)
+    result._attributes["__or__"] = wrapMethod(context, name: "__or__", doc: nil, func: PySet.or(_:), castSelf: selfAsPySet)
+    result._attributes["__ror__"] = wrapMethod(context, name: "__ror__", doc: nil, func: PySet.ror(_:), castSelf: selfAsPySet)
+    result._attributes["__xor__"] = wrapMethod(context, name: "__xor__", doc: nil, func: PySet.xor(_:), castSelf: selfAsPySet)
+    result._attributes["__rxor__"] = wrapMethod(context, name: "__rxor__", doc: nil, func: PySet.rxor(_:), castSelf: selfAsPySet)
+    result._attributes["issubset"] = wrapMethod(context, name: "issubset", doc: nil, func: PySet.isSubset(of:), castSelf: selfAsPySet)
+    result._attributes["issuperset"] = wrapMethod(context, name: "issuperset", doc: nil, func: PySet.isSuperset(of:), castSelf: selfAsPySet)
+    result._attributes["intersection"] = wrapMethod(context, name: "intersection", doc: nil, func: PySet.intersection(with:), castSelf: selfAsPySet)
+    result._attributes["union"] = wrapMethod(context, name: "union", doc: nil, func: PySet.union(with:), castSelf: selfAsPySet)
+    result._attributes["difference"] = wrapMethod(context, name: "difference", doc: nil, func: PySet.difference(with:), castSelf: selfAsPySet)
+    result._attributes["symmetric_difference"] = wrapMethod(context, name: "symmetric_difference", doc: nil, func: PySet.symmetricDifference(with:), castSelf: selfAsPySet)
+    result._attributes["isdisjoint"] = wrapMethod(context, name: "isdisjoint", doc: nil, func: PySet.isDisjoint(with:), castSelf: selfAsPySet)
+    result._attributes["add"] = wrapMethod(context, name: "add", doc: nil, func: PySet.add(_:), castSelf: selfAsPySet)
+    result._attributes["remove"] = wrapMethod(context, name: "remove", doc: nil, func: PySet.remove(_:), castSelf: selfAsPySet)
+    result._attributes["discard"] = wrapMethod(context, name: "discard", doc: nil, func: PySet.discard(_:), castSelf: selfAsPySet)
+    result._attributes["clear"] = wrapMethod(context, name: "clear", doc: nil, func: PySet.clear, castSelf: selfAsPySet)
+    result._attributes["copy"] = wrapMethod(context, name: "copy", doc: nil, func: PySet.copy, castSelf: selfAsPySet)
+    result._attributes["pop"] = wrapMethod(context, name: "pop", doc: nil, func: PySet.pop, castSelf: selfAsPySet)
+    return result
+  }
+
   // MARK: - Slice
 
   internal static func slice(_ context: PyContext, type: PyType, base: PyType) -> PyType {

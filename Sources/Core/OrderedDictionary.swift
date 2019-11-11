@@ -214,6 +214,12 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
     }
   }
 
+  // MARK: - Contains
+
+  public func contains(key: Key) -> Bool {
+    return self.get(key: key) != nil
+  }
+
   // MARK: - Insert
 
   /// Updates the value stored in the dictionary for the given key, or adds a

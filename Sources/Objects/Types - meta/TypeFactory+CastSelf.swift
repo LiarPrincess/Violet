@@ -78,6 +78,10 @@ extension TypeFactory {
     return value as! PyRange
   }
 
+  internal static func selfAsPySet(_ value: PyObject) -> PySet {
+    return value as! PySet
+  }
+
   internal static func selfAsPySlice(_ value: PyObject) -> PySlice {
     return value as! PySlice
   }

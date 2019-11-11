@@ -1,172 +1,292 @@
 import Core
 
 // In CPython:
-// Objects -> listobject.c
+// Objects -> setobject.c
 // https://docs.python.org/3.7/c-api/set.html
 
 // TODO: Frozen set
-#warning("This is not a correct implementation, it will fail on collision!")
-
 // swiftlint:disable file_length
 
+internal struct PySetElement: VioletHashable {
+
+  internal var hash: PyHash
+  internal var object: PyObject
+
+  internal init(hash: PyHash, object: PyObject) {
+    self.hash = hash
+    self.object = object
+  }
+
+  internal func isEqual(to other: PySetElement) -> Bool {
+    return self.hash == other.hash &&
+      self.object.builtins.isEqualBool(left: self.object, right: other.object)
+  }
+}
+
+extension OrderedDictionary where Value == Void {
+  public mutating func insert(key: Key) {
+    self.insert(key: key, value: ())
+  }
+}
+
+// sourcery: pytype = set
 /// This subtype of PyObject is used to hold the internal data for both set
 /// and frozenset objects.
 internal final class PySet: PyObject {
 
-  internal var elements: [PyHash: PyObject]
+  internal static let doc: String = """
+    set() -> new empty set object
+    set(iterable) -> new set object
 
-  internal init(_ context: PyContext, elements: [PyHash:PyObject]) {
-    self.elements = elements
-    // TOOD: add to context
-    super.init()
+    Build an unordered collection of unique elements.
+    """
+
+  /// Small trick: when we use `Void` (which is the same as `()`) as value
+  /// then it would not take any space in dictionary!
+  /// For example `struct { Int, Void }` has the same storage as `struct { Int }`.
+  /// This trick is sponsored by 'go lang': `map[T]struct{}`.
+  private typealias OrderedSetType = OrderedDictionary<PySetElement, ()>
+
+  private var elements: OrderedSetType
+
+  // MARK: - Init
+
+  internal init(_ context: PyContext) {
+    self.elements = OrderedSetType()
+    super.init(type: context.builtins.types.set)
   }
-}
 
-/// This subtype of PyObject is used to hold the internal data for both set
-/// and frozenset objects.
-internal final class PySetType: PyObject /* ,
-  ReprTypeClass,
-  ComparableTypeClass, HashableTypeClass,
-  SubTypeClass, SubInPlaceTypeClass,
-  BinaryTypeClass, BinaryInPlaceTypeClass,
-  LengthTypeClass, ContainsTypeClass,
-  ClearTypeClass */ {
+  // MARK: - Equatable
 
-//  override internal var name: String { return "set" }
-//  override internal var doc: String? { return """
-//    set() -> new empty set object
-//    set(iterable) -> new set object
-//
-//    Build an unordered collection of unique elements.
-//    """
-//  }
-
-  // MARK: - Ctor
-/*
-  // MARK: - Equatable, hashable
-
-  internal func compare(left: PyObject,
-                        right: PyObject,
-                        mode: CompareMode) throws -> Bool {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
-
-    switch mode {
-    case .equal:
-      guard l.elements.count == r.elements.count else {
-        return false
-      }
-
-      let lHash = try self.hash(value: left)
-      let rHash = try self.hash(value: right)
-      guard lHash == rHash else {
-        return false
-      }
-
-      return try self.isSubset(set: left, of: right)
-
-    case .notEqual:
-      let cmp = try self.compare(left: left, right: right, mode: .equal)
-      return !cmp
-
-    case .less:
-      guard l.elements.count == r.elements.count else {
-        return false
-      }
-      return try self.isSubset(set: left, of: right)
-    case .lessEqual:
-      return try self.isSubset(set: left, of: right)
-
-    case .greater:
-      guard l.elements.count == r.elements.count else {
-        return false
-      }
-      return try self.isSuperset(set: left, of: right)
-    case .greaterEqual:
-      return try self.isSuperset(set: left, of: right)
+  // sourcery: pymethod = __eq__
+  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    guard let other = other as? PySet else {
+      return .notImplemented
     }
+
+    return .value(self.isEqual(other))
   }
 
-  internal func hash(value: PyObject) throws -> PyHash {
-    throw HashableNotImplemented(value: value)
+  internal func isEqual(_ other: PySet) -> Bool {
+    guard self.elements.count == other.elements.count else {
+      return false
+    }
+
+    // Equal count + isSubset -> equal
+    return self.isSubset(of: other)
+  }
+
+  // sourcery: pymethod = __ne__
+  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    // CPython has different implementation here,
+    // but in the end it all comes down to:
+    return NotEqualHelper.fromIsEqual(self.isEqual(other))
+  }
+
+  // MARK: - Comparable
+
+  // sourcery: pymethod = __lt__
+  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
+    guard let other = other as? PySet else {
+      return .notImplemented
+    }
+
+    return .value(
+      self.elements.count < other.elements.count
+      && self.isSubset(of: other)
+    )
+  }
+
+  // sourcery: pymethod = __le__
+  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    guard let other = other as? PySet else {
+      return .notImplemented
+    }
+
+    return .value(self.isSubset(of: other))
+  }
+
+  // sourcery: pymethod = __gt__
+  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
+    guard let other = other as? PySet else {
+      return .notImplemented
+    }
+
+    return .value(
+      self.elements.count > other.elements.count
+      && self.isSuperset(of: other)
+    )
+  }
+
+  // sourcery: pymethod = __ge__
+  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+    guard let other = other as? PySet else {
+      return .notImplemented
+    }
+
+    return .value(self.isSuperset(of: other))
+  }
+
+  // MARK: - Hashable
+
+  // sourcery: pymethod = __hash__
+  internal func hash() -> PyResultOrNot<PyHash> {
+    return .error(self.builtins.hashNotImplemented(self))
   }
 
   // MARK: - String
 
-  internal func repr(value: PyObject) throws -> String {
-    let v = try self.matchType(value)
-
-    if v.elements.isEmpty {
-      return "()"
+  // sourcery: pymethod = __repr__
+  internal func repr() -> PyResult<String> {
+    if self.elements.isEmpty {
+      return .value("()")
     }
 
-    if value.hasReprLock {
-      return "(...)"
+    if self.hasReprLock {
+      return .value("(...)")
     }
 
-    return try value.withReprLock {
-      var result = "\(self.name)("
-      for (index, element) in v.elements.enumerated() {
+    return self.withReprLock {
+      var result = "set("
+      for (index, element) in self.elements.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ', )'.
         }
 
-        result += try self.context.reprString(value: element.value)
+        result += self.context._repr(value: element.key.object)
       }
 
-      result += v.elements.count > 1 ? ")" : ",)"
-      return result
+      result += self.elements.count > 1 ? ")" : ",)"
+      return .value(result)
     }
   }
 
-  // MARK: - Items
+  // MARK: - Attributes
 
-  internal func add(owner: PyObject, element: PyObject) throws {
-    let o = try self.matchType(owner)
-    let hash = try self.context.hash(value: element)
-    o.elements[hash] = element
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(zelf: self, name: name)
   }
+
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
+  // MARK: - Length
+
+  // sourcery: pymethod = __len__
+  internal func getLength() -> BigInt {
+    return BigInt(self.elements.count)
+  }
+
+  // MARK: - Contaions
+
+  // sourcery: pymethod = __contains__
+  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+    let key: PySetElement
+    switch self.createKey(from: element) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    return .value(self.elements.contains(key: key))
+  }
+
+  // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal func sub(left: PyObject, right: PyObject) throws -> PyObject {
-    return try self.difference(left: left, right: right)
+  internal func sub(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    guard let otherSet = other as? PySet else {
+      return .notImplemented
+    }
+
+    return .value(self.difference(with: otherSet))
   }
 
-  // sourcery: pymethod = __isub__
-  internal func subInPlace(left: PyObject, right: PyObject) throws {
-    let l = try self.matchType(left)
-    let diff = try self.difference(left: left, right: right)
-    l.elements = diff.elements
+  // sourcery: pymethod = __rsub__
+  internal func rsub(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    guard let otherSet = other as? PySet else {
+      return .notImplemented
+    }
+
+    return .value(otherSet.difference(with: self))
   }
 
-  internal func length(value: PyObject) throws -> PyInt {
-    let v = try self.matchType(value)
-    return self.types.int.new(v.elements.count)
+  // MARK: - And
+
+  // sourcery: pymethod = __and__
+  internal func and(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    guard let otherSet = other as? PySet else {
+      return .notImplemented
+    }
+
+    return .value(self.intersection(with: otherSet))
   }
 
-  internal func contains(owner: PyObject, element: PyObject) throws -> Bool {
-    let v = try self.matchType(owner)
-    let hash = try self.context.hash(value: element)
-    return v.elements.contains { h, _ in h == hash }
+  // sourcery: pymethod = __rand__
+  internal func rand(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    return self.and(other)
   }
 
-  internal func clear(value: PyObject) throws {
-    let v = try self.matchType(value)
-    v.elements.removeAll()
+  // MARK: - Or
+
+  // sourcery: pymethod = __or__
+  internal func or(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    guard let otherSet = other as? PySet else {
+      return .notImplemented
+    }
+
+    return .value(self.union(with: otherSet))
   }
 
-  // MARK: - Subset/superset
+  // sourcery: pymethod = __ror__
+  internal func ror(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    return self.or(other)
+  }
 
-  private func isSubset(set: PyObject, of superset: PyObject) throws -> Bool {
-    let set = try self.matchType(set)
-    let superset = try self.matchType(superset)
+  // MARK: - Xor
 
-    guard superset.elements.count > set.elements.count else {
+  // sourcery: pymethod = __xor__
+  internal func xor(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    guard let otherSet = other as? PySet else {
+      return .notImplemented
+    }
+
+    return .value(self.symmetricDifference(with: otherSet))
+  }
+
+  // sourcery: pymethod = __rxor__
+  internal func rxor(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    return self.xor(other)
+  }
+
+  // MARK: - Subset
+  // TODO: All of the set methods should work for any iterable
+  // TODO: All of the set methods should have tuple as an arg
+
+  internal static let isSubsetDoc = """
+    Report whether another set contains this set.
+    """
+
+  // sourcery: pymethod = issubset, doc = isSubsetDoc
+  internal func isSubset(of other: PyObject) -> PyResult<Bool> {
+    guard let otherSet = other as? PySet else {
+      return .typeError("'\(other.typeName)' object is not iterable")
+    }
+
+    return .value(self.isSubset(of: otherSet))
+  }
+
+  internal func isSubset(of other: PySet) -> Bool {
+    guard self.elements.count <= other.elements.count else {
       return false
     }
 
-    for (hash, _) in set.elements {
-      if !superset.elements.contains(hash) {
+    for entry in self.elements {
+      guard other.elements.contains(key: entry.key) else {
         return false
       }
     }
@@ -174,130 +294,288 @@ internal final class PySetType: PyObject /* ,
     return true
   }
 
-  private func isSuperset(set superset: PyObject, of subset: PyObject) throws -> Bool {
-    let superset = try self.matchType(superset)
-    let subset = try self.matchType(subset)
+  // MARK: - Superset
 
-    guard superset.elements.count > subset.elements.count else {
-      return false
+  internal static let isSupersetDoc = """
+    Report whether this set contains another set.
+    """
+
+  // sourcery: pymethod = issuperset, doc = isSupersetDoc
+  internal func isSuperset(of other: PyObject) -> PyResult<Bool> {
+    guard let otherSet = other as? PySet else {
+      return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    for (hash, _) in subset.elements {
-      if !superset.elements.contains(hash) {
-        return false
+    return otherSet.isSubset(of: self)
+  }
+
+  internal func isSuperset(of other: PySet) -> Bool {
+    return other.isSubset(of: self)
+  }
+
+  // MARK: - Intersection
+
+  internal static let intersectionDoc = """
+    Return the intersection of two sets as a new set.
+
+    (i.e. all elements that are in both sets.)
+    """
+
+  // sourcery: pymethod = intersection, doc = intersectionDoc
+  internal func intersection(with other: PyObject) -> PyResult<PySet> {
+    guard let otherSet = other as? PySet else {
+      return .typeError("'\(other.typeName)' object is not iterable")
+    }
+
+    return .value(self.intersection(with: otherSet))
+  }
+
+  internal func intersection(with other: PySet) -> PySet {
+    let isSelfSmaller = self.elements.count < other.elements.count
+    let smallerSet = isSelfSmaller ? self : other
+    let largerSet = isSelfSmaller ? other : self
+
+    let result = PySet(self.context)
+    for entry in smallerSet.elements {
+      if largerSet.elements.contains(key: entry.key) {
+        result.elements.insert(key: entry.key)
       }
     }
 
-    return true
+    return result
   }
 
-  // MARK: - Binary
+  // MARK: - Union
 
-  internal func and(left: PyObject, right: PyObject) throws -> PyObject {
-    return try self.intersection(left: left, right: right)
+  internal static let unionDoc = """
+    Return the union of sets as a new set.
+
+    (i.e. all elements that are in either set.)
+    """
+
+  // sourcery: pymethod = union, doc = unionDoc
+  internal func union(with other: PyObject) -> PyResult<PySet> {
+    guard let otherSet = other as? PySet else {
+      return .typeError("'\(other.typeName)' object is not iterable")
+    }
+
+    return .value(self.union(with: otherSet))
   }
 
-  internal func andInPlace(left: PyObject, right: PyObject) throws {
-    let l = try self.matchType(left)
-    let inter = try self.intersection(left: left, right: right)
-    l.elements = inter.elements
+  internal func union(with other: PySet) -> PySet {
+    let isSelfSmaller = self.elements.count < other.elements.count
+    let smallerSet = isSelfSmaller ? self : other
+    let largerSet = isSelfSmaller ? other : self
+
+    let result = PySet(self.context)
+    result.elements = largerSet.elements
+
+    for entry in smallerSet.elements {
+      result.elements.insert(key: entry.key)
+    }
+
+    return result
   }
 
-  internal func or(left: PyObject, right: PyObject) throws -> PyObject {
-    return try self.union(left: left, right: right)
+  // MARK: - Difference
+
+  internal static let differenceDoc = """
+    Return the difference of two or more sets as a new set.
+
+    (i.e. all elements that are in this set but not the others.)
+    """
+
+  // sourcery: pymethod = difference, doc = differenceDoc
+  internal func difference(with other: PyObject) -> PyResult<PySet> {
+    guard let otherSet = other as? PySet else {
+      return .typeError("'\(other.typeName)' object is not iterable")
+    }
+
+    return .value(self.difference(with: otherSet))
   }
 
-  internal func orInPlace(left: PyObject, right: PyObject) throws {
-    let l = try self.matchType(left)
-    let sum = try self.union(left: left, right: right)
-    l.elements = sum.elements
-  }
-
-  internal func xor(left: PyObject, right: PyObject) throws -> PyObject {
-    return try self.symmetricDifference(left: left, right: right)
-  }
-
-  internal func xorInPlace(left: PyObject, right: PyObject) throws {
-    let l = try self.matchType(left)
-    let diff = try self.symmetricDifference(left: left, right: right)
-    l.elements = diff.elements
-  }
-
-  // MARK: - Set operations
-
-  /// Returns: `left - right`
-  private func difference(left: PyObject, right: PyObject) throws -> PySet {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
-
-    var result = [PyHash: PyObject]()
-    for (hash, object) in l.elements {
-      if !r.elements.contains(hash) {
-        result[hash] = object
+  internal func difference(with other: PySet) -> PySet {
+    let result = PySet(self.context)
+    for entry in self.elements {
+      if !other.elements.contains(key: entry.key) {
+        result.elements.insert(key: entry.key)
       }
     }
-    return self.new(elements: result)
+
+    return result
   }
 
-  /// Returns: `left ^ right`
-  /// (i.e. all elements that are in exactly one of the sets.)
-  private func symmetricDifference(left: PyObject, right: PyObject) throws -> PySet {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
+  // MARK: - Symmetric difference
 
-    var result = [PyHash: PyObject]()
-    for (hash, object) in l.elements {
-      if r.elements.contains(hash) {
-        result[hash] = object
-      }
+  internal static let symmetricDifferenceDoc = """
+    Return the symmetric difference of two sets as a new set.
+
+    (i.e. all elements that are in exactly one of the sets.
+    """
+
+  // sourcery: pymethod = symmetric_difference, doc = symmetricDifferenceDoc
+  internal func symmetricDifference(with other: PyObject) -> PyResult<PySet> {
+    guard let otherSet = other as? PySet else {
+      return .typeError("'\(other.typeName)' object is not iterable")
     }
-    return self.new(elements: result)
+
+    return .value(self.symmetricDifference(with: otherSet))
   }
 
-  /// Returns: `left + right`
-  private func union(left: PyObject, right: PyObject) throws -> PySet {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
-
-    var result = l.elements
-    for (hash, object) in r.elements {
-      if !result.contains(hash) {
-        result[hash] = object
+  internal func symmetricDifference(with other: PySet) -> PySet {
+    let result = PySet(self.context)
+    for entry in self.elements {
+      if !other.elements.contains(key: entry.key) {
+        result.elements.insert(key: entry.key)
       }
     }
-    return self.new(elements: result)
+
+    for entry in other.elements {
+      if !self.elements.contains(key: entry.key) {
+        result.elements.insert(key: entry.key)
+      }
+    }
+
+    return result
   }
 
-  /// Returns: `left & right`
-  private func intersection(left: PyObject, right: PyObject) throws -> PySet {
-    let l = try self.matchType(left)
-    let r = try self.matchType(right)
+  // MARK: - Is disjoint
 
-    var result = [PyHash: PyObject]()
-    for (hash, object) in l.elements {
-      if r.elements.contains(hash) {
-        result[hash] = object
+  internal static let isDisjointDoc = """
+    Return True if two sets have a null intersection.
+    """
+
+  // sourcery: pymethod = isdisjoint, doc = isDisjointDoc
+  internal func isDisjoint(with other: PyObject) -> PyResult<Bool> {
+    guard let otherSet = other as? PySet else {
+      return .typeError("'\(other.typeName)' object is not iterable")
+    }
+
+    let isSelfSmaller = self.elements.count < otherSet.elements.count
+    let smallerSet = isSelfSmaller ? self : otherSet
+    let largerSet = isSelfSmaller ? otherSet : self
+
+    for entry in smallerSet.elements {
+      if largerSet.elements.contains(key: entry.key) {
+        return .value(false)
       }
     }
-    return self.new(elements: result)
+
+    return .value(true)
+  }
+
+  // MARK: - Add
+
+  internal static let addDoc = """
+    Add an element to a set.
+
+    This has no effect if the element is already present.
+    """
+
+  // sourcery: pymethod = add, doc = addDoc
+  internal func add(_ value: PyObject) -> PyResult<PyNone> {
+    let key: PySetElement
+    switch self.createKey(from: value) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    self.elements.insert(key: key)
+    return .value(self.builtins.none)
+  }
+
+  // MARK: - Remove
+
+  internal static let removeDoc = """
+    Remove an element from a set; it must be a member.
+
+    If the element is not a member, raise a KeyError.
+    """
+
+  // sourcery: pymethod = remove, doc = removeDoc
+  internal func remove(_ value: PyObject) -> PyResult<PyNone> {
+    let key: PySetElement
+    switch self.createKey(from: value) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    let wasInSet = self.elements.remove(key: key) != nil
+    if wasInSet {
+      return .value(self.builtins.none)
+    }
+
+    return .keyErrorForKey(value)
+  }
+
+  // MARK: - Discard
+
+  internal static let discardDoc = """
+    Remove an element from a set if it is a member.
+
+    If the element is not a member, do nothing.
+    """
+
+  // sourcery: pymethod = discard, doc = discardDoc
+  internal func discard(_ value: PyObject) -> PyResult<PyNone> {
+    let key: PySetElement
+    switch self.createKey(from: value) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    _ = self.elements.remove(key: key) != nil
+    return .value(self.builtins.none)
+  }
+
+  // MARK: - Clear
+
+  internal static let clearDoc = """
+    Remove all elements from this set.
+    """
+
+  // sourcery: pymethod = clear, doc = clearDoc
+  internal func clear() -> PyResult<PyNone> {
+    self.elements.clear()
+    return .value(self.builtins.none)
+  }
+
+  // MARK: - Copy
+
+  internal static let copyDoc = "Return a shallow copy of a set."
+
+  // sourcery: pymethod = copy, doc = copyDoc
+  internal func copy() -> PyObject {
+    let result = PySet(self.context)
+    result.elements = self.elements
+    return result
+  }
+
+  // MARK: - Pop
+
+  internal static let popDoc = """
+    Remove and return an arbitrary set element.
+    Raises KeyError if the set is empty.
+    """
+
+  // sourcery: pymethod = pop, doc = popDoc
+  internal func pop() -> PyResult<PyObject> {
+    guard let last = self.elements.last else {
+      return .keyError("pop from an empty set")
+    }
+
+    _ = self.elements.remove(key: last.key)
+    return .value(last.key.object)
   }
 
   // MARK: - Helpers
 
-  internal func matchTypeOrNil(_ object: PyObject) -> PySet? {
-    if let o = object as? PySet {
-      return o
+  private func createKey(from object: PyObject) -> PyResult<PySetElement> {
+    switch self.builtins.hash(object) {
+    case let .value(hash):
+      return .value(PySetElement(hash: hash, object: object))
+    case let .error(e):
+      return .error(e)
     }
-
-    return nil
   }
-
-  internal func matchType(_ object: PyObject) throws -> PySet {
-    if let o = object as? PySet {
-      return o
-    }
-
-    throw PyContextError.invalidTypeConversion(object: object, to: self)
-  }
-*/
 }
