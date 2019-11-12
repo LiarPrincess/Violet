@@ -9,7 +9,7 @@ import Core
 // sourcery: pytype = set
 /// This subtype of PyObject is used to hold the internal data for both set
 /// and frozenset objects.
-internal final class PySet: PyObject {
+public final class PySet: PyObject {
 
   internal static let doc: String = """
     set() -> new empty set object

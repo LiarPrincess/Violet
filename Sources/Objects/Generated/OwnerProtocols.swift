@@ -35,7 +35,6 @@ protocol __getattribute__Owner { func getAttribute(name: PyObject) -> PyResult<P
 protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
 protocol __gt__Owner { func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> }
 protocol __hash__Owner { func hash() -> PyResultOrNot<PyHash> }
-protocol __iadd__Owner { func addInPlace(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __imul__Owner { func mulInPlace(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __index__Owner { func asIndex() -> BigInt }
 protocol __int__Owner { func asInt() -> PyResult<PyInt> }
@@ -102,7 +101,6 @@ protocol discardOwner { func discard(_ value: PyObject) -> PyResult<PyNone> }
 protocol endswithOwner { func endsWith(_ element: PyObject) -> PyResultOrNot<Bool> }
 protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResultOrNot<Bool> }
 protocol expandtabsOwner { func expandTabs(tabSize: PyObject?) -> PyResult<String> }
-protocol extendOwner { func extend(_ iterator: PyObject) -> PyResult<PyNone> }
 protocol findOwner { func find(_ element: PyObject) -> PyResult<Int> }
 protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Int> }
 protocol getOwner { func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }

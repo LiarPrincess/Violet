@@ -6,7 +6,7 @@ import Core
 
 // swiftlint:disable file_length
 
-internal typealias OrderedDictionaryType = OrderedDictionary<PyDictKey, PyObject>
+internal typealias PyDictData = OrderedDictionary<PyDictKey, PyObject>
 
 internal struct PyDictKey: VioletHashable {
 
@@ -26,7 +26,7 @@ internal struct PyDictKey: VioletHashable {
 
 // sourcery: pytype = dict
 /// This subtype of PyObject represents a Python dictionary object.
-internal final class PyDict: PyObject {
+public final class PyDict: PyObject {
 
   internal static let doc: String = """
     dict() -> new empty dictionary
@@ -40,12 +40,17 @@ internal final class PyDict: PyObject {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
-  private var elements: OrderedDictionaryType
+  private var elements: PyDictData
 
   // MARK: - Init
 
   internal init(_ context: PyContext) {
-    self.elements = OrderedDictionaryType()
+    self.elements = PyDictData()
+    super.init(type: context.builtins.types.dict)
+  }
+
+  internal init(_ context: PyContext, elements: PyDictData) {
+    self.elements = elements
     super.init(type: context.builtins.types.dict)
   }
 

@@ -24,7 +24,7 @@ extension Builtins {
 
   // sourcery: pytype: dict
   /// class dict(**kwarg)
-  //  public var dict: PyType { return self.types.dict }
+  public var dict: PyType { return self.types.dict }
 
   // sourcery: pytype: float
   /// class float([x])
@@ -32,7 +32,7 @@ extension Builtins {
 
   // sourcery: pytype: frozenset
   /// class frozenset([iterable])
-  //  public var frozenset: PyType { return self.types.frozenset }
+  public var frozenset: PyType { return self.types.frozenset }
 
   // sourcery: pytype: int
   /// class int([x])
@@ -52,7 +52,7 @@ extension Builtins {
 
   // sourcery: pytype: set
   /// class set([iterable])
-  //  public var set: PyType { return self.types.set }
+  public var set: PyType { return self.types.set }
 
   // sourcery: pytype: slice
   /// class slice(stop)

@@ -105,10 +105,12 @@ list
   Unimplemented:
     __hash__ - <class 'NoneType'>
     __delitem__
+    __iadd__
     __iter__
     __reversed__
     __setitem__
     __sizeof__
+    extend
     insert
     pop
     remove

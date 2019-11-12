@@ -8,7 +8,7 @@ import Core
 
 // sourcery: pytype = list
 /// This subtype of PyObject represents a Python list object.
-internal final class PyList: PyObject {
+public final class PyList: PyObject {
 
   internal static let doc: String = """
     list(iterable=(), /)
@@ -184,13 +184,6 @@ internal final class PyList: PyObject {
     return .value(self.context._none)
   }
 
-  // sourcery: pymethod = extend
-  internal func extend(_ iterator: PyObject) -> PyResult<PyNone> {
-    // Check if implementatio is OK with 'addInPlace'
-    // TODO: Write this - list_extend(PyListObject *self, PyObject *iterable)
-    return .value(self.context._none)
-  }
-
   internal func pop(index: BigInt = -1) -> PyResult<PyObject> {
     if self.elements.isEmpty {
       return .error(.indexError("pop from empty list"))
@@ -239,12 +232,6 @@ internal final class PyList: PyObject {
 
     let result = self.elements + otherList.elements
     return .value(self.list(result))
-  }
-
-  // sourcery: pymethod = __iadd__
-  internal func addInPlace(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    _ = self.extend(other)
-    return .value(self)
   }
 
   // MARK: - Mul

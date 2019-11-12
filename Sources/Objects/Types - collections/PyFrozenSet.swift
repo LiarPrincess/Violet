@@ -8,7 +8,7 @@ import Core
 
 // sourcery: pytype = frozenset
 /// This is an instance of PyTypeObject representing the Python frozenset type.
-internal final class PyFrozenSet: PyObject {
+public final class PyFrozenSet: PyObject {
 
   internal static let doc: String = """
     frozenset() -> empty frozenset object

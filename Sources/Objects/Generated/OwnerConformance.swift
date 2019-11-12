@@ -289,11 +289,9 @@ extension PyList:
   countOwner,
   indexOwner,
   appendOwner,
-  extendOwner,
   clearOwner,
   copyOwner,
   __add__Owner,
-  __iadd__Owner,
   __mul__Owner,
   __rmul__Owner,
   __imul__Owner
