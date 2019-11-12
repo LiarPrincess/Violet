@@ -14,18 +14,22 @@ internal class Frame {
 
   /// Python state.
   internal let context: PyContext
+  /// Built-in functions.
+  internal var builtins: Builtins {
+    return self.context.builtins
+  }
 
   /// The main data frame of the stack machine.
   internal var stack = ObjectStack()
 
   /// Local symbol table.
-  internal var locals = [String: PyObject]()
+  internal var localSymbols = [String: PyObject]()
   /// Global symbol table.
-  internal var globals = [String: PyObject]()
+  internal var globalSymbols = [String: PyObject]()
   /// Builtin symbol table.
-  internal var builtins = [String: PyObject]()
+  internal var builtinSymbols = [String: PyObject]()
   /// Free variables.
-  internal var free = [String: PyObject]()
+  internal var freeVariables = [String: PyObject]()
 
   internal var standardOutput: FileHandle {
     return FileHandle.standardOutput

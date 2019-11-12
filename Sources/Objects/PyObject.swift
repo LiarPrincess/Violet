@@ -65,11 +65,11 @@ public class PyObject {
   }
 
   internal func int(_ value: BigInt) -> PyInt {
-    return self.context._int(value)
+    return self.context.builtins.newInt(value)
   }
 
   internal func int(_ value: Int) -> PyInt {
-    return self.context._int(value)
+    return self.context.builtins.newInt(value)
   }
 
   internal func bool(_ value: Bool) -> PyBool {
@@ -77,11 +77,11 @@ public class PyObject {
   }
 
   internal func float(_ value: Double) -> PyFloat {
-    return self.context._float(value)
+    return self.context.builtins.newFloat(value)
   }
 
   internal func complex(real: Double, imag: Double) -> PyComplex {
-    return self.context._complex(real: real, imag: imag)
+    return self.context.builtins.newComplex(real: real, imag: imag)
   }
 
   internal func tuple(_ elements: PyObject...) -> PyTuple {

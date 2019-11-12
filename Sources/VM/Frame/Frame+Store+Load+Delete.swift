@@ -18,10 +18,10 @@ extension Frame {
     case .false: return self.context.false
     case .none: return self.context.none
     case .ellipsis: return self.context.ellipsis
-    case let .integer(arg): return self.context.int(arg)
-    case let .float(arg): return self.context.float(arg)
-    case let .complex(real, imag): return self.context.complex(real: real, imag: imag)
-    case let .string(arg): return self.context.string(arg)
+    case let .integer(arg): return self.builtins.newInt(arg)
+    case let .float(arg): return self.builtins.newFloat(arg)
+    case let .complex(real, imag): return self.builtins.newComplex(real: real, imag: imag)
+    case let .string(arg): return self.builtins.newString(arg)
     case .bytes: // let .bytes(arg):
       fatalError()
     case .code: // let .code(arg):
@@ -38,24 +38,24 @@ extension Frame {
   internal func storeName(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
     let value = self.stack.pop()
-    self.locals[name] = value
+    self.localSymbols[name] = value
   }
 
   /// Pushes the value associated with `name` onto the stack.
   internal func loadName(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
 
-    if let local = self.locals[name] {
+    if let local = self.localSymbols[name] {
       self.stack.push(local)
       return
     }
 
-    if let global = self.globals[name] {
+    if let global = self.globalSymbols[name] {
       self.stack.push(global)
       return
     }
 
-    if let builtin = self.builtins[name] {
+    if let builtin = self.builtinSymbols[name] {
       self.stack.push(builtin)
       return
     }
@@ -67,7 +67,7 @@ extension Frame {
   /// Implements `del name`.
   internal func deleteName(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let value = self.locals.removeValue(forKey: name)
+    let value = self.localSymbols.removeValue(forKey: name)
 
     if value == nil {
       // format_exc_check_arg(PyExc_NameError, NAME_ERROR_MSG, name);
@@ -131,19 +131,19 @@ extension Frame {
   internal func storeGlobal(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
     let value = self.stack.pop()
-    self.globals[name] = value
+    self.globalSymbols[name] = value
   }
 
   /// Loads the global named `name` onto the stack.
   internal func loadGlobal(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
 
-    if let global = self.globals[name] {
+    if let global = self.globalSymbols[name] {
       self.stack.push(global)
       return
     }
 
-    if let builtin = self.builtins[name] {
+    if let builtin = self.builtinSymbols[name] {
       self.stack.push(builtin)
       return
     }
@@ -155,7 +155,7 @@ extension Frame {
   /// Works as DeleteName, but deletes a global name.
   internal func deleteGlobal(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let value = self.globals.removeValue(forKey: name)
+    let value = self.globalSymbols.removeValue(forKey: name)
 
     if value == nil {
       // format_exc_check_arg(PyExc_NameError, NAME_ERROR_MSG, name);
@@ -168,7 +168,7 @@ extension Frame {
   internal func loadFast(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
 
-    if let local = self.locals[name] {
+    if let local = self.localSymbols[name] {
       self.stack.push(local)
       return
     }
@@ -182,12 +182,12 @@ extension Frame {
   internal func storeFast(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
     let value = self.stack.pop()
-    self.locals[name] = value
+    self.localSymbols[name] = value
   }
 
   internal func deleteFast(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let value = self.locals.removeValue(forKey: name)
+    let value = self.localSymbols.removeValue(forKey: name)
 
     if value == nil {
       // format_exc_check_arg(PyExc_UnboundLocalError,
@@ -203,7 +203,7 @@ extension Frame {
   /// Pushes a reference to the object the cell contains on the stack.
   internal func loadDeref(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    if let value = self.free[name] {
+    if let value = self.freeVariables[name] {
       self.stack.push(value)
       return
     }
@@ -217,14 +217,14 @@ extension Frame {
   internal func storeDeref(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
     let value = self.stack.pop()
-    self.free[name] = value
+    self.freeVariables[name] = value
   }
 
   /// Empties the cell contained in slot i of the cell and free variable storage.
   /// Used by the del statement.
   internal func deleteDeref(nameIndex: Int) throws {
     let name = self.code.names[nameIndex]
-    let value = self.free.removeValue(forKey: name)
+    let value = self.freeVariables.removeValue(forKey: name)
 
     if value == nil {
       // format_exc_unbound(co, oparg);

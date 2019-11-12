@@ -8,13 +8,13 @@ public protocol PyObjectConvertible {
 
 extension Int: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
-    return context.int(self)
+    return context.builtins.newInt(self)
   }
 }
 
 extension BigInt: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
-    return context.int(self)
+    return context.builtins.newInt(self)
   }
 }
 
@@ -49,7 +49,7 @@ extension Optional: PyObjectConvertible where Wrapped: PyObjectConvertible {
 
 extension String: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
-    return context.string(self)
+    return context.builtins.newString(self)
   }
 }
 

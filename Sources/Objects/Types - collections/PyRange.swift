@@ -50,7 +50,8 @@ public final class PyRange: PyObject {
       if let s = step {
         return s
       }
-      return context._int(isGoingUp ? 1 : -1)
+
+      return context.builtins.newInt(isGoingUp ? 1 : -1)
     }()
 
     let length: BigInt = {
@@ -70,7 +71,7 @@ public final class PyRange: PyObject {
     self.stop = stop
     self.step = unwrappedStep
     self.stepType = step == nil ? .implicit: .explicit
-    self.length = context._int(length)
+    self.length = context.builtins.newInt(length)
 
     super.init(type: context.builtins.types.range)
   }

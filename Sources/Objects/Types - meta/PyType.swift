@@ -78,7 +78,7 @@ public final class PyType: PyObject, AttributesOwner {
 
     self._attributes["__doc__"] = doc
       .map(DocHelper.getDocWithoutSignature)
-      .map(context._string) ?? context._none
+      .map(context.builtins.newString) ?? context._none
   }
 
   /// NEVER EVER use this function!
