@@ -158,7 +158,7 @@ public final class PyList: PyObject {
 
     switch result {
     case let .single(s): return .value(s)
-    case let .slice(s): return .value(self.context._list(s))
+    case let .slice(s): return .value(self.builtins.newList(s))
     case let .error(e): return .error(e)
     }
   }

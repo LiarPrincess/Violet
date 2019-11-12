@@ -27,8 +27,8 @@ extension Frame {
     case .code: // let .code(arg):
       fatalError()
     case let .tuple(args):
-      let elements = args.map { self.toObject($0) }
-      return self.context.tuple(elements)
+      let elements = args.map(self.toObject)
+      return self.builtins.newTuple(elements)
     }
   }
 

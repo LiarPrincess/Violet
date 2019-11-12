@@ -173,7 +173,7 @@ public final class PyTuple: PyObject {
 
     switch result {
     case let .single(s): return .value(s)
-    case let .slice(s): return .value(self.context._tuple(s))
+    case let .slice(s): return .value(self.builtins.newTuple(s))
     case let .error(e): return .error(e)
     }
   }

@@ -10,11 +10,13 @@ internal enum CallResult {
 
 extension Builtins {
 
-  // MARK: - Other
-
   public func getDict(_ module: PyModule) -> Attributes {
     return module._attributes
   }
+
+  // MARK: - Other
+
+  internal func handleError<E>(_ effect: E) { }
 
   /// Internal API to look for a name through the MRO.
   internal func lookup(_ object: PyObject, name: String) -> PyObject? {

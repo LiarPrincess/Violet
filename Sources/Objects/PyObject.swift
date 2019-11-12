@@ -77,35 +77,35 @@ public class PyObject {
   }
 
   internal func float(_ value: Double) -> PyFloat {
-    return self.context.builtins.newFloat(value)
+    return self.builtins.newFloat(value)
   }
 
   internal func complex(real: Double, imag: Double) -> PyComplex {
-    return self.context.builtins.newComplex(real: real, imag: imag)
+    return self.builtins.newComplex(real: real, imag: imag)
   }
 
   internal func tuple(_ elements: PyObject...) -> PyTuple {
-    return self.context._tuple(elements)
+    return self.builtins.newTuple(elements)
   }
 
   internal func tuple(_ elements: [PyObject]) -> PyTuple {
-    return self.context._tuple(elements)
+    return self.builtins.newTuple(elements)
   }
 
   internal func list(_ elements: PyObject...) -> PyList {
-    return self.context._list(elements)
+    return self.builtins.newList(elements)
   }
 
   internal func list(_ elements: [PyObject]) -> PyList {
-    return self.context._list(elements)
+    return self.builtins.newList(elements)
   }
 
   internal func range(stop: PyInt) -> PyResult<PyRange> {
-    return self.context._range(stop: stop)
+    return .value(self.builtins.newRange(stop: stop))
   }
 
   internal func range(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
-    return self.context._range(start: start, stop: stop, step: step)
+    return .value(self.builtins.newRange(start: start, stop: stop, step: step))
   }
 
   // MARK: - Repr

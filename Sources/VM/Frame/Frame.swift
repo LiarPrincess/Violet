@@ -178,11 +178,11 @@ internal class Frame {
     case let .buildConstKeyMap(elementCount):
       try self.buildConstKeyMap(elementCount: extendedArg + Int(elementCount))
     case let .setAdd(value):
-      try self.setAdd(value: extendedArg + Int(value))
+      self.setAdd(value: extendedArg + Int(value))
     case let .listAppend(value):
-      try self.listAppend(value: extendedArg + Int(value))
+      self.listAppend(value: extendedArg + Int(value))
     case let .mapAdd(value):
-      try self.mapAdd(value: extendedArg + Int(value))
+      self.mapAdd(value: extendedArg + Int(value))
     case let .buildTupleUnpack(elementCount):
       try self.buildTupleUnpack(elementCount: extendedArg + Int(elementCount))
     case let .buildTupleUnpackWithCall(elementCount):

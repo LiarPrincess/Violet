@@ -56,7 +56,7 @@ extension String: PyObjectConvertible {
 extension Array: PyObjectConvertible where Element: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
     let array = self.map { $0.toPyObject(in: context) }
-    return context.list(array)
+    return context.builtins.newList(array)
   }
 }
 

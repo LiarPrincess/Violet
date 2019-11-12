@@ -9,7 +9,7 @@ extension Frame {
   /// and pushes the resulting tuple onto the stack.
   internal func buildTuple(elementCount: Int) throws {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = self.context.tuple(elements)
+    let collection = self.builtins.newTuple(elements)
     self.stack.push(collection)
   }
 
@@ -17,7 +17,7 @@ extension Frame {
   /// and pushes the resulting list onto the stack.
   internal func buildList(elementCount: Int) throws {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = self.context.list(elements)
+    let collection = self.builtins.newList(elements)
     self.stack.push(collection)
   }
 
@@ -25,7 +25,7 @@ extension Frame {
   /// and pushes the resulting set onto the stack.
   internal func buildSet(elementCount: Int) throws {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = try self.context.set(elements: elements)
+    let collection = self.builtins.newSet(elements)
     self.stack.push(collection)
   }
 
@@ -34,7 +34,7 @@ extension Frame {
   /// {..., TOS3: TOS2, TOS1: TOS}.
   internal func buildMap(elementCount: Int) throws {
     let elements = self.popDictionaryElements(count: elementCount)
-    let collection = self.context.dictionary(elements: elements)
+    let collection = self.builtins.newDict(elements)
     self.stack.push(collection)
   }
 
@@ -50,7 +50,7 @@ extension Frame {
     }
 
     let elements = self.stack.popElementsInPushOrder(count: count)
-    let collection = self.context.dictionary(keyTuple: keys, elements: elements)
+    let collection = self.builtins.newDict(keyTuple: keys, elements: elements)
     self.stack.push(collection)
   }
 
@@ -71,28 +71,28 @@ extension Frame {
   /// Calls `set.add(TOS1[-i], TOS)`.
   /// Container object remains on the stack.
   /// Used to implement set comprehensions.
-  internal func setAdd(value: Int) throws {
+  internal func setAdd(value: Int) {
     let element = self.stack.pop()
     let set = self.stack.top
-    try self.context.add(set: set, value: element)
+    self.builtins.add(set: set, value: element)
   }
 
   /// Calls `list.append(TOS[-i], TOS)`.
   /// Container object remains on the stack.
   /// Used to implement list comprehensions.
-  internal func listAppend(value: Int) throws {
+  internal func listAppend(value: Int) {
     let element = self.stack.pop()
     let list = self.stack.top
-    try self.context.add(list: list, element: element)
+    self.builtins.add(list: list, element: element)
   }
 
   /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`.
   /// Container object remains on the stack.
   /// Used to implement dict comprehensions.
-  internal func mapAdd(value: Int) throws {
+  internal func mapAdd(value: Int) {
     let key = self.stack.pop()
     let value = self.stack.pop()
     let map = self.stack.top
-    self.context.dictionaryAdd(dictionary: map, key: key, value: value)
+    self.context.builtins.add(dict: map, key: key, value: value)
   }
 }

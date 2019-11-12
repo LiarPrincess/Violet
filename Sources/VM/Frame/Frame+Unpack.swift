@@ -7,9 +7,7 @@ extension Frame {
   /// and pushes the result.
   /// Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
   internal func buildTupleUnpack(elementCount: Int) throws {
-    let list = try self.unpackList(elementCount: elementCount)
-    let tuple = try self.context.tuple(list: list)
-    self.stack.push(tuple)
+    self.unimplemented()
   }
 
   /// This is similar to `BuildTupleUnpack`, but is used for `f(*x, *y, *z)` call syntax.
@@ -21,36 +19,20 @@ extension Frame {
   /// This is similar to `BuildTupleUnpack`, but pushes a list instead of tuple.
   /// Implements iterable unpacking in list displays `[*x, *y, *z]`.
   internal func buildListUnpack(elementCount: Int) throws {
-    let list = try self.unpackList(elementCount: elementCount)
-    self.stack.push(list)
+    self.unimplemented()
   }
 
   /// This is similar to `BuildTupleUnpack`, but pushes a set instead of tuple.
   /// Implements iterable unpacking in set displays `{*x, *y, *z}`.
   internal func buildSetUnpack(elementCount: Int) throws {
-    let set = try self.context.set()
-    let elements = self.stack.popElementsInPushOrder(count: elementCount)
-
-    for iterable in elements {
-      try self.context.extend(set: set, iterable: iterable)
-    }
-
-    self.stack.push(set)
+    self.unimplemented()
   }
 
   /// Pops count mappings from the stack, merges them into a single dictionary,
   /// and pushes the result.
   /// Implements dictionary unpacking in dictionary displays `{**x, **y, **z}`.
   internal func buildMapUnpack(elementCount: Int) throws {
-    let dict = self.context.dictionary()
-    let elements = self.stack.popElementsInPushOrder(count: elementCount)
-
-    for iterable in elements {
-      self.context.PyDict_Update(dictionary: dict, iterable: iterable)
-      // TODO: if (PyErr_ExceptionMatches(PyExc_AttributeError)) {
-    }
-
-    self.stack.push(dict)
+    self.unimplemented()
   }
 
   /// This is similar to `BuildMapUnpack`, but is used for `f(**x, **y, **z)` call syntax.
@@ -76,18 +58,5 @@ extension Frame {
   /// The resulting values are put onto the stack right-to-left.
   internal func unpackEx(elementCountBefore: Int) throws {
     self.unimplemented()
-  }
-
-  // MARK: - Helpers
-
-  private func unpackList(elementCount: Int) throws -> PyObject {
-    let result = self.context.list()
-    let elements = self.stack.popElementsInPushOrder(count: elementCount)
-
-    for iterable in elements {
-      try self.context.extend(list: result, iterable: iterable)
-    }
-
-    return result
   }
 }
