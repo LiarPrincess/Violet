@@ -155,12 +155,14 @@ internal final class PyDict: PyObject {
     return self.type
   }
 
-  // MARK: - Sequence
+  // MARK: - Length
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
     return BigInt(self.elements.count)
   }
+
+  // MARK: - Get/set/del item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
@@ -211,6 +213,8 @@ internal final class PyDict: PyObject {
     return .keyErrorForKey(index)
   }
 
+  // MARK: - Contains
+
   // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
     let key: PyDictKey
@@ -222,6 +226,8 @@ internal final class PyDict: PyObject {
     return .value(self.elements.contains(key: key))
   }
 
+  // MARK: - Clear
+
   internal static let clearDoc = """
     D.clear() -> None.  Remove all items from D.
     """
@@ -231,6 +237,8 @@ internal final class PyDict: PyObject {
     self.elements.clear()
     return .value(self.builtins.none)
   }
+
+  // MARK: - Get
 
   internal static let getDoc = """
     get($self, key, default=None, /)
@@ -254,6 +262,8 @@ internal final class PyDict: PyObject {
     let result = `default` ?? self.builtins.none
     return .value(result)
   }
+
+  // MARK: - Set default
 
   internal static let setdefaultDoc = """
     setdefault($self, key, default=None, /)
@@ -285,6 +295,8 @@ internal final class PyDict: PyObject {
     return .value(value)
   }
 
+  // MARK: - Copy
+
   internal static let copyDoc = "D.copy() -> a shallow copy of D"
 
   // sourcery: pymethod = copy, doc = copyDoc
@@ -293,6 +305,8 @@ internal final class PyDict: PyObject {
     result.elements = self.elements
     return result
   }
+
+  // MARK: - Pop
 
   internal static let popDoc = """
     D.pop(k[,d]) -> v, remove specified key and return the corresponding value.

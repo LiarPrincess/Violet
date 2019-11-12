@@ -4,7 +4,7 @@
 // sourcery: pytype = module
 public final class PyModule: PyObject, AttributesOwner {
 
-  public static let doc: String = """
+  internal static let doc: String = """
     module(name, doc=None)
     --
     Create a module object.
@@ -37,21 +37,21 @@ public final class PyModule: PyObject, AttributesOwner {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func dict() -> Attributes {
+  internal func dict() -> Attributes {
     return self._attributes
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  public func repr() -> PyResult<String> {
+  internal func repr() -> PyResult<String> {
     return .value("'" + self.name + "'")
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     let m = self
     let attr = AttributeHelper.getAttribute(zelf: m, name: name)
 
@@ -81,30 +81,30 @@ public final class PyModule: PyObject, AttributesOwner {
   }
 
   // sourcery: pymethod = __setattr__
-  public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(zelf: self, name: name, value: value)
   }
 
   // sourcery: pymethod = __delattr__
-  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
+  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(zelf: self, name: name)
   }
 
-  public func delAttribute(name: String) -> PyResult<PyNone> {
+  internal func delAttribute(name: String) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(zelf: self, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  public func getClass() -> PyType {
+  internal func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  public func dir() -> DirResult {
+  internal func dir() -> DirResult {
     // Do not add `self.type` dir!
     if let dirFunc = self._attributes["__dir__"] {
       return self.context.callDir(dirFunc, args: [])

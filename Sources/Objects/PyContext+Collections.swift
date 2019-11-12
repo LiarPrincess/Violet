@@ -57,7 +57,7 @@ extension PyContext {
   }
 
   /// PyObject * _PyList_Extend(PyListObject *self, PyObject *iterable)
-  public func extent(list: PyObject, iterable: PyObject) throws {
+  public func extend(list: PyObject, iterable: PyObject) throws {
 //    try self.types.list.extend(owner: list, iterable: iterable)
   }
 

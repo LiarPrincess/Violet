@@ -12,6 +12,10 @@ extension Builtins {
 
   // MARK: - Other
 
+  public func getDict(_ module: PyModule) -> Attributes {
+    return module._attributes
+  }
+
   /// Internal API to look for a name through the MRO.
   internal func lookup(_ object: PyObject, name: String) -> PyObject? {
     return object.type.lookup(name: name)

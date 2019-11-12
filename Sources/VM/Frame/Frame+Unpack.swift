@@ -85,7 +85,7 @@ extension Frame {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
 
     for iterable in elements {
-      try self.context.extent(list: result, iterable: iterable)
+      try self.context.extend(list: result, iterable: iterable)
     }
 
     return result
