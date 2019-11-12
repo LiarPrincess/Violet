@@ -22,7 +22,7 @@ public final class PyTuple: PyObject {
 
   internal init(_ context: PyContext, elements: [PyObject]) {
     self.elements = elements
-    super.init(type: context.types.tuple)
+    super.init(type: context.builtins.types.tuple)
   }
 
   // MARK: - Equatable

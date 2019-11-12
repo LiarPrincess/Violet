@@ -21,7 +21,7 @@ internal final class PyMethod: PyObject {
   internal init(_ context: PyContext, func fn: PyFunction, zelf: PyObject) {
     self._func = fn
     self._self = zelf
-    super.init(type: context.types.method)
+    super.init(type: context.builtins.types.method)
   }
 
   // MARK: - Equatable

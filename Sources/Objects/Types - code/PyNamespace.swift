@@ -13,7 +13,7 @@ public final class PyNamespace: PyObject, AttributesOwner {
   internal let _attributes = Attributes()
 
   internal init(_ context: PyContext, name: PyObject, doc: PyObject? = nil) {
-    super.init(type: context.types.namespace)
+    super.init(type: context.builtins.types.simpleNamespace)
   }
 
   // MARK: - Equatable

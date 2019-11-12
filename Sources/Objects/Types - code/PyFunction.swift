@@ -63,7 +63,7 @@ internal final class PyFunction: PyObject, AttributesOwner {
     default: self._doc = nil
     }
 
-    super.init(type: context.types.function)
+    super.init(type: context.builtins.types.function)
   }
 
   // MARK: - String

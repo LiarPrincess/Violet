@@ -34,7 +34,7 @@ public final class PyBool: PyInt {
   // MARK: - Init
 
   internal init(_ context: PyContext, value: Bool) {
-    super.init(type: context.types.bool, value: BigInt(value ? 1 : 0))
+    super.init(type: context.builtins.types.bool, value: BigInt(value ? 1 : 0))
   }
 
   // MARK: - String

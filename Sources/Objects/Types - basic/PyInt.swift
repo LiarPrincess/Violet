@@ -36,7 +36,7 @@ public class PyInt: PyObject {
 
   internal init(_ context: PyContext, value: BigInt) {
     self.value = value
-    super.init(type: context.types.int)
+    super.init(type: context.builtins.types.int)
   }
 
   /// Only for PyBool use!

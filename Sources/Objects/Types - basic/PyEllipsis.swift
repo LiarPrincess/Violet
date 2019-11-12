@@ -12,7 +12,7 @@ public final class PyEllipsis: PyObject {
   // MARK: - Init
 
   internal init(_ context: PyContext) {
-    super.init(type: context.types.ellipsis)
+    super.init(type: context.builtins.types.ellipsis)
   }
 
   // MARK: - String
