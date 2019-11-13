@@ -101,11 +101,11 @@ public class PyObject {
   }
 
   internal func range(stop: PyInt) -> PyResult<PyRange> {
-    return .value(self.builtins.newRange(stop: stop))
+    return self.builtins.newRange(stop: stop)
   }
 
   internal func range(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
-    return .value(self.builtins.newRange(start: start, stop: stop, step: step))
+    return self.builtins.newRange(start: start, stop: stop, step: step)
   }
 
   // MARK: - Repr

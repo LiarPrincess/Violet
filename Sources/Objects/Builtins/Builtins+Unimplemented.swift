@@ -16,8 +16,6 @@ extension Builtins {
 
   // MARK: - Other
 
-  internal func handleError<E>(_ effect: E) { }
-
   /// Internal API to look for a name through the MRO.
   internal func lookup(_ object: PyObject, name: String) -> PyObject? {
     return object.type.lookup(name: name)

@@ -43,9 +43,9 @@ extension Builtins {
   }
 
   /// int PyList_Append(PyObject *op, PyObject *newitem)
-  public func add(list: PyObject, element: PyObject) {
+  public func add(list: PyObject, element: PyObject) -> PyResult<()> {
     let list = TypeFactory.selfAsPyList(list)
-    self.handleError(list.append(element))
+    return list.append(element).map { _ in () }
   }
 
   /// PyObject * _PyList_Extend(PyListObject *self, PyObject *iterable)
@@ -57,24 +57,24 @@ extension Builtins {
   // MARK: - Set
 
   /// PyObject * PySet_New(PyObject *iterable)
-  public func newSet(_ elements: [PyObject] = []) -> PySet {
+  public func newSet(_ elements: [PyObject] = []) -> PyResult<PySet> {
     var data = PySetData()
     for element in elements {
       switch self.hash(element) {
       case let .value(hash):
         data.insert(key: PySetElement(hash: hash, object: element))
       case let .error(e):
-        self.handleError(e)
+        return .error(e)
       }
     }
 
-    return PySet(self.context, elements: data)
+    return .value(PySet(self.context, elements: data))
   }
 
   /// int PySet_Add(PyObject *anyset, PyObject *key)
-  public func add(set: PyObject, value: PyObject) {
+  public func add(set: PyObject, value: PyObject) -> PyResult<()> {
     let set = TypeFactory.selfAsPySet(set)
-    self.handleError(set.add(value))
+    return set.add(value).map { _ in () }
   }
 
   /// int _PySet_Update(PyObject *set, PyObject *iterable)
@@ -84,7 +84,7 @@ extension Builtins {
 
   // MARK: - Dictionary
 
-  public func newDict(_ args: [CreateDictionaryArg] = []) -> PyDict {
+  public func newDict(_ args: [CreateDictionaryArg] = []) -> PyResult<PyDict> {
     var data = PyDictData()
     for arg in args {
       switch self.hash(arg.key) {
@@ -92,23 +92,20 @@ extension Builtins {
         let key = PyDictKey(hash: hash, object: arg.key)
         data.insert(key: key, value: arg.value)
       case let .error(e):
-        self.handleError(e)
+        return .error(e)
       }
     }
 
-    return PyDict(self.context, elements: data)
+    return .value(PyDict(self.context, elements: data))
   }
 
   public func newDict(keyTuple: PyObject,
-                      elements: [PyObject]) -> PyDict {
+                      elements: [PyObject]) -> PyResult<PyDict> {
     var data = PyDictData()
     let keyTuple = TypeFactory.selfAsPyTuple(keyTuple)
 
     guard keyTuple.elements.count == elements.count else {
-      self.handleError(
-        PyErrorEnum.valueError("bad 'dictionary(keyTuple:elements:)' keys argument")
-      )
-      fatalError()
+      return .valueError("bad 'dictionary(keyTuple:elements:)' keys argument")
     }
 
     for (keyObject, value) in Swift.zip(keyTuple.elements, elements) {
@@ -117,31 +114,31 @@ extension Builtins {
         let key = PyDictKey(hash: hash, object: keyObject)
         data.insert(key: key, value: value)
       case let .error(e):
-        self.handleError(e)
+        return .error(e)
       }
     }
 
-    return PyDict(self.context, elements: data)
+    return .value(PyDict(self.context, elements: data))
   }
 
-  public func add(dict: PyObject, key: PyObject, value: PyObject) {
+  public func add(dict: PyObject, key: PyObject, value: PyObject) -> PyResult<()> {
     let dict = TypeFactory.selfAsPyDict(dict)
-    self.handleError(dict.setItem(at: key, to: value))
+    return dict.setItem(at: key, to: value).map { _ in () }
   }
 
   // MARK: - Range
 
-  public func newRange(stop: PyInt) -> PyRange {
+  public func newRange(stop: PyInt) -> PyResult<PyRange> {
     let zero = self.newInt(0)
     return self.newRange(start: zero, stop: stop, step: nil)
   }
 
-  public func newRange(start: PyInt, stop: PyInt, step: PyInt?) -> PyRange {
+  public func newRange(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
     if let s = step, s.value == 0 {
-      self.handleError(PyErrorEnum.valueError("range() arg 3 must not be zero"))
+      return .valueError("range() arg 3 must not be zero")
     }
 
-    return PyRange(self.context, start: start, stop: stop, step: step)
+    return .value(PyRange(self.context, start: start, stop: stop, step: step))
   }
 
   // MARK: - Enumerate

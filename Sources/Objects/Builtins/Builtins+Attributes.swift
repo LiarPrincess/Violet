@@ -24,29 +24,25 @@ extension Builtins {
   /// _PyObject_LookupAttr(PyObject *v, PyObject *name, PyObject **result)
   public func getAttribute(_ object: PyObject,
                            name: PyObject,
-                           default: PyObject? = nil) -> PyObject {
+                           default: PyObject? = nil) -> PyResult<PyObject> {
     guard let name = name as? PyString else {
-      let msg = "getattr(): attribute name must be string"
-      let error = PyErrorEnum.typeError(msg)
-      return error.toPyObject(in: self.context)
+      return .typeError("getattr(): attribute name must be string")
     }
 
     // Fast protocol-based path
     if let getAttributeOwner = object as? __getattribute__Owner {
-      let result = getAttributeOwner.getAttribute(name: name)
-      return result.toPyObject(in: self.context)
+      return getAttributeOwner.getAttribute(name: name)
     }
 
     // Slow python path
     // TODO: Recheck this after we have `__call__`
     switch self.callMethod(on: object, selector: "__getattribute__", arg: name) {
     case .value(let o):
-      return o
+      return .value(o)
     case .noSuchMethod:
-      let o = AttributeHelper.getAttribute(zelf: object, name: name.value)
-      return o.toPyObject(in: self.context)
+      return AttributeHelper.getAttribute(zelf: object, name: name.value)
     case .methodIsNotCallable(let e):
-      return e.toPyObject(in: self.context)
+      return .error(e)
     }
   }
 

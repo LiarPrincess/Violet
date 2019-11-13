@@ -66,18 +66,11 @@ extension PyObject: PyObjectConvertible {
   }
 }
 
-extension PyErrorEnum: PyObjectConvertible {
-  public func toPyObject(in context: PyContext) -> PyObject {
-    // TODO: Put error in TLS
-    fatalError()
-  }
-}
-
 extension PyResult: PyObjectConvertible where V: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
     switch self {
     case let .value(v): return v.toPyObject(in: context)
-    case let .error(e): return e.toPyObject(in: context)
+    case .error: fatalError()
     }
   }
 }
@@ -85,8 +78,8 @@ extension PyResult: PyObjectConvertible where V: PyObjectConvertible {
 extension PyResultOrNot: PyObjectConvertible where V: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
     switch self {
-    case let .value(v): return v.toPyObject(in: context)
-    case let .error(e): return e.toPyObject(in: context)
+    case .value(let v): return v.toPyObject(in: context)
+    case .error: fatalError()
     case .notImplemented: return context.notImplemented
     }
   }

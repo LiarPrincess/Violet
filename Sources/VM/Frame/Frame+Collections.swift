@@ -27,9 +27,13 @@ extension Frame {
   /// and pushes the resulting set onto the stack.
   internal func buildSet(elementCount: Int) -> InstructionResult {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = self.builtins.newSet(elements)
-    self.stack.push(collection)
-    return .ok
+    switch self.builtins.newSet(elements) {
+    case let .value(collection):
+      self.stack.push(collection)
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Pushes a new dictionary object onto the stack.
@@ -37,9 +41,13 @@ extension Frame {
   /// {..., TOS3: TOS2, TOS1: TOS}.
   internal func buildMap(elementCount: Int) -> InstructionResult {
     let elements = self.popDictionaryElements(count: elementCount)
-    let collection = self.builtins.newDict(elements)
-    self.stack.push(collection)
-    return .ok
+    switch self.builtins.newDict(elements) {
+    case let .value(collection):
+      self.stack.push(collection)
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// The version of `BuildMap` specialized for constant keys.
@@ -54,9 +62,13 @@ extension Frame {
     }
 
     let elements = self.stack.popElementsInPushOrder(count: count)
-    let collection = self.builtins.newDict(keyTuple: keys, elements: elements)
-    self.stack.push(collection)
-    return .ok
+    switch self.builtins.newDict(keyTuple: keys, elements: elements) {
+    case let .value(collection):
+      self.stack.push(collection)
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   private func popDictionaryElements(count: Int) -> [CreateDictionaryArg] {
@@ -79,8 +91,13 @@ extension Frame {
   internal func setAdd(value: Int) -> InstructionResult {
     let element = self.stack.pop()
     let set = self.stack.top
-    self.builtins.add(set: set, value: element)
-    return .ok
+
+    switch self.builtins.add(set: set, value: element) {
+    case .value:
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Calls `list.append(TOS[-i], TOS)`.
@@ -89,8 +106,13 @@ extension Frame {
   internal func listAppend(value: Int) -> InstructionResult {
     let element = self.stack.pop()
     let list = self.stack.top
-    self.builtins.add(list: list, element: element)
-    return .ok
+
+    switch self.builtins.add(list: list, element: element) {
+    case .value:
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`.
@@ -100,7 +122,12 @@ extension Frame {
     let key = self.stack.pop()
     let value = self.stack.pop()
     let map = self.stack.top
-    self.builtins.add(dict: map, key: key, value: value)
-    return .ok
+
+    switch self.builtins.add(dict: map, key: key, value: value) {
+    case .value:
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 }

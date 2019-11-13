@@ -11,13 +11,10 @@ extension Builtins {
   /// Equivalent of 'not v'.
   ///
   /// int PyObject_Not(PyObject *v)
-  public func not(_ object: PyObject) -> PyObject {
-    switch self.isTrueRaw(object) {
-    case let .value(isTrue):
-      return self.newBool(!isTrue)
-    case let .error(e):
-      return e.toPyObject(in: self.context)
-    }
+  public func not(_ object: PyObject) -> PyResult<PyBool> {
+    return self.isTrueRaw(object)
+      .map { !$0 }
+      .map(self.newBool)
   }
 
   public func notBool(_ object: PyObject) -> Bool {
@@ -27,13 +24,8 @@ extension Builtins {
   // MARK: - Is true
 
   /// Test a value used as condition, e.g.,  `if`  or `in` statement.
-  public func isTrue(_ object: PyObject) -> PyObject {
-    switch self.isTrueRaw(object) {
-    case let .value(isTrue):
-      return self.newBool(isTrue)
-    case let .error(e):
-      return e.toPyObject(in: self.context)
-    }
+  public func isTrue(_ object: PyObject) -> PyResult<PyBool> {
+    return self.isTrueRaw(object).map(self.newBool)
   }
 
   public func isTrueBool(_ object: PyObject) -> Bool {
