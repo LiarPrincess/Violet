@@ -288,27 +288,27 @@ extension Builtins {
 
   // MARK: - Bool
 
-  public func isEqualBool(left: PyObject, right: PyObject) -> Bool {
+  public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.compareResultAsBool(self.isEqual(left: left, right: right))
   }
 
-  public func isNotEqualBool(left: PyObject, right: PyObject) -> Bool {
+  public func isNotEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.compareResultAsBool(self.isNotEqual(left: left, right: right))
   }
 
-  public func isLessBool(left: PyObject, right: PyObject) -> Bool {
+  public func isLessBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.compareResultAsBool(self.isLess(left: left, right: right))
   }
 
-  public func isLessEqualBool(left: PyObject, right: PyObject) -> Bool {
+  public func isLessEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.compareResultAsBool(self.isLessEqual(left: left, right: right))
   }
 
-  public func isGreaterBool(left: PyObject, right: PyObject) -> Bool {
+  public func isGreaterBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.compareResultAsBool(self.isGreater(left: left, right: right))
   }
 
-  public func isGreaterEqualBool(left: PyObject, right: PyObject) -> Bool {
+  public func isGreaterEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.compareResultAsBool(self.isGreaterEqual(left: left, right: right))
   }
 
@@ -322,7 +322,7 @@ extension Builtins {
     return .typeError("'\(op)' not supported between instances of '\(l)' and '\(r)'")
   }
 
-  private func compareResultAsBool(_ result: PyResult<PyObject>) -> Bool {
+  private func compareResultAsBool(_ result: PyResult<PyObject>) -> PyResult<Bool> {
     // Try this:
     //
     // >>> class C():
@@ -339,9 +339,9 @@ extension Builtins {
     // True
     switch result {
     case let .value(object):
-      return self.isTrueBool(object)
-    case .error:
-      return true
+      return .value(self.isTrueBool(object))
+    case let .error(e):
+      return .error(e)
     }
   }
 }

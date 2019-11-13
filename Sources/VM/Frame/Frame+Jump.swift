@@ -12,7 +12,7 @@ extension Frame {
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfTrue(labelIndex: Int) -> InstructionResult {
     let top = self.stack.pop()
-    let isTrue = self.context.isTrue(value: top)
+    let isTrue = self.builtins.isTrueBool(top)
     self.popJumpIf(isTrue, to: labelIndex)
     return .ok
   }
@@ -20,7 +20,7 @@ extension Frame {
   /// If TOS is false, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfFalse(labelIndex: Int) -> InstructionResult {
     let top = self.stack.pop()
-    let isTrue = self.context.isTrue(value: top)
+    let isTrue = self.builtins.isTrueBool(top)
     self.popJumpIf(!isTrue, to: labelIndex)
     return .ok
   }
@@ -29,7 +29,7 @@ extension Frame {
   /// Otherwise (TOS is false), TOS is popped.
   internal func jumpIfTrueOrPop(labelIndex: Int) -> InstructionResult {
     let top = self.stack.top
-    let isTrue = self.context.isTrue(value: top)
+    let isTrue = self.builtins.isTrueBool(top)
     self.jumpIfOrPop(isTrue, to: labelIndex)
     return .ok
   }
@@ -38,7 +38,7 @@ extension Frame {
   /// Otherwise (TOS is true), TOS is popped.
   internal func jumpIfFalseOrPop(labelIndex: Int) -> InstructionResult {
     let top = self.stack.top
-    let isTrue = self.context.isTrue(value: top)
+    let isTrue = self.builtins.isTrueBool(top)
     self.jumpIfOrPop(!isTrue, to: labelIndex)
     return .ok
   }

@@ -14,13 +14,13 @@ internal final class PyMethod: PyObject {
     """
 
   /// The callable object implementing the method
-  internal let _func: PyFunction
+  internal let fn: PyFunction
   /// The instance it is bound to
-  internal let _self: PyObject
+  internal let object: PyObject
 
-  internal init(_ context: PyContext, func fn: PyFunction, zelf: PyObject) {
-    self._func = fn
-    self._self = zelf
+  internal init(_ context: PyContext, fn: PyFunction, object: PyObject) {
+    self.fn = fn
+    self.object = object
     super.init(type: context.builtins.types.method)
   }
 
@@ -32,21 +32,16 @@ internal final class PyMethod: PyObject {
       return .notImplemented
     }
 
-    return .value(self.isEqual(other))
-  }
-
-  internal func isEqual(_ other: PyMethod) -> Bool {
-    let isFuncEqual = self.context.isEqual(left: self._func, right: other._func)
-    guard case PyResultOrNot.value(true) = isFuncEqual else {
-      return false
+    switch self.builtins.isEqualBool(left: self.fn, right: other.fn) {
+    case .value(true): break // compare self
+    case .value(false): return .value(false)
+    case .error(let e): return .error(e)
     }
 
-    let isSelfEqual = self.context.isEqual(left: self._self, right: other._self)
-    guard case PyResultOrNot.value(true) = isSelfEqual else {
-      return false
+    switch self.builtins.isEqualBool(left: self.object, right: other.object) {
+    case .value(let b): return .value(b)
+    case .error(let e): return .error(e)
     }
-
-    return true
   }
 
   // sourcery: pymethod = __ne__
@@ -80,16 +75,16 @@ internal final class PyMethod: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let funcNameObject = self._func._attributes["__qualname__"] ??
-                         self._func._attributes["__name__"]
+    let funcNameObject = self.fn._attributes["__qualname__"] ??
+                         self.fn._attributes["__name__"]
 
-    var funcName = self._func._name
+    var funcName = self.fn._name
     if let str = funcNameObject as? PyString {
       funcName = str.value
     }
 
-    let ptr = self._self.ptrString
-    let type = self._self.typeName
+    let ptr = self.object.ptrString
+    let type = self.object.typeName
     return .value("<bound method \(funcName) of \(type) object at \(ptr)>")
   }
 
@@ -104,8 +99,8 @@ internal final class PyMethod: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    let selfHash = self.context.hash(value: self._self)
-    let funcHash = self.context.hash(value: self._func)
+    let selfHash = self.context.hash(value: self.object)
+    let funcHash = self.context.hash(value: self.fn)
     return .value(selfHash ^ funcHash)
   }
 
@@ -145,14 +140,14 @@ internal final class PyMethod: PyObject {
 
   // MARK: - Getters
 
-  // sourcery: pymethod = __func__
+  // sourcery: pymethod = _fn__
   internal func getFunc() -> PyObject {
-    return self._func
+    return self.fn
   }
 
-  // sourcery: pymethod = __self__
+  // sourcery: pymethod = _object__
   internal func getSelf() -> PyObject {
-    return self._self
+    return self.object
   }
 
   // MARK: - Call
@@ -166,6 +161,6 @@ internal final class PyMethod: PyObject {
     }
 
     // Bind it to obj
-    return .value(PyMethod(context, func: self._func, zelf: object))
+    return .value(PyMethod(context, fn: self.fn, object: object))
   }
 }

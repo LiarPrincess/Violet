@@ -5,69 +5,67 @@ internal protocol AttributesOwner {
 
 /// Dictionary used for `__dict__`.
 /// Basically a Swift Dictionary, but as a reference type.
-public final class Attributes: Equatable {
+public final class Attributes {
 
-  private var _values = [String:PyObject]()
+  private var values = [String:PyObject]()
 
   internal var asDictionary: [String: PyObject] {
-    return self._values
+    return self.values
   }
 
   public subscript(key: String) -> PyObject? {
-    get { return self._values[key] }
-    set { self._values[key] = newValue }
+    get { return self.values[key] }
+    set { self.values[key] = newValue }
   }
 
   public func has(key: String) -> Bool {
-    return self._values[key] != nil
+    return self.values[key] != nil
   }
 
   /// Use this for `__getattribute__` implementation
   public func get(key: String) -> PyObject? {
-    return self._values[key]
+    return self.values[key]
   }
 
   /// Use this for `__setattr__` implementation
   public func set(key: String, to value: PyObject) {
-    self._values[key] = value
+    self.values[key] = value
   }
 
   /// Use this for `__delattr__` implementation
   @discardableResult
   public func del(key: String) -> PyObject? {
-    return self._values.removeValue(forKey: key)
+    return self.values.removeValue(forKey: key)
   }
 
   // Technically thats an implementaton detail
   internal typealias KeysType = Dictionary<String, PyObject>.Keys
 
   internal var keys: KeysType {
-    return self._values.keys
+    return self.values.keys
   }
 
   // MARK: - Equatable
 
-  public static func == (lhs: Attributes, rhs: Attributes) -> Bool {
-    guard lhs._values.count == rhs._values.count else {
-      return false
+  public func isEqual(to other: Attributes) -> PyResult<Bool> {
+    guard self.values.count == other.values.count else {
+      return .value(false)
     }
 
-    for (key, lhsObject) in lhs._values {
-      guard let rhsObject = rhs._values[key] else {
-        return false
+    for (key, lhsObject) in self.values {
+      guard let rhsObject = other.values[key] else {
+        return .value(false)
       }
 
       let context = lhsObject.context
-      switch context.isEqual(left: lhsObject, right: rhsObject) {
-      case .value(true):
-        break // next one please!
-      case .value(false),
-           .notImplemented,
-           .error:
-        return false
+
+      switch context.builtins.isEqualBool(left: lhsObject, right: rhsObject) {
+      case .value(true): break // next one please!
+      case .value(false): return .value(false)
+      case let .error(e): return .error(e)
       }
     }
 
-    return true
+    return .value(true)
   }
 }

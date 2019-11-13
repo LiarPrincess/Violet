@@ -1,9 +1,5 @@
 import Core
 
-internal protocol CGVisitor {
-  func visit(_ object: PyObject)
-}
-
 extension PyContext {
 
   @discardableResult

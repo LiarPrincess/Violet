@@ -14,11 +14,10 @@ internal enum SequenceHelper {
     }
 
     for (l, r) in zip(left, right) {
-      switch context.isEqual(left: l, right: r) {
+      switch context.builtins.isEqualBool(left: l, right: r) {
       case .value(true): break // go to next element
       case .value(false): return .value(false)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
+      case .error(let e): return .error(e)
       }
     }
 
@@ -31,11 +30,13 @@ internal enum SequenceHelper {
                               left: [PyObject],
                               right: [PyObject]) -> PyResultOrNot<Bool> {
     for (l, r) in zip(left, right) {
-      switch context.isEqual(left: l, right: r) {
+      // Find 1st not equal element
+      switch context.builtins.isEqualBool(left: l, right: r) {
       case .value(true): break // go to next element
-      case .value(false): return context.isLess(left: l, right: r)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
+      case .value(false):
+        let result = context.builtins.isLessBool(left: l, right: r)
+        return SequenceHelper.toCompareResult(result)
+      case .error(let e): return .error(e)
       }
     }
 
@@ -46,11 +47,13 @@ internal enum SequenceHelper {
                                    left: [PyObject],
                                    right: [PyObject]) -> PyResultOrNot<Bool> {
     for (l, r) in zip(left, right) {
-      switch context.isEqual(left: l, right: r) {
+      // Find 1st not equal element
+      switch context.builtins.isEqualBool(left: l, right: r) {
       case .value(true): break // go to next element
-      case .value(false): return context.isLessEqual(left: l, right: r)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
+      case .value(false):
+        let result = context.builtins.isLessEqualBool(left: l, right: r)
+        return SequenceHelper.toCompareResult(result)
+      case .error(let e): return .error(e)
       }
     }
 
@@ -61,11 +64,13 @@ internal enum SequenceHelper {
                                  left: [PyObject],
                                  right: [PyObject]) -> PyResultOrNot<Bool> {
     for (l, r) in zip(left, right) {
-      switch context.isEqual(left: l, right: r) {
+      // Find 1st not equal element
+      switch context.builtins.isEqualBool(left: l, right: r) {
       case .value(true): break // go to next element
-      case .value(false): return context.isGreater(left: l, right: r)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
+      case .value(false):
+        let result = context.builtins.isGreaterBool(left: l, right: r)
+        return SequenceHelper.toCompareResult(result)
+      case .error(let e): return .error(e)
       }
     }
 
@@ -76,15 +81,26 @@ internal enum SequenceHelper {
                                       left: [PyObject],
                                       right: [PyObject]) -> PyResultOrNot<Bool> {
     for (l, r) in zip(left, right) {
-      switch context.isEqual(left: l, right: r) {
+      // Find 1st not equal element
+      switch context.builtins.isEqualBool(left: l, right: r) {
       case .value(true): break // go to next element
-      case .value(false): return context.isGreaterEqual(left: l, right: r)
-      case .error(let msg): return .error(msg)
-      case .notImplemented: return .notImplemented
+      case .value(false):
+        let result = context.builtins.isGreaterEqualBool(left: l, right: r)
+        return SequenceHelper.toCompareResult(result)
+      case .error(let e): return .error(e)
       }
     }
 
     return .value(left.count >= right.count)
+  }
+
+  private static func toCompareResult(_ value: PyResult<Bool>) -> PyResultOrNot<Bool> {
+    switch value {
+    case let .value(b):
+      return .value(b)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Contains
@@ -93,13 +109,9 @@ internal enum SequenceHelper {
                                 elements: [PyObject],
                                 element: PyObject) -> Bool {
     for e in elements {
-      switch context.isEqual(left: e, right: element) {
-      case .value(true):
-        return true
-      case .value(false),
-           .error,
-           .notImplemented:
-        break // go to next element
+      switch context.builtins.isEqualBool(left: e, right: element) {
+      case .value(true): return true
+      case .value(false), .error: break // go to next element
       }
     }
 
@@ -251,13 +263,10 @@ internal enum SequenceHelper {
     var result: BigInt = 0
 
     for e in elements {
-      switch context.isEqual(left: e, right: element) {
-      case .value(true):
-        result += 1
-      case .value(false),
-           .error,
-           .notImplemented:
-        break // go to next element
+      switch context.builtins.isEqualBool(left: e, right: element) {
+      case .value(true): result += 1
+      case .value(false): break // go to next element
+      case .error(let e): return .error(e)
       }
     }
 
@@ -271,13 +280,13 @@ internal enum SequenceHelper {
                              element: PyObject,
                              typeName: String) -> PyResult<BigInt> {
     for (index, e) in elements.enumerated() {
-      switch context.isEqual(left: e, right: element) {
+      switch context.builtins.isEqualBool(left: e, right: element) {
       case .value(true):
         return .value(BigInt(index))
-      case .value(false),
-           .error,
-           .notImplemented:
+      case .value(false):
         break // go to next element
+      case .error(let e):
+        return .error(e)
       }
     }
 

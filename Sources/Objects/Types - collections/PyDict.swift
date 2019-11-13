@@ -19,6 +19,14 @@ internal struct PyDictKey: VioletHashable {
   }
 
   internal func isEqual(to other: PyDictKey) -> Bool {
+    // >>> class C:
+    // ...     def __eq__(self, other): raise NotImplementedError('a')
+    // ...     def __hash__(self): return 1
+    // >>> d = {}
+    // >>> d[1] = 'a'
+    // >>> d[c] = 'b'
+    // NotImplementedError: a
+
     return self.hash == other.hash &&
       self.object.builtins.isEqualBool(left: self.object, right: other.object)
   }
@@ -62,25 +70,23 @@ public final class PyDict: PyObject {
       return .notImplemented
     }
 
-    return .value(self.isEqual(other))
-  }
-
-  internal func isEqual(_ other: PyDict) -> Bool {
     guard self.elements.count == other.elements.count else {
-      return false
+      return .value(false)
     }
 
     for entry in self.elements {
       guard let otherValue = other.elements[entry.key] else {
-        return false
+        return .value(false)
       }
 
-      guard self.builtins.isEqualBool(left: entry.value, right: otherValue) else {
-        return false
+      switch self.builtins.isEqualBool(left: entry.value, right: otherValue) {
+      case .value(true): break // Go to next element
+      case .value(false): return .value(false)
+      case .error(let e): return .error(e)
       }
     }
 
-    return true
+    return .value(true)
   }
 
   // sourcery: pymethod = __ne__

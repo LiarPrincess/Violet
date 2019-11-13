@@ -193,7 +193,7 @@ internal class Frame {
     case let .setAdd(value):
       return self.setAdd(value: extendedArg + Int(value))
     case let .listAppend(value):
-      return self.listAppend(value: extendedArg + Int(value))
+      return self.listAdd(value: extendedArg + Int(value))
     case let .mapAdd(value):
       return self.mapAdd(value: extendedArg + Int(value))
     case let .buildTupleUnpack(elementCount):

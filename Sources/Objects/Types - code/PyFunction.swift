@@ -150,6 +150,6 @@ internal final class PyFunction: PyObject, AttributesOwner {
       return .value(self)
     }
 
-    return .value(PyMethod(context, func: self, zelf: object))
+    return .value(PyMethod(context, fn: self, object: object))
   }
 }

@@ -24,11 +24,10 @@ public final class PyNamespace: PyObject, AttributesOwner {
       return .notImplemented
     }
 
-    return .value(self.isEqual(other))
-  }
-
-  internal func isEqual(_ other: PyNamespace) -> Bool {
-    return self._attributes == other._attributes
+    switch self._attributes.isEqual(to: other._attributes) {
+    case let .value(b): return .value(b)
+    case let .error(e): return .error(e)
+    }
   }
 
   // sourcery: pymethod = __ne__

@@ -21,8 +21,8 @@ extension Frame {
 
   /// Implements `TOS = not TOS`.
   internal func unaryNot() -> InstructionResult {
-    let value = self.stack.top
-    let boolValue = self.context.isTrue(value: value)
+    let top = self.stack.top
+    let boolValue = self.builtins.isTrueBool(top)
 
     switch boolValue {
     case true:

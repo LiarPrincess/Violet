@@ -2,20 +2,6 @@ import Core
 
 extension PyContext {
 
-  // MARK: - Bool
-
-  public func not(value: PyObject) -> Bool {
-    return false
-  }
-
-  public func isTrue(value: PyObject) -> Bool {
-    return true
-  }
-
-  public func `is`(left: PyObject, right: PyObject) -> Bool {
-    return false
-  }
-
   // MARK: - Repr
 
   /// PyObject * PyObject_Repr(PyObject *v)
@@ -71,8 +57,6 @@ extension PyContext {
     return raw.padding(toLength: padTo, withPad: "0", startingAt: 0)
   }
 
-  // MARK: - Helpers
-
   private func genericRepr(value: PyObject) -> String {
     return "<\(value.typeName) object at \(value.ptrString)>"
   }
@@ -82,32 +66,6 @@ extension PyContext {
   /// Py_hash_t PyObject_Hash(PyObject *v)
   internal func hash(value: PyObject) -> PyHash {
     return 0
-  }
-
-  // MARK: - Compare
-
-  public func isEqual(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
-    return .notImplemented
-  }
-
-  public func isNotEqual(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
-    return .notImplemented
-  }
-
-  public func isLess(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
-    return .notImplemented
-  }
-
-  public func isLessEqual(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
-    return .notImplemented
-  }
-
-  public func isGreater(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
-    return .notImplemented
-  }
-
-  public func isGreaterEqual(left: PyObject, right: PyObject) -> PyResultOrNot<Bool> {
-    return .notImplemented
   }
 
   // MARK: - Shared

@@ -3,7 +3,7 @@ import Objects
 
 extension Frame {
 
-  // MARK: - Build
+  // MARK: - Tuple
 
   /// Creates a tuple consuming `count` items from the stack,
   /// and pushes the resulting tuple onto the stack.
@@ -14,6 +14,8 @@ extension Frame {
     return .ok
   }
 
+  // MARK: - List
+
   /// Creates a list consuming `count` items from the stack,
   /// and pushes the resulting list onto the stack.
   internal func buildList(elementCount: Int) -> InstructionResult {
@@ -22,6 +24,23 @@ extension Frame {
     self.stack.push(collection)
     return .ok
   }
+
+  /// Calls `list.append(TOS[-i], TOS)`.
+  /// Container object remains on the stack.
+  /// Used to implement list comprehensions.
+  internal func listAdd(value: Int) -> InstructionResult {
+    let element = self.stack.pop()
+    let list = self.stack.top
+
+    switch self.builtins.add(list: list, element: element) {
+    case .value:
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
+  }
+
+  // MARK: - Set
 
   /// Creates a set consuming `count` items from the stack,
   /// and pushes the resulting set onto the stack.
@@ -35,6 +54,23 @@ extension Frame {
       return .builtinError(e)
     }
   }
+
+  /// Calls `set.add(TOS1[-i], TOS)`.
+  /// Container object remains on the stack.
+  /// Used to implement set comprehensions.
+  internal func setAdd(value: Int) -> InstructionResult {
+    let element = self.stack.pop()
+    let set = self.stack.top
+
+    switch self.builtins.add(set: set, value: element) {
+    case .value:
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
+  }
+
+  // MARK: - Map
 
   /// Pushes a new dictionary object onto the stack.
   /// Pops 2 * count items so that the dictionary holds count entries:
@@ -81,38 +117,6 @@ extension Frame {
 
     // Elements on stack are in reverse order
     return elements.reversed()
-  }
-
-  // MARK: - Add
-
-  /// Calls `set.add(TOS1[-i], TOS)`.
-  /// Container object remains on the stack.
-  /// Used to implement set comprehensions.
-  internal func setAdd(value: Int) -> InstructionResult {
-    let element = self.stack.pop()
-    let set = self.stack.top
-
-    switch self.builtins.add(set: set, value: element) {
-    case .value:
-      return .ok
-    case let .error(e):
-      return .builtinError(e)
-    }
-  }
-
-  /// Calls `list.append(TOS[-i], TOS)`.
-  /// Container object remains on the stack.
-  /// Used to implement list comprehensions.
-  internal func listAppend(value: Int) -> InstructionResult {
-    let element = self.stack.pop()
-    let list = self.stack.top
-
-    switch self.builtins.add(list: list, element: element) {
-    case .value:
-      return .ok
-    case let .error(e):
-      return .builtinError(e)
-    }
   }
 
   /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`.

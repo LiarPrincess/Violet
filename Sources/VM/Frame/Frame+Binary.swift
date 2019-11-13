@@ -154,10 +154,10 @@ extension Frame {
     case .greaterEqual:
       return self.context.isGreaterEqual(left: left, right: right)
     case .is:
-      let iss = self.context.is(left: left, right: right)
+      let iss = self.builtins.is(left: left, right: right)
       return .value(iss)
     case .isNot:
-      let iss = self.context.is(left: left, right: right)
+      let iss = self.builtins.is(left: left, right: right)
       return .value(!iss)
     case .in:
       return self.context.contains(sequence: left, value: right)
