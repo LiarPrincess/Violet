@@ -13,8 +13,8 @@ extension Frame {
   ///
   /// The next opcode will either ignore it (`PopTop`),
   /// or store it in variable (StoreFast, StoreName, or UnpackSequence).
-  internal func setupWith(afterBodyLabel: Int) throws {
-    self.unimplemented()
+  internal func setupWith(afterBodyLabel: Int) -> InstructionResult {
+    return .unimplemented
   }
 
   /// Cleans up the stack when a `with` statement block exits.
@@ -28,8 +28,8 @@ extension Frame {
   /// In the last case, `TOS(SECOND, THIRD, FOURTH)` is called,
   /// otherwise `TOS(None, None, None)`.
   /// Pushes `SECOND` and result of the call to the stack.
-  internal func withCleanupStart() throws {
-    self.unimplemented()
+  internal func withCleanupStart() -> InstructionResult {
+    return .unimplemented
   }
 
   /// Pops exception type and result of ‘exit’ function call from the stack.
@@ -38,18 +38,18 @@ extension Frame {
   /// this information is “zapped” and replaced with a single WhySilenced
   /// to prevent EndFinally from re-raising the exception.
   /// (But non-local gotos will still be resumed.)
-  internal func withCleanupFinish() throws {
-    self.unimplemented()
+  internal func withCleanupFinish() -> InstructionResult {
+    return .unimplemented
   }
 
   /// Resolves `AEnter` and `AExit` from the object on top of the stack.
   /// Pushes `AExit` and result of `AEnter()` to the stack.
-  internal func beforeAsyncWith() throws {
-    self.unimplemented()
+  internal func beforeAsyncWith() -> InstructionResult {
+    return .unimplemented
   }
 
   /// Creates a new frame object.
-  internal func setupAsyncWith() throws {
-    self.unimplemented()
+  internal func setupAsyncWith() -> InstructionResult {
+    return .unimplemented
   }
 }

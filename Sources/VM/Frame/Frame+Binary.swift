@@ -6,121 +6,135 @@ extension Frame {
   // MARK: - Arithmetic
 
   /// Implements `TOS = TOS1 ** TOS`.
-  internal func binaryPower() throws {
+  internal func binaryPower() -> InstructionResult {
     let exponent = self.stack.pop()
     let value = self.stack.top
-    let result = try self.context.pow(value: value, exponent: exponent)
+    let result = self.context.pow(value: value, exponent: exponent)
     self.stack.top = result
+    return .ok
   }
 
   /// Implements `TOS = TOS1 * TOS`.
-  internal func binaryMultiply() throws {
+  internal func binaryMultiply() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.context.mul(left: left, right: right)
+    let result = self.context.mul(left: left, right: right)
     self.stack.top = result
+    return .ok
   }
 
   /// Implements `TOS = TOS1 @ TOS`.
-  internal func binaryMatrixMultiply() throws {
+  internal func binaryMatrixMultiply() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.context.matrixMul(left: left, right: right)
+    let result = self.context.matrixMul(left: left, right: right)
     self.stack.top = result
+    return .ok
   }
 
   /// Implements `TOS = TOS1 // TOS`.
-  internal func binaryFloorDivide() throws {
+  internal func binaryFloorDivide() -> InstructionResult {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
-    let quotient = try self.context.divFloor(left: dividend, right: divisor)
+    let quotient = self.context.divFloor(left: dividend, right: divisor)
     self.stack.top = quotient
+    return .ok
   }
 
   /// Implements `TOS = TOS1 / TOS`.
-  internal func binaryTrueDivide() throws {
+  internal func binaryTrueDivide() -> InstructionResult {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
-    let quotient = try self.context.div(left: dividend, right: divisor)
+    let quotient = self.context.div(left: dividend, right: divisor)
     self.stack.top = quotient
+    return .ok
   }
 
   /// Implements `TOS = TOS1 % TOS`.
-  internal func binaryModulo() throws {
+  internal func binaryModulo() -> InstructionResult {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
-    let result = try self.context.remainder(left: dividend, right: divisor)
+    let result = self.context.remainder(left: dividend, right: divisor)
     self.stack.top = result
+    return .ok
   }
 
   /// Implements `TOS = TOS1 + TOS`.
-  internal func binaryAdd() throws {
+  internal func binaryAdd() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.context.add(left: left, right: right)
+    let result = self.context.add(left: left, right: right)
     self.stack.top = result
+    return .ok
   }
 
   /// Implements `TOS = TOS1 - TOS`.
-  internal func binarySubtract() throws {
+  internal func binarySubtract() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.context.sub(left: left, right: right)
+    let result = self.context.sub(left: left, right: right)
     self.stack.top = result
+    return .ok
   }
 
   // MARK: - Shifts
 
   /// Implements `TOS = TOS1 << TOS`.
-  internal func binaryLShift() throws {
+  internal func binaryLShift() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.context.lShift(left: left, right: right)
+    let result = self.context.lShift(left: left, right: right)
     self.stack.top = result
+    return .ok
   }
 
   /// Implements `TOS = TOS1 >> TOS`.
-  internal func binaryRShift() throws {
+  internal func binaryRShift() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.context.rShift(left: left, right: right)
+    let result = self.context.rShift(left: left, right: right)
     self.stack.top = result
+    return .ok
   }
 
   // MARK: - Binary
 
   /// Implements `TOS = TOS1 & TOS`.
-  internal func binaryAnd() throws {
+  internal func binaryAnd() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.context.and(left: left, right: right)
+    let result = self.context.and(left: left, right: right)
     self.stack.top = result
+    return .ok
   }
 
   /// Implements `TOS = TOS1 ^ TOS`.
-  internal func binaryXor() throws {
+  internal func binaryXor() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.context.xor(left: left, right: right)
+    let result = self.context.xor(left: left, right: right)
     self.stack.top = result
+    return .ok
   }
 
   /// Implements `TOS = TOS1 | TOS`.
-  internal func binaryOr() throws {
+  internal func binaryOr() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = try self.context.or(left: left, right: right)
+    let result = self.context.or(left: left, right: right)
     self.stack.top = result
+    return .ok
   }
 
   // MARK: - Compare
 
   /// Performs a `Boolean` operation.
-  internal func compareOp(comparison: ComparisonOpcode) throws {
+  internal func compareOp(comparison: ComparisonOpcode) -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
     let result = self.compare(left: left, right: right, comparison: comparison)
     self.stack.top = result.toPyObject(in: self.context)
+    return .ok
   }
 
   private func compare(left: PyObject,

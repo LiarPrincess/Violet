@@ -49,7 +49,7 @@ extension CompareOp {
 
     // Check if right is subtype of left, if so then use right.
     if left.type !== right.type && right.type.isSubtype(of: left.type) {
-     checkedReverse = true
+      checkedReverse = true
 
       let result = reverse.callCompare(left: right, right: left)
       if case CompareResult.value = result {
@@ -57,22 +57,22 @@ extension CompareOp {
       }
     }
 
-     // Try left compare (default path)
-     let result = callCompare(left: left, right: right)
-     if case CompareResult.value = result {
-       return result
-     }
+    // Try left compare (default path)
+    let result = callCompare(left: left, right: right)
+    if case CompareResult.value = result {
+      return result
+    }
 
-     // Try reverse on right
-     if !checkedReverse {
-       let result = reverse.callCompare(left: right, right: left)
-       if case CompareResult.value = result {
-         return result
-       }
-     }
+    // Try reverse on right
+    if !checkedReverse {
+      let result = reverse.callCompare(left: right, right: left)
+      if case CompareResult.value = result {
+        return result
+      }
+    }
 
-     // Not hope left! We are doomed!
-     return .notImplemented
+    // Not hope left! We are doomed!
+    return .notImplemented
   }
 
   private static func callCompare(left: PyObject,

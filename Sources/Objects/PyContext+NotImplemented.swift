@@ -47,7 +47,7 @@ extension PyContext {
     return self.unimplemented()
   }
 
-  public func Py_CLEAR(value: PyObject) throws { }
+  public func Py_CLEAR(value: PyObject) { }
 
   public func pySlice_New(start: PyObject, stop: PyObject, step: PyObject?) -> PyObject {
     return start
@@ -56,34 +56,34 @@ extension PyContext {
   // MARK: - Attribute
 
   /// PyObject_SetAttr
-  public func setAttribute(object: PyObject, name: String, value: PyObject) throws {
+  public func setAttribute(object: PyObject, name: String, value: PyObject) {
     self.unimplemented()
   }
 
-  public func deleteAttribute(object: PyObject, name: String) throws {
+  public func deleteAttribute(object: PyObject, name: String) {
     // err = PyObject_SetAttr(owner, name, (PyObject *)NULL);
     self.unimplemented()
   }
 
   /// PyObject_GetAttr
-  public func getAttribute(object: PyObject, name: String) throws -> PyObject {
+  public func getAttribute(object: PyObject, name: String) -> PyObject {
     return object
   }
 
   // MARK: - Subscript
 
   /// PyObject_GetItem
-  public func getItem(object: PyObject, index: PyObject) throws -> PyObject {
+  public func getItem(object: PyObject, index: PyObject) -> PyObject {
     return object
   }
 
   /// PyObject_SetItem
-  public func setItem(object: PyObject, index: PyObject, value: PyObject) throws {
+  public func setItem(object: PyObject, index: PyObject, value: PyObject) {
     self.unimplemented()
   }
 
   /// PyObject_DelItem
-  public func deleteItem(object: PyObject, index: PyObject) throws {
+  public func deleteItem(object: PyObject, index: PyObject) {
     self.unimplemented()
   }
 }

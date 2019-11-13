@@ -3,7 +3,7 @@ extension PyContext {
   // MARK: - Add
 
   /// PyObject * PyNumber_InPlaceAdd(PyObject *v, PyObject *w)
-  public func addInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func addInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: AddInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.addInPlace(left: left, right: right)
 //      return left
@@ -30,7 +30,7 @@ extension PyContext {
   // MARK: - Sub
 
   /// INPLACE_BINOP(PyNumber_InPlaceSubtract, nb_inplace_subtract, nb_subtract, "-=")
-  public func subInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func subInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: SubInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.subInPlace(left: left, right: right)
 //      return left
@@ -43,7 +43,7 @@ extension PyContext {
   // MARK: - Mul
 
   /// PyObject * PyNumber_InPlaceMultiply(PyObject *v, PyObject *w)
-  public func mulInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func mulInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: MulInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.mulInPlace(left: left, right: right)
 //      return left
@@ -82,7 +82,7 @@ extension PyContext {
   }
 
   /// PyObject * PyNumber_InPlaceMatrixMultiply(PyObject *v, PyObject *w)
-  public func matrixMulInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func matrixMulInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: MatrixMulInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.matrixMulInPlace(left: left, right: right)
 //      return left
@@ -93,7 +93,7 @@ extension PyContext {
   }
 
   /// PyObject * PyNumber_InPlacePower(PyObject *v, PyObject *w, PyObject *z)
-  public func powInPlace(value: PyObject, exponent: PyObject) throws -> PyObject {
+  public func powInPlace(value: PyObject, exponent: PyObject) -> PyObject {
 //    if let type: PowInPlaceTypeClass = self.getTypeClassOrNil(left: value, right: exponent) {
 //      try type.powInPlace(value: value, exponent: exponent)
 //      return value
@@ -106,7 +106,7 @@ extension PyContext {
   // MARK: - Div
 
   /// PyObject * PyNumber_InPlaceTrueDivide(PyObject *v, PyObject *w)
-  public func divInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func divInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: DivInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.divInPlace(left: left, right: right)
 //      return left
@@ -117,7 +117,7 @@ extension PyContext {
   }
 
   /// PyObject * PyNumber_InPlaceFloorDivide(PyObject *v, PyObject *w)
-  public func divFloorInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func divFloorInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: DivFloorInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.divFloorInPlace(left: left, right: right)
 //      return left
@@ -128,7 +128,7 @@ extension PyContext {
   }
 
   /// PyObject * PyNumber_InPlaceRemainder(PyObject *v, PyObject *w)
-  public func remainderInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func remainderInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: RemainderInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.remainderInPlace(left: left, right: right)
 //      return left
@@ -141,7 +141,7 @@ extension PyContext {
   // MARK: - Shift
 
   /// INPLACE_BINOP(PyNumber_InPlaceLshift, nb_inplace_lshift, nb_lshift, "<<=")
-  public func lShiftInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func lShiftInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: ShiftInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.lShiftInPlace(left: left, right: right)
 //      return left
@@ -152,7 +152,7 @@ extension PyContext {
   }
 
   /// INPLACE_BINOP(PyNumber_InPlaceRshift, nb_inplace_rshift, nb_rshift, ">>=")
-  public func rShiftInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func rShiftInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: ShiftInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.rShiftInPlace(left: left, right: right)
 //      return left
@@ -165,7 +165,7 @@ extension PyContext {
   // MARK: - Binary
 
   /// INPLACE_BINOP(PyNumber_InPlaceAnd, nb_inplace_and, nb_and, "&=")
-  public func andInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func andInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: BinaryInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.andInPlace(left: left, right: right)
 //      return left
@@ -176,7 +176,7 @@ extension PyContext {
   }
 
   /// INPLACE_BINOP(PyNumber_InPlaceOr, nb_inplace_or, nb_or, "|=")
-  public func orInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func orInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: BinaryInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.orInPlace(left: left, right: right)
 //      return left
@@ -187,7 +187,7 @@ extension PyContext {
   }
 
   /// INPLACE_BINOP(PyNumber_InPlaceXor, nb_inplace_xor, nb_xor, "^=")
-  public func xorInPlace(left: PyObject, right: PyObject) throws -> PyObject {
+  public func xorInPlace(left: PyObject, right: PyObject) -> PyObject {
 //    if let type: BinaryInPlaceTypeClass = self.getTypeClassOrNil(left: left, right: right) {
 //      try type.xorInPlace(left: left, right: right)
 //      return left

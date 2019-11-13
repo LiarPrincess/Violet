@@ -4,7 +4,7 @@ import Core
 extension PyContext {
 
   /// int PyObject_Print(PyObject *op, FILE *fp, int flags)
-  public func print(value: PyObject, file: FileHandle, raw: Bool) throws {
+  public func print(value: PyObject, file: FileHandle, raw: Bool) {
     // TODO: OutputStream
     let string = raw ?
       self._str(value: value) :

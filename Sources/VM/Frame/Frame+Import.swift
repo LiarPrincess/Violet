@@ -7,8 +7,8 @@ extension Frame {
   ///
   /// The module is popped after loading all names.
   /// This opcode implements `from module import *`.
-  internal func importStar() throws {
-    self.unimplemented()
+  internal func importStar() -> InstructionResult {
+    return .unimplemented
   }
 
   /// Imports the module `name`.
@@ -17,15 +17,15 @@ extension Frame {
   /// The module object is pushed onto the stack.
   /// The current namespace is not affected: for a proper import statement,
   /// a subsequent StoreFast instruction modifies the namespace.
-  internal func importName(nameIndex: Int) throws {
-    self.unimplemented()
+  internal func importName(nameIndex: Int) -> InstructionResult {
+    return .unimplemented
   }
 
   /// Loads the attribute `name` from the module found in TOS.
   ///
   /// The resulting object is pushed onto the stack,
   /// to be subsequently stored by a `StoreFast` instruction.
-  internal func importFrom(nameIndex: Int) throws {
-    self.unimplemented()
+  internal func importFrom(nameIndex: Int) -> InstructionResult {
+    return .unimplemented
   }
 }

@@ -4,7 +4,7 @@
 // sourcery: pytype = types.SimpleNamespace
 public final class PyNamespace: PyObject, AttributesOwner {
 
-  public static let doc: String = """
+  internal static let doc: String = """
     A simple attribute-based namespace.
 
     SimpleNamespace(**kwargs)
@@ -61,7 +61,7 @@ public final class PyNamespace: PyObject, AttributesOwner {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func dict() -> Attributes {
+  internal func dict() -> Attributes {
     return self._attributes
   }
 

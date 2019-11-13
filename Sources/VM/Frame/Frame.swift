@@ -7,6 +7,21 @@ import Objects
 
 // swiftlint:disable file_length
 
+/// Result of running of a single instruction.
+internal enum InstructionResult {
+  /// Instruction executed succesfully.
+  case ok
+  /// Instruction requested a `return` from a current frame.
+  case `return`
+  /// Builtin mudule raised an error.
+  case builtinError(PyErrorEnum)
+  /// User raised error using `raise` instruction.
+  case userError
+  // TODO: Remove `.unimplemented`
+  /// Unimplemented
+  case unimplemented
+}
+
 internal class Frame {
 
   /// Code to run.
@@ -45,13 +60,11 @@ internal class Frame {
 
   // MARK: - Run
 
-  internal func run() throws {
+  internal func run() {
     while self.nextInstructionIndex != self.code.instructions.endIndex {
-      try self.executeInstruction()
-   }
+      _ = self.executeInstruction()
+    }
   }
-
-  internal func unimplemented() {}
 
   private func fetchInstruction() -> Instruction {
     assert(self.nextInstructionIndex >= 0)
@@ -63,7 +76,7 @@ internal class Frame {
   }
 
   // swiftlint:disable:next function_body_length
-  private func executeInstruction(extendedArg: Int = 0) throws {
+  private func executeInstruction(extendedArg: Int = 0) -> InstructionResult {
     let instruction = self.fetchInstruction()
 
     // According to CPython doing single switch will trash our jump prediction
@@ -71,245 +84,245 @@ internal class Frame {
     // we don't care about this (for now).
     switch instruction {
     case .nop:
-      break
+      return .ok
     case .popTop:
-      try self.popTop()
+      return self.popTop()
     case .rotTwo:
-      try self.rotTwo()
+      return self.rotTwo()
     case .rotThree:
-      try self.rotThree()
+      return self.rotThree()
     case .dupTop:
-      try self.dupTop()
+      return self.dupTop()
     case .dupTopTwo:
-      try self.dupTopTwo()
+      return self.dupTopTwo()
     case .unaryPositive:
-      try self.unaryPositive()
+      return self.unaryPositive()
     case .unaryNegative:
-      try self.unaryNegative()
+      return self.unaryNegative()
     case .unaryNot:
-      try self.unaryNot()
+      return self.unaryNot()
     case .unaryInvert:
-      try self.unaryInvert()
+      return self.unaryInvert()
     case .binaryPower:
-      try self.binaryPower()
+      return self.binaryPower()
     case .binaryMultiply:
-      try self.binaryMultiply()
+      return self.binaryMultiply()
     case .binaryMatrixMultiply:
-      try self.binaryMatrixMultiply()
+      return self.binaryMatrixMultiply()
     case .binaryFloorDivide:
-      try self.binaryFloorDivide()
+      return self.binaryFloorDivide()
     case .binaryTrueDivide:
-      try self.binaryTrueDivide()
+      return self.binaryTrueDivide()
     case .binaryModulo:
-      try self.binaryModulo()
+      return self.binaryModulo()
     case .binaryAdd:
-      try self.binaryAdd()
+      return self.binaryAdd()
     case .binarySubtract:
-      try self.binarySubtract()
+      return self.binarySubtract()
     case .binaryLShift:
-      try self.binaryLShift()
+      return self.binaryLShift()
     case .binaryRShift:
-      try self.binaryRShift()
+      return self.binaryRShift()
     case .binaryAnd:
-      try self.binaryAnd()
+      return self.binaryAnd()
     case .binaryXor:
-      try self.binaryXor()
+      return self.binaryXor()
     case .binaryOr:
-      try self.binaryOr()
+      return self.binaryOr()
     case .inplacePower:
-      try self.inplacePower()
+      return self.inplacePower()
     case .inplaceMultiply:
-      try self.inplaceMultiply()
+      return self.inplaceMultiply()
     case .inplaceMatrixMultiply:
-      try self.inplaceMatrixMultiply()
+      return self.inplaceMatrixMultiply()
     case .inplaceFloorDivide:
-      try self.inplaceFloorDivide()
+      return self.inplaceFloorDivide()
     case .inplaceTrueDivide:
-      try self.inplaceTrueDivide()
+      return self.inplaceTrueDivide()
     case .inplaceModulo:
-      try self.inplaceModulo()
+      return self.inplaceModulo()
     case .inplaceAdd:
-      try self.inplaceAdd()
+      return self.inplaceAdd()
     case .inplaceSubtract:
-      try self.inplaceSubtract()
+      return self.inplaceSubtract()
     case .inplaceLShift:
-      try self.inplaceLShift()
+      return self.inplaceLShift()
     case .inplaceRShift:
-      try self.inplaceRShift()
+      return self.inplaceRShift()
     case .inplaceAnd:
-      try self.inplaceAnd()
+      return self.inplaceAnd()
     case .inplaceXor:
-      try self.inplaceXor()
+      return self.inplaceXor()
     case .inplaceOr:
-      try self.inplaceOr()
+      return self.inplaceOr()
     case let .compareOp(comparison):
       assert(extendedArg == 0)
-      try self.compareOp(comparison: comparison)
+      return self.compareOp(comparison: comparison)
     case .getAwaitable:
-      try self.getAwaitable()
+      return self.getAwaitable()
     case .getAIter:
-      try self.getAIter()
+      return self.getAIter()
     case .getANext:
-      try self.getANext()
+      return self.getANext()
     case .yieldValue:
-      try self.yieldValue()
+      return self.yieldValue()
     case .yieldFrom:
-      try self.yieldFrom()
+      return self.yieldFrom()
     case .printExpr:
-      try self.printExpr()
+      return self.printExpr()
     case let .setupLoop(loopEndLabel):
-      try self.setupLoop(loopEndLabel: extendedArg + Int(loopEndLabel))
+      return self.setupLoop(loopEndLabel: extendedArg + Int(loopEndLabel))
     case let .forIter(ifEmptyLabel):
-      try self.forIter(ifEmptyLabel: extendedArg + Int(ifEmptyLabel))
+      return self.forIter(ifEmptyLabel: extendedArg + Int(ifEmptyLabel))
     case .getIter:
-      try self.getIter()
+      return self.getIter()
     case .getYieldFromIter:
-      try self.getYieldFromIter()
+      return self.getYieldFromIter()
     case .`break`:
-      try self.doBreak()
+      return self.doBreak()
     case let .buildTuple(elementCount):
-      try self.buildTuple(elementCount: extendedArg + Int(elementCount))
+      return self.buildTuple(elementCount: extendedArg + Int(elementCount))
     case let .buildList(elementCount):
-      try self.buildList(elementCount: extendedArg + Int(elementCount))
+      return self.buildList(elementCount: extendedArg + Int(elementCount))
     case let .buildSet(elementCount):
-      try self.buildSet(elementCount: extendedArg + Int(elementCount))
+      return self.buildSet(elementCount: extendedArg + Int(elementCount))
     case let .buildMap(elementCount):
-      try self.buildMap(elementCount: extendedArg + Int(elementCount))
+      return self.buildMap(elementCount: extendedArg + Int(elementCount))
     case let .buildConstKeyMap(elementCount):
-      try self.buildConstKeyMap(elementCount: extendedArg + Int(elementCount))
+      return self.buildConstKeyMap(elementCount: extendedArg + Int(elementCount))
     case let .setAdd(value):
-      self.setAdd(value: extendedArg + Int(value))
+      return self.setAdd(value: extendedArg + Int(value))
     case let .listAppend(value):
-      self.listAppend(value: extendedArg + Int(value))
+      return self.listAppend(value: extendedArg + Int(value))
     case let .mapAdd(value):
-      self.mapAdd(value: extendedArg + Int(value))
+      return self.mapAdd(value: extendedArg + Int(value))
     case let .buildTupleUnpack(elementCount):
-      try self.buildTupleUnpack(elementCount: extendedArg + Int(elementCount))
+      return self.buildTupleUnpack(elementCount: extendedArg + Int(elementCount))
     case let .buildTupleUnpackWithCall(elementCount):
-      try self.buildTupleUnpackWithCall(elementCount: extendedArg + Int(elementCount))
+      return self.buildTupleUnpackWithCall(elementCount: extendedArg + Int(elementCount))
     case let .buildListUnpack(elementCount):
-      try self.buildListUnpack(elementCount: extendedArg + Int(elementCount))
+      return self.buildListUnpack(elementCount: extendedArg + Int(elementCount))
     case let .buildSetUnpack(elementCount):
-      try self.buildSetUnpack(elementCount: extendedArg + Int(elementCount))
+      return self.buildSetUnpack(elementCount: extendedArg + Int(elementCount))
     case let .buildMapUnpack(elementCount):
-      try self.buildMapUnpack(elementCount: extendedArg + Int(elementCount))
+      return self.buildMapUnpack(elementCount: extendedArg + Int(elementCount))
     case let .buildMapUnpackWithCall(elementCount):
-      try self.buildMapUnpackWithCall(elementCount: extendedArg + Int(elementCount))
+      return self.buildMapUnpackWithCall(elementCount: extendedArg + Int(elementCount))
     case let .unpackSequence(elementCount):
-      try self.unpackSequence(elementCount: extendedArg + Int(elementCount))
+      return self.unpackSequence(elementCount: extendedArg + Int(elementCount))
     case let .unpackEx(elementCountBefore):
-      try self.unpackEx(elementCountBefore: extendedArg + Int(elementCountBefore))
+      return self.unpackEx(elementCountBefore: extendedArg + Int(elementCountBefore))
     case let .loadConst(index):
-      try self.loadConst(index: extendedArg + Int(index))
+      return self.loadConst(index: extendedArg + Int(index))
     case let .storeName(nameIndex):
-      try self.storeName(nameIndex: extendedArg + Int(nameIndex))
+      return self.storeName(nameIndex: extendedArg + Int(nameIndex))
     case let .loadName(nameIndex):
-      try self.loadName(nameIndex: extendedArg + Int(nameIndex))
+      return self.loadName(nameIndex: extendedArg + Int(nameIndex))
     case let .deleteName(nameIndex):
-      try self.deleteName(nameIndex: extendedArg + Int(nameIndex))
+      return self.deleteName(nameIndex: extendedArg + Int(nameIndex))
     case let .storeAttribute(nameIndex):
-      try self.storeAttribute(nameIndex: extendedArg + Int(nameIndex))
+      return self.storeAttribute(nameIndex: extendedArg + Int(nameIndex))
     case let .loadAttribute(nameIndex):
-      try self.loadAttribute(nameIndex: extendedArg + Int(nameIndex))
+      return self.loadAttribute(nameIndex: extendedArg + Int(nameIndex))
     case let .deleteAttribute(nameIndex):
-      try self.deleteAttribute(nameIndex: extendedArg + Int(nameIndex))
+      return self.deleteAttribute(nameIndex: extendedArg + Int(nameIndex))
     case .binarySubscript:
-      try self.binarySubscript()
+      return self.binarySubscript()
     case .storeSubscript:
-      try self.storeSubscript()
+      return self.storeSubscript()
     case .deleteSubscript:
-      try self.deleteSubscript()
+      return self.deleteSubscript()
     case let .storeGlobal(nameIndex):
-      try self.storeGlobal(nameIndex: extendedArg + Int(nameIndex))
+      return self.storeGlobal(nameIndex: extendedArg + Int(nameIndex))
     case let .loadGlobal(nameIndex):
-      try self.loadGlobal(nameIndex: extendedArg + Int(nameIndex))
+      return self.loadGlobal(nameIndex: extendedArg + Int(nameIndex))
     case let .deleteGlobal(nameIndex):
-      try self.deleteGlobal(nameIndex: extendedArg + Int(nameIndex))
+      return self.deleteGlobal(nameIndex: extendedArg + Int(nameIndex))
     case let .loadFast(nameIndex):
-      try self.loadFast(nameIndex: extendedArg + Int(nameIndex))
+      return self.loadFast(nameIndex: extendedArg + Int(nameIndex))
     case let .storeFast(nameIndex):
-      try self.storeFast(nameIndex: extendedArg + Int(nameIndex))
+      return self.storeFast(nameIndex: extendedArg + Int(nameIndex))
     case let .deleteFast(nameIndex):
-      try self.deleteFast(nameIndex: extendedArg + Int(nameIndex))
+      return self.deleteFast(nameIndex: extendedArg + Int(nameIndex))
     case let .loadDeref(nameIndex):
-      try self.loadDeref(nameIndex: extendedArg + Int(nameIndex))
+      return self.loadDeref(nameIndex: extendedArg + Int(nameIndex))
     case let .storeDeref(nameIndex):
-      try self.storeDeref(nameIndex: extendedArg + Int(nameIndex))
+      return self.storeDeref(nameIndex: extendedArg + Int(nameIndex))
     case let .deleteDeref(nameIndex):
-      try self.deleteDeref(nameIndex: extendedArg + Int(nameIndex))
+      return self.deleteDeref(nameIndex: extendedArg + Int(nameIndex))
     case let .loadClassDeref(nameIndex):
-      try self.loadClassDeref(nameIndex: extendedArg + Int(nameIndex))
+      return self.loadClassDeref(nameIndex: extendedArg + Int(nameIndex))
     case let .makeFunction(flags):
       assert(extendedArg == 0)
-      try self.makeFunction(flags: flags)
+      return self.makeFunction(flags: flags)
     case let .callFunction(argumentCount):
-      try self.callFunction(argumentCount: extendedArg + Int(argumentCount))
+      return self.callFunction(argumentCount: extendedArg + Int(argumentCount))
     case let .callFunctionKw(argumentCount):
-      try self.callFunctionKw(argumentCount: extendedArg + Int(argumentCount))
+      return self.callFunctionKw(argumentCount: extendedArg + Int(argumentCount))
     case let .callFunctionEx(hasKeywordArguments):
       assert(extendedArg == 0)
-      try self.callFunctionEx(hasKeywordArguments: hasKeywordArguments)
+      return self.callFunctionEx(hasKeywordArguments: hasKeywordArguments)
     case .`return`:
-      try self.doReturn()
+      return self.doReturn()
     case .loadBuildClass:
-      try self.loadBuildClass()
+      return self.loadBuildClass()
     case let .loadMethod(nameIndex):
-      try self.loadMethod(nameIndex: extendedArg + Int(nameIndex))
+      return self.loadMethod(nameIndex: extendedArg + Int(nameIndex))
     case let .callMethod(argumentCount):
-      try self.callMethod(argumentCount: extendedArg + Int(argumentCount))
+      return self.callMethod(argumentCount: extendedArg + Int(argumentCount))
     case .importStar:
-      try self.importStar()
+      return self.importStar()
     case let .importName(nameIndex):
-      try self.importName(nameIndex: extendedArg + Int(nameIndex))
+      return self.importName(nameIndex: extendedArg + Int(nameIndex))
     case let .importFrom(nameIndex):
-      try self.importFrom(nameIndex: extendedArg + Int(nameIndex))
+      return self.importFrom(nameIndex: extendedArg + Int(nameIndex))
     case .popExcept:
-      try self.popExcept()
+      return self.popExcept()
     case .endFinally:
-      try self.endFinally()
+      return self.endFinally()
     case let .setupExcept(firstExceptLabel):
-      try self.setupExcept(firstExceptLabel: extendedArg + Int(firstExceptLabel))
+      return self.setupExcept(firstExceptLabel: extendedArg + Int(firstExceptLabel))
     case let .setupFinally(finallyStartLabel):
-      try self.setupFinally(finallyStartLabel: extendedArg + Int(finallyStartLabel))
+      return self.setupFinally(finallyStartLabel: extendedArg + Int(finallyStartLabel))
     case let .raiseVarargs(arg):
       assert(extendedArg == 0)
-      try self.raiseVarargs(arg: arg)
+      return self.raiseVarargs(arg: arg)
     case let .setupWith(afterBodyLabel):
-      try self.setupWith(afterBodyLabel: extendedArg + Int(afterBodyLabel))
+      return self.setupWith(afterBodyLabel: extendedArg + Int(afterBodyLabel))
     case .withCleanupStart:
-      try self.withCleanupStart()
+      return self.withCleanupStart()
     case .withCleanupFinish:
-      try self.withCleanupFinish()
+      return self.withCleanupFinish()
     case .beforeAsyncWith:
-      try self.beforeAsyncWith()
+      return self.beforeAsyncWith()
     case .setupAsyncWith:
-      try self.setupAsyncWith()
+      return self.setupAsyncWith()
     case let .jumpAbsolute(labelIndex):
-      try self.jumpAbsolute(labelIndex: extendedArg + Int(labelIndex))
+      return self.jumpAbsolute(labelIndex: extendedArg + Int(labelIndex))
     case let .popJumpIfTrue(labelIndex):
-      try self.popJumpIfTrue(labelIndex: extendedArg + Int(labelIndex))
+      return self.popJumpIfTrue(labelIndex: extendedArg + Int(labelIndex))
     case let .popJumpIfFalse(labelIndex):
-      try self.popJumpIfFalse(labelIndex: extendedArg + Int(labelIndex))
+      return self.popJumpIfFalse(labelIndex: extendedArg + Int(labelIndex))
     case let .jumpIfTrueOrPop(labelIndex):
-      try self.jumpIfTrueOrPop(labelIndex: extendedArg + Int(labelIndex))
+      return self.jumpIfTrueOrPop(labelIndex: extendedArg + Int(labelIndex))
     case let .jumpIfFalseOrPop(labelIndex):
-      try self.jumpIfFalseOrPop(labelIndex: extendedArg + Int(labelIndex))
+      return self.jumpIfFalseOrPop(labelIndex: extendedArg + Int(labelIndex))
     case let .formatValue(conversion, hasFormat):
       assert(extendedArg == 0)
-      try self.formatValue(conversion: conversion, hasFormat: hasFormat)
+      return self.formatValue(conversion: conversion, hasFormat: hasFormat)
     case let .buildString(value):
-      try self.buildString(count: extendedArg + Int(value))
+      return self.buildString(count: extendedArg + Int(value))
     case let .extendedArg(value):
       let arg = extendedArg << 8 | Int(value)
-      try self.executeInstruction(extendedArg: arg)
+      return self.executeInstruction(extendedArg: arg)
     case .setupAnnotations:
-      try self.setupAnnotations()
+      return self.setupAnnotations()
     case .popBlock:
-      try self.popBlock()
+      return self.popBlock()
     case let .loadClosure(cellOrFreeIndex):
-      try self.loadClosure(cellOrFreeIndex: extendedArg + Int(cellOrFreeIndex))
+      return self.loadClosure(cellOrFreeIndex: extendedArg + Int(cellOrFreeIndex))
     case let .buildSlice(arg):
-      try self.buildSlice(arg: arg)
+      return self.buildSlice(arg: arg)
     }
   }
 }

@@ -13,8 +13,8 @@ extension Frame {
   /// - `0x08` - has tuple containing cells for free variables,
   ///            making a closure the code associated with the function (at TOS1)
   ///            the qualified name of the function (at TOS)
-  internal func makeFunction(flags: FunctionFlags) throws {
-    self.unimplemented()
+  internal func makeFunction(flags: FunctionFlags) -> InstructionResult {
+    return .unimplemented
   }
 
   /// Calls a callable object with positional arguments.
@@ -30,8 +30,8 @@ extension Frame {
   /// 3. push the return value returned by the callable object
   /// - Note:
   /// This opcode is used only for calls with positional arguments!
-  internal func callFunction(argumentCount: Int) throws {
-    self.unimplemented()
+  internal func callFunction(argumentCount: Int) -> InstructionResult {
+    return .unimplemented
   }
 
   /// Calls a callable object with positional (if any) and keyword arguments.
@@ -47,8 +47,8 @@ extension Frame {
   /// 1. pop all arguments and the callable object off the stack
   /// 2. call the callable object with those arguments
   /// 3. push the return value returned by the callable object.
-  internal func callFunctionKw(argumentCount: Int) throws {
-    self.unimplemented()
+  internal func callFunctionKw(argumentCount: Int) -> InstructionResult {
+    return .unimplemented
   }
 
   /// Calls a callable object with variable set of positional and keyword arguments.
@@ -66,12 +66,12 @@ extension Frame {
   /// contents is passed in as keyword and positional arguments respectively
   /// 3. call the callable object with those arguments
   /// 4. push the return value returned by the callable object
-  internal func callFunctionEx(hasKeywordArguments: Bool) throws {
-    self.unimplemented()
+  internal func callFunctionEx(hasKeywordArguments: Bool) -> InstructionResult {
+    return .unimplemented
   }
 
   /// Returns with TOS to the caller of the function.
-  internal func doReturn() throws {
-    self.unimplemented()
+  internal func doReturn() -> InstructionResult {
+    return .unimplemented
   }
 }
