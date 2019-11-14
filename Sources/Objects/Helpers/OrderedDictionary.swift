@@ -18,7 +18,7 @@ private let perturbShift: Int = 5
 
 // MARK: - Hashable
 
-public protocol VioletHashable {
+internal protocol PyHashable {
 
   /// The hash value.
   ///
@@ -27,19 +27,19 @@ public protocol VioletHashable {
   var hash: Int { get }
 
   /// Returns a Boolean value indicating whether two values are equal.
-  func isEqual(to other: Self) -> Bool
+  func isEqual(to other: Self) -> PyResult<Bool>
 }
 
 // MARK: - OrderedDictionary
 
 /// A generic collection to store key-value pairs in the order they were
 /// inserted in.
-public struct OrderedDictionary<Key: VioletHashable, Value> {
+internal struct OrderedDictionary<Key: PyHashable, Value> {
 
-  public struct Entry {
-    public let hash: Int
-    public let key:  Key
-    public let value: Value
+  internal struct Entry {
+    internal let hash: Int
+    internal let key:  Key
+    internal let value: Value
 
     fileprivate init(key: Key, value: Value) {
       self.hash = key.hash
@@ -125,24 +125,24 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
   /// The number of keys in the dictionary.
   ///
   /// - Complexity: O(1).
-  public var count: Int {
+  internal var count: Int {
     return self.used
   }
 
   /// The total number of key-value pairs that the dictionary can contain without
   /// allocating new storage.
-  public var capacity: Int {
+  internal var capacity: Int {
     return self.size
   }
 
   /// A Boolean value indicating whether the collection is empty.
-  public var isEmpty: Bool {
+  internal var isEmpty: Bool {
     return self.used == 0
   }
 
   /// The last inserted element.
   /// If the dictionary is empty, the value of this property is `nil`.
-  public var last: Entry? {
+  internal var last: Entry? {
     if self.isEmpty {
       return nil
     }
@@ -161,12 +161,12 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
   // MARK: - Init
 
-  public init() {
+  internal init() {
     self.init(size: minsize)
   }
 
   /// static PyDictKeysObject *new_keys_object(Py_ssize_t size)
-  public init(size: Int) {
+  internal init(size: Int) {
     let size = Swift.max(nextPowerOf2(size), minsize)
     assert(isPowerOf2(size))
 
@@ -182,55 +182,65 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
     self.checkConsistency()
   }
 
-  // MARK: - Subscript
-
-  /// Accesses the value associated with the given key for reading and writing.
-  ///
-  /// This *key-based* subscript returns the value for the given key if the key
-  /// is found in the dictionary, or `nil` if the key is not found.
-  public subscript(key: Key) -> Value? {
-    get { return self.get(key: key) }
-    set {
-      if let newValue = newValue {
-        self.insert(key: key, value: newValue)
-      } else {
-        _ = self.remove(key: key)
-      }
-    }
-  }
-
   // MARK: - Get
+
+  internal enum GetResult {
+    case value(Value)
+    case notFound
+    case error(PyErrorEnum)
+  }
 
   /// Accesses the value associated with the given key for reading.
   ///
   /// This *key-based* function returns the value for the given key if the key
   /// is found in the dictionary, or `nil` if the key is not found.
-  public func get(key: Key) -> Value? {
+  internal func get(key: Key) -> GetResult {
     switch self.lookup(key: key) {
     case let .entry(index: _, entryIndex: _, entry: entry):
-      return entry.value
+      return .value(entry.value)
     case .notFound:
-      return nil
+      return .notFound
+    case let .error(e):
+      return .error(e)
     }
   }
 
   // MARK: - Contains
 
-  public func contains(key: Key) -> Bool {
-    return self.get(key: key) != nil
+  internal enum ContainsResult {
+    case value(Bool)
+    case error(PyErrorEnum)
+  }
+
+  internal func contains(key: Key) -> ContainsResult {
+    switch self.get(key: key) {
+    case .value:
+      return .value(true)
+    case .notFound:
+      return .value(false)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Insert
+
+  internal enum InsertResult {
+    case inserted
+    case updated
+    case error(PyErrorEnum)
+  }
 
   /// Updates the value stored in the dictionary for the given key, or adds a
   /// new key-value pair if the key does not exist.
   ///
   /// insertdict(PyDictObject *mp, PyObject *key, Py_hash_t hash, PyObject *value)
-  public mutating func insert(key: Key, value: Value) {
+  internal mutating func insert(key: Key, value: Value) -> InsertResult {
     switch self.lookup(key: key) {
     case let .entry(index: _, entryIndex: entryIndex, entry: _):
       // Update existing entry.
       self.entries[entryIndex] = .entry(Entry(key: key, value: value))
+      return .updated
 
     case .notFound:
       // Try to insert into new slot.
@@ -247,6 +257,10 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
       self.used += 1
       self.usable -= 1
       self.checkConsistency()
+      return .inserted
+
+    case let .error(e):
+      return .error(e)
     }
   }
 
@@ -272,16 +286,22 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
   // MARK: - Remove
 
+  internal enum RemoveResult {
+    case value(Value)
+    case notFound
+    case error(PyErrorEnum)
+  }
+
   /// Removes the given key and its associated value from the dictionary.
   ///
   /// If the key is found in the dictionary, this method returns the key's
   /// associated value.
   /// int
   /// _PyDict_DelItem_KnownHash(PyObject *op, PyObject *key, Py_hash_t hash)
-  public mutating func remove(key: Key) -> Value? {
+  internal mutating func remove(key: Key) -> RemoveResult {
     switch self.lookup(key: key) {
     case .notFound:
-      return nil
+      return .notFound
 
     case let .entry(index: index, entryIndex: entryIndex, entry: entry):
       self.used -= 1
@@ -289,7 +309,10 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
       self.entries[entryIndex] = .deleted
 
       self.checkConsistency()
-      return entry.value
+      return .value(entry.value)
+
+    case let .error(e):
+      return .error(e)
     }
   }
 
@@ -298,6 +321,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
   private enum LookupResult {
     case notFound
     case entry(index: Int, entryIndex: Int, entry: Entry)
+    case error(PyErrorEnum)
   }
 
   /// The basic lookup function used by all operations.
@@ -328,8 +352,15 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
           break
         }
 
-        if hash == old.hash && key.isEqual(to: old.key) {
-          return .entry(index: index, entryIndex: arrayIndex, entry: old)
+        if hash == old.hash {
+          switch key.isEqual(to: old.key) {
+          case .value(true):
+            return .entry(index: index, entryIndex: arrayIndex, entry: old)
+          case .value(false):
+            break // Try next entry
+          case .error(let e):
+            return .error(e)
+          }
         }
       }
 
@@ -351,7 +382,7 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 
   // MARK: - Clear
 
-  public mutating func clear() {
+  internal mutating func clear() {
     self = OrderedDictionary()
   }
 
@@ -442,18 +473,18 @@ public struct OrderedDictionary<Key: VioletHashable, Value> {
 // MARK: - Iterator
 
 /// Iterator for `OrderedDictionary` that will skip deleted entries.
-public struct OrderedDictionaryIterator<Key: VioletHashable, Value>: IteratorProtocol {
+internal struct OrderedDictionaryIterator<Key: PyHashable, Value>: IteratorProtocol {
 
-  public typealias OrderedDictionaryType = OrderedDictionary<Key, Value>
-  public typealias Element = OrderedDictionaryType.Entry
+  internal typealias OrderedDictionaryType = OrderedDictionary<Key, Value>
+  internal typealias Element = OrderedDictionaryType.Entry
 
   private var inner: IndexingIterator<[OrderedDictionaryType.EntryOrDeleted]>
 
-  public init(_ dictionary: OrderedDictionaryType) {
+  internal init(_ dictionary: OrderedDictionaryType) {
     self.inner = dictionary.entries.makeIterator()
   }
 
-  public mutating func next() -> Self.Element? {
+  internal mutating func next() -> Self.Element? {
     while let entryOrDeleted = self.inner.next() {
       switch entryOrDeleted {
       case let .entry(entry):
@@ -470,17 +501,8 @@ public struct OrderedDictionaryIterator<Key: VioletHashable, Value>: IteratorPro
 
 // MARK: - Extensions
 
-extension OrderedDictionary: ExpressibleByDictionaryLiteral {
-  public init(dictionaryLiteral elements: (Key, Value)...) {
-    self.init()
-    for element in elements {
-      self.insert(key: element.0, value: element.1)
-    }
-  }
-}
-
 extension OrderedDictionary: CustomStringConvertible {
-  public var description: String {
+  internal var description: String {
     var result = ""
 
     for entry in self {
@@ -495,9 +517,9 @@ extension OrderedDictionary: CustomStringConvertible {
 }
 
 extension OrderedDictionary: Sequence {
-  public typealias Element = Array<Entry>.Element
+  internal typealias Element = Array<Entry>.Element
 
-  public func makeIterator() -> OrderedDictionaryIterator<Key, Value> {
+  internal func makeIterator() -> OrderedDictionaryIterator<Key, Value> {
     return OrderedDictionaryIterator(self)
   }
 }

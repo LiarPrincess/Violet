@@ -70,7 +70,7 @@ extension PyContext {
 
   // MARK: - Shared
 
-  public func contains(sequence: PyObject, value: PyObject) -> PyResultOrNot<Bool> {
-    return .notImplemented
+  public func contains(sequence: PyObject, value: PyObject) -> PyResult<Bool> {
+    return .value(false)
   }
 }

@@ -3,19 +3,7 @@ import Core
 // TODO: All of the set methods should work for any iterable
 // TODO: All of the set methods should have tuple as an arg
 
-// MARK: - Set type
-
-/// Small trick: when we use `Void` (which is the same as `()`) as value
-/// then it would not take any space in dictionary!
-/// For example `struct { Int, Void }` has the same storage as `struct { Int }`.
-/// This trick is sponsored by 'go lang': `map[T]struct{}`.
-internal typealias PySetData = OrderedDictionary<PySetElement, ()>
-
-extension OrderedDictionary where Value == Void {
-  public mutating func insert(key: Key) {
-    self.insert(key: key, value: ())
-  }
-}
+// swiftlint:disable file_length
 
 internal protocol PySetType: PyObject {
   var elements: PySetData { get set }
@@ -24,50 +12,63 @@ internal protocol PySetType: PyObject {
 extension PySet: PySetType { }
 extension PyFrozenSet: PySetType { }
 
-internal struct PySetElement: VioletHashable {
-
-  internal var hash: PyHash
-  internal var object: PyObject
-
-  internal init(hash: PyHash, object: PyObject) {
-    self.hash = hash
-    self.object = object
-  }
-
-  internal func isEqual(to other: PySetElement) -> Bool {
-    return self.hash == other.hash &&
-      self.object.builtins.isEqualBool(left: self.object, right: other.object)
-  }
-}
-
 internal enum SetHelper {
 
   // MARK: - Equatable
 
-  internal static func isEqual(left: PySetType, right: PySetType) -> Bool {
+  internal static func isEqual(left: PySetType,
+                               right: PySetType) -> PyResult<Bool> {
     // Equal count + isSubset -> equal
-    return left.elements.count == right.elements.count
-      && SetHelper.isSubset(left, of: right)
+    guard left.elements.count == right.elements.count else {
+      return .value(false)
+    }
+
+    switch SetHelper.isSubset(left, of: right) {
+    case let .value(b): return .value(b)
+    case let .error(e): return .error(e)
+    }
   }
 
   // MARK: - Comparable
 
-  internal static func isLess(left: PySetType, right: PySetType) -> Bool {
-    return left.elements.count < right.elements.count
-      && SetHelper.isSubset(left, of: right)
+  internal static func isLess(left: PySetType,
+                              right: PySetType) -> PyResult<Bool> {
+    guard left.elements.count < right.elements.count else {
+      return .value(false)
+    }
+
+    switch SetHelper.isSubset(left, of: right) {
+    case let .value(b): return .value(b)
+    case let .error(e): return .error(e)
+    }
   }
 
-  internal static func isLessEqual(left: PySetType, right: PySetType) -> Bool {
-    return SetHelper.isSubset(left, of: right)
+  internal static func isLessEqual(left: PySetType,
+                                   right: PySetType) -> PyResult<Bool> {
+    switch SetHelper.isSubset(left, of: right) {
+    case let .value(b): return .value(b)
+    case let .error(e): return .error(e)
+    }
   }
 
-  internal static func isGreater(left: PySetType, right: PySetType) -> Bool {
-    return left.elements.count > right.elements.count
-      && SetHelper.isSuperset(left, of: right)
+  internal static func isGreater(left: PySetType,
+                                 right: PySetType) -> PyResult<Bool> {
+    guard left.elements.count > right.elements.count else {
+      return .value(false)
+    }
+
+    switch SetHelper.isSuperset(left, of: right) {
+    case let .value(b): return .value(b)
+    case let .error(e): return .error(e)
+    }
   }
 
-  internal static func isGreaterEqual(left: PySetType, right: PySetType) -> Bool {
-    return SetHelper.isSuperset(left, of: right)
+  internal static func isGreaterEqual(left: PySetType,
+                                      right: PySetType) -> PyResult<Bool> {
+    switch SetHelper.isSuperset(left, of: right) {
+    case let .value(b): return .value(b)
+    case let .error(e): return .error(e)
+    }
   }
 
   // MARK: - String
@@ -106,142 +107,193 @@ internal enum SetHelper {
 
   // MARK: - Contains
 
-  internal static func contains(set: PySetType, element: PyObject) -> PyResult<Bool> {
+  internal static func contains(_ set: PySetType,
+                                element: PyObject) -> PyResult<Bool> {
     let key: PySetElement
     switch SetHelper.createKey(from: element) {
     case let .value(v): key = v
     case let .error(e): return .error(e)
     }
 
-    return .value(set.elements.contains(key: key))
+    switch set.elements.contains(key: key) {
+    case let .value(b): return .value(b)
+    case let .error(e): return .error(e)
+    }
   }
 
   // MARK: - And
 
-  internal static func and(left: PySetType, right: PySetType) -> PySetData {
+  internal static func and(left: PySetType,
+                           right: PySetType) -> PyResult<PySetData> {
     return SetHelper.intersection(left: left, right: right)
   }
 
   // MARK: - Or
 
-  internal static func or(left: PySetType, right: PySetType) -> PySetData {
+  internal static func or(left: PySetType,
+                          right: PySetType) -> PyResult<PySetData> {
     return SetHelper.union(left: left, right: right)
   }
 
   // MARK: - Xor
 
-  internal static func xor(left: PySetType, right: PySetType) -> PySetData {
+  internal static func xor(left: PySetType,
+                           right: PySetType) -> PyResult<PySetData> {
     return SetHelper.symmetricDifference(left: left, right: right)
   }
 
   // MARK: - Sub
 
-  internal static func sub(left: PySetType, right: PySetType) -> PySetData {
+  internal static func sub(left: PySetType,
+                           right: PySetType) -> PyResult<PySetData> {
     return SetHelper.difference(left: left, right: right)
   }
 
   // MARK: - Subset
 
-  internal static func isSubset(_ set: PySetType, of other: PySetType) -> Bool {
+  internal static func isSubset(_ set: PySetType,
+                                of other: PySetType) -> PyResult<Bool> {
     guard set.elements.count <= other.elements.count else {
-      return false
+      return .value(false)
     }
 
     for entry in set.elements {
-      guard other.elements.contains(key: entry.key) else {
-        return false
+      switch other.elements.contains(key: entry.key) {
+      case .value(true): break // try next
+      case .value(false): return .value(false)
+      case .error(let e): return .error(e)
       }
     }
 
-    return true
+    return .value(true)
   }
 
   // MARK: - Superset
 
-  internal static func isSuperset(_ set: PySetType, of other: PySetType) -> Bool {
+  internal static func isSuperset(_ set: PySetType,
+                                  of other: PySetType) -> PyResult<Bool> {
     return SetHelper.isSubset(other, of: set)
   }
 
   // MARK: - Intersection
 
-  internal static func intersection(left: PySetType, right: PySetType) -> PySetData {
+  internal static func intersection(left: PySetType,
+                                    right: PySetType) -> PyResult<PySetData> {
     let isLeftSmaller = left.elements.count < right.elements.count
     let smallerSet = isLeftSmaller ? left : right
     let largerSet = isLeftSmaller ? right : left
 
     var result = PySetData()
     for entry in smallerSet.elements {
-      if largerSet.elements.contains(key: entry.key) {
-        result.insert(key: entry.key)
+      switch largerSet.elements.contains(key: entry.key) {
+      case .value(true):
+        switch result.insert(key: entry.key) {
+        case .inserted, .updated: break
+        case .error(let e): return .error(e)
+        }
+      case .value(false): break
+      case .error(let e): return .error(e)
       }
     }
 
-    return result
+    return .value(result)
   }
 
   // MARK: - Union
 
-  internal static func union(left: PySetType, right: PySetType) -> PySetData {
+  internal static func union(left: PySetType,
+                             right: PySetType) -> PyResult<PySetData> {
     let isLeftSmaller = left.elements.count < right.elements.count
     let smallerSet = isLeftSmaller ? left : right
     let largerSet = isLeftSmaller ? right : left
 
     var result = largerSet.elements
     for entry in smallerSet.elements {
-      result.insert(key: entry.key)
+      switch result.insert(key: entry.key) {
+      case .inserted, .updated: break
+      case .error(let e): return .error(e)
+      }
     }
 
-    return result
+    return .value(result)
   }
 
   // MARK: - Difference
 
-  internal static func difference(left: PySetType, right: PySetType) -> PySetData {
+  internal static func difference(left: PySetType,
+                                  right: PySetType) -> PyResult<PySetData> {
     var result = PySetData()
     for entry in left.elements {
-      if !right.elements.contains(key: entry.key) {
-        result.insert(key: entry.key)
+      switch right.elements.contains(key: entry.key) {
+      case .value(true):
+        break
+      case .value(false):
+        switch result.insert(key: entry.key) {
+        case .inserted, .updated: break
+        case .error(let e): return .error(e)
+        }
+      case .error(let e):
+        return .error(e)
       }
     }
 
-    return result
+    return .value(result)
   }
 
   // MARK: - Symmetric difference
 
   internal static func symmetricDifference(left: PySetType,
-                                           right: PySetType) -> PySetData {
+                                           right: PySetType) -> PyResult<PySetData> {
     var result = PySetData()
 
     for entry in left.elements {
-      if !right.elements.contains(key: entry.key) {
-        result.insert(key: entry.key)
+      switch right.elements.contains(key: entry.key) {
+      case .value(true):
+        break
+      case .value(false):
+        switch result.insert(key: entry.key) {
+        case .inserted, .updated: break
+        case .error(let e): return .error(e)
+        }
+      case .error(let e):
+        return .error(e)
       }
     }
 
     for entry in right.elements {
-      if !left.elements.contains(key: entry.key) {
-        result.insert(key: entry.key)
+      switch left.elements.contains(key: entry.key) {
+      case .value(true):
+        break
+      case .value(false):
+        switch result.insert(key: entry.key) {
+        case .inserted, .updated: break
+        case .error(let e): return .error(e)
+        }
+      case .error(let e):
+        return .error(e)
       }
     }
 
-    return result
+    return .value(result)
   }
 
   // MARK: - Is disjoint
 
-  internal static func isDisjoint(left: PySetType, right: PySetType) -> Bool {
+  internal static func isDisjoint(left: PySetType,
+                                  right: PySetType) -> PyResult<Bool> {
     let isLeftSmaller = left.elements.count < right.elements.count
     let smallerSet = isLeftSmaller ? left : right
     let largerSet = isLeftSmaller ? right : left
 
     for entry in smallerSet.elements {
-      if largerSet.elements.contains(key: entry.key) {
-        return false
+      switch largerSet.elements.contains(key: entry.key) {
+      case .value(true): return .value(false)
+      case .value(false) : break
+      case .error(let e): return .error(e)
       }
     }
 
-    return true
+    return .value(true)
   }
 
   // MARK: - Add
@@ -253,8 +305,10 @@ internal enum SetHelper {
     case let .error(e): return e
     }
 
-    set.elements.insert(key: key)
-    return nil
+    switch set.elements.insert(key: key) {
+    case .inserted, .updated: return nil
+    case .error(let e): return e
+    }
   }
 
   // MARK: - Remove
@@ -266,11 +320,11 @@ internal enum SetHelper {
     case let .error(e): return e
     }
 
-    if set.elements.remove(key: key) == nil {
-      return .keyErrorForKey(value)
+    switch set.elements.remove(key: key) {
+    case .value: return nil
+    case .notFound: return .keyErrorForKey(value)
+    case .error(let e): return e
     }
-
-    return nil
   }
 
   // MARK: - Discard

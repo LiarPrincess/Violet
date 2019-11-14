@@ -139,31 +139,32 @@ extension Frame {
 
   private func compare(left: PyObject,
                        right: PyObject,
-                       comparison: ComparisonOpcode) -> PyResultOrNot<Bool> {
+                       comparison: ComparisonOpcode) -> PyResult<PyObject> {
     switch comparison {
     case .equal:
-      return self.context.isEqual(left: left, right: right)
+      return self.builtins.isEqual(left: left, right: right)
     case .notEqual:
-      return self.context.isNotEqual(left: left, right: right)
+      return self.builtins.isNotEqual(left: left, right: right)
     case .less:
-      return self.context.isLess(left: left, right: right)
+      return self.builtins.isLess(left: left, right: right)
     case .lessEqual:
-      return self.context.isLessEqual(left: left, right: right)
+      return self.builtins.isLessEqual(left: left, right: right)
     case .greater:
-      return self.context.isGreater(left: left, right: right)
+      return self.builtins.isGreater(left: left, right: right)
     case .greaterEqual:
-      return self.context.isGreaterEqual(left: left, right: right)
+      return self.builtins.isGreaterEqual(left: left, right: right)
     case .is:
-      let iss = self.builtins.is(left: left, right: right)
-      return .value(iss)
+      let result = self.builtins.is(left: left, right: right)
+      return .value(self.builtins.newBool(result))
     case .isNot:
-      let iss = self.builtins.is(left: left, right: right)
-      return .value(!iss)
+      let result = self.builtins.is(left: left, right: right)
+      return .value(self.builtins.newBool(!result))
     case .in:
-      return self.context.contains(sequence: left, value: right)
+      let result = self.context.contains(sequence: left, value: right)
+      return result.map(self.builtins.newBool)
     case .notIn:
-      let contains = self.context.contains(sequence: left, value: right)
-      return contains.map { !$0 }
+      let result = self.context.contains(sequence: left, value: right)
+      return result.map { !$0 } .map(self.builtins.newBool)
     case .exceptionMatch:
       // ceval.c -> case PyCmp_EXC_MATCH:
       fatalError()

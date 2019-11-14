@@ -6,32 +6,6 @@ import Core
 
 // swiftlint:disable file_length
 
-internal typealias PyDictData = OrderedDictionary<PyDictKey, PyObject>
-
-internal struct PyDictKey: VioletHashable {
-
-  internal var hash: PyHash
-  internal var object: PyObject
-
-  internal init(hash: PyHash, object: PyObject) {
-    self.hash = hash
-    self.object = object
-  }
-
-  internal func isEqual(to other: PyDictKey) -> Bool {
-    // >>> class C:
-    // ...     def __eq__(self, other): raise NotImplementedError('a')
-    // ...     def __hash__(self): return 1
-    // >>> d = {}
-    // >>> d[1] = 'a'
-    // >>> d[c] = 'b'
-    // NotImplementedError: a
-
-    return self.hash == other.hash &&
-      self.object.builtins.isEqualBool(left: self.object, right: other.object)
-  }
-}
-
 // sourcery: pytype = dict
 /// This subtype of PyObject represents a Python dictionary object.
 public final class PyDict: PyObject {
@@ -75,8 +49,11 @@ public final class PyDict: PyObject {
     }
 
     for entry in self.elements {
-      guard let otherValue = other.elements[entry.key] else {
-        return .value(false)
+      let otherValue: PyObject
+      switch other.elements.get(key: entry.key) {
+      case .value(let o): otherValue = o
+      case .notFound: return .value(false)
+      case .error(let e): return .error(e)
       }
 
       switch self.builtins.isEqualBool(left: entry.value, right: otherValue) {
@@ -183,8 +160,10 @@ public final class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    if let result = self.elements[key] {
-      return .value(result)
+    switch self.elements.get(key: key) {
+    case .value(let o): return .value(o)
+    case .notFound: break // Try '__missing__'
+    case .error(let e): return .error(e)
     }
 
     let missing = "__missing__"
@@ -205,8 +184,12 @@ public final class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    self.elements[key] = value
-    return .value(self.builtins.none)
+    switch self.elements.insert(key: key, value: value) {
+    case .inserted, .updated:
+      return .value(self.builtins.none)
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod = __delitem__
@@ -217,11 +200,14 @@ public final class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    if self.elements.remove(key: key) != nil {
+    switch self.elements.remove(key: key) {
+    case .value:
       return .value(self.builtins.none)
+    case .notFound:
+      return .keyErrorForKey(index)
+    case .error(let e):
+      return .error(e)
     }
-
-    return .keyErrorForKey(index)
   }
 
   // MARK: - Contains
@@ -234,7 +220,12 @@ public final class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    return .value(self.elements.contains(key: key))
+    switch self.elements.contains(key: key) {
+    case let .value(b):
+      return .value(b)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Clear
@@ -266,12 +257,14 @@ public final class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    if let result = self.elements[key] {
-      return .value(result)
+    switch self.elements.get(key: key) {
+    case .value(let o):
+      return .value(o)
+    case .notFound:
+      return .value(`default` ?? self.builtins.none)
+    case .error(let e):
+      return .error(e)
     }
-
-    let result = `default` ?? self.builtins.none
-    return .value(result)
   }
 
   // MARK: - Set default
@@ -297,13 +290,20 @@ public final class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    if let oldValue = self.elements.get(key: key) {
-      return .value(oldValue)
+    switch self.elements.get(key: key) {
+    case .value(let o):
+      return .value(o)
+    case .notFound:
+      let value = `default` ?? self.builtins.none
+      switch self.elements.insert(key: key, value: value) {
+      case .inserted, .updated:
+        return .value(value)
+      case .error(let e):
+        return .error(e)
+      }
+    case .error(let e):
+      return .error(e)
     }
-
-    let value = `default` ?? self.builtins.none
-    self.elements.insert(key: key, value: value)
-    return .value(value)
   }
 
   // MARK: - Copy
@@ -333,15 +333,18 @@ public final class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    if let result = self.elements.remove(key: key) {
-      return .value(result)
-    }
+    switch self.elements.remove(key: key) {
+    case .value(let o):
+      return .value(o)
+    case .notFound:
+      if let def = `default` {
+        return .value(def)
+      }
 
-    if let def = `default` {
-      return .value(def)
+      return .keyErrorForKey(index)
+    case .error(let e):
+      return .error(e)
     }
-
-    return .keyErrorForKey(index)
   }
 
   internal static let popitemDoc = """

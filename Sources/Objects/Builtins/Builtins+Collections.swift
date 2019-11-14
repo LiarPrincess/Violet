@@ -62,7 +62,10 @@ extension Builtins {
     for element in elements {
       switch self.hash(element) {
       case let .value(hash):
-        data.insert(key: PySetElement(hash: hash, object: element))
+        switch data.insert(key: PySetElement(hash: hash, object: element)) {
+        case .inserted, .updated: break
+        case let .error(e): return .error(e)
+        }
       case let .error(e):
         return .error(e)
       }
@@ -90,7 +93,10 @@ extension Builtins {
       switch self.hash(arg.key) {
       case let .value(hash):
         let key = PyDictKey(hash: hash, object: arg.key)
-        data.insert(key: key, value: arg.value)
+        switch data.insert(key: key, value: arg.value) {
+        case .inserted, .updated: break
+        case .error(let e): return .error(e)
+        }
       case let .error(e):
         return .error(e)
       }
@@ -112,7 +118,10 @@ extension Builtins {
       switch self.hash(keyObject) {
       case let .value(hash):
         let key = PyDictKey(hash: hash, object: keyObject)
-        data.insert(key: key, value: value)
+        switch data.insert(key: key, value: value) {
+        case .inserted, .updated: break
+        case .error(let e): return .error(e)
+        }
       case let .error(e):
         return .error(e)
       }

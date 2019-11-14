@@ -79,6 +79,15 @@ public enum PyResult<V> {
       return .error(f(e))
     }
   }
+
+  public var asResultOrNot: PyResultOrNot<V> {
+    switch self {
+    case let .value(v):
+      return .value(v)
+    case let .error(e):
+      return .error(e)
+    }
+  }
 }
 
 extension PyResult where V == Void {
