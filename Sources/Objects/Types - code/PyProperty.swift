@@ -78,17 +78,17 @@ internal final class PyProperty: PyObject {
 
   // sourcery: pyproperty = fget
   internal func getFGet() -> PyObject {
-    return self._getter ?? self.context.none
+    return self._getter ?? self.builtins.none
   }
 
   // sourcery: pyproperty = fset
   internal func getFSet() -> PyObject {
-    return self._setter ?? self.context.none
+    return self._setter ?? self.builtins.none
   }
 
   // sourcery: pyproperty = fdel
   internal func getFDel() -> PyObject {
-    return self._deleter ?? self.context.none
+    return self._deleter ?? self.builtins.none
   }
 
   // MARK: - Call
@@ -121,6 +121,6 @@ internal final class PyProperty: PyObject {
 
   // sourcery: pymethod = __delete__
   internal func del(object: PyObject) -> PyResult<PyObject> {
-    self.set(object: object, value: self.context.none)
+    self.set(object: object, value: self.builtins.none)
   }
 }

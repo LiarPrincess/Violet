@@ -136,7 +136,7 @@ public final class PyRange: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    let none = self.context.none
+    let none = self.builtins.none
     var tuple = [self.length, none, none]
 
     if self.length.value == 0 {

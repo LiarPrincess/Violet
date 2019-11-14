@@ -158,6 +158,6 @@ internal enum PyBaseObject {
   /// The default implementation does nothing.
   /// It may be overridden to extend subclasses.
   internal static func initSubclass(zelf: PyObject) -> PyResultOrNot<PyObject> {
-    return .value(zelf.context._none)
+    return .value(zelf.builtins.none)
   }
 }

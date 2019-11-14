@@ -15,10 +15,10 @@ extension Frame {
 
   private func toObject(_ value: Constant) -> PyObject {
     switch value {
-    case .true: return self.context.true
-    case .false: return self.context.false
-    case .none: return self.context.none
-    case .ellipsis: return self.context.ellipsis
+    case .true: return self.builtins.true
+    case .false: return self.builtins.false
+    case .none: return self.builtins.none
+    case .ellipsis: return self.builtins.ellipsis
     case let .integer(arg): return self.builtins.newInt(arg)
     case let .float(arg): return self.builtins.newFloat(arg)
     case let .complex(real, imag): return self.builtins.newComplex(real: real, imag: imag)

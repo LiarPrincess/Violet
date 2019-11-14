@@ -191,6 +191,6 @@ internal final class PyBuiltinFunction: PyObject {
 
   // sourcery: pyproperty = __self__
   internal func getSelf() -> PyObject {
-    return self._self ?? context.none
+    return self._self ?? self.builtins.none
   }
 }

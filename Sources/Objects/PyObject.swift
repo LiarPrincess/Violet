@@ -73,7 +73,7 @@ public class PyObject {
   }
 
   internal func bool(_ value: Bool) -> PyBool {
-    return value ? self.context._true : self.context._false
+    return value ? self.builtins.true : self.builtins.false
   }
 
   internal func float(_ value: Double) -> PyFloat {

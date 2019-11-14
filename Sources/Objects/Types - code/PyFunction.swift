@@ -51,7 +51,7 @@ internal final class PyFunction: PyObject, AttributesOwner {
     self._code = code
 
     // __module__: If module name is in globals, use it. Otherwise, use None.
-    self._module = globals["__name__"] ?? context.none
+    self._module = globals["__name__"] ?? context.builtins.none
 
     self._globals = globals
     self._defaults = nil

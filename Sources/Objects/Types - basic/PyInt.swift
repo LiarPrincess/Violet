@@ -580,17 +580,21 @@ public class PyInt: PyObject {
   /// int.__round__(12345, -2) -> 12300
   /// ```
   internal func round(nDigits: PyObject?) -> PyResultOrNot<PyObject> {
-    let nDigits = nDigits ?? self.context._none
+    let digitCount: BigInt? = {
+      guard let n = nDigits else {
+        return 0
+      }
 
-    var digitCount: BigInt?
+      if n is PyNone {
+        return 0
+      }
 
-    if nDigits is PyNone {
-      digitCount = 0
-    }
+      if let int = n as? PyInt {
+        return int.value
+      }
 
-    if let int = nDigits as? PyInt {
-      digitCount = int.value
-    }
+      return nil
+    }()
 
     // if digits >= 0 then no rounding is necessary; return self unchanged
     if let dc = digitCount, dc >= 0 {

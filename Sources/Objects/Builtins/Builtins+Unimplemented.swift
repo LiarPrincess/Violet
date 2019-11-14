@@ -44,6 +44,6 @@ extension Builtins {
   // MARK: - Helpers
 
   internal var unimplemented: PyObject {
-    return self.context.none
+    return self.none
   }
 }

@@ -4,7 +4,7 @@ extension PyContext {
 
   @discardableResult
   internal func unimplemented() -> PyObject {
-    return self.none
+    return self.builtins.none
   }
 
   internal func call(_ fn: PyObject, args: [PyObject?]) -> PyResult<PyObject> {

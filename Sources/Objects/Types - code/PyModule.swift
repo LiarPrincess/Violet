@@ -27,9 +27,9 @@ public final class PyModule: PyObject, AttributesOwner {
     super.init(type: context.builtins.types.module)
     self._attributes["__name__"] = name
     self._attributes["__doc__"] = doc
-    self._attributes["__package__"] = context._none
-    self._attributes["__loader__"] = context._none
-    self._attributes["__spec__"] = context._none
+    self._attributes["__package__"] = context.builtins.none
+    self._attributes["__loader__"] = context.builtins.none
+    self._attributes["__spec__"] = context.builtins.none
   }
 
   // MARK: - Dict

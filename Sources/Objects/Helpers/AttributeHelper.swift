@@ -77,7 +77,7 @@ internal enum AttributeHelper {
       if let descrSet = descrSet {
         let args = [descr, zelf, value]
         _ = zelf.context.call(descrSet, args: args)
-        return .value(zelf.context._none)
+        return .value(zelf.builtins.none)
       }
     }
 
@@ -87,7 +87,7 @@ internal enum AttributeHelper {
       } else {
         attribOwner._attributes.del(key: name)
       }
-      return .value(zelf.context._none)
+      return .value(zelf.builtins.none)
     }
 
     let msg = descr == nil ?

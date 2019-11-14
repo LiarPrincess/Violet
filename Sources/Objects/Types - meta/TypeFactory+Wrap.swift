@@ -64,7 +64,7 @@ extension TypeFactory {
       func: { arg0, arg1 -> PyResult<PyObject> in
         let zelf = castSelf(arg0)
         let result = set(zelf)(arg1)
-        return result.map { _ in arg0.context.none }
+        return result.map { _ in arg0.builtins.none }
       }
     )
   }

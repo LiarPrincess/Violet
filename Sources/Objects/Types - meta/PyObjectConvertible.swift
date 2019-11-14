@@ -20,7 +20,7 @@ extension BigInt: PyObjectConvertible {
 
 extension Bool: PyObjectConvertible {
   public func toPyObject(in context: PyContext) -> PyObject {
-    return self ? context.true : context.false
+    return self ? context.builtins.true : context.builtins.false
   }
 }
 
@@ -42,7 +42,7 @@ extension Optional: PyObjectConvertible where Wrapped: PyObjectConvertible {
     case let .some(v):
       return v.toPyObject(in: context)
     default:
-      return context.none
+      return context.builtins.none
     }
   }
 }
@@ -80,7 +80,7 @@ extension PyResultOrNot: PyObjectConvertible where V: PyObjectConvertible {
     switch self {
     case .value(let v): return v.toPyObject(in: context)
     case .error: fatalError()
-    case .notImplemented: return context.notImplemented
+    case .notImplemented: return context.builtins.notImplemented
     }
   }
 }

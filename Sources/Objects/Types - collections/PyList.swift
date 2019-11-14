@@ -184,7 +184,7 @@ public final class PyList: PyObject {
   // sourcery: pymethod = append
   internal func append(_ element: PyObject) -> PyResult<PyNone> {
     self.elements.append(element)
-    return .value(self.context._none)
+    return .value(self.builtins.none)
   }
 
   internal func pop(index: BigInt = -1) -> PyResult<PyObject> {
@@ -215,7 +215,7 @@ public final class PyList: PyObject {
   // sourcery: pymethod = clear
   internal func clear() -> PyResult<PyNone> {
     self.elements.removeAll()
-    return .value(self.context._none)
+    return .value(self.builtins.none)
   }
 
   // sourcery: pymethod = copy

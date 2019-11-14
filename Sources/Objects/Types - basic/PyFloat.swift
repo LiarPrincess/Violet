@@ -403,7 +403,7 @@ public final class PyFloat: PyObject {
   /// Return the Integral closest to x, rounding half toward even.
   /// When an argument is passed, work like built-in round(x, ndigits).
   internal func round(nDigits: PyObject?) -> PyResultOrNot<PyObject> {
-    let nDigits = nDigits ?? self.context._none
+    let nDigits = nDigits ?? self.builtins.none
 
     var digitCount: BigInt?
 

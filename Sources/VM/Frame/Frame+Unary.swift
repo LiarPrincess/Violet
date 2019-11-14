@@ -23,14 +23,7 @@ extension Frame {
   internal func unaryNot() -> InstructionResult {
     let top = self.stack.top
     let boolValue = self.builtins.isTrueBool(top)
-
-    switch boolValue {
-    case true:
-      self.stack.top = self.context.false
-    case false:
-      self.stack.top = self.context.true
-    }
-
+    self.stack.top = self.builtins.newBool(boolValue)
     return .ok
   }
 
