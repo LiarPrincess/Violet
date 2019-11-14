@@ -163,7 +163,7 @@ extension Builtins {
 
   // MARK: - Slice
 
-  public func slice(stop: PyInt?) -> PySlice {
+  public func newSlice(stop: PyInt?) -> PySlice {
     return PySlice(
       self.context,
       start: self.none,
@@ -172,12 +172,29 @@ extension Builtins {
     )
   }
 
-  public func slice(start: PyInt?, stop: PyInt?, step: PyInt? = nil) -> PySlice {
+  public func newSlice(start: PyInt?,
+                       stop: PyInt?,
+                       step: PyInt? = nil) -> PySlice {
     return PySlice(
       self.context,
       start: start ?? self.none,
       stop: stop ?? self.none,
       step: step ?? self.none
     )
+  }
+
+  // MARK: - Contains
+
+  /// int
+  /// PySequence_Contains(PyObject *seq, PyObject *ob)
+  public func contains(_ collection: PyObject,
+                       element: PyObject) -> PyResult<Bool> {
+
+    if let containsOwner = collection as? __contains__Owner {
+      return containsOwner.contains(element)
+    }
+
+    // TODO: 1. Try to use 'user contains', 2. _PySequence_IterSearch
+    return .value(false)
   }
 }
