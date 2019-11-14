@@ -155,7 +155,7 @@ extension Builtins {
 //  public func _enumerate(iterable: PyObject, startIndex: Int) -> PyResult<PyEnumerate> {
 //    guard let source = iterable as? PyEnumerateSource else {
 //      let str = self._str(value: iterable)
-//      return .error(.typeError("'\(str)' object is not iterable"))
+//      return .typeError("'\(str)' object is not iterable")
 //    }
 //
 //    return .value(PyEnumerate(self, iterable: source, startIndex: startIndex))

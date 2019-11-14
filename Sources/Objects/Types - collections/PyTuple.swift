@@ -209,8 +209,8 @@ public final class PyTuple: PyObject {
     }
 
     guard let otherTuple = other as? PyTuple else {
-      return .error(
-        .typeError("can only concatenate tuple (not '\(other.typeName)') to tuple")
+      return .typeError(
+        "can only concatenate tuple (not '\(other.typeName)') to tuple"
       )
     }
 

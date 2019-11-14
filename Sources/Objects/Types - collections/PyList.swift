@@ -189,7 +189,7 @@ public final class PyList: PyObject {
 
   internal func pop(index: BigInt = -1) -> PyResult<PyObject> {
     if self.elements.isEmpty {
-      return .error(.indexError("pop from empty list"))
+      return .indexError("pop from empty list")
     }
 
     var index = index
@@ -198,15 +198,15 @@ public final class PyList: PyObject {
     }
 
     guard let indexInt = Int(exactly: index) else {
-      return .error(.indexError("pop index out of range"))
+      return .indexError("pop index out of range")
     }
 
     guard 0 <= indexInt && indexInt < self.elements.count else {
-      return .error(.indexError("pop index out of range"))
+      return .indexError("pop index out of range")
     }
 
     guard let last = self.elements.popLast() else {
-      return .error(.indexError("pop index out of range"))
+      return .indexError("pop index out of range")
     }
 
     return .value(last)
@@ -228,8 +228,8 @@ public final class PyList: PyObject {
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let otherList = other as? PyList else {
-      return .error(
-        .typeError("can only concatenate list (not '\(other.typeName)') to list")
+      return .typeError(
+        "can only concatenate list (not '\(other.typeName)') to list"
       )
     }
 

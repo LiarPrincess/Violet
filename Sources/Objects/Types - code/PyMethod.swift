@@ -125,9 +125,7 @@ internal final class PyMethod: PyObject {
   // sourcery: pymethod = __getattribute__, doc = getAttributeDoc
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     guard let nameString = name as? PyString else {
-      return .error(
-        .typeError("attribute name must be string, not '\(name.typeName)'")
-      )
+      return .typeError("attribute name must be string, not '\(name.typeName)'")
     }
 
     if let descr = self.type.lookup(name: nameString.value),

@@ -293,7 +293,7 @@ public final class PyFloat: PyObject {
 
   private func trueDiv(left: Double, right: Double) -> PyResultOrNot<PyObject> {
     if right.isZero {
-      return .error(.zeroDivisionError("float division by zero"))
+      return .zeroDivisionError("float division by zero")
     }
 
     return .value(self.builtins.newFloat(left / right))
@@ -321,7 +321,7 @@ public final class PyFloat: PyObject {
 
   private func floorDiv(left: Double, right: Double) -> PyResultOrNot<PyObject> {
     if right.isZero {
-      return .error(.zeroDivisionError("float floor division by zero"))
+      return .zeroDivisionError("float floor division by zero")
     }
 
     let result = self.floorDivRaw(left: left, right: right)
@@ -354,7 +354,7 @@ public final class PyFloat: PyObject {
 
   private func mod(left: Double, right: Double) -> PyResultOrNot<PyObject> {
     if right.isZero {
-      return .error(.zeroDivisionError("float modulo by zero"))
+      return .zeroDivisionError("float modulo by zero")
     }
 
     let result = self.modRaw(left: left, right: right)
@@ -387,7 +387,7 @@ public final class PyFloat: PyObject {
 
   private func divMod(left: Double, right: Double) -> PyResultOrNot<PyObject> {
     if right.isZero {
-      return .error(.zeroDivisionError("float divmod() by zero"))
+      return .zeroDivisionError("float divmod() by zero")
     }
 
     let div = self.floorDivRaw(left: left, right: right)
@@ -426,8 +426,8 @@ public final class PyFloat: PyObject {
       // TODO: Implement float rounding to arbitrary precision
       return .notImplemented
     case .none:
-      return .error(
-        .typeError("'\(nDigits.typeName)' object cannot be interpreted as an integer")
+      return .typeError(
+        "'\(nDigits.typeName)' object cannot be interpreted as an integer"
       )
     }
   }

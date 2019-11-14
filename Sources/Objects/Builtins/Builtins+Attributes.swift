@@ -85,8 +85,7 @@ extension Builtins {
 
     switch self.hasAttribute(object, name: name) {
     case .value(true):
-      let msg = "'\(type)' object has only read-only attributes (\(op) \(nameStr))"
-      return .typeError(msg)
+      return .typeError("'\(type)' object has only read-only attributes (\(op) \(nameStr))")
     case .value(false):
       return .typeError("'\(type)' object has no attributes (\(op) \(nameStr))")
     case let .error(e):

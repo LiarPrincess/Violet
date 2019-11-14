@@ -357,7 +357,7 @@ public class PyInt: PyObject {
 
   private func trueDiv(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right == 0 {
-      return .error(.zeroDivisionError("division by zero"))
+      return .zeroDivisionError("division by zero")
     }
 
     return .value(self.builtins.newFloat(Double(left) / Double(right)))
@@ -385,7 +385,7 @@ public class PyInt: PyObject {
 
   private func floorDiv(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right == 0 {
-      return .error(.zeroDivisionError("division by zero"))
+      return .zeroDivisionError("division by zero")
     }
 
     let result = self.floorDivRaw(left: left, right: right)
@@ -418,7 +418,7 @@ public class PyInt: PyObject {
 
   private func mod(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right == 0 {
-      return .error(.zeroDivisionError("modulo by zero"))
+      return .zeroDivisionError("modulo by zero")
     }
 
     let result = self.modRaw(left: left, right: right)
@@ -451,7 +451,7 @@ public class PyInt: PyObject {
 
   private func divMod(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right == 0 {
-      return .error(.zeroDivisionError("divmod() by zero"))
+      return .zeroDivisionError("divmod() by zero")
     }
 
     let div = self.floorDivRaw(left: left, right: right)
@@ -484,7 +484,7 @@ public class PyInt: PyObject {
 
   private func lShift(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right < 0 {
-      return .error(.valueError("negative shift count"))
+      return .valueError("negative shift count")
     }
 
     return .value(self.builtins.newInt(left << right))
@@ -512,7 +512,7 @@ public class PyInt: PyObject {
 
   private func rShift(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right < 0 {
-      return .error(.valueError("negative shift count"))
+      return .valueError("negative shift count")
     }
 
     return .value(self.builtins.newInt(left >> right))

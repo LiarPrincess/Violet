@@ -93,7 +93,7 @@ internal final class PyFunction: PyObject, AttributesOwner {
     }
 
     guard let valueString = value as? PyString else {
-      return .error(.typeError("__name__ must be set to a string object"))
+      return .typeError("__name__ must be set to a string object")
     }
 
     self._name = valueString.value
@@ -111,7 +111,7 @@ internal final class PyFunction: PyObject, AttributesOwner {
     }
 
     guard let valueString = value as? PyString else {
-      return .error(.typeError("__qualname__ must be set to a string object"))
+      return .typeError("__qualname__ must be set to a string object")
     }
 
     self._qualname = valueString.value

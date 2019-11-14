@@ -69,18 +69,14 @@ public final class PyModule: PyObject, AttributesOwner {
     }
 
     guard let nameString = name as? PyString else {
-      return .error(
-        .typeError("attribute name must be string, not '\(name.typeName)'")
-      )
+      return .typeError("attribute name must be string, not '\(name.typeName)'")
     }
 
     if let getAttr = self._attributes["__getattr__"] {
       return self.builtins.call(getAttr, args: [self, name])
     }
 
-    return .error(
-      .attributeError("module \(self.name) has no attribute '\(nameString.value)'")
-    )
+    return .attributeError("module \(self.name) has no attribute '\(nameString.value)'")
   }
 
   // sourcery: pymethod = __setattr__

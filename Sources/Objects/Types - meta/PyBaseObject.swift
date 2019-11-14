@@ -87,8 +87,8 @@ internal enum PyBaseObject {
       return .value(PyBaseObject.str(zelf: zelf))
     }
 
-    return .error(
-      .typeError("unsupported format string passed to \(zelf.typeName).__format__")
+    return .typeError(
+      "unsupported format string passed to \(zelf.typeName).__format__"
     )
   }
 

@@ -240,8 +240,8 @@ public final class PyRange: PyObject {
       return result.flatMap { PyResult<PyObject>.value($0) }
     }
 
-    return .error(
-      .typeError("range indices must be integers or slices, not \(index.typeName)")
+    return .typeError(
+      "range indices must be integers or slices, not \(index.typeName)"
     )
   }
 
@@ -257,7 +257,7 @@ public final class PyRange: PyObject {
     }
 
     guard 0 <= index && index < self.length.value else {
-      return .error(.indexError("range object index out of range"))
+      return .indexError("range object index out of range")
     }
 
     let result = self.start.value + self.step.value * index
@@ -306,7 +306,7 @@ public final class PyRange: PyObject {
   internal func index(of element: PyObject) -> PyResult<BigInt> {
     guard let int = element as? PyInt, self.contains(int) else {
       let str = self.context._str(value: element)
-      return .error(.valueError("\(str) is not in range"))
+      return .valueError("\(str) is not in range")
     }
 
     let tmp = int.value - self.start.value

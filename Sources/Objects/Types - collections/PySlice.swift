@@ -153,11 +153,11 @@ public final class PySlice: PyObject {
     }
 
     guard let lengthInt = Int(exactly: length) else {
-      return .error(.indexError("length out of range"))
+      return .indexError("length out of range")
     }
 
     if lengthInt < 0 {
-      return .error(.valueError("length should not be negative"))
+      return .valueError("length should not be negative")
     }
 
     switch self.getLongIndices(length: lengthInt) {
@@ -191,7 +191,7 @@ public final class PySlice: PyObject {
     case .none: break
     case let .index(value):
       if value == 0 {
-        return .error(.valueError("slice step cannot be zero"))
+        return .valueError("slice step cannot be zero")
       }
       step = value
     case let .error(e):
@@ -261,7 +261,7 @@ public final class PySlice: PyObject {
     case .none: break
     case let .index(value):
       if value == 0 {
-        return .error(.valueError("slice step cannot be zero"))
+        return .valueError("slice step cannot be zero")
       }
       step = value
     case let .error(e): return .error(e)

@@ -100,7 +100,7 @@ internal final class PyProperty: PyObject {
     }
 
     guard let propGet = self._getter else {
-      return .error(.attributeError("unreadable attribute"))
+      return .attributeError("unreadable attribute")
     }
 
     return self.context.call(propGet, args: [object])
@@ -113,7 +113,7 @@ internal final class PyProperty: PyObject {
 
     guard let fn = fnOrNil else {
       let msg = isDelete ? "can't delete attribute" : "can't set attribute"
-      return .error(.attributeError(msg))
+      return .attributeError(msg)
     }
 
     return self.context.call(fn, args: [object, value])

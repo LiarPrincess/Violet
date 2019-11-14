@@ -115,12 +115,12 @@ public final class PyComplex: PyObject {
 
   // sourcery: pymethod = __int__
   internal func asInt() -> PyResult<PyInt> {
-    return .error(.typeError("can't convert complex to int"))
+    return .typeError("can't convert complex to int")
   }
 
   // sourcery: pymethod = __float__
   internal func asFloat() -> PyResult<PyFloat> {
-    return .error(.typeError("can't convert complex to float"))
+    return .typeError("can't convert complex to float")
   }
 
   // sourcery: pymethod = real
@@ -299,7 +299,7 @@ public final class PyComplex: PyObject {
 
     if left.real.isZero && left.imag.isZero {
       if right.real < 0.0 || right.imag != 0.0 {
-        return .error(.valueError("complex zero to negative or complex power"))
+        return .valueError("complex zero to negative or complex power")
       }
 
       return .value(self.builtins.newComplex(real: 0.0, imag: 0.0))
@@ -353,7 +353,7 @@ public final class PyComplex: PyObject {
 
     let d = right.real * right.real + right.imag * right.imag
     if d.isZero {
-      return .error(.zeroDivisionError("complex division by zero"))
+      return .zeroDivisionError("complex division by zero")
     }
 
     return .value(
@@ -368,7 +368,7 @@ public final class PyComplex: PyObject {
 
   // sourcery: pymethod = __floordiv__
   internal func floorDiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return .error(.typeError("can't take floor of complex number."))
+    return .typeError("can't take floor of complex number.")
   }
 
   // sourcery: pymethod = __rfloordiv__
@@ -380,7 +380,7 @@ public final class PyComplex: PyObject {
 
   // sourcery: pymethod = __mod__
   internal func mod(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return .error(.typeError("can't mod complex numbers."))
+    return .typeError("can't mod complex numbers.")
   }
 
   // sourcery: pymethod = __rmod__
@@ -392,7 +392,7 @@ public final class PyComplex: PyObject {
 
   // sourcery: pymethod = __divmod__
   internal func divMod(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return .error(.typeError("can't take floor or mod of complex number."))
+    return .typeError("can't take floor or mod of complex number.")
   }
 
   // sourcery: pymethod = __rdivmod__

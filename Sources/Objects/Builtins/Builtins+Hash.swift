@@ -21,8 +21,9 @@ extension Builtins {
     }
 
     guard let pyint = result as? PyInt else {
-      let msg = "__hash__ method should return an integer, not \(result.typeName)"
-      return .typeError(msg)
+      return .typeError(
+        "__hash__ method should return an integer, not \(result.typeName)"
+      )
     }
 
     if let hash = PyHash(exactly: pyint.value) {

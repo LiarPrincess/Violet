@@ -130,12 +130,12 @@ internal class PyBaseException: PyObject, AttributesOwner {
 
   internal func setArgs(_ value: PyObject?) -> PyResult<()> {
     //    guard let value = value else {
-    //      return .error(.typeError("args may not be deleted"))
+    //      return .typeError("args may not be deleted")
     //    }
 
     // TODO: seq = PySequence_Tuple(val);
     //    guard let tuple = value as? PyTuple else {
-    //      return .error(.typeError("__args__ must be a tuple"))
+    //      return .typeError("__args__ must be a tuple")
     //    }
     //
     //    self._args = tuple
@@ -151,7 +151,7 @@ internal class PyBaseException: PyObject, AttributesOwner {
 
   internal func setTraceback(_ value: PyObject?) -> PyResult<()> {
     //    guard let value = value else {
-    //      return .error(.typeError("__traceback__ may not be deleted"))
+    //      return .typeError("__traceback__ may not be deleted")
     //    }
 
     // TODO: This (but we need PyTraceback first)
@@ -161,7 +161,7 @@ internal class PyBaseException: PyObject, AttributesOwner {
     //    }
 
     //    guard let tuple = value as? PyObject else {
-    //      return .error(.typeError("__traceback__ must be a traceback"))
+    //      return .typeError("__traceback__ must be a traceback")
     //    }
     //
     //    self._traceback = tuple
@@ -179,7 +179,7 @@ internal class PyBaseException: PyObject, AttributesOwner {
 
   internal func setCause(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
-      return .error(.typeError("__cause__ may not be deleted"))
+      return .typeError("__cause__ may not be deleted")
     }
 
     if value is PyNone {
@@ -188,9 +188,7 @@ internal class PyBaseException: PyObject, AttributesOwner {
     }
 
     guard value.type.isException else {
-      return .error(
-        .typeError("exception cause must be None or derive from BaseException")
-      )
+      return .typeError("exception cause must be None or derive from BaseException")
     }
 
     self._cause = value
@@ -208,7 +206,7 @@ internal class PyBaseException: PyObject, AttributesOwner {
 
   internal func setContext(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
-      return .error(.typeError("__context__ may not be deleted"))
+      return .typeError("__context__ may not be deleted")
     }
 
     if value is PyNone {
@@ -217,9 +215,7 @@ internal class PyBaseException: PyObject, AttributesOwner {
     }
 
     guard value.type.isException else {
-      return .error(
-        .typeError("exception context must be None or derive from BaseException")
-      )
+      return .typeError("exception context must be None or derive from BaseException")
     }
 
     self._exceptionContext = value

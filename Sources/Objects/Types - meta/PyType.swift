@@ -104,7 +104,7 @@ public final class PyType: PyObject, AttributesOwner {
   }
 
   internal func setName(_ value: PyObject) -> PyResult<()> {
-    return .error(.typeError("can't set \(self._name).__name__"))
+    return .typeError("can't set \(self._name).__name__")
   }
 
   // MARK: - Qualname
@@ -115,7 +115,7 @@ public final class PyType: PyObject, AttributesOwner {
   }
 
   internal func setQualname(_ value: PyObject) -> PyResult<()> {
-    return .error(.typeError("can't set \(self._name).__qualname__"))
+    return .typeError("can't set \(self._name).__qualname__")
   }
 
   // MARK: - Module
@@ -142,7 +142,7 @@ public final class PyType: PyObject, AttributesOwner {
   }
 
   internal func setModule(_ value: PyObject) -> PyResult<()> {
-    return .error(.typeError("can't set \(self._name).__module__"))
+    return .typeError("can't set \(self._name).__module__")
   }
 
   // MARK: - Base
@@ -153,7 +153,7 @@ public final class PyType: PyObject, AttributesOwner {
   }
 
   internal func setBases(_ value: PyObject) -> PyResult<()> {
-    return .error(.typeError("can't set \(self._name).__bases__"))
+    return .typeError("can't set \(self._name).__bases__")
   }
 
   // MARK: - Dict
@@ -208,9 +208,7 @@ public final class PyType: PyObject, AttributesOwner {
   // sourcery: pymethod = __instancecheck__
   internal func isInstance(of type: PyObject) -> PyResult<Bool> {
     guard let type = type as? PyType else {
-      return .error(
-        .typeError("isinstance() arg 2 must be a type or tuple of types")
-      )
+      return .typeError("isinstance() arg 2 must be a type or tuple of types")
     }
 
     if self.type === type || self.type.isSubtype(of: type) {
@@ -226,9 +224,7 @@ public final class PyType: PyObject, AttributesOwner {
   // sourcery: pymethod = __subclasscheck__
   internal func isSubclass(of type: PyObject) -> PyResult<Bool> {
     guard let type = type as? PyType else {
-      return .error(
-        .typeError("issubclass() arg 2 must be a class or tuple of classes")
-      )
+      return .typeError("issubclass() arg 2 must be a class or tuple of classes")
     }
 
     return .value(self.isSubtype(of: type))
@@ -239,9 +235,7 @@ public final class PyType: PyObject, AttributesOwner {
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     guard let nameString = name as? PyString else {
-      return .error(
-        .typeError("attribute name must be string, not '\(name.typeName)'")
-      )
+      return .typeError("attribute name must be string, not '\(name.typeName)'")
     }
 
     return self.getAttribute(name: nameString.value)
@@ -261,7 +255,8 @@ public final class PyType: PyObject, AttributesOwner {
       }
     }
 
-    // No data descriptor found on metatype. Look in __dict__ of this type and its bases
+    // No data descriptor found on metatype.
+    // Look in __dict__ of this type and its bases
     if let attribute = self.lookup(name: name) {
       if let localGet = attribute.type.lookup(name: "__get__") {
         let args = [attribute, nil, self]
@@ -271,7 +266,8 @@ public final class PyType: PyObject, AttributesOwner {
       return .value(attribute)
     }
 
-    // No attribute found in __dict__ (or bases): use the descriptor from the metatype
+    // No attribute found in __dict__ (or bases):
+    // use the descriptor from the metatype
     if let metaGet = metaGet {
       let args = [metaAttribute, self, metaType]
       return self.context.call(metaGet, args: args)
@@ -282,21 +278,21 @@ public final class PyType: PyObject, AttributesOwner {
       return .value(metaAttribute)
     }
 
-    return .error(
-      .attributeError("type object '\(self.typeName)' has no attribute '\(name)'")
+    return .attributeError(
+      "type object '\(self.typeName)' has no attribute '\(name)'"
     )
   }
 
   // sourcery: pymethod = __setattr__
   internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
-    return .error(
-      .typeError("can't set attributes of built-in/extension type '\(self.typeName)'")
+    return .typeError(
+      "can't set attributes of built-in/extension type '\(self.typeName)'"
     )
   }
 
   internal func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
-    return .error(
-      .typeError("can't set attributes of built-in/extension type '\(self.typeName)'")
+    return .typeError(
+      "can't set attributes of built-in/extension type '\(self.typeName)'"
     )
   }
 

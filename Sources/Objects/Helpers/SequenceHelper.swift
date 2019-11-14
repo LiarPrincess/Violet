@@ -181,7 +181,9 @@ internal enum SequenceHelper {
     }
 
     return .error(
-      .typeError("\(typeName) indices must be integers or slices, not \(index.typeName)")
+      .typeError(
+        "\(typeName) indices must be integers or slices, not \(index.typeName)"
+      )
     )
   }
 
@@ -201,7 +203,7 @@ internal enum SequenceHelper {
 
     guard let int = Int(exactly: index),
           let i = elements.index(start, offsetBy: int, limitedBy: end) else {
-      return .error(.indexError("\(typeName) index out of range"))
+      return .indexError("\(typeName) index out of range")
     }
 
     return .value(elements[i])
@@ -224,7 +226,7 @@ internal enum SequenceHelper {
     }
 
     if adjusted.step == 0 {
-      return .error(.valueError("slice step cannot be zero"))
+      return .valueError("slice step cannot be zero")
     }
 
     if adjusted.step == 1 {
@@ -290,7 +292,7 @@ internal enum SequenceHelper {
       }
     }
 
-    return .error(.valueError("\(typeName).index(x): x not in \(typeName)"))
+    return .valueError("\(typeName).index(x): x not in \(typeName)")
   }
 
   // MARK: - Mul
