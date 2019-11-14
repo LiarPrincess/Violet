@@ -45,6 +45,14 @@ public enum PyResult<V> {
     return PyResult.error(.overflowError(msg))
   }
 
+  public static func systemError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.systemError(msg))
+  }
+
+  public static func nameError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.nameError(msg))
+  }
+
   public static func keyError(_ msg: String) -> PyResult<V> {
     return PyResult.error(.keyError(msg))
   }
@@ -137,6 +145,14 @@ public enum PyResultOrNot<V> {
 
   public static func overflowError(_ msg: String) -> PyResultOrNot<V> {
     return PyResultOrNot.error(.overflowError(msg))
+  }
+
+  public static func systemError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.systemError(msg))
+  }
+
+  public static func nameError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.nameError(msg))
   }
 
   public static func keyError(_ msg: String) -> PyResultOrNot<V> {

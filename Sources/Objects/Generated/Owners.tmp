@@ -26,7 +26,7 @@ PyBuiltinFunction|PyObject|get|__class__|getClass() -> PyType
 PyBuiltinFunction|PyObject|get|__name__|getName() -> String
 PyBuiltinFunction|PyObject|get|__qualname__|getQualname() -> String
 PyBuiltinFunction|PyObject|get|__text_signature__|getTextSignature() -> String?
-PyBuiltinFunction|PyObject|get|__module__|getModule() -> String
+PyBuiltinFunction|PyObject|get|__module__|getModule() -> PyResult<String>
 PyBuiltinFunction|PyObject|get|__self__|getSelf() -> PyObject
 
 PyBuiltinFunction|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -190,7 +190,7 @@ PyFunction|PyObject|get|__qualname__|getQualname() -> String
 PyFunction|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__code__|getCode() -> PyCode
 PyFunction|PyObject|get|__doc__|getDoc() -> String?
-PyFunction|PyObject|get|__module__|getModule() -> String
+PyFunction|PyObject|get|__module__|getModule() -> PyResult<String>
 PyFunction|PyObject|get|__dict__|dict() -> Attributes
 
 PyFunction|PyObject|func|__repr__|repr() -> PyResult<String>

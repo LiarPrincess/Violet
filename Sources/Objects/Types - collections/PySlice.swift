@@ -104,9 +104,24 @@ public final class PySlice: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let start = self.context._repr(value: self.start)
-    let stop  = self.context._repr(value: self.stop)
-    let step  = self.context._repr(value: self.step)
+    let start: String
+    switch self.builtins.repr(self.start) {
+    case let .value(s): start = s
+    case let .error(e): return .error(e)
+    }
+
+    let stop: String
+    switch self.builtins.repr(self.stop) {
+    case let .value(s): stop = s
+    case let .error(e): return .error(e)
+    }
+
+    let step: String
+    switch self.builtins.repr(self.step) {
+    case let .value(s): step = s
+    case let .error(e): return .error(e)
+    }
+
     return .value("slice(\(start), \(stop), \(step))")
   }
 

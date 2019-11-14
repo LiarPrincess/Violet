@@ -13,16 +13,14 @@ public final class PyModule: PyObject, AttributesOwner {
 
   internal let _attributes = Attributes()
 
-  internal var name: String {
-    guard let obj = self._attributes["__name__"] else {
-      return "module"
+  /// PyObject*
+  /// PyModule_GetNameObject(PyObject *m)
+  internal var name: PyResult<String> {
+    guard let nameObject = self._attributes["__name__"] else {
+      return .systemError("nameless module")
     }
 
-    guard let str = obj as? PyString else {
-      return self.context._repr(value: obj)
-    }
-
-    return str.value
+    return .value(self.context._str(value: nameObject))
   }
 
   internal init(_ context: PyContext, name: PyObject, doc: PyObject?) {
@@ -45,7 +43,12 @@ public final class PyModule: PyObject, AttributesOwner {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return .value("'" + self.name + "'")
+    switch self.name {
+    case let .value(s):
+      return .value("'\(s)'")
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Attributes

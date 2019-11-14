@@ -74,13 +74,13 @@ internal enum SetHelper {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func repr(_ set: PySetType) -> String {
+  internal static func repr(_ set: PySetType) -> PyResult<String> {
     if set.elements.isEmpty {
-      return "()"
+      return .value("()")
     }
 
     if set.hasReprLock {
-      return "(...)"
+      return .value("(...)")
     }
 
     return set.withReprLock {
@@ -90,11 +90,15 @@ internal enum SetHelper {
           result += ", " // so that we don't have ', )'.
         }
 
-        result += set.context._repr(value: element.key.object)
+        let builtins = element.key.object.builtins
+        switch builtins.repr(element.key.object) {
+        case let .value(s): result += s
+        case let .error(e): return .error(e)
+        }
       }
 
       result += set.elements.count > 1 ? ")" : ",)"
-      return result
+      return .value(result)
     }
   }
 

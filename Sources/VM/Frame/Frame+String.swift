@@ -5,10 +5,16 @@ extension Frame {
 
   /// Used for implementing formatted literal strings (f-strings).
   /// (And yes, Swift will pack both payloads in single byte).
-  internal func formatValue(conversion: StringConversion, hasFormat: Bool) -> InstructionResult {
+  internal func formatValue(conversion: StringConversion,
+                            hasFormat: Bool) -> InstructionResult {
     let format: PyObject? = hasFormat ? self.stack.pop() : nil
     let rawValue = self.stack.pop()
-    let value = try self.convert(value: rawValue, conversion: conversion)
+
+    let value: PyObject
+    switch self.convert(value: rawValue, conversion: conversion) {
+    case let .value(o): value = o
+    case let .error(e): return .builtinError(e)
+    }
 
     if let format = format {
       let formatted = self.context.PyObject_Format(value: value, format: format)
@@ -22,12 +28,16 @@ extension Frame {
   }
 
   private func convert(value: PyObject,
-                       conversion: StringConversion) -> PyObject {
+                       conversion: StringConversion) -> PyResult<PyObject> {
     switch conversion {
-    case .none:  return value
-    case .str:   return self.context.str(value: value)
-    case .repr:  return self.context.repr(value: value)
-    case .ascii: return self.context.ascii(value: value)
+    case .none:
+      return .value(value)
+    case .str:
+      return .value(self.context.str(value: value))
+    case .repr:
+      return self.builtins.repr(value).map(self.builtins.newString)
+    case .ascii:
+      return self.builtins.ascii(value).map(self.builtins.newString)
     }
   }
 

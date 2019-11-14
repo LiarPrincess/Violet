@@ -185,8 +185,8 @@ internal final class PyBuiltinFunction: PyObject {
   }
 
   // sourcery: pyproperty = __module__
-  internal func getModule() -> String {
-    return "builtins"
+  internal func getModule() -> PyResult<String> {
+    return .value("builtins")
   }
 
   // sourcery: pyproperty = __self__

@@ -4,13 +4,24 @@ import Core
 extension PyContext {
 
   /// int PyObject_Print(PyObject *op, FILE *fp, int flags)
-  public func print(value: PyObject, file: FileHandle, raw: Bool) {
+  public func print(value: PyObject,
+                    file: FileHandle,
+                    raw: Bool) -> PyResult<()> {
     // TODO: OutputStream
-    let string = raw ?
-      self._str(value: value) :
-      self._repr(value: value)
+    let string: String
+
+    if raw {
+      string = self._str(value: value)
+    } else {
+      switch self.builtins.repr(value) {
+      case let .value(s): string = s
+      case let .error(e): return .error(e)
+      }
+    }
 
     let data = Data(string.utf8)
     file.write(data)
+
+    return .value()
   }
 }

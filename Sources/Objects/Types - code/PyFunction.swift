@@ -129,12 +129,12 @@ internal final class PyFunction: PyObject, AttributesOwner {
   }
 
   // sourcery: pyproperty = __module__
-  internal func getModule() -> String {
+  internal func getModule() -> PyResult<String> {
     if let module = self._module as? PyModule {
       return module.name
     }
 
-    return self.context._str(value: self._module)
+    return .value(self.context._str(value: self._module))
   }
 
   // sourcery: pyproperty = __dict__

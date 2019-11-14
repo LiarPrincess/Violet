@@ -140,12 +140,12 @@ internal final class PyMethod: PyObject {
 
   // MARK: - Getters
 
-  // sourcery: pymethod = _fn__
+  // sourcery: pymethod = __func__
   internal func getFunc() -> PyObject {
     return self.fn
   }
 
-  // sourcery: pymethod = _object__
+  // sourcery: pymethod = __self__
   internal func getSelf() -> PyObject {
     return self.object
   }

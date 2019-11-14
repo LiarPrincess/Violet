@@ -44,7 +44,7 @@ protocol __len__Owner { func getLength() -> BigInt }
 protocol __lshift__Owner { func lShift(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __lt__Owner { func isLess(_ other: PyObject) -> PyResultOrNot<Bool> }
 protocol __mod__Owner { func mod(_ other: PyObject) -> PyResultOrNot<PyObject> }
-protocol __module__GetterOwner { func getModule() -> String }
+protocol __module__GetterOwner { func getModule() -> PyResult<String> }
 protocol __mul__Owner { func mul(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __name__GetterOwner { func getName() -> String }
 protocol __name__SetterOwner { func setName(_ value: PyObject?) -> PyResult<()> }

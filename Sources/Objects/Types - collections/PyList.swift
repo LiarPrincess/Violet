@@ -112,7 +112,10 @@ public final class PyList: PyObject {
           result += ", " // so that we don't have ', )'.
         }
 
-        result += self.context._repr(value: element)
+        switch self.builtins.repr(element) {
+        case let .value(s): result += s
+        case let .error(e): return .error(e)
+        }
       }
 
       result += self.elements.count > 1 ? "]" : ",]"

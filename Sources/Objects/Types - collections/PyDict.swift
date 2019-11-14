@@ -119,9 +119,17 @@ public final class PyDict: PyObject {
           result += ", " // so that we don't have ', )'.
         }
 
-        result += self.context._repr(value: element.key.object)
+        switch self.builtins.repr(element.key.object) {
+        case let .value(s): result += s
+        case let .error(e): return .error(e)
+        }
+
         result += ": "
-        result += self.context._repr(value: element.value)
+
+        switch self.builtins.repr(element.value) {
+        case let .value(s): result += s
+        case let .error(e): return .error(e)
+        }
       }
 
       result += "}"

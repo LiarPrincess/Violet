@@ -35,16 +35,18 @@ extension Builtins {
   // sourcery: pymethod: ascii
   /// ascii(object)
   /// See [this](https://docs.python.org/3/library/functions.html#ascii)
-  public func ascii(_ object: PyObject) -> String {
-    guard case let PyResult.value(repr) = self.repr(object) else {
-      return ""
+  public func ascii(_ object: PyObject) -> PyResult<String> {
+    let repr: String
+    switch self.repr(object) {
+    case let .value(s): repr = s
+    case let .error(e): return .error(e)
     }
 
     let scalars = repr.unicodeScalars
 
     let allASCII = scalars.allSatisfy { $0.isASCII }
     if allASCII {
-      return repr
+      return .value(repr)
     }
 
     var result = ""
@@ -60,15 +62,15 @@ extension Builtins {
       }
     }
 
-    return result
+    return .value(result)
   }
+
+  // MARK: - Helpers
 
   private func hex(_ value: UInt32, padTo: Int) -> String {
     let raw = String(value, radix: 16, uppercase: false)
     return raw.padding(toLength: padTo, withPad: "0", startingAt: 0)
   }
-
-  // MARK: - Helpers
 
   private func genericRepr(_ object: PyObject) -> String {
     return "<\(object.typeName) object at \(object.ptrString)>"

@@ -110,7 +110,7 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return .value(SetHelper.repr(self))
+    return SetHelper.repr(self)
   }
 
   // MARK: - Attributes

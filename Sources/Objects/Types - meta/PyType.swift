@@ -126,10 +126,10 @@ public final class PyType: PyObject, AttributesOwner {
   }
 
   // sourcery: pyproperty = __module__, setter = setModule
-  internal func getModule() -> String {
+  internal func getModule() -> PyResult<String> {
     switch self.getModuleRaw() {
-    case let .external(e): return e
-    case .builtins: return "__builtins__"
+    case .builtins: return .value("__builtins__")
+    case .external(let s): return .value(s)
     }
   }
 

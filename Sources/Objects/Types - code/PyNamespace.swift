@@ -77,13 +77,11 @@ public final class PyNamespace: PyObject, AttributesOwner {
 
     return self.withReprLock {
       var list = [String]()
-      for key in self._attributes.keys.sorted() {
-        guard let value = self._attributes[key] else {
-          continue // just, so that Swift does not shout at us
+      for (key, value) in self._attributes.asDictionary {
+        switch self.builtins.repr(value) {
+        case let .value(s): list.append("\(key)=\(s)")
+        case let .error(e): return .error(e)
         }
-
-        let valueString = self.context._repr(value: value)
-        list.append("\(key)=\(valueString)")
       }
 
       let listJoined = list.joined(separator: ", ")
