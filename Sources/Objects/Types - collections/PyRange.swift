@@ -140,8 +140,7 @@ public final class PyRange: PyObject {
     var tuple = [self.length, none, none]
 
     if self.length.value == 0 {
-      let result = self.context.hash(value: self.tuple(type))
-      return .value(result)
+      return self.builtins.hash(self.tuple(tuple)).asResultOrNot
     }
 
     tuple[1] = self.start
@@ -149,8 +148,7 @@ public final class PyRange: PyObject {
       tuple[2] = self.step
     }
 
-    let result = self.context.hash(value: self.tuple(type))
-    return .value(result)
+    return self.builtins.hash(self.tuple(tuple)).asResultOrNot
   }
 
   // MARK: - String

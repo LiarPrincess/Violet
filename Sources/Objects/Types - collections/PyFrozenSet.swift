@@ -98,9 +98,13 @@ public final class PyFrozenSet: PyObject {
     var mult = HashHelper._PyHASH_MULTIPLIER
 
     for entry in self.elements {
-      let y = self.context.hash(value: entry.key.object)
-      x = (x ^ y) * mult
-      mult += 82_520 + PyHash(2 * self.elements.count)
+      switch self.builtins.hash(entry.key.object) {
+      case let .value(y):
+        x = (x ^ y) * mult
+        mult += 82_520 + PyHash(2 * self.elements.count)
+      case let .error(e):
+        return .error(e)
+      }
     }
 
     return .value(x + 97_531)

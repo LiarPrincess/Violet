@@ -97,9 +97,13 @@ public final class PyTuple: PyObject {
     var mult = HashHelper._PyHASH_MULTIPLIER
 
     for e in self.elements {
-      let y = self.context.hash(value: e)
-      x = (x ^ y) * mult
-      mult += 82_520 + PyHash(2 * self.elements.count)
+      switch self.builtins.hash(e) {
+      case let .value(y):
+        x = (x ^ y) * mult
+        mult += 82_520 + PyHash(2 * self.elements.count)
+      case let .error(e):
+        return .error(e)
+      }
     }
 
     return .value(x + 97_531)

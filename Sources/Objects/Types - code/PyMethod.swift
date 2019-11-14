@@ -99,9 +99,19 @@ internal final class PyMethod: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    let selfHash = self.context.hash(value: self.object)
-    let funcHash = self.context.hash(value: self.fn)
-    return .value(selfHash ^ funcHash)
+    let objectHash: PyHash
+    switch self.builtins.hash(self.object) {
+    case let .value(h): objectHash = h
+    case let .error(e): return .error(e)
+    }
+
+    let fnHash: PyHash
+    switch self.builtins.hash(self.fn) {
+    case let .value(h): fnHash = h
+    case let .error(e): return .error(e)
+    }
+
+    return .value(objectHash ^ fnHash)
   }
 
   // MARK: - Attributes
