@@ -137,12 +137,12 @@ public final class PyFloat: PyObject {
 
   // sourcery: pymethod = __int__
   internal func asInt() -> PyResult<PyInt> {
-    return .value(self.int(BigInt(self.value)))
+    return .value(self.builtins.newInt(BigInt(self.value)))
   }
 
   // sourcery: pymethod = __float__
   internal func asFloat() -> PyResult<PyFloat> {
-    return .value(self.float(self.value))
+    return .value(self.builtins.newFloat(self.value))
   }
 
   // sourcery: pymethod = real
@@ -152,7 +152,7 @@ public final class PyFloat: PyObject {
 
   // sourcery: pymethod = imag
   internal func asImag() -> PyObject {
-    return self.float(0.0)
+    return self.builtins.newFloat(0.0)
   }
 
   // MARK: - Imaginary
@@ -187,14 +187,14 @@ public final class PyFloat: PyObject {
 
   // sourcery: pymethod = __neg__
   internal func negative() -> PyObject {
-    return self.float(-self.value)
+    return self.builtins.newFloat(-self.value)
   }
 
   // MARK: - Abs
 
   // sourcery: pymethod = __abs__
   internal func abs() -> PyObject {
-    return self.float(Swift.abs(self.value))
+    return self.builtins.newFloat(Swift.abs(self.value))
   }
 
   // MARK: - Add
@@ -205,7 +205,7 @@ public final class PyFloat: PyObject {
       return .notImplemented
     }
 
-    return .value(self.float(self.value + other))
+    return .value(self.builtins.newFloat(self.value + other))
   }
 
   // sourcery: pymethod = __radd__
@@ -221,7 +221,7 @@ public final class PyFloat: PyObject {
       return .notImplemented
     }
 
-    return .value(self.float(self.value - other))
+    return .value(self.builtins.newFloat(self.value - other))
   }
 
   // sourcery: pymethod = __rsub__
@@ -230,7 +230,7 @@ public final class PyFloat: PyObject {
       return .notImplemented
     }
 
-    return .value(self.float(other - self.value))
+    return .value(self.builtins.newFloat(other - self.value))
   }
 
   // MARK: - Mul
@@ -241,7 +241,7 @@ public final class PyFloat: PyObject {
       return .notImplemented
     }
 
-    return .value(self.float(self.value * other))
+    return .value(self.builtins.newFloat(self.value * other))
   }
 
   // sourcery: pymethod = __rmul__
@@ -258,7 +258,7 @@ public final class PyFloat: PyObject {
     }
 
     let result = Foundation.pow(self.value, other)
-    return .value(self.float(result))
+    return .value(self.builtins.newFloat(result))
   }
 
   // sourcery: pymethod = __rpow__
@@ -268,7 +268,7 @@ public final class PyFloat: PyObject {
     }
 
     let result = Foundation.pow(other, self.value)
-    return .value(self.float(result))
+    return .value(self.builtins.newFloat(result))
   }
 
   // MARK: - True div
@@ -296,7 +296,7 @@ public final class PyFloat: PyObject {
       return .error(.zeroDivisionError("float division by zero"))
     }
 
-    return .value(self.float(left / right))
+    return .value(self.builtins.newFloat(left / right))
   }
 
   // MARK: - Floor div
@@ -325,7 +325,7 @@ public final class PyFloat: PyObject {
     }
 
     let result = self.floorDivRaw(left: left, right: right)
-    return .value(self.float(result))
+    return .value(self.builtins.newFloat(result))
   }
 
   private func floorDivRaw(left: Double, right: Double) -> Double {
@@ -358,7 +358,7 @@ public final class PyFloat: PyObject {
     }
 
     let result = self.modRaw(left: left, right: right)
-    return .value(self.float(result))
+    return .value(self.builtins.newFloat(result))
   }
 
   private func modRaw(left: Double, right: Double) -> Double {
@@ -392,7 +392,10 @@ public final class PyFloat: PyObject {
 
     let div = self.floorDivRaw(left: left, right: right)
     let mod = self.modRaw(left: left, right: right)
-    return .value(self.tuple(self.float(div), self.float(mod)))
+
+    let tuple0 = self.builtins.newFloat(div)
+    let tuple1 = self.builtins.newFloat(mod)
+    return .value(self.builtins.newTuple(tuple0, tuple1))
   }
 
   // MARK: - Round
@@ -418,7 +421,7 @@ public final class PyFloat: PyObject {
     switch digitCount {
     case .some(0):
       // round to nearest integer
-      return .value(self.float(self.value.rounded()))
+      return .value(self.builtins.newFloat(self.value.rounded()))
     case .some:
       // TODO: Implement float rounding to arbitrary precision
       return .notImplemented

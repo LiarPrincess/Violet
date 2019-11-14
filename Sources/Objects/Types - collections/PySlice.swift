@@ -162,10 +162,10 @@ public final class PySlice: PyObject {
 
     switch self.getLongIndices(length: lengthInt) {
     case let .value(v):
-      let start = self.int(v.start)
-      let stop = self.int(v.stop)
-      let step = self.int(v.step)
-      return .value(self.tuple(start, stop, step))
+      let start = self.builtins.newInt(v.start)
+      let stop = self.builtins.newInt(v.stop)
+      let step = self.builtins.newInt(v.step)
+      return .value(self.builtins.newTuple(start, stop, step))
     case let .error(e):
       return .error(e)
     }

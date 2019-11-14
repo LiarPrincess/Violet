@@ -140,7 +140,7 @@ public final class PyRange: PyObject {
     var tuple = [self.length, none, none]
 
     if self.length.value == 0 {
-      return self.builtins.hash(self.tuple(tuple)).asResultOrNot
+      return self.builtins.hash(self.builtins.newTuple(tuple)).asResultOrNot
     }
 
     tuple[1] = self.start
@@ -148,7 +148,7 @@ public final class PyRange: PyObject {
       tuple[2] = self.step
     }
 
-    return self.builtins.hash(self.tuple(tuple)).asResultOrNot
+    return self.builtins.hash(self.builtins.newTuple(tuple)).asResultOrNot
   }
 
   // MARK: - String
@@ -261,7 +261,7 @@ public final class PyRange: PyObject {
     }
 
     let result = self.start.value + self.step.value * index
-    return .value(self.int(result))
+    return .value(self.builtins.newInt(result))
   }
 
   internal func getItem(at slice: PySlice) -> PyResult<PyRange> {

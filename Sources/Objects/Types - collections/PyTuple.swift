@@ -219,7 +219,7 @@ public final class PyTuple: PyObject {
     }
 
     let result = self.elements + otherTuple.elements
-    return .value(self.tuple(result))
+    return .value(self.builtins.newTuple(result))
   }
 
   // MARK: - Mul
@@ -228,13 +228,13 @@ public final class PyTuple: PyObject {
   internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)
-      .map(self.tuple)
+      .map(self.builtins.newTuple)
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return SequenceHelper
       .rmul(elements: self.elements, count: other)
-      .map(self.tuple)
+      .map(self.builtins.newTuple)
   }
 }

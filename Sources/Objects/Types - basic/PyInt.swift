@@ -140,7 +140,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __float__
   internal func asFloat() -> PyResult<PyFloat> {
-    return .value(self.float(Double(self.value)))
+    return .value(self.builtins.newFloat(Double(self.value)))
   }
 
   // sourcery: pymethod = __index__
@@ -164,7 +164,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = imag
   internal func asImag() -> PyObject {
-    return self.int(0)
+    return self.builtins.newInt(0)
   }
 
   // sourcery: pymethod = conjugate
@@ -181,7 +181,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = denominator
   internal func denominator() -> PyInt {
-    return self.int(1)
+    return self.builtins.newInt(1)
   }
 
   // MARK: - Attributes
@@ -200,14 +200,14 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __neg__
   internal func negative() -> PyObject {
-    return self.int(-self.value)
+    return self.builtins.newInt(-self.value)
   }
 
   // MARK: - Abs
 
   // sourcery: pymethod = __abs__
   internal func abs() -> PyObject {
-    return self.int(Swift.abs(self.value))
+    return self.builtins.newInt(Swift.abs(self.value))
   }
 
   // MARK: - Add
@@ -218,7 +218,7 @@ public class PyInt: PyObject {
       return .notImplemented
     }
 
-    return .value(self.int(self.value + other.value))
+    return .value(self.builtins.newInt(self.value + other.value))
   }
 
   // sourcery: pymethod = __radd__
@@ -234,7 +234,7 @@ public class PyInt: PyObject {
       return .notImplemented
     }
 
-    return .value(self.int(self.value - other.value))
+    return .value(self.builtins.newInt(self.value - other.value))
   }
 
   // sourcery: pymethod = __rsub__
@@ -243,7 +243,7 @@ public class PyInt: PyObject {
       return .notImplemented
     }
 
-    return .value(self.int(other.value - self.value))
+    return .value(self.builtins.newInt(other.value - self.value))
   }
 
   // MARK: - Mul
@@ -254,7 +254,7 @@ public class PyInt: PyObject {
       return .notImplemented
     }
 
-    return .value(self.int(self.value * other.value))
+    return .value(self.builtins.newInt(self.value * other.value))
   }
 
   // sourcery: pymethod = __rmul__
@@ -307,8 +307,8 @@ public class PyInt: PyObject {
 
   private func asObject(_ result: InnerPyResultOrNot) -> PyObject {
     switch result {
-    case let .int(i): return self.int(i)
-    case let .fraction(f): return self.float(f)
+    case let .int(i): return self.builtins.newInt(i)
+    case let .fraction(f): return self.builtins.newFloat(f)
     }
   }
 
@@ -360,7 +360,7 @@ public class PyInt: PyObject {
       return .error(.zeroDivisionError("division by zero"))
     }
 
-    return .value(self.float(Double(left) / Double(right)))
+    return .value(self.builtins.newFloat(Double(left) / Double(right)))
   }
 
   // MARK: - Floor div
@@ -389,7 +389,7 @@ public class PyInt: PyObject {
     }
 
     let result = self.floorDivRaw(left: left, right: right)
-    return .value(self.int(result))
+    return .value(self.builtins.newInt(result))
   }
 
   private func floorDivRaw(left: BigInt, right: BigInt) -> BigInt {
@@ -422,7 +422,7 @@ public class PyInt: PyObject {
     }
 
     let result = self.modRaw(left: left, right: right)
-    return .value(self.int(result))
+    return .value(self.builtins.newInt(result))
   }
 
   private func modRaw(left: BigInt, right: BigInt) -> BigInt {
@@ -456,7 +456,10 @@ public class PyInt: PyObject {
 
     let div = self.floorDivRaw(left: left, right: right)
     let mod = self.modRaw(left: left, right: right)
-    return .value(self.tuple(self.int(div), self.int(mod)))
+
+    let tuple0 = self.builtins.newInt(div)
+    let tuple1 = self.builtins.newInt(mod)
+    return .value(self.builtins.newTuple(tuple0, tuple1))
   }
 
   // MARK: - LShift
@@ -484,7 +487,7 @@ public class PyInt: PyObject {
       return .error(.valueError("negative shift count"))
     }
 
-    return .value(self.int(left << right))
+    return .value(self.builtins.newInt(left << right))
   }
 
   // MARK: - RShift
@@ -512,7 +515,7 @@ public class PyInt: PyObject {
       return .error(.valueError("negative shift count"))
     }
 
-    return .value(self.int(left >> right))
+    return .value(self.builtins.newInt(left >> right))
   }
 
   // MARK: - And
@@ -523,7 +526,7 @@ public class PyInt: PyObject {
       return .notImplemented
     }
 
-    return .value(self.int(self.value & other.value))
+    return .value(self.builtins.newInt(self.value & other.value))
   }
 
   // sourcery: pymethod = __rand__
@@ -539,7 +542,7 @@ public class PyInt: PyObject {
       return .notImplemented
     }
 
-    return .value(self.int(self.value | other.value))
+    return .value(self.builtins.newInt(self.value | other.value))
   }
 
   // sourcery: pymethod = __ror__
@@ -555,7 +558,7 @@ public class PyInt: PyObject {
       return .notImplemented
     }
 
-    return .value(self.int(self.value ^ other.value))
+    return .value(self.builtins.newInt(self.value ^ other.value))
   }
 
   // sourcery: pymethod = __rxor__
@@ -567,7 +570,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __invert__
   internal func invert() -> PyObject {
-    return self.int(~self.value)
+    return self.builtins.newInt(~self.value)
   }
 
   // MARK: - Round

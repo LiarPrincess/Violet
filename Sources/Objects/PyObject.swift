@@ -4,8 +4,8 @@ internal struct PyObjectFlags: OptionSet {
 
   let rawValue: UInt8
 
-  /// This flag is used to control infinite recursion in `repr`, `str`, `print`
-  /// etc.
+  /// This flag is used to control infinite recursion
+  /// in `repr`, `str`, `print` etc.
   ///
   /// Container objects that may recursively contain themselves, e.g. builtin
   /// dictionaries and lists, should use `withReprLock()` to avoid infinite
@@ -27,6 +27,14 @@ public class PyObject {
     return self.type.getName()
   }
 
+  internal var context: PyContext {
+    return self.type.context
+  }
+
+  internal var builtins: Builtins {
+    return self.context.builtins
+  }
+
   internal var ptrString: String {
     // This may not work exactly as in CPython, but that does not matter.
     return String(describing: Unmanaged.passUnretained(self).toOpaque())
@@ -41,71 +49,17 @@ public class PyObject {
   // MARK: - BaseObject and Type
 
   /// NEVER EVER use this ctor!
-  /// This is a reserved for `objectType` and `typeType`.
+  /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
   /// Use version with 'type: PyType' parameter.
   internal init() {
     self._type = nil
   }
 
   /// NEVER EVER use this function!
-  /// This is a reserved for `objectType` and `typeType`.
+  /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
   internal func setType(to type: PyType) {
     assert(self._type == nil, "Type is already assigned!")
     self._type = type
-  }
-
-  // MARK: - Helpers
-
-  internal var context: PyContext {
-    return self.type.context
-  }
-
-  internal var builtins: Builtins {
-    return self.context.builtins
-  }
-
-  internal func int(_ value: BigInt) -> PyInt {
-    return self.context.builtins.newInt(value)
-  }
-
-  internal func int(_ value: Int) -> PyInt {
-    return self.context.builtins.newInt(value)
-  }
-
-  internal func bool(_ value: Bool) -> PyBool {
-    return value ? self.builtins.true : self.builtins.false
-  }
-
-  internal func float(_ value: Double) -> PyFloat {
-    return self.builtins.newFloat(value)
-  }
-
-  internal func complex(real: Double, imag: Double) -> PyComplex {
-    return self.builtins.newComplex(real: real, imag: imag)
-  }
-
-  internal func tuple(_ elements: PyObject...) -> PyTuple {
-    return self.builtins.newTuple(elements)
-  }
-
-  internal func tuple(_ elements: [PyObject]) -> PyTuple {
-    return self.builtins.newTuple(elements)
-  }
-
-  internal func list(_ elements: PyObject...) -> PyList {
-    return self.builtins.newList(elements)
-  }
-
-  internal func list(_ elements: [PyObject]) -> PyList {
-    return self.builtins.newList(elements)
-  }
-
-  internal func range(stop: PyInt) -> PyResult<PyRange> {
-    return self.builtins.newRange(stop: stop)
-  }
-
-  internal func range(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
-    return self.builtins.newRange(start: start, stop: stop, step: step)
   }
 
   // MARK: - Repr

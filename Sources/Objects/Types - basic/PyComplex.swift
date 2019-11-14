@@ -125,12 +125,12 @@ public final class PyComplex: PyObject {
 
   // sourcery: pymethod = real
   internal func asReal() -> PyObject {
-    return self.float(self.real)
+    return self.builtins.newFloat(self.real)
   }
 
   // sourcery: pymethod = imag
   internal func asImag() -> PyObject {
-    return self.float(self.imag)
+    return self.builtins.newFloat(self.imag)
   }
 
   // MARK: - Imaginary
@@ -139,7 +139,7 @@ public final class PyComplex: PyObject {
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
   internal func conjugate() -> PyObject {
-    return self.complex(real: self.real, imag: -self.imag)
+    return self.builtins.newComplex(real: self.real, imag: -self.imag)
   }
 
   // MARK: - Class
@@ -165,7 +165,7 @@ public final class PyComplex: PyObject {
 
   // sourcery: pymethod = __neg__
   internal func negative() -> PyObject {
-    return self.complex(real: -self.real, imag: -self.imag)
+    return self.builtins.newComplex(real: -self.real, imag: -self.imag)
   }
 
   // MARK: - Abs
@@ -175,18 +175,18 @@ public final class PyComplex: PyObject {
     let bothFinite = self.real.isFinite && self.imag.isFinite
     guard bothFinite else {
       if self.real.isInfinite {
-        return self.float(Swift.abs(self.real))
+        return self.builtins.newFloat(Swift.abs(self.real))
       }
 
       if self.imag.isInfinite {
-        return self.float(Swift.abs(self.imag))
+        return self.builtins.newFloat(Swift.abs(self.imag))
       }
 
-      return self.float(.nan)
+      return self.builtins.newFloat(.nan)
     }
 
     let result = hypot(self.real, self.imag)
-    return self.float(result)
+    return self.builtins.newFloat(result)
   }
 
   // MARK: - Add
@@ -198,7 +198,7 @@ public final class PyComplex: PyObject {
     }
 
     return .value(
-      self.complex(
+      self.builtins.newComplex(
         real: self.real + other.real,
         imag: self.imag + other.real
       )
@@ -233,7 +233,7 @@ public final class PyComplex: PyObject {
   }
 
   private func sub(left: RawComplex, right: RawComplex) -> PyComplex {
-    return self.complex(
+    return self.builtins.newComplex(
       real: left.real - right.real,
       imag: left.imag - right.real
     )
@@ -262,7 +262,7 @@ public final class PyComplex: PyObject {
   }
 
   private func mul(left: RawComplex, right: RawComplex) -> PyComplex {
-    return self.complex(
+    return self.builtins.newComplex(
       real: left.real * right.real - left.imag * right.imag,
       imag: left.real * right.imag + left.imag * right.real
     )
@@ -294,7 +294,7 @@ public final class PyComplex: PyObject {
 
   private func pow(left: RawComplex, right: RawComplex) -> PyResultOrNot<PyComplex> {
     if right.real.isZero && right.real.isZero {
-      return .value(self.complex(real: 1.0, imag: 0.0))
+      return .value(self.builtins.newComplex(real: 1.0, imag: 0.0))
     }
 
     if left.real.isZero && left.imag.isZero {
@@ -302,7 +302,7 @@ public final class PyComplex: PyObject {
         return .error(.valueError("complex zero to negative or complex power"))
       }
 
-      return .value(self.complex(real: 0.0, imag: 0.0))
+      return .value(self.builtins.newComplex(real: 0.0, imag: 0.0))
     }
 
     let vabs = Foundation.hypot(left.real, left.imag)
@@ -316,7 +316,7 @@ public final class PyComplex: PyObject {
     }
 
     return .value(
-      self.complex(
+      self.builtins.newComplex(
         real: len * cos(phase),
         imag: len * sin(phase)
       )
@@ -357,7 +357,7 @@ public final class PyComplex: PyObject {
     }
 
     return .value(
-      self.complex(
+      self.builtins.newComplex(
         real: (left.real * right.real + left.imag * right.imag) / d,
         imag: (left.imag * right.real - left.real * right.imag) / d
       )

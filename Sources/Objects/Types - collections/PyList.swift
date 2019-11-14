@@ -220,7 +220,7 @@ public final class PyList: PyObject {
 
   // sourcery: pymethod = copy
   internal func copy() -> PyObject {
-    return self.list(self.elements)
+    return self.builtins.newList(self.elements)
   }
 
   // MARK: - Add
@@ -234,7 +234,7 @@ public final class PyList: PyObject {
     }
 
     let result = self.elements + otherList.elements
-    return .value(self.list(result))
+    return .value(self.builtins.newList(result))
   }
 
   // MARK: - Mul
@@ -243,14 +243,14 @@ public final class PyList: PyObject {
   internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)
-      .map(self.list)
+      .map(self.builtins.newList)
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return SequenceHelper
       .rmul(elements: self.elements, count: other)
-      .map(self.list)
+      .map(self.builtins.newList)
   }
 
   // sourcery: pymethod = __imul__
