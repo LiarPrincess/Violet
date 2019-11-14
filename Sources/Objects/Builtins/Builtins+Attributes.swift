@@ -40,7 +40,7 @@ extension Builtins {
     case .value(let o):
       return .value(o)
     case .noSuchMethod:
-      return AttributeHelper.getAttribute(zelf: object, name: name.value)
+      return AttributeHelper.getAttribute(from: object, name: name.value)
     case .methodIsNotCallable(let e):
       return .error(e)
     }

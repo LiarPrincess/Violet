@@ -134,7 +134,7 @@ internal final class PyBuiltinFunction: PyObject {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(zelf: self, name: name)
+    return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Class

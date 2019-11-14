@@ -9,40 +9,40 @@ internal enum AttributeHelper {
   ///                                  PyObject *name,
   ///                                  PyObject *dict,
   ///                                  int suppress)
-  internal static func getAttribute(zelf: PyObject,
+  internal static func getAttribute(from object: PyObject,
                                     name: PyObject) -> PyResult<PyObject> {
     guard let nameString = name as? PyString else {
       return .typeError("attribute name must be string, not '\(name.typeName)'")
     }
 
-    return getAttribute(zelf: zelf, name: nameString.value)
+    return getAttribute(from: object, name: nameString.value)
   }
 
-  internal static func getAttribute(zelf: PyObject,
+  internal static func getAttribute(from object: PyObject,
                                     name: String) -> PyResult<PyObject> {
-    let tp = zelf.type
+    let tp = object.type
     let descr = tp.lookup(name: name)
     var descrGet: PyObject?
 
     if let descr = descr {
       descrGet = descr.type.lookup(name: "__get__")
       if let descrGet = descrGet, DescriptorHelper.isData(descr) {
-        let args = [descr, zelf, zelf.type]
-        return zelf.context.call(descrGet, args: args)
+        let args = [descr, object, object.type]
+        return object.context.call(descrGet, args: args)
       }
     }
 
-    if let attribOwner = zelf as? AttributesOwner,
+    if let attribOwner = object as? AttributesOwner,
        let value = attribOwner._attributes.get(key: name) {
       return .value(value)
     }
 
     if let descrGet = descrGet {
-      let args = [descr, zelf, zelf.type]
-      return zelf.context.call(descrGet, args: args)
+      let args = [descr, object, object.type]
+      return object.context.call(descrGet, args: args)
     }
 
-    return .attributeError("\(zelf.typeName) object has no attribute '\(name)'")
+    return .attributeError("\(object.typeName) object has no attribute '\(name)'")
   }
 
   // MARK: - Set
@@ -54,20 +54,20 @@ internal enum AttributeHelper {
   ///                                  PyObject *name,
   ///                                  PyObject *value,
   ///                                  PyObject *dict)
-  internal static func setAttribute(zelf: PyObject,
+  internal static func setAttribute(on object: PyObject,
                                     name: PyObject,
-                                    value: PyObject?) -> PyResult<PyNone> {
+                                    to value: PyObject?) -> PyResult<PyNone> {
     guard let nameString = name as? PyString else {
       return .typeError("attribute name must be string, not '\(name.typeName)'")
     }
 
-    return setAttribute(zelf: zelf, name: nameString.value, value: value)
+    return setAttribute(on: object, name: nameString.value, to: value)
   }
 
-  internal static func setAttribute(zelf: PyObject,
+  internal static func setAttribute(on object: PyObject,
                                     name: String,
-                                    value: PyObject?) -> PyResult<PyNone> {
-    let tp = zelf.type
+                                    to value: PyObject?) -> PyResult<PyNone> {
+    let tp = object.type
     let descr = tp.lookup(name: name)
     var descrSet: PyObject?
 
@@ -75,24 +75,24 @@ internal enum AttributeHelper {
       descrSet = desc.type.lookup(name: "__set__")
 
       if let descrSet = descrSet {
-        let args = [descr, zelf, value]
-        _ = zelf.context.call(descrSet, args: args)
-        return .value(zelf.builtins.none)
+        let args = [descr, object, value]
+        _ = object.context.call(descrSet, args: args)
+        return .value(object.builtins.none)
       }
     }
 
-    if let attribOwner = zelf as? AttributesOwner {
+    if let attribOwner = object as? AttributesOwner {
       if let value = value {
         attribOwner._attributes.set(key: name, to: value)
       } else {
         attribOwner._attributes.del(key: name)
       }
-      return .value(zelf.builtins.none)
+      return .value(object.builtins.none)
     }
 
     let msg = descr == nil ?
-      "'\(zelf.typeName)' object has no attribute '\(name)'" :
-      "'\(zelf.typeName)' object attribute '\(name)' is read-only"
+      "'\(object.typeName)' object has no attribute '\(name)'" :
+      "'\(object.typeName)' object attribute '\(name)' is read-only"
 
     return .attributeError(msg)
   }
@@ -100,13 +100,13 @@ internal enum AttributeHelper {
   // MARK: - Del
 
   /// Basically: `AttributeHelper.setAttribute` with `None` as value
-  internal static func delAttribute(zelf: PyObject,
+  internal static func delAttribute(on object: PyObject,
                                     name: PyObject) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(zelf: zelf, name: name, value: nil)
+    return AttributeHelper.setAttribute(on: object, name: name, to: nil)
   }
 
-  internal static func delAttribute(zelf: PyObject,
+  internal static func delAttribute(on object: PyObject,
                                     name: String) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(zelf: zelf, name: name, value: nil)
+    return AttributeHelper.setAttribute(on: object, name: name, to: nil)
   }
 }

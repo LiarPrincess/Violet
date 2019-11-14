@@ -55,8 +55,7 @@ public final class PyModule: PyObject, AttributesOwner {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    let m = self
-    let attr = AttributeHelper.getAttribute(zelf: m, name: name)
+    let attr = AttributeHelper.getAttribute(from: self, name: name)
 
     switch attr {
     case let .value(v):
@@ -81,16 +80,16 @@ public final class PyModule: PyObject, AttributesOwner {
 
   // sourcery: pymethod = __setattr__
   internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(zelf: self, name: name, value: value)
+    return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
   // sourcery: pymethod = __delattr__
   internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
-    return AttributeHelper.delAttribute(zelf: self, name: name)
+    return AttributeHelper.delAttribute(on: self, name: name)
   }
 
   internal func delAttribute(name: String) -> PyResult<PyNone> {
-    return AttributeHelper.delAttribute(zelf: self, name: name)
+    return AttributeHelper.delAttribute(on: self, name: name)
   }
 
   // MARK: - Class
