@@ -4,7 +4,8 @@
 
 internal enum CallResult {
   case value(PyObject)
-  case noSuchMethod
+  // return .attributeError("'\(value.typeName)' object has no attribute 'abc'")
+  case noSuchMethod(PyErrorEnum)
   case methodIsNotCallable(PyErrorEnum)
 }
 

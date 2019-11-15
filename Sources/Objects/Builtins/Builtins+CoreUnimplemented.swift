@@ -6,13 +6,6 @@
 
 extension Builtins {
 
-  // sourcery: pymethod: abs
-  /// abs(x)
-  /// See [this](https://docs.python.org/3/library/functions.html#abs)
-  public func abs() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: all
   /// all(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#all)

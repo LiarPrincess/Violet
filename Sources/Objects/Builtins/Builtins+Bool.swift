@@ -33,6 +33,7 @@ extension Builtins {
     case .value(let result):
       return result
     case .error:
+      // TODO: Nope! just propagate error as always!
       // All builtin errors are always `True`
       return true
     }

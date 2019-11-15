@@ -1,47 +1,5 @@
 extension PyContext {
 
-  // MARK: - Unary
-
-  /// PyObject * PyNumber_Positive(PyObject *o)
-  public func positive(_ value: PyObject) -> PyObject {
-    return self.unimplemented()
-//    if let v = value as? SignedTypeClass {
-//      return v.positive()
-//    }
-//
-//    throw PyContextError.invalidOperandForUnaryPositive(value)
-  }
-
-  /// PyObject * PyNumber_Negative(PyObject *o)
-  public func negative(_ value: PyObject) -> PyObject {
-      return self.unimplemented()
-//    if let v = value as? SignedTypeClass {
-//      return v.negative()
-//    }
-//
-//    throw PyContextError.invalidOperandForUnaryNegative(value)
-  }
-
-  /// PyObject * PyNumber_Invert(PyObject *o)
-  public func invert(_ value: PyObject) -> PyObject {
-    return self.unimplemented()
-//    if let v = value as? InvertTypeClass {
-//      return v.invert()
-//    }
-//
-//    throw PyContextError.invalidOperandForUnaryInvert(value)
-  }
-
-  /// PyObject * PyNumber_Absolute(PyObject *o)
-  public func abs(_ value: PyObject) -> PyObject {
-    return self.unimplemented()
-//    if let v = value as? AbsTypeClass {
-//      return v.abs()
-//    }
-//
-//    throw PyContextError.invalidOperandForAbs(value)
-  }
-
   // MARK: - Add
 
   /// PyObject * PyNumber_Add(PyObject *v, PyObject *w)

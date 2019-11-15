@@ -6,17 +6,25 @@ extension Frame {
   /// Implements `TOS = +TOS`.
   internal func unaryPositive() -> InstructionResult {
     let value = self.stack.top
-    let result = self.context.positive(value)
-    self.stack.top = result
-    return .ok
+    switch self.builtins.pos(value) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `TOS = -TOS`.
   internal func unaryNegative() -> InstructionResult {
     let value = self.stack.top
-    let result = self.context.negative(value)
-    self.stack.top = result
-    return .ok
+    switch self.builtins.neg(value) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `TOS = not TOS`.
@@ -30,8 +38,12 @@ extension Frame {
   /// Implements `TOS = ~TOS`.
   internal func unaryInvert() -> InstructionResult {
     let value = self.stack.top
-    let result = self.context.invert(value)
-    self.stack.top = result
-    return .ok
+    switch self.builtins.invert(value) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 }

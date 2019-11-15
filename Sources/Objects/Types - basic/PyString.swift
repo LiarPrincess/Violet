@@ -932,7 +932,7 @@ public class PyString: PyObject {
     """
 
   // Special overload for `IndexOwner` protocol
-  internal func index(of element: PyObject) -> PyResult<BigInt>{
+  internal func index(of element: PyObject) -> PyResult<BigInt> {
     return self.index(of: element, start: nil, end: nil)
   }
 
