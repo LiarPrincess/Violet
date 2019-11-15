@@ -120,32 +120,73 @@ internal enum SequenceHelper {
 
   // MARK: - Extract index
 
-  internal enum ExtractIndexResult {
-    case none
-    case index(Int)
+  internal enum GetIndexResult<T> {
+    case value(T)
+    case notIndex
     case error(PyErrorEnum)
   }
 
-  internal static func extractIndex2(_ value: PyObject,
-                                     typeName: String) -> ExtractIndexResult {
+  /// Py_ssize_t PyNumber_AsSsize_t(PyObject *item, PyObject *err)
+  /// _PyEval_SliceIndexNotNone
+  internal static func tryGetIndex(_ value: PyObject) -> GetIndexResult<Int> {
+    let bigInt: BigInt
+    switch getIndexBigInt(value) {
+    case .value(let v): bigInt = v
+    case .notIndex: return .notIndex
+    case .error(let e): return .error(e)
+    }
 
-//    return .typeError(
-//      "\(typename) indices must be integers or None or have an __index__ method"
-//    )
+    if let int = Int(exactly: bigInt) {
+      return .value(int)
+    }
 
-    fatalError()
+    return .error(
+      .indexError("cannot fit '\(value.typeName)' into an index-sized integer")
+    )
   }
 
-  /// PyLong_FromSsize_t
-  /// _PyEval_SliceIndex
-  /// _PyEval_SliceIndexNotNone
-  internal static func extractIndex(_ value: PyObject) -> BigInt? {
-//    guard let indexType = value.type as? IndexConvertibleTypeClass else {
-//      return nil
-//    }
+  /// Basically `SequenceHelper.tryGetIndex`, but it will return type error
+  /// if the value cannot be converted to index.
+  internal static func getIndex(_ value: PyObject) -> PyResult<Int> {
+    switch SequenceHelper.tryGetIndex(value) {
+    case .value(let v):
+      return .value(v)
+    case .notIndex:
+      let msg = "'\(value.typeName)' object cannot be interpreted as an integer"
+      return .error(.typeError(msg))
+    case .error(let e):
+      return .error(e)
+    }
+  }
 
-//    return indexType.asIndex()
-    fatalError()
+  /// Return a Python int from the object item.
+  /// Raise TypeError if the result is not an int
+  /// or if the object cannot be interpreted as an index.
+  ///
+  /// PyObject * PyNumber_Index(PyObject *item)
+  private static func getIndexBigInt(_ value: PyObject) -> GetIndexResult<BigInt> {
+    if let int = value as? PyInt {
+      return .value(int.value)
+    }
+
+    if let indexOwner = value as? __index__Owner {
+      return .value(indexOwner.asIndex())
+    }
+
+    switch value.builtins.callMethod(on: value, selector: "__index__") {
+    case .value(let object):
+      guard let int = object as? PyInt else {
+        let msg = "__index__ returned non-int (type \(object.typeName)"
+        return .error(.typeError(msg))
+      }
+
+      return .value(int.value)
+
+    case .noSuchMethod:
+      return .notIndex
+    case .methodIsNotCallable(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Get item
@@ -162,15 +203,16 @@ internal enum SequenceHelper {
     index: PyObject,
     typeName: String) -> GetItemResult<C.Element> {
 
-    if let index = extractIndex(index) {
-      let item = getSingleItem(context: context,
-                               elements: elements,
-                               index: index,
-                               typeName: typeName)
-      switch item {
+    switch SequenceHelper.tryGetIndex(index) {
+    case .value(let index):
+      switch getSingleItem(elements: elements, index: index, typeName: typeName) {
       case let .value(v): return .single(v)
       case let .error(e): return .error(e)
       }
+    case .notIndex:
+      break // Try slice
+    case .error(let e):
+      return .error(e)
     }
 
     if let slice = index as? PySlice {
@@ -188,21 +230,19 @@ internal enum SequenceHelper {
   }
 
   internal static func getSingleItem<C: Collection>(
-    context: PyContext,
     elements: C,
-    index: BigInt,
+    index: Int,
     typeName: String) -> PyResult<C.Element> {
 
     var index = index
     if index < 0 {
-      index += BigInt(elements.count)
+      index += elements.count
     }
 
     let start = elements.startIndex
     let end = elements.endIndex
 
-    guard let int = Int(exactly: index),
-          let i = elements.index(start, offsetBy: int, limitedBy: end) else {
+    guard let i = elements.index(start, offsetBy: index, limitedBy: end) else {
       return .indexError("\(typeName) index out of range")
     }
 

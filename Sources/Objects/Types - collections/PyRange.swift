@@ -230,9 +230,12 @@ public final class PyRange: PyObject {
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    if let index = SequenceHelper.extractIndex(index) {
-      let result = self.getItem(at: index)
-      return result.flatMap { PyResult<PyObject>.value($0) }
+    switch SequenceHelper.tryGetIndex(index) {
+    case .value(let int):
+      // swiftlint:disable:next array_init
+      return self.getItem(at: BigInt(int)).map { $0 }
+    case .notIndex: break // Try slice
+    case .error(let e): return .error(e)
     }
 
     if let slice = index as? PySlice {

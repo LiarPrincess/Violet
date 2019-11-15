@@ -141,19 +141,20 @@ public final class PySlice: PyObject {
 
   // MARK: - Indices
 
-  /// S.indices(len) -> (start, stop, stride)
-  ///
-  /// Assuming a sequence of length len, calculate the start and stop
-  /// indices, and the stride length of the extended slice described by S.
-  /// Out of bounds indices are clipped in a manner consistent with the
-  /// handling of normal slices.
-  internal func indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject> {
-    guard let length = SequenceHelper.extractIndex(length) else {
-      return .notImplemented
-    }
+  internal static let indicesDoc = """
+    Return a copy of the string with leading and trailing whitespace remove.
 
-    guard let lengthInt = Int(exactly: length) else {
-      return .indexError("length out of range")
+    If chars is given and not None, remove characters in chars instead.
+    """
+
+  // sourcery: pymethod = indices, doc = indicesDoc
+  /// static PyObject*
+  /// slice_indices(PySliceObject* self, PyObject* len)
+  internal func indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject> {
+    let lengthInt: Int
+    switch SequenceHelper.getIndex(length) {
+    case .value(let v): lengthInt = v
+    case .error(let e): return .error(e)
     }
 
     if lengthInt < 0 {
@@ -339,7 +340,27 @@ public final class PySlice: PyObject {
 
   // MARK: - Helpers
 
-  private func extractIndex(_ value: PyObject) -> SequenceHelper.ExtractIndexResult {
-    return SequenceHelper.extractIndex2(value, typeName: "slice")
+  internal enum ExtractIndexResult {
+    case none
+    case index(Int)
+    case error(PyErrorEnum)
+  }
+
+  /// _PyEval_SliceIndex
+  private func extractIndex(_ value: PyObject) -> ExtractIndexResult {
+    if value is PyNone {
+      return .index(1)
+    }
+
+    switch SequenceHelper.tryGetIndex(value) {
+    case .value(let value):
+      return .index(value)
+    case .notIndex:
+      let msg = "\(self.typeName) indices must be integers or None " +
+                "or have an __index__ method"
+      return .error(.typeError(msg))
+    case .error(let e):
+      return .error(e)
+    }
   }
 }

@@ -1872,24 +1872,24 @@ public class PyString: PyObject {
       return .none
     }
 
-    switch SequenceHelper.extractIndex2(value, typeName: "str") {
-    case .none:
+    if value is PyNone {
       return .none
-    case var .index(index):
-      let count = self.scalars.count
+    }
 
+    switch SequenceHelper.getIndex(value) {
+    case var .value(index):
       if index < 0 {
-        index += count
+        index += self.scalars.count
         if index < 0 {
           index = 0
         }
       }
 
-      let result = self.scalars.index(self.scalars.startIndex,
-                                      offsetBy: index,
-                                      limitedBy: self.scalars.endIndex)
-
+      let start = self.scalars.startIndex
+      let end = self.scalars.endIndex
+      let result = self.scalars.index(start, offsetBy: index, limitedBy: end)
       return .index(result ?? self.scalars.endIndex)
+
     case let .error(e):
       return .error(e)
     }
