@@ -10,7 +10,7 @@ extension Builtins {
 
     return self.callUnaryMethod(on: value,
                                 selector: "__pos__",
-                                op: "unary +")
+                                operation: "unary +")
   }
 
   // MARK: - Neg
@@ -23,7 +23,7 @@ extension Builtins {
 
     return self.callUnaryMethod(on: value,
                                 selector: "__neg__",
-                                op: "unary -")
+                                operation: "unary -")
   }
 
   // MARK: - Invert
@@ -36,7 +36,7 @@ extension Builtins {
 
     return self.callUnaryMethod(on: value,
                                 selector: "__invert__",
-                                op: "unary ~")
+                                operation: "unary ~")
   }
 
   // MARK: - Abs
@@ -53,19 +53,19 @@ extension Builtins {
 
     return self.callUnaryMethod(on: value,
                                 selector: "__abs__",
-                                op: "abs()")
+                                operation: "abs()")
   }
 
   // MARK: - Helpers
 
   private func callUnaryMethod(on value: PyObject,
                                selector: String,
-                               op: String) -> PyResult<PyObject> {
+                               operation: String) -> PyResult<PyObject> {
     switch self.callMethod(on: value, selector: selector) {
     case .value(let result):
       return .value(result)
     case .noSuchMethod:
-      return .typeError("bad operand type for \(op): '\(value.typeName)'")
+      return .typeError("bad operand type for \(operation): '\(value.typeName)'")
     case .methodIsNotCallable(let e):
       return .error(e)
     }

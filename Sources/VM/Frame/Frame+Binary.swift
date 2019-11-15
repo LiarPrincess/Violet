@@ -3,98 +3,138 @@ import Objects
 
 extension Frame {
 
-  // MARK: - Arithmetic
+  // MARK: - Pow
 
   /// Implements `TOS = TOS1 ** TOS`.
   internal func binaryPower() -> InstructionResult {
-    let exponent = self.stack.pop()
-    let value = self.stack.top
-    let result = self.context.pow(value: value, exponent: exponent)
-    self.stack.top = result
-    return .ok
+    return .unimplemented
   }
+
+  // MARK: - Mul
 
   /// Implements `TOS = TOS1 * TOS`.
   internal func binaryMultiply() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = self.context.mul(left: left, right: right)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.mul(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `TOS = TOS1 @ TOS`.
   internal func binaryMatrixMultiply() -> InstructionResult {
-    let right = self.stack.pop()
-    let left = self.stack.top
-    let result = self.context.matrixMul(left: left, right: right)
-    self.stack.top = result
-    return .ok
+    return .unimplemented
   }
+
+  // MARK: - Div
 
   /// Implements `TOS = TOS1 // TOS`.
   internal func binaryFloorDivide() -> InstructionResult {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
-    let quotient = self.context.divFloor(left: dividend, right: divisor)
-    self.stack.top = quotient
-    return .ok
+
+    switch self.builtins.divFloor(left: dividend, right: divisor) {
+    case let .value(quotient):
+      self.stack.top = quotient
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `TOS = TOS1 / TOS`.
   internal func binaryTrueDivide() -> InstructionResult {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
-    let quotient = self.context.div(left: dividend, right: divisor)
-    self.stack.top = quotient
-    return .ok
+
+    switch self.builtins.div(left: dividend, right: divisor) {
+    case let .value(quotient):
+      self.stack.top = quotient
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `TOS = TOS1 % TOS`.
   internal func binaryModulo() -> InstructionResult {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
-    let result = self.context.remainder(left: dividend, right: divisor)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.remainder(left: dividend, right: divisor) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
+
+  // MARK: - Add
 
   /// Implements `TOS = TOS1 + TOS`.
   internal func binaryAdd() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = self.context.add(left: left, right: right)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.add(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
+
+  // MARK: - Sub
 
   /// Implements `TOS = TOS1 - TOS`.
   internal func binarySubtract() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = self.context.sub(left: left, right: right)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.sub(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
-  // MARK: - Shifts
+  // MARK: - Shift
 
   /// Implements `TOS = TOS1 << TOS`.
   internal func binaryLShift() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = self.context.lShift(left: left, right: right)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.lShift(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `TOS = TOS1 >> TOS`.
   internal func binaryRShift() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = self.context.rShift(left: left, right: right)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.rShift(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   // MARK: - Binary
@@ -103,27 +143,42 @@ extension Frame {
   internal func binaryAnd() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = self.context.and(left: left, right: right)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.and(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `TOS = TOS1 ^ TOS`.
   internal func binaryXor() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = self.context.xor(left: left, right: right)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.xor(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `TOS = TOS1 | TOS`.
   internal func binaryOr() -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = self.context.or(left: left, right: right)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.or(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   // MARK: - Compare
