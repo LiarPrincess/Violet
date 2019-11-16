@@ -2,12 +2,14 @@ import Bytecode
 
 extension Frame {
 
-  // MARK: - Arithmetic
+  // MARK: - Pow
 
   /// Implements in-place TOS = TOS1 ** TOS.
   internal func inplacePower() -> InstructionResult {
     return .unimplemented
   }
+
+  // MARK: - Mul
 
   /// Implements in-place TOS = TOS1 * TOS.
   internal func inplaceMultiply() -> InstructionResult {
@@ -36,6 +38,8 @@ extension Frame {
       return .builtinError(e)
     }
   }
+
+  // MARK: - Div
 
   /// Implements in-place TOS = TOS1 // TOS.
   internal func inplaceFloorDivide() -> InstructionResult {
@@ -79,6 +83,8 @@ extension Frame {
     }
   }
 
+  // MARK: - Add
+
   /// Implements in-place TOS = TOS1 + TOS.
   internal func inplaceAdd() -> InstructionResult {
     let right = self.stack.pop()
@@ -92,6 +98,8 @@ extension Frame {
       return .builtinError(e)
     }
   }
+
+  // MARK: - Sub
 
   /// Implements in-place TOS = TOS1 - TOS.
   internal func inplaceSubtract() -> InstructionResult {
@@ -107,7 +115,7 @@ extension Frame {
     }
   }
 
-  // MARK: - Shifts
+  // MARK: - Shift
 
   /// Implements in-place TOS = TOS1 << TOS.
   internal func inplaceLShift() -> InstructionResult {

@@ -3,6 +3,8 @@ import Objects
 
 extension Frame {
 
+  // MARK: - Pos
+
   /// Implements `TOS = +TOS`.
   internal func unaryPositive() -> InstructionResult {
     let value = self.stack.top
@@ -14,6 +16,8 @@ extension Frame {
       return .builtinError(e)
     }
   }
+
+  // MARK: - New
 
   /// Implements `TOS = -TOS`.
   internal func unaryNegative() -> InstructionResult {
@@ -27,6 +31,9 @@ extension Frame {
     }
   }
 
+
+  // MARK: - Not
+
   /// Implements `TOS = not TOS`.
   internal func unaryNot() -> InstructionResult {
     let top = self.stack.top
@@ -34,6 +41,8 @@ extension Frame {
     self.stack.top = self.builtins.newBool(boolValue)
     return .ok
   }
+
+  // MARK: - Invert
 
   /// Implements `TOS = ~TOS`.
   internal func unaryInvert() -> InstructionResult {
