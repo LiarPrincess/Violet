@@ -442,7 +442,8 @@ extension PySlice:
   __gt__Owner,
   __ge__Owner,
   __repr__Owner,
-  __getattribute__Owner
+  __getattribute__Owner,
+  indicesOwner
 { }
 
 // MARK: - String

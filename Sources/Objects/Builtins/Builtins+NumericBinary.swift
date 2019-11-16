@@ -8,20 +8,33 @@
 /// Basically a template for binary operations.
 /// See `Builtins+Compare` for reasoning why we do it this way.
 private protocol BinaryOp {
+
   /// Operator used to invoke given binary operation, for example '+'.
   /// Used for error messages.
   static var op: String { get }
+  /// Operator used to invoke given binary operation, for example '+='.
+  /// Used for error messages.
+  static var inPlaceOp: String { get }
+
   /// Python selector, for example `__add__`.
   static var selector: String { get }
   /// Python selector for reverse operation.
-  /// For example for `__add__` it is `__radd__`.
+  /// For `__add__` it is `__radd__`.
   static var reverseSelector: String { get }
+  /// Python selector for in-place operation.
+  /// For `__add__` it is `__iadd__`.
+  static var inPlaceSelector: String { get }
+
   /// Call op with fast protocol dispatch.
   static func callFastOp(left: PyObject,
                          right: PyObject) -> PyResultOrNot<PyObject>
   /// Call reverse op with fast protocol dispatch.
-  /// For example for `__add__` it should call `__radd__`.
+  /// For `__add__` it should call `__radd__`.
   static func callFastReverse(left: PyObject,
+                              right: PyObject) -> PyResultOrNot<PyObject>
+  /// Call in-place op with fast protocol dispatch.
+  /// For `__add__` it should call `__iadd__`.
+  static func callFastInPlace(left: PyObject,
                               right: PyObject) -> PyResultOrNot<PyObject>
 }
 
@@ -33,6 +46,74 @@ extension BinaryOp {
   /// binary_op(PyObject *v, PyObject *w, const int op_slot, const char *op_name)
   fileprivate static func call(left: PyObject,
                                right: PyObject) -> PyResult<PyObject> {
+    switch callInner(left: left, right: right, operation: op) {
+    case .value(let result):
+      return .value(result)
+    case .error(let e):
+      return .error(e)
+    case .notImplemented:
+      let lt = left.typeName
+      let rt = right.typeName
+      var msg = "unsupported operand type(s) for \(op): '\(lt)' and '\(rt)'."
+
+      // For C++ programmers who try to `print << 'Elsa'`:
+      if let fn = left as? PyBuiltinFunction, fn._name == "print", Self.op == "<<" {
+        msg += " Did you mean \"print(<message>, file=<output_stream>)\"?"
+      }
+
+      return .typeError(msg)
+    }
+  }
+
+  fileprivate static func callInPlace(left: PyObject,
+                                      right: PyObject) -> PyResult<PyObject> {
+    let builtins = left.context.builtins
+
+    // Try fast protocol-based dispach
+    switch callFastInPlace(left: left, right: right) {
+    case .value(let result):
+      if !(result is PyNotImplemented) {
+        return .value(result)
+      }
+    case .notImplemented:
+      break // Try other options...
+    case .error(let e):
+      return .error(e)
+    }
+
+    // Try standard Python dispatch
+    switch builtins.callMethod(on: left, selector: inPlaceSelector, arg: right) {
+    case .value(let result):
+      if !(result is PyNotImplemented) {
+        return .value(result)
+      }
+    case .noSuchMethod:
+      break // Try other options...
+    case .methodIsNotCallable(let e):
+      return .error(e)
+    }
+
+    // Try standard operation, for example '+'
+    switch callInner(left: left, right: right, operation: op) {
+    case .value(let result):
+      return .value(result)
+    case .error(let e):
+      return .error(e)
+    case .notImplemented:
+      let lt = left.typeName
+      let rt = right.typeName
+      let msg = "unsupported operand type(s) for \(inPlaceOp): '\(lt)' and '\(rt)'."
+      return .typeError(msg)
+    }
+  }
+
+  /// static PyObject *
+  /// binary_op1(PyObject *v, PyObject *w, const int op_slot)
+  /// static PyObject *
+  /// binary_op(PyObject *v, PyObject *w, const int op_slot, const char *op_name)
+  fileprivate static func callInner(left: PyObject,
+                                    right: PyObject,
+                                    operation: String) -> PyResultOrNot<PyObject> {
     var checkedReverse = false
 
     // Check if right is subtype of left, if so then use right.
@@ -62,8 +143,8 @@ extension BinaryOp {
       }
     }
 
-    // Not hope left! We are doomed!
-    return unsupported(left: left, right: right)
+    // No hope left! We are doomed!
+    return .notImplemented
   }
 
   private static func callOp(left: PyObject,
@@ -115,25 +196,6 @@ extension BinaryOp {
       return .error(e)
     }
   }
-
-  /// static PyObject *
-  /// binop_type_error(PyObject *v, PyObject *w, const char *op_name)
-  /// static PyObject *
-  /// binary_op(PyObject *v, PyObject *w, const int op_slot, const char *op_name)
-  private static func unsupported(left: PyObject,
-                                  right: PyObject) -> PyResult<PyObject> {
-    let lt = left.typeName
-    let rt = right.typeName
-
-    var msg = "unsupported operand type(s) for \(Self.op): '\(lt)' and '\(rt)'."
-
-    // For C++ programmers who try to `print << 'Elsa'`:
-    if let fn = left as? PyBuiltinFunction, fn._name == "print", Self.op == "<<" {
-      msg += " Did you mean \"print(<message>, file=<output_stream>)\"?"
-    }
-
-    return .typeError(msg)
-  }
 }
 
 // MARK: - Builtins
@@ -145,8 +207,10 @@ extension Builtins {
   private struct AddOp: BinaryOp {
 
     fileprivate static let op = "+"
+    fileprivate static let inPlaceOp = "+="
     fileprivate static let selector = "__add__"
     fileprivate static let reverseSelector = "__radd__"
+    fileprivate static let inPlaceSelector = "__iadd__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
@@ -163,10 +227,22 @@ extension Builtins {
       }
       return .notImplemented
     }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __iadd__Owner {
+        return owner.iadd(right)
+      }
+      return .notImplemented
+    }
   }
 
   public func add(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return AddOp.call(left: left, right: right)
+  }
+
+  public func addInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return AddOp.callInPlace(left: left, right: right)
   }
 
   // MARK: - Sub
@@ -174,8 +250,10 @@ extension Builtins {
   private struct SubOp: BinaryOp {
 
     fileprivate static let op = "-"
+    fileprivate static let inPlaceOp = "-="
     fileprivate static let selector = "__sub__"
     fileprivate static let reverseSelector = "__rsub__"
+    fileprivate static let inPlaceSelector = "__isub__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
@@ -192,10 +270,22 @@ extension Builtins {
       }
       return .notImplemented
     }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __isub__Owner {
+        return owner.isub(right)
+      }
+      return .notImplemented
+    }
   }
 
   public func sub(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return SubOp.call(left: left, right: right)
+  }
+
+  public func subInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return SubOp.callInPlace(left: left, right: right)
   }
 
   // MARK: - Mul
@@ -203,8 +293,10 @@ extension Builtins {
   private struct MulOp: BinaryOp {
 
     fileprivate static let op = "*"
+    fileprivate static let inPlaceOp = "*="
     fileprivate static let selector = "__mul__"
     fileprivate static let reverseSelector = "__rmul__"
+    fileprivate static let inPlaceSelector = "__imul__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
@@ -221,24 +313,81 @@ extension Builtins {
       }
       return .notImplemented
     }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __imul__Owner {
+        return owner.imul(right)
+      }
+      return .notImplemented
+    }
   }
 
   public func mul(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return MulOp.call(left: left, right: right)
   }
 
-  // MARK: - Div
+  public func mulInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return MulOp.callInPlace(left: left, right: right)
+  }
 
-  private struct DivOp: BinaryOp {
+  // MARK: - Matmul
+
+  private struct MatmulOp: BinaryOp {
+
+    fileprivate static let op = "@"
+    fileprivate static let inPlaceOp = "@="
+    fileprivate static let selector = "__matmul__"
+    fileprivate static let reverseSelector = "__rmatmul__"
+    fileprivate static let inPlaceSelector = "__imatmul__"
+
+    fileprivate static func callFastOp(left: PyObject,
+                                       right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __matmul__Owner {
+        return owner.matmul(right)
+      }
+      return .notImplemented
+    }
+
+    fileprivate static func callFastReverse(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = right as? __rmatmul__Owner {
+        return owner.rmatmul(left)
+      }
+      return .notImplemented
+    }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __imatmul__Owner {
+        return owner.imatmul(right)
+      }
+      return .notImplemented
+    }
+  }
+
+  public func matmul(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return MatmulOp.call(left: left, right: right)
+  }
+
+  public func matmulInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return MatmulOp.callInPlace(left: left, right: right)
+  }
+
+  // MARK: - Truediv
+
+  private struct TruedivOp: BinaryOp {
 
     fileprivate static let op = "/"
-    fileprivate static let selector = "__div__"
-    fileprivate static let reverseSelector = "__rdiv__"
+    fileprivate static let inPlaceOp = "/="
+    fileprivate static let selector = "__truediv__"
+    fileprivate static let reverseSelector = "__rtruediv__"
+    fileprivate static let inPlaceSelector = "__itruediv__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = left as? __truediv__Owner {
-        return owner.trueDiv(right)
+        return owner.truediv(right)
       }
       return .notImplemented
     }
@@ -246,28 +395,42 @@ extension Builtins {
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = right as? __rtruediv__Owner {
-        return owner.rtrueDiv(left)
+        return owner.rtruediv(left)
+      }
+      return .notImplemented
+    }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __itruediv__Owner {
+        return owner.itruediv(right)
       }
       return .notImplemented
     }
   }
 
-  public func div(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return DivOp.call(left: left, right: right)
+  public func truediv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return TruedivOp.call(left: left, right: right)
   }
 
-  // MARK: - DivFloor
+  public func truedivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return TruedivOp.callInPlace(left: left, right: right)
+  }
 
-  private struct DivFloorOp: BinaryOp {
+  // MARK: - Floordiv
+
+  private struct FloordivOp: BinaryOp {
 
     fileprivate static let op = "//"
-    fileprivate static let selector = "__divFloor__"
-    fileprivate static let reverseSelector = "__rdivFloor__"
+    fileprivate static let inPlaceOp = "//="
+    fileprivate static let selector = "__floordiv__"
+    fileprivate static let reverseSelector = "__rfloordiv__"
+    fileprivate static let inPlaceSelector = "__ifloordiv__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = left as? __floordiv__Owner {
-        return owner.floorDiv(right)
+        return owner.floordiv(right)
       }
       return .notImplemented
     }
@@ -275,23 +438,37 @@ extension Builtins {
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = right as? __rfloordiv__Owner {
-        return owner.rfloorDiv(left)
+        return owner.rfloordiv(left)
+      }
+      return .notImplemented
+    }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __ifloordiv__Owner {
+        return owner.ifloordiv(right)
       }
       return .notImplemented
     }
   }
 
-  public func divFloor(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return DivFloorOp.call(left: left, right: right)
+  public func floordiv(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return FloordivOp.call(left: left, right: right)
   }
 
-  // MARK: - Remainder
+  public func floordivInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return FloordivOp.callInPlace(left: left, right: right)
+  }
 
-  private struct RemainderOp: BinaryOp {
+  // MARK: - Mod
+
+  private struct ModOp: BinaryOp {
 
     fileprivate static let op = "%"
-    fileprivate static let selector = "__remainder__"
-    fileprivate static let reverseSelector = "__rremainder__"
+    fileprivate static let inPlaceOp = "%="
+    fileprivate static let selector = "__mod__"
+    fileprivate static let reverseSelector = "__rmod__"
+    fileprivate static let inPlaceSelector = "__imod__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
@@ -308,24 +485,38 @@ extension Builtins {
       }
       return .notImplemented
     }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __imod__Owner {
+        return owner.imod(right)
+      }
+      return .notImplemented
+    }
   }
 
-  public func remainder(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return RemainderOp.call(left: left, right: right)
+  public func mod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return ModOp.call(left: left, right: right)
   }
 
-  // MARK: - DivMod
+  public func modInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return ModOp.callInPlace(left: left, right: right)
+  }
 
-  private struct DivModOp: BinaryOp {
+  // MARK: - Divmod
+
+  private struct DivmodOp: BinaryOp {
 
     fileprivate static let op = "divmod()"
-    fileprivate static let selector = "__divMod__"
-    fileprivate static let reverseSelector = "__rdivMod__"
+    fileprivate static let inPlaceOp = "divmod()="
+    fileprivate static let selector = "__divmod__"
+    fileprivate static let reverseSelector = "__rdivmod__"
+    fileprivate static let inPlaceSelector = "__idivmod__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = left as? __divmod__Owner {
-        return owner.divMod(right)
+        return owner.divmod(right)
       }
       return .notImplemented
     }
@@ -333,28 +524,40 @@ extension Builtins {
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = right as? __rdivmod__Owner {
-        return owner.rdivMod(left)
+        return owner.rdivmod(left)
+      }
+      return .notImplemented
+    }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __idivmod__Owner {
+        return owner.idivmod(right)
       }
       return .notImplemented
     }
   }
 
-  public func divMod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return DivModOp.call(left: left, right: right)
+  public func divmod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return DivmodOp.call(left: left, right: right)
   }
 
-  // MARK: - LShift
+  // `divmod` in place does not make sense
 
-  private struct LShiftOp: BinaryOp {
+  // MARK: - Lshift
+
+  private struct LshiftOp: BinaryOp {
 
     fileprivate static let op = "<<"
-    fileprivate static let selector = "__lShift__"
-    fileprivate static let reverseSelector = "__rlShift__"
+    fileprivate static let inPlaceOp = "<<="
+    fileprivate static let selector = "__lshift__"
+    fileprivate static let reverseSelector = "__rlshift__"
+    fileprivate static let inPlaceSelector = "__ilshift__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = left as? __lshift__Owner {
-        return owner.lShift(right)
+        return owner.lshift(right)
       }
       return .notImplemented
     }
@@ -362,28 +565,42 @@ extension Builtins {
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = right as? __rlshift__Owner {
-        return owner.rlShift(left)
+        return owner.rlshift(left)
+      }
+      return .notImplemented
+    }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __ilshift__Owner {
+        return owner.ilshift(right)
       }
       return .notImplemented
     }
   }
 
-  public func lShift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return LShiftOp.call(left: left, right: right)
+  public func lshift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return LshiftOp.call(left: left, right: right)
   }
 
-  // MARK: - RShift
+  public func lshiftInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return LshiftOp.callInPlace(left: left, right: right)
+  }
 
-  private struct RShiftOp: BinaryOp {
+  // MARK: - Rshift
+
+  private struct RshiftOp: BinaryOp {
 
     fileprivate static let op = ">>"
-    fileprivate static let selector = "__rShift__"
-    fileprivate static let reverseSelector = "__rrShift__"
+    fileprivate static let inPlaceOp = ">>="
+    fileprivate static let selector = "__rshift__"
+    fileprivate static let reverseSelector = "__rrshift__"
+    fileprivate static let inPlaceSelector = "__irshift__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = left as? __rshift__Owner {
-        return owner.rShift(right)
+        return owner.rshift(right)
       }
       return .notImplemented
     }
@@ -391,14 +608,26 @@ extension Builtins {
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> PyResultOrNot<PyObject> {
       if let owner = right as? __rrshift__Owner {
-        return owner.rrShift(left)
+        return owner.rrshift(left)
+      }
+      return .notImplemented
+    }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __irshift__Owner {
+        return owner.irshift(right)
       }
       return .notImplemented
     }
   }
 
-  public func rShift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
-    return RShiftOp.call(left: left, right: right)
+  public func rshift(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return RshiftOp.call(left: left, right: right)
+  }
+
+  public func rshiftInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return RshiftOp.callInPlace(left: left, right: right)
   }
 
   // MARK: - And
@@ -406,8 +635,10 @@ extension Builtins {
   private struct AndOp: BinaryOp {
 
     fileprivate static let op = "&"
+    fileprivate static let inPlaceOp = "&="
     fileprivate static let selector = "__and__"
     fileprivate static let reverseSelector = "__rand__"
+    fileprivate static let inPlaceSelector = "__iand__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
@@ -424,10 +655,22 @@ extension Builtins {
       }
       return .notImplemented
     }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __iand__Owner {
+        return owner.iand(right)
+      }
+      return .notImplemented
+    }
   }
 
   public func and(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return AndOp.call(left: left, right: right)
+  }
+
+  public func andInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return AndOp.callInPlace(left: left, right: right)
   }
 
   // MARK: - Or
@@ -435,8 +678,10 @@ extension Builtins {
   private struct OrOp: BinaryOp {
 
     fileprivate static let op = "|"
+    fileprivate static let inPlaceOp = "|="
     fileprivate static let selector = "__or__"
     fileprivate static let reverseSelector = "__ror__"
+    fileprivate static let inPlaceSelector = "__ior__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
@@ -453,10 +698,22 @@ extension Builtins {
       }
       return .notImplemented
     }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __ior__Owner {
+        return owner.ior(right)
+      }
+      return .notImplemented
+    }
   }
 
   public func or(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return OrOp.call(left: left, right: right)
+  }
+
+  public func orInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return OrOp.callInPlace(left: left, right: right)
   }
 
   // MARK: - Xor
@@ -464,8 +721,10 @@ extension Builtins {
   private struct XorOp: BinaryOp {
 
     fileprivate static let op = "^"
+    fileprivate static let inPlaceOp = "^="
     fileprivate static let selector = "__xor__"
     fileprivate static let reverseSelector = "__rxor__"
+    fileprivate static let inPlaceSelector = "__ixor__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> PyResultOrNot<PyObject> {
@@ -482,9 +741,21 @@ extension Builtins {
       }
       return .notImplemented
     }
+
+    fileprivate static func callFastInPlace(left: PyObject,
+                                            right: PyObject) -> PyResultOrNot<PyObject> {
+      if let owner = left as? __ixor__Owner {
+        return owner.ixor(right)
+      }
+      return .notImplemented
+    }
   }
 
   public func xor(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return XorOp.call(left: left, right: right)
+  }
+
+  public func xorInPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    return XorOp.callInPlace(left: left, right: right)
   }
 }

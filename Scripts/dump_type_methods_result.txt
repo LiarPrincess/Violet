@@ -152,7 +152,6 @@ set
 slice
   Unimplemented:
     __hash__ - <class 'NoneType'>
-    indices
     start
     step
     stop

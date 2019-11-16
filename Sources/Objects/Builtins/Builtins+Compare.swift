@@ -69,7 +69,7 @@ extension CompareOp {
       }
     }
 
-    // Not hope left! We are doomed!
+    // No hope left! We are doomed!
     return .notImplemented
   }
 

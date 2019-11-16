@@ -102,6 +102,25 @@ def print_protocols():
     else:
       assert False
 
+  # Add additional protocols (none of the builtin types implement them)
+  protocols.add(f'protocol __matmul__Owner {{ func matmul(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __rmatmul__Owner {{ func rmatmul(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+
+  protocols.add(f'protocol __iadd__Owner {{ func iadd(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __isub__Owner {{ func isub(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __imul__Owner {{ func imul(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __imatmul__Owner {{ func imatmul(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __itruediv__Owner {{ func itruediv(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __ifloordiv__Owner {{ func ifloordiv(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __imod__Owner {{ func imod(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __idivmod__Owner {{ func idivmod(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __ipow__Owner {{ func ipow(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __ilshift__Owner {{ func ilshift(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __irshift__Owner {{ func irshift(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __iand__Owner {{ func iand(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __ixor__Owner {{ func ixor(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __ior__Owner {{ func ior(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+
   print('''\
 import Core
 

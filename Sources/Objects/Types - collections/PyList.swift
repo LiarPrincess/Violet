@@ -254,7 +254,7 @@ public final class PyList: PyObject {
   }
 
   // sourcery: pymethod = __imul__
-  internal func mulInPlace(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func imul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return SequenceHelper
       .mul(elements: self.elements, count: other)
       .map { elements -> PyList in

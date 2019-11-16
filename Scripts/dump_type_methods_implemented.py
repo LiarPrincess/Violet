@@ -420,6 +420,7 @@ types = {
     '__ge__',
     '__repr__',
     '__getattribute__',
+    'indices',
   ],
   str: [
     '__class__',

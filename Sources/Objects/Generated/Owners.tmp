@@ -78,14 +78,14 @@ PyComplex|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject
 PyComplex|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyComplex|PyObject|func|__pow__|pow(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyComplex|PyObject|func|__rpow__|rpow(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyComplex|PyObject|func|__truediv__|trueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyComplex|PyObject|func|__rtruediv__|rtrueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyComplex|PyObject|func|__floordiv__|floorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyComplex|PyObject|func|__rfloordiv__|rfloorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__truediv__|truediv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rtruediv__|rtruediv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__floordiv__|floordiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rfloordiv__|rfloordiv(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyComplex|PyObject|func|__mod__|mod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyComplex|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyComplex|PyObject|func|__divmod__|divMod(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyComplex|PyObject|func|__rdivmod__|rdivMod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__divmod__|divmod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__rdivmod__|rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject>
 
 PyDict|PyObject|get|__class__|getClass() -> PyType
 
@@ -143,14 +143,14 @@ PyFloat|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__pow__|pow(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__rpow__|rpow(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyFloat|PyObject|func|__truediv__|trueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyFloat|PyObject|func|__rtruediv__|rtrueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyFloat|PyObject|func|__floordiv__|floorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyFloat|PyObject|func|__rfloordiv__|rfloorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__truediv__|truediv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rtruediv__|rtruediv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__floordiv__|floordiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rfloordiv__|rfloordiv(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__mod__|mod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyFloat|PyObject|func|__divmod__|divMod(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyFloat|PyObject|func|__rdivmod__|rdivMod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__divmod__|divmod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__rdivmod__|rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
 
 PyFrozenSet|PyObject|get|__class__|getClass() -> PyType
@@ -228,18 +228,18 @@ PyInt|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__pow__|pow(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__rpow__|rpow(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__truediv__|trueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__rtruediv__|rtrueDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__floordiv__|floorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__rfloordiv__|rfloorDiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__truediv__|truediv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rtruediv__|rtruediv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__floordiv__|floordiv(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rfloordiv__|rfloordiv(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__mod__|mod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__divmod__|divMod(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__rdivmod__|rdivMod(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__lshift__|lShift(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__rlshift__|rlShift(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__rshift__|rShift(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__rrshift__|rrShift(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__divmod__|divmod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rdivmod__|rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__lshift__|lshift(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rlshift__|rlshift(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rshift__|rshift(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__rrshift__|rrshift(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__and__|and(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__rand__|rand(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__or__|or(_ other: PyObject) -> PyResultOrNot<PyObject>
@@ -270,7 +270,7 @@ PyList|PyObject|func|copy|copy() -> PyObject
 PyList|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyList|PyObject|func|__imul__|mulInPlace(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyList|PyObject|func|__imul__|imul(_ other: PyObject) -> PyResultOrNot<PyObject>
 
 PyMethod|PyObject|get|__class__|getClass() -> PyType
 
@@ -392,6 +392,7 @@ PySlice|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
 PySlice|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
 PySlice|PyObject|func|__repr__|repr() -> PyResult<String>
 PySlice|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PySlice|PyObject|func|indices|indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject>
 
 PyString|PyObject|get|__class__|getClass() -> PyType
 

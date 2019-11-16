@@ -338,24 +338,24 @@ public class PyInt: PyObject {
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  internal func trueDiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func truediv(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.trueDiv(left: self.value, right: other.value)
+    return self.truediv(left: self.value, right: other.value)
   }
 
   // sourcery: pymethod = __rtruediv__
-  internal func rtrueDiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rtruediv(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.trueDiv(left: other.value, right: self.value)
+    return self.truediv(left: other.value, right: self.value)
   }
 
-  private func trueDiv(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
+  private func truediv(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right == 0 {
       return .zeroDivisionError("division by zero")
     }
@@ -366,33 +366,33 @@ public class PyInt: PyObject {
   // MARK: - Floor div
 
   // sourcery: pymethod = __floordiv__
-  internal func floorDiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func floordiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.floorDiv(left: self.value, right: other.value)
+    return self.floordiv(left: self.value, right: other.value)
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal func rfloorDiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rfloordiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.floorDiv(left: other.value, right: self.value)
+    return self.floordiv(left: other.value, right: self.value)
   }
 
-  private func floorDiv(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
+  private func floordiv(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right == 0 {
       return .zeroDivisionError("division by zero")
     }
 
-    let result = self.floorDivRaw(left: left, right: right)
+    let result = self.floordivRaw(left: left, right: right)
     return .value(self.builtins.newInt(result))
   }
 
-  private func floorDivRaw(left: BigInt, right: BigInt) -> BigInt {
+  private func floordivRaw(left: BigInt, right: BigInt) -> BigInt {
     return left / right
   }
 
@@ -432,29 +432,29 @@ public class PyInt: PyObject {
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
-  internal func divMod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func divmod(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.divMod(left: self.value, right: other.value)
+    return self.divmod(left: self.value, right: other.value)
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal func rdivMod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.divMod(left: other.value, right: self.value)
+    return self.divmod(left: other.value, right: self.value)
   }
 
-  private func divMod(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
+  private func divmod(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right == 0 {
       return .zeroDivisionError("divmod() by zero")
     }
 
-    let div = self.floorDivRaw(left: left, right: right)
+    let div = self.floordivRaw(left: left, right: right)
     let mod = self.modRaw(left: left, right: right)
 
     let tuple0 = self.builtins.newInt(div)
@@ -465,24 +465,24 @@ public class PyInt: PyObject {
   // MARK: - LShift
 
   // sourcery: pymethod = __lshift__
-  internal func lShift(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func lshift(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.lShift(left: self.value, right: other.value)
+    return self.lshift(left: self.value, right: other.value)
   }
 
   // sourcery: pymethod = __rlshift__
-  internal func rlShift(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rlshift(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.lShift(left: other.value, right: self.value)
+    return self.lshift(left: other.value, right: self.value)
   }
 
-  private func lShift(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
+  private func lshift(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right < 0 {
       return .valueError("negative shift count")
     }
@@ -493,24 +493,24 @@ public class PyInt: PyObject {
   // MARK: - RShift
 
   // sourcery: pymethod = __rshift__
-  internal func rShift(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rshift(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.rShift(left: self.value, right: other.value)
+    return self.rshift(left: self.value, right: other.value)
   }
 
   // sourcery: pymethod = __rrshift__
-  internal func rrShift(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rrshift(_ other: PyObject) -> PyResultOrNot<PyObject> {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return self.rShift(left: other.value, right: self.value)
+    return self.rshift(left: other.value, right: self.value)
   }
 
-  private func rShift(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
+  private func rshift(left: BigInt, right: BigInt) -> PyResultOrNot<PyObject> {
     if right < 0 {
       return .valueError("negative shift count")
     }

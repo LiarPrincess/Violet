@@ -38,7 +38,7 @@ extension Frame {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch self.builtins.divFloor(left: dividend, right: divisor) {
+    switch self.builtins.floordiv(left: dividend, right: divisor) {
     case let .value(quotient):
       self.stack.top = quotient
       return .ok
@@ -52,7 +52,7 @@ extension Frame {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch self.builtins.div(left: dividend, right: divisor) {
+    switch self.builtins.truediv(left: dividend, right: divisor) {
     case let .value(quotient):
       self.stack.top = quotient
       return .ok
@@ -66,7 +66,7 @@ extension Frame {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch self.builtins.remainder(left: dividend, right: divisor) {
+    switch self.builtins.mod(left: dividend, right: divisor) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -114,7 +114,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.lShift(left: left, right: right) {
+    switch self.builtins.lshift(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -128,7 +128,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.rShift(left: left, right: right) {
+    switch self.builtins.rshift(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
