@@ -187,9 +187,14 @@ extension Frame {
   internal func compareOp(comparison: ComparisonOpcode) -> InstructionResult {
     let right = self.stack.pop()
     let left = self.stack.top
-    let result = self.compare(left: left, right: right, comparison: comparison)
-    self.stack.top = result.toPyObject(in: self.context)
-    return .ok
+
+    switch self.compare(left: left, right: right, comparison: comparison) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   private func compare(left: PyObject,

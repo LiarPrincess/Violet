@@ -9,32 +9,6 @@ import Core
 // PyObject_Call(), PyObject_CallFunction() and PyObject_CallMethod()
 // are recommended to call a callable object.
 
-public struct Arguments {
-  public let args: [PyObject]
-  public let kwargs: OrderedDictionary<String, PyObject>
-}
-
-extension String: PyHashable {
-  public func isEqual(to other: String) -> PyResult<Bool> {
-    var selfIter = self.unicodeScalars.makeIterator()
-    var otherIter = other.unicodeScalars.makeIterator()
-
-    while let selfScalar = selfIter.next(), let otherScalar = otherIter.next() {
-      if selfScalar != otherScalar {
-        return .value(false)
-      }
-    }
-
-    let isSelfExhausted = selfIter.next() == nil
-    let isOtherExhausted = otherIter.next() == nil
-    return .value(isSelfExhausted && isOtherExhausted)
-  }
-}
-
-internal protocol __call__Owner {
-  func call(arguments: Arguments) -> PyResult<PyObject>
-}
-
 internal enum CallResult_new { // swiftlint:disable:this type_name
   case value(PyObject)
   // return .attributeError("'\(value.typeName)' object has no attribute 'abc'")

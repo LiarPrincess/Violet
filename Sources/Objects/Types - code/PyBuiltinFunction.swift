@@ -1,74 +1,32 @@
 // In CPython:
 // Objects -> methodobject.c
 
-// swiftlint:disable type_name
-internal typealias F1 = (PyObject) -> PyObject
-internal typealias F2 = (PyObject, PyObject) -> PyObject
-internal typealias F3 = (PyObject, PyObject, PyObject) -> PyObject
-internal typealias F4 = (PyObject, PyObject, PyObject, PyObject) -> PyObject
-// swiftlint:enable type_name
-
 // sourcery: pytype = builtinFunction
-/// Native function implemented in Swift.
+/// This is about the type `builtin_function_or_method`,
+/// not Python methods in user-defined classes.
 internal final class PyBuiltinFunction: PyObject {
 
-  /// The name of the built-in function/method
-  internal let _name: String
-  /// The `__doc__` attribute, or NULL
-  internal let _doc: String?
-  /// The Swift function that implements it
-  internal let _func: PyBuiltinFunction.Storage
-  /// The instance it is bound to
-  internal let _self: PyObject?
+  /// The Swift function that will be called.
+  internal let function: FunctionWrapper
+  /// **Optional** instance it is bound to.
+  internal let object: PyObject?
+  /// The `__doc__` attribute, or `nil`.
+  internal let doc: String?
 
-  internal enum Storage {
-    case f1(F1)
-    case f2(F2)
-    case f3(F3)
-    case f4(F4)
+  /// The name of the built-in function/method.
+  internal var name: String {
+    return self.function.name
   }
 
-  internal convenience init(_ context: PyContext,
-                            name: String,
-                            doc: String?,
-                            func fn: @escaping F1,
-                            zelf: PyObject?) {
-    self.init(context, name: name, doc: doc, func: .f1(fn), zelf: zelf)
-  }
-
-  internal convenience init(_ context: PyContext,
-                            name: String,
-                            doc: String?,
-                            func fn: @escaping F2,
-                            zelf: PyObject?) {
-    self.init(context, name: name, doc: doc, func: .f2(fn), zelf: zelf)
-  }
-
-  internal convenience init(_ context: PyContext,
-                            name: String,
-                            doc: String?,
-                            func fn: @escaping F3,
-                            zelf: PyObject?) {
-    self.init(context, name: name, doc: doc, func: .f3(fn), zelf: zelf)
-  }
-
-  internal convenience init(_ context: PyContext,
-                            name: String,
-                            doc: String?,
-                            func fn: @escaping F4,
-                            zelf: PyObject?) {
-    self.init(context, name: name, doc: doc, func: .f4(fn), zelf: zelf)
-  }
+  // MARK: - Init
 
   internal init(_ context: PyContext,
-                name: String,
                 doc: String?,
-                func fn: PyBuiltinFunction.Storage,
-                zelf: PyObject?) {
-    self._name = name
-    self._doc = doc
-    self._func = fn
-    self._self = zelf
+                fn: FunctionWrapper,
+                object: PyObject? = nil) {
+    self.function = fn
+    self.object = object
+    self.doc = doc
     super.init(type: context.builtins.types.builtinFunction)
   }
 
@@ -117,17 +75,17 @@ internal final class PyBuiltinFunction: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    guard let zelf = self._self else {
-      return .value("<built-in function \(self._name)>")
+    guard let object = self.object else {
+      return .value("<built-in function \(self.name)>")
     }
 
-    if self._self is PyModule {
-      return .value("<built-in function \(self._name)>")
+    if object is PyModule {
+      return .value("<built-in function \(self.name)>")
     }
 
-    let ptr = zelf.ptrString
-    let type = zelf.typeName
-    return .value("<built-in method \(self._name) of \(type) object at \(ptr)>")
+    let ptr = object.ptrString
+    let type = object.typeName
+    return .value("<built-in method \(self.name) of \(type) object at \(ptr)>")
   }
 
   // MARK: - Attributes
@@ -148,40 +106,37 @@ internal final class PyBuiltinFunction: PyObject {
 
   // sourcery: pyproperty = __name__
   internal func getName() -> String {
-    return self._name
+    return self.name
   }
 
   // sourcery: pyproperty = __qualname__
   internal func getQualname() -> String {
     // If __self__ is a module or NULL, return m.__name__
     // (e.g. len.__qualname__ == 'len')
-    //
+    guard let object = self.object else {
+      return self.name
+    }
+
+    if object is PyModule {
+      return self.name
+    }
+
     // If __self__ is a type, return m.__self__.__qualname__ + '.' + m.__name__
     // (e.g. dict.fromkeys.__qualname__ == 'dict.fromkeys')
-    //
-    // Otherwise return type(m.__self__).__qualname__ + '.' + m.__name__
+    var type = object.type
+    if let ifObjectIsTypeThenUseItAsType = object as? PyType {
+      type = ifObjectIsTypeThenUseItAsType
+    }
+
+    // Return type(m.__self__).__qualname__ + '.' + m.__name__
     // (e.g. [].append.__qualname__ == 'list.append')
-
-    guard let zelf = self._self else {
-      return self._name
-    }
-
-    if zelf is PyModule {
-      return self._name
-    }
-
-    var type = zelf.type
-    if let caseWhenZelfIsType = zelf as? PyType {
-      type = caseWhenZelfIsType
-    }
-
     let typeQualname = type.getQualname()
-    return typeQualname + "." + self._name
+    return typeQualname + "." + self.name
   }
 
   // sourcery: pyproperty = __text_signature__
   internal func getTextSignature() -> String? {
-    return self._doc.map(DocHelper.getSignature)
+    return self.doc.map(DocHelper.getSignature)
   }
 
   // sourcery: pyproperty = __module__
@@ -191,6 +146,49 @@ internal final class PyBuiltinFunction: PyObject {
 
   // sourcery: pyproperty = __self__
   internal func getSelf() -> PyObject {
-    return self._self ?? self.builtins.none
+    return self.object ?? self.builtins.none
+  }
+
+  // MARK: - Call
+
+  // sourcery: pyproperty = __call__
+  /// PyObject *
+  /// PyCFunction_Call(PyObject *func, PyObject *args, PyObject *kwargs)
+  internal func call(args: PyObject,
+                     kwargs: PyObject) -> PyResultOrNot<PyObject> {
+    guard let argsTuple = args as? PyTuple else {
+      let t = args.typeName
+      return .typeError("Function positional arguments should be a tuple, not \(t)")
+    }
+
+    guard let kwargsDict = kwargs as? PyDict else {
+      let t = kwargs.typeName
+      return .typeError("Function keyword arguments should be a dict, not \(t)")
+    }
+
+    return self.call(args: argsTuple.elements, kwargs: kwargsDict.elements)
+  }
+
+  /// _PyMethodDef_RawFastCallDict(PyMethodDef *method,
+  ///                              PyObject *self,
+  ///                              PyObject *const *args, Py_ssize_t nargs,
+  ///                              PyObject *kwargs)
+  /// static PyObject *
+  /// slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
+  internal func call(args: [PyObject],
+                     kwargs: PyDictData?) -> PyResultOrNot<PyObject> {
+    let realArgs = self.prependSelfIfNeeded(args: args)
+    return self.function.call(args: realArgs, kwargs: kwargs)
+  }
+
+  /// PyObject *
+  /// _PyObject_Call_Prepend(PyObject *callable,
+  ///                        PyObject *obj, PyObject *args, PyObject *kwargs)
+  private func prependSelfIfNeeded(args: [PyObject]) -> [PyObject] {
+    if let object = self.object {
+      return [object] + args
+    }
+
+    return args
   }
 }

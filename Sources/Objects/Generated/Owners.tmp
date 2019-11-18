@@ -28,6 +28,7 @@ PyBuiltinFunction|PyObject|get|__qualname__|getQualname() -> String
 PyBuiltinFunction|PyObject|get|__text_signature__|getTextSignature() -> String?
 PyBuiltinFunction|PyObject|get|__module__|getModule() -> PyResult<String>
 PyBuiltinFunction|PyObject|get|__self__|getSelf() -> PyObject
+PyBuiltinFunction|PyObject|get|__call__|call(args: PyObject,                     kwargs: PyObject) -> PyResultOrNot<PyObject>
 
 PyBuiltinFunction|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
 PyBuiltinFunction|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>

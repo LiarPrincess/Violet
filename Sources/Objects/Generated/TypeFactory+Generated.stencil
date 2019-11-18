@@ -19,12 +19,12 @@
 
     {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    result._attributes["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }})
+    result._attributes["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% endfor %}
 
     {% for method in type.instanceMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    result._attributes["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, func: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }})
+    result._attributes["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }})
   {% endfor %}
 {% endmacro %}
 
