@@ -12,6 +12,12 @@ extension Builtins {
     exist; without it, an exception is raised in that case.
     """
 
+  public func getAttribute(_ object: PyObject,
+                           name: String) -> PyResult<PyObject> {
+    let nameString = self.newString(name)
+    return self.getAttribute(object, name: nameString)
+  }
+
   // sourcery: pymethod: getattr, doc = getAttributeDoc
   /// getattr(object, name[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
@@ -30,12 +36,12 @@ extension Builtins {
     }
 
     // Fast protocol-based path
-    if let getAttributeOwner = object as? __getattribute__Owner {
-      return getAttributeOwner.getAttribute(name: name)
+    if let owner = object as? __getattribute__Owner {
+      return owner.getAttribute(name: name)
     }
 
     // Slow python path
-    // TODO: Recheck this after we have `__call__`
+    // TODO: Recheck this after we have `__call__`, also: use 'default'
     switch self.callMethod(on: object, selector: "__getattribute__", arg: name) {
     case .value(let o):
       return .value(o)

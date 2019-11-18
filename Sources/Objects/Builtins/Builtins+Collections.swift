@@ -1,3 +1,7 @@
+// In CPython:
+// Python -> builtinmodule.c
+// https://docs.python.org/3/library/functions.html
+
 public class CreateDictionaryArg {
   public let key: PyObject
   public let value: PyObject
