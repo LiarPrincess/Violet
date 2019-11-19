@@ -11,7 +11,7 @@ protocol __abs__Owner { func abs() -> PyObject }
 protocol __add__Owner { func add(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __and__Owner { func and(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __bool__Owner { func asBool() -> Bool }
-protocol __call__GetterOwner { func call(args: PyObject, kwargs: PyObject) -> PyResultOrNot<PyObject> }
+protocol __call__Owner { func call(args: PyObject, kwargs: PyObject) -> PyResultOrNot<PyObject> }
 protocol __cause__GetterOwner { func getCause() -> PyObject }
 protocol __cause__SetterOwner { func setCause(_ value: PyObject?) -> PyResult<()> }
 protocol __class__GetterOwner { func getClass() -> PyType }

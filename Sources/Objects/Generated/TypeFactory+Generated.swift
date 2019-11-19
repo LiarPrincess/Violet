@@ -94,7 +94,6 @@ extension TypeFactory {
     result._attributes["__text_signature__"] = createProperty(context, name: "__text_signature__", doc: nil, get: PyBuiltinFunction.getTextSignature, castSelf: selfAsPyBuiltinFunction)
     result._attributes["__module__"] = createProperty(context, name: "__module__", doc: nil, get: PyBuiltinFunction.getModule, castSelf: selfAsPyBuiltinFunction)
     result._attributes["__self__"] = createProperty(context, name: "__self__", doc: nil, get: PyBuiltinFunction.getSelf, castSelf: selfAsPyBuiltinFunction)
-    result._attributes["__call__"] = createProperty(context, name: "__call__", doc: nil, get: PyBuiltinFunction.call(args:kwargs:), castSelf: selfAsPyBuiltinFunction)
 
 
     result._attributes["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyBuiltinFunction.isEqual(_:), castSelf: selfAsPyBuiltinFunction)
@@ -106,6 +105,7 @@ extension TypeFactory {
     result._attributes["__hash__"] = wrapMethod(context, name: "__hash__", doc: nil, fn: PyBuiltinFunction.hash, castSelf: selfAsPyBuiltinFunction)
     result._attributes["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyBuiltinFunction.repr, castSelf: selfAsPyBuiltinFunction)
     result._attributes["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyBuiltinFunction.getAttribute(name:), castSelf: selfAsPyBuiltinFunction)
+    result._attributes["__call__"] = wrapMethod(context, name: "__call__", doc: nil, fn: PyBuiltinFunction.call(args:kwargs:), castSelf: selfAsPyBuiltinFunction)
     return result
   }
 

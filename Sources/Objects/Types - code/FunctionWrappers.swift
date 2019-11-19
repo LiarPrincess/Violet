@@ -57,6 +57,17 @@ extension Array: FunctionResultConvertible
   }
 }
 
+extension Optional: FunctionResultConvertible
+  where Wrapped: FunctionResultConvertible {
+
+  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
+    switch self {
+    case .some(let v): return v.toFunctionResult(in: context)
+    case .none: return .value(context.builtins.none)
+    }
+  }
+}
+
 extension Attributes: FunctionResultConvertible {
   internal func toFunctionResult(in context: PyContext) -> FunctionResult {
     // swiftlint:disable:next fatal_error_message

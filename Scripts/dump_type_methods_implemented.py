@@ -66,6 +66,7 @@ types = {
     '__hash__',
     '__repr__',
     '__getattribute__',
+    '__call__',
   ],
   t.CodeType: [
     '__class__',

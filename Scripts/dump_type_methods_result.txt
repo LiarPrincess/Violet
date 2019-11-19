@@ -21,10 +21,6 @@ type
     __sizeof__
     mro
 
-builtin_function_or_method
-  Unimplemented:
-    __call__
-
 code
   Unimplemented:
     __getattribute__

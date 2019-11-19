@@ -151,7 +151,7 @@ internal final class PyBuiltinFunction: PyObject {
 
   // MARK: - Call
 
-  // sourcery: pyproperty = __call__
+  // sourcery: pymethod = __call__
   /// PyObject *
   /// PyCFunction_Call(PyObject *func, PyObject *args, PyObject *kwargs)
   internal func call(args: PyObject,
