@@ -37,19 +37,50 @@ extension Builtins {
 
     // Fast protocol-based path
     if let owner = object as? __getattribute__Owner {
-      return owner.getAttribute(name: name)
+      let result = owner.getAttribute(name: name)
+      return self.handleAttributeError(result: result, default: `default`)
     }
 
     // Slow python path
-    // TODO: Recheck this after we have `__call__`, also: use 'default'
     switch self.callMethod(on: object, selector: "__getattribute__", arg: name) {
     case .value(let o):
       return .value(o)
-    case .noSuchMethod:
-      return AttributeHelper.getAttribute(from: object, name: name.value)
+
+    case .noSuchMethod,
+         .notImplemented:
+      let result = AttributeHelper.getAttribute(from: object, name: name.value)
+      return self.handleAttributeError(result: result, default: `default`)
+
     case .methodIsNotCallable(let e):
       return .error(e)
+
+    case .error(let e):
+      return self.handleAttributeError(error: e, default: `default`)
     }
+  }
+
+  private func handleAttributeError(result: PyResult<PyObject>,
+                                    default: PyObject?) -> PyResult<PyObject> {
+    guard case let PyResult.error(e) = result else {
+      return result
+    }
+
+    return self.handleAttributeError(error: e, default: `default`)
+  }
+
+  private func handleAttributeError(error: PyErrorEnum,
+                                    default: PyObject?) -> PyResult<PyObject> {
+    // We are only interested in AttributeError
+    guard case PyErrorEnum.attributeError = error else {
+      return .error(error)
+    }
+
+    // It is AttributeError. If we have `default` then return it.
+    if let def = `default` {
+      return .value(def)
+    }
+
+    return .error(error)
   }
 
   // sourcery: pymethod: hasattr
@@ -57,17 +88,18 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasAttribute(_ object: PyObject,
                            name: PyObject) -> PyResult<Bool> {
-//    guard name is PyString else {
-//      return .typeError("hasattr(): attribute name must be string")
-//    }
-//
-//    guard let getAttro = self.lookup(object, name: "__getattribute__") else {
-//      return .value(false)
-//    }
-//
-//    let result = self.call(getAttro, args: [object, name])
-    // TODO: If result is AttributeError then return false
-    return .value(true)
+    guard name is PyString else {
+      return .typeError("hasattr(): attribute name must be string")
+    }
+
+    switch self.getAttribute(object, name: name, default: nil) {
+    case .value:
+      return .value(true)
+    case .error(.attributeError):
+      return .value(false)
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod: setattr

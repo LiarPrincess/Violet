@@ -92,9 +92,11 @@ extension BinaryOp {
       if !(result is PyNotImplemented) {
         return .value(result)
       }
-    case .noSuchMethod:
+    case .noSuchMethod,
+         .notImplemented:
       break // Try other options...
-    case .methodIsNotCallable(let e):
+    case .methodIsNotCallable(let e),
+         .error(let e):
       return .error(e)
     }
 
@@ -170,9 +172,11 @@ extension BinaryOp {
     switch builtins.callMethod(on: left, selector: selector, arg: right) {
     case .value(let result):
       return result is PyNotImplemented ? .notImplemented : .value(result)
-    case .noSuchMethod:
+    case .noSuchMethod,
+         .notImplemented:
       return .notImplemented
-    case .methodIsNotCallable(let e):
+    case .methodIsNotCallable(let e),
+         .error(let e):
       return .error(e)
     }
   }
@@ -195,9 +199,11 @@ extension BinaryOp {
     switch builtins.callMethod(on: right, selector: reverseSelector, arg: left) {
     case .value(let result):
       return result is PyNotImplemented ? .notImplemented : .value(result)
-    case .noSuchMethod:
+    case .noSuchMethod,
+         .notImplemented:
       return .notImplemented
-    case .methodIsNotCallable(let e):
+    case .methodIsNotCallable(let e),
+         .error(let e):
       return .error(e)
     }
   }

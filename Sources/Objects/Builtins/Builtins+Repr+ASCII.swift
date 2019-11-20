@@ -18,16 +18,22 @@ extension Builtins {
       return reprOwner.repr()
     }
 
-    let callResult = self.callMethod(on: object, selector: "__repr__")
-    guard case let CallResult.value(result) = callResult else {
+    switch self.callMethod(on: object, selector: "__repr__") {
+    case .value(let result):
+      guard let resultStr = result as? PyString else {
+        return .typeError("__repr__ returned non-string (\(result.typeName))")
+      }
+
+      return .value(resultStr.value)
+
+    case .noSuchMethod,
+         .notImplemented:
       return .value(self.genericRepr(object))
-    }
 
-    guard let resultStr = result as? PyString else {
-      return .typeError("__repr__ returned non-string (\(result.typeName))")
+    case .methodIsNotCallable(let e),
+         .error(let e):
+      return .error(e)
     }
-
-    return .value(resultStr.value)
   }
 
   // MARK: - ASCII

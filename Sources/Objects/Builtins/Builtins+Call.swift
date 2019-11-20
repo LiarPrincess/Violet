@@ -9,7 +9,7 @@ import Core
 // PyObject_Call(), PyObject_CallFunction() and PyObject_CallMethod()
 // are recommended to call a callable object.
 
-public enum CallResult_new { // swiftlint:disable:this type_name
+public enum CallResult {
   case value(PyObject)
   case notImplemented
   case noSuchMethod(PyErrorEnum)
@@ -19,17 +19,47 @@ public enum CallResult_new { // swiftlint:disable:this type_name
 
 extension Builtins {
 
+  // MARK: - Lookup
+
   /// Internal API to look for a name through the MRO.
   public func lookup(_ object: PyObject, name: String) -> PyObject? {
     return object.type.lookup(name: name)
   }
 
+  // MARK: - Method
+
+  internal func callMethod(on object: PyObject,
+                           selector: String) -> CallResult {
+    return self.callMethod(on: object,
+                           selector: selector,
+                           args: [],
+                           kwargs: self.emptyKwarks)
+  }
+
+  internal func callMethod(on object: PyObject,
+                           selector: String,
+                           arg: PyObject) -> CallResult {
+    return self.callMethod(on: object,
+                           selector: selector,
+                           args: [arg],
+                           kwargs: self.emptyKwarks)
+  }
+
+  internal func callMethod(on object: PyObject,
+                           selector: String,
+                           args: [PyObject]) -> CallResult {
+    return self.callMethod(on: object,
+                           selector: selector,
+                           args: args,
+                           kwargs: self.emptyKwarks)
+  }
+
   /// PyObject *
   /// PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...)
-  public func callMethod_new(on object: PyObject,
-                             selector: String,
-                             args: [PyObject],
-                             kwargs: PyObject) -> CallResult_new {
+  public func callMethod(on object: PyObject,
+                         selector: String,
+                         args: [PyObject],
+                         kwargs: PyObject) -> CallResult {
     guard let method = object.type.lookup(name: selector) else {
       let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
       return .noSuchMethod(.attributeError(msg))

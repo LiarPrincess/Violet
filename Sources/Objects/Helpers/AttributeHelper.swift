@@ -27,9 +27,7 @@ internal enum AttributeHelper {
     if let descr = descr {
       descrGet = descr.type.lookup(name: "__get__")
       if let descrGet = descrGet, DescriptorHelper.isData(descr) {
-        return AttributeHelper.callDescriptorGet(descr: descr,
-                                                 descrGet: descrGet,
-                                                 object: object)
+        return callDescriptorGet(descr: descr, descrGet: descrGet, object: object)
       }
     }
 
@@ -39,12 +37,10 @@ internal enum AttributeHelper {
     }
 
     if let descr = descr, let descrGet = descrGet {
-      return AttributeHelper.callDescriptorGet(descr: descr,
-                                               descrGet: descrGet,
-                                               object: object)
+      return callDescriptorGet(descr: descr, descrGet: descrGet, object: object)
     }
 
-    return .attributeError("\(object.typeName) object has no attribute '\(name)'")
+    return .error(attributeError(object: object, name: name))
   }
 
   private static func callDescriptorGet(descr: PyObject,
@@ -52,6 +48,11 @@ internal enum AttributeHelper {
                                         object: PyObject) -> PyResult<PyObject> {
     let args = [descr, object, object.type]
     return object.context.call(descrGet, args: args)
+  }
+
+  internal static func attributeError(object: PyObject,
+                                      name: String) -> PyErrorEnum {
+    return .attributeError("\(object.typeName) object has no attribute '\(name)'")
   }
 
   // MARK: - Set

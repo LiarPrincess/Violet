@@ -19,6 +19,9 @@ public final class Builtins {
   public lazy var emptyTuple = PyTuple(self.context, elements: [])
   public lazy var notImplemented = PyNotImplemented(self.context)
 
+  /// Reusable empty dictionary for `kwargs` argument in a functions.
+  internal lazy var emptyKwarks = PyDict(self.context)
+
   internal var cachedInts = [BigInt: PyInt]()
 
   public let types: BuiltinTypes

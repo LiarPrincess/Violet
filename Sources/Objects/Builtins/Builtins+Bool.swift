@@ -51,14 +51,20 @@ extension Builtins {
       return .value(boolOwner.asBool())
     }
 
-    let boolResult = self.callMethod(on: object, selector: "__bool__")
-    if case let CallResult.value(object) = boolResult {
-      if object.type.isSubtype(of: self.bool) {
-        return .value(self.isTrueBool(object))
+    switch self.callMethod(on: object, selector: "__bool__") {
+    case .value(let result):
+      if result.type.isSubtype(of: self.bool) {
+        return .value(self.isTrueBool(result))
       }
 
-      let typeName = object.typeName
+      let typeName = result.typeName
       return .typeError("__bool__ should return bool, returned '\(typeName)'")
+    case .notImplemented,
+         .noSuchMethod:
+      break // Try other methods
+    case .methodIsNotCallable(let e),
+         .error(let e):
+      return .error(e)
     }
 
     // Try __len__
@@ -67,12 +73,16 @@ extension Builtins {
       return .value(len.isTrue)
     }
 
-    let lenResult = self.callMethod(on: object, selector: "__len__")
-    if case let CallResult.value(object) = lenResult {
-      return .value(self.isTrueBool(object))
+    switch self.callMethod(on: object, selector: "__len__") {
+    case .value(let result):
+      return .value(self.isTrueBool(result))
+    case .notImplemented,
+         .noSuchMethod:
+      return .value(true)
+    case .methodIsNotCallable(let e),
+         .error(let e):
+      return .error(e)
     }
-
-    return .value(true)
   }
 
   // MARK: - Is

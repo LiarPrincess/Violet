@@ -19,9 +19,16 @@ extension Builtins {
       }
     }
 
-    let callResult = self.callMethod(on: object, selector: "__hash__")
-    guard case let CallResult.value(result) = callResult else {
+    let result: PyObject
+    switch self.callMethod(on: object, selector: "__hash__") {
+    case .value(let o):
+      result = o
+    case .noSuchMethod,
+         .notImplemented:
       return .error(self.hashNotImplemented(object))
+    case .methodIsNotCallable(let e),
+         .error(let e):
+      return .error(e)
     }
 
     guard let pyint = result as? PyInt else {

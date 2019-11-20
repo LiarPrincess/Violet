@@ -179,12 +179,13 @@ internal enum SequenceHelper {
         let msg = "__index__ returned non-int (type \(object.typeName)"
         return .error(.typeError(msg))
       }
-
       return .value(int.value)
 
-    case .noSuchMethod:
+    case .noSuchMethod,
+         .notImplemented:
       return .notIndex
-    case .methodIsNotCallable(let e):
+    case .methodIsNotCallable(let e),
+         .error(let e):
       return .error(e)
     }
   }
