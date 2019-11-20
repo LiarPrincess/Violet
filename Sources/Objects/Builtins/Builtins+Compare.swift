@@ -328,11 +328,6 @@ extension Builtins {
     // False
     // >>> [c] == [1] <- element compare returns 'Elsa' which is True
     // True
-    switch result {
-    case let .value(object):
-      return .value(self.isTrueBool(object))
-    case let .error(e):
-      return .error(e)
-    }
+    return result.flatMap(self.isTrueBool)
   }
 }

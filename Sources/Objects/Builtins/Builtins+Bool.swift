@@ -12,36 +12,25 @@ extension Builtins {
   ///
   /// int PyObject_Not(PyObject *v)
   public func not(_ object: PyObject) -> PyResult<PyBool> {
-    return self.isTrueRaw(object)
+    return self.isTrueBool(object)
       .map { !$0 }
       .map(self.newBool)
   }
 
-  public func notBool(_ object: PyObject) -> Bool {
-    return !self.isTrueBool(object)
+  public func notBool(_ object: PyObject) -> PyResult<Bool> {
+    return self.isTrueBool(object).map { !$0 }
   }
 
   // MARK: - Is true
 
   /// Test a value used as condition, e.g.,  `if`  or `in` statement.
   public func isTrue(_ object: PyObject) -> PyResult<PyBool> {
-    return self.isTrueRaw(object).map(self.newBool)
-  }
-
-  public func isTrueBool(_ object: PyObject) -> Bool {
-    switch self.isTrueRaw(object) {
-    case .value(let result):
-      return result
-    case .error:
-      // TODO: Nope! just propagate error as always!
-      // All builtin errors are always `True`
-      return true
-    }
+    return self.isTrueBool(object).map(self.newBool)
   }
 
   /// PyObject_IsTrue(PyObject *v)
   /// slot_nb_bool(PyObject *self)
-  private func isTrueRaw(_ object: PyObject) -> PyResult<Bool> {
+  public func isTrueBool(_ object: PyObject) -> PyResult<Bool> {
     if object is PyNone {
       return .value(false)
     }
@@ -54,7 +43,7 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__bool__") {
     case .value(let result):
       if result.type.isSubtype(of: self.bool) {
-        return .value(self.isTrueBool(result))
+        return self.isTrueBool(result)
       }
 
       let typeName = result.typeName
@@ -75,7 +64,7 @@ extension Builtins {
 
     switch self.callMethod(on: object, selector: "__len__") {
     case .value(let result):
-      return .value(self.isTrueBool(result))
+      return self.isTrueBool(result)
     case .notImplemented,
          .noSuchMethod:
       return .value(true)

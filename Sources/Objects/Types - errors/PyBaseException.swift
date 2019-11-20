@@ -188,7 +188,8 @@ internal class PyBaseException: PyObject, AttributesOwner {
     }
 
     guard value.type.isException else {
-      return .typeError("exception cause must be None or derive from BaseException")
+      let msg = "exception cause must be None or derive from BaseException"
+      return .typeError(msg)
     }
 
     self._cause = value
@@ -215,7 +216,8 @@ internal class PyBaseException: PyObject, AttributesOwner {
     }
 
     guard value.type.isException else {
-      return .typeError("exception context must be None or derive from BaseException")
+      let msg = "exception context must be None or derive from BaseException"
+      return .typeError(msg)
     }
 
     self._exceptionContext = value
@@ -231,7 +233,10 @@ internal class PyBaseException: PyObject, AttributesOwner {
 
   internal func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
     if let value = value {
-      self._suppressExceptionContext = self.builtins.isTrueBool(value)
+      switch self.builtins.isTrueBool(value) {
+      case let .value(v): self._suppressExceptionContext = v
+      case let .error(e): return .error(e)
+      }
     } else {
       self._suppressExceptionContext = false
     }

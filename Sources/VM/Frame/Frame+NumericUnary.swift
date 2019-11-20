@@ -31,15 +31,19 @@ extension Frame {
     }
   }
 
-
   // MARK: - Not
 
   /// Implements `TOS = not TOS`.
   internal func unaryNot() -> InstructionResult {
     let top = self.stack.top
-    let boolValue = self.builtins.isTrueBool(top)
-    self.stack.top = self.builtins.newBool(boolValue)
-    return .ok
+
+    switch self.builtins.not(top) {
+    case let .value(not):
+      self.stack.top = not
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   // MARK: - Invert
