@@ -77,9 +77,9 @@ public final class PyNamespace: PyObject {
 
     return self.withReprLock {
       var list = [String]()
-      for (key, value) in self._attributes.asDictionary {
-        switch self.builtins.repr(value) {
-        case let .value(s): list.append("\(key)=\(s)")
+      for entry in self._attributes.entries {
+        switch self.builtins.repr(entry.value) {
+        case let .value(o): list.append("\(entry.key)=\(o)")
         case let .error(e): return .error(e)
         }
       }
