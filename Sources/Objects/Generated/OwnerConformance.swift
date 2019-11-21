@@ -12,6 +12,29 @@ extension PyBaseObject { }
 // Type does not own anything.
 extension PyType { }
 
+// MARK: - Type
+
+extension PyType:
+  __name__GetterOwner,
+  __name__SetterOwner,
+  __qualname__GetterOwner,
+  __qualname__SetterOwner,
+  __module__GetterOwner,
+  __module__SetterOwner,
+  __bases__GetterOwner,
+  __bases__SetterOwner,
+  __dict__GetterOwner,
+  __class__GetterOwner,
+  __repr__Owner,
+  __subclasses__Owner,
+  __instancecheck__Owner,
+  __subclasscheck__Owner,
+  __getattribute__Owner,
+  __setattr__Owner,
+  __delattr__Owner,
+  __dir__Owner
+{ }
+
 // MARK: - Bool
 
 // PyBool does not add any new protocols to PyInt

@@ -2,7 +2,7 @@
 // Objects -> moduleobject.c
 
 // sourcery: pytype = module
-public final class PyModule: PyObject, AttributesOwner {
+public final class PyModule: PyObject {
 
   internal static let doc: String = """
     module(name, doc=None)

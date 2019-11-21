@@ -10,6 +10,8 @@ protocol FsetGetterOwner { func getFSet() -> PyObject }
 protocol __abs__Owner { func abs() -> PyObject }
 protocol __add__Owner { func add(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __and__Owner { func and(_ other: PyObject) -> PyResultOrNot<PyObject> }
+protocol __bases__GetterOwner { func getBases() -> [PyType] }
+protocol __bases__SetterOwner { func setBases(_ value: PyObject?) -> PyResult<()> }
 protocol __bool__Owner { func asBool() -> Bool }
 protocol __call__Owner { func call(args: PyObject, kwargs: PyObject) -> PyResultOrNot<PyObject> }
 protocol __cause__GetterOwner { func getCause() -> PyObject }
@@ -45,6 +47,7 @@ protocol __imatmul__Owner { func imatmul(_ other: PyObject) -> PyResultOrNot<PyO
 protocol __imod__Owner { func imod(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __imul__Owner { func imul(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __index__Owner { func asIndex() -> BigInt }
+protocol __instancecheck__Owner { func isInstance(of type: PyObject) -> PyResult<Bool> }
 protocol __int__Owner { func asInt() -> PyResult<PyInt> }
 protocol __invert__Owner { func invert() -> PyObject }
 protocol __ior__Owner { func ior(_ other: PyObject) -> PyResultOrNot<PyObject> }
@@ -60,6 +63,7 @@ protocol __lt__Owner { func isLess(_ other: PyObject) -> PyResultOrNot<Bool> }
 protocol __matmul__Owner { func matmul(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __mod__Owner { func mod(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __module__GetterOwner { func getModule() -> PyResult<String> }
+protocol __module__SetterOwner { func setModule(_ value: PyObject?) -> PyResult<()> }
 protocol __mul__Owner { func mul(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __name__GetterOwner { func getName() -> String }
 protocol __name__SetterOwner { func setName(_ value: PyObject?) -> PyResult<()> }
@@ -94,6 +98,8 @@ protocol __setattr__Owner { func setAttribute(name: PyObject, value: PyObject?) 
 protocol __setitem__Owner { func setItem(at index: PyObject, to value: PyObject) -> PyResult<PyNone> }
 protocol __str__Owner { func str() -> PyResult<String> }
 protocol __sub__Owner { func sub(_ other: PyObject) -> PyResultOrNot<PyObject> }
+protocol __subclasscheck__Owner { func isSubclass(of type: PyObject) -> PyResult<Bool> }
+protocol __subclasses__Owner { func getSubclasses() -> [PyType] }
 protocol __suppress_context__GetterOwner { func getSuppressContext() -> PyObject }
 protocol __suppress_context__SetterOwner { func setSuppressContext(_ value: PyObject?) -> PyResult<()> }
 protocol __text_signature__GetterOwner { func getTextSignature() -> String? }

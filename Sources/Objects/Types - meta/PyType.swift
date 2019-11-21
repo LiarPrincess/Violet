@@ -14,7 +14,7 @@ internal class PyTypeWeakRef {
   }
 }
 
-public final class PyType: PyObject, AttributesOwner {
+public final class PyType: PyObject {
 
   internal static let doc: String = """
     type(object_or_name, bases, dict)
@@ -103,7 +103,7 @@ public final class PyType: PyObject, AttributesOwner {
     }
   }
 
-  internal func setName(_ value: PyObject) -> PyResult<()> {
+  internal func setName(_ value: PyObject?) -> PyResult<()> {
     return .typeError("can't set \(self._name).__name__")
   }
 
@@ -114,7 +114,7 @@ public final class PyType: PyObject, AttributesOwner {
     return self.getName()
   }
 
-  internal func setQualname(_ value: PyObject) -> PyResult<()> {
+  internal func setQualname(_ value: PyObject?) -> PyResult<()> {
     return .typeError("can't set \(self._name).__qualname__")
   }
 
@@ -141,7 +141,7 @@ public final class PyType: PyObject, AttributesOwner {
     return .builtins
   }
 
-  internal func setModule(_ value: PyObject) -> PyResult<()> {
+  internal func setModule(_ value: PyObject?) -> PyResult<()> {
     return .typeError("can't set \(self._name).__module__")
   }
 
@@ -152,7 +152,7 @@ public final class PyType: PyObject, AttributesOwner {
     return self._bases
   }
 
-  internal func setBases(_ value: PyObject) -> PyResult<()> {
+  internal func setBases(_ value: PyObject?) -> PyResult<()> {
     return .typeError("can't set \(self._name).__bases__")
   }
 

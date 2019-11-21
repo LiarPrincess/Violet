@@ -1,10 +1,4 @@
-/// For types that have `__dict__`.
-internal protocol AttributesOwner {
-  var _attributes: Attributes { get }
-}
-
 /// Dictionary used for `__dict__`.
-/// Basically a Swift Dictionary, but as a reference type.
 public final class Attributes {
 
   private var values = [String:PyObject]()

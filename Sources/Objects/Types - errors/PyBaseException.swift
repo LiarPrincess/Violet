@@ -6,7 +6,7 @@ import Core
 // https://docs.python.org/3.7/c-api/exceptions.html
 
 // sourcery: pyerrortype = BaseException
-internal class PyBaseException: PyObject, AttributesOwner {
+internal class PyBaseException: PyObject {
 
   internal class var doc: String {
     return "Common base class for all exceptions"

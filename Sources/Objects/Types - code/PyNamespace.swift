@@ -2,7 +2,7 @@
 // Objects -> namespaceobject.c
 
 // sourcery: pytype = types.SimpleNamespace
-public final class PyNamespace: PyObject, AttributesOwner {
+public final class PyNamespace: PyObject {
 
   internal static let doc: String = """
     A simple attribute-based namespace.

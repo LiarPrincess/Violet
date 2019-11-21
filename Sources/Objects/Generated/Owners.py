@@ -1,6 +1,11 @@
 import os
 import sys
 
+ignored_methods = [
+  # 'pop' has different definitions in different types
+  'pop'
+]
+
 # ----
 # File
 # ----
@@ -15,7 +20,7 @@ class Line:
 
 def read_input_file() -> [Line]:
   dir_path = os.path.dirname(__file__)
-  input_file =  os.path.join(dir_path, 'Owners.tmp')
+  input_file = os.path.join(dir_path, 'Owners.tmp')
 
   result = []
   with open(input_file, 'r') as reader:
@@ -28,8 +33,15 @@ def read_input_file() -> [Line]:
       line_split = line.split('|')
       assert len(line_split) == 5
 
-      entry = Line(line_split[0], line_split[1], line_split[2], line_split[3], line_split[4])
-      result.append(entry)
+      type_name = line_split[0]
+      base_type_name = line_split[1]
+      operation = line_split[2]
+      python_name = line_split[3]
+      swift_signature = line_split[4]
+
+      if python_name not in ignored_methods:
+        entry = Line(type_name, base_type_name, operation, python_name, swift_signature)
+        result.append(entry)
 
   return result
 

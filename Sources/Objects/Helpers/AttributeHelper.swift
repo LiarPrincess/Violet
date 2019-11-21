@@ -31,8 +31,8 @@ internal enum AttributeHelper {
       }
     }
 
-    if let attribOwner = object as? AttributesOwner,
-       let value = attribOwner._attributes.get(key: name) {
+    if let attribOwner = object as? __dict__GetterOwner,
+       let value = attribOwner.dict().get(key: name) {
       return .value(value)
     }
 
@@ -91,11 +91,13 @@ internal enum AttributeHelper {
       }
     }
 
-    if let attribOwner = object as? AttributesOwner {
+    if let owner = object as? __dict__GetterOwner {
+      let dict = owner.dict()
+
       if let value = value {
-        attribOwner._attributes.set(key: name, to: value)
+        dict.set(key: name, to: value)
       } else {
-        attribOwner._attributes.del(key: name)
+        dict.del(key: name)
       }
       return .value(object.builtins.none)
     }

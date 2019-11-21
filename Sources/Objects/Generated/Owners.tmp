@@ -11,6 +11,27 @@
 
 
 
+PyType|PyObject|get|__name__|getName() -> String
+PyType|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__qualname__|getQualname() -> String
+PyType|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__module__|getModule() -> PyResult<String>
+PyType|PyObject|set|__module__|setModule(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__bases__|getBases() -> [PyType]
+PyType|PyObject|set|__bases__|setBases(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__dict__|dict() -> Attributes
+PyType|PyObject|get|__class__|getClass() -> PyType
+
+PyType|PyObject|func|__repr__|repr() -> PyResult<String>
+PyType|PyObject|func|__subclasses__|getSubclasses() -> [PyType]
+PyType|PyObject|func|__instancecheck__|isInstance(of type: PyObject) -> PyResult<Bool>
+PyType|PyObject|func|__subclasscheck__|isSubclass(of type: PyObject) -> PyResult<Bool>
+PyType|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
+PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
+PyType|PyObject|func|__dir__|dir() -> DirResult
+
+
 PyBool|PyInt|get|__class__|getClass() -> PyType
 
 PyBool|PyInt|func|__repr__|repr() -> PyResult<String>
@@ -108,6 +129,7 @@ PyDict|PyObject|func|clear|clear() -> PyResult<PyNone>
 PyDict|PyObject|func|get|get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                           default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|copy|copy() -> PyObject
+PyDict|PyObject|func|pop|pop(_ index: PyObject,                    default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|popitem|popitem() -> PyResult<PyObject>
 
 PyEllipsis|PyObject|get|__class__|getClass() -> PyType
@@ -382,6 +404,7 @@ PySet|PyObject|func|remove|remove(_ value: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|discard|discard(_ value: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|clear|clear() -> PyResult<PyNone>
 PySet|PyObject|func|copy|copy() -> PyObject
+PySet|PyObject|func|pop|pop() -> PyResult<PyObject>
 
 PySlice|PyObject|get|__class__|getClass() -> PyType
 

@@ -4,7 +4,7 @@ import Bytecode
 // Objects -> funcobject.c
 
 // sourcery: pytype = function
-internal final class PyFunction: PyObject, AttributesOwner {
+internal final class PyFunction: PyObject {
 
   internal static let doc: String = """
     function(code, globals, name=None, argdefs=None, closure=None)

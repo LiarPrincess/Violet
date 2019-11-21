@@ -310,7 +310,8 @@ extension Builtins {
                             right: PyObject) -> PyResult<PyObject> {
     let l = left.typeName
     let r = right.typeName
-    return .typeError("'\(op)' not supported between instances of '\(l)' and '\(r)'")
+    let msg = "'\(op)' not supported between instances of '\(l)' and '\(r)'"
+    return .typeError(msg)
   }
 
   private func compareResultAsBool(_ result: PyResult<PyObject>) -> PyResult<Bool> {
