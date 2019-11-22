@@ -7,13 +7,20 @@ extension String: PyHashable {
     var selfValue = selfIter.next()
     var otherValue = otherIter.next()
 
-    while selfValue == otherValue {
+    while let s = selfValue, let o = otherValue {
+      if s != o {
+        return .value(false)
+      }
+
       selfValue = selfIter.next()
       otherValue = otherIter.next()
     }
 
-    // If both are `nil` then the strings are equal
-    return .value(selfValue == otherValue)
+    // One (or both) of the values is nil (which means that we arrived to end)
+    let isSelfEnd = selfValue == nil
+    let isOtherEnd = otherValue == nil
+    let isCountEqual = isSelfEnd && isOtherEnd
+    return .value(isCountEqual)
   }
 }
 

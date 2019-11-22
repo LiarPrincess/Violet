@@ -9,12 +9,6 @@ import Core
 // sourcery: pytype = str
 /// Textual data in Python is handled with str objects, or strings.
 /// Strings are immutable sequences of Unicode code points.
-///
-/// Everything here is 'best-efford'
-///
-/// We work on scalars (Unicode code points) instead of graphemes because:
-/// - len("Cafe\u0301") = 5 (Swift: "Cafe\u{0301}".unicodeScalars.count)
-/// - len("Café")       = 4 (Swift: "Café".unicodeScalars.count)
 public class PyString: PyObject {
 
   internal static let doc = """
@@ -30,13 +24,16 @@ public class PyString: PyObject {
     errors defaults to 'strict'.
     """
 
-  internal let value: String
-  internal lazy var scalars = self.value.unicodeScalars
+  internal let data: PyStringData
+
+  internal var value: String {
+    return self.data.value
+  }
 
   // MARK: - Init
 
   internal init(_ context: PyContext, value: String) {
-    self.value = value
+    self.data = PyStringData(value)
     super.init(type: context.builtins.types.str)
   }
 
@@ -88,96 +85,33 @@ public class PyString: PyObject {
     return self.compare(other).map { $0 == .greater || $0 == .equal }
   }
 
-  private enum CompareResult {
-    case less
-    case greater
-    case equal
-  }
+  private typealias CompareResult = StringCompareResult
 
-  private func compare(_ other: PyObject) -> PyResultOrNot<CompareResult> {
+  private func compare(_ other: PyObject) -> PyResultOrNot<StringCompareResult> {
     guard let other = other as? PyString else {
       return .notImplemented
     }
 
-    return .value(self.compare(other.value))
-  }
-
-  private func compare(_ other: String) -> CompareResult {
-    // "Cafe\u0301" == "Café" (Caf\u00E9) -> False
-    // "Cafe\u0301" <  "Café" (Caf\u00E9) -> True
-    let lScalars = self.scalars
-    let rScalars = other.unicodeScalars
-
-    for (l, r) in zip(lScalars, rScalars) {
-      if l.value < r.value {
-        return .less
-      }
-      if l.value > r.value {
-        return .greater
-      }
-    }
-
-    let lCount = lScalars.count
-    let rCount = rScalars.count
-    return lCount < rCount ? .less :
-           lCount > rCount ? .greater :
-           .equal
+    return .value(self.data.compare(to: other.data))
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    return .value(HashHelper.hash(self.value))
+    return .value(self.data.hash)
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    // Compute length of output, quote characters and maximum character
-    var singleQuoteCount = 0
-    var doubleQuoteCount = 0
-    for c in self.value {
-      switch c {
-      case "'":  singleQuoteCount += 1
-      case "\"": doubleQuoteCount += 1
-      default:   break
-      }
-    }
-
-    // Use single quote if equal
-    let quote: Character = doubleQuoteCount > singleQuoteCount ? "\"" : "'"
-
-    var result = String(quote)
-    result.reserveCapacity(self.value.count)
-
-    for c in self.value {
-      switch c {
-      case quote, "\\":
-        result.append("\\")
-        result.append(c)
-      case "\n":
-        result.append("\\")
-        result.append("n")
-      case "\t":
-        result.append("\\")
-        result.append("t")
-      case "\r":
-        result.append("\\")
-        result.append("r")
-      default:
-        result.append(c)
-      }
-    }
-    result.append(quote)
-
-    return .value(result)
+    return .value(self.data.repr)
   }
 
   // sourcery: pymethod = __str__
   internal func str() -> PyResult<String> {
-    return .value(self.value)
+    return .value(self.data.str)
   }
 
   // MARK: - Class
@@ -198,39 +132,27 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    // len("Cafe\u0301") -> 5
-    // len("Café")       -> 4
-    return BigInt(self.scalars.count)
+    return BigInt(self.data.count)
   }
 
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
-    // In Python: "\u00E9" in "Cafe\u0301" -> False
-    // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
-    // which is 'e with acute (as a single char)' in 'Cafe{accent}'
-
     guard let elementString = element as? PyString else {
       return .typeError(
         "'in <string>' requires string as left operand, not \(element.typeName)"
       )
     }
 
-    switch self.find(in: self.scalars, value: elementString.value) {
-    case .index:
-      return .value(true)
-    case .notFound:
-      return .value(false)
-    }
+    return .value(self.data.contains(elementString.data))
   }
 
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    let result = SequenceHelper.getItem(context: self.context,
-                                        elements: self.scalars,
+    let result = SequenceHelper.getItem(elements: self.data.scalars,
                                         index: index,
                                         typeName: "string")
 
@@ -254,28 +176,9 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = isalnum, doc = isalnumDoc
-  /// Return true if all characters in the string are alphanumeric
-  /// and there is at least one characte.
-  /// A character c is alphanumeric if one of the following returns True:
-  /// c.isalpha(), c.isdecimal(), c.isdigit(), or c.isnumeric()
-  /// https://docs.python.org/3/library/stdtypes.html#str.isalnum
   internal func isAlphaNumeric() -> Bool {
-    return self.scalars.any && self.scalars.allSatisfy { scalar in
-      let properties = scalar.properties
-      let category = properties.generalCategory
-      return PyString.alphaCategories.contains(category)
-        || category == .decimalNumber
-        || properties.numericType != nil
-    }
+    return self.data.isAlphaNumeric
   }
-
-  private static let alphaCategories: Set<Unicode.GeneralCategory> = Set([
-    .modifierLetter, // Lm
-    .titlecaseLetter, // Lt
-    .uppercaseLetter, // Lu
-    .lowercaseLetter, // Ll
-    .otherLetter // Lo
-  ])
 
   internal static let isalphaDoc = """
     Return True if the string is an alphabetic string, False otherwise.
@@ -285,17 +188,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = isalpha, doc = isalphaDoc
-  /// Return true if all characters in the string are alphabetic
-  /// and there is at least one character.
-  /// Alphabetic characters are those characters defined in the Unicode character
-  /// database as “Letter”, i.e., those with general category property
-  /// being one of “Lm”, “Lt”, “Lu”, “Ll”, or “Lo”.
-  /// https://docs.python.org/3/library/stdtypes.html#str.isalpha
   internal func isAlpha() -> Bool {
-    return self.scalars.any && self.scalars.allSatisfy { scalar in
-      let category = scalar.properties.generalCategory
-      return PyString.alphaCategories.contains(category)
-    }
+    return self.data.isAlpha
   }
 
   internal static let isasciiDoc = """
@@ -306,11 +200,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = isascii, doc = isasciiDoc
-  /// Return true if the string is empty or all characters in the string are ASCII.
-  /// ASCII characters have code points in the range U+0000-U+007F.
-  /// https://docs.python.org/3/library/stdtypes.html#str.isascii
   internal func isAscii() -> Bool {
-    return self.scalars.any && self.scalars.allSatisfy { $0.isASCII }
+    return self.data.isAscii
   }
 
   internal static let isdecimalDoc = """
@@ -321,14 +212,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = isdecimal, doc = isdecimalDoc
-  /// Return true if all characters in the string are decimal characters
-  /// and there is at least one character.
-  /// Formally a decimal character is a character in the Unicode General
-  /// Category “Nd”.
-  /// https://docs.python.org/3/library/stdtypes.html#str.isdecimal
   internal func isDecimal() -> Bool {
-    return self.scalars.any &&
-      self.scalars.allSatisfy { $0.properties.generalCategory == .decimalNumber }
+    return self.data.isDecimal
   }
 
   internal static let isdigitDoc = """
@@ -339,19 +224,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = isdigit, doc = isdigitDoc
-  /// Return true if all characters in the string are digits
-  /// and there is at least one character.
-  /// Formally, a digit is a character that has the property value
-  /// Numeric_Type=Digit or Numeric_Type=Decimal.
-  /// https://docs.python.org/3/library/stdtypes.html#str.isdigit
   internal func isDigit() -> Bool {
-    return self.scalars.any && self.scalars.allSatisfy { scalar in
-      guard let numericType = scalar.properties.numericType else {
-        return false
-      }
-
-      return numericType == .digit || numericType == .decimal
-    }
+    return self.data.isDigit
   }
 
   internal static let isidentifierDoc = """
@@ -362,14 +236,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = isidentifier, doc = isidentifierDoc
-  /// https://docs.python.org/3/library/stdtypes.html#str.isidentifier
   internal func isIdentifier() -> Bool {
-    switch self.scalars.isValidIdentifier {
-    case .yes:
-      return true
-    case .no, .emptyString:
-      return false
-    }
+    return self.data.isIdentifier
   }
 
   internal static let islowerDoc = """
@@ -380,16 +248,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = islower, doc = islowerDoc
-  /// Return true if all cased characters 4 in the string are lowercase
-  /// and there is at least one cased character.
-  /// https://docs.python.org/3/library/stdtypes.html#str.islower
   internal func isLower() -> Bool {
-    // If the character does not have case then True, for example:
-    // "a\u02B0b".islower() -> True
-    return self.scalars.any && self.scalars.allSatisfy { scalar in
-      let properties = scalar.properties
-      return !properties.isCased || properties.isLowercase
-    }
+    return self.data.isLower
   }
 
   internal static let isnumericDoc = """
@@ -400,14 +260,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = isnumeric, doc = isnumericDoc
-  /// Return true if all characters in the string are numeric characters,
-  /// and there is at least one character.
-  /// Formally, numeric characters are those with the property value
-  /// Numeric_Type=Digit, Numeric_Type=Decimal or Numeric_Type=Numeric.
-  /// https://docs.python.org/3/library/stdtypes.html#str.isnumeric
   internal func isNumeric() -> Bool {
-    return self.scalars.any &&
-      self.scalars.allSatisfy { $0.properties.numericType != nil }
+    return self.data.isNumeric
   }
 
   internal static let isprintableDoc = """
@@ -418,45 +272,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = isprintable, doc = isprintableDoc
-  /// Return true if all characters in the string are printable
-  /// or the string is empty.
-  ///
-  /// Nonprintable characters are those characters defined in the Unicode
-  /// character database as “Other” or “Separator”,
-  /// excepting the ASCII space (0x20) which is considered printable.
-  ///
-  /// All characters except those characters defined in the Unicode character
-  /// database as following categories are considered printable.
-  ///    * Cc (Other, Control)
-  ///    * Cf (Other, Format)
-  ///    * Cs (Other, Surrogate)
-  ///    * Co (Other, Private Use)
-  ///    * Cn (Other, Not Assigned)
-  ///    * Zl Separator, Line ('\u2028', LINE SEPARATOR)
-  ///    * Zp Separator, Paragraph ('\u2029', PARAGRAPH SEPARATOR)
-  ///    * Zs (Separator, Space) other than ASCII space('\x20').
-  /// https://docs.python.org/3/library/stdtypes.html#str.isprintable
   internal func isPrintable() -> Bool {
-    return self.scalars.any && self.scalars.allSatisfy { scalar in
-      let space = 32
-      if scalar.value == space {
-        return true
-      }
-
-      switch scalar.properties.generalCategory {
-      case .control, // Cc
-           .format, // Cf
-           .surrogate, // Cs
-           .privateUse, // Co
-           .unassigned, // Cn
-           .lineSeparator, // Zl
-           .paragraphSeparator, // Zp
-           .spaceSeparator: // Zs
-        return false
-      default:
-        return true
-      }
-    }
+    return self.data.isPrintable
   }
 
   internal static let isspaceDoc = """
@@ -467,18 +284,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = isspace, doc = isspaceDoc
-  /// Return true if there are only whitespace characters in the string
-  /// and there is at least one character.
-  /// A character is whitespace if in the Unicode character database:
-  /// - its general category is Zs (“Separator, space”)
-  /// - or its bidirectional class is one of WS, B, or S
-  /// https://docs.python.org/3/library/stdtypes.html#str.isspace
   internal func isSpace() -> Bool {
-    return self.scalars.any && self.scalars.allSatisfy {
-        $0.properties.generalCategory == .spaceSeparator
-        ||
-        Unicode.bidiClass_ws_b_s.contains($0.value)
-    }
+    return self.data.isSpace
   }
 
   internal static let istitleDoc = """
@@ -489,37 +296,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = istitle, doc = istitleDoc
-  /// Return true if the string is a titlecased string and there is at least
-  /// one character, for example uppercase characters may only follow uncased
-  /// characters and lowercase characters only cased ones.
-  /// https://docs.python.org/3/library/stdtypes.html#str.istitle
   internal func isTitle() -> Bool {
-    var cased = false
-    var isPreviousCased = false
-    for scalar in self.scalars {
-      switch scalar.properties.generalCategory {
-      case .lowercaseLetter:
-        if !isPreviousCased {
-          return false
-        }
-
-        isPreviousCased = true
-        cased = true
-
-      case .uppercaseLetter, .titlecaseLetter:
-        if isPreviousCased {
-          return false
-        }
-
-        isPreviousCased = true
-        cased = true
-
-      default:
-        isPreviousCased = false
-      }
-    }
-
-    return cased
+    return self.data.isTitle
   }
 
   internal static let isupperDoc = """
@@ -534,10 +312,7 @@ public class PyString: PyObject {
   /// and there is at least one cased character.
   /// https://docs.python.org/3/library/stdtypes.html#str.isupper
   internal func isUpper() -> Bool {
-    return self.scalars.any && self.scalars.allSatisfy { scalar in
-      let properties = scalar.properties
-      return !properties.isCased || properties.isUppercase
-    }
+    return self.data.isUpper
   }
 
   // MARK: - Starts/ends with
@@ -559,36 +334,33 @@ public class PyString: PyObject {
   internal func startsWith(_ element: PyObject,
                            start: PyObject?,
                            end: PyObject?) -> PyResult<Bool> {
-    // "e\u0301".startswith("é") -> False
-
-    let substring: String.UnicodeScalarView.SubSequence
+    let substring: PyStringDataSlice
     switch self.getSubstring(start: start, end: end) {
     case let .value(v): substring = v
     case let .error(e): return .error(e)
     }
 
+    if let string = element as? PyString {
+      return .value(substring.starts(with: string.data))
+    }
+
     if let tuple = element as? PyTuple {
       for element in tuple.elements {
         guard let string = element as? PyString else {
-          return .typeError(
-            "tuple for startswith must only contain str, not \(element.typeName)"
-          )
+          let t = element.typeName
+          return .typeError("tuple for startswith must only contain str, not \(t)")
         }
 
-        if substring.starts(with: string.value.unicodeScalars) {
+        if substring.starts(with: string.data) {
           return .value(true)
         }
       }
+
+      return .value(false)
     }
 
-    if let string = element as? PyString,
-      substring.starts(with: string.value.unicodeScalars) {
-      return .value(true)
-    }
-
-    return .typeError(
-      "startswith first arg must be str or a tuple of str, not \(element.typeName)"
-    )
+    let t = element.typeName
+    return .typeError("startswith first arg must be str or a tuple of str, not \(t)")
   }
 
   internal static let endswithDoc = """
@@ -608,36 +380,33 @@ public class PyString: PyObject {
   internal func endsWith(_ element: PyObject,
                          start: PyObject?,
                          end: PyObject?) -> PyResultOrNot<Bool> {
-    // "e\u0301".endswith("é") -> False
-
-    let substring: String.UnicodeScalarView.SubSequence
+    let substring: PyStringDataSlice
     switch self.getSubstring(start: start, end: end) {
     case let .value(v): substring = v
     case let .error(e): return .error(e)
     }
 
+    if let string = element as? PyString {
+      return .value(substring.ends(with: string.data))
+    }
+
     if let tuple = element as? PyTuple {
       for element in tuple.elements {
         guard let string = element as? PyString else {
-          return .typeError(
-            "tuple for endswith must only contain str, not \(element.typeName)"
-          )
+          let t = element.typeName
+          return .typeError("tuple for endswith must only contain str, not \(t)")
         }
 
-        if substring.ends(with: string.value.unicodeScalars) {
+        if substring.ends(with: string.data) {
           return .value(true)
         }
       }
+
+      return .value(false)
     }
 
-    if let string = element as? PyString,
-      substring.ends(with: string.value.unicodeScalars) {
-      return .value(true)
-    }
-
-    return .typeError(
-      "endswith first arg must be str or a tuple of str, not \(element.typeName)"
-    )
+    let t = element.typeName
+    return .typeError("endswith first arg must be str or a tuple of str, not \(t)")
   }
 
   // MARK: - Strip
@@ -652,13 +421,9 @@ public class PyString: PyObject {
   internal func strip(_ chars: PyObject?) -> PyResult<String> {
     switch self.parseStripChars(chars, fnName: "strip") {
     case .whitespace:
-      let tmp = self.lstripWhitespace(in: self.value)
-      let result = self.rstripWhitespace(in: String(tmp))
-      return .value(String(result))
+      return .value(self.data.stripWhitespace())
     case let .chars(set):
-      let tmp = self.lstrip(value: self.value, chars: set)
-      let result = self.rstrip(value: tmp, chars: set)
-      return .value(result)
+      return .value(self.data.strip(chars: set))
     case let .error(e):
       return .error(e)
     }
@@ -674,38 +439,12 @@ public class PyString: PyObject {
   internal func lstrip(_ chars: PyObject) -> PyResult<String> {
     switch self.parseStripChars(chars, fnName: "lstrip") {
     case .whitespace:
-      let result = self.lstripWhitespace(in: self.value)
-      return .value(String(result))
+      return .value(self.data.lstripWhitespace())
     case let .chars(set):
-      let result = self.lstrip(value: self.value, chars: set)
-      return .value(result)
+      return .value(self.data.lstrip(chars: set))
     case let .error(e):
       return .error(e)
     }
-  }
-
-  private func lstripWhitespace(in value: String) -> String.UnicodeScalarView.SubSequence {
-    return value.unicodeScalars.drop { $0.properties.isWhitespace }
-  }
-
-  private func lstrip(value: String, chars: Set<UnicodeScalar>) -> String {
-    let scalars = value.unicodeScalars
-    var index = scalars.startIndex
-
-    while index != scalars.endIndex {
-      if !chars.contains(scalars[index]) {
-        break
-      }
-
-      scalars.formIndex(after: &index)
-    }
-
-    // Avoid `String` allocation
-    if index == scalars.startIndex {
-      return value
-    }
-
-    return String(scalars[index...])
   }
 
   internal static let rstripDoc = """
@@ -718,38 +457,12 @@ public class PyString: PyObject {
   internal func rstrip(_ chars: PyObject) -> PyResult<String> {
     switch self.parseStripChars(chars, fnName: "rstrip") {
     case .whitespace:
-      let result = self.rstripWhitespace(in: self.value)
-      return .value(String(result))
+      return .value(self.data.rstripWhitespace())
     case let .chars(set):
-      let result = self.rstrip(value: self.value, chars: set)
-      return .value(result)
+      return .value(self.data.rstrip(chars: set))
     case let .error(e):
       return .error(e)
     }
-  }
-
-  private func rstripWhitespace(in value: String) -> String.UnicodeScalarView.SubSequence {
-    return value.unicodeScalars.dropLast { $0.properties.isWhitespace }
-  }
-
-  private func rstrip(value: String, chars: Set<UnicodeScalar>) -> String {
-    let scalars = value.unicodeScalars
-    var index = scalars.endIndex
-
-    while index != scalars.startIndex {
-      if !chars.contains(scalars[index]) {
-        break
-      }
-
-      scalars.formIndex(before: &index)
-    }
-
-    // Avoid `String` allocation
-    if index == scalars.endIndex {
-      return value
-    }
-
-    return String(scalars[index...])
   }
 
   private enum StripCharsResult {
@@ -769,7 +482,7 @@ public class PyString: PyObject {
     }
 
     if let charsString = chars as? PyString {
-      return .chars(Set(charsString.value.unicodeScalars))
+      return .chars(Set(charsString.data.scalars))
     }
 
     return .error(
@@ -801,13 +514,13 @@ public class PyString: PyObject {
       return .typeError("find arg must be str, not \(element.typeName)")
     }
 
-    let substring: String.UnicodeScalarView.SubSequence
+    let substring: PyStringDataSlice
     switch self.getSubstring(start: start, end: end) {
-    case let .value(v): substring = v
+    case let .value(s): substring = s
     case let .error(e): return .error(e)
     }
 
-    switch self.find(in: substring, value: elementString.value) {
+    switch substring.find(value: elementString.data) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -837,86 +550,18 @@ public class PyString: PyObject {
       return .typeError("find arg must be str, not \(element.typeName)")
     }
 
-    let substring: String.UnicodeScalarView.SubSequence
+    let substring: PyStringDataSlice
     switch self.getSubstring(start: start, end: end) {
-    case let .value(v): substring = v
+    case let .value(s): substring = s
     case let .error(e): return .error(e)
     }
 
-    switch self.rfind(in: substring, value: elementString.value) {
+    switch substring.rfind(value: elementString.data) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
       return .value(-1)
     }
-  }
-
-  private enum FindResult {
-    case index(index: String.UnicodeScalarIndex, position: Int)
-    case notFound
-  }
-
-  private func find(in scalarsSub: String.UnicodeScalarView.SubSequence,
-                    value: String) -> FindResult {
-    let scalars = String.UnicodeScalarView(scalarsSub)
-    return find(in: scalars, value: value)
-  }
-
-  private func find(in scalars: String.UnicodeScalarView,
-                    value: String) -> FindResult {
-    // There are many good substring algorithms, and we went with this?
-    var position = 0
-    var index = scalars.startIndex
-    let needle = value.unicodeScalars
-
-    while index != scalars.endIndex {
-      let substring = scalars[index...]
-      if substring.starts(with: needle) {
-        return .index(index: index, position: position)
-      }
-
-      position += 1
-      scalars.formIndex(after: &index)
-    }
-
-    return .notFound
-  }
-
-  private func rfind(in scalarsSub: String.UnicodeScalarView.SubSequence,
-                     value: String) -> FindResult {
-    let scalars = String.UnicodeScalarView(scalarsSub)
-    return rfind(in: scalars, value: value)
-  }
-
-  private func rfind(in scalars: String.UnicodeScalarView,
-                     value: String) -> FindResult {
-    if scalars.isEmpty {
-      return .notFound
-    }
-
-    // There are many good substring algorithms, and we went with this?
-    var position = scalars.count - 1
-    var index = scalars.endIndex
-    let needle = value.unicodeScalars
-
-    // `endIndex` is AFTER the collection
-    scalars.formIndex(before: &index)
-
-    while index != scalars.startIndex {
-      let substring = scalars[index...]
-      if substring.starts(with: needle) {
-        return .index(index: index, position: position)
-      }
-
-      position -= 1
-      scalars.formIndex(before: &index)
-    }
-
-    if scalars.starts(with: needle) {
-      return .index(index: index, position: 0)
-    }
-
-    return .notFound
   }
 
   // MARK: - Index
@@ -944,13 +589,13 @@ public class PyString: PyObject {
       return .typeError("index arg must be str, not \(element.typeName)")
     }
 
-    let substring: String.UnicodeScalarView.SubSequence
+    let substring: PyStringDataSlice
     switch self.getSubstring(start: start, end: end) {
-    case let .value(v): substring = v
+    case let .value(s): substring = s
     case let .error(e): return .error(e)
     }
 
-    switch self.find(in: substring, value: elementString.value) {
+    switch substring.find(value: elementString.data) {
     case let .index(index: _, position: position):
       return .value(BigInt(position))
     case .notFound:
@@ -980,13 +625,13 @@ public class PyString: PyObject {
        return .typeError("rindex arg must be str, not \(element.typeName)")
      }
 
-    let substring: String.UnicodeScalarView.SubSequence
+    let substring: PyStringDataSlice
     switch self.getSubstring(start: start, end: end) {
-    case let .value(v): substring = v
+    case let .value(s): substring = s
     case let .error(e): return .error(e)
     }
 
-    switch self.rfind(in: substring, value: elementString.value) {
+    switch substring.rfind(value: elementString.data) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -998,162 +643,101 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = lower
   internal func lower() -> String {
-    return self.value.lowercased()
+    return self.data.lowerCased()
   }
 
   // sourcery: pymethod = upper
   internal func upper() -> String {
-    return self.value.uppercased()
+    return self.data.upperCased()
   }
 
   // sourcery: pymethod = title
   internal func title() -> String {
-    var result = ""
-    var isPreviousCased = false
-
-    for scalar in self.scalars {
-      let properties = scalar.properties
-
-      switch properties.generalCategory {
-      case .lowercaseLetter:
-        if isPreviousCased {
-          result.append(properties.titlecaseMapping)
-        } else {
-          result.append(scalar)
-        }
-        isPreviousCased = true
-
-      case .uppercaseLetter, .titlecaseLetter:
-        if isPreviousCased {
-          result.append(properties.lowercaseMapping)
-        } else {
-          result.append(scalar)
-        }
-        isPreviousCased = true
-
-      default:
-        isPreviousCased = false
-        result.append(scalar)
-      }
-    }
-
-    return result
+    return self.data.titleCased()
   }
 
   // sourcery: pymethod = swapcase
   internal func swapcase() -> String {
-    var result = ""
-    for scalar in self.scalars {
-      let properties = scalar.properties
-      if properties.isLowercase {
-        result.append(properties.uppercaseMapping)
-      } else if properties.isUppercase {
-        result.append(properties.lowercaseMapping)
-      } else {
-        result.append(scalar)
-      }
-    }
-    return result
+    return self.data.swapCase()
   }
 
   // sourcery: pymethod = casefold
   internal func casefold() -> String {
-    var result = ""
-    for scalar in self.scalars {
-      if let mapping = Unicode.caseFoldMapping[scalar.value] {
-        result.append(mapping)
-      } else {
-        result.append(scalar)
-      }
-    }
-    return result
+    return self.data.caseFold()
   }
 
   // sourcery: pymethod = capitalize
   internal func capitalize() -> String {
-    // Capitalize only first scalar:
-    // list("e\u0301".capitalize()) -> ['E', '́']
-
-    guard let first = self.scalars.first else {
-      return self.value
-    }
-
-    let head = first.properties.titlecaseMapping
-    let tail = String(self.scalars.dropFirst()).lowercased()
-    return head + tail
+    return self.data.capitalize()
   }
 
-  // MARK: - Just
+  // MARK: - Center, just
 
   // sourcery: pymethod = center
   internal func center(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
-    guard let widthInt = width as? PyInt else {
-      return .typeError("ljust width arg must be int, not \(width.typeName)")
+    let parsedWidth: Int
+    switch self.parseJustWidth(width, fnName: "center") {
+    case let .value(w): parsedWidth = w
+    case let .error(e): return .error(e)
     }
 
-    guard let width = Int(exactly: widthInt.value) else {
-      return .overflowError("ljust width is too large")
-    }
-
-    var fill: UnicodeScalar = " "
-    switch self.parseJustFillChar(fillChar, fnName: "ljust") {
-    case .default: break
+    let fill: UnicodeScalar
+    switch self.parseJustFillChar(fillChar, fnName: "center") {
+    case .default: fill = " "
     case let .value(s): fill  = s
     case let .error(e): return .error(e)
     }
 
-    /// CPython: marg
-    let count = width - self.scalars.count
-    guard count > 0 else {
-      // swiftlint:disable:previous empty_count
-      return .value(self.value)
-    }
-
-    let left = count / 2 + (count & width & 1)
-    let right = count - left
-    return .value(self.pad(left: left, right: right, fill: fill))
+    return .value(self.data.center(width: parsedWidth, fill: fill))
   }
 
   // sourcery: pymethod = ljust
   internal func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
-    guard let widthInt = width as? PyInt else {
-      return .typeError("ljust width arg must be int, not \(width.typeName)")
+    let parsedWidth: Int
+    switch self.parseJustWidth(width, fnName: "ljust") {
+    case let .value(w): parsedWidth = w
+    case let .error(e): return .error(e)
     }
 
-    guard let width = Int(exactly: widthInt.value) else {
-      return .overflowError("ljust width is too large")
-    }
-
-    var fill: UnicodeScalar = " "
+    let fill: UnicodeScalar
     switch self.parseJustFillChar(fillChar, fnName: "ljust") {
-    case .default: break
+    case .default: fill = " "
     case let .value(s): fill  = s
     case let .error(e): return .error(e)
     }
 
-    let count = width - self.scalars.count
-    return .value(self.pad(left: 0, right: count, fill: fill))
+    return .value(self.data.ljust(width: parsedWidth, fill: fill))
   }
 
   // sourcery: pymethod = rjust
   internal func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
-    guard let widthInt = width as? PyInt else {
-      return .typeError("rjust width arg must be int, not \(width.typeName)")
+    let parsedWidth: Int
+    switch self.parseJustWidth(width, fnName: "rjust") {
+    case let .value(w): parsedWidth = w
+    case let .error(e): return .error(e)
     }
 
-    guard let width = Int(exactly: widthInt.value) else {
-      return .overflowError("rjust width is too large")
-    }
-
-    var fill: UnicodeScalar = " "
+    let fill: UnicodeScalar
     switch self.parseJustFillChar(fillChar, fnName: "rjust") {
-    case .default: break
+    case .default: fill = " "
     case let .value(s): fill  = s
     case let .error(e): return .error(e)
     }
 
-    let count = width - self.scalars.count
-    return .value(self.pad(left: count, right: 0, fill: fill))
+    return .value(self.data.rjust(width: parsedWidth, fill: fill))
+  }
+
+  private func parseJustWidth(_ width: PyObject,
+                              fnName: String) -> PyResult<Int> {
+    guard let pyInt = width as? PyInt else {
+      return .typeError("\(fnName) width arg must be int, not \(width.typeName)")
+    }
+
+    guard let int = Int(exactly: pyInt.value) else {
+      return .overflowError("\(fnName) width is too large")
+    }
+
+    return .value(int)
   }
 
   private enum JustFillChar {
@@ -1162,263 +746,96 @@ public class PyString: PyObject {
     case error(PyErrorEnum)
   }
 
-  private func parseJustFillChar(_ fillChar: PyObject?, fnName: String) -> JustFillChar {
+  private func parseJustFillChar(_ fillChar: PyObject?,
+                                 fnName: String) -> JustFillChar {
     guard let fillChar = fillChar else {
       return .default
     }
 
-    guard let fillCharString = fillChar as? PyString else {
-      return .error(
-        .typeError("ljust fillchar arg must be str, not \(fillChar.typeName)")
-      )
+    guard let pyString = fillChar as? PyString else {
+      let msg = "\(fnName) fillchar arg must be str, not \(fillChar.typeName)"
+      return .error(.typeError(msg))
     }
 
-    let scalars = fillCharString.value.unicodeScalars
+    let scalars = pyString.data.scalars
     guard let first = scalars.first, scalars.count == 1 else {
-      return .error(
-        .valueError("The fill character must be exactly one character long")
-      )
+      let msg = "The fill character must be exactly one character long"
+      return .error(.valueError(msg))
     }
 
     return .value(first)
   }
 
-  private func pad(left: Int, right: Int, fill: UnicodeScalar) -> String {
-    // Fast path to avoid allocation
-    guard left > 0 || right > 0 else {
-      return self.value
-    }
-
-    var result = [UnicodeScalar]()
-
-    if left > 0 {
-      result = Array(repeating: fill, count: left)
-    }
-
-    result.append(contentsOf: self.scalars)
-
-    if right > 0 {
-      result.append(contentsOf: Array(repeating: fill, count: right))
-    }
-
-    return String(result)
-  }
-
   // MARK: - Split
-
-  // TODO: Really, really test this. (Objects/stringlib/split.h)
 
   // sourcery: pymethod = split
   internal func split(separator: PyObject?,
                       maxCount: PyObject?) -> PyResult<[String]> {
-    var sep: String
+    var sep: PyStringData
     switch self.parseSplitSeparator(separator) {
     case .whitespace: return self.splitWhitespace(maxCount)
     case let .some(s): sep = s
     case let .error(e): return .error(e)
     }
 
-    var splitCounter: Int
+    var count: Int
     switch self.parseSplitMaxCount(maxCount) {
-    case let .count(c): splitCounter = c
+    case let .count(c): count = c
     case let .error(e): return .error(e)
     }
 
-    var result = [String]()
-    var index = self.scalars.startIndex
-
-    let sepScalars = sep.unicodeScalars
-    let sepCount = sepScalars.count
-
-    while splitCounter > 0 {
-      defer { splitCounter -= 1 }
-
-      // Advance index until the end of the group
-      let groupStart = index
-      while index != self.scalars.endIndex || self.scalars[index...].starts(with: sepScalars) {
-          self.scalars.formIndex(after: &index)
-      }
-
-      if index == self.scalars.endIndex {
-        break
-      }
-
-      // If we start with the `sep` then dont add it, just advance
-      if index != self.scalars.startIndex {
-        result.append(String(self.scalars[groupStart..<index]))
-      }
-
-      // Move index after `sep`
-      index = self.scalars.index(index, offsetBy: sepCount)
-    }
-
-    result.append(String(self.scalars[index...]))
-    return .value(result)
+    return .value(self.data.split(separator: sep, maxCount: count))
   }
 
   private func splitWhitespace(_ maxCount: PyObject?) -> PyResult<[String]> {
-    assert(self.scalars.any)
-
-    if self.scalars.isEmpty {
+    if self.data.isEmpty {
       return .value([])
     }
 
-    var splitCounter: Int
+    var count: Int
     switch self.parseSplitMaxCount(maxCount) {
-    case let .count(c): splitCounter = c
+    case let .count(c): count = c
     case let .error(e): return .error(e)
     }
 
-    var result = [String]()
-    var index = self.scalars.startIndex
-
-    while splitCounter > 0 {
-      defer { splitCounter -= 1 }
-
-      // Consume whitespaces
-      while index != self.scalars.endIndex && self.isWhitespace(self.scalars[index]) {
-        self.scalars.formIndex(after: &index)
-      }
-
-      if index == self.scalars.endIndex {
-        break
-      }
-
-      // Consume group
-      let groupStart = index
-      while index != self.scalars.endIndex && !self.isWhitespace(self.scalars[index]) {
-        self.scalars.formIndex(after: &index)
-      }
-
-      let s = index == self.scalars.endIndex ?
-        self.scalars[groupStart...] :
-        self.scalars[groupStart...index]
-
-      result.append(String(s))
-    }
-
-    if index != self.scalars.endIndex {
-      // Only occurs when maxcount was reached
-      // Skip any remaining whitespace and copy to end of string
-      while index != self.scalars.endIndex && self.isWhitespace(self.scalars[index]) {
-        self.scalars.formIndex(after: &index)
-      }
-
-      if index != self.scalars.endIndex {
-        result.append(String(self.scalars[index...]))
-      }
-    }
-
-    return .value(result)
+    return .value(self.data.splitWhitespace(maxCount: count))
   }
 
   // sourcery: pymethod = rsplit
   internal func rsplit(separator: PyObject?,
                        maxCount: PyObject?) -> PyResult<[String]> {
-    if self.scalars.isEmpty {
+    if self.data.isEmpty {
       return .value([])
     }
 
-    var sep: String
+    var sep: PyStringData
     switch self.parseSplitSeparator(separator) {
     case .whitespace: return self.rsplitWhitespace(maxCount)
     case let .some(s): sep = s
     case let .error(e): return .error(e)
     }
 
-    var splitCounter: Int
+    var count: Int
     switch self.parseSplitMaxCount(maxCount) {
-    case let .count(c): splitCounter = c
+    case let .count(c): count = c
     case let .error(e): return .error(e)
     }
 
-    var result = [String]()
-    var index = self.scalars.endIndex
-    self.scalars.formIndex(before: &index)
-
-    let sepScalars = sep.unicodeScalars
-    let sepCount = sepScalars.count
-
-    while splitCounter > 0 {
-      defer { splitCounter -= 1 }
-
-      // Consume whitespaces
-      let groupEnd = index // Include character at this index!
-      while index != self.scalars.startIndex && !self.scalars[index...].starts(with: sepScalars) {
-        self.scalars.formIndex(before: &index)
-      }
-
-      // Consume group
-      let isAtStartWithSep = index == self.scalars.startIndex
-        && self.scalars[index...].starts(with: sepScalars)
-
-      let groupStart = isAtStartWithSep ?
-        self.scalars.index(index, offsetBy: sepCount) :
-        self.scalars.startIndex
-
-      let s = self.scalars[groupStart...groupEnd]
-      result.append(String(s))
-
-      if index == self.scalars.startIndex {
-        break
-      }
-    }
-
-    return .value(result)
+    return .value(self.data.rsplit(separator: sep, maxCount: count))
   }
 
   private func rsplitWhitespace(_ maxCount: PyObject?) -> PyResult<[String]> {
-    assert(self.scalars.any)
+    if self.data.isEmpty {
+      return .value([])
+    }
 
-    var splitCounter: Int
+    var count: Int
     switch self.parseSplitMaxCount(maxCount) {
-    case let .count(c): splitCounter = c
+    case let .count(c): count = c
     case let .error(e): return .error(e)
     }
 
-    var result = [String]()
-    var index = self.scalars.endIndex
-    self.scalars.formIndex(before: &index)
-
-    while splitCounter > 0 {
-      defer { splitCounter -= 1 }
-
-      // Consume whitespaces
-      while index != self.scalars.startIndex && self.isWhitespace(self.scalars[index]) {
-       self.scalars.formIndex(before: &index)
-      }
-
-      if index == self.scalars.startIndex {
-        break
-      }
-
-      // Consume group
-      let groupEnd = index // Include character at this index!
-      var groupStart = index
-      while index != self.scalars.startIndex && !self.isWhitespace(self.scalars[index]) {
-        groupStart = index // `groupStart` = index to the right of `index`
-        self.scalars.formIndex(before: &index)
-      }
-
-      /// Index may be non-whitespace when we arrive at startIndex
-      let s = self.isWhitespace(self.scalars[index]) ?
-        self.scalars[groupStart...groupEnd] :
-        self.scalars[index...groupEnd]
-
-       result.append(String(s))
-    }
-
-    if index != self.scalars.startIndex {
-      while index != self.scalars.startIndex && self.isWhitespace(self.scalars[index]) {
-       self.scalars.formIndex(before: &index)
-      }
-
-      // Only occurs when maxcount was reached
-      // Skip any remaining whitespace and copy to end of string
-      result.append(String(self.scalars[...index]))
-    }
-
-    return .value(result)
+    return .value(self.data.rsplitWhitespace(maxCount: count))
   }
 
   // sourcery: pymethod = splitlines
@@ -1428,66 +845,12 @@ public class PyString: PyObject {
     }
 
     let keepEnds = keepEndsBool.asBool()
-
-    var result = [String]()
-    var index = self.scalars.startIndex
-
-    while index != self.scalars.endIndex {
-      let groupStart = index
-
-      // Advance 'till line break
-      while index != self.scalars.endIndex && !self.isLineBreak(self.scalars[index]) {
-        self.scalars.formIndex(after: &index)
-      }
-
-      var eol = index
-      if index != self.scalars.endIndex {
-        // Consume CRLF as one line break
-        if let after = self.scalars.index(index,
-                                          offsetBy: 1,
-                                          limitedBy: self.scalars.endIndex),
-          self.scalars[index] == "\r" && self.scalars[after] == "\n" {
-
-          self.scalars.formIndex(after: &index)
-        }
-
-        self.scalars.formIndex(after: &index)
-        if keepEnds {
-          eol = index
-        }
-      }
-
-      result.append(String(self.scalars[groupStart...eol]))
-    }
-
-    return .value(result)
-  }
-
-  private func isWhitespace(_ scalar: UnicodeScalar) -> Bool {
-    return scalar.properties.isWhitespace
-  }
-
-  private static let lineBreaks: Set<UnicodeScalar> = Set([
-    "\n", // \n - Line Feed
-    "\r", // \r - Carriage Return
-    // \r\n - Carriage Return + Line Feed
-    "\u{0b}", // \v or \x0b - Line Tabulation
-    "\u{0c}", // \f or \x0c - Form Feed
-    "\u{1c}", // \x1c - File Separator
-    "\u{1d}", // \x1d - Group Separator
-    "\u{1e}", // \x1e - Record Separator
-    "\u{85}", // \x85 - Next Line (C1 Control Code)
-    "\u{2028}", // \u2028 - Line Separator
-    "\u{2029}" // \u2029 - Paragraph Separator
-  ])
-
-  private func isLineBreak(_ scalar: UnicodeScalar) -> Bool {
-    return PyString.lineBreaks.contains(scalar)
+    return .value(self.data.splitLines(keepEnds: keepEnds))
   }
 
   private enum SplitSeparator {
     case whitespace
-    case some(String)
+    case some(PyStringData)
     case error(PyErrorEnum)
   }
 
@@ -1506,11 +869,11 @@ public class PyString: PyObject {
       )
     }
 
-    if sep.value.isEmpty {
+    if sep.data.isEmpty {
       return .error(.valueError("empty separator"))
     }
 
-    return .some(sep.value)
+    return .some(sep.data)
   }
 
   private enum SplitMaxCount {
@@ -1542,24 +905,8 @@ public class PyString: PyObject {
       return .typeError("sep must be string, not \(separator.typeName)")
     }
 
-    let sep = separatorString.value
-    if sep.isEmpty {
-      return .valueError("empty separator")
-    }
-
-    switch self.find(in: self.scalars, value: sep) {
-    case let .index(index: index, position: _):
-      let sepCount = sep.unicodeScalars.count
-      let afterStart = self.scalars.index(index, offsetBy: sepCount)
-
-      let before = PyString(context, value: self.scalars[..<index])
-      let after  = PyString(context, value: self.scalars[afterStart...])
-      return .value(PyTuple(self.context, elements: [before, separatorString, after]))
-
-    case .notFound:
-      let empty = self.createEmpty()
-      return .value(PyTuple(self.context, elements: [self, empty, empty]))
-    }
+    let result = self.data.partition(separator: separatorString.data)
+    return self.toTuple(separator: separator, result: result)
   }
 
   // sourcery: pymethod = rpartition
@@ -1568,64 +915,35 @@ public class PyString: PyObject {
       return .typeError("sep must be string, not \(separator.typeName)")
     }
 
-    let sep = separatorString.value
-    if sep.isEmpty {
-      return .valueError("empty separator")
-    }
-
-    switch self.rfind(in: self.scalars, value: sep) {
-    case let .index(index: index, position: _):
-      let sepCount = sep.unicodeScalars.count
-      let afterStart = self.scalars.index(index, offsetBy: sepCount)
-
-      let before = PyString(context, value: self.scalars[..<index])
-      let after  = PyString(context, value: self.scalars[afterStart...])
-      return .value(PyTuple(self.context, elements: [before, separatorString, after]))
-
-    case .notFound:
-      let empty = self.createEmpty()
-      return .value(PyTuple(self.context, elements: [self, empty, empty]))
-    }
+    let result = self.data.rpartition(separator: separatorString.data)
+    return self.toTuple(separator: separator, result: result)
   }
 
-  private func createEmpty() -> PyString {
-    return PyString(self.context, value: "")
+  private func toTuple(separator: PyObject,
+                       result: StringPartitionResult) -> PyResult<PyTuple> {
+    switch result {
+    case .notFound:
+      let empty = self.builtins.emptyString
+      return .value(PyTuple(self.context, elements: [self, empty, empty]))
+    case let .triple(before: before, after: after):
+      let b = PyString(self.context, value: String(before))
+      let a = PyString(self.context, value: String(after))
+      return .value(PyTuple(self.context, elements: [b, separator, a]))
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Expand tabs
 
   // sourcery: pymethod = expandtabs
   internal func expandTabs(tabSize: PyObject?) -> PyResult<String> {
-    var tab: Int
     switch self.parseExpandTabsSize(tabSize) {
-    case let .value(v): tab = v
-    case let .error(e): return .error(e)
+    case let .value(v):
+      return .value(self.data.expandTabs(tabSize: v))
+    case let .error(e):
+      return .error(e)
     }
-
-    var result = ""
-    var linePos = 0
-
-    for scalar in self.scalars {
-      switch scalar {
-      case "\t":
-        if tab > 0 {
-
-          let incr = tab - (linePos % tab)
-          linePos += incr
-          result.append(contentsOf: Array(repeating: " ", count: incr))
-        }
-
-      default:
-        linePos += 1
-        result.append(scalar)
-
-        if scalar == "\n" || scalar == "\r" {
-          linePos = 0
-        }
-      }
-    }
-
-    return .value(result)
   }
 
   private func parseExpandTabsSize(_ tabSize: PyObject?) -> PyResult<Int> {
@@ -1667,29 +985,13 @@ public class PyString: PyObject {
       return .typeError("sub arg must be str, not \(element.typeName)")
     }
 
-    let substring: String.UnicodeScalarView.SubSequence
     switch self.getSubstring(start: start, end: end) {
-    case let .value(v): substring = v
-    case let .error(e): return .error(e)
+    case let .value(substring):
+      let result = substring.count(element: elementString.data)
+      return .value(BigInt(result))
+    case let .error(e):
+      return .error(e)
     }
-
-    let elementScalars = elementString.scalars
-    let elementCount = elementScalars.count
-
-    var result = 0
-    var index = substring.startIndex
-
-    while index != substring.endIndex {
-      defer { substring.formIndex(after: &index) }
-
-      let s = substring[index...]
-      if s.starts(with: elementScalars) {
-        result += 1
-        index = substring.index(index, offsetBy: elementCount)
-      }
-    }
-
-    return .value(BigInt(result))
   }
 
   // MARK: - Replace
@@ -1706,33 +1008,15 @@ public class PyString: PyObject {
       return .typeError("new must be str, not \(old.typeName)")
     }
 
-    var remainingCount: Int
+    var parsedCount: Int
     switch self.parseReplaceCount(count) {
-    case let .value(c): remainingCount = c
+    case let .value(c): parsedCount = c
     case let .error(e): return .error(e)
     }
 
-    let oldScalars = oldString.scalars
-    let oldCount = oldScalars.count
-
-    var result = ""
-    var index = self.scalars.startIndex
-
-    while index != self.scalars.endIndex {
-      let s = self.scalars[index...]
-      guard s.starts(with: oldScalars) else {
-        result.append(self.scalars[index])
-        continue
-      }
-
-      result.append(contentsOf: newString.value)
-      index = self.scalars.index(index, offsetBy: oldCount)
-
-      remainingCount -= 1
-      if remainingCount <= 0 {
-        break
-      }
-    }
+    let result = self.data.replace(old: oldString.data,
+                                   new: newString.data,
+                                   count: parsedCount)
 
     return .value(result)
   }
@@ -1753,7 +1037,7 @@ public class PyString: PyObject {
     return .value(int < 0 ? Int.max : int)
   }
 
-  // MARK: - Zfil
+  // MARK: - ZFill
 
   // sourcery: pymethod = zfill
   internal func zfill(width: PyObject) -> PyResult<String> {
@@ -1765,27 +1049,7 @@ public class PyString: PyObject {
       return .overflowError("width is too big")
     }
 
-    let fillCount = width - self.scalars.count
-    guard fillCount > 0 else {
-      return .value(self.value)
-    }
-
-    let padding = String(repeating: "0", count: fillCount)
-    guard let first = self.scalars.first else {
-      return .value(padding)
-    }
-
-    var result = ""
-
-    var withoutSign = self.scalars
-    if first == "+" || first == "-" {
-      result.append(first)
-      withoutSign = String.UnicodeScalarView(self.scalars.dropFirst())
-    }
-
-    result.append(padding)
-    result.unicodeScalars.append(contentsOf: withoutSign)
-    return .value(result)
+    return .value(self.data.zfill(width: width))
   }
 
   // MARK: - Add
@@ -1796,15 +1060,7 @@ public class PyString: PyObject {
       return .typeError("can only concatenate str (not '\(other.typeName)') to str")
     }
 
-    if self.value.isEmpty {
-      return .value(PyString(self.context, value: otherStr.value))
-    }
-
-    if otherStr.value.isEmpty {
-      return .value(PyString(self.context, value: self.value))
-    }
-
-    let result = self.value + otherStr.value
+    let result = self.data.add(otherStr.data)
     return .value(PyString(self.context, value: result))
   }
 
@@ -1820,15 +1076,7 @@ public class PyString: PyObject {
       return .overflowError("repeated string is too long")
     }
 
-    if self.value.isEmpty || int == 1 {
-      return .value(PyString(self.context, value: self.value))
-    }
-
-    var result = ""
-    for _ in 0..<max(int, 0) {
-      result.append(self.value)
-    }
-
+    let result = self.data.mul(int)
     return .value(PyString(self.context, value: result))
   }
 
@@ -1839,31 +1087,29 @@ public class PyString: PyObject {
 
   // MARK: - Helpers
 
-  private func getSubstring(
-    start: PyObject?,
-    end: PyObject?) -> PyResult<String.UnicodeScalarView.SubSequence> {
+  private func getSubstring(start: PyObject?,
+                            end: PyObject?) -> PyResult<PyStringDataSlice> {
 
-    var startIndex = self.scalars.startIndex
+    let startIndex: PyStringData.Index
     switch self.extractIndex(start) {
-    case .none: break
-    case let .index(index): startIndex = index
-    case let .error(e): return .error(e)
+    case .none: startIndex = self.data.startIndex
+    case .index(let index): startIndex = index
+    case .error(let e): return .error(e)
     }
 
-    var endIndex = self.scalars.endIndex
+    var endIndex: PyStringData.Index
     switch self.extractIndex(end) {
-    case .none: break
-    case let .index(index): endIndex = index
-    case let .error(e): return .error(e)
+    case .none: endIndex = self.data.endIndex
+    case .index(let index): endIndex = index
+    case .error(let e): return .error(e)
     }
 
-    let result = self.scalars[startIndex..<endIndex]
-    return .value(result)
+    return .value(self.data.substring(start: startIndex, end: endIndex))
   }
 
   private enum ExtractIndexResult {
     case none
-    case index(String.UnicodeScalarIndex)
+    case index(PyStringData.Index)
     case error(PyErrorEnum)
   }
 
@@ -1879,16 +1125,16 @@ public class PyString: PyObject {
     switch SequenceHelper.getIndex(value) {
     case var .value(index):
       if index < 0 {
-        index += self.scalars.count
+        index += self.data.count
         if index < 0 {
           index = 0
         }
       }
 
-      let start = self.scalars.startIndex
-      let end = self.scalars.endIndex
-      let result = self.scalars.index(start, offsetBy: index, limitedBy: end)
-      return .index(result ?? self.scalars.endIndex)
+      let start = self.data.startIndex
+      let end = self.data.endIndex
+      let result = self.data.index(start, offsetBy: index, limitedBy: end)
+      return .index(result ?? end)
 
     case let .error(e):
       return .error(e)

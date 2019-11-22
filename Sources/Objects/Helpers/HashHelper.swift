@@ -93,6 +93,12 @@ internal enum HashHelper {
     fatalError()
   }
 
+  internal static func hash<Scalars: Collection>(_ value: Scalars) -> PyHash
+    where Scalars.Element == UnicodeScalar {
+
+    fatalError()
+  }
+
   internal static func hash(_ value: ObjectIdentifier) -> PyHash {
 //    Py_hash_t x;
 //    size_t y = (size_t)p;

@@ -1,3 +1,5 @@
+// MARK: - Array
+
 extension Array {
 
   /// Basically: `self.append(element)`
@@ -5,6 +7,8 @@ extension Array {
     self.append(element)
   }
 }
+
+// MARK: - Collection
 
 extension Collection {
 
@@ -27,6 +31,8 @@ extension Collection {
     return result
   }
 }
+
+// MARK: - BidirectionalCollection
 
 extension BidirectionalCollection {
 
@@ -108,6 +114,8 @@ extension BidirectionalCollection {
   }
 }
 
+// MARK: - OptionSet
+
 extension OptionSet {
 
   /// A Boolean value that indicates whether the set has any elements.
@@ -121,6 +129,8 @@ extension OptionSet {
     return self.intersection(other).any
   }
 }
+
+// MARK: - Dictionary
 
 extension Dictionary {
 
@@ -143,12 +153,20 @@ extension Dictionary {
   }
 }
 
+private func takeExisting<Value>(_ existing: Value, _ new: Value) -> Value {
+  return existing
+}
+
+// MARK: - String
+
 extension String {
 
   /// Create String instance from given scalars.
   /// It can produce broken strings such as '\u{0301}' (COMBINING ACUTE ACCENT).
   /// Even if string does look correct it may not have sense, e.g. ' \u{0301}'.
-  public init(_ scalars: [UnicodeScalar]) {
+  public init<Scalars: Collection>(_ scalars: Scalars)
+    where Scalars.Element == UnicodeScalar {
+
     let view = UnicodeScalarView(scalars)
     self.init(view)
   }
@@ -157,6 +175,8 @@ extension String {
     self.unicodeScalars.append(scalar)
   }
 }
+
+// MARK: - UnicodeScalar
 
 extension UnicodeScalar {
 
@@ -183,52 +203,34 @@ extension UnicodeScalar {
   }
 }
 
-extension Substring.UnicodeScalarView {
-  public var isValidIdentifier: IsValidIdentifierResult {
-    return isValidIdentifierImpl(self)
-  }
-}
-
-extension String.UnicodeScalarView {
-  public var isValidIdentifier: IsValidIdentifierResult {
-    return isValidIdentifierImpl(self)
-  }
-}
-
-// MARK: - Helpers
-
-private func takeExisting<Value>(_ existing: Value, _ new: Value) -> Value {
-  return existing
-}
-
 public enum IsValidIdentifierResult {
   case yes
   case no(scalar: UnicodeScalar, column: SourceColumn)
   case emptyString
 }
 
-private func isValidIdentifierImpl<C>(_ scalars: C) -> IsValidIdentifierResult
-  where C: Collection, C.Element == UnicodeScalar {
+extension Collection where Element == UnicodeScalar {
+  public var isValidIdentifier: IsValidIdentifierResult {
+    // Returning single scalar does not make sense (scalars don't have meaning).
+    // We include its index, but not very precise.
+    // Basically everything is 'best efford', because text is hard.
 
-  // Returning single scalar does not make sense (scalars don't have meaning).
-  // We include its index, but not very precise.
-  // Basically everything is 'best efford', because text is hard.
-
-  guard let first = scalars.first else {
-    return .emptyString
-  }
-
-  guard first.isIdentifierStart else {
-    return .no(scalar: first, column: 0)
-  }
-
-  for (index, c) in scalars.dropFirst().enumerated() {
-    guard c.isIdentifierContinue else {
-      let skippedFirst: SourceColumn = 1
-      let column = skippedFirst + SourceColumn(index)
-      return .no(scalar: c, column: column)
+    guard let first = self.first else {
+      return .emptyString
     }
-  }
 
-  return .yes
+    guard first.isIdentifierStart else {
+      return .no(scalar: first, column: 0)
+    }
+
+    for (index, c) in self.dropFirst().enumerated() {
+      guard c.isIdentifierContinue else {
+        let skippedFirst: SourceColumn = 1
+        let column = skippedFirst + SourceColumn(index)
+        return .no(scalar: c, column: column)
+      }
+    }
+
+    return .yes
+  }
 }

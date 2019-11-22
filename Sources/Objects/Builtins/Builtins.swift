@@ -17,6 +17,7 @@ public final class Builtins {
   public lazy var none  = PyNone(self.context)
   public lazy var ellipsis = PyEllipsis(self.context)
   public lazy var emptyTuple = PyTuple(self.context, elements: [])
+  public lazy var emptyString = PyString(self.context, value: "")
   public lazy var notImplemented = PyNotImplemented(self.context)
 
   /// Reusable empty dictionary for `kwargs` argument in a functions.

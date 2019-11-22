@@ -199,7 +199,6 @@ internal enum SequenceHelper {
   }
 
   internal static func getItem<C: Collection>(
-    context: PyContext,
     elements: C,
     index: PyObject,
     typeName: String) -> GetItemResult<C.Element> {
@@ -217,7 +216,7 @@ internal enum SequenceHelper {
     }
 
     if let slice = index as? PySlice {
-      switch getSliceItem(context: context, elements: elements, slice: slice) {
+      switch getSliceItem(elements: elements, slice: slice) {
       case let .value(v): return .slice(v)
       case let .error(e): return .error(e)
       }
@@ -251,7 +250,6 @@ internal enum SequenceHelper {
   }
 
   internal static func getSliceItem<C: Collection>(
-    context: PyContext,
     elements: C,
     slice: PySlice) -> PyResult<[C.Element]> {
 

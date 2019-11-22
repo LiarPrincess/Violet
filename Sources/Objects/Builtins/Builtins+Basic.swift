@@ -44,7 +44,9 @@ extension Builtins {
   // MARK: - String
 
   public func newString(_ value: String) -> PyString {
-    return PyString(self.context, value: value)
+    return value.isEmpty ?
+      self.emptyString :
+      PyString(self.context, value: value)
   }
 
   // MARK: - Module

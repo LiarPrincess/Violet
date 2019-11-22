@@ -173,8 +173,7 @@ public final class PyTuple: PyObject {
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    let result = SequenceHelper.getItem(context: self.context,
-                                        elements: self.elements,
+    let result = SequenceHelper.getItem(elements: self.elements,
                                         index: index,
                                         typeName: "tuple")
 
