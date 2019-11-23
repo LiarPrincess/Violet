@@ -6,7 +6,6 @@ import Core
 // Objects -> longobject.c
 // https://docs.python.org/3.7/c-api/complex.html
 
-// TODO: What on 32 bit systems?
 public typealias PyHash = Int
 
 // For numeric types, the hash of a number x is based on the reduction
@@ -16,22 +15,36 @@ public typealias PyHash = Int
 internal enum HashHelper {
 
   /// Prime multiplier used in string and various other hashes (0xf4243).
-  internal static let _PyHASH_MULTIPLIER: PyHash = 1_000_003
+  internal static let multiplier: PyHash = 1_000_003
   /// Numeric hashes are based on reduction modulo the prime 2**_BITS - 1
-  internal static let _PyHASH_BITS: PyHash = 61
+  internal static let bits: PyHash = 61
 
-  internal static var _PyHASH_MODULUS: PyHash { return ((1 << _PyHASH_BITS) - 1) }
-  internal static var _PyHASH_INF:     PyHash { return 314_159 }
-  internal static var _PyHASH_NAN:     PyHash { return 0 }
-  internal static var _PyHASH_IMAG:    PyHash { return _PyHASH_MULTIPLIER }
-  internal static var PyLong_SHIFT:    PyHash { return 30 }
+  internal static var modulus: PyHash { return ((1 << bits) - 1) }
+  internal static var inf:     PyHash { return 314_159 }
+  internal static var nan:     PyHash { return 0 }
+  internal static var imag:    PyHash { return multiplier }
+  internal static var shift:   PyHash { return 30 }
 
+  /// static Py_hash_t
+  /// long_hash(PyLongObject *v)
+  internal static func hash(_ value: BigInt) -> PyHash {
+    // CPython returns '-2' when the hash is equal to '-1',
+    // as '-1' is reserved for errors.
+    // We don't have to do it.
+
+    let modulus = BigInt(HashHelper.modulus)
+    // swiftlint:disable:next force_unwrapping
+    return PyHash(exactly: value % modulus)!
+  }
+
+  /// Py_hash_t
+  /// _Py_HashDouble(double v)
   internal static func hash(_ value: Double) -> PyHash {
     if !value.isFinite {
       if value.isInfinite {
-        return value > 0 ? _PyHASH_INF : -_PyHASH_INF
+        return value > 0 ? inf : -inf
       } else {
-        return _PyHASH_NAN
+        return nan
       }
     }
 
@@ -48,49 +61,27 @@ internal enum HashHelper {
     // this should work well both for binary and hexadecimal floating point.
     var x: PyHash = 0
     while m > 0 {
-      x = ((x << 28) & _PyHASH_MODULUS) | x >> (_PyHASH_BITS - 28)
+      x = ((x << 28) & modulus) | x >> (bits - 28)
       m *= 268_435_456.0  // 2**28
       e -= 28
       let y = PyHash(m)  // pull out integer part
       m -= Double(y)
       x += y
-      if x >= _PyHASH_MODULUS {
-        x -= _PyHASH_MODULUS
+      if x >= modulus {
+        x -= modulus
       }
     }
 
     // adjust for the exponent; first reduce it modulo BITS
-    let BITS32 = Int32(_PyHASH_BITS)
-    e = e >= 0 ? e % BITS32 : BITS32 - 1 - ((-1 - e) % BITS32)
-    x = ((x << e) & _PyHASH_MODULUS) | x >> (BITS32 - e)
-
-    return sign * x
-  }
-
-  internal static func hash(_ value: BigInt) -> PyHash {
-    let sign: PyHash = value < 0 ? -1 : 1
-    var x: PyHash = 0
-    var i = abs(value)
-
-    while i > 0 {
-      // swiftlint:disable:next force_unwrapping
-      let digit = PyHash(exactly: i % 10)!
-
-      x = ((x << PyLong_SHIFT) & _PyHASH_MODULUS) | (x >> (_PyHASH_BITS - PyLong_SHIFT))
-      x += digit
-      if x >= _PyHASH_MODULUS {
-        x -= _PyHASH_MODULUS
-      }
-
-      // swiftlint:disable:next shorthand_operator
-      i = i / 10
-    }
+    let bits32 = Int32(bits)
+    e = e >= 0 ? e % bits32 : bits32 - 1 - ((-1 - e) % bits32)
+    x = ((x << e) & modulus) | x >> (bits32 - e)
 
     return sign * x
   }
 
   internal static func hash(_ value: String) -> PyHash {
-    fatalError()
+    return HashHelper.hash(value.unicodeScalars)
   }
 
   internal static func hash<Scalars: Collection>(_ value: Scalars) -> PyHash
@@ -110,5 +101,10 @@ internal enum HashHelper {
 //    x = -2;
 //    return x;
     fatalError()
+  }
+
+  // TODO: Remove this
+  private static func separator() {
+    print("-----------------")
   }
 }

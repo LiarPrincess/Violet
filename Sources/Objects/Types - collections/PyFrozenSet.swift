@@ -95,7 +95,7 @@ public final class PyFrozenSet: PyObject {
     // and 'tuple' with the same elements (in the same order) will have
     // the same hash.
     var x: PyHash = 0x345678
-    var mult = HashHelper._PyHASH_MULTIPLIER
+    var mult = HashHelper.multiplier
 
     for entry in self.elements {
       switch self.builtins.hash(entry.key.object) {

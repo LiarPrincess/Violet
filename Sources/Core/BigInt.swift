@@ -171,7 +171,7 @@ public struct BigInt:
   }
 
   public static func > (lhs: BigInt, rhs: BigInt) -> Bool {
-    return rhs.value > lhs.value
+    return lhs.value > rhs.value
   }
 
   public static func > <RHS>(lhs: BigInt, rhs: RHS) -> Bool where RHS: BinaryInteger {

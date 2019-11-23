@@ -83,7 +83,7 @@ public final class PyComplex: PyObject {
   internal func hash() -> PyResultOrNot<PyHash> {
     let realHash = HashHelper.hash(self.real)
     let imagHash = HashHelper.hash(self.imag)
-    return .value(realHash + HashHelper._PyHASH_IMAG * imagHash)
+    return .value(realHash + HashHelper.imag * imagHash)
   }
 
   // MARK: - String
