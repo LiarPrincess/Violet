@@ -9,8 +9,8 @@ class HashInt: XCTestCase {
   // MARK: - Zero
 
   func test_zero_isZero() {
-    XCTAssertEqual(HashHelper.hash(BigInt(+0)), 0)
-    XCTAssertEqual(HashHelper.hash(BigInt(-0)), 0)
+    XCTAssertEqual(self.hash(+0), 0)
+    XCTAssertEqual(self.hash(-0), 0)
   }
 
   // MARK: - Positive
@@ -18,7 +18,7 @@ class HashInt: XCTestCase {
   func test_positive_small_stayTheSame() {
     for value in 1...255 {
       let big = BigInt(value)
-      XCTAssertEqual(HashHelper.hash(big), value)
+      XCTAssertEqual(self.hash(big), value)
     }
   }
 
@@ -31,7 +31,7 @@ class HashInt: XCTestCase {
 
     for value in values {
       let big = BigInt(value)
-      XCTAssertEqual(HashHelper.hash(big), value)
+      XCTAssertEqual(self.hash(big), value)
     }
   }
 
@@ -48,10 +48,10 @@ class HashInt: XCTestCase {
     // 2
 
     let modulus = BigInt(1 << 61)
-    XCTAssertEqual(HashHelper.hash(modulus - 2),  2305843009213693950)
-    XCTAssertEqual(HashHelper.hash(modulus - 1), 0)
-    XCTAssertEqual(HashHelper.hash(modulus + 0), 1)
-    XCTAssertEqual(HashHelper.hash(modulus + 1), 2)
+    XCTAssertEqual(self.hash(modulus - 2),  2305843009213693950)
+    XCTAssertEqual(self.hash(modulus - 1), 0)
+    XCTAssertEqual(self.hash(modulus + 0), 1)
+    XCTAssertEqual(self.hash(modulus + 1), 2)
   }
 
   // MARK: - Negative
@@ -59,14 +59,14 @@ class HashInt: XCTestCase {
   func test_negative_1_isMinus1() {
     // CPython would return '-2'.
     let zero = BigInt(-1)
-    XCTAssertEqual(HashHelper.hash(zero), -1)
+    XCTAssertEqual(self.hash(zero), -1)
   }
 
   func test_negative_small_stayTheSame() {
     for value in 2...255 {
       let negValue = -value
       let big = BigInt(negValue)
-      XCTAssertEqual(HashHelper.hash(big), negValue)
+      XCTAssertEqual(self.hash(big), negValue)
     }
   }
 
@@ -79,7 +79,7 @@ class HashInt: XCTestCase {
 
     for value in values {
       let big = BigInt(value)
-      XCTAssertEqual(HashHelper.hash(big), value)
+      XCTAssertEqual(self.hash(big), value)
     }
   }
 
@@ -98,10 +98,19 @@ class HashInt: XCTestCase {
     // -2305843009213693949
 
     let modulus = -BigInt(1 << 61)
-    XCTAssertEqual(HashHelper.hash(modulus - 1), -2)
-    XCTAssertEqual(HashHelper.hash(modulus + 0), -1) // '-1' is used for errors
-    XCTAssertEqual(HashHelper.hash(modulus + 1),  0)
-    XCTAssertEqual(HashHelper.hash(modulus + 2), -2305843009213693950)
-    XCTAssertEqual(HashHelper.hash(modulus + 3), -2305843009213693949)
+    XCTAssertEqual(self.hash(modulus - 1), -2)
+    XCTAssertEqual(self.hash(modulus + 0), -1) // '-1' is used for errors
+    XCTAssertEqual(self.hash(modulus + 1),  0)
+    XCTAssertEqual(self.hash(modulus + 2), -2305843009213693950)
+    XCTAssertEqual(self.hash(modulus + 3), -2305843009213693949)
+  }
+
+  // MARK: - Helper
+
+  private func hash(_ value: BigInt) -> Int {
+    // Key is 'I See the Light ' in ASCII
+    let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
+    let hasher = PyHasher(key0: key.0, key1: key.1)
+    return hasher.hash(value)
   }
 }

@@ -20,7 +20,9 @@ public class VM {
   }
 
   public init(arguments: Arguments, environment: Environment = Environment()) {
-    self.context = PyContext()
+    // Key is 'VioletEvergarden' in ASCII
+    let key: (UInt64, UInt64) = (0x56696f6c65744576, 0x657267617264656e)
+    self.context = PyContext(hashKey0: key.0, hashKey1: key.1)
     self.configuration = CoreConfiguration(arguments: arguments, environment: environment)
   }
 

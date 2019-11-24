@@ -9,8 +9,8 @@ class HashFloat: XCTestCase {
   // MARK: - Int zero
 
   func test_int_zero_isZero() {
-    XCTAssertEqual(HashHelper.hash(+0.0), 0)
-    XCTAssertEqual(HashHelper.hash(-0.0), 0)
+    XCTAssertEqual(self.hash(+0.0), 0)
+    XCTAssertEqual(self.hash(-0.0), 0)
   }
 
   // MARK: - Int positive
@@ -18,7 +18,7 @@ class HashFloat: XCTestCase {
   func test_int_positive_small_stayTheSame() {
     for value in 1...255 {
       let double = Double(value)
-      XCTAssertEqual(HashHelper.hash(double), value)
+      XCTAssertEqual(self.hash(double), value)
     }
   }
 
@@ -31,7 +31,7 @@ class HashFloat: XCTestCase {
 
     for value in values {
       let double = Double(value)
-      XCTAssertEqual(HashHelper.hash(double), value)
+      XCTAssertEqual(self.hash(double), value)
     }
   }
 
@@ -53,10 +53,10 @@ class HashFloat: XCTestCase {
     //  1
 
     let modulus = Double(1 << 61)
-    XCTAssertEqual(HashHelper.hash(modulus - 2), 1)
-    XCTAssertEqual(HashHelper.hash(modulus - 1), 1)
-    XCTAssertEqual(HashHelper.hash(modulus + 0), 1)
-    XCTAssertEqual(HashHelper.hash(modulus + 1), 1)
+    XCTAssertEqual(self.hash(modulus - 2), 1)
+    XCTAssertEqual(self.hash(modulus - 1), 1)
+    XCTAssertEqual(self.hash(modulus + 0), 1)
+    XCTAssertEqual(self.hash(modulus + 1), 1)
   }
 
   // MARK: - Int negative
@@ -64,14 +64,14 @@ class HashFloat: XCTestCase {
   func test_int_negative_1_isMinus1() {
     // CPython would return '-2'.
     let zero = Double(-1)
-    XCTAssertEqual(HashHelper.hash(zero), -1)
+    XCTAssertEqual(self.hash(zero), -1)
   }
 
   func test_int_negative_small_stayTheSame() {
     for value in 2...255 {
       let negValue = -value
       let double = Double(negValue)
-      XCTAssertEqual(HashHelper.hash(double), negValue)
+      XCTAssertEqual(self.hash(double), negValue)
     }
   }
 
@@ -84,7 +84,7 @@ class HashFloat: XCTestCase {
 
     for value in values {
       let double = Double(value)
-      XCTAssertEqual(HashHelper.hash(double), value)
+      XCTAssertEqual(self.hash(double), value)
     }
   }
 
@@ -106,11 +106,11 @@ class HashFloat: XCTestCase {
     // -2
 
     let modulus = -Double(1 << 61)
-    XCTAssertEqual(HashHelper.hash(modulus - 1), -1)
-    XCTAssertEqual(HashHelper.hash(modulus + 0), -1)
-    XCTAssertEqual(HashHelper.hash(modulus + 1), -1)
-    XCTAssertEqual(HashHelper.hash(modulus + 2), -1)
-    XCTAssertEqual(HashHelper.hash(modulus + 3), -1)
+    XCTAssertEqual(self.hash(modulus - 1), -1)
+    XCTAssertEqual(self.hash(modulus + 0), -1)
+    XCTAssertEqual(self.hash(modulus + 1), -1)
+    XCTAssertEqual(self.hash(modulus + 2), -1)
+    XCTAssertEqual(self.hash(modulus + 3), -1)
   }
 
   // MARK: - Decimal
@@ -123,9 +123,9 @@ class HashFloat: XCTestCase {
     //  >>> hash(1.3)
     //  691752902764108289
 
-    XCTAssertEqual(HashHelper.hash(1.1), 230584300921369601)
-    XCTAssertEqual(HashHelper.hash(1.2), 461168601842738689)
-    XCTAssertEqual(HashHelper.hash(1.3), 691752902764108289)
+    XCTAssertEqual(self.hash(1.1), 230584300921369601)
+    XCTAssertEqual(self.hash(1.2), 461168601842738689)
+    XCTAssertEqual(self.hash(1.3), 691752902764108289)
   }
 
   func test_decimal_negative() {
@@ -136,9 +136,9 @@ class HashFloat: XCTestCase {
     //  >>> hash(-1.3)
     //  -691752902764108289
 
-    XCTAssertEqual(HashHelper.hash(-1.1), -230584300921369601)
-    XCTAssertEqual(HashHelper.hash(-1.2), -461168601842738689)
-    XCTAssertEqual(HashHelper.hash(-1.3), -691752902764108289)
+    XCTAssertEqual(self.hash(-1.1), -230584300921369601)
+    XCTAssertEqual(self.hash(-1.2), -461168601842738689)
+    XCTAssertEqual(self.hash(-1.3), -691752902764108289)
   }
 
   // MARK: - NaN
@@ -147,12 +147,10 @@ class HashFloat: XCTestCase {
     // >>> hash(float('nan'))
     // 0
 
-    let nan = Double.nan
-    XCTAssertEqual(HashHelper.hash(nan), 0)
+    XCTAssertEqual(self.hash(Double.nan), 0)
 
     // `NaN` with fancy bits filled.
-    let nan2 = Double.signalingNaN
-    XCTAssertEqual(HashHelper.hash(nan2), 0)
+    XCTAssertEqual(self.hash(Double.signalingNaN), 0)
   }
 
   // MARK: - Inf
@@ -163,10 +161,16 @@ class HashFloat: XCTestCase {
     // >>> hash(float('-inf'))
     // -314159
 
-    let inf = Double.infinity
-    XCTAssertEqual(HashHelper.hash(inf), 314159)
+    XCTAssertEqual(self.hash(+Double.infinity),  314159)
+    XCTAssertEqual(self.hash(-Double.infinity), -314159)
+  }
 
-    let minusInf = -Double.infinity
-    XCTAssertEqual(HashHelper.hash(minusInf), -314159)
+  // MARK: - Helper
+
+  private func hash(_ value: Double) -> Int {
+    // Key is 'I See the Light ' in ASCII
+    let key: (UInt64, UInt64) = (0x4920536565207468, 0x65204c6967687420)
+    let hasher = PyHasher(key0: key.0, key1: key.1)
+    return hasher.hash(value)
   }
 }

@@ -140,12 +140,6 @@ extension PyStringDataImpl {
     }
   }
 
-  // MARK: - Hash
-
-  internal var hash: PyHash {
-    return HashHelper.hash(self.scalars)
-  }
-
   // MARK: - Repr
 
   internal var repr: String {

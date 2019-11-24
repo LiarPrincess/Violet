@@ -99,7 +99,11 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    return .value(self.data.hash)
+    return .value(self.hashRaw())
+  }
+
+  internal func hashRaw() -> PyHash {
+    return self.hasher.hash(self.value)
   }
 
   // MARK: - String

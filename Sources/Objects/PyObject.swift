@@ -35,6 +35,10 @@ public class PyObject {
     return self.context.builtins
   }
 
+  internal var hasher: PyHasher {
+    return self.context.hasher
+  }
+
   internal var ptrString: String {
     // This may not work exactly as in CPython, but that does not matter.
     return String(describing: Unmanaged.passUnretained(self).toOpaque())

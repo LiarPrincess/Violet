@@ -113,7 +113,7 @@ public final class PyFloat: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    return .value(HashHelper.hash(self.value))
+    return .value(self.hasher.hash(self.value))
   }
 
   // MARK: - String
