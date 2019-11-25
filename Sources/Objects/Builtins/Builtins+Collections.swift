@@ -31,7 +31,13 @@ extension Builtins {
   /// PyObject * PyList_AsTuple(PyObject *v)
   public func newTuple(list: PyObject) -> PyTuple {
     let list = TypeFactory.selfAsPyList(list)
-    return PyTuple(self.context, elements: list.elements)
+    return list.isEmpty ?
+      self.emptyTuple :
+      PyTuple(self.context, data: list.data)
+  }
+
+  internal func newTuple(_ data: PySequenceData) -> PyTuple {
+    return PyTuple(self.context, data: data)
   }
 
   // MARK: - List
@@ -44,6 +50,10 @@ extension Builtins {
   /// PyObject * PyList_New(Py_ssize_t size)
   public func newList(_ elements: [PyObject]) -> PyList {
     return PyList(self.context, elements: elements)
+  }
+
+  internal func newList(_ data: PySequenceData) -> PyList {
+    return PyList(self.context, data: data)
   }
 
   /// int PyList_Append(PyObject *op, PyObject *newitem)

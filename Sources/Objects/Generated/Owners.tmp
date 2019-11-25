@@ -288,6 +288,7 @@ PyList|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObjec
 PyList|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
 PyList|PyObject|func|index|index(of element: PyObject) -> PyResult<BigInt>
 PyList|PyObject|func|append|append(_ element: PyObject) -> PyResult<PyNone>
+PyList|PyObject|func|pop|pop(index: BigInt?) -> PyResult<PyObject>
 PyList|PyObject|func|clear|clear() -> PyResult<PyNone>
 PyList|PyObject|func|copy|copy() -> PyObject
 PyList|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>

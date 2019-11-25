@@ -38,6 +38,8 @@ internal protocol PySetType: PyObject {
 
 // MARK: - PySetData
 
+/// Main logic for Python sets.
+/// Used in `PySet` and `PyFrozenSet`.
 internal struct PySetData {
 
   // Small trick: when we use `Void` (which is the same as `()`) as value
@@ -68,7 +70,7 @@ internal struct PySetData {
 
   internal func isEqual(to other: PySetData) -> PyResult<Bool> {
     // Equal count + isSubset -> equal
-    guard self.dict.count == other.dict.count else {
+    guard self.count == other.count else {
       return .value(false)
     }
 
@@ -81,7 +83,7 @@ internal struct PySetData {
   // MARK: - Comparable
 
   internal func isLess(than other: PySetData) -> PyResult<Bool> {
-    guard self.dict.count < other.dict.count else {
+    guard self.count < other.count else {
       return .value(false)
     }
 
@@ -99,7 +101,7 @@ internal struct PySetData {
   }
 
   internal func isGreater(than other: PySetData) -> PyResult<Bool> {
-    guard self.dict.count > other.dict.count else {
+    guard self.count > other.count else {
       return .value(false)
     }
 
@@ -119,7 +121,7 @@ internal struct PySetData {
   // MARK: - String
 
   internal func repr(typeName: String) -> PyResult<String> {
-    if self.dict.isEmpty {
+    if self.isEmpty {
       return .value("()")
     }
 
@@ -136,7 +138,7 @@ internal struct PySetData {
       }
     }
 
-    result += self.dict.count > 1 ? ")" : ",)"
+    result += self.count > 1 ? ")" : ",)"
     return .value(result)
   }
 
@@ -195,7 +197,7 @@ internal struct PySetData {
   // MARK: - Subset
 
   internal func isSubset(of other: PySetData) -> PyResult<Bool> {
-    guard self.dict.count <= other.dict.count else {
+    guard self.count <= other.count else {
       return .value(false)
     }
 
@@ -219,7 +221,7 @@ internal struct PySetData {
   // MARK: - Intersection
 
   internal func intersection(with other: PySetData) -> PyResult<PySetData> {
-    let isSelfSmaller = self.dict.count < other.dict.count
+    let isSelfSmaller = self.count < other.count
     let smallerSet = isSelfSmaller ? self : other
     let largerSet = isSelfSmaller ? other : self
 
@@ -242,7 +244,7 @@ internal struct PySetData {
   // MARK: - Union
 
   internal func union(with other: PySetData) -> PyResult<PySetData> {
-    let isSelfSmaller = self.dict.count < other.dict.count
+    let isSelfSmaller = self.count < other.count
     let smallerSet = isSelfSmaller ? self : other
     let largerSet = isSelfSmaller ? other : self
 
@@ -317,7 +319,7 @@ internal struct PySetData {
   // MARK: - Is disjoint
 
   internal func isDisjoint(with other: PySetData) -> PyResult<Bool> {
-    let isSelfSmaller = self.dict.count < other.dict.count
+    let isSelfSmaller = self.count < other.count
     let smallerSet = isSelfSmaller ? self : other
     let largerSet = isSelfSmaller ? other : self
 

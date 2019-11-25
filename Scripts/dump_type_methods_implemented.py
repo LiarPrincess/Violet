@@ -293,6 +293,7 @@ types = {
     'count',
     'index',
     'append',
+    'pop',
     'clear',
     'copy',
     '__add__',

@@ -23,6 +23,11 @@ public final class PySlice: PyObject {
   internal var stop:  PyObject
   internal var step:  PyObject
 
+  private var asStartStopStepSequence: PySequenceData {
+    let elements = [self.start, self.stop, self.step]
+    return PySequenceData(elements: elements)
+  }
+
   // MARK: - Init
 
   internal init(_ context: PyContext, start: PyObject, stop: PyObject, step: PyObject) {
@@ -40,13 +45,8 @@ public final class PySlice: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isEqual(context: self.context,
-                                  left: self.asArray,
-                                  right: other.asArray)
-  }
-
-  private var asArray: [PyObject] {
-    return [self.start, self.stop, self.step]
+    let data = self.asStartStopStepSequence
+    return data.isEqual(to: other.asStartStopStepSequence).asResultOrNot
   }
 
   // sourcery: pymethod = __ne__
@@ -62,9 +62,8 @@ public final class PySlice: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isLess(context: self.context,
-                                 left: self.asArray,
-                                 right: other.asArray)
+    let data = self.asStartStopStepSequence
+    return data.isLess(than: other.asStartStopStepSequence).asResultOrNot
   }
 
   // sourcery: pymethod = __le__
@@ -73,9 +72,8 @@ public final class PySlice: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isLessEqual(context: self.context,
-                                      left: self.asArray,
-                                      right: other.asArray)
+    let data = self.asStartStopStepSequence
+    return data.isLessEqual(than: other.asStartStopStepSequence).asResultOrNot
   }
 
   // sourcery: pymethod = __gt__
@@ -84,9 +82,8 @@ public final class PySlice: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isGreater(context: self.context,
-                                    left: self.asArray,
-                                    right: other.asArray)
+    let data = self.asStartStopStepSequence
+    return data.isGreater(than: other.asStartStopStepSequence).asResultOrNot
   }
 
   // sourcery: pymethod = __ge__
@@ -95,9 +92,8 @@ public final class PySlice: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isGreaterEqual(context: self.context,
-                                         left: self.asArray,
-                                         right: other.asArray)
+    let data = self.asStartStopStepSequence
+    return data.isGreaterEqual(than: other.asStartStopStepSequence).asResultOrNot
   }
 
   // MARK: - String

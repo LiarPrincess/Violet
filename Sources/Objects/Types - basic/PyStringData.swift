@@ -596,6 +596,68 @@ extension PyStringDataImpl {
     return .notFound
   }
 
+  // MARK: - Get item
+
+  internal func getItem(at index: Int) -> PyResult<String> {
+    var offset = index
+    if offset < 0 {
+      offset += self.count
+    }
+
+    // swiftlint:disable:next yoda_condition
+    guard 0 <= offset && offset < self.count else {
+      return .indexError("str index out of range")
+    }
+
+    let indexOrNil = self.scalars.index(self.scalars.startIndex,
+                                        offsetBy: offset,
+                                        limitedBy: self.scalars.endIndex)
+
+    guard let index = indexOrNil else {
+      return .indexError("str index out of range")
+    }
+
+    return .value(String(self.scalars[index]))
+  }
+
+  internal func getSlice(start: Int, step: Int, count: Int) -> PyResult<String> {
+    // swiftlint:disable:next empty_count
+    if count <= 0 {
+      return .value("")
+    }
+
+    if step == 0 {
+      return .valueError("slice step cannot be zero")
+    }
+
+    if step == 1 {
+      let result = self.scalars.dropFirst(start).prefix(count)
+      return .value(String(result))
+    }
+
+    guard var index = self.scalars.index(self.scalars.startIndex,
+                                         offsetBy: start,
+                                         limitedBy: self.scalars.endIndex) else {
+      return .value("")
+    }
+
+    var result = [UnicodeScalar]()
+    for _ in 0..<count {
+      result.append(self.scalars[index])
+
+      let limit = step > 0 ? self.scalars.endIndex : self.scalars.startIndex
+      guard let newIndex = self.scalars.index(index,
+                                              offsetBy: step,
+                                              limitedBy: limit) else {
+        return .value(String(result))
+      }
+
+      index = newIndex
+    }
+
+    return .value(String(result))
+  }
+
   // MARK: - Case
 
   internal func lowerCased() -> String {

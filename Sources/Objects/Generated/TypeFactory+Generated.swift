@@ -404,6 +404,7 @@ extension TypeFactory {
     result._attributes["count"] = wrapMethod(context, name: "count", doc: nil, fn: PyList.count(_:), castSelf: selfAsPyList)
     result._attributes["index"] = wrapMethod(context, name: "index", doc: nil, fn: PyList.index(of:), castSelf: selfAsPyList)
     result._attributes["append"] = wrapMethod(context, name: "append", doc: nil, fn: PyList.append(_:), castSelf: selfAsPyList)
+    result._attributes["pop"] = wrapMethod(context, name: "pop", doc: nil, fn: PyList.pop(index:), castSelf: selfAsPyList)
     result._attributes["clear"] = wrapMethod(context, name: "clear", doc: nil, fn: PyList.clear, castSelf: selfAsPyList)
     result._attributes["copy"] = wrapMethod(context, name: "copy", doc: nil, fn: PyList.copy, castSelf: selfAsPyList)
     result._attributes["__add__"] = wrapMethod(context, name: "__add__", doc: nil, fn: PyList.add(_:), castSelf: selfAsPyList)

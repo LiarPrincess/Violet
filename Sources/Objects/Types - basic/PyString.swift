@@ -156,18 +156,36 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    let result = SequenceHelper.getItem(elements: self.data.scalars,
-                                        index: index,
-                                        typeName: "string")
-
-    switch result {
-    case let .single(scalar):
-      return .value(self.builtins.newString(String(scalar)))
-    case let .slice(scalars):
-      return .value(self.builtins.newString(String(scalars)))
-    case let .error(e):
+    switch SequenceHelper.tryGetIndex(index) {
+    case .value(let index):
+      return self.data.getItem(at: index).map(self.builtins.newString(_:))
+    case .notIndex:
+      break // Try slice
+    case .error(let e):
       return .error(e)
     }
+
+    if let slice = index as? PySlice {
+      return self.getSlice(slice: slice)
+    }
+
+    let msg = "str indices must be integers or slices, not \(index.typeName)"
+    return .typeError(msg)
+  }
+
+  private func getSlice(slice: PySlice) -> PyResult<PyObject> {
+    let unpack: PySlice.UnpackedIndices
+    switch slice.unpack() {
+    case let .value(v): unpack = v
+    case let .error(e): return .error(e)
+    }
+
+    let adjusted = slice.adjust(unpack, toLength: self.data.count)
+    let result = self.data.getSlice(start: adjusted.start,
+                                    step: adjusted.step,
+                                    count: adjusted.length)
+
+    return result.map(self.builtins.newString(_:))
   }
 
   // MARK: - Predicates

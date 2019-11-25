@@ -16,12 +16,21 @@ public final class PyTuple: PyObject {
     If the argument is a tuple, the return value is the same object.
     """
 
-  internal let elements: [PyObject]
+  internal let data: PySequenceData
+
+  internal var elements: [PyObject] {
+    return self.data.elements
+  }
 
   // MARK: - Init
 
-  internal init(_ context: PyContext, elements: [PyObject]) {
-    self.elements = elements
+  convenience init(_ context: PyContext, elements: [PyObject]) {
+    let data = PySequenceData(elements: elements)
+    self.init(context, data: data)
+  }
+
+  internal init(_ context: PyContext, data: PySequenceData) {
+    self.data = data
     super.init(type: context.builtins.types.tuple)
   }
 
@@ -33,9 +42,7 @@ public final class PyTuple: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isEqual(context: self.context,
-                                  left: self.elements,
-                                  right: other.elements)
+    return self.data.isEqual(to: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __ne__
@@ -51,9 +58,7 @@ public final class PyTuple: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isLess(context: self.context,
-                                 left: self.elements,
-                                 right: other.elements)
+    return self.data.isLess(than: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __le__
@@ -62,9 +67,7 @@ public final class PyTuple: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isLessEqual(context: self.context,
-                                      left: self.elements,
-                                      right: other.elements)
+    return self.data.isLessEqual(than: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __gt__
@@ -73,9 +76,7 @@ public final class PyTuple: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isGreater(context: self.context,
-                                    left: self.elements,
-                                    right: other.elements)
+    return self.data.isGreater(than: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __ge__
@@ -84,9 +85,7 @@ public final class PyTuple: PyObject {
       return .notImplemented
     }
 
-    return SequenceHelper.isGreaterEqual(context: self.context,
-                                         left: self.elements,
-                                         right: other.elements)
+    return self.data.isGreaterEqual(than: other.data).asResultOrNot
   }
 
   // MARK: - Hashable
@@ -113,10 +112,6 @@ public final class PyTuple: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    if self.elements.isEmpty {
-      return .value("()")
-    }
-
     // While not mutable, it is still possible to end up with a cycle in a tuple
     // through an object that stores itself within a tuple (and thus infinitely
     // asks for the repr of itself).
@@ -125,20 +120,7 @@ public final class PyTuple: PyObject {
     }
 
     return self.withReprLock {
-      var result = "("
-      for (index, element) in self.elements.enumerated() {
-        if index > 0 {
-          result += ", " // so that we don't have ', )'.
-        }
-
-        switch self.builtins.repr(element) {
-        case let .value(s): result += s
-        case let .error(e): return .error(e)
-        }
-      }
-
-      result += self.elements.count > 1 ? ")" : ",)"
-      return .value(result)
+      self.data.repr(openBrace: "(", closeBrace: ")")
     }
   }
 
@@ -156,68 +138,63 @@ public final class PyTuple: PyObject {
     return self.type
   }
 
-  // MARK: - Sequence
+  // MARK: - Length
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return BigInt(self.elements.count)
+    return BigInt(self.data.count)
   }
+
+  // MARK: - Contains
 
   // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
-    let result = SequenceHelper.contains(context: self.context,
-                                         elements: self.elements,
-                                         element: element)
-    return .value(result)
+    return self.data.contains(value: element)
   }
+
+  // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    let result = SequenceHelper.getItem(elements: self.elements,
-                                        index: index,
-                                        typeName: "tuple")
-
-    switch result {
+    switch self.data.getItem(index: index, typeName: "tuple") {
     case let .single(s): return .value(s)
     case let .slice(s): return .value(self.builtins.newTuple(s))
     case let .error(e): return .error(e)
     }
   }
 
+  // MARK: - Cont
+
   // sourcery: pymethod = count
   internal func count(_ element: PyObject) -> PyResult<BigInt> {
-    return SequenceHelper.count(context: self.context,
-                                elements: self.elements,
-                                element: element)
+    return self.data.count(element: element).map(BigInt.init)
   }
+
+  // MARK: - Index of
 
   // sourcery: pymethod = index
   internal func index(of element: PyObject) -> PyResult<BigInt> {
-    return SequenceHelper.index(context: self.context,
-                                elements: self.elements,
-                                element: element,
-                                typeName: "tuple")
+    return self.data.index(of: element, typeName: "tuple").map(BigInt.init)
   }
 
   // MARK: - Add
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    if self.elements.isEmpty {
+    if self.data.isEmpty {
       return .value(other)
     }
 
     guard let otherTuple = other as? PyTuple else {
-      return .typeError(
-        "can only concatenate tuple (not '\(other.typeName)') to tuple"
-      )
+      let msg = "can only concatenate tuple (not '\(other.typeName)') to tuple"
+      return .typeError(msg)
     }
 
-    if otherTuple.elements.isEmpty {
+    if otherTuple.data.isEmpty {
       return .value(self)
     }
 
-    let result = self.elements + otherTuple.elements
+    let result = self.data.add(other: otherTuple.data)
     return .value(self.builtins.newTuple(result))
   }
 
@@ -225,15 +202,11 @@ public final class PyTuple: PyObject {
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return SequenceHelper
-      .mul(elements: self.elements, count: other)
-      .map(self.builtins.newTuple)
+    return self.data.mul(count: other).map(self.builtins.newTuple)
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return SequenceHelper
-      .rmul(elements: self.elements, count: other)
-      .map(self.builtins.newTuple)
+    return self.data.rmul(count: other).map(self.builtins.newTuple)
   }
 }
