@@ -190,7 +190,7 @@ public class CodeObjectBuilder {
 
   // MARK: - Unimplemented
 
-  // TODO: remove this
+  // TODO: Remove 'unimplemented'
   internal func unimplemented(fn: StaticString = #function) {
     precondition(false, "Unimplemented: \(fn)")
   }

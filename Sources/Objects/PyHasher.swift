@@ -4,7 +4,19 @@ import Core
 // In CPython:
 // Python -> pyhash.c <-- Seriously look it up!
 // Objects -> longobject.c
-// https://docs.python.org/3.7/c-api/complex.html
+// https://www.python.org/dev/peps/pep-0456
+//
+// >>> import sys
+// >>> sys.hash_info
+// sys.hash_info(width=64,
+//               modulus=2305843009213693951,
+//               inf=314159,
+//               nan=0,
+//               imag=1000003,
+//               algorithm='siphash24',
+//               hash_bits=64,
+//               seed_bits=128,
+//               cutoff=0)
 
 // MARK: - PyHash
 

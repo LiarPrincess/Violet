@@ -6,8 +6,6 @@ import Lexer
 //  ast_for_import_stmt(struct compiling *c, const node *n)
 //  alias_for_import_name(struct compiling *c, const node *n, int store)
 
-// swiftlint:disable file_length
-
 extension Parser {
 
   /// ```c

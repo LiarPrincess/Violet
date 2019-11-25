@@ -91,10 +91,10 @@ public final class Attributes {
     }
   }
 
+  // swiftlint:disable:next unavailable_function
   private func errorNotHandled(operation: String, error: PyErrorEnum) -> Never {
-    fatalError(
-      "Attribute dictionary '\(operation)' operation returned an error: \(error)"
-    )
+    let msg = "Attribute dictionary '\(operation)' operation returned an error: \(error)"
+    fatalError(msg)
   }
 
   // MARK: - Keys, entries

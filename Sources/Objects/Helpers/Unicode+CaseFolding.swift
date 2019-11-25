@@ -11,7 +11,7 @@
 //
 //   toCasefold(X): Map each character C in X to Case_Folding(C).
 //
-//   Case_Folding(C) uses the mappings with the status field value“C” or “F”
+//   Case_Folding(C) uses the mappings with the status field value “C” or “F”
 //   in the data file CaseFolding.txt in the Unicode Character Database.
 
 // To get the newest version of 'CaseFolding.txt' go to:

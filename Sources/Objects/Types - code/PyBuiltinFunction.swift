@@ -136,7 +136,7 @@ internal final class PyBuiltinFunction: PyObject {
 
   // sourcery: pyproperty = __text_signature__
   internal func getTextSignature() -> String? {
-    return self.doc.map(DocHelper.getSignature)
+    return self.doc.flatMap(DocHelper.getSignature)
   }
 
   // sourcery: pyproperty = __module__
