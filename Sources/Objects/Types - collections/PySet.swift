@@ -9,7 +9,7 @@ import Core
 // sourcery: pytype = set
 /// This subtype of PyObject is used to hold the internal data for both set
 /// and frozenset objects.
-public final class PySet: PyObject {
+public final class PySet: PyObject, PySetType {
 
   internal static let doc: String = """
     set() -> new empty set object
@@ -18,17 +18,17 @@ public final class PySet: PyObject {
     Build an unordered collection of unique elements.
     """
 
-  internal var elements: PySetData
+  internal var data: PySetData
 
   // MARK: - Init
 
   internal init(_ context: PyContext) {
-    self.elements = PySetData()
+    self.data = PySetData()
     super.init(type: context.builtins.types.set)
   }
 
-  internal init(_ context: PyContext, elements: PySetData) {
-    self.elements = elements
+  internal init(_ context: PyContext, data: PySetData) {
+    self.data = data
     super.init(type: context.builtins.types.set)
   }
 
@@ -40,7 +40,7 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isEqual(left: self, right: other).asResultOrNot
+    return self.data.isEqual(to: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __ne__
@@ -58,7 +58,7 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isLess(left: self, right: other).asResultOrNot
+    return self.data.isLess(than: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __le__
@@ -67,7 +67,7 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isLessEqual(left: self, right: other).asResultOrNot
+    return self.data.isLessEqual(than: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __gt__
@@ -76,7 +76,7 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isGreater(left: self, right: other).asResultOrNot
+    return self.data.isGreater(than: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __ge__
@@ -85,7 +85,7 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isGreaterEqual(left: self, right: other).asResultOrNot
+    return self.data.isGreaterEqual(than: other.data).asResultOrNot
   }
 
   // MARK: - Hashable
@@ -99,7 +99,13 @@ public final class PySet: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return SetHelper.repr(self)
+    if self.hasReprLock {
+      return .value("(...)")
+    }
+
+    return self.withReprLock {
+      self.data.repr(typeName: self.typeName)
+    }
   }
 
   // MARK: - Attributes
@@ -120,14 +126,14 @@ public final class PySet: PyObject {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return SetHelper.getLength(self)
+    return BigInt(self.data.count)
   }
 
   // MARK: - Contaions
 
   // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
-    return SetHelper.contains(self, element: element)
+    return self.data.contains(value: element)
   }
 
   // MARK: - And
@@ -138,12 +144,9 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.and(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.and(other: otherSet.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // sourcery: pymethod = __rand__
@@ -159,12 +162,9 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.union(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.or(other: otherSet.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // sourcery: pymethod = __ror__
@@ -180,12 +180,9 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.symmetricDifference(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.xor(other: otherSet.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // sourcery: pymethod = __rxor__
@@ -201,12 +198,9 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.difference(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.difference(with: otherSet.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // sourcery: pymethod = __rsub__
@@ -215,12 +209,9 @@ public final class PySet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.difference(left: otherSet, right: self) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return otherSet.data.difference(with: self.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // MARK: - Subset
@@ -235,7 +226,7 @@ public final class PySet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    return SetHelper.isSubset(self, of: otherSet)
+    return self.data.isSubset(of: otherSet.data)
   }
 
   // MARK: - Superset
@@ -250,7 +241,7 @@ public final class PySet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    return SetHelper.isSuperset(self, of: otherSet)
+    return self.data.isSuperset(of: otherSet.data)
   }
 
   // MARK: - Intersection
@@ -267,12 +258,8 @@ public final class PySet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    switch SetHelper.intersection(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.intersection(with: otherSet.data)
+      .map(self.createSet(data:))
   }
 
   // MARK: - Union
@@ -289,12 +276,8 @@ public final class PySet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    switch SetHelper.union(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.union(with: otherSet.data)
+      .map(self.createSet(data:))
   }
 
   // MARK: - Difference
@@ -311,12 +294,8 @@ public final class PySet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    switch SetHelper.difference(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.difference(with: otherSet.data)
+      .map(self.createSet(data:))
   }
 
   // MARK: - Symmetric difference
@@ -333,12 +312,8 @@ public final class PySet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    switch SetHelper.symmetricDifference(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.symmetricDifference(with: otherSet.data)
+      .map(self.createSet(data:))
   }
 
   // MARK: - Is disjoint
@@ -353,7 +328,7 @@ public final class PySet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    return SetHelper.isDisjoint(left: self, right: otherSet)
+    return self.data.isDisjoint(with: otherSet.data)
   }
 
   // MARK: - Add
@@ -366,10 +341,10 @@ public final class PySet: PyObject {
 
   // sourcery: pymethod = add, doc = addDoc
   internal func add(_ value: PyObject) -> PyResult<PyNone> {
-    switch SetHelper.add(self, value: value) {
-    case .none:
+    switch self.data.insert(value: value) {
+    case .ok:
       return .value(self.builtins.none)
-    case .some(let e):
+    case .error(let e):
       return .error(e)
     }
   }
@@ -384,10 +359,10 @@ public final class PySet: PyObject {
 
   // sourcery: pymethod = remove, doc = removeDoc
   internal func remove(_ value: PyObject) -> PyResult<PyNone> {
-    switch SetHelper.remove(self, value: value) {
-    case .none:
+    switch self.data.remove(value: value) {
+    case .ok:
       return .value(self.builtins.none)
-    case .some(let e):
+    case .error(let e):
       return .error(e)
     }
   }
@@ -402,10 +377,10 @@ public final class PySet: PyObject {
 
   // sourcery: pymethod = discard, doc = discardDoc
   internal func discard(_ value: PyObject) -> PyResult<PyNone> {
-    switch SetHelper.discard(self, value: value) {
-    case .none:
+    switch self.data.discard(value: value) {
+    case .ok:
       return .value(self.builtins.none)
-    case .some(let e):
+    case .error(let e):
       return .error(e)
     }
   }
@@ -418,7 +393,7 @@ public final class PySet: PyObject {
 
   // sourcery: pymethod = clear, doc = clearDoc
   internal func clear() -> PyResult<PyNone> {
-    self.elements.clear()
+    self.data.clear()
     return .value(self.builtins.none)
   }
 
@@ -428,7 +403,7 @@ public final class PySet: PyObject {
 
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
-    return self.createSet(elements: self.elements)
+    return self.createSet(data: self.data)
   }
 
   // MARK: - Pop
@@ -440,26 +415,17 @@ public final class PySet: PyObject {
 
   // sourcery: pymethod = pop, doc = popDoc
   internal func pop() -> PyResult<PyObject> {
-    guard let last = self.elements.last else {
+    guard let lastElement = self.data.last else {
       return .keyError("pop from an empty set")
     }
 
-    _ = self.elements.remove(key: last.key)
-    return .value(last.key.object)
+    _ = self.data.remove(element: lastElement)
+    return .value(lastElement.object)
   }
 
   // MARK: - Helpers
 
-  private func createSet(elements: PySetData) -> PySet {
-    return PySet(self.context, elements: elements)
-  }
-
-  private func createKey(from object: PyObject) -> PyResult<PySetElement> {
-    switch self.builtins.hash(object) {
-    case let .value(hash):
-      return .value(PySetElement(hash: hash, object: object))
-    case let .error(e):
-      return .error(e)
-    }
+  private func createSet(data: PySetData) -> PySet {
+    return PySet(self.context, data: data)
   }
 }

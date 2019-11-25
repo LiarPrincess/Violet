@@ -64,18 +64,13 @@ extension Builtins {
   public func newSet(_ elements: [PyObject] = []) -> PyResult<PySet> {
     var data = PySetData()
     for element in elements {
-      switch self.hash(element) {
-      case let .value(hash):
-        switch data.insert(key: PySetElement(hash: hash, object: element)) {
-        case .inserted, .updated: break
-        case let .error(e): return .error(e)
-        }
-      case let .error(e):
-        return .error(e)
+      switch data.insert(value: element) {
+      case .ok: break
+      case .error(let e): return .error(e)
       }
     }
 
-    return .value(PySet(self.context, elements: data))
+    return .value(PySet(self.context, data: data))
   }
 
   /// int PySet_Add(PyObject *anyset, PyObject *key)

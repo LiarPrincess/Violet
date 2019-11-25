@@ -8,7 +8,7 @@ import Core
 
 // sourcery: pytype = frozenset
 /// This is an instance of PyTypeObject representing the Python frozenset type.
-public final class PyFrozenSet: PyObject {
+public final class PyFrozenSet: PyObject, PySetType {
 
   internal static let doc: String = """
     frozenset() -> empty frozenset object
@@ -17,17 +17,17 @@ public final class PyFrozenSet: PyObject {
     Build an immutable unordered collection of unique elements.
     """
 
-  internal var elements: PySetData
+  internal var data: PySetData
 
   // MARK: - Init
 
   internal init(_ context: PyContext) {
-    self.elements = PySetData()
+    self.data = PySetData()
     super.init(type: context.builtins.types.frozenset)
   }
 
-  internal init(_ context: PyContext, elements: PySetData) {
-    self.elements = elements
+  internal init(_ context: PyContext, data: PySetData) {
+    self.data = data
     super.init(type: context.builtins.types.frozenset)
   }
 
@@ -39,7 +39,7 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isEqual(left: self, right: other).asResultOrNot
+    return self.data.isEqual(to: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __ne__
@@ -57,7 +57,7 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isLess(left: self, right: other).asResultOrNot
+    return self.data.isLess(than: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __le__
@@ -66,7 +66,7 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isLessEqual(left: self, right: other).asResultOrNot
+    return self.data.isLessEqual(than: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __gt__
@@ -75,7 +75,7 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isGreater(left: self, right: other).asResultOrNot
+    return self.data.isGreater(than: other.data).asResultOrNot
   }
 
   // sourcery: pymethod = __ge__
@@ -84,7 +84,7 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    return SetHelper.isGreaterEqual(left: self, right: other).asResultOrNot
+    return self.data.isGreaterEqual(than: other.data).asResultOrNot
   }
 
   // MARK: - Hashable
@@ -97,14 +97,10 @@ public final class PyFrozenSet: PyObject {
     var x: PyHash = 0x345678
     var mult = PyHasher.multiplier
 
-    for entry in self.elements {
-      switch self.builtins.hash(entry.key.object) {
-      case let .value(y):
-        x = (x ^ y) * mult
-        mult += 82_520 + PyHash(2 * self.elements.count)
-      case let .error(e):
-        return .error(e)
-      }
+    for element in self.data.elements {
+      let y = element.hash
+      x = (x ^ y) * mult
+      mult += 82_520 + PyHash(2 * self.data.count)
     }
 
     return .value(x + 97_531)
@@ -114,7 +110,13 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return SetHelper.repr(self)
+    if self.hasReprLock {
+      return .value("(...)")
+    }
+
+    return self.withReprLock {
+      self.data.repr(typeName: self.typeName)
+    }
   }
 
   // MARK: - Attributes
@@ -135,14 +137,14 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return SetHelper.getLength(self)
+    return BigInt(self.data.count)
   }
 
   // MARK: - Contaions
 
   // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
-    return SetHelper.contains(self, element: element)
+    return self.data.contains(value: element)
   }
 
   // MARK: - And
@@ -153,12 +155,9 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.and(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.and(other: otherSet.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // sourcery: pymethod = __rand__
@@ -174,12 +173,9 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.union(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.or(other: otherSet.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // sourcery: pymethod = __ror__
@@ -195,12 +191,9 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.symmetricDifference(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.xor(other: otherSet.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // sourcery: pymethod = __rxor__
@@ -216,12 +209,9 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.difference(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.difference(with: otherSet.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // sourcery: pymethod = __rsub__
@@ -230,12 +220,9 @@ public final class PyFrozenSet: PyObject {
       return .notImplemented
     }
 
-    switch SetHelper.difference(left: otherSet, right: self) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return otherSet.data.difference(with: self.data)
+      .map(self.createSet(data:))
+      .asResultOrNot
   }
 
   // MARK: - Subset
@@ -250,7 +237,7 @@ public final class PyFrozenSet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    return SetHelper.isSubset(self, of: otherSet)
+    return self.data.isSubset(of: otherSet.data)
   }
 
   // MARK: - Superset
@@ -265,7 +252,7 @@ public final class PyFrozenSet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    return SetHelper.isSuperset(self, of: otherSet)
+    return self.data.isSuperset(of: otherSet.data)
   }
 
   // MARK: - Intersection
@@ -282,12 +269,8 @@ public final class PyFrozenSet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    switch SetHelper.intersection(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.intersection(with: otherSet.data)
+      .map(self.createSet(data:))
   }
 
   // MARK: - Union
@@ -304,12 +287,8 @@ public final class PyFrozenSet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    switch SetHelper.union(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.union(with: otherSet.data)
+      .map(self.createSet(data:))
   }
 
   // MARK: - Difference
@@ -326,12 +305,8 @@ public final class PyFrozenSet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    switch SetHelper.difference(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.difference(with: otherSet.data)
+      .map(self.createSet(data:))
   }
 
   // MARK: - Symmetric difference
@@ -348,12 +323,8 @@ public final class PyFrozenSet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    switch SetHelper.symmetricDifference(left: self, right: otherSet) {
-    case let .value(data):
-      return .value(self.createSet(elements: data))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.symmetricDifference(with: otherSet.data)
+      .map(self.createSet(data:))
   }
 
   // MARK: - Is disjoint
@@ -368,7 +339,7 @@ public final class PyFrozenSet: PyObject {
       return .typeError("'\(other.typeName)' object is not iterable")
     }
 
-    return SetHelper.isDisjoint(left: self, right: otherSet)
+    return self.data.isDisjoint(with: otherSet.data)
   }
 
   // MARK: - Copy
@@ -377,12 +348,12 @@ public final class PyFrozenSet: PyObject {
 
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
-    return self.createSet(elements: self.elements)
+    return self.createSet(data: self.data)
   }
 
   // MARK: - Helpers
 
-  private func createSet(elements: PySetData) -> PyFrozenSet {
-    return PyFrozenSet(self.context, elements: elements)
+  private func createSet(data: PySetData) -> PyFrozenSet {
+    return PyFrozenSet(self.context, data: data)
   }
 }
