@@ -70,15 +70,27 @@ extension Optional: FunctionResultConvertible
 
 extension Attributes: FunctionResultConvertible {
   internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    // swiftlint:disable:next fatal_error_message
-    fatalError()
+    let builtins = context.builtins
+
+    let args = self.entries.map { entry -> CreateDictionaryArg in
+      let key = builtins.newString(entry.key)
+      return CreateDictionaryArg(key: key, value: entry.value)
+    }
+
+    switch builtins.newDict(args) {
+    case let .value(dict):
+      return .value(dict)
+    case let .error(e):
+      return .error(e)
+    }
   }
 }
 
 extension DirResult: FunctionResultConvertible {
   internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    // swiftlint:disable:next fatal_error_message
-    fatalError()
+    let builtins = context.builtins
+    let elements = self.sortedValues.map { builtins.newString($0) }
+    return .value(builtins.newList(elements))
   }
 }
 

@@ -2,7 +2,7 @@ public struct DirResult {
 
   private var values = Set<String>()
 
-  internal var sorted: [String] {
+  internal var sortedValues: [String] {
     return self.values.sorted()
   }
 
