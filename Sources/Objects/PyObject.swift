@@ -1,5 +1,7 @@
 import Core
 
+// MARK: - Flags
+
 internal struct PyObjectFlags: OptionSet {
 
   let rawValue: UInt8
@@ -13,15 +15,25 @@ internal struct PyObjectFlags: OptionSet {
   internal static let reprLock = PyObjectFlags(rawValue: 1 << 0)
 }
 
+// MARK: - Object
+
 public class PyObject {
 
-  internal var flags: PyObjectFlags = []
+  // `self_type` has to be implicitly unwrapped optional because:
+  // - `objectType` has `typeType` type
+  // - `typeType` has `typeType` type and is sybclass of `objectType`
+  // The only way to produce this result is to skip `self_type` during
+  // init and then fill it later.
+  // There is as special `init` and `func setType(to type: PyType)` methods
+  // for this.
 
   // swiftlint:disable:next implicitly_unwrapped_optional
   private var _type: PyType!
   internal var type: PyType {
     return self._type
   }
+
+  internal var flags: PyObjectFlags = []
 
   internal var typeName: String {
     return self.type.getName()
@@ -50,11 +62,9 @@ public class PyObject {
     self._type = type
   }
 
-  // MARK: - BaseObject and Type
-
   /// NEVER EVER use this ctor!
   /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
-  /// Use version with 'type: PyType' parameter.
+  /// Use version with `type: PyType` parameter.
   internal init() {
     self._type = nil
   }
@@ -74,23 +84,11 @@ public class PyObject {
     return self.flags.contains(.reprLock)
   }
 
-  /// Set flag that is used to control infinite recursion
-  /// in `repr`, `str`, `print` etc.
-  internal func enterReprLock() {
-    self.flags.formUnion(.reprLock)
-  }
-
-  /// Unset flag that is used to control infinite recursion
-  /// in `repr`, `str`, `print` etc.
-  internal func leaveReprLock() {
-    _ = self.flags.subtracting(.reprLock)
-  }
-
-  /// Set flag that is used to control infinite recursion
-  /// in `repr`, `str`, `print` etc.
+  /// Set, execute `body` and unset flag that is used to control
+  /// infinite recursion in `repr`, `str`, `print` etc.
   internal func withReprLock<T>(body: () -> T) -> T {
-    self.enterReprLock()
-    defer { self.leaveReprLock() }
+    self.flags.formUnion(.reprLock)
+    defer { self.flags.subtract(.reprLock) }
 
     return body()
   }

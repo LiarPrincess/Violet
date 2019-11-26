@@ -331,7 +331,7 @@ internal struct PySequenceData {
 
   // MARK: - Pop
 
-  internal mutating func pop(at index: BigInt,
+  internal mutating func pop(at index: Int,
                              typeName: String) -> PyResult<PyObject> {
     if self.isEmpty {
       return .indexError("pop from empty \(typeName)")
@@ -339,18 +339,14 @@ internal struct PySequenceData {
 
     var index = index
     if index < 0 {
-      index += BigInt(self.count)
+      index += self.count
     }
 
-    guard let indexInt = Int(exactly: index) else {
+    guard 0 <= index && index < self.count else {
       return .indexError("pop index out of range")
     }
 
-    guard 0 <= indexInt && indexInt < self.count else {
-      return .indexError("pop index out of range")
-    }
-
-    let result = self.elements.remove(at: indexInt)
+    let result = self.elements.remove(at: index)
     return .value(result)
   }
 }

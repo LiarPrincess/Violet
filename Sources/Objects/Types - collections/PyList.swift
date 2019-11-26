@@ -20,9 +20,9 @@ public final class PyList: PyObject {
 
   internal var data: PySequenceData
 
-//  internal var elements: [PyObject] {
-//    return self.data.elements
-//  }
+  internal var elements: [PyObject] {
+    return self.data.elements
+  }
 
   // MARK: - Init
 
@@ -128,10 +128,14 @@ public final class PyList: PyObject {
     return BigInt(self.data.count)
   }
 
+  // MARK: - Contains
+
   // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
     return self.data.contains(value: element)
   }
+
+  // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
@@ -142,15 +146,21 @@ public final class PyList: PyObject {
     }
   }
 
+  // MARK: - Count
+
   // sourcery: pymethod = count
   internal func count(_ element: PyObject) -> PyResult<BigInt> {
     return self.data.count(element: element).map(BigInt.init)
   }
 
+  // MARK: - Index
+
   // sourcery: pymethod = index
   internal func index(of element: PyObject) -> PyResult<BigInt> {
     return self.data.index(of: element, typeName: "list").map(BigInt.init)
   }
+
+  // MARK: - Append
 
   // sourcery: pymethod = append
   internal func append(_ element: PyObject) -> PyResult<PyNone> {
@@ -158,17 +168,35 @@ public final class PyList: PyObject {
     return .value(self.builtins.none)
   }
 
+  // MARK: - Pop
+
   // sourcery: pymethod = pop
-  internal func pop(index: BigInt?) -> PyResult<PyObject> {
-    let index = index ?? -1
-    return self.data.pop(at: index, typeName: "list")
+  internal func pop(index: PyObject?) -> PyResult<PyObject> {
+    switch self.parsePopIndex(from: index) {
+    case let .value(i):
+      return self.data.pop(at: i, typeName: "list")
+    case let .error(e):
+      return .error(e)
+    }
   }
+
+  private func parsePopIndex(from index: PyObject?) -> PyResult<Int> {
+    guard let index = index else {
+      return .value(-1)
+    }
+
+    return SequenceHelper.getIndex(index)
+  }
+
+  // MARK: - Clear
 
   // sourcery: pymethod = clear
   internal func clear() -> PyResult<PyNone> {
     self.data.clear()
     return .value(self.builtins.none)
   }
+
+  // MARK: - Copy
 
   // sourcery: pymethod = copy
   internal func copy() -> PyObject {

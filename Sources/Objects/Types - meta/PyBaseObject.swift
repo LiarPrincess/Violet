@@ -5,7 +5,6 @@ import Core
 // Objects -> typeobject.c
 
 /// Root of the Object hierarchy (kind of important thingie).
-/// Under the hood it is just a special type with fancy dict.
 internal enum PyBaseObject {
 
   internal static let doc: String = """
