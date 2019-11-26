@@ -216,8 +216,7 @@ PyTypeObject PyDict_Type = {
     PyObject_GenericGetAttr,    /* tp_getattro */
     0,          /* tp_setattro */
     0,          /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE | Py_TPFLAGS_DICT_SUBCLASS,         /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_DICT_SUBCLASS,         /* tp_flags */
     dictionary_doc,             /* tp_doc */
     dict_traverse,              /* tp_traverse */
     dict_tp_clear,              /* tp_clear */
@@ -512,8 +511,7 @@ PyTypeObject PyFrozenSet_Type = {
     PyObject_GenericGetAttr,            /* tp_getattro */
     0,                                  /* tp_setattro */
     0,                                  /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,            /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,            /* tp_flags */
     frozenset_doc,                      /* tp_doc */
     (traverseproc)set_traverse,         /* tp_traverse */
     (inquiry)set_clear_internal,        /* tp_clear */
@@ -710,8 +708,7 @@ PyTypeObject PyEnum_Type = {
 PyObject_GenericGetAttr,        /* tp_getattro */
     0,                              /* tp_setattro */
     0,                              /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,        /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,        /* tp_flags */
     enum_new__doc__,                /* tp_doc */
 (traverseproc)enum_traverse,    /* tp_traverse */
     0,                              /* tp_clear */
@@ -754,8 +751,7 @@ PyTypeObject PyReversed_Type = {
     PyObject_GenericGetAttr,        /* tp_getattro */
     0,                              /* tp_setattro */
     0,                              /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,        /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,        /* tp_flags */
     reversed_new__doc__,            /* tp_doc */
     (traverseproc)reversed_traverse,/* tp_traverse */
     0,                              /* tp_clear */

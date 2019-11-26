@@ -21,8 +21,7 @@ PyTypeObject PyFilter_Type = {
     PyObject_GenericGetAttr,            /* tp_getattro */
     0,                                  /* tp_setattro */
     0,                                  /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,            /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,            /* tp_flags */
     filter_doc,                         /* tp_doc */
     (traverseproc)filter_traverse,      /* tp_traverse */
     0,                                  /* tp_clear */
@@ -65,8 +64,7 @@ PyTypeObject PyMap_Type = {
     PyObject_GenericGetAttr,            /* tp_getattro */
     0,                                  /* tp_setattro */
     0,                                  /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,            /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,            /* tp_flags */
     map_doc,                            /* tp_doc */
     (traverseproc)map_traverse,         /* tp_traverse */
     0,                                  /* tp_clear */
@@ -109,8 +107,7 @@ PyTypeObject PyZip_Type = {
     PyObject_GenericGetAttr,            /* tp_getattro */
     0,                                  /* tp_setattro */
     0,                                  /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,            /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,            /* tp_flags */
     zip_doc,                            /* tp_doc */
     (traverseproc)zip_traverse,    /* tp_traverse */
     0,                                  /* tp_clear */
@@ -298,8 +295,7 @@ _PyWeakref_RefType = {
     0,                          /*tp_getattro*/
     0,                          /*tp_setattro*/
     0,                          /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC
-        | Py_TPFLAGS_BASETYPE,  /*tp_flags*/
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,  /*tp_flags*/
     0,                          /*tp_doc*/
     (traverseproc)gc_traverse,  /*tp_traverse*/
     (inquiry)gc_clear,          /*tp_clear*/

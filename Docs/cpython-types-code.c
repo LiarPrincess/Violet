@@ -18,8 +18,7 @@ PyTypeObject _PyNamespace_Type = {
     PyObject_GenericGetAttr,                    /* tp_getattro */
     PyObject_GenericSetAttr,                    /* tp_setattro */
     0,                                          /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,                    /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,                    /* tp_flags */
     namespace_doc,                              /* tp_doc */
     (traverseproc)namespace_traverse,           /* tp_traverse */
     (inquiry)namespace_clear,                   /* tp_clear */
@@ -61,8 +60,7 @@ PyTypeObject PyModule_Type = {
     (getattrofunc)module_getattro,              /* tp_getattro */
     PyObject_GenericSetAttr,                    /* tp_setattro */
     0,                                          /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,                    /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,                    /* tp_flags */
     module___init____doc__,                     /* tp_doc */
     (traverseproc)module_traverse,              /* tp_traverse */
     (inquiry)module_clear,                      /* tp_clear */
@@ -140,8 +138,7 @@ PyTypeObject PyProperty_Type = {
     PyObject_GenericGetAttr,                    /* tp_getattro */
     0,                                          /* tp_setattro */
     0,                                          /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,                    /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,                    /* tp_flags */
     property_init__doc__,                       /* tp_doc */
     property_traverse,                          /* tp_traverse */
     (inquiry)property_clear,                    /* tp_clear */

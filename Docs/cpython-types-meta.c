@@ -18,8 +18,7 @@ PyTypeObject PyType_Type = {
     (getattrofunc)type_getattro,                /* tp_getattro */
     (setattrofunc)type_setattro,                /* tp_setattro */
     0,                                          /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE | Py_TPFLAGS_TYPE_SUBCLASS,         /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE | Py_TPFLAGS_TYPE_SUBCLASS,         /* tp_flags */
     type_doc,                                   /* tp_doc */
     (traverseproc)type_traverse,                /* tp_traverse */
     (inquiry)type_clear,                        /* tp_clear */
@@ -105,8 +104,7 @@ PyTypeObject PySuper_Type = {
     super_getattro,                             /* tp_getattro */
     0,                                          /* tp_setattro */
     0,                                          /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC |
-        Py_TPFLAGS_BASETYPE,                    /* tp_flags */
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_GC | Py_TPFLAGS_BASETYPE,                    /* tp_flags */
     super_doc,                                  /* tp_doc */
     super_traverse,                             /* tp_traverse */
     0,                                          /* tp_clear */
