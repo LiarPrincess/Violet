@@ -20,15 +20,10 @@ internal enum AttributeHelper {
 
   internal static func getAttribute(from object: PyObject,
                                     name: String) -> PyResult<PyObject> {
-    let tp = object.type
-    let descr = tp.lookup(name: name)
-    var descrGet: PyObject?
+    let descriptor = DescriptorHelper.get(from: object, name: name)
 
-    if let descr = descr {
-      descrGet = descr.type.lookup(name: "__get__")
-      if let descrGet = descrGet, DescriptorHelper.isData(descr) {
-        return callDescriptorGet(descr: descr, descrGet: descrGet, object: object)
-      }
+    if let descr = descriptor, descr.isData {
+      return descr.callGet()
     }
 
     if let attribOwner = object as? __dict__GetterOwner,
@@ -36,18 +31,11 @@ internal enum AttributeHelper {
       return .value(value)
     }
 
-    if let descr = descr, let descrGet = descrGet {
-      return callDescriptorGet(descr: descr, descrGet: descrGet, object: object)
+    if let descr = descriptor {
+      return descr.callGet()
     }
 
     return .error(attributeError(object: object, name: name))
-  }
-
-  private static func callDescriptorGet(descr: PyObject,
-                                        descrGet: PyObject,
-                                        object: PyObject) -> PyResult<PyObject> {
-    let args = [descr, object, object.type]
-    return object.context.call(descrGet, args: args)
   }
 
   internal static func attributeError(object: PyObject,
