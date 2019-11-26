@@ -138,7 +138,7 @@ internal final class PyFunction: PyObject {
   }
 
   // sourcery: pyproperty = __dict__
-  internal func dict() -> Attributes {
+  internal func getDict() -> Attributes {
     return self._attributes
   }
 

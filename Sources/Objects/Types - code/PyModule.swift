@@ -36,7 +36,7 @@ public final class PyModule: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal func dict() -> Attributes {
+  internal func getDict() -> Attributes {
     return self._attributes
   }
 

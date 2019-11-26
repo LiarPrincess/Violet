@@ -7,24 +7,25 @@
 {% macro fillDict type %}
   {% set castSelf %}selfAs{{ type.name }}{% endset %}
 
+    let dict = result.getDict()
   {% for prop in type.instanceMethods|annotated:"pyproperty" %}
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     {% set getter %}{{ type.name }}.{{ prop.selectorName }}{% endset %}
     {% if prop.annotations.setter %}
-    result._attributes["{{ attribute }}"] = createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }})
+    dict["{{ attribute }}"] = createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }})
     {% else %}
-    result._attributes["{{ attribute }}"] = createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }})
+    dict["{{ attribute }}"] = createProperty(context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }})
     {% endif %}
-    {% endfor %}
+  {% endfor %}
 
-    {% for method in type.staticMethods|annotated:"pymethod" %}
+  {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    result._attributes["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
-    {% endfor %}
+    dict["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+  {% endfor %}
 
-    {% for method in type.instanceMethods|annotated:"pymethod" %}
+  {% for method in type.instanceMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    result._attributes["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }})
+    dict["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }})
   {% endfor %}
 {% endmacro %}
 

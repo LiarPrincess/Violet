@@ -133,7 +133,7 @@ internal {final}class Py{name}: Py{base} {{
    }}
 
    // sourcery: pyproperty = __dict__
-   override internal func dict() -> Attributes {{
+   override internal func getDict() -> Attributes {{
      return self._attributes
    }}
 }}

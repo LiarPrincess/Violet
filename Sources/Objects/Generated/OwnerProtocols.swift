@@ -24,7 +24,7 @@ protocol __context__SetterOwner { func setContext(_ value: PyObject?) -> PyResul
 protocol __delattr__Owner { func delAttribute(name: PyObject) -> PyResult<PyNone> }
 protocol __delete__Owner { func del(object: PyObject) -> PyResult<PyObject> }
 protocol __delitem__Owner { func delItem(at index: PyObject) -> PyResult<PyNone> }
-protocol __dict__GetterOwner { func dict() -> Attributes }
+protocol __dict__GetterOwner { func getDict() -> Attributes }
 protocol __dir__Owner { func dir() -> DirResult }
 protocol __divmod__Owner { func divmod(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __doc__GetterOwner { func getDoc() -> String? }
