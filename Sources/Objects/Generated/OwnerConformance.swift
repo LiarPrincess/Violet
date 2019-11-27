@@ -33,7 +33,8 @@ extension PyType:
   __getattribute__Owner,
   __setattr__Owner,
   __delattr__Owner,
-  __dir__Owner
+  __dir__Owner,
+  __call__Owner
 { }
 
 // MARK: - Bool

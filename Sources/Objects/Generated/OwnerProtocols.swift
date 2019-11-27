@@ -13,7 +13,7 @@ protocol __and__Owner { func and(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __bases__GetterOwner { func getBases() -> PyTuple }
 protocol __bases__SetterOwner { func setBases(_ value: PyObject?) -> PyResult<()> }
 protocol __bool__Owner { func asBool() -> Bool }
-protocol __call__Owner { func call(args: PyObject, kwargs: PyObject) -> PyResultOrNot<PyObject> }
+protocol __call__Owner { func call(args: PyObject, kwargs: PyObject?) -> PyResultOrNot<PyObject> }
 protocol __cause__GetterOwner { func getCause() -> PyObject }
 protocol __cause__SetterOwner { func setCause(_ value: PyObject?) -> PyResult<()> }
 protocol __class__GetterOwner { func getClass() -> PyType }

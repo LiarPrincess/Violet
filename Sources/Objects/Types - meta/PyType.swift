@@ -463,6 +463,77 @@ public final class PyType: PyObject {
     return nil
   }
 
+  // MARK: - Call
+
+  // sourcery: pymethod = __call__
+  /// static PyObject *
+  /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
+  internal func call(args: PyObject,
+                     kwargs: PyObject?) -> PyResultOrNot<PyObject> {
+    let newResult = self.builtins.callMethod(on: self,
+                                             selector: "__new__",
+                                             args: args,
+                                             kwargs: kwargs)
+    let object: PyObject
+    switch newResult {
+    case .value(let o):
+      object = o
+    case .notImplemented:
+      return .value(self.builtins.notImplemented)
+    case .noSuchMethod:
+      return .typeError("cannot create '\(self.name)' instances")
+    case .methodIsNotCallable(let e), .error(let e):
+      return .error(e)
+    }
+
+    // Ugly exception: when the call was type(something),
+    // don't call tp_init on the result.
+    if self === self.builtins.type
+      && self.isSingleElementTuple(args: args)
+      && self.isEmptyDictOrNil(kwargs: kwargs) {
+      return .value(object)
+    }
+
+    // If the returned object is not an instance of type,
+    // it won't be initialized.
+    guard object.type.isSubtype(of: self) else {
+      return .value(object)
+    }
+
+    // Call '__init__' (on object type not on self!).
+    let initResult = self.builtins.callMethod(on: object.type,
+                                              selector: "__init__",
+                                              args: args,
+                                              kwargs: kwargs)
+
+    switch initResult {
+    case .value, .noSuchMethod, .notImplemented:
+      return .value(object)
+    case .methodIsNotCallable(let e), .error(let e):
+      return .error(e)
+    }
+  }
+
+  private func isSingleElementTuple(args: PyObject) -> Bool {
+    guard let tuple = args as? PyTuple else {
+      return false
+    }
+
+    return tuple.data.count == 1
+  }
+
+  private func isEmptyDictOrNil(kwargs: PyObject?) -> Bool {
+    guard let kwargs = kwargs else {
+      return false
+    }
+
+    guard let kwargsDict = kwargs as? PyDict else {
+      return false
+    }
+
+    return kwargsDict.elements.isEmpty
+  }
+
   // MARK: - Helpers
 
   private func checkSetSpecialAttribute(name: String,

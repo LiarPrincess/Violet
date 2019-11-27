@@ -31,6 +31,7 @@ PyType|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<P
 PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
 PyType|PyObject|func|__dir__|dir() -> DirResult
+PyType|PyObject|func|__call__|call(args: PyObject,                     kwargs: PyObject?) -> PyResultOrNot<PyObject>
 
 
 PyBool|PyInt|get|__class__|getClass() -> PyType
@@ -60,7 +61,7 @@ PyBuiltinFunction|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyRe
 PyBuiltinFunction|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
 PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
-PyBuiltinFunction|PyObject|func|__call__|call(args: PyObject,                     kwargs: PyObject) -> PyResultOrNot<PyObject>
+PyBuiltinFunction|PyObject|func|__call__|call(args: PyObject,                     kwargs: PyObject?) -> PyResultOrNot<PyObject>
 
 PyCode|PyObject|get|__class__|getClass() -> PyType
 

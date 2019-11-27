@@ -63,6 +63,7 @@ extension TypeFactory {
     dict["__setattr__"] = wrapMethod(context, name: "__setattr__", doc: nil, fn: PyType.setAttribute(name:value:), castSelf: selfAsPyType)
     dict["__delattr__"] = wrapMethod(context, name: "__delattr__", doc: nil, fn: PyType.delAttribute(name:), castSelf: selfAsPyType)
     dict["__dir__"] = wrapMethod(context, name: "__dir__", doc: nil, fn: PyType.dir, castSelf: selfAsPyType)
+    dict["__call__"] = wrapMethod(context, name: "__call__", doc: nil, fn: PyType.call(args:kwargs:), castSelf: selfAsPyType)
     return result
   }
 

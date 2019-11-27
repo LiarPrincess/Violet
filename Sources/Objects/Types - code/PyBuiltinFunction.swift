@@ -155,10 +155,23 @@ internal final class PyBuiltinFunction: PyObject {
   /// PyObject *
   /// PyCFunction_Call(PyObject *func, PyObject *args, PyObject *kwargs)
   internal func call(args: PyObject,
-                     kwargs: PyObject) -> PyResultOrNot<PyObject> {
+                     kwargs: PyObject?) -> PyResultOrNot<PyObject> {
     guard let argsTuple = args as? PyTuple else {
       let t = args.typeName
       return .typeError("Function positional arguments should be a tuple, not \(t)")
+    }
+
+    switch self.getKwargsDict(kwargs: kwargs) {
+    case let .value(dict):
+      return self.call(args: argsTuple.elements, kwargs: dict)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func getKwargsDict(kwargs: PyObject?) -> PyResult<PyDictData?> {
+    guard let kwargs = kwargs else {
+      return .value(nil)
     }
 
     guard let kwargsDict = kwargs as? PyDict else {
@@ -166,7 +179,7 @@ internal final class PyBuiltinFunction: PyObject {
       return .typeError("Function keyword arguments should be a dict, not \(t)")
     }
 
-    return self.call(args: argsTuple.elements, kwargs: kwargsDict.elements)
+    return .value(kwargsDict.elements)
   }
 
   /// _PyMethodDef_RawFastCallDict(PyMethodDef *method,

@@ -28,47 +28,39 @@ extension Builtins {
 
   // MARK: - Method
 
-  internal func callMethod(on object: PyObject,
-                           selector: String) -> CallResult {
-    return self.callMethod(on: object,
-                           selector: selector,
-                           args: [],
-                           kwargs: self.emptyKwarks)
-  }
-
+  /// Call method with single arg.
   internal func callMethod(on object: PyObject,
                            selector: String,
                            arg: PyObject) -> CallResult {
-    return self.callMethod(on: object,
-                           selector: selector,
-                           args: [arg],
-                           kwargs: self.emptyKwarks)
+    return self.callMethod(on: object, selector: selector, args: [arg])
   }
 
-  internal func callMethod(on object: PyObject,
-                           selector: String,
-                           args: [PyObject]) -> CallResult {
+  /// Call method with positional arg array.
+  public func callMethod(on object: PyObject,
+                         selector: String,
+                         args: [PyObject]) -> CallResult {
+    let tupleArgs = self.newTuple([object] + args)
     return self.callMethod(on: object,
                            selector: selector,
-                           args: args,
-                           kwargs: self.emptyKwarks)
+                           args: tupleArgs,
+                           kwargs: nil)
   }
 
   /// PyObject *
   /// PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...)
   public func callMethod(on object: PyObject,
                          selector: String,
-                         args: [PyObject],
-                         kwargs: PyObject) -> CallResult {
+                         args: PyObject? = nil,
+                         kwargs: PyObject? = nil) -> CallResult {
     guard let method = object.type.lookup(name: selector) else {
       let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
       return .noSuchMethod(.attributeError(msg))
     }
 
-    let realArgs = PyTuple(self.context, elements: [object] + args)
+    let args = args ?? self.emptyTuple
 
     if let owner = method as? __call__Owner {
-      switch owner.call(args: realArgs, kwargs: kwargs) {
+      switch owner.call(args: args, kwargs: kwargs) {
       case .value(let result): return .value(result)
       case .notImplemented: return .notImplemented
       case .error(let e): return .error(e)

@@ -22,7 +22,8 @@ internal struct MRO {
   ///
   /// It will not take into account `self` (which should be 1st in MRO)!
   internal static func linearize(baseClass: PyType) -> MRO {
-    return MRO(baseClasses: [baseClass], resolutionOrder: baseClass.mro)
+    let mro = baseClass.getMRORaw()
+    return MRO(baseClasses: [baseClass], resolutionOrder: mro)
   }
 
   /// Create C3 linearisation of given base classes.
@@ -45,13 +46,13 @@ internal struct MRO {
     }
 
     // Sanity check.
-    if let duplicate = MRO.getDuplicateBaseClassName(baseClasses) {
-      return .typeError("duplicate base class \(duplicate)")
+    if let duplicate = MRO.getDuplicateBaseClass(baseClasses) {
+      return .typeError("duplicate base class \(duplicate.getQualname())")
     }
 
     // Perform C3 linearisation.
     var result = [PyType]()
-    let mros = baseClasses.map { $0.mro } + [baseClasses]
+    let mros = baseClasses.map { $0.getMRORaw() } + [baseClasses]
 
     while hasAnyClassRemaining(mros) {
       guard let base = getNextBase(mros) else {
@@ -82,17 +83,15 @@ internal struct MRO {
     return result
   }
 
-  private static func getDuplicateBaseClassName(_ baseClasses: [PyType]) -> String? {
-    var processed = [PyType]()
-
+  private static func getDuplicateBaseClass(_ baseClasses: [PyType]) -> PyType? {
     // This is quadratic, but we don't expect many (>100) base classes.
-    for base in baseClasses {
-      let isDuplicate = processed.contains { $0 === base }
-      if isDuplicate {
-        return base.qualname
-      }
+    for (index, base) in baseClasses.enumerated() {
+      let upToCurrent = baseClasses[0..<index]
 
-      processed.append(base)
+      let isDuplicate = upToCurrent.contains { $0 === base }
+      if isDuplicate {
+        return base
+      }
     }
 
     return nil
