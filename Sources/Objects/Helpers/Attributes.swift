@@ -1,5 +1,13 @@
 // MARK: - Attributes
 
+// It has to be a class because it needs to be shared between multiple entities:
+// >>> class C(): pass
+// >>> c = C()        <-- 'c' has reference to its own '__dict__'
+// >>> d = c.__dict__ <-- save dict reference
+// >>> c.a = 1        <-- add attribute
+// >>> d
+// {'a': 1} <-- attribute is present in dict
+
 /// Dictionary used for `__dict__`.
 public final class Attributes {
 

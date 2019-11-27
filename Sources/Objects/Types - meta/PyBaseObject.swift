@@ -66,29 +66,30 @@ internal enum PyBaseObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal static func repr(zelf: PyObject) -> String {
+  internal static func repr(zelf: PyObject) -> PyResult<String> {
     switch zelf.type.getModuleRaw() {
     case .builtins:
-      return "<\(zelf.typeName) object at \(zelf.ptrString)>"
-    case let .external(module):
-      return "<\(module).\(zelf.typeName) object at \(zelf.ptrString)>"
+      return .value("<\(zelf.typeName) object at \(zelf.ptrString)>")
+    case .module(let module):
+      return .value("<\(module).\(zelf.typeName) object at \(zelf.ptrString)>")
+    case .error(let e):
+      return .error(e)
     }
   }
 
   // sourcery: pymethod = __str__
-  internal static func str(zelf: PyObject) -> String {
+  internal static func str(zelf: PyObject) -> PyResult<String> {
     return PyBaseObject.repr(zelf: zelf)
   }
 
   // sourcery: pymethod = __format__
   internal static func format(zelf: PyObject, spec: PyObject) -> PyResult<String> {
     if let spec = spec as? PyString, spec.value.isEmpty {
-      return .value(PyBaseObject.str(zelf: zelf))
+      return PyBaseObject.str(zelf: zelf)
     }
 
-    return .typeError(
-      "unsupported format string passed to \(zelf.typeName).__format__"
-    )
+    let msg = "unsupported format string passed to \(zelf.typeName).__format__"
+    return .typeError(msg)
   }
 
   // MARK: - Class

@@ -124,8 +124,12 @@ internal final class PyFunction: PyObject {
   }
 
   // sourcery: pyproperty = __doc__
-  internal func getDoc() -> String? {
-    return self._doc
+  internal func getDoc() -> PyResult<PyObject> {
+    guard let doc = self._doc else {
+      return .value(self.builtins.none)
+    }
+
+    return .value(self.builtins.newString(doc))
   }
 
   // sourcery: pyproperty = __module__

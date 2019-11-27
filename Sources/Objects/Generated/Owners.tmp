@@ -15,17 +15,18 @@ PyType|PyObject|get|__name__|getName() -> String
 PyType|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
 PyType|PyObject|get|__qualname__|getQualname() -> String
 PyType|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
+PyType|PyObject|get|__doc__|getDoc() -> PyResult<PyObject>
+PyType|PyObject|set|__doc__|setDoc(_ value: PyObject?) -> PyResult<()>
 PyType|PyObject|get|__module__|getModule() -> PyResult<String>
 PyType|PyObject|set|__module__|setModule(_ value: PyObject?) -> PyResult<()>
-PyType|PyObject|get|__bases__|getBases() -> [PyType]
+PyType|PyObject|get|__bases__|getBases() -> PyTuple
 PyType|PyObject|set|__bases__|setBases(_ value: PyObject?) -> PyResult<()>
 PyType|PyObject|get|__dict__|getDict() -> Attributes
 PyType|PyObject|get|__class__|getClass() -> PyType
+PyType|PyObject|get|__mro__|getMRO() -> PyTuple
 
 PyType|PyObject|func|__repr__|repr() -> PyResult<String>
 PyType|PyObject|func|__subclasses__|getSubclasses() -> [PyType]
-PyType|PyObject|func|__instancecheck__|isInstance(of type: PyObject) -> PyResult<Bool>
-PyType|PyObject|func|__subclasscheck__|isSubclass(of type: PyObject) -> PyResult<Bool>
 PyType|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
@@ -212,7 +213,7 @@ PyFunction|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__qualname__|getQualname() -> String
 PyFunction|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__code__|getCode() -> PyCode
-PyFunction|PyObject|get|__doc__|getDoc() -> String?
+PyFunction|PyObject|get|__doc__|getDoc() -> PyResult<PyObject>
 PyFunction|PyObject|get|__module__|getModule() -> PyResult<String>
 PyFunction|PyObject|get|__dict__|getDict() -> Attributes
 

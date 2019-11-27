@@ -12,14 +12,17 @@ type
     __dictoffset__ - <class 'int'>
     __flags__ - <class 'int'>
     __itemsize__ - <class 'int'>
-    __mro__ - <class 'tuple'>
     __prepare__ - <class 'builtin_function_or_method'>
     __text_signature__ - <class 'NoneType'>
     __weakrefoffset__ - <class 'int'>
     __abstractmethods__
     __call__
+    __instancecheck__
     __sizeof__
+    __subclasscheck__
     mro
+  Why do we even have this?
+    __doc__
 
 code
   Unimplemented:

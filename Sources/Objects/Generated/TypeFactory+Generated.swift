@@ -49,16 +49,16 @@ extension TypeFactory {
     let dict = result.getDict()
     dict["__name__"] = createProperty(context, name: "__name__", doc: nil, get: PyType.getName, set: PyType.setName, castSelf: selfAsPyType)
     dict["__qualname__"] = createProperty(context, name: "__qualname__", doc: nil, get: PyType.getQualname, set: PyType.setQualname, castSelf: selfAsPyType)
+    dict["__doc__"] = createProperty(context, name: "__doc__", doc: nil, get: PyType.getDoc, set: PyType.setDoc, castSelf: selfAsPyType)
     dict["__module__"] = createProperty(context, name: "__module__", doc: nil, get: PyType.getModule, set: PyType.setModule, castSelf: selfAsPyType)
     dict["__bases__"] = createProperty(context, name: "__bases__", doc: nil, get: PyType.getBases, set: PyType.setBases, castSelf: selfAsPyType)
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyType.getDict, castSelf: selfAsPyType)
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyType.getClass, castSelf: selfAsPyType)
+    dict["__mro__"] = createProperty(context, name: "__mro__", doc: nil, get: PyType.getMRO, castSelf: selfAsPyType)
 
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyType.repr, castSelf: selfAsPyType)
     dict["__subclasses__"] = wrapMethod(context, name: "__subclasses__", doc: nil, fn: PyType.getSubclasses, castSelf: selfAsPyType)
-    dict["__instancecheck__"] = wrapMethod(context, name: "__instancecheck__", doc: nil, fn: PyType.isInstance(of:), castSelf: selfAsPyType)
-    dict["__subclasscheck__"] = wrapMethod(context, name: "__subclasscheck__", doc: nil, fn: PyType.isSubclass(of:), castSelf: selfAsPyType)
     dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyType.getAttribute(name:), castSelf: selfAsPyType)
     dict["__setattr__"] = wrapMethod(context, name: "__setattr__", doc: nil, fn: PyType.setAttribute(name:value:), castSelf: selfAsPyType)
     dict["__delattr__"] = wrapMethod(context, name: "__delattr__", doc: nil, fn: PyType.delAttribute(name:), castSelf: selfAsPyType)
