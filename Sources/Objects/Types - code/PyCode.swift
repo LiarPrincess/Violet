@@ -4,17 +4,17 @@ import Bytecode
 // Objects -> codeobject.c
 
 // sourcery: pytype = code
-internal final class PyCode: PyObject {
+public class PyCode: PyObject {
 
   internal static let doc: String = """
     Create a code object. Not for the faint of heart.
     """
 
-  internal let _code: CodeObject
-  internal let _filename = "" // TODO: Add 'filename' to CodeObject
+  internal let codeObject: CodeObject
+  internal let filename = "" // TODO: Add 'filename' to CodeObject
 
   internal init(_ context: PyContext, code: CodeObject) {
-    self._code = code
+    self.codeObject = code
     super.init(type: context.builtins.types.code)
   }
 
@@ -52,8 +52,8 @@ internal final class PyCode: PyObject {
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
     // Not the best, but PyCodes are not used often
-    let name = self.hasher.hash(self._code.name)
-    let qualifiedName = self.hasher.hash(self._code.qualifiedName)
+    let name = self.hasher.hash(self.codeObject.name)
+    let qualifiedName = self.hasher.hash(self.codeObject.qualifiedName)
     return .value(name ^ qualifiedName)
   }
 
@@ -61,10 +61,10 @@ internal final class PyCode: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let name = self._code.name
+    let name = self.codeObject.name
     let ptr = self.ptrString
-    let file = self._filename
-    let line = self._code.firstLine
+    let file = self.filename
+    let line = self.codeObject.firstLine
     return .value("<code object \(name) at \(ptr), file '\(file)', line \(line)>")
   }
 

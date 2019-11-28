@@ -33,7 +33,7 @@ internal struct PyTypeWeakRef {
 
 // MARK: - Type
 
-public final class PyType: PyObject {
+public class PyType: PyObject {
 
   internal static let doc: String = """
     type(object_or_name, bases, dict)

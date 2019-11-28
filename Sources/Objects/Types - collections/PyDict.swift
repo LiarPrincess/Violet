@@ -8,7 +8,7 @@ import Core
 
 // sourcery: pytype = dict
 /// This subtype of PyObject represents a Python dictionary object.
-public final class PyDict: PyObject {
+public class PyDict: PyObject {
 
   internal static let doc: String = """
     dict() -> new empty dictionary

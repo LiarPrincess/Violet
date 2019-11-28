@@ -3,7 +3,7 @@
 
 // sourcery: pytype = property
 /// Native property implemented in Swift.
-internal final class PyProperty: PyObject {
+public class PyProperty: PyObject {
 
   internal static let doc: String = """
     property(fget=None, fset=None, fdel=None, doc=None)
@@ -43,19 +43,19 @@ internal final class PyProperty: PyObject {
             del self._x
     """
 
-  internal let _getter: PyObject?
-  internal let _setter: PyObject?
-  internal let _deleter: PyObject?
-  internal let _doc: PyObject?
+  internal let getter: PyObject?
+  internal let setter: PyObject?
+  internal let deleter: PyObject?
+  internal let doc: PyObject?
 
   internal init(_ context: PyContext,
                 getter: PyObject?,
                 setter: PyObject?,
                 deleter: PyObject?) {
-    self._getter = getter is PyNone ? nil : getter
-    self._setter = setter is PyNone ? nil : setter
-    self._deleter = deleter is PyNone ? nil : deleter
-    self._doc = nil
+    self.getter = getter is PyNone ? nil : getter
+    self.setter = setter is PyNone ? nil : setter
+    self.deleter = deleter is PyNone ? nil : deleter
+    self.doc = nil
 
     super.init(type: context.builtins.types.property)
   }
@@ -78,17 +78,17 @@ internal final class PyProperty: PyObject {
 
   // sourcery: pyproperty = fget
   internal func getFGet() -> PyObject {
-    return self._getter ?? self.builtins.none
+    return self.getter ?? self.builtins.none
   }
 
   // sourcery: pyproperty = fset
   internal func getFSet() -> PyObject {
-    return self._setter ?? self.builtins.none
+    return self.setter ?? self.builtins.none
   }
 
   // sourcery: pyproperty = fdel
   internal func getFDel() -> PyObject {
-    return self._deleter ?? self.builtins.none
+    return self.deleter ?? self.builtins.none
   }
 
   // MARK: - Call
@@ -99,7 +99,7 @@ internal final class PyProperty: PyObject {
       return .value(self)
     }
 
-    guard let propGet = self._getter else {
+    guard let propGet = self.getter else {
       return .attributeError("unreadable attribute")
     }
 
@@ -109,7 +109,7 @@ internal final class PyProperty: PyObject {
   // sourcery: pymethod = __set__
   internal func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
     let isDelete = value is PyNone
-    let fnOrNil = isDelete ? self._deleter : self._setter
+    let fnOrNil = isDelete ? self.deleter : self.setter
 
     guard let fn = fnOrNil else {
       let msg = isDelete ? "can't delete attribute" : "can't set attribute"

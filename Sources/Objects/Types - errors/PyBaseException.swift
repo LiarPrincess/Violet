@@ -6,20 +6,20 @@ import Core
 // https://docs.python.org/3.7/c-api/exceptions.html
 
 // sourcery: pyerrortype = BaseException
-internal class PyBaseException: PyObject {
+public class PyBaseException: PyObject {
 
   internal class var doc: String {
     return "Common base class for all exceptions"
   }
 
-  internal var _args: PyTuple
-  internal var _traceback: PyObject
-  internal var _cause: PyObject?
-  internal var _attributes: Attributes
+  internal var args: PyTuple
+  internal var traceback: PyObject
+  internal var cause: PyObject?
+  internal var attributes: Attributes
 
   /// Another exception during whose handling ex was raised.
-  internal var _exceptionContext: PyObject?
-  internal var _suppressExceptionContext: Bool
+  internal var exceptionContext: PyObject?
+  internal var suppressExceptionContext: Bool
 
   // MARK: - Init
 
@@ -29,12 +29,12 @@ internal class PyBaseException: PyObject {
                 cause: PyObject?,
                 exceptionContext: PyObject?,
                 suppressExceptionContext: Bool) {
-    self._args = args
-    self._traceback = traceback
-    self._cause = cause
-    self._attributes = Attributes()
-    self._exceptionContext = exceptionContext
-    self._suppressExceptionContext = suppressExceptionContext
+    self.args = args
+    self.traceback = traceback
+    self.cause = cause
+    self.attributes = Attributes()
+    self.exceptionContext = exceptionContext
+    self.suppressExceptionContext = suppressExceptionContext
 
     super.init()
     self.initType(from: context)
@@ -63,7 +63,7 @@ internal class PyBaseException: PyObject {
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
     let name = self.typeName
-    let args = self._args
+    let args = self.args
 
     switch args.getLength() {
     case 1:
@@ -77,7 +77,7 @@ internal class PyBaseException: PyObject {
 
   // sourcery: pymethod = __str__
   internal func str() -> PyResult<String> {
-    let args = self._args
+    let args = self.args
 
     switch args.getLength() {
     case 0:
@@ -94,7 +94,7 @@ internal class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __dict__
   internal func getDict() -> Attributes {
-    return self._attributes
+    return self.attributes
   }
 
   // MARK: - Class
@@ -125,7 +125,7 @@ internal class PyBaseException: PyObject {
 
   // sourcery: pyproperty = args, setter = setArgs
   internal func getArgs() -> PyObject {
-    return self._args
+    return self.args
   }
 
   internal func setArgs(_ value: PyObject?) -> PyResult<()> {
@@ -146,7 +146,7 @@ internal class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __traceback__, setter = setTraceback
   internal func getTraceback() -> PyObject {
-    return self._traceback
+    return self.traceback
   }
 
   internal func setTraceback(_ value: PyObject?) -> PyResult<()> {
@@ -174,7 +174,7 @@ internal class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __cause__, setter = setCause, doc = getCauseDoc
   internal func getCause() -> PyObject {
-    return self._cause ?? self.builtins.none
+    return self.cause ?? self.builtins.none
   }
 
   internal func setCause(_ value: PyObject?) -> PyResult<()> {
@@ -183,7 +183,7 @@ internal class PyBaseException: PyObject {
     }
 
     if value is PyNone {
-      self._cause = nil
+      self.cause = nil
       return .value()
     }
 
@@ -192,7 +192,7 @@ internal class PyBaseException: PyObject {
       return .typeError(msg)
     }
 
-    self._cause = value
+    self.cause = value
     return .value()
   }
 
@@ -202,7 +202,7 @@ internal class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __context__, setter = setContext, doc = getContetDoc
   internal func getContext() -> PyObject {
-    return self._exceptionContext ?? self.builtins.none
+    return self.exceptionContext ?? self.builtins.none
   }
 
   internal func setContext(_ value: PyObject?) -> PyResult<()> {
@@ -211,7 +211,7 @@ internal class PyBaseException: PyObject {
     }
 
     if value is PyNone {
-      self._exceptionContext = nil
+      self.exceptionContext = nil
       return .value()
     }
 
@@ -220,7 +220,7 @@ internal class PyBaseException: PyObject {
       return .typeError(msg)
     }
 
-    self._exceptionContext = value
+    self.exceptionContext = value
     return .value()
   }
 
@@ -228,17 +228,17 @@ internal class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __suppress_context__, setter = setSuppressContext
   internal func getSuppressContext() -> PyObject {
-    return self.builtins.newBool(self._suppressExceptionContext)
+    return self.builtins.newBool(self.suppressExceptionContext)
   }
 
   internal func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
     if let value = value {
       switch self.builtins.isTrueBool(value) {
-      case let .value(v): self._suppressExceptionContext = v
+      case let .value(v): self.suppressExceptionContext = v
       case let .error(e): return .error(e)
       }
     } else {
-      self._suppressExceptionContext = false
+      self.suppressExceptionContext = false
     }
 
     return .value()

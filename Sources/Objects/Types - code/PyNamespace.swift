@@ -2,7 +2,7 @@
 // Objects -> namespaceobject.c
 
 // sourcery: pytype = types.SimpleNamespace
-public final class PyNamespace: PyObject {
+public class PyNamespace: PyObject {
 
   internal static let doc: String = """
     A simple attribute-based namespace.
@@ -10,7 +10,7 @@ public final class PyNamespace: PyObject {
     SimpleNamespace(**kwargs)
     """
 
-  internal let _attributes = Attributes()
+  internal let attributes = Attributes()
 
   internal init(_ context: PyContext, name: PyObject, doc: PyObject? = nil) {
     super.init(type: context.builtins.types.simpleNamespace)
@@ -24,7 +24,7 @@ public final class PyNamespace: PyObject {
       return .notImplemented
     }
 
-    switch self._attributes.isEqual(to: other._attributes) {
+    switch self.attributes.isEqual(to: other.attributes) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
@@ -61,7 +61,7 @@ public final class PyNamespace: PyObject {
 
   // sourcery: pyproperty = __dict__
   internal func getDict() -> Attributes {
-    return self._attributes
+    return self.attributes
   }
 
   // MARK: - String
@@ -77,7 +77,7 @@ public final class PyNamespace: PyObject {
 
     return self.withReprLock {
       var list = [String]()
-      for entry in self._attributes.entries {
+      for entry in self.attributes.entries {
         switch self.builtins.repr(entry.value) {
         case let .value(o): list.append("\(entry.key)=\(o)")
         case let .error(e): return .error(e)

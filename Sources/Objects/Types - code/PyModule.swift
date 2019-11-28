@@ -2,7 +2,7 @@
 // Objects -> moduleobject.c
 
 // sourcery: pytype = module
-public final class PyModule: PyObject {
+public class PyModule: PyObject {
 
   internal static let doc: String = """
     module(name, doc=None)
@@ -12,12 +12,12 @@ public final class PyModule: PyObject {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  internal let _attributes = Attributes()
+  internal let attributes = Attributes()
 
   /// PyObject*
   /// PyModule_GetNameObject(PyObject *m)
   internal var name: PyResult<String> {
-    guard let nameObject = self._attributes["__name__"] else {
+    guard let nameObject = self.attributes["__name__"] else {
       return .systemError("nameless module")
     }
 
@@ -26,18 +26,18 @@ public final class PyModule: PyObject {
 
   internal init(_ context: PyContext, name: PyObject, doc: PyObject?) {
     super.init(type: context.builtins.types.module)
-    self._attributes["__name__"] = name
-    self._attributes["__doc__"] = doc
-    self._attributes["__package__"] = context.builtins.none
-    self._attributes["__loader__"] = context.builtins.none
-    self._attributes["__spec__"] = context.builtins.none
+    self.attributes["__name__"] = name
+    self.attributes["__doc__"] = doc
+    self.attributes["__package__"] = context.builtins.none
+    self.attributes["__loader__"] = context.builtins.none
+    self.attributes["__spec__"] = context.builtins.none
   }
 
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
   internal func getDict() -> Attributes {
-    return self._attributes
+    return self.attributes
   }
 
   // MARK: - String
@@ -72,7 +72,7 @@ public final class PyModule: PyObject {
       return .typeError("attribute name must be string, not '\(name.typeName)'")
     }
 
-    if let getAttr = self._attributes["__getattr__"] {
+    if let getAttr = self.attributes["__getattr__"] {
       return self.builtins.call(getAttr, args: [self, name])
     }
 
@@ -105,10 +105,10 @@ public final class PyModule: PyObject {
   // sourcery: pymethod = __dir__
   internal func dir() -> DirResult {
     // Do not add `self.type` dir!
-    if let dirFunc = self._attributes["__dir__"] {
+    if let dirFunc = self.attributes["__dir__"] {
       return self.context.callDir(dirFunc, args: [])
     } else {
-      return DirResult(self._attributes.keys)
+      return DirResult(self.attributes.keys)
     }
   }
 }

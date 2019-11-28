@@ -9,7 +9,7 @@ import Core
 // sourcery: pytype = slice
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
-public final class PySlice: PyObject {
+public class PySlice: PyObject {
 
   internal static let doc: String = """
     slice(stop)

@@ -1,0 +1,468 @@
+// Generated using Sourcery 0.15.0 — https://github.com/krzysztofzablocki/Sourcery
+// DO NOT EDIT
+
+
+// swiftlint:disable:previous vertical_whitespace
+// swiftlint:disable vertical_whitespace
+// swiftlint:disable file_length
+
+
+
+// MARK: - Bool
+
+/// Type used when we derive builtin `bool` class.
+/// For example: `class Rapunzel(bool): pass`.
+internal final class PyBoolHeap: PyBool {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - BuiltinFunction
+
+/// Type used when we derive builtin `builtinFunction` class.
+/// For example: `class Rapunzel(builtinFunction): pass`.
+internal final class PyBuiltinFunctionHeap: PyBuiltinFunction {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Code
+
+/// Type used when we derive builtin `code` class.
+/// For example: `class Rapunzel(code): pass`.
+internal final class PyCodeHeap: PyCode {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Complex
+
+/// Type used when we derive builtin `complex` class.
+/// For example: `class Rapunzel(complex): pass`.
+internal final class PyComplexHeap: PyComplex {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Dict
+
+/// Type used when we derive builtin `dict` class.
+/// For example: `class Rapunzel(dict): pass`.
+internal final class PyDictHeap: PyDict {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Ellipsis
+
+/// Type used when we derive builtin `ellipsis` class.
+/// For example: `class Rapunzel(ellipsis): pass`.
+internal final class PyEllipsisHeap: PyEllipsis {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Float
+
+/// Type used when we derive builtin `float` class.
+/// For example: `class Rapunzel(float): pass`.
+internal final class PyFloatHeap: PyFloat {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - FrozenSet
+
+/// Type used when we derive builtin `frozenset` class.
+/// For example: `class Rapunzel(frozenset): pass`.
+internal final class PyFrozenSetHeap: PyFrozenSet {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Function
+
+// PyFunction already has everything we need
+
+// MARK: - Int
+
+/// Type used when we derive builtin `int` class.
+/// For example: `class Rapunzel(int): pass`.
+internal final class PyIntHeap: PyInt {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - List
+
+/// Type used when we derive builtin `list` class.
+/// For example: `class Rapunzel(list): pass`.
+internal final class PyListHeap: PyList {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Method
+
+/// Type used when we derive builtin `method` class.
+/// For example: `class Rapunzel(method): pass`.
+internal final class PyMethodHeap: PyMethod {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Module
+
+// PyModule already has everything we need
+
+// MARK: - Namespace
+
+// PyNamespace already has everything we need
+
+// MARK: - None
+
+/// Type used when we derive builtin `NoneType` class.
+/// For example: `class Rapunzel(NoneType): pass`.
+internal final class PyNoneHeap: PyNone {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - NotImplemented
+
+/// Type used when we derive builtin `NotImplementedType` class.
+/// For example: `class Rapunzel(NotImplementedType): pass`.
+internal final class PyNotImplementedHeap: PyNotImplemented {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Property
+
+/// Type used when we derive builtin `property` class.
+/// For example: `class Rapunzel(property): pass`.
+internal final class PyPropertyHeap: PyProperty {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Range
+
+/// Type used when we derive builtin `range` class.
+/// For example: `class Rapunzel(range): pass`.
+internal final class PyRangeHeap: PyRange {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Set
+
+/// Type used when we derive builtin `set` class.
+/// For example: `class Rapunzel(set): pass`.
+internal final class PySetHeap: PySet {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Slice
+
+/// Type used when we derive builtin `slice` class.
+/// For example: `class Rapunzel(slice): pass`.
+internal final class PySliceHeap: PySlice {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - String
+
+/// Type used when we derive builtin `str` class.
+/// For example: `class Rapunzel(str): pass`.
+internal final class PyStringHeap: PyString {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+// MARK: - Tuple
+
+/// Type used when we derive builtin `tuple` class.
+/// For example: `class Rapunzel(tuple): pass`.
+internal final class PyTupleHeap: PyTuple {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
+
+// MARK: - ArithmeticError
+
+// PyArithmeticError already has everything we need
+
+// MARK: - AssertionError
+
+// PyAssertionError already has everything we need
+
+// MARK: - AttributeError
+
+// PyAttributeError already has everything we need
+
+// MARK: - BaseException
+
+// PyBaseException already has everything we need
+
+// MARK: - BlockingIOError
+
+// PyBlockingIOError already has everything we need
+
+// MARK: - BrokenPipeError
+
+// PyBrokenPipeError already has everything we need
+
+// MARK: - BufferError
+
+// PyBufferError already has everything we need
+
+// MARK: - BytesWarning
+
+// PyBytesWarning already has everything we need
+
+// MARK: - ChildProcessError
+
+// PyChildProcessError already has everything we need
+
+// MARK: - ConnectionAbortedError
+
+// PyConnectionAbortedError already has everything we need
+
+// MARK: - ConnectionError
+
+// PyConnectionError already has everything we need
+
+// MARK: - ConnectionRefusedError
+
+// PyConnectionRefusedError already has everything we need
+
+// MARK: - ConnectionResetError
+
+// PyConnectionResetError already has everything we need
+
+// MARK: - DeprecationWarning
+
+// PyDeprecationWarning already has everything we need
+
+// MARK: - EOFError
+
+// PyEOFError already has everything we need
+
+// MARK: - Exception
+
+// PyException already has everything we need
+
+// MARK: - FileExistsError
+
+// PyFileExistsError already has everything we need
+
+// MARK: - FileNotFoundError
+
+// PyFileNotFoundError already has everything we need
+
+// MARK: - FloatingPointError
+
+// PyFloatingPointError already has everything we need
+
+// MARK: - FutureWarning
+
+// PyFutureWarning already has everything we need
+
+// MARK: - GeneratorExit
+
+// PyGeneratorExit already has everything we need
+
+// MARK: - ImportError
+
+// PyImportError already has everything we need
+
+// MARK: - ImportWarning
+
+// PyImportWarning already has everything we need
+
+// MARK: - IndentationError
+
+// PyIndentationError already has everything we need
+
+// MARK: - IndexError
+
+// PyIndexError already has everything we need
+
+// MARK: - InterruptedError
+
+// PyInterruptedError already has everything we need
+
+// MARK: - IsADirectoryError
+
+// PyIsADirectoryError already has everything we need
+
+// MARK: - KeyError
+
+// PyKeyError already has everything we need
+
+// MARK: - KeyboardInterrupt
+
+// PyKeyboardInterrupt already has everything we need
+
+// MARK: - LookupError
+
+// PyLookupError already has everything we need
+
+// MARK: - MemoryError
+
+// PyMemoryError already has everything we need
+
+// MARK: - ModuleNotFoundError
+
+// PyModuleNotFoundError already has everything we need
+
+// MARK: - NameError
+
+// PyNameError already has everything we need
+
+// MARK: - NotADirectoryError
+
+// PyNotADirectoryError already has everything we need
+
+// MARK: - NotImplementedError
+
+// PyNotImplementedError already has everything we need
+
+// MARK: - OSError
+
+// PyOSError already has everything we need
+
+// MARK: - OverflowError
+
+// PyOverflowError already has everything we need
+
+// MARK: - PendingDeprecationWarning
+
+// PyPendingDeprecationWarning already has everything we need
+
+// MARK: - PermissionError
+
+// PyPermissionError already has everything we need
+
+// MARK: - ProcessLookupError
+
+// PyProcessLookupError already has everything we need
+
+// MARK: - RecursionError
+
+// PyRecursionError already has everything we need
+
+// MARK: - ReferenceError
+
+// PyReferenceError already has everything we need
+
+// MARK: - ResourceWarning
+
+// PyResourceWarning already has everything we need
+
+// MARK: - RuntimeError
+
+// PyRuntimeError already has everything we need
+
+// MARK: - RuntimeWarning
+
+// PyRuntimeWarning already has everything we need
+
+// MARK: - StopAsyncIteration
+
+// PyStopAsyncIteration already has everything we need
+
+// MARK: - StopIteration
+
+// PyStopIteration already has everything we need
+
+// MARK: - SyntaxError
+
+// PySyntaxError already has everything we need
+
+// MARK: - SyntaxWarning
+
+// PySyntaxWarning already has everything we need
+
+// MARK: - SystemError
+
+// PySystemError already has everything we need
+
+// MARK: - SystemExit
+
+// PySystemExit already has everything we need
+
+// MARK: - TabError
+
+// PyTabError already has everything we need
+
+// MARK: - TimeoutError
+
+// PyTimeoutError already has everything we need
+
+// MARK: - TypeError
+
+// PyTypeError already has everything we need
+
+// MARK: - UnboundLocalError
+
+// PyUnboundLocalError already has everything we need
+
+// MARK: - UnicodeDecodeError
+
+// PyUnicodeDecodeError already has everything we need
+
+// MARK: - UnicodeEncodeError
+
+// PyUnicodeEncodeError already has everything we need
+
+// MARK: - UnicodeError
+
+// PyUnicodeError already has everything we need
+
+// MARK: - UnicodeTranslateError
+
+// PyUnicodeTranslateError already has everything we need
+
+// MARK: - UnicodeWarning
+
+// PyUnicodeWarning already has everything we need
+
+// MARK: - UserWarning
+
+// PyUserWarning already has everything we need
+
+// MARK: - ValueError
+
+// PyValueError already has everything we need
+
+// MARK: - Warning
+
+// PyWarning already has everything we need
+
+// MARK: - ZeroDivisionError
+
+// PyZeroDivisionError already has everything we need

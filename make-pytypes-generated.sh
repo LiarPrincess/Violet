@@ -6,6 +6,12 @@ sourcery \
   --templates $GENERATED/TypeFactory+Generated.stencil \
   --output $GENERATED/TypeFactory+Generated.swift
 
+# Heap types
+sourcery \
+  --sources ./Sources/Objects \
+  --templates $GENERATED/HeapTypes.stencil \
+  --output $GENERATED/HeapTypes.swift
+
 # Builtin types
 sourcery \
   --sources ./Sources/Objects \

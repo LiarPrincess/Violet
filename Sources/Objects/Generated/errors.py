@@ -117,7 +117,7 @@ def print_class_definitions():
 // MARK: - {name}
 
 // sourcery: pyerrortype = {name}
-internal {final}class Py{name}: Py{base} {{
+public {final}class Py{name}: Py{base} {{
 
   override internal class var doc: String {{
     return "{doc}"
@@ -134,7 +134,7 @@ internal {final}class Py{name}: Py{base} {{
 
    // sourcery: pyproperty = __dict__
    override internal func getDict() -> Attributes {{
-     return self._attributes
+     return self.attributes
    }}
 }}
 ''')

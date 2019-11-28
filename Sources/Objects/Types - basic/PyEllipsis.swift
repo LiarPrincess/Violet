@@ -7,7 +7,7 @@ import Core
 // sourcery: pytype = ellipsis
 /// The Python Ellipsis object. This object has no methods.
 /// Like Py_None it is a singleton object.
-public final class PyEllipsis: PyObject {
+public class PyEllipsis: PyObject {
 
   // MARK: - Init
 

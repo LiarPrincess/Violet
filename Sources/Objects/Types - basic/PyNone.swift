@@ -8,7 +8,7 @@ import Core
 
 // sourcery: pytype = NoneType
 /// The Python None object, denoting lack of value. This object has no methods.
-public final class PyNone: PyObject {
+public class PyNone: PyObject {
 
   // MARK: - Init
 

@@ -5,7 +5,7 @@ import Bytecode
 
 // sourcery: pytype = method
 /// Function bound to an object.
-internal final class PyMethod: PyObject {
+public class PyMethod: PyObject {
 
   internal static let doc: String = """
     method(function, instance)
@@ -75,10 +75,10 @@ internal final class PyMethod: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let funcNameObject = self.fn._attributes["__qualname__"] ??
-                         self.fn._attributes["__name__"]
+    let funcNameObject = self.fn.attributes["__qualname__"] ??
+                         self.fn.attributes["__name__"]
 
-    var funcName = self.fn._name
+    var funcName = self.fn.name
     if let str = funcNameObject as? PyString {
       funcName = str.value
     }

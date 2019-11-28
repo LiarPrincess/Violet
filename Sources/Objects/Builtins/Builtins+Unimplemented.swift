@@ -5,7 +5,7 @@
 extension Builtins {
 
   public func getDict(_ module: PyModule) -> Attributes {
-    return module._attributes
+    return module.attributes
   }
 
   // MARK: - Other

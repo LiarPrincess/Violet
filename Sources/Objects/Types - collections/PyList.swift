@@ -6,7 +6,7 @@ import Core
 
 // sourcery: pytype = list
 /// This subtype of PyObject represents a Python list object.
-public final class PyList: PyObject {
+public class PyList: PyObject {
 
   internal static let doc: String = """
     list(iterable=(), /)

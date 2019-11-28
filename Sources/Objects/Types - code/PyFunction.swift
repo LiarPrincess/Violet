@@ -4,7 +4,7 @@ import Bytecode
 // Objects -> funcobject.c
 
 // sourcery: pytype = function
-internal final class PyFunction: PyObject {
+public class PyFunction: PyObject {
 
   internal static let doc: String = """
     function(code, globals, name=None, argdefs=None, closure=None)
@@ -25,42 +25,42 @@ internal final class PyFunction: PyObject {
     """
 
   /// The __name__ attribute, a string object
-  internal var _name: String
+  internal var name: String
   /// The qualified name
-  internal var _qualname: String
+  internal var qualname: String
   /// The __doc__ attribute, can be anything
-  internal let _doc: String?
+  internal let doc: String?
   /// The __dict__ attribute, a dict or NULL
-  internal let _attributes = Attributes()
+  internal let attributes = Attributes()
   /// The __module__ attribute, can be anything
-  internal let _module: PyObject
+  internal let module: PyObject
   /// A code object, the __code__ attribute
-  internal let _code: PyCode
+  internal let code: PyCode
 
-  internal let _globals: Attributes
-  internal let _defaults: PyTuple?
-  internal let _kwdefaults: PyDict?
-  internal let _closure: PyTuple?
+  internal let globals: Attributes
+  internal let defaults: PyTuple?
+  internal let kwdefaults: PyDict?
+  internal let closure: PyTuple?
 
   internal init(_ context: PyContext,
                 qualname: String?,
                 code: PyCode,
                 globals: Attributes) {
-    self._name = code._code.name
-    self._qualname = qualname ?? code._code.name
-    self._code = code
+    self.name = code.codeObject.name
+    self.qualname = qualname ?? code.codeObject.name
+    self.code = code
 
     // __module__: If module name is in globals, use it. Otherwise, use None.
-    self._module = globals["__name__"] ?? context.builtins.none
+    self.module = globals["__name__"] ?? context.builtins.none
 
-    self._globals = globals
-    self._defaults = nil
-    self._kwdefaults = nil
-    self._closure = nil
+    self.globals = globals
+    self.defaults = nil
+    self.kwdefaults = nil
+    self.closure = nil
 
-    switch code._code.constants.first {
-    case let .some(.string(s)): self._doc = s
-    default: self._doc = nil
+    switch code.codeObject.constants.first {
+    case let .some(.string(s)): self.doc = s
+    default: self.doc = nil
     }
 
     super.init(type: context.builtins.types.function)
@@ -70,7 +70,7 @@ internal final class PyFunction: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return .value("<function \(self._qualname) at \(self.ptrString)>")
+    return .value("<function \(self.qualname) at \(self.ptrString)>")
   }
 
   // MARK: - Class
@@ -80,11 +80,11 @@ internal final class PyFunction: PyObject {
     return self.type
   }
 
-  // MARK: - Properties
+  // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter = setName
   internal func getName() -> String {
-    return self._name
+    return self.name
   }
 
   internal func setName(_ value: PyObject?) -> PyResult<()> {
@@ -96,13 +96,15 @@ internal final class PyFunction: PyObject {
       return .typeError("__name__ must be set to a string object")
     }
 
-    self._name = valueString.value
+    self.name = valueString.value
     return .value()
   }
 
+  // MARK: - Qualname
+
   // sourcery: pyproperty = __qualname__, setter = setQualname
   internal func getQualname() -> String {
-    return self._qualname
+    return self.qualname
   }
 
   internal func setQualname(_ value: PyObject?) -> PyResult<()> {
@@ -114,39 +116,47 @@ internal final class PyFunction: PyObject {
       return .typeError("__qualname__ must be set to a string object")
     }
 
-    self._qualname = valueString.value
+    self.qualname = valueString.value
     return .value()
   }
 
+  // MARK: - Code
+
   // sourcery: pyproperty = __code__
   internal func getCode() -> PyCode {
-    return self._code
+    return self.code
   }
+
+  // MARK: - Doc
 
   // sourcery: pyproperty = __doc__
   internal func getDoc() -> PyResult<PyObject> {
-    guard let doc = self._doc else {
+    guard let doc = self.doc else {
       return .value(self.builtins.none)
     }
 
     return .value(self.builtins.newString(doc))
   }
 
+  // MARK: - Module
+
   // sourcery: pyproperty = __module__
   internal func getModule() -> PyResult<String> {
-    if let module = self._module as? PyModule {
+    if let module = self.module as? PyModule {
       return module.name
     }
 
-    return .value(self.context._str(value: self._module))
+    return .value(self.context._str(value: self.module))
   }
+
+  // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
   internal func getDict() -> Attributes {
-    return self._attributes
+    return self.attributes
   }
 
-  // MARK: - Call
+  // MARK: - Get
 
   // sourcery: pymethod = __get__
   internal func get(object: PyObject) -> PyResult<PyObject> {

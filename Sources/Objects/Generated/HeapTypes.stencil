@@ -1,0 +1,30 @@
+// swiftlint:disable:previous vertical_whitespace
+// swiftlint:disable vertical_whitespace
+// swiftlint:disable file_length
+
+{% macro printHeapType type %}
+  {# If we already have 'attributes: Attributes' then we dont need 'Heap' type #}
+  {% set hasAttributes %}{% for variable in type.allVariables where variable.name == "attributes" and variable.type.name == "Attributes" %}x{% endfor %}{% endset %}
+
+// MARK: - {{ type.name|replace:"Py","" }}
+
+  {% if hasAttributes %}
+// {{ type.name }} already has everything we need
+  {% else %}
+/// Type used when we derive builtin `{{ type.annotations.pytype }}` class.
+/// For example: `class Rapunzel({{ type.annotations.pytype }}): pass`.
+internal final class {{ type.name }}Heap: {{ type.name }} {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+  {% endif %}
+{% endmacro %}
+
+{% for type in types.classes|annotated:"pytype" %}
+{% call printHeapType type %}
+{% endfor %}
+
+{% for type in types.classes|annotated:"pyerrortype" %}
+{% call printHeapType type %}
+{% endfor %}
