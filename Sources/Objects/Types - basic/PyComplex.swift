@@ -28,7 +28,7 @@ public final class PyComplex: PyObject {
   internal init(_ context: PyContext, real: Double, imag: Double) {
     self.real = real
     self.imag = imag
-    super.init(type: context.builtins.types.complex, hasDict: false)
+    super.init(type: context.builtins.types.complex)
   }
 
   // MARK: - Equatable

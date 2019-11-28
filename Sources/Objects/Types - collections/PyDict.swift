@@ -28,12 +28,12 @@ public final class PyDict: PyObject {
 
   internal init(_ context: PyContext) {
     self.elements = PyDictData()
-    super.init(type: context.builtins.types.dict, hasDict: false)
+    super.init(type: context.builtins.types.dict)
   }
 
   internal init(_ context: PyContext, elements: PyDictData) {
     self.elements = elements
-    super.init(type: context.builtins.types.dict, hasDict: false)
+    super.init(type: context.builtins.types.dict)
   }
 
   // MARK: - Equatable

@@ -62,19 +62,14 @@ public class PyObject {
   ///
   /// - Parameter type: Type of given `PyObject`.
   ///                   For example for `PyInt` it will be `builtins.int`
-  /// - Parameter hasDict: Does the given object has `__dict__`?
-  ///                      See comment above `self.attributes` for details.
-  ///                      Most of the time when it is a builtin it will be `false`.
-  internal init(type: PyType, hasDict: Bool) {
+  internal init(type: PyType) {
     self._type = type
   }
 
   /// NEVER EVER use this ctor!
   /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
   /// Use version with `type: PyType` parameter.
-  /// - Parameter hasDict: Does the given object has `__dict__`?
-  ///                      See comment above `self.attributes` for details.
-  internal init(hasDict: Bool) {
+  internal init() {
     self._type = nil
   }
 

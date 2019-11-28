@@ -27,7 +27,7 @@ internal final class PyBuiltinFunction: PyObject {
     self.function = fn
     self.object = object
     self.doc = doc
-    super.init(type: context.builtins.types.builtinFunction, hasDict: false)
+    super.init(type: context.builtins.types.builtinFunction)
   }
 
   // MARK: - Equatable

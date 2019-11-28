@@ -33,7 +33,7 @@ public final class PyList: PyObject {
 
   internal init(_ context: PyContext, data: PySequenceData) {
     self.data = data
-    super.init(type: context.builtins.types.list, hasDict: false)
+    super.init(type: context.builtins.types.list)
   }
 
   // MARK: - Equatable

@@ -13,7 +13,7 @@ public final class PyNone: PyObject {
   // MARK: - Init
 
   internal init(_ context: PyContext) {
-    super.init(type: context.builtins.types.none, hasDict: false)
+    super.init(type: context.builtins.types.none)
   }
 
   // MARK: - String

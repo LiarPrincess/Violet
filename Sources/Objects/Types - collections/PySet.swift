@@ -24,12 +24,12 @@ public final class PySet: PyObject, PySetType {
 
   internal init(_ context: PyContext) {
     self.data = PySetData()
-    super.init(type: context.builtins.types.set, hasDict: false)
+    super.init(type: context.builtins.types.set)
   }
 
   internal init(_ context: PyContext, data: PySetData) {
     self.data = data
-    super.init(type: context.builtins.types.set, hasDict: false)
+    super.init(type: context.builtins.types.set)
   }
 
   // MARK: - Equatable

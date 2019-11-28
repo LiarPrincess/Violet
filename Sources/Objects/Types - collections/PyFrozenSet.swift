@@ -23,12 +23,12 @@ public final class PyFrozenSet: PyObject, PySetType {
 
   internal init(_ context: PyContext) {
     self.data = PySetData()
-    super.init(type: context.builtins.types.frozenset, hasDict: false)
+    super.init(type: context.builtins.types.frozenset)
   }
 
   internal init(_ context: PyContext, data: PySetData) {
     self.data = data
-    super.init(type: context.builtins.types.frozenset, hasDict: false)
+    super.init(type: context.builtins.types.frozenset)
   }
 
   // MARK: - Equatable

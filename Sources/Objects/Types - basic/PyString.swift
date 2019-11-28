@@ -34,7 +34,7 @@ public class PyString: PyObject {
 
   internal init(_ context: PyContext, value: String) {
     self.data = PyStringData(value)
-    super.init(type: context.builtins.types.str, hasDict: false)
+    super.init(type: context.builtins.types.str)
   }
 
   convenience init(_ context: PyContext,

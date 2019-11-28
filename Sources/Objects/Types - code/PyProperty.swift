@@ -57,7 +57,7 @@ internal final class PyProperty: PyObject {
     self._deleter = deleter is PyNone ? nil : deleter
     self._doc = nil
 
-    super.init(type: context.builtins.types.property, hasDict: false)
+    super.init(type: context.builtins.types.property)
   }
 
   // MARK: - Class
