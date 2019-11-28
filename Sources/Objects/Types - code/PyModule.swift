@@ -25,7 +25,7 @@ public final class PyModule: PyObject {
   }
 
   internal init(_ context: PyContext, name: PyObject, doc: PyObject?) {
-    super.init(type: context.builtins.types.module)
+    super.init(type: context.builtins.types.module, hasDict: false)
     self._attributes["__name__"] = name
     self._attributes["__doc__"] = doc
     self._attributes["__package__"] = context.builtins.none

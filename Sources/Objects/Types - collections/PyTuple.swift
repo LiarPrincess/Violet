@@ -31,7 +31,7 @@ public final class PyTuple: PyObject {
 
   internal init(_ context: PyContext, data: PySequenceData) {
     self.data = data
-    super.init(type: context.builtins.types.tuple)
+    super.init(type: context.builtins.types.tuple, hasDict: false)
   }
 
   // MARK: - Equatable

@@ -63,7 +63,7 @@ internal final class PyFunction: PyObject {
     default: self._doc = nil
     }
 
-    super.init(type: context.builtins.types.function)
+    super.init(type: context.builtins.types.function, hasDict: false)
   }
 
   // MARK: - String

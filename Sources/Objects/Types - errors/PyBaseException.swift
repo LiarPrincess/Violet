@@ -36,7 +36,7 @@ internal class PyBaseException: PyObject {
     self._exceptionContext = exceptionContext
     self._suppressExceptionContext = suppressExceptionContext
 
-    super.init()
+    super.init(hasDict: false)
     self.initType(from: context)
   }
 

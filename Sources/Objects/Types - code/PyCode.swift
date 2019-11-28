@@ -15,7 +15,7 @@ internal final class PyCode: PyObject {
 
   internal init(_ context: PyContext, code: CodeObject) {
     self._code = code
-    super.init(type: context.builtins.types.code)
+    super.init(type: context.builtins.types.code, hasDict: false)
   }
 
   // MARK: - Equatable

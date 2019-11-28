@@ -24,7 +24,7 @@ public final class PyFloat: PyObject {
 
   internal init(_ context: PyContext, value: Double) {
     self.value = value
-    super.init(type: context.builtins.types.float)
+    super.init(type: context.builtins.types.float, hasDict: false)
   }
 
   // MARK: - Equatable

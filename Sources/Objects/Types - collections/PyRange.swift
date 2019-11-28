@@ -73,7 +73,7 @@ public final class PyRange: PyObject {
     self.stepType = step == nil ? .implicit: .explicit
     self.length = context.builtins.newInt(length)
 
-    super.init(type: context.builtins.types.range)
+    super.init(type: context.builtins.types.range, hasDict: false)
   }
 
   // MARK: - Equatable

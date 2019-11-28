@@ -97,7 +97,8 @@ public final class PyType: PyObject {
     self.mro = [] // temporary, until we are able to use self
     self._context = context
 
-    super.init()
+    // Special init just for `PyType` and `BaseType`.
+    super.init(hasDict: false)
 
     // Proper mro (with self at 1st place)
     if let mro = mro {

@@ -34,7 +34,7 @@ public final class PySlice: PyObject {
     self.start = start
     self.stop = stop
     self.step = step
-    super.init(type: context.builtins.types.slice)
+    super.init(type: context.builtins.types.slice, hasDict: false)
   }
 
   // MARK: - Equatable

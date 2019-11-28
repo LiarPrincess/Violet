@@ -11,7 +11,7 @@ public final class PyNotImplemented: PyObject {
   // MARK: - Init
 
   internal init(_ context: PyContext) {
-    super.init(type: context.builtins.types.notImplemented)
+    super.init(type: context.builtins.types.notImplemented, hasDict: false)
   }
 
   // MARK: - String

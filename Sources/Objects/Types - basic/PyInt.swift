@@ -36,13 +36,13 @@ public class PyInt: PyObject {
 
   internal init(_ context: PyContext, value: BigInt) {
     self.value = value
-    super.init(type: context.builtins.types.int)
+    super.init(type: context.builtins.types.int, hasDict: false)
   }
 
   /// Only for PyBool use!
-  internal init(type: PyType, value: BigInt) {
+  internal init(type: PyType, value: BigInt, hasDict: Bool) {
     self.value = value
-    super.init(type: type)
+    super.init(type: type, hasDict: hasDict)
   }
 
   // MARK: - Equatable
