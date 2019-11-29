@@ -1,7 +1,7 @@
 import Core
 
 /*
-// sourcery: pytype = enumerate
+// sourcery: pytype = enumerate, default, hasGC, baseType
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.
 internal final class PyEnumerate: PyObject {

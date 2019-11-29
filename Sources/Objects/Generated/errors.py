@@ -116,7 +116,7 @@ def print_class_definitions():
     print(f'''\
 // MARK: - {name}
 
-// sourcery: pyerrortype = {name}
+// sourcery: pyerrortype = {name}, default, baseType, hasGC
 public {final}class Py{name}: Py{base} {{
 
   override internal class var doc: String {{

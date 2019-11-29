@@ -1,7 +1,7 @@
 // In CPython:
 // Objects -> descrobject.c
 
-// sourcery: pytype = property
+// sourcery: pytype = property, default, hasGC, baseType
 /// Native property implemented in Swift.
 public class PyProperty: PyObject {
 

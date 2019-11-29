@@ -6,7 +6,7 @@ import Core
 
 // swiftlint:disable file_length
 
-// sourcery: pytype = str
+// sourcery: pytype = str, default, baseType, unicodeSubclass
 /// Textual data in Python is handled with str objects, or strings.
 /// Strings are immutable sequences of Unicode code points.
 public class PyString: PyObject {

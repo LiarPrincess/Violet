@@ -8,7 +8,7 @@
 
 // MARK: - SystemExit
 
-// sourcery: pyerrortype = SystemExit
+// sourcery: pyerrortype = SystemExit, default, baseType, hasGC
 public final class PySystemExit: PyBaseException {
 
   override internal class var doc: String {
@@ -32,7 +32,7 @@ public final class PySystemExit: PyBaseException {
 
 // MARK: - KeyboardInterrupt
 
-// sourcery: pyerrortype = KeyboardInterrupt
+// sourcery: pyerrortype = KeyboardInterrupt, default, baseType, hasGC
 public final class PyKeyboardInterrupt: PyBaseException {
 
   override internal class var doc: String {
@@ -56,7 +56,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
 
 // MARK: - GeneratorExit
 
-// sourcery: pyerrortype = GeneratorExit
+// sourcery: pyerrortype = GeneratorExit, default, baseType, hasGC
 public final class PyGeneratorExit: PyBaseException {
 
   override internal class var doc: String {
@@ -80,7 +80,7 @@ public final class PyGeneratorExit: PyBaseException {
 
 // MARK: - Exception
 
-// sourcery: pyerrortype = Exception
+// sourcery: pyerrortype = Exception, default, baseType, hasGC
 public class PyException: PyBaseException {
 
   override internal class var doc: String {
@@ -104,7 +104,7 @@ public class PyException: PyBaseException {
 
 // MARK: - StopIteration
 
-// sourcery: pyerrortype = StopIteration
+// sourcery: pyerrortype = StopIteration, default, baseType, hasGC
 public final class PyStopIteration: PyException {
 
   override internal class var doc: String {
@@ -128,7 +128,7 @@ public final class PyStopIteration: PyException {
 
 // MARK: - StopAsyncIteration
 
-// sourcery: pyerrortype = StopAsyncIteration
+// sourcery: pyerrortype = StopAsyncIteration, default, baseType, hasGC
 public final class PyStopAsyncIteration: PyException {
 
   override internal class var doc: String {
@@ -152,7 +152,7 @@ public final class PyStopAsyncIteration: PyException {
 
 // MARK: - ArithmeticError
 
-// sourcery: pyerrortype = ArithmeticError
+// sourcery: pyerrortype = ArithmeticError, default, baseType, hasGC
 public class PyArithmeticError: PyException {
 
   override internal class var doc: String {
@@ -176,7 +176,7 @@ public class PyArithmeticError: PyException {
 
 // MARK: - FloatingPointError
 
-// sourcery: pyerrortype = FloatingPointError
+// sourcery: pyerrortype = FloatingPointError, default, baseType, hasGC
 public final class PyFloatingPointError: PyArithmeticError {
 
   override internal class var doc: String {
@@ -200,7 +200,7 @@ public final class PyFloatingPointError: PyArithmeticError {
 
 // MARK: - OverflowError
 
-// sourcery: pyerrortype = OverflowError
+// sourcery: pyerrortype = OverflowError, default, baseType, hasGC
 public final class PyOverflowError: PyArithmeticError {
 
   override internal class var doc: String {
@@ -224,7 +224,7 @@ public final class PyOverflowError: PyArithmeticError {
 
 // MARK: - ZeroDivisionError
 
-// sourcery: pyerrortype = ZeroDivisionError
+// sourcery: pyerrortype = ZeroDivisionError, default, baseType, hasGC
 public final class PyZeroDivisionError: PyArithmeticError {
 
   override internal class var doc: String {
@@ -248,7 +248,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
 
 // MARK: - AssertionError
 
-// sourcery: pyerrortype = AssertionError
+// sourcery: pyerrortype = AssertionError, default, baseType, hasGC
 public final class PyAssertionError: PyException {
 
   override internal class var doc: String {
@@ -272,7 +272,7 @@ public final class PyAssertionError: PyException {
 
 // MARK: - AttributeError
 
-// sourcery: pyerrortype = AttributeError
+// sourcery: pyerrortype = AttributeError, default, baseType, hasGC
 public final class PyAttributeError: PyException {
 
   override internal class var doc: String {
@@ -296,7 +296,7 @@ public final class PyAttributeError: PyException {
 
 // MARK: - BufferError
 
-// sourcery: pyerrortype = BufferError
+// sourcery: pyerrortype = BufferError, default, baseType, hasGC
 public final class PyBufferError: PyException {
 
   override internal class var doc: String {
@@ -320,7 +320,7 @@ public final class PyBufferError: PyException {
 
 // MARK: - EOFError
 
-// sourcery: pyerrortype = EOFError
+// sourcery: pyerrortype = EOFError, default, baseType, hasGC
 public final class PyEOFError: PyException {
 
   override internal class var doc: String {
@@ -344,7 +344,7 @@ public final class PyEOFError: PyException {
 
 // MARK: - ImportError
 
-// sourcery: pyerrortype = ImportError
+// sourcery: pyerrortype = ImportError, default, baseType, hasGC
 public class PyImportError: PyException {
 
   override internal class var doc: String {
@@ -368,7 +368,7 @@ public class PyImportError: PyException {
 
 // MARK: - ModuleNotFoundError
 
-// sourcery: pyerrortype = ModuleNotFoundError
+// sourcery: pyerrortype = ModuleNotFoundError, default, baseType, hasGC
 public final class PyModuleNotFoundError: PyImportError {
 
   override internal class var doc: String {
@@ -392,7 +392,7 @@ public final class PyModuleNotFoundError: PyImportError {
 
 // MARK: - LookupError
 
-// sourcery: pyerrortype = LookupError
+// sourcery: pyerrortype = LookupError, default, baseType, hasGC
 public class PyLookupError: PyException {
 
   override internal class var doc: String {
@@ -416,7 +416,7 @@ public class PyLookupError: PyException {
 
 // MARK: - IndexError
 
-// sourcery: pyerrortype = IndexError
+// sourcery: pyerrortype = IndexError, default, baseType, hasGC
 public final class PyIndexError: PyLookupError {
 
   override internal class var doc: String {
@@ -440,7 +440,7 @@ public final class PyIndexError: PyLookupError {
 
 // MARK: - KeyError
 
-// sourcery: pyerrortype = KeyError
+// sourcery: pyerrortype = KeyError, default, baseType, hasGC
 public final class PyKeyError: PyLookupError {
 
   override internal class var doc: String {
@@ -464,7 +464,7 @@ public final class PyKeyError: PyLookupError {
 
 // MARK: - MemoryError
 
-// sourcery: pyerrortype = MemoryError
+// sourcery: pyerrortype = MemoryError, default, baseType, hasGC
 public final class PyMemoryError: PyException {
 
   override internal class var doc: String {
@@ -488,7 +488,7 @@ public final class PyMemoryError: PyException {
 
 // MARK: - NameError
 
-// sourcery: pyerrortype = NameError
+// sourcery: pyerrortype = NameError, default, baseType, hasGC
 public class PyNameError: PyException {
 
   override internal class var doc: String {
@@ -512,7 +512,7 @@ public class PyNameError: PyException {
 
 // MARK: - UnboundLocalError
 
-// sourcery: pyerrortype = UnboundLocalError
+// sourcery: pyerrortype = UnboundLocalError, default, baseType, hasGC
 public final class PyUnboundLocalError: PyNameError {
 
   override internal class var doc: String {
@@ -536,7 +536,7 @@ public final class PyUnboundLocalError: PyNameError {
 
 // MARK: - OSError
 
-// sourcery: pyerrortype = OSError
+// sourcery: pyerrortype = OSError, default, baseType, hasGC
 public class PyOSError: PyException {
 
   override internal class var doc: String {
@@ -560,7 +560,7 @@ public class PyOSError: PyException {
 
 // MARK: - BlockingIOError
 
-// sourcery: pyerrortype = BlockingIOError
+// sourcery: pyerrortype = BlockingIOError, default, baseType, hasGC
 public final class PyBlockingIOError: PyOSError {
 
   override internal class var doc: String {
@@ -584,7 +584,7 @@ public final class PyBlockingIOError: PyOSError {
 
 // MARK: - ChildProcessError
 
-// sourcery: pyerrortype = ChildProcessError
+// sourcery: pyerrortype = ChildProcessError, default, baseType, hasGC
 public final class PyChildProcessError: PyOSError {
 
   override internal class var doc: String {
@@ -608,7 +608,7 @@ public final class PyChildProcessError: PyOSError {
 
 // MARK: - ConnectionError
 
-// sourcery: pyerrortype = ConnectionError
+// sourcery: pyerrortype = ConnectionError, default, baseType, hasGC
 public class PyConnectionError: PyOSError {
 
   override internal class var doc: String {
@@ -632,7 +632,7 @@ public class PyConnectionError: PyOSError {
 
 // MARK: - BrokenPipeError
 
-// sourcery: pyerrortype = BrokenPipeError
+// sourcery: pyerrortype = BrokenPipeError, default, baseType, hasGC
 public final class PyBrokenPipeError: PyConnectionError {
 
   override internal class var doc: String {
@@ -656,7 +656,7 @@ public final class PyBrokenPipeError: PyConnectionError {
 
 // MARK: - ConnectionAbortedError
 
-// sourcery: pyerrortype = ConnectionAbortedError
+// sourcery: pyerrortype = ConnectionAbortedError, default, baseType, hasGC
 public final class PyConnectionAbortedError: PyConnectionError {
 
   override internal class var doc: String {
@@ -680,7 +680,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
 
 // MARK: - ConnectionRefusedError
 
-// sourcery: pyerrortype = ConnectionRefusedError
+// sourcery: pyerrortype = ConnectionRefusedError, default, baseType, hasGC
 public final class PyConnectionRefusedError: PyConnectionError {
 
   override internal class var doc: String {
@@ -704,7 +704,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
 
 // MARK: - ConnectionResetError
 
-// sourcery: pyerrortype = ConnectionResetError
+// sourcery: pyerrortype = ConnectionResetError, default, baseType, hasGC
 public final class PyConnectionResetError: PyConnectionError {
 
   override internal class var doc: String {
@@ -728,7 +728,7 @@ public final class PyConnectionResetError: PyConnectionError {
 
 // MARK: - FileExistsError
 
-// sourcery: pyerrortype = FileExistsError
+// sourcery: pyerrortype = FileExistsError, default, baseType, hasGC
 public final class PyFileExistsError: PyOSError {
 
   override internal class var doc: String {
@@ -752,7 +752,7 @@ public final class PyFileExistsError: PyOSError {
 
 // MARK: - FileNotFoundError
 
-// sourcery: pyerrortype = FileNotFoundError
+// sourcery: pyerrortype = FileNotFoundError, default, baseType, hasGC
 public final class PyFileNotFoundError: PyOSError {
 
   override internal class var doc: String {
@@ -776,7 +776,7 @@ public final class PyFileNotFoundError: PyOSError {
 
 // MARK: - InterruptedError
 
-// sourcery: pyerrortype = InterruptedError
+// sourcery: pyerrortype = InterruptedError, default, baseType, hasGC
 public final class PyInterruptedError: PyOSError {
 
   override internal class var doc: String {
@@ -800,7 +800,7 @@ public final class PyInterruptedError: PyOSError {
 
 // MARK: - IsADirectoryError
 
-// sourcery: pyerrortype = IsADirectoryError
+// sourcery: pyerrortype = IsADirectoryError, default, baseType, hasGC
 public final class PyIsADirectoryError: PyOSError {
 
   override internal class var doc: String {
@@ -824,7 +824,7 @@ public final class PyIsADirectoryError: PyOSError {
 
 // MARK: - NotADirectoryError
 
-// sourcery: pyerrortype = NotADirectoryError
+// sourcery: pyerrortype = NotADirectoryError, default, baseType, hasGC
 public final class PyNotADirectoryError: PyOSError {
 
   override internal class var doc: String {
@@ -848,7 +848,7 @@ public final class PyNotADirectoryError: PyOSError {
 
 // MARK: - PermissionError
 
-// sourcery: pyerrortype = PermissionError
+// sourcery: pyerrortype = PermissionError, default, baseType, hasGC
 public final class PyPermissionError: PyOSError {
 
   override internal class var doc: String {
@@ -872,7 +872,7 @@ public final class PyPermissionError: PyOSError {
 
 // MARK: - ProcessLookupError
 
-// sourcery: pyerrortype = ProcessLookupError
+// sourcery: pyerrortype = ProcessLookupError, default, baseType, hasGC
 public final class PyProcessLookupError: PyOSError {
 
   override internal class var doc: String {
@@ -896,7 +896,7 @@ public final class PyProcessLookupError: PyOSError {
 
 // MARK: - TimeoutError
 
-// sourcery: pyerrortype = TimeoutError
+// sourcery: pyerrortype = TimeoutError, default, baseType, hasGC
 public final class PyTimeoutError: PyOSError {
 
   override internal class var doc: String {
@@ -920,7 +920,7 @@ public final class PyTimeoutError: PyOSError {
 
 // MARK: - ReferenceError
 
-// sourcery: pyerrortype = ReferenceError
+// sourcery: pyerrortype = ReferenceError, default, baseType, hasGC
 public final class PyReferenceError: PyException {
 
   override internal class var doc: String {
@@ -944,7 +944,7 @@ public final class PyReferenceError: PyException {
 
 // MARK: - RuntimeError
 
-// sourcery: pyerrortype = RuntimeError
+// sourcery: pyerrortype = RuntimeError, default, baseType, hasGC
 public class PyRuntimeError: PyException {
 
   override internal class var doc: String {
@@ -968,7 +968,7 @@ public class PyRuntimeError: PyException {
 
 // MARK: - NotImplementedError
 
-// sourcery: pyerrortype = NotImplementedError
+// sourcery: pyerrortype = NotImplementedError, default, baseType, hasGC
 public final class PyNotImplementedError: PyRuntimeError {
 
   override internal class var doc: String {
@@ -992,7 +992,7 @@ public final class PyNotImplementedError: PyRuntimeError {
 
 // MARK: - RecursionError
 
-// sourcery: pyerrortype = RecursionError
+// sourcery: pyerrortype = RecursionError, default, baseType, hasGC
 public final class PyRecursionError: PyRuntimeError {
 
   override internal class var doc: String {
@@ -1016,7 +1016,7 @@ public final class PyRecursionError: PyRuntimeError {
 
 // MARK: - SyntaxError
 
-// sourcery: pyerrortype = SyntaxError
+// sourcery: pyerrortype = SyntaxError, default, baseType, hasGC
 public class PySyntaxError: PyException {
 
   override internal class var doc: String {
@@ -1040,7 +1040,7 @@ public class PySyntaxError: PyException {
 
 // MARK: - IndentationError
 
-// sourcery: pyerrortype = IndentationError
+// sourcery: pyerrortype = IndentationError, default, baseType, hasGC
 public class PyIndentationError: PySyntaxError {
 
   override internal class var doc: String {
@@ -1064,7 +1064,7 @@ public class PyIndentationError: PySyntaxError {
 
 // MARK: - TabError
 
-// sourcery: pyerrortype = TabError
+// sourcery: pyerrortype = TabError, default, baseType, hasGC
 public final class PyTabError: PyIndentationError {
 
   override internal class var doc: String {
@@ -1088,7 +1088,7 @@ public final class PyTabError: PyIndentationError {
 
 // MARK: - SystemError
 
-// sourcery: pyerrortype = SystemError
+// sourcery: pyerrortype = SystemError, default, baseType, hasGC
 public final class PySystemError: PyException {
 
   override internal class var doc: String {
@@ -1115,7 +1115,7 @@ public final class PySystemError: PyException {
 
 // MARK: - TypeError
 
-// sourcery: pyerrortype = TypeError
+// sourcery: pyerrortype = TypeError, default, baseType, hasGC
 public final class PyTypeError: PyException {
 
   override internal class var doc: String {
@@ -1139,7 +1139,7 @@ public final class PyTypeError: PyException {
 
 // MARK: - ValueError
 
-// sourcery: pyerrortype = ValueError
+// sourcery: pyerrortype = ValueError, default, baseType, hasGC
 public class PyValueError: PyException {
 
   override internal class var doc: String {
@@ -1163,7 +1163,7 @@ public class PyValueError: PyException {
 
 // MARK: - UnicodeError
 
-// sourcery: pyerrortype = UnicodeError
+// sourcery: pyerrortype = UnicodeError, default, baseType, hasGC
 public class PyUnicodeError: PyValueError {
 
   override internal class var doc: String {
@@ -1187,7 +1187,7 @@ public class PyUnicodeError: PyValueError {
 
 // MARK: - UnicodeDecodeError
 
-// sourcery: pyerrortype = UnicodeDecodeError
+// sourcery: pyerrortype = UnicodeDecodeError, default, baseType, hasGC
 public final class PyUnicodeDecodeError: PyUnicodeError {
 
   override internal class var doc: String {
@@ -1211,7 +1211,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
 
 // MARK: - UnicodeEncodeError
 
-// sourcery: pyerrortype = UnicodeEncodeError
+// sourcery: pyerrortype = UnicodeEncodeError, default, baseType, hasGC
 public final class PyUnicodeEncodeError: PyUnicodeError {
 
   override internal class var doc: String {
@@ -1235,7 +1235,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
 
 // MARK: - UnicodeTranslateError
 
-// sourcery: pyerrortype = UnicodeTranslateError
+// sourcery: pyerrortype = UnicodeTranslateError, default, baseType, hasGC
 public final class PyUnicodeTranslateError: PyUnicodeError {
 
   override internal class var doc: String {
@@ -1259,7 +1259,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
 
 // MARK: - Warning
 
-// sourcery: pyerrortype = Warning
+// sourcery: pyerrortype = Warning, default, baseType, hasGC
 public class PyWarning: PyException {
 
   override internal class var doc: String {
@@ -1283,7 +1283,7 @@ public class PyWarning: PyException {
 
 // MARK: - DeprecationWarning
 
-// sourcery: pyerrortype = DeprecationWarning
+// sourcery: pyerrortype = DeprecationWarning, default, baseType, hasGC
 public final class PyDeprecationWarning: PyWarning {
 
   override internal class var doc: String {
@@ -1307,7 +1307,7 @@ public final class PyDeprecationWarning: PyWarning {
 
 // MARK: - PendingDeprecationWarning
 
-// sourcery: pyerrortype = PendingDeprecationWarning
+// sourcery: pyerrortype = PendingDeprecationWarning, default, baseType, hasGC
 public final class PyPendingDeprecationWarning: PyWarning {
 
   override internal class var doc: String {
@@ -1332,7 +1332,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
 
 // MARK: - RuntimeWarning
 
-// sourcery: pyerrortype = RuntimeWarning
+// sourcery: pyerrortype = RuntimeWarning, default, baseType, hasGC
 public final class PyRuntimeWarning: PyWarning {
 
   override internal class var doc: String {
@@ -1356,7 +1356,7 @@ public final class PyRuntimeWarning: PyWarning {
 
 // MARK: - SyntaxWarning
 
-// sourcery: pyerrortype = SyntaxWarning
+// sourcery: pyerrortype = SyntaxWarning, default, baseType, hasGC
 public final class PySyntaxWarning: PyWarning {
 
   override internal class var doc: String {
@@ -1380,7 +1380,7 @@ public final class PySyntaxWarning: PyWarning {
 
 // MARK: - UserWarning
 
-// sourcery: pyerrortype = UserWarning
+// sourcery: pyerrortype = UserWarning, default, baseType, hasGC
 public final class PyUserWarning: PyWarning {
 
   override internal class var doc: String {
@@ -1404,7 +1404,7 @@ public final class PyUserWarning: PyWarning {
 
 // MARK: - FutureWarning
 
-// sourcery: pyerrortype = FutureWarning
+// sourcery: pyerrortype = FutureWarning, default, baseType, hasGC
 public final class PyFutureWarning: PyWarning {
 
   override internal class var doc: String {
@@ -1429,7 +1429,7 @@ public final class PyFutureWarning: PyWarning {
 
 // MARK: - ImportWarning
 
-// sourcery: pyerrortype = ImportWarning
+// sourcery: pyerrortype = ImportWarning, default, baseType, hasGC
 public final class PyImportWarning: PyWarning {
 
   override internal class var doc: String {
@@ -1453,7 +1453,7 @@ public final class PyImportWarning: PyWarning {
 
 // MARK: - UnicodeWarning
 
-// sourcery: pyerrortype = UnicodeWarning
+// sourcery: pyerrortype = UnicodeWarning, default, baseType, hasGC
 public final class PyUnicodeWarning: PyWarning {
 
   override internal class var doc: String {
@@ -1478,7 +1478,7 @@ public final class PyUnicodeWarning: PyWarning {
 
 // MARK: - BytesWarning
 
-// sourcery: pyerrortype = BytesWarning
+// sourcery: pyerrortype = BytesWarning, default, baseType, hasGC
 public final class PyBytesWarning: PyWarning {
 
   override internal class var doc: String {
@@ -1503,7 +1503,7 @@ public final class PyBytesWarning: PyWarning {
 
 // MARK: - ResourceWarning
 
-// sourcery: pyerrortype = ResourceWarning
+// sourcery: pyerrortype = ResourceWarning, default, baseType, hasGC
 public final class PyResourceWarning: PyWarning {
 
   override internal class var doc: String {

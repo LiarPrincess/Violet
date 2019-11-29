@@ -4,6 +4,7 @@ import Core
 // In CPython:
 // Objects -> typeobject.c
 
+// sourcery: default, baseType
 /// Root of the Object hierarchy (kind of important thingie).
 internal enum PyBaseObject {
 

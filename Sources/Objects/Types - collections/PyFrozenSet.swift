@@ -6,7 +6,7 @@ import Core
 
 // swiftlint:disable file_length
 
-// sourcery: pytype = frozenset
+// sourcery: pytype = frozenset, default, hasGC, baseType
 /// This is an instance of PyTypeObject representing the Python frozenset type.
 public class PyFrozenSet: PyObject, PySetType {
 

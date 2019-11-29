@@ -6,7 +6,7 @@ import Core
 
 // swiftlint:disable file_length
 
-// sourcery: pytype = dict
+// sourcery: pytype = dict, default, hasGC, baseType, dictSubclass
 /// This subtype of PyObject represents a Python dictionary object.
 public class PyDict: PyObject {
 

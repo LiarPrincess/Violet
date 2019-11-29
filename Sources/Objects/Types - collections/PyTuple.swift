@@ -4,7 +4,7 @@ import Core
 // Objects -> tupleobject.c
 // https://docs.python.org/3.7/c-api/tuple.html
 
-// sourcery: pytype = tuple
+// sourcery: pytype = tuple, default, hasGC, baseType, tupleSubclass
 /// This instance of PyTypeObject represents the Python tuple type;
 /// it is the same object as tuple in the Python layer.
 public class PyTuple: PyObject {

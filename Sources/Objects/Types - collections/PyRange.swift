@@ -7,7 +7,7 @@ import Core
 // swiftlint:disable yoda_condition
 // swiftlint:disable file_length
 
-// sourcery: pytype = range
+// sourcery: pytype = range, default
 /// The range type represents an immutable sequence of numbers
 /// and is commonly used for looping a specific number of times in for loops.
 public class PyRange: PyObject {

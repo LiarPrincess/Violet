@@ -3,7 +3,7 @@ import Bytecode
 // In CPython:
 // Objects -> classobject.c
 
-// sourcery: pytype = method
+// sourcery: pytype = method, default, hasGC
 /// Function bound to an object.
 public class PyMethod: PyObject {
 

@@ -7,14 +7,45 @@
 
 internal struct PyTypeFlags: OptionSet {
 
-  let rawValue: UInt8
+  let rawValue: UInt16
 
-  /// Set if the type object is dynamically allocated.
-  ///
-  /// All types in Violet are dynamically allocated, but we are using CPython
-  /// naming convention. For us it means that this type was created by user
+  /// Set if the type object is dynamically allocated
   /// (for example by `class` statement).
   internal static let heapType = PyTypeFlags(rawValue: 1 << 0)
+
+  /// Set if the type allows subclassing.
+  internal static let baseType = PyTypeFlags(rawValue: 1 << 1)
+
+  /// Objects support garbage collection.
+  internal static let hasGC = PyTypeFlags(rawValue: 1 << 2)
+
+  /// Type is abstract and cannot be instantiated
+  internal static let isAbstract = PyTypeFlags(rawValue: 1 << 3)
+
+  /// Type structure has tp_finalize member (3.4)
+  internal static let hasFinalize = PyTypeFlags(rawValue: 1 << 4)
+
+  /// #define Py_TPFLAGS_DEFAULT  ( \
+  ///     Py_TPFLAGS_HAVE_STACKLESS_EXTENSION | \
+  ///     Py_TPFLAGS_HAVE_VERSION_TAG)
+  internal static let `default` = PyTypeFlags(rawValue: 1 << 5)
+
+  /// These flags are used to determine if a type is a subclass.
+  internal static let longSubclass = PyTypeFlags(rawValue: 1 << 8)
+  /// These flags are used to determine if a type is a subclass.
+  internal static let listSubclass = PyTypeFlags(rawValue: 1 << 9)
+  /// These flags are used to determine if a type is a subclass.
+  internal static let tupleSubclass = PyTypeFlags(rawValue: 1 << 10)
+  /// These flags are used to determine if a type is a subclass.
+  internal static let bytesSubclass = PyTypeFlags(rawValue: 1 << 11)
+  /// These flags are used to determine if a type is a subclass.
+  internal static let unicodeSubclass = PyTypeFlags(rawValue: 1 << 12)
+  /// These flags are used to determine if a type is a subclass.
+  internal static let dictSubclass = PyTypeFlags(rawValue: 1 << 13)
+  /// These flags are used to determine if a type is a subclass.
+  internal static let baseExceptionSubclass = PyTypeFlags(rawValue: 1 << 14)
+  /// These flags are used to determine if a type is a subclass.
+  internal static let typeSubclass = PyTypeFlags(rawValue: 1 << 15)
 }
 
 // MARK: - Type weak ref
@@ -33,6 +64,7 @@ internal struct PyTypeWeakRef {
 
 // MARK: - Type
 
+// sourcery: default, hasGC, baseType, typeSubclass
 public class PyType: PyObject {
 
   internal static let doc: String = """
@@ -58,6 +90,10 @@ public class PyType: PyObject {
   private unowned let _context: PyContext
   override internal var context: PyContext {
     return self._context
+  }
+
+  internal func setFlag(_ flag: PyTypeFlags) {
+    self.typeFlags.insert(flag)
   }
 
   // MARK: - Init

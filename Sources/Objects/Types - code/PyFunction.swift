@@ -3,7 +3,7 @@ import Bytecode
 // In CPython:
 // Objects -> funcobject.c
 
-// sourcery: pytype = function
+// sourcery: pytype = function, default, hasGC
 public class PyFunction: PyObject {
 
   internal static let doc: String = """

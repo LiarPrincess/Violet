@@ -1,7 +1,7 @@
 // In CPython:
 // Objects -> methodobject.c
 
-// sourcery: pytype = builtinFunction
+// sourcery: pytype = builtinFunction, default, hasGC
 /// This is about the type `builtin_function_or_method`,
 /// not Python methods in user-defined classes.
 public class PyBuiltinFunction: PyObject {

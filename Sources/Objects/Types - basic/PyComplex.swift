@@ -7,7 +7,7 @@ import Core
 
 // swiftlint:disable file_length
 
-// sourcery: pytype = complex
+// sourcery: pytype = complex, default, baseType
 /// This subtype of PyObject represents a Python complex number object.
 public class PyComplex: PyObject {
 

@@ -6,7 +6,7 @@ import Core
 
 // swiftlint:disable file_length
 
-// sourcery: pytype = slice
+// sourcery: pytype = slice, default, hasGC
 /// The type object for slice objects.
 /// This is the same as slice in the Python layer.
 public class PySlice: PyObject {

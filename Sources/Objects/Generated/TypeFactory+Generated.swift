@@ -9,6 +9,7 @@
 // swiftlint:disable function_body_length
 
 
+
 extension TypeFactory {
 
   // MARK: - Base object
@@ -16,6 +17,8 @@ extension TypeFactory {
   /// Create `object` type without assigning `type` property.
   internal static func objectWithoutType(_ context: PyContext) -> PyType {
     let result = PyType.initWithoutType(context, name: "object", doc: PyBaseObject.doc, base: nil)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
 
     let dict = result.getDict()
 
@@ -45,6 +48,10 @@ extension TypeFactory {
   /// Create `type` type without assigning `type` property.
   internal static func typeWithoutType(_ context: PyContext, base: PyType) -> PyType {
     let result = PyType.initWithoutType(context, name: "type", doc: PyType.doc, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
+    result.setFlag(.typeSubclass)
 
     let dict = result.getDict()
     dict["__name__"] = createProperty(context, name: "__name__", doc: nil, get: PyType.getName, set: PyType.setName, castSelf: selfAsPyType)
@@ -71,6 +78,7 @@ extension TypeFactory {
 
   internal static func bool(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "bool", doc: PyBool.doc, type: type, base: base)
+    result.setFlag(.default)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyBool.getClass, castSelf: selfAsPyBool)
@@ -91,6 +99,8 @@ extension TypeFactory {
 
   internal static func builtinFunction(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "builtinFunction", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyBuiltinFunction.getClass, castSelf: selfAsPyBuiltinFunction)
@@ -118,6 +128,7 @@ extension TypeFactory {
 
   internal static func code(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "code", doc: PyCode.doc, type: type, base: base)
+    result.setFlag(.default)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyCode.getClass, castSelf: selfAsPyCode)
@@ -137,6 +148,8 @@ extension TypeFactory {
 
   internal static func complex(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "complex", doc: PyComplex.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyComplex.getClass, castSelf: selfAsPyComplex)
@@ -184,6 +197,10 @@ extension TypeFactory {
 
   internal static func dict(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "dict", doc: PyDict.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
+    result.setFlag(.dictSubclass)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyDict.getClass, castSelf: selfAsPyDict)
@@ -216,6 +233,7 @@ extension TypeFactory {
 
   internal static func ellipsis(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ellipsis", doc: nil, type: type, base: base)
+    result.setFlag(.default)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyEllipsis.getClass, castSelf: selfAsPyEllipsis)
@@ -230,6 +248,8 @@ extension TypeFactory {
 
   internal static func float(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "float", doc: PyFloat.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyFloat.getClass, castSelf: selfAsPyFloat)
@@ -278,6 +298,9 @@ extension TypeFactory {
 
   internal static func frozenset(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "frozenset", doc: PyFrozenSet.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyFrozenSet.getClass, castSelf: selfAsPyFrozenSet)
@@ -317,6 +340,8 @@ extension TypeFactory {
 
   internal static func function(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "function", doc: PyFunction.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyFunction.getClass, castSelf: selfAsPyFunction)
@@ -337,6 +362,9 @@ extension TypeFactory {
 
   internal static func int(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "int", doc: PyInt.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.longSubclass)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyInt.getClass, castSelf: selfAsPyInt)
@@ -399,6 +427,10 @@ extension TypeFactory {
 
   internal static func list(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "list", doc: PyList.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
+    result.setFlag(.listSubclass)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyList.getClass, castSelf: selfAsPyList)
@@ -432,6 +464,8 @@ extension TypeFactory {
 
   internal static func method(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "method", doc: PyMethod.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: selfAsPyMethod)
@@ -458,6 +492,9 @@ extension TypeFactory {
 
   internal static func module(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "module", doc: PyModule.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyModule.getDict, castSelf: selfAsPyModule)
@@ -476,6 +513,9 @@ extension TypeFactory {
 
   internal static func simpleNamespace(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "types.SimpleNamespace", doc: PyNamespace.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyNamespace.getDict, castSelf: selfAsPyNamespace)
@@ -498,6 +538,7 @@ extension TypeFactory {
 
   internal static func none(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NoneType", doc: nil, type: type, base: base)
+    result.setFlag(.default)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyNone.getClass, castSelf: selfAsPyNone)
@@ -512,6 +553,7 @@ extension TypeFactory {
 
   internal static func notImplemented(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NotImplementedType", doc: nil, type: type, base: base)
+    result.setFlag(.default)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyNotImplemented.getClass, castSelf: selfAsPyNotImplemented)
@@ -525,6 +567,9 @@ extension TypeFactory {
 
   internal static func property(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "property", doc: PyProperty.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyProperty.getClass, castSelf: selfAsPyProperty)
@@ -544,6 +589,7 @@ extension TypeFactory {
 
   internal static func range(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "range", doc: PyRange.doc, type: type, base: base)
+    result.setFlag(.default)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyRange.getClass, castSelf: selfAsPyRange)
@@ -571,6 +617,9 @@ extension TypeFactory {
 
   internal static func set(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "set", doc: PySet.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PySet.getClass, castSelf: selfAsPySet)
@@ -615,6 +664,8 @@ extension TypeFactory {
 
   internal static func slice(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "slice", doc: PySlice.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PySlice.getClass, castSelf: selfAsPySlice)
@@ -636,6 +687,9 @@ extension TypeFactory {
 
   internal static func str(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "str", doc: PyString.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.unicodeSubclass)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyString.getClass, castSelf: selfAsPyString)
@@ -703,6 +757,10 @@ extension TypeFactory {
 
   internal static func tuple(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "tuple", doc: PyTuple.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
+    result.setFlag(.tupleSubclass)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: selfAsPyTuple)
@@ -732,6 +790,9 @@ extension TypeFactory {
 
   internal static func arithmeticError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ArithmeticError", doc: PyArithmeticError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyArithmeticError.getClass, castSelf: selfAsPyArithmeticError)
@@ -745,6 +806,9 @@ extension TypeFactory {
 
   internal static func assertionError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "AssertionError", doc: PyAssertionError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyAssertionError.getClass, castSelf: selfAsPyAssertionError)
@@ -758,6 +822,9 @@ extension TypeFactory {
 
   internal static func attributeError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "AttributeError", doc: PyAttributeError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyAttributeError.getClass, castSelf: selfAsPyAttributeError)
@@ -771,6 +838,10 @@ extension TypeFactory {
 
   internal static func baseException(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "BaseException", doc: PyBaseException.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
+    result.setFlag(.baseExceptionSubclass)
 
     let dict = result.getDict()
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyBaseException.getDict, castSelf: selfAsPyBaseException)
@@ -794,6 +865,9 @@ extension TypeFactory {
 
   internal static func blockingIOError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "BlockingIOError", doc: PyBlockingIOError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyBlockingIOError.getClass, castSelf: selfAsPyBlockingIOError)
@@ -807,6 +881,9 @@ extension TypeFactory {
 
   internal static func brokenPipeError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "BrokenPipeError", doc: PyBrokenPipeError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyBrokenPipeError.getClass, castSelf: selfAsPyBrokenPipeError)
@@ -820,6 +897,9 @@ extension TypeFactory {
 
   internal static func bufferError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "BufferError", doc: PyBufferError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyBufferError.getClass, castSelf: selfAsPyBufferError)
@@ -833,6 +913,9 @@ extension TypeFactory {
 
   internal static func bytesWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "BytesWarning", doc: PyBytesWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyBytesWarning.getClass, castSelf: selfAsPyBytesWarning)
@@ -846,6 +929,9 @@ extension TypeFactory {
 
   internal static func childProcessError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ChildProcessError", doc: PyChildProcessError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyChildProcessError.getClass, castSelf: selfAsPyChildProcessError)
@@ -859,6 +945,9 @@ extension TypeFactory {
 
   internal static func connectionAbortedError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ConnectionAbortedError", doc: PyConnectionAbortedError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyConnectionAbortedError.getClass, castSelf: selfAsPyConnectionAbortedError)
@@ -872,6 +961,9 @@ extension TypeFactory {
 
   internal static func connectionError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ConnectionError", doc: PyConnectionError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyConnectionError.getClass, castSelf: selfAsPyConnectionError)
@@ -885,6 +977,9 @@ extension TypeFactory {
 
   internal static func connectionRefusedError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ConnectionRefusedError", doc: PyConnectionRefusedError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyConnectionRefusedError.getClass, castSelf: selfAsPyConnectionRefusedError)
@@ -898,6 +993,9 @@ extension TypeFactory {
 
   internal static func connectionResetError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ConnectionResetError", doc: PyConnectionResetError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyConnectionResetError.getClass, castSelf: selfAsPyConnectionResetError)
@@ -911,6 +1009,9 @@ extension TypeFactory {
 
   internal static func deprecationWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "DeprecationWarning", doc: PyDeprecationWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyDeprecationWarning.getClass, castSelf: selfAsPyDeprecationWarning)
@@ -924,6 +1025,9 @@ extension TypeFactory {
 
   internal static func eofError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "EOFError", doc: PyEOFError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyEOFError.getClass, castSelf: selfAsPyEOFError)
@@ -937,6 +1041,9 @@ extension TypeFactory {
 
   internal static func exception(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "Exception", doc: PyException.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyException.getClass, castSelf: selfAsPyException)
@@ -950,6 +1057,9 @@ extension TypeFactory {
 
   internal static func fileExistsError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "FileExistsError", doc: PyFileExistsError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyFileExistsError.getClass, castSelf: selfAsPyFileExistsError)
@@ -963,6 +1073,9 @@ extension TypeFactory {
 
   internal static func fileNotFoundError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "FileNotFoundError", doc: PyFileNotFoundError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyFileNotFoundError.getClass, castSelf: selfAsPyFileNotFoundError)
@@ -976,6 +1089,9 @@ extension TypeFactory {
 
   internal static func floatingPointError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "FloatingPointError", doc: PyFloatingPointError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyFloatingPointError.getClass, castSelf: selfAsPyFloatingPointError)
@@ -989,6 +1105,9 @@ extension TypeFactory {
 
   internal static func futureWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "FutureWarning", doc: PyFutureWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyFutureWarning.getClass, castSelf: selfAsPyFutureWarning)
@@ -1002,6 +1121,9 @@ extension TypeFactory {
 
   internal static func generatorExit(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "GeneratorExit", doc: PyGeneratorExit.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyGeneratorExit.getClass, castSelf: selfAsPyGeneratorExit)
@@ -1015,6 +1137,9 @@ extension TypeFactory {
 
   internal static func importError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ImportError", doc: PyImportError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyImportError.getClass, castSelf: selfAsPyImportError)
@@ -1028,6 +1153,9 @@ extension TypeFactory {
 
   internal static func importWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ImportWarning", doc: PyImportWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyImportWarning.getClass, castSelf: selfAsPyImportWarning)
@@ -1041,6 +1169,9 @@ extension TypeFactory {
 
   internal static func indentationError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "IndentationError", doc: PyIndentationError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyIndentationError.getClass, castSelf: selfAsPyIndentationError)
@@ -1054,6 +1185,9 @@ extension TypeFactory {
 
   internal static func indexError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "IndexError", doc: PyIndexError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyIndexError.getClass, castSelf: selfAsPyIndexError)
@@ -1067,6 +1201,9 @@ extension TypeFactory {
 
   internal static func interruptedError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "InterruptedError", doc: PyInterruptedError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyInterruptedError.getClass, castSelf: selfAsPyInterruptedError)
@@ -1080,6 +1217,9 @@ extension TypeFactory {
 
   internal static func isADirectoryError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "IsADirectoryError", doc: PyIsADirectoryError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyIsADirectoryError.getClass, castSelf: selfAsPyIsADirectoryError)
@@ -1093,6 +1233,9 @@ extension TypeFactory {
 
   internal static func keyError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "KeyError", doc: PyKeyError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyKeyError.getClass, castSelf: selfAsPyKeyError)
@@ -1106,6 +1249,9 @@ extension TypeFactory {
 
   internal static func keyboardInterrupt(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "KeyboardInterrupt", doc: PyKeyboardInterrupt.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyKeyboardInterrupt.getClass, castSelf: selfAsPyKeyboardInterrupt)
@@ -1119,6 +1265,9 @@ extension TypeFactory {
 
   internal static func lookupError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "LookupError", doc: PyLookupError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyLookupError.getClass, castSelf: selfAsPyLookupError)
@@ -1132,6 +1281,9 @@ extension TypeFactory {
 
   internal static func memoryError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "MemoryError", doc: PyMemoryError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyMemoryError.getClass, castSelf: selfAsPyMemoryError)
@@ -1145,6 +1297,9 @@ extension TypeFactory {
 
   internal static func moduleNotFoundError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ModuleNotFoundError", doc: PyModuleNotFoundError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyModuleNotFoundError.getClass, castSelf: selfAsPyModuleNotFoundError)
@@ -1158,6 +1313,9 @@ extension TypeFactory {
 
   internal static func nameError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NameError", doc: PyNameError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyNameError.getClass, castSelf: selfAsPyNameError)
@@ -1171,6 +1329,9 @@ extension TypeFactory {
 
   internal static func notADirectoryError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NotADirectoryError", doc: PyNotADirectoryError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyNotADirectoryError.getClass, castSelf: selfAsPyNotADirectoryError)
@@ -1184,6 +1345,9 @@ extension TypeFactory {
 
   internal static func notImplementedError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "NotImplementedError", doc: PyNotImplementedError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyNotImplementedError.getClass, castSelf: selfAsPyNotImplementedError)
@@ -1197,6 +1361,9 @@ extension TypeFactory {
 
   internal static func osError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "OSError", doc: PyOSError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyOSError.getClass, castSelf: selfAsPyOSError)
@@ -1210,6 +1377,9 @@ extension TypeFactory {
 
   internal static func overflowError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "OverflowError", doc: PyOverflowError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyOverflowError.getClass, castSelf: selfAsPyOverflowError)
@@ -1223,6 +1393,9 @@ extension TypeFactory {
 
   internal static func pendingDeprecationWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "PendingDeprecationWarning", doc: PyPendingDeprecationWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyPendingDeprecationWarning.getClass, castSelf: selfAsPyPendingDeprecationWarning)
@@ -1236,6 +1409,9 @@ extension TypeFactory {
 
   internal static func permissionError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "PermissionError", doc: PyPermissionError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyPermissionError.getClass, castSelf: selfAsPyPermissionError)
@@ -1249,6 +1425,9 @@ extension TypeFactory {
 
   internal static func processLookupError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ProcessLookupError", doc: PyProcessLookupError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyProcessLookupError.getClass, castSelf: selfAsPyProcessLookupError)
@@ -1262,6 +1441,9 @@ extension TypeFactory {
 
   internal static func recursionError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "RecursionError", doc: PyRecursionError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyRecursionError.getClass, castSelf: selfAsPyRecursionError)
@@ -1275,6 +1457,9 @@ extension TypeFactory {
 
   internal static func referenceError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ReferenceError", doc: PyReferenceError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyReferenceError.getClass, castSelf: selfAsPyReferenceError)
@@ -1288,6 +1473,9 @@ extension TypeFactory {
 
   internal static func resourceWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ResourceWarning", doc: PyResourceWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyResourceWarning.getClass, castSelf: selfAsPyResourceWarning)
@@ -1301,6 +1489,9 @@ extension TypeFactory {
 
   internal static func runtimeError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "RuntimeError", doc: PyRuntimeError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyRuntimeError.getClass, castSelf: selfAsPyRuntimeError)
@@ -1314,6 +1505,9 @@ extension TypeFactory {
 
   internal static func runtimeWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "RuntimeWarning", doc: PyRuntimeWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyRuntimeWarning.getClass, castSelf: selfAsPyRuntimeWarning)
@@ -1327,6 +1521,9 @@ extension TypeFactory {
 
   internal static func stopAsyncIteration(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "StopAsyncIteration", doc: PyStopAsyncIteration.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyStopAsyncIteration.getClass, castSelf: selfAsPyStopAsyncIteration)
@@ -1340,6 +1537,9 @@ extension TypeFactory {
 
   internal static func stopIteration(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "StopIteration", doc: PyStopIteration.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyStopIteration.getClass, castSelf: selfAsPyStopIteration)
@@ -1353,6 +1553,9 @@ extension TypeFactory {
 
   internal static func syntaxError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "SyntaxError", doc: PySyntaxError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PySyntaxError.getClass, castSelf: selfAsPySyntaxError)
@@ -1366,6 +1569,9 @@ extension TypeFactory {
 
   internal static func syntaxWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "SyntaxWarning", doc: PySyntaxWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PySyntaxWarning.getClass, castSelf: selfAsPySyntaxWarning)
@@ -1379,6 +1585,9 @@ extension TypeFactory {
 
   internal static func systemError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "SystemError", doc: PySystemError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PySystemError.getClass, castSelf: selfAsPySystemError)
@@ -1392,6 +1601,9 @@ extension TypeFactory {
 
   internal static func systemExit(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "SystemExit", doc: PySystemExit.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PySystemExit.getClass, castSelf: selfAsPySystemExit)
@@ -1405,6 +1617,9 @@ extension TypeFactory {
 
   internal static func tabError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "TabError", doc: PyTabError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyTabError.getClass, castSelf: selfAsPyTabError)
@@ -1418,6 +1633,9 @@ extension TypeFactory {
 
   internal static func timeoutError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "TimeoutError", doc: PyTimeoutError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyTimeoutError.getClass, castSelf: selfAsPyTimeoutError)
@@ -1431,6 +1649,9 @@ extension TypeFactory {
 
   internal static func typeError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "TypeError", doc: PyTypeError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyTypeError.getClass, castSelf: selfAsPyTypeError)
@@ -1444,6 +1665,9 @@ extension TypeFactory {
 
   internal static func unboundLocalError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "UnboundLocalError", doc: PyUnboundLocalError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyUnboundLocalError.getClass, castSelf: selfAsPyUnboundLocalError)
@@ -1457,6 +1681,9 @@ extension TypeFactory {
 
   internal static func unicodeDecodeError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "UnicodeDecodeError", doc: PyUnicodeDecodeError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyUnicodeDecodeError.getClass, castSelf: selfAsPyUnicodeDecodeError)
@@ -1470,6 +1697,9 @@ extension TypeFactory {
 
   internal static func unicodeEncodeError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "UnicodeEncodeError", doc: PyUnicodeEncodeError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyUnicodeEncodeError.getClass, castSelf: selfAsPyUnicodeEncodeError)
@@ -1483,6 +1713,9 @@ extension TypeFactory {
 
   internal static func unicodeError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "UnicodeError", doc: PyUnicodeError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyUnicodeError.getClass, castSelf: selfAsPyUnicodeError)
@@ -1496,6 +1729,9 @@ extension TypeFactory {
 
   internal static func unicodeTranslateError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "UnicodeTranslateError", doc: PyUnicodeTranslateError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyUnicodeTranslateError.getClass, castSelf: selfAsPyUnicodeTranslateError)
@@ -1509,6 +1745,9 @@ extension TypeFactory {
 
   internal static func unicodeWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "UnicodeWarning", doc: PyUnicodeWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyUnicodeWarning.getClass, castSelf: selfAsPyUnicodeWarning)
@@ -1522,6 +1761,9 @@ extension TypeFactory {
 
   internal static func userWarning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "UserWarning", doc: PyUserWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyUserWarning.getClass, castSelf: selfAsPyUserWarning)
@@ -1535,6 +1777,9 @@ extension TypeFactory {
 
   internal static func valueError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ValueError", doc: PyValueError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyValueError.getClass, castSelf: selfAsPyValueError)
@@ -1548,6 +1793,9 @@ extension TypeFactory {
 
   internal static func warning(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "Warning", doc: PyWarning.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyWarning.getClass, castSelf: selfAsPyWarning)
@@ -1561,6 +1809,9 @@ extension TypeFactory {
 
   internal static func zeroDivisionError(_ context: PyContext, type: PyType, base: PyType) -> PyType {
     let result = PyType(context, name: "ZeroDivisionError", doc: PyZeroDivisionError.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
 
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyZeroDivisionError.getClass, castSelf: selfAsPyZeroDivisionError)

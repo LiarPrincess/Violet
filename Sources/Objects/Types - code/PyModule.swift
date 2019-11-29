@@ -1,7 +1,7 @@
 // In CPython:
 // Objects -> moduleobject.c
 
-// sourcery: pytype = module
+// sourcery: pytype = module, default, hasGC, baseType
 public class PyModule: PyObject {
 
   internal static let doc: String = """

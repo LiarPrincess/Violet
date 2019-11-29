@@ -3,7 +3,7 @@ import Core
 // In CPython:
 // Objects -> object.c
 
-// sourcery: pytype = NotImplementedType
+// sourcery: pytype = NotImplementedType, default
 /// `NotImplemented` is an object that can be used to signal that an
 /// operation is not implemented for the given type combination.
 public class PyNotImplemented: PyObject {

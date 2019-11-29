@@ -8,7 +8,7 @@ import Core
 
 // swiftlint:disable file_length
 
-// sourcery: pytype = float
+// sourcery: pytype = float, default, baseType
 /// This subtype of PyObject represents a Python floating point object.
 public class PyFloat: PyObject {
 

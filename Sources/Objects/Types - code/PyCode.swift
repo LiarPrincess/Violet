@@ -3,7 +3,7 @@ import Bytecode
 // In CPython:
 // Objects -> codeobject.c
 
-// sourcery: pytype = code
+// sourcery: pytype = code, default
 public class PyCode: PyObject {
 
   internal static let doc: String = """

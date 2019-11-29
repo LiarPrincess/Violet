@@ -5,7 +5,7 @@ import Core
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
 
-// sourcery: pyerrortype = BaseException
+// sourcery: pyerrortype = BaseException, default, baseType, hasGC, baseExceptionSubclass
 public class PyBaseException: PyObject {
 
   internal class var doc: String {

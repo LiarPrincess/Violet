@@ -6,7 +6,7 @@ import Core
 
 // swiftlint:disable file_length
 
-// sourcery: pytype = set
+// sourcery: pytype = set, default, hasGC, baseType
 /// This subtype of PyObject is used to hold the internal data for both set
 /// and frozenset objects.
 public class PySet: PyObject, PySetType {

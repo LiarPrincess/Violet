@@ -1,7 +1,7 @@
 // In CPython:
 // Objects -> namespaceobject.c
 
-// sourcery: pytype = types.SimpleNamespace
+// sourcery: pytype = types.SimpleNamespace, default, hasGC, baseType
 public class PyNamespace: PyObject {
 
   internal static let doc: String = """
