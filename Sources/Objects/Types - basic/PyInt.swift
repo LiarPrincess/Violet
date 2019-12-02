@@ -39,7 +39,7 @@ public class PyInt: PyObject {
     super.init(type: context.builtins.types.int)
   }
 
-  /// Only for PyBool or `__new__ `use!
+  /// Use only in PyBool or `__new__`!
   internal init(type: PyType, value: BigInt) {
     self.value = value
     super.init(type: type)
@@ -82,7 +82,7 @@ public class PyInt: PyObject {
     }
 
     guard let base = base else {
-      return extractInt(x).map { alloca(type, $0) }
+      return PyInt.extractInt(x).map { alloca(type, $0) }
     }
 
     let baseInt: Int
@@ -95,9 +95,9 @@ public class PyInt: PyObject {
       return .valueError("int() base must be >= 2 and <= 36, or 0")
     }
 
-    if let xStr = x as? PyString {
-      guard let value = BigInt(xStr.value, radix: baseInt) else {
-        return .valueError("int() '\(xStr.value)' cannot be interpreted as string")
+    if let str = x as? PyString {
+      guard let value = BigInt(str.value, radix: baseInt) else {
+        return .valueError("int() '\(str.value)' cannot be interpreted as string")
       }
       return .value(alloca(type, value))
     }
@@ -143,7 +143,8 @@ public class PyInt: PyObject {
     }
 
     switch object.builtins.callMethod(on: object, selector: "__trunc__") {
-    case .value(let o): return .value(o)
+    case .value(let o):
+      return .value(o)
     case .notImplemented,
          .noSuchMethod:
       return .notImplemented
