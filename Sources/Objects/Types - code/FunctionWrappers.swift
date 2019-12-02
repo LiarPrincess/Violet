@@ -1,118 +1,5 @@
 import Core
 
-// swiftlint:disable file_length
-
-// MARK: - Function result
-
-internal typealias FunctionResult = PyResultOrNot<PyObject>
-
-internal protocol FunctionResultConvertible {
-  func toFunctionResult(in context: PyContext) -> FunctionResult
-}
-
-extension Bool: FunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    return .value(self ? context.builtins.true : context.builtins.false)
-  }
-}
-
-extension Int: FunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    return .value(context.builtins.newInt(self))
-  }
-}
-
-extension BigInt: FunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    return .value(context.builtins.newInt(self))
-  }
-}
-
-extension String: FunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    return .value(context.builtins.newString(self))
-  }
-}
-
-extension PyObject: FunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    return .value(self)
-  }
-}
-
-extension Array: FunctionResultConvertible
-  where Element: FunctionResultConvertible {
-
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    var elements = [PyObject]()
-    for e in self {
-      switch e.toFunctionResult(in: context) {
-      case .value(let v): elements.append(v)
-      case .notImplemented: return .notImplemented
-      case .error(let e): return .error(e)
-      }
-    }
-
-    return .value(context.builtins.newList(elements))
-  }
-}
-
-extension Optional: FunctionResultConvertible
-  where Wrapped: FunctionResultConvertible {
-
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    switch self {
-    case .some(let v): return v.toFunctionResult(in: context)
-    case .none: return .value(context.builtins.none)
-    }
-  }
-}
-
-extension Attributes: FunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    let builtins = context.builtins
-
-    let args = self.entries.map { entry -> CreateDictionaryArg in
-      let key = builtins.newString(entry.key)
-      return CreateDictionaryArg(key: key, value: entry.value)
-    }
-
-    switch builtins.newDict(args) {
-    case let .value(dict):
-      return .value(dict)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-}
-
-extension DirResult: FunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    let builtins = context.builtins
-    let elements = self.sortedValues.map { builtins.newString($0) }
-    return .value(builtins.newList(elements))
-  }
-}
-
-extension PyResult: FunctionResultConvertible
-  where V: FunctionResultConvertible {
-
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    switch self {
-    case let .value(v): return v.toFunctionResult(in: context)
-    case let .error(e): return .error(e)
-    }
-  }
-}
-
-extension PyResultOrNot: FunctionResultConvertible
-  where V: FunctionResultConvertible {
-
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
-    return self.flatMap { $0.toFunctionResult(in: context) }
-  }
-}
-
 // MARK: - Function wrapper
 
 internal protocol FunctionWrapper {
@@ -134,6 +21,36 @@ extension FunctionWrapper {
   /// Use when you have unexpected keyword arguments.
   fileprivate func noKeywordError() -> FunctionResult {
     return .typeError("'\(self.name)' takes no keyword arguments")
+  }
+}
+
+// MARK: - New
+
+internal typealias NewFunction = (PyType, [PyObject], PyDictData?) -> PyResult<PyObject>
+
+internal struct NewFunctionWrapper: FunctionWrapper {
+
+  internal let typeName: String
+  internal let fn: NewFunction
+
+  internal var name: String {
+    return self.typeName + ".__new__"
+  }
+
+  /// static PyObject *
+  /// tp_new_wrapper(PyObject *self, PyObject *args, PyObject *kwds)
+  internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
+    guard args.any else {
+      return .typeError("\(self.name)(): not enough arguments")
+    }
+
+    let arg0 = args[0]
+    guard let type = arg0 as? PyType else {
+      return .typeError("\(self.name)(X): X is not a type object (\(arg0))")
+    }
+
+    let argsWithoutType = Array(args.dropFirst())
+    return self.fn(type, argsWithoutType, kwargs).asResultOrNot
   }
 }
 

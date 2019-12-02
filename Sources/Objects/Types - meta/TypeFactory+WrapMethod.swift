@@ -25,6 +25,21 @@ import Core
 
 extension TypeFactory {
 
+  // MARK: - New
+
+  internal static func wrapNew(
+    _ context: PyContext,
+    typeName: String,
+    doc: String?,
+    fn: @escaping NewFunction) -> PyBuiltinFunction {
+
+    return PyBuiltinFunction(
+      context,
+      doc: doc,
+      fn: NewFunctionWrapper(typeName: typeName, fn: fn)
+    )
+  }
+
   // MARK: - Unary
 
   internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
