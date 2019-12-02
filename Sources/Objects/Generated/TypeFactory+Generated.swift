@@ -291,6 +291,7 @@ extension TypeFactory {
     dict["__divmod__"] = wrapMethod(context, name: "__divmod__", doc: nil, fn: PyFloat.divmod(_:), castSelf: selfAsPyFloat)
     dict["__rdivmod__"] = wrapMethod(context, name: "__rdivmod__", doc: nil, fn: PyFloat.rdivmod(_:), castSelf: selfAsPyFloat)
     dict["__round__"] = wrapMethod(context, name: "__round__", doc: nil, fn: PyFloat.round(nDigits:), castSelf: selfAsPyFloat)
+    dict["__trunc__"] = wrapMethod(context, name: "__trunc__", doc: nil, fn: PyFloat.trunc, castSelf: selfAsPyFloat)
     return result
   }
 

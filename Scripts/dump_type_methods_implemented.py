@@ -38,6 +38,7 @@ types = {
     '__setattr__',
     '__delattr__',
     '__dir__',
+    '__call__',
   ],
   bool: [
     '__class__',
@@ -182,6 +183,7 @@ types = {
     '__divmod__',
     '__rdivmod__',
     '__round__',
+    '__trunc__',
   ],
   frozenset: [
     '__class__',

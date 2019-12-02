@@ -189,7 +189,8 @@ extension PyFloat:
   __rmod__Owner,
   __divmod__Owner,
   __rdivmod__Owner,
-  __round__Owner
+  __round__Owner,
+  __trunc__Owner
 { }
 
 // MARK: - FrozenSet

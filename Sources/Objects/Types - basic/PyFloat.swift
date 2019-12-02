@@ -432,6 +432,22 @@ public class PyFloat: PyObject {
     }
   }
 
+  // MARK: - Trunc
+
+  // sourcery: pymethod = __trunc__
+  internal func trunc() -> PyResultOrNot<PyObject> {
+    let raw = self.value
+
+    var wholePart = 0.0
+    Foundation.modf(raw, &wholePart)
+
+    if let int = BigInt(exactly: wholePart) {
+      return .value(self.builtins.newInt(int))
+    }
+
+    return .value(self.builtins.newFloat(wholePart))
+  }
+
   // MARK: - Helpers
 
   private func asDouble(_ object: PyObject) -> Double? {

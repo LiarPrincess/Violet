@@ -106,6 +106,7 @@ protocol __text_signature__GetterOwner { func getTextSignature() -> String? }
 protocol __traceback__GetterOwner { func getTraceback() -> PyObject }
 protocol __traceback__SetterOwner { func setTraceback(_ value: PyObject?) -> PyResult<()> }
 protocol __truediv__Owner { func truediv(_ other: PyObject) -> PyResultOrNot<PyObject> }
+protocol __trunc__Owner { func trunc() -> PyResultOrNot<PyObject> }
 protocol __xor__Owner { func xor(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol addOwner { func add(_ value: PyObject) -> PyResult<PyNone> }
 protocol appendOwner { func append(_ element: PyObject) -> PyResult<PyNone> }

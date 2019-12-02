@@ -16,7 +16,6 @@ type
     __text_signature__ - <class 'NoneType'>
     __weakrefoffset__ - <class 'int'>
     __abstractmethods__
-    __call__
     __instancecheck__
     __sizeof__
     __subclasscheck__
@@ -67,7 +66,6 @@ float
     fromhex - <class 'builtin_function_or_method'>
     __format__
     __getnewargs__
-    __trunc__
     as_integer_ratio
     hex
     is_integer
