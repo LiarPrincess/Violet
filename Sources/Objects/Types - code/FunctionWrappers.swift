@@ -9,21 +9,6 @@ internal protocol FunctionWrapper {
   func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult
 }
 
-extension FunctionWrapper {
-
-  fileprivate func isNilOrEmpty(kwargs: PyDictData?) -> Bool {
-    if let kwargs = kwargs {
-      return kwargs.isEmpty
-    }
-    return false
-  }
-
-  /// Use when you have unexpected keyword arguments.
-  fileprivate func noKeywordError() -> FunctionResult {
-    return .typeError("'\(self.name)' takes no keyword arguments")
-  }
-}
-
 // MARK: - New
 
 internal typealias NewFunction = (PyType, [PyObject], PyDictData?) -> PyResult<PyObject>
@@ -64,8 +49,8 @@ internal struct UnaryFunctionWrapper: FunctionWrapper {
   internal let fn: UnaryFunction
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     if args.count != 1 {
@@ -88,8 +73,8 @@ internal struct BinaryFunctionWrapper: FunctionWrapper {
   internal let fn: BinaryFunction
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     switch args.count {
@@ -107,8 +92,8 @@ internal struct BinaryFunctionOptWrapper: FunctionWrapper {
   internal let fn: BinaryFunctionOpt
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     switch args.count {
@@ -137,8 +122,8 @@ internal struct TernaryFunctionWrapper: FunctionWrapper {
   internal let fn: TernaryFunction
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     switch args.count {
@@ -156,8 +141,8 @@ internal struct TernaryFunctionOptWrapper: FunctionWrapper {
   internal let fn: TernaryFunctionOpt
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     switch args.count {
@@ -177,8 +162,8 @@ internal struct TernaryFunctionOptOptWrapper: FunctionWrapper {
   internal let fn: TernaryFunctionOptOpt
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     switch args.count {
@@ -211,8 +196,8 @@ internal struct QuartaryFunctionWrapper: FunctionWrapper {
   internal let fn: QuartaryFunction
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     switch args.count {
@@ -230,8 +215,8 @@ internal struct QuartaryFunctionOptWrapper: FunctionWrapper {
   internal let fn: QuartaryFunctionOpt
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     switch args.count {
@@ -251,8 +236,8 @@ internal struct QuartaryFunctionOptOptWrapper: FunctionWrapper {
   internal let fn: QuartaryFunctionOptOpt
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     switch args.count {
@@ -274,8 +259,8 @@ internal struct QuartaryFunctionOptOptOptWrapper: FunctionWrapper {
   internal let fn: QuartaryFunctionOptOptOpt
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
-    guard self.isNilOrEmpty(kwargs: kwargs) else {
-      return self.noKeywordError()
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     switch args.count {

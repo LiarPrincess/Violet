@@ -24,8 +24,10 @@
   {% for method in type.instanceMethods|annotated:"pymethod" %}
 {% call line type "func" method.annotations.pymethod method.name method.returnTypeName %}
   {% endfor %}
-
   {% for method in type.staticMethods|annotated:"pymethod" %}
+{% call line type "static_func" method.annotations.pymethod method.name method.returnTypeName %}
+  {% endfor %}
+  {% for method in type.classMethods|annotated:"pymethod" %}
 {% call line type "static_func" method.annotations.pymethod method.name method.returnTypeName %}
   {% endfor %}
 {% endmacro %}

@@ -42,6 +42,7 @@ types = {
   ],
   bool: [
     '__class__',
+    '__new__',
     '__repr__',
     '__str__',
     '__and__',

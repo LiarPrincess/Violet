@@ -405,6 +405,48 @@ internal struct ArgumentParser {
     return .value(kwargsDict.elements)
   }
 
+  // MARK: - Unpack
+
+  /// int
+  /// PyArg_UnpackTuple(PyObject *args,
+  ///                   const char *name,
+  ///                   Py_ssize_t min, Py_ssize_t max, ...)
+  internal static func guaranteeArgsCountOrError(fnName: String,
+                                                 args: [PyObject],
+                                                 min: Int,
+                                                 max: Int) -> PyErrorEnum? {
+    let nargs = args.count
+
+    if nargs < min {
+      let s = min == max ? "" : "at least "
+      return . typeError("\(fnName) expected \(s)\(max) arguments, got \(nargs)")
+    }
+
+    if nargs == 0 {
+      return nil
+    }
+
+    if nargs > max {
+      let s = min == max ? "" : "at most "
+      return .typeError("\(fnName) expected \(s)\(max) arguments, got \(nargs)")
+    }
+
+    return nil
+  }
+
+  // MARK: - No keywords
+
+  /// int
+  /// _PyArg_NoKeywords(const char *funcname, PyObject *kwargs)
+  internal static func noKwargsOrError(fnName: String,
+                                       kwargs: PyDictData?) -> PyErrorEnum? {
+    guard let kwargs = kwargs, kwargs.isEmpty else {
+      return nil
+    }
+
+    return .typeError("\(fnName) takes no keyword arguments")
+  }
+
   // MARK: - Dump
 
   /// For debug

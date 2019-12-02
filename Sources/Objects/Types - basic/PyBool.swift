@@ -37,6 +37,30 @@ public class PyBool: PyInt {
     super.init(type: context.builtins.types.bool, value: BigInt(value ? 1 : 0))
   }
 
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    if let e = ArgumentParser.noKwargsOrError(fnName: "bool", kwargs: kwargs) {
+      return .error(e)
+    }
+
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "bool",
+                                                        args: args,
+                                                        min: 0,
+                                                        max: 1) {
+      return .error(e)
+    }
+
+    if args.isEmpty {
+      return .value(type.builtins.false)
+    }
+
+    return type.builtins.isTrue(args[0]).map { $0 as PyObject }
+  }
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__

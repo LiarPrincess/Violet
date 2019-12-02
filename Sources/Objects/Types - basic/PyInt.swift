@@ -39,7 +39,7 @@ public class PyInt: PyObject {
     super.init(type: context.builtins.types.int)
   }
 
-  /// Only for PyBool use!
+  /// Only for PyBool or `__new__ `use!
   internal init(type: PyType, value: BigInt) {
     self.value = value
     super.init(type: type)
@@ -53,9 +53,9 @@ public class PyInt: PyObject {
   )
 
   // sourcery: pymethod = __new__
-  internal static func new(type: PyType,
-                           args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal class func new(type: PyType,
+                          args: [PyObject],
+                          kwargs: PyDictData?) -> PyResult<PyObject> {
     switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(bind.count <= 2, "Invalid argument count returned from parser.")

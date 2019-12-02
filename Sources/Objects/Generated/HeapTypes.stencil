@@ -2,16 +2,33 @@
 // swiftlint:disable vertical_whitespace
 // swiftlint:disable file_length
 
+// Types used when we subclass on of the builtin types.
+//
+// Normally most builtin types (like int, float etc.) do not have `__dict__`.
+// But if we subclass then then `__dict__` is now present.
+//
+// For example:
+// ```Python
+// >>> 1.__dict__ # Builtin int does not have `__dict__`
+// SyntaxError: invalid syntax
+//
+// >>> class MyInt(int): pass
+// >>> MyInt().__dict__ # But the subclass has
+// { }
+// ```
+
 {% macro printHeapType type %}
   {# If we already have 'attributes: Attributes' then we dont need 'Heap' type #}
   {% set hasAttributes %}{% for variable in type.allVariables where variable.name == "attributes" and variable.type.name == "Attributes" %}x{% endfor %}{% endset %}
 
 // MARK: - {{ type.name|replace:"Py","" }}
 
-  {% if hasAttributes %}
-// {{ type.name }} already has everything we need
+  {% if not type.annotations.baseType %}
+// {{ type.name }} is not a base type.
+  {% else %}{% if hasAttributes %}
+// {{ type.name }} already has everything we need.
   {% else %}
-/// Type used when we derive builtin `{{ type.annotations.pytype }}` class.
+/// Type used when we subclass builtin `{{ type.annotations.pytype }}` class.
 /// For example: `class Rapunzel({{ type.annotations.pytype }}): pass`.
 internal final class {{ type.name }}Heap: {{ type.name }} {
 
@@ -19,8 +36,12 @@ internal final class {{ type.name }}Heap: {{ type.name }} {
   internal lazy var attributes = Attributes()
 }
   {% endif %}
+  {% endif %}
 {% endmacro %}
 
+// MARK: - Type type
+
+// PyType already has everything we need.
 {% for type in types.classes|annotated:"pytype" %}
 {% call printHeapType type %}
 {% endfor %}
