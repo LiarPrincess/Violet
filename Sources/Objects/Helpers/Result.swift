@@ -2,7 +2,7 @@ import Core
 
 // MARK: - PyErrorEnum
 
-public enum PyErrorEnum {
+public enum PyErrorEnum: CustomStringConvertible {
   case typeError(String)
   case valueError(String)
   case indexError(String)
@@ -13,6 +13,21 @@ public enum PyErrorEnum {
   case nameError(String)
   case keyError(String)
   case keyErrorForKey(PyObject)
+
+  public var description: String {
+    switch self {
+    case .typeError(let msg): return "Type error: '\(msg)'"
+    case .valueError(let msg): return "Value error: '\(msg)'"
+    case .indexError(let msg): return "Index error: '\(msg)'"
+    case .attributeError(let msg): return "Attribute error: '\(msg)'"
+    case .zeroDivisionError(let msg): return "ZeroDivision error: '\(msg)'"
+    case .overflowError(let msg): return "Overflow error: '\(msg)'"
+    case .systemError(let msg): return "System error: '\(msg)'"
+    case .nameError(let msg): return "Name error: '\(msg)'"
+    case .keyError(let msg): return "Key error: '\(msg)'"
+    case .keyErrorForKey: return "Key error for key"
+    }
+  }
 }
 
 // MARK: - PyResult

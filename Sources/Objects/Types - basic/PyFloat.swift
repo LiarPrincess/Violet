@@ -435,7 +435,7 @@ public class PyFloat: PyObject {
   // MARK: - Trunc
 
   // sourcery: pymethod = __trunc__
-  internal func trunc() -> PyResultOrNot<PyObject> {
+  internal func trunc() -> PyResult<PyObject> {
     let raw = self.value
 
     var wholePart = 0.0

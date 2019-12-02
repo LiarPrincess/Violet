@@ -2,7 +2,7 @@ import XCTest
 import Core
 @testable import Objects
 
-private class TestObject: PyObject, Equatable {
+private class TestObject: PyObject {
 
   fileprivate let value: Int
 
@@ -10,14 +10,11 @@ private class TestObject: PyObject, Equatable {
     self.value = value
     super.init()
   }
-
-  fileprivate static func == (lhs: TestObject, rhs: TestObject) -> Bool {
-    return lhs.value == rhs.value
-  }
 }
 
 extension Objects.ArgumentParser {
 
+  // swiftlint:disable:next discouraged_optional_collection
   fileprivate func parseOrNil(args: [PyObject],
                               kwargs: [String:PyObject],
                               file: StaticString = #file,
@@ -36,9 +33,34 @@ class ArgumentParser: XCTestCase {
 
   // MARK: - Create
 
+  func test_init_withoutName_fails() {
+    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", ""],
+                                                   format: "|OOO") else {
+      XCTAssert(false)
+      return
+    }
+
+    guard case PyErrorEnum.systemError = e else {
+      XCTAssert(false)
+      return
+    }
+  }
+
+  func test_init_withoutName2_fails() {
+    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", ""],
+                                                   format: "|OOO:") else {
+      XCTAssert(false)
+      return
+    }
+
+    guard case PyErrorEnum.systemError = e else {
+      XCTAssert(false)
+      return
+    }
+  }
+
   func test_init_positionalAfterKwarg_fails() {
-    guard case let PyResult.error(e) = self.create(fnName: "fn",
-                                                   arguments: ["", "kw", ""],
+    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", ""],
                                                    format: "|OOO:fn") else {
       XCTAssert(false)
       return
@@ -51,8 +73,7 @@ class ArgumentParser: XCTestCase {
   }
 
   func test_init_moreArguments_thanInFormat_fails() {
-    guard case let PyResult.error(e) = self.create(fnName: "fn",
-                                                   arguments: ["", "kw", "kw2"],
+    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", "kw2"],
                                                    format: "|OO:fn") else {
       XCTAssert(false)
       return
@@ -65,8 +86,7 @@ class ArgumentParser: XCTestCase {
   }
 
   func test_init_moreArgumentsInFormat_thanNames_fails() {
-    guard case let PyResult.error(e) = self.create(fnName: "fn",
-                                                   arguments: ["", "kw"],
+    guard case let PyResult.error(e) = self.create(arguments: ["", "kw"],
                                                    format: "|OOO:fn") else {
       XCTAssert(false)
       return
@@ -79,8 +99,7 @@ class ArgumentParser: XCTestCase {
   }
 
   func test_init_multipleMinArgMarker_fails() {
-    guard case let PyResult.error(e) = self.create(fnName: "fn",
-                                                   arguments: ["", "kw"],
+    guard case let PyResult.error(e) = self.create(arguments: ["", "kw"],
                                                    format: "|O|OO:fn") else {
       XCTAssert(false)
       return
@@ -93,8 +112,7 @@ class ArgumentParser: XCTestCase {
   }
 
   func test_init_multipleMaxPositionalMarker_fails() {
-    guard case let PyResult.error(e) = self.create(fnName: "fn",
-                                                   arguments: ["", "kw", "kw2"],
+    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", "kw2"],
                                                    format: "|O$O$O:fn") else {
       XCTAssert(false)
       return
@@ -108,11 +126,20 @@ class ArgumentParser: XCTestCase {
 
   // MARK: - Int.int
 
+  private func createIntParser(file: StaticString = #file,
+                               line: UInt         = #line) -> Objects.ArgumentParser? {
+    switch self.create(arguments: ["", "base"], format: "|OO:int") {
+    case let .value(r):
+      return r
+    case let .error(e):
+      XCTAssert(false, String(describing: e), file: file, line: line)
+      return nil
+    }
+  }
+
   /// int()
   func test_int_new_withoutArgs() {
-    guard let parser = self.createOrNil(fnName: "int",
-                                        arguments: ["", "base"],
-                                        format: "|OO:int") else {
+    guard let parser = self.createIntParser() else {
       return
     }
 
@@ -125,9 +152,7 @@ class ArgumentParser: XCTestCase {
 
   /// int('5')
   func test_int_new_positional() {
-    guard let parser = self.createOrNil(fnName: "int",
-                                        arguments: ["", "base"],
-                                        format: "|OO:int") else {
+    guard let parser = self.createIntParser() else {
       return
     }
 
@@ -146,9 +171,7 @@ class ArgumentParser: XCTestCase {
 
   /// int('5', 16)
   func test_int_new_positional_positional() {
-    guard let parser = self.createOrNil(fnName: "int",
-                                        arguments: ["", "base"],
-                                        format: "|OO:int") else {
+    guard let parser = self.createIntParser() else {
       return
     }
 
@@ -169,9 +192,7 @@ class ArgumentParser: XCTestCase {
 
   /// int('5', base=16)
   func test_int_new_positional_keyword() {
-    guard let parser = self.createOrNil(fnName: "int",
-                                        arguments: ["", "base"],
-                                        format: "|OO:int") else {
+    guard let parser = self.createIntParser() else {
       return
     }
 
@@ -191,10 +212,8 @@ class ArgumentParser: XCTestCase {
   }
 
   /// int('5', 16, 1)
-  func test_int_new_toMuchPositional_fails() {
-    guard let parser = self.createOrNil(fnName: "int",
-                                        arguments: ["", "base"],
-                                        format: "|OO:int") else {
+  func test_int_new_tooMuchPositional_fails() {
+    guard let parser = self.createIntParser() else {
       return
     }
 
@@ -210,16 +229,14 @@ class ArgumentParser: XCTestCase {
 
     let msg = "int() takes at most 2 arguments (3 given)"
     guard case PyErrorEnum.typeError(msg) = e else {
-      XCTAssert(false)
+      XCTAssert(false, String(describing: e))
       return
     }
   }
 
   /// int('5', elsa=16)
   func test_int_new_invalidKeyword_fails() {
-    guard let parser = self.createOrNil(fnName: "int",
-                                        arguments: ["", "base"],
-                                        format: "|OO:int") else {
+    guard let parser = self.createIntParser() else {
       return
     }
 
@@ -232,32 +249,15 @@ class ArgumentParser: XCTestCase {
 
     let msg = "'elsa' is an invalid keyword argument for int()"
     guard case PyErrorEnum.typeError(msg) = e else {
-      XCTAssert(false)
+      XCTAssert(false, String(describing: e))
       return
     }
   }
 
   // MARK: - Create helpers
 
-  private func create(fnName: String,
-                      arguments: [String],
+  private func create(arguments: [String],
                       format: String) -> PyResult<Objects.ArgumentParser> {
-    return Objects.ArgumentParser.create(fnName: fnName,
-                                         arguments: arguments,
-                                         format: format)
-  }
-
-  private func createOrNil(fnName: String,
-                           arguments: [String],
-                           format: String,
-                           file: StaticString = #file,
-                           line: UInt         = #line) -> Objects.ArgumentParser? {
-    switch self.create(fnName: fnName, arguments: arguments, format: format) {
-    case let .value(r):
-      return r
-    case let .error(e):
-      XCTAssert(false, String(describing: e), file: file, line: line)
-      return nil
-    }
+    return Objects.ArgumentParser.create(arguments: arguments, format: format)
   }
 }

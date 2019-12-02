@@ -34,7 +34,11 @@
 
   {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
+    {% if attribute == "__new__" %}
+    dict["{{ attribute }}"] = wrapNew(context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% else %}
     dict["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% endif %}
   {% endfor %}
 
   {% for method in type.instanceMethods|annotated:"pymethod" %}

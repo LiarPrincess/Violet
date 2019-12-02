@@ -1,5 +1,7 @@
 object
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __sizeof__
   Why do we even have this?
     __subclasshook__
@@ -12,10 +14,12 @@ type
     __dictoffset__ - <class 'int'>
     __flags__ - <class 'int'>
     __itemsize__ - <class 'int'>
+    __new__ - <class 'builtin_function_or_method'>
     __prepare__ - <class 'builtin_function_or_method'>
     __text_signature__ - <class 'NoneType'>
     __weakrefoffset__ - <class 'int'>
     __abstractmethods__
+    __init__
     __instancecheck__
     __sizeof__
     __subclasscheck__
@@ -25,6 +29,7 @@ type
 
 code
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __ne__
     __sizeof__
@@ -46,12 +51,15 @@ code
 
 complex
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     __format__
     __getnewargs__
 
 dict
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     fromkeys - <class 'builtin_function_or_method'>
+    __init__
     __iter__
     __sizeof__
     items
@@ -62,6 +70,7 @@ dict
 float
   Unimplemented:
     __getformat__ - <class 'builtin_function_or_method'>
+    __new__ - <class 'builtin_function_or_method'>
     __set_format__ - <class 'builtin_function_or_method'>
     fromhex - <class 'builtin_function_or_method'>
     __format__
@@ -72,11 +81,13 @@ float
 
 frozenset
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     __iter__
     __sizeof__
 
 function
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     __annotations__
     __call__
     __closure__
@@ -101,8 +112,10 @@ int
 list
   Unimplemented:
     __hash__ - <class 'NoneType'>
+    __new__ - <class 'builtin_function_or_method'>
     __delitem__
     __iadd__
+    __init__
     __iter__
     __reversed__
     __setitem__
@@ -115,10 +128,25 @@ list
 
 method
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     __call__
+
+module
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+SimpleNamespace
+  Unimplemented:
+    __class__ - <class 'type'>
+    __hash__ - <class 'NoneType'>
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
 
 property
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __isabstractmethod__
     deleter
     getter
@@ -126,6 +154,7 @@ property
 
 range
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     __iter__
     __reversed__
     start
@@ -134,7 +163,9 @@ range
 
 set
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     __iand__
+    __init__
     __ior__
     __isub__
     __iter__
@@ -148,12 +179,14 @@ set
 slice
   Unimplemented:
     __hash__ - <class 'NoneType'>
+    __new__ - <class 'builtin_function_or_method'>
     start
     step
     stop
 
 str
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     maketrans - <class 'builtin_function_or_method'>
     __format__
     __getnewargs__
@@ -169,27 +202,196 @@ str
 
 tuple
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
     __getnewargs__
     __iter__
 
+ArithmeticError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+AssertionError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+AttributeError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
 BaseException
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __setstate__
     with_traceback
 
+BlockingIOError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+BrokenPipeError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+BufferError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+BytesWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ChildProcessError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ConnectionAbortedError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ConnectionError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ConnectionRefusedError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ConnectionResetError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+DeprecationWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+EOFError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+Exception
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+FileExistsError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+FileNotFoundError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+FloatingPointError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+FutureWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+GeneratorExit
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
 ImportError
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __str__
     msg
     name
     path
 
+ImportWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+IndentationError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+IndexError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+InterruptedError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+IsADirectoryError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
 KeyError
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __str__
+
+KeyboardInterrupt
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+LookupError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+MemoryError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ModuleNotFoundError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+NameError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+NotADirectoryError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+NotImplementedError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
 
 OSError
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __str__
     characters_written
     errno
@@ -197,12 +399,66 @@ OSError
     filename2
     strerror
 
+OverflowError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+PendingDeprecationWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+PermissionError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ProcessLookupError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+RecursionError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ReferenceError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ResourceWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+RuntimeError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+RuntimeWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+StopAsyncIteration
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
 StopIteration
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     value
 
 SyntaxError
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __str__
     filename
     lineno
@@ -211,12 +467,46 @@ SyntaxError
     print_file_and_line
     text
 
+SyntaxWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+SystemError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
 SystemExit
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     code
+
+TabError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+TimeoutError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+TypeError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+UnboundLocalError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
 
 UnicodeDecodeError
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __str__
     encoding
     end
@@ -226,6 +516,8 @@ UnicodeDecodeError
 
 UnicodeEncodeError
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __str__
     encoding
     end
@@ -233,12 +525,44 @@ UnicodeEncodeError
     reason
     start
 
+UnicodeError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
 UnicodeTranslateError
   Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
     __str__
     encoding
     end
     object
     reason
     start
+
+UnicodeWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+UserWarning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ValueError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+Warning
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
+
+ZeroDivisionError
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __init__
 

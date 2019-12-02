@@ -97,19 +97,21 @@ def print_protocols():
       protocol_name = setter_protocol_name(python_name)
       protocols.add(f'protocol {protocol_name} {{ func {signature} }}')
 
-    elif line.operation == 'func':
+    elif line.operation == 'func' or line.operation == 'static_func':
+      static = 'static ' if line.operation == 'static_func' else ''
+
       # Special case for 'str' methods with 'start' and 'end' args
       # We will also have version without range.
       if is_ranged_function(signature):
         protocol_name = func_protocol_name(python_name)
         signature_no_range = signature.replace(', start: PyObject?, end: PyObject?', '')
-        protocols.add(f'protocol {protocol_name} {{ func {signature_no_range} }}')
+        protocols.add(f'protocol {protocol_name} {{ {static}func {signature_no_range} }}')
 
         ranged_protocol_name = ranged_func_protocol_name(python_name)
-        protocols.add(f'protocol {ranged_protocol_name} {{ func {signature} }}')
+        protocols.add(f'protocol {ranged_protocol_name} {{ {static}func {signature} }}')
       else:
         protocol_name = func_protocol_name(python_name)
-        protocols.add(f'protocol {protocol_name} {{ func {signature} }}')
+        protocols.add(f'protocol {protocol_name} {{ {static}func {signature} }}')
 
     else:
       assert False

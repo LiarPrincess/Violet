@@ -2,19 +2,19 @@ import Core
 
 internal enum SequenceHelper {
 
-  // MARK: - Extract index
-
   internal enum GetIndexResult<T> {
     case value(T)
     case notIndex
     case error(PyErrorEnum)
   }
 
+  // MARK: - Int
+
   /// Py_ssize_t PyNumber_AsSsize_t(PyObject *item, PyObject *err)
   /// _PyEval_SliceIndexNotNone
   internal static func tryGetIndex(_ value: PyObject) -> GetIndexResult<Int> {
     let bigInt: BigInt
-    switch getIndexBigInt(value) {
+    switch tryGetIndexBig(value) {
     case .value(let v): bigInt = v
     case .notIndex: return .notIndex
     case .error(let e): return .error(e)
@@ -24,9 +24,8 @@ internal enum SequenceHelper {
       return .value(int)
     }
 
-    return .error(
-      .indexError("cannot fit '\(value.typeName)' into an index-sized integer")
-    )
+    let msg = "cannot fit '\(value.typeName)' into an index-sized integer"
+    return .error(.indexError(msg))
   }
 
   /// Basically `SequenceHelper.tryGetIndex`, but it will return type error
@@ -43,12 +42,28 @@ internal enum SequenceHelper {
     }
   }
 
+  // MARK: - BigInt
+
+  /// Basically `SequenceHelper.tryGetIndexBig`, but it will return type error
+  /// if the value cannot be converted to index.
+  internal static func getIndexBig(_ value: PyObject) -> PyResult<BigInt> {
+    switch SequenceHelper.tryGetIndexBig(value) {
+    case .value(let v):
+      return .value(v)
+    case .notIndex:
+      let msg = "'\(value.typeName)' object cannot be interpreted as an integer"
+      return .error(.typeError(msg))
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
   /// Return a Python int from the object item.
   /// Raise TypeError if the result is not an int
   /// or if the object cannot be interpreted as an index.
   ///
   /// PyObject * PyNumber_Index(PyObject *item)
-  private static func getIndexBigInt(_ value: PyObject) -> GetIndexResult<BigInt> {
+  internal static func tryGetIndexBig(_ value: PyObject) -> GetIndexResult<BigInt> {
     if let int = value as? PyInt {
       return .value(int.value)
     }

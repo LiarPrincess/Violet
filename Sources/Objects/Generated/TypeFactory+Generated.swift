@@ -370,6 +370,7 @@ extension TypeFactory {
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyInt.getClass, castSelf: selfAsPyInt)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyInt.new(type:args:kwargs:))
 
     dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyInt.isEqual(_:), castSelf: selfAsPyInt)
     dict["__ne__"] = wrapMethod(context, name: "__ne__", doc: nil, fn: PyInt.isNotEqual(_:), castSelf: selfAsPyInt)

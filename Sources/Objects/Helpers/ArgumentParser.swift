@@ -62,9 +62,14 @@ internal struct ArgumentParser {
   ///                     - `$` - end of positional arguments (maxPositionalArgCount)
   ///                     - other - ignored
   ///                     For example: `|OO`.
-  internal static func create(fnName: String,
-                              arguments: [String],
+  internal static func create(arguments: [String],
                               format: String) -> PyResult<ArgumentParser> {
+    let name: String
+    switch ArgumentParser.extractFunctionName(format: format) {
+    case let .value(n): name = n
+    case let .error(e): return .error(e)
+    }
+
     let firstKeywordArgIndex = arguments.firstIndex { !$0.isEmpty }
     let positionalArgCount = firstKeywordArgIndex ?? arguments.count
 
@@ -87,13 +92,39 @@ internal struct ArgumentParser {
 
     return .value(
       ArgumentParser(
-        fnName: fnName,
+        fnName: name,
         minArgCount: Swift.min(parsedFormat.min, arguments.count),
         positionalArgCount: positionalArgCount,
         maxPositionalArgCount: Swift.min(parsedFormat.max, arguments.count),
         keywordArgNames: keywordArgumentNames
       )
     )
+  }
+
+  /// Create parser using `ArgumentParser.create` or `fatalError`.
+  internal static func createOrFatal(arguments: [String],
+                                     format: String) -> ArgumentParser {
+    switch ArgumentParser.create(arguments: arguments, format: format) {
+    case let .value(r):
+      return r
+    case let .error(e):
+      fatalError(String(describing: e))
+    }
+  }
+
+  /// Function name starts after ':' in format.
+  private static func extractFunctionName(format: String) -> PyResult<String> {
+    guard var startIndex = format.firstIndex(of: ":") else {
+      return .systemError("Format does not contain function name")
+    }
+
+    // Go after ':'
+    format.formIndex(after: &startIndex) // after ':'
+    if startIndex == format.endIndex {
+      return .systemError("Format does not contain function name")
+    }
+
+    return .value(String(format[startIndex...]))
   }
 
   private struct ParsedFormat {
