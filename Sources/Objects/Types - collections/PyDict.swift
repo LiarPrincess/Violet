@@ -36,6 +36,12 @@ public class PyDict: PyObject {
     super.init(type: context.builtins.types.dict)
   }
 
+  /// Use in `__new__`!
+  internal init(type: PyType, elements: PyDictData) {
+    self.elements = elements
+    super.init(type: type)
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
@@ -377,6 +383,21 @@ public class PyDict: PyObject {
     let value = last.value
     let result = PyTuple(self.context, elements: [key, value])
     return .value(result)
+  }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    let isBuiltin = type === type.builtins.dict
+    let alloca = isBuiltin ?
+      PyDict.init(type:elements:) :
+      PyDictHeap.init(type:elements:)
+
+    let data = PyDictData()
+    return .value(alloca(type, data))
   }
 
   // MARK: - Helpers

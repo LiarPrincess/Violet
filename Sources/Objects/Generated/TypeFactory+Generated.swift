@@ -213,6 +213,7 @@ extension TypeFactory {
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyDict.getClass, castSelf: selfAsPyDict)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyDict.new(type:args:kwargs:))
 
 
     dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyDict.isEqual(_:), castSelf: selfAsPyDict)
@@ -722,6 +723,7 @@ extension TypeFactory {
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyString.getClass, castSelf: selfAsPyString)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyString.new(type:args:kwargs:))
 
     dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyString.isEqual(_:), castSelf: selfAsPyString)
     dict["__ne__"] = wrapMethod(context, name: "__ne__", doc: nil, fn: PyString.isNotEqual(_:), castSelf: selfAsPyString)

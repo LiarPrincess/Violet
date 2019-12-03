@@ -9,11 +9,6 @@ extension PyBaseObject { }
 
 // MARK: - Type
 
-// Type does not own anything.
-extension PyType { }
-
-// MARK: - Type
-
 extension PyType:
   __name__GetterOwner,
   __name__SetterOwner,
@@ -114,7 +109,8 @@ extension PyComplex:
   __mod__Owner,
   __rmod__Owner,
   __divmod__Owner,
-  __rdivmod__Owner
+  __rdivmod__Owner,
+  __new__Owner
 { }
 
 // MARK: - Dict
@@ -139,7 +135,8 @@ extension PyDict:
   getOwner,
   setdefaultOwner,
   copyOwner,
-  popitemOwner
+  popitemOwner,
+  __new__Owner
 { }
 
 // MARK: - Ellipsis
@@ -190,7 +187,8 @@ extension PyFloat:
   __divmod__Owner,
   __rdivmod__Owner,
   __round__Owner,
-  __trunc__Owner
+  __trunc__Owner,
+  __new__Owner
 { }
 
 // MARK: - FrozenSet
@@ -295,7 +293,8 @@ extension PyInt:
   __xor__Owner,
   __rxor__Owner,
   __invert__Owner,
-  __round__Owner
+  __round__Owner,
+  __new__Owner
 { }
 
 // MARK: - List
@@ -538,7 +537,8 @@ extension PyString:
   zfillOwner,
   __add__Owner,
   __mul__Owner,
-  __rmul__Owner
+  __rmul__Owner,
+  __new__Owner
 { }
 
 // MARK: - Tuple

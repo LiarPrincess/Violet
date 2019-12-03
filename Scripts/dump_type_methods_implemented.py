@@ -42,7 +42,6 @@ types = {
   ],
   bool: [
     '__class__',
-    '__new__',
     '__repr__',
     '__str__',
     '__and__',
@@ -51,6 +50,7 @@ types = {
     '__ror__',
     '__xor__',
     '__rxor__',
+    '__new__',
   ],
   t.BuiltinFunctionType: [
     '__class__',
@@ -82,7 +82,6 @@ types = {
   ],
   complex: [
     '__class__',
-    '__new__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -118,6 +117,7 @@ types = {
     '__rmod__',
     '__divmod__',
     '__rdivmod__',
+    '__new__',
   ],
   dict: [
     '__class__',
@@ -141,6 +141,7 @@ types = {
     'copy',
     'pop',
     'popitem',
+    '__new__',
   ],
   type(...): [
     '__class__',
@@ -149,7 +150,6 @@ types = {
   ],
   float: [
     '__class__',
-    '__new__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -187,6 +187,7 @@ types = {
     '__rdivmod__',
     '__round__',
     '__trunc__',
+    '__new__',
   ],
   frozenset: [
     '__class__',
@@ -231,7 +232,6 @@ types = {
   ],
   int: [
     '__class__',
-    '__new__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -282,6 +282,7 @@ types = {
     '__rxor__',
     '__invert__',
     '__round__',
+    '__new__',
   ],
   list: [
     '__class__',
@@ -487,6 +488,7 @@ types = {
     '__add__',
     '__mul__',
     '__rmul__',
+    '__new__',
   ],
   tuple: [
     '__class__',

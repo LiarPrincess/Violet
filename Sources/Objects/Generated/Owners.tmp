@@ -130,6 +130,7 @@ PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                   
 PyDict|PyObject|func|copy|copy() -> PyObject
 PyDict|PyObject|func|pop|pop(_ index: PyObject,                    default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|popitem|popitem() -> PyResult<PyObject>
+PyDict|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
 PyEllipsis|PyObject|get|__class__|getClass() -> PyType
 
 PyEllipsis|PyObject|func|__repr__|repr() -> PyResult<String>
@@ -462,6 +463,7 @@ PyString|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<String>
 PyString|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyString|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyString|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyString|PyObject|static_func|__new__|new(type: PyType,                          args: [PyObject],                          kwargs: PyDictData?) -> PyResult<PyObject>
 PyTuple|PyObject|get|__class__|getClass() -> PyType
 
 PyTuple|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

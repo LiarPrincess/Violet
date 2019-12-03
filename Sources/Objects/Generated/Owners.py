@@ -178,12 +178,14 @@ def print_conformance():
       protocols.append(getter_protocol_name(python_name))
     elif line.operation == 'set':
       protocols.append(setter_protocol_name(python_name))
-    elif line.operation == 'func':
+    elif line.operation == 'func' or line.operation == 'static_func':
       if is_ranged_function(signature):
         protocols.append(func_protocol_name(python_name))
         protocols.append(ranged_func_protocol_name(python_name))
       else:
         protocols.append(func_protocol_name(python_name))
+    else:
+      assert False
 
   print('''\
 // swiftlint:disable file_length
@@ -194,11 +196,6 @@ def print_conformance():
 
 // PyBaseObject does not own anything.
 extension PyBaseObject { }
-
-// MARK: - Type
-
-// Type does not own anything.
-extension PyType { }
 ''')
 
   for entry in entries_by_type_name.values():
