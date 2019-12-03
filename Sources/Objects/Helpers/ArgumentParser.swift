@@ -402,7 +402,7 @@ internal struct ArgumentParser {
       return .typeError("Function keyword arguments should be a dict, not \(t)")
     }
 
-    return .value(kwargsDict.elements)
+    return .value(kwargsDict.data)
   }
 
   // MARK: - Unpack

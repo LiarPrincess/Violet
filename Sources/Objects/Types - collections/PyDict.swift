@@ -22,23 +22,23 @@ public class PyDict: PyObject {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
-  internal var elements: PyDictData
+  internal var data: PyDictData
 
   // MARK: - Init
 
   internal init(_ context: PyContext) {
-    self.elements = PyDictData()
+    self.data = PyDictData()
     super.init(type: context.builtins.types.dict)
   }
 
-  internal init(_ context: PyContext, elements: PyDictData) {
-    self.elements = elements
+  internal init(_ context: PyContext, data: PyDictData) {
+    self.data = data
     super.init(type: context.builtins.types.dict)
   }
 
   /// Use in `__new__`!
-  internal init(type: PyType, elements: PyDictData) {
-    self.elements = elements
+  internal init(type: PyType, data: PyDictData) {
+    self.data = data
     super.init(type: type)
   }
 
@@ -50,13 +50,13 @@ public class PyDict: PyObject {
       return .notImplemented
     }
 
-    guard self.elements.count == other.elements.count else {
+    guard self.data.count == other.data.count else {
       return .value(false)
     }
 
-    for entry in self.elements {
+    for entry in self.data {
       let otherValue: PyObject
-      switch other.elements.get(key: entry.key) {
+      switch other.data.get(key: entry.key) {
       case .value(let o): otherValue = o
       case .notFound: return .value(false)
       case .error(let e): return .error(e)
@@ -110,7 +110,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    if self.elements.isEmpty {
+    if self.data.isEmpty {
       return .value("{}")
     }
 
@@ -120,7 +120,7 @@ public class PyDict: PyObject {
 
     return self.withReprLock {
       var result = "{"
-      for (index, element) in self.elements.enumerated() {
+      for (index, element) in self.data.enumerated() {
         if index > 0 {
           result += ", " // so that we don't have ', )'.
         }
@@ -161,7 +161,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __len__
   internal func getLength() -> BigInt {
-    return BigInt(self.elements.count)
+    return BigInt(self.data.count)
   }
 
   // MARK: - Get/set/del item
@@ -174,7 +174,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.get(key: key) {
+    switch self.data.get(key: key) {
     case .value(let o): return .value(o)
     case .notFound: break // Try '__missing__'
     case .error(let e): return .error(e)
@@ -203,7 +203,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.insert(key: key, value: value) {
+    switch self.data.insert(key: key, value: value) {
     case .inserted, .updated:
       return .value(self.builtins.none)
     case .error(let e):
@@ -219,7 +219,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.remove(key: key) {
+    switch self.data.remove(key: key) {
     case .value:
       return .value(self.builtins.none)
     case .notFound:
@@ -239,7 +239,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.contains(key: key) {
+    switch self.data.contains(key: key) {
     case let .value(b):
       return .value(b)
     case let .error(e):
@@ -255,7 +255,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = clear, doc = clearDoc
   internal func clear() -> PyResult<PyNone> {
-    self.elements.clear()
+    self.data.clear()
     return .value(self.builtins.none)
   }
 
@@ -276,7 +276,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.get(key: key) {
+    switch self.data.get(key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -309,12 +309,12 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.get(key: key) {
+    switch self.data.get(key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
       let value = `default` ?? self.builtins.none
-      switch self.elements.insert(key: key, value: value) {
+      switch self.data.insert(key: key, value: value) {
       case .inserted, .updated:
         return .value(value)
       case .error(let e):
@@ -332,7 +332,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
     let result = PyDict(self.context)
-    result.elements = self.elements
+    result.data = self.data
     return result
   }
 
@@ -352,7 +352,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.elements.remove(key: key) {
+    switch self.data.remove(key: key) {
     case .value(let o):
       return .value(o)
     case .notFound:
@@ -373,11 +373,11 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = popitem, doc = popitemDoc
   internal func popitem() -> PyResult<PyObject> {
-    guard let last = self.elements.last else {
+    guard let last = self.data.last else {
       return .keyError("popitem(): dictionary is empty")
     }
 
-    _ = self.elements.remove(key: last.key)
+    _ = self.data.remove(key: last.key)
 
     let key = last.key.object
     let value = last.value
@@ -393,8 +393,8 @@ public class PyDict: PyObject {
                            kwargs: PyDictData?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.dict
     let alloca = isBuiltin ?
-      PyDict.init(type:elements:) :
-      PyDictHeap.init(type:elements:)
+      PyDict.init(type:data:) :
+      PyDictHeap.init(type:data:)
 
     let data = PyDictData()
     return .value(alloca(type, data))

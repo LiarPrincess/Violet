@@ -574,7 +574,7 @@ public class PyType: PyObject {
       return false
     }
 
-    return kwargsDict.elements.isEmpty
+    return kwargsDict.data.isEmpty
   }
 
   // MARK: - Helpers

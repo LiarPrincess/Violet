@@ -111,7 +111,7 @@ extension Builtins {
       }
     }
 
-    return .value(PyDict(self.context, elements: data))
+    return .value(PyDict(self.context, data: data))
   }
 
   public func newDict(keyTuple: PyObject,
@@ -136,7 +136,7 @@ extension Builtins {
       }
     }
 
-    return .value(PyDict(self.context, elements: data))
+    return .value(PyDict(self.context, data: data))
   }
 
   public func add(dict: PyObject, key: PyObject, value: PyObject) -> PyResult<()> {
