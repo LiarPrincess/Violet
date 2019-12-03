@@ -36,4 +36,18 @@ public class PyNone: PyObject {
   internal func getClass() -> PyType {
     return self.type
   }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    let noKwargs = kwargs?.isEmpty ?? true
+    guard args.isEmpty && noKwargs else {
+      return .typeError("NoneType takes no arguments")
+    }
+
+    return .value(type.builtins.none)
+  }
 }

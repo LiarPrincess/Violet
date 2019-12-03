@@ -33,4 +33,18 @@ public class PyNotImplemented: PyObject {
   internal var reduce: String {
     return "NotImplemented"
   }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    let noKwargs = kwargs?.isEmpty ?? true
+    guard args.isEmpty && noKwargs else {
+      return .typeError("NotImplementedType takes no arguments")
+    }
+
+    return .value(type.builtins.notImplemented)
+  }
 }

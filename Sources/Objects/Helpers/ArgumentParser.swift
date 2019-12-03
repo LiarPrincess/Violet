@@ -440,7 +440,8 @@ internal struct ArgumentParser {
   /// _PyArg_NoKeywords(const char *funcname, PyObject *kwargs)
   internal static func noKwargsOrError(fnName: String,
                                        kwargs: PyDictData?) -> PyErrorEnum? {
-    guard let kwargs = kwargs, kwargs.isEmpty else {
+    let noKwargs = kwargs?.isEmpty ?? true
+    if noKwargs {
       return nil
     }
 

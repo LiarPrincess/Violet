@@ -42,4 +42,18 @@ public class PyEllipsis: PyObject {
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    let noKwargs = kwargs?.isEmpty ?? true
+    guard args.isEmpty && noKwargs else {
+      return .typeError("EllipsisType takes no arguments")
+    }
+
+    return .value(type.builtins.ellipsis)
+  }
 }
