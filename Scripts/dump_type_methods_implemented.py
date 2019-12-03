@@ -82,6 +82,7 @@ types = {
   ],
   complex: [
     '__class__',
+    '__new__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -148,6 +149,7 @@ types = {
   ],
   float: [
     '__class__',
+    '__new__',
     '__eq__',
     '__ne__',
     '__lt__',

@@ -71,7 +71,7 @@ public class PyInt: PyObject {
                            x: PyObject?,
                            base: PyObject?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.int
-    let alloca = isBuiltin ? PyInt.init(type:value:) : PyIntHeap.init(type:value:)
+    let alloca = isBuiltin ? newPyInt(type:value:) : PyIntHeap.init(type:value:)
 
     guard let x = x else {
       if base != nil {
@@ -97,13 +97,18 @@ public class PyInt: PyObject {
 
     if let str = x as? PyString {
       guard let value = BigInt(str.value, radix: baseInt) else {
-        return .valueError("int() '\(str.value)' cannot be interpreted as string")
+        return .valueError("int() '\(str.value)' cannot be interpreted as int")
       }
       return .value(alloca(type, value))
     }
 
     // TODO: Add bytes (both to us and extractInt)
     return .typeError("int() can't convert non-string with explicit base")
+  }
+
+  /// Allocate new PyInt (it will use 'builtins' cache if possible).
+  private static func newPyInt(type: PyType, value: BigInt) -> PyInt {
+    return type.builtins.newInt(value)
   }
 
   /// PyObject *
@@ -127,7 +132,7 @@ public class PyInt: PyObject {
 
     if let str = object as? PyString {
       guard let value = BigInt(str.value, radix: 10) else {
-        return .valueError("int() '\(str.value)' cannot be interpreted as string")
+        return .valueError("int() '\(str.value)' cannot be interpreted as int")
       }
       return .value(value)
     }

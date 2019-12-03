@@ -161,6 +161,7 @@ extension TypeFactory {
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyComplex.getClass, castSelf: selfAsPyComplex)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyComplex.new(type:args:kwargs:))
 
     dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyComplex.isEqual(_:), castSelf: selfAsPyComplex)
     dict["__ne__"] = wrapMethod(context, name: "__ne__", doc: nil, fn: PyComplex.isNotEqual(_:), castSelf: selfAsPyComplex)
@@ -264,6 +265,7 @@ extension TypeFactory {
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyFloat.getClass, castSelf: selfAsPyFloat)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyFloat.new(type:args:kwargs:))
 
     dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyFloat.isEqual(_:), castSelf: selfAsPyFloat)
     dict["__ne__"] = wrapMethod(context, name: "__ne__", doc: nil, fn: PyFloat.isNotEqual(_:), castSelf: selfAsPyFloat)

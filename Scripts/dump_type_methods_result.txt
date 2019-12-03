@@ -51,7 +51,6 @@ code
 
 complex
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __format__
     __getnewargs__
 
@@ -70,7 +69,6 @@ dict
 float
   Unimplemented:
     __getformat__ - <class 'builtin_function_or_method'>
-    __new__ - <class 'builtin_function_or_method'>
     __set_format__ - <class 'builtin_function_or_method'>
     fromhex - <class 'builtin_function_or_method'>
     __format__

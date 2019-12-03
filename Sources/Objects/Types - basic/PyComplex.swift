@@ -31,6 +31,212 @@ public class PyComplex: PyObject {
     super.init(type: context.builtins.types.complex)
   }
 
+  /// Use only in `__new__`!
+  internal init(type: PyType, real: Double, imag: Double) {
+    self.real = real
+    self.imag = imag
+    super.init(type: type)
+  }
+
+  // MARK: - Python new/init
+
+  private static let newArgumentsParser = ArgumentParser.createOrFatal(
+    arguments: ["real", "imag"],
+    format: "|OO:complex"
+  )
+
+  // sourcery: pymethod = __new__
+  internal class func new(type: PyType,
+                          args: [PyObject],
+                          kwargs: PyDictData?) -> PyResult<PyObject> {
+    switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
+    case let .value(bind):
+      assert(bind.count <= 2, "Invalid argument count returned from parser.")
+      let arg0 = bind.count >= 1 ? bind[0] : nil
+      let arg1 = bind.count >= 2 ? bind[1] : nil
+      return PyComplex.new(type: type, arg0: arg0, arg1: arg1)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private class func new(type: PyType,
+                         arg0: PyObject?,
+                         arg1: PyObject?) -> PyResult<PyObject> {
+    // Special-case for a single argument when type(arg) is complex.
+    if let complex = arg0 as? PyComplex, arg1 == nil {
+      return .value(complex)
+    }
+
+    let isBuiltin = type === type.builtins.complex
+    let alloca = isBuiltin ?
+      PyComplex.init(type:real:imag:) :
+      PyComplexHeap.init(type:real:imag:)
+
+    if let str = arg0 as? PyString {
+      guard arg1 == nil else {
+        return . typeError("complex() can't take second arg if first is a string")
+      }
+
+      return PyComplex.parse(str.value).map { alloca(type, $0.real, $0.imag) }
+    }
+
+    guard arg1 as? PyString == nil else {
+      return .typeError("complex() second arg can't be a string")
+    }
+
+    // If we get this far, then the "real" and "imag" parts should
+    // both be treated as numbers, and the constructor should return a
+    // complex number equal to (real + imag*1j).
+    // Note that we do NOT assume the input to already be in canonical
+    // form; the "real" and "imag" parts might themselves be complex numbers:
+    // >>> complex.__new__(complex, 0, 5j)
+    // (-5+0j)
+
+    let a: Raw
+    switch PyComplex.extractComplex(arg0) {
+    case let .value(o): a = o
+    case let .error(e): return .error(e)
+    }
+
+    let b: Raw
+    switch PyComplex.extractComplex(arg1) {
+    case let .value(o): b = o
+    case let .error(e): return .error(e)
+    }
+
+    // a + b * j = (a.r + a.i) + (b.r + b.i) * j = (a.r - b.i) + (a.i + b.r)j
+    let result = alloca(type, a.real - b.imag, a.imag + b.real)
+    return .value(result)
+  }
+
+  internal struct Raw {
+    internal let real: Double
+    internal let imag: Double
+  }
+
+  /// A valid complex string usually takes one of the three forms:
+  /// - `<float>`                  - real part only
+  /// - `<float>j`                 - imaginary part only
+  /// - `<float><signed-float>j`   - real and imaginary parts
+  ///
+  /// `<float>` represents any numeric string that's accepted by the
+  /// float constructor (including 'nan', 'inf', 'infinity', etc.)
+  ///
+  /// `<signed-float>` is any string of the form `<float>` whose first
+  /// character is '+' or '-'
+  internal static func parse(_ arg: String) -> PyResult<Raw> {
+    // swiftlint:disable:previous cyclomatic_complexity function_body_length
+
+    let s = arg.trimmingCharacters(in: .whitespacesAndNewlines)
+    if s.isEmpty {
+      return .valueError("complex() arg is a malformed string")
+    }
+
+    var index = s.startIndex
+    func isAny(of chars: String) -> Bool {
+      return chars.contains(s[index])
+    }
+
+    // Skip first '+-'
+    if isAny(of: "+-") {
+      s.formIndex(after: &index)
+    }
+
+    // Move to next '+-' (which would be end of real part)
+    while index != s.endIndex, !isAny(of: "+=j") {
+      s.formIndex(after: &index)
+    }
+
+    guard let real = Double(s[..<index]) else {
+      return .valueError("complex() '\(s)' cannot be interpreted as complex")
+    }
+
+    // complex('123') -> (123+0j)
+    if index == s.endIndex {
+      return .value(Raw(real: real, imag: 0.0))
+    }
+
+    // complex('123j') -> 123j
+    if s[index] == "j" {
+      s.formIndex(after: &index) // consume 'j'
+      guard index == s.endIndex else {
+        return .valueError("complex() arg is a malformed string")
+      }
+
+      return .value(Raw(real: 0.0, imag: real))
+    }
+
+    // Go up until 'j' (s[index] is one of '+-')
+    let imagStart = index
+    while index != s.endIndex, s[index] != "j" {
+      s.formIndex(after: &index)
+    }
+
+    // Missing 'j'
+    if index == s.endIndex {
+      return .valueError("complex() arg is a malformed string")
+    }
+
+    print("imag", s[imagStart..<index])
+    guard let imag = Double(s[imagStart..<index]) else {
+      return .valueError("complex() '\(s)' cannot be interpreted as complex")
+    }
+
+    s.formIndex(after: &index) // consume 'j'
+    guard index == s.endIndex else {
+      return .valueError("complex() arg is a malformed string")
+    }
+
+    return .value(Raw(real: real, imag: imag))
+  }
+
+  private static func extractComplex(_ object: PyObject?) -> PyResult<Raw> {
+    guard let object = object else {
+      return .value(Raw(real: 0.0, imag: 0.0))
+    }
+
+    switch PyComplex.callComplex(object) {
+    case .value(let o):
+      guard let complex = o as? PyComplex else {
+        return .typeError("__complex__ returned non-Complex (type \(o.typeName))")
+      }
+      return .value(Raw(real: complex.real, imag: complex.imag))
+    case .notImplemented:
+      break // try other possibilities
+    case .error(let e):
+      return .error(e)
+    }
+
+    if let int = object as? PyInt {
+      return .value(Raw(real: Double(int.value), imag: 0.0))
+    }
+
+    if let float = object as? PyFloat {
+      return .value(Raw(real: float.value, imag: 0.0))
+    }
+
+    let t = object.type
+    return .typeError("complex() argument must be a string or a number, not '\(t)'")
+  }
+
+  private static func callComplex(_ object: PyObject) -> PyResultOrNot<PyObject> {
+    if let owner = object as? __complex__Owner {
+      return owner.asComplex().map { $0 as PyObject }.asResultOrNot
+    }
+
+    switch object.builtins.callMethod(on: object, selector: "__complex__") {
+    case .value(let o):
+      return .value(o)
+    case .notImplemented,
+         .noSuchMethod:
+      return .notImplemented
+    case .error(let e),
+         .methodIsNotCallable(let e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__

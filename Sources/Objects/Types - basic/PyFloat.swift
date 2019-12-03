@@ -39,7 +39,6 @@ public class PyFloat: PyObject {
   internal class func new(type: PyType,
                           args: [PyObject],
                           kwargs: PyDictData?) -> PyResult<PyObject> {
-
     let isBuiltin = type === type.builtins.float
     if isBuiltin {
       if let e = ArgumentParser.noKwargsOrError(fnName: "float",
@@ -64,7 +63,7 @@ public class PyFloat: PyObject {
     let arg0 = args[0]
     if let str = arg0 as? PyString {
       guard let value = Double(str.value) else {
-        return .valueError("float() '\(str.value)' cannot be interpreted as string")
+        return .valueError("float() '\(str.value)' cannot be interpreted as float")
       }
       return .value(alloca(type, value))
     }

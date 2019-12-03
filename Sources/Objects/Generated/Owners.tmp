@@ -107,6 +107,7 @@ PyComplex|PyObject|func|__mod__|mod(_ other: PyObject) -> PyResultOrNot<PyObject
 PyComplex|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyComplex|PyObject|func|__divmod__|divmod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyComplex|PyObject|func|__rdivmod__|rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|static_func|__new__|new(type: PyType,                          args: [PyObject],                          kwargs: PyDictData?) -> PyResult<PyObject>
 PyDict|PyObject|get|__class__|getClass() -> PyType
 
 PyDict|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -172,6 +173,7 @@ PyFloat|PyObject|func|__divmod__|divmod(_ other: PyObject) -> PyResultOrNot<PyOb
 PyFloat|PyObject|func|__rdivmod__|rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__trunc__|trunc() -> PyResult<PyObject>
+PyFloat|PyObject|static_func|__new__|new(type: PyType,                          args: [PyObject],                          kwargs: PyDictData?) -> PyResult<PyObject>
 PyFrozenSet|PyObject|get|__class__|getClass() -> PyType
 
 PyFrozenSet|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

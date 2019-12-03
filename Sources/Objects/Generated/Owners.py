@@ -134,6 +134,7 @@ def print_protocols():
   protocols.add(f'protocol __iand__Owner {{ func iand(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
   protocols.add(f'protocol __ixor__Owner {{ func ixor(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
   protocols.add(f'protocol __ior__Owner {{ func ior(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  protocols.add(f'protocol __complex__Owner {{ func asComplex() -> PyResult<PyComplex> }}')
 
   print('''\
 import Core
