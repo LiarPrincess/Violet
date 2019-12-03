@@ -14,8 +14,8 @@ extension Builtins {
       return .value("")
     }
 
-    if let reprOwner = object as? __repr__Owner {
-      return reprOwner.repr()
+    if let owner = object as? __repr__Owner {
+      return owner.repr()
     }
 
     switch self.callMethod(on: object, selector: "__repr__") {
@@ -29,6 +29,37 @@ extension Builtins {
     case .noSuchMethod,
          .notImplemented:
       return .value(self.genericRepr(object))
+
+    case .methodIsNotCallable(let e),
+         .error(let e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Str
+
+  /// class str(object='')
+  /// class str(object=b'', encoding='utf-8', errors='strict')
+  public func strValue(_ object: PyObject) -> PyResult<String> {
+    if object.hasReprLock {
+      return .value("")
+    }
+
+    if let owner = object as? __str__Owner {
+      return owner.str()
+    }
+
+    switch self.callMethod(on: object, selector: "__str__") {
+    case .value(let result):
+      guard let resultStr = result as? PyString else {
+        return .typeError("__str__ returned non-string (\(result.typeName))")
+      }
+
+      return .value(resultStr.value)
+
+    case .noSuchMethod,
+         .notImplemented:
+      return self.repr(object)
 
     case .methodIsNotCallable(let e),
          .error(let e):

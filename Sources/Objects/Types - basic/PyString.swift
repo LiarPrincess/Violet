@@ -32,11 +32,6 @@ public class PyString: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext, value: String) {
-    self.data = PyStringData(value)
-    super.init(type: context.builtins.types.str)
-  }
-
   convenience init(_ context: PyContext,
                    value: String.UnicodeScalarView) {
     self.init(context, value: String(value))
@@ -45,6 +40,17 @@ public class PyString: PyObject {
   convenience init(_ context: PyContext,
                    value: String.UnicodeScalarView.SubSequence) {
     self.init(context, value: String(value))
+  }
+
+  internal init(_ context: PyContext, value: String) {
+    self.data = PyStringData(value)
+    super.init(type: context.builtins.types.str)
+  }
+
+  /// Use only in  `__new__`!
+  internal init(type: PyType, value: String) {
+    self.data = PyStringData(value)
+    super.init(type: type)
   }
 
   // MARK: - Equatable
@@ -1105,6 +1111,55 @@ public class PyString: PyObject {
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return self.mul(other)
+  }
+
+  // MARK: - Python new/init
+
+  private static let newArgumentsParser = ArgumentParser.createOrFatal(
+    arguments: ["object", "encoding", "errors"],
+    format: "|Oss:str"
+  )
+
+  // sourcery: pymethod = __new__
+  internal class func new(type: PyType,
+                          args: [PyObject],
+                          kwargs: PyDictData?) -> PyResult<PyObject> {
+    switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
+    case let .value(bind):
+      assert(bind.count <= 3, "Invalid argument count returned from parser.")
+      let arg0 = bind.count >= 1 ? bind[0] : nil
+      let arg1 = bind.count >= 2 ? bind[1] : nil
+      let arg2 = bind.count >= 3 ? bind[2] : nil
+      return PyString.new(type: type, object: arg0, encoding: arg1, errors: arg2)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal static func new(type: PyType,
+                           object: PyObject?,
+                           encoding: PyObject?,
+                           errors: PyObject?) -> PyResult<PyObject> {
+    let isBuiltin = type === type.builtins.str
+    let alloca = isBuiltin ? newString(type:value:) : PyStringHeap.init(type:value:)
+
+    guard let object = object else {
+      return .value(alloca(type, ""))
+    }
+
+    // TODO: Implement `str.__new__` - encoding and error
+    guard encoding == nil && errors == nil else {
+      let msg = "Violet currently does not support 'encoding' and 'errors' parameters"
+      return .valueError(msg)
+    }
+
+    let builtins = type.builtins
+    return builtins.strValue(object).map(builtins.newString)
+  }
+
+  /// Allocate new PyString (it will use 'builtins' cache if possible).
+  private static func newString(type: PyType, value: String) -> PyString {
+    return type.builtins.newString(value)
   }
 
   // MARK: - Helpers
