@@ -109,7 +109,6 @@ int
 list
   Unimplemented:
     __hash__ - <class 'NoneType'>
-    __new__ - <class 'builtin_function_or_method'>
     __delitem__
     __iadd__
     __init__
@@ -130,7 +129,6 @@ method
 
 module
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 SimpleNamespace
@@ -142,7 +140,6 @@ SimpleNamespace
 
 property
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __isabstractmethod__
     deleter
@@ -160,7 +157,6 @@ range
 
 set
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __iand__
     __init__
     __ior__

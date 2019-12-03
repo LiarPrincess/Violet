@@ -32,6 +32,12 @@ public class PySet: PyObject, PySetType {
     super.init(type: context.builtins.types.set)
   }
 
+  /// Use in `__new__`!
+  internal init(type: PyType, data: PySetData) {
+    self.data = data
+    super.init(type: type)
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
@@ -421,6 +427,21 @@ public class PySet: PyObject, PySetType {
 
     _ = self.data.remove(element: lastElement)
     return .value(lastElement.object)
+  }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    let isBuiltin = type === type.builtins.set
+    let alloca = isBuiltin ?
+      PySet.init(type:data:) :
+      PySetHeap.init(type:data:)
+
+    let data = PySetData()
+    return .value(alloca(type, data))
   }
 
   // MARK: - Helpers

@@ -307,6 +307,7 @@ types = {
     '__mul__',
     '__rmul__',
     '__imul__',
+    '__new__',
   ],
   t.MethodType: [
     '__class__',
@@ -333,6 +334,7 @@ types = {
     '__setattr__',
     '__delattr__',
     '__dir__',
+    '__new__',
   ],
   t.SimpleNamespace: [
     '__dict__',
@@ -365,6 +367,7 @@ types = {
     '__get__',
     '__set__',
     '__delete__',
+    '__new__',
   ],
   range: [
     '__class__',
@@ -418,6 +421,7 @@ types = {
     'clear',
     'copy',
     'pop',
+    '__new__',
   ],
   slice: [
     '__class__',

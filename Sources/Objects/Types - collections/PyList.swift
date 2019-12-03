@@ -36,6 +36,12 @@ public class PyList: PyObject {
     super.init(type: context.builtins.types.list)
   }
 
+  /// Use in `__new__`!
+  internal init(type: PyType, data: PySequenceData) {
+    self.data = data
+    super.init(type: type)
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
@@ -239,5 +245,20 @@ public class PyList: PyObject {
     case .error(let e):
       return .error(e)
     }
+  }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    let isBuiltin = type === type.builtins.list
+    let alloca = isBuiltin ?
+      PyList.init(type:data:) :
+      PyListHeap.init(type:data:)
+
+    let data = PySequenceData()
+    return .value(alloca(type, data))
   }
 }

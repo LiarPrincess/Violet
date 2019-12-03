@@ -320,7 +320,8 @@ extension PyList:
   __add__Owner,
   __mul__Owner,
   __rmul__Owner,
-  __imul__Owner
+  __imul__Owner,
+  __new__Owner
 { }
 
 // MARK: - Method
@@ -352,7 +353,8 @@ extension PyModule:
   __getattribute__Owner,
   __setattr__Owner,
   __delattr__Owner,
-  __dir__Owner
+  __dir__Owner,
+  __new__Owner
 { }
 
 // MARK: - Namespace
@@ -396,7 +398,8 @@ extension PyProperty:
   __getattribute__Owner,
   __get__Owner,
   __set__Owner,
-  __delete__Owner
+  __delete__Owner,
+  __new__Owner
 { }
 
 // MARK: - Range
@@ -454,7 +457,8 @@ extension PySet:
   removeOwner,
   discardOwner,
   clearOwner,
-  copyOwner
+  copyOwner,
+  __new__Owner
 { }
 
 // MARK: - Slice

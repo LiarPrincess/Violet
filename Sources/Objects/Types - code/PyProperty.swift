@@ -60,6 +60,15 @@ public class PyProperty: PyObject {
     super.init(type: context.builtins.types.property)
   }
 
+  /// Use in `__new__`!
+  internal override init(type: PyType) {
+    self.getter = nil
+    self.setter = nil
+    self.deleter = nil
+    self.doc = nil
+    super.init(type: type)
+  }
+
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
@@ -122,5 +131,16 @@ public class PyProperty: PyObject {
   // sourcery: pymethod = __delete__
   internal func del(object: PyObject) -> PyResult<PyObject> {
     self.set(object: object, value: self.builtins.none)
+  }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    let isBuiltin = type === type.builtins.property
+    let alloca = isBuiltin ? PyProperty.init(type:) : PyPropertyHeap.init(type:)
+    return .value(alloca(type))
   }
 }

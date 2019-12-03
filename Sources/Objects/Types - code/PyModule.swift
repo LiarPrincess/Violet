@@ -33,6 +33,11 @@ public class PyModule: PyObject {
     self.attributes["__spec__"] = context.builtins.none
   }
 
+  /// Use in `__new__`!
+  internal override init(type: PyType) {
+    super.init(type: type)
+  }
+
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
@@ -110,5 +115,14 @@ public class PyModule: PyObject {
     } else {
       return DirResult(self.attributes.keys)
     }
+  }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    return .value(PyModule(type: type))
   }
 }

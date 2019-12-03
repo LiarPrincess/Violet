@@ -292,6 +292,7 @@ PyList|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__imul__|imul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyList|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
 PyMethod|PyObject|get|__class__|getClass() -> PyType
 
 PyMethod|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -316,6 +317,7 @@ PyModule|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult
 PyModule|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyModule|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
 PyModule|PyObject|func|__dir__|dir() -> DirResult
+PyModule|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
 PyNamespace|PyObject|get|__dict__|getDict() -> Attributes
 
 PyNamespace|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -344,6 +346,7 @@ PyProperty|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResu
 PyProperty|PyObject|func|__get__|get(object: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__set__|set(object: PyObject, value: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__delete__|del(object: PyObject) -> PyResult<PyObject>
+PyProperty|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
 PyRange|PyObject|get|__class__|getClass() -> PyType
 
 PyRange|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -395,6 +398,7 @@ PySet|PyObject|func|discard|discard(_ value: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|clear|clear() -> PyResult<PyNone>
 PySet|PyObject|func|copy|copy() -> PyObject
 PySet|PyObject|func|pop|pop() -> PyResult<PyObject>
+PySet|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
 PySlice|PyObject|get|__class__|getClass() -> PyType
 
 PySlice|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

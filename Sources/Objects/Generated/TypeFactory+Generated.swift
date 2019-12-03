@@ -453,6 +453,7 @@ extension TypeFactory {
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyList.getClass, castSelf: selfAsPyList)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyList.new(type:args:kwargs:))
 
 
     dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyList.isEqual(_:), castSelf: selfAsPyList)
@@ -520,6 +521,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyModule.getDict, castSelf: selfAsPyModule)
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyModule.getClass, castSelf: selfAsPyModule)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyModule.new(type:args:kwargs:))
 
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyModule.repr, castSelf: selfAsPyModule)
@@ -601,6 +603,7 @@ extension TypeFactory {
     dict["fset"] = createProperty(context, name: "fset", doc: nil, get: PyProperty.getFSet, castSelf: selfAsPyProperty)
     dict["fdel"] = createProperty(context, name: "fdel", doc: nil, get: PyProperty.getFDel, castSelf: selfAsPyProperty)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyProperty.new(type:args:kwargs:))
 
 
     dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyProperty.getAttribute(name:), castSelf: selfAsPyProperty)
@@ -650,6 +653,7 @@ extension TypeFactory {
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PySet.getClass, castSelf: selfAsPySet)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PySet.new(type:args:kwargs:))
 
 
     dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PySet.isEqual(_:), castSelf: selfAsPySet)
