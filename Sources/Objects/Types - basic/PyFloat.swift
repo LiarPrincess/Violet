@@ -33,72 +33,6 @@ public class PyFloat: PyObject {
     super.init(type: type)
   }
 
-  // MARK: - Python new/init
-
-  // sourcery: pymethod = __new__
-  internal class func new(type: PyType,
-                          args: [PyObject],
-                          kwargs: PyDictData?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.float
-    if isBuiltin {
-      if let e = ArgumentParser.noKwargsOrError(fnName: "float",
-                                                kwargs: kwargs) {
-        return .error(e)
-      }
-    }
-
-    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "float",
-                                                        args: args,
-                                                        min: 0,
-                                                        max: 1) {
-      return .error(e)
-    }
-
-    let alloca = isBuiltin ? PyFloat.init(type:value:) : PyFloatHeap.init(type:value:)
-
-    if args.isEmpty {
-      return .value(alloca(type, 0.0))
-    }
-
-    let arg0 = args[0]
-    if let str = arg0 as? PyString {
-      guard let value = Double(str.value) else {
-        return .valueError("float() '\(str.value)' cannot be interpreted as float")
-      }
-      return .value(alloca(type, value))
-    }
-
-    return PyFloat.extractDouble(arg0).map { alloca(type, $0) }
-  }
-
-  /// PyObject *
-  /// PyNumber_Float(PyObject *o)
-  private static func extractDouble(_ object: PyObject) -> PyResult<Double> {
-    if let float = object as? PyFloat {
-      return .value(float.value)
-    }
-
-    if let owner = object as? __float__Owner {
-      return owner.asFloat().map { $0.value }
-    }
-
-    switch object.builtins.callMethod(on: object, selector: "__float__") {
-    case .value(let o):
-      guard let float = o as? PyFloat else {
-        return .typeError("\(object.typeName).__float__ returned non-float " +
-                          "(type \(o.typeName))")
-      }
-      return .value(float.value)
-    case .notImplemented,
-         .noSuchMethod:
-      return .typeError("float() argument must be a string, " +
-                        "or a number, not '\(object.typeName)'")
-    case .methodIsNotCallable(let e),
-         .error(let e):
-      return .error(e)
-    }
-  }
-
   // MARK: - Equatable
 
   /// This is nightmare, whatever we do is wrong (see CPython comment above
@@ -518,6 +452,72 @@ public class PyFloat: PyObject {
     }
 
     return .value(self.builtins.newFloat(wholePart))
+  }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal class func new(type: PyType,
+                          args: [PyObject],
+                          kwargs: PyDictData?) -> PyResult<PyObject> {
+    let isBuiltin = type === type.builtins.float
+    if isBuiltin {
+      if let e = ArgumentParser.noKwargsOrError(fnName: "float",
+                                                kwargs: kwargs) {
+        return .error(e)
+      }
+    }
+
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "float",
+                                                        args: args,
+                                                        min: 0,
+                                                        max: 1) {
+      return .error(e)
+    }
+
+    let alloca = isBuiltin ? PyFloat.init(type:value:) : PyFloatHeap.init(type:value:)
+
+    if args.isEmpty {
+      return .value(alloca(type, 0.0))
+    }
+
+    let arg0 = args[0]
+    if let str = arg0 as? PyString {
+      guard let value = Double(str.value) else {
+        return .valueError("float() '\(str.value)' cannot be interpreted as float")
+      }
+      return .value(alloca(type, value))
+    }
+
+    return PyFloat.extractDouble(arg0).map { alloca(type, $0) }
+  }
+
+  /// PyObject *
+  /// PyNumber_Float(PyObject *o)
+  private static func extractDouble(_ object: PyObject) -> PyResult<Double> {
+    if let float = object as? PyFloat {
+      return .value(float.value)
+    }
+
+    if let owner = object as? __float__Owner {
+      return owner.asFloat().map { $0.value }
+    }
+
+    switch object.builtins.callMethod(on: object, selector: "__float__") {
+    case .value(let o):
+      guard let float = o as? PyFloat else {
+        return .typeError("\(object.typeName).__float__ returned non-float " +
+                          "(type \(o.typeName))")
+      }
+      return .value(float.value)
+    case .notImplemented,
+         .noSuchMethod:
+      return .typeError("float() argument must be a string, " +
+                        "or a number, not '\(object.typeName)'")
+    case .methodIsNotCallable(let e),
+         .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Helpers

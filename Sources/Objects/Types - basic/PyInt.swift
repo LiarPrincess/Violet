@@ -45,120 +45,6 @@ public class PyInt: PyObject {
     super.init(type: type)
   }
 
-  // MARK: - Python new/init
-
-  private static let newArgumentsParser = ArgumentParser.createOrFatal(
-    arguments: ["", "base"],
-    format: "|OO:int"
-  )
-
-  // sourcery: pymethod = __new__
-  internal class func new(type: PyType,
-                          args: [PyObject],
-                          kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(bind.count <= 2, "Invalid argument count returned from parser.")
-      let arg0 = bind.count >= 1 ? bind[0] : nil
-      let arg1 = bind.count >= 2 ? bind[1] : nil
-      return PyInt.new(type: type, x: arg0, base: arg1)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  internal static func new(type: PyType,
-                           x: PyObject?,
-                           base: PyObject?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.int
-    let alloca = isBuiltin ? newPyInt(type:value:) : PyIntHeap.init(type:value:)
-
-    guard let x = x else {
-      if base != nil {
-        return .typeError("int() missing string argument")
-      }
-
-      return .value(alloca(type, 0))
-    }
-
-    guard let base = base else {
-      return PyInt.extractInt(x).map { alloca(type, $0) }
-    }
-
-    let baseInt: Int
-    switch SequenceHelper.getIndex(base) {
-    case let .value(b): baseInt = b
-    case let .error(e): return .error(e)
-    }
-
-    guard (baseInt == 0 || baseInt > 2) && baseInt <= 36 else {
-      return .valueError("int() base must be >= 2 and <= 36, or 0")
-    }
-
-    if let str = x as? PyString {
-      guard let value = BigInt(str.value, radix: baseInt) else {
-        return .valueError("int() '\(str.value)' cannot be interpreted as int")
-      }
-      return .value(alloca(type, value))
-    }
-
-    // TODO: Add bytes (both to us and extractInt)
-    return .typeError("int() can't convert non-string with explicit base")
-  }
-
-  /// Allocate new PyInt (it will use 'builtins' cache if possible).
-  private static func newPyInt(type: PyType, value: BigInt) -> PyInt {
-    return type.builtins.newInt(value)
-  }
-
-  /// PyObject *
-  /// PyNumber_Long(PyObject *o)
-  private static func extractInt(_ object: PyObject) -> PyResult<BigInt> {
-    if let int = object as? PyInt {
-      return .value(int.value)
-    }
-
-    switch PyInt.callTrunc(object) {
-    case .value(let o):
-      guard let int = o as? PyInt else {
-        return .typeError("__trunc__ returned non-Integral (type \(o.typeName))")
-      }
-      return .value(int.value)
-    case .notImplemented:
-      break // try other possibilities
-    case .error(let e):
-      return .error(e)
-    }
-
-    if let str = object as? PyString {
-      guard let value = BigInt(str.value, radix: 10) else {
-        return .valueError("int() '\(str.value)' cannot be interpreted as int")
-      }
-      return .value(value)
-    }
-
-    return .typeError("int() argument must be a string, " +
-                      "a bytes-like object or a number, " +
-                      "not '\(object.typeName)'")
-  }
-
-  private static func callTrunc(_ object: PyObject) -> PyResultOrNot<PyObject> {
-    if let owner = object as? __trunc__Owner {
-      return owner.trunc().asResultOrNot
-    }
-
-    switch object.builtins.callMethod(on: object, selector: "__trunc__") {
-    case .value(let o):
-      return .value(o)
-    case .notImplemented,
-         .noSuchMethod:
-      return .notImplemented
-    case .error(let e),
-         .methodIsNotCallable(let e):
-      return .error(e)
-    }
-  }
-
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
@@ -720,5 +606,119 @@ public class PyInt: PyObject {
 
     // TODO: Implement int rounding to arbitrary precision
     return .notImplemented
+  }
+
+  // MARK: - Python new/init
+
+  private static let newArgumentsParser = ArgumentParser.createOrFatal(
+    arguments: ["", "base"],
+    format: "|OO:int"
+  )
+
+  // sourcery: pymethod = __new__
+  internal class func new(type: PyType,
+                          args: [PyObject],
+                          kwargs: PyDictData?) -> PyResult<PyObject> {
+    switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
+    case let .value(bind):
+      assert(bind.count <= 2, "Invalid argument count returned from parser.")
+      let arg0 = bind.count >= 1 ? bind[0] : nil
+      let arg1 = bind.count >= 2 ? bind[1] : nil
+      return PyInt.new(type: type, x: arg0, base: arg1)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal static func new(type: PyType,
+                           x: PyObject?,
+                           base: PyObject?) -> PyResult<PyObject> {
+    let isBuiltin = type === type.builtins.int
+    let alloca = isBuiltin ? newInt(type:value:) : PyIntHeap.init(type:value:)
+
+    guard let x = x else {
+      if base != nil {
+        return .typeError("int() missing string argument")
+      }
+
+      return .value(alloca(type, 0))
+    }
+
+    guard let base = base else {
+      return PyInt.extractInt(x).map { alloca(type, $0) }
+    }
+
+    let baseInt: Int
+    switch SequenceHelper.getIndex(base) {
+    case let .value(b): baseInt = b
+    case let .error(e): return .error(e)
+    }
+
+    guard (baseInt == 0 || baseInt > 2) && baseInt <= 36 else {
+      return .valueError("int() base must be >= 2 and <= 36, or 0")
+    }
+
+    if let str = x as? PyString {
+      guard let value = BigInt(str.value, radix: baseInt) else {
+        return .valueError("int() '\(str.value)' cannot be interpreted as int")
+      }
+      return .value(alloca(type, value))
+    }
+
+    // TODO: Add bytes (both to us and extractInt)
+    return .typeError("int() can't convert non-string with explicit base")
+  }
+
+  /// Allocate new PyInt (it will use 'builtins' cache if possible).
+  private static func newInt(type: PyType, value: BigInt) -> PyInt {
+    return type.builtins.newInt(value)
+  }
+
+  /// PyObject *
+  /// PyNumber_Long(PyObject *o)
+  private static func extractInt(_ object: PyObject) -> PyResult<BigInt> {
+    if let int = object as? PyInt {
+      return .value(int.value)
+    }
+
+    switch PyInt.callTrunc(object) {
+    case .value(let o):
+      guard let int = o as? PyInt else {
+        return .typeError("__trunc__ returned non-Integral (type \(o.typeName))")
+      }
+      return .value(int.value)
+    case .notImplemented:
+      break // try other possibilities
+    case .error(let e):
+      return .error(e)
+    }
+
+    if let str = object as? PyString {
+      guard let value = BigInt(str.value, radix: 10) else {
+        return .valueError("int() '\(str.value)' cannot be interpreted as int")
+      }
+      return .value(value)
+    }
+
+    return .typeError("int() argument must be a string, " +
+                      "a bytes-like object or a number, " +
+                      "not '\(object.typeName)'")
+  }
+
+  private static func callTrunc(_ object: PyObject) -> PyResultOrNot<PyObject> {
+    if let owner = object as? __trunc__Owner {
+      return owner.trunc().asResultOrNot
+    }
+
+    switch object.builtins.callMethod(on: object, selector: "__trunc__") {
+    case .value(let o):
+      return .value(o)
+    case .notImplemented,
+         .noSuchMethod:
+      return .notImplemented
+    case .error(let e),
+         .methodIsNotCallable(let e):
+      return .error(e)
+    }
   }
 }
