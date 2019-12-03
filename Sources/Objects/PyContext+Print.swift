@@ -8,20 +8,16 @@ extension PyContext {
                     file: FileHandle,
                     raw: Bool) -> PyResult<()> {
     // TODO: OutputStream
-    let string: String
+    let stringRaw = raw ? self.builtins.strValue(value) : self.builtins.repr(value)
 
-    if raw {
-      string = self._str(value: value)
-    } else {
-      switch self.builtins.repr(value) {
-      case let .value(s): string = s
-      case let .error(e): return .error(e)
-      }
+    let string: String
+    switch stringRaw {
+    case let .value(s): string = s
+    case let .error(e): return .error(e)
     }
 
     let data = Data(string.utf8)
     file.write(data)
-
     return .value()
   }
 }

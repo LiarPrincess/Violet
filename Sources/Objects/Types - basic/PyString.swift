@@ -91,8 +91,6 @@ public class PyString: PyObject {
     return self.compare(other).map { $0 == .greater || $0 == .equal }
   }
 
-  private typealias CompareResult = StringCompareResult
-
   private func compare(_ other: PyObject) -> PyResultOrNot<StringCompareResult> {
     guard let other = other as? PyString else {
       return .notImplemented

@@ -277,7 +277,12 @@ public class PyType: PyObject {
       }
 
       guard let module = object as? PyModule else {
-        return .module(self.context._str(value: object))
+        switch self.builtins.strValue(object) {
+        case let .value(s):
+          return .module(s)
+        case let .error(e):
+          return .error(e)
+        }
       }
 
       switch module.name {
@@ -537,6 +542,7 @@ public class PyType: PyObject {
       return .value(object)
     }
 
+    // TODO: Add `object` as first args
     // Call '__init__' (on object type not on self!).
     let initResult = self.builtins.callMethod(on: object.type,
                                               selector: "__init__",

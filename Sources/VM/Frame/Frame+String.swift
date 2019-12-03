@@ -33,7 +33,7 @@ extension Frame {
     case .none:
       return .value(value)
     case .str:
-      return .value(self.context.str(value: value))
+      return self.builtins.strValue(value).map(self.builtins.newString)
     case .repr:
       return self.builtins.repr(value).map(self.builtins.newString)
     case .ascii:

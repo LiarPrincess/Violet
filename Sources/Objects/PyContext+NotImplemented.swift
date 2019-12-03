@@ -23,27 +23,9 @@ extension PyContext {
     return 0
   }
 
-  internal func PyObject_GetIter(value: PyObject) -> PyObject {
-    return value
-  }
-
-  internal func _PyType_Name(value: PyType) -> String {
-    return value.getName()
-  }
-
-  internal func PyType_IsSubtype(parent: PyType, subtype: PyType) -> Bool {
-    return false
-  }
-
-  internal func PyUnicode_FromFormat(format: String, args: Any...) -> String {
-    return ""
-  }
-
   public func PyObject_Format(value: PyObject, format: PyObject) -> PyObject {
     return self.unimplemented()
   }
-
-  public func Py_CLEAR(value: PyObject) { }
 
   public func pySlice_New(start: PyObject, stop: PyObject, step: PyObject?) -> PyObject {
     return start

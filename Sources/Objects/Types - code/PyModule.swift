@@ -21,7 +21,7 @@ public class PyModule: PyObject {
       return .systemError("nameless module")
     }
 
-    return .value(self.context._str(value: nameObject))
+    return self.builtins.strValue(nameObject)
   }
 
   internal init(_ context: PyContext, name: PyObject, doc: PyObject?) {

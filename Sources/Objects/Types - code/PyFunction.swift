@@ -146,7 +146,7 @@ public class PyFunction: PyObject {
       return module.name
     }
 
-    return .value(self.context._str(value: self.module))
+    return self.builtins.strValue(self.module)
   }
 
   // MARK: - Dict

@@ -308,8 +308,12 @@ public class PyRange: PyObject {
   // sourcery: pymethod = index
   internal func index(of element: PyObject) -> PyResult<BigInt> {
     guard let int = element as? PyInt, self.contains(int) else {
-      let str = self.context._str(value: element)
-      return .valueError("\(str) is not in range")
+      switch self.builtins.strValue(element) {
+      case .value(let str):
+        return .valueError("\(str) is not in range")
+      case .error:
+        return .valueError("element is not in range")
+      }
     }
 
     let tmp = int.value - self.start.value
