@@ -39,6 +39,7 @@ extension TypeFactory {
     dict["__delattr__"] = wrapMethod(context, name: "__delattr__", doc: nil, fn: PyBaseObject.delAttribute(zelf:name:))
     dict["__subclasshook__"] = wrapMethod(context, name: "__subclasshook__", doc: nil, fn: PyBaseObject.subclasshook(zelf:))
     dict["__init_subclass__"] = wrapMethod(context, name: "__init_subclass__", doc: nil, fn: PyBaseObject.initSubclass(zelf:))
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBaseObject.new(type:args:kwargs:))
 
 
     return result

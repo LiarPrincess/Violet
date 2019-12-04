@@ -22,6 +22,7 @@ types = {
     '__delattr__',
     '__subclasshook__',
     '__init_subclass__',
+    '__new__',
   ],
   type: [
     '__name__',

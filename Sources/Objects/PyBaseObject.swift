@@ -5,7 +5,7 @@ import Core
 // Objects -> typeobject.c
 
 // sourcery: default, baseType
-/// Root of the Object hierarchy (kind of important thingie).
+/// Root of the Python object hierarchy (kind of important thingie).
 internal enum PyBaseObject {
 
   internal static let doc: String = """
@@ -162,5 +162,20 @@ internal enum PyBaseObject {
   /// It may be overridden to extend subclasses.
   internal static func initSubclass(zelf: PyObject) -> PyResultOrNot<PyObject> {
     return .value(zelf.builtins.none)
+  }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    let noKwargs = kwargs?.isEmpty ?? true
+    guard args.isEmpty && noKwargs else {
+      return .typeError("\(type.getName()) takes no arguments")
+    }
+
+    let result = PyObject(type: type)
+    return .value(result)
   }
 }

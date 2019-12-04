@@ -1,6 +1,5 @@
 object
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __sizeof__
   Why do we even have this?

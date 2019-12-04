@@ -20,10 +20,10 @@ internal struct PyTypeFlags: OptionSet {
   internal static let hasGC = PyTypeFlags(rawValue: 1 << 2)
 
   /// Type is abstract and cannot be instantiated
-  internal static let isAbstract = PyTypeFlags(rawValue: 1 << 3)
+//  internal static let isAbstract = PyTypeFlags(rawValue: 1 << 3)
 
   /// Type structure has tp_finalize member (3.4)
-  internal static let hasFinalize = PyTypeFlags(rawValue: 1 << 4)
+//  internal static let hasFinalize = PyTypeFlags(rawValue: 1 << 4)
 
   /// #define Py_TPFLAGS_DEFAULT  ( \
   ///     Py_TPFLAGS_HAVE_STACKLESS_EXTENSION | \
