@@ -147,6 +147,7 @@ types = {
     '__class__',
     '__repr__',
     '__getattribute__',
+    '__new__',
   ],
   float: [
     '__class__',
@@ -353,10 +354,12 @@ types = {
     '__class__',
     '__repr__',
     '__bool__',
+    '__new__',
   ],
   type(NotImplemented): [
     '__class__',
     '__repr__',
+    '__new__',
   ],
   property: [
     '__class__',
@@ -517,14 +520,17 @@ types = {
   ArithmeticError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   AssertionError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   AttributeError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   BaseException: [
     '__dict__',
@@ -539,245 +545,306 @@ types = {
     '__getattribute__',
     '__setattr__',
     '__delattr__',
+    '__new__',
   ],
   BlockingIOError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   BrokenPipeError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   BufferError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   BytesWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ChildProcessError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ConnectionAbortedError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ConnectionError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ConnectionRefusedError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ConnectionResetError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   DeprecationWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   EOFError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   Exception: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   FileExistsError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   FileNotFoundError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   FloatingPointError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   FutureWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   GeneratorExit: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ImportError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ImportWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   IndentationError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   IndexError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   InterruptedError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   IsADirectoryError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   KeyError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   KeyboardInterrupt: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   LookupError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   MemoryError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ModuleNotFoundError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   NameError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   NotADirectoryError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   NotImplementedError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   OSError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   OverflowError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   PendingDeprecationWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   PermissionError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ProcessLookupError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   RecursionError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ReferenceError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ResourceWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   RuntimeError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   RuntimeWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   StopAsyncIteration: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   StopIteration: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   SyntaxError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   SyntaxWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   SystemError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   SystemExit: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   TabError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   TimeoutError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   TypeError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   UnboundLocalError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   UnicodeDecodeError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   UnicodeEncodeError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   UnicodeError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   UnicodeTranslateError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   UnicodeWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   UserWarning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ValueError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   Warning: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
   ZeroDivisionError: [
     '__class__',
     '__dict__',
+    '__new__',
   ],
 }

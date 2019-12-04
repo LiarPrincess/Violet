@@ -144,7 +144,8 @@ extension PyDict:
 extension PyEllipsis:
   __class__GetterOwner,
   __repr__Owner,
-  __getattribute__Owner
+  __getattribute__Owner,
+  __new__Owner
 { }
 
 // MARK: - Float
@@ -378,14 +379,16 @@ extension PyNamespace:
 extension PyNone:
   __class__GetterOwner,
   __repr__Owner,
-  __bool__Owner
+  __bool__Owner,
+  __new__Owner
 { }
 
 // MARK: - NotImplemented
 
 extension PyNotImplemented:
   __class__GetterOwner,
-  __repr__Owner
+  __repr__Owner,
+  __new__Owner
 { }
 
 // MARK: - Property
@@ -602,7 +605,8 @@ extension PyBaseException:
   __str__Owner,
   __getattribute__Owner,
   __setattr__Owner,
-  __delattr__Owner
+  __delattr__Owner,
+  __new__Owner
 { }
 
 // MARK: - BlockingIOError

@@ -13,7 +13,7 @@ public class PyBaseException: PyObject {
   }
 
   internal var args: PyTuple
-  internal var traceback: PyObject
+  internal var traceback: PyObject?
   internal var cause: PyObject?
   internal var attributes: Attributes
 
@@ -25,10 +25,10 @@ public class PyBaseException: PyObject {
 
   internal init(_ context: PyContext,
                 args: PyTuple,
-                traceback: PyObject,
-                cause: PyObject?,
-                exceptionContext: PyObject?,
-                suppressExceptionContext: Bool) {
+                traceback: PyObject? = nil,
+                cause: PyObject? = nil,
+                exceptionContext: PyObject? = nil,
+                suppressExceptionContext: Bool = false) {
     self.args = args
     self.traceback = traceback
     self.cause = cause
@@ -146,7 +146,7 @@ public class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __traceback__, setter = setTraceback
   internal func getTraceback() -> PyObject {
-    return self.traceback
+    return self.traceback ?? self.builtins.none
   }
 
   internal func setTraceback(_ value: PyObject?) -> PyResult<()> {
@@ -242,5 +242,15 @@ public class PyBaseException: PyObject {
     }
 
     return .value()
+  }
+
+  // MARK: - Python new/init
+
+  // sourcery: pymethod = __new__
+  internal class func new(type: PyType,
+                          args: [PyObject],
+                          kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyBaseException(type.context, args: argsTuple))
   }
 }

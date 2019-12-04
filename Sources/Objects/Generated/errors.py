@@ -136,6 +136,14 @@ public {final}class Py{name}: Py{base} {{
    override internal func getDict() -> Attributes {{
      return self.attributes
    }}
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {{
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(Py{name}(type.context, args: argsTuple))
+  }}
 }}
 ''')
 

@@ -248,6 +248,7 @@ extension TypeFactory {
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyEllipsis.getClass, castSelf: selfAsPyEllipsis)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyEllipsis.new(type:args:kwargs:))
 
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyEllipsis.repr, castSelf: selfAsPyEllipsis)
@@ -567,6 +568,7 @@ extension TypeFactory {
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyNone.getClass, castSelf: selfAsPyNone)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyNone.new(type:args:kwargs:))
 
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyNone.repr, castSelf: selfAsPyNone)
@@ -583,6 +585,7 @@ extension TypeFactory {
     let dict = result.getDict()
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyNotImplemented.getClass, castSelf: selfAsPyNotImplemented)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyNotImplemented.new(type:args:kwargs:))
 
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyNotImplemented.repr, castSelf: selfAsPyNotImplemented)
@@ -834,6 +837,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyArithmeticError.getDict, castSelf: selfAsPyArithmeticError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyArithmeticError.new(type:args:kwargs:))
 
     return result
   }
@@ -851,6 +855,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyAssertionError.getDict, castSelf: selfAsPyAssertionError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyAssertionError.new(type:args:kwargs:))
 
     return result
   }
@@ -868,6 +873,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyAttributeError.getDict, castSelf: selfAsPyAttributeError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyAttributeError.new(type:args:kwargs:))
 
     return result
   }
@@ -891,6 +897,7 @@ extension TypeFactory {
     dict["__suppress_context__"] = createProperty(context, name: "__suppress_context__", doc: nil, get: PyBaseException.getSuppressContext, set: PyBaseException.setSuppressContext, castSelf: selfAsPyBaseException)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBaseException.new(type:args:kwargs:))
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyBaseException.repr, castSelf: selfAsPyBaseException)
     dict["__str__"] = wrapMethod(context, name: "__str__", doc: nil, fn: PyBaseException.str, castSelf: selfAsPyBaseException)
@@ -913,6 +920,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyBlockingIOError.getDict, castSelf: selfAsPyBlockingIOError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBlockingIOError.new(type:args:kwargs:))
 
     return result
   }
@@ -930,6 +938,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyBrokenPipeError.getDict, castSelf: selfAsPyBrokenPipeError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBrokenPipeError.new(type:args:kwargs:))
 
     return result
   }
@@ -947,6 +956,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyBufferError.getDict, castSelf: selfAsPyBufferError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBufferError.new(type:args:kwargs:))
 
     return result
   }
@@ -964,6 +974,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyBytesWarning.getDict, castSelf: selfAsPyBytesWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBytesWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -981,6 +992,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyChildProcessError.getDict, castSelf: selfAsPyChildProcessError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyChildProcessError.new(type:args:kwargs:))
 
     return result
   }
@@ -998,6 +1010,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyConnectionAbortedError.getDict, castSelf: selfAsPyConnectionAbortedError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyConnectionAbortedError.new(type:args:kwargs:))
 
     return result
   }
@@ -1015,6 +1028,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyConnectionError.getDict, castSelf: selfAsPyConnectionError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyConnectionError.new(type:args:kwargs:))
 
     return result
   }
@@ -1032,6 +1046,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyConnectionRefusedError.getDict, castSelf: selfAsPyConnectionRefusedError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyConnectionRefusedError.new(type:args:kwargs:))
 
     return result
   }
@@ -1049,6 +1064,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyConnectionResetError.getDict, castSelf: selfAsPyConnectionResetError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyConnectionResetError.new(type:args:kwargs:))
 
     return result
   }
@@ -1066,6 +1082,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyDeprecationWarning.getDict, castSelf: selfAsPyDeprecationWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyDeprecationWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1083,6 +1100,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyEOFError.getDict, castSelf: selfAsPyEOFError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyEOFError.new(type:args:kwargs:))
 
     return result
   }
@@ -1100,6 +1118,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyException.getDict, castSelf: selfAsPyException)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyException.new(type:args:kwargs:))
 
     return result
   }
@@ -1117,6 +1136,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyFileExistsError.getDict, castSelf: selfAsPyFileExistsError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyFileExistsError.new(type:args:kwargs:))
 
     return result
   }
@@ -1134,6 +1154,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyFileNotFoundError.getDict, castSelf: selfAsPyFileNotFoundError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyFileNotFoundError.new(type:args:kwargs:))
 
     return result
   }
@@ -1151,6 +1172,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyFloatingPointError.getDict, castSelf: selfAsPyFloatingPointError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyFloatingPointError.new(type:args:kwargs:))
 
     return result
   }
@@ -1168,6 +1190,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyFutureWarning.getDict, castSelf: selfAsPyFutureWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyFutureWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1185,6 +1208,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyGeneratorExit.getDict, castSelf: selfAsPyGeneratorExit)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyGeneratorExit.new(type:args:kwargs:))
 
     return result
   }
@@ -1202,6 +1226,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyImportError.getDict, castSelf: selfAsPyImportError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyImportError.new(type:args:kwargs:))
 
     return result
   }
@@ -1219,6 +1244,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyImportWarning.getDict, castSelf: selfAsPyImportWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyImportWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1236,6 +1262,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyIndentationError.getDict, castSelf: selfAsPyIndentationError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyIndentationError.new(type:args:kwargs:))
 
     return result
   }
@@ -1253,6 +1280,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyIndexError.getDict, castSelf: selfAsPyIndexError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyIndexError.new(type:args:kwargs:))
 
     return result
   }
@@ -1270,6 +1298,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyInterruptedError.getDict, castSelf: selfAsPyInterruptedError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyInterruptedError.new(type:args:kwargs:))
 
     return result
   }
@@ -1287,6 +1316,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyIsADirectoryError.getDict, castSelf: selfAsPyIsADirectoryError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyIsADirectoryError.new(type:args:kwargs:))
 
     return result
   }
@@ -1304,6 +1334,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyKeyError.getDict, castSelf: selfAsPyKeyError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyKeyError.new(type:args:kwargs:))
 
     return result
   }
@@ -1321,6 +1352,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyKeyboardInterrupt.getDict, castSelf: selfAsPyKeyboardInterrupt)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyKeyboardInterrupt.new(type:args:kwargs:))
 
     return result
   }
@@ -1338,6 +1370,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyLookupError.getDict, castSelf: selfAsPyLookupError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyLookupError.new(type:args:kwargs:))
 
     return result
   }
@@ -1355,6 +1388,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyMemoryError.getDict, castSelf: selfAsPyMemoryError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyMemoryError.new(type:args:kwargs:))
 
     return result
   }
@@ -1372,6 +1406,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyModuleNotFoundError.getDict, castSelf: selfAsPyModuleNotFoundError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyModuleNotFoundError.new(type:args:kwargs:))
 
     return result
   }
@@ -1389,6 +1424,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyNameError.getDict, castSelf: selfAsPyNameError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyNameError.new(type:args:kwargs:))
 
     return result
   }
@@ -1406,6 +1442,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyNotADirectoryError.getDict, castSelf: selfAsPyNotADirectoryError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyNotADirectoryError.new(type:args:kwargs:))
 
     return result
   }
@@ -1423,6 +1460,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyNotImplementedError.getDict, castSelf: selfAsPyNotImplementedError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyNotImplementedError.new(type:args:kwargs:))
 
     return result
   }
@@ -1440,6 +1478,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyOSError.getDict, castSelf: selfAsPyOSError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyOSError.new(type:args:kwargs:))
 
     return result
   }
@@ -1457,6 +1496,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyOverflowError.getDict, castSelf: selfAsPyOverflowError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyOverflowError.new(type:args:kwargs:))
 
     return result
   }
@@ -1474,6 +1514,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyPendingDeprecationWarning.getDict, castSelf: selfAsPyPendingDeprecationWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyPendingDeprecationWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1491,6 +1532,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyPermissionError.getDict, castSelf: selfAsPyPermissionError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyPermissionError.new(type:args:kwargs:))
 
     return result
   }
@@ -1508,6 +1550,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyProcessLookupError.getDict, castSelf: selfAsPyProcessLookupError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyProcessLookupError.new(type:args:kwargs:))
 
     return result
   }
@@ -1525,6 +1568,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyRecursionError.getDict, castSelf: selfAsPyRecursionError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyRecursionError.new(type:args:kwargs:))
 
     return result
   }
@@ -1542,6 +1586,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyReferenceError.getDict, castSelf: selfAsPyReferenceError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyReferenceError.new(type:args:kwargs:))
 
     return result
   }
@@ -1559,6 +1604,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyResourceWarning.getDict, castSelf: selfAsPyResourceWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyResourceWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1576,6 +1622,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyRuntimeError.getDict, castSelf: selfAsPyRuntimeError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyRuntimeError.new(type:args:kwargs:))
 
     return result
   }
@@ -1593,6 +1640,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyRuntimeWarning.getDict, castSelf: selfAsPyRuntimeWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyRuntimeWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1610,6 +1658,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyStopAsyncIteration.getDict, castSelf: selfAsPyStopAsyncIteration)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyStopAsyncIteration.new(type:args:kwargs:))
 
     return result
   }
@@ -1627,6 +1676,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyStopIteration.getDict, castSelf: selfAsPyStopIteration)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyStopIteration.new(type:args:kwargs:))
 
     return result
   }
@@ -1644,6 +1694,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PySyntaxError.getDict, castSelf: selfAsPySyntaxError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PySyntaxError.new(type:args:kwargs:))
 
     return result
   }
@@ -1661,6 +1712,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PySyntaxWarning.getDict, castSelf: selfAsPySyntaxWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PySyntaxWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1678,6 +1730,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PySystemError.getDict, castSelf: selfAsPySystemError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PySystemError.new(type:args:kwargs:))
 
     return result
   }
@@ -1695,6 +1748,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PySystemExit.getDict, castSelf: selfAsPySystemExit)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PySystemExit.new(type:args:kwargs:))
 
     return result
   }
@@ -1712,6 +1766,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyTabError.getDict, castSelf: selfAsPyTabError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyTabError.new(type:args:kwargs:))
 
     return result
   }
@@ -1729,6 +1784,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyTimeoutError.getDict, castSelf: selfAsPyTimeoutError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyTimeoutError.new(type:args:kwargs:))
 
     return result
   }
@@ -1746,6 +1802,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyTypeError.getDict, castSelf: selfAsPyTypeError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyTypeError.new(type:args:kwargs:))
 
     return result
   }
@@ -1763,6 +1820,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyUnboundLocalError.getDict, castSelf: selfAsPyUnboundLocalError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnboundLocalError.new(type:args:kwargs:))
 
     return result
   }
@@ -1780,6 +1838,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyUnicodeDecodeError.getDict, castSelf: selfAsPyUnicodeDecodeError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeDecodeError.new(type:args:kwargs:))
 
     return result
   }
@@ -1797,6 +1856,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyUnicodeEncodeError.getDict, castSelf: selfAsPyUnicodeEncodeError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeEncodeError.new(type:args:kwargs:))
 
     return result
   }
@@ -1814,6 +1874,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyUnicodeError.getDict, castSelf: selfAsPyUnicodeError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeError.new(type:args:kwargs:))
 
     return result
   }
@@ -1831,6 +1892,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyUnicodeTranslateError.getDict, castSelf: selfAsPyUnicodeTranslateError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeTranslateError.new(type:args:kwargs:))
 
     return result
   }
@@ -1848,6 +1910,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyUnicodeWarning.getDict, castSelf: selfAsPyUnicodeWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1865,6 +1928,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyUserWarning.getDict, castSelf: selfAsPyUserWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUserWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1882,6 +1946,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyValueError.getDict, castSelf: selfAsPyValueError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyValueError.new(type:args:kwargs:))
 
     return result
   }
@@ -1899,6 +1964,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyWarning.getDict, castSelf: selfAsPyWarning)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyWarning.new(type:args:kwargs:))
 
     return result
   }
@@ -1916,6 +1982,7 @@ extension TypeFactory {
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyZeroDivisionError.getDict, castSelf: selfAsPyZeroDivisionError)
 
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyZeroDivisionError.new(type:args:kwargs:))
 
     return result
   }

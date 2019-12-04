@@ -28,6 +28,14 @@ public final class PySystemExit: PyBaseException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PySystemExit(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - KeyboardInterrupt
@@ -52,6 +60,14 @@ public final class PyKeyboardInterrupt: PyBaseException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyKeyboardInterrupt(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - GeneratorExit
@@ -76,6 +92,14 @@ public final class PyGeneratorExit: PyBaseException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyGeneratorExit(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - Exception
@@ -100,6 +124,14 @@ public class PyException: PyBaseException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyException(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - StopIteration
@@ -124,6 +156,14 @@ public final class PyStopIteration: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyStopIteration(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - StopAsyncIteration
@@ -148,6 +188,14 @@ public final class PyStopAsyncIteration: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyStopAsyncIteration(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ArithmeticError
@@ -172,6 +220,14 @@ public class PyArithmeticError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyArithmeticError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - FloatingPointError
@@ -196,6 +252,14 @@ public final class PyFloatingPointError: PyArithmeticError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyFloatingPointError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - OverflowError
@@ -220,6 +284,14 @@ public final class PyOverflowError: PyArithmeticError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyOverflowError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ZeroDivisionError
@@ -244,6 +316,14 @@ public final class PyZeroDivisionError: PyArithmeticError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyZeroDivisionError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - AssertionError
@@ -268,6 +348,14 @@ public final class PyAssertionError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyAssertionError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - AttributeError
@@ -292,6 +380,14 @@ public final class PyAttributeError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyAttributeError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - BufferError
@@ -316,6 +412,14 @@ public final class PyBufferError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyBufferError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - EOFError
@@ -340,6 +444,14 @@ public final class PyEOFError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyEOFError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ImportError
@@ -364,6 +476,14 @@ public class PyImportError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyImportError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ModuleNotFoundError
@@ -388,6 +508,14 @@ public final class PyModuleNotFoundError: PyImportError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyModuleNotFoundError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - LookupError
@@ -412,6 +540,14 @@ public class PyLookupError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyLookupError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - IndexError
@@ -436,6 +572,14 @@ public final class PyIndexError: PyLookupError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyIndexError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - KeyError
@@ -460,6 +604,14 @@ public final class PyKeyError: PyLookupError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyKeyError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - MemoryError
@@ -484,6 +636,14 @@ public final class PyMemoryError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyMemoryError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - NameError
@@ -508,6 +668,14 @@ public class PyNameError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyNameError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - UnboundLocalError
@@ -532,6 +700,14 @@ public final class PyUnboundLocalError: PyNameError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyUnboundLocalError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - OSError
@@ -556,6 +732,14 @@ public class PyOSError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyOSError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - BlockingIOError
@@ -580,6 +764,14 @@ public final class PyBlockingIOError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyBlockingIOError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ChildProcessError
@@ -604,6 +796,14 @@ public final class PyChildProcessError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyChildProcessError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ConnectionError
@@ -628,6 +828,14 @@ public class PyConnectionError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyConnectionError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - BrokenPipeError
@@ -652,6 +860,14 @@ public final class PyBrokenPipeError: PyConnectionError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyBrokenPipeError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ConnectionAbortedError
@@ -676,6 +892,14 @@ public final class PyConnectionAbortedError: PyConnectionError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyConnectionAbortedError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ConnectionRefusedError
@@ -700,6 +924,14 @@ public final class PyConnectionRefusedError: PyConnectionError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyConnectionRefusedError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ConnectionResetError
@@ -724,6 +956,14 @@ public final class PyConnectionResetError: PyConnectionError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyConnectionResetError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - FileExistsError
@@ -748,6 +988,14 @@ public final class PyFileExistsError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyFileExistsError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - FileNotFoundError
@@ -772,6 +1020,14 @@ public final class PyFileNotFoundError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyFileNotFoundError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - InterruptedError
@@ -796,6 +1052,14 @@ public final class PyInterruptedError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyInterruptedError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - IsADirectoryError
@@ -820,6 +1084,14 @@ public final class PyIsADirectoryError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyIsADirectoryError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - NotADirectoryError
@@ -844,6 +1116,14 @@ public final class PyNotADirectoryError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyNotADirectoryError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - PermissionError
@@ -868,6 +1148,14 @@ public final class PyPermissionError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyPermissionError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ProcessLookupError
@@ -892,6 +1180,14 @@ public final class PyProcessLookupError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyProcessLookupError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - TimeoutError
@@ -916,6 +1212,14 @@ public final class PyTimeoutError: PyOSError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyTimeoutError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ReferenceError
@@ -940,6 +1244,14 @@ public final class PyReferenceError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyReferenceError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - RuntimeError
@@ -964,6 +1276,14 @@ public class PyRuntimeError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyRuntimeError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - NotImplementedError
@@ -988,6 +1308,14 @@ public final class PyNotImplementedError: PyRuntimeError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyNotImplementedError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - RecursionError
@@ -1012,6 +1340,14 @@ public final class PyRecursionError: PyRuntimeError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyRecursionError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - SyntaxError
@@ -1036,6 +1372,14 @@ public class PySyntaxError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PySyntaxError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - IndentationError
@@ -1060,6 +1404,14 @@ public class PyIndentationError: PySyntaxError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyIndentationError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - TabError
@@ -1084,6 +1436,14 @@ public final class PyTabError: PyIndentationError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyTabError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - SystemError
@@ -1111,6 +1471,14 @@ public final class PySystemError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PySystemError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - TypeError
@@ -1135,6 +1503,14 @@ public final class PyTypeError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyTypeError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ValueError
@@ -1159,6 +1535,14 @@ public class PyValueError: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyValueError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - UnicodeError
@@ -1183,6 +1567,14 @@ public class PyUnicodeError: PyValueError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyUnicodeError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - UnicodeDecodeError
@@ -1207,6 +1599,14 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyUnicodeDecodeError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - UnicodeEncodeError
@@ -1231,6 +1631,14 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyUnicodeEncodeError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - UnicodeTranslateError
@@ -1255,6 +1663,14 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyUnicodeTranslateError(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - Warning
@@ -1279,6 +1695,14 @@ public class PyWarning: PyException {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - DeprecationWarning
@@ -1303,6 +1727,14 @@ public final class PyDeprecationWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyDeprecationWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - PendingDeprecationWarning
@@ -1328,6 +1760,14 @@ public final class PyPendingDeprecationWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyPendingDeprecationWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - RuntimeWarning
@@ -1352,6 +1792,14 @@ public final class PyRuntimeWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyRuntimeWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - SyntaxWarning
@@ -1376,6 +1824,14 @@ public final class PySyntaxWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PySyntaxWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - UserWarning
@@ -1400,6 +1856,14 @@ public final class PyUserWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyUserWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - FutureWarning
@@ -1425,6 +1889,14 @@ public final class PyFutureWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyFutureWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ImportWarning
@@ -1449,6 +1921,14 @@ public final class PyImportWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyImportWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - UnicodeWarning
@@ -1474,6 +1954,14 @@ public final class PyUnicodeWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyUnicodeWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - BytesWarning
@@ -1499,6 +1987,14 @@ public final class PyBytesWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyBytesWarning(type.context, args: argsTuple))
+  }
 }
 
 // MARK: - ResourceWarning
@@ -1523,5 +2019,13 @@ public final class PyResourceWarning: PyWarning {
    override internal func getDict() -> Attributes {
      return self.attributes
    }
+
+  // sourcery: pymethod = __new__
+  override internal class func new(type: PyType,
+                                   args: [PyObject],
+                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let argsTuple = type.builtins.newTuple(args)
+    return .value(PyResourceWarning(type.context, args: argsTuple))
+  }
 }
 

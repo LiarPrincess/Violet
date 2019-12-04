@@ -200,114 +200,92 @@ tuple
 
 ArithmeticError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 AssertionError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 AttributeError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 BaseException
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __setstate__
     with_traceback
 
 BlockingIOError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 BrokenPipeError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 BufferError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 BytesWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ChildProcessError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ConnectionAbortedError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ConnectionError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ConnectionRefusedError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ConnectionResetError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 DeprecationWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 EOFError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 Exception
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 FileExistsError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 FileNotFoundError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 FloatingPointError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 FutureWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 GeneratorExit
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ImportError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __str__
     msg
@@ -316,73 +294,59 @@ ImportError
 
 ImportWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 IndentationError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 IndexError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 InterruptedError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 IsADirectoryError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 KeyError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __str__
 
 KeyboardInterrupt
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 LookupError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 MemoryError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ModuleNotFoundError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 NameError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 NotADirectoryError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 NotImplementedError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 OSError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __str__
     characters_written
@@ -393,63 +357,51 @@ OSError
 
 OverflowError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 PendingDeprecationWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 PermissionError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ProcessLookupError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 RecursionError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ReferenceError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ResourceWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 RuntimeError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 RuntimeWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 StopAsyncIteration
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 StopIteration
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     value
 
 SyntaxError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __str__
     filename
@@ -461,43 +413,35 @@ SyntaxError
 
 SyntaxWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 SystemError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 SystemExit
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     code
 
 TabError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 TimeoutError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 TypeError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 UnboundLocalError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 UnicodeDecodeError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __str__
     encoding
@@ -508,7 +452,6 @@ UnicodeDecodeError
 
 UnicodeEncodeError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __str__
     encoding
@@ -519,12 +462,10 @@ UnicodeEncodeError
 
 UnicodeError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 UnicodeTranslateError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
     __str__
     encoding
@@ -535,26 +476,21 @@ UnicodeTranslateError
 
 UnicodeWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 UserWarning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ValueError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 Warning
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
 ZeroDivisionError
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __init__
 
