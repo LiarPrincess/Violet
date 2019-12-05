@@ -209,4 +209,32 @@ public class PyTuple: PyObject {
   internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return self.data.rmul(count: other).map(self.builtins.newTuple)
   }
+
+  // MARK: - Python new/init
+
+  // sourcery_NOT_DONE: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    if let e = ArgumentParser.noKwargsOrError(fnName: "tuple", kwargs: kwargs) {
+      return .error(e)
+    }
+
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "tuple",
+                                                        args: args,
+                                                        min: 0,
+                                                        max: 1) {
+      return .error(e)
+    }
+
+//    let iterable = args[0]
+    // TODO: tuple_new_impl(PyTypeObject *type, PyObject *iterable)
+//    let isBuiltin = type === type.builtins.list
+//    let alloca = isBuiltin ?
+//      PyList.init(type:data:) :
+//      PyListHeap.init(type:data:)
+//
+//    let data = PySequenceData()
+    return .value(type.builtins.none)
+  }
 }
