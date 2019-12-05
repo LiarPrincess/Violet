@@ -407,7 +407,7 @@ public class PyComplex: PyObject {
     return self.divmod(other)
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   private static let newArgumentsParser = ArgumentParser.createOrFatal(
     arguments: ["real", "imag"],
@@ -415,23 +415,23 @@ public class PyComplex: PyObject {
   )
 
   // sourcery: pymethod = __new__
-  internal class func new(type: PyType,
-                          args: [PyObject],
-                          kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
     switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(bind.count <= 2, "Invalid argument count returned from parser.")
       let arg0 = bind.count >= 1 ? bind[0] : nil
       let arg1 = bind.count >= 2 ? bind[1] : nil
-      return PyComplex.new(type: type, arg0: arg0, arg1: arg1)
+      return PyComplex.pyNew(type: type, arg0: arg0, arg1: arg1)
     case let .error(e):
       return .error(e)
     }
   }
 
-  private class func new(type: PyType,
-                         arg0: PyObject?,
-                         arg1: PyObject?) -> PyResult<PyObject> {
+  private class func pyNew(type: PyType,
+                           arg0: PyObject?,
+                           arg1: PyObject?) -> PyResult<PyObject> {
     // Special-case for a single argument when type(arg) is complex.
     if let complex = arg0 as? PyComplex, arg1 == nil {
       return .value(complex)

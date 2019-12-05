@@ -454,12 +454,12 @@ public class PyFloat: PyObject {
     return .value(self.builtins.newFloat(wholePart))
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   // sourcery: pymethod = __new__
-  internal class func new(type: PyType,
-                          args: [PyObject],
-                          kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.float
     if isBuiltin {
       if let e = ArgumentParser.noKwargsOrError(fnName: "float",

@@ -107,12 +107,12 @@ public class PyBool: PyInt {
     return self.xor(other)
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   // sourcery: pymethod = __new__
-  override internal class func new(type: PyType,
-                                   args: [PyObject],
-                                   kwargs: PyDictData?) -> PyResult<PyObject> {
+  override internal class func pyNew(type: PyType,
+                                     args: [PyObject],
+                                     kwargs: PyDictData?) -> PyResult<PyObject> {
     if let e = ArgumentParser.noKwargsOrError(fnName: "bool", kwargs: kwargs) {
       return .error(e)
     }

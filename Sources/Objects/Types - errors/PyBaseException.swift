@@ -244,12 +244,12 @@ public class PyBaseException: PyObject {
     return .value()
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   // sourcery: pymethod = __new__
-  internal class func new(type: PyType,
-                          args: [PyObject],
-                          kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
     return .value(PyBaseException(type.context, args: argsTuple))
   }

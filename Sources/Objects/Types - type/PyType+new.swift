@@ -28,9 +28,9 @@ extension PyType {
   )
 
   // sourcery: pymethod = __new__
-  internal static func new(type: PyType,
-                           args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDictData?) -> PyResult<PyObject> {
     // Special case: type(x) should return x->ob_type
     if type === type.builtins.type {
       let nargs = args.count
@@ -68,12 +68,12 @@ extension PyType {
       case let .error(e): return .error(e)
       }
 
-      return PyType.new(args: PyTypeNewArgs(metatype: type,
-                                            args: args,
-                                            kwargs: kwargs,
-                                            name: name.value,
-                                            bases: baseTypes,
-                                            dict: dict.data))
+      return PyType.pyNew(args: PyTypeNewArgs(metatype: type,
+                                              args: args,
+                                              kwargs: kwargs,
+                                              name: name.value,
+                                              bases: baseTypes,
+                                              dict: dict.data))
     case let .error(e):
       return .error(e)
     }
@@ -97,7 +97,7 @@ extension PyType {
   }
 
   // swiftlint:disable:next function_body_length
-  private static func new(args: PyTypeNewArgs) -> PyResult<PyObject> {
+  private static func pyNew(args: PyTypeNewArgs) -> PyResult<PyObject> {
     let base: PyType
     var bases = args.bases
     var metatype = args.metatype

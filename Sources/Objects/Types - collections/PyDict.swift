@@ -385,12 +385,12 @@ public class PyDict: PyObject {
     return .value(result)
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   // sourcery: pymethod = __new__
-  internal static func new(type: PyType,
-                           args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDictData?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.dict
     let alloca = isBuiltin ?
       PyDict.init(type:data:) :

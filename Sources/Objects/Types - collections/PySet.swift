@@ -429,12 +429,12 @@ public class PySet: PyObject, PySetType {
     return .value(lastElement.object)
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   // sourcery: pymethod = __new__
-  internal static func new(type: PyType,
-                           args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDictData?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.set
     let alloca = isBuiltin ?
       PySet.init(type:data:) :

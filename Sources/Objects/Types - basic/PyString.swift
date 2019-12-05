@@ -1111,7 +1111,7 @@ public class PyString: PyObject {
     return self.mul(other)
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   private static let newArgumentsParser = ArgumentParser.createOrFatal(
     arguments: ["object", "encoding", "errors"],
@@ -1119,25 +1119,25 @@ public class PyString: PyObject {
   )
 
   // sourcery: pymethod = __new__
-  internal class func new(type: PyType,
-                          args: [PyObject],
-                          kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
     switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(bind.count <= 3, "Invalid argument count returned from parser.")
       let arg0 = bind.count >= 1 ? bind[0] : nil
       let arg1 = bind.count >= 2 ? bind[1] : nil
       let arg2 = bind.count >= 3 ? bind[2] : nil
-      return PyString.new(type: type, object: arg0, encoding: arg1, errors: arg2)
+      return PyString.pyNew(type: type, object: arg0, encoding: arg1, errors: arg2)
     case let .error(e):
       return .error(e)
     }
   }
 
-  internal static func new(type: PyType,
-                           object: PyObject?,
-                           encoding: PyObject?,
-                           errors: PyObject?) -> PyResult<PyObject> {
+  internal static func pyNew(type: PyType,
+                             object: PyObject?,
+                             encoding: PyObject?,
+                             errors: PyObject?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.str
     let alloca = isBuiltin ? newString(type:value:) : PyStringHeap.init(type:value:)
 

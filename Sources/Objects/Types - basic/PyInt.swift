@@ -608,7 +608,7 @@ public class PyInt: PyObject {
     return .notImplemented
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   private static let newArgumentsParser = ArgumentParser.createOrFatal(
     arguments: ["", "base"],
@@ -616,23 +616,23 @@ public class PyInt: PyObject {
   )
 
   // sourcery: pymethod = __new__
-  internal class func new(type: PyType,
-                          args: [PyObject],
-                          kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
     switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(bind.count <= 2, "Invalid argument count returned from parser.")
       let arg0 = bind.count >= 1 ? bind[0] : nil
       let arg1 = bind.count >= 2 ? bind[1] : nil
-      return PyInt.new(type: type, x: arg0, base: arg1)
+      return PyInt.pyNew(type: type, x: arg0, base: arg1)
     case let .error(e):
       return .error(e)
     }
   }
 
-  internal static func new(type: PyType,
-                           x: PyObject?,
-                           base: PyObject?) -> PyResult<PyObject> {
+  private static func pyNew(type: PyType,
+                            x: PyObject?,
+                            base: PyObject?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.int
     let alloca = isBuiltin ? newInt(type:value:) : PyIntHeap.init(type:value:)
 

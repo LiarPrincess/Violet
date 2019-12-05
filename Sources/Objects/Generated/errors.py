@@ -138,9 +138,9 @@ public {final}class Py{name}: Py{base} {{
    }}
 
   // sourcery: pymethod = __new__
-  override internal class func new(type: PyType,
-                                   args: [PyObject],
-                                   kwargs: PyDictData?) -> PyResult<PyObject> {{
+  override internal class func pyNew(type: PyType,
+                                     args: [PyObject],
+                                     kwargs: PyDictData?) -> PyResult<PyObject> {{
     let argsTuple = type.builtins.newTuple(args)
     return .value(Py{name}(type.context, args: argsTuple))
   }}

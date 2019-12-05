@@ -37,7 +37,10 @@
     {% if attribute == "__new__" %}
     dict["{{ attribute }}"] = wrapNew(context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% else %}
+    {% if attribute == "__init__" %}
+    {% else %}
     dict["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% endif %}
     {% endif %}
   {% endfor %}
 
@@ -46,7 +49,10 @@
     {% if attribute == "__new__" %}
     dict["{{ attribute }}"] = wrapNew(context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% else %}
+    {% if attribute == "__init__" %}
+    {% else %}
     dict["{{ attribute }}"] = wrapMethod(context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% endif %}
     {% endif %}
   {% endfor %}
 

@@ -210,7 +210,7 @@ public class PyTuple: PyObject {
     return self.data.rmul(count: other).map(self.builtins.newTuple)
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   // sourcery_NOT_DONE: pymethod = __new__
   internal static func new(type: PyType,

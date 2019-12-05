@@ -133,12 +133,12 @@ public class PyProperty: PyObject {
     self.set(object: object, value: self.builtins.none)
   }
 
-  // MARK: - Python new/init
+  // MARK: - Python new
 
   // sourcery: pymethod = __new__
-  internal static func new(type: PyType,
-                           args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDictData?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.property
     let alloca = isBuiltin ? PyProperty.init(type:) : PyPropertyHeap.init(type:)
     return .value(alloca(type))

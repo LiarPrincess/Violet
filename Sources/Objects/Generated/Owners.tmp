@@ -33,7 +33,7 @@ PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) 
 PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
 PyType|PyObject|func|__dir__|dir() -> DirResult
 PyType|PyObject|func|__call__|call(args: PyObject,                     kwargs: PyObject?) -> PyResultOrNot<PyObject>
-PyType|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
+PyType|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 
 PyBool|PyInt|get|__class__|getClass() -> PyType
 
@@ -45,7 +45,7 @@ PyBool|PyInt|func|__or__|or(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyBool|PyInt|func|__ror__|ror(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyBool|PyInt|func|__xor__|xor(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyBool|PyInt|func|__rxor__|rxor(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyBool|PyInt|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyBool|PyInt|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
 PyBuiltinFunction|PyObject|get|__class__|getClass() -> PyType
 PyBuiltinFunction|PyObject|get|__name__|getName() -> String
 PyBuiltinFunction|PyObject|get|__qualname__|getQualname() -> String
@@ -109,7 +109,7 @@ PyComplex|PyObject|func|__mod__|mod(_ other: PyObject) -> PyResultOrNot<PyObject
 PyComplex|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyComplex|PyObject|func|__divmod__|divmod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyComplex|PyObject|func|__rdivmod__|rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyComplex|PyObject|static_func|__new__|new(type: PyType,                          args: [PyObject],                          kwargs: PyDictData?) -> PyResult<PyObject>
+PyComplex|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyDict|PyObject|get|__class__|getClass() -> PyType
 
 PyDict|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -132,12 +132,12 @@ PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                   
 PyDict|PyObject|func|copy|copy() -> PyObject
 PyDict|PyObject|func|pop|pop(_ index: PyObject,                    default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|popitem|popitem() -> PyResult<PyObject>
-PyDict|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
+PyDict|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyEllipsis|PyObject|get|__class__|getClass() -> PyType
 
 PyEllipsis|PyObject|func|__repr__|repr() -> PyResult<String>
 PyEllipsis|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
-PyEllipsis|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
+PyEllipsis|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyFloat|PyObject|get|__class__|getClass() -> PyType
 
 PyFloat|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -177,7 +177,7 @@ PyFloat|PyObject|func|__divmod__|divmod(_ other: PyObject) -> PyResultOrNot<PyOb
 PyFloat|PyObject|func|__rdivmod__|rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
 PyFloat|PyObject|func|__trunc__|trunc() -> PyResult<PyObject>
-PyFloat|PyObject|static_func|__new__|new(type: PyType,                          args: [PyObject],                          kwargs: PyDictData?) -> PyResult<PyObject>
+PyFloat|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyFrozenSet|PyObject|get|__class__|getClass() -> PyType
 
 PyFrozenSet|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -271,7 +271,7 @@ PyInt|PyObject|func|__xor__|xor(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__rxor__|rxor(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__invert__|invert() -> PyObject
 PyInt|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
-PyInt|PyObject|static_func|__new__|new(type: PyType,                          args: [PyObject],                          kwargs: PyDictData?) -> PyResult<PyObject>
+PyInt|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyList|PyObject|get|__class__|getClass() -> PyType
 
 PyList|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -295,7 +295,7 @@ PyList|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__imul__|imul(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyList|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
+PyList|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyMethod|PyObject|get|__class__|getClass() -> PyType
 
 PyMethod|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -320,7 +320,7 @@ PyModule|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult
 PyModule|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyModule|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
 PyModule|PyObject|func|__dir__|dir() -> DirResult
-PyModule|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
+PyModule|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyNamespace|PyObject|get|__dict__|getDict() -> Attributes
 
 PyNamespace|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -337,11 +337,11 @@ PyNone|PyObject|get|__class__|getClass() -> PyType
 
 PyNone|PyObject|func|__repr__|repr() -> PyResult<String>
 PyNone|PyObject|func|__bool__|asBool() -> Bool
-PyNone|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
+PyNone|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyNotImplemented|PyObject|get|__class__|getClass() -> PyType
 
 PyNotImplemented|PyObject|func|__repr__|repr() -> PyResult<String>
-PyNotImplemented|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
+PyNotImplemented|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyProperty|PyObject|get|__class__|getClass() -> PyType
 PyProperty|PyObject|get|fget|getFGet() -> PyObject
 PyProperty|PyObject|get|fset|getFSet() -> PyObject
@@ -351,7 +351,7 @@ PyProperty|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResu
 PyProperty|PyObject|func|__get__|get(object: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__set__|set(object: PyObject, value: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__delete__|del(object: PyObject) -> PyResult<PyObject>
-PyProperty|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
+PyProperty|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyRange|PyObject|get|__class__|getClass() -> PyType
 
 PyRange|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -403,7 +403,7 @@ PySet|PyObject|func|discard|discard(_ value: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|clear|clear() -> PyResult<PyNone>
 PySet|PyObject|func|copy|copy() -> PyObject
 PySet|PyObject|func|pop|pop() -> PyResult<PyObject>
-PySet|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
+PySet|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PySlice|PyObject|get|__class__|getClass() -> PyType
 
 PySlice|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -472,7 +472,7 @@ PyString|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<String>
 PyString|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyString|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyString|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
-PyString|PyObject|static_func|__new__|new(type: PyType,                          args: [PyObject],                          kwargs: PyDictData?) -> PyResult<PyObject>
+PyString|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyTuple|PyObject|get|__class__|getClass() -> PyType
 
 PyTuple|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -496,15 +496,18 @@ PyTuple|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject
 PyArithmeticError|PyException|get|__class__|getClass() -> PyType
 PyArithmeticError|PyException|get|__dict__|getDict() -> Attributes
 
-PyArithmeticError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyArithmeticError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyArithmeticError|PyException|static_func|__init__|pyInit(zelf: PyArithmeticError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyAssertionError|PyException|get|__class__|getClass() -> PyType
 PyAssertionError|PyException|get|__dict__|getDict() -> Attributes
 
-PyAssertionError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyAssertionError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyAssertionError|PyException|static_func|__init__|pyInit(zelf: PyAssertionError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyAttributeError|PyException|get|__class__|getClass() -> PyType
 PyAttributeError|PyException|get|__dict__|getDict() -> Attributes
 
-PyAttributeError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyAttributeError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyAttributeError|PyException|static_func|__init__|pyInit(zelf: PyAttributeError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyBaseException|PyObject|get|__dict__|getDict() -> Attributes
 PyBaseException|PyObject|get|__class__|getClass() -> PyType
 PyBaseException|PyObject|get|args|getArgs() -> PyObject
@@ -523,244 +526,305 @@ PyBaseException|PyObject|func|__str__|str() -> PyResult<String>
 PyBaseException|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyBaseException|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyBaseException|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
-PyBaseException|PyObject|static_func|__new__|new(type: PyType,                          args: [PyObject],                          kwargs: PyDictData?) -> PyResult<PyObject>
+PyBaseException|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
+PyBaseException|PyObject|static_func|__init__|pyInit(zelf: PyBaseException,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyBlockingIOError|PyOSError|get|__class__|getClass() -> PyType
 PyBlockingIOError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyBlockingIOError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyBlockingIOError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyBlockingIOError|PyOSError|static_func|__init__|pyInit(zelf: PyBlockingIOError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyBrokenPipeError|PyConnectionError|get|__class__|getClass() -> PyType
 PyBrokenPipeError|PyConnectionError|get|__dict__|getDict() -> Attributes
 
-PyBrokenPipeError|PyConnectionError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyBrokenPipeError|PyConnectionError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyBrokenPipeError|PyConnectionError|static_func|__init__|pyInit(zelf: PyBrokenPipeError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyBufferError|PyException|get|__class__|getClass() -> PyType
 PyBufferError|PyException|get|__dict__|getDict() -> Attributes
 
-PyBufferError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyBufferError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyBufferError|PyException|static_func|__init__|pyInit(zelf: PyBufferError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyBytesWarning|PyWarning|get|__class__|getClass() -> PyType
 PyBytesWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PyBytesWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyBytesWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyBytesWarning|PyWarning|static_func|__init__|pyInit(zelf: PyBytesWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyChildProcessError|PyOSError|get|__class__|getClass() -> PyType
 PyChildProcessError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyChildProcessError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyChildProcessError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyChildProcessError|PyOSError|static_func|__init__|pyInit(zelf: PyChildProcessError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyConnectionAbortedError|PyConnectionError|get|__class__|getClass() -> PyType
 PyConnectionAbortedError|PyConnectionError|get|__dict__|getDict() -> Attributes
 
-PyConnectionAbortedError|PyConnectionError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyConnectionAbortedError|PyConnectionError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyConnectionAbortedError|PyConnectionError|static_func|__init__|pyInit(zelf: PyConnectionAbortedError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyConnectionError|PyOSError|get|__class__|getClass() -> PyType
 PyConnectionError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyConnectionError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyConnectionError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyConnectionError|PyOSError|static_func|__init__|pyInit(zelf: PyConnectionError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyConnectionRefusedError|PyConnectionError|get|__class__|getClass() -> PyType
 PyConnectionRefusedError|PyConnectionError|get|__dict__|getDict() -> Attributes
 
-PyConnectionRefusedError|PyConnectionError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyConnectionRefusedError|PyConnectionError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyConnectionRefusedError|PyConnectionError|static_func|__init__|pyInit(zelf: PyConnectionRefusedError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyConnectionResetError|PyConnectionError|get|__class__|getClass() -> PyType
 PyConnectionResetError|PyConnectionError|get|__dict__|getDict() -> Attributes
 
-PyConnectionResetError|PyConnectionError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyConnectionResetError|PyConnectionError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyConnectionResetError|PyConnectionError|static_func|__init__|pyInit(zelf: PyConnectionResetError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyDeprecationWarning|PyWarning|get|__class__|getClass() -> PyType
 PyDeprecationWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PyDeprecationWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyDeprecationWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyDeprecationWarning|PyWarning|static_func|__init__|pyInit(zelf: PyDeprecationWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyEOFError|PyException|get|__class__|getClass() -> PyType
 PyEOFError|PyException|get|__dict__|getDict() -> Attributes
 
-PyEOFError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyEOFError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyEOFError|PyException|static_func|__init__|pyInit(zelf: PyEOFError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyException|PyBaseException|get|__class__|getClass() -> PyType
 PyException|PyBaseException|get|__dict__|getDict() -> Attributes
 
-PyException|PyBaseException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyException|PyBaseException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyException|PyBaseException|static_func|__init__|pyInit(zelf: PyException,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyFileExistsError|PyOSError|get|__class__|getClass() -> PyType
 PyFileExistsError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyFileExistsError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyFileExistsError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyFileExistsError|PyOSError|static_func|__init__|pyInit(zelf: PyFileExistsError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyFileNotFoundError|PyOSError|get|__class__|getClass() -> PyType
 PyFileNotFoundError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyFileNotFoundError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyFileNotFoundError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyFileNotFoundError|PyOSError|static_func|__init__|pyInit(zelf: PyFileNotFoundError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyFloatingPointError|PyArithmeticError|get|__class__|getClass() -> PyType
 PyFloatingPointError|PyArithmeticError|get|__dict__|getDict() -> Attributes
 
-PyFloatingPointError|PyArithmeticError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyFloatingPointError|PyArithmeticError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyFloatingPointError|PyArithmeticError|static_func|__init__|pyInit(zelf: PyFloatingPointError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyFutureWarning|PyWarning|get|__class__|getClass() -> PyType
 PyFutureWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PyFutureWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyFutureWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyFutureWarning|PyWarning|static_func|__init__|pyInit(zelf: PyFutureWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyGeneratorExit|PyBaseException|get|__class__|getClass() -> PyType
 PyGeneratorExit|PyBaseException|get|__dict__|getDict() -> Attributes
 
-PyGeneratorExit|PyBaseException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyGeneratorExit|PyBaseException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyGeneratorExit|PyBaseException|static_func|__init__|pyInit(zelf: PyGeneratorExit,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyImportError|PyException|get|__class__|getClass() -> PyType
 PyImportError|PyException|get|__dict__|getDict() -> Attributes
 
-PyImportError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyImportError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyImportError|PyException|static_func|__init__|pyInit(zelf: PyImportError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyImportWarning|PyWarning|get|__class__|getClass() -> PyType
 PyImportWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PyImportWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyImportWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyImportWarning|PyWarning|static_func|__init__|pyInit(zelf: PyImportWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyIndentationError|PySyntaxError|get|__class__|getClass() -> PyType
 PyIndentationError|PySyntaxError|get|__dict__|getDict() -> Attributes
 
-PyIndentationError|PySyntaxError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyIndentationError|PySyntaxError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyIndentationError|PySyntaxError|static_func|__init__|pyInit(zelf: PyIndentationError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyIndexError|PyLookupError|get|__class__|getClass() -> PyType
 PyIndexError|PyLookupError|get|__dict__|getDict() -> Attributes
 
-PyIndexError|PyLookupError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyIndexError|PyLookupError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyIndexError|PyLookupError|static_func|__init__|pyInit(zelf: PyIndexError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyInterruptedError|PyOSError|get|__class__|getClass() -> PyType
 PyInterruptedError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyInterruptedError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyInterruptedError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyInterruptedError|PyOSError|static_func|__init__|pyInit(zelf: PyInterruptedError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyIsADirectoryError|PyOSError|get|__class__|getClass() -> PyType
 PyIsADirectoryError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyIsADirectoryError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyIsADirectoryError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyIsADirectoryError|PyOSError|static_func|__init__|pyInit(zelf: PyIsADirectoryError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyKeyError|PyLookupError|get|__class__|getClass() -> PyType
 PyKeyError|PyLookupError|get|__dict__|getDict() -> Attributes
 
-PyKeyError|PyLookupError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyKeyError|PyLookupError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyKeyError|PyLookupError|static_func|__init__|pyInit(zelf: PyKeyError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyKeyboardInterrupt|PyBaseException|get|__class__|getClass() -> PyType
 PyKeyboardInterrupt|PyBaseException|get|__dict__|getDict() -> Attributes
 
-PyKeyboardInterrupt|PyBaseException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyKeyboardInterrupt|PyBaseException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyKeyboardInterrupt|PyBaseException|static_func|__init__|pyInit(zelf: PyKeyboardInterrupt,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyLookupError|PyException|get|__class__|getClass() -> PyType
 PyLookupError|PyException|get|__dict__|getDict() -> Attributes
 
-PyLookupError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyLookupError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyLookupError|PyException|static_func|__init__|pyInit(zelf: PyLookupError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyMemoryError|PyException|get|__class__|getClass() -> PyType
 PyMemoryError|PyException|get|__dict__|getDict() -> Attributes
 
-PyMemoryError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyMemoryError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyMemoryError|PyException|static_func|__init__|pyInit(zelf: PyMemoryError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyModuleNotFoundError|PyImportError|get|__class__|getClass() -> PyType
 PyModuleNotFoundError|PyImportError|get|__dict__|getDict() -> Attributes
 
-PyModuleNotFoundError|PyImportError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyModuleNotFoundError|PyImportError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyModuleNotFoundError|PyImportError|static_func|__init__|pyInit(zelf: PyModuleNotFoundError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyNameError|PyException|get|__class__|getClass() -> PyType
 PyNameError|PyException|get|__dict__|getDict() -> Attributes
 
-PyNameError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyNameError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyNameError|PyException|static_func|__init__|pyInit(zelf: PyNameError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyNotADirectoryError|PyOSError|get|__class__|getClass() -> PyType
 PyNotADirectoryError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyNotADirectoryError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyNotADirectoryError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyNotADirectoryError|PyOSError|static_func|__init__|pyInit(zelf: PyNotADirectoryError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyNotImplementedError|PyRuntimeError|get|__class__|getClass() -> PyType
 PyNotImplementedError|PyRuntimeError|get|__dict__|getDict() -> Attributes
 
-PyNotImplementedError|PyRuntimeError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyNotImplementedError|PyRuntimeError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyNotImplementedError|PyRuntimeError|static_func|__init__|pyInit(zelf: PyNotImplementedError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyOSError|PyException|get|__class__|getClass() -> PyType
 PyOSError|PyException|get|__dict__|getDict() -> Attributes
 
-PyOSError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyOSError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyOSError|PyException|static_func|__init__|pyInit(zelf: PyOSError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyOverflowError|PyArithmeticError|get|__class__|getClass() -> PyType
 PyOverflowError|PyArithmeticError|get|__dict__|getDict() -> Attributes
 
-PyOverflowError|PyArithmeticError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyOverflowError|PyArithmeticError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyOverflowError|PyArithmeticError|static_func|__init__|pyInit(zelf: PyOverflowError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyPendingDeprecationWarning|PyWarning|get|__class__|getClass() -> PyType
 PyPendingDeprecationWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PyPendingDeprecationWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyPendingDeprecationWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyPendingDeprecationWarning|PyWarning|static_func|__init__|pyInit(zelf: PyPendingDeprecationWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyPermissionError|PyOSError|get|__class__|getClass() -> PyType
 PyPermissionError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyPermissionError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyPermissionError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyPermissionError|PyOSError|static_func|__init__|pyInit(zelf: PyPermissionError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyProcessLookupError|PyOSError|get|__class__|getClass() -> PyType
 PyProcessLookupError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyProcessLookupError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyProcessLookupError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyProcessLookupError|PyOSError|static_func|__init__|pyInit(zelf: PyProcessLookupError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyRecursionError|PyRuntimeError|get|__class__|getClass() -> PyType
 PyRecursionError|PyRuntimeError|get|__dict__|getDict() -> Attributes
 
-PyRecursionError|PyRuntimeError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyRecursionError|PyRuntimeError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyRecursionError|PyRuntimeError|static_func|__init__|pyInit(zelf: PyRecursionError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyReferenceError|PyException|get|__class__|getClass() -> PyType
 PyReferenceError|PyException|get|__dict__|getDict() -> Attributes
 
-PyReferenceError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyReferenceError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyReferenceError|PyException|static_func|__init__|pyInit(zelf: PyReferenceError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyResourceWarning|PyWarning|get|__class__|getClass() -> PyType
 PyResourceWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PyResourceWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyResourceWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyResourceWarning|PyWarning|static_func|__init__|pyInit(zelf: PyResourceWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyRuntimeError|PyException|get|__class__|getClass() -> PyType
 PyRuntimeError|PyException|get|__dict__|getDict() -> Attributes
 
-PyRuntimeError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyRuntimeError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyRuntimeError|PyException|static_func|__init__|pyInit(zelf: PyRuntimeError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyRuntimeWarning|PyWarning|get|__class__|getClass() -> PyType
 PyRuntimeWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PyRuntimeWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyRuntimeWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyRuntimeWarning|PyWarning|static_func|__init__|pyInit(zelf: PyRuntimeWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyStopAsyncIteration|PyException|get|__class__|getClass() -> PyType
 PyStopAsyncIteration|PyException|get|__dict__|getDict() -> Attributes
 
-PyStopAsyncIteration|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyStopAsyncIteration|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyStopAsyncIteration|PyException|static_func|__init__|pyInit(zelf: PyStopAsyncIteration,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyStopIteration|PyException|get|__class__|getClass() -> PyType
 PyStopIteration|PyException|get|__dict__|getDict() -> Attributes
 
-PyStopIteration|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyStopIteration|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyStopIteration|PyException|static_func|__init__|pyInit(zelf: PyStopIteration,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PySyntaxError|PyException|get|__class__|getClass() -> PyType
 PySyntaxError|PyException|get|__dict__|getDict() -> Attributes
 
-PySyntaxError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PySyntaxError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PySyntaxError|PyException|static_func|__init__|pyInit(zelf: PySyntaxError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PySyntaxWarning|PyWarning|get|__class__|getClass() -> PyType
 PySyntaxWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PySyntaxWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PySyntaxWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PySyntaxWarning|PyWarning|static_func|__init__|pyInit(zelf: PySyntaxWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PySystemError|PyException|get|__class__|getClass() -> PyType
 PySystemError|PyException|get|__dict__|getDict() -> Attributes
 
-PySystemError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PySystemError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PySystemError|PyException|static_func|__init__|pyInit(zelf: PySystemError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PySystemExit|PyBaseException|get|__class__|getClass() -> PyType
 PySystemExit|PyBaseException|get|__dict__|getDict() -> Attributes
 
-PySystemExit|PyBaseException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PySystemExit|PyBaseException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PySystemExit|PyBaseException|static_func|__init__|pyInit(zelf: PySystemExit,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyTabError|PyIndentationError|get|__class__|getClass() -> PyType
 PyTabError|PyIndentationError|get|__dict__|getDict() -> Attributes
 
-PyTabError|PyIndentationError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyTabError|PyIndentationError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyTabError|PyIndentationError|static_func|__init__|pyInit(zelf: PyTabError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyTimeoutError|PyOSError|get|__class__|getClass() -> PyType
 PyTimeoutError|PyOSError|get|__dict__|getDict() -> Attributes
 
-PyTimeoutError|PyOSError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyTimeoutError|PyOSError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyTimeoutError|PyOSError|static_func|__init__|pyInit(zelf: PyTimeoutError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyTypeError|PyException|get|__class__|getClass() -> PyType
 PyTypeError|PyException|get|__dict__|getDict() -> Attributes
 
-PyTypeError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyTypeError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyTypeError|PyException|static_func|__init__|pyInit(zelf: PyTypeError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyUnboundLocalError|PyNameError|get|__class__|getClass() -> PyType
 PyUnboundLocalError|PyNameError|get|__dict__|getDict() -> Attributes
 
-PyUnboundLocalError|PyNameError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnboundLocalError|PyNameError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnboundLocalError|PyNameError|static_func|__init__|pyInit(zelf: PyUnboundLocalError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyUnicodeDecodeError|PyUnicodeError|get|__class__|getClass() -> PyType
 PyUnicodeDecodeError|PyUnicodeError|get|__dict__|getDict() -> Attributes
 
-PyUnicodeDecodeError|PyUnicodeError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeDecodeError|PyUnicodeError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeDecodeError|PyUnicodeError|static_func|__init__|pyInit(zelf: PyUnicodeDecodeError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyUnicodeEncodeError|PyUnicodeError|get|__class__|getClass() -> PyType
 PyUnicodeEncodeError|PyUnicodeError|get|__dict__|getDict() -> Attributes
 
-PyUnicodeEncodeError|PyUnicodeError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeEncodeError|PyUnicodeError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeEncodeError|PyUnicodeError|static_func|__init__|pyInit(zelf: PyUnicodeEncodeError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyUnicodeError|PyValueError|get|__class__|getClass() -> PyType
 PyUnicodeError|PyValueError|get|__dict__|getDict() -> Attributes
 
-PyUnicodeError|PyValueError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeError|PyValueError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeError|PyValueError|static_func|__init__|pyInit(zelf: PyUnicodeError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyUnicodeTranslateError|PyUnicodeError|get|__class__|getClass() -> PyType
 PyUnicodeTranslateError|PyUnicodeError|get|__dict__|getDict() -> Attributes
 
-PyUnicodeTranslateError|PyUnicodeError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeTranslateError|PyUnicodeError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeTranslateError|PyUnicodeError|static_func|__init__|pyInit(zelf: PyUnicodeTranslateError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyUnicodeWarning|PyWarning|get|__class__|getClass() -> PyType
 PyUnicodeWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PyUnicodeWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyUnicodeWarning|PyWarning|static_func|__init__|pyInit(zelf: PyUnicodeWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyUserWarning|PyWarning|get|__class__|getClass() -> PyType
 PyUserWarning|PyWarning|get|__dict__|getDict() -> Attributes
 
-PyUserWarning|PyWarning|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyUserWarning|PyWarning|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyUserWarning|PyWarning|static_func|__init__|pyInit(zelf: PyUserWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyValueError|PyException|get|__class__|getClass() -> PyType
 PyValueError|PyException|get|__dict__|getDict() -> Attributes
 
-PyValueError|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyValueError|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyValueError|PyException|static_func|__init__|pyInit(zelf: PyValueError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyWarning|PyException|get|__class__|getClass() -> PyType
 PyWarning|PyException|get|__dict__|getDict() -> Attributes
 
-PyWarning|PyException|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyWarning|PyException|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyWarning|PyException|static_func|__init__|pyInit(zelf: PyWarning,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyZeroDivisionError|PyArithmeticError|get|__class__|getClass() -> PyType
 PyZeroDivisionError|PyArithmeticError|get|__dict__|getDict() -> Attributes
 
-PyZeroDivisionError|PyArithmeticError|static_func|__new__|new(type: PyType,                                   args: [PyObject],                                   kwargs: PyDictData?) -> PyResult<PyObject>
+PyZeroDivisionError|PyArithmeticError|static_func|__new__|pyNew(type: PyType,                                     args: [PyObject],                                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyZeroDivisionError|PyArithmeticError|static_func|__init__|pyInit(zelf: PyZeroDivisionError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
