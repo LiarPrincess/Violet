@@ -114,6 +114,10 @@ extension Builtins {
     return .value(PyDict(self.context, data: data))
   }
 
+  internal func newDict(_ context: PyContext, data: PyDictData?) -> PyDict {
+    return PyDict(context, data: data ?? PyDictData())
+  }
+
   public func newDict(keyTuple: PyObject,
                       elements: [PyObject]) -> PyResult<PyDict> {
     var data = PyDictData()

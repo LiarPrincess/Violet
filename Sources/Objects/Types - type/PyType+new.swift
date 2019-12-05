@@ -1,0 +1,302 @@
+private struct PyTypeNewArgs {
+  /// First argument in `__new__` invocation
+  fileprivate let metatype: PyType
+  /// Args passed to orginal function
+  fileprivate let args: [PyObject]
+  /// Kwargs passed to orginal function
+  fileprivate let kwargs: PyDictData?
+
+  /// Name string is the class name and becomes the `__name__` attribute
+  /// `self.args[0] as String`
+  fileprivate let name: String
+  /// Bases tuple itemizes the base classes and becomes the __bases__ attribute;
+  /// `self.args[1] as Tuple`
+  fileprivate let bases: [PyType]
+  /// Dict is the namespace containing definitions for class body and is copied
+  /// to a standard dictionary to become the `__dict__` attribute.
+  /// `self.args[2] as Dict`
+  fileprivate let dict: PyDictData
+}
+
+extension PyType {
+
+  private static let newArgumentsParser = ArgumentParser.createOrFatal(
+    arguments: ["name", "bases", "dict"],
+    format: "OOO:type.__new__"
+  )
+
+  // sourcery: pymethod = __new__
+  internal static func new(type: PyType,
+                           args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    // Special case: type(x) should return x->ob_type
+    if type === type.builtins.type {
+      let nargs = args.count
+      let nkwds = kwargs?.count ?? 0
+
+      if nargs == 1 && nkwds == 0 {
+        return .value(args[0].type)
+      }
+
+      if nargs != 3 {
+        return .typeError("type() takes 1 or 3 arguments")
+      }
+    }
+
+    // class type(name, bases, dict)
+    switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
+    case let .value(bind):
+      assert(bind.count == 3, "Invalid argument count returned from parser.")
+
+      guard let name = bind[0] as? PyString else {
+        return .typeError("type.__new__() argument 1 must be str, not \(bind[0].typeName)")
+      }
+
+      guard let bases = bind[1] as? PyTuple else {
+        return .typeError("type.__new__() argument 2 must be tuple, not \(bind[1].typeName)")
+      }
+
+      guard let dict = bind[2] as? PyDict else {
+        return .typeError("type.__new__() argument 3 must be dict, not \(bind[2].typeName)")
+      }
+
+      var baseTypes = [PyType]()
+      switch PyType.guaranteeBaseTypes(bases.elements) {
+      case let .value(r): baseTypes = r
+      case let .error(e): return .error(e)
+      }
+
+      return PyType.new(args: PyTypeNewArgs(metatype: type,
+                                            args: args,
+                                            kwargs: kwargs,
+                                            name: name.value,
+                                            bases: baseTypes,
+                                            dict: dict.data))
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private static func guaranteeBaseTypes(_ objects: [PyObject]) -> PyResult<[PyType]> {
+    var result = [PyType]()
+    for object in objects {
+      guard let base = object as? PyType else {
+        return .typeError("bases must be types")
+      }
+
+      guard base.isBaseType else {
+        return .typeError("type '\(base.getName())' is not an acceptable base type")
+      }
+
+      result.append(base)
+    }
+
+    return .value(result)
+  }
+
+  // swiftlint:disable:next function_body_length
+  private static func new(args: PyTypeNewArgs) -> PyResult<PyObject> {
+    let base: PyType
+    var bases = args.bases
+    var metatype = args.metatype
+
+    if bases.isEmpty {
+      base = args.metatype.builtins.object
+      bases = [base]
+    } else {
+      // Search the bases for the proper metatype to deal with this
+      switch PyType.calculateMetaclass(args: args) {
+      case let .value(t): metatype = t
+      case let .error(e): return .error(e)
+      }
+
+      // Calculate best base using bases memory layout (layout confilct -> error)
+      switch PyType.bestBase(bases: args.bases) {
+      case let .value(r): base = r
+      case let .error(e): return .error(e)
+      }
+    }
+
+    // Assumming we don't have slots
+    let mro: MRO
+    switch MRO.linearize(baseClasses: bases) {
+    case let .value(r): mro = r
+    case let .typeError(msg): return .typeError(msg)
+    case let .valueError(msg): return .valueError(msg)
+    }
+
+    // Create type object
+    let type = PyType(args.metatype.context,
+                      name: args.name,
+                      qualname: args.name, // May be overriden below
+                      doc: nil,
+                      type: metatype,
+                      base: base,
+                      mro: mro)
+
+    type.setFlag([.default, .heapType, .baseType, .hasFinalize])
+    if base.typeFlags.contains(.hasGC) {
+      type.setFlag(.hasGC)
+    }
+
+    // Initialize dict from passed-in dict
+    let attributes: Attributes
+    switch PyType.createAttributes(from: args.dict) {
+    case let .value(a): attributes = a
+    case let .error(e): return .error(e)
+    }
+
+    type.setAttributes(attributes)
+
+    // Set __module__ in the dict
+    if !attributes.has(key: "__module__") {
+      let globals = type.context.getGlobals()
+      if let module = globals["__name__"] {
+        switch type.setModule(module) {
+        case .value: break
+        case .error(let e): return .error(e)
+        }
+      }
+    }
+
+    // Set ht_qualname to dict['__qualname__'] if available, else to __name__.
+    // The __qualname__ accessor will use for self.qualname.
+    if let qualname = attributes.get(key: "__qualname__") {
+      switch type.setQualname(qualname) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    // TODO: Special-case __new__: if it's a plain function, make it a static function
+    // TODO: if (init_subclass(type, kwds) < 0)
+
+    return .value(type)
+  }
+
+  private static func createAttributes(from dict: PyDictData) -> PyResult<Attributes> {
+    let result = Attributes()
+
+    for entry in dict {
+      guard let key = entry.key.object as? PyString else {
+        return .typeError("Dictionary key mus be a str.")
+      }
+
+      result.set(key: key.value, to: entry.value)
+    }
+
+    return .value(result)
+  }
+
+  // MARK: - Metaclass
+
+  /// Determine the most derived metatype.
+  /// PyTypeObject *
+  /// _PyType_CalculateMetaclass(PyTypeObject *metatype, PyObject *bases)
+  private static func calculateMetaclass(args: PyTypeNewArgs) -> PyResult<PyType> {
+    var winner = args.metatype
+    for tmp in args.bases {
+      let tmpType = tmp.type
+
+      // Get to the most specific type (lowest subclass)
+      if winner.isSubtype(of: tmpType) {
+        continue
+      }
+
+      if tmpType.isSubtype(of: winner) {
+        winner = tmpType
+        continue
+      }
+
+      return .typeError("metaclass conflict: the metaclass of a derived class " +
+        "must be a (non-strict) subclass of the metaclasses of all its bases")
+    }
+
+    return .value(winner)
+  }
+
+  // MARK: - Best base
+
+  /// static PyTypeObject *
+  /// best_base(PyObject *bases)
+  private static func bestBase(bases: [PyType]) -> PyResult<PyType> {
+    assert(bases.any)
+
+    var base: PyType?
+    var winner: PyType?
+
+    for b in bases {
+      let candidate = PyType.solidBase(type: b)
+      guard let currentWinner = winner  else {
+        winner = candidate
+        base = b
+        continue
+      }
+
+      if currentWinner.isSubtype(of: candidate) {
+        // nothing
+      } else if candidate.isSubtype(of: currentWinner) {
+        winner = candidate
+        base = b
+      } else {
+        return .typeError("multiple bases have instance lay-out conflict")
+      }
+    }
+
+    assert(base != nil) // basically the same check as 'bases.any' at top
+    return .value(base!) // swiftlint:disable:this force_unwrapping
+  }
+
+  /// static PyTypeObject *
+  /// solid_base(PyTypeObject *type)
+  private static func solidBase(type: PyType) -> PyType {
+    // Traverse class hierarchy (from derieved to base).
+    // Stop when base class has different memory layout than 'us'.
+    // Return 'us'.
+    // For example:
+    //   Given:   Bool -> Int -> Object
+    //   Returns: Int
+    //   Reason: 'Bool' and 'Int' have the same layout (single BigInt property),
+    //           but 'Intĺ and 'Object' have different layouts.
+
+    // Special case for BaseObject
+    guard let base = type.getBase() else {
+      return type
+    }
+
+    return PyType.hasExtraProperties(type: type, base: base) ? type : base
+  }
+
+  /// static int
+  /// extra_ivars(PyTypeObject *type, PyTypeObject *base)
+  private static func hasExtraProperties(type: PyType, base: PyType) -> Bool {
+    // This is aproximation of the correct behavior.
+
+    let isTypeHeap = type is HeapType
+    let isBaseHeap = base is HeapType
+
+    let isBuiltinDerievedFromBuiltin = !isTypeHeap && !isBaseHeap
+    if isBuiltinDerievedFromBuiltin {
+      // We assume that every builtin subclass adds something new.
+      // Not really true (for example: Bool and Int both have only BigInt property),
+      // but whatever (you can't subclass Bool anyway).
+      return true
+    }
+
+    let isUserTypeDerievedFromBuiltin = isTypeHeap && !isBaseHeap
+    if isUserTypeDerievedFromBuiltin {
+      // All of the user types (heap types) add `__dict__`.
+      return true
+    }
+
+    let isUserTypeDerievedFromUserType = isTypeHeap && isBaseHeap
+    if isUserTypeDerievedFromUserType {
+      // No change here (we already have `__dict__`).
+      // And we do not allow extensions.
+      return false
+    }
+
+    // Remaining case: !isTypeHeap && isBaseHeap
+    fatalError("Builtin type derieved from user type.")
+  }
+}

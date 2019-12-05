@@ -21,6 +21,9 @@
 // { }
 // ```
 
+/// Marker protocol for all heap types
+internal protocol HeapType { }
+
 
 // MARK: - Type type
 
@@ -42,7 +45,7 @@
 
 /// Type used when we subclass builtin `complex` class.
 /// For example: `class Rapunzel(complex): pass`.
-internal final class PyComplexHeap: PyComplex {
+internal final class PyComplexHeap: PyComplex, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
@@ -52,7 +55,7 @@ internal final class PyComplexHeap: PyComplex {
 
 /// Type used when we subclass builtin `dict` class.
 /// For example: `class Rapunzel(dict): pass`.
-internal final class PyDictHeap: PyDict {
+internal final class PyDictHeap: PyDict, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
@@ -66,7 +69,7 @@ internal final class PyDictHeap: PyDict {
 
 /// Type used when we subclass builtin `float` class.
 /// For example: `class Rapunzel(float): pass`.
-internal final class PyFloatHeap: PyFloat {
+internal final class PyFloatHeap: PyFloat, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
@@ -76,7 +79,7 @@ internal final class PyFloatHeap: PyFloat {
 
 /// Type used when we subclass builtin `frozenset` class.
 /// For example: `class Rapunzel(frozenset): pass`.
-internal final class PyFrozenSetHeap: PyFrozenSet {
+internal final class PyFrozenSetHeap: PyFrozenSet, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
@@ -90,7 +93,7 @@ internal final class PyFrozenSetHeap: PyFrozenSet {
 
 /// Type used when we subclass builtin `int` class.
 /// For example: `class Rapunzel(int): pass`.
-internal final class PyIntHeap: PyInt {
+internal final class PyIntHeap: PyInt, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
@@ -100,7 +103,7 @@ internal final class PyIntHeap: PyInt {
 
 /// Type used when we subclass builtin `list` class.
 /// For example: `class Rapunzel(list): pass`.
-internal final class PyListHeap: PyList {
+internal final class PyListHeap: PyList, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
@@ -130,7 +133,7 @@ internal final class PyListHeap: PyList {
 
 /// Type used when we subclass builtin `property` class.
 /// For example: `class Rapunzel(property): pass`.
-internal final class PyPropertyHeap: PyProperty {
+internal final class PyPropertyHeap: PyProperty, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
@@ -144,7 +147,7 @@ internal final class PyPropertyHeap: PyProperty {
 
 /// Type used when we subclass builtin `set` class.
 /// For example: `class Rapunzel(set): pass`.
-internal final class PySetHeap: PySet {
+internal final class PySetHeap: PySet, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
@@ -158,7 +161,7 @@ internal final class PySetHeap: PySet {
 
 /// Type used when we subclass builtin `str` class.
 /// For example: `class Rapunzel(str): pass`.
-internal final class PyStringHeap: PyString {
+internal final class PyStringHeap: PyString, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
@@ -168,7 +171,7 @@ internal final class PyStringHeap: PyString {
 
 /// Type used when we subclass builtin `tuple` class.
 /// For example: `class Rapunzel(tuple): pass`.
-internal final class PyTupleHeap: PyTuple {
+internal final class PyTupleHeap: PyTuple, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()

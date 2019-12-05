@@ -32,6 +32,7 @@ types = {
     '__bases__',
     '__dict__',
     '__class__',
+    '__base__',
     '__mro__',
     '__repr__',
     '__subclasses__',
@@ -40,6 +41,7 @@ types = {
     '__delattr__',
     '__dir__',
     '__call__',
+    '__new__',
   ],
   bool: [
     '__class__',

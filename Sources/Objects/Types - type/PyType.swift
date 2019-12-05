@@ -20,10 +20,10 @@ internal struct PyTypeFlags: OptionSet {
   internal static let hasGC = PyTypeFlags(rawValue: 1 << 2)
 
   /// Type is abstract and cannot be instantiated
-//  internal static let isAbstract = PyTypeFlags(rawValue: 1 << 3)
+  internal static let isAbstract = PyTypeFlags(rawValue: 1 << 3)
 
   /// Type structure has tp_finalize member (3.4)
-//  internal static let hasFinalize = PyTypeFlags(rawValue: 1 << 4)
+  internal static let hasFinalize = PyTypeFlags(rawValue: 1 << 4)
 
   /// #define Py_TPFLAGS_DEFAULT  ( \
   ///     Py_TPFLAGS_HAVE_STACKLESS_EXTENSION | \
@@ -73,20 +73,28 @@ public class PyType: PyObject {
     type(name, bases, dict) -> a new type
     """
 
+  // object type - type: typeType, base: nil,        mro: [self]
+  // type type   - type: typeType, base: objectType, mro: [self, objectType]
+  // normal type - type: typeType, base: objectType, mro: [self, objectType]
   private var name: String
   private var qualname: String
+  private let base:  PyType?
   private let bases: [PyType]
   private var mro:   [PyType]
   private var subclasses: [PyTypeWeakRef] = []
-  private let attributes = Attributes()
+  private var attributes = Attributes()
 
-  private var typeFlags = PyTypeFlags()
+  internal private(set) var typeFlags = PyTypeFlags()
 
   internal var isHeapType: Bool {
     return self.typeFlags.contains(.heapType)
   }
 
-  // Special hack for cyclic reference
+  internal var isBaseType: Bool {
+    return self.typeFlags.contains(.baseType)
+  }
+
+  // Special hack for cyclic references
   private unowned let _context: PyContext
   override internal var context: PyContext {
     return self._context
@@ -96,16 +104,25 @@ public class PyType: PyObject {
     self.typeFlags.insert(flag)
   }
 
+  internal func setAttributes(_ attributes: Attributes) {
+    self.attributes = attributes
+  }
+
   // MARK: - Init
 
-  /// Special init for types where we have single base and `qualname` = `name`.
+  /// Special init for types where we have single base and `qualname = name`.
   internal convenience init(_ context: PyContext,
                             name: String,
                             doc:  String?,
                             type: PyType,
                             base: PyType) {
-    let mro = MRO.linearize(baseClass: base)
-    self.init(context, name: name, qualname: name, doc: doc, type: type, mro: mro)
+    self.init(context,
+              name: name,
+              qualname: name,
+              doc: doc,
+              type: type,
+              base: base,
+              mro: MRO.linearize(baseClass: base))
   }
 
   /// Full init with all of the options.
@@ -114,8 +131,10 @@ public class PyType: PyObject {
                             qualname: String,
                             doc:  String?,
                             type: PyType,
+                            base: PyType,
                             mro:  MRO) {
-    self.init(context, name: name, doc: doc, mro: mro)
+    assert(mro.baseClasses.contains { $0 === base })
+    self.init(context, name: name, doc: doc, base: base, mro: mro)
     self.setType(to: type)
   }
 
@@ -123,12 +142,14 @@ public class PyType: PyObject {
   ///
   /// NEVER EVER use this function!
   /// Reserved for `objectType` and `typeType`.
-  ///
-  /// If you really want to use it then do it by `PyType.initWithoutType` proxy
-  /// (so that you don't use by accident).
-  private init(_ context: PyContext, name: String, doc: String?, mro: MRO?) {
+  private init(_ context: PyContext,
+               name: String,
+               doc: String?,
+               base: PyType?,
+               mro: MRO?) {
     self.name = name
     self.qualname = name
+    self.base = base
     self.bases = mro?.baseClasses ?? []
     self.mro = [] // temporary, until we are able to use self
     self._context = context
@@ -152,14 +173,20 @@ public class PyType: PyObject {
       .map(context.builtins.newString) ?? context.builtins.none
   }
 
-  /// NEVER EVER use this function!
-  /// This is a reserved for `objectType` and `typeType`.
-  internal static func initWithoutType(_ context: PyContext,
-                                       name: String,
-                                       doc:  String,
-                                       base: PyType?) -> PyType {
-    let mro = base.map(MRO.linearize(baseClass:))
-    return PyType(context, name: name, doc: doc, mro: mro)
+  /// NEVER EVER use this function! It is a reserved for `objectType`.
+  internal static func initObjectType(_ context: PyContext,
+                                      name: String,
+                                      doc:  String) -> PyType {
+    return PyType(context, name: name, doc: doc, base: nil, mro: nil)
+  }
+
+  /// NEVER EVER use this function! It is a reserved for `typeType`.
+  internal static func initTypeType(_ context: PyContext,
+                                    name: String,
+                                    doc:  String,
+                                    objectType: PyType) -> PyType {
+    let mro = MRO.linearize(baseClass: objectType)
+    return PyType(context, name: name, doc: doc, base: objectType, mro: mro)
   }
 
   // MARK: - Name
@@ -354,6 +381,13 @@ public class PyType: PyObject {
     case .error(let e):
       return .error(e)
     }
+  }
+
+  // MARK: - Base
+
+  // sourcery: pyproperty = __base__
+  internal func getBase() -> PyType? {
+    return self.base
   }
 
   // MARK: - Mro

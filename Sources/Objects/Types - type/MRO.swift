@@ -13,6 +13,8 @@ internal struct MRO {
   // 'private' so that the only way to create MRO is to go through
   // one of our static methods.
   private init(baseClasses: [PyType], resolutionOrder: [PyType]) {
+    assert(baseClasses.count == resolutionOrder.count)
+    assert(baseClasses.allSatisfy { b in resolutionOrder.contains { $0 === b } })
     self.baseClasses = baseClasses
     self.resolutionOrder = resolutionOrder
   }
@@ -31,10 +33,14 @@ internal struct MRO {
   ///
   /// It will not take into account `self` (which should be 1st in MRO)!
   internal static func linearize(baseClasses: [PyObject]) -> LinearizationResult {
-    guard let baseClasses = asPyTypes(baseClasses) else {
+    guard let baseTypes = asPyTypes(baseClasses) else {
       return .typeError("bases must be types")
     }
 
+    return MRO.linearize(baseClasses: baseTypes)
+  }
+
+  internal static func linearize(baseClasses: [PyType]) -> LinearizationResult {
     // No base classes? Empty MRO.
     if baseClasses.isEmpty {
       return .value(MRO(baseClasses: [], resolutionOrder: []))

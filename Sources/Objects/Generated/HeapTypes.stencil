@@ -17,6 +17,9 @@
 // { }
 // ```
 
+/// Marker protocol for all heap types
+internal protocol HeapType { }
+
 {% macro printHeapType type %}
   {# If we already have 'attributes: Attributes' then we dont need 'Heap' type #}
   {% set hasAttributes %}{% for variable in type.allVariables where variable.name == "attributes" and variable.type.name == "Attributes" %}x{% endfor %}{% endset %}
@@ -30,7 +33,7 @@
   {% else %}
 /// Type used when we subclass builtin `{{ type.annotations.pytype }}` class.
 /// For example: `class Rapunzel({{ type.annotations.pytype }}): pass`.
-internal final class {{ type.name }}Heap: {{ type.name }} {
+internal final class {{ type.name }}Heap: {{ type.name }}, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()

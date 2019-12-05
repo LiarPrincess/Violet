@@ -23,6 +23,7 @@ PyType|PyObject|get|__bases__|getBases() -> PyTuple
 PyType|PyObject|set|__bases__|setBases(_ value: PyObject?) -> PyResult<()>
 PyType|PyObject|get|__dict__|getDict() -> Attributes
 PyType|PyObject|get|__class__|getClass() -> PyType
+PyType|PyObject|get|__base__|getBase() -> PyType?
 PyType|PyObject|get|__mro__|getMRO() -> PyTuple
 
 PyType|PyObject|func|__repr__|repr() -> PyResult<String>
@@ -32,6 +33,7 @@ PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) 
 PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
 PyType|PyObject|func|__dir__|dir() -> DirResult
 PyType|PyObject|func|__call__|call(args: PyObject,                     kwargs: PyObject?) -> PyResultOrNot<PyObject>
+PyType|PyObject|static_func|__new__|new(type: PyType,                           args: [PyObject],                           kwargs: PyDictData?) -> PyResult<PyObject>
 
 PyBool|PyInt|get|__class__|getClass() -> PyType
 

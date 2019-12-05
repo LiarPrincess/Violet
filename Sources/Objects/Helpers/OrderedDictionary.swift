@@ -182,6 +182,13 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
     self.checkConsistency()
   }
 
+  fileprivate init(copy: OrderedDictionary<Key, Value>) {
+    self.entries = copy.entries
+    self.indices = copy.indices
+    self.used = copy.used
+    self.usable = copy.usable
+  }
+
   // MARK: - Get
 
   internal enum GetResult {
@@ -378,6 +385,12 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   /// dk_get_index(PyDictKeysObject *keys, Py_ssize_t i)
   private func getIndexValue(_ i: Int) -> EntryIndex {
     return self.indices[i]
+  }
+
+  // MARK: - Copy
+
+  internal func copy() -> OrderedDictionary<Key, Value> {
+    return OrderedDictionary<Key, Value>(copy: self)
   }
 
   // MARK: - Clear

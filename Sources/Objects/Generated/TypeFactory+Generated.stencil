@@ -63,7 +63,7 @@ extension TypeFactory {
 
   /// Create `object` type without assigning `type` property.
   internal static func objectWithoutType(_ context: PyContext) -> PyType {
-    let result = PyType.initWithoutType(context, name: "object", doc: PyBaseObject.doc, base: nil)
+    let result = PyType.initObjectType(context, name: "object", doc: PyBaseObject.doc)
     {% call addFlags type %}
     {% call fillDict type %}
     return result
@@ -75,7 +75,7 @@ extension TypeFactory {
 
   /// Create `type` type without assigning `type` property.
   internal static func typeWithoutType(_ context: PyContext, base: PyType) -> PyType {
-    let result = PyType.initWithoutType(context, name: "type", doc: PyType.doc, base: base)
+    let result = PyType.initTypeType(context, name: "type", doc: PyType.doc, objectType: base)
     {% call addFlags type %}
     {% call fillDict type %}
     return result

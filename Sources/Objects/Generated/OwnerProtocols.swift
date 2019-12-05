@@ -10,6 +10,7 @@ protocol FsetGetterOwner { func getFSet() -> PyObject }
 protocol __abs__Owner { func abs() -> PyObject }
 protocol __add__Owner { func add(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __and__Owner { func and(_ other: PyObject) -> PyResultOrNot<PyObject> }
+protocol __base__GetterOwner { func getBase() -> PyType? }
 protocol __bases__GetterOwner { func getBases() -> PyTuple }
 protocol __bases__SetterOwner { func setBases(_ value: PyObject?) -> PyResult<()> }
 protocol __bool__Owner { func asBool() -> Bool }

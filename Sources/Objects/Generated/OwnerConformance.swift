@@ -22,6 +22,7 @@ extension PyType:
   __bases__SetterOwner,
   __dict__GetterOwner,
   __class__GetterOwner,
+  __base__GetterOwner,
   __mro__GetterOwner,
   __repr__Owner,
   __subclasses__Owner,
@@ -29,7 +30,8 @@ extension PyType:
   __setattr__Owner,
   __delattr__Owner,
   __dir__Owner,
-  __call__Owner
+  __call__Owner,
+  __new__Owner
 { }
 
 // MARK: - Bool

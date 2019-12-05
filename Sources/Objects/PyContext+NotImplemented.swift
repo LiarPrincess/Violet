@@ -31,6 +31,10 @@ extension PyContext {
     return start
   }
 
+  internal func getGlobals() -> [String: PyObject] {
+    return [:]
+  }
+
   // MARK: - Attribute
 
   /// PyObject_SetAttr

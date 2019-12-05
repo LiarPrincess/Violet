@@ -16,7 +16,7 @@ extension TypeFactory {
 
   /// Create `object` type without assigning `type` property.
   internal static func objectWithoutType(_ context: PyContext) -> PyType {
-    let result = PyType.initWithoutType(context, name: "object", doc: PyBaseObject.doc, base: nil)
+    let result = PyType.initObjectType(context, name: "object", doc: PyBaseObject.doc)
     result.setFlag(.default)
     result.setFlag(.baseType)
 
@@ -49,7 +49,7 @@ extension TypeFactory {
 
   /// Create `type` type without assigning `type` property.
   internal static func typeWithoutType(_ context: PyContext, base: PyType) -> PyType {
-    let result = PyType.initWithoutType(context, name: "type", doc: PyType.doc, base: base)
+    let result = PyType.initTypeType(context, name: "type", doc: PyType.doc, objectType: base)
     result.setFlag(.default)
     result.setFlag(.baseType)
     result.setFlag(.hasGC)
@@ -63,8 +63,10 @@ extension TypeFactory {
     dict["__bases__"] = createProperty(context, name: "__bases__", doc: nil, get: PyType.getBases, set: PyType.setBases, castSelf: selfAsPyType)
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyType.getDict, castSelf: selfAsPyType)
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyType.getClass, castSelf: selfAsPyType)
+    dict["__base__"] = createProperty(context, name: "__base__", doc: nil, get: PyType.getBase, castSelf: selfAsPyType)
     dict["__mro__"] = createProperty(context, name: "__mro__", doc: nil, get: PyType.getMRO, castSelf: selfAsPyType)
 
+    dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyType.new(type:args:kwargs:))
 
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyType.repr, castSelf: selfAsPyType)
