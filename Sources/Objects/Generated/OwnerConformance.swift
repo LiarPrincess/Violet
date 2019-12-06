@@ -31,7 +31,8 @@ extension PyType:
   __delattr__Owner,
   __dir__Owner,
   __call__Owner,
-  __new__Owner
+  __new__Owner,
+  __init__Owner
 { }
 
 // MARK: - Bool

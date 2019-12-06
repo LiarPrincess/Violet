@@ -1,6 +1,5 @@
 object
   Unimplemented:
-    __init__
     __sizeof__
   Why do we even have this?
     __subclasshook__
@@ -16,7 +15,6 @@ type
     __text_signature__ - <class 'NoneType'>
     __weakrefoffset__ - <class 'int'>
     __abstractmethods__
-    __init__
     __instancecheck__
     __sizeof__
     __subclasscheck__

@@ -40,6 +40,7 @@ extension TypeFactory {
     dict["__subclasshook__"] = wrapMethod(context, name: "__subclasshook__", doc: nil, fn: PyBaseObject.subclasshook(zelf:))
     dict["__init_subclass__"] = wrapMethod(context, name: "__init_subclass__", doc: nil, fn: PyBaseObject.initSubclass(zelf:))
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBaseObject.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyBaseObject.pyInit(zelf:args:kwargs:))
 
 
     return result
@@ -67,6 +68,7 @@ extension TypeFactory {
     dict["__mro__"] = createProperty(context, name: "__mro__", doc: nil, get: PyType.getMRO, castSelf: selfAsPyType)
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyType.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyType.pyInit(zelf:args:kwargs:))
 
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyType.repr, castSelf: selfAsPyType)

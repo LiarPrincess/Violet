@@ -34,6 +34,7 @@ PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone
 PyType|PyObject|func|__dir__|dir() -> DirResult
 PyType|PyObject|func|__call__|call(args: PyObject,                     kwargs: PyObject?) -> PyResultOrNot<PyObject>
 PyType|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
+PyType|PyObject|static_func|__init__|pyInit(zelf: PyType,                              args: [PyObject],                              kwargs: PyDictData?) -> PyResult<PyNone>
 
 PyBool|PyInt|get|__class__|getClass() -> PyType
 

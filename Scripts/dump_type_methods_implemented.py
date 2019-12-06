@@ -23,6 +23,7 @@ types = {
     '__subclasshook__',
     '__init_subclass__',
     '__new__',
+    '__init__',
   ],
   type: [
     '__name__',
@@ -42,6 +43,7 @@ types = {
     '__dir__',
     '__call__',
     '__new__',
+    '__init__',
   ],
   bool: [
     '__class__',

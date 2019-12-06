@@ -301,4 +301,23 @@ extension PyType {
     // Remaining case: !isTypeHeap && isBaseHeap
     fatalError("Builtin type derieved from user type.")
   }
+
+  // MARK: - Python init
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PyType,
+                              args: [PyObject],
+                              kwargs: PyDictData?) -> PyResult<PyNone> {
+    // swiftlint:disable:next empty_count
+    if let kwargs = kwargs, args.count == 1 && kwargs.count != 0 {
+      return .typeError("type.__init__() takes no keyword arguments")
+    }
+
+    guard args.count == 1 || args.count == 3 else {
+      return . typeError("type.__init__() takes 1 or 3 arguments")
+    }
+
+    // Call object.__init__(self) now.
+    return PyBaseObject.pyInit(zelf: zelf, args: [], kwargs: nil)
+  }
 }
