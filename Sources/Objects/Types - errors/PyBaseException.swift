@@ -253,4 +253,36 @@ public class PyBaseException: PyObject {
     let argsTuple = type.builtins.newTuple(args)
     return .value(PyBaseException(type.context, args: argsTuple))
   }
+
+  // MARK: - Python init
+
+  // sourcery: pymethod = __init__
+  internal class func pyInit(zelf: PyBaseException,
+                             args: [PyObject],
+                             kwargs: PyDictData?) -> PyResult<PyNone> {
+    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  }
+
+  internal static func pyInitShared(zelf: PyBaseException,
+                                    args: [PyObject],
+                                    kwargs: PyDictData?) -> PyResult<PyNone> {
+    if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
+                                              kwargs: kwargs) {
+      return .error(e)
+    }
+
+    let zelfArgs = zelf.args.elements
+    let argsAreEqual = zelfArgs.count == args.count
+        && zip(zelfArgs, args).allSatisfy { $0.0 === $0.1 }
+
+    if !argsAreEqual {
+      let argsTuple = zelf.builtins.newTuple(args)
+      switch zelf.setArgs(argsTuple) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .value(zelf.builtins.none)
+  }
 }

@@ -2,6 +2,15 @@ import Core
 
 // swiftlint:disable line_length
 
+protocol __new__Owner {
+  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject>
+}
+
+protocol __init__Owner {
+  associatedtype Zelf: PyObject
+  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
+}
+
 protocol ArgsGetterOwner { func getArgs() -> PyObject }
 protocol ArgsSetterOwner { func setArgs(_ value: PyObject?) -> PyResult<()> }
 protocol FdelGetterOwner { func getFDel() -> PyObject }
@@ -72,7 +81,6 @@ protocol __name__GetterOwner { func getName() -> String }
 protocol __name__SetterOwner { func setName(_ value: PyObject?) -> PyResult<()> }
 protocol __ne__Owner { func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> }
 protocol __neg__Owner { func negative() -> PyObject }
-protocol __new__Owner { static func new(type: PyType, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
 protocol __or__Owner { func or(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __pos__Owner { func positive() -> PyObject }
 protocol __pow__Owner { func pow(_ other: PyObject) -> PyResultOrNot<PyObject> }

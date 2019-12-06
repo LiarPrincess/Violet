@@ -195,156 +195,24 @@ tuple
     __getnewargs__
     __iter__
 
-ArithmeticError
-  Unimplemented:
-    __init__
-
-AssertionError
-  Unimplemented:
-    __init__
-
-AttributeError
-  Unimplemented:
-    __init__
-
 BaseException
   Unimplemented:
-    __init__
     __setstate__
     with_traceback
 
-BlockingIOError
-  Unimplemented:
-    __init__
-
-BrokenPipeError
-  Unimplemented:
-    __init__
-
-BufferError
-  Unimplemented:
-    __init__
-
-BytesWarning
-  Unimplemented:
-    __init__
-
-ChildProcessError
-  Unimplemented:
-    __init__
-
-ConnectionAbortedError
-  Unimplemented:
-    __init__
-
-ConnectionError
-  Unimplemented:
-    __init__
-
-ConnectionRefusedError
-  Unimplemented:
-    __init__
-
-ConnectionResetError
-  Unimplemented:
-    __init__
-
-DeprecationWarning
-  Unimplemented:
-    __init__
-
-EOFError
-  Unimplemented:
-    __init__
-
-Exception
-  Unimplemented:
-    __init__
-
-FileExistsError
-  Unimplemented:
-    __init__
-
-FileNotFoundError
-  Unimplemented:
-    __init__
-
-FloatingPointError
-  Unimplemented:
-    __init__
-
-FutureWarning
-  Unimplemented:
-    __init__
-
-GeneratorExit
-  Unimplemented:
-    __init__
-
 ImportError
   Unimplemented:
-    __init__
     __str__
     msg
     name
     path
 
-ImportWarning
-  Unimplemented:
-    __init__
-
-IndentationError
-  Unimplemented:
-    __init__
-
-IndexError
-  Unimplemented:
-    __init__
-
-InterruptedError
-  Unimplemented:
-    __init__
-
-IsADirectoryError
-  Unimplemented:
-    __init__
-
 KeyError
   Unimplemented:
-    __init__
     __str__
-
-KeyboardInterrupt
-  Unimplemented:
-    __init__
-
-LookupError
-  Unimplemented:
-    __init__
-
-MemoryError
-  Unimplemented:
-    __init__
-
-ModuleNotFoundError
-  Unimplemented:
-    __init__
-
-NameError
-  Unimplemented:
-    __init__
-
-NotADirectoryError
-  Unimplemented:
-    __init__
-
-NotImplementedError
-  Unimplemented:
-    __init__
 
 OSError
   Unimplemented:
-    __init__
     __str__
     characters_written
     errno
@@ -352,54 +220,12 @@ OSError
     filename2
     strerror
 
-OverflowError
-  Unimplemented:
-    __init__
-
-PendingDeprecationWarning
-  Unimplemented:
-    __init__
-
-PermissionError
-  Unimplemented:
-    __init__
-
-ProcessLookupError
-  Unimplemented:
-    __init__
-
-RecursionError
-  Unimplemented:
-    __init__
-
-ReferenceError
-  Unimplemented:
-    __init__
-
-ResourceWarning
-  Unimplemented:
-    __init__
-
-RuntimeError
-  Unimplemented:
-    __init__
-
-RuntimeWarning
-  Unimplemented:
-    __init__
-
-StopAsyncIteration
-  Unimplemented:
-    __init__
-
 StopIteration
   Unimplemented:
-    __init__
     value
 
 SyntaxError
   Unimplemented:
-    __init__
     __str__
     filename
     lineno
@@ -408,38 +234,12 @@ SyntaxError
     print_file_and_line
     text
 
-SyntaxWarning
-  Unimplemented:
-    __init__
-
-SystemError
-  Unimplemented:
-    __init__
-
 SystemExit
   Unimplemented:
-    __init__
     code
-
-TabError
-  Unimplemented:
-    __init__
-
-TimeoutError
-  Unimplemented:
-    __init__
-
-TypeError
-  Unimplemented:
-    __init__
-
-UnboundLocalError
-  Unimplemented:
-    __init__
 
 UnicodeDecodeError
   Unimplemented:
-    __init__
     __str__
     encoding
     end
@@ -449,45 +249,19 @@ UnicodeDecodeError
 
 UnicodeEncodeError
   Unimplemented:
-    __init__
     __str__
     encoding
     end
     object
     reason
     start
-
-UnicodeError
-  Unimplemented:
-    __init__
 
 UnicodeTranslateError
   Unimplemented:
-    __init__
     __str__
     encoding
     end
     object
     reason
     start
-
-UnicodeWarning
-  Unimplemented:
-    __init__
-
-UserWarning
-  Unimplemented:
-    __init__
-
-ValueError
-  Unimplemented:
-    __init__
-
-Warning
-  Unimplemented:
-    __init__
-
-ZeroDivisionError
-  Unimplemented:
-    __init__
 

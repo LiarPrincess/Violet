@@ -144,6 +144,13 @@ public {final}class Py{name}: Py{base} {{
     let argsTuple = type.builtins.newTuple(args)
     return .value(Py{name}(type.context, args: argsTuple))
   }}
+
+  // sourcery: pymethod = __init__
+  internal class func pyInit(zelf: Py{name},
+                             args: [PyObject],
+                             kwargs: PyDictData?) -> PyResult<PyNone> {{
+    return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
+  }}
 }}
 ''')
 

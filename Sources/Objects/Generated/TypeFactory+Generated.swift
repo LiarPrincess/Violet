@@ -841,6 +841,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyArithmeticError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyArithmeticError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -859,6 +860,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyAssertionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyAssertionError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -877,6 +879,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyAttributeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyAttributeError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -901,6 +904,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBaseException.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyBaseException.pyInit(zelf:args:kwargs:))
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyBaseException.repr, castSelf: selfAsPyBaseException)
     dict["__str__"] = wrapMethod(context, name: "__str__", doc: nil, fn: PyBaseException.str, castSelf: selfAsPyBaseException)
@@ -924,6 +928,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBlockingIOError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyBlockingIOError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -942,6 +947,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBrokenPipeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyBrokenPipeError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -960,6 +966,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBufferError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyBufferError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -978,6 +985,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyBytesWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyBytesWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -996,6 +1004,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyChildProcessError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyChildProcessError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1014,6 +1023,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyConnectionAbortedError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyConnectionAbortedError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1032,6 +1042,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyConnectionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyConnectionError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1050,6 +1061,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyConnectionRefusedError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyConnectionRefusedError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1068,6 +1080,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyConnectionResetError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyConnectionResetError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1086,6 +1099,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyDeprecationWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyDeprecationWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1104,6 +1118,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyEOFError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyEOFError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1122,6 +1137,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyException.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyException.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1140,6 +1156,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyFileExistsError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyFileExistsError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1158,6 +1175,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyFileNotFoundError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyFileNotFoundError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1176,6 +1194,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyFloatingPointError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyFloatingPointError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1194,6 +1213,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyFutureWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyFutureWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1212,6 +1232,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyGeneratorExit.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyGeneratorExit.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1230,6 +1251,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyImportError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyImportError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1248,6 +1270,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyImportWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyImportWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1266,6 +1289,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyIndentationError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyIndentationError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1284,6 +1308,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyIndexError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyIndexError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1302,6 +1327,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyInterruptedError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyInterruptedError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1320,6 +1346,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyIsADirectoryError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyIsADirectoryError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1338,6 +1365,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyKeyError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyKeyError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1356,6 +1384,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyKeyboardInterrupt.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyKeyboardInterrupt.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1374,6 +1403,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyLookupError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyLookupError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1392,6 +1422,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyMemoryError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyMemoryError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1410,6 +1441,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyModuleNotFoundError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyModuleNotFoundError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1428,6 +1460,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyNameError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyNameError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1446,6 +1479,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyNotADirectoryError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyNotADirectoryError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1464,6 +1498,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyNotImplementedError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyNotImplementedError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1482,6 +1517,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyOSError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyOSError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1500,6 +1536,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyOverflowError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyOverflowError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1518,6 +1555,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyPendingDeprecationWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyPendingDeprecationWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1536,6 +1574,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyPermissionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyPermissionError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1554,6 +1593,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyProcessLookupError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyProcessLookupError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1572,6 +1612,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyRecursionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyRecursionError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1590,6 +1631,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyReferenceError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyReferenceError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1608,6 +1650,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyResourceWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyResourceWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1626,6 +1669,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyRuntimeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyRuntimeError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1644,6 +1688,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyRuntimeWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyRuntimeWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1662,6 +1707,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyStopAsyncIteration.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyStopAsyncIteration.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1680,6 +1726,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyStopIteration.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyStopIteration.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1698,6 +1745,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PySyntaxError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PySyntaxError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1716,6 +1764,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PySyntaxWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PySyntaxWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1734,6 +1783,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PySystemError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PySystemError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1752,6 +1802,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PySystemExit.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PySystemExit.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1770,6 +1821,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyTabError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyTabError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1788,6 +1840,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyTimeoutError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyTimeoutError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1806,6 +1859,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyTypeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyTypeError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1824,6 +1878,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnboundLocalError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyUnboundLocalError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1842,6 +1897,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeDecodeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyUnicodeDecodeError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1860,6 +1916,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeEncodeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyUnicodeEncodeError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1878,6 +1935,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyUnicodeError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1896,6 +1954,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeTranslateError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyUnicodeTranslateError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1914,6 +1973,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUnicodeWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyUnicodeWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1932,6 +1992,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyUserWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyUserWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1950,6 +2011,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyValueError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyValueError.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1968,6 +2030,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyWarning.pyInit(zelf:args:kwargs:))
 
     return result
   }
@@ -1986,6 +2049,7 @@ extension TypeFactory {
 
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyZeroDivisionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyZeroDivisionError.pyInit(zelf:args:kwargs:))
 
     return result
   }

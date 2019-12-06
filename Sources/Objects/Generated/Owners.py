@@ -100,9 +100,12 @@ def print_protocols():
     elif line.operation == 'func' or line.operation == 'static_func':
       static = 'static ' if line.operation == 'static_func' else ''
 
-      # Special case for 'str' methods with 'start' and 'end' args
-      # We will also have version without range.
-      if is_ranged_function(signature):
+      if python_name == '__init__' or python_name == '__new__':
+        # We will add this one manually.
+        pass
+      elif is_ranged_function(signature):
+        # Special case for 'str' methods with 'start' and 'end' args
+        # We will also have version without range.
         protocol_name = func_protocol_name(python_name)
         signature_no_range = signature.replace(', start: PyObject?, end: PyObject?', '')
         protocols.add(f'protocol {protocol_name} {{ {static}func {signature_no_range} }}')
@@ -116,30 +119,40 @@ def print_protocols():
     else:
       assert False
 
-  # Add additional protocols (none of the builtin types implement them)
-  protocols.add(f'protocol __matmul__Owner {{ func matmul(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __rmatmul__Owner {{ func rmatmul(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
+  # Additional protocols (none of the builtin types implement them)
+  protocols.add('protocol __matmul__Owner { func matmul(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __rmatmul__Owner { func rmatmul(_ other: PyObject) -> PyResultOrNot<PyObject> }')
 
-  protocols.add(f'protocol __iadd__Owner {{ func iadd(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __isub__Owner {{ func isub(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __imul__Owner {{ func imul(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __imatmul__Owner {{ func imatmul(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __itruediv__Owner {{ func itruediv(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __ifloordiv__Owner {{ func ifloordiv(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __imod__Owner {{ func imod(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __idivmod__Owner {{ func idivmod(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __ipow__Owner {{ func ipow(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __ilshift__Owner {{ func ilshift(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __irshift__Owner {{ func irshift(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __iand__Owner {{ func iand(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __ixor__Owner {{ func ixor(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __ior__Owner {{ func ior(_ other: PyObject) -> PyResultOrNot<PyObject> }}')
-  protocols.add(f'protocol __complex__Owner {{ func asComplex() -> PyResult<PyComplex> }}')
+  protocols.add('protocol __iadd__Owner { func iadd(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __isub__Owner { func isub(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __imul__Owner { func imul(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __imatmul__Owner { func imatmul(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __itruediv__Owner { func itruediv(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __ifloordiv__Owner { func ifloordiv(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __imod__Owner { func imod(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __idivmod__Owner { func idivmod(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __ipow__Owner { func ipow(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __ilshift__Owner { func ilshift(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __irshift__Owner { func irshift(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __iand__Owner { func iand(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __ixor__Owner { func ixor(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __ior__Owner { func ior(_ other: PyObject) -> PyResultOrNot<PyObject> }')
+  protocols.add('protocol __complex__Owner { func asComplex() -> PyResult<PyComplex> }')
 
+  # We will manually create '__new__Owner' and '__init__Owner'
   print('''\
 import Core
 
 // swiftlint:disable line_length
+
+protocol __new__Owner {
+  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject>
+}
+
+protocol __init__Owner {
+  associatedtype Zelf: PyObject
+  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
+}
 ''')
 
   for line in sorted(protocols):

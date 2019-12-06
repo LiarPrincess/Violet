@@ -608,7 +608,8 @@ extension PyBaseException:
   __getattribute__Owner,
   __setattr__Owner,
   __delattr__Owner,
-  __new__Owner
+  __new__Owner,
+  __init__Owner
 { }
 
 // MARK: - BlockingIOError
