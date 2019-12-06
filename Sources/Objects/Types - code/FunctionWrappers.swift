@@ -1,5 +1,7 @@
 import Core
 
+// swiftlint:disable file_length
+
 // MARK: - Function wrapper
 
 internal protocol FunctionWrapper {
@@ -36,6 +38,57 @@ internal struct NewFunctionWrapper: FunctionWrapper {
 
     let argsWithoutType = Array(args.dropFirst())
     return self.fn(type, argsWithoutType, kwargs).asResultOrNot
+  }
+}
+
+// MARK: - Init
+
+internal typealias InitFunction<Zelf: PyObject> =
+  (Zelf, [PyObject], PyDictData?) -> PyResult<PyNone>
+
+internal struct InitFunctionWrapper: FunctionWrapper {
+
+  internal let typeName: String
+  internal let fn: InitFunction<PyObject>
+
+  internal var name: String {
+    return self.typeName + ".__init__"
+  }
+
+  internal init<Zelf: PyObject>(typeName: String,
+                                fn: @escaping InitFunction<Zelf>) {
+    self.typeName = typeName
+    self.fn = InitFunctionWrapper.downcastZelf(typeName: typeName, fn: fn)
+  }
+
+  private static func downcastZelf<Zelf: PyObject>(
+    typeName: String,
+    fn: @escaping InitFunction<Zelf>) -> InitFunction<PyObject> {
+
+    return { (object: PyObject, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> in
+      guard let zelf = object as? Zelf else {
+        return .typeError("'__init__' requires a '\(typeName)' object " +
+          "but received a '\(object.type)'")
+      }
+
+      return fn(zelf, args, kwargs)
+    }
+  }
+
+  internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
+    guard args.any else {
+      return .typeError("\(self.name)(): not enough arguments")
+    }
+
+    let arg0 = args[0]
+    guard let type = arg0 as? PyType else {
+      return .typeError("\(self.name)(X): X is not a type object (\(arg0))")
+    }
+
+    let argsWithoutType = Array(args.dropFirst())
+    return self.fn(type, argsWithoutType, kwargs)
+      .map { $0 as PyObject }
+      .asResultOrNot
   }
 }
 

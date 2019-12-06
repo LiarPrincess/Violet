@@ -40,6 +40,21 @@ extension TypeFactory {
     )
   }
 
+  // MARK: - Init
+
+  internal static func wrapInit<Zelf: PyObject>(
+    _ context: PyContext,
+    typeName: String,
+    doc: String?,
+    fn: @escaping InitFunction<Zelf>) -> PyBuiltinFunction {
+
+    return PyBuiltinFunction(
+      context,
+      doc: doc,
+      fn: InitFunctionWrapper(typeName: typeName, fn: fn)
+    )
+  }
+
   // MARK: - Unary
 
   internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
