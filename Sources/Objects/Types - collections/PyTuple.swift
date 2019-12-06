@@ -228,7 +228,7 @@ public class PyTuple: PyObject {
     }
 
 //    let iterable = args[0]
-    // TODO: tuple_new_impl(PyTypeObject *type, PyObject *iterable)
+    // TODO: interables - tuple_new_impl(PyTypeObject *type, PyObject *iterable)
 //    let isBuiltin = type === type.builtins.list
 //    let alloca = isBuiltin ?
 //      PyList.init(type:data:) :

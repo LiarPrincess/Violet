@@ -178,4 +178,19 @@ internal enum PyBaseObject {
     let result = PyObject(type: type)
     return .value(result)
   }
+
+  // MARK: - Python init
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PyObject,
+                              args: [PyObject],
+                              kwargs: PyDictData?) -> PyResult<PyNone> {
+    let noKwargs = kwargs?.isEmpty ?? true
+    guard args.isEmpty && noKwargs else {
+      return .typeError("\(zelf.typeName).__init__() takes exactly one argument " +
+      "(the instance to initialize)")
+    }
+
+    return .value(zelf.builtins.none)
+  }
 }
