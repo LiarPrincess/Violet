@@ -19,7 +19,7 @@
 {% endmacro %}
 
 {% macro fillDict type %}
-  {% set castSelf %}selfAs{{ type.name }}{% endset %}
+  {% set castSelf %}Cast.as{{ type.name }}{% endset %}
 
     let dict = result.getDict()
   {% for prop in type.instanceMethods|annotated:"pyproperty" %}

@@ -8,7 +8,7 @@ import Core
 // swiftlint:disable file_length
 
 // sourcery: pytype = int, default, baseType, longSubclass
-/// All integers are implemented as “long” integer objects of arbitrary size.
+/// All integers are implemented as “long” integer objects.
 public class PyInt: PyObject {
 
   internal class var doc: String { return """

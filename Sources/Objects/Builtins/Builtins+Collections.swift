@@ -29,15 +29,15 @@ extension Builtins {
   }
 
   /// PyObject * PyList_AsTuple(PyObject *v)
-  public func newTuple(list: PyObject) -> PyTuple {
-    let list = TypeFactory.selfAsPyList(list)
-    return list.isEmpty ?
-      self.emptyTuple :
-      PyTuple(self.context, data: list.data)
+  public func newTuple(list object: PyObject) -> PyResult<PyTuple> {
+    return self.cast(object, as: PyList.self, typeName: "list")
+      .map { self.newTuple($0.data) }
   }
 
   internal func newTuple(_ data: PySequenceData) -> PyTuple {
-    return PyTuple(self.context, data: data)
+    return data.isEmpty ?
+      self.emptyTuple :
+      PyTuple(self.context, data: data)
   }
 
   // MARK: - List
@@ -57,9 +57,9 @@ extension Builtins {
   }
 
   /// int PyList_Append(PyObject *op, PyObject *newitem)
-  public func add(list: PyObject, element: PyObject) -> PyResult<()> {
-    let list = TypeFactory.selfAsPyList(list)
-    return list.append(element).map { _ in () }
+  public func add(list object: PyObject, element: PyObject) -> PyResult<PyNone> {
+    return self.cast(object, as: PyList.self, typeName: "list")
+      .flatMap { $0.append(element) }
   }
 
   /// PyObject * _PyList_Extend(PyListObject *self, PyObject *iterable)
@@ -84,9 +84,9 @@ extension Builtins {
   }
 
   /// int PySet_Add(PyObject *anyset, PyObject *key)
-  public func add(set: PyObject, value: PyObject) -> PyResult<()> {
-    let set = TypeFactory.selfAsPySet(set)
-    return set.add(value).map { _ in () }
+  public func add(set object: PyObject, value: PyObject) -> PyResult<PyNone> {
+    return self.cast(object, as: PySet.self, typeName: "set")
+      .flatMap { $0.add(value) }
   }
 
   /// int _PySet_Update(PyObject *set, PyObject *iterable)
@@ -118,15 +118,19 @@ extension Builtins {
     return PyDict(context, data: data ?? PyDictData())
   }
 
-  public func newDict(keyTuple: PyObject,
+  public func newDict(keyTuple keyObject: PyObject,
                       elements: [PyObject]) -> PyResult<PyDict> {
-    var data = PyDictData()
-    let keyTuple = TypeFactory.selfAsPyTuple(keyTuple)
+    let keyTuple: PyTuple
+    switch self.cast(keyObject, as: PyTuple.self, typeName: "tuple") {
+    case let .value(r): keyTuple = r
+    case let .error(e): return .error(e)
+    }
 
     guard keyTuple.elements.count == elements.count else {
       return .valueError("bad 'dictionary(keyTuple:elements:)' keys argument")
     }
 
+    var data = PyDictData()
     for (keyObject, value) in Swift.zip(keyTuple.elements, elements) {
       switch self.hash(keyObject) {
       case let .value(hash):
@@ -143,9 +147,11 @@ extension Builtins {
     return .value(PyDict(self.context, data: data))
   }
 
-  public func add(dict: PyObject, key: PyObject, value: PyObject) -> PyResult<()> {
-    let dict = TypeFactory.selfAsPyDict(dict)
-    return dict.setItem(at: key, to: value).map { _ in () }
+  public func add(dict object: PyObject,
+                  key: PyObject,
+                  value: PyObject) -> PyResult<PyNone> {
+    return self.cast(object, as: PyDict.self, typeName: "dict")
+      .flatMap { $0.setItem(at: key, to: value) }
   }
 
   // MARK: - Range
@@ -202,12 +208,23 @@ extension Builtins {
   /// PySequence_Contains(PyObject *seq, PyObject *ob)
   public func contains(_ collection: PyObject,
                        element: PyObject) -> PyResult<Bool> {
-
-    if let containsOwner = collection as? __contains__Owner {
-      return containsOwner.contains(element)
+    if let owner = collection as? __contains__Owner {
+      return owner.contains(element)
     }
 
     // TODO: 1. Try to use 'user contains', 2. _PySequence_IterSearch
     return .value(false)
+  }
+
+  // MARK: - Helpers
+
+  private func cast<T>(_ object: PyObject,
+                       as type: T.Type,
+                       typeName: String) -> PyResult<T> {
+    if let v = object as? T {
+      return .value(v)
+    }
+
+    return .typeError("expected \(typeName), but received a '\(object.typeName)'")
   }
 }

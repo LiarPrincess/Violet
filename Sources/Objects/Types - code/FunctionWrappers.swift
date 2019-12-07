@@ -67,7 +67,8 @@ internal struct InitFunctionWrapper: FunctionWrapper {
 
     return { (object: PyObject, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> in
       guard let zelf = object as? Zelf else {
-        return .typeError("'__init__' requires a '\(typeName)' object " +
+        return .typeError(
+          "descriptor '__init__' requires a '\(typeName)' object " +
           "but received a '\(object.type)'")
       }
 

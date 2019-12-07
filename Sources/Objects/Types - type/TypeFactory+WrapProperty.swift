@@ -9,7 +9,7 @@ extension TypeFactory {
     name: String,
     doc: String?,
     get: @escaping (Zelf) -> () -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyProperty {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyProperty {
 
     return PyProperty(
       context,
@@ -26,7 +26,7 @@ extension TypeFactory {
     doc: String?,
     get: @escaping (Zelf) -> () -> R,
     set: @escaping (Zelf) -> (PyObject) -> PyResult<()>,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyProperty {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyProperty {
 
     return PyProperty(
       context,
@@ -39,7 +39,7 @@ extension TypeFactory {
   private static func wrapGetter<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     get: @escaping (Zelf) -> () -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return wrapMethod(
       context,
@@ -53,16 +53,17 @@ extension TypeFactory {
   private static func wrapSetter<Zelf>(
     _ context: PyContext,
     set: @escaping (Zelf) -> (PyObject) -> PyResult<()>,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
+    let name = "__set__"
     return wrapMethod(
       context,
-      name: "__set__",
+      name: name,
       doc: nil,
       fn: { arg0, arg1 -> PyResult<PyObject> in
-        let zelf = castSelf(arg0)
-        let result = set(zelf)(arg1)
-        return result.map { _ in arg0.builtins.none }
+        castSelf(arg0, name)
+          .map { set($0)(arg1) }
+          .map { _ in arg0.builtins.none }
       }
     )
   }

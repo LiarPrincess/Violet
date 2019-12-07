@@ -1,5 +1,7 @@
 import Core
 
+// swiftlint:disable file_length
+
 // Why do we need so many overloads?
 // For example for ternary methods (self + 2 args) we have:
 // - TernaryFunction = (PyObject, PyObject, PyObject) -> FunctionResult
@@ -62,13 +64,13 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: UnaryFunctionWrapper(name: name) { arg0 in
-        fn(castSelf(arg0)).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name).map(fn).toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -78,13 +80,13 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> () -> R, // Read-only property disquised as method
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: UnaryFunctionWrapper(name: name) { arg0 in
-        fn(castSelf(arg0))().toFunctionResult(in: arg0.context)
+        castSelf(arg0, name).map { fn($0)() }.toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -112,13 +114,15 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: BinaryFunctionWrapper(name: name) { arg0, arg1 in
-        fn(castSelf(arg0))(arg1).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name)
+          .map { fn($0)(arg1) }
+          .toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -146,13 +150,15 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject?) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: BinaryFunctionOptWrapper(name: name) { arg0, arg1 in
-        fn(castSelf(arg0))(arg1).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name)
+          .map { fn($0)(arg1) }
+          .toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -164,13 +170,15 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: TernaryFunctionWrapper(name: name) { arg0, arg1, arg2 in
-        fn(castSelf(arg0))(arg1, arg2).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name)
+          .map { fn($0)(arg1, arg2) }
+          .toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -198,13 +206,15 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject?) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: TernaryFunctionOptWrapper(name: name) { arg0, arg1, arg2 in
-        fn(castSelf(arg0))(arg1, arg2).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name)
+          .map { fn($0)(arg1, arg2) }
+          .toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -216,13 +226,15 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject?, PyObject?) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: TernaryFunctionOptOptWrapper(name: name) { arg0, arg1, arg2 in
-        fn(castSelf(arg0))(arg1, arg2).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name)
+          .map { fn($0)(arg1, arg2) }
+          .toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -234,13 +246,15 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject, PyObject) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: QuartaryFunctionWrapper(name: name) { arg0, arg1, arg2, arg3 in
-        fn(castSelf(arg0))(arg1, arg2, arg3).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name)
+          .map { fn($0)(arg1, arg2, arg3) }
+          .toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -252,13 +266,15 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject, PyObject?) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: QuartaryFunctionOptWrapper(name: name) { arg0, arg1, arg2, arg3 in
-        fn(castSelf(arg0))(arg1, arg2, arg3).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name)
+          .map { fn($0)(arg1, arg2, arg3) }
+          .toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -270,13 +286,15 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject?, PyObject?) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: QuartaryFunctionOptOptWrapper(name: name) { arg0, arg1, arg2, arg3 in
-        fn(castSelf(arg0))(arg1, arg2, arg3).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name)
+          .map { fn($0)(arg1, arg2, arg3) }
+          .toFunctionResult(in: arg0.context)
       }
     )
   }
@@ -288,13 +306,15 @@ extension TypeFactory {
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject?, PyObject?, PyObject?) -> R,
-    castSelf: @escaping (PyObject) -> Zelf) -> PyBuiltinFunction {
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
       context,
       doc: doc,
       fn: QuartaryFunctionOptOptOptWrapper(name: name) { arg0, arg1, arg2, arg3 in
-        fn(castSelf(arg0))(arg1, arg2, arg3).toFunctionResult(in: arg0.context)
+        castSelf(arg0, name)
+          .map { fn($0)(arg1, arg2, arg3) }
+          .toFunctionResult(in: arg0.context)
       }
     )
   }

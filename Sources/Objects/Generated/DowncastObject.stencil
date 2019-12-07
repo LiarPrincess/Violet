@@ -1,0 +1,50 @@
+// swiftlint:disable:previous vertical_whitespace
+// swiftlint:disable vertical_whitespace
+// swiftlint:disable line_length
+// swiftlint:disable file_length
+
+// Basically:
+// We hold 'PyObjects' on stack.
+// We need to call Swift method that needs specific 'self' type.
+// This file is responsible for downcasting 'PyObject' -> that specific Swift type.
+
+private func cast<T>(_ object: PyObject,
+                     as type: T.Type,
+                     typeName: String,
+                     methodName: String) -> PyResult<T> {
+  if let v = object as? T {
+    return .value(v)
+  }
+
+  return .typeError(
+    "descriptor '\(methodName)' requires a '\(typeName)' object " +
+    "but received a '\(object.typeName)'"
+  )
+}
+
+{% macro printCast pyType typeName %}
+  internal static func as{{ pyType }}(_ object: PyObject, methodName: String) -> PyResult<{{ pyType }}> {
+    return cast(object, as: {{ pyType }}.self, typeName: "{{ typeName }}", methodName: methodName)
+  }
+{% endmacro %}
+
+internal enum Cast {
+{% for type in types.classes where type.name == "PyType" %}
+
+  // MARK: - Type type
+
+  {% call printCast type.name "type" %}
+{% endfor %}
+{% for type in types.classes|annotated:"pytype" %}
+
+  // MARK: - {{ type.name|replace:"Py","" }}
+
+  {% call printCast type.name type.annotations.pytype %}
+{% endfor %}
+{% for type in types.classes|annotated:"pyerrortype" %}
+
+  // MARK: - {{ type.name|replace:"Py","" }}
+
+  {% call printCast type.name type.annotations.pyerrortype %}
+{% endfor %}
+}

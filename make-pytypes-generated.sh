@@ -6,6 +6,12 @@ sourcery \
   --templates $GENERATED/TypeFactory+Generated.stencil \
   --output $GENERATED/TypeFactory+Generated.swift
 
+# Casts
+sourcery \
+  --sources ./Sources/Objects \
+  --templates $GENERATED/DowncastObject.stencil \
+  --output $GENERATED/DowncastObject.swift
+
 # Heap types
 sourcery \
   --sources ./Sources/Objects \
