@@ -222,17 +222,10 @@ internal struct ArgumentParser {
                       kwargs: PyDictData?) -> PyResult<[PyObject]> {
     // We do not expect large kwargs dictionaries,
     // so the allocation should be minimal.
-    var kwargsDict = [String:PyObject]()
-
-    if let kwargs = kwargs {
-      for entry in kwargs {
-        switch entry.key.object as? PyString {
-        case let .some(keyString):
-          kwargsDict[keyString.value] = entry.value
-        case .none:
-          return .typeError("keywords must be strings")
-        }
-      }
+    var kwargsDict: [String:PyObject]
+    switch ArgumentParser.guaranteeStringKeywords(kwargs: kwargs) {
+    case let .value(r): kwargsDict = r
+    case let .error(e): return .error(e)
     }
 
     return self.parse(args: args, kwargs: kwargsDict)
@@ -446,6 +439,40 @@ internal struct ArgumentParser {
     }
 
     return .typeError("\(fnName) takes no keyword arguments")
+  }
+
+  // MARK: - String keywords
+
+  /// int
+  /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
+  internal static func guaranteeStringKeywords(kwargs: PyDictData?)
+    -> PyResult<[String:PyObject]> {
+
+    switch kwargs {
+    case .some(let kwargs):
+      return ArgumentParser.guaranteeStringKeywords(kwargs: kwargs)
+    case .none:
+      return .value([:])
+    }
+  }
+
+  /// int
+  /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
+  internal static func guaranteeStringKeywords(kwargs: PyDictData)
+    -> PyResult<[String:PyObject]> {
+
+    var result = [String:PyObject]()
+
+    for entry in kwargs {
+      switch entry.key.object as? PyString {
+      case let .some(keyString):
+        result[keyString.value] = entry.value
+      case .none:
+        return .typeError("keywords must be strings")
+      }
+    }
+
+    return .value(result)
   }
 
   // MARK: - Dump

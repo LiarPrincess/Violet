@@ -105,4 +105,28 @@ public class PyNamespace: PyObject {
   internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
   }
+
+  // MARK: - Python init
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PyNamespace,
+                              args: [PyObject],
+                              kwargs: PyDictData?) -> PyResult<PyNone> {
+    guard args.isEmpty else {
+      return .typeError("no positional arguments expected")
+    }
+
+    guard let kwargs = kwargs else {
+      return .value(zelf.builtins.none)
+    }
+
+    let kwargsDict: [String:PyObject]
+    switch ArgumentParser.guaranteeStringKeywords(kwargs: kwargs) {
+    case let .value(r): kwargsDict = r
+    case let .error(e): return .error(e)
+    }
+
+    zelf.attributes.update(values: kwargsDict)
+    return .value(zelf.builtins.none)
+  }
 }
