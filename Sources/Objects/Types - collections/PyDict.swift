@@ -36,7 +36,7 @@ public class PyDict: PyObject {
     super.init(type: context.builtins.types.dict)
   }
 
-  /// Use in `__new__`!
+  /// Use only in `__new__`!
   internal init(type: PyType, data: PyDictData) {
     self.data = data
     super.init(type: type)

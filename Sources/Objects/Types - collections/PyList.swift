@@ -36,7 +36,7 @@ public class PyList: PyObject {
     super.init(type: context.builtins.types.list)
   }
 
-  /// Use in `__new__`!
+  /// Use only in `__new__`!
   internal init(type: PyType, data: PySequenceData) {
     self.data = data
     super.init(type: type)

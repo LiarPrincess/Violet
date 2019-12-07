@@ -60,7 +60,7 @@ public class PyProperty: PyObject {
     super.init(type: context.builtins.types.property)
   }
 
-  /// Use in `__new__`!
+  /// Use only in `__new__`!
   internal override init(type: PyType) {
     self.getter = nil
     self.setter = nil

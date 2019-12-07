@@ -33,8 +33,8 @@ public class PyModule: PyObject {
     self.attributes["__spec__"] = context.builtins.none
   }
 
-  /// Use in `__new__`!
-  internal override init(type: PyType) {
+  /// Use only in `__new__`!
+  override internal init(type: PyType) {
     super.init(type: type)
   }
 
@@ -124,5 +124,34 @@ public class PyModule: PyObject {
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
     return .value(PyModule(type: type))
+  }
+
+  // MARK: - Python init
+
+  private static let initArgumentsParser = ArgumentParser.createOrFatal(
+    arguments: ["name", "doc"],
+    format: "U|O:module"
+  )
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PyModule,
+                              args: [PyObject],
+                              kwargs: PyDictData?) -> PyResult<PyNone> {
+    switch PyModule.initArgumentsParser.parse(args: args, kwargs: kwargs) {
+    case let .value(bind):
+      assert(1 <= bind.count && bind.count <= 2, "Invalid argument count returned from parser.")
+      let name = bind[0]
+      let doc = bind.count >= 2 ? bind[1] : zelf.builtins.none
+
+      zelf.attributes.set(key: "___name__", to: name)
+      zelf.attributes.set(key: "___doc__", to: doc)
+      zelf.attributes.set(key: "___package__", to: zelf.builtins.none)
+      zelf.attributes.set(key: "___loader__", to: zelf.builtins.none)
+      zelf.attributes.set(key: "___spec__", to: zelf.builtins.none)
+      return .value(zelf.builtins.none)
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 }

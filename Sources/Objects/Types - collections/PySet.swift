@@ -32,7 +32,7 @@ public class PySet: PyObject, PySetType {
     super.init(type: context.builtins.types.set)
   }
 
-  /// Use in `__new__`!
+  /// Use only in `__new__`!
   internal init(type: PyType, data: PySetData) {
     self.data = data
     super.init(type: type)
