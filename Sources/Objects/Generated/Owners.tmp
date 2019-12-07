@@ -322,6 +322,7 @@ PyModule|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?
 PyModule|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
 PyModule|PyObject|func|__dir__|dir() -> DirResult
 PyModule|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
+PyModule|PyObject|static_func|__init__|pyInit(zelf: PyModule,                              args: [PyObject],                              kwargs: PyDictData?) -> PyResult<PyNone>
 PyNamespace|PyObject|get|__dict__|getDict() -> Attributes
 
 PyNamespace|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -334,6 +335,7 @@ PyNamespace|PyObject|func|__repr__|repr() -> PyResult<String>
 PyNamespace|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyNamespace|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyNamespace|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
+PyNamespace|PyObject|static_func|__init__|pyInit(zelf: PyNamespace,                              args: [PyObject],                              kwargs: PyDictData?) -> PyResult<PyNone>
 PyNone|PyObject|get|__class__|getClass() -> PyType
 
 PyNone|PyObject|func|__repr__|repr() -> PyResult<String>
@@ -353,6 +355,7 @@ PyProperty|PyObject|func|__get__|get(object: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__set__|set(object: PyObject, value: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__delete__|del(object: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
+PyProperty|PyObject|static_func|__init__|pyInit(zelf: PyProperty,                              args: [PyObject],                              kwargs: PyDictData?) -> PyResult<PyNone>
 PyRange|PyObject|get|__class__|getClass() -> PyType
 
 PyRange|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

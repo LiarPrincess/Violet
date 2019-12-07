@@ -122,20 +122,8 @@ method
     __new__ - <class 'builtin_function_or_method'>
     __call__
 
-module
-  Unimplemented:
-    __init__
-
-SimpleNamespace
-  Unimplemented:
-    __class__ - <class 'type'>
-    __hash__ - <class 'NoneType'>
-    __new__ - <class 'builtin_function_or_method'>
-    __init__
-
 property
   Unimplemented:
-    __init__
     __isabstractmethod__
     deleter
     getter

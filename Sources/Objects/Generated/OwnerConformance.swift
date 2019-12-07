@@ -358,7 +358,8 @@ extension PyModule:
   __setattr__Owner,
   __delattr__Owner,
   __dir__Owner,
-  __new__Owner
+  __new__Owner,
+  __init__Owner
 { }
 
 // MARK: - Namespace
@@ -374,7 +375,8 @@ extension PyNamespace:
   __repr__Owner,
   __getattribute__Owner,
   __setattr__Owner,
-  __delattr__Owner
+  __delattr__Owner,
+  __init__Owner
 { }
 
 // MARK: - None
@@ -405,7 +407,8 @@ extension PyProperty:
   __get__Owner,
   __set__Owner,
   __delete__Owner,
-  __new__Owner
+  __new__Owner,
+  __init__Owner
 { }
 
 // MARK: - Range

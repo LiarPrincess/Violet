@@ -341,6 +341,7 @@ types = {
     '__delattr__',
     '__dir__',
     '__new__',
+    '__init__',
   ],
   t.SimpleNamespace: [
     '__dict__',
@@ -354,6 +355,7 @@ types = {
     '__getattribute__',
     '__setattr__',
     '__delattr__',
+    '__init__',
   ],
   type(None): [
     '__class__',
@@ -376,6 +378,7 @@ types = {
     '__set__',
     '__delete__',
     '__new__',
+    '__init__',
   ],
   range: [
     '__class__',

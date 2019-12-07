@@ -528,6 +528,7 @@ extension TypeFactory {
     dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyModule.getClass, castSelf: selfAsPyModule)
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyModule.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyModule.pyInit(zelf:args:kwargs:))
 
 
     dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyModule.repr, castSelf: selfAsPyModule)
@@ -549,6 +550,7 @@ extension TypeFactory {
     let dict = result.getDict()
     dict["__dict__"] = createProperty(context, name: "__dict__", doc: nil, get: PyNamespace.getDict, castSelf: selfAsPyNamespace)
 
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyNamespace.pyInit(zelf:args:kwargs:))
 
 
     dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyNamespace.isEqual(_:), castSelf: selfAsPyNamespace)
@@ -612,6 +614,7 @@ extension TypeFactory {
     dict["fdel"] = createProperty(context, name: "fdel", doc: nil, get: PyProperty.getFDel, castSelf: selfAsPyProperty)
 
     dict["__new__"] = wrapNew(context, typeName: "__new__", doc: nil, fn: PyProperty.pyNew(type:args:kwargs:))
+    dict["__init__"] = wrapInit(context, typeName: "__init__", doc: nil, fn: PyProperty.pyInit(zelf:args:kwargs:))
 
 
     dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyProperty.getAttribute(name:), castSelf: selfAsPyProperty)
