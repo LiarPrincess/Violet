@@ -43,10 +43,10 @@ public class PyProperty: PyObject {
             del self._x
     """
 
-  internal let getter: PyObject?
-  internal let setter: PyObject?
-  internal let deleter: PyObject?
-  internal let doc: PyObject?
+  internal private(set) var getter: PyObject?
+  internal private(set) var setter: PyObject?
+  internal private(set) var deleter: PyObject?
+  internal private(set) var doc: PyObject?
 
   internal init(_ context: PyContext,
                 getter: PyObject?,
@@ -61,7 +61,7 @@ public class PyProperty: PyObject {
   }
 
   /// Use only in `__new__`!
-  internal override init(type: PyType) {
+  override internal init(type: PyType) {
     self.getter = nil
     self.setter = nil
     self.deleter = nil
@@ -142,5 +142,34 @@ public class PyProperty: PyObject {
     let isBuiltin = type === type.builtins.property
     let alloca = isBuiltin ? PyProperty.init(type:) : PyPropertyHeap.init(type:)
     return .value(alloca(type))
+  }
+
+  // MARK: - Python init
+
+  private static let initArgumentsParser = ArgumentParser.createOrFatal(
+    arguments: ["fget", "fset", "fdel", "doc"],
+    format: "|OOOO:property"
+  )
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PyProperty,
+                              args: [PyObject],
+                              kwargs: PyDictData?) -> PyResult<PyNone> {
+    switch PyProperty.initArgumentsParser.parse(args: args, kwargs: kwargs) {
+    case let .value(bind):
+      assert(bind.count <= 4, "Invalid argument count returned from parser.")
+      zelf.getter = bind.count >= 1 ? PyProperty.nilIfNone(bind[0]) : nil
+      zelf.setter = bind.count >= 2 ? PyProperty.nilIfNone(bind[1]) : nil
+      zelf.deleter = bind.count >= 3 ? PyProperty.nilIfNone(bind[2]) : nil
+      zelf.doc = bind.count >= 4 ? bind[3] : nil
+      return .value(zelf.builtins.none)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private static func nilIfNone(_ value: PyObject) -> PyObject? {
+    return value is PyNone ? nil : value
   }
 }
