@@ -7,6 +7,10 @@ import Core
 /// Used in `PyTuple` and `PyList`.
 internal struct PySequenceData {
 
+  internal typealias Elements = Array<PyObject>
+  internal typealias Index = Elements.Index
+  internal typealias SubSequence = Elements.SubSequence
+
   internal private(set) var elements: [PyObject]
 
   internal init() {
@@ -256,8 +260,17 @@ internal struct PySequenceData {
 
   // MARK: - Get index
 
-  internal func index(of element: PyObject, typeName: String) -> PyResult<Int> {
-    for (index, e) in self.elements.enumerated() {
+  internal func index(of element: PyObject,
+                      start: PyObject?,
+                      end: PyObject?,
+                      typeName: String) -> PyResult<Int> {
+    let subsequence: SubSequence
+    switch self.getSubsequence(start: start, end: end) {
+    case let .value(s): subsequence = s
+    case let .error(e): return .error(e)
+    }
+
+    for (index, e) in subsequence.enumerated() {
       switch e.builtins.isEqualBool(left: e, right: element) {
       case .value(true):
         return .value(index)
@@ -348,5 +361,63 @@ internal struct PySequenceData {
 
     let result = self.elements.remove(at: index)
     return .value(result)
+  }
+
+  // MARK: - Index
+
+  private enum ExtractIndexResult {
+    case none
+    case index(Index)
+    case error(PyErrorEnum)
+  }
+
+  private func extractIndex(_ value: PyObject?) -> ExtractIndexResult {
+    guard let value = value else {
+      return .none
+    }
+
+    if value is PyNone {
+      return .none
+    }
+
+    switch SequenceHelper.getIndex(value) {
+    case var .value(index):
+      if index < 0 {
+        index += self.elements.count
+        if index < 0 {
+          index = 0
+        }
+      }
+
+      let start = self.elements.startIndex
+      let end = self.elements.endIndex
+      let result = self.elements.index(start, offsetBy: index, limitedBy: end)
+      return .index(result ?? end)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Subsequence
+
+  private func getSubsequence(start: PyObject?,
+                              end: PyObject?) -> PyResult<SubSequence> {
+
+    let startIndex: Index
+    switch self.extractIndex(start) {
+    case .none: startIndex = self.elements.startIndex
+    case .index(let index): startIndex = index
+    case .error(let e): return .error(e)
+    }
+
+    var endIndex: Index
+    switch self.extractIndex(end) {
+    case .none: endIndex = self.elements.endIndex
+    case .index(let index): endIndex = index
+    case .error(let e): return .error(e)
+    }
+
+    return .value(self.elements[startIndex..<endIndex])
   }
 }

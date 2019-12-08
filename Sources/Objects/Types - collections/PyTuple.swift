@@ -172,9 +172,20 @@ public class PyTuple: PyObject {
 
   // MARK: - Index of
 
-  // sourcery: pymethod = index
+  // Special overload for `IndexOwner` protocol
   internal func index(of element: PyObject) -> PyResult<BigInt> {
-    return self.data.index(of: element, typeName: "tuple").map(BigInt.init)
+    return self.index(of: element, start: nil, end: nil)
+  }
+
+  // sourcery: pymethod = index
+  internal func index(of element: PyObject,
+                      start: PyObject?,
+                      end: PyObject?) -> PyResult<BigInt> {
+    return self.data.index(of: element,
+                           start: start,
+                           end: end,
+                           typeName: "tuple")
+      .map(BigInt.init)
   }
 
   // MARK: - Add

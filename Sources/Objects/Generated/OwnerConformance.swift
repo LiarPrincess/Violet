@@ -318,6 +318,7 @@ extension PyList:
   __getitem__Owner,
   countOwner,
   indexOwner,
+  indexRangedOwner,
   appendOwner,
   clearOwner,
   copyOwner,
@@ -572,6 +573,7 @@ extension PyTuple:
   __getitem__Owner,
   countOwner,
   indexOwner,
+  indexRangedOwner,
   __add__Owner,
   __mul__Owner,
   __rmul__Owner
