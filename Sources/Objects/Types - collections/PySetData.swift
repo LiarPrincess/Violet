@@ -47,16 +47,9 @@ internal struct PySetData {
   // For example `struct { Int, Void }` has the same storage as `struct { Int }`.
   // This trick is sponsored by 'go lang': `map[T]struct{}`.
   internal typealias DictType = OrderedDictionary<PySetElement, ()>
+  internal typealias Iterator = DictType.Iterator
 
-  private var dict: DictType
-
-  internal var elements: [PySetElement] {
-    return self.dict.map { $0.key }
-  }
-
-  internal var last: PySetElement? {
-    return self.dict.last?.key
-  }
+  internal private(set) var dict: DictType
 
   internal init() {
     self.dict = DictType()

@@ -225,7 +225,8 @@ extension PyFrozenSet:
   differenceOwner,
   symmetric_differenceOwner,
   isdisjointOwner,
-  copyOwner
+  copyOwner,
+  __iter__Owner
 { }
 
 // MARK: - Function
@@ -488,7 +489,17 @@ extension PySet:
   discardOwner,
   clearOwner,
   copyOwner,
+  __iter__Owner,
   __new__Owner
+{ }
+
+// MARK: - SetIterator
+
+extension PySetIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
 { }
 
 // MARK: - Slice

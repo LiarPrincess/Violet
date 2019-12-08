@@ -74,7 +74,6 @@ float
 frozenset
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
-    __iter__
     __sizeof__
 
 function
@@ -154,13 +153,17 @@ set
     __init__
     __ior__
     __isub__
-    __iter__
     __ixor__
     __sizeof__
     difference_update
     intersection_update
     symmetric_difference_update
     update
+
+set_iterator
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __length_hint__
 
 slice
   Unimplemented:

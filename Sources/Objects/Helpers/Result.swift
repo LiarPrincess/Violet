@@ -14,6 +14,7 @@ public enum PyErrorEnum: CustomStringConvertible {
   case keyError(String)
   case keyErrorForKey(PyObject)
   case stopIteration
+  case runtimeError(String)
 
   public var description: String {
     switch self {
@@ -28,6 +29,7 @@ public enum PyErrorEnum: CustomStringConvertible {
     case .keyError(let msg): return "Key error: '\(msg)'"
     case .keyErrorForKey: return "Key error for key"
     case .stopIteration: return "Stop iteration"
+    case .runtimeError(let msg): return "Runtime error: '\(msg)'"
     }
   }
 }
@@ -80,6 +82,10 @@ public enum PyResult<V> {
 
   public static var stopIteration: PyResult<V> {
     return PyResult.error(.stopIteration)
+  }
+
+  public static func runtimeError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.runtimeError(msg))
   }
 
   public func map<A>(_ f: (V) -> A) -> PyResult<A> {
@@ -186,6 +192,10 @@ public enum PyResultOrNot<V> {
 
   public static var stopIteration: PyResultOrNot<V> {
     return PyResultOrNot.error(.stopIteration)
+  }
+
+  public static func runtimeError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.runtimeError(msg))
   }
 
   public func map<A>(_ f: (V) -> A) -> PyResultOrNot<A> {

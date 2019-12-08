@@ -354,6 +354,7 @@ extension TypeFactory {
     dict["symmetric_difference"] = wrapMethod(context, name: "symmetric_difference", doc: nil, fn: PyFrozenSet.symmetricDifference(with:), castSelf: Cast.asPyFrozenSet)
     dict["isdisjoint"] = wrapMethod(context, name: "isdisjoint", doc: nil, fn: PyFrozenSet.isDisjoint(with:), castSelf: Cast.asPyFrozenSet)
     dict["copy"] = wrapMethod(context, name: "copy", doc: nil, fn: PyFrozenSet.copy, castSelf: Cast.asPyFrozenSet)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyFrozenSet.iter, castSelf: Cast.asPyFrozenSet)
     return result
   }
 
@@ -737,6 +738,25 @@ extension TypeFactory {
     dict["clear"] = wrapMethod(context, name: "clear", doc: nil, fn: PySet.clear, castSelf: Cast.asPySet)
     dict["copy"] = wrapMethod(context, name: "copy", doc: nil, fn: PySet.copy, castSelf: Cast.asPySet)
     dict["pop"] = wrapMethod(context, name: "pop", doc: nil, fn: PySet.pop, castSelf: Cast.asPySet)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PySet.iter, castSelf: Cast.asPySet)
+    return result
+  }
+
+  // MARK: - SetIterator
+
+  internal static func set_iterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "set_iterator", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PySetIterator.getClass, castSelf: Cast.asPySetIterator)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PySetIterator.getAttribute(name:), castSelf: Cast.asPySetIterator)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PySetIterator.iter, castSelf: Cast.asPySetIterator)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PySetIterator.next, castSelf: Cast.asPySetIterator)
     return result
   }
 

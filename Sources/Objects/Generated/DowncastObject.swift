@@ -161,6 +161,12 @@ internal enum Cast {
     return cast(object, as: PySet.self, typeName: "set", methodName: methodName)
   }
 
+  // MARK: - SetIterator
+
+  internal static func asPySetIterator(_ object: PyObject, methodName: String) -> PyResult<PySetIterator> {
+    return cast(object, as: PySetIterator.self, typeName: "set_iterator", methodName: methodName)
+  }
+
   // MARK: - Slice
 
   internal static func asPySlice(_ object: PyObject, methodName: String) -> PyResult<PySlice> {

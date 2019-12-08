@@ -48,7 +48,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
     }
   }
 
-  fileprivate enum EntryOrDeleted {
+  internal enum EntryOrDeleted {
     /// Proper value in dictionary.
     case entry(Entry)
     /// There was an index here, but it was deleted.
@@ -102,7 +102,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
   /// Data held in dictinary.
   /// `nil` means that there was an entry here but it was deleted.
-  fileprivate var entries: [EntryOrDeleted]
+  internal fileprivate(set) var entries: [EntryOrDeleted]
   /// Actual hash table of `self.size` entries. Holds indices to `self.entries`.
   /// Indices must be: `0 <= indice < usableFraction(self.size)`.
   fileprivate var indices: [EntryIndex]

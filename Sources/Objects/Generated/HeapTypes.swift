@@ -161,6 +161,10 @@ internal final class PySetHeap: PySet, HeapType {
   internal lazy var attributes = Attributes()
 }
 
+// MARK: - SetIterator
+
+// PySetIterator is not a base type.
+
 // MARK: - Slice
 
 // PySlice is not a base type.

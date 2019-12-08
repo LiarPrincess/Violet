@@ -7,11 +7,11 @@ import Core
 /// Used in `PyTuple` and `PyList`.
 internal struct PySequenceData {
 
-  internal typealias Elements = Array<PyObject>
+  internal typealias Elements = [PyObject]
   internal typealias Index = Elements.Index
   internal typealias SubSequence = Elements.SubSequence
 
-  internal private(set) var elements: [PyObject]
+  internal private(set) var elements: Elements
 
   internal init() {
     self.elements = []

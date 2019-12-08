@@ -421,12 +421,19 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = pop, doc = popDoc
   internal func pop() -> PyResult<PyObject> {
-    guard let lastElement = self.data.last else {
+    guard let lastElement = self.data.dict.last else {
       return .keyError("pop from an empty set")
     }
 
-    _ = self.data.remove(element: lastElement)
-    return .value(lastElement.object)
+    _ = self.data.remove(element: lastElement.key)
+    return .value(lastElement.key.object)
+  }
+
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return PySetIterator(set: self)
   }
 
   // MARK: - Python new

@@ -13,7 +13,7 @@ public class PyListReverseIterator: PyObject {
 
   internal init(list: PyList) {
     self.list = list
-    self.index = list.elements.count
+    self.index = list.elements.count - 1
     super.init(type: list.builtins.types.list_reverseiterator)
   }
 
@@ -42,7 +42,7 @@ public class PyListReverseIterator: PyObject {
 
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
-    if self.index >= 0 && index < self.list.elements.count {
+    if self.index >= 0 {
       let item = self.list.elements[self.index]
       self.index -= 1
       return .value(item)

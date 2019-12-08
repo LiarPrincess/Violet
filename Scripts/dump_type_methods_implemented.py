@@ -3,6 +3,7 @@ import types as t
 tuple_iterator = type(iter(()))
 list_iterator = type(iter([]))
 list_reverseiterator = type(reversed([]))
+set_iterator = type(iter({ 1 }))
 
 
 
@@ -227,6 +228,7 @@ types = {
     'symmetric_difference',
     'isdisjoint',
     'copy',
+    '__iter__',
   ],
   t.FunctionType: [
     '__class__',
@@ -449,7 +451,14 @@ types = {
     'clear',
     'copy',
     'pop',
+    '__iter__',
     '__new__',
+  ],
+  set_iterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
   ],
   slice: [
     '__class__',

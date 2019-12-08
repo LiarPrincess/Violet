@@ -97,8 +97,8 @@ public class PyFrozenSet: PyObject, PySetType {
     var x: PyHash = 0x345678
     var mult = PyHasher.multiplier
 
-    for element in self.data.elements {
-      let y = element.hash
+    for entry in self.data.dict {
+      let y = entry.key.hash
       x = (x ^ y) * mult
       mult += 82_520 + PyHash(2 * self.data.count)
     }
@@ -349,6 +349,13 @@ public class PyFrozenSet: PyObject, PySetType {
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
     return self.createSet(data: self.data)
+  }
+
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return PySetIterator(set: self)
   }
 
   // MARK: - Helpers

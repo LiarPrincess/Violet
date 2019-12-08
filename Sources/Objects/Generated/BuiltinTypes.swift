@@ -32,6 +32,7 @@ public final class BuiltinTypes {
   public let property: PyType
   public let range: PyType
   public let set: PyType
+  public let set_iterator: PyType
   public let slice: PyType
   public let str: PyType
   public let tuple: PyType
@@ -69,6 +70,7 @@ public final class BuiltinTypes {
     self.property = TypeFactory.property(context, type: self.type, base: self.object)
     self.range = TypeFactory.range(context, type: self.type, base: self.object)
     self.set = TypeFactory.set(context, type: self.type, base: self.object)
+    self.set_iterator = TypeFactory.set_iterator(context, type: self.type, base: self.object)
     self.slice = TypeFactory.slice(context, type: self.type, base: self.object)
     self.str = TypeFactory.str(context, type: self.type, base: self.object)
     self.tuple = TypeFactory.tuple(context, type: self.type, base: self.object)
