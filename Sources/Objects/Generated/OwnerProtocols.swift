@@ -65,6 +65,7 @@ protocol __ior__Owner { func ior(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __ipow__Owner { func ipow(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __irshift__Owner { func irshift(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __isub__Owner { func isub(_ other: PyObject) -> PyResultOrNot<PyObject> }
+protocol __iter__Owner { func iter() -> PyObject }
 protocol __itruediv__Owner { func itruediv(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __ixor__Owner { func ixor(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __le__Owner { func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> }
@@ -81,6 +82,7 @@ protocol __name__GetterOwner { func getName() -> String }
 protocol __name__SetterOwner { func setName(_ value: PyObject?) -> PyResult<()> }
 protocol __ne__Owner { func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> }
 protocol __neg__Owner { func negative() -> PyObject }
+protocol __next__Owner { func next() -> PyResult<PyObject> }
 protocol __or__Owner { func or(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __pos__Owner { func positive() -> PyObject }
 protocol __pow__Owner { func pow(_ other: PyObject) -> PyResultOrNot<PyObject> }

@@ -179,7 +179,12 @@ tuple
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
     __getnewargs__
-    __iter__
+
+tuple_iterator
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __length_hint__
+    __setstate__
 
 BaseException
   Unimplemented:

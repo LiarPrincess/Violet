@@ -574,9 +574,19 @@ extension PyTuple:
   countOwner,
   indexOwner,
   indexRangedOwner,
+  __iter__Owner,
   __add__Owner,
   __mul__Owner,
   __rmul__Owner
+{ }
+
+// MARK: - TupleIterator
+
+extension PyTupleIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
 { }
 
 // MARK: - ArithmeticError

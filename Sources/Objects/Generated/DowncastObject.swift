@@ -167,6 +167,12 @@ internal enum Cast {
     return cast(object, as: PyTuple.self, typeName: "tuple", methodName: methodName)
   }
 
+  // MARK: - TupleIterator
+
+  internal static func asPyTupleIterator(_ object: PyObject, methodName: String) -> PyResult<PyTupleIterator> {
+    return cast(object, as: PyTupleIterator.self, typeName: "tuple_iterator", methodName: methodName)
+  }
+
   // MARK: - ArithmeticError
 
   internal static func asPyArithmeticError(_ object: PyObject, methodName: String) -> PyResult<PyArithmeticError> {

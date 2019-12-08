@@ -177,6 +177,10 @@ internal final class PyTupleHeap: PyTuple, HeapType {
   internal lazy var attributes = Attributes()
 }
 
+// MARK: - TupleIterator
+
+// PyTupleIterator is not a base type.
+
 
 // MARK: - ArithmeticError
 

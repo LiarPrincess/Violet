@@ -826,9 +826,28 @@ extension TypeFactory {
     dict["__getitem__"] = wrapMethod(context, name: "__getitem__", doc: nil, fn: PyTuple.getItem(at:), castSelf: Cast.asPyTuple)
     dict["count"] = wrapMethod(context, name: "count", doc: nil, fn: PyTuple.count(_:), castSelf: Cast.asPyTuple)
     dict["index"] = wrapMethod(context, name: "index", doc: nil, fn: PyTuple.index(of:start:end:), castSelf: Cast.asPyTuple)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyTuple.iter, castSelf: Cast.asPyTuple)
     dict["__add__"] = wrapMethod(context, name: "__add__", doc: nil, fn: PyTuple.add(_:), castSelf: Cast.asPyTuple)
     dict["__mul__"] = wrapMethod(context, name: "__mul__", doc: nil, fn: PyTuple.mul(_:), castSelf: Cast.asPyTuple)
     dict["__rmul__"] = wrapMethod(context, name: "__rmul__", doc: nil, fn: PyTuple.rmul(_:), castSelf: Cast.asPyTuple)
+    return result
+  }
+
+  // MARK: - TupleIterator
+
+  internal static func tuple_iterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "tuple_iterator", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyTupleIterator.getClass, castSelf: Cast.asPyTupleIterator)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyTupleIterator.getAttribute(name:), castSelf: Cast.asPyTupleIterator)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyTupleIterator.iter, castSelf: Cast.asPyTupleIterator)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PyTupleIterator.next, castSelf: Cast.asPyTupleIterator)
     return result
   }
 

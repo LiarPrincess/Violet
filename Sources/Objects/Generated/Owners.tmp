@@ -493,9 +493,15 @@ PyTuple|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Boo
 PyTuple|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
 PyTuple|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
 PyTuple|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyTuple|PyObject|func|__iter__|iter() -> PyObject
 PyTuple|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyTuple|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyTuple|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyTupleIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyTupleIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyTupleIterator|PyObject|func|__iter__|iter() -> PyObject
+PyTupleIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 
 PyArithmeticError|PyException|get|__class__|getClass() -> PyType
 PyArithmeticError|PyException|get|__dict__|getDict() -> Attributes

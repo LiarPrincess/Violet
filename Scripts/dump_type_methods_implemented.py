@@ -1,5 +1,6 @@
 
 import types as t
+tuple_iterator = type((1,2).__iter__())
 
 
 
@@ -521,9 +522,16 @@ types = {
     '__getitem__',
     'count',
     'index',
+    '__iter__',
     '__add__',
     '__mul__',
     '__rmul__',
+  ],
+  tuple_iterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
   ],
   ArithmeticError: [
     '__class__',

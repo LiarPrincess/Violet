@@ -1,4 +1,5 @@
 import types as t
+tuple_iterator = type((1,2).__iter__())
 
 {% macro printProperties properties %}
   {% for prop in properties|annotated:"pyproperty" %}

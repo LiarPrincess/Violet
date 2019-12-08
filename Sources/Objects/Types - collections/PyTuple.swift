@@ -163,7 +163,7 @@ public class PyTuple: PyObject {
     }
   }
 
-  // MARK: - Cont
+  // MARK: - Count
 
   // sourcery: pymethod = count
   internal func count(_ element: PyObject) -> PyResult<BigInt> {
@@ -186,6 +186,13 @@ public class PyTuple: PyObject {
                            end: end,
                            typeName: "tuple")
       .map(BigInt.init)
+  }
+
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return PyTupleIterator(tuple: self)
   }
 
   // MARK: - Add

@@ -173,7 +173,7 @@ internal struct PySequenceData {
   internal func getItem(index: PyObject, typeName: String) -> GetItemResult {
     switch SequenceHelper.tryGetIndex(index) {
     case .value(let index):
-      switch self.getSingleItem(index: index, typeName: typeName) {
+      switch self.getItem(index: index, typeName: typeName) {
       case let .value(v): return .single(v)
       case let .error(e): return .error(e)
       }
@@ -184,7 +184,7 @@ internal struct PySequenceData {
     }
 
     if let slice = index as? PySlice {
-      switch self.getSliceItem(slice: slice) {
+      switch self.getItem(slice: slice) {
       case let .value(v): return .slice(v)
       case let .error(e): return .error(e)
       }
@@ -194,7 +194,7 @@ internal struct PySequenceData {
     return .error(.typeError(msg))
   }
 
-  private func getSingleItem(index: Int, typeName: String) -> PyResult<PyObject> {
+  internal func getItem(index: Int, typeName: String) -> PyResult<PyObject> {
     var index = index
     if index < 0 {
       index += self.count
@@ -207,7 +207,7 @@ internal struct PySequenceData {
     return .value(self.elements[index])
   }
 
-  private func getSliceItem(slice: PySlice) -> PyResult<[PyObject]> {
+  internal func getItem(slice: PySlice) -> PyResult<[PyObject]> {
     let unpack: PySlice.UnpackedIndices
     switch slice.unpack() {
     case let .value(v): unpack = v
