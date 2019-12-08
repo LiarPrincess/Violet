@@ -22,6 +22,8 @@ public final class BuiltinTypes {
   public let function: PyType
   public let int: PyType
   public let list: PyType
+  public let list_iterator: PyType
+  public let list_reverseiterator: PyType
   public let method: PyType
   public let module: PyType
   public let simpleNamespace: PyType
@@ -57,6 +59,8 @@ public final class BuiltinTypes {
     self.function = TypeFactory.function(context, type: self.type, base: self.object)
     self.int = TypeFactory.int(context, type: self.type, base: self.object)
     self.list = TypeFactory.list(context, type: self.type, base: self.object)
+    self.list_iterator = TypeFactory.list_iterator(context, type: self.type, base: self.object)
+    self.list_reverseiterator = TypeFactory.list_reverseiterator(context, type: self.type, base: self.object)
     self.method = TypeFactory.method(context, type: self.type, base: self.object)
     self.module = TypeFactory.module(context, type: self.type, base: self.object)
     self.simpleNamespace = TypeFactory.simpleNamespace(context, type: self.type, base: self.object)

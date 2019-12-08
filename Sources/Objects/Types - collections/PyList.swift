@@ -177,6 +177,18 @@ public class PyList: PyObject {
       .map(BigInt.init)
   }
 
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return PyListIterator(list: self)
+  }
+
+  // sourcery: pymethod = __reversed__
+  internal func reversedIter() -> PyObject {
+    return PyListReverseIterator(list: self)
+  }
+
   // MARK: - Append
 
   // sourcery: pymethod = append

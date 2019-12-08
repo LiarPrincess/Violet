@@ -107,8 +107,6 @@ list
     __delitem__
     __iadd__
     __init__
-    __iter__
-    __reversed__
     __setitem__
     __sizeof__
     extend
@@ -116,6 +114,18 @@ list
     remove
     reverse
     sort
+
+list_iterator
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __length_hint__
+    __setstate__
+
+list_reverseiterator
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __length_hint__
+    __setstate__
 
 method
   Unimplemented:

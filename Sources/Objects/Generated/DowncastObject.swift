@@ -101,6 +101,18 @@ internal enum Cast {
     return cast(object, as: PyList.self, typeName: "list", methodName: methodName)
   }
 
+  // MARK: - ListIterator
+
+  internal static func asPyListIterator(_ object: PyObject, methodName: String) -> PyResult<PyListIterator> {
+    return cast(object, as: PyListIterator.self, typeName: "list_iterator", methodName: methodName)
+  }
+
+  // MARK: - ListReverseIterator
+
+  internal static func asPyListReverseIterator(_ object: PyObject, methodName: String) -> PyResult<PyListReverseIterator> {
+    return cast(object, as: PyListReverseIterator.self, typeName: "list_reverseiterator", methodName: methodName)
+  }
+
   // MARK: - Method
 
   internal static func asPyMethod(_ object: PyObject, methodName: String) -> PyResult<PyMethod> {

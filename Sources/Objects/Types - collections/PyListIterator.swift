@@ -1,20 +1,20 @@
 import Core
 
 // In CPython:
-// Objects -> tupleobject.c
+// Objects -> listobject.c
 
-// sourcery: pytype = tuple_iterator, default, hasGC
-public class PyTupleIterator: PyObject {
+// sourcery: pytype = list_iterator, default, hasGC
+public class PyListIterator: PyObject {
 
-  internal let tuple: PyTuple
+  internal let list: PyList
   internal private(set) var index: Int
 
   // MARK: - Init
 
-  internal init(tuple: PyTuple) {
-    self.tuple = tuple
+  internal init(list: PyList) {
+    self.list = list
     self.index = 0
-    super.init(type: tuple.builtins.types.tuple_iterator)
+    super.init(type: list.builtins.types.list_iterator)
   }
 
   // MARK: - Class
@@ -42,8 +42,8 @@ public class PyTupleIterator: PyObject {
 
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
-    if self.index < self.tuple.elements.count {
-      let item = self.tuple.elements[self.index]
+    if self.index < self.list.elements.count {
+      let item = self.list.elements[self.index]
       self.index += 1
       return .value(item)
     }

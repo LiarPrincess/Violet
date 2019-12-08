@@ -319,6 +319,8 @@ extension PyList:
   countOwner,
   indexOwner,
   indexRangedOwner,
+  __iter__Owner,
+  __reversed__Owner,
   appendOwner,
   clearOwner,
   copyOwner,
@@ -327,6 +329,24 @@ extension PyList:
   __rmul__Owner,
   __imul__Owner,
   __new__Owner
+{ }
+
+// MARK: - ListIterator
+
+extension PyListIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
+{ }
+
+// MARK: - ListReverseIterator
+
+extension PyListReverseIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
 { }
 
 // MARK: - Method

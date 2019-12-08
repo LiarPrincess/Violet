@@ -1,5 +1,7 @@
 import types as t
-tuple_iterator = type((1,2).__iter__())
+tuple_iterator = type(iter(()))
+list_iterator = type(iter([]))
+list_reverseiterator = type(reversed([]))
 
 {% macro printProperties properties %}
   {% for prop in properties|annotated:"pyproperty" %}

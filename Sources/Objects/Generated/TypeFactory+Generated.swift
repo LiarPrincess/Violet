@@ -475,6 +475,8 @@ extension TypeFactory {
     dict["__getitem__"] = wrapMethod(context, name: "__getitem__", doc: nil, fn: PyList.getItem(at:), castSelf: Cast.asPyList)
     dict["count"] = wrapMethod(context, name: "count", doc: nil, fn: PyList.count(_:), castSelf: Cast.asPyList)
     dict["index"] = wrapMethod(context, name: "index", doc: nil, fn: PyList.index(of:start:end:), castSelf: Cast.asPyList)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyList.iter, castSelf: Cast.asPyList)
+    dict["__reversed__"] = wrapMethod(context, name: "__reversed__", doc: nil, fn: PyList.reversedIter, castSelf: Cast.asPyList)
     dict["append"] = wrapMethod(context, name: "append", doc: nil, fn: PyList.append(_:), castSelf: Cast.asPyList)
     dict["pop"] = wrapMethod(context, name: "pop", doc: nil, fn: PyList.pop(index:), castSelf: Cast.asPyList)
     dict["clear"] = wrapMethod(context, name: "clear", doc: nil, fn: PyList.clear, castSelf: Cast.asPyList)
@@ -483,6 +485,42 @@ extension TypeFactory {
     dict["__mul__"] = wrapMethod(context, name: "__mul__", doc: nil, fn: PyList.mul(_:), castSelf: Cast.asPyList)
     dict["__rmul__"] = wrapMethod(context, name: "__rmul__", doc: nil, fn: PyList.rmul(_:), castSelf: Cast.asPyList)
     dict["__imul__"] = wrapMethod(context, name: "__imul__", doc: nil, fn: PyList.imul(_:), castSelf: Cast.asPyList)
+    return result
+  }
+
+  // MARK: - ListIterator
+
+  internal static func list_iterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "list_iterator", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyListIterator.getClass, castSelf: Cast.asPyListIterator)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyListIterator.getAttribute(name:), castSelf: Cast.asPyListIterator)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyListIterator.iter, castSelf: Cast.asPyListIterator)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PyListIterator.next, castSelf: Cast.asPyListIterator)
+    return result
+  }
+
+  // MARK: - ListReverseIterator
+
+  internal static func list_reverseiterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "list_reverseiterator", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyListReverseIterator.getClass, castSelf: Cast.asPyListReverseIterator)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyListReverseIterator.getAttribute(name:), castSelf: Cast.asPyListReverseIterator)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyListReverseIterator.iter, castSelf: Cast.asPyListReverseIterator)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PyListReverseIterator.next, castSelf: Cast.asPyListReverseIterator)
     return result
   }
 

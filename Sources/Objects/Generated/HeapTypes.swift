@@ -109,6 +109,14 @@ internal final class PyListHeap: PyList, HeapType {
   internal lazy var attributes = Attributes()
 }
 
+// MARK: - ListIterator
+
+// PyListIterator is not a base type.
+
+// MARK: - ListReverseIterator
+
+// PyListReverseIterator is not a base type.
+
 // MARK: - Method
 
 // PyMethod is not a base type.

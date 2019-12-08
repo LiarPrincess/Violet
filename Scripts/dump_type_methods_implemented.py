@@ -1,6 +1,8 @@
 
 import types as t
-tuple_iterator = type((1,2).__iter__())
+tuple_iterator = type(iter(()))
+list_iterator = type(iter([]))
+list_reverseiterator = type(reversed([]))
 
 
 
@@ -306,6 +308,8 @@ types = {
     '__getitem__',
     'count',
     'index',
+    '__iter__',
+    '__reversed__',
     'append',
     'pop',
     'clear',
@@ -315,6 +319,18 @@ types = {
     '__rmul__',
     '__imul__',
     '__new__',
+  ],
+  list_iterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
+  ],
+  list_reverseiterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
   ],
   t.MethodType: [
     '__class__',

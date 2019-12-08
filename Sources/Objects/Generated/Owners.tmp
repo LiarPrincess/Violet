@@ -288,6 +288,8 @@ PyList|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool
 PyList|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
 PyList|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
 PyList|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyList|PyObject|func|__iter__|iter() -> PyObject
+PyList|PyObject|func|__reversed__|reversedIter() -> PyObject
 PyList|PyObject|func|append|append(_ element: PyObject) -> PyResult<PyNone>
 PyList|PyObject|func|pop|pop(index: PyObject?) -> PyResult<PyObject>
 PyList|PyObject|func|clear|clear() -> PyResult<PyNone>
@@ -297,6 +299,16 @@ PyList|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__imul__|imul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
+PyListIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyListIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyListIterator|PyObject|func|__iter__|iter() -> PyObject
+PyListIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyListReverseIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyListReverseIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyListReverseIterator|PyObject|func|__iter__|iter() -> PyObject
+PyListReverseIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyMethod|PyObject|get|__class__|getClass() -> PyType
 
 PyMethod|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
