@@ -176,6 +176,11 @@ PyDictValueIterator|PyObject|get|__class__|getClass() -> PyType
 PyDictValueIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyDictValueIterator|PyObject|func|__iter__|iter() -> PyObject
 PyDictValueIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+
+PyDictValues|PyObject|func|__repr__|repr() -> PyResult<String>
+PyDictValues|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyDictValues|PyObject|func|__len__|getLength() -> BigInt
+PyDictValues|PyObject|func|__iter__|iter() -> PyObject
 PyEllipsis|PyObject|get|__class__|getClass() -> PyType
 
 PyEllipsis|PyObject|func|__repr__|repr() -> PyResult<String>

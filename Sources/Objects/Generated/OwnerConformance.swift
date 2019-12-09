@@ -204,6 +204,15 @@ extension PyDictValueIterator:
   __next__Owner
 { }
 
+// MARK: - DictValues
+
+extension PyDictValues:
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __iter__Owner
+{ }
+
 // MARK: - Ellipsis
 
 extension PyEllipsis:

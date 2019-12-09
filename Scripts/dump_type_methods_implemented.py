@@ -208,6 +208,12 @@ types = {
     '__iter__',
     '__next__',
   ],
+  dict_values: [
+    '__repr__',
+    '__getattribute__',
+    '__len__',
+    '__iter__',
+  ],
   type(...): [
     '__class__',
     '__repr__',

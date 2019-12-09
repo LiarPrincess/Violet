@@ -351,6 +351,24 @@ extension TypeFactory {
     return result
   }
 
+  // MARK: - DictValues
+
+  internal static func dict_values(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "dict_values", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+
+
+
+    dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyDictValues.repr, castSelf: Cast.asPyDictValues)
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyDictValues.getAttribute(name:), castSelf: Cast.asPyDictValues)
+    dict["__len__"] = wrapMethod(context, name: "__len__", doc: nil, fn: PyDictValues.getLength, castSelf: Cast.asPyDictValues)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyDictValues.iter, castSelf: Cast.asPyDictValues)
+    return result
+  }
+
   // MARK: - Ellipsis
 
   internal static func ellipsis(_ context: PyContext, type: PyType, base: PyType) -> PyType {
