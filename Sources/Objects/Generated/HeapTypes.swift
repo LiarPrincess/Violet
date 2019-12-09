@@ -89,6 +89,16 @@ internal final class PyDictHeap: PyDict, HeapType {
 
 // PyEllipsis is not a base type.
 
+// MARK: - Enumerate
+
+/// Type used when we subclass builtin `enumerate` class.
+/// For example: `class Rapunzel(enumerate): pass`.
+internal final class PyEnumerateHeap: PyEnumerate, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
 // MARK: - Float
 
 /// Type used when we subclass builtin `float` class.

@@ -189,6 +189,11 @@ PyEllipsis|PyObject|get|__class__|getClass() -> PyType
 PyEllipsis|PyObject|func|__repr__|repr() -> PyResult<String>
 PyEllipsis|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyEllipsis|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
+PyEnumerate|PyObject|get|__class__|getClass() -> PyType
+
+PyEnumerate|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyEnumerate|PyObject|func|__iter__|iter() -> PyObject
+PyEnumerate|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyFloat|PyObject|get|__class__|getClass() -> PyType
 
 PyFloat|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

@@ -389,6 +389,25 @@ extension TypeFactory {
     return result
   }
 
+  // MARK: - Enumerate
+
+  internal static func enumerate(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "enumerate", doc: PyEnumerate.doc, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.baseType)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyEnumerate.getClass, castSelf: Cast.asPyEnumerate)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyEnumerate.getAttribute(name:), castSelf: Cast.asPyEnumerate)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyEnumerate.iter, castSelf: Cast.asPyEnumerate)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PyEnumerate.next, castSelf: Cast.asPyEnumerate)
+    return result
+  }
+
   // MARK: - Float
 
   internal static func float(_ context: PyContext, type: PyType, base: PyType) -> PyType {

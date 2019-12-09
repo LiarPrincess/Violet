@@ -107,6 +107,12 @@ internal enum Cast {
     return cast(object, as: PyEllipsis.self, typeName: "ellipsis", methodName: methodName)
   }
 
+  // MARK: - Enumerate
+
+  internal static func asPyEnumerate(_ object: PyObject, methodName: String) -> PyResult<PyEnumerate> {
+    return cast(object, as: PyEnumerate.self, typeName: "enumerate", methodName: methodName)
+  }
+
   // MARK: - Float
 
   internal static func asPyFloat(_ object: PyObject, methodName: String) -> PyResult<PyFloat> {

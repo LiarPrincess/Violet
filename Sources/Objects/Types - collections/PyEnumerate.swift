@@ -1,6 +1,5 @@
 import Core
 
-/*
 // sourcery: pytype = enumerate, default, hasGC, baseType
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.
@@ -23,46 +22,54 @@ internal final class PyEnumerate: PyObject {
     """
 
   /// Secondary iterator of enumeration
-  internal let iterable: PyEnumerateSource
-  /// Current index of enumeration
-  internal var index: Index
-  /// Current item
-  internal var item: PyObject
-
-  internal enum Index {
-    /// Before first call to next
-    case notStarted(startingIndex: Int)
-    /// After first call to next
-    case started(Int)
-  }
+  internal let iterator: PyObject
+  /// Next used index of enumeration
+  internal private(set) var nextIndex: Int
 
   // MARK: - Init
 
-  internal init(_ context: PyContext, iterable: PyEnumerateSource, startIndex: Int) {
-    self.iterable = iterable
-    self.index = .notStarted(startingIndex: startIndex)
-    self.item = context._none
-    super.init(type: context.types.enumerate)
+  internal init(iterator: PyObject, startFrom index: Int) {
+    self.iterator = iterator
+    self.nextIndex = index
+    super.init(type: iterator.builtins.types.enumerate)
+  }
+
+  // MARK: - Class
+
+  // sourcery: pyproperty = __class__
+  internal func getClass() -> PyType {
+    return self.type
+  }
+
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(from: self, name: name)
+  }
+
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return self
   }
 
   // MARK: - Next
 
-  internal func next() -> PyObject {
-    self.item = self.iterable.next()
-    let index = self.advanceIndex()
-    return self.tuple(self.int(index), self.item)
-  }
-
-  private func advanceIndex() -> Int {
-    switch self.index {
-    case let .notStarted(startingIndex: index):
-      self.index = .started(index)
-      return index
-    case let .started(index):
-      let nextIndex = index + 1
-      self.index = .started(nextIndex)
-      return nextIndex
+  // sourcery: pymethod = __next__
+  internal func next() -> PyResult<PyObject> {
+    let item: PyObject
+    switch self.builtins.next(iterator: self.iterator) {
+    case .value(let n): item = n
+    case .error(.stopIteration): return .error(.stopIteration) // lets be explicit
+    case .error(let e): return .error(e)
     }
+
+    let index = self.builtins.newInt(self.nextIndex)
+    let result = self.builtins.newTuple(index, item)
+
+    self.nextIndex += 1
+    return .value(result)
   }
 }
-*/

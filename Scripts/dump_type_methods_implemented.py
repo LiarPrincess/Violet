@@ -225,6 +225,12 @@ types = {
     '__getattribute__',
     '__new__',
   ],
+  enumerate: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
+  ],
   float: [
     '__class__',
     '__eq__',
