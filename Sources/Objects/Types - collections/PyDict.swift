@@ -392,6 +392,23 @@ public class PyDict: PyObject {
     return .value(result)
   }
 
+  // MARK: - Views
+
+  // sourcery: pymethod = keys
+  internal func keys() -> PyObject {
+    return PyDictKeys(dict: self)
+  }
+
+  // sourcery: pymethod = items
+  internal func items() -> PyObject {
+    return PyDictItems(dict: self)
+  }
+
+  // sourcery: pymethod = values
+  internal func values() -> PyObject {
+    return PyDictValues(dict: self)
+  }
+
   // MARK: - Python new
 
   // sourcery: pymethod = __new__

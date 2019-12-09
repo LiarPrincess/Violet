@@ -232,7 +232,6 @@ extension Builtins {
         case .value(false): return .value(false)
         case .error(let e): return .error(e)
         }
-        break
       case .error(.stopIteration):
         return .value(true)
       case .error(let e):

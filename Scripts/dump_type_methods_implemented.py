@@ -160,6 +160,9 @@ types = {
     'copy',
     'pop',
     'popitem',
+    'keys',
+    'items',
+    'values',
     '__new__',
   ],
   dict_itemiterator: [

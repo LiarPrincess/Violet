@@ -161,6 +161,8 @@ protocol issubsetOwner { func isSubset(of other: PyObject) -> PyResult<Bool> }
 protocol issupersetOwner { func isSuperset(of other: PyObject) -> PyResult<Bool> }
 protocol istitleOwner { func isTitle() -> Bool }
 protocol isupperOwner { func isUpper() -> Bool }
+protocol itemsOwner { func items() -> PyObject }
+protocol keysOwner { func keys() -> PyObject }
 protocol ljustOwner { func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String> }
 protocol lowerOwner { func lower() -> String }
 protocol lstripOwner { func lstrip(_ chars: PyObject) -> PyResult<String> }
@@ -189,4 +191,5 @@ protocol symmetric_differenceOwner { func symmetricDifference(with other: PyObje
 protocol titleOwner { func title() -> String }
 protocol unionOwner { func union(with other: PyObject) -> PyResult<PyObject> }
 protocol upperOwner { func upper() -> String }
+protocol valuesOwner { func values() -> PyObject }
 protocol zfillOwner { func zfill(width: PyObject) -> PyResult<String> }

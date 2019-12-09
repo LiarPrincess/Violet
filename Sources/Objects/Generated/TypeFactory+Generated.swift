@@ -242,6 +242,9 @@ extension TypeFactory {
     dict["copy"] = wrapMethod(context, name: "copy", doc: nil, fn: PyDict.copy, castSelf: Cast.asPyDict)
     dict["pop"] = wrapMethod(context, name: "pop", doc: nil, fn: PyDict.pop(_:default:), castSelf: Cast.asPyDict)
     dict["popitem"] = wrapMethod(context, name: "popitem", doc: nil, fn: PyDict.popitem, castSelf: Cast.asPyDict)
+    dict["keys"] = wrapMethod(context, name: "keys", doc: nil, fn: PyDict.keys, castSelf: Cast.asPyDict)
+    dict["items"] = wrapMethod(context, name: "items", doc: nil, fn: PyDict.items, castSelf: Cast.asPyDict)
+    dict["values"] = wrapMethod(context, name: "values", doc: nil, fn: PyDict.values, castSelf: Cast.asPyDict)
     return result
   }
 

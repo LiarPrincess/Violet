@@ -134,6 +134,9 @@ PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                   
 PyDict|PyObject|func|copy|copy() -> PyObject
 PyDict|PyObject|func|pop|pop(_ index: PyObject,                    default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|popitem|popitem() -> PyResult<PyObject>
+PyDict|PyObject|func|keys|keys() -> PyObject
+PyDict|PyObject|func|items|items() -> PyObject
+PyDict|PyObject|func|values|values() -> PyObject
 PyDict|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyDictItemIterator|PyObject|get|__class__|getClass() -> PyType
 

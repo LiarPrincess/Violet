@@ -140,6 +140,9 @@ extension PyDict:
   setdefaultOwner,
   copyOwner,
   popitemOwner,
+  keysOwner,
+  itemsOwner,
+  valuesOwner,
   __new__Owner
 { }
 

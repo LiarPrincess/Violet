@@ -54,10 +54,7 @@ dict
     fromkeys - <class 'builtin_function_or_method'>
     __init__
     __sizeof__
-    items
-    keys
     update
-    values
 
 dict_itemiterator
   Unimplemented:
