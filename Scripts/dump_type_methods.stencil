@@ -3,6 +3,9 @@ tuple_iterator = type(iter(()))
 list_iterator = type(iter([]))
 list_reverseiterator = type(reversed([]))
 set_iterator = type(iter({ 1 }))
+dict_itemiterator = type(iter({}.items()))
+dict_keyiterator = type(iter({}.keys()))
+dict_valueiterator = type(iter({}.values()))
 
 {% macro printProperties properties %}
   {% for prop in properties|annotated:"pyproperty" %}

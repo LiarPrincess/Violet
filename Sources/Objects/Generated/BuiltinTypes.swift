@@ -16,6 +16,9 @@ public final class BuiltinTypes {
   public let code: PyType
   public let complex: PyType
   public let dict: PyType
+  public let dict_itemiterator: PyType
+  public let dict_keyiterator: PyType
+  public let dict_valueiterator: PyType
   public let ellipsis: PyType
   public let float: PyType
   public let frozenset: PyType
@@ -54,6 +57,9 @@ public final class BuiltinTypes {
     self.code = TypeFactory.code(context, type: self.type, base: self.object)
     self.complex = TypeFactory.complex(context, type: self.type, base: self.object)
     self.dict = TypeFactory.dict(context, type: self.type, base: self.object)
+    self.dict_itemiterator = TypeFactory.dict_itemiterator(context, type: self.type, base: self.object)
+    self.dict_keyiterator = TypeFactory.dict_keyiterator(context, type: self.type, base: self.object)
+    self.dict_valueiterator = TypeFactory.dict_valueiterator(context, type: self.type, base: self.object)
     self.ellipsis = TypeFactory.ellipsis(context, type: self.type, base: self.object)
     self.float = TypeFactory.float(context, type: self.type, base: self.object)
     self.frozenset = TypeFactory.frozenset(context, type: self.type, base: self.object)

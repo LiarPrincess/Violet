@@ -4,6 +4,9 @@ tuple_iterator = type(iter(()))
 list_iterator = type(iter([]))
 list_reverseiterator = type(reversed([]))
 set_iterator = type(iter({ 1 }))
+dict_itemiterator = type(iter({}.items()))
+dict_keyiterator = type(iter({}.keys()))
+dict_valueiterator = type(iter({}.values()))
 
 
 
@@ -146,11 +149,30 @@ types = {
     '__contains__',
     'clear',
     'get',
+    '__iter__',
     'setdefault',
     'copy',
     'pop',
     'popitem',
     '__new__',
+  ],
+  dict_itemiterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
+  ],
+  dict_keyiterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
+  ],
+  dict_valueiterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
   ],
   type(...): [
     '__class__',

@@ -65,6 +65,24 @@ internal enum Cast {
     return cast(object, as: PyDict.self, typeName: "dict", methodName: methodName)
   }
 
+  // MARK: - DictItemIterator
+
+  internal static func asPyDictItemIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictItemIterator> {
+    return cast(object, as: PyDictItemIterator.self, typeName: "dict_itemiterator", methodName: methodName)
+  }
+
+  // MARK: - DictKeyIterator
+
+  internal static func asPyDictKeyIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictKeyIterator> {
+    return cast(object, as: PyDictKeyIterator.self, typeName: "dict_keyiterator", methodName: methodName)
+  }
+
+  // MARK: - DictValueIterator
+
+  internal static func asPyDictValueIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictValueIterator> {
+    return cast(object, as: PyDictValueIterator.self, typeName: "dict_valueiterator", methodName: methodName)
+  }
+
   // MARK: - Ellipsis
 
   internal static func asPyEllipsis(_ object: PyObject, methodName: String) -> PyResult<PyEllipsis> {

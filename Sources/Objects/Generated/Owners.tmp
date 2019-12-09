@@ -129,11 +129,27 @@ PyDict|PyObject|func|__delitem__|delItem(at index: PyObject) -> PyResult<PyNone>
 PyDict|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
 PyDict|PyObject|func|clear|clear() -> PyResult<PyNone>
 PyDict|PyObject|func|get|get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject>
+PyDict|PyObject|func|__iter__|iter() -> PyObject
 PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                           default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|copy|copy() -> PyObject
 PyDict|PyObject|func|pop|pop(_ index: PyObject,                    default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|popitem|popitem() -> PyResult<PyObject>
 PyDict|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
+PyDictItemIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyDictItemIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyDictItemIterator|PyObject|func|__iter__|iter() -> PyObject
+PyDictItemIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyDictKeyIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyDictKeyIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyDictKeyIterator|PyObject|func|__iter__|iter() -> PyObject
+PyDictKeyIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyDictValueIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyDictValueIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyDictValueIterator|PyObject|func|__iter__|iter() -> PyObject
+PyDictValueIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyEllipsis|PyObject|get|__class__|getClass() -> PyType
 
 PyEllipsis|PyObject|func|__repr__|repr() -> PyResult<String>

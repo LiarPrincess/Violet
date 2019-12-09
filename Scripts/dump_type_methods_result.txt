@@ -53,12 +53,26 @@ dict
   Unimplemented:
     fromkeys - <class 'builtin_function_or_method'>
     __init__
-    __iter__
     __sizeof__
     items
     keys
     update
     values
+
+dict_itemiterator
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __length_hint__
+
+dict_keyiterator
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __length_hint__
+
+dict_valueiterator
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __length_hint__
 
 float
   Unimplemented:

@@ -237,10 +237,65 @@ extension TypeFactory {
     dict["__contains__"] = wrapMethod(context, name: "__contains__", doc: nil, fn: PyDict.contains(_:), castSelf: Cast.asPyDict)
     dict["clear"] = wrapMethod(context, name: "clear", doc: nil, fn: PyDict.clear, castSelf: Cast.asPyDict)
     dict["get"] = wrapMethod(context, name: "get", doc: nil, fn: PyDict.get(_:default:), castSelf: Cast.asPyDict)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyDict.iter, castSelf: Cast.asPyDict)
     dict["setdefault"] = wrapMethod(context, name: "setdefault", doc: nil, fn: PyDict.setDefault(_:default:), castSelf: Cast.asPyDict)
     dict["copy"] = wrapMethod(context, name: "copy", doc: nil, fn: PyDict.copy, castSelf: Cast.asPyDict)
     dict["pop"] = wrapMethod(context, name: "pop", doc: nil, fn: PyDict.pop(_:default:), castSelf: Cast.asPyDict)
     dict["popitem"] = wrapMethod(context, name: "popitem", doc: nil, fn: PyDict.popitem, castSelf: Cast.asPyDict)
+    return result
+  }
+
+  // MARK: - DictItemIterator
+
+  internal static func dict_itemiterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "dict_itemiterator", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyDictItemIterator.getClass, castSelf: Cast.asPyDictItemIterator)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyDictItemIterator.getAttribute(name:), castSelf: Cast.asPyDictItemIterator)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyDictItemIterator.iter, castSelf: Cast.asPyDictItemIterator)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PyDictItemIterator.next, castSelf: Cast.asPyDictItemIterator)
+    return result
+  }
+
+  // MARK: - DictKeyIterator
+
+  internal static func dict_keyiterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "dict_keyiterator", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyDictKeyIterator.getClass, castSelf: Cast.asPyDictKeyIterator)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyDictKeyIterator.getAttribute(name:), castSelf: Cast.asPyDictKeyIterator)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyDictKeyIterator.iter, castSelf: Cast.asPyDictKeyIterator)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PyDictKeyIterator.next, castSelf: Cast.asPyDictKeyIterator)
+    return result
+  }
+
+  // MARK: - DictValueIterator
+
+  internal static func dict_valueiterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "dict_valueiterator", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyDictValueIterator.getClass, castSelf: Cast.asPyDictValueIterator)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyDictValueIterator.getAttribute(name:), castSelf: Cast.asPyDictValueIterator)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyDictValueIterator.iter, castSelf: Cast.asPyDictValueIterator)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PyDictValueIterator.next, castSelf: Cast.asPyDictValueIterator)
     return result
   }
 

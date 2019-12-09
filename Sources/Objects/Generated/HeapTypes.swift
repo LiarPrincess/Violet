@@ -61,6 +61,18 @@ internal final class PyDictHeap: PyDict, HeapType {
   internal lazy var attributes = Attributes()
 }
 
+// MARK: - DictItemIterator
+
+// PyDictItemIterator is not a base type.
+
+// MARK: - DictKeyIterator
+
+// PyDictKeyIterator is not a base type.
+
+// MARK: - DictValueIterator
+
+// PyDictValueIterator is not a base type.
+
 // MARK: - Ellipsis
 
 // PyEllipsis is not a base type.

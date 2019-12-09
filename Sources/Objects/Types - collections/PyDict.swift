@@ -286,6 +286,13 @@ public class PyDict: PyObject {
     }
   }
 
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return PyDictKeyIterator(dict: self)
+  }
+
   // MARK: - Set default
 
   internal static let setdefaultDoc = """

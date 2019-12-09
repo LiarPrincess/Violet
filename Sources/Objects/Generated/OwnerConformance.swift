@@ -136,10 +136,38 @@ extension PyDict:
   __contains__Owner,
   clearOwner,
   getOwner,
+  __iter__Owner,
   setdefaultOwner,
   copyOwner,
   popitemOwner,
   __new__Owner
+{ }
+
+// MARK: - DictItemIterator
+
+extension PyDictItemIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
+{ }
+
+// MARK: - DictKeyIterator
+
+extension PyDictKeyIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
+{ }
+
+// MARK: - DictValueIterator
+
+extension PyDictValueIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
 { }
 
 // MARK: - Ellipsis
