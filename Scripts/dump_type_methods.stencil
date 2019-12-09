@@ -13,6 +13,8 @@ dict_keyiterator = type(iter({}.keys()))
 dict_values = type({}.values())
 dict_valueiterator = type(iter({}.values()))
 
+str_iterator = type(iter(''))
+
 {% macro printProperties properties %}
   {% for prop in properties|annotated:"pyproperty" %}
     '{{ prop.annotations.pyproperty }}',

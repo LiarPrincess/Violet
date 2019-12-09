@@ -1111,6 +1111,13 @@ public class PyString: PyObject {
     return self.mul(other)
   }
 
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return PyStringIterator(string: self)
+  }
+
   // MARK: - Python new
 
   private static let newArgumentsParser = ArgumentParser.createOrFatal(

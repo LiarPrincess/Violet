@@ -657,7 +657,17 @@ extension PyString:
   __add__Owner,
   __mul__Owner,
   __rmul__Owner,
+  __iter__Owner,
   __new__Owner
+{ }
+
+// MARK: - StringIterator
+
+extension PyStringIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
 { }
 
 // MARK: - Tuple

@@ -217,7 +217,6 @@ str
     maketrans - <class 'builtin_function_or_method'>
     __format__
     __getnewargs__
-    __iter__
     __mod__
     __rmod__
     __sizeof__
@@ -226,6 +225,12 @@ str
     format_map
     join
     translate
+
+str_iterator
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __length_hint__
+    __setstate__
 
 tuple
   Unimplemented:

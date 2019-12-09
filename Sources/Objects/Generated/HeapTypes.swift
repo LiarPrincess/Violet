@@ -203,6 +203,10 @@ internal final class PyStringHeap: PyString, HeapType {
   internal lazy var attributes = Attributes()
 }
 
+// MARK: - StringIterator
+
+// PyStringIterator is not a base type.
+
 // MARK: - Tuple
 
 /// Type used when we subclass builtin `tuple` class.

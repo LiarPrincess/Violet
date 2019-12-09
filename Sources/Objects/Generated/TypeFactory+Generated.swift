@@ -981,6 +981,25 @@ extension TypeFactory {
     dict["__add__"] = wrapMethod(context, name: "__add__", doc: nil, fn: PyString.add(_:), castSelf: Cast.asPyString)
     dict["__mul__"] = wrapMethod(context, name: "__mul__", doc: nil, fn: PyString.mul(_:), castSelf: Cast.asPyString)
     dict["__rmul__"] = wrapMethod(context, name: "__rmul__", doc: nil, fn: PyString.rmul(_:), castSelf: Cast.asPyString)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyString.iter, castSelf: Cast.asPyString)
+    return result
+  }
+
+  // MARK: - StringIterator
+
+  internal static func str_iterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "str_iterator", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyStringIterator.getClass, castSelf: Cast.asPyStringIterator)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyStringIterator.getAttribute(name:), castSelf: Cast.asPyStringIterator)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyStringIterator.iter, castSelf: Cast.asPyStringIterator)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PyStringIterator.next, castSelf: Cast.asPyStringIterator)
     return result
   }
 

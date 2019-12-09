@@ -14,6 +14,8 @@ dict_keyiterator = type(iter({}.keys()))
 dict_values = type({}.values())
 dict_valueiterator = type(iter({}.values()))
 
+str_iterator = type(iter(''))
+
 
 
 types = {
@@ -594,7 +596,14 @@ types = {
     '__add__',
     '__mul__',
     '__rmul__',
+    '__iter__',
     '__new__',
+  ],
+  str_iterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
   ],
   tuple: [
     '__class__',

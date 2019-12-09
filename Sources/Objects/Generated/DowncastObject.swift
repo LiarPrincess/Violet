@@ -215,6 +215,12 @@ internal enum Cast {
     return cast(object, as: PyString.self, typeName: "str", methodName: methodName)
   }
 
+  // MARK: - StringIterator
+
+  internal static func asPyStringIterator(_ object: PyObject, methodName: String) -> PyResult<PyStringIterator> {
+    return cast(object, as: PyStringIterator.self, typeName: "str_iterator", methodName: methodName)
+  }
+
   // MARK: - Tuple
 
   internal static func asPyTuple(_ object: PyObject, methodName: String) -> PyResult<PyTuple> {

@@ -43,6 +43,7 @@ public final class BuiltinTypes {
   public let set_iterator: PyType
   public let slice: PyType
   public let str: PyType
+  public let str_iterator: PyType
   public let tuple: PyType
   public let tuple_iterator: PyType
 
@@ -87,6 +88,7 @@ public final class BuiltinTypes {
     self.set_iterator = TypeFactory.set_iterator(context, type: self.type, base: self.object)
     self.slice = TypeFactory.slice(context, type: self.type, base: self.object)
     self.str = TypeFactory.str(context, type: self.type, base: self.object)
+    self.str_iterator = TypeFactory.str_iterator(context, type: self.type, base: self.object)
     self.tuple = TypeFactory.tuple(context, type: self.type, base: self.object)
     self.tuple_iterator = TypeFactory.tuple_iterator(context, type: self.type, base: self.object)
     self.bool = TypeFactory.bool(context, type: self.type, base: self.int)
