@@ -22,7 +22,7 @@ public class PyDict: PyObject {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
-  internal var data: PyDictData
+  internal private(set) var data: PyDictData
 
   // MARK: - Init
 

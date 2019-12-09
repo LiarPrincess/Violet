@@ -145,6 +145,19 @@ PyDictKeyIterator|PyObject|get|__class__|getClass() -> PyType
 PyDictKeyIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyDictKeyIterator|PyObject|func|__iter__|iter() -> PyObject
 PyDictKeyIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyDictKeys|PyObject|get|__class__|getClass() -> PyType
+
+PyDictKeys|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDictKeys|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDictKeys|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDictKeys|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDictKeys|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDictKeys|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyDictKeys|PyObject|func|__repr__|repr() -> PyResult<String>
+PyDictKeys|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyDictKeys|PyObject|func|__len__|getLength() -> BigInt
+PyDictKeys|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PyDictKeys|PyObject|func|__iter__|iter() -> PyObject
 PyDictValueIterator|PyObject|get|__class__|getClass() -> PyType
 
 PyDictValueIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

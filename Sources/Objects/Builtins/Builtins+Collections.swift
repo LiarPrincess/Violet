@@ -216,6 +216,31 @@ extension Builtins {
     return .value(false)
   }
 
+  public func contains(_ collection: PyObject,
+                       allFrom subset: PyObject) -> PyResult<Bool> {
+    let iter: PyObject
+    switch self.iter(object: subset) {
+    case let .value(i): iter = i
+    case let .error(e): return .error(e)
+    }
+
+    while true {
+      switch self.next(iterator: iter) {
+      case .value(let o):
+        switch self.contains(collection, element: o) {
+        case .value(true): break // check next element
+        case .value(false): return .value(false)
+        case .error(let e): return .error(e)
+        }
+        break
+      case .error(.stopIteration):
+        return .value(true)
+      case .error(let e):
+        return .error(e)
+      }
+    }
+  }
+
   // MARK: - Helpers
 
   private func cast<T>(_ object: PyObject,

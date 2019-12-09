@@ -281,6 +281,32 @@ extension TypeFactory {
     return result
   }
 
+  // MARK: - DictKeys
+
+  internal static func dict_keys(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "dict_keys", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyDictKeys.getClass, castSelf: Cast.asPyDictKeys)
+
+
+
+    dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyDictKeys.isEqual(_:), castSelf: Cast.asPyDictKeys)
+    dict["__ne__"] = wrapMethod(context, name: "__ne__", doc: nil, fn: PyDictKeys.isNotEqual(_:), castSelf: Cast.asPyDictKeys)
+    dict["__lt__"] = wrapMethod(context, name: "__lt__", doc: nil, fn: PyDictKeys.isLess(_:), castSelf: Cast.asPyDictKeys)
+    dict["__le__"] = wrapMethod(context, name: "__le__", doc: nil, fn: PyDictKeys.isLessEqual(_:), castSelf: Cast.asPyDictKeys)
+    dict["__gt__"] = wrapMethod(context, name: "__gt__", doc: nil, fn: PyDictKeys.isGreater(_:), castSelf: Cast.asPyDictKeys)
+    dict["__ge__"] = wrapMethod(context, name: "__ge__", doc: nil, fn: PyDictKeys.isGreaterEqual(_:), castSelf: Cast.asPyDictKeys)
+    dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyDictKeys.repr, castSelf: Cast.asPyDictKeys)
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyDictKeys.getAttribute(name:), castSelf: Cast.asPyDictKeys)
+    dict["__len__"] = wrapMethod(context, name: "__len__", doc: nil, fn: PyDictKeys.getLength, castSelf: Cast.asPyDictKeys)
+    dict["__contains__"] = wrapMethod(context, name: "__contains__", doc: nil, fn: PyDictKeys.contains(_:), castSelf: Cast.asPyDictKeys)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyDictKeys.iter, castSelf: Cast.asPyDictKeys)
+    return result
+  }
+
   // MARK: - DictValueIterator
 
   internal static func dict_valueiterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {

@@ -3,6 +3,8 @@
 
 
 // swiftlint:disable:previous vertical_whitespace
+// swiftlint:disable function_body_length
+// swiftlint:disable line_length
 
 public final class BuiltinTypes {
 
@@ -18,6 +20,7 @@ public final class BuiltinTypes {
   public let dict: PyType
   public let dict_itemiterator: PyType
   public let dict_keyiterator: PyType
+  public let dict_keys: PyType
   public let dict_valueiterator: PyType
   public let ellipsis: PyType
   public let float: PyType
@@ -59,6 +62,7 @@ public final class BuiltinTypes {
     self.dict = TypeFactory.dict(context, type: self.type, base: self.object)
     self.dict_itemiterator = TypeFactory.dict_itemiterator(context, type: self.type, base: self.object)
     self.dict_keyiterator = TypeFactory.dict_keyiterator(context, type: self.type, base: self.object)
+    self.dict_keys = TypeFactory.dict_keys(context, type: self.type, base: self.object)
     self.dict_valueiterator = TypeFactory.dict_valueiterator(context, type: self.type, base: self.object)
     self.ellipsis = TypeFactory.ellipsis(context, type: self.type, base: self.object)
     self.float = TypeFactory.float(context, type: self.type, base: self.object)

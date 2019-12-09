@@ -69,6 +69,10 @@ internal final class PyDictHeap: PyDict, HeapType {
 
 // PyDictKeyIterator is not a base type.
 
+// MARK: - DictKeys
+
+// PyDictKeys is not a base type.
+
 // MARK: - DictValueIterator
 
 // PyDictValueIterator is not a base type.

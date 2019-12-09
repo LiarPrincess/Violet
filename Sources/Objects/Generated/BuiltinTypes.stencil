@@ -1,4 +1,6 @@
 // swiftlint:disable:previous vertical_whitespace
+// swiftlint:disable function_body_length
+// swiftlint:disable line_length
 
 public final class BuiltinTypes {
 

@@ -3,18 +3,10 @@ import Core
 // In CPython:
 // Objects -> setobject.c
 
-/// Type that can be used in `PySetIterator`.
-internal protocol PySetIterable: PyObject {
-  var data: PySetData { get }
-}
-
-extension PySet: PySetIterable { }
-extension PyFrozenSet: PySetIterable { }
-
 // sourcery: pytype = set_iterator, default, hasGC
 public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
-  internal let set: PySetIterable
+  internal let set: PySetType
   internal var index: Int
   private var initCount: Int
 
@@ -24,7 +16,7 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
 
   // MARK: - Init
 
-  internal init(set: PySetIterable) {
+  internal init(set: PySetType) {
     self.set = set
     self.index = 0
     self.initCount = set.data.count

@@ -163,8 +163,8 @@ extension Builtins {
   // sourcery: pymethod: iter
   /// iter(object[, sentinel])
   /// See [this](https://docs.python.org/3/library/functions.html#iter)
-  public func iter() -> PyObject {
-    return self.unimplemented
+  public func iter(object: PyObject) -> PyResult<PyObject> {
+    return .value(self.unimplemented)
   }
 
   // sourcery: pymethod: len
@@ -212,8 +212,8 @@ extension Builtins {
   // sourcery: pymethod: next
   /// next(iterator[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#next)
-  public func next() -> PyObject {
-    return self.unimplemented
+  public func next(iterator: PyObject) -> PyResult<PyObject> {
+    return .value(self.unimplemented)
   }
 
   // sourcery: pymethod: oct

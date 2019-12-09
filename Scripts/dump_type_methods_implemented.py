@@ -1,11 +1,17 @@
 
 import types as t
 tuple_iterator = type(iter(()))
+
 list_iterator = type(iter([]))
 list_reverseiterator = type(reversed([]))
+
 set_iterator = type(iter({ 1 }))
+
+dict_items = type({}.items())
 dict_itemiterator = type(iter({}.items()))
+dict_keys = type({}.keys())
 dict_keyiterator = type(iter({}.keys()))
+dict_values = type({}.values())
 dict_valueiterator = type(iter({}.values()))
 
 
@@ -167,6 +173,20 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+  ],
+  dict_keys: [
+    '__class__',
+    '__eq__',
+    '__ne__',
+    '__lt__',
+    '__le__',
+    '__gt__',
+    '__ge__',
+    '__repr__',
+    '__getattribute__',
+    '__len__',
+    '__contains__',
+    '__iter__',
   ],
   dict_valueiterator: [
     '__class__',
