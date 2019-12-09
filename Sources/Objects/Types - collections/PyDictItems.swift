@@ -3,10 +3,14 @@ import Core
 // In CPython:
 // Objects -> dictobject.c
 
-// sourcery: pytype = dict_keys, default, hasGC
-public class PyDictKeys: PyObject, PyDictViewsShared {
+// sourcery: pytype = dict_items, default, hasGC
+public class PyDictItems: PyObject, PyDictViewsShared {
 
   internal let dict: PyDict
+
+  private var data: PyDictData {
+    return self.dict.data
+  }
 
   // MARK: - Init
 
@@ -60,7 +64,7 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return self.reprShared(typeName: "dict_keys")
+    return self.reprShared(typeName: "dict_items")
   }
 
   // MARK: - Attributes
@@ -81,13 +85,25 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
-    return self.dict.contains(element)
+    guard let tuple = element as? PyTuple, tuple.data.count == 2 else {
+      return .value(false)
+    }
+
+    let key = tuple.data.elements[0]
+    let value = tuple.data.elements[1]
+
+    switch self.dict.getItem(at: key) {
+    case let .value(o):
+      return self.builtins.isEqualBool(left: value, right: o)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyDictKeyIterator(dict: self.dict)
+    return PyDictItemIterator(dict: self.dict)
   }
 }

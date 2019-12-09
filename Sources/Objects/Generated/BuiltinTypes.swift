@@ -19,6 +19,7 @@ public final class BuiltinTypes {
   public let complex: PyType
   public let dict: PyType
   public let dict_itemiterator: PyType
+  public let dict_items: PyType
   public let dict_keyiterator: PyType
   public let dict_keys: PyType
   public let dict_valueiterator: PyType
@@ -61,6 +62,7 @@ public final class BuiltinTypes {
     self.complex = TypeFactory.complex(context, type: self.type, base: self.object)
     self.dict = TypeFactory.dict(context, type: self.type, base: self.object)
     self.dict_itemiterator = TypeFactory.dict_itemiterator(context, type: self.type, base: self.object)
+    self.dict_items = TypeFactory.dict_items(context, type: self.type, base: self.object)
     self.dict_keyiterator = TypeFactory.dict_keyiterator(context, type: self.type, base: self.object)
     self.dict_keys = TypeFactory.dict_keys(context, type: self.type, base: self.object)
     self.dict_valueiterator = TypeFactory.dict_valueiterator(context, type: self.type, base: self.object)

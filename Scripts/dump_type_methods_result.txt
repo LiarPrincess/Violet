@@ -64,6 +64,20 @@ dict_itemiterator
     __new__ - <class 'builtin_function_or_method'>
     __length_hint__
 
+dict_items
+  Unimplemented:
+    __hash__ - <class 'NoneType'>
+    __new__ - <class 'builtin_function_or_method'>
+    __and__
+    __or__
+    __rand__
+    __ror__
+    __rsub__
+    __rxor__
+    __sub__
+    __xor__
+    isdisjoint
+
 dict_keyiterator
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>

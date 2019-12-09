@@ -152,6 +152,23 @@ extension PyDictItemIterator:
   __next__Owner
 { }
 
+// MARK: - DictItems
+
+extension PyDictItems:
+  __class__GetterOwner,
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __iter__Owner
+{ }
+
 // MARK: - DictKeyIterator
 
 extension PyDictKeyIterator:

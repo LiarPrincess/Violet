@@ -71,6 +71,12 @@ internal enum Cast {
     return cast(object, as: PyDictItemIterator.self, typeName: "dict_itemiterator", methodName: methodName)
   }
 
+  // MARK: - DictItems
+
+  internal static func asPyDictItems(_ object: PyObject, methodName: String) -> PyResult<PyDictItems> {
+    return cast(object, as: PyDictItems.self, typeName: "dict_items", methodName: methodName)
+  }
+
   // MARK: - DictKeyIterator
 
   internal static func asPyDictKeyIterator(_ object: PyObject, methodName: String) -> PyResult<PyDictKeyIterator> {

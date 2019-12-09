@@ -263,6 +263,32 @@ extension TypeFactory {
     return result
   }
 
+  // MARK: - DictItems
+
+  internal static func dict_items(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "dict_items", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyDictItems.getClass, castSelf: Cast.asPyDictItems)
+
+
+
+    dict["__eq__"] = wrapMethod(context, name: "__eq__", doc: nil, fn: PyDictItems.isEqual(_:), castSelf: Cast.asPyDictItems)
+    dict["__ne__"] = wrapMethod(context, name: "__ne__", doc: nil, fn: PyDictItems.isNotEqual(_:), castSelf: Cast.asPyDictItems)
+    dict["__lt__"] = wrapMethod(context, name: "__lt__", doc: nil, fn: PyDictItems.isLess(_:), castSelf: Cast.asPyDictItems)
+    dict["__le__"] = wrapMethod(context, name: "__le__", doc: nil, fn: PyDictItems.isLessEqual(_:), castSelf: Cast.asPyDictItems)
+    dict["__gt__"] = wrapMethod(context, name: "__gt__", doc: nil, fn: PyDictItems.isGreater(_:), castSelf: Cast.asPyDictItems)
+    dict["__ge__"] = wrapMethod(context, name: "__ge__", doc: nil, fn: PyDictItems.isGreaterEqual(_:), castSelf: Cast.asPyDictItems)
+    dict["__repr__"] = wrapMethod(context, name: "__repr__", doc: nil, fn: PyDictItems.repr, castSelf: Cast.asPyDictItems)
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyDictItems.getAttribute(name:), castSelf: Cast.asPyDictItems)
+    dict["__len__"] = wrapMethod(context, name: "__len__", doc: nil, fn: PyDictItems.getLength, castSelf: Cast.asPyDictItems)
+    dict["__contains__"] = wrapMethod(context, name: "__contains__", doc: nil, fn: PyDictItems.contains(_:), castSelf: Cast.asPyDictItems)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyDictItems.iter, castSelf: Cast.asPyDictItems)
+    return result
+  }
+
   // MARK: - DictKeyIterator
 
   internal static func dict_keyiterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
