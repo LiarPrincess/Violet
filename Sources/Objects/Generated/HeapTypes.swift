@@ -133,6 +133,10 @@ internal final class PyIntHeap: PyInt, HeapType {
   internal lazy var attributes = Attributes()
 }
 
+// MARK: - Iterator
+
+// PyIterator is not a base type.
+
 // MARK: - List
 
 /// Type used when we subclass builtin `list` class.

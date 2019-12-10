@@ -1,5 +1,8 @@
 
 import types as t
+import collections as c
+
+iterator = c.Iterator
 tuple_iterator = type(iter(()))
 
 list_iterator = type(iter([]))
@@ -367,6 +370,12 @@ types = {
     '__invert__',
     '__round__',
     '__new__',
+  ],
+  iterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
   ],
   list: [
     '__class__',

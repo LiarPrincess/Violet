@@ -30,6 +30,7 @@ public final class BuiltinTypes {
   public let frozenset: PyType
   public let function: PyType
   public let int: PyType
+  public let iterator: PyType
   public let list: PyType
   public let list_iterator: PyType
   public let list_reverseiterator: PyType
@@ -77,6 +78,7 @@ public final class BuiltinTypes {
     self.frozenset = TypeFactory.frozenset(context, type: self.type, base: self.object)
     self.function = TypeFactory.function(context, type: self.type, base: self.object)
     self.int = TypeFactory.int(context, type: self.type, base: self.object)
+    self.iterator = TypeFactory.iterator(context, type: self.type, base: self.object)
     self.list = TypeFactory.list(context, type: self.type, base: self.object)
     self.list_iterator = TypeFactory.list_iterator(context, type: self.type, base: self.object)
     self.list_reverseiterator = TypeFactory.list_reverseiterator(context, type: self.type, base: self.object)

@@ -385,6 +385,15 @@ extension PyInt:
   __new__Owner
 { }
 
+// MARK: - Iterator
+
+extension PyIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
+{ }
+
 // MARK: - List
 
 extension PyList:

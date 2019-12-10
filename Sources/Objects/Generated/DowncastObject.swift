@@ -137,6 +137,12 @@ internal enum Cast {
     return cast(object, as: PyInt.self, typeName: "int", methodName: methodName)
   }
 
+  // MARK: - Iterator
+
+  internal static func asPyIterator(_ object: PyObject, methodName: String) -> PyResult<PyIterator> {
+    return cast(object, as: PyIterator.self, typeName: "iterator", methodName: methodName)
+  }
+
   // MARK: - List
 
   internal static func asPyList(_ object: PyObject, methodName: String) -> PyResult<PyList> {

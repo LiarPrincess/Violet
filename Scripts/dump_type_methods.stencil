@@ -1,4 +1,7 @@
 import types as t
+import collections as c
+
+iterator = c.Iterator
 tuple_iterator = type(iter(()))
 
 list_iterator = type(iter([]))

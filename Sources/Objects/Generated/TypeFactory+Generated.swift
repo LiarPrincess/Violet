@@ -595,6 +595,24 @@ extension TypeFactory {
     return result
   }
 
+  // MARK: - Iterator
+
+  internal static func iterator(_ context: PyContext, type: PyType, base: PyType) -> PyType {
+    let result = PyType(context, name: "iterator", doc: nil, type: type, base: base)
+    result.setFlag(.default)
+    result.setFlag(.hasGC)
+
+    let dict = result.getDict()
+    dict["__class__"] = createProperty(context, name: "__class__", doc: nil, get: PyIterator.getClass, castSelf: Cast.asPyIterator)
+
+
+
+    dict["__getattribute__"] = wrapMethod(context, name: "__getattribute__", doc: nil, fn: PyIterator.getAttribute(name:), castSelf: Cast.asPyIterator)
+    dict["__iter__"] = wrapMethod(context, name: "__iter__", doc: nil, fn: PyIterator.iter, castSelf: Cast.asPyIterator)
+    dict["__next__"] = wrapMethod(context, name: "__next__", doc: nil, fn: PyIterator.next, castSelf: Cast.asPyIterator)
+    return result
+  }
+
   // MARK: - List
 
   internal static func list(_ context: PyContext, type: PyType, base: PyType) -> PyType {

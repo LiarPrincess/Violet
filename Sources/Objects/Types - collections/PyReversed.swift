@@ -17,11 +17,13 @@ internal class PyReversed: PyObject {
   internal let sequence: PyObject
   internal private(set) var index: Int
 
+  private static let endIndex = -1
+
   // MARK: - Init
 
-  internal init(sequence: PyObject) {
+  internal init(sequence: PyObject, sequenceCount: Int) {
     self.sequence = sequence
-    self.index = 0
+    self.index = sequenceCount - 1
     super.init(type: sequence.builtins.types.reversed)
   }
 
@@ -63,7 +65,7 @@ internal class PyReversed: PyObject {
       }
     }
 
-    self.index = -1
+    self.index = PyReversed.endIndex
     return .stopIteration
   }
 }

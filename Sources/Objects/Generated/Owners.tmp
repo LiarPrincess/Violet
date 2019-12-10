@@ -329,6 +329,11 @@ PyInt|PyObject|func|__rxor__|rxor(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__invert__|invert() -> PyObject
 PyInt|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
 PyInt|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
+PyIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyIterator|PyObject|func|__iter__|iter() -> PyObject
+PyIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyList|PyObject|get|__class__|getClass() -> PyType
 
 PyList|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

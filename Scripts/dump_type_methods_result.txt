@@ -139,6 +139,10 @@ int
     bit_length
     to_bytes
 
+Iterator
+  Why do we even have this?
+    __getattribute__
+
 list
   Unimplemented:
     __hash__ - <class 'NoneType'>

@@ -22,6 +22,7 @@ extension Builtins {
 
   // MARK: - Get item
 
+  /// PySequence_GetItem
   public func getItem(_ collection: PyObject,
                       at index: Int) -> PyResult<PyObject> {
     return .value(self.unimplemented)
