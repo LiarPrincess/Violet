@@ -185,6 +185,16 @@ internal final class PyPropertyHeap: PyProperty, HeapType {
 
 // PyRange is not a base type.
 
+// MARK: - Reversed
+
+/// Type used when we subclass builtin `reversed` class.
+/// For example: `class Rapunzel(reversed): pass`.
+internal final class PyReversedHeap: PyReversed, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
 // MARK: - Set
 
 /// Type used when we subclass builtin `set` class.

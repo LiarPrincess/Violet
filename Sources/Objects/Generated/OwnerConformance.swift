@@ -537,6 +537,15 @@ extension PyRange:
   indexOwner
 { }
 
+// MARK: - Reversed
+
+extension PyReversed:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
+{ }
+
 // MARK: - Set
 
 extension PySet:

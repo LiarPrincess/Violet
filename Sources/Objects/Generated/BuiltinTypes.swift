@@ -40,6 +40,7 @@ public final class BuiltinTypes {
   public let notImplemented: PyType
   public let property: PyType
   public let range: PyType
+  public let reversed: PyType
   public let set: PyType
   public let set_iterator: PyType
   public let slice: PyType
@@ -86,6 +87,7 @@ public final class BuiltinTypes {
     self.notImplemented = TypeFactory.notImplemented(context, type: self.type, base: self.object)
     self.property = TypeFactory.property(context, type: self.type, base: self.object)
     self.range = TypeFactory.range(context, type: self.type, base: self.object)
+    self.reversed = TypeFactory.reversed(context, type: self.type, base: self.object)
     self.set = TypeFactory.set(context, type: self.type, base: self.object)
     self.set_iterator = TypeFactory.set_iterator(context, type: self.type, base: self.object)
     self.slice = TypeFactory.slice(context, type: self.type, base: self.object)

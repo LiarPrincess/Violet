@@ -1,9 +1,12 @@
 import Core
 
+// In CPython:
+// Objects -> enumobject.c
+
 // sourcery: pytype = enumerate, default, hasGC, baseType
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.
-internal final class PyEnumerate: PyObject {
+internal class PyEnumerate: PyObject {
 
   internal static let doc: String = """
     enumerate(iterable, start=0)

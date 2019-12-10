@@ -19,4 +19,11 @@ extension Builtins {
   internal var unimplemented: PyObject {
     return self.none
   }
+
+  // MARK: - Get item
+
+  public func getItem(_ collection: PyObject,
+                      at index: Int) -> PyResult<PyObject> {
+    return .value(self.unimplemented)
+  }
 }

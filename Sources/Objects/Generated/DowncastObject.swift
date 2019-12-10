@@ -197,6 +197,12 @@ internal enum Cast {
     return cast(object, as: PyRange.self, typeName: "range", methodName: methodName)
   }
 
+  // MARK: - Reversed
+
+  internal static func asPyReversed(_ object: PyObject, methodName: String) -> PyResult<PyReversed> {
+    return cast(object, as: PyReversed.self, typeName: "reversed", methodName: methodName)
+  }
+
   // MARK: - Set
 
   internal static func asPySet(_ object: PyObject, methodName: String) -> PyResult<PySet> {

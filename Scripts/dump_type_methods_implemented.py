@@ -490,6 +490,12 @@ types = {
     'count',
     'index',
   ],
+  reversed: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
+  ],
   set: [
     '__class__',
     '__eq__',

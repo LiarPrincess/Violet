@@ -186,6 +186,12 @@ range
     step
     stop
 
+reversed
+  Unimplemented:
+    __new__ - <class 'builtin_function_or_method'>
+    __length_hint__
+    __setstate__
+
 set
   Unimplemented:
     __iand__
