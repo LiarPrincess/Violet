@@ -13,7 +13,6 @@ internal struct MRO {
   // 'private' so that the only way to create MRO is to go through
   // one of our static methods.
   private init(baseClasses: [PyType], resolutionOrder: [PyType]) {
-    assert(baseClasses.count == resolutionOrder.count)
     assert(baseClasses.allSatisfy { b in resolutionOrder.contains { $0 === b } })
     self.baseClasses = baseClasses
     self.resolutionOrder = resolutionOrder

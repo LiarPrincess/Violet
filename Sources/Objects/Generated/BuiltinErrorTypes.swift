@@ -5,6 +5,7 @@
 
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
+// swiftlint:disable trailing_comma
 
 public final class BuiltinErrorTypes {
 
@@ -73,70 +74,210 @@ public final class BuiltinErrorTypes {
   public let bytesWarning: PyType
   public let resourceWarning: PyType
 
+  /// Init that will only initialize properties.
+  /// You need to call `postInit` to fill `__dict__` etc.!
   internal init(context: PyContext, types: BuiltinTypes) {
-    self.baseException = TypeFactory.baseException(context, type: types.type, base: types.object)
-    self.systemExit = TypeFactory.systemExit(context, type: types.type, base: self.baseException)
-    self.keyboardInterrupt = TypeFactory.keyboardInterrupt(context, type: types.type, base: self.baseException)
-    self.generatorExit = TypeFactory.generatorExit(context, type: types.type, base: self.baseException)
-    self.exception = TypeFactory.exception(context, type: types.type, base: self.baseException)
-    self.stopIteration = TypeFactory.stopIteration(context, type: types.type, base: self.exception)
-    self.stopAsyncIteration = TypeFactory.stopAsyncIteration(context, type: types.type, base: self.exception)
-    self.arithmeticError = TypeFactory.arithmeticError(context, type: types.type, base: self.exception)
-    self.floatingPointError = TypeFactory.floatingPointError(context, type: types.type, base: self.arithmeticError)
-    self.overflowError = TypeFactory.overflowError(context, type: types.type, base: self.arithmeticError)
-    self.zeroDivisionError = TypeFactory.zeroDivisionError(context, type: types.type, base: self.arithmeticError)
-    self.assertionError = TypeFactory.assertionError(context, type: types.type, base: self.exception)
-    self.attributeError = TypeFactory.attributeError(context, type: types.type, base: self.exception)
-    self.bufferError = TypeFactory.bufferError(context, type: types.type, base: self.exception)
-    self.eofError = TypeFactory.eofError(context, type: types.type, base: self.exception)
-    self.importError = TypeFactory.importError(context, type: types.type, base: self.exception)
-    self.moduleNotFoundError = TypeFactory.moduleNotFoundError(context, type: types.type, base: self.importError)
-    self.lookupError = TypeFactory.lookupError(context, type: types.type, base: self.exception)
-    self.indexError = TypeFactory.indexError(context, type: types.type, base: self.lookupError)
-    self.keyError = TypeFactory.keyError(context, type: types.type, base: self.lookupError)
-    self.memoryError = TypeFactory.memoryError(context, type: types.type, base: self.exception)
-    self.nameError = TypeFactory.nameError(context, type: types.type, base: self.exception)
-    self.unboundLocalError = TypeFactory.unboundLocalError(context, type: types.type, base: self.nameError)
-    self.osError = TypeFactory.osError(context, type: types.type, base: self.exception)
-    self.blockingIOError = TypeFactory.blockingIOError(context, type: types.type, base: self.osError)
-    self.childProcessError = TypeFactory.childProcessError(context, type: types.type, base: self.osError)
-    self.connectionError = TypeFactory.connectionError(context, type: types.type, base: self.osError)
-    self.brokenPipeError = TypeFactory.brokenPipeError(context, type: types.type, base: self.connectionError)
-    self.connectionAbortedError = TypeFactory.connectionAbortedError(context, type: types.type, base: self.connectionError)
-    self.connectionRefusedError = TypeFactory.connectionRefusedError(context, type: types.type, base: self.connectionError)
-    self.connectionResetError = TypeFactory.connectionResetError(context, type: types.type, base: self.connectionError)
-    self.fileExistsError = TypeFactory.fileExistsError(context, type: types.type, base: self.osError)
-    self.fileNotFoundError = TypeFactory.fileNotFoundError(context, type: types.type, base: self.osError)
-    self.interruptedError = TypeFactory.interruptedError(context, type: types.type, base: self.osError)
-    self.isADirectoryError = TypeFactory.isADirectoryError(context, type: types.type, base: self.osError)
-    self.notADirectoryError = TypeFactory.notADirectoryError(context, type: types.type, base: self.osError)
-    self.permissionError = TypeFactory.permissionError(context, type: types.type, base: self.osError)
-    self.processLookupError = TypeFactory.processLookupError(context, type: types.type, base: self.osError)
-    self.timeoutError = TypeFactory.timeoutError(context, type: types.type, base: self.osError)
-    self.referenceError = TypeFactory.referenceError(context, type: types.type, base: self.exception)
-    self.runtimeError = TypeFactory.runtimeError(context, type: types.type, base: self.exception)
-    self.notImplementedError = TypeFactory.notImplementedError(context, type: types.type, base: self.runtimeError)
-    self.recursionError = TypeFactory.recursionError(context, type: types.type, base: self.runtimeError)
-    self.syntaxError = TypeFactory.syntaxError(context, type: types.type, base: self.exception)
-    self.indentationError = TypeFactory.indentationError(context, type: types.type, base: self.syntaxError)
-    self.tabError = TypeFactory.tabError(context, type: types.type, base: self.indentationError)
-    self.systemError = TypeFactory.systemError(context, type: types.type, base: self.exception)
-    self.typeError = TypeFactory.typeError(context, type: types.type, base: self.exception)
-    self.valueError = TypeFactory.valueError(context, type: types.type, base: self.exception)
-    self.unicodeError = TypeFactory.unicodeError(context, type: types.type, base: self.valueError)
-    self.unicodeDecodeError = TypeFactory.unicodeDecodeError(context, type: types.type, base: self.unicodeError)
-    self.unicodeEncodeError = TypeFactory.unicodeEncodeError(context, type: types.type, base: self.unicodeError)
-    self.unicodeTranslateError = TypeFactory.unicodeTranslateError(context, type: types.type, base: self.unicodeError)
-    self.warning = TypeFactory.warning(context, type: types.type, base: self.exception)
-    self.deprecationWarning = TypeFactory.deprecationWarning(context, type: types.type, base: self.warning)
-    self.pendingDeprecationWarning = TypeFactory.pendingDeprecationWarning(context, type: types.type, base: self.warning)
-    self.runtimeWarning = TypeFactory.runtimeWarning(context, type: types.type, base: self.warning)
-    self.syntaxWarning = TypeFactory.syntaxWarning(context, type: types.type, base: self.warning)
-    self.userWarning = TypeFactory.userWarning(context, type: types.type, base: self.warning)
-    self.futureWarning = TypeFactory.futureWarning(context, type: types.type, base: self.warning)
-    self.importWarning = TypeFactory.importWarning(context, type: types.type, base: self.warning)
-    self.unicodeWarning = TypeFactory.unicodeWarning(context, type: types.type, base: self.warning)
-    self.bytesWarning = TypeFactory.bytesWarning(context, type: types.type, base: self.warning)
-    self.resourceWarning = TypeFactory.resourceWarning(context, type: types.type, base: self.warning)
+    self.baseException = PyType.initBuiltinType(name: "BaseException", type: types.type, base: types.object)
+    self.systemExit = PyType.initBuiltinType(name: "SystemExit", type: types.type, base: self.baseException)
+    self.keyboardInterrupt = PyType.initBuiltinType(name: "KeyboardInterrupt", type: types.type, base: self.baseException)
+    self.generatorExit = PyType.initBuiltinType(name: "GeneratorExit", type: types.type, base: self.baseException)
+    self.exception = PyType.initBuiltinType(name: "Exception", type: types.type, base: self.baseException)
+    self.stopIteration = PyType.initBuiltinType(name: "StopIteration", type: types.type, base: self.exception)
+    self.stopAsyncIteration = PyType.initBuiltinType(name: "StopAsyncIteration", type: types.type, base: self.exception)
+    self.arithmeticError = PyType.initBuiltinType(name: "ArithmeticError", type: types.type, base: self.exception)
+    self.floatingPointError = PyType.initBuiltinType(name: "FloatingPointError", type: types.type, base: self.arithmeticError)
+    self.overflowError = PyType.initBuiltinType(name: "OverflowError", type: types.type, base: self.arithmeticError)
+    self.zeroDivisionError = PyType.initBuiltinType(name: "ZeroDivisionError", type: types.type, base: self.arithmeticError)
+    self.assertionError = PyType.initBuiltinType(name: "AssertionError", type: types.type, base: self.exception)
+    self.attributeError = PyType.initBuiltinType(name: "AttributeError", type: types.type, base: self.exception)
+    self.bufferError = PyType.initBuiltinType(name: "BufferError", type: types.type, base: self.exception)
+    self.eofError = PyType.initBuiltinType(name: "EOFError", type: types.type, base: self.exception)
+    self.importError = PyType.initBuiltinType(name: "ImportError", type: types.type, base: self.exception)
+    self.moduleNotFoundError = PyType.initBuiltinType(name: "ModuleNotFoundError", type: types.type, base: self.importError)
+    self.lookupError = PyType.initBuiltinType(name: "LookupError", type: types.type, base: self.exception)
+    self.indexError = PyType.initBuiltinType(name: "IndexError", type: types.type, base: self.lookupError)
+    self.keyError = PyType.initBuiltinType(name: "KeyError", type: types.type, base: self.lookupError)
+    self.memoryError = PyType.initBuiltinType(name: "MemoryError", type: types.type, base: self.exception)
+    self.nameError = PyType.initBuiltinType(name: "NameError", type: types.type, base: self.exception)
+    self.unboundLocalError = PyType.initBuiltinType(name: "UnboundLocalError", type: types.type, base: self.nameError)
+    self.osError = PyType.initBuiltinType(name: "OSError", type: types.type, base: self.exception)
+    self.blockingIOError = PyType.initBuiltinType(name: "BlockingIOError", type: types.type, base: self.osError)
+    self.childProcessError = PyType.initBuiltinType(name: "ChildProcessError", type: types.type, base: self.osError)
+    self.connectionError = PyType.initBuiltinType(name: "ConnectionError", type: types.type, base: self.osError)
+    self.brokenPipeError = PyType.initBuiltinType(name: "BrokenPipeError", type: types.type, base: self.connectionError)
+    self.connectionAbortedError = PyType.initBuiltinType(name: "ConnectionAbortedError", type: types.type, base: self.connectionError)
+    self.connectionRefusedError = PyType.initBuiltinType(name: "ConnectionRefusedError", type: types.type, base: self.connectionError)
+    self.connectionResetError = PyType.initBuiltinType(name: "ConnectionResetError", type: types.type, base: self.connectionError)
+    self.fileExistsError = PyType.initBuiltinType(name: "FileExistsError", type: types.type, base: self.osError)
+    self.fileNotFoundError = PyType.initBuiltinType(name: "FileNotFoundError", type: types.type, base: self.osError)
+    self.interruptedError = PyType.initBuiltinType(name: "InterruptedError", type: types.type, base: self.osError)
+    self.isADirectoryError = PyType.initBuiltinType(name: "IsADirectoryError", type: types.type, base: self.osError)
+    self.notADirectoryError = PyType.initBuiltinType(name: "NotADirectoryError", type: types.type, base: self.osError)
+    self.permissionError = PyType.initBuiltinType(name: "PermissionError", type: types.type, base: self.osError)
+    self.processLookupError = PyType.initBuiltinType(name: "ProcessLookupError", type: types.type, base: self.osError)
+    self.timeoutError = PyType.initBuiltinType(name: "TimeoutError", type: types.type, base: self.osError)
+    self.referenceError = PyType.initBuiltinType(name: "ReferenceError", type: types.type, base: self.exception)
+    self.runtimeError = PyType.initBuiltinType(name: "RuntimeError", type: types.type, base: self.exception)
+    self.notImplementedError = PyType.initBuiltinType(name: "NotImplementedError", type: types.type, base: self.runtimeError)
+    self.recursionError = PyType.initBuiltinType(name: "RecursionError", type: types.type, base: self.runtimeError)
+    self.syntaxError = PyType.initBuiltinType(name: "SyntaxError", type: types.type, base: self.exception)
+    self.indentationError = PyType.initBuiltinType(name: "IndentationError", type: types.type, base: self.syntaxError)
+    self.tabError = PyType.initBuiltinType(name: "TabError", type: types.type, base: self.indentationError)
+    self.systemError = PyType.initBuiltinType(name: "SystemError", type: types.type, base: self.exception)
+    self.typeError = PyType.initBuiltinType(name: "TypeError", type: types.type, base: self.exception)
+    self.valueError = PyType.initBuiltinType(name: "ValueError", type: types.type, base: self.exception)
+    self.unicodeError = PyType.initBuiltinType(name: "UnicodeError", type: types.type, base: self.valueError)
+    self.unicodeDecodeError = PyType.initBuiltinType(name: "UnicodeDecodeError", type: types.type, base: self.unicodeError)
+    self.unicodeEncodeError = PyType.initBuiltinType(name: "UnicodeEncodeError", type: types.type, base: self.unicodeError)
+    self.unicodeTranslateError = PyType.initBuiltinType(name: "UnicodeTranslateError", type: types.type, base: self.unicodeError)
+    self.warning = PyType.initBuiltinType(name: "Warning", type: types.type, base: self.exception)
+    self.deprecationWarning = PyType.initBuiltinType(name: "DeprecationWarning", type: types.type, base: self.warning)
+    self.pendingDeprecationWarning = PyType.initBuiltinType(name: "PendingDeprecationWarning", type: types.type, base: self.warning)
+    self.runtimeWarning = PyType.initBuiltinType(name: "RuntimeWarning", type: types.type, base: self.warning)
+    self.syntaxWarning = PyType.initBuiltinType(name: "SyntaxWarning", type: types.type, base: self.warning)
+    self.userWarning = PyType.initBuiltinType(name: "UserWarning", type: types.type, base: self.warning)
+    self.futureWarning = PyType.initBuiltinType(name: "FutureWarning", type: types.type, base: self.warning)
+    self.importWarning = PyType.initBuiltinType(name: "ImportWarning", type: types.type, base: self.warning)
+    self.unicodeWarning = PyType.initBuiltinType(name: "UnicodeWarning", type: types.type, base: self.warning)
+    self.bytesWarning = PyType.initBuiltinType(name: "BytesWarning", type: types.type, base: self.warning)
+    self.resourceWarning = PyType.initBuiltinType(name: "ResourceWarning", type: types.type, base: self.warning)
+  }
+
+  /// This function finalizes init of all of the stored types
+  /// (adds `__doc__`, fills `__dict__` etc.) .
+  internal func postInit() {
+    BuiltinTypesFill.baseException(self.baseException)
+    BuiltinTypesFill.systemExit(self.systemExit)
+    BuiltinTypesFill.keyboardInterrupt(self.keyboardInterrupt)
+    BuiltinTypesFill.generatorExit(self.generatorExit)
+    BuiltinTypesFill.exception(self.exception)
+    BuiltinTypesFill.stopIteration(self.stopIteration)
+    BuiltinTypesFill.stopAsyncIteration(self.stopAsyncIteration)
+    BuiltinTypesFill.arithmeticError(self.arithmeticError)
+    BuiltinTypesFill.floatingPointError(self.floatingPointError)
+    BuiltinTypesFill.overflowError(self.overflowError)
+    BuiltinTypesFill.zeroDivisionError(self.zeroDivisionError)
+    BuiltinTypesFill.assertionError(self.assertionError)
+    BuiltinTypesFill.attributeError(self.attributeError)
+    BuiltinTypesFill.bufferError(self.bufferError)
+    BuiltinTypesFill.eofError(self.eofError)
+    BuiltinTypesFill.importError(self.importError)
+    BuiltinTypesFill.moduleNotFoundError(self.moduleNotFoundError)
+    BuiltinTypesFill.lookupError(self.lookupError)
+    BuiltinTypesFill.indexError(self.indexError)
+    BuiltinTypesFill.keyError(self.keyError)
+    BuiltinTypesFill.memoryError(self.memoryError)
+    BuiltinTypesFill.nameError(self.nameError)
+    BuiltinTypesFill.unboundLocalError(self.unboundLocalError)
+    BuiltinTypesFill.osError(self.osError)
+    BuiltinTypesFill.blockingIOError(self.blockingIOError)
+    BuiltinTypesFill.childProcessError(self.childProcessError)
+    BuiltinTypesFill.connectionError(self.connectionError)
+    BuiltinTypesFill.brokenPipeError(self.brokenPipeError)
+    BuiltinTypesFill.connectionAbortedError(self.connectionAbortedError)
+    BuiltinTypesFill.connectionRefusedError(self.connectionRefusedError)
+    BuiltinTypesFill.connectionResetError(self.connectionResetError)
+    BuiltinTypesFill.fileExistsError(self.fileExistsError)
+    BuiltinTypesFill.fileNotFoundError(self.fileNotFoundError)
+    BuiltinTypesFill.interruptedError(self.interruptedError)
+    BuiltinTypesFill.isADirectoryError(self.isADirectoryError)
+    BuiltinTypesFill.notADirectoryError(self.notADirectoryError)
+    BuiltinTypesFill.permissionError(self.permissionError)
+    BuiltinTypesFill.processLookupError(self.processLookupError)
+    BuiltinTypesFill.timeoutError(self.timeoutError)
+    BuiltinTypesFill.referenceError(self.referenceError)
+    BuiltinTypesFill.runtimeError(self.runtimeError)
+    BuiltinTypesFill.notImplementedError(self.notImplementedError)
+    BuiltinTypesFill.recursionError(self.recursionError)
+    BuiltinTypesFill.syntaxError(self.syntaxError)
+    BuiltinTypesFill.indentationError(self.indentationError)
+    BuiltinTypesFill.tabError(self.tabError)
+    BuiltinTypesFill.systemError(self.systemError)
+    BuiltinTypesFill.typeError(self.typeError)
+    BuiltinTypesFill.valueError(self.valueError)
+    BuiltinTypesFill.unicodeError(self.unicodeError)
+    BuiltinTypesFill.unicodeDecodeError(self.unicodeDecodeError)
+    BuiltinTypesFill.unicodeEncodeError(self.unicodeEncodeError)
+    BuiltinTypesFill.unicodeTranslateError(self.unicodeTranslateError)
+    BuiltinTypesFill.warning(self.warning)
+    BuiltinTypesFill.deprecationWarning(self.deprecationWarning)
+    BuiltinTypesFill.pendingDeprecationWarning(self.pendingDeprecationWarning)
+    BuiltinTypesFill.runtimeWarning(self.runtimeWarning)
+    BuiltinTypesFill.syntaxWarning(self.syntaxWarning)
+    BuiltinTypesFill.userWarning(self.userWarning)
+    BuiltinTypesFill.futureWarning(self.futureWarning)
+    BuiltinTypesFill.importWarning(self.importWarning)
+    BuiltinTypesFill.unicodeWarning(self.unicodeWarning)
+    BuiltinTypesFill.bytesWarning(self.bytesWarning)
+    BuiltinTypesFill.resourceWarning(self.resourceWarning)
+  }
+
+  internal var all: [PyType] {
+    return [
+      self.baseException,
+      self.systemExit,
+      self.keyboardInterrupt,
+      self.generatorExit,
+      self.exception,
+      self.stopIteration,
+      self.stopAsyncIteration,
+      self.arithmeticError,
+      self.floatingPointError,
+      self.overflowError,
+      self.zeroDivisionError,
+      self.assertionError,
+      self.attributeError,
+      self.bufferError,
+      self.eofError,
+      self.importError,
+      self.moduleNotFoundError,
+      self.lookupError,
+      self.indexError,
+      self.keyError,
+      self.memoryError,
+      self.nameError,
+      self.unboundLocalError,
+      self.osError,
+      self.blockingIOError,
+      self.childProcessError,
+      self.connectionError,
+      self.brokenPipeError,
+      self.connectionAbortedError,
+      self.connectionRefusedError,
+      self.connectionResetError,
+      self.fileExistsError,
+      self.fileNotFoundError,
+      self.interruptedError,
+      self.isADirectoryError,
+      self.notADirectoryError,
+      self.permissionError,
+      self.processLookupError,
+      self.timeoutError,
+      self.referenceError,
+      self.runtimeError,
+      self.notImplementedError,
+      self.recursionError,
+      self.syntaxError,
+      self.indentationError,
+      self.tabError,
+      self.systemError,
+      self.typeError,
+      self.valueError,
+      self.unicodeError,
+      self.unicodeDecodeError,
+      self.unicodeEncodeError,
+      self.unicodeTranslateError,
+      self.warning,
+      self.deprecationWarning,
+      self.pendingDeprecationWarning,
+      self.runtimeWarning,
+      self.syntaxWarning,
+      self.userWarning,
+      self.futureWarning,
+      self.importWarning,
+      self.unicodeWarning,
+      self.bytesWarning,
+      self.resourceWarning,
+    ]
   }
 }

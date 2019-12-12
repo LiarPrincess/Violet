@@ -163,6 +163,7 @@ def print_type_definitions():
   print('''\
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
+// swiftlint:disable trailing_comma
 
 public final class BuiltinErrorTypes {
 ''')
@@ -172,6 +173,8 @@ public final class BuiltinErrorTypes {
     print(f'  public let {property_name}: PyType')
 
   print()
+  print('  /// Init that will only initialize properties.')
+  print('  /// You need to call `postInit` to fill `__dict__` etc.!')
   print('  internal init(context: PyContext, types: BuiltinTypes) {')
 
   for name, base, doc in data:
@@ -182,9 +185,28 @@ public final class BuiltinErrorTypes {
     else:
       base_name = 'self.' + get_builtins_type_property_name(base)
 
-    print(f'    self.{property_name} = TypeFactory.{property_name}(context, type: types.type, base: {base_name})')
-
+    print(f'    self.{property_name} = PyType.initBuiltinType(name: "{name}", type: types.type, base: { base_name })')
   print('  }')
+  print()
+
+  print('  /// This function finalizes init of all of the stored types')
+  print('  /// (adds `__doc__`, fills `__dict__` etc.) .')
+  print('  internal func postInit() {')
+  for name, base, doc in data:
+    property_name = get_builtins_type_property_name(name)
+    method_name = get_builtins_type_property_name(name)
+    print(f'    BuiltinTypesFill.{method_name}(self.{property_name})')
+  print('  }')
+  print()
+
+  print('  internal var all: [PyType] {')
+  print('    return [')
+  for name, base, doc in data:
+    property_name = get_builtins_type_property_name(name)
+    print(f'      self.{property_name},')
+  print('    ]')
+  print('  }')
+
   print('}')
 
 def get_builtins_type_property_name(name):

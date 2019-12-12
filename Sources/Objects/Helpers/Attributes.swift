@@ -90,6 +90,12 @@ public final class Attributes {
     fatalError(msg)
   }
 
+  // MARK: - Clear
+
+  public func clear() {
+    self.data.clear()
+  }
+
   // MARK: - Update
 
   public func update(values: [String:PyObject]) {

@@ -1,6 +1,7 @@
 // swiftlint:disable:previous vertical_whitespace
 // swiftlint:disable function_body_length
 // swiftlint:disable line_length
+// swiftlint:disable trailing_comma
 
 public final class BuiltinTypes {
 
@@ -14,22 +15,44 @@ public final class BuiltinTypes {
   public let {{ name }}: PyType
 {% endfor %}
 
+  /// Init that will only initialize properties.
+  /// You need to call `postInit` to fill `__dict__` etc.!
   internal init(context: PyContext) {
-    // Requirements (for `self.object` and `self.type`):
-    // 1. `type` inherits from `object`
-    // 2. both `type` and `object` are instances of `type`
-    // And yes, it is a cycle that will never be deallocated
-
-    self.object = TypeFactory.objectWithoutType(context)
-    self.type = TypeFactory.typeWithoutType(context, base: self.object)
+    // Requirements (for 'self.object' and 'self.type'):
+    // 1. 'type' inherits from 'object'
+    // 2. both 'type' and 'object' are instances of 'type'
+    self.object = PyType.initObjectType(context)
+    self.type = PyType.initTypeType(objectType: self.object)
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
-    // `self.bool` has to be last because it uses `self.int` as base!
+    // 'self.bool' has to be last because it uses 'self.int' as base!
     {% for type in types.classes|annotated:"pytype" where type.name != "PyBool" %}
     {% set name %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
-    self.{{ name }} = TypeFactory.{{ name }}(context, type: self.type, base: self.object)
+    self.{{ name }} = PyType.initBuiltinType(name: "{{ type.annotations.pytype }}", type: self.type, base: self.object)
     {% endfor %}
-    self.bool = TypeFactory.bool(context, type: self.type, base: self.int)
+    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int)
+  }
+
+  /// This function finalizes init of all of the stored types
+  /// (adds `__doc__`, fills `__dict__` etc.) .
+  internal func postInit() {
+    BuiltinTypesFill.object(self.object)
+    BuiltinTypesFill.type(self.type)
+    {% for type in types.classes|annotated:"pytype" %}
+    {% set name %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+    BuiltinTypesFill.{{ name }}(self.{{ name }})
+    {% endfor %}
+  }
+
+  internal var all: [PyType] {
+    return [
+      self.object,
+      self.type,
+    {% for type in types.classes|annotated:"pytype" %}
+    {% set name %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+      self.{{ name }},
+    {% endfor %}
+    ]
   }
 }

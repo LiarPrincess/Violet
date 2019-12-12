@@ -65,7 +65,7 @@ internal struct PyTypeWeakRef {
 // MARK: - Type
 
 // sourcery: default, hasGC, baseType, typeSubclass
-public class PyType: PyObject {
+public class PyType: PyObject, CustomStringConvertible {
 
   internal static let doc: String = """
     type(object_or_name, bases, dict)
@@ -78,8 +78,8 @@ public class PyType: PyObject {
   // normal type - type: typeType, base: objectType, mro: [self, objectType]
   private var name: String
   private var qualname: String
-  private let base:  PyType?
-  private let bases: [PyType]
+  private var base:  PyType?
+  private var bases: [PyType]
   private var mro:   [PyType]
   private var subclasses: [PyTypeWeakRef] = []
   private var attributes = Attributes()
@@ -108,33 +108,24 @@ public class PyType: PyObject {
     self.attributes = attributes
   }
 
-  // MARK: - Init
-
-  /// Special init for types where we have single base and `qualname = name`.
-  internal convenience init(_ context: PyContext,
-                            name: String,
-                            doc:  String?,
-                            type: PyType,
-                            base: PyType) {
-    self.init(context,
-              name: name,
-              qualname: name,
-              doc: doc,
-              type: type,
-              base: base,
-              mro: MRO.linearize(baseClass: base))
+  public var description: String { // Because debugging without this is hard...
+    return self.name
   }
 
+  // MARK: - Init
+
   /// Full init with all of the options.
-  internal convenience init(_ context: PyContext,
-                            name: String,
+  internal convenience init(name: String,
                             qualname: String,
-                            doc:  String?,
                             type: PyType,
                             base: PyType,
                             mro:  MRO) {
+    assert(type.context === base.context)
     assert(mro.baseClasses.contains { $0 === base })
-    self.init(context, name: name, doc: doc, base: base, mro: mro)
+    assert(mro.baseClasses.allSatisfy { $0.context === type.context })
+    assert(mro.resolutionOrder.allSatisfy { $0.context === type.context })
+
+    self.init(base.context, name: name, base: base, mro: mro)
     self.setType(to: type)
   }
 
@@ -142,11 +133,7 @@ public class PyType: PyObject {
   ///
   /// NEVER EVER use this function!
   /// Reserved for `objectType` and `typeType`.
-  private init(_ context: PyContext,
-               name: String,
-               doc: String?,
-               base: PyType?,
-               mro: MRO?) {
+  private init(_ context: PyContext, name: String, base: PyType?, mro: MRO?) {
     self.name = name
     self.qualname = name
     self.base = base
@@ -167,26 +154,32 @@ public class PyType: PyObject {
     } else {
       self.mro = [self]
     }
-
-    self.attributes["__doc__"] = doc
-      .map(DocHelper.getDocWithoutSignature)
-      .map(context.builtins.newString) ?? context.builtins.none
   }
 
   /// NEVER EVER use this function! It is a reserved for `objectType`.
-  internal static func initObjectType(_ context: PyContext,
-                                      name: String,
-                                      doc:  String) -> PyType {
-    return PyType(context, name: name, doc: doc, base: nil, mro: nil)
+  ///
+  /// - Warning:
+  /// It will not set `self.type` property!
+  internal static func initObjectType(_ context: PyContext) -> PyType {
+    return PyType(context, name: "object", base: nil, mro: nil)
   }
 
   /// NEVER EVER use this function! It is a reserved for `typeType`.
-  internal static func initTypeType(_ context: PyContext,
-                                    name: String,
-                                    doc:  String,
-                                    objectType: PyType) -> PyType {
+  ///
+  /// - Warning:
+  /// It will not set `self.type` property!
+  internal static func initTypeType(objectType: PyType) -> PyType {
     let mro = MRO.linearize(baseClass: objectType)
-    return PyType(context, name: name, doc: doc, base: objectType, mro: mro)
+    return PyType(objectType.context, name: "type", base: objectType, mro: mro)
+  }
+
+  /// NEVER EVER use this function! It is a reserved for builtin types
+  /// (except for `objectType` and `typeType` they have their own inits).
+  internal static func initBuiltinType(name: String,
+                                       type: PyType,
+                                       base: PyType) -> PyType {
+    let mro = MRO.linearize(baseClass: base)
+    return PyType(name: name, qualname: name, type: type, base: base, mro: mro)
   }
 
   // MARK: - Name
@@ -275,6 +268,15 @@ public class PyType: PyObject {
 
     self.attributes.set(key: "__doc__", to: object)
     return .value()
+  }
+
+  /// Set type for a builtin type.
+  /// We can't do it in init because we are not allowed to use other types in init.
+  /// (Which means that we would not be able to create PyString to put in dict)
+  internal func setBuiltinTypeDoc(_ value: String?) {
+    self.attributes["__doc__"] = value
+      .map(DocHelper.getDocWithoutSignature)
+      .map(context.builtins.newString) ?? context.builtins.none
   }
 
   // MARK: - Module
@@ -609,6 +611,18 @@ public class PyType: PyObject {
     }
 
     return kwargsDict.data.isEmpty
+  }
+
+  // MARK: - GC
+
+  /// Remove all of the references to other Python objects.
+  override internal func gcClean() {
+    self.base = nil
+    self.bases = []
+    self.mro = []
+    self.subclasses = []
+    self.attributes.clear()
+    super.gcClean()
   }
 
   // MARK: - Helpers

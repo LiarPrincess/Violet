@@ -5,6 +5,7 @@
 // swiftlint:disable:previous vertical_whitespace
 // swiftlint:disable function_body_length
 // swiftlint:disable line_length
+// swiftlint:disable trailing_comma
 
 public final class BuiltinTypes {
 
@@ -50,53 +51,139 @@ public final class BuiltinTypes {
   public let tuple: PyType
   public let tuple_iterator: PyType
 
+  /// Init that will only initialize properties.
+  /// You need to call `postInit` to fill `__dict__` etc.!
   internal init(context: PyContext) {
-    // Requirements (for `self.object` and `self.type`):
-    // 1. `type` inherits from `object`
-    // 2. both `type` and `object` are instances of `type`
-    // And yes, it is a cycle that will never be deallocated
-
-    self.object = TypeFactory.objectWithoutType(context)
-    self.type = TypeFactory.typeWithoutType(context, base: self.object)
+    // Requirements (for 'self.object' and 'self.type'):
+    // 1. 'type' inherits from 'object'
+    // 2. both 'type' and 'object' are instances of 'type'
+    self.object = PyType.initObjectType(context)
+    self.type = PyType.initTypeType(objectType: self.object)
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)
 
-    // `self.bool` has to be last because it uses `self.int` as base!
-    self.builtinFunction = TypeFactory.builtinFunction(context, type: self.type, base: self.object)
-    self.code = TypeFactory.code(context, type: self.type, base: self.object)
-    self.complex = TypeFactory.complex(context, type: self.type, base: self.object)
-    self.dict = TypeFactory.dict(context, type: self.type, base: self.object)
-    self.dict_itemiterator = TypeFactory.dict_itemiterator(context, type: self.type, base: self.object)
-    self.dict_items = TypeFactory.dict_items(context, type: self.type, base: self.object)
-    self.dict_keyiterator = TypeFactory.dict_keyiterator(context, type: self.type, base: self.object)
-    self.dict_keys = TypeFactory.dict_keys(context, type: self.type, base: self.object)
-    self.dict_valueiterator = TypeFactory.dict_valueiterator(context, type: self.type, base: self.object)
-    self.dict_values = TypeFactory.dict_values(context, type: self.type, base: self.object)
-    self.ellipsis = TypeFactory.ellipsis(context, type: self.type, base: self.object)
-    self.enumerate = TypeFactory.enumerate(context, type: self.type, base: self.object)
-    self.float = TypeFactory.float(context, type: self.type, base: self.object)
-    self.frozenset = TypeFactory.frozenset(context, type: self.type, base: self.object)
-    self.function = TypeFactory.function(context, type: self.type, base: self.object)
-    self.int = TypeFactory.int(context, type: self.type, base: self.object)
-    self.iterator = TypeFactory.iterator(context, type: self.type, base: self.object)
-    self.list = TypeFactory.list(context, type: self.type, base: self.object)
-    self.list_iterator = TypeFactory.list_iterator(context, type: self.type, base: self.object)
-    self.list_reverseiterator = TypeFactory.list_reverseiterator(context, type: self.type, base: self.object)
-    self.method = TypeFactory.method(context, type: self.type, base: self.object)
-    self.module = TypeFactory.module(context, type: self.type, base: self.object)
-    self.simpleNamespace = TypeFactory.simpleNamespace(context, type: self.type, base: self.object)
-    self.none = TypeFactory.none(context, type: self.type, base: self.object)
-    self.notImplemented = TypeFactory.notImplemented(context, type: self.type, base: self.object)
-    self.property = TypeFactory.property(context, type: self.type, base: self.object)
-    self.range = TypeFactory.range(context, type: self.type, base: self.object)
-    self.reversed = TypeFactory.reversed(context, type: self.type, base: self.object)
-    self.set = TypeFactory.set(context, type: self.type, base: self.object)
-    self.set_iterator = TypeFactory.set_iterator(context, type: self.type, base: self.object)
-    self.slice = TypeFactory.slice(context, type: self.type, base: self.object)
-    self.str = TypeFactory.str(context, type: self.type, base: self.object)
-    self.str_iterator = TypeFactory.str_iterator(context, type: self.type, base: self.object)
-    self.tuple = TypeFactory.tuple(context, type: self.type, base: self.object)
-    self.tuple_iterator = TypeFactory.tuple_iterator(context, type: self.type, base: self.object)
-    self.bool = TypeFactory.bool(context, type: self.type, base: self.int)
+    // 'self.bool' has to be last because it uses 'self.int' as base!
+    self.builtinFunction = PyType.initBuiltinType(name: "builtinFunction", type: self.type, base: self.object)
+    self.code = PyType.initBuiltinType(name: "code", type: self.type, base: self.object)
+    self.complex = PyType.initBuiltinType(name: "complex", type: self.type, base: self.object)
+    self.dict = PyType.initBuiltinType(name: "dict", type: self.type, base: self.object)
+    self.dict_itemiterator = PyType.initBuiltinType(name: "dict_itemiterator", type: self.type, base: self.object)
+    self.dict_items = PyType.initBuiltinType(name: "dict_items", type: self.type, base: self.object)
+    self.dict_keyiterator = PyType.initBuiltinType(name: "dict_keyiterator", type: self.type, base: self.object)
+    self.dict_keys = PyType.initBuiltinType(name: "dict_keys", type: self.type, base: self.object)
+    self.dict_valueiterator = PyType.initBuiltinType(name: "dict_valueiterator", type: self.type, base: self.object)
+    self.dict_values = PyType.initBuiltinType(name: "dict_values", type: self.type, base: self.object)
+    self.ellipsis = PyType.initBuiltinType(name: "ellipsis", type: self.type, base: self.object)
+    self.enumerate = PyType.initBuiltinType(name: "enumerate", type: self.type, base: self.object)
+    self.float = PyType.initBuiltinType(name: "float", type: self.type, base: self.object)
+    self.frozenset = PyType.initBuiltinType(name: "frozenset", type: self.type, base: self.object)
+    self.function = PyType.initBuiltinType(name: "function", type: self.type, base: self.object)
+    self.int = PyType.initBuiltinType(name: "int", type: self.type, base: self.object)
+    self.iterator = PyType.initBuiltinType(name: "iterator", type: self.type, base: self.object)
+    self.list = PyType.initBuiltinType(name: "list", type: self.type, base: self.object)
+    self.list_iterator = PyType.initBuiltinType(name: "list_iterator", type: self.type, base: self.object)
+    self.list_reverseiterator = PyType.initBuiltinType(name: "list_reverseiterator", type: self.type, base: self.object)
+    self.method = PyType.initBuiltinType(name: "method", type: self.type, base: self.object)
+    self.module = PyType.initBuiltinType(name: "module", type: self.type, base: self.object)
+    self.simpleNamespace = PyType.initBuiltinType(name: "types.SimpleNamespace", type: self.type, base: self.object)
+    self.none = PyType.initBuiltinType(name: "NoneType", type: self.type, base: self.object)
+    self.notImplemented = PyType.initBuiltinType(name: "NotImplementedType", type: self.type, base: self.object)
+    self.property = PyType.initBuiltinType(name: "property", type: self.type, base: self.object)
+    self.range = PyType.initBuiltinType(name: "range", type: self.type, base: self.object)
+    self.reversed = PyType.initBuiltinType(name: "reversed", type: self.type, base: self.object)
+    self.set = PyType.initBuiltinType(name: "set", type: self.type, base: self.object)
+    self.set_iterator = PyType.initBuiltinType(name: "set_iterator", type: self.type, base: self.object)
+    self.slice = PyType.initBuiltinType(name: "slice", type: self.type, base: self.object)
+    self.str = PyType.initBuiltinType(name: "str", type: self.type, base: self.object)
+    self.str_iterator = PyType.initBuiltinType(name: "str_iterator", type: self.type, base: self.object)
+    self.tuple = PyType.initBuiltinType(name: "tuple", type: self.type, base: self.object)
+    self.tuple_iterator = PyType.initBuiltinType(name: "tuple_iterator", type: self.type, base: self.object)
+    self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int)
+  }
+
+  /// This function finalizes init of all of the stored types
+  /// (adds `__doc__`, fills `__dict__` etc.) .
+  internal func postInit() {
+    BuiltinTypesFill.object(self.object)
+    BuiltinTypesFill.type(self.type)
+    BuiltinTypesFill.bool(self.bool)
+    BuiltinTypesFill.builtinFunction(self.builtinFunction)
+    BuiltinTypesFill.code(self.code)
+    BuiltinTypesFill.complex(self.complex)
+    BuiltinTypesFill.dict(self.dict)
+    BuiltinTypesFill.dict_itemiterator(self.dict_itemiterator)
+    BuiltinTypesFill.dict_items(self.dict_items)
+    BuiltinTypesFill.dict_keyiterator(self.dict_keyiterator)
+    BuiltinTypesFill.dict_keys(self.dict_keys)
+    BuiltinTypesFill.dict_valueiterator(self.dict_valueiterator)
+    BuiltinTypesFill.dict_values(self.dict_values)
+    BuiltinTypesFill.ellipsis(self.ellipsis)
+    BuiltinTypesFill.enumerate(self.enumerate)
+    BuiltinTypesFill.float(self.float)
+    BuiltinTypesFill.frozenset(self.frozenset)
+    BuiltinTypesFill.function(self.function)
+    BuiltinTypesFill.int(self.int)
+    BuiltinTypesFill.iterator(self.iterator)
+    BuiltinTypesFill.list(self.list)
+    BuiltinTypesFill.list_iterator(self.list_iterator)
+    BuiltinTypesFill.list_reverseiterator(self.list_reverseiterator)
+    BuiltinTypesFill.method(self.method)
+    BuiltinTypesFill.module(self.module)
+    BuiltinTypesFill.simpleNamespace(self.simpleNamespace)
+    BuiltinTypesFill.none(self.none)
+    BuiltinTypesFill.notImplemented(self.notImplemented)
+    BuiltinTypesFill.property(self.property)
+    BuiltinTypesFill.range(self.range)
+    BuiltinTypesFill.reversed(self.reversed)
+    BuiltinTypesFill.set(self.set)
+    BuiltinTypesFill.set_iterator(self.set_iterator)
+    BuiltinTypesFill.slice(self.slice)
+    BuiltinTypesFill.str(self.str)
+    BuiltinTypesFill.str_iterator(self.str_iterator)
+    BuiltinTypesFill.tuple(self.tuple)
+    BuiltinTypesFill.tuple_iterator(self.tuple_iterator)
+  }
+
+  internal var all: [PyType] {
+    return [
+      self.object,
+      self.type,
+      self.bool,
+      self.builtinFunction,
+      self.code,
+      self.complex,
+      self.dict,
+      self.dict_itemiterator,
+      self.dict_items,
+      self.dict_keyiterator,
+      self.dict_keys,
+      self.dict_valueiterator,
+      self.dict_values,
+      self.ellipsis,
+      self.enumerate,
+      self.float,
+      self.frozenset,
+      self.function,
+      self.int,
+      self.iterator,
+      self.list,
+      self.list_iterator,
+      self.list_reverseiterator,
+      self.method,
+      self.module,
+      self.simpleNamespace,
+      self.none,
+      self.notImplemented,
+      self.property,
+      self.range,
+      self.reversed,
+      self.set,
+      self.set_iterator,
+      self.slice,
+      self.str,
+      self.str_iterator,
+      self.tuple,
+      self.tuple_iterator,
+    ]
   }
 }

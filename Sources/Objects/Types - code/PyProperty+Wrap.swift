@@ -2,9 +2,9 @@ import Core
 
 // swiftlint:disable trailing_closure
 
-extension TypeFactory {
+extension PyProperty {
 
-  internal static func createProperty<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -20,7 +20,7 @@ extension TypeFactory {
   }
 
   // swiftlint:disable:next function_parameter_count
-  internal static func createProperty<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -41,7 +41,7 @@ extension TypeFactory {
     get: @escaping (Zelf) -> () -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
-    return wrapMethod(
+    return PyBuiltinFunction.wrap(
       context,
       name: "__get__",
       doc: nil,
@@ -56,7 +56,7 @@ extension TypeFactory {
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
 
     let name = "__set__"
-    return wrapMethod(
+    return PyBuiltinFunction.wrap(
       context,
       name: name,
       doc: nil,

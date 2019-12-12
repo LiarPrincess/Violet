@@ -1,10 +1,20 @@
 GENERATED=./Sources/Objects/Generated
 
-# Type factory
+# Builtin types
 sourcery \
   --sources ./Sources/Objects \
-  --templates $GENERATED/TypeFactory+Generated.stencil \
-  --output $GENERATED/TypeFactory+Generated.swift
+  --templates $GENERATED/BuiltinTypes.stencil \
+  --output $GENERATED/BuiltinTypes.swift
+
+# Builtin errors
+python3 $GENERATED/Errors.py "class-definitions" > $GENERATED/PyExceptions.swift
+python3 $GENERATED/Errors.py "types" > $GENERATED/BuiltinErrorTypes.swift
+
+# Type fill
+sourcery \
+  --sources ./Sources/Objects \
+  --templates $GENERATED/BuiltinTypesFill.stencil \
+  --output $GENERATED/BuiltinTypesFill.swift
 
 # Casts
 sourcery \
@@ -17,16 +27,6 @@ sourcery \
   --sources ./Sources/Objects \
   --templates $GENERATED/HeapTypes.stencil \
   --output $GENERATED/HeapTypes.swift
-
-# Builtin types
-sourcery \
-  --sources ./Sources/Objects \
-  --templates $GENERATED/BuiltinTypes.stencil \
-  --output $GENERATED/BuiltinTypes.swift
-
-# Builtin errors
-python3 $GENERATED/Errors.py "class-definitions" > $GENERATED/PyExceptions.swift
-python3 $GENERATED/Errors.py "types" > $GENERATED/BuiltinErrorTypes.swift
 
 # Owner protocols
 sourcery \

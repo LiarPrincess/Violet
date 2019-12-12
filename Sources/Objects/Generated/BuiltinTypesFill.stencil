@@ -1,0 +1,124 @@
+// swiftlint:disable:previous vertical_whitespace
+// swiftlint:disable vertical_whitespace
+// swiftlint:disable vertical_whitespace_closing_braces
+// swiftlint:disable line_length
+// swiftlint:disable file_length
+// swiftlint:disable function_body_length
+
+// Add all of boring stuff to 'PyType', for example:
+// - __doc__
+// - flags
+// - __dict__ entries
+
+{% macro addDoc type %}
+    {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
+    {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
+    {% set docOrNil %}{% if doc == "" %}nil{% else %}{{ doc }}{% endif %}{% endset %}
+    type.setBuiltinTypeDoc({{ docOrNil }})
+{% endmacro %}
+
+{% macro addFlags type %}
+    {% if type.annotations.default %}type.setFlag(.default){% endif %}
+    {% if type.annotations.baseType %}type.setFlag(.baseType){% endif %}
+    {% if type.annotations.hasGC %}type.setFlag(.hasGC){% endif %}
+    {% if type.annotations.longSubclass %}type.setFlag(.longSubclass){% endif %}
+    {% if type.annotations.listSubclass %}type.setFlag(.listSubclass){% endif %}
+    {% if type.annotations.tupleSubclass %}type.setFlag(.tupleSubclass){% endif %}
+    {% if type.annotations.bytesSubclass %}type.setFlag(.bytesSubclass){% endif %}
+    {% if type.annotations.unicodeSubclass %}type.setFlag(.unicodeSubclass){% endif %}
+    {% if type.annotations.dictSubclass %}type.setFlag(.dictSubclass){% endif %}
+    {% if type.annotations.baseExceptionSubclass %}type.setFlag(.baseExceptionSubclass){% endif %}
+    {% if type.annotations.typeSubclass %}type.setFlag(.typeSubclass){% endif %}
+{% endmacro %}
+
+{% macro fillDict type %}
+  {% set castSelf %}Cast.as{{ type.name }}{% endset %}
+
+    let dict = type.getDict()
+  {% for prop in type.instanceMethods|annotated:"pyproperty" %}
+    {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
+    {% set getter %}{{ type.name }}.{{ prop.selectorName }}{% endset %}
+    {% if prop.annotations.setter %}
+    dict["{{ attribute }}"] = PyProperty.wrap(type.context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }})
+    {% else %}
+    dict["{{ attribute }}"] = PyProperty.wrap(type.context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }})
+    {% endif %}
+  {% endfor %}
+
+  {% for method in type.staticMethods|annotated:"pymethod" %}
+    {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
+    {% if attribute == "__new__" %}
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(type.context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% else %}
+    {% if attribute == "__init__" %}
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(type.context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% else %}
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(type.context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% for method in type.classMethods|annotated:"pymethod" %}
+    {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
+    {% if attribute == "__new__" %}
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(type.context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% else %}
+    {% if attribute == "__init__" %}
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(type.context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% else %}
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(type.context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    {% endif %}
+    {% endif %}
+  {% endfor %}
+
+  {% for method in type.instanceMethods|annotated:"pymethod" %}
+    {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(type.context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }})
+  {% endfor %}
+{% endmacro %}
+
+internal enum BuiltinTypesFill {
+
+{% for type in types.enums where type.name == "PyBaseObject" %}
+
+  // MARK: - Base object
+
+  internal static func object(_ type: PyType) {
+    {% call addFlags type %}
+    {% call fillDict type %}
+  }
+{% endfor %}
+
+{% for type in types.classes where type.name == "PyType" %}
+
+  // MARK: - Type type
+
+  internal static func type(_ type: PyType) {
+    {% call addFlags type %}
+    {% call fillDict type %}
+  }
+{% endfor %}
+
+{% for type in types.classes|annotated:"pytype" %}
+
+  // MARK: - {{ type.name|replace:"Py","" }}
+
+  {% set fnName %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+  internal static func {{ fnName }}(_ type: PyType) {
+    {% call addDoc type %}
+    {% call addFlags type %}
+    {% call fillDict type %}
+  }
+{% endfor %}
+{% for type in types.classes|annotated:"pyerrortype" %}
+
+  // MARK: - {{ type.name|replace:"Py","" }}
+
+  {% set fnName %}{{ type.annotations.pyerrortype|lowerFirstWord }}{% endset %}
+  internal static func {{ fnName }}(_ type: PyType) {
+    {% call addDoc type %}
+    {% call addFlags type %}
+    {% call fillDict type %}
+  }
+{% endfor %}
+}

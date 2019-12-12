@@ -128,10 +128,8 @@ extension PyType {
     }
 
     // Create type object
-    let type = PyType(args.metatype.context,
-                      name: args.name,
+    let type = PyType(name: args.name,
                       qualname: args.name, // May be overriden below
-                      doc: nil,
                       type: metatype,
                       base: base,
                       mro: mro)

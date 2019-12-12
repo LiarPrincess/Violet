@@ -20,12 +20,12 @@ import Core
 // When called with more than 1 argument we will return error (hopefully).
 //
 // It is also nice test to see if Swift can properly bind correct overload of
-// `wrapMethod`.
+// `wrap`.
 // Technically 'TernaryFunction' is super-type of 'TernaryFunctionOpt',
 // because any function passed to 'TernaryFunction' can also be used in
 // 'TernaryFunctionOpt' (functions are contravariant on parameter type).
 
-extension TypeFactory {
+extension PyBuiltinFunction {
 
   // MARK: - New
 
@@ -59,7 +59,7 @@ extension TypeFactory {
 
   // MARK: - Unary
 
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -75,7 +75,7 @@ extension TypeFactory {
     )
   }
 
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -92,7 +92,7 @@ extension TypeFactory {
   }
 
   // Overload without `self` argument.
-  internal static func wrapMethod<R: FunctionResultConvertible>(
+  internal static func wrap<R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -109,7 +109,7 @@ extension TypeFactory {
 
   // MARK: - Binary
 
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -128,7 +128,7 @@ extension TypeFactory {
   }
 
   // Overload without `self` argument.
-  internal static func wrapMethod<R: FunctionResultConvertible>(
+  internal static func wrap<R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -145,7 +145,7 @@ extension TypeFactory {
 
   // Special overload for binary method (self + args) with optionals.
   // See top of this file for reasoning.
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -165,7 +165,7 @@ extension TypeFactory {
 
   // MARK: - Ternary
 
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -184,7 +184,7 @@ extension TypeFactory {
   }
 
   // Overload without `self` argument.
-  internal static func wrapMethod<R: FunctionResultConvertible>(
+  internal static func wrap<R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -201,7 +201,7 @@ extension TypeFactory {
 
   // Special overload for ternany method (self + 2 args) with optionals.
   // See top of this file for reasoning.
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -221,7 +221,7 @@ extension TypeFactory {
 
   // Special overload for ternany method (self + 2 args) with optionals.
   // See top of this file for reasoning.
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -241,7 +241,7 @@ extension TypeFactory {
 
  // MARK: - Quartary
 
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -261,7 +261,7 @@ extension TypeFactory {
 
   // Special overload for quartary method (self + 3 args) with optionals.
   // See top of this file for reasoning.
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -281,7 +281,7 @@ extension TypeFactory {
 
   // Special overload for quartary method (self + 3 args) with optionals.
   // See top of this file for reasoning.
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -301,7 +301,7 @@ extension TypeFactory {
 
   // Special overload for quartary method (self + 3 args) with optionals.
   // See top of this file for reasoning.
-  internal static func wrapMethod<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,

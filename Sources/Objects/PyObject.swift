@@ -96,4 +96,11 @@ public class PyObject {
 
     return body()
   }
+
+  // MARK: - GC
+
+  /// Remove all of the references to other Python objects.
+  internal func gcClean() {
+    self._type = nil
+  }
 }
