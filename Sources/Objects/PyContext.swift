@@ -19,13 +19,13 @@ public protocol PyContextDelegate: AnyObject {
 
 public class PyContext {
 
-  internal let hasher: PyHasher
+  internal let hasher: Hasher
   internal weak var delegate: PyContextDelegate?
 
   public private(set) lazy var builtins = Builtins(context: self)
 
   public init(config: PyContextConfig, delegate: PyContextDelegate) {
-    self.hasher = PyHasher(key0: config.hashKey0, key1: config.hashKey1)
+    self.hasher = Hasher(key0: config.hashKey0, key1: config.hashKey1)
     self.delegate = delegate
 
     // This is hack, but we can access `self.builtins` here because they are

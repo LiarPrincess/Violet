@@ -95,7 +95,7 @@ public class PyFrozenSet: PyObject, PySetType {
     // and 'tuple' with the same elements (in the same order) will have
     // the same hash.
     var x: PyHash = 0x345678
-    var mult = PyHasher.multiplier
+    var mult = Hasher.multiplier
 
     for entry in self.data.dict {
       let y = entry.key.hash

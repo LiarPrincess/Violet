@@ -93,7 +93,7 @@ public class PyTuple: PyObject {
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
     var x: PyHash = 0x345678
-    var mult = PyHasher.multiplier
+    var mult = Hasher.multiplier
 
     for e in self.elements {
       switch self.builtins.hash(e) {

@@ -28,7 +28,7 @@ public typealias PyHash = Int
 // of x modulo the prime P = 2**_PyHASH_BITS - 1.
 // It's designed so that hash(x) == hash(y) whenever x and y are numerically
 // equal, even if x and y have different types.
-internal struct PyHasher {
+internal struct Hasher {
 
   // MARK: - Constants
 
@@ -66,7 +66,7 @@ internal struct PyHasher {
     // as '-1' is reserved for errors.
     // We don't have to do it.
 
-    let modulus = BigInt(PyHasher.modulus)
+    let modulus = BigInt(Hasher.modulus)
     // swiftlint:disable:next force_unwrapping
     return PyHash(exactly: value % modulus)!
   }
@@ -78,9 +78,9 @@ internal struct PyHasher {
   internal func hash(_ value: Double) -> PyHash {
     if !value.isFinite {
       if value.isInfinite {
-        return value > 0 ? PyHasher.inf : -PyHasher.inf
+        return value > 0 ? Hasher.inf : -Hasher.inf
       } else {
-        return PyHasher.nan
+        return Hasher.nan
       }
     }
 
@@ -97,21 +97,21 @@ internal struct PyHasher {
     // this should work well both for binary and hexadecimal floating point.
     var x: PyHash = 0
     while m > 0 {
-      x = ((x << 28) & PyHasher.modulus) | x >> (PyHasher.bits - 28)
+      x = ((x << 28) & Hasher.modulus) | x >> (Hasher.bits - 28)
       m *= 268_435_456.0  // 2**28
       e -= 28
       let y = PyHash(m)  // pull out integer part
       m -= Double(y)
       x += y
-      if x >= PyHasher.modulus {
-        x -= PyHasher.modulus
+      if x >= Hasher.modulus {
+        x -= Hasher.modulus
       }
     }
 
     // adjust for the exponent; first reduce it modulo BITS
-    let bits32 = Int32(PyHasher.bits)
+    let bits32 = Int32(Hasher.bits)
     e = e >= 0 ? e % bits32 : bits32 - 1 - ((-1 - e) % bits32)
-    x = ((x << e) & PyHasher.modulus) | x >> (bits32 - e)
+    x = ((x << e) & Hasher.modulus) | x >> (bits32 - e)
 
     return sign * x
   }

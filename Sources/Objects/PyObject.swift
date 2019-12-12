@@ -47,7 +47,7 @@ public class PyObject {
     return self.context.builtins
   }
 
-  internal var hasher: PyHasher {
+  internal var hasher: Hasher {
     return self.context.hasher
   }
 
