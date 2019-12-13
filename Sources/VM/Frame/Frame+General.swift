@@ -90,7 +90,7 @@ extension Frame {
     let stop = self.stack.pop()
     let start = self.stack.top
 
-    let slice = self.context.pySlice_New(start: start, stop: stop, step: step)
+    let slice = self.builtins.newSlice(start: start, stop: stop, step: step)
     self.stack.top = slice
     return .ok
   }

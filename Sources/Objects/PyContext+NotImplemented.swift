@@ -18,12 +18,6 @@ extension PyContext {
     return self.builtins.none
   }
 
-  public func pySlice_New(start: PyObject,
-                          stop: PyObject,
-                          step: PyObject?) -> PyObject {
-    return start
-  }
-
   internal func getGlobals() -> [String: PyObject] {
     return [:]
   }

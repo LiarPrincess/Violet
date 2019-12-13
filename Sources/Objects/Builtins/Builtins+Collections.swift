@@ -191,9 +191,9 @@ extension Builtins {
     )
   }
 
-  public func newSlice(start: PyInt?,
-                       stop: PyInt?,
-                       step: PyInt? = nil) -> PySlice {
+  public func newSlice(start: PyObject?,
+                       stop: PyObject?,
+                       step: PyObject? = nil) -> PySlice {
     return PySlice(
       self.context,
       start: start ?? self.none,
