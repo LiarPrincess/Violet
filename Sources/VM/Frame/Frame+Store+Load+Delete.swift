@@ -111,9 +111,14 @@ extension Frame {
   internal func binarySubscript() -> InstructionResult {
     let index = self.stack.pop()
     let object = self.stack.top
-    let result = self.context.getItem(object: object, index: index)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.getItem(object, at: index) {
+    case let .value(r):
+      self.stack.top = r
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `TOS1[TOS] = TOS2`.
@@ -121,16 +126,26 @@ extension Frame {
     let index = self.stack.pop()
     let object = self.stack.pop()
     let value = self.stack.pop()
-    self.context.setItem(object: object, index: index, value: value)
-    return .ok
+
+    switch self.builtins.setItem(object, at: index, value: value) {
+    case .value:
+      return .ok
+    case .error(let e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `del TOS1[TOS]`.
   internal func deleteSubscript() -> InstructionResult {
     let index = self.stack.pop()
     let object = self.stack.pop()
-    self.context.deleteItem(object: object, index: index)
-    return .ok
+
+    switch self.builtins.deleteItem(object, at: index) {
+    case .value:
+      return .ok
+    case .error(let e):
+      return .builtinError(e)
+    }
   }
 
   // MARK: - Global

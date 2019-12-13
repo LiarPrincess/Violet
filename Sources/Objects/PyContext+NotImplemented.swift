@@ -51,21 +51,4 @@ extension PyContext {
   public func getAttribute(object: PyObject, name: String) -> PyObject {
     return object
   }
-
-  // MARK: - Subscript
-
-  /// PyObject_GetItem
-  public func getItem(object: PyObject, index: PyObject) -> PyObject {
-    return object
-  }
-
-  /// PyObject_SetItem
-  public func setItem(object: PyObject, index: PyObject, value: PyObject) {
-    self.unimplemented()
-  }
-
-  /// PyObject_DelItem
-  public func deleteItem(object: PyObject, index: PyObject) {
-    self.unimplemented()
-  }
 }
