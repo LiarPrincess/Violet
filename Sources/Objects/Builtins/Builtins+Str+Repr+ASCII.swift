@@ -102,6 +102,60 @@ extension Builtins {
     return .value(result)
   }
 
+  // MARK: - Join
+
+  /// _PyUnicode_JoinArray
+  public func join(strings elements: [PyObject],
+                   separator: PyObject) -> PyResult<PyString> {
+    if elements.isEmpty {
+      return .value(self.emptyString)
+    }
+
+    if elements.count == 1 {
+      if let s = elements[0] as? PyString {
+        return .value(s)
+      }
+    }
+
+    guard let sep = separator as? PyString else {
+      return .typeError("separator: expected str instance, \(separator.typeName) found")
+    }
+
+    let strings: [PyString]
+    switch self.asStringArray(elements: elements) {
+    case let .value(r): strings = r
+    case let .error(e): return .error(e)
+    }
+
+    var result = ""
+    for (index, string) in strings.enumerated() {
+      result.append(string.value)
+
+      let isLast = index == strings.count - 1
+      if !isLast {
+        result.append(sep.value)
+      }
+    }
+
+    return .value(self.newString(result))
+  }
+
+  private func asStringArray(elements: [PyObject]) -> PyResult<[PyString]> {
+    var result = [PyString]()
+
+    for (index, object) in elements.enumerated() {
+      switch object as? PyString {
+      case .some(let s):
+        result.append(s)
+      case .none:
+        let msg = "sequence item \(index): expected str instance, \(object.typeName) found"
+        return .typeError(msg)
+      }
+    }
+
+    return .value(result)
+  }
+
   // MARK: - Helpers
 
   private func hex(_ value: UInt32, padTo: Int) -> String {

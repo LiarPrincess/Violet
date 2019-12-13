@@ -44,9 +44,15 @@ extension Frame {
   /// Concatenates `count` strings from the stack
   /// and pushes the resulting string onto the stack.
   internal func buildString(count: Int) -> InstructionResult {
+    let empty = self.builtins.emptyString
     let elements = self.stack.popElementsInPushOrder(count: count)
-    let str = self.context._PyUnicode_JoinArray(elements: elements)
-    self.stack.push(str)
-    return .ok
+
+    switch self.builtins.join(strings: elements, separator: empty) {
+    case let .value(r):
+      self.stack.push(r)
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 }

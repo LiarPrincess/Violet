@@ -10,10 +10,6 @@ extension PyContext {
     return DirResult()
   }
 
-  public func _PyUnicode_JoinArray(elements: [PyObject]) -> PyObject {
-    return self.builtins.none
-  }
-
   public func getSizeInt(value: PyObject) -> Int {
     return 0
   }
