@@ -399,6 +399,24 @@ internal enum BuiltinTypesFill {
     dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyEnumerate.next, castSelf: Cast.asPyEnumerate)
   }
 
+  // MARK: - Filter
+
+  internal static func filter(_ type: PyType) {
+    type.setBuiltinTypeDoc(PyFilter.doc)
+    type.setFlag(.default)
+    type.setFlag(.baseType)
+    type.setFlag(.hasGC)
+
+    let dict = type.getDict()
+    dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyFilter.getClass, castSelf: Cast.asPyFilter)
+
+
+
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyFilter.getAttribute(name:), castSelf: Cast.asPyFilter)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyFilter.iter, castSelf: Cast.asPyFilter)
+    dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyFilter.next, castSelf: Cast.asPyFilter)
+  }
+
   // MARK: - Float
 
   internal static func float(_ type: PyType) {

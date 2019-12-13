@@ -99,6 +99,16 @@ internal final class PyEnumerateHeap: PyEnumerate, HeapType {
   internal lazy var attributes = Attributes()
 }
 
+// MARK: - Filter
+
+/// Type used when we subclass builtin `filter` class.
+/// For example: `class Rapunzel(filter): pass`.
+internal final class PyFilterHeap: PyFilter, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
 // MARK: - Float
 
 /// Type used when we subclass builtin `float` class.

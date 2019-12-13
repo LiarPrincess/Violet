@@ -83,13 +83,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: filter
-  /// filter(function, iterable)
-  /// See [this](https://docs.python.org/3/library/functions.html#filter)
-  public func filter() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: format
   /// format(value[, format_spec])
   /// See [this](https://docs.python.org/3/library/functions.html#format)

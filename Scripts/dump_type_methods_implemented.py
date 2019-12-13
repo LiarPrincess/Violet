@@ -234,6 +234,12 @@ types = {
     '__iter__',
     '__next__',
   ],
+  filter: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
+  ],
   float: [
     '__class__',
     '__eq__',

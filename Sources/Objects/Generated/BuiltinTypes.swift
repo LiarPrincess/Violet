@@ -27,6 +27,7 @@ public final class BuiltinTypes {
   public let dict_values: PyType
   public let ellipsis: PyType
   public let enumerate: PyType
+  public let filter: PyType
   public let float: PyType
   public let frozenset: PyType
   public let function: PyType
@@ -75,6 +76,7 @@ public final class BuiltinTypes {
     self.dict_values = PyType.initBuiltinType(name: "dict_values", type: self.type, base: self.object)
     self.ellipsis = PyType.initBuiltinType(name: "ellipsis", type: self.type, base: self.object)
     self.enumerate = PyType.initBuiltinType(name: "enumerate", type: self.type, base: self.object)
+    self.filter = PyType.initBuiltinType(name: "filter", type: self.type, base: self.object)
     self.float = PyType.initBuiltinType(name: "float", type: self.type, base: self.object)
     self.frozenset = PyType.initBuiltinType(name: "frozenset", type: self.type, base: self.object)
     self.function = PyType.initBuiltinType(name: "function", type: self.type, base: self.object)
@@ -119,6 +121,7 @@ public final class BuiltinTypes {
     BuiltinTypesFill.dict_values(self.dict_values)
     BuiltinTypesFill.ellipsis(self.ellipsis)
     BuiltinTypesFill.enumerate(self.enumerate)
+    BuiltinTypesFill.filter(self.filter)
     BuiltinTypesFill.float(self.float)
     BuiltinTypesFill.frozenset(self.frozenset)
     BuiltinTypesFill.function(self.function)
@@ -161,6 +164,7 @@ public final class BuiltinTypes {
       self.dict_values,
       self.ellipsis,
       self.enumerate,
+      self.filter,
       self.float,
       self.frozenset,
       self.function,

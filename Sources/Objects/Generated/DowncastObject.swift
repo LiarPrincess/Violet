@@ -113,6 +113,12 @@ internal enum Cast {
     return cast(object, as: PyEnumerate.self, typeName: "enumerate", methodName: methodName)
   }
 
+  // MARK: - Filter
+
+  internal static func asPyFilter(_ object: PyObject, methodName: String) -> PyResult<PyFilter> {
+    return cast(object, as: PyFilter.self, typeName: "filter", methodName: methodName)
+  }
+
   // MARK: - Float
 
   internal static func asPyFloat(_ object: PyObject, methodName: String) -> PyResult<PyFloat> {

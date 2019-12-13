@@ -26,6 +26,11 @@ extension Builtins {
   /// class dict(**kwarg)
   public var dict: PyType { return self.types.dict }
 
+  // sourcery: pytype: filter
+  /// filter(function, iterable)
+  /// See [this](https://docs.python.org/3/library/functions.html#filter)
+  public var filter: PyType { return self.types.filter }
+
   // sourcery: pytype: float
   /// class float([x])
   public var float: PyType { return self.types.float }

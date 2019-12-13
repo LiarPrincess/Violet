@@ -2,6 +2,13 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
+internal enum CallResult2 {
+  case value(PyObject)
+  case notImplemented
+  case methodIsNotCallable(PyErrorEnum)
+  case error(PyErrorEnum)
+}
+
 extension Builtins {
 
   internal func callDir(_ fn: PyObject, args: [PyObject?]) -> DirResult {
@@ -22,6 +29,10 @@ extension Builtins {
 
   internal func call(_ fn: PyObject, args: [PyObject?]) -> PyResult<PyObject> {
     return .value(self.unimplemented)
+  }
+
+  internal func call2(_ fn: PyObject, args: [PyObject?]) -> CallResult2 {
+    return .notImplemented
   }
 
   // MARK: - Helpers

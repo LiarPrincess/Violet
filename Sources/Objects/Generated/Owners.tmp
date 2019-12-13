@@ -194,6 +194,11 @@ PyEnumerate|PyObject|get|__class__|getClass() -> PyType
 PyEnumerate|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyEnumerate|PyObject|func|__iter__|iter() -> PyObject
 PyEnumerate|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyFilter|PyObject|get|__class__|getClass() -> PyType
+
+PyFilter|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyFilter|PyObject|func|__iter__|iter() -> PyObject
+PyFilter|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyFloat|PyObject|get|__class__|getClass() -> PyType
 
 PyFloat|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
