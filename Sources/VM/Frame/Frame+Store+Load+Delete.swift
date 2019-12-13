@@ -84,25 +84,40 @@ extension Frame {
     let name = self.code.names[nameIndex]
     let object = self.stack.pop()
     let value = self.stack.pop()
-    self.context.setAttribute(object: object, name: name, value: value)
-    return .ok
+
+    switch self.builtins.setAttribute(object, name: name, value: value) {
+    case .value:
+      return .ok
+    case .error(let e):
+      return .builtinError(e)
+    }
   }
 
   /// Replaces TOS with `getAttr(TOS, name)`.
   internal func loadAttribute(nameIndex: Int) -> InstructionResult {
     let name = self.code.names[nameIndex]
     let object = self.stack.top
-    let result = self.context.getAttribute(object: object, name: name)
-    self.stack.top = result
-    return .ok
+
+    switch self.builtins.getAttribute(object, name: name) {
+    case let .value(r):
+      self.stack.top = r
+      return .ok
+    case let .error(e):
+      return .builtinError(e)
+    }
   }
 
   /// Implements `del TOS.name`.
   internal func deleteAttribute(nameIndex: Int) -> InstructionResult {
     let name = self.code.names[nameIndex]
     let object = self.stack.pop()
-    self.context.deleteAttribute(object: object, name: name)
-    return .ok
+
+    switch self.builtins.deleteAttribute(object, name: name) {
+    case .value:
+      return .ok
+    case .error(let e):
+      return .builtinError(e)
+    }
   }
 
   // MARK: - Subscript

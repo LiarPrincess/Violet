@@ -4,6 +4,8 @@
 
 extension Builtins {
 
+  // MARK: - Get
+
   internal static let getAttributeDoc = """
     getattr(object, name[, default]) -> value
 
@@ -14,8 +16,8 @@ extension Builtins {
 
   public func getAttribute(_ object: PyObject,
                            name: String) -> PyResult<PyObject> {
-    let nameString = self.newString(name)
-    return self.getAttribute(object, name: nameString)
+    let nameObject = self.toObject(name)
+    return self.getAttribute(object, name: nameObject)
   }
 
   // sourcery: pymethod: getattr, doc = getAttributeDoc
@@ -45,15 +47,12 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__getattribute__", arg: name) {
     case .value(let o):
       return .value(o)
-
     case .noSuchMethod,
          .notImplemented:
       let result = AttributeHelper.getAttribute(from: object, name: name.value)
       return self.handleAttributeError(result: result, default: `default`)
-
     case .methodIsNotCallable(let e):
       return .error(e)
-
     case .error(let e):
       return self.handleAttributeError(error: e, default: `default`)
     }
@@ -83,6 +82,8 @@ extension Builtins {
     return .error(error)
   }
 
+  // MARK: - Has
+
   // sourcery: pymethod: hasattr
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
@@ -102,43 +103,80 @@ extension Builtins {
     }
   }
 
+  // MARK: - Set
+
+  /// setattr(object, name, value)
+  /// See [this](https://docs.python.org/3/library/functions.html#setattr)
+  public func setAttribute(_ object: PyObject,
+                           name: String,
+                           value: PyObject) -> PyResult<PyNone> {
+    let nameObject = self.toObject(name)
+    return self.setAttribute(object, name: nameObject, value: value)
+  }
+
   // sourcery: pymethod: setattr
   /// setattr(object, name, value)
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(_ object: PyObject,
                            name: PyObject,
-                           value: PyObject?) -> PyResult<()> {
+                           value: PyObject) -> PyResult<PyNone> {
     guard let name = name as? PyString else {
       return .typeError("setattr(): attribute name must be string")
     }
 
-    if let setAttr = self.lookup(object, name: "__setattr__") {
-      let result = object.context.call(setAttr, args: [object, name, value])
-      return result.map { _ in () }
+    if let owner = object as? __setattr__Owner {
+      return owner.setAttribute(name: name, value: value)
     }
 
-    let type = object.typeName
-    let op = value is PyNone ? "del" : "assign to"
-    let nameStr = name.str()
+    let args = [name, value]
+    switch self.callMethod(on: object, selector: "__setattr__", args: args) {
+    case .value:
+      return .value(self.none)
+    case .notImplemented,
+         .noSuchMethod:
+      let typeName = object.typeName
+      let operation = value is PyNone ? "del" : "assign to"
+      let details = "(\(operation) \(name.value))"
 
-    switch self.hasAttribute(object, name: name) {
-    case .value(true):
-      return .typeError("'\(type)' object has only read-only attributes (\(op) \(nameStr))")
-    case .value(false):
-      return .typeError("'\(type)' object has no attributes (\(op) \(nameStr))")
-    case let .error(e):
+      switch self.hasAttribute(object, name: name) {
+      case .value(true):
+        return .typeError("'\(typeName)' object has only read-only attributes \(details)")
+      case .value(false):
+        return .typeError("'\(typeName)' object has no attributes \(details)")
+      case let .error(e):
+        return .error(e)
+      }
+    case .error(let e),
+         .methodIsNotCallable(let e):
       return .error(e)
     }
+  }
+
+  // MARK: - Delete
+
+  /// delattr(object, name)
+  /// See [this](https://docs.python.org/3/library/functions.html#delattr)
+  public func deleteAttribute(_ object: PyObject,
+                              name: String) -> PyResult<PyNone> {
+    return self.setAttribute(object, name: name, value: self.none)
   }
 
   // sourcery: pymethod: delattr
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
-  public func delAttribute(_ object: PyObject, name: PyObject) -> PyResult<()> {
-    guard let name = name as? PyString else {
+  public func deleteAttribute(_ object: PyObject,
+                              name: PyObject) -> PyResult<PyNone> {
+    guard name is PyString else {
       return .typeError("delattr(): attribute name must be string")
     }
 
-    return self.setAttribute(object, name: name, value: nil)
+    return self.setAttribute(object, name: name, value: self.none)
+  }
+
+  // MARK: - Helpers
+
+  // TODO: Maybe have overload with just a string for all of the 'attr' methods?
+  private func toObject(_ value: String) -> PyString {
+    return self.newString(value)
   }
 }

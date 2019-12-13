@@ -1,5 +1,7 @@
 extension Builtins {
 
+  // MARK: - Get
+
   /// PyObject_GetItem
   public func getItem(_ object: PyObject,
                       at index: PyObject) -> PyResult<PyObject> {
@@ -18,6 +20,8 @@ extension Builtins {
       return .error(e)
     }
   }
+
+  // MARK: - Set
 
   /// PyObject_SetItem
   public func setItem(_ object: PyObject,
@@ -38,6 +42,8 @@ extension Builtins {
       return .error(e)
     }
   }
+
+  // MARK: - Delete
 
   /// PyObject_DelItem
   public func deleteItem(_ object: PyObject,
