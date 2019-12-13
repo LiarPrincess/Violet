@@ -10,7 +10,7 @@ extension Builtins {
 
   // MARK: - Other
 
-  internal func call(_ fn: PyObject, args: [PyObject]) -> PyResult<PyObject> {
+  internal func call(_ fn: PyObject, args: [PyObject?]) -> PyResult<PyObject> {
     return .value(self.unimplemented)
   }
 

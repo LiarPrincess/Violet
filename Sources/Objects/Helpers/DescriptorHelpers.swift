@@ -30,8 +30,8 @@ internal class GetDescriptor {
     let owner: PyObject? = withOwner ? self.owner : nil
     let args = [self.descriptor, owner, self.owner.type]
 
-    let context = self.descriptor.context
-    return context.call(self.get, args: args)
+    let builtins = self.descriptor.builtins
+    return builtins.call(self.get, args: args)
   }
 
   // MARK: Factory
@@ -78,9 +78,9 @@ internal class SetDescriptor {
   }
 
   internal func call(value: PyObject?) -> PyResult<PyObject> {
-    let context = self.descriptor.context
+    let builtins = self.descriptor.builtins
     let args = [self.descriptor, self.owner, value]
-    return context.call(self.set, args: args)
+    return builtins.call(self.set, args: args)
   }
 
   // MARK: Factory

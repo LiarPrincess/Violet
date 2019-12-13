@@ -112,7 +112,7 @@ public class PyProperty: PyObject {
       return .attributeError("unreadable attribute")
     }
 
-    return self.context.call(propGet, args: [object])
+    return self.builtins.call(propGet, args: [object])
   }
 
   // sourcery: pymethod = __set__
@@ -125,7 +125,7 @@ public class PyProperty: PyObject {
       return .attributeError(msg)
     }
 
-    return self.context.call(fn, args: [object, value])
+    return self.builtins.call(fn, args: [object, value])
   }
 
   // sourcery: pymethod = __delete__
