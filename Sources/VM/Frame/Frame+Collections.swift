@@ -91,14 +91,15 @@ extension Frame {
   /// The top element on the stack contains a tuple of keys.
   internal func buildConstKeyMap(elementCount: Int) -> InstructionResult {
     let keys = self.stack.pop()
-    let count = self.context.getSizeInt(value: keys)
 
-    if count != elementCount {
+    guard let keysTuple = keys as? PyTuple else {
       return .builtinError(.systemError("bad BUILD_CONST_KEY_MAP keys argument"))
     }
 
+    let count = self.builtins.length(keysTuple)
     let elements = self.stack.popElementsInPushOrder(count: count)
-    switch self.builtins.newDict(keyTuple: keys, elements: elements) {
+
+    switch self.builtins.newDict(keys: keysTuple, elements: elements) {
     case let .value(collection):
       self.stack.push(collection)
       return .ok

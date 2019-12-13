@@ -118,20 +118,13 @@ extension Builtins {
     return PyDict(context, data: data ?? PyDictData())
   }
 
-  public func newDict(keyTuple keyObject: PyObject,
-                      elements: [PyObject]) -> PyResult<PyDict> {
-    let keyTuple: PyTuple
-    switch self.cast(keyObject, as: PyTuple.self, typeName: "tuple") {
-    case let .value(r): keyTuple = r
-    case let .error(e): return .error(e)
-    }
-
-    guard keyTuple.elements.count == elements.count else {
+  public func newDict(keys: PyTuple, elements: [PyObject]) -> PyResult<PyDict> {
+    guard keys.elements.count == elements.count else {
       return .valueError("bad 'dictionary(keyTuple:elements:)' keys argument")
     }
 
     var data = PyDictData()
-    for (keyObject, value) in Swift.zip(keyTuple.elements, elements) {
+    for (keyObject, value) in Swift.zip(keys.elements, elements) {
       switch self.hash(keyObject) {
       case let .value(hash):
         let key = PyDictKey(hash: hash, object: keyObject)
@@ -200,6 +193,12 @@ extension Builtins {
       stop: stop ?? self.none,
       step: step ?? self.none
     )
+  }
+
+  // MARK: - Length
+
+  public func length(_ value: PyTuple) -> Int {
+    return value.data.count
   }
 
   // MARK: - Contains

@@ -10,10 +10,6 @@ extension PyContext {
     return DirResult()
   }
 
-  public func getSizeInt(value: PyObject) -> Int {
-    return 0
-  }
-
   public func PyObject_Format(value: PyObject, format: PyObject) -> PyObject {
     return self.builtins.none
   }
