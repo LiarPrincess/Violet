@@ -53,8 +53,13 @@ extension Frame {
   /// In non-interactive mode, an expression statement is terminated with PopTop.
   internal func printExpr() -> InstructionResult {
     let value = self.stack.pop()
-    self.context.print(value: value, file: self.standardOutput, raw: true)
-    return .ok
+
+    switch self.builtins.print(value: value, raw: true) {
+    case .value:
+      return .ok
+    case .error(let e):
+      return .builtinError(e)
+    }
   }
 
   /// Checks whether Annotations is defined in locals(),

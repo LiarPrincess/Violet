@@ -248,8 +248,8 @@ extension Builtins {
   // sourcery: pymethod: print
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
-  public func print() -> PyObject {
-    return self.unimplemented
+  internal func print(args: PyObject, kwargs: PyObject) -> PyResult<PyNone> {
+    return .value(self.none)
   }
 
   // sourcery: pymethod: range

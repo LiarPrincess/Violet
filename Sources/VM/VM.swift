@@ -6,19 +6,10 @@ import Bytecode
 import Objects
 
 // swiftlint:disable:next type_name
-public class VM: PyContextDelegate {
+public class VM {
 
+  internal let context: PyContext
   internal let configuration: CoreConfiguration
-
-  internal lazy var context: PyContext = {
-    let contextConf = PyContextConfig(
-      // Hash key is 'VioletEvergarden' in ASCII
-      hashKey0: 0x56696f6c65744576,
-      hashKey1: 0x657267617264656e
-    )
-
-    return PyContext(config: contextConf, delegate: self)
-  }()
 
   internal var arguments: Arguments {
     return self.configuration.arguments
@@ -29,6 +20,8 @@ public class VM: PyContextDelegate {
   }
 
   public init(arguments: Arguments, environment: Environment = Environment()) {
+    let contextConf = PyContextConfig()
+    self.context = PyContext(config: contextConf)
     self.configuration = CoreConfiguration(arguments: arguments, environment: environment)
   }
 
