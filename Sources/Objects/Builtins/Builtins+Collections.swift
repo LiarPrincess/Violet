@@ -2,6 +2,8 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
+// swiftlint:disable file_length
+
 public class CreateDictionaryArg {
   public let key: PyObject
   public let value: PyObject
@@ -201,6 +203,62 @@ extension Builtins {
     return value.data.count
   }
 
+  // MARK: - Any
+
+  // sourcery: pymethod: any
+  /// any(iterable)
+  /// See [this](https://docs.python.org/3/library/functions.html#any)
+  public func any(iterable: PyObject) -> PyResult<Bool> {
+    let iter: PyObject
+    switch self.iter(from: iterable) {
+    case let .value(i): iter = i
+    case let .error(e): return .error(e)
+    }
+
+    while true {
+      switch self.next(iterator: iter) {
+      case .value(let o):
+        switch self.isTrueBool(o) {
+        case .value(true):  return .value(true)
+        case .value(false): break // check next element
+        case .error(let e): return .error(e)
+        }
+      case .error(.stopIteration):
+        return .value(false)
+      case .error(let e):
+        return .error(e)
+      }
+    }
+  }
+
+  // MARK: - All
+
+  // sourcery: pymethod: all
+  /// all(iterable)
+  /// See [this](https://docs.python.org/3/library/functions.html#all)
+  public func all(iterable: PyObject) -> PyResult<Bool> {
+    let iter: PyObject
+    switch self.iter(from: iterable) {
+    case let .value(i): iter = i
+    case let .error(e): return .error(e)
+    }
+
+    while true {
+      switch self.next(iterator: iter) {
+      case .value(let o):
+        switch self.isTrueBool(o) {
+        case .value(true): break // check next element
+        case .value(false): return .value(false)
+        case .error(let e): return .error(e)
+        }
+      case .error(.stopIteration):
+        return .value(true)
+      case .error(let e):
+        return .error(e)
+      }
+    }
+  }
+
   // MARK: - Contains
 
   /// int
@@ -211,14 +269,51 @@ extension Builtins {
       return owner.contains(element)
     }
 
-    // TODO: 1. Try to use 'user contains', 2. _PySequence_IterSearch
-    return .value(false)
+    switch self.callMethod(on: collection, selector: "__contains__", arg: element) {
+    case .value(let o):
+      return self.isTrueBool(o)
+    case .notImplemented,
+         .noSuchMethod:
+      break // try other things
+    case .error(let e),
+         .methodIsNotCallable(let e):
+      return .error(e)
+    }
+
+    return self.iterSearch(collection, element: element)
+  }
+
+  /// Py_ssize_t
+  /// _PySequence_IterSearch(PyObject *seq, PyObject *obj, int operation)
+  private func iterSearch(_ collection: PyObject,
+                          element: PyObject) -> PyResult<Bool> {
+    let iter: PyObject
+    switch self.iter(from: collection) {
+    case .value(let i): iter = i
+    case .error:
+      return .typeError("argument of type '\(collection.typeName)' is not iterable")
+    }
+
+    while true {
+      switch self.next(iterator: iter) {
+      case .value(let o):
+        switch self.isEqualBool(left: o, right: element) {
+        case .value(true): return .value(true)
+        case .value(false): return .value(false)
+        case .error(let e): return .error(e)
+        }
+      case .error(.stopIteration):
+        return .value(false)
+      case .error(let e):
+        return .error(e)
+      }
+    }
   }
 
   public func contains(_ collection: PyObject,
                        allFrom subset: PyObject) -> PyResult<Bool> {
     let iter: PyObject
-    switch self.iter(object: subset) {
+    switch self.iter(from: subset) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }

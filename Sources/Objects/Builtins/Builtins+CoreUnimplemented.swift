@@ -6,20 +6,6 @@
 
 extension Builtins {
 
-  // sourcery: pymethod: all
-  /// all(iterable)
-  /// See [this](https://docs.python.org/3/library/functions.html#all)
-  public func all() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: any
-  /// any(iterable)
-  /// See [this](https://docs.python.org/3/library/functions.html#any)
-  public func any() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: bin
   /// bin(x)
   /// See [this](https://docs.python.org/3/library/functions.html#bin)
@@ -163,7 +149,7 @@ extension Builtins {
   // sourcery: pymethod: iter
   /// iter(object[, sentinel])
   /// See [this](https://docs.python.org/3/library/functions.html#iter)
-  public func iter(object: PyObject) -> PyResult<PyObject> {
+  public func iter(from object: PyObject) -> PyResult<PyObject> {
     return .value(self.unimplemented)
   }
 
