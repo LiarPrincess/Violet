@@ -150,7 +150,7 @@ extension PyType {
 
     // Set __module__ in the dict
     if !attributes.has(key: "__module__") {
-      let globals = type.context.getGlobals()
+      let globals = type.builtins.getGlobals()
       if let module = globals["__name__"] {
         switch type.setModule(module) {
         case .value: break

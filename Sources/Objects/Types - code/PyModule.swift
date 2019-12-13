@@ -111,7 +111,7 @@ public class PyModule: PyObject {
   internal func dir() -> DirResult {
     // Do not add `self.type` dir!
     if let dirFunc = self.attributes["__dir__"] {
-      return self.context.callDir(dirFunc, args: [])
+      return self.builtins.callDir(dirFunc, args: [])
     } else {
       return DirResult(self.attributes.keys)
     }

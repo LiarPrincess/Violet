@@ -2,6 +2,13 @@ extension Builtins {
 
   // MARK: - Get
 
+  /// PySequence_GetItem
+  public func getItem(_ object: PyObject,
+                      at index: Int) -> PyResult<PyObject> {
+    let int = self.newInt(index)
+    return self.getItem(object, at: int)
+  }
+
   /// PyObject_GetItem
   public func getItem(_ object: PyObject,
                       at index: PyObject) -> PyResult<PyObject> {

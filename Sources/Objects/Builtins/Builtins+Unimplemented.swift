@@ -4,11 +4,21 @@
 
 extension Builtins {
 
+  internal func callDir(_ fn: PyObject, args: [PyObject?]) -> DirResult {
+    return DirResult()
+  }
+
+  public func PyObject_Format(value: PyObject, format: PyObject) -> PyObject {
+    return self.none
+  }
+
+  internal func getGlobals() -> [String: PyObject] {
+    return [:]
+  }
+
   public func getDict(_ module: PyModule) -> Attributes {
     return module.attributes
   }
-
-  // MARK: - Other
 
   internal func call(_ fn: PyObject, args: [PyObject?]) -> PyResult<PyObject> {
     return .value(self.unimplemented)
@@ -18,13 +28,5 @@ extension Builtins {
 
   internal var unimplemented: PyObject {
     return self.none
-  }
-
-  // MARK: - Get item
-
-  /// PySequence_GetItem
-  public func getItem(_ collection: PyObject,
-                      at index: Int) -> PyResult<PyObject> {
-    return .value(self.unimplemented)
   }
 }

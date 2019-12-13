@@ -17,7 +17,7 @@ extension Frame {
     }
 
     if let format = format {
-      let formatted = self.context.PyObject_Format(value: value, format: format)
+      let formatted = self.builtins.PyObject_Format(value: value, format: format)
       self.stack.push(formatted)
     } else {
       // TODO: Make sure that this is string
