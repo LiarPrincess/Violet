@@ -36,6 +36,7 @@ public final class BuiltinTypes {
   public let list: PyType
   public let list_iterator: PyType
   public let list_reverseiterator: PyType
+  public let map: PyType
   public let method: PyType
   public let module: PyType
   public let simpleNamespace: PyType
@@ -85,6 +86,7 @@ public final class BuiltinTypes {
     self.list = PyType.initBuiltinType(name: "list", type: self.type, base: self.object)
     self.list_iterator = PyType.initBuiltinType(name: "list_iterator", type: self.type, base: self.object)
     self.list_reverseiterator = PyType.initBuiltinType(name: "list_reverseiterator", type: self.type, base: self.object)
+    self.map = PyType.initBuiltinType(name: "map", type: self.type, base: self.object)
     self.method = PyType.initBuiltinType(name: "method", type: self.type, base: self.object)
     self.module = PyType.initBuiltinType(name: "module", type: self.type, base: self.object)
     self.simpleNamespace = PyType.initBuiltinType(name: "types.SimpleNamespace", type: self.type, base: self.object)
@@ -130,6 +132,7 @@ public final class BuiltinTypes {
     BuiltinTypesFill.list(self.list)
     BuiltinTypesFill.list_iterator(self.list_iterator)
     BuiltinTypesFill.list_reverseiterator(self.list_reverseiterator)
+    BuiltinTypesFill.map(self.map)
     BuiltinTypesFill.method(self.method)
     BuiltinTypesFill.module(self.module)
     BuiltinTypesFill.simpleNamespace(self.simpleNamespace)
@@ -173,6 +176,7 @@ public final class BuiltinTypes {
       self.list,
       self.list_iterator,
       self.list_reverseiterator,
+      self.map,
       self.method,
       self.module,
       self.simpleNamespace,

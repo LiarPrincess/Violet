@@ -240,7 +240,8 @@ extension PyFilter:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - Float
@@ -449,6 +450,16 @@ extension PyListReverseIterator:
   __getattribute__Owner,
   __iter__Owner,
   __next__Owner
+{ }
+
+// MARK: - Map
+
+extension PyMap:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - Method

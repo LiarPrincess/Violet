@@ -165,6 +165,16 @@ internal final class PyListHeap: PyList, HeapType {
 
 // PyListReverseIterator is not a base type.
 
+// MARK: - Map
+
+/// Type used when we subclass builtin `map` class.
+/// For example: `class Rapunzel(map): pass`.
+internal final class PyMapHeap: PyMap, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
 // MARK: - Method
 
 // PyMethod is not a base type.

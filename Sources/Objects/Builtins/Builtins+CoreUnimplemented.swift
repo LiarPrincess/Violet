@@ -160,13 +160,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: map
-  /// map(function, iterable, ...)
-  /// See [this](https://docs.python.org/3/library/functions.html#map)
-  public func map() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: max
   /// max(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#max)

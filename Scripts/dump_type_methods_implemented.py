@@ -239,6 +239,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__new__',
   ],
   float: [
     '__class__',
@@ -421,6 +422,13 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+  ],
+  map: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
+    '__new__',
   ],
   t.MethodType: [
     '__class__',

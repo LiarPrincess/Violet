@@ -56,7 +56,7 @@ public class PyFilter: PyObject {
   internal func next() -> PyResult<PyObject> {
     loop: while true {
       switch self.builtins.next(iterator: self.iterator) {
-      case .value(let item):
+      case let .value(item):
         if self.fn is PyNone {
           return .value(item)
         }
@@ -77,15 +77,14 @@ public class PyFilter: PyObject {
           case .error(let e): return .error(e)
           }
         case .notImplemented:
+          // 'self.builtins.notImplemented' is True
           return .value(item)
         case .error(let e),
              .methodIsNotCallable(let e):
           return .error(e)
         }
 
-      case .error(.stopIteration):
-        return .stopIteration // explicit things are explicit
-      case .error(let e):
+      case let .error(e): // that includes 'stopIteration'
         return .error(e)
       }
     }
@@ -98,8 +97,7 @@ public class PyFilter: PyObject {
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
     if type === type.builtins.filter {
-      if let e = ArgumentParser.noKwargsOrError(fnName: "filter",
-                                                kwargs: kwargs) {
+      if let e = ArgumentParser.noKwargsOrError(fnName: "filter", kwargs: kwargs) {
         return .error(e)
       }
     }

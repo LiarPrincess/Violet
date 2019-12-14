@@ -410,6 +410,7 @@ internal enum BuiltinTypesFill {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyFilter.getClass, castSelf: Cast.asPyFilter)
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyFilter.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyFilter.getAttribute(name:), castSelf: Cast.asPyFilter)
@@ -689,6 +690,25 @@ internal enum BuiltinTypesFill {
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyListReverseIterator.getAttribute(name:), castSelf: Cast.asPyListReverseIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyListReverseIterator.iter, castSelf: Cast.asPyListReverseIterator)
     dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyListReverseIterator.next, castSelf: Cast.asPyListReverseIterator)
+  }
+
+  // MARK: - Map
+
+  internal static func map(_ type: PyType) {
+    type.setBuiltinTypeDoc(PyMap.doc)
+    type.setFlag(.default)
+    type.setFlag(.baseType)
+    type.setFlag(.hasGC)
+
+    let dict = type.getDict()
+    dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyMap.getClass, castSelf: Cast.asPyMap)
+
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyMap.pyNew(type:args:kwargs:))
+
+
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyMap.getAttribute(name:), castSelf: Cast.asPyMap)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyMap.iter, castSelf: Cast.asPyMap)
+    dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyMap.next, castSelf: Cast.asPyMap)
   }
 
   // MARK: - Method

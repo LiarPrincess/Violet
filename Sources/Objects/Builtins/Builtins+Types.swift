@@ -47,6 +47,11 @@ extension Builtins {
   /// class list([iterable])
   public var list: PyType { return self.types.list }
 
+  // sourcery: pymethod: map
+  /// map(function, iterable, ...)
+  /// See [this](https://docs.python.org/3/library/functions.html#map)
+  public var map: PyType { return self.types.map }
+
   // sourcery: pytype: object
   /// class object
   public var object: PyType { return self.types.object }
