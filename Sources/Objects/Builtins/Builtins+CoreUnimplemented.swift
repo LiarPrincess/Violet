@@ -2,8 +2,6 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-// swiftlint:disable file_length
-
 extension Builtins {
 
   // sourcery: pymethod: bin
@@ -153,27 +151,12 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: max
-  /// max(iterable, *[, key, default])
-  /// See [this](https://docs.python.org/3/library/functions.html#max)
-  public func max() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: memoryview
   /// memoryview(obj)
   /// See [this](https://docs.python.org/3/library/functions.html)
   public func memoryview() -> PyObject {
     return self.unimplemented
   }
-
-  // sourcery: pymethod: min
-  /// min(iterable, *[, key, default])
-  /// See [this](https://docs.python.org/3/library/functions.html#min)
-  public func min() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: next
   /// next(iterator[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#next)

@@ -31,6 +31,10 @@ extension Builtins {
     return .value(self.unimplemented)
   }
 
+  internal func call2(_ fn: PyObject, arg: PyObject) -> CallResult2 {
+    return .notImplemented
+  }
+
   internal func call2(_ fn: PyObject, args: [PyObject?]) -> CallResult2 {
     return .notImplemented
   }
