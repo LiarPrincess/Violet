@@ -146,13 +146,6 @@ extension Builtins {
     return .value(self.unimplemented)
   }
 
-  // sourcery: pymethod: len
-  /// len(s)
-  /// See [this](https://docs.python.org/3/library/functions.html#len)
-  public func len() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: locals
   /// locals()
   /// See [this](https://docs.python.org/3/library/functions.html#locals)

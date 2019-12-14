@@ -199,7 +199,28 @@ extension Builtins {
 
   // MARK: - Length
 
-  public func length(_ value: PyTuple) -> Int {
+  // sourcery: pymethod: len
+  /// len(s)
+  /// See [this](https://docs.python.org/3/library/functions.html#len)
+  public func length(_ collection: PyObject) -> PyResult<PyObject> {
+    if let owner = collection as? __len__Owner {
+      let bigInt = owner.getLength()
+      return .value(self.newInt(bigInt))
+    }
+
+    switch self.callMethod(on: collection, selector: "__len__") {
+    case .value(let o):
+      return .value(o)
+    case .noSuchMethod,
+         .notImplemented:
+      return .typeError("object of type '\(collection.typeName)' has no len()")
+    case .error(let e),
+         .methodIsNotCallable(let e):
+      return .error(e)
+    }
+  }
+
+  public func lengthInt(_ value: PyTuple) -> Int {
     return value.data.count
   }
 

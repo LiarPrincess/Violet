@@ -96,7 +96,7 @@ extension Frame {
       return .builtinError(.systemError("bad BUILD_CONST_KEY_MAP keys argument"))
     }
 
-    let count = self.builtins.length(keysTuple)
+    let count = self.builtins.lengthInt(keysTuple)
     let elements = self.stack.popElementsInPushOrder(count: count)
 
     switch self.builtins.newDict(keys: keysTuple, elements: elements) {
