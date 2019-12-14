@@ -1118,6 +1118,25 @@ internal enum BuiltinTypesFill {
     dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyTupleIterator.next, castSelf: Cast.asPyTupleIterator)
   }
 
+  // MARK: - Zip
+
+  internal static func zip(_ type: PyType) {
+    type.setBuiltinTypeDoc(PyZip.doc)
+    type.setFlag(.default)
+    type.setFlag(.baseType)
+    type.setFlag(.hasGC)
+
+    let dict = type.getDict()
+    dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyZip.getClass, castSelf: Cast.asPyZip)
+
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyZip.pyNew(type:args:kwargs:))
+
+
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyZip.getAttribute(name:), castSelf: Cast.asPyZip)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyZip.iter, castSelf: Cast.asPyZip)
+    dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyZip.next, castSelf: Cast.asPyZip)
+  }
+
   // MARK: - ArithmeticError
 
   internal static func arithmeticError(_ type: PyType) {

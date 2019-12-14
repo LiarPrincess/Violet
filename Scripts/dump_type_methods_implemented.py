@@ -667,6 +667,13 @@ types = {
     '__iter__',
     '__next__',
   ],
+  zip: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
+    '__new__',
+  ],
   ArithmeticError: [
     '__class__',
     '__dict__',

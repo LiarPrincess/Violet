@@ -77,4 +77,9 @@ extension Builtins {
   /// class type(object)
   /// class type(name, bases, dict)
   public var type: PyType { return self.types.type }
+
+  // sourcery: pymethod: zip
+  /// zip(*iterables)
+  /// See [this](https://docs.python.org/3/library/functions.html#zip)
+  public var zip: PyType { return self.types.zip }
 }

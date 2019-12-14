@@ -3,28 +3,27 @@ import Core
 // In CPython:
 // Python -> builtinmodule.c
 
-// sourcery: pytype = map, default, hasGC, baseType
-public class PyMap: PyObject {
+// sourcery: pytype = zip, default, hasGC, baseType
+public class PyZip: PyObject {
 
   internal static let doc: String = """
-    map(func, *iterables) --> map object
+    zip(iter1 [,iter2 [...]]) --> zip object
 
-    Make an iterator that computes the function using arguments from
-    each of the iterables.  Stops when the shortest iterable is exhausted.
+    Return a zip object whose .__next__() method returns a tuple where
+    the i-th element comes from the i-th iterable argument.  The .__next__()
+    method continues until the shortest iterable in the argument sequence
+    is exhausted and then it raises StopIteration.
     """
 
-  internal let fn: PyObject
   internal let iterators: [PyObject]
 
-  internal init(fn: PyObject, iterators: [PyObject]) {
-    self.fn = fn
+  internal init(context: PyContext, iterators: [PyObject]) {
     self.iterators = iterators
-    super.init(type: fn.builtins.types.map)
+    super.init(type: context.builtins.types.zip)
   }
 
   /// Use only in `__new__`!
-  internal init(type: PyType, fn: PyObject, iterators: [PyObject]) {
-    self.fn = fn
+  internal init(type: PyType, iterators: [PyObject]) {
     self.iterators = iterators
     super.init(type: type)
   }
@@ -54,25 +53,28 @@ public class PyMap: PyObject {
 
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
-    var args = [PyObject]()
+    if self.iterators.isEmpty {
+      return .stopIteration
+    }
+
+    var result = [PyObject]()
     for iter in self.iterators {
       switch self.builtins.next(iterator: iter) {
       case let .value(o):
-        args.append(o)
+        result.append(o)
       case let .error(e): // that includes 'stopIteration'
         return .error(e)
       }
     }
 
-    switch self.builtins.call2(self.fn, args: args) {
-    case .value(let r):
-      return .value(r)
-    case .notImplemented:
-      return .value(self.builtins.notImplemented)
-    case .error(let e),
-         .methodIsNotCallable(let e):
-      return .error(e)
+    // Single iterator -> single object
+    if result.count == 1 {
+      return .value(result[0])
     }
+
+    // Multiple iterators -> tuple
+    let tuple = self.builtins.newTuple(result)
+    return .value(tuple)
   }
 
   // MARK: - Python new
@@ -81,27 +83,26 @@ public class PyMap: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    if type === type.builtins.map {
-      if let e = ArgumentParser.noKwargsOrError(fnName: "map", kwargs: kwargs) {
+    if type === type.builtins.zip {
+      if let e = ArgumentParser.noKwargsOrError(fnName: "zip", kwargs: kwargs) {
         return .error(e)
       }
     }
 
-    if args.count < 2 {
-      return .typeError("map() must have at least two arguments.")
-    }
-
-    let fn = args[0]
     var iters = [PyObject]()
 
-    for object in args[1...] {
+    for (index, object) in args.enumerated() {
       switch object.builtins.iter(from: object) {
-      case let .value(i): iters.append(i)
-      case let .error(e): return .error(e)
+      case .value(let i):
+        iters.append(i)
+      case .error(.typeError):
+        return . typeError("zip argument \(index + 1) must support iteration")
+      case .error(let e):
+        return .error(e)
       }
     }
 
-    let result = PyMap(type: type, fn: fn, iterators: iters)
+    let result = PyZip(type: type, iterators: iters)
     return .value(result)
   }
 }

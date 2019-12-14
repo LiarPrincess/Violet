@@ -287,13 +287,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: zip
-  /// zip(*iterables)
-  /// See [this](https://docs.python.org/3/library/functions.html#zip)
-  public func zip() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: __import__
   /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
   /// See [this](https://docs.python.org/3/library/functions.html#__import__)

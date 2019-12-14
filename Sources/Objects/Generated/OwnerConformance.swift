@@ -751,6 +751,16 @@ extension PyTupleIterator:
   __next__Owner
 { }
 
+// MARK: - Zip
+
+extension PyZip:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
 // MARK: - ArithmeticError
 
 // PyArithmeticError does not add any new protocols to PyException

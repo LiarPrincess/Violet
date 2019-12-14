@@ -604,6 +604,12 @@ PyTupleIterator|PyObject|get|__class__|getClass() -> PyType
 PyTupleIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyTupleIterator|PyObject|func|__iter__|iter() -> PyObject
 PyTupleIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyZip|PyObject|get|__class__|getClass() -> PyType
+
+PyZip|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyZip|PyObject|func|__iter__|iter() -> PyObject
+PyZip|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyZip|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 
 PyArithmeticError|PyException|get|__class__|getClass() -> PyType
 PyArithmeticError|PyException|get|__dict__|getDict() -> Attributes

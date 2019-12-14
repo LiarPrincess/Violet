@@ -52,6 +52,7 @@ public final class BuiltinTypes {
   public let str_iterator: PyType
   public let tuple: PyType
   public let tuple_iterator: PyType
+  public let zip: PyType
 
   /// Init that will only initialize properties.
   /// You need to call `postInit` to fill `__dict__` etc.!
@@ -102,6 +103,7 @@ public final class BuiltinTypes {
     self.str_iterator = PyType.initBuiltinType(name: "str_iterator", type: self.type, base: self.object)
     self.tuple = PyType.initBuiltinType(name: "tuple", type: self.type, base: self.object)
     self.tuple_iterator = PyType.initBuiltinType(name: "tuple_iterator", type: self.type, base: self.object)
+    self.zip = PyType.initBuiltinType(name: "zip", type: self.type, base: self.object)
     self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int)
   }
 
@@ -148,6 +150,7 @@ public final class BuiltinTypes {
     BuiltinTypesFill.str_iterator(self.str_iterator)
     BuiltinTypesFill.tuple(self.tuple)
     BuiltinTypesFill.tuple_iterator(self.tuple_iterator)
+    BuiltinTypesFill.zip(self.zip)
   }
 
   internal var all: [PyType] {
@@ -192,6 +195,7 @@ public final class BuiltinTypes {
       self.str_iterator,
       self.tuple,
       self.tuple_iterator,
+      self.zip,
     ]
   }
 }

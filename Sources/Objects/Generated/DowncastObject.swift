@@ -263,6 +263,12 @@ internal enum Cast {
     return cast(object, as: PyTupleIterator.self, typeName: "tuple_iterator", methodName: methodName)
   }
 
+  // MARK: - Zip
+
+  internal static func asPyZip(_ object: PyObject, methodName: String) -> PyResult<PyZip> {
+    return cast(object, as: PyZip.self, typeName: "zip", methodName: methodName)
+  }
+
   // MARK: - ArithmeticError
 
   internal static func asPyArithmeticError(_ object: PyObject, methodName: String) -> PyResult<PyArithmeticError> {

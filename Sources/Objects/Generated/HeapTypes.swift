@@ -265,6 +265,16 @@ internal final class PyTupleHeap: PyTuple, HeapType {
 
 // PyTupleIterator is not a base type.
 
+// MARK: - Zip
+
+/// Type used when we subclass builtin `zip` class.
+/// For example: `class Rapunzel(zip): pass`.
+internal final class PyZipHeap: PyZip, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
 
 // MARK: - ArithmeticError
 
