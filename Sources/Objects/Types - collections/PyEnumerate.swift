@@ -6,7 +6,7 @@ import Core
 // sourcery: pytype = enumerate, default, hasGC, baseType
 /// Return an enumerate object. iterable must be a sequence, an iterator,
 /// or some other object which supports iteration.
-internal class PyEnumerate: PyObject {
+public class PyEnumerate: PyObject {
 
   internal static let doc: String = """
     enumerate(iterable, start=0)
