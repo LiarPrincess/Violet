@@ -166,13 +166,6 @@ extension Builtins {
     return .value(self.none)
   }
 
-  // sourcery: pymethod: range
-  /// range(stop)
-  /// See [this](https://docs.python.org/3/library/functions.html)
-  public func range() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: reversed
   /// reversed(seq)
   /// See [this](https://docs.python.org/3/library/functions.html#reversed)
@@ -205,13 +198,6 @@ extension Builtins {
   /// super([type[, object-or-type]])
   /// See [this](https://docs.python.org/3/library/functions.html#super)
   public func `super`() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: tuple
-  /// tuple([iterable])
-  /// See [this](https://docs.python.org/3/library/functions.html)
-  public func tuple() -> PyObject {
     return self.unimplemented
   }
 

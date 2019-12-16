@@ -65,6 +65,11 @@ extension Builtins {
   /// class property(fget=None, fset=None, fdel=None, docne) */
   public var property: PyType { return self.types.property }
 
+  // sourcery: pymethod: range
+  /// range(stop)
+  /// See [this](https://docs.python.org/3/library/functions.html)
+  public var range: PyType { return self.types.range }
+
   // sourcery: pytype: set
   /// class set([iterable])
   public var set: PyType { return self.types.set }
@@ -77,6 +82,11 @@ extension Builtins {
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
   public var str: PyType { return self.types.str }
+
+  // sourcery: pymethod: tuple
+  /// tuple([iterable])
+  /// See [this](https://docs.python.org/3/library/functions.html)
+  public var tuple: PyType { return self.types.tuple }
 
   // sourcery: pytype: type
   /// class type(object)
