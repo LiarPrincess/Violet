@@ -708,7 +708,7 @@ public class PyInt: PyObject {
     }
 
     let baseInt: Int
-    switch SequenceHelper.getIndex(base) {
+    switch IndexHelper.int(base) {
     case let .value(b): baseInt = b
     case let .error(e): return .error(e)
     }

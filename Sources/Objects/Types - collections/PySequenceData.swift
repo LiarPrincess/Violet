@@ -171,7 +171,7 @@ internal struct PySequenceData {
   }
 
   internal func getItem(index: PyObject, typeName: String) -> GetItemResult {
-    switch SequenceHelper.tryGetIndex(index) {
+    switch IndexHelper.tryInt(index) {
     case .value(let index):
       switch self.getItem(index: index, typeName: typeName) {
       case let .value(v): return .single(v)
@@ -380,7 +380,7 @@ internal struct PySequenceData {
       return .none
     }
 
-    switch SequenceHelper.getIndex(value) {
+    switch IndexHelper.int(value) {
     case var .value(index):
       if index < 0 {
         index += self.elements.count

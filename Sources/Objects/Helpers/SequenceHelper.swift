@@ -1,6 +1,6 @@
 import Core
 
-internal enum SequenceHelper {
+internal enum IndexHelper {
 
   internal enum GetIndexResult<T> {
     case value(T)
@@ -12,9 +12,9 @@ internal enum SequenceHelper {
 
   /// Py_ssize_t PyNumber_AsSsize_t(PyObject *item, PyObject *err)
   /// _PyEval_SliceIndexNotNone
-  internal static func tryGetIndex(_ value: PyObject) -> GetIndexResult<Int> {
+  internal static func tryInt(_ value: PyObject) -> GetIndexResult<Int> {
     let bigInt: BigInt
-    switch tryGetIndexBig(value) {
+    switch tryBigInt(value) {
     case .value(let v): bigInt = v
     case .notIndex: return .notIndex
     case .error(let e): return .error(e)
@@ -28,10 +28,10 @@ internal enum SequenceHelper {
     return .error(.indexError(msg))
   }
 
-  /// Basically `SequenceHelper.tryGetIndex`, but it will return type error
+  /// Basically `IndexHelper.intRaw`, but it will return type error
   /// if the value cannot be converted to index.
-  internal static func getIndex(_ value: PyObject) -> PyResult<Int> {
-    switch SequenceHelper.tryGetIndex(value) {
+  internal static func int(_ value: PyObject) -> PyResult<Int> {
+    switch IndexHelper.tryInt(value) {
     case .value(let v):
       return .value(v)
     case .notIndex:
@@ -44,10 +44,10 @@ internal enum SequenceHelper {
 
   // MARK: - BigInt
 
-  /// Basically `SequenceHelper.tryGetIndexBig`, but it will return type error
+  /// Basically `IndexHelper.bigIntRaw`, but it will return type error
   /// if the value cannot be converted to index.
-  internal static func getIndexBig(_ value: PyObject) -> PyResult<BigInt> {
-    switch SequenceHelper.tryGetIndexBig(value) {
+  internal static func bigInt(_ value: PyObject) -> PyResult<BigInt> {
+    switch IndexHelper.tryBigInt(value) {
     case .value(let v):
       return .value(v)
     case .notIndex:
@@ -63,7 +63,7 @@ internal enum SequenceHelper {
   /// or if the object cannot be interpreted as an index.
   ///
   /// PyObject * PyNumber_Index(PyObject *item)
-  internal static func tryGetIndexBig(_ value: PyObject) -> GetIndexResult<BigInt> {
+  internal static func tryBigInt(_ value: PyObject) -> GetIndexResult<BigInt> {
     if let int = value as? PyInt {
       return .value(int.value)
     }

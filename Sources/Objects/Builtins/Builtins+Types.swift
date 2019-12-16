@@ -26,6 +26,11 @@ extension Builtins {
   /// class dict(**kwarg)
   public var dict: PyType { return self.types.dict }
 
+  // sourcery: pymethod: enumerate
+  /// enumerate(iterable, start=0)
+  /// See [this](https://docs.python.org/3/library/functions.html#enumerate)
+  public var enumerate: PyType { return self.types.enumerate }
+
   // sourcery: pytype: filter
   /// filter(function, iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#filter)

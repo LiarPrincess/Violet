@@ -1,3 +1,5 @@
+import Core
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
@@ -63,12 +65,6 @@ extension Builtins {
     return self.cast(object, as: PyList.self, typeName: "list")
       .flatMap { $0.append(element) }
   }
-
-  /// PyObject * _PyList_Extend(PyListObject *self, PyObject *iterable)
-//  public func extend(list: PyObject, iterable: PyObject) -> PyResult<()> {
-//    let list = TypeFactory.selfAsPyList(list)
-//    return list.extend(iterable).map { _ in () }
-//  }
 
   // MARK: - Set
 
@@ -168,6 +164,11 @@ extension Builtins {
 
   public func newEnumerate(iterable: PyObject,
                            startFrom index: Int) -> PyResult<PyEnumerate> {
+    return self.newEnumerate(iterable: iterable, startFrom: BigInt(index))
+  }
+
+  public func newEnumerate(iterable: PyObject,
+                           startFrom index: BigInt) -> PyResult<PyEnumerate> {
     let iter: PyObject
     switch self.iter(from: iterable) {
     case let .value(i): iter = i

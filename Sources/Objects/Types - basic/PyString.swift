@@ -160,7 +160,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    switch SequenceHelper.tryGetIndex(index) {
+    switch IndexHelper.tryInt(index) {
     case .value(let index):
       return self.data.getItem(at: index).map(self.builtins.newString(_:))
     case .notIndex:
@@ -1204,7 +1204,7 @@ public class PyString: PyObject {
       return .none
     }
 
-    switch SequenceHelper.getIndex(value) {
+    switch IndexHelper.int(value) {
     case var .value(index):
       if index < 0 {
         index += self.data.count

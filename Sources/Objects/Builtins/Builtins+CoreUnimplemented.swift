@@ -53,13 +53,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: enumerate
-  /// enumerate(iterable, start=0)
-  /// See [this](https://docs.python.org/3/library/functions.html#enumerate)
-  public func enumerate() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: eval
   /// eval(expression[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#eval)

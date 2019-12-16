@@ -214,7 +214,7 @@ public class PyList: PyObject {
       return .value(-1)
     }
 
-    return SequenceHelper.getIndex(index)
+    return IndexHelper.int(index)
   }
 
   // MARK: - Clear
