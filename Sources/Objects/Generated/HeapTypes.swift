@@ -37,6 +37,10 @@ internal protocol HeapType { }
 
 // PyBuiltinFunction is not a base type.
 
+// MARK: - CallableIterator
+
+// PyCallableIterator is not a base type.
+
 // MARK: - Code
 
 // PyCode is not a base type.

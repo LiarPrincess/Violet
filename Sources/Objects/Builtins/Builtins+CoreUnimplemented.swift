@@ -137,13 +137,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: iter
-  /// iter(object[, sentinel])
-  /// See [this](https://docs.python.org/3/library/functions.html#iter)
-  public func iter(from object: PyObject) -> PyResult<PyObject> {
-    return .value(self.unimplemented)
-  }
-
   // sourcery: pymethod: locals
   /// locals()
   /// See [this](https://docs.python.org/3/library/functions.html#locals)
@@ -156,12 +149,6 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html)
   public func memoryview() -> PyObject {
     return self.unimplemented
-  }
-  // sourcery: pymethod: next
-  /// next(iterator[, default])
-  /// See [this](https://docs.python.org/3/library/functions.html#next)
-  public func next(iterator: PyObject) -> PyResult<PyObject> {
-    return .value(self.unimplemented)
   }
 
   // sourcery: pymethod: oct

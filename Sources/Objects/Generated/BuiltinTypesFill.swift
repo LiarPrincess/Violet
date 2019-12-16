@@ -136,6 +136,23 @@ internal enum BuiltinTypesFill {
     dict["__call__"] = PyBuiltinFunction.wrap(type.context, name: "__call__", doc: nil, fn: PyBuiltinFunction.call(args:kwargs:), castSelf: Cast.asPyBuiltinFunction)
   }
 
+  // MARK: - CallableIterator
+
+  internal static func callable_iterator(_ type: PyType) {
+    type.setBuiltinTypeDoc(nil)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
+
+    let dict = type.getDict()
+    dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyCallableIterator.getClass, castSelf: Cast.asPyCallableIterator)
+
+
+
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyCallableIterator.getAttribute(name:), castSelf: Cast.asPyCallableIterator)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyCallableIterator.iter, castSelf: Cast.asPyCallableIterator)
+    dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyCallableIterator.next, castSelf: Cast.asPyCallableIterator)
+  }
+
   // MARK: - Code
 
   internal static func code(_ type: PyType) {
@@ -1079,6 +1096,7 @@ internal enum BuiltinTypesFill {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: Cast.asPyTuple)
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyTuple.pyNew(type:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PyTuple.isEqual(_:), castSelf: Cast.asPyTuple)

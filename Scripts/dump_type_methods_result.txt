@@ -244,7 +244,6 @@ str_iterator
 
 tuple
   Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
     __getnewargs__
 
 tuple_iterator

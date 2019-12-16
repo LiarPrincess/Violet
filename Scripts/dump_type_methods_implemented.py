@@ -3,6 +3,7 @@ import types as t
 import collections as c
 
 iterator = c.Iterator
+callable_iterator = type(iter(str, None))
 tuple_iterator = type(iter(()))
 
 list_iterator = type(iter([]))
@@ -92,6 +93,12 @@ types = {
     '__repr__',
     '__getattribute__',
     '__call__',
+  ],
+  callable_iterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
   ],
   t.CodeType: [
     '__class__',
@@ -660,6 +667,7 @@ types = {
     '__add__',
     '__mul__',
     '__rmul__',
+    '__new__',
   ],
   tuple_iterator: [
     '__class__',

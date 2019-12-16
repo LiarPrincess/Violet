@@ -64,6 +64,11 @@ PyBuiltinFunction|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
 PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyBuiltinFunction|PyObject|func|__call__|call(args: PyObject,                     kwargs: PyObject?) -> PyResultOrNot<PyObject>
+PyCallableIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyCallableIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyCallableIterator|PyObject|func|__iter__|iter() -> PyObject
+PyCallableIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyCode|PyObject|get|__class__|getClass() -> PyType
 
 PyCode|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -599,6 +604,7 @@ PyTuple|PyObject|func|__iter__|iter() -> PyObject
 PyTuple|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyTuple|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyTuple|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyTuple|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyTupleIterator|PyObject|get|__class__|getClass() -> PyType
 
 PyTupleIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

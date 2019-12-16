@@ -230,10 +230,10 @@ public class PyTuple: PyObject {
 
   // MARK: - Python new
 
-  // sourcery_NOT_DONE: pymethod = __new__
-  internal static func new(type: PyType,
-                           args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<PyObject> {
+  // sourcery: pymethod = __new__
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDictData?) -> PyResult<PyObject> {
     if let e = ArgumentParser.noKwargsOrError(fnName: "tuple", kwargs: kwargs) {
       return .error(e)
     }

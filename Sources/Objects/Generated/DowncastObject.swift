@@ -47,6 +47,12 @@ internal enum Cast {
     return cast(object, as: PyBuiltinFunction.self, typeName: "builtinFunction", methodName: methodName)
   }
 
+  // MARK: - CallableIterator
+
+  internal static func asPyCallableIterator(_ object: PyObject, methodName: String) -> PyResult<PyCallableIterator> {
+    return cast(object, as: PyCallableIterator.self, typeName: "callable_iterator", methodName: methodName)
+  }
+
   // MARK: - Code
 
   internal static func asPyCode(_ object: PyObject, methodName: String) -> PyResult<PyCode> {

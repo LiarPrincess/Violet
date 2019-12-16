@@ -61,6 +61,15 @@ extension PyBuiltinFunction:
   __call__Owner
 { }
 
+// MARK: - CallableIterator
+
+extension PyCallableIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
+{ }
+
 // MARK: - Code
 
 extension PyCode:
@@ -739,7 +748,8 @@ extension PyTuple:
   __iter__Owner,
   __add__Owner,
   __mul__Owner,
-  __rmul__Owner
+  __rmul__Owner,
+  __new__Owner
 { }
 
 // MARK: - TupleIterator
