@@ -215,7 +215,7 @@ extension Builtins {
 
   // MARK: - Add
 
-  private struct AddOp: BinaryOp {
+  private enum AddOp: BinaryOp {
 
     fileprivate static let op = "+"
     fileprivate static let inPlaceOp = "+="
@@ -258,7 +258,7 @@ extension Builtins {
 
   // MARK: - Sub
 
-  private struct SubOp: BinaryOp {
+  private enum SubOp: BinaryOp {
 
     fileprivate static let op = "-"
     fileprivate static let inPlaceOp = "-="
@@ -301,7 +301,7 @@ extension Builtins {
 
   // MARK: - Mul
 
-  private struct MulOp: BinaryOp {
+  private enum MulOp: BinaryOp {
 
     fileprivate static let op = "*"
     fileprivate static let inPlaceOp = "*="
@@ -344,7 +344,7 @@ extension Builtins {
 
   // MARK: - Matmul
 
-  private struct MatmulOp: BinaryOp {
+  private enum MatmulOp: BinaryOp {
 
     fileprivate static let op = "@"
     fileprivate static let inPlaceOp = "@="
@@ -387,7 +387,7 @@ extension Builtins {
 
   // MARK: - Truediv
 
-  private struct TruedivOp: BinaryOp {
+  private enum TruedivOp: BinaryOp {
 
     fileprivate static let op = "/"
     fileprivate static let inPlaceOp = "/="
@@ -430,7 +430,7 @@ extension Builtins {
 
   // MARK: - Floordiv
 
-  private struct FloordivOp: BinaryOp {
+  private enum FloordivOp: BinaryOp {
 
     fileprivate static let op = "//"
     fileprivate static let inPlaceOp = "//="
@@ -473,7 +473,7 @@ extension Builtins {
 
   // MARK: - Mod
 
-  private struct ModOp: BinaryOp {
+  private enum ModOp: BinaryOp {
 
     fileprivate static let op = "%"
     fileprivate static let inPlaceOp = "%="
@@ -516,7 +516,7 @@ extension Builtins {
 
   // MARK: - Divmod
 
-  private struct DivmodOp: BinaryOp {
+  private enum DivmodOp: BinaryOp {
 
     fileprivate static let op = "divmod()"
     fileprivate static let inPlaceOp = "divmod()="
@@ -549,6 +549,9 @@ extension Builtins {
     }
   }
 
+  // sourcery: pymethod: divmod
+  /// divmod(a, b)
+  /// See [this](https://docs.python.org/3/library/functions.html#divmod)
   public func divmod(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     return DivmodOp.call(left: left, right: right)
   }
@@ -557,7 +560,7 @@ extension Builtins {
 
   // MARK: - Lshift
 
-  private struct LshiftOp: BinaryOp {
+  private enum LshiftOp: BinaryOp {
 
     fileprivate static let op = "<<"
     fileprivate static let inPlaceOp = "<<="
@@ -600,7 +603,7 @@ extension Builtins {
 
   // MARK: - Rshift
 
-  private struct RshiftOp: BinaryOp {
+  private enum RshiftOp: BinaryOp {
 
     fileprivate static let op = ">>"
     fileprivate static let inPlaceOp = ">>="
@@ -643,7 +646,7 @@ extension Builtins {
 
   // MARK: - And
 
-  private struct AndOp: BinaryOp {
+  private enum AndOp: BinaryOp {
 
     fileprivate static let op = "&"
     fileprivate static let inPlaceOp = "&="
@@ -686,7 +689,7 @@ extension Builtins {
 
   // MARK: - Or
 
-  private struct OrOp: BinaryOp {
+  private enum OrOp: BinaryOp {
 
     fileprivate static let op = "|"
     fileprivate static let inPlaceOp = "|="
@@ -729,7 +732,7 @@ extension Builtins {
 
   // MARK: - Xor
 
-  private struct XorOp: BinaryOp {
+  private enum XorOp: BinaryOp {
 
     fileprivate static let op = "^"
     fileprivate static let inPlaceOp = "^="

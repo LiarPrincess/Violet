@@ -264,52 +264,111 @@ public class PyInt: PyObject {
 
   // MARK: - Pow
 
+  internal func pow(exp: PyObject) -> PyResultOrNot<PyObject> {
+    return self.pow(exp: exp, mod: nil)
+  }
+
   // sourcery: pymethod = __pow__
-  internal func pow(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    guard let other = other as? PyInt else {
+  internal func pow(exp: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+    guard let exp = exp as? PyInt else {
       return .notImplemented
     }
 
-    let result = self.pow(left: self.value, right: other.value)
-    return .value(self.asObject(result))
+    switch self.parsePowMod(mod: mod) {
+    case .none:
+      let result = self.pow(base: self.value, exp: exp.value)
+      return .value(result.asObject(in: self.context))
+
+    case .int(let modPyInt):
+      if modPyInt.value == 0 {
+        return .valueError("pow() 3rd argument cannot be 0")
+      }
+
+      switch self.pow(base: self.value, exp: exp.value) {
+      case let .int(powInt):
+        let result = powInt % modPyInt.value
+        return .value(self.builtins.newInt(result))
+      case let .fraction(powDouble):
+        let modDouble = Double(modPyInt.value)
+        let result = powDouble.truncatingRemainder(dividingBy: modDouble)
+        return .value(self.builtins.newFloat(result))
+      }
+
+    case .notImplemented:
+      return .notImplemented
+    }
+  }
+
+  internal func rpow(base: PyObject) -> PyResultOrNot<PyObject> {
+    return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    guard let other = other as? PyInt else {
+  internal func rpow(base: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+    guard let base = base as? PyInt else {
       return .notImplemented
     }
 
-    let result = self.pow(left: other.value, right: self.value)
-    return .value(self.asObject(result))
+    switch self.parsePowMod(mod: mod) {
+    case .none:
+      let result = self.pow(base: base.value, exp: self.value)
+      return .value(result.asObject(in: self.context))
+    case .int:
+      // Three-arg power doesn't use __rpow__.
+      return .notImplemented
+    case .notImplemented:
+      return .notImplemented
+    }
   }
 
-  private enum InnerPyResultOrNot {
+  private enum PowMod {
+    case none
+    case int(PyInt)
+    case notImplemented
+  }
+
+  private func parsePowMod(mod: PyObject?) -> PowMod {
+    guard let mod = mod else {
+      return .none
+    }
+
+    if let int = mod as? PyInt {
+      return .int(int)
+    }
+
+    if mod is PyNone {
+      return .none
+    }
+
+    return .notImplemented
+  }
+
+  private enum PowResult {
     case int(BigInt)
     case fraction(Double)
+
+    fileprivate func asObject(in context: PyContext) -> PyObject {
+      switch self {
+      case let .int(i): return context.builtins.newInt(i)
+      case let .fraction(f): return context.builtins.newFloat(f)
+      }
+    }
   }
 
-  private func pow(left: BigInt, right: BigInt) -> InnerPyResultOrNot {
-    if right == 0 {
+  private func pow(base: BigInt, exp: BigInt) -> PowResult {
+    if exp == 0 {
       return .int(1)
     }
 
-    if right == 1 {
-      return .int(left)
+    if exp == 1 {
+      return .int(base)
     }
 
-    let result = self.exponentiationBySquaring(1, left, Swift.abs(right))
+    let result = self.exponentiationBySquaring(1, base, Swift.abs(exp))
 
-    return right > 0 ?
+    return exp > 0 ?
       .int(result) :
       .fraction(Double(1.0) / Double(result))
-  }
-
-  private func asObject(_ result: InnerPyResultOrNot) -> PyObject {
-    switch result {
-    case let .int(i): return self.builtins.newInt(i)
-    case let .fraction(f): return self.builtins.newFloat(f)
-    }
   }
 
   /// Source:

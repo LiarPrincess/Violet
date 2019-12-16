@@ -53,13 +53,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: divmod
-  /// divmod(a, b)
-  /// See [this](https://docs.python.org/3/library/functions.html#divmod)
-  public func divmod() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: enumerate
   /// enumerate(iterable, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#enumerate)
@@ -170,13 +163,6 @@ extension Builtins {
   /// ord(c)
   /// See [this](https://docs.python.org/3/library/functions.html#ord)
   public func ord() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: pow
-  /// pow(base, exp[, mod])
-  /// See [this](https://docs.python.org/3/library/functions.html#pow)
-  public func pow() -> PyObject {
     return self.unimplemented
   }
 

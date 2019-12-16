@@ -277,49 +277,67 @@ public class PyComplex: PyObject {
 
   // MARK: - Pow
 
+  internal func pow(exp: PyObject) -> PyResultOrNot<PyObject> {
+    return self.pow(exp: exp, mod: nil)
+  }
+
   // sourcery: pymethod = __pow__
-  internal func pow(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    guard let other = self.asComplex(other) else {
+  internal func pow(exp: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+    guard self.isNilOrNone(mod) else {
+      return .valueError("complex modulo")
+    }
+
+    guard let exp = self.asComplex(exp) else {
       return .notImplemented
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
-    return self.pow(left: zelf, right: other)
-      .flatMap { PyResultOrNot<PyObject>.value($0) }
+    return self.pow(base: zelf, exp: exp)
+  }
+
+  internal func rpow(base: PyObject) -> PyResultOrNot<PyObject> {
+    return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    guard let other = self.asComplex(other) else {
+  internal func rpow(base: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+    guard self.isNilOrNone(mod) else {
+      return .valueError("complex modulo")
+    }
+
+    guard let base = self.asComplex(base) else {
       return .notImplemented
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
-    return self.pow(left: other, right: zelf)
-      .flatMap { PyResultOrNot<PyObject>.value($0) }
+    return self.pow(base: base, exp: zelf)
   }
 
-  private func pow(left: Raw, right: Raw) -> PyResultOrNot<PyComplex> {
-    if right.real.isZero && right.real.isZero {
+  private func isNilOrNone(_ value: PyObject?) -> Bool {
+    return value == nil || value is PyNone
+  }
+
+  private func pow(base: Raw, exp: Raw) -> PyResultOrNot<PyObject> {
+    if exp.real.isZero && exp.real.isZero {
       return .value(self.builtins.newComplex(real: 1.0, imag: 0.0))
     }
 
-    if left.real.isZero && left.imag.isZero {
-      if right.real < 0.0 || right.imag != 0.0 {
+    if base.real.isZero && base.imag.isZero {
+      if exp.real < 0.0 || exp.imag != 0.0 {
         return .valueError("complex zero to negative or complex power")
       }
 
       return .value(self.builtins.newComplex(real: 0.0, imag: 0.0))
     }
 
-    let vabs = Foundation.hypot(left.real, left.imag)
-    var len = Foundation.pow(vabs, right.real)
-    let at = Foundation.atan2(left.imag, left.real)
-    var phase = at * right.real
+    let vabs = Foundation.hypot(base.real, base.imag)
+    var len = Foundation.pow(vabs, exp.real)
+    let at = Foundation.atan2(base.imag, base.real)
+    var phase = at * exp.real
 
-    if !right.imag.isZero {
-      len /= Foundation.exp(at * right.imag)
-      phase += right.imag * Foundation.log(vabs)
+    if !exp.imag.isZero {
+      len /= Foundation.exp(at * exp.imag)
+      phase += exp.imag * Foundation.log(vabs)
     }
 
     return .value(

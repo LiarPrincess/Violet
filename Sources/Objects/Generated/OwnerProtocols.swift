@@ -85,7 +85,7 @@ protocol __neg__Owner { func negative() -> PyObject }
 protocol __next__Owner { func next() -> PyResult<PyObject> }
 protocol __or__Owner { func or(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __pos__Owner { func positive() -> PyObject }
-protocol __pow__Owner { func pow(_ other: PyObject) -> PyResultOrNot<PyObject> }
+protocol __pow__Owner { func pow(exp: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> }
 protocol __qualname__GetterOwner { func getQualname() -> String }
 protocol __qualname__SetterOwner { func setQualname(_ value: PyObject?) -> PyResult<()> }
 protocol __radd__Owner { func radd(_ other: PyObject) -> PyResultOrNot<PyObject> }
@@ -100,7 +100,7 @@ protocol __rmod__Owner { func rmod(_ other: PyObject) -> PyResultOrNot<PyObject>
 protocol __rmul__Owner { func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __ror__Owner { func ror(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __round__Owner { func round(nDigits: PyObject?) -> PyResultOrNot<PyObject> }
-protocol __rpow__Owner { func rpow(_ other: PyObject) -> PyResultOrNot<PyObject> }
+protocol __rpow__Owner { func rpow(base: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> }
 protocol __rrshift__Owner { func rrshift(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __rshift__Owner { func rshift(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __rsub__Owner { func rsub(_ other: PyObject) -> PyResultOrNot<PyObject> }
