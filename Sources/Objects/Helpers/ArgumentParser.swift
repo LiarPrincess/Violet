@@ -204,13 +204,23 @@ internal struct ArgumentParser {
     case let .error(e): return .error(e)
     }
 
+    return self.parse(args: argsArray, kwargs: kwargs)
+  }
+
+  /// static int
+  /// vgetargskeywordsfast_impl(PyObject *const *args, Py_ssize_t nargs,
+  ///                           PyObject *kwargs, PyObject *kwnames,
+  ///                           struct _PyArg_Parser *parser,
+  ///                           va_list *p_va, int flags)
+  internal func parse(args: [PyObject],
+                      kwargs: PyObject?) -> PyResult<[PyObject]> {
     let kwargsData: PyDictData?
     switch ArgumentParser.unpackKwargsDict(kwargs: kwargs) {
     case let .value(o): kwargsData = o
     case let .error(e): return .error(e)
     }
 
-    return self.parse(args: argsArray, kwargs: kwargsData)
+    return self.parse(args: args, kwargs: kwargsData)
   }
 
   /// static int

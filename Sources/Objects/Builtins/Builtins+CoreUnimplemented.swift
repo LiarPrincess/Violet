@@ -235,13 +235,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: sum
-  /// sum(iterable, /, start=0)
-  /// See [this](https://docs.python.org/3/library/functions.html#sum)
-  public func sum() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: super
   /// super([type[, object-or-type]])
   /// See [this](https://docs.python.org/3/library/functions.html#super)

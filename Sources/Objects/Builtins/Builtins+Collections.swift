@@ -224,62 +224,6 @@ extension Builtins {
     return value.data.count
   }
 
-  // MARK: - Any
-
-  // sourcery: pymethod: any
-  /// any(iterable)
-  /// See [this](https://docs.python.org/3/library/functions.html#any)
-  public func any(iterable: PyObject) -> PyResult<Bool> {
-    let iter: PyObject
-    switch self.iter(from: iterable) {
-    case let .value(i): iter = i
-    case let .error(e): return .error(e)
-    }
-
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let o):
-        switch self.isTrueBool(o) {
-        case .value(true):  return .value(true)
-        case .value(false): break // check next element
-        case .error(let e): return .error(e)
-        }
-      case .error(.stopIteration):
-        return .value(false)
-      case .error(let e):
-        return .error(e)
-      }
-    }
-  }
-
-  // MARK: - All
-
-  // sourcery: pymethod: all
-  /// all(iterable)
-  /// See [this](https://docs.python.org/3/library/functions.html#all)
-  public func all(iterable: PyObject) -> PyResult<Bool> {
-    let iter: PyObject
-    switch self.iter(from: iterable) {
-    case let .value(i): iter = i
-    case let .error(e): return .error(e)
-    }
-
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let o):
-        switch self.isTrueBool(o) {
-        case .value(true): break // check next element
-        case .value(false): return .value(false)
-        case .error(let e): return .error(e)
-        }
-      case .error(.stopIteration):
-        return .value(true)
-      case .error(let e):
-        return .error(e)
-      }
-    }
-  }
-
   // MARK: - Contains
 
   /// int
