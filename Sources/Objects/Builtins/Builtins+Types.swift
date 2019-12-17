@@ -72,6 +72,11 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html)
   public var range: PyType { return self.types.range }
 
+  // sourcery: pymethod: reversed
+  /// reversed(seq)
+  /// See [this](https://docs.python.org/3/library/functions.html#reversed)
+  public var reversed: PyType { return self.types.reversed }
+
   // sourcery: pytype: set
   /// class set([iterable])
   public var set: PyType { return self.types.set }

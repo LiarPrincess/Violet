@@ -60,6 +60,10 @@ extension Builtins {
     return PyList(self.context, data: data)
   }
 
+  internal func newList(iterable: PyObject) -> PyResult<PyList> {
+    return self.iterate(iterable: iterable).map(self.newList)
+  }
+
   /// int PyList_Append(PyObject *op, PyObject *newitem)
   public func add(list object: PyObject, element: PyObject) -> PyResult<PyNone> {
     return self.cast(object, as: PyList.self, typeName: "list")
@@ -86,11 +90,6 @@ extension Builtins {
     return self.cast(object, as: PySet.self, typeName: "set")
       .flatMap { $0.add(value) }
   }
-
-  /// int _PySet_Update(PyObject *set, PyObject *iterable)
-//  public func extend(set: PyObject, iterable: PyObject) {
-//    self.unimplemented()
-//  }
 
   // MARK: - Dictionary
 
@@ -303,6 +302,35 @@ extension Builtins {
     }
   }
 
+  // MARK: - Sort
+
+  private static let sortedDoc = """
+    sorted($module, iterable, /, *, key=None, reverse=False)
+    --
+
+    Return a new list containing all items from the iterable in ascending order.
+
+    A custom key function can be supplied to customize the sort order, and the
+    reverse flag can be set to request the result in descending order.
+    """
+
+  // sourcery: pymethod: sorted
+  /// sorted(iterable, *, key=None, reverse=False)
+  /// See [this](https://docs.python.org/3/library/functions.html#sorted)
+  public func sorted(iterable: PyObject,
+                     key: PyObject? = nil,
+                     reverse: PyObject? = nil) -> PyResult<PyList> {
+    switch self.newList(iterable: iterable) {
+    case let .value(list):
+      switch list.sort(key: key, isReverse: reverse) {
+      case .value: return .value(list)
+      case .error(let e): return .error(e)
+      }
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Helpers
 
   private func cast<T>(_ object: PyObject,
@@ -313,5 +341,38 @@ extension Builtins {
     }
 
     return .typeError("expected \(typeName), but received a '\(object.typeName)'")
+  }
+
+  internal func iterate(iterable: PyObject) -> PyResult<[PyObject]> {
+    let iter: PyObject
+    switch self.iter(from: iterable) {
+    case let .value(i): iter = i
+    case let .error(e): return .error(e)
+    }
+
+    var elements = [PyObject]()
+    while true {
+      switch self.next(iterator: iter) {
+      case .value(let o): elements.append(o)
+      case .error(.stopIteration): return .value(elements)
+      case .error(let e): return .error(e)
+      }
+    }
+  }
+
+  internal func selectKey(object: PyObject, key: PyObject?) -> PyResult<PyObject> {
+    guard let key = key else {
+      return .value(object)
+    }
+
+    switch self.call2(key, arg: object) {
+    case .value(let e):
+      return .value(e)
+    case .notImplemented:
+      return .value(self.notImplemented)
+    case .error(let e),
+         .methodIsNotCallable(let e):
+      return .error(e)
+    }
   }
 }

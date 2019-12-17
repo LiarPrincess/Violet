@@ -183,6 +183,7 @@ protocol rpartitionOwner { func rpartition(separator: PyObject) -> PyResult<PyTu
 protocol rsplitOwner { func rsplit(separator: PyObject?, maxCount: PyObject?) -> PyResult<[String]> }
 protocol rstripOwner { func rstrip(_ chars: PyObject) -> PyResult<String> }
 protocol setdefaultOwner { func setDefault(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
+protocol sortOwner { func sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> }
 protocol splitOwner { func split(separator: PyObject?, maxCount: PyObject?) -> PyResult<[String]> }
 protocol splitlinesOwner { func splitLines(keepEnds: PyObject) -> PyResult<[String]> }
 protocol startswithOwner { func startsWith(_ element: PyObject) -> PyResult<Bool> }

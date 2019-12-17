@@ -670,6 +670,7 @@ internal enum BuiltinTypesFill {
     dict["__reversed__"] = PyBuiltinFunction.wrap(type.context, name: "__reversed__", doc: nil, fn: PyList.reversedIter, castSelf: Cast.asPyList)
     dict["append"] = PyBuiltinFunction.wrap(type.context, name: "append", doc: nil, fn: PyList.append(_:), castSelf: Cast.asPyList)
     dict["pop"] = PyBuiltinFunction.wrap(type.context, name: "pop", doc: nil, fn: PyList.pop(index:), castSelf: Cast.asPyList)
+    dict["sort"] = PyBuiltinFunction.wrap(type.context, name: "sort", doc: nil, fn: PyList.sort(args:kwargs:), castSelf: Cast.asPyList)
     dict["clear"] = PyBuiltinFunction.wrap(type.context, name: "clear", doc: nil, fn: PyList.clear, castSelf: Cast.asPyList)
     dict["copy"] = PyBuiltinFunction.wrap(type.context, name: "copy", doc: nil, fn: PyList.copy, castSelf: Cast.asPyList)
     dict["__add__"] = PyBuiltinFunction.wrap(type.context, name: "__add__", doc: nil, fn: PyList.add(_:), castSelf: Cast.asPyList)

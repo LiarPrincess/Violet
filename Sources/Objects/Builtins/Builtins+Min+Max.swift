@@ -119,7 +119,7 @@ extension MinMaxImpl {
                               object: PyObject,
                               key: PyObject?) -> PyResult<PyObject> {
     let property: PyObject
-    switch Self.selectKey(key: key, from: object) {
+    switch object.builtins.selectKey(object: object, key: key) {
     case let .value(e): property = e
     case let .error(e): return .error(e)
     }
@@ -132,24 +132,6 @@ extension MinMaxImpl {
       }
     } else {
       return .value(property)
-    }
-  }
-
-  private static func selectKey(key: PyObject?,
-                                from object: PyObject) -> PyResult<PyObject> {
-    guard let key = key else {
-      return .value(object)
-    }
-
-    let builtins = key.builtins
-    switch builtins.call2(key, arg: object) {
-    case .value(let e):
-      return .value(e)
-    case .notImplemented:
-      return .value(builtins.notImplemented)
-    case .error(let e),
-         .methodIsNotCallable(let e):
-      return .error(e)
     }
   }
 }

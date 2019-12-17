@@ -437,6 +437,7 @@ extension PyList:
   __iter__Owner,
   __reversed__Owner,
   appendOwner,
+  sortOwner,
   clearOwner,
   copyOwner,
   __add__Owner,

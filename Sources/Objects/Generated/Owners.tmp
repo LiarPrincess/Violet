@@ -367,6 +367,7 @@ PyList|PyObject|func|__iter__|iter() -> PyObject
 PyList|PyObject|func|__reversed__|reversedIter() -> PyObject
 PyList|PyObject|func|append|append(_ element: PyObject) -> PyResult<PyNone>
 PyList|PyObject|func|pop|pop(index: PyObject?) -> PyResult<PyObject>
+PyList|PyObject|func|sort|sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
 PyList|PyObject|func|clear|clear() -> PyResult<PyNone>
 PyList|PyObject|func|copy|copy() -> PyObject
 PyList|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>

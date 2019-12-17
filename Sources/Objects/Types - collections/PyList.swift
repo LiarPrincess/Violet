@@ -4,6 +4,8 @@ import Core
 // Objects -> listobject.c
 // https://docs.python.org/3.7/c-api/list.html
 
+// swiftlint:disable file_length
+
 // sourcery: pytype = list, default, hasGC, baseType, listSubclass
 /// This subtype of PyObject represents a Python list object.
 public class PyList: PyObject {
@@ -215,6 +217,95 @@ public class PyList: PyObject {
     }
 
     return IndexHelper.int(index)
+  }
+
+  // MARK: - Sort
+
+  private static let sortDoc = """
+    sort($self, /, *, key=None, reverse=False)
+    --
+
+    Stable sort *IN PLACE*.
+    """
+
+  private static let sortArguments = ArgumentParser.createOrFatal(
+    arguments: ["key", "reverse"],
+    format: "|$OO:sort"
+  )
+
+  // sourcery: pymethod = sort, doc = sortDoc
+  internal func sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> {
+    switch PyList.sortArguments.parse(args: [], kwargs: kwargs) {
+    case let .value(bind):
+      assert(bind.count <= 2, "Invalid argument count returned from parser.")
+      let key = bind.count >= 1 ? bind[0] : nil
+      let isReverse = bind.count >= 2 ? bind[1] : nil
+      return self.sort(key: key, isReverse: isReverse)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private struct SortElement {
+    fileprivate let key: PyObject
+    fileprivate let element: PyObject
+  }
+
+  /// Wrapper for `PyErrorEnum` so that it can be used after `throw`.
+  private enum SortError: Error {
+    case builtin(PyErrorEnum)
+  }
+
+  internal func sort(key: PyObject?, isReverse: PyObject?) -> PyResult<PyNone> {
+    guard let isReverse = isReverse else {
+      return self.sort(key: key, isReverse: false)
+    }
+
+    switch self.builtins.isTrueBool(isReverse) {
+    case let .value(b):
+      return self.sort(key: key, isReverse: b)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func sort(key: PyObject?, isReverse: Bool) -> PyResult<PyNone> {
+    var elements = [SortElement]()
+    for object in self.elements {
+      switch self.builtins.selectKey(object: object, key: key) {
+      case let .value(k): elements.append(SortElement(key: k, element: object))
+      case let .error(e): return .error(e)
+      }
+    }
+
+    do {
+      let fn = self.createSortFn(isReverse: isReverse)
+
+      // Note that Python requires STABLE sort, but Swift does not guarantee
+      // that! We will ignore this. (Because reasons...)
+      // Btw. under certain conditions Swift sort is actually stable (at the time
+      // of writting this comment), but that's an implementation detail.
+      try elements.sort(by: fn)
+      self.data = PySequenceData(elements: elements.map { $0.element })
+      return .value(self.builtins.none)
+    } catch let SortError.builtin(e) {
+      return .error(e)
+    } catch {
+      fatalError("Unexpected error in PyList.sort: \(error)")
+    }
+  }
+
+  private typealias SortFn = (SortElement, SortElement) throws -> Bool
+
+  private func createSortFn(isReverse: Bool) -> SortFn {
+    return { (lhs: SortElement, rhs: SortElement) in
+      let builtins = lhs.element.builtins
+
+      switch builtins.isLessBool(left: lhs.key, right: rhs.key) {
+      case let .value(b): return isReverse ? !b : b
+      case let .error(e): throw SortError.builtin(e)
+      }
+    }
   }
 
   // MARK: - Clear

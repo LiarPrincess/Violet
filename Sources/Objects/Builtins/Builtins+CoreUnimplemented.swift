@@ -131,24 +131,10 @@ extension Builtins {
     return .value(self.none)
   }
 
-  // sourcery: pymethod: reversed
-  /// reversed(seq)
-  /// See [this](https://docs.python.org/3/library/functions.html#reversed)
-  public func reversed() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: round
   /// round(number[, ndigits])
   /// See [this](https://docs.python.org/3/library/functions.html#round)
   public func round() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: sorted
-  /// sorted(iterable, *, key=None, reverse=False)
-  /// See [this](https://docs.python.org/3/library/functions.html#sorted)
-  public func sorted() -> PyObject {
     return self.unimplemented
   }
 

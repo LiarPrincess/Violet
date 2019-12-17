@@ -413,6 +413,7 @@ types = {
     '__reversed__',
     'append',
     'pop',
+    'sort',
     'clear',
     'copy',
     '__add__',
