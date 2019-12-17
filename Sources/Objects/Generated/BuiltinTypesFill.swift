@@ -76,6 +76,8 @@ internal enum BuiltinTypesFill {
 
 
     dict["__repr__"] = PyBuiltinFunction.wrap(type.context, name: "__repr__", doc: nil, fn: PyType.repr, castSelf: Cast.asPyType)
+    dict["__subclasscheck__"] = PyBuiltinFunction.wrap(type.context, name: "__subclasscheck__", doc: nil, fn: PyType.isSubtype(of:), castSelf: Cast.asPyType)
+    dict["__instancecheck__"] = PyBuiltinFunction.wrap(type.context, name: "__instancecheck__", doc: nil, fn: PyType.isType(of:), castSelf: Cast.asPyType)
     dict["__subclasses__"] = PyBuiltinFunction.wrap(type.context, name: "__subclasses__", doc: nil, fn: PyType.getSubclasses, castSelf: Cast.asPyType)
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyType.getAttribute(name:), castSelf: Cast.asPyType)
     dict["__setattr__"] = PyBuiltinFunction.wrap(type.context, name: "__setattr__", doc: nil, fn: PyType.setAttribute(name:value:), castSelf: Cast.asPyType)

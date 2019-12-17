@@ -25,6 +25,8 @@ extension PyType:
   __base__GetterOwner,
   __mro__GetterOwner,
   __repr__Owner,
+  __subclasscheck__Owner,
+  __instancecheck__Owner,
   __subclasses__Owner,
   __getattribute__Owner,
   __setattr__Owner,

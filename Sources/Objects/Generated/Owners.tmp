@@ -27,6 +27,8 @@ PyType|PyObject|get|__base__|getBase() -> PyType?
 PyType|PyObject|get|__mro__|getMRO() -> PyTuple
 
 PyType|PyObject|func|__repr__|repr() -> PyResult<String>
+PyType|PyObject|func|__subclasscheck__|isSubtype(of object: PyObject) -> PyResult<Bool>
+PyType|PyObject|func|__instancecheck__|isType(of object: PyObject) -> Bool
 PyType|PyObject|func|__subclasses__|getSubclasses() -> [PyType]
 PyType|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>

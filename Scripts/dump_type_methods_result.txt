@@ -15,9 +15,7 @@ type
     __text_signature__ - <class 'NoneType'>
     __weakrefoffset__ - <class 'int'>
     __abstractmethods__
-    __instancecheck__
     __sizeof__
-    __subclasscheck__
     mro
   Why do we even have this?
     __doc__

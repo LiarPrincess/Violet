@@ -405,8 +405,22 @@ public class PyType: PyObject, CustomStringConvertible {
 
   // MARK: - Subtypes
 
+  // sourcery: pymethod = __subclasscheck__
+  internal func isSubtype(of object: PyObject) -> PyResult<Bool> {
+    if let type = object as? PyType {
+      return .value(self.isSubtype(of: type))
+    }
+
+    return .typeError("issubclass() arg 1 must be a class")
+  }
+
   internal func isSubtype(of type: PyType) -> Bool {
     return self.mro.contains { $0 === type }
+  }
+
+  // sourcery: pymethod = __instancecheck__
+  internal func isType(of object: PyObject) -> Bool {
+    return object.type.isSubtype(of: self)
   }
 
   /// PyExceptionInstance_Check

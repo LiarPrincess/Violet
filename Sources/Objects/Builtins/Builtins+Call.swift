@@ -26,6 +26,16 @@ extension Builtins {
     return object.type.lookup(name: name)
   }
 
+  // MARK: - Callable
+
+  // sourcery: pymethod: callable
+  /// callable(object)
+  /// See [this](https://docs.python.org/3/library/functions.html#callable)
+  public func isCallable(_ object: PyObject) -> Bool {
+    return object is __call__Owner
+      || self.lookup(object, name: "__call__") != nil
+  }
+
   // MARK: - Method
 
   public func callMethod(on object: PyObject,

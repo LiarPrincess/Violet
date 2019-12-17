@@ -18,13 +18,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: callable
-  /// callable(object)
-  /// See [this](https://docs.python.org/3/library/functions.html#callable)
-  public func callable() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: chr
   /// chr(i)
   /// See [this](https://docs.python.org/3/library/functions.html#chr)
@@ -106,20 +99,6 @@ extension Builtins {
   /// input([prompt])
   /// See [this](https://docs.python.org/3/library/functions.html#input)
   public func input() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: isinstance
-  /// isinstance(object, classinfo)
-  /// See [this](https://docs.python.org/3/library/functions.html#isinstance)
-  public func isinstance() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: issubclass
-  /// issubclass(class, classinfo)
-  /// See [this](https://docs.python.org/3/library/functions.html#issubclass)
-  public func issubclass() -> PyObject {
     return self.unimplemented
   }
 

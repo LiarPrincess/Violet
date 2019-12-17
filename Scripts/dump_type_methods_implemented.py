@@ -55,6 +55,8 @@ types = {
     '__base__',
     '__mro__',
     '__repr__',
+    '__subclasscheck__',
+    '__instancecheck__',
     '__subclasses__',
     '__getattribute__',
     '__setattr__',
