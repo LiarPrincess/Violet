@@ -39,13 +39,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: dir
-  /// dir([object])
-  /// See [this](https://docs.python.org/3/library/functions.html#dir)
-  public func dir() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: eval
   /// eval(expression[, globals[, locals]])
   /// See [this](https://docs.python.org/3/library/functions.html#eval)
@@ -85,13 +78,6 @@ extension Builtins {
   /// hex(x)
   /// See [this](https://docs.python.org/3/library/functions.html#hex)
   public func hex() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: id
-  /// id(object)
-  /// See [this](https://docs.python.org/3/library/functions.html#id)
-  public func id() -> PyObject {
     return self.unimplemented
   }
 

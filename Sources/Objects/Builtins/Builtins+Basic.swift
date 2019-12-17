@@ -60,4 +60,65 @@ extension Builtins {
   public func newModule(name: PyObject, doc: PyObject? = nil) -> PyModule {
     return PyModule(self.context, name: name, doc: doc)
   }
+
+  // MARK: - Id
+
+  // sourcery: pymethod: id
+  /// id(object)
+  /// See [this](https://docs.python.org/3/library/functions.html#id)
+  public func id(_ object: PyObject) -> PyInt {
+    let id = ObjectIdentifier(object)
+    return self.newInt(id.hashValue)
+  }
+
+  // MARK: - Dir
+
+  private static let dirDoc = """
+    dir([object]) -> list of strings
+
+    If called without an argument, return the names in the current scope.
+    Else, return an alphabetized list of names comprising (some of) the attributes
+    of the given object, and of attributes reachable from it.
+    If the object supplies a method named __dir__, it will be used; otherwise
+    the default dir() logic is used and returns:
+      for a module object: the module's attributes.
+      for a class object:  its attributes, and recursively the attributes
+        of its bases.
+      for any other object: its attributes, its class's attributes, and
+        recursively the attributes of its class's base classes.
+    """
+
+  // sourcery: pymethod: dir
+  /// dir([object])
+  /// See [this](https://docs.python.org/3/library/functions.html#dir)
+  public func dir(_ object: PyObject?) -> PyResult<PyObject> {
+    if let object = object {
+      switch self.call__dir__(on: object) {
+      case .value(let o): return .value(o)
+      case .notImplemented: return .typeError("object does not provide __dir__")
+      case .error(let e): return .error(e)
+      }
+    }
+
+    // TODO: Add '_dir_locals(void)'
+    return .value(self.unimplemented)
+  }
+
+  private func call__dir__(on object: PyObject) -> FunctionResult {
+    if let owner = object as? __dir__Owner {
+      let result = owner.dir()
+      return result.toFunctionResult(in: object.context)
+    }
+
+    switch self.callMethod(on: object, selector: "__dir__") {
+    case .value(let o):
+      return .value(o)
+    case .notImplemented,
+         .noSuchMethod:
+      return .notImplemented
+    case .error(let e),
+         .methodIsNotCallable(let e):
+      return .error(e)
+    }
+  }
 }
