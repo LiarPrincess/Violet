@@ -57,7 +57,27 @@ extension PyBuiltinFunction {
     )
   }
 
-  // MARK: - Unary
+  // MARK: - Args kwargs
+
+  internal static func wrap<Zelf, R: FunctionResultConvertible>(
+    _ context: PyContext,
+    name: String,
+    doc: String?,
+    fn: @escaping (Zelf) -> ([PyObject], PyDictData?) -> R,
+    castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {
+
+    return PyBuiltinFunction(
+      context,
+      doc: doc,
+      fn: ArgsKwargsFunctionWrapper(name: name) { arg0, args, kwargs in
+        castSelf(arg0, name)
+          .map { fn($0)(args, kwargs) }
+          .toFunctionResult(in: arg0.context)
+      }
+    )
+  }
+
+  // MARK: - Positional unary
 
   internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
@@ -107,7 +127,7 @@ extension PyBuiltinFunction {
     )
   }
 
-  // MARK: - Binary
+  // MARK: - Positional binary
 
   internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
@@ -163,7 +183,7 @@ extension PyBuiltinFunction {
     )
   }
 
-  // MARK: - Ternary
+  // MARK: - Positional ternary
 
   internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
@@ -239,7 +259,7 @@ extension PyBuiltinFunction {
     )
   }
 
- // MARK: - Quartary
+  // MARK: - Positional quartary
 
   internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,

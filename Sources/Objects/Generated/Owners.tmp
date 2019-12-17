@@ -32,7 +32,7 @@ PyType|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<P
 PyType|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyType|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
 PyType|PyObject|func|__dir__|dir() -> DirResult
-PyType|PyObject|func|__call__|call(args: PyObject,                     kwargs: PyObject?) -> PyResultOrNot<PyObject>
+PyType|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResultOrNot<PyObject>
 PyType|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyType|PyObject|static_func|__init__|pyInit(zelf: PyType,                              args: [PyObject],                              kwargs: PyDictData?) -> PyResult<PyNone>
 
@@ -63,7 +63,7 @@ PyBuiltinFunction|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyRe
 PyBuiltinFunction|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
 PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
-PyBuiltinFunction|PyObject|func|__call__|call(args: PyObject,                     kwargs: PyObject?) -> PyResultOrNot<PyObject>
+PyBuiltinFunction|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResultOrNot<PyObject>
 PyCallableIterator|PyObject|get|__class__|getClass() -> PyType
 
 PyCallableIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
@@ -199,6 +199,7 @@ PyEnumerate|PyObject|get|__class__|getClass() -> PyType
 PyEnumerate|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyEnumerate|PyObject|func|__iter__|iter() -> PyObject
 PyEnumerate|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyEnumerate|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyFilter|PyObject|get|__class__|getClass() -> PyType
 
 PyFilter|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

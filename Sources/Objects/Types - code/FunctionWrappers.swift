@@ -93,7 +93,28 @@ internal struct InitFunctionWrapper: FunctionWrapper {
   }
 }
 
-// MARK: - Unary
+// MARK: - Args kwargs
+
+internal typealias ArgsKwargsFunction =
+  (PyObject, [PyObject], PyDictData?) -> FunctionResult
+
+internal struct ArgsKwargsFunctionWrapper: FunctionWrapper {
+
+  internal let name: String
+  internal let fn: ArgsKwargsFunction
+
+  internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
+    guard args.any else {
+      return .typeError("\(self.name)(): not enough arguments")
+    }
+
+    let zelf = args[0]
+    let argsWithoutZelf = Array(args.dropFirst())
+    return self.fn(zelf, argsWithoutZelf, kwargs)
+  }
+}
+
+// MARK: - Positional unary
 
 internal typealias UnaryFunction = (PyObject) -> FunctionResult
 
@@ -116,7 +137,7 @@ internal struct UnaryFunctionWrapper: FunctionWrapper {
   }
 }
 
-// MARK: - Binary
+// MARK: - Positional binary
 
 internal typealias BinaryFunction    = (PyObject, PyObject) -> FunctionResult
 internal typealias BinaryFunctionOpt = (PyObject, PyObject?) -> FunctionResult
@@ -161,7 +182,7 @@ internal struct BinaryFunctionOptWrapper: FunctionWrapper {
   }
 }
 
-// MARK: - Ternary
+// MARK: - Positional ternary
 
 internal typealias TernaryFunction =
   (PyObject, PyObject, PyObject) -> FunctionResult
@@ -233,7 +254,7 @@ internal struct TernaryFunctionOptOptWrapper: FunctionWrapper {
   }
 }
 
-// MARK: - Quartary
+// MARK: - Positional quartary
 
 internal typealias QuartaryFunction =
   (PyObject, PyObject, PyObject, PyObject) -> FunctionResult
@@ -332,6 +353,6 @@ internal struct QuartaryFunctionOptOptOptWrapper: FunctionWrapper {
   }
 }
 
-// MARK: - Quintary
+// MARK: - Positional quintary
 // We are not doing this!
 // We have already gone too far with 'QuartaryFunctionOptOptOptWrapper'.

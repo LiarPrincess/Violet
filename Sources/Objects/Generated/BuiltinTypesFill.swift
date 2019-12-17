@@ -409,6 +409,7 @@ internal enum BuiltinTypesFill {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyEnumerate.getClass, castSelf: Cast.asPyEnumerate)
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyEnumerate.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyEnumerate.getAttribute(name:), castSelf: Cast.asPyEnumerate)

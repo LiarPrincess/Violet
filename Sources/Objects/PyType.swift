@@ -546,34 +546,29 @@ public class PyType: PyObject, CustomStringConvertible {
   // sourcery: pymethod = __call__
   /// static PyObject *
   /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
-  internal func call(args: PyObject,
-                     kwargs: PyObject?) -> PyResultOrNot<PyObject> {
+  internal func call(args: [PyObject],
+                     kwargs: PyDictData?) -> PyResultOrNot<PyObject> {
     let newResult = self.builtins.callMethod(on: self,
                                              selector: "__new__",
                                              args: args,
                                              kwargs: kwargs)
     let object: PyObject
     switch newResult {
-    case .value(let o):
-      object = o
-    case .notImplemented:
-      return .value(self.builtins.notImplemented)
-    case .noSuchMethod:
-      return .typeError("cannot create '\(self.name)' instances")
-    case .methodIsNotCallable(let e), .error(let e):
-      return .error(e)
+    case .value(let o): object = o
+    case .notImplemented: return .value(self.builtins.notImplemented)
+    case .noSuchMethod: return .typeError("cannot create '\(self.name)' instances")
+    case .methodIsNotCallable(let e), .error(let e): return .error(e)
     }
 
     // Ugly exception: when the call was type(something),
     // don't call tp_init on the result.
-    if self === self.builtins.type
-      && self.isSingleElementTuple(args: args)
-      && self.isEmptyDictOrNil(kwargs: kwargs) {
+    let hasSingleArg = args.count == 1
+    let hasEmptyKwargs = kwargs?.isEmpty ?? true
+    if self === self.builtins.type && hasSingleArg && hasEmptyKwargs {
       return .value(object)
     }
 
-    // If the returned object is not an instance of type,
-    // it won't be initialized.
+    // If the returned object is not an instance of type, it won't be initialized.
     guard object.type.isSubtype(of: self) else {
       return .value(object)
     }
@@ -591,26 +586,6 @@ public class PyType: PyObject, CustomStringConvertible {
     case .methodIsNotCallable(let e), .error(let e):
       return .error(e)
     }
-  }
-
-  private func isSingleElementTuple(args: PyObject) -> Bool {
-    guard let tuple = args as? PyTuple else {
-      return false
-    }
-
-    return tuple.data.count == 1
-  }
-
-  private func isEmptyDictOrNil(kwargs: PyObject?) -> Bool {
-    guard let kwargs = kwargs else {
-      return false
-    }
-
-    guard let kwargsDict = kwargs as? PyDict else {
-      return false
-    }
-
-    return kwargsDict.data.isEmpty
   }
 
   // MARK: - GC

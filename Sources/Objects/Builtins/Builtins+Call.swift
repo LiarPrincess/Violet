@@ -28,6 +28,27 @@ extension Builtins {
 
   // MARK: - Method
 
+  public func callMethod(on object: PyObject,
+                         selector: String,
+                         args: PyObject,
+                         kwargs: PyObject?) -> CallResult {
+    let argsArray: [PyObject]
+    switch ArgumentParser.unpackArgsTuple(args: args) {
+    case let .value(o): argsArray = o
+    case let .error(e): return .error(e)
+    }
+
+    switch ArgumentParser.unpackKwargsDict(kwargs: kwargs) {
+    case let .value(kwargsDict):
+      return self.callMethod(on: object,
+                             selector: selector,
+                             args: argsArray,
+                             kwargs: kwargsDict)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   /// Call method with single arg.
   internal func callMethod(on object: PyObject,
                            selector: String,
@@ -35,31 +56,18 @@ extension Builtins {
     return self.callMethod(on: object, selector: selector, args: [arg])
   }
 
-  /// Call method with positional arg array.
-  public func callMethod(on object: PyObject,
-                         selector: String,
-                         args: [PyObject]) -> CallResult {
-    let tupleArgs = self.newTuple([object] + args)
-    return self.callMethod(on: object,
-                           selector: selector,
-                           args: tupleArgs,
-                           kwargs: nil)
-  }
-
   /// PyObject *
   /// PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...)
-  public func callMethod(on object: PyObject,
-                         selector: String,
-                         args: PyObject? = nil,
-                         kwargs: PyObject? = nil) -> CallResult {
-    guard let method = object.type.lookup(name: selector) else {
+  internal func callMethod(on object: PyObject,
+                           selector: String,
+                           args: [PyObject] = [],
+                           kwargs: PyDictData? = nil) -> CallResult {
+    guard let boundMethod = self.lookup(object, name: selector) else {
       let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
       return .noSuchMethod(.attributeError(msg))
     }
 
-    let args = args ?? self.emptyTuple
-
-    if let owner = method as? __call__Owner {
+    if let owner = boundMethod as? __call__Owner {
       switch owner.call(args: args, kwargs: kwargs) {
       case .value(let result): return .value(result)
       case .notImplemented: return .notImplemented
@@ -79,7 +87,7 @@ extension Builtins {
     // >>> c.f(1) <-- we are calling method 'f' on object 'c'
     // 1
 
-    let msg = "attribute of type '\(method.typeName)' is not callable"
+    let msg = "attribute of type '\(boundMethod.typeName)' is not callable"
     return .methodIsNotCallable(.typeError(msg))
   }
 }

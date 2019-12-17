@@ -240,7 +240,8 @@ extension PyEnumerate:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - Filter

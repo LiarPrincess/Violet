@@ -154,22 +154,6 @@ public class PyBuiltinFunction: PyObject {
   // sourcery: pymethod = __call__
   /// PyObject *
   /// PyCFunction_Call(PyObject *func, PyObject *args, PyObject *kwargs)
-  internal func call(args: PyObject,
-                     kwargs: PyObject?) -> PyResultOrNot<PyObject> {
-    let argsArray: [PyObject]
-    switch ArgumentParser.unpackArgsTuple(args: args) {
-    case let .value(o): argsArray = o
-    case let .error(e): return .error(e)
-    }
-
-    switch ArgumentParser.unpackKwargsDict(kwargs: kwargs) {
-    case let .value(kwargsDict):
-      return self.call(args: argsArray, kwargs: kwargsDict)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
   /// _PyMethodDef_RawFastCallDict(PyMethodDef *method,
   ///                              PyObject *self,
   ///                              PyObject *const *args, Py_ssize_t nargs,
