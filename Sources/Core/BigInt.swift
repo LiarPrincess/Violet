@@ -29,6 +29,12 @@ extension BinaryInteger {
   }
 }
 
+extension String {
+  public init(_ value: BigInt, radix: Int = 10, uppercase: Bool = false) {
+    self.init(value.value, radix: radix, uppercase: uppercase)
+  }
+}
+
 public struct BigInt:
   Equatable, Hashable, Comparable, Strideable,
   SignedNumeric,

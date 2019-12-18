@@ -4,13 +4,6 @@
 
 extension Builtins {
 
-  // sourcery: pymethod: bin
-  /// bin(x)
-  /// See [this](https://docs.python.org/3/library/functions.html#bin)
-  public func bin() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: breakpoint
   /// breakpoint(*args, **kws)
   /// See [this](https://docs.python.org/3/library/functions.html#breakpoint)
@@ -74,13 +67,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: hex
-  /// hex(x)
-  /// See [this](https://docs.python.org/3/library/functions.html#hex)
-  public func hex() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: input
   /// input([prompt])
   /// See [this](https://docs.python.org/3/library/functions.html#input)
@@ -99,13 +85,6 @@ extension Builtins {
   /// memoryview(obj)
   /// See [this](https://docs.python.org/3/library/functions.html)
   public func memoryview() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: oct
-  /// oct(x)
-  /// See [this](https://docs.python.org/3/library/functions.html#oct)
-  public func oct() -> PyObject {
     return self.unimplemented
   }
 
