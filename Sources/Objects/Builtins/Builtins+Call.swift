@@ -9,11 +9,14 @@ import Core
 // PyObject_Call(), PyObject_CallFunction() and PyObject_CallMethod()
 // are recommended to call a callable object.
 
-public enum CallResult {
+public enum CallMethodResult {
   case value(PyObject)
+  /// Method returned 'NotImplemented'.
   case notImplemented
-  case noSuchMethod(PyErrorEnum)
-  case methodIsNotCallable(PyErrorEnum)
+  /// Such method does not exists.
+  case missingMethod(PyErrorEnum)
+  /// Method exists but it is not callable.
+  case notCallable(PyErrorEnum)
   case error(PyErrorEnum)
 }
 
@@ -41,7 +44,7 @@ extension Builtins {
   public func callMethod(on object: PyObject,
                          selector: String,
                          args: PyObject,
-                         kwargs: PyObject?) -> CallResult {
+                         kwargs: PyObject?) -> CallMethodResult {
     let argsArray: [PyObject]
     switch ArgumentParser.unpackArgsTuple(args: args) {
     case let .value(o): argsArray = o
@@ -62,7 +65,7 @@ extension Builtins {
   /// Call method with single arg.
   internal func callMethod(on object: PyObject,
                            selector: String,
-                           arg: PyObject) -> CallResult {
+                           arg: PyObject) -> CallMethodResult {
     return self.callMethod(on: object, selector: selector, args: [arg])
   }
 
@@ -71,15 +74,15 @@ extension Builtins {
   internal func callMethod(on object: PyObject,
                            selector: String,
                            args: [PyObject] = [],
-                           kwargs: PyDictData? = nil) -> CallResult {
+                           kwargs: PyDictData? = nil) -> CallMethodResult {
     guard let boundMethod = self.lookup(object, name: selector) else {
       let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
-      return .noSuchMethod(.attributeError(msg))
+      return .missingMethod(.attributeError(msg))
     }
 
     if let owner = boundMethod as? __call__Owner {
       switch owner.call(args: args, kwargs: kwargs) {
-      case .value(let result): return .value(result)
+      case .value(let result): return self.handleNotImplemented(result)
       case .notImplemented: return .notImplemented
       case .error(let e): return .error(e)
       }
@@ -98,6 +101,16 @@ extension Builtins {
     // 1
 
     let msg = "attribute of type '\(boundMethod.typeName)' is not callable"
-    return .methodIsNotCallable(.typeError(msg))
+    return .notCallable(.typeError(msg))
+  }
+
+  // MARK: - Helpers
+
+  private func handleNotImplemented(_ object: PyObject) -> CallMethodResult {
+    if object is PyNotImplemented {
+      return .notImplemented
+    }
+
+    return .value(object)
   }
 }

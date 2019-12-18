@@ -26,12 +26,10 @@ extension Builtins {
 
       return .value(resultStr.value)
 
-    case .noSuchMethod,
-         .notImplemented:
+    case .missingMethod, .notImplemented:
       return .value(self.genericRepr(object))
 
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
   }
@@ -57,12 +55,10 @@ extension Builtins {
 
       return .value(resultStr.value)
 
-    case .noSuchMethod,
-         .notImplemented:
+    case .missingMethod, .notImplemented:
       return self.repr(object)
 
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
   }

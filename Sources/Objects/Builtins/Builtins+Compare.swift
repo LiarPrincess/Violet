@@ -93,11 +93,9 @@ extension CompareOp {
     switch pythonResult {
     case .value(let result):
       return result is PyNotImplemented ? .notImplemented : .value(result)
-    case .noSuchMethod,
-         .notImplemented:
+    case .missingMethod, .notImplemented:
       break // Try other options...
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
 

@@ -89,11 +89,9 @@ extension TernaryOp {
     switch builtins.callMethod(on: left, selector: selector, args: [middle, right]) {
     case .value(let result):
       return result is PyNotImplemented ? .notImplemented : .value(result)
-    case .noSuchMethod,
-         .notImplemented:
+    case .missingMethod, .notImplemented:
       return .notImplemented
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
   }
@@ -117,11 +115,9 @@ extension TernaryOp {
     switch builtins.callMethod(on: middle, selector: reverseSelector, args: [left, right]) {
     case .value(let result):
       return result is PyNotImplemented ? .notImplemented : .value(result)
-    case .noSuchMethod,
-         .notImplemented:
+    case .missingMethod, .notImplemented:
       return .notImplemented
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
   }

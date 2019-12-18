@@ -214,11 +214,9 @@ extension Builtins {
     switch self.callMethod(on: collection, selector: "__len__") {
     case .value(let o):
       return .value(o)
-    case .noSuchMethod,
-         .notImplemented:
+    case .missingMethod, .notImplemented:
       return .typeError("object of type '\(collection.typeName)' has no len()")
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
@@ -240,11 +238,9 @@ extension Builtins {
     switch self.callMethod(on: collection, selector: "__contains__", arg: element) {
     case .value(let o):
       return self.isTrueBool(o)
-    case .notImplemented,
-         .noSuchMethod:
+    case .notImplemented, .missingMethod:
       break // try other things
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
 

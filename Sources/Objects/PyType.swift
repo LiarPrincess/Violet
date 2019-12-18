@@ -570,8 +570,8 @@ public class PyType: PyObject, CustomStringConvertible {
     switch newResult {
     case .value(let o): object = o
     case .notImplemented: return .value(self.builtins.notImplemented)
-    case .noSuchMethod: return .typeError("cannot create '\(self.name)' instances")
-    case .methodIsNotCallable(let e), .error(let e): return .error(e)
+    case .missingMethod: return .typeError("cannot create '\(self.name)' instances")
+    case .notCallable(let e), .error(let e): return .error(e)
     }
 
     // Ugly exception: when the call was type(something),
@@ -595,9 +595,9 @@ public class PyType: PyObject, CustomStringConvertible {
                                               kwargs: kwargs)
 
     switch initResult {
-    case .value, .noSuchMethod, .notImplemented:
+    case .value, .missingMethod, .notImplemented:
       return .value(object)
-    case .methodIsNotCallable(let e), .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
   }

@@ -80,11 +80,9 @@ internal enum IndexHelper {
       }
       return .value(int.value)
 
-    case .noSuchMethod,
-         .notImplemented:
+    case .missingMethod, .notImplemented:
       return .notIndex
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
   }

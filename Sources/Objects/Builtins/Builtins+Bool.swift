@@ -48,11 +48,9 @@ extension Builtins {
 
       let typeName = result.typeName
       return .typeError("__bool__ should return bool, returned '\(typeName)'")
-    case .notImplemented,
-         .noSuchMethod:
+    case .notImplemented, .missingMethod:
       break // Try other methods
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
 
@@ -65,11 +63,9 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__len__") {
     case .value(let result):
       return self.isTrueBool(result)
-    case .notImplemented,
-         .noSuchMethod:
+    case .notImplemented, .missingMethod:
       return .value(true)
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
   }

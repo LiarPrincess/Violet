@@ -615,11 +615,9 @@ public class PyComplex: PyObject {
     switch object.builtins.callMethod(on: object, selector: "__complex__") {
     case .value(let o):
       return .value(o)
-    case .notImplemented,
-         .noSuchMethod:
+    case .notImplemented, .missingMethod:
       return .notImplemented
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

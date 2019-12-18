@@ -113,11 +113,9 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__dir__") {
     case .value(let o):
       return .value(o)
-    case .notImplemented,
-         .noSuchMethod:
+    case .notImplemented, .missingMethod:
       return .notImplemented
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

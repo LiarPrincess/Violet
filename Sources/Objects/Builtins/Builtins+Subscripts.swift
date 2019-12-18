@@ -19,11 +19,9 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__getitem__", arg: index) {
     case .value(let r):
       return .value(r)
-    case .notImplemented,
-         .noSuchMethod:
+    case .notImplemented, .missingMethod:
       return .typeError("'\(object.typeName)' object is not subscriptable")
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
@@ -41,11 +39,9 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__setitem__", arg: value) {
     case .value:
       return .value(self.none)
-    case .notImplemented,
-         .noSuchMethod:
+    case .notImplemented, .missingMethod:
       return .typeError("'\(object.typeName)' object does not support item assignment")
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
@@ -62,11 +58,9 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__delitem__") {
     case .value:
       return .value(self.none)
-    case .notImplemented,
-         .noSuchMethod:
+    case .notImplemented, .missingMethod:
       return .typeError("'\(object.typeName)' object does not support item deletion")
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

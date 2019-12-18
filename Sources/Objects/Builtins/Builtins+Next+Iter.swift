@@ -36,11 +36,9 @@ extension Builtins {
     switch self.callMethod(on: iterator, selector: "__next__") {
     case .value(let o):
       return .value(o)
-    case .noSuchMethod,
-         .notImplemented:
+    case .missingMethod, .notImplemented:
       return . typeError("'\(iterator.typeName)' object is not an iterator")
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
@@ -77,8 +75,8 @@ extension Builtins {
     case .notImplemented:
       return .typeError("'\(object.typeName)' object is not an iterable")
     case .error(let e),
-         .noSuchMethod(let e),
-         .methodIsNotCallable(let e):
+         .missingMethod(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

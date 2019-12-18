@@ -524,18 +524,17 @@ public class PyFloat: PyObject {
     }
 
     switch object.builtins.callMethod(on: object, selector: "__float__") {
-    case .value(let o):
-      guard let float = o as? PyFloat else {
-        return .typeError("\(object.typeName).__float__ returned non-float " +
-                          "(type \(o.typeName))")
+    case .value(let f):
+      guard let float = f as? PyFloat else {
+        let ot = object.typeName
+        let ft = f.typeName
+        return .typeError("\(ot).__float__ returned non-float (type \(ft))")
       }
       return .value(float.value)
-    case .notImplemented,
-         .noSuchMethod:
-      return .typeError("float() argument must be a string, " +
-                        "or a number, not '\(object.typeName)'")
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notImplemented, .missingMethod:
+      let t = object.typeName
+      return .typeError("float() argument must be a string, or a number, not '\(t)'")
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
   }

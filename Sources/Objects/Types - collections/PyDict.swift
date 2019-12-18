@@ -184,11 +184,9 @@ public class PyDict: PyObject {
     switch self.builtins.callMethod(on: self, selector: missing, arg: index) {
     case .value(let o):
       return .value(o)
-    case .noSuchMethod,
-         .notImplemented:
+    case .missingMethod, .notImplemented:
       break
-    case .methodIsNotCallable(let e),
-         .error(let e):
+    case .notCallable(let e), .error(let e):
       return .error(e)
     }
 

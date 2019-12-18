@@ -47,11 +47,11 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__getattribute__", arg: name) {
     case .value(let o):
       return .value(o)
-    case .noSuchMethod,
+    case .missingMethod,
          .notImplemented:
       let result = AttributeHelper.getAttribute(from: object, name: name.value)
       return self.handleAttributeError(result: result, default: `default`)
-    case .methodIsNotCallable(let e):
+    case .notCallable(let e):
       return .error(e)
     case .error(let e):
       return self.handleAttributeError(error: e, default: `default`)
@@ -132,8 +132,7 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__setattr__", args: args) {
     case .value:
       return .value(self.none)
-    case .notImplemented,
-         .noSuchMethod:
+    case .notImplemented, .missingMethod:
       let typeName = object.typeName
       let operation = value is PyNone ? "del" : "assign to"
       let details = "(\(operation) \(name.value))"
@@ -146,8 +145,7 @@ extension Builtins {
       case let .error(e):
         return .error(e)
       }
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
