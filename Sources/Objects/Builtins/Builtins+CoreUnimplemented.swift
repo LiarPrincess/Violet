@@ -11,13 +11,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: chr
-  /// chr(i)
-  /// See [this](https://docs.python.org/3/library/functions.html#chr)
-  public func chr() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: @classmethod
   /// @classmethod
   /// See [this](https://docs.python.org/3/library/functions.html#classmethod)
@@ -93,13 +86,6 @@ extension Builtins {
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)
   public func open() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: ord
-  /// ord(c)
-  /// See [this](https://docs.python.org/3/library/functions.html#ord)
-  public func ord() -> PyObject {
     return self.unimplemented
   }
 
