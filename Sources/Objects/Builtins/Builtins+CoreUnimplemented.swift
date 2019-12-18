@@ -4,17 +4,12 @@
 
 extension Builtins {
 
-  // sourcery: pymethod: breakpoint
-  /// breakpoint(*args, **kws)
-  /// See [this](https://docs.python.org/3/library/functions.html#breakpoint)
-  public func breakpoint() -> PyObject {
-    return self.unimplemented
-  }
+  // MARK: - Code
 
-  // sourcery: pymethod: @classmethod
-  /// @classmethod
-  /// See [this](https://docs.python.org/3/library/functions.html#classmethod)
-  public func classmethod() -> PyObject {
+  // sourcery: pymethod: __import__
+  /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
+  /// See [this](https://docs.python.org/3/library/functions.html#__import__)
+  public func __import__() -> PyObject {
     return self.unimplemented
   }
 
@@ -39,10 +34,35 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: format
-  /// format(value[, format_spec])
-  /// See [this](https://docs.python.org/3/library/functions.html#format)
-  public func format() -> PyObject {
+  // sourcery: pymethod: breakpoint
+  /// breakpoint(*args, **kws)
+  /// See [this](https://docs.python.org/3/library/functions.html#breakpoint)
+  public func breakpoint() -> PyObject {
+    return self.unimplemented
+  }
+
+  // MARK: - Static, class method
+
+  // sourcery: pymethod: @staticmethod
+  /// @staticmethod
+  /// See [this](https://docs.python.org/3/library/functions.html#staticmethod)
+  public func staticmethod() -> PyObject {
+    return self.unimplemented
+  }
+
+  // sourcery: pymethod: @classmethod
+  /// @classmethod
+  /// See [this](https://docs.python.org/3/library/functions.html#classmethod)
+  public func classmethod() -> PyObject {
+    return self.unimplemented
+  }
+
+  // MARK: - Locals, globals
+
+  // sourcery: pymethod: locals
+  /// locals()
+  /// See [this](https://docs.python.org/3/library/functions.html#locals)
+  public func locals() -> PyObject {
     return self.unimplemented
   }
 
@@ -53,31 +73,19 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: help
-  /// help([object])
-  /// See [this](https://docs.python.org/3/library/functions.html#help)
-  public func help() -> PyObject {
+  // sourcery: pymethod: vars
+  /// vars([object])
+  /// See [this](https://docs.python.org/3/library/functions.html#vars)
+  public func vars() -> PyObject {
     return self.unimplemented
   }
+
+  // MARK: - IO
 
   // sourcery: pymethod: input
   /// input([prompt])
   /// See [this](https://docs.python.org/3/library/functions.html#input)
   public func input() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: locals
-  /// locals()
-  /// See [this](https://docs.python.org/3/library/functions.html#locals)
-  public func locals() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: memoryview
-  /// memoryview(obj)
-  /// See [this](https://docs.python.org/3/library/functions.html)
-  public func memoryview() -> PyObject {
     return self.unimplemented
   }
 
@@ -96,6 +104,29 @@ extension Builtins {
     return .value(self.none)
   }
 
+  // MARK: - Other
+
+  // sourcery: pymethod: format
+  /// format(value[, format_spec])
+  /// See [this](https://docs.python.org/3/library/functions.html#format)
+  public func format() -> PyObject {
+    return self.unimplemented
+  }
+
+  // sourcery: pymethod: help
+  /// help([object])
+  /// See [this](https://docs.python.org/3/library/functions.html#help)
+  public func help() -> PyObject {
+    return self.unimplemented
+  }
+
+  // sourcery: pymethod: memoryview
+  /// memoryview(obj)
+  /// See [this](https://docs.python.org/3/library/functions.html)
+  public func memoryview() -> PyObject {
+    return self.unimplemented
+  }
+
   // sourcery: pymethod: round
   /// round(number[, ndigits])
   /// See [this](https://docs.python.org/3/library/functions.html#round)
@@ -103,31 +134,10 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: @staticmethod
-  /// @staticmethod
-  /// See [this](https://docs.python.org/3/library/functions.html#staticmethod)
-  public func staticmethod() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: super
   /// super([type[, object-or-type]])
   /// See [this](https://docs.python.org/3/library/functions.html#super)
   public func `super`() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: vars
-  /// vars([object])
-  /// See [this](https://docs.python.org/3/library/functions.html#vars)
-  public func vars() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pymethod: __import__
-  /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
-  /// See [this](https://docs.python.org/3/library/functions.html#__import__)
-  public func __import__() -> PyObject {
     return self.unimplemented
   }
 }
