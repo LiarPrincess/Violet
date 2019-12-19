@@ -69,7 +69,7 @@ public class PyFilter: PyObject {
           }
         }
 
-        switch self.builtins.call2(self.fn, args: [item]) {
+        switch self.builtins.call(callable: self.fn, args: [item]) {
         case .value(let r):
           switch self.builtins.isTrueBool(r) {
           case .value(true): return .value(item)
@@ -79,8 +79,7 @@ public class PyFilter: PyObject {
         case .notImplemented:
           // 'self.builtins.notImplemented' is True
           return .value(item)
-        case .error(let e),
-             .methodIsNotCallable(let e):
+        case .error(let e), .notCallable(let e):
           return .error(e)
         }
 

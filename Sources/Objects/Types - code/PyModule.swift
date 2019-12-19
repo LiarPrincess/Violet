@@ -78,10 +78,15 @@ public class PyModule: PyObject {
     }
 
     if let getAttr = self.attributes["__getattr__"] {
-      return self.builtins.call(getAttr, args: [self, name])
+      switch self.builtins.call(callable: getAttr, args: [self, name]) {
+      case .value(let r): return .value(r)
+      case .notImplemented: break
+      case .error(let e), .notCallable(let e): return .error(e)
+      }
     }
 
-    return .attributeError("module \(self.name) has no attribute '\(nameString.value)'")
+    let msg = "module \(self.name) has no attribute '\(nameString.value)'"
+    return .attributeError(msg)
   }
 
   // sourcery: pymethod = __setattr__

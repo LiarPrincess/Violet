@@ -42,21 +42,22 @@ internal class PyCallableIterator: PyObject {
 
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
-    switch self.builtins.call2(self.callable) {
+    switch self.builtins.call(callable: self.callable) {
     case let .value(o):
       switch self.builtins.isEqualBool(left: o, right: self.sentinel) {
       case .value(true): return .error(.stopIteration)
       case .value(false): return .value(o)
       case .error(let e): return .error(e)
       }
+    case .notImplemented:
+      if self.sentinel is PyNotImplemented {
+        return .error(.stopIteration)
+      }
+
+      return .value(self.builtins.notImplemented)
     case .error(.stopIteration): // explicit
       return .error(.stopIteration)
-    case .notImplemented:
-      return self.sentinel is PyNotImplemented ?
-        .error(.stopIteration):
-        .value(self.builtins.notImplemented)
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

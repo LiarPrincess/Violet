@@ -361,13 +361,13 @@ extension Builtins {
       return .value(object)
     }
 
-    switch self.call2(key, arg: object) {
+    switch self.call(callable: key, arg: object) {
     case .value(let e):
       return .value(e)
     case .notImplemented:
       return .value(self.notImplemented)
     case .error(let e),
-         .methodIsNotCallable(let e):
+         .notCallable(let e):
       return .error(e)
     }
   }

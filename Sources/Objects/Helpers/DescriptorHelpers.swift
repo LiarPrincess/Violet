@@ -1,8 +1,32 @@
+// Run this:
+// >>> class MyProp:
+// ...     def __init__(self, x): pass
+// ...     def __get__(self, x, t):
+// ...             print('x:', x)
+// ...             print('t:', t)
+// ...             return 7
+
+// >>> class C:
+// ...     def __init__(self, x): self.__x = x
+// ...     @MyProp
+// ...     def x(self): return self.__x
+
+// >>> c = C(4)
+// >>> c.x          <-- will call '__get__' on 'MyProp'
+// x: <__main__.C object at 0x1022f33c8>
+// t: <class '__main__.C'>
+// 7
+
+// >>> C.x          <-- will call '__get__' on 'MyProp'
+// x: None
+// t: <class '__main__.C'>
+// 7
+
 // MARK: - Get
 
 // It has to be class because it is a very common pattern to check `self.isData`
-// after creation.
-// This mutation and it is not ergonomic to use it as struct.
+// after creation. Since this property is lazy it would be mutation
+// and then we would have to declare descriptor as `var` which is ugly.
 internal class GetDescriptor {
 
   /// Object on which this descriptor should be called.
@@ -10,9 +34,9 @@ internal class GetDescriptor {
   /// Descriptor object (the one with get/set/del methods).
   private let descriptor: PyObject
 
-  /// Get method on `self.descriptor`.
+  /// `__get__` method on `self.descriptor`.
   private let get: PyObject
-  /// Set method on `self.descriptor`.
+  /// `__set__` method on `self.descriptor`.
   private lazy var set = self.descriptor.type.lookup(name: "__set__")
 
   /// define PyDescr_IsData(d) (Py_TYPE(d)->tp_descr_set != NULL)
@@ -27,11 +51,19 @@ internal class GetDescriptor {
   }
 
   internal func call(withOwner: Bool = true) -> PyResult<PyObject> {
-    let owner: PyObject? = withOwner ? self.owner : nil
+    let builtins = self.descriptor.builtins
+
+    let owner = withOwner ? self.owner : builtins.none
     let args = [self.descriptor, owner, self.owner.type]
 
-    let builtins = self.descriptor.builtins
-    return builtins.call(self.get, args: args)
+    switch builtins.call(callable: self.get, args: args) {
+    case .value(let r):
+      return .value(r)
+    case .notImplemented:
+      return .value(builtins.notImplemented)
+    case .error(let e), .notCallable(let e):
+      return .error(e)
+    }
   }
 
   // MARK: Factory
@@ -68,7 +100,7 @@ internal class SetDescriptor {
   private let owner: PyObject
   /// Descriptor object (the one with get/set/del methods).
   private let descriptor: PyObject
-  /// Set method on `self.descriptor`.
+  /// `__set__` method on `self.descriptor`.
   private var set: PyObject
 
   private init(owner: PyObject, descriptor: PyObject, set: PyObject) {
@@ -79,8 +111,16 @@ internal class SetDescriptor {
 
   internal func call(value: PyObject?) -> PyResult<PyObject> {
     let builtins = self.descriptor.builtins
-    let args = [self.descriptor, self.owner, value]
-    return builtins.call(self.set, args: args)
+    let args = [self.descriptor, self.owner, value ?? builtins.none]
+
+    switch builtins.call(callable: self.set, args: args) {
+    case .value(let r):
+      return .value(r)
+    case .notImplemented:
+      return .value(builtins.notImplemented)
+    case .error(let e), .notCallable(let e):
+      return .error(e)
+    }
   }
 
   // MARK: Factory

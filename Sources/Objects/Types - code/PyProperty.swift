@@ -112,7 +112,14 @@ public class PyProperty: PyObject {
       return .attributeError("unreadable attribute")
     }
 
-    return self.builtins.call(propGet, args: [object])
+    switch self.builtins.call(callable: propGet, args: [object]) {
+    case .value(let r):
+      return .value(r)
+    case .notImplemented:
+      return .value(self.builtins.notImplemented)
+    case .error(let e), .notCallable(let e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod = __set__
@@ -125,7 +132,14 @@ public class PyProperty: PyObject {
       return .attributeError(msg)
     }
 
-    return self.builtins.call(fn, args: [object, value])
+    switch self.builtins.call(callable: fn, args: [object, value]) {
+    case .value(let r):
+      return .value(r)
+    case .notImplemented:
+      return .value(self.builtins.notImplemented)
+    case .error(let e), .notCallable(let e):
+      return .error(e)
+    }
   }
 
   // sourcery: pymethod = __delete__

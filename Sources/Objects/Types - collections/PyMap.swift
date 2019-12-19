@@ -64,13 +64,12 @@ public class PyMap: PyObject {
       }
     }
 
-    switch self.builtins.call2(self.fn, args: args) {
+    switch self.builtins.call(callable: self.fn, args: args) {
     case .value(let r):
       return .value(r)
     case .notImplemented:
       return .value(self.builtins.notImplemented)
-    case .error(let e),
-         .methodIsNotCallable(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

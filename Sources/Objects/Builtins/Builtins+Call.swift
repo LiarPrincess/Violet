@@ -9,6 +9,15 @@ import Core
 // PyObject_Call(), PyObject_CallFunction() and PyObject_CallMethod()
 // are recommended to call a callable object.
 
+public enum CallResult {
+  case value(PyObject)
+  /// Method returned 'NotImplemented'.
+  case notImplemented
+  /// Function is not callable.
+  case notCallable(PyErrorEnum)
+  case error(PyErrorEnum)
+}
+
 public enum CallMethodResult {
   case value(PyObject)
   /// Method returned 'NotImplemented'.
@@ -37,6 +46,52 @@ extension Builtins {
   public func isCallable(_ object: PyObject) -> Bool {
     return object is __call__Owner
       || self.lookup(object, name: "__call__") != nil
+  }
+
+  // MARK: - Call
+
+  public func call(callable: PyObject,
+                   args: PyObject,
+                   kwargs: PyObject?) -> CallResult {
+    let argsArray: [PyObject]
+    switch ArgumentParser.unpackArgsTuple(args: args) {
+    case let .value(o): argsArray = o
+    case let .error(e): return .error(e)
+    }
+
+    switch ArgumentParser.unpackKwargsDict(kwargs: kwargs) {
+    case let .value(kwargsDict):
+      return self.call(callable: callable, args: argsArray, kwargs: kwargsDict)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func call(callable: PyObject,
+                     arg: PyObject) -> CallResult {
+    return self.call(callable: callable, args: [arg], kwargs: nil)
+  }
+
+  internal func call(callable: PyObject,
+                     args: [PyObject] = [],
+                     kwargs: PyDictData? = nil) -> CallResult {
+    guard let owner = callable as? __call__Owner else {
+      let msg = "object of type '\(callable.typeName)' is not callable"
+      return .notCallable(.typeError(msg))
+    }
+
+    switch owner.call(args: args, kwargs: kwargs) {
+    case .value(let result):
+      if result is PyNotImplemented {
+        return .notImplemented
+      }
+
+      return .value(result)
+    case .notImplemented:
+      return .notImplemented
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Method
@@ -80,14 +135,6 @@ extension Builtins {
       return .missingMethod(.attributeError(msg))
     }
 
-    if let owner = boundMethod as? __call__Owner {
-      switch owner.call(args: args, kwargs: kwargs) {
-      case .value(let result): return self.handleNotImplemented(result)
-      case .notImplemented: return .notImplemented
-      case .error(let e): return .error(e)
-      }
-    }
-
     // Case that is not supported in this method
     // (because it is actually a callable property):
     // >>> class F():
@@ -100,17 +147,16 @@ extension Builtins {
     // >>> c.f(1) <-- we are calling method 'f' on object 'c'
     // 1
 
-    let msg = "attribute of type '\(boundMethod.typeName)' is not callable"
-    return .notCallable(.typeError(msg))
-  }
-
-  // MARK: - Helpers
-
-  private func handleNotImplemented(_ object: PyObject) -> CallMethodResult {
-    if object is PyNotImplemented {
+    switch self.call(callable: boundMethod, args: args, kwargs: kwargs) {
+    case .value(let result):
+      return .value(result)
+    case .notImplemented:
       return .notImplemented
+    case .notCallable:
+      let msg = "attribute of type '\(boundMethod.typeName)' is not callable"
+      return .notCallable(.typeError(msg))
+    case .error(let e):
+      return .error(e)
     }
-
-    return .value(object)
   }
 }
