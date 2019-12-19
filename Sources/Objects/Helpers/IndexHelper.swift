@@ -28,7 +28,7 @@ internal enum IndexHelper {
     return .error(.indexError(msg))
   }
 
-  /// Basically `IndexHelper.intRaw`, but it will return type error
+  /// Basically `IndexHelper.tryInt`, but it will return type error
   /// if the value cannot be converted to index.
   internal static func int(_ value: PyObject) -> PyResult<Int> {
     switch IndexHelper.tryInt(value) {
@@ -44,7 +44,7 @@ internal enum IndexHelper {
 
   // MARK: - BigInt
 
-  /// Basically `IndexHelper.bigIntRaw`, but it will return type error
+  /// Basically `IndexHelper.tryBigInt`, but it will return type error
   /// if the value cannot be converted to index.
   internal static func bigInt(_ value: PyObject) -> PyResult<BigInt> {
     switch IndexHelper.tryBigInt(value) {

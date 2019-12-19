@@ -14,7 +14,7 @@ private let growthRate = 3
 
 /// To ensure the lookup algorithm terminates, there must be at least one Unused
 /// slot (NULL key) in the table.
-private let perturbShift: Int = 5
+private let perturbShift = 5
 
 // MARK: - Hashable
 
@@ -51,7 +51,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   internal enum EntryOrDeleted {
     /// Proper value in dictionary.
     case entry(Entry)
-    /// There was an index here, but it was deleted.
+    /// There was an entry here, but it was deleted.
     /// We can't reuse this index because we need to remember insertion order.
     case deleted
   }
@@ -78,7 +78,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
     private let value: Int
 
     /// Slot contains an entry. Use `self.entries[arrayIndex]` to get its value.
-    fileprivate var arrayIndex: Int {
+    fileprivate var asArrayIndex: Int {
       assert(self.isArrayIndex, "Can't index array with 'notAssigned' or 'deleted'")
       return self.value
     }
@@ -93,6 +93,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
       self.value = value
     }
 
+    /// Init used to create 'notAssigned' and 'deleted' values.
     private init(unchecked value: Int) {
       self.value = value
     }
@@ -352,7 +353,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
       case let entryIndex:
         assert(entryIndex.isArrayIndex)
-        let arrayIndex = entryIndex.arrayIndex
+        let arrayIndex = entryIndex.asArrayIndex
 
         guard case let .entry(old) = self.entries[arrayIndex] else {
           assert(false, "Index was deleted, but entry was not.")
@@ -469,7 +470,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
     var indexEntryCount = 0
     for entryIndex in self.indices where entryIndex.isArrayIndex {
-      assert(entryIndex.arrayIndex <= self.entries.count)
+      assert(entryIndex.asArrayIndex <= self.entries.count)
       indexEntryCount += 1
     }
 
