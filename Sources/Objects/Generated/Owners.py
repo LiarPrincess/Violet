@@ -1,9 +1,26 @@
 import os
 import sys
 
+# We will not generate protocols for following methods:
 ignored_methods = [
-  # 'pop' has different definitions in different types
-  'pop'
+  'pop',
+  'strip',
+  'lstrip',
+  'rstrip',
+  'center',
+  'ljust',
+  'rjust',
+  'split',
+  'rsplit',
+  'splitlines',
+  'expandtabs',
+  'replace',
+  'zfill',
+  'capitalize',
+  'lower',
+  'swapcase',
+  'title',
+  'upper',
 ]
 
 # ----

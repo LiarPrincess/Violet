@@ -126,9 +126,7 @@ protocol __trunc__Owner { func trunc() -> PyResult<PyObject> }
 protocol __xor__Owner { func xor(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol addOwner { func add(_ value: PyObject) -> PyResult<PyNone> }
 protocol appendOwner { func append(_ element: PyObject) -> PyResult<PyNone> }
-protocol capitalizeOwner { func capitalize() -> String }
 protocol casefoldOwner { func casefold() -> String }
-protocol centerOwner { func center(width: PyObject, fillChar: PyObject?) -> PyResult<String> }
 protocol clearOwner { func clear() -> PyResult<PyNone> }
 protocol conjugateOwner { func conjugate() -> PyObject }
 protocol copyOwner { func copy() -> PyObject }
@@ -139,7 +137,6 @@ protocol differenceOwner { func difference(with other: PyObject) -> PyResult<PyO
 protocol discardOwner { func discard(_ value: PyObject) -> PyResult<PyNone> }
 protocol endswithOwner { func endsWith(_ element: PyObject) -> PyResult<Bool> }
 protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Bool> }
-protocol expandtabsOwner { func expandTabs(tabSize: PyObject?) -> PyResult<String> }
 protocol findOwner { func find(_ element: PyObject) -> PyResult<BigInt> }
 protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol getOwner { func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
@@ -165,34 +162,20 @@ protocol istitleOwner { func isTitle() -> Bool }
 protocol isupperOwner { func isUpper() -> Bool }
 protocol itemsOwner { func items() -> PyObject }
 protocol keysOwner { func keys() -> PyObject }
-protocol ljustOwner { func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String> }
-protocol lowerOwner { func lower() -> String }
-protocol lstripOwner { func lstrip(_ chars: PyObject) -> PyResult<String> }
 protocol numeratorOwner { func numerator() -> PyInt }
 protocol partitionOwner { func partition(separator: PyObject) -> PyResult<PyTuple> }
 protocol popitemOwner { func popitem() -> PyResult<PyObject> }
 protocol realOwner { func asReal() -> PyObject }
 protocol removeOwner { func remove(_ value: PyObject) -> PyResult<PyNone> }
-protocol replaceOwner { func replace(old: PyObject, new: PyObject, count: PyObject?) -> PyResult<String> }
 protocol rfindOwner { func rfind(_ element: PyObject) -> PyResult<BigInt> }
 protocol rfindRangedOwner { func rfind(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol rindexOwner { func rindex(_ element: PyObject) -> PyResult<BigInt> }
 protocol rindexRangedOwner { func rindex(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
-protocol rjustOwner { func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String> }
 protocol rpartitionOwner { func rpartition(separator: PyObject) -> PyResult<PyTuple> }
-protocol rsplitOwner { func rsplit(separator: PyObject?, maxCount: PyObject?) -> PyResult<[String]> }
-protocol rstripOwner { func rstrip(_ chars: PyObject) -> PyResult<String> }
 protocol setdefaultOwner { func setDefault(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
 protocol sortOwner { func sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> }
-protocol splitOwner { func split(separator: PyObject?, maxCount: PyObject?) -> PyResult<[String]> }
-protocol splitlinesOwner { func splitLines(keepEnds: PyObject) -> PyResult<[String]> }
 protocol startswithOwner { func startsWith(_ element: PyObject) -> PyResult<Bool> }
 protocol startswithRangedOwner { func startsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Bool> }
-protocol stripOwner { func strip(_ chars: PyObject?) -> PyResult<String> }
-protocol swapcaseOwner { func swapcase() -> String }
 protocol symmetric_differenceOwner { func symmetricDifference(with other: PyObject) -> PyResult<PyObject> }
-protocol titleOwner { func title() -> String }
 protocol unionOwner { func union(with other: PyObject) -> PyResult<PyObject> }
-protocol upperOwner { func upper() -> String }
 protocol valuesOwner { func values() -> PyObject }
-protocol zfillOwner { func zfill(width: PyObject) -> PyResult<String> }

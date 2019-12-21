@@ -1,58 +1,45 @@
 import Core
-
-private typealias UnicodeScalarView = String.UnicodeScalarView
-private typealias UnicodeScalarViewSub = UnicodeScalarView.SubSequence
-
-// In CPython:
-// Objects -> unicodeobject.c
-// https://docs.python.org/3/library/stdtypes.html
+import Foundation
 
 // swiftlint:disable file_length
 
-// sourcery: pytype = str, default, baseType, unicodeSubclass
-/// Textual data in Python is handled with str objects, or strings.
-/// Strings are immutable sequences of Unicode code points.
-public class PyString: PyObject {
+// In CPython:
+// Objects -> bytesobject.c
+// https://docs.python.org/3/library/stdtypes.html
+
+// sourcery: pytype = bytes, default, baseType, bytesSubclass
+public class PyBytes: PyObject, PyBytesType {
 
   internal static let doc = """
-    str(object='') -> str
-    str(bytes_or_buffer[, encoding[, errors]]) -> str
+    bytes(iterable_of_ints) -> bytes
+    bytes(string, encoding[, errors]) -> bytes
+    bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer
+    bytes(int) -> bytes object of size given by the parameter initialized with null bytes
+    bytes() -> empty bytes object
 
-    Create a new string object from the given object. If encoding or
-    errors is specified, then the object must expose a data buffer
-    that will be decoded using the given encoding and error handler.
-    Otherwise, returns the result of object.__str__() (if defined)
-    or repr(object).
-    encoding defaults to sys.getdefaultencoding().
-    errors defaults to 'strict'.
+    Construct an immutable array of bytes from:
+      - an iterable yielding integers in range(256)
+      - a text string encoded using the specified encoding
+      - any object implementing the buffer API.
+      - an integer
     """
 
-  internal let data: PyStringData
+  internal let data: PyBytesData
 
-  internal var value: String {
-    return self.data.value
+  internal var value: Data {
+    return self.data.values
   }
 
   // MARK: - Init
 
-  convenience init(_ context: PyContext,
-                   value: String.UnicodeScalarView) {
-    self.init(context, value: String(value))
-  }
-
-  convenience init(_ context: PyContext,
-                   value: String.UnicodeScalarView.SubSequence) {
-    self.init(context, value: String(value))
-  }
-
-  internal init(_ context: PyContext, value: String) {
-    self.data = PyStringData(value)
-    super.init(type: context.builtins.types.str)
+  internal init(_ context: PyContext, value: Data) {
+    self.data = PyBytesData(value)
+    super.init(type: context.builtins.types.bytes)
   }
 
   /// Use only in  `__new__`!
-  internal init(type: PyType, value: String) {
-    self.data = PyStringData(value)
+  internal init(type: PyType, value: Data) {
+    self.data = PyBytesData(value)
     super.init(type: type)
   }
 
@@ -95,7 +82,7 @@ public class PyString: PyObject {
   }
 
   private func compare(_ other: PyObject) -> PyResultOrNot<StringCompareResult> {
-    guard let other = other as? PyString else {
+    guard let other = other as? PyBytes else {
       return .notImplemented
     }
 
@@ -117,13 +104,13 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let result = self.data.createRepr()
+    let result = self.data.createRepr(prefix: "b")
     return .value(result)
   }
 
   // sourcery: pymethod = __str__
   internal func str() -> PyResult<String> {
-    return .value(self.data.value)
+    return self.repr()
   }
 
   // MARK: - Class
@@ -159,11 +146,11 @@ public class PyString: PyObject {
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(at: index) {
-    case let .item(scalar):
-      let result = self.builtins.newString(String(scalar))
+    case let .item(int):
+      let result = self.builtins.newBytes(Data([int]))
       return .value(result)
-    case let .slice(string):
-      let result = self.builtins.newString(string)
+    case let .slice(bytes):
+      let result = self.builtins.newBytes(bytes)
       return .value(result)
     case let .error(e):
       return .error(e)
@@ -208,18 +195,6 @@ public class PyString: PyObject {
     return self.data.isAscii
   }
 
-  internal static let isdecimalDoc = """
-    Return True if the string is a decimal string, False otherwise.
-
-    A string is a decimal string if all characters in the string are decimal and
-    there is at least one character in the string.
-    """
-
-  // sourcery: pymethod = isdecimal, doc = isdecimalDoc
-  internal func isDecimal() -> Bool {
-    return self.data.isDecimal
-  }
-
   internal static let isdigitDoc = """
     Return True if the string is a digit string, False otherwise.
 
@@ -232,18 +207,6 @@ public class PyString: PyObject {
     return self.data.isDigit
   }
 
-  internal static let isidentifierDoc = """
-    Return True if the string is a valid Python identifier, False otherwise.
-
-    Use keyword.iskeyword() to test for reserved identifiers such as "def" and
-    "class".
-    """
-
-  // sourcery: pymethod = isidentifier, doc = isidentifierDoc
-  internal func isIdentifier() -> Bool {
-    return self.data.isIdentifier
-  }
-
   internal static let islowerDoc = """
     Return True if the string is a lowercase string, False otherwise.
 
@@ -254,30 +217,6 @@ public class PyString: PyObject {
   // sourcery: pymethod = islower, doc = islowerDoc
   internal func isLower() -> Bool {
     return self.data.isLower
-  }
-
-  internal static let isnumericDoc = """
-    Return True if the string is a numeric string, False otherwise.
-
-    A string is numeric if all characters in the string are numeric and there is at
-    least one character in the string.
-    """
-
-  // sourcery: pymethod = isnumeric, doc = isnumericDoc
-  internal func isNumeric() -> Bool {
-    return self.data.isNumeric
-  }
-
-  internal static let isprintableDoc = """
-    Return True if the string is printable, False otherwise.
-
-    A string is printable if all of its characters are considered printable in
-    repr() or if it is empty.
-    """
-
-  // sourcery: pymethod = isprintable, doc = isprintableDoc
-  internal func isPrintable() -> Bool {
-    return self.data.isPrintable
   }
 
   internal static let isspaceDoc = """
@@ -370,8 +309,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = strip, doc = stripDoc
-  internal func strip(_ chars: PyObject?) -> PyResult<String> {
-    return self.data.strip(chars).map(String.init)
+  internal func strip(_ chars: PyObject?) -> PyResult<Data> {
+    return self.data.strip(chars)
   }
 
   internal static let lstripDoc = """
@@ -381,8 +320,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = lstrip, doc = lstripDoc
-  internal func lstrip(_ chars: PyObject) -> PyResult<String> {
-    return self.data.lstrip(chars).map(String.init)
+  internal func lstrip(_ chars: PyObject) -> PyResult<Data> {
+    return self.data.lstrip(chars)
   }
 
   internal static let rstripDoc = """
@@ -392,8 +331,8 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = rstrip, doc = rstripDoc
-  internal func rstrip(_ chars: PyObject) -> PyResult<String> {
-    return self.data.rstrip(chars).map(String.init)
+  internal func rstrip(_ chars: PyObject) -> PyResult<Data> {
+    return self.data.rstrip(chars)
   }
 
   // MARK: - Find
@@ -450,7 +389,7 @@ public class PyString: PyObject {
     }
   }
 
-  private func toFindResult(_ raw: StringFindResult<PyStringData.Index>)
+  private func toFindResult(_ raw: StringFindResult<PyBytesData.Index>)
     -> PyResult<BigInt> {
 
     switch raw {
@@ -509,49 +448,70 @@ public class PyString: PyObject {
   // MARK: - Case
 
   // sourcery: pymethod = lower
-  internal func lower() -> String {
-    return self.data.lowerCased()
+  internal func lower() -> Data {
+    let string = self.asString
+    let result = string.lowercased()
+    return self.asData(result)
   }
 
   // sourcery: pymethod = upper
-  internal func upper() -> String {
-    return self.data.upperCased()
+  internal func upper() -> Data {
+    let string = self.asString
+    let result = string.uppercased()
+    return self.asData(result)
   }
 
   // sourcery: pymethod = title
-  internal func title() -> String {
-    return self.data.titleCased()
+  internal func title() -> Data {
+    return self.asData(self.data.titleCased())
   }
 
   // sourcery: pymethod = swapcase
-  internal func swapcase() -> String {
-    return self.data.swapCase()
-  }
-
-  // sourcery: pymethod = casefold
-  internal func casefold() -> String {
-    return self.data.caseFold()
+  internal func swapcase() -> Data {
+    return self.asData(self.data.swapCase())
   }
 
   // sourcery: pymethod = capitalize
-  internal func capitalize() -> String {
-    return self.data.capitalize()
+  internal func capitalize() -> Data {
+    return self.asData(self.data.capitalize())
+  }
+
+  private var asString: String {
+    if let result = String(data: self.value, encoding: .ascii) {
+      return result
+    }
+
+    let msg = "Violet error: Sometimes we convert 'bytes' to 'string' " +
+      "(mostly when we really need string, for example to check for whitespaces). " +
+      "Normally it works, but this time conversion to string failed."
+    fatalError(msg)
+  }
+
+  private func asData(_ string: String) -> Data {
+    if let result = string.data(using: .ascii) {
+      return result
+    }
+
+    let msg = "Violet error: Sometimes we convert 'bytes' to 'string' and back " +
+      "(mostly when we really need string, for example to check for whitespaces). " +
+      "Normally it works, but this time conversion back to bytes failed."
+    fatalError(msg)
   }
 
   // MARK: - Center, just
 
   // sourcery: pymethod = center
-  internal func center(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+  internal func center(width: PyObject, fillChar: PyObject?) -> PyResult<Data> {
     return self.data.center(width: width, fill: fillChar)
   }
 
   // sourcery: pymethod = ljust
-  internal func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+  internal func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<Data> {
     return self.data.ljust(width: width, fill: fillChar)
   }
 
   // sourcery: pymethod = rjust
-  internal func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+  internal func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<Data> {
     return self.data.rjust(width: width, fill: fillChar)
   }
 
@@ -559,26 +519,19 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = split
   internal func split(separator: PyObject?,
-                      maxCount: PyObject?) -> PyResult<[String]> {
+                      maxCount: PyObject?) -> PyResult<[Data]> {
     return self.data.split(separator: separator, maxCount: maxCount)
-      .map(self.toStringArray(_:))
   }
 
   // sourcery: pymethod = rsplit
   internal func rsplit(separator: PyObject?,
-                       maxCount: PyObject?) -> PyResult<[String]> {
+                       maxCount: PyObject?) -> PyResult<[Data]> {
     return self.data.rsplit(separator: separator, maxCount: maxCount)
-      .map(self.toStringArray(_:))
   }
 
   // sourcery: pymethod = splitlines
-  internal func splitLines(keepEnds: PyObject) -> PyResult<[String]> {
+  internal func splitLines(keepEnds: PyObject) -> PyResult<[Data]> {
     return self.data.splitLines(keepEnds: keepEnds)
-      .map(self.toStringArray(_:))
-  }
-
-  private func toStringArray(_ values: [UnicodeScalarViewSub]) -> [String] {
-    return values.map(String.init)
   }
 
   // MARK: - Partition
@@ -595,17 +548,15 @@ public class PyString: PyObject {
       .flatMap { self.toTuple(separator: separator, result: $0) }
   }
 
-  private func toTuple(
-    separator: PyObject,
-    result: StringPartitionResult<UnicodeScalarViewSub>) -> PyResult<PyTuple> {
-
+  private func toTuple(separator: PyObject,
+                       result: StringPartitionResult<Data>) -> PyResult<PyTuple> {
     switch result {
     case .separatorNotFound:
       let empty = self.builtins.emptyString
       return .value(PyTuple(self.context, elements: [self, empty, empty]))
     case let .separatorFound(before, after):
-      let b = self.builtins.newString(String(before))
-      let a = self.builtins.newString(String(after))
+      let b = self.builtins.newBytes(before)
+      let a = self.builtins.newBytes(after)
       return .value(PyTuple(self.context, elements: [b, separator, a]))
     case .error(let e):
       return .error(e)
@@ -615,7 +566,7 @@ public class PyString: PyObject {
   // MARK: - Expand tabs
 
   // sourcery: pymethod = expandtabs
-  internal func expandTabs(tabSize: PyObject?) -> PyResult<String> {
+  internal func expandTabs(tabSize: PyObject?) -> PyResult<Data> {
     return self.data.expandTabs(tabSize: tabSize)
   }
 
@@ -646,14 +597,14 @@ public class PyString: PyObject {
   // sourcery: pymethod = replace
   internal func replace(old: PyObject,
                         new: PyObject,
-                        count: PyObject?) -> PyResult<String> {
+                        count: PyObject?) -> PyResult<Data> {
     return self.data.replace(old: old, new: new, count: count)
   }
 
   // MARK: - ZFill
 
   // sourcery: pymethod = zfill
-  internal func zfill(width: PyObject) -> PyResult<String> {
+  internal func zfill(width: PyObject) -> PyResult<Data> {
     return self.data.zfill(width: width)
   }
 
@@ -661,74 +612,18 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return self.data.add(other).map(self.builtins.newString(_:))
+    return self.data.add(other).map(self.builtins.newBytes(_:))
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return self.data.mul(other).map(self.builtins.newString(_:))
+    return self.data.mul(other).map(self.builtins.newBytes(_:))
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return self.data.rmul(other).map(self.builtins.newString(_:))
-  }
-
-  // MARK: - Iter
-
-  // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
-    return PyStringIterator(string: self)
-  }
-
-  // MARK: - Python new
-
-  private static let newArgumentsParser = ArgumentParser.createOrFatal(
-    arguments: ["object", "encoding", "errors"],
-    format: "|Oss:str"
-  )
-
-  // sourcery: pymethod = __new__
-  internal class func pyNew(type: PyType,
-                            args: [PyObject],
-                            kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(bind.count <= 3, "Invalid argument count returned from parser.")
-      let arg0 = bind.count >= 1 ? bind[0] : nil
-      let arg1 = bind.count >= 2 ? bind[1] : nil
-      let arg2 = bind.count >= 3 ? bind[2] : nil
-      return PyString.pyNew(type: type, object: arg0, encoding: arg1, errors: arg2)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  internal static func pyNew(type: PyType,
-                             object: PyObject?,
-                             encoding: PyObject?,
-                             errors: PyObject?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.str
-    let alloca = isBuiltin ? newString(type:value:) : PyStringHeap.init(type:value:)
-
-    guard let object = object else {
-      return .value(alloca(type, ""))
-    }
-
-    // TODO: Implement `str.__new__` - encoding and error
-    guard encoding == nil && errors == nil else {
-      let msg = "Violet currently does not support 'encoding' and 'errors' parameters"
-      return .valueError(msg)
-    }
-
-    let builtins = type.builtins
-    return builtins.strValue(object).map(builtins.newString)
-  }
-
-  /// Allocate new PyString (it will use 'builtins' cache if possible).
-  private static func newString(type: PyType, value: String) -> PyString {
-    return type.builtins.newString(value)
+    return self.data.rmul(other).map(self.builtins.newBytes(_:))
   }
 }

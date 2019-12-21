@@ -66,6 +66,58 @@ PyBuiltinFunction|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
 PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyBuiltinFunction|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResultOrNot<PyObject>
+PyBytes|PyObject|get|__class__|getClass() -> PyType
+
+PyBytes|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBytes|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBytes|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBytes|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBytes|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBytes|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyBytes|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyBytes|PyObject|func|__repr__|repr() -> PyResult<String>
+PyBytes|PyObject|func|__str__|str() -> PyResult<String>
+PyBytes|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyBytes|PyObject|func|__len__|getLength() -> BigInt
+PyBytes|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PyBytes|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
+PyBytes|PyObject|func|isalnum|isAlphaNumeric() -> Bool
+PyBytes|PyObject|func|isalpha|isAlpha() -> Bool
+PyBytes|PyObject|func|isascii|isAscii() -> Bool
+PyBytes|PyObject|func|isdigit|isDigit() -> Bool
+PyBytes|PyObject|func|islower|isLower() -> Bool
+PyBytes|PyObject|func|isspace|isSpace() -> Bool
+PyBytes|PyObject|func|istitle|isTitle() -> Bool
+PyBytes|PyObject|func|isupper|isUpper() -> Bool
+PyBytes|PyObject|func|startswith|startsWith(_ element: PyObject,                           start: PyObject?,                           end: PyObject?) -> PyResult<Bool>
+PyBytes|PyObject|func|endswith|endsWith(_ element: PyObject,                         start: PyObject?,                         end: PyObject?) -> PyResult<Bool>
+PyBytes|PyObject|func|strip|strip(_ chars: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|lstrip|lstrip(_ chars: PyObject) -> PyResult<Data>
+PyBytes|PyObject|func|rstrip|rstrip(_ chars: PyObject) -> PyResult<Data>
+PyBytes|PyObject|func|find|find(_ element: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<BigInt>
+PyBytes|PyObject|func|rfind|rfind(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyBytes|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyBytes|PyObject|func|rindex|rindex(_ element: PyObject,                       start: PyObject?,                       end: PyObject?) -> PyResult<BigInt>
+PyBytes|PyObject|func|lower|lower() -> Data
+PyBytes|PyObject|func|upper|upper() -> Data
+PyBytes|PyObject|func|title|title() -> Data
+PyBytes|PyObject|func|swapcase|swapcase() -> Data
+PyBytes|PyObject|func|capitalize|capitalize() -> Data
+PyBytes|PyObject|func|center|center(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|ljust|ljust(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|rjust|rjust(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|split|split(separator: PyObject?,                      maxCount: PyObject?) -> PyResult<[Data]>
+PyBytes|PyObject|func|rsplit|rsplit(separator: PyObject?,                       maxCount: PyObject?) -> PyResult<[Data]>
+PyBytes|PyObject|func|splitlines|splitLines(keepEnds: PyObject) -> PyResult<[Data]>
+PyBytes|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTuple>
+PyBytes|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
+PyBytes|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|count|count(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyBytes|PyObject|func|replace|replace(old: PyObject,                        new: PyObject,                        count: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<Data>
+PyBytes|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyBytes|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyBytes|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyCallableIterator|PyObject|get|__class__|getClass() -> PyType
 
 PyCallableIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

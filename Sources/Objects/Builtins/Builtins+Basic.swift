@@ -1,4 +1,5 @@
 import Core
+import Foundation
 
 // In CPython:
 // Python -> builtinmodule.c
@@ -47,6 +48,10 @@ extension Builtins {
     return value.isEmpty ?
       self.emptyString :
       PyString(self.context, value: value)
+  }
+
+  public func newBytes(_ value: Data) -> PyBytes {
+    return PyBytes(self.context, value: value)
   }
 
   // MARK: - Module

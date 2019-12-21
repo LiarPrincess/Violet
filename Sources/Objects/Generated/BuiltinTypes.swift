@@ -16,6 +16,7 @@ public final class BuiltinTypes {
 
   public let bool: PyType
   public let builtinFunction: PyType
+  public let bytes: PyType
   public let callable_iterator: PyType
   public let code: PyType
   public let complex: PyType
@@ -68,6 +69,7 @@ public final class BuiltinTypes {
 
     // 'self.bool' has to be last because it uses 'self.int' as base!
     self.builtinFunction = PyType.initBuiltinType(name: "builtinFunction", type: self.type, base: self.object)
+    self.bytes = PyType.initBuiltinType(name: "bytes", type: self.type, base: self.object)
     self.callable_iterator = PyType.initBuiltinType(name: "callable_iterator", type: self.type, base: self.object)
     self.code = PyType.initBuiltinType(name: "code", type: self.type, base: self.object)
     self.complex = PyType.initBuiltinType(name: "complex", type: self.type, base: self.object)
@@ -116,6 +118,7 @@ public final class BuiltinTypes {
     BuiltinTypesFill.type(self.type)
     BuiltinTypesFill.bool(self.bool)
     BuiltinTypesFill.builtinFunction(self.builtinFunction)
+    BuiltinTypesFill.bytes(self.bytes)
     BuiltinTypesFill.callable_iterator(self.callable_iterator)
     BuiltinTypesFill.code(self.code)
     BuiltinTypesFill.complex(self.complex)
@@ -162,6 +165,7 @@ public final class BuiltinTypes {
       self.type,
       self.bool,
       self.builtinFunction,
+      self.bytes,
       self.callable_iterator,
       self.code,
       self.complex,

@@ -89,7 +89,7 @@ internal protocol PyStringImpl {
   associatedtype Builder: StringBuilderType where
     Builder.Element == Scalars.Element
 
-  /// `UnicodeScalarView` for str and `Data` for bytes.
+  /// `UnicodeScalarView` for `str` and `Data` for `bytes`.
   ///
   /// We improperly use name `scalars` for both because this is easier to
   /// visualise than `elements/values/etc.`.
@@ -98,7 +98,7 @@ internal protocol PyStringImpl {
   /// Name of the type that uses this implementations (e.g. `str` or `bytes`).
   /// Used in error messages.
   static var typeName: String { get }
-  /// Default fill character
+  /// Default fill character (for example for `center`).
   static var defaultFill: Element { get }
   /// Fill used by `zfill` function
   static var zFill: Element { get }
@@ -108,8 +108,6 @@ internal protocol PyStringImpl {
   /// Sometimes we will do that when we really need to work on strings
   /// (for example to classify something as whitespace).
   static func toScalar(_ element: Element) -> UnicodeScalar
-  /// Basically reverse `Self.toScalar`.
-  static func toElement(_ scalar: UnicodeScalar) -> Element
   /// Given a `PyObject` try to extract valid value to use in function.
   ///
   /// For `str`: `Self` will be `str`.
@@ -210,6 +208,10 @@ extension PyStringImpl {
 
   internal var isEmpty: Bool {
     return self.scalars.isEmpty
+  }
+
+  internal var any: Bool {
+    return !self.isEmpty
   }
 
   internal var count: Int {
@@ -520,6 +522,90 @@ extension PyStringImpl {
     }
 
     return cased
+  }
+
+  // MARK: - Case
+
+  internal func titleCased() -> String {
+    var result = ""
+    var isPreviousCased = false
+
+    for element in self.scalars {
+      let scalar = Self.toScalar(element)
+      let properties = scalar.properties
+
+      switch properties.generalCategory {
+      case .lowercaseLetter:
+        if isPreviousCased {
+          result.append(properties.titlecaseMapping)
+        } else {
+          result.append(scalar)
+        }
+        isPreviousCased = true
+
+      case .uppercaseLetter, .titlecaseLetter:
+        if isPreviousCased {
+          result.append(properties.lowercaseMapping)
+        } else {
+          result.append(scalar)
+        }
+        isPreviousCased = true
+
+      default:
+        isPreviousCased = false
+        result.append(scalar)
+      }
+    }
+
+    return result
+  }
+
+  internal func swapCase() -> String {
+    var result = ""
+    for element in self.scalars {
+      let scalar = Self.toScalar(element)
+      let properties = scalar.properties
+      if properties.isLowercase {
+        result.append(properties.uppercaseMapping)
+      } else if properties.isUppercase {
+        result.append(properties.lowercaseMapping)
+      } else {
+        result.append(scalar)
+      }
+    }
+    return result
+  }
+
+  internal func caseFold() -> String {
+    var result = ""
+    for element in self.scalars {
+      let scalar = Self.toScalar(element)
+      if let mapping = Unicode.caseFoldMapping[scalar.value] {
+        result.append(mapping)
+      } else {
+        result.append(scalar)
+      }
+    }
+    return result
+  }
+
+  internal func capitalize() -> String {
+    // Capitalize only first scalar:
+    // list("e\u0301".capitalize()) -> ['E', '́']
+
+    guard let first = self.scalars.first else {
+      return ""
+    }
+
+    let firstScalar = Self.toScalar(first)
+    var result = firstScalar.properties.titlecaseMapping
+
+    for element in self.scalars.dropFirst() {
+      let scalar = Self.toScalar(element)
+      result.append(contentsOf: scalar.properties.lowercaseMapping)
+    }
+
+    return result
   }
 
   // MARK: - Is(thingie) predicates
@@ -1643,5 +1729,65 @@ extension PyStringImpl {
     }
 
     return builder.result
+  }
+
+  // MARK: - Add
+
+  internal func add(_ other: PyObject) -> PyResultOrNot<Builder.Result> {
+    guard let otherStr = Self.extractSelf(from: other) else {
+      let s = Self.typeName
+      let t = other.typeName
+      return .typeError("can only concatenate \(s) (not '\(t)') to \(s)")
+    }
+
+    return .value(self.add(otherStr))
+  }
+
+  internal func add(_ other: Self) -> Builder.Result {
+    var builder = Builder()
+
+    if self.any {
+      builder.append(contentsOf: self.scalars)
+    }
+
+    if other.any {
+      builder.append(contentsOf: other.scalars)
+    }
+
+    return builder.result
+  }
+
+  // MARK: - Mul
+
+  internal func mul(_ other: PyObject) -> PyResultOrNot<Builder.Result> {
+    guard let pyInt = other as? PyInt else {
+      let s = Self.typeName
+      let t = other.typeName
+      return .typeError("can only multiply \(s) and int (not '\(t)')")
+    }
+
+    guard let int = Int(exactly: pyInt.value) else {
+      return .overflowError("repeated string is too long")
+    }
+
+    return .value(self.mul(int))
+  }
+
+  internal func mul(_ n: Int) -> Builder.Result {
+    var builder = Builder()
+
+    if self.isEmpty {
+      return builder.result
+    }
+
+    for _ in 0..<max(n, 0) {
+      builder.append(contentsOf: self.scalars)
+    }
+
+    return builder.result
+  }
+
+  internal func rmul(_ other: PyObject) -> PyResultOrNot<Builder.Result> {
+    return self.mul(other)
   }
 }

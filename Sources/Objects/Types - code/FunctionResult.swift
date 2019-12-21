@@ -1,4 +1,5 @@
 import Core
+import Foundation
 
 internal typealias FunctionResult = PyResultOrNot<PyObject>
 
@@ -29,6 +30,12 @@ extension BigInt: FunctionResultConvertible {
 extension String: FunctionResultConvertible {
   internal func toFunctionResult(in context: PyContext) -> FunctionResult {
     return .value(context.builtins.newString(self))
+  }
+}
+
+extension Data: FunctionResultConvertible {
+  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
+    return .value(context.builtins.newBytes(self))
   }
 }
 

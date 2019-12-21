@@ -123,15 +123,36 @@ internal struct Hasher {
       return 0
     }
 
-    let h = value.utf8.withContiguousStorageIfAvailable { ptr -> UInt64 in
-      Core.SipHash.hash(key0: self.key0, key1: self.key1, bytes: ptr)
+    let hashOrNil = value.utf8.withContiguousStorageIfAvailable { ptr -> UInt64 in
+      SipHash.hash(key0: self.key0, key1: self.key1, bytes: ptr)
     }
 
-    guard let hashUInt64 = h else {
+    guard let hash = hashOrNil else {
       let method = "utf8.withContiguousStorageIfAvailable"
-      fatalError("Error whan hashing '\(value)', unable to obtain '\(method)'")
+      fatalError("Error when hashing '\(value)', unable to obtain '\(method)'")
     }
 
+    return self.toPyHash(hash)
+  }
+
+  internal func hash(_ value: Data) -> PyHash {
+    if value.isEmpty {
+      return 0
+    }
+
+    let hashOrNil = value.withContiguousStorageIfAvailable { ptr -> UInt64 in
+      SipHash.hash(key0: self.key0, key1: self.key1, bytes: ptr)
+    }
+
+    guard let hash = hashOrNil else {
+      let method = "Data.withContiguousStorageIfAvailable"
+      fatalError("Error when hashing '\(value)', unable to obtain '\(method)'")
+    }
+
+    return self.toPyHash(hash)
+  }
+
+  private func toPyHash(_ value: UInt64) -> PyHash {
     // We support only 64 bit platforms which means that `PyHash` is 64 bit.
     // SipHash returns UInt64 value.
     // 'truncatingIfNeeded' in this case means bit cast, for example:
@@ -139,7 +160,7 @@ internal struct Hasher {
     //   PyHash(truncatingIfNeeded: sipHash) // which is -6362187867865225860
     // Which is the same as:
     //  Int64(bitPattern: sipHash)
-    return PyHash(truncatingIfNeeded: hashUInt64)
+    return PyHash(truncatingIfNeeded: value)
   }
 
   // MARK: - Pointer

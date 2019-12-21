@@ -37,6 +37,16 @@ internal protocol HeapType { }
 
 // PyBuiltinFunction is not a base type.
 
+// MARK: - Bytes
+
+/// Type used when we subclass builtin `bytes` class.
+/// For example: `class Rapunzel(bytes): pass`.
+internal final class PyBytesHeap: PyBytes, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
 // MARK: - CallableIterator
 
 // PyCallableIterator is not a base type.
