@@ -552,14 +552,14 @@ PyString|PyObject|func|isspace|isSpace() -> Bool
 PyString|PyObject|func|istitle|isTitle() -> Bool
 PyString|PyObject|func|isupper|isUpper() -> Bool
 PyString|PyObject|func|startswith|startsWith(_ element: PyObject,                           start: PyObject?,                           end: PyObject?) -> PyResult<Bool>
-PyString|PyObject|func|endswith|endsWith(_ element: PyObject,                         start: PyObject?,                         end: PyObject?) -> PyResultOrNot<Bool>
+PyString|PyObject|func|endswith|endsWith(_ element: PyObject,                         start: PyObject?,                         end: PyObject?) -> PyResult<Bool>
 PyString|PyObject|func|strip|strip(_ chars: PyObject?) -> PyResult<String>
 PyString|PyObject|func|lstrip|lstrip(_ chars: PyObject) -> PyResult<String>
 PyString|PyObject|func|rstrip|rstrip(_ chars: PyObject) -> PyResult<String>
-PyString|PyObject|func|find|find(_ element: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<Int>
-PyString|PyObject|func|rfind|rfind(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<Int>
+PyString|PyObject|func|find|find(_ element: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<BigInt>
+PyString|PyObject|func|rfind|rfind(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
 PyString|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
-PyString|PyObject|func|rindex|rindex(_ element: PyObject,                       start: PyObject?,                       end: PyObject?) -> PyResult<Int>
+PyString|PyObject|func|rindex|rindex(_ element: PyObject,                       start: PyObject?,                       end: PyObject?) -> PyResult<BigInt>
 PyString|PyObject|func|lower|lower() -> String
 PyString|PyObject|func|upper|upper() -> String
 PyString|PyObject|func|title|title() -> String

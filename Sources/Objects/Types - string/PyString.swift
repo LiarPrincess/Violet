@@ -114,12 +114,13 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return .value(self.data.repr)
+    let result = self.data.createRepr()
+    return .value(result)
   }
 
   // sourcery: pymethod = __str__
   internal func str() -> PyResult<String> {
-    return .value(self.data.str)
+    return self.repr()
   }
 
   // MARK: - Class
@@ -148,48 +149,28 @@ public class PyString: PyObject {
   // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
     guard let elementString = element as? PyString else {
-      return .typeError(
-        "'in <string>' requires string as left operand, not \(element.typeName)"
-      )
+      let t = element.typeName
+      return .typeError("'in <string>' requires string as left operand, not \(t)")
     }
 
-    return .value(self.data.contains(elementString.data))
+    let result = self.data.contains(elementString.data)
+    return .value(result)
   }
 
   // MARK: - Get item
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    switch IndexHelper.tryInt(index) {
-    case .value(let index):
-      return self.data.getItem(at: index).map(self.builtins.newString(_:))
-    case .notIndex:
-      break // Try slice
-    case .error(let e):
+    switch self.data.getItem(at: index) {
+    case let .item(scalar):
+      let result = self.builtins.newString(String(scalar))
+      return .value(result)
+    case let .slice(string):
+      let result = self.builtins.newString(string)
+      return .value(result)
+    case let .error(e):
       return .error(e)
     }
-
-    if let slice = index as? PySlice {
-      return self.getSlice(slice: slice)
-    }
-
-    let msg = "str indices must be integers or slices, not \(index.typeName)"
-    return .typeError(msg)
-  }
-
-  private func getSlice(slice: PySlice) -> PyResult<PyObject> {
-    let unpack: PySlice.UnpackedIndices
-    switch slice.unpack() {
-    case let .value(v): unpack = v
-    case let .error(e): return .error(e)
-    }
-
-    let adjusted = slice.adjust(unpack, toLength: self.data.count)
-    let result = self.data.getSlice(start: adjusted.start,
-                                    step: adjusted.step,
-                                    count: adjusted.length)
-
-    return result.map(self.builtins.newString(_:))
   }
 
   // MARK: - Predicates
@@ -360,33 +341,7 @@ public class PyString: PyObject {
   internal func startsWith(_ element: PyObject,
                            start: PyObject?,
                            end: PyObject?) -> PyResult<Bool> {
-    let substring: PyStringDataSlice
-    switch self.getSubstring(start: start, end: end) {
-    case let .value(v): substring = v
-    case let .error(e): return .error(e)
-    }
-
-    if let string = element as? PyString {
-      return .value(substring.starts(with: string.data))
-    }
-
-    if let tuple = element as? PyTuple {
-      for element in tuple.elements {
-        guard let string = element as? PyString else {
-          let t = element.typeName
-          return .typeError("tuple for startswith must only contain str, not \(t)")
-        }
-
-        if substring.starts(with: string.data) {
-          return .value(true)
-        }
-      }
-
-      return .value(false)
-    }
-
-    let t = element.typeName
-    return .typeError("startswith first arg must be str or a tuple of str, not \(t)")
+    return self.data.starts(with: element, start: start, end: end)
   }
 
   internal static let endswithDoc = """
@@ -398,41 +353,15 @@ public class PyString: PyObject {
     suffix can also be a tuple of strings to try.
     """
 
-  internal func endsWith(_ element: PyObject) -> PyResultOrNot<Bool> {
+  internal func endsWith(_ element: PyObject) -> PyResult<Bool> {
     return self.endsWith(element, start: nil, end: nil)
   }
 
   // sourcery: pymethod = endswith, doc = endswithDoc
   internal func endsWith(_ element: PyObject,
                          start: PyObject?,
-                         end: PyObject?) -> PyResultOrNot<Bool> {
-    let substring: PyStringDataSlice
-    switch self.getSubstring(start: start, end: end) {
-    case let .value(v): substring = v
-    case let .error(e): return .error(e)
-    }
-
-    if let string = element as? PyString {
-      return .value(substring.ends(with: string.data))
-    }
-
-    if let tuple = element as? PyTuple {
-      for element in tuple.elements {
-        guard let string = element as? PyString else {
-          let t = element.typeName
-          return .typeError("tuple for endswith must only contain str, not \(t)")
-        }
-
-        if substring.ends(with: string.data) {
-          return .value(true)
-        }
-      }
-
-      return .value(false)
-    }
-
-    let t = element.typeName
-    return .typeError("endswith first arg must be str or a tuple of str, not \(t)")
+                         end: PyObject?) -> PyResult<Bool> {
+    return self.data.ends(with: element, start: start, end: end)
   }
 
   // MARK: - Strip
@@ -445,14 +374,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = strip, doc = stripDoc
   internal func strip(_ chars: PyObject?) -> PyResult<String> {
-    switch self.parseStripChars(chars, fnName: "strip") {
-    case .whitespace:
-      return .value(self.data.stripWhitespace())
-    case let .chars(set):
-      return .value(self.data.strip(chars: set))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.strip(chars).map(String.init)
   }
 
   internal static let lstripDoc = """
@@ -463,14 +385,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = lstrip, doc = lstripDoc
   internal func lstrip(_ chars: PyObject) -> PyResult<String> {
-    switch self.parseStripChars(chars, fnName: "lstrip") {
-    case .whitespace:
-      return .value(self.data.lstripWhitespace())
-    case let .chars(set):
-      return .value(self.data.lstrip(chars: set))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.lstrip(chars).map(String.init)
   }
 
   internal static let rstripDoc = """
@@ -481,39 +396,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = rstrip, doc = rstripDoc
   internal func rstrip(_ chars: PyObject) -> PyResult<String> {
-    switch self.parseStripChars(chars, fnName: "rstrip") {
-    case .whitespace:
-      return .value(self.data.rstripWhitespace())
-    case let .chars(set):
-      return .value(self.data.rstrip(chars: set))
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  private enum StripCharsResult {
-    case whitespace
-    case chars(Set<UnicodeScalar>)
-    case error(PyErrorEnum)
-  }
-
-  private func parseStripChars(_ chars: PyObject?,
-                               fnName: String) -> StripCharsResult {
-    guard let chars = chars else {
-      return .whitespace
-    }
-
-    if chars is PyNone {
-      return .whitespace
-    }
-
-    if let charsString = chars as? PyString {
-      return .chars(Set(charsString.data.scalars))
-    }
-
-    return .error(
-      .typeError("\(fnName) arg must be str or None, not \(chars.typeName)")
-    )
+    return self.data.rstrip(chars).map(String.init)
   }
 
   // MARK: - Find
@@ -528,29 +411,20 @@ public class PyString: PyObject {
     Return -1 on failure.
     """
 
-  internal func find(_ element: PyObject) -> PyResult<Int> {
+  internal func find(_ element: PyObject) -> PyResult<BigInt> {
     return self.find(element, start: nil, end: nil)
   }
 
   // sourcery: pymethod = find, doc = findDoc
   internal func find(_ element: PyObject,
                      start: PyObject?,
-                     end: PyObject?) -> PyResult<Int> {
-    guard let elementString = element as? PyString else {
-      return .typeError("find arg must be str, not \(element.typeName)")
-    }
+                     end: PyObject?) -> PyResult<BigInt> {
 
-    let substring: PyStringDataSlice
-    switch self.getSubstring(start: start, end: end) {
-    case let .value(s): substring = s
-    case let .error(e): return .error(e)
-    }
-
-    switch substring.find(value: elementString.data) {
-    case let .index(index: _, position: position):
-      return .value(position)
-    case .notFound:
-      return .value(-1)
+    switch self.data.find(element, start: start, end: end) {
+    case let .value(result):
+      return self.toFindResult(result)
+    case let .error(e):
+      return .error(e)
     }
   }
 
@@ -564,25 +438,25 @@ public class PyString: PyObject {
     Return -1 on failure.
     """
 
-  internal func rfind(_ element: PyObject) -> PyResult<Int> {
-    return self.rindex(element, start: nil, end: nil)
+  internal func rfind(_ element: PyObject) -> PyResult<BigInt> {
+    return self.rfind(element, start: nil, end: nil)
   }
 
   // sourcery: pymethod = rfind, doc = rfindDoc
   internal func rfind(_ element: PyObject,
                       start: PyObject?,
-                      end: PyObject?) -> PyResult<Int> {
-    guard let elementString = element as? PyString else {
-      return .typeError("find arg must be str, not \(element.typeName)")
-    }
+                      end: PyObject?) -> PyResult<BigInt> {
 
-    let substring: PyStringDataSlice
-    switch self.getSubstring(start: start, end: end) {
-    case let .value(s): substring = s
-    case let .error(e): return .error(e)
+    switch self.data.rfind(element, start: start, end: end) {
+    case let .value(result):
+      return self.toFindResult(result)
+    case let .error(e):
+      return .error(e)
     }
+  }
 
-    switch substring.rfind(value: elementString.data) {
+  private func toFindResult(_ raw: StringFindResult<PyStringData.Index>) -> PyResult<BigInt> {
+    switch raw {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -611,22 +485,7 @@ public class PyString: PyObject {
   internal func index(of element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-    guard let elementString = element as? PyString else {
-      return .typeError("index arg must be str, not \(element.typeName)")
-    }
-
-    let substring: PyStringDataSlice
-    switch self.getSubstring(start: start, end: end) {
-    case let .value(s): substring = s
-    case let .error(e): return .error(e)
-    }
-
-    switch substring.find(value: elementString.data) {
-    case let .index(index: _, position: position):
-      return .value(BigInt(position))
-    case .notFound:
-      return .valueError("substring not found")
-    }
+    return self.data.index(of: element, start: start, end: end)
   }
 
   internal static let rindexDoc = """
@@ -639,30 +498,15 @@ public class PyString: PyObject {
     Raises ValueError when the substring is not found.
     """
 
-  internal func rindex(_ element: PyObject) -> PyResult<Int> {
+  internal func rindex(_ element: PyObject) -> PyResult<BigInt> {
     return self.rindex(element, start: nil, end: nil)
   }
 
   // sourcery: pymethod = rindex, doc = rindexDoc
   internal func rindex(_ element: PyObject,
                        start: PyObject?,
-                       end: PyObject?) -> PyResult<Int> {
-    guard let elementString = element as? PyString else {
-       return .typeError("rindex arg must be str, not \(element.typeName)")
-     }
-
-    let substring: PyStringDataSlice
-    switch self.getSubstring(start: start, end: end) {
-    case let .value(s): substring = s
-    case let .error(e): return .error(e)
-    }
-
-    switch substring.rfind(value: elementString.data) {
-    case let .index(index: _, position: position):
-      return .value(position)
-    case .notFound:
-      return .valueError("substring not found")
-    }
+                       end: PyObject?) -> PyResult<BigInt> {
+    return self.data.rindex(element, start: start, end: end)
   }
 
   // MARK: - Case
@@ -797,165 +641,60 @@ public class PyString: PyObject {
   // sourcery: pymethod = split
   internal func split(separator: PyObject?,
                       maxCount: PyObject?) -> PyResult<[String]> {
-    var sep: PyStringData
-    switch self.parseSplitSeparator(separator) {
-    case .whitespace: return self.splitWhitespace(maxCount)
-    case let .some(s): sep = s
-    case let .error(e): return .error(e)
+    switch self.data.split(separator: separator, maxCount: maxCount) {
+    case let .value(arr):
+      return .value(arr.map { String($0) })
+    case let .error(e):
+      return .error(e)
     }
-
-    var count: Int
-    switch self.parseSplitMaxCount(maxCount) {
-    case let .count(c): count = c
-    case let .error(e): return .error(e)
-    }
-
-    return .value(self.data.split(separator: sep, maxCount: count))
-  }
-
-  private func splitWhitespace(_ maxCount: PyObject?) -> PyResult<[String]> {
-    if self.data.isEmpty {
-      return .value([])
-    }
-
-    var count: Int
-    switch self.parseSplitMaxCount(maxCount) {
-    case let .count(c): count = c
-    case let .error(e): return .error(e)
-    }
-
-    return .value(self.data.splitWhitespace(maxCount: count))
   }
 
   // sourcery: pymethod = rsplit
   internal func rsplit(separator: PyObject?,
                        maxCount: PyObject?) -> PyResult<[String]> {
-    if self.data.isEmpty {
-      return .value([])
+    switch self.data.rsplit(separator: separator, maxCount: maxCount) {
+    case let .value(arr):
+      return .value(arr.map { String($0) })
+    case let .error(e):
+      return .error(e)
     }
-
-    var sep: PyStringData
-    switch self.parseSplitSeparator(separator) {
-    case .whitespace: return self.rsplitWhitespace(maxCount)
-    case let .some(s): sep = s
-    case let .error(e): return .error(e)
-    }
-
-    var count: Int
-    switch self.parseSplitMaxCount(maxCount) {
-    case let .count(c): count = c
-    case let .error(e): return .error(e)
-    }
-
-    return .value(self.data.rsplit(separator: sep, maxCount: count))
-  }
-
-  private func rsplitWhitespace(_ maxCount: PyObject?) -> PyResult<[String]> {
-    if self.data.isEmpty {
-      return .value([])
-    }
-
-    var count: Int
-    switch self.parseSplitMaxCount(maxCount) {
-    case let .count(c): count = c
-    case let .error(e): return .error(e)
-    }
-
-    return .value(self.data.rsplitWhitespace(maxCount: count))
   }
 
   // sourcery: pymethod = splitlines
   internal func splitLines(keepEnds: PyObject) -> PyResult<[String]> {
-    guard let keepEndsBool = keepEnds as? PyBool else {
-      return .typeError("keepends must be bool, not \(keepEnds.typeName)")
+    switch self.data.splitLines(keepEnds: keepEnds) {
+    case let .value(arr):
+      return .value(arr.map { String($0) })
+    case let .error(e):
+      return .error(e)
     }
-
-    let keepEnds = keepEndsBool.asBool()
-    return .value(self.data.splitLines(keepEnds: keepEnds))
-  }
-
-  private enum SplitSeparator {
-    case whitespace
-    case some(PyStringData)
-    case error(PyErrorEnum)
-  }
-
-  private func parseSplitSeparator(_ separator: PyObject?) -> SplitSeparator {
-    guard let separator = separator else {
-      return .whitespace
-    }
-
-    if separator is PyNone {
-      return .whitespace
-    }
-
-    guard let sep = separator as? PyString else {
-      return .error(
-        .typeError("sep must be str or None, not \(separator.typeName)")
-      )
-    }
-
-    if sep.data.isEmpty {
-      return .error(.valueError("empty separator"))
-    }
-
-    return .some(sep.data)
-  }
-
-  private enum SplitMaxCount {
-    case count(Int)
-    case error(PyErrorEnum)
-  }
-
-  private func parseSplitMaxCount(_ maxCount: PyObject?) -> SplitMaxCount {
-    guard let maxCount = maxCount else {
-      return .count(Int.max)
-    }
-
-    guard let pyInt = maxCount as? PyInt else {
-      return .error(.typeError("maxsplit must be int, not \(maxCount.typeName)"))
-    }
-
-    guard let int = Int(exactly: pyInt.value) else {
-      return .error(.overflowError("maxsplit is too big"))
-    }
-
-    return .count(int < 0 ? Int.max : int)
   }
 
   // MARK: - Partition
 
   // sourcery: pymethod = partition
   internal func partition(separator: PyObject) -> PyResult<PyTuple> {
-    guard let separatorString = separator as? PyString else {
-      return .typeError("sep must be string, not \(separator.typeName)")
-    }
-
-    let result = self.data.partition(separator: separatorString.data)
-    return self.toTuple(separator: separator, result: result)
+    return self.data.partition(separator: separator)
+      .flatMap { self.toTuple(separator: separator, result: $0) }
   }
 
   // sourcery: pymethod = rpartition
   internal func rpartition(separator: PyObject) -> PyResult<PyTuple> {
-    guard let separatorString = separator as? PyString else {
-      return .typeError("sep must be string, not \(separator.typeName)")
-    }
-
-    let result = self.data.rpartition(separator: separatorString.data)
-    return self.toTuple(separator: separator, result: result)
+    return self.data.rpartition(separator: separator)
+      .flatMap { self.toTuple(separator: separator, result: $0) }
   }
 
   private func toTuple(separator: PyObject,
-                       result: StringPartitionResult) -> PyResult<PyTuple> {
+                       result: StringPartitionResult<String.UnicodeScalarView.SubSequence>) -> PyResult<PyTuple> {
     switch result {
-    case .notFound:
+    case .separatorNotFound:
       let empty = self.builtins.emptyString
       return .value(PyTuple(self.context, elements: [self, empty, empty]))
-    case let .triple(before: before, after: after):
+    case .separatorFound(let before, let after):
       let b = PyString(self.context, value: String(before))
       let a = PyString(self.context, value: String(after))
       return .value(PyTuple(self.context, elements: [b, separator, a]))
-    case let .error(e):
+    case .error(let e):
       return .error(e)
     }
   }
@@ -1007,17 +746,7 @@ public class PyString: PyObject {
   internal func count(_ element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-    guard let elementString = element as? PyString else {
-      return .typeError("sub arg must be str, not \(element.typeName)")
-    }
-
-    switch self.getSubstring(start: start, end: end) {
-    case let .value(substring):
-      let result = substring.count(element: elementString.data)
-      return .value(BigInt(result))
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.count(element, start: start, end: end)
   }
 
   // MARK: - Replace
@@ -1026,56 +755,14 @@ public class PyString: PyObject {
   internal func replace(old: PyObject,
                         new: PyObject,
                         count: PyObject?) -> PyResult<String> {
-    guard let oldString = old as? PyString else {
-      return .typeError("old must be str, not \(old.typeName)")
-    }
-
-    guard let newString = new as? PyString else {
-      return .typeError("new must be str, not \(old.typeName)")
-    }
-
-    var parsedCount: Int
-    switch self.parseReplaceCount(count) {
-    case let .value(c): parsedCount = c
-    case let .error(e): return .error(e)
-    }
-
-    let result = self.data.replace(old: oldString.data,
-                                   new: newString.data,
-                                   count: parsedCount)
-
-    return .value(result)
-  }
-
-  private func parseReplaceCount(_ count: PyObject?) -> PyResult<Int> {
-    guard let count = count else {
-      return .value(Int.max)
-    }
-
-    guard let pyInt = count as? PyInt else {
-      return .typeError("count must be int, not \(count.typeName)")
-    }
-
-    guard let int = Int(exactly: pyInt.value) else {
-      return .overflowError("count is too big")
-    }
-
-    return .value(int < 0 ? Int.max : int)
+    return self.data.replace(old: old, new: new, count: count)
   }
 
   // MARK: - ZFill
 
   // sourcery: pymethod = zfill
   internal func zfill(width: PyObject) -> PyResult<String> {
-    guard let widthInt = width as? PyInt else {
-      return .typeError("width must be int, not \(width.typeName)")
-    }
-
-    guard let width = Int(exactly: widthInt.value) else {
-      return .overflowError("width is too big")
-    }
-
-    return .value(self.data.zfill(width: width))
+    return self.data.zfill(width: width)
   }
 
   // MARK: - Add
@@ -1165,61 +852,5 @@ public class PyString: PyObject {
   /// Allocate new PyString (it will use 'builtins' cache if possible).
   private static func newString(type: PyType, value: String) -> PyString {
     return type.builtins.newString(value)
-  }
-
-  // MARK: - Helpers
-
-  private func getSubstring(start: PyObject?,
-                            end: PyObject?) -> PyResult<PyStringDataSlice> {
-
-    let startIndex: PyStringData.Index
-    switch self.extractIndex(start) {
-    case .none: startIndex = self.data.startIndex
-    case .index(let index): startIndex = index
-    case .error(let e): return .error(e)
-    }
-
-    var endIndex: PyStringData.Index
-    switch self.extractIndex(end) {
-    case .none: endIndex = self.data.endIndex
-    case .index(let index): endIndex = index
-    case .error(let e): return .error(e)
-    }
-
-    return .value(self.data.substring(start: startIndex, end: endIndex))
-  }
-
-  private enum ExtractIndexResult {
-    case none
-    case index(PyStringData.Index)
-    case error(PyErrorEnum)
-  }
-
-  private func extractIndex(_ value: PyObject?) -> ExtractIndexResult {
-    guard let value = value else {
-      return .none
-    }
-
-    if value is PyNone {
-      return .none
-    }
-
-    switch IndexHelper.int(value) {
-    case var .value(index):
-      if index < 0 {
-        index += self.data.count
-        if index < 0 {
-          index = 0
-        }
-      }
-
-      let start = self.data.startIndex
-      let end = self.data.endIndex
-      let result = self.data.index(start, offsetBy: index, limitedBy: end)
-      return .index(result ?? end)
-
-    case let .error(e):
-      return .error(e)
-    }
   }
 }

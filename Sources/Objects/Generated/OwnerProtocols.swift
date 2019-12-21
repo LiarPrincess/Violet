@@ -137,11 +137,11 @@ protocol countRangedOwner { func count(_ element: PyObject, start: PyObject?, en
 protocol denominatorOwner { func denominator() -> PyInt }
 protocol differenceOwner { func difference(with other: PyObject) -> PyResult<PyObject> }
 protocol discardOwner { func discard(_ value: PyObject) -> PyResult<PyNone> }
-protocol endswithOwner { func endsWith(_ element: PyObject) -> PyResultOrNot<Bool> }
-protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResultOrNot<Bool> }
+protocol endswithOwner { func endsWith(_ element: PyObject) -> PyResult<Bool> }
+protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Bool> }
 protocol expandtabsOwner { func expandTabs(tabSize: PyObject?) -> PyResult<String> }
-protocol findOwner { func find(_ element: PyObject) -> PyResult<Int> }
-protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Int> }
+protocol findOwner { func find(_ element: PyObject) -> PyResult<BigInt> }
+protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol getOwner { func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
 protocol imagOwner { func asImag() -> PyObject }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
@@ -174,10 +174,10 @@ protocol popitemOwner { func popitem() -> PyResult<PyObject> }
 protocol realOwner { func asReal() -> PyObject }
 protocol removeOwner { func remove(_ value: PyObject) -> PyResult<PyNone> }
 protocol replaceOwner { func replace(old: PyObject, new: PyObject, count: PyObject?) -> PyResult<String> }
-protocol rfindOwner { func rfind(_ element: PyObject) -> PyResult<Int> }
-protocol rfindRangedOwner { func rfind(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Int> }
-protocol rindexOwner { func rindex(_ element: PyObject) -> PyResult<Int> }
-protocol rindexRangedOwner { func rindex(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Int> }
+protocol rfindOwner { func rfind(_ element: PyObject) -> PyResult<BigInt> }
+protocol rfindRangedOwner { func rfind(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
+protocol rindexOwner { func rindex(_ element: PyObject) -> PyResult<BigInt> }
+protocol rindexRangedOwner { func rindex(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol rjustOwner { func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String> }
 protocol rpartitionOwner { func rpartition(separator: PyObject) -> PyResult<PyTuple> }
 protocol rsplitOwner { func rsplit(separator: PyObject?, maxCount: PyObject?) -> PyResult<[String]> }
