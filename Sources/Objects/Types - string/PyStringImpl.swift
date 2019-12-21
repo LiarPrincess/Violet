@@ -2,8 +2,6 @@ import Core
 
 // swiftlint:disable file_length
 
-// TODO: Rename all of the 'str' to protocol provided values
-
 internal enum StringCompareResult {
   case less
   case greater
@@ -97,6 +95,9 @@ internal protocol PyStringImpl {
   /// visualise than `elements/values/etc.`.
   var scalars: Scalars { get }
 
+  /// Name of the type that uses this implementations (e.g. `str` or `bytes`).
+  /// Used in error messages.
+  static var typeName: String { get }
   /// Default fill character
   static var defaultFill: Element { get }
   /// Fill used by `zfill` function
@@ -111,8 +112,8 @@ internal protocol PyStringImpl {
   static func toElement(_ scalar: UnicodeScalar) -> Element
   /// Given a `PyObject` try to extract valid value to use in function.
   ///
-  /// For `str:` `Self` will be `str`.
-  /// For `bytes:` `Self` will be `bytes`.
+  /// For `str`: `Self` will be `str`.
+  /// For `bytes`: `Self` will be `bytes`.
   /// Used for example in `find` where you can only `find` homogenous value.
   static func extractSelf(from object: PyObject) -> Self?
 }
@@ -307,8 +308,9 @@ extension PyStringImpl {
 
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
     guard let string = Self.extractSelf(from: element) else {
+      let s = Self.typeName
       let t = element.typeName
-      return .typeError("'in <string>' requires string as left operand, not \(t)")
+      return .typeError("'in <\(s)>' requires \(s) as left operand, not \(t)")
     }
 
     return .value(self.contains(string))
@@ -550,8 +552,9 @@ extension PyStringImpl {
     if let tuple = element as? PyTuple {
       for element in tuple.elements {
         guard let string = Self.extractSelf(from: element) else {
+          let s = Self.typeName
           let t = element.typeName
-          return .typeError("tuple for startswith must only contain str, not \(t)")
+          return .typeError("tuple for startswith must only contain \(s), not \(t)")
         }
 
         if substring.starts(with: string.scalars) {
@@ -562,8 +565,9 @@ extension PyStringImpl {
       return .value(false)
     }
 
+    let s = Self.typeName
     let t = element.typeName
-    return .typeError("startswith first arg must be str or a tuple of str, not \(t)")
+    return .typeError("startswith first arg must be \(s) or a tuple of \(s), not \(t)")
   }
 
   internal func ends(with element: PyObject,
@@ -582,8 +586,9 @@ extension PyStringImpl {
     if let tuple = element as? PyTuple {
       for element in tuple.elements {
         guard let string = Self.extractSelf(from: element) else {
+          let s = Self.typeName
           let t = element.typeName
-          return .typeError("tuple for endswith must only contain str, not \(t)")
+          return .typeError("tuple for endswith must only contain \(s), not \(t)")
         }
 
         if substring.ends(with: string.scalars) {
@@ -594,8 +599,9 @@ extension PyStringImpl {
       return .value(false)
     }
 
+    let s = Self.typeName
     let t = element.typeName
-    return .typeError("endswith first arg must be str or a tuple of str, not \(t)")
+    return .typeError("endswith first arg must be \(s) or a tuple of \(s), not \(t)")
   }
 
   // MARK: - Strip
@@ -649,7 +655,7 @@ extension PyStringImpl {
       return .chars(Set(charsString.scalars))
     }
 
-    let msg = "\(fnName) arg must be str or None, not \(chars.typeName)"
+    let msg = "\(fnName) arg must be \(Self.typeName) or None, not \(chars.typeName)"
     return .error(.typeError(msg))
   }
 
@@ -723,7 +729,7 @@ extension PyStringImpl {
                      start: PyObject?,
                      end: PyObject?) -> PyResult<StringFindResult<Self.Index>> {
     guard let elementString = Self.extractSelf(from: element) else {
-      return .typeError("find arg must be str, not \(element.typeName)")
+      return .typeError("find arg must be \(Self.typeName), not \(element.typeName)")
     }
 
     let substring: Scalars.SubSequence
@@ -765,7 +771,7 @@ extension PyStringImpl {
                       start: PyObject?,
                       end: PyObject?) -> PyResult<StringFindResult<Self.Index>> {
     guard let elementString = Self.extractSelf(from: element) else {
-      return .typeError("find arg must be str, not \(element.typeName)")
+      return .typeError("rfind arg must be \(Self.typeName), not \(element.typeName)")
     }
 
     let substring: Scalars.SubSequence
@@ -817,7 +823,7 @@ extension PyStringImpl {
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
     guard let elementString = Self.extractSelf(from: element) else {
-      return .typeError("index arg must be str, not \(element.typeName)")
+      return .typeError("index arg must be \(Self.typeName), not \(element.typeName)")
     }
 
     let substring: Scalars.SubSequence
@@ -838,7 +844,7 @@ extension PyStringImpl {
                        start: PyObject?,
                        end: PyObject?) -> PyResult<BigInt> {
     guard let elementString = Self.extractSelf(from: element) else {
-       return .typeError("rindex arg must be str, not \(element.typeName)")
+       return .typeError("rindex arg must be \(Self.typeName), not \(element.typeName)")
      }
 
     let substring: Scalars.SubSequence
@@ -877,7 +883,7 @@ extension PyStringImpl {
       }
     }
 
-    let msg = "str indices must be integers or slices, not \(index.typeName)"
+    let msg = "\(Self.typeName) indices must be integers or slices, not \(index.typeName)"
     return .error(.typeError(msg))
   }
 
@@ -889,7 +895,7 @@ extension PyStringImpl {
 
     // swiftlint:disable:next yoda_condition
     guard 0 <= offset && offset < self.count else {
-      return .indexError("str index out of range")
+      return .indexError("\(Self.typeName) index out of range")
     }
 
     let indexOrNil = self.scalars.index(self.scalars.startIndex,
@@ -897,7 +903,7 @@ extension PyStringImpl {
                                         limitedBy: self.scalars.endIndex)
 
     guard let index = indexOrNil else {
-      return .indexError("str index out of range")
+      return .indexError("\(Self.typeName) index out of range")
     }
 
     return .value(self.scalars[index])
@@ -1057,7 +1063,7 @@ extension PyStringImpl {
     guard let str = Self.extractSelf(from: fill),
           let first = str.scalars.first, str.scalars.count == 1 else {
       let t = fill.typeName
-      let msg = "\(fnName) fillchar arg must be string of length 1, not \(t)"
+      let msg = "\(fnName) fillchar arg must be \(Self.typeName) of length 1, not \(t)"
       return .error(.typeError(msg))
     }
 
@@ -1303,7 +1309,7 @@ extension PyStringImpl {
     }
 
     guard let sep = Self.extractSelf(from: separator) else {
-      let msg = "sep must be str or None, not \(separator.typeName)"
+      let msg = "sep must be \(Self.typeName) or None, not \(separator.typeName)"
       return .error(.typeError(msg))
     }
 
@@ -1495,7 +1501,7 @@ extension PyStringImpl {
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
     guard let elementString = Self.extractSelf(from: element) else {
-      return .typeError("sub arg must be str, not \(element.typeName)")
+      return .typeError("sub arg must be \(Self.typeName), not \(element.typeName)")
     }
 
     switch self.substring(start: start, end: end) {
@@ -1529,11 +1535,11 @@ extension PyStringImpl {
                         new: PyObject,
                         count: PyObject?) -> PyResult<Builder.Result> {
     guard let oldString = Self.extractSelf(from: old) else {
-      return .typeError("old must be str, not \(old.typeName)")
+      return .typeError("old must be \(Self.typeName), not \(old.typeName)")
     }
 
     guard let newString = Self.extractSelf(from: new) else {
-      return .typeError("new must be str, not \(new.typeName)")
+      return .typeError("new must be \(Self.typeName), not \(new.typeName)")
     }
 
     var parsedCount: Int

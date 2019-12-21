@@ -51,6 +51,7 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
     return self.value.unicodeScalars
   }
 
+  internal static let typeName = "str"
   internal static let defaultFill: UnicodeScalar = " "
   internal static let zFill: UnicodeScalar = "0"
 
