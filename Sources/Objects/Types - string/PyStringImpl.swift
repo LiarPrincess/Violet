@@ -75,21 +75,26 @@ internal protocol StringBuilderType {
 
 // MARK: - String implementation
 
-/// All of the `str` methods.
+/// (Almost) all of the `str` methods.
 ///
 /// Look at us! Using traits/protocols as intended!
 internal protocol PyStringImpl {
 
+  /// `UnicodeScalarView` for str and `Data` for bytes.
+  /// `Bidirectional` because we need to iterate backwards for `rfind` etc.
   associatedtype Scalars: BidirectionalCollection where
-    Scalars.Element: Comparable,
-    Scalars.Element: Hashable
+    Scalars.Element: Comparable, // Compare strings
+    Scalars.Element: Hashable // Not needed, but gives us  O(1) `strip` lookups
 
+  /// See `StringBuilderType` documentation.
+  /// `Builder.Result` is abstract - user defined.
   associatedtype Builder: StringBuilderType where
     Builder.Element == Scalars.Element
 
   /// `UnicodeScalarView` for str and `Data` for bytes.
-  /// We improperly use name 'scalars' for both because this is easier to
-  /// visualise than abstract 'elements'.
+  ///
+  /// We improperly use name `scalars` for both because this is easier to
+  /// visualise than `elements/values/etc.`.
   var scalars: Scalars { get }
 
   /// Default fill character
@@ -105,7 +110,11 @@ internal protocol PyStringImpl {
   /// Basically reverse `Self.toScalar`.
   static func toElement(_ scalar: UnicodeScalar) -> Element
   /// Given a `PyObject` try to extract valid value to use in function.
-  static func extractSelf(from object: PyObject) -> PyResult<Self>
+  ///
+  /// For `str:` `Self` will be `str`.
+  /// For `bytes:` `Self` will be `bytes`.
+  /// Used for example in `find` where you can only `find` homogenous value.
+  static func extractSelf(from object: PyObject) -> Self?
 }
 
 extension PyStringImpl {
@@ -153,7 +162,7 @@ extension PyStringImpl {
 
   // MARK: - Repr
 
-  /// Prefix: use 'b' for bytes and emppty for normal string.
+  /// Prefix: use 'b' for bytes and empty string (default) for normal string.
   internal func createRepr(prefix: String = "") -> String {
     // Find quote character
     var singleQuoteCount = 0
@@ -176,16 +185,13 @@ extension PyStringImpl {
       switch Self.toScalar(element) {
       case quote, "\\":
         result.append("\\")
-        result.append("\"")
+        result.append(quote)
       case "\n":
-        result.append("\\")
-        result.append("n")
+        result.append("\\n")
       case "\t":
-        result.append("\\")
-        result.append("t")
+        result.append("\\t")
       case "\r":
-        result.append("\\")
-        result.append("r")
+        result.append("\\r")
       case let s:
         result.append(s)
       }
@@ -300,7 +306,12 @@ extension PyStringImpl {
   // MARK: - Contains
 
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
-    return Self.extractSelf(from: element).map(self.contains)
+    guard let string = Self.extractSelf(from: element) else {
+      let t = element.typeName
+      return .typeError("'in <string>' requires string as left operand, not \(t)")
+    }
+
+    return .value(self.contains(string))
   }
 
   internal func contains(_ data: Self) -> Bool {
@@ -532,13 +543,13 @@ extension PyStringImpl {
     case let .error(e): return .error(e)
     }
 
-    if let string = Self.extractSelfOrNil(from: element) {
+    if let string = Self.extractSelf(from: element) {
       return .value(substring.starts(with: string.scalars))
     }
 
     if let tuple = element as? PyTuple {
       for element in tuple.elements {
-        guard let string = Self.extractSelfOrNil(from: element) else {
+        guard let string = Self.extractSelf(from: element) else {
           let t = element.typeName
           return .typeError("tuple for startswith must only contain str, not \(t)")
         }
@@ -564,13 +575,13 @@ extension PyStringImpl {
     case let .error(e): return .error(e)
     }
 
-    if let string = Self.extractSelfOrNil(from: element) {
+    if let string = Self.extractSelf(from: element) {
       return .value(substring.ends(with: string.scalars))
     }
 
     if let tuple = element as? PyTuple {
       for element in tuple.elements {
-        guard let string = Self.extractSelfOrNil(from: element) else {
+        guard let string = Self.extractSelf(from: element) else {
           let t = element.typeName
           return .typeError("tuple for endswith must only contain str, not \(t)")
         }
@@ -634,7 +645,7 @@ extension PyStringImpl {
       return .whitespace
     }
 
-    if let charsString = Self.extractSelfOrNil(from: chars) {
+    if let charsString = Self.extractSelf(from: chars) {
       return .chars(Set(charsString.scalars))
     }
 
@@ -644,7 +655,7 @@ extension PyStringImpl {
 
   private func lstrip<C: BidirectionalCollection>(
     _ scalars: C,
-    chars: Set<Element>) -> C.SubSequence where C.Element == Self.Element {
+    chars: Set<C.Element>) -> C.SubSequence where C.Element == Self.Element {
 
     var index = scalars.startIndex
 
@@ -661,9 +672,12 @@ extension PyStringImpl {
 
   private func rstrip<C: BidirectionalCollection>(
     _ scalars: C,
-    chars: Set<Element>) -> C.SubSequence where C.Element == Self.Element {
+    chars: Set<C.Element>) -> C.SubSequence where C.Element == Self.Element {
 
     var index = scalars.endIndex
+
+    // `endIndex` is AFTER the collection
+    scalars.formIndex(before: &index)
 
     while index != scalars.startIndex {
       if !chars.contains(scalars[index]) {
@@ -708,7 +722,7 @@ extension PyStringImpl {
   internal func find(_ element: PyObject,
                      start: PyObject?,
                      end: PyObject?) -> PyResult<StringFindResult<Self.Index>> {
-    guard let elementString = Self.extractSelfOrNil(from: element) else {
+    guard let elementString = Self.extractSelf(from: element) else {
       return .typeError("find arg must be str, not \(element.typeName)")
     }
 
@@ -750,7 +764,7 @@ extension PyStringImpl {
   internal func rfind(_ element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<StringFindResult<Self.Index>> {
-    guard let elementString = Self.extractSelfOrNil(from: element) else {
+    guard let elementString = Self.extractSelf(from: element) else {
       return .typeError("find arg must be str, not \(element.typeName)")
     }
 
@@ -802,7 +816,7 @@ extension PyStringImpl {
   internal func index(of element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-    guard let elementString = Self.extractSelfOrNil(from: element) else {
+    guard let elementString = Self.extractSelf(from: element) else {
       return .typeError("index arg must be str, not \(element.typeName)")
     }
 
@@ -823,7 +837,7 @@ extension PyStringImpl {
   internal func rindex(_ element: PyObject,
                        start: PyObject?,
                        end: PyObject?) -> PyResult<BigInt> {
-    guard let elementString = Self.extractSelfOrNil(from: element) else {
+    guard let elementString = Self.extractSelf(from: element) else {
        return .typeError("rindex arg must be str, not \(element.typeName)")
      }
 
@@ -945,7 +959,7 @@ extension PyStringImpl {
   // MARK: - Center, just
 
   internal func center(width: PyObject,
-                       fillChar: PyObject?) -> PyResult<Builder.Result> {
+                       fill: PyObject?) -> PyResult<Builder.Result> {
     let parsedWidth: Int
     switch self.parseJustWidth(width, fnName: "center") {
     case let .value(w): parsedWidth = w
@@ -953,7 +967,7 @@ extension PyStringImpl {
     }
 
     let parsedFill: Element
-    switch self.parseJustFillChar(fillChar, fnName: "center") {
+    switch self.parseJustFillChar(fill, fnName: "center") {
     case .default: parsedFill = Self.defaultFill
     case .value(let s): parsedFill  = s
     case .error(let e): return .error(e)
@@ -976,7 +990,7 @@ extension PyStringImpl {
   }
 
   internal func ljust(width: PyObject,
-                      fillChar: PyObject?) -> PyResult<Builder.Result> {
+                      fill: PyObject?) -> PyResult<Builder.Result> {
     let parsedWidth: Int
     switch self.parseJustWidth(width, fnName: "ljust") {
     case let .value(w): parsedWidth = w
@@ -984,7 +998,7 @@ extension PyStringImpl {
     }
 
     let parsedFill: Element
-    switch self.parseJustFillChar(fillChar, fnName: "ljust") {
+    switch self.parseJustFillChar(fill, fnName: "ljust") {
     case .default: parsedFill = Self.defaultFill
     case .value(let s): parsedFill  = s
     case .error(let e): return .error(e)
@@ -999,7 +1013,7 @@ extension PyStringImpl {
   }
 
   internal func rjust(width: PyObject,
-                      fillChar: PyObject?) -> PyResult<Builder.Result> {
+                      fill: PyObject?) -> PyResult<Builder.Result> {
     let parsedWidth: Int
     switch self.parseJustWidth(width, fnName: "rjust") {
     case let .value(w): parsedWidth = w
@@ -1007,7 +1021,7 @@ extension PyStringImpl {
     }
 
     let parsedFill: Element
-    switch self.parseJustFillChar(fillChar, fnName: "rjust") {
+    switch self.parseJustFillChar(fill, fnName: "rjust") {
     case .default: parsedFill = Self.defaultFill
     case .value(let s): parsedFill  = s
     case .error(let e): return .error(e)
@@ -1034,24 +1048,20 @@ extension PyStringImpl {
     return .value(int)
   }
 
-  private func parseJustFillChar(_ fillChar: PyObject?,
+  private func parseJustFillChar(_ fill: PyObject?,
                                  fnName: String) -> FillChar<Element> {
-    guard let fillChar = fillChar else {
+    guard let fill = fill else {
       return .default
     }
 
-    switch Self.extractSelf(from: fillChar) {
-    case .value(let str):
-      guard let first = str.scalars.first, str.scalars.count == 1 else {
-        let t = fillChar.typeName
-        let errorMsg = "\(fnName) fillchar arg must be string of length 1, not \(t)"
-        return .error(.typeError(errorMsg))
-      }
-      return .value(first)
-
-    case let .error(e):
-      return .error(e)
+    guard let str = Self.extractSelf(from: fill),
+          let first = str.scalars.first, str.scalars.count == 1 else {
+      let t = fill.typeName
+      let msg = "\(fnName) fillchar arg must be string of length 1, not \(t)"
+      return .error(.typeError(msg))
     }
+
+    return .value(first)
   }
 
   private func pad(left: Int, right: Int, fill: Element) -> Builder.Result {
@@ -1120,7 +1130,7 @@ extension PyStringImpl {
         break
       }
 
-      // If we start with the `sep` then dont add it, just advance
+      // If we start with the `sep` then don't add it, just advance
       if index != self.scalars.startIndex {
         result.append(self.scalars[groupStart..<index])
       }
@@ -1292,18 +1302,16 @@ extension PyStringImpl {
       return .whitespace
     }
 
-    switch Self.extractSelf(from: separator) {
-    case let .value(sep):
-      if sep.scalars.isEmpty {
-        return .error(.valueError("empty separator"))
-      }
-
-      return .some(sep)
-
-    case .error:
+    guard let sep = Self.extractSelf(from: separator) else {
       let msg = "sep must be str or None, not \(separator.typeName)"
       return .error(.typeError(msg))
     }
+
+    if sep.scalars.isEmpty {
+      return .error(.valueError("empty separator"))
+    }
+
+    return .some(sep)
   }
 
   private func parseSplitMaxCount(_ maxCount: PyObject?) -> PyResult<Int> {
@@ -1369,8 +1377,10 @@ extension PyStringImpl {
 
   // MARK: - Partition
 
-  internal func partition(separator: PyObject) -> PyResult<StringPartitionResult<Self.SubSequence>> {
-    guard let sep = Self.extractSelfOrNil(from: separator) else {
+  internal typealias PartitionResult = PyResult<StringPartitionResult<Self.SubSequence>>
+
+  internal func partition(separator: PyObject) -> PartitionResult {
+    guard let sep = Self.extractSelf(from: separator) else {
       return .typeError("sep must be string, not \(separator.typeName)")
     }
 
@@ -1397,8 +1407,8 @@ extension PyStringImpl {
     }
   }
 
-  internal func rpartition(separator: PyObject) -> PyResult<StringPartitionResult<Self.SubSequence>> {
-    guard let sep = Self.extractSelfOrNil(from: separator) else {
+  internal func rpartition(separator: PyObject) -> PartitionResult {
+    guard let sep = Self.extractSelf(from: separator) else {
       return .typeError("sep must be string, not \(separator.typeName)")
     }
 
@@ -1427,6 +1437,15 @@ extension PyStringImpl {
 
   // MARK: - Expand tabs
 
+  internal func expandTabs(tabSize: PyObject?) -> PyResult<Builder.Result> {
+    switch self.parseExpandTabsSize(tabSize) {
+    case let .value(v):
+      return .value(self.expandTabs(tabSize: v))
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   internal func expandTabs(tabSize: Int) -> Builder.Result {
     var builder = Builder()
     var linePos = 0
@@ -1436,7 +1455,6 @@ extension PyStringImpl {
       switch scalar {
       case "\t":
         if tabSize > 0 {
-
           let incr = tabSize - (linePos % tabSize)
           linePos += incr
           builder.append(contentsOf: Array(repeating: Self.defaultFill, count: incr))
@@ -1455,12 +1473,28 @@ extension PyStringImpl {
     return builder.result
   }
 
+  private func parseExpandTabsSize(_ tabSize: PyObject?) -> PyResult<Int> {
+    guard let tabSize = tabSize else {
+      return .value(8)
+    }
+
+    guard let pyInt = tabSize as? PyInt else {
+      return .typeError("tabsize must be int, not \(tabSize.typeName)")
+    }
+
+    guard let int = Int(exactly: pyInt.value) else {
+      return .overflowError("tabsize is too big")
+    }
+
+    return .value(int)
+  }
+
   // MARK: - Count
 
   internal func count(_ element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-    guard let elementString = Self.extractSelfOrNil(from: element) else {
+    guard let elementString = Self.extractSelf(from: element) else {
       return .typeError("sub arg must be str, not \(element.typeName)")
     }
 
@@ -1494,12 +1528,12 @@ extension PyStringImpl {
   internal func replace(old: PyObject,
                         new: PyObject,
                         count: PyObject?) -> PyResult<Builder.Result> {
-    guard let oldString = Self.extractSelfOrNil(from: old) else {
+    guard let oldString = Self.extractSelf(from: old) else {
       return .typeError("old must be str, not \(old.typeName)")
     }
 
-    guard let newString = Self.extractSelfOrNil(from: new) else {
-      return .typeError("new must be str, not \(old.typeName)")
+    guard let newString = Self.extractSelf(from: new) else {
+      return .typeError("new must be str, not \(new.typeName)")
     }
 
     var parsedCount: Int
@@ -1603,14 +1637,5 @@ extension PyStringImpl {
     }
 
     return builder.result
-  }
-
-  // MARK: - Helpers
-
-  private static func extractSelfOrNil(from object: PyObject) -> Self? {
-    switch Self.extractSelf(from: object) {
-    case .value(let s): return s
-    case .error: return nil
-    }
   }
 }

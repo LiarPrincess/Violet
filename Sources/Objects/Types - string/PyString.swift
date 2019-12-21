@@ -1,5 +1,8 @@
 import Core
 
+private typealias UnicodeScalarView = String.UnicodeScalarView
+private typealias UnicodeScalarViewSub = UnicodeScalarView.SubSequence
+
 // In CPython:
 // Objects -> unicodeobject.c
 // https://docs.python.org/3/library/stdtypes.html
@@ -120,7 +123,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __str__
   internal func str() -> PyResult<String> {
-    return self.repr()
+    return .value(self.data.value)
   }
 
   // MARK: - Class
@@ -148,13 +151,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __contains__
   internal func contains(_ element: PyObject) -> PyResult<Bool> {
-    guard let elementString = element as? PyString else {
-      let t = element.typeName
-      return .typeError("'in <string>' requires string as left operand, not \(t)")
-    }
-
-    let result = self.data.contains(elementString.data)
-    return .value(result)
+    return self.data.contains(element)
   }
 
   // MARK: - Get item
@@ -419,7 +416,6 @@ public class PyString: PyObject {
   internal func find(_ element: PyObject,
                      start: PyObject?,
                      end: PyObject?) -> PyResult<BigInt> {
-
     switch self.data.find(element, start: start, end: end) {
     case let .value(result):
       return self.toFindResult(result)
@@ -446,7 +442,6 @@ public class PyString: PyObject {
   internal func rfind(_ element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-
     switch self.data.rfind(element, start: start, end: end) {
     case let .value(result):
       return self.toFindResult(result)
@@ -455,7 +450,9 @@ public class PyString: PyObject {
     }
   }
 
-  private func toFindResult(_ raw: StringFindResult<PyStringData.Index>) -> PyResult<BigInt> {
+  private func toFindResult(_ raw: StringFindResult<PyStringData.Index>)
+    -> PyResult<BigInt> {
+
     switch raw {
     case let .index(index: _, position: position):
       return .value(position)
@@ -545,95 +542,17 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = center
   internal func center(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
-    let parsedWidth: Int
-    switch self.parseJustWidth(width, fnName: "center") {
-    case let .value(w): parsedWidth = w
-    case let .error(e): return .error(e)
-    }
-
-    let fill: UnicodeScalar
-    switch self.parseJustFillChar(fillChar, fnName: "center") {
-    case .default: fill = " "
-    case let .value(s): fill  = s
-    case let .error(e): return .error(e)
-    }
-
-    return .value(self.data.center(width: parsedWidth, fill: fill))
+    return self.data.center(width: width, fill: fillChar)
   }
 
   // sourcery: pymethod = ljust
   internal func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
-    let parsedWidth: Int
-    switch self.parseJustWidth(width, fnName: "ljust") {
-    case let .value(w): parsedWidth = w
-    case let .error(e): return .error(e)
-    }
-
-    let fill: UnicodeScalar
-    switch self.parseJustFillChar(fillChar, fnName: "ljust") {
-    case .default: fill = " "
-    case let .value(s): fill  = s
-    case let .error(e): return .error(e)
-    }
-
-    return .value(self.data.ljust(width: parsedWidth, fill: fill))
+    return self.data.ljust(width: width, fill: fillChar)
   }
 
   // sourcery: pymethod = rjust
   internal func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
-    let parsedWidth: Int
-    switch self.parseJustWidth(width, fnName: "rjust") {
-    case let .value(w): parsedWidth = w
-    case let .error(e): return .error(e)
-    }
-
-    let fill: UnicodeScalar
-    switch self.parseJustFillChar(fillChar, fnName: "rjust") {
-    case .default: fill = " "
-    case let .value(s): fill  = s
-    case let .error(e): return .error(e)
-    }
-
-    return .value(self.data.rjust(width: parsedWidth, fill: fill))
-  }
-
-  private func parseJustWidth(_ width: PyObject,
-                              fnName: String) -> PyResult<Int> {
-    guard let pyInt = width as? PyInt else {
-      return .typeError("\(fnName) width arg must be int, not \(width.typeName)")
-    }
-
-    guard let int = Int(exactly: pyInt.value) else {
-      return .overflowError("\(fnName) width is too large")
-    }
-
-    return .value(int)
-  }
-
-  private enum JustFillChar {
-    case `default`
-    case value(UnicodeScalar)
-    case error(PyErrorEnum)
-  }
-
-  private func parseJustFillChar(_ fillChar: PyObject?,
-                                 fnName: String) -> JustFillChar {
-    guard let fillChar = fillChar else {
-      return .default
-    }
-
-    guard let pyString = fillChar as? PyString else {
-      let msg = "\(fnName) fillchar arg must be str, not \(fillChar.typeName)"
-      return .error(.typeError(msg))
-    }
-
-    let scalars = pyString.data.scalars
-    guard let first = scalars.first, scalars.count == 1 else {
-      let msg = "The fill character must be exactly one character long"
-      return .error(.valueError(msg))
-    }
-
-    return .value(first)
+    return self.data.rjust(width: width, fill: fillChar)
   }
 
   // MARK: - Split
@@ -641,33 +560,25 @@ public class PyString: PyObject {
   // sourcery: pymethod = split
   internal func split(separator: PyObject?,
                       maxCount: PyObject?) -> PyResult<[String]> {
-    switch self.data.split(separator: separator, maxCount: maxCount) {
-    case let .value(arr):
-      return .value(arr.map { String($0) })
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.split(separator: separator, maxCount: maxCount)
+      .map(self.toStringArray(_:))
   }
 
   // sourcery: pymethod = rsplit
   internal func rsplit(separator: PyObject?,
                        maxCount: PyObject?) -> PyResult<[String]> {
-    switch self.data.rsplit(separator: separator, maxCount: maxCount) {
-    case let .value(arr):
-      return .value(arr.map { String($0) })
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.rsplit(separator: separator, maxCount: maxCount)
+      .map(self.toStringArray(_:))
   }
 
   // sourcery: pymethod = splitlines
   internal func splitLines(keepEnds: PyObject) -> PyResult<[String]> {
-    switch self.data.splitLines(keepEnds: keepEnds) {
-    case let .value(arr):
-      return .value(arr.map { String($0) })
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.splitLines(keepEnds: keepEnds)
+      .map(self.toStringArray(_:))
+  }
+
+  private func toStringArray(_ values: [UnicodeScalarViewSub]) -> [String] {
+    return values.map(String.init)
   }
 
   // MARK: - Partition
@@ -684,15 +595,17 @@ public class PyString: PyObject {
       .flatMap { self.toTuple(separator: separator, result: $0) }
   }
 
-  private func toTuple(separator: PyObject,
-                       result: StringPartitionResult<String.UnicodeScalarView.SubSequence>) -> PyResult<PyTuple> {
+  private func toTuple(
+    separator: PyObject,
+    result: StringPartitionResult<UnicodeScalarViewSub>) -> PyResult<PyTuple> {
+
     switch result {
     case .separatorNotFound:
       let empty = self.builtins.emptyString
       return .value(PyTuple(self.context, elements: [self, empty, empty]))
-    case .separatorFound(let before, let after):
-      let b = PyString(self.context, value: String(before))
-      let a = PyString(self.context, value: String(after))
+    case let .separatorFound(before, after):
+      let b = self.builtins.newString(String(before))
+      let a = self.builtins.newString(String(after))
       return .value(PyTuple(self.context, elements: [b, separator, a]))
     case .error(let e):
       return .error(e)
@@ -703,28 +616,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = expandtabs
   internal func expandTabs(tabSize: PyObject?) -> PyResult<String> {
-    switch self.parseExpandTabsSize(tabSize) {
-    case let .value(v):
-      return .value(self.data.expandTabs(tabSize: v))
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  private func parseExpandTabsSize(_ tabSize: PyObject?) -> PyResult<Int> {
-    guard let tabSize = tabSize else {
-      return .value(8)
-    }
-
-    guard let pyInt = tabSize as? PyInt else {
-      return .typeError("tabsize must be int, not \(tabSize.typeName)")
-    }
-
-    guard let int = Int(exactly: pyInt.value) else {
-      return .overflowError("tabsize is too big")
-    }
-
-    return .value(int)
+    return self.data.expandTabs(tabSize: tabSize)
   }
 
   // MARK: - Count
@@ -769,28 +661,14 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    guard let otherStr = other as? PyString else {
-      return .typeError("can only concatenate str (not '\(other.typeName)') to str")
-    }
-
-    let result = self.data.add(otherStr.data)
-    return .value(PyString(self.context, value: result))
+    return self.data.add(other).map(self.builtins.newString(_:))
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    guard let pyInt = other as? PyInt else {
-      return .typeError("can only multiply str and int (not '\(other.typeName)')")
-    }
-
-    guard let int = Int(exactly: pyInt.value) else {
-      return .overflowError("repeated string is too long")
-    }
-
-    let result = self.data.mul(int)
-    return .value(PyString(self.context, value: result))
+    return self.data.mul(other).map(self.builtins.newString(_:))
   }
 
   // sourcery: pymethod = __rmul__

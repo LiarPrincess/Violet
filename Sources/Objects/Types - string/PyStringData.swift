@@ -62,12 +62,9 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
     return scalar
   }
 
-  internal static func extractSelf(from object: PyObject) -> PyResult<PyStringData> {
-    if let str = object as? PyString {
-      return .value(str.data)
-    }
-
-    return .typeError("a str object is required, not '\(object.typeName)'")
+  internal static func extractSelf(from object: PyObject) -> PyStringData? {
+    let string = object as? PyString
+    return string?.data
   }
 
   // MARK: - Properties
@@ -167,6 +164,14 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
 
   // MARK: - Add
 
+  internal func add(_ other: PyObject) -> PyResultOrNot<String> {
+    guard let otherStr = other as? PyString else {
+      return .typeError("can only concatenate str (not '\(other.typeName)') to str")
+    }
+
+    return .value(self.add(otherStr.data))
+  }
+
   internal func add(_ other: PyStringData) -> String {
     if self.isEmpty {
       return other.value
@@ -180,6 +185,18 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
   }
 
   // MARK: - Mul
+
+  internal func mul(_ other: PyObject) -> PyResultOrNot<String> {
+    guard let pyInt = other as? PyInt else {
+      return .typeError("can only multiply str and int (not '\(other.typeName)')")
+    }
+
+    guard let int = Int(exactly: pyInt.value) else {
+      return .overflowError("repeated string is too long")
+    }
+
+    return .value(self.mul(int))
+  }
 
   internal func mul(_ n: Int) -> String {
     if self.isEmpty || n == 1 {
