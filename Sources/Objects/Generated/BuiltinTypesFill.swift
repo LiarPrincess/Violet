@@ -138,6 +138,70 @@ internal enum BuiltinTypesFill {
     dict["__call__"] = PyBuiltinFunction.wrap(type.context, name: "__call__", doc: nil, fn: PyBuiltinFunction.call(args:kwargs:), castSelf: Cast.asPyBuiltinFunction)
   }
 
+  // MARK: - ByteArray
+
+  internal static func bytearray(_ type: PyType) {
+    type.setBuiltinTypeDoc(PyByteArray.doc)
+    type.setFlag(.default)
+    type.setFlag(.baseType)
+
+    let dict = type.getDict()
+    dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyByteArray.getClass, castSelf: Cast.asPyByteArray)
+
+
+
+    dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PyByteArray.isEqual(_:), castSelf: Cast.asPyByteArray)
+    dict["__ne__"] = PyBuiltinFunction.wrap(type.context, name: "__ne__", doc: nil, fn: PyByteArray.isNotEqual(_:), castSelf: Cast.asPyByteArray)
+    dict["__lt__"] = PyBuiltinFunction.wrap(type.context, name: "__lt__", doc: nil, fn: PyByteArray.isLess(_:), castSelf: Cast.asPyByteArray)
+    dict["__le__"] = PyBuiltinFunction.wrap(type.context, name: "__le__", doc: nil, fn: PyByteArray.isLessEqual(_:), castSelf: Cast.asPyByteArray)
+    dict["__gt__"] = PyBuiltinFunction.wrap(type.context, name: "__gt__", doc: nil, fn: PyByteArray.isGreater(_:), castSelf: Cast.asPyByteArray)
+    dict["__ge__"] = PyBuiltinFunction.wrap(type.context, name: "__ge__", doc: nil, fn: PyByteArray.isGreaterEqual(_:), castSelf: Cast.asPyByteArray)
+    dict["__repr__"] = PyBuiltinFunction.wrap(type.context, name: "__repr__", doc: nil, fn: PyByteArray.repr, castSelf: Cast.asPyByteArray)
+    dict["__str__"] = PyBuiltinFunction.wrap(type.context, name: "__str__", doc: nil, fn: PyByteArray.str, castSelf: Cast.asPyByteArray)
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyByteArray.getAttribute(name:), castSelf: Cast.asPyByteArray)
+    dict["__len__"] = PyBuiltinFunction.wrap(type.context, name: "__len__", doc: nil, fn: PyByteArray.getLength, castSelf: Cast.asPyByteArray)
+    dict["__contains__"] = PyBuiltinFunction.wrap(type.context, name: "__contains__", doc: nil, fn: PyByteArray.contains(_:), castSelf: Cast.asPyByteArray)
+    dict["__getitem__"] = PyBuiltinFunction.wrap(type.context, name: "__getitem__", doc: nil, fn: PyByteArray.getItem(at:), castSelf: Cast.asPyByteArray)
+    dict["isalnum"] = PyBuiltinFunction.wrap(type.context, name: "isalnum", doc: nil, fn: PyByteArray.isAlphaNumeric, castSelf: Cast.asPyByteArray)
+    dict["isalpha"] = PyBuiltinFunction.wrap(type.context, name: "isalpha", doc: nil, fn: PyByteArray.isAlpha, castSelf: Cast.asPyByteArray)
+    dict["isascii"] = PyBuiltinFunction.wrap(type.context, name: "isascii", doc: nil, fn: PyByteArray.isAscii, castSelf: Cast.asPyByteArray)
+    dict["isdigit"] = PyBuiltinFunction.wrap(type.context, name: "isdigit", doc: nil, fn: PyByteArray.isDigit, castSelf: Cast.asPyByteArray)
+    dict["islower"] = PyBuiltinFunction.wrap(type.context, name: "islower", doc: nil, fn: PyByteArray.isLower, castSelf: Cast.asPyByteArray)
+    dict["isspace"] = PyBuiltinFunction.wrap(type.context, name: "isspace", doc: nil, fn: PyByteArray.isSpace, castSelf: Cast.asPyByteArray)
+    dict["istitle"] = PyBuiltinFunction.wrap(type.context, name: "istitle", doc: nil, fn: PyByteArray.isTitle, castSelf: Cast.asPyByteArray)
+    dict["isupper"] = PyBuiltinFunction.wrap(type.context, name: "isupper", doc: nil, fn: PyByteArray.isUpper, castSelf: Cast.asPyByteArray)
+    dict["startswith"] = PyBuiltinFunction.wrap(type.context, name: "startswith", doc: nil, fn: PyByteArray.startsWith(_:start:end:), castSelf: Cast.asPyByteArray)
+    dict["endswith"] = PyBuiltinFunction.wrap(type.context, name: "endswith", doc: nil, fn: PyByteArray.endsWith(_:start:end:), castSelf: Cast.asPyByteArray)
+    dict["strip"] = PyBuiltinFunction.wrap(type.context, name: "strip", doc: nil, fn: PyByteArray.strip(_:), castSelf: Cast.asPyByteArray)
+    dict["lstrip"] = PyBuiltinFunction.wrap(type.context, name: "lstrip", doc: nil, fn: PyByteArray.lstrip(_:), castSelf: Cast.asPyByteArray)
+    dict["rstrip"] = PyBuiltinFunction.wrap(type.context, name: "rstrip", doc: nil, fn: PyByteArray.rstrip(_:), castSelf: Cast.asPyByteArray)
+    dict["find"] = PyBuiltinFunction.wrap(type.context, name: "find", doc: nil, fn: PyByteArray.find(_:start:end:), castSelf: Cast.asPyByteArray)
+    dict["rfind"] = PyBuiltinFunction.wrap(type.context, name: "rfind", doc: nil, fn: PyByteArray.rfind(_:start:end:), castSelf: Cast.asPyByteArray)
+    dict["index"] = PyBuiltinFunction.wrap(type.context, name: "index", doc: nil, fn: PyByteArray.index(of:start:end:), castSelf: Cast.asPyByteArray)
+    dict["rindex"] = PyBuiltinFunction.wrap(type.context, name: "rindex", doc: nil, fn: PyByteArray.rindex(_:start:end:), castSelf: Cast.asPyByteArray)
+    dict["lower"] = PyBuiltinFunction.wrap(type.context, name: "lower", doc: nil, fn: PyByteArray.lower, castSelf: Cast.asPyByteArray)
+    dict["upper"] = PyBuiltinFunction.wrap(type.context, name: "upper", doc: nil, fn: PyByteArray.upper, castSelf: Cast.asPyByteArray)
+    dict["title"] = PyBuiltinFunction.wrap(type.context, name: "title", doc: nil, fn: PyByteArray.title, castSelf: Cast.asPyByteArray)
+    dict["swapcase"] = PyBuiltinFunction.wrap(type.context, name: "swapcase", doc: nil, fn: PyByteArray.swapcase, castSelf: Cast.asPyByteArray)
+    dict["casefold"] = PyBuiltinFunction.wrap(type.context, name: "casefold", doc: nil, fn: PyByteArray.casefold, castSelf: Cast.asPyByteArray)
+    dict["capitalize"] = PyBuiltinFunction.wrap(type.context, name: "capitalize", doc: nil, fn: PyByteArray.capitalize, castSelf: Cast.asPyByteArray)
+    dict["center"] = PyBuiltinFunction.wrap(type.context, name: "center", doc: nil, fn: PyByteArray.center(width:fillChar:), castSelf: Cast.asPyByteArray)
+    dict["ljust"] = PyBuiltinFunction.wrap(type.context, name: "ljust", doc: nil, fn: PyByteArray.ljust(width:fillChar:), castSelf: Cast.asPyByteArray)
+    dict["rjust"] = PyBuiltinFunction.wrap(type.context, name: "rjust", doc: nil, fn: PyByteArray.rjust(width:fillChar:), castSelf: Cast.asPyByteArray)
+    dict["split"] = PyBuiltinFunction.wrap(type.context, name: "split", doc: nil, fn: PyByteArray.split(separator:maxCount:), castSelf: Cast.asPyByteArray)
+    dict["rsplit"] = PyBuiltinFunction.wrap(type.context, name: "rsplit", doc: nil, fn: PyByteArray.rsplit(separator:maxCount:), castSelf: Cast.asPyByteArray)
+    dict["splitlines"] = PyBuiltinFunction.wrap(type.context, name: "splitlines", doc: nil, fn: PyByteArray.splitLines(keepEnds:), castSelf: Cast.asPyByteArray)
+    dict["partition"] = PyBuiltinFunction.wrap(type.context, name: "partition", doc: nil, fn: PyByteArray.partition(separator:), castSelf: Cast.asPyByteArray)
+    dict["rpartition"] = PyBuiltinFunction.wrap(type.context, name: "rpartition", doc: nil, fn: PyByteArray.rpartition(separator:), castSelf: Cast.asPyByteArray)
+    dict["expandtabs"] = PyBuiltinFunction.wrap(type.context, name: "expandtabs", doc: nil, fn: PyByteArray.expandTabs(tabSize:), castSelf: Cast.asPyByteArray)
+    dict["count"] = PyBuiltinFunction.wrap(type.context, name: "count", doc: nil, fn: PyByteArray.count(_:start:end:), castSelf: Cast.asPyByteArray)
+    dict["replace"] = PyBuiltinFunction.wrap(type.context, name: "replace", doc: nil, fn: PyByteArray.replace(old:new:count:), castSelf: Cast.asPyByteArray)
+    dict["zfill"] = PyBuiltinFunction.wrap(type.context, name: "zfill", doc: nil, fn: PyByteArray.zfill(width:), castSelf: Cast.asPyByteArray)
+    dict["__add__"] = PyBuiltinFunction.wrap(type.context, name: "__add__", doc: nil, fn: PyByteArray.add(_:), castSelf: Cast.asPyByteArray)
+    dict["__mul__"] = PyBuiltinFunction.wrap(type.context, name: "__mul__", doc: nil, fn: PyByteArray.mul(_:), castSelf: Cast.asPyByteArray)
+    dict["__rmul__"] = PyBuiltinFunction.wrap(type.context, name: "__rmul__", doc: nil, fn: PyByteArray.rmul(_:), castSelf: Cast.asPyByteArray)
+  }
+
   // MARK: - Bytes
 
   internal static func bytes(_ type: PyType) {
@@ -185,6 +249,7 @@ internal enum BuiltinTypesFill {
     dict["upper"] = PyBuiltinFunction.wrap(type.context, name: "upper", doc: nil, fn: PyBytes.upper, castSelf: Cast.asPyBytes)
     dict["title"] = PyBuiltinFunction.wrap(type.context, name: "title", doc: nil, fn: PyBytes.title, castSelf: Cast.asPyBytes)
     dict["swapcase"] = PyBuiltinFunction.wrap(type.context, name: "swapcase", doc: nil, fn: PyBytes.swapcase, castSelf: Cast.asPyBytes)
+    dict["casefold"] = PyBuiltinFunction.wrap(type.context, name: "casefold", doc: nil, fn: PyBytes.casefold, castSelf: Cast.asPyBytes)
     dict["capitalize"] = PyBuiltinFunction.wrap(type.context, name: "capitalize", doc: nil, fn: PyBytes.capitalize, castSelf: Cast.asPyBytes)
     dict["center"] = PyBuiltinFunction.wrap(type.context, name: "center", doc: nil, fn: PyBytes.center(width:fillChar:), castSelf: Cast.asPyBytes)
     dict["ljust"] = PyBuiltinFunction.wrap(type.context, name: "ljust", doc: nil, fn: PyBytes.ljust(width:fillChar:), castSelf: Cast.asPyBytes)

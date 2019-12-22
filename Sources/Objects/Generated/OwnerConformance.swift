@@ -63,6 +63,51 @@ extension PyBuiltinFunction:
   __call__Owner
 { }
 
+// MARK: - ByteArray
+
+extension PyByteArray:
+  __class__GetterOwner,
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __repr__Owner,
+  __str__Owner,
+  __getattribute__Owner,
+  __len__Owner,
+  __contains__Owner,
+  __getitem__Owner,
+  isalnumOwner,
+  isalphaOwner,
+  isasciiOwner,
+  isdigitOwner,
+  islowerOwner,
+  isspaceOwner,
+  istitleOwner,
+  isupperOwner,
+  startswithOwner,
+  startswithRangedOwner,
+  endswithOwner,
+  endswithRangedOwner,
+  findOwner,
+  findRangedOwner,
+  rfindOwner,
+  rfindRangedOwner,
+  indexOwner,
+  indexRangedOwner,
+  rindexOwner,
+  rindexRangedOwner,
+  partitionOwner,
+  rpartitionOwner,
+  countOwner,
+  countRangedOwner,
+  __add__Owner,
+  __mul__Owner,
+  __rmul__Owner
+{ }
+
 // MARK: - Bytes
 
 extension PyBytes:
@@ -738,7 +783,6 @@ extension PyString:
   indexRangedOwner,
   rindexOwner,
   rindexRangedOwner,
-  casefoldOwner,
   partitionOwner,
   rpartitionOwner,
   countOwner,

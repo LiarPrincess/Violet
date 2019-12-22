@@ -85,4 +85,20 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
   internal func upperCased() -> String {
     return self.value.uppercased()
   }
+
+  internal func titleCased() -> String {
+    return self.titleCasedString()
+  }
+
+  internal func swapCase() -> String {
+    return self.swapCaseString()
+  }
+
+  internal func caseFold() -> String {
+    return self.caseFoldString()
+  }
+
+  internal func capitalize() -> String {
+    return self.capitalizeString()
+  }
 }

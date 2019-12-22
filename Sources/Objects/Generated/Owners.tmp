@@ -66,6 +66,58 @@ PyBuiltinFunction|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
 PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyBuiltinFunction|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResultOrNot<PyObject>
+PyByteArray|PyObject|get|__class__|getClass() -> PyType
+
+PyByteArray|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyByteArray|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyByteArray|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
+PyByteArray|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyByteArray|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
+PyByteArray|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyByteArray|PyObject|func|__repr__|repr() -> PyResult<String>
+PyByteArray|PyObject|func|__str__|str() -> PyResult<String>
+PyByteArray|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyByteArray|PyObject|func|__len__|getLength() -> BigInt
+PyByteArray|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
+PyByteArray|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
+PyByteArray|PyObject|func|isalnum|isAlphaNumeric() -> Bool
+PyByteArray|PyObject|func|isalpha|isAlpha() -> Bool
+PyByteArray|PyObject|func|isascii|isAscii() -> Bool
+PyByteArray|PyObject|func|isdigit|isDigit() -> Bool
+PyByteArray|PyObject|func|islower|isLower() -> Bool
+PyByteArray|PyObject|func|isspace|isSpace() -> Bool
+PyByteArray|PyObject|func|istitle|isTitle() -> Bool
+PyByteArray|PyObject|func|isupper|isUpper() -> Bool
+PyByteArray|PyObject|func|startswith|startsWith(_ element: PyObject,                           start: PyObject?,                           end: PyObject?) -> PyResult<Bool>
+PyByteArray|PyObject|func|endswith|endsWith(_ element: PyObject,                         start: PyObject?,                         end: PyObject?) -> PyResult<Bool>
+PyByteArray|PyObject|func|strip|strip(_ chars: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|lstrip|lstrip(_ chars: PyObject) -> PyResult<Data>
+PyByteArray|PyObject|func|rstrip|rstrip(_ chars: PyObject) -> PyResult<Data>
+PyByteArray|PyObject|func|find|find(_ element: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<BigInt>
+PyByteArray|PyObject|func|rfind|rfind(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyByteArray|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyByteArray|PyObject|func|rindex|rindex(_ element: PyObject,                       start: PyObject?,                       end: PyObject?) -> PyResult<BigInt>
+PyByteArray|PyObject|func|lower|lower() -> Data
+PyByteArray|PyObject|func|upper|upper() -> Data
+PyByteArray|PyObject|func|title|title() -> Data
+PyByteArray|PyObject|func|swapcase|swapcase() -> Data
+PyByteArray|PyObject|func|casefold|casefold() -> Data
+PyByteArray|PyObject|func|capitalize|capitalize() -> Data
+PyByteArray|PyObject|func|center|center(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|ljust|ljust(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|rjust|rjust(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|split|split(separator: PyObject?,                      maxCount: PyObject?) -> PyResult<[Data]>
+PyByteArray|PyObject|func|rsplit|rsplit(separator: PyObject?,                       maxCount: PyObject?) -> PyResult<[Data]>
+PyByteArray|PyObject|func|splitlines|splitLines(keepEnds: PyObject) -> PyResult<[Data]>
+PyByteArray|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTuple>
+PyByteArray|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
+PyByteArray|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|count|count(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyByteArray|PyObject|func|replace|replace(old: PyObject,                        new: PyObject,                        count: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<Data>
+PyByteArray|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyByteArray|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyByteArray|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyBytes|PyObject|get|__class__|getClass() -> PyType
 
 PyBytes|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -102,6 +154,7 @@ PyBytes|PyObject|func|lower|lower() -> Data
 PyBytes|PyObject|func|upper|upper() -> Data
 PyBytes|PyObject|func|title|title() -> Data
 PyBytes|PyObject|func|swapcase|swapcase() -> Data
+PyBytes|PyObject|func|casefold|casefold() -> Data
 PyBytes|PyObject|func|capitalize|capitalize() -> Data
 PyBytes|PyObject|func|center|center(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
 PyBytes|PyObject|func|ljust|ljust(width: PyObject, fillChar: PyObject?) -> PyResult<Data>

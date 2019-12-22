@@ -37,6 +37,16 @@ internal protocol HeapType { }
 
 // PyBuiltinFunction is not a base type.
 
+// MARK: - ByteArray
+
+/// Type used when we subclass builtin `bytearray` class.
+/// For example: `class Rapunzel(bytearray): pass`.
+internal final class PyByteArrayHeap: PyByteArray, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var attributes = Attributes()
+}
+
 // MARK: - Bytes
 
 /// Type used when we subclass builtin `bytes` class.

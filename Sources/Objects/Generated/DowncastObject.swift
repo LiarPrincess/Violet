@@ -47,6 +47,12 @@ internal enum Cast {
     return cast(object, as: PyBuiltinFunction.self, typeName: "builtinFunction", methodName: methodName)
   }
 
+  // MARK: - ByteArray
+
+  internal static func asPyByteArray(_ object: PyObject, methodName: String) -> PyResult<PyByteArray> {
+    return cast(object, as: PyByteArray.self, typeName: "bytearray", methodName: methodName)
+  }
+
   // MARK: - Bytes
 
   internal static func asPyBytes(_ object: PyObject, methodName: String) -> PyResult<PyBytes> {

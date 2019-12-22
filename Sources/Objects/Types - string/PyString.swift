@@ -416,12 +416,7 @@ public class PyString: PyObject {
   internal func find(_ element: PyObject,
                      start: PyObject?,
                      end: PyObject?) -> PyResult<BigInt> {
-    switch self.data.find(element, start: start, end: end) {
-    case let .value(result):
-      return self.toFindResult(result)
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.find(element, start: start, end: end)
   }
 
   internal static let rfindDoc = """
@@ -442,23 +437,7 @@ public class PyString: PyObject {
   internal func rfind(_ element: PyObject,
                       start: PyObject?,
                       end: PyObject?) -> PyResult<BigInt> {
-    switch self.data.rfind(element, start: start, end: end) {
-    case let .value(result):
-      return self.toFindResult(result)
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  private func toFindResult(_ raw: StringFindResult<PyStringData.Index>)
-    -> PyResult<BigInt> {
-
-    switch raw {
-    case let .index(index: _, position: position):
-      return .value(position)
-    case .notFound:
-      return .value(-1)
-    }
+    return self.data.rfind(element, start: start, end: end)
   }
 
   // MARK: - Index

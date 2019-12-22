@@ -75,7 +75,13 @@ internal protocol StringBuilderType {
 
 /// (Almost) all of the `str` methods.
 ///
-/// Look at us! Using traits/protocols as intended!
+/// Note that we will use the same implementation for `str` and `bytes`.
+/// Some methods should work differently, but we will ignore this.
+/// For example:
+/// - `str` can only use `str` inide `in` expression
+/// - `bytes` we can use `int` or `bytes` inside `in` expression  (`49 in b'123'`
+///
+/// Also: look at us! Using traits/protocols as intended!
 internal protocol PyStringImpl {
 
   /// `UnicodeScalarView` for str and `Data` for bytes.
@@ -162,7 +168,7 @@ extension PyStringImpl {
   // MARK: - Repr
 
   /// Prefix: use 'b' for bytes and empty string (default) for normal string.
-  internal func createRepr(prefix: String = "") -> String {
+  internal func createRepr() -> String {
     // Find quote character
     var singleQuoteCount = 0
     var doubleQuoteCount = 0
@@ -177,7 +183,7 @@ extension PyStringImpl {
     // Use single quote if equal
     let quote: UnicodeScalar = doubleQuoteCount > singleQuoteCount ? "\"" : "'"
 
-    var result = prefix + String(quote)
+    var result = String(quote)
     result.reserveCapacity(self.scalars.count)
 
     for element in self.scalars {
@@ -526,7 +532,7 @@ extension PyStringImpl {
 
   // MARK: - Case
 
-  internal func titleCased() -> String {
+  internal func titleCasedString() -> String {
     var result = ""
     var isPreviousCased = false
 
@@ -560,7 +566,7 @@ extension PyStringImpl {
     return result
   }
 
-  internal func swapCase() -> String {
+  internal func swapCaseString() -> String {
     var result = ""
     for element in self.scalars {
       let scalar = Self.toScalar(element)
@@ -576,7 +582,7 @@ extension PyStringImpl {
     return result
   }
 
-  internal func caseFold() -> String {
+  internal func caseFoldString() -> String {
     var result = ""
     for element in self.scalars {
       let scalar = Self.toScalar(element)
@@ -589,7 +595,7 @@ extension PyStringImpl {
     return result
   }
 
-  internal func capitalize() -> String {
+  internal func capitalizeString() -> String {
     // Capitalize only first scalar:
     // list("e\u0301".capitalize()) -> ['E', '́']
 
@@ -813,7 +819,7 @@ extension PyStringImpl {
 
   internal func find(_ element: PyObject,
                      start: PyObject?,
-                     end: PyObject?) -> PyResult<StringFindResult<Self.Index>> {
+                     end: PyObject?) -> PyResult<BigInt> {
     guard let elementString = Self.extractSelf(from: element) else {
       return .typeError("find arg must be \(Self.typeName), not \(element.typeName)")
     }
@@ -825,7 +831,7 @@ extension PyStringImpl {
     }
 
     let result = self.find(in: substring, value: elementString)
-    return .value(result)
+    return .value(self.minusOneIfNotFound(result))
   }
 
   private func find<C: Collection>(
@@ -855,7 +861,7 @@ extension PyStringImpl {
 
   internal func rfind(_ element: PyObject,
                       start: PyObject?,
-                      end: PyObject?) -> PyResult<StringFindResult<Self.Index>> {
+                      end: PyObject?) -> PyResult<BigInt> {
     guard let elementString = Self.extractSelf(from: element) else {
       return .typeError("rfind arg must be \(Self.typeName), not \(element.typeName)")
     }
@@ -867,7 +873,7 @@ extension PyStringImpl {
     }
 
     let result = self.rfind(in: substring, value: elementString)
-    return .value(result)
+    return .value(self.minusOneIfNotFound(result))
   }
 
   private func rfind<C: BidirectionalCollection>(
@@ -901,6 +907,15 @@ extension PyStringImpl {
     }
 
     return .notFound
+  }
+
+  private func minusOneIfNotFound(_ raw: StringFindResult<Index>) -> BigInt {
+    switch raw {
+    case let .index(index: _, position: position):
+      return position
+    case .notFound:
+      return -1
+    }
   }
 
   // MARK: - Index

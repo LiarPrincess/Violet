@@ -21,6 +21,7 @@ ignored_methods = [
   'swapcase',
   'title',
   'upper',
+  'casefold',
 ]
 
 # ----

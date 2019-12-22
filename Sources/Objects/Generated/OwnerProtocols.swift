@@ -126,7 +126,6 @@ protocol __trunc__Owner { func trunc() -> PyResult<PyObject> }
 protocol __xor__Owner { func xor(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol addOwner { func add(_ value: PyObject) -> PyResult<PyNone> }
 protocol appendOwner { func append(_ element: PyObject) -> PyResult<PyNone> }
-protocol casefoldOwner { func casefold() -> String }
 protocol clearOwner { func clear() -> PyResult<PyNone> }
 protocol conjugateOwner { func conjugate() -> PyObject }
 protocol copyOwner { func copy() -> PyObject }

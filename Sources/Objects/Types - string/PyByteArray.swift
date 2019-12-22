@@ -6,19 +6,20 @@ import Foundation
 // In CPython:
 // Objects -> bytesobject.c
 
-// sourcery: pytype = bytes, default, baseType, bytesSubclass
-public class PyBytes: PyObject, PyBytesType {
+// sourcery: pytype = bytearray, default, baseType
+public class PyByteArray: PyObject, PyBytesType {
 
   internal static let doc = """
-    bytes(iterable_of_ints) -> bytes
-    bytes(string, encoding[, errors]) -> bytes
-    bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer
-    bytes(int) -> bytes object of size given by the parameter initialized with null bytes
-    bytes() -> empty bytes object
+    bytearray(iterable_of_ints) -> bytearray
+    bytearray(string, encoding[, errors]) -> bytearray
+    bytearray(bytes_or_buffer) -> mutable copy of bytes_or_buffer
+    bytearray(int) -> bytes array of size given by the parameter initialized with null bytes
+    bytearray() -> empty bytes array
 
-    Construct an immutable array of bytes from:
+    Construct a mutable bytearray object from:
       - an iterable yielding integers in range(256)
       - a text string encoded using the specified encoding
+      - a bytes or a buffer object
       - any object implementing the buffer API.
       - an integer
     """
@@ -88,22 +89,11 @@ public class PyBytes: PyObject, PyBytesType {
     return .value(self.data.compare(to: other.data))
   }
 
-  // MARK: - Hashable
-
-  // sourcery: pymethod = __hash__
-  internal func hash() -> PyResultOrNot<PyHash> {
-    return .value(self.hashRaw())
-  }
-
-  internal func hashRaw() -> PyHash {
-    return self.hasher.hash(self.value)
-  }
-
   // MARK: - String
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let result = "b" + self.data.createRepr()
+    let result = "bytearray(b" + self.data.createRepr() + ")"
     return .value(result)
   }
 
