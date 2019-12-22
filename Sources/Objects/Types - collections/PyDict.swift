@@ -194,7 +194,8 @@ public class PyDict: PyObject {
   }
 
   // sourcery: pymethod = __setitem__
-  internal func setItem(at index: PyObject, to value: PyObject) -> PyResult<PyNone> {
+  internal func setItem(at index: PyObject,
+                        to value: PyObject) -> PyResult<PyNone> {
     let key: PyDictKey
     switch self.createKey(from: index) {
     case let .value(v): key = v

@@ -329,7 +329,7 @@ extension PyStringImpl {
     // In Swift:  "Cafe\u{0301}".contains("\u{00E9}") -> True
     // which is 'e with acute (as a single char)' in 'Cafe{accent}'
 
-    switch self.find(in: self.scalars, value: data) {
+    switch self.findRaw(in: self.scalars, value: data) {
     case .index: return true
     case .notFound: return false
     }
@@ -818,8 +818,8 @@ extension PyStringImpl {
   // MARK: - Find
 
   internal func find(_ element: PyObject,
-                     start: PyObject?,
-                     end: PyObject?) -> PyResult<BigInt> {
+                     start: PyObject? = nil,
+                     end: PyObject? = nil) -> PyResult<BigInt> {
     guard let elementString = Self.extractSelf(from: element) else {
       return .typeError("find arg must be \(Self.typeName), not \(element.typeName)")
     }
@@ -830,13 +830,20 @@ extension PyStringImpl {
     case let .error(e): return .error(e)
     }
 
-    let result = self.find(in: substring, value: elementString)
+    let result = self.findRaw(in: substring, value: elementString)
     return .value(self.minusOneIfNotFound(result))
   }
 
-  private func find<C: Collection>(
+  internal func findRaw<C: Collection>(
     in container: C,
     value: Self) -> StringFindResult<C.Index> where C.Element == Self.Element {
+
+    return self.findRaw(in: container, scalars: value.scalars)
+  }
+
+  internal func findRaw<C: Collection>(
+    in container: C,
+    scalars: Scalars) -> StringFindResult<C.Index> where C.Element == Self.Element {
 
     if container.isEmpty {
       return .notFound
@@ -848,7 +855,7 @@ extension PyStringImpl {
 
     while index != container.endIndex {
       let substring = container[index...]
-      if substring.starts(with: value.scalars) {
+      if substring.starts(with: scalars) {
         return .index(index: index, position: position)
       }
 
@@ -860,8 +867,8 @@ extension PyStringImpl {
   }
 
   internal func rfind(_ element: PyObject,
-                      start: PyObject?,
-                      end: PyObject?) -> PyResult<BigInt> {
+                      start: PyObject? = nil,
+                      end: PyObject? = nil) -> PyResult<BigInt> {
     guard let elementString = Self.extractSelf(from: element) else {
       return .typeError("rfind arg must be \(Self.typeName), not \(element.typeName)")
     }
@@ -872,13 +879,20 @@ extension PyStringImpl {
     case let .error(e): return .error(e)
     }
 
-    let result = self.rfind(in: substring, value: elementString)
+    let result = self.rfindRaw(in: substring, value: elementString)
     return .value(self.minusOneIfNotFound(result))
   }
 
-  private func rfind<C: BidirectionalCollection>(
+  internal func rfindRaw<C: BidirectionalCollection>(
     in container: C,
     value: Self) -> StringFindResult<C.Index> where C.Element == Self.Element {
+
+    return self.rfindRaw(in: container, scalars: value.scalars)
+  }
+
+  internal func rfindRaw<C: BidirectionalCollection>(
+    in container: C,
+    scalars: Scalars) -> StringFindResult<C.Index> where C.Element == Self.Element {
 
     if container.isEmpty {
       return .notFound
@@ -893,7 +907,7 @@ extension PyStringImpl {
 
     while index != container.startIndex {
       let substring = container[index...]
-      if substring.starts(with: value.scalars) {
+      if substring.starts(with: scalars) {
         return .index(index: index, position: BigInt(position))
       }
 
@@ -902,7 +916,7 @@ extension PyStringImpl {
     }
 
     // Check if maybe we start with it (it was not checked inside loop!)
-    if container.starts(with: value.scalars) {
+    if container.starts(with: scalars) {
       return .index(index: index, position: 0)
     }
 
@@ -933,7 +947,7 @@ extension PyStringImpl {
     case let .error(e): return .error(e)
     }
 
-    switch self.find(in: substring, value: elementString) {
+    switch self.findRaw(in: substring, value: elementString) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -954,7 +968,7 @@ extension PyStringImpl {
     case let .error(e): return .error(e)
     }
 
-    switch self.rfind(in: substring, value: elementString) {
+    switch self.rfindRaw(in: substring, value: elementString) {
     case let .index(index: _, position: position):
       return .value(position)
     case .notFound:
@@ -1499,7 +1513,7 @@ extension PyStringImpl {
       return .error(.valueError("empty separator"))
     }
 
-    switch self.find(in: self.scalars, value: separator) {
+    switch self.findRaw(in: self.scalars, value: separator) {
     case let .index(index: index1, position: _):
       // before | index1 | separator | index2 | after
       let sepCount = separator.scalars.count
@@ -1527,7 +1541,7 @@ extension PyStringImpl {
       return .error(.valueError("empty separator"))
     }
 
-    switch self.rfind(in: self.scalars, value: separator) {
+    switch self.rfindRaw(in: self.scalars, value: separator) {
     case let .index(index: index1, position: _):
       // before | index1 | separator | index2 | after
       let sepCount = separator.scalars.count

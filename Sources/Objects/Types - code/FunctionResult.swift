@@ -21,6 +21,12 @@ extension Int: FunctionResultConvertible {
   }
 }
 
+extension UInt8: FunctionResultConvertible {
+  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
+    return .value(context.builtins.newInt(self))
+  }
+}
+
 extension BigInt: FunctionResultConvertible {
   internal func toFunctionResult(in context: PyContext) -> FunctionResult {
     return .value(context.builtins.newInt(self))

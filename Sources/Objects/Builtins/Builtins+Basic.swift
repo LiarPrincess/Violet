@@ -9,6 +9,10 @@ extension Builtins {
 
   // MARK: - Int
 
+  public func newInt(_ value: UInt8) -> PyInt {
+    return PyInt(self.context, value: BigInt(value))
+  }
+
   public func newInt(_ value: Int) -> PyInt {
     return PyInt(self.context, value: BigInt(value))
   }
@@ -52,6 +56,10 @@ extension Builtins {
 
   public func newBytes(_ value: Data) -> PyBytes {
     return PyBytes(self.context, value: value)
+  }
+
+  public func newByteArray(_ value: Data) -> PyByteArray {
+    return PyByteArray(self.context, value: value)
   }
 
   // MARK: - Module

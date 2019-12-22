@@ -24,7 +24,7 @@ public class PyByteArray: PyObject, PyBytesType {
       - an integer
     """
 
-  internal let data: PyBytesData
+  internal private(set) var data: PyBytesData
 
   internal var value: Data {
     return self.data.values
@@ -136,7 +136,7 @@ public class PyByteArray: PyObject, PyBytesType {
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(at: index) {
     case let .item(int):
-      let result = self.builtins.newBytes(Data([int]))
+      let result = self.builtins.newInt(int)
       return .value(result)
     case let .slice(bytes):
       let result = self.builtins.newBytes(bytes)
@@ -435,11 +435,6 @@ public class PyByteArray: PyObject, PyBytesType {
     return self.data.swapCase()
   }
 
-  // sourcery: pymethod = casefold
-  internal func casefold() -> Data {
-    return self.data.caseFold()
-  }
-
   // sourcery: pymethod = capitalize
   internal func capitalize() -> Data {
     return self.data.capitalize()
@@ -572,5 +567,139 @@ public class PyByteArray: PyObject, PyBytesType {
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return self.data.rmul(other).map(self.builtins.newBytes(_:))
+  }
+
+  // MARK: Methods that are not in PyBytes
+
+  // MARK: - Append
+
+  internal static let appendDoc = """
+    append($self, item, /)
+    --
+
+    Append a single item to the end of the bytearray.
+
+      item
+        The item to be appended.
+    """
+
+  // sourcery: pymethod = append, doc = appendDoc
+  internal func append(_ element: PyObject) -> PyResult<PyNone> {
+    return self.data.append(element).map { _ in self.builtins.none }
+  }
+
+  // MARK: - Insert
+
+  internal static let insertDoc = """
+    insert($self, index, item, /)
+    --
+
+    Insert a single item into the bytearray before the given index.
+
+      index
+        The index where the value is to be inserted.
+      item
+        The item to be inserted.
+    """
+
+  // sourcery: pymethod = insert, doc = insertDoc
+  internal func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> {
+    return self.data.insert(at: index, item: item).map { _ in self.builtins.none }
+  }
+
+  // MARK: - Remove
+
+  internal static let removeDoc = """
+    remove($self, value, /)
+    --
+
+    Remove the first occurrence of a value in the bytearray.
+
+      value
+        The value to remove.
+    """
+
+  // sourcery: pymethod = remove, doc = removeDoc
+  internal func remove(_ value: PyObject) -> PyResult<PyNone> {
+    return self.data.remove(value).map { _ in self.builtins.none }
+  }
+
+  // MARK: - Pop
+
+  internal static let popDoc = """
+    pop($self, index=-1, /)
+    --
+
+    Remove and return a single item from B.
+
+      index
+        The index from where to remove the item.
+        -1 (the default value) means remove the last item.
+
+    If no index argument is given, will pop the last item.
+    """
+
+  // sourcery: pymethod = pop, doc = popDoc
+  internal func pop(index: PyObject?) -> PyResult<PyObject> {
+    return self.data.pop(index: index).map(self.builtins.newInt)
+  }
+
+  // MARK: - Set/del item
+
+  // sourcery: pymethod = __setitem__
+  internal func setItem(at index: PyObject,
+                        to value: PyObject) -> PyResult<PyNone> {
+    return self.data.setItem(at: index, to: value)
+      .map { _ in self.builtins.none }
+  }
+
+  // sourcery: pymethod = __delitem__
+  internal func delItem(at index: PyObject) -> PyResult<PyNone> {
+    return self.data.delItem(at: index)
+      .map { _ in self.builtins.none }
+  }
+
+  // MARK: - Clear
+
+  internal static let clearDoc = """
+    clear($self, /)
+    --
+
+    Remove all items from the bytearray.
+    """
+
+  // sourcery: pymethod = clear, doc = clearDoc
+  internal func clear() -> PyResult<PyNone> {
+    self.data.clear()
+    return .value(self.builtins.none)
+  }
+
+  // MARK: - Reverse
+
+  internal static let reverseDoc = """
+    reverse($self, /)
+    --
+
+    Reverse the order of the values in B in place.
+    """
+
+  // sourcery: pymethod = reverse, doc = reverseDoc
+  internal func reverse() -> PyResult<PyNone> {
+    self.data.reverse()
+    return .value(self.builtins.none)
+  }
+
+  // MARK: - Copy
+
+  internal static let copyDoc = """
+    copy($self, /)
+    --
+
+    Return a copy of B.
+    """
+
+  // sourcery: pymethod = copy, doc = copyDoc
+  internal func copy() -> PyObject {
+    return self.builtins.newByteArray(self.data.values)
   }
 }

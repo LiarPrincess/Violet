@@ -1,6 +1,8 @@
 import Core
 import Foundation
 
+// swiftlint:disable yoda_condition
+
 /// Protocol implemented by both `bytes` and `bytesrray`.
 internal protocol PyBytesType: PyObject {
   var data: PyBytesData { get }
@@ -33,7 +35,7 @@ internal struct BytesBuilder: StringBuilderType {
 /// Shared code between `PyBytes` and `PyBytesArray`.
 internal struct PyBytesData: PyStringImpl {
 
-  internal let values: Data
+  internal private(set) var values: Data
 
   internal init() {
     self.values = Data()
@@ -87,14 +89,147 @@ internal struct PyBytesData: PyStringImpl {
     return self.asData(string)
   }
 
-  internal func caseFold() -> Data {
-    let string = self.caseFoldString()
-    return self.asData(string)
-  }
-
   internal func capitalize() -> Data {
     let string = self.capitalizeString()
     return self.asData(string)
+  }
+
+  // MARK: - Append
+
+  internal mutating func append(_ value: PyObject) -> PyResult<()> {
+    switch self.asByte(value) {
+    case let .value(b):
+      self.values.append(b)
+      return .value()
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Insert
+
+  internal mutating func insert(at index: PyObject,
+                                item: PyObject) -> PyResult<()> {
+    let parsedIndex: Int
+    switch IndexHelper.int(index) {
+    case let .value(i): parsedIndex = i
+    case let .error(e): return .error(e)
+    }
+
+    let byte: UInt8
+    switch self.asByte(item) {
+    case let .value(b): byte = b
+    case let .error(e): return .error(e)
+    }
+
+    return self.insert(at: parsedIndex, item: byte)
+  }
+
+  internal mutating func insert(at index: Int,
+                                item: UInt8) -> PyResult<()> {
+    self.values.insert(item, at: index)
+    return .value()
+  }
+
+  // MARK: - Remove
+
+  // sourcery: pymethod = pop
+  internal mutating func remove(_ value: PyObject) -> PyResult<()> {
+    switch self.asByte(value) {
+    case let .value(b):
+      guard let index = self.values.firstIndex(of: b) else {
+        return .valueError("value not found in bytearray")
+      }
+
+      self.values.remove(at: index)
+      return .value()
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Pop
+
+  // sourcery: pymethod = pop
+  internal mutating func pop(index: PyObject?) -> PyResult<UInt8> {
+    switch self.parsePopIndex(from: index) {
+    case let .value(int):
+      return self.pop(index: int)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal mutating func pop(index: Int) -> PyResult<UInt8> {
+    if self.isEmpty {
+      return .indexError("pop from empty bytearray")
+    }
+
+    var index = index
+    if index < 0 {
+      index += self.count
+    }
+
+    guard 0 <= index && index < self.count else {
+      return .indexError("pop index out of range")
+    }
+
+    let result = self.values.remove(at: index)
+    return .value(result)
+  }
+
+  private func parsePopIndex(from index: PyObject?) -> PyResult<Int> {
+    guard let index = index else {
+      return .value(-1)
+    }
+
+    return IndexHelper.int(index)
+  }
+
+  // MARK: - Set/del item
+
+  internal mutating func setItem(at index: PyObject,
+                                 to value: PyObject) -> PyResult<()> {
+    // Setting slice is not (yet) implemented
+
+    let parsedIndex: Int
+    switch IndexHelper.int(index) {
+    case let .value(i): parsedIndex = i
+    case let .error(e): return .error(e)
+    }
+
+    let byte: UInt8
+    switch self.asByte(value) {
+    case let .value(b): byte = b
+    case let .error(e): return .error(e)
+    }
+
+    self.values[parsedIndex] = byte
+    return .value()
+  }
+
+  internal mutating func delItem(at index: PyObject) -> PyResult<()> {
+    let parsedIndex: Int
+    switch IndexHelper.int(index) {
+    case let .value(i): parsedIndex = i
+    case let .error(e): return .error(e)
+    }
+
+    _ = self.values.remove(at: parsedIndex)
+    return .value()
+  }
+
+  // MARK: - Clear
+
+  internal mutating func clear() {
+    self.values = Data()
+  }
+
+  // MARK: - Reverse
+
+  internal mutating func reverse() {
+    self.values.reverse()
   }
 
   // MARK: - String conversion
@@ -121,5 +256,20 @@ internal struct PyBytesData: PyStringImpl {
       "(mostly when we really need string, for example to check for whitespaces). " +
       "Normally it works, but this time conversion back to bytes failed."
     fatalError(msg)
+  }
+
+  // MARK: - Helpers
+
+  private func asByte(_ value: PyObject) -> PyResult<UInt8> {
+    guard let int = value as? PyInt else {
+      let t = value.typeName
+      return .typeError("'\(t)' object cannot be interpreted as an integer")
+    }
+
+    guard let byte = UInt8(exactly: int.value) else {
+      return .valueError("byte must be in range(0, 256)")
+    }
+
+    return .value(byte)
   }
 }

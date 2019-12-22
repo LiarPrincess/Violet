@@ -143,6 +143,7 @@ protocol imagOwner { func asImag() -> PyObject }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
 protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol indicesOwner { func indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject> }
+protocol insertOwner { func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> }
 protocol intersectionOwner { func intersection(with other: PyObject) -> PyResult<PyObject> }
 protocol isalnumOwner { func isAlphaNumeric() -> Bool }
 protocol isalphaOwner { func isAlpha() -> Bool }
@@ -166,6 +167,7 @@ protocol partitionOwner { func partition(separator: PyObject) -> PyResult<PyTupl
 protocol popitemOwner { func popitem() -> PyResult<PyObject> }
 protocol realOwner { func asReal() -> PyObject }
 protocol removeOwner { func remove(_ value: PyObject) -> PyResult<PyNone> }
+protocol reverseOwner { func reverse() -> PyResult<PyNone> }
 protocol rfindOwner { func rfind(_ element: PyObject) -> PyResult<BigInt> }
 protocol rfindRangedOwner { func rfind(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol rindexOwner { func rindex(_ element: PyObject) -> PyResult<BigInt> }

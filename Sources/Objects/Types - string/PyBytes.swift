@@ -146,7 +146,7 @@ public class PyBytes: PyObject, PyBytesType {
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(at: index) {
     case let .item(int):
-      let result = self.builtins.newBytes(Data([int]))
+      let result = self.builtins.newInt(int)
       return .value(result)
     case let .slice(bytes):
       let result = self.builtins.newBytes(bytes)
@@ -443,11 +443,6 @@ public class PyBytes: PyObject, PyBytesType {
   // sourcery: pymethod = swapcase
   internal func swapcase() -> Data {
     return self.data.swapCase()
-  }
-
-  // sourcery: pymethod = casefold
-  internal func casefold() -> Data {
-    return self.data.caseFold()
   }
 
   // sourcery: pymethod = capitalize

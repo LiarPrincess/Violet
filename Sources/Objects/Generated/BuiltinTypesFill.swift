@@ -183,7 +183,6 @@ internal enum BuiltinTypesFill {
     dict["upper"] = PyBuiltinFunction.wrap(type.context, name: "upper", doc: nil, fn: PyByteArray.upper, castSelf: Cast.asPyByteArray)
     dict["title"] = PyBuiltinFunction.wrap(type.context, name: "title", doc: nil, fn: PyByteArray.title, castSelf: Cast.asPyByteArray)
     dict["swapcase"] = PyBuiltinFunction.wrap(type.context, name: "swapcase", doc: nil, fn: PyByteArray.swapcase, castSelf: Cast.asPyByteArray)
-    dict["casefold"] = PyBuiltinFunction.wrap(type.context, name: "casefold", doc: nil, fn: PyByteArray.casefold, castSelf: Cast.asPyByteArray)
     dict["capitalize"] = PyBuiltinFunction.wrap(type.context, name: "capitalize", doc: nil, fn: PyByteArray.capitalize, castSelf: Cast.asPyByteArray)
     dict["center"] = PyBuiltinFunction.wrap(type.context, name: "center", doc: nil, fn: PyByteArray.center(width:fillChar:), castSelf: Cast.asPyByteArray)
     dict["ljust"] = PyBuiltinFunction.wrap(type.context, name: "ljust", doc: nil, fn: PyByteArray.ljust(width:fillChar:), castSelf: Cast.asPyByteArray)
@@ -200,6 +199,15 @@ internal enum BuiltinTypesFill {
     dict["__add__"] = PyBuiltinFunction.wrap(type.context, name: "__add__", doc: nil, fn: PyByteArray.add(_:), castSelf: Cast.asPyByteArray)
     dict["__mul__"] = PyBuiltinFunction.wrap(type.context, name: "__mul__", doc: nil, fn: PyByteArray.mul(_:), castSelf: Cast.asPyByteArray)
     dict["__rmul__"] = PyBuiltinFunction.wrap(type.context, name: "__rmul__", doc: nil, fn: PyByteArray.rmul(_:), castSelf: Cast.asPyByteArray)
+    dict["append"] = PyBuiltinFunction.wrap(type.context, name: "append", doc: nil, fn: PyByteArray.append(_:), castSelf: Cast.asPyByteArray)
+    dict["insert"] = PyBuiltinFunction.wrap(type.context, name: "insert", doc: nil, fn: PyByteArray.insert(at:item:), castSelf: Cast.asPyByteArray)
+    dict["remove"] = PyBuiltinFunction.wrap(type.context, name: "remove", doc: nil, fn: PyByteArray.remove(_:), castSelf: Cast.asPyByteArray)
+    dict["pop"] = PyBuiltinFunction.wrap(type.context, name: "pop", doc: nil, fn: PyByteArray.pop(index:), castSelf: Cast.asPyByteArray)
+    dict["__setitem__"] = PyBuiltinFunction.wrap(type.context, name: "__setitem__", doc: nil, fn: PyByteArray.setItem(at:to:), castSelf: Cast.asPyByteArray)
+    dict["__delitem__"] = PyBuiltinFunction.wrap(type.context, name: "__delitem__", doc: nil, fn: PyByteArray.delItem(at:), castSelf: Cast.asPyByteArray)
+    dict["clear"] = PyBuiltinFunction.wrap(type.context, name: "clear", doc: nil, fn: PyByteArray.clear, castSelf: Cast.asPyByteArray)
+    dict["reverse"] = PyBuiltinFunction.wrap(type.context, name: "reverse", doc: nil, fn: PyByteArray.reverse, castSelf: Cast.asPyByteArray)
+    dict["copy"] = PyBuiltinFunction.wrap(type.context, name: "copy", doc: nil, fn: PyByteArray.copy, castSelf: Cast.asPyByteArray)
   }
 
   // MARK: - Bytes
@@ -249,7 +257,6 @@ internal enum BuiltinTypesFill {
     dict["upper"] = PyBuiltinFunction.wrap(type.context, name: "upper", doc: nil, fn: PyBytes.upper, castSelf: Cast.asPyBytes)
     dict["title"] = PyBuiltinFunction.wrap(type.context, name: "title", doc: nil, fn: PyBytes.title, castSelf: Cast.asPyBytes)
     dict["swapcase"] = PyBuiltinFunction.wrap(type.context, name: "swapcase", doc: nil, fn: PyBytes.swapcase, castSelf: Cast.asPyBytes)
-    dict["casefold"] = PyBuiltinFunction.wrap(type.context, name: "casefold", doc: nil, fn: PyBytes.casefold, castSelf: Cast.asPyBytes)
     dict["capitalize"] = PyBuiltinFunction.wrap(type.context, name: "capitalize", doc: nil, fn: PyBytes.capitalize, castSelf: Cast.asPyBytes)
     dict["center"] = PyBuiltinFunction.wrap(type.context, name: "center", doc: nil, fn: PyBytes.center(width:fillChar:), castSelf: Cast.asPyBytes)
     dict["ljust"] = PyBuiltinFunction.wrap(type.context, name: "ljust", doc: nil, fn: PyBytes.ljust(width:fillChar:), castSelf: Cast.asPyBytes)

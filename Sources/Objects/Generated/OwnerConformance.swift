@@ -105,7 +105,15 @@ extension PyByteArray:
   countRangedOwner,
   __add__Owner,
   __mul__Owner,
-  __rmul__Owner
+  __rmul__Owner,
+  appendOwner,
+  insertOwner,
+  removeOwner,
+  __setitem__Owner,
+  __delitem__Owner,
+  clearOwner,
+  reverseOwner,
+  copyOwner
 { }
 
 // MARK: - Bytes
