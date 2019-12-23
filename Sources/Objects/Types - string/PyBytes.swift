@@ -603,20 +603,21 @@ public class PyBytes: PyObject, PyBytesType {
       let arg0 = bind.count >= 1 ? bind[0] : nil
       let arg1 = bind.count >= 2 ? bind[1] : nil
       let arg2 = bind.count >= 3 ? bind[2] : nil
-      return PyString.pyNew(type: type, object: arg0, encoding: arg1, errors: arg2)
+      return PyBytes.pyNew(type: type, object: arg0, encoding: arg1, errors: arg2)
     case let .error(e):
       return .error(e)
     }
   }
 
-  internal static func pyNew(type: PyType,
-                             object: PyObject?,
-                             encoding: PyObject?,
-                             errors: PyObject?) -> PyResult<PyObject> {
+  private static func pyNew(type: PyType,
+                            object: PyObject?,
+                            encoding: PyObject?,
+                            errors: PyObject?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.bytes
     let alloca = isBuiltin ? newBytes(type:value:) : PyBytesHeap.init(type:value:)
 
-    return PyBytesData.new(object: object, encoding: encoding, errors: errors)
+    return PyBytesData
+      .handleNewArgs(object: object, encoding: encoding, errors: errors)
       .map { alloca(type, $0) }
   }
 

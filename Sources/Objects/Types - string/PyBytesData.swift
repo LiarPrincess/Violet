@@ -272,9 +272,9 @@ internal struct PyBytesData: PyStringImpl {
   /// |  bytes(int) -> bytes object of size given by the parameter initialized with null bytes
   /// |  bytes() -> empty bytes object
   /// ```
-  internal static func new(object: PyObject?,
-                           encoding: PyObject?,
-                           errors: PyObject?) -> PyResult<Data> {
+  internal static func handleNewArgs(object: PyObject?,
+                                     encoding: PyObject?,
+                                     errors: PyObject?) -> PyResult<Data> {
     guard let object = object else {
       return .value(Data())
     }

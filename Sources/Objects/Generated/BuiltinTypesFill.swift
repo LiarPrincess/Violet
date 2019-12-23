@@ -148,7 +148,9 @@ internal enum BuiltinTypesFill {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyByteArray.getClass, castSelf: Cast.asPyByteArray)
 
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type.context, typeName: "__init__", doc: nil, fn: PyByteArray.pyInit(zelf:args:kwargs:))
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyByteArray.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PyByteArray.isEqual(_:), castSelf: Cast.asPyByteArray)
     dict["__ne__"] = PyBuiltinFunction.wrap(type.context, name: "__ne__", doc: nil, fn: PyByteArray.isNotEqual(_:), castSelf: Cast.asPyByteArray)
@@ -240,6 +242,7 @@ internal enum BuiltinTypesFill {
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyBytes.getClass, castSelf: Cast.asPyBytes)
 
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyBytes.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PyBytes.isEqual(_:), castSelf: Cast.asPyBytes)
     dict["__ne__"] = PyBuiltinFunction.wrap(type.context, name: "__ne__", doc: nil, fn: PyBytes.isNotEqual(_:), castSelf: Cast.asPyBytes)

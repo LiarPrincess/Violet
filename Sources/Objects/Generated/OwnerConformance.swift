@@ -114,7 +114,9 @@ extension PyByteArray:
   __delitem__Owner,
   clearOwner,
   reverseOwner,
-  copyOwner
+  copyOwner,
+  __init__Owner,
+  __new__Owner
 { }
 
 // MARK: - ByteArrayIterator
@@ -170,7 +172,8 @@ extension PyBytes:
   __add__Owner,
   __mul__Owner,
   __rmul__Owner,
-  __iter__Owner
+  __iter__Owner,
+  __new__Owner
 { }
 
 // MARK: - BytesIterator

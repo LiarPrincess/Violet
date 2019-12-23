@@ -576,6 +576,65 @@ public class PyByteArray: PyObject, PyBytesType {
     return PyByteArrayIterator(bytes: self)
   }
 
+  // MARK: - Python new
+
+  // sourcery: pymethod = __new__
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
+    let isBuiltin = type === type.builtins.bytes
+    let alloca = isBuiltin ? newByteArray(type:value:) : PyByteArrayHeap.init(type:value:)
+
+    let data = Data()
+    return .value(alloca(type, data))
+  }
+
+  private static func newByteArray(type: PyType, value: Data) -> PyByteArray {
+    return type.builtins.newByteArray(value)
+  }
+
+  // MARK: - Python init
+
+  private static let initArgumentsParser = ArgumentParser.createOrFatal(
+    arguments: ["source", "encoding", "errors"],
+    format: "|Oss:bytearray"
+  )
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PyByteArray,
+                              args: [PyObject],
+                              kwargs: PyDictData?) -> PyResult<PyNone> {
+    switch PyByteArray.initArgumentsParser.parse(args: args, kwargs: kwargs) {
+    case let .value(bind):
+      assert(bind.count <= 3, "Invalid argument count returned from parser.")
+      let arg0 = bind.count >= 1 ? bind[0] : nil
+      let arg1 = bind.count >= 2 ? bind[1] : nil
+      let arg2 = bind.count >= 3 ? bind[2] : nil
+      return PyByteArray.pyInit(zelf: zelf,
+                                object: arg0,
+                                encoding: arg1,
+                                errors: arg2)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private static func pyInit(zelf: PyByteArray,
+                             object: PyObject?,
+                             encoding: PyObject?,
+                             errors: PyObject?) -> PyResult<PyNone> {
+    switch PyBytesData.handleNewArgs(object: object,
+                                     encoding: encoding,
+                                     errors: errors) {
+    case let .value(data):
+      zelf.data = PyBytesData(data)
+      return .value(zelf.builtins.none)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   // MARK: Methods that are not in PyBytes
 
   // MARK: - Append

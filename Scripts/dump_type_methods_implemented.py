@@ -150,6 +150,8 @@ types = {
     '__mul__',
     '__rmul__',
     '__iter__',
+    '__new__',
+    '__init__',
     'append',
     'insert',
     'remove',
@@ -219,6 +221,7 @@ types = {
     '__mul__',
     '__rmul__',
     '__iter__',
+    '__new__',
   ],
   bytes_iterator: [
     '__class__',

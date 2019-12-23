@@ -685,10 +685,10 @@ public class PyString: PyObject {
     }
   }
 
-  internal static func pyNew(type: PyType,
-                             object: PyObject?,
-                             encoding: PyObject?,
-                             errors: PyObject?) -> PyResult<PyObject> {
+  private static func pyNew(type: PyType,
+                            object: PyObject?,
+                            encoding: PyObject?,
+                            errors: PyObject?) -> PyResult<PyObject> {
     let isBuiltin = type === type.builtins.str
     let alloca = isBuiltin ? newString(type:value:) : PyStringHeap.init(type:value:)
 
