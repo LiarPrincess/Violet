@@ -47,6 +47,10 @@ internal final class PyByteArrayHeap: PyByteArray, HeapType {
   internal lazy var attributes = Attributes()
 }
 
+// MARK: - ByteArrayIterator
+
+// PyByteArrayIterator is not a base type.
+
 // MARK: - Bytes
 
 /// Type used when we subclass builtin `bytes` class.
@@ -56,6 +60,10 @@ internal final class PyBytesHeap: PyBytes, HeapType {
   /// Python `__dict__` property.
   internal lazy var attributes = Attributes()
 }
+
+// MARK: - BytesIterator
+
+// PyBytesIterator is not a base type.
 
 // MARK: - CallableIterator
 

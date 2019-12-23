@@ -19,6 +19,8 @@ dict_values = type({}.values())
 dict_valueiterator = type(iter({}.values()))
 
 str_iterator = type(iter(''))
+bytes_iterator = type(iter(b''))
+bytearray_iterator = type(iter(bytearray()))
 
 
 
@@ -147,6 +149,7 @@ types = {
     '__add__',
     '__mul__',
     '__rmul__',
+    '__iter__',
     'append',
     'insert',
     'remove',
@@ -156,6 +159,12 @@ types = {
     'clear',
     'reverse',
     'copy',
+  ],
+  bytearray_iterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
   ],
   bytes: [
     '__class__',
@@ -209,6 +218,13 @@ types = {
     '__add__',
     '__mul__',
     '__rmul__',
+    '__iter__',
+  ],
+  bytes_iterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
   ],
   callable_iterator: [
     '__class__',

@@ -17,7 +17,9 @@ public final class BuiltinTypes {
   public let bool: PyType
   public let builtinFunction: PyType
   public let bytearray: PyType
+  public let bytearray_iterator: PyType
   public let bytes: PyType
+  public let bytes_iterator: PyType
   public let callable_iterator: PyType
   public let code: PyType
   public let complex: PyType
@@ -71,7 +73,9 @@ public final class BuiltinTypes {
     // 'self.bool' has to be last because it uses 'self.int' as base!
     self.builtinFunction = PyType.initBuiltinType(name: "builtinFunction", type: self.type, base: self.object)
     self.bytearray = PyType.initBuiltinType(name: "bytearray", type: self.type, base: self.object)
+    self.bytearray_iterator = PyType.initBuiltinType(name: "bytearray_iterator", type: self.type, base: self.object)
     self.bytes = PyType.initBuiltinType(name: "bytes", type: self.type, base: self.object)
+    self.bytes_iterator = PyType.initBuiltinType(name: "bytes_iterator", type: self.type, base: self.object)
     self.callable_iterator = PyType.initBuiltinType(name: "callable_iterator", type: self.type, base: self.object)
     self.code = PyType.initBuiltinType(name: "code", type: self.type, base: self.object)
     self.complex = PyType.initBuiltinType(name: "complex", type: self.type, base: self.object)
@@ -121,7 +125,9 @@ public final class BuiltinTypes {
     BuiltinTypesFill.bool(self.bool)
     BuiltinTypesFill.builtinFunction(self.builtinFunction)
     BuiltinTypesFill.bytearray(self.bytearray)
+    BuiltinTypesFill.bytearray_iterator(self.bytearray_iterator)
     BuiltinTypesFill.bytes(self.bytes)
+    BuiltinTypesFill.bytes_iterator(self.bytes_iterator)
     BuiltinTypesFill.callable_iterator(self.callable_iterator)
     BuiltinTypesFill.code(self.code)
     BuiltinTypesFill.complex(self.complex)
@@ -169,7 +175,9 @@ public final class BuiltinTypes {
       self.bool,
       self.builtinFunction,
       self.bytearray,
+      self.bytearray_iterator,
       self.bytes,
+      self.bytes_iterator,
       self.callable_iterator,
       self.code,
       self.complex,

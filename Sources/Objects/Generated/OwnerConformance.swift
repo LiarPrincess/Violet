@@ -106,6 +106,7 @@ extension PyByteArray:
   __add__Owner,
   __mul__Owner,
   __rmul__Owner,
+  __iter__Owner,
   appendOwner,
   insertOwner,
   removeOwner,
@@ -114,6 +115,15 @@ extension PyByteArray:
   clearOwner,
   reverseOwner,
   copyOwner
+{ }
+
+// MARK: - ByteArrayIterator
+
+extension PyByteArrayIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
 { }
 
 // MARK: - Bytes
@@ -159,7 +169,17 @@ extension PyBytes:
   countRangedOwner,
   __add__Owner,
   __mul__Owner,
-  __rmul__Owner
+  __rmul__Owner,
+  __iter__Owner
+{ }
+
+// MARK: - BytesIterator
+
+extension PyBytesIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner
 { }
 
 // MARK: - CallableIterator

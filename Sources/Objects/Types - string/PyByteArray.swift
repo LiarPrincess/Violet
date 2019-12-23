@@ -569,6 +569,13 @@ public class PyByteArray: PyObject, PyBytesType {
     return self.data.rmul(other).map(self.builtins.newBytes(_:))
   }
 
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return PyByteArrayIterator(bytes: self)
+  }
+
   // MARK: Methods that are not in PyBytes
 
   // MARK: - Append

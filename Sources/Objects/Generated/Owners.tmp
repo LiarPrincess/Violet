@@ -117,6 +117,7 @@ PyByteArray|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<Data>
 PyByteArray|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyByteArray|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyByteArray|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyByteArray|PyObject|func|__iter__|iter() -> PyObject
 PyByteArray|PyObject|func|append|append(_ element: PyObject) -> PyResult<PyNone>
 PyByteArray|PyObject|func|insert|insert(at index: PyObject, item: PyObject) -> PyResult<PyNone>
 PyByteArray|PyObject|func|remove|remove(_ value: PyObject) -> PyResult<PyNone>
@@ -126,6 +127,11 @@ PyByteArray|PyObject|func|__delitem__|delItem(at index: PyObject) -> PyResult<Py
 PyByteArray|PyObject|func|clear|clear() -> PyResult<PyNone>
 PyByteArray|PyObject|func|reverse|reverse() -> PyResult<PyNone>
 PyByteArray|PyObject|func|copy|copy() -> PyObject
+PyByteArrayIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyByteArrayIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyByteArrayIterator|PyObject|func|__iter__|iter() -> PyObject
+PyByteArrayIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyBytes|PyObject|get|__class__|getClass() -> PyType
 
 PyBytes|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -178,6 +184,12 @@ PyBytes|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<Data>
 PyBytes|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyBytes|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyBytes|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyBytes|PyObject|func|__iter__|iter() -> PyObject
+PyBytesIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyBytesIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyBytesIterator|PyObject|func|__iter__|iter() -> PyObject
+PyBytesIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyCallableIterator|PyObject|get|__class__|getClass() -> PyType
 
 PyCallableIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

@@ -578,4 +578,11 @@ public class PyBytes: PyObject, PyBytesType {
   internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
     return self.data.rmul(other).map(self.builtins.newBytes(_:))
   }
+
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return PyBytesIterator(bytes: self)
+  }
 }

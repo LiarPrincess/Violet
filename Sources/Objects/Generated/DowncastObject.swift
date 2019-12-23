@@ -53,10 +53,22 @@ internal enum Cast {
     return cast(object, as: PyByteArray.self, typeName: "bytearray", methodName: methodName)
   }
 
+  // MARK: - ByteArrayIterator
+
+  internal static func asPyByteArrayIterator(_ object: PyObject, methodName: String) -> PyResult<PyByteArrayIterator> {
+    return cast(object, as: PyByteArrayIterator.self, typeName: "bytearray_iterator", methodName: methodName)
+  }
+
   // MARK: - Bytes
 
   internal static func asPyBytes(_ object: PyObject, methodName: String) -> PyResult<PyBytes> {
     return cast(object, as: PyBytes.self, typeName: "bytes", methodName: methodName)
+  }
+
+  // MARK: - BytesIterator
+
+  internal static func asPyBytesIterator(_ object: PyObject, methodName: String) -> PyResult<PyBytesIterator> {
+    return cast(object, as: PyBytesIterator.self, typeName: "bytes_iterator", methodName: methodName)
   }
 
   // MARK: - CallableIterator

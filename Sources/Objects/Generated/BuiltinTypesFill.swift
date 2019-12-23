@@ -199,6 +199,7 @@ internal enum BuiltinTypesFill {
     dict["__add__"] = PyBuiltinFunction.wrap(type.context, name: "__add__", doc: nil, fn: PyByteArray.add(_:), castSelf: Cast.asPyByteArray)
     dict["__mul__"] = PyBuiltinFunction.wrap(type.context, name: "__mul__", doc: nil, fn: PyByteArray.mul(_:), castSelf: Cast.asPyByteArray)
     dict["__rmul__"] = PyBuiltinFunction.wrap(type.context, name: "__rmul__", doc: nil, fn: PyByteArray.rmul(_:), castSelf: Cast.asPyByteArray)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyByteArray.iter, castSelf: Cast.asPyByteArray)
     dict["append"] = PyBuiltinFunction.wrap(type.context, name: "append", doc: nil, fn: PyByteArray.append(_:), castSelf: Cast.asPyByteArray)
     dict["insert"] = PyBuiltinFunction.wrap(type.context, name: "insert", doc: nil, fn: PyByteArray.insert(at:item:), castSelf: Cast.asPyByteArray)
     dict["remove"] = PyBuiltinFunction.wrap(type.context, name: "remove", doc: nil, fn: PyByteArray.remove(_:), castSelf: Cast.asPyByteArray)
@@ -208,6 +209,23 @@ internal enum BuiltinTypesFill {
     dict["clear"] = PyBuiltinFunction.wrap(type.context, name: "clear", doc: nil, fn: PyByteArray.clear, castSelf: Cast.asPyByteArray)
     dict["reverse"] = PyBuiltinFunction.wrap(type.context, name: "reverse", doc: nil, fn: PyByteArray.reverse, castSelf: Cast.asPyByteArray)
     dict["copy"] = PyBuiltinFunction.wrap(type.context, name: "copy", doc: nil, fn: PyByteArray.copy, castSelf: Cast.asPyByteArray)
+  }
+
+  // MARK: - ByteArrayIterator
+
+  internal static func bytearray_iterator(_ type: PyType) {
+    type.setBuiltinTypeDoc(nil)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
+
+    let dict = type.getDict()
+    dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyByteArrayIterator.getClass, castSelf: Cast.asPyByteArrayIterator)
+
+
+
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyByteArrayIterator.getAttribute(name:), castSelf: Cast.asPyByteArrayIterator)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyByteArrayIterator.iter, castSelf: Cast.asPyByteArrayIterator)
+    dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyByteArrayIterator.next, castSelf: Cast.asPyByteArrayIterator)
   }
 
   // MARK: - Bytes
@@ -273,6 +291,24 @@ internal enum BuiltinTypesFill {
     dict["__add__"] = PyBuiltinFunction.wrap(type.context, name: "__add__", doc: nil, fn: PyBytes.add(_:), castSelf: Cast.asPyBytes)
     dict["__mul__"] = PyBuiltinFunction.wrap(type.context, name: "__mul__", doc: nil, fn: PyBytes.mul(_:), castSelf: Cast.asPyBytes)
     dict["__rmul__"] = PyBuiltinFunction.wrap(type.context, name: "__rmul__", doc: nil, fn: PyBytes.rmul(_:), castSelf: Cast.asPyBytes)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyBytes.iter, castSelf: Cast.asPyBytes)
+  }
+
+  // MARK: - BytesIterator
+
+  internal static func bytes_iterator(_ type: PyType) {
+    type.setBuiltinTypeDoc(nil)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
+
+    let dict = type.getDict()
+    dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyBytesIterator.getClass, castSelf: Cast.asPyBytesIterator)
+
+
+
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyBytesIterator.getAttribute(name:), castSelf: Cast.asPyBytesIterator)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyBytesIterator.iter, castSelf: Cast.asPyBytesIterator)
+    dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyBytesIterator.next, castSelf: Cast.asPyBytesIterator)
   }
 
   // MARK: - CallableIterator
