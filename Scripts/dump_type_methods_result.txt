@@ -33,7 +33,6 @@ bytearray
     decode
     extend
     hex
-    join
     translate
 
 bytearray_iterator
@@ -50,7 +49,6 @@ bytes
     __rmod__
     decode
     hex
-    join
     translate
 
 bytes_iterator
@@ -268,7 +266,6 @@ str
     encode
     format
     format_map
-    join
     translate
 
 str_iterator

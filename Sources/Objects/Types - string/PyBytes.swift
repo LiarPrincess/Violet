@@ -544,6 +544,13 @@ public class PyBytes: PyObject, PyBytesType {
     return self.data.count(element, start: start, end: end)
   }
 
+  // MARK: - Join
+
+  // sourcery: pymethod = join
+  internal func join(iterable: PyObject) -> PyResult<Data> {
+    return self.data.join(iterable: iterable)
+  }
+
   // MARK: - Replace
 
   // sourcery: pymethod = replace

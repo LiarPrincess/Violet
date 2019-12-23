@@ -1644,6 +1644,34 @@ extension PyStringImpl {
     return result
   }
 
+  // MARK: - Join
+
+  internal func join(iterable: PyObject) -> PyResult<Builder.Result> {
+    let builtins = iterable.builtins
+
+    var index = 0
+    let b = builtins.reduce(iterable: iterable, into: Builder()) { builder, object in
+      let isFirst = index == 0
+      if !isFirst {
+        builder.append(contentsOf: self.scalars)
+      }
+
+      guard let string = Self.extractSelf(from: object) else {
+        let s = Self.typeName
+        let t = object.typeName
+        let msg = "sequence item \(index): expected a \(s)-like object, \(t) found"
+        return .error(.typeError(msg))
+      }
+
+      index += 1
+      builder.append(contentsOf: string.scalars)
+      return .goToNextElement
+    }
+
+
+    return b.map { $0.result }
+  }
+
   // MARK: - Replace
 
   internal func replace(old: PyObject,

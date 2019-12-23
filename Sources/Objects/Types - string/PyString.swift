@@ -620,6 +620,13 @@ public class PyString: PyObject {
     return self.data.count(element, start: start, end: end)
   }
 
+  // MARK: - Join
+
+  // sourcery: pymethod = join
+  internal func join(iterable: PyObject) -> PyResult<String> {
+    return self.data.join(iterable: iterable)
+  }
+
   // MARK: - Replace
 
   // sourcery: pymethod = replace

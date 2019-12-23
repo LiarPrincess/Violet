@@ -61,7 +61,7 @@ extension Builtins {
   }
 
   internal func newList(iterable: PyObject) -> PyResult<PyList> {
-    return self.iterate(iterable: iterable).map(self.newList)
+    return self.toArray(iterable: iterable).map(self.newList)
   }
 
   /// int PyList_Append(PyObject *op, PyObject *newitem)
@@ -410,7 +410,7 @@ extension Builtins {
     return .typeError("expected \(typeName), but received a '\(object.typeName)'")
   }
 
-  internal func iterate(iterable: PyObject) -> PyResult<[PyObject]> {
+  internal func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
     return self.reduce(iterable: iterable, into: [PyObject]()) { acc, object in
       acc.append(object)
       return .goToNextElement

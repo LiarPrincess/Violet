@@ -113,6 +113,7 @@ PyByteArray|PyObject|func|partition|partition(separator: PyObject) -> PyResult<P
 PyByteArray|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
 PyByteArray|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<Data>
 PyByteArray|PyObject|func|count|count(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyByteArray|PyObject|func|join|join(iterable: PyObject) -> PyResult<Data>
 PyByteArray|PyObject|func|replace|replace(old: PyObject,                        new: PyObject,                        count: PyObject?) -> PyResult<Data>
 PyByteArray|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<Data>
 PyByteArray|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
@@ -183,6 +184,7 @@ PyBytes|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTup
 PyBytes|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
 PyBytes|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<Data>
 PyBytes|PyObject|func|count|count(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyBytes|PyObject|func|join|join(iterable: PyObject) -> PyResult<Data>
 PyBytes|PyObject|func|replace|replace(old: PyObject,                        new: PyObject,                        count: PyObject?) -> PyResult<Data>
 PyBytes|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<Data>
 PyBytes|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
@@ -706,6 +708,7 @@ PyString|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTu
 PyString|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
 PyString|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<String>
 PyString|PyObject|func|count|count(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
+PyString|PyObject|func|join|join(iterable: PyObject) -> PyResult<String>
 PyString|PyObject|func|replace|replace(old: PyObject,                        new: PyObject,                        count: PyObject?) -> PyResult<String>
 PyString|PyObject|func|zfill|zfill(width: PyObject) -> PyResult<String>
 PyString|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
