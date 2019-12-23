@@ -1,3 +1,7 @@
+// In CPython:
+// Python -> builtinmodule.c
+// https://docs.python.org/3/library/functions.html
+
 extension Builtins {
 
   // MARK: - Any
@@ -6,24 +10,11 @@ extension Builtins {
   /// any(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#any)
   public func any(iterable: PyObject) -> PyResult<Bool> {
-    let iter: PyObject
-    switch self.iter(from: iterable) {
-    case let .value(i): iter = i
-    case let .error(e): return .error(e)
-    }
-
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let o):
-        switch self.isTrueBool(o) {
-        case .value(true):  return .value(true)
-        case .value(false): break // check next element
-        case .error(let e): return .error(e)
-        }
-      case .error(.stopIteration):
-        return .value(false)
-      case .error(let e):
-        return .error(e)
+    return self.reduce(iterable: iterable, initial: false) { _, object in
+      switch self.isTrueBool(object) {
+      case .value(true):  return .finish(true)
+      case .value(false): return .goToNextElement
+      case .error(let e): return .error(e)
       }
     }
   }
@@ -34,24 +25,11 @@ extension Builtins {
   /// all(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#all)
   public func all(iterable: PyObject) -> PyResult<Bool> {
-    let iter: PyObject
-    switch self.iter(from: iterable) {
-    case let .value(i): iter = i
-    case let .error(e): return .error(e)
-    }
-
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let o):
-        switch self.isTrueBool(o) {
-        case .value(true): break // check next element
-        case .value(false): return .value(false)
-        case .error(let e): return .error(e)
-        }
-      case .error(.stopIteration):
-        return .value(true)
-      case .error(let e):
-        return .error(e)
+    return self.reduce(iterable: iterable, initial: true) { _, object in
+      switch self.isTrueBool(object) {
+      case .value(true): return .goToNextElement
+      case .value(false): return .finish(false)
+      case .error(let e): return .error(e)
       }
     }
   }
@@ -82,29 +60,24 @@ extension Builtins {
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
   public func sum(iterable: PyObject, start: PyObject?) -> PyResult<PyObject> {
-    // TODO: Add bytes and byte array
     if start is PyString {
       return .typeError("sum() can't sum strings [use ''.join(seq) instead]")
     }
 
-    let iter: PyObject
-    switch self.iter(from: iterable) {
-    case let .value(i): iter = i
-    case let .error(e): return .error(e)
+    if start is PyBytes {
+      return .typeError("sum() can't sum bytes [use b''.join(seq) instead]")
     }
 
-    var result = start ?? self.newInt(0)
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let item):
-        switch self.add(left: result, right: item) {
-        case let .value(x): result = x
-        case let .error(e): return .error(e)
-        }
-      case .error(.stopIteration):
-        return .value(result)
-      case .error(let e):
-        return .error(e)
+    if start is PyByteArray {
+      return .typeError("sum() can't sum bytearray [use b''.join(seq) instead]")
+    }
+
+    let initial = start ?? self.newInt(0)
+
+    return self.reduce(iterable: iterable, initial: initial) { acc, object in
+      switch self.add(left: acc, right: object) {
+      case let .value(x): return .setAcc(x)
+      case let .error(e): return .error(e)
       }
     }
   }

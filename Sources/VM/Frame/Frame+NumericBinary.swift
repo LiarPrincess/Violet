@@ -220,11 +220,11 @@ extension Frame {
       let result = self.builtins.is(left: left, right: right)
       return .value(self.builtins.newBool(!result))
     case .in:
-      let result = self.builtins.contains(left, element: right)
+      let result = self.builtins.contains(iterable: left, element: right)
       return result.map(self.builtins.newBool)
     case .notIn:
-      let result = self.builtins.contains(left, element: right)
-      return result.map { !$0 } .map(self.builtins.newBool)
+      let result = self.builtins.contains(iterable: left, element: right)
+      return result.map { !$0 }.map(self.builtins.newBool)
     case .exceptionMatch:
       // ceval.c -> case PyCmp_EXC_MATCH:
       fatalError()

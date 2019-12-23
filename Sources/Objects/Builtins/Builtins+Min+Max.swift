@@ -77,35 +77,28 @@ extension MinMaxImpl {
                                default: PyObject?) -> PyResult<PyObject> {
     let builtins = iterable.builtins
 
-    let iter: PyObject
-    switch builtins.iter(from: iterable) {
-    case let .value(i): iter = i
-    case let .error(e): return .error(e)
+    let initial: PyObject? = nil
+    let acc = builtins.reduce(iterable: iterable, initial: initial) { acc, object in
+      switch Self.compare(current: acc, object: object, key: key) {
+      case let .value(r): return .setAcc(r)
+      case let .error(e): return .error(e)
+      }
     }
 
-    var result: PyObject?
-    while true {
-      switch builtins.next(iterator: iter) {
-      case .value(let arg):
-        switch Self.compare(current: result, object: arg, key: key) {
-        case let .value(r): result = r
-        case let .error(e): return .error(e)
-        }
-
-      case .error(.stopIteration):
-        if let r = result {
-          return .value(r)
-        }
-
-        if let d = `default` {
-          return .value(d)
-        }
-
-        return Self.emptyCollectionError()
-
-      case .error(let e):
-        return .error(e)
+    switch acc {
+    case let .value(result):
+      if let r = result {
+        return .value(r)
       }
+
+      if let d = `default` {
+        return .value(d)
+      }
+
+      return Self.emptyCollectionError()
+
+    case let .error(e):
+      return .error(e)
     }
   }
 

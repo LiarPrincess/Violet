@@ -80,4 +80,11 @@ extension Builtins {
       return .error(e)
     }
   }
+
+  public func hasIter(object: PyObject) -> Bool {
+    switch self.iter(from: object) {
+    case .value: return true
+    case .error: return false
+    }
+  }
 }

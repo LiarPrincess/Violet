@@ -229,13 +229,13 @@ extension Builtins {
 
   /// int
   /// PySequence_Contains(PyObject *seq, PyObject *ob)
-  public func contains(_ collection: PyObject,
+  public func contains(iterable: PyObject,
                        element: PyObject) -> PyResult<Bool> {
-    if let owner = collection as? __contains__Owner {
+    if let owner = iterable as? __contains__Owner {
       return owner.contains(element)
     }
 
-    switch self.callMethod(on: collection, selector: "__contains__", arg: element) {
+    switch self.callMethod(on: iterable, selector: "__contains__", arg: element) {
     case .value(let o):
       return self.isTrueBool(o)
     case .notImplemented, .missingMethod:
@@ -244,56 +244,29 @@ extension Builtins {
       return .error(e)
     }
 
-    return self.iterSearch(collection, element: element)
+    return self.iterSearch(iterable: iterable, element: element)
   }
 
   /// Py_ssize_t
   /// _PySequence_IterSearch(PyObject *seq, PyObject *obj, int operation)
-  private func iterSearch(_ collection: PyObject,
+  private func iterSearch(iterable: PyObject,
                           element: PyObject) -> PyResult<Bool> {
-    let iter: PyObject
-    switch self.iter(from: collection) {
-    case .value(let i): iter = i
-    case .error:
-      return .typeError("argument of type '\(collection.typeName)' is not iterable")
-    }
-
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let o):
-        switch self.isEqualBool(left: o, right: element) {
-        case .value(true): return .value(true)
-        case .value(false): return .value(false)
-        case .error(let e): return .error(e)
-        }
-      case .error(.stopIteration):
-        return .value(false)
-      case .error(let e):
-        return .error(e)
+    return self.reduce(iterable: iterable, initial: false) { _, object in
+      switch self.isEqualBool(left: object, right: element) {
+      case .value(true): return .finish(true)
+      case .value(false): return .goToNextElement
+      case .error(let e): return .error(e)
       }
     }
   }
 
-  public func contains(_ collection: PyObject,
+  public func contains(iterable: PyObject,
                        allFrom subset: PyObject) -> PyResult<Bool> {
-    let iter: PyObject
-    switch self.iter(from: subset) {
-    case let .value(i): iter = i
-    case let .error(e): return .error(e)
-    }
-
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let o):
-        switch self.contains(collection, element: o) {
-        case .value(true): break // check next element
-        case .value(false): return .value(false)
-        case .error(let e): return .error(e)
-        }
-      case .error(.stopIteration):
-        return .value(true)
-      case .error(let e):
-        return .error(e)
+    return self.reduce(iterable: subset, initial: true) { _, object in
+      switch self.contains(iterable: iterable, element: object) {
+      case .value(true): return .setAcc(true)  // just go to next element
+      case .value(false): return .goToNextElement
+      case .error(let e): return .error(e)
       }
     }
   }
@@ -327,6 +300,104 @@ extension Builtins {
     }
   }
 
+  // MARK: - Reduce
+
+  public enum ReduceStep<Acc> {
+    /// Go to the next item without changing `acc`.
+    case goToNextElement
+    /// Go to the next item using given `acc`.
+    case setAcc(Acc)
+    /// End reduction with given `acc`.
+    /// Use this if you already have the result and don't need to iterate anymore.
+    case finish(Acc)
+    /// Finish reduction with given error.
+    case error(PyErrorEnum)
+  }
+
+  public typealias ReduceFn<Acc> = (Acc, PyObject) -> ReduceStep<Acc>
+
+  /// Returns the result of combining the elements of the sequence
+  /// using the given closure.
+  ///
+  /// This method is similiar to `Array.reduce(_:_:)`.
+  public func reduce<Acc>(iterable: PyObject,
+                          initial: Acc,
+                          fn: ReduceFn<Acc>)  -> PyResult<Acc> {
+    let iter: PyObject
+    switch self.iter(from: iterable) {
+    case let .value(i): iter = i
+    case let .error(e): return .error(e)
+    }
+
+    var acc = initial
+    while true {
+      switch self.next(iterator: iter) {
+      case .value(let o):
+        switch fn(acc, o) {
+        case .goToNextElement: break // do nothing
+        case .setAcc(let a): acc = a
+        case .finish(let a): return .value(a)
+        case .error(let e): return .error(e)
+        }
+
+      case .error(.stopIteration):
+        return .value(acc)
+
+      case .error(let e):
+        return .error(e)
+      }
+    }
+  }
+
+  // MARK: - Reduce into
+
+  public enum ReduceIntoStep<Acc> {
+    /// Go to the next item.
+    case goToNextElement
+    /// End reduction.
+    /// Use this if you already have the result and don't need to iterate anymore.
+    case finish
+    /// Finish reduction with given error.
+    case error(PyErrorEnum)
+  }
+
+  public typealias ReduceIntoFn<Acc> = (inout Acc, PyObject) -> ReduceIntoStep<Acc>
+
+  /// Returns the result of combining the elements of the sequence
+  /// using the given closure.
+  ///
+  /// This method is similiar to `Array.reduce(into:_:)`.
+  ///
+  /// It is preferred over `reduce(_:_:)` for efficiency when the result
+  /// is a copy-on-write type, for example an `Array` or a `Dictionary`.
+  public func reduce<Acc>(iterable: PyObject,
+                          into initial: Acc,
+                          fn: ReduceIntoFn<Acc>)  -> PyResult<Acc> {
+    let iter: PyObject
+    switch self.iter(from: iterable) {
+    case let .value(i): iter = i
+    case let .error(e): return .error(e)
+    }
+
+    var acc = initial
+    while true {
+      switch self.next(iterator: iter) {
+      case .value(let o):
+        switch fn(&acc, o) {
+        case .goToNextElement: break // mutation is our side-effect
+        case .finish: return .value(acc)
+        case .error(let e): return .error(e)
+        }
+
+      case .error(.stopIteration):
+        return .value(acc)
+
+      case .error(let e):
+        return .error(e)
+      }
+    }
+  }
+
   // MARK: - Helpers
 
   private func cast<T>(_ object: PyObject,
@@ -340,19 +411,9 @@ extension Builtins {
   }
 
   internal func iterate(iterable: PyObject) -> PyResult<[PyObject]> {
-    let iter: PyObject
-    switch self.iter(from: iterable) {
-    case let .value(i): iter = i
-    case let .error(e): return .error(e)
-    }
-
-    var elements = [PyObject]()
-    while true {
-      switch self.next(iterator: iter) {
-      case .value(let o): elements.append(o)
-      case .error(.stopIteration): return .value(elements)
-      case .error(let e): return .error(e)
-      }
+    return self.reduce(iterable: iterable, into: [PyObject]()) { acc, object in
+      acc.append(object)
+      return .goToNextElement
     }
   }
 

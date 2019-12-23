@@ -329,27 +329,25 @@ internal struct PyBytesData: PyStringImpl {
   private static func newFromIterable(object: PyObject) -> NewFromResult {
     let builtins = object.builtins
 
-    let iter: PyObject
-    switch builtins.iter(from: object) {
-    case .value(let i): iter = i
-    case .error: return .tryOther
+    guard builtins.hasIter(object: object) else {
+      return .tryOther
     }
 
-    var data = Data()
-    while true {
-      switch builtins.next(iterator: iter) {
-      case .value(let o):
-        switch PyBytesData.asByte(o) {
-        case let .value(byte): data.append(byte)
-        case let .error(e): return .error(e)
-        }
-
-      case .error(.stopIteration):
-        return .bytes(data)
-
-      case .error(let e):
+    let acc = builtins.reduce(iterable: object, into: Data()) { data, object in
+      switch PyBytesData.asByte(object) {
+      case let .value(byte):
+        data.append(byte)
+        return .goToNextElement
+      case let .error(e):
         return .error(e)
       }
+    }
+
+    switch acc {
+    case let .value(data):
+      return .bytes(data)
+    case let .error(e):
+      return .error(e)
     }
   }
 
