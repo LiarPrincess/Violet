@@ -1,6 +1,7 @@
 import Core
 import Foundation
 
+// swiftlint:disable file_length
 // swiftlint:disable yoda_condition
 
 /// Protocol implemented by both `bytes` and `bytesrray`.
@@ -97,7 +98,7 @@ internal struct PyBytesData: PyStringImpl {
   // MARK: - Append
 
   internal mutating func append(_ value: PyObject) -> PyResult<()> {
-    switch self.asByte(value) {
+    switch PyBytesData.asByte(value) {
     case let .value(b):
       self.values.append(b)
       return .value()
@@ -117,7 +118,7 @@ internal struct PyBytesData: PyStringImpl {
     }
 
     let byte: UInt8
-    switch self.asByte(item) {
+    switch PyBytesData.asByte(item) {
     case let .value(b): byte = b
     case let .error(e): return .error(e)
     }
@@ -135,7 +136,7 @@ internal struct PyBytesData: PyStringImpl {
 
   // sourcery: pymethod = pop
   internal mutating func remove(_ value: PyObject) -> PyResult<()> {
-    switch self.asByte(value) {
+    switch PyBytesData.asByte(value) {
     case let .value(b):
       guard let index = self.values.firstIndex(of: b) else {
         return .valueError("value not found in bytearray")
@@ -200,7 +201,7 @@ internal struct PyBytesData: PyStringImpl {
     }
 
     let byte: UInt8
-    switch self.asByte(value) {
+    switch PyBytesData.asByte(value) {
     case let .value(b): byte = b
     case let .error(e): return .error(e)
     }
@@ -258,15 +259,110 @@ internal struct PyBytesData: PyStringImpl {
     fatalError(msg)
   }
 
-  // MARK: - Helpers
+  // MARK: - New
 
-  private func asByte(_ value: PyObject) -> PyResult<UInt8> {
-    guard let int = value as? PyInt else {
-      let t = value.typeName
-      return .typeError("'\(t)' object cannot be interpreted as an integer")
+  /// Helper for `__new__` method.
+  ///
+  ///```
+  /// >>> help(bytes)
+  /// class bytes(object)
+  /// |  bytes(iterable_of_ints) -> bytes
+  /// |  bytes(string, encoding[, errors]) -> bytes
+  /// |  bytes(bytes_or_buffer) -> immutable copy of bytes_or_buffer
+  /// |  bytes(int) -> bytes object of size given by the parameter initialized with null bytes
+  /// |  bytes() -> empty bytes object
+  /// ```
+  internal static func new(object: PyObject?,
+                           encoding: PyObject?,
+                           errors: PyObject?) -> PyResult<Data> {
+    guard let object = object else {
+      return .value(Data())
     }
 
-    guard let byte = UInt8(exactly: int.value) else {
+    guard encoding == nil && errors == nil else {
+      fatalError("Violet currently does not support 'encoding' and 'errors' parameters")
+    }
+
+    if let bytes = object as? PyBytesType {
+      return .value(bytes.data.values)
+    }
+
+    switch PyBytesData.newFromCount(object: object) {
+    case .bytes(let data): return .value(data)
+    case .tryOther: break
+    case .error(let e): return .error(e)
+    }
+
+    switch PyBytesData.newFromIterable(object: object) {
+    case .bytes(let data): return .value(data)
+    case .tryOther: break
+    case .error(let e): return .error(e)
+    }
+
+    return .typeError("cannot convert '\(object.typeName)' object to bytes")
+  }
+
+  private enum NewFromResult {
+    case bytes(Data)
+    case tryOther
+    case error(PyErrorEnum)
+  }
+
+  private static func newFromCount(object: PyObject) -> NewFromResult {
+    switch IndexHelper.tryInt(object) {
+    case .value(let count):
+      // swiftlint:disable:next empty_count
+      guard count >= 0 else {
+        return .error(.valueError("negative count"))
+      }
+
+      return .bytes(Data(repeating: 0, count: count))
+
+    case .notIndex:
+      return .tryOther
+
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private static func newFromIterable(object: PyObject) -> NewFromResult {
+    let builtins = object.builtins
+
+    let iter: PyObject
+    switch builtins.iter(from: object) {
+    case .value(let i): iter = i
+    case .error: return .tryOther
+    }
+
+    var data = Data()
+    while true {
+      switch builtins.next(iterator: iter) {
+      case .value(let o):
+        switch PyBytesData.asByte(o) {
+        case let .value(byte): data.append(byte)
+        case let .error(e): return .error(e)
+        }
+
+      case .error(.stopIteration):
+        return .bytes(data)
+
+      case .error(let e):
+        return .error(e)
+      }
+    }
+  }
+
+  // MARK: - Helpers
+
+  internal static func asByte(_ value: PyObject) -> PyResult<UInt8> {
+    let int: Int
+    switch IndexHelper.int(value) {
+    case let .value(i): int = i
+    case let .error(e): return .error(e)
+    }
+
+    guard let byte = UInt8(exactly: int) else {
       return .valueError("byte must be in range(0, 256)")
     }
 

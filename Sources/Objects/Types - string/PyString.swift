@@ -696,14 +696,13 @@ public class PyString: PyObject {
       return .value(alloca(type, ""))
     }
 
-    // TODO: Implement `str.__new__` - encoding and error
+    // TODO: [str.__new__] `encoding` and `error` args (+bytes +bytearray)
     guard encoding == nil && errors == nil else {
-      let msg = "Violet currently does not support 'encoding' and 'errors' parameters"
-      return .valueError(msg)
+      fatalError("Violet currently does not support 'encoding' and 'errors' parameters")
     }
 
     let builtins = type.builtins
-    return builtins.strValue(object).map(builtins.newString)
+    return builtins.strValue(object).map { alloca(type, $0) }
   }
 
   /// Allocate new PyString (it will use 'builtins' cache if possible).

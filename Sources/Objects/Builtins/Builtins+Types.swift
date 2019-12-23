@@ -2,8 +2,6 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-// TODO: Uncomment remaining types
-
 extension Builtins {
 
   // MARK: - Types
@@ -14,11 +12,11 @@ extension Builtins {
 
   // sourcery: pytype: bytearray
   /// class bytearray([source[, encoding[, errors]]])
-  //  public var bytearray: PyType { return self.types.bytearray }
+  public var bytearray: PyType { return self.types.bytearray }
 
   // sourcery: pytype: bytes
   /// class bytes([source[, encoding[, errors]]])
-  //  public var bytes: PyType { return self.types.bytes }
+  public var bytes: PyType { return self.types.bytes }
 
   // sourcery: pytype: complex
   /// class complex([real[, imag]])
