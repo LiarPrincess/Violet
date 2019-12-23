@@ -89,6 +89,13 @@ public class PyByteArray: PyObject, PyBytesType {
     return .value(self.data.compare(to: other.data))
   }
 
+  // MARK: - Hashable
+
+  // sourcery: pymethod = __hash__
+  internal func hash() -> PyResultOrNot<PyHash> {
+    return .typeError("unhashable type: 'bytearray'")
+  }
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__

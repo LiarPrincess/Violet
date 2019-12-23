@@ -74,6 +74,7 @@ PyByteArray|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool
 PyByteArray|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
 PyByteArray|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
 PyByteArray|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyByteArray|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
 PyByteArray|PyObject|func|__repr__|repr() -> PyResult<String>
 PyByteArray|PyObject|func|__str__|str() -> PyResult<String>
 PyByteArray|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
@@ -134,6 +135,7 @@ PyByteArrayIterator|PyObject|get|__class__|getClass() -> PyType
 PyByteArrayIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyByteArrayIterator|PyObject|func|__iter__|iter() -> PyObject
 PyByteArrayIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyByteArrayIterator|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyBytes|PyObject|get|__class__|getClass() -> PyType
 
 PyBytes|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
@@ -193,6 +195,7 @@ PyBytesIterator|PyObject|get|__class__|getClass() -> PyType
 PyBytesIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyBytesIterator|PyObject|func|__iter__|iter() -> PyObject
 PyBytesIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyBytesIterator|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyCallableIterator|PyObject|get|__class__|getClass() -> PyType
 
 PyCallableIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
@@ -715,6 +718,7 @@ PyStringIterator|PyObject|get|__class__|getClass() -> PyType
 PyStringIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyStringIterator|PyObject|func|__iter__|iter() -> PyObject
 PyStringIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyStringIterator|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyTuple|PyObject|get|__class__|getClass() -> PyType
 
 PyTuple|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

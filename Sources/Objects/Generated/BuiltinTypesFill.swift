@@ -158,6 +158,7 @@ internal enum BuiltinTypesFill {
     dict["__le__"] = PyBuiltinFunction.wrap(type.context, name: "__le__", doc: nil, fn: PyByteArray.isLessEqual(_:), castSelf: Cast.asPyByteArray)
     dict["__gt__"] = PyBuiltinFunction.wrap(type.context, name: "__gt__", doc: nil, fn: PyByteArray.isGreater(_:), castSelf: Cast.asPyByteArray)
     dict["__ge__"] = PyBuiltinFunction.wrap(type.context, name: "__ge__", doc: nil, fn: PyByteArray.isGreaterEqual(_:), castSelf: Cast.asPyByteArray)
+    dict["__hash__"] = PyBuiltinFunction.wrap(type.context, name: "__hash__", doc: nil, fn: PyByteArray.hash, castSelf: Cast.asPyByteArray)
     dict["__repr__"] = PyBuiltinFunction.wrap(type.context, name: "__repr__", doc: nil, fn: PyByteArray.repr, castSelf: Cast.asPyByteArray)
     dict["__str__"] = PyBuiltinFunction.wrap(type.context, name: "__str__", doc: nil, fn: PyByteArray.str, castSelf: Cast.asPyByteArray)
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyByteArray.getAttribute(name:), castSelf: Cast.asPyByteArray)
@@ -224,6 +225,7 @@ internal enum BuiltinTypesFill {
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyByteArrayIterator.getClass, castSelf: Cast.asPyByteArrayIterator)
 
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyByteArrayIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyByteArrayIterator.getAttribute(name:), castSelf: Cast.asPyByteArrayIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyByteArrayIterator.iter, castSelf: Cast.asPyByteArrayIterator)
@@ -308,6 +310,7 @@ internal enum BuiltinTypesFill {
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyBytesIterator.getClass, castSelf: Cast.asPyBytesIterator)
 
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyBytesIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyBytesIterator.getAttribute(name:), castSelf: Cast.asPyBytesIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyBytesIterator.iter, castSelf: Cast.asPyBytesIterator)
@@ -1258,6 +1261,7 @@ internal enum BuiltinTypesFill {
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyStringIterator.getClass, castSelf: Cast.asPyStringIterator)
 
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyStringIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyStringIterator.getAttribute(name:), castSelf: Cast.asPyStringIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyStringIterator.iter, castSelf: Cast.asPyStringIterator)

@@ -55,4 +55,13 @@ public class PyBytesIterator: PyObject {
 
     return .stopIteration
   }
+
+  // MARK: - Python new
+
+  // sourcery: pymethod = __new__
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
+    return .typeError("cannot create 'bytes_iterator' instances")
+  }
 }

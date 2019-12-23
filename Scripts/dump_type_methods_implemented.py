@@ -106,6 +106,7 @@ types = {
     '__le__',
     '__gt__',
     '__ge__',
+    '__hash__',
     '__repr__',
     '__str__',
     '__getattribute__',
@@ -167,6 +168,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__new__',
   ],
   bytes: [
     '__class__',
@@ -228,6 +230,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__new__',
   ],
   callable_iterator: [
     '__class__',
@@ -783,6 +786,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__new__',
   ],
   tuple: [
     '__class__',

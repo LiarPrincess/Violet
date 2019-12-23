@@ -73,6 +73,7 @@ extension PyByteArray:
   __le__Owner,
   __gt__Owner,
   __ge__Owner,
+  __hash__Owner,
   __repr__Owner,
   __str__Owner,
   __getattribute__Owner,
@@ -125,7 +126,8 @@ extension PyByteArrayIterator:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - Bytes
@@ -182,7 +184,8 @@ extension PyBytesIterator:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - CallableIterator
@@ -831,7 +834,8 @@ extension PyStringIterator:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - Tuple
