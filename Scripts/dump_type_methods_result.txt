@@ -1,6 +1,4 @@
 object
-  Unimplemented:
-    __sizeof__
   Why do we even have this?
     __subclasshook__
     __init_subclass__
@@ -15,7 +13,6 @@ type
     __text_signature__ - <class 'NoneType'>
     __weakrefoffset__ - <class 'int'>
     __abstractmethods__
-    __sizeof__
     mro
   Why do we even have this?
     __doc__
@@ -29,39 +26,26 @@ bytearray
     __imul__
     __mod__
     __rmod__
-    __sizeof__
     decode
     extend
     hex
     translate
 
-bytearray_iterator
-  Unimplemented:
-    __length_hint__
-    __setstate__
-
 bytes
   Unimplemented:
     fromhex - <class 'builtin_function_or_method'>
     maketrans - <class 'builtin_function_or_method'>
-    __getnewargs__
     __mod__
     __rmod__
     decode
     hex
     translate
 
-bytes_iterator
-  Unimplemented:
-    __length_hint__
-    __setstate__
-
 code
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
     __getattribute__
     __ne__
-    __sizeof__
     co_argcount
     co_cellvars
     co_code
@@ -81,19 +65,12 @@ code
 complex
   Unimplemented:
     __format__
-    __getnewargs__
 
 dict
   Unimplemented:
     fromkeys - <class 'builtin_function_or_method'>
     __init__
-    __sizeof__
     update
-
-dict_itemiterator
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __length_hint__
 
 dict_items
   Unimplemented:
@@ -109,11 +86,6 @@ dict_items
     __xor__
     isdisjoint
 
-dict_keyiterator
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __length_hint__
-
 dict_keys
   Unimplemented:
     __hash__ - <class 'NoneType'>
@@ -128,26 +100,15 @@ dict_keys
     __xor__
     isdisjoint
 
-dict_valueiterator
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __length_hint__
-
 float
   Unimplemented:
     __getformat__ - <class 'builtin_function_or_method'>
     __set_format__ - <class 'builtin_function_or_method'>
     fromhex - <class 'builtin_function_or_method'>
     __format__
-    __getnewargs__
     as_integer_ratio
     hex
     is_integer
-
-frozenset
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __sizeof__
 
 function
   Unimplemented:
@@ -167,8 +128,6 @@ int
     __ceil__
     __floor__
     __format__
-    __getnewargs__
-    __sizeof__
     __trunc__
     bit_length
     to_bytes
@@ -184,23 +143,10 @@ list
     __iadd__
     __init__
     __setitem__
-    __sizeof__
     extend
     insert
     remove
     reverse
-
-list_iterator
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __length_hint__
-    __setstate__
-
-list_reverseiterator
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __length_hint__
-    __setstate__
 
 method
   Unimplemented:
@@ -223,12 +169,6 @@ range
     step
     stop
 
-reversed
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __length_hint__
-    __setstate__
-
 set
   Unimplemented:
     __iand__
@@ -236,16 +176,10 @@ set
     __ior__
     __isub__
     __ixor__
-    __sizeof__
     difference_update
     intersection_update
     symmetric_difference_update
     update
-
-set_iterator
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __length_hint__
 
 slice
   Unimplemented:
@@ -259,33 +193,15 @@ str
   Unimplemented:
     maketrans - <class 'builtin_function_or_method'>
     __format__
-    __getnewargs__
     __mod__
     __rmod__
-    __sizeof__
     encode
     format
     format_map
     translate
 
-str_iterator
-  Unimplemented:
-    __length_hint__
-    __setstate__
-
-tuple
-  Unimplemented:
-    __getnewargs__
-
-tuple_iterator
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __length_hint__
-    __setstate__
-
 BaseException
   Unimplemented:
-    __setstate__
     with_traceback
 
 ImportError

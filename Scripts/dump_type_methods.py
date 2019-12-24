@@ -14,7 +14,14 @@ for t in implemented.types:
   methods_derived = []
   members_from_sourcery = implemented.types[t]
 
-  ignored = ['__init_subclass__', '__subclasshook__', '__reduce__', '__reduce_ex__']
+  ignored = [
+    '__init_subclass__', '__subclasshook__', # TODO: Later
+    '__reduce__', '__reduce_ex__', # Pickle
+    '__getnewargs__',  # Pickle (probably)
+    '__length_hint__', '__setstate__', # Iterator methods
+    '__sizeof__', # CPython implementation detail
+  ]
+
   for name, member in inspect.getmembers(t):
     if name in ignored:
       continue
