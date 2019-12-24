@@ -155,6 +155,7 @@ types = {
     '__new__',
     '__init__',
     'append',
+    'extend',
     'insert',
     'remove',
     'pop',

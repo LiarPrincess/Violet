@@ -107,6 +107,37 @@ internal struct PyBytesData: PyStringImpl {
     }
   }
 
+  // MARK: - Extend
+
+  internal mutating func extend(iterable: PyObject) -> PyResult<()> {
+    // Fast path: adding bytes
+    if let bytes = Self.extractSelf(from: iterable) {
+      self.values.append(contentsOf: bytes.scalars)
+      return .value()
+    }
+
+    // Slow path: iterable
+    // Do not modify `self.values` until we finished iteration.
+    let builtins = iterable.builtins
+    let d = builtins.reduce(iterable: iterable, into: Data()) { acc, object in
+      switch Self.asByte(object) {
+      case let .value(byte):
+        acc.append(byte)
+        return .goToNextElement
+      case let .error(e):
+        return .error(e)
+      }
+    }
+
+    switch d {
+    case let .value(data):
+      self.values.append(contentsOf: data)
+      return .value()
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Insert
 
   internal mutating func insert(at index: PyObject,

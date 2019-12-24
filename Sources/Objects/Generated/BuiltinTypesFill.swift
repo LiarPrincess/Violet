@@ -205,6 +205,7 @@ internal enum BuiltinTypesFill {
     dict["__rmul__"] = PyBuiltinFunction.wrap(type.context, name: "__rmul__", doc: nil, fn: PyByteArray.rmul(_:), castSelf: Cast.asPyByteArray)
     dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyByteArray.iter, castSelf: Cast.asPyByteArray)
     dict["append"] = PyBuiltinFunction.wrap(type.context, name: "append", doc: nil, fn: PyByteArray.append(_:), castSelf: Cast.asPyByteArray)
+    dict["extend"] = PyBuiltinFunction.wrap(type.context, name: "extend", doc: nil, fn: PyByteArray.extend(iterable:), castSelf: Cast.asPyByteArray)
     dict["insert"] = PyBuiltinFunction.wrap(type.context, name: "insert", doc: nil, fn: PyByteArray.insert(at:item:), castSelf: Cast.asPyByteArray)
     dict["remove"] = PyBuiltinFunction.wrap(type.context, name: "remove", doc: nil, fn: PyByteArray.remove(_:), castSelf: Cast.asPyByteArray)
     dict["pop"] = PyBuiltinFunction.wrap(type.context, name: "pop", doc: nil, fn: PyByteArray.pop(index:), castSelf: Cast.asPyByteArray)

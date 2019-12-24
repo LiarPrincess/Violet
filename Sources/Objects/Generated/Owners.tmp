@@ -121,6 +121,7 @@ PyByteArray|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObje
 PyByteArray|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyByteArray|PyObject|func|__iter__|iter() -> PyObject
 PyByteArray|PyObject|func|append|append(_ element: PyObject) -> PyResult<PyNone>
+PyByteArray|PyObject|func|extend|extend(iterable: PyObject) -> PyResult<PyNone>
 PyByteArray|PyObject|func|insert|insert(at index: PyObject, item: PyObject) -> PyResult<PyNone>
 PyByteArray|PyObject|func|remove|remove(_ value: PyObject) -> PyResult<PyNone>
 PyByteArray|PyObject|func|pop|pop(index: PyObject?) -> PyResult<PyObject>

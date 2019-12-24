@@ -668,6 +668,13 @@ public class PyByteArray: PyObject, PyBytesType {
     return self.data.append(element).map { _ in self.builtins.none }
   }
 
+  // MARK: - Extend
+
+  // sourcery: pymethod = extend
+  internal func extend(iterable: PyObject) -> PyResult<PyNone> {
+    return self.data.extend(iterable: iterable).map { _ in self.builtins.none }
+  }
+
   // MARK: - Insert
 
   internal static let insertDoc = """

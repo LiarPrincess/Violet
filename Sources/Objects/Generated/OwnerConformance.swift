@@ -109,6 +109,7 @@ extension PyByteArray:
   __rmul__Owner,
   __iter__Owner,
   appendOwner,
+  extendOwner,
   insertOwner,
   removeOwner,
   __setitem__Owner,

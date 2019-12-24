@@ -136,6 +136,7 @@ protocol differenceOwner { func difference(with other: PyObject) -> PyResult<PyO
 protocol discardOwner { func discard(_ value: PyObject) -> PyResult<PyNone> }
 protocol endswithOwner { func endsWith(_ element: PyObject) -> PyResult<Bool> }
 protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Bool> }
+protocol extendOwner { func extend(iterable: PyObject) -> PyResult<PyNone> }
 protocol findOwner { func find(_ element: PyObject) -> PyResult<BigInt> }
 protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol getOwner { func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }

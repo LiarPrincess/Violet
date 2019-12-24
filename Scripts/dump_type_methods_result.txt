@@ -27,7 +27,6 @@ bytearray
     __mod__
     __rmod__
     decode
-    extend
     hex
     translate
 
