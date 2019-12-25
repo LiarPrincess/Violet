@@ -551,6 +551,7 @@ types = {
     '__iter__',
     '__reversed__',
     'append',
+    'extend',
     'pop',
     'sort',
     'clear',
@@ -560,6 +561,7 @@ types = {
     '__rmul__',
     '__imul__',
     '__new__',
+    '__init__',
   ],
   list_iterator: [
     '__class__',

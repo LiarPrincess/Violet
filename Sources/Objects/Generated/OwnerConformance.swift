@@ -563,6 +563,7 @@ extension PyList:
   __iter__Owner,
   __reversed__Owner,
   appendOwner,
+  extendOwner,
   sortOwner,
   clearOwner,
   copyOwner,
@@ -570,7 +571,8 @@ extension PyList:
   __mul__Owner,
   __rmul__Owner,
   __imul__Owner,
-  __new__Owner
+  __new__Owner,
+  __init__Owner
 { }
 
 // MARK: - ListIterator

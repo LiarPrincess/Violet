@@ -290,6 +290,37 @@ internal struct PySequenceData {
     self.elements.append(element)
   }
 
+  // MARK: - Extend
+
+  internal mutating func extend(iterable: PyObject) -> PyResult<()> {
+    // Fast path: adding tuples, lists
+    if let tuple = iterable as? PyTuple {
+      self.elements.append(contentsOf: tuple.elements)
+      return .value()
+    }
+
+    if let list = iterable as? PyList {
+      self.elements.append(contentsOf: list.elements)
+      return .value()
+    }
+
+    // Slow path: iterable
+    // Do not modify `self.elements` until we finished iteration.
+    let builtins = iterable.builtins
+    let d = builtins.reduce(iterable: iterable, into: [PyObject]()) { acc, object in
+      acc.append(object)
+      return .goToNextElement
+    }
+
+    switch d {
+    case let .value(elements):
+      self.elements.append(contentsOf: elements)
+      return .value()
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Add
 
   internal func add(other: PySequenceData) -> [PyObject] {

@@ -833,6 +833,7 @@ internal enum BuiltinTypesFill {
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyList.getClass, castSelf: Cast.asPyList)
 
     dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyList.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type.context, typeName: "__init__", doc: nil, fn: PyList.pyInit(zelf:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PyList.isEqual(_:), castSelf: Cast.asPyList)
@@ -851,6 +852,7 @@ internal enum BuiltinTypesFill {
     dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyList.iter, castSelf: Cast.asPyList)
     dict["__reversed__"] = PyBuiltinFunction.wrap(type.context, name: "__reversed__", doc: nil, fn: PyList.reversedIter, castSelf: Cast.asPyList)
     dict["append"] = PyBuiltinFunction.wrap(type.context, name: "append", doc: nil, fn: PyList.append(_:), castSelf: Cast.asPyList)
+    dict["extend"] = PyBuiltinFunction.wrap(type.context, name: "extend", doc: nil, fn: PyList.extend(iterable:), castSelf: Cast.asPyList)
     dict["pop"] = PyBuiltinFunction.wrap(type.context, name: "pop", doc: nil, fn: PyList.pop(index:), castSelf: Cast.asPyList)
     dict["sort"] = PyBuiltinFunction.wrap(type.context, name: "sort", doc: nil, fn: PyList.sort(args:kwargs:), castSelf: Cast.asPyList)
     dict["clear"] = PyBuiltinFunction.wrap(type.context, name: "clear", doc: nil, fn: PyList.clear, castSelf: Cast.asPyList)

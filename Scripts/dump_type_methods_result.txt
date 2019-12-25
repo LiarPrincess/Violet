@@ -140,9 +140,7 @@ list
     __hash__ - <class 'NoneType'>
     __delitem__
     __iadd__
-    __init__
     __setitem__
-    extend
     insert
     remove
     reverse

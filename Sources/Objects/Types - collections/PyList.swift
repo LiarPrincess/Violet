@@ -199,6 +199,13 @@ public class PyList: PyObject {
     return .value(self.builtins.none)
   }
 
+  // MARK: - Extend
+
+  // sourcery: pymethod = extend
+  internal func extend(iterable: PyObject) -> PyResult<PyNone> {
+    return self.data.extend(iterable: iterable).map { _ in self.builtins.none }
+  }
+
   // MARK: - Pop
 
   // sourcery: pymethod = pop
@@ -374,5 +381,35 @@ public class PyList: PyObject {
 
     let data = PySequenceData()
     return .value(alloca(type, data))
+  }
+
+  // MARK: - Python init
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PyList,
+                              args: [PyObject],
+                              kwargs: PyDictData?) -> PyResult<PyNone> {
+    if zelf.type === zelf.builtins.list {
+      if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
+                                                kwargs: kwargs) {
+        return .error(e)
+      }
+    }
+
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: zelf.typeName,
+                                                        args: args,
+                                                        min: 0,
+                                                        max: 1) {
+      return .error(e)
+    }
+
+    if let iterable = args.first {
+      switch zelf.data.extend(iterable: iterable) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .value(zelf.builtins.none)
   }
 }
