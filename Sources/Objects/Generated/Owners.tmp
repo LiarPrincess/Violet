@@ -489,11 +489,14 @@ PyList|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
 PyList|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
 PyList|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
 PyList|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PyList|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
 PyList|PyObject|func|__repr__|repr() -> PyResult<String>
 PyList|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyList|PyObject|func|__len__|getLength() -> BigInt
 PyList|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
 PyList|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
+PyList|PyObject|func|__setitem__|setItem(at index: PyObject,                        to value: PyObject) -> PyResult<PyNone>
+PyList|PyObject|func|__delitem__|delItem(at index: PyObject) -> PyResult<PyNone>
 PyList|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
 PyList|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
 PyList|PyObject|func|__iter__|iter() -> PyObject
@@ -508,6 +511,7 @@ PyList|PyObject|func|reverse|reverse() -> PyResult<PyNone>
 PyList|PyObject|func|clear|clear() -> PyResult<PyNone>
 PyList|PyObject|func|copy|copy() -> PyObject
 PyList|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
+PyList|PyObject|func|__iadd__|iadd(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyList|PyObject|func|__imul__|imul(_ other: PyObject) -> PyResultOrNot<PyObject>

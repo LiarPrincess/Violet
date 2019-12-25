@@ -135,13 +135,6 @@ Iterator
   Why do we even have this?
     __getattribute__
 
-list
-  Unimplemented:
-    __hash__ - <class 'NoneType'>
-    __delitem__
-    __iadd__
-    __setitem__
-
 method
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>

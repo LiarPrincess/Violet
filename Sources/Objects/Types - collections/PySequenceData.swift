@@ -242,6 +242,33 @@ internal struct PySequenceData {
     return .value(result)
   }
 
+  // MARK: - Set/del item
+
+  internal mutating func setItem(at index: PyObject,
+                                 to value: PyObject) -> PyResult<()> {
+    // Setting slice is not (yet) implemented
+
+    let parsedIndex: Int
+    switch IndexHelper.int(index) {
+    case let .value(i): parsedIndex = i
+    case let .error(e): return .error(e)
+    }
+
+    self.elements[parsedIndex] = value
+    return .value()
+  }
+
+  internal mutating func delItem(at index: PyObject) -> PyResult<()> {
+    let parsedIndex: Int
+    switch IndexHelper.int(index) {
+    case let .value(i): parsedIndex = i
+    case let .error(e): return .error(e)
+    }
+
+    _ = self.elements.remove(at: parsedIndex)
+    return .value()
+  }
+
   // MARK: - Count
 
   internal func count(element: PyObject) -> PyResult<Int> {
@@ -375,6 +402,10 @@ internal struct PySequenceData {
 
   internal func add(other: PySequenceData) -> [PyObject] {
     return self.elements + other.elements
+  }
+
+  internal mutating func iadd(other: PySequenceData) {
+    self.elements += other.elements
   }
 
   // MARK: - Mul

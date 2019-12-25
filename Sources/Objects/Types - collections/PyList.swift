@@ -98,6 +98,13 @@ public class PyList: PyObject {
     return self.data.isGreaterEqual(than: other.data).asResultOrNot
   }
 
+  // MARK: - Hashable
+
+  // sourcery: pymethod = __hash__
+  internal func hash() -> PyResultOrNot<PyHash> {
+    return .typeError("unhashable type: 'list'")
+  }
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__
@@ -152,6 +159,21 @@ public class PyList: PyObject {
     case let .slice(s): return .value(self.builtins.newList(s))
     case let .error(e): return .error(e)
     }
+  }
+
+  // MARK: - Set/del item
+
+  // sourcery: pymethod = __setitem__
+  internal func setItem(at index: PyObject,
+                        to value: PyObject) -> PyResult<PyNone> {
+    return self.data.setItem(at: index, to: value)
+      .map { _ in self.builtins.none }
+  }
+
+  // sourcery: pymethod = __delitem__
+  internal func delItem(at index: PyObject) -> PyResult<PyNone> {
+    return self.data.delItem(at: index)
+      .map { _ in self.builtins.none }
   }
 
   // MARK: - Count
@@ -386,6 +408,17 @@ public class PyList: PyObject {
 
     let result = self.data.add(other: otherList.data)
     return .value(self.builtins.newList(result))
+  }
+
+  // sourcery: pymethod = __iadd__
+  internal func iadd(_ other: PyObject) -> PyResultOrNot<PyObject> {
+    guard let otherList = other as? PyList else {
+      let msg = "can only concatenate list (not '\(other.typeName)') to list"
+      return .typeError(msg)
+    }
+
+    self.data.iadd(other: otherList.data)
+    return .value(self)
   }
 
   // MARK: - Mul

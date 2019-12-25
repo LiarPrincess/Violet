@@ -142,7 +142,6 @@ def print_protocols():
   protocols.add('protocol __matmul__Owner { func matmul(_ other: PyObject) -> PyResultOrNot<PyObject> }')
   protocols.add('protocol __rmatmul__Owner { func rmatmul(_ other: PyObject) -> PyResultOrNot<PyObject> }')
 
-  protocols.add('protocol __iadd__Owner { func iadd(_ other: PyObject) -> PyResultOrNot<PyObject> }')
   protocols.add('protocol __isub__Owner { func isub(_ other: PyObject) -> PyResultOrNot<PyObject> }')
   protocols.add('protocol __imul__Owner { func imul(_ other: PyObject) -> PyResultOrNot<PyObject> }')
   protocols.add('protocol __imatmul__Owner { func imatmul(_ other: PyObject) -> PyResultOrNot<PyObject> }')
