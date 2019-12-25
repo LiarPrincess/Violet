@@ -199,11 +199,41 @@ public class PyList: PyObject {
     return .value(self.builtins.none)
   }
 
+  // MARK: - Insert
+
+  internal static let insertDoc = """
+    insert($self, index, object, /)
+    --
+
+    Insert object before index.
+    """
+
+  // sourcery: pymethod = insert, doc = insertDoc
+  internal func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> {
+    return self.data.insert(at: index, item: item).map { _ in self.builtins.none }
+  }
+
   // MARK: - Extend
 
   // sourcery: pymethod = extend
   internal func extend(iterable: PyObject) -> PyResult<PyNone> {
     return self.data.extend(iterable: iterable).map { _ in self.builtins.none }
+  }
+
+  // MARK: - Remove
+
+  internal static let removeDoc = """
+    remove($self, value, /)
+    --
+
+    Remove first occurrence of value.
+
+    Raises ValueError if the value is not present.
+    """
+
+  // sourcery: pymethod = remove, doc = removeDoc
+  internal func remove(_ value: PyObject) -> PyResult<PyNone> {
+    return self.data.remove(value).map { _ in self.builtins.none }
   }
 
   // MARK: - Pop
@@ -313,6 +343,21 @@ public class PyList: PyObject {
       case let .error(e): throw SortError.builtin(e)
       }
     }
+  }
+
+  // MARK: - Reverse
+
+  internal static let reverseDoc = """
+    reverse($self, /)
+    --
+
+    Reverse *IN PLACE*.
+    """
+
+  // sourcery: pymethod = reverse, doc = reverseDoc
+  internal func reverse() -> PyResult<PyNone> {
+    self.data.reverse()
+    return .value(self.builtins.none)
   }
 
   // MARK: - Clear

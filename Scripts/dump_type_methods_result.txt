@@ -141,9 +141,6 @@ list
     __delitem__
     __iadd__
     __setitem__
-    insert
-    remove
-    reverse
 
 method
   Unimplemented:

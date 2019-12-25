@@ -165,7 +165,6 @@ internal struct PyBytesData: PyStringImpl {
 
   // MARK: - Remove
 
-  // sourcery: pymethod = pop
   internal mutating func remove(_ value: PyObject) -> PyResult<()> {
     switch PyBytesData.asByte(value) {
     case let .value(b):
@@ -183,7 +182,6 @@ internal struct PyBytesData: PyStringImpl {
 
   // MARK: - Pop
 
-  // sourcery: pymethod = pop
   internal mutating func pop(index: PyObject?) -> PyResult<UInt8> {
     switch self.parsePopIndex(from: index) {
     case let .value(int):

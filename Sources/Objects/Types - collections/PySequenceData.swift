@@ -290,6 +290,56 @@ internal struct PySequenceData {
     self.elements.append(element)
   }
 
+  // MARK: - Insert
+
+  internal mutating func insert(at index: PyObject,
+                                item: PyObject) -> PyResult<()> {
+    let parsedIndex: Int
+    switch IndexHelper.int(index) {
+    case let .value(i): parsedIndex = i
+    case let .error(e): return .error(e)
+    }
+
+    self.elements.insert(item, at: parsedIndex)
+    return .value()
+  }
+
+  // MARK: - Remove
+
+  internal mutating func remove(_ value: PyObject) -> PyResult<()> {
+    switch self.find(value) {
+    case .index(let index):
+      self.elements.remove(at: index)
+      return .value()
+
+    case .notFound:
+      return .valueError("list.remove(x): x not in list")
+
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Find
+
+  internal enum FindResult {
+    case index(Int)
+    case notFound
+    case error(PyErrorEnum)
+  }
+
+  internal func find(_ value: PyObject) -> FindResult {
+    for (index, element) in self.elements.enumerated() {
+      switch element.builtins.isEqualBool(left: element, right: value) {
+      case .value(true): return .index(index)
+      case .value(false): break // go to next element
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .notFound
+  }
+
   // MARK: - Extend
 
   internal mutating func extend(iterable: PyObject) -> PyResult<()> {
@@ -365,6 +415,12 @@ internal struct PySequenceData {
     }
 
     return mul(count: countInt)
+  }
+
+  // MARK: - Reverse
+
+  internal mutating func reverse() {
+    self.elements.reverse()
   }
 
   // MARK: - Clear
