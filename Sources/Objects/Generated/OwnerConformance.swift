@@ -588,7 +588,8 @@ extension PyListIterator:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - ListReverseIterator
@@ -597,7 +598,8 @@ extension PyListReverseIterator:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - Map
@@ -880,7 +882,8 @@ extension PyTupleIterator:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - Zip

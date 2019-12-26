@@ -575,12 +575,14 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__new__',
   ],
   list_reverseiterator: [
     '__class__',
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__new__',
   ],
   map: [
     '__class__',
@@ -828,6 +830,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__new__',
   ],
   zip: [
     '__class__',

@@ -522,11 +522,13 @@ PyListIterator|PyObject|get|__class__|getClass() -> PyType
 PyListIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyListIterator|PyObject|func|__iter__|iter() -> PyObject
 PyListIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyListIterator|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyListReverseIterator|PyObject|get|__class__|getClass() -> PyType
 
 PyListReverseIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyListReverseIterator|PyObject|func|__iter__|iter() -> PyObject
 PyListReverseIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyListReverseIterator|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyMap|PyObject|get|__class__|getClass() -> PyType
 
 PyMap|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
@@ -758,6 +760,7 @@ PyTupleIterator|PyObject|get|__class__|getClass() -> PyType
 PyTupleIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyTupleIterator|PyObject|func|__iter__|iter() -> PyObject
 PyTupleIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyTupleIterator|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyZip|PyObject|get|__class__|getClass() -> PyType
 
 PyZip|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
