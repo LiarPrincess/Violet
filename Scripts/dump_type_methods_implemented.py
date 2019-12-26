@@ -22,6 +22,8 @@ str_iterator = type(iter(''))
 bytes_iterator = type(iter(b''))
 bytearray_iterator = type(iter(bytearray()))
 
+range_iterator = type(iter(range(1)))
+
 
 
 types = {
@@ -681,6 +683,13 @@ types = {
     'step',
     'count',
     'index',
+  ],
+  range_iterator: [
+    '__class__',
+    '__getattribute__',
+    '__iter__',
+    '__next__',
+    '__new__',
   ],
   reversed: [
     '__class__',

@@ -49,6 +49,7 @@ public final class BuiltinTypes {
   public let notImplemented: PyType
   public let property: PyType
   public let range: PyType
+  public let range_iterator: PyType
   public let reversed: PyType
   public let set: PyType
   public let set_iterator: PyType
@@ -105,6 +106,7 @@ public final class BuiltinTypes {
     self.notImplemented = PyType.initBuiltinType(name: "NotImplementedType", type: self.type, base: self.object)
     self.property = PyType.initBuiltinType(name: "property", type: self.type, base: self.object)
     self.range = PyType.initBuiltinType(name: "range", type: self.type, base: self.object)
+    self.range_iterator = PyType.initBuiltinType(name: "range_iterator", type: self.type, base: self.object)
     self.reversed = PyType.initBuiltinType(name: "reversed", type: self.type, base: self.object)
     self.set = PyType.initBuiltinType(name: "set", type: self.type, base: self.object)
     self.set_iterator = PyType.initBuiltinType(name: "set_iterator", type: self.type, base: self.object)
@@ -157,6 +159,7 @@ public final class BuiltinTypes {
     BuiltinTypesFill.notImplemented(self.notImplemented)
     BuiltinTypesFill.property(self.property)
     BuiltinTypesFill.range(self.range)
+    BuiltinTypesFill.range_iterator(self.range_iterator)
     BuiltinTypesFill.reversed(self.reversed)
     BuiltinTypesFill.set(self.set)
     BuiltinTypesFill.set_iterator(self.set_iterator)
@@ -207,6 +210,7 @@ public final class BuiltinTypes {
       self.notImplemented,
       self.property,
       self.range,
+      self.range_iterator,
       self.reversed,
       self.set,
       self.set_iterator,

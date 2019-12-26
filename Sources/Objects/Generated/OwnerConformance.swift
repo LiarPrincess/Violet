@@ -724,6 +724,16 @@ extension PyRange:
   indexOwner
 { }
 
+// MARK: - RangeIterator
+
+extension PyRangeIterator:
+  __class__GetterOwner,
+  __getattribute__Owner,
+  __iter__Owner,
+  __next__Owner,
+  __new__Owner
+{ }
+
 // MARK: - Reversed
 
 extension PyReversed:

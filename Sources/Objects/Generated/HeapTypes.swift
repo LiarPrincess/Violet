@@ -241,6 +241,10 @@ internal final class PyPropertyHeap: PyProperty, HeapType {
 
 // PyRange is not a base type.
 
+// MARK: - RangeIterator
+
+// PyRangeIterator is not a base type.
+
 // MARK: - Reversed
 
 /// Type used when we subclass builtin `reversed` class.

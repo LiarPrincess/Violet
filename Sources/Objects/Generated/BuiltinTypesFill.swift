@@ -1093,6 +1093,23 @@ internal enum BuiltinTypesFill {
     dict["index"] = PyBuiltinFunction.wrap(type.context, name: "index", doc: nil, fn: PyRange.index(of:), castSelf: Cast.asPyRange)
   }
 
+  // MARK: - RangeIterator
+
+  internal static func range_iterator(_ type: PyType) {
+    type.setBuiltinTypeDoc(nil)
+    type.setFlag(.default)
+
+    let dict = type.getDict()
+    dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyRangeIterator.getClass, castSelf: Cast.asPyRangeIterator)
+
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyRangeIterator.pyNew(type:args:kwargs:))
+
+
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PyRangeIterator.getAttribute(name:), castSelf: Cast.asPyRangeIterator)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyRangeIterator.iter, castSelf: Cast.asPyRangeIterator)
+    dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyRangeIterator.next, castSelf: Cast.asPyRangeIterator)
+  }
+
   // MARK: - Reversed
 
   internal static func reversed(_ type: PyType) {

@@ -319,6 +319,16 @@ public class PyRange: PyObject {
     return self.step
   }
 
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  internal func iter() -> PyObject {
+    return PyRangeIterator(self.context,
+                           start: self.start.value,
+                           step: self.step.value,
+                           length: self.length.value)
+  }
+
   // MARK: - Count
 
   // sourcery: pymethod = count

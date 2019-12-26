@@ -619,6 +619,12 @@ PyRange|PyObject|func|stop|getStop() -> PyInt
 PyRange|PyObject|func|step|getStep() -> PyInt
 PyRange|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
 PyRange|PyObject|func|index|index(of element: PyObject) -> PyResult<BigInt>
+PyRangeIterator|PyObject|get|__class__|getClass() -> PyType
+
+PyRangeIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyRangeIterator|PyObject|func|__iter__|iter() -> PyObject
+PyRangeIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyRangeIterator|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyReversed|PyObject|get|__class__|getClass() -> PyType
 
 PyReversed|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

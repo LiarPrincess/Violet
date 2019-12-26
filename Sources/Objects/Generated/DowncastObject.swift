@@ -245,6 +245,12 @@ internal enum Cast {
     return cast(object, as: PyRange.self, typeName: "range", methodName: methodName)
   }
 
+  // MARK: - RangeIterator
+
+  internal static func asPyRangeIterator(_ object: PyObject, methodName: String) -> PyResult<PyRangeIterator> {
+    return cast(object, as: PyRangeIterator.self, typeName: "range_iterator", methodName: methodName)
+  }
+
   // MARK: - Reversed
 
   internal static func asPyReversed(_ object: PyObject, methodName: String) -> PyResult<PyReversed> {

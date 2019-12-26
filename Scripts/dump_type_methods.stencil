@@ -21,6 +21,8 @@ str_iterator = type(iter(''))
 bytes_iterator = type(iter(b''))
 bytearray_iterator = type(iter(bytearray()))
 
+range_iterator = type(iter(range(1)))
+
 {% macro printProperties properties %}
   {% for prop in properties|annotated:"pyproperty" %}
     '{{ prop.annotations.pyproperty }}',
