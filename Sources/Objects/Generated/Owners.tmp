@@ -633,6 +633,7 @@ PyReversed|PyObject|get|__class__|getClass() -> PyType
 PyReversed|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyReversed|PyObject|func|__iter__|iter() -> PyObject
 PyReversed|PyObject|func|__next__|next() -> PyResult<PyObject>
+PyReversed|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PySet|PyObject|get|__class__|getClass() -> PyType
 
 PySet|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

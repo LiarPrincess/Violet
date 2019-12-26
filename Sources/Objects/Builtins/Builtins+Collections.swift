@@ -252,24 +252,56 @@ extension Builtins {
   // sourcery: pymethod: len
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
-  public func length(_ collection: PyObject) -> PyResult<PyObject> {
-    if let owner = collection as? __len__Owner {
+  public func length(iterable: PyObject) -> PyResult<PyObject> {
+    if let owner = iterable as? __len__Owner {
       let bigInt = owner.getLength()
       return .value(self.newInt(bigInt))
     }
 
-    switch self.callMethod(on: collection, selector: "__len__") {
+    switch self.callMethod(on: iterable, selector: "__len__") {
     case .value(let o):
       return .value(o)
     case .missingMethod, .notImplemented:
-      return .typeError("object of type '\(collection.typeName)' has no len()")
+      return .typeError("object of type '\(iterable.typeName)' has no len()")
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
 
-  public func lengthInt(_ value: PyTuple) -> Int {
-    return value.data.count
+  public func lengthBigInt(iterable: PyObject) -> PyResult<BigInt> {
+    // Avoid 'PyObject' allocation inside `self.length(iterable: PyObject)`
+    if let owner = iterable as? __len__Owner {
+      let bigInt = owner.getLength()
+      return .value(bigInt)
+    }
+
+    // Use `self.length(iterable: PyObject)`
+    switch self.length(iterable: iterable) {
+    case let .value(object):
+      guard let pyInt = object as? PyInt else {
+        return .typeError("'\(object)' object cannot be interpreted as an integer")
+      }
+
+      return .value(pyInt.value)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  public func lengthInt(tuple: PyTuple) -> Int {
+    return tuple.data.count
+  }
+
+  public func lengthInt(iterable: PyObject) -> PyResult<Int> {
+    return self.lengthBigInt(iterable: iterable)
+      .flatMap { bigInt -> PyResult<Int> in
+        guard let int = Int(exactly: bigInt) else {
+          return .overflowError("Object length is too big")
+        }
+
+        return .value(int)
+      }
   }
 
   // MARK: - Contains
