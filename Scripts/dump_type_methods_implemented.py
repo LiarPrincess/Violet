@@ -411,6 +411,7 @@ types = {
     '__pos__',
     '__neg__',
     '__abs__',
+    'is_integer',
     '__add__',
     '__radd__',
     '__sub__',

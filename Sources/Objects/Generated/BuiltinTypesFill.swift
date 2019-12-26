@@ -652,6 +652,7 @@ internal enum BuiltinTypesFill {
     dict["__pos__"] = PyBuiltinFunction.wrap(type.context, name: "__pos__", doc: nil, fn: PyFloat.positive, castSelf: Cast.asPyFloat)
     dict["__neg__"] = PyBuiltinFunction.wrap(type.context, name: "__neg__", doc: nil, fn: PyFloat.negative, castSelf: Cast.asPyFloat)
     dict["__abs__"] = PyBuiltinFunction.wrap(type.context, name: "__abs__", doc: nil, fn: PyFloat.abs, castSelf: Cast.asPyFloat)
+    dict["is_integer"] = PyBuiltinFunction.wrap(type.context, name: "is_integer", doc: nil, fn: PyFloat.isInteger, castSelf: Cast.asPyFloat)
     dict["__add__"] = PyBuiltinFunction.wrap(type.context, name: "__add__", doc: nil, fn: PyFloat.add(_:), castSelf: Cast.asPyFloat)
     dict["__radd__"] = PyBuiltinFunction.wrap(type.context, name: "__radd__", doc: nil, fn: PyFloat.radd(_:), castSelf: Cast.asPyFloat)
     dict["__sub__"] = PyBuiltinFunction.wrap(type.context, name: "__sub__", doc: nil, fn: PyFloat.sub(_:), castSelf: Cast.asPyFloat)

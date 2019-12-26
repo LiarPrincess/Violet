@@ -405,6 +405,7 @@ extension PyFloat:
   __pos__Owner,
   __neg__Owner,
   __abs__Owner,
+  is_integerOwner,
   __add__Owner,
   __radd__Owner,
   __sub__Owner,

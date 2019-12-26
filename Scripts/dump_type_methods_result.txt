@@ -107,7 +107,6 @@ float
     __format__
     as_integer_ratio
     hex
-    is_integer
 
 function
   Unimplemented:

@@ -813,7 +813,7 @@ public class PyInt: PyObject {
 
   private static func callTrunc(_ object: PyObject) -> PyResultOrNot<PyObject> {
     if let owner = object as? __trunc__Owner {
-      return owner.trunc().asResultOrNot
+      return .value(owner.trunc())
     }
 
     switch object.builtins.callMethod(on: object, selector: "__trunc__") {

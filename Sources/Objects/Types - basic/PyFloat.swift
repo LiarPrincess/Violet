@@ -203,6 +203,25 @@ public class PyFloat: PyObject {
     return self.builtins.newFloat(Swift.abs(self.value))
   }
 
+  // MARK: - Is integer
+
+  internal static let isIntegerDoc = """
+    is_integer($self, /)
+    --
+
+    Return True if the float is an integer.
+    """
+
+  // sourcery: pymethod = is_integer, , doc = isIntegerDoc
+  internal func isInteger() -> PyBool {
+    guard self.value.isFinite else {
+      return self.builtins.false
+    }
+
+    let result = floor(self.value) == self.value
+    return self.builtins.newBool(result)
+  }
+
   // MARK: - Add
 
   // sourcery: pymethod = __add__
@@ -461,17 +480,17 @@ public class PyFloat: PyObject {
   // MARK: - Trunc
 
   // sourcery: pymethod = __trunc__
-  internal func trunc() -> PyResult<PyObject> {
+  internal func trunc() -> PyObject {
     let raw = self.value
 
     var wholePart = 0.0
     Foundation.modf(raw, &wholePart)
 
     if let int = BigInt(exactly: wholePart) {
-      return .value(self.builtins.newInt(int))
+      return self.builtins.newInt(int)
     }
 
-    return .value(self.builtins.newFloat(wholePart))
+    return self.builtins.newFloat(wholePart)
   }
 
   // MARK: - Python new

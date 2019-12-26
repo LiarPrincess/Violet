@@ -125,7 +125,6 @@ protocol __traceback__GetterOwner { func getTraceback() -> PyObject }
 protocol __traceback__SetterOwner { func setTraceback(_ value: PyObject?) -> PyResult<()> }
 protocol __truediv__Owner { func truediv(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __trunc__Owner { func trunc() -> PyObject }
-protocol __trunc__Owner { func trunc() -> PyResult<PyObject> }
 protocol __xor__Owner { func xor(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol addOwner { func add(_ value: PyObject) -> PyResult<PyNone> }
 protocol appendOwner { func append(_ element: PyObject) -> PyResult<PyNone> }
@@ -150,6 +149,7 @@ protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, e
 protocol indicesOwner { func indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject> }
 protocol insertOwner { func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> }
 protocol intersectionOwner { func intersection(with other: PyObject) -> PyResult<PyObject> }
+protocol is_integerOwner { func isInteger() -> PyBool }
 protocol isalnumOwner { func isAlphaNumeric() -> Bool }
 protocol isalphaOwner { func isAlpha() -> Bool }
 protocol isasciiOwner { func isAscii() -> Bool }
