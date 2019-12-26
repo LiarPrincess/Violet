@@ -124,11 +124,7 @@ function
 int
   Unimplemented:
     from_bytes - <class 'builtin_function_or_method'>
-    __ceil__
-    __floor__
     __format__
-    __trunc__
-    bit_length
     to_bytes
 
 Iterator

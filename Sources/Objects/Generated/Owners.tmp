@@ -447,6 +447,10 @@ PyInt|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<Py
 PyInt|PyObject|func|__pos__|positive() -> PyObject
 PyInt|PyObject|func|__neg__|negative() -> PyObject
 PyInt|PyObject|func|__abs__|abs() -> PyObject
+PyInt|PyObject|func|__trunc__|trunc() -> PyObject
+PyInt|PyObject|func|__floor__|floor() -> PyObject
+PyInt|PyObject|func|__ceil__|ceil() -> PyObject
+PyInt|PyObject|func|bit_length|bitLength() -> PyObject
 PyInt|PyObject|func|__add__|add(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__radd__|radd(_ other: PyObject) -> PyResultOrNot<PyObject>
 PyInt|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResultOrNot<PyObject>

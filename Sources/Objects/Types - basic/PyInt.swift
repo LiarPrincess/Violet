@@ -210,6 +210,53 @@ public class PyInt: PyObject {
     return self.builtins.newInt(Swift.abs(self.value))
   }
 
+  // MARK: - Trunc
+
+  internal static let truncDoc = "Truncating an Integral returns itself."
+
+  // sourcery: pymethod = __trunc__, , doc = truncDoc
+  internal func trunc() -> PyObject {
+    return self
+  }
+
+  // MARK: - Floor
+
+  internal static let floorDoc = "Flooring an Integral returns itself."
+
+  // sourcery: pymethod = __floor__, , doc = floorDoc
+  internal func floor() -> PyObject {
+    return self
+  }
+
+  // MARK: - Ceil
+
+  internal static let ceilDoc = "Ceiling of an Integral returns itself."
+
+  // sourcery: pymethod = __ceil__, , doc = ceilDoc
+  internal func ceil() -> PyObject {
+    return self
+  }
+
+  // MARK: - Bit length
+
+  internal static let bitLengthDoc = """
+    bit_length($self, /)
+    --
+
+    Number of bits necessary to represent self in binary.
+
+    >>> bin(37)
+    \'0b100101\'
+    >>> (37).bit_length()
+    6
+    """
+
+  // sourcery: pymethod = bit_length, , doc = bitLengthDoc
+  internal func bitLength() -> PyObject {
+    let result = self.value.bitWidth
+    return self.builtins.newInt(result)
+  }
+
   // MARK: - Add
 
   // sourcery: pymethod = __add__

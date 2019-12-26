@@ -68,6 +68,11 @@ public struct BigInt:
     case negative
   }
 
+  /// The number of bits in the binary representation of this value.
+  public var bitWidth: Int {
+    return self.value.bitWidth
+  }
+
   public var description: String {
     return String(describing: self.value)
   }

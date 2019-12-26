@@ -26,6 +26,7 @@ protocol __bool__Owner { func asBool() -> Bool }
 protocol __call__Owner { func call(args: [PyObject], kwargs: PyDictData?) -> PyResultOrNot<PyObject> }
 protocol __cause__GetterOwner { func getCause() -> PyObject }
 protocol __cause__SetterOwner { func setCause(_ value: PyObject?) -> PyResult<()> }
+protocol __ceil__Owner { func ceil() -> PyObject }
 protocol __class__GetterOwner { func getClass() -> PyType }
 protocol __code__GetterOwner { func getCode() -> PyCode }
 protocol __complex__Owner { func asComplex() -> PyResult<PyComplex> }
@@ -42,6 +43,7 @@ protocol __doc__GetterOwner { func getDoc() -> PyResult<PyObject> }
 protocol __doc__SetterOwner { func setDoc(_ value: PyObject?) -> PyResult<()> }
 protocol __eq__Owner { func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> }
 protocol __float__Owner { func asFloat() -> PyResult<PyFloat> }
+protocol __floor__Owner { func floor() -> PyObject }
 protocol __floordiv__Owner { func floordiv(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __func__Owner { func getFunc() -> PyObject }
 protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> }
@@ -122,10 +124,12 @@ protocol __text_signature__GetterOwner { func getTextSignature() -> String? }
 protocol __traceback__GetterOwner { func getTraceback() -> PyObject }
 protocol __traceback__SetterOwner { func setTraceback(_ value: PyObject?) -> PyResult<()> }
 protocol __truediv__Owner { func truediv(_ other: PyObject) -> PyResultOrNot<PyObject> }
+protocol __trunc__Owner { func trunc() -> PyObject }
 protocol __trunc__Owner { func trunc() -> PyResult<PyObject> }
 protocol __xor__Owner { func xor(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol addOwner { func add(_ value: PyObject) -> PyResult<PyNone> }
 protocol appendOwner { func append(_ element: PyObject) -> PyResult<PyNone> }
+protocol bit_lengthOwner { func bitLength() -> PyObject }
 protocol clearOwner { func clear() -> PyResult<PyNone> }
 protocol conjugateOwner { func conjugate() -> PyObject }
 protocol copyOwner { func copy() -> PyObject }
