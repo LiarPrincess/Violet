@@ -171,7 +171,7 @@ public class PySlice: PyObject {
     }
   }
 
-  private struct GetLongIndicesResult {
+  internal struct GetLongIndicesResult {
     var start: Int
     var stop:  Int
     var step:  Int
@@ -182,7 +182,7 @@ public class PySlice: PyObject {
   /// Compute slice indices given a slice and length.
   /// Return -1 on failure. Used by slice.indices and rangeobject slicing.
   /// Assumes that `len` is a nonnegative instance of PyLong.
-  private func getLongIndices(length: Int) -> PyResult<GetLongIndicesResult> {
+  internal func getLongIndices(length: Int) -> PyResult<GetLongIndicesResult> {
     // swiftlint:disable:previous function_body_length
 
     // Convert step to an integer; raise for zero step.
@@ -355,8 +355,8 @@ public class PySlice: PyObject {
     case .value(let value):
       return .index(value)
     case .notIndex:
-      let msg = "\(self.typeName) indices must be integers or None " +
-                "or have an __index__ method"
+      let t = self.typeName
+      let msg = "\(t) indices must be integers or None or have an __index__ method"
       return .error(.typeError(msg))
     case .error(let e):
       return .error(e)

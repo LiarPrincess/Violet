@@ -717,6 +717,9 @@ extension PyRange:
   __getattribute__Owner,
   __contains__Owner,
   __getitem__Owner,
+  startOwner,
+  stopOwner,
+  stepOwner,
   countOwner,
   indexOwner
 { }

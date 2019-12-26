@@ -92,20 +92,7 @@ public class PyTuple: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    var x: PyHash = 0x345678
-    var mult = Hasher.multiplier
-
-    for e in self.elements {
-      switch self.builtins.hash(e) {
-      case let .value(y):
-        x = (x ^ y) * mult
-        mult += 82_520 + PyHash(2 * self.elements.count)
-      case let .error(e):
-        return .error(e)
-      }
-    }
-
-    return .value(x + 97_531)
+    return self.data.hash.asResultOrNot
   }
 
   // MARK: - String

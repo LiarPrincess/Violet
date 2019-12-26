@@ -38,21 +38,14 @@ public class PyRange: PyObject {
   }
 
   private var isGoingUp: Bool {
-    return self.start.value < self.stop.value
+    return self.start.value <= self.stop.value
   }
 
   // MARK: - Init
 
   internal init(_ context: PyContext, start: PyInt, stop: PyInt, step: PyInt?) {
-    let isGoingUp = start.value < stop.value
-
-    let unwrappedStep: PyInt = {
-      if let s = step {
-        return s
-      }
-
-      return context.builtins.newInt(isGoingUp ? 1 : -1)
-    }()
+    let isGoingUp = start.value <= stop.value
+    let unwrappedStep = step ?? context.builtins.newInt(isGoingUp ? 1 : -1)
 
     let length: BigInt = {
       let low  = isGoingUp ? start : stop
@@ -70,7 +63,7 @@ public class PyRange: PyObject {
     self.start = start
     self.stop = stop
     self.step = unwrappedStep
-    self.stepType = step == nil ? .implicit: .explicit
+    self.stepType = step == nil ? .implicit : .explicit
     self.length = context.builtins.newInt(length)
 
     super.init(type: context.builtins.types.range)
@@ -140,7 +133,8 @@ public class PyRange: PyObject {
     var tuple = [self.length, none, none]
 
     if self.length.value == 0 {
-      return self.builtins.hash(self.builtins.newTuple(tuple)).asResultOrNot
+      let data = PySequenceData(elements: tuple)
+      return data.hash.asResultOrNot
     }
 
     tuple[1] = self.start
@@ -148,7 +142,8 @@ public class PyRange: PyObject {
       tuple[2] = self.step
     }
 
-    return self.builtins.hash(self.builtins.newTuple(tuple)).asResultOrNot
+    let data = PySequenceData(elements: tuple)
+    return data.hash.asResultOrNot
   }
 
   // MARK: - String
@@ -222,7 +217,7 @@ public class PyRange: PyObject {
     }
 
     let tmp1 = value - self.start.value
-    let tmp2 = tmp1 & self.step.value
+    let tmp2 = tmp1 % self.step.value
     return tmp2 == 0
   }
 
@@ -252,6 +247,10 @@ public class PyRange: PyObject {
     return self.getItem(at: index.value)
   }
 
+  internal func getItem(at index: Int) -> PyResult<PyInt> {
+    return self.getItem(at: BigInt(index))
+  }
+
   internal func getItem(at index: BigInt) -> PyResult<PyInt> {
     var index = index
 
@@ -268,28 +267,56 @@ public class PyRange: PyObject {
   }
 
   internal func getItem(at slice: PySlice) -> PyResult<PyRange> {
-//    var start = self.start
-//    if let sliceStart = slice.start {
-//      switch self.getItem(at: sliceStart) {
-//      case let .value(v): start = v
-//      case let .error(e): return .error(e)
-//      }
-//    }
-//
-//    var stop = self.stop
-//    if let sliceStop = slice.stop {
-//      switch self.getItem(at: sliceStop) {
-//      case let .value(v): stop = v
-//      case let .error(e): return .error(e)
-//      }
-//    }
-//
-//    let sliceStep = slice.step?.value ?? 1
-//    let step = self.int(sliceStep * self.step.value)
-//
-//    let result = self.range(start: start, stop: stop, step: step)
-//    return result.flatMap { .value($0) }
-    fatalError()
+    let length: Int
+    switch IndexHelper.int(self.length) {
+    case let .value(l): length = l
+    case let .error(e): return .error(e)
+    }
+
+    let indices: PySlice.GetLongIndicesResult
+    switch slice.getLongIndices(length: length) {
+    case let .value(i):indices = i
+    case let .error(e): return .error(e)
+    }
+
+    let subStart: PyInt
+    switch self.getItem(at: indices.start) {
+    case let .value(s): subStart = s
+    case let .error(e): return .error(e)
+    }
+
+    let subStop: PyInt
+    switch self.getItem(at: indices.stop) {
+    case let .value(s): subStop = s
+    case let .error(e): return .error(e)
+    }
+
+    let subStep = self.step.value * BigInt(indices.step)
+
+    return self.builtins.newRange(start: subStart,
+                                  stop: subStop,
+                                  step: self.builtins.newInt(subStep))
+  }
+
+  // MARK: - Start
+
+  // sourcery: pymethod = start
+  internal func getStart() -> PyInt {
+    return self.start
+  }
+
+  // MARK: - Stop
+
+  // sourcery: pymethod = stop
+  internal func getStop() -> PyInt {
+    return self.stop
+  }
+
+  // MARK: - Step
+
+  // sourcery: pymethod = step
+  internal func getStep() -> PyInt {
+    return self.step
   }
 
   // MARK: - Count

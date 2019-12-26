@@ -147,9 +147,6 @@ range
     __new__ - <class 'builtin_function_or_method'>
     __iter__
     __reversed__
-    start
-    step
-    stop
 
 set
   Unimplemented:
