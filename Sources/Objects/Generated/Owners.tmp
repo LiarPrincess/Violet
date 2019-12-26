@@ -617,6 +617,8 @@ PyRange|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObje
 PyRange|PyObject|func|start|getStart() -> PyInt
 PyRange|PyObject|func|stop|getStop() -> PyInt
 PyRange|PyObject|func|step|getStep() -> PyInt
+PyRange|PyObject|func|__reversed__|reversed() -> PyResult<PyObject>
+PyRange|PyObject|func|__iter__|iter() -> PyObject
 PyRange|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
 PyRange|PyObject|func|index|index(of element: PyObject) -> PyResult<BigInt>
 PyRangeIterator|PyObject|get|__class__|getClass() -> PyType

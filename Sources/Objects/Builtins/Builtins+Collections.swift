@@ -151,6 +151,14 @@ extension Builtins {
     return self.newRange(start: zero, stop: stop, step: nil)
   }
 
+  public func newRange(start: BigInt, stop: BigInt, step: BigInt?) -> PyResult<PyRange> {
+    return self.newRange(
+      start: self.newInt(start),
+      stop: self.newInt(stop),
+      step: step.map(self.newInt)
+    )
+  }
+
   public func newRange(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
     if let s = step, s.value == 0 {
       return .valueError("range() arg 3 must not be zero")

@@ -142,12 +142,6 @@ property
     getter
     setter
 
-range
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __iter__
-    __reversed__
-
 set
   Unimplemented:
     __iand__

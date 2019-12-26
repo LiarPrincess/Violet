@@ -95,6 +95,7 @@ protocol __radd__Owner { func radd(_ other: PyObject) -> PyResultOrNot<PyObject>
 protocol __rand__Owner { func rand(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __rdivmod__Owner { func rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __repr__Owner { func repr() -> PyResult<String> }
+protocol __reversed__Owner { func reversed() -> PyResult<PyObject> }
 protocol __reversed__Owner { func reversedIter() -> PyObject }
 protocol __rfloordiv__Owner { func rfloordiv(_ other: PyObject) -> PyResultOrNot<PyObject> }
 protocol __rlshift__Owner { func rlshift(_ other: PyObject) -> PyResultOrNot<PyObject> }

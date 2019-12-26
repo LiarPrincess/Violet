@@ -319,6 +319,29 @@ public class PyRange: PyObject {
     return self.step
   }
 
+  // MARK: - Reversed
+
+  // sourcery: pymethod = __reversed__
+  internal func reversed() -> PyResult<PyObject> {
+    // `reversed(range(start, stop, step))` can be expressed as
+    // `range(start + (n-1) * step, start-step, -step)`,
+    // where n is the number of integers in the range (length).
+
+    let start = self.start.value
+    let step = self.step.value
+    let length = self.length.value
+
+    // Example: start: 3, stop: 17, step: 2
+    // range(3, 17, 2):  3,  5,  7, 9, 11, 13, 15
+    // reversed:        15, 13, 11, 9,  7,  5,  3 = range(15, 1, -2)
+    let newStop = start - step // 3 - 2 = 1
+    let newStart = newStop + length * step // 1 + 7 * 2 = 1 + 14 = 15
+    let newStep = -step // -2
+
+    return self.builtins.newRange(start: newStart, stop: newStop, step: newStep)
+      .map { $0 as PyObject }
+  }
+
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__

@@ -720,6 +720,8 @@ extension PyRange:
   startOwner,
   stopOwner,
   stepOwner,
+  __reversed__Owner,
+  __iter__Owner,
   countOwner,
   indexOwner
 { }

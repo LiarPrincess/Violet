@@ -1089,6 +1089,8 @@ internal enum BuiltinTypesFill {
     dict["start"] = PyBuiltinFunction.wrap(type.context, name: "start", doc: nil, fn: PyRange.getStart, castSelf: Cast.asPyRange)
     dict["stop"] = PyBuiltinFunction.wrap(type.context, name: "stop", doc: nil, fn: PyRange.getStop, castSelf: Cast.asPyRange)
     dict["step"] = PyBuiltinFunction.wrap(type.context, name: "step", doc: nil, fn: PyRange.getStep, castSelf: Cast.asPyRange)
+    dict["__reversed__"] = PyBuiltinFunction.wrap(type.context, name: "__reversed__", doc: nil, fn: PyRange.reversed, castSelf: Cast.asPyRange)
+    dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyRange.iter, castSelf: Cast.asPyRange)
     dict["count"] = PyBuiltinFunction.wrap(type.context, name: "count", doc: nil, fn: PyRange.count(_:), castSelf: Cast.asPyRange)
     dict["index"] = PyBuiltinFunction.wrap(type.context, name: "index", doc: nil, fn: PyRange.index(of:), castSelf: Cast.asPyRange)
   }

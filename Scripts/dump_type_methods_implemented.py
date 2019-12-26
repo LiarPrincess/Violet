@@ -681,6 +681,8 @@ types = {
     'start',
     'stop',
     'step',
+    '__reversed__',
+    '__iter__',
     'count',
     'index',
   ],
