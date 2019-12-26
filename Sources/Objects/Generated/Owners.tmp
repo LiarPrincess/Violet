@@ -505,7 +505,7 @@ PyList|PyObject|func|__delitem__|delItem(at index: PyObject) -> PyResult<PyNone>
 PyList|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
 PyList|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
 PyList|PyObject|func|__iter__|iter() -> PyObject
-PyList|PyObject|func|__reversed__|reversedIter() -> PyObject
+PyList|PyObject|func|__reversed__|reversed() -> PyObject
 PyList|PyObject|func|append|append(_ element: PyObject) -> PyResult<PyNone>
 PyList|PyObject|func|insert|insert(at index: PyObject, item: PyObject) -> PyResult<PyNone>
 PyList|PyObject|func|extend|extend(iterable: PyObject) -> PyResult<PyNone>
@@ -617,10 +617,11 @@ PyRange|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObje
 PyRange|PyObject|func|start|getStart() -> PyInt
 PyRange|PyObject|func|stop|getStop() -> PyInt
 PyRange|PyObject|func|step|getStep() -> PyInt
-PyRange|PyObject|func|__reversed__|reversed() -> PyResult<PyObject>
+PyRange|PyObject|func|__reversed__|reversed() -> PyObject
 PyRange|PyObject|func|__iter__|iter() -> PyObject
 PyRange|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
 PyRange|PyObject|func|index|index(of element: PyObject) -> PyResult<BigInt>
+PyRange|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyRangeIterator|PyObject|get|__class__|getClass() -> PyType
 
 PyRangeIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

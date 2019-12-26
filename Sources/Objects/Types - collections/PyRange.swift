@@ -28,6 +28,7 @@ public class PyRange: PyObject {
   internal let step: PyInt
   /// Number of elements in range.
   internal let length: PyInt
+  /// Remember how user created this range (`repr` depends on it).
   private let stepType: StepType
 
   private enum StepType {
@@ -44,29 +45,41 @@ public class PyRange: PyObject {
   // MARK: - Init
 
   internal init(_ context: PyContext, start: PyInt, stop: PyInt, step: PyInt?) {
+    assert(
+      step?.value != 0,
+      "PyRange.step cannot be 0. Use 'builtins.newRange' to handle this case."
+    )
+
     let isGoingUp = start.value <= stop.value
-    let unwrappedStep = step ?? context.builtins.newInt(isGoingUp ? 1 : -1)
+    let unwrappedStep = step?.value ?? (isGoingUp ? 1 : -1)
 
-    let length: BigInt = {
-      let low  = isGoingUp ? start : stop
-      let high = isGoingUp ? stop : start
-
-      // len(range(0, 3, -1)) -> 0
-      guard low.value < high.value else {
-        return 0
-      }
-
-      let diff = (high.value - low.value) - 1
-      return (diff / abs(unwrappedStep.value)) + 1
-    }()
+    let length = PyRange.calculateLength(start: start.value,
+                                         stop: stop.value,
+                                         step: unwrappedStep)
 
     self.start = start
     self.stop = stop
-    self.step = unwrappedStep
+    self.step = context.builtins.newInt(unwrappedStep)
     self.stepType = step == nil ? .implicit : .explicit
     self.length = context.builtins.newInt(length)
 
     super.init(type: context.builtins.types.range)
+  }
+
+  private static func calculateLength(start: BigInt,
+                                      stop: BigInt,
+                                      step: BigInt) -> BigInt {
+    let isGoingUp = step >= 0
+    let low  = isGoingUp ? start : stop
+    let high = isGoingUp ? stop : start
+
+    // len(range(0, 3, -1)) -> 0
+    guard low < high else {
+      return 0
+    }
+
+    let diff = high - low - 1
+    return (diff / abs(step)) + 1
   }
 
   // MARK: - Equatable
@@ -322,7 +335,7 @@ public class PyRange: PyObject {
   // MARK: - Reversed
 
   // sourcery: pymethod = __reversed__
-  internal func reversed() -> PyResult<PyObject> {
+  internal func reversed() -> PyObject {
     // `reversed(range(start, stop, step))` can be expressed as
     // `range(start + (n-1) * step, start-step, -step)`,
     // where n is the number of integers in the range (length).
@@ -338,8 +351,14 @@ public class PyRange: PyObject {
     let newStart = newStop + length * step // 1 + 7 * 2 = 1 + 14 = 15
     let newStep = -step // -2
 
-    return self.builtins.newRange(start: newStart, stop: newStop, step: newStep)
-      .map { $0 as PyObject }
+    let newLength = PyRange.calculateLength(start: newStart,
+                                            stop: newStop,
+                                            step: newStep)
+
+    return PyRangeIterator(self.context,
+                           start: newStart,
+                           step: newStep,
+                           length: newLength)
   }
 
   // MARK: - Iter
@@ -379,5 +398,38 @@ public class PyRange: PyObject {
     let tmp = int.value - self.start.value
     let result = tmp / self.step.value
     return .value(result)
+  }
+
+  // MARK: - Python new
+
+  // sourcery: pymethod = __new__
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDictData?) -> PyResult<PyObject> {
+    if let e = ArgumentParser.noKwargsOrError(fnName: "range", kwargs: kwargs) {
+      return .error(e)
+    }
+
+    // Guarantee that we have 1, 2 or 3 arguments
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "range",
+                                                        args: args,
+                                                        min: 1,
+                                                        max: 3) {
+      return .error(e)
+    }
+
+    let builtins = type.builtins
+
+    // Handle 1 argument
+    if args.count == 1 {
+      return builtins.newRange(stop: args[0]).map { $0 as PyObject }
+    }
+
+    // Handle 2 or 3 arguments
+    let start = args[0]
+    let stop = args[1]
+    let step = args.count == 3 ? args[2] : nil
+    return builtins.newRange(start: start, stop: stop, step: step)
+      .map { $0 as PyObject }
   }
 }

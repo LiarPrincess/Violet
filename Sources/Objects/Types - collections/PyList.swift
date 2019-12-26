@@ -209,7 +209,7 @@ public class PyList: PyObject {
   }
 
   // sourcery: pymethod = __reversed__
-  internal func reversedIter() -> PyObject {
+  internal func reversed() -> PyObject {
     return PyListReverseIterator(list: self)
   }
 

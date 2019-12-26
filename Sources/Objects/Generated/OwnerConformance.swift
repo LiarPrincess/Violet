@@ -723,7 +723,8 @@ extension PyRange:
   __reversed__Owner,
   __iter__Owner,
   countOwner,
-  indexOwner
+  indexOwner,
+  __new__Owner
 { }
 
 // MARK: - RangeIterator

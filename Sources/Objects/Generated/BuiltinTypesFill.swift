@@ -858,7 +858,7 @@ internal enum BuiltinTypesFill {
     dict["count"] = PyBuiltinFunction.wrap(type.context, name: "count", doc: nil, fn: PyList.count(_:), castSelf: Cast.asPyList)
     dict["index"] = PyBuiltinFunction.wrap(type.context, name: "index", doc: nil, fn: PyList.index(of:start:end:), castSelf: Cast.asPyList)
     dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyList.iter, castSelf: Cast.asPyList)
-    dict["__reversed__"] = PyBuiltinFunction.wrap(type.context, name: "__reversed__", doc: nil, fn: PyList.reversedIter, castSelf: Cast.asPyList)
+    dict["__reversed__"] = PyBuiltinFunction.wrap(type.context, name: "__reversed__", doc: nil, fn: PyList.reversed, castSelf: Cast.asPyList)
     dict["append"] = PyBuiltinFunction.wrap(type.context, name: "append", doc: nil, fn: PyList.append(_:), castSelf: Cast.asPyList)
     dict["insert"] = PyBuiltinFunction.wrap(type.context, name: "insert", doc: nil, fn: PyList.insert(at:item:), castSelf: Cast.asPyList)
     dict["extend"] = PyBuiltinFunction.wrap(type.context, name: "extend", doc: nil, fn: PyList.extend(iterable:), castSelf: Cast.asPyList)
@@ -1071,6 +1071,7 @@ internal enum BuiltinTypesFill {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyRange.getClass, castSelf: Cast.asPyRange)
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyRange.pyNew(type:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PyRange.isEqual(_:), castSelf: Cast.asPyRange)

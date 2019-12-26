@@ -146,12 +146,21 @@ extension Builtins {
 
   // MARK: - Range
 
-  public func newRange(stop: PyInt) -> PyResult<PyRange> {
-    let zero = self.newInt(0)
-    return self.newRange(start: zero, stop: stop, step: nil)
+  public func newRange(stop: BigInt) -> PyResult<PyRange> {
+    return self.newRange(stop: self.newInt(stop))
   }
 
-  public func newRange(start: BigInt, stop: BigInt, step: BigInt?) -> PyResult<PyRange> {
+  public func newRange(stop: PyInt) -> PyResult<PyRange> {
+    return self.newRange(start: self.newInt(0), stop: stop, step: nil)
+  }
+
+  public func newRange(stop: PyObject) -> PyResult<PyRange> {
+    return IndexHelper.bigInt(stop).flatMap(self.newRange(stop:))
+  }
+
+  public func newRange(start: BigInt,
+                       stop: BigInt,
+                       step: BigInt?) -> PyResult<PyRange> {
     return self.newRange(
       start: self.newInt(start),
       stop: self.newInt(stop),
@@ -159,12 +168,42 @@ extension Builtins {
     )
   }
 
-  public func newRange(start: PyInt, stop: PyInt, step: PyInt?) -> PyResult<PyRange> {
+  public func newRange(start: PyInt,
+                       stop: PyInt,
+                       step: PyInt?) -> PyResult<PyRange> {
     if let s = step, s.value == 0 {
       return .valueError("range() arg 3 must not be zero")
     }
 
     return .value(PyRange(self.context, start: start, stop: stop, step: step))
+  }
+
+  public func newRange(start: PyObject,
+                       stop: PyObject,
+                       step: PyObject?) -> PyResult<PyRange> {
+    let parsedStart: BigInt
+    switch IndexHelper.bigInt(start) {
+    case let .value(i): parsedStart = i
+    case let .error(e): return .error(e)
+    }
+
+    let parsedStop: BigInt
+    switch IndexHelper.bigInt(stop) {
+    case let .value(i): parsedStop = i
+    case let .error(e): return .error(e)
+    }
+
+    guard let step = step else {
+      return self.newRange(start: parsedStart, stop: parsedStop, step: nil)
+    }
+
+    let parsedStep: BigInt
+    switch IndexHelper.bigInt(step) {
+    case let .value(i): parsedStep = i
+    case let .error(e): return .error(e)
+    }
+
+    return self.newRange(start: parsedStart, stop: parsedStop, step: parsedStep)
   }
 
   // MARK: - Enumerate

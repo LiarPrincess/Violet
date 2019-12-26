@@ -685,6 +685,7 @@ types = {
     '__iter__',
     'count',
     'index',
+    '__new__',
   ],
   range_iterator: [
     '__class__',
