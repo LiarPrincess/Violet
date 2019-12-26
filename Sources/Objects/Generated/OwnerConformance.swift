@@ -805,9 +805,14 @@ extension PySlice:
   __le__Owner,
   __gt__Owner,
   __ge__Owner,
+  __hash__Owner,
   __repr__Owner,
   __getattribute__Owner,
-  indicesOwner
+  startOwner,
+  stopOwner,
+  stepOwner,
+  indicesOwner,
+  __new__Owner
 { }
 
 // MARK: - String

@@ -99,6 +99,13 @@ public class PySlice: PyObject {
     return data.isGreaterEqual(than: other.asStartStopStepSequence).asResultOrNot
   }
 
+  // MARK: - Hashable
+
+  // sourcery: pymethod = __hash__
+  internal func hash() -> PyResultOrNot<PyHash> {
+    return .typeError("unhashable type: 'slice'")
+  }
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__
@@ -136,6 +143,27 @@ public class PySlice: PyObject {
   // sourcery: pyproperty = __class__
   internal func getClass() -> PyType {
     return self.type
+  }
+
+  // MARK: - Start
+
+  // sourcery: pymethod = start
+  internal func getStart() -> PyObject {
+    return self.start
+  }
+
+  // MARK: - Stop
+
+  // sourcery: pymethod = stop
+  internal func getStop() -> PyObject {
+    return self.stop
+  }
+
+  // MARK: - Step
+
+  // sourcery: pymethod = step
+  internal func getStep() -> PyObject {
+    return self.step
   }
 
   // MARK: - Indices
@@ -335,6 +363,41 @@ public class PySlice: PyObject {
     }
 
     return AdjustedIndices(start: start, stop: stop, step: step, length: length)
+  }
+
+  // MARK: - Python new
+
+  // sourcery: pymethod = __new__
+  internal static func pyNew(type: PyType,
+                             args: [PyObject],
+                             kwargs: PyDictData?) -> PyResult<PyObject> {
+    if let e = ArgumentParser.noKwargsOrError(fnName: "slice", kwargs: kwargs) {
+      return .error(e)
+    }
+
+    // Guarantee that we have 1, 2 or 3 arguments
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "slice",
+                                                        args: args,
+                                                        min: 1,
+                                                        max: 3) {
+      return .error(e)
+    }
+
+    let builtins = type.builtins
+
+    // Handle 1 argument
+    if args.count == 1 {
+      let result = builtins.newSlice(stop: args[0])
+      return .value(result)
+    }
+
+    // Handle 2 or 3 arguments
+    let start = args[0]
+    let stop = args[1]
+    let step = args.count == 3 ? args[2] : nil
+
+    let result = builtins.newSlice(start: start, stop: stop, step: step)
+    return .value(result)
   }
 
   // MARK: - Helpers

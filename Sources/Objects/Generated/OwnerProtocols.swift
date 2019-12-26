@@ -180,11 +180,11 @@ protocol rindexRangedOwner { func rindex(_ element: PyObject, start: PyObject?, 
 protocol rpartitionOwner { func rpartition(separator: PyObject) -> PyResult<PyTuple> }
 protocol setdefaultOwner { func setDefault(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
 protocol sortOwner { func sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> }
-protocol startOwner { func getStart() -> PyInt }
+protocol startOwner { func getStart() -> PyObject }
 protocol startswithOwner { func startsWith(_ element: PyObject) -> PyResult<Bool> }
 protocol startswithRangedOwner { func startsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Bool> }
-protocol stepOwner { func getStep() -> PyInt }
-protocol stopOwner { func getStop() -> PyInt }
+protocol stepOwner { func getStep() -> PyObject }
+protocol stopOwner { func getStop() -> PyObject }
 protocol symmetric_differenceOwner { func symmetricDifference(with other: PyObject) -> PyResult<PyObject> }
 protocol unionOwner { func union(with other: PyObject) -> PyResult<PyObject> }
 protocol valuesOwner { func values() -> PyObject }

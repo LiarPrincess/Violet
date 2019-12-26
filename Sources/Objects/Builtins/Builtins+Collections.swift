@@ -227,11 +227,11 @@ extension Builtins {
 
   // MARK: - Slice
 
-  public func newSlice(stop: PyInt?) -> PySlice {
+  public func newSlice(stop: PyObject) -> PySlice {
     return PySlice(
       self.context,
       start: self.none,
-      stop: stop ?? self.none,
+      stop: stop,
       step: self.none
     )
   }

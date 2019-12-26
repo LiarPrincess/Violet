@@ -314,21 +314,21 @@ public class PyRange: PyObject {
   // MARK: - Start
 
   // sourcery: pymethod = start
-  internal func getStart() -> PyInt {
+  internal func getStart() -> PyObject {
     return self.start
   }
 
   // MARK: - Stop
 
   // sourcery: pymethod = stop
-  internal func getStop() -> PyInt {
+  internal func getStop() -> PyObject {
     return self.stop
   }
 
   // MARK: - Step
 
   // sourcery: pymethod = step
-  internal func getStep() -> PyInt {
+  internal func getStep() -> PyObject {
     return self.step
   }
 

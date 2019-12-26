@@ -154,14 +154,6 @@ set
     symmetric_difference_update
     update
 
-slice
-  Unimplemented:
-    __hash__ - <class 'NoneType'>
-    __new__ - <class 'builtin_function_or_method'>
-    start
-    step
-    stop
-
 str
   Unimplemented:
     maketrans - <class 'builtin_function_or_method'>

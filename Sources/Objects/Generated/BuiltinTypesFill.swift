@@ -1208,6 +1208,7 @@ internal enum BuiltinTypesFill {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PySlice.getClass, castSelf: Cast.asPySlice)
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PySlice.pyNew(type:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PySlice.isEqual(_:), castSelf: Cast.asPySlice)
@@ -1216,8 +1217,12 @@ internal enum BuiltinTypesFill {
     dict["__le__"] = PyBuiltinFunction.wrap(type.context, name: "__le__", doc: nil, fn: PySlice.isLessEqual(_:), castSelf: Cast.asPySlice)
     dict["__gt__"] = PyBuiltinFunction.wrap(type.context, name: "__gt__", doc: nil, fn: PySlice.isGreater(_:), castSelf: Cast.asPySlice)
     dict["__ge__"] = PyBuiltinFunction.wrap(type.context, name: "__ge__", doc: nil, fn: PySlice.isGreaterEqual(_:), castSelf: Cast.asPySlice)
+    dict["__hash__"] = PyBuiltinFunction.wrap(type.context, name: "__hash__", doc: nil, fn: PySlice.hash, castSelf: Cast.asPySlice)
     dict["__repr__"] = PyBuiltinFunction.wrap(type.context, name: "__repr__", doc: nil, fn: PySlice.repr, castSelf: Cast.asPySlice)
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PySlice.getAttribute(name:), castSelf: Cast.asPySlice)
+    dict["start"] = PyBuiltinFunction.wrap(type.context, name: "start", doc: nil, fn: PySlice.getStart, castSelf: Cast.asPySlice)
+    dict["stop"] = PyBuiltinFunction.wrap(type.context, name: "stop", doc: nil, fn: PySlice.getStop, castSelf: Cast.asPySlice)
+    dict["step"] = PyBuiltinFunction.wrap(type.context, name: "step", doc: nil, fn: PySlice.getStep, castSelf: Cast.asPySlice)
     dict["indices"] = PyBuiltinFunction.wrap(type.context, name: "indices", doc: nil, fn: PySlice.indicesInSequence(length:), castSelf: Cast.asPySlice)
   }
 

@@ -614,9 +614,9 @@ PyRange|PyObject|func|__len__|getLength() -> BigInt
 PyRange|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyRange|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
 PyRange|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
-PyRange|PyObject|func|start|getStart() -> PyInt
-PyRange|PyObject|func|stop|getStop() -> PyInt
-PyRange|PyObject|func|step|getStep() -> PyInt
+PyRange|PyObject|func|start|getStart() -> PyObject
+PyRange|PyObject|func|stop|getStop() -> PyObject
+PyRange|PyObject|func|step|getStep() -> PyObject
 PyRange|PyObject|func|__reversed__|reversed() -> PyObject
 PyRange|PyObject|func|__iter__|iter() -> PyObject
 PyRange|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>
@@ -683,9 +683,14 @@ PySlice|PyObject|func|__lt__|isLess(_ other: PyObject) -> PyResultOrNot<Bool>
 PySlice|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool>
 PySlice|PyObject|func|__gt__|isGreater(_ other: PyObject) -> PyResultOrNot<Bool>
 PySlice|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool>
+PySlice|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
 PySlice|PyObject|func|__repr__|repr() -> PyResult<String>
 PySlice|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PySlice|PyObject|func|start|getStart() -> PyObject
+PySlice|PyObject|func|stop|getStop() -> PyObject
+PySlice|PyObject|func|step|getStep() -> PyObject
 PySlice|PyObject|func|indices|indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject>
+PySlice|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyString|PyObject|get|__class__|getClass() -> PyType
 
 PyString|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>
