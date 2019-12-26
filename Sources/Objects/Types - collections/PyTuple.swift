@@ -245,14 +245,24 @@ public class PyTuple: PyObject {
       return .error(e)
     }
 
-//    let iterable = args[0]
-    // TODO: interables - tuple_new_impl(PyTypeObject *type, PyObject *iterable)
-//    let isBuiltin = type === type.builtins.list
-//    let alloca = isBuiltin ?
-//      PyList.init(type:data:) :
-//      PyListHeap.init(type:data:)
-//
-//    let data = PySequenceData()
-    return .value(type.builtins.none)
+    let isBuiltin = type === type.builtins.list
+    let alloca = isBuiltin ?
+      PyList.init(type:data:) :
+      PyListHeap.init(type:data:)
+
+    return PyTuple.getSequenceData(args: args).map { alloca(type, $0) }
+  }
+
+  private static func getSequenceData(args: [PyObject]) -> PyResult<PySequenceData> {
+    // swiftlint:disable:next empty_count
+    assert(args.count == 0 || args.count == 1)
+
+    guard let iterable = args.first else {
+      return .value(PySequenceData())
+    }
+
+    let builtins = iterable.builtins
+    return builtins.toArray(iterable: iterable)
+      .map(PySequenceData.init(elements:))
   }
 }
