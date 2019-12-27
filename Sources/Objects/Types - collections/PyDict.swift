@@ -331,6 +331,172 @@ public class PyDict: PyObject {
     }
   }
 
+  // MARK: - Update
+
+  // sourcery: pymethod = update
+  internal func update(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> {
+    // Guarantee 0 or 1 args
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "update",
+                                                        args: args,
+                                                        min: 0,
+                                                        max: 1) {
+      return .error(e)
+    }
+
+    // Handle single arg
+    if let arg = args.first {
+      if let dict = arg as? PyDict {
+        switch self.update(fromData: dict.data) {
+        case .value: break
+        case .error(let e): return .error(e)
+        }
+      } else {
+        switch self.callKeys(on: arg) {
+        case .value(let keys): // We have keys -> dict-like object
+          switch self.update(fromKeysOwner: arg, keys: keys) {
+          case .value: break
+          case .error(let e): return .error(e)
+          }
+        case .notImplemented: // We don't have keys -> try iterable
+          switch self.update(fromIterableOfPairs: arg) {
+          case .value: break
+          case .error(let e): return .error(e)
+          }
+        case .error(let e):
+          return .error(e)
+        }
+      }
+    }
+
+    // Handle kwargs
+    if let kwargs = kwargs {
+      switch self.update(fromData: kwargs) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .value(self.builtins.none)
+  }
+
+  private func callKeys(on object: PyObject) -> PyResultOrNot<PyObject> {
+    if let owner = object as? keysOwner {
+      return .value(owner.keys())
+    }
+
+    switch self.builtins.callMethod(on: object, selector: "keys") {
+    case .value(let o):
+      return .value(o)
+    case .notImplemented, .missingMethod:
+      return .notImplemented
+    case .error(let e), .notCallable(let e):
+      return .error(e)
+    }
+  }
+
+  private func update(fromData data: PyDictData) -> PyResult<()> {
+    for entry in data {
+      switch self.insert(key: entry.key, value: entry.value) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .value()
+  }
+
+  internal func insert(key: PyDictKey, value: PyObject) -> PyResult<()> {
+    switch self.data.insert(key: key, value: value) {
+    case .inserted, .updated:
+      return .value()
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private typealias KeyValue = (key: PyDictKey, value: PyObject)
+
+  /// int
+  /// PyDict_MergeFromSeq2(PyObject *d, PyObject *seq2, int override)
+  ///
+  /// Iterable of sequences with 2 elements (key and value).
+  private func update(fromIterableOfPairs iterable: PyObject) -> PyResult<()> {
+    let kvs = self.builtins.reduce(iterable: iterable, into: [KeyValue]()) { acc, object in
+      switch self.unpackKeyValue(fromIterable: object) {
+      case let .value(keyValue):
+        acc.append(keyValue)
+        return .goToNextElement
+      case let .error(e):
+        return .error(e)
+      }
+    }
+
+    switch kvs {
+    case let .value(kvs):
+      for (key, value) in kvs {
+        switch self.insert(key: key, value: value) {
+        case .value: break
+        case .error(let e): return .error(e)
+        }
+      }
+
+      return .value()
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// Given iterable of 2 elements it will return
+  /// `iterable[0]` as key and `iterable[1]` as value.
+  private func unpackKeyValue(fromIterable iterable: PyObject) -> PyResult<KeyValue> {
+    switch self.builtins.toArray(iterable: iterable) {
+    case let .value(array):
+      guard array.count == 2 else {
+        let l = array.count
+        let msg = "dictionary update sequence element has length \(l); 2 is required"
+        return .valueError(msg)
+      }
+
+      return self.createKey(from: array[0]).map { ($0, array[1]) }
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// static int
+  /// dict_merge(PyObject *a, PyObject *b, int override)
+  private func update(fromKeysOwner dict: PyObject,
+                      keys keyIterable: PyObject) -> PyResult<()> {
+    let keys: [PyObject]
+    switch self.builtins.toArray(iterable: keyIterable) {
+    case let .value(k): keys = k
+    case let .error(e): return .error(e)
+    }
+
+    for keyObject in keys {
+      let key: PyDictKey
+      switch self.createKey(from: keyObject) {
+      case let .value(k): key = k
+      case let .error(e): return .error(e)
+      }
+
+      let value: PyObject
+      switch self.builtins.getItem(dict, at: keyObject) {
+      case let .value(v): value = v
+      case let .error(e): return .error(e)
+      }
+
+      switch self.insert(key: key, value: value) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .value()
+  }
+
   // MARK: - Copy
 
   internal static let copyDoc = "D.copy() -> a shallow copy of D"
