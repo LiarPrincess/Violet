@@ -473,6 +473,7 @@ types = {
     'isdisjoint',
     'copy',
     '__iter__',
+    '__new__',
   ],
   t.FunctionType: [
     '__class__',
@@ -752,6 +753,7 @@ types = {
     '__getattribute__',
     '__iter__',
     '__next__',
+    '__new__',
   ],
   slice: [
     '__class__',

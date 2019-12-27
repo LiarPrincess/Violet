@@ -421,6 +421,7 @@ PyFrozenSet|PyObject|func|symmetric_difference|symmetricDifference(with other: P
 PyFrozenSet|PyObject|func|isdisjoint|isDisjoint(with other: PyObject) -> PyResult<Bool>
 PyFrozenSet|PyObject|func|copy|copy() -> PyObject
 PyFrozenSet|PyObject|func|__iter__|iter() -> PyObject
+PyFrozenSet|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyFunction|PyObject|get|__class__|getClass() -> PyType
 PyFunction|PyObject|get|__name__|getName() -> String
 PyFunction|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
@@ -684,6 +685,7 @@ PySetIterator|PyObject|get|__class__|getClass() -> PyType
 PySetIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PySetIterator|PyObject|func|__iter__|iter() -> PyObject
 PySetIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+PySetIterator|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PySlice|PyObject|get|__class__|getClass() -> PyType
 
 PySlice|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

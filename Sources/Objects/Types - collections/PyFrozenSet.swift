@@ -31,6 +31,12 @@ public class PyFrozenSet: PyObject, PySetType {
     super.init(type: context.builtins.types.frozenset)
   }
 
+  /// Use only in `__new__`!
+  internal init(type: PyType, data: PySetData) {
+    self.data = data
+    super.init(type: type)
+  }
+
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
@@ -356,6 +362,72 @@ public class PyFrozenSet: PyObject, PySetType {
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
     return PySetIterator(set: self)
+  }
+
+  // MARK: - Python new
+
+  // sourcery: pymethod = __new__
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
+    let isBuiltin = type === type.builtins.frozenset
+    if isBuiltin {
+      if let e = ArgumentParser.noKwargsOrError(fnName: "frozenset",
+                                                kwargs: kwargs) {
+        return .error(e)
+      }
+    }
+
+    // Guarantee 0 or 1 args
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "frozenset",
+                                                        args: args,
+                                                        min: 0,
+                                                        max: 1) {
+      return .error(e)
+    }
+
+    var dataOrNil: PySetData?
+    if let iterable = args.first {
+      switch PyFrozenSet.data(fromIterable: iterable) {
+      case let .value(d): dataOrNil = d
+      case let .error(e): return .error(e)
+      }
+    }
+
+    let alloca = isBuiltin ?
+      PyFrozenSet.newSet(type:data:) :
+      PyFrozenSetHeap.init(type:data:)
+
+    let result = alloca(type, dataOrNil ?? PySetData())
+    return .value(result)
+  }
+
+  private static func newSet(type: PyType, data: PySetData) -> PyFrozenSet {
+    return type.builtins.newFrozenSet(data)
+  }
+
+  private static func data(fromIterable iterable: PyObject) -> PyResult<PySetData> {
+    if let set = iterable as? PySetType {
+      return .value(set.data)
+    }
+
+    let builtins = iterable.builtins
+    switch builtins.toArray(iterable: iterable) {
+    case let .value(array):
+      var data = PySetData()
+
+      for object in array {
+        switch data.insert(value: object) {
+        case .ok: break
+        case .error(let e): return .error(e)
+        }
+      }
+
+      return .value(data)
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Helpers

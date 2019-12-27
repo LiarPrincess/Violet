@@ -694,6 +694,7 @@ internal enum BuiltinTypesFill {
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyFrozenSet.getClass, castSelf: Cast.asPyFrozenSet)
 
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyFrozenSet.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PyFrozenSet.isEqual(_:), castSelf: Cast.asPyFrozenSet)
     dict["__ne__"] = PyBuiltinFunction.wrap(type.context, name: "__ne__", doc: nil, fn: PyFrozenSet.isNotEqual(_:), castSelf: Cast.asPyFrozenSet)
@@ -1201,6 +1202,7 @@ internal enum BuiltinTypesFill {
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PySetIterator.getClass, castSelf: Cast.asPySetIterator)
 
 
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PySetIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(type.context, name: "__getattribute__", doc: nil, fn: PySetIterator.getAttribute(name:), castSelf: Cast.asPySetIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PySetIterator.iter, castSelf: Cast.asPySetIterator)

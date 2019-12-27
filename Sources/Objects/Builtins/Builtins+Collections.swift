@@ -74,7 +74,22 @@ extension Builtins {
 
   /// PyObject * PySet_New(PyObject *iterable)
   public func newSet(_ elements: [PyObject] = []) -> PyResult<PySet> {
+    return self.toSetData(elements).map(self.newSet(_:))
+  }
+
+  internal func newSet(_ data: PySetData) -> PySet {
+    return PySet(self.context, data: data)
+  }
+
+  /// int PySet_Add(PyObject *anyset, PyObject *key)
+  public func add(set object: PyObject, value: PyObject) -> PyResult<PyNone> {
+    return self.cast(object, as: PySet.self, typeName: "set")
+      .flatMap { $0.add(value) }
+  }
+
+  private func toSetData(_ elements: [PyObject]) -> PyResult<PySetData> {
     var data = PySetData()
+
     for element in elements {
       switch data.insert(value: element) {
       case .ok: break
@@ -82,13 +97,19 @@ extension Builtins {
       }
     }
 
-    return .value(PySet(self.context, data: data))
+    return .value(data)
   }
 
-  /// int PySet_Add(PyObject *anyset, PyObject *key)
-  public func add(set object: PyObject, value: PyObject) -> PyResult<PyNone> {
-    return self.cast(object, as: PySet.self, typeName: "set")
-      .flatMap { $0.add(value) }
+  // MARK: - Frozen set
+
+  public func newFrozenSet(_ elements: [PyObject] = []) -> PyResult<PyFrozenSet> {
+    return self.toSetData(elements).map(self.newFrozenSet(_:))
+  }
+
+  internal func newFrozenSet(_ data: PySetData) -> PyFrozenSet {
+    return data.isEmpty ?
+      self.emptyFrozenSet :
+      PyFrozenSet(self.context, data: data)
   }
 
   // MARK: - Dictionary
