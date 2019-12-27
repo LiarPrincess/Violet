@@ -355,6 +355,22 @@ public class PySet: PyObject, PySetType {
     }
   }
 
+  // MARK: - Update
+
+  internal static let updateDoc = """
+    Update a set with the union of itself and others.
+    """
+
+  // sourcery: pymethod = update, doc = updateDoc
+  internal func update(from other: PyObject) -> PyResult<PyNone> {
+    switch self.data.update(from: other) {
+    case .ok:
+      return .value(self.builtins.none)
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Remove
 
   internal static let removeDoc = """
@@ -449,6 +465,34 @@ public class PySet: PyObject, PySetType {
 
     let data = PySetData()
     return .value(alloca(type, data))
+  }
+
+  // MARK: - Python init
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PySet,
+                              args: [PyObject],
+                              kwargs: PyDictData?) -> PyResult<PyNone> {
+    if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
+                                              kwargs: kwargs) {
+      return .error(e)
+    }
+
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: zelf.typeName,
+                                                        args: args,
+                                                        min: 0,
+                                                        max: 1) {
+      return .error(e)
+    }
+
+    if let iterable = args.first {
+      switch zelf.update(from: iterable) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return.value(zelf.builtins.none)
   }
 
   // MARK: - Helpers

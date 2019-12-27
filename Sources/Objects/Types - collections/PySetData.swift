@@ -352,6 +352,59 @@ internal struct PySetData {
     }
   }
 
+  // MARK: - Update
+
+  internal enum UpdateResult {
+    case ok
+    case error(PyErrorEnum)
+  }
+
+  internal mutating func update(from other: PyObject) -> UpdateResult {
+    if let set = other as? PySetType {
+      return self.update(from: set.data)
+    }
+
+    if let dict = other as? PyDict {
+      return self.update(from: dict.data)
+    }
+
+    let builtins = other.builtins
+    let result = builtins.reduce(iterable: other, initial: 0) { _, object in
+      switch self.insert(value: object) {
+      case .ok: return .goToNextElement
+      case .error(let e): return .error(e)
+      }
+    }
+
+    switch result {
+    case .value: return .ok
+    case .error(let e): return .error(e)
+    }
+  }
+
+  internal mutating func update(from other: PySetData) -> UpdateResult {
+    for entry in other.dict {
+      switch self.insert(element: entry.key) {
+      case .ok: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .ok
+  }
+
+  internal mutating func update(from other: PyDictData) -> UpdateResult {
+    for entry in other {
+      let element = PySetElement(hash: entry.hash, object: entry.key.object)
+      switch self.insert(element: element) {
+      case .ok: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    return .ok
+  }
+
   // MARK: - Remove
 
   internal enum RemoveResult {
