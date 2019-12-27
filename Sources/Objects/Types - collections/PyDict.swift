@@ -589,6 +589,17 @@ public class PyDict: PyObject {
     return .value(alloca(type, data))
   }
 
+  // MARK: - Python init
+
+  // sourcery: pymethod = __init__
+  internal static func pyInit(zelf: PyDict,
+                              args: [PyObject],
+                              kwargs: PyDictData?) -> PyResult<PyNone> {
+    return zelf
+      .update(args: args, kwargs: kwargs)
+      .map { _ in zelf.builtins.none }
+  }
+
   // MARK: - Helpers
 
   private func createKey(from object: PyObject) -> PyResult<PyDictKey> {

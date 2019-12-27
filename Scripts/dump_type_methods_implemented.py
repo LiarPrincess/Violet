@@ -312,6 +312,7 @@ types = {
     'get',
     '__iter__',
     'setdefault',
+    'update',
     'copy',
     'pop',
     'popitem',
@@ -319,6 +320,7 @@ types = {
     'items',
     'values',
     '__new__',
+    '__init__',
   ],
   dict_itemiterator: [
     '__class__',

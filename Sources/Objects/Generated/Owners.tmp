@@ -271,6 +271,7 @@ PyDict|PyObject|func|clear|clear() -> PyResult<PyNone>
 PyDict|PyObject|func|get|get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|__iter__|iter() -> PyObject
 PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                           default: PyObject?) -> PyResult<PyObject>
+PyDict|PyObject|func|update|update(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
 PyDict|PyObject|func|copy|copy() -> PyObject
 PyDict|PyObject|func|pop|pop(_ index: PyObject,                    default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|popitem|popitem() -> PyResult<PyObject>
@@ -278,6 +279,7 @@ PyDict|PyObject|func|keys|keys() -> PyObject
 PyDict|PyObject|func|items|items() -> PyObject
 PyDict|PyObject|func|values|values() -> PyObject
 PyDict|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
+PyDict|PyObject|static_func|__init__|pyInit(zelf: PyDict,                              args: [PyObject],                              kwargs: PyDictData?) -> PyResult<PyNone>
 PyDictItemIterator|PyObject|get|__class__|getClass() -> PyType
 
 PyDictItemIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

@@ -65,12 +65,6 @@ complex
   Unimplemented:
     __format__
 
-dict
-  Unimplemented:
-    fromkeys - <class 'builtin_function_or_method'>
-    __init__
-    update
-
 dict_items
   Unimplemented:
     __hash__ - <class 'NoneType'>

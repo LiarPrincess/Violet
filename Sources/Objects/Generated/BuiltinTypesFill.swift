@@ -420,6 +420,7 @@ internal enum BuiltinTypesFill {
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyDict.getClass, castSelf: Cast.asPyDict)
 
     dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PyDict.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type.context, typeName: "__init__", doc: nil, fn: PyDict.pyInit(zelf:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PyDict.isEqual(_:), castSelf: Cast.asPyDict)
@@ -440,6 +441,7 @@ internal enum BuiltinTypesFill {
     dict["get"] = PyBuiltinFunction.wrap(type.context, name: "get", doc: nil, fn: PyDict.get(_:default:), castSelf: Cast.asPyDict)
     dict["__iter__"] = PyBuiltinFunction.wrap(type.context, name: "__iter__", doc: nil, fn: PyDict.iter, castSelf: Cast.asPyDict)
     dict["setdefault"] = PyBuiltinFunction.wrap(type.context, name: "setdefault", doc: nil, fn: PyDict.setDefault(_:default:), castSelf: Cast.asPyDict)
+    dict["update"] = PyBuiltinFunction.wrap(type.context, name: "update", doc: nil, fn: PyDict.update(args:kwargs:), castSelf: Cast.asPyDict)
     dict["copy"] = PyBuiltinFunction.wrap(type.context, name: "copy", doc: nil, fn: PyDict.copy, castSelf: Cast.asPyDict)
     dict["pop"] = PyBuiltinFunction.wrap(type.context, name: "pop", doc: nil, fn: PyDict.pop(_:default:), castSelf: Cast.asPyDict)
     dict["popitem"] = PyBuiltinFunction.wrap(type.context, name: "popitem", doc: nil, fn: PyDict.popitem, castSelf: Cast.asPyDict)
