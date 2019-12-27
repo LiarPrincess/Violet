@@ -3,6 +3,10 @@ import Core
 // swiftlint:disable file_length
 // swiftlint:disable yoda_condition
 
+internal protocol PySequenceType {
+  var data: PySequenceData { get }
+}
+
 /// Main logic for Python sequences.
 /// Used in `PyTuple` and `PyList`.
 internal struct PySequenceData {

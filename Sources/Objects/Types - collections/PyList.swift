@@ -8,7 +8,7 @@ import Core
 
 // sourcery: pytype = list, default, hasGC, baseType, listSubclass
 /// This subtype of PyObject represents a Python list object.
-public class PyList: PyObject {
+public class PyList: PyObject, PySequenceType {
 
   internal static let doc: String = """
     list(iterable=(), /)
