@@ -740,6 +740,7 @@ types = {
     'symmetric_difference',
     'isdisjoint',
     'add',
+    'update',
     'remove',
     'discard',
     'clear',
@@ -747,6 +748,7 @@ types = {
     'pop',
     '__iter__',
     '__new__',
+    '__init__',
   ],
   set_iterator: [
     '__class__',

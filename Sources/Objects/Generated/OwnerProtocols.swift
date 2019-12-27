@@ -187,5 +187,4 @@ protocol stepOwner { func getStep() -> PyObject }
 protocol stopOwner { func getStop() -> PyObject }
 protocol symmetric_differenceOwner { func symmetricDifference(with other: PyObject) -> PyResult<PyObject> }
 protocol unionOwner { func union(with other: PyObject) -> PyResult<PyObject> }
-protocol updateOwner { func update(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> }
 protocol valuesOwner { func values() -> PyObject }

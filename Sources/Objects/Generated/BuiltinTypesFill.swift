@@ -1154,6 +1154,7 @@ internal enum BuiltinTypesFill {
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PySet.getClass, castSelf: Cast.asPySet)
 
     dict["__new__"] = PyBuiltinFunction.wrapNew(type.context, typeName: "__new__", doc: nil, fn: PySet.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type.context, typeName: "__init__", doc: nil, fn: PySet.pyInit(zelf:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(type.context, name: "__eq__", doc: nil, fn: PySet.isEqual(_:), castSelf: Cast.asPySet)
@@ -1183,6 +1184,7 @@ internal enum BuiltinTypesFill {
     dict["symmetric_difference"] = PyBuiltinFunction.wrap(type.context, name: "symmetric_difference", doc: nil, fn: PySet.symmetricDifference(with:), castSelf: Cast.asPySet)
     dict["isdisjoint"] = PyBuiltinFunction.wrap(type.context, name: "isdisjoint", doc: nil, fn: PySet.isDisjoint(with:), castSelf: Cast.asPySet)
     dict["add"] = PyBuiltinFunction.wrap(type.context, name: "add", doc: nil, fn: PySet.add(_:), castSelf: Cast.asPySet)
+    dict["update"] = PyBuiltinFunction.wrap(type.context, name: "update", doc: nil, fn: PySet.update(from:), castSelf: Cast.asPySet)
     dict["remove"] = PyBuiltinFunction.wrap(type.context, name: "remove", doc: nil, fn: PySet.remove(_:), castSelf: Cast.asPySet)
     dict["discard"] = PyBuiltinFunction.wrap(type.context, name: "discard", doc: nil, fn: PySet.discard(_:), castSelf: Cast.asPySet)
     dict["clear"] = PyBuiltinFunction.wrap(type.context, name: "clear", doc: nil, fn: PySet.clear, castSelf: Cast.asPySet)

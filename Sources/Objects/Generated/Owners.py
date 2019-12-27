@@ -22,7 +22,8 @@ ignored_methods = [
   'title',
   'upper',
   'casefold',
-  'join'
+  'join',
+  'update'
 ]
 
 # ----

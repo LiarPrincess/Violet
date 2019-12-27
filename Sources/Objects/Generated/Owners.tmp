@@ -673,6 +673,7 @@ PySet|PyObject|func|difference|difference(with other: PyObject) -> PyResult<PyOb
 PySet|PyObject|func|symmetric_difference|symmetricDifference(with other: PyObject) -> PyResult<PyObject>
 PySet|PyObject|func|isdisjoint|isDisjoint(with other: PyObject) -> PyResult<Bool>
 PySet|PyObject|func|add|add(_ value: PyObject) -> PyResult<PyNone>
+PySet|PyObject|func|update|update(from other: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|remove|remove(_ value: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|discard|discard(_ value: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|clear|clear() -> PyResult<PyNone>
@@ -680,6 +681,7 @@ PySet|PyObject|func|copy|copy() -> PyObject
 PySet|PyObject|func|pop|pop() -> PyResult<PyObject>
 PySet|PyObject|func|__iter__|iter() -> PyObject
 PySet|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
+PySet|PyObject|static_func|__init__|pyInit(zelf: PySet,                              args: [PyObject],                              kwargs: PyDictData?) -> PyResult<PyNone>
 PySetIterator|PyObject|get|__class__|getClass() -> PyType
 
 PySetIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>

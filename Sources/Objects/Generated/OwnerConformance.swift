@@ -275,7 +275,6 @@ extension PyDict:
   getOwner,
   __iter__Owner,
   setdefaultOwner,
-  updateOwner,
   copyOwner,
   popitemOwner,
   keysOwner,
@@ -793,7 +792,8 @@ extension PySet:
   clearOwner,
   copyOwner,
   __iter__Owner,
-  __new__Owner
+  __new__Owner,
+  __init__Owner
 { }
 
 // MARK: - SetIterator

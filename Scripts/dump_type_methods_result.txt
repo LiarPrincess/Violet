@@ -135,14 +135,12 @@ property
 set
   Unimplemented:
     __iand__
-    __init__
     __ior__
     __isub__
     __ixor__
     difference_update
     intersection_update
     symmetric_difference_update
-    update
 
 str
   Unimplemented:
