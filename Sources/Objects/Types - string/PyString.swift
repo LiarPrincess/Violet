@@ -33,6 +33,10 @@ public class PyString: PyObject {
     return self.data.value
   }
 
+  internal var scalars: String.UnicodeScalarView {
+    return self.data.scalars
+  }
+
   // MARK: - Init
 
   convenience init(_ context: PyContext,
@@ -703,7 +707,7 @@ public class PyString: PyObject {
       return .value(alloca(type, ""))
     }
 
-    // TODO: [str.__new__] `encoding` and `error` args (+bytes +bytearray)
+    // TODO: [str.__new__] `encoding` and `error` args (also in bytes and bytearray)
     guard encoding == nil && errors == nil else {
       fatalError("Violet currently does not support 'encoding' and 'errors' parameters")
     }

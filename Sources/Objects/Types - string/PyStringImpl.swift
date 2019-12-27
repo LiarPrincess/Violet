@@ -1668,7 +1668,6 @@ extension PyStringImpl {
       return .goToNextElement
     }
 
-
     return b.map { $0.result }
   }
 

@@ -71,16 +71,29 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#ord)
   public func ord(_ object: PyObject) -> PyResult<PyInt> {
     // Unicode character -> integer representing the Unicode code point
-    // TODO: Add PyBytes_Check, PyByteArray_Check (builtin_ord(PyObject *module...
 
     if let string = object as? PyString {
-      let scalars = string.data.scalars
+      let scalars = string.scalars
+
       guard let first = scalars.first, scalars.count == 1 else {
-        let msg = "ord() expected a character, but string of length \(scalars.count) found"
-        return .typeError(msg)
+        let l = scalars.count
+        return .typeError("ord() expected a character, but string of length \(l) found")
       }
 
       let int = BigInt(first.value)
+      return .value(self.newInt(int))
+    }
+
+    if let bytes = object as? PyBytesType {
+      let scalars = bytes.data.values
+
+      guard let first = scalars.first, scalars.count == 1 else {
+        let l = scalars.count
+        return .typeError("ord() expected a character, but string of length \(l) found")
+      }
+
+      let scalar = UnicodeScalar(first) // Does this even make sense?
+      let int = BigInt(scalar.value)
       return .value(self.newInt(int))
     }
 
