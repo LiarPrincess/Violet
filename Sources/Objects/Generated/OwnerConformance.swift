@@ -291,7 +291,8 @@ extension PyDictItemIterator:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - DictItems
@@ -304,11 +305,13 @@ extension PyDictItems:
   __le__Owner,
   __gt__Owner,
   __ge__Owner,
+  __hash__Owner,
   __repr__Owner,
   __getattribute__Owner,
   __len__Owner,
   __contains__Owner,
-  __iter__Owner
+  __iter__Owner,
+  __new__Owner
 { }
 
 // MARK: - DictKeyIterator
@@ -317,7 +320,8 @@ extension PyDictKeyIterator:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - DictKeys
@@ -330,11 +334,13 @@ extension PyDictKeys:
   __le__Owner,
   __gt__Owner,
   __ge__Owner,
+  __hash__Owner,
   __repr__Owner,
   __getattribute__Owner,
   __len__Owner,
   __contains__Owner,
-  __iter__Owner
+  __iter__Owner,
+  __new__Owner
 { }
 
 // MARK: - DictValueIterator
@@ -343,7 +349,8 @@ extension PyDictValueIterator:
   __class__GetterOwner,
   __getattribute__Owner,
   __iter__Owner,
-  __next__Owner
+  __next__Owner,
+  __new__Owner
 { }
 
 // MARK: - DictValues

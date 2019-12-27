@@ -102,7 +102,7 @@ public class PyList: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    return .typeError("unhashable type: 'list'")
+    return .error(self.builtins.hashNotImplemented(self))
   }
 
   // MARK: - String

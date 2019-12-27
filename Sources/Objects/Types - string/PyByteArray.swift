@@ -93,7 +93,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    return .typeError("unhashable type: 'bytearray'")
+    return .error(self.builtins.hashNotImplemented(self))
   }
 
   // MARK: - String

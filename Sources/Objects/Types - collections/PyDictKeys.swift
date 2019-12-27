@@ -49,6 +49,13 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
     return self.isGreaterEqualShared(other)
   }
 
+  // MARK: - Hashable
+
+  // sourcery: pymethod = __hash__
+  internal func hash() -> PyResultOrNot<PyHash> {
+    return .error(self.builtins.hashNotImplemented(self))
+  }
+
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
@@ -89,5 +96,14 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
     return PyDictKeyIterator(dict: self.dict)
+  }
+
+  // MARK: - Python new
+
+  // sourcery: pymethod = __new__
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
+    return .typeError("cannot create 'dict_keys' instances")
   }
 }

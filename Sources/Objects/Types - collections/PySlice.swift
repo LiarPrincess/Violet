@@ -103,7 +103,7 @@ public class PySlice: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> PyResultOrNot<PyHash> {
-    return .typeError("unhashable type: 'slice'")
+    return .error(self.builtins.hashNotImplemented(self))
   }
 
   // MARK: - String

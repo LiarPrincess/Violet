@@ -67,8 +67,6 @@ complex
 
 dict_items
   Unimplemented:
-    __hash__ - <class 'NoneType'>
-    __new__ - <class 'builtin_function_or_method'>
     __and__
     __or__
     __rand__
@@ -81,8 +79,6 @@ dict_items
 
 dict_keys
   Unimplemented:
-    __hash__ - <class 'NoneType'>
-    __new__ - <class 'builtin_function_or_method'>
     __and__
     __or__
     __rand__

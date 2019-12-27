@@ -55,4 +55,13 @@ public class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator {
 
     return self.nextShared().map { $0.key.object }
   }
+
+  // MARK: - Python new
+
+  // sourcery: pymethod = __new__
+  internal class func pyNew(type: PyType,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyObject> {
+    return .typeError("cannot create 'dict_keyiterator' instances")
+  }
 }
