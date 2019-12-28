@@ -15,7 +15,6 @@ internal protocol FunctionWrapper {
 
 internal typealias NewFunction = (PyType, [PyObject], PyDictData?) -> PyResult<PyObject>
 
-// TODO: Add 'tp_new_wrapper(PyObject *self, PyObject *args, PyObject *kwds)' + init
 internal struct NewFunctionWrapper: FunctionWrapper {
 
   internal let typeName: String

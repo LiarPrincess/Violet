@@ -751,7 +751,7 @@ public class PyInt: PyObject {
     }
 
     guard let base = base else {
-      return PyInt.extractInt(x).map { alloca(type, $0) }
+      return PyInt.parseBigIntWithoutBase(x).map { alloca(type, $0) }
     }
 
     let baseInt: Int
@@ -764,14 +764,12 @@ public class PyInt: PyObject {
       return .valueError("int() base must be >= 2 and <= 36, or 0")
     }
 
-    if let str = x as? PyString {
-      guard let value = BigInt(str.value, radix: baseInt) else {
-        return .valueError("int() '\(str.value)' cannot be interpreted as int")
-      }
-      return .value(alloca(type, value))
+    switch PyInt.parseBigIntFromString(x, radix: baseInt) {
+    case .value(let v): return .value(alloca(type, v))
+    case .notString: break
+    case .error(let e): return .error(e)
     }
 
-    // TODO: Add bytes (both to us and extractInt)
     return .typeError("int() can't convert non-string with explicit base")
   }
 
@@ -782,7 +780,7 @@ public class PyInt: PyObject {
 
   /// PyObject *
   /// PyNumber_Long(PyObject *o)
-  private static func extractInt(_ object: PyObject) -> PyResult<BigInt> {
+  private static func parseBigIntWithoutBase(_ object: PyObject) -> PyResult<BigInt> {
     if let int = object as? PyInt {
       return .value(int.value)
     }
@@ -799,16 +797,49 @@ public class PyInt: PyObject {
       return .error(e)
     }
 
-    if let str = object as? PyString {
-      guard let value = BigInt(str.value, radix: 10) else {
-        return .valueError("int() '\(str.value)' cannot be interpreted as int")
-      }
-      return .value(value)
+    switch PyInt.parseBigIntFromString(object, radix: 10) {
+    case .value(let v): return .value(v)
+    case .notString: break
+    case .error(let e): return .error(e)
     }
 
     return .typeError("int() argument must be a string, " +
                       "a bytes-like object or a number, " +
                       "not '\(object.typeName)'")
+  }
+
+  private enum IntFromString {
+    case value(BigInt)
+    case notString
+    case error(PyErrorEnum)
+  }
+
+  private static func parseBigIntFromString(_ object: PyObject,
+                                            radix: Int) -> IntFromString {
+    if let str = object as? PyString {
+      if let value = BigInt(str.value, radix: radix) {
+        return .value(value)
+      }
+
+      let msg = "int() '\(str.value)' cannot be interpreted as int"
+      return .error(.valueError(msg))
+    }
+
+    if let bytes = object as? PyBytesType {
+      guard let string = String(bytes: bytes.data.values, encoding: .ascii) else {
+        let msg = "int() bytes '\(bytes.ptrString)' cannot be interpreted as str"
+        return .error(.valueError(msg))
+      }
+
+      if let value = BigInt(string, radix: radix) {
+        return .value(value)
+      }
+
+      let msg = "int() '\(string)' cannot be interpreted as int"
+      return .error(.valueError(msg))
+    }
+
+    return .notString
   }
 
   private static func callTrunc(_ object: PyObject) -> PyResultOrNot<PyObject> {

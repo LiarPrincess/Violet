@@ -113,7 +113,7 @@ extension Builtins {
       }
     }
 
-    // TODO: Add '_dir_locals(void)'
+    // TODO: Add '_dir_locals(void)' from 'PyObject_Dir(PyObject *obj)'
     return .value(self.unimplemented)
   }
 
