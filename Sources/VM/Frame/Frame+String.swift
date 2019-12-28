@@ -4,7 +4,6 @@ import Objects
 extension Frame {
 
   /// Used for implementing formatted literal strings (f-strings).
-  /// (And yes, Swift will pack both payloads in single byte).
   internal func formatValue(conversion: StringConversion,
                             hasFormat: Bool) -> InstructionResult {
     let format: PyObject? = hasFormat ? self.stack.pop() : nil
@@ -16,13 +15,13 @@ extension Frame {
     case let .error(e): return .builtinError(e)
     }
 
-    if let format = format {
-      let formatted = self.builtins.PyObject_Format(value: value, format: format)
-      self.stack.push(formatted)
-    } else {
-      // TODO: Make sure that this is string
+    if value is PyString && format == nil {
       self.stack.push(value)
+      return .ok
     }
+
+    let formatted = self.builtins.PyObject_Format(value: value, format: format)
+    self.stack.push(formatted)
 
     return .ok
   }

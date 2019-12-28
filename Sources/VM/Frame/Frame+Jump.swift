@@ -2,12 +2,16 @@ import Bytecode
 
 extension Frame {
 
+  // MARK: - Jump absolute
+
   /// Set bytecode counter to target.
   internal func jumpAbsolute(labelIndex: Int) -> InstructionResult {
     let label = self.code.labels[labelIndex]
     self.jumpTo(label: label)
     return .ok
   }
+
+  // MARK: - Jump if...
 
   /// If TOS is true, sets the bytecode counter to target. TOS is popped.
   internal func popJumpIfTrue(labelIndex: Int) -> InstructionResult {
@@ -34,6 +38,8 @@ extension Frame {
       return .builtinError(e)
     }
   }
+
+  // MARK: - Jump or pop
 
   /// If TOS is true, sets the bytecode counter to target and leaves TOS on the stack.
   /// Otherwise (TOS is false), TOS is popped.

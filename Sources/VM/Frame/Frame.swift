@@ -80,8 +80,8 @@ internal class Frame {
     let instruction = self.fetchInstruction()
 
     // According to CPython doing single switch will trash our jump prediction
-    // (unles you have the same opcode multiple times in a row)
-    // we don't care about this (for now).
+    // (unles you have the same opcode multiple times in a row),
+    // it is valid concern, but we don't care about this (for now).
     switch instruction {
     case .nop:
       return .ok

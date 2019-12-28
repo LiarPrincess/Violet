@@ -8,7 +8,7 @@ extension Builtins {
     return DirResult()
   }
 
-  public func PyObject_Format(value: PyObject, format: PyObject) -> PyObject {
+  public func PyObject_Format(value: PyObject, format: PyObject?) -> PyObject {
     return self.none
   }
 

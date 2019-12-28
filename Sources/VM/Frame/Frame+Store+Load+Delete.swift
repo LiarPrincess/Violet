@@ -23,8 +23,7 @@ extension Frame {
     case let .float(arg): return self.builtins.newFloat(arg)
     case let .complex(real, imag): return self.builtins.newComplex(real: real, imag: imag)
     case let .string(arg): return self.builtins.newString(arg)
-    case .bytes: // let .bytes(arg):
-      fatalError()
+    case let .bytes(arg): return self.builtins.newBytes(arg)
     case .code: // let .code(arg):
       fatalError()
     case let .tuple(args):
