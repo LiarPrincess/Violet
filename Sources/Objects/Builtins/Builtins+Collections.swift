@@ -38,6 +38,14 @@ extension Builtins {
       .map { self.newTuple($0.data) }
   }
 
+  public func newTuple(iterable: PyObject) -> PyResult<PyTuple> {
+    if let seq = iterable as? PySequenceType {
+      return .value(self.newTuple(seq.data))
+    }
+
+    return self.toArray(iterable: iterable).map(self.newTuple)
+  }
+
   internal func newTuple(_ data: PySequenceData) -> PyTuple {
     return data.isEmpty ?
       self.emptyTuple :

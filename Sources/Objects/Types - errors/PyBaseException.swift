@@ -129,17 +129,17 @@ public class PyBaseException: PyObject {
   }
 
   internal func setArgs(_ value: PyObject?) -> PyResult<()> {
-    //    guard let value = value else {
-    //      return .typeError("args may not be deleted")
-    //    }
+    guard let value = value else {
+      return .typeError("args may not be deleted")
+    }
 
-    // TODO: seq = PySequence_Tuple(val);
-    //    guard let tuple = value as? PyTuple else {
-    //      return .typeError("__args__ must be a tuple")
-    //    }
-    //
-    //    self._args = tuple
-    return .value()
+    switch self.builtins.newTuple(iterable: value) {
+    case let .value(tuple):
+      self.args = tuple
+      return .value()
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Traceback
