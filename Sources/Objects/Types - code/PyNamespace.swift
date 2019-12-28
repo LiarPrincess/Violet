@@ -68,8 +68,8 @@ public class PyNamespace: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    // TODO: name = (Py_TYPE(ns) == &_PyNamespace_Type) ? "namespace" : ns->ob_type->tp_name;
-    let name = "namespace"
+    let isBuiltin = self.type === self.builtins.types.simpleNamespace
+    let name = isBuiltin ? "namespace" : self.typeName
 
     if self.hasReprLock {
       return .value(name + "(...)")
