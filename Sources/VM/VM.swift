@@ -22,7 +22,8 @@ public class VM {
   public init(arguments: Arguments, environment: Environment = Environment()) {
     let contextConf = PyContextConfig()
     self.context = PyContext(config: contextConf)
-    self.configuration = CoreConfiguration(arguments: arguments, environment: environment)
+    self.configuration = CoreConfiguration(arguments: arguments,
+                                           environment: environment)
   }
 
   /// static void pymain_run_python(_PyMain *pymain)
@@ -58,7 +59,7 @@ public class VM {
   private func runCommand(_ command: String) throws {
     let module = self.builtins.newModule(name: "__main__")
     let moduleDict = self.builtins.getDict(module)
-    let code = try self.compile(source: command, mode: .fileInput)
+    let code = try self.compile(filename: "<stdin>", source: command, mode: .fileInput)
     self.run(code: code, globals: moduleDict, locals: moduleDict)
   }
 
@@ -92,8 +93,9 @@ public class VM {
     let moduleDict = self.builtins.getDict(module)
     moduleDict.set(key: "__file__", to: self.newString(file))
 
+    let filename = fileUrl.lastPathComponent
     let source = try String(contentsOf: fileUrl, encoding: .utf8)
-    let code = try self.compile(source: source, mode: .fileInput)
+    let code = try self.compile(filename: filename, source: source, mode: .fileInput)
 
     self.run(code: code, globals: moduleDict, locals: moduleDict)
     moduleDict.del(key: "__file__")
@@ -150,7 +152,7 @@ public class VM {
 
   private func runInteractive(input: String) -> RunInteractiveResult {
     do {
-      let code = try self.compile(source: input, mode: .interactive)
+      let code = try self.compile(filename: "<stdin>", source: input, mode: .interactive)
 
       let module = self.builtins.newModule(name: "__main__")
       let moduleDict = self.builtins.getDict(module)
@@ -174,14 +176,18 @@ public class VM {
 
   // MARK: - Compile
 
-  private func compile(source: String, mode: ParserMode) throws -> CodeObject {
+  private func compile(filename: String,
+                       source: String,
+                       mode: ParserMode) throws -> CodeObject {
     let lexer = Lexer(for: source)
     let parser = Parser(mode: mode, tokenSource: lexer)
     let ast = try parser.parse()
 
     let optimizationLevel = self.configuration.optimization
     let compilerOptions = CompilerOptions(optimizationLevel: optimizationLevel)
-    let compiler = try Compiler(ast: ast, options: compilerOptions)
+    let compiler = try Compiler(ast: ast,
+                                filename: filename,
+                                options: compilerOptions)
 
     return try compiler.run()
   }

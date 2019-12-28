@@ -11,6 +11,8 @@ public final class Compiler {
 
   /// Program that we are compiling.
   private let ast: AST
+  /// Name of the file that this code object was loaded from.
+  public let filename: String
   /// Compilation options.
   internal let options: CompilerOptions
 
@@ -71,8 +73,9 @@ public final class Compiler {
     return self.blockStack.contains { $0.isLoop }
   }
 
-  public init(ast: AST, options: CompilerOptions) throws {
+  public init(ast: AST, filename: String, options: CompilerOptions) throws {
     self.ast = ast
+    self.filename = filename
     self.options = options
 
     let symbolTableBuilder = SymbolTableBuilder()
@@ -219,6 +222,7 @@ public final class Compiler {
 
     let object = CodeObject(name: name,
                             qualifiedName: qualifiedName,
+                            filename: self.filename,
                             type: type,
                             varNames: varNames,
                             freeVars: freeVars,

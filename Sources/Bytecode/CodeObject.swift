@@ -39,6 +39,8 @@ public final class CodeObject {
   ///     pass
   /// ```
   public let qualifiedName: String
+  /// Name of the file that this code object was loaded from.
+  public let filename: String
 
   /// Type of the code object.
   /// Possible values are: module, class, (async)function, lambda and comprehension.
@@ -70,6 +72,7 @@ public final class CodeObject {
 
   public init(name: String,
               qualifiedName: String,
+              filename: String,
               type: CodeObjectType,
               varNames: [MangledName],
               freeVars: [MangledName],
@@ -77,6 +80,7 @@ public final class CodeObject {
               firstLine: SourceLine) {
     self.name = name
     self.qualifiedName = qualifiedName
+    self.filename = filename
     self.type = type
     self.varNames = varNames
     self.freeVars = freeVars

@@ -11,7 +11,10 @@ public class PyCode: PyObject {
     """
 
   internal let codeObject: CodeObject
-  internal let filename = "" // TODO: Add 'filename' to CodeObject
+
+  internal var filename: String {
+    return self.codeObject.filename
+  }
 
   internal init(_ context: PyContext, code: CodeObject) {
     self.codeObject = code
