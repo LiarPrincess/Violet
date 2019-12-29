@@ -4,6 +4,8 @@ import Parser
 
 extension CodeObjectBuilder {
 
+  // MARK: - Variables
+
   public func appendName<S: ConstantString>(name: S, context: ExpressionContext) {
     switch context {
     case .store: self.appendStoreName(name)
@@ -12,7 +14,7 @@ extension CodeObjectBuilder {
     }
   }
 
-  public func appendFast<S: ConstantString>(name: S, context: ExpressionContext) {
+  public func appendFast(name: MangledName, context: ExpressionContext) {
     switch context {
     case .store: self.appendStoreFast(name)
     case .load:  self.appendLoadFast(name)
@@ -27,6 +29,8 @@ extension CodeObjectBuilder {
     case .del:   self.appendDeleteGlobal(name)
     }
   }
+
+  // MARK: - Operators
 
   public func appendUnaryOperator(_ op: UnaryOperator) {
     switch op {
@@ -72,6 +76,8 @@ extension CodeObjectBuilder {
     case .floorDiv:   self.appendInplaceFloorDivide()
     }
   }
+
+  // MARK: - Compare
 
   /// Append a `compareOp` instruction to code object.
   public func appendCompareOp(_ op: ComparisonOperator) {

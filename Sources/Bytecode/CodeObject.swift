@@ -64,7 +64,7 @@ public final class CodeObject {
   public internal(set) var labels = [Int]()
 
   /// List of local variable names (from SymbolTable).
-  public let varNames: [MangledName]
+  public internal(set) var varNames: [MangledName]
   /// List of free variable names (from SymbolTable).
   public let freeVars: [MangledName]
   /// List of cell variable names (from SymbolTable).

@@ -203,39 +203,42 @@ extension Frame {
 
   // MARK: - Fast
 
-  internal func loadFast(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+  internal func loadFast(index: Int) -> InstructionResult {
+    assert(0 <= index && index < self.fastLocals.count)
 
-    if let local = self.localSymbols[name] {
-      self.stack.push(local)
+    if let object = self.fastLocals[index] {
+      self.stack.push(object)
       return .ok
     }
 
-    // format_exc_check_arg(PyExc_UnboundLocalError,
-    //                      UNBOUNDLOCAL_ERROR_MSG,
-    //                      PyTuple_GetItem(co->co_varnames, oparg));
-    fatalError()
+    return self.unboundFast(index: index)
   }
 
-  internal func storeFast(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+  internal func storeFast(index: Int) -> InstructionResult {
+    assert(0 <= index && index < self.fastLocals.count)
+
     let value = self.stack.pop()
-    self.localSymbols[name] = value
-    return .unimplemented
+    self.fastLocals[index] = value
+    return .ok
   }
 
-  internal func deleteFast(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
-    let value = self.localSymbols.removeValue(forKey: name)
+  internal func deleteFast(index: Int) -> InstructionResult {
+    assert(0 <= index && index < self.fastLocals.count)
 
-    if value == nil {
-      // format_exc_check_arg(PyExc_UnboundLocalError,
-      //                      UNBOUNDLOCAL_ERROR_MSG,
-      //                      PyTuple_GetItem(co->co_varnames, oparg));
-      fatalError()
+    if self.fastLocals[index] != nil {
+      self.fastLocals[index] = nil
+      return .ok
     }
 
-    return.unimplemented
+    return self.unboundFast(index: index)
+  }
+
+  private func unboundFast(index: Int) -> InstructionResult {
+    assert(0 <= index && index < self.code.varNames.count)
+
+    let mangled = self.code.varNames[index]
+    let e = PyErrorEnum.unboundLocalError(variableName: mangled.value)
+    return .builtinError(e)
   }
 
   // MARK: - Deref

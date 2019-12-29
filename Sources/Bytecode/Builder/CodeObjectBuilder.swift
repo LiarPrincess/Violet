@@ -13,6 +13,8 @@ internal struct CachedIndices {
   internal var strings = [String:Int]()
   /// CodeObject.names
   internal var names = [String:Int]()
+  /// CodeObject.varNames
+  internal var varNames = [MangledName:Int]()
 }
 
 /// Helper for adding new instructions to `CodeObject`.
@@ -72,6 +74,10 @@ public class CodeObjectBuilder {
     for (index, name) in self.codeObject.names.enumerated() {
       self.cachedIndices.names[name] = index
     }
+
+    for (index, name) in self.codeObject.varNames.enumerated() {
+      self.cachedIndices.varNames[name] = index
+    }
   }
 
   // MARK: - Append
@@ -114,7 +120,7 @@ public class CodeObjectBuilder {
     self.codeObject.labels[label.index] = jumpTarget
   }
 
-  // MARK: - Extended arg
+  // MARK: - Add name
 
   internal func addNameWithExtendedArgIfNeeded<S: ConstantString>(name: S) -> UInt8 {
     let index = self.getNameIndex(name.constant)
@@ -128,12 +134,35 @@ public class CodeObjectBuilder {
 
     let index = self.codeObject.names.endIndex
     self.codeObject.names.append(name)
+    self.cachedIndices.names[name] = index
     return index
   }
+
+  // MARK: - Add var name
+
+  internal func addVarNameWithExtendedArgIfNeeded(name: MangledName) -> UInt8 {
+    let index = self.getVarNameIndex(name)
+    return self.appendExtendedArgIfNeeded(index)
+  }
+
+  private func getVarNameIndex(_ name: MangledName) -> Int {
+    if let cachedIndex = self.cachedIndices.varNames[name] {
+      return cachedIndex
+    }
+
+    let index = self.codeObject.varNames.endIndex
+    self.codeObject.varNames.append(name)
+    self.cachedIndices.varNames[name] = index
+    return index
+  }
+
+  // MARK: - Add label
 
   internal func addLabelWithExtendedArgIfNeeded(_ label: Label) -> UInt8 {
     return self.appendExtendedArgIfNeeded(label.index)
   }
+
+  // MARK: - Extended arg
 
   /// If the arg is `>255` then it can't be stored directly in instruction.
   /// In this case we have to emit `extendedArg` before it.

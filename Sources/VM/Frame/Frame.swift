@@ -45,6 +45,8 @@ internal class Frame {
   internal var builtinSymbols = [String: PyObject]()
   /// Free variables.
   internal var freeVariables = [String: PyObject]()
+  /// Function args and local function variables.
+  internal var fastLocals: [PyObject?]
 
   internal var standardOutput: FileHandle {
     return FileHandle.standardOutput
@@ -56,6 +58,7 @@ internal class Frame {
   internal init(code: CodeObject, context: PyContext) {
     self.code = code
     self.context = context
+    self.fastLocals = [PyObject?](repeating: nil, count: code.varNames.count)
   }
 
   // MARK: - Run
@@ -80,8 +83,8 @@ internal class Frame {
     let instruction = self.fetchInstruction()
 
     // According to CPython doing single switch will trash our jump prediction
-    // (unles you have the same opcode multiple times in a row),
-    // it is valid concern, but we don't care about this (for now).
+    // (unles you have the same opcode multiple times in a row).
+    // It is a valid concern, but we don't care about this (for now).
     switch instruction {
     case .nop:
       return .ok
@@ -239,11 +242,11 @@ internal class Frame {
     case let .deleteGlobal(nameIndex):
       return self.deleteGlobal(nameIndex: extendedArg + Int(nameIndex))
     case let .loadFast(nameIndex):
-      return self.loadFast(nameIndex: extendedArg + Int(nameIndex))
+      return self.loadFast(index: extendedArg + Int(nameIndex))
     case let .storeFast(nameIndex):
-      return self.storeFast(nameIndex: extendedArg + Int(nameIndex))
+      return self.storeFast(index: extendedArg + Int(nameIndex))
     case let .deleteFast(nameIndex):
-      return self.deleteFast(nameIndex: extendedArg + Int(nameIndex))
+      return self.deleteFast(index: extendedArg + Int(nameIndex))
     case let .loadDeref(nameIndex):
       return self.loadDeref(nameIndex: extendedArg + Int(nameIndex))
     case let .storeDeref(nameIndex):

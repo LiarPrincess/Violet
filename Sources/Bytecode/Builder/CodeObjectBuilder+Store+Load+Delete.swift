@@ -78,24 +78,25 @@ extension CodeObjectBuilder {
     let index = self.addNameWithExtendedArgIfNeeded(name: name)
     self.append(.deleteGlobal(nameIndex: index))
   }
+
   // MARK: - Fast
 
   /// Append a `loadFast` instruction to this code object.
-  public func appendLoadFast<S: ConstantString>(_ name: S) {
-    // self.append(.loadFast)
-    self.unimplemented()
+  public func appendLoadFast(_ name: MangledName) {
+    let index = self.addVarNameWithExtendedArgIfNeeded(name: name)
+    self.append(.loadFast(nameIndex: index))
   }
 
   /// Append a `storeFast` instruction to this code object.
-  public func appendStoreFast<S: ConstantString>(_ name: S) {
-    // self.append(.storeFast)
-    self.unimplemented()
+  public func appendStoreFast(_ name: MangledName) {
+    let index = self.addVarNameWithExtendedArgIfNeeded(name: name)
+    self.append(.storeFast(nameIndex: index))
   }
 
   /// Append a `deleteFast` instruction to this code object.
-  public func appendDeleteFast<S: ConstantString>(_ name: S) {
-    // self.append(.deleteFast)
-    self.unimplemented()
+  public func appendDeleteFast(_ name: MangledName) {
+    let index = self.addVarNameWithExtendedArgIfNeeded(name: name)
+    self.append(.deleteFast(nameIndex: index))
   }
 
   // MARK: - Deref
