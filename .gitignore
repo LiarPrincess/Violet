@@ -3,9 +3,13 @@
 /.build
 /Packages
 
-# It is not like we will include Unicode stuff...
-/Scripts/CaseFolding.txt
-/Scripts/UnicodeData.txt
+# It is not like we will include Unicode thingies...
+/Scripts/unicode/CaseFolding.txt
+/Scripts/unicode/UnicodeData.txt
+
+# Python thingies
+/**/.pyc
+/**/__pycache__
 
 # mac
 .DS_Store

@@ -1,10 +1,21 @@
-"Download 'CaseFolding.txt' from 'https://www.unicode.org/Public/UCD/latest/ucd/'"
+"""
+Download 'CaseFolding.txt' from 'https://www.unicode.org/Public/UCD/latest/ucd/'
+"""
+
+import os
 
 def to_swift_unicode_escape(code):
   '0061 -> \\u{0061}'
   return '\\u{' + code + '}'
 
-with open('./Scripts/CaseFolding.txt', 'r') as f:
+def in_current_directory(file):
+  current_file = __file__
+  current_dir = os.path.dirname(current_file)
+  return os.path.join(current_dir, file)
+
+file = in_current_directory('CaseFolding.txt')
+
+with open(file, 'r') as f:
   for line in f:
     line = line.strip()
     if not line or line.startswith('#'):

@@ -1,7 +1,7 @@
 // See annex #9 - 'UNICODE BIDIRECTIONAL ALGORITHM' to Unicode standard for details
 // (https://www.unicode.org/reports/tr9/tr9-41.html#Bidi_Conformance_Testing).
 
-// This file was generated with 'Scripts/UnicodeData-Swift.py'.
+// This file was generated with 'Scripts/unicode/BidirectionalClass.py'.
 // To get the newest version of 'UnicodeData.txt' go to:
 // https://www.unicode.org/Public/UCD/latest/ucd/
 

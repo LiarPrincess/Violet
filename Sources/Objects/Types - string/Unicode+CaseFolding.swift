@@ -16,7 +16,7 @@
 
 // To get the newest version of 'CaseFolding.txt' go to:
 // https://www.unicode.org/Public/UCD/latest/ucd/
-// This file was generated with 'Scripts/CaseFolding-Swift.py'.
+// This file was generated with 'Scripts/unicode/CaseFolding.py'.
 
 // swiftlint:disable file_length
 // swiftlint:disable line_length
