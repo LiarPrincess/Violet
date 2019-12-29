@@ -3,7 +3,7 @@
 // https://docs.python.org/3/library/functions.html
 
 // A lot of the code in this file was generated using:
-// './Scripts/generate-builtins-binary.py'
+// './Scripts/generate_module_funcs/generate-builtins-binary.py'
 
 // swiftlint:disable file_length
 
