@@ -20,6 +20,7 @@ public class PyContext {
   internal let hasher: Hasher
 
   public private(set) lazy var builtins = Builtins(context: self)
+  public private(set) lazy var sys = Sys(context: self)
 
   public init(config: PyContextConfig) {
     self.stdout = config.stdout
@@ -28,9 +29,11 @@ public class PyContext {
     // This is hack, but we can access `self.builtins` here because they are
     // annotated as `lazy` (even though they need `PyContext` in ctor).
     self.builtins.onContextFullyInitailized()
+    self.sys.onContextFullyInitailized()
   }
 
   deinit {
     self.builtins.onContextDeinit()
+    self.sys.onContextDeinit()
   }
 }

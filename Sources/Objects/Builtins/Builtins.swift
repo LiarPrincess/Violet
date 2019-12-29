@@ -34,7 +34,7 @@ public final class Builtins {
   ///
   /// 'PyType.init' is not allowed to use any other type!
   /// For example you can't just create `PyString` for `__doc__` etc.
-  /// (that is because `str` typw may not exist), we will deal with this in
+  /// (that is because `str` type may not exist), we will deal with this in
   /// `onContextFullyInitailized`.
   internal init(context: PyContext) {
     self.context = context
