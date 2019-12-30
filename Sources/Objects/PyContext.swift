@@ -36,4 +36,19 @@ public class PyContext {
     self.builtins.onContextDeinit()
     self.sys.onContextDeinit()
   }
+
+  // MARK: - Intern
+
+  private var internedStrings = [String:PyString]()
+
+  /// Create and cache Python string representing given `string` value.
+  internal func intern(_ str: String) -> PyString {
+    if let existing = self.internedStrings[str] {
+      return existing
+    }
+
+    let object = self.builtins.newString(str)
+    self.internedStrings[str] = object
+    return object
+  }
 }

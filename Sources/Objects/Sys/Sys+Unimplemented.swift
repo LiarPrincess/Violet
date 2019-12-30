@@ -9,20 +9,6 @@ extension Sys {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: ps1
-  /// sys.ps1
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
-  public func getPS1() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: ps2
-  /// sys.ps2
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
-  public func getPS2() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pyproperty: modules
   /// sys.modules
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.modules).
@@ -44,10 +30,17 @@ extension Sys {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: platform
-  /// sys.platform
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.platform).
-  public func getPlatform() -> PyObject {
+  // sourcery: pyproperty: builtin_module_names
+  /// sys.builtin_module_names
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.builtin_module_names).
+  public func getBuiltinModuleNames() -> PyObject {
+    return self.unimplemented
+  }
+
+  // sourcery: pyproperty: warnoptions
+  /// sys.warnoptions
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.warnoptions).
+  public func getWarnOptions() -> PyObject {
     return self.unimplemented
   }
 
@@ -205,20 +198,6 @@ extension Sys {
   /// sys.byteorder
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.byteorder).
   public func getByteOrder() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: builtin_module_names
-  /// sys.builtin_module_names
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.builtin_module_names).
-  public func getBuiltinModuleNames() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: warnoptions
-  /// sys.warnoptions
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.warnoptions).
-  public func getWarnOptions() -> PyObject {
     return self.unimplemented
   }
 

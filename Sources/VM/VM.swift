@@ -19,6 +19,10 @@ public class VM {
     return self.context.builtins
   }
 
+  internal var sys: Sys {
+    return self.context.sys
+  }
+
   public init(arguments: Arguments, environment: Environment = Environment()) {
     let contextConf = PyContextConfig()
     self.context = PyContext(config: contextConf)
@@ -106,10 +110,9 @@ public class VM {
     var isContinuing = false
 
     while true {
-      let promptObject = self.sysGetObject(key: isContinuing ? "ps2" : "ps1")
-      let prompt = self.toStr(promptObject)
+      let prompt = isContinuing ? self.sys.ps2String : self.sys.ps1String
+      print(prompt, terminator: "")
 
-      print(prompt, terminator: " ")
       switch readLine() {
       case let .some(line):
         let stopContinuing = line.isEmpty

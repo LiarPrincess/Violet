@@ -38,13 +38,4 @@ extension VM {
                      kwargs: [PyObject]) -> PyObject {
     self.unimplemented()
   }
-
-  /// _PySys_GetObjectId
-  internal func sysGetObject(key: String) -> PyObject {
-    self.unimplemented()
-  }
-
-  internal func toStr(_ object: PyObject) -> String {
-    self.unimplemented()
-  }
 }
