@@ -34,6 +34,10 @@ public class PyInt: PyObject {
 
   // MARK: - Init
 
+  internal convenience init(_ context: PyContext, value: Int) {
+    self.init(context, value: BigInt(value))
+  }
+
   internal init(_ context: PyContext, value: BigInt) {
     self.value = value
     super.init(type: context.builtins.types.int)

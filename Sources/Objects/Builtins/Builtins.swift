@@ -21,8 +21,6 @@ public final class Builtins {
   public lazy var emptyFrozenSet = PyFrozenSet(self.context)
   public lazy var notImplemented = PyNotImplemented(self.context)
 
-  internal var cachedInts = [BigInt: PyInt]()
-
   public let types: BuiltinTypes
   public let errorTypes: BuiltinErrorTypes
 
@@ -48,17 +46,6 @@ public final class Builtins {
   internal func onContextFullyInitailized() {
     self.types.postInit()
     self.errorTypes.postInit()
-    self.cacheIntegers()
-  }
-
-  private func cacheIntegers() {
-    let min = -10
-    let max = 255
-
-    for int in min...max {
-      let bigInt = BigInt(int)
-      self.cachedInts[bigInt] = PyInt(self.context, value: bigInt)
-    }
   }
 
   // MARK: - Deinit

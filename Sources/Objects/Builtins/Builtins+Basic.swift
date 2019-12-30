@@ -10,7 +10,7 @@ extension Builtins {
   // MARK: - Int
 
   public func newInt(_ value: UInt8) -> PyInt {
-    return PyInt(self.context, value: BigInt(value))
+    return PyInt(self.context, value: Int(value))
   }
 
   public func newInt(_ value: UInt32) -> PyInt {
@@ -18,14 +18,11 @@ extension Builtins {
   }
 
   public func newInt(_ value: Int) -> PyInt {
-    return PyInt(self.context, value: BigInt(value))
+    return self.context.getInterned(value) ?? PyInt(self.context, value: value)
   }
 
   public func newInt(_ value: BigInt) -> PyInt {
-    if let cached = self.cachedInts[value] {
-      return cached
-    }
-    return PyInt(self.context, value: value)
+    return self.context.getInterned(value) ?? PyInt(self.context, value: value)
   }
 
   // MARK: - Bool

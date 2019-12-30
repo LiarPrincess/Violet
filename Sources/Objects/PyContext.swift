@@ -1,3 +1,4 @@
+import Core
 import Foundation
 
 // MARK: - Config
@@ -37,18 +38,44 @@ public class PyContext {
     self.sys.onContextDeinit()
   }
 
-  // MARK: - Intern
+  // MARK: - Intern ints
 
-  private var internedStrings = [String:PyString]()
+  private static let smallIntRange = -10...255
 
-  /// Create and cache Python string representing given `string` value.
-  internal func intern(_ str: String) -> PyString {
-    if let existing = self.internedStrings[str] {
-      return existing
+  private lazy var smallInts = PyContext.smallIntRange.map { PyInt(self, value: $0) }
+
+  /// Get cached `int`.
+  internal func getInterned(_ value: BigInt) -> PyInt? {
+    guard let int = Int(exactly: value) else {
+      return nil
     }
 
-    let object = self.builtins.newString(str)
-    self.internedStrings[str] = object
+    return self.getInterned(int)
+  }
+
+  /// Get cached `int`.
+  internal func getInterned(_ value: Int) -> PyInt? {
+    guard PyContext.smallIntRange.contains(value) else {
+      return nil
+    }
+
+    let index = value + Swift.abs(PyContext.smallIntRange.lowerBound)
+    return self.smallInts[index]
+  }
+
+  // MARK: - Intern strings
+
+  private lazy var internedStrings = [String:PyString]()
+
+  /// Cache `str` representing given value.
+  internal func intern(_ value: String) -> PyString {
+    let object = PyString(self, value: value)
+    self.internedStrings[value] = object
     return object
+  }
+
+  /// Get cached `str`.
+  internal func getInterned(_ value: String) -> PyString? {
+    return self.internedStrings[value]
   }
 }
