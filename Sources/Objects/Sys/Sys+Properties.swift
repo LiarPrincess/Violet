@@ -84,4 +84,13 @@ extension Sys {
   internal func getImplementation() -> PyObject {
     return self.implementationInfo.object
   }
+
+  // MARK: - Hash
+
+  // sourcery: pyproperty: hash_info
+  /// sys.hash_info
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hash_info).
+  internal func getHashInfo() -> PyObject {
+    return self.hashInfo.object
+  }
 }

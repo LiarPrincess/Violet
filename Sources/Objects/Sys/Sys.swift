@@ -166,6 +166,10 @@ public final class Sys {
     cacheTag: nil
   )
 
+  // MARK: - Hash
+
+  public lazy var hashInfo = HashInfo(context: self.context)
+
   // MARK: - Copyright
 
   public lazy var copyright = self.context.intern(Lyrics.letItGo)

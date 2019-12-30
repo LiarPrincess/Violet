@@ -12,7 +12,7 @@ extension Sys {
   /// `argv[0]` is set to the string `'-c'`.
   /// If no script name was passed to the Python interpreter,
   /// `argv[0]` is the empty string.
-  public func getArgv() -> PyObject {
+  internal func getArgv() -> PyObject {
     return self.unimplemented
   }
 
@@ -22,7 +22,7 @@ extension Sys {
   ///
   /// This is a dictionary that maps module names to modules
   /// which have already been loaded.
-  public func getModules() -> PyObject {
+  internal func getModules() -> PyObject {
     return self.unimplemented
   }
 
@@ -38,7 +38,7 @@ extension Sys {
   /// the Python interpreter.
   /// If the script directory is not available, `path[0]` is the empty string,
   /// which directs Python to search modules in the current directory first.
-  public func getPath() -> PyObject {
+  internal func getPath() -> PyObject {
     return self.unimplemented
   }
 
@@ -48,7 +48,7 @@ extension Sys {
   ///
   /// A tuple of strings giving the names of all modules that are compiled
   /// into this Python interpreter.
-  public func getBuiltinModuleNames() -> PyObject {
+  internal func getBuiltinModuleNames() -> PyObject {
     return self.unimplemented
   }
 
@@ -60,7 +60,7 @@ extension Sys {
   /// the Python interpreter, on systems where this makes sense.
   /// If Python is unable to retrieve the real path to its executable,
   /// `sys.executable` will be an empty string or `None`.
-  public func getExecutable() -> PyObject {
+  internal func getExecutable() -> PyObject {
     return self.unimplemented
   }
 
@@ -71,16 +71,7 @@ extension Sys {
   /// This is an implementation detail of the warnings framework;
   /// do not modify this value.
   /// Refer to the `warnings` module for more information on the warnings framework.
-  public func getWarnOptions() -> PyObject {
-    return self.unimplemented
-  }
-
-  // MARK: - Hash
-
-  // sourcery: pyproperty: hash_info
-  /// sys.hash_info
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hash_info).
-  public func getHashInfo() -> PyObject {
+  internal func getWarnOptions() -> PyObject {
     return self.unimplemented
   }
 
@@ -89,14 +80,14 @@ extension Sys {
   // sourcery: pymethod: breakpointhook
   /// sys.breakpointhook()
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.breakpointhook).
-  public func breakpointHook() -> PyObject {
+  internal func breakpointHook() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: __breakpointhook__
   /// sys.__breakpointhook__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__breakpointhook__).
-  public func get__breakpointhook__() -> PyObject {
+  internal func get__breakpointhook__() -> PyObject {
     return self.unimplemented
   }
 
@@ -105,14 +96,14 @@ extension Sys {
   // sourcery: pymethod: displayhook
   /// sys.displayhook(value)
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.displayhook).
-  public func displayHook() -> PyObject {
+  internal func displayHook() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: __displayhook__
   /// sys.__displayhook__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__displayhook__).
-  public func get__displayhook__() -> PyObject {
+  internal func get__displayhook__() -> PyObject {
     return self.unimplemented
   }
 
@@ -121,14 +112,14 @@ extension Sys {
   // sourcery: pymethod: excepthook
   /// sys.excepthook(type, value, traceback)
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.excepthook).
-  public func excepthook() -> PyObject {
+  internal func excepthook() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: __excepthook__
   /// sys.__excepthook__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__excepthook__).
-  public func get__excepthook__() -> PyObject {
+  internal func get__excepthook__() -> PyObject {
     return self.unimplemented
   }
 
@@ -137,7 +128,7 @@ extension Sys {
   // sourcery: pymethod: exit
   /// sys.exit([arg])
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.exit).
-  public func exit() -> PyObject {
+  internal func exit() -> PyObject {
     return self.unimplemented
   }
 
@@ -146,42 +137,42 @@ extension Sys {
   // sourcery: pyproperty: stdin
   /// sys.stdin
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  public func getStdin() -> PyObject {
+  internal func getStdin() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: stdout
   /// sys.stdout
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  public func getStdout() -> PyObject {
+  internal func getStdout() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: stderr
   /// sys.stderr
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  public func getStderr() -> PyObject {
+  internal func getStderr() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: __stdin__
   /// sys.__stdin__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public func get__stdin__() -> PyObject {
+  internal func get__stdin__() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: __stdout__
   /// sys.__stdout__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public func get__stdout__() -> PyObject {
+  internal func get__stdout__() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: __stderr__
   /// sys.__stderr__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  public func get__stderr__() -> PyObject {
+  internal func get__stderr__() -> PyObject {
     return self.unimplemented
   }
 
@@ -196,14 +187,14 @@ extension Sys {
   // sourcery: pyproperty: byteorder
   /// sys.byteorder
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.byteorder).
-  public func getByteOrder() -> PyObject {
+  internal func getByteOrder() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pymethod: exc_info
   /// sys.exc_info()
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.exc_info).
-  public func excInfo() -> PyObject {
+  internal func excInfo() -> PyObject {
     return self.unimplemented
   }
 }

@@ -32,13 +32,22 @@ internal struct Hasher {
 
   // MARK: - Constants
 
+  /// Name of the algorithm for hashing of str, bytes, and memoryview
+  internal static let algorithm = "siphash24"
+
+  /// Width in bits used for hash values
+  internal static let width: PyHash = 64
+  /// Internal output size of the hash algorithm
+  internal static let hashBits: PyHash = 64
+  /// Size of the seed key of the hash algorithm
+  internal static let seedBits: PyHash = 128
+
+  /// Prime modulus P used for numeric hash scheme
+  internal static let modulus: PyHash = ((1 << bits) - 1)
   /// Prime multiplier used in string and various other hashes (0xf4243).
   internal static let multiplier: PyHash = 1_000_003
   /// Numeric hashes are based on reduction modulo the prime 2**_BITS - 1
   internal static let bits: PyHash = 61
-
-  internal static let modulus: PyHash = ((1 << bits) - 1)
-  internal static let shift:   PyHash = 30
 
   /// Value used as hash for infinity.
   internal static let inf: PyHash = 314_159
