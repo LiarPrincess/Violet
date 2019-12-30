@@ -10,9 +10,10 @@ public class PyNamespace: PyObject {
     SimpleNamespace(**kwargs)
     """
 
-  internal let attributes = Attributes()
+  internal let attributes: Attributes
 
-  internal init(_ context: PyContext) {
+  internal init(_ context: PyContext, attributes: Attributes) {
+    self.attributes = attributes
     super.init(type: context.builtins.types.simpleNamespace)
   }
 

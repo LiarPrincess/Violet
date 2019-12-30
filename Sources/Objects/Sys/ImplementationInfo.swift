@@ -16,13 +16,13 @@ public struct ImplementationInfo {
     self.cacheTag = cacheTag
 
     let builtins = context.builtins
-    let c = cacheTag.map(context.intern) ?? builtins.none
+    let cacheTagObject: PyObject = cacheTag.map(context.intern) ?? builtins.none
 
-    // Ignore errors (because namespaces are made just to hold attributes).
-    self.object = PyNamespace(context)
-    _ = self.object.setAttribute(name: "name", value: context.intern(name))
-    _ = self.object.setAttribute(name: "version", value: version.object)
-    _ = self.object.setAttribute(name: "hexversion", value: version.hexVersionObject)
-    _ = self.object.setAttribute(name: "cache_tag", value: c)
+    let attributes = Attributes()
+    attributes.set(key: "name", to: context.intern(name))
+    attributes.set(key: "version", to: version.object)
+    attributes.set(key: "hexversion", to: version.hexVersionObject)
+    attributes.set(key: "cache_tag", to: cacheTagObject)
+    self.object = builtins.newNamespace(attributes: attributes)
   }
 }

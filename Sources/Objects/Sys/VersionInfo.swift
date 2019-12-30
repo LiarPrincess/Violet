@@ -63,15 +63,15 @@ public struct VersionInfo {
     self.releaseLevel = releaseLevel
     self.serial = serial
 
-    let b = context.builtins
+    let builtins = context.builtins
 
-    // Ignore errors (because namespaces are made just to hold attributes).
-    self.object = PyNamespace(context)
-    _ = self.object.setAttribute(name: "major", value: b.newInt(major))
-    _ = self.object.setAttribute(name: "minor", value: b.newInt(minor))
-    _ = self.object.setAttribute(name: "micro", value: b.newInt(micro))
-    _ = self.object.setAttribute(name: "releaseLevel", value: b.newString(releaseLevel.description))
-    _ = self.object.setAttribute(name: "serial", value: b.newInt(serial))
+    let attributes = Attributes()
+    attributes.set(key: "major", to: builtins.newInt(major))
+    attributes.set(key: "minor", to: builtins.newInt(minor))
+    attributes.set(key: "micro", to: builtins.newInt(micro))
+    attributes.set(key: "releaseLevel", to: builtins.newString(releaseLevel.description))
+    attributes.set(key: "serial", to: builtins.newInt(serial))
+    self.object = builtins.newNamespace(attributes: attributes)
 
     // https://docs.python.org/3.7/c-api/apiabiversion.html#apiabiversion
     // >>> sys.version_info
@@ -84,6 +84,6 @@ public struct VersionInfo {
     let releaseLevelHex = UInt32(releaseLevel.hexVersion) << 4
     let serialHex = UInt32(serial)
     self.hexVersion = majorHex | minorHex | microHex | releaseLevelHex | serialHex
-    self.hexVersionObject = b.newInt(self.hexVersion)
+    self.hexVersionObject = builtins.newInt(self.hexVersion)
   }
 }

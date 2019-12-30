@@ -63,6 +63,16 @@ extension Builtins {
     return PyByteArray(self.context, value: value)
   }
 
+  // MARK: - Namespace
+
+  public func newNamespace() -> PyNamespace {
+    return self.newNamespace(attributes: Attributes())
+  }
+
+  public func newNamespace(attributes: Attributes) -> PyNamespace {
+    return PyNamespace(self.context, attributes: attributes)
+  }
+
   // MARK: - Module
 
   public func newModule(name: String, doc: String? = nil) -> PyModule {

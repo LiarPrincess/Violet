@@ -22,17 +22,17 @@ public struct HashInfo {
   public let object: PyNamespace
 
   public init(context: PyContext) {
-    let b = context.builtins
+    let builtins = context.builtins
 
-    // Ignore errors (because namespaces are made just to hold attributes).
-    self.object = PyNamespace(context)
-    _ = self.object.setAttribute(name: "width", value: b.newInt(self.width))
-    _ = self.object.setAttribute(name: "modulus", value: b.newInt(self.modulus))
-    _ = self.object.setAttribute(name: "inf", value: b.newInt(self.inf))
-    _ = self.object.setAttribute(name: "nan", value: b.newInt(self.nan))
-    _ = self.object.setAttribute(name: "imag", value: b.newInt(self.imag))
-    _ = self.object.setAttribute(name: "algorithm", value: b.newString(self.algorithm))
-    _ = self.object.setAttribute(name: "hash_bits", value: b.newInt(self.hashBits))
-    _ = self.object.setAttribute(name: "seed_bits", value: b.newInt(self.seedBits))
+    let attributes = Attributes()
+    attributes.set(key: "width", to: builtins.newInt(self.width))
+    attributes.set(key: "modulus", to: builtins.newInt(self.modulus))
+    attributes.set(key: "inf", to: builtins.newInt(self.inf))
+    attributes.set(key: "nan", to: builtins.newInt(self.nan))
+    attributes.set(key: "imag", to: builtins.newInt(self.imag))
+    attributes.set(key: "algorithm", to: builtins.newString(self.algorithm))
+    attributes.set(key: "hash_bits", to: builtins.newInt(self.hashBits))
+    attributes.set(key: "seed_bits", to: builtins.newInt(self.seedBits))
+    self.object = builtins.newNamespace(attributes: attributes)
   }
 }
