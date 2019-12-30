@@ -9,6 +9,9 @@ extension Sys {
   // sourcery: pyproperty: ps1, setter = setPS1
   /// sys.ps1
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
+  ///
+  /// Strings specifying the primary and secondary prompt of the interpreter.
+  /// These are only defined if the interpreter is in interactive mode.
   internal func getPS1() -> PyObject {
     return self.ps1
   }
@@ -20,6 +23,9 @@ extension Sys {
   // sourcery: pyproperty: ps2, setter = setPS2
   /// sys.ps2
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
+  ///
+  /// Strings specifying the primary and secondary prompt of the interpreter.
+  /// These are only defined if the interpreter is in interactive mode.
   internal func getPS2() -> PyObject {
     return self.ps2
   }
@@ -30,14 +36,52 @@ extension Sys {
 
   // MARK: - Platform
 
-  // sourcery: pyproperty: platform, setter = setPlatform
+  // sourcery: pyproperty: platform
   /// sys.platform
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.platform).
-  internal func getPlatform() -> PyObject {
+  ///
+  /// This string contains a platform identifier that can be used to append
+  /// platform-specific components to `sys.path`, for instance.
+  internal func getPlatform() -> PyString {
     return self.platform
   }
 
-  internal func setPlatform(to value: PyObject) {
-    self.platform = value
+  // MARK: - Copyright
+
+  // sourcery: pyproperty: copyright
+  /// sys.copyright
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.copyright).
+  ///
+  /// A string containing the copyright pertaining to the Python interpreter.
+  internal func getCopyright() -> PyString {
+    return self.copyright
+  }
+
+  // MARK: - Version
+
+  // sourcery: pyproperty: version
+  /// sys.version
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version).
+  internal func getVersion() -> PyString {
+    return self.context.intern(self.version)
+  }
+
+  // sourcery: pyproperty: version_info
+  /// sys.version_info
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version_info).
+  ///
+  /// A tuple containing the five components of the version number:
+  /// major, minor, micro, releaselevel, and serial.
+  /// All values except releaselevel are integers;
+  /// the release level is 'alpha', 'beta', 'candidate', or 'final'.
+  internal func getVersionInfo() -> PyObject {
+    return self.versionInfo.object
+  }
+
+  // sourcery: pyproperty: implementation
+  /// sys.implementation
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.implementation).
+  internal func getImplementation() -> PyObject {
+    return self.implementationInfo.object
   }
 }

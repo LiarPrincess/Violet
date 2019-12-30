@@ -5,6 +5,13 @@ extension Sys {
   // sourcery: pyproperty: argv
   /// sys.argv
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.argv).
+  ///
+  /// The list of command line arguments passed to a Python script.
+  /// `argv[0]` is the script name.
+  /// If the command was executed using the `-c` command line option,
+  /// `argv[0]` is set to the string `'-c'`.
+  /// If no script name was passed to the Python interpreter,
+  /// `argv[0]` is the empty string.
   public func getArgv() -> PyObject {
     return self.unimplemented
   }
@@ -12,6 +19,9 @@ extension Sys {
   // sourcery: pyproperty: modules
   /// sys.modules
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.modules).
+  ///
+  /// This is a dictionary that maps module names to modules
+  /// which have already been loaded.
   public func getModules() -> PyObject {
     return self.unimplemented
   }
@@ -19,51 +29,49 @@ extension Sys {
   // sourcery: pyproperty: path
   /// sys.path
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.path).
+  ///
+  /// A list of strings that specifies the search path for modules.
+  /// Initialized from the environment variable PYTHONPATH,
+  /// plus an installation-dependent default.
+  ///
+  /// `path[0]`, is the directory containing the script that was used to invoke
+  /// the Python interpreter.
+  /// If the script directory is not available, `path[0]` is the empty string,
+  /// which directs Python to search modules in the current directory first.
   public func getPath() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: executable
-  /// sys.executable
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.executable).
-  public func getExecutable() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: builtin_module_names
   /// sys.builtin_module_names
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.builtin_module_names).
+  ///
+  /// A tuple of strings giving the names of all modules that are compiled
+  /// into this Python interpreter.
   public func getBuiltinModuleNames() -> PyObject {
+    return self.unimplemented
+  }
+
+  // sourcery: pyproperty: executable
+  /// sys.executable
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.executable).
+  ///
+  /// A string giving the absolute path of the executable binary for
+  /// the Python interpreter, on systems where this makes sense.
+  /// If Python is unable to retrieve the real path to its executable,
+  /// `sys.executable` will be an empty string or `None`.
+  public func getExecutable() -> PyObject {
     return self.unimplemented
   }
 
   // sourcery: pyproperty: warnoptions
   /// sys.warnoptions
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.warnoptions).
+  ///
+  /// This is an implementation detail of the warnings framework;
+  /// do not modify this value.
+  /// Refer to the `warnings` module for more information on the warnings framework.
   public func getWarnOptions() -> PyObject {
-    return self.unimplemented
-  }
-
-  // MARK: - Version
-
-  // sourcery: pyproperty: version
-  /// sys.version
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version).
-  public func getVersion() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: version_info
-  /// sys.version_info
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version_info).
-  public func getVersionInfo() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: implementation
-  /// sys.implementation
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.implementation).
-  public func getImplementation() -> PyObject {
     return self.unimplemented
   }
 
@@ -73,15 +81,6 @@ extension Sys {
   /// sys.hash_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hash_info).
   public func getHashInfo() -> PyObject {
-    return self.unimplemented
-  }
-
-  // MARK: - Copyright
-
-  // sourcery: pyproperty: copyright
-  /// sys.copyright
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.copyright).
-  public func getCopyright() -> PyObject {
     return self.unimplemented
   }
 

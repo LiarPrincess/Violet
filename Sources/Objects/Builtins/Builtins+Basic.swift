@@ -13,6 +13,10 @@ extension Builtins {
     return PyInt(self.context, value: BigInt(value))
   }
 
+  public func newInt(_ value: UInt32) -> PyInt {
+    return PyInt(self.context, value: BigInt(value))
+  }
+
   public func newInt(_ value: Int) -> PyInt {
     return PyInt(self.context, value: BigInt(value))
   }

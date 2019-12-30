@@ -12,7 +12,7 @@ public class PyNamespace: PyObject {
 
   internal let attributes = Attributes()
 
-  internal init(_ context: PyContext, name: PyObject, doc: PyObject? = nil) {
+  internal init(_ context: PyContext) {
     super.init(type: context.builtins.types.simpleNamespace)
   }
 
@@ -24,10 +24,7 @@ public class PyNamespace: PyObject {
       return .notImplemented
     }
 
-    switch self.attributes.isEqual(to: other.attributes) {
-    case let .value(b): return .value(b)
-    case let .error(e): return .error(e)
-    }
+    return self.attributes.isEqual(to: other.attributes).asResultOrNot
   }
 
   // sourcery: pymethod = __ne__
@@ -98,6 +95,10 @@ public class PyNamespace: PyObject {
 
   // sourcery: pymethod = __setattr__
   internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+    return AttributeHelper.setAttribute(on: self, name: name, to: value)
+  }
+
+  internal func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
