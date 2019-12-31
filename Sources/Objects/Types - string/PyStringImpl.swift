@@ -74,12 +74,13 @@ internal protocol StringBuilderType {
 // MARK: - String implementation
 
 /// (Almost) all of the `str` methods.
+/// Everything here is 'best-efford'
 ///
 /// Note that we will use the same implementation for `str` and `bytes`.
 /// Some methods should work differently, but we will ignore this.
 /// For example:
-/// - `str` can only use `str` inide `in` expression
-/// - `bytes` we can use `int` or `bytes` inside `in` expression  (`49 in b'123'`
+/// - `str` can only use `str` inside `in` expression
+/// - `bytes` can use `int` or `bytes` inside `in` expression  (`49 in b'123'`)
 ///
 /// Also: look at us! Using traits/protocols as intended!
 internal protocol PyStringImpl {

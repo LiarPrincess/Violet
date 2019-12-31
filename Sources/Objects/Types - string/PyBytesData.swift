@@ -4,7 +4,7 @@ import Foundation
 // swiftlint:disable file_length
 // swiftlint:disable yoda_condition
 
-/// Protocol implemented by both `bytes` and `bytesrray`.
+/// Protocol implemented by both `bytes` and `bytesarray`.
 internal protocol PyBytesType: PyObject {
   var data: PyBytesData { get }
 }
@@ -64,6 +64,14 @@ internal struct PyBytesData: PyStringImpl {
   }
 
   internal static func extractSelf(from object: PyObject) -> PyBytesData? {
+    // Most of the `bytes` functions also accept `int`.
+    // For example: `49 in b'123'`.
+    if let pyInt = object as? PyInt,
+       let byte = UInt8(exactly: pyInt.value) {
+
+      return PyBytesData(Data([byte]))
+    }
+
     let bytes = object as? PyBytesType
     return bytes?.data
   }

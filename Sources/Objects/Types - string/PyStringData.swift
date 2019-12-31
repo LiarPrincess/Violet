@@ -25,7 +25,6 @@ internal struct StringBuilder: StringBuilderType {
 // MARK: - String data
 
 /// Basically `PyString` that does not require `PyContext`.
-/// Everything here is 'best-efford'
 ///
 /// We work on scalars (Unicode code points) instead of graphemes because:
 /// - len("Cafe\u0301") = 5 (Swift: "Cafe\u{0301}".unicodeScalars.count)
