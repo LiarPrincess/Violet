@@ -59,8 +59,7 @@ internal enum IndexHelper {
   }
 
   /// Return a Python int from the object item.
-  /// Raise TypeError if the result is not an int
-  /// or if the object cannot be interpreted as an index.
+  /// Raise TypeError if the result is not an int.
   ///
   /// PyObject * PyNumber_Index(PyObject *item)
   internal static func tryBigInt(_ value: PyObject) -> GetIndexResult<BigInt> {

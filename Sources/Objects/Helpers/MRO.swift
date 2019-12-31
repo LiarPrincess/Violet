@@ -1,3 +1,5 @@
+import Foundation
+
 // TODO: Do we have custom mro? (mro_invoke(PyTypeObject *type))
 internal enum LinearizationResult {
   case value(MRO)
@@ -32,11 +34,23 @@ internal struct MRO {
   ///
   /// It will not take into account `self` (which should be 1st in MRO)!
   internal static func linearize(baseClasses: [PyObject]) -> LinearizationResult {
-    guard let baseTypes = asPyTypes(baseClasses) else {
+    guard let baseTypes = MRO.asTypeArray(baseClasses) else {
       return .typeError("bases must be types")
     }
 
     return MRO.linearize(baseClasses: baseTypes)
+  }
+
+  // swiftlint:disable:next discouraged_optional_collection
+  private static func asTypeArray(_ baseClasses: [PyObject]) -> [PyType]? {
+    var result = [PyType]()
+    for base in baseClasses {
+      switch base as? PyType {
+      case .some(let t): result.append(t)
+      case .none: return .none
+      }
+    }
+    return result
   }
 
   internal static func linearize(baseClasses: [PyType]) -> LinearizationResult {
@@ -59,8 +73,8 @@ internal struct MRO {
     var result = [PyType]()
     let mros = baseClasses.map { $0.getMRORaw() } + [baseClasses]
 
-    while hasAnyClassRemaining(mros) {
-      guard let base = getNextBase(mros) else {
+    while MRO.hasAnyClassRemaining(mros) {
+      guard let base = MRO.getNextBase(mros) else {
         let msg = "Cannot create a consistent method resolution order (MRO) for bases"
         return .valueError(msg)
       }
@@ -76,27 +90,17 @@ internal struct MRO {
     return .value(MRO(baseClasses: baseClasses, resolutionOrder: result))
   }
 
-  // swiftlint:disable:next discouraged_optional_collection
-  private static func asPyTypes(_ baseClasses: [PyObject]) -> [PyType]? {
-    var result = [PyType]()
-    for base in baseClasses {
-      switch base as? PyType {
-      case let .some(t): result.append(t)
-      case .none: return .none
-      }
-    }
-    return result
-  }
-
   private static func getDuplicateBaseClass(_ baseClasses: [PyType]) -> PyType? {
-    // This is quadratic, but we don't expect many (>100) base classes.
-    for (index, base) in baseClasses.enumerated() {
-      let upToCurrent = baseClasses[0..<index]
+    var visited = Set<ObjectIdentifier>()
 
-      let isDuplicate = upToCurrent.contains { $0 === base }
-      if isDuplicate {
+    for base in baseClasses {
+      let id = ObjectIdentifier(base)
+
+      if visited.contains(id) {
         return base
       }
+
+      visited.insert(id)
     }
 
     return nil
