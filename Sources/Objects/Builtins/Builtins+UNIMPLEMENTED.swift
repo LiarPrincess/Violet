@@ -89,14 +89,6 @@ extension Builtins {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: open
-  /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
-  ///            closefd=True, opener=None)
-  /// See [this](https://docs.python.org/3/library/functions.html#open)
-  public func open() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod: print
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
@@ -139,5 +131,29 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#super)
   public func `super`() -> PyObject {
     return self.unimplemented
+  }
+
+  // MARK: - Other
+
+  internal func callDir(_ fn: PyObject, args: [PyObject?]) -> DirResult {
+    return DirResult()
+  }
+
+  public func PyObject_Format(value: PyObject, format: PyObject?) -> PyObject {
+    return self.none
+  }
+
+  internal func getGlobals() -> [String: PyObject] {
+    return [:]
+  }
+
+  public func getDict(_ module: PyModule) -> Attributes {
+    return module.attributes
+  }
+
+  // MARK: - Helpers
+
+  internal var unimplemented: PyObject {
+    return self.none
   }
 }
