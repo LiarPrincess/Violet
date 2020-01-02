@@ -1,3 +1,4 @@
+import _io
 import types as t
 import collections as c
 
@@ -22,6 +23,10 @@ bytes_iterator = type(iter(b''))
 bytearray_iterator = type(iter(bytearray()))
 
 range_iterator = type(iter(range(1)))
+
+# We dont have '_io' module.
+# Instead we use custom 'builtins.TextFile' based on '_io.TextIOWrapper'.
+TextFile = _io.TextIOWrapper
 
 {% macro printProperties properties %}
   {% for prop in properties|annotated:"pyproperty" %}

@@ -1,4 +1,5 @@
 
+import _io
 import types as t
 import collections as c
 
@@ -23,6 +24,10 @@ bytes_iterator = type(iter(b''))
 bytearray_iterator = type(iter(bytearray()))
 
 range_iterator = type(iter(range(1)))
+
+# We dont have '_io' module.
+# Instead we use custom 'builtins.TextFile' based on '_io.TextIOWrapper'.
+TextFile = _io.TextIOWrapper
 
 
 
@@ -841,6 +846,12 @@ types = {
     '__iter__',
     '__next__',
     '__new__',
+  ],
+  TextFile: [
+    '__class__',
+    '__repr__',
+    'readable',
+    'read',
   ],
   tuple: [
     '__class__',

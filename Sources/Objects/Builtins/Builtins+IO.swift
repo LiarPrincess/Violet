@@ -86,16 +86,6 @@ extension Builtins {
       return .error(e)
     }
 
-    guard type == .text else {
-      return .valueError("only text mode is currently supported")
-    }
-
-    let fd: FileDescriptor
-    switch self.open(source: source, mode: mode, type: type) {
-    case let .value(f): fd = f
-    case let .error(e): return .error(e)
-    }
-
     // We will ignore 'buffering', 'newline', 'closefd' and 'opener'
     // because we are lazy.
 
@@ -111,21 +101,27 @@ extension Builtins {
     case let .error(e): return .error(e)
     }
 
-    let result = PyFile(self.context, fd: fd, encoding: encoding, errors: errors)
-    return .value(result)
+    // Delay `open` syscall untill the end of the method,
+    // so that we don't have to deal with dangling handles.
+    switch type {
+    case .binary:
+      return .valueError("only text mode is currently supported")
+    case .text:
+      return self.open(source: source, mode: mode)
+        .map { PyTextFile(self.context, fd: $0, encoding: encoding, errors: errors) }
+    }
   }
 
   private func open(source: FileSource,
-                    mode: FileMode,
-                    type: FileType) -> PyResult<FileDescriptor> {
+                    mode: FileMode) -> PyResult<FileDescriptor> {
     let delegate = self.context.delegate
 
     switch source {
     case let .fileDescriptor(fd):
-      return delegate.open(fileno: fd, mode: mode, type: type)
+      return delegate.open(fileno: fd, mode: mode)
 
     case let .string(path):
-      return delegate.open(file: path, mode: mode, type: type)
+      return delegate.open(file: path, mode: mode)
 
     case let .bytes(bytes):
       let data = PyBytesData(bytes)
@@ -133,7 +129,7 @@ extension Builtins {
         return .valueError("bytes cannot interpreted as path")
       }
 
-      return delegate.open(file: path, mode: mode, type: type)
+      return delegate.open(file: path, mode: mode)
     }
   }
 }

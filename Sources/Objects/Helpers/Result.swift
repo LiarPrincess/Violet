@@ -1,4 +1,5 @@
 import Core
+import Foundation
 
 // swiftlint:disable file_length
 
@@ -20,6 +21,8 @@ public enum PyErrorEnum: CustomStringConvertible {
   case unboundLocalError(variableName: String)
   case deprecationWarning(String)
   case lookupError(String)
+  case unicodeDecodeError(FileEncoding, Data)
+  case osError(String)
 
   public var description: String {
     switch self {
@@ -39,6 +42,8 @@ public enum PyErrorEnum: CustomStringConvertible {
       return "UnboundLocalError: local variable '\(v)' referenced before assignment"
     case .deprecationWarning(let msg): return "Deprecation warning: '\(msg)'"
     case .lookupError(let msg): return "Lookup error: '\(msg)'"
+    case .unicodeDecodeError(let e, _): return "'\(e)' codec can't decode data"
+    case .osError(let msg): return "OS error: '\(msg)'"
     }
   }
 }
@@ -107,6 +112,15 @@ public enum PyResult<V> {
 
   public static func lookupError(_ msg: String) -> PyResult<V> {
     return PyResult.error(.lookupError(msg))
+  }
+
+  public static func unicodeDecodeError(encoding: FileEncoding,
+                                        data: Data) -> PyResult<V> {
+    return PyResult.error(.unicodeDecodeError(encoding, data))
+  }
+
+  public static func osError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.osError(msg))
   }
 
   public func map<A>(_ f: (V) -> A) -> PyResult<A> {
@@ -229,6 +243,15 @@ public enum PyResultOrNot<V> {
 
   public static func lookupError(_ msg: String) -> PyResultOrNot<V> {
     return PyResultOrNot.error(.lookupError(msg))
+  }
+
+  public static func unicodeDecodeError(encoding: FileEncoding,
+                                        data: Data) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.unicodeDecodeError(encoding, data))
+  }
+
+  public static func osError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.osError(msg))
   }
 
   public func map<A>(_ f: (V) -> A) -> PyResultOrNot<A> {

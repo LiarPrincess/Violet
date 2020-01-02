@@ -888,6 +888,15 @@ extension PyStringIterator:
   __new__Owner
 { }
 
+// MARK: - TextFile
+
+extension PyTextFile:
+  __class__GetterOwner,
+  __repr__Owner,
+  readableOwner,
+  readOwner
+{ }
+
 // MARK: - Tuple
 
 extension PyTuple:

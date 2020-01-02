@@ -1330,6 +1330,23 @@ internal enum BuiltinTypesFill {
     dict["__next__"] = PyBuiltinFunction.wrap(type.context, name: "__next__", doc: nil, fn: PyStringIterator.next, castSelf: Cast.asPyStringIterator)
   }
 
+  // MARK: - TextFile
+
+  internal static func textFile(_ type: PyType) {
+    type.setBuiltinTypeDoc(PyTextFile.doc)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
+
+    let dict = type.getDict()
+    dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyTextFile.getClass, castSelf: Cast.asPyTextFile)
+
+
+
+    dict["__repr__"] = PyBuiltinFunction.wrap(type.context, name: "__repr__", doc: nil, fn: PyTextFile.repr, castSelf: Cast.asPyTextFile)
+    dict["readable"] = PyBuiltinFunction.wrap(type.context, name: "readable", doc: nil, fn: PyTextFile.isReadable, castSelf: Cast.asPyTextFile)
+    dict["read"] = PyBuiltinFunction.wrap(type.context, name: "read", doc: nil, fn: PyTextFile.read(size:), castSelf: Cast.asPyTextFile)
+  }
+
   // MARK: - Tuple
 
   internal static func tuple(_ type: PyType) {

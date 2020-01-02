@@ -287,6 +287,10 @@ internal final class PyStringHeap: PyString, HeapType {
 
 // PyStringIterator is not a base type.
 
+// MARK: - TextFile
+
+// PyTextFile is not a base type.
+
 // MARK: - Tuple
 
 /// Type used when we subclass builtin `tuple` class.

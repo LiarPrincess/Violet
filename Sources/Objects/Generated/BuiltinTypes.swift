@@ -56,6 +56,7 @@ public final class BuiltinTypes {
   public let slice: PyType
   public let str: PyType
   public let str_iterator: PyType
+  public let textFile: PyType
   public let tuple: PyType
   public let tuple_iterator: PyType
   public let zip: PyType
@@ -113,6 +114,7 @@ public final class BuiltinTypes {
     self.slice = PyType.initBuiltinType(name: "slice", type: self.type, base: self.object)
     self.str = PyType.initBuiltinType(name: "str", type: self.type, base: self.object)
     self.str_iterator = PyType.initBuiltinType(name: "str_iterator", type: self.type, base: self.object)
+    self.textFile = PyType.initBuiltinType(name: "TextFile", type: self.type, base: self.object)
     self.tuple = PyType.initBuiltinType(name: "tuple", type: self.type, base: self.object)
     self.tuple_iterator = PyType.initBuiltinType(name: "tuple_iterator", type: self.type, base: self.object)
     self.zip = PyType.initBuiltinType(name: "zip", type: self.type, base: self.object)
@@ -166,6 +168,7 @@ public final class BuiltinTypes {
     BuiltinTypesFill.slice(self.slice)
     BuiltinTypesFill.str(self.str)
     BuiltinTypesFill.str_iterator(self.str_iterator)
+    BuiltinTypesFill.textFile(self.textFile)
     BuiltinTypesFill.tuple(self.tuple)
     BuiltinTypesFill.tuple_iterator(self.tuple_iterator)
     BuiltinTypesFill.zip(self.zip)
@@ -217,6 +220,7 @@ public final class BuiltinTypes {
       self.slice,
       self.str,
       self.str_iterator,
+      self.textFile,
       self.tuple,
       self.tuple_iterator,
       self.zip,

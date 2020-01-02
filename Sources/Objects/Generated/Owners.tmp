@@ -770,6 +770,11 @@ PyStringIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> 
 PyStringIterator|PyObject|func|__iter__|iter() -> PyObject
 PyStringIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyStringIterator|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
+PyTextFile|PyObject|get|__class__|getClass() -> PyType
+
+PyTextFile|PyObject|func|__repr__|repr() -> PyResult<String>
+PyTextFile|PyObject|func|readable|isReadable() -> Bool
+PyTextFile|PyObject|func|read|read(size: PyObject) -> PyResult<PyString>
 PyTuple|PyObject|get|__class__|getClass() -> PyType
 
 PyTuple|PyObject|func|__eq__|isEqual(_ other: PyObject) -> PyResultOrNot<Bool>

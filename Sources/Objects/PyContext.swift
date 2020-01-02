@@ -13,9 +13,9 @@ public struct PyContextConfig {
   public init() { }
 }
 
-public protocol PyContextDelegate: class {
-  func open(file: String, mode: FileMode, type: FileType) -> PyResult<FileDescriptor>
-  func open(fileno: Int32, mode: FileMode, type: FileType) -> PyResult<FileDescriptor>
+public protocol PyContextDelegate: AnyObject {
+  func open(file: String, mode: FileMode) -> PyResult<FileDescriptor>
+  func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptor>
 }
 
 // MARK: - Context

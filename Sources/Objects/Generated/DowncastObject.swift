@@ -287,6 +287,12 @@ internal enum Cast {
     return cast(object, as: PyStringIterator.self, typeName: "str_iterator", methodName: methodName)
   }
 
+  // MARK: - TextFile
+
+  internal static func asPyTextFile(_ object: PyObject, methodName: String) -> PyResult<PyTextFile> {
+    return cast(object, as: PyTextFile.self, typeName: "TextFile", methodName: methodName)
+  }
+
   // MARK: - Tuple
 
   internal static func asPyTuple(_ object: PyObject, methodName: String) -> PyResult<PyTuple> {

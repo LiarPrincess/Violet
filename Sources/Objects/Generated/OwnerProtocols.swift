@@ -170,6 +170,8 @@ protocol keysOwner { func keys() -> PyObject }
 protocol numeratorOwner { func numerator() -> PyInt }
 protocol partitionOwner { func partition(separator: PyObject) -> PyResult<PyTuple> }
 protocol popitemOwner { func popitem() -> PyResult<PyObject> }
+protocol readOwner { func read(size: PyObject) -> PyResult<PyString> }
+protocol readableOwner { func isReadable() -> Bool }
 protocol realOwner { func asReal() -> PyObject }
 protocol removeOwner { func remove(_ value: PyObject) -> PyResult<PyNone> }
 protocol reverseOwner { func reverse() -> PyResult<PyNone> }

@@ -153,6 +153,37 @@ str
     format_map
     translate
 
+TextIOWrapper
+  Unimplemented:
+    __dict__ - <class 'mappingproxy'>
+    __new__ - <class 'builtin_function_or_method'>
+    _CHUNK_SIZE
+    __getstate__
+    __init__
+    __next__
+    _finalizing
+    buffer
+    close
+    closed
+    detach
+    encoding
+    errors
+    fileno
+    flush
+    isatty
+    line_buffering
+    name
+    newlines
+    readline
+    reconfigure
+    seek
+    seekable
+    tell
+    truncate
+    writable
+    write
+    write_through
+
 BaseException
   Unimplemented:
     with_traceback

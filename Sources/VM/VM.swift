@@ -8,15 +8,11 @@ import Objects
 #warning("Implmement 'PyContextDelegate'")
 internal class PyContextDelegateImpl: PyContextDelegate {
 
-  internal func open(file: String,
-                     mode: FileMode,
-                     type: FileType) -> PyResult<FileDescriptor> {
+  internal func open(file: String, mode: FileMode) -> PyResult<FileDescriptor> {
     return .error(.valueError(""))
   }
 
-  internal func open(fileno: Int32,
-                     mode: FileMode,
-                     type: FileType) -> PyResult<FileDescriptor> {
+  internal func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptor> {
     return .error(.valueError(""))
   }
 }

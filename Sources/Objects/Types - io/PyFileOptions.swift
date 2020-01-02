@@ -42,6 +42,16 @@ public enum FileMode {
   case update
 
   internal static let `default` = FileMode.read
+
+  internal var flag: String {
+    switch self {
+    case .read: return "r"
+    case .write: return "w"
+    case .create: return "x"
+    case .append: return "a"
+    case .update: return "+"
+    }
+  }
 }
 
 public enum FileType {
@@ -133,7 +143,7 @@ internal struct FileModeParser {
 // MARK: - Encoding
 
 /// https://docs.python.org/3.7/library/codecs.html#standard-encodings
-internal enum FileEncoding {
+public enum FileEncoding: CustomStringConvertible {
   /// ascii, 646, us-ascii; English
   case ascii
   /// latin_1, iso-8859-1, iso8859-1, 8859, cp819, latin, latin1, L1; Western Europe
@@ -173,6 +183,20 @@ internal enum FileEncoding {
     case .utf32: return .utf32
     case .utf32BigEndian: return .utf32BigEndian
     case .utf32LittleEndian: return .utf32LittleEndian
+    }
+  }
+
+  public var description: String {
+    switch self {
+    case .ascii: return "ascii"
+    case .isoLatin1: return "latin-1"
+    case .utf8: return "utf-8"
+    case .utf16: return "utf-16"
+    case .utf16BigEndian: return "utf-16-be"
+    case .utf16LittleEndian: return "utf-16-le"
+    case .utf32: return "utf-32"
+    case .utf32BigEndian: return "utf-32-be"
+    case .utf32LittleEndian: return "utf-32-le"
     }
   }
 
@@ -243,7 +267,7 @@ internal enum FileErrorHandler {
     case "ignore":
       return .value(.ignore)
     default:
-      return .valueError("errors have to either 'strict' or 'ignore'")
+      return .lookupError("unknown error handler name '\(value)'")
     }
   }
 }
