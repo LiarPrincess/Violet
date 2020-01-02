@@ -13,6 +13,11 @@ public struct PyContextConfig {
   public init() { }
 }
 
+public protocol PyContextDelegate: class {
+  func open(file: String, mode: FileMode, type: FileType) -> PyResult<FileDescriptor>
+  func open(fileno: Int32, mode: FileMode, type: FileType) -> PyResult<FileDescriptor>
+}
+
 // MARK: - Context
 
 public class PyContext {
@@ -23,9 +28,16 @@ public class PyContext {
   public private(set) lazy var builtins = Builtins(context: self)
   public private(set) lazy var sys = Sys(context: self)
 
-  public init(config: PyContextConfig) {
+  private weak var _delegate: PyContextDelegate?
+  internal var delegate: PyContextDelegate {
+    if let d = self._delegate { return d }
+    fatalError("Python context delegate was deallocated!")
+  }
+
+  public init(config: PyContextConfig, delegate: PyContextDelegate) {
     self.stdout = config.stdout
     self.hasher = Hasher(key0: config.hashKey0, key1: config.hashKey1)
+    self._delegate = delegate
 
     // This is hack, but we can access `self.builtins` here because they are
     // annotated as `lazy` (even though they need `PyContext` in ctor).

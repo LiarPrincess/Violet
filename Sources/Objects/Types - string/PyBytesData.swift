@@ -79,28 +79,28 @@ internal struct PyBytesData: PyStringImpl {
   // MARK: - Case
 
   internal func lowerCased() -> Data {
-    let string = self.asString.lowercased()
-    return self.asData(string)
+    let string = self.stringOrFatal.lowercased()
+    return self.encode(string)
   }
 
   internal func upperCased() -> Data {
-    let string = self.asString.uppercased()
-    return self.asData(string)
+    let string = self.stringOrFatal.uppercased()
+    return self.encode(string)
   }
 
   internal func titleCased() -> Data {
     let string = self.titleCasedString()
-    return self.asData(string)
+    return self.encode(string)
   }
 
   internal func swapCase() -> Data {
     let string = self.swapCaseString()
-    return self.asData(string)
+    return self.encode(string)
   }
 
   internal func capitalize() -> Data {
     let string = self.capitalizeString()
-    return self.asData(string)
+    return self.encode(string)
   }
 
   // MARK: - Append
@@ -274,9 +274,17 @@ internal struct PyBytesData: PyStringImpl {
 
   private static let encoding = String.Encoding.ascii
 
-  private var asString: String {
-    if let result = String(data: self.values, encoding: PyBytesData.encoding) {
-      return result
+  /// Decode `self` as string.
+  ///
+  /// Return `valueError` with following message if this fails:
+  /// '\(fnName) bytes '\(bytes.ptrString)' cannot be interpreted as str'.
+  internal var string: String? {
+    return String(data: self.values, encoding: PyBytesData.encoding)
+  }
+
+  private var stringOrFatal: String {
+    if let s = self.string {
+      return s
     }
 
     let msg = "Violet error: Sometimes we convert 'bytes' to 'string' " +
@@ -285,7 +293,7 @@ internal struct PyBytesData: PyStringImpl {
     fatalError(msg)
   }
 
-  private func asData(_ string: String) -> Data {
+  private func encode(_ string: String) -> Data {
     if let result = string.data(using: PyBytesData.encoding) {
       return result
     }

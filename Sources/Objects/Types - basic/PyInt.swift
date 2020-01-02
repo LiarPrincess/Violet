@@ -830,7 +830,7 @@ public class PyInt: PyObject {
     }
 
     if let bytes = object as? PyBytesType {
-      guard let string = String(bytes: bytes.data.values, encoding: .ascii) else {
+      guard let string = bytes.data.string else {
         let msg = "int() bytes '\(bytes.ptrString)' cannot be interpreted as str"
         return .error(.valueError(msg))
       }

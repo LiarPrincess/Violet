@@ -11,3 +11,7 @@ extension FileHandle: StandardOutput {
     self.write(data)
   }
 }
+
+// MARK: - New
+
+public protocol FileDescriptor { }

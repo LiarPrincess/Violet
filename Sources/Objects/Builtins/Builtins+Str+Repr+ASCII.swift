@@ -34,6 +34,13 @@ extension Builtins {
     }
   }
 
+  internal func reprOrGeneric(_ object: PyObject) -> String {
+    switch self.repr(object) {
+    case .value(let s): return s
+    case .error: return self.genericRepr(object)
+    }
+  }
+
   // MARK: - Str
 
   /// class str(object='')

@@ -5,6 +5,22 @@ import Compiler
 import Bytecode
 import Objects
 
+#warning("Implmement 'PyContextDelegate'")
+internal class PyContextDelegateImpl: PyContextDelegate {
+
+  internal func open(file: String,
+                     mode: FileMode,
+                     type: FileType) -> PyResult<FileDescriptor> {
+    return .error(.valueError(""))
+  }
+
+  internal func open(fileno: Int32,
+                     mode: FileMode,
+                     type: FileType) -> PyResult<FileDescriptor> {
+    return .error(.valueError(""))
+  }
+}
+
 // swiftlint:disable:next type_name
 public class VM {
 
@@ -24,8 +40,9 @@ public class VM {
   }
 
   public init(arguments: Arguments, environment: Environment = Environment()) {
-    let contextConf = PyContextConfig()
-    self.context = PyContext(config: contextConf)
+    let conf = PyContextConfig()
+    let delegate = PyContextDelegateImpl()
+    self.context = PyContext(config: conf, delegate: delegate)
     self.configuration = CoreConfiguration(arguments: arguments,
                                            environment: environment)
   }

@@ -1,5 +1,7 @@
 import Core
 
+// swiftlint:disable file_length
+
 // MARK: - PyErrorEnum
 
 public enum PyErrorEnum: CustomStringConvertible {
@@ -16,6 +18,8 @@ public enum PyErrorEnum: CustomStringConvertible {
   case stopIteration
   case runtimeError(String)
   case unboundLocalError(variableName: String)
+  case deprecationWarning(String)
+  case lookupError(String)
 
   public var description: String {
     switch self {
@@ -33,6 +37,8 @@ public enum PyErrorEnum: CustomStringConvertible {
     case .runtimeError(let msg): return "Runtime error: '\(msg)'"
     case .unboundLocalError(variableName: let v):
       return "UnboundLocalError: local variable '\(v)' referenced before assignment"
+    case .deprecationWarning(let msg): return "Deprecation warning: '\(msg)'"
+    case .lookupError(let msg): return "Lookup error: '\(msg)'"
     }
   }
 }
@@ -93,6 +99,14 @@ public enum PyResult<V> {
 
   public static func unboundLocalError(variableName: String) -> PyResult<V> {
     return PyResult.error(.unboundLocalError(variableName: variableName))
+  }
+
+  public static func deprecationWarning(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.deprecationWarning(msg))
+  }
+
+  public static func lookupError(_ msg: String) -> PyResult<V> {
+    return PyResult.error(.lookupError(msg))
   }
 
   public func map<A>(_ f: (V) -> A) -> PyResult<A> {
@@ -207,6 +221,14 @@ public enum PyResultOrNot<V> {
 
   public static func unboundLocalError(variableName: String) -> PyResultOrNot<V> {
     return PyResultOrNot.error(.unboundLocalError(variableName: variableName))
+  }
+
+  public static func deprecationWarning(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.deprecationWarning(msg))
+  }
+
+  public static func lookupError(_ msg: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.lookupError(msg))
   }
 
   public func map<A>(_ f: (V) -> A) -> PyResultOrNot<A> {
