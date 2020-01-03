@@ -29,6 +29,7 @@ internal struct StringBuilder: StringBuilderType {
 /// We work on scalars (Unicode code points) instead of graphemes because:
 /// - len("Cafe\u0301") = 5 (Swift: "Cafe\u{0301}".unicodeScalars.count)
 /// - len("Café")       = 4 (Swift: "Café".unicodeScalars.count)
+/// See: https://www.python.org/dev/peps/pep-0393/
 internal struct PyStringData: PyStringImpl, CustomStringConvertible {
 
   internal let value: String

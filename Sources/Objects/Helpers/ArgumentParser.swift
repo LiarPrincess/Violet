@@ -1,8 +1,8 @@
 import Core
 
 // In CPython:
-// Objects -> modsupport.h
-// Objects -> getargs.c
+// Python -> modsupport.h
+// Python -> getargs.c
 
 // This code is quite complicated, but most of the time it is just line-by-line
 // copy of CPython.
