@@ -1336,6 +1336,7 @@ internal enum BuiltinTypesFill {
     type.setBuiltinTypeDoc(PyTextFile.doc)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setFlag(.hasFinalize)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(type.context, name: "__class__", doc: nil, get: PyTextFile.getClass, castSelf: Cast.asPyTextFile)
@@ -1345,6 +1346,11 @@ internal enum BuiltinTypesFill {
     dict["__repr__"] = PyBuiltinFunction.wrap(type.context, name: "__repr__", doc: nil, fn: PyTextFile.repr, castSelf: Cast.asPyTextFile)
     dict["readable"] = PyBuiltinFunction.wrap(type.context, name: "readable", doc: nil, fn: PyTextFile.isReadable, castSelf: Cast.asPyTextFile)
     dict["read"] = PyBuiltinFunction.wrap(type.context, name: "read", doc: nil, fn: PyTextFile.read(size:), castSelf: Cast.asPyTextFile)
+    dict["writable"] = PyBuiltinFunction.wrap(type.context, name: "writable", doc: nil, fn: PyTextFile.isWritable, castSelf: Cast.asPyTextFile)
+    dict["write"] = PyBuiltinFunction.wrap(type.context, name: "write", doc: nil, fn: PyTextFile.write(object:), castSelf: Cast.asPyTextFile)
+    dict["closed"] = PyBuiltinFunction.wrap(type.context, name: "closed", doc: nil, fn: PyTextFile.isClosed, castSelf: Cast.asPyTextFile)
+    dict["close"] = PyBuiltinFunction.wrap(type.context, name: "close", doc: nil, fn: PyTextFile.close, castSelf: Cast.asPyTextFile)
+    dict["__del__"] = PyBuiltinFunction.wrap(type.context, name: "__del__", doc: nil, fn: PyTextFile.del, castSelf: Cast.asPyTextFile)
   }
 
   // MARK: - Tuple

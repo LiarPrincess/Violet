@@ -19,8 +19,11 @@
 
 {% macro addFlags type %}
     {% if type.annotations.default %}type.setFlag(.default){% endif %}
+    {% if type.annotations.heapType %}type.setFlag(.heapType){% endif %}
     {% if type.annotations.baseType %}type.setFlag(.baseType){% endif %}
     {% if type.annotations.hasGC %}type.setFlag(.hasGC){% endif %}
+    {% if type.annotations.isAbstract %}type.setFlag(.isAbstract){% endif %}
+    {% if type.annotations.hasFinalize %}type.setFlag(.hasFinalize){% endif %}
     {% if type.annotations.longSubclass %}type.setFlag(.longSubclass){% endif %}
     {% if type.annotations.listSubclass %}type.setFlag(.listSubclass){% endif %}
     {% if type.annotations.tupleSubclass %}type.setFlag(.tupleSubclass){% endif %}

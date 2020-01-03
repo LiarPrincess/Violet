@@ -894,7 +894,12 @@ extension PyTextFile:
   __class__GetterOwner,
   __repr__Owner,
   readableOwner,
-  readOwner
+  readOwner,
+  writableOwner,
+  writeOwner,
+  closedOwner,
+  closeOwner,
+  __del__Owner
 { }
 
 // MARK: - Tuple

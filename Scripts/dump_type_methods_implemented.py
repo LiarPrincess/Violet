@@ -852,6 +852,11 @@ types = {
     '__repr__',
     'readable',
     'read',
+    'writable',
+    'write',
+    'closed',
+    'close',
+    '__del__',
   ],
   tuple: [
     '__class__',

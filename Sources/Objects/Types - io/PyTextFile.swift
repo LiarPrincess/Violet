@@ -75,21 +75,7 @@ public class PyTextFile: PyObject {
   // MARK: - Deinit
 
   deinit {
-    // Example when this matters:
-    // 1) stdout - 'closeOnDealloc' should be 'false'
-    //    We need to to allow printing after Violet context is destroyed.
-    // 2) file - 'closeOnDealloc' should be 'true'
-    //    We need to free descriptor.
-    //    Note:
-    //    Number of available descriptors is limited by kernel.
-    //    This is why you should never rely on garbage collector to free resources.
-    //    This is also why .Net has 'IDisposable' and why you should never
-    //    use 'Object.finalize' to free resources in Java.
-    //    Anyway...
-
-    if self.closeOnDealloc {
-      _ = self.close() // 'self.close' is (or at least should be) idempotent
-    }
+    _ = self.del()
   }
 
    // MARK: - String
@@ -248,11 +234,29 @@ public class PyTextFile: PyObject {
     }
   }
 
-  // MARK: - Dealloc
+  // MARK: - Del
 
-  #warning("PyTextFile - __dealloc__")
-  // Type objects get a new tp_finalize slot to which __del__ methods are mapped.
-  // https://www.python.org/dev/peps/pep-0442/#c-level-changes
+  // sourcery: pymethod = __del__
+  internal func del() -> PyResult<PyNone> {
+    // Example when this matters:
+    // 1) stdout - 'closeOnDealloc' should be 'false'
+    //    We need to to allow printing after Violet context is destroyed.
+    // 2) file - 'closeOnDealloc' should be 'true'
+    //    We need to free descriptor.
+    //    Note:
+    //    Number of available descriptors is limited by kernel.
+    //    This is why you should never rely on garbage collector to free resources.
+    //    This is also why .Net has 'IDisposable' and why you should never
+    //    use 'Object.finalize' to free resources in Java.
+    //    Anyway...
+
+    guard self.closeOnDealloc else {
+      return .value(self.builtins.none)
+    }
+
+    // 'self.close' is (or at least should be) idempotent
+    return self.close()
+  }
 
   // MARK: - Encoding
 

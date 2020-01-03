@@ -173,14 +173,7 @@ public enum FileEncoding: CustomStringConvertible {
   /// utf_32_le, UTF-32LE; all languages
   case utf32LittleEndian
 
-  /// Hardcoded 'UTF-8'.
-  ///
-  ///```
-  /// >>> import locale
-  /// >>> locale.getpreferredencoding()
-  /// 'UTF-8'
-  ///```
-  internal static let `default` = FileEncoding.utf8
+  internal static let `default` = Unimplemented.locale.getpreferredencoding
 
   internal var swift: String.Encoding {
     switch self {

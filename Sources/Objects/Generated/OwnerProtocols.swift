@@ -33,6 +33,7 @@ protocol __complex__Owner { func asComplex() -> PyResult<PyComplex> }
 protocol __contains__Owner { func contains(_ element: PyObject) -> PyResult<Bool> }
 protocol __context__GetterOwner { func getContext() -> PyObject }
 protocol __context__SetterOwner { func setContext(_ value: PyObject?) -> PyResult<()> }
+protocol __del__Owner { func del() -> PyResult<PyNone> }
 protocol __delattr__Owner { func delAttribute(name: PyObject) -> PyResult<PyNone> }
 protocol __delete__Owner { func del(object: PyObject) -> PyResult<PyObject> }
 protocol __delitem__Owner { func delItem(at index: PyObject) -> PyResult<PyNone> }
@@ -130,6 +131,8 @@ protocol addOwner { func add(_ value: PyObject) -> PyResult<PyNone> }
 protocol appendOwner { func append(_ element: PyObject) -> PyResult<PyNone> }
 protocol bit_lengthOwner { func bitLength() -> PyObject }
 protocol clearOwner { func clear() -> PyResult<PyNone> }
+protocol closeOwner { func close() -> PyResult<PyNone> }
+protocol closedOwner { func isClosed() -> Bool }
 protocol conjugateOwner { func conjugate() -> PyObject }
 protocol copyOwner { func copy() -> PyObject }
 protocol countOwner { func count(_ element: PyObject) -> PyResult<BigInt> }
@@ -190,3 +193,5 @@ protocol stopOwner { func getStop() -> PyObject }
 protocol symmetric_differenceOwner { func symmetricDifference(with other: PyObject) -> PyResult<PyObject> }
 protocol unionOwner { func union(with other: PyObject) -> PyResult<PyObject> }
 protocol valuesOwner { func values() -> PyObject }
+protocol writableOwner { func isWritable() -> Bool }
+protocol writeOwner { func write(object: PyObject) -> PyResult<PyNone> }

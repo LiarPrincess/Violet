@@ -163,8 +163,6 @@ TextIOWrapper
     __next__
     _finalizing
     buffer
-    close
-    closed
     detach
     encoding
     errors
@@ -180,9 +178,9 @@ TextIOWrapper
     seekable
     tell
     truncate
-    writable
-    write
     write_through
+  Why do we even have this?
+    __del__
 
 BaseException
   Unimplemented:
