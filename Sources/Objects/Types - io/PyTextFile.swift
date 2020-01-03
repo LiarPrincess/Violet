@@ -250,7 +250,7 @@ public class PyTextFile: PyObject {
 
   // MARK: - Dealloc
 
-  // TODO: __dealloc__
+  #warning("PyTextFile - __dealloc__")
   // Type objects get a new tp_finalize slot to which __del__ methods are mapped.
   // https://www.python.org/dev/peps/pep-0442/#c-level-changes
 

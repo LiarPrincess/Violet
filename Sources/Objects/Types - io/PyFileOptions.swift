@@ -29,7 +29,7 @@ internal enum FileSource {
 
 // MARK: - File mode, type
 
-public enum FileMode {
+public enum FileMode: CustomStringConvertible {
   /// `r` - open for reading (default)
   case read
   /// `w` - open for writing, truncating the file first
@@ -42,6 +42,16 @@ public enum FileMode {
   case update
 
   internal static let `default` = FileMode.read
+
+  public var description: String {
+    switch self {
+    case .read: return "read"
+    case .write: return "write"
+    case .create: return "create"
+    case .append: return "append"
+    case .update: return "update"
+    }
+  }
 
   internal var flag: String {
     switch self {

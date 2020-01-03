@@ -300,7 +300,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
     self.init(fileDescriptor: fd, closeOnDealloc: false)
   }
 
-  internal init?(path: String, flags: Int32, createMode: Int) {
+  public init?(path: String, flags: Int32, createMode: Int) {
     self._fd = _CFOpenFileWithMode(path, flags, mode_t(createMode))
     self._closeOnDealloc = true
 
