@@ -8,7 +8,9 @@ public struct PyContextConfig {
   public var hashKey0: UInt64 = 0x56696f6c65744576
   public var hashKey1: UInt64 = 0x657267617264656e
 
-  public var stdout: StandardOutput = FileHandle.standardOutput
+  public var standardInput: FileDescriptorType = FileDescriptor.standardInput
+  public var standardOutput: FileDescriptorType = FileDescriptor.standardOutput
+  public var standardError: FileDescriptorType = FileDescriptor.standardError
 
   public init() { }
 }
@@ -16,7 +18,9 @@ public struct PyContextConfig {
 // MARK: - Delegate
 
 public protocol PyContextDelegate: AnyObject {
+  /// Extension point for opening files.
   func open(file: String, mode: FileMode) -> PyResult<FileDescriptorType>
+  /// Extension point for opening files.
   func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType>
 }
 
@@ -24,8 +28,9 @@ public protocol PyContextDelegate: AnyObject {
 
 public class PyContext {
 
-  internal let stdout: StandardOutput
-  internal let hasher: Hasher
+  internal let config: PyContextConfig
+  internal private(set) lazy var hasher = Hasher(key0: self.config.hashKey0,
+                                                 key1: self.config.hashKey1)
 
   public private(set) lazy var builtins = Builtins(context: self)
   public private(set) lazy var sys = Sys(context: self)
@@ -37,8 +42,7 @@ public class PyContext {
   }
 
   public init(config: PyContextConfig, delegate: PyContextDelegate) {
-    self.stdout = config.stdout
-    self.hasher = Hasher(key0: config.hashKey0, key1: config.hashKey1)
+    self.config = config
     self._delegate = delegate
 
     // This is hack, but we can access `self.builtins` here because they are

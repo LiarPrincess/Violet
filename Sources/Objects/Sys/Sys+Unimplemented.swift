@@ -132,50 +132,6 @@ extension Sys {
     return self.unimplemented
   }
 
-  // MARK: - Streams
-
-  // sourcery: pyproperty: stdin
-  /// sys.stdin
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  internal func getStdin() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: stdout
-  /// sys.stdout
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  internal func getStdout() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: stderr
-  /// sys.stderr
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
-  internal func getStderr() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: __stdin__
-  /// sys.__stdin__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  internal func get__stdin__() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: __stdout__
-  /// sys.__stdout__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  internal func get__stdout__() -> PyObject {
-    return self.unimplemented
-  }
-
-  // sourcery: pyproperty: __stderr__
-  /// sys.__stderr__
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
-  internal func get__stderr__() -> PyObject {
-    return self.unimplemented
-  }
-
   // MARK: - Helpers
 
   internal var unimplemented: PyObject {

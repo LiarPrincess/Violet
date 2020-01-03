@@ -174,6 +174,38 @@ public final class Sys {
 
   public lazy var copyright = self.context.intern(Lyrics.letItGo)
 
+  // MARK: - Streams
+
+  internal lazy var __stdin__ = self.createStdio(name: "<stdin>",
+                                                 fd: self.config.standardInput,
+                                                 mode: .read)
+
+  internal lazy var __stdout__ = self.createStdio(name: "<stdout>",
+                                                  fd: self.config.standardOutput,
+                                                  mode: .write)
+
+  internal lazy var __stderr__ = self.createStdio(name: "<stderr>",
+                                                  fd: self.config.standardError,
+                                                  mode: .write)
+
+  internal lazy var stdin = self.__stdin__
+  internal lazy var stdout = self.__stdout__
+  internal lazy var stderr = self.__stderr__
+
+  /// static PyObject*
+  /// create_stdio(PyObject* io,
+  private func createStdio(name: String,
+                           fd: FileDescriptorType,
+                           mode: FileMode) -> PyTextFile {
+    return PyTextFile(self.context,
+                      name: name,
+                      fd: fd,
+                      mode: mode,
+                      encoding: Unimplemented.stdioEncoding,
+                      errors: Unimplemented.stdioErrors,
+                      closeOnDealloc: false)
+  }
+
   // MARK: - Context
 
   private weak var _context: PyContext?
@@ -187,6 +219,10 @@ public final class Sys {
 
   internal var builtins: Builtins {
     return self.context.builtins
+  }
+
+  internal var config: PyContextConfig {
+    return self.context.config
   }
 
   // MARK: - Init
