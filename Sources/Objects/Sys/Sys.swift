@@ -176,7 +176,14 @@ public final class Sys {
 
   // MARK: - Context
 
-  internal unowned let context: PyContext
+  private weak var _context: PyContext?
+  internal var context: PyContext {
+    if let c = self._context {
+      return c
+    }
+
+    fatalError("Trying to use 'sys' module after its context was deallocated.")
+  }
 
   internal var builtins: Builtins {
     return self.context.builtins
@@ -186,7 +193,7 @@ public final class Sys {
 
   /// Stage 1: Create all objects
   internal init(context: PyContext) {
-    self.context = context
+    self._context = context
   }
 
   /// Stage 2: Fill type objects

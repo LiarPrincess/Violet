@@ -24,7 +24,14 @@ public final class Builtins {
   public let types: BuiltinTypes
   public let errorTypes: BuiltinErrorTypes
 
-  internal unowned let context: PyContext
+  private weak var _context: PyContext?
+  internal var context: PyContext {
+    if let c = self._context {
+      return c
+    }
+
+    fatalError("Trying to use 'sys' module after its context was deallocated.")
+  }
 
   // MARK: - Init
 
@@ -35,7 +42,7 @@ public final class Builtins {
   /// (that is because `str` type may not exist), we will deal with this in
   /// `onContextFullyInitailized`.
   internal init(context: PyContext) {
-    self.context = context
+    self._context = context
     self.types = BuiltinTypes(context: context)
     self.errorTypes = BuiltinErrorTypes(context: context, types: self.types)
   }

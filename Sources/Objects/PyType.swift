@@ -95,9 +95,13 @@ public class PyType: PyObject, CustomStringConvertible {
   }
 
   // Special hack for cyclic references
-  private unowned let _context: PyContext
+  private weak var _context: PyContext?
   override internal var context: PyContext {
-    return self._context
+    if let c = self._context {
+      return c
+    }
+
+    fatalError("Trying to use '\(self.name)' after its context was deallocated.")
   }
 
   internal func setFlag(_ flag: PyTypeFlags) {
