@@ -62,6 +62,7 @@ extension Builtins {
     }
   }
 
+  // swiftlint:disable:next function_body_length
   public func open(file fileArg: PyObject,
                    mode modeArg: PyObject? = nil,
                    buffering bufferingArg: PyObject? = nil,
@@ -70,6 +71,8 @@ extension Builtins {
                    newline newlineArg: PyObject? = nil,
                    closefd closefdArg: PyObject? = nil,
                    opener openerArg: PyObject? = nil) -> PyResult<PyObject> {
+    // We will ignore 'buffering', 'newline', and 'opener' because we are lazy.
+
     let source: FileSource
     switch FileSource.from(fileArg) {
     case let .value(f): source = f
@@ -86,9 +89,6 @@ extension Builtins {
       return .error(e)
     }
 
-    // We will ignore 'buffering', 'newline', 'closefd' and 'opener'
-    // because we are lazy.
-
     let encoding: FileEncoding
     switch FileEncoding.from(encodingArg) {
     case let .value(e): encoding = e
@@ -101,6 +101,12 @@ extension Builtins {
     case let .error(e): return .error(e)
     }
 
+    let closeOnDealloc: Bool
+    switch self.isTrueBool(closefdArg ?? self.true) {
+    case let .value(b): closeOnDealloc = b
+    case let .error(e): return .error(e)
+    }
+
     // Delay `open` syscall untill the end of the method,
     // so that we don't have to deal with dangling handles.
     switch type {
@@ -108,12 +114,27 @@ extension Builtins {
       return .valueError("only text mode is currently supported")
     case .text:
       return self.open(source: source, mode: mode)
-        .map { PyTextFile(self.context, fd: $0, encoding: encoding, errors: errors) }
+        .map { PyTextFile(self.context,
+                          name: self.path(source: source),
+                          fd: $0,
+                          mode: mode,
+                          encoding: encoding,
+                          errors: errors,
+                          closeOnDealloc: closeOnDealloc)
+        }
+    }
+  }
+
+  private func path(source: FileSource) -> String? {
+    switch source {
+    case .fileDescriptor: return nil
+    case .string(let s): return s
+    case .bytes(let b): return self.toString(bytes: b)
     }
   }
 
   private func open(source: FileSource,
-                    mode: FileMode) -> PyResult<FileDescriptor> {
+                    mode: FileMode) -> PyResult<FileDescriptorType> {
     let delegate = self.context.delegate
 
     switch source {
@@ -124,12 +145,15 @@ extension Builtins {
       return delegate.open(file: path, mode: mode)
 
     case let .bytes(bytes):
-      let data = PyBytesData(bytes)
-      guard let path = data.string else {
+      guard let path = self.toString(bytes: bytes) else {
         return .valueError("bytes cannot interpreted as path")
       }
 
       return delegate.open(file: path, mode: mode)
     }
+  }
+
+  private func toString(bytes: Data) -> String? {
+    return PyBytesData(bytes).string
   }
 }

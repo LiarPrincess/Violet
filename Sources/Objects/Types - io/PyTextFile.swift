@@ -5,6 +5,8 @@ import Foundation
 // Python -> codecs.c
 // https://docs.python.org/3.7/library/io.html
 
+// swiftlint:disable file_length
+
 // sourcery: pytype = TextFile, default, hasGC, hasFinalize
 /// We don't have `_io` module.
 /// Instead we have our own `TextFile` type based on `_io.TextIOWrapper`.
@@ -29,24 +31,65 @@ public class PyTextFile: PyObject {
     defaults to "strict".
     """
 
-  internal let fd: FileDescriptor
+  internal let name: String?
+  internal let fd: FileDescriptorType
   internal let encoding: FileEncoding
   internal let errors: FileErrorHandler
 
-  internal var mode: FileMode {
-    return self.fd.mode
-  }
+  internal let mode: FileMode
+  internal let closeOnDealloc: Bool
 
   // MARK: - Init
 
+  internal convenience init(_ context: PyContext,
+                            fd: FileDescriptorType,
+                            mode: FileMode,
+                            encoding: FileEncoding,
+                            errors: FileErrorHandler,
+                            closeOnDealloc: Bool) {
+    self.init(context,
+              name: nil,
+              fd: fd,
+              mode: mode,
+              encoding: encoding,
+              errors: errors,
+              closeOnDealloc: closeOnDealloc)
+  }
+
   internal init(_ context: PyContext,
-                fd: FileDescriptor,
+                name: String?,
+                fd: FileDescriptorType,
+                mode: FileMode,
                 encoding: FileEncoding,
-                errors: FileErrorHandler) {
+                errors: FileErrorHandler,
+                closeOnDealloc: Bool) {
+    self.name = name
     self.fd = fd
     self.encoding = encoding
     self.errors = errors
+    self.mode = mode
+    self.closeOnDealloc = closeOnDealloc
     super.init(type: context.builtins.types.textFile)
+  }
+
+  // MARK: - Deinit
+
+  deinit {
+    // Example when this matters:
+    // 1) stdout - 'closeOnDealloc' should be 'false'
+    //    We need to to allow printing after Violet context is destroyed.
+    // 2) file - 'closeOnDealloc' should be 'true'
+    //    We need to free descriptor.
+    //    Note:
+    //    Number of available descriptors is limited by kernel.
+    //    This is why you should never rely on garbage collector to free resources.
+    //    This is also why .Net has 'IDisposable' and why you should never
+    //    use 'Object.finalize' to free resources in Java.
+    //    Anyway...
+
+    if self.closeOnDealloc {
+      _ = self.close() // 'self.close' is (or at least should be) idempotent
+    }
   }
 
    // MARK: - String
@@ -60,7 +103,7 @@ public class PyTextFile: PyObject {
     return self.withReprLock {
       var result = "<TextFile"
 
-      if let name = self.fd.name {
+      if let name = self.name {
         result += " name=\(name)"
       }
 
@@ -109,46 +152,167 @@ public class PyTextFile: PyObject {
   }
 
   internal func read(size: Int) -> PyResult<PyString> {
+    return self.readRaw(size: size).map(self.builtins.newString(_:))
+  }
+
+  internal func readRaw(size: Int) -> PyResult<String> {
+    guard !self.isClosed() else {
+      return .valueError("I/O operation on closed file.")
+    }
+
     guard self.isReadable() else {
-      return .osError("not readable")
+      return .error(self.modeError("not readable"))
     }
 
     if size == 0 {
-      return self.decode(data: Data())
+      return .value("")
     }
 
-    let data = size > 0 ?
-      self.fd.readData(ofLength: size) :
-      self.fd.readDataToEndOfFile()
+    do {
+      let data = size > 0 ?
+        try self.fd.read(upToCount: size) :
+        try self.fd.readToEnd()
 
-    return self.decode(data: data)
+      return self.decode(data: data)
+    } catch {
+      return .error(self.osError(from: error))
+    }
+  }
+
+  // MARK: - Write
+
+  // sourcery: pymethod = writable
+  internal func isWritable() -> Bool {
+    switch self.mode {
+    case .write,
+         .create,
+         .append,
+         .update: return true
+    case .read: return true
+    }
+  }
+
+  // sourcery: pymethod = write
+  /// static PyObject *
+  /// _io_TextIOWrapper_write_impl(textio *self, Py_ssize_t n)
+  internal func write(object: PyObject) -> PyResult<PyNone> {
+    guard let str = object as? PyString else {
+      return .typeError("write() argument must be str, not \(object.typeName)")
+    }
+
+    return self.write(string: str.value)
+  }
+
+  internal func write(string: String) -> PyResult<PyNone> {
+    guard !self.isClosed() else {
+      return .valueError("I/O operation on closed file.")
+    }
+
+    guard self.isWritable() else {
+      return .error(self.modeError("not writable"))
+    }
+
+    switch self.encodeError(string: string) {
+    case let .value(data):
+      do {
+        try self.fd.write(contentsOf: data)
+        return .value(self.builtins.none)
+      } catch {
+        return .error(self.osError(from: error))
+      }
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Close
+
+  // sourcery: pymethod = closed
+  internal func isClosed() -> Bool {
+    return self.fd.raw < 0
+  }
+
+  // sourcery: pymethod = close
+  /// Idempotent
+  internal func close() -> PyResult<PyNone> {
+    guard !self.isClosed() else {
+      return .value(self.builtins.none)
+    }
+
+    do {
+      try self.fd.close()
+      return .value(self.builtins.none)
+    } catch {
+      return .error(self.osError(from: error))
+    }
   }
 
   // MARK: - Dealloc
 
-  // __dealloc__
+  // TODO: __dealloc__
   // Type objects get a new tp_finalize slot to which __del__ methods are mapped.
   // https://www.python.org/dev/peps/pep-0442/#c-level-changes
 
   // MARK: - Encoding
 
-  private func decode(data: Data) -> PyResult<PyString> {
+  private func decode(data: Data) -> PyResult<String> {
     let encoding = self.encoding.swift
     guard let string = String(data: data, encoding: encoding) else {
       return self.decodeError(data: data)
     }
 
-    let result = self.builtins.newString(string)
-    return .value(result)
+    return .value(string)
   }
 
   /// static int _PyCodecRegistry_Init(void)
-  private func decodeError(data: Data) -> PyResult<PyString> {
+  private func decodeError(data: Data) -> PyResult<String> {
     switch self.errors {
     case .strict:
       return .unicodeDecodeError(encoding: self.encoding, data: data)
     case .ignore:
-      return .value(self.builtins.emptyString)
+      return .value("")
     }
+  }
+
+  private func encode(string: String) -> PyResult<Data> {
+    let e = self.encoding.swift
+
+    switch self.errors {
+    case .strict:
+      guard let data = string.data(using: e, allowLossyConversion: false) else {
+        return self.encodeError(string: string)
+      }
+
+      return .value(data)
+
+    case .ignore:
+      guard let data = string.data(using: e, allowLossyConversion: true) else {
+        return .value(Data())
+      }
+
+      return .value(data)
+    }
+  }
+
+  /// static int _PyCodecRegistry_Init(void)
+  private func encodeError(string: String) -> PyResult<Data> {
+    return .unicodeEncodeError(encoding: self.encoding, string: string)
+  }
+
+  // MARK: - Helpers
+
+  private func osError(from error: Error) -> PyErrorEnum {
+    if let fileError = error as? FileDescriptor.Error {
+      return .osError(fileError.str)
+    }
+
+    return .osError("unknown IO error")
+  }
+
+  private func modeError(_ msg: String) -> PyErrorEnum {
+    // It should be 'io.UnsupportedOperation', but we don't have it,
+    // so we will use 'OSError' instead.
+    return .osError(msg)
   }
 }

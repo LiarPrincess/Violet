@@ -68,26 +68,9 @@ private let _close = Glibc.close(_:)
 private func _NSErrorWithErrno(_ posixErrno: Int32,
                                reading: Bool,
                                path: String? = nil,
-                               url: URL? = nil) -> FileDescriptor.Error {
-  if reading {
-    switch posixErrno {
-    case EFBIG: return.fileReadTooLarge
-    case ENOENT: return.fileReadNoSuchFile
-    case EPERM, EACCES: return.fileReadNoPermission
-    case ENAMETOOLONG: return.fileReadUnknown
-    default: return .fileReadUnknown
-    }
-  } else {
-    switch posixErrno {
-    case ENOENT: return .fileNoSuchFile
-    case EPERM, EACCES: return .fileWriteNoPermission
-    case ENAMETOOLONG: return .fileWriteInvalidFileName
-    case EDQUOT, ENOSPC: return .fileWriteOutOfSpace
-    case EROFS: return .fileWriteVolumeReadOnly
-    case EEXIST: return .fileWriteFileExists
-    default: return .fileWriteUnknown
-    }
-  }
+                               url: URL? = nil) -> Swift.Error {
+  return FileDescriptor.Error(errno: posixErrno,
+                              operation: reading ? .read : .write)
 }
 
 private func _CFReallocf(_ ptr: UnsafeMutableRawPointer,
@@ -116,9 +99,9 @@ private func _CFOpenFileWithMode(_ path: UnsafePointer<CChar>,
 
 // MARK: - FileDescriptor
 
-public class FileDescriptor: NSObject {
+public class FileDescriptor: NSObject, FileDescriptorType {
 
-  public enum Error: Swift.Error {
+  public enum ErrorType {
     case fileReadTooLarge
     case fileReadNoSuchFile
     case fileReadNoPermission
@@ -131,6 +114,56 @@ public class FileDescriptor: NSObject {
     case fileWriteVolumeReadOnly
     case fileWriteFileExists
     case fileWriteUnknown
+  }
+
+  public enum Operation {
+    case read
+    case write
+  }
+
+  public struct Error: Swift.Error {
+
+    public let errno: Int32
+    public let operation: Operation
+
+    public var type: ErrorType {
+      switch self.operation {
+      case .read:
+        switch self.errno {
+        case EFBIG: return.fileReadTooLarge
+        case ENOENT: return.fileReadNoSuchFile
+        case EPERM, EACCES: return.fileReadNoPermission
+        case ENAMETOOLONG: return.fileReadUnknown
+        default: return .fileReadUnknown
+        }
+      case .write:
+        switch self.errno {
+        case ENOENT: return .fileNoSuchFile
+        case EPERM, EACCES: return .fileWriteNoPermission
+        case ENAMETOOLONG: return .fileWriteInvalidFileName
+        case EDQUOT, ENOSPC: return .fileWriteOutOfSpace
+        case EROFS: return .fileWriteVolumeReadOnly
+        case EEXIST: return .fileWriteFileExists
+        default: return .fileWriteUnknown
+        }
+      }
+    }
+
+    public var str: String {
+      guard let cStr = strerror(self.errno) else {
+        return "unknown IO error"
+      }
+
+      return String(cString: cStr)
+    }
+
+    fileprivate static var fileReadUnknown: Error {
+      return Error(errno: -1, operation: .read)
+    }
+
+    fileprivate static var fileWriteUnknown: Error {
+      return Error(errno: -1, operation: .read)
+    }
   }
 
   private var _fd: Int32
@@ -226,8 +259,8 @@ public class FileDescriptor: NSObject {
     return Data(bytesNoCopy: bytePtr, count: total, deallocator: .free)
   }
 
-  internal func _readBytes(into buffer: UnsafeMutablePointer<UInt8>,
-                           length: Int) throws -> Int {
+  private func _readBytes(into buffer: UnsafeMutablePointer<UInt8>,
+                          length: Int) throws -> Int {
     let amtRead = _read(self._fd, buffer, length)
     if amtRead < 0 {
       throw _NSErrorWithErrno(errno, reading: true)
@@ -238,7 +271,7 @@ public class FileDescriptor: NSObject {
 
   // MARK: - Helpers - Write
 
-  internal func _writeBytes(buf: UnsafeRawPointer, length: Int) throws {
+  private func _writeBytes(buf: UnsafeRawPointer, length: Int) throws {
     var bytesRemaining = length
     while bytesRemaining > 0 {
       var bytesWritten = 0
@@ -284,17 +317,16 @@ public class FileDescriptor: NSObject {
 
   // MARK: - Read
 
-  public func readToEnd() throws -> Data? {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else { return nil }
-
+  public func readToEnd() throws -> Data {
     return try self.read(upToCount: Int.max)
   }
 
-  public func read(upToCount count: Int) throws -> Data? {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else { return nil }
+  public func read(upToCount count: Int) throws -> Data {
+    guard self != FileDescriptor._nulldeviceFileDescriptor else {
+      return Data()
+    }
 
-    let result = try self._readDataOfLength(count, untilEOF: true)
-    return result.isEmpty ? nil : result
+    return try self._readDataOfLength(count, untilEOF: true)
   }
 
   // MARK: - Write
@@ -321,7 +353,7 @@ public class FileDescriptor: NSObject {
 
     guard self._isValid else { throw Error.fileReadUnknown }
 
-    let offset = lseek(_fd, 0, SEEK_CUR)
+    let offset = lseek(self._fd, 0, SEEK_CUR)
     guard offset >= 0 else { throw _NSErrorWithErrno(errno, reading: true) }
     return UInt64(offset)
   }
@@ -334,7 +366,7 @@ public class FileDescriptor: NSObject {
 
     guard self._isValid else { throw Error.fileReadUnknown }
 
-    let offset = lseek(_fd, 0, SEEK_END)
+    let offset = lseek(self._fd, 0, SEEK_END)
     guard offset >= 0 else { throw _NSErrorWithErrno(errno, reading: true) }
     return UInt64(offset)
   }
@@ -344,7 +376,7 @@ public class FileDescriptor: NSObject {
 
     guard self._isValid else { throw Error.fileReadUnknown }
 
-    guard lseek(_fd, off_t(offset), SEEK_SET) >= 0 else {
+    guard lseek(self._fd, off_t(offset), SEEK_SET) >= 0 else {
       throw _NSErrorWithErrno(errno, reading: true)
     }
   }
@@ -354,11 +386,11 @@ public class FileDescriptor: NSObject {
 
     guard self._isValid else { throw Error.fileWriteUnknown }
 
-    guard lseek(_fd, off_t(offset), SEEK_SET) >= 0 else {
+    guard lseek(self._fd, off_t(offset), SEEK_SET) >= 0 else {
       throw _NSErrorWithErrno(errno, reading: false)
     }
 
-    guard ftruncate(_fd, off_t(offset)) >= 0 else {
+    guard ftruncate(self._fd, off_t(offset)) >= 0 else {
       throw _NSErrorWithErrno(errno, reading: false)
     }
   }
@@ -368,7 +400,7 @@ public class FileDescriptor: NSObject {
   public func synchronize() throws {
     guard self != FileDescriptor._nulldeviceFileDescriptor else { return }
 
-    guard fsync(_fd) >= 0 else {
+    guard fsync(self._fd) >= 0 else {
       throw _NSErrorWithErrno(errno, reading: false)
     }
   }
@@ -409,8 +441,8 @@ extension FileDescriptor {
 
       override var availableData: Data { return Data() }
 
-      override func readToEnd() throws -> Data? { return Data() }
-      override func read(upToCount count: Int) throws -> Data? { return Data() }
+      override func readToEnd() throws -> Data { return Data() }
+      override func read(upToCount count: Int) throws -> Data { return Data() }
       override func write<T: DataProtocol>(contentsOf data: T) throws { }
       override func offset() throws -> UInt64 { return 0 }
       override func seekToEnd() throws -> UInt64 { return 0 }

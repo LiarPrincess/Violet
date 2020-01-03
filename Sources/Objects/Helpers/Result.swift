@@ -22,6 +22,7 @@ public enum PyErrorEnum: CustomStringConvertible {
   case deprecationWarning(String)
   case lookupError(String)
   case unicodeDecodeError(FileEncoding, Data)
+  case unicodeEncodeError(FileEncoding, String)
   case osError(String)
 
   public var description: String {
@@ -43,6 +44,7 @@ public enum PyErrorEnum: CustomStringConvertible {
     case .deprecationWarning(let msg): return "Deprecation warning: '\(msg)'"
     case .lookupError(let msg): return "Lookup error: '\(msg)'"
     case .unicodeDecodeError(let e, _): return "'\(e)' codec can't decode data"
+    case .unicodeEncodeError(let e, _): return "'\(e)' codec can't encode data"
     case .osError(let msg): return "OS error: '\(msg)'"
     }
   }
@@ -117,6 +119,11 @@ public enum PyResult<V> {
   public static func unicodeDecodeError(encoding: FileEncoding,
                                         data: Data) -> PyResult<V> {
     return PyResult.error(.unicodeDecodeError(encoding, data))
+  }
+
+  public static func unicodeEncodeError(encoding: FileEncoding,
+                                        string: String) -> PyResult<V> {
+    return PyResult.error(.unicodeEncodeError(encoding, string))
   }
 
   public static func osError(_ msg: String) -> PyResult<V> {
@@ -248,6 +255,11 @@ public enum PyResultOrNot<V> {
   public static func unicodeDecodeError(encoding: FileEncoding,
                                         data: Data) -> PyResultOrNot<V> {
     return PyResultOrNot.error(.unicodeDecodeError(encoding, data))
+  }
+
+  public static func unicodeEncodeError(encoding: FileEncoding,
+                                        string: String) -> PyResultOrNot<V> {
+    return PyResultOrNot.error(.unicodeEncodeError(encoding, string))
   }
 
   public static func osError(_ msg: String) -> PyResultOrNot<V> {
