@@ -478,6 +478,10 @@ extension Builtins {
   ///
   /// It is preferred over `reduce(_:_:)` for efficiency when the result
   /// is a copy-on-write type, for example an `Array` or a `Dictionary`.
+  ///
+  /// - Warning
+  /// Do not merge into `reduce(_:_:)`!
+  /// I am 90% sure it will create needles copy during COW.
   public func reduce<Acc>(iterable: PyObject,
                           into initial: Acc,
                           fn: ReduceIntoFn<Acc>)  -> PyResult<Acc> {
