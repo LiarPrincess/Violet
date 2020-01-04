@@ -1,5 +1,5 @@
 import inspect
-import dump_type_methods_implemented as implemented
+import implemented
 
 def dump(obj):
   for attr in dir(obj):

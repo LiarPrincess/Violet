@@ -1,9 +1,20 @@
 
 import _io
-import types as t
-import collections as c
+import types
+import collections
 
-iterator = c.Iterator
+NoneType = type(None)
+NotImplementedType = type(NotImplemented)
+ellipsis = type(...)
+code = types.CodeType
+module = types.ModuleType
+function = types.FunctionType
+method = types.MethodType
+builtinFunction = types.BuiltinFunctionType
+builtinMethod = types.BuiltinMethodType
+SimpleNamespace = types.SimpleNamespace
+
+iterator = collections.Iterator
 callable_iterator = type(iter(str, None))
 tuple_iterator = type(iter(()))
 
@@ -87,7 +98,7 @@ types = {
     '__rxor__',
     '__new__',
   ],
-  t.BuiltinFunctionType: [
+  builtinFunction: [
     '__class__',
     '__name__',
     '__qualname__',
@@ -248,7 +259,7 @@ types = {
     '__iter__',
     '__next__',
   ],
-  t.CodeType: [
+  code: [
     '__class__',
     '__eq__',
     '__lt__',
@@ -386,7 +397,7 @@ types = {
     '__len__',
     '__iter__',
   ],
-  type(...): [
+  ellipsis: [
     '__class__',
     '__repr__',
     '__getattribute__',
@@ -480,7 +491,7 @@ types = {
     '__iter__',
     '__new__',
   ],
-  t.FunctionType: [
+  function: [
     '__class__',
     '__name__',
     '__qualname__',
@@ -613,7 +624,7 @@ types = {
     '__next__',
     '__new__',
   ],
-  t.MethodType: [
+  method: [
     '__class__',
     '__eq__',
     '__ne__',
@@ -630,7 +641,7 @@ types = {
     '__self__',
     '__get__',
   ],
-  t.ModuleType: [
+  module: [
     '__dict__',
     '__class__',
     '__repr__',
@@ -641,7 +652,7 @@ types = {
     '__new__',
     '__init__',
   ],
-  t.SimpleNamespace: [
+  types.SimpleNamespace: [
     '__dict__',
     '__eq__',
     '__ne__',
@@ -655,13 +666,13 @@ types = {
     '__delattr__',
     '__init__',
   ],
-  type(None): [
+  NoneType: [
     '__class__',
     '__repr__',
     '__bool__',
     '__new__',
   ],
-  type(NotImplemented): [
+  NotImplementedType: [
     '__class__',
     '__repr__',
     '__new__',
