@@ -87,7 +87,7 @@ extension Builtins {
 
   // MARK: - Id
 
-  // sourcery: pymethod: id
+  // sourcery: pymethod = id
   /// id(object)
   /// See [this](https://docs.python.org/3/library/functions.html#id)
   public func id(_ object: PyObject) -> PyInt {
@@ -112,7 +112,7 @@ extension Builtins {
         recursively the attributes of its class's base classes.
     """
 
-  // sourcery: pymethod: dir
+  // sourcery: pymethod = dir
   /// dir([object])
   /// See [this](https://docs.python.org/3/library/functions.html#dir)
   public func dir(_ object: PyObject?) -> PyResult<PyObject> {

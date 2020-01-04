@@ -40,7 +40,7 @@ extension Builtins {
 
   // MARK: - Callable
 
-  // sourcery: pymethod: callable
+  // sourcery: pymethod = callable
   /// callable(object)
   /// See [this](https://docs.python.org/3/library/functions.html#callable)
   public func isCallable(_ object: PyObject) -> Bool {

@@ -26,7 +26,7 @@ extension Builtins {
   /// class dict(**kwarg)
   public var dict: PyType { return self.types.dict }
 
-  // sourcery: pymethod: enumerate
+  // sourcery: pymethod = enumerate
   /// enumerate(iterable, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#enumerate)
   public var enumerate: PyType { return self.types.enumerate }
@@ -52,7 +52,7 @@ extension Builtins {
   /// class list([iterable])
   public var list: PyType { return self.types.list }
 
-  // sourcery: pymethod: map
+  // sourcery: pymethod = map
   /// map(function, iterable, ...)
   /// See [this](https://docs.python.org/3/library/functions.html#map)
   public var map: PyType { return self.types.map }
@@ -65,12 +65,12 @@ extension Builtins {
   /// class property(fget=None, fset=None, fdel=None, docne) */
   public var property: PyType { return self.types.property }
 
-  // sourcery: pymethod: range
+  // sourcery: pymethod = range
   /// range(stop)
   /// See [this](https://docs.python.org/3/library/functions.html)
   public var range: PyType { return self.types.range }
 
-  // sourcery: pymethod: reversed
+  // sourcery: pymethod = reversed
   /// reversed(seq)
   /// See [this](https://docs.python.org/3/library/functions.html#reversed)
   public var reversed: PyType { return self.types.reversed }
@@ -88,7 +88,7 @@ extension Builtins {
   /// class str(object=b'', encoding='utf-8', errors='strict')
   public var str: PyType { return self.types.str }
 
-  // sourcery: pymethod: tuple
+  // sourcery: pymethod = tuple
   /// tuple([iterable])
   /// See [this](https://docs.python.org/3/library/functions.html)
   public var tuple: PyType { return self.types.tuple }
@@ -98,7 +98,7 @@ extension Builtins {
   /// class type(name, bases, dict)
   public var type: PyType { return self.types.type }
 
-  // sourcery: pymethod: zip
+  // sourcery: pymethod = zip
   /// zip(*iterables)
   /// See [this](https://docs.python.org/3/library/functions.html#zip)
   public var zip: PyType { return self.types.zip }
@@ -116,7 +116,7 @@ extension Builtins {
     or ...`` etc.
     """
 
-  // sourcery: pymethod: isinstance, doc = isInstanceDoc
+  // sourcery: pymethod = isinstance, doc = isInstanceDoc
   /// isinstance(object, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#isinstance)
   public func isInstance(object: PyObject,
@@ -168,7 +168,7 @@ extension Builtins {
     or ...`` etc.
     """
 
-  // sourcery: pymethod: issubclass, doc = isSubclassDoc
+  // sourcery: pymethod = issubclass, doc = isSubclassDoc
   /// issubclass(class, classinfo)
   /// See [this](https://docs.python.org/3/library/functions.html#issubclass)
   public func isSubclass(object: PyObject,

@@ -161,7 +161,7 @@ extension Builtins {
     }
   }
 
-  // sourcery: pymethod: min, doc = minDoc
+  // sourcery: pymethod = min, doc = minDoc
   /// min(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#min)
   public func min(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
@@ -197,7 +197,7 @@ extension Builtins {
     }
   }
 
-  // sourcery: pymethod: max, doc = maxDoc
+  // sourcery: pymethod = max, doc = maxDoc
   /// max(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#max)
   public func max(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {

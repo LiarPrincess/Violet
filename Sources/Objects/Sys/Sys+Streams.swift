@@ -6,7 +6,7 @@ extension Sys {
 
   // MARK: - Stdin
 
-  // sourcery: pyproperty: stdin, setter = setStdin
+  // sourcery: pyproperty = stdin, setter = setStdin
   /// sys.stdin
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
   internal func getStdin() -> PyObject {
@@ -22,7 +22,7 @@ extension Sys {
     return .value()
   }
 
-  // sourcery: pyproperty: __stdin__
+  // sourcery: pyproperty = __stdin__
   /// sys.__stdin__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
   internal func get__stdin__() -> PyObject {
@@ -31,14 +31,14 @@ extension Sys {
 
   // MARK: - Stdout
 
-  // sourcery: pyproperty: stdout, setter = setStdout
+  // sourcery: pyproperty = stdout, setter = setStdout
   /// sys.stdout
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
   internal func getStdout() -> PyObject {
     return self.stdout
   }
 
-  // sourcery: pyproperty: __stdout__
+  // sourcery: pyproperty = __stdout__
   /// sys.__stdout__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
   internal func get__stdout__() -> PyObject {
@@ -56,7 +56,7 @@ extension Sys {
 
   // MARK: - Stderr
 
-  // sourcery: pyproperty: stderr, setter = setStderr
+  // sourcery: pyproperty = stderr, setter = setStderr
   /// sys.stderr
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.stdin).
   internal func getStderr() -> PyObject {
@@ -72,7 +72,7 @@ extension Sys {
     return .value()
   }
 
-  // sourcery: pyproperty: __stderr__
+  // sourcery: pyproperty = __stderr__
   /// sys.__stderr__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__stdin__).
   internal func get__stderr__() -> PyObject {

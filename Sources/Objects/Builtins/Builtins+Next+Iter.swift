@@ -9,7 +9,7 @@ extension Builtins {
     is exhausted, it is returned instead of raising StopIteration.
     """
 
-  // sourcery: pymethod: next, doc = nextDoc
+  // sourcery: pymethod = next, doc = nextDoc
   /// next(iterator[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#next)
   public func next(iterator: PyObject,
@@ -54,7 +54,7 @@ extension Builtins {
     In the second form, the callable is called until it returns the sentinel.
     """
 
-  // sourcery: pymethod: iter, doc = iterDoc
+  // sourcery: pymethod = iter, doc = iterDoc
   /// iter(object[, sentinel])
   /// See [this](https://docs.python.org/3/library/functions.html#iter)
   public func iter(from object: PyObject,

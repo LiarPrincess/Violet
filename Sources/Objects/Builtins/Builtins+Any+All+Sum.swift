@@ -6,7 +6,7 @@ extension Builtins {
 
   // MARK: - Any
 
-  // sourcery: pymethod: any
+  // sourcery: pymethod = any
   /// any(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#any)
   public func any(iterable: PyObject) -> PyResult<Bool> {
@@ -21,7 +21,7 @@ extension Builtins {
 
   // MARK: - All
 
-  // sourcery: pymethod: all
+  // sourcery: pymethod = all
   /// all(iterable)
   /// See [this](https://docs.python.org/3/library/functions.html#all)
   public func all(iterable: PyObject) -> PyResult<Bool> {
@@ -56,7 +56,7 @@ extension Builtins {
     }
   }
 
-  // sourcery: pymethod: sum
+  // sourcery: pymethod = sum
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
   public func sum(iterable: PyObject, start: PyObject?) -> PyResult<PyObject> {

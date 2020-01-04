@@ -153,7 +153,7 @@ extension Builtins {
     }
   }
 
-  // sourcery: pymethod: pow
+  // sourcery: pymethod = pow
   /// pow(base, exp[, mod])
   /// See [this](https://docs.python.org/3/library/functions.html#pow)
   public func pow(base: PyObject,

@@ -543,7 +543,7 @@ extension Builtins {
     }
   }
 
-  // sourcery: pymethod: divmod
+  // sourcery: pymethod = divmod
   /// divmod(a, b)
   /// See [this](https://docs.python.org/3/library/functions.html#divmod)
   public func divmod(left: PyObject, right: PyObject) -> PyResult<PyObject> {

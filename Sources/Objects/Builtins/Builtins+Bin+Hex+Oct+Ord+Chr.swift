@@ -6,21 +6,21 @@ extension Builtins {
 
   // MARK: - Bin, Hex, Oct
 
-  // sourcery: pymethod: bin
+  // sourcery: pymethod = bin
   /// bin(x)
   /// See [this](https://docs.python.org/3/library/functions.html#bin)
   public func bin(_ object: PyObject) -> PyResult<PyObject> {
     return self.toNumberString(object, radix: 2, prefix: "0b")
   }
 
-  // sourcery: pymethod: oct
+  // sourcery: pymethod = oct
   /// oct(x)
   /// See [this](https://docs.python.org/3/library/functions.html#oct)
   public func oct(_ object: PyObject) -> PyResult<PyObject> {
     return self.toNumberString(object, radix: 8, prefix: "0o")
   }
 
-  // sourcery: pymethod: hex
+  // sourcery: pymethod = hex
   /// hex(x)
   /// See [this](https://docs.python.org/3/library/functions.html#hex)
   public func hex(_ object: PyObject) -> PyResult<PyObject> {
@@ -41,7 +41,7 @@ extension Builtins {
 
   // MARK: - Chr, Ord
 
-  // sourcery: pymethod: chr
+  // sourcery: pymethod = chr
   /// chr(i)
   /// See [this](https://docs.python.org/3/library/functions.html#chr)
   public func chr(_ object: PyObject) -> PyResult<PyString> {
@@ -66,7 +66,7 @@ extension Builtins {
     return .value(result)
   }
 
-  // sourcery: pymethod: ord
+  // sourcery: pymethod = ord
   /// ord(c)
   /// See [this](https://docs.python.org/3/library/functions.html#ord)
   public func ord(_ object: PyObject) -> PyResult<PyInt> {

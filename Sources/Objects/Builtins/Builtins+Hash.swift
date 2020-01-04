@@ -4,7 +4,7 @@
 
 extension Builtins {
 
-  // sourcery: pymethod: hash
+  // sourcery: pymethod = hash
   /// hash(object)
   /// See [this](https://docs.python.org/3/library/functions.html#hash)
   ///

@@ -6,7 +6,7 @@ extension Sys {
 
   // MARK: - Prompts
 
-  // sourcery: pyproperty: ps1, setter = setPS1
+  // sourcery: pyproperty = ps1, setter = setPS1
   /// sys.ps1
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
   ///
@@ -20,7 +20,7 @@ extension Sys {
     self.ps1 = value
   }
 
-  // sourcery: pyproperty: ps2, setter = setPS2
+  // sourcery: pyproperty = ps2, setter = setPS2
   /// sys.ps2
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.ps1).
   ///
@@ -36,7 +36,7 @@ extension Sys {
 
   // MARK: - Platform
 
-  // sourcery: pyproperty: platform
+  // sourcery: pyproperty = platform
   /// sys.platform
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.platform).
   ///
@@ -48,7 +48,7 @@ extension Sys {
 
   // MARK: - Copyright
 
-  // sourcery: pyproperty: copyright
+  // sourcery: pyproperty = copyright
   /// sys.copyright
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.copyright).
   ///
@@ -59,14 +59,14 @@ extension Sys {
 
   // MARK: - Version
 
-  // sourcery: pyproperty: version
+  // sourcery: pyproperty = version
   /// sys.version
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version).
   internal func getVersion() -> PyString {
     return self.context.intern(self.version)
   }
 
-  // sourcery: pyproperty: version_info
+  // sourcery: pyproperty = version_info
   /// sys.version_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version_info).
   ///
@@ -78,7 +78,7 @@ extension Sys {
     return self.versionInfo.object
   }
 
-  // sourcery: pyproperty: implementation
+  // sourcery: pyproperty = implementation
   /// sys.implementation
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.implementation).
   internal func getImplementation() -> PyObject {
@@ -87,7 +87,7 @@ extension Sys {
 
   // MARK: - Hash
 
-  // sourcery: pyproperty: hash_info
+  // sourcery: pyproperty = hash_info
   /// sys.hash_info
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.hash_info).
   internal func getHashInfo() -> PyObject {

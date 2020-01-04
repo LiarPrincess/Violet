@@ -1,8 +1,8 @@
 extension Sys {
-
+/*
   // MARK: - Properties
 
-  // sourcery: pyproperty: argv
+  // sourcery: pyproperty = argv
   /// sys.argv
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.argv).
   ///
@@ -16,7 +16,7 @@ extension Sys {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: modules
+  // sourcery: pyproperty = modules
   /// sys.modules
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.modules).
   ///
@@ -26,7 +26,7 @@ extension Sys {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: path
+  // sourcery: pyproperty = path
   /// sys.path
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.path).
   ///
@@ -42,7 +42,7 @@ extension Sys {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: builtin_module_names
+  // sourcery: pyproperty = builtin_module_names
   /// sys.builtin_module_names
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.builtin_module_names).
   ///
@@ -52,7 +52,7 @@ extension Sys {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: executable
+  // sourcery: pyproperty = executable
   /// sys.executable
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.executable).
   ///
@@ -64,7 +64,7 @@ extension Sys {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: warnoptions
+  // sourcery: pyproperty = warnoptions
   /// sys.warnoptions
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.warnoptions).
   ///
@@ -77,14 +77,14 @@ extension Sys {
 
   // MARK: - Breakpointhook
 
-  // sourcery: pymethod: breakpointhook
+  // sourcery: pymethod = breakpointhook
   /// sys.breakpointhook()
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.breakpointhook).
   internal func breakpointHook() -> PyObject {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: __breakpointhook__
+  // sourcery: pyproperty = __breakpointhook__
   /// sys.__breakpointhook__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__breakpointhook__).
   internal func get__breakpointhook__() -> PyObject {
@@ -93,14 +93,14 @@ extension Sys {
 
   // MARK: - Displayhook
 
-  // sourcery: pymethod: displayhook
+  // sourcery: pymethod = displayhook
   /// sys.displayhook(value)
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.displayhook).
   internal func displayHook() -> PyObject {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: __displayhook__
+  // sourcery: pyproperty = __displayhook__
   /// sys.__displayhook__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__displayhook__).
   internal func get__displayhook__() -> PyObject {
@@ -109,14 +109,14 @@ extension Sys {
 
   // MARK: - Excepthook
 
-  // sourcery: pymethod: excepthook
+  // sourcery: pymethod = excepthook
   /// sys.excepthook(type, value, traceback)
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.excepthook).
   internal func excepthook() -> PyObject {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty: __excepthook__
+  // sourcery: pyproperty = __excepthook__
   /// sys.__excepthook__
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.__excepthook__).
   internal func get__excepthook__() -> PyObject {
@@ -125,32 +125,27 @@ extension Sys {
 
   // MARK: - Exit
 
-  // sourcery: pymethod: exit
+  // sourcery: pymethod = exit
   /// sys.exit([arg])
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.exit).
   internal func exit() -> PyObject {
     return self.unimplemented
   }
 
-  // MARK: - Helpers
-
-  internal var unimplemented: PyObject {
-    return self.builtins.none
-  }
-
   // MARK: - Other
 
-  // sourcery: pyproperty: byteorder
+  // sourcery: pyproperty = byteorder
   /// sys.byteorder
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.byteorder).
   internal func getByteOrder() -> PyObject {
     return self.unimplemented
   }
 
-  // sourcery: pymethod: exc_info
+  // sourcery: pymethod = exc_info
   /// sys.exc_info()
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.exc_info).
   internal func excInfo() -> PyObject {
     return self.unimplemented
   }
+*/
 }

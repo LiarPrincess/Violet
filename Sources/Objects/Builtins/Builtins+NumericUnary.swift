@@ -45,7 +45,7 @@ extension Builtins {
 
   // MARK: - Abs
 
-  // sourcery: pymethod: abs
+  // sourcery: pymethod = abs
   /// abs(x)
   /// See [this](https://docs.python.org/3/library/functions.html#abs)
   ///

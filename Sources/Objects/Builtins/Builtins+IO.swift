@@ -27,7 +27,7 @@ extension Builtins {
     format: "O|sizzziO:open"
   )
 
-  // sourcery: pymethod: open
+  // sourcery: pymethod = open
   /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)

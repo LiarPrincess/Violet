@@ -278,7 +278,7 @@ extension Builtins {
 
   // MARK: - Length
 
-  // sourcery: pymethod: len
+  // sourcery: pymethod = len
   /// len(s)
   /// See [this](https://docs.python.org/3/library/functions.html#len)
   public func length(iterable: PyObject) -> PyResult<PyObject> {
@@ -391,7 +391,7 @@ extension Builtins {
     reverse flag can be set to request the result in descending order.
     """
 
-  // sourcery: pymethod: sorted
+  // sourcery: pymethod = sorted
   /// sorted(iterable, *, key=None, reverse=False)
   /// See [this](https://docs.python.org/3/library/functions.html#sorted)
   public func sorted(iterable: PyObject,

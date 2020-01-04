@@ -20,7 +20,7 @@ extension Builtins {
     return self.getAttribute(object, name: nameObject)
   }
 
-  // sourcery: pymethod: getattr, doc = getAttributeDoc
+  // sourcery: pymethod = getattr, doc = getAttributeDoc
   /// getattr(object, name[, default])
   /// See [this](https://docs.python.org/3/library/functions.html#getattr)
   ///
@@ -84,7 +84,7 @@ extension Builtins {
 
   // MARK: - Has
 
-  // sourcery: pymethod: hasattr
+  // sourcery: pymethod = hasattr
   /// hasattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasAttribute(_ object: PyObject,
@@ -114,7 +114,7 @@ extension Builtins {
     return self.setAttribute(object, name: nameObject, value: value)
   }
 
-  // sourcery: pymethod: setattr
+  // sourcery: pymethod = setattr
   /// setattr(object, name, value)
   /// See [this](https://docs.python.org/3/library/functions.html#setattr)
   public func setAttribute(_ object: PyObject,
@@ -159,7 +159,7 @@ extension Builtins {
     return self.setAttribute(object, name: name, value: self.none)
   }
 
-  // sourcery: pymethod: delattr
+  // sourcery: pymethod = delattr
   /// delattr(object, name)
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func deleteAttribute(_ object: PyObject,
