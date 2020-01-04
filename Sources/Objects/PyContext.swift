@@ -35,6 +35,13 @@ public class PyContext {
   public private(set) lazy var builtins = Builtins(context: self)
   public private(set) lazy var sys = Sys(context: self)
 
+  /// `self.builtins` but as a Python module (`PyModule`).
+  public private(set)
+  lazy var builtinsModule = ModuleFactory.createBuiltins(from: self.builtins)
+  /// `self.sys` but as a Python module (`PyModule`).
+  public private(set)
+  lazy var sysModule = ModuleFactory.createSys(from: self.sys)
+
   private weak var _delegate: PyContextDelegate?
   internal var delegate: PyContextDelegate {
     if let d = self._delegate { return d }

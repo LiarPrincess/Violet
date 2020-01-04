@@ -24,6 +24,8 @@ import Core
 // Technically 'TernaryFunction' is super-type of 'TernaryFunctionOpt',
 // because any function passed to 'TernaryFunction' can also be used in
 // 'TernaryFunctionOpt' (functions are contravariant on parameter type).
+//
+// As for the names go to: 'https://en.wikipedia.org/wiki/Arity'
 
 extension PyBuiltinFunction {
 
@@ -59,6 +61,24 @@ extension PyBuiltinFunction {
 
   // MARK: - Args kwargs
 
+  internal static func wrap<R: FunctionResultConvertible>(
+    _ context: PyContext,
+    name: String,
+    doc: String?,
+    fn: @escaping ([PyObject], PyDictData?) -> R) -> PyBuiltinFunction {
+
+    return PyBuiltinFunction(
+      context,
+      doc: doc,
+      fn: ArgsKwargsFunctionWrapper(name: name) { [weak context] args, kwargs in
+        guard let c = context else {
+          fatalError("Trying to call '\(name)' after its context was deallocated.")
+        }
+        return fn(args, kwargs).toFunctionResult(in: c)
+      }
+    )
+  }
+
   internal static func wrap<Zelf, R: FunctionResultConvertible>(
     _ context: PyContext,
     name: String,
@@ -69,10 +89,30 @@ extension PyBuiltinFunction {
     return PyBuiltinFunction(
       context,
       doc: doc,
-      fn: ArgsKwargsFunctionWrapper(name: name) { arg0, args, kwargs in
+      fn: ArgsKwargsMethodWrapper(name: name) { arg0, args, kwargs in
         castSelf(arg0, name)
           .map { fn($0)(args, kwargs) }
           .toFunctionResult(in: arg0.context)
+      }
+    )
+  }
+
+  // MARK: - Positional nullary
+
+  internal static func wrap<R: FunctionResultConvertible>(
+    _ context: PyContext,
+    name: String,
+    doc: String?,
+    fn: @escaping () -> R) -> PyBuiltinFunction {
+
+    return PyBuiltinFunction(
+      context,
+      doc: doc,
+      fn: NullaryFunctionWrapper(name: name) { [weak context] in
+        guard let c = context else {
+          fatalError("Trying to call '\(name)' after its context was deallocated.")
+        }
+        return fn().toFunctionResult(in: c)
       }
     )
   }

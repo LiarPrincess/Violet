@@ -161,12 +161,16 @@ extension Builtins {
     }
   }
 
+  public func min(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
+    return ArgumentParser.unpackKwargsDict(kwargs: kwargs)
+      .flatMap { self.min(args: args, kwargs: $0) }
+  }
+
   // sourcery: pymethod = min, doc = minDoc
   /// min(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#min)
-  public func min(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
-    return ArgumentParser.unpackKwargsDict(kwargs: kwargs)
-      .flatMap { MinImpl.run(args: args, kwargs: $0) }
+  internal func min(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
+    return MinImpl.run(args: args, kwargs: kwargs)
   }
 
   // MARK: - Max
@@ -197,11 +201,15 @@ extension Builtins {
     }
   }
 
+  public func max(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
+    return ArgumentParser.unpackKwargsDict(kwargs: kwargs)
+      .flatMap { self.max(args: args, kwargs: $0) }
+  }
+
   // sourcery: pymethod = max, doc = maxDoc
   /// max(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#max)
-  public func max(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
-    return ArgumentParser.unpackKwargsDict(kwargs: kwargs)
-      .flatMap { MaxImpl.run(args: args, kwargs: $0) }
+  internal func max(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
+    return MaxImpl.run(args: args, kwargs: kwargs)
   }
 }

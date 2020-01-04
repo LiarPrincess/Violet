@@ -4,6 +4,7 @@ import Core
 // Python -> sysmodule.c
 // https://docs.python.org/3.7/library/sys.html
 
+// sourcery: pymodule = sys
 public final class Sys {
 
   internal static let doc = """

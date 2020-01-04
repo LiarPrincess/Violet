@@ -16,8 +16,9 @@ extension Sys {
     return self.ps1
   }
 
-  internal func setPS1(to value: PyObject) {
+  internal func setPS1(to value: PyObject) -> PyResult<()> {
     self.ps1 = value
+    return .value()
   }
 
   // sourcery: pyproperty = ps2, setter = setPS2
@@ -30,8 +31,9 @@ extension Sys {
     return self.ps2
   }
 
-  internal func setPS2(to value: PyObject) {
+  internal func setPS2(to value: PyObject) -> PyResult<()> {
     self.ps2 = value
+    return .value()
   }
 
   // MARK: - Platform

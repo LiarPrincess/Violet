@@ -27,11 +27,16 @@ extension Builtins {
     format: "O|sizzziO:open"
   )
 
+  public func open(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
+    return ArgumentParser.unpackKwargsDict(kwargs: kwargs)
+      .flatMap { self.open(args: args, kwargs: $0) }
+  }
+
   // sourcery: pymethod = open
   /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)
-  public func open(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
+  internal func open(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
     switch Builtins.openArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(

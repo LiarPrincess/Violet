@@ -1,0 +1,48 @@
+// swiftlint:disable:previous vertical_whitespace
+// swiftlint:disable vertical_whitespace
+// swiftlint:disable line_length
+// swiftlint:disable function_body_length
+
+// ModuleFactory is based on pre-specialization (partial application)
+// of function to module object and then wrapping remaining function.
+//
+// So, for example:
+//   Builtins.add :: (self: Builtins) -> (left: PyObject, right: PyObject) -> Result
+// would be specialized to 'Builtins' instance giving us:
+//   add :: (left: PyObject, right: PyObject) -> Result
+// which would be wrapped and exposed to Python runtime.
+//
+// So when you are working on Python 'builtins' you are actually working on
+// (Scooby-Doo reveal incomming...)
+// 'PyContext.builtins' object (which gives us stateful modules).
+// (and we would have gotten away with it without you meddling kids!)
+// https://www.youtube.com/watch?v=b4JLLv1lE7A
+
+internal enum ModuleFactory {
+{% for type in types.classes|annotated:"pymodule" %}
+
+  // MARK: - {{ type.name }}
+
+  internal static func create{{ type.name }}(from object: {{ type.name }}) -> PyModule {
+    let result = PyModule(object.context, name: "{{ type.annotations.pymodule }}", doc: nil)
+    let dict = result.getDict()
+
+  {% for prop in type.instanceMethods|annotated:"pyproperty" %}
+    {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
+    {% set getter %}object.{{ prop.selectorName }}{% endset %}
+    {% if prop.annotations.setter %}
+    dict["{{ attribute }}"] = PyProperty.wrap(object.context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: object.{{ prop.annotations.setter }})
+    {% else %}
+    dict["{{ attribute }}"] = PyProperty.wrap(object.context, name: "{{ attribute }}", doc: nil, get: {{ getter }})
+    {% endif %}
+  {% endfor %}
+
+  {% for method in type.instanceMethods|annotated:"pymethod" %}
+    {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(object.context, name: "{{ attribute }}", doc: nil, fn: object.{{ method.selectorName }})
+  {% endfor %}
+
+    return result
+  }
+{% endfor %}
+}

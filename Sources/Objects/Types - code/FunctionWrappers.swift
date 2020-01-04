@@ -15,6 +15,7 @@ internal protocol FunctionWrapper {
 
 internal typealias NewFunction = (PyType, [PyObject], PyDictData?) -> PyResult<PyObject>
 
+/// Wrapper dedicated to `__new__` function
 internal struct NewFunctionWrapper: FunctionWrapper {
 
   internal let typeName: String
@@ -46,6 +47,7 @@ internal struct NewFunctionWrapper: FunctionWrapper {
 internal typealias InitFunction<Zelf: PyObject> =
   (Zelf, [PyObject], PyDictData?) -> PyResult<PyNone>
 
+/// Wrapper dedicated to `__init__` function
 internal struct InitFunctionWrapper: FunctionWrapper {
 
   internal let typeName: String
@@ -93,15 +95,33 @@ internal struct InitFunctionWrapper: FunctionWrapper {
   }
 }
 
-// MARK: - Args kwargs
+// MARK: - Args kwargs function
 
 internal typealias ArgsKwargsFunction =
-  (PyObject, [PyObject], PyDictData?) -> FunctionResult
+  ([PyObject], PyDictData?) -> FunctionResult
 
+/// Wrapper dedicated to function that takes `args` and `kwargs` arguments.
 internal struct ArgsKwargsFunctionWrapper: FunctionWrapper {
 
   internal let name: String
   internal let fn: ArgsKwargsFunction
+
+  internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
+    return self.fn(args, kwargs)
+  }
+}
+
+// MARK: - Args kwargs method
+
+internal typealias ArgsKwargsMethod =
+  (PyObject, [PyObject], PyDictData?) -> FunctionResult
+
+/// Wrapper dedicated to method that takes `args` and `kwargs` arguments.
+/// First argument in `args` will be treeated as `self`.
+internal struct ArgsKwargsMethodWrapper: FunctionWrapper {
+
+  internal let name: String
+  internal let fn: ArgsKwargsMethod
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
     guard args.any else {
@@ -114,10 +134,35 @@ internal struct ArgsKwargsFunctionWrapper: FunctionWrapper {
   }
 }
 
+// MARK: - Positional nullary
+
+internal typealias NullaryFunction = () -> FunctionResult
+
+/// Wrapper dedicated to method that takes no arguments.
+internal struct NullaryFunctionWrapper: FunctionWrapper {
+
+  internal let name: String
+  internal let fn: NullaryFunction
+
+  internal func call(args: [PyObject], kwargs: PyDictData?) -> FunctionResult {
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
+    }
+
+    if args.any {
+      let msg = "'\(self.name)' takes no arguments (\(args.count) given)"
+      return .typeError(msg)
+    }
+
+    return self.fn()
+  }
+}
+
 // MARK: - Positional unary
 
 internal typealias UnaryFunction = (PyObject) -> FunctionResult
 
+/// Wrapper dedicated to method that takes 1 arguments.
 internal struct UnaryFunctionWrapper: FunctionWrapper {
 
   internal let name: String
@@ -142,6 +187,7 @@ internal struct UnaryFunctionWrapper: FunctionWrapper {
 internal typealias BinaryFunction    = (PyObject, PyObject) -> FunctionResult
 internal typealias BinaryFunctionOpt = (PyObject, PyObject?) -> FunctionResult
 
+/// Wrapper dedicated to method that takes 2 arguments.
 internal struct BinaryFunctionWrapper: FunctionWrapper {
 
   internal let name: String
@@ -161,6 +207,7 @@ internal struct BinaryFunctionWrapper: FunctionWrapper {
   }
 }
 
+/// Wrapper dedicated to method that takes 2 arguments (1 of them is optional).
 internal struct BinaryFunctionOptWrapper: FunctionWrapper {
 
   internal let name: String
@@ -191,6 +238,7 @@ internal typealias TernaryFunctionOpt =
 internal typealias TernaryFunctionOptOpt =
   (PyObject, PyObject?, PyObject?) -> FunctionResult
 
+/// Wrapper dedicated to method that takes 3 arguments.
 internal struct TernaryFunctionWrapper: FunctionWrapper {
 
   internal let name: String
@@ -210,6 +258,7 @@ internal struct TernaryFunctionWrapper: FunctionWrapper {
   }
 }
 
+/// Wrapper dedicated to method that takes 3 arguments (1 of them is optional).
 internal struct TernaryFunctionOptWrapper: FunctionWrapper {
 
   internal let name: String
@@ -231,6 +280,7 @@ internal struct TernaryFunctionOptWrapper: FunctionWrapper {
   }
 }
 
+/// Wrapper dedicated to method that takes 3 arguments (2 of them are optional).
 internal struct TernaryFunctionOptOptWrapper: FunctionWrapper {
 
   internal let name: String
@@ -265,6 +315,7 @@ internal typealias QuartaryFunctionOptOpt =
 internal typealias QuartaryFunctionOptOptOpt =
   (PyObject, PyObject?, PyObject?, PyObject?) -> FunctionResult
 
+/// Wrapper dedicated to method that takes 4 arguments.
 internal struct QuartaryFunctionWrapper: FunctionWrapper {
 
   internal let name: String
@@ -284,6 +335,7 @@ internal struct QuartaryFunctionWrapper: FunctionWrapper {
   }
 }
 
+/// Wrapper dedicated to method that takes 4 arguments (1 of them is optional).
 internal struct QuartaryFunctionOptWrapper: FunctionWrapper {
 
   internal let name: String
@@ -305,6 +357,7 @@ internal struct QuartaryFunctionOptWrapper: FunctionWrapper {
   }
 }
 
+/// Wrapper dedicated to method that takes 4 arguments (2 of them are optional).
 internal struct QuartaryFunctionOptOptWrapper: FunctionWrapper {
 
   internal let name: String
@@ -328,6 +381,7 @@ internal struct QuartaryFunctionOptOptWrapper: FunctionWrapper {
   }
 }
 
+/// Wrapper dedicated to method that takes 4 arguments (3 of them are optional).
 internal struct QuartaryFunctionOptOptOptWrapper: FunctionWrapper {
 
   internal let name: String

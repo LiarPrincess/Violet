@@ -24,6 +24,12 @@ public class PyModule: PyObject {
     return self.builtins.strValue(nameObject)
   }
 
+  internal convenience init(_ context: PyContext, name: String, doc: String?) {
+    let n = context.builtins.newString(name)
+    let d = doc.map(context.builtins.newString(_:))
+    self.init(context, name: n, doc: d)
+  }
+
   internal init(_ context: PyContext, name: PyObject, doc: PyObject?) {
     super.init(type: context.builtins.types.module)
     self.attributes["__name__"] = name

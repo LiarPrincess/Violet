@@ -4,6 +4,7 @@ import Core
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
+// sourcery: pymodule = builtins
 public final class Builtins {
 
   internal static let doc = """
