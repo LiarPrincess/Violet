@@ -23,7 +23,7 @@ builtins_config = Config(
   'https://docs.python.org/3/library/stdtypes.html', # type_url_prefix
   'https://docs.python.org/3/library/functions.html', # property_url_prefix
   'https://docs.python.org/3/library/functions.html', # function_url_prefix
-  14 * 5 - 1, # expected_count
+  14 * 5 - 1, # expected_count (from the table at the top of the site)
 )
 
 sys_config = Config(
@@ -41,6 +41,38 @@ def in_current_directory(file):
   current_file = __file__
   current_dir = os.path.dirname(current_file)
   return os.path.join(current_dir, file)
+
+# HTML example:
+# <dl class="function">
+#   <dt id="abs">
+#     <code class="descname">abs</code>
+#     <span class="sig-paren">(</span>
+#     <em>x</em>
+#     <span class="sig-paren">)</span>
+#     <a class="headerlink" href="#abs" title="Permalink to this definition">¶</a>
+#   </dt>
+#   <dd>
+#     <p>
+#       Return the absolute value of a number. The argument may be an
+#       integer or a floating point number. If the argument is a complex number, its
+#       magnitude is returned. If
+#       <em>x</em>
+#       defines
+#       <a class="reference internal" href="../reference/datamodel.html#object.__abs__" title="object.__abs__">
+#         <code class="xref py py-meth docutils literal notranslate">
+#           <span class="pre">__abs__()</span>
+#         </code>
+#       </a>,
+#       <code class="docutils literal notranslate">
+#         <span class="pre">abs(x)</span>
+#       </code>
+#       returns
+#       <code class="docutils literal notranslate">
+#         <span class="pre">x.__abs__()</span>
+#       </code>.
+#     </p>
+#   </dd>
+# </dl>
 
 def print_module_functions(config: Config):
   count = 0
@@ -114,35 +146,3 @@ def print_module_functions(config: Config):
 if __name__ == '__main__':
   print_module_functions(builtins_config)
   print_module_functions(sys_config)
-
-# HTML example:
-# <dl class="function">
-#   <dt id="abs">
-#     <code class="descname">abs</code>
-#     <span class="sig-paren">(</span>
-#     <em>x</em>
-#     <span class="sig-paren">)</span>
-#     <a class="headerlink" href="#abs" title="Permalink to this definition">¶</a>
-#   </dt>
-#   <dd>
-#     <p>
-#       Return the absolute value of a number. The argument may be an
-#       integer or a floating point number. If the argument is a complex number, its
-#       magnitude is returned. If
-#       <em>x</em>
-#       defines
-#       <a class="reference internal" href="../reference/datamodel.html#object.__abs__" title="object.__abs__">
-#         <code class="xref py py-meth docutils literal notranslate">
-#           <span class="pre">__abs__()</span>
-#         </code>
-#       </a>,
-#       <code class="docutils literal notranslate">
-#         <span class="pre">abs(x)</span>
-#       </code>
-#       returns
-#       <code class="docutils literal notranslate">
-#         <span class="pre">x.__abs__()</span>
-#       </code>.
-#     </p>
-#   </dd>
-# </dl>
