@@ -73,7 +73,7 @@ extension Frame {
       return self.nameError(name)
     }
 
-    return.unimplemented
+    fatalError()
   }
 
   // MARK: - Attribute
@@ -198,7 +198,7 @@ extension Frame {
       return self.nameError(name)
     }
 
-    return.unimplemented
+    fatalError()
   }
 
   // MARK: - Fast
@@ -239,51 +239,6 @@ extension Frame {
     let mangled = self.code.varNames[index]
     let e = PyErrorEnum.unboundLocalError(variableName: mangled.value)
     return .builtinError(e)
-  }
-
-  // MARK: - Deref
-
-  /// Loads the cell contained in slot i of the cell and free variable storage.
-  /// Pushes a reference to the object the cell contains on the stack.
-  internal func loadDeref(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
-    if let value = self.freeVariables[name] {
-      self.stack.push(value)
-      return .ok
-    }
-
-    // format_exc_unbound(co, oparg);
-    fatalError()
-  }
-
-  /// Stores TOS into the cell contained in slot i of the cell
-  /// and free variable storage.
-  internal func storeDeref(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
-    let value = self.stack.pop()
-    self.freeVariables[name] = value
-    return.unimplemented
-  }
-
-  /// Empties the cell contained in slot i of the cell and free variable storage.
-  /// Used by the del statement.
-  internal func deleteDeref(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
-    let value = self.freeVariables.removeValue(forKey: name)
-
-    if value == nil {
-      // format_exc_unbound(co, oparg);
-      fatalError()
-    }
-
-    return .unimplemented
-  }
-
-  /// Much like `LoadDeref` but first checks the locals dictionary before
-  /// consulting the cell.
-  /// This is used for loading free variables in class bodies.
-  internal func loadClassDeref(nameIndex: Int) -> InstructionResult {
-    return .unimplemented
   }
 
   // MARK: - Helpers

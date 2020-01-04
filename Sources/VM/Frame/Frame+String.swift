@@ -3,6 +3,8 @@ import Objects
 
 extension Frame {
 
+  // MARK: - Format
+
   /// Used for implementing formatted literal strings (f-strings).
   internal func formatValue(conversion: StringConversion,
                             hasFormat: Bool) -> InstructionResult {
@@ -39,6 +41,8 @@ extension Frame {
       return self.builtins.ascii(value).map(self.builtins.newString)
     }
   }
+
+  // MARK: - Build
 
   /// Concatenates `count` strings from the stack
   /// and pushes the resulting string onto the stack.

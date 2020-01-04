@@ -2,13 +2,6 @@ import Bytecode
 
 extension Frame {
 
-  // MARK: - Pow
-
-  /// Implements in-place TOS = TOS1 ** TOS.
-  internal func inplacePower() -> InstructionResult {
-    return .unimplemented
-  }
-
   // MARK: - Mul
 
   /// Implements in-place TOS = TOS1 * TOS.

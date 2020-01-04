@@ -17,9 +17,6 @@ internal enum InstructionResult {
   case builtinError(PyErrorEnum)
   /// User raised error using `raise` instruction.
   case userError
-  // TODO: Remove `.unimplemented`
-  /// Unimplemented
-  case unimplemented
 }
 
 internal class Frame {

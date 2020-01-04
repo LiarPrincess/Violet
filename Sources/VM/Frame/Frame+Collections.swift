@@ -135,4 +135,26 @@ extension Frame {
       return .builtinError(e)
     }
   }
+
+  // MARK: - Slice
+
+  /// Pushes a slice object on the stack.
+  internal func buildSlice(arg: SliceArg) -> InstructionResult {
+    let step = self.getSliceStep(arg: arg)
+    let stop = self.stack.pop()
+    let start = self.stack.top
+
+    let slice = self.builtins.newSlice(start: start, stop: stop, step: step)
+    self.stack.top = slice
+    return .ok
+  }
+
+  private func getSliceStep(arg: SliceArg) -> PyObject? {
+    switch arg {
+    case .lowerUpper:
+      return nil
+    case .lowerUpperStep:
+      return self.stack.pop()
+    }
+  }
 }
