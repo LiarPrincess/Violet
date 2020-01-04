@@ -7,9 +7,12 @@
 /Scripts/unicode/CaseFolding.txt
 /Scripts/unicode/UnicodeData.txt
 
-# Python thingies
+# Python stuff
 /**/.pyc
 /**/__pycache__
+
+# C stuff
+/**/*.out
 
 # mac
 .DS_Store
