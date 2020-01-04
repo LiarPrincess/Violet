@@ -22,7 +22,7 @@ private struct PyTypeNewArgs {
 
 extension PyType {
 
-  private static let newArgumentsParser = ArgumentParser.createOrFatal(
+  private static let newArguments = ArgumentParser.createOrFatal(
     arguments: ["name", "bases", "dict"],
     format: "OOO:type.__new__"
   )
@@ -46,7 +46,7 @@ extension PyType {
     }
 
     // class type(name, bases, dict)
-    switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
+    switch newArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(bind.count == 3, "Invalid argument count returned from parser.")
 

@@ -609,7 +609,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // MARK: - Python init
 
-  private static let initArgumentsParser = ArgumentParser.createOrFatal(
+  private static let initArguments = ArgumentParser.createOrFatal(
     arguments: ["source", "encoding", "errors"],
     format: "|Oss:bytearray"
   )
@@ -618,7 +618,7 @@ public class PyByteArray: PyObject, PyBytesType {
   internal static func pyInit(zelf: PyByteArray,
                               args: [PyObject],
                               kwargs: PyDictData?) -> PyResult<PyNone> {
-    switch PyByteArray.initArgumentsParser.parse(args: args, kwargs: kwargs) {
+    switch PyByteArray.initArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(bind.count <= 3, "Invalid argument count returned from parser.")
       let arg0 = bind.count >= 1 ? bind[0] : nil

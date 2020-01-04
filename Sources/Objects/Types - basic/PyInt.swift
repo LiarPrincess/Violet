@@ -720,7 +720,7 @@ public class PyInt: PyObject {
 
   // MARK: - Python new
 
-  private static let newArgumentsParser = ArgumentParser.createOrFatal(
+  private static let newArguments = ArgumentParser.createOrFatal(
     arguments: ["", "base"],
     format: "|OO:int"
   )
@@ -729,7 +729,7 @@ public class PyInt: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
+    switch newArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(bind.count <= 2, "Invalid argument count returned from parser.")
       let arg0 = bind.count >= 1 ? bind[0] : nil

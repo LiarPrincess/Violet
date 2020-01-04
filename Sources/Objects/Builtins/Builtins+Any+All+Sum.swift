@@ -37,13 +37,13 @@ extension Builtins {
   // MARK: - Sum
 
   // CPython does this differently.
-  private static let sumArgumentsParser = ArgumentParser.createOrFatal(
+  private static let sumArguments = ArgumentParser.createOrFatal(
     arguments: ["", "start"],
     format: "O|O:sum"
   )
 
   public func sum(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
-    switch Builtins.sumArgumentsParser.parse(args: args, kwargs: kwargs) {
+    switch Builtins.sumArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(1 <= bind.count && bind.count <= 2,
              "Invalid argument count returned from parser.")

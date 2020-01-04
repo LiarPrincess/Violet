@@ -595,7 +595,7 @@ public class PyBytes: PyObject, PyBytesType {
 
   // MARK: - Python new
 
-  private static let newArgumentsParser = ArgumentParser.createOrFatal(
+  private static let newArguments = ArgumentParser.createOrFatal(
     arguments: ["source", "encoding", "errors"],
     format: "|Oss:bytes"
   )
@@ -604,7 +604,7 @@ public class PyBytes: PyObject, PyBytesType {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch newArgumentsParser.parse(args: args, kwargs: kwargs) {
+    switch newArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(bind.count <= 3, "Invalid argument count returned from parser.")
       let arg0 = bind.count >= 1 ? bind[0] : nil

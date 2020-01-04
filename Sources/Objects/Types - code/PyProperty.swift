@@ -160,7 +160,7 @@ public class PyProperty: PyObject {
 
   // MARK: - Python init
 
-  private static let initArgumentsParser = ArgumentParser.createOrFatal(
+  private static let initArguments = ArgumentParser.createOrFatal(
     arguments: ["fget", "fset", "fdel", "doc"],
     format: "|OOOO:property"
   )
@@ -169,7 +169,7 @@ public class PyProperty: PyObject {
   internal static func pyInit(zelf: PyProperty,
                               args: [PyObject],
                               kwargs: PyDictData?) -> PyResult<PyNone> {
-    switch PyProperty.initArgumentsParser.parse(args: args, kwargs: kwargs) {
+    switch PyProperty.initArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(bind.count <= 4, "Invalid argument count returned from parser.")
       zelf.getter = bind.count >= 1 ? PyProperty.nilIfNone(bind[0]) : nil

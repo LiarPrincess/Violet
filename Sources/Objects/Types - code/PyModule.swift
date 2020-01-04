@@ -139,7 +139,7 @@ public class PyModule: PyObject {
 
   // MARK: - Python init
 
-  private static let initArgumentsParser = ArgumentParser.createOrFatal(
+  private static let initArguments = ArgumentParser.createOrFatal(
     arguments: ["name", "doc"],
     format: "U|O:module"
   )
@@ -148,7 +148,7 @@ public class PyModule: PyObject {
   internal static func pyInit(zelf: PyModule,
                               args: [PyObject],
                               kwargs: PyDictData?) -> PyResult<PyNone> {
-    switch PyModule.initArgumentsParser.parse(args: args, kwargs: kwargs) {
+    switch PyModule.initArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(1 <= bind.count && bind.count <= 2, "Invalid argument count returned from parser.")
       let name = bind[0]
