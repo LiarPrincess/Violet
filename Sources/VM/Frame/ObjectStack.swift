@@ -1,6 +1,5 @@
 import Objects
 
-/// The main data frame of the stack machine.
 internal struct ObjectStack {
 
   private var elements = [PyObject]()
@@ -25,15 +24,23 @@ internal struct ObjectStack {
     set { self.set(4, to: newValue) }
   }
 
+  internal var isEmpty: Bool { return self.elements.isEmpty }
+
+  // MARK: - Peek
+
   internal func peek(_ n: Int) -> PyObject {
-    return self.elements[self.elements.count - n]
+    let count = self.elements.count
+    assert(count >= n, "Stack peek out of bounds (peek: \(n), count: \(count)).")
+    return self.elements[count - n]
   }
+
+  // MARK: - Set
 
   internal mutating func set(_ n: Int, to value: PyObject) {
-    self.elements[self.elements.count - n] = value
+    let count = self.elements.count
+    assert(count >= n, "Stack set out of bounds (set: \(n), count: \(count)).")
+    self.elements[count - n] = value
   }
-
-  internal var isEmpty: Bool { return self.elements.isEmpty }
 
   // MARK: - Push
 
@@ -44,17 +51,25 @@ internal struct ObjectStack {
   // MARK: - Pop
 
   internal mutating func pop() -> PyObject {
-    return self.elements.popLast()!
+    let last = self.elements.popLast()
+    assert(last != nil, "Stack pop from empty stack.")
+    return last! // swiftlint:disable:this force_unwrapping
   }
 
-  /// Pop `count` elements and then reverse, so that first pushed element
-  /// is in 1st position.
-  internal mutating func popElementsInPushOrder(count: Int) -> [PyObject] {
-    var elements = [PyObject]()
-    for _ in 0..<count {
-      elements.push(self.pop())
-    }
+  /// Pop `count` elements and then reverse,
+  /// so that first pushed element is in 1st position.
+  internal mutating func popElementsInPushOrder(count elementCount: Int) -> [PyObject] {
+    let count = self.elements.count
+    assert(
+      count >= elementCount,
+      "Stack popElements out of bounds (pop: \(elementCount), count: \(count))."
+    )
 
-    return elements.reversed()
+    let resultStart = count - elementCount
+    let result = self.elements[resultStart...]
+
+    self.elements.removeLast(elementCount)
+
+    return Array(result.reversed())
   }
 }
