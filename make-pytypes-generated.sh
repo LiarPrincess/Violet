@@ -16,6 +16,12 @@ sourcery \
   --templates $GENERATED/BuiltinTypesFill.stencil \
   --output $GENERATED/BuiltinTypesFill.swift
 
+# Modules
+sourcery \
+  --sources ./Sources/Objects \
+  --templates $GENERATED/ModuleFactory.stencil \
+  --output $GENERATED/ModuleFactory.swift
+
 # Casts
 sourcery \
   --sources ./Sources/Objects \
