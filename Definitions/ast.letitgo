@@ -1,9 +1,4 @@
 {-
-Quick tips:
-- Use Haskell syntax highlighting
-- Use block comments (the one starting with braces) for Elsa comments
-- Use single line comments (the one starting with --) for Swift documentation
-
 Most of the documentation was taken from:
 https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -}

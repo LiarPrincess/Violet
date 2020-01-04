@@ -1,20 +1,13 @@
 {-
-Quick tips:
-- Use Haskell syntax highlighting
-- Use block comments (the one starting with braces) for Elsa comments
-- Use single line comments (the one starting with --) for Swift documentation
-
 CPython bytecode is defined in: Lib -> opcode.py.
 Docs from: https://docs.python.org/3.7/library/dis.html
--}
 
-{-
 Almost all of the associated values are UInt8, but for documentation purposes
-we will alias it to be more precise (they will be changed back to UInt8 by Elsa).
+we will alias them to be more precise (they will be changed back to UInt8 by Elsa).
 
-`Count` is just a number, for example count of items in `BuildTuple`.
-`LabelIndex`, `NameIndex`, `ConstantIndex` are indices in constants, names, labels
-properties of `CodeObject`.
+'Count' is just a number, for example count of items in 'BuildTuple'.
+'LabelIndex', 'NameIndex', 'ConstantIndex' are indices in constants, names
+and labels properties of 'CodeObject'.
 -}
 @alias Count = UInt8
 @alias LabelIndex = UInt8
@@ -55,7 +48,7 @@ properties of `CodeObject`.
   We cannot just use 'Parser.ComparisonOpcode',
   because Swift thinks we are using Parser class instead of Parser as a module.
   We cannot use the type from Parser,
-  because Bytecode should not import Parser (and vide-versa).
+  because Bytecode should not import Parser (and vice-versa).
 -}
 
 @enum ComparisonOpcode =
