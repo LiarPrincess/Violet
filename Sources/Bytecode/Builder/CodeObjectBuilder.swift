@@ -216,11 +216,4 @@ public class CodeObjectBuilder {
 
     return UInt8(arg & ffMask)
   }
-
-  // MARK: - Unimplemented
-
-  // TODO: Remove 'unimplemented'
-  internal func unimplemented(fn: StaticString = #function) {
-    precondition(false, "Unimplemented: \(fn)")
-  }
 }

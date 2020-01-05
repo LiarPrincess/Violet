@@ -98,30 +98,4 @@ extension CodeObjectBuilder {
     let index = self.addVarNameWithExtendedArgIfNeeded(name: name)
     self.append(.deleteFast(nameIndex: index))
   }
-
-  // MARK: - Deref
-
-  /// Append a `loadDeref` instruction to this code object.
-  public func appendLoadDeref<S: ConstantString>(_ name: S) {
-    // self.append(.loadDeref)
-    self.unimplemented()
-  }
-
-  /// Append a `loadClassDeref` instruction to this code object.
-  public func appendLoadClassDeref<S: ConstantString>(_ name: S) {
-    // self.append(.loadClassDeref)
-    self.unimplemented()
-  }
-
-  /// Append a `storeDeref` instruction to this code object.
-  public func appendStoreDeref<S: ConstantString>(_ name: S) {
-    // self.append(.storeDeref)
-    self.unimplemented()
-  }
-
-  /// Append a `deleteDeref` instruction to this code object.
-  public func appendDeleteDeref<S: ConstantString>(_ name: S) {
-    // self.append(.deleteDeref)
-    self.unimplemented()
-  }
 }

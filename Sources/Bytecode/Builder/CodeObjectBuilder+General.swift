@@ -44,12 +44,6 @@ extension CodeObjectBuilder {
     self.append(.printExpr)
   }
 
-  /// Append an `extendedArg` instruction to this code object.
-  public func appendExtendedArg(value: UInt8) {
-    // self.append(.extendedArg)
-    self.unimplemented()
-  }
-
   /// Append a `setupAnnotations` instruction to this code object.
   public func appendSetupAnnotations() {
     self.append(.setupAnnotations)
@@ -58,27 +52,6 @@ extension CodeObjectBuilder {
   /// Append a `popBlock` instruction to this code object.
   public func appendPopBlock() {
     self.append(.popBlock)
-  }
-
-  /// Append a `loadClosure` instruction to this code object.
-  public func appendLoadClosure(_ variable: ClosureVariable) {
-    // self.append(.loadClosure)
-    //    if let i = codeObject.cellVars.firstIndex(of: name) {
-    //      index = .cell(name)
-    //    } else {
-    //      assert(false)
-    //    }
-    //    switch index {
-    //    case let .cell(i):
-    //      // index = i
-    //      break
-    //    case let .free(i):
-    //      let offset = self.cellVars.count
-    //      // index = offset + i
-    //      break
-    //    }
-
-    self.unimplemented()
   }
 
   /// Append a `buildSlice` instruction to this code object.

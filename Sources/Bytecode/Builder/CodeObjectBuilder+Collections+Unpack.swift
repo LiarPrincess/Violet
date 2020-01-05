@@ -34,26 +34,6 @@ extension CodeObjectBuilder {
     self.append(.buildConstKeyMap(elementCount: arg))
   }
 
-  // MARK: - Add
-
-  /// Append a `setAdd` instruction to this code object.
-  public func appendSetAdd(value: Any) {
-    // self.append(.setAdd)
-    self.unimplemented()
-  }
-
-  /// Append a `listAppend` instruction to this code object.
-  public func appendListAppend(value: Any) {
-    // self.append(.listAppend)
-    self.unimplemented()
-  }
-
-  /// Append a `mapAdd` instruction to this code object.
-  public func appendMapAdd(value: Any) {
-    // self.append(.mapAdd)
-    self.unimplemented()
-  }
-
   // MARK: - Tuple unpack
 
   /// Append a `buildTupleUnpack` instruction to this code object.
@@ -104,22 +84,5 @@ extension CodeObjectBuilder {
   public func appendUnpackSequence(elementCount: Int) {
     let arg = self.appendExtendedArgIfNeeded(elementCount)
     self.append(.unpackSequence(elementCount: arg))
-  }
-
-  /// Implements assignment with a starred target.
-  ///
-  /// Unpacks an iterable in TOS into individual values, where the total number
-  /// of values can be smaller than the number of items in the iterable:
-  /// one of the new values will be a list of all leftover items.
-  ///
-  /// The low byte of counts is the number of values before the list value,
-  /// the high byte of counts the number of values after it.
-  /// The resulting values are put onto the stack right-to-left.
-  public func appendUnpackEx(countBefore: Int, countAfter: Int) {
-    precondition(countBefore <= 0xff)
-    precondition(countAfter  <= 0xffff_ff)
-
-    //    let rawValue = countAfter << 8 | countBefore
-    self.unimplemented()
   }
 }
