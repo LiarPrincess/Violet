@@ -22,7 +22,7 @@ private struct PyTypeNewArgs {
 
 extension PyType {
 
-  private static let newArguments = ArgumentParser.createOrFatal(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["name", "bases", "dict"],
     format: "OOO:type.__new__"
   )
@@ -297,7 +297,7 @@ extension PyType {
     }
 
     // Remaining case: !isTypeHeap && isBaseHeap
-    fatalError("Builtin type derieved from user type.")
+    trap("Builtin type derieved from user type.")
   }
 
   // MARK: - Python init

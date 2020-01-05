@@ -37,7 +37,7 @@ extension Builtins {
   // MARK: - Sum
 
   // CPython does this differently.
-  private static let sumArguments = ArgumentParser.createOrFatal(
+  private static let sumArguments = ArgumentParser.createOrTrap(
     arguments: ["", "start"],
     format: "O|O:sum"
   )

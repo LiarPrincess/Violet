@@ -215,7 +215,7 @@ public final class Sys {
       return c
     }
 
-    fatalError("Trying to use 'sys' module after its context was deallocated.")
+    trap("Trying to use 'sys' module after its context was deallocated.")
   }
 
   internal var builtins: Builtins {

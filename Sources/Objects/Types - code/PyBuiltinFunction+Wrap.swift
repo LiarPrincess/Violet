@@ -72,7 +72,7 @@ extension PyBuiltinFunction {
       doc: doc,
       fn: ArgsKwargsFunctionWrapper(name: name) { [weak context] args, kwargs in
         guard let c = context else {
-          fatalError("Trying to call '\(name)' after its context was deallocated.")
+          trap("Trying to call '\(name)' after its context was deallocated.")
         }
         return fn(args, kwargs).toFunctionResult(in: c)
       }
@@ -110,7 +110,7 @@ extension PyBuiltinFunction {
       doc: doc,
       fn: NullaryFunctionWrapper(name: name) { [weak context] in
         guard let c = context else {
-          fatalError("Trying to call '\(name)' after its context was deallocated.")
+          trap("Trying to call '\(name)' after its context was deallocated.")
         }
         return fn().toFunctionResult(in: c)
       }

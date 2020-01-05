@@ -18,7 +18,7 @@ extension Builtins {
 
   // MARK: - Open
 
-  private static let openArguments = ArgumentParser.createOrFatal(
+  private static let openArguments = ArgumentParser.createOrTrap(
     arguments: [
       "file", "mode", "buffering",
       "encoding", "errors", "newline",

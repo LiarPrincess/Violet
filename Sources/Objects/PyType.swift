@@ -101,7 +101,7 @@ public class PyType: PyObject, CustomStringConvertible {
       return c
     }
 
-    fatalError("Trying to use '\(self.name)' after its context was deallocated.")
+    trap("Trying to use '\(self.name)' after its context was deallocated.")
   }
 
   internal func setFlag(_ flag: PyTypeFlags) {

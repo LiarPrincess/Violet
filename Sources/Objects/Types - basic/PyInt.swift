@@ -720,7 +720,7 @@ public class PyInt: PyObject {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser.createOrFatal(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["", "base"],
     format: "|OO:int"
   )

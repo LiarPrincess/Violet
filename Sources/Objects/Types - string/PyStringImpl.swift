@@ -162,7 +162,7 @@ extension PyStringImpl {
     case (_, nil): return .greater // Finished other, self has some remaining
     default:
       // Not possible? See `while` condition.
-      fatalError("Error when comparing '\(self)' and '\(other)'")
+      trap("Error when comparing '\(self)' and '\(other)'")
     }
   }
 

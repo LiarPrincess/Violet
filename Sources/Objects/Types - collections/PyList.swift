@@ -287,7 +287,7 @@ public class PyList: PyObject, PySequenceType {
     Stable sort *IN PLACE*.
     """
 
-  private static let sortArguments = ArgumentParser.createOrFatal(
+  private static let sortArguments = ArgumentParser.createOrTrap(
     arguments: ["key", "reverse"],
     format: "|$OO:sort"
   )
@@ -350,7 +350,7 @@ public class PyList: PyObject, PySequenceType {
     } catch let SortError.builtin(e) {
       return .error(e)
     } catch {
-      fatalError("Unexpected error in PyList.sort: \(error)")
+      trap("Unexpected error type in PyList.sort: \(error)")
     }
   }
 

@@ -101,14 +101,14 @@ internal struct ArgumentParser {
     )
   }
 
-  /// Create parser using `ArgumentParser.create` or `fatalError`.
-  internal static func createOrFatal(arguments: [String],
-                                     format: String) -> ArgumentParser {
+  /// Create parser using `ArgumentParser.create` or trap.
+  internal static func createOrTrap(arguments: [String],
+                                    format: String) -> ArgumentParser {
     switch ArgumentParser.create(arguments: arguments, format: format) {
     case let .value(r):
       return r
     case let .error(e):
-      fatalError(String(describing: e))
+      trap(String(describing: e))
     }
   }
 

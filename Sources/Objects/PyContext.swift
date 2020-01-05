@@ -45,7 +45,7 @@ public class PyContext {
   private weak var _delegate: PyContextDelegate?
   internal var delegate: PyContextDelegate {
     if let d = self._delegate { return d }
-    fatalError("Python context delegate was deallocated!")
+    trap("Python context delegate was deallocated!")
   }
 
   public init(config: PyContextConfig, delegate: PyContextDelegate) {

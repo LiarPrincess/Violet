@@ -427,7 +427,7 @@ public class PyComplex: PyObject {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser.createOrFatal(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["real", "imag"],
     format: "|OO:complex"
   )

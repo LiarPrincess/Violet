@@ -31,7 +31,7 @@ public final class Builtins {
       return c
     }
 
-    fatalError("Trying to use 'builtins' module after its context was deallocated.")
+    trap("Trying to use 'builtins' module after its context was deallocated.")
   }
 
   internal var sys: Sys {

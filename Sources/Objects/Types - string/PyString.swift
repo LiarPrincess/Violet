@@ -675,7 +675,7 @@ public class PyString: PyObject {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser.createOrFatal(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["object", "encoding", "errors"],
     format: "|Oss:str"
   )
@@ -709,7 +709,7 @@ public class PyString: PyObject {
 
     // TODO: [str.__new__] `encoding` and `error` args (also in bytes and bytearray)
     guard encoding == nil && errors == nil else {
-      fatalError("Violet currently does not support 'encoding' and 'errors' parameters")
+      trap("Violet currently does not support 'encoding' and 'errors' parameters")
     }
 
     let builtins = type.builtins

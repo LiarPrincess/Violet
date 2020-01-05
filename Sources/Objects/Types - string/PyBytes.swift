@@ -595,7 +595,7 @@ public class PyBytes: PyObject, PyBytesType {
 
   // MARK: - Python new
 
-  private static let newArguments = ArgumentParser.createOrFatal(
+  private static let newArguments = ArgumentParser.createOrTrap(
     arguments: ["source", "encoding", "errors"],
     format: "|Oss:bytes"
   )

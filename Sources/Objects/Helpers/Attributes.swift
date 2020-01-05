@@ -81,13 +81,10 @@ public final class Attributes {
     }
   }
 
-  // swiftlint:disable unavailable_function
   /// Errors can happen when the value is not-hashable.
   /// Strings are always hashable, so we don't expect errors.
   private func errorNotHandled(operation: String, error: PyErrorEnum) -> Never {
-    // swiftlint:enable unavailable_function
-    let msg = "Attribute dictionary '\(operation)' operation returned an error: \(error)"
-    fatalError(msg)
+    trap("Attribute dictionary '\(operation)' operation returned an error: \(error)")
   }
 
   // MARK: - Clear

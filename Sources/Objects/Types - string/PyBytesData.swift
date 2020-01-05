@@ -290,7 +290,7 @@ internal struct PyBytesData: PyStringImpl {
     let msg = "Violet error: Sometimes we convert 'bytes' to 'string' " +
       "(mostly when we really need string, for example to check for whitespaces). " +
       "Normally it works, but this time conversion to string failed."
-    fatalError(msg)
+    trap(msg)
   }
 
   private func encode(_ string: String) -> Data {
@@ -301,7 +301,7 @@ internal struct PyBytesData: PyStringImpl {
     let msg = "Violet error: Sometimes we convert 'bytes' to 'string' and back " +
       "(mostly when we really need string, for example to check for whitespaces). " +
       "Normally it works, but this time conversion back to bytes failed."
-    fatalError(msg)
+    trap(msg)
   }
 
   // MARK: - New
@@ -325,7 +325,7 @@ internal struct PyBytesData: PyStringImpl {
     }
 
     guard encoding == nil && errors == nil else {
-      fatalError("Violet currently does not support 'encoding' and 'errors' parameters")
+      trap("Violet currently does not support 'encoding' and 'errors' parameters")
     }
 
     if let bytes = object as? PyBytesType {

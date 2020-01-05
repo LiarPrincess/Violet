@@ -138,7 +138,7 @@ internal struct Hasher {
 
     guard let hash = hashOrNil else {
       let method = "utf8.withContiguousStorageIfAvailable"
-      fatalError("Error when hashing '\(value)', unable to obtain '\(method)'")
+      trap("Error when hashing '\(value)', unable to obtain '\(method)'")
     }
 
     return self.toPyHash(hash)
@@ -155,7 +155,7 @@ internal struct Hasher {
 
     guard let hash = hashOrNil else {
       let method = "Data.withContiguousStorageIfAvailable"
-      fatalError("Error when hashing '\(value)', unable to obtain '\(method)'")
+      trap("Error when hashing '\(value)', unable to obtain '\(method)'")
     }
 
     return self.toPyHash(hash)

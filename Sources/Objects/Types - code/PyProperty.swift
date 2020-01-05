@@ -160,7 +160,7 @@ public class PyProperty: PyObject {
 
   // MARK: - Python init
 
-  private static let initArguments = ArgumentParser.createOrFatal(
+  private static let initArguments = ArgumentParser.createOrTrap(
     arguments: ["fget", "fset", "fdel", "doc"],
     format: "|OOOO:property"
   )

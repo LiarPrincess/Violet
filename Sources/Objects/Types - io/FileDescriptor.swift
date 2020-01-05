@@ -188,7 +188,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
     do {
       return try self._readDataOfLength(Int.max, untilEOF: false)
     } catch {
-      fatalError("\(error)")
+      trap("\(error)")
     }
   }
 
