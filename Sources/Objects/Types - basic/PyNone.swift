@@ -4,7 +4,7 @@ import Core
 // Objects -> object.c
 // https://docs.python.org/3.7/c-api/none.html
 
-// TODO: Do we need custom '__getattribute__' as RustPython?
+// TODO: Do we need custom '__getattribute__' as RustPython? (see descriptors)
 
 // sourcery: pytype = NoneType, default
 /// The Python None object, denoting lack of value. This object has no methods.

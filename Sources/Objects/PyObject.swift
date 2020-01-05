@@ -29,6 +29,7 @@ public class PyObject {
 
   // swiftlint:disable:next implicitly_unwrapped_optional
   private var _type: PyType!
+  /// Also known as `klass`, but we are using CPython naming convention.
   internal var type: PyType {
     return self._type
   }

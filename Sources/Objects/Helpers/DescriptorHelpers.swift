@@ -1,9 +1,9 @@
 // Run this:
 // >>> class MyProp:
-// ...     def __init__(self, x): pass
-// ...     def __get__(self, x, t):
-// ...             print('x:', x)
-// ...             print('t:', t)
+// ...     def __init__(self, method): pass
+// ...     def __get__(self, instance, klass):
+// ...             print('instance:', instance)
+// ...             print('klass:', klass)
 // ...             return 7
 
 // >>> class C:
@@ -13,13 +13,13 @@
 
 // >>> c = C(4)
 // >>> c.x          <-- will call '__get__' on 'MyProp'
-// x: <__main__.C object at 0x1022f33c8>
-// t: <class '__main__.C'>
+// instance: <__main__.C object at 0x1022f33c8>
+// klass: <class '__main__.C'>
 // 7
 
 // >>> C.x          <-- will call '__get__' on 'MyProp'
-// x: None
-// t: <class '__main__.C'>
+// instance: None
+// klass: <class '__main__.C'>
 // 7
 
 // MARK: - Get
