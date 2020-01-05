@@ -173,6 +173,25 @@ public class FileDescriptor: NSObject, FileDescriptorType {
     return self._fd
   }
 
+  override public var description: String {
+    // We could also switch on value of 'self._fd' (0, 1 or 2),
+    // but we want to differentiate user-created stdio and ours.
+
+    if self === FileDescriptor.standardInput {
+      return "FileDescriptor.standardInput"
+    }
+
+    if self === FileDescriptor.standardOutput {
+      return "FileDescriptor.standardOutput"
+    }
+
+    if self === FileDescriptor.standardError {
+      return "FileDescriptor.standardError"
+    }
+
+    return "FileDescriptor(raw: \(self._fd))"
+  }
+
   /// Foundation: `func _checkFileHandle()`
   private func _isValidOrFatal() {
     precondition(self._fd >= 0, "Bad file descriptor")
