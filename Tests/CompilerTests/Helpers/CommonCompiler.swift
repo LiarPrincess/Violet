@@ -56,7 +56,7 @@ extension CommonCompiler {
                        line: UInt         = #line) -> CodeObject? {
     do {
       let options = CompilerOptions(optimizationLevel: optimizationLevel)
-      let compiler = try Compiler(ast: ast, options: options)
+      let compiler = try Compiler(ast: ast, filename: "file", options: options)
       return try compiler.run()
     } catch {
       XCTAssert(false, "\(error)", file: file, line: line)
