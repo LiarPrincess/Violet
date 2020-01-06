@@ -2,9 +2,9 @@ import XCTest
 @testable import Rapunzel
 
 private func XCTAssertLayout(_ doc: Doc,
-                              _ s:  String,
-                              file: StaticString = #file,
-                              line: UInt         = #line) {
+                             _ s:  String,
+                             file: StaticString = #file,
+                             line: UInt         = #line) {
   let layout = doc.layout()
   XCTAssertEqual(layout, s, file: file, line: line)
 }
@@ -15,21 +15,56 @@ class Tests: XCTestCase {
   private let flynn = Doc.text("Flynn")
   private let pascal = Doc.text("Pascal")
 
+  // MARK: - Ctors
+
   func test_ctors() {
     XCTAssertLayout(.concat(rapunzel, flynn), "RapunzelFlynn")
     XCTAssertLayout(.nest(2, rapunzel), "  Rapunzel")
     XCTAssertLayout(.text("Rapunzel"), "Rapunzel")
     XCTAssertLayout(.line, "\n")
+
+    let block = Doc.block(title: "Tangled", indent: 2, lines: [rapunzel, flynn])
+    XCTAssertLayout(block, """
+      Tangled
+        Rapunzel
+        Flynn
+      """)
   }
 
-  func test_combine_recursive_nested() {
+  // MARK: - Combine
+
+  func test_recursive_nested() {
     let horizontal = Doc.nest(2, rapunzel) <> Doc.nest(3, flynn)
     XCTAssertLayout(horizontal, "  Rapunzel   Flynn")
 
     let vertical = rapunzel <|>
                     Doc.nest(2, flynn <|> // notice not closed paren
                       Doc.nest(3, pascal))
-    XCTAssertLayout(vertical, "Rapunzel\n  Flynn\n     Pascal")
+    XCTAssertLayout(vertical, """
+      Rapunzel
+        Flynn
+           Pascal
+      """)
+  }
+
+  func test_recursive_blocks() {
+    let thug1 = Doc.text("Hook Hand")
+    let thug2 = Doc.text("Vladimir")
+
+    let thugs = Doc.block(title: "Pub Thugs", indent: 2, lines: [thug1, thug2])
+    let doc = Doc.block(title: "Tangled",
+                        indent: 2,
+                        lines: [rapunzel, flynn, thugs, pascal])
+
+    XCTAssertLayout(doc, """
+      Tangled
+        Rapunzel
+        Flynn
+        Pub Thugs
+          Hook Hand
+          Vladimir
+        Pascal
+      """)
   }
 
   // MARK: - Common
@@ -87,6 +122,7 @@ class Tests: XCTestCase {
       """)
   }
 
+  // swiftlint:disable:next function_body_length
   func test_lyrics_song() {
     let lyrics = Lyrics.iSeeTheLight
     XCTAssertLayout(lyrics.doc, """

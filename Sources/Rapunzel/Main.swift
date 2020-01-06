@@ -23,6 +23,16 @@ public indirect enum Doc: RapunzelConvertible {
   case text(String)
   /// '\n'
   case line
+  /// Block with a title and some lines.
+  /// Use it to produce:
+  /// ```
+  /// title
+  ///   line0
+  ///   line1
+  /// ```
+  /// It can be produced using other elements,
+  /// but since it is very common structure we will add a special support.
+  case block(title: String, indent: Int, lines: [Doc])
 
   public var doc: Doc {
     return self
@@ -46,20 +56,36 @@ public indirect enum Doc: RapunzelConvertible {
 
     case .line:
       return "\n" + String(repeating: " ", count: indent)
+
+    case let .block(title: title, indent: i, lines: lines):
+      let totalIndent = indent + i
+      let lineIndent = String(repeating: " ", count: totalIndent)
+
+      var result = title + "\n"
+      for (index, line) in lines.enumerated() {
+        result += lineIndent + line.layout(indent: totalIndent)
+
+        let isLast = index == lines.count - 1
+        if !isLast {
+          result += "\n"
+        }
+      }
+
+      return result
     }
   }
 
   // MARK: - Operators
 
-  public static func <>(lhs: Doc, rhs: Doc) -> Doc {
+  public static func <> (lhs: Doc, rhs: Doc) -> Doc {
     return .concat(lhs, rhs)
   }
 
-  public static func <+>(lhs: Doc, rhs: Doc) -> Doc {
+  public static func <+> (lhs: Doc, rhs: Doc) -> Doc {
     return lhs <> .space <> rhs
   }
 
-  public static func <|>(lhs: Doc, rhs: Doc) -> Doc {
+  public static func <|> (lhs: Doc, rhs: Doc) -> Doc {
     return lhs <> .line <> rhs
   }
 

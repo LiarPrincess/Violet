@@ -10,8 +10,8 @@ private func join<S: Sequence>(_ arr: S, _ separator: String = " ") -> String {
   return arr.map { describe($0) }.joined(separator: separator)
 }
 
-private func describe<T>(_ obj: T) -> String {
-  return String(describing: obj)
+private func describe<T>(_ value: T) -> String {
+  return String(describing: value)
 }
 
 private func prefix(_ s: String, length: Int = 5) -> String {

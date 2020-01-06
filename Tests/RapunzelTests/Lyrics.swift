@@ -17,9 +17,8 @@ extension Lyrics: RapunzelConvertible {
 
 extension Part: RapunzelConvertible {
   var doc: Doc {
-    let character = Doc.text(self.character)
-    let lines = self.lines.stack()
-    return character <|> Doc.nest(2, lines)
+    let lines = self.lines.map(Doc.text)
+    return Doc.block(title: self.character, indent: 2, lines: lines)
   }
 }
 
