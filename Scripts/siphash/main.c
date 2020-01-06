@@ -17,6 +17,7 @@ uint64_t siphash_str(const char* str) {
 }
 
 const char *lyrics[] = {
+    "[RAPUNZEL]",
     "All those days watching from the windows",
     "All those years outside looking in",
     "All that time never even knowing",

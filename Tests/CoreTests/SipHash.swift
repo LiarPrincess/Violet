@@ -37,6 +37,7 @@ class SipHash: XCTestCase {
   // Lyrics taken from:
   // https://genius.com/Walt-disney-records-i-see-the-light-lyrics
   func test_i_see_the_light() {
+    XCTAssertHash("[RAPUNZEL]", 17128426921564907453)
     XCTAssertHash("All those days watching from the windows", 12084556205844325756)
     XCTAssertHash("All those years outside looking in", 7204810991338202327)
     XCTAssertHash("All that time never even knowing", 14138769137698236062)
