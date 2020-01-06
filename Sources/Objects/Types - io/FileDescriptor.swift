@@ -42,7 +42,9 @@
 //
 // === Result ===
 // We went with option '3'.
-// We also simplified it a bit (e.g. no queues/barriers, because we are lazy).
+// We also simplified it a bit (because we are lazy):
+// - we are no longer NSObject
+// - no queues/barriers
 
 import Foundation.NSData
 
@@ -99,7 +101,7 @@ private func _CFOpenFileWithMode(_ path: UnsafePointer<CChar>,
 
 // MARK: - FileDescriptor
 
-public class FileDescriptor: NSObject, FileDescriptorType {
+public class FileDescriptor: CustomStringConvertible, FileDescriptorType {
 
   public enum ErrorType {
     case fileReadTooLarge
@@ -173,7 +175,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
     return self._fd
   }
 
-  override public var description: String {
+  public var description: String {
     // We could also switch on value of 'self._fd' (0, 1 or 2),
     // but we want to differentiate user-created stdio and ours.
 
@@ -341,7 +343,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
   }
 
   public func read(upToCount count: Int) throws -> Data {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else {
+    guard self !== FileDescriptor._nulldeviceFileDescriptor else {
       return Data()
     }
 
@@ -351,7 +353,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
   // MARK: - Write
 
   public func write<T: DataProtocol>(contentsOf data: T) throws {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else { return }
+    guard self !== FileDescriptor._nulldeviceFileDescriptor else { return }
 
     guard self._isValid else { throw Error.fileWriteUnknown }
 
@@ -368,7 +370,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
   // MARK: - Offset
 
   public func offset() throws -> UInt64 {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else { return 0 }
+    guard self !== FileDescriptor._nulldeviceFileDescriptor else { return 0 }
 
     guard self._isValid else { throw Error.fileReadUnknown }
 
@@ -381,7 +383,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
 
   @discardableResult
   public func seekToEnd() throws -> UInt64 {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else { return 0 }
+    guard self !== FileDescriptor._nulldeviceFileDescriptor else { return 0 }
 
     guard self._isValid else { throw Error.fileReadUnknown }
 
@@ -391,7 +393,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
   }
 
   public func seek(toOffset offset: UInt64) throws {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else { return }
+    guard self !== FileDescriptor._nulldeviceFileDescriptor else { return }
 
     guard self._isValid else { throw Error.fileReadUnknown }
 
@@ -401,7 +403,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
   }
 
   public func truncate(atOffset offset: UInt64) throws {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else { return }
+    guard self !== FileDescriptor._nulldeviceFileDescriptor else { return }
 
     guard self._isValid else { throw Error.fileWriteUnknown }
 
@@ -417,7 +419,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
   // MARK: - Synchronize
 
   public func synchronize() throws {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else { return }
+    guard self !== FileDescriptor._nulldeviceFileDescriptor else { return }
 
     guard fsync(self._fd) >= 0 else {
       throw _NSErrorWithErrno(errno, reading: false)
@@ -431,7 +433,7 @@ public class FileDescriptor: NSObject, FileDescriptorType {
   }
 
   private func _immediatelyClose() throws {
-    guard self != FileDescriptor._nulldeviceFileDescriptor else { return }
+    guard self !== FileDescriptor._nulldeviceFileDescriptor else { return }
     guard self._isValid else { return }
 
     guard _close(self._fd) >= 0 else {
