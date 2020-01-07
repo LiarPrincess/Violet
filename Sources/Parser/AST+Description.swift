@@ -4,6 +4,9 @@ import Lexer
 
 // swiftlint:disable file_length
 
+// Note that you should probably use 'Rapunzel' ('dump()' method)
+// instead of 'description'.
+
 // MARK: - Helpers
 
 private func join<S: Sequence>(_ arr: S, _ separator: String = " ") -> String {
@@ -31,6 +34,8 @@ extension Statement: CustomStringConvertible, CustomDebugStringConvertible {
 }
 
 extension StatementKind: CustomStringConvertible {
+
+  // swiftlint:disable:next function_parameter_count
   private func defDescription(header: String,
                               name: String,
                               args: Arguments,

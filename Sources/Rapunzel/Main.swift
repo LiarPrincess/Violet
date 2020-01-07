@@ -5,6 +5,12 @@ public protocol RapunzelConvertible {
   var doc: Doc { get }
 }
 
+extension RapunzelConvertible {
+  public func dump() -> String {
+    return self.doc.layout()
+  }
+}
+
 // MARK: - Doc
 
 infix operator <>: MultiplicationPrecedence
