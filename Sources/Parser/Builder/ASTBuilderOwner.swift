@@ -1,5 +1,9 @@
 import Core
 
+// Why do we have 'AnyObject' requirement?
+// Because:
+// https://www.bignerdranch.com/blog/protocol-oriented-problems-and-the-immutable-self-error/
+
 /// Simplify working with `ASTBuilders` properties
 /// (so that we don't have to use `self.builder` prefix).
 public protocol ASTBuilderOwner: AnyObject {
