@@ -412,15 +412,4 @@ public final class Compiler {
   internal func error(_ kind: CompilerErrorKind) -> CompilerError {
     return CompilerError(kind, location: self.appendLocation)
   }
-
-  // MARK: - Not implemented
-  // TODO: Implement this
-
-  internal func notImplementedAsync() -> Error {
-    return NotImplemented.pep401
-  }
-
-  internal func notImplementedComprehension() -> Error {
-    return NotImplemented.pep401
-  }
 }

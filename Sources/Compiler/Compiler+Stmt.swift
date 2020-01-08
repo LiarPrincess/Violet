@@ -32,8 +32,13 @@ extension Compiler {
                                 decorators: decorators,
                                 returns: returns,
                                 statement: stmt)
-    case .asyncFunctionDef:
-      throw self.notImplementedAsync()
+    case let .asyncFunctionDef(name, args, body, decorators, returns):
+      try self.visitAsyncFunctionDef(name: name,
+                                     args: args,
+                                     body: body,
+                                     decorators: decorators,
+                                     returns: returns,
+                                     statement: stmt)
 
     case let .classDef(name, bases, keywords, body, decorators):
       try self.visitClassDef(name:  name,
@@ -58,8 +63,11 @@ extension Compiler {
                         iter:   iter,
                         body:   body,
                         orElse: orElse)
-    case .asyncFor:
-      throw self.notImplementedAsync()
+    case let .asyncFor(target, iter, body, orElse):
+      try self.visitAsyncFor(target: target,
+                             iter:   iter,
+                             body:   body,
+                             orElse: orElse)
 
     case let .while(test, body, orElse):
       try self.visitWhile(test: test, body: body, orElse: orElse)
@@ -69,8 +77,8 @@ extension Compiler {
 
     case let .with(items, body):
       try self.visitWith(items: items, body: body)
-    case .asyncWith:
-      throw self.notImplementedAsync()
+    case let .asyncWith(items, body):
+      try self.visitAsyncWith(items: items, body: body)
 
     case let .raise(exception, cause):
       try self.visitRaise(exception: exception, cause: cause)
