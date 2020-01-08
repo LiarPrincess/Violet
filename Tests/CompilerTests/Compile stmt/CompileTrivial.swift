@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileTrivial: XCTestCase, CommonCompiler {
+class CompileTrivial: CompileTestCase {
 
   func test_empty() {
     let expected: [EmittedInstruction] = [

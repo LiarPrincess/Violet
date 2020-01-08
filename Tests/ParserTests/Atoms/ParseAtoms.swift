@@ -5,6 +5,8 @@ import Lexer
 
 class ParseAtoms: XCTestCase, Common, ExpressionMatcher, StringMatcher {
 
+  // MARK: - None
+
   func test_none() {
     var parser = self.createExprParser(
       self.token(.none, start: loc0, end: loc1)
@@ -17,6 +19,8 @@ class ParseAtoms: XCTestCase, Common, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(expr.end,   loc1)
     }
   }
+
+  // MARK: - Bool
 
   func test_true() {
     var parser = self.createExprParser(
@@ -43,6 +47,8 @@ class ParseAtoms: XCTestCase, Common, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(expr.end,   loc1)
     }
   }
+
+  // MARK: - Numbers
 
   func test_int() {
     let value = BigInt(42)
@@ -85,6 +91,8 @@ class ParseAtoms: XCTestCase, Common, ExpressionMatcher, StringMatcher {
     }
   }
 
+  // MARK: - Ellipsis
+
   func test_ellipsis() {
     var parser = self.createExprParser(
       self.token(.ellipsis, start: loc0, end: loc1)
@@ -97,6 +105,8 @@ class ParseAtoms: XCTestCase, Common, ExpressionMatcher, StringMatcher {
       XCTAssertEqual(expr.end,   loc1)
     }
   }
+
+  // MARK: - Await
 
   func test_await() {
     var parser = self.createExprParser(

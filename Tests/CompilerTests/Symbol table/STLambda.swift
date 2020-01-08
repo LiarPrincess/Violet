@@ -6,7 +6,7 @@ import Parser
 // swiftlint:disable function_body_length
 
 /// Use 'Tools/dump_symtable.py' for reference.
-class STLambda: XCTestCase, CommonSymbolTable {
+class STLambda: SymbolTableTestCase {
 
   /// lambda elsa, anna: elsa
   ///

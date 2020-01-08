@@ -6,6 +6,8 @@ import Lexer
 //  ast_for_import_stmt(struct compiling *c, const node *n)
 //  alias_for_import_name(struct compiling *c, const node *n, int store)
 
+// swiftlint:disable file_length
+
 extension Parser {
 
   /// ```c
@@ -76,7 +78,10 @@ extension Parser {
       end = token.end
     }
 
-    return Alias(name: base.name, asName: asName, start: base.start, end: end)
+    return self.alias(name: base.name,
+                      asName: asName,
+                      start: base.start,
+                      end: end)
   }
 
   /// `dotted_as_names: dotted_as_name (',' dotted_as_name)*`
@@ -291,6 +296,9 @@ extension Parser {
       try self.checkForbiddenName(name, location: start)
     }
 
-    return Alias(name: name, asName: asName, start: start, end: end)
+    return self.alias(name: name,
+                      asName: asName,
+                      start: start,
+                      end: end)
   }
 }

@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileAttribute: XCTestCase, CommonCompiler {
+class CompileAttribute: CompileTestCase {
 
   /// paris.notre_dame
   ///

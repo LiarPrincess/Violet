@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileFor: XCTestCase, CommonCompiler {
+class CompileFor: CompileTestCase {
 
   /// for person in castle: becomeItem
   ///

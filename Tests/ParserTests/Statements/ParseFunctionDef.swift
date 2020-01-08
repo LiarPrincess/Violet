@@ -6,7 +6,9 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
+class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
+
+  internal var builder = ASTBuilder()
 
   // MARK: - No arguments
 
@@ -104,7 +106,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
+      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
       XCTAssertArguments(d.args.args, [argA])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .none)
@@ -144,8 +146,8 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let annA = Expression(.identifier("Vegetable"), start: loc10, end: loc11)
-      let argA = Arg("zucchini", annotation: annA, start: loc6, end: loc11)
+      let annA = self.expression(.identifier("Vegetable"), start: loc10, end: loc11)
+      let argA = self.arg(name: "zucchini", annotation: annA, start: loc6, end: loc11)
       XCTAssertArguments(d.args.args, [argA])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .none)
@@ -185,8 +187,8 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
-      let defA = Expression(.float(1.0), start: loc10, end: loc11)
+      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let defA = self.expression(.float(1.0), start: loc10, end: loc11)
       XCTAssertArguments(d.args.args, [argA])
       XCTAssertArgumentDefaults(d.args.defaults, [defA])
       XCTAssertVararg(d.args.vararg, .none)
@@ -226,8 +228,8 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = Arg("tomato", annotation: nil, start: loc10, end: loc11)
+      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let argB = self.arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
       XCTAssertArguments(d.args.args, [argA, argB])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .none)
@@ -269,9 +271,9 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = Arg("tomato", annotation: nil, start: loc10, end: loc11)
-      let defB = Expression(.float(1.0), start: loc14, end: loc15)
+      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let argB = self.arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
+      let defB = self.expression(.float(1.0), start: loc14, end: loc15)
       XCTAssertArguments(d.args.args, [argA, argB])
       XCTAssertArgumentDefaults(d.args.defaults, [defB])
       XCTAssertVararg(d.args.vararg, .none)
@@ -334,7 +336,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
+      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .named(varargA))
@@ -377,9 +379,9 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = Arg("tomato", annotation: nil, start: loc12, end: loc13)
-      let kwDefB  = Expression(.float(1), start: loc16, end: loc17)
+      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwB     = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let kwDefB  = self.expression(.float(1), start: loc16, end: loc17)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .named(varargA))
@@ -420,9 +422,9 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = Arg("tomato", annotation: nil, start: loc12, end: loc13)
-      let kwDefB = Expression(.none, start: loc13, end: loc13)
+      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwB     = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let kwDefB = self.expression(.none, start: loc13, end: loc13)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .named(varargA))
@@ -484,8 +486,8 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let kwA = Arg("zucchini", annotation: nil, start: loc10, end: loc11)
-      let kwDefA = Expression(.none, start: loc11, end: loc11)
+      let kwA = self.arg(name: "zucchini", annotation: nil, start: loc10, end: loc11)
+      let kwDefA = self.expression(.none, start: loc11, end: loc11)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .unnamed)
@@ -544,7 +546,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let kwargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .none)
@@ -584,7 +586,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let kwargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .none)
@@ -654,11 +656,11 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher {
       XCTAssertEqual(d.name, "cook")
       XCTAssertEqual(d.returns, nil)
 
-      let argA    = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
-      let varargB = Arg("tomato", annotation: nil, start: loc12, end: loc13)
-      let kwC     = Arg("pepper", annotation: nil, start: loc16, end: loc17)
-      let kwDefC  = Expression(.none, start: loc17, end: loc17)
-      let kwargD = Arg("eggplant", annotation: nil, start: loc22, end: loc23)
+      let argA    = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let varargB = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let kwC     = self.arg(name: "pepper", annotation: nil, start: loc16, end: loc17)
+      let kwDefC  = self.expression(.none, start: loc17, end: loc17)
+      let kwargD = self.arg(name: "eggplant", annotation: nil, start: loc22, end: loc23)
       XCTAssertArguments(d.args.args, [argA])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .named(varargB))

@@ -28,7 +28,7 @@ public final class SymbolTable {
 public struct ScopeByNodeDictionary {
 
   // We can't use `Node` as key because it as an protocol.
-  private var inner = [NodeId:SymbolScope]()
+  private var inner = [ASTNodeId:SymbolScope]()
 
   // `internal` so, that we can't instantiate it outside of this module.
   internal init() { }

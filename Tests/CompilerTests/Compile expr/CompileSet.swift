@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileSet: XCTestCase, CommonCompiler {
+class CompileSet: CompileTestCase {
 
   // '{}' crates new dictionary!
   // It is not possible to create empty set using literal.

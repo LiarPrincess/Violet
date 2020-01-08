@@ -4,10 +4,10 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Shared test helpers.
-protocol CommonCompiler: ASTCreator { }
+/// Base class for all of the compiler tests
+internal class CompileTestCase: XCTestCase, ASTCreator {
 
-extension CommonCompiler {
+  internal var builder = ASTBuilder()
 
   // MARK: - Compile
 

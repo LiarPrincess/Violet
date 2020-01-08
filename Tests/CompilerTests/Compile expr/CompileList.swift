@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileList: XCTestCase, CommonCompiler {
+class CompileList: CompileTestCase {
 
   /// []
   func test_empty() {

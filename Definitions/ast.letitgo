@@ -15,6 +15,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 @alias stmt = Statement
 @alias stmtKind = StatementKind
 @alias loc = SourceLocation
+@alias NodeId = ASTNodeId
 
 -- Tree model of an entire program.
 --

@@ -27,7 +27,7 @@ internal func XCTAssertStmtDoc(_ value: StatementKind,
 
 // MARK: - Shared
 
-internal protocol RapunzelShared { }
+internal protocol RapunzelShared: ASTBuilderOwner { }
 
 extension RapunzelShared {
 
@@ -35,11 +35,11 @@ extension RapunzelShared {
 
   internal func statement(string: String) -> Statement {
     let e = self.expression(string: string)
-    return self.statement(.expr(e))
+    return self.self.statement(.expr(e))
   }
 
   internal func statement(_ kind: StatementKind) -> Statement {
-    return Statement(
+    return self.statement(
       kind,
       start: SourceLocation(line: 0, column: 0),
       end: SourceLocation(line: 0, column: 10)
@@ -49,11 +49,11 @@ extension RapunzelShared {
   // MARK: - Expression
 
   internal func expression(string: String) -> Expression {
-    return self.expression(.string(.literal(string)))
+    return self.self.expression(.string(.literal(string)))
   }
 
   internal func expression(_ kind: ExpressionKind) -> Expression {
-    return Expression(
+    return self.expression(
       kind,
       start: SourceLocation(line: 1, column: 10),
       end: SourceLocation(line: 2, column: 20)
@@ -66,7 +66,7 @@ extension RapunzelShared {
                               iter: Expression,
                               ifs: [Expression],
                               isAsync: Bool) -> Comprehension {
-    return Comprehension(
+    return self.comprehension(
        target: target,
        iter: iter,
        ifs: ifs,
@@ -85,7 +85,7 @@ extension RapunzelShared {
                           kwOnlyArgs: [Arg],
                           kwOnlyDefaults: [Expression],
                           kwarg: Arg?) -> Arguments {
-    return Arguments(
+    return self.arguments(
       args: args,
       defaults: defaults,
       vararg: vararg,
@@ -98,8 +98,8 @@ extension RapunzelShared {
   }
 
   internal func arg(name: String, annotation: Expression?) -> Arg {
-    return Arg(
-      name,
+    return self.arg(
+      name: name,
       annotation: annotation,
       start: SourceLocation(line: 7, column: 70),
       end: SourceLocation(line: 8, column: 80)
@@ -107,8 +107,8 @@ extension RapunzelShared {
   }
 
   internal func keyword(kind: KeywordKind, value: Expression) -> Keyword {
-    return Keyword(
-      kind: kind,
+    return self.keyword(
+      kind,
       value: value,
       start: SourceLocation(line: 9, column: 90),
       end: SourceLocation(line: 10, column: 100)
@@ -118,7 +118,7 @@ extension RapunzelShared {
   // MARK: - Slice
 
   internal func slice(kind: SliceKind) -> Slice {
-    return Slice(
+    return self.slice(
       kind,
       start: SourceLocation(line: 11, column: 110),
       end: SourceLocation(line: 12, column: 120)
@@ -129,7 +129,7 @@ extension RapunzelShared {
 
   internal func withItem(contextExpr: Expression,
                          optionalVars: Expression?) -> WithItem {
-    return WithItem(
+    return self.withItem(
       contextExpr: contextExpr,
       optionalVars: optionalVars,
       start: SourceLocation(line: 13, column: 130),
@@ -141,7 +141,7 @@ extension RapunzelShared {
 
   internal func exceptHandler(kind: ExceptHandlerKind,
                               body: Statement) -> ExceptHandler {
-    return ExceptHandler(
+    return self.exceptHandler(
       kind: kind,
       body: NonEmptyArray(first: body),
       start: SourceLocation(line: 15, column: 150),
@@ -152,7 +152,7 @@ extension RapunzelShared {
   // MARK: - Alias
 
   internal func alias(name: String, asName: String?) -> Alias {
-    return Alias(
+    return self.alias(
       name: name,
       asName: asName,
       start: SourceLocation(line: 17, column: 170),

@@ -28,7 +28,7 @@ extension Parser {
     let right = try self.test()
 
     let kind = ExpressionKind.ifExpression(test: test, body: left, orElse: right)
-    return Expression(kind, start: left.start, end: right.end)
+    return self.expression(kind, start: left.start, end: right.end)
   }
 
   /// `test_nocond: or_test | lambdef_nocond`
@@ -61,7 +61,7 @@ extension Parser {
 
     let body = try self.test()
     let kind = ExpressionKind.lambda(args: args, body: body)
-    return Expression(kind, start: start, end: body.end)
+    return self.expression(kind, start: start, end: body.end)
   }
 
   /// `lambdef_nocond: 'lambda' [varargslist] ':' test_nocond`
@@ -81,7 +81,7 @@ extension Parser {
 
     let body = try self.testNoCond()
     let kind = ExpressionKind.lambda(args: args, body: body)
-    return Expression(kind, start: start, end: body.end)
+    return self.expression(kind, start: start, end: body.end)
   }
 
   // MARK: - Or test

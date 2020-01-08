@@ -14,6 +14,8 @@ import Rapunzel
 /// scene (the one that starts at page 132), but that would be a spoiler.
 class RapunzelStatements: XCTestCase, RapunzelShared {
 
+  internal var builder = ASTBuilder()
+
   // MARK: - Trivial
 
   func test_pass() {

@@ -11,6 +11,8 @@ import Rapunzel
 /// We will be using string literals as stand-in for more complicated expressions.
 class RapunzelExpression: XCTestCase, RapunzelShared {
 
+  internal var builder = ASTBuilder()
+
   // MARK: - Trivial
 
   func test_none() {

@@ -9,12 +9,13 @@ extension Parser {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
 
-    internal func toExpression(start: SourceLocation) -> Expression {
+    internal func toExpression(using builder: inout ASTBuilder,
+                               start: SourceLocation) -> Expression {
       switch self {
       case let .single(e):
         return e
       case let .tuple(es, end):
-        return Expression(.tuple(Array(es)), start: start, end: end)
+        return builder.expression(.tuple(Array(es)), start: start, end: end)
       }
     }
   }
@@ -54,12 +55,13 @@ extension Parser {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
 
-    internal func toExpression(start: SourceLocation) -> Expression {
+    internal func toExpression(using builder: inout ASTBuilder,
+                               start: SourceLocation) -> Expression {
       switch self {
       case let .single(e):
         return e
       case let .tuple(es, end):
-        return Expression(.tuple(Array(es)), start: start, end: end)
+        return builder.expression(.tuple(Array(es)), start: start, end: end)
       }
     }
   }
@@ -142,12 +144,13 @@ extension Parser {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
 
-    internal func toExpression(start: SourceLocation) -> Expression {
+    internal func toExpression(using builder: inout ASTBuilder,
+                               start: SourceLocation) -> Expression {
       switch self {
       case let .single(e):
         return e
       case let .tuple(es, end):
-        return Expression(.tuple(Array(es)), start: start, end: end)
+        return builder.expression(.tuple(Array(es)), start: start, end: end)
       }
     }
   }

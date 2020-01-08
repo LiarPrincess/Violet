@@ -32,15 +32,15 @@ private struct ArgumentsIR {
     self.end = end
   }
 
-  fileprivate func compile() -> Arguments {
-    return Arguments(args:     self.args,
-                     defaults: self.defaults,
-                     vararg: self.vararg,
-                     kwOnlyArgs:     self.kwOnlyArgs,
-                     kwOnlyDefaults: self.kwOnlyDefaults,
-                     kwarg: self.kwarg,
-                     start: self.start,
-                     end: self.end)
+  fileprivate func compile(using builder: inout ASTBuilder) -> Arguments {
+    return builder.arguments(args:     self.args,
+                             defaults: self.defaults,
+                             vararg: self.vararg,
+                             kwOnlyArgs:     self.kwOnlyArgs,
+                             kwOnlyDefaults: self.kwOnlyDefaults,
+                             kwarg: self.kwarg,
+                             start: self.start,
+                             end: self.end)
   }
 }
 
@@ -104,7 +104,10 @@ extension Parser {
     let token = parser.peek
     let name = try parser.consumeIdentifierOrThrow()
     try parser.checkForbiddenName(name, location: token.start)
-    return Arg(name, annotation: nil, start: token.start, end: token.end)
+    return parser.arg(name: name,
+                      annotation: nil,
+                      start: token.start,
+                      end: token.end)
   }
 
   /// `tfpdef: NAME [':' test]`
@@ -121,7 +124,10 @@ extension Parser {
     }
 
     let end = annotation?.end ?? token.end
-    return Arg(name, annotation: annotation, start: token.start, end: end)
+    return parser.arg(name: name,
+                      annotation: annotation,
+                      start: token.start,
+                      end: end)
   }
 
   // MARK: - Args list
@@ -154,7 +160,7 @@ extension Parser {
       throw self.error(.starWithoutFollowingArguments)
     }
 
-    return ir.compile()
+    return ir.compile(using: &self.builder)
   }
 
   /// `vfpdef/tfpdef ['=' test]`
@@ -188,7 +194,7 @@ extension Parser {
       } else {
         // We will place 'implicit None' just after 'argument'
         let loc = argument.end
-        let implicitNone = Expression(.none, start: loc, end: loc)
+        let implicitNone = self.expression(.none, start: loc, end: loc)
         ir.kwOnlyDefaults.append(implicitNone)
       }
     }

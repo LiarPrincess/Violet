@@ -17,8 +17,8 @@ extension Parser {
     }
 
     return isAwait ?
-      Expression(.await(rightExpr), start: start, end: rightExpr.end):
-    rightExpr
+      self.expression(.await(rightExpr), start: start, end: rightExpr.end) :
+      rightExpr
   }
 
   ///```

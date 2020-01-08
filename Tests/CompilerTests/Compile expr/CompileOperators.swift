@@ -8,7 +8,7 @@ import Bytecode
 // swiftlint:disable function_body_length
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileOperators: XCTestCase, CommonCompiler {
+class CompileOperators: CompileTestCase {
 
   // MARK: - Unary
 

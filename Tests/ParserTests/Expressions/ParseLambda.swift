@@ -6,7 +6,9 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-class ParseLambda: XCTestCase, Common, ExpressionMatcher {
+class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
+
+  internal var builder = ASTBuilder()
 
   // MARK: - No arguments
 
@@ -52,7 +54,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
+      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
       XCTAssertArguments(d.args.args, [argA])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .none)
@@ -84,8 +86,8 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
-      let defA = Expression(.float(1.0), start: loc10, end: loc11)
+      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let defA = self.expression(.float(1.0), start: loc10, end: loc11)
       XCTAssertArguments(d.args.args, [argA])
       XCTAssertArgumentDefaults(d.args.defaults, [defA])
       XCTAssertVararg(d.args.vararg, .none)
@@ -117,8 +119,8 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = Arg("tomato", annotation: nil, start: loc10, end: loc11)
+      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let argB = self.arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
       XCTAssertArguments(d.args.args, [argA, argB])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .none)
@@ -152,9 +154,9 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let argA = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = Arg("tomato", annotation: nil, start: loc10, end: loc11)
-      let defB = Expression(.float(1.0), start: loc14, end: loc15)
+      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let argB = self.arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
+      let defB = self.expression(.float(1.0), start: loc14, end: loc15)
       XCTAssertArguments(d.args.args, [argA, argB])
       XCTAssertArgumentDefaults(d.args.defaults, [defB])
       XCTAssertVararg(d.args.vararg, .none)
@@ -206,7 +208,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
+      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .named(varargA))
@@ -241,9 +243,9 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = Arg("tomato", annotation: nil, start: loc12, end: loc13)
-      let kwDefB  = Expression(.float(1), start: loc16, end: loc17)
+      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwB     = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let kwDefB  = self.expression(.float(1), start: loc16, end: loc17)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .named(varargA))
@@ -276,9 +278,9 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let varargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = Arg("tomato", annotation: nil, start: loc12, end: loc13)
-      let kwDefB = Expression(.none, start: loc13, end: loc13)
+      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwB     = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let kwDefB = self.expression(.none, start: loc13, end: loc13)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .named(varargA))
@@ -329,8 +331,8 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let kwA = Arg("zucchini", annotation: nil, start: loc10, end: loc11)
-      let kwDefA = Expression(.none, start: loc11, end: loc11)
+      let kwA = self.arg(name: "zucchini", annotation: nil, start: loc10, end: loc11)
+      let kwDefA = self.expression(.none, start: loc11, end: loc11)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .unnamed)
@@ -378,7 +380,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let kwargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .none)
@@ -410,7 +412,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let kwargA = Arg("zucchini", annotation: nil, start: loc8, end: loc9)
+      let kwargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
       XCTAssertArguments(d.args.args, [])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .none)
@@ -469,11 +471,11 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher {
     if let expr = self.parseExpr(&parser) {
       guard let d = self.matchLambda(expr) else { return }
 
-      let argA    = Arg("zucchini", annotation: nil, start: loc6, end: loc7)
-      let varargB = Arg("tomato", annotation: nil, start: loc12, end: loc13)
-      let kwC     = Arg("pepper", annotation: nil, start: loc16, end: loc17)
-      let kwDefC  = Expression(.none, start: loc17, end: loc17)
-      let kwargD = Arg("eggplant", annotation: nil, start: loc22, end: loc23)
+      let argA    = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
+      let varargB = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
+      let kwC     = self.arg(name: "pepper", annotation: nil, start: loc16, end: loc17)
+      let kwDefC  = self.expression(.none, start: loc17, end: loc17)
+      let kwargD = self.arg(name: "eggplant", annotation: nil, start: loc22, end: loc23)
       XCTAssertArguments(d.args.args, [argA])
       XCTAssertArgumentDefaults(d.args.defaults, [])
       XCTAssertVararg(d.args.vararg, .named(varargB))

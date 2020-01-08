@@ -107,7 +107,7 @@ extension Parser {
     try self.advance() // *
 
     let test = try self.test()
-    let expr = Expression(.starred(test), start: start, end: test.end)
+    let expr = self.expression(.starred(test), start: start, end: test.end)
     ir.args.append(expr)
   }
 
@@ -118,11 +118,10 @@ extension Parser {
     try self.advance() // **
 
     let test = try self.test()
-    let keyword = Keyword(kind: .dictionaryUnpack,
-                          value: test,
-                          start: start,
-                          end: test.end)
-    ir.keywords.append(keyword)
+    ir.keywords.append(self.keyword(.dictionaryUnpack,
+                                    value: test,
+                                    start: start,
+                                    end: test.end))
     ir.hasStarStar = true
   }
 
@@ -143,12 +142,10 @@ extension Parser {
       }
 
       let value = try self.test()
-      let keyword = Keyword(kind: .named(name),
-                            value: value,
-                            start: nameToken.start,
-                            end: value.end)
-
-      ir.keywords.append(keyword)
+      ir.keywords.append(self.keyword(.named(name),
+                                      value: value,
+                                      start: nameToken.start,
+                                      end: value.end))
 
     case .lambda:
       throw self.error(.callWithLambdaAssignment, location: nameToken.start)
@@ -196,8 +193,7 @@ extension Parser {
 
       let end = generators.last?.end ?? test.end
       let kind = ExpressionKind.generatorExp(elt: test, generators: generators)
-      let expr = Expression(kind, start: test.start, end: end)
-      ir.args.append(expr)
+      ir.args.append(self.expression(kind, start: test.start, end: end))
     } else {
       ir.args.append(test)
     }

@@ -7,7 +7,7 @@ import Bytecode
 // swiftlint:disable function_body_length
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileWith: XCTestCase, CommonCompiler {
+class CompileWith: CompileTestCase {
 
   /// with alice: wonderland
   ///

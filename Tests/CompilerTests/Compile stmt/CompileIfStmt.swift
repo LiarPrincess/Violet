@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileIfStmt: XCTestCase, CommonCompiler {
+class CompileIfStmt: CompileTestCase {
 
   /// if eat_me: big
   ///

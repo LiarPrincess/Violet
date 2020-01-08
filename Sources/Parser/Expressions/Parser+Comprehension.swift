@@ -63,13 +63,12 @@ extension Parser {
         ifs.append(try self.testNoCond())
       }
 
-      let comp = Comprehension(target: self.compForTarget(exprList),
-                               iter: iter,
-                               ifs: ifs,
-                               isAsync: isAsync,
-                               start: start,
-                               end: ifs.last?.end ?? iter.end)
-      elements.append(comp)
+      elements.append(self.comprehension(target: self.compForTarget(exprList),
+                                         iter: iter,
+                                         ifs: ifs,
+                                         isAsync: isAsync,
+                                         start: start,
+                                         end: ifs.last?.end ?? iter.end))
     }
 
     guard let first = elements.first else {

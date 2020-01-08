@@ -4,7 +4,7 @@ import Parser
 @testable import Compiler
 
 /// Use 'Tools/dump_symtable.py' for reference.
-class STImport: XCTestCase, CommonSymbolTable {
+class STImport: SymbolTableTestCase {
 
   // MARK: - Import
 

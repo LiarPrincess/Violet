@@ -9,7 +9,7 @@ import Parser
 /// Basic checks for comprehension, without nested scopes.
 /// Just so we know that we visit all childs.
 /// Use 'Tools/dump_symtable.py' for reference.
-class STExprComprehension: XCTestCase, CommonSymbolTable {
+class STExprComprehension: SymbolTableTestCase {
 
   // MARK: - List
 

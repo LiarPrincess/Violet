@@ -74,12 +74,11 @@ extension Parser {
       try self.consumeOrThrow(.colon)
       let body = try self.suite()
 
-      let handler = ExceptHandler(kind: kind,
-                                  body: body,
-                                  start: start,
-                                  end: body.last.end)
+      ir.handlers.append(self.exceptHandler(kind: kind,
+                                            body: body,
+                                            start: start,
+                                            end: body.last.end))
 
-      ir.handlers.append(handler)
       ir.end = body.last.end
     }
   }

@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileIfExpr: XCTestCase, CommonCompiler {
+class CompileIfExpr: CompileTestCase {
 
   /// 'genie' if 'touched' else 'lamp'
   /// additional_block <-- so that we don't get returns at the end

@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileRaise: XCTestCase, CommonCompiler {
+class CompileRaise: CompileTestCase {
 
   /// raise
   ///

@@ -5,7 +5,7 @@ import Bytecode
 @testable import Compiler
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileDelete: XCTestCase, CommonCompiler {
+class CompileDelete: CompileTestCase {
 
   /// del jafar
   ///

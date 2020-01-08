@@ -4,7 +4,7 @@ import Parser
 // swiftlint:disable file_length
 
 /// Create AST (without locations, because we don't need them most of the time).
-internal protocol ASTCreator { }
+internal protocol ASTCreator: ASTBuilderOwner { }
 
 extension ASTCreator {
 
@@ -21,20 +21,20 @@ extension ASTCreator {
   // MARK: - AST
 
   internal func ast(_ kind: ASTKind) -> AST {
-    return AST(kind, start: start, end: end)
+    return self.ast(kind, start: start, end: end)
   }
 
   // MARK: - Statements
 
   internal func statement(_ kind: StatementKind,
                           start: SourceLocation? = nil) -> Statement {
-    return Statement(kind, start: start ?? self.start, end: end)
+    return self.statement(kind, start: start ?? self.start, end: end)
   }
 
   internal func statement(expr kind: ExpressionKind,
                           start: SourceLocation? = nil) -> Statement {
     let stmtKind = StatementKind.expr(self.expression(kind))
-    return Statement(stmtKind, start: start ?? self.start, end: end)
+    return self.statement(stmtKind, start: start ?? self.start, end: end)
   }
 
   internal func `for`(target: Expression,
@@ -246,7 +246,7 @@ extension ASTCreator {
 
   internal func expression(_ kind: ExpressionKind,
                            start: SourceLocation? = nil) -> Expression {
-    return Expression(kind, start: start ?? self.start, end: end)
+    return self.expression(kind, start: start ?? self.start, end: end)
   }
 
   internal func listComprehension(elt: Expression,
@@ -259,52 +259,59 @@ extension ASTCreator {
     )
   }
 
-  // MARK: - Other
+  // MARK: - Slice
 
   internal func slice(_ kind: SliceKind) -> Slice {
-    return Slice(kind, start: start, end: end)
+    return self.slice(kind, start: start, end: end)
   }
+
+  // MARK: - Alias
 
   internal func alias(name: String,
                       asName: String?,
                       start: SourceLocation? = nil) -> Alias {
-    return Alias(name: name,
-                 asName: asName,
-                 start: start ?? self.start,
-                 end: end)
+    return self.alias(name: name,
+                      asName: asName,
+                      start: start ?? self.start,
+                      end: end)
   }
+
+  // MARK: - WithItem
 
   internal func withItem(contextExpr: Expression,
                          optionalVars: Expression?) -> WithItem {
-    return WithItem(id: .next,
-                    contextExpr: contextExpr,
-                    optionalVars: optionalVars,
-                    start: start,
-                    end: end)
+    return self.withItem(contextExpr: contextExpr,
+                         optionalVars: optionalVars,
+                         start: start,
+                         end: end)
   }
+
+  // MARK: - ExceptHandler
 
   internal func exceptHandler(kind: ExceptHandlerKind,
                               body: Statement,
                               start: SourceLocation? = nil) -> ExceptHandler {
-    return ExceptHandler(id: .next,
-                         kind: kind,
-                         body: NonEmptyArray(first: body),
-                         start: start ?? self.start,
-                         end: self.end)
+    return self.exceptHandler(kind: kind,
+                              body: NonEmptyArray(first: body),
+                              start: start ?? self.start,
+                              end: self.end)
   }
+
+  // MARK: - Comprehension
 
   internal func comprehension(target: Expression,
                               iter: Expression,
                               ifs: [Expression],
                               isAsync: Bool) -> Comprehension {
-    return Comprehension(id: .next,
-                         target: target,
-                         iter: iter,
-                         ifs: ifs,
-                         isAsync: isAsync,
-                         start: start,
-                         end: end)
+    return self.comprehension(target: target,
+                              iter: iter,
+                              ifs: ifs,
+                              isAsync: isAsync,
+                              start: start,
+                              end: end)
   }
+
+  // MARK: - Arguments
 
   internal func arguments(args: [Arg] = [],
                           defaults: [Expression] = [],
@@ -312,33 +319,29 @@ extension ASTCreator {
                           kwOnlyArgs: [Arg] = [],
                           kwOnlyDefaults: [Expression] = [],
                           kwarg: Arg? = nil) -> Arguments {
-    return Arguments(id: .next,
-                     args: args,
-                     defaults: defaults,
-                     vararg: vararg,
-                     kwOnlyArgs: kwOnlyArgs,
-                     kwOnlyDefaults: kwOnlyDefaults,
-                     kwarg: kwarg,
-                     start: start,
-                     end: end)
+    return self.arguments(args: args,
+                          defaults: defaults,
+                          vararg: vararg,
+                          kwOnlyArgs: kwOnlyArgs,
+                          kwOnlyDefaults: kwOnlyDefaults,
+                          kwarg: kwarg,
+                          start: start,
+                          end: end)
   }
 
   internal func arg(_ name: String,
                     annotation: Expression? = nil,
                     start: SourceLocation? = nil) -> Arg {
-    return Arg(id: .next,
-               name: name,
-               annotation: annotation,
-               start: start ?? self.start,
-               end: end)
+    return self.arg(name: name,
+                    annotation: annotation,
+                    start: start ?? self.start,
+                    end: end)
   }
 
+  // MARK: - Keyword
+
   internal func keyword(kind: KeywordKind, value: Expression) -> Keyword {
-    return Keyword(id: .next,
-                   kind: kind,
-                   value: value,
-                   start: start,
-                   end: end)
+    return self.keyword(kind, value: value, start: start, end: end)
   }
 
   // MARK: - Other helpers

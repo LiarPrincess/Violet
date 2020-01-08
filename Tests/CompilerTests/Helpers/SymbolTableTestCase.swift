@@ -3,10 +3,10 @@ import Core
 import Parser
 @testable import Compiler
 
-/// Shared test helpers.
-protocol CommonSymbolTable: ASTCreator { }
+/// Base class for all of the symbol table tests
+internal class SymbolTableTestCase: XCTestCase, ASTCreator {
 
-extension CommonSymbolTable {
+  internal var builder = ASTBuilder()
 
   // MARK: - Create
 

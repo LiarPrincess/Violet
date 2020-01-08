@@ -22,7 +22,7 @@ private enum ParserState {
   case error(Error)
 }
 
-public class Parser {
+public class Parser: ASTBuilderOwner {
 
   /// Token source.
   internal var lexer: LexerType
@@ -33,6 +33,9 @@ public class Parser {
   /// Current parser state.
   /// Used for example for: caching parsing result.
   private var state = ParserState.notStarted
+
+  /// Helper for creating AST nodes.
+  public var builder = ASTBuilder()
 
   public init(mode: ParserMode, tokenSource lexer: LexerType) {
     self.mode = mode
@@ -113,17 +116,18 @@ public class Parser {
 
     if self.peek.kind == .newLine {
       let end = self.peek.end
-      return AST(.interactive([]), start: start, end: end)
+      return self.ast(.interactive([]), start: start, end: end)
     }
 
     if let stmt = try self.compoundStmtOrNop() {
       let end = self.peek.end
       try self.consumeOrThrow(.newLine)
-      return AST(.interactive([stmt]), start: start, end: end)
+
+      return self.ast(.interactive([stmt]), start: start, end: end)
     }
 
     let stmts = try self.simpleStmt()
-    return AST(.interactive(Array(stmts)), start: start, end: stmts.last.end)
+    return self.ast(.interactive(Array(stmts)), start: start, end: stmts.last.end)
   }
 
   /// file_input: (NEWLINE | stmt)* ENDMARKER
@@ -143,7 +147,7 @@ public class Parser {
 
     // We know that 'self.peek.kind == .eof' (because of 'while' condition)
     let end = result.last?.end ?? first.end
-    return AST(.module(result), start: first.start, end: end)
+    return self.ast(.module(result), start: first.start, end: end)
   }
 
   /// eval_input: testlist NEWLINE* ENDMARKER
@@ -160,8 +164,8 @@ public class Parser {
       throw self.unexpectedToken(expected: [.eof])
     }
 
-    let expr = list.toExpression(start: start)
-    return AST(.expression(expr), start: start, end: end)
+    let expr = list.toExpression(using: &self.builder, start: start)
+    return self.ast(.expression(expr), start: start, end: end)
   }
 
   // MARK: - Naming
@@ -207,18 +211,6 @@ public class Parser {
 
   // MARK: - Create
 
-  internal func statement(_ kind: StatementKind,
-                          start:  SourceLocation,
-                          end:    SourceLocation) -> Statement {
-    return Statement(kind, start: start, end: end)
-  }
-
-  internal func expression(_ kind: ExpressionKind,
-                           start:  SourceLocation,
-                           end:    SourceLocation) -> Expression {
-    return Expression(kind, start: start, end: end)
-  }
-
   /// Create parser warning
   internal func warn(_ warning: ParserWarning, location:  SourceLocation? = nil) {
     // uh... oh... well that's embarrassing...
@@ -235,17 +227,11 @@ public class Parser {
                                 location: SourceLocation? = nil,
                                 expected: [ExpectedToken]) -> ParserError {
     let tok = token ?? self.peek
-    switch tok.kind {
-    case .eof:
-      return self.error(
-        .unexpectedEOF(expected: expected),
-        location: location
-      )
-    default:
-      return self.error(
-        .unexpectedToken(tok.kind, expected: expected),
-        location: location
-      )
-    }
+
+    let kind = tok.kind == .eof ?
+      ParserErrorKind.unexpectedEOF(expected: expected) :
+      ParserErrorKind.unexpectedToken(tok.kind, expected: expected)
+
+    return self.error(kind, location: location)
   }
 }

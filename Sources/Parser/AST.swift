@@ -21,7 +21,7 @@ public struct AST: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   /// Type of the statement.
   public let kind: ASTKind
   /// Location of the first character in the source code.
@@ -29,7 +29,7 @@ public struct AST: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, kind: ASTKind, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, kind: ASTKind, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.kind = kind
     self.start = start
@@ -84,7 +84,7 @@ public struct Statement: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   /// Type of the statement.
   public let kind: StatementKind
   /// Location of the first character in the source code.
@@ -92,7 +92,7 @@ public struct Statement: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, kind: StatementKind, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, kind: StatementKind, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.kind = kind
     self.start = start
@@ -344,7 +344,7 @@ public struct Alias: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   public let name: String
   public let asName: String?
   /// Location of the first character in the source code.
@@ -352,7 +352,7 @@ public struct Alias: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, name: String, asName: String?, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, name: String, asName: String?, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.name = name
     self.asName = asName
@@ -366,7 +366,7 @@ public struct WithItem: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   /// Context manager (often a Call node).
   public let contextExpr: Expression
   /// Name, Tuple or List for the `as foo` part, or `nil` if that isn’t used.
@@ -376,7 +376,7 @@ public struct WithItem: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, contextExpr: Expression, optionalVars: Expression?, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, contextExpr: Expression, optionalVars: Expression?, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.contextExpr = contextExpr
     self.optionalVars = optionalVars
@@ -390,7 +390,7 @@ public struct ExceptHandler: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   /// Exception type it will match,  (or `.default` for a catch-all).
   public let kind: ExceptHandlerKind
   /// List of handler nodes.
@@ -400,7 +400,7 @@ public struct ExceptHandler: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, kind: ExceptHandlerKind, body: NonEmptyArray<Statement>, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, kind: ExceptHandlerKind, body: NonEmptyArray<Statement>, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.kind = kind
     self.body = body
@@ -430,7 +430,7 @@ public struct Expression: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   /// Type of the expression.
   public let kind: ExpressionKind
   /// Location of the first character in the source code.
@@ -438,7 +438,7 @@ public struct Expression: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, kind: ExpressionKind, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.kind = kind
     self.start = start
@@ -823,14 +823,14 @@ public struct Slice: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   public let kind: SliceKind
   /// Location of the first character in the source code.
   public let start: SourceLocation
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, kind: SliceKind, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, kind: SliceKind, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.kind = kind
     self.start = start
@@ -869,7 +869,7 @@ public struct Comprehension: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   /// Reference to use for each element,
   /// typically a `Identifier` or `Tuple` node.
   public let target: Expression
@@ -884,7 +884,7 @@ public struct Comprehension: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, target: Expression, iter: Expression, ifs: [Expression], isAsync: Bool, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, target: Expression, iter: Expression, ifs: [Expression], isAsync: Bool, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.target = target
     self.iter = iter
@@ -902,7 +902,7 @@ public struct Arguments: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   /// Function positional arguments.
   /// When a function is called, positional arguments are mapped
   /// to these parameters based solely on their position.
@@ -931,7 +931,7 @@ public struct Arguments: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, args: [Arg], defaults: [Expression], vararg: Vararg, kwOnlyArgs: [Arg], kwOnlyDefaults: [Expression], kwarg: Arg?, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, args: [Arg], defaults: [Expression], vararg: Vararg, kwOnlyArgs: [Arg], kwOnlyDefaults: [Expression], kwarg: Arg?, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.args = args
     self.defaults = defaults
@@ -948,7 +948,7 @@ public struct Arg: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   /// Argument name.
   public let name: String
   /// Python expression evaluated at compile time.
@@ -960,7 +960,7 @@ public struct Arg: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, name: String, annotation: Expression?, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, name: String, annotation: Expression?, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.name = name
     self.annotation = annotation
@@ -988,7 +988,7 @@ public struct Keyword: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
-  public let id: NodeId
+  public let id: ASTNodeId
   /// Type of the keyword argument, either dictionary unpack (`**tangled`)
   /// or named (`princess=rapunzel`).
   public let kind: KeywordKind
@@ -999,7 +999,7 @@ public struct Keyword: ASTNode {
   /// Location just after the last character in the source code.
   public let end: SourceLocation
 
-  public init(id: NodeId, kind: KeywordKind, value: Expression, start: SourceLocation, end: SourceLocation) {
+  public init(id: ASTNodeId, kind: KeywordKind, value: Expression, start: SourceLocation, end: SourceLocation) {
     self.id = id
     self.kind = kind
     self.value = value

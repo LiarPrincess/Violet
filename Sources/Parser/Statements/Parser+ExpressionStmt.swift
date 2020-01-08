@@ -27,7 +27,7 @@ extension Parser {
 
     let firstStart = self.peek.start
     let firstList = try self.testListStarExpr(closingTokens: firstClosing)
-    let first = firstList.toExpression(start: firstStart)
+    let first = firstList.toExpression(using: &self.builder, start: firstStart)
 
     switch self.peek.kind {
     case .colon:
@@ -170,7 +170,7 @@ extension Parser {
 
     let listStart = self.peek.start
     let list = try self.testList(closingTokens: closingTokens)
-    return list.toExpression(start: listStart)
+    return list.toExpression(using: &self.builder, start: listStart)
   }
 
   // MARK: - Normal assignment
@@ -192,7 +192,7 @@ extension Parser {
       } else {
         let testStart = self.peek.start
         let test = try self.testListStarExpr(closingTokens: elementClosing)
-        elements.append(test.toExpression(start: testStart))
+        elements.append(test.toExpression(using: &self.builder, start: testStart))
       }
     }
 

@@ -9,7 +9,7 @@ import Parser
 /// Basic checks for statements, without nested scopes.
 /// Just so we know that we visit all childs.
 /// Use 'Tools/dump_symtable.py' for reference.
-class STStmt: XCTestCase, CommonSymbolTable {
+class STStmt: SymbolTableTestCase {
 
   // MARK: - Pass, break, continue, return, delete and assert
 

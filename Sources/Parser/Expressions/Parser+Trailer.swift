@@ -40,7 +40,7 @@ extension Parser {
       let end = self.peek.end
       try self.consumeOrThrow(.rightSqb)
 
-      let slice = Slice(sliceKind, start: start, end: end)
+      let slice = self.slice(sliceKind, start: start, end: end)
       let kind = ExpressionKind.subscript(leftExpr, slice: slice)
       return self.expression(kind, start: leftExpr.start, end: end)
 
@@ -103,10 +103,10 @@ extension Parser {
       }
     }
 
-    let tuple = Expression(.tuple(indices),
-                           start: slices.first.start,
-                           end: slices.last.end)
-    return .index(tuple)
+    return .index(self.expression(.tuple(indices),
+                                  start: slices.first.start,
+                                  end: slices.last.end)
+    )
   }
 
   /// ```c
@@ -124,7 +124,7 @@ extension Parser {
     // subscript: test -> index
     if let index = lower, closingTokens.contains(self.peek.kind) {
       let kind = SliceKind.index(index)
-      return Slice(kind, start: index.start, end: index.end)
+      return self.slice(kind, start: index.start, end: index.end)
     }
 
     // subscript: [test] ':' [test] [sliceop] -> slice
@@ -149,6 +149,6 @@ extension Parser {
     }
 
     let kind = SliceKind.slice(lower: lower, upper: upper, step: step)
-    return Slice(kind, start: start, end: end)
+    return self.slice(kind, start: start, end: end)
   }
 }

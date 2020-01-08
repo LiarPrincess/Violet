@@ -170,12 +170,12 @@ extension Parser {
 
     let targetStart = self.peek.start
     let targetRaw = try self.exprList(closingTokens: [.in])
-    let target = targetRaw.toExpression(start: targetStart)
+    let target = targetRaw.toExpression(using: &self.builder, start: targetStart)
     try self.consumeOrThrow(.in)
 
     let iterStart = self.peek.start
     let iterRaw = try self.testList(closingTokens: [.colon])
-    let iter = iterRaw.toExpression(start: iterStart)
+    let iter = iterRaw.toExpression(using: &self.builder, start: iterStart)
     try self.consumeOrThrow(.colon)
 
     let body = try self.suite()
@@ -237,10 +237,10 @@ extension Parser {
       optionalVars = try self.expr()
     }
 
-    return WithItem(contextExpr: context,
-                    optionalVars: optionalVars,
-                    start: token.start,
-                    end: optionalVars?.end ?? token.end)
+    return self.withItem(contextExpr: context,
+                         optionalVars: optionalVars,
+                         start: token.start,
+                         end: optionalVars?.end ?? token.end)
   }
 
   // MARK: - Async

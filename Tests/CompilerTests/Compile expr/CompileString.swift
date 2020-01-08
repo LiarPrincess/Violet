@@ -11,7 +11,7 @@ private let c: UInt8 = 0x63
 private let e: UInt8 = 0x65
 
 /// Use 'Scripts/dump_dis.py' for reference.
-class CompileStringTests: XCTestCase, CommonCompiler {
+class CompileStringTests: CompileTestCase {
 
   // MARK: - Bytes
 
