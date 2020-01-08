@@ -6,9 +6,6 @@ import Rapunzel
 
 // MARK: - Helpers
 
-private let indent = 2
-private let trimCount = 60
-
 private func text<S: CustomStringConvertible>(_ value: S) -> Doc {
   return .text(String(describing: value))
 }
@@ -18,12 +15,14 @@ private func block(title: String, lines: Doc...) -> Doc {
 }
 
 private func block(title: String, lines: [Doc]) -> Doc {
-  return .block(title: title, indent: indent, lines: lines)
+  return .block(title: title,
+                indent: RapunzelConfig.indent,
+                lines: lines)
 }
 
 private func trim(_ value: String) -> String {
   let index = value.index(value.startIndex,
-                          offsetBy: trimCount,
+                          offsetBy: RapunzelConfig.stringCutoff,
                           limitedBy: value.endIndex)
 
   switch index {
@@ -327,8 +326,7 @@ extension Arguments: RapunzelConvertible {
 
 extension Arg: RapunzelConvertible {
   public var doc: Doc {
-    let ann = self.annotation
-      .map { block(title: "Annotation", lines: $0.doc) } ??
+    let ann = self.annotation.map { block(title: "Annotation", lines: $0.doc) } ??
       text("Annotation: none")
 
     return block(

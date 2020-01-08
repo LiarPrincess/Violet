@@ -7,55 +7,38 @@ import Rapunzel
 
 // swiftlint:disable file_length
 
-internal func XCTAssertDoc(_ expr: ExpressionKind,
-                           _ expected: String,
-                           _ message:  String = "",
-                           file: StaticString = #file,
-                           line: UInt         = #line) {
-  let doc = expr.doc
-  let result = doc.layout()
-  XCTAssertEqual(result, expected, message, file: file, line: line)
-}
-
-@available(*, deprecated, message: "Usable only when writing tests")
-private func dump<R: RapunzelConvertible>(_ value: R) {
-  print("========")
-  print(value.dump())
-  print("========")
-}
-
 /// Song reference: https://www.youtube.com/watch?v=t6Ol7VsZGk4
 /// We will be using string literals as stand-in for more complicated expressions.
-class RapunzelExpression: XCTestCase {
+class RapunzelExpression: XCTestCase, RapunzelShared {
 
   // MARK: - Trivial
 
   func test_none() {
-    XCTAssertDoc(.none, "None")
+    XCTAssertExprDoc(.none, "None")
   }
 
   func test_ellipsis() {
-    XCTAssertDoc(.ellipsis, "...")
+    XCTAssertExprDoc(.ellipsis, "...")
   }
 
   func test_identifier() {
-    XCTAssertDoc(.identifier("look_at_this_stuff"), "look_at_this_stuff")
+    XCTAssertExprDoc(.identifier("look_at_this_stuff"), "look_at_this_stuff")
   }
 
   // MARK: - Basic types
 
   func test_booleans() {
-    XCTAssertDoc(.true, "True")
-    XCTAssertDoc(.false, "False")
+    XCTAssertExprDoc(.true, "True")
+    XCTAssertExprDoc(.false, "False")
   }
 
   func test_numeric() {
     // swiftlint:disable:next number_separator
-    XCTAssertDoc(.int(1989), "1989")
+    XCTAssertExprDoc(.int(1989), "1989")
 
-    XCTAssertDoc(.float(19.89), "19.89")
+    XCTAssertExprDoc(.float(19.89), "19.89")
 
-    XCTAssertDoc(.complex(real: 19, imag: 8.9), """
+    XCTAssertExprDoc(.complex(real: 19, imag: 8.9), """
       Complex
         real: 19.0
         imag: 8.9
@@ -64,7 +47,7 @@ class RapunzelExpression: XCTestCase {
 
   func test_string() {
     let literal = StringGroup.literal("Isn't it neat?")
-    XCTAssertDoc(.string(literal), """
+    XCTAssertExprDoc(.string(literal), """
       String: 'Isn't it neat?'
       """)
 
@@ -75,7 +58,7 @@ class RapunzelExpression: XCTestCase {
       spec: "Wouldn't you think I'm the girl"
     )
 
-    XCTAssertDoc(.string(formattedValue), """
+    XCTAssertExprDoc(.string(formattedValue), """
       Formatted string
         Expression(start: 1:10, end: 2:20)
           String: 'Wouldn't you think my collection's complete?'
@@ -84,7 +67,7 @@ class RapunzelExpression: XCTestCase {
       """)
 
     let joined = StringGroup.joined([literal, formattedValue])
-    XCTAssertDoc(.string(joined), """
+    XCTAssertExprDoc(.string(joined), """
     Joined string
       String: 'Isn't it neat?'
       Formatted string
@@ -97,7 +80,7 @@ class RapunzelExpression: XCTestCase {
 
   func test_bytes() {
     let data = Data([1,2,3,4,5,6])
-    XCTAssertDoc(.bytes(data), """
+    XCTAssertExprDoc(.bytes(data), """
       Bytes
         Count: \(data.count)
       """)
@@ -113,7 +96,7 @@ class RapunzelExpression: XCTestCase {
 
     for op in operators {
       let expr = ExpressionKind.unaryOp(op, right: right)
-      XCTAssertDoc(expr, """
+      XCTAssertExprDoc(expr, """
         Unary operation
           Operation: \(op)
           Right
@@ -140,7 +123,7 @@ class RapunzelExpression: XCTestCase {
 
     for op in operators {
       let expr = ExpressionKind.binaryOp(op, left: left, right: right)
-      XCTAssertDoc(expr, """
+      XCTAssertExprDoc(expr, """
         Binary operation
           Operation: \(op)
           Left
@@ -164,7 +147,7 @@ class RapunzelExpression: XCTestCase {
 
     for op in operators {
       let expr = ExpressionKind.boolOp(op, left: left, right: right)
-      XCTAssertDoc(expr, """
+      XCTAssertExprDoc(expr, """
         Bool operation
           Operation: \(op)
           Left
@@ -197,7 +180,7 @@ class RapunzelExpression: XCTestCase {
       let elements = NonEmptyArray(first: element)
 
       let expr = ExpressionKind.compare(left: left, elements: elements)
-      XCTAssertDoc(expr, """
+      XCTAssertExprDoc(expr, """
         Compare operation
           Left
             Expression(start: 1:10, end: 2:20)
@@ -223,7 +206,7 @@ class RapunzelExpression: XCTestCase {
       self.expression(string: s1)
     ])
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Tuple
         Expression(start: 1:10, end: 2:20)
           String: '\(s0)'
@@ -241,7 +224,7 @@ class RapunzelExpression: XCTestCase {
       self.expression(string: s1)
     ])
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       List
         Expression(start: 1:10, end: 2:20)
           String: '\(s0)'
@@ -263,7 +246,7 @@ class RapunzelExpression: XCTestCase {
       .unpacking(self.expression(string: s2))
     ])
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Dictionary
         Key/value
           Key
@@ -287,7 +270,7 @@ class RapunzelExpression: XCTestCase {
       self.expression(string: s1)
     ])
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Set
         Expression(start: 1:10, end: 2:20)
           String: '\(s0)'
@@ -315,7 +298,7 @@ class RapunzelExpression: XCTestCase {
       )
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       ListComprehension
         Element
           Expression(start: 1:10, end: 2:20)
@@ -350,7 +333,7 @@ class RapunzelExpression: XCTestCase {
       )
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       SetComprehension
         Element
           Expression(start: 1:10, end: 2:20)
@@ -388,7 +371,7 @@ class RapunzelExpression: XCTestCase {
       )
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       DictionaryComprehension
         Key
           Expression(start: 1:10, end: 2:20)
@@ -426,7 +409,7 @@ class RapunzelExpression: XCTestCase {
       )
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       GeneratorExpr
         Element
           Expression(start: 1:10, end: 2:20)
@@ -453,7 +436,7 @@ class RapunzelExpression: XCTestCase {
       self.expression(string: s0)
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Await
         Expression(start: 1:10, end: 2:20)
           String: '\(s0)'
@@ -467,7 +450,7 @@ class RapunzelExpression: XCTestCase {
       self.expression(string: s0)
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Yield
         Expression(start: 1:10, end: 2:20)
           String: '\(s0)'
@@ -477,7 +460,7 @@ class RapunzelExpression: XCTestCase {
   func test_yield_nil() {
     let expr = ExpressionKind.yield(nil)
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Yield
         (none)
       """)
@@ -490,7 +473,7 @@ class RapunzelExpression: XCTestCase {
       self.expression(string: s0)
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       YieldFrom
         Expression(start: 1:10, end: 2:20)
           String: '\(s0)'
@@ -517,7 +500,7 @@ class RapunzelExpression: XCTestCase {
       body: self.expression(string: s1)
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Lambda
         Args
           Arguments(start: 5:50, end: 6:60)
@@ -558,7 +541,7 @@ class RapunzelExpression: XCTestCase {
       ]
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Call
         Name
           Expression(start: 1:10, end: 2:20)
@@ -597,7 +580,7 @@ class RapunzelExpression: XCTestCase {
       orElse: self.expression(string: s2)
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       IfExpression
         Expression(start: 1:10, end: 2:20)
           String: '\(s0)'
@@ -615,7 +598,7 @@ class RapunzelExpression: XCTestCase {
 
     let expr = ExpressionKind.starred(self.expression(string: s0))
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Starred
         Expression(start: 1:10, end: 2:20)
           String: '\(s0)'
@@ -633,7 +616,7 @@ class RapunzelExpression: XCTestCase {
       name: s1
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Attribute
         Value
           Expression(start: 1:10, end: 2:20)
@@ -653,7 +636,7 @@ class RapunzelExpression: XCTestCase {
       slice: self.slice(kind: .index(self.expression(string: s1)))
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Subscript
         Value
           Expression(start: 1:10, end: 2:20)
@@ -681,7 +664,7 @@ class RapunzelExpression: XCTestCase {
       )
     )
 
-    XCTAssertDoc(expr, """
+    XCTAssertExprDoc(expr, """
       Subscript
         Value
           Expression(start: 1:10, end: 2:20)
@@ -695,78 +678,5 @@ class RapunzelExpression: XCTestCase {
                   String: '\(s1)'
               Step: none
       """)
-  }
-
-  // MARK: - Helpers
-
-  private func expression(string: String) -> Expression {
-    return self.expression(.string(.literal(string)))
-  }
-
-  private func expression(_ kind: ExpressionKind) -> Expression {
-    return Expression(
-      kind,
-      start: SourceLocation(line: 1, column: 10),
-      end: SourceLocation(line: 2, column: 20)
-    )
-  }
-
-  private func comprehension(target: Expression,
-                             iter: Expression,
-                             ifs: [Expression],
-                             isAsync: Bool) -> Comprehension {
-    return Comprehension(
-       target: target,
-       iter: iter,
-       ifs: ifs,
-       isAsync: isAsync,
-       start: SourceLocation(line: 3, column: 30),
-       end: SourceLocation(line: 4, column: 40)
-     )
-  }
-
-  // swiftlint:disable:next function_parameter_count
-  private func arguments(args: [Arg],
-                         defaults: [Expression],
-                         vararg: Vararg,
-                         kwOnlyArgs: [Arg],
-                         kwOnlyDefaults: [Expression],
-                         kwarg: Arg?) -> Arguments {
-    return Arguments(
-      args: args,
-      defaults: defaults,
-      vararg: vararg,
-      kwOnlyArgs: kwOnlyArgs,
-      kwOnlyDefaults: kwOnlyDefaults,
-      kwarg: kwarg,
-      start: SourceLocation(line: 5, column: 50),
-      end: SourceLocation(line: 6, column: 60)
-    )
-  }
-
-  private func arg(name: String, annotation: Expression?) -> Arg {
-    return Arg(
-      name,
-      annotation: annotation,
-      start: SourceLocation(line: 7, column: 70),
-      end: SourceLocation(line: 8, column: 80)
-    )
-  }
-
-  private func keyword(kind: KeywordKind, value: Expression) -> Keyword {
-    return Keyword(
-      kind: kind,
-      value: value,
-      start: SourceLocation(line: 9, column: 90),
-      end: SourceLocation(line: 10, column: 100)
-    )
-  }
-
-  private func slice(kind: SliceKind) -> Slice {
-    return Slice(
-      kind,
-      start: SourceLocation(line: 11, column: 110),
-      end: SourceLocation(line: 12, column: 120)
-    )
   }
 }

@@ -39,19 +39,19 @@ extension StatementKind: CustomStringConvertible {
     switch self {
 
     case let .functionDef(name, args, body, decorators, returns):
-      return self.defDescription(header: "def",
-                                 name: name,
-                                 args: args,
-                                 body: body,
-                                 decorators: decorators,
-                                 returns: returns)
+      return self.functionDef(header: "def",
+                              name: name,
+                              args: args,
+                              body: body,
+                              decorators: decorators,
+                              returns: returns)
     case let .asyncFunctionDef(name, args, body, decorators, returns):
-      return self.defDescription(header: "asyncDef",
-                                 name: name,
-                                 args: args,
-                                 body: body,
-                                 decorators: decorators,
-                                 returns: returns)
+      return self.functionDef(header: "asyncDef",
+                              name: name,
+                              args: args,
+                              body: body,
+                              decorators: decorators,
+                              returns: returns)
 
     case let .classDef(name, bases, keywords, body, decorators):
       var parents = ""
@@ -183,12 +183,12 @@ extension StatementKind: CustomStringConvertible {
   // MARK: Helpers
 
   // swiftlint:disable:next function_parameter_count
-  private func defDescription(header: String,
-                              name: String,
-                              args: Arguments,
-                              body: NonEmptyArray<Statement>,
-                              decorators: [Expression],
-                              returns: Expression?) -> String {
+  private func functionDef(header: String,
+                           name: String,
+                           args: Arguments,
+                           body: NonEmptyArray<Statement>,
+                           decorators: [Expression],
+                           returns: Expression?) -> String {
     let r = returns.map { " -> " + describe($0) } ?? ""
     let d = self.decorators(from: decorators)
     return "(\(header) \(name)\(args)\(r)\(d) do: \(join(body)))"
