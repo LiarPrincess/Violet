@@ -9,6 +9,13 @@ private func XCTAssertLayout(_ doc: Doc,
   XCTAssertEqual(layout, s, file: file, line: line)
 }
 
+@available(*, deprecated, message: "Usable only when writing tests")
+internal func dump<R: RapunzelConvertible>(_ value: R) {
+  print("========")
+  print(value.dump())
+  print("========")
+}
+
 class Tests: XCTestCase {
 
   private let rapunzel = Doc.text("Rapunzel")
@@ -22,48 +29,22 @@ class Tests: XCTestCase {
     XCTAssertLayout(.nest(2, rapunzel), "  Rapunzel")
     XCTAssertLayout(.text("Rapunzel"), "Rapunzel")
     XCTAssertLayout(.line, "\n")
-
-    let block = Doc.block(title: "Tangled", indent: 2, lines: [rapunzel, flynn])
-    XCTAssertLayout(block, """
-      Tangled
-        Rapunzel
-        Flynn
-      """)
   }
 
   // MARK: - Combine
 
-  func test_recursive_nested() {
+  func test_nest_recursive() {
     let horizontal = Doc.nest(2, rapunzel) <> Doc.nest(3, flynn)
     XCTAssertLayout(horizontal, "  Rapunzel   Flynn")
 
     let vertical = rapunzel <|>
                     Doc.nest(2, flynn <|> // notice not closed paren
                       Doc.nest(3, pascal))
+
     XCTAssertLayout(vertical, """
       Rapunzel
         Flynn
            Pascal
-      """)
-  }
-
-  func test_recursive_blocks() {
-    let thug1 = Doc.text("Hook Hand")
-    let thug2 = Doc.text("Vladimir")
-
-    let thugs = Doc.block(title: "Pub Thugs", indent: 2, lines: [thug1, thug2])
-    let doc = Doc.block(title: "Tangled",
-                        indent: 2,
-                        lines: [rapunzel, flynn, thugs, pascal])
-
-    XCTAssertLayout(doc, """
-      Tangled
-        Rapunzel
-        Flynn
-        Pub Thugs
-          Hook Hand
-          Vladimir
-        Pascal
       """)
   }
 
@@ -86,13 +67,46 @@ class Tests: XCTestCase {
     XCTAssertLayout(.rightBrace, "}")
   }
 
-  func test_common_layout() {
-    let spread = Doc.spread(rapunzel, flynn, pascal)
-    XCTAssertLayout(spread, "Rapunzel Flynn Pascal")
+  func test_common_spread() {
+    let doc = Doc.spread(rapunzel, flynn, pascal)
+    XCTAssertLayout(doc, "Rapunzel Flynn Pascal")
+  }
 
-    let stack = Doc.stack(rapunzel, flynn, pascal)
-    XCTAssertLayout(stack, "Rapunzel\nFlynn\nPascal")
+  func test_common_stack() {
+    let doc = Doc.stack(rapunzel, flynn, pascal)
+    XCTAssertLayout(doc, "Rapunzel\nFlynn\nPascal")
+  }
 
+  func test_common_block() {
+    let doc = Doc.block(title: "Tangled", indent: 2, lines: [rapunzel, flynn])
+    XCTAssertLayout(doc, """
+      Tangled
+        Rapunzel
+        Flynn
+      """)
+  }
+
+  func test_common_block_recursive() {
+    let thug1 = Doc.text("Hook Hand")
+    let thug2 = Doc.text("Vladimir")
+
+    let thugs = Doc.block(title: "Pub Thugs", indent: 2, lines: [thug1, thug2])
+    let doc = Doc.block(title: "Tangled",
+                        indent: 2,
+                        lines: [rapunzel, flynn, thugs, pascal])
+
+    XCTAssertLayout(doc, """
+      Tangled
+        Rapunzel
+        Flynn
+        Pub Thugs
+          Hook Hand
+          Vladimir
+        Pascal
+      """)
+  }
+
+  func test_common_join() {
     let join = Doc.join([rapunzel, flynn, pascal], with: .colon)
     XCTAssertLayout(join, "Rapunzel:Flynn:Pascal")
   }
