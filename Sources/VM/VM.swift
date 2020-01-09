@@ -36,11 +36,12 @@ public class VM: PyContextDelegate {
   // MARK: - Dump
 
   internal func dump(_ ast: AST) {
+    print("=== AST ===")
     print(ast.dump())
   }
 
   internal func dump(_ code: CodeObject) {
-    print("'debug(_ code: CodeObject)' is not yet implemented")
-    exit(0)
+    print("=== Bytecode ===")
+    print(code.dump())
   }
 }

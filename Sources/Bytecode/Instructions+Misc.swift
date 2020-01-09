@@ -1,5 +1,6 @@
 extension Instruction {
 
+  /// Each instruction is 2 bytes in size.
   public static let byteSize = 2
 
   /// Maximum argument for an single instruction.
