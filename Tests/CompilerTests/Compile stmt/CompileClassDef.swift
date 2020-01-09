@@ -7,7 +7,7 @@ import Bytecode
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
-/// Use 'Scripts/dump_dis.py' for reference.
+/// Use './Scripts/dump_compiler_test' for reference.
 class CompileClassDef: CompileTestCase {
 
   // MARK: - No base

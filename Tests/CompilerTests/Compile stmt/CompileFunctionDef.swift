@@ -6,7 +6,7 @@ import Bytecode
 
 // swiftlint:disable file_length
 
-/// Use 'Scripts/dump_dis.py' for reference.
+/// Use './Scripts/dump_compiler_test' for reference.
 class CompileFunctionDef: CompileTestCase {
 
   // MARK: - No arguments

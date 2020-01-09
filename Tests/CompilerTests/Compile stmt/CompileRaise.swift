@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use 'Scripts/dump_dis.py' for reference.
+/// Use './Scripts/dump_compiler_test' for reference.
 class CompileRaise: CompileTestCase {
 
   /// raise

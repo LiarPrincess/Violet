@@ -7,7 +7,7 @@ import Bytecode
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-/// Use 'Scripts/dump_dis.py' for reference.
+/// Use './Scripts/dump_compiler_test' for reference.
 class CompileTry: CompileTestCase {
 
   // MARK: - Only finally
