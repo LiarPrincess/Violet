@@ -1,10 +1,21 @@
-'''
-Helper for creating unit tests for compiler.
-Use 'python3 ./dump_dis_print_test.sh' instead of manually running this file.
-'''
-
+import io
+import os
 import re
+import dis
 import sys
+
+def in_current_directory(file):
+  current_file = __file__
+  current_dir = os.path.dirname(current_file)
+  return os.path.join(current_dir, file)
+
+def read_input_file():
+  file = in_current_directory('input.py')
+
+  with open(file) as f:
+    source = f.read()
+
+  return source
 
 def print_docs(lines):
   index = 0
@@ -67,8 +78,20 @@ def to_camel_case(snake_str):
     return components[0].lower() + ''.join(x.title() for x in components[1:])
 
 if __name__ == '__main__':
-  lines = [l.replace('\n', '') for l in sys.stdin]
+  code = read_input_file()
 
+  bytecode_stream = io.StringIO()
+  dis.dis(code, file=bytecode_stream)
+
+  bytecode_stream.seek(0)
+  bytecode_lines = bytecode_stream.readlines()
+
+  lines = [l.replace('\n', '') for l in bytecode_lines]
+
+  for c in code.splitlines():
+    print('///', c)
+
+  print('///')
   print_docs(lines)
   print('-----------------')
   print_expected(lines)
