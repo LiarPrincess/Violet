@@ -285,7 +285,7 @@ class RapunzelStatements: XCTestCase, RapunzelShared {
           Target
             Expression(start: 1:10, end: 2:20)
               String: '“for Mrs. Long has just been here, and she told me all about ...'
-          Operation: \(op)
+          Operator: \(op)
           Value
             Expression(start: 1:10, end: 2:20)
               String: 'Mr. Bennet made no answer.'

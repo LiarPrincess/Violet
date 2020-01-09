@@ -112,7 +112,7 @@ extension StatementKind: RapunzelConvertible {
         title: "AugAssign",
         lines:
           block(title: "Target", lines: target.doc),
-          text("Operation: \(op)"),
+          text("Operator: \(op)"),
           block(title: "Value", lines: value.doc)
       )
 

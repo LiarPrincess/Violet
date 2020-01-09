@@ -44,6 +44,8 @@ extension Expression: RapunzelConvertible {
   }
 }
 
+// MARK: - ExpressionKind
+
 extension ExpressionKind: RapunzelConvertible {
   public var doc: Doc {
     switch self {
@@ -74,14 +76,14 @@ extension ExpressionKind: RapunzelConvertible {
       return block(
         title: "Unary operation",
         lines:
-          text("Operation: \(op)"),
+          text("Operator: \(op)"),
           block(title: "Right", lines: right.doc)
       )
     case let .binaryOp(op, left: left, right: right):
       return block(
         title: "Binary operation",
         lines:
-          text("Operation: \(op)"),
+          text("Operator: \(op)"),
           block(title: "Left", lines: left.doc),
           block(title: "Right", lines: right.doc)
       )
@@ -89,7 +91,7 @@ extension ExpressionKind: RapunzelConvertible {
       return block(
         title: "Bool operation",
         lines:
-          text("Operation: \(op)"),
+          text("Operator: \(op)"),
           block(title: "Left", lines: left.doc),
           block(title: "Right", lines: right.doc)
       )
@@ -264,7 +266,7 @@ extension ComparisonElement: RapunzelConvertible {
     return block(
       title: "ComparisonElement",
       lines:
-        text("Operation: \(self.op)"),
+        text("Operator: \(self.op)"),
         block(title: "Right", lines: self.right.doc)
     )
   }

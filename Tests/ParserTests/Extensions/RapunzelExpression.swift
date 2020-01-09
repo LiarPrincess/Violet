@@ -100,7 +100,7 @@ class RapunzelExpression: XCTestCase, RapunzelShared {
       let expr = ExpressionKind.unaryOp(op, right: right)
       XCTAssertExprDoc(expr, """
         Unary operation
-          Operation: \(op)
+          Operator: \(op)
           Right
             Expression(start: 1:10, end: 2:20)
               String: '\(r)'
@@ -127,7 +127,7 @@ class RapunzelExpression: XCTestCase, RapunzelShared {
       let expr = ExpressionKind.binaryOp(op, left: left, right: right)
       XCTAssertExprDoc(expr, """
         Binary operation
-          Operation: \(op)
+          Operator: \(op)
           Left
             Expression(start: 1:10, end: 2:20)
               String: '\(l)'
@@ -151,7 +151,7 @@ class RapunzelExpression: XCTestCase, RapunzelShared {
       let expr = ExpressionKind.boolOp(op, left: left, right: right)
       XCTAssertExprDoc(expr, """
         Bool operation
-          Operation: \(op)
+          Operator: \(op)
           Left
             Expression(start: 1:10, end: 2:20)
               String: '\(l)'
@@ -189,7 +189,7 @@ class RapunzelExpression: XCTestCase, RapunzelShared {
               String: '\(l)'
           Elements
             ComparisonElement
-              Operation: \(op)
+              Operator: \(op)
               Right
                 Expression(start: 1:10, end: 2:20)
                   String: '\(r)'
