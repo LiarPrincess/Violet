@@ -7,7 +7,8 @@ extension VM {
 
   // MARK: - Run
 
-  /// static void pymain_run_python(_PyMain *pymain)
+  /// static void
+  /// pymain_run_python(_PyMain *pymain)
   public func run() throws {
     if self.arguments.printHelp {
       print(self.arguments.getUsage())
@@ -15,7 +16,7 @@ extension VM {
     }
 
     if self.arguments.printVersion {
-      print("Python \(Constants.pythonVersion)")
+      print("Python \(self.sys.version)")
       return
     }
 
@@ -29,7 +30,7 @@ extension VM {
       try self.runModule(module)
     } else if let script = self.arguments.script {
       runRepl = false
-      try self.runFilename(script)
+      try self.runScript(script)
     }
 
     if runRepl || self.configuration.inspectInteractively {
@@ -40,10 +41,10 @@ extension VM {
   // MARK: - Run command
 
   private func runCommand(_ command: String) throws {
-    let module = self.builtins.newModule(name: "__main__")
-    let moduleDict = self.builtins.getDict(module)
-    let code = try self.compile(filename: "<stdin>", source: command, mode: .fileInput)
-    self.run(code: code, globals: moduleDict, locals: moduleDict)
+//    let module = self.builtins.newModule(name: "__main__")
+//    let moduleDict = self.builtins.getDict(module)
+//    let code = try self.compile(filename: "<stdin>", source: command, mode: .fileInput)
+//    self.run(code: code, globals: moduleDict, locals: moduleDict)
   }
 
   // MARK: - Run module
@@ -63,108 +64,135 @@ extension VM {
 //    }
   }
 
-  // MARK: - Run filename
+  // MARK: - Run script
 
-  private func runFilename(_ file: String) throws {
-    // We don't support 'PYTHONSTARTUP'
+  /// static void
+  /// pymain_run_filename(_PyMain *pymain, PyCompilerFlags *cf)
+  private func runScript(_ file: String) throws {
+    // We don't support 'PYTHONSTARTUP'!
+
+    let url = try self.getScriptURL(file)
+    let source = try self.readScript(from: url)
+    let code = try self.compile(filename: url.lastPathComponent,
+                                source: source,
+                                mode: .fileInput)
+
+// TODO: This or RustPython main.rs -> line 410:
+// let sys_path = vm.get_attribute(sys_module, "path")
+// vm.call_method(&sys_path, "insert", vec![vm.new_int(0), vm.new_str(dir)])?;
+
+    let main = self.builtins.newModule(name: "__main__")
+    let mainDict = self.builtins.getDict(main)
+    mainDict.set(key: "__file__", to: self.builtins.newString(file))
+
+//    self.run(code: code, globals: moduleDict, locals: moduleDict)
+    mainDict.del(key: "__file__")
+  }
+
+  private func getScriptURL(_ file: String) throws -> URL {
     var isDir: ObjCBool = false
     guard self.fm.fileExists(atPath: file, isDirectory: &isDir) else {
-      fatalError()
-//      self.unimplemented("Can't open file '\(file)': No such file or directory")
+      throw VMError.scriptDoesNotExist(path: file)
     }
 
-    var fileUrl = URL(fileURLWithPath: file, isDirectory: isDir.boolValue)
-    if isDir.boolValue {
-      fileUrl.appendPathComponent("__main__.py")
+    let fileUrl = URL(fileURLWithPath: file, isDirectory: isDir.boolValue)
+
+    // If it is just a file then return this URL,
+    // otherwise try '__main_._py' inside this dir.
+    guard isDir.boolValue else {
+      return fileUrl
     }
 
-    // TODO: This or RustPython main.rs -> line 410:
-    // let sys_path = vm.get_attribute(sys_module, "path")
-    // vm.call_method(&sys_path, "insert", vec![vm.new_int(0), vm.new_str(dir)])?;
+    let mainFileUrl = fileUrl.appendingPathComponent("__main__.py")
+    guard self.fm.fileExists(atPath: mainFileUrl.path, isDirectory: &isDir),
+          !isDir.boolValue else {
+      throw VMError.scriptDirDoesNotContain__main__(dir: file)
+    }
 
-    let module = self.builtins.newModule(name: "__main__")
-    let moduleDict = self.builtins.getDict(module)
-    moduleDict.set(key: "__file__", to: self.builtins.newString(file))
+    return mainFileUrl
+  }
 
-    let filename = fileUrl.lastPathComponent
-    let source = try String(contentsOf: fileUrl, encoding: .utf8)
-    let code = try self.compile(filename: filename, source: source, mode: .fileInput)
+  private func readScript(from url: URL) throws -> String {
+    let encoding = String.Encoding.utf8
 
-    self.run(code: code, globals: moduleDict, locals: moduleDict)
-    moduleDict.del(key: "__file__")
+    do {
+      return try String(contentsOf: url, encoding: encoding)
+    } catch {
+      throw VMError.scriptIsNotReadable(path: url.path, encoding: encoding)
+    }
   }
 
   // MARK: - Run REPL
 
   private func runRepl() throws {
-    var input = ""
-    var isContinuing = false
-
-    while true {
-      let prompt = isContinuing ? self.sys.ps2String : self.sys.ps1String
-      print(prompt, terminator: "")
-
-      switch readLine() {
-      case let .some(line):
-        let stopContinuing = line.isEmpty
-
-        if input.isEmpty {
-          input = line
-        } else {
-          input.append(line)
-        }
-        input.append("\n")
-
-        if isContinuing {
-          if stopContinuing {
-            isContinuing = false
-          } else {
-            continue
-          }
-        }
-
-        switch self.runInteractive(input: input) {
-        case .ok:
-          input = ""
-        case .notFinished:
-          isContinuing = true
-        case let .error(e):
-          throw e
-        }
-
-      case .none:
-        return
-      }
-    }
+//    var input = ""
+//    var isContinuing = false
+//
+//    while true {
+//      let prompt = isContinuing ? self.sys.ps2String : self.sys.ps1String
+//      print(prompt, terminator: "")
+//
+//      switch readLine() {
+//      case let .some(line):
+//        let stopContinuing = line.isEmpty
+//
+//        if input.isEmpty {
+//          input = line
+//        } else {
+//          input.append(line)
+//        }
+//        input.append("\n")
+//
+//        if isContinuing {
+//          if stopContinuing {
+//            isContinuing = false
+//          } else {
+//            continue
+//          }
+//        }
+//
+//        switch self.runInteractive(input: input) {
+//        case .ok:
+//          input = ""
+//        case .notFinished:
+//          isContinuing = true
+//        case let .error(e):
+//          throw e
+//        }
+//
+//      case .none:
+//        return
+//      }
+//    }
   }
 
-  private enum RunInteractiveResult {
-    case ok
-    case notFinished
-    case error(Error)
-  }
-
-  private func runInteractive(input: String) -> RunInteractiveResult {
-    do {
-      let code = try self.compile(filename: "<stdin>", source: input, mode: .interactive)
-
-      let module = self.builtins.newModule(name: "__main__")
-      let moduleDict = self.builtins.getDict(module)
-
-      self.run(code: code, globals: moduleDict, locals: moduleDict)
-      return .ok
-    } catch let error as LexerError {
-      switch error.kind {
-      case .eof, .unfinishedLongString: return .notFinished
-      default: return .error(error)
-      }
-    } catch let error as ParserError {
-      switch error.kind {
-      case .unexpectedEOF: return .notFinished
-      default: return .error(error)
-      }
-    } catch {
-      return .error(error)
-    }
-  }
+//  private enum RunInteractiveResult {
+//    case ok
+//    case notFinished
+//    case error(Error)
+//  }
+//
+//  private func runInteractive(input: String) -> RunInteractiveResult {
+//    do {
+//      let code = try self.compile(filename: "<stdin>", source: input, mode: .interactive)
+//
+//      let module = self.builtins.newModule(name: "__main__")
+//      let moduleDict = self.builtins.getDict(module)
+//
+//      self.run(code: code, globals: moduleDict, locals: moduleDict)
+//      return .ok
+//    } catch let error as LexerError {
+//      switch error.kind {
+//      case .eof, .unfinishedLongString: return .notFinished
+//      default: return .error(error)
+//      }
+//    } catch let error as ParserError {
+//      switch error.kind {
+//      case .unexpectedEOF: return .notFinished
+//      default: return .error(error)
+//      }
+//    } catch {
+//      return .error(error)
+//    }
+//  }
 }

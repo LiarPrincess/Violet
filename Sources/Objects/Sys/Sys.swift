@@ -132,10 +132,8 @@ public final class Sys {
   public lazy var version: String = {
     let p = self.versionInfo
     let v = self.implementationInfo.version
-    return """
-      Python \(p.major).\(p.minor).\(p.micro)
-      (Violet \(v.major).\(v.minor).\(v.micro))
-      """
+    return "Python \(p.major).\(p.minor).\(p.micro) " +
+           "(Violet \(v.major).\(v.minor).\(v.micro))"
   }()
 
   /// `sys.version_info`

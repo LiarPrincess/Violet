@@ -11,12 +11,16 @@ extension VM {
     let parser = Parser(mode: mode, tokenSource: lexer)
     let ast = try parser.parse()
 
+    self.dump(ast)
+
     let optimizationLevel = self.configuration.optimization
     let compilerOptions = CompilerOptions(optimizationLevel: optimizationLevel)
     let compiler = try Compiler(ast: ast,
                                 filename: filename,
                                 options: compilerOptions)
 
-    return try compiler.run()
+    let code = try compiler.run()
+    self.dump(code)
+    return code
   }
 }
