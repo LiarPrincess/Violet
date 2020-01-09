@@ -6,7 +6,11 @@ This tool should be used with CPython!
 import sys
 import symtable
 
-def dumpTable(table: symtable.SymbolTable, level = 0):
+def dump_symtable(code):
+  table = symtable.symtable(code, '<string>', 'exec')
+  dump_symtable_inner(table)
+
+def dump_symtable_inner(table: symtable.SymbolTable, level = 0):
   indent = level * '  '
 
   print(indent, 'name:', table.get_name())
@@ -49,25 +53,8 @@ def dumpTable(table: symtable.SymbolTable, level = 0):
         symbolProps += prop + ', '
 
     print(indent, ' ', symbol.get_name(), '-', symbolProps)
-    pass
 
   if table.has_children():
     print(indent,'children:')
     for child in table.get_children():
-      dumpTable(child, level + 1)
-
-if __name__ == '__main__':
-  # if len(sys.argv) < 2:
-  #   print("Usage: 'python3 dump_symtable.py [FILE]'")
-  #   sys.exit(1)
-
-  # filename = sys.argv[1]
-  # code = open(filename).read()
-
-  code = '''
-class FROZEN():
-  def ELSA():
-    ELSA
-'''
-  table = symtable.symtable(code, '<string>', 'exec')
-  dumpTable(table)
+      dump_symtable_inner(child, level + 1)

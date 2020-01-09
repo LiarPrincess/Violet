@@ -1,11 +1,20 @@
+'''
+Dump AST.
+This tool should be used with CPython!
+'''
+
 import ast
 import sys
 
-def classname(obj):
+def class_name(obj):
   return obj.__class__.__name__
 
-def printNode(node, level = 0):
-  name = classname(node)
+def dump_ast(code, indent = 0):
+  root = ast.parse(code, '<string>')
+  dump_ast_inner(root, level=indent)
+
+def dump_ast_inner(node, level = 0):
+  name = class_name(node)
   print(' ' * level * 2 + name + " (node)")
 
   childLevel = level + 1
@@ -19,9 +28,9 @@ def printNode(node, level = 0):
     if isinstance(v, ast.AST):
       if v._fields:
         print(f"{childIndent}{k} (node)")
-        printNode(v, childLevel + 1)
+        dump_ast_inner(v, childLevel + 1)
       else:
-        print(f"{childIndent}{k}: {classname(v)}")
+        print(f"{childIndent}{k}: {class_name(v)}")
     elif isinstance(v, list):
       if len(v) == 0:
         print(f"{childIndent}{k} (list): empty")
@@ -29,7 +38,7 @@ def printNode(node, level = 0):
         print(f"{childIndent}{k} (list)")
         for e in v:
           if isinstance(e, ast.AST):
-            printNode(e, childLevel + 1)
+            dump_ast_inner(e, childLevel + 1)
           else:
             print(f"{childIndent}  {e}")
     elif isinstance(v, str):
@@ -40,17 +49,3 @@ def printNode(node, level = 0):
       print(f"{childIndent}{k}: null")
     else:
       print(f"{childIndent}{k}: ?")
-
-if __name__ == '__main__':
-  # if len(sys.argv) < 2:
-  #   print("Usage: 'python3 dump_ast.py [FILE]'")
-  #   sys.exit(1)
-
-  # filename = sys.argv[1]
-  # code = open(filename).read()
-
-  code = '''
-2 + 2
-'''
-  root = ast.parse(code, '<string>')
-  printNode(root)
