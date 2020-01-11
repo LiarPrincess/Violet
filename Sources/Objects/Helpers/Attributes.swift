@@ -1,3 +1,5 @@
+import Core
+
 // MARK: - Attributes
 
 // It has to be a class because it needs to be shared between multiple entities:

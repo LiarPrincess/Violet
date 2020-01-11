@@ -1,3 +1,5 @@
+import Core
+
 // In CPython:
 // Objects -> typeobject.c
 

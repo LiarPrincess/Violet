@@ -7,9 +7,9 @@
 ///
 /// Orginally this function was called `uhOhSoThatHappened`,
 /// but that was way too long for our 80 column limit .
-internal func trap(_ msg: String,
-                   file: StaticString = #file,
-                   function: StaticString = #function,
-                   line: Int = #line) -> Never {
+public func trap(_ msg: String,
+                 file: StaticString = #file,
+                 function: StaticString = #function,
+                 line: Int = #line) -> Never {
   fatalError("\(file):\(line) - \(msg)")
 }
