@@ -203,9 +203,11 @@ internal class Frame {
     case .printExpr:
       return self.printExpr()
     case let .setupLoop(loopEndLabel):
-      return self.setupLoop(loopEndLabel: extendedArg + Int(loopEndLabel))
+      let extended = self.extend(base: extendedArg, arg: loopEndLabel)
+      return self.setupLoop(loopEndLabelIndex: extended)
     case let .forIter(ifEmptyLabel):
-      return self.forIter(ifEmptyLabel: extendedArg + Int(ifEmptyLabel))
+      let extended = self.extend(base: extendedArg, arg: ifEmptyLabel)
+      return self.forIter(ifEmptyLabelIndex: extended)
     case .getIter:
       return self.getIter()
     case .getYieldFromIter:
@@ -213,51 +215,74 @@ internal class Frame {
     case .`break`:
       return self.doBreak()
     case let .buildTuple(elementCount):
-      return self.buildTuple(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildTuple(elementCount: extended)
     case let .buildList(elementCount):
-      return self.buildList(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildList(elementCount: extended)
     case let .buildSet(elementCount):
-      return self.buildSet(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildSet(elementCount: extended)
     case let .buildMap(elementCount):
-      return self.buildMap(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildMap(elementCount: extended)
     case let .buildConstKeyMap(elementCount):
-      return self.buildConstKeyMap(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildConstKeyMap(elementCount: extended)
     case let .setAdd(value):
-      return self.setAdd(value: extendedArg + Int(value))
+      let extended = self.extend(base: extendedArg, arg: value)
+      return self.setAdd(value: extended)
     case let .listAppend(value):
-      return self.listAdd(value: extendedArg + Int(value))
+      let extended = self.extend(base: extendedArg, arg: value)
+      return self.listAdd(value: extended)
     case let .mapAdd(value):
-      return self.mapAdd(value: extendedArg + Int(value))
+      let extended = self.extend(base: extendedArg, arg: value)
+      return self.mapAdd(value: extended)
     case let .buildTupleUnpack(elementCount):
-      return self.buildTupleUnpack(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildTupleUnpack(elementCount: extended)
     case let .buildTupleUnpackWithCall(elementCount):
-      return self.buildTupleUnpackWithCall(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildTupleUnpackWithCall(elementCount: extended)
     case let .buildListUnpack(elementCount):
-      return self.buildListUnpack(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildListUnpack(elementCount: extended)
     case let .buildSetUnpack(elementCount):
-      return self.buildSetUnpack(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildSetUnpack(elementCount: extended)
     case let .buildMapUnpack(elementCount):
-      return self.buildMapUnpack(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildMapUnpack(elementCount: extended)
     case let .buildMapUnpackWithCall(elementCount):
-      return self.buildMapUnpackWithCall(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.buildMapUnpackWithCall(elementCount: extended)
     case let .unpackSequence(elementCount):
-      return self.unpackSequence(elementCount: extendedArg + Int(elementCount))
+      let extended = self.extend(base: extendedArg, arg: elementCount)
+      return self.unpackSequence(elementCount: extended)
     case let .unpackEx(elementCountBefore):
-      return self.unpackEx(elementCountBefore: extendedArg + Int(elementCountBefore))
+      let extended = self.extend(base: extendedArg, arg: elementCountBefore)
+      return self.unpackEx(elementCountBefore: extended)
     case let .loadConst(index):
-      return self.loadConst(index: extendedArg + Int(index))
+      let extended = self.extend(base: extendedArg, arg: index)
+      return self.loadConst(index: extended)
     case let .storeName(nameIndex):
-      return self.storeName(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.storeName(nameIndex: extended)
     case let .loadName(nameIndex):
-      return self.loadName(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.loadName(nameIndex: extended)
     case let .deleteName(nameIndex):
-      return self.deleteName(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.deleteName(nameIndex: extended)
     case let .storeAttribute(nameIndex):
-      return self.storeAttribute(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.storeAttribute(nameIndex: extended)
     case let .loadAttribute(nameIndex):
-      return self.loadAttribute(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.loadAttribute(nameIndex: extended)
     case let .deleteAttribute(nameIndex):
-      return self.deleteAttribute(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.deleteAttribute(nameIndex: extended)
     case .binarySubscript:
       return self.binarySubscript()
     case .storeSubscript:
@@ -265,32 +290,44 @@ internal class Frame {
     case .deleteSubscript:
       return self.deleteSubscript()
     case let .storeGlobal(nameIndex):
-      return self.storeGlobal(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.storeGlobal(nameIndex: extended)
     case let .loadGlobal(nameIndex):
-      return self.loadGlobal(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.loadGlobal(nameIndex: extended)
     case let .deleteGlobal(nameIndex):
-      return self.deleteGlobal(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.deleteGlobal(nameIndex: extended)
     case let .loadFast(nameIndex):
-      return self.loadFast(index: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.loadFast(index: extended)
     case let .storeFast(nameIndex):
-      return self.storeFast(index: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.storeFast(index: extended)
     case let .deleteFast(nameIndex):
-      return self.deleteFast(index: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.deleteFast(index: extended)
     case let .loadDeref(nameIndex):
-      return self.loadDeref(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.loadDeref(nameIndex: extended)
     case let .storeDeref(nameIndex):
-      return self.storeDeref(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.storeDeref(nameIndex: extended)
     case let .deleteDeref(nameIndex):
-      return self.deleteDeref(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.deleteDeref(nameIndex: extended)
     case let .loadClassDeref(nameIndex):
-      return self.loadClassDeref(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.loadClassDeref(nameIndex: extended)
     case let .makeFunction(flags):
       assert(extendedArg == 0)
       return self.makeFunction(flags: flags)
     case let .callFunction(argumentCount):
-      return self.callFunction(argumentCount: extendedArg + Int(argumentCount))
+      let extended = self.extend(base: extendedArg, arg: argumentCount)
+      return self.callFunction(argumentCount: extended)
     case let .callFunctionKw(argumentCount):
-      return self.callFunctionKw(argumentCount: extendedArg + Int(argumentCount))
+      let extended = self.extend(base: extendedArg, arg: argumentCount)
+      return self.callFunctionKw(argumentCount: extended)
     case let .callFunctionEx(hasKeywordArguments):
       assert(extendedArg == 0)
       return self.callFunctionEx(hasKeywordArguments: hasKeywordArguments)
@@ -299,28 +336,35 @@ internal class Frame {
     case .loadBuildClass:
       return self.loadBuildClass()
     case let .loadMethod(nameIndex):
-      return self.loadMethod(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.loadMethod(nameIndex: extended)
     case let .callMethod(argumentCount):
-      return self.callMethod(argumentCount: extendedArg + Int(argumentCount))
+      let extended = self.extend(base: extendedArg, arg: argumentCount)
+      return self.callMethod(argumentCount: extended)
     case .importStar:
       return self.importStar()
     case let .importName(nameIndex):
-      return self.importName(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.importName(nameIndex: extended)
     case let .importFrom(nameIndex):
-      return self.importFrom(nameIndex: extendedArg + Int(nameIndex))
+      let extended = self.extend(base: extendedArg, arg: nameIndex)
+      return self.importFrom(nameIndex: extended)
     case .popExcept:
       return self.popExcept()
     case .endFinally:
       return self.endFinally()
     case let .setupExcept(firstExceptLabel):
-      return self.setupExcept(firstExceptLabel: extendedArg + Int(firstExceptLabel))
+      let extended = self.extend(base: extendedArg, arg: firstExceptLabel)
+      return self.setupExcept(firstExceptLabelIndex: extended)
     case let .setupFinally(finallyStartLabel):
-      return self.setupFinally(finallyStartLabel: extendedArg + Int(finallyStartLabel))
+      let extended = self.extend(base: extendedArg, arg: finallyStartLabel)
+      return self.setupFinally(finallyStartLabelIndex: extended)
     case let .raiseVarargs(arg):
       assert(extendedArg == 0)
       return self.raiseVarargs(arg: arg)
     case let .setupWith(afterBodyLabel):
-      return self.setupWith(afterBodyLabel: extendedArg + Int(afterBodyLabel))
+      let extended = self.extend(base: extendedArg, arg: afterBodyLabel)
+      return self.setupWith(afterBodyLabelIndex: extended)
     case .withCleanupStart:
       return self.withCleanupStart()
     case .withCleanupFinish:
@@ -330,31 +374,42 @@ internal class Frame {
     case .setupAsyncWith:
       return self.setupAsyncWith()
     case let .jumpAbsolute(labelIndex):
-      return self.jumpAbsolute(labelIndex: extendedArg + Int(labelIndex))
+      let extended = self.extend(base: extendedArg, arg: labelIndex)
+      return self.jumpAbsolute(labelIndex: extended)
     case let .popJumpIfTrue(labelIndex):
-      return self.popJumpIfTrue(labelIndex: extendedArg + Int(labelIndex))
+      let extended = self.extend(base: extendedArg, arg: labelIndex)
+      return self.popJumpIfTrue(labelIndex: extended)
     case let .popJumpIfFalse(labelIndex):
-      return self.popJumpIfFalse(labelIndex: extendedArg + Int(labelIndex))
+      let extended = self.extend(base: extendedArg, arg: labelIndex)
+      return self.popJumpIfFalse(labelIndex: extended)
     case let .jumpIfTrueOrPop(labelIndex):
-      return self.jumpIfTrueOrPop(labelIndex: extendedArg + Int(labelIndex))
+      let extended = self.extend(base: extendedArg, arg: labelIndex)
+      return self.jumpIfTrueOrPop(labelIndex: extended)
     case let .jumpIfFalseOrPop(labelIndex):
-      return self.jumpIfFalseOrPop(labelIndex: extendedArg + Int(labelIndex))
+      let extended = self.extend(base: extendedArg, arg: labelIndex)
+      return self.jumpIfFalseOrPop(labelIndex: extended)
     case let .formatValue(conversion, hasFormat):
       assert(extendedArg == 0)
       return self.formatValue(conversion: conversion, hasFormat: hasFormat)
-    case let .buildString(value):
-      return self.buildString(count: extendedArg + Int(value))
+    case let .buildString(arg):
+      let extended = self.extend(base: extendedArg, arg: arg)
+      return self.buildString(count: extended)
     case let .extendedArg(value):
-      let arg = extendedArg << 8 | Int(value)
-      return self.executeInstruction(extendedArg: arg)
+      let extended = self.extend(base: extendedArg, arg: value)
+      return self.executeInstruction(extendedArg: extended)
     case .setupAnnotations:
       return self.setupAnnotations()
     case .popBlock:
       return self.popBlock()
     case let .loadClosure(cellOrFreeIndex):
-      return self.loadClosure(cellOrFreeIndex: extendedArg + Int(cellOrFreeIndex))
+      let extended = self.extend(base: extendedArg, arg: cellOrFreeIndex)
+      return self.loadClosure(cellOrFreeIndex: extended)
     case let .buildSlice(arg):
       return self.buildSlice(arg: arg)
     }
+  }
+
+  private func extend(base: Int, arg: UInt8) -> Int {
+    return base << 8 | Int(arg)
   }
 }
