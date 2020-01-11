@@ -440,7 +440,7 @@ extension Frame {
 
   // MARK: - Unimplemented
 
-  private func unimplemented() -> InstructionResult {
-    fatalError("not yet done")
+  private func unimplemented(fn: StaticString = #function) -> InstructionResult {
+    fatalError("NOT IMPLEMENTED: '\(fn)'")
   }
 }

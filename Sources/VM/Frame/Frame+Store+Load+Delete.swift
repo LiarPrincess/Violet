@@ -67,7 +67,7 @@ extension Frame {
   /// Implements `del name`.
   internal func deleteName(nameIndex: Int) -> InstructionResult {
     let name = self.code.names[nameIndex]
-    let value = self.localSymbols.removeValue(forKey: name)
+    let value = self.localSymbols.del(key: name)
 
     if value == nil {
       return self.nameError(name)
@@ -192,7 +192,7 @@ extension Frame {
   /// Works as DeleteName, but deletes a global name.
   internal func deleteGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.code.names[nameIndex]
-    let value = self.globalSymbols.removeValue(forKey: name)
+    let value = self.globalSymbols.del(key: name)
 
     if value == nil {
       return self.nameError(name)

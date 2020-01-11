@@ -23,6 +23,8 @@ internal class Frame {
 
   /// Code to run.
   internal let code: CodeObject
+  /// Parent frame.
+  internal let parent: Frame?
 
   /// Python state.
   internal let context: PyContext
@@ -34,17 +36,22 @@ internal class Frame {
   /// The main data frame of the stack machine.
   internal var stack = ObjectStack()
 
-  /// Local symbol table.
-  internal var localSymbols = [String: PyObject]()
-  /// Global symbol table.
-  internal var globalSymbols = [String: PyObject]()
-  /// Builtin symbol table.
-  internal var builtinSymbols = [String: PyObject]()
-  /// Free variables.
-  internal var freeVariables = [String: PyObject]()
+  /// Local variables.
+  internal var localSymbols: Attributes
+  /// Global variables.
+  internal var globalSymbols: Attributes
+  /// Builtin symbols (most of the time `self.builtins.__dict__`).
+  internal var builtinSymbols: Attributes
+  /// Free variables (variables from upper scopes).
+  internal lazy var freeVariables = [String: PyObject]()
   /// Function args and local function variables.
-  internal var fastLocals: [PyObject?]
+  ///
+  /// We could use `self.localSymbols` but that would be `O(1)` with
+  /// massive constants (array is like dictionary but with lower constants).
+  internal lazy var fastLocals = [PyObject?](repeating: nil,
+                                             count: code.varNames.count)
 
+  #warning("Remove this")
   internal var standardOutput: FileHandle {
     return FileHandle.standardOutput
   }
@@ -52,10 +59,35 @@ internal class Frame {
   /// Index of the next instruction to run.
   internal var nextInstructionIndex = 0
 
-  internal init(code: CodeObject, context: PyContext) {
+  /// PyFrameObject* _Py_HOT_FUNCTION
+  /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
+  internal init(context: PyContext,
+                code: CodeObject,
+                locals: Attributes,
+                globals: Attributes,
+                parent: Frame?) {
     self.code = code
+    self.parent = parent
     self.context = context
-    self.fastLocals = [PyObject?](repeating: nil, count: code.varNames.count)
+    self.localSymbols = locals
+    self.globalSymbols = globals
+    self.builtinSymbols = Frame.getBuiltins(context: context,
+                                            globals: globals,
+                                            parent: parent)
+  }
+
+  private static func getBuiltins(context: PyContext,
+                                  globals: Attributes,
+                                  parent: Frame?) -> Attributes {
+
+    if parent == nil || parent?.globalSymbols !== globals {
+      if let module = globals.get(key: "__builtins__") as? PyModule {
+        return context.builtins.getDict(module)
+      }
+    }
+
+    let module = context.builtinsModule
+    return context.builtins.getDict(module)
   }
 
   // MARK: - Run
