@@ -71,7 +71,7 @@ extension Frame {
   // MARK: - Helpers
 
   internal func jumpTo(labelIndex: Int) {
-    let label = self.code.labels[labelIndex]
+    let label = self.getLabel(index: labelIndex)
     self.jumpTo(label: label)
   }
 

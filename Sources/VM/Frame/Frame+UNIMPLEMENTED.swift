@@ -128,12 +128,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  /// Removes one block from the block stack.
-  /// Per frame, there is a stack of blocks, denoting nested loops, try statements, and such.
-  internal func popBlock() -> InstructionResult {
-    return self.unimplemented()
-  }
-
   /// Pushes a reference to the cell contained in slot 'i'
   /// of the 'cell' or 'free' variable storage.
   /// If 'i' < cellVars.count: name of the variable is cellVars[i].
@@ -208,62 +202,18 @@ extension Frame {
 
   // MARK: - Loop
 
-  /// Pushes a block for a loop onto the block stack.
-  /// The block spans from the current instruction up until `loopEndLabel`.
-  internal func setupLoop(loopEndLabelIndex: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// TOS is an iterator. Call its `Next()` method.
-  /// If this `yields` a new value, push it on the stack (leaving the iterator below it).
-  /// If not then TOS is popped, and the byte code counter is incremented by delta.
-  internal func forIter(ifEmptyLabelIndex: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// Implements `TOS = iter(TOS)`.
-  internal func getIter() -> InstructionResult {
-    return self.unimplemented()
-  }
-
   /// If TOS is a generator iterator or coroutine object then it is left as is.
   /// Otherwise, implements `TOS = iter(TOS)`.
   internal func getYieldFromIter() -> InstructionResult {
     return self.unimplemented()
   }
 
-  /// Terminates a loop due to a break statement.
-  internal func doBreak() -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - Try+Catch
-
-  /// Removes one block from the block stack.
-  /// The popped block must be an exception handler block,
-  /// as implicitly created when entering an except handler.
-  /// In addition to popping extraneous values from the frame stack,
-  /// the last three popped values are used to restore the exception state.
-  internal func popExcept() -> InstructionResult {
-    return self.unimplemented()
-  }
 
   /// Terminates a finally clause.
   /// The interpreter recalls whether the exception has to be re-raised,
   /// or whether the function returns, and continues with the outer-next block.
   internal func endFinally() -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// Pushes a try block from a try-except clause onto the block stack.
-  /// `delta` points to the first except block.
-  internal func setupExcept(firstExceptLabelIndex: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// Pushes a try block from a try-except clause onto the block stack.
-  /// `delta` points to the finally block.
-  internal func setupFinally(finallyStartLabelIndex: Int) -> InstructionResult {
     return self.unimplemented()
   }
 

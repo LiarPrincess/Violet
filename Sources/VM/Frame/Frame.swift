@@ -99,6 +99,17 @@ internal final class Frame {
     return context.builtins.getDict(module)
   }
 
+  // MARK: - Helpers
+
+  internal var stackLevel: Int {
+    return self.stack.count
+  }
+
+  internal func getLabel(index: Int) -> Int {
+    assert(0 <= index && index < self.code.labels.count)
+    return self.code.labels[index]
+  }
+
   // MARK: - Run
 
   internal func run() -> PyObject {
@@ -121,70 +132,6 @@ internal final class Frame {
     }
 
     fatalError()
-  }
-
-  /// Unwind stacks if a (pseudo) exception occurred.
-  ///
-  /// CPython: fast_block_end:
-  private func unwind(reason: UnwindReason) -> UnwindResult {
-    while let block = self.currentBlock {
-      // We don't pop block on 'coutinue'.
-      if case .continue = reason, block.type == .setupLoop {
-        // JUMPTO(PyLong_AS_LONG(retval));
-        break
-      }
-
-      if block.type == .exceptHandler {
-        self.unwindExceptHandler(block: block)
-        continue
-      }
-
-      _ = self.blocks.popLast()
-      self.unwindBlock(block: block)
-
-      if case .break = reason, block.type == .setupLoop {
-        self.jumpTo(label: block.handler)
-        break
-      }
-
-      // TODO: Finish
-//      if case .exception = reason,
-//        block.type == .setupExcept || block.type == .setupFinally { }
-
-//      if block.type == .setupFinally { }
-    }
-
-    switch reason {
-    case .return(let value):
-      return .return(value)
-    case .exception: // (let e):
-      fatalError()
-    case .break, .continue:
-      trap("Internal error: break or continue must occur within a loop block.")
-    }
-  }
-
-  /// \#define UNWIND_BLOCK(b)
-  private func unwindBlock(block: Block) {
-    self.stack.popUntil(count: block.level)
-  }
-
-  /// \#define UNWIND_EXCEPT_HANDLER(b)
-  private func unwindExceptHandler(block: Block) {
-    let stackWithExceptionInfoCount = block.level + 3
-    assert(self.stack.count >= stackWithExceptionInfoCount)
-
-    self.stack.popUntil(count: stackWithExceptionInfoCount)
-
-    //  _PyErr_StackItem *exc_info = tstate->exc_info;
-    //  exc_info->exc_type = POP();
-    //  exc_info->exc_value = POP();
-    //  exc_info->exc_traceback = POP();
-    _ = self.stack.pop() // type
-    _ = self.stack.pop() // value
-    _ = self.stack.pop() // traceback
-
-    assert(self.stack.count == block.level)
   }
 
   private func fetchInstruction() -> Instruction {

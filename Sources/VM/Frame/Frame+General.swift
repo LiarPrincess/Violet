@@ -12,6 +12,19 @@ extension Frame {
     return .ok
   }
 
+  /// Removes one block from the block stack.
+  /// Per frame, there is a stack of blocks, denoting nested loops,
+  /// try statements, and such.
+  ///
+  /// - Note:
+  /// This is an instruction implementation!
+  /// If you want to really `popBlock` then use `self.popBlockInner()`.
+  internal func popBlock() -> InstructionResult {
+    let block = self.popBlockInner()
+    self.unwindBlock(block: block)
+    return .ok
+  }
+
   // MARK: - Rot
 
   /// Swaps the two top-most stack items.
