@@ -44,7 +44,7 @@ extension VM {
                       globals: globals,
                       parent: parent)
 
-    frame.run()
+    _ = frame.run()
 
 //    fastlocals = f->f_localsplus;
 //    freevars = f->f_localsplus + co->co_nlocals;

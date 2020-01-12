@@ -6,8 +6,7 @@ extension Frame {
 
   /// Set bytecode counter to target.
   internal func jumpAbsolute(labelIndex: Int) -> InstructionResult {
-    let label = self.code.labels[labelIndex]
-    self.jumpTo(label: label)
+    self.jumpTo(labelIndex: labelIndex)
     return .ok
   }
 
@@ -71,7 +70,12 @@ extension Frame {
 
   // MARK: - Helpers
 
-  private func jumpTo(label: Int) {
+  internal func jumpTo(labelIndex: Int) {
+    let label = self.code.labels[labelIndex]
+    self.jumpTo(label: label)
+  }
+
+  internal func jumpTo(label: Int) {
     self.nextInstructionIndex = label
   }
 

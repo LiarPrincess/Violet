@@ -118,11 +118,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  /// Returns with TOS to the caller of the function.
-  internal func doReturn() -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - General
 
   /// Checks whether Annotations is defined in locals(),
@@ -215,14 +210,14 @@ extension Frame {
 
   /// Pushes a block for a loop onto the block stack.
   /// The block spans from the current instruction up until `loopEndLabel`.
-  internal func setupLoop(loopEndLabel: Int) -> InstructionResult {
+  internal func setupLoop(loopEndLabelIndex: Int) -> InstructionResult {
     return self.unimplemented()
   }
 
   /// TOS is an iterator. Call its `Next()` method.
   /// If this `yields` a new value, push it on the stack (leaving the iterator below it).
   /// If not then TOS is popped, and the byte code counter is incremented by delta.
-  internal func forIter(ifEmptyLabel: Int) -> InstructionResult {
+  internal func forIter(ifEmptyLabelIndex: Int) -> InstructionResult {
     return self.unimplemented()
   }
 
@@ -262,13 +257,13 @@ extension Frame {
 
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `delta` points to the first except block.
-  internal func setupExcept(firstExceptLabel: Int) -> InstructionResult {
+  internal func setupExcept(firstExceptLabelIndex: Int) -> InstructionResult {
     return self.unimplemented()
   }
 
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `delta` points to the finally block.
-  internal func setupFinally(finallyStartLabel: Int) -> InstructionResult {
+  internal func setupFinally(finallyStartLabelIndex: Int) -> InstructionResult {
     return self.unimplemented()
   }
 
@@ -398,7 +393,7 @@ extension Frame {
   ///
   /// The next opcode will either ignore it (`PopTop`),
   /// or store it in variable (StoreFast, StoreName, or UnpackSequence).
-  internal func setupWith(afterBodyLabel: Int) -> InstructionResult {
+  internal func setupWith(afterBodyLabelIndex: Int) -> InstructionResult {
     return self.unimplemented()
   }
 

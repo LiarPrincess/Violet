@@ -1,3 +1,4 @@
+import Core
 import Foundation
 import Bytecode
 import Objects
@@ -7,19 +8,23 @@ import Objects
 
 // swiftlint:disable file_length
 
+// MARK: - Instruction result
+
 /// Result of running of a single instruction.
 internal enum InstructionResult {
   /// Instruction executed succesfully.
   case ok
   /// Instruction requested a `return` from a current frame.
-  case `return`
+  case unwind(UnwindReason)
   /// Builtin mudule raised an error.
   case builtinError(PyErrorEnum)
   /// User raised error using `raise` instruction.
   case userError
 }
 
-internal class Frame {
+// MARK: - Frame
+
+internal final class Frame {
 
   /// Code to run.
   internal let code: CodeObject
@@ -35,26 +40,30 @@ internal class Frame {
 
   /// The main data frame of the stack machine.
   internal var stack = ObjectStack()
+  /// Stack of blocks (new ones are last).
+  internal var blocks = [Block]()
+
+  /// Top-most block.
+  internal var currentBlock: Block? {
+    return blocks.last
+  }
 
   /// Local variables.
   internal var localSymbols: Attributes
   /// Global variables.
   internal var globalSymbols: Attributes
-  /// Builtin symbols (most of the time `self.builtins.__dict__`).
+  /// Builtin symbols (most of the time it would be `self.builtins.__dict__`).
   internal var builtinSymbols: Attributes
   /// Free variables (variables from upper scopes).
   internal lazy var freeVariables = [String: PyObject]()
   /// Function args and local function variables.
   ///
   /// We could use `self.localSymbols` but that would be `O(1)` with
-  /// massive constants (array is like dictionary but with lower constants).
+  /// massive constants (array is like dictionary, but with lower constants).
+  /// We could also put it at the bottom of our stack (like in other languages),
+  /// but 'being the hipster trash that we are' we won't do this.
   internal lazy var fastLocals = [PyObject?](repeating: nil,
                                              count: code.varNames.count)
-
-  #warning("Remove this")
-  internal var standardOutput: FileHandle {
-    return FileHandle.standardOutput
-  }
 
   /// Index of the next instruction to run.
   internal var nextInstructionIndex = 0
@@ -92,10 +101,90 @@ internal class Frame {
 
   // MARK: - Run
 
-  internal func run() {
+  internal func run() -> PyObject {
     while self.nextInstructionIndex != self.code.instructions.endIndex {
-      _ = self.executeInstruction()
+      switch self.executeInstruction() {
+      case .ok:
+        break // just go to next instruction
+      case .unwind(let reason):
+        switch self.unwind(reason: reason) {
+        case .return(let value):
+          return value
+        case .notImplemented:
+          break
+        }
+      case .builtinError: // (_):
+        break
+      case .userError:
+        break
+      }
     }
+
+    fatalError()
+  }
+
+  /// Unwind stacks if a (pseudo) exception occurred.
+  ///
+  /// CPython: fast_block_end:
+  private func unwind(reason: UnwindReason) -> UnwindResult {
+    while let block = self.currentBlock {
+      // We don't pop block on 'coutinue'.
+      if case .continue = reason, block.type == .setupLoop {
+        // JUMPTO(PyLong_AS_LONG(retval));
+        break
+      }
+
+      if block.type == .exceptHandler {
+        self.unwindExceptHandler(block: block)
+        continue
+      }
+
+      _ = self.blocks.popLast()
+      self.unwindBlock(block: block)
+
+      if case .break = reason, block.type == .setupLoop {
+        self.jumpTo(label: block.handler)
+        break
+      }
+
+      // TODO: Finish
+//      if case .exception = reason,
+//        block.type == .setupExcept || block.type == .setupFinally { }
+
+//      if block.type == .setupFinally { }
+    }
+
+    switch reason {
+    case .return(let value):
+      return .return(value)
+    case .exception: // (let e):
+      fatalError()
+    case .break, .continue:
+      trap("Internal error: break or continue must occur within a loop block.")
+    }
+  }
+
+  /// \#define UNWIND_BLOCK(b)
+  private func unwindBlock(block: Block) {
+    self.stack.popUntil(count: block.level)
+  }
+
+  /// \#define UNWIND_EXCEPT_HANDLER(b)
+  private func unwindExceptHandler(block: Block) {
+    let stackWithExceptionInfoCount = block.level + 3
+    assert(self.stack.count >= stackWithExceptionInfoCount)
+
+    self.stack.popUntil(count: stackWithExceptionInfoCount)
+
+    //  _PyErr_StackItem *exc_info = tstate->exc_info;
+    //  exc_info->exc_type = POP();
+    //  exc_info->exc_value = POP();
+    //  exc_info->exc_traceback = POP();
+    _ = self.stack.pop() // type
+    _ = self.stack.pop() // value
+    _ = self.stack.pop() // traceback
+
+    assert(self.stack.count == block.level)
   }
 
   private func fetchInstruction() -> Instruction {

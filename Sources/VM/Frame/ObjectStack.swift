@@ -24,7 +24,13 @@ internal struct ObjectStack {
     set { self.set(4, to: newValue) }
   }
 
-  internal var isEmpty: Bool { return self.elements.isEmpty }
+  internal var isEmpty: Bool {
+    return self.elements.isEmpty
+  }
+
+  internal var count: Int {
+    return self.elements.count
+  }
 
   // MARK: - Peek
 
@@ -71,5 +77,16 @@ internal struct ObjectStack {
     self.elements.removeLast(elementCount)
 
     return Array(result.reversed())
+  }
+
+  internal mutating func popUntil(count: Int) {
+    assert(self.elements.count >= count)
+
+    // Avoid allocation when we have correct size
+    if self.elements.count != count {
+      self.elements = Array(self.elements[0..<count])
+    }
+    
+    assert(self.elements.count == count)
   }
 }
