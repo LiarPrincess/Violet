@@ -82,7 +82,7 @@ extension VM {
 // vm.call_method(&sys_path, "insert", vec![vm.new_int(0), vm.new_str(dir)])?;
 
     let main = self.builtins.newModule(name: "__main__")
-    let mainDict = self.builtins.getDict(main)
+    let mainDict = main.getDict()
     mainDict.set(key: "__file__", to: self.builtins.newString(file))
 
 //    self.run(code: code, globals: moduleDict, locals: moduleDict)

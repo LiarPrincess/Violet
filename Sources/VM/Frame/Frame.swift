@@ -91,12 +91,11 @@ internal final class Frame {
 
     if parent == nil || parent?.globalSymbols !== globals {
       if let module = globals.get(key: "__builtins__") as? PyModule {
-        return context.builtins.getDict(module)
+        return module.getDict()
       }
     }
 
-    let module = context.builtinsModule
-    return context.builtins.getDict(module)
+    return context.builtinsModule.getDict()
   }
 
   // MARK: - Helpers

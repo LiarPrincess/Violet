@@ -147,10 +147,6 @@ extension Builtins {
     return [:]
   }
 
-  public func getDict(_ module: PyModule) -> Attributes {
-    return module.attributes
-  }
-
   // MARK: - Helpers
 
   internal var unimplemented: PyObject {

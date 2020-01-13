@@ -191,7 +191,7 @@ public class PyType: PyObject, CustomStringConvertible {
   // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter = setName
-  internal func getName() -> String {
+  public func getName() -> String {
     if self.isHeapType {
       return self.name
     }
@@ -204,7 +204,7 @@ public class PyType: PyObject, CustomStringConvertible {
     }
   }
 
-  internal func setName(_ value: PyObject?) -> PyResult<()> {
+  public func setName(_ value: PyObject?) -> PyResult<()> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: "__name__", value: value) {
     case let .value(v): object = v
@@ -223,7 +223,7 @@ public class PyType: PyObject, CustomStringConvertible {
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter = setQualname
-  internal func getQualname() -> String {
+  public func getQualname() -> String {
     if self.isHeapType {
       return self.qualname
     }
@@ -231,7 +231,7 @@ public class PyType: PyObject, CustomStringConvertible {
     return self.getName()
   }
 
-  internal func setQualname(_ value: PyObject?) -> PyResult<()> {
+  public func setQualname(_ value: PyObject?) -> PyResult<()> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: "__qualname__", value: value) {
     case let .value(v): object = v
@@ -250,7 +250,7 @@ public class PyType: PyObject, CustomStringConvertible {
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__, setter = setDoc
-  internal func getDoc() -> PyResult<PyObject> {
+  public func getDoc() -> PyResult<PyObject> {
     guard let doc = self.attributes.get(key: "__doc__") else {
       return .value(self.builtins.none)
     }
@@ -265,7 +265,7 @@ public class PyType: PyObject, CustomStringConvertible {
     return .value(doc)
   }
 
-  internal func setDoc(_ value: PyObject?) -> PyResult<()> {
+  public func setDoc(_ value: PyObject?) -> PyResult<()> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: "__doc__", value: value) {
     case let .value(v): object = v
@@ -288,7 +288,7 @@ public class PyType: PyObject, CustomStringConvertible {
   // MARK: - Module
 
   // sourcery: pyproperty = __module__, setter = setModule
-  internal func getModule() -> PyResult<String> {
+  public func getModule() -> PyResult<String> {
     switch self.getModuleRaw() {
     case .builtins:
       return .value("builtins")
@@ -299,13 +299,13 @@ public class PyType: PyObject, CustomStringConvertible {
     }
   }
 
-  internal enum GetModuleRawResult {
+  public enum GetModuleRawResult {
     case builtins
     case module(String)
     case error(PyErrorEnum)
   }
 
-  internal func getModuleRaw() -> GetModuleRawResult {
+  public func getModuleRaw() -> GetModuleRawResult {
     if self.isHeapType {
       guard let object = self.attributes.get(key: "__module__") else {
         return .error(.attributeError("__module__"))
@@ -336,7 +336,7 @@ public class PyType: PyObject, CustomStringConvertible {
     return .builtins
   }
 
-  internal func setModule(_ value: PyObject?) -> PyResult<()> {
+  public func setModule(_ value: PyObject?) -> PyResult<()> {
     let object: PyObject
     switch self.checkSetSpecialAttribute(name: "__module__", value: value) {
     case let .value(v): object = v
@@ -354,11 +354,11 @@ public class PyType: PyObject, CustomStringConvertible {
     return self.builtins.newTuple(self.getBasesRaw())
   }
 
-  internal func getBasesRaw() -> [PyType] {
+  public func getBasesRaw() -> [PyType] {
     return self.bases
   }
 
-  internal func setBases(_ value: PyObject?) -> PyResult<()> {
+  public func setBases(_ value: PyObject?) -> PyResult<()> {
     // Violet currently does not support this
     return .typeError("can't set \(self.name).__bases__")
   }
@@ -366,21 +366,21 @@ public class PyType: PyObject, CustomStringConvertible {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal func getDict() -> Attributes {
+  public func getDict() -> Attributes {
     return self.attributes
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     switch self.getModuleRaw() {
     case .builtins:
       return .value("<class '\(self.name)'>")
@@ -394,7 +394,7 @@ public class PyType: PyObject, CustomStringConvertible {
   // MARK: - Base
 
   // sourcery: pyproperty = __base__
-  internal func getBase() -> PyType? {
+  public func getBase() -> PyType? {
     return self.base
   }
 
@@ -405,7 +405,7 @@ public class PyType: PyObject, CustomStringConvertible {
     return self.builtins.newTuple(self.getMRORaw())
   }
 
-  internal func getMRORaw() -> [PyType] {
+  public func getMRORaw() -> [PyType] {
     return self.mro
   }
 
@@ -420,23 +420,25 @@ public class PyType: PyObject, CustomStringConvertible {
     return .typeError("issubclass() arg 1 must be a class")
   }
 
-  internal func isSubtype(of type: PyType) -> Bool {
+  public func isSubtype(of type: PyType) -> Bool {
     return self.mro.contains { $0 === type }
   }
 
   // sourcery: pymethod = __instancecheck__
-  internal func isType(of object: PyObject) -> Bool {
+  public func isType(of object: PyObject) -> Bool {
     return object.type.isSubtype(of: self)
   }
 
+  /// Is `self` subtype of `baseException`?
+  ///
   /// PyExceptionInstance_Check
-  internal var isException: Bool {
+  public var isException: Bool {
     let baseException = self.builtins.errorTypes.baseException
     return self.isSubtype(of: baseException)
   }
 
   // sourcery: pymethod = __subclasses__
-  internal func getSubclasses() -> [PyType] {
+  public func getSubclasses() -> [PyType] {
     var result = [PyType]()
     for subclassRef in self.subclasses {
       if let subclass = subclassRef.value {
@@ -457,7 +459,7 @@ public class PyType: PyObject, CustomStringConvertible {
     return self.getAttribute(name: nameString.value)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
+  public func getAttribute(name: String) -> PyResult<PyObject> {
     let metaType = self.type
     let metaAttribute = metaType.lookup(name: name)
     var metaDescriptor: GetDescriptor?
@@ -510,7 +512,7 @@ public class PyType: PyObject, CustomStringConvertible {
     return self.setAttribute(name: nameString.value, value: value)
   }
 
-  internal func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
+  public func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
     if let error = self.checkSetAttributeOnBuiltin() {
       return .error(error)
     }
@@ -528,7 +530,7 @@ public class PyType: PyObject, CustomStringConvertible {
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
+  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return self.setAttribute(name: name, value: nil)
   }
 
@@ -539,7 +541,7 @@ public class PyType: PyObject, CustomStringConvertible {
   ///
   /// We deliberately don't suck up its __class__, as methods belonging to the
   /// metaclass would probably be more confusing than helpful.
-  internal func dir() -> DirResult {
+  public func dir() -> DirResult {
     return self.mro.reduce(into: DirResult()) { acc, base in
       acc.append(contentsOf: base.attributes.keys)
     }

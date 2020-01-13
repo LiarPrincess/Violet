@@ -47,14 +47,14 @@ public class PyModule: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal func getDict() -> Attributes {
+  public func getDict() -> Attributes {
     return self.attributes
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     switch self.name {
     case let .value(s):
       return .value("'\(s)'")
@@ -119,7 +119,7 @@ public class PyModule: PyObject {
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
-  internal func dir() -> DirResult {
+  public func dir() -> DirResult {
     // Do not add `self.type` dir!
     if let dirFunc = self.attributes["__dir__"] {
       return self.builtins.callDir(dirFunc, args: [])
