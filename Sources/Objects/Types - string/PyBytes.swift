@@ -570,19 +570,19 @@ public class PyBytes: PyObject, PyBytesType {
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func add(_ other: PyObject) -> PyResult<PyObject> {
     return self.data.add(other).map(self.builtins.newBytes(_:))
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
     return self.data.mul(other).map(self.builtins.newBytes(_:))
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
     return self.data.rmul(other).map(self.builtins.newBytes(_:))
   }
 

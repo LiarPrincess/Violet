@@ -400,7 +400,7 @@ public class PyList: PyObject, PySequenceType {
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func add(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherList = other as? PyList else {
       let msg = "can only concatenate list (not '\(other.typeName)') to list"
       return .typeError(msg)
@@ -411,7 +411,7 @@ public class PyList: PyObject, PySequenceType {
   }
 
   // sourcery: pymethod = __iadd__
-  internal func iadd(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func iadd(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherList = other as? PyList else {
       let msg = "can only concatenate list (not '\(other.typeName)') to list"
       return .typeError(msg)
@@ -424,25 +424,36 @@ public class PyList: PyObject, PySequenceType {
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return self.data.mul(count: other).map(self.builtins.newList)
+  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
+    return self.mulResult(self.data.mul(count: other))
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return self.data.rmul(count: other).map(self.builtins.newList)
+  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
+    return self.mulResult(self.data.rmul(count: other))
   }
 
   // sourcery: pymethod = __imul__
-  internal func imul(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func imul(_ other: PyObject) -> PyResult<PyObject> {
     switch self.data.mul(count: other) {
     case .value(let elements):
       self.data = PySequenceData(elements: elements)
       return .value(self)
     case .notImplemented:
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     case .error(let e):
       return .error(e)
+    }
+  }
+
+  private func mulResult(_ result: PySequenceData.MulResult) -> PyResult<PyObject> {
+    switch result {
+    case .value(let elements):
+      return .value(self.builtins.newList(elements))
+    case .error(let e):
+      return .error(e)
+    case .notImplemented:
+      return .value(self.builtins.notImplemented)
     }
   }
 

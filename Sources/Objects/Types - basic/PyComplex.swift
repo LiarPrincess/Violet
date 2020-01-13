@@ -199,9 +199,9 @@ public class PyComplex: PyObject {
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func add(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return .value(
@@ -213,16 +213,16 @@ public class PyComplex: PyObject {
   }
 
   // sourcery: pymethod = __radd__
-  internal func radd(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func radd(_ other: PyObject) -> PyResult<PyObject> {
     return self.add(other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -230,9 +230,9 @@ public class PyComplex: PyObject {
   }
 
   // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -249,9 +249,9 @@ public class PyComplex: PyObject {
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -259,9 +259,9 @@ public class PyComplex: PyObject {
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -351,28 +351,26 @@ public class PyComplex: PyObject {
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  internal func truediv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
     return self.truediv(left: zelf, right: other)
-      .flatMap { PyResultOrNot<PyObject>.value($0) }
   }
 
   // sourcery: pymethod = __rtruediv__
-  internal func rtruediv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
     return self.truediv(left: other, right: zelf)
-      .flatMap { PyResultOrNot<PyObject>.value($0) }
   }
 
-  private func truediv(left: Raw, right: Raw) -> PyResultOrNot<PyComplex> {
+  private func truediv(left: Raw, right: Raw) -> PyResult<PyObject> {
     // We implement the 'incorrect' version because it is simpler.
     // See comment in 'Py_complex _Py_c_quot(Py_complex a, Py_complex b)' for details.
 
@@ -392,36 +390,36 @@ public class PyComplex: PyObject {
   // MARK: - Floor div
 
   // sourcery: pymethod = __floordiv__
-  internal func floordiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
     return .typeError("can't take floor of complex number.")
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal func rfloordiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
     return self.floordiv(other)
   }
 
   // MARK: - Mod
 
   // sourcery: pymethod = __mod__
-  internal func mod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func mod(_ other: PyObject) -> PyResult<PyObject> {
     return .typeError("can't mod complex numbers.")
   }
 
   // sourcery: pymethod = __rmod__
-  internal func rmod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
     return self.mod(other)
   }
 
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
-  internal func divmod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
     return .typeError("can't take floor or mod of complex number.")
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal func rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
     return self.divmod(other)
   }
 

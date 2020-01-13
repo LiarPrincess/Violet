@@ -225,34 +225,34 @@ public class PyFloat: PyObject {
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func add(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return .value(self.builtins.newFloat(self.value + other))
   }
 
   // sourcery: pymethod = __radd__
-  internal func radd(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func radd(_ other: PyObject) -> PyResult<PyObject> {
     return self.add(other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return .value(self.builtins.newFloat(self.value - other))
   }
 
   // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return .value(self.builtins.newFloat(other - self.value))
@@ -261,16 +261,16 @@ public class PyFloat: PyObject {
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return .value(self.builtins.newFloat(self.value * other))
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
     return self.mul(other)
   }
 
@@ -319,24 +319,24 @@ public class PyFloat: PyObject {
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  internal func truediv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return self.truediv(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __rtruediv__
-  internal func rtruediv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return self.truediv(left: other, right: self.value)
   }
 
-  private func truediv(left: Double, right: Double) -> PyResultOrNot<PyObject> {
+  private func truediv(left: Double, right: Double) -> PyResult<PyObject> {
     if right.isZero {
       return .zeroDivisionError("float division by zero")
     }
@@ -347,24 +347,24 @@ public class PyFloat: PyObject {
   // MARK: - Floor div
 
   // sourcery: pymethod = __floordiv__
-  internal func floordiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return self.floordiv(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal func rfloordiv(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return self.floordiv(left: other, right: self.value)
   }
 
-  private func floordiv(left: Double, right: Double) -> PyResultOrNot<PyObject> {
+  private func floordiv(left: Double, right: Double) -> PyResult<PyObject> {
     if right.isZero {
       return .zeroDivisionError("float floor division by zero")
     }
@@ -380,24 +380,24 @@ public class PyFloat: PyObject {
   // MARK: - Mod
 
   // sourcery: pymethod = __mod__
-  internal func mod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func mod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return self.mod(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __rmod__
-  internal func rmod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return self.mod(left: other, right: self.value)
   }
 
-  private func mod(left: Double, right: Double) -> PyResultOrNot<PyObject> {
+  private func mod(left: Double, right: Double) -> PyResult<PyObject> {
     if right.isZero {
       return .zeroDivisionError("float modulo by zero")
     }
@@ -413,24 +413,24 @@ public class PyFloat: PyObject {
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
-  internal func divmod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return self.divmod(left: self.value, right: other)
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal func rdivmod(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     return self.divmod(left: other, right: self.value)
   }
 
-  private func divmod(left: Double, right: Double) -> PyResultOrNot<PyObject> {
+  private func divmod(left: Double, right: Double) -> PyResult<PyObject> {
     if right.isZero {
       return .zeroDivisionError("float divmod() by zero")
     }

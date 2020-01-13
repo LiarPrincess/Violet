@@ -1790,7 +1790,7 @@ extension PyStringImpl {
 
   // MARK: - Add
 
-  internal func add(_ other: PyObject) -> PyResultOrNot<Builder.Result> {
+  internal func add(_ other: PyObject) -> PyResult<Builder.Result> {
     guard let otherStr = Self.extractSelf(from: other) else {
       let s = Self.typeName
       let t = other.typeName
@@ -1816,7 +1816,7 @@ extension PyStringImpl {
 
   // MARK: - Mul
 
-  internal func mul(_ other: PyObject) -> PyResultOrNot<Builder.Result> {
+  internal func mul(_ other: PyObject) -> PyResult<Builder.Result> {
     guard let pyInt = other as? PyInt else {
       let s = Self.typeName
       let t = other.typeName
@@ -1844,7 +1844,7 @@ extension PyStringImpl {
     return builder.result
   }
 
-  internal func rmul(_ other: PyObject) -> PyResultOrNot<Builder.Result> {
+  internal func rmul(_ other: PyObject) -> PyResult<Builder.Result> {
     return self.mul(other)
   }
 }

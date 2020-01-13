@@ -185,7 +185,7 @@ public class PyTuple: PyObject, PySequenceType {
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func add(_ other: PyObject) -> PyResult<PyObject> {
     if self.data.isEmpty {
       return .value(other)
     }
@@ -206,13 +206,24 @@ public class PyTuple: PyObject, PySequenceType {
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return self.data.mul(count: other).map(self.builtins.newTuple)
+  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
+    return self.mulResult(self.data.mul(count: other))
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResultOrNot<PyObject> {
-    return self.data.rmul(count: other).map(self.builtins.newTuple)
+  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
+    return self.mulResult(self.data.rmul(count: other))
+  }
+
+  private func mulResult(_ result: PySequenceData.MulResult) -> PyResult<PyObject> {
+    switch result {
+    case .value(let elements):
+      return .value(self.builtins.newTuple(elements))
+    case .error(let e):
+      return .error(e)
+    case .notImplemented:
+      return .value(self.builtins.notImplemented)
+    }
   }
 
   // MARK: - Python new

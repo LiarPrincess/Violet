@@ -108,6 +108,12 @@ public class PyObject {
     return body()
   }
 
+  // MARK: - Helpers
+
+  internal var isNotImplemented: Bool {
+    return self is PyNotImplemented
+  }
+
   // MARK: - GC
 
   /// Remove all of the references to other Python objects.

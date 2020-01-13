@@ -145,79 +145,69 @@ public class PySet: PyObject, PySetType {
   // MARK: - And
 
   // sourcery: pymethod = __and__
-  internal func and(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func and(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
-    return self.data.and(other: otherSet.data)
-      .map(self.createSet(data:))
-      .asResultOrNot
+    return self.data.and(other: otherSet.data).map(self.createSet(data:))
   }
 
   // sourcery: pymethod = __rand__
-  internal func rand(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rand(_ other: PyObject) -> PyResult<PyObject> {
     return self.and(other)
   }
 
   // MARK: - Or
 
   // sourcery: pymethod = __or__
-  internal func or(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func or(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
-    return self.data.or(other: otherSet.data)
-      .map(self.createSet(data:))
-      .asResultOrNot
+    return self.data.or(other: otherSet.data).map(self.createSet(data:))
   }
 
   // sourcery: pymethod = __ror__
-  internal func ror(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func ror(_ other: PyObject) -> PyResult<PyObject> {
     return self.or(other)
   }
 
   // MARK: - Xor
 
   // sourcery: pymethod = __xor__
-  internal func xor(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func xor(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
-    return self.data.xor(other: otherSet.data)
-      .map(self.createSet(data:))
-      .asResultOrNot
+    return self.data.xor(other: otherSet.data).map(self.createSet(data:))
   }
 
   // sourcery: pymethod = __rxor__
-  internal func rxor(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rxor(_ other: PyObject) -> PyResult<PyObject> {
     return self.xor(other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
-    return self.data.difference(with: otherSet.data)
-      .map(self.createSet(data:))
-      .asResultOrNot
+    return self.data.difference(with: otherSet.data).map(self.createSet(data:))
   }
 
   // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
-    return otherSet.data.difference(with: self.data)
-      .map(self.createSet(data:))
-      .asResultOrNot
+    return otherSet.data.difference(with: self.data).map(self.createSet(data:))
   }
 
   // MARK: - Subset

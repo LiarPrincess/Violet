@@ -433,7 +433,13 @@ internal struct PySequenceData {
 
   // MARK: - Mul
 
-  internal func mul(count: PyObject) -> PyResultOrNot<[PyObject]> {
+  internal enum MulResult {
+    case value([PyObject])
+    case error(PyErrorEnum)
+    case notImplemented
+  }
+
+  internal func mul(count: PyObject) -> MulResult {
     guard let countInt = count as? PyInt else {
       return .notImplemented
     }
@@ -441,7 +447,15 @@ internal struct PySequenceData {
     return mul(count: countInt)
   }
 
-  private func mul(count: PyInt) -> PyResultOrNot<[PyObject]> {
+  internal func rmul(count: PyObject) -> MulResult {
+    guard let countInt = count as? PyInt else {
+      return .notImplemented
+    }
+
+    return mul(count: countInt)
+  }
+
+  private func mul(count: PyInt) -> MulResult {
     let count = max(count.value, 0)
 
     // swiftlint:disable:next empty_count
@@ -461,14 +475,6 @@ internal struct PySequenceData {
     }
 
     return .value(result)
-  }
-
-  internal func rmul(count: PyObject) -> PyResultOrNot<[PyObject]> {
-    guard let countInt = count as? PyInt else {
-      return .notImplemented
-    }
-
-    return mul(count: countInt)
   }
 
   // MARK: - Reverse
