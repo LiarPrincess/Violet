@@ -61,7 +61,8 @@ internal final class Frame {
   /// We could use `self.localSymbols` but that would be `O(1)` with
   /// massive constants (array is like dictionary, but with lower constants).
   /// We could also put it at the bottom of our stack (like in other languages),
-  /// but 'being the hipster trash that we are' we won't do this.
+  /// but 'being the hipster trash that we are' (quote from @bestdressed)
+  /// we won't do this.
   internal lazy var fastLocals = [PyObject?](repeating: nil,
                                              count: code.varNames.count)
 
