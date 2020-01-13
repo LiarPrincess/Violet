@@ -85,7 +85,7 @@ extension VM {
     let mainDict = main.getDict()
     mainDict.set(key: "__file__", to: self.builtins.newString(file))
 
-//    self.run(code: code, globals: moduleDict, locals: moduleDict)
+    self.eval(code: code, globals: mainDict, locals: mainDict)
     mainDict.del(key: "__file__")
   }
 

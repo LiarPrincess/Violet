@@ -30,13 +30,13 @@ public class PyObject {
   // swiftlint:disable:next implicitly_unwrapped_optional
   private var _type: PyType!
   /// Also known as `klass`, but we are using CPython naming convention.
-  internal var type: PyType {
+  public var type: PyType {
     return self._type
   }
 
   internal var flags: PyObjectFlags = []
 
-  internal var typeName: String {
+  public var typeName: String {
     return self.type.getName()
   }
 
@@ -79,6 +79,16 @@ public class PyObject {
   internal func setType(to type: PyType) {
     assert(self._type == nil, "Type is already assigned!")
     self._type = type
+  }
+
+  // MARK: - Public
+
+  public func hasType(type: PyType) -> Bool {
+    return self.type === type
+  }
+
+  public func hasSubtype(of type: PyType) -> Bool {
+    return type.isType(of: self)
   }
 
   // MARK: - Repr

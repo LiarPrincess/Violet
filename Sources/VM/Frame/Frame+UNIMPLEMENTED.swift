@@ -217,15 +217,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  /// Raises an exception using one of the 3 forms of the raise statement,
-  /// depending on the value of argc:
-  /// - 0: raise (re-raise previous exception)
-  /// - 1: raise TOS (raise exception instance or type at TOS)
-  /// - 2: raise TOS1 from TOS (raise exception instance or type at TOS1 with Cause set to TOS)
-  internal func raiseVarargs(arg: RaiseArg) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - Frame+Store+Load+Delete
 
   /// Loads the cell contained in slot i of the cell and free variable storage.

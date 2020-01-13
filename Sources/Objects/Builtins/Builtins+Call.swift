@@ -50,6 +50,10 @@ extension Builtins {
 
   // MARK: - Call
 
+  public func call(callable: PyObject, args: [PyObject]) -> CallResult {
+    return self.call(callable: callable, args: args, kwargs: nil)
+  }
+
   public func call(callable: PyObject,
                    args: PyObject,
                    kwargs: PyObject?) -> CallResult {
