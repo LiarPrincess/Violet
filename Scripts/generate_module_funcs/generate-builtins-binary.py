@@ -93,20 +93,26 @@ private struct {struct_name}: BinaryOp {{
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {{
-    let owner = left as? __{name}__Owner
-    return FastCallResult(owner?.{name}(right))
+    if let owner = left as? __{name}__Owner {{
+      return FastCallResult(owner.{name}(right))
+    }}
+    return .unavailable
   }}
 
   fileprivate static func callFastReverse(left: PyObject,
                                           right: PyObject) -> FastCallResult {{
-    let owner = right as? __r{name}__Owner
-    return FastCallResult(owner?.r{name}(left))
+    if let owner = right as? __r{name}__Owner {{
+      return FastCallResult(owner.r{name}(left))
+    }}
+    return .unavailable
   }}
 
   fileprivate static func callFastInPlace(left: PyObject,
                                           right: PyObject) -> FastCallResult {{
-    let owner = left as? __i{name}__Owner
-    return FastCallResult(owner?.i{name}(right))
+    if let owner = left as? __i{name}__Owner {{
+      return FastCallResult(owner.i{name}(right))
+    }}
+    return .unavailable
   }}
 }}
 ''')

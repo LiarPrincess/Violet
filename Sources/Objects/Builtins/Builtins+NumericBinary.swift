@@ -14,14 +14,12 @@ private enum FastCallResult {
   case error(PyErrorEnum)
   case unavailable
 
-  fileprivate init(_ value: PyResult<PyObject>?) {
+  fileprivate init(_ value: PyResult<PyObject>) {
     switch value {
-    case .some(.value(let o)):
+    case .value(let o):
       self = .value(o)
-    case .some(.error(let e)):
+    case .error(let e):
       self = .error(e)
-    case .none:
-      self = .unavailable
     }
   }
 }
@@ -266,20 +264,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __add__Owner
-      return FastCallResult(owner?.add(right))
+      if let owner = left as? __add__Owner {
+        return FastCallResult(owner.add(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __radd__Owner
-      return FastCallResult(owner?.radd(left))
+      if let owner = right as? __radd__Owner {
+        return FastCallResult(owner.radd(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __iadd__Owner
-      return FastCallResult(owner?.iadd(right))
+      if let owner = left as? __iadd__Owner {
+        return FastCallResult(owner.iadd(right))
+      }
+      return .unavailable
     }
   }
 
@@ -303,20 +307,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __sub__Owner
-      return FastCallResult(owner?.sub(right))
+      if let owner = left as? __sub__Owner {
+        return FastCallResult(owner.sub(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rsub__Owner
-      return FastCallResult(owner?.rsub(left))
+      if let owner = right as? __rsub__Owner {
+        return FastCallResult(owner.rsub(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __isub__Owner
-      return FastCallResult(owner?.isub(right))
+      if let owner = left as? __isub__Owner {
+        return FastCallResult(owner.isub(right))
+      }
+      return .unavailable
     }
   }
 
@@ -340,20 +350,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __mul__Owner
-      return FastCallResult(owner?.mul(right))
+      if let owner = left as? __mul__Owner {
+        return FastCallResult(owner.mul(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rmul__Owner
-      return FastCallResult(owner?.rmul(left))
+      if let owner = right as? __rmul__Owner {
+        return FastCallResult(owner.rmul(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __imul__Owner
-      return FastCallResult(owner?.imul(right))
+      if let owner = left as? __imul__Owner {
+        return FastCallResult(owner.imul(right))
+      }
+      return .unavailable
     }
   }
 
@@ -377,20 +393,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __matmul__Owner
-      return FastCallResult(owner?.matmul(right))
+      if let owner = left as? __matmul__Owner {
+        return FastCallResult(owner.matmul(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rmatmul__Owner
-      return FastCallResult(owner?.rmatmul(left))
+      if let owner = right as? __rmatmul__Owner {
+        return FastCallResult(owner.rmatmul(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __imatmul__Owner
-      return FastCallResult(owner?.imatmul(right))
+      if let owner = left as? __imatmul__Owner {
+        return FastCallResult(owner.imatmul(right))
+      }
+      return .unavailable
     }
   }
 
@@ -414,20 +436,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __truediv__Owner
-      return FastCallResult(owner?.truediv(right))
+      if let owner = left as? __truediv__Owner {
+        return FastCallResult(owner.truediv(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rtruediv__Owner
-      return FastCallResult(owner?.rtruediv(left))
+      if let owner = right as? __rtruediv__Owner {
+        return FastCallResult(owner.rtruediv(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __itruediv__Owner
-      return FastCallResult(owner?.itruediv(right))
+      if let owner = left as? __itruediv__Owner {
+        return FastCallResult(owner.itruediv(right))
+      }
+      return .unavailable
     }
   }
 
@@ -451,20 +479,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __floordiv__Owner
-      return FastCallResult(owner?.floordiv(right))
+      if let owner = left as? __floordiv__Owner {
+        return FastCallResult(owner.floordiv(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rfloordiv__Owner
-      return FastCallResult(owner?.rfloordiv(left))
+      if let owner = right as? __rfloordiv__Owner {
+        return FastCallResult(owner.rfloordiv(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __ifloordiv__Owner
-      return FastCallResult(owner?.ifloordiv(right))
+      if let owner = left as? __ifloordiv__Owner {
+        return FastCallResult(owner.ifloordiv(right))
+      }
+      return .unavailable
     }
   }
 
@@ -488,20 +522,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __mod__Owner
-      return FastCallResult(owner?.mod(right))
+      if let owner = left as? __mod__Owner {
+        return FastCallResult(owner.mod(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rmod__Owner
-      return FastCallResult(owner?.rmod(left))
+      if let owner = right as? __rmod__Owner {
+        return FastCallResult(owner.rmod(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __imod__Owner
-      return FastCallResult(owner?.imod(right))
+      if let owner = left as? __imod__Owner {
+        return FastCallResult(owner.imod(right))
+      }
+      return .unavailable
     }
   }
 
@@ -525,14 +565,18 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __divmod__Owner
-      return FastCallResult(owner?.divmod(right))
+      if let owner = left as? __divmod__Owner {
+        return FastCallResult(owner.divmod(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rdivmod__Owner
-      return FastCallResult(owner?.rdivmod(left))
+      if let owner = right as? __rdivmod__Owner {
+        return FastCallResult(owner.rdivmod(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
@@ -562,20 +606,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __lshift__Owner
-      return FastCallResult(owner?.lshift(right))
+      if let owner = left as? __lshift__Owner {
+        return FastCallResult(owner.lshift(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rlshift__Owner
-      return FastCallResult(owner?.rlshift(left))
+      if let owner = right as? __rlshift__Owner {
+        return FastCallResult(owner.rlshift(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __ilshift__Owner
-      return FastCallResult(owner?.ilshift(right))
+      if let owner = left as? __ilshift__Owner {
+        return FastCallResult(owner.ilshift(right))
+      }
+      return .unavailable
     }
   }
 
@@ -599,20 +649,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __rshift__Owner
-      return FastCallResult(owner?.rshift(right))
+      if let owner = left as? __rshift__Owner {
+        return FastCallResult(owner.rshift(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rrshift__Owner
-      return FastCallResult(owner?.rrshift(left))
+      if let owner = right as? __rrshift__Owner {
+        return FastCallResult(owner.rrshift(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __irshift__Owner
-      return FastCallResult(owner?.irshift(right))
+      if let owner = left as? __irshift__Owner {
+        return FastCallResult(owner.irshift(right))
+      }
+      return .unavailable
     }
   }
 
@@ -636,20 +692,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __and__Owner
-      return FastCallResult(owner?.and(right))
+      if let owner = left as? __and__Owner {
+        return FastCallResult(owner.and(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rand__Owner
-      return FastCallResult(owner?.rand(left))
+      if let owner = right as? __rand__Owner {
+        return FastCallResult(owner.rand(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __iand__Owner
-      return FastCallResult(owner?.iand(right))
+      if let owner = left as? __iand__Owner {
+        return FastCallResult(owner.iand(right))
+      }
+      return .unavailable
     }
   }
 
@@ -673,20 +735,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __or__Owner
-      return FastCallResult(owner?.or(right))
+      if let owner = left as? __or__Owner {
+        return FastCallResult(owner.or(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __ror__Owner
-      return FastCallResult(owner?.ror(left))
+      if let owner = right as? __ror__Owner {
+        return FastCallResult(owner.ror(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __ior__Owner
-      return FastCallResult(owner?.ior(right))
+      if let owner = left as? __ior__Owner {
+        return FastCallResult(owner.ior(right))
+      }
+      return .unavailable
     }
   }
 
@@ -710,20 +778,26 @@ extension Builtins {
 
     fileprivate static func callFastOp(left: PyObject,
                                        right: PyObject) -> FastCallResult {
-      let owner = left as? __xor__Owner
-      return FastCallResult(owner?.xor(right))
+      if let owner = left as? __xor__Owner {
+        return FastCallResult(owner.xor(right))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastReverse(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = right as? __rxor__Owner
-      return FastCallResult(owner?.rxor(left))
+      if let owner = right as? __rxor__Owner {
+        return FastCallResult(owner.rxor(left))
+      }
+      return .unavailable
     }
 
     fileprivate static func callFastInPlace(left: PyObject,
                                             right: PyObject) -> FastCallResult {
-      let owner = left as? __ixor__Owner
-      return FastCallResult(owner?.ixor(right))
+      if let owner = left as? __ixor__Owner {
+        return FastCallResult(owner.ixor(right))
+      }
+      return .unavailable
     }
   }
 
