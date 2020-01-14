@@ -39,7 +39,7 @@ public class PyFloat: PyObject {
   /// 'static PyObject* float_richcompare(PyObject *v, PyObject *w, int op)'
   /// for details).
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isEqual(_ other: PyObject) -> CompareResult {
     if let pyFloat = other as? PyFloat {
       return .value(self.value == pyFloat.value)
     }
@@ -53,14 +53,14 @@ public class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
     return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLess(_ other: PyObject) -> CompareResult {
     if let pyFloat = other as? PyFloat {
       return .value(self.value < pyFloat.value)
     }
@@ -74,7 +74,7 @@ public class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
     if let pyFloat = other as? PyFloat {
       return .value(self.value <= pyFloat.value)
     }
@@ -88,7 +88,7 @@ public class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreater(_ other: PyObject) -> CompareResult {
     if let pyFloat = other as? PyFloat {
       return .value(self.value > pyFloat.value)
     }
@@ -102,7 +102,7 @@ public class PyFloat: PyObject {
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
     if let pyFloat = other as? PyFloat {
       return .value(self.value >= pyFloat.value)
     }

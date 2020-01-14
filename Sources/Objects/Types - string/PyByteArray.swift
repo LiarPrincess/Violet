@@ -46,47 +46,47 @@ public class PyByteArray: PyObject, PyBytesType {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isEqual(_ other: PyObject) -> CompareResult {
     if self === other {
       return .value(true)
     }
 
-    return self.compare(other).map { $0 == .equal }
+    return CompareResult(self.compare(other).map { $0 == .equal })
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
     return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
-    return self.compare(other).map { $0 == .less }
+  internal func isLess(_ other: PyObject) -> CompareResult {
+    return CompareResult(self.compare(other).map { $0 == .less })
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
-    return self.compare(other).map { $0 == .less || $0 == .equal }
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+    return CompareResult(self.compare(other).map { $0 == .less || $0 == .equal })
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
-    return self.compare(other).map { $0 == .greater }
+  internal func isGreater(_ other: PyObject) -> CompareResult {
+    return CompareResult(self.compare(other).map { $0 == .greater })
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
-    return self.compare(other).map { $0 == .greater || $0 == .equal }
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+    return CompareResult(self.compare(other).map { $0 == .greater || $0 == .equal })
   }
 
-  private func compare(_ other: PyObject) -> PyResultOrNot<StringCompareResult> {
-    guard let other = other as? PyBytes else {
-      return .notImplemented
+  private func compare(_ other: PyObject) -> StringCompareResult? {
+    guard let other = other as? PyBytesType else {
+      return nil
     }
 
-    return .value(self.data.compare(to: other.data))
+    return self.data.compare(to: other.data)
   }
 
   // MARK: - Hashable

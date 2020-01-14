@@ -41,7 +41,7 @@ public class PyComplex: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isEqual(_ other: PyObject) -> CompareResult {
     if let o = other as? PyComplex {
       return .value(self.real == o.real && self.imag == o.imag)
     }
@@ -58,29 +58,29 @@ public class PyComplex: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
     return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLess(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreater(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 

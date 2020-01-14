@@ -85,10 +85,9 @@ public class PyRange: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
-    return (other as? PyRange)
-      .map(self.isEqual)
-      .map(PyResultOrNot<Bool>.value) ?? .notImplemented
+  internal func isEqual(_ other: PyObject) -> CompareResult {
+    let boolOrNil = (other as? PyRange).map(self.isEqual)
+    return CompareResult(boolOrNil)
   }
 
   internal func isEqual(_ other: PyRange) -> Bool {
@@ -112,29 +111,29 @@ public class PyRange: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
     return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLess(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreater(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 

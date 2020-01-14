@@ -14,7 +14,7 @@ extension PyDictViewsShared {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqualShared(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isEqualShared(_ other: PyObject) -> CompareResult {
     guard let size = self.getSetOrDictSize(other) else {
       return .notImplemented
     }
@@ -23,17 +23,17 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return self.builtins.contains(iterable: self, allFrom: other).asResultOrNot
+    return self.builtins.contains(iterable: self, allFrom: other).asCompareResult
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqualShared(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isNotEqualShared(_ other: PyObject) -> CompareResult {
     return NotEqualHelper.fromIsEqual(self.isEqualShared(other))
   }
 
   // MARK: - Comparable
 
-  internal func isLessShared(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLessShared(_ other: PyObject) -> CompareResult {
     guard let size = self.getSetOrDictSize(other) else {
       return .notImplemented
     }
@@ -42,10 +42,10 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return self.builtins.contains(iterable: other, allFrom: self).asResultOrNot
+    return self.builtins.contains(iterable: other, allFrom: self).asCompareResult
   }
 
-  internal func isLessEqualShared(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLessEqualShared(_ other: PyObject) -> CompareResult {
     guard let size = self.getSetOrDictSize(other) else {
       return .notImplemented
     }
@@ -54,10 +54,10 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return self.builtins.contains(iterable: other, allFrom: self).asResultOrNot
+    return self.builtins.contains(iterable: other, allFrom: self).asCompareResult
   }
 
-  internal func isGreaterShared(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreaterShared(_ other: PyObject) -> CompareResult {
     guard let size = self.getSetOrDictSize(other) else {
       return .notImplemented
     }
@@ -66,10 +66,10 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return self.builtins.contains(iterable: self, allFrom: other).asResultOrNot
+    return self.builtins.contains(iterable: self, allFrom: other).asCompareResult
   }
 
-  internal func isGreaterEqualShared(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreaterEqualShared(_ other: PyObject) -> CompareResult {
     guard let size = self.getSetOrDictSize(other) else {
       return .notImplemented
     }
@@ -78,7 +78,7 @@ extension PyDictViewsShared {
       return .value(false)
     }
 
-    return self.builtins.contains(iterable: self, allFrom: other).asResultOrNot
+    return self.builtins.contains(iterable: self, allFrom: other).asCompareResult
   }
 
   private func getSetOrDictSize(_ other: PyObject) -> Int? {

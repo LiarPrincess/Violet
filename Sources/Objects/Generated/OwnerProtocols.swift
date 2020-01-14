@@ -42,16 +42,16 @@ protocol __dir__Owner { func dir() -> DirResult }
 protocol __divmod__Owner { func divmod(_ other: PyObject) -> PyResult<PyObject> }
 protocol __doc__GetterOwner { func getDoc() -> PyResult<PyObject> }
 protocol __doc__SetterOwner { func setDoc(_ value: PyObject?) -> PyResult<()> }
-protocol __eq__Owner { func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> }
+protocol __eq__Owner { func isEqual(_ other: PyObject) -> CompareResult }
 protocol __float__Owner { func asFloat() -> PyResult<PyFloat> }
 protocol __floor__Owner { func floor() -> PyObject }
 protocol __floordiv__Owner { func floordiv(_ other: PyObject) -> PyResult<PyObject> }
 protocol __func__Owner { func getFunc() -> PyObject }
-protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> }
+protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
 protocol __get__Owner { func get(object: PyObject) -> PyResult<PyObject> }
 protocol __getattribute__Owner { func getAttribute(name: PyObject) -> PyResult<PyObject> }
 protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
-protocol __gt__Owner { func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> }
+protocol __gt__Owner { func isGreater(_ other: PyObject) -> CompareResult }
 protocol __hash__Owner { func hash() -> PyResultOrNot<PyHash> }
 protocol __iadd__Owner { func iadd(_ other: PyObject) -> PyResult<PyObject> }
 protocol __iand__Owner { func iand(_ other: PyObject) -> PyResult<PyObject> }
@@ -71,10 +71,10 @@ protocol __isub__Owner { func isub(_ other: PyObject) -> PyResult<PyObject> }
 protocol __iter__Owner { func iter() -> PyObject }
 protocol __itruediv__Owner { func itruediv(_ other: PyObject) -> PyResult<PyObject> }
 protocol __ixor__Owner { func ixor(_ other: PyObject) -> PyResult<PyObject> }
-protocol __le__Owner { func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> }
+protocol __le__Owner { func isLessEqual(_ other: PyObject) -> CompareResult }
 protocol __len__Owner { func getLength() -> BigInt }
 protocol __lshift__Owner { func lshift(_ other: PyObject) -> PyResult<PyObject> }
-protocol __lt__Owner { func isLess(_ other: PyObject) -> PyResultOrNot<Bool> }
+protocol __lt__Owner { func isLess(_ other: PyObject) -> CompareResult }
 protocol __matmul__Owner { func matmul(_ other: PyObject) -> PyResult<PyObject> }
 protocol __mod__Owner { func mod(_ other: PyObject) -> PyResult<PyObject> }
 protocol __module__GetterOwner { func getModule() -> PyResult<String> }
@@ -83,7 +83,7 @@ protocol __mro__GetterOwner { func getMRO() -> PyTuple }
 protocol __mul__Owner { func mul(_ other: PyObject) -> PyResult<PyObject> }
 protocol __name__GetterOwner { func getName() -> String }
 protocol __name__SetterOwner { func setName(_ value: PyObject?) -> PyResult<()> }
-protocol __ne__Owner { func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> }
+protocol __ne__Owner { func isNotEqual(_ other: PyObject) -> CompareResult }
 protocol __neg__Owner { func negative() -> PyObject }
 protocol __next__Owner { func next() -> PyResult<PyObject> }
 protocol __or__Owner { func or(_ other: PyObject) -> PyResult<PyObject> }

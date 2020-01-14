@@ -37,55 +37,55 @@ public class PyTuple: PyObject, PySequenceType {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isEqual(_ other: PyObject) -> CompareResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
     }
 
-    return self.data.isEqual(to: other.data).asResultOrNot
+    return self.data.isEqual(to: other.data).asCompareResult
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
     return NotEqualHelper.fromIsEqual(self.isEqual(other))
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLess(_ other: PyObject) -> CompareResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
     }
 
-    return self.data.isLess(than: other.data).asResultOrNot
+    return self.data.isLess(than: other.data).asCompareResult
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isLessEqual(_ other: PyObject) -> CompareResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
     }
 
-    return self.data.isLessEqual(than: other.data).asResultOrNot
+    return self.data.isLessEqual(than: other.data).asCompareResult
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreater(_ other: PyObject) -> CompareResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
     }
 
-    return self.data.isGreater(than: other.data).asResultOrNot
+    return self.data.isGreater(than: other.data).asCompareResult
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> PyResultOrNot<Bool> {
+  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
     guard let other = other as? PyTuple else {
       return .notImplemented
     }
 
-    return self.data.isGreaterEqual(than: other.data).asResultOrNot
+    return self.data.isGreaterEqual(than: other.data).asCompareResult
   }
 
   // MARK: - Hashable

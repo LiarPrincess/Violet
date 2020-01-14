@@ -19,13 +19,17 @@ internal enum PyBaseObject {
 
   // sourcery: pymethod = __eq__
   internal static func isEqual(zelf: PyObject,
-                               other: PyObject) -> PyResultOrNot<Bool> {
-    return zelf === other ? .value(true) : .notImplemented
+                               other: PyObject) -> CompareResult {
+    if zelf === other {
+      return .value(true)
+    }
+
+    return .notImplemented
   }
 
   // sourcery: pymethod = __ne__
   internal static func isNotEqual(zelf: PyObject,
-                                  other: PyObject) -> PyResultOrNot<Bool> {
+                                  other: PyObject) -> CompareResult {
     let isEqual = PyBaseObject.isEqual(zelf: zelf, other: other)
     return NotEqualHelper.fromIsEqual(isEqual)
   }
@@ -34,25 +38,25 @@ internal enum PyBaseObject {
 
   // sourcery: pymethod = __lt__
   internal static func isLess(zelf: PyObject,
-                              other: PyObject) -> PyResultOrNot<Bool> {
+                              other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
   internal static func isLessEqual(zelf: PyObject,
-                                   other: PyObject) -> PyResultOrNot<Bool> {
+                                   other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
   internal static func isGreater(zelf: PyObject,
-                                 other: PyObject) -> PyResultOrNot<Bool> {
+                                 other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
   internal static func isGreaterEqual(zelf: PyObject,
-                                      other: PyObject) -> PyResultOrNot<Bool> {
+                                      other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
