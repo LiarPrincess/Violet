@@ -30,8 +30,7 @@ internal enum PyBaseObject {
   // sourcery: pymethod = __ne__
   internal static func isNotEqual(zelf: PyObject,
                                   other: PyObject) -> CompareResult {
-    let isEqual = PyBaseObject.isEqual(zelf: zelf, other: other)
-    return NotEqualHelper.fromIsEqual(isEqual)
+    return PyBaseObject.isEqual(zelf: zelf, other: other).not
   }
 
   // MARK: - Comparable

@@ -12,6 +12,20 @@ public enum CompareResult {
       self = .notImplemented
     }
   }
+
+  /// Method used when implementing `__ne__`.
+  ///
+  ///We don't want to override `!` operator, because it is tiny and easy to miss.
+  public var not: CompareResult {
+    switch self {
+    case .value(let bool):
+      return .value(!bool)
+    case .error(let e):
+      return .error(e)
+    case .notImplemented:
+      return .notImplemented
+    }
+  }
 }
 
 extension CompareResult: PyFunctionResultConvertible {

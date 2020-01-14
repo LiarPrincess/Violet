@@ -28,7 +28,7 @@ extension PyDictViewsShared {
 
   // sourcery: pymethod = __ne__
   internal func isNotEqualShared(_ other: PyObject) -> CompareResult {
-    return NotEqualHelper.fromIsEqual(self.isEqualShared(other))
+    return self.isEqualShared(other).not
   }
 
   // MARK: - Comparable

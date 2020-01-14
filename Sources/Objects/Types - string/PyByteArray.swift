@@ -56,7 +56,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = __ne__
   internal func isNotEqual(_ other: PyObject) -> CompareResult {
-    return NotEqualHelper.fromIsEqual(self.isEqual(other))
+    return self.isEqual(other).not
   }
 
   // MARK: - Comparable

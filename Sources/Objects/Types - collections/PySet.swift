@@ -53,7 +53,7 @@ public class PySet: PyObject, PySetType {
   internal func isNotEqual(_ other: PyObject) -> CompareResult {
     // CPython has different implementation here,
     // but in the end it all comes down to:
-    return NotEqualHelper.fromIsEqual(self.isEqual(other))
+    return self.isEqual(other).not
   }
 
   // MARK: - Comparable
