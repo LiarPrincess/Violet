@@ -17,7 +17,7 @@ extension HashResult: PyFunctionResultConvertible {
   }
 }
 
-extension PyResult where V == PyHash {
+extension PyResult where Wrapped == PyHash {
   public var asHashResult: HashResult {
     switch self {
     case let .value(v):

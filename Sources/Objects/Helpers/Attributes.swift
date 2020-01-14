@@ -172,7 +172,7 @@ extension String: PyHashable {
   }
 }
 
-// MARK: - PyFunctionResultConvertible
+// MARK: - Function result convertible
 
 extension Attributes: PyFunctionResultConvertible {
   internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {

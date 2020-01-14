@@ -122,7 +122,7 @@ public class PyObject {
   }
 }
 
-// MARK: - PyFunctionResultConvertible
+// MARK: - Function result convertible
 
 // 'PyObject' can be returned from Python function!
 extension PyObject: PyFunctionResultConvertible {

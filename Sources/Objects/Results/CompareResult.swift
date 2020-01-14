@@ -27,7 +27,7 @@ extension CompareResult: PyFunctionResultConvertible {
   }
 }
 
-extension PyResult where V == Bool {
+extension PyResult where Wrapped == Bool {
   public var asCompareResult: CompareResult {
     switch self {
     case let .value(v):
