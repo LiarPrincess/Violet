@@ -56,7 +56,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyResultOrNot<PyHash> {
+  internal func hash() -> HashResult {
     return .error(self.builtins.hashNotImplemented(self))
   }
 

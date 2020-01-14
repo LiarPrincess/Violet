@@ -96,7 +96,7 @@ public class PyFrozenSet: PyObject, PySetType {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyResultOrNot<PyHash> {
+  internal func hash() -> HashResult {
     // This is hash function from 'tuple', which means that 'frozenset'
     // and 'tuple' with the same elements (in the same order) will have
     // the same hash.

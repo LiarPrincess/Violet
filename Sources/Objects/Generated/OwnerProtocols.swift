@@ -52,7 +52,7 @@ protocol __get__Owner { func get(object: PyObject) -> PyResult<PyObject> }
 protocol __getattribute__Owner { func getAttribute(name: PyObject) -> PyResult<PyObject> }
 protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
 protocol __gt__Owner { func isGreater(_ other: PyObject) -> CompareResult }
-protocol __hash__Owner { func hash() -> PyResultOrNot<PyHash> }
+protocol __hash__Owner { func hash() -> HashResult }
 protocol __iadd__Owner { func iadd(_ other: PyObject) -> PyResult<PyObject> }
 protocol __iand__Owner { func iand(_ other: PyObject) -> PyResult<PyObject> }
 protocol __ifloordiv__Owner { func ifloordiv(_ other: PyObject) -> PyResult<PyObject> }

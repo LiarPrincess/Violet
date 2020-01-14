@@ -140,13 +140,13 @@ public class PyRange: PyObject {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyResultOrNot<PyHash> {
+  internal func hash() -> HashResult {
     let none = self.builtins.none
     var tuple = [self.length, none, none]
 
     if self.length.value == 0 {
       let data = PySequenceData(elements: tuple)
-      return data.hash.asResultOrNot
+      return data.hash.asHashResult
     }
 
     tuple[1] = self.start
@@ -155,7 +155,7 @@ public class PyRange: PyObject {
     }
 
     let data = PySequenceData(elements: tuple)
-    return data.hash.asResultOrNot
+    return data.hash.asHashResult
   }
 
   // MARK: - String

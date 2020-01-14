@@ -91,8 +91,8 @@ public class PyTuple: PyObject, PySequenceType {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyResultOrNot<PyHash> {
-    return self.data.hash.asResultOrNot
+  internal func hash() -> HashResult {
+    return self.data.hash.asHashResult
   }
 
   // MARK: - String

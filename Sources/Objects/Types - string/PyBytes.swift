@@ -91,7 +91,7 @@ public class PyBytes: PyObject, PyBytesType {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyResultOrNot<PyHash> {
+  internal func hash() -> HashResult {
     return .value(self.hashRaw())
   }
 

@@ -101,7 +101,7 @@ public class PyList: PyObject, PySequenceType {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> PyResultOrNot<PyHash> {
+  internal func hash() -> HashResult {
     return .error(self.builtins.hashNotImplemented(self))
   }
 
