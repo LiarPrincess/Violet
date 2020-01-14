@@ -277,36 +277,36 @@ public class PyComplex: PyObject {
 
   // MARK: - Pow
 
-  internal func pow(exp: PyObject) -> PyResultOrNot<PyObject> {
+  internal func pow(exp: PyObject) -> PyResult<PyObject> {
     return self.pow(exp: exp, mod: nil)
   }
 
   // sourcery: pymethod = __pow__
-  internal func pow(exp: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+  internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard self.isNilOrNone(mod) else {
       return .valueError("complex modulo")
     }
 
     guard let exp = self.asComplex(exp) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
     return self.pow(base: zelf, exp: exp)
   }
 
-  internal func rpow(base: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rpow(base: PyObject) -> PyResult<PyObject> {
     return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(base: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+  internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard self.isNilOrNone(mod) else {
       return .valueError("complex modulo")
     }
 
     guard let base = self.asComplex(base) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -317,7 +317,7 @@ public class PyComplex: PyObject {
     return value == nil || value is PyNone
   }
 
-  private func pow(base: Raw, exp: Raw) -> PyResultOrNot<PyObject> {
+  private func pow(base: Raw, exp: Raw) -> PyResult<PyObject> {
     if exp.real.isZero && exp.real.isZero {
       return .value(self.builtins.newComplex(real: 1.0, imag: 0.0))
     }

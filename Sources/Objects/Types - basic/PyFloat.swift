@@ -276,36 +276,36 @@ public class PyFloat: PyObject {
 
   // MARK: - Pow
 
-  internal func pow(exp: PyObject) -> PyResultOrNot<PyObject> {
+  internal func pow(exp: PyObject) -> PyResult<PyObject> {
     return self.pow(exp: exp, mod: nil)
   }
 
   // sourcery: pymethod = __pow__
-  internal func pow(exp: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+  internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard self.isNilOrNone(mod) else {
       return .typeError("pow() 3rd argument not allowed unless all arguments are integers")
     }
 
     guard let exp = self.asDouble(exp) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let result = Foundation.pow(self.value, exp)
     return .value(self.builtins.newFloat(result))
   }
 
-  internal func rpow(base: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rpow(base: PyObject) -> PyResult<PyObject> {
     return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(base: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+  internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard self.isNilOrNone(mod) else {
       return .typeError("pow() 3rd argument not allowed unless all arguments are integers")
     }
 
     guard let base = self.asDouble(base) else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     let result = Foundation.pow(base, self.value)

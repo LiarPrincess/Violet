@@ -315,14 +315,14 @@ public class PyInt: PyObject {
 
   // MARK: - Pow
 
-  internal func pow(exp: PyObject) -> PyResultOrNot<PyObject> {
+  internal func pow(exp: PyObject) -> PyResult<PyObject> {
     return self.pow(exp: exp, mod: nil)
   }
 
   // sourcery: pymethod = __pow__
-  internal func pow(exp: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+  internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard let exp = exp as? PyInt else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     switch self.parsePowMod(mod: mod) {
@@ -346,18 +346,18 @@ public class PyInt: PyObject {
       }
 
     case .notImplemented:
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
   }
 
-  internal func rpow(base: PyObject) -> PyResultOrNot<PyObject> {
+  internal func rpow(base: PyObject) -> PyResult<PyObject> {
     return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(base: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject> {
+  internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard let base = base as? PyInt else {
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
 
     switch self.parsePowMod(mod: mod) {
@@ -366,9 +366,9 @@ public class PyInt: PyObject {
       return .value(result.asObject(in: self.context))
     case .int:
       // Three-arg power doesn't use __rpow__.
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     case .notImplemented:
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     }
   }
 

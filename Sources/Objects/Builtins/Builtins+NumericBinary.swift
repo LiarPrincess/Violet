@@ -12,6 +12,7 @@
 private enum FastCallResult {
   case value(PyObject)
   case error(PyErrorEnum)
+  /// Fast call is not available
   case unavailable
 
   fileprivate init(_ value: PyResult<PyObject>) {
@@ -174,7 +175,7 @@ extension BinaryOp {
 
   private static func callOp(left: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
-    let builtins = left.context.builtins
+    let builtins = left.builtins
 
     // Try fast protocol-based dispach
     switch callFastOp(left: left, right: right) {
@@ -191,7 +192,7 @@ extension BinaryOp {
     case .value(let result):
       return .value(result)
     case .missingMethod, .notImplemented:
-      return .value(left.builtins.notImplemented)
+      return .value(builtins.notImplemented)
     case .notCallable(let e), .error(let e):
       return .error(e)
     }
@@ -199,7 +200,7 @@ extension BinaryOp {
 
   private static func callReverse(left: PyObject,
                                   right: PyObject) -> PyResult<PyObject> {
-    let builtins = left.context.builtins
+    let builtins = left.builtins
 
     // Try fast protocol-based dispach
     switch callFastReverse(left: left, right: right) {
@@ -224,7 +225,7 @@ extension BinaryOp {
 
   private static func callInPlaceInner(left: PyObject,
                                        right: PyObject) -> PyResult<PyObject> {
-    let builtins = left.context.builtins
+    let builtins = left.builtins
 
     // Try fast protocol-based dispach
     switch callFastInPlace(left: left, right: right) {

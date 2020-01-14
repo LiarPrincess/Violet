@@ -3,6 +3,7 @@ public enum CompareResult {
   case error(PyErrorEnum)
   case notImplemented
 
+  // swiftlint:disable:next discouraged_optional_boolean
   internal init(_ value: Bool?) {
     switch value {
     case .some(let b):
