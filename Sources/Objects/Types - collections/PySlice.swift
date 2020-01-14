@@ -177,7 +177,7 @@ public class PySlice: PyObject {
   // sourcery: pymethod = indices, doc = indicesDoc
   /// static PyObject*
   /// slice_indices(PySliceObject* self, PyObject* len)
-  internal func indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject> {
+  internal func indicesInSequence(length: PyObject) -> PyResult<PyObject> {
     let lengthInt: Int
     switch IndexHelper.int(length) {
     case .value(let v): lengthInt = v
@@ -188,14 +188,11 @@ public class PySlice: PyObject {
       return .valueError("length should not be negative")
     }
 
-    switch self.getLongIndices(length: lengthInt) {
-    case let .value(v):
-      let start = self.builtins.newInt(v.start)
-      let stop = self.builtins.newInt(v.stop)
-      let step = self.builtins.newInt(v.step)
-      return .value(self.builtins.newTuple(start, stop, step))
-    case let .error(e):
-      return .error(e)
+    return self.getLongIndices(length: lengthInt).map { indices in
+      let start = self.builtins.newInt(indices.start)
+      let stop = self.builtins.newInt(indices.stop)
+      let step = self.builtins.newInt(indices.step)
+      return self.builtins.newTuple(start, stop, step)
     }
   }
 

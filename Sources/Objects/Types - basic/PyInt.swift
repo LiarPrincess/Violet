@@ -692,7 +692,7 @@ public class PyInt: PyObject {
   /// int.__round__(12345,  2) -> 12345
   /// int.__round__(12345, -2) -> 12300
   /// ```
-  internal func round(nDigits: PyObject?) -> PyResultOrNot<PyObject> {
+  internal func round(nDigits: PyObject?) -> PyResult<PyObject> {
     let digitCount: BigInt? = {
       guard let n = nDigits else {
         return 0
@@ -715,7 +715,7 @@ public class PyInt: PyObject {
     }
 
     // TODO: Implement int rounding to arbitrary precision
-    return .notImplemented
+    return .value(self.builtins.notImplemented)
   }
 
   // MARK: - Python new

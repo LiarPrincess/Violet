@@ -62,7 +62,7 @@ PyBuiltinFunction|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResul
 PyBuiltinFunction|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyBuiltinFunction|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyBuiltinFunction|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyBuiltinFunction|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyBuiltinFunction|PyObject|func|__hash__|hash() -> HashResult
 PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyBuiltinFunction|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResultOrNot<PyObject>
@@ -74,7 +74,7 @@ PyByteArray|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyByteArray|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyByteArray|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyByteArray|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyByteArray|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyByteArray|PyObject|func|__hash__|hash() -> HashResult
 PyByteArray|PyObject|func|__repr__|repr() -> PyResult<String>
 PyByteArray|PyObject|func|__str__|str() -> PyResult<String>
 PyByteArray|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
@@ -146,7 +146,7 @@ PyBytes|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyBytes|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyBytes|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyBytes|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyBytes|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyBytes|PyObject|func|__hash__|hash() -> HashResult
 PyBytes|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBytes|PyObject|func|__str__|str() -> PyResult<String>
 PyBytes|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
@@ -211,7 +211,7 @@ PyCode|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyCode|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyCode|PyObject|func|__hash__|hash() -> HashResult
 PyCode|PyObject|func|__repr__|repr() -> PyResult<String>
 PyComplex|PyObject|get|__class__|getClass() -> PyType
 
@@ -221,7 +221,7 @@ PyComplex|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyComplex|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyComplex|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyComplex|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyComplex|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyComplex|PyObject|func|__hash__|hash() -> HashResult
 PyComplex|PyObject|func|__repr__|repr() -> PyResult<String>
 PyComplex|PyObject|func|__str__|str() -> PyResult<String>
 PyComplex|PyObject|func|__bool__|asBool() -> Bool
@@ -240,8 +240,8 @@ PyComplex|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResult<PyObject>
 PyComplex|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResult<PyObject>
 PyComplex|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResult<PyObject>
 PyComplex|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResult<PyObject>
-PyComplex|PyObject|func|__pow__|pow(exp: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject>
-PyComplex|PyObject|func|__rpow__|rpow(base: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject>
+PyComplex|PyObject|func|__pow__|pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject>
+PyComplex|PyObject|func|__rpow__|rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject>
 PyComplex|PyObject|func|__truediv__|truediv(_ other: PyObject) -> PyResult<PyObject>
 PyComplex|PyObject|func|__rtruediv__|rtruediv(_ other: PyObject) -> PyResult<PyObject>
 PyComplex|PyObject|func|__floordiv__|floordiv(_ other: PyObject) -> PyResult<PyObject>
@@ -259,7 +259,7 @@ PyDict|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyDict|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyDict|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyDict|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyDict|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyDict|PyObject|func|__hash__|hash() -> HashResult
 PyDict|PyObject|func|__repr__|repr() -> PyResult<String>
 PyDict|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyDict|PyObject|func|__len__|getLength() -> BigInt
@@ -294,7 +294,7 @@ PyDictItems|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyDictItems|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyDictItems|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyDictItems|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyDictItems|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyDictItems|PyObject|func|__hash__|hash() -> HashResult
 PyDictItems|PyObject|func|__repr__|repr() -> PyResult<String>
 PyDictItems|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyDictItems|PyObject|func|__len__|getLength() -> BigInt
@@ -315,7 +315,7 @@ PyDictKeys|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyDictKeys|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyDictKeys|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyDictKeys|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyDictKeys|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyDictKeys|PyObject|func|__hash__|hash() -> HashResult
 PyDictKeys|PyObject|func|__repr__|repr() -> PyResult<String>
 PyDictKeys|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyDictKeys|PyObject|func|__len__|getLength() -> BigInt
@@ -358,7 +358,7 @@ PyFloat|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyFloat|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyFloat|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyFloat|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyFloat|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyFloat|PyObject|func|__hash__|hash() -> HashResult
 PyFloat|PyObject|func|__repr__|repr() -> PyResult<String>
 PyFloat|PyObject|func|__str__|str() -> PyResult<String>
 PyFloat|PyObject|func|__bool__|asBool() -> Bool
@@ -378,8 +378,8 @@ PyFloat|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResult<PyObject>
 PyFloat|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResult<PyObject>
 PyFloat|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResult<PyObject>
 PyFloat|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResult<PyObject>
-PyFloat|PyObject|func|__pow__|pow(exp: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject>
-PyFloat|PyObject|func|__rpow__|rpow(base: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__pow__|pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject>
+PyFloat|PyObject|func|__rpow__|rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject>
 PyFloat|PyObject|func|__truediv__|truediv(_ other: PyObject) -> PyResult<PyObject>
 PyFloat|PyObject|func|__rtruediv__|rtruediv(_ other: PyObject) -> PyResult<PyObject>
 PyFloat|PyObject|func|__floordiv__|floordiv(_ other: PyObject) -> PyResult<PyObject>
@@ -388,7 +388,7 @@ PyFloat|PyObject|func|__mod__|mod(_ other: PyObject) -> PyResult<PyObject>
 PyFloat|PyObject|func|__rmod__|rmod(_ other: PyObject) -> PyResult<PyObject>
 PyFloat|PyObject|func|__divmod__|divmod(_ other: PyObject) -> PyResult<PyObject>
 PyFloat|PyObject|func|__rdivmod__|rdivmod(_ other: PyObject) -> PyResult<PyObject>
-PyFloat|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
+PyFloat|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResult<PyObject>
 PyFloat|PyObject|func|__trunc__|trunc() -> PyObject
 PyFloat|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyFrozenSet|PyObject|get|__class__|getClass() -> PyType
@@ -399,7 +399,7 @@ PyFrozenSet|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyFrozenSet|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyFrozenSet|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyFrozenSet|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyFrozenSet|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyFrozenSet|PyObject|func|__hash__|hash() -> HashResult
 PyFrozenSet|PyObject|func|__repr__|repr() -> PyResult<String>
 PyFrozenSet|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyFrozenSet|PyObject|func|__len__|getLength() -> BigInt
@@ -442,7 +442,7 @@ PyInt|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyInt|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyInt|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyInt|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyInt|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyInt|PyObject|func|__hash__|hash() -> HashResult
 PyInt|PyObject|func|__repr__|repr() -> PyResult<String>
 PyInt|PyObject|func|__str__|str() -> PyResult<String>
 PyInt|PyObject|func|__bool__|asBool() -> Bool
@@ -468,8 +468,8 @@ PyInt|PyObject|func|__sub__|sub(_ other: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|func|__rsub__|rsub(_ other: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|func|__mul__|mul(_ other: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|func|__rmul__|rmul(_ other: PyObject) -> PyResult<PyObject>
-PyInt|PyObject|func|__pow__|pow(exp: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject>
-PyInt|PyObject|func|__rpow__|rpow(base: PyObject, mod: PyObject?) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__pow__|pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject>
+PyInt|PyObject|func|__rpow__|rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject>
 PyInt|PyObject|func|__truediv__|truediv(_ other: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|func|__rtruediv__|rtruediv(_ other: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|func|__floordiv__|floordiv(_ other: PyObject) -> PyResult<PyObject>
@@ -489,7 +489,7 @@ PyInt|PyObject|func|__ror__|ror(_ other: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|func|__xor__|xor(_ other: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|func|__rxor__|rxor(_ other: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|func|__invert__|invert() -> PyObject
-PyInt|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResultOrNot<PyObject>
+PyInt|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResult<PyObject>
 PyInt|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PyIterator|PyObject|get|__class__|getClass() -> PyType
 
@@ -504,7 +504,7 @@ PyList|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyList|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyList|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyList|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyList|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyList|PyObject|func|__hash__|hash() -> HashResult
 PyList|PyObject|func|__repr__|repr() -> PyResult<String>
 PyList|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyList|PyObject|func|__len__|getLength() -> BigInt
@@ -559,7 +559,7 @@ PyMethod|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyMethod|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyMethod|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
 PyMethod|PyObject|func|__repr__|repr() -> PyResult<String>
-PyMethod|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyMethod|PyObject|func|__hash__|hash() -> HashResult
 PyMethod|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyMethod|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
 PyMethod|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
@@ -617,7 +617,7 @@ PyRange|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyRange|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyRange|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyRange|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyRange|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyRange|PyObject|func|__hash__|hash() -> HashResult
 PyRange|PyObject|func|__repr__|repr() -> PyResult<String>
 PyRange|PyObject|func|__bool__|asBool() -> Bool
 PyRange|PyObject|func|__len__|getLength() -> BigInt
@@ -652,7 +652,7 @@ PySet|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PySet|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PySet|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PySet|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PySet|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PySet|PyObject|func|__hash__|hash() -> HashResult
 PySet|PyObject|func|__repr__|repr() -> PyResult<String>
 PySet|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PySet|PyObject|func|__len__|getLength() -> BigInt
@@ -696,13 +696,13 @@ PySlice|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PySlice|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PySlice|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PySlice|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PySlice|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PySlice|PyObject|func|__hash__|hash() -> HashResult
 PySlice|PyObject|func|__repr__|repr() -> PyResult<String>
 PySlice|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PySlice|PyObject|func|start|getStart() -> PyObject
 PySlice|PyObject|func|stop|getStop() -> PyObject
 PySlice|PyObject|func|step|getStep() -> PyObject
-PySlice|PyObject|func|indices|indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject>
+PySlice|PyObject|func|indices|indicesInSequence(length: PyObject) -> PyResult<PyObject>
 PySlice|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyString|PyObject|get|__class__|getClass() -> PyType
 
@@ -712,7 +712,7 @@ PyString|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyString|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyString|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyString|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyString|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyString|PyObject|func|__hash__|hash() -> HashResult
 PyString|PyObject|func|__repr__|repr() -> PyResult<String>
 PyString|PyObject|func|__str__|str() -> PyResult<String>
 PyString|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
@@ -788,7 +788,7 @@ PyTuple|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyTuple|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyTuple|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyTuple|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
-PyTuple|PyObject|func|__hash__|hash() -> PyResultOrNot<PyHash>
+PyTuple|PyObject|func|__hash__|hash() -> HashResult
 PyTuple|PyObject|func|__repr__|repr() -> PyResult<String>
 PyTuple|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyTuple|PyObject|func|__len__|getLength() -> BigInt

@@ -102,7 +102,7 @@ protocol __rmatmul__Owner { func rmatmul(_ other: PyObject) -> PyResult<PyObject
 protocol __rmod__Owner { func rmod(_ other: PyObject) -> PyResult<PyObject> }
 protocol __rmul__Owner { func rmul(_ other: PyObject) -> PyResult<PyObject> }
 protocol __ror__Owner { func ror(_ other: PyObject) -> PyResult<PyObject> }
-protocol __round__Owner { func round(nDigits: PyObject?) -> PyResultOrNot<PyObject> }
+protocol __round__Owner { func round(nDigits: PyObject?) -> PyResult<PyObject> }
 protocol __rpow__Owner { func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> }
 protocol __rrshift__Owner { func rrshift(_ other: PyObject) -> PyResult<PyObject> }
 protocol __rshift__Owner { func rshift(_ other: PyObject) -> PyResult<PyObject> }
@@ -148,7 +148,7 @@ protocol getOwner { func get(_ index: PyObject, default: PyObject?) -> PyResult<
 protocol imagOwner { func asImag() -> PyObject }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
 protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
-protocol indicesOwner { func indicesInSequence(length: PyObject) -> PyResultOrNot<PyObject> }
+protocol indicesOwner { func indicesInSequence(length: PyObject) -> PyResult<PyObject> }
 protocol insertOwner { func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> }
 protocol intersectionOwner { func intersection(with other: PyObject) -> PyResult<PyObject> }
 protocol is_integerOwner { func isInteger() -> PyBool }

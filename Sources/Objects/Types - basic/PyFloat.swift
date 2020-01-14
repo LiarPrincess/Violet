@@ -450,7 +450,7 @@ public class PyFloat: PyObject {
   ///
   /// Return the Integral closest to x, rounding half toward even.
   /// When an argument is passed, work like built-in round(x, ndigits).
-  internal func round(nDigits: PyObject?) -> PyResultOrNot<PyObject> {
+  internal func round(nDigits: PyObject?) -> PyResult<PyObject> {
     let nDigits = nDigits ?? self.builtins.none
 
     var digitCount: BigInt?
@@ -469,7 +469,7 @@ public class PyFloat: PyObject {
       return .value(self.builtins.newFloat(self.value.rounded()))
     case .some:
       // TODO: Implement float rounding to arbitrary precision
-      return .notImplemented
+      return .value(self.builtins.notImplemented)
     case .none:
       return .typeError(
         "'\(nDigits.typeName)' object cannot be interpreted as an integer"

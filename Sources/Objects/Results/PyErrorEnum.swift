@@ -45,4 +45,3 @@ public enum PyErrorEnum: CustomStringConvertible {
     }
   }
 }
-
