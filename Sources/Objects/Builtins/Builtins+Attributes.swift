@@ -40,35 +40,34 @@ extension Builtins {
     // Fast protocol-based path
     if let owner = object as? __getattribute__Owner {
       let result = owner.getAttribute(name: name)
-      return self.handleAttributeError(result: result, default: `default`)
+      return self.defaultIfAttributeError(result: result, default: `default`)
     }
 
     // Slow python path
     switch self.callMethod(on: object, selector: "__getattribute__", arg: name) {
     case .value(let o):
       return .value(o)
-    case .missingMethod,
-         .notImplemented:
+    case .missingMethod:
       let result = AttributeHelper.getAttribute(from: object, name: name.value)
-      return self.handleAttributeError(result: result, default: `default`)
+      return self.defaultIfAttributeError(result: result, default: `default`)
     case .notCallable(let e):
       return .error(e)
     case .error(let e):
-      return self.handleAttributeError(error: e, default: `default`)
+      return self.defaultIfAttributeError(error: e, default: `default`)
     }
   }
 
-  private func handleAttributeError(result: PyResult<PyObject>,
-                                    default: PyObject?) -> PyResult<PyObject> {
+  private func defaultIfAttributeError(result: PyResult<PyObject>,
+                                       default: PyObject?) -> PyResult<PyObject> {
     guard case let PyResult.error(e) = result else {
       return result
     }
 
-    return self.handleAttributeError(error: e, default: `default`)
+    return self.defaultIfAttributeError(error: e, default: `default`)
   }
 
-  private func handleAttributeError(error: PyErrorEnum,
-                                    default: PyObject?) -> PyResult<PyObject> {
+  private func defaultIfAttributeError(error: PyErrorEnum,
+                                       default: PyObject?) -> PyResult<PyObject> {
     // We are only interested in AttributeError
     guard case PyErrorEnum.attributeError = error else {
       return .error(error)
@@ -132,7 +131,7 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__setattr__", args: args) {
     case .value:
       return .value(self.none)
-    case .notImplemented, .missingMethod:
+    case .missingMethod:
       let typeName = object.typeName
       let operation = value is PyNone ? "del" : "assign to"
       let details = "(\(operation) \(name.value))"

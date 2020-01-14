@@ -11,20 +11,16 @@ import Core
 
 public enum CallResult {
   case value(PyObject)
-  /// Method returned 'NotImplemented'.
-  case notImplemented
-  /// Function is not callable.
+  /// Object is not callable.
   case notCallable(PyErrorEnum)
   case error(PyErrorEnum)
 }
 
 public enum CallMethodResult {
   case value(PyObject)
-  /// Method returned 'NotImplemented'.
-  case notImplemented
   /// Such method does not exists.
   case missingMethod(PyErrorEnum)
-  /// Method exists but it is not callable.
+  /// Method exists, but it is not callable.
   case notCallable(PyErrorEnum)
   case error(PyErrorEnum)
 }
@@ -86,10 +82,6 @@ extension Builtins {
 
     switch owner.call(args: args, kwargs: kwargs) {
     case .value(let result):
-      if result is PyNotImplemented {
-        return .notImplemented
-      }
-
       return .value(result)
     case .error(let e):
       return .error(e)
@@ -152,8 +144,6 @@ extension Builtins {
     switch self.call(callable: boundMethod, args: args, kwargs: kwargs) {
     case .value(let result):
       return .value(result)
-    case .notImplemented:
-      return .notImplemented
     case .notCallable:
       let msg = "attribute of type '\(boundMethod.typeName)' is not callable"
       return .notCallable(.typeError(msg))

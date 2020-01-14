@@ -76,9 +76,6 @@ public class PyFilter: PyObject {
           case .value(false): continue loop // try next item
           case .error(let e): return .error(e)
           }
-        case .notImplemented:
-          // 'self.builtins.notImplemented' is True
-          return .value(item)
         case .error(let e), .notCallable(let e):
           return .error(e)
         }

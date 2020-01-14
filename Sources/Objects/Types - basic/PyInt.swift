@@ -854,7 +854,7 @@ public class PyInt: PyObject {
     switch object.builtins.callMethod(on: object, selector: "__trunc__") {
     case .value(let o):
       return .value(o)
-    case .notImplemented, .missingMethod:
+    case .missingMethod:
       return .notImplemented
     case .error(let e), .notCallable(let e):
       return .error(e)

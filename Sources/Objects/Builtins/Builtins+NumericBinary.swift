@@ -191,9 +191,9 @@ extension BinaryOp {
     switch builtins.callMethod(on: left, selector: selector, arg: right) {
     case .value(let result):
       return .value(result)
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return .value(builtins.notImplemented)
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
@@ -216,9 +216,9 @@ extension BinaryOp {
     switch builtins.callMethod(on: right, selector: reverseSelector, arg: left) {
     case .value(let result):
       return .value(result)
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return .value(builtins.notImplemented)
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
@@ -241,9 +241,9 @@ extension BinaryOp {
     switch builtins.callMethod(on: left, selector: inPlaceSelector, arg: right) {
     case .value(let result):
       return .value(result)
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return .value(builtins.notImplemented)
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

@@ -59,8 +59,6 @@ internal class GetDescriptor {
     switch builtins.call(callable: self.get, args: args) {
     case .value(let r):
       return .value(r)
-    case .notImplemented:
-      return .value(builtins.notImplemented)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
@@ -116,8 +114,6 @@ internal class SetDescriptor {
     switch builtins.call(callable: self.set, args: args) {
     case .value(let r):
       return .value(r)
-    case .notImplemented:
-      return .value(builtins.notImplemented)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

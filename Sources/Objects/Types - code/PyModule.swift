@@ -85,9 +85,10 @@ public class PyModule: PyObject {
 
     if let getAttr = self.attributes["__getattr__"] {
       switch self.builtins.call(callable: getAttr, args: [self, name]) {
-      case .value(let r): return .value(r)
-      case .notImplemented: break
-      case .error(let e), .notCallable(let e): return .error(e)
+      case .value(let r):
+        return .value(r)
+      case .error(let e), .notCallable(let e):
+        return .error(e)
       }
     }
 

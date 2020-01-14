@@ -42,15 +42,15 @@ extension Builtins {
 
     switch self.callMethod(on: object, selector: "__bool__") {
     case .value(let result):
-      if result.type.isSubtype(of: self.bool) {
-        return self.isTrueBool(result)
+      if let pyBool = result as? PyBool {
+        return .value(pyBool.value.isTrue)
       }
 
       let typeName = result.typeName
       return .typeError("__bool__ should return bool, returned '\(typeName)'")
-    case .notImplemented, .missingMethod:
+    case .missingMethod:
       break // Try other methods
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
 
@@ -63,9 +63,9 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__len__") {
     case .value(let result):
       return self.isTrueBool(result)
-    case .notImplemented, .missingMethod:
+    case .missingMethod:
       return .value(true)
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

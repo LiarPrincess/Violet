@@ -49,12 +49,6 @@ internal class PyCallableIterator: PyObject {
       case .value(false): return .value(o)
       case .error(let e): return .error(e)
       }
-    case .notImplemented:
-      if self.sentinel is PyNotImplemented {
-        return .error(.stopIteration)
-      }
-
-      return .value(self.builtins.notImplemented)
     case .error(.stopIteration): // explicit
       return .error(.stopIteration)
     case .error(let e), .notCallable(let e):

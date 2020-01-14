@@ -115,9 +115,9 @@ extension TernaryOp {
     switch builtins.callMethod(on: left, selector: selector, args: [middle, right]) {
     case .value(let result):
       return .value(result)
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return .value(builtins.notImplemented)
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
@@ -141,9 +141,9 @@ extension TernaryOp {
     switch builtins.callMethod(on: middle, selector: reverseSelector, args: [left, right]) {
     case .value(let result):
       return .value(result)
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return .value(builtins.notImplemented)
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

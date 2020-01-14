@@ -23,9 +23,9 @@ extension Builtins {
     switch self.callMethod(on: object, selector: "__hash__") {
     case .value(let o):
       result = o
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return .error(self.hashNotImplemented(object))
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
 

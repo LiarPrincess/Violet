@@ -68,9 +68,9 @@ extension Builtins {
     switch self.callMethod(on: value, selector: selector) {
     case .value(let result):
       return .value(result)
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return .typeError("bad operand type for \(operation): '\(value.typeName)'")
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

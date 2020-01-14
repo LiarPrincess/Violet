@@ -115,8 +115,6 @@ public class PyProperty: PyObject {
     switch self.builtins.call(callable: propGet, args: [object]) {
     case .value(let r):
       return .value(r)
-    case .notImplemented:
-      return .value(self.builtins.notImplemented)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
@@ -135,8 +133,6 @@ public class PyProperty: PyObject {
     switch self.builtins.call(callable: fn, args: [object, value]) {
     case .value(let r):
       return .value(r)
-    case .notImplemented:
-      return .value(self.builtins.notImplemented)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

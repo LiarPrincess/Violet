@@ -550,10 +550,10 @@ public class PyFloat: PyObject {
         return .typeError("\(ot).__float__ returned non-float (type \(ft))")
       }
       return .value(float.value)
-    case .notImplemented, .missingMethod:
+    case .missingMethod:
       let t = object.typeName
       return .typeError("float() argument must be a string, or a number, not '\(t)'")
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

@@ -131,7 +131,7 @@ internal class PyReversed: PyObject {
     switch builtins.callMethod(on: object, selector: "__reversed__") {
     case .value(let o):
       return .value(o)
-    case .notImplemented, .missingMethod:
+    case .missingMethod:
       return .notImplemented
     case .error(let e), .notCallable(let e):
       return .error(e)

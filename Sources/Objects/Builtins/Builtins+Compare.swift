@@ -124,9 +124,9 @@ extension CompareOp {
     switch pythonResult {
     case .value(let result):
       return .value(result)
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       break // Try other options...
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
 

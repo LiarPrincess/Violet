@@ -148,7 +148,7 @@ extension Builtins {
     switch self.callMethod(on: type, selector: "__instancecheck__", arg: instance) {
     case .value(let o):
       return self.isTrueBool(o)
-    case .notImplemented, .missingMethod:
+    case .missingMethod:
       return .typeError("isinstance() arg 2 must be a type or tuple of types")
     case .error(let e), .notCallable(let e):
       return .error(e)
@@ -199,7 +199,7 @@ extension Builtins {
     switch self.callMethod(on: type, selector: "__subclasscheck__", arg: `super`) {
     case .value(let o):
       return self.isTrueBool(o)
-    case .notImplemented, .missingMethod:
+    case .missingMethod:
       return .typeError("issubclass() arg 1 must be a class")
     case .error(let e), .notCallable(let e):
       return .error(e)

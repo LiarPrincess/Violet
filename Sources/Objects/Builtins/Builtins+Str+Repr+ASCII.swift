@@ -26,10 +26,10 @@ extension Builtins {
 
       return .value(resultStr.value)
 
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return .value(self.genericRepr(object))
 
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }
@@ -62,10 +62,10 @@ extension Builtins {
 
       return .value(resultStr.value)
 
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return self.repr(object)
 
-    case .notCallable(let e), .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
     }
   }

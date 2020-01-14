@@ -290,7 +290,7 @@ extension Builtins {
     switch self.callMethod(on: iterable, selector: "__len__") {
     case .value(let o):
       return .value(o)
-    case .missingMethod, .notImplemented:
+    case .missingMethod:
       return .typeError("object of type '\(iterable.typeName)' has no len()")
     case .error(let e), .notCallable(let e):
       return .error(e)
@@ -346,7 +346,7 @@ extension Builtins {
     switch self.callMethod(on: iterable, selector: "__contains__", arg: element) {
     case .value(let o):
       return self.isTrueBool(o)
-    case .notImplemented, .missingMethod:
+    case .missingMethod:
       break // try other things
     case .error(let e), .notCallable(let e):
       return .error(e)
@@ -372,8 +372,8 @@ extension Builtins {
                        allFrom subset: PyObject) -> PyResult<Bool> {
     return self.reduce(iterable: subset, initial: true) { _, object in
       switch self.contains(iterable: iterable, element: object) {
-      case .value(true): return .setAcc(true)  // just go to next element
-      case .value(false): return .goToNextElement
+      case .value(true): return .goToNextElement
+      case .value(false): return .finish(false)
       case .error(let e): return .error(e)
       }
     }
@@ -410,6 +410,7 @@ extension Builtins {
 
   // MARK: - Reduce
 
+  /// `Builtins.reduce(iterable:initial:fn)` trampoline.
   public enum ReduceStep<Acc> {
     /// Go to the next item without changing `acc`.
     case goToNextElement
@@ -459,6 +460,7 @@ extension Builtins {
 
   // MARK: - Reduce into
 
+  /// `Builtins.reduce(iterable:into:fn)` trampoline.
   public enum ReduceIntoStep<Acc> {
     /// Go to the next item.
     case goToNextElement
@@ -537,8 +539,6 @@ extension Builtins {
     switch self.call(callable: key, arg: object) {
     case .value(let e):
       return .value(e)
-    case .notImplemented:
-      return .value(self.notImplemented)
     case .error(let e),
          .notCallable(let e):
       return .error(e)
