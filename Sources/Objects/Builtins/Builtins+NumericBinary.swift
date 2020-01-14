@@ -38,9 +38,9 @@ private protocol BinaryOp {
 
   /// Python selector, for example `__add__`.
   static var selector: String { get }
-  /// Python selector for reverse operation.
+  /// Python selector for reflected operation.
   /// For `__add__` it is `__radd__`.
-  static var reverseSelector: String { get }
+  static var reflectedSelector: String { get }
   /// Python selector for in-place operation.
   /// For `__add__` it is `__iadd__`.
   static var inPlaceSelector: String { get }
@@ -48,10 +48,10 @@ private protocol BinaryOp {
   /// Call op with fast protocol dispatch.
   static func callFastOp(left: PyObject,
                          right: PyObject) -> FastCallResult
-  /// Call reverse op with fast protocol dispatch.
+  /// Call reflected op with fast protocol dispatch.
   /// For `__add__` it should call `__radd__`.
-  static func callFastReverse(left: PyObject,
-                              right: PyObject) -> FastCallResult
+  static func callFastReflected(left: PyObject,
+                                right: PyObject) -> FastCallResult
   /// Call in-place op with fast protocol dispatch.
   /// For `__add__` it should call `__iadd__`.
   static func callFastInPlace(left: PyObject,
@@ -127,13 +127,13 @@ extension BinaryOp {
   fileprivate static func callInner(left: PyObject,
                                     right: PyObject,
                                     operation: String) -> PyResult<PyObject> {
-    var checkedReverse = false
+    var checkedReflected = false
 
     // Check if right is subtype of left, if so then use right.
     if left.type !== right.type && right.type.isSubtype(of: left.type) {
-      checkedReverse = true
+      checkedReflected = true
 
-      switch callReverse(left: left, right: right) {
+      switch callReflected(left: left, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -155,9 +155,9 @@ extension BinaryOp {
       return .error(e)
     }
 
-    // Try reverse on right
-    if !checkedReverse {
-      switch callReverse(left: left, right: right) {
+    // Try reflected on right
+    if !checkedReflected {
+      switch callReflected(left: left, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -198,12 +198,12 @@ extension BinaryOp {
     }
   }
 
-  private static func callReverse(left: PyObject,
+  private static func callReflected(left: PyObject,
                                   right: PyObject) -> PyResult<PyObject> {
     let builtins = left.builtins
 
     // Try fast protocol-based dispach
-    switch callFastReverse(left: left, right: right) {
+    switch callFastReflected(left: left, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -213,7 +213,7 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch builtins.callMethod(on: right, selector: reverseSelector, arg: left) {
+    switch builtins.callMethod(on: right, selector: reflectedSelector, arg: left) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
@@ -260,7 +260,7 @@ extension Builtins {
     fileprivate static let op = "+"
     fileprivate static let inPlaceOp = "+="
     fileprivate static let selector = "__add__"
-    fileprivate static let reverseSelector = "__radd__"
+    fileprivate static let reflectedSelector = "__radd__"
     fileprivate static let inPlaceSelector = "__iadd__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -271,8 +271,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __radd__Owner {
         return FastCallResult(owner.radd(left))
       }
@@ -303,7 +303,7 @@ extension Builtins {
     fileprivate static let op = "-"
     fileprivate static let inPlaceOp = "-="
     fileprivate static let selector = "__sub__"
-    fileprivate static let reverseSelector = "__rsub__"
+    fileprivate static let reflectedSelector = "__rsub__"
     fileprivate static let inPlaceSelector = "__isub__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -314,8 +314,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rsub__Owner {
         return FastCallResult(owner.rsub(left))
       }
@@ -346,7 +346,7 @@ extension Builtins {
     fileprivate static let op = "*"
     fileprivate static let inPlaceOp = "*="
     fileprivate static let selector = "__mul__"
-    fileprivate static let reverseSelector = "__rmul__"
+    fileprivate static let reflectedSelector = "__rmul__"
     fileprivate static let inPlaceSelector = "__imul__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -357,8 +357,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rmul__Owner {
         return FastCallResult(owner.rmul(left))
       }
@@ -389,7 +389,7 @@ extension Builtins {
     fileprivate static let op = "@"
     fileprivate static let inPlaceOp = "@="
     fileprivate static let selector = "__matmul__"
-    fileprivate static let reverseSelector = "__rmatmul__"
+    fileprivate static let reflectedSelector = "__rmatmul__"
     fileprivate static let inPlaceSelector = "__imatmul__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -400,8 +400,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rmatmul__Owner {
         return FastCallResult(owner.rmatmul(left))
       }
@@ -432,7 +432,7 @@ extension Builtins {
     fileprivate static let op = "/"
     fileprivate static let inPlaceOp = "/="
     fileprivate static let selector = "__truediv__"
-    fileprivate static let reverseSelector = "__rtruediv__"
+    fileprivate static let reflectedSelector = "__rtruediv__"
     fileprivate static let inPlaceSelector = "__itruediv__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -443,8 +443,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rtruediv__Owner {
         return FastCallResult(owner.rtruediv(left))
       }
@@ -475,7 +475,7 @@ extension Builtins {
     fileprivate static let op = "//"
     fileprivate static let inPlaceOp = "//="
     fileprivate static let selector = "__floordiv__"
-    fileprivate static let reverseSelector = "__rfloordiv__"
+    fileprivate static let reflectedSelector = "__rfloordiv__"
     fileprivate static let inPlaceSelector = "__ifloordiv__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -486,8 +486,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rfloordiv__Owner {
         return FastCallResult(owner.rfloordiv(left))
       }
@@ -518,7 +518,7 @@ extension Builtins {
     fileprivate static let op = "%"
     fileprivate static let inPlaceOp = "%="
     fileprivate static let selector = "__mod__"
-    fileprivate static let reverseSelector = "__rmod__"
+    fileprivate static let reflectedSelector = "__rmod__"
     fileprivate static let inPlaceSelector = "__imod__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -529,8 +529,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rmod__Owner {
         return FastCallResult(owner.rmod(left))
       }
@@ -561,7 +561,7 @@ extension Builtins {
     fileprivate static let op = "divmod()"
     fileprivate static let inPlaceOp = "divmod()="
     fileprivate static let selector = "__divmod__"
-    fileprivate static let reverseSelector = "__rdivmod__"
+    fileprivate static let reflectedSelector = "__rdivmod__"
     fileprivate static let inPlaceSelector = "__idivmod__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -572,8 +572,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rdivmod__Owner {
         return FastCallResult(owner.rdivmod(left))
       }
@@ -602,7 +602,7 @@ extension Builtins {
     fileprivate static let op = "<<"
     fileprivate static let inPlaceOp = "<<="
     fileprivate static let selector = "__lshift__"
-    fileprivate static let reverseSelector = "__rlshift__"
+    fileprivate static let reflectedSelector = "__rlshift__"
     fileprivate static let inPlaceSelector = "__ilshift__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -613,8 +613,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rlshift__Owner {
         return FastCallResult(owner.rlshift(left))
       }
@@ -645,7 +645,7 @@ extension Builtins {
     fileprivate static let op = ">>"
     fileprivate static let inPlaceOp = ">>="
     fileprivate static let selector = "__rshift__"
-    fileprivate static let reverseSelector = "__rrshift__"
+    fileprivate static let reflectedSelector = "__rrshift__"
     fileprivate static let inPlaceSelector = "__irshift__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -656,8 +656,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rrshift__Owner {
         return FastCallResult(owner.rrshift(left))
       }
@@ -688,7 +688,7 @@ extension Builtins {
     fileprivate static let op = "&"
     fileprivate static let inPlaceOp = "&="
     fileprivate static let selector = "__and__"
-    fileprivate static let reverseSelector = "__rand__"
+    fileprivate static let reflectedSelector = "__rand__"
     fileprivate static let inPlaceSelector = "__iand__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -699,8 +699,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rand__Owner {
         return FastCallResult(owner.rand(left))
       }
@@ -731,7 +731,7 @@ extension Builtins {
     fileprivate static let op = "|"
     fileprivate static let inPlaceOp = "|="
     fileprivate static let selector = "__or__"
-    fileprivate static let reverseSelector = "__ror__"
+    fileprivate static let reflectedSelector = "__ror__"
     fileprivate static let inPlaceSelector = "__ior__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -742,8 +742,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __ror__Owner {
         return FastCallResult(owner.ror(left))
       }
@@ -774,7 +774,7 @@ extension Builtins {
     fileprivate static let op = "^"
     fileprivate static let inPlaceOp = "^="
     fileprivate static let selector = "__xor__"
-    fileprivate static let reverseSelector = "__rxor__"
+    fileprivate static let reflectedSelector = "__rxor__"
     fileprivate static let inPlaceSelector = "__ixor__"
 
     fileprivate static func callFastOp(left: PyObject,
@@ -785,8 +785,8 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = right as? __rxor__Owner {
         return FastCallResult(owner.rxor(left))
       }

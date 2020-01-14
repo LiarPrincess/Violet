@@ -88,7 +88,7 @@ private struct {struct_name}: BinaryOp {{
   fileprivate static let op = "{operator}"
   fileprivate static let inPlaceOp = "{operator}="
   fileprivate static let selector = "__{name}__"
-  fileprivate static let reverseSelector = "__r{name}__"
+  fileprivate static let reflectedSelector = "__r{name}__"
   fileprivate static let inPlaceSelector = "__i{name}__"
 
   fileprivate static func callFastOp(left: PyObject,
@@ -99,8 +99,8 @@ private struct {struct_name}: BinaryOp {{
     return .unavailable
   }}
 
-  fileprivate static func callFastReverse(left: PyObject,
-                                          right: PyObject) -> FastCallResult {{
+  fileprivate static func callFastReflected(left: PyObject,
+                                            right: PyObject) -> FastCallResult {{
     if let owner = right as? __r{name}__Owner {{
       return FastCallResult(owner.r{name}(left))
     }}

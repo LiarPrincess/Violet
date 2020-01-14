@@ -45,9 +45,8 @@ private protocol CompareOp {
   static var selector: String { get }
   /// Call compare from PyBaseObject.
   static var baseCompare: (PyObject, PyObject) -> CompareResult { get }
-  /// Reverse compare operation, for example 'equal' -> 'not equal'.
-  /// Lazy, otherwise we would get infinite mutual recursion.
-  associatedtype reverse: CompareOp
+  /// Reflected compare operation, for example 'equal' -> 'not equal'.
+  associatedtype reflected: CompareOp
   /// Call compare with fast protocol dispatch.
   static func callFastCompare(left: PyObject, right: PyObject) -> FastCallResult
 }
@@ -58,13 +57,13 @@ extension CompareOp {
   /// PyObject_RichCompare(PyObject *v, PyObject *w, int op)
   fileprivate static func compare(left: PyObject,
                                   right: PyObject) -> PyResult<PyObject> {
-    var checkedReverse = false
+    var checkedReflected = false
 
     // Check if right is subtype of left, if so then use right.
     if left.type !== right.type && right.type.isSubtype(of: left.type) {
-      checkedReverse = true
+      checkedReflected = true
 
-      switch reverse.callCompare(left: right, right: left) {
+      switch reflected.callCompare(left: right, right: left) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -86,9 +85,9 @@ extension CompareOp {
       return .error(e)
     }
 
-    // Try reverse on right
-    if !checkedReverse {
-      switch reverse.callCompare(left: right, right: left) {
+    // Try reflected on right
+    if !checkedReflected {
+      switch reflected.callCompare(left: right, right: left) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -148,7 +147,7 @@ extension Builtins {
 
   private enum EqualCompare: CompareOp {
 
-    typealias reverse = NotEqualCompare
+    typealias reflected = NotEqualCompare
     fileprivate static let selector = "__eq__"
     fileprivate static let baseCompare = PyBaseObject.isEqual
 
@@ -182,7 +181,7 @@ extension Builtins {
 
   private enum NotEqualCompare: CompareOp {
 
-    typealias reverse = EqualCompare
+    typealias reflected = EqualCompare
     fileprivate static let selector = "__ne__"
     fileprivate static let baseCompare = PyBaseObject.isNotEqual
 
@@ -216,7 +215,7 @@ extension Builtins {
 
   private enum LessCompare: CompareOp {
 
-    typealias reverse = GreaterEqualCompare
+    typealias reflected = GreaterEqualCompare
     fileprivate static let selector = "__lt__"
     fileprivate static let baseCompare = PyBaseObject.isLess
 
@@ -250,7 +249,7 @@ extension Builtins {
 
   private enum LessEqualCompare: CompareOp {
 
-    typealias reverse = GreaterCompare
+    typealias reflected = GreaterCompare
     fileprivate static let selector = "__le__"
     fileprivate static let baseCompare = PyBaseObject.isLessEqual
 
@@ -284,7 +283,7 @@ extension Builtins {
 
   private enum GreaterCompare: CompareOp {
 
-    typealias reverse = LessEqualCompare
+    typealias reflected = LessEqualCompare
     fileprivate static let selector = "__gt__"
     fileprivate static let baseCompare = PyBaseObject.isGreater
 
@@ -318,7 +317,7 @@ extension Builtins {
 
   private enum GreaterEqualCompare: CompareOp {
 
-    typealias reverse = LessCompare
+    typealias reflected = LessCompare
     fileprivate static let selector = "__ge__"
     fileprivate static let baseCompare = PyBaseObject.isGreaterEqual
 

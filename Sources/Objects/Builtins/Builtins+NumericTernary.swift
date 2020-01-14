@@ -30,19 +30,19 @@ private protocol TernaryOp {
 
   /// Python selector, for example `__pow__`.
   static var selector: String { get }
-  /// Python selector for reverse operation.
+  /// Python selector for reflected operation.
   /// For `__pow__` it is `__rpow__`.
-  static var reverseSelector: String { get }
+  static var reflectedSelector: String { get }
 
   /// Call op with fast protocol dispatch.
   static func callFastOp(left: PyObject,
                          middle: PyObject,
                          right: PyObject) -> FastCallResult
-  /// Call reverse op with fast protocol dispatch.
+  /// Call reflected op with fast protocol dispatch.
   /// For `__pow__` it should call `__rpow__`.
-  static func callFastReverse(left: PyObject,
-                              middle: PyObject,
-                              right: PyObject) -> FastCallResult
+  static func callFastReflected(left: PyObject,
+                                middle: PyObject,
+                                right: PyObject) -> FastCallResult
 }
 
 extension TernaryOp {
@@ -50,13 +50,13 @@ extension TernaryOp {
   fileprivate static func call(left: PyObject,
                                middle: PyObject,
                                right: PyObject) -> PyResult<PyObject> {
-    var checkedReverse = false
+    var checkedReflected = false
 
     // Check if middle is subtype of left, if so then use middle.
     if left.type !== middle.type && middle.type.isSubtype(of: left.type) {
-      checkedReverse = true
+      checkedReflected = true
 
-      switch callReverse(left: left, middle: middle, right: right) {
+      switch callReflected(left: left, middle: middle, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -78,9 +78,9 @@ extension TernaryOp {
       return .error(e)
     }
 
-    // Try reverse on middle
-    if !checkedReverse {
-      switch callReverse(left: left, middle: middle, right: right) {
+    // Try reflected on middle
+    if !checkedReflected {
+      switch callReflected(left: left, middle: middle, right: right) {
       case .value(let result):
         if result.isNotImplemented {
           break // try other options
@@ -122,13 +122,13 @@ extension TernaryOp {
     }
   }
 
-  private static func callReverse(left: PyObject,
-                                  middle: PyObject,
-                                  right: PyObject) -> PyResult<PyObject> {
+  private static func callReflected(left: PyObject,
+                                    middle: PyObject,
+                                    right: PyObject) -> PyResult<PyObject> {
     let builtins = left.context.builtins
 
     // Try fast protocol-based dispach
-    switch callFastReverse(left: left, middle: middle, right: right) {
+    switch callFastReflected(left: left, middle: middle, right: right) {
     case .value(let result):
       return .value(result)
     case .unavailable:
@@ -138,7 +138,7 @@ extension TernaryOp {
     }
 
     // Try standard Python dispatch
-    switch builtins.callMethod(on: middle, selector: reverseSelector, args: [left, right]) {
+    switch builtins.callMethod(on: middle, selector: reflectedSelector, args: [left, right]) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
@@ -158,7 +158,7 @@ extension Builtins {
   private enum PowOp: TernaryOp {
     fileprivate static var op = "** or pow()"
     fileprivate static var selector = "__pow__"
-    fileprivate static var reverseSelector = "__rpow__"
+    fileprivate static var reflectedSelector = "__rpow__"
 
     fileprivate static func callFastOp(left: PyObject,
                                        middle: PyObject,
@@ -169,9 +169,9 @@ extension Builtins {
       return .unavailable
     }
 
-    fileprivate static func callFastReverse(left: PyObject,
-                                            middle: PyObject,
-                                            right: PyObject) -> FastCallResult {
+    fileprivate static func callFastReflected(left: PyObject,
+                                              middle: PyObject,
+                                              right: PyObject) -> FastCallResult {
       if let owner = middle as? __rpow__Owner {
         return FastCallResult(owner.rpow(base: left, mod: right))
       }
