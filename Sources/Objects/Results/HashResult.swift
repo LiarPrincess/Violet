@@ -4,8 +4,8 @@ public enum HashResult {
   case notImplemented
 }
 
-extension HashResult: FunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
+extension HashResult: PyFunctionResultConvertible {
+  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
     switch self {
     case .value(let hash):
       return hash.toFunctionResult(in: context)

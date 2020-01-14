@@ -5,10 +5,12 @@ import Foundation
 
 /// Result of a `Python` operation.
 public enum PyResult<V> {
-  /// Ordinary value (it can still be `error`, but when passed as variable -
-  /// not raised).
+  /// Use this ctor for ordinary (non-error) values.
+  ///
+  /// It can still hold `error` (as a subclass of `BaseException`),
+  /// but in this case it is just a object reference, not to raised.
   case value(V)
-  /// Error should be raised in VM.
+  /// Use this ctor to raise error in VM.
   case error(PyErrorEnum)
 
   public static func typeError(_ msg: String) -> PyResult<V> {
@@ -125,6 +127,16 @@ public enum PyResult<V> {
 extension PyResult where V == Void {
   public static func value() -> PyResult {
     return PyResult.value(())
+  }
+}
+
+// MARK: - PyFunctionResultConvertible
+
+extension PyResult: PyFunctionResultConvertible
+  where V: PyFunctionResultConvertible {
+
+  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
+    return self.flatMap { $0.toFunctionResult(in: context) }
   }
 }
 

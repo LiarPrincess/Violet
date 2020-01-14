@@ -6,7 +6,7 @@ extension PyProperty {
 
   // MARK: - Wrap read only property
 
-  internal static func wrap<R: FunctionResultConvertible>(
+  internal static func wrap<R: PyFunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -20,7 +20,7 @@ extension PyProperty {
     )
   }
 
-  internal static func wrap<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -38,7 +38,7 @@ extension PyProperty {
   // MARK: - Wrap property
 
   // swiftlint:disable:next function_parameter_count
-  internal static func wrap<R: FunctionResultConvertible>(
+  internal static func wrap<R: PyFunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -54,7 +54,7 @@ extension PyProperty {
   }
 
   // swiftlint:disable:next function_parameter_count
-  internal static func wrap<Zelf, R: FunctionResultConvertible>(
+  internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
     _ context: PyContext,
     name: String,
     doc: String?,
@@ -72,7 +72,7 @@ extension PyProperty {
 
   // MARK: - Wrap getter
 
-  private static func wrapGetter<R: FunctionResultConvertible>(
+  private static func wrapGetter<R: PyFunctionResultConvertible>(
     _ context: PyContext,
     get: @escaping () -> R) -> PyBuiltinFunction {
 
@@ -84,7 +84,7 @@ extension PyProperty {
     )
   }
 
-  private static func wrapGetter<Zelf, R: FunctionResultConvertible>(
+  private static func wrapGetter<Zelf, R: PyFunctionResultConvertible>(
     _ context: PyContext,
     get: @escaping (Zelf) -> () -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyBuiltinFunction {

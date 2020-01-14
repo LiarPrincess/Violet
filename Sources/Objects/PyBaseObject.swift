@@ -154,8 +154,8 @@ internal enum PyBaseObject {
   /// It should return True, False or NotImplemented.  If it returns
   /// NotImplemented, the normal algorithm is used.  Otherwise, it
   /// overrides the normal algorithm (and the outcome is cached).
-  internal static func subclasshook(zelf: PyObject) -> PyResultOrNot<PyObject> {
-    return .notImplemented
+  internal static func subclasshook(zelf: PyObject) -> PyResult<PyObject> {
+    return .value(zelf.builtins.notImplemented)
   }
 
   // MARK: - Init subclass
@@ -164,7 +164,7 @@ internal enum PyBaseObject {
   /// This method is called when a class is subclassed.
   /// The default implementation does nothing.
   /// It may be overridden to extend subclasses.
-  internal static func initSubclass(zelf: PyObject) -> PyResultOrNot<PyObject> {
+  internal static func initSubclass(zelf: PyObject) -> PyResult<PyObject> {
     return .value(zelf.builtins.none)
   }
 

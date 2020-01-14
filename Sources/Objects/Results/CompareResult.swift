@@ -14,8 +14,8 @@ public enum CompareResult {
   }
 }
 
-extension CompareResult: FunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> FunctionResult {
+extension CompareResult: PyFunctionResultConvertible {
+  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
     switch self {
     case .value(let bool):
       return bool.toFunctionResult(in: context)

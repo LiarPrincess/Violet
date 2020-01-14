@@ -28,3 +28,11 @@ public struct DirResult {
     self.append(contentsOf: newElements.values)
   }
 }
+
+extension DirResult: PyFunctionResultConvertible {
+  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
+    let builtins = context.builtins
+    let elements = self.sortedValues.map { builtins.newString($0) }
+    return .value(builtins.newList(elements))
+  }
+}

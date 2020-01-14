@@ -1,7 +1,5 @@
 import Core
 
-// MARK: - Attributes
-
 // It has to be a class because it needs to be shared between multiple entities:
 // >>> class C(): pass
 // >>> c = C()        <-- 'c' has reference to its own '__dict__'
@@ -171,5 +169,25 @@ extension String: PyHashable {
     let isOtherEnd = otherValue == nil
     let isCountEqual = isSelfEnd && isOtherEnd
     return .value(isCountEqual)
+  }
+}
+
+// MARK: - PyFunctionResultConvertible
+
+extension Attributes: PyFunctionResultConvertible {
+  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
+    let builtins = context.builtins
+
+    let args = self.entries.map { entry -> CreateDictionaryArg in
+      let key = builtins.newString(entry.key)
+      return CreateDictionaryArg(key: key, value: entry.value)
+    }
+
+    switch builtins.newDict(args) {
+    case let .value(dict):
+      return .value(dict)
+    case let .error(e):
+      return .error(e)
+    }
   }
 }

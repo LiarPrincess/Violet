@@ -121,3 +121,12 @@ public class PyObject {
     self._type = nil
   }
 }
+
+// MARK: - PyFunctionResultConvertible
+
+// 'PyObject' can be returned from Python function!
+extension PyObject: PyFunctionResultConvertible {
+  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
+    return .value(self)
+  }
+}

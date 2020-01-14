@@ -161,7 +161,7 @@ public class PyBuiltinFunction: PyObject {
   /// static PyObject *
   /// slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
   internal func call(args: [PyObject],
-                     kwargs: PyDictData?) -> PyResultOrNot<PyObject> {
+                     kwargs: PyDictData?) -> PyResult<PyObject> {
     let realArgs = self.prependSelfIfNeeded(args: args)
     return self.function.call(args: realArgs, kwargs: kwargs)
   }

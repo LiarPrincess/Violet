@@ -569,7 +569,7 @@ public class PyType: PyObject, CustomStringConvertible {
   /// static PyObject *
   /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
   internal func call(args: [PyObject],
-                     kwargs: PyDictData?) -> PyResultOrNot<PyObject> {
+                     kwargs: PyDictData?) -> PyResult<PyObject> {
     let newResult = self.builtins.callMethod(on: self,
                                              selector: "__new__",
                                              args: args,

@@ -117,18 +117,14 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#dir)
   public func dir(_ object: PyObject?) -> PyResult<PyObject> {
     if let object = object {
-      switch self.call__dir__(on: object) {
-      case .value(let o): return .value(o)
-      case .notImplemented: return .typeError("object does not provide __dir__")
-      case .error(let e): return .error(e)
-      }
+      return self.call__dir__(on: object)
     }
 
     // TODO: Add '_dir_locals(void)' from 'PyObject_Dir(PyObject *obj)'
     return .value(self.unimplemented)
   }
 
-  private func call__dir__(on object: PyObject) -> FunctionResult {
+  private func call__dir__(on object: PyObject) -> PyFunctionResult {
     if let owner = object as? __dir__Owner {
       let result = owner.dir()
       return result.toFunctionResult(in: object.context)
@@ -138,7 +134,7 @@ extension Builtins {
     case .value(let o):
       return .value(o)
     case .notImplemented, .missingMethod:
-      return .notImplemented
+      return .typeError("object does not provide __dir__")
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

@@ -91,8 +91,6 @@ extension Builtins {
       }
 
       return .value(result)
-    case .notImplemented:
-      return .notImplemented
     case .error(let e):
       return .error(e)
     }
