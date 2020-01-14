@@ -101,7 +101,7 @@ internal class PyReversed: PyObject {
     switch PyReversed.call__reversed__(on: object) {
     case .value(let r):
       reverse = r
-    case .notImplemented:
+    case .missingMethod:
       return .typeError("'\(object.typeName)' object is not reversible")
     case .error(let e):
       return .error(e)
@@ -122,7 +122,13 @@ internal class PyReversed: PyObject {
     return .value(result)
   }
 
-  private static func call__reversed__(on object: PyObject) -> PyResultOrNot<PyObject> {
+  private enum CallReversedResult {
+    case value(PyObject)
+    case error(PyErrorEnum)
+    case missingMethod
+  }
+
+  private static func call__reversed__(on object: PyObject) -> CallReversedResult {
     if let owner = object as? __reversed__Owner {
       return .value(owner.reversed())
     }
@@ -132,7 +138,7 @@ internal class PyReversed: PyObject {
     case .value(let o):
       return .value(o)
     case .missingMethod:
-      return .notImplemented
+      return .missingMethod
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

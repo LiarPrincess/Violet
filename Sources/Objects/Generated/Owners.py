@@ -155,7 +155,7 @@ def print_protocols():
   protocols.add('protocol __iand__Owner { func iand(_ other: PyObject) -> PyResult<PyObject> }')
   protocols.add('protocol __ixor__Owner { func ixor(_ other: PyObject) -> PyResult<PyObject> }')
   protocols.add('protocol __ior__Owner { func ior(_ other: PyObject) -> PyResult<PyObject> }')
-  protocols.add('protocol __complex__Owner { func asComplex() -> PyResult<PyComplex> }')
+  protocols.add('protocol __complex__Owner { func asComplex() -> PyObject }')
 
   # We will manually create '__new__Owner' and '__init__Owner'
   print('''\

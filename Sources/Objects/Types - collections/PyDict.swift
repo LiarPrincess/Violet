@@ -357,7 +357,7 @@ public class PyDict: PyObject {
           case .value: break
           case .error(let e): return .error(e)
           }
-        case .notImplemented: // We don't have keys -> try iterable
+        case .missingMethod: // We don't have keys -> try iterable
           switch self.update(fromIterableOfPairs: arg) {
           case .value: break
           case .error(let e): return .error(e)
@@ -379,7 +379,13 @@ public class PyDict: PyObject {
     return .value(self.builtins.none)
   }
 
-  private func callKeys(on object: PyObject) -> PyResultOrNot<PyObject> {
+  private enum CallKeysResult {
+    case value(PyObject)
+    case error(PyErrorEnum)
+    case missingMethod
+  }
+
+  private func callKeys(on object: PyObject) -> CallKeysResult {
     if let owner = object as? keysOwner {
       return .value(owner.keys())
     }
@@ -388,7 +394,7 @@ public class PyDict: PyObject {
     case .value(let o):
       return .value(o)
     case .missingMethod:
-      return .notImplemented
+      return .missingMethod
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

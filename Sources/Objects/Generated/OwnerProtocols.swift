@@ -29,7 +29,7 @@ protocol __cause__SetterOwner { func setCause(_ value: PyObject?) -> PyResult<()
 protocol __ceil__Owner { func ceil() -> PyObject }
 protocol __class__GetterOwner { func getClass() -> PyType }
 protocol __code__GetterOwner { func getCode() -> PyCode }
-protocol __complex__Owner { func asComplex() -> PyResult<PyComplex> }
+protocol __complex__Owner { func asComplex() -> PyObject }
 protocol __contains__Owner { func contains(_ element: PyObject) -> PyResult<Bool> }
 protocol __context__GetterOwner { func getContext() -> PyObject }
 protocol __context__SetterOwner { func setContext(_ value: PyObject?) -> PyResult<()> }

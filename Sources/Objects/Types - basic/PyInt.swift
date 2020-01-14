@@ -795,7 +795,7 @@ public class PyInt: PyObject {
         return .typeError("__trunc__ returned non-Integral (type \(o.typeName))")
       }
       return .value(int.value)
-    case .notImplemented:
+    case .missingMethod:
       break // try other possibilities
     case .error(let e):
       return .error(e)
@@ -846,7 +846,13 @@ public class PyInt: PyObject {
     return .notString
   }
 
-  private static func callTrunc(_ object: PyObject) -> PyResultOrNot<PyObject> {
+  private enum CallTruncResult {
+    case value(PyObject)
+    case error(PyErrorEnum)
+    case missingMethod
+  }
+
+  private static func callTrunc(_ object: PyObject) -> CallTruncResult {
     if let owner = object as? __trunc__Owner {
       return .value(owner.trunc())
     }
@@ -855,7 +861,7 @@ public class PyInt: PyObject {
     case .value(let o):
       return .value(o)
     case .missingMethod:
-      return .notImplemented
+      return .missingMethod
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

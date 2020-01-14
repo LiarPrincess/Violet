@@ -587,7 +587,7 @@ public class PyComplex: PyObject {
         return .typeError("__complex__ returned non-Complex (type \(o.typeName))")
       }
       return .value(Raw(real: complex.real, imag: complex.imag))
-    case .notImplemented:
+    case .missingMethod:
       break // try other possibilities
     case .error(let e):
       return .error(e)
@@ -605,16 +605,22 @@ public class PyComplex: PyObject {
     return .typeError("complex() argument must be a string or a number, not '\(t)'")
   }
 
-  private static func callComplex(_ object: PyObject) -> PyResultOrNot<PyObject> {
+  private enum CallComplexResult {
+    case value(PyObject)
+    case error(PyErrorEnum)
+    case missingMethod
+  }
+
+  private static func callComplex(_ object: PyObject) -> CallComplexResult {
     if let owner = object as? __complex__Owner {
-      return owner.asComplex().map { $0 as PyObject }.asResultOrNot
+      return .value(owner.asComplex())
     }
 
     switch object.builtins.callMethod(on: object, selector: "__complex__") {
     case .value(let o):
       return .value(o)
     case .missingMethod:
-      return .notImplemented
+      return .missingMethod
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
