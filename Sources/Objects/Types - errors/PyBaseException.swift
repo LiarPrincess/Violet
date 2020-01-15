@@ -5,6 +5,8 @@ import Core
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
 
+// swiftlint:disable file_length
+
 // sourcery: pyerrortype = BaseException, default, baseType, hasGC, baseExceptionSubclass
 public class PyBaseException: PyObject {
 
@@ -22,6 +24,23 @@ public class PyBaseException: PyObject {
   internal var suppressExceptionContext: Bool
 
   // MARK: - Init
+
+  convenience init(_ context: PyContext,
+                   msg: String,
+                   traceback: PyObject? = nil,
+                   cause: PyObject? = nil,
+                   exceptionContext: PyObject? = nil,
+                   suppressExceptionContext: Bool = false) {
+    let builtins = context.builtins
+    let msgPy = builtins.newString(msg)
+    let args = builtins.newTuple(msgPy)
+    self.init(context,
+              args: args,
+              traceback: traceback,
+              cause: cause,
+              exceptionContext: exceptionContext,
+              suppressExceptionContext: suppressExceptionContext)
+  }
 
   internal init(_ context: PyContext,
                 args: PyTuple,

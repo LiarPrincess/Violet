@@ -91,6 +91,7 @@ def print_header():
 // In CPython:
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
+// https://docs.python.org/3.7/library/exceptions.html
 // https://docs.python.org/3.7/c-api/exceptions.html
 ''')
 
@@ -224,7 +225,7 @@ def get_builtins_type_property_name(name):
 
 if __name__ == '__main__':
   if len(sys.argv) < 2:
-    print("Usage: 'python3 errors.py [protocols|conformance]'")
+    print("Usage: 'python3 errors.py [class-definitions|types]'")
     sys.exit(1)
 
   mode = sys.argv[1]
