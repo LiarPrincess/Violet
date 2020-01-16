@@ -77,6 +77,20 @@ public class PyBaseException: PyObject {
     self.setType(to: context.builtins.errorTypes.baseException)
   }
 
+  // MARK: - Subclass checks
+
+  public var isAttributeError: Bool {
+    return self is PyAttributeError
+  }
+
+  public var isStopIteration: Bool {
+    return self is PyStopIteration
+  }
+
+  public var isIndexError: Bool {
+    return self is PyIndexError
+  }
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__

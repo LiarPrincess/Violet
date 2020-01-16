@@ -44,14 +44,14 @@ internal class PyCallableIterator: PyObject {
   internal func next() -> PyResult<PyObject> {
     switch self.builtins.call(callable: self.callable) {
     case let .value(o):
+      // If we are equal to 'self.sentinel' then we have to stop
       switch self.builtins.isEqualBool(left: o, right: self.sentinel) {
       case .value(true): return .error(.stopIteration)
       case .value(false): return .value(o)
       case .error(let e): return .error(e)
       }
-    case .error(.stopIteration): // explicit
-      return .error(.stopIteration)
     case .error(let e), .notCallable(let e):
+      // This also handles 'StopIteration'
       return .error(e)
     }
   }

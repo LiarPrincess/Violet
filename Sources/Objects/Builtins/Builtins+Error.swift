@@ -79,8 +79,8 @@ extension Builtins {
   }
 
   /// Signal the end from iterator.__next__().
-  public func newStopIteration(value: PyObject) -> PyStopIteration {
-    let args = self.newTuple(value)
+  public func newStopIteration(value: PyObject? = nil) -> PyStopIteration {
+    let args = self.newTuple(value ?? self.none)
     return PyStopIteration(self.context, args: args)
   }
 

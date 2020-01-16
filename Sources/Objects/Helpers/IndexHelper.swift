@@ -2,7 +2,7 @@ import Core
 
 internal enum IndexHelper {
 
-  internal enum GetIndexResult<T> {
+  internal enum TryIndexResult<T> {
     case value(T)
     case notIndex
     case error(PyErrorEnum)
@@ -10,9 +10,17 @@ internal enum IndexHelper {
 
   // MARK: - Int
 
+  /// Try to extract `Int` index from `PyObject`.
+  ///
+  /// When object is not convertible to index it will return `.notIndex`.
+  /// When index is out of range of `int` it will return error.
+  ///
+  /// CPython:
+  /// ```
   /// Py_ssize_t PyNumber_AsSsize_t(PyObject *item, PyObject *err)
   /// _PyEval_SliceIndexNotNone
-  internal static func tryInt(_ value: PyObject) -> GetIndexResult<Int> {
+  /// ```
+  internal static func tryInt(_ value: PyObject) -> TryIndexResult<Int> {
     let bigInt: BigInt
     switch tryBigInt(value) {
     case .value(let v): bigInt = v
@@ -28,8 +36,11 @@ internal enum IndexHelper {
     return .error(.indexError(msg))
   }
 
-  /// Basically `IndexHelper.tryInt`, but it will return type error
-  /// if the value cannot be converted to index.
+  /// Extract `int` index from `PyObject`.
+  ///
+  /// It will return error when:
+  /// - object is not convertible to index
+  /// - index is out of range of `int`
   internal static func int(_ value: PyObject) -> PyResult<Int> {
     switch IndexHelper.tryInt(value) {
     case .value(let v):
@@ -44,25 +55,10 @@ internal enum IndexHelper {
 
   // MARK: - BigInt
 
-  /// Basically `IndexHelper.tryBigInt`, but it will return type error
-  /// if the value cannot be converted to index.
-  internal static func bigInt(_ value: PyObject) -> PyResult<BigInt> {
-    switch IndexHelper.tryBigInt(value) {
-    case .value(let v):
-      return .value(v)
-    case .notIndex:
-      let msg = "'\(value.typeName)' object cannot be interpreted as an integer"
-      return .error(.typeError(msg))
-    case .error(let e):
-      return .error(e)
-    }
-  }
-
-  /// Return a Python int from the object item.
-  /// Raise TypeError if the result is not an int.
+  /// Try to extract `BigInt` index from `PyObject`.
   ///
-  /// PyObject * PyNumber_Index(PyObject *item)
-  internal static func tryBigInt(_ value: PyObject) -> GetIndexResult<BigInt> {
+  /// When object is not convertible to index it will return `.notIndex`.
+  internal static func tryBigInt(_ value: PyObject) -> TryIndexResult<BigInt> {
     if let int = value as? PyInt {
       return .value(int.value)
     }
@@ -82,6 +78,22 @@ internal enum IndexHelper {
     case .missingMethod:
       return .notIndex
     case .error(let e), .notCallable(let e):
+      return .error(e)
+    }
+  }
+
+  /// Extract `BigInt` index from `PyObject`.
+  ///
+  /// It will return error when:
+  /// - object is not convertible to index
+  internal static func bigInt(_ value: PyObject) -> PyResult<BigInt> {
+    switch IndexHelper.tryBigInt(value) {
+    case .value(let v):
+      return .value(v)
+    case .notIndex:
+      let msg = "'\(value.typeName)' object cannot be interpreted as an integer"
+      return .error(.typeError(msg))
+    case .error(let e):
       return .error(e)
     }
   }

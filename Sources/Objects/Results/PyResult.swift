@@ -43,7 +43,7 @@ extension PyResult: PyFunctionResultConvertible
   }
 }
 
-// MARK: - Void shortcut
+// MARK: - Void sugar
 
 extension PyResult where Wrapped == Void {
   public static func value() -> PyResult {

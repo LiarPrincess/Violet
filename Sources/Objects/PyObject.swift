@@ -21,11 +21,11 @@ public class PyObject {
 
   // `self_type` has to be implicitly unwrapped optional because:
   // - `objectType` has `typeType` type
-  // - `typeType` has `typeType` type and is sybclass of `objectType`
-  // The only way to produce this result is to skip `self_type` during
+  // - `typeType` has `typeType` type and is subclass of `objectType`
+  // The only way to produce this result is to skip `self.type` during
   // init and then fill it later.
-  // There is as special `init` and `func setType(to type: PyType)` methods
-  // for this.
+  // There is as special `init()` and `func setType(to type: PyType)`
+  // to do exactly this.
 
   // swiftlint:disable:next implicitly_unwrapped_optional
   private var _type: PyType!
@@ -52,24 +52,25 @@ public class PyObject {
     return self.context.hasher
   }
 
+  /// Object address.
+  ///
+  /// It should be used only for error messages
+  /// (it is there mainly for CPython programmers for debugging).
   internal var ptrString: String {
-    // This may not work exactly as in CPython, but that does not matter.
     return String(describing: Unmanaged.passUnretained(self).toOpaque())
   }
 
   // MARK: - Init
 
   /// Create new Python object.
-  ///
-  /// - Parameter type: Type of given `PyObject`.
-  ///                   For example for `PyInt` it will be `builtins.int`
+  /// When in doubt use this ctor!
   internal init(type: PyType) {
     self._type = type
   }
 
   /// NEVER EVER use this ctor!
   /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
-  /// Use version with `type: PyType` parameter.
+  /// Use `init(type: PyType)` instead.
   internal init() {
     self._type = nil
   }
@@ -81,14 +82,26 @@ public class PyObject {
     self._type = type
   }
 
-  // MARK: - Public
+  // MARK: - Helpers
 
+  /// Check if this object type is **exactly** given type.
+  ///
+  /// Use `hasSubtype(of:)` if you want to check for possible subtype.
   public func hasType(type: PyType) -> Bool {
     return self.type === type
   }
 
+  /// Check if this object type is subtype of a given type.
+  ///
+  /// Use `hasType(type:)` if you want to check if the type is **exactly** type.
   public func hasSubtype(of type: PyType) -> Bool {
     return type.isType(of: self)
+  }
+
+  /// Helper to use when implementing binary operations.
+  /// [docs](https://docs.python.org/3/library/constants.html#NotImplemented).
+  internal var isNotImplemented: Bool {
+    return self is PyNotImplemented
   }
 
   // MARK: - Repr
@@ -106,12 +119,6 @@ public class PyObject {
     defer { self.flags.subtract(.reprLock) }
 
     return body()
-  }
-
-  // MARK: - Helpers
-
-  internal var isNotImplemented: Bool {
-    return self is PyNotImplemented
   }
 
   // MARK: - GC
