@@ -3,6 +3,20 @@
 // swiftlint:disable line_length
 // swiftlint:disable trailing_comma
 
+// VERY IMPORTANT:
+//
+// Type initialization order:
+//
+// Stage 1: Create all type objects ('init()' function)
+// Just instantiate all of the 'PyType' properties.
+// At this point we can't fill '__dict__', because for this we would need other
+// types to be already initialized (which would be circular).
+// For example we can't fill '__doc__' because for this we would need 'str' type,
+// which may not yet exist.
+//
+// Stage 2: Fill type objects ('fill__dict__()' method)
+// When all of the types are initalized we can finally fill dictionaries.
+
 public final class BuiltinTypes {
 
   /// Root of the type hierarchy
@@ -16,7 +30,7 @@ public final class BuiltinTypes {
 {% endfor %}
 
   /// Init that will only initialize properties.
-  /// You need to call `postInit` to fill `__dict__` etc.!
+  /// (see comment at the top of this file)
   internal init(context: PyContext) {
     // Requirements (for 'self.object' and 'self.type'):
     // 1. 'type' inherits from 'object'
@@ -34,9 +48,14 @@ public final class BuiltinTypes {
     self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int)
   }
 
-  /// This function finalizes init of all of the stored types
-  /// (adds `__doc__`, fills `__dict__` etc.) .
-  internal func postInit() {
+  /// This function finalizes init of all of the stored types.
+  /// (see comment at the top of this file)
+  ///
+  /// For example it will:
+  /// - set type flags
+  /// - add `__doc__`
+  /// - fill `__dict__`
+  internal func fill__dict__() {
     BuiltinTypesFill.object(self.object)
     BuiltinTypesFill.type(self.type)
     {% for type in types.classes|annotated:"pytype" %}

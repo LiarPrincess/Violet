@@ -175,7 +175,6 @@ public final class BuiltinErrorTypes {
 
   print()
   print('  /// Init that will only initialize properties.')
-  print('  /// You need to call `postInit` to fill `__dict__` etc.!')
   print('  internal init(context: PyContext, types: BuiltinTypes) {')
 
   for name, base, doc in data:
@@ -190,9 +189,14 @@ public final class BuiltinErrorTypes {
   print('  }')
   print()
 
-  print('  /// This function finalizes init of all of the stored types')
-  print('  /// (adds `__doc__`, fills `__dict__` etc.) .')
-  print('  internal func postInit() {')
+  print('/// This function finalizes init of all of the stored types.')
+  print('/// (see comment at the top of this file)')
+  print('///')
+  print('/// For example it will:')
+  print('/// - set type flags')
+  print('/// - add `__doc__`')
+  print('/// - fill `__dict__`')
+  print('  internal func fill__dict__() {')
   for name, base, doc in data:
     property_name = get_builtins_type_property_name(name)
     method_name = get_builtins_type_property_name(name)

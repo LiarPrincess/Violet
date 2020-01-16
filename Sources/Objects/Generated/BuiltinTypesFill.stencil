@@ -5,10 +5,12 @@
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-// Add all of boring stuff to 'PyType', for example:
-// - __doc__
-// - flags
-// - __dict__ entries
+/// Add all of boring stuff to 'PyType'.
+///
+/// For example it will:
+/// - set type flags
+/// - add `__doc__`
+/// - fill `__dict__`
 
 {% macro addDoc type %}
     {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}

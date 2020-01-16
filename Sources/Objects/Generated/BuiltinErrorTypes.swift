@@ -76,7 +76,6 @@ public final class BuiltinErrorTypes {
   public let resourceWarning: PyType
 
   /// Init that will only initialize properties.
-  /// You need to call `postInit` to fill `__dict__` etc.!
   internal init(context: PyContext, types: BuiltinTypes) {
     self.baseException = PyType.initBuiltinType(name: "BaseException", type: types.type, base: types.object)
     self.systemExit = PyType.initBuiltinType(name: "SystemExit", type: types.type, base: self.baseException)
@@ -144,9 +143,14 @@ public final class BuiltinErrorTypes {
     self.resourceWarning = PyType.initBuiltinType(name: "ResourceWarning", type: types.type, base: self.warning)
   }
 
-  /// This function finalizes init of all of the stored types
-  /// (adds `__doc__`, fills `__dict__` etc.) .
-  internal func postInit() {
+/// This function finalizes init of all of the stored types.
+/// (see comment at the top of this file)
+///
+/// For example it will:
+/// - set type flags
+/// - add `__doc__`
+/// - fill `__dict__`
+  internal func fill__dict__() {
     BuiltinTypesFill.baseException(self.baseException)
     BuiltinTypesFill.systemExit(self.systemExit)
     BuiltinTypesFill.keyboardInterrupt(self.keyboardInterrupt)

@@ -56,8 +56,8 @@ public final class Builtins {
   ///
   /// Now we are allowed to use other types (for example create PyStrings etc.)
   internal func onContextFullyInitailized() {
-    self.types.postInit()
-    self.errorTypes.postInit()
+    self.types.fill__dict__()
+    self.errorTypes.fill__dict__()
   }
 
   // MARK: - Deinit
