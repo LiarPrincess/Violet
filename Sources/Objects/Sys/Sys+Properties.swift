@@ -45,7 +45,7 @@ extension Sys {
   /// This string contains a platform identifier that can be used to append
   /// platform-specific components to `sys.path`, for instance.
   internal func getPlatform() -> PyString {
-    return self.platform
+    return self.platformObject
   }
 
   // MARK: - Copyright
@@ -56,7 +56,7 @@ extension Sys {
   ///
   /// A string containing the copyright pertaining to the Python interpreter.
   internal func getCopyright() -> PyString {
-    return self.copyright
+    return self.copyrightObject
   }
 
   // MARK: - Version
@@ -65,7 +65,7 @@ extension Sys {
   /// sys.version
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.version).
   internal func getVersion() -> PyString {
-    return self.context.intern(self.version)
+    return self.versionObject
   }
 
   // sourcery: pyproperty = version_info

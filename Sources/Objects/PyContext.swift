@@ -87,20 +87,4 @@ public class PyContext {
     let index = value + Swift.abs(PyContext.smallIntRange.lowerBound)
     return self.smallInts[index]
   }
-
-  // MARK: - Intern strings
-
-  private lazy var internedStrings = [String:PyString]()
-
-  /// Cache `str` representing given value.
-  internal func intern(_ value: String) -> PyString {
-    let object = PyString(value: value)
-    self.internedStrings[value] = object
-    return object
-  }
-
-  /// Get cached `str`.
-  internal func getInterned(_ value: String) -> PyString? {
-    return self.internedStrings[value]
-  }
 }

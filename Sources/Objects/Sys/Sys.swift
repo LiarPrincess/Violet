@@ -80,18 +80,8 @@ public final class Sys {
 
   // MARK: - Prompt values
 
-  private var _ps1: PyObject?
-  private var _ps2: PyObject?
-
-  public var ps1: PyObject {
-    get { return self._ps1 ?? self.context.intern(">>> ") }
-    set { self._ps1 = newValue }
-  }
-
-  public var ps2: PyObject {
-    get { return self._ps2 ?? self.context.intern("... ") }
-    set { self._ps2 = newValue }
-  }
+  public lazy var ps1: PyObject = Py.builtins.newString(">>> ")
+  public lazy var ps2: PyObject = Py.builtins.newString("... ")
 
   /// String that should be printed in interactive mode.
   public var ps1String: String {
@@ -111,21 +101,21 @@ public final class Sys {
 
   // MARK: - Platform
 
-  public lazy var platform: PyString = {
+  public lazy var platform: String = {
     #if os(macOS) || os(iOS) || os(watchOS) || os(tvOS)
-    let name = "darwin"
+    return "darwin"
     #elseif os(Linux) || os(Android)
-    let name = "linux"
+    return "linux"
     #elseif os(Cygwin) // Is this even a thing?
-    let name = "cygwin"
+    return "cygwin"
     #elseif os(Windows)
-    let name = "win32"
+    return "win32"
     #else
-    let name = "unknown"
+    return "unknown"
     #endif
-
-    return self.context.intern(name)
   }()
+
+  public lazy var platformObject = Py.builtins.newString(self.platform)
 
   // MARK: - Version
 
@@ -135,6 +125,8 @@ public final class Sys {
     return "Python \(p.major).\(p.minor).\(p.micro) " +
            "(Violet \(v.major).\(v.minor).\(v.micro))"
   }()
+
+  public lazy var versionObject = Py.builtins.newString(self.version)
 
   /// `sys.version_info`
   ///
@@ -152,7 +144,6 @@ public final class Sys {
   )
 
   public lazy var implementationInfo = ImplementationInfo(
-    context: self.context,
     name: "violet",
     version: VersionInfo(
       context: self.context,
@@ -167,11 +158,13 @@ public final class Sys {
 
   // MARK: - Hash
 
-  public lazy var hashInfo = HashInfo(context: self.context)
+  public lazy var hashInfo = HashInfo()
 
   // MARK: - Copyright
 
-  public lazy var copyright = self.context.intern(Lyrics.letItGo)
+  public lazy var copyright = Lyrics.letItGo
+
+  public lazy var copyrightObject = Py.builtins.newString(self.copyright)
 
   // MARK: - Streams
 

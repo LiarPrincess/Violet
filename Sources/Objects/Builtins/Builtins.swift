@@ -18,7 +18,7 @@ public final class Builtins {
   public lazy var none  = PyNone()
   public lazy var ellipsis = PyEllipsis()
   public lazy var emptyTuple = PyTuple(elements: [])
-  public lazy var emptyString = self.context.intern("")
+  public lazy var emptyString = PyString(value: "")
   public lazy var emptyFrozenSet = PyFrozenSet()
   public lazy var notImplemented = PyNotImplemented()
 

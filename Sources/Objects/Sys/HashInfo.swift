@@ -19,20 +19,16 @@ public struct HashInfo {
   /// Multiplier used for the imaginary part of a complex number
   public let imag = Hasher.imag
 
-  public let object: PyNamespace
-
-  public init(context: PyContext) {
-    let builtins = context.builtins
-
+  public lazy var object: PyNamespace = {
     let attributes = Attributes()
-    attributes.set(key: "width", to: builtins.newInt(self.width))
-    attributes.set(key: "modulus", to: builtins.newInt(self.modulus))
-    attributes.set(key: "inf", to: builtins.newInt(self.inf))
-    attributes.set(key: "nan", to: builtins.newInt(self.nan))
-    attributes.set(key: "imag", to: builtins.newInt(self.imag))
-    attributes.set(key: "algorithm", to: builtins.newString(self.algorithm))
-    attributes.set(key: "hash_bits", to: builtins.newInt(self.hashBits))
-    attributes.set(key: "seed_bits", to: builtins.newInt(self.seedBits))
-    self.object = builtins.newNamespace(attributes: attributes)
-  }
+    attributes.set(key: "width", to: Py.builtins.newInt(self.width))
+    attributes.set(key: "modulus", to: Py.builtins.newInt(self.modulus))
+    attributes.set(key: "inf", to: Py.builtins.newInt(self.inf))
+    attributes.set(key: "nan", to: Py.builtins.newInt(self.nan))
+    attributes.set(key: "imag", to: Py.builtins.newInt(self.imag))
+    attributes.set(key: "algorithm", to: Py.builtins.newString(self.algorithm))
+    attributes.set(key: "hash_bits", to: Py.builtins.newInt(self.hashBits))
+    attributes.set(key: "seed_bits", to: Py.builtins.newInt(self.seedBits))
+    return Py.builtins.newNamespace(attributes: attributes)
+  }()
 }
