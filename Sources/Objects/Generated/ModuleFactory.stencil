@@ -24,7 +24,7 @@ internal enum ModuleFactory {
   // MARK: - {{ type.name }}
 
   internal static func create{{ type.name }}(from object: {{ type.name }}) -> PyModule {
-    let result = PyModule(object.context, name: "{{ type.annotations.pymodule }}", doc: nil)
+    let result = PyModule(name: "{{ type.annotations.pymodule }}", doc: nil)
     let dict = result.getDict()
 
   {% for prop in type.instanceMethods|annotated:"pyproperty" %}

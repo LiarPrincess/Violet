@@ -143,7 +143,7 @@ public {final}class Py{name}: Py{base} {{
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {{
     let argsTuple = type.builtins.newTuple(args)
-    return .value(Py{name}(type.context, args: argsTuple))
+    return .value(Py{name}(args: argsTuple))
   }}
 
   // sourcery: pymethod = __init__
