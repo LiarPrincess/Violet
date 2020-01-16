@@ -18,11 +18,11 @@ extension Builtins {
   }
 
   public func newInt(_ value: Int) -> PyInt {
-    return self.context.getInterned(value) ?? PyInt(value: value)
+    return Py.getInterned(value) ?? PyInt(value: value)
   }
 
   public func newInt(_ value: BigInt) -> PyInt {
-    return self.context.getInterned(value) ?? PyInt(value: value)
+    return Py.getInterned(value) ?? PyInt(value: value)
   }
 
   // MARK: - Bool

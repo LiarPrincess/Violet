@@ -121,4 +121,29 @@ public class PyInstance {
     let fn = "Py.initialize(config:delegate:)"
     trap("Python context must first be initialized with '\(fn)'.")
   }
+
+  // MARK: - Intern integers
+
+  private static let smallIntRange = -10...255
+
+  private lazy var smallInts = PyInstance.smallIntRange.map { PyInt(value: $0) }
+
+  /// Get cached `int`.
+  internal func getInterned(_ value: BigInt) -> PyInt? {
+    guard let int = Int(exactly: value) else {
+      return nil
+    }
+
+    return self.getInterned(int)
+  }
+
+  /// Get cached `int`.
+  internal func getInterned(_ value: Int) -> PyInt? {
+    guard PyInstance.smallIntRange.contains(value) else {
+      return nil
+    }
+
+    let index = value + Swift.abs(PyInstance.smallIntRange.lowerBound)
+    return self.smallInts[index]
+  }
 }
