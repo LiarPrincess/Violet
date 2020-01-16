@@ -115,7 +115,7 @@ public class PyInt: PyObject {
   }
 
   internal func hashRaw() -> PyHash {
-    return self.hasher.hash(self.value)
+    return Py.hasher.hash(self.value)
   }
 
   // MARK: - String

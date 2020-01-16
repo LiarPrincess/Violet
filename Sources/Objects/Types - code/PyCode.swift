@@ -55,8 +55,8 @@ public class PyCode: PyObject {
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
     // Not the best, but PyCodes are not used often
-    let name = self.hasher.hash(self.codeObject.name)
-    let qualifiedName = self.hasher.hash(self.codeObject.qualifiedName)
+    let name = Py.hasher.hash(self.codeObject.name)
+    let qualifiedName = Py.hasher.hash(self.codeObject.qualifiedName)
     return .value(name ^ qualifiedName)
   }
 

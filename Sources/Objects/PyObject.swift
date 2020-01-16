@@ -48,10 +48,6 @@ public class PyObject {
     return self.context.builtins
   }
 
-  internal var hasher: Hasher {
-    return self.context.hasher
-  }
-
   /// Object address.
   ///
   /// It should be used only for error messages

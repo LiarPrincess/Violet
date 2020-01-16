@@ -110,11 +110,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .value(self.hashRaw())
-  }
-
-  internal func hashRaw() -> PyHash {
-    return self.hasher.hash(self.value)
+    return .value(Py.hasher.hash(self.value))
   }
 
   // MARK: - String
