@@ -32,7 +32,6 @@ extension PyBuiltinFunction {
   // MARK: - New
 
   internal static func wrapNew(
-    _ context: PyContext,
     typeName: String,
     doc: String?,
     fn: @escaping NewFunction) -> PyBuiltinFunction {
@@ -46,7 +45,6 @@ extension PyBuiltinFunction {
   // MARK: - Init
 
   internal static func wrapInit<Zelf: PyObject>(
-    _ context: PyContext,
     typeName: String,
     doc: String?,
     fn: @escaping InitFunction<Zelf>) -> PyBuiltinFunction {
@@ -60,24 +58,19 @@ extension PyBuiltinFunction {
   // MARK: - Args kwargs
 
   internal static func wrap<R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping ([PyObject], PyDictData?) -> R) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
-      fn: ArgsKwargsFunctionWrapper(name: name) { [weak context] args, kwargs in
-        guard let c = context else {
-          trap("Trying to call '\(name)' after its context was deallocated.")
-        }
-        return fn(args, kwargs).toFunctionResult(in: c)
+      fn: ArgsKwargsFunctionWrapper(name: name) { args, kwargs in
+        fn(args, kwargs).toFunctionResult(in: Py.context)
       },
       doc: doc
     )
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> ([PyObject], PyDictData?) -> R,
@@ -96,17 +89,13 @@ extension PyBuiltinFunction {
   // MARK: - Positional nullary
 
   internal static func wrap<R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping () -> R) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
-      fn: NullaryFunctionWrapper(name: name) { [weak context] in
-        guard let c = context else {
-          trap("Trying to call '\(name)' after its context was deallocated.")
-        }
-        return fn().toFunctionResult(in: c)
+      fn: NullaryFunctionWrapper(name: name) {
+        fn().toFunctionResult(in: Py.context)
       },
       doc: doc
     )
@@ -115,7 +104,6 @@ extension PyBuiltinFunction {
   // MARK: - Positional unary
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> R,
@@ -130,7 +118,6 @@ extension PyBuiltinFunction {
   }
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> () -> R, // Read-only property disquised as method
@@ -146,7 +133,6 @@ extension PyBuiltinFunction {
 
   // Overload without `self` argument.
   internal static func wrap<R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (PyObject) -> R) -> PyBuiltinFunction {
@@ -162,7 +148,6 @@ extension PyBuiltinFunction {
   // MARK: - Positional binary
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject) -> R,
@@ -180,7 +165,6 @@ extension PyBuiltinFunction {
 
   // Overload without `self` argument.
   internal static func wrap<R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (PyObject, PyObject) -> R) -> PyBuiltinFunction {
@@ -196,7 +180,6 @@ extension PyBuiltinFunction {
   // Special overload for binary method (self + args) with optionals.
   // See top of this file for reasoning.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject?) -> R,
@@ -215,7 +198,6 @@ extension PyBuiltinFunction {
   // MARK: - Positional ternary
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject) -> R,
@@ -233,7 +215,6 @@ extension PyBuiltinFunction {
 
   // Overload without `self` argument.
   internal static func wrap<R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (PyObject, PyObject, PyObject) -> R) -> PyBuiltinFunction {
@@ -249,7 +230,6 @@ extension PyBuiltinFunction {
   // Special overload for ternany method (self + 2 args) with optionals.
   // See top of this file for reasoning.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject?) -> R,
@@ -268,7 +248,6 @@ extension PyBuiltinFunction {
   // Special overload for ternany method (self + 2 args) with optionals.
   // See top of this file for reasoning.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject?, PyObject?) -> R,
@@ -287,7 +266,6 @@ extension PyBuiltinFunction {
   // MARK: - Positional quartary
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject, PyObject) -> R,
@@ -306,7 +284,6 @@ extension PyBuiltinFunction {
   // Special overload for quartary method (self + 3 args) with optionals.
   // See top of this file for reasoning.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject, PyObject?) -> R,
@@ -325,7 +302,6 @@ extension PyBuiltinFunction {
   // Special overload for quartary method (self + 3 args) with optionals.
   // See top of this file for reasoning.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject, PyObject?, PyObject?) -> R,
@@ -344,7 +320,6 @@ extension PyBuiltinFunction {
   // Special overload for quartary method (self + 3 args) with optionals.
   // See top of this file for reasoning.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
-    _ context: PyContext,
     name: String,
     doc: String?,
     fn: @escaping (Zelf) -> (PyObject?, PyObject?, PyObject?) -> R,

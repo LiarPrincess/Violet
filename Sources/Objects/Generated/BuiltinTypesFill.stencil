@@ -44,21 +44,21 @@
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     {% set getter %}{{ type.name }}.{{ prop.selectorName }}{% endset %}
     {% if prop.annotations.setter %}
-    dict["{{ attribute }}"] = PyProperty.wrap(type.context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }})
+    dict["{{ attribute }}"] = PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }})
     {% else %}
-    dict["{{ attribute }}"] = PyProperty.wrap(type.context, name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }})
+    dict["{{ attribute }}"] = PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }})
     {% endif %}
   {% endfor %}
 
   {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
     {% if attribute == "__new__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(type.context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% else %}
     {% if attribute == "__init__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(type.context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% else %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(type.context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% endif %}
     {% endif %}
   {% endfor %}
@@ -66,19 +66,19 @@
   {% for method in type.classMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
     {% if attribute == "__new__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(type.context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% else %}
     {% if attribute == "__init__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(type.context, typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% else %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(type.context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% endif %}
     {% endif %}
   {% endfor %}
 
   {% for method in type.instanceMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(type.context, name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }})
   {% endfor %}
 {% endmacro %}
 
