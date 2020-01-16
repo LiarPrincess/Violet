@@ -20,9 +20,9 @@ public class PyBuiltinFunction: PyObject {
 
   // MARK: - Init
 
-  internal init(doc: String?,
-                fn: FunctionWrapper,
-                object: PyObject? = nil) {
+  internal init(fn: FunctionWrapper,
+                object: PyObject? = nil,
+                doc: String? = nil) {
     self.function = fn
     self.object = object
     self.doc = doc
