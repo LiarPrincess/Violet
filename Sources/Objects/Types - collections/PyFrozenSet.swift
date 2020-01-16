@@ -21,14 +21,13 @@ public class PyFrozenSet: PyObject, PySetType {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext) {
-    self.data = PySetData()
-    super.init(type: context.builtins.types.frozenset)
+  override internal convenience init() {
+    self.init(data: PySetData())
   }
 
-  internal init(_ context: PyContext, data: PySetData) {
+  internal init(data: PySetData) {
     self.data = data
-    super.init(type: context.builtins.types.frozenset)
+    super.init(type: Py.types.frozenset)
   }
 
   /// Use only in `__new__`!
@@ -428,6 +427,6 @@ public class PyFrozenSet: PyObject, PySetType {
   // MARK: - Helpers
 
   private func createSet(data: PySetData) -> PyFrozenSet {
-    return PyFrozenSet(self.context, data: data)
+    return PyFrozenSet(data: data)
   }
 }

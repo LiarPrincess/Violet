@@ -1,10 +1,6 @@
 import Core
 import Foundation
 
-#warning("Remove this")
-// swiftlint:disable:next implicitly_unwrapped_optional
-private var fakeContext: PyContext!
-
 // MARK: - Config
 
 public struct PyConfig {
@@ -33,18 +29,22 @@ public let Py = PyInstance()
 
 public class PyInstance {
 
+  #warning("Remove this")
+  // swiftlint:disable:next implicitly_unwrapped_optional
+  internal let context: PyContext!
+
   // MARK: - Modules
 
   /// Python `builtins` module.
   public private(set) lazy var builtins: Builtins = {
     self.ensureInitialized()
-    return Builtins(context: fakeContext)
+    return Builtins(context: self.context)
   }()
 
   /// Python `sys` module.
   public private(set) lazy var sys: Sys = {
     self.ensureInitialized()
-    return Sys(context: fakeContext)
+    return Sys(context: self.context)
   }()
 
   /// `self.builtins` but as a Python module (`PyModule`).
@@ -59,12 +59,12 @@ public class PyInstance {
 
   public private(set) lazy var types: BuiltinTypes = {
     self.ensureInitialized()
-    return BuiltinTypes(context: fakeContext)
+    return BuiltinTypes(context: self.context)
   }()
 
   public private(set) lazy var errorTypes: BuiltinErrorTypes = {
     self.ensureInitialized()
-    return BuiltinErrorTypes(context: fakeContext, types: self.types)
+    return BuiltinErrorTypes(context: self.context, types: self.types)
   }()
 
   // MARK: - Hasher
@@ -85,6 +85,12 @@ public class PyInstance {
     if let d = self._delegate { return d }
     if self.isInitialized { trap("Py.delegate was deallocated!") }
     self.trapUninitialized()
+  }
+
+  // MARK: - Init
+
+  fileprivate init() {
+    self.context = nil
   }
 
   // MARK: - Initialize

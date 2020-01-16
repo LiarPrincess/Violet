@@ -35,7 +35,7 @@ public final class PySystemExit: PyBaseException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PySystemExit(type.context, args: argsTuple))
+    return .value(PySystemExit(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -74,7 +74,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyKeyboardInterrupt(type.context, args: argsTuple))
+    return .value(PyKeyboardInterrupt(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -113,7 +113,7 @@ public final class PyGeneratorExit: PyBaseException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyGeneratorExit(type.context, args: argsTuple))
+    return .value(PyGeneratorExit(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -152,7 +152,7 @@ public class PyException: PyBaseException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyException(type.context, args: argsTuple))
+    return .value(PyException(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -191,7 +191,7 @@ public final class PyStopIteration: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyStopIteration(type.context, args: argsTuple))
+    return .value(PyStopIteration(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -230,7 +230,7 @@ public final class PyStopAsyncIteration: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyStopAsyncIteration(type.context, args: argsTuple))
+    return .value(PyStopAsyncIteration(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -269,7 +269,7 @@ public class PyArithmeticError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyArithmeticError(type.context, args: argsTuple))
+    return .value(PyArithmeticError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -308,7 +308,7 @@ public final class PyFloatingPointError: PyArithmeticError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyFloatingPointError(type.context, args: argsTuple))
+    return .value(PyFloatingPointError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -347,7 +347,7 @@ public final class PyOverflowError: PyArithmeticError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyOverflowError(type.context, args: argsTuple))
+    return .value(PyOverflowError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -386,7 +386,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyZeroDivisionError(type.context, args: argsTuple))
+    return .value(PyZeroDivisionError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -425,7 +425,7 @@ public final class PyAssertionError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyAssertionError(type.context, args: argsTuple))
+    return .value(PyAssertionError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -464,7 +464,7 @@ public final class PyAttributeError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyAttributeError(type.context, args: argsTuple))
+    return .value(PyAttributeError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -503,7 +503,7 @@ public final class PyBufferError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyBufferError(type.context, args: argsTuple))
+    return .value(PyBufferError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -542,7 +542,7 @@ public final class PyEOFError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyEOFError(type.context, args: argsTuple))
+    return .value(PyEOFError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -581,7 +581,7 @@ public class PyImportError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyImportError(type.context, args: argsTuple))
+    return .value(PyImportError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -620,7 +620,7 @@ public final class PyModuleNotFoundError: PyImportError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyModuleNotFoundError(type.context, args: argsTuple))
+    return .value(PyModuleNotFoundError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -659,7 +659,7 @@ public class PyLookupError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyLookupError(type.context, args: argsTuple))
+    return .value(PyLookupError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -698,7 +698,7 @@ public final class PyIndexError: PyLookupError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyIndexError(type.context, args: argsTuple))
+    return .value(PyIndexError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -737,7 +737,7 @@ public final class PyKeyError: PyLookupError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyKeyError(type.context, args: argsTuple))
+    return .value(PyKeyError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -776,7 +776,7 @@ public final class PyMemoryError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyMemoryError(type.context, args: argsTuple))
+    return .value(PyMemoryError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -815,7 +815,7 @@ public class PyNameError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyNameError(type.context, args: argsTuple))
+    return .value(PyNameError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -854,7 +854,7 @@ public final class PyUnboundLocalError: PyNameError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyUnboundLocalError(type.context, args: argsTuple))
+    return .value(PyUnboundLocalError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -893,7 +893,7 @@ public class PyOSError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyOSError(type.context, args: argsTuple))
+    return .value(PyOSError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -932,7 +932,7 @@ public final class PyBlockingIOError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyBlockingIOError(type.context, args: argsTuple))
+    return .value(PyBlockingIOError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -971,7 +971,7 @@ public final class PyChildProcessError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyChildProcessError(type.context, args: argsTuple))
+    return .value(PyChildProcessError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1010,7 +1010,7 @@ public class PyConnectionError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyConnectionError(type.context, args: argsTuple))
+    return .value(PyConnectionError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1049,7 +1049,7 @@ public final class PyBrokenPipeError: PyConnectionError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyBrokenPipeError(type.context, args: argsTuple))
+    return .value(PyBrokenPipeError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1088,7 +1088,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyConnectionAbortedError(type.context, args: argsTuple))
+    return .value(PyConnectionAbortedError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1127,7 +1127,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyConnectionRefusedError(type.context, args: argsTuple))
+    return .value(PyConnectionRefusedError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1166,7 +1166,7 @@ public final class PyConnectionResetError: PyConnectionError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyConnectionResetError(type.context, args: argsTuple))
+    return .value(PyConnectionResetError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1205,7 +1205,7 @@ public final class PyFileExistsError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyFileExistsError(type.context, args: argsTuple))
+    return .value(PyFileExistsError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1244,7 +1244,7 @@ public final class PyFileNotFoundError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyFileNotFoundError(type.context, args: argsTuple))
+    return .value(PyFileNotFoundError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1283,7 +1283,7 @@ public final class PyInterruptedError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyInterruptedError(type.context, args: argsTuple))
+    return .value(PyInterruptedError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1322,7 +1322,7 @@ public final class PyIsADirectoryError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyIsADirectoryError(type.context, args: argsTuple))
+    return .value(PyIsADirectoryError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1361,7 +1361,7 @@ public final class PyNotADirectoryError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyNotADirectoryError(type.context, args: argsTuple))
+    return .value(PyNotADirectoryError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1400,7 +1400,7 @@ public final class PyPermissionError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyPermissionError(type.context, args: argsTuple))
+    return .value(PyPermissionError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1439,7 +1439,7 @@ public final class PyProcessLookupError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyProcessLookupError(type.context, args: argsTuple))
+    return .value(PyProcessLookupError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1478,7 +1478,7 @@ public final class PyTimeoutError: PyOSError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyTimeoutError(type.context, args: argsTuple))
+    return .value(PyTimeoutError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1517,7 +1517,7 @@ public final class PyReferenceError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyReferenceError(type.context, args: argsTuple))
+    return .value(PyReferenceError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1556,7 +1556,7 @@ public class PyRuntimeError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyRuntimeError(type.context, args: argsTuple))
+    return .value(PyRuntimeError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1595,7 +1595,7 @@ public final class PyNotImplementedError: PyRuntimeError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyNotImplementedError(type.context, args: argsTuple))
+    return .value(PyNotImplementedError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1634,7 +1634,7 @@ public final class PyRecursionError: PyRuntimeError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyRecursionError(type.context, args: argsTuple))
+    return .value(PyRecursionError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1673,7 +1673,7 @@ public class PySyntaxError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PySyntaxError(type.context, args: argsTuple))
+    return .value(PySyntaxError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1712,7 +1712,7 @@ public class PyIndentationError: PySyntaxError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyIndentationError(type.context, args: argsTuple))
+    return .value(PyIndentationError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1751,7 +1751,7 @@ public final class PyTabError: PyIndentationError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyTabError(type.context, args: argsTuple))
+    return .value(PyTabError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1793,7 +1793,7 @@ public final class PySystemError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PySystemError(type.context, args: argsTuple))
+    return .value(PySystemError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1832,7 +1832,7 @@ public final class PyTypeError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyTypeError(type.context, args: argsTuple))
+    return .value(PyTypeError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1871,7 +1871,7 @@ public class PyValueError: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyValueError(type.context, args: argsTuple))
+    return .value(PyValueError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1910,7 +1910,7 @@ public class PyUnicodeError: PyValueError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyUnicodeError(type.context, args: argsTuple))
+    return .value(PyUnicodeError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1949,7 +1949,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyUnicodeDecodeError(type.context, args: argsTuple))
+    return .value(PyUnicodeDecodeError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -1988,7 +1988,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyUnicodeEncodeError(type.context, args: argsTuple))
+    return .value(PyUnicodeEncodeError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2027,7 +2027,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyUnicodeTranslateError(type.context, args: argsTuple))
+    return .value(PyUnicodeTranslateError(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2066,7 +2066,7 @@ public class PyWarning: PyException {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyWarning(type.context, args: argsTuple))
+    return .value(PyWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2105,7 +2105,7 @@ public final class PyDeprecationWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyDeprecationWarning(type.context, args: argsTuple))
+    return .value(PyDeprecationWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2145,7 +2145,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyPendingDeprecationWarning(type.context, args: argsTuple))
+    return .value(PyPendingDeprecationWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2184,7 +2184,7 @@ public final class PyRuntimeWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyRuntimeWarning(type.context, args: argsTuple))
+    return .value(PyRuntimeWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2223,7 +2223,7 @@ public final class PySyntaxWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PySyntaxWarning(type.context, args: argsTuple))
+    return .value(PySyntaxWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2262,7 +2262,7 @@ public final class PyUserWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyUserWarning(type.context, args: argsTuple))
+    return .value(PyUserWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2302,7 +2302,7 @@ public final class PyFutureWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyFutureWarning(type.context, args: argsTuple))
+    return .value(PyFutureWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2341,7 +2341,7 @@ public final class PyImportWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyImportWarning(type.context, args: argsTuple))
+    return .value(PyImportWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2381,7 +2381,7 @@ public final class PyUnicodeWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyUnicodeWarning(type.context, args: argsTuple))
+    return .value(PyUnicodeWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2421,7 +2421,7 @@ public final class PyBytesWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyBytesWarning(type.context, args: argsTuple))
+    return .value(PyBytesWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__
@@ -2460,7 +2460,7 @@ public final class PyResourceWarning: PyWarning {
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyResourceWarning(type.context, args: argsTuple))
+    return .value(PyResourceWarning(args: argsTuple))
   }
 
   // sourcery: pymethod = __init__

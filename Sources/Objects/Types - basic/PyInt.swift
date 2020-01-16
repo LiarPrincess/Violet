@@ -34,13 +34,13 @@ public class PyInt: PyObject {
 
   // MARK: - Init
 
-  internal convenience init(_ context: PyContext, value: Int) {
-    self.init(context, value: BigInt(value))
+  internal convenience init(value: Int) {
+    self.init(value: BigInt(value))
   }
 
-  internal init(_ context: PyContext, value: BigInt) {
+  internal init(value: BigInt) {
     self.value = value
-    super.init(type: context.builtins.types.int)
+    super.init(type: Py.types.int)
   }
 
   /// Use only in PyBool or `__new__`!

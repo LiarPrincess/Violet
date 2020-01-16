@@ -22,14 +22,13 @@ public class PySet: PyObject, PySetType {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext) {
-    self.data = PySetData()
-    super.init(type: context.builtins.types.set)
+  override internal convenience init() {
+    self.init(data: PySetData())
   }
 
-  internal init(_ context: PyContext, data: PySetData) {
+  internal init(data: PySetData) {
     self.data = data
-    super.init(type: context.builtins.types.set)
+    super.init(type: Py.types.set)
   }
 
   /// Use only in `__new__`!
@@ -488,6 +487,6 @@ public class PySet: PyObject, PySetType {
   // MARK: - Helpers
 
   private func createSet(data: PySetData) -> PySet {
-    return PySet(self.context, data: data)
+    return PySet(data: data)
   }
 }

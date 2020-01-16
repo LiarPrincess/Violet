@@ -39,19 +39,17 @@ public class PyString: PyObject {
 
   // MARK: - Init
 
-  convenience init(_ context: PyContext,
-                   value: String.UnicodeScalarView) {
-    self.init(context, value: String(value))
+  convenience init(value: String.UnicodeScalarView) {
+    self.init(value: String(value))
   }
 
-  convenience init(_ context: PyContext,
-                   value: String.UnicodeScalarView.SubSequence) {
-    self.init(context, value: String(value))
+  convenience init(value: String.UnicodeScalarView.SubSequence) {
+    self.init(value: String(value))
   }
 
-  internal init(_ context: PyContext, value: String) {
+  internal init(value: String) {
     self.data = PyStringData(value)
-    super.init(type: context.builtins.types.str)
+    super.init(type: Py.types.str)
   }
 
   /// Use only in  `__new__`!
@@ -581,11 +579,11 @@ public class PyString: PyObject {
     switch result {
     case .separatorNotFound:
       let empty = self.builtins.emptyString
-      return .value(PyTuple(self.context, elements: [self, empty, empty]))
+      return .value(self.builtins.newTuple(self, empty, empty))
     case let .separatorFound(before, after):
       let b = self.builtins.newString(String(before))
       let a = self.builtins.newString(String(after))
-      return .value(PyTuple(self.context, elements: [b, separator, a]))
+      return .value(self.builtins.newTuple(b, separator, a))
     case .error(let e):
       return .error(e)
     }

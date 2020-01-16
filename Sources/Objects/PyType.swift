@@ -131,7 +131,7 @@ public class PyType: PyObject, CustomStringConvertible {
     assert(mro.baseClasses.allSatisfy { $0.context === type.context })
     assert(mro.resolutionOrder.allSatisfy { $0.context === type.context })
 
-    self.init(base.context, name: name, base: base, mro: mro)
+    self.init(name: name, base: base, mro: mro)
     self.setType(to: type)
   }
 
@@ -139,13 +139,13 @@ public class PyType: PyObject, CustomStringConvertible {
   ///
   /// NEVER EVER use this function!
   /// Reserved for `objectType` and `typeType`.
-  private init(_ context: PyContext, name: String, base: PyType?, mro: MRO?) {
+  private init(name: String, base: PyType?, mro: MRO?) {
     self.name = name
     self.qualname = name
     self.base = base
     self.bases = mro?.baseClasses ?? []
     self.mro = [] // temporary, until we are able to use self
-    self._context = context
+    self._context = Py.context
 
     // Special init just for `PyType` and `BaseType`.
     super.init()
@@ -167,7 +167,7 @@ public class PyType: PyObject, CustomStringConvertible {
   /// - Warning:
   /// It will not set `self.type` property!
   internal static func initObjectType(_ context: PyContext) -> PyType {
-    return PyType(context, name: "object", base: nil, mro: nil)
+    return PyType(name: "object", base: nil, mro: nil)
   }
 
   /// NEVER EVER use this function! It is a reserved for `typeType`.
@@ -176,7 +176,7 @@ public class PyType: PyObject, CustomStringConvertible {
   /// It will not set `self.type` property!
   internal static func initTypeType(objectType: PyType) -> PyType {
     let mro = MRO.linearize(baseClass: objectType)
-    return PyType(objectType.context, name: "type", base: objectType, mro: mro)
+    return PyType(name: "type", base: objectType, mro: mro)
   }
 
   /// NEVER EVER use this function! It is a reserved for builtin types

@@ -12,8 +12,8 @@ public class PyNone: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext) {
-    super.init(type: context.builtins.types.none)
+  internal override init() {
+    super.init(type: Py.types.none)
   }
 
   // MARK: - String

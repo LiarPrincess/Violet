@@ -77,7 +77,7 @@ extension Frame {
   /// {..., TOS3: TOS2, TOS1: TOS}.
   internal func buildMap(elementCount: Int) -> InstructionResult {
     let elements = self.popDictionaryElements(count: elementCount)
-    switch self.builtins.newDict(elements) {
+    switch self.builtins.newDict(elements: elements) {
     case let .value(collection):
       self.stack.push(collection)
       return .ok

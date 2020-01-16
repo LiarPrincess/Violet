@@ -44,7 +44,7 @@ public class PyRange: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext, start: PyInt, stop: PyInt, step: PyInt?) {
+  internal init(start: PyInt, stop: PyInt, step: PyInt?) {
     assert(
       step?.value != 0,
       "PyRange.step cannot be 0. Use 'builtins.newRange' to handle this case."
@@ -59,11 +59,11 @@ public class PyRange: PyObject {
 
     self.start = start
     self.stop = stop
-    self.step = context.builtins.newInt(unwrappedStep)
+    self.step = Py.builtins.newInt(unwrappedStep)
     self.stepType = step == nil ? .implicit : .explicit
-    self.length = context.builtins.newInt(length)
+    self.length = Py.builtins.newInt(length)
 
-    super.init(type: context.builtins.types.range)
+    super.init(type: Py.types.range)
   }
 
   private static func calculateLength(start: BigInt,
@@ -354,8 +354,7 @@ public class PyRange: PyObject {
                                             stop: newStop,
                                             step: newStep)
 
-    return PyRangeIterator(self.context,
-                           start: newStart,
+    return PyRangeIterator(start: newStart,
                            step: newStep,
                            length: newLength)
   }
@@ -364,8 +363,7 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = __iter__
   internal func iter() -> PyObject {
-    return PyRangeIterator(self.context,
-                           start: self.start.value,
+    return PyRangeIterator(start: self.start.value,
                            step: self.step.value,
                            length: self.length.value)
   }

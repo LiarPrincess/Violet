@@ -29,7 +29,7 @@ extension Builtins {
   public func newTuple(_ elements: [PyObject]) -> PyTuple {
     return elements.isEmpty ?
       self.emptyTuple :
-      PyTuple(self.context, elements: elements)
+      PyTuple(elements: elements)
   }
 
   /// PyObject * PyList_AsTuple(PyObject *v)
@@ -49,7 +49,7 @@ extension Builtins {
   internal func newTuple(_ data: PySequenceData) -> PyTuple {
     return data.isEmpty ?
       self.emptyTuple :
-      PyTuple(self.context, data: data)
+      PyTuple(data: data)
   }
 
   // MARK: - List
@@ -61,11 +61,11 @@ extension Builtins {
 
   /// PyObject * PyList_New(Py_ssize_t size)
   public func newList(_ elements: [PyObject]) -> PyList {
-    return PyList(self.context, elements: elements)
+    return PyList(elements: elements)
   }
 
   internal func newList(_ data: PySequenceData) -> PyList {
-    return PyList(self.context, data: data)
+    return PyList(data: data)
   }
 
   internal func newList(iterable: PyObject) -> PyResult<PyList> {
@@ -86,7 +86,7 @@ extension Builtins {
   }
 
   internal func newSet(_ data: PySetData) -> PySet {
-    return PySet(self.context, data: data)
+    return PySet(data: data)
   }
 
   /// int PySet_Add(PyObject *anyset, PyObject *key)
@@ -117,14 +117,18 @@ extension Builtins {
   internal func newFrozenSet(_ data: PySetData) -> PyFrozenSet {
     return data.isEmpty ?
       self.emptyFrozenSet :
-      PyFrozenSet(self.context, data: data)
+      PyFrozenSet(data: data)
   }
 
   // MARK: - Dictionary
 
-  public func newDict(_ args: [CreateDictionaryArg] = []) -> PyResult<PyDict> {
+  internal func newDict(data: PyDictData? = nil) -> PyDict {
+    return PyDict(data: data ?? PyDictData())
+  }
+
+  public func newDict(elements: [CreateDictionaryArg]) -> PyResult<PyDict> {
     var data = PyDictData()
-    for arg in args {
+    for arg in elements {
       switch self.hash(arg.key) {
       case let .value(hash):
         let key = PyDictKey(hash: hash, object: arg.key)
@@ -137,11 +141,7 @@ extension Builtins {
       }
     }
 
-    return .value(PyDict(self.context, data: data))
-  }
-
-  internal func newDict(_ context: PyContext, data: PyDictData?) -> PyDict {
-    return PyDict(context, data: data ?? PyDictData())
+    return .value(PyDict(data: data))
   }
 
   public func newDict(keys: PyTuple, elements: [PyObject]) -> PyResult<PyDict> {
@@ -163,7 +163,7 @@ extension Builtins {
       }
     }
 
-    return .value(PyDict(self.context, data: data))
+    return .value(PyDict(data: data))
   }
 
   public func add(dict object: PyObject,
@@ -204,7 +204,7 @@ extension Builtins {
       return .valueError("range() arg 3 must not be zero")
     }
 
-    return .value(PyRange(self.context, start: start, stop: stop, step: step))
+    return .value(PyRange(start: start, stop: stop, step: step))
   }
 
   public func newRange(start: PyObject,
@@ -258,7 +258,6 @@ extension Builtins {
 
   public func newSlice(stop: PyObject) -> PySlice {
     return PySlice(
-      self.context,
       start: self.none,
       stop: stop,
       step: self.none
@@ -269,7 +268,6 @@ extension Builtins {
                        stop: PyObject?,
                        step: PyObject? = nil) -> PySlice {
     return PySlice(
-      self.context,
       start: start ?? self.none,
       stop: stop ?? self.none,
       step: step ?? self.none

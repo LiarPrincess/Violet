@@ -25,25 +25,21 @@ public class PyBaseException: PyObject {
 
   // MARK: - Init
 
-  convenience init(_ context: PyContext,
-                   msg: String,
+  convenience init(msg: String,
                    traceback: PyObject? = nil,
                    cause: PyObject? = nil,
                    exceptionContext: PyObject? = nil,
                    suppressExceptionContext: Bool = false) {
-    let builtins = context.builtins
-    let msgPy = builtins.newString(msg)
-    let args = builtins.newTuple(msgPy)
-    self.init(context,
-              args: args,
+    let msgPy = Py.builtins.newString(msg)
+    let args = Py.builtins.newTuple(msgPy)
+    self.init(args: args,
               traceback: traceback,
               cause: cause,
               exceptionContext: exceptionContext,
               suppressExceptionContext: suppressExceptionContext)
   }
 
-  internal init(_ context: PyContext,
-                args: PyTuple,
+  internal init(args: PyTuple,
                 traceback: PyObject? = nil,
                 cause: PyObject? = nil,
                 exceptionContext: PyObject? = nil,
@@ -284,7 +280,7 @@ public class PyBaseException: PyObject {
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
     let argsTuple = type.builtins.newTuple(args)
-    return .value(PyBaseException(type.context, args: argsTuple))
+    return .value(PyBaseException(args: argsTuple))
   }
 
   // MARK: - Python init

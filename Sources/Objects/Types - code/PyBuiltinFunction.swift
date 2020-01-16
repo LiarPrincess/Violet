@@ -20,14 +20,13 @@ public class PyBuiltinFunction: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext,
-                doc: String?,
+  internal init(doc: String?,
                 fn: FunctionWrapper,
                 object: PyObject? = nil) {
     self.function = fn
     self.object = object
     self.doc = doc
-    super.init(type: context.builtins.types.builtinFunction)
+    super.init(type: Py.types.builtinFunction)
   }
 
   // MARK: - Equatable

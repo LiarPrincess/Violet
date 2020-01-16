@@ -19,7 +19,7 @@ public class PyZip: PyObject {
 
   internal init(context: PyContext, iterators: [PyObject]) {
     self.iterators = iterators
-    super.init(type: context.builtins.types.zip)
+    super.init(type: Py.types.zip)
   }
 
   /// Use only in `__new__`!

@@ -25,10 +25,10 @@ public class PyComplex: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext, real: Double, imag: Double) {
+  internal init(real: Double, imag: Double) {
     self.real = real
     self.imag = imag
-    super.init(type: context.builtins.types.complex)
+    super.init(type: Py.types.complex)
   }
 
   /// Use only in `__new__`!

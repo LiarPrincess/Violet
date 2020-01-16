@@ -13,7 +13,6 @@ extension PyProperty {
     get: @escaping () -> R) -> PyProperty {
 
     return PyProperty(
-      context,
       getter: wrapGetter(context, get: get),
       setter: nil,
       deleter: nil
@@ -28,7 +27,6 @@ extension PyProperty {
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyProperty {
 
     return PyProperty(
-      context,
       getter: wrapGetter(context, get: get, castSelf: castSelf),
       setter: nil,
       deleter: nil
@@ -37,7 +35,6 @@ extension PyProperty {
 
   // MARK: - Wrap property
 
-  // swiftlint:disable:next function_parameter_count
   internal static func wrap<R: PyFunctionResultConvertible>(
     _ context: PyContext,
     name: String,
@@ -46,7 +43,6 @@ extension PyProperty {
     set: @escaping (PyObject) -> PyResult<()>) -> PyProperty {
 
     return PyProperty(
-      context,
       getter: wrapGetter(context, get: get),
       setter: wrapSetter(context, set: set),
       deleter: nil
@@ -63,7 +59,6 @@ extension PyProperty {
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>) -> PyProperty {
 
     return PyProperty(
-      context,
       getter: wrapGetter(context, get: get, castSelf: castSelf),
       setter: wrapSetter(context, set: set, castSelf: castSelf),
       deleter: nil

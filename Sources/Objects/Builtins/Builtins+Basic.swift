@@ -10,19 +10,19 @@ extension Builtins {
   // MARK: - Int
 
   public func newInt(_ value: UInt8) -> PyInt {
-    return PyInt(self.context, value: Int(value))
+    return self.newInt(Int(value))
   }
 
   public func newInt(_ value: UInt32) -> PyInt {
-    return PyInt(self.context, value: BigInt(value))
+    return self.newInt(BigInt(value))
   }
 
   public func newInt(_ value: Int) -> PyInt {
-    return self.context.getInterned(value) ?? PyInt(self.context, value: value)
+    return self.context.getInterned(value) ?? PyInt(value: value)
   }
 
   public func newInt(_ value: BigInt) -> PyInt {
-    return self.context.getInterned(value) ?? PyInt(self.context, value: value)
+    return self.context.getInterned(value) ?? PyInt(value: value)
   }
 
   // MARK: - Bool
@@ -38,13 +38,13 @@ extension Builtins {
   // MARK: - Float
 
   public func newFloat(_ value: Double) -> PyFloat {
-    return PyFloat(self.context, value: value)
+    return PyFloat(value: value)
   }
 
   // MARK: - Complex
 
   public func newComplex(real: Double, imag: Double) -> PyComplex {
-    return PyComplex(self.context, real: real, imag: imag)
+    return PyComplex(real: real, imag: imag)
   }
 
   // MARK: - String
@@ -52,15 +52,15 @@ extension Builtins {
   public func newString(_ value: String) -> PyString {
     return value.isEmpty ?
       self.emptyString :
-      PyString(self.context, value: value)
+      PyString(value: value)
   }
 
   public func newBytes(_ value: Data) -> PyBytes {
-    return PyBytes(self.context, value: value)
+    return PyBytes(value: value)
   }
 
   public func newByteArray(_ value: Data) -> PyByteArray {
-    return PyByteArray(self.context, value: value)
+    return PyByteArray(value: value)
   }
 
   // MARK: - Namespace
@@ -70,7 +70,7 @@ extension Builtins {
   }
 
   public func newNamespace(attributes: Attributes) -> PyNamespace {
-    return PyNamespace(self.context, attributes: attributes)
+    return PyNamespace(attributes: attributes)
   }
 
   // MARK: - Module
@@ -82,7 +82,7 @@ extension Builtins {
   }
 
   public func newModule(name: PyObject, doc: PyObject? = nil) -> PyModule {
-    return PyModule(self.context, name: name, doc: doc)
+    return PyModule(name: name, doc: doc)
   }
 
   // MARK: - Id

@@ -12,9 +12,9 @@ public class PyNamespace: PyObject {
 
   internal let attributes: Attributes
 
-  internal init(_ context: PyContext, attributes: Attributes) {
+  internal init(attributes: Attributes) {
     self.attributes = attributes
-    super.init(type: context.builtins.types.simpleNamespace)
+    super.init(type: Py.types.simpleNamespace)
   }
 
   // MARK: - Equatable

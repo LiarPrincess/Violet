@@ -48,8 +48,7 @@ public class PyProperty: PyObject {
   internal private(set) var deleter: PyObject?
   internal private(set) var doc: PyObject?
 
-  internal init(_ context: PyContext,
-                getter: PyObject?,
+  internal init(getter: PyObject?,
                 setter: PyObject?,
                 deleter: PyObject?) {
     self.getter = getter is PyNone ? nil : getter
@@ -57,7 +56,7 @@ public class PyProperty: PyObject {
     self.deleter = deleter is PyNone ? nil : deleter
     self.doc = nil
 
-    super.init(type: context.builtins.types.property)
+    super.init(type: Py.types.property)
   }
 
   /// Use only in `__new__`!

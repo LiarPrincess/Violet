@@ -18,10 +18,10 @@ public class PyMethod: PyObject {
   /// The instance it is bound to
   internal let object: PyObject
 
-  internal init(_ context: PyContext, fn: PyFunction, object: PyObject) {
+  internal init(fn: PyFunction, object: PyObject) {
     self.fn = fn
     self.object = object
-    super.init(type: context.builtins.types.method)
+    super.init(type: Py.types.method)
   }
 
   // MARK: - Equatable
@@ -169,6 +169,6 @@ public class PyMethod: PyObject {
     }
 
     // Bind it to obj
-    return .value(PyMethod(context, fn: self.fn, object: object))
+    return .value(PyMethod(fn: self.fn, object: object))
   }
 }

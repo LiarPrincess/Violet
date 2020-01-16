@@ -26,14 +26,13 @@ public class PyDict: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext) {
-    self.data = PyDictData()
-    super.init(type: context.builtins.types.dict)
+  override internal convenience init() {
+    self.init(data: PyDictData())
   }
 
-  internal init(_ context: PyContext, data: PyDictData) {
+  internal init(data: PyDictData) {
     self.data = data
-    super.init(type: context.builtins.types.dict)
+    super.init(type: Py.types.dict)
   }
 
   /// Use only in `__new__`!
@@ -509,7 +508,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
-    let result = PyDict(self.context)
+    let result = self.builtins.newDict()
     result.data = self.data
     return result
   }
@@ -559,7 +558,7 @@ public class PyDict: PyObject {
 
     let key = last.key.object
     let value = last.value
-    let result = PyTuple(self.context, elements: [key, value])
+    let result = self.builtins.newTuple(key, value)
     return .value(result)
   }
 

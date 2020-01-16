@@ -16,9 +16,9 @@ public class PyCode: PyObject {
     return self.codeObject.filename
   }
 
-  internal init(_ context: PyContext, code: CodeObject) {
+  internal init(code: CodeObject) {
     self.codeObject = code
-    super.init(type: context.builtins.types.code)
+    super.init(type: Py.types.code)
   }
 
   // MARK: - Equatable

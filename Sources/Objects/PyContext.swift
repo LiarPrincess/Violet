@@ -67,7 +67,7 @@ public class PyContext {
 
   private static let smallIntRange = -10...255
 
-  private lazy var smallInts = PyContext.smallIntRange.map { PyInt(self, value: $0) }
+  private lazy var smallInts = PyContext.smallIntRange.map { PyInt(value: $0) }
 
   /// Get cached `int`.
   internal func getInterned(_ value: BigInt) -> PyInt? {
@@ -94,7 +94,7 @@ public class PyContext {
 
   /// Cache `str` representing given value.
   internal func intern(_ value: String) -> PyString {
-    let object = PyString(self, value: value)
+    let object = PyString(value: value)
     self.internedStrings[value] = object
     return object
   }

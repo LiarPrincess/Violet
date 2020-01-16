@@ -31,9 +31,9 @@ public class PyBytes: PyObject, PyBytesType {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext, value: Data) {
+  internal init(value: Data) {
     self.data = PyBytesData(value)
-    super.init(type: context.builtins.types.bytes)
+    super.init(type: Py.types.bytes)
   }
 
   /// Use only in  `__new__`!
@@ -501,11 +501,11 @@ public class PyBytes: PyObject, PyBytesType {
     switch result {
     case .separatorNotFound:
       let empty = self.builtins.emptyString
-      return .value(PyTuple(self.context, elements: [self, empty, empty]))
+      return .value(self.builtins.newTuple(self, empty, empty))
     case let .separatorFound(before, after):
       let b = self.builtins.newBytes(before)
       let a = self.builtins.newBytes(after)
-      return .value(PyTuple(self.context, elements: [b, separator, a]))
+      return .value(self.builtins.newTuple(b, separator, a))
     case .error(let e):
       return .error(e)
     }

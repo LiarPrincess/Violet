@@ -109,8 +109,7 @@ extension Builtins {
       return .valueError("only text mode is currently supported")
     case .text:
       return self.open(source: source, mode: mode)
-        .map { PyTextFile(self.context,
-                          name: self.path(source: source),
+        .map { PyTextFile(name: self.path(source: source),
                           fd: $0,
                           mode: mode,
                           encoding: encoding,

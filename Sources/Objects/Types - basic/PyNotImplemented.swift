@@ -10,8 +10,8 @@ public class PyNotImplemented: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext) {
-    super.init(type: context.builtins.types.notImplemented)
+  internal override init() {
+    super.init(type: Py.types.notImplemented)
   }
 
   // MARK: - String

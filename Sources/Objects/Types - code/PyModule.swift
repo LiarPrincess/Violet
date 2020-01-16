@@ -24,14 +24,14 @@ public class PyModule: PyObject {
     return self.builtins.strValue(nameObject)
   }
 
-  internal convenience init(_ context: PyContext, name: String, doc: String?) {
-    let n = context.builtins.newString(name)
-    let d = doc.map(context.builtins.newString(_:))
-    self.init(context, name: n, doc: d)
+  internal convenience init(name: String, doc: String?) {
+    let n = Py.builtins.newString(name)
+    let d = doc.map(Py.builtins.newString(_:))
+    self.init(name: n, doc: d)
   }
 
-  internal init(_ context: PyContext, name: PyObject, doc: PyObject?) {
-    super.init(type: context.builtins.types.module)
+  internal init(name: PyObject, doc: PyObject?) {
+    super.init(type: Py.types.module)
     self.attributes["__name__"] = name
     self.attributes["__doc__"] = doc
     self.attributes["__package__"] = context.builtins.none

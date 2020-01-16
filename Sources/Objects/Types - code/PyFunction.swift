@@ -42,8 +42,7 @@ public class PyFunction: PyObject {
   internal let kwdefaults: PyDict?
   internal let closure: PyTuple?
 
-  internal init(_ context: PyContext,
-                qualname: String?,
+  internal init(qualname: String?,
                 code: PyCode,
                 globals: Attributes) {
     self.name = code.codeObject.name
@@ -51,7 +50,7 @@ public class PyFunction: PyObject {
     self.code = code
 
     // __module__: If module name is in globals, use it. Otherwise, use None.
-    self.module = globals["__name__"] ?? context.builtins.none
+    self.module = globals["__name__"] ?? Py.builtins.none
 
     self.globals = globals
     self.defaults = nil
@@ -63,7 +62,7 @@ public class PyFunction: PyObject {
     default: self.doc = nil
     }
 
-    super.init(type: context.builtins.types.function)
+    super.init(type: Py.types.function)
   }
 
   // MARK: - String
@@ -164,6 +163,6 @@ public class PyFunction: PyObject {
       return .value(self)
     }
 
-    return .value(PyMethod(context, fn: self, object: object))
+    return .value(PyMethod(fn: self, object: object))
   }
 }

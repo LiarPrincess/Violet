@@ -41,14 +41,12 @@ public class PyTextFile: PyObject {
 
   // MARK: - Init
 
-  internal convenience init(_ context: PyContext,
-                            fd: FileDescriptorType,
+  internal convenience init(fd: FileDescriptorType,
                             mode: FileMode,
                             encoding: FileEncoding,
                             errors: FileErrorHandler,
                             closeOnDealloc: Bool) {
-    self.init(context,
-              name: nil,
+    self.init(name: nil,
               fd: fd,
               mode: mode,
               encoding: encoding,
@@ -56,8 +54,7 @@ public class PyTextFile: PyObject {
               closeOnDealloc: closeOnDealloc)
   }
 
-  internal init(_ context: PyContext,
-                name: String?,
+  internal init(name: String?,
                 fd: FileDescriptorType,
                 mode: FileMode,
                 encoding: FileEncoding,
@@ -69,7 +66,7 @@ public class PyTextFile: PyObject {
     self.errors = errors
     self.mode = mode
     self.closeOnDealloc = closeOnDealloc
-    super.init(type: context.builtins.types.textFile)
+    super.init(type: Py.types.textFile)
   }
 
   // MARK: - Deinit

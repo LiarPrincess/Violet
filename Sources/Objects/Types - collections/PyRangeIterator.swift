@@ -11,14 +11,13 @@ public class PyRangeIterator: PyObject {
   internal let length: BigInt
   internal var index: BigInt = 0
 
-  internal init(_ context: PyContext,
-                start: BigInt,
+  internal init(start: BigInt,
                 step: BigInt,
                 length: BigInt) {
     self.start = start
     self.step = step
     self.length = length
-    super.init(type: context.builtins.types.range_iterator)
+    super.init(type: Py.types.range_iterator)
   }
 
   // MARK: - Class

@@ -24,14 +24,14 @@ public class PyTuple: PyObject, PySequenceType {
 
   // MARK: - Init
 
-  convenience init(_ context: PyContext, elements: [PyObject]) {
+  convenience init(elements: [PyObject]) {
     let data = PySequenceData(elements: elements)
-    self.init(context, data: data)
+    self.init(data: data)
   }
 
-  internal init(_ context: PyContext, data: PySequenceData) {
+  internal init(data: PySequenceData) {
     self.data = data
-    super.init(type: context.builtins.types.tuple)
+    super.init(type: Py.types.tuple)
   }
 
   // MARK: - Equatable

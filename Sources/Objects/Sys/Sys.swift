@@ -196,8 +196,7 @@ public final class Sys {
   private func createStdio(name: String,
                            fd: FileDescriptorType,
                            mode: FileMode) -> PyTextFile {
-    return PyTextFile(self.context,
-                      name: name,
+    return PyTextFile(name: name,
                       fd: fd,
                       mode: mode,
                       encoding: Unimplemented.stdioEncoding,

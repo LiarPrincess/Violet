@@ -13,14 +13,14 @@ public final class Builtins {
     Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices.
     """
 
-  public lazy var `true`  = PyBool(self.context, value: true)
-  public lazy var `false` = PyBool(self.context, value: false)
-  public lazy var none  = PyNone(self.context)
-  public lazy var ellipsis = PyEllipsis(self.context)
-  public lazy var emptyTuple = PyTuple(self.context, elements: [])
+  public lazy var `true`  = PyBool(value: true)
+  public lazy var `false` = PyBool(value: false)
+  public lazy var none  = PyNone()
+  public lazy var ellipsis = PyEllipsis()
+  public lazy var emptyTuple = PyTuple(elements: [])
   public lazy var emptyString = self.context.intern("")
-  public lazy var emptyFrozenSet = PyFrozenSet(self.context)
-  public lazy var notImplemented = PyNotImplemented(self.context)
+  public lazy var emptyFrozenSet = PyFrozenSet()
+  public lazy var notImplemented = PyNotImplemented()
 
   public let types: BuiltinTypes
   public let errorTypes: BuiltinErrorTypes

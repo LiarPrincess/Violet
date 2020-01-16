@@ -30,14 +30,13 @@ public class PySlice: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext,
-                start: PyObject,
+  internal init(start: PyObject,
                 stop: PyObject,
                 step: PyObject) {
     self.start = start
     self.stop = stop
     self.step = step
-    super.init(type: context.builtins.types.slice)
+    super.init(type: Py.types.slice)
   }
 
   // MARK: - Equatable

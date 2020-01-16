@@ -22,9 +22,9 @@ public class PyFloat: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext, value: Double) {
+  internal init(value: Double) {
     self.value = value
-    super.init(type: context.builtins.types.float)
+    super.init(type: Py.types.float)
   }
 
   /// Use only in `__new__`!

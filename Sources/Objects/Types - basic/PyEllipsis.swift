@@ -11,8 +11,8 @@ public class PyEllipsis: PyObject {
 
   // MARK: - Init
 
-  internal init(_ context: PyContext) {
-    super.init(type: context.builtins.types.ellipsis)
+  internal override init() {
+    super.init(type: Py.types.ellipsis)
   }
 
   // MARK: - String

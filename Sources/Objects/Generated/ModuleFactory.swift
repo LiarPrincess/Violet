@@ -27,7 +27,7 @@ internal enum ModuleFactory {
   // MARK: - Builtins
 
   internal static func createBuiltins(from object: Builtins) -> PyModule {
-    let result = PyModule(object.context, name: "builtins", doc: nil)
+    let result = PyModule(name: "builtins", doc: nil)
     let dict = result.getDict()
 
 
@@ -68,7 +68,7 @@ internal enum ModuleFactory {
   // MARK: - Sys
 
   internal static func createSys(from object: Sys) -> PyModule {
-    let result = PyModule(object.context, name: "sys", doc: nil)
+    let result = PyModule(name: "sys", doc: nil)
     let dict = result.getDict()
 
     dict["stdin"] = PyProperty.wrap(object.context, name: "stdin", doc: nil, get: object.getStdin, set: object.setStdin)
