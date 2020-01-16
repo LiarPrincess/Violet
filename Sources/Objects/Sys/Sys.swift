@@ -85,7 +85,7 @@ public final class Sys {
 
   /// String that should be printed in interactive mode.
   public var ps1String: String {
-    switch self.builtins.strValue(self.ps1) {
+    switch Py.builtins.strValue(self.ps1) {
     case .value(let s): return s
     case .error: return ""
     }
@@ -93,7 +93,7 @@ public final class Sys {
 
   /// String that should be printed in interactive mode.
   public var ps2String: String {
-    switch self.builtins.strValue(self.ps2) {
+    switch Py.builtins.strValue(self.ps2) {
     case .value(let s): return s
     case .error: return ""
     }
@@ -135,7 +135,6 @@ public final class Sys {
   /// sys.version_info(major=3, minor=7, micro=2, releaselevel='final', serial=0)
   /// ```
   public lazy var versionInfo = VersionInfo(
-    context: self.context,
     major: 3,
     minor: 7,
     micro: 2,
@@ -146,7 +145,6 @@ public final class Sys {
   public lazy var implementationInfo = ImplementationInfo(
     name: "violet",
     version: VersionInfo(
-      context: self.context,
       major: 0,
       minor: 3,
       micro: 0,
@@ -169,15 +167,15 @@ public final class Sys {
   // MARK: - Streams
 
   internal lazy var __stdin__ = self.createStdio(name: "<stdin>",
-                                                 fd: self.config.standardInput,
+                                                 fd: Py.config.standardInput,
                                                  mode: .read)
 
   internal lazy var __stdout__ = self.createStdio(name: "<stdout>",
-                                                  fd: self.config.standardOutput,
+                                                  fd: Py.config.standardOutput,
                                                   mode: .write)
 
   internal lazy var __stderr__ = self.createStdio(name: "<stderr>",
-                                                  fd: self.config.standardError,
+                                                  fd: Py.config.standardError,
                                                   mode: .write)
 
   internal lazy var stdin = self.__stdin__
@@ -196,37 +194,4 @@ public final class Sys {
                       errors: Unimplemented.stdioErrors,
                       closeOnDealloc: false)
   }
-
-  // MARK: - Context
-
-  private weak var _context: PyContext?
-  internal var context: PyContext {
-    if let c = self._context {
-      return c
-    }
-
-    trap("Trying to use 'sys' module after its context was deallocated.")
-  }
-
-  internal var builtins: Builtins {
-    return self.context.builtins
-  }
-
-  internal var config: PyContextConfig {
-    return self.context.config
-  }
-
-  // MARK: - Init
-
-  /// Stage 1: Create all objects
-  internal init(context: PyContext) {
-    self._context = context
-  }
-
-  /// Stage 2: Fill type objects
-  internal func onContextFullyInitailized() { }
-
-  // MARK: - Deinit
-
-  internal func onContextDeinit() { }
 }

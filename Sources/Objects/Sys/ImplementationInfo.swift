@@ -1,5 +1,5 @@
 /// Internal helper for `sys.implementation`.
-public struct ImplementationInfo {
+public class ImplementationInfo {
 
   public let name: String
   public let version: VersionInfo
@@ -10,9 +10,9 @@ public struct ImplementationInfo {
       self.cacheTag.map(Py.builtins.newString(_:)) ?? Py.builtins.none
 
     let attributes = Attributes()
-    attributes.set(key: "name", to: Py.builtins.newString(name))
-    attributes.set(key: "version", to: version.object)
-    attributes.set(key: "hexversion", to: version.hexVersionObject)
+    attributes.set(key: "name", to: Py.builtins.newString(self.name))
+    attributes.set(key: "version", to: self.version.object)
+    attributes.set(key: "hexversion", to: self.version.hexVersionObject)
     attributes.set(key: "cache_tag", to: cacheTag)
     return Py.builtins.newNamespace(attributes: attributes)
   }()

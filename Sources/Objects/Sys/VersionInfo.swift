@@ -2,18 +2,21 @@
 ///
 /// A tuple containing the five components of the version number:
 /// `major`, `minor`, `micro`, `releaselevel`, and `serial`.
+///
 /// All values except `releaselevel` are integers;
 /// the release level is `'alpha'`, `'beta'`, `'candidate'`, or `'final'`.
+///
 /// The `version_info` value corresponding to the Python version 2.0
 /// is (2, 0, 0, 'final', 0).
-/// The components can also be accessed by name,
-/// so `sys.version_info[0]` is equivalent to `sys.version_info.major` and so on.
+///
+/// The components can also be accessed by name, so `sys.version_info[0]`
+/// is equivalent to `sys.version_info.major` and so on.
 ///
 /// ```
 /// >>> sys.version_info
 /// sys.version_info(major=3, minor=7, micro=2, releaselevel='final', serial=0)
 /// ```
-public struct VersionInfo {
+public class VersionInfo {
 
   public enum ReleaseLevel: CustomStringConvertible {
     case alpha
@@ -46,13 +49,21 @@ public struct VersionInfo {
   public let releaseLevel: ReleaseLevel
   public let serial: UInt8
 
-  public let object: PyNamespace
+  public lazy var object: PyNamespace = {
+    let attributes = Attributes()
+    attributes.set(key: "major", to: Py.builtins.newInt(self.major))
+    attributes.set(key: "minor", to: Py.builtins.newInt(self.minor))
+    attributes.set(key: "micro", to: Py.builtins.newInt(self.micro))
+    attributes.set(key: "releaseLevel", to: Py.builtins.newString(self.releaseLevel.description))
+    attributes.set(key: "serial", to: Py.builtins.newInt(self.serial))
+    return Py.builtins.newNamespace(attributes: attributes)
+  }()
 
   public let hexVersion: UInt32
-  public let hexVersionObject: PyInt
 
-  public init(context: PyContext,
-              major: UInt8,
+  public lazy var hexVersionObject = Py.builtins.newInt(self.hexVersion)
+
+  public init(major: UInt8,
               minor: UInt8,
               micro: UInt8,
               releaseLevel: ReleaseLevel,
@@ -62,16 +73,6 @@ public struct VersionInfo {
     self.micro = micro
     self.releaseLevel = releaseLevel
     self.serial = serial
-
-    let builtins = context.builtins
-
-    let attributes = Attributes()
-    attributes.set(key: "major", to: builtins.newInt(major))
-    attributes.set(key: "minor", to: builtins.newInt(minor))
-    attributes.set(key: "micro", to: builtins.newInt(micro))
-    attributes.set(key: "releaseLevel", to: builtins.newString(releaseLevel.description))
-    attributes.set(key: "serial", to: builtins.newInt(serial))
-    self.object = builtins.newNamespace(attributes: attributes)
 
     // https://docs.python.org/3.7/c-api/apiabiversion.html#apiabiversion
     // >>> sys.version_info
@@ -84,6 +85,5 @@ public struct VersionInfo {
     let releaseLevelHex = UInt32(releaseLevel.hexVersion) << 4
     let serialHex = UInt32(serial)
     self.hexVersion = majorHex | minorHex | microHex | releaseLevelHex | serialHex
-    self.hexVersionObject = builtins.newInt(self.hexVersion)
   }
 }

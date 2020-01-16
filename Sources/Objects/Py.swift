@@ -44,7 +44,7 @@ public class PyInstance {
   /// Python `sys` module.
   public private(set) lazy var sys: Sys = {
     self.ensureInitialized()
-    return Sys(context: self.context)
+    return Sys()
   }()
 
   /// `self.builtins` but as a Python module (`PyModule`).
