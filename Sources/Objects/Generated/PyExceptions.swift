@@ -34,7 +34,7 @@ public final class PySystemExit: PyBaseException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PySystemExit(args: argsTuple))
   }
 
@@ -73,7 +73,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyKeyboardInterrupt(args: argsTuple))
   }
 
@@ -112,7 +112,7 @@ public final class PyGeneratorExit: PyBaseException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyGeneratorExit(args: argsTuple))
   }
 
@@ -151,7 +151,7 @@ public class PyException: PyBaseException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyException(args: argsTuple))
   }
 
@@ -190,7 +190,7 @@ public final class PyStopIteration: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyStopIteration(args: argsTuple))
   }
 
@@ -229,7 +229,7 @@ public final class PyStopAsyncIteration: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyStopAsyncIteration(args: argsTuple))
   }
 
@@ -268,7 +268,7 @@ public class PyArithmeticError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyArithmeticError(args: argsTuple))
   }
 
@@ -307,7 +307,7 @@ public final class PyFloatingPointError: PyArithmeticError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyFloatingPointError(args: argsTuple))
   }
 
@@ -346,7 +346,7 @@ public final class PyOverflowError: PyArithmeticError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyOverflowError(args: argsTuple))
   }
 
@@ -385,7 +385,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyZeroDivisionError(args: argsTuple))
   }
 
@@ -424,7 +424,7 @@ public final class PyAssertionError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyAssertionError(args: argsTuple))
   }
 
@@ -463,7 +463,7 @@ public final class PyAttributeError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyAttributeError(args: argsTuple))
   }
 
@@ -502,7 +502,7 @@ public final class PyBufferError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyBufferError(args: argsTuple))
   }
 
@@ -541,7 +541,7 @@ public final class PyEOFError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyEOFError(args: argsTuple))
   }
 
@@ -580,7 +580,7 @@ public class PyImportError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyImportError(args: argsTuple))
   }
 
@@ -619,7 +619,7 @@ public final class PyModuleNotFoundError: PyImportError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyModuleNotFoundError(args: argsTuple))
   }
 
@@ -658,7 +658,7 @@ public class PyLookupError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyLookupError(args: argsTuple))
   }
 
@@ -697,7 +697,7 @@ public final class PyIndexError: PyLookupError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyIndexError(args: argsTuple))
   }
 
@@ -736,7 +736,7 @@ public final class PyKeyError: PyLookupError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyKeyError(args: argsTuple))
   }
 
@@ -775,7 +775,7 @@ public final class PyMemoryError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyMemoryError(args: argsTuple))
   }
 
@@ -814,7 +814,7 @@ public class PyNameError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyNameError(args: argsTuple))
   }
 
@@ -853,7 +853,7 @@ public final class PyUnboundLocalError: PyNameError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyUnboundLocalError(args: argsTuple))
   }
 
@@ -892,7 +892,7 @@ public class PyOSError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyOSError(args: argsTuple))
   }
 
@@ -931,7 +931,7 @@ public final class PyBlockingIOError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyBlockingIOError(args: argsTuple))
   }
 
@@ -970,7 +970,7 @@ public final class PyChildProcessError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyChildProcessError(args: argsTuple))
   }
 
@@ -1009,7 +1009,7 @@ public class PyConnectionError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyConnectionError(args: argsTuple))
   }
 
@@ -1048,7 +1048,7 @@ public final class PyBrokenPipeError: PyConnectionError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyBrokenPipeError(args: argsTuple))
   }
 
@@ -1087,7 +1087,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyConnectionAbortedError(args: argsTuple))
   }
 
@@ -1126,7 +1126,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyConnectionRefusedError(args: argsTuple))
   }
 
@@ -1165,7 +1165,7 @@ public final class PyConnectionResetError: PyConnectionError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyConnectionResetError(args: argsTuple))
   }
 
@@ -1204,7 +1204,7 @@ public final class PyFileExistsError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyFileExistsError(args: argsTuple))
   }
 
@@ -1243,7 +1243,7 @@ public final class PyFileNotFoundError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyFileNotFoundError(args: argsTuple))
   }
 
@@ -1282,7 +1282,7 @@ public final class PyInterruptedError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyInterruptedError(args: argsTuple))
   }
 
@@ -1321,7 +1321,7 @@ public final class PyIsADirectoryError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyIsADirectoryError(args: argsTuple))
   }
 
@@ -1360,7 +1360,7 @@ public final class PyNotADirectoryError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyNotADirectoryError(args: argsTuple))
   }
 
@@ -1399,7 +1399,7 @@ public final class PyPermissionError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyPermissionError(args: argsTuple))
   }
 
@@ -1438,7 +1438,7 @@ public final class PyProcessLookupError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyProcessLookupError(args: argsTuple))
   }
 
@@ -1477,7 +1477,7 @@ public final class PyTimeoutError: PyOSError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyTimeoutError(args: argsTuple))
   }
 
@@ -1516,7 +1516,7 @@ public final class PyReferenceError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyReferenceError(args: argsTuple))
   }
 
@@ -1555,7 +1555,7 @@ public class PyRuntimeError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyRuntimeError(args: argsTuple))
   }
 
@@ -1594,7 +1594,7 @@ public final class PyNotImplementedError: PyRuntimeError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyNotImplementedError(args: argsTuple))
   }
 
@@ -1633,7 +1633,7 @@ public final class PyRecursionError: PyRuntimeError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyRecursionError(args: argsTuple))
   }
 
@@ -1672,7 +1672,7 @@ public class PySyntaxError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PySyntaxError(args: argsTuple))
   }
 
@@ -1711,7 +1711,7 @@ public class PyIndentationError: PySyntaxError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyIndentationError(args: argsTuple))
   }
 
@@ -1750,7 +1750,7 @@ public final class PyTabError: PyIndentationError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyTabError(args: argsTuple))
   }
 
@@ -1792,7 +1792,7 @@ public final class PySystemError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PySystemError(args: argsTuple))
   }
 
@@ -1831,7 +1831,7 @@ public final class PyTypeError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyTypeError(args: argsTuple))
   }
 
@@ -1870,7 +1870,7 @@ public class PyValueError: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyValueError(args: argsTuple))
   }
 
@@ -1909,7 +1909,7 @@ public class PyUnicodeError: PyValueError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeError(args: argsTuple))
   }
 
@@ -1948,7 +1948,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeDecodeError(args: argsTuple))
   }
 
@@ -1987,7 +1987,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeEncodeError(args: argsTuple))
   }
 
@@ -2026,7 +2026,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeTranslateError(args: argsTuple))
   }
 
@@ -2065,7 +2065,7 @@ public class PyWarning: PyException {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyWarning(args: argsTuple))
   }
 
@@ -2104,7 +2104,7 @@ public final class PyDeprecationWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyDeprecationWarning(args: argsTuple))
   }
 
@@ -2144,7 +2144,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyPendingDeprecationWarning(args: argsTuple))
   }
 
@@ -2183,7 +2183,7 @@ public final class PyRuntimeWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyRuntimeWarning(args: argsTuple))
   }
 
@@ -2222,7 +2222,7 @@ public final class PySyntaxWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PySyntaxWarning(args: argsTuple))
   }
 
@@ -2261,7 +2261,7 @@ public final class PyUserWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyUserWarning(args: argsTuple))
   }
 
@@ -2301,7 +2301,7 @@ public final class PyFutureWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyFutureWarning(args: argsTuple))
   }
 
@@ -2340,7 +2340,7 @@ public final class PyImportWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyImportWarning(args: argsTuple))
   }
 
@@ -2380,7 +2380,7 @@ public final class PyUnicodeWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeWarning(args: argsTuple))
   }
 
@@ -2420,7 +2420,7 @@ public final class PyBytesWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyBytesWarning(args: argsTuple))
   }
 
@@ -2459,7 +2459,7 @@ public final class PyResourceWarning: PyWarning {
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyResourceWarning(args: argsTuple))
   }
 

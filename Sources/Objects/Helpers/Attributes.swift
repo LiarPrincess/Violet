@@ -134,7 +134,7 @@ public final class Attributes {
       case .error(let e): return .error(e)
       }
 
-      switch lhs.builtins.isEqualBool(left: lhs, right: rhs) {
+      switch Py.isEqualBool(left: lhs, right: rhs) {
       case .value(true): break // Go to next entry
       case .value(false): return .value(false)
       case .error(let e): return .error(e)

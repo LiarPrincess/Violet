@@ -142,7 +142,7 @@ public {final}class Py{name}: Py{base} {{
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
                                      kwargs: PyDictData?) -> PyResult<PyObject> {{
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(Py{name}(args: argsTuple))
   }}
 

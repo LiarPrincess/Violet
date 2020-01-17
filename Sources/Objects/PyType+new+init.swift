@@ -36,7 +36,7 @@ extension PyType {
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
     // Special case: type(x) should return x->ob_type
-    if type === type.builtins.type {
+    if type === Py.types.type {
       let nargs = args.count
       let nkwds = kwargs?.count ?? 0
 
@@ -107,7 +107,7 @@ extension PyType {
     var metatype = args.metatype
 
     if bases.isEmpty {
-      base = args.metatype.builtins.object
+      base = Py.types.object
       bases = [base]
     } else {
       // Search the bases for the proper metatype to deal with this
@@ -154,7 +154,7 @@ extension PyType {
 
     // Set __module__ in the dict
     if !attributes.has(key: "__module__") {
-      let globals = type.builtins.getGlobals()
+      let globals = Py.getGlobals()
       if let module = globals["__name__"] {
         switch type.setModule(module) {
         case .value: break

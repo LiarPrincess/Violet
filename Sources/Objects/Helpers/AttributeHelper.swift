@@ -64,7 +64,7 @@ internal enum AttributeHelper {
 
     if let desc = descriptor {
       _ = desc.call(value: value)
-      return .value(object.builtins.none)
+      return .value(Py.none)
     }
 
     if let owner = object as? __dict__GetterOwner {
@@ -75,7 +75,7 @@ internal enum AttributeHelper {
       } else {
         dict.del(key: name)
       }
-      return .value(object.builtins.none)
+      return .value(Py.none)
     }
 
     let msg = descriptor == nil ?

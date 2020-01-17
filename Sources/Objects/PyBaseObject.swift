@@ -113,7 +113,7 @@ internal enum PyBaseObject {
       let dict = attribOwner.getDict()
 
       if let dirFunc = dict.get(key: "__dir__") {
-        let dir = zelf.builtins.callDir(dirFunc, args: [])
+        let dir = Py.callDir(dirFunc, args: [])
         result.append(contentsOf: dir)
       } else {
         result.append(contentsOf: dict.keys)
@@ -154,7 +154,7 @@ internal enum PyBaseObject {
   /// NotImplemented, the normal algorithm is used.  Otherwise, it
   /// overrides the normal algorithm (and the outcome is cached).
   internal static func subclasshook(zelf: PyObject) -> PyResult<PyObject> {
-    return .value(zelf.builtins.notImplemented)
+    return .value(Py.notImplemented)
   }
 
   // MARK: - Init subclass
@@ -164,7 +164,7 @@ internal enum PyBaseObject {
   /// The default implementation does nothing.
   /// It may be overridden to extend subclasses.
   internal static func initSubclass(zelf: PyObject) -> PyResult<PyObject> {
-    return .value(zelf.builtins.none)
+    return .value(Py.none)
   }
 
   // MARK: - Python new
@@ -193,7 +193,7 @@ internal enum PyBaseObject {
       return .typeError(msg)
     }
 
-    return .value(zelf.builtins.none)
+    return .value(Py.none)
   }
 
   /// static int

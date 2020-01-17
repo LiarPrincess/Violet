@@ -240,7 +240,7 @@ public class PyType: PyObject, CustomStringConvertible {
   // sourcery: pyproperty = __doc__, setter = setDoc
   public func getDoc() -> PyResult<PyObject> {
     guard let doc = self.attributes.get(key: "__doc__") else {
-      return .value(self.builtins.none)
+      return .value(Py.none)
     }
 
     if let descr = GetDescriptor.get(object: self, attribute: doc) {
@@ -300,7 +300,7 @@ public class PyType: PyObject, CustomStringConvertible {
       }
 
       guard let module = object as? PyModule else {
-        switch self.builtins.strValue(object) {
+        switch Py.strValue(object) {
         case let .value(s):
           return .module(s)
         case let .error(e):
@@ -339,7 +339,7 @@ public class PyType: PyObject, CustomStringConvertible {
 
   // sourcery: pyproperty = __bases__, setter = setBases
   internal func getBases() -> PyTuple {
-    return self.builtins.newTuple(self.getBasesRaw())
+    return Py.newTuple(self.getBasesRaw())
   }
 
   public func getBasesRaw() -> [PyType] {
@@ -390,7 +390,7 @@ public class PyType: PyObject, CustomStringConvertible {
 
   // sourcery: pyproperty = __mro__
   internal func getMRO() -> PyTuple {
-    return self.builtins.newTuple(self.getMRORaw())
+    return Py.newTuple(self.getMRORaw())
   }
 
   public func getMRORaw() -> [PyType] {
@@ -421,7 +421,7 @@ public class PyType: PyObject, CustomStringConvertible {
   ///
   /// PyExceptionInstance_Check
   public var isException: Bool {
-    let baseException = self.builtins.errorTypes.baseException
+    let baseException = Py.errorTypes.baseException
     return self.isSubtype(of: baseException)
   }
 
@@ -558,10 +558,10 @@ public class PyType: PyObject, CustomStringConvertible {
   /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
   internal func call(args: [PyObject],
                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let newResult = self.builtins.callMethod(on: self,
-                                             selector: "__new__",
-                                             args: args,
-                                             kwargs: kwargs)
+    let newResult = Py.callMethod(on: self,
+                                  selector: "__new__",
+                                  args: args,
+                                  kwargs: kwargs)
     let object: PyObject
     switch newResult {
     case .value(let o): object = o
@@ -573,7 +573,7 @@ public class PyType: PyObject, CustomStringConvertible {
     // don't call tp_init on the result.
     let hasSingleArg = args.count == 1
     let hasEmptyKwargs = kwargs?.isEmpty ?? true
-    if self === self.builtins.type && hasSingleArg && hasEmptyKwargs {
+    if self === Py.types.type && hasSingleArg && hasEmptyKwargs {
       return .value(object)
     }
 
@@ -584,10 +584,10 @@ public class PyType: PyObject, CustomStringConvertible {
 
     // TODO: Add `object` as first args
     // Call '__init__' (on object type not on self!).
-    let initResult = self.builtins.callMethod(on: object.type,
-                                              selector: "__init__",
-                                              args: args,
-                                              kwargs: kwargs)
+    let initResult = Py.callMethod(on: object.type,
+                                   selector: "__init__",
+                                   args: args,
+                                   kwargs: kwargs)
 
     switch initResult {
     case .value, .missingMethod:

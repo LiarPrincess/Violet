@@ -51,12 +51,10 @@ internal class GetDescriptor {
   }
 
   internal func call(withOwner: Bool = true) -> PyResult<PyObject> {
-    let builtins = self.descriptor.builtins
-
-    let owner = withOwner ? self.owner : builtins.none
+    let owner = withOwner ? self.owner : Py.none
     let args = [self.descriptor, owner, self.owner.type]
 
-    switch builtins.call(callable: self.get, args: args) {
+    switch Py.call(callable: self.get, args: args) {
     case .value(let r):
       return .value(r)
     case .error(let e), .notCallable(let e):
@@ -108,10 +106,9 @@ internal class SetDescriptor {
   }
 
   internal func call(value: PyObject?) -> PyResult<PyObject> {
-    let builtins = self.descriptor.builtins
-    let args = [self.descriptor, self.owner, value ?? builtins.none]
+    let args = [self.descriptor, self.owner, value ?? Py.none]
 
-    switch builtins.call(callable: self.set, args: args) {
+    switch Py.call(callable: self.set, args: args) {
     case .value(let r):
       return .value(r)
     case .error(let e), .notCallable(let e):
