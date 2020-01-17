@@ -7,14 +7,14 @@ public class ImplementationInfo {
 
   public lazy var object: PyNamespace = {
     let cacheTag: PyObject =
-      self.cacheTag.map(Py.builtins.newString(_:)) ?? Py.builtins.none
+      self.cacheTag.map(Py.newString(_:)) ?? Py.none
 
     let attributes = Attributes()
-    attributes.set(key: "name", to: Py.builtins.newString(self.name))
+    attributes.set(key: "name", to: Py.newString(self.name))
     attributes.set(key: "version", to: self.version.object)
     attributes.set(key: "hexversion", to: self.version.hexVersionObject)
     attributes.set(key: "cache_tag", to: cacheTag)
-    return Py.builtins.newNamespace(attributes: attributes)
+    return Py.newNamespace(attributes: attributes)
   }()
 
   internal init(name: String, version: VersionInfo, cacheTag: String?) {

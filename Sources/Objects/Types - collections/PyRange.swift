@@ -59,9 +59,9 @@ public class PyRange: PyObject {
 
     self.start = start
     self.stop = stop
-    self.step = Py.builtins.newInt(unwrappedStep)
+    self.step = Py.newInt(unwrappedStep)
     self.stepType = step == nil ? .implicit : .explicit
-    self.length = Py.builtins.newInt(length)
+    self.length = Py.newInt(length)
 
     super.init(type: Py.types.range)
   }

@@ -80,12 +80,12 @@ public final class Sys {
 
   // MARK: - Prompt values
 
-  public lazy var ps1: PyObject = Py.builtins.newString(">>> ")
-  public lazy var ps2: PyObject = Py.builtins.newString("... ")
+  public lazy var ps1: PyObject = Py.newString(">>> ")
+  public lazy var ps2: PyObject = Py.newString("... ")
 
   /// String that should be printed in interactive mode.
   public var ps1String: String {
-    switch Py.builtins.strValue(self.ps1) {
+    switch Py.strValue(self.ps1) {
     case .value(let s): return s
     case .error: return ""
     }
@@ -93,7 +93,7 @@ public final class Sys {
 
   /// String that should be printed in interactive mode.
   public var ps2String: String {
-    switch Py.builtins.strValue(self.ps2) {
+    switch Py.strValue(self.ps2) {
     case .value(let s): return s
     case .error: return ""
     }
@@ -115,7 +115,7 @@ public final class Sys {
     #endif
   }()
 
-  public lazy var platformObject = Py.builtins.newString(self.platform)
+  public lazy var platformObject = Py.newString(self.platform)
 
   // MARK: - Version
 
@@ -126,7 +126,7 @@ public final class Sys {
            "(Violet \(v.major).\(v.minor).\(v.micro))"
   }()
 
-  public lazy var versionObject = Py.builtins.newString(self.version)
+  public lazy var versionObject = Py.newString(self.version)
 
   /// `sys.version_info`
   ///
@@ -162,7 +162,7 @@ public final class Sys {
 
   public lazy var copyright = Lyrics.letItGo
 
-  public lazy var copyrightObject = Py.builtins.newString(self.copyright)
+  public lazy var copyrightObject = Py.newString(self.copyright)
 
   // MARK: - Streams
 

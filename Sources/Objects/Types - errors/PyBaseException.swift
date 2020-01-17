@@ -30,9 +30,7 @@ public class PyBaseException: PyObject {
                    cause: PyObject? = nil,
                    exceptionContext: PyObject? = nil,
                    suppressExceptionContext: Bool = false) {
-    let msgPy = Py.builtins.newString(msg)
-    let args = Py.builtins.newTuple(msgPy)
-    self.init(args: args,
+    self.init(args: Py.newTuple(Py.newString(msg)),
               traceback: traceback,
               cause: cause,
               exceptionContext: exceptionContext,

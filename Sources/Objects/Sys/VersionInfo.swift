@@ -51,17 +51,17 @@ public class VersionInfo {
 
   public lazy var object: PyNamespace = {
     let attributes = Attributes()
-    attributes.set(key: "major", to: Py.builtins.newInt(self.major))
-    attributes.set(key: "minor", to: Py.builtins.newInt(self.minor))
-    attributes.set(key: "micro", to: Py.builtins.newInt(self.micro))
-    attributes.set(key: "releaseLevel", to: Py.builtins.newString(self.releaseLevel.description))
-    attributes.set(key: "serial", to: Py.builtins.newInt(self.serial))
-    return Py.builtins.newNamespace(attributes: attributes)
+    attributes.set(key: "major", to: Py.newInt(self.major))
+    attributes.set(key: "minor", to: Py.newInt(self.minor))
+    attributes.set(key: "micro", to: Py.newInt(self.micro))
+    attributes.set(key: "releaseLevel", to: Py.newString(self.releaseLevel.description))
+    attributes.set(key: "serial", to: Py.newInt(self.serial))
+    return Py.newNamespace(attributes: attributes)
   }()
 
   public let hexVersion: UInt32
 
-  public lazy var hexVersionObject = Py.builtins.newInt(self.hexVersion)
+  public lazy var hexVersionObject = Py.newInt(self.hexVersion)
 
   public init(major: UInt8,
               minor: UInt8,

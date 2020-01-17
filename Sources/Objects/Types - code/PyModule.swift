@@ -25,8 +25,8 @@ public class PyModule: PyObject {
   }
 
   internal convenience init(name: String, doc: String?) {
-    let n = Py.builtins.newString(name)
-    let d = doc.map(Py.builtins.newString(_:))
+    let n = Py.newString(name)
+    let d = doc.map(Py.newString(_:))
     self.init(name: n, doc: d)
   }
 

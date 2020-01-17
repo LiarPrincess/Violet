@@ -50,7 +50,7 @@ public class PyFunction: PyObject {
     self.code = code
 
     // __module__: If module name is in globals, use it. Otherwise, use None.
-    self.module = globals["__name__"] ?? Py.builtins.none
+    self.module = globals["__name__"] ?? Py.none
 
     self.globals = globals
     self.defaults = nil

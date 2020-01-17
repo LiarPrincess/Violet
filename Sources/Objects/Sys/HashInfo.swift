@@ -21,14 +21,14 @@ public class HashInfo {
 
   public lazy var object: PyNamespace = {
     let attributes = Attributes()
-    attributes.set(key: "width", to: Py.builtins.newInt(self.width))
-    attributes.set(key: "modulus", to: Py.builtins.newInt(self.modulus))
-    attributes.set(key: "inf", to: Py.builtins.newInt(self.inf))
-    attributes.set(key: "nan", to: Py.builtins.newInt(self.nan))
-    attributes.set(key: "imag", to: Py.builtins.newInt(self.imag))
-    attributes.set(key: "algorithm", to: Py.builtins.newString(self.algorithm))
-    attributes.set(key: "hash_bits", to: Py.builtins.newInt(self.hashBits))
-    attributes.set(key: "seed_bits", to: Py.builtins.newInt(self.seedBits))
-    return Py.builtins.newNamespace(attributes: attributes)
+    attributes.set(key: "width", to: Py.newInt(self.width))
+    attributes.set(key: "modulus", to: Py.newInt(self.modulus))
+    attributes.set(key: "inf", to: Py.newInt(self.inf))
+    attributes.set(key: "nan", to: Py.newInt(self.nan))
+    attributes.set(key: "imag", to: Py.newInt(self.imag))
+    attributes.set(key: "algorithm", to: Py.newString(self.algorithm))
+    attributes.set(key: "hash_bits", to: Py.newInt(self.hashBits))
+    attributes.set(key: "seed_bits", to: Py.newInt(self.seedBits))
+    return Py.newNamespace(attributes: attributes)
   }()
 }
