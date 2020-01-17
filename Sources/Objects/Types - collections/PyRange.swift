@@ -141,8 +141,7 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    let none = self.builtins.none
-    var tuple = [self.length, none, none]
+    var tuple = [self.length, Py.none, Py.none]
 
     if self.length.value == 0 {
       let data = PySequenceData(elements: tuple)
@@ -275,7 +274,7 @@ public class PyRange: PyObject {
     }
 
     let result = self.start.value + self.step.value * index
-    return .value(self.builtins.newInt(result))
+    return .value(Py.newInt(result))
   }
 
   internal func getItem(at slice: PySlice) -> PyResult<PyRange> {
@@ -305,9 +304,9 @@ public class PyRange: PyObject {
 
     let subStep = self.step.value * BigInt(indices.step)
 
-    return self.builtins.newRange(start: subStart,
-                                  stop: subStop,
-                                  step: self.builtins.newInt(subStep))
+    return Py.newRange(start: subStart,
+                       stop: subStop,
+                       step: Py.newInt(subStep))
   }
 
   // MARK: - Start
@@ -384,7 +383,7 @@ public class PyRange: PyObject {
   // sourcery: pymethod = index
   internal func index(of element: PyObject) -> PyResult<BigInt> {
     guard let int = element as? PyInt, self.contains(int) else {
-      switch self.builtins.strValue(element) {
+      switch Py.strValue(element) {
       case .value(let str):
         return .valueError("\(str) is not in range")
       case .error:
@@ -415,18 +414,16 @@ public class PyRange: PyObject {
       return .error(e)
     }
 
-    let builtins = type.builtins
-
     // Handle 1 argument
     if args.count == 1 {
-      return builtins.newRange(stop: args[0]).map { $0 as PyObject }
+      return Py.newRange(stop: args[0]).map { $0 as PyObject }
     }
 
     // Handle 2 or 3 arguments
     let start = args[0]
     let stop = args[1]
     let step = args.count == 3 ? args[2] : nil
-    return builtins.newRange(start: start, stop: stop, step: step)
+    return Py.newRange(start: start, stop: stop, step: step)
       .map { $0 as PyObject }
   }
 }

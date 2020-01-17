@@ -33,7 +33,7 @@ internal struct PySequenceData {
     }
 
     for (l, r) in zip(self.elements, other.elements) {
-      switch l.builtins.isEqualBool(left: l, right: r) {
+      switch Py.isEqualBool(left: l, right: r) {
       case .value(true): break // go to next element
       case .value(false): return .value(false)
       case .error(let e): return .error(e)
@@ -48,7 +48,7 @@ internal struct PySequenceData {
   internal func isLess(than other: PySequenceData) -> PyResult<Bool> {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return l.builtins.isLessBool(left: l, right: r)
+      return Py.isLessBool(left: l, right: r)
     case .allEqualUpToShorterCount:
       return .value(self.count < other.count)
     case let .error(e):
@@ -59,7 +59,7 @@ internal struct PySequenceData {
   internal func isLessEqual(than other: PySequenceData) -> PyResult<Bool> {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return l.builtins.isLessEqualBool(left: l, right: r)
+      return Py.isLessEqualBool(left: l, right: r)
     case .allEqualUpToShorterCount:
       return .value(self.count <= other.count)
     case let .error(e):
@@ -70,7 +70,7 @@ internal struct PySequenceData {
   internal func isGreater(than other: PySequenceData) -> PyResult<Bool> {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return l.builtins.isGreaterBool(left: l, right: r)
+      return Py.isGreaterBool(left: l, right: r)
     case .allEqualUpToShorterCount:
       return .value(self.count > other.count)
     case let .error(e):
@@ -81,7 +81,7 @@ internal struct PySequenceData {
   internal func isGreaterEqual(than other: PySequenceData) -> PyResult<Bool> {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return l.builtins.isGreaterEqualBool(left: l, right: r)
+      return Py.isGreaterEqualBool(left: l, right: r)
     case .allEqualUpToShorterCount:
       return .value(self.count >= other.count)
     case let .error(e):
@@ -97,7 +97,7 @@ internal struct PySequenceData {
 
   private func getFirstNotEqualElement(with other: PySequenceData) -> FistNotEqualElements {
     for (l, r) in zip(self.elements, other.elements) {
-      switch l.builtins.isEqualBool(left: l, right: r) {
+      switch Py.isEqualBool(left: l, right: r) {
       case .value(true):
         break // go to next element
       case .value(false):
@@ -117,7 +117,7 @@ internal struct PySequenceData {
     var mult = Hasher.multiplier
 
     for e in self.elements {
-      switch e.builtins.hash(e) {
+      switch Py.hash(e) {
       case let .value(y):
         x = (x ^ y) * mult
         mult += 82_520 + PyHash(2 * self.elements.count)
@@ -144,7 +144,7 @@ internal struct PySequenceData {
         result += ", " // so that we don't have ', )'.
       }
 
-      switch element.builtins.repr(element) {
+      switch Py.repr(element) {
       case let .value(s): result += s
       case let .error(e): return .error(e)
       }
@@ -298,7 +298,7 @@ internal struct PySequenceData {
     var result = 0
 
     for e in self.elements {
-      switch e.builtins.isEqualBool(left: e, right: element) {
+      switch Py.isEqualBool(left: e, right: element) {
       case .value(true): result += 1
       case .value(false): break // go to next element
       case .error(let e): return .error(e)
@@ -321,7 +321,7 @@ internal struct PySequenceData {
     }
 
     for (index, e) in subsequence.enumerated() {
-      switch e.builtins.isEqualBool(left: e, right: element) {
+      switch Py.isEqualBool(left: e, right: element) {
       case .value(true):
         return .value(index)
       case .value(false):
@@ -380,7 +380,7 @@ internal struct PySequenceData {
 
   internal func find(_ value: PyObject) -> FindResult {
     for (index, element) in self.elements.enumerated() {
-      switch element.builtins.isEqualBool(left: element, right: value) {
+      switch Py.isEqualBool(left: element, right: value) {
       case .value(true): return .index(index)
       case .value(false): break // go to next element
       case .error(let e): return .error(e)
@@ -406,8 +406,7 @@ internal struct PySequenceData {
 
     // Slow path: iterable
     // Do not modify `self.elements` until we finished iteration.
-    let builtins = iterable.builtins
-    let d = builtins.reduce(iterable: iterable, into: [PyObject]()) { acc, object in
+    let d = Py.reduce(iterable: iterable, into: [PyObject]()) { acc, object in
       acc.append(object)
       return .goToNextElement
     }

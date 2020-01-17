@@ -20,7 +20,7 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
     self.set = set
     self.index = 0
     self.initCount = set.data.count
-    super.init(type: set.builtins.types.set_iterator)
+    super.init(type: Py.types.set_iterator)
   }
 
   // MARK: - Class

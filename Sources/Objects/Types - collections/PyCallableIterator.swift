@@ -14,7 +14,7 @@ internal class PyCallableIterator: PyObject {
   internal init(callable: PyObject, sentinel: PyObject) {
     self.callable = callable
     self.sentinel = sentinel
-    super.init(type: callable.builtins.types.callable_iterator)
+    super.init(type: Py.types.callable_iterator)
   }
 
   // MARK: - Class
@@ -42,10 +42,10 @@ internal class PyCallableIterator: PyObject {
 
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
-    switch self.builtins.call(callable: self.callable) {
+    switch Py.call(callable: self.callable) {
     case let .value(o):
       // If we are equal to 'self.sentinel' then we have to stop
-      switch self.builtins.isEqualBool(left: o, right: self.sentinel) {
+      switch Py.isEqualBool(left: o, right: self.sentinel) {
       case .value(true):
         return .stopIteration()
       case .value(false):

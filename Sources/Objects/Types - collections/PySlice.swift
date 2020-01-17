@@ -102,7 +102,7 @@ public class PySlice: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(self.builtins.hashNotImplemented(self))
+    return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - String
@@ -110,19 +110,19 @@ public class PySlice: PyObject {
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
     let start: String
-    switch self.builtins.repr(self.start) {
+    switch Py.repr(self.start) {
     case let .value(s): start = s
     case let .error(e): return .error(e)
     }
 
     let stop: String
-    switch self.builtins.repr(self.stop) {
+    switch Py.repr(self.stop) {
     case let .value(s): stop = s
     case let .error(e): return .error(e)
     }
 
     let step: String
-    switch self.builtins.repr(self.step) {
+    switch Py.repr(self.step) {
     case let .value(s): step = s
     case let .error(e): return .error(e)
     }
@@ -188,10 +188,10 @@ public class PySlice: PyObject {
     }
 
     return self.getLongIndices(length: lengthInt).map { indices in
-      let start = self.builtins.newInt(indices.start)
-      let stop = self.builtins.newInt(indices.stop)
-      let step = self.builtins.newInt(indices.step)
-      return self.builtins.newTuple(start, stop, step)
+      let start = Py.newInt(indices.start)
+      let stop = Py.newInt(indices.stop)
+      let step = Py.newInt(indices.step)
+      return Py.newTuple(start, stop, step)
     }
   }
 
@@ -379,11 +379,9 @@ public class PySlice: PyObject {
       return .error(e)
     }
 
-    let builtins = type.builtins
-
     // Handle 1 argument
     if args.count == 1 {
-      let result = builtins.newSlice(stop: args[0])
+      let result = Py.newSlice(stop: args[0])
       return .value(result)
     }
 
@@ -392,7 +390,7 @@ public class PySlice: PyObject {
     let stop = args[1]
     let step = args.count == 3 ? args[2] : nil
 
-    let result = builtins.newSlice(start: start, stop: stop, step: step)
+    let result = Py.newSlice(start: start, stop: stop, step: step)
     return .value(result)
   }
 

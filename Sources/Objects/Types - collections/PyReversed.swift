@@ -22,8 +22,9 @@ internal class PyReversed: PyObject {
   // MARK: - Init
 
   internal convenience init(sequence: PyObject, sequenceCount: Int) {
-    let type = sequence.builtins.types.reversed
-    self.init(type: type, sequence: sequence, sequenceCount: sequenceCount)
+    self.init(type: Py.types.reversed,
+              sequence: sequence,
+              sequenceCount: sequenceCount)
   }
 
   /// Use only in `__new__`!
@@ -59,7 +60,7 @@ internal class PyReversed: PyObject {
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
     if self.index >= 0 {
-      switch self.builtins.getItem(self.sequence, at: self.index) {
+      switch Py.getItem(self.sequence, at: self.index) {
       case .value(let o):
         self.index -= 1
         return .value(o)
@@ -110,12 +111,12 @@ internal class PyReversed: PyObject {
     }
 
     let count: Int
-    switch reverse.builtins.lengthInt(iterable: reverse) {
+    switch Py.lengthInt(iterable: reverse) {
     case let .value(l): count = l
     case let .error(e): return .error(e)
     }
 
-    let isBuiltin = type === type.builtins.reversed
+    let isBuiltin = type === Py.types.reversed
     let alloca = isBuiltin ?
       PyReversed.init(type:sequence:sequenceCount:) :
       PyReversedHeap.init(type:sequence:sequenceCount:)
@@ -135,8 +136,7 @@ internal class PyReversed: PyObject {
       return .value(owner.reversed())
     }
 
-    let builtins = object.builtins
-    switch builtins.callMethod(on: object, selector: "__reversed__") {
+    switch Py.callMethod(on: object, selector: "__reversed__") {
     case .value(let o):
       return .value(o)
     case .missingMethod:

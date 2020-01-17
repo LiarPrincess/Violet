@@ -157,7 +157,7 @@ public class PyFrozenSet: PyObject, PySetType {
   // sourcery: pymethod = __and__
   internal func and(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.data.and(other: otherSet.data)
@@ -174,7 +174,7 @@ public class PyFrozenSet: PyObject, PySetType {
   // sourcery: pymethod = __or__
   internal func or(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.data.or(other: otherSet.data)
@@ -191,7 +191,7 @@ public class PyFrozenSet: PyObject, PySetType {
   // sourcery: pymethod = __xor__
   internal func xor(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.data.xor(other: otherSet.data)
@@ -208,7 +208,7 @@ public class PyFrozenSet: PyObject, PySetType {
   // sourcery: pymethod = __sub__
   internal func sub(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.data.difference(with: otherSet.data)
@@ -218,7 +218,7 @@ public class PyFrozenSet: PyObject, PySetType {
   // sourcery: pymethod = __rsub__
   internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return otherSet.data.difference(with: self.data)
@@ -364,7 +364,7 @@ public class PyFrozenSet: PyObject, PySetType {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.frozenset
+    let isBuiltin = type === Py.types.frozenset
     if isBuiltin {
       if let e = ArgumentParser.noKwargsOrError(fnName: "frozenset",
                                                 kwargs: kwargs) {
@@ -397,7 +397,7 @@ public class PyFrozenSet: PyObject, PySetType {
   }
 
   private static func newSet(type: PyType, data: PySetData) -> PyFrozenSet {
-    return type.builtins.newFrozenSet(data)
+    return Py.newFrozenSet(data)
   }
 
   private static func data(fromIterable iterable: PyObject) -> PyResult<PySetData> {
@@ -405,8 +405,7 @@ public class PyFrozenSet: PyObject, PySetType {
       return .value(set.data)
     }
 
-    let builtins = iterable.builtins
-    switch builtins.toArray(iterable: iterable) {
+    switch Py.toArray(iterable: iterable) {
     case let .value(array):
       var data = PySetData()
 

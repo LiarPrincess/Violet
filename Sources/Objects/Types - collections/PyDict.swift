@@ -61,7 +61,7 @@ public class PyDict: PyObject {
       case .error(let e): return .error(e)
       }
 
-      switch self.builtins.isEqualBool(left: entry.value, right: otherValue) {
+      switch Py.isEqualBool(left: entry.value, right: otherValue) {
       case .value(true): break // Go to next element
       case .value(false): return .value(false)
       case .error(let e): return .error(e)
@@ -102,7 +102,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(self.builtins.hashNotImplemented(self))
+    return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - String
@@ -124,14 +124,14 @@ public class PyDict: PyObject {
           result += ", " // so that we don't have ', )'.
         }
 
-        switch self.builtins.repr(element.key.object) {
+        switch Py.repr(element.key.object) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
 
         result += ": "
 
-        switch self.builtins.repr(element.value) {
+        switch Py.repr(element.value) {
         case let .value(s): result += s
         case let .error(e): return .error(e)
         }
@@ -180,7 +180,7 @@ public class PyDict: PyObject {
     }
 
     let missing = "__missing__"
-    switch self.builtins.callMethod(on: self, selector: missing, arg: index) {
+    switch Py.callMethod(on: self, selector: missing, arg: index) {
     case .value(let o):
       return .value(o)
     case .missingMethod:
@@ -203,7 +203,7 @@ public class PyDict: PyObject {
 
     switch self.data.insert(key: key, value: value) {
     case .inserted, .updated:
-      return .value(self.builtins.none)
+      return .value(Py.none)
     case .error(let e):
       return .error(e)
     }
@@ -219,7 +219,7 @@ public class PyDict: PyObject {
 
     switch self.data.remove(key: key) {
     case .value:
-      return .value(self.builtins.none)
+      return .value(Py.none)
     case .notFound:
       return .keyError(key: index)
     case .error(let e):
@@ -254,7 +254,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = clear, doc = clearDoc
   internal func clear() -> PyResult<PyNone> {
     self.data.clear()
-    return .value(self.builtins.none)
+    return .value(Py.none)
   }
 
   // MARK: - Get
@@ -278,7 +278,7 @@ public class PyDict: PyObject {
     case .value(let o):
       return .value(o)
     case .notFound:
-      return .value(`default` ?? self.builtins.none)
+      return .value(`default` ?? Py.none)
     case .error(let e):
       return .error(e)
     }
@@ -318,7 +318,7 @@ public class PyDict: PyObject {
     case .value(let o):
       return .value(o)
     case .notFound:
-      let value = `default` ?? self.builtins.none
+      let value = `default` ?? Py.none
       switch self.data.insert(key: key, value: value) {
       case .inserted, .updated:
         return .value(value)
@@ -375,7 +375,7 @@ public class PyDict: PyObject {
       }
     }
 
-    return .value(self.builtins.none)
+    return .value(Py.none)
   }
 
   private enum CallKeysResult {
@@ -389,7 +389,7 @@ public class PyDict: PyObject {
       return .value(owner.keys())
     }
 
-    switch self.builtins.callMethod(on: object, selector: "keys") {
+    switch Py.callMethod(on: object, selector: "keys") {
     case .value(let o):
       return .value(o)
     case .missingMethod:
@@ -426,7 +426,7 @@ public class PyDict: PyObject {
   ///
   /// Iterable of sequences with 2 elements (key and value).
   private func update(fromIterableOfPairs iterable: PyObject) -> PyResult<()> {
-    let kvs = self.builtins.reduce(iterable: iterable, into: [KeyValue]()) { acc, object in
+    let kvs = Py.reduce(iterable: iterable, into: [KeyValue]()) { acc, object in
       switch self.unpackKeyValue(fromIterable: object) {
       case let .value(keyValue):
         acc.append(keyValue)
@@ -455,7 +455,7 @@ public class PyDict: PyObject {
   /// Given iterable of 2 elements it will return
   /// `iterable[0]` as key and `iterable[1]` as value.
   private func unpackKeyValue(fromIterable iterable: PyObject) -> PyResult<KeyValue> {
-    switch self.builtins.toArray(iterable: iterable) {
+    switch Py.toArray(iterable: iterable) {
     case let .value(array):
       guard array.count == 2 else {
         let l = array.count
@@ -475,7 +475,7 @@ public class PyDict: PyObject {
   private func update(fromKeysOwner dict: PyObject,
                       keys keyIterable: PyObject) -> PyResult<()> {
     let keys: [PyObject]
-    switch self.builtins.toArray(iterable: keyIterable) {
+    switch Py.toArray(iterable: keyIterable) {
     case let .value(k): keys = k
     case let .error(e): return .error(e)
     }
@@ -488,7 +488,7 @@ public class PyDict: PyObject {
       }
 
       let value: PyObject
-      switch self.builtins.getItem(dict, at: keyObject) {
+      switch Py.getItem(dict, at: keyObject) {
       case let .value(v): value = v
       case let .error(e): return .error(e)
       }
@@ -508,7 +508,7 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
-    let result = self.builtins.newDict()
+    let result = Py.newDict()
     result.data = self.data
     return result
   }
@@ -558,7 +558,7 @@ public class PyDict: PyObject {
 
     let key = last.key.object
     let value = last.value
-    let result = self.builtins.newTuple(key, value)
+    let result = Py.newTuple(key, value)
     return .value(result)
   }
 
@@ -585,7 +585,7 @@ public class PyDict: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.dict
+    let isBuiltin = type === Py.types.dict
     let alloca = isBuiltin ?
       PyDict.init(type:data:) :
       PyDictHeap.init(type:data:)
@@ -602,13 +602,13 @@ public class PyDict: PyObject {
                               kwargs: PyDictData?) -> PyResult<PyNone> {
     return zelf
       .update(args: args, kwargs: kwargs)
-      .map { _ in zelf.builtins.none }
+      .map { _ in Py.none }
   }
 
   // MARK: - Helpers
 
   private func createKey(from object: PyObject) -> PyResult<PyDictKey> {
-    switch self.builtins.hash(object) {
+    switch Py.hash(object) {
     case let .value(hash):
       return .value(PyDictKey(hash: hash, object: object))
     case let .error(e):

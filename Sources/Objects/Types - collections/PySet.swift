@@ -97,7 +97,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(self.builtins.hashNotImplemented(self))
+    return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - String
@@ -146,7 +146,7 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = __and__
   internal func and(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.data.and(other: otherSet.data).map(self.createSet(data:))
@@ -162,7 +162,7 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = __or__
   internal func or(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.data.or(other: otherSet.data).map(self.createSet(data:))
@@ -178,7 +178,7 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = __xor__
   internal func xor(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.data.xor(other: otherSet.data).map(self.createSet(data:))
@@ -194,7 +194,7 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = __sub__
   internal func sub(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.data.difference(with: otherSet.data).map(self.createSet(data:))
@@ -203,7 +203,7 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = __rsub__
   internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
     guard let otherSet = other as? PySetType else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return otherSet.data.difference(with: self.data).map(self.createSet(data:))
@@ -338,7 +338,7 @@ public class PySet: PyObject, PySetType {
   internal func add(_ value: PyObject) -> PyResult<PyNone> {
     switch self.data.insert(value: value) {
     case .ok:
-      return .value(self.builtins.none)
+      return .value(Py.none)
     case .error(let e):
       return .error(e)
     }
@@ -354,7 +354,7 @@ public class PySet: PyObject, PySetType {
   internal func update(from other: PyObject) -> PyResult<PyNone> {
     switch self.data.update(from: other) {
     case .ok:
-      return .value(self.builtins.none)
+      return .value(Py.none)
     case .error(let e):
       return .error(e)
     }
@@ -372,7 +372,7 @@ public class PySet: PyObject, PySetType {
   internal func remove(_ value: PyObject) -> PyResult<PyNone> {
     switch self.data.remove(value: value) {
     case .ok:
-      return .value(self.builtins.none)
+      return .value(Py.none)
     case .error(let e):
       return .error(e)
     }
@@ -390,7 +390,7 @@ public class PySet: PyObject, PySetType {
   internal func discard(_ value: PyObject) -> PyResult<PyNone> {
     switch self.data.discard(value: value) {
     case .ok:
-      return .value(self.builtins.none)
+      return .value(Py.none)
     case .error(let e):
       return .error(e)
     }
@@ -405,7 +405,7 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = clear, doc = clearDoc
   internal func clear() -> PyResult<PyNone> {
     self.data.clear()
-    return .value(self.builtins.none)
+    return .value(Py.none)
   }
 
   // MARK: - Copy
@@ -447,7 +447,7 @@ public class PySet: PyObject, PySetType {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.set
+    let isBuiltin = type === Py.types.set
     let alloca = isBuiltin ?
       PySet.init(type:data:) :
       PySetHeap.init(type:data:)
@@ -481,7 +481,7 @@ public class PySet: PyObject, PySetType {
       }
     }
 
-    return.value(zelf.builtins.none)
+    return.value(Py.none)
   }
 
   // MARK: - Helpers

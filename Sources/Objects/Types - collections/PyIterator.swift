@@ -48,7 +48,7 @@ internal class PyIterator: PyObject {
       return .stopIteration()
     }
 
-    switch self.builtins.getItem(self.sequence, at: self.index) {
+    switch Py.getItem(self.sequence, at: self.index) {
     case .value(let o):
       self.index += 1
       return .value(o)

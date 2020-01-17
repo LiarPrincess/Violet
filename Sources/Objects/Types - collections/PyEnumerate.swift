@@ -34,7 +34,7 @@ public class PyEnumerate: PyObject {
   internal init(iterator: PyObject, startFrom index: BigInt) {
     self.iterator = iterator
     self.nextIndex = index
-    super.init(type: iterator.builtins.types.enumerate)
+    super.init(type: Py.types.enumerate)
   }
 
   /// Use only in `__new__`!
@@ -70,7 +70,7 @@ public class PyEnumerate: PyObject {
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
     let item: PyObject
-    switch self.builtins.next(iterator: self.iterator) {
+    switch Py.next(iterator: self.iterator) {
     case .value(let n):
       item = n
     case .error(let e):
@@ -78,8 +78,8 @@ public class PyEnumerate: PyObject {
       return .error(e)
     }
 
-    let index = self.builtins.newInt(self.nextIndex)
-    let result = self.builtins.newTuple(index, item)
+    let index = Py.newInt(self.nextIndex)
+    let result = Py.newTuple(index, item)
 
     self.nextIndex += 1
     return .value(result)
@@ -138,7 +138,7 @@ public class PyEnumerate: PyObject {
     }
 
     let iter: PyObject
-    switch iterable.builtins.iter(from: iterable) {
+    switch Py.iter(from: iterable) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }

@@ -19,7 +19,7 @@ public class PyMap: PyObject {
   internal init(fn: PyObject, iterators: [PyObject]) {
     self.fn = fn
     self.iterators = iterators
-    super.init(type: fn.builtins.types.map)
+    super.init(type: Py.types.map)
   }
 
   /// Use only in `__new__`!
@@ -56,7 +56,7 @@ public class PyMap: PyObject {
   internal func next() -> PyResult<PyObject> {
     var args = [PyObject]()
     for iter in self.iterators {
-      switch self.builtins.next(iterator: iter) {
+      switch Py.next(iterator: iter) {
       case let .value(o):
         args.append(o)
       case let .error(e): // that includes 'stopIteration'
@@ -64,7 +64,7 @@ public class PyMap: PyObject {
       }
     }
 
-    switch self.builtins.call(callable: self.fn, args: args) {
+    switch Py.call(callable: self.fn, args: args) {
     case .value(let r):
       return .value(r)
     case .error(let e), .notCallable(let e):
@@ -78,7 +78,7 @@ public class PyMap: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    if type === type.builtins.map {
+    if type === Py.types.map {
       if let e = ArgumentParser.noKwargsOrError(fnName: "map", kwargs: kwargs) {
         return .error(e)
       }
@@ -92,7 +92,7 @@ public class PyMap: PyObject {
     var iters = [PyObject]()
 
     for object in args[1...] {
-      switch object.builtins.iter(from: object) {
+      switch Py.iter(from: object) {
       case let .value(i): iters.append(i)
       case let .error(e): return .error(e)
       }

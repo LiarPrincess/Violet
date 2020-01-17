@@ -12,7 +12,7 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
 
   internal init(dict: PyDict) {
     self.dict = dict
-    super.init(type: dict.builtins.types.dict_keys)
+    super.init(type: Py.types.dict_keys)
   }
 
   // MARK: - Equatable
@@ -53,7 +53,7 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(self.builtins.hashNotImplemented(self))
+    return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - Class

@@ -12,10 +12,6 @@ internal struct PySetElement: PyHashable {
   internal var hash: PyHash
   internal var object: PyObject
 
-  private var builtins: Builtins {
-    return self.object.builtins
-  }
-
   internal init(hash: PyHash, object: PyObject) {
     self.hash = hash
     self.object = object
@@ -26,7 +22,7 @@ internal struct PySetElement: PyHashable {
       return .value(false)
     }
 
-    return self.builtins.isEqualBool(left: self.object, right: other.object)
+    return Py.isEqualBool(left: self.object, right: other.object)
   }
 }
 
@@ -124,8 +120,7 @@ internal struct PySetData {
         result += ", " // so that we don't have ', )'.
       }
 
-      let builtins = element.key.object.builtins
-      switch builtins.repr(element.key.object) {
+      switch Py.repr(element.key.object) {
       case let .value(s): result += s
       case let .error(e): return .error(e)
       }
@@ -368,8 +363,7 @@ internal struct PySetData {
       return self.update(from: dict.data)
     }
 
-    let builtins = other.builtins
-    let result = builtins.reduce(iterable: other, initial: 0) { _, object in
+    let result = Py.reduce(iterable: other, initial: 0) { _, object in
       switch self.insert(value: object) {
       case .ok: return .goToNextElement
       case .error(let e): return .error(e)
@@ -466,7 +460,7 @@ internal struct PySetData {
   // MARK: - Helpers
 
   private func createElement(from object: PyObject) -> PyResult<PySetElement> {
-    switch object.builtins.hash(object) {
+    switch Py.hash(object) {
     case let .value(hash):
       return .value(PySetElement(hash: hash, object: object))
     case let .error(e):

@@ -5,10 +5,6 @@ internal struct PyDictKey: PyHashable {
   internal var hash: PyHash
   internal var object: PyObject
 
-  private var builtins: Builtins {
-    return self.object.builtins
-  }
-
   internal init(hash: PyHash, object: PyObject) {
     self.hash = hash
     self.object = object
@@ -27,6 +23,6 @@ internal struct PyDictKey: PyHashable {
       return .value(false)
     }
 
-    return self.builtins.isEqualBool(left: self.object, right: other.object)
+    return Py.isEqualBool(left: self.object, right: other.object)
   }
 }

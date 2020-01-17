@@ -102,7 +102,7 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(self.builtins.hashNotImplemented(self))
+    return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - String
@@ -156,7 +156,7 @@ public class PyList: PyObject, PySequenceType {
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(index: index, typeName: "list") {
     case let .single(s): return .value(s)
-    case let .slice(s): return .value(self.builtins.newList(s))
+    case let .slice(s): return .value(Py.newList(s))
     case let .error(e): return .error(e)
     }
   }
@@ -167,13 +167,13 @@ public class PyList: PyObject, PySequenceType {
   internal func setItem(at index: PyObject,
                         to value: PyObject) -> PyResult<PyNone> {
     return self.data.setItem(at: index, to: value)
-      .map { _ in self.builtins.none }
+      .map { _ in Py.none }
   }
 
   // sourcery: pymethod = __delitem__
   internal func delItem(at index: PyObject) -> PyResult<PyNone> {
     return self.data.delItem(at: index)
-      .map { _ in self.builtins.none }
+      .map { _ in Py.none }
   }
 
   // MARK: - Count
@@ -218,7 +218,7 @@ public class PyList: PyObject, PySequenceType {
   // sourcery: pymethod = append
   internal func append(_ element: PyObject) -> PyResult<PyNone> {
     self.data.append(element)
-    return .value(self.builtins.none)
+    return .value(Py.none)
   }
 
   // MARK: - Insert
@@ -232,14 +232,14 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = insert, doc = insertDoc
   internal func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> {
-    return self.data.insert(at: index, item: item).map { _ in self.builtins.none }
+    return self.data.insert(at: index, item: item).map { _ in Py.none }
   }
 
   // MARK: - Extend
 
   // sourcery: pymethod = extend
   internal func extend(iterable: PyObject) -> PyResult<PyNone> {
-    return self.data.extend(iterable: iterable).map { _ in self.builtins.none }
+    return self.data.extend(iterable: iterable).map { _ in Py.none }
   }
 
   // MARK: - Remove
@@ -255,7 +255,7 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = remove, doc = removeDoc
   internal func remove(_ value: PyObject) -> PyResult<PyNone> {
-    return self.data.remove(value).map { _ in self.builtins.none }
+    return self.data.remove(value).map { _ in Py.none }
   }
 
   // MARK: - Pop
@@ -320,7 +320,7 @@ public class PyList: PyObject, PySequenceType {
       return self.sort(key: key, isReverse: false)
     }
 
-    switch self.builtins.isTrueBool(isReverse) {
+    switch Py.isTrueBool(isReverse) {
     case let .value(b):
       return self.sort(key: key, isReverse: b)
     case let .error(e):
@@ -331,7 +331,7 @@ public class PyList: PyObject, PySequenceType {
   internal func sort(key: PyObject?, isReverse: Bool) -> PyResult<PyNone> {
     var elements = [SortElement]()
     for object in self.elements {
-      switch self.builtins.selectKey(object: object, key: key) {
+      switch Py.selectKey(object: object, key: key) {
       case let .value(k): elements.append(SortElement(key: k, element: object))
       case let .error(e): return .error(e)
       }
@@ -346,7 +346,7 @@ public class PyList: PyObject, PySequenceType {
       // of writting this comment), but that's an implementation detail.
       try elements.sort(by: fn)
       self.data = PySequenceData(elements: elements.map { $0.element })
-      return .value(self.builtins.none)
+      return .value(Py.none)
     } catch let SortError.builtin(e) {
       return .error(e)
     } catch {
@@ -358,9 +358,7 @@ public class PyList: PyObject, PySequenceType {
 
   private func createSortFn(isReverse: Bool) -> SortFn {
     return { (lhs: SortElement, rhs: SortElement) in
-      let builtins = lhs.element.builtins
-
-      switch builtins.isLessBool(left: lhs.key, right: rhs.key) {
+      switch Py.isLessBool(left: lhs.key, right: rhs.key) {
       case let .value(b): return isReverse ? !b : b
       case let .error(e): throw SortError.builtin(e)
       }
@@ -379,7 +377,7 @@ public class PyList: PyObject, PySequenceType {
   // sourcery: pymethod = reverse, doc = reverseDoc
   internal func reverse() -> PyResult<PyNone> {
     self.data.reverse()
-    return .value(self.builtins.none)
+    return .value(Py.none)
   }
 
   // MARK: - Clear
@@ -387,14 +385,14 @@ public class PyList: PyObject, PySequenceType {
   // sourcery: pymethod = clear
   internal func clear() -> PyResult<PyNone> {
     self.data.clear()
-    return .value(self.builtins.none)
+    return .value(Py.none)
   }
 
   // MARK: - Copy
 
   // sourcery: pymethod = copy
   internal func copy() -> PyObject {
-    return self.builtins.newList(self.data)
+    return Py.newList(self.data)
   }
 
   // MARK: - Add
@@ -407,7 +405,7 @@ public class PyList: PyObject, PySequenceType {
     }
 
     let result = self.data.add(other: otherList.data)
-    return .value(self.builtins.newList(result))
+    return .value(Py.newList(result))
   }
 
   // sourcery: pymethod = __iadd__
@@ -440,7 +438,7 @@ public class PyList: PyObject, PySequenceType {
       self.data = PySequenceData(elements: elements)
       return .value(self)
     case .notImplemented:
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     case .error(let e):
       return .error(e)
     }
@@ -449,11 +447,11 @@ public class PyList: PyObject, PySequenceType {
   private func mulResult(_ result: PySequenceData.MulResult) -> PyResult<PyObject> {
     switch result {
     case .value(let elements):
-      return .value(self.builtins.newList(elements))
+      return .value(Py.newList(elements))
     case .error(let e):
       return .error(e)
     case .notImplemented:
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
   }
 
@@ -463,7 +461,7 @@ public class PyList: PyObject, PySequenceType {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.list
+    let isBuiltin = type === Py.types.list
     let alloca = isBuiltin ?
       PyList.init(type:data:) :
       PyListHeap.init(type:data:)
@@ -478,7 +476,7 @@ public class PyList: PyObject, PySequenceType {
   internal static func pyInit(zelf: PyList,
                               args: [PyObject],
                               kwargs: PyDictData?) -> PyResult<PyNone> {
-    if zelf.type === zelf.builtins.list {
+    if zelf.type === Py.types.list {
       if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
                                                 kwargs: kwargs) {
         return .error(e)
@@ -499,6 +497,6 @@ public class PyList: PyObject, PySequenceType {
       }
     }
 
-    return .value(zelf.builtins.none)
+    return .value(Py.none)
   }
 }

@@ -20,7 +20,7 @@ public class PyDictKeyIterator: PyObject, OrderedDictionaryBackedIterator {
     self.object = dict
     self.index = 0
     self.initCount = dict.data.count
-    super.init(type: dict.builtins.types.dict_keyiterator)
+    super.init(type: Py.types.dict_keyiterator)
   }
 
   // MARK: - Class

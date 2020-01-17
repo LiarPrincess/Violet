@@ -14,7 +14,7 @@ public class PyListIterator: PyObject {
   internal init(list: PyList) {
     self.list = list
     self.index = 0
-    super.init(type: list.builtins.types.list_iterator)
+    super.init(type: Py.types.list_iterator)
   }
 
   // MARK: - Class

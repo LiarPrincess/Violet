@@ -145,7 +145,7 @@ public class PyTuple: PyObject, PySequenceType {
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(index: index, typeName: "tuple") {
     case let .single(s): return .value(s)
-    case let .slice(s): return .value(self.builtins.newTuple(s))
+    case let .slice(s): return .value(Py.newTuple(s))
     case let .error(e): return .error(e)
     }
   }
@@ -200,7 +200,7 @@ public class PyTuple: PyObject, PySequenceType {
     }
 
     let result = self.data.add(other: otherTuple.data)
-    return .value(self.builtins.newTuple(result))
+    return .value(Py.newTuple(result))
   }
 
   // MARK: - Mul
@@ -218,11 +218,11 @@ public class PyTuple: PyObject, PySequenceType {
   private func mulResult(_ result: PySequenceData.MulResult) -> PyResult<PyObject> {
     switch result {
     case .value(let elements):
-      return .value(self.builtins.newTuple(elements))
+      return .value(Py.newTuple(elements))
     case .error(let e):
       return .error(e)
     case .notImplemented:
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
   }
 
@@ -243,7 +243,7 @@ public class PyTuple: PyObject, PySequenceType {
       return .error(e)
     }
 
-    let isBuiltin = type === type.builtins.list
+    let isBuiltin = type === Py.types.list
     let alloca = isBuiltin ?
       PyList.init(type:data:) :
       PyListHeap.init(type:data:)
@@ -259,8 +259,7 @@ public class PyTuple: PyObject, PySequenceType {
       return .value(PySequenceData())
     }
 
-    let builtins = iterable.builtins
-    return builtins.toArray(iterable: iterable)
+    return Py.toArray(iterable: iterable)
       .map(PySequenceData.init(elements:))
   }
 }

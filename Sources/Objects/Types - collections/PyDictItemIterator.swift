@@ -20,7 +20,7 @@ public class PyDictItemIterator: PyObject, OrderedDictionaryBackedIterator {
     self.object = dict
     self.index = 0
     self.initCount = dict.data.count
-    super.init(type: dict.builtins.types.dict_itemiterator)
+    super.init(type: Py.types.dict_itemiterator)
   }
 
   // MARK: - Class
@@ -57,7 +57,7 @@ public class PyDictItemIterator: PyObject, OrderedDictionaryBackedIterator {
     case let .value(entry):
       let key = entry.key.object
       let value = entry.value
-      let tuple = self.builtins.newTuple(key, value)
+      let tuple = Py.newTuple(key, value)
       return .value(tuple)
     case let .error(e):
       return .error(e)

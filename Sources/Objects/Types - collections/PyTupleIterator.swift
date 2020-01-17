@@ -14,7 +14,7 @@ public class PyTupleIterator: PyObject {
   internal init(tuple: PyTuple) {
     self.tuple = tuple
     self.index = 0
-    super.init(type: tuple.builtins.types.tuple_iterator)
+    super.init(type: Py.types.tuple_iterator)
   }
 
   // MARK: - Class

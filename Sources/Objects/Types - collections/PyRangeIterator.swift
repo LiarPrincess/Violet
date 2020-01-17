@@ -48,7 +48,7 @@ public class PyRangeIterator: PyObject {
     if self.index < self.length {
       let result = self.start + self.step * self.index
       self.index += 1
-      return .value(self.builtins.newInt(result))
+      return .value(Py.newInt(result))
     }
 
     return .stopIteration()

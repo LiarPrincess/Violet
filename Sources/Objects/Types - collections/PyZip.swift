@@ -59,7 +59,7 @@ public class PyZip: PyObject {
 
     var result = [PyObject]()
     for iter in self.iterators {
-      switch self.builtins.next(iterator: iter) {
+      switch Py.next(iterator: iter) {
       case let .value(o):
         result.append(o)
       case let .error(e): // that includes 'stopIteration'
@@ -73,7 +73,7 @@ public class PyZip: PyObject {
     }
 
     // Multiple iterators -> tuple
-    let tuple = self.builtins.newTuple(result)
+    let tuple = Py.newTuple(result)
     return .value(tuple)
   }
 
@@ -83,7 +83,7 @@ public class PyZip: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    if type === type.builtins.zip {
+    if type === Py.zip {
       if let e = ArgumentParser.noKwargsOrError(fnName: "zip", kwargs: kwargs) {
         return .error(e)
       }
@@ -92,7 +92,7 @@ public class PyZip: PyObject {
     var iters = [PyObject]()
 
     for (index, object) in args.enumerated() {
-      switch object.builtins.iter(from: object) {
+      switch Py.iter(from: object) {
       case .value(let i):
         iters.append(i)
 

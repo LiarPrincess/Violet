@@ -16,7 +16,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
 
   internal init(dict: PyDict) {
     self.dict = dict
-    super.init(type: dict.builtins.types.dict_keys)
+    super.init(type: Py.types.dict_keys)
   }
 
   // MARK: - Equatable
@@ -57,7 +57,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(self.builtins.hashNotImplemented(self))
+    return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - Class
@@ -101,7 +101,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
 
     switch self.dict.getItem(at: key) {
     case let .value(o):
-      return self.builtins.isEqualBool(left: value, right: o)
+      return Py.isEqualBool(left: value, right: o)
     case let .error(e):
       return .error(e)
     }

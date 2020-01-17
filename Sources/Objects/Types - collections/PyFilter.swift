@@ -19,7 +19,7 @@ public class PyFilter: PyObject {
   internal init(fn: PyObject, iterator: PyObject) {
     self.fn = fn
     self.iterator = iterator
-    super.init(type: fn.builtins.types.filter)
+    super.init(type: Py.types.filter)
   }
 
   /// Use only in `__new__`!
@@ -55,23 +55,23 @@ public class PyFilter: PyObject {
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
     loop: while true {
-      switch self.builtins.next(iterator: self.iterator) {
+      switch Py.next(iterator: self.iterator) {
       case let .value(item):
         if self.fn is PyNone {
           return .value(item)
         }
 
-        if self.iterator === self.builtins.bool {
-          switch self.builtins.isTrueBool(item) {
+        if self.iterator === Py.bool {
+          switch Py.isTrueBool(item) {
           case .value(true): return .value(item)
           case .value(false): continue loop // try next item
           case .error(let e): return .error(e)
           }
         }
 
-        switch self.builtins.call(callable: self.fn, args: [item]) {
+        switch Py.call(callable: self.fn, args: [item]) {
         case .value(let r):
-          switch self.builtins.isTrueBool(r) {
+          switch Py.isTrueBool(r) {
           case .value(true): return .value(item)
           case .value(false): continue loop // try next item
           case .error(let e): return .error(e)
@@ -92,7 +92,7 @@ public class PyFilter: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    if type === type.builtins.filter {
+    if type === Py.types.filter {
       if let e = ArgumentParser.noKwargsOrError(fnName: "filter", kwargs: kwargs) {
         return .error(e)
       }
@@ -109,7 +109,7 @@ public class PyFilter: PyObject {
     let seq = args[1]
 
     let iter: PyObject
-    switch seq.builtins.iter(from: seq) {
+    switch Py.iter(from: seq) {
     case let .value(i): iter = i
     case let .error(e): return .error(e)
     }
