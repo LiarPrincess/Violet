@@ -175,7 +175,8 @@ public final class BuiltinErrorTypes {
 
   print()
   print('  /// Init that will only initialize properties.')
-  print('  internal init(context: PyContext, types: BuiltinTypes) {')
+  print('  internal init() {')
+  print('    let types = Py.types')
 
   for name, base, doc in data:
     property_name = get_builtins_type_property_name(name)

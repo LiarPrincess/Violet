@@ -166,7 +166,7 @@ public class PyType: PyObject, CustomStringConvertible {
   ///
   /// - Warning:
   /// It will not set `self.type` property!
-  internal static func initObjectType(_ context: PyContext) -> PyType {
+  internal static func initObjectType() -> PyType {
     return PyType(name: "object", base: nil, mro: nil)
   }
 

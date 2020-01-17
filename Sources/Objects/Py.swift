@@ -36,7 +36,7 @@ public class PyInstance: BuiltinFunctions {
 
   #warning("Remove this")
   // swiftlint:disable:next implicitly_unwrapped_optional
-  internal let context: PyContext!
+  internal let context: PyContext! = nil
 
   // MARK: - Builtins
 
@@ -75,12 +75,12 @@ public class PyInstance: BuiltinFunctions {
 
   public private(set) lazy var types: BuiltinTypes = {
     self.ensureInitialized()
-    return BuiltinTypes(context: self.context)
+    return BuiltinTypes()
   }()
 
   public private(set) lazy var errorTypes: BuiltinErrorTypes = {
     self.ensureInitialized()
-    return BuiltinErrorTypes(context: self.context, types: self.types)
+    return BuiltinErrorTypes()
   }()
 
   // MARK: - Hasher
@@ -103,11 +103,9 @@ public class PyInstance: BuiltinFunctions {
     self.trapUninitialized()
   }
 
-  // MARK: - Init
+  // MARK: - Init/deinit
 
-  fileprivate init() {
-    self.context = nil
-  }
+  fileprivate init() { }
 
   deinit {
     // Clean circular references.

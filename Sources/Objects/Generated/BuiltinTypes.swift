@@ -77,11 +77,11 @@ public final class BuiltinTypes {
 
   /// Init that will only initialize properties.
   /// (see comment at the top of this file)
-  internal init(context: PyContext) {
+  internal init() {
     // Requirements (for 'self.object' and 'self.type'):
     // 1. 'type' inherits from 'object'
     // 2. both 'type' and 'object' are instances of 'type'
-    self.object = PyType.initObjectType(context)
+    self.object = PyType.initObjectType()
     self.type = PyType.initTypeType(objectType: self.object)
     self.object.setType(to: self.type)
     self.type.setType(to: self.type)

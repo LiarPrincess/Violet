@@ -76,7 +76,8 @@ public final class BuiltinErrorTypes {
   public let resourceWarning: PyType
 
   /// Init that will only initialize properties.
-  internal init(context: PyContext, types: BuiltinTypes) {
+  internal init() {
+    let types = Py.types
     self.baseException = PyType.initBuiltinType(name: "BaseException", type: types.type, base: types.object)
     self.systemExit = PyType.initBuiltinType(name: "SystemExit", type: types.type, base: self.baseException)
     self.keyboardInterrupt = PyType.initBuiltinType(name: "KeyboardInterrupt", type: types.type, base: self.baseException)
