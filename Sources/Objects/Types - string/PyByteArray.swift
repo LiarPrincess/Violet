@@ -93,7 +93,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    return .error(self.builtins.hashNotImplemented(self))
+    return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - String
@@ -143,11 +143,9 @@ public class PyByteArray: PyObject, PyBytesType {
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(at: index) {
     case let .item(int):
-      let result = self.builtins.newInt(int)
-      return .value(result)
+      return .value(Py.newInt(int))
     case let .slice(bytes):
-      let result = self.builtins.newBytes(bytes)
-      return .value(result)
+      return .value(Py.newBytes(bytes))
     case let .error(e):
       return .error(e)
     }
@@ -501,12 +499,12 @@ public class PyByteArray: PyObject, PyBytesType {
                        result: StringPartitionResult<Data>) -> PyResult<PyTuple> {
     switch result {
     case .separatorNotFound:
-      let empty = self.builtins.emptyString
-      return .value(self.builtins.newTuple(self, empty, empty))
+      let empty = Py.emptyString
+      return .value(Py.newTuple(self, empty, empty))
     case let .separatorFound(before, after):
-      let b = self.builtins.newBytes(before)
-      let a = self.builtins.newBytes(after)
-      return .value(self.builtins.newTuple(b, separator, a))
+      let b = Py.newBytes(before)
+      let a = Py.newBytes(after)
+      return .value(Py.newTuple(b, separator, a))
     case .error(let e):
       return .error(e)
     }
@@ -568,19 +566,19 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.add(other).map(self.builtins.newBytes(_:))
+    return self.data.add(other).map(Py.newBytes(_:))
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.mul(other).map(self.builtins.newBytes(_:))
+    return self.data.mul(other).map(Py.newBytes(_:))
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.rmul(other).map(self.builtins.newBytes(_:))
+    return self.data.rmul(other).map(Py.newBytes(_:))
   }
 
   // MARK: - Iter
@@ -596,7 +594,7 @@ public class PyByteArray: PyObject, PyBytesType {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.bytes
+    let isBuiltin = type === Py.types.bytes
     let alloca = isBuiltin ? newByteArray(type:value:) : PyByteArrayHeap.init(type:value:)
 
     let data = Data()
@@ -604,7 +602,7 @@ public class PyByteArray: PyObject, PyBytesType {
   }
 
   private static func newByteArray(type: PyType, value: Data) -> PyByteArray {
-    return type.builtins.newByteArray(value)
+    return Py.newByteArray(value)
   }
 
   // MARK: - Python init
@@ -643,7 +641,7 @@ public class PyByteArray: PyObject, PyBytesType {
                                      errors: errors) {
     case let .value(data):
       zelf.data = PyBytesData(data)
-      return .value(zelf.builtins.none)
+      return .value(Py.none)
     case let .error(e):
       return .error(e)
     }
@@ -665,14 +663,14 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = append, doc = appendDoc
   internal func append(_ element: PyObject) -> PyResult<PyNone> {
-    return self.data.append(element).map { _ in self.builtins.none }
+    return self.data.append(element).map { _ in Py.none }
   }
 
   // MARK: - Extend
 
   // sourcery: pymethod = extend
   internal func extend(iterable: PyObject) -> PyResult<PyNone> {
-    return self.data.extend(iterable: iterable).map { _ in self.builtins.none }
+    return self.data.extend(iterable: iterable).map { _ in Py.none }
   }
 
   // MARK: - Insert
@@ -691,7 +689,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = insert, doc = insertDoc
   internal func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> {
-    return self.data.insert(at: index, item: item).map { _ in self.builtins.none }
+    return self.data.insert(at: index, item: item).map { _ in Py.none }
   }
 
   // MARK: - Remove
@@ -708,7 +706,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = remove, doc = removeDoc
   internal func remove(_ value: PyObject) -> PyResult<PyNone> {
-    return self.data.remove(value).map { _ in self.builtins.none }
+    return self.data.remove(value).map { _ in Py.none }
   }
 
   // MARK: - Pop
@@ -728,7 +726,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = pop, doc = popDoc
   internal func pop(index: PyObject?) -> PyResult<PyObject> {
-    return self.data.pop(index: index).map(self.builtins.newInt)
+    return self.data.pop(index: index).map(Py.newInt)
   }
 
   // MARK: - Set/del item
@@ -737,13 +735,13 @@ public class PyByteArray: PyObject, PyBytesType {
   internal func setItem(at index: PyObject,
                         to value: PyObject) -> PyResult<PyNone> {
     return self.data.setItem(at: index, to: value)
-      .map { _ in self.builtins.none }
+      .map { _ in Py.none }
   }
 
   // sourcery: pymethod = __delitem__
   internal func delItem(at index: PyObject) -> PyResult<PyNone> {
     return self.data.delItem(at: index)
-      .map { _ in self.builtins.none }
+      .map { _ in Py.none }
   }
 
   // MARK: - Clear
@@ -758,7 +756,7 @@ public class PyByteArray: PyObject, PyBytesType {
   // sourcery: pymethod = clear, doc = clearDoc
   internal func clear() -> PyResult<PyNone> {
     self.data.clear()
-    return .value(self.builtins.none)
+    return .value(Py.none)
   }
 
   // MARK: - Reverse
@@ -773,7 +771,7 @@ public class PyByteArray: PyObject, PyBytesType {
   // sourcery: pymethod = reverse, doc = reverseDoc
   internal func reverse() -> PyResult<PyNone> {
     self.data.reverse()
-    return .value(self.builtins.none)
+    return .value(Py.none)
   }
 
   // MARK: - Copy
@@ -787,6 +785,6 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = copy, doc = copyDoc
   internal func copy() -> PyObject {
-    return self.builtins.newByteArray(self.data.values)
+    return Py.newByteArray(self.data.values)
   }
 }

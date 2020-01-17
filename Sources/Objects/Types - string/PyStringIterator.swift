@@ -14,7 +14,7 @@ public class PyStringIterator: PyObject {
   internal init(string: PyString) {
     self.string = string
     self.index = 0
-    super.init(type: string.builtins.types.str_iterator)
+    super.init(type: Py.types.str_iterator)
   }
 
   // MARK: - Class
@@ -50,7 +50,7 @@ public class PyStringIterator: PyObject {
     if let scalarsIndex = scalarsIndexOrNil {
       self.index += 1
       let char = String(scalars[scalarsIndex])
-      return .value(self.builtins.newString(char))
+      return .value(Py.newString(char))
     }
 
     return .stopIteration()

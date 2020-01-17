@@ -172,7 +172,7 @@ internal struct PySequenceData {
 
   internal func contains(value: PyObject) -> PyResult<Bool> {
     for element in self.elements {
-      switch element.builtins.isEqualBool(left: element, right: value) {
+      switch Py.isEqualBool(left: element, right: value) {
       case .value(true):
         return .value(true)
       case .value(false):

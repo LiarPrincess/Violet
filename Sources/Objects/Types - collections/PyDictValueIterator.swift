@@ -20,7 +20,7 @@ public class PyDictValueIterator: PyObject, OrderedDictionaryBackedIterator {
     self.object = dict
     self.index = 0
     self.initCount = dict.data.count
-    super.init(type: dict.builtins.types.dict_valueiterator)
+    super.init(type: Py.types.dict_valueiterator)
   }
 
   // MARK: - Class

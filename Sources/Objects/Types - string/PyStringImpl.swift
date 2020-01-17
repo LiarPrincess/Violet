@@ -1648,10 +1648,8 @@ extension PyStringImpl {
   // MARK: - Join
 
   internal func join(iterable: PyObject) -> PyResult<Builder.Result> {
-    let builtins = iterable.builtins
-
     var index = 0
-    let b = builtins.reduce(iterable: iterable, into: Builder()) { builder, object in
+    let b = Py.reduce(iterable: iterable, into: Builder()) { builder, object in
       let isFirst = index == 0
       if !isFirst {
         builder.append(contentsOf: self.scalars)

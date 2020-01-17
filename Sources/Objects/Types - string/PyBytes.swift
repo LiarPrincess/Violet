@@ -142,10 +142,10 @@ public class PyBytes: PyObject, PyBytesType {
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(at: index) {
     case let .item(int):
-      let result = self.builtins.newInt(int)
+      let result = Py.newInt(int)
       return .value(result)
     case let .slice(bytes):
-      let result = self.builtins.newBytes(bytes)
+      let result = Py.newBytes(bytes)
       return .value(result)
     case let .error(e):
       return .error(e)
@@ -500,12 +500,12 @@ public class PyBytes: PyObject, PyBytesType {
                        result: StringPartitionResult<Data>) -> PyResult<PyTuple> {
     switch result {
     case .separatorNotFound:
-      let empty = self.builtins.emptyString
-      return .value(self.builtins.newTuple(self, empty, empty))
+      let empty = Py.emptyString
+      return .value(Py.newTuple(self, empty, empty))
     case let .separatorFound(before, after):
-      let b = self.builtins.newBytes(before)
-      let a = self.builtins.newBytes(after)
-      return .value(self.builtins.newTuple(b, separator, a))
+      let b = Py.newBytes(before)
+      let a = Py.newBytes(after)
+      return .value(Py.newTuple(b, separator, a))
     case .error(let e):
       return .error(e)
     }
@@ -567,19 +567,19 @@ public class PyBytes: PyObject, PyBytesType {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.add(other).map(self.builtins.newBytes(_:))
+    return self.data.add(other).map(Py.newBytes(_:))
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.mul(other).map(self.builtins.newBytes(_:))
+    return self.data.mul(other).map(Py.newBytes(_:))
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.rmul(other).map(self.builtins.newBytes(_:))
+    return self.data.rmul(other).map(Py.newBytes(_:))
   }
 
   // MARK: - Iter
@@ -616,7 +616,7 @@ public class PyBytes: PyObject, PyBytesType {
                             object: PyObject?,
                             encoding: PyObject?,
                             errors: PyObject?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.bytes
+    let isBuiltin = type === Py.types.bytes
     let alloca = isBuiltin ? newBytes(type:value:) : PyBytesHeap.init(type:value:)
 
     return PyBytesData
@@ -625,6 +625,6 @@ public class PyBytes: PyObject, PyBytesType {
   }
 
   private static func newBytes(type: PyType, value: Data) -> PyBytes {
-    return type.builtins.newBytes(value)
+    return Py.newBytes(value)
   }
 }

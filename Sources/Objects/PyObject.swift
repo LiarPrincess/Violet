@@ -40,10 +40,6 @@ public class PyObject {
     return self.type.getName()
   }
 
-  internal var builtins: Builtins {
-    return Py.builtins
-  }
-
   /// Object address.
   ///
   /// It should be used only for error messages

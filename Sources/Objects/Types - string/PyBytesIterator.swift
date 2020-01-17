@@ -14,7 +14,7 @@ public class PyBytesIterator: PyObject {
   internal init(bytes: PyBytes) {
     self.bytes = bytes
     self.index = 0
-    super.init(type: bytes.builtins.types.bytes_iterator)
+    super.init(type: Py.types.bytes_iterator)
   }
 
   // MARK: - Class
@@ -50,7 +50,7 @@ public class PyBytesIterator: PyObject {
     if let scalarsIndex = scalarsIndexOrNil {
       self.index += 1
       let byte = scalars[scalarsIndex]
-      return .value(self.builtins.newInt(byte))
+      return .value(Py.newInt(byte))
     }
 
     return .stopIteration()

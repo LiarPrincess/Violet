@@ -16,7 +16,7 @@ internal class PyIterator: PyObject {
   internal init(sequence: PyObject) {
     self.sequence = sequence
     self.index = 0
-    super.init(type: sequence.builtins.types.iterator)
+    super.init(type: Py.types.iterator)
   }
 
   // MARK: - Class

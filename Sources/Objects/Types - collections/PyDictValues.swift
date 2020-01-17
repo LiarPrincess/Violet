@@ -16,7 +16,7 @@ public class PyDictValues: PyObject, PyDictViewsShared {
 
   internal init(dict: PyDict) {
     self.dict = dict
-    super.init(type: dict.builtins.types.dict_values)
+    super.init(type: Py.types.dict_values)
   }
 
   // MARK: - String

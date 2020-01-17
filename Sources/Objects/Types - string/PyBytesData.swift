@@ -126,8 +126,7 @@ internal struct PyBytesData: PyStringImpl {
 
     // Slow path: iterable
     // Do not modify `self.values` until we finished iteration.
-    let builtins = iterable.builtins
-    let d = builtins.reduce(iterable: iterable, into: Data()) { acc, object in
+    let d = Py.reduce(iterable: iterable, into: Data()) { acc, object in
       switch Self.asByte(object) {
       case let .value(byte):
         acc.append(byte)
@@ -372,13 +371,11 @@ internal struct PyBytesData: PyStringImpl {
   }
 
   private static func newFromIterable(object: PyObject) -> NewFromResult {
-    let builtins = object.builtins
-
-    guard builtins.hasIter(object: object) else {
+    guard Py.hasIter(object: object) else {
       return .tryOther
     }
 
-    let acc = builtins.reduce(iterable: object, into: Data()) { data, object in
+    let acc = Py.reduce(iterable: object, into: Data()) { data, object in
       switch PyBytesData.asByte(object) {
       case let .value(byte):
         data.append(byte)

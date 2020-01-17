@@ -158,10 +158,10 @@ public class PyString: PyObject {
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
     switch self.data.getItem(at: index) {
     case let .item(scalar):
-      let result = self.builtins.newString(String(scalar))
+      let result = Py.newString(String(scalar))
       return .value(result)
     case let .slice(string):
-      let result = self.builtins.newString(string)
+      let result = Py.newString(string)
       return .value(result)
     case let .error(e):
       return .error(e)
@@ -578,12 +578,12 @@ public class PyString: PyObject {
 
     switch result {
     case .separatorNotFound:
-      let empty = self.builtins.emptyString
-      return .value(self.builtins.newTuple(self, empty, empty))
+      let empty = Py.emptyString
+      return .value(Py.newTuple(self, empty, empty))
     case let .separatorFound(before, after):
-      let b = self.builtins.newString(String(before))
-      let a = self.builtins.newString(String(after))
-      return .value(self.builtins.newTuple(b, separator, a))
+      let b = Py.newString(String(before))
+      let a = Py.newString(String(after))
+      return .value(Py.newTuple(b, separator, a))
     case .error(let e):
       return .error(e)
     }
@@ -645,19 +645,19 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.add(other).map(self.builtins.newString(_:))
+    return self.data.add(other).map(Py.newString(_:))
   }
 
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.mul(other).map(self.builtins.newString(_:))
+    return self.data.mul(other).map(Py.newString(_:))
   }
 
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
-    return self.data.rmul(other).map(self.builtins.newString(_:))
+    return self.data.rmul(other).map(Py.newString(_:))
   }
 
   // MARK: - Iter
@@ -694,7 +694,7 @@ public class PyString: PyObject {
                             object: PyObject?,
                             encoding: PyObject?,
                             errors: PyObject?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.str
+    let isBuiltin = type === Py.types.str
     let alloca = isBuiltin ? newString(type:value:) : PyStringHeap.init(type:value:)
 
     guard let object = object else {
@@ -706,12 +706,11 @@ public class PyString: PyObject {
       trap("Violet currently does not support 'encoding' and 'errors' parameters")
     }
 
-    let builtins = type.builtins
-    return builtins.strValue(object).map { alloca(type, $0) }
+    return Py.strValue(object).map { alloca(type, $0) }
   }
 
   /// Allocate new PyString (it will use 'builtins' cache if possible).
   private static func newString(type: PyType, value: String) -> PyString {
-    return type.builtins.newString(value)
+    return Py.newString(value)
   }
 }

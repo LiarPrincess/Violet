@@ -14,7 +14,7 @@ public class PyListReverseIterator: PyObject {
   internal init(list: PyList) {
     self.list = list
     self.index = list.elements.count - 1
-    super.init(type: list.builtins.types.list_reverseiterator)
+    super.init(type: Py.types.list_reverseiterator)
   }
 
   // MARK: - Class
