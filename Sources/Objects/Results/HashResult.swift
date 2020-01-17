@@ -5,14 +5,14 @@ public enum HashResult {
 }
 
 extension HashResult: PyFunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
+  internal var asFunctionResult: PyFunctionResult {
     switch self {
     case .value(let hash):
-      return hash.toFunctionResult(in: context)
+      return hash.asFunctionResult
     case .error(let e):
       return .error(e)
     case .notImplemented:
-      return .value(context.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
   }
 }

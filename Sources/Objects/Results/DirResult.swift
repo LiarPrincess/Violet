@@ -30,9 +30,8 @@ public struct DirResult {
 }
 
 extension DirResult: PyFunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
-    let builtins = context.builtins
-    let elements = self.sortedValues.map { builtins.newString($0) }
-    return .value(builtins.newList(elements))
+  internal var asFunctionResult: PyFunctionResult {
+    let elements = self.sortedValues.map { Py.newString($0) }
+    return .value(Py.newList(elements))
   }
 }

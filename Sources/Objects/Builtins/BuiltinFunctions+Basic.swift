@@ -129,7 +129,7 @@ extension BuiltinFunctions {
   private func call__dir__(on object: PyObject) -> PyFunctionResult {
     if let owner = object as? __dir__Owner {
       let result = owner.dir()
-      return result.toFunctionResult(in: object.context)
+      return result.asFunctionResult
     }
 
     switch self.callMethod(on: object, selector: "__dir__") {

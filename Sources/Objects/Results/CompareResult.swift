@@ -29,14 +29,14 @@ public enum CompareResult {
 }
 
 extension CompareResult: PyFunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
+  internal var asFunctionResult: PyFunctionResult {
     switch self {
     case .value(let bool):
-      return bool.toFunctionResult(in: context)
+      return bool.asFunctionResult
     case .error(let e):
       return .error(e)
     case .notImplemented:
-      return .value(context.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
   }
 }

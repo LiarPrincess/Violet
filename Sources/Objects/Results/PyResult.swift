@@ -38,8 +38,8 @@ public enum PyResult<Wrapped> {
 extension PyResult: PyFunctionResultConvertible
   where Wrapped: PyFunctionResultConvertible {
 
-  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
-    return self.flatMap { $0.toFunctionResult(in: context) }
+  internal var asFunctionResult: PyFunctionResult {
+    return self.flatMap { $0.asFunctionResult }
   }
 }
 

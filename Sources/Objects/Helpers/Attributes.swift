@@ -176,15 +176,13 @@ extension String: PyHashable {
 // MARK: - Function result convertible
 
 extension Attributes: PyFunctionResultConvertible {
-  internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
-    let builtins = context.builtins
-
+  internal var asFunctionResult: PyFunctionResult {
     let args = self.entries.map { entry -> CreateDictionaryArg in
-      let key = builtins.newString(entry.key)
+      let key = Py.newString(entry.key)
       return CreateDictionaryArg(key: key, value: entry.value)
     }
 
-    switch builtins.newDict(elements: args) {
+    switch Py.newDict(elements: args) {
     case let .value(dict):
       return .value(dict)
     case let .error(e):
