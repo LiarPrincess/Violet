@@ -32,6 +32,10 @@ public class PyInt: PyObject {
   // This has to be `let` because we cache most used ints!
   internal let value: BigInt
 
+  override public var description: String {
+    return "PyInt(\(self.value))"
+  }
+
   // MARK: - Init
 
   internal convenience init(value: Int) {

@@ -17,6 +17,10 @@ public class PyListIterator: PyObject {
     super.init(type: Py.types.list_iterator)
   }
 
+  override public var description: String {
+    return "PyListIterator()"
+  }
+
   // MARK: - Class
 
   // sourcery: pyproperty = __class__

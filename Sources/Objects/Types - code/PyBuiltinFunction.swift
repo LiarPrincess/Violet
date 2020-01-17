@@ -18,6 +18,10 @@ public class PyBuiltinFunction: PyObject {
     return self.function.name
   }
 
+  override public var description: String {
+    return "PyBuiltinFunction(name: \(self.name))"
+  }
+
   // MARK: - Init
 
   internal init(fn: FunctionWrapper,

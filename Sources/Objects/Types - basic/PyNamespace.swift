@@ -12,6 +12,12 @@ public class PyNamespace: PyObject {
 
   internal let attributes: Attributes
 
+  override public var description: String {
+    return "PyNamespace()"
+  }
+
+  // MARK: - Init
+
   internal init(attributes: Attributes) {
     self.attributes = attributes
     super.init(type: Py.types.simpleNamespace)

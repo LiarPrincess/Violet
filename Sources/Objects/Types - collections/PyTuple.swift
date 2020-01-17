@@ -22,6 +22,10 @@ public class PyTuple: PyObject, PySequenceType {
     return self.data.elements
   }
 
+  override public var description: String {
+    return "PyTuple(count: \(self.elements.count))"
+  }
+
   // MARK: - Init
 
   convenience init(elements: [PyObject]) {

@@ -17,7 +17,7 @@ internal struct PyObjectFlags: OptionSet {
 
 // MARK: - Object
 
-public class PyObject {
+public class PyObject: CustomStringConvertible {
 
   // `self_type` has to be implicitly unwrapped optional because:
   // - `objectType` has `typeType` type
@@ -38,6 +38,10 @@ public class PyObject {
 
   public var typeName: String {
     return self.type.getName()
+  }
+
+  public var description: String {
+    return "PyObject()"
   }
 
   /// Object address.

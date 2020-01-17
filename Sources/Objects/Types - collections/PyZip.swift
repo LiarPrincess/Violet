@@ -17,6 +17,12 @@ public class PyZip: PyObject {
 
   internal let iterators: [PyObject]
 
+  override public var description: String {
+    return "PyZip(iterator count: \(self.iterators.count))"
+  }
+
+  // MARK: - Init
+
   internal init(iterators: [PyObject]) {
     self.iterators = iterators
     super.init(type: Py.types.zip)

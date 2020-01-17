@@ -12,6 +12,10 @@ public class PyDictValues: PyObject, PyDictViewsShared {
     return self.dict.data
   }
 
+  override public var description: String {
+    return "PyDictValues()"
+  }
+
   // MARK: - Init
 
   internal init(dict: PyDict) {

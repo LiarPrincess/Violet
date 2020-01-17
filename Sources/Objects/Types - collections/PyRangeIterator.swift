@@ -11,6 +11,12 @@ public class PyRangeIterator: PyObject {
   internal let length: BigInt
   internal var index: BigInt = 0
 
+  override public var description: String {
+    return "PyRangeIterator()"
+  }
+
+  // MARK: - Init
+
   internal init(start: BigInt,
                 step: BigInt,
                 length: BigInt) {

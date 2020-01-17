@@ -10,6 +10,10 @@ import Core
 /// The Python None object, denoting lack of value. This object has no methods.
 public class PyNone: PyObject {
 
+  override public var description: String {
+    return "PyNone()"
+  }
+
   // MARK: - Init
 
   override internal init() {

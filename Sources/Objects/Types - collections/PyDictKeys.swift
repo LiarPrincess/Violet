@@ -8,6 +8,10 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
 
   internal let dict: PyDict
 
+  override public var description: String {
+    return "PyDictKeys(count: \(self.dict.data.count))"
+  }
+
   // MARK: - Init
 
   internal init(dict: PyDict) {

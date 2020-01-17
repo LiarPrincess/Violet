@@ -9,6 +9,10 @@ public class PyStringIterator: PyObject {
   internal let string: PyString
   internal private(set) var index: Int
 
+  override public var description: String {
+    return "PyStringIterator()"
+  }
+
   // MARK: - Init
 
   internal init(string: PyString) {

@@ -8,6 +8,10 @@ import Core
 /// operation is not implemented for the given type combination.
 public class PyNotImplemented: PyObject {
 
+  override public var description: String {
+    return "PyNotImplemented()"
+  }
+
   // MARK: - Init
 
   override internal init() {

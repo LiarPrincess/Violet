@@ -39,6 +39,11 @@ public class PyTextFile: PyObject {
   internal let mode: FileMode
   internal let closeOnDealloc: Bool
 
+  override public var description: String {
+    let name = self.name ?? "?"
+    return "PyTextFile(name: \(name), fd: \(self.fd.raw), mode: \(self.mode)"
+  }
+
   // MARK: - Init
 
   internal convenience init(fd: FileDescriptorType,

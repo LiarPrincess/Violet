@@ -18,6 +18,12 @@ public class PyMethod: PyObject {
   /// The instance it is bound to
   internal let object: PyObject
 
+  override public var description: String {
+    return "PyMethod()"
+  }
+
+  // MARK: - Init
+
   internal init(fn: PyFunction, object: PyObject) {
     self.fn = fn
     self.object = object

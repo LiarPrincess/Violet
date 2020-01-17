@@ -28,6 +28,10 @@ public class PySlice: PyObject {
     return PySequenceData(elements: elements)
   }
 
+  override public var description: String {
+    return "PySlice()"
+  }
+
   // MARK: - Init
 
   internal init(start: PyObject,

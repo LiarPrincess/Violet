@@ -12,6 +12,10 @@ public class PyDictItems: PyObject, PyDictViewsShared {
     return self.dict.data
   }
 
+  override public var description: String {
+    return "PyDictItems(count: \(self.data.count))"
+  }
+
   // MARK: - Init
 
   internal init(dict: PyDict) {

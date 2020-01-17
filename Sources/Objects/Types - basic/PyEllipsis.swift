@@ -9,6 +9,10 @@ import Core
 /// Like Py_None it is a singleton object.
 public class PyEllipsis: PyObject {
 
+  override public var description: String {
+    return "PyEllipsis()"
+  }
+
   // MARK: - Init
 
   override internal init() {

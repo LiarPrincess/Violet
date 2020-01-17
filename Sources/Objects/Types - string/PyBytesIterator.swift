@@ -17,6 +17,10 @@ public class PyBytesIterator: PyObject {
     super.init(type: Py.types.bytes_iterator)
   }
 
+  override public var description: String {
+    return "PyBytesIterator()"
+  }
+
   // MARK: - Class
 
   // sourcery: pyproperty = __class__

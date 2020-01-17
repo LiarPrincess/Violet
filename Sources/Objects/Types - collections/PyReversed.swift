@@ -19,6 +19,10 @@ internal class PyReversed: PyObject {
 
   private static let endIndex = -1
 
+  override public var description: String {
+    return "PyReversed()"
+  }
+
   // MARK: - Init
 
   internal convenience init(sequence: PyObject, sequenceCount: Int) {

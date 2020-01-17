@@ -11,6 +11,10 @@ internal class PyIterator: PyObject {
 
   private static let endIndex = -1
 
+  override public var description: String {
+    return "PyIterator()"
+  }
+
   // MARK: - Init
 
   internal init(sequence: PyObject) {

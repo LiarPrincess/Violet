@@ -14,6 +14,10 @@ public class PySetIterator: PyObject, OrderedDictionaryBackedIterator {
     return self.set.data.dict
   }
 
+  override public var description: String {
+    return "PySetIterator()"
+  }
+
   // MARK: - Init
 
   internal init(set: PySetType) {

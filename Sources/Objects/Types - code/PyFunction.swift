@@ -42,6 +42,12 @@ public class PyFunction: PyObject {
   internal let kwdefaults: PyDict?
   internal let closure: PyTuple?
 
+  override public var description: String {
+    return "PyFunction(name: \(self.name), qualname: \(self.qualname))"
+  }
+
+  // MARK: - Init
+
   internal init(qualname: String?,
                 code: PyCode,
                 globals: Attributes) {

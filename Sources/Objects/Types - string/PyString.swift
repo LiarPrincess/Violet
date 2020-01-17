@@ -37,6 +37,17 @@ public class PyString: PyObject {
     return self.data.scalars
   }
 
+  override public var description: String {
+    let shortCount = 50
+
+    var short = self.value.prefix(shortCount)
+    if self.value.count > shortCount {
+      short += "..."
+    }
+
+    return "PyString('\(short)')"
+  }
+
   // MARK: - Init
 
   convenience init(value: String.UnicodeScalarView) {

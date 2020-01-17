@@ -24,6 +24,10 @@ public class PyDict: PyObject {
 
   internal private(set) var data: PyDictData
 
+  override public var description: String {
+    return "PyDict(count: \(self.data.count))"
+  }
+
   // MARK: - Init
 
   override internal convenience init() {

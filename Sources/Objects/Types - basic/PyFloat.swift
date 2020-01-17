@@ -20,6 +20,10 @@ public class PyFloat: PyObject {
 
   internal let value: Double
 
+  override public var description: String {
+    return "PyFloat(\(self.value))"
+  }
+
   // MARK: - Init
 
   internal init(value: Double) {

@@ -9,6 +9,10 @@ public class PyListReverseIterator: PyObject {
   internal let list: PyList
   internal private(set) var index: Int
 
+  override public var description: String {
+    return "PyListReverseIterator()"
+  }
+
   // MARK: - Init
 
   internal init(list: PyList) {

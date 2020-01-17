@@ -16,6 +16,10 @@ public final class PySystemExit: PyBaseException {
     return "Request to exit from the interpreter."
   }
 
+  override public var description: String {
+    return "PySystemExit()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.systemExit)
   }
@@ -53,6 +57,10 @@ public final class PyKeyboardInterrupt: PyBaseException {
 
   override internal class var doc: String {
     return "Program interrupted by user."
+  }
+
+  override public var description: String {
+    return "PyKeyboardInterrupt()"
   }
 
   override internal func setType() {
@@ -94,6 +102,10 @@ public final class PyGeneratorExit: PyBaseException {
     return "Request that a generator exit."
   }
 
+  override public var description: String {
+    return "PyGeneratorExit()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.generatorExit)
   }
@@ -131,6 +143,10 @@ public class PyException: PyBaseException {
 
   override internal class var doc: String {
     return "Common base class for all non-exit exceptions."
+  }
+
+  override public var description: String {
+    return "PyException()"
   }
 
   override internal func setType() {
@@ -172,6 +188,10 @@ public final class PyStopIteration: PyException {
     return "Signal the end from iterator.__next__()."
   }
 
+  override public var description: String {
+    return "PyStopIteration()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.stopIteration)
   }
@@ -209,6 +229,10 @@ public final class PyStopAsyncIteration: PyException {
 
   override internal class var doc: String {
     return "Signal the end from iterator.__anext__()."
+  }
+
+  override public var description: String {
+    return "PyStopAsyncIteration()"
   }
 
   override internal func setType() {
@@ -250,6 +274,10 @@ public class PyArithmeticError: PyException {
     return "Base class for arithmetic errors."
   }
 
+  override public var description: String {
+    return "PyArithmeticError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.arithmeticError)
   }
@@ -287,6 +315,10 @@ public final class PyFloatingPointError: PyArithmeticError {
 
   override internal class var doc: String {
     return "Floating point operation failed."
+  }
+
+  override public var description: String {
+    return "PyFloatingPointError()"
   }
 
   override internal func setType() {
@@ -328,6 +360,10 @@ public final class PyOverflowError: PyArithmeticError {
     return "Result too large to be represented."
   }
 
+  override public var description: String {
+    return "PyOverflowError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.overflowError)
   }
@@ -365,6 +401,10 @@ public final class PyZeroDivisionError: PyArithmeticError {
 
   override internal class var doc: String {
     return "Second argument to a division or modulo operation was zero."
+  }
+
+  override public var description: String {
+    return "PyZeroDivisionError()"
   }
 
   override internal func setType() {
@@ -406,6 +446,10 @@ public final class PyAssertionError: PyException {
     return "Assertion failed."
   }
 
+  override public var description: String {
+    return "PyAssertionError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.assertionError)
   }
@@ -443,6 +487,10 @@ public final class PyAttributeError: PyException {
 
   override internal class var doc: String {
     return "Attribute not found."
+  }
+
+  override public var description: String {
+    return "PyAttributeError()"
   }
 
   override internal func setType() {
@@ -484,6 +532,10 @@ public final class PyBufferError: PyException {
     return "Buffer error."
   }
 
+  override public var description: String {
+    return "PyBufferError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.bufferError)
   }
@@ -521,6 +573,10 @@ public final class PyEOFError: PyException {
 
   override internal class var doc: String {
     return "Read beyond end of file."
+  }
+
+  override public var description: String {
+    return "PyEOFError()"
   }
 
   override internal func setType() {
@@ -562,6 +618,10 @@ public class PyImportError: PyException {
     return "Import can't find module, or can't find name in module."
   }
 
+  override public var description: String {
+    return "PyImportError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.importError)
   }
@@ -599,6 +659,10 @@ public final class PyModuleNotFoundError: PyImportError {
 
   override internal class var doc: String {
     return "Module not found."
+  }
+
+  override public var description: String {
+    return "PyModuleNotFoundError()"
   }
 
   override internal func setType() {
@@ -640,6 +704,10 @@ public class PyLookupError: PyException {
     return "Base class for lookup errors."
   }
 
+  override public var description: String {
+    return "PyLookupError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.lookupError)
   }
@@ -677,6 +745,10 @@ public final class PyIndexError: PyLookupError {
 
   override internal class var doc: String {
     return "Sequence index out of range."
+  }
+
+  override public var description: String {
+    return "PyIndexError()"
   }
 
   override internal func setType() {
@@ -718,6 +790,10 @@ public final class PyKeyError: PyLookupError {
     return "Mapping key not found."
   }
 
+  override public var description: String {
+    return "PyKeyError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.keyError)
   }
@@ -755,6 +831,10 @@ public final class PyMemoryError: PyException {
 
   override internal class var doc: String {
     return "Out of memory."
+  }
+
+  override public var description: String {
+    return "PyMemoryError()"
   }
 
   override internal func setType() {
@@ -796,6 +876,10 @@ public class PyNameError: PyException {
     return "Name not found globally."
   }
 
+  override public var description: String {
+    return "PyNameError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.nameError)
   }
@@ -833,6 +917,10 @@ public final class PyUnboundLocalError: PyNameError {
 
   override internal class var doc: String {
     return "Local name referenced but not bound to a value."
+  }
+
+  override public var description: String {
+    return "PyUnboundLocalError()"
   }
 
   override internal func setType() {
@@ -874,6 +962,10 @@ public class PyOSError: PyException {
     return "Base class for I/O related errors."
   }
 
+  override public var description: String {
+    return "PyOSError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.osError)
   }
@@ -911,6 +1003,10 @@ public final class PyBlockingIOError: PyOSError {
 
   override internal class var doc: String {
     return "I/O operation would block."
+  }
+
+  override public var description: String {
+    return "PyBlockingIOError()"
   }
 
   override internal func setType() {
@@ -952,6 +1048,10 @@ public final class PyChildProcessError: PyOSError {
     return "Child process error."
   }
 
+  override public var description: String {
+    return "PyChildProcessError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.childProcessError)
   }
@@ -989,6 +1089,10 @@ public class PyConnectionError: PyOSError {
 
   override internal class var doc: String {
     return "Connection error."
+  }
+
+  override public var description: String {
+    return "PyConnectionError()"
   }
 
   override internal func setType() {
@@ -1030,6 +1134,10 @@ public final class PyBrokenPipeError: PyConnectionError {
     return "Broken pipe."
   }
 
+  override public var description: String {
+    return "PyBrokenPipeError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.brokenPipeError)
   }
@@ -1067,6 +1175,10 @@ public final class PyConnectionAbortedError: PyConnectionError {
 
   override internal class var doc: String {
     return "Connection aborted."
+  }
+
+  override public var description: String {
+    return "PyConnectionAbortedError()"
   }
 
   override internal func setType() {
@@ -1108,6 +1220,10 @@ public final class PyConnectionRefusedError: PyConnectionError {
     return "Connection refused."
   }
 
+  override public var description: String {
+    return "PyConnectionRefusedError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.connectionRefusedError)
   }
@@ -1145,6 +1261,10 @@ public final class PyConnectionResetError: PyConnectionError {
 
   override internal class var doc: String {
     return "Connection reset."
+  }
+
+  override public var description: String {
+    return "PyConnectionResetError()"
   }
 
   override internal func setType() {
@@ -1186,6 +1306,10 @@ public final class PyFileExistsError: PyOSError {
     return "File already exists."
   }
 
+  override public var description: String {
+    return "PyFileExistsError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.fileExistsError)
   }
@@ -1223,6 +1347,10 @@ public final class PyFileNotFoundError: PyOSError {
 
   override internal class var doc: String {
     return "File not found."
+  }
+
+  override public var description: String {
+    return "PyFileNotFoundError()"
   }
 
   override internal func setType() {
@@ -1264,6 +1392,10 @@ public final class PyInterruptedError: PyOSError {
     return "Interrupted by signal."
   }
 
+  override public var description: String {
+    return "PyInterruptedError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.interruptedError)
   }
@@ -1301,6 +1433,10 @@ public final class PyIsADirectoryError: PyOSError {
 
   override internal class var doc: String {
     return "Operation doesn't work on directories."
+  }
+
+  override public var description: String {
+    return "PyIsADirectoryError()"
   }
 
   override internal func setType() {
@@ -1342,6 +1478,10 @@ public final class PyNotADirectoryError: PyOSError {
     return "Operation only works on directories."
   }
 
+  override public var description: String {
+    return "PyNotADirectoryError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.notADirectoryError)
   }
@@ -1379,6 +1519,10 @@ public final class PyPermissionError: PyOSError {
 
   override internal class var doc: String {
     return "Not enough permissions."
+  }
+
+  override public var description: String {
+    return "PyPermissionError()"
   }
 
   override internal func setType() {
@@ -1420,6 +1564,10 @@ public final class PyProcessLookupError: PyOSError {
     return "Process not found."
   }
 
+  override public var description: String {
+    return "PyProcessLookupError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.processLookupError)
   }
@@ -1457,6 +1605,10 @@ public final class PyTimeoutError: PyOSError {
 
   override internal class var doc: String {
     return "Timeout expired."
+  }
+
+  override public var description: String {
+    return "PyTimeoutError()"
   }
 
   override internal func setType() {
@@ -1498,6 +1650,10 @@ public final class PyReferenceError: PyException {
     return "Weak ref proxy used after referent went away."
   }
 
+  override public var description: String {
+    return "PyReferenceError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.referenceError)
   }
@@ -1535,6 +1691,10 @@ public class PyRuntimeError: PyException {
 
   override internal class var doc: String {
     return "Unspecified run-time error."
+  }
+
+  override public var description: String {
+    return "PyRuntimeError()"
   }
 
   override internal func setType() {
@@ -1576,6 +1736,10 @@ public final class PyNotImplementedError: PyRuntimeError {
     return "Method or function hasn't been implemented yet."
   }
 
+  override public var description: String {
+    return "PyNotImplementedError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.notImplementedError)
   }
@@ -1613,6 +1777,10 @@ public final class PyRecursionError: PyRuntimeError {
 
   override internal class var doc: String {
     return "Recursion limit exceeded."
+  }
+
+  override public var description: String {
+    return "PyRecursionError()"
   }
 
   override internal func setType() {
@@ -1654,6 +1822,10 @@ public class PySyntaxError: PyException {
     return "Invalid syntax."
   }
 
+  override public var description: String {
+    return "PySyntaxError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.syntaxError)
   }
@@ -1693,6 +1865,10 @@ public class PyIndentationError: PySyntaxError {
     return "Improper indentation."
   }
 
+  override public var description: String {
+    return "PyIndentationError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.indentationError)
   }
@@ -1730,6 +1906,10 @@ public final class PyTabError: PyIndentationError {
 
   override internal class var doc: String {
     return "Improper mixture of spaces and tabs."
+  }
+
+  override public var description: String {
+    return "PyTabError()"
   }
 
   override internal func setType() {
@@ -1774,6 +1954,10 @@ public final class PySystemError: PyException {
 "the Python version, and the hardware/OS platform and version."
   }
 
+  override public var description: String {
+    return "PySystemError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.systemError)
   }
@@ -1811,6 +1995,10 @@ public final class PyTypeError: PyException {
 
   override internal class var doc: String {
     return "Inappropriate argument type."
+  }
+
+  override public var description: String {
+    return "PyTypeError()"
   }
 
   override internal func setType() {
@@ -1852,6 +2040,10 @@ public class PyValueError: PyException {
     return "Inappropriate argument value (of correct type)."
   }
 
+  override public var description: String {
+    return "PyValueError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.valueError)
   }
@@ -1889,6 +2081,10 @@ public class PyUnicodeError: PyValueError {
 
   override internal class var doc: String {
     return "Unicode related error."
+  }
+
+  override public var description: String {
+    return "PyUnicodeError()"
   }
 
   override internal func setType() {
@@ -1930,6 +2126,10 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
     return "Unicode decoding error."
   }
 
+  override public var description: String {
+    return "PyUnicodeDecodeError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.unicodeDecodeError)
   }
@@ -1967,6 +2167,10 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
 
   override internal class var doc: String {
     return "Unicode encoding error."
+  }
+
+  override public var description: String {
+    return "PyUnicodeEncodeError()"
   }
 
   override internal func setType() {
@@ -2008,6 +2212,10 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
     return "Unicode translation error."
   }
 
+  override public var description: String {
+    return "PyUnicodeTranslateError()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.unicodeTranslateError)
   }
@@ -2047,6 +2255,10 @@ public class PyWarning: PyException {
     return "Base class for warning categories."
   }
 
+  override public var description: String {
+    return "PyWarning()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.warning)
   }
@@ -2084,6 +2296,10 @@ public final class PyDeprecationWarning: PyWarning {
 
   override internal class var doc: String {
     return "Base class for warnings about deprecated features."
+  }
+
+  override public var description: String {
+    return "PyDeprecationWarning()"
   }
 
   override internal func setType() {
@@ -2126,6 +2342,10 @@ public final class PyPendingDeprecationWarning: PyWarning {
 "in the future."
   }
 
+  override public var description: String {
+    return "PyPendingDeprecationWarning()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.pendingDeprecationWarning)
   }
@@ -2163,6 +2383,10 @@ public final class PyRuntimeWarning: PyWarning {
 
   override internal class var doc: String {
     return "Base class for warnings about dubious runtime behavior."
+  }
+
+  override public var description: String {
+    return "PyRuntimeWarning()"
   }
 
   override internal func setType() {
@@ -2204,6 +2428,10 @@ public final class PySyntaxWarning: PyWarning {
     return "Base class for warnings about dubious syntax."
   }
 
+  override public var description: String {
+    return "PySyntaxWarning()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.syntaxWarning)
   }
@@ -2241,6 +2469,10 @@ public final class PyUserWarning: PyWarning {
 
   override internal class var doc: String {
     return "Base class for warnings generated by user code."
+  }
+
+  override public var description: String {
+    return "PyUserWarning()"
   }
 
   override internal func setType() {
@@ -2283,6 +2515,10 @@ public final class PyFutureWarning: PyWarning {
 "in the future."
   }
 
+  override public var description: String {
+    return "PyFutureWarning()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.futureWarning)
   }
@@ -2320,6 +2556,10 @@ public final class PyImportWarning: PyWarning {
 
   override internal class var doc: String {
     return "Base class for warnings about probable mistakes in module imports"
+  }
+
+  override public var description: String {
+    return "PyImportWarning()"
   }
 
   override internal func setType() {
@@ -2362,6 +2602,10 @@ public final class PyUnicodeWarning: PyWarning {
 "related to conversion problems."
   }
 
+  override public var description: String {
+    return "PyUnicodeWarning()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.unicodeWarning)
   }
@@ -2402,6 +2646,10 @@ public final class PyBytesWarning: PyWarning {
 "related to conversion from str or comparing to str."
   }
 
+  override public var description: String {
+    return "PyBytesWarning()"
+  }
+
   override internal func setType() {
     self.setType(to: Py.errorTypes.bytesWarning)
   }
@@ -2439,6 +2687,10 @@ public final class PyResourceWarning: PyWarning {
 
   override internal class var doc: String {
     return "Base class for warnings about resource usage."
+  }
+
+  override public var description: String {
+    return "PyResourceWarning()"
   }
 
   override internal func setType() {

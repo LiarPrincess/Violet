@@ -16,6 +16,12 @@ public class PyMap: PyObject {
   internal let fn: PyObject
   internal let iterators: [PyObject]
 
+  override public var description: String {
+    return "PyMap()"
+  }
+
+  // MARK: - Init
+
   internal init(fn: PyObject, iterators: [PyObject]) {
     self.fn = fn
     self.iterators = iterators

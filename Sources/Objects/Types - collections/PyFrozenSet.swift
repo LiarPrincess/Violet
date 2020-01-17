@@ -19,6 +19,10 @@ public class PyFrozenSet: PyObject, PySetType {
 
   internal var data: PySetData
 
+  override public var description: String {
+    return "PyFrozenSet(count: \(self.data.count))"
+  }
+
   // MARK: - Init
 
   override internal convenience init() {

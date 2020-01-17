@@ -67,7 +67,7 @@ internal struct PyTypeWeakRef {
 // MARK: - Type
 
 // sourcery: default, hasGC, baseType, typeSubclass
-public class PyType: PyObject, CustomStringConvertible {
+public class PyType: PyObject {
 
   internal static let doc: String = """
     type(object_or_name, bases, dict)
@@ -104,8 +104,8 @@ public class PyType: PyObject, CustomStringConvertible {
     self.attributes = attributes
   }
 
-  public var description: String { // Because debugging without this is hard...
-    return self.name
+  override public var description: String {
+    return "PyType(name: \(self.name), qualname: \(qualname))"
   }
 
   // MARK: - Init

@@ -14,6 +14,10 @@ public class PyDictValueIterator: PyObject, OrderedDictionaryBackedIterator {
     return self.object.data
   }
 
+  override public var description: String {
+    return "PyDictValueIterator()"
+  }
+
   // MARK: - Init
 
   internal init(dict: PyDict) {

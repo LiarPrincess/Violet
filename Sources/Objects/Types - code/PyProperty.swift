@@ -48,6 +48,10 @@ public class PyProperty: PyObject {
   internal private(set) var deleter: PyObject?
   internal private(set) var doc: PyObject?
 
+  override public var description: String {
+    return "PyProperty()"
+  }
+
   internal init(getter: PyObject?,
                 setter: PyObject?,
                 deleter: PyObject?) {

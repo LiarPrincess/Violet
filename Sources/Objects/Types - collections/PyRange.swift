@@ -42,6 +42,13 @@ public class PyRange: PyObject {
     return self.start.value <= self.stop.value
   }
 
+  override public var description: String {
+    let start = self.start
+    let stop = self.stop
+    let step = self.step
+    return "PyRange(start: \(start), stop: \(stop), step: \(step))"
+  }
+
   // MARK: - Init
 
   internal init(start: PyInt, stop: PyInt, step: PyInt?) {

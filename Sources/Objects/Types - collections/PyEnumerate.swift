@@ -29,6 +29,10 @@ public class PyEnumerate: PyObject {
   /// Next used index of enumeration
   internal private(set) var nextIndex: BigInt
 
+  override public var description: String {
+    return "PyEnumerate()"
+  }
+
   // MARK: - Init
 
   internal init(iterator: PyObject, startFrom index: BigInt) {

@@ -26,6 +26,10 @@ public class PyList: PyObject, PySequenceType {
     return self.data.elements
   }
 
+  override public var description: String {
+    return "PyList(count: \(self.elements.count))"
+  }
+
   // MARK: - Init
 
   convenience init(elements: [PyObject]) {

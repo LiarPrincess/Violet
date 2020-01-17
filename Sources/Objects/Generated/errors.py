@@ -124,6 +124,10 @@ public {final}class Py{name}: Py{base} {{
     return "{doc}"
   }}
 
+  override public var description: String {{
+    return "Py{name}()"
+  }}
+
   override internal func setType() {{
     self.setType(to: Py.errorTypes.{builtins_type_variable})
   }}

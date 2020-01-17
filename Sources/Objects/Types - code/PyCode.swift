@@ -16,6 +16,12 @@ public class PyCode: PyObject {
     return self.codeObject.filename
   }
 
+  override public var description: String {
+    return "PyCode(filename: \(self.filename))"
+  }
+
+  // MARK: - Init
+
   internal init(code: CodeObject) {
     self.codeObject = code
     super.init(type: Py.types.code)

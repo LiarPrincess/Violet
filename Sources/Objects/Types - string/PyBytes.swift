@@ -29,6 +29,10 @@ public class PyBytes: PyObject, PyBytesType {
     return self.data.values
   }
 
+  override public var description: String {
+    return "PyBytes(count: \(self.value.count))"
+  }
+
   // MARK: - Init
 
   internal init(value: Data) {

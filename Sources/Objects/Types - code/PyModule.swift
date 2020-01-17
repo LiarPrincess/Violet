@@ -24,6 +24,17 @@ public class PyModule: PyObject {
     return Py.strValue(nameObject)
   }
 
+  override public var description: String {
+    switch self.name {
+    case .value(let name):
+      return "PyModule(name: \(name))"
+    case .error:
+      return "PyModule(name: ?)"
+    }
+  }
+
+  // MARK: - Init
+
   internal convenience init(name: String, doc: String?) {
     let n = Py.newString(name)
     let d = doc.map(Py.newString(_:))
