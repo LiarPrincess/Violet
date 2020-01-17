@@ -401,7 +401,7 @@ public class PySlice: PyObject {
   internal enum ExtractIndexResult {
     case none
     case index(Int)
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   /// _PyEval_SliceIndex
@@ -416,7 +416,7 @@ public class PySlice: PyObject {
     case .notIndex:
       let t = self.typeName
       let msg = "\(t) indices must be integers or None or have an __index__ method"
-      return .error(.typeError(msg))
+      return .error(Py.newTypeError(msg: msg))
     case .error(let e):
       return .error(e)
     }

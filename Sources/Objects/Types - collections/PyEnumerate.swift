@@ -71,9 +71,11 @@ public class PyEnumerate: PyObject {
   internal func next() -> PyResult<PyObject> {
     let item: PyObject
     switch self.builtins.next(iterator: self.iterator) {
-    case .value(let n): item = n
-    case .error(.stopIteration): return .error(.stopIteration) // lets be explicit
-    case .error(let e): return .error(e)
+    case .value(let n):
+      item = n
+    case .error(let e):
+      // This also includes 'StopIteration'
+      return .error(e)
     }
 
     let index = self.builtins.newInt(self.nextIndex)

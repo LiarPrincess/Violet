@@ -36,7 +36,7 @@ extension Frame {
     case .value:
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -51,7 +51,7 @@ extension Frame {
       self.stack.push(collection)
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -66,7 +66,7 @@ extension Frame {
     case .value:
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -82,7 +82,7 @@ extension Frame {
       self.stack.push(collection)
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -93,7 +93,8 @@ extension Frame {
     let keys = self.stack.pop()
 
     guard let keysTuple = keys as? PyTuple else {
-      return .builtinError(.systemError("bad BUILD_CONST_KEY_MAP keys argument"))
+      let msg = "bad BUILD_CONST_KEY_MAP keys argument"
+      return .error(Py.newSystemError(msg: msg))
     }
 
     let count = self.builtins.lengthInt(tuple: keysTuple)
@@ -104,7 +105,7 @@ extension Frame {
       self.stack.push(collection)
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -132,7 +133,7 @@ extension Frame {
     case .value:
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 

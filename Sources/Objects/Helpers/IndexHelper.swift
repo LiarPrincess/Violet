@@ -5,7 +5,7 @@ internal enum IndexHelper {
   internal enum TryIndexResult<T> {
     case value(T)
     case notIndex
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   // MARK: - Int
@@ -33,7 +33,7 @@ internal enum IndexHelper {
     }
 
     let msg = "cannot fit '\(value.typeName)' into an index-sized integer"
-    return .error(.indexError(msg))
+    return .error(Py.newIndexError(msg: msg))
   }
 
   /// Extract `int` index from `PyObject`.
@@ -47,7 +47,7 @@ internal enum IndexHelper {
       return .value(v)
     case .notIndex:
       let msg = "'\(value.typeName)' object cannot be interpreted as an integer"
-      return .error(.typeError(msg))
+      return .typeError(msg)
     case .error(let e):
       return .error(e)
     }
@@ -71,7 +71,7 @@ internal enum IndexHelper {
     case .value(let object):
       guard let int = object as? PyInt else {
         let msg = "__index__ returned non-int (type \(object.typeName)"
-        return .error(.typeError(msg))
+        return .error(Py.newTypeError(msg: msg))
       }
       return .value(int.value)
 
@@ -92,7 +92,7 @@ internal enum IndexHelper {
       return .value(v)
     case .notIndex:
       let msg = "'\(value.typeName)' object cannot be interpreted as an integer"
-      return .error(.typeError(msg))
+      return .typeError(msg)
     case .error(let e):
       return .error(e)
     }

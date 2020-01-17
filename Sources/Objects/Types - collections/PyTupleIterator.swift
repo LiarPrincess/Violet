@@ -48,7 +48,7 @@ public class PyTupleIterator: PyObject {
       return .value(item)
     }
 
-    return .stopIteration
+    return .stopIteration()
   }
 
   // MARK: - Python new

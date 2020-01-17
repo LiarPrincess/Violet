@@ -14,7 +14,7 @@ extension Frame {
     let value: PyObject
     switch self.convert(value: rawValue, conversion: conversion) {
     case let .value(o): value = o
-    case let .error(e): return .builtinError(e)
+    case let .error(e): return .error(e)
     }
 
     if value is PyString && format == nil {
@@ -55,7 +55,7 @@ extension Frame {
       self.stack.push(r)
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 }

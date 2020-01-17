@@ -92,7 +92,7 @@ internal struct PySequenceData {
   private enum FistNotEqualElements {
     case elements(selfElement: PyObject, otherElement: PyObject)
     case allEqualUpToShorterCount
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   private func getFirstNotEqualElement(with other: PySequenceData) -> FistNotEqualElements {
@@ -190,7 +190,7 @@ internal struct PySequenceData {
   internal enum GetItemResult {
     case single(PyObject)
     case slice([PyObject])
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   internal func getItem(index: PyObject, typeName: String) -> GetItemResult {
@@ -214,7 +214,7 @@ internal struct PySequenceData {
     }
 
     let msg = "\(typeName) indices must be integers or slices, not \(index.typeName)"
-    return .error(.typeError(msg))
+    return .error(Py.newTypeError(msg: msg))
   }
 
   internal func getItem(index: Int, typeName: String) -> PyResult<PyObject> {
@@ -375,7 +375,7 @@ internal struct PySequenceData {
   internal enum FindResult {
     case index(Int)
     case notFound
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   internal func find(_ value: PyObject) -> FindResult {
@@ -435,7 +435,7 @@ internal struct PySequenceData {
 
   internal enum MulResult {
     case value([PyObject])
-    case error(PyErrorEnum)
+    case error(PyBaseException)
     case notImplemented
   }
 
@@ -515,7 +515,7 @@ internal struct PySequenceData {
   private enum ExtractIndexResult {
     case none
     case index(Index)
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   private func extractIndex(_ value: PyObject?) -> ExtractIndexResult {

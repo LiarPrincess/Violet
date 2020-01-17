@@ -63,16 +63,18 @@ internal class PyReversed: PyObject {
       case .value(let o):
         self.index -= 1
         return .value(o)
-      case .error(.indexError),
-           .error(.stopIteration):
-        break
+
       case .error(let e):
+        if e.isIndexError || e.isStopIteration {
+          break
+        }
+
         return .error(e)
       }
     }
 
     self.index = PyReversed.endIndex
-    return .stopIteration
+    return .stopIteration()
   }
 
   // MARK: - Python new
@@ -124,7 +126,7 @@ internal class PyReversed: PyObject {
 
   private enum CallReversedResult {
     case value(PyObject)
-    case error(PyErrorEnum)
+    case error(PyBaseException)
     case missingMethod
   }
 

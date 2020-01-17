@@ -54,7 +54,7 @@ public class PyZip: PyObject {
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
     if self.iterators.isEmpty {
-      return .stopIteration
+      return .stopIteration()
     }
 
     var result = [PyObject]()
@@ -95,9 +95,11 @@ public class PyZip: PyObject {
       switch object.builtins.iter(from: object) {
       case .value(let i):
         iters.append(i)
-      case .error(.typeError):
-        return . typeError("zip argument \(index + 1) must support iteration")
+
       case .error(let e):
+        if e.isTypeError {
+          return .typeError("zip argument \(index + 1) must support iteration")
+        }
         return .error(e)
       }
     }

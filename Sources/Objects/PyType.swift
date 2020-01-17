@@ -302,13 +302,13 @@ public class PyType: PyObject, CustomStringConvertible {
   public enum GetModuleRawResult {
     case builtins
     case module(String)
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   public func getModuleRaw() -> GetModuleRawResult {
     if self.isHeapType {
       guard let object = self.attributes.get(key: "__module__") else {
-        return .error(.attributeError("__module__"))
+        return .error(Py.newAttributeError(msg: "__module__"))
       }
 
       guard let module = object as? PyModule else {
@@ -520,10 +520,10 @@ public class PyType: PyObject, CustomStringConvertible {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
-  private func checkSetAttributeOnBuiltin() -> PyErrorEnum? {
+  private func checkSetAttributeOnBuiltin() -> PyBaseException? {
     if !self.isHeapType {
       let msg = "can't set attributes of built-in/extension type '\(self.name)'"
-      return .typeError(msg)
+      return Py.newTypeError(msg: msg)
     }
 
     return nil

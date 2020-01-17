@@ -49,7 +49,7 @@ public class PyListReverseIterator: PyObject {
     }
 
     self.index = -1
-    return .stopIteration
+    return .stopIteration()
   }
 
   // MARK: - Python new

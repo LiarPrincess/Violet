@@ -34,7 +34,8 @@ extension Frame {
     let block = self.popBlockInner()
 
     if block.type != .exceptHandler {
-      return .builtinError(.systemError("popped block is not an except handler"))
+      let msg = "popped block is not an except handler"
+      return .error(Py.newSystemError(msg: msg))
     }
 
     self.unwindExceptHandler(block: block)

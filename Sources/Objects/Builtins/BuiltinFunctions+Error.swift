@@ -86,7 +86,6 @@ extension BuiltinFunctions {
 
   /// Local name referenced but not bound to a value.
   public func newUnboundLocalError(variableName: String) -> PyUnboundLocalError {
-     // variableName - standard 'msg'
     let msg = "local variable '\(variableName)' referenced before assignment"
     return PyUnboundLocalError(msg: msg)
   }

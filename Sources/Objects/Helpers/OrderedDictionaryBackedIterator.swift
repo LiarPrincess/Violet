@@ -19,7 +19,7 @@ extension OrderedDictionaryBackedIterator {
       switch self.dict.entries[self.index] {
       case .entry(let e):
         // Increment index, so that the next iteration
-        // does not return current element
+        // does not return the same element
         self.index += 1
         return .value(e)
       case .deleted:
@@ -27,6 +27,6 @@ extension OrderedDictionaryBackedIterator {
       }
     }
 
-    return .stopIteration
+    return .error(Py.newStopIteration())
   }
 }

@@ -607,7 +607,7 @@ public class PyComplex: PyObject {
 
   private enum CallComplexResult {
     case value(PyObject)
-    case error(PyErrorEnum)
+    case error(PyBaseException)
     case missingMethod
   }
 

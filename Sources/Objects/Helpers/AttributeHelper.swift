@@ -101,11 +101,13 @@ internal enum AttributeHelper {
   // MARK: - Errors
 
   internal static func attributeError(object: PyObject,
-                                      name: String) -> PyErrorEnum {
-    return .attributeError("\(object.typeName) object has no attribute '\(name)'")
+                                      name: String) -> PyBaseException {
+    let msg = "\(object.typeName) object has no attribute '\(name)'"
+    return Py.newAttributeError(msg: msg)
   }
 
-  internal static func nameTypeError(name: PyObject) -> PyErrorEnum {
-    return .typeError("attribute name must be string, not '\(name.typeName)'")
+  internal static func nameTypeError(name: PyObject) -> PyBaseException {
+    let msg = "attribute name must be string, not '\(name.typeName)'"
+    return Py.newTypeError(msg: msg)
   }
 }

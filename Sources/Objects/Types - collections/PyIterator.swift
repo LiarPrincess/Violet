@@ -45,18 +45,20 @@ internal class PyIterator: PyObject {
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
     guard self.index != PyIterator.endIndex else {
-      return .stopIteration
+      return .stopIteration()
     }
 
     switch self.builtins.getItem(self.sequence, at: self.index) {
     case .value(let o):
       self.index += 1
       return .value(o)
-    case .error(.indexError),
-         .error(.stopIteration):
-      self.index = PyIterator.endIndex
-      return .stopIteration
+
     case .error(let e):
+      if e.isIndexError || e.isStopIteration {
+        self.index = PyIterator.endIndex
+        return .stopIteration()
+      }
+
       return .error(e)
     }
   }

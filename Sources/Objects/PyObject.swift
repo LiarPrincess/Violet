@@ -128,6 +128,7 @@ public class PyObject {
 // MARK: - Function result convertible
 
 // 'PyObject' can be returned from Python function!
+// Yeah... I know, kind of hard to believe.
 extension PyObject: PyFunctionResultConvertible {
   internal func toFunctionResult(in context: PyContext) -> PyFunctionResult {
     return .value(self)

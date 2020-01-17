@@ -25,7 +25,7 @@ extension Frame {
       self.stack.top = iter
     return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -40,12 +40,15 @@ extension Frame {
     case .value(let o):
       self.stack.push(o)
       return .ok
-    case .error(.stopIteration):
-      _ = self.stack.pop() // iter
-      self.jumpTo(labelIndex: ifEmptyLabelIndex)
-      return .ok
+
     case .error(let e):
-      return .builtinError(e)
+      if e.isStopIteration {
+        _ = self.stack.pop() // iter
+        self.jumpTo(labelIndex: ifEmptyLabelIndex)
+        return .ok
+      }
+
+      return .error(e)
     }
   }
 

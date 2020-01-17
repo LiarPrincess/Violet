@@ -3,7 +3,7 @@
 private enum MinMaxResult {
   case useCurrent
   case useNew
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 }
 
 /// Shared code for `min/max` implementation.

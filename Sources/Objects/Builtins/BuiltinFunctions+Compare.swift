@@ -9,7 +9,7 @@
 
 private enum FastCallResult {
   case value(Bool)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
   case notImplemented
   /// Fast call is not available
   case unavailable

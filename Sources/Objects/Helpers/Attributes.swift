@@ -83,8 +83,9 @@ public final class Attributes {
 
   /// Errors can happen when the value is not-hashable.
   /// Strings are always hashable, so we don't expect errors.
-  private func errorNotHandled(operation: String, error: PyErrorEnum) -> Never {
-    trap("Attribute dictionary '\(operation)' operation returned an error: \(error)")
+  private func errorNotHandled(operation: String, error: PyBaseException) -> Never {
+    let repr = Py.reprOrGeneric(error)
+    trap("Attribute dictionary '\(operation)' operation returned an error: \(repr)")
   }
 
   // MARK: - Clear

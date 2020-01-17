@@ -303,17 +303,16 @@ public class PyTextFile: PyObject {
 
   // MARK: - Helpers
 
-  private func osError(from error: Error) -> PyErrorEnum {
-    if let fileError = error as? FileDescriptor.Error {
-      return .osError(fileError.str)
-    }
+  private func osError(from error: Error) -> PyBaseException {
+    let descriptorError = error as? FileDescriptor.Error
+    let msg = descriptorError?.str ?? "unknown IO error"
 
-    return .osError("unknown IO error")
+    return Py.newOSError(msg: msg)
   }
 
-  private func modeError(_ msg: String) -> PyErrorEnum {
+  private func modeError(_ msg: String) -> PyBaseException {
     // It should be 'io.UnsupportedOperation', but we don't have it,
     // so we will use 'OSError' instead.
-    return .osError(msg)
+    return Py.newOSError(msg: msg)
   }
 }

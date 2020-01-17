@@ -48,7 +48,7 @@ public class PyListIterator: PyObject {
       return .value(item)
     }
 
-    return .stopIteration
+    return .stopIteration()
   }
 
   // MARK: - Python new

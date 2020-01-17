@@ -53,7 +53,7 @@ public class PyStringIterator: PyObject {
       return .value(self.builtins.newString(char))
     }
 
-    return .stopIteration
+    return .stopIteration()
   }
 
   // MARK: - Python new

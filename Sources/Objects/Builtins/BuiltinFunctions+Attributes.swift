@@ -70,10 +70,10 @@ extension BuiltinFunctions {
     return self.defaultIfAttributeError(error: e, default: `default`)
   }
 
-  private func defaultIfAttributeError(error: PyErrorEnum,
+  private func defaultIfAttributeError(error: PyBaseException,
                                        default: PyObject?) -> PyResult<PyObject> {
     // We are only interested in AttributeError
-    guard case PyErrorEnum.attributeError = error else {
+    guard error.isAttributeError else {
       return .error(error)
     }
 
@@ -99,9 +99,12 @@ extension BuiltinFunctions {
     switch self.getAttribute(object, name: name, default: nil) {
     case .value:
       return .value(true)
-    case .error(.attributeError):
-      return .value(false)
+
     case .error(let e):
+      if e.isAttributeError {
+        return .value(false)
+      }
+
       return .error(e)
     }
   }

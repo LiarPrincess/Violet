@@ -310,9 +310,9 @@ public class PyList: PyObject, PySequenceType {
     fileprivate let element: PyObject
   }
 
-  /// Wrapper for `PyErrorEnum` so that it can be used after `throw`.
+  /// Wrapper for `PyBaseException` so that it can be used after `throw`.
   private enum SortError: Error {
-    case builtin(PyErrorEnum)
+    case builtin(PyBaseException)
   }
 
   internal func sort(key: PyObject?, isReverse: PyObject?) -> PyResult<PyNone> {

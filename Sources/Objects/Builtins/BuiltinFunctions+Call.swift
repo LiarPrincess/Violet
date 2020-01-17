@@ -12,17 +12,17 @@ import Core
 public enum CallResult {
   case value(PyObject)
   /// Object is not callable.
-  case notCallable(PyErrorEnum)
-  case error(PyErrorEnum)
+  case notCallable(PyBaseException)
+  case error(PyBaseException)
 }
 
 public enum CallMethodResult {
   case value(PyObject)
   /// Such method does not exists.
-  case missingMethod(PyErrorEnum)
+  case missingMethod(PyBaseException)
   /// Method exists, but it is not callable.
-  case notCallable(PyErrorEnum)
-  case error(PyErrorEnum)
+  case notCallable(PyBaseException)
+  case error(PyBaseException)
 }
 
 extension BuiltinFunctions {
@@ -77,7 +77,7 @@ extension BuiltinFunctions {
                      kwargs: PyDictData? = nil) -> CallResult {
     guard let owner = callable as? __call__Owner else {
       let msg = "object of type '\(callable.typeName)' is not callable"
-      return .notCallable(.typeError(msg))
+      return .notCallable(self.newTypeError(msg: msg))
     }
 
     switch owner.call(args: args, kwargs: kwargs) {
@@ -126,7 +126,7 @@ extension BuiltinFunctions {
                            kwargs: PyDictData? = nil) -> CallMethodResult {
     guard let boundMethod = self.lookup(object, name: selector) else {
       let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
-      return .missingMethod(.attributeError(msg))
+      return .missingMethod(self.newAttributeError(msg: msg))
     }
 
     // Case that is not supported in this method
@@ -146,7 +146,7 @@ extension BuiltinFunctions {
       return .value(result)
     case .notCallable:
       let msg = "attribute of type '\(boundMethod.typeName)' is not callable"
-      return .notCallable(.typeError(msg))
+      return .notCallable(self.newTypeError(msg: msg))
     case .error(let e):
       return .error(e)
     }

@@ -51,7 +51,7 @@ public class PyRangeIterator: PyObject {
       return .value(self.builtins.newInt(result))
     }
 
-    return .stopIteration
+    return .stopIteration()
   }
 
   // MARK: - Python new

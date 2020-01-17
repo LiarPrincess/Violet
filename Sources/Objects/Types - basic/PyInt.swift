@@ -815,7 +815,7 @@ public class PyInt: PyObject {
   private enum IntFromString {
     case value(BigInt)
     case notString
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   private static func parseBigIntFromString(_ object: PyObject,
@@ -826,13 +826,13 @@ public class PyInt: PyObject {
       }
 
       let msg = "int() '\(str.value)' cannot be interpreted as int"
-      return .error(.valueError(msg))
+      return .error(Py.newValueError(msg: msg))
     }
 
     if let bytes = object as? PyBytesType {
       guard let string = bytes.data.string else {
         let msg = "int() bytes '\(bytes.ptrString)' cannot be interpreted as str"
-        return .error(.valueError(msg))
+        return .error(Py.newValueError(msg: msg))
       }
 
       if let value = BigInt(string, radix: radix) {
@@ -840,7 +840,7 @@ public class PyInt: PyObject {
       }
 
       let msg = "int() '\(string)' cannot be interpreted as int"
-      return .error(.valueError(msg))
+      return .error(Py.newValueError(msg: msg))
     }
 
     return .notString
@@ -848,7 +848,7 @@ public class PyInt: PyObject {
 
   private enum CallTruncResult {
     case value(PyObject)
-    case error(PyErrorEnum)
+    case error(PyBaseException)
     case missingMethod
   }
 

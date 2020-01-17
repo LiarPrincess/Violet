@@ -88,7 +88,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -102,7 +102,7 @@ extension Frame {
       self.stack.top = r
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -115,7 +115,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -131,7 +131,7 @@ extension Frame {
       self.stack.top = r
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -145,7 +145,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -158,7 +158,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -237,13 +237,12 @@ extension Frame {
     assert(0 <= index && index < self.code.varNames.count)
 
     let mangled = self.code.varNames[index]
-    let e = PyErrorEnum.unboundLocalError(variableName: mangled.value)
-    return .builtinError(e)
+    return .error(Py.newUnboundLocalError(variableName: mangled.value))
   }
 
   // MARK: - Helpers
 
   private func nameError(_ name: String) -> InstructionResult {
-    return .builtinError(.nameError("name '\(name)' is not defined"))
+    return .error(Py.newNameError(msg: "name '\(name)' is not defined"))
   }
 }

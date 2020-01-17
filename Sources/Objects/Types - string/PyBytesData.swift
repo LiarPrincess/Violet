@@ -350,7 +350,7 @@ internal struct PyBytesData: PyStringImpl {
   private enum NewFromResult {
     case bytes(Data)
     case tryOther
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   private static func newFromCount(object: PyObject) -> NewFromResult {
@@ -358,7 +358,7 @@ internal struct PyBytesData: PyStringImpl {
     case .value(let count):
       // swiftlint:disable:next empty_count
       guard count >= 0 else {
-        return .error(.valueError("negative count"))
+        return .error(Py.newValueError(msg: "negative count"))
       }
 
       return .bytes(Data(repeating: 0, count: count))

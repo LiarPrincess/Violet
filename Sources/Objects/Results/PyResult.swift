@@ -12,7 +12,7 @@ public enum PyResult<Wrapped> {
   /// but in this case it is just a local variable, not object to be raised.
   case value(Wrapped)
   /// Use this ctor to raise error in VM.
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 
   public func map<A>(_ f: (Wrapped) -> A) -> PyResult<A> {
     switch self {
@@ -46,6 +46,7 @@ extension PyResult: PyFunctionResultConvertible
 // MARK: - Void sugar
 
 extension PyResult where Wrapped == Void {
+
   public static func value() -> PyResult {
     return PyResult.value(())
   }
@@ -56,76 +57,78 @@ extension PyResult where Wrapped == Void {
 extension PyResult {
 
   public static func typeError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.typeError(msg))
+    return PyResult.error(Py.newTypeError(msg: msg))
   }
 
   public static func valueError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.valueError(msg))
+    return PyResult.error(Py.newValueError(msg: msg))
   }
 
   public static func indexError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.indexError(msg))
+    return PyResult.error(Py.newIndexError(msg: msg))
   }
 
   public static func attributeError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.attributeError(msg))
+    return PyResult.error(Py.newAttributeError(msg: msg))
   }
 
   public static func zeroDivisionError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.zeroDivisionError(msg))
+    return PyResult.error(Py.newZeroDivisionError(msg: msg))
   }
 
   public static func overflowError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.overflowError(msg))
+    return PyResult.error(Py.newOverflowError(msg: msg))
   }
 
   public static func systemError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.systemError(msg))
+    return PyResult.error(Py.newSystemError(msg: msg))
   }
 
   public static func nameError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.nameError(msg))
+    return PyResult.error(Py.newNameError(msg: msg))
   }
 
   public static func keyError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.keyError(msg))
+    return PyResult.error(Py.newKeyError(msg: msg))
   }
 
-  public static func keyErrorForKey(_ key: PyObject) -> PyResult<Wrapped> {
-    return PyResult.error(.keyErrorForKey(key))
+  public static func keyError(key: PyObject) -> PyResult<Wrapped> {
+    return PyResult.error(Py.newKeyError(key: key))
   }
 
-  public static var stopIteration: PyResult<Wrapped> {
-    return PyResult.error(.stopIteration)
+  public static func stopIteration(value: PyObject? = nil) -> PyResult<Wrapped> {
+    return PyResult.error(Py.newStopIteration(value: value))
   }
 
   public static func runtimeError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.runtimeError(msg))
+    return PyResult.error(Py.newRuntimeError(msg: msg))
   }
 
   public static func unboundLocalError(variableName: String) -> PyResult<Wrapped> {
-    return PyResult.error(.unboundLocalError(variableName: variableName))
+    return PyResult.error(Py.newUnboundLocalError(variableName: variableName))
   }
 
   public static func deprecationWarning(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.deprecationWarning(msg))
+    return PyResult.error(Py.newDeprecationWarning(msg: msg))
   }
 
   public static func lookupError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.lookupError(msg))
+    return PyResult.error(Py.newLookupError(msg: msg))
   }
 
   public static func unicodeDecodeError(encoding: FileEncoding,
                                         data: Data) -> PyResult<Wrapped> {
-    return PyResult.error(.unicodeDecodeError(encoding, data))
+    let error = Py.newUnicodeDecodeError(encoding: encoding, data: data)
+    return PyResult.error(error)
   }
 
   public static func unicodeEncodeError(encoding: FileEncoding,
                                         string: String) -> PyResult<Wrapped> {
-    return PyResult.error(.unicodeEncodeError(encoding, string))
+    let error = Py.newUnicodeEncodeError(encoding: encoding, string: string)
+    return PyResult.error(error)
   }
 
   public static func osError(_ msg: String) -> PyResult<Wrapped> {
-    return PyResult.error(.osError(msg))
+    return PyResult.error(Py.newOSError(msg: msg))
   }
 }

@@ -87,6 +87,10 @@ public class PyBaseException: PyObject {
     return self is PyIndexError
   }
 
+  public var isTypeError: Bool {
+    return self is PyTypeError
+  }
+
   // MARK: - String
 
   // sourcery: pymethod = __repr__

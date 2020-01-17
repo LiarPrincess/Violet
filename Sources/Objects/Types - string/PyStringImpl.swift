@@ -16,7 +16,7 @@ internal enum StringFindResult<Index> {
 internal enum StringGetItemResult<Item, Slice> {
   case item(Item)
   case slice(Slice)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 }
 
 internal enum StringPartitionResult<SubString> {
@@ -24,31 +24,31 @@ internal enum StringPartitionResult<SubString> {
   case separatorNotFound
   /// Separator was found.
   case separatorFound(before: SubString, after: SubString)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 }
 
 private enum ExtractIndexResult<Index> {
   case none
   case index(Index)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 }
 
 private enum FillChar<T> {
   case `default`
   case value(T)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 }
 
 private enum SplitSeparator<T> {
   case whitespace
   case some(T)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 }
 
 private enum StripChars<Element: Hashable> {
   case whitespace
   case chars(Set<Element>)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 }
 
 // MARK: - String builder
@@ -749,7 +749,7 @@ extension PyStringImpl {
     }
 
     let msg = "\(fnName) arg must be \(Self.typeName) or None, not \(chars.typeName)"
-    return .error(.typeError(msg))
+    return .error(Py.newTypeError(msg: msg))
   }
 
   private func lstrip<C: BidirectionalCollection>(
@@ -1000,7 +1000,7 @@ extension PyStringImpl {
     }
 
     let msg = "\(Self.typeName) indices must be integers or slices, not \(index.typeName)"
-    return .error(.typeError(msg))
+    return .error(Py.newTypeError(msg: msg))
   }
 
   internal func getItem(at index: Int) -> PyResult<Element> {
@@ -1180,7 +1180,7 @@ extension PyStringImpl {
           let first = str.scalars.first, str.scalars.count == 1 else {
       let t = fill.typeName
       let msg = "\(fnName) fillchar arg must be \(Self.typeName) of length 1, not \(t)"
-      return .error(.typeError(msg))
+      return .error(Py.newTypeError(msg: msg))
     }
 
     return .value(first)
@@ -1426,11 +1426,11 @@ extension PyStringImpl {
 
     guard let sep = Self.extractSelf(from: separator) else {
       let msg = "sep must be \(Self.typeName) or None, not \(separator.typeName)"
-      return .error(.typeError(msg))
+      return .error(Py.newTypeError(msg: msg))
     }
 
     if sep.scalars.isEmpty {
-      return .error(.valueError("empty separator"))
+      return .error(Py.newValueError(msg: "empty separator"))
     }
 
     return .some(sep)
@@ -1442,11 +1442,11 @@ extension PyStringImpl {
     }
 
     guard let pyInt = maxCount as? PyInt else {
-      return .error(.typeError("maxsplit must be int, not \(maxCount.typeName)"))
+      return .typeError("maxsplit must be int, not \(maxCount.typeName)")
     }
 
     guard let int = Int(exactly: pyInt.value) else {
-      return .error(.overflowError("maxsplit is too big"))
+      return .overflowError("maxsplit is too big")
     }
 
     return .value(int < 0 ? Int.max : int)
@@ -1511,7 +1511,7 @@ extension PyStringImpl {
 
   internal func partition(separator: Self) -> StringPartitionResult<Self.SubSequence> {
     if separator.isEmpty {
-      return .error(.valueError("empty separator"))
+      return .error(Py.newValueError(msg: "empty separator"))
     }
 
     switch self.findRaw(in: self.scalars, value: separator) {
@@ -1539,7 +1539,7 @@ extension PyStringImpl {
 
   internal func rpartition(separator: Self) -> StringPartitionResult<Self.SubSequence> {
     if separator.isEmpty {
-      return .error(.valueError("empty separator"))
+      return .error(Py.newValueError(msg: "empty separator"))
     }
 
     switch self.rfindRaw(in: self.scalars, value: separator) {
@@ -1661,7 +1661,7 @@ extension PyStringImpl {
         let s = Self.typeName
         let t = object.typeName
         let msg = "sequence item \(index): expected a \(s)-like object, \(t) found"
-        return .error(.typeError(msg))
+        return .error(Py.newTypeError(msg: msg))
       }
 
       index += 1

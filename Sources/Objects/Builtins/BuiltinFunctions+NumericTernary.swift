@@ -6,7 +6,7 @@
 
 private enum FastCallResult {
   case value(PyObject)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
   /// Fast call is not available
   case unavailable
 

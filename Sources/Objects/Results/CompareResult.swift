@@ -1,6 +1,6 @@
 public enum CompareResult {
   case value(Bool)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
   case notImplemented
 
   // swiftlint:disable:next discouraged_optional_boolean

@@ -1,6 +1,6 @@
 public enum HashResult {
   case value(PyHash)
-  case error(PyErrorEnum)
+  case error(PyBaseException)
   case notImplemented
 }
 

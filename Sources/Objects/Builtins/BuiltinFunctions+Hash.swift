@@ -46,7 +46,7 @@ extension BuiltinFunctions {
   }
 
   /// Py_hash_t PyObject_HashNotImplemented(PyObject *v)
-  public func hashNotImplemented(_ object: PyObject) -> PyErrorEnum {
-    return .typeError("unhashable type: '\(object.typeName)'")
+  public func hashNotImplemented(_ object: PyObject) -> PyBaseException {
+    return self.newTypeError(msg: "unhashable type: '\(object.typeName)'")
   }
 }

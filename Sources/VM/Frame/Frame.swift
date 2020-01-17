@@ -16,10 +16,8 @@ internal enum InstructionResult {
   case ok
   /// Instruction requested a `return` from a current frame.
   case unwind(UnwindReason)
-  /// Builtin mudule raised an error.
-  case builtinError(PyErrorEnum)
-  /// User raised error using `raise` instruction.
-  case userError
+  /// Instruction raised an error.
+  case error(PyBaseException)
 }
 
 // MARK: - Frame
@@ -124,9 +122,7 @@ internal final class Frame {
         case .notImplemented:
           break
         }
-      case .builtinError: // (_):
-        break
-      case .userError:
+      case .error: // (let e)
         break
       }
     }

@@ -12,7 +12,7 @@ public class PyNone: PyObject {
 
   // MARK: - Init
 
-  internal override init() {
+  override internal init() {
     super.init(type: Py.types.none)
   }
 

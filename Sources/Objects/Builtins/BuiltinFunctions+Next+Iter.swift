@@ -19,13 +19,12 @@ extension BuiltinFunctions {
     switch self.callNext(iterator: iterator) {
     case .value(let r):
       return .value(r)
-    case .error(.stopIteration):
-      if let d = `default` {
+
+    case .error(let e):
+      if let d = `default`, e.isStopIteration {
         return .value(d)
       }
 
-      return .error(.stopIteration)
-    case .error(let e):
       return .error(e)
     }
   }

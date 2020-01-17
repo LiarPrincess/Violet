@@ -21,7 +21,7 @@ extension Frame {
       self.popJumpIf(isTrue, to: labelIndex)
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -34,7 +34,7 @@ extension Frame {
       self.popJumpIf(!isTrue, to: labelIndex)
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -50,7 +50,7 @@ extension Frame {
       self.jumpIfOrPop(isTrue, to: labelIndex)
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -64,7 +64,7 @@ extension Frame {
       self.jumpIfOrPop(!isTrue, to: labelIndex)
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 

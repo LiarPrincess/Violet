@@ -73,10 +73,11 @@ public class PyModule: PyObject {
     case let .value(v):
       return .value(v)
     case let .error(e):
-      switch e {
-      case .attributeError: break // attr error -> there is still hope!
-      default: return attr // normal error -> end with error
+      if e.isAttributeError {
+        break // there is still hope!
       }
+
+      return attr
     }
 
     guard let nameString = name as? PyString else {

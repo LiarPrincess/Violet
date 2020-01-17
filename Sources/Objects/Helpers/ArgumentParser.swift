@@ -285,7 +285,8 @@ internal struct ArgumentParser {
 
       let hasAllRequiredArguments = i >= self.minArgCount
       guard hasAllRequiredArguments else {
-        return .error(self.missingArgumentError(argIndex: i, args: args, kwargs: kwargs))
+        let e = self.missingArgumentError(argIndex: i, args: args, kwargs: kwargs)
+        return .error(e)
       }
 
       // Current code reports success when all required args are fulfilled
@@ -297,7 +298,8 @@ internal struct ArgumentParser {
 
     if remainingKwargArgs > 0 {
       // Make sure there are no arguments given by name and position
-      if let e = self.checkArgumentGivenAsPositionalAndKwarg(args: args, kwargs: kwargs) {
+      if let e = self.checkArgumentGivenAsPositionalAndKwarg(args: args,
+                                                             kwargs: kwargs) {
         return .error(e)
       }
 
@@ -313,7 +315,7 @@ internal struct ArgumentParser {
   // MARK: - Parsing errors
 
   private func tooMuchArgumentsError(args: [PyObject],
-                                     kwargs: [String:PyObject]) -> PyErrorEnum {
+                                     kwargs: [String:PyObject]) -> PyBaseException {
     let providedCount = args.count + kwargs.count
     assert(providedCount > self.argumentCount)
 
@@ -325,59 +327,68 @@ internal struct ArgumentParser {
               "\(keyword)\(arguments) " +
               "(\(providedCount) given)"
 
-    return .typeError(msg)
+    return Py.newTypeError(msg: msg)
   }
 
-  private func tooMuchPositionalArgumentsError(args: [PyObject]) -> PyErrorEnum {
+  private func tooMuchPositionalArgumentsError(args: [PyObject]) -> PyBaseException {
     assert(args.count > self.maxPositionalArgCount)
 
     let fn = self.fnName + "()"
     switch self.maxPositionalArgCount {
     case 0:
-      return .typeError("\(fn) takes no positional arguments")
+      let msg = "\(fn) takes no positional arguments"
+      return Py.newTypeError(msg: msg)
     case let max:
       let s = self.minArgCount == Int.max ? "exactly" : "at most"
       let msg = "\(fn) takes \(s) \(max) positional arguments (\(args.count) given)"
-      return .typeError(msg)
+      return Py.newTypeError(msg: msg)
     }
   }
 
   private func missingArgumentError(argIndex: Int,
                                     args: [PyObject],
-                                    kwargs: [String:PyObject]) -> PyErrorEnum {
+                                    kwargs: [String:PyObject]) -> PyBaseException {
     let fn = self.fnName + "()"
 
     if argIndex < self.positionalArgCount {
-      let s = self.minArgCount < self.maxPositionalArgCount ? "at least" : "exactly"
-      let msg = "\(fn) takes \(s) \(minArgCount) positional arguments (\(args.count) given)"
-      return .typeError(msg)
+      let atLeast = self.minArgCount < self.maxPositionalArgCount ?
+        "at least" :
+        "exactly"
+
+      let msg = "\(fn) takes \(atLeast) \(self.minArgCount) positional arguments " +
+                "(\(args.count) given)"
+      return Py.newTypeError(msg: msg)
     }
 
     let keyword = self.keywordArgNames[argIndex - self.positionalArgCount]
     let msg = "\(fn) missing required argument '\(keyword)' (pos \(argIndex + 1))"
-    return .typeError(msg)
+    return Py.newTypeError(msg: msg)
   }
 
-  private func checkArgumentGivenAsPositionalAndKwarg(args: [PyObject],
-                                                      kwargs: [String:PyObject]) -> PyErrorEnum? {
+  private func checkArgumentGivenAsPositionalAndKwarg(
+    args: [PyObject],
+    kwargs: [String:PyObject]) -> PyBaseException? {
+
     for i in self.positionalArgCount..<args.count {
       let keyword = self.keywordArgNames[i - self.positionalArgCount]
       if kwargs.contains(keyword) {
         let fn = self.fnName + "()"
         let msg = "argument for \(fn) given by name ('\(keyword)') and position (\(i + 1))"
-        return .typeError(msg)
+        return Py.newTypeError(msg: msg)
       }
     }
 
     return nil
   }
 
-  private func checkExtraneousKeywordArguments(kwargs: [String:PyObject]) -> PyErrorEnum? {
+  private func checkExtraneousKeywordArguments(
+    kwargs: [String:PyObject]) -> PyBaseException? {
+
     for key in kwargs.keys {
       if !self.keywordArgNames.contains(key) {
         let fn = self.fnName + "()"
         let msg = "'\(key)' is an invalid keyword argument for \(fn)"
-        return .typeError(msg)
+        return Py.newTypeError(msg: msg)
       }
     }
 
@@ -417,12 +428,13 @@ internal struct ArgumentParser {
   internal static func guaranteeArgsCountOrError(fnName: String,
                                                  args: [PyObject],
                                                  min: Int,
-                                                 max: Int) -> PyErrorEnum? {
+                                                 max: Int) -> PyBaseException? {
     let nargs = args.count
 
     if nargs < min {
       let s = min == max ? "" : "at least "
-      return . typeError("\(fnName) expected \(s)\(max) arguments, got \(nargs)")
+      let msg = "\(fnName) expected \(s)\(max) arguments, got \(nargs)"
+      return Py.newTypeError(msg: msg)
     }
 
     if nargs == 0 {
@@ -431,7 +443,8 @@ internal struct ArgumentParser {
 
     if nargs > max {
       let s = min == max ? "" : "at most "
-      return .typeError("\(fnName) expected \(s)\(max) arguments, got \(nargs)")
+      let msg = "\(fnName) expected \(s)\(max) arguments, got \(nargs)"
+      return Py.newTypeError(msg: msg)
     }
 
     return nil
@@ -442,13 +455,13 @@ internal struct ArgumentParser {
   /// int
   /// _PyArg_NoKeywords(const char *funcname, PyObject *kwargs)
   internal static func noKwargsOrError(fnName: String,
-                                       kwargs: PyDictData?) -> PyErrorEnum? {
+                                       kwargs: PyDictData?) -> PyBaseException? {
     let noKwargs = kwargs?.isEmpty ?? true
     if noKwargs {
       return nil
     }
 
-    return .typeError("\(fnName) takes no keyword arguments")
+    return Py.newTypeError(msg: "\(fnName) takes no keyword arguments")
   }
 
   // MARK: - String keywords

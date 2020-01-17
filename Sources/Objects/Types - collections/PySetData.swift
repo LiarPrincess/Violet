@@ -331,7 +331,7 @@ internal struct PySetData {
 
   internal enum InsertResult {
     case ok
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   internal mutating func insert(value: PyObject) -> InsertResult {
@@ -356,7 +356,7 @@ internal struct PySetData {
 
   internal enum UpdateResult {
     case ok
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   internal mutating func update(from other: PyObject) -> UpdateResult {
@@ -409,7 +409,7 @@ internal struct PySetData {
 
   internal enum RemoveResult {
     case ok
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   internal mutating func remove(value: PyObject) -> RemoveResult {
@@ -426,7 +426,7 @@ internal struct PySetData {
     case .value:
       return .ok
     case .notFound:
-      return .error(.keyErrorForKey(element.object))
+      return .error(Py.newKeyError(key: element.object))
     case .error(let e):
       return .error(e)
     }
@@ -436,7 +436,7 @@ internal struct PySetData {
 
   internal enum DiscardResult {
     case ok
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   internal mutating func discard(value: PyObject) -> DiscardResult {

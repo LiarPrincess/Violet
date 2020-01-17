@@ -123,26 +123,28 @@ internal struct FileModeParser {
     return .value(result)
   }
 
-  private mutating func setMode(_ mode: FileMode) -> PyErrorEnum? {
+  private mutating func setMode(_ mode: FileMode) -> PyBaseException? {
     if self.mode == mode {
       return nil
     }
 
     guard self.mode == nil else {
-      return .valueError("must have exactly one of create/read/write/append mode")
+      let msg = "must have exactly one of create/read/write/append mode"
+      return Py.newValueError(msg: msg)
     }
 
     self.mode = mode
     return nil
   }
 
-  private mutating func setType(_ type: FileType) -> PyErrorEnum? {
+  private mutating func setType(_ type: FileType) -> PyBaseException? {
     if self.type == type {
       return nil
     }
 
     guard self.type == nil else {
-      return .valueError("can't have text and binary mode at once")
+      let msg = "can't have text and binary mode at once"
+      return Py.newValueError(msg: msg)
     }
 
     self.type = type

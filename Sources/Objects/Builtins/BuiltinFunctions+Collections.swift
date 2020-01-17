@@ -424,7 +424,7 @@ public enum ReduceStep<Acc> {
   /// Use this if you already have the result and don't need to iterate anymore.
   case finish(Acc)
   /// Finish reduction with given error.
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 }
 
 /// `Builtins.reduce(iterable:into:fn)` trampoline.
@@ -435,7 +435,7 @@ public enum ReduceIntoStep<Acc> {
   /// Use this if you already have the result and don't need to iterate anymore.
   case finish
   /// Finish reduction with given error.
-  case error(PyErrorEnum)
+  case error(PyBaseException)
 }
 
 extension BuiltinFunctions {
@@ -466,10 +466,11 @@ extension BuiltinFunctions {
         case .error(let e): return .error(e)
         }
 
-      case .error(.stopIteration):
-        return .value(acc)
-
       case .error(let e):
+        if e.isStopIteration {
+          return .value(acc)
+        }
+
         return .error(e)
       }
     }
@@ -509,10 +510,11 @@ extension BuiltinFunctions {
         case .error(let e): return .error(e)
         }
 
-      case .error(.stopIteration):
-        return .value(acc)
-
       case .error(let e):
+        if e.isStopIteration {
+          return .value(acc)
+        }
+
         return .error(e)
       }
     }

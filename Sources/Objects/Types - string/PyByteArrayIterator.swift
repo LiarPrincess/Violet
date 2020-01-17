@@ -53,7 +53,7 @@ public class PyByteArrayIterator: PyObject {
       return .value(self.builtins.newInt(byte))
     }
 
-    return .stopIteration
+    return .stopIteration()
   }
 
   // MARK: - Python new

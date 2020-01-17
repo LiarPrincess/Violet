@@ -195,7 +195,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   internal enum GetResult {
     case value(Value)
     case notFound
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   /// Accesses the value associated with the given key for reading.
@@ -217,7 +217,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
   internal enum ContainsResult {
     case value(Bool)
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   internal func contains(key: Key) -> ContainsResult {
@@ -236,7 +236,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   internal enum InsertResult {
     case inserted
     case updated
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   /// Updates the value stored in the dictionary for the given key, or adds a
@@ -297,7 +297,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   internal enum RemoveResult {
     case value(Value)
     case notFound
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   /// Removes the given key and its associated value from the dictionary.
@@ -329,7 +329,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   private enum LookupResult {
     case notFound
     case entry(index: Int, entryIndex: Int, entry: Entry)
-    case error(PyErrorEnum)
+    case error(PyBaseException)
   }
 
   /// The basic lookup function used by all operations.

@@ -14,7 +14,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -28,7 +28,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -44,7 +44,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -58,7 +58,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -72,7 +72,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -88,7 +88,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -104,7 +104,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -120,7 +120,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -134,7 +134,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -150,7 +150,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -164,7 +164,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 
@@ -178,7 +178,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 }

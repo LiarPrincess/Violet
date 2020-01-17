@@ -79,7 +79,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .builtinError(e)
+      return .error(e)
     }
   }
 }
