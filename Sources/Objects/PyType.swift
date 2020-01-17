@@ -118,7 +118,7 @@ public class PyType: PyObject, CustomStringConvertible {
                             mro:  MRO) {
     assert(mro.baseClasses.contains { $0 === base })
 
-    self.init(name: name, base: base, mro: mro)
+    self.init(name: name, qualname: qualname, base: base, mro: mro)
     self.setType(to: type)
   }
 
@@ -126,9 +126,9 @@ public class PyType: PyObject, CustomStringConvertible {
   ///
   /// NEVER EVER use this function!
   /// Reserved for `objectType` and `typeType`.
-  private init(name: String, base: PyType?, mro: MRO?) {
+  private init(name: String, qualname: String, base: PyType?, mro: MRO?) {
     self.name = name
-    self.qualname = name
+    self.qualname = qualname
     self.base = base
     self.bases = mro?.baseClasses ?? []
     self.mro = [] // temporary, until we are able to use self
@@ -153,7 +153,8 @@ public class PyType: PyObject, CustomStringConvertible {
   /// - Warning:
   /// It will not set `self.type` property!
   internal static func initObjectType() -> PyType {
-    return PyType(name: "object", base: nil, mro: nil)
+    let name = "object"
+    return PyType(name: name, qualname: name, base: nil, mro: nil)
   }
 
   /// NEVER EVER use this function! It is a reserved for `typeType`.
@@ -161,8 +162,9 @@ public class PyType: PyObject, CustomStringConvertible {
   /// - Warning:
   /// It will not set `self.type` property!
   internal static func initTypeType(objectType: PyType) -> PyType {
+    let name = "type"
     let mro = MRO.linearize(baseClass: objectType)
-    return PyType(name: "type", base: objectType, mro: mro)
+    return PyType(name: name, qualname: name, base: objectType, mro: mro)
   }
 
   /// NEVER EVER use this function! It is a reserved for builtin types
