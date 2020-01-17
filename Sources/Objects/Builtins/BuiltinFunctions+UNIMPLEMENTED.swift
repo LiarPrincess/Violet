@@ -2,7 +2,7 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension Builtins {
+extension BuiltinFunctions {
 /*
   // MARK: - Code
 
@@ -140,7 +140,7 @@ extension Builtins {
   }
 
   public func PyObject_Format(value: PyObject, format: PyObject?) -> PyObject {
-    return self.none
+    return Py.none
   }
 
   internal func getGlobals() -> [String: PyObject] {
@@ -150,6 +150,6 @@ extension Builtins {
   // MARK: - Helpers
 
   internal var unimplemented: PyObject {
-    return self.none
+    return Py.none
   }
 }

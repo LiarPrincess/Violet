@@ -2,7 +2,7 @@ import Core
 
 // We will group all those functions in a single file just because
 // they all have 3-letter names.
-extension Builtins {
+extension BuiltinFunctions {
 
   // MARK: - Bin, Hex, Oct
 

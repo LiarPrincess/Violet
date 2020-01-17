@@ -6,17 +6,7 @@ import Core
 
 // swiftlint:disable file_length
 
-public class CreateDictionaryArg {
-  public let key: PyObject
-  public let value: PyObject
-
-  public init(key: PyObject, value: PyObject) {
-    self.key = key
-    self.value = value
-  }
-}
-
-extension Builtins {
+extension BuiltinFunctions {
 
   // MARK: - Tuple
 
@@ -28,7 +18,7 @@ extension Builtins {
   /// PyObject * PyTuple_New(Py_ssize_t size)
   public func newTuple(_ elements: [PyObject]) -> PyTuple {
     return elements.isEmpty ?
-      self.emptyTuple :
+      Py.emptyTuple :
       PyTuple(elements: elements)
   }
 
@@ -48,7 +38,7 @@ extension Builtins {
 
   internal func newTuple(_ data: PySequenceData) -> PyTuple {
     return data.isEmpty ?
-      self.emptyTuple :
+      Py.emptyTuple :
       PyTuple(data: data)
   }
 
@@ -116,9 +106,22 @@ extension Builtins {
 
   internal func newFrozenSet(_ data: PySetData) -> PyFrozenSet {
     return data.isEmpty ?
-      self.emptyFrozenSet :
+      Py.emptyFrozenSet :
       PyFrozenSet(data: data)
   }
+}
+
+public class CreateDictionaryArg {
+  public let key: PyObject
+  public let value: PyObject
+
+  public init(key: PyObject, value: PyObject) {
+    self.key = key
+    self.value = value
+  }
+}
+
+extension BuiltinFunctions {
 
   // MARK: - Dictionary
 
@@ -258,9 +261,9 @@ extension Builtins {
 
   public func newSlice(stop: PyObject) -> PySlice {
     return PySlice(
-      start: self.none,
+      start: Py.none,
       stop: stop,
-      step: self.none
+      step: Py.none
     )
   }
 
@@ -268,9 +271,9 @@ extension Builtins {
                        stop: PyObject?,
                        step: PyObject? = nil) -> PySlice {
     return PySlice(
-      start: start ?? self.none,
-      stop: stop ?? self.none,
-      step: step ?? self.none
+      start: start ?? Py.none,
+      stop: stop ?? Py.none,
+      step: step ?? Py.none
     )
   }
 
@@ -379,7 +382,8 @@ extension Builtins {
 
   // MARK: - Sort
 
-  private static let sortedDoc = """
+  internal static var sortedDoc: String {
+    return """
     sorted($module, iterable, /, *, key=None, reverse=False)
     --
 
@@ -388,6 +392,7 @@ extension Builtins {
     A custom key function can be supplied to customize the sort order, and the
     reverse flag can be set to request the result in descending order.
     """
+  }
 
   // sourcery: pymethod = sorted
   /// sorted(iterable, *, key=None, reverse=False)
@@ -405,21 +410,35 @@ extension Builtins {
       return .error(e)
     }
   }
+}
 
-  // MARK: - Reduce
+// MARK: - Reduce
 
-  /// `Builtins.reduce(iterable:initial:fn)` trampoline.
-  public enum ReduceStep<Acc> {
-    /// Go to the next item without changing `acc`.
-    case goToNextElement
-    /// Go to the next item using given `acc`.
-    case setAcc(Acc)
-    /// End reduction with given `acc`.
-    /// Use this if you already have the result and don't need to iterate anymore.
-    case finish(Acc)
-    /// Finish reduction with given error.
-    case error(PyErrorEnum)
-  }
+/// `Builtins.reduce(iterable:initial:fn)` trampoline.
+public enum ReduceStep<Acc> {
+  /// Go to the next item without changing `acc`.
+  case goToNextElement
+  /// Go to the next item using given `acc`.
+  case setAcc(Acc)
+  /// End reduction with given `acc`.
+  /// Use this if you already have the result and don't need to iterate anymore.
+  case finish(Acc)
+  /// Finish reduction with given error.
+  case error(PyErrorEnum)
+}
+
+/// `Builtins.reduce(iterable:into:fn)` trampoline.
+public enum ReduceIntoStep<Acc> {
+  /// Go to the next item.
+  case goToNextElement
+  /// End reduction.
+  /// Use this if you already have the result and don't need to iterate anymore.
+  case finish
+  /// Finish reduction with given error.
+  case error(PyErrorEnum)
+}
+
+extension BuiltinFunctions {
 
   public typealias ReduceFn<Acc> = (Acc, PyObject) -> ReduceStep<Acc>
 
@@ -457,17 +476,6 @@ extension Builtins {
   }
 
   // MARK: - Reduce into
-
-  /// `Builtins.reduce(iterable:into:fn)` trampoline.
-  public enum ReduceIntoStep<Acc> {
-    /// Go to the next item.
-    case goToNextElement
-    /// End reduction.
-    /// Use this if you already have the result and don't need to iterate anymore.
-    case finish
-    /// Finish reduction with given error.
-    case error(PyErrorEnum)
-  }
 
   public typealias ReduceIntoFn<Acc> = (inout Acc, PyObject) -> ReduceIntoStep<Acc>
 

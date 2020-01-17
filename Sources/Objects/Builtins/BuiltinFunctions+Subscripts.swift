@@ -1,4 +1,4 @@
-extension Builtins {
+extension BuiltinFunctions {
 
   // MARK: - Get
 
@@ -38,7 +38,7 @@ extension Builtins {
 
     switch self.callMethod(on: object, selector: "__setitem__", arg: value) {
     case .value:
-      return .value(self.none)
+      return .value(Py.none)
     case .missingMethod:
       return .typeError("'\(object.typeName)' object does not support item assignment")
     case .error(let e), .notCallable(let e):
@@ -57,7 +57,7 @@ extension Builtins {
 
     switch self.callMethod(on: object, selector: "__delitem__") {
     case .value:
-      return .value(self.none)
+      return .value(Py.none)
     case .missingMethod:
       return .typeError("'\(object.typeName)' object does not support item deletion")
     case .error(let e), .notCallable(let e):

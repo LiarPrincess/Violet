@@ -75,10 +75,8 @@ extension MinMaxImpl {
   private static func iterable(iterable: PyObject,
                                key: PyObject?,
                                default: PyObject?) -> PyResult<PyObject> {
-    let builtins = iterable.builtins
-
     let initial: PyObject? = nil
-    let acc = builtins.reduce(iterable: iterable, initial: initial) { acc, object in
+    let acc = Py.reduce(iterable: iterable, initial: initial) { acc, object in
       switch Self.compare(current: acc, object: object, key: key) {
       case let .value(r): return .setAcc(r)
       case let .error(e): return .error(e)
@@ -112,7 +110,7 @@ extension MinMaxImpl {
                               object: PyObject,
                               key: PyObject?) -> PyResult<PyObject> {
     let property: PyObject
-    switch object.builtins.selectKey(object: object, key: key) {
+    switch Py.selectKey(object: object, key: key) {
     case let .value(e): property = e
     case let .error(e): return .error(e)
     }
@@ -129,13 +127,28 @@ extension MinMaxImpl {
   }
 }
 
-// MARK: - Builtins
+// MARK: - Min
 
-extension Builtins {
+private enum MinImpl: MinMaxImpl {
 
-  // MARK: - Min
+  fileprivate static var fnName = "min"
+  fileprivate static var argumentParser = Self.createParser()
 
-  internal static let minDoc = """
+  fileprivate static func compare(current: PyObject,
+                                  with element: PyObject) -> MinMaxResult {
+    let builtins = current.builtins
+    switch builtins.isLessBool(left: current, right: element) {
+    case .value(true): return .useCurrent
+    case .value(false): return .useNew
+    case .error(let e): return .error(e)
+    }
+  }
+}
+
+extension BuiltinFunctions {
+
+  internal static var minDoc: String {
+    return """
     min(iterable, *[, default=obj, key=func]) -> value
     min(arg1, arg2, *args, *[, key=func]) -> value
 
@@ -144,21 +157,6 @@ extension Builtins {
     the provided iterable is empty.
     With two or more arguments, return the smallest argument.
     """
-
-  private enum MinImpl: MinMaxImpl {
-
-    fileprivate static var fnName = "min"
-    fileprivate static var argumentParser = Self.createParser()
-
-    fileprivate static func compare(current: PyObject,
-                                    with element: PyObject) -> MinMaxResult {
-      let builtins = current.builtins
-      switch builtins.isLessBool(left: current, right: element) {
-      case .value(true): return .useCurrent
-      case .value(false): return .useNew
-      case .error(let e): return .error(e)
-      }
-    }
   }
 
   public func min(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
@@ -172,10 +170,30 @@ extension Builtins {
   internal func min(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
     return MinImpl.run(args: args, kwargs: kwargs)
   }
+}
 
   // MARK: - Max
 
-  internal static let maxDoc = """
+private enum MaxImpl: MinMaxImpl {
+
+  fileprivate static var fnName = "max"
+  fileprivate static var argumentParser = Self.createParser()
+
+  fileprivate static func compare(current: PyObject,
+                                  with element: PyObject) -> MinMaxResult {
+    let builtins = current.builtins
+    switch builtins.isGreaterBool(left: current, right: element) {
+    case .value(true): return .useCurrent
+    case .value(false): return .useNew
+    case .error(let e): return .error(e)
+    }
+  }
+}
+
+extension BuiltinFunctions {
+
+  internal static var maxDoc: String {
+    return """
     max(iterable, *[, default=obj, key=func]) -> value
     max(arg1, arg2, *args, *[, key=func]) -> value
 
@@ -184,21 +202,6 @@ extension Builtins {
     the provided iterable is empty.
     With two or more arguments, return the largest argument.
     """
-
-  private enum MaxImpl: MinMaxImpl {
-
-    fileprivate static var fnName = "max"
-    fileprivate static var argumentParser = Self.createParser()
-
-    fileprivate static func compare(current: PyObject,
-                                    with element: PyObject) -> MinMaxResult {
-      let builtins = current.builtins
-      switch builtins.isGreaterBool(left: current, right: element) {
-      case .value(true): return .useCurrent
-      case .value(false): return .useNew
-      case .error(let e): return .error(e)
-      }
-    }
   }
 
   public func max(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {

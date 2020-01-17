@@ -2,7 +2,7 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension Builtins {
+extension BuiltinFunctions {
 
   // sourcery: pymethod = hash
   /// hash(object)

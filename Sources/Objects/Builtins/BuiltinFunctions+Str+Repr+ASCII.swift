@@ -2,7 +2,7 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension Builtins {
+extension BuiltinFunctions {
 
   // MARK: - Repr
 
@@ -111,7 +111,7 @@ extension Builtins {
   public func join(strings elements: [PyObject],
                    separator: PyObject) -> PyResult<PyString> {
     if elements.isEmpty {
-      return .value(self.emptyString)
+      return .value(Py.emptyString)
     }
 
     if elements.count == 1 {

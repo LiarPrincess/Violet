@@ -119,23 +119,29 @@ private struct {struct_name}: BinaryOp {{
 
     if name == 'divmod':
       print(f'''\
-// sourcery: pymethod = divmod
-/// divmod(a, b)
-/// See [this](https://docs.python.org/3/library/functions.html#divmod)
-public func {name}(left: PyObject, right: PyObject) -> PyResult<PyObject> {{
-  return {struct_name}.call(left: left, right: right)
-}}
+extension BuiltinFunctions {{
 
-// `divmod` in place does not make sense\n
+  // sourcery: pymethod = divmod
+  /// divmod(a, b)
+  /// See [this](https://docs.python.org/3/library/functions.html#divmod)
+  public func {name}(left: PyObject, right: PyObject) -> PyResult<PyObject> {{
+    return {struct_name}.call(left: left, right: right)
+  }}
+
+  // `divmod` in place does not make sense\n
+}}
 ''')
 
     else:
       print(f'''\
-public func {name}(left: PyObject, right: PyObject) -> PyResult<PyObject> {{
-  return {struct_name}.call(left: left, right: right)
-}}
+extension BuiltinFunctions {{
 
-public func {name}InPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {{
-  return {struct_name}.callInPlace(left: left, right: right)
+  public func {name}(left: PyObject, right: PyObject) -> PyResult<PyObject> {{
+    return {struct_name}.call(left: left, right: right)
+  }}
+
+  public func {name}InPlace(left: PyObject, right: PyObject) -> PyResult<PyObject> {{
+    return {struct_name}.callInPlace(left: left, right: right)
+  }}
 }}
 ''')

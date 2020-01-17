@@ -112,7 +112,7 @@ extension TernaryOp {
     }
 
     // Try standard Python dispatch
-    switch builtins.callMethod(on: left, selector: selector, args: [middle, right]) {
+    switch Py.callMethod(on: left, selector: selector, args: [middle, right]) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
@@ -138,7 +138,7 @@ extension TernaryOp {
     }
 
     // Try standard Python dispatch
-    switch builtins.callMethod(on: middle, selector: reflectedSelector, args: [left, right]) {
+    switch Py.callMethod(on: middle, selector: reflectedSelector, args: [left, right]) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
@@ -149,35 +149,33 @@ extension TernaryOp {
   }
 }
 
-// MARK: - Builtins
+// MARK: - Pow
 
-extension Builtins {
+private enum PowOp: TernaryOp {
+  fileprivate static var op = "** or pow()"
+  fileprivate static var selector = "__pow__"
+  fileprivate static var reflectedSelector = "__rpow__"
 
-  // MARK: - Pow
-
-  private enum PowOp: TernaryOp {
-    fileprivate static var op = "** or pow()"
-    fileprivate static var selector = "__pow__"
-    fileprivate static var reflectedSelector = "__rpow__"
-
-    fileprivate static func callFastOp(left: PyObject,
-                                       middle: PyObject,
-                                       right: PyObject) -> FastCallResult {
-      if let owner = left as? __pow__Owner {
-        return FastCallResult(owner.pow(exp: middle, mod: right))
-      }
-      return .unavailable
+  fileprivate static func callFastOp(left: PyObject,
+                                     middle: PyObject,
+                                     right: PyObject) -> FastCallResult {
+    if let owner = left as? __pow__Owner {
+      return FastCallResult(owner.pow(exp: middle, mod: right))
     }
-
-    fileprivate static func callFastReflected(left: PyObject,
-                                              middle: PyObject,
-                                              right: PyObject) -> FastCallResult {
-      if let owner = middle as? __rpow__Owner {
-        return FastCallResult(owner.rpow(base: left, mod: right))
-      }
-      return .unavailable
-    }
+    return .unavailable
   }
+
+  fileprivate static func callFastReflected(left: PyObject,
+                                            middle: PyObject,
+                                            right: PyObject) -> FastCallResult {
+    if let owner = middle as? __rpow__Owner {
+      return FastCallResult(owner.rpow(base: left, mod: right))
+    }
+    return .unavailable
+  }
+}
+
+extension BuiltinFunctions {
 
   // sourcery: pymethod = pow
   /// pow(base, exp[, mod])
@@ -185,7 +183,7 @@ extension Builtins {
   public func pow(base: PyObject,
                   exp: PyObject,
                   mod: PyObject? = nil) -> PyResult<PyObject> {
-    let mod = mod ?? self.none
+    let mod = mod ?? Py.none
     return PowOp.call(left: base, middle: exp, right: mod)
   }
 }

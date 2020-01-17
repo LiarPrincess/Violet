@@ -2,7 +2,6 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-// swiftlint:disable nesting
 // swiftlint:disable type_name
 // swiftlint:disable file_length
 
@@ -105,22 +104,16 @@ extension CompareOp {
 
   private static func callCompare(left: PyObject,
                                   right: PyObject) -> PyResult<PyObject> {
-    let builtins = left.context.builtins
-
     // Try fast protocol-based dispach
     switch callFastCompare(left: left, right: right) {
-    case .value(let bool): return .value(builtins.newBool(bool))
+    case .value(let bool): return .value(Py.newBool(bool))
     case .error(let e): return .error(e)
-    case .notImplemented: return .value(builtins.notImplemented)
+    case .notImplemented: return .value(Py.notImplemented)
     case .unavailable: break // Try other options...
     }
 
     // Try standard Python dispatch
-    let pythonResult = builtins.callMethod(on: left,
-                                           selector: selector,
-                                           arg: right)
-
-    switch pythonResult {
+    switch Py.callMethod(on: left, selector: selector, arg: right) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
@@ -132,39 +125,37 @@ extension CompareOp {
     // Use base object implementation
     // (all objects derieve from Object to this is probably a dead code)
     switch baseCompare(left, right) {
-    case .value(let bool): return .value(builtins.newBool(bool))
+    case .value(let bool): return .value(Py.newBool(bool))
     case .error(let e): return .error(e)
-    case .notImplemented: return .value(builtins.notImplemented)
+    case .notImplemented: return .value(Py.notImplemented)
     }
   }
 }
 
-// MARK: - Builtins
+// MARK: - Equal
 
-extension Builtins {
+private enum EqualCompare: CompareOp {
 
-  // MARK: - Equal
+  typealias reflected = NotEqualCompare
+  fileprivate static let selector = "__eq__"
+  fileprivate static let baseCompare = PyBaseObject.isEqual
 
-  private enum EqualCompare: CompareOp {
-
-    typealias reflected = NotEqualCompare
-    fileprivate static let selector = "__eq__"
-    fileprivate static let baseCompare = PyBaseObject.isEqual
-
-    fileprivate static func callFastCompare(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-      if let left = left as? __eq__Owner {
-        return FastCallResult(left.isEqual(right))
-      }
-      return .unavailable
+  fileprivate static func callFastCompare(left: PyObject,
+                                          right: PyObject) -> FastCallResult {
+    if let left = left as? __eq__Owner {
+      return FastCallResult(left.isEqual(right))
     }
+    return .unavailable
   }
+}
+
+extension BuiltinFunctions {
 
   public func isEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch EqualCompare.compare(left: left, right: right) {
     case .value(let result):
       if result.isNotImplemented {
-        return .value(left === right ? self.true : self.false)
+        return .value(self.newBool(left === right))
       }
       return .value(result)
 
@@ -176,29 +167,32 @@ extension Builtins {
   public func isEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.asBool(self.isEqual(left: left, right: right))
   }
+}
 
   // MARK: - Not Equal
 
-  private enum NotEqualCompare: CompareOp {
+private enum NotEqualCompare: CompareOp {
 
-    typealias reflected = EqualCompare
-    fileprivate static let selector = "__ne__"
-    fileprivate static let baseCompare = PyBaseObject.isNotEqual
+  typealias reflected = EqualCompare
+  fileprivate static let selector = "__ne__"
+  fileprivate static let baseCompare = PyBaseObject.isNotEqual
 
-    fileprivate static func callFastCompare(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-      if let left = left as? __ne__Owner {
-        return FastCallResult(left.isNotEqual(right))
-      }
-      return .unavailable
+  fileprivate static func callFastCompare(left: PyObject,
+                                          right: PyObject) -> FastCallResult {
+    if let left = left as? __ne__Owner {
+      return FastCallResult(left.isNotEqual(right))
     }
+    return .unavailable
   }
+}
+
+extension BuiltinFunctions {
 
   public func isNotEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch NotEqualCompare.compare(left: left, right: right) {
     case .value(let result):
       if result.isNotImplemented {
-        return .value(left !== right ? self.true : self.false)
+        return .value(Py.newBool(left !== right))
       }
       return .value(result)
 
@@ -210,23 +204,26 @@ extension Builtins {
   public func isNotEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.asBool(self.isNotEqual(left: left, right: right))
   }
+}
 
-  // MARK: - Less
+// MARK: - Less
 
-  private enum LessCompare: CompareOp {
+private enum LessCompare: CompareOp {
 
-    typealias reflected = GreaterEqualCompare
-    fileprivate static let selector = "__lt__"
-    fileprivate static let baseCompare = PyBaseObject.isLess
+  typealias reflected = GreaterEqualCompare
+  fileprivate static let selector = "__lt__"
+  fileprivate static let baseCompare = PyBaseObject.isLess
 
-    fileprivate static func callFastCompare(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-      if let left = left as? __lt__Owner {
-        return FastCallResult(left.isLess(right))
-      }
-      return .unavailable
+  fileprivate static func callFastCompare(left: PyObject,
+                                          right: PyObject) -> FastCallResult {
+    if let left = left as? __lt__Owner {
+      return FastCallResult(left.isLess(right))
     }
+    return .unavailable
   }
+}
+
+extension BuiltinFunctions {
 
   public func isLess(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch LessCompare.compare(left: left, right: right) {
@@ -244,23 +241,26 @@ extension Builtins {
   public func isLessBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.asBool(self.isLess(left: left, right: right))
   }
+}
 
-  // MARK: - Less equal
+// MARK: - Less equal
 
-  private enum LessEqualCompare: CompareOp {
+private enum LessEqualCompare: CompareOp {
 
-    typealias reflected = GreaterCompare
-    fileprivate static let selector = "__le__"
-    fileprivate static let baseCompare = PyBaseObject.isLessEqual
+  typealias reflected = GreaterCompare
+  fileprivate static let selector = "__le__"
+  fileprivate static let baseCompare = PyBaseObject.isLessEqual
 
-    fileprivate static func callFastCompare(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-      if let left = left as? __le__Owner {
-        return FastCallResult(left.isLessEqual(right))
-      }
-      return .unavailable
+  fileprivate static func callFastCompare(left: PyObject,
+                                          right: PyObject) -> FastCallResult {
+    if let left = left as? __le__Owner {
+      return FastCallResult(left.isLessEqual(right))
     }
+    return .unavailable
   }
+}
+
+extension BuiltinFunctions {
 
   public func isLessEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch LessEqualCompare.compare(left: left, right: right) {
@@ -278,23 +278,26 @@ extension Builtins {
   public func isLessEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.asBool(self.isLessEqual(left: left, right: right))
   }
+}
 
   // MARK: - Greater
 
-  private enum GreaterCompare: CompareOp {
+private enum GreaterCompare: CompareOp {
 
-    typealias reflected = LessEqualCompare
-    fileprivate static let selector = "__gt__"
-    fileprivate static let baseCompare = PyBaseObject.isGreater
+  typealias reflected = LessEqualCompare
+  fileprivate static let selector = "__gt__"
+  fileprivate static let baseCompare = PyBaseObject.isGreater
 
-    fileprivate static func callFastCompare(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-      if let left = left as? __gt__Owner {
-        return FastCallResult(left.isGreater(right))
-      }
-      return .unavailable
+  fileprivate static func callFastCompare(left: PyObject,
+                                          right: PyObject) -> FastCallResult {
+    if let left = left as? __gt__Owner {
+      return FastCallResult(left.isGreater(right))
     }
+    return .unavailable
   }
+}
+
+extension BuiltinFunctions {
 
   public func isGreater(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch GreaterCompare.compare(left: left, right: right) {
@@ -312,23 +315,26 @@ extension Builtins {
   public func isGreaterBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.asBool(self.isGreater(left: left, right: right))
   }
+}
 
-  // MARK: - Greater equal
+// MARK: - Greater equal
 
-  private enum GreaterEqualCompare: CompareOp {
+private enum GreaterEqualCompare: CompareOp {
 
-    typealias reflected = LessCompare
-    fileprivate static let selector = "__ge__"
-    fileprivate static let baseCompare = PyBaseObject.isGreaterEqual
+  typealias reflected = LessCompare
+  fileprivate static let selector = "__ge__"
+  fileprivate static let baseCompare = PyBaseObject.isGreaterEqual
 
-    fileprivate static func callFastCompare(left: PyObject,
-                                            right: PyObject) -> FastCallResult {
-      if let left = left as? __ge__Owner {
-        return FastCallResult(left.isGreaterEqual(right))
-      }
-      return .unavailable
+  fileprivate static func callFastCompare(left: PyObject,
+                                          right: PyObject) -> FastCallResult {
+    if let left = left as? __ge__Owner {
+      return FastCallResult(left.isGreaterEqual(right))
     }
+    return .unavailable
   }
+}
+
+extension BuiltinFunctions {
 
   public func isGreaterEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
     switch GreaterEqualCompare.compare(left: left, right: right) {
@@ -346,8 +352,11 @@ extension Builtins {
   public func isGreaterEqualBool(left: PyObject, right: PyObject) -> PyResult<Bool> {
     return self.asBool(self.isGreaterEqual(left: left, right: right))
   }
+}
 
-  // MARK: - Helpers
+// MARK: - Helpers
+
+extension BuiltinFunctions {
 
   private func notSupported(_ op: String,
                             left: PyObject,

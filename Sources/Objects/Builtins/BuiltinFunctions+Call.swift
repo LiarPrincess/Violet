@@ -25,7 +25,7 @@ public enum CallMethodResult {
   case error(PyErrorEnum)
 }
 
-extension Builtins {
+extension BuiltinFunctions {
 
   // MARK: - Lookup
 

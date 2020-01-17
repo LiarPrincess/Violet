@@ -21,17 +21,33 @@ public struct PyConfig {
 
 // MARK: - Delegate
 
-public protocol PyDelegate: AnyObject { }
+public protocol PyDelegate: AnyObject {
+  /// Extension point for opening files.
+  func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType>
+  /// Extension point for opening files.
+  func open(file: String, mode: FileMode) -> PyResult<FileDescriptorType>
+}
 
 // MARK: - Py
 
 public let Py = PyInstance()
 
-public class PyInstance {
+public class PyInstance: BuiltinFunctions {
 
   #warning("Remove this")
   // swiftlint:disable:next implicitly_unwrapped_optional
   internal let context: PyContext!
+
+  // MARK: - Builtins
+
+  public lazy var `true`  = PyBool(value: true)
+  public lazy var `false` = PyBool(value: false)
+  public lazy var none  = PyNone()
+  public lazy var ellipsis = PyEllipsis()
+  public lazy var emptyTuple = PyTuple(elements: [])
+  public lazy var emptyString = PyString(value: "")
+  public lazy var emptyFrozenSet = PyFrozenSet()
+  public lazy var notImplemented = PyNotImplemented()
 
   // MARK: - Modules
 

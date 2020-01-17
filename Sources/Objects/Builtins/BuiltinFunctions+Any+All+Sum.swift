@@ -2,7 +2,7 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension Builtins {
+extension BuiltinFunctions {
 
   // MARK: - Any
 
@@ -33,17 +33,22 @@ extension Builtins {
       }
     }
   }
-
+}
   // MARK: - Sum
 
-  // CPython does this differently.
-  private static let sumArguments = ArgumentParser.createOrTrap(
-    arguments: ["", "start"],
-    format: "O|O:sum"
-  )
+// CPython does this differently.
+private let sumArguments = ArgumentParser.createOrTrap(
+  arguments: ["", "start"],
+  format: "O|O:sum"
+)
 
+extension BuiltinFunctions {
+
+  // sourcery: pymethod = sum
+  /// sum(iterable, /, start=0)
+  /// See [this](https://docs.python.org/3/library/functions.html#sum)
   public func sum(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
-    switch Builtins.sumArguments.parse(args: args, kwargs: kwargs) {
+    switch sumArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(1 <= bind.count && bind.count <= 2,
              "Invalid argument count returned from parser.")
@@ -56,9 +61,6 @@ extension Builtins {
     }
   }
 
-  // sourcery: pymethod = sum
-  /// sum(iterable, /, start=0)
-  /// See [this](https://docs.python.org/3/library/functions.html#sum)
   public func sum(iterable: PyObject, start: PyObject?) -> PyResult<PyObject> {
     if start is PyString {
       return .typeError("sum() can't sum strings [use ''.join(seq) instead]")

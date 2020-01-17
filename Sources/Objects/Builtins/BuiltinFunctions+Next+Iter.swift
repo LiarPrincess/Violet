@@ -1,13 +1,15 @@
-extension Builtins {
+extension BuiltinFunctions {
 
   // MARK: - Next
 
-  internal static let nextDoc = """
+  internal static var nextDoc: String {
+    return """
     next(iterator[, default])
 
     Return the next item from the iterator. If default is given and the iterator
     is exhausted, it is returned instead of raising StopIteration.
     """
+  }
 
   // sourcery: pymethod = next, doc = nextDoc
   /// next(iterator[, default])
@@ -45,7 +47,8 @@ extension Builtins {
 
   // MARK: - Iter
 
-  internal static let iterDoc = """
+  internal static var iterDoc: String {
+    return """
     iter(iterable) -> iterator
     iter(callable, sentinel) -> iterator
 
@@ -53,6 +56,7 @@ extension Builtins {
     supply its own iterator, or be a sequence.
     In the second form, the callable is called until it returns the sentinel.
     """
+  }
 
   // sourcery: pymethod = iter, doc = iterDoc
   /// iter(object[, sentinel])

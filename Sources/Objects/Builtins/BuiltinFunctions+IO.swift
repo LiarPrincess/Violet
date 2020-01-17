@@ -5,27 +5,28 @@ import Foundation
 // Modules -> _io -> _iomodule.c
 // https://docs.python.org/3.7/library/io.html
 
-// MARK: - Builtins
+// MARK: - Print
 
-extension Builtins {
-
-  // MARK: - Print
+extension BuiltinFunctions {
 
   public func print(value: PyObject, raw: Bool) -> PyResult<PyNone> {
     let string = raw ? self.strValue(value) : self.repr(value)
-    return string.flatMap(self.sys.stdout.write(string:))
+    return string.flatMap(Py.sys.stdout.write(string:))
   }
+}
 
-  // MARK: - Open
+// MARK: - Open
 
-  private static let openArguments = ArgumentParser.createOrTrap(
-    arguments: [
-      "file", "mode", "buffering",
-      "encoding", "errors", "newline",
-      "closefd", "opener"
-    ],
-    format: "O|sizzziO:open"
-  )
+private let openArguments = ArgumentParser.createOrTrap(
+  arguments: [
+    "file", "mode", "buffering",
+    "encoding", "errors", "newline",
+    "closefd", "opener"
+  ],
+  format: "O|sizzziO:open"
+)
+
+extension BuiltinFunctions {
 
   public func open(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
     return ArgumentParser.unpackKwargsDict(kwargs: kwargs)
@@ -37,7 +38,7 @@ extension Builtins {
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)
   internal func open(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch Builtins.openArguments.parse(args: args, kwargs: kwargs) {
+    switch openArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(
         1 <= bind.count && bind.count <= 8,
@@ -97,7 +98,7 @@ extension Builtins {
     }
 
     let closeOnDealloc: Bool
-    switch self.isTrueBool(closefdArg ?? self.true) {
+    switch self.isTrueBool(closefdArg ?? Py.true) {
     case let .value(b): closeOnDealloc = b
     case let .error(e): return .error(e)
     }
@@ -129,21 +130,20 @@ extension Builtins {
 
   private func open(source: FileSource,
                     mode: FileMode) -> PyResult<FileDescriptorType> {
-    let delegate = self.context.delegate
 
     switch source {
     case let .fileDescriptor(fd):
-      return delegate.open(fileno: fd, mode: mode)
+      return Py.delegate.open(fileno: fd, mode: mode)
 
     case let .string(path):
-      return delegate.open(file: path, mode: mode)
+      return Py.delegate.open(file: path, mode: mode)
 
     case let .bytes(bytes):
       guard let path = self.toString(bytes: bytes) else {
         return .valueError("bytes cannot interpreted as path")
       }
 
-      return delegate.open(file: path, mode: mode)
+      return Py.delegate.open(file: path, mode: mode)
     }
   }
 

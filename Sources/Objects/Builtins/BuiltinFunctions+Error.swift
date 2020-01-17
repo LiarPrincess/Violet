@@ -5,7 +5,7 @@ import Foundation
 // Python -> errors.c (kind of...)
 // https://docs.python.org/3.7/library/exceptions.html
 
-extension Builtins {
+extension BuiltinFunctions {
 
   /// Inappropriate argument type.
   public func newTypeError(msg: String) -> PyTypeError {
@@ -80,7 +80,7 @@ extension Builtins {
 
   /// Signal the end from iterator.__next__().
   public func newStopIteration(value: PyObject? = nil) -> PyStopIteration {
-    let args = self.newTuple(value ?? self.none)
+    let args = self.newTuple(value ?? Py.none)
     return PyStopIteration(args: args)
   }
 

@@ -2,17 +2,19 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension Builtins {
+extension BuiltinFunctions {
 
   // MARK: - Get
 
-  internal static let getAttributeDoc = """
+  internal static var getAttributeDoc: String {
+    return """
     getattr(object, name[, default]) -> value
 
     Get a named attribute from an object; getattr(x, 'y') is equivalent to x.y.
     When a default argument is given, it is returned when the attribute doesn't
     exist; without it, an exception is raised in that case.
     """
+  }
 
   public func getAttribute(_ object: PyObject,
                            name: String) -> PyResult<PyObject> {
@@ -130,7 +132,7 @@ extension Builtins {
     let args = [name, value]
     switch self.callMethod(on: object, selector: "__setattr__", args: args) {
     case .value:
-      return .value(self.none)
+      return .value(Py.none)
     case .missingMethod:
       let typeName = object.typeName
       let operation = value is PyNone ? "del" : "assign to"
@@ -155,7 +157,7 @@ extension Builtins {
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func deleteAttribute(_ object: PyObject,
                               name: String) -> PyResult<PyNone> {
-    return self.setAttribute(object, name: name, value: self.none)
+    return self.setAttribute(object, name: name, value: Py.none)
   }
 
   // sourcery: pymethod = delattr
@@ -167,7 +169,7 @@ extension Builtins {
       return .typeError("delattr(): attribute name must be string")
     }
 
-    return self.setAttribute(object, name: name, value: self.none)
+    return self.setAttribute(object, name: name, value: Py.none)
   }
 
   // MARK: - Helpers

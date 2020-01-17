@@ -5,7 +5,7 @@ import Foundation
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension Builtins {
+extension BuiltinFunctions {
 
   // MARK: - Int
 
@@ -28,7 +28,7 @@ extension Builtins {
   // MARK: - Bool
 
   public func newBool(_ value: Bool) -> PyBool {
-    return value ? self.true : self.false
+    return value ? Py.true : Py.false
   }
 
   public func newBool(_ value: BigInt) -> PyBool {
@@ -51,7 +51,7 @@ extension Builtins {
 
   public func newString(_ value: String) -> PyString {
     return value.isEmpty ?
-      self.emptyString :
+      Py.emptyString :
       PyString(value: value)
   }
 
@@ -97,7 +97,8 @@ extension Builtins {
 
   // MARK: - Dir
 
-  private static let dirDoc = """
+  internal static var dirDoc: String {
+    return """
     dir([object]) -> list of strings
 
     If called without an argument, return the names in the current scope.
@@ -111,6 +112,7 @@ extension Builtins {
       for any other object: its attributes, its class's attributes, and
         recursively the attributes of its class's base classes.
     """
+  }
 
   // sourcery: pymethod = dir
   /// dir([object])
