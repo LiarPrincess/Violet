@@ -9,7 +9,7 @@ extension Frame {
   /// and pushes the resulting tuple onto the stack.
   internal func buildTuple(elementCount: Int) -> InstructionResult {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = self.builtins.newTuple(elements)
+    let collection = Py.newTuple(elements)
     self.stack.push(collection)
     return .ok
   }
@@ -20,7 +20,7 @@ extension Frame {
   /// and pushes the resulting list onto the stack.
   internal func buildList(elementCount: Int) -> InstructionResult {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    let collection = self.builtins.newList(elements)
+    let collection = Py.newList(elements)
     self.stack.push(collection)
     return .ok
   }
@@ -32,7 +32,7 @@ extension Frame {
     let element = self.stack.pop()
     let list = self.stack.top
 
-    switch self.builtins.add(list: list, element: element) {
+    switch Py.add(list: list, element: element) {
     case .value:
       return .ok
     case let .error(e):
@@ -46,7 +46,7 @@ extension Frame {
   /// and pushes the resulting set onto the stack.
   internal func buildSet(elementCount: Int) -> InstructionResult {
     let elements = self.stack.popElementsInPushOrder(count: elementCount)
-    switch self.builtins.newSet(elements) {
+    switch Py.newSet(elements) {
     case let .value(collection):
       self.stack.push(collection)
       return .ok
@@ -62,7 +62,7 @@ extension Frame {
     let element = self.stack.pop()
     let set = self.stack.top
 
-    switch self.builtins.add(set: set, value: element) {
+    switch Py.add(set: set, value: element) {
     case .value:
       return .ok
     case let .error(e):
@@ -77,7 +77,7 @@ extension Frame {
   /// {..., TOS3: TOS2, TOS1: TOS}.
   internal func buildMap(elementCount: Int) -> InstructionResult {
     let elements = self.popDictionaryElements(count: elementCount)
-    switch self.builtins.newDict(elements: elements) {
+    switch Py.newDict(elements: elements) {
     case let .value(collection):
       self.stack.push(collection)
       return .ok
@@ -97,10 +97,10 @@ extension Frame {
       return .error(Py.newSystemError(msg: msg))
     }
 
-    let count = self.builtins.lengthInt(tuple: keysTuple)
+    let count = Py.lengthInt(tuple: keysTuple)
     let elements = self.stack.popElementsInPushOrder(count: count)
 
-    switch self.builtins.newDict(keys: keysTuple, elements: elements) {
+    switch Py.newDict(keys: keysTuple, elements: elements) {
     case let .value(collection):
       self.stack.push(collection)
       return .ok
@@ -129,7 +129,7 @@ extension Frame {
     let value = self.stack.pop()
     let map = self.stack.top
 
-    switch self.builtins.add(dict: map, key: key, value: value) {
+    switch Py.add(dict: map, key: key, value: value) {
     case .value:
       return .ok
     case let .error(e):
@@ -145,7 +145,7 @@ extension Frame {
     let stop = self.stack.pop()
     let start = self.stack.top
 
-    let slice = self.builtins.newSlice(start: start, stop: stop, step: step)
+    let slice = Py.newSlice(start: start, stop: stop, step: step)
     self.stack.top = slice
     return .ok
   }

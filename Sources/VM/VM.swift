@@ -7,7 +7,7 @@ import Objects
 import Rapunzel
 
 // swiftlint:disable:next type_name
-public class VM: PyContextDelegate {
+public class VM: PyDelegate {
 
   internal let fm = FileManager.default
   internal let configuration: CoreConfiguration
@@ -16,21 +16,12 @@ public class VM: PyContextDelegate {
     return self.configuration.arguments
   }
 
-  internal private(set) lazy var context: PyContext = {
-    let conf = PyContextConfig()
-    return PyContext(config: conf, delegate: self)
-  }()
-
-  internal var builtins: Builtins {
-    return self.context.builtins
-  }
-
-  internal var sys: Sys {
-    return self.context.sys
-  }
-
   public init(arguments: Arguments, environment: Environment = Environment()) {
-    self.configuration = CoreConfiguration(arguments: arguments, environment: environment)
+    self.configuration = CoreConfiguration(arguments: arguments,
+                                           environment: environment)
+
+    let config = PyConfig()
+    Py.initialize(config: config, delegate: self)
   }
 
   // MARK: - Dump

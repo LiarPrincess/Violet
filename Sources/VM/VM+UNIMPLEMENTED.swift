@@ -7,6 +7,6 @@ extension VM {
 
   /// PyImport_ImportModule
   internal func importModule(_ name: String) -> PyModule {
-    return self.context.builtinsModule
+    return Py.builtinsModule
   }
 }

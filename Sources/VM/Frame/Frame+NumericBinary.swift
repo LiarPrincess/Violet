@@ -10,7 +10,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.mul(left: left, right: right) {
+    switch Py.mul(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -24,7 +24,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.matmul(left: left, right: right) {
+    switch Py.matmul(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -40,7 +40,7 @@ extension Frame {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch self.builtins.floordiv(left: dividend, right: divisor) {
+    switch Py.floordiv(left: dividend, right: divisor) {
     case let .value(quotient):
       self.stack.top = quotient
       return .ok
@@ -54,7 +54,7 @@ extension Frame {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch self.builtins.truediv(left: dividend, right: divisor) {
+    switch Py.truediv(left: dividend, right: divisor) {
     case let .value(quotient):
       self.stack.top = quotient
       return .ok
@@ -68,7 +68,7 @@ extension Frame {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch self.builtins.mod(left: dividend, right: divisor) {
+    switch Py.mod(left: dividend, right: divisor) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -84,7 +84,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.add(left: left, right: right) {
+    switch Py.add(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -100,7 +100,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.sub(left: left, right: right) {
+    switch Py.sub(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -116,7 +116,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.lshift(left: left, right: right) {
+    switch Py.lshift(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -130,7 +130,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.rshift(left: left, right: right) {
+    switch Py.rshift(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -146,7 +146,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.and(left: left, right: right) {
+    switch Py.and(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -160,7 +160,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.xor(left: left, right: right) {
+    switch Py.xor(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -174,7 +174,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.or(left: left, right: right) {
+    switch Py.or(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok

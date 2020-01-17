@@ -16,7 +16,7 @@ extension VM {
     }
 
     if self.arguments.printVersion {
-      print("Python \(self.sys.version)")
+      print("Python \(Py.sys.version)")
       return
     }
 
@@ -81,9 +81,9 @@ extension VM {
 // let sys_path = vm.get_attribute(sys_module, "path")
 // vm.call_method(&sys_path, "insert", vec![vm.new_int(0), vm.new_str(dir)])?;
 
-    let main = self.builtins.newModule(name: "__main__")
+    let main = Py.newModule(name: "__main__")
     let mainDict = main.getDict()
-    mainDict.set(key: "__file__", to: self.builtins.newString(file))
+    mainDict.set(key: "__file__", to: Py.newString(file))
 
     self.eval(code: code, globals: mainDict, locals: mainDict)
     mainDict.del(key: "__file__")

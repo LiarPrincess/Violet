@@ -17,7 +17,7 @@ public class PyZip: PyObject {
 
   internal let iterators: [PyObject]
 
-  internal init(context: PyContext, iterators: [PyObject]) {
+  internal init(iterators: [PyObject]) {
     self.iterators = iterators
     super.init(type: Py.types.zip)
   }

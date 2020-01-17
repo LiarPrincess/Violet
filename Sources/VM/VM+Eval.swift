@@ -38,8 +38,7 @@ extension VM {
 
     // We don't support zombie frames, we always create new one.
 //    let totalArgs = args.count + kwargs.count
-    let frame = Frame(context: self.context,
-                      code: code,
+    let frame = Frame(code: code,
                       locals: locals,
                       globals: globals,
                       parent: parent)

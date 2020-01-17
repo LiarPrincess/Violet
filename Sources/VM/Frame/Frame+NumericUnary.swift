@@ -8,7 +8,7 @@ extension Frame {
   /// Implements `TOS = +TOS`.
   internal func unaryPositive() -> InstructionResult {
     let value = self.stack.top
-    switch self.builtins.pos(value) {
+    switch Py.pos(value) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -22,7 +22,7 @@ extension Frame {
   /// Implements `TOS = -TOS`.
   internal func unaryNegative() -> InstructionResult {
     let value = self.stack.top
-    switch self.builtins.neg(value) {
+    switch Py.neg(value) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -37,7 +37,7 @@ extension Frame {
   internal func unaryNot() -> InstructionResult {
     let top = self.stack.top
 
-    switch self.builtins.not(top) {
+    switch Py.not(top) {
     case let .value(not):
       self.stack.top = not
       return .ok
@@ -51,7 +51,7 @@ extension Frame {
   /// Implements `TOS = ~TOS`.
   internal func unaryInvert() -> InstructionResult {
     let value = self.stack.top
-    switch self.builtins.invert(value) {
+    switch Py.invert(value) {
     case let .value(result):
       self.stack.top = result
       return .ok

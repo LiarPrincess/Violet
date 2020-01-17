@@ -22,29 +22,29 @@ extension Frame {
                        comparison: ComparisonOpcode) -> PyResult<PyObject> {
     switch comparison {
     case .equal:
-      return self.builtins.isEqual(left: left, right: right)
+      return Py.isEqual(left: left, right: right)
     case .notEqual:
-      return self.builtins.isNotEqual(left: left, right: right)
+      return Py.isNotEqual(left: left, right: right)
     case .less:
-      return self.builtins.isLess(left: left, right: right)
+      return Py.isLess(left: left, right: right)
     case .lessEqual:
-      return self.builtins.isLessEqual(left: left, right: right)
+      return Py.isLessEqual(left: left, right: right)
     case .greater:
-      return self.builtins.isGreater(left: left, right: right)
+      return Py.isGreater(left: left, right: right)
     case .greaterEqual:
-      return self.builtins.isGreaterEqual(left: left, right: right)
+      return Py.isGreaterEqual(left: left, right: right)
     case .is:
-      let result = self.builtins.is(left: left, right: right)
-      return .value(self.builtins.newBool(result))
+      let result = Py.is(left: left, right: right)
+      return .value(Py.newBool(result))
     case .isNot:
-      let result = self.builtins.is(left: left, right: right)
-      return .value(self.builtins.newBool(!result))
+      let result = Py.is(left: left, right: right)
+      return .value(Py.newBool(!result))
     case .in:
-      let result = self.builtins.contains(iterable: left, element: right)
-      return result.map(self.builtins.newBool)
+      let result = Py.contains(iterable: left, element: right)
+      return result.map(Py.newBool)
     case .notIn:
-      let result = self.builtins.contains(iterable: left, element: right)
-      return result.map { !$0 }.map(self.builtins.newBool)
+      let result = Py.contains(iterable: left, element: right)
+      return result.map { !$0 }.map(Py.newBool)
     case .exceptionMatch:
       // ceval.c -> case PyCmp_EXC_MATCH:
       fatalError()

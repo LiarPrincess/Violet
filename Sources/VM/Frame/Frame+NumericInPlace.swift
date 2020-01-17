@@ -1,3 +1,4 @@
+import Objects
 import Bytecode
 
 extension Frame {
@@ -9,7 +10,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.mulInPlace(left: left, right: right) {
+    switch Py.mulInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -23,7 +24,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.matmulInPlace(left: left, right: right) {
+    switch Py.matmulInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -39,7 +40,7 @@ extension Frame {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch self.builtins.floordivInPlace(left: dividend, right: divisor) {
+    switch Py.floordivInPlace(left: dividend, right: divisor) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -53,7 +54,7 @@ extension Frame {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch self.builtins.truedivInPlace(left: dividend, right: divisor) {
+    switch Py.truedivInPlace(left: dividend, right: divisor) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -67,7 +68,7 @@ extension Frame {
     let divisor = self.stack.pop()
     let dividend = self.stack.top
 
-    switch self.builtins.modInPlace(left: dividend, right: divisor) {
+    switch Py.modInPlace(left: dividend, right: divisor) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -83,7 +84,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.addInPlace(left: left, right: right) {
+    switch Py.addInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -99,7 +100,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.subInPlace(left: left, right: right) {
+    switch Py.subInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -115,7 +116,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.lshiftInPlace(left: left, right: right) {
+    switch Py.lshiftInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -129,7 +130,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.rshiftInPlace(left: left, right: right) {
+    switch Py.rshiftInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -145,7 +146,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.andInPlace(left: left, right: right) {
+    switch Py.andInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -159,7 +160,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.xorInPlace(left: left, right: right) {
+    switch Py.xorInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -173,7 +174,7 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.builtins.orInPlace(left: left, right: right) {
+    switch Py.orInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok

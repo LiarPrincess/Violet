@@ -15,20 +15,20 @@ extension Frame {
 
   private func toObject(_ value: Constant) -> PyObject {
     switch value {
-    case .true: return self.builtins.true
-    case .false: return self.builtins.false
-    case .none: return self.builtins.none
-    case .ellipsis: return self.builtins.ellipsis
-    case let .integer(arg): return self.builtins.newInt(arg)
-    case let .float(arg): return self.builtins.newFloat(arg)
-    case let .complex(real, imag): return self.builtins.newComplex(real: real, imag: imag)
-    case let .string(arg): return self.builtins.newString(arg)
-    case let .bytes(arg): return self.builtins.newBytes(arg)
+    case .true: return Py.true
+    case .false: return Py.false
+    case .none: return Py.none
+    case .ellipsis: return Py.ellipsis
+    case let .integer(arg): return Py.newInt(arg)
+    case let .float(arg): return Py.newFloat(arg)
+    case let .complex(real, imag): return Py.newComplex(real: real, imag: imag)
+    case let .string(arg): return Py.newString(arg)
+    case let .bytes(arg): return Py.newBytes(arg)
     case .code: // let .code(arg):
       fatalError()
     case let .tuple(args):
       let elements = args.map(self.toObject)
-      return self.builtins.newTuple(elements)
+      return Py.newTuple(elements)
     }
   }
 
@@ -84,7 +84,7 @@ extension Frame {
     let object = self.stack.pop()
     let value = self.stack.pop()
 
-    switch self.builtins.setAttribute(object, name: name, value: value) {
+    switch Py.setAttribute(object, name: name, value: value) {
     case .value:
       return .ok
     case .error(let e):
@@ -97,7 +97,7 @@ extension Frame {
     let name = self.code.names[nameIndex]
     let object = self.stack.top
 
-    switch self.builtins.getAttribute(object, name: name) {
+    switch Py.getAttribute(object, name: name) {
     case let .value(r):
       self.stack.top = r
       return .ok
@@ -111,7 +111,7 @@ extension Frame {
     let name = self.code.names[nameIndex]
     let object = self.stack.pop()
 
-    switch self.builtins.deleteAttribute(object, name: name) {
+    switch Py.deleteAttribute(object, name: name) {
     case .value:
       return .ok
     case .error(let e):
@@ -126,7 +126,7 @@ extension Frame {
     let index = self.stack.pop()
     let object = self.stack.top
 
-    switch self.builtins.getItem(object, at: index) {
+    switch Py.getItem(object, at: index) {
     case let .value(r):
       self.stack.top = r
       return .ok
@@ -141,7 +141,7 @@ extension Frame {
     let object = self.stack.pop()
     let value = self.stack.pop()
 
-    switch self.builtins.setItem(object, at: index, value: value) {
+    switch Py.setItem(object, at: index, value: value) {
     case .value:
       return .ok
     case .error(let e):
@@ -154,7 +154,7 @@ extension Frame {
     let index = self.stack.pop()
     let object = self.stack.pop()
 
-    switch self.builtins.deleteItem(object, at: index) {
+    switch Py.deleteItem(object, at: index) {
     case .value:
       return .ok
     case .error(let e):

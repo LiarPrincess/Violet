@@ -75,7 +75,7 @@ extension Frame {
   internal func printExpr() -> InstructionResult {
     let value = self.stack.pop()
 
-    switch self.builtins.print(value: value, raw: true) {
+    switch Py.print(value: value, raw: true) {
     case .value:
       return .ok
     case .error(let e):

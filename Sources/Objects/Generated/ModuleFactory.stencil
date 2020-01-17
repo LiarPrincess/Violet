@@ -14,7 +14,7 @@
 //
 // So when you are working on Python 'builtins' you are actually working on
 // (Scooby-Doo reveal incomming...)
-// 'PyContext.builtins' object (which gives us stateful modules).
+// 'Py.builtins' object (which gives us stateful modules).
 // (and we would have gotten away with it without you meddling kids!)
 // https://www.youtube.com/watch?v=b4JLLv1lE7A
 

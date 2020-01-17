@@ -1,3 +1,4 @@
+import Objects
 import Bytecode
 
 extension Frame {
@@ -16,7 +17,7 @@ extension Frame {
   internal func popJumpIfTrue(labelIndex: Int) -> InstructionResult {
     let top = self.stack.pop()
 
-    switch self.builtins.isTrueBool(top) {
+    switch Py.isTrueBool(top) {
     case let .value(isTrue):
       self.popJumpIf(isTrue, to: labelIndex)
       return .ok
@@ -29,7 +30,7 @@ extension Frame {
   internal func popJumpIfFalse(labelIndex: Int) -> InstructionResult {
     let top = self.stack.pop()
 
-    switch self.builtins.isTrueBool(top) {
+    switch Py.isTrueBool(top) {
     case let .value(isTrue):
       self.popJumpIf(!isTrue, to: labelIndex)
       return .ok
@@ -45,7 +46,7 @@ extension Frame {
   internal func jumpIfTrueOrPop(labelIndex: Int) -> InstructionResult {
     let top = self.stack.top
 
-    switch self.builtins.isTrueBool(top) {
+    switch Py.isTrueBool(top) {
     case let .value(isTrue):
       self.jumpIfOrPop(isTrue, to: labelIndex)
       return .ok
@@ -59,7 +60,7 @@ extension Frame {
   internal func jumpIfFalseOrPop(labelIndex: Int) -> InstructionResult {
     let top = self.stack.top
 
-    switch self.builtins.isTrueBool(top) {
+    switch Py.isTrueBool(top) {
     case let .value(isTrue):
       self.jumpIfOrPop(!isTrue, to: labelIndex)
       return .ok

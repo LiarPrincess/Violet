@@ -20,7 +20,7 @@ extension Frame {
   internal func getIter() -> InstructionResult {
     let iterable = self.stack.top
 
-    switch self.builtins.iter(from: iterable) {
+    switch Py.iter(from: iterable) {
     case let .value(iter):
       self.stack.top = iter
     return .ok
@@ -36,7 +36,7 @@ extension Frame {
     // before: [iter]; after: [iter, iter()] *or* []
     let iter = self.stack.top
 
-    switch self.builtins.next(iterator: iter) {
+    switch Py.next(iterator: iter) {
     case .value(let o):
       self.stack.push(o)
       return .ok

@@ -22,7 +22,7 @@ extension Frame {
       return .ok
     }
 
-    let formatted = self.builtins.PyObject_Format(value: value, format: format)
+    let formatted = Py.PyObject_Format(value: value, format: format)
     self.stack.push(formatted)
 
     return .ok
@@ -34,11 +34,11 @@ extension Frame {
     case .none:
       return .value(value)
     case .str:
-      return self.builtins.strValue(value).map(self.builtins.newString)
+      return Py.strValue(value).map(Py.newString)
     case .repr:
-      return self.builtins.repr(value).map(self.builtins.newString)
+      return Py.repr(value).map(Py.newString)
     case .ascii:
-      return self.builtins.ascii(value).map(self.builtins.newString)
+      return Py.ascii(value).map(Py.newString)
     }
   }
 
@@ -47,10 +47,10 @@ extension Frame {
   /// Concatenates `count` strings from the stack
   /// and pushes the resulting string onto the stack.
   internal func buildString(count: Int) -> InstructionResult {
-    let empty = self.builtins.emptyString
+    let empty = Py.emptyString
     let elements = self.stack.popElementsInPushOrder(count: count)
 
-    switch self.builtins.join(strings: elements, separator: empty) {
+    switch Py.join(strings: elements, separator: empty) {
     case let .value(r):
       self.stack.push(r)
       return .ok

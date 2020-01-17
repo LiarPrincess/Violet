@@ -29,13 +29,6 @@ internal final class Frame {
   /// Parent frame.
   internal let parent: Frame?
 
-  /// Python state.
-  internal let context: PyContext
-  /// Built-in functions.
-  internal var builtins: Builtins {
-    return self.context.builtins
-  }
-
   /// The main data frame of the stack machine.
   internal var stack = ObjectStack()
   /// Stack of blocks (new ones are last).
@@ -50,7 +43,7 @@ internal final class Frame {
   internal var localSymbols: Attributes
   /// Global variables.
   internal var globalSymbols: Attributes
-  /// Builtin symbols (most of the time it would be `self.builtins.__dict__`).
+  /// Builtin symbols (most of the time it would be `Py.builtinsModule.__dict__`).
   internal var builtinSymbols: Attributes
   /// Free variables (variables from upper scopes).
   internal lazy var freeVariables = [String: PyObject]()
@@ -69,23 +62,18 @@ internal final class Frame {
 
   /// PyFrameObject* _Py_HOT_FUNCTION
   /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
-  internal init(context: PyContext,
-                code: CodeObject,
+  internal init(code: CodeObject,
                 locals: Attributes,
                 globals: Attributes,
                 parent: Frame?) {
     self.code = code
     self.parent = parent
-    self.context = context
     self.localSymbols = locals
     self.globalSymbols = globals
-    self.builtinSymbols = Frame.getBuiltins(context: context,
-                                            globals: globals,
-                                            parent: parent)
+    self.builtinSymbols = Frame.getBuiltins(globals: globals, parent: parent)
   }
 
-  private static func getBuiltins(context: PyContext,
-                                  globals: Attributes,
+  private static func getBuiltins(globals: Attributes,
                                   parent: Frame?) -> Attributes {
 
     if parent == nil || parent?.globalSymbols !== globals {
@@ -94,7 +82,7 @@ internal final class Frame {
       }
     }
 
-    return context.builtinsModule.getDict()
+    return Py.builtinsModule.getDict()
   }
 
   // MARK: - Helpers
