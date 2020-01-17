@@ -32,13 +32,13 @@ public class PyMethod: PyObject {
       return .notImplemented
     }
 
-    switch self.builtins.isEqualBool(left: self.fn, right: other.fn) {
+    switch Py.isEqualBool(left: self.fn, right: other.fn) {
     case .value(true): break // compare self
     case .value(false): return .value(false)
     case .error(let e): return .error(e)
     }
 
-    switch self.builtins.isEqualBool(left: self.object, right: other.object) {
+    switch Py.isEqualBool(left: self.object, right: other.object) {
     case .value(let b): return .value(b)
     case .error(let e): return .error(e)
     }
@@ -100,13 +100,13 @@ public class PyMethod: PyObject {
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
     let objectHash: PyHash
-    switch self.builtins.hash(self.object) {
+    switch Py.hash(self.object) {
     case let .value(h): objectHash = h
     case let .error(e): return .error(e)
     }
 
     let fnHash: PyHash
-    switch self.builtins.hash(self.fn) {
+    switch Py.hash(self.fn) {
     case let .value(h): fnHash = h
     case let .error(e): return .error(e)
     }

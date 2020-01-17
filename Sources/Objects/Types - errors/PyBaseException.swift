@@ -99,7 +99,7 @@ public class PyBaseException: PyObject {
     switch args.getLength() {
     case 1:
       let first = args.elements[0]
-      return self.builtins.repr(first).map { name + "(" + $0 + ")" }
+      return Py.repr(first).map { name + "(" + $0 + ")" }
     default:
       let argsRepr = args.repr()
       return argsRepr.map { name + $0 }
@@ -115,9 +115,9 @@ public class PyBaseException: PyObject {
       return .value("")
     case 1:
       let first = args.elements[0]
-      return self.builtins.repr(first)
+      return Py.repr(first)
     default:
-      return self.builtins.repr(args)
+      return Py.repr(args)
     }
   }
 
@@ -164,7 +164,7 @@ public class PyBaseException: PyObject {
       return .typeError("args may not be deleted")
     }
 
-    switch self.builtins.newTuple(iterable: value) {
+    switch Py.newTuple(iterable: value) {
     case let .value(tuple):
       self.args = tuple
       return .value()
@@ -177,25 +177,25 @@ public class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __traceback__, setter = setTraceback
   internal func getTraceback() -> PyObject {
-    return self.traceback ?? self.builtins.none
+    return self.traceback ?? Py.none
   }
 
   internal func setTraceback(_ value: PyObject?) -> PyResult<()> {
-    //    guard let value = value else {
-    //      return .typeError("__traceback__ may not be deleted")
-    //    }
+//    guard let value = value else {
+//      return .typeError("__traceback__ may not be deleted")
+//    }
 
     // TODO: This (but we need PyTraceback first)
-    //    else if (!(tb == Py_None || PyTraceBack_Check(tb))) {
-    //        PyErr_SetString(PyExc_TypeError, "__traceback__ must be a traceback or None");
-    //        return -1;
-    //    }
+//    else if (!(tb == Py_None || PyTraceBack_Check(tb))) {
+//        PyErr_SetString(PyExc_TypeError, "__traceback__ must be a traceback or None");
+//        return -1;
+//    }
 
-    //    guard let tuple = value as? PyObject else {
-    //      return .typeError("__traceback__ must be a traceback")
-    //    }
-    //
-    //    self._traceback = tuple
+//    guard let tuple = value as? PyObject else {
+//      return .typeError("__traceback__ must be a traceback")
+//    }
+//
+//    self._traceback = tuple
     return .value()
   }
 
@@ -205,7 +205,7 @@ public class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __cause__, setter = setCause, doc = getCauseDoc
   internal func getCause() -> PyObject {
-    return self.cause ?? self.builtins.none
+    return self.cause ?? Py.none
   }
 
   internal func setCause(_ value: PyObject?) -> PyResult<()> {
@@ -233,7 +233,7 @@ public class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __context__, setter = setContext, doc = getContetDoc
   internal func getContext() -> PyObject {
-    return self.exceptionContext ?? self.builtins.none
+    return self.exceptionContext ?? Py.none
   }
 
   internal func setContext(_ value: PyObject?) -> PyResult<()> {
@@ -259,12 +259,12 @@ public class PyBaseException: PyObject {
 
   // sourcery: pyproperty = __suppress_context__, setter = setSuppressContext
   internal func getSuppressContext() -> PyObject {
-    return self.builtins.newBool(self.suppressExceptionContext)
+    return Py.newBool(self.suppressExceptionContext)
   }
 
   internal func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
     if let value = value {
-      switch self.builtins.isTrueBool(value) {
+      switch Py.isTrueBool(value) {
       case let .value(v): self.suppressExceptionContext = v
       case let .error(e): return .error(e)
       }
@@ -281,7 +281,7 @@ public class PyBaseException: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    let argsTuple = type.builtins.newTuple(args)
+    let argsTuple = Py.newTuple(args)
     return .value(PyBaseException(args: argsTuple))
   }
 
@@ -307,13 +307,13 @@ public class PyBaseException: PyObject {
         && zip(zelfArgs, args).allSatisfy { $0.0 === $0.1 }
 
     if !argsAreEqual {
-      let argsTuple = zelf.builtins.newTuple(args)
+      let argsTuple = Py.newTuple(args)
       switch zelf.setArgs(argsTuple) {
       case .value: break
       case .error(let e): return .error(e)
       }
     }
 
-    return .value(zelf.builtins.none)
+    return .value(Py.none)
   }
 }

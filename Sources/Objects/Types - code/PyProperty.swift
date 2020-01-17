@@ -86,17 +86,17 @@ public class PyProperty: PyObject {
 
   // sourcery: pyproperty = fget
   internal func getFGet() -> PyObject {
-    return self.getter ?? self.builtins.none
+    return self.getter ?? Py.none
   }
 
   // sourcery: pyproperty = fset
   internal func getFSet() -> PyObject {
-    return self.setter ?? self.builtins.none
+    return self.setter ?? Py.none
   }
 
   // sourcery: pyproperty = fdel
   internal func getFDel() -> PyObject {
-    return self.deleter ?? self.builtins.none
+    return self.deleter ?? Py.none
   }
 
   // MARK: - Call
@@ -111,7 +111,7 @@ public class PyProperty: PyObject {
       return .attributeError("unreadable attribute")
     }
 
-    switch self.builtins.call(callable: propGet, args: [object]) {
+    switch Py.call(callable: propGet, args: [object]) {
     case .value(let r):
       return .value(r)
     case .error(let e), .notCallable(let e):
@@ -129,7 +129,7 @@ public class PyProperty: PyObject {
       return .attributeError(msg)
     }
 
-    switch self.builtins.call(callable: fn, args: [object, value]) {
+    switch Py.call(callable: fn, args: [object, value]) {
     case .value(let r):
       return .value(r)
     case .error(let e), .notCallable(let e):
@@ -139,7 +139,7 @@ public class PyProperty: PyObject {
 
   // sourcery: pymethod = __delete__
   internal func del(object: PyObject) -> PyResult<PyObject> {
-    self.set(object: object, value: self.builtins.none)
+    self.set(object: object, value: Py.none)
   }
 
   // MARK: - Python new
@@ -148,7 +148,7 @@ public class PyProperty: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.property
+    let isBuiltin = type === Py.types.property
     let alloca = isBuiltin ? PyProperty.init(type:) : PyPropertyHeap.init(type:)
     return .value(alloca(type))
   }
@@ -171,7 +171,7 @@ public class PyProperty: PyObject {
       zelf.setter = bind.count >= 2 ? PyProperty.nilIfNone(bind[1]) : nil
       zelf.deleter = bind.count >= 3 ? PyProperty.nilIfNone(bind[2]) : nil
       zelf.doc = bind.count >= 4 ? bind[3] : nil
-      return .value(zelf.builtins.none)
+      return .value(Py.none)
 
     case let .error(e):
       return .error(e)

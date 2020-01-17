@@ -145,7 +145,7 @@ public class PyBuiltinFunction: PyObject {
 
   // sourcery: pyproperty = __self__
   internal func getSelf() -> PyObject {
-    return self.object ?? self.builtins.none
+    return self.object ?? Py.none
   }
 
   // MARK: - Call

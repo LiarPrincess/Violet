@@ -94,7 +94,7 @@ extension PyProperty {
       name: name,
       doc: nil,
       fn: { value -> PyResult<PyObject> in
-        set(value).map { _ in value.builtins.none }
+        set(value).map { _ in Py.none }
       }
     )
   }
@@ -110,7 +110,7 @@ extension PyProperty {
       fn: { zelf, value -> PyResult<PyObject> in
         castSelf(zelf, name)
           .map { set($0)(value) }
-          .map { _ in zelf.builtins.none }
+          .map { _ in Py.none }
       }
     )
   }

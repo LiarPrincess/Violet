@@ -21,7 +21,7 @@ public class PyModule: PyObject {
       return .systemError("nameless module")
     }
 
-    return self.builtins.strValue(nameObject)
+    return Py.strValue(nameObject)
   }
 
   internal convenience init(name: String, doc: String?) {
@@ -85,7 +85,7 @@ public class PyModule: PyObject {
     }
 
     if let getAttr = self.attributes["__getattr__"] {
-      switch self.builtins.call(callable: getAttr, args: [self, name]) {
+      switch Py.call(callable: getAttr, args: [self, name]) {
       case .value(let r):
         return .value(r)
       case .error(let e), .notCallable(let e):
@@ -124,7 +124,7 @@ public class PyModule: PyObject {
   public func dir() -> DirResult {
     // Do not add `self.type` dir!
     if let dirFunc = self.attributes["__dir__"] {
-      return self.builtins.callDir(dirFunc, args: [])
+      return Py.callDir(dirFunc, args: [])
     } else {
       return DirResult(self.attributes.keys)
     }
@@ -154,14 +154,14 @@ public class PyModule: PyObject {
     case let .value(bind):
       assert(1 <= bind.count && bind.count <= 2, "Invalid argument count returned from parser.")
       let name = bind[0]
-      let doc = bind.count >= 2 ? bind[1] : zelf.builtins.none
+      let doc = bind.count >= 2 ? bind[1] : Py.none
 
       zelf.attributes.set(key: "___name__", to: name)
       zelf.attributes.set(key: "___doc__", to: doc)
-      zelf.attributes.set(key: "___package__", to: zelf.builtins.none)
-      zelf.attributes.set(key: "___loader__", to: zelf.builtins.none)
-      zelf.attributes.set(key: "___spec__", to: zelf.builtins.none)
-      return .value(zelf.builtins.none)
+      zelf.attributes.set(key: "___package__", to: Py.none)
+      zelf.attributes.set(key: "___loader__", to: Py.none)
+      zelf.attributes.set(key: "___spec__", to: Py.none)
+      return .value(Py.none)
 
     case let .error(e):
       return .error(e)

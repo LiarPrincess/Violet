@@ -135,7 +135,7 @@ public class PyTextFile: PyObject {
   }
 
   internal func read(size: Int) -> PyResult<PyString> {
-    return self.readRaw(size: size).map(self.builtins.newString(_:))
+    return self.readRaw(size: size).map(Py.newString(_:))
   }
 
   internal func readRaw(size: Int) -> PyResult<String> {
@@ -199,7 +199,7 @@ public class PyTextFile: PyObject {
     case let .value(data):
       do {
         try self.fd.write(contentsOf: data)
-        return .value(self.builtins.none)
+        return .value(Py.none)
       } catch {
         return .error(self.osError(from: error))
       }
@@ -220,12 +220,12 @@ public class PyTextFile: PyObject {
   /// Idempotent
   internal func close() -> PyResult<PyNone> {
     guard !self.isClosed() else {
-      return .value(self.builtins.none)
+      return .value(Py.none)
     }
 
     do {
       try self.fd.close()
-      return .value(self.builtins.none)
+      return .value(Py.none)
     } catch {
       return .error(self.osError(from: error))
     }
@@ -248,7 +248,7 @@ public class PyTextFile: PyObject {
     //    Anyway...
 
     guard self.closeOnDealloc else {
-      return .value(self.builtins.none)
+      return .value(Py.none)
     }
 
     // 'self.close' is (or at least should be) idempotent

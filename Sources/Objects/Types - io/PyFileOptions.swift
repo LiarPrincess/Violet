@@ -21,8 +21,7 @@ internal enum FileSource {
       return .value(.bytes(bytes.data.scalars))
     }
 
-    let builtins = object.builtins
-    let repr = builtins.reprOrGeneric(object)
+    let repr = Py.reprOrGeneric(object)
     return .typeError("invalid file: \(repr)")
   }
 }

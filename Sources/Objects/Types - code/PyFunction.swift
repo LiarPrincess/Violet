@@ -131,10 +131,10 @@ public class PyFunction: PyObject {
   // sourcery: pyproperty = __doc__
   internal func getDoc() -> PyResult<PyObject> {
     guard let doc = self.doc else {
-      return .value(self.builtins.none)
+      return .value(Py.none)
     }
 
-    return .value(self.builtins.newString(doc))
+    return .value(Py.newString(doc))
   }
 
   // MARK: - Module
@@ -145,7 +145,7 @@ public class PyFunction: PyObject {
       return module.name
     }
 
-    return self.builtins.strValue(self.module)
+    return Py.strValue(self.module)
   }
 
   // MARK: - Dict
