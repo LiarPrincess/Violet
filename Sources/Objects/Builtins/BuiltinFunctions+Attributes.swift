@@ -16,6 +16,8 @@ extension BuiltinFunctions {
     """
   }
 
+  /// getattr(object, name[, default])
+  /// See [this](https://docs.python.org/3/library/functions.html#getattr)
   public func getAttribute(_ object: PyObject,
                            name: String) -> PyResult<PyObject> {
     let nameObject = self.toObject(name)

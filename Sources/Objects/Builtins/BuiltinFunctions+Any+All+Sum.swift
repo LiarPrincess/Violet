@@ -47,7 +47,7 @@ extension BuiltinFunctions {
   // sourcery: pymethod = sum
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
-  public func sum(args: [PyObject], kwargs: PyObject?) -> PyResult<PyObject> {
+  internal func sum(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
     switch sumArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
       assert(1 <= bind.count && bind.count <= 2,

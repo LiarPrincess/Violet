@@ -3,9 +3,9 @@
 // https://docs.python.org/3/library/functions.html
 
 extension BuiltinFunctions {
-/*
-  // MARK: - Code
 
+  // MARK: - Code
+/*
   // sourcery: pymethod = __import__
   /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
   /// See [this](https://docs.python.org/3/library/functions.html#__import__)
@@ -40,9 +40,10 @@ extension BuiltinFunctions {
   public func breakpoint() -> PyObject {
     return self.unimplemented
   }
+*/
 
   // MARK: - Static, class method
-
+/*
   // sourcery: pymethod = @staticmethod
   /// @staticmethod
   /// See [this](https://docs.python.org/3/library/functions.html#staticmethod)
@@ -56,9 +57,10 @@ extension BuiltinFunctions {
   public func classmethod() -> PyObject {
     return self.unimplemented
   }
+*/
 
   // MARK: - Locals, globals
-
+/*
   // sourcery: pymethod = locals
   /// locals()
   /// See [this](https://docs.python.org/3/library/functions.html#locals)
@@ -79,9 +81,10 @@ extension BuiltinFunctions {
   public func vars() -> PyObject {
     return self.unimplemented
   }
+*/
 
   // MARK: - IO
-
+/*
   // sourcery: pymethod = input
   /// input([prompt])
   /// See [this](https://docs.python.org/3/library/functions.html#input)
@@ -95,9 +98,10 @@ extension BuiltinFunctions {
   internal func print(args: PyObject, kwargs: PyObject) -> PyResult<PyNone> {
     return .value(self.none)
   }
+*/
 
   // MARK: - Other
-
+/*
   // sourcery: pymethod = format
   /// format(value[, format_spec])
   /// See [this](https://docs.python.org/3/library/functions.html#format)
@@ -133,6 +137,7 @@ extension BuiltinFunctions {
     return self.unimplemented
   }
 */
+
   // MARK: - Other
 
   internal func callDir(_ fn: PyObject, args: [PyObject?]) -> DirResult {

@@ -27,7 +27,7 @@ internal enum ModuleFactory {
     let result = PyModule(name: "{{ type.annotations.pymodule }}", doc: nil)
     let dict = result.getDict()
 
-  {% for prop in type.instanceMethods|annotated:"pyproperty" %}
+  {% for prop in type.allMethods|annotated:"pyproperty" %}
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     {% set getter %}object.{{ prop.selectorName }}{% endset %}
     {% if prop.annotations.setter %}
@@ -37,7 +37,7 @@ internal enum ModuleFactory {
     {% endif %}
   {% endfor %}
 
-  {% for method in type.instanceMethods|annotated:"pymethod" %}
+  {% for method in type.allMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
     dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: object.{{ method.selectorName }})
   {% endfor %}
