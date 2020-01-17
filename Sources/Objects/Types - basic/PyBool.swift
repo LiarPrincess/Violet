@@ -62,7 +62,7 @@ public class PyBool: PyInt {
   override internal func and(_ other: PyObject) -> PyResult<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue && other.value.isTrue
-      return .value(self.builtins.newBool(result))
+      return .value(Py.newBool(result))
     }
 
     return super.and(other)
@@ -79,7 +79,7 @@ public class PyBool: PyInt {
   override internal func or(_ other: PyObject) -> PyResult<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue || other.value.isTrue
-      return .value(self.builtins.newBool(result))
+      return .value(Py.newBool(result))
     }
 
     return super.or(other)
@@ -96,7 +96,7 @@ public class PyBool: PyInt {
   override internal func xor(_ other: PyObject) -> PyResult<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue != other.value.isTrue
-      return .value(self.builtins.newBool(result))
+      return .value(Py.newBool(result))
     }
 
     return super.xor(other)
@@ -125,9 +125,9 @@ public class PyBool: PyInt {
     }
 
     if args.isEmpty {
-      return .value(type.builtins.false)
+      return .value(Py.false)
     }
 
-    return type.builtins.isTrue(args[0]).map { $0 as PyObject }
+    return Py.isTrue(args[0]).map { $0 as PyObject }
   }
 }

@@ -66,7 +66,7 @@ public class PyNamespace: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let isBuiltin = self.type === self.builtins.types.simpleNamespace
+    let isBuiltin = self.type === Py.types.simpleNamespace
     let name = isBuiltin ? "namespace" : self.typeName
 
     if self.hasReprLock {
@@ -76,7 +76,7 @@ public class PyNamespace: PyObject {
     return self.withReprLock {
       var list = [String]()
       for entry in self.attributes.entries {
-        switch self.builtins.repr(entry.value) {
+        switch Py.repr(entry.value) {
         case let .value(o): list.append("\(entry.key)=\(o)")
         case let .error(e): return .error(e)
         }
@@ -119,7 +119,7 @@ public class PyNamespace: PyObject {
     }
 
     guard let kwargs = kwargs else {
-      return .value(zelf.builtins.none)
+      return .value(Py.none)
     }
 
     let kwargsDict: [String:PyObject]
@@ -129,6 +129,6 @@ public class PyNamespace: PyObject {
     }
 
     zelf.attributes.update(values: kwargsDict)
-    return .value(zelf.builtins.none)
+    return .value(Py.none)
   }
 }

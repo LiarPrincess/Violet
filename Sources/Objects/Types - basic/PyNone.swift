@@ -48,6 +48,6 @@ public class PyNone: PyObject {
       return .typeError("NoneType takes no arguments")
     }
 
-    return .value(type.builtins.none)
+    return .value(Py.none)
   }
 }

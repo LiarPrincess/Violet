@@ -143,12 +143,12 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __int__
   internal func asInt() -> PyResult<PyInt> {
-    return .value(self.builtins.newInt(BigInt(self.value)))
+    return .value(Py.newInt(BigInt(self.value)))
   }
 
   // sourcery: pymethod = __float__
   internal func asFloat() -> PyResult<PyFloat> {
-    return .value(self.builtins.newFloat(self.value))
+    return .value(Py.newFloat(self.value))
   }
 
   // sourcery: pymethod = real
@@ -158,7 +158,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = imag
   internal func asImag() -> PyObject {
-    return self.builtins.newFloat(0.0)
+    return Py.newFloat(0.0)
   }
 
   // MARK: - Imaginary
@@ -193,14 +193,14 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __neg__
   internal func negative() -> PyObject {
-    return self.builtins.newFloat(-self.value)
+    return Py.newFloat(-self.value)
   }
 
   // MARK: - Abs
 
   // sourcery: pymethod = __abs__
   internal func abs() -> PyObject {
-    return self.builtins.newFloat(Swift.abs(self.value))
+    return Py.newFloat(Swift.abs(self.value))
   }
 
   // MARK: - Is integer
@@ -215,11 +215,11 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = is_integer, , doc = isIntegerDoc
   internal func isInteger() -> PyBool {
     guard self.value.isFinite else {
-      return self.builtins.false
+      return Py.false
     }
 
     let result = floor(self.value) == self.value
-    return self.builtins.newBool(result)
+    return Py.newBool(result)
   }
 
   // MARK: - Add
@@ -227,10 +227,10 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
-    return .value(self.builtins.newFloat(self.value + other))
+    return .value(Py.newFloat(self.value + other))
   }
 
   // sourcery: pymethod = __radd__
@@ -243,19 +243,19 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __sub__
   internal func sub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
-    return .value(self.builtins.newFloat(self.value - other))
+    return .value(Py.newFloat(self.value - other))
   }
 
   // sourcery: pymethod = __rsub__
   internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
-    return .value(self.builtins.newFloat(other - self.value))
+    return .value(Py.newFloat(other - self.value))
   }
 
   // MARK: - Mul
@@ -263,10 +263,10 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
-    return .value(self.builtins.newFloat(self.value * other))
+    return .value(Py.newFloat(self.value * other))
   }
 
   // sourcery: pymethod = __rmul__
@@ -287,11 +287,11 @@ public class PyFloat: PyObject {
     }
 
     guard let exp = self.asDouble(exp) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let result = Foundation.pow(self.value, exp)
-    return .value(self.builtins.newFloat(result))
+    return .value(Py.newFloat(result))
   }
 
   internal func rpow(base: PyObject) -> PyResult<PyObject> {
@@ -305,11 +305,11 @@ public class PyFloat: PyObject {
     }
 
     guard let base = self.asDouble(base) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let result = Foundation.pow(base, self.value)
-    return .value(self.builtins.newFloat(result))
+    return .value(Py.newFloat(result))
   }
 
   private func isNilOrNone(_ value: PyObject?) -> Bool {
@@ -321,7 +321,7 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __truediv__
   internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.truediv(left: self.value, right: other)
@@ -330,7 +330,7 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __rtruediv__
   internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.truediv(left: other, right: self.value)
@@ -341,7 +341,7 @@ public class PyFloat: PyObject {
       return .zeroDivisionError("float division by zero")
     }
 
-    return .value(self.builtins.newFloat(left / right))
+    return .value(Py.newFloat(left / right))
   }
 
   // MARK: - Floor div
@@ -349,7 +349,7 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __floordiv__
   internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.floordiv(left: self.value, right: other)
@@ -358,7 +358,7 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __rfloordiv__
   internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.floordiv(left: other, right: self.value)
@@ -370,7 +370,7 @@ public class PyFloat: PyObject {
     }
 
     let result = self.floordivRaw(left: left, right: right)
-    return .value(self.builtins.newFloat(result))
+    return .value(Py.newFloat(result))
   }
 
   private func floordivRaw(left: Double, right: Double) -> Double {
@@ -382,7 +382,7 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __mod__
   internal func mod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.mod(left: self.value, right: other)
@@ -391,7 +391,7 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __rmod__
   internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.mod(left: other, right: self.value)
@@ -403,7 +403,7 @@ public class PyFloat: PyObject {
     }
 
     let result = self.modRaw(left: left, right: right)
-    return .value(self.builtins.newFloat(result))
+    return .value(Py.newFloat(result))
   }
 
   private func modRaw(left: Double, right: Double) -> Double {
@@ -415,7 +415,7 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __divmod__
   internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.divmod(left: self.value, right: other)
@@ -424,7 +424,7 @@ public class PyFloat: PyObject {
   // sourcery: pymethod = __rdivmod__
   internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asDouble(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return self.divmod(left: other, right: self.value)
@@ -438,9 +438,9 @@ public class PyFloat: PyObject {
     let div = self.floordivRaw(left: left, right: right)
     let mod = self.modRaw(left: left, right: right)
 
-    let tuple0 = self.builtins.newFloat(div)
-    let tuple1 = self.builtins.newFloat(mod)
-    return .value(self.builtins.newTuple(tuple0, tuple1))
+    let tuple0 = Py.newFloat(div)
+    let tuple1 = Py.newFloat(mod)
+    return .value(Py.newTuple(tuple0, tuple1))
   }
 
   // MARK: - Round
@@ -451,7 +451,7 @@ public class PyFloat: PyObject {
   /// Return the Integral closest to x, rounding half toward even.
   /// When an argument is passed, work like built-in round(x, ndigits).
   internal func round(nDigits: PyObject?) -> PyResult<PyObject> {
-    let nDigits = nDigits ?? self.builtins.none
+    let nDigits = nDigits ?? Py.none
 
     var digitCount: BigInt?
 
@@ -466,10 +466,10 @@ public class PyFloat: PyObject {
     switch digitCount {
     case .some(0):
       // round to nearest integer
-      return .value(self.builtins.newFloat(self.value.rounded()))
+      return .value(Py.newFloat(self.value.rounded()))
     case .some:
       // TODO: Implement float rounding to arbitrary precision
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     case .none:
       return .typeError(
         "'\(nDigits.typeName)' object cannot be interpreted as an integer"
@@ -487,10 +487,10 @@ public class PyFloat: PyObject {
     Foundation.modf(raw, &wholePart)
 
     if let int = BigInt(exactly: wholePart) {
-      return self.builtins.newInt(int)
+      return Py.newInt(int)
     }
 
-    return self.builtins.newFloat(wholePart)
+    return Py.newFloat(wholePart)
   }
 
   // MARK: - Python new
@@ -499,7 +499,7 @@ public class PyFloat: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    let isBuiltin = type === type.builtins.float
+    let isBuiltin = type === Py.types.float
     if isBuiltin {
       if let e = ArgumentParser.noKwargsOrError(fnName: "float",
                                                 kwargs: kwargs) {
@@ -542,7 +542,7 @@ public class PyFloat: PyObject {
       return owner.asFloat().map { $0.value }
     }
 
-    switch object.builtins.callMethod(on: object, selector: "__float__") {
+    switch Py.callMethod(on: object, selector: "__float__") {
     case .value(let f):
       guard let float = f as? PyFloat else {
         let ot = object.typeName

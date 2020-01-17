@@ -132,12 +132,12 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = real
   internal func asReal() -> PyObject {
-    return self.builtins.newFloat(self.real)
+    return Py.newFloat(self.real)
   }
 
   // sourcery: pymethod = imag
   internal func asImag() -> PyObject {
-    return self.builtins.newFloat(self.imag)
+    return Py.newFloat(self.imag)
   }
 
   // MARK: - Imaginary
@@ -146,7 +146,7 @@ public class PyComplex: PyObject {
   /// float.conjugate
   /// Return self, the complex conjugate of any float.
   internal func conjugate() -> PyObject {
-    return self.builtins.newComplex(real: self.real, imag: -self.imag)
+    return Py.newComplex(real: self.real, imag: -self.imag)
   }
 
   // MARK: - Class
@@ -172,7 +172,7 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __neg__
   internal func negative() -> PyObject {
-    return self.builtins.newComplex(real: -self.real, imag: -self.imag)
+    return Py.newComplex(real: -self.real, imag: -self.imag)
   }
 
   // MARK: - Abs
@@ -182,18 +182,18 @@ public class PyComplex: PyObject {
     let bothFinite = self.real.isFinite && self.imag.isFinite
     guard bothFinite else {
       if self.real.isInfinite {
-        return self.builtins.newFloat(Swift.abs(self.real))
+        return Py.newFloat(Swift.abs(self.real))
       }
 
       if self.imag.isInfinite {
-        return self.builtins.newFloat(Swift.abs(self.imag))
+        return Py.newFloat(Swift.abs(self.imag))
       }
 
-      return self.builtins.newFloat(.nan)
+      return Py.newFloat(.nan)
     }
 
     let result = hypot(self.real, self.imag)
-    return self.builtins.newFloat(result)
+    return Py.newFloat(result)
   }
 
   // MARK: - Add
@@ -201,11 +201,11 @@ public class PyComplex: PyObject {
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     return .value(
-      self.builtins.newComplex(
+      Py.newComplex(
         real: self.real + other.real,
         imag: self.imag + other.real
       )
@@ -222,7 +222,7 @@ public class PyComplex: PyObject {
   // sourcery: pymethod = __sub__
   internal func sub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -232,7 +232,7 @@ public class PyComplex: PyObject {
   // sourcery: pymethod = __rsub__
   internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -240,7 +240,7 @@ public class PyComplex: PyObject {
   }
 
   private func sub(left: Raw, right: Raw) -> PyComplex {
-    return self.builtins.newComplex(
+    return Py.newComplex(
       real: left.real - right.real,
       imag: left.imag - right.real
     )
@@ -251,7 +251,7 @@ public class PyComplex: PyObject {
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -261,7 +261,7 @@ public class PyComplex: PyObject {
   // sourcery: pymethod = __rmul__
   internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -269,7 +269,7 @@ public class PyComplex: PyObject {
   }
 
   private func mul(left: Raw, right: Raw) -> PyComplex {
-    return self.builtins.newComplex(
+    return Py.newComplex(
       real: left.real * right.real - left.imag * right.imag,
       imag: left.real * right.imag + left.imag * right.real
     )
@@ -288,7 +288,7 @@ public class PyComplex: PyObject {
     }
 
     guard let exp = self.asComplex(exp) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -306,7 +306,7 @@ public class PyComplex: PyObject {
     }
 
     guard let base = self.asComplex(base) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -319,7 +319,7 @@ public class PyComplex: PyObject {
 
   private func pow(base: Raw, exp: Raw) -> PyResult<PyObject> {
     if exp.real.isZero && exp.real.isZero {
-      return .value(self.builtins.newComplex(real: 1.0, imag: 0.0))
+      return .value(Py.newComplex(real: 1.0, imag: 0.0))
     }
 
     if base.real.isZero && base.imag.isZero {
@@ -327,7 +327,7 @@ public class PyComplex: PyObject {
         return .valueError("complex zero to negative or complex power")
       }
 
-      return .value(self.builtins.newComplex(real: 0.0, imag: 0.0))
+      return .value(Py.newComplex(real: 0.0, imag: 0.0))
     }
 
     let vabs = Foundation.hypot(base.real, base.imag)
@@ -340,12 +340,8 @@ public class PyComplex: PyObject {
       phase += exp.imag * Foundation.log(vabs)
     }
 
-    return .value(
-      self.builtins.newComplex(
-        real: len * cos(phase),
-        imag: len * sin(phase)
-      )
-    )
+    let result = Py.newComplex(real: len * cos(phase), imag: len * sin(phase))
+    return .value(result)
   }
 
   // MARK: - True div
@@ -353,7 +349,7 @@ public class PyComplex: PyObject {
   // sourcery: pymethod = __truediv__
   internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -363,7 +359,7 @@ public class PyComplex: PyObject {
   // sourcery: pymethod = __rtruediv__
   internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = self.asComplex(other) else {
-      return .value(self.builtins.notImplemented)
+      return .value(Py.notImplemented)
     }
 
     let zelf = Raw(real: self.real, imag: self.imag)
@@ -380,7 +376,7 @@ public class PyComplex: PyObject {
     }
 
     return .value(
-      self.builtins.newComplex(
+      Py.newComplex(
         real: (left.real * right.real + left.imag * right.imag) / d,
         imag: (left.imag * right.real - left.real * right.imag) / d
       )
@@ -453,7 +449,7 @@ public class PyComplex: PyObject {
       return .value(complex)
     }
 
-    let isBuiltin = type === type.builtins.complex
+    let isBuiltin = type === Py.types.complex
     let alloca = isBuiltin ?
       PyComplex.init(type:real:imag:) :
       PyComplexHeap.init(type:real:imag:)
@@ -616,7 +612,7 @@ public class PyComplex: PyObject {
       return .value(owner.asComplex())
     }
 
-    switch object.builtins.callMethod(on: object, selector: "__complex__") {
+    switch Py.callMethod(on: object, selector: "__complex__") {
     case .value(let o):
       return .value(o)
     case .missingMethod:

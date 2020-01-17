@@ -54,6 +54,6 @@ public class PyEllipsis: PyObject {
       return .typeError("EllipsisType takes no arguments")
     }
 
-    return .value(type.builtins.ellipsis)
+    return .value(Py.ellipsis)
   }
 }

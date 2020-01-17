@@ -45,6 +45,6 @@ public class PyNotImplemented: PyObject {
       return .typeError("NotImplementedType takes no arguments")
     }
 
-    return .value(type.builtins.notImplemented)
+    return .value(Py.notImplemented)
   }
 }
