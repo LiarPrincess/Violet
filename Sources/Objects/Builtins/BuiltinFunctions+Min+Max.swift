@@ -136,8 +136,7 @@ private enum MinImpl: MinMaxImpl {
 
   fileprivate static func compare(current: PyObject,
                                   with element: PyObject) -> MinMaxResult {
-    let builtins = current.builtins
-    switch builtins.isLessBool(left: current, right: element) {
+    switch Py.isLessBool(left: current, right: element) {
     case .value(true): return .useCurrent
     case .value(false): return .useNew
     case .error(let e): return .error(e)
@@ -181,8 +180,7 @@ private enum MaxImpl: MinMaxImpl {
 
   fileprivate static func compare(current: PyObject,
                                   with element: PyObject) -> MinMaxResult {
-    let builtins = current.builtins
-    switch builtins.isGreaterBool(left: current, right: element) {
+    switch Py.isGreaterBool(left: current, right: element) {
     case .value(true): return .useCurrent
     case .value(false): return .useNew
     case .error(let e): return .error(e)

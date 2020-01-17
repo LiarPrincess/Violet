@@ -21,7 +21,7 @@ private enum FastCallResult {
 }
 
 /// Basically a template for ternary operations (even though we have only one).
-/// See `Builtins+Compare` for reasoning why we do it this way.
+/// See `BuiltinFunctions+Compare` for reasoning why we do it this way.
 private protocol TernaryOp {
 
   /// Operator used to invoke given binary operation, for example '+'.
@@ -99,8 +99,6 @@ extension TernaryOp {
   private static func callOp(left: PyObject,
                              middle: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
-    let builtins = left.builtins
-
     // Try fast protocol-based dispach
     switch callFastOp(left: left, middle: middle, right: right) {
     case .value(let result):
@@ -116,7 +114,7 @@ extension TernaryOp {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(builtins.notImplemented)
+      return .value(Py.notImplemented)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
@@ -125,8 +123,6 @@ extension TernaryOp {
   private static func callReflected(left: PyObject,
                                     middle: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
-    let builtins = left.context.builtins
-
     // Try fast protocol-based dispach
     switch callFastReflected(left: left, middle: middle, right: right) {
     case .value(let result):
@@ -142,7 +138,7 @@ extension TernaryOp {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(builtins.notImplemented)
+      return .value(Py.notImplemented)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

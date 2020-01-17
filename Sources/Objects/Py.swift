@@ -54,7 +54,7 @@ public class PyInstance: BuiltinFunctions {
   /// Python `builtins` module.
   public private(set) lazy var builtins: Builtins = {
     self.ensureInitialized()
-    return Builtins(context: self.context)
+    return Builtins()
   }()
 
   /// Python `sys` module.
@@ -107,6 +107,21 @@ public class PyInstance: BuiltinFunctions {
 
   fileprivate init() {
     self.context = nil
+  }
+
+  deinit {
+    // Clean circular references.
+    // This is VERY IMPORTANT because:
+    // 1. 'type' inherits from 'object'
+    //    both 'type' and 'object' are instances of 'type'
+    // 2. 'Type' type has 'BuiltinFunction' attributes which reference 'Type'.
+    for type in self.types.all {
+      type.gcClean()
+    }
+
+    for type in self.errorTypes.all {
+      type.gcClean()
+    }
   }
 
   // MARK: - Initialize

@@ -98,8 +98,7 @@ extension CompareOp {
     }
 
     // No hope left! We are doomed!
-    let builtins = left.context.builtins
-    return .value(builtins.notImplemented)
+    return .value(Py.notImplemented)
   }
 
   private static func callCompare(left: PyObject,

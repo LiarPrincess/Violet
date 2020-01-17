@@ -26,7 +26,7 @@ private enum FastCallResult {
 }
 
 /// Basically a template for binary operations.
-/// See `Builtins+Compare` for reasoning why we do it this way.
+/// See `BuiltinFunctions+Compare` for reasoning why we do it this way.
 private protocol BinaryOp {
 
   /// Operator used to invoke given binary operation, for example '+'.
@@ -169,14 +169,11 @@ extension BinaryOp {
     }
 
     // No hope left! We are doomed!
-    let builtins = left.context.builtins
-    return .value(builtins.notImplemented)
+    return .value(Py.notImplemented)
   }
 
   private static func callOp(left: PyObject,
                              right: PyObject) -> PyResult<PyObject> {
-    let builtins = left.builtins
-
     // Try fast protocol-based dispach
     switch callFastOp(left: left, right: right) {
     case .value(let result):
@@ -188,11 +185,11 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch builtins.callMethod(on: left, selector: selector, arg: right) {
+    switch Py.callMethod(on: left, selector: selector, arg: right) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(builtins.notImplemented)
+      return .value(Py.notImplemented)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
@@ -200,8 +197,6 @@ extension BinaryOp {
 
   private static func callReflected(left: PyObject,
                                     right: PyObject) -> PyResult<PyObject> {
-    let builtins = left.builtins
-
     // Try fast protocol-based dispach
     switch callFastReflected(left: left, right: right) {
     case .value(let result):
@@ -213,11 +208,11 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch builtins.callMethod(on: right, selector: reflectedSelector, arg: left) {
+    switch Py.callMethod(on: right, selector: reflectedSelector, arg: left) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(builtins.notImplemented)
+      return .value(Py.notImplemented)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
@@ -225,8 +220,6 @@ extension BinaryOp {
 
   private static func callInPlaceInner(left: PyObject,
                                        right: PyObject) -> PyResult<PyObject> {
-    let builtins = left.builtins
-
     // Try fast protocol-based dispach
     switch callFastInPlace(left: left, right: right) {
     case .value(let result):
@@ -238,11 +231,11 @@ extension BinaryOp {
     }
 
     // Try standard Python dispatch
-    switch builtins.callMethod(on: left, selector: inPlaceSelector, arg: right) {
+    switch Py.callMethod(on: left, selector: inPlaceSelector, arg: right) {
     case .value(let result):
       return .value(result)
     case .missingMethod:
-      return .value(builtins.notImplemented)
+      return .value(Py.notImplemented)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }

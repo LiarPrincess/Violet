@@ -32,7 +32,7 @@ public class PyContext {
   internal private(set) lazy var hasher = Hasher(key0: self.config.hashKey0,
                                                  key1: self.config.hashKey1)
 
-  public private(set) lazy var builtins = Builtins(context: self)
+  public private(set) lazy var builtins = Builtins()
   public private(set) lazy var sys = Sys()
 
   /// `self.builtins` but as a Python module (`PyModule`).
@@ -51,13 +51,5 @@ public class PyContext {
   public init(config: PyContextConfig, delegate: PyContextDelegate) {
     self.config = config
     self._delegate = delegate
-
-    // This is hack, but we can access `self.builtins` here because they are
-    // annotated as `lazy` (even though they need `PyContext` in ctor).
-    self.builtins.onContextFullyInitailized()
-  }
-
-  deinit {
-    self.builtins.onContextDeinit()
   }
 }
