@@ -124,8 +124,8 @@ public {final}class Py{name}: Py{base} {{
     return "{doc}"
   }}
 
-  override internal func initType(from context: PyContext) {{
-    self.setType(to: context.builtins.errorTypes.{builtins_type_variable})
+  override internal func setType() {{
+    self.setType(to: Py.errorTypes.{builtins_type_variable})
   }}
 
    // sourcery: pyproperty = __class__

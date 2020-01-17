@@ -87,6 +87,7 @@ internal struct MRO {
       }
     }
 
+    assert(result.count == baseClasses.count)
     return .value(MRO(baseClasses: baseClasses, resolutionOrder: result))
   }
 

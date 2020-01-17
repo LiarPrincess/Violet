@@ -52,7 +52,7 @@ public class PyBaseException: PyObject {
     self.suppressExceptionContext = suppressExceptionContext
 
     super.init()
-    self.initType(from: context)
+    self.setType()
   }
 
   /// Override this function in every exception class!
@@ -69,8 +69,8 @@ public class PyBaseException: PyObject {
   /// 3. Use the same `init` in every exception and inject proper type to assign.
   ///
   /// We went with 3 using dynamic dyspatch.
-  internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.baseException)
+  internal func setType() {
+    self.setType(to: Py.errorTypes.baseException)
   }
 
   // MARK: - Subclass checks

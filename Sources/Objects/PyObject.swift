@@ -40,12 +40,8 @@ public class PyObject {
     return self.type.getName()
   }
 
-  internal var context: PyContext {
-    return self.type.context
-  }
-
   internal var builtins: Builtins {
-    return self.context.builtins
+    return Py.builtins
   }
 
   /// Object address.

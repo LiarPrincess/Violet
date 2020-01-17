@@ -16,8 +16,8 @@ public final class PySystemExit: PyBaseException {
     return "Request to exit from the interpreter."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.systemExit)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.systemExit)
   }
 
    // sourcery: pyproperty = __class__
@@ -55,8 +55,8 @@ public final class PyKeyboardInterrupt: PyBaseException {
     return "Program interrupted by user."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.keyboardInterrupt)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.keyboardInterrupt)
   }
 
    // sourcery: pyproperty = __class__
@@ -94,8 +94,8 @@ public final class PyGeneratorExit: PyBaseException {
     return "Request that a generator exit."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.generatorExit)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.generatorExit)
   }
 
    // sourcery: pyproperty = __class__
@@ -133,8 +133,8 @@ public class PyException: PyBaseException {
     return "Common base class for all non-exit exceptions."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.exception)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.exception)
   }
 
    // sourcery: pyproperty = __class__
@@ -172,8 +172,8 @@ public final class PyStopIteration: PyException {
     return "Signal the end from iterator.__next__()."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.stopIteration)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.stopIteration)
   }
 
    // sourcery: pyproperty = __class__
@@ -211,8 +211,8 @@ public final class PyStopAsyncIteration: PyException {
     return "Signal the end from iterator.__anext__()."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.stopAsyncIteration)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.stopAsyncIteration)
   }
 
    // sourcery: pyproperty = __class__
@@ -250,8 +250,8 @@ public class PyArithmeticError: PyException {
     return "Base class for arithmetic errors."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.arithmeticError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.arithmeticError)
   }
 
    // sourcery: pyproperty = __class__
@@ -289,8 +289,8 @@ public final class PyFloatingPointError: PyArithmeticError {
     return "Floating point operation failed."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.floatingPointError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.floatingPointError)
   }
 
    // sourcery: pyproperty = __class__
@@ -328,8 +328,8 @@ public final class PyOverflowError: PyArithmeticError {
     return "Result too large to be represented."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.overflowError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.overflowError)
   }
 
    // sourcery: pyproperty = __class__
@@ -367,8 +367,8 @@ public final class PyZeroDivisionError: PyArithmeticError {
     return "Second argument to a division or modulo operation was zero."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.zeroDivisionError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.zeroDivisionError)
   }
 
    // sourcery: pyproperty = __class__
@@ -406,8 +406,8 @@ public final class PyAssertionError: PyException {
     return "Assertion failed."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.assertionError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.assertionError)
   }
 
    // sourcery: pyproperty = __class__
@@ -445,8 +445,8 @@ public final class PyAttributeError: PyException {
     return "Attribute not found."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.attributeError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.attributeError)
   }
 
    // sourcery: pyproperty = __class__
@@ -484,8 +484,8 @@ public final class PyBufferError: PyException {
     return "Buffer error."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.bufferError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.bufferError)
   }
 
    // sourcery: pyproperty = __class__
@@ -523,8 +523,8 @@ public final class PyEOFError: PyException {
     return "Read beyond end of file."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.eofError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.eofError)
   }
 
    // sourcery: pyproperty = __class__
@@ -562,8 +562,8 @@ public class PyImportError: PyException {
     return "Import can't find module, or can't find name in module."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.importError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.importError)
   }
 
    // sourcery: pyproperty = __class__
@@ -601,8 +601,8 @@ public final class PyModuleNotFoundError: PyImportError {
     return "Module not found."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.moduleNotFoundError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.moduleNotFoundError)
   }
 
    // sourcery: pyproperty = __class__
@@ -640,8 +640,8 @@ public class PyLookupError: PyException {
     return "Base class for lookup errors."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.lookupError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.lookupError)
   }
 
    // sourcery: pyproperty = __class__
@@ -679,8 +679,8 @@ public final class PyIndexError: PyLookupError {
     return "Sequence index out of range."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.indexError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.indexError)
   }
 
    // sourcery: pyproperty = __class__
@@ -718,8 +718,8 @@ public final class PyKeyError: PyLookupError {
     return "Mapping key not found."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.keyError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.keyError)
   }
 
    // sourcery: pyproperty = __class__
@@ -757,8 +757,8 @@ public final class PyMemoryError: PyException {
     return "Out of memory."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.memoryError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.memoryError)
   }
 
    // sourcery: pyproperty = __class__
@@ -796,8 +796,8 @@ public class PyNameError: PyException {
     return "Name not found globally."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.nameError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.nameError)
   }
 
    // sourcery: pyproperty = __class__
@@ -835,8 +835,8 @@ public final class PyUnboundLocalError: PyNameError {
     return "Local name referenced but not bound to a value."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.unboundLocalError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.unboundLocalError)
   }
 
    // sourcery: pyproperty = __class__
@@ -874,8 +874,8 @@ public class PyOSError: PyException {
     return "Base class for I/O related errors."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.osError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.osError)
   }
 
    // sourcery: pyproperty = __class__
@@ -913,8 +913,8 @@ public final class PyBlockingIOError: PyOSError {
     return "I/O operation would block."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.blockingIOError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.blockingIOError)
   }
 
    // sourcery: pyproperty = __class__
@@ -952,8 +952,8 @@ public final class PyChildProcessError: PyOSError {
     return "Child process error."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.childProcessError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.childProcessError)
   }
 
    // sourcery: pyproperty = __class__
@@ -991,8 +991,8 @@ public class PyConnectionError: PyOSError {
     return "Connection error."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.connectionError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.connectionError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1030,8 +1030,8 @@ public final class PyBrokenPipeError: PyConnectionError {
     return "Broken pipe."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.brokenPipeError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.brokenPipeError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1069,8 +1069,8 @@ public final class PyConnectionAbortedError: PyConnectionError {
     return "Connection aborted."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.connectionAbortedError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.connectionAbortedError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1108,8 +1108,8 @@ public final class PyConnectionRefusedError: PyConnectionError {
     return "Connection refused."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.connectionRefusedError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.connectionRefusedError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1147,8 +1147,8 @@ public final class PyConnectionResetError: PyConnectionError {
     return "Connection reset."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.connectionResetError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.connectionResetError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1186,8 +1186,8 @@ public final class PyFileExistsError: PyOSError {
     return "File already exists."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.fileExistsError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.fileExistsError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1225,8 +1225,8 @@ public final class PyFileNotFoundError: PyOSError {
     return "File not found."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.fileNotFoundError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.fileNotFoundError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1264,8 +1264,8 @@ public final class PyInterruptedError: PyOSError {
     return "Interrupted by signal."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.interruptedError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.interruptedError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1303,8 +1303,8 @@ public final class PyIsADirectoryError: PyOSError {
     return "Operation doesn't work on directories."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.isADirectoryError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.isADirectoryError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1342,8 +1342,8 @@ public final class PyNotADirectoryError: PyOSError {
     return "Operation only works on directories."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.notADirectoryError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.notADirectoryError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1381,8 +1381,8 @@ public final class PyPermissionError: PyOSError {
     return "Not enough permissions."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.permissionError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.permissionError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1420,8 +1420,8 @@ public final class PyProcessLookupError: PyOSError {
     return "Process not found."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.processLookupError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.processLookupError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1459,8 +1459,8 @@ public final class PyTimeoutError: PyOSError {
     return "Timeout expired."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.timeoutError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.timeoutError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1498,8 +1498,8 @@ public final class PyReferenceError: PyException {
     return "Weak ref proxy used after referent went away."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.referenceError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.referenceError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1537,8 +1537,8 @@ public class PyRuntimeError: PyException {
     return "Unspecified run-time error."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.runtimeError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.runtimeError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1576,8 +1576,8 @@ public final class PyNotImplementedError: PyRuntimeError {
     return "Method or function hasn't been implemented yet."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.notImplementedError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.notImplementedError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1615,8 +1615,8 @@ public final class PyRecursionError: PyRuntimeError {
     return "Recursion limit exceeded."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.recursionError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.recursionError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1654,8 +1654,8 @@ public class PySyntaxError: PyException {
     return "Invalid syntax."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.syntaxError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.syntaxError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1693,8 +1693,8 @@ public class PyIndentationError: PySyntaxError {
     return "Improper indentation."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.indentationError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.indentationError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1732,8 +1732,8 @@ public final class PyTabError: PyIndentationError {
     return "Improper mixture of spaces and tabs."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.tabError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.tabError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1774,8 +1774,8 @@ public final class PySystemError: PyException {
 "the Python version, and the hardware/OS platform and version."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.systemError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.systemError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1813,8 +1813,8 @@ public final class PyTypeError: PyException {
     return "Inappropriate argument type."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.typeError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.typeError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1852,8 +1852,8 @@ public class PyValueError: PyException {
     return "Inappropriate argument value (of correct type)."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.valueError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.valueError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1891,8 +1891,8 @@ public class PyUnicodeError: PyValueError {
     return "Unicode related error."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.unicodeError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.unicodeError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1930,8 +1930,8 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
     return "Unicode decoding error."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.unicodeDecodeError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.unicodeDecodeError)
   }
 
    // sourcery: pyproperty = __class__
@@ -1969,8 +1969,8 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
     return "Unicode encoding error."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.unicodeEncodeError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.unicodeEncodeError)
   }
 
    // sourcery: pyproperty = __class__
@@ -2008,8 +2008,8 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
     return "Unicode translation error."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.unicodeTranslateError)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.unicodeTranslateError)
   }
 
    // sourcery: pyproperty = __class__
@@ -2047,8 +2047,8 @@ public class PyWarning: PyException {
     return "Base class for warning categories."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.warning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.warning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2086,8 +2086,8 @@ public final class PyDeprecationWarning: PyWarning {
     return "Base class for warnings about deprecated features."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.deprecationWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.deprecationWarning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2126,8 +2126,8 @@ public final class PyPendingDeprecationWarning: PyWarning {
 "in the future."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.pendingDeprecationWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.pendingDeprecationWarning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2165,8 +2165,8 @@ public final class PyRuntimeWarning: PyWarning {
     return "Base class for warnings about dubious runtime behavior."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.runtimeWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.runtimeWarning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2204,8 +2204,8 @@ public final class PySyntaxWarning: PyWarning {
     return "Base class for warnings about dubious syntax."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.syntaxWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.syntaxWarning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2243,8 +2243,8 @@ public final class PyUserWarning: PyWarning {
     return "Base class for warnings generated by user code."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.userWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.userWarning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2283,8 +2283,8 @@ public final class PyFutureWarning: PyWarning {
 "in the future."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.futureWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.futureWarning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2322,8 +2322,8 @@ public final class PyImportWarning: PyWarning {
     return "Base class for warnings about probable mistakes in module imports"
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.importWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.importWarning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2362,8 +2362,8 @@ public final class PyUnicodeWarning: PyWarning {
 "related to conversion problems."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.unicodeWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.unicodeWarning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2402,8 +2402,8 @@ public final class PyBytesWarning: PyWarning {
 "related to conversion from str or comparing to str."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.bytesWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.bytesWarning)
   }
 
    // sourcery: pyproperty = __class__
@@ -2441,8 +2441,8 @@ public final class PyResourceWarning: PyWarning {
     return "Base class for warnings about resource usage."
   }
 
-  override internal func initType(from context: PyContext) {
-    self.setType(to: context.builtins.errorTypes.resourceWarning)
+  override internal func setType() {
+    self.setType(to: Py.errorTypes.resourceWarning)
   }
 
    // sourcery: pyproperty = __class__

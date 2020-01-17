@@ -34,9 +34,9 @@ public class PyModule: PyObject {
     super.init(type: Py.types.module)
     self.attributes["__name__"] = name
     self.attributes["__doc__"] = doc
-    self.attributes["__package__"] = context.builtins.none
-    self.attributes["__loader__"] = context.builtins.none
-    self.attributes["__spec__"] = context.builtins.none
+    self.attributes["__package__"] = Py.none
+    self.attributes["__loader__"] = Py.none
+    self.attributes["__spec__"] = Py.none
   }
 
   /// Use only in `__new__`!

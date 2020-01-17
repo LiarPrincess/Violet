@@ -328,7 +328,7 @@ public class PyInt: PyObject {
     switch self.parsePowMod(mod: mod) {
     case .none:
       let result = self.pow(base: self.value, exp: exp.value)
-      return .value(result.asObject(in: self.context))
+      return .value(result.asObject)
 
     case .int(let modPyInt):
       if modPyInt.value == 0 {
@@ -363,7 +363,7 @@ public class PyInt: PyObject {
     switch self.parsePowMod(mod: mod) {
     case .none:
       let result = self.pow(base: base.value, exp: self.value)
-      return .value(result.asObject(in: self.context))
+      return .value(result.asObject)
     case .int:
       // Three-arg power doesn't use __rpow__.
       return .value(self.builtins.notImplemented)
@@ -398,10 +398,10 @@ public class PyInt: PyObject {
     case int(BigInt)
     case fraction(Double)
 
-    fileprivate func asObject(in context: PyContext) -> PyObject {
+    fileprivate var asObject: PyObject {
       switch self {
-      case let .int(i): return context.builtins.newInt(i)
-      case let .fraction(f): return context.builtins.newFloat(f)
+      case let .int(i): return Py.newInt(i)
+      case let .fraction(f): return Py.newFloat(f)
       }
     }
   }

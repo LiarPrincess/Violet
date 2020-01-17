@@ -96,16 +96,6 @@ public class PyType: PyObject, CustomStringConvertible {
     return self.typeFlags.contains(.baseType)
   }
 
-  // Special hack for cyclic references
-  private weak var _context: PyContext?
-  override internal var context: PyContext {
-    if let c = self._context {
-      return c
-    }
-
-    trap("Trying to use '\(self.name)' after its context was deallocated.")
-  }
-
   internal func setFlag(_ flag: PyTypeFlags) {
     self.typeFlags.insert(flag)
   }
@@ -126,10 +116,7 @@ public class PyType: PyObject, CustomStringConvertible {
                             type: PyType,
                             base: PyType,
                             mro:  MRO) {
-    assert(type.context === base.context)
     assert(mro.baseClasses.contains { $0 === base })
-    assert(mro.baseClasses.allSatisfy { $0.context === type.context })
-    assert(mro.resolutionOrder.allSatisfy { $0.context === type.context })
 
     self.init(name: name, base: base, mro: mro)
     self.setType(to: type)
@@ -145,7 +132,6 @@ public class PyType: PyObject, CustomStringConvertible {
     self.base = base
     self.bases = mro?.baseClasses ?? []
     self.mro = [] // temporary, until we are able to use self
-    self._context = Py.context
 
     // Special init just for `PyType` and `BaseType`.
     super.init()
@@ -282,7 +268,7 @@ public class PyType: PyObject, CustomStringConvertible {
   internal func setBuiltinTypeDoc(_ value: String?) {
     self.attributes["__doc__"] = value
       .map(DocHelper.getDocWithoutSignature)
-      .map(context.builtins.newString) ?? context.builtins.none
+      .map(Py.newString) ?? Py.none
   }
 
   // MARK: - Module
