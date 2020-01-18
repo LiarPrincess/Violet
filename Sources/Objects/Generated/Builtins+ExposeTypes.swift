@@ -1,8 +1,10 @@
-// swiftlint:disable:previous vertical_whitespace
 // swiftlint:disable file_length
 
 // This file will add type properties to 'Builtins', so that they are exposed
 // to Python runtime.
+// Later 'ModuleFactory' script will pick those properties and add them to module
+// '__dict__' as 'PyProperty'.
+//
 // Btw. Not all of those types should be exposed from builtins module.
 // Some should require 'import types', but sice we don't have 'types' module,
 // we will expose them from builtins.
@@ -240,7 +242,6 @@ extension Builtins {
   internal func type_zip() -> PyType {
     return Py.types.zip
   }
-
 
   // MARK: - Error types
 

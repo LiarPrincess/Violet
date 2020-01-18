@@ -205,7 +205,7 @@ public final class BuiltinErrorTypes {
   for name, base, doc in data:
     property_name = get_builtins_type_property_name(name)
     method_name = get_builtins_type_property_name(name)
-    print(f'    BuiltinTypesFill.{method_name}(self.{property_name})')
+    print(f'    FillTypes.{method_name}(self.{property_name})')
   print('  }')
   print()
 

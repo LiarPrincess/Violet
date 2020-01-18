@@ -81,7 +81,7 @@
   {% endfor %}
 {% endmacro %}
 
-internal enum BuiltinTypesFill {
+internal enum FillTypes {
 
 {% for type in types.enums where type.name == "PyBaseObject" %}
 

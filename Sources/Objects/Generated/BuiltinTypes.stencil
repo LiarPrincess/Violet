@@ -55,11 +55,11 @@ public final class BuiltinTypes {
   /// - add `__doc__`
   /// - fill `__dict__`
   internal func fill__dict__() {
-    BuiltinTypesFill.object(self.object)
-    BuiltinTypesFill.type(self.type)
+    FillTypes.object(self.object)
+    FillTypes.type(self.type)
     {% for type in types.classes|annotated:"pytype" %}
     {% set name %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
-    BuiltinTypesFill.{{ name }}(self.{{ name }})
+    FillTypes.{{ name }}(self.{{ name }})
     {% endfor %}
   }
 

@@ -14,7 +14,7 @@
 
 
 
-internal enum BuiltinTypesFill {
+internal enum FillTypes {
 
 
   // MARK: - Base object

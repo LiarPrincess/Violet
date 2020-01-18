@@ -70,10 +70,10 @@ python3 $GENERATED/remove-sourcery-header.py BuiltinTypes.swift
 # This will generate a giant file responsible for filling PyTypes '__dict__'.
 sourcery \
   --sources ./Sources/Objects \
-  --templates $GENERATED/BuiltinTypesFill.stencil \
-  --output $GENERATED/BuiltinTypesFill.swift
+  --templates $GENERATED/FillTypes.stencil \
+  --output $GENERATED/FillTypes.swift
 
-python3 $GENERATED/remove-sourcery-header.py BuiltinTypesFill.swift
+python3 $GENERATED/remove-sourcery-header.py FillTypes.swift
 
 # === Casts ===
 # Since we use Swift methods as Python functions we have to cast 'self: PyObject'
