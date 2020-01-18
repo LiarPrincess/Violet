@@ -1,8 +1,3 @@
-// Generated using Sourcery 0.15.0 — https://github.com/krzysztofzablocki/Sourcery
-// DO NOT EDIT
-
-
-// swiftlint:disable:previous vertical_whitespace
 // swiftlint:disable vertical_whitespace
 // swiftlint:disable line_length
 // swiftlint:disable function_body_length
