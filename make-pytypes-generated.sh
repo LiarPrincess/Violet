@@ -6,6 +6,7 @@ GENERATED=./Sources/Objects/Generated
 # - it always generates '.swift' files that will mess up SPM
 #   (not all of the generated files should be a part of the build,
 #   sometimes we just generate '.tmp' files that will be inputs for next stages)
+#   We could use 'sourcery:file' pragma, but that still leaves us 1st problem.
 
 # Also, we will be removing Sourcery header/marker from generated files.
 # So, normally Sourcery skips other generated files using this marker to recognize

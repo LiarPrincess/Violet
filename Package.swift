@@ -29,8 +29,8 @@ let package = Package(
     .testTarget(name: "LexerTests", dependencies: ["Core", "Lexer"]),
 
     // Tokens -> AST
-    .target(name: "Parser", dependencies: ["Lexer"]),
-    .testTarget(name: "ParserTests", dependencies: ["Parser", "Rapunzel"]),
+    .target(name: "Parser", dependencies: ["Lexer", "Rapunzel"]),
+    .testTarget(name: "ParserTests", dependencies: ["Parser"]),
 
     // AST -> Bytecode
     .target(name: "Compiler", dependencies: ["Parser", "Bytecode"]),
