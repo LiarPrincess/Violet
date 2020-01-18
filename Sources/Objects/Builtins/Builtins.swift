@@ -17,15 +17,5 @@ public final class Builtins: BuiltinFunctions {
   public var `false`: PyBool { return Py.`false` }
   public var none: PyNone { return Py.none }
   public var ellipsis: PyEllipsis { return Py.ellipsis }
-  public var emptyTuple: PyTuple { return Py.emptyTuple }
-  public var emptyString: PyString { return Py.emptyString }
-  public var emptyFrozenSet: PyFrozenSet { return Py.emptyFrozenSet }
   public var notImplemented: PyNotImplemented { return Py.notImplemented }
-
-  public var types: BuiltinTypes { return Py.types }
-  public var errorTypes: BuiltinErrorTypes { return Py.errorTypes }
-
-  internal var sys: Sys {
-    return Py.sys
-  }
 }

@@ -1,0 +1,33 @@
+// swiftlint:disable file_length
+
+// This file will add type properties to 'Builtins', so that they are exposed
+// to Python runtime.
+// Btw. Not all of those types should be exposed from builtins module.
+// Some should require 'import types', but sice we don't have 'types' module,
+// we will expose them from builtins.
+
+extension Builtins {
+
+  // MARK: - Types
+{% for type in types.classes|annotated:"pytype" %}
+
+  {% set py %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".","" }}{% endset %}
+  {% set prop %}{{ py|lowerFirstWord }}{% endset %}
+  // sourcery: pyproperty = {{ py }}
+  internal func type_{{ prop }}() -> PyType {
+    return Py.types.{{ prop }}
+  }
+{% endfor %}
+
+
+  // MARK: - Error types
+{% for type in types.classes|annotated:"pyerrortype" %}
+
+  {% set py %}{{ type.annotations.pyerrortype }}{% endset %}
+  {% set prop %}{{ py|lowerFirstWord }}{% endset %}
+  // sourcery: pyproperty = {{ py }}
+  internal func type_{{ prop }}() -> PyType {
+    return Py.errorTypes.{{ prop }}
+  }
+{% endfor %}
+}

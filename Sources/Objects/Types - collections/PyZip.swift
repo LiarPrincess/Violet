@@ -89,7 +89,7 @@ public class PyZip: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    if type === Py.zip {
+    if type === Py.types.zip {
       if let e = ArgumentParser.noKwargsOrError(fnName: "zip", kwargs: kwargs) {
         return .error(e)
       }

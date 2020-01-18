@@ -67,7 +67,7 @@ public class PyFilter: PyObject {
           return .value(item)
         }
 
-        if self.iterator === Py.bool {
+        if self.iterator === Py.types.bool {
           switch Py.isTrueBool(item) {
           case .value(true): return .value(item)
           case .value(false): continue loop // try next item

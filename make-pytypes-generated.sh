@@ -48,6 +48,15 @@ python3 $GENERATED/remove-sourcery-header.py HeapTypes.swift
 # =====================================
 # This stage has to be after 'Stage 1: Generate new types'
 
+# === Expose types ===
+# Expose all of the types to Python runtime (make the properties on builtins).
+sourcery \
+  --sources ./Sources/Objects \
+  --templates $GENERATED/Builtins+ExposeTypes.stencil \
+  --output $GENERATED/Builtins+ExposeTypes.swift
+
+python3 $GENERATED/remove-sourcery-header.py Builtins+ExposeTypes.swift
+
 # === Builtin types ===
 # This will generate a class with references to all of the builtin 'PyTypes'.
 sourcery \
