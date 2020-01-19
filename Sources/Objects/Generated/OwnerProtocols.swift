@@ -144,7 +144,7 @@ protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObjec
 protocol extendOwner { func extend(iterable: PyObject) -> PyResult<PyNone> }
 protocol findOwner { func find(_ element: PyObject) -> PyResult<BigInt> }
 protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
-protocol getOwner { func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
+protocol getOwner { func get(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
 protocol imagOwner { func asImag() -> PyObject }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
 protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }

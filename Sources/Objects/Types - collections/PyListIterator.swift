@@ -18,7 +18,8 @@ public class PyListIterator: PyObject {
   }
 
   override public var description: String {
-    return "PyListIterator()"
+    let count = self.list.data.count
+    return "PyListIterator(count: \(count), index: \(self.index))"
   }
 
   // MARK: - Class

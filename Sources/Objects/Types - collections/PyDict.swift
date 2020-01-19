@@ -125,7 +125,7 @@ public class PyDict: PyObject {
       var result = "{"
       for (index, element) in self.data.enumerated() {
         if index > 0 {
-          result += ", " // so that we don't have ', )'.
+          result += ", " // so that we don't have ugly ', }'.
         }
 
         switch Py.repr(element.key.object) {
@@ -188,12 +188,10 @@ public class PyDict: PyObject {
     case .value(let o):
       return .value(o)
     case .missingMethod:
-      break
+      return .keyError(key: index)
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
-
-    return .keyError(key: index)
   }
 
   // sourcery: pymethod = __setitem__
@@ -241,12 +239,7 @@ public class PyDict: PyObject {
     case let .error(e): return .error(e)
     }
 
-    switch self.data.contains(key: key) {
-    case let .value(b):
-      return .value(b)
-    case let .error(e):
-      return .error(e)
-    }
+    return self.data.contains(key: key)
   }
 
   // MARK: - Clear
@@ -270,7 +263,29 @@ public class PyDict: PyObject {
     Return the value for key if key is in the dictionary, else default.
     """
 
+  private static let getArguments = ArgumentParser.createOrTrap(
+    arguments: ["", "default"],
+    format: "O|O:get"
+  )
+
   // sourcery: pymethod = get, doc = getDoc
+  internal func get(args: [PyObject],
+                    kwargs: PyDictData?) -> PyResult<PyObject> {
+    switch PyDict.getArguments.parse(args: args, kwargs: kwargs) {
+    case let .value(bind):
+      assert(
+        1 <= bind.count && bind.count <= 2,
+        "Invalid argument count returned from parser."
+      )
+
+      let arg0 = bind[0]
+      let arg1 = bind.count >= 2 ? bind[1] : nil
+      return self.get(arg0, default: arg1)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   internal func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
     switch self.createKey(from: index) {
@@ -441,8 +456,8 @@ public class PyDict: PyObject {
     }
 
     switch kvs {
-    case let .value(kvs):
-      for (key, value) in kvs {
+    case let .value(keyValues):
+      for (key, value) in keyValues {
         switch self.insert(key: key, value: value) {
         case .value: break
         case .error(let e): return .error(e)

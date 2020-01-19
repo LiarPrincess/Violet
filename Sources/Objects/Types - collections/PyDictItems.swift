@@ -8,10 +8,6 @@ public class PyDictItems: PyObject, PyDictViewsShared {
 
   internal let dict: PyDict
 
-  private var data: PyDictData {
-    return self.dict.data
-  }
-
   override public var description: String {
     return "PyDictItems(count: \(self.data.count))"
   }
@@ -20,7 +16,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
 
   internal init(dict: PyDict) {
     self.dict = dict
-    super.init(type: Py.types.dict_keys)
+    super.init(type: Py.types.dict_items)
   }
 
   // MARK: - Equatable
@@ -39,7 +35,7 @@ public class PyDictItems: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.isLessEqual(other)
+    return self.isLessShared(other)
   }
 
   // sourcery: pymethod = __le__

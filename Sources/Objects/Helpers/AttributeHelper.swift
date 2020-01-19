@@ -27,7 +27,7 @@ internal enum AttributeHelper {
     }
 
     if let attribOwner = object as? __dict__GetterOwner,
-      let value = attribOwner.getDict().get(key: name) {
+       let value = attribOwner.getDict().get(key: name) {
       return .value(value)
     }
 

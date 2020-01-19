@@ -12,14 +12,15 @@ public class PyRangeIterator: PyObject {
   internal var index: BigInt = 0
 
   override public var description: String {
-    return "PyRangeIterator()"
+    let start = self.start
+    let step = self.step
+    let length = self.length
+    return "PyRangeIterator(start: \(start), step: \(step), length: \(length))"
   }
 
   // MARK: - Init
 
-  internal init(start: BigInt,
-                step: BigInt,
-                length: BigInt) {
+  internal init(start: BigInt, step: BigInt, length: BigInt) {
     self.start = start
     self.step = step
     self.length = length

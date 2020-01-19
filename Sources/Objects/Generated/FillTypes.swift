@@ -436,7 +436,7 @@ internal enum FillTypes {
     dict["__delitem__"] = PyBuiltinFunction.wrap(name: "__delitem__", doc: nil, fn: PyDict.delItem(at:), castSelf: Cast.asPyDict)
     dict["__contains__"] = PyBuiltinFunction.wrap(name: "__contains__", doc: nil, fn: PyDict.contains(_:), castSelf: Cast.asPyDict)
     dict["clear"] = PyBuiltinFunction.wrap(name: "clear", doc: nil, fn: PyDict.clear, castSelf: Cast.asPyDict)
-    dict["get"] = PyBuiltinFunction.wrap(name: "get", doc: nil, fn: PyDict.get(_:default:), castSelf: Cast.asPyDict)
+    dict["get"] = PyBuiltinFunction.wrap(name: "get", doc: nil, fn: PyDict.get(args:kwargs:), castSelf: Cast.asPyDict)
     dict["__iter__"] = PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDict.iter, castSelf: Cast.asPyDict)
     dict["setdefault"] = PyBuiltinFunction.wrap(name: "setdefault", doc: nil, fn: PyDict.setDefault(_:default:), castSelf: Cast.asPyDict)
     dict["update"] = PyBuiltinFunction.wrap(name: "update", doc: nil, fn: PyDict.update(args:kwargs:), castSelf: Cast.asPyDict)

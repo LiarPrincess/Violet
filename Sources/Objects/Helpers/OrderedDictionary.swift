@@ -215,12 +215,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Contains
 
-  internal enum ContainsResult {
-    case value(Bool)
-    case error(PyBaseException)
-  }
-
-  internal func contains(key: Key) -> ContainsResult {
+  internal func contains(key: Key) -> PyResult<Bool> {
     switch self.get(key: key) {
     case .value:
       return .value(true)

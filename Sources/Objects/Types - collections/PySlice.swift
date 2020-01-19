@@ -52,7 +52,7 @@ public class PySlice: PyObject {
     }
 
     let data = self.asStartStopStepSequence
-    return data.isEqual(to: other.asStartStopStepSequence).asCompareResult
+    return data.isEqual(to: other.asStartStopStepSequence)
   }
 
   // sourcery: pymethod = __ne__
@@ -69,7 +69,7 @@ public class PySlice: PyObject {
     }
 
     let data = self.asStartStopStepSequence
-    return data.isLess(than: other.asStartStopStepSequence).asCompareResult
+    return data.isLess(than: other.asStartStopStepSequence)
   }
 
   // sourcery: pymethod = __le__
@@ -79,7 +79,7 @@ public class PySlice: PyObject {
     }
 
     let data = self.asStartStopStepSequence
-    return data.isLessEqual(than: other.asStartStopStepSequence).asCompareResult
+    return data.isLessEqual(than: other.asStartStopStepSequence)
   }
 
   // sourcery: pymethod = __gt__
@@ -89,7 +89,7 @@ public class PySlice: PyObject {
     }
 
     let data = self.asStartStopStepSequence
-    return data.isGreater(than: other.asStartStopStepSequence).asCompareResult
+    return data.isGreater(than: other.asStartStopStepSequence)
   }
 
   // sourcery: pymethod = __ge__
@@ -99,7 +99,7 @@ public class PySlice: PyObject {
     }
 
     let data = self.asStartStopStepSequence
-    return data.isGreaterEqual(than: other.asStartStopStepSequence).asCompareResult
+    return data.isGreaterEqual(than: other.asStartStopStepSequence)
   }
 
   // MARK: - Hashable
@@ -171,13 +171,7 @@ public class PySlice: PyObject {
 
   // MARK: - Indices
 
-  internal static let indicesDoc = """
-    Return a copy of the string with leading and trailing whitespace remove.
-
-    If chars is given and not None, remove characters in chars instead.
-    """
-
-  // sourcery: pymethod = indices, doc = indicesDoc
+  // sourcery: pymethod = indices
   /// static PyObject*
   /// slice_indices(PySliceObject* self, PyObject* len)
   internal func indicesInSequence(length: PyObject) -> PyResult<PyObject> {
@@ -208,8 +202,8 @@ public class PySlice: PyObject {
   /// int _PySlice_GetLongIndices(PySliceObject *self, PyObject *length, ...)
   ///
   /// Compute slice indices given a slice and length.
-  /// Return -1 on failure. Used by slice.indices and rangeobject slicing.
-  /// Assumes that `len` is a nonnegative instance of PyLong.
+  /// Used by slice.indices and rangeobject slicing.
+  /// Assumes that `len` is a nonnegative.
   internal func getLongIndices(length: Int) -> PyResult<GetLongIndicesResult> {
     // swiftlint:disable:previous function_body_length
 

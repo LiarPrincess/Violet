@@ -10,7 +10,8 @@ public class PyListReverseIterator: PyObject {
   internal private(set) var index: Int
 
   override public var description: String {
-    return "PyListReverseIterator()"
+    let count = self.list.data.count
+    return "PyListReverseIterator(count: \(count), index: \(self.index))"
   }
 
   // MARK: - Init

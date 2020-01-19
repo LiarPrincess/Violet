@@ -96,6 +96,7 @@ extension PyResult {
     return PyResult.error(Py.newKeyError(key: key))
   }
 
+  /// `Value` is used by generators and corutines to hold `return` value.
   public static func stopIteration(value: PyObject? = nil) -> PyResult<Wrapped> {
     return PyResult.error(Py.newStopIteration(value: value))
   }

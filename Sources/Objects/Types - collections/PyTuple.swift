@@ -46,7 +46,7 @@ public class PyTuple: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isEqual(to: other.data).asCompareResult
+    return self.data.isEqual(to: other.data)
   }
 
   // sourcery: pymethod = __ne__
@@ -62,7 +62,7 @@ public class PyTuple: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isLess(than: other.data).asCompareResult
+    return self.data.isLess(than: other.data)
   }
 
   // sourcery: pymethod = __le__
@@ -71,7 +71,7 @@ public class PyTuple: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isLessEqual(than: other.data).asCompareResult
+    return self.data.isLessEqual(than: other.data)
   }
 
   // sourcery: pymethod = __gt__
@@ -80,7 +80,7 @@ public class PyTuple: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isGreater(than: other.data).asCompareResult
+    return self.data.isGreater(than: other.data)
   }
 
   // sourcery: pymethod = __ge__
@@ -89,7 +89,7 @@ public class PyTuple: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isGreaterEqual(than: other.data).asCompareResult
+    return self.data.isGreaterEqual(than: other.data)
   }
 
   // MARK: - Hashable
@@ -176,7 +176,6 @@ public class PyTuple: PyObject, PySequenceType {
                            start: start,
                            end: end,
                            typeName: "tuple")
-      .map(BigInt.init)
   }
 
   // MARK: - Iter

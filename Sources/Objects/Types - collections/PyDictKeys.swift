@@ -35,7 +35,7 @@ public class PyDictKeys: PyObject, PyDictViewsShared {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    return self.isLessEqual(other)
+    return self.isLessShared(other)
   }
 
   // sourcery: pymethod = __le__

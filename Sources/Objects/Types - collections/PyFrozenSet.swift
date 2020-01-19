@@ -48,7 +48,7 @@ public class PyFrozenSet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isEqual(to: other.data).asCompareResult
+    return self.data.isEqual(to: other.data)
   }
 
   // sourcery: pymethod = __ne__
@@ -66,7 +66,7 @@ public class PyFrozenSet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isLess(than: other.data).asCompareResult
+    return self.data.isLess(than: other.data)
   }
 
   // sourcery: pymethod = __le__
@@ -75,7 +75,7 @@ public class PyFrozenSet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isLessEqual(than: other.data).asCompareResult
+    return self.data.isLessEqual(than: other.data)
   }
 
   // sourcery: pymethod = __gt__
@@ -84,7 +84,7 @@ public class PyFrozenSet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isGreater(than: other.data).asCompareResult
+    return self.data.isGreater(than: other.data)
   }
 
   // sourcery: pymethod = __ge__
@@ -93,7 +93,7 @@ public class PyFrozenSet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isGreaterEqual(than: other.data).asCompareResult
+    return self.data.isGreaterEqual(than: other.data)
   }
 
   // MARK: - Hashable

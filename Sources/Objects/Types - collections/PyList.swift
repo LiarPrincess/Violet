@@ -56,7 +56,7 @@ public class PyList: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isEqual(to: other.data).asCompareResult
+    return self.data.isEqual(to: other.data)
   }
 
   // sourcery: pymethod = __ne__
@@ -72,7 +72,7 @@ public class PyList: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isLess(than: other.data).asCompareResult
+    return self.data.isLess(than: other.data)
   }
 
   // sourcery: pymethod = __le__
@@ -81,7 +81,7 @@ public class PyList: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isLessEqual(than: other.data).asCompareResult
+    return self.data.isLessEqual(than: other.data)
   }
 
   // sourcery: pymethod = __gt__
@@ -90,7 +90,7 @@ public class PyList: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isGreater(than: other.data).asCompareResult
+    return self.data.isGreater(than: other.data)
   }
 
   // sourcery: pymethod = __ge__
@@ -99,7 +99,7 @@ public class PyList: PyObject, PySequenceType {
       return .notImplemented
     }
 
-    return self.data.isGreaterEqual(than: other.data).asCompareResult
+    return self.data.isGreaterEqual(than: other.data)
   }
 
   // MARK: - Hashable
@@ -171,13 +171,11 @@ public class PyList: PyObject, PySequenceType {
   internal func setItem(at index: PyObject,
                         to value: PyObject) -> PyResult<PyNone> {
     return self.data.setItem(at: index, to: value)
-      .map { _ in Py.none }
   }
 
   // sourcery: pymethod = __delitem__
   internal func delItem(at index: PyObject) -> PyResult<PyNone> {
     return self.data.delItem(at: index)
-      .map { _ in Py.none }
   }
 
   // MARK: - Count
@@ -202,7 +200,6 @@ public class PyList: PyObject, PySequenceType {
                            start: start,
                            end: end,
                            typeName: "list")
-      .map(BigInt.init)
   }
 
   // MARK: - Iter
@@ -221,8 +218,7 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = append
   internal func append(_ element: PyObject) -> PyResult<PyNone> {
-    self.data.append(element)
-    return .value(Py.none)
+    return self.data.append(element)
   }
 
   // MARK: - Insert
@@ -236,14 +232,14 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = insert, doc = insertDoc
   internal func insert(at index: PyObject, item: PyObject) -> PyResult<PyNone> {
-    return self.data.insert(at: index, item: item).map { _ in Py.none }
+    return self.data.insert(at: index, item: item)
   }
 
   // MARK: - Extend
 
   // sourcery: pymethod = extend
   internal func extend(iterable: PyObject) -> PyResult<PyNone> {
-    return self.data.extend(iterable: iterable).map { _ in Py.none }
+    return self.data.extend(iterable: iterable)
   }
 
   // MARK: - Remove
@@ -259,7 +255,7 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = remove, doc = removeDoc
   internal func remove(_ value: PyObject) -> PyResult<PyNone> {
-    return self.data.remove(value).map { _ in Py.none }
+    return self.data.remove(typeName: self.typeName, value: value)
   }
 
   // MARK: - Pop
@@ -309,16 +305,6 @@ public class PyList: PyObject, PySequenceType {
     }
   }
 
-  private struct SortElement {
-    fileprivate let key: PyObject
-    fileprivate let element: PyObject
-  }
-
-  /// Wrapper for `PyBaseException` so that it can be used after `throw`.
-  private enum SortError: Error {
-    case builtin(PyBaseException)
-  }
-
   internal func sort(key: PyObject?, isReverse: PyObject?) -> PyResult<PyNone> {
     guard let isReverse = isReverse else {
       return self.sort(key: key, isReverse: false)
@@ -332,6 +318,16 @@ public class PyList: PyObject, PySequenceType {
     }
   }
 
+  private struct SortElement {
+    fileprivate let key: PyObject
+    fileprivate let element: PyObject
+  }
+
+  /// Wrapper for `PyBaseException` so that it can be used after `throw`.
+  private enum SortError: Error {
+    case wrapper(PyBaseException)
+  }
+
   internal func sort(key: PyObject?, isReverse: Bool) -> PyResult<PyNone> {
     var elements = [SortElement]()
     for object in self.elements {
@@ -342,16 +338,16 @@ public class PyList: PyObject, PySequenceType {
     }
 
     do {
-      let fn = self.createSortFn(isReverse: isReverse)
-
       // Note that Python requires STABLE sort, but Swift does not guarantee
       // that! We will ignore this. (Because reasons...)
-      // Btw. under certain conditions Swift sort is actually stable (at the time
-      // of writting this comment), but that's an implementation detail.
+      // Btw. under certain conditions Swift sort is actually stable
+      // (at the time of writting this comment), but that's an implementation detail.
+
+      let fn = self.createSortFn(isReverse: isReverse)
       try elements.sort(by: fn)
       self.data = PySequenceData(elements: elements.map { $0.element })
       return .value(Py.none)
-    } catch let SortError.builtin(e) {
+    } catch let SortError.wrapper(e) {
       return .error(e)
     } catch {
       trap("Unexpected error type in PyList.sort: \(error)")
@@ -361,10 +357,10 @@ public class PyList: PyObject, PySequenceType {
   private typealias SortFn = (SortElement, SortElement) throws -> Bool
 
   private func createSortFn(isReverse: Bool) -> SortFn {
-    return { (lhs: SortElement, rhs: SortElement) in
+    return { (lhs: SortElement, rhs: SortElement) -> Bool in
       switch Py.isLessBool(left: lhs.key, right: rhs.key) {
-      case let .value(b): return isReverse ? !b : b
-      case let .error(e): throw SortError.builtin(e)
+      case let .value(b): return isReverse ? !b : b // ignore stability (again)
+      case let .error(e): throw SortError.wrapper(e)
       }
     }
   }
@@ -380,16 +376,14 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = reverse, doc = reverseDoc
   internal func reverse() -> PyResult<PyNone> {
-    self.data.reverse()
-    return .value(Py.none)
+    return self.data.reverse()
   }
 
   // MARK: - Clear
 
   // sourcery: pymethod = clear
   internal func clear() -> PyResult<PyNone> {
-    self.data.clear()
-    return .value(Py.none)
+    return self.data.clear()
   }
 
   // MARK: - Copy

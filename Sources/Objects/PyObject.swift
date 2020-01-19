@@ -104,7 +104,7 @@ public class PyObject: CustomStringConvertible {
     return self.flags.contains(.reprLock)
   }
 
-  /// Set, execute `body` and unset flag that is used to control
+  /// Set, execute `body` and then unset flag that is used to control
   /// infinite recursion in `repr`, `str`, `print` etc.
   internal func withReprLock<T>(body: () -> T) -> T {
     self.flags.formUnion(.reprLock)

@@ -26,6 +26,12 @@ internal struct PySetElement: PyHashable {
   }
 }
 
+extension OrderedDictionary where Value == Void {
+  internal mutating func insert(key: Key) -> InsertResult {
+    return self.insert(key: key, value: ())
+  }
+}
+
 // MARK: - PySetType
 
 internal protocol PySetType: PyObject {
@@ -57,7 +63,7 @@ internal struct PySetData {
 
   // MARK: - Equatable
 
-  internal func isEqual(to other: PySetData) -> PyResult<Bool> {
+  internal func isEqual(to other: PySetData) -> CompareResult {
     // Equal count + isSubset -> equal
     guard self.count == other.count else {
       return .value(false)
@@ -71,7 +77,7 @@ internal struct PySetData {
 
   // MARK: - Comparable
 
-  internal func isLess(than other: PySetData) -> PyResult<Bool> {
+  internal func isLess(than other: PySetData) -> CompareResult {
     guard self.count < other.count else {
       return .value(false)
     }
@@ -82,14 +88,14 @@ internal struct PySetData {
     }
   }
 
-  internal func isLessEqual(than other: PySetData) -> PyResult<Bool> {
+  internal func isLessEqual(than other: PySetData) -> CompareResult {
     switch self.isSubset(of: other) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
   }
 
-  internal func isGreater(than other: PySetData) -> PyResult<Bool> {
+  internal func isGreater(than other: PySetData) -> CompareResult {
     guard self.count > other.count else {
       return .value(false)
     }
@@ -100,7 +106,7 @@ internal struct PySetData {
     }
   }
 
-  internal func isGreaterEqual(than other: PySetData) -> PyResult<Bool> {
+  internal func isGreaterEqual(than other: PySetData) -> CompareResult {
     switch self.isSuperset(of: other) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
@@ -152,10 +158,7 @@ internal struct PySetData {
   }
 
   internal func contains(element: PySetElement) -> PyResult<Bool> {
-    switch self.dict.contains(key: element) {
-    case let .value(b): return .value(b)
-    case let .error(e): return .error(e)
-    }
+    return self.dict.contains(key: element)
   }
 
   // MARK: - And
@@ -457,6 +460,17 @@ internal struct PySetData {
     self.dict.clear()
   }
 
+  // MARK: - Pop
+
+  internal mutating func pop() -> PyResult<PyObject> {
+    guard let lastElement = self.dict.last else {
+      return .keyError("pop from an empty set")
+    }
+
+    _ = self.remove(element: lastElement.key)
+    return .value(lastElement.key.object)
+  }
+
   // MARK: - Helpers
 
   private func createElement(from object: PyObject) -> PyResult<PySetElement> {
@@ -466,13 +480,5 @@ internal struct PySetData {
     case let .error(e):
       return .error(e)
     }
-  }
-}
-
-// MARK: - OrderedDictionary helper
-
-extension OrderedDictionary where Value == Void {
-  internal mutating func insert(key: Key) -> InsertResult {
-    return self.insert(key: key, value: ())
   }
 }

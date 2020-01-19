@@ -102,6 +102,8 @@ internal struct ArgumentParser {
   }
 
   /// Create parser using `ArgumentParser.create` or trap.
+  ///
+  /// See `ArgumentParser.create` for parameter descriptions.
   internal static func createOrTrap(arguments: [String],
                                     format: String) -> ArgumentParser {
     switch ArgumentParser.create(arguments: arguments, format: format) {

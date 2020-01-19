@@ -27,7 +27,7 @@ internal struct PySequenceData {
 
   // MARK: - Equatable
 
-  internal func isEqual(to other: PySequenceData) -> PyResult<Bool> {
+  internal func isEqual(to other: PySequenceData) -> CompareResult {
     guard self.count == other.count else {
       return .value(false)
     }
@@ -45,10 +45,10 @@ internal struct PySequenceData {
 
   // MARK: - Comparable
 
-  internal func isLess(than other: PySequenceData) -> PyResult<Bool> {
+  internal func isLess(than other: PySequenceData) -> CompareResult {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return Py.isLessBool(left: l, right: r)
+      return Py.isLessBool(left: l, right: r).asCompareResult
     case .allEqualUpToShorterCount:
       return .value(self.count < other.count)
     case let .error(e):
@@ -56,10 +56,10 @@ internal struct PySequenceData {
     }
   }
 
-  internal func isLessEqual(than other: PySequenceData) -> PyResult<Bool> {
+  internal func isLessEqual(than other: PySequenceData) -> CompareResult {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return Py.isLessEqualBool(left: l, right: r)
+      return Py.isLessEqualBool(left: l, right: r).asCompareResult
     case .allEqualUpToShorterCount:
       return .value(self.count <= other.count)
     case let .error(e):
@@ -67,10 +67,10 @@ internal struct PySequenceData {
     }
   }
 
-  internal func isGreater(than other: PySequenceData) -> PyResult<Bool> {
+  internal func isGreater(than other: PySequenceData) -> CompareResult {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return Py.isGreaterBool(left: l, right: r)
+      return Py.isGreaterBool(left: l, right: r).asCompareResult
     case .allEqualUpToShorterCount:
       return .value(self.count > other.count)
     case let .error(e):
@@ -78,10 +78,10 @@ internal struct PySequenceData {
     }
   }
 
-  internal func isGreaterEqual(than other: PySequenceData) -> PyResult<Bool> {
+  internal func isGreaterEqual(than other: PySequenceData) -> CompareResult {
     switch self.getFirstNotEqualElement(with: other) {
     case let .elements(selfElement: l, otherElement: r):
-      return Py.isGreaterEqualBool(left: l, right: r)
+      return Py.isGreaterEqualBool(left: l, right: r).asCompareResult
     case .allEqualUpToShorterCount:
       return .value(self.count >= other.count)
     case let .error(e):
@@ -133,7 +133,6 @@ internal struct PySequenceData {
 
   internal func repr(openBrace: String,
                      closeBrace: String) -> PyResult<String> {
-
     if self.isEmpty {
       return .value(openBrace + closeBrace) // '[]'
     }
@@ -268,7 +267,7 @@ internal struct PySequenceData {
   // MARK: - Set/del item
 
   internal mutating func setItem(at index: PyObject,
-                                 to value: PyObject) -> PyResult<()> {
+                                 to value: PyObject) -> PyResult<PyNone> {
     // Setting slice is not (yet) implemented
 
     let parsedIndex: Int
@@ -278,10 +277,10 @@ internal struct PySequenceData {
     }
 
     self.elements[parsedIndex] = value
-    return .value()
+    return .value(Py.none)
   }
 
-  internal mutating func delItem(at index: PyObject) -> PyResult<()> {
+  internal mutating func delItem(at index: PyObject) -> PyResult<PyNone> {
     let parsedIndex: Int
     switch IndexHelper.int(index) {
     case let .value(i): parsedIndex = i
@@ -289,7 +288,7 @@ internal struct PySequenceData {
     }
 
     _ = self.elements.remove(at: parsedIndex)
-    return .value()
+    return .value(Py.none)
   }
 
   // MARK: - Count
@@ -313,7 +312,7 @@ internal struct PySequenceData {
   internal func index(of element: PyObject,
                       start: PyObject?,
                       end: PyObject?,
-                      typeName: String) -> PyResult<Int> {
+                      typeName: String) -> PyResult<BigInt> {
     let subsequence: SubSequence
     switch self.getSubsequence(start: start, end: end) {
     case let .value(s): subsequence = s
@@ -323,7 +322,7 @@ internal struct PySequenceData {
     for (index, e) in subsequence.enumerated() {
       switch Py.isEqualBool(left: e, right: element) {
       case .value(true):
-        return .value(index)
+        return .value(BigInt(index))
       case .value(false):
         break // go to next element
       case .error(let e):
@@ -336,14 +335,15 @@ internal struct PySequenceData {
 
   // MARK: - Append
 
-  internal mutating func append(_ element: PyObject) {
+  internal mutating func append(_ element: PyObject) -> PyResult<PyNone> {
     self.elements.append(element)
+    return .value(Py.none)
   }
 
   // MARK: - Insert
 
   internal mutating func insert(at index: PyObject,
-                                item: PyObject) -> PyResult<()> {
+                                item: PyObject) -> PyResult<PyNone> {
     let parsedIndex: Int
     switch IndexHelper.int(index) {
     case let .value(i): parsedIndex = i
@@ -351,19 +351,20 @@ internal struct PySequenceData {
     }
 
     self.elements.insert(item, at: parsedIndex)
-    return .value()
+    return .value(Py.none)
   }
 
   // MARK: - Remove
 
-  internal mutating func remove(_ value: PyObject) -> PyResult<()> {
+  internal mutating func remove(typeName: String,
+                                value: PyObject) -> PyResult<PyNone> {
     switch self.find(value) {
     case .index(let index):
       self.elements.remove(at: index)
-      return .value()
+      return .value(Py.none)
 
     case .notFound:
-      return .valueError("list.remove(x): x not in list")
+      return .valueError("\(typeName).remove(x): x not in \(typeName)")
 
     case .error(let e):
       return .error(e)
@@ -392,16 +393,16 @@ internal struct PySequenceData {
 
   // MARK: - Extend
 
-  internal mutating func extend(iterable: PyObject) -> PyResult<()> {
+  internal mutating func extend(iterable: PyObject) -> PyResult<PyNone> {
     // Fast path: adding tuples, lists
     if let tuple = iterable as? PyTuple {
       self.elements.append(contentsOf: tuple.elements)
-      return .value()
+      return .value(Py.none)
     }
 
     if let list = iterable as? PyList {
       self.elements.append(contentsOf: list.elements)
-      return .value()
+      return .value(Py.none)
     }
 
     // Slow path: iterable
@@ -414,7 +415,7 @@ internal struct PySequenceData {
     switch d {
     case let .value(elements):
       self.elements.append(contentsOf: elements)
-      return .value()
+      return .value(Py.none)
     case let .error(e):
       return .error(e)
     }
@@ -478,14 +479,16 @@ internal struct PySequenceData {
 
   // MARK: - Reverse
 
-  internal mutating func reverse() {
+  internal mutating func reverse() -> PyResult<PyNone> {
     self.elements.reverse()
+    return .value(Py.none)
   }
 
   // MARK: - Clear
 
-  internal mutating func clear() {
+  internal mutating func clear() -> PyResult<PyNone> {
     self.elements.removeAll()
+    return .value(Py.none)
   }
 
   // MARK: - Pop

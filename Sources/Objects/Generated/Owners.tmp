@@ -269,7 +269,7 @@ PyDict|PyObject|func|__setitem__|setItem(at index: PyObject,                    
 PyDict|PyObject|func|__delitem__|delItem(at index: PyObject) -> PyResult<PyNone>
 PyDict|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
 PyDict|PyObject|func|clear|clear() -> PyResult<PyNone>
-PyDict|PyObject|func|get|get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject>
+PyDict|PyObject|func|get|get(args: [PyObject],                    kwargs: PyDictData?) -> PyResult<PyObject>
 PyDict|PyObject|func|__iter__|iter() -> PyObject
 PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                           default: PyObject?) -> PyResult<PyObject>
 PyDict|PyObject|func|update|update(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>

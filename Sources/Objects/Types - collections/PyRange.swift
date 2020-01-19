@@ -54,7 +54,7 @@ public class PyRange: PyObject {
   internal init(start: PyInt, stop: PyInt, step: PyInt?) {
     assert(
       step?.value != 0,
-      "PyRange.step cannot be 0. Use 'builtins.newRange' to handle this case."
+      "PyRange.step cannot be 0. Use 'Py.newRange' to handle this case."
     )
 
     let isGoingUp = start.value <= stop.value
@@ -93,8 +93,11 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    let boolOrNil = (other as? PyRange).map(self.isEqual)
-    return CompareResult(boolOrNil)
+    guard let otherRange = other as? PyRange else {
+      return .notImplemented
+    }
+
+    return .value(self.isEqual(otherRange))
   }
 
   internal func isEqual(_ other: PyRange) -> Bool {
@@ -183,7 +186,7 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = __bool__
   internal func asBool() -> Bool {
-    return self.length.value > 0
+    return self.length.value.isTrue
   }
 
   // MARK: - Class
@@ -256,9 +259,8 @@ public class PyRange: PyObject {
       return result.flatMap { PyResult<PyObject>.value($0) }
     }
 
-    return .typeError(
-      "range indices must be integers or slices, not \(index.typeName)"
-    )
+    let msg = "range indices must be integers or slices, not \(index.typeName)"
+    return .typeError(msg)
   }
 
   internal func getItem(at index: PyInt) -> PyResult<PyInt> {

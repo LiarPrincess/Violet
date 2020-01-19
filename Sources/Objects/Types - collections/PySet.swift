@@ -49,7 +49,7 @@ public class PySet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isEqual(to: other.data).asCompareResult
+    return self.data.isEqual(to: other.data)
   }
 
   // sourcery: pymethod = __ne__
@@ -67,7 +67,7 @@ public class PySet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isLess(than: other.data).asCompareResult
+    return self.data.isLess(than: other.data)
   }
 
   // sourcery: pymethod = __le__
@@ -76,7 +76,7 @@ public class PySet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isLessEqual(than: other.data).asCompareResult
+    return self.data.isLessEqual(than: other.data)
   }
 
   // sourcery: pymethod = __gt__
@@ -85,7 +85,7 @@ public class PySet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isGreater(than: other.data).asCompareResult
+    return self.data.isGreater(than: other.data)
   }
 
   // sourcery: pymethod = __ge__
@@ -94,7 +94,7 @@ public class PySet: PyObject, PySetType {
       return .notImplemented
     }
 
-    return self.data.isGreaterEqual(than: other.data).asCompareResult
+    return self.data.isGreaterEqual(than: other.data)
   }
 
   // MARK: - Hashable
@@ -430,12 +430,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = pop, doc = popDoc
   internal func pop() -> PyResult<PyObject> {
-    guard let lastElement = self.data.dict.last else {
-      return .keyError("pop from an empty set")
-    }
-
-    _ = self.data.remove(element: lastElement.key)
-    return .value(lastElement.key.object)
+    return self.data.pop()
   }
 
   // MARK: - Iter
