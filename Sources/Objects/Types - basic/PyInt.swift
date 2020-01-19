@@ -138,7 +138,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __bool__
   internal func asBool() -> Bool {
-    return self.value != 0
+    return self.value.isTrue
   }
 
   // sourcery: pymethod = __int__
@@ -789,10 +789,7 @@ public class PyInt: PyObject {
   /// PyObject *
   /// PyNumber_Long(PyObject *o)
   private static func parseBigIntWithoutBase(_ object: PyObject) -> PyResult<BigInt> {
-    if let int = object as? PyInt {
-      return .value(int.value)
-    }
-
+    // Call has to be before 'PyInt' cast, because it can override
     switch PyInt.callTrunc(object) {
     case .value(let o):
       guard let int = o as? PyInt else {
@@ -801,8 +798,12 @@ public class PyInt: PyObject {
       return .value(int.value)
     case .missingMethod:
       break // try other possibilities
-    case .error(let e):
+    case .error(let e), .notCallable(let e):
       return .error(e)
+    }
+
+    if let int = object as? PyInt {
+      return .value(int.value)
     }
 
     switch PyInt.parseBigIntFromString(object, radix: 10) {
@@ -814,6 +815,14 @@ public class PyInt: PyObject {
     return .typeError("int() argument must be a string, " +
                       "a bytes-like object or a number, " +
                       "not '\(object.typeName)'")
+  }
+
+  private static func callTrunc(_ object: PyObject) -> CallMethodResult {
+    if let owner = object as? __trunc__Owner {
+      return .value(owner.trunc())
+    }
+
+    return Py.callMethod(on: object, selector: "__trunc__")
   }
 
   private enum IntFromString {
@@ -848,26 +857,5 @@ public class PyInt: PyObject {
     }
 
     return .notString
-  }
-
-  private enum CallTruncResult {
-    case value(PyObject)
-    case error(PyBaseException)
-    case missingMethod
-  }
-
-  private static func callTrunc(_ object: PyObject) -> CallTruncResult {
-    if let owner = object as? __trunc__Owner {
-      return .value(owner.trunc())
-    }
-
-    switch Py.callMethod(on: object, selector: "__trunc__") {
-    case .value(let o):
-      return .value(o)
-    case .missingMethod:
-      return .missingMethod
-    case .error(let e), .notCallable(let e):
-      return .error(e)
-    }
   }
 }

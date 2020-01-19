@@ -4,7 +4,7 @@ import Core
 // Objects -> iterobject.c
 
 // sourcery: pytype = iterator, default, hasGC
-internal class PyIterator: PyObject {
+public class PyIterator: PyObject {
 
   internal let sequence: PyObject
   internal private(set) var index: Int

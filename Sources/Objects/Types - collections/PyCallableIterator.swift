@@ -4,7 +4,7 @@ import Core
 // Objects -> iterobject.c
 
 // sourcery: pytype = callable_iterator, default, hasGC
-internal class PyCallableIterator: PyObject {
+public class PyCallableIterator: PyObject {
 
   internal let callable: PyObject
   internal let sentinel: PyObject

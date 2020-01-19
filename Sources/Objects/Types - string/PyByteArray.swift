@@ -30,7 +30,7 @@ public class PyByteArray: PyObject, PyBytesType {
     return self.data.values
   }
 
-  override public var description: String  {
+  override public var description: String {
     return "PyByteArray(count: \(self.value.count))"
   }
 

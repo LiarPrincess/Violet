@@ -5,7 +5,7 @@ import Core
 
 // sourcery: pytype = reversed, default, hasGC, baseType
 /// Return a reverse iterator over the values of the given sequence.
-internal class PyReversed: PyObject {
+public class PyReversed: PyObject {
 
   internal static let doc: String = """
     reversed(sequence, /)

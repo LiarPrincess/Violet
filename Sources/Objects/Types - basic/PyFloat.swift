@@ -44,13 +44,8 @@ public class PyFloat: PyObject {
   /// for details).
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    if let pyFloat = other as? PyFloat {
-      return .value(self.value == pyFloat.value)
-    }
-
-    if let pyInt = other as? PyInt {
-      let float = Double(pyInt.value)
-      return .value(self.value == float)
+    if let o = PyFloat.asDouble(other) {
+      return .value(self.value == o)
     }
 
     return .notImplemented
@@ -65,13 +60,8 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    if let pyFloat = other as? PyFloat {
-      return .value(self.value < pyFloat.value)
-    }
-
-    if let pyInt = other as? PyInt {
-      let float = Double(pyInt.value)
-      return .value(self.value < float)
+    if let o = PyFloat.asDouble(other) {
+      return .value(self.value < o)
     }
 
     return .notImplemented
@@ -79,13 +69,8 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    if let pyFloat = other as? PyFloat {
-      return .value(self.value <= pyFloat.value)
-    }
-
-    if let pyInt = other as? PyInt {
-      let float = Double(pyInt.value)
-      return .value(self.value <= float)
+    if let o = PyFloat.asDouble(other) {
+      return .value(self.value <= o)
     }
 
     return .notImplemented
@@ -93,13 +78,8 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    if let pyFloat = other as? PyFloat {
-      return .value(self.value > pyFloat.value)
-    }
-
-    if let pyInt = other as? PyInt {
-      let float = Double(pyInt.value)
-      return .value(self.value > float)
+    if let o = PyFloat.asDouble(other) {
+      return .value(self.value > o)
     }
 
     return .notImplemented
@@ -107,13 +87,8 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    if let pyFloat = other as? PyFloat {
-      return .value(self.value >= pyFloat.value)
-    }
-
-    if let pyInt = other as? PyInt {
-      let float = Double(pyInt.value)
-      return .value(self.value >= float)
+    if let o = PyFloat.asDouble(other) {
+      return .value(self.value >= o)
     }
 
     return .notImplemented
@@ -135,7 +110,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __str__
   internal func str() -> PyResult<String> {
-    return .value(String(describing: self.value))
+    return self.repr()
   }
 
   // MARK: - Convertible
@@ -152,7 +127,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __float__
   internal func asFloat() -> PyResult<PyFloat> {
-    return .value(Py.newFloat(self.value))
+    return .value(self)
   }
 
   // sourcery: pymethod = real
@@ -230,7 +205,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __add__
   internal func add(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -246,7 +221,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __sub__
   internal func sub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -255,7 +230,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __rsub__
   internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -266,7 +241,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __mul__
   internal func mul(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -290,7 +265,7 @@ public class PyFloat: PyObject {
       return .typeError("pow() 3rd argument not allowed unless all arguments are integers")
     }
 
-    guard let exp = self.asDouble(exp) else {
+    guard let exp = PyFloat.asDouble(exp) else {
       return .value(Py.notImplemented)
     }
 
@@ -308,7 +283,7 @@ public class PyFloat: PyObject {
       return .typeError("pow() 3rd argument not allowed unless all arguments are integers")
     }
 
-    guard let base = self.asDouble(base) else {
+    guard let base = PyFloat.asDouble(base) else {
       return .value(Py.notImplemented)
     }
 
@@ -324,7 +299,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __truediv__
   internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -333,7 +308,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __rtruediv__
   internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -352,7 +327,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __floordiv__
   internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -361,7 +336,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __rfloordiv__
   internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -385,7 +360,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __mod__
   internal func mod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -394,7 +369,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __rmod__
   internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -418,7 +393,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __divmod__
   internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -427,7 +402,7 @@ public class PyFloat: PyObject {
 
   // sourcery: pymethod = __rdivmod__
   internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
-    guard let other = self.asDouble(other) else {
+    guard let other = PyFloat.asDouble(other) else {
       return .value(Py.notImplemented)
     }
 
@@ -475,9 +450,8 @@ public class PyFloat: PyObject {
       // TODO: Implement float rounding to arbitrary precision
       return .value(Py.notImplemented)
     case .none:
-      return .typeError(
-        "'\(nDigits.typeName)' object cannot be interpreted as an integer"
-      )
+      let msg = "'\(nDigits.typeName)' object cannot be interpreted as an integer"
+      return .typeError(msg)
     }
   }
 
@@ -518,7 +492,9 @@ public class PyFloat: PyObject {
       return .error(e)
     }
 
-    let alloca = isBuiltin ? PyFloat.init(type:value:) : PyFloatHeap.init(type:value:)
+    let alloca = isBuiltin ?
+      PyFloat.init(type:value:) :
+      PyFloatHeap.init(type:value:)
 
     if args.isEmpty {
       return .value(alloca(type, 0.0))
@@ -538,33 +514,43 @@ public class PyFloat: PyObject {
   /// PyObject *
   /// PyNumber_Float(PyObject *o)
   private static func extractDouble(_ object: PyObject) -> PyResult<Double> {
-    if let float = object as? PyFloat {
-      return .value(float.value)
-    }
-
-    if let owner = object as? __float__Owner {
-      return owner.asFloat().map { $0.value }
-    }
-
-    switch Py.callMethod(on: object, selector: "__float__") {
-    case .value(let f):
-      guard let float = f as? PyFloat else {
-        let ot = object.typeName
-        let ft = f.typeName
-        return .typeError("\(ot).__float__ returned non-float (type \(ft))")
+    // Call has to be before 'PyFloat.asDouble', because it can override
+    switch PyFloat.callFloat(object) {
+    case .value(let o):
+      guard let f = o as? PyFloat else {
+        let ot = o.typeName
+        let msg = "\(object.typeName).__float__ returned non-float (type \(ot))"
+        return .typeError(msg)
       }
-      return .value(float.value)
+      return .value(f.value)
     case .missingMethod:
-      let t = object.typeName
-      return .typeError("float() argument must be a string, or a number, not '\(t)'")
+      break // try other possibilities
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
+
+    if let d = PyFloat.asDouble(object) {
+      return .value(d)
+    }
+
+    let msg = "float() argument must be a string, or a number, not '\(object.typeName)'"
+    return .typeError(msg)
+  }
+
+  private static func callFloat(_ object: PyObject) -> CallMethodResult {
+    if let owner = object as? __float__Owner {
+      switch owner.asFloat() {
+      case let .value(f): return .value(f)
+      case let .error(e): return .error(e)
+      }
+    }
+
+    return Py.callMethod(on: object, selector: "__float__")
   }
 
   // MARK: - Helpers
 
-  private func asDouble(_ object: PyObject) -> Double? {
+  private static func asDouble(_ object: PyObject) -> Double? {
     if let pyFloat = object as? PyFloat {
       return pyFloat.value
     }
