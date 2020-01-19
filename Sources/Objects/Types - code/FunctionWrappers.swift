@@ -83,13 +83,18 @@ internal struct InitFunctionWrapper: FunctionWrapper {
       return .typeError("\(self.name)(): not enough arguments")
     }
 
-    let arg0 = args[0]
-    guard let type = arg0 as? PyType else {
-      return .typeError("\(self.name)(X): X is not a type object (\(arg0))")
-    }
+    // TODO: Old code:
+    // let arg0 = args[0]
+    // guard let type = arg0 as? PyType else {
+    //   return .typeError("\(self.name)(X): X is not a type object (\(arg0))")
+    // }
+    //
+    // let argsWithoutType = Array(args.dropFirst())
+    // return self.fn(type, argsWithoutType, kwargs).map { $0 as PyObject }
 
-    let argsWithoutType = Array(args.dropFirst())
-    return self.fn(type, argsWithoutType, kwargs).map { $0 as PyObject }
+    let zelf = args[0]
+    let argsWithoutZelf = Array(args.dropFirst())
+    return self.fn(zelf, argsWithoutZelf, kwargs).map { $0 as PyObject }
   }
 }
 
@@ -143,13 +148,13 @@ internal struct NullaryFunctionWrapper: FunctionWrapper {
   internal let fn: NullaryFunction
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
-    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
-      return .error(e)
-    }
-
     if args.any {
       let msg = "'\(self.name)' takes no arguments (\(args.count) given)"
       return .typeError(msg)
+    }
+
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     return self.fn()
@@ -167,13 +172,13 @@ internal struct UnaryFunctionWrapper: FunctionWrapper {
   internal let fn: UnaryFunction
 
   internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
-    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
-      return .error(e)
-    }
-
     if args.count != 1 {
       let msg = "'\(self.name)' takes exactly one argument (\(args.count) given)"
       return .typeError(msg)
+    }
+
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
     }
 
     return self.fn(args[0])

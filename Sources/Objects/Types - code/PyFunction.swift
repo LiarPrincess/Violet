@@ -24,17 +24,17 @@ public class PyFunction: PyObject {
     a tuple that supplies the bindings for free variables
     """
 
-  /// The __name__ attribute, a string object
+  /// The `__name__` attribute, a string object
   internal var name: String
   /// The qualified name
   internal var qualname: String
-  /// The __doc__ attribute, can be anything
+  /// The `__doc__` attribute, can be anything
   internal let doc: String?
-  /// The __dict__ attribute, a dict or NULL
+  /// The `__dict__` attribute, a dict or NULL
   internal let attributes = Attributes()
-  /// The __module__ attribute, can be anything
+  /// The `__module__` attribute, can be anything
   internal let module: PyObject
-  /// A code object, the __code__ attribute
+  /// A code object, the `__code__` attribute
   internal let code: PyCode
 
   internal let globals: Attributes

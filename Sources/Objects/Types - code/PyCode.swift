@@ -17,7 +17,8 @@ public class PyCode: PyObject {
   }
 
   override public var description: String {
-    return "PyCode(filename: \(self.filename))"
+    let firstLine = self.codeObject.firstLine
+    return "PyCode(filename: \(self.filename), line: \(firstLine))"
   }
 
   // MARK: - Init
@@ -31,7 +32,17 @@ public class PyCode: PyObject {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
+    // We are simplifing things a bit.
+    // We should do property based equal instead, but comparing code objects
+    // is not that frequent to waste time on this.
+    //
+    // If you change this then remember to also update '__hash__'.
     return .value(self === other)
+  }
+
+  // sourcery: pymethod = __ne__
+  internal func isNotEqual(_ other: PyObject) -> CompareResult {
+    return self.isEqual(other).not
   }
 
   // MARK: - Comparable
@@ -60,10 +71,9 @@ public class PyCode: PyObject {
 
   // sourcery: pymethod = __hash__
   internal func hash() -> HashResult {
-    // Not the best, but PyCodes are not used often
-    let name = Py.hasher.hash(self.codeObject.name)
-    let qualifiedName = Py.hasher.hash(self.codeObject.qualifiedName)
-    return .value(name ^ qualifiedName)
+    // See the comment in '__eq__'.
+    let id = ObjectIdentifier(self)
+    return .value(Py.hasher.hash(id))
   }
 
   // MARK: - String

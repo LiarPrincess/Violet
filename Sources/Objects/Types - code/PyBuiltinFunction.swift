@@ -8,8 +8,10 @@ public class PyBuiltinFunction: PyObject {
 
   /// The Swift function that will be called.
   internal let function: FunctionWrapper
-  /// **Optional** instance it is bound to.
+  /// **Optional** instance it is bound to (`__self__`).
   internal let object: PyObject?
+  /// The `__module__` attribute, can be anything
+  internal let module: PyObject?
   /// The `__doc__` attribute, or `nil`.
   internal let doc: String?
 
@@ -26,9 +28,11 @@ public class PyBuiltinFunction: PyObject {
 
   internal init(fn: FunctionWrapper,
                 object: PyObject? = nil,
+                module: PyObject? = nil,
                 doc: String? = nil) {
     self.function = fn
     self.object = object
+    self.module = module
     self.doc = doc
     super.init(type: Py.types.builtinFunction)
   }
@@ -114,8 +118,9 @@ public class PyBuiltinFunction: PyObject {
 
   // sourcery: pyproperty = __qualname__
   internal func getQualname() -> String {
-    // If __self__ is a module or NULL, return m.__name__
-    // (e.g. len.__qualname__ == 'len')
+    // If __self__ is a module or nil, return __name__, for example:
+    // >>> len.__qualname__
+    // 'len'
     guard let object = self.object else {
       return self.name
     }
@@ -125,14 +130,16 @@ public class PyBuiltinFunction: PyObject {
     }
 
     // If __self__ is a type, return m.__self__.__qualname__ + '.' + m.__name__
-    // (e.g. dict.fromkeys.__qualname__ == 'dict.fromkeys')
+    // >>> dict.fromkeys.__qualname__ # 'dict' is a type, so use it!
+    // 'dict.fromkeys'
     var type = object.type
     if let ifObjectIsTypeThenUseItAsType = object as? PyType {
       type = ifObjectIsTypeThenUseItAsType
     }
 
     // Return type(m.__self__).__qualname__ + '.' + m.__name__
-    // (e.g. [].append.__qualname__ == 'list.append')
+    // >>> [].append.__qualname__
+    // 'list.append'
     let typeQualname = type.getQualname()
     return typeQualname + "." + self.name
   }
@@ -144,7 +151,15 @@ public class PyBuiltinFunction: PyObject {
 
   // sourcery: pyproperty = __module__
   internal func getModule() -> PyResult<String> {
-    return .value("builtins")
+    guard let moduleObject = self.module else {
+      return .value("")
+    }
+
+    if let module = moduleObject as? PyModule {
+      return module.name
+    }
+
+    return Py.strValue(moduleObject)
   }
 
   // sourcery: pyproperty = __self__

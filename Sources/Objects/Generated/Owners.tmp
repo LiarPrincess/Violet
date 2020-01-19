@@ -207,6 +207,7 @@ PyCallableIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyCode|PyObject|get|__class__|getClass() -> PyType
 
 PyCode|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
+PyCode|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult

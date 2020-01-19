@@ -38,7 +38,7 @@ internal enum ModuleFactory {
 
   {% for method in type.allMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: object.{{ method.selectorName }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: object.{{ method.selectorName }}, module: result)
   {% endfor %}
 
     return result

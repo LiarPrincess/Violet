@@ -346,6 +346,7 @@ internal enum FillTypes {
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyCode.isEqual(_:), castSelf: Cast.asPyCode)
+    dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyCode.isNotEqual(_:), castSelf: Cast.asPyCode)
     dict["__lt__"] = PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PyCode.isLess(_:), castSelf: Cast.asPyCode)
     dict["__le__"] = PyBuiltinFunction.wrap(name: "__le__", doc: nil, fn: PyCode.isLessEqual(_:), castSelf: Cast.asPyCode)
     dict["__gt__"] = PyBuiltinFunction.wrap(name: "__gt__", doc: nil, fn: PyCode.isGreater(_:), castSelf: Cast.asPyCode)

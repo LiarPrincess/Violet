@@ -44,7 +44,6 @@ code
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
     __getattribute__
-    __ne__
     co_argcount
     co_cellvars
     co_code

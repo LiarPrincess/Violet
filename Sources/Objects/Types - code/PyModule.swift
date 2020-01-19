@@ -88,7 +88,7 @@ public class PyModule: PyObject {
         break // there is still hope!
       }
 
-      return attr
+      return attr // 'attr' is an error, just return it
     }
 
     guard let nameString = name as? PyString else {
@@ -133,7 +133,7 @@ public class PyModule: PyObject {
 
   // sourcery: pymethod = __dir__
   public func dir() -> DirResult {
-    // Do not add `self.type` dir!
+    // Do not add 'self.type' dir!
     if let dirFunc = self.attributes["__dir__"] {
       return Py.callDir(dirFunc, args: [])
     } else {
@@ -163,7 +163,11 @@ public class PyModule: PyObject {
                               kwargs: PyDictData?) -> PyResult<PyNone> {
     switch PyModule.initArguments.parse(args: args, kwargs: kwargs) {
     case let .value(bind):
-      assert(1 <= bind.count && bind.count <= 2, "Invalid argument count returned from parser.")
+      assert(
+        1 <= bind.count && bind.count <= 2,
+        "Invalid argument count returned from parser."
+      )
+
       let name = bind[0]
       let doc = bind.count >= 2 ? bind[1] : Py.none
 

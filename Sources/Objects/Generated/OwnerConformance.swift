@@ -203,6 +203,7 @@ extension PyCallableIterator:
 extension PyCode:
   __class__GetterOwner,
   __eq__Owner,
+  __ne__Owner,
   __lt__Owner,
   __le__Owner,
   __gt__Owner,

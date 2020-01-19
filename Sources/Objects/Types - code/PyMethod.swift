@@ -19,7 +19,9 @@ public class PyMethod: PyObject {
   internal let object: PyObject
 
   override public var description: String {
-    return "PyMethod()"
+    let name = self.fn.name
+    let qualname = self.fn.qualname
+    return "PyMethod(name: \(name), qualname: \(qualname))"
   }
 
   // MARK: - Init
@@ -122,23 +124,8 @@ public class PyMethod: PyObject {
 
   // MARK: - Attributes
 
-  internal static let getAttributeDoc = """
-    method(function, instance)
-
-    Create a bound instance method object.
-    """
-
-  // sourcery: pymethod = __getattribute__, doc = getAttributeDoc
+  // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    guard let nameString = name as? PyString else {
-      return .typeError("attribute name must be string, not '\(name.typeName)'")
-    }
-
-    if let descr = self.type.lookup(name: nameString.value),
-       let f = descr.type as? __get__Owner {
-      return f.get(object: self.type)
-    }
-
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
