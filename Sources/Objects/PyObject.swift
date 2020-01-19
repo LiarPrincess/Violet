@@ -9,33 +9,56 @@ internal struct PyObjectFlags: OptionSet {
   /// This flag is used to control infinite recursion
   /// in `repr`, `str`, `print` etc.
   ///
-  /// Container objects that may recursively contain themselves, e.g. builtin
-  /// dictionaries and lists, should use `withReprLock()` to avoid infinite
-  /// recursion.
+  /// It is used when container objects recursively contain themselves:
+  /// ```py
+  /// >>> l = []
+  /// >>> l.append(l)
+  /// >>> l
+  /// [[...]]
+  /// ```
+  ///
+  /// Use `PyObject.withReprLock()` to automate setting/resetting this flag.
   internal static let reprLock = PyObjectFlags(rawValue: 1 << 0)
 }
 
 // MARK: - Object
 
+/// Top of the `Python` type hierarchy.
+///
+/// It should be subclassed for every more-specific type.
+///
+/// Having single super-class simplifies a few things:
+/// - we can store `PyObject` on the VM stack and it 'just works'.
+/// - it has nice mental model: to implement type just add a Swift class.
+/// - it makes reading Python docs more natural (meaning that you don't have
+/// to go through translation step: description in docs -> our implementation).
 public class PyObject: CustomStringConvertible {
 
   // `self_type` has to be implicitly unwrapped optional because:
   // - `objectType` has `typeType` type
   // - `typeType` has `typeType` type and is subclass of `objectType`
   // The only way to produce this result is to skip `self.type` during
-  // init and then fill it later.
+  // `init` and then fill it later.
   // There is as special `init()` and `func setType(to type: PyType)`
   // to do exactly this.
 
   // swiftlint:disable:next implicitly_unwrapped_optional
   private var _type: PyType!
   /// Also known as `klass`, but we are using CPython naming convention.
-  public var type: PyType {
+  public final var type: PyType {
+    // Not really sure if this property wrapper is needed (we could just expose
+    // 'self._type' as implicitly unwrapped optional).
+    // Public properties in Swift are exposed as a getter/setter anyway
+    // (this is done so that we can change stored proeprty -> computed property
+    // without breaking ABI - probably, I may be wrong here).
+    // Anyway, it is 'final' so it should not be a problem (also most of its
+    // users are inside this module, so it should optimize nicely).
     return self._type
   }
 
   internal var flags: PyObjectFlags = []
 
+  /// Name of the type (mostly for convenience).
   public var typeName: String {
     return self.type.getName()
   }
@@ -60,7 +83,8 @@ public class PyObject: CustomStringConvertible {
     self._type = type
   }
 
-  /// NEVER EVER use this ctor!
+  /// NEVER EVER use this ctor! It will not set `self.type`!
+  ///
   /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
   /// Use `init(type: PyType)` instead.
   internal init() {
@@ -68,6 +92,7 @@ public class PyObject: CustomStringConvertible {
   }
 
   /// NEVER EVER use this function!
+  ///
   /// This is a reserved for `objectType` and `typeType` to create mutual recursion.
   internal func setType(to type: PyType) {
     assert(self._type == nil, "Type is already assigned!")
@@ -76,16 +101,16 @@ public class PyObject: CustomStringConvertible {
 
   // MARK: - Helpers
 
-  /// Check if this object type is **exactly** given type.
+  /// Check if this object type has **exactly** the given type.
   ///
-  /// Use `hasSubtype(of:)` if you want to check for possible subtype.
+  /// Use `hasSubtype(of:)` if you want to include subtypes.
   public func hasType(type: PyType) -> Bool {
     return self.type === type
   }
 
-  /// Check if this object type is subtype of a given type.
+  /// Check if this object type is subtype of the given type.
   ///
-  /// Use `hasType(type:)` if you want to check if the type is **exactly** type.
+  /// Use `hasType(type:)` if you want to check if the type is **exactly** equal.
   public func hasSubtype(of type: PyType) -> Bool {
     return type.isType(of: self)
   }
@@ -104,8 +129,8 @@ public class PyObject: CustomStringConvertible {
     return self.flags.contains(.reprLock)
   }
 
-  /// Set, execute `body` and then unset flag that is used to control
-  /// infinite recursion in `repr`, `str`, `print` etc.
+  /// Set, execute `body` and then unset `reprLock` flag
+  /// (the one that is used to control recursion in `repr`, `str`, `print` etc).
   internal func withReprLock<T>(body: () -> T) -> T {
     self.flags.formUnion(.reprLock)
     defer { self.flags.subtract(.reprLock) }

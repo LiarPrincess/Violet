@@ -19,7 +19,7 @@ public class PyBaseException: PyObject {
   internal var cause: PyObject?
   internal var attributes: Attributes
 
-  /// Another exception during whose handling ex was raised.
+  /// Another exception during whose handling this exception was raised.
   internal var exceptionContext: PyObject?
   internal var suppressExceptionContext: Bool
 
@@ -58,12 +58,13 @@ public class PyBaseException: PyObject {
   /// This is a terrible HACK!.
   /// Our goal is to set proper `type` in each PyObject and to do this we can:
   /// 1. Have 2 inits in each exception:
-  ///    - convenience (similar to this one), so it can be used in 'normal' code
+  ///    - convenience, so it can be used in 'normal' code
   ///    - with `type: PyType` arg, so it can be used in derieved classes to set type
   ///    But this is a lot of boilerplate.
-  /// 2. Store `context` in each PyObject and have `type` as computed property.
-  ///    This simplifies some stuff, but complicates other
-  ///    (mostly by having different mental model than other VMs).
+  /// 2. Have `type` as a computed property.
+  ///    This simplifies some stuff, but complicates other, for example
+  ///    it is totally different than other types.
+  ///    It also forces us to drop 'final' in 'PyObject.type'.
   /// 3. Use the same `init` in every exception and inject proper type to assign.
   ///
   /// We went with 3 using dynamic dyspatch.
@@ -98,9 +99,11 @@ public class PyBaseException: PyObject {
 
     switch args.getLength() {
     case 1:
+      // BaseException('Elsa')
       let first = args.elements[0]
       return Py.repr(first).map { name + "(" + $0 + ")" }
     default:
+      // BaseException('Elsa', 'Anna')
       let argsRepr = args.repr()
       return argsRepr.map { name + $0 }
     }
@@ -294,6 +297,7 @@ public class PyBaseException: PyObject {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 
+  /// `pyInit` in all of the exception classes will call this shared method.
   internal static func pyInitShared(zelf: PyBaseException,
                                     args: [PyObject],
                                     kwargs: PyDictData?) -> PyResult<PyNone> {

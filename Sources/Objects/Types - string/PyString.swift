@@ -50,14 +50,6 @@ public class PyString: PyObject {
 
   // MARK: - Init
 
-  convenience init(value: String.UnicodeScalarView) {
-    self.init(value: String(value))
-  }
-
-  convenience init(value: String.UnicodeScalarView.SubSequence) {
-    self.init(value: String(value))
-  }
-
   internal init(value: String) {
     self.data = PyStringData(value)
     super.init(type: Py.types.str)
@@ -706,7 +698,9 @@ public class PyString: PyObject {
                             encoding: PyObject?,
                             errors: PyObject?) -> PyResult<PyObject> {
     let isBuiltin = type === Py.types.str
-    let alloca = isBuiltin ? newString(type:value:) : PyStringHeap.init(type:value:)
+    let alloca = isBuiltin ?
+      newString(type:value:) :
+      PyStringHeap.init(type:value:)
 
     guard let object = object else {
       return .value(alloca(type, ""))

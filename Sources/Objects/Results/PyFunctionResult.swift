@@ -4,7 +4,7 @@ import Foundation
 /// Return type of a Python function.
 internal typealias PyFunctionResult = PyResult<PyObject>
 
-/// Object can be returned from a Python function.
+/// Object that can be returned from a Python function.
 internal protocol PyFunctionResultConvertible {
   var asFunctionResult: PyFunctionResult { get }
 }

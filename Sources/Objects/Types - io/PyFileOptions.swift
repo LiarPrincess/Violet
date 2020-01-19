@@ -2,9 +2,13 @@ import Foundation
 
 // MARK: - File source
 
+/// Where to find file?
 internal enum FileSource {
+  /// We already have it.
   case fileDescriptor(Int32)
+  /// Path.
   case string(String)
+  /// Encoded path.
   case bytes(Data)
 
   internal static func from(_ object: PyObject) -> PyResult<FileSource> {
@@ -28,6 +32,7 @@ internal enum FileSource {
 
 // MARK: - File mode, type
 
+/// What are we going to do with file?
 public enum FileMode: CustomStringConvertible {
   /// `r` - open for reading (default)
   case read
@@ -63,6 +68,7 @@ public enum FileMode: CustomStringConvertible {
   }
 }
 
+/// Binary or text.
 public enum FileType {
   /// `b` - binary mode
   case binary
@@ -244,6 +250,7 @@ public enum FileEncoding: CustomStringConvertible {
 
 // MARK: - Errors
 
+/// What are we going to do when error happen?
 internal enum FileErrorHandler {
   /// Raise UnicodeError (or a subclass); this is the default.
   case strict
