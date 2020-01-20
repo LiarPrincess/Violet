@@ -24,8 +24,7 @@ extension Frame {
     case let .complex(real, imag): return Py.newComplex(real: real, imag: imag)
     case let .string(arg): return Py.newString(arg)
     case let .bytes(arg): return Py.newBytes(arg)
-    case .code: // let .code(arg):
-      fatalError()
+    case let .code(arg): return Py.newCode(code: arg)
     case let .tuple(args):
       let elements = args.map(self.toObject)
       return Py.newTuple(elements)

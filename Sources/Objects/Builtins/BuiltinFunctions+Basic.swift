@@ -1,4 +1,5 @@
 import Core
+import Bytecode
 import Foundation
 
 // In CPython:
@@ -83,6 +84,12 @@ extension BuiltinFunctions {
 
   public func newModule(name: PyObject, doc: PyObject? = nil) -> PyModule {
     return PyModule(name: name, doc: doc)
+  }
+
+  // MARK: - Code
+
+  public func newCode(code: CodeObject) -> PyCode {
+    return PyCode(code: code)
   }
 
   // MARK: - Id
