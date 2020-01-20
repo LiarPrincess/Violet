@@ -2,10 +2,12 @@ import Foundation
 
 // In CPython:
 // Objects -> exceptions.c
-// Python -> errors.c (kind of...)
+// Python -> errors.c
 // https://docs.python.org/3.7/library/exceptions.html
 
 extension BuiltinFunctions {
+
+  // MARK: - New
 
   /// Inappropriate argument type.
   public func newTypeError(msg: String) -> PyTypeError {
@@ -102,5 +104,63 @@ extension BuiltinFunctions {
                                     string: String) -> PyUnicodeEncodeError {
     let msg = "'\(encoding)' codec can't encode data"
     return PyUnicodeEncodeError(msg: msg)
+  }
+
+  // MARK: - Exception matches
+
+  /// Check if a given `error` is an instance of `exceptionType`.
+  ///
+  /// CPython:
+  /// ```py
+  /// int
+  /// PyErr_GivenExceptionMatches(PyObject *err, PyObject *exc)
+  /// ```
+  ///
+  /// - Parameters:
+  ///   - error: Exception instance/type.
+  ///   - exceptionType: Exception type to check agains (tuples are also allowed).
+  public func exceptionMatches(error: PyObject,
+                               exceptionType: PyObject) -> Bool {
+    if let tuple = exceptionType as? PyTuple {
+      return self.exceptionMatches(error: error, exceptionTypes: tuple)
+    }
+
+    if let type = exceptionType as? PyType {
+      return self.exceptionMatches(error: error, exceptionType: type)
+    }
+
+    return false
+  }
+
+  public func exceptionMatches(error: PyObject,
+                               exceptionTypes: PyTuple) -> Bool {
+    return exceptionTypes.elements.contains {
+      self.exceptionMatches(error: error, exceptionType: $0)
+    }
+  }
+
+  public func exceptionMatches(error: PyObject,
+                               exceptionType: PyType) -> Bool {
+    // 'error' is a type
+    if let type = error as? PyType {
+      return self.exceptionMatches(error: type, exceptionType: exceptionType)
+    }
+
+    // 'error' is an error instance, so check its class
+    return self.exceptionMatches(error: error.type, exceptionType: exceptionType)
+  }
+
+  /// Final version of `exceptionMatches` where we compare types.
+  private func exceptionMatches(error: PyType,
+                                exceptionType: PyType) -> Bool {
+    guard error.isException else {
+      return false
+    }
+
+    guard exceptionType.isException else {
+      return false
+    }
+
+    return error.isSubtype(of: exceptionType)
   }
 }

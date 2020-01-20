@@ -46,8 +46,34 @@ extension Frame {
       let result = Py.contains(iterable: left, element: right)
       return result.map { !$0 }.map(Py.newBool)
     case .exceptionMatch:
-      // ceval.c -> case PyCmp_EXC_MATCH:
-      fatalError()
+      return self.exceptionMatch(left: left, right: right)
     }
+  }
+
+  private func exceptionMatch(left: PyObject,
+                              right: PyObject) -> PyResult<PyObject> {
+    if let rightTuple = right as? PyTuple {
+      for element in rightTuple.elements {
+        if let e = self.guaranteeExceptionType(element) {
+          return .error(e)
+        }
+      }
+    } else {
+      if let e = self.guaranteeExceptionType(right) {
+        return .error(e)
+      }
+    }
+
+    let result = Py.exceptionMatches(error: left, exceptionType: right)
+    return .value(Py.newBool(result))
+  }
+
+  private func guaranteeExceptionType(_ object: PyObject) -> PyBaseException? {
+    if let type = object as? PyType, type.isException {
+      return nil
+    }
+
+    let msg  = "catching classes that do not inherit from BaseException is not allowed"
+    return Py.newTypeError(msg: msg)
   }
 }
