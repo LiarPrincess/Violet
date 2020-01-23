@@ -832,15 +832,15 @@ PyAttributeError|PyException|static_func|__new__|pyNew(type: PyType,            
 PyAttributeError|PyException|static_func|__init__|pyInit(zelf: PyAttributeError,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyNone>
 PyBaseException|PyObject|get|__dict__|getDict() -> Attributes
 PyBaseException|PyObject|get|__class__|getClass() -> PyType
-PyBaseException|PyObject|get|args|getArgs() -> PyObject
+PyBaseException|PyObject|get|args|getArgs() -> PyTuple
 PyBaseException|PyObject|set|args|setArgs(_ value: PyObject?) -> PyResult<()>
-PyBaseException|PyObject|get|__traceback__|getTraceback() -> PyObject
+PyBaseException|PyObject|get|__traceback__|getTraceback() -> PyObject?
 PyBaseException|PyObject|set|__traceback__|setTraceback(_ value: PyObject?) -> PyResult<()>
-PyBaseException|PyObject|get|__cause__|getCause() -> PyObject
+PyBaseException|PyObject|get|__cause__|getCause() -> PyObject?
 PyBaseException|PyObject|set|__cause__|setCause(_ value: PyObject?) -> PyResult<()>
-PyBaseException|PyObject|get|__context__|getContext() -> PyObject
+PyBaseException|PyObject|get|__context__|getContext() -> PyBaseException?
 PyBaseException|PyObject|set|__context__|setContext(_ value: PyObject?) -> PyResult<()>
-PyBaseException|PyObject|get|__suppress_context__|getSuppressContext() -> PyObject
+PyBaseException|PyObject|get|__suppress_context__|getSuppressContext() -> PyBool
 PyBaseException|PyObject|set|__suppress_context__|setSuppressContext(_ value: PyObject?) -> PyResult<()>
 
 PyBaseException|PyObject|func|__repr__|repr() -> PyResult<String>

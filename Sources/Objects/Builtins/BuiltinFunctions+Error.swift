@@ -106,6 +106,45 @@ extension BuiltinFunctions {
     return PyUnicodeEncodeError(msg: msg)
   }
 
+  /// static PyObject*
+  /// _PyErr_CreateException(PyObject *exception, PyObject *value)
+  public func newException(type: PyType,
+                           value: PyObject?) -> PyResult<PyBaseException> {
+    guard type.isException else {
+      return .typeError("exceptions must derive from BaseException")
+    }
+
+    switch self.callExceptionType(type: type, arg: value) {
+    case let .value(object):
+      guard let exception = object as? PyBaseException else {
+        let msg = "calling \(type.getName()) should have returned " +
+        "an instance of BaseException, not \(object.typeName)"
+        return .typeError(msg)
+      }
+
+      return .value(exception)
+
+    case let .error(e), let .notCallable(e):
+      return .error(e)
+    }
+  }
+
+  private func callExceptionType(type: PyType, arg: PyObject?) -> CallResult {
+    guard let arg = arg else {
+      return Py.call(callable: type, args: [])
+    }
+
+    if arg is PyNone {
+      return Py.call(callable: type, args: [])
+    }
+
+    if let argTuple = arg as? PyTuple {
+      return Py.call(callable: type, args: argTuple.elements)
+    }
+
+    return Py.call(callable: type, args: [arg])
+  }
+
   // MARK: - Exception matches
 
   /// Check if a given `error` is an instance of `exceptionType`.

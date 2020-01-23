@@ -11,7 +11,7 @@ protocol __init__Owner {
   static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
 }
 
-protocol ArgsGetterOwner { func getArgs() -> PyObject }
+protocol ArgsGetterOwner { func getArgs() -> PyTuple }
 protocol ArgsSetterOwner { func setArgs(_ value: PyObject?) -> PyResult<()> }
 protocol FdelGetterOwner { func getFDel() -> PyObject }
 protocol FgetGetterOwner { func getFGet() -> PyObject }
@@ -24,14 +24,14 @@ protocol __bases__GetterOwner { func getBases() -> PyTuple }
 protocol __bases__SetterOwner { func setBases(_ value: PyObject?) -> PyResult<()> }
 protocol __bool__Owner { func asBool() -> Bool }
 protocol __call__Owner { func call(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
-protocol __cause__GetterOwner { func getCause() -> PyObject }
+protocol __cause__GetterOwner { func getCause() -> PyObject? }
 protocol __cause__SetterOwner { func setCause(_ value: PyObject?) -> PyResult<()> }
 protocol __ceil__Owner { func ceil() -> PyObject }
 protocol __class__GetterOwner { func getClass() -> PyType }
 protocol __code__GetterOwner { func getCode() -> PyCode }
 protocol __complex__Owner { func asComplex() -> PyObject }
 protocol __contains__Owner { func contains(_ element: PyObject) -> PyResult<Bool> }
-protocol __context__GetterOwner { func getContext() -> PyObject }
+protocol __context__GetterOwner { func getContext() -> PyBaseException? }
 protocol __context__SetterOwner { func setContext(_ value: PyObject?) -> PyResult<()> }
 protocol __del__Owner { func del() -> PyResult<PyNone> }
 protocol __delattr__Owner { func delAttribute(name: PyObject) -> PyResult<PyNone> }
@@ -118,10 +118,10 @@ protocol __str__Owner { func str() -> PyResult<String> }
 protocol __sub__Owner { func sub(_ other: PyObject) -> PyResult<PyObject> }
 protocol __subclasscheck__Owner { func isSubtype(of object: PyObject) -> PyResult<Bool> }
 protocol __subclasses__Owner { func getSubclasses() -> [PyType] }
-protocol __suppress_context__GetterOwner { func getSuppressContext() -> PyObject }
+protocol __suppress_context__GetterOwner { func getSuppressContext() -> PyBool }
 protocol __suppress_context__SetterOwner { func setSuppressContext(_ value: PyObject?) -> PyResult<()> }
 protocol __text_signature__GetterOwner { func getTextSignature() -> String? }
-protocol __traceback__GetterOwner { func getTraceback() -> PyObject }
+protocol __traceback__GetterOwner { func getTraceback() -> PyObject? }
 protocol __traceback__SetterOwner { func setTraceback(_ value: PyObject?) -> PyResult<()> }
 protocol __truediv__Owner { func truediv(_ other: PyObject) -> PyResult<PyObject> }
 protocol __trunc__Owner { func trunc() -> PyObject }

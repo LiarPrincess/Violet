@@ -20,7 +20,7 @@ public class PyBaseException: PyObject {
   internal var attributes: Attributes
 
   /// Another exception during whose handling this exception was raised.
-  internal var exceptionContext: PyObject?
+  internal var exceptionContext: PyBaseException?
   internal var suppressExceptionContext: Bool
 
   // MARK: - Init
@@ -28,7 +28,7 @@ public class PyBaseException: PyObject {
   convenience init(msg: String,
                    traceback: PyObject? = nil,
                    cause: PyObject? = nil,
-                   exceptionContext: PyObject? = nil,
+                   exceptionContext: PyBaseException? = nil,
                    suppressExceptionContext: Bool = false) {
     self.init(args: Py.newTuple(Py.newString(msg)),
               traceback: traceback,
@@ -40,7 +40,7 @@ public class PyBaseException: PyObject {
   internal init(args: PyTuple,
                 traceback: PyObject? = nil,
                 cause: PyObject? = nil,
-                exceptionContext: PyObject? = nil,
+                exceptionContext: PyBaseException? = nil,
                 suppressExceptionContext: Bool = false) {
     self.args = args
     self.traceback = traceback
@@ -93,7 +93,7 @@ public class PyBaseException: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     let name = self.typeName
     let args = self.args
 
@@ -110,7 +110,7 @@ public class PyBaseException: PyObject {
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> PyResult<String> {
+  public func str() -> PyResult<String> {
     let args = self.args
 
     switch args.getLength() {
@@ -127,42 +127,42 @@ public class PyBaseException: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal func getDict() -> Attributes {
+  public func getDict() -> Attributes {
     return self.attributes
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+  public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
+  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
   }
 
   // MARK: - Args
 
   // sourcery: pyproperty = args, setter = setArgs
-  internal func getArgs() -> PyObject {
+  public func getArgs() -> PyTuple {
     return self.args
   }
 
-  internal func setArgs(_ value: PyObject?) -> PyResult<()> {
+  public func setArgs(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
       return .typeError("args may not be deleted")
     }
@@ -179,11 +179,11 @@ public class PyBaseException: PyObject {
   // MARK: - Traceback
 
   // sourcery: pyproperty = __traceback__, setter = setTraceback
-  internal func getTraceback() -> PyObject {
-    return self.traceback ?? Py.none
+  public func getTraceback() -> PyObject? {
+    return self.traceback
   }
 
-  internal func setTraceback(_ value: PyObject?) -> PyResult<()> {
+  public func setTraceback(_ value: PyObject?) -> PyResult<()> {
 //    guard let value = value else {
 //      return .typeError("__traceback__ may not be deleted")
 //    }
@@ -207,27 +207,35 @@ public class PyBaseException: PyObject {
   internal static let getCauseDoc = "exception cause"
 
   // sourcery: pyproperty = __cause__, setter = setCause, doc = getCauseDoc
-  internal func getCause() -> PyObject {
-    return self.cause ?? Py.none
+  public func getCause() -> PyObject? {
+    return self.cause
   }
 
-  internal func setCause(_ value: PyObject?) -> PyResult<()> {
+  public func setCause(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
       return .typeError("__cause__ may not be deleted")
     }
 
     if value is PyNone {
-      self.cause = nil
+      self.delContext()
       return .value()
     }
 
-    guard value.type.isException else {
-      let msg = "exception cause must be None or derive from BaseException"
-      return .typeError(msg)
+    if let e = value as? PyBaseException {
+      self.setCause(e)
+      return .value()
     }
 
+    let msg = "exception cause must be None or derive from BaseException"
+    return .typeError(msg)
+  }
+
+  public func setCause(_ value: PyBaseException) {
     self.cause = value
-    return .value()
+  }
+
+  public func delCause() {
+    self.cause = nil
   }
 
   // MARK: - Context
@@ -235,37 +243,45 @@ public class PyBaseException: PyObject {
   internal static let getContetDoc = "exception context"
 
   // sourcery: pyproperty = __context__, setter = setContext, doc = getContetDoc
-  internal func getContext() -> PyObject {
-    return self.exceptionContext ?? Py.none
+  public func getContext() -> PyBaseException? {
+    return self.exceptionContext
   }
 
-  internal func setContext(_ value: PyObject?) -> PyResult<()> {
+  public func setContext(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
       return .typeError("__context__ may not be deleted")
     }
 
     if value is PyNone {
-      self.exceptionContext = nil
+      self.delContext()
       return .value()
     }
 
-    guard value.type.isException else {
-      let msg = "exception context must be None or derive from BaseException"
-      return .typeError(msg)
+    if let context = value as? PyBaseException {
+      self.setContext(context)
+      return .value()
     }
 
+    let msg = "exception context must be None or derive from BaseException"
+    return .typeError(msg)
+  }
+
+  public func setContext(_ value: PyBaseException) {
     self.exceptionContext = value
-    return .value()
+  }
+
+  public func delContext() {
+    self.exceptionContext = nil
   }
 
   // MARK: - Suppress context
 
   // sourcery: pyproperty = __suppress_context__, setter = setSuppressContext
-  internal func getSuppressContext() -> PyObject {
+  public func getSuppressContext() -> PyBool {
     return Py.newBool(self.suppressExceptionContext)
   }
 
-  internal func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
+  public func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
     if let value = value {
       switch Py.isTrueBool(value) {
       case let .value(v): self.suppressExceptionContext = v
