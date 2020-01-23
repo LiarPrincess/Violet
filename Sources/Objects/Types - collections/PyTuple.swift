@@ -18,7 +18,7 @@ public class PyTuple: PyObject, PySequenceType {
 
   internal let data: PySequenceData
 
-  internal var elements: [PyObject] {
+  public var elements: [PyObject] {
     return self.data.elements
   }
 

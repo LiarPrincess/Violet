@@ -488,7 +488,7 @@ public class PyComplex: PyObject {
   /// `<signed-float>` is any string of the form `<float>` whose first
   /// character is '+' or '-'
   internal static func parse(_ arg: String) -> PyResult<Raw> {
-    // swiftlint:disable:previous cyclomatic_complexity function_body_length
+    // swiftlint:disable:previous cyclomatic_complexity
 
     let s = arg.trimmingCharacters(in: .whitespacesAndNewlines)
     if s.isEmpty {

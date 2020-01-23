@@ -400,7 +400,7 @@ public class PyType: PyObject {
   // MARK: - Subtypes
 
   // sourcery: pymethod = __subclasscheck__
-  internal func isSubtype(of object: PyObject) -> PyResult<Bool> {
+  public func isSubtype(of object: PyObject) -> PyResult<Bool> {
     if let type = object as? PyType {
       return .value(self.isSubtype(of: type))
     }

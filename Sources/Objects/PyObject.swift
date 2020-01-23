@@ -101,23 +101,14 @@ public class PyObject: CustomStringConvertible {
 
   // MARK: - Helpers
 
-  /// Check if this object type has **exactly** the given type.
-  ///
-  /// Use `hasSubtype(of:)` if you want to include subtypes.
-  public func hasType(type: PyType) -> Bool {
-    return self.type === type
-  }
-
-  /// Check if this object type is subtype of the given type.
-  ///
-  /// Use `hasType(type:)` if you want to check if the type is **exactly** equal.
-  public func hasSubtype(of type: PyType) -> Bool {
-    return type.isType(of: self)
+  /// Is this `none`?
+  public var isNone: Bool {
+    return self is PyNone
   }
 
   /// Helper to use when implementing binary operations.
   /// [docs](https://docs.python.org/3/library/constants.html#NotImplemented).
-  internal var isNotImplemented: Bool {
+  public var isNotImplemented: Bool {
     return self is PyNotImplemented
   }
 
