@@ -8,9 +8,9 @@ extension Frame {
   /// Pushes a block for a loop onto the block stack.
   /// The block spans from the current instruction up until `loopEndLabel`.
   internal func setupLoop(loopEndLabelIndex: Int) -> InstructionResult {
-    let label = self.getLabel(index: loopEndLabelIndex)
-    let block = Block(type: .setupLoop, handler: label, level: self.stackLevel)
-    self.pushBlock(block: block)
+    let type = BlockType.setupLoop(endLabelIndex: loopEndLabelIndex)
+    let block = Block(type: type, level: self.stackLevel)
+    self.blocks.push(block: block)
     return .ok
   }
 
@@ -56,6 +56,6 @@ extension Frame {
 
   /// Terminates a loop due to a break statement.
   internal func doBreak() -> InstructionResult {
-    return .unwind(.break)
+    return .break
   }
 }

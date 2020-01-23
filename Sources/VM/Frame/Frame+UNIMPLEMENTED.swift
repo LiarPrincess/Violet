@@ -208,15 +208,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  // MARK: - Try+Catch
-
-  /// Terminates a finally clause.
-  /// The interpreter recalls whether the exception has to be re-raised,
-  /// or whether the function returns, and continues with the outer-next block.
-  internal func endFinally() -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - Frame+Store+Load+Delete
 
   /// Loads the cell contained in slot i of the cell and free variable storage.

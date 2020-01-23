@@ -14,9 +14,14 @@ import Objects
 internal enum InstructionResult {
   /// Instruction executed succesfully.
   case ok
+  /// Instruction requested a `break`.
+  /// We will unwind stopping at nearest loop.
+  case `break`
   /// Instruction requested a `return` from a current frame.
-  case unwind(UnwindReason)
+  /// We will unwind and the return `value`.
+  case `return`(PyObject)
   /// Instruction raised an error.
+  /// We will unwind trying to handle it.
   case error(PyBaseException)
 }
 
@@ -29,15 +34,12 @@ internal final class Frame {
   /// Parent frame.
   internal let parent: Frame?
 
-  /// The main data frame of the stack machine.
+  /// Stack of `PyObjects`.
   internal var stack = ObjectStack()
-  /// Stack of blocks (new ones are last).
-  internal var blocks = [Block]()
-
-  /// Top-most block.
-  internal var currentBlock: Block? {
-    return blocks.last
-  }
+  /// Stack of blocks.
+  internal var blocks = BlockStack()
+  /// Stack of exceptions.
+  internal var exceptions = ExceptionStack()
 
   /// Local variables.
   internal var localSymbols: Attributes
@@ -47,17 +49,18 @@ internal final class Frame {
   internal var builtinSymbols: Attributes
   /// Free variables (variables from upper scopes).
   internal lazy var freeVariables = [String: PyObject]()
-  /// Function args and local function variables.
+  /// Function args and local variables.
   ///
   /// We could use `self.localSymbols` but that would be `O(1)` with
-  /// massive constants (array is like dictionary, but with lower constants).
-  /// We could also put it at the bottom of our stack (like in other languages),
-  /// but 'being the hipster trash that we are' (quote from @bestdressed)
+  /// massive constants.
+  /// We use array which is like dictionary, but with lower constants.
+  /// We could also put them at the bottom of our stack (like in other languages),
+  /// but as 'the hipster trash that we are' (quote from @bestdressed)
   /// we won't do this.
   internal lazy var fastLocals = [PyObject?](repeating: nil,
                                              count: code.varNames.count)
 
-  /// Index of the next instruction to run.
+  /// Index of the next instruction to run (program counter).
   internal var nextInstructionIndex = 0
 
   /// PyFrameObject* _Py_HOT_FUNCTION
@@ -98,24 +101,34 @@ internal final class Frame {
 
   // MARK: - Run
 
-  internal func run() -> PyObject {
+  internal func run() -> PyResult<PyObject> {
+    // TODO: When we 'case .error(let e):' unwind remaining blocks?
     while self.nextInstructionIndex != self.code.instructions.endIndex {
       switch self.executeInstruction() {
       case .ok:
-        break // just go to next instruction
-      case .unwind(let reason):
-        switch self.unwind(reason: reason) {
-        case .return(let value):
-          return value
-        case .notImplemented:
-          break
-        }
-      case .error: // (let e)
+        // Just go to next instruction
         break
+      case .break:
+        // Ok -> go to next instruction;
+        switch self.unwind(reason: .break) {
+        case .ok: break
+        case .error(let e): return .error(e)
+        }
+      case .return(let value):
+        // Unwind will unwind all blocks -> then just return
+        switch self.unwind(reason: .return(value)) {
+        case .ok: return .value(value)
+        case .error(let e): return .error(e)
+        }
+      case .error(let e):
+        switch self.unwind(reason: .exception(e)) {
+        case .ok: break
+        case .error(let e): return .error(e)
+        }
       }
     }
 
-    fatalError()
+    return .value(Py.none)
   }
 
   private func fetchInstruction() -> Instruction {

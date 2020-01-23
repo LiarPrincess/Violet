@@ -18,11 +18,14 @@ extension Frame {
   ///
   /// - Note:
   /// This is an instruction implementation!
-  /// If you want to really `popBlock` then use `self.popBlockInner()`.
+  /// If you want to just `popBlock` then use `self.blocks.pop()`!
   internal func popBlock() -> InstructionResult {
-    let block = self.popBlockInner()
-    self.unwindBlock(block: block)
-    return .ok
+    if let block = self.blocks.pop() {
+      self.unwindBlock(block: block)
+      return .ok
+    }
+
+    return .error(Py.newSystemError(msg: "XXX block stack underflow"))
   }
 
   // MARK: - Rot

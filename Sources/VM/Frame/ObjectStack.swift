@@ -1,6 +1,6 @@
 import Objects
 
-internal struct ObjectStack {
+internal class ObjectStack {
 
   private var elements = [PyObject]()
 
@@ -42,7 +42,7 @@ internal struct ObjectStack {
 
   // MARK: - Set
 
-  internal mutating func set(_ n: Int, to value: PyObject) {
+  internal func set(_ n: Int, to value: PyObject) {
     let count = self.elements.count
     assert(count >= n, "Stack set out of bounds (set: \(n), count: \(count)).")
     self.elements[count - n] = value
@@ -50,13 +50,13 @@ internal struct ObjectStack {
 
   // MARK: - Push
 
-  internal mutating func push(_ value: PyObject) {
+  internal func push(_ value: PyObject) {
     self.elements.push(value)
   }
 
   // MARK: - Pop
 
-  internal mutating func pop() -> PyObject {
+  internal func pop() -> PyObject {
     let last = self.elements.popLast()
     assert(last != nil, "Stack pop from empty stack.")
     return last! // swiftlint:disable:this force_unwrapping
@@ -64,7 +64,7 @@ internal struct ObjectStack {
 
   /// Pop `count` elements and then reverse,
   /// so that first pushed element is in 1st position.
-  internal mutating func popElementsInPushOrder(count elementCount: Int) -> [PyObject] {
+  internal func popElementsInPushOrder(count elementCount: Int) -> [PyObject] {
     let count = self.elements.count
     assert(
       count >= elementCount,
@@ -79,14 +79,14 @@ internal struct ObjectStack {
     return Array(result.reversed())
   }
 
-  internal mutating func popUntil(count: Int) {
+  internal func popUntil(count: Int) {
     assert(self.elements.count >= count)
 
     // Avoid allocation when we have correct size
     if self.elements.count != count {
       self.elements = Array(self.elements[0..<count])
     }
-    
+
     assert(self.elements.count == count)
   }
 }
