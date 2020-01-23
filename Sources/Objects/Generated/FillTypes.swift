@@ -1430,6 +1430,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyArithmeticError.getClass, castSelf: Cast.asPyArithmeticError)
@@ -1448,6 +1449,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyAssertionError.getClass, castSelf: Cast.asPyAssertionError)
@@ -1466,6 +1468,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyAttributeError.getClass, castSelf: Cast.asPyAttributeError)
@@ -1513,6 +1516,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyBlockingIOError.getClass, castSelf: Cast.asPyBlockingIOError)
@@ -1531,6 +1535,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyBrokenPipeError.getClass, castSelf: Cast.asPyBrokenPipeError)
@@ -1549,6 +1554,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyBufferError.getClass, castSelf: Cast.asPyBufferError)
@@ -1567,6 +1573,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesWarning.getClass, castSelf: Cast.asPyBytesWarning)
@@ -1585,6 +1592,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyChildProcessError.getClass, castSelf: Cast.asPyChildProcessError)
@@ -1603,6 +1611,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionAbortedError.getClass, castSelf: Cast.asPyConnectionAbortedError)
@@ -1621,6 +1630,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionError.getClass, castSelf: Cast.asPyConnectionError)
@@ -1639,6 +1649,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionRefusedError.getClass, castSelf: Cast.asPyConnectionRefusedError)
@@ -1657,6 +1668,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionResetError.getClass, castSelf: Cast.asPyConnectionResetError)
@@ -1675,6 +1687,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyDeprecationWarning.getClass, castSelf: Cast.asPyDeprecationWarning)
@@ -1693,6 +1706,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyEOFError.getClass, castSelf: Cast.asPyEOFError)
@@ -1711,6 +1725,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyException.getClass, castSelf: Cast.asPyException)
@@ -1729,6 +1744,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyFileExistsError.getClass, castSelf: Cast.asPyFileExistsError)
@@ -1747,6 +1763,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyFileNotFoundError.getClass, castSelf: Cast.asPyFileNotFoundError)
@@ -1765,6 +1782,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyFloatingPointError.getClass, castSelf: Cast.asPyFloatingPointError)
@@ -1783,6 +1801,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyFutureWarning.getClass, castSelf: Cast.asPyFutureWarning)
@@ -1801,6 +1820,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyGeneratorExit.getClass, castSelf: Cast.asPyGeneratorExit)
@@ -1819,6 +1839,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyImportError.getClass, castSelf: Cast.asPyImportError)
@@ -1837,6 +1858,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyImportWarning.getClass, castSelf: Cast.asPyImportWarning)
@@ -1855,6 +1877,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyIndentationError.getClass, castSelf: Cast.asPyIndentationError)
@@ -1873,6 +1896,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyIndexError.getClass, castSelf: Cast.asPyIndexError)
@@ -1891,6 +1915,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyInterruptedError.getClass, castSelf: Cast.asPyInterruptedError)
@@ -1909,6 +1934,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyIsADirectoryError.getClass, castSelf: Cast.asPyIsADirectoryError)
@@ -1927,6 +1953,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyError.getClass, castSelf: Cast.asPyKeyError)
@@ -1945,6 +1972,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyboardInterrupt.getClass, castSelf: Cast.asPyKeyboardInterrupt)
@@ -1963,6 +1991,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyLookupError.getClass, castSelf: Cast.asPyLookupError)
@@ -1981,6 +2010,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyMemoryError.getClass, castSelf: Cast.asPyMemoryError)
@@ -1999,6 +2029,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyModuleNotFoundError.getClass, castSelf: Cast.asPyModuleNotFoundError)
@@ -2017,6 +2048,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyNameError.getClass, castSelf: Cast.asPyNameError)
@@ -2035,6 +2067,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyNotADirectoryError.getClass, castSelf: Cast.asPyNotADirectoryError)
@@ -2053,6 +2086,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplementedError.getClass, castSelf: Cast.asPyNotImplementedError)
@@ -2071,6 +2105,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyOSError.getClass, castSelf: Cast.asPyOSError)
@@ -2089,6 +2124,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyOverflowError.getClass, castSelf: Cast.asPyOverflowError)
@@ -2107,6 +2143,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyPendingDeprecationWarning.getClass, castSelf: Cast.asPyPendingDeprecationWarning)
@@ -2125,6 +2162,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyPermissionError.getClass, castSelf: Cast.asPyPermissionError)
@@ -2143,6 +2181,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyProcessLookupError.getClass, castSelf: Cast.asPyProcessLookupError)
@@ -2161,6 +2200,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyRecursionError.getClass, castSelf: Cast.asPyRecursionError)
@@ -2179,6 +2219,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyReferenceError.getClass, castSelf: Cast.asPyReferenceError)
@@ -2197,6 +2238,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyResourceWarning.getClass, castSelf: Cast.asPyResourceWarning)
@@ -2215,6 +2257,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeError.getClass, castSelf: Cast.asPyRuntimeError)
@@ -2233,6 +2276,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeWarning.getClass, castSelf: Cast.asPyRuntimeWarning)
@@ -2251,6 +2295,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyStopAsyncIteration.getClass, castSelf: Cast.asPyStopAsyncIteration)
@@ -2269,6 +2314,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyStopIteration.getClass, castSelf: Cast.asPyStopIteration)
@@ -2287,6 +2333,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxError.getClass, castSelf: Cast.asPySyntaxError)
@@ -2305,6 +2352,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxWarning.getClass, castSelf: Cast.asPySyntaxWarning)
@@ -2323,6 +2371,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PySystemError.getClass, castSelf: Cast.asPySystemError)
@@ -2341,6 +2390,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PySystemExit.getClass, castSelf: Cast.asPySystemExit)
@@ -2359,6 +2409,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyTabError.getClass, castSelf: Cast.asPyTabError)
@@ -2377,6 +2428,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyTimeoutError.getClass, castSelf: Cast.asPyTimeoutError)
@@ -2395,6 +2447,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyTypeError.getClass, castSelf: Cast.asPyTypeError)
@@ -2413,6 +2466,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyUnboundLocalError.getClass, castSelf: Cast.asPyUnboundLocalError)
@@ -2431,6 +2485,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeDecodeError.getClass, castSelf: Cast.asPyUnicodeDecodeError)
@@ -2449,6 +2504,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeEncodeError.getClass, castSelf: Cast.asPyUnicodeEncodeError)
@@ -2467,6 +2523,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeError.getClass, castSelf: Cast.asPyUnicodeError)
@@ -2485,6 +2542,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeTranslateError.getClass, castSelf: Cast.asPyUnicodeTranslateError)
@@ -2503,6 +2561,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeWarning.getClass, castSelf: Cast.asPyUnicodeWarning)
@@ -2521,6 +2580,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyUserWarning.getClass, castSelf: Cast.asPyUserWarning)
@@ -2539,6 +2599,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyValueError.getClass, castSelf: Cast.asPyValueError)
@@ -2557,6 +2618,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyWarning.getClass, castSelf: Cast.asPyWarning)
@@ -2575,6 +2637,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setFlag(.baseExceptionSubclass)
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyZeroDivisionError.getClass, castSelf: Cast.asPyZeroDivisionError)

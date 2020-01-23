@@ -5,11 +5,12 @@
 // https://docs.python.org/3.7/c-api/exceptions.html
 
 // swiftlint:disable file_length
+// swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 
 // MARK: - SystemExit
 
-// sourcery: pyerrortype = SystemExit, default, baseType, hasGC
+// sourcery: pyerrortype = SystemExit, default, baseType, hasGC, baseExceptionSubclass
 public final class PySystemExit: PyBaseException {
 
   override internal class var doc: String {
@@ -25,12 +26,12 @@ public final class PySystemExit: PyBaseException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -52,7 +53,7 @@ public final class PySystemExit: PyBaseException {
 
 // MARK: - KeyboardInterrupt
 
-// sourcery: pyerrortype = KeyboardInterrupt, default, baseType, hasGC
+// sourcery: pyerrortype = KeyboardInterrupt, default, baseType, hasGC, baseExceptionSubclass
 public final class PyKeyboardInterrupt: PyBaseException {
 
   override internal class var doc: String {
@@ -68,12 +69,12 @@ public final class PyKeyboardInterrupt: PyBaseException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -95,7 +96,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
 
 // MARK: - GeneratorExit
 
-// sourcery: pyerrortype = GeneratorExit, default, baseType, hasGC
+// sourcery: pyerrortype = GeneratorExit, default, baseType, hasGC, baseExceptionSubclass
 public final class PyGeneratorExit: PyBaseException {
 
   override internal class var doc: String {
@@ -111,12 +112,12 @@ public final class PyGeneratorExit: PyBaseException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -138,7 +139,7 @@ public final class PyGeneratorExit: PyBaseException {
 
 // MARK: - Exception
 
-// sourcery: pyerrortype = Exception, default, baseType, hasGC
+// sourcery: pyerrortype = Exception, default, baseType, hasGC, baseExceptionSubclass
 public class PyException: PyBaseException {
 
   override internal class var doc: String {
@@ -154,12 +155,12 @@ public class PyException: PyBaseException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -181,7 +182,7 @@ public class PyException: PyBaseException {
 
 // MARK: - StopIteration
 
-// sourcery: pyerrortype = StopIteration, default, baseType, hasGC
+// sourcery: pyerrortype = StopIteration, default, baseType, hasGC, baseExceptionSubclass
 public final class PyStopIteration: PyException {
 
   override internal class var doc: String {
@@ -197,12 +198,12 @@ public final class PyStopIteration: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -224,7 +225,7 @@ public final class PyStopIteration: PyException {
 
 // MARK: - StopAsyncIteration
 
-// sourcery: pyerrortype = StopAsyncIteration, default, baseType, hasGC
+// sourcery: pyerrortype = StopAsyncIteration, default, baseType, hasGC, baseExceptionSubclass
 public final class PyStopAsyncIteration: PyException {
 
   override internal class var doc: String {
@@ -240,12 +241,12 @@ public final class PyStopAsyncIteration: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -267,7 +268,7 @@ public final class PyStopAsyncIteration: PyException {
 
 // MARK: - ArithmeticError
 
-// sourcery: pyerrortype = ArithmeticError, default, baseType, hasGC
+// sourcery: pyerrortype = ArithmeticError, default, baseType, hasGC, baseExceptionSubclass
 public class PyArithmeticError: PyException {
 
   override internal class var doc: String {
@@ -283,12 +284,12 @@ public class PyArithmeticError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -310,7 +311,7 @@ public class PyArithmeticError: PyException {
 
 // MARK: - FloatingPointError
 
-// sourcery: pyerrortype = FloatingPointError, default, baseType, hasGC
+// sourcery: pyerrortype = FloatingPointError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyFloatingPointError: PyArithmeticError {
 
   override internal class var doc: String {
@@ -326,12 +327,12 @@ public final class PyFloatingPointError: PyArithmeticError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -353,7 +354,7 @@ public final class PyFloatingPointError: PyArithmeticError {
 
 // MARK: - OverflowError
 
-// sourcery: pyerrortype = OverflowError, default, baseType, hasGC
+// sourcery: pyerrortype = OverflowError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyOverflowError: PyArithmeticError {
 
   override internal class var doc: String {
@@ -369,12 +370,12 @@ public final class PyOverflowError: PyArithmeticError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -396,7 +397,7 @@ public final class PyOverflowError: PyArithmeticError {
 
 // MARK: - ZeroDivisionError
 
-// sourcery: pyerrortype = ZeroDivisionError, default, baseType, hasGC
+// sourcery: pyerrortype = ZeroDivisionError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyZeroDivisionError: PyArithmeticError {
 
   override internal class var doc: String {
@@ -412,12 +413,12 @@ public final class PyZeroDivisionError: PyArithmeticError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -439,7 +440,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
 
 // MARK: - AssertionError
 
-// sourcery: pyerrortype = AssertionError, default, baseType, hasGC
+// sourcery: pyerrortype = AssertionError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyAssertionError: PyException {
 
   override internal class var doc: String {
@@ -455,12 +456,12 @@ public final class PyAssertionError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -482,7 +483,7 @@ public final class PyAssertionError: PyException {
 
 // MARK: - AttributeError
 
-// sourcery: pyerrortype = AttributeError, default, baseType, hasGC
+// sourcery: pyerrortype = AttributeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyAttributeError: PyException {
 
   override internal class var doc: String {
@@ -498,12 +499,12 @@ public final class PyAttributeError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -525,7 +526,7 @@ public final class PyAttributeError: PyException {
 
 // MARK: - BufferError
 
-// sourcery: pyerrortype = BufferError, default, baseType, hasGC
+// sourcery: pyerrortype = BufferError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyBufferError: PyException {
 
   override internal class var doc: String {
@@ -541,12 +542,12 @@ public final class PyBufferError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -568,7 +569,7 @@ public final class PyBufferError: PyException {
 
 // MARK: - EOFError
 
-// sourcery: pyerrortype = EOFError, default, baseType, hasGC
+// sourcery: pyerrortype = EOFError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyEOFError: PyException {
 
   override internal class var doc: String {
@@ -584,12 +585,12 @@ public final class PyEOFError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -611,7 +612,7 @@ public final class PyEOFError: PyException {
 
 // MARK: - ImportError
 
-// sourcery: pyerrortype = ImportError, default, baseType, hasGC
+// sourcery: pyerrortype = ImportError, default, baseType, hasGC, baseExceptionSubclass
 public class PyImportError: PyException {
 
   override internal class var doc: String {
@@ -627,12 +628,12 @@ public class PyImportError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -654,7 +655,7 @@ public class PyImportError: PyException {
 
 // MARK: - ModuleNotFoundError
 
-// sourcery: pyerrortype = ModuleNotFoundError, default, baseType, hasGC
+// sourcery: pyerrortype = ModuleNotFoundError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyModuleNotFoundError: PyImportError {
 
   override internal class var doc: String {
@@ -670,12 +671,12 @@ public final class PyModuleNotFoundError: PyImportError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -697,7 +698,7 @@ public final class PyModuleNotFoundError: PyImportError {
 
 // MARK: - LookupError
 
-// sourcery: pyerrortype = LookupError, default, baseType, hasGC
+// sourcery: pyerrortype = LookupError, default, baseType, hasGC, baseExceptionSubclass
 public class PyLookupError: PyException {
 
   override internal class var doc: String {
@@ -713,12 +714,12 @@ public class PyLookupError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -740,7 +741,7 @@ public class PyLookupError: PyException {
 
 // MARK: - IndexError
 
-// sourcery: pyerrortype = IndexError, default, baseType, hasGC
+// sourcery: pyerrortype = IndexError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyIndexError: PyLookupError {
 
   override internal class var doc: String {
@@ -756,12 +757,12 @@ public final class PyIndexError: PyLookupError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -783,7 +784,7 @@ public final class PyIndexError: PyLookupError {
 
 // MARK: - KeyError
 
-// sourcery: pyerrortype = KeyError, default, baseType, hasGC
+// sourcery: pyerrortype = KeyError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyKeyError: PyLookupError {
 
   override internal class var doc: String {
@@ -799,12 +800,12 @@ public final class PyKeyError: PyLookupError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -826,7 +827,7 @@ public final class PyKeyError: PyLookupError {
 
 // MARK: - MemoryError
 
-// sourcery: pyerrortype = MemoryError, default, baseType, hasGC
+// sourcery: pyerrortype = MemoryError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyMemoryError: PyException {
 
   override internal class var doc: String {
@@ -842,12 +843,12 @@ public final class PyMemoryError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -869,7 +870,7 @@ public final class PyMemoryError: PyException {
 
 // MARK: - NameError
 
-// sourcery: pyerrortype = NameError, default, baseType, hasGC
+// sourcery: pyerrortype = NameError, default, baseType, hasGC, baseExceptionSubclass
 public class PyNameError: PyException {
 
   override internal class var doc: String {
@@ -885,12 +886,12 @@ public class PyNameError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -912,7 +913,7 @@ public class PyNameError: PyException {
 
 // MARK: - UnboundLocalError
 
-// sourcery: pyerrortype = UnboundLocalError, default, baseType, hasGC
+// sourcery: pyerrortype = UnboundLocalError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnboundLocalError: PyNameError {
 
   override internal class var doc: String {
@@ -928,12 +929,12 @@ public final class PyUnboundLocalError: PyNameError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -955,7 +956,7 @@ public final class PyUnboundLocalError: PyNameError {
 
 // MARK: - OSError
 
-// sourcery: pyerrortype = OSError, default, baseType, hasGC
+// sourcery: pyerrortype = OSError, default, baseType, hasGC, baseExceptionSubclass
 public class PyOSError: PyException {
 
   override internal class var doc: String {
@@ -971,12 +972,12 @@ public class PyOSError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -998,7 +999,7 @@ public class PyOSError: PyException {
 
 // MARK: - BlockingIOError
 
-// sourcery: pyerrortype = BlockingIOError, default, baseType, hasGC
+// sourcery: pyerrortype = BlockingIOError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyBlockingIOError: PyOSError {
 
   override internal class var doc: String {
@@ -1014,12 +1015,12 @@ public final class PyBlockingIOError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1041,7 +1042,7 @@ public final class PyBlockingIOError: PyOSError {
 
 // MARK: - ChildProcessError
 
-// sourcery: pyerrortype = ChildProcessError, default, baseType, hasGC
+// sourcery: pyerrortype = ChildProcessError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyChildProcessError: PyOSError {
 
   override internal class var doc: String {
@@ -1057,12 +1058,12 @@ public final class PyChildProcessError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1084,7 +1085,7 @@ public final class PyChildProcessError: PyOSError {
 
 // MARK: - ConnectionError
 
-// sourcery: pyerrortype = ConnectionError, default, baseType, hasGC
+// sourcery: pyerrortype = ConnectionError, default, baseType, hasGC, baseExceptionSubclass
 public class PyConnectionError: PyOSError {
 
   override internal class var doc: String {
@@ -1100,12 +1101,12 @@ public class PyConnectionError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1127,7 +1128,7 @@ public class PyConnectionError: PyOSError {
 
 // MARK: - BrokenPipeError
 
-// sourcery: pyerrortype = BrokenPipeError, default, baseType, hasGC
+// sourcery: pyerrortype = BrokenPipeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyBrokenPipeError: PyConnectionError {
 
   override internal class var doc: String {
@@ -1143,12 +1144,12 @@ public final class PyBrokenPipeError: PyConnectionError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1170,7 +1171,7 @@ public final class PyBrokenPipeError: PyConnectionError {
 
 // MARK: - ConnectionAbortedError
 
-// sourcery: pyerrortype = ConnectionAbortedError, default, baseType, hasGC
+// sourcery: pyerrortype = ConnectionAbortedError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyConnectionAbortedError: PyConnectionError {
 
   override internal class var doc: String {
@@ -1186,12 +1187,12 @@ public final class PyConnectionAbortedError: PyConnectionError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1213,7 +1214,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
 
 // MARK: - ConnectionRefusedError
 
-// sourcery: pyerrortype = ConnectionRefusedError, default, baseType, hasGC
+// sourcery: pyerrortype = ConnectionRefusedError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyConnectionRefusedError: PyConnectionError {
 
   override internal class var doc: String {
@@ -1229,12 +1230,12 @@ public final class PyConnectionRefusedError: PyConnectionError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1256,7 +1257,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
 
 // MARK: - ConnectionResetError
 
-// sourcery: pyerrortype = ConnectionResetError, default, baseType, hasGC
+// sourcery: pyerrortype = ConnectionResetError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyConnectionResetError: PyConnectionError {
 
   override internal class var doc: String {
@@ -1272,12 +1273,12 @@ public final class PyConnectionResetError: PyConnectionError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1299,7 +1300,7 @@ public final class PyConnectionResetError: PyConnectionError {
 
 // MARK: - FileExistsError
 
-// sourcery: pyerrortype = FileExistsError, default, baseType, hasGC
+// sourcery: pyerrortype = FileExistsError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyFileExistsError: PyOSError {
 
   override internal class var doc: String {
@@ -1315,12 +1316,12 @@ public final class PyFileExistsError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1342,7 +1343,7 @@ public final class PyFileExistsError: PyOSError {
 
 // MARK: - FileNotFoundError
 
-// sourcery: pyerrortype = FileNotFoundError, default, baseType, hasGC
+// sourcery: pyerrortype = FileNotFoundError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyFileNotFoundError: PyOSError {
 
   override internal class var doc: String {
@@ -1358,12 +1359,12 @@ public final class PyFileNotFoundError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1385,7 +1386,7 @@ public final class PyFileNotFoundError: PyOSError {
 
 // MARK: - InterruptedError
 
-// sourcery: pyerrortype = InterruptedError, default, baseType, hasGC
+// sourcery: pyerrortype = InterruptedError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyInterruptedError: PyOSError {
 
   override internal class var doc: String {
@@ -1401,12 +1402,12 @@ public final class PyInterruptedError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1428,7 +1429,7 @@ public final class PyInterruptedError: PyOSError {
 
 // MARK: - IsADirectoryError
 
-// sourcery: pyerrortype = IsADirectoryError, default, baseType, hasGC
+// sourcery: pyerrortype = IsADirectoryError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyIsADirectoryError: PyOSError {
 
   override internal class var doc: String {
@@ -1444,12 +1445,12 @@ public final class PyIsADirectoryError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1471,7 +1472,7 @@ public final class PyIsADirectoryError: PyOSError {
 
 // MARK: - NotADirectoryError
 
-// sourcery: pyerrortype = NotADirectoryError, default, baseType, hasGC
+// sourcery: pyerrortype = NotADirectoryError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyNotADirectoryError: PyOSError {
 
   override internal class var doc: String {
@@ -1487,12 +1488,12 @@ public final class PyNotADirectoryError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1514,7 +1515,7 @@ public final class PyNotADirectoryError: PyOSError {
 
 // MARK: - PermissionError
 
-// sourcery: pyerrortype = PermissionError, default, baseType, hasGC
+// sourcery: pyerrortype = PermissionError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyPermissionError: PyOSError {
 
   override internal class var doc: String {
@@ -1530,12 +1531,12 @@ public final class PyPermissionError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1557,7 +1558,7 @@ public final class PyPermissionError: PyOSError {
 
 // MARK: - ProcessLookupError
 
-// sourcery: pyerrortype = ProcessLookupError, default, baseType, hasGC
+// sourcery: pyerrortype = ProcessLookupError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyProcessLookupError: PyOSError {
 
   override internal class var doc: String {
@@ -1573,12 +1574,12 @@ public final class PyProcessLookupError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1600,7 +1601,7 @@ public final class PyProcessLookupError: PyOSError {
 
 // MARK: - TimeoutError
 
-// sourcery: pyerrortype = TimeoutError, default, baseType, hasGC
+// sourcery: pyerrortype = TimeoutError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyTimeoutError: PyOSError {
 
   override internal class var doc: String {
@@ -1616,12 +1617,12 @@ public final class PyTimeoutError: PyOSError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1643,7 +1644,7 @@ public final class PyTimeoutError: PyOSError {
 
 // MARK: - ReferenceError
 
-// sourcery: pyerrortype = ReferenceError, default, baseType, hasGC
+// sourcery: pyerrortype = ReferenceError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyReferenceError: PyException {
 
   override internal class var doc: String {
@@ -1659,12 +1660,12 @@ public final class PyReferenceError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1686,7 +1687,7 @@ public final class PyReferenceError: PyException {
 
 // MARK: - RuntimeError
 
-// sourcery: pyerrortype = RuntimeError, default, baseType, hasGC
+// sourcery: pyerrortype = RuntimeError, default, baseType, hasGC, baseExceptionSubclass
 public class PyRuntimeError: PyException {
 
   override internal class var doc: String {
@@ -1702,12 +1703,12 @@ public class PyRuntimeError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1729,7 +1730,7 @@ public class PyRuntimeError: PyException {
 
 // MARK: - NotImplementedError
 
-// sourcery: pyerrortype = NotImplementedError, default, baseType, hasGC
+// sourcery: pyerrortype = NotImplementedError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyNotImplementedError: PyRuntimeError {
 
   override internal class var doc: String {
@@ -1745,12 +1746,12 @@ public final class PyNotImplementedError: PyRuntimeError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1772,7 +1773,7 @@ public final class PyNotImplementedError: PyRuntimeError {
 
 // MARK: - RecursionError
 
-// sourcery: pyerrortype = RecursionError, default, baseType, hasGC
+// sourcery: pyerrortype = RecursionError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyRecursionError: PyRuntimeError {
 
   override internal class var doc: String {
@@ -1788,12 +1789,12 @@ public final class PyRecursionError: PyRuntimeError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1815,7 +1816,7 @@ public final class PyRecursionError: PyRuntimeError {
 
 // MARK: - SyntaxError
 
-// sourcery: pyerrortype = SyntaxError, default, baseType, hasGC
+// sourcery: pyerrortype = SyntaxError, default, baseType, hasGC, baseExceptionSubclass
 public class PySyntaxError: PyException {
 
   override internal class var doc: String {
@@ -1831,12 +1832,12 @@ public class PySyntaxError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1858,7 +1859,7 @@ public class PySyntaxError: PyException {
 
 // MARK: - IndentationError
 
-// sourcery: pyerrortype = IndentationError, default, baseType, hasGC
+// sourcery: pyerrortype = IndentationError, default, baseType, hasGC, baseExceptionSubclass
 public class PyIndentationError: PySyntaxError {
 
   override internal class var doc: String {
@@ -1874,12 +1875,12 @@ public class PyIndentationError: PySyntaxError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1901,7 +1902,7 @@ public class PyIndentationError: PySyntaxError {
 
 // MARK: - TabError
 
-// sourcery: pyerrortype = TabError, default, baseType, hasGC
+// sourcery: pyerrortype = TabError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyTabError: PyIndentationError {
 
   override internal class var doc: String {
@@ -1917,12 +1918,12 @@ public final class PyTabError: PyIndentationError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1944,7 +1945,7 @@ public final class PyTabError: PyIndentationError {
 
 // MARK: - SystemError
 
-// sourcery: pyerrortype = SystemError, default, baseType, hasGC
+// sourcery: pyerrortype = SystemError, default, baseType, hasGC, baseExceptionSubclass
 public final class PySystemError: PyException {
 
   override internal class var doc: String {
@@ -1963,12 +1964,12 @@ public final class PySystemError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -1990,7 +1991,7 @@ public final class PySystemError: PyException {
 
 // MARK: - TypeError
 
-// sourcery: pyerrortype = TypeError, default, baseType, hasGC
+// sourcery: pyerrortype = TypeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyTypeError: PyException {
 
   override internal class var doc: String {
@@ -2006,12 +2007,12 @@ public final class PyTypeError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2033,7 +2034,7 @@ public final class PyTypeError: PyException {
 
 // MARK: - ValueError
 
-// sourcery: pyerrortype = ValueError, default, baseType, hasGC
+// sourcery: pyerrortype = ValueError, default, baseType, hasGC, baseExceptionSubclass
 public class PyValueError: PyException {
 
   override internal class var doc: String {
@@ -2049,12 +2050,12 @@ public class PyValueError: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2076,7 +2077,7 @@ public class PyValueError: PyException {
 
 // MARK: - UnicodeError
 
-// sourcery: pyerrortype = UnicodeError, default, baseType, hasGC
+// sourcery: pyerrortype = UnicodeError, default, baseType, hasGC, baseExceptionSubclass
 public class PyUnicodeError: PyValueError {
 
   override internal class var doc: String {
@@ -2092,12 +2093,12 @@ public class PyUnicodeError: PyValueError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2119,7 +2120,7 @@ public class PyUnicodeError: PyValueError {
 
 // MARK: - UnicodeDecodeError
 
-// sourcery: pyerrortype = UnicodeDecodeError, default, baseType, hasGC
+// sourcery: pyerrortype = UnicodeDecodeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnicodeDecodeError: PyUnicodeError {
 
   override internal class var doc: String {
@@ -2135,12 +2136,12 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2162,7 +2163,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
 
 // MARK: - UnicodeEncodeError
 
-// sourcery: pyerrortype = UnicodeEncodeError, default, baseType, hasGC
+// sourcery: pyerrortype = UnicodeEncodeError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnicodeEncodeError: PyUnicodeError {
 
   override internal class var doc: String {
@@ -2178,12 +2179,12 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2205,7 +2206,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
 
 // MARK: - UnicodeTranslateError
 
-// sourcery: pyerrortype = UnicodeTranslateError, default, baseType, hasGC
+// sourcery: pyerrortype = UnicodeTranslateError, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnicodeTranslateError: PyUnicodeError {
 
   override internal class var doc: String {
@@ -2221,12 +2222,12 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2248,7 +2249,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
 
 // MARK: - Warning
 
-// sourcery: pyerrortype = Warning, default, baseType, hasGC
+// sourcery: pyerrortype = Warning, default, baseType, hasGC, baseExceptionSubclass
 public class PyWarning: PyException {
 
   override internal class var doc: String {
@@ -2264,12 +2265,12 @@ public class PyWarning: PyException {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2291,7 +2292,7 @@ public class PyWarning: PyException {
 
 // MARK: - DeprecationWarning
 
-// sourcery: pyerrortype = DeprecationWarning, default, baseType, hasGC
+// sourcery: pyerrortype = DeprecationWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyDeprecationWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2307,12 +2308,12 @@ public final class PyDeprecationWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2334,7 +2335,7 @@ public final class PyDeprecationWarning: PyWarning {
 
 // MARK: - PendingDeprecationWarning
 
-// sourcery: pyerrortype = PendingDeprecationWarning, default, baseType, hasGC
+// sourcery: pyerrortype = PendingDeprecationWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyPendingDeprecationWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2351,12 +2352,12 @@ public final class PyPendingDeprecationWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2378,7 +2379,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
 
 // MARK: - RuntimeWarning
 
-// sourcery: pyerrortype = RuntimeWarning, default, baseType, hasGC
+// sourcery: pyerrortype = RuntimeWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyRuntimeWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2394,12 +2395,12 @@ public final class PyRuntimeWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2421,7 +2422,7 @@ public final class PyRuntimeWarning: PyWarning {
 
 // MARK: - SyntaxWarning
 
-// sourcery: pyerrortype = SyntaxWarning, default, baseType, hasGC
+// sourcery: pyerrortype = SyntaxWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PySyntaxWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2437,12 +2438,12 @@ public final class PySyntaxWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2464,7 +2465,7 @@ public final class PySyntaxWarning: PyWarning {
 
 // MARK: - UserWarning
 
-// sourcery: pyerrortype = UserWarning, default, baseType, hasGC
+// sourcery: pyerrortype = UserWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUserWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2480,12 +2481,12 @@ public final class PyUserWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2507,7 +2508,7 @@ public final class PyUserWarning: PyWarning {
 
 // MARK: - FutureWarning
 
-// sourcery: pyerrortype = FutureWarning, default, baseType, hasGC
+// sourcery: pyerrortype = FutureWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyFutureWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2524,12 +2525,12 @@ public final class PyFutureWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2551,7 +2552,7 @@ public final class PyFutureWarning: PyWarning {
 
 // MARK: - ImportWarning
 
-// sourcery: pyerrortype = ImportWarning, default, baseType, hasGC
+// sourcery: pyerrortype = ImportWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyImportWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2567,12 +2568,12 @@ public final class PyImportWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2594,7 +2595,7 @@ public final class PyImportWarning: PyWarning {
 
 // MARK: - UnicodeWarning
 
-// sourcery: pyerrortype = UnicodeWarning, default, baseType, hasGC
+// sourcery: pyerrortype = UnicodeWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyUnicodeWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2611,12 +2612,12 @@ public final class PyUnicodeWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2638,7 +2639,7 @@ public final class PyUnicodeWarning: PyWarning {
 
 // MARK: - BytesWarning
 
-// sourcery: pyerrortype = BytesWarning, default, baseType, hasGC
+// sourcery: pyerrortype = BytesWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyBytesWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2655,12 +2656,12 @@ public final class PyBytesWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 
@@ -2682,7 +2683,7 @@ public final class PyBytesWarning: PyWarning {
 
 // MARK: - ResourceWarning
 
-// sourcery: pyerrortype = ResourceWarning, default, baseType, hasGC
+// sourcery: pyerrortype = ResourceWarning, default, baseType, hasGC, baseExceptionSubclass
 public final class PyResourceWarning: PyWarning {
 
   override internal class var doc: String {
@@ -2698,12 +2699,12 @@ public final class PyResourceWarning: PyWarning {
   }
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {
+   override public func getClass() -> PyType {
      return self.type
    }
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {
+   override public func getDict() -> Attributes {
      return self.attributes
    }
 

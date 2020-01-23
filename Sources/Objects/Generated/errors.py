@@ -103,6 +103,7 @@ def print_class_definitions():
   print_header()
   print('''\
 // swiftlint:disable file_length
+// swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 ''')
 
@@ -117,7 +118,7 @@ def print_class_definitions():
     print(f'''\
 // MARK: - {name}
 
-// sourcery: pyerrortype = {name}, default, baseType, hasGC
+// sourcery: pyerrortype = {name}, default, baseType, hasGC, baseExceptionSubclass
 public {final}class Py{name}: Py{base} {{
 
   override internal class var doc: String {{
@@ -133,12 +134,12 @@ public {final}class Py{name}: Py{base} {{
   }}
 
    // sourcery: pyproperty = __class__
-   override internal func getClass() -> PyType {{
+   override public func getClass() -> PyType {{
      return self.type
    }}
 
    // sourcery: pyproperty = __dict__
-   override internal func getDict() -> Attributes {{
+   override public func getDict() -> Attributes {{
      return self.attributes
    }}
 
