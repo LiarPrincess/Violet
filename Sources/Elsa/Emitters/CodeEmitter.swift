@@ -19,8 +19,9 @@ public final class CodeEmitter: EmitterBase {
 
     for entity in entities {
       switch entity {
-      case .enum(let e): self.emitEnum(e)
-      case .struct(let s): self.emitStruct(s)
+      case let .enum(e): self.emitEnum(e)
+      case let .struct(s): self.emitProduct(s)
+      case let .class(c): self.emitProduct(c)
       }
     }
   }
@@ -31,7 +32,7 @@ public final class CodeEmitter: EmitterBase {
     self.emitDoc(enumDef.doc, indent: 0)
 
     let bases = self.compileBases(enumDef.bases)
-    let indirect = enumDef.indirect ? "indirect " : ""
+    let indirect = enumDef.isIndirect ? "indirect " : ""
     self.write("public \(indirect)enum \(enumDef.name)\(bases) {")
 
     // emit `case single([Statement])`
@@ -64,11 +65,11 @@ public final class CodeEmitter: EmitterBase {
 
   // MARK: - Struct
 
-  private func emitStruct(_ structDef: StructDef) {
+  private func emitProduct<T: ProductType>(_ structDef: T) {
     let bases = self.compileBases(structDef.bases)
 
     self.emitDoc(structDef.doc, indent: 0)
-    self.write("public struct \(structDef.name)\(bases) {")
+    self.write("public \(T.swiftKeyword) \(structDef.name)\(bases) {")
     self.write()
 
     for property in structDef.properties {
@@ -88,7 +89,7 @@ public final class CodeEmitter: EmitterBase {
     self.write()
   }
 
-  private func structPropertyInit(_ prop: StructProperty) -> String {
+  private func structPropertyInit(_ prop: ProductProperty) -> String {
     let prefix = prop.underscoreInit ? "_ " : ""
     return prefix + prop.nameColonType
   }

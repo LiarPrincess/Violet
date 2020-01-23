@@ -29,8 +29,7 @@ public final class CodeObjectTestHelpersEmitter: EmitterBase {
       switch entity {
       case let .enum(e) where e.name == "Instruction":
         return e
-      case .enum,
-           .struct:
+      case .enum, .struct, .class:
         break
       }
     }

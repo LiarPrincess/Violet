@@ -1,8 +1,12 @@
+// MARK: - Token kind
+
 public enum TokenKind: Equatable, CustomStringConvertible {
   case alias
   case `enum`
   case indirect
   case `struct`
+  case `class`
+  case finalClass
   case underscoreInit
   case name(String)
   case doc(String)
@@ -24,8 +28,10 @@ public enum TokenKind: Equatable, CustomStringConvertible {
     switch self {
     case .alias: return "@alias"
     case .enum: return "@enum"
-    case .indirect: return "@indirect"
+    case .indirect: return "@indirectEnum"
     case .struct: return "@struct"
+    case .class: return "@class"
+    case .finalClass: return "@finalClass"
     case .underscoreInit: return "@underscoreInit"
     case .name(let value): return value
     case .doc: return "documentation"
@@ -43,20 +49,7 @@ public enum TokenKind: Equatable, CustomStringConvertible {
   }
 }
 
-public struct Token: Equatable, CustomStringConvertible {
-
-  public let kind: TokenKind
-  public let location: SourceLocation
-
-  public init(_ kind: TokenKind, location: SourceLocation) {
-    self.kind = kind
-    self.location = location
-  }
-
-  public var description: String {
-    return "\(self.location): \(self.kind)"
-  }
-}
+// MARK: - SourceLocation
 
 public struct SourceLocation: Equatable, CustomStringConvertible {
 
@@ -79,5 +72,22 @@ public struct SourceLocation: Equatable, CustomStringConvertible {
   public var description: String {
     let columnPrefix = self.column < 10 ? "0" : ""
     return "\(self.line):\(columnPrefix)\(self.column)"
+  }
+}
+
+// MARK: - Token
+
+public struct Token: Equatable, CustomStringConvertible {
+
+  public let kind: TokenKind
+  public let location: SourceLocation
+
+  public init(_ kind: TokenKind, location: SourceLocation) {
+    self.kind = kind
+    self.location = location
+  }
+
+  public var description: String {
+    return "\(self.location): \(self.kind)"
   }
 }

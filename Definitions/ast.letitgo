@@ -71,6 +71,37 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   loc end
 )
 
+@finalClass FunctionDefArgs = (
+  -- - `name` is a raw string of the function name.
+  identifier name,
+  -- - `args` is a arguments node.
+  arguments args,
+  -- - `body` is the list of nodes inside the function.
+  stmt+ body,
+  -- - `decorators` is the list of decorators to be applied,
+  --    stored outermost first (i.e. the first in the list will be applied last).
+  expr* decorators,
+  -- - `returns` is the return annotation (the thing after '->').
+  expr? returns
+)
+
+@finalClass ClassDefArgs = (
+  -- - `name` is a raw string for the class name
+  identifier name,
+  -- - `bases` is a list of nodes for explicitly specified base classes.
+  expr* bases,
+  -- - `keywords` is a list of keyword nodes, principally for ‘metaclass’.
+  --    Other keywords will be passed to the metaclass, as per PEP-3115.
+  -- - `starargs` and kwargs are each a single node, as in a function call.
+  --    starargs will be expanded to join the list of base classes,
+  --    and kwargs will be passed to the metaclass.
+  keyword* keywords,
+  -- - `body` is a list of nodes representing the code within the class definition.
+  stmt+ body,
+  -- - `decorators` is a list of nodes, as in `FunctionDef`.
+  expr* decorators
+)
+
 -- Syntactic unit that expresses some action to be carried out.
 --
 -- See:
@@ -78,39 +109,12 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- - [Compound statement](https://docs.python.org/3/reference/compound_stmts.html)
 @enum stmtKind: Equatable =
   -- A function definition.
-  -- - `name` is a raw string of the function name.
-  -- - `args` is a arguments node.
-  -- - `body` is the list of nodes inside the function.
-  -- - `decorators` is the list of decorators to be applied,
-  --    stored outermost first (i.e. the first in the list will be applied last).
-  -- - `returns` is the return annotation (the thing after '->').
-  FunctionDef(identifier name,
-              arguments args,
-              stmt+ body,
-              expr* decorators,
-              expr? returns)
+  FunctionDef(FunctionDefArgs)
   -- An async def function definition.
-  -- Has the same fields as `FunctionDef`.
-  | AsyncFunctionDef(identifier name,
-                     arguments args,
-                     stmt+ body,
-                     expr* decorators,
-                     expr? returns)
+  | AsyncFunctionDef(FunctionDefArgs)
 
   -- A class definition.
-  -- - `name` is a raw string for the class name
-  -- - `bases` is a list of nodes for explicitly specified base classes.
-  -- - `keywords` is a list of keyword nodes, principally for ‘metaclass’.
-  --    Other keywords will be passed to the metaclass, as per PEP-3115.
-  -- - `starargs` and kwargs are each a single node, as in a function call.
-  --    starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass.
-  -- - `body` is a list of nodes representing the code within the class definition.
-  -- - `decorators` is a list of nodes, as in `FunctionDef`.
-  | ClassDef(identifier name,
-             expr* bases,
-             keyword* keywords,
-             stmt+ body,
-             expr* decorators)
+  | ClassDef(ClassDefArgs)
 
   -- A `return` statement.
   | Return(expr?)
@@ -282,7 +286,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 -- that the programming language interprets and computes to produce another value.
 --
 -- See: [docs](https://docs.python.org/3/reference/expressions.html)
-@indirect exprKind: Equatable =
+@indirectEnum exprKind: Equatable =
 {- Base -}
   True
   | False

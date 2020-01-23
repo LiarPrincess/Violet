@@ -3,8 +3,10 @@ import Foundation
 private let keywords: [String:TokenKind] = [
   "alias":    .alias,
   "enum":     .enum,
-  "indirect": .indirect,
+  "indirectEnum": .indirect,
   "struct":   .struct,
+  "class":   .class,
+  "finalClass": .finalClass,
   "underscoreInit": .underscoreInit
 ]
 
@@ -21,6 +23,7 @@ private let operators: [Character: TokenKind] = [
 ]
 
 // It should not contain any of the operators!
+// (see operators above)
 private func isValidNameCharacter(_ c: Character) -> Bool {
   return ("0" <= c && c <= "9")
       || ("a" <= c && c <= "z")
@@ -30,6 +33,7 @@ private func isValidNameCharacter(_ c: Character) -> Bool {
 
 // MARK: - Lexer
 
+/// String -> stream of `Tokens`
 public class Lexer {
 
   private var source: String
@@ -43,26 +47,38 @@ public class Lexer {
 
   // MARK: - Traversal
 
+  /// Next character.
   private var peek: Character? {
-    let atEnd = self.sourceIndex == self.source.endIndex
-    return atEnd ? nil : self.source[self.sourceIndex]
+    return self.isAtEnd ? nil : self.source[self.sourceIndex]
   }
 
+  /// Character after `self.peek`.
   private var peekNext: Character? {
-    let end = self.source.endIndex
-    let index = self.source.index(self.sourceIndex, offsetBy: 1, limitedBy: end)
-    return index.flatMap { $0 == end ? nil : self.source[$0] }
+    if self.isAtEnd {
+      return nil
+    }
+
+    var index = self.sourceIndex
+    self.source.formIndex(after: &index)
+    return index == self.source.endIndex ? nil : self.source[index]
   }
 
+  /// Did we read the whole `self.source`?
+  private var isAtEnd: Bool {
+    return self.sourceIndex == self.source.endIndex
+  }
+
+  /// Go to the next character.
   private func advance() {
-    guard self.sourceIndex < self.source.endIndex else {
+    guard !self.isAtEnd else {
       return
     }
 
     let consumed = self.peek
     self.source.formIndex(after: &self.sourceIndex)
 
-    if consumed?.isNewline ?? false {
+    let isNewline = consumed?.isNewline ?? false
+    if isNewline {
       self.location.advanceLine()
     } else {
       self.location.advanceColumn()
@@ -71,8 +87,10 @@ public class Lexer {
 
   // MARK: - Get token
 
-  // swiftlint:disable:next function_body_length
+  /// Get next token.
   public func getToken() -> Token {
+    // swiftlint:disable:previous function_body_length
+
     while true {
       guard let peek = self.peek else {
         return Token(.eof, location: self.location)
@@ -81,11 +99,13 @@ public class Lexer {
       let start = self.location
 
       switch peek {
+      // Consume all whitespaces
       case let c where c.isWhitespace:
         while let p = self.peek, p.isWhitespace {
-          self.advance() // consume all whitespaces
+          self.advance()
         }
 
+      // Elsa keyword
       case "@":
         self.advance() // @
         let name = self.getName()
@@ -94,6 +114,7 @@ public class Lexer {
         }
         return Token(keyword, location: start)
 
+      // Elsa comment
       case "{":
         if self.peekNext == "-" {
           self.advance() // {
@@ -103,6 +124,7 @@ public class Lexer {
           self.fail("Character '{' is only permitted as part of the comment '{-'.")
         }
 
+      // Swift doc
       case "-":
         if self.peekNext == "-" {
           self.advance() // -
@@ -147,7 +169,7 @@ public class Lexer {
   }
 
   private func getDoc() -> String {
-    // consume space (but only 1)
+    // consume space after '--' (but only 1)
     if let peek = self.peek, peek == " " {
       self.advance()
     }
@@ -170,12 +192,13 @@ public class Lexer {
     return String(self.source[startIndex..<self.sourceIndex])
   }
 
+  /// Unrecoverable error.
   private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
     print("\(location ?? self.location):\(message)")
     exit(EXIT_FAILURE)
   }
 
-  /// Print all tokens up to eof.
+  /// Print all tokens up to eof (usefull for debugging).
   public func dumpTokens() {
     while true {
       let token = self.getToken()

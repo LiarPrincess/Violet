@@ -2,12 +2,11 @@ import Foundation
 
 internal class Parser {
 
-  private var lexer: Lexer
+  private let lexer: Lexer
   private var token: Token
   private var location = SourceLocation.start
 
   private var aliases = [String:String]()
-  private var collectedDoc: String?
 
   internal init(lexer: Lexer) {
     self.lexer = lexer
@@ -33,6 +32,10 @@ internal class Parser {
     self.token = self.lexer.getToken()
     self.location = token.location
   }
+
+  // MARK: - Doc
+
+  private var collectedDoc: String?
 
   private func collectDoc() {
     var result = ""
@@ -67,15 +70,15 @@ internal class Parser {
       case .alias:
         self.alias()
       case .enum, .indirect:
-        let value = self.enumDef()
-        result.append(.enum(value))
+        result.append(.enum(self.enumDef()))
       case .struct:
-        let value = self.structDef()
-        result.append(.struct(value))
+        result.append(.struct(self.structDef()))
+      case .class, .finalClass:
+        result.append(.class(self.classDef()))
 
       case .name(let value):
         self.fail("'\(value)' is not a valid entity declaration. " +
-                  "Expected @struct, @enum or @indirect.")
+          "Expected @struct, @enum or @indirect.")
       default:
         self.fail("Unexpected '\(token.kind)'.")
       }
@@ -118,7 +121,11 @@ internal class Parser {
       cases.append(self.enumCaseDef())
     }
 
-    return EnumDef(name, bases: bases, cases: cases, indirect: indirect, doc: doc)
+    return EnumDef(name,
+                   bases: bases,
+                   cases: cases,
+                   isIndirect: indirect,
+                   doc: doc)
   }
 
   private func enumCaseDef() -> EnumCaseDef {
@@ -128,13 +135,13 @@ internal class Parser {
     return EnumCaseDef(name, properties: properties, doc: doc)
   }
 
-  // MARK: - Struct
+  // MARK: - Product types
 
   private func structDef() -> StructDef {
     assert(self.token.kind == .struct)
 
     let doc = self.useCollectedDoc()
-    self.advance() // struct
+    self.advance() // @struct
 
     let name = self.consumeNameOrFail()
     let bases = self.consumeProtocols()
@@ -142,6 +149,25 @@ internal class Parser {
     let properties = self.structProperties()
 
     return StructDef(name, bases: bases, properties: properties, doc: doc)
+  }
+
+  private func classDef() -> ClassDef {
+    assert(self.token.kind == .class || self.token.kind == .finalClass)
+
+    let doc = self.useCollectedDoc()
+    let isFinal = self.token.kind == .finalClass
+    self.advance() // @class, @finalClass
+
+    let name = self.consumeNameOrFail()
+    let bases = self.consumeProtocols()
+    self.consumeOrFail(.equal)
+    let properties = self.structProperties()
+
+    return ClassDef(name,
+                    bases: bases,
+                    properties: properties,
+                    isFinal: isFinal,
+                    doc: doc)
   }
 
   // MARK: - Properties
@@ -178,10 +204,10 @@ internal class Parser {
     return result
   }
 
-  private func structProperties() -> [StructProperty] {
+  private func structProperties() -> [ProductProperty] {
     self.consumeOrFail(.leftParen)
 
-    var result = [StructProperty]()
+    var result = [ProductProperty]()
     while self.token.kind != .rightParen {
       let doc = self.useCollectedDoc()
       let type = self.consumeNameOrFail()
@@ -189,11 +215,11 @@ internal class Parser {
       let name = self.consumeNameOrFail()
       let underscoreInit = self.consumeIfEqual(kind: .underscoreInit)
 
-      let property = StructProperty(name,
-                                    type: type,
-                                    kind: kind,
-                                    underscoreInit: underscoreInit,
-                                    doc: doc)
+      let property = ProductProperty(name,
+                                     type: type,
+                                     kind: kind,
+                                     underscoreInit: underscoreInit,
+                                     doc: doc)
       result.append(property)
 
       if self.token.kind != .rightParen {

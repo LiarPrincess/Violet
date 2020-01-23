@@ -54,10 +54,12 @@ public final class AstPassEmitter: EmitterBase {
                            || e.name == "ExpressionKind":
         self.emitFunctionWithSingleSwitch(e)
         self.emitFunctionPerCase(e)
-      case let .struct(s):
-        self.emitStruct(s)
-      default:
+      case .enum: // Other enum types
         break
+      case let .struct(s):
+        self.emitProduct(s)
+      case let .class(c):
+        self.emitProduct(c)
       }
     }
 
@@ -146,10 +148,10 @@ public final class AstPassEmitter: EmitterBase {
 
   // MARK: - Struct
 
-  private func emitStruct(_ structDef: StructDef) {
-    let pascalName = pascalCase(structDef.name)
-    let argName = argNames[structDef.name] ?? camelCase(structDef.name)
-    self.write("  private func visit\(pascalName)(_ \(argName): \(structDef.name)) throws {")
+  private func emitProduct<T: ProductType>(_ def: T) {
+    let pascalName = pascalCase(def.name)
+    let argName = argNames[def.name] ?? camelCase(def.name)
+    self.write("  private func visit\(pascalName)(_ \(argName): \(def.name)) throws {")
     self.write("  }")
     self.write()
   }

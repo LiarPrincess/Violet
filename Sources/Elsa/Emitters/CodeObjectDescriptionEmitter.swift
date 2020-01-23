@@ -17,7 +17,7 @@ public final class CodeObjectDescriptionEmitter: EmitterBase {
       switch entity {
       case let .enum(e):
         self.emitDescription(e)
-      case .struct:
+      case .struct, .class:
         break
       }
     }

@@ -41,7 +41,7 @@ public final class AstPatternMatchingEmitter: EmitterBase {
         default: break
         }
 
-      case .struct:
+      case .struct, .class:
         break
       }
     }
