@@ -38,18 +38,18 @@ public struct ASTValidationPass: ASTPass {
   /// validate_stmt(stmt_ty stmt)
   private func visitStatement(_ stmt: Statement) throws {
     switch stmt.kind {
-    case let .functionDef(_, args, body, decorators, returns),
-         let .asyncFunctionDef(_, args, body, decorators, returns):
-      try self.visitStatements(body)
-      try self.visitArguments(args)
-      try self.visitExpressions(decorators)
-      try self.visitExpression(returns)
+    case let .functionDef(args),
+         let .asyncFunctionDef(args):
+      try self.visitStatements(args.body)
+      try self.visitArguments(args.args)
+      try self.visitExpressions(args.decorators)
+      try self.visitExpression(args.returns)
 
-    case let .classDef(_, bases, keywords, body, decorators):
-      try self.visitStatements(body)
-      try self.visitExpressions(bases)
-      try self.visitKeywords(keywords)
-      try self.visitExpressions(decorators)
+    case let .classDef(args):
+      try self.visitStatements(args.body)
+      try self.visitExpressions(args.bases)
+      try self.visitKeywords(args.keywords)
+      try self.visitExpressions(args.decorators)
 
     case let .return(value):
       try self.visitExpression(value)

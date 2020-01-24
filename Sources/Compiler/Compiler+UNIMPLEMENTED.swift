@@ -54,12 +54,8 @@ extension Compiler {
 
   // MARK: - Compiler+Function
 
-  internal func visitAsyncFunctionDef(name: String,
-                                      args: Arguments,
-                                      body: NonEmptyArray<Statement>,
-                                      decorators: [Expression],
-                                      returns:    Expression?,
-                                      statement:  Statement) throws {
+  internal func visitAsyncFunctionDef(args: FunctionDefArgs,
+                                      statement: Statement) throws {
     throw self.notImplementedAsync()
   }
 

@@ -107,26 +107,11 @@ public struct Statement: ASTNode {
 /// - [Compound statement](https://docs.python.org/3/reference/compound_stmts.html)
 public enum StatementKind: Equatable {
   /// A function definition.
-  /// - `name` is a raw string of the function name.
-  /// - `args` is a arguments node.
-  /// - `body` is the list of nodes inside the function.
-  /// - `decorators` is the list of decorators to be applied,
-  ///    stored outermost first (i.e. the first in the list will be applied last).
-  /// - `returns` is the return annotation (the thing after '->').
-  case functionDef(name: String, args: Arguments, body: NonEmptyArray<Statement>, decorators: [Expression], returns: Expression?)
+  case functionDef(FunctionDefArgs)
   /// An async def function definition.
-  /// Has the same fields as `FunctionDef`.
-  case asyncFunctionDef(name: String, args: Arguments, body: NonEmptyArray<Statement>, decorators: [Expression], returns: Expression?)
+  case asyncFunctionDef(FunctionDefArgs)
   /// A class definition.
-  /// - `name` is a raw string for the class name
-  /// - `bases` is a list of nodes for explicitly specified base classes.
-  /// - `keywords` is a list of keyword nodes, principally for ‘metaclass’.
-  ///    Other keywords will be passed to the metaclass, as per PEP-3115.
-  /// - `starargs` and kwargs are each a single node, as in a function call.
-  ///    starargs will be expanded to join the list of base classes, and kwargs will be passed to the metaclass.
-  /// - `body` is a list of nodes representing the code within the class definition.
-  /// - `decorators` is a list of nodes, as in `FunctionDef`.
-  case classDef(name: String, bases: [Expression], keywords: [Keyword], body: NonEmptyArray<Statement>, decorators: [Expression])
+  case classDef(ClassDefArgs)
   /// A `return` statement.
   case `return`(Expression?)
   /// Represents a `del` statement.
@@ -337,10 +322,81 @@ public enum StatementKind: Equatable {
 
 }
 
+public class FunctionDefArgs: Equatable {
+
+  /// `name` is a raw string of the function name.
+  public let name: String
+  /// `args` is a arguments node.
+  public let args: Arguments
+  /// `body` is the list of nodes inside the function.
+  public let body: NonEmptyArray<Statement>
+  /// `decorators` is the list of decorators to be applied,
+  ///  stored outermost first (i.e. the first in the list will be applied last).
+  public let decorators: [Expression]
+  /// `returns` is the return annotation (the thing after '->').
+  public let returns: Expression?
+
+  public init(name: String, args: Arguments, body: NonEmptyArray<Statement>, decorators: [Expression], returns: Expression?) {
+    self.name = name
+    self.args = args
+    self.body = body
+    self.decorators = decorators
+    self.returns = returns
+  }
+}
+
+extension FunctionDefArgs {
+  public static func == (lhs: FunctionDefArgs, rhs: FunctionDefArgs) -> Bool {
+    guard lhs.name == rhs.name else { return false }
+    guard lhs.args == rhs.args else { return false }
+    guard lhs.body == rhs.body else { return false }
+    guard lhs.decorators == rhs.decorators else { return false }
+    guard lhs.returns == rhs.returns else { return false }
+    return true
+  }
+}
+
+public class ClassDefArgs: Equatable {
+
+  /// `name` is a raw string for the class name
+  public let name: String
+  /// `bases` is a list of nodes for explicitly specified base classes.
+  public let bases: [Expression]
+  /// `keywords` is a list of keyword nodes, principally for ‘metaclass’.
+  ///  Other keywords will be passed to the metaclass, as per PEP-3115.
+  /// `starargs` and kwargs are each a single node, as in a function call.
+  ///  starargs will be expanded to join the list of base classes,
+  ///  and kwargs will be passed to the metaclass.
+  public let keywords: [Keyword]
+  /// `body` is a list of nodes representing the code within the class definition.
+  public let body: NonEmptyArray<Statement>
+  /// `decorators` is a list of nodes, as in `FunctionDef`.
+  public let decorators: [Expression]
+
+  public init(name: String, bases: [Expression], keywords: [Keyword], body: NonEmptyArray<Statement>, decorators: [Expression]) {
+    self.name = name
+    self.bases = bases
+    self.keywords = keywords
+    self.body = body
+    self.decorators = decorators
+  }
+}
+
+extension ClassDefArgs {
+  public static func == (lhs: ClassDefArgs, rhs: ClassDefArgs) -> Bool {
+    guard lhs.name == rhs.name else { return false }
+    guard lhs.bases == rhs.bases else { return false }
+    guard lhs.keywords == rhs.keywords else { return false }
+    guard lhs.body == rhs.body else { return false }
+    guard lhs.decorators == rhs.decorators else { return false }
+    return true
+  }
+}
+
 /// Import name with optional 'as' alias.
 /// Both parameters are raw strings of the names.
 /// `asname` can be None if the regular name is to be used.
-public struct Alias: ASTNode {
+public class Alias: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -362,7 +418,7 @@ public struct Alias: ASTNode {
 }
 
 /// A single context manager in a `with` block.
-public struct WithItem: ASTNode {
+public class WithItem: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -386,7 +442,7 @@ public struct WithItem: ASTNode {
 }
 
 /// A single except clause.
-public struct ExceptHandler: ASTNode {
+public class ExceptHandler: ASTNode {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.

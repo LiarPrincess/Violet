@@ -33,11 +33,15 @@ extension Parser {
     try self.consumeOrThrow(.colon)
     let body = try self.suite()
 
+    let kindArgs = FunctionDefArgs(name: name,
+                                   args: args,
+                                   body: body,
+                                   decorators: decorators,
+                                   returns: returns)
+
     let kind: StatementKind = isAsync ?
-      .asyncFunctionDef(name: name, args: args, body: body,
-                        decorators: decorators, returns: returns) :
-      .functionDef     (name: name, args: args, body: body,
-                        decorators: decorators, returns: returns)
+      .asyncFunctionDef(kindArgs) :
+      .functionDef(kindArgs)
 
     return self.statement(kind, start: start, end: body.last.end)
   }
@@ -60,11 +64,13 @@ extension Parser {
     try self.consumeOrThrow(.colon)
     let body = try self.suite()
 
-    let kind = StatementKind.classDef(name: name,
-                                      bases: args?.args ?? [],
-                                      keywords: args?.keywords ?? [], // PEP3115
-                                      body: body,
-                                      decorators: decorators)
+    let kindArgs = ClassDefArgs(name: name,
+                                bases: args?.args ?? [],
+                                keywords: args?.keywords ?? [], // PEP3115
+                                body: body,
+                                decorators: decorators)
+
+    let kind = StatementKind.classDef(kindArgs)
 
     let end = body.last.end
     return self.statement(kind, start: start, end: end)

@@ -21,15 +21,9 @@ extension Compiler {
   /// - `<name>` is the class name
   /// - `<bases>` is the positional arguments and *varargs argument
   /// - `<keywords>` is the keyword arguments and **kwds argument
-  internal func visitClassDef(name: String,
-                              bases: [Expression],
-                              keywords: [Keyword],
-                              body: NonEmptyArray<Statement>,
-                              decorators: [Expression],
-                              statement:  Statement) throws {
-
+  internal func visitClassDef(args: ClassDefArgs, statement: Statement) throws {
     let location = statement.start
-    try self.visitDecorators(decorators: decorators, location: location)
+    try self.visitDecorators(decorators: args.decorators, location: location)
 
     // 1. compile the class body into a code object
     let codeObject = try self.inNewCodeObject(node: statement, type: .class) {
@@ -40,7 +34,7 @@ extension Compiler {
       self.builder.appendString(self.codeObject.qualifiedName)
       self.builder.appendStoreName(SpecialIdentifiers.__qualname__)
 
-      try self.visitStatements(body)
+      try self.visitStatements(args.body)
 
       // Return __class__ cell if it is referenced, otherwise return None
       if self.currentScope.needsClassClosure {
@@ -64,17 +58,17 @@ extension Compiler {
     // 3. load a function (or closure) made from the code object
     try self.makeClosure(codeObject: codeObject, flags: [], location: location)
     // 4. load class name
-    self.builder.appendString(name)
+    self.builder.appendString(args.name)
     // 5. generate the rest of the code for the call
-    try self.callHelper(args: bases,
-                        keywords: keywords,
+    try self.callHelper(args: args.bases,
+                        keywords: args.keywords,
                         context: .load,
                         alreadyPushedArgs: 2)
     // 6. apply decorators
-    for _ in decorators {
+    for _ in args.decorators {
       self.builder.appendCallFunction(argumentCount: 1)
     }
     // 7. store into <name>
-    self.builder.appendStoreName(name)
+    self.builder.appendStoreName(args.name)
   }
 }

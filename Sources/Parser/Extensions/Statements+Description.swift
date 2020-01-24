@@ -38,32 +38,22 @@ extension StatementKind: CustomStringConvertible {
   public var description: String {
     switch self {
 
-    case let .functionDef(name, args, body, decorators, returns):
-      return self.functionDef(header: "def",
-                              name: name,
-                              args: args,
-                              body: body,
-                              decorators: decorators,
-                              returns: returns)
-    case let .asyncFunctionDef(name, args, body, decorators, returns):
-      return self.functionDef(header: "asyncDef",
-                              name: name,
-                              args: args,
-                              body: body,
-                              decorators: decorators,
-                              returns: returns)
+    case let .functionDef(args):
+      return self.functionDef(header: "def", args: args)
+    case let .asyncFunctionDef(args):
+      return self.functionDef(header: "asyncDef", args: args)
 
-    case let .classDef(name, bases, keywords, body, decorators):
+    case let .classDef(args):
       var parents = ""
-      switch (bases.isEmpty, keywords.isEmpty) {
+      switch (args.bases.isEmpty, args.keywords.isEmpty) {
       case (true, true): break
-      case (false, true):  parents = " (" + join(bases) + ")"
-      case (true, false):  parents = " (" + join(keywords) + ")"
-      case (false, false): parents = " (" + join(bases) + " " + join(keywords) + ")"
+      case (false, true):  parents = " (" + join(args.bases) + ")"
+      case (true, false):  parents = " (" + join(args.keywords) + ")"
+      case (false, false): parents = " (" + join(args.bases) + " " + join(args.keywords) + ")"
       }
 
-      let d = self.decorators(from: decorators)
-      return "(class \(name)\(parents)\(d) body: \(join(body)))"
+      let d = self.decorators(from: args.decorators)
+      return "(class \(args.name)\(parents)\(d) body: \(join(args.body)))"
 
     case let .return(value):
       switch value {
@@ -182,16 +172,10 @@ extension StatementKind: CustomStringConvertible {
 
   // MARK: Helpers
 
-  // swiftlint:disable:next function_parameter_count
-  private func functionDef(header: String,
-                           name: String,
-                           args: Arguments,
-                           body: NonEmptyArray<Statement>,
-                           decorators: [Expression],
-                           returns: Expression?) -> String {
-    let r = returns.map { " -> " + describe($0) } ?? ""
-    let d = self.decorators(from: decorators)
-    return "(\(header) \(name)\(args)\(r)\(d) do: \(join(body)))"
+  private func functionDef(header: String, args: FunctionDefArgs) -> String {
+    let r = args.returns.map { " -> " + describe($0) } ?? ""
+    let d = self.decorators(from: args.decorators)
+    return "(\(header) \(args.name)\(args.args)\(r)\(d) do: \(join(args.body)))"
   }
 
   private func forDescription(header: String,

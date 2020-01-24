@@ -36,32 +36,27 @@ extension Compiler {
   // MARK: - Function
 
   /// compiler_function(struct compiler *c, stmt_ty s, int is_async)
-  internal func visitFunctionDef(name: String,
-                                 args: Arguments,
-                                 body: NonEmptyArray<Statement>,
-                                 decorators: [Expression],
-                                 returns:    Expression?,
-                                 statement:  Statement) throws {
-
+  internal func visitFunctionDef(args: FunctionDefArgs,
+                                 statement: Statement) throws {
     let location = statement.start
-    try self.visitDecorators(decorators: decorators, location: location)
+    try self.visitDecorators(decorators: args.decorators, location: location)
 
     var flags: FunctionFlags = []
-    try self.visitDefaultArguments(args: args,
+    try self.visitDefaultArguments(args: args.args,
                                    updating: &flags,
                                    location: location)
-    try self.visitAnnotations(args: args,
-                              returns: returns,
+    try self.visitAnnotations(args: args.args,
+                              returns: args.returns,
                               updating: &flags,
                               location: location)
 
     let codeObject = try self.inNewCodeObject(node: statement, type: .function) {
       let optimizationLevel = self.options.optimizationLevel
-      if let docString = body.first.getDocString(), optimizationLevel < .OO {
+      if let docString = args.body.first.getDocString(), optimizationLevel < .OO {
         self.builder.appendString(docString)
       }
 
-      try self.visitStatements(body)
+      try self.visitStatements(args.body)
 
       if !self.currentScope.hasReturnValue {
         self.builder.appendNone()
@@ -71,11 +66,11 @@ extension Compiler {
 
     try self.makeClosure(codeObject: codeObject, flags: flags, location: location)
 
-    for _ in decorators {
+    for _ in args.decorators {
       self.builder.appendCallFunction(argumentCount: 1)
     }
 
-    self.builder.appendStoreName(name)
+    self.builder.appendStoreName(args.name)
   }
 
   // MARK: - Decorators

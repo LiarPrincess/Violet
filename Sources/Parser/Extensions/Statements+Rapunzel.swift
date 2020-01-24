@@ -37,42 +37,31 @@ extension StatementKind: RapunzelConvertible {
 
   public var doc: Doc {
     switch self {
-    case let .functionDef(name, args, body, decorators, returns):
-      return self.functionDef(title: "FunctionDef",
-                              name: name,
-                              args: args,
-                              body: body,
-                              decorators: decorators,
-                              returns: returns)
+    case let .functionDef(args):
+      return self.functionDef(title: "FunctionDef", args: args)
+    case let .asyncFunctionDef(args):
+      return self.functionDef(title: "AsyncFunctionDef", args: args)
 
-    case let .asyncFunctionDef(name, args, body, decorators, returns):
-      return self.functionDef(title: "AsyncFunctionDef",
-                              name: name,
-                              args: args,
-                              body: body,
-                              decorators: decorators,
-                              returns: returns)
-
-    case let .classDef(name, bases, keywords, body, decorators):
-      let b = bases.isEmpty ?
+    case let .classDef(args):
+      let b = args.bases.isEmpty ?
         text("Bases: none") :
-        block(title: "Bases", lines: bases.map { $0.doc })
+        block(title: "Bases", lines: args.bases.map { $0.doc })
 
-      let k = keywords.isEmpty ?
+      let k = args.keywords.isEmpty ?
         text("Keywords: none") :
-        block(title: "Keywords", lines: keywords.map { $0.doc })
+        block(title: "Keywords", lines: args.keywords.map { $0.doc })
 
-      let d = decorators.isEmpty ?
+      let d = args.decorators.isEmpty ?
         text("Decorators: none") :
-        block(title: "Decorators", lines: decorators.map { $0.doc })
+        block(title: "Decorators", lines: args.decorators.map { $0.doc })
 
       return block(
         title: "ClassDef",
         lines:
-          text("Name: \(name)"),
+          text("Name: \(args.name)"),
           b,
           k,
-          block(title: "Body", lines: body.map { $0.doc }),
+          block(title: "Body", lines: args.body.map { $0.doc }),
           d
       )
 
@@ -239,27 +228,20 @@ extension StatementKind: RapunzelConvertible {
 
 // MARK: Helpers
 
-  // swiftlint:disable:next function_parameter_count
-  private func functionDef(title: String,
-                           name: String,
-                           args: Arguments,
-                           body: NonEmptyArray<Statement>,
-                           decorators: [Expression],
-                           returns: Expression?) -> Doc {
-
-    let d = decorators.isEmpty ?
+  private func functionDef(title: String, args: FunctionDefArgs) -> Doc {
+    let d = args.decorators.isEmpty ?
       text("Decorators: none") :
-      block(title: "Decorators", lines: decorators.map { $0.doc })
+      block(title: "Decorators", lines: args.decorators.map { $0.doc })
 
-    let r = returns.map { block(title: "Returns", lines: $0.doc) } ??
+    let r = args.returns.map { block(title: "Returns", lines: $0.doc) } ??
       text("Returns: none")
 
     return block(
       title: title,
       lines:
-        text("Name: \(name)"),
-        block(title: "Args", lines: args.doc),
-        block(title: "Body", lines: body.map { $0.doc }),
+        text("Name: \(args.name)"),
+        block(title: "Args", lines: args.args.doc),
+        block(title: "Body", lines: args.body.map { $0.doc }),
         d,
         r
     )

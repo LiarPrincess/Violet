@@ -19,24 +19,28 @@ public final class CodeEmitter: EmitterBase {
 
     for entity in entities {
       switch entity {
-      case let .enum(e): self.emitEnum(e)
-      case let .struct(s): self.emitProduct(s)
-      case let .class(c): self.emitProduct(c)
+      case let .enum(e):
+        self.emitEnum(e)
+      case let .struct(s):
+        self.emitProduct(s)
+      case let .class(c):
+        self.emitProduct(c)
+        self.emitEquatable(c)
       }
     }
   }
 
   // MARK: - Enum
 
-  private func emitEnum(_ enumDef: EnumDef) {
-    self.emitDoc(enumDef.doc, indent: 0)
+  private func emitEnum(_ def: EnumDef) {
+    self.emitDoc(def.doc, indent: 0)
 
-    let bases = self.compileBases(enumDef.bases)
-    let indirect = enumDef.isIndirect ? "indirect " : ""
-    self.write("public \(indirect)enum \(enumDef.name)\(bases) {")
+    let bases = self.compileBases(def.bases)
+    let indirect = def.isIndirect ? "indirect " : ""
+    self.write("public \(indirect)enum \(def.name)\(bases) {")
 
     // emit `case single([Statement])`
-    for caseDef in enumDef.cases {
+    for caseDef in def.cases {
       self.emitDoc(caseDef.doc, indent: 2)
 
       var properties = ""
@@ -51,7 +55,7 @@ public final class CodeEmitter: EmitterBase {
     self.write()
 
     // emit `var isSingle: Bool {`
-    for caseDef in enumDef.cases where !caseDef.properties.isEmpty {
+    for caseDef in def.cases where !caseDef.properties.isEmpty {
       self.write("  public var is\(pascalCase(caseDef.name)): Bool {")
       self.write("    if case .\(caseDef.name) = self { return true }")
       self.write("    return false")
@@ -63,24 +67,24 @@ public final class CodeEmitter: EmitterBase {
     self.write()
   }
 
-  // MARK: - Struct
+  // MARK: - Product
 
-  private func emitProduct<T: ProductType>(_ structDef: T) {
-    let bases = self.compileBases(structDef.bases)
+  private func emitProduct<T: ProductType>(_ def: T) {
+    let bases = self.compileBases(def.bases)
 
-    self.emitDoc(structDef.doc, indent: 0)
-    self.write("public \(T.swiftKeyword) \(structDef.name)\(bases) {")
+    self.emitDoc(def.doc, indent: 0)
+    self.write("public \(T.swiftKeyword) \(def.name)\(bases) {")
     self.write()
 
-    for property in structDef.properties {
+    for property in def.properties {
       self.emitDoc(property.doc, indent: 2)
       self.write("  public let \(property.nameColonType)")
     }
     self.write()
 
-    let initArgs = structDef.properties.map(structPropertyInit).joined(", ")
+    let initArgs = def.properties.map(structPropertyInit).joined(", ")
     self.write("  public init(\(initArgs)) {")
-    for property in structDef.properties {
+    for property in def.properties {
       self.write("    self.\(property.name) = \(property.name)")
     }
     self.write("  }")
@@ -92,6 +96,27 @@ public final class CodeEmitter: EmitterBase {
   private func structPropertyInit(_ prop: ProductProperty) -> String {
     let prefix = prop.underscoreInit ? "_ " : ""
     return prefix + prop.nameColonType
+  }
+
+  private func emitEquatable(_ def: ClassDef) {
+    guard def.bases.contains("Equatable") else {
+      return
+    }
+
+    let type = def.name
+    self.write("extension \(type) {")
+    self.write("  public static func == (lhs: \(type), rhs: \(type)) -> Bool {")
+
+    for prop in def.properties {
+      let name = prop.name
+      self.write("    guard lhs.\(name) == rhs.\(name) else { return false }")
+    }
+
+    self.write("    return true")
+    self.write("  }")
+
+    self.write("}")
+    self.write()
   }
 
   // MARK: - Common

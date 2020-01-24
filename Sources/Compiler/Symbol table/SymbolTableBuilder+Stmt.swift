@@ -24,34 +24,34 @@ extension SymbolTableBuilder {
 // swiftlint:enable cyclomatic_complexity function_body_length
 
     switch stmt.kind {
-    case let .functionDef(name, args, body, decorators, returns),
-         let .asyncFunctionDef(name, args, body, decorators, returns):
+    case let .functionDef(args),
+         let .asyncFunctionDef(args):
 
-      try self.addSymbol(name, flags: .defLocal, location: stmt.start)
-      try self.visitDefaults(args)
-      try self.visitAnnotations(args)
-      try self.visitExpression(returns) // in CPython it is a part of visitAnnotations
-      try self.visitExpressions(decorators)
+      try self.addSymbol(args.name, flags: .defLocal, location: stmt.start)
+      try self.visitDefaults(args.args)
+      try self.visitAnnotations(args.args)
+      try self.visitExpression(args.returns) // in CPython it is a part of visitAnnotations
+      try self.visitExpressions(args.decorators)
 
-      self.enterScope(name: name, type: .function, node: stmt)
+      self.enterScope(name: args.name, type: .function, node: stmt)
       if stmt.kind.isAsyncFunctionDef {
         self.currentScope.isCoroutine = true
       }
-      try self.visitArguments(args)
-      try self.visitStatements(body)
+      try self.visitArguments(args.args)
+      try self.visitStatements(args.body)
       self.leaveScope()
 
-    case let .classDef(name, bases, keywords, body, decorators):
-      try self.addSymbol(name, flags: .defLocal, location: stmt.start)
-      try self.visitExpressions(bases)
-      try self.visitKeywords(keywords)
-      try self.visitExpressions(decorators)
+    case let .classDef(args):
+      try self.addSymbol(args.name, flags: .defLocal, location: stmt.start)
+      try self.visitExpressions(args.bases)
+      try self.visitKeywords(args.keywords)
+      try self.visitExpressions(args.decorators)
 
       let previousClassName = self.className
 
-      self.enterScope(name: name, type: .class, node: stmt)
-      self.className = name
-      try self.visitStatements(body)
+      self.enterScope(name: args.name, type: .class, node: stmt)
+      self.className = args.name
+      try self.visitStatements(args.body)
       self.className = previousClassName
       self.leaveScope()
 

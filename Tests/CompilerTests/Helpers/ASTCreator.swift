@@ -108,14 +108,14 @@ extension ASTCreator {
                             decorators: [Expression] = [],
                             returns: Expression? = nil,
                             start: SourceLocation? = nil) -> Statement {
+    let kindArgs = FunctionDefArgs(name: name,
+                                   args: args,
+                                   body: self.toNonEmptyArray(body),
+                                   decorators: decorators,
+                                   returns: returns)
+
     return self.statement(
-      .functionDef(
-        name: name,
-        args: args,
-        body: self.toNonEmptyArray(body),
-        decorators: decorators,
-        returns: returns
-      ),
+      .functionDef(kindArgs),
       start: start ?? self.start
     )
   }
@@ -126,15 +126,17 @@ extension ASTCreator {
                                  decorators: [Expression] = [],
                                  returns: Expression? = nil,
                                  start: SourceLocation? = nil) -> Statement {
-    let b = body ?? self.statement(.pass)
+    let bodyStatement = body ?? self.statement(.pass)
+    let bodyArray = self.toNonEmptyArray([bodyStatement])
+
+    let kindArgs = FunctionDefArgs(name: name,
+                                   args: args,
+                                   body: bodyArray,
+                                   decorators: decorators,
+                                   returns: returns)
+
     return self.statement(
-      .asyncFunctionDef(
-        name: name,
-        args: args,
-        body: NonEmptyArray(first: b),
-        decorators: decorators,
-        returns: returns
-      ),
+      .asyncFunctionDef(kindArgs),
       start: start ?? self.start
     )
   }
@@ -230,14 +232,14 @@ extension ASTCreator {
                         body: [Statement],
                         decorators: [Expression] = [],
                         start: SourceLocation? = nil) -> Statement {
+    let kindArgs = ClassDefArgs(name: name,
+                                bases: bases,
+                                keywords: keywords,
+                                body: self.toNonEmptyArray(body),
+                                decorators: decorators)
+
     return self.statement(
-      .classDef(
-        name: name,
-        bases: bases,
-        keywords: keywords,
-        body: self.toNonEmptyArray(body),
-        decorators: decorators
-      ),
+      .classDef(kindArgs),
       start: start ?? self.start
     )
   }

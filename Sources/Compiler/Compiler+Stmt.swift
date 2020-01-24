@@ -25,28 +25,13 @@ extension Compiler {
     self.setAppendLocation(stmt)
 
     switch stmt.kind {
-    case let .functionDef(name, args, body, decorators, returns):
-      try self.visitFunctionDef(name: name,
-                                args: args,
-                                body: body,
-                                decorators: decorators,
-                                returns: returns,
-                                statement: stmt)
-    case let .asyncFunctionDef(name, args, body, decorators, returns):
-      try self.visitAsyncFunctionDef(name: name,
-                                     args: args,
-                                     body: body,
-                                     decorators: decorators,
-                                     returns: returns,
-                                     statement: stmt)
+    case let .functionDef(args):
+      try self.visitFunctionDef(args: args, statement: stmt)
+    case let .asyncFunctionDef(args):
+      try self.visitAsyncFunctionDef(args: args, statement: stmt)
 
-    case let .classDef(name, bases, keywords, body, decorators):
-      try self.visitClassDef(name:  name,
-                             bases: bases,
-                             keywords: keywords,
-                             body: body,
-                             decorators: decorators,
-                             statement: stmt)
+    case let .classDef(args):
+      try self.visitClassDef(args: args, statement: stmt)
 
     case let .assign(targets, value):
       try self.visitAssign(targets: targets, value: value)

@@ -71,37 +71,6 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   loc end
 )
 
-@finalClass FunctionDefArgs = (
-  -- - `name` is a raw string of the function name.
-  identifier name,
-  -- - `args` is a arguments node.
-  arguments args,
-  -- - `body` is the list of nodes inside the function.
-  stmt+ body,
-  -- - `decorators` is the list of decorators to be applied,
-  --    stored outermost first (i.e. the first in the list will be applied last).
-  expr* decorators,
-  -- - `returns` is the return annotation (the thing after '->').
-  expr? returns
-)
-
-@finalClass ClassDefArgs = (
-  -- - `name` is a raw string for the class name
-  identifier name,
-  -- - `bases` is a list of nodes for explicitly specified base classes.
-  expr* bases,
-  -- - `keywords` is a list of keyword nodes, principally for ‘metaclass’.
-  --    Other keywords will be passed to the metaclass, as per PEP-3115.
-  -- - `starargs` and kwargs are each a single node, as in a function call.
-  --    starargs will be expanded to join the list of base classes,
-  --    and kwargs will be passed to the metaclass.
-  keyword* keywords,
-  -- - `body` is a list of nodes representing the code within the class definition.
-  stmt+ body,
-  -- - `decorators` is a list of nodes, as in `FunctionDef`.
-  expr* decorators
-)
-
 -- Syntactic unit that expresses some action to be carried out.
 --
 -- See:
@@ -215,10 +184,46 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- `continue` statement.
   | Continue
 
+{-
+  Following entities have to be a class,
+  otherwise we would bloat 'Statement' memory size
+-}
+
+@finalClass FunctionDefArgs: Equatable = (
+  -- `name` is a raw string of the function name.
+  identifier name,
+  -- `args` is a arguments node.
+  arguments args,
+  -- `body` is the list of nodes inside the function.
+  stmt+ body,
+  -- `decorators` is the list of decorators to be applied,
+  --  stored outermost first (i.e. the first in the list will be applied last).
+  expr* decorators,
+  -- `returns` is the return annotation (the thing after '->').
+  expr? returns
+)
+
+@finalClass ClassDefArgs: Equatable = (
+  -- `name` is a raw string for the class name
+  identifier name,
+  -- `bases` is a list of nodes for explicitly specified base classes.
+  expr* bases,
+  -- `keywords` is a list of keyword nodes, principally for ‘metaclass’.
+  --  Other keywords will be passed to the metaclass, as per PEP-3115.
+  -- `starargs` and kwargs are each a single node, as in a function call.
+  --  starargs will be expanded to join the list of base classes,
+  --  and kwargs will be passed to the metaclass.
+  keyword* keywords,
+  -- `body` is a list of nodes representing the code within the class definition.
+  stmt+ body,
+  -- `decorators` is a list of nodes, as in `FunctionDef`.
+  expr* decorators
+)
+
 -- Import name with optional 'as' alias.
 -- Both parameters are raw strings of the names.
 -- `asname` can be None if the regular name is to be used.
-@struct Alias: ASTNode = (
+@finalClass Alias: ASTNode = (
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
@@ -231,7 +236,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 )
 
 -- A single context manager in a `with` block.
-@struct WithItem: ASTNode = (
+@finalClass WithItem: ASTNode = (
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
@@ -246,7 +251,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 )
 
 -- A single except clause.
-@struct ExceptHandler: ASTNode = (
+@finalClass ExceptHandler: ASTNode = (
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,

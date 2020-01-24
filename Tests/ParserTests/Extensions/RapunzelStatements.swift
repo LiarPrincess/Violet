@@ -38,7 +38,7 @@ class RapunzelStatements: XCTestCase, RapunzelShared {
     let s1 = "that a single man in possession of a good fortune,"
     let s2 = "must be in want of a wife."
 
-    let stmt = StatementKind.functionDef(
+    let args = self.functionDefArgs(
       name: s0,
       args:
         self.arguments(
@@ -51,12 +51,12 @@ class RapunzelStatements: XCTestCase, RapunzelShared {
             kwOnlyDefaults: [],
             kwarg: nil
           ),
-      body: NonEmptyArray(first: self.statement(string: s1)),
+      body: self.statement(string: s1),
       decorators: [],
       returns: self.expression(string: s2)
     )
 
-    XCTAssertStmtDoc(stmt, """
+    XCTAssertStmtDoc(StatementKind.functionDef(args), """
       FunctionDef
         Name: It is a truth universally acknowledged,
         Args
@@ -87,7 +87,7 @@ class RapunzelStatements: XCTestCase, RapunzelShared {
     let s1 = " or views of such a man may be"
     let s2 = "on his first entering a neighbourhood,"
 
-    let stmt = StatementKind.asyncFunctionDef(
+    let args = self.functionDefArgs(
       name: s0,
       args:
         self.arguments(
@@ -98,12 +98,12 @@ class RapunzelStatements: XCTestCase, RapunzelShared {
           kwOnlyDefaults: [],
           kwarg: nil
         ),
-      body: NonEmptyArray(first: self.statement(string: s1)),
+      body: self.statement(string: s1),
       decorators: [],
       returns: self.expression(string: s2)
     )
 
-    XCTAssertStmtDoc(stmt, """
+    XCTAssertStmtDoc(StatementKind.asyncFunctionDef(args), """
       AsyncFunctionDef
         Name: However little known the feelings
         Args
@@ -128,6 +128,18 @@ class RapunzelStatements: XCTestCase, RapunzelShared {
       """)
   }
 
+  private func functionDefArgs(name: String,
+                               args: Arguments,
+                               body: Statement,
+                               decorators: [Expression],
+                               returns: Expression?) -> FunctionDefArgs {
+    return FunctionDefArgs(name: name,
+                           args: args,
+                           body: NonEmptyArray(first: body),
+                           decorators: decorators,
+                           returns: returns)
+  }
+
   // MARK: - Class
 
   func test_class() {
@@ -135,7 +147,7 @@ class RapunzelStatements: XCTestCase, RapunzelShared {
     let s1 = "surrounding families, that he is considered the rightful"
     let s2 = "property of some one or other of their daughters."
 
-    let stmt = StatementKind.classDef(
+    let args = ClassDefArgs(
       name: s0,
       bases: [self.expression(string: s1)],
       keywords: [],
@@ -143,7 +155,7 @@ class RapunzelStatements: XCTestCase, RapunzelShared {
       decorators: []
     )
 
-    XCTAssertStmtDoc(stmt, """
+    XCTAssertStmtDoc(StatementKind.classDef(args), """
       ClassDef
         Name: this truth is so well fixed in the minds of the
         Bases

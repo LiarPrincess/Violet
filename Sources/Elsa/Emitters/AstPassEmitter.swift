@@ -146,7 +146,7 @@ public final class AstPassEmitter: EmitterBase {
     return result
   }
 
-  // MARK: - Struct
+  // MARK: - Product
 
   private func emitProduct<T: ProductType>(_ def: T) {
     let pascalName = pascalCase(def.name)
