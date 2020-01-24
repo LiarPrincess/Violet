@@ -194,7 +194,7 @@ public class Lexer {
 
   /// Unrecoverable error.
   private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
-    print("\(location ?? self.location):\(message)")
+    printErr("\(location ?? self.location):\(message)")
     exit(EXIT_FAILURE)
   }
 

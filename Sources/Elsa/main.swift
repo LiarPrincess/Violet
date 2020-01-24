@@ -19,60 +19,50 @@ private func parseLetItGo(file: URL) -> [Entity] {
   return parser.parse()
 }
 
-private func generateAST() throws {
-  let input = rootDir
+private func generateAST() {
+  let definition = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)
     .appendingPathComponent("ast.letitgo", isDirectory: false)
 
-  let entities = parseLetItGo(file: input)
-
-  // Definitions
-  let codeFile = parserDir.appendingPathComponent("AST.swift")
-  let codeEmitter = try CodeEmitter(letItGo: input, output: codeFile)
-  codeEmitter.emit(entities: entities, imports: ["Foundation", "Core", "Lexer"])
-
-  // Pass
-//  let passFile = rootDir.appendingPathComponent("DummyPass.swift")
-//  let astPassEmitter = try AstPassEmitter(letItGo: input, output: passFile)
-//  astPassEmitter.emit(entities: entities)
+  emitTypes(
+    inputFile: definition,
+    outputFile: parserDir.appendingPathComponent("AST.swift"),
+    imports: ["Foundation", "Core", "Lexer"]
+  )
 
   // Destruct
+  let entities = parseLetItGo(file: definition)
   let patternFile = parserTestsDir
     .appendingPathComponent("Helpers")
     .appendingPathComponent("PatternMatching.swift")
-  let patternEmitter = try AstPatternMatchingEmitter(letItGo: input, output: patternFile)
+  let patternEmitter = try! AstPatternMatchingEmitter(letItGo: definition,
+                                                      output: patternFile)
   patternEmitter.emit(entities: entities)
 }
 
-private func generateBytecode() throws {
-  let input = rootDir
+private func generateBytecode() {
+  let definition = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)
     .appendingPathComponent("opcodes.letitgo", isDirectory: false)
 
-  let entities = parseLetItGo(file: input)
+  emitTypes(
+    inputFile: definition,
+    outputFile: bytecodeDir.appendingPathComponent("Instructions.swift"),
+    imports: ["Foundation", "Core"]
+  )
 
-  // Definitions
-  let codeFile = bytecodeDir.appendingPathComponent("Instructions.swift")
-  let codeEmitter = try CodeEmitter(letItGo: input, output: codeFile)
-  codeEmitter.emit(entities: entities, imports: ["Foundation", "Core"])
+  emitCodeObjectDescription(
+    inputFile: definition,
+    outputFile: bytecodeDir.appendingPathComponent("Instructions+Description.swift")
+  )
 
-  // Descriptions
-  let descrFile = bytecodeDir.appendingPathComponent("Instructions+Description.swift")
-  let descrEmitter = try CodeObjectDescriptionEmitter(letItGo: input, output: descrFile)
-  descrEmitter.emit(entities: entities, imports: ["Foundation", "Core"])
-
-  // Emitted instruction
-  let testFile = compilerTestsDir
-    .appendingPathComponent("Helpers")
-    .appendingPathComponent("EmittedInstruction.swift")
-  let testEmitter = try CodeObjectTestHelpersEmitter(letItGo: input, output: testFile)
-  testEmitter.emit(entities: entities)
-
-  // Append - DO NOT USE
-//  let builderFile = rootDir.appendingPathComponent("CodeObjectBuilder.swift")
-//  let builderEmitter = try CodeObjectBuilderEmitter(letItGo: input, output: builderFile)
-//  builderEmitter.emit(entities: entities, imports: [])
+  emitCodeObjectTestHelpers(
+    inputFile: definition,
+    outputFile: compilerTestsDir
+      .appendingPathComponent("Helpers")
+      .appendingPathComponent("EmittedInstruction.swift")
+  )
 }
 
-try generateAST()
-try generateBytecode()
+generateAST()
+generateBytecode()

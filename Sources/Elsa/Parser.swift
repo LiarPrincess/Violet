@@ -285,7 +285,7 @@ internal class Parser {
   // MARK: - Fail
 
   private func fail(_ message: String, location: SourceLocation? = nil) -> Never {
-    print("\(location ?? self.location): \(message)")
+    printErr("\(location ?? self.location): \(message)")
     exit(EXIT_FAILURE)
   }
 }

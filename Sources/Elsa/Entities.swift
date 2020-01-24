@@ -15,9 +15,6 @@ public protocol ProductType {
   var properties: [ProductProperty] { get }
   /// Comment above type definition
   var doc: String? { get }
-
-  /// `Class` or `struct`.
-  static var swiftKeyword: String { get }
 }
 
 public struct StructDef: ProductType {
@@ -25,8 +22,6 @@ public struct StructDef: ProductType {
   public let bases: [String]
   public let properties: [ProductProperty]
   public let doc: String?
-
-  public static let swiftKeyword = "struct"
 
   public init(_ name: String,
               bases: [String],
@@ -45,8 +40,6 @@ public struct ClassDef: ProductType {
   public let properties: [ProductProperty]
   public let doc: String?
   public let isFinal: Bool
-
-  public static let swiftKeyword = "class"
 
   public init(_ name: String,
               bases: [String],
