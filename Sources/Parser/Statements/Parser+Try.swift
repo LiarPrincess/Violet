@@ -53,12 +53,12 @@ extension Parser {
       throw self.error(.tryWithElseWithoutExcept, location: start)
     }
 
-    let kind = StatementKind.try(body: body,
-                                 handlers: ir.handlers,
-                                 orElse:   ir.orElse,
-                                 finally:  ir.finally)
-
-    return self.statement(kind, start: start, end: ir.end)
+    return self.builder.tryStmt(body: body,
+                                handlers: ir.handlers,
+                                orElse:   ir.orElse,
+                                finally:  ir.finally,
+                                start: start,
+                                end: ir.end)
   }
 
   /// ```c
@@ -74,11 +74,12 @@ extension Parser {
       try self.consumeOrThrow(.colon)
       let body = try self.suite()
 
-      ir.handlers.append(self.exceptHandler(kind: kind,
-                                            body: body,
-                                            start: start,
-                                            end: body.last.end))
+      let handler = self.builder.exceptHandler(kind: kind,
+                                               body: body,
+                                               start: start,
+                                               end: body.last.end)
 
+      ir.handlers.append(handler)
       ir.end = body.last.end
     }
   }

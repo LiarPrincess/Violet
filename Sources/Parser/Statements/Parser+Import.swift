@@ -54,8 +54,9 @@ extension Parser {
     try self.advance() // import
 
     let names = try self.dottedAsNames()
-    let kind = StatementKind.import(names)
-    return self.statement(kind, start: start, end: names.last.end)
+    return self.builder.importStmt(aliases: names,
+                                   start: start,
+                                   end: names.last.end)
   }
 
   // MARK: - Dotted names
@@ -78,10 +79,10 @@ extension Parser {
       end = token.end
     }
 
-    return self.alias(name: base.name,
-                      asName: asName,
-                      start: base.start,
-                      end: end)
+    return self.builder.alias(name: base.name,
+                              asName: asName,
+                              start: base.start,
+                              end: end)
   }
 
   /// `dotted_as_names: dotted_as_name (',' dotted_as_name)*`
@@ -160,16 +161,18 @@ extension Parser {
     try self.parseImportFromModule(into: &ir)
     try self.parseImportFromNames(into: &ir, closingTokens: closingTokens)
 
-    let kind = self.getStatementKind(from: ir)
-    return self.statement(kind, start: start, end: ir.end)
-  }
-
-  private func getStatementKind(from ir: ImportFromIR) -> StatementKind {
     switch ir.values {
-    case .all:
-      return .importFromStar(moduleName: ir.module, level: ir.level)
-    case let .aliases(aliases):
-      return .importFrom(moduleName: ir.module, names: aliases, level: ir.level)
+      case .all:
+        return self.builder.importFromStarStmt(moduleName: ir.module,
+                                               level: ir.level,
+                                               start: start,
+                                               end: ir.end)
+      case let .aliases(aliases):
+        return self.builder.importFromStmt(moduleName: ir.module,
+                                           names: aliases,
+                                           level: ir.level,
+                                           start: start,
+                                           end: ir.end)
     }
   }
 
@@ -296,9 +299,6 @@ extension Parser {
       try self.checkForbiddenName(name, location: start)
     }
 
-    return self.alias(name: name,
-                      asName: asName,
-                      start: start,
-                      end: end)
+    return self.builder.alias(name: name, asName: asName, start: start, end: end)
   }
 }

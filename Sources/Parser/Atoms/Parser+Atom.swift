@@ -17,7 +17,7 @@ extension Parser {
     }
 
     return isAwait ?
-      self.expression(.await(rightExpr), start: start, end: rightExpr.end) :
+      self.builder.awaitExpr(value: rightExpr, start: start, end: rightExpr.end) :
       rightExpr
   }
 
@@ -40,14 +40,23 @@ extension Parser {
       return try self.atomSetDictionary()
 
     case let .identifier(value):
-      return try self.simpleAtom(.identifier(value), from: token)
+      return self.builder.identifierExpr(value: value,
+                                         start: token.start,
+                                         end: token.end)
 
     case let .int(value):
-      return try self.simpleAtom(.int(value), from: token)
+      return self.builder.intExpr(value: value,
+                                  start: token.start,
+                                  end: token.end)
     case let .float(value):
-      return try self.simpleAtom(.float(value), from: token)
+      return self.builder.floatExpr(value: value,
+                                    start: token.start,
+                                    end: token.end)
     case let .imaginary(value):
-      return try self.simpleAtom(.complex(real: 0.0, imag: value), from: token)
+      return self.builder.complexExpr(real: 0.0,
+                                      imag: value,
+                                      start: token.start,
+                                      end: token.end)
 
     case .string, .formatString:
       return try self.strPlus()
@@ -55,22 +64,16 @@ extension Parser {
       return try self.bytesPlus()
 
     case .ellipsis:
-      return try self.simpleAtom(.ellipsis, from: token)
+      return self.builder.ellipsisExpr(start: token.start, end: token.end)
     case .none:
-      return try self.simpleAtom(.none, from: token)
+      return self.builder.noneExpr(start: token.start, end: token.end)
     case .true:
-      return try self.simpleAtom(.true, from: token)
+      return self.builder.trueExpr(start: token.start, end: token.end)
     case .false:
-      return try self.simpleAtom(.false, from: token)
+      return self.builder.falseExpr(start: token.start, end: token.end)
 
     default:
       throw self.unexpectedToken(expected: [.expression])
     }
-  }
-
-  private func simpleAtom(_ kind: ExpressionKind,
-                          from token: Token) throws -> Expression {
-    try self.advance()
-    return self.expression(kind, start: token.start, end: token.end)
   }
 }

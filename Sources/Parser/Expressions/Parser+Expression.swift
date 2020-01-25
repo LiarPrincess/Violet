@@ -27,8 +27,11 @@ extension Parser {
     try self.consumeOrThrow(.else)
     let right = try self.test()
 
-    let kind = ExpressionKind.ifExpression(test: test, body: left, orElse: right)
-    return self.expression(kind, start: left.start, end: right.end)
+    return self.builder.ifExpr(test: test,
+                               body: left,
+                               orElse: right,
+                               start: left.start,
+                               end: right.end)
   }
 
   /// `test_nocond: or_test | lambdef_nocond`
@@ -60,8 +63,7 @@ extension Parser {
     try self.consumeOrThrow(.colon)
 
     let body = try self.test()
-    let kind = ExpressionKind.lambda(args: args, body: body)
-    return self.expression(kind, start: start, end: body.end)
+    return self.builder.lambdaExpr(args: args, body: body, start: start, end: body.end)
   }
 
   /// `lambdef_nocond: 'lambda' [varargslist] ':' test_nocond`
@@ -80,8 +82,7 @@ extension Parser {
     try self.consumeOrThrow(.colon)
 
     let body = try self.testNoCond()
-    let kind = ExpressionKind.lambda(args: args, body: body)
-    return self.expression(kind, start: start, end: body.end)
+    return self.builder.lambdaExpr(args: args, body: body, start: start, end: body.end)
   }
 
   // MARK: - Or test
@@ -94,8 +95,11 @@ extension Parser {
       try self.advance() // or
 
       let right = try self.andTest()
-      let kind = ExpressionKind.boolOp(.or, left: left, right: right)
-      left = self.expression(kind, start: left.start, end: right.end)
+      left = self.builder.boolOpExpr(op: .or,
+                                     left: left,
+                                     right: right,
+                                     start: left.start,
+                                     end: right.end)
     }
 
     return left
@@ -111,8 +115,11 @@ extension Parser {
       try self.advance() // and
 
       let right = try self.notTest()
-      let kind = ExpressionKind.boolOp(.and, left: left, right: right)
-      left = self.expression(kind, start: left.start, end: right.end)
+      left = self.builder.boolOpExpr(op: .and,
+                                     left: left,
+                                     right: right,
+                                     start: left.start,
+                                     end: right.end)
     }
 
     return left
@@ -127,8 +134,10 @@ extension Parser {
       try self.advance() // not
 
       let right = try self.notTest()
-      let kind = ExpressionKind.unaryOp(.not, right: right)
-      return self.expression(kind, start: token.start, end: right.end)
+      return self.builder.unaryOpExpr(op: .not,
+                                      right: right,
+                                      start: token.start,
+                                      end: right.end)
     }
 
     return try self.comparison()
@@ -178,8 +187,11 @@ extension Parser {
     if let first = elements.first {
       let rest = elements.dropFirst()
       let comps = NonEmptyArray<ComparisonElement>(first: first, rest: rest)
-      let kind = ExpressionKind.compare(left: left, elements: comps)
-      return self.expression(kind, start: left.start, end: comps.last.right.end)
+
+      return self.builder.compareExpr(left: left,
+                                      elements: comps,
+                                      start: left.start,
+                                      end: comps.last.right.end)
     }
 
     return left
@@ -197,8 +209,9 @@ extension Parser {
     case .star:
       try self.advance() // *
       let expr = try self.expr()
-      let kind = ExpressionKind.starred(expr)
-      return self.expression(kind, start: token.start, end: expr.end)
+      return self.builder.starredExpr(expression: expr,
+                                      start: token.start,
+                                      end: expr.end)
     default:
       return nil
     }
@@ -214,8 +227,11 @@ extension Parser {
       try self.advance() // op
 
       let right = try self.xorExpr()
-      let kind = ExpressionKind.binaryOp(.bitOr, left: left, right: right)
-      left = self.expression(kind, start: left.start, end: right.end)
+      left = self.builder.binaryOpExpr(op: .bitOr,
+                                       left: left,
+                                       right: right,
+                                       start: left.start,
+                                       end: right.end)
     }
 
     return left
@@ -231,8 +247,11 @@ extension Parser {
       try self.advance() // op
 
       let right = try self.andExpr()
-      let kind = ExpressionKind.binaryOp(.bitXor, left: left, right: right)
-      left = self.expression(kind, start: left.start, end: right.end)
+      left = self.builder.binaryOpExpr(op: .bitXor,
+                                       left: left,
+                                       right: right,
+                                       start: left.start,
+                                       end: right.end)
     }
 
     return left
@@ -248,8 +267,11 @@ extension Parser {
       try self.advance() // op
 
       let right = try self.shiftExpr()
-      let kind = ExpressionKind.binaryOp(.bitAnd, left: left, right: right)
-      left = self.expression(kind, start: left.start, end: right.end)
+      left = self.builder.binaryOpExpr(op: .bitAnd,
+                                       left: left,
+                                       right: right,
+                                       start: left.start,
+                                       end: right.end)
     }
 
     return left
@@ -270,8 +292,11 @@ extension Parser {
       try self.advance() // op
 
       let right = try self.term()
-      let kind = ExpressionKind.binaryOp(op, left: left, right: right)
-      left = self.expression(kind, start: left.start, end: right.end)
+      left = self.builder.binaryOpExpr(op: op,
+                                       left: left,
+                                       right: right,
+                                       start: left.start,
+                                       end: right.end)
     }
 
     return left
@@ -292,8 +317,11 @@ extension Parser {
       try self.advance() // op
 
       let right = try self.term()
-      let kind = ExpressionKind.binaryOp(op, left: left, right: right)
-      left = self.expression(kind, start: left.start, end: right.end)
+      left = self.builder.binaryOpExpr(op: op,
+                                       left: left,
+                                       right: right,
+                                       start: left.start,
+                                       end: right.end)
     }
 
     return left
@@ -317,8 +345,11 @@ extension Parser {
       try self.advance() // op
 
       let right = try self.factor()
-      let kind = ExpressionKind.binaryOp(op, left: left, right: right)
-      left = self.expression(kind, start: left.start, end: right.end)
+      left = self.builder.binaryOpExpr(op: op,
+                                       left: left,
+                                       right: right,
+                                       start: left.start,
+                                       end: right.end)
     }
 
     return left
@@ -334,20 +365,26 @@ extension Parser {
     case .plus:
       try self.advance() // +
       let factor = try self.factor()
-      let kind = ExpressionKind.unaryOp(.plus, right: factor)
-      return self.expression(kind, start: token.start, end: factor.end)
+      return self.builder.unaryOpExpr(op: .plus,
+                                      right: factor,
+                                      start: token.start,
+                                      end: factor.end)
 
     case .minus:
       try self.advance() // -
       let factor = try self.factor()
-      let kind = ExpressionKind.unaryOp(.minus, right: factor)
-      return self.expression(kind, start: token.start, end: factor.end)
+      return self.builder.unaryOpExpr(op: .minus,
+                                      right: factor,
+                                      start: token.start,
+                                      end: factor.end)
 
     case .tilde:
       try self.advance() // ~
       let factor = try self.factor()
-      let kind = ExpressionKind.unaryOp(.invert, right: factor)
-      return self.expression(kind, start: token.start, end: factor.end)
+      return self.builder.unaryOpExpr(op: .invert,
+                                      right: factor,
+                                      start: token.start,
+                                      end: factor.end)
 
     default:
       return try self.power()
@@ -362,8 +399,11 @@ extension Parser {
 
     if try self.consumeIf(.starStar) {
       let factor = try self.factor()
-      let kind = ExpressionKind.binaryOp(.pow, left: atomExpr, right: factor)
-      return self.expression(kind, start: atomExpr.start, end: factor.end)
+      return self.builder.binaryOpExpr(op: .pow,
+                                       left: atomExpr,
+                                       right: factor,
+                                       start: atomExpr.start,
+                                       end: factor.end)
     }
 
     return atomExpr

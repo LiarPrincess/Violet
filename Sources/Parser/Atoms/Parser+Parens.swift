@@ -26,7 +26,7 @@ extension Parser {
     if self.peek.kind == .rightParen { // a = () -> empty tuple
       let end = self.peek.end
       try self.advance() // )
-      return self.expression(.tuple([]), start: start, end: end)
+      return self.builder.tupleExpr(elements: [], start: start, end: end)
     }
 
     if let yield = try self.yieldExprOrNop(closingTokens: [.rightParen]) {
@@ -43,12 +43,16 @@ extension Parser {
     switch test {
     case let .single(e):
       // rebind start/end to include parens
-      return self.expression(e.kind, start: start, end: end)
+      e.start = start
+      e.end = end
+      return e
     case let .multiple(es):
-      return self.expression(.tuple(es), start: start, end: end)
+      return self.builder.tupleExpr(elements: es, start: start, end: end)
     case let .listComprehension(elt: elt, generators: gen):
-      let kind = ExpressionKind.generatorExp(elt: elt, generators: gen)
-      return self.expression(kind, start: start, end: end)
+      return self.builder.generatorExpr(element: elt,
+                                        generators: gen,
+                                        start: start,
+                                        end: end)
     }
   }
 }

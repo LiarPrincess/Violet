@@ -37,7 +37,7 @@ extension Parser {
       let end = self.peek.end
       try self.advance() // }
 
-      return self.expression(.dictionary([]), start: start, end: end)
+      return self.builder.dictionaryExpr(elements: [], start: start, end: end)
     }
 
     // star
@@ -72,8 +72,7 @@ extension Parser {
       let end = self.peek.end
       try self.advance() // }
 
-      let kind = ExpressionKind.set([first])
-      return self.expression(kind, start: start, end: end)
+      return self.builder.setExpr(elements: [first], start: start, end: end)
     }
 
     // set comprehension
@@ -81,9 +80,10 @@ extension Parser {
       let end = self.peek.end
       try self.consumeOrThrow(.rightBrace)
 
-      let kind = ExpressionKind.setComprehension(elt: first,
-                                                 generators: generators)
-      return self.expression(kind, start: start, end: end)
+      return self.builder.setComprehensionExpr(element: first,
+                                               generators: generators,
+                                               start: start,
+                                               end: end)
     }
 
     // set with multiple elements
@@ -102,10 +102,11 @@ extension Parser {
       let end = self.peek.end
       try self.consumeOrThrow(.rightBrace)
 
-      let kind = ExpressionKind.dictionaryComprehension(key: first,
-                                                        value: value,
-                                                        generators: generators)
-      return self.expression(kind, start: start, end: end)
+      return self.builder.dictionaryComprehensionExpr(key: first,
+                                                      value: value,
+                                                      generators: generators,
+                                                      start: start,
+                                                      end: end)
     }
 
     // dictionary
@@ -134,7 +135,7 @@ extension Parser {
     let end = self.peek.end
     try self.consumeOrThrow(closingToken)
 
-    return self.expression(.set(elements), start: start, end: end)
+    return self.builder.setExpr(elements: elements, start: start, end: end)
   }
 
   /// `(comp_for | (',' (test ':' test | '**' expr))* [','])`
@@ -166,6 +167,6 @@ extension Parser {
     let end = self.peek.end
     try self.consumeOrThrow(closingToken)
 
-    return self.expression(.dictionary(elements), start: start, end: end)
+    return self.builder.dictionaryExpr(elements: elements, start: start, end: end)
   }
 }

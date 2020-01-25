@@ -63,12 +63,13 @@ extension Parser {
         ifs.append(try self.testNoCond())
       }
 
-      elements.append(self.comprehension(target: self.compForTarget(exprList),
-                                         iter: iter,
-                                         ifs: ifs,
-                                         isAsync: isAsync,
-                                         start: start,
-                                         end: ifs.last?.end ?? iter.end))
+      let compr = self.builder.comprehension(target: self.compForTarget(exprList),
+                                             iter: iter,
+                                             ifs: ifs,
+                                             isAsync: isAsync,
+                                             start: start,
+                                             end: ifs.last?.end ?? iter.end)
+      elements.append(compr)
     }
 
     guard let first = elements.first else {
@@ -84,8 +85,9 @@ extension Parser {
     case let .single(e):
       return e
     case let .tuple(es, end):
-      let start = es.first.start
-      return self.expression(.tuple(Array(es)), start: start, end: end)
+      return self.builder.tupleExpr(elements: Array(es),
+                                    start: es.first.start,
+                                    end: end)
     }
   }
 }

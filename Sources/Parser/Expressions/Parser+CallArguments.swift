@@ -26,12 +26,6 @@ internal struct CallIR {
   fileprivate init(isBaseClass: Bool) {
     self.isBaseClass = isBaseClass
   }
-
-  internal func compile(calling function: Expression) -> ExpressionKind {
-    return ExpressionKind.call(function: function,
-                               args: self.args,
-                               keywords: self.keywords)
-  }
 }
 
 extension Parser {
@@ -107,7 +101,7 @@ extension Parser {
     try self.advance() // *
 
     let test = try self.test()
-    let expr = self.expression(.starred(test), start: start, end: test.end)
+    let expr = self.builder.starredExpr(expression: test, start: start, end: test.end)
     ir.args.append(expr)
   }
 
@@ -118,10 +112,12 @@ extension Parser {
     try self.advance() // **
 
     let test = try self.test()
-    ir.keywords.append(self.keyword(.dictionaryUnpack,
-                                    value: test,
-                                    start: start,
-                                    end: test.end))
+    let keyword = self.builder.keyword(kind: .dictionaryUnpack,
+                                       value: test,
+                                       start: start,
+                                       end: test.end)
+
+    ir.keywords.append(keyword)
     ir.hasStarStar = true
   }
 
@@ -142,10 +138,11 @@ extension Parser {
       }
 
       let value = try self.test()
-      ir.keywords.append(self.keyword(.named(name),
-                                      value: value,
-                                      start: nameToken.start,
-                                      end: value.end))
+      let keyword = self.builder.keyword(kind: .named(name),
+                                         value: value,
+                                         start: nameToken.start,
+                                         end: value.end)
+      ir.keywords.append(keyword)
 
     case .lambda:
       throw self.error(.callWithLambdaAssignment, location: nameToken.start)
@@ -192,8 +189,12 @@ extension Parser {
       self.warn(.callWithGeneratorArgument)
 
       let end = generators.last?.end ?? test.end
-      let kind = ExpressionKind.generatorExp(elt: test, generators: generators)
-      ir.args.append(self.expression(kind, start: test.start, end: end))
+      let expr = self.builder.generatorExpr(element: test,
+                                            generators: generators,
+                                            start: test.start,
+                                            end: end)
+
+      ir.args.append(expr)
     } else {
       ir.args.append(test)
     }

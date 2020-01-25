@@ -104,10 +104,10 @@ extension Parser {
     let token = parser.peek
     let name = try parser.consumeIdentifierOrThrow()
     try parser.checkForbiddenName(name, location: token.start)
-    return parser.arg(name: name,
-                      annotation: nil,
-                      start: token.start,
-                      end: token.end)
+    return parser.builder.arg(name: name,
+                              annotation: nil,
+                              start: token.start,
+                              end: token.end)
   }
 
   /// `tfpdef: NAME [':' test]`
@@ -124,10 +124,10 @@ extension Parser {
     }
 
     let end = annotation?.end ?? token.end
-    return parser.arg(name: name,
-                      annotation: annotation,
-                      start: token.start,
-                      end: end)
+    return parser.builder.arg(name: name,
+                              annotation: annotation,
+                              start: token.start,
+                              end: end)
   }
 
   // MARK: - Args list
@@ -194,7 +194,7 @@ extension Parser {
       } else {
         // We will place 'implicit None' just after 'argument'
         let loc = argument.end
-        let implicitNone = self.expression(.none, start: loc, end: loc)
+        let implicitNone = self.builder.noneExpr(start: loc, end: loc)
         ir.kwOnlyDefaults.append(implicitNone)
       }
     }

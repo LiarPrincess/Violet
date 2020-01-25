@@ -18,11 +18,14 @@ extension Parser {
     case .del:
       return try self.delStmt(closingTokens: closingTokens)
     case .pass:
-      return try self.simpleStmt(.pass, from: token)
+      try self.advance()
+      return self.builder.passStmt(start: token.start, end: token.end)
     case .break:
-      return try self.simpleStmt(.break, from: token)
+      try self.advance()
+      return self.builder.breakStmt(start: token.start, end: token.end)
     case .continue:
-      return try self.simpleStmt(.continue, from: token)
+      try self.advance()
+      return self.builder.continueStmt(start: token.start, end: token.end)
     case .return:
       return try self.returnStmt(closingTokens: closingTokens)
     case .raise:
@@ -37,7 +40,9 @@ extension Parser {
     // DO NOT consume yield! `yield_expr` is responsible for this!
     case _ where self.isYieldExpr():
       let expr = try self.yieldExpr(closingTokens: closingTokens)
-      return self.statement(.expr(expr), start: token.start, end: expr.end)
+      return self.builder.exprStmt(expression: expr,
+                                   start: token.start,
+                                   end: expr.end)
 
     case _ where self.isImportStmt():
       return try self.importStmt(closingTokens: closingTokens)
@@ -45,12 +50,6 @@ extension Parser {
     default:
       return try self.exprStmt(closingTokens: closingTokens)
     }
-  }
-
-  private func simpleStmt(_ kind: StatementKind,
-                          from token: Token) throws -> Statement {
-    try self.advance()
-    return self.statement(kind, start: token.start, end: token.end)
   }
 
   /// del_stmt: 'del' exprlist
@@ -64,9 +63,9 @@ extension Parser {
     switch exprs {
     case let .single(e):
       let es = NonEmptyArray(first: e)
-      return self.statement(.delete(es), start: start, end: e.end)
+      return self.builder.deleteStmt(values: es, start: start, end: e.end)
     case let .tuple(es, end):
-      return self.statement(.delete(es), start: start, end: end)
+      return self.builder.deleteStmt(values: es, start: start, end: end)
     }
   }
 
@@ -80,17 +79,19 @@ extension Parser {
 
     let isEnd = closingTokens.contains(self.peek.kind)
     if isEnd {
-      return self.statement(.return(nil), start: start, end: token.end)
+      return self.builder.returnStmt(value: nil, start: start, end: token.end)
     }
 
     let testList = try self.testList(closingTokens: closingTokens)
     switch testList {
     case let .single(e):
-      return self.statement(.return(e), start: start, end: e.end)
+      return self.builder.returnStmt(value: e, start: start, end: e.end)
     case let .tuple(es, end):
       let tupleStart = es.first.start
-      let tuple = self.expression(.tuple(Array(es)), start: tupleStart, end: end)
-      return self.statement(.return(tuple), start: start, end: end)
+      let tuple = self.builder.tupleExpr(elements: Array(es),
+                                         start: tupleStart,
+                                         end: end)
+      return self.builder.returnStmt(value: tuple, start: start, end: end)
     }
   }
 
@@ -104,8 +105,10 @@ extension Parser {
 
     let isEnd = closingTokens.contains(self.peek.kind)
     if isEnd {
-      let kind = StatementKind.raise(exception: nil, cause: nil)
-      return self.statement(kind, start: start, end: token.end)
+      return self.builder.raiseStmt(exception: nil,
+                                    cause: nil,
+                                    start: start,
+                                    end: token.end)
     }
 
     let exception = try self.test()
@@ -115,9 +118,10 @@ extension Parser {
       cause = try self.test()
     }
 
-    let end = cause?.end ?? exception.end
-    let kind = StatementKind.raise(exception: exception, cause: cause)
-    return self.statement(kind, start: start, end: end)
+    return self.builder.raiseStmt(exception: exception,
+                                  cause: cause,
+                                  start: start,
+                                  end: cause?.end ?? exception.end)
   }
 
   /// global_stmt: 'global' NAME (',' NAME)*
@@ -129,7 +133,7 @@ extension Parser {
     try self.advance() // global
 
     let (names, end) = try self.nameList(separator: .comma)
-    return self.statement(.global(names), start: start, end: end)
+    return self.builder.globalStmt(identifiers: names, start: start, end: end)
   }
 
   /// nonlocal_stmt: 'nonlocal' NAME (',' NAME)*
@@ -141,7 +145,7 @@ extension Parser {
     try self.advance() // nonlocal
 
     let (names, end) = try self.nameList(separator: .comma)
-    return self.statement(.nonlocal(names), start: start, end: end)
+    return self.builder.nonlocalStmt(identifiers: names, start: start, end: end)
   }
 
   /// assert_stmt: 'assert' test [',' test]
@@ -160,8 +164,7 @@ extension Parser {
     }
 
     let end = msg?.end ?? test.end
-    let kind = StatementKind.assert(test: test, msg: msg)
-    return self.statement(kind, start: start, end: end)
+    return self.builder.assertStmt(test: test, msg: msg, start: start, end: end)
   }
 
   /// NAME (',' NAME)*

@@ -21,7 +21,7 @@ extension Parser {
       let end = self.peek.end
       try self.advance() // ]
 
-      return self.expression(.list([]), start: start, end: end)
+      return self.builder.listExpr(elements: [], start: start, end: end)
     }
 
     let test = try self.testListComp(closingToken: .rightSqb)
@@ -31,12 +31,14 @@ extension Parser {
 
     switch test {
     case let .single(e):
-      return self.expression(.list([e]), start: start, end: end)
+      return self.builder.listExpr(elements: [e], start: start, end: end)
     case let .multiple(es):
-      return self.expression(.list(es), start: start, end: end)
+      return self.builder.listExpr(elements: es, start: start, end: end)
     case let .listComprehension(elt: elt, generators: gen):
-      let kind = ExpressionKind.listComprehension(elt: elt, generators: gen)
-      return self.expression(kind, start: start, end: end)
+      return self.builder.listComprehensionExpr(element: elt,
+                                                generators: gen,
+                                                start: start,
+                                                end: end)
     }
   }
 }

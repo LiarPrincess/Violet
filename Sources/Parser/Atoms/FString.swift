@@ -219,10 +219,11 @@ internal struct FString {
       let parser = Parser(mode: .eval, tokenSource: lexer)
       let ast = try parser.parse()
 
-      switch ast.kind {
-      case .expression(let e):  return e
-      case .interactive, .module: assert(false)
+      guard let exprAST = ast as? ExpressionAST else {
+        trap("Parser in 'eval' mode should return expression.")
       }
+
+      return exprAST.expression
     } catch let error as ParserError {
       throw FStringError.parsingError(error.kind)
     }

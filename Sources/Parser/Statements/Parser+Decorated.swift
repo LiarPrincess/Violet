@@ -80,19 +80,21 @@ extension Parser {
 
     let firstToken = self.peek
     let firstId = try self.consumeIdentifierOrThrow()
-    let first = self.expression(.identifier(firstId),
-                                start: firstToken.start,
-                                end: firstToken.end)
+    let first = self.builder.identifierExpr(value: firstId,
+                                            start: firstToken.start,
+                                            end: firstToken.end)
 
-    var result = first
+    var result: Expression = first
     while self.peek.kind == .dot {
       try self.advance() // .
 
       let end = self.peek.end
       let id = try self.consumeIdentifierOrThrow()
-      result = self.expression(.attribute(result, name: id),
-                               start: result.start,
-                               end: end)
+
+      result = self.builder.attributeExpr(object: result,
+                                          name: id,
+                                          start: result.start,
+                                          end: end)
     }
 
     return result
@@ -111,16 +113,22 @@ extension Parser {
       let end = self.peek.end
       try self.advance() // )
 
-      let kind = ExpressionKind.call(function: left, args: [], keywords: [])
-      return self.expression(kind, start: left.start, end: end)
+      return self.builder.callExpr(function: left,
+                                   args: [],
+                                   keywords: [],
+                                   start: left.start,
+                                   end: end)
     }
 
-    let args = try self.argList(closingToken: .rightParen)
+    let ir = try self.argList(closingToken: .rightParen)
 
     let end = self.peek.end
     try self.consumeOrThrow(.rightParen)
 
-    let kind = args.compile(calling: left)
-    return self.expression(kind, start: left.start, end: end)
+    return self.builder.callExpr(function: left,
+                                 args: ir.args,
+                                 keywords: ir.keywords,
+                                 start: left.start,
+                                 end: end)
   }
 }

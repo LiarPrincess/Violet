@@ -28,8 +28,11 @@ extension Parser {
       let end = self.peek.end
       try self.consumeOrThrow(.rightParen)
 
-      let kind = ir.compile(calling: leftExpr)
-      return self.expression(kind, start: leftExpr.start, end: end)
+      return self.builder.callExpr(function: leftExpr,
+                                   args: ir.args,
+                                   keywords: ir.keywords,
+                                   start: leftExpr.start,
+                                   end: end)
 
     case .leftSqb:
       let start = self.peek.start
@@ -40,17 +43,22 @@ extension Parser {
       let end = self.peek.end
       try self.consumeOrThrow(.rightSqb)
 
-      let slice = self.slice(sliceKind, start: start, end: end)
-      let kind = ExpressionKind.subscript(leftExpr, slice: slice)
-      return self.expression(kind, start: leftExpr.start, end: end)
+      let slice = self.builder.slice(kind: sliceKind, start: start, end: end)
+      return self.builder.subscriptExpr(object: leftExpr,
+                                        slice: slice,
+                                        start: leftExpr.start,
+                                        end: end)
 
     case .dot:
       try self.advance() // .
 
       let nameToken = self.peek
       let name = try self.consumeIdentifierOrThrow()
-      let kind = ExpressionKind.attribute(leftExpr, name: name)
-      return self.expression(kind, start: leftExpr.start, end: nameToken.end)
+
+      return self.builder.attributeExpr(object: leftExpr,
+                                        name: name,
+                                        start: leftExpr.start,
+                                        end: nameToken.end)
 
     default: // no trailer
       return nil
@@ -103,10 +111,11 @@ extension Parser {
       }
     }
 
-    return .index(self.expression(.tuple(indices),
-                                  start: slices.first.start,
-                                  end: slices.last.end)
-    )
+    let result = self.builder.tupleExpr(elements: indices,
+                                        start: slices.first.start,
+                                        end: slices.last.end)
+
+    return .index(result)
   }
 
   /// ```c
@@ -124,7 +133,7 @@ extension Parser {
     // subscript: test -> index
     if let index = lower, closingTokens.contains(self.peek.kind) {
       let kind = SliceKind.index(index)
-      return self.slice(kind, start: index.start, end: index.end)
+      return self.builder.slice(kind: kind, start: index.start, end: index.end)
     }
 
     // subscript: [test] ':' [test] [sliceop] -> slice
@@ -149,6 +158,6 @@ extension Parser {
     }
 
     let kind = SliceKind.slice(lower: lower, upper: upper, step: step)
-    return self.slice(kind, start: start, end: end)
+    return self.builder.slice(kind: kind, start: start, end: end)
   }
 }

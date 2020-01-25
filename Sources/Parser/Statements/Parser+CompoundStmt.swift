@@ -110,12 +110,13 @@ extension Parser {
     var pendingElse = orElse.map { Array($0) } ?? []
 
     for ir in irs.reversed() {
-      let kind = StatementKind.if(test: ir.test,
-                                  body: ir.body,
-                                  orElse: pendingElse)
-
       let end = pendingElse.last?.end ?? ir.body.last.end
-      let statement = self.statement(kind, start: ir.start, end: end)
+      let statement = self.builder.ifStmt(test: ir.test,
+                                          body: ir.body,
+                                          orElse: pendingElse,
+                                          start: ir.start,
+                                          end: end)
+
       result = statement
       pendingElse = [statement]
     }
@@ -148,12 +149,12 @@ extension Parser {
       orElse = try self.suite()
     }
 
-    let kind = StatementKind.while(test: test,
-                                   body: body,
-                                   orElse: orElse.map { Array($0) } ?? [])
-
     let end = orElse?.last.end ?? body.last.end
-    return self.statement(kind, start: start, end: end)
+    return self.builder.whileStmt(test: test,
+                                  body: body,
+                                  orElse: orElse.map { Array($0) } ?? [],
+                                  start: start,
+                                  end: end)
   }
 
   /// ```c
@@ -188,12 +189,13 @@ extension Parser {
       orElse = Array(orElseRaw)
     }
 
-    let kind: StatementKind = isAsync ?
-      .asyncFor(target: target, iter: iter, body: body, orElse: orElse) :
-      .for     (target: target, iter: iter, body: body, orElse: orElse)
-
     let end = orElse.last?.end ?? body.last.end
-    return self.statement(kind, start: forStart, end: end)
+
+    return isAsync ?
+      self.builder.asyncForStmt(target: target, iterable: iter, body: body,
+                                orElse: orElse, start: forStart, end: end) :
+      self.builder.forStmt     (target: target, iterable: iter, body: body,
+                                orElse: orElse, start: forStart, end: end)
   }
 
   // MARK: - With
@@ -219,12 +221,11 @@ extension Parser {
 
     try self.consumeOrThrow(.colon)
     let body = try self.suite()
+    let end = body.last.end
 
-    let kind: StatementKind = isAsync ?
-      .asyncWith(items: items, body: body) :
-      .with     (items: items, body: body)
-
-    return self.statement(kind, start: start, end: body.last.end)
+    return isAsync ?
+      self.builder.asyncWithStmt(items: items, body: body, start: start, end: end) :
+      self.builder.withStmt     (items: items, body: body, start: start, end: end)
   }
 
   /// `with_item: test ['as' expr]`
@@ -237,10 +238,10 @@ extension Parser {
       optionalVars = try self.expr()
     }
 
-    return self.withItem(contextExpr: context,
-                         optionalVars: optionalVars,
-                         start: token.start,
-                         end: optionalVars?.end ?? token.end)
+    return self.builder.withItem(contextExpr: context,
+                                 optionalVars: optionalVars,
+                                 start: token.start,
+                                 end: optionalVars?.end ?? token.end)
   }
 
   // MARK: - Async

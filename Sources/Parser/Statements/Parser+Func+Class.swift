@@ -32,18 +32,15 @@ extension Parser {
 
     try self.consumeOrThrow(.colon)
     let body = try self.suite()
+    let end = body.last.end
 
-    let kindArgs = FunctionDefArgs(name: name,
-                                   args: args,
-                                   body: body,
-                                   decorators: decorators,
-                                   returns: returns)
-
-    let kind: StatementKind = isAsync ?
-      .asyncFunctionDef(kindArgs) :
-      .functionDef(kindArgs)
-
-    return self.statement(kind, start: start, end: body.last.end)
+    return isAsync ?
+      self.builder.asyncFunctionDefStmt(name: name, args: args, body: body,
+                                        decorators: decorators, returns: returns,
+                                        start: start, end: end) :
+      self.builder.functionDefStmt(name: name, args: args, body: body,
+                                   decorators: decorators, returns: returns,
+                                   start: start, end: end)
   }
 
   // MARK: - Class
@@ -64,16 +61,13 @@ extension Parser {
     try self.consumeOrThrow(.colon)
     let body = try self.suite()
 
-    let kindArgs = ClassDefArgs(name: name,
-                                bases: args?.args ?? [],
-                                keywords: args?.keywords ?? [], // PEP3115
-                                body: body,
-                                decorators: decorators)
-
-    let kind = StatementKind.classDef(kindArgs)
-
-    let end = body.last.end
-    return self.statement(kind, start: start, end: end)
+    return self.builder.classDefStmt(name: name,
+                                     bases: args?.args ?? [],
+                                     keywords: args?.keywords ?? [], // PEP3115
+                                     body: body,
+                                     decorators: decorators,
+                                     start: start,
+                                     end: body.last.end)
   }
 
   private func parseBaseClass() throws -> CallIR? {

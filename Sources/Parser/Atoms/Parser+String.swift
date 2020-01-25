@@ -26,7 +26,7 @@ extension Parser {
       throw self.error(.mixBytesAndNonBytesLiterals)
     }
 
-    return self.expression(.bytes(data), start: start, end: end)
+    return self.builder.bytesExpr(value: data, start: start, end: end)
   }
 
   // MARK: - String
@@ -66,7 +66,7 @@ extension Parser {
     }
 
     let group = try string.compile()
-    return self.expression(.string(group), start: start, end: end)
+    return self.builder.stringExpr(value: group, start: start, end: end)
   }
 
   // MARK: - Is xxx

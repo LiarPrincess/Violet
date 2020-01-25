@@ -181,7 +181,19 @@ public indirect enum Doc: RapunzelConvertible {
   ///   line1
   /// ```
   public static func block(title: String, indent: Int, lines: [Doc]) -> Doc {
-    return Doc.text(title) <|> Doc.nest(indent, lines.stack())
+    return Doc.block(title: text(title), indent: indent, lines: lines)
+  }
+
+  /// Block with a title and some lines.
+  ///
+  /// Use it to produce:
+  /// ```
+  /// title
+  ///   line0
+  ///   line1
+  /// ```
+  public static func block(title: Doc, indent: Int, lines: [Doc]) -> Doc {
+    return title <|> Doc.nest(indent, lines.stack())
   }
 
   /// Join documents by inserting `glue` between each pair.

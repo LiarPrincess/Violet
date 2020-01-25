@@ -22,7 +22,7 @@ private enum ParserState {
   case error(Error)
 }
 
-public class Parser: ASTBuilderOwner {
+public class Parser {
 
   /// Token source.
   internal var lexer: LexerType
@@ -106,8 +106,8 @@ public class Parser: ASTBuilderOwner {
   }
 
   private func validate(_ ast: AST) throws {
-    let validator = ASTValidationPass()
-    try validator.visit(ast)
+    let validator = ASTValidator()
+    try validator.validate(ast: ast)
   }
 
   /// single_input: NEWLINE | simple_stmt | compound_stmt NEWLINE
@@ -115,19 +115,24 @@ public class Parser: ASTBuilderOwner {
     let start = self.peek.start
 
     if self.peek.kind == .newLine {
-      let end = self.peek.end
-      return self.ast(.interactive([]), start: start, end: end)
+      return self.builder.interactiveAST(statements: [],
+                                         start: start,
+                                         end: self.peek.end)
     }
 
     if let stmt = try self.compoundStmtOrNop() {
       let end = self.peek.end
       try self.consumeOrThrow(.newLine)
 
-      return self.ast(.interactive([stmt]), start: start, end: end)
+      return self.builder.interactiveAST(statements: [stmt],
+                                         start: start,
+                                         end: end)
     }
 
     let stmts = try self.simpleStmt()
-    return self.ast(.interactive(Array(stmts)), start: start, end: stmts.last.end)
+    return self.builder.interactiveAST(statements: Array(stmts),
+                                       start: start,
+                                       end: stmts.last.end)
   }
 
   /// file_input: (NEWLINE | stmt)* ENDMARKER
@@ -146,8 +151,9 @@ public class Parser: ASTBuilderOwner {
     }
 
     // We know that 'self.peek.kind == .eof' (because of 'while' condition)
-    let end = result.last?.end ?? first.end
-    return self.ast(.module(result), start: first.start, end: end)
+    return self.builder.moduleAST(statements: result,
+                                  start: first.start,
+                                  end: result.last?.end ?? first.end)
   }
 
   /// eval_input: testlist NEWLINE* ENDMARKER
@@ -165,7 +171,7 @@ public class Parser: ASTBuilderOwner {
     }
 
     let expr = list.toExpression(using: &self.builder, start: start)
-    return self.ast(.expression(expr), start: start, end: end)
+    return self.builder.expressionAST(expression: expr, start: start, end: end)
   }
 
   // MARK: - Naming

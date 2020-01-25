@@ -1,19 +1,17 @@
 import Foundation
 
-public func emitTypes(inputFile: URL,
-                      outputFile: URL,
-                      imports: [String]) {
+public func emitAst(inputFile: URL, outputFile: URL) {
   withRedirectedStandardOutput(to: outputFile) {
-    emitTypes(inputFile: inputFile, imports: imports)
+    emitAst(inputFile: inputFile)
   }
 }
 
-private func emitTypes(inputFile: URL, imports: [String]) {
+private func emitAst(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
-  for i in imports {
-    print("import \(i)")
-  }
+  print("import Core")
+  print("import Lexer")
+  print("import Foundation")
   print()
 
   print("// swiftlint:disable superfluous_disable_command")
@@ -31,7 +29,7 @@ private func emitTypes(inputFile: URL, imports: [String]) {
       emitProduct(keyword: "struct", def: s)
     case let .class(c):
       emitProduct(keyword: "class", def: c)
-      emitEquatable(c)
+      printEquatable(c)
     }
   }
 }
@@ -45,7 +43,7 @@ private func emitEnum(_ def: EnumDef) {
   let indirect = def.isIndirect ? "indirect " : ""
   print("public \(indirect)enum \(def.name)\(bases) {")
 
-  // emit `case single([Statement])`
+  // emit `case xxx([Statement])`
   for caseDef in def.cases {
     printDoc(caseDef.doc, indent: 2)
 
@@ -80,25 +78,73 @@ private func emitEnum(_ def: EnumDef) {
 private func emitProduct<T: ProductType>(keyword: String, def: T) {
   let bases = createBases(def.bases)
 
+  print("// MARK: - \(def.name)")
+  print()
+
   printDoc(def.doc)
   print("public \(keyword) \(def.name)\(bases) {")
   print()
 
   for property in def.properties {
     printDoc(property.doc, indent: 2)
-    print("  public let \(property.nameColonType)")
+    print("  public var \(property.nameColonType)")
   }
   print()
 
-  let initArgs = def.properties.map(productPropertyInit).joined(", ")
-  print("  public init(\(initArgs)) {")
-  for property in def.properties {
-    print("    self.\(property.name) = \(property.name)")
-  }
-  print("  }")
+  printInit(def: def)
+  printVisitor(def: def)
 
   print("}")
   print()
+}
+
+// MARK: - Init
+
+private func printInit<T: ProductType>(def: T) {
+  if def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass {
+    printSubclassInit(def: def)
+    return
+  }
+
+
+  print("  public init(")
+  for (index, prop) in def.properties.enumerated() {
+    let isLast = index == def.properties.count - 1
+    let comma = isLast ? "" : ","
+    print("    \(prop.nameColonType)\(comma)")
+  }
+  print("  ) {")
+
+  for property in def.properties {
+    print("    self.\(property.name) = \(property.name)")
+  }
+
+  print("  }")
+  print()
+}
+
+private func printSubclassInit<T: ProductType>(def: T) {
+  let isUsingSuperInit = def.properties.isEmpty
+  if isUsingSuperInit {
+    return
+  }
+
+   print("  public init(")
+   print("    id: ASTNodeId,")
+   for prop in def.properties {
+     print("    \(prop.nameColonType),")
+   }
+   print("    start: SourceLocation,")
+   print("    end: SourceLocation")
+   print("  ) {")
+
+   for property in def.properties {
+     print("    self.\(property.name) = \(property.name)")
+   }
+
+  print("    super.init(id: id, start: start, end: end)")
+   print("  }")
+   print()
 }
 
 private func productPropertyInit(_ prop: ProductProperty) -> String {
@@ -106,7 +152,33 @@ private func productPropertyInit(_ prop: ProductProperty) -> String {
   return prefix + prop.nameColonType
 }
 
-private func emitEquatable(_ def: ClassDef) {
+// MARK: - Visitor
+
+private func printVisitor<T: ProductType>(def: T) {
+  let visitorType = def.astVisitorTypeName
+
+  if def.isAST || def .isStmt || def.isExpr {
+    print("""
+  public func accept<V: \(visitorType)>(_ visitor: V) throws -> V.PassResult {
+    trap("'accept' method should be overriden in subclass")
+  }
+
+""")
+  }
+
+  if def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass {
+    print("""
+  override public func accept<V: \(visitorType)>(_ visitor: V) throws -> V.PassResult {
+    try visitor.visit(self)
+  }
+
+""")
+  }
+}
+
+// MARK: - Equatable
+
+private func printEquatable(_ def: ClassDef) {
   guard def.bases.contains("Equatable") else {
     return
   }

@@ -57,9 +57,6 @@ extension Parser {
                               isTargetInParen: Bool) throws -> Statement {
     try self.checkAnnAssignTarget(target)
 
-    let isTargetIdentifier = self.isIdentifierExpr(target)
-    let isSimple = isTargetIdentifier && !isTargetInParen
-
     assert(self.peek.kind == .colon)
     try self.advance() // :
 
@@ -70,44 +67,41 @@ extension Parser {
       value = try self.test()
     }
 
-    let kind = StatementKind.annAssign(target: target,
-                                       annotation: annotation,
-                                       value: value,
-                                       isSimple: isSimple)
-
-    let start = target.start
-    let end = value?.end ?? annotation.end
-    return self.statement(kind, start: start, end: end)
+    let isSimple = target is IdentifierExpr && !isTargetInParen
+    return self.builder.annAssignStmt(target: target,
+                                      annotation: annotation,
+                                      value: value,
+                                      isSimple: isSimple,
+                                      start: target.start,
+                                      end: value?.end ?? annotation.end)
   }
 
   private func checkAnnAssignTarget(_ target: Expression) throws {
     let loc = target.start
 
-    switch target.kind {
+    if let id = target as? IdentifierExpr {
+      try self.checkForbiddenName(id.value, location: loc)
+      return
+    }
 
-    case let .identifier(name):
-      try self.checkForbiddenName(name, location: loc)
+    if let attr = target as? AttributeExpr {
+      try self.checkForbiddenName(attr.name, location: loc)
+      return
+    }
 
-    case let .attribute(_, name):
-      try self.checkForbiddenName(name, location: loc)
+    if target is SubscriptExpr {
+      return // Nothing to check
+    }
 
-    case .subscript:
-      break
-
-    case .list:
+    if target is ListExpr {
       throw self.error(.annAssignmentWithListTarget, location: loc)
-    case .tuple:
-      throw self.error(.annAssignmentWithTupleTarget, location: loc)
-    default:
-      throw self.error(.illegalAnnAssignmentTarget, location: loc)
     }
-  }
 
-  private func isIdentifierExpr(_ e: Expression) -> Bool {
-    if case ExpressionKind.identifier = e.kind {
-      return true
+    if target is TupleExpr {
+      throw self.error(.annAssignmentWithTupleTarget, location: loc)
     }
-    return false
+
+    throw self.error(.illegalAnnAssignmentTarget, location: loc)
   }
 
   // MARK: - Augumented assignment
@@ -147,19 +141,19 @@ extension Parser {
     let value = try self.parseAugAssignValue(closingTokens: closingTokens)
 
     // swiftlint:disable:next force_unwrapping
-    let kind = StatementKind.augAssign(target: target, op: op!, value: value)
-    return self.statement(kind, start: target.start, end: value.end)
+    return self.builder.augAssignStmt(target: target,
+                                      op: op!,
+                                      value: value,
+                                      start: target.start,
+                                      end: value.end)
   }
 
   private func checkAugAssignTarget(_ target: Expression) throws {
-    switch target.kind {
-    case .identifier,
-         .attribute,
-         .subscript:
-      break
-    default:
-      throw self.error(.illegalAugAssignmentTarget, location: target.start)
+    if target is IdentifierExpr || target is AttributeExpr || target is SubscriptExpr {
+      return
     }
+
+    throw self.error(.illegalAugAssignmentTarget, location: target.start)
   }
 
   /// `yield_expr|testlist`
@@ -199,28 +193,23 @@ extension Parser {
     guard let value = elements.last else {
       // Just an expr, without anything else. It does not even matter
       // (unless it has an side-effect like exception...).
-      return self.statement(.expr(firstTarget),
-                            start: firstTarget.start,
-                            end: firstTarget.end)
+      return self.builder.exprStmt(expression: firstTarget,
+                                   start: firstTarget.start,
+                                   end: firstTarget.end)
     }
 
     let targets = NonEmptyArray(first: firstTarget, rest: elements.dropLast())
     try self.checkNormalAssignTargets(targets)
 
-    let kind = StatementKind.assign(targets: targets, value: value)
-    return self.statement(kind, start: firstTarget.start, end: value.end)
-  }
-
-  private func isYieldExpr(_ e: Expression) -> Bool {
-    if case ExpressionKind.yield = e.kind {
-      return true
-    }
-    return false
+    return self.builder.assignStmt(targets: targets,
+                                   value: value,
+                                   start: firstTarget.start,
+                                   end: value.end)
   }
 
   private func checkNormalAssignTargets(_ targets: NonEmptyArray<Expression>) throws {
     for expr in targets {
-      if self.isYieldExpr(expr) {
+      if expr is YieldExpr {
         throw self.error(.assignmentToYield, location: expr.start)
       }
     }

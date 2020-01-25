@@ -92,7 +92,7 @@ public struct ProductProperty {
   public init(_ name: String,
               type baseType: String,
               kind: PropertyKind,
-              underscoreInit: Bool,
+              underscoreInit: Bool = false,
               doc: String? = nil) {
     self.name = camelCase(name)
     self.baseType = pascalCase(baseType)

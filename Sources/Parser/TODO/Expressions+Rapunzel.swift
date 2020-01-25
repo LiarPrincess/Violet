@@ -1,3 +1,4 @@
+/*
 import Core
 import Rapunzel
 
@@ -35,161 +36,343 @@ private func trim(_ value: String) -> String {
 
 // MARK: - Expression
 
-extension Expression: RapunzelConvertible {
+extension Expression {
+
+  fileprivate func baseDoc(type: String, lines: Doc...) -> Doc {
+    return self.baseDoc(type: type, lines: lines)
+  }
+
+  fileprivate func baseDoc(type: String, lines: [Doc]) -> Doc {
+    let title = "\(type)(start: \(self.start), end: \(self.end))"
+    return lines.isEmpty ?
+      text(title) :
+      block(title: title, lines: lines)
+  }
+}
+
+// MARK: - TrueExpr
+
+extension TrueExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "TrueExpr")
+  }
+}
+
+// MARK: - FalseExpr
+
+extension FalseExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "FalseExpr")
+  }
+}
+
+// MARK: - NoneExpr
+
+extension NoneExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "NoneExpr")
+  }
+}
+
+// MARK: - EllipsisExpr
+
+extension EllipsisExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "EllipsisExpr")
+  }
+}
+
+// MARK: - IdentifierExpr
+
+extension IdentifierExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "IdentifierExpr")
+  }
+}
+
+// MARK: - StringExpr
+
+extension StringExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "StringExpr")
+  }
+}
+
+// MARK: - IntExpr
+
+extension IntExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "IntExpr")
+  }
+}
+
+// MARK: - FloatExpr
+
+extension FloatExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "FloatExpr")
+  }
+}
+
+// MARK: - ComplexExpr
+
+extension ComplexExpr: RapunzelConvertible {
   public var doc: Doc {
     return block(
-      title: "Expression(start: \(self.start), end: \(self.end))",
-      lines: self.kind.doc
+      title: "Complex",
+      lines:
+        text("real: \(self.real)"),
+        text("imag: \(self.imag)")
     )
   }
 }
 
-// MARK: - ExpressionKind
+// MARK: - BytesExpr
 
-extension ExpressionKind: RapunzelConvertible {
+extension BytesExpr: RapunzelConvertible {
   public var doc: Doc {
-    switch self {
-
-    case .true:  return text("True")
-    case .false: return text("False")
-    case .none:  return text("None")
-    case .ellipsis: return text("...")
-
-    case let .identifier(value): return text(value)
-    case let .int(value):        return text(value)
-    case let .float(value):      return text(value)
-
-    case let .complex(real: real, imag: imag):
-      return block(
-        title: "Complex",
-        lines:
-          text("real: \(real)"),
-          text("imag: \(imag)")
-      )
-
-    case let .string(s):
-      return s.doc
-    case let .bytes(data):
-      return block(title: "Bytes", lines: text("Count: \(data.count)"))
-
-    case let .unaryOp(op, right: right):
-      return block(
-        title: "Unary operation",
-        lines:
-          text("Operator: \(op)"),
-          block(title: "Right", lines: right.doc)
-      )
-    case let .binaryOp(op, left: left, right: right):
-      return block(
-        title: "Binary operation",
-        lines:
-          text("Operator: \(op)"),
-          block(title: "Left", lines: left.doc),
-          block(title: "Right", lines: right.doc)
-      )
-    case let .boolOp(op, left: left, right: right):
-      return block(
-        title: "Bool operation",
-        lines:
-          text("Operator: \(op)"),
-          block(title: "Left", lines: left.doc),
-          block(title: "Right", lines: right.doc)
-      )
-    case let .compare(left: left, elements: elements):
-      return block(
-        title: "Compare operation",
-        lines:
-          block(title: "Left", lines: left.doc),
-          block(title: "Elements", lines: elements.map { $0.doc })
-      )
-
-    case let .tuple(elements):
-      return block(title: "Tuple", lines: elements.map { $0.doc })
-    case let .list(elements):
-      return block(title: "List", lines: elements.map { $0.doc })
-    case let .dictionary(elements):
-      return block(title: "Dictionary", lines: elements.map { $0.doc })
-    case let .set(elements):
-      return block(title: "Set", lines: elements.map { $0.doc })
-
-    case let .listComprehension(elt, generators):
-      return comprehension(title: "ListComprehension",
-                           element: elt,
-                           generators: generators)
-    case let .setComprehension(elt, generators):
-      return comprehension(title: "SetComprehension",
-                           element: elt,
-                           generators: generators)
-    case let .dictionaryComprehension(key, value, generators):
-      return comprehension(title: "DictionaryComprehension",
-                           key: key,
-                           value: value,
-                           generators: generators)
-    case let .generatorExp(elt, generators):
-      return comprehension(title: "GeneratorExpr",
-                           element: elt,
-                           generators: generators)
-
-    case let .await(value):
-      return block(title: "Await", lines: value.doc)
-    case let .yield(value):
-      let val = value.map { $0.doc } ?? text("(none)")
-      return block(title: "Yield", lines: val)
-    case let .yieldFrom(value):
-      return block(title: "YieldFrom", lines: value.doc)
-
-    case let .lambda(args: args, body: body):
-      return block(
-        title: "Lambda",
-        lines:
-          block(title: "Args", lines: args.doc),
-          block(title: "Body", lines: body.doc)
-      )
-    case let .call(name, args, keywords):
-      let args = args.isEmpty ?
-        text("Args: none") :
-        block(title: "Args", lines: args.map { $0.doc })
-
-      let kwargs = keywords.isEmpty ?
-        text("Keywords: none") :
-        block(title: "Keywords", lines: keywords.map { $0.doc })
-
-      return block(
-        title: "Call",
-        lines:
-          block(title: "Name", lines: name.doc),
-          args,
-          kwargs
-      )
-
-    case let .ifExpression(test: test, body: body, orElse: orElse):
-      return block(
-        title: "IfExpression",
-        lines:
-          test.doc,
-          body.doc,
-          orElse.doc
-      )
-
-    case let .starred(value):
-      return block(title: "Starred", lines: value.doc)
-    case let .attribute(value, name):
-      return block(
-        title: "Attribute",
-        lines:
-          block(title: "Value", lines: value.doc),
-          text("Name: \(name)")
-      )
-    case let .subscript(value, slice):
-      return block(
-        title: "Subscript",
-        lines:
-          block(title: "Value", lines: value.doc),
-          block(title: "Slice", lines: slice.doc)
-      )
-    }
+    return self.baseDoc(
+      type: "BytesExpr",
+      lines: text("Count: \(data.count)")
+    )
   }
 }
+
+// MARK: - UnaryOpExpr
+
+extension UnaryOpExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "UnaryOpExpr",
+      lines:
+        text("Operator: \(self.op)"),
+        block(title: "Right", lines: self.right.doc)
+    )
+  }
+}
+
+// MARK: - BinaryOpExpr
+
+extension BinaryOpExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "BinaryOpExpr",
+      lines:
+        text("Operator: \(op)"),
+        block(title: "Left", lines: left.doc),
+        block(title: "Right", lines: right.doc)
+    )
+  }
+}
+
+// MARK: - BoolOpExpr
+
+extension BoolOpExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "BoolOpExpr",
+      lines:
+        text("Operator: \(op)"),
+        block(title: "Left", lines: left.doc),
+        block(title: "Right", lines: right.doc)
+    )
+  }
+}
+
+// MARK: - CompareExpr
+
+extension CompareExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "CompareExpr",
+      lines:
+        block(title: "Left", lines: left.doc),
+        block(title: "Elements", lines: elements.map { $0.doc })
+    )
+  }
+}
+
+// MARK: - TupleExpr
+
+extension TupleExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "TupleExpr", lines: elements.map { $0.doc })
+  }
+}
+
+// MARK: - ListExpr
+
+extension ListExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "ListExpr", lines: elements.map { $0.doc })
+  }
+}
+
+// MARK: - DictionaryExpr
+
+extension DictionaryExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "DictionaryExpr", lines: elements.map { $0.doc })
+  }
+}
+
+// MARK: - SetExpr
+
+extension SetExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "SetExpr", lines: elements.map { $0.doc })
+  }
+}
+
+// MARK: - ListComprehensionExpr
+
+extension ListComprehensionExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "ListComprehensionExpr",
+      lines: []
+    )
+  }
+}
+
+// MARK: - SetComprehensionExpr
+
+extension SetComprehensionExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "SetComprehensionExpr",
+      lines: []
+    )
+  }
+}
+
+// MARK: - DictionaryComprehensionExpr
+
+extension DictionaryComprehensionExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "DictionaryComprehensionExpr",
+      lines: []
+    )
+  }
+}
+
+// MARK: - GeneratorExpExpr
+
+extension GeneratorExpExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "GeneratorExpExpr",
+      lines: []
+    )
+  }
+}
+
+// MARK: - AwaitExpr
+
+extension AwaitExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "AwaitExpr", lines: self.value.doc)
+  }
+}
+
+// MARK: - YieldExpr
+
+extension YieldExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "YieldExpr", lines: self.value.doc)
+  }
+}
+
+// MARK: - YieldFromExpr
+
+extension YieldFromExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(type: "YieldFromExpr", lines: self.value.doc)
+  }
+}
+
+// MARK: - LambdaExpr
+
+extension LambdaExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "LambdaExpr",
+      lines: []
+    )
+  }
+}
+
+// MARK: - CallExpr
+
+extension CallExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "CallExpr",
+      lines: []
+    )
+  }
+}
+
+// MARK: - IfExpressionExpr
+
+extension IfExpressionExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "IfExpressionExpr",
+      lines: []
+    )
+  }
+}
+
+// MARK: - AttributeExpr
+
+extension AttributeExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "AttributeExpr",
+      lines: []
+    )
+  }
+}
+
+// MARK: - SubscriptExpr
+
+extension SubscriptExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "SubscriptExpr",
+      lines: []
+    )
+  }
+}
+
+// MARK: - StarredExpr
+
+extension StarredExpr: RapunzelConvertible {
+  public var doc: Doc {
+    return self.baseDoc(
+      type: "StarredExpr",
+      lines: []
+    )
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 private func comprehension(title: String,
                            element: Expression,
@@ -417,3 +600,4 @@ extension SliceKind: RapunzelConvertible {
     }
   }
 }
+*/

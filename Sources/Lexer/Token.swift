@@ -14,10 +14,7 @@ public struct Token: Equatable {
   /// Should be roughly equal to the one you would get from CPython.
   public let end: SourceLocation
 
-  public init(_ kind:   TokenKind,
-              start:    SourceLocation,
-              end:      SourceLocation) {
-
+  public init(_ kind: TokenKind, start: SourceLocation, end: SourceLocation) {
     self.kind = kind
     self.start = start
     self.end = end

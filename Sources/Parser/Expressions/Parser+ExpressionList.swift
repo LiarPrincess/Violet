@@ -15,7 +15,7 @@ extension Parser {
       case let .single(e):
         return e
       case let .tuple(es, end):
-        return builder.expression(.tuple(Array(es)), start: start, end: end)
+        return builder.tupleExpr(elements: Array(es), start: start, end: end)
       }
     }
   }
@@ -61,7 +61,7 @@ extension Parser {
       case let .single(e):
         return e
       case let .tuple(es, end):
-        return builder.expression(.tuple(Array(es)), start: start, end: end)
+        return builder.tupleExpr(elements: Array(es), start: start, end: end)
       }
     }
   }
@@ -150,7 +150,7 @@ extension Parser {
       case let .single(e):
         return e
       case let .tuple(es, end):
-        return builder.expression(.tuple(Array(es)), start: start, end: end)
+        return builder.tupleExpr(elements: Array(es), start: start, end: end)
       }
     }
   }
