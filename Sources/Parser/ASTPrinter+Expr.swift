@@ -328,13 +328,17 @@ extension ASTPrinter {
       node.vararg == .unnamed ? text("Vararg: unnamed") :
         self.block(title: "Vararg", lines: self.visit(node.vararg))
 
-    let kwargs = node.kwOnlyArgs.isEmpty ?
+    let kwOnly = node.kwOnlyArgs.isEmpty ?
       self.text("KwOnlyArgs: none") :
       self.block(title: "KwOnlyArgs", lines: node.kwOnlyArgs.map(self.visit))
 
-    let kwargDefaults = node.kwOnlyDefaults.isEmpty ?
+    let kwOnlyDefaults = node.kwOnlyDefaults.isEmpty ?
       self.text("KwOnlyDefaults: none") :
       self.block(title: "KwOnlyDefaults", lines: node.kwOnlyDefaults.map(self.visit))
+
+    let kwarg = node.kwarg.map {
+      self.block(title: "Kwarg", lines: self.visit($0))
+    } ?? self.text("Kwarg: none")
 
     return self.block(
       title: "Arguments(start: \(node.start), end: \(node.end))",
@@ -342,8 +346,9 @@ extension ASTPrinter {
         args,
         defaults,
         vararg,
-        kwargs,
-        kwargDefaults
+        kwOnly,
+        kwOnlyDefaults,
+        kwarg
     )
   }
 
@@ -417,9 +422,9 @@ extension ASTPrinter {
     return self.base(
       expr: node,
       lines:
-        self.visit(node.test),
-        self.visit(node.body),
-        self.visit(node.orElse)
+        self.block(title: "Test", lines: self.visit(node.test)),
+        self.block(title: "Body", lines: self.visit(node.body)),
+        self.block(title: "OrElse", lines: self.visit(node.orElse))
     )
   }
 
@@ -441,7 +446,7 @@ extension ASTPrinter {
       expr: node,
       lines:
         self.block(title: "Object", lines: self.visit(node.object)),
-        self.block(title: "Slice", lines: self.visit(node.slice))
+        self.visit(node.slice)
     )
   }
 

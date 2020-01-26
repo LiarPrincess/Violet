@@ -20,13 +20,13 @@ class ParseString: XCTestCase, Common {
       self.token(.bytes(data), start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  BytesExpr(start: 0:0, end: 1:6)
-    Count: 4
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      BytesExpr(start: 0:0, end: 1:6)
+        Count: 4
+    """)
   }
 
   func test_bytes_concat() {
@@ -38,13 +38,13 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.bytes(sa), start: loc2, end: loc3)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 3:8)
-  BytesExpr(start: 0:0, end: 3:8)
-    Count: 4
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 3:8)
+      BytesExpr(start: 0:0, end: 3:8)
+        Count: 4
+    """)
   }
 
   func test_bytes_concatWithString_throws() {
@@ -82,13 +82,13 @@ ExpressionAST(start: 0:0, end: 3:8)
       self.token(.string("Let it go"), start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  StringExpr(start: 0:0, end: 1:6)
-    String: 'Let it go'
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      StringExpr(start: 0:0, end: 1:6)
+        String: 'Let it go'
+    """)
   }
 
   func test_string_concat() {
@@ -98,13 +98,13 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.string("go"),   start: loc4, end: loc5)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 5:10)
-  StringExpr(start: 0:0, end: 5:10)
-    String: 'Let it go'
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 5:10)
+      StringExpr(start: 0:0, end: 5:10)
+        String: 'Let it go'
+    """)
   }
 
   func test_fstring() throws {
@@ -112,20 +112,20 @@ ExpressionAST(start: 0:0, end: 5:10)
       self.token(.formatString("Let {'it'} go"), start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  StringExpr(start: 0:0, end: 1:6)
-    Joined string
-      String: 'Let '
-      Formatted string
-        StringExpr(start: 1:0, end: 1:4)
-          String: 'it'
-        Conversion: none
-        Spec: none
-      String: ' go'
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      StringExpr(start: 0:0, end: 1:6)
+        Joined string
+          String: 'Let '
+          Formatted string
+            StringExpr(start: 1:0, end: 1:4)
+              String: 'it'
+            Conversion: none
+            Spec: none
+          String: ' go'
+    """)
   }
 
   func test_fstring_concat() throws {
@@ -135,25 +135,25 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.formatString(" {'go'}"), start: loc4, end: loc5)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 5:10)
-  StringExpr(start: 0:0, end: 5:10)
-    Joined string
-      String: 'Let '
-      Formatted string
-        StringExpr(start: 1:0, end: 1:4)
-          String: 'it'
-        Conversion: none
-        Spec: none
-      String: ' '
-      Formatted string
-        StringExpr(start: 1:0, end: 1:4)
-          String: 'go'
-        Conversion: none
-        Spec: none
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 5:10)
+      StringExpr(start: 0:0, end: 5:10)
+        Joined string
+          String: 'Let '
+          Formatted string
+            StringExpr(start: 1:0, end: 1:4)
+              String: 'it'
+            Conversion: none
+            Spec: none
+          String: ' '
+          Formatted string
+            StringExpr(start: 1:0, end: 1:4)
+              String: 'go'
+            Conversion: none
+            Spec: none
+    """)
   }
 
   func test_fstring_error() throws {

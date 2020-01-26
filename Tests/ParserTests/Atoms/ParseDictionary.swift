@@ -14,13 +14,13 @@ class ParseDictionary: XCTestCase, Common {
       self.token(.rightBrace, start: loc2, end: loc3)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 3:8)
-  DictionaryExpr(start: 0:0, end: 3:8)
-    Elements: none
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 3:8)
+      DictionaryExpr(start: 0:0, end: 3:8)
+        Elements: none
+    """)
   }
 
   // MARK: - Dictionary
@@ -35,20 +35,20 @@ ExpressionAST(start: 0:0, end: 3:8)
       self.token(.rightBrace,             start: loc8, end: loc9)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 9:14)
-  DictionaryExpr(start: 0:0, end: 9:14)
-    Elements
-      Key/value
-        Key
-          IdentifierExpr(start: 2:2, end: 3:8)
-            Value: rapunzel
-        Value
-          IdentifierExpr(start: 6:6, end: 7:12)
-            Value: eugene
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 9:14)
+      DictionaryExpr(start: 0:0, end: 9:14)
+        Elements
+          Key/value
+            Key
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: rapunzel
+            Value
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: eugene
+    """)
   }
 
   /// {rapunzel:eugene,}
@@ -62,20 +62,20 @@ ExpressionAST(start: 0:0, end: 9:14)
       self.token(.rightBrace,             start: loc10, end: loc11)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 11:16)
-  DictionaryExpr(start: 0:0, end: 11:16)
-    Elements
-      Key/value
-        Key
-          IdentifierExpr(start: 2:2, end: 3:8)
-            Value: rapunzel
-        Value
-          IdentifierExpr(start: 6:6, end: 7:12)
-            Value: eugene
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 11:16)
+      DictionaryExpr(start: 0:0, end: 11:16)
+        Elements
+          Key/value
+            Key
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: rapunzel
+            Value
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: eugene
+    """)
   }
 
   /// {**rapunzel}
@@ -87,16 +87,16 @@ ExpressionAST(start: 0:0, end: 11:16)
       self.token(.rightBrace,                  start: loc6, end: loc7)
     )
 
-    if let ast = self.parse(parser) {
+    guard let ast = self.parse(parser) else { return }
+
     XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 7:12)
-  DictionaryExpr(start: 0:0, end: 7:12)
-    Elements
-      Unpack
-        IdentifierExpr(start: 4:4, end: 5:10)
-          Value: rapunzel
-""")
-    }
+    ExpressionAST(start: 0:0, end: 7:12)
+      DictionaryExpr(start: 0:0, end: 7:12)
+        Elements
+          Unpack
+            IdentifierExpr(start: 4:4, end: 5:10)
+              Value: rapunzel
+    """)
   }
 
   /// {rapunzel:eugene, **cassandra, pascal:maximus}
@@ -116,30 +116,30 @@ ExpressionAST(start: 0:0, end: 7:12)
       self.token(.rightBrace,                  start: loc22, end: loc23)
     )
 
-    if let ast = self.parse(parser) {
+    guard let ast = self.parse(parser) else { return }
+
     XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 23:28)
-  DictionaryExpr(start: 0:0, end: 23:28)
-    Elements
-      Key/value
-        Key
-          IdentifierExpr(start: 2:2, end: 3:8)
-            Value: rapunzel
-        Value
-          IdentifierExpr(start: 6:6, end: 7:12)
-            Value: eugene
-      Unpack
-        IdentifierExpr(start: 12:12, end: 13:18)
-          Value: cassandra
-      Key/value
-        Key
-          IdentifierExpr(start: 16:16, end: 17:22)
-            Value: pascal
-        Value
-          IdentifierExpr(start: 20:20, end: 21:26)
-            Value: maximus
-""")
-    }
+    ExpressionAST(start: 0:0, end: 23:28)
+      DictionaryExpr(start: 0:0, end: 23:28)
+        Elements
+          Key/value
+            Key
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: rapunzel
+            Value
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: eugene
+          Unpack
+            IdentifierExpr(start: 12:12, end: 13:18)
+              Value: cassandra
+          Key/value
+            Key
+              IdentifierExpr(start: 16:16, end: 17:22)
+                Value: pascal
+            Value
+              IdentifierExpr(start: 20:20, end: 21:26)
+                Value: maximus
+    """)
   }
 
   // MARK: - Dictionary comprehension
@@ -159,28 +159,28 @@ ExpressionAST(start: 0:0, end: 23:28)
       self.token(.rightBrace,                  start: loc18, end: loc19)
     )
 
-    if let ast = self.parse(parser) {
+    guard let ast = self.parse(parser) else { return }
+
     XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 19:24)
-  DictionaryComprehensionExpr(start: 0:0, end: 19:24)
-    Key
-      IdentifierExpr(start: 2:2, end: 3:8)
-        Value: rapunzel
-    Value
-      IdentifierExpr(start: 6:6, end: 7:12)
-        Value: eugene
-    Generators
-      Comprehension(start: 8:8, end: 17:22)
-        isAsync: false
-        Target
-          IdentifierExpr(start: 10:10, end: 11:16)
-            Value: cassandra
-        Iterable
-          ListExpr(start: 14:14, end: 17:22)
-            Elements: none
-        Ifs: none
-""")
-    }
+    ExpressionAST(start: 0:0, end: 19:24)
+      DictionaryComprehensionExpr(start: 0:0, end: 19:24)
+        Key
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: rapunzel
+        Value
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: eugene
+        Generators
+          Comprehension(start: 8:8, end: 17:22)
+            isAsync: false
+            Target
+              IdentifierExpr(start: 10:10, end: 11:16)
+                Value: cassandra
+            Iterable
+              ListExpr(start: 14:14, end: 17:22)
+                Elements: none
+            Ifs: none
+    """)
   }
 
   /// { **rapunzel for eugene in [] }

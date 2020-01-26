@@ -5,11 +5,11 @@ import Lexer
 
 // swiftlint:disable function_body_length
 
-class ParseCallComprehension: XCTestCase, Common, ExpressionMatcher {
+class ParseCallComprehension: XCTestCase, Common {
 
   /// f(a for b in [])
   func test_simple() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -21,37 +21,36 @@ class ParseCallComprehension: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc16, end: loc17)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.args.count, 1)
-      guard d.args.count == 1 else { return }
-      guard let gen = self.matchGeneratorExp(d.args[0]) else { return }
-
-      XCTAssertExpression(gen.elt, "a")
-      XCTAssertEqual(gen.generators.count, 1)
-      guard gen.generators.count == 1 else { return }
-
-      let g = gen.generators[0]
-      XCTAssertEqual(g.isAsync, false)
-      XCTAssertExpression(g.target, "b")
-      XCTAssertExpression(g.iter, "[]")
-      XCTAssertEqual(g.ifs.count, 0)
-      XCTAssertEqual(g.start, loc6)
-      XCTAssertEqual(g.end, loc15)
-
-      XCTAssertExpression(expr, "f((generatorCompr a (for b in [])))")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 17:22)
+      CallExpr(start: 0:0, end: 17:22)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          GeneratorExpr(start: 4:4, end: 15:20)
+            Element
+              IdentifierExpr(start: 4:4, end: 5:10)
+                Value: a
+            Generators
+              Comprehension(start: 6:6, end: 15:20)
+                isAsync: false
+                Target
+                  IdentifierExpr(start: 8:8, end: 9:14)
+                    Value: b
+                Iterable
+                  ListExpr(start: 12:12, end: 15:20)
+                    Elements: none
+                Ifs: none
+        Keywords: none
+    """)
   }
 
   /// f(1, a for b in [])
   func test_afterPositional() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.float(1.0),      start: loc6, end: loc7),
@@ -65,25 +64,38 @@ class ParseCallComprehension: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc22, end: loc23)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.args.count, 2)
-      XCTAssertEqual(d.keywords, [])
-
-      // We don't have to check detailed props,
-      // if the basic tests are working then this one should too.
-
-      XCTAssertExpression(expr, "f(1.0 (generatorCompr a (for b in [])))")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc23)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 23:28)
+      CallExpr(start: 0:0, end: 23:28)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          FloatExpr(start: 6:6, end: 7:12)
+            Value: 1.0
+          GeneratorExpr(start: 10:10, end: 21:26)
+            Element
+              IdentifierExpr(start: 10:10, end: 11:16)
+                Value: a
+            Generators
+              Comprehension(start: 12:12, end: 21:26)
+                isAsync: false
+                Target
+                  IdentifierExpr(start: 14:14, end: 15:20)
+                    Value: b
+                Iterable
+                  ListExpr(start: 18:18, end: 21:26)
+                    Elements: none
+                Ifs: none
+        Keywords: none
+    """)
   }
 
   /// f(1, (a for b in []))
   func test_afterPositional_inParens() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.float(1.0),      start: loc6, end: loc7),
@@ -99,25 +111,38 @@ class ParseCallComprehension: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc26, end: loc27)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.args.count, 2)
-      XCTAssertEqual(d.keywords, [])
-
-      // We don't have to check detailed props,
-      // if the basic tests are working then this one should too.
-
-      XCTAssertExpression(expr, "f(1.0 (generatorCompr a (for b in [])))")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc27)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 27:32)
+      CallExpr(start: 0:0, end: 27:32)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          FloatExpr(start: 6:6, end: 7:12)
+            Value: 1.0
+          GeneratorExpr(start: 10:10, end: 25:30)
+            Element
+              IdentifierExpr(start: 12:12, end: 13:18)
+                Value: a
+            Generators
+              Comprehension(start: 14:14, end: 23:28)
+                isAsync: false
+                Target
+                  IdentifierExpr(start: 16:16, end: 17:22)
+                    Value: b
+                Iterable
+                  ListExpr(start: 20:20, end: 23:28)
+                    Elements: none
+                Ifs: none
+        Keywords: none
+    """)
   }
 
   /// f(a for b in [], 1)
   func test_beforePositional() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc11),
@@ -131,25 +156,38 @@ class ParseCallComprehension: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc20, end: loc23)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.args.count, 2)
-      XCTAssertEqual(d.keywords, [])
-
-      // We don't have to check detailed props,
-      // if the basic tests are working then this one should too.
-
-      XCTAssertExpression(expr, "f((generatorCompr a (for b in [])) 1.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc23)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 23:28)
+      CallExpr(start: 0:0, end: 23:28)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          GeneratorExpr(start: 4:4, end: 21:26)
+            Element
+              IdentifierExpr(start: 4:4, end: 11:16)
+                Value: a
+            Generators
+              Comprehension(start: 6:6, end: 21:26)
+                isAsync: false
+                Target
+                  IdentifierExpr(start: 8:8, end: 15:20)
+                    Value: b
+                Iterable
+                  ListExpr(start: 12:12, end: 21:26)
+                    Elements: none
+                Ifs: none
+          FloatExpr(start: 18:18, end: 7:12)
+            Value: 1.0
+        Keywords: none
+    """)
   }
 
   /// f(a for b in [],)
   func test_commaAfter() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -162,31 +200,30 @@ class ParseCallComprehension: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc18, end: loc19)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.args.count, 1)
-      XCTAssertEqual(d.keywords, [])
-
-      guard d.args.count == 1 else { return }
-      guard let gen = self.matchGeneratorExp(d.args[0]) else { return }
-
-      XCTAssertExpression(gen.elt, "a")
-      XCTAssertEqual(gen.generators.count, 1)
-      guard gen.generators.count == 1 else { return }
-
-      let g = gen.generators[0]
-      XCTAssertEqual(g.isAsync, false)
-      XCTAssertExpression(g.target, "b")
-      XCTAssertExpression(g.iter, "[]")
-      XCTAssertEqual(g.ifs.count, 0)
-      XCTAssertEqual(g.start, loc6)
-      XCTAssertEqual(g.end, loc15)
-
-      XCTAssertExpression(expr, "f((generatorCompr a (for b in [])))")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 19:24)
+      CallExpr(start: 0:0, end: 19:24)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          GeneratorExpr(start: 4:4, end: 15:20)
+            Element
+              IdentifierExpr(start: 4:4, end: 5:10)
+                Value: a
+            Generators
+              Comprehension(start: 6:6, end: 15:20)
+                isAsync: false
+                Target
+                  IdentifierExpr(start: 8:8, end: 9:14)
+                    Value: b
+                Iterable
+                  ListExpr(start: 12:12, end: 15:20)
+                    Elements: none
+                Ifs: none
+        Keywords: none
+    """)
   }
 }

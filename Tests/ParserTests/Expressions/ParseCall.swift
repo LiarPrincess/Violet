@@ -5,61 +5,60 @@ import Lexer
 
 // swiftlint:disable file_length
 
-class ParseCall: XCTestCase, Common, ExpressionMatcher {
+class ParseCall: XCTestCase, Common {
 
   // MARK: - No arguments
 
   /// f()
   func test_noArgs() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.rightParen,      start: loc4, end: loc5)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.args, [])
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertExpression(expr, "f()")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc5)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 5:10)
+      CallExpr(start: 0:0, end: 5:10)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args: none
+        Keywords: none
+    """)
   }
 
   // MARK: - Positional
 
   /// f(1)
   func test_positional_single() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.float(1.0),      start: loc4, end: loc5),
       self.token(.rightParen,      start: loc6, end: loc7)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.args.count, 1)
-      guard d.args.count == 1 else { return }
-      XCTAssertExpression(d.args[0], "1.0")
-
-      XCTAssertExpression(expr, "f(1.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc7)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 7:12)
+      CallExpr(start: 0:0, end: 7:12)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          FloatExpr(start: 4:4, end: 5:10)
+            Value: 1.0
+        Keywords: none
+    """)
   }
 
   /// f(a, 1)
   func test_positional_multiple() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -68,26 +67,26 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc10, end: loc11)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.args.count, 2)
-      guard d.args.count == 2 else { return }
-      XCTAssertExpression(d.args[0], "a")
-      XCTAssertExpression(d.args[1], "1.0")
-
-      XCTAssertExpression(expr, "f(a 1.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc11)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 11:16)
+      CallExpr(start: 0:0, end: 11:16)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          IdentifierExpr(start: 4:4, end: 5:10)
+            Value: a
+          FloatExpr(start: 8:8, end: 9:14)
+            Value: 1.0
+        Keywords: none
+    """)
   }
 
   /// f(1,)
   func test_positional_withCommaAfter() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.float(1.0),      start: loc4, end: loc5),
@@ -95,25 +94,24 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc8, end: loc9)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.args.count, 1)
-      guard d.args.count == 1 else { return }
-      XCTAssertExpression(d.args[0], "1.0")
-
-      XCTAssertExpression(expr, "f(1.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 9:14)
+      CallExpr(start: 0:0, end: 9:14)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          FloatExpr(start: 4:4, end: 5:10)
+            Value: 1.0
+        Keywords: none
+    """)
   }
 
   /// f((a))
   func test_positional_withAdditionalParens() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.leftParen,       start: loc4, end: loc5),
@@ -122,25 +120,24 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc10, end: loc11)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.args.count, 1)
-      guard d.args.count == 1 else { return }
-      XCTAssertExpression(d.args[0], "a")
-
-      XCTAssertExpression(expr, "f(a)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc11)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 11:16)
+      CallExpr(start: 0:0, end: 11:16)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          IdentifierExpr(start: 4:4, end: 9:14)
+            Value: a
+        Keywords: none
+    """)
   }
 
   /// f(a=1, b)
   func test_positional_afterKeyword_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -151,7 +148,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc14, end: loc15)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithPositionalArgumentAfterKeywordArgument)
       XCTAssertEqual(error.location, loc12)
     }
@@ -159,7 +156,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
 
   /// f(**a, b)
   func test_positional_afterKeywordUnpacking_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.starStar,        start: loc6, end: loc7),
@@ -169,7 +166,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc14, end: loc15)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithPositionalArgumentAfterKeywordUnpacking)
       XCTAssertEqual(error.location, loc12)
     }
@@ -179,7 +176,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
 
   /// f(*a)
   func test_star() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.star,            start: loc4, end: loc5),
@@ -187,25 +184,26 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc8, end: loc9)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.args.count, 1)
-      guard d.args.count == 1 else { return }
-      XCTAssertExpression(d.args[0], "*a")
-
-      XCTAssertExpression(expr, "f(*a)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 9:14)
+      CallExpr(start: 0:0, end: 9:14)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          StarredExpr(start: 4:4, end: 7:12)
+            Expression
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: a
+        Keywords: none
+    """)
   }
 
   /// f(a, *b)
   func test_star_afterPositional() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -215,26 +213,28 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc12, end: loc13)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.args.count, 2)
-      guard d.args.count == 2 else { return }
-      XCTAssertExpression(d.args[0], "a")
-      XCTAssertExpression(d.args[1], "*b")
-
-      XCTAssertExpression(expr, "f(a *b)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 13:18)
+      CallExpr(start: 0:0, end: 13:18)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          IdentifierExpr(start: 4:4, end: 5:10)
+            Value: a
+          StarredExpr(start: 8:8, end: 11:16)
+            Expression
+              IdentifierExpr(start: 10:10, end: 11:16)
+                Value: b
+        Keywords: none
+    """)
   }
 
   /// f(a=1, *b)
   func test_star_afterKeyword() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -246,28 +246,32 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc16, end: loc17)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-
-      XCTAssertEqual(d.args.count, 1)
-      guard d.args.count == 1 else { return }
-      XCTAssertExpression(d.args[0], "*b")
-
-      XCTAssertEqual(d.keywords.count, 1)
-      guard d.keywords.count == 1 else { return }
-      XCTAssertKeyword(d.keywords[0], "a=1.0")
-
-      XCTAssertExpression(expr, "f(*b a=1.0)") // reorder
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 17:22)
+      CallExpr(start: 0:0, end: 17:22)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          StarredExpr(start: 12:12, end: 15:20)
+            Expression
+              IdentifierExpr(start: 14:14, end: 15:20)
+                Value: b
+        Keywords
+          Keyword(start: 4:4, end: 9:14)
+            Kind
+              Named('a')
+            Value
+              FloatExpr(start: 8:8, end: 9:14)
+                Value: 1.0
+    """)
   }
 
   /// f(**a, *b)
   func test_star_afterKeywordUnpacking_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.starStar,        start: loc4, end: loc5),
@@ -278,7 +282,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc14, end: loc15)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithIterableArgumentAfterKeywordUnpacking)
       XCTAssertEqual(error.location, loc10)
     }
@@ -288,7 +292,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
 
   /// f(a=1)
   func test_keyword_single() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -297,25 +301,28 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc10, end: loc11)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.args, [])
-
-      XCTAssertEqual(d.keywords.count, 1)
-      guard d.keywords.count == 1 else { return }
-      XCTAssertKeyword(d.keywords[0], "a=1.0")
-
-      XCTAssertExpression(expr, "f(a=1.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc11)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 11:16)
+      CallExpr(start: 0:0, end: 11:16)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args: none
+        Keywords
+          Keyword(start: 4:4, end: 9:14)
+            Kind
+              Named('a')
+            Value
+              FloatExpr(start: 8:8, end: 9:14)
+                Value: 1.0
+    """)
   }
 
   /// f(a=1.0, b=2.0)
   func test_keyword_multiple() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -328,26 +335,34 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc18, end: loc19)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.args, [])
-
-      XCTAssertEqual(d.keywords.count, 2)
-      guard d.keywords.count == 2 else { return }
-      XCTAssertKeyword(d.keywords[0], "a=1.0")
-      XCTAssertKeyword(d.keywords[1], "b=2.0")
-
-      XCTAssertExpression(expr, "f(a=1.0 b=2.0)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 19:24)
+      CallExpr(start: 0:0, end: 19:24)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args: none
+        Keywords
+          Keyword(start: 4:4, end: 9:14)
+            Kind
+              Named('a')
+            Value
+              FloatExpr(start: 8:8, end: 9:14)
+                Value: 1.0
+          Keyword(start: 12:12, end: 17:22)
+            Kind
+              Named('b')
+            Value
+              FloatExpr(start: 16:16, end: 17:22)
+                Value: 2.0
+    """)
   }
 
   /// f(a=1, a=2)
   func test_keyword_duplicate_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -360,7 +375,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc18, end: loc19)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithDuplicateKeywordArgument("a"))
       XCTAssertEqual(error.location, loc12)
     }
@@ -369,7 +384,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
   /// From comment in CPython:
   /// `f(lambda x: x[0] = 3)`
   func test_keyword_lambda_assignment_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"),  start: loc0, end: loc1),
       self.token(.leftParen,        start: loc2, end: loc3),
       self.token(.lambda,           start: loc4, end: loc5),
@@ -384,7 +399,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,       start: loc22, end: loc23)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithLambdaAssignment)
       XCTAssertEqual(error.location, loc4)
     }
@@ -392,7 +407,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
 
   /// f(3=1)
   func test_keyword_invalidName_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"),  start: loc0, end: loc1),
       self.token(.leftParen,        start: loc2, end: loc3),
       self.token(.int(BigInt(3)),   start: loc4, end: loc5),
@@ -401,7 +416,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,       start: loc10, end: loc11)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithKeywordExpression)
       XCTAssertEqual(error.location, loc4)
     }
@@ -411,7 +426,7 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
 
   /// f(**a)
   func test_starStar() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.starStar,        start: loc4, end: loc5),
@@ -419,25 +434,28 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc8, end: loc9)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-      XCTAssertEqual(d.args, [])
-
-      XCTAssertEqual(d.keywords.count, 1)
-      guard d.keywords.count == 1 else { return }
-      XCTAssertKeyword(d.keywords[0], "**a")
-
-      XCTAssertExpression(expr, "f(**a)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 9:14)
+      CallExpr(start: 0:0, end: 9:14)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args: none
+        Keywords
+          Keyword(start: 4:4, end: 7:12)
+            Kind
+              DictionaryUnpack
+            Value
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: a
+    """)
   }
 
   /// f(a, **b)
   func test_starStar_afterPositional() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("f"), start: loc0, end: loc1),
       self.token(.leftParen,       start: loc2, end: loc3),
       self.token(.identifier("a"), start: loc4, end: loc5),
@@ -447,22 +465,24 @@ class ParseCall: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,      start: loc12, end: loc13)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchCall(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.function, "f")
-
-      XCTAssertEqual(d.args.count, 1)
-      guard d.args.count == 1 else { return }
-      XCTAssertExpression(d.args[0], "a")
-
-      XCTAssertEqual(d.keywords.count, 1)
-      guard d.keywords.count == 1 else { return }
-      XCTAssertKeyword(d.keywords[0], "**b")
-
-      XCTAssertExpression(expr, "f(a **b)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 13:18)
+      CallExpr(start: 0:0, end: 13:18)
+        Name
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: f
+        Args
+          IdentifierExpr(start: 4:4, end: 5:10)
+            Value: a
+        Keywords
+          Keyword(start: 8:8, end: 11:16)
+            Kind
+              DictionaryUnpack
+            Value
+              IdentifierExpr(start: 10:10, end: 11:16)
+                Value: b
+    """)
   }
 }

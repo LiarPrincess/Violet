@@ -6,75 +6,73 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
-
-  internal var builder = ASTBuilder()
+class ParseLambda: XCTestCase, Common {
 
   // MARK: - No arguments
 
   /// lambda: "Ratatouille"
   func test_noArguments() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                start: loc0, end: loc1),
       self.token(.colon,                 start: loc8, end: loc9),
       self.token(.string("Ratatouille"), start: loc10, end: loc11)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc8)
-      XCTAssertEqual(d.args.end,   loc8)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ () do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc11)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 11:16)
+      LambdaExpr(start: 0:0, end: 11:16)
+        Args
+          Arguments(start: 8:8, end: 8:8)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          StringExpr(start: 10:10, end: 11:16)
+            String: 'Ratatouille'
+    """)
   }
 
   // MARK: - Positional
 
   /// lambda zucchini: "Ratatouille"
   func test_positional() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.identifier("zucchini"), start: loc6, end: loc7),
       self.token(.colon,                  start: loc10, end: loc11),
       self.token(.string("Ratatouille"),  start: loc12, end: loc13)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      XCTAssertArguments(d.args.args, [argA])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc7)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (zucchini) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 13:18)
+      LambdaExpr(start: 0:0, end: 13:18)
+        Args
+          Arguments(start: 6:6, end: 7:12)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          StringExpr(start: 12:12, end: 13:18)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda zucchini = 1: "Ratatouille"
   func test_positional_default() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.identifier("zucchini"), start: loc6, end: loc7),
       self.token(.equal,                  start: loc8, end: loc9),
@@ -83,31 +81,33 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let defA = self.expression(.float(1.0), start: loc10, end: loc11)
-      XCTAssertArguments(d.args.args, [argA])
-      XCTAssertArgumentDefaults(d.args.defaults, [defA])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc11)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (zucchini=1.0) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 17:22)
+      LambdaExpr(start: 0:0, end: 17:22)
+        Args
+          Arguments(start: 6:6, end: 11:16)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+            Defaults
+              FloatExpr(start: 10:10, end: 11:16)
+                Value: 1.0
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          StringExpr(start: 16:16, end: 17:22)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda zucchini, tomato: "Ratatouille"
   func test_positional_multiple() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.identifier("zucchini"), start: loc6, end: loc7),
       self.token(.comma,                  start: loc8, end: loc9),
@@ -116,31 +116,34 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = self.arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
-      XCTAssertArguments(d.args.args, [argA, argB])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc11)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (zucchini tomato) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 17:22)
+      LambdaExpr(start: 0:0, end: 17:22)
+        Args
+          Arguments(start: 6:6, end: 11:16)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+              Arg
+                Name: tomato
+                Annotation: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          StringExpr(start: 16:16, end: 17:22)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda zucchini, tomato=1: "Ratatouille"
   func test_positional_default_afterRequired() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.identifier("zucchini"), start: loc6, end: loc7),
       self.token(.comma,                  start: loc8, end: loc9),
@@ -151,32 +154,36 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = self.arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
-      let defB = self.expression(.float(1.0), start: loc14, end: loc15)
-      XCTAssertArguments(d.args.args, [argA, argB])
-      XCTAssertArgumentDefaults(d.args.defaults, [defB])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc15)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (zucchini tomato=1.0) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc21)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 21:26)
+      LambdaExpr(start: 0:0, end: 21:26)
+        Args
+          Arguments(start: 6:6, end: 15:20)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+              Arg
+                Name: tomato
+                Annotation: none
+            Defaults
+              FloatExpr(start: 14:14, end: 15:20)
+                Value: 1.0
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          StringExpr(start: 20:20, end: 21:26)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda zucchini = 1, tomato: "Ratatouille"
   func test_positional_requited_afterDefault_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.identifier("zucchini"), start: loc6, end: loc7),
       self.token(.equal,                  start: loc8, end: loc9),
@@ -187,7 +194,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .defaultAfterNonDefaultArgument)
       XCTAssertEqual(error.location, loc14)
     }
@@ -197,7 +204,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
 
   /// lambda *zucchini: "Ratatouille"
   func test_varargs() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.star,                   start: loc6, end: loc7),
       self.token(.identifier("zucchini"), start: loc8, end: loc9),
@@ -205,30 +212,32 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc14, end: loc15)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .named(varargA))
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc9)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (*zucchini) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 15:20)
+      LambdaExpr(start: 0:0, end: 15:20)
+        Args
+          Arguments(start: 6:6, end: 9:14)
+            Args: none
+            Defaults: none
+            Vararg
+              Named
+                Arg
+                  Name: zucchini
+                  Annotation: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          StringExpr(start: 14:14, end: 15:20)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda *zucchini, tomato=1: "Ratatouille"
   func test_varargs_keywordOnly_withDefault() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.star,                   start: loc6, end: loc7),
       self.token(.identifier("zucchini"), start: loc8, end: loc9),
@@ -240,32 +249,37 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc22, end: loc23)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
-      let kwDefB  = self.expression(.float(1), start: loc16, end: loc17)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .named(varargA))
-      XCTAssertArguments(d.args.kwOnlyArgs, [kwB])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefB])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc17)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (*zucchini tomato=1.0) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc23)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 23:28)
+      LambdaExpr(start: 0:0, end: 23:28)
+        Args
+          Arguments(start: 6:6, end: 17:22)
+            Args: none
+            Defaults: none
+            Vararg
+              Named
+                Arg
+                  Name: zucchini
+                  Annotation: none
+            KwOnlyArgs
+              Arg
+                Name: tomato
+                Annotation: none
+            KwOnlyDefaults
+              FloatExpr(start: 16:16, end: 17:22)
+                Value: 1.0
+            Kwarg: none
+        Body
+          StringExpr(start: 22:22, end: 23:28)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda *zucchini, tomato: "Ratatouille"
   func test_varargs_keywordOnly_withoutDefault_isImplicitNone() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.star,                   start: loc6, end: loc7),
       self.token(.identifier("zucchini"), start: loc8, end: loc9),
@@ -275,32 +289,36 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc18, end: loc19)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
-      let kwDefB = self.expression(.none, start: loc13, end: loc13)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .named(varargA))
-      XCTAssertArguments(d.args.kwOnlyArgs, [kwB])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefB])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc13)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (*zucchini tomato=None) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 19:24)
+      LambdaExpr(start: 0:0, end: 19:24)
+        Args
+          Arguments(start: 6:6, end: 13:18)
+            Args: none
+            Defaults: none
+            Vararg
+              Named
+                Arg
+                  Name: zucchini
+                  Annotation: none
+            KwOnlyArgs
+              Arg
+                Name: tomato
+                Annotation: none
+            KwOnlyDefaults
+              NoneExpr(start: 13:18, end: 13:18)
+            Kwarg: none
+        Body
+          StringExpr(start: 18:18, end: 19:24)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda *zucchini, *tomato: "Ratatouille"
   func test_varargs_duplicate_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.star,                   start: loc6, end: loc7),
       self.token(.identifier("zucchini"), start: loc8, end: loc9),
@@ -311,7 +329,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .duplicateVarargs)
       XCTAssertEqual(error.location, loc12)
     }
@@ -319,7 +337,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
 
   /// lambda *, zucchini: "Ratatouille"
   func test_varargsUnnamed() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.star,                   start: loc6, end: loc7),
       self.token(.comma,                  start: loc8, end: loc9),
@@ -328,38 +346,39 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let kwA = self.arg(name: "zucchini", annotation: nil, start: loc10, end: loc11)
-      let kwDefA = self.expression(.none, start: loc11, end: loc11)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .unnamed)
-      XCTAssertArguments(d.args.kwOnlyArgs, [kwA])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefA])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc11)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (* zucchini=None) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 17:22)
+      LambdaExpr(start: 0:0, end: 17:22)
+        Args
+          Arguments(start: 6:6, end: 11:16)
+            Args: none
+            Defaults: none
+            Vararg: unnamed
+            KwOnlyArgs
+              Arg
+                Name: zucchini
+                Annotation: none
+            KwOnlyDefaults
+              NoneExpr(start: 11:16, end: 11:16)
+            Kwarg: none
+        Body
+          StringExpr(start: 16:16, end: 17:22)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda *: "Ratatouille"
   func test_varargsUnnamed_withoutFollowingArguments_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.star,                   start: loc6, end: loc7),
       self.token(.colon,                  start: loc10, end: loc11),
       self.token(.string("Ratatouille"),  start: loc12, end: loc13)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .starWithoutFollowingArguments)
       XCTAssertEqual(error.location, loc10)
     }
@@ -369,7 +388,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
 
   /// lambda **zucchini: "Ratatouille"
   func test_kwargs() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.starStar,               start: loc6, end: loc7),
       self.token(.identifier("zucchini"), start: loc8, end: loc9),
@@ -377,30 +396,31 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc14, end: loc15)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let kwargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertArgument(d.args.kwarg, kwargA)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc9)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (**zucchini) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 15:20)
+      LambdaExpr(start: 0:0, end: 15:20)
+        Args
+          Arguments(start: 6:6, end: 9:14)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg
+              Arg
+                Name: zucchini
+                Annotation: none
+        Body
+          StringExpr(start: 14:14, end: 15:20)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda **zucchini,: "Ratatouille"
   func test_kwargs_withCommaAfter() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.starStar,               start: loc6, end: loc7),
       self.token(.identifier("zucchini"), start: loc8, end: loc9),
@@ -409,30 +429,31 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let kwargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertArgument(d.args.kwarg, kwargA)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc11)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (**zucchini) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 17:22)
+      LambdaExpr(start: 0:0, end: 17:22)
+        Args
+          Arguments(start: 6:6, end: 11:16)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg
+              Arg
+                Name: zucchini
+                Annotation: none
+        Body
+          StringExpr(start: 16:16, end: 17:22)
+            String: 'Ratatouille'
+    """)
   }
 
   /// lambda **zucchini, **tomato: "Ratatouille"
   func test_kwargs_duplicate_throws() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.starStar,               start: loc6, end: loc7),
       self.token(.identifier("zucchini"), start: loc8, end: loc9),
@@ -443,7 +464,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .duplicateKwargs)
       XCTAssertEqual(error.location, loc12)
     }
@@ -453,7 +474,7 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
 
   /// lambda zucchini, *tomato, pepper, **eggplant: "Ratatouille"
   func test_all() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.lambda,                 start: loc0, end: loc1),
       self.token(.identifier("zucchini"), start: loc6, end: loc7),
       self.token(.comma,                  start: loc8, end: loc9),
@@ -468,28 +489,36 @@ class ParseLambda: XCTestCase, Common, ExpressionMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc28, end: loc29)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchLambda(expr) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      let argA    = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let varargB = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
-      let kwC     = self.arg(name: "pepper", annotation: nil, start: loc16, end: loc17)
-      let kwDefC  = self.expression(.none, start: loc17, end: loc17)
-      let kwargD = self.arg(name: "eggplant", annotation: nil, start: loc22, end: loc23)
-      XCTAssertArguments(d.args.args, [argA])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .named(varargB))
-      XCTAssertArguments(d.args.kwOnlyArgs, [kwC])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefC])
-      XCTAssertArgument(d.args.kwarg, kwargD)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc23)
-
-      XCTAssertExpression(d.body, "'Ratatouille'")
-
-      XCTAssertExpression(expr, "(λ (zucchini *tomato pepper=None **eggplant) do: 'Ratatouille')")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc29)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 29:34)
+      LambdaExpr(start: 0:0, end: 29:34)
+        Args
+          Arguments(start: 6:6, end: 23:28)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+            Defaults: none
+            Vararg
+              Named
+                Arg
+                  Name: tomato
+                  Annotation: none
+            KwOnlyArgs
+              Arg
+                Name: pepper
+                Annotation: none
+            KwOnlyDefaults
+              NoneExpr(start: 17:22, end: 17:22)
+            Kwarg
+              Arg
+                Name: eggplant
+                Annotation: none
+        Body
+          StringExpr(start: 28:28, end: 29:34)
+            String: 'Ratatouille'
+    """)
   }
 }

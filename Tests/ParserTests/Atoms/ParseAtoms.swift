@@ -12,12 +12,12 @@ class ParseAtoms: XCTestCase, Common {
       self.token(.none, start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  NoneExpr(start: 0:0, end: 1:6)
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+    
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      NoneExpr(start: 0:0, end: 1:6)
+    """)
   }
 
   // MARK: - Bool
@@ -27,12 +27,12 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.true, start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  TrueExpr(start: 0:0, end: 1:6)
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      TrueExpr(start: 0:0, end: 1:6)
+    """)
   }
 
   func test_false() {
@@ -40,12 +40,12 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.false, start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  FalseExpr(start: 0:0, end: 1:6)
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      FalseExpr(start: 0:0, end: 1:6)
+    """)
   }
 
   // MARK: - Numbers
@@ -57,13 +57,13 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.int(value), start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  IntExpr(start: 0:0, end: 1:6)
-    Value: 42
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      IntExpr(start: 0:0, end: 1:6)
+        Value: 42
+    """)
   }
 
   func test_float() {
@@ -71,13 +71,13 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.float(4.2), start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  FloatExpr(start: 0:0, end: 1:6)
-    Value: 4.2
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      FloatExpr(start: 0:0, end: 1:6)
+        Value: 4.2
+    """)
   }
 
   func test_imaginary() {
@@ -85,14 +85,14 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.imaginary(4.2), start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  ComplexExpr(start: 0:0, end: 1:6)
-    Real: 0.0
-    Imag: 4.2
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      ComplexExpr(start: 0:0, end: 1:6)
+        Real: 0.0
+        Imag: 4.2
+    """)
   }
 
   // MARK: - Ellipsis
@@ -102,12 +102,12 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.ellipsis, start: loc0, end: loc1)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 1:6)
-  EllipsisExpr(start: 0:0, end: 1:6)
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 1:6)
+      EllipsisExpr(start: 0:0, end: 1:6)
+    """)
   }
 
   // MARK: - Await
@@ -118,14 +118,14 @@ ExpressionAST(start: 0:0, end: 1:6)
       self.token(.string("Elsa"), start: loc2, end: loc3)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 3:8)
-  AwaitExpr(start: 0:0, end: 3:8)
-    Value
-      StringExpr(start: 2:2, end: 3:8)
-        String: 'Elsa'
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 3:8)
+      AwaitExpr(start: 0:0, end: 3:8)
+        Value
+          StringExpr(start: 2:2, end: 3:8)
+            String: 'Elsa'
+    """)
   }
 }

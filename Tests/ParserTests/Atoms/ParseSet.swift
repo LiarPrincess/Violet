@@ -15,15 +15,15 @@ class ParseSet: XCTestCase, Common {
       self.token(.rightBrace,             start: loc4, end: loc5)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 5:10)
-  SetExpr(start: 0:0, end: 5:10)
-    Elements
-      IdentifierExpr(start: 2:2, end: 3:8)
-        Value: rapunzel
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 5:10)
+      SetExpr(start: 0:0, end: 5:10)
+        Elements
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: rapunzel
+    """)
   }
 
   /// {rapunzel,}
@@ -35,15 +35,15 @@ ExpressionAST(start: 0:0, end: 5:10)
       self.token(.rightBrace,             start: loc6, end: loc7)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 7:12)
-  SetExpr(start: 0:0, end: 7:12)
-    Elements
-      IdentifierExpr(start: 2:2, end: 3:8)
-        Value: rapunzel
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 7:12)
+      SetExpr(start: 0:0, end: 7:12)
+        Elements
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: rapunzel
+    """)
   }
 
   /// {*1}
@@ -55,17 +55,17 @@ ExpressionAST(start: 0:0, end: 7:12)
       self.token(.rightBrace,             start: loc6, end: loc7)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 7:12)
-  SetExpr(start: 0:0, end: 7:12)
-    Elements
-      StarredExpr(start: 2:2, end: 5:10)
-        Expression
-          IdentifierExpr(start: 4:4, end: 5:10)
-            Value: rapunzel
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+  ExpressionAST(start: 0:0, end: 7:12)
+    SetExpr(start: 0:0, end: 7:12)
+      Elements
+        StarredExpr(start: 2:2, end: 5:10)
+          Expression
+            IdentifierExpr(start: 4:4, end: 5:10)
+              Value: rapunzel
+  """)
   }
 
   /// {rapunzel, *eugene, cassandra}
@@ -81,21 +81,21 @@ ExpressionAST(start: 0:0, end: 7:12)
       self.token(.rightBrace,              start: loc14, end: loc15)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 15:20)
-  SetExpr(start: 0:0, end: 15:20)
-    Elements
-      IdentifierExpr(start: 2:2, end: 3:8)
-        Value: rapunzel
-      StarredExpr(start: 6:6, end: 9:14)
-        Expression
-          IdentifierExpr(start: 8:8, end: 9:14)
-            Value: eugene
-      IdentifierExpr(start: 12:12, end: 13:18)
-        Value: cassandra
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 15:20)
+      SetExpr(start: 0:0, end: 15:20)
+        Elements
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: rapunzel
+          StarredExpr(start: 6:6, end: 9:14)
+            Expression
+              IdentifierExpr(start: 8:8, end: 9:14)
+                Value: eugene
+          IdentifierExpr(start: 12:12, end: 13:18)
+            Value: cassandra
+    """)
   }
 
   // MARK: - Set comprehension
@@ -113,24 +113,24 @@ ExpressionAST(start: 0:0, end: 15:20)
       self.token(.rightBrace,             start: loc14, end: loc15)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 15:20)
-  SetComprehensionExpr(start: 0:0, end: 15:20)
-    Element
-      IdentifierExpr(start: 2:2, end: 3:8)
-        Value: rapunzel
-    Generators
-      Comprehension(start: 4:4, end: 13:18)
-        isAsync: false
-        Target
-          IdentifierExpr(start: 6:6, end: 7:12)
-            Value: eugene
-        Iterable
-          ListExpr(start: 10:10, end: 13:18)
-            Elements: none
-        Ifs: none
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 15:20)
+      SetComprehensionExpr(start: 0:0, end: 15:20)
+        Element
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: rapunzel
+        Generators
+          Comprehension(start: 4:4, end: 13:18)
+            isAsync: false
+            Target
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: eugene
+            Iterable
+              ListExpr(start: 10:10, end: 13:18)
+                Elements: none
+            Ifs: none
+    """)
   }
 }

@@ -3,30 +3,31 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseAttribute: XCTestCase, Common, ExpressionMatcher, SliceMatcher {
+class ParseAttribute: XCTestCase, Common {
 
   /// a.b
   func test_simple() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.dot,             start: loc2, end: loc3),
       self.token(.identifier("b"), start: loc4, end: loc5)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d = self.matchAttribute(expr) else { return }
-      XCTAssertExpression(d.0, "a")
-      XCTAssertEqual(d.name, "b")
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(expr, "a.b")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc5)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 5:10)
+      AttributeExpr(start: 0:0, end: 5:10)
+        Object
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: a
+        Name: b
+    """)
   }
 
   /// a.b.c = (a.b).c
   func test_isLeftAssociative() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.identifier("a"), start: loc0, end: loc1),
       self.token(.dot,             start: loc2, end: loc3),
       self.token(.identifier("b"), start: loc4, end: loc5),
@@ -34,18 +35,18 @@ class ParseAttribute: XCTestCase, Common, ExpressionMatcher, SliceMatcher {
       self.token(.identifier("c"), start: loc7, end: loc9)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let d0 = self.matchAttribute(expr) else { return }
-      XCTAssertExpression(d0.0, "a.b")
-      XCTAssertEqual(d0.name, "c")
+    guard let ast = self.parse(parser) else { return }
 
-      guard let d1 = self.matchAttribute(d0.0) else { return }
-      XCTAssertExpression(d1.0, "a")
-      XCTAssertEqual(d1.name, "b")
-
-      XCTAssertExpression(expr, "a.b.c")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 9:14)
+      AttributeExpr(start: 0:0, end: 9:14)
+        Object
+          AttributeExpr(start: 0:0, end: 5:10)
+            Object
+              IdentifierExpr(start: 0:0, end: 1:6)
+                Value: a
+            Name: b
+        Name: c
+    """)
   }
 }

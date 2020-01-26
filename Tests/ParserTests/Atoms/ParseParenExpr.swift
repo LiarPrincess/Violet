@@ -14,13 +14,13 @@ class ParseParenExpr: XCTestCase, Common {
       self.token(.rightParen, start: loc2, end: loc3)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 3:8)
-  TupleExpr(start: 0:0, end: 3:8)
-    Elements: none
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 3:8)
+      TupleExpr(start: 0:0, end: 3:8)
+        Elements: none
+    """)
   }
 
   // MARK: - Single
@@ -33,13 +33,13 @@ ExpressionAST(start: 0:0, end: 3:8)
       self.token(.rightParen,         start: loc4, end: loc5)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 5:10)
-  IdentifierExpr(start: 0:0, end: 5:10)
-    Value: elsa
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 5:10)
+      IdentifierExpr(start: 0:0, end: 5:10)
+        Value: elsa
+    """)
   }
 
   // MARK: - Tuple
@@ -53,15 +53,15 @@ ExpressionAST(start: 0:0, end: 5:10)
       self.token(.rightParen,         start: loc6, end: loc7)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 7:12)
-  TupleExpr(start: 0:0, end: 7:12)
-    Elements
-      IdentifierExpr(start: 2:2, end: 3:8)
-        Value: elsa
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 7:12)
+      TupleExpr(start: 0:0, end: 7:12)
+        Elements
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: elsa
+    """)
   }
 
   /// (elsa, anna)
@@ -74,17 +74,17 @@ ExpressionAST(start: 0:0, end: 7:12)
       self.token(.rightParen,         start: loc8, end: loc9)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 9:14)
-  TupleExpr(start: 0:0, end: 9:14)
-    Elements
-      IdentifierExpr(start: 2:2, end: 3:8)
-        Value: elsa
-      IdentifierExpr(start: 6:6, end: 7:12)
-        Value: anna
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 9:14)
+      TupleExpr(start: 0:0, end: 9:14)
+        Elements
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: elsa
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: anna
+    """)
   }
 
   // MARK: - Yield
@@ -97,13 +97,13 @@ ExpressionAST(start: 0:0, end: 9:14)
       self.token(.rightParen, start: loc4, end: loc5)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 5:10)
-  YieldExpr(start: 2:2, end: 3:8)
-    Value: none
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 5:10)
+      YieldExpr(start: 2:2, end: 3:8)
+        Value: none
+    """)
   }
 
   /// (yield elsa)
@@ -115,15 +115,15 @@ ExpressionAST(start: 0:0, end: 5:10)
       self.token(.rightParen,         start: loc6, end: loc7)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 7:12)
-  YieldExpr(start: 2:2, end: 5:10)
-    Value
-      IdentifierExpr(start: 4:4, end: 5:10)
-        Value: elsa
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 7:12)
+      YieldExpr(start: 2:2, end: 5:10)
+        Value
+          IdentifierExpr(start: 4:4, end: 5:10)
+            Value: elsa
+    """)
   }
 
   /// (yield elsa, anna)
@@ -137,19 +137,19 @@ ExpressionAST(start: 0:0, end: 7:12)
       self.token(.rightParen,         start: loc10, end: loc11)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 11:16)
-  YieldExpr(start: 2:2, end: 9:14)
-    Value
-      TupleExpr(start: 4:4, end: 9:14)
-        Elements
-          IdentifierExpr(start: 4:4, end: 5:10)
-            Value: elsa
-          IdentifierExpr(start: 8:8, end: 9:14)
-            Value: anna
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 11:16)
+      YieldExpr(start: 2:2, end: 9:14)
+        Value
+          TupleExpr(start: 4:4, end: 9:14)
+            Elements
+              IdentifierExpr(start: 4:4, end: 5:10)
+                Value: elsa
+              IdentifierExpr(start: 8:8, end: 9:14)
+                Value: anna
+    """)
   }
 
   // MARK: - Generator expr
@@ -167,24 +167,24 @@ ExpressionAST(start: 0:0, end: 11:16)
       self.token(.rightParen,         start: loc14, end: loc15)
     )
 
-    if let ast = self.parse(parser) {
-      XCTAssertAST(ast, """
-ExpressionAST(start: 0:0, end: 15:20)
-  GeneratorExpr(start: 0:0, end: 15:20)
-    Element
-      IdentifierExpr(start: 2:2, end: 3:8)
-        Value: elsa
-    Generators
-      Comprehension(start: 4:4, end: 13:18)
-        isAsync: false
-        Target
-          IdentifierExpr(start: 6:6, end: 7:12)
-            Value: anna
-        Iterable
-          ListExpr(start: 10:10, end: 13:18)
-            Elements: none
-        Ifs: none
-""")
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 15:20)
+      GeneratorExpr(start: 0:0, end: 15:20)
+        Element
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: elsa
+        Generators
+          Comprehension(start: 4:4, end: 13:18)
+            isAsync: false
+            Target
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: anna
+            Iterable
+              ListExpr(start: 10:10, end: 13:18)
+                Elements: none
+            Ifs: none
+    """)
   }
 }

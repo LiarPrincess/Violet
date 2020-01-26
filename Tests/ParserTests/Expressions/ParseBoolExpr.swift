@@ -3,24 +3,23 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseBoolExpr: XCTestCase, Common, ExpressionMatcher {
+class ParseBoolExpr: XCTestCase, Common {
 
   func test_not() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.not,   start: loc0, end: loc1),
       self.token(.false, start: loc2, end: loc3)
     )
 
-    if let expr = self.parseExpr(&parser) {
+    guard let ast = self.parse(parser) else { return }
 
-      guard let unaryOp = self.matchUnaryOp(expr) else { return }
-      XCTAssertEqual(unaryOp.0, .not)
-      XCTAssertExpression(unaryOp.right, "False")
-
-      XCTAssertExpression(expr, "(not False)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc3)
-    }
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 3:8)
+      UnaryOpExpr(start: 0:0, end: 3:8)
+        Operator: not
+        Right
+          FalseExpr(start: 2:2, end: 3:8)
+    """)
   }
 
   func test_and_or() {
@@ -30,24 +29,23 @@ class ParseBoolExpr: XCTestCase, Common, ExpressionMatcher {
     ]
 
     for (token, op) in variants {
-      var parser = self.createExprParser(
+      let parser = self.createExprParser(
         self.token(.true,  start: loc0, end: loc1),
         self.token(token,  start: loc2, end: loc3),
         self.token(.false, start: loc4, end: loc5)
       )
 
-      if let expr = self.parseExpr(&parser) {
-        let msg = "for token '\(token)'"
+      guard let ast = self.parse(parser) else { continue }
 
-        guard let binOp = self.matchBoolOp(expr) else { return }
-        XCTAssertEqual(binOp.0, op, msg)
-        XCTAssertExpression(binOp.left,  "True", msg)
-        XCTAssertExpression(binOp.right, "False", msg)
-
-        XCTAssertExpression(expr, "(\(op) True False)", msg)
-        XCTAssertEqual(expr.start, loc0, msg)
-        XCTAssertEqual(expr.end,   loc5, msg)
-      }
+      XCTAssertAST(ast, """
+      ExpressionAST(start: 0:0, end: 5:10)
+        BoolOpExpr(start: 0:0, end: 5:10)
+          Operator: \(op)
+          Left
+            TrueExpr(start: 0:0, end: 1:6)
+          Right
+            FalseExpr(start: 4:4, end: 5:10)
+      """)
     }
   }
 
@@ -55,22 +53,29 @@ class ParseBoolExpr: XCTestCase, Common, ExpressionMatcher {
 
   /// not not false = not (not false)
   func test_not_isRightAssociative() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.not,   start: loc0, end: loc1),
       self.token(.not,   start: loc2, end: loc3),
       self.token(.false, start: loc4, end: loc5)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      XCTAssertExpression(expr, "(not (not False))")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc5)
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 5:10)
+      UnaryOpExpr(start: 0:0, end: 5:10)
+        Operator: not
+        Right
+          UnaryOpExpr(start: 2:2, end: 5:10)
+            Operator: not
+            Right
+              FalseExpr(start: 4:4, end: 5:10)
+    """)
   }
 
   /// true and false and true = (true and false) and true
   func test_and_isLeftAssociative() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.true,  start: loc0, end: loc1),
       self.token(.and,   start: loc2, end: loc3),
       self.token(.false, start: loc4, end: loc5),
@@ -78,16 +83,27 @@ class ParseBoolExpr: XCTestCase, Common, ExpressionMatcher {
       self.token(.true,  start: loc8, end: loc9)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      XCTAssertExpression(expr, "(and (and True False) True)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 9:14)
+      BoolOpExpr(start: 0:0, end: 9:14)
+        Operator: and
+        Left
+          BoolOpExpr(start: 0:0, end: 5:10)
+            Operator: and
+            Left
+              TrueExpr(start: 0:0, end: 1:6)
+            Right
+              FalseExpr(start: 4:4, end: 5:10)
+        Right
+          TrueExpr(start: 8:8, end: 9:14)
+    """)
   }
 
   /// true or false or true = (true or false) or true
   func test_or_isLeftAssociative() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.true,  start: loc0, end: loc1),
       self.token(.or,    start: loc2, end: loc3),
       self.token(.false, start: loc4, end: loc5),
@@ -95,34 +111,54 @@ class ParseBoolExpr: XCTestCase, Common, ExpressionMatcher {
       self.token(.true,  start: loc8, end: loc9)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      XCTAssertExpression(expr, "(or (or True False) True)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 9:14)
+      BoolOpExpr(start: 0:0, end: 9:14)
+        Operator: or
+        Left
+          BoolOpExpr(start: 0:0, end: 5:10)
+            Operator: or
+            Left
+              TrueExpr(start: 0:0, end: 1:6)
+            Right
+              FalseExpr(start: 4:4, end: 5:10)
+        Right
+          TrueExpr(start: 8:8, end: 9:14)
+    """)
   }
 
   // MARK: - Precedence
 
   /// not true and false = (not true) and false
   func test_not_hasHigherPrecedence_thanAnd() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.not,   start: loc0, end: loc1),
       self.token(.true,  start: loc2, end: loc3),
       self.token(.and,   start: loc4, end: loc5),
       self.token(.false, start: loc6, end: loc7)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      XCTAssertExpression(expr, "(and (not True) False)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc7)
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 7:12)
+      BoolOpExpr(start: 0:0, end: 7:12)
+        Operator: and
+        Left
+          UnaryOpExpr(start: 0:0, end: 3:8)
+            Operator: not
+            Right
+              TrueExpr(start: 2:2, end: 3:8)
+        Right
+          FalseExpr(start: 6:6, end: 7:12)
+    """)
   }
 
   /// true or false and true = true or (false and true)
   func test_and_hasHigherPrecedence_thanOr() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.true,  start: loc0, end: loc1),
       self.token(.or,    start: loc2, end: loc3),
       self.token(.false, start: loc4, end: loc5),
@@ -130,10 +166,21 @@ class ParseBoolExpr: XCTestCase, Common, ExpressionMatcher {
       self.token(.true,  start: loc8, end: loc9)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      XCTAssertExpression(expr, "(or True (and False True))")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
-    }
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ExpressionAST(start: 0:0, end: 9:14)
+      BoolOpExpr(start: 0:0, end: 9:14)
+        Operator: or
+        Left
+          TrueExpr(start: 0:0, end: 1:6)
+        Right
+          BoolOpExpr(start: 4:4, end: 9:14)
+            Operator: and
+            Left
+              FalseExpr(start: 4:4, end: 5:10)
+            Right
+              TrueExpr(start: 8:8, end: 9:14)
+    """)
   }
 }
