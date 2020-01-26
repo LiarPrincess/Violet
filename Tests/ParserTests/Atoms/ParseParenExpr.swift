@@ -3,24 +3,23 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseParenExpr: XCTestCase, Common, ExpressionMatcher {
+class ParseParenExpr: XCTestCase, Common {
 
   // MARK: - Empty
 
   /// ()
   func test_emptyTuple() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftParen,  start: loc0, end: loc1),
       self.token(.rightParen, start: loc2, end: loc3)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let tupleExpr = self.matchTuple(expr) else { return }
-      XCTAssertEqual(tupleExpr.count, 0)
-
-      XCTAssertExpression(expr, "()")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc3)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 3:8)
+  TupleExpr(start: 0:0, end: 3:8)
+    Elements: none
+""")
     }
   }
 
@@ -28,19 +27,18 @@ class ParseParenExpr: XCTestCase, Common, ExpressionMatcher {
 
   /// (elsa)
   func test_value() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftParen,          start: loc0, end: loc1),
       self.token(.identifier("elsa"), start: loc2, end: loc3),
       self.token(.rightParen,         start: loc4, end: loc5)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let id = self.matchIdentifier(expr) else { return }
-      XCTAssertEqual(id, "elsa")
-
-      XCTAssertExpression(expr, "elsa")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc5)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 5:10)
+  IdentifierExpr(start: 0:0, end: 5:10)
+    Value: elsa
+""")
     }
   }
 
@@ -48,29 +46,27 @@ class ParseParenExpr: XCTestCase, Common, ExpressionMatcher {
 
   /// (elsa,)
   func test_value_withComaAfter_givesTuple() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftParen,          start: loc0, end: loc1),
       self.token(.identifier("elsa"), start: loc2, end: loc3),
       self.token(.comma,              start: loc4, end: loc5),
       self.token(.rightParen,         start: loc6, end: loc7)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let tupleExpr = self.matchTuple(expr) else { return }
-
-      XCTAssertEqual(tupleExpr.count, 1)
-      guard tupleExpr.count == 1 else { return }
-      XCTAssertExpression(tupleExpr[0], "elsa")
-
-      XCTAssertExpression(expr, "(elsa)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc7)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 7:12)
+  TupleExpr(start: 0:0, end: 7:12)
+    Elements
+      IdentifierExpr(start: 2:2, end: 3:8)
+        Value: elsa
+""")
     }
   }
 
   /// (elsa, anna)
   func test_tuple() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftParen,          start: loc0, end: loc1),
       self.token(.identifier("elsa"), start: loc2, end: loc3),
       self.token(.comma,              start: loc4, end: loc5),
@@ -78,17 +74,16 @@ class ParseParenExpr: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,         start: loc8, end: loc9)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let tupleExpr = self.matchTuple(expr) else { return }
-
-      XCTAssertEqual(tupleExpr.count, 2)
-      guard tupleExpr.count == 2 else { return }
-      XCTAssertExpression(tupleExpr[0], "elsa")
-      XCTAssertExpression(tupleExpr[1], "anna")
-
-      XCTAssertExpression(expr, "(elsa anna)")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc9)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 9:14)
+  TupleExpr(start: 0:0, end: 9:14)
+    Elements
+      IdentifierExpr(start: 2:2, end: 3:8)
+        Value: elsa
+      IdentifierExpr(start: 6:6, end: 7:12)
+        Value: anna
+""")
     }
   }
 
@@ -96,44 +91,44 @@ class ParseParenExpr: XCTestCase, Common, ExpressionMatcher {
 
   /// (yield)
   func test_yield_nil() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftParen,  start: loc0, end: loc1),
       self.token(.yield,      start: loc2, end: loc3),
       self.token(.rightParen, start: loc4, end: loc5)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let yieldExpr = self.matchYield(expr) else { return }
-      XCTAssertEqual(yieldExpr, nil)
-
-      XCTAssertExpression(expr, "(yield)")
-      XCTAssertEqual(expr.start, loc2)
-      XCTAssertEqual(expr.end,   loc3)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 5:10)
+  YieldExpr(start: 2:2, end: 3:8)
+    Value: none
+""")
     }
   }
 
   /// (yield elsa)
   func test_yield_expr() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftParen,          start: loc0, end: loc1),
       self.token(.yield,              start: loc2, end: loc3),
       self.token(.identifier("elsa"), start: loc4, end: loc5),
       self.token(.rightParen,         start: loc6, end: loc7)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let yieldExpr = self.matchYield(expr) else { return }
-      XCTAssertExpression(yieldExpr, "elsa")
-
-      XCTAssertExpression(expr, "(yield elsa)")
-      XCTAssertEqual(expr.start, loc2)
-      XCTAssertEqual(expr.end,   loc5)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 7:12)
+  YieldExpr(start: 2:2, end: 5:10)
+    Value
+      IdentifierExpr(start: 4:4, end: 5:10)
+        Value: elsa
+""")
     }
   }
 
   /// (yield elsa, anna)
   func test_yield_tuple() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftParen,          start: loc0, end: loc1),
       self.token(.yield,              start: loc2, end: loc3),
       self.token(.identifier("elsa"), start: loc4, end: loc5),
@@ -142,13 +137,18 @@ class ParseParenExpr: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,         start: loc10, end: loc11)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let yieldExpr = self.matchYield(expr) else { return }
-      XCTAssertExpression(yieldExpr, "(elsa anna)")
-
-      XCTAssertExpression(expr, "(yield (elsa anna))")
-      XCTAssertEqual(expr.start, loc2)
-      XCTAssertEqual(expr.end,   loc9)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 11:16)
+  YieldExpr(start: 2:2, end: 9:14)
+    Value
+      TupleExpr(start: 4:4, end: 9:14)
+        Elements
+          IdentifierExpr(start: 4:4, end: 5:10)
+            Value: elsa
+          IdentifierExpr(start: 8:8, end: 9:14)
+            Value: anna
+""")
     }
   }
 
@@ -156,7 +156,7 @@ class ParseParenExpr: XCTestCase, Common, ExpressionMatcher {
 
   /// (elsa for anna in [])
   func test_generator() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftParen,          start: loc0, end: loc1),
       self.token(.identifier("elsa"), start: loc2, end: loc3),
       self.token(.for,                start: loc4, end: loc5),
@@ -167,24 +167,24 @@ class ParseParenExpr: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightParen,         start: loc14, end: loc15)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let genExpr = self.matchGeneratorExp(expr) else { return }
-      XCTAssertExpression(genExpr.elt, "elsa")
-
-      XCTAssertEqual(genExpr.generators.count, 1)
-      guard genExpr.generators.count == 1 else { return }
-
-      let g = genExpr.generators[0]
-      XCTAssertEqual(g.isAsync, false)
-      XCTAssertExpression(g.target, "anna")
-      XCTAssertExpression(g.iter, "[]")
-      XCTAssertEqual(g.ifs.count, 0)
-      XCTAssertEqual(g.start, loc4)
-      XCTAssertEqual(g.end, loc13)
-
-      XCTAssertExpression(expr, "(generatorCompr elsa (for anna in []))")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc15)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 15:20)
+  GeneratorExpr(start: 0:0, end: 15:20)
+    Element
+      IdentifierExpr(start: 2:2, end: 3:8)
+        Value: elsa
+    Generators
+      Comprehension(start: 4:4, end: 13:18)
+        isAsync: false
+        Target
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: anna
+        Iterable
+          ListExpr(start: 10:10, end: 13:18)
+            Elements: none
+        Ifs: none
+""")
     }
   }
 }

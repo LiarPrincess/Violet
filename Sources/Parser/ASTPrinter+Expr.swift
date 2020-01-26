@@ -10,7 +10,10 @@ extension ASTPrinter {
   private func base(expr: Expression, lines: [Doc] = []) -> Doc {
     let type = self.typeName(of: expr)
     let title = "\(type)(start: \(expr.start), end: \(expr.end))"
-    return self.block(title: title, lines: lines)
+
+    return lines.isEmpty ?
+      self.text(title) :
+      self.block(title: title, lines: lines)
   }
 
   // MARK: - Expr
@@ -174,24 +177,27 @@ extension ASTPrinter {
   // MARK: - Collection expr
 
   public func visit(_ node: TupleExpr) -> Doc {
-    return self.base(
-      expr: node,
-      lines: block(title: "Elements", lines: node.elements.map(self.visit))
-    )
+    let e = node.elements.isEmpty ?
+      self.text("Elements: none") :
+      self.block(title: "Elements", lines: node.elements.map(self.visit))
+
+    return self.base(expr: node, lines: e)
   }
 
   public func visit(_ node: ListExpr) -> Doc {
-    return self.base(
-      expr: node,
-      lines: block(title: "Elements", lines: node.elements.map(self.visit))
-    )
+    let e = node.elements.isEmpty ?
+      self.text("Elements: none") :
+      self.block(title: "Elements", lines: node.elements.map(self.visit))
+
+    return self.base(expr: node, lines: e)
   }
 
   public func visit(_ node: DictionaryExpr) -> Doc {
-    return self.base(
-      expr: node,
-      lines: []
-    )
+    let e = node.elements.isEmpty ?
+      self.text("Elements: none") :
+      self.block(title: "Elements", lines: node.elements.map(self.visit))
+
+    return self.base(expr: node, lines: e)
   }
 
   public func visit(_ element: DictionaryElement) -> Doc {
@@ -209,10 +215,11 @@ extension ASTPrinter {
   }
 
   public func visit(_ node: SetExpr) -> Doc {
-    return self.base(
-      expr: node,
-      lines: block(title: "Elements", lines: node.elements.map(self.visit))
-    )
+    let e = node.elements.isEmpty ?
+      self.text("Elements: none") :
+      self.block(title: "Elements", lines: node.elements.map(self.visit))
+
+    return self.base(expr: node, lines: e)
   }
 
   // MARK: - Comprehension expr
@@ -280,11 +287,11 @@ extension ASTPrinter {
   // MARK: - Yield expr
 
   public func visit(_ node: YieldExpr) -> Doc {
-    let v = node.value.map(self.visit) ?? text("(none)")
-    return self.base(
-      expr: node,
-      lines: self.block(title: "Value", lines: v)
-    )
+    let v = node.value.map {
+      self.block(title: "Value", lines: self.visit($0))
+    } ?? text("Value: none")
+
+    return self.base(expr: node, lines: v)
   }
 
   public func visit(_ node: YieldFromExpr) -> Doc {

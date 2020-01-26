@@ -3,78 +3,74 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseSet: XCTestCase, Common, ExpressionMatcher {
+class ParseSet: XCTestCase, Common {
 
   // MARK: - Set
 
   /// {rapunzel}
   func test_singleElement() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.identifier("rapunzel"), start: loc2, end: loc3),
       self.token(.rightBrace,             start: loc4, end: loc5)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let setExpr = self.matchSet(expr) else { return }
-
-      XCTAssertEqual(setExpr.count, 1)
-      guard setExpr.count == 1 else { return }
-      XCTAssertExpression(setExpr[0], "rapunzel")
-
-      XCTAssertExpression(expr, "{rapunzel}")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc5)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 5:10)
+  SetExpr(start: 0:0, end: 5:10)
+    Elements
+      IdentifierExpr(start: 2:2, end: 3:8)
+        Value: rapunzel
+""")
     }
   }
 
   /// {rapunzel,}
   func test_withComaAfter() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.identifier("rapunzel"), start: loc2, end: loc3),
       self.token(.comma,                  start: loc4, end: loc5),
       self.token(.rightBrace,             start: loc6, end: loc7)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let setExpr = self.matchSet(expr) else { return }
-
-      XCTAssertEqual(setExpr.count, 1)
-      guard setExpr.count == 1 else { return }
-      XCTAssertExpression(setExpr[0], "rapunzel")
-
-      XCTAssertExpression(expr, "{rapunzel}")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc7)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 7:12)
+  SetExpr(start: 0:0, end: 7:12)
+    Elements
+      IdentifierExpr(start: 2:2, end: 3:8)
+        Value: rapunzel
+""")
     }
   }
 
   /// {*1}
   func test_star() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.star,                   start: loc2, end: loc3),
       self.token(.identifier("rapunzel"), start: loc4, end: loc5),
       self.token(.rightBrace,             start: loc6, end: loc7)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let setExpr = self.matchSet(expr) else { return }
-
-      XCTAssertEqual(setExpr.count, 1)
-      guard setExpr.count == 1 else { return }
-      XCTAssertExpression(setExpr[0], "*rapunzel")
-
-      XCTAssertExpression(expr, "{*rapunzel}")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc7)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 7:12)
+  SetExpr(start: 0:0, end: 7:12)
+    Elements
+      StarredExpr(start: 2:2, end: 5:10)
+        Expression
+          IdentifierExpr(start: 4:4, end: 5:10)
+            Value: rapunzel
+""")
     }
   }
 
   /// {rapunzel, *eugene, cassandra}
   func test_multipleElements() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftBrace,               start: loc0, end: loc1),
       self.token(.identifier("rapunzel"),  start: loc2, end: loc3),
       self.token(.comma,                   start: loc4, end: loc5),
@@ -85,18 +81,20 @@ class ParseSet: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightBrace,              start: loc14, end: loc15)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let setExpr = self.matchSet(expr) else { return }
-
-      XCTAssertEqual(setExpr.count, 3)
-      guard setExpr.count == 3 else { return }
-      XCTAssertExpression(setExpr[0], "rapunzel")
-      XCTAssertExpression(setExpr[1], "*eugene")
-      XCTAssertExpression(setExpr[2], "cassandra")
-
-      XCTAssertExpression(expr, "{rapunzel *eugene cassandra}")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc15)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 15:20)
+  SetExpr(start: 0:0, end: 15:20)
+    Elements
+      IdentifierExpr(start: 2:2, end: 3:8)
+        Value: rapunzel
+      StarredExpr(start: 6:6, end: 9:14)
+        Expression
+          IdentifierExpr(start: 8:8, end: 9:14)
+            Value: eugene
+      IdentifierExpr(start: 12:12, end: 13:18)
+        Value: cassandra
+""")
     }
   }
 
@@ -104,7 +102,7 @@ class ParseSet: XCTestCase, Common, ExpressionMatcher {
 
   /// {rapunzel for eugene in []}
   func test_comprehension() {
-    var parser = self.createExprParser(
+    let parser = self.createExprParser(
       self.token(.leftBrace,              start: loc0, end: loc1),
       self.token(.identifier("rapunzel"), start: loc2, end: loc3),
       self.token(.for,                    start: loc4, end: loc5),
@@ -115,24 +113,24 @@ class ParseSet: XCTestCase, Common, ExpressionMatcher {
       self.token(.rightBrace,             start: loc14, end: loc15)
     )
 
-    if let expr = self.parseExpr(&parser) {
-      guard let setGen = self.matchSetComprehension(expr) else { return }
-      XCTAssertExpression(setGen.elt, "rapunzel")
-
-      XCTAssertEqual(setGen.generators.count, 1)
-      guard setGen.generators.count == 1 else { return }
-
-      let g = setGen.generators[0]
-      XCTAssertEqual(g.isAsync, false)
-      XCTAssertExpression(g.target, "eugene")
-      XCTAssertExpression(g.iter, "[]")
-      XCTAssertEqual(g.ifs.count, 0)
-      XCTAssertEqual(g.start, loc4)
-      XCTAssertEqual(g.end, loc13)
-
-      XCTAssertExpression(expr, "(setCompr rapunzel (for eugene in []))")
-      XCTAssertEqual(expr.start, loc0)
-      XCTAssertEqual(expr.end,   loc15)
+    if let ast = self.parse(parser) {
+      XCTAssertAST(ast, """
+ExpressionAST(start: 0:0, end: 15:20)
+  SetComprehensionExpr(start: 0:0, end: 15:20)
+    Element
+      IdentifierExpr(start: 2:2, end: 3:8)
+        Value: rapunzel
+    Generators
+      Comprehension(start: 4:4, end: 13:18)
+        isAsync: false
+        Target
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: eugene
+        Iterable
+          ListExpr(start: 10:10, end: 13:18)
+            Elements: none
+        Ifs: none
+""")
     }
   }
 }

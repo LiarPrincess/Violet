@@ -10,7 +10,10 @@ extension ASTPrinter {
   private func base(stmt: Statement, lines: [Doc] = []) -> Doc {
     let type = self.typeName(of: stmt)
     let title = "\(type)(start: \(stmt.start), end: \(stmt.end))"
-    return self.block(title: title, lines: lines)
+    
+    return lines.isEmpty ?
+      self.text(title) :
+      self.block(title: title, lines: lines)
   }
 
   // MARK: - Stmt

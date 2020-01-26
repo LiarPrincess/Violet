@@ -4,7 +4,7 @@ import Lexer
 @testable import Parser
 
 /// Shared test helpers.
-internal protocol Common: ASTMatcher { }
+internal protocol Common { }
 
 extension Common {
 
@@ -33,45 +33,20 @@ extension Common {
 
   // MARK: - Parse
 
-  internal func parseExpr(_ parser: inout Parser,
-                          file:    StaticString = #file,
-                          line:    UInt         = #line) -> Expression? {
+  internal func parse(_ parser: Parser,
+                      file: StaticString = #file,
+                      line: UInt         = #line) -> AST? {
     do {
-      let ast = try parser.parse()
-      return self.matchExpression(ast, file: file, line: line)
+      return try parser.parse()
     } catch {
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil
     }
   }
 
-  internal func parseStmt(_ parser: inout Parser,
-                          file:    StaticString = #file,
-                          line:    UInt         = #line) -> Statement? {
-    do {
-      let ast = try parser.parse()
-      guard let statements = self.matchModule(ast, file: file, line: line) else {
-        return nil
-      }
-
-      guard statements.count == 1 else {
-        let msg = "Got \(statements.count) statements (expected 1)."
-        XCTAssert(false, msg, file: file, line: line)
-        return nil
-      }
-
-      return statements[0]
-    } catch {
-      XCTAssert(false, "\(error)", file: file, line: line)
-      return nil
-    }
-  }
-
-  // MARK: - Errors
-
-  internal func error(_ parser: inout Parser,
-                      file:    StaticString = #file,
-                      line:    UInt = #line) -> ParserError? {
+  internal func error(_ parser: Parser,
+                      file: StaticString = #file,
+                      line: UInt = #line) -> ParserError? {
     do {
       let result = try parser.parse()
       XCTAssert(false, "Successful parse: \(result)", file: file, line: line)
@@ -82,5 +57,14 @@ extension Common {
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil
     }
+  }
+
+  // MARK: - Dump
+
+  @available(*, deprecated, message: "Use only when writing tests!")
+  internal func dump<C: CustomStringConvertible>(_ value: C) {
+    print("=========")
+    print(value)
+    print("=========")
   }
 }

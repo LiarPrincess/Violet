@@ -30,23 +30,6 @@ private func generateAST() {
     inputFile: definition,
     outputFile: parserDir.appendingPathComponent("ASTBuilder.swift")
   )
-
-  // Destruct
-  let entities = parseLetItGo(file: definition)
-  let patternFile = parserTestsDir
-    .appendingPathComponent("Helpers")
-    .appendingPathComponent("PatternMatching.swift")
-  let patternEmitter = try! AstPatternMatchingEmitter(letItGo: definition,
-                                                      output: patternFile)
-  patternEmitter.emit(entities: entities)
-}
-
-private func parseLetItGo(file: URL) -> [Entity] {
-  // swiftlint:disable:next force_try
-  let content = try! String(contentsOf: file, encoding: .utf8)
-  let lexer = Lexer(source: content)
-  let parser = Parser(lexer: lexer)
-  return parser.parse()
 }
 
 private func generateBytecode() {

@@ -62,15 +62,15 @@ public class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
   }
 
   internal func trim(_ value: String) -> String {
-    let index = value.index(value.startIndex,
-                            offsetBy: ASTPrinter.stringCutoff,
-                            limitedBy: value.endIndex)
-
-    switch index {
+    let str = value.replacingOccurrences(of: "\n", with: "\\n")
+    let cutoffIndex = str.index(str.startIndex,
+                                offsetBy: ASTPrinter.stringCutoff,
+                                limitedBy: str.endIndex)
+    switch cutoffIndex {
     case .none:
       return value
     case .some(let i):
-      return String(value[...i]) + "..."
+      return String(str[...i]) + "..."
     }
   }
 }

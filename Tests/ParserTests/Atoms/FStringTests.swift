@@ -1,3 +1,4 @@
+
 import Foundation
 import XCTest
 import Core
@@ -10,7 +11,7 @@ import Lexer
 
 // swiftlint:disable file_length
 
-class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
+class FStringTests: XCTestCase, Common {
 
   // MARK: - Empty
 
@@ -18,9 +19,9 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     var string = FString()
 
     let group = try string.compile()
-    if let result = self.matchStringLiteral(group) {
-      XCTAssertEqual(result, "")
-    }
+    XCTAssertString(group, """
+String: ''
+""")
   }
 
   // MARK: - String
@@ -32,27 +33,21 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     string.append(s)
 
     let group = try string.compile()
-    if let result = self.matchStringLiteral(group) {
-      XCTAssertEqual(result, s)
-    }
+    XCTAssertString(group, """
+String: 'The snow glows white on the mountain tonight'
+""")
   }
 
-  func test_string_multiple() throws {
+  func test_string_multiline() throws {
     var string = FString()
     string.append("Not a footprint to be seen\n")
     string.append("A kingdom of isolation\n")
     string.append("And it looks like I'm the queen")
 
-    let expected = """
-      Not a footprint to be seen
-      A kingdom of isolation
-      And it looks like I'm the queen
-      """
-
     let group = try string.compile()
-    if let result = self.matchStringLiteral(group) {
-      XCTAssertEqual(result, expected)
-    }
+    XCTAssertString(group, """
+String: 'Not a footprint to be seen\\nA kingdom of isolation\\nAnd it lo...'
+""")
   }
 
   // MARK: - FString - without expr
@@ -64,22 +59,21 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString(s)
 
     let group = try string.compile()
-    if let result = self.matchStringLiteral(group) {
-      XCTAssertEqual(result, s)
-    }
+    XCTAssertString(group, """
+String: 'The wind is howling like this swirling storm inside'
+""")
   }
 
   func test_fString_withoutExpr_withEscapes() throws {
     let s = "Couldn't keep {{it}} in, heaven knows I tried!"
-    let expected = "Couldn't keep {it} in, heaven knows I tried!"
 
     var string = FString()
     try string.appendFormatString(s)
 
     let group = try string.compile()
-    if let result = self.matchStringLiteral(group) {
-      XCTAssertEqual(result, expected)
-    }
+    XCTAssertString(group, """
+String: 'Couldn't keep {it} in, heaven knows I tried!'
+""")
   }
 
   func test_fString_withoutExpr_withUnclosedEscape_throws() throws {
@@ -115,15 +109,10 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("Conceal, don't feel, don't let them know\n")
     try string.appendFormatString("Well, now they know!")
 
-    let expected = """
-      Conceal, don't feel, don't let them know
-      Well, now they know!
-      """
-
     let group = try string.compile()
-    if let result = self.matchStringLiteral(group) {
-      XCTAssertEqual(result, expected)
-    }
+    XCTAssertString(group, """
+String: 'Conceal, don't feel, don't let them know\\nWell, now they know...'
+""")
   }
 
   // MARK: - Formatted value
@@ -133,14 +122,13 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("{2013}")
 
     let group = try string.compile()
-    if let value = self.matchStringFormattedValue(group) {
-      guard let pyInt = self.matchInt(value.0) else { return }
-      XCTAssertEqual(pyInt, BigInt(2_013))
-
-      XCTAssertExpression(value.0, "2013")
-      XCTAssertEqual(value.conversion, nil)
-      XCTAssertEqual(value.spec, nil)
-    }
+    XCTAssertString(group, """
+Formatted string
+  IntExpr(start: 1:0, end: 1:4)
+    Value: 2013
+  Conversion: none
+  Spec: none
+""")
   }
 
   func test_formattedValue_addition() throws {
@@ -148,16 +136,19 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("{20 + 13}")
 
     let group = try string.compile()
-    if let value = self.matchStringFormattedValue(group) {
-      guard let bin = self.matchBinaryOp(value.0) else { return }
-      XCTAssertEqual(bin.0, BinaryOperator.add)
-      XCTAssertExpression(bin.left, "20")
-      XCTAssertExpression(bin.right, "13")
-
-      XCTAssertExpression(value.0, "(+ 20 13)")
-      XCTAssertEqual(value.conversion, nil)
-      XCTAssertEqual(value.spec, nil)
-    }
+    XCTAssertString(group, """
+Formatted string
+  BinaryOpExpr(start: 1:0, end: 1:7)
+    Operator: +
+    Left
+      IntExpr(start: 1:0, end: 1:2)
+        Value: 20
+    Right
+      IntExpr(start: 1:5, end: 1:7)
+        Value: 13
+  Conversion: none
+  Spec: none
+""")
   }
 
   func test_formattedValue_string() throws {
@@ -165,14 +156,13 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("{'Let it go, let it go'}")
 
     let group = try string.compile()
-    if let value = self.matchStringFormattedValue(group) {
-      guard let valueStr = self.matchString(value.0) else { return }
-      XCTAssertEqual(valueStr, StringGroup.literal("Let it go, let it go"))
-
-      XCTAssertExpression(value.0, "'Let it go, let it go'")
-      XCTAssertEqual(value.conversion, nil)
-      XCTAssertEqual(value.spec, nil)
-    }
+    XCTAssertString(group, """
+Formatted string
+  StringExpr(start: 1:0, end: 1:22)
+    String: 'Let it go, let it go'
+  Conversion: none
+  Spec: none
+""")
   }
 
   func test_formattedValue_inParens() throws {
@@ -180,11 +170,13 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("{('Cant hold it back anymore')}")
 
     let group = try string.compile()
-    if let value = self.matchStringFormattedValue(group) {
-      XCTAssertExpression(value.0, "'Cant hold it back an...'")
-      XCTAssertEqual(value.conversion, nil)
-      XCTAssertEqual(value.spec, nil)
-    }
+    XCTAssertString(group, """
+Formatted string
+  StringExpr(start: 1:0, end: 1:29)
+    String: 'Cant hold it back anymore'
+  Conversion: none
+  Spec: none
+""")
   }
 
   func test_formattedValue_conversion() throws {
@@ -192,11 +184,13 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("{'Let it go, let it go'!r}")
 
     let group = try string.compile()
-    if let value = self.matchStringFormattedValue(group) {
-      XCTAssertExpression(value.0, "'Let it go, let it go'")
-      XCTAssertEqual(value.conversion, .repr)
-      XCTAssertEqual(value.spec, nil)
-    }
+    XCTAssertString(group, """
+Formatted string
+  StringExpr(start: 1:0, end: 1:22)
+    String: 'Let it go, let it go'
+  Conversion: repr
+  Spec: none
+""")
   }
 
   func test_formattedValue_formatSpec() throws {
@@ -204,11 +198,13 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("{'Let it go, let it go':^30}")
 
     let group = try string.compile()
-    if let value = self.matchStringFormattedValue(group) {
-      XCTAssertExpression(value.0, "'Let it go, let it go'")
-      XCTAssertEqual(value.conversion, nil)
-      XCTAssertEqual(value.spec, "^30")
-    }
+    XCTAssertString(group, """
+Formatted string
+  StringExpr(start: 1:0, end: 1:22)
+    String: 'Let it go, let it go'
+  Conversion: none
+  Spec: ^30
+""")
   }
 
   func test_formattedValue_conversion_formatSpec() throws {
@@ -216,11 +212,13 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("{'Turn away and slam the door!'!a:^30}")
 
     let group = try string.compile()
-    if let value = self.matchStringFormattedValue(group) {
-      XCTAssertExpression(value.0, "'Turn away and slam t...'")
-      XCTAssertEqual(value.conversion, .ascii)
-      XCTAssertEqual(value.spec, "^30")
-    }
+    XCTAssertString(group, """
+Formatted string
+  StringExpr(start: 1:0, end: 1:30)
+    String: 'Turn away and slam the door!'
+  Conversion: ascii
+  Spec: ^30
+""")
   }
 
   // MARK: - FString - joined
@@ -230,19 +228,15 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("{I} don't care\nWhat they're going to say")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoined(group) {
-      XCTAssertEqual(joined.count, 2)
-      guard joined.count == 2 else { return }
-
-      guard let value0 = self.matchStringFormattedValue(joined[0]) else { return }
-      guard let id0 = self.matchIdentifier(value0.0) else { return }
-      XCTAssertEqual(id0, "I")
-      XCTAssertEqual(value0.conversion, nil)
-      XCTAssertEqual(value0.spec, nil)
-
-      guard let str1 = self.matchStringLiteral(joined[1]) else { return }
-      XCTAssertEqual(str1, " don't care\nWhat they're going to say")
-    }
+    XCTAssertString(group, """
+Joined string
+  Formatted string
+    IdentifierExpr(start: 1:0, end: 1:1)
+      Value: I
+    Conversion: none
+    Spec: none
+  String: ' don't care\nWhat they're going to say'
+""")
   }
 
   func test_joined_expression_asEnd() throws {
@@ -250,19 +244,15 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("Let the storm rage {on}")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoined(group) {
-      XCTAssertEqual(joined.count, 2)
-      guard joined.count == 2 else { return }
-
-      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
-      XCTAssertEqual(str0, "Let the storm rage ")
-
-      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
-      guard let id1 = self.matchIdentifier(value1.0) else { return }
-      XCTAssertEqual(id1, "on")
-      XCTAssertEqual(value1.conversion, nil)
-      XCTAssertEqual(value1.spec, nil)
-    }
+    XCTAssertString(group, """
+Joined string
+  String: 'Let the storm rage '
+  Formatted string
+    IdentifierExpr(start: 1:0, end: 1:2)
+      Value: on
+    Conversion: none
+    Spec: none
+""")
   }
 
   func test_joined_expression_inTheMiddle() throws {
@@ -270,22 +260,16 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("The cold never {bothered} me anyway!")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoined(group) {
-      XCTAssertEqual(joined.count, 3)
-      guard joined.count == 3 else { return }
-
-      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
-      XCTAssertEqual(str0, "The cold never ")
-
-      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
-      guard let id1 = self.matchIdentifier(value1.0) else { return }
-      XCTAssertEqual(id1, "bothered")
-      XCTAssertEqual(value1.conversion, nil)
-      XCTAssertEqual(value1.spec, nil)
-
-      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
-      XCTAssertEqual(str2, " me anyway!")
-    }
+    XCTAssertString(group, """
+Joined string
+  String: 'The cold never '
+  Formatted string
+    IdentifierExpr(start: 1:0, end: 1:8)
+      Value: bothered
+    Conversion: none
+    Spec: none
+  String: ' me anyway!'
+""")
   }
 
   func test_joined_expression_inTheMiddle_withConversion_andFormatSpec() throws {
@@ -293,22 +277,16 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("Its funny {how!s:-10} some distance")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoined(group) {
-      XCTAssertEqual(joined.count, 3)
-      guard joined.count == 3 else { return }
-
-      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
-      XCTAssertEqual(str0, "Its funny ")
-
-      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
-      guard let id1 = self.matchIdentifier(value1.0) else { return }
-      XCTAssertEqual(id1, "how")
-      XCTAssertEqual(value1.conversion, .str)
-      XCTAssertEqual(value1.spec, "-10")
-
-      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
-      XCTAssertEqual(str2, " some distance")
-    }
+    XCTAssertString(group, """
+Joined string
+  String: 'Its funny '
+  Formatted string
+    IdentifierExpr(start: 1:0, end: 1:3)
+      Value: how
+    Conversion: str
+    Spec: -10
+  String: ' some distance'
+""")
   }
 
   func test_joined_expressions_multiple() throws {
@@ -316,28 +294,21 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("Makes {everything:+6} seem {small!a}")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoined(group) {
-      XCTAssertEqual(joined.count, 4)
-      guard joined.count == 4 else { return }
-
-      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
-      XCTAssertEqual(str0, "Makes ")
-
-      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
-      guard let id1 = self.matchIdentifier(value1.0) else { return }
-      XCTAssertEqual(id1, "everything")
-      XCTAssertEqual(value1.conversion, nil)
-      XCTAssertEqual(value1.spec, "+6")
-
-      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
-      XCTAssertEqual(str2, " seem ")
-
-      guard let value3 = self.matchStringFormattedValue(joined[3]) else { return }
-      guard let id3 = self.matchIdentifier(value3.0) else { return }
-      XCTAssertEqual(id3, "small")
-      XCTAssertEqual(value3.conversion, .ascii)
-      XCTAssertEqual(value3.spec, nil)
-    }
+    XCTAssertString(group, """
+Joined string
+  String: 'Makes '
+  Formatted string
+    IdentifierExpr(start: 1:0, end: 1:10)
+      Value: everything
+    Conversion: none
+    Spec: +6
+  String: ' seem '
+  Formatted string
+    IdentifierExpr(start: 1:0, end: 1:5)
+      Value: small
+    Conversion: ascii
+    Spec: none
+""")
   }
 
   func test_joined_expressions_sideBySide() throws {
@@ -345,28 +316,21 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString("And the {fears}{that} once controlled me")
 
     let group = try string.compile()
-    if let joined = self.matchStringJoined(group) {
-      XCTAssertEqual(joined.count, 4)
-      guard joined.count == 4 else { return }
-
-      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
-      XCTAssertEqual(str0, "And the ")
-
-      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
-      guard let id1 = self.matchIdentifier(value1.0) else { return }
-      XCTAssertEqual(id1, "fears")
-      XCTAssertEqual(value1.conversion, nil)
-      XCTAssertEqual(value1.spec, nil)
-
-      guard let value2 = self.matchStringFormattedValue(joined[2]) else { return }
-      guard let id2 = self.matchIdentifier(value2.0) else { return }
-      XCTAssertEqual(id2, "that")
-      XCTAssertEqual(value2.conversion, nil)
-      XCTAssertEqual(value2.spec, nil)
-
-      guard let str3 = self.matchStringLiteral(joined[3]) else { return }
-      XCTAssertEqual(str3, " once controlled me")
-    }
+    XCTAssertString(group, """
+Joined string
+  String: 'And the '
+  Formatted string
+    IdentifierExpr(start: 1:0, end: 1:5)
+      Value: fears
+    Conversion: none
+    Spec: none
+  Formatted string
+    IdentifierExpr(start: 1:0, end: 1:4)
+      Value: that
+    Conversion: none
+    Spec: none
+  String: ' once controlled me'
+""")
   }
 
   func test_joined_unclosedString_throws() throws {
@@ -417,23 +381,16 @@ class FStringTests: XCTestCase, ExpressionMatcher, StringMatcher {
     try string.appendFormatString(s)
 
     let group = try string.compile()
-    if let joined = self.matchStringJoined(group) {
-      XCTAssertEqual(joined.count, 3)
-      guard joined.count == 3 else { return }
-
-      guard let str0 = self.matchStringLiteral(joined[0]) else { return }
-      XCTAssertEqual(str0, "No right, no wrong, ")
-
-      guard let value1 = self.matchStringFormattedValue(joined[1]) else { return }
-      guard let valueGrp1 = self.matchString(value1.0) else { return }
-      guard let valueStr1 = self.matchStringLiteral(valueGrp1) else { return }
-      XCTAssertEqual(valueStr1, "no rules for me")
-      XCTAssertEqual(value1.conversion, nil)
-      XCTAssertEqual(value1.spec, nil)
-
-      guard let str2 = self.matchStringLiteral(joined[2]) else { return }
-      XCTAssertEqual(str2, " Im free!")
-    }
+    XCTAssertString(group, """
+Joined string
+  String: 'No right, no wrong, '
+  Formatted string
+    StringExpr(start: 1:0, end: 1:21)
+      String: 'no rules for me'
+    Conversion: none
+    Spec: none
+  String: ' Im free!'
+""")
   }
 
   func test_joined_single_unclosedParen_throws_unexpectedEnd() throws {

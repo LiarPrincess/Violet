@@ -40,19 +40,23 @@ extension Parser {
       return try self.atomSetDictionary()
 
     case let .identifier(value):
+      try self.advance()
       return self.builder.identifierExpr(value: value,
                                          start: token.start,
                                          end: token.end)
 
     case let .int(value):
+      try self.advance()
       return self.builder.intExpr(value: value,
                                   start: token.start,
                                   end: token.end)
     case let .float(value):
+      try self.advance()
       return self.builder.floatExpr(value: value,
                                     start: token.start,
                                     end: token.end)
     case let .imaginary(value):
+      try self.advance()
       return self.builder.complexExpr(real: 0.0,
                                       imag: value,
                                       start: token.start,
@@ -64,12 +68,16 @@ extension Parser {
       return try self.bytesPlus()
 
     case .ellipsis:
+      try self.advance()
       return self.builder.ellipsisExpr(start: token.start, end: token.end)
     case .none:
+      try self.advance()
       return self.builder.noneExpr(start: token.start, end: token.end)
     case .true:
+      try self.advance()
       return self.builder.trueExpr(start: token.start, end: token.end)
     case .false:
+      try self.advance()
       return self.builder.falseExpr(start: token.start, end: token.end)
 
     default:
