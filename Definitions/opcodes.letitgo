@@ -589,7 +589,6 @@ and labels properties of 'CodeObject'.
   -- Pushes `SECOND` and result of the call to the stack.
   | WithCleanupStart
 
-  {- TODO: doc -}
   -- Pops exception type and result of ‘exit’ function call from the stack.
   --
   -- If the stack represents an exception, and the function call returns a ‘true’ value,

@@ -57,18 +57,18 @@ private func generateBytecode() {
     .appendingPathComponent("Definitions", isDirectory: true)
     .appendingPathComponent("opcodes.letitgo", isDirectory: false)
 
-  emitTypes(
+  emitBytecode(
     inputFile: definition,
     outputFile: bytecodeDir.appendingPathComponent("Instructions.swift"),
     imports: ["Foundation", "Core"]
   )
 
-  emitCodeObjectDescription(
+  emitBytecodeDescription(
     inputFile: definition,
     outputFile: bytecodeDir.appendingPathComponent("Instructions+Description.swift")
   )
 
-  emitCodeObjectTestHelpers(
+  emitBytecodeTestHelpers(
     inputFile: definition,
     outputFile: compilerTestsDir
       .appendingPathComponent("Helpers")

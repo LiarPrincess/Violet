@@ -1,12 +1,12 @@
 import Foundation
 
-public func emitCodeObjectDescription(inputFile: URL, outputFile: URL) {
+public func emitBytecodeDescription(inputFile: URL, outputFile: URL) {
   withRedirectedStandardOutput(to: outputFile) {
-    emitCodeObjectDescription(inputFile: inputFile)
+    emitBytecodeDescription(inputFile: inputFile)
   }
 }
 
-private func emitCodeObjectDescription(inputFile: URL) {
+private func emitBytecodeDescription(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
   print("import Core")

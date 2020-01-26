@@ -1,14 +1,14 @@
 import Foundation
 
-public func emitTypes(inputFile: URL,
-                      outputFile: URL,
-                      imports: [String]) {
+public func emitBytecode(inputFile: URL,
+                         outputFile: URL,
+                         imports: [String]) {
   withRedirectedStandardOutput(to: outputFile) {
-    emitTypes(inputFile: inputFile, imports: imports)
+    emitBytecode(inputFile: inputFile, imports: imports)
   }
 }
 
-private func emitTypes(inputFile: URL, imports: [String]) {
+private func emitBytecode(inputFile: URL, imports: [String]) {
   print(createHeader(inputFile: inputFile))
 
   for i in imports {

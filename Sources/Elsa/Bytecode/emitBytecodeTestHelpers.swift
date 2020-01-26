@@ -1,12 +1,12 @@
 import Foundation
 
-public func emitCodeObjectTestHelpers(inputFile: URL, outputFile: URL) {
+public func emitBytecodeTestHelpers(inputFile: URL, outputFile: URL) {
   withRedirectedStandardOutput(to: outputFile) {
-    emitCodeObjectTestHelpers(inputFile: inputFile)
+    emitBytecodeTestHelpers(inputFile: inputFile)
   }
 }
 
-private func emitCodeObjectTestHelpers(inputFile: URL) {
+private func emitBytecodeTestHelpers(inputFile: URL) {
   print(createHeader(inputFile: inputFile))
 
   print("import Core")
