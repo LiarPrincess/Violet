@@ -24,11 +24,11 @@ private func emitAst(inputFile: URL) {
   for entity in parse(url: inputFile) {
     switch entity {
     case let .enum(e):
-      emitEnum(e)
+      printEnum(e)
     case let .struct(s):
-      emitProduct(keyword: "struct", def: s)
+      printProduct(keyword: "struct", def: s)
     case let .class(c):
-      emitProduct(keyword: "class", def: c)
+      printProduct(keyword: "class", def: c)
       printEquatable(c)
     }
   }
@@ -36,14 +36,14 @@ private func emitAst(inputFile: URL) {
 
 // MARK: - Enum
 
-private func emitEnum(_ def: EnumDef) {
+private func printEnum(_ def: EnumDef) {
   printDoc(def.doc)
 
   let bases = createBases(def.bases)
   let indirect = def.isIndirect ? "indirect " : ""
-  print("public \(indirect)enum \(def.name)\(bases) {")
+  print("public \(indirect)enum \(def.name)\(bases), CustomStringConvertible {")
 
-  // emit `case xxx([Statement])`
+  // print `case xxx([Statement])`
   for caseDef in def.cases {
     printDoc(caseDef.doc, indent: 2)
 
@@ -58,7 +58,7 @@ private func emitEnum(_ def: EnumDef) {
   }
   print("")
 
-  // emit `var isXXX: Bool {`
+  // print `var isXXX: Bool {`
   for caseDef in def.cases where !caseDef.properties.isEmpty {
     print("""
         public var is\(pascalCase(caseDef.name)): Bool {
@@ -69,20 +69,26 @@ private func emitEnum(_ def: EnumDef) {
       """)
   }
 
+  printDescription()
+
   print("}")
   print()
 }
 
 // MARK: - Product
 
-private func emitProduct<T: ProductType>(keyword: String, def: T) {
+private func printProduct<T: ProductType>(keyword: String, def: T) {
   let bases = createBases(def.bases)
 
   print("// MARK: - \(def.name)")
   print()
 
+  let isSubclass = def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass
+  let hasDescr = !isSubclass
+  let descrProtocol = hasDescr ? ", CustomStringConvertible" : ""
+
   printDoc(def.doc)
-  print("public \(keyword) \(def.name)\(bases) {")
+  print("public \(keyword) \(def.name)\(bases)\(descrProtocol) {")
   print()
 
   for property in def.properties {
@@ -90,6 +96,10 @@ private func emitProduct<T: ProductType>(keyword: String, def: T) {
     print("  public var \(property.nameColonType)")
   }
   print()
+
+  if hasDescr {
+    printDescription()
+  }
 
   printInit(def: def)
   printVisitor(def: def)
@@ -174,6 +184,19 @@ private func printVisitor<T: ProductType>(def: T) {
 
 """)
   }
+}
+
+// MARK: - Description
+
+private func printDescription() {
+  print("""
+    public var description: String {
+      let printer = ASTPrinter()
+      let doc = printer.visit(self)
+      return doc.layout()
+    }
+
+  """)
 }
 
 // MARK: - Equatable

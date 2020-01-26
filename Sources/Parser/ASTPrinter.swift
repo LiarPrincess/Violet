@@ -1,0 +1,76 @@
+import Core
+import Rapunzel
+
+public class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
+
+  public typealias PassResult = Doc
+
+  private static let indent = 2
+  private static let stringCutoff = 60
+
+  // MARK: - AST
+
+  func astBase(ast: AST, lines: [Doc]) -> Doc {
+    let type = self.typeName(of: ast)
+    let title = "\(type)(start: \(ast.start), end: \(ast.end))"
+    return self.block(title: title, lines: lines)
+  }
+
+  public func visit(_ node: AST) -> Doc {
+    return try! node.accept(self)
+  }
+
+  public func visit(_ node: InteractiveAST) -> Doc {
+    return self.astBase(
+      ast: node,
+      lines: node.statements.map(self.visit)
+    )
+  }
+
+  public func visit(_ node: ModuleAST) -> Doc {
+    return self.astBase(
+      ast: node,
+      lines: node.statements.map(self.visit)
+    )
+  }
+
+  public func visit(_ node: ExpressionAST) -> Doc {
+    return self.astBase(
+      ast: node,
+      lines: [self.visit(node.expression)]
+    )
+  }
+
+  // MARK: - Helpers
+
+  internal func typeName(of object: Any) -> String {
+    return String(describing: type(of: object))
+  }
+
+  internal func text<S: CustomStringConvertible>(_ value: S) -> Doc {
+    return .text(String(describing: value))
+  }
+
+  internal func block(title: String, lines: Doc...) -> Doc {
+    return block(title: title, lines: lines)
+  }
+
+  internal func block(title: String, lines: [Doc]) -> Doc {
+    return .block(title: title,
+                  indent: ASTPrinter.indent,
+                  lines: lines)
+  }
+
+  internal func trim(_ value: String) -> String {
+    let index = value.index(value.startIndex,
+                            offsetBy: ASTPrinter.stringCutoff,
+                            limitedBy: value.endIndex)
+
+    switch index {
+    case .none:
+      return value
+    case .some(let i):
+      return String(value[...i]) + "..."
+    }
+  }
+}

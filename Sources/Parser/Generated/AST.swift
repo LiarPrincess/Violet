@@ -19,7 +19,7 @@ import Foundation
 /// See:
 /// - [Official docs](https://docs.python.org/3/reference/index.html)
 /// - [greentreesnakes](https://greentreesnakes.readthedocs.io/en/latest/nodes.html)
-public class AST: ASTNode {
+public class AST: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -28,6 +28,12 @@ public class AST: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -132,7 +138,7 @@ public class ExpressionAST: AST {
 /// See:
 /// - [Simple statement](https://docs.python.org/3/reference/simple_stmts.html)
 /// - [Compound statement](https://docs.python.org/3/reference/compound_stmts.html)
-public class Statement: ASTNode {
+public class Statement: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -141,6 +147,12 @@ public class Statement: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -915,7 +927,7 @@ public class ContinueStmt: Statement {
 /// Import name with optional 'as' alias.
 /// Both parameters are raw strings of the names.
 /// `asName` can be `nil` if the regular name is to be used.
-public struct Alias: ASTNode {
+public struct Alias: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -926,6 +938,12 @@ public struct Alias: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -946,7 +964,7 @@ public struct Alias: ASTNode {
 // MARK: - WithItem
 
 /// A single context manager in a `with` block.
-public struct WithItem: ASTNode {
+public struct WithItem: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -959,6 +977,12 @@ public struct WithItem: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -979,7 +1003,7 @@ public struct WithItem: ASTNode {
 // MARK: - ExceptHandler
 
 /// A single except clause.
-public struct ExceptHandler: ASTNode {
+public struct ExceptHandler: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -992,6 +1016,12 @@ public struct ExceptHandler: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -1009,7 +1039,7 @@ public struct ExceptHandler: ASTNode {
 
 }
 
-public enum ExceptHandlerKind: Equatable {
+public enum ExceptHandlerKind: Equatable, CustomStringConvertible {
   /// Handler with type it will match, typically an `Identifier` node.
   case typed(type: Expression, asName: String?)
   /// Catch-all handler.
@@ -1020,6 +1050,12 @@ public enum ExceptHandlerKind: Equatable {
     return false
   }
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
 // MARK: - Expression
@@ -1028,7 +1064,7 @@ public enum ExceptHandlerKind: Equatable {
 /// that the programming language interprets and computes to produce another value.
 /// 
 /// See: [docs](https://docs.python.org/3/reference/expressions.html)
-public class Expression: ASTNode {
+public class Expression: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -1037,6 +1073,12 @@ public class Expression: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -1799,7 +1841,7 @@ public class StarredExpr: Expression {
 
 }
 
-public enum UnaryOperator: Equatable {
+public enum UnaryOperator: Equatable, CustomStringConvertible {
   /// Bitwise inversion of its integer argument.
   /// Only applies to integral numbers.
   case invert
@@ -1810,17 +1852,29 @@ public enum UnaryOperator: Equatable {
   /// Negation of its numeric argument. CPython: USub (unary sub).
   case minus
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
-public enum BooleanOperator: Equatable {
+public enum BooleanOperator: Equatable, CustomStringConvertible {
   /// Logical `and` with short-circuit.
   case and
   /// Logical `or` with short-circuit.
   case or
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
-public enum BinaryOperator: Equatable {
+public enum BinaryOperator: Equatable, CustomStringConvertible {
   /// Sum of its arguments.
   /// - Numbers added together.
   /// - Sequences are concatenated.
@@ -1857,14 +1911,26 @@ public enum BinaryOperator: Equatable {
   /// Floor division of integers results in an integer.
   case floorDiv
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
 // MARK: - ComparisonElement
 
-public struct ComparisonElement: Equatable {
+public struct ComparisonElement: Equatable, CustomStringConvertible {
 
   public var op: ComparisonOperator
   public var right: Expression
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     op: ComparisonOperator,
@@ -1876,7 +1942,7 @@ public struct ComparisonElement: Equatable {
 
 }
 
-public enum ComparisonOperator: Equatable {
+public enum ComparisonOperator: Equatable, CustomStringConvertible {
   /// True when two operands are equal.
   case equal
   /// True when two operands are not equal.
@@ -1898,9 +1964,15 @@ public enum ComparisonOperator: Equatable {
   /// Negation of `x in s`
   case notIn
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
-public enum DictionaryElement: Equatable {
+public enum DictionaryElement: Equatable, CustomStringConvertible {
   /// `**expr`
   case unpacking(Expression)
   /// `key : value`
@@ -1916,10 +1988,16 @@ public enum DictionaryElement: Equatable {
     return false
   }
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
 /// For normal strings and f-strings, concatenate them together.
-public enum StringGroup: Equatable {
+public enum StringGroup: Equatable, CustomStringConvertible {
   /// String - no f-strings.
   case literal(String)
   /// FormattedValue - just an f-string (with no leading or trailing literals).
@@ -1942,10 +2020,16 @@ public enum StringGroup: Equatable {
     return false
   }
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
 /// Transforms a value prior to formatting it.
-public enum ConversionFlag: Equatable {
+public enum ConversionFlag: Equatable, CustomStringConvertible {
   /// Converts by calling `str(<value>)`.
   case str
   /// Converts by calling `ascii(<value>)`.
@@ -1953,11 +2037,17 @@ public enum ConversionFlag: Equatable {
   /// Converts by calling `repr(<value>)`.
   case repr
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
 // MARK: - Slice
 
-public struct Slice: ASTNode {
+public struct Slice: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -1967,6 +2057,12 @@ public struct Slice: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -1982,7 +2078,7 @@ public struct Slice: ASTNode {
 
 }
 
-public enum SliceKind: Equatable {
+public enum SliceKind: Equatable, CustomStringConvertible {
   /// Regular slicing: `movies[pinocchio:frozen2]`.
   case slice(lower: Expression?, upper: Expression?, step: Expression?)
   /// Advanced slicing: `frozen[kristoff:ana, olaf]`.
@@ -2006,12 +2102,18 @@ public enum SliceKind: Equatable {
     return false
   }
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
 // MARK: - Comprehension
 
 /// One `for` clause in a comprehension.
-public struct Comprehension: ASTNode {
+public struct Comprehension: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -2029,6 +2131,12 @@ public struct Comprehension: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -2055,7 +2163,7 @@ public struct Comprehension: ASTNode {
 /// The arguments for a function passed by value
 /// (where the value is always an object reference, not the value of the object).
 /// https://docs.python.org/3/tutorial/controlflow.html#more-on-defining-functions"
-public struct Arguments: ASTNode {
+public struct Arguments: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -2088,6 +2196,12 @@ public struct Arguments: ASTNode {
   /// Location just after the last character in the source code.
   public var end: SourceLocation
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
   public init(
     id: ASTNodeId,
     args: [Arg],
@@ -2114,7 +2228,7 @@ public struct Arguments: ASTNode {
 
 // MARK: - Arg
 
-public struct Arg: ASTNode {
+public struct Arg: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -2129,6 +2243,12 @@ public struct Arg: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -2146,7 +2266,7 @@ public struct Arg: ASTNode {
 
 }
 
-public enum Vararg: Equatable {
+public enum Vararg: Equatable, CustomStringConvertible {
   case none
   /// Separator for keyword arguments. Represented by just `*`.
   case unnamed
@@ -2157,13 +2277,19 @@ public enum Vararg: Equatable {
     return false
   }
 
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
+
 }
 
 // MARK: - Keyword
 
 /// A keyword argument to a function call or class definition.
 /// `nil` name is used for `**kwargs`.
-public struct Keyword: ASTNode {
+public struct Keyword: ASTNode, CustomStringConvertible {
 
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
@@ -2177,6 +2303,12 @@ public struct Keyword: ASTNode {
   public var start: SourceLocation
   /// Location just after the last character in the source code.
   public var end: SourceLocation
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
+  }
 
   public init(
     id: ASTNodeId,
@@ -2194,13 +2326,19 @@ public struct Keyword: ASTNode {
 
 }
 
-public enum KeywordKind: Equatable {
+public enum KeywordKind: Equatable, CustomStringConvertible {
   case dictionaryUnpack
   case named(String)
 
   public var isNamed: Bool {
     if case .named = self { return true }
     return false
+  }
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
   }
 
 }
