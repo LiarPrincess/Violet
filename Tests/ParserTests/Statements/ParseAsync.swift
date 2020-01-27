@@ -3,11 +3,11 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseAsync: XCTestCase, Common, StatementMatcher {
+class ParseAsync: XCTestCase, Common {
 
   /// async def cook(): "Ratatouille"
   func test_def() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.async,                 start: loc0, end: loc1),
       self.token(.def,                   start: loc2, end: loc3),
       self.token(.identifier("cook"),    start: loc4, end: loc5),
@@ -17,34 +17,32 @@ class ParseAsync: XCTestCase, Common, StatementMatcher {
       self.token(.string("Ratatouille"), start: loc12, end: loc13)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchAsyncFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      XCTAssertEqual(d.args.args, [])
-      XCTAssertEqual(d.args.defaults, [])
-      XCTAssertEqual(d.args.vararg, .none)
-      XCTAssertEqual(d.args.kwOnlyArgs, [])
-      XCTAssertEqual(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc8)
-      XCTAssertEqual(d.args.end,   loc8)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(asyncDef cook() do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 13:18)
+      AsyncFunctionDefStmt(start: 0:0, end: 13:18)
+        Name: cook
+        Args
+          Arguments(start: 8:8, end: 8:8)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 12:12, end: 13:18)
+            StringExpr(start: 12:12, end: 13:18)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// async with Alice: "wonderland"
   func test_with() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.async,                start: loc0, end: loc1),
       self.token(.with,                 start: loc2, end: loc3),
       self.token(.identifier("Alice"),  start: loc4, end: loc5),
@@ -52,26 +50,27 @@ class ParseAsync: XCTestCase, Common, StatementMatcher {
       self.token(.string("wonderland"), start: loc8, end: loc9)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchAsyncWith(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.items.count, 1)
-      guard d.items.count == 1 else { return }
-      XCTAssertWithItem(d.items[0], "Alice")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'wonderland'")
-
-      XCTAssertStatement(stmt, "(asyncWith Alice do: 'wonderland')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc9)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 9:14)
+      AsyncWithStmt(start: 0:0, end: 9:14)
+        Items
+          WithItem(start: 4:4, end: 5:10)
+            ContextExpr
+              IdentifierExpr(start: 4:4, end: 5:10)
+                Value: Alice
+            OptionalVars: none
+        Body
+          ExprStmt(start: 8:8, end: 9:14)
+            StringExpr(start: 8:8, end: 9:14)
+              String: 'wonderland'
+    """)
   }
 
   /// async for person in castle: "becomeItem"
   func test_for() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.async,                 start: loc0, end: loc1),
       self.token(.for,                   start: loc2, end: loc3),
       self.token(.identifier("person"),  start: loc4, end: loc5),
@@ -81,26 +80,28 @@ class ParseAsync: XCTestCase, Common, StatementMatcher {
       self.token(.string("becomeItem"),  start: loc12, end: loc13)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchAsyncFor(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.target, "person")
-      XCTAssertExpression(d.iter, "castle")
-      XCTAssertEqual(d.orElse, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'becomeItem'")
-
-      XCTAssertStatement(stmt, "(asyncFor person in: castle do: 'becomeItem')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 13:18)
+      AsyncForStmt(start: 0:0, end: 13:18)
+        Target
+          IdentifierExpr(start: 4:4, end: 5:10)
+            Value: person
+        Iterable
+          IdentifierExpr(start: 8:8, end: 9:14)
+            Value: castle
+        Body
+          ExprStmt(start: 12:12, end: 13:18)
+            StringExpr(start: 12:12, end: 13:18)
+              String: 'becomeItem'
+        OrElse: none
+    """)
   }
 
   /// async while Frollo: "Quasimodo"
   func test_while_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.async,                start: loc0, end: loc1),
       self.token(.while,                start: loc2, end: loc3),
       self.token(.identifier("Frollo"), start: loc4, end: loc5),
@@ -108,7 +109,7 @@ class ParseAsync: XCTestCase, Common, StatementMatcher {
       self.token(.string("Quasimodo"),  start: loc8, end: loc9)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .unexpectedToken(.while, expected: [.def, .with, .for]))
       XCTAssertEqual(error.location, loc2)
     }

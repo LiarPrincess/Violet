@@ -3,8 +3,7 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseAugAssign: XCTestCase,
-Common, ExpressionMatcher, StatementMatcher, StringMatcher {
+class ParseAugAssign: XCTestCase, Common {
 
   // MARK: - Augumented assignment
 
@@ -29,30 +28,31 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
     ]
 
     for (tokenKind, op) in augAssign {
-      var parser = self.createStmtParser(
+      let parser = self.createStmtParser(
         self.token(.identifier("Ariel"), start: loc0, end: loc1),
         self.token(tokenKind,            start: loc2, end: loc3),
         self.token(.string("legs"),      start: loc4, end: loc5)
       )
 
-      if let stmt = self.parseStmt(&parser) {
-        let msg = "for: \(tokenKind)"
-        guard let d = self.matchAugAssign(stmt) else { return }
+      guard let ast = self.parse(parser) else { continue }
 
-        XCTAssertExpression(d.target, "Ariel", msg)
-        XCTAssertEqual(d.op, op, msg)
-        XCTAssertExpression(d.value, "'legs'", msg)
-
-        XCTAssertStatement(stmt, "(Ariel \(op)= 'legs')", msg)
-        XCTAssertEqual(stmt.start, loc0)
-        XCTAssertEqual(stmt.end,   loc5)
-      }
+      XCTAssertAST(ast, """
+      ModuleAST(start: 0:0, end: 5:10)
+        AugAssignStmt(start: 0:0, end: 5:10)
+          Target
+            IdentifierExpr(start: 0:0, end: 1:6)
+              Value: Ariel
+          Operator: \(op)
+          Value
+            StringExpr(start: 4:4, end: 5:10)
+              String: 'legs'
+      """)
     }
   }
 
   /// sea.cavern += "Gizmos"
   func test_toAttribute() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.identifier("sea"),    start: loc0, end: loc1),
       self.token(.dot,                  start: loc2, end: loc3),
       self.token(.identifier("cavern"), start: loc4, end: loc5),
@@ -60,22 +60,27 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
       self.token(.string("Gizmos"),     start: loc8, end: loc9)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchAugAssign(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.target, "sea.cavern")
-      XCTAssertEqual(d.op, .add)
-      XCTAssertExpression(d.value, "'Gizmos'")
-
-      XCTAssertStatement(stmt, "(sea.cavern += 'Gizmos')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc9)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 9:14)
+      AugAssignStmt(start: 0:0, end: 9:14)
+        Target
+          AttributeExpr(start: 0:0, end: 5:10)
+            Object
+              IdentifierExpr(start: 0:0, end: 1:6)
+                Value: sea
+            Name: cavern
+        Operator: +
+        Value
+          StringExpr(start: 8:8, end: 9:14)
+            String: 'Gizmos'
+    """)
   }
 
   /// sea[cavern] += "Gizmos"
   func test_toSubscript() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.identifier("sea"),    start: loc0, end: loc1),
       self.token(.leftSqb,              start: loc2, end: loc3),
       self.token(.identifier("cavern"), start: loc4, end: loc5),
@@ -84,28 +89,36 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
       self.token(.string("Gizmos"),     start: loc10, end: loc11)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchAugAssign(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.target, "sea[cavern]")
-      XCTAssertEqual(d.op, .add)
-      XCTAssertExpression(d.value, "'Gizmos'")
-
-      XCTAssertStatement(stmt, "(sea[cavern] += 'Gizmos')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc11)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 11:16)
+      AugAssignStmt(start: 0:0, end: 11:16)
+        Target
+          SubscriptExpr(start: 0:0, end: 7:12)
+            Object
+              IdentifierExpr(start: 0:0, end: 1:6)
+                Value: sea
+            Slice(start: 2:2, end: 7:12)
+              Index
+                IdentifierExpr(start: 4:4, end: 5:10)
+                  Value: cavern
+        Operator: +
+        Value
+          StringExpr(start: 10:10, end: 11:16)
+            String: 'Gizmos'
+    """)
   }
 
   /// 3 += "Ursula"
   func test_toConstants_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.int(BigInt(3)),    start: loc0, end: loc1),
       self.token(.plusEqual,         start: loc2, end: loc3),
       self.token(.string("Ursula"),  start: loc4, end: loc5)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .illegalAugAssignmentTarget)
       XCTAssertEqual(error.location, loc0)
     }
@@ -113,23 +126,27 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
 
   /// Ariel += yield "legs"
   func test_yield() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.identifier("Ariel"), start: loc0, end: loc1),
       self.token(.plusEqual,           start: loc2, end: loc3),
       self.token(.yield,               start: loc4, end: loc5),
       self.token(.string("legs"),      start: loc6, end: loc7)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchAugAssign(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.target, "Ariel")
-      XCTAssertEqual(d.op, .add)
-      XCTAssertExpression(d.value, "(yield 'legs')")
-
-      XCTAssertStatement(stmt, "(Ariel += (yield 'legs'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc7)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 7:12)
+      AugAssignStmt(start: 0:0, end: 7:12)
+        Target
+          IdentifierExpr(start: 0:0, end: 1:6)
+            Value: Ariel
+        Operator: +
+        Value
+          YieldExpr(start: 4:4, end: 7:12)
+            Value
+              StringExpr(start: 6:6, end: 7:12)
+                String: 'legs'
+    """)
   }
 }

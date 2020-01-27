@@ -6,15 +6,13 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
-
-  internal var builder = ASTBuilder()
+class ParseFunctionDef: XCTestCase, Common {
 
   // MARK: - No arguments
 
   /// def cook(): "Ratatouille"
   func test_noArguments() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                   start: loc0, end: loc1),
       self.token(.identifier("cook"),    start: loc2, end: loc3),
       self.token(.leftParen,             start: loc4, end: loc5),
@@ -23,34 +21,32 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"), start: loc10, end: loc11)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc6)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook() do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc11)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 11:16)
+      FunctionDefStmt(start: 0:0, end: 11:16)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 6:6)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 10:10, end: 11:16)
+            StringExpr(start: 10:10, end: 11:16)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook() -> Dish: "Ratatouille"
   func test_noArguments_return() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                   start: loc0, end: loc1),
       self.token(.identifier("cook"),    start: loc2, end: loc3),
       self.token(.leftParen,             start: loc4, end: loc5),
@@ -61,36 +57,36 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"), start: loc14, end: loc15)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertExpression(d.returns, "Dish")
-
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc6)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook() -> Dish do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 15:20)
+      FunctionDefStmt(start: 0:0, end: 15:20)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 6:6)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 14:14, end: 15:20)
+            StringExpr(start: 14:14, end: 15:20)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns
+          IdentifierExpr(start: 10:10, end: 11:16)
+            Value: Dish
+    """)
   }
 
   // MARK: - Positional
 
   /// def cook(zucchini): "Ratatouille"
   func test_positional() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -100,35 +96,35 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc12, end: loc13)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      XCTAssertArguments(d.args.args, [argA])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc7)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(zucchini) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 13:18)
+      FunctionDefStmt(start: 0:0, end: 13:18)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 7:12)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 12:12, end: 13:18)
+            StringExpr(start: 12:12, end: 13:18)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(zucchini: Vegetable): "Ratatouille"
   func test_positional_withType() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                     start: loc0, end: loc1),
       self.token(.identifier("cook"),      start: loc2, end: loc3),
       self.token(.leftParen,               start: loc4, end: loc5),
@@ -140,36 +136,37 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),   start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let annA = self.expression(.identifier("Vegetable"), start: loc10, end: loc11)
-      let argA = self.arg(name: "zucchini", annotation: annA, start: loc6, end: loc11)
-      XCTAssertArguments(d.args.args, [argA])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc11)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(zucchini:Vegetable) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      FunctionDefStmt(start: 0:0, end: 17:22)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 11:16)
+            Args
+              Arg
+                Name: zucchini
+                Annotation
+                  IdentifierExpr(start: 10:10, end: 11:16)
+                    Value: Vegetable
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(zucchini = 1): "Ratatouille"
   func test_positional_default() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -181,36 +178,37 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let defA = self.expression(.float(1.0), start: loc10, end: loc11)
-      XCTAssertArguments(d.args.args, [argA])
-      XCTAssertArgumentDefaults(d.args.defaults, [defA])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc11)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(zucchini=1.0) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      FunctionDefStmt(start: 0:0, end: 17:22)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 11:16)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+            Defaults
+              FloatExpr(start: 10:10, end: 11:16)
+                Value: 1.0
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(zucchini, tomato): "Ratatouille"
   func test_positional_multiple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -222,36 +220,38 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = self.arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
-      XCTAssertArguments(d.args.args, [argA, argB])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc11)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(zucchini tomato) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      FunctionDefStmt(start: 0:0, end: 17:22)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 11:16)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+              Arg
+                Name: tomato
+                Annotation: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(zucchini, tomato=1): "Ratatouille"
   func test_positional_default_afterRequired() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -265,37 +265,40 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let argA = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let argB = self.arg(name: "tomato", annotation: nil, start: loc10, end: loc11)
-      let defB = self.expression(.float(1.0), start: loc14, end: loc15)
-      XCTAssertArguments(d.args.args, [argA, argB])
-      XCTAssertArgumentDefaults(d.args.defaults, [defB])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc15)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(zucchini tomato=1.0) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc21)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 21:26)
+      FunctionDefStmt(start: 0:0, end: 21:26)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 15:20)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+              Arg
+                Name: tomato
+                Annotation: none
+            Defaults
+              FloatExpr(start: 14:14, end: 15:20)
+                Value: 1.0
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 20:20, end: 21:26)
+            StringExpr(start: 20:20, end: 21:26)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(zucchini = 1, tomato): "Ratatouille"
   func test_positional_requited_afterDefault_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -309,7 +312,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .defaultAfterNonDefaultArgument)
       XCTAssertEqual(error.location, loc14)
     }
@@ -319,7 +322,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
 
   /// def cook(*zucchini): "Ratatouille"
   func test_varargs() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -330,35 +333,36 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc14, end: loc15)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .named(varargA))
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc9)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(*zucchini) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 15:20)
+      FunctionDefStmt(start: 0:0, end: 15:20)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 9:14)
+            Args: none
+            Defaults: none
+            Vararg
+              Named
+                Arg
+                  Name: zucchini
+                  Annotation: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 14:14, end: 15:20)
+            StringExpr(start: 14:14, end: 15:20)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(*zucchini, tomato=1): "Ratatouille"
   func test_varargs_keywordOnly_withDefault() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -373,37 +377,41 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc22, end: loc23)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
-      let kwDefB  = self.expression(.float(1), start: loc16, end: loc17)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .named(varargA))
-      XCTAssertArguments(d.args.kwOnlyArgs, [kwB])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefB])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc17)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(*zucchini tomato=1.0) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc23)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 23:28)
+      FunctionDefStmt(start: 0:0, end: 23:28)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 17:22)
+            Args: none
+            Defaults: none
+            Vararg
+              Named
+                Arg
+                  Name: zucchini
+                  Annotation: none
+            KwOnlyArgs
+              Arg
+                Name: tomato
+                Annotation: none
+            KwOnlyDefaults
+              FloatExpr(start: 16:16, end: 17:22)
+                Value: 1.0
+            Kwarg: none
+        Body
+          ExprStmt(start: 22:22, end: 23:28)
+            StringExpr(start: 22:22, end: 23:28)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(*zucchini, tomato): "Ratatouille"
   func test_varargs_keywordOnly_withoutDefault_isImplicitNone() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -416,37 +424,40 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc18, end: loc19)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let varargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      let kwB     = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
-      let kwDefB = self.expression(.none, start: loc13, end: loc13)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .named(varargA))
-      XCTAssertArguments(d.args.kwOnlyArgs, [kwB])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefB])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc13)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(*zucchini tomato=None) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 19:24)
+      FunctionDefStmt(start: 0:0, end: 19:24)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 13:18)
+            Args: none
+            Defaults: none
+            Vararg
+              Named
+                Arg
+                  Name: zucchini
+                  Annotation: none
+            KwOnlyArgs
+              Arg
+                Name: tomato
+                Annotation: none
+            KwOnlyDefaults
+              NoneExpr(start: 13:18, end: 13:18)
+            Kwarg: none
+        Body
+          ExprStmt(start: 18:18, end: 19:24)
+            StringExpr(start: 18:18, end: 19:24)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(*zucchini, *tomato): "Ratatouille"
   func test_varargs_duplicate_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -460,7 +471,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .duplicateVarargs)
       XCTAssertEqual(error.location, loc12)
     }
@@ -468,7 +479,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
 
   /// def cook(*, zucchini): "Ratatouille"
   func test_varargsUnnamed() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -480,36 +491,36 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let kwA = self.arg(name: "zucchini", annotation: nil, start: loc10, end: loc11)
-      let kwDefA = self.expression(.none, start: loc11, end: loc11)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .unnamed)
-      XCTAssertArguments(d.args.kwOnlyArgs, [kwA])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefA])
-      XCTAssertEqual(d.args.kwarg, nil)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc11)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(* zucchini=None) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      FunctionDefStmt(start: 0:0, end: 17:22)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 11:16)
+            Args: none
+            Defaults: none
+            Vararg: unnamed
+            KwOnlyArgs
+              Arg
+                Name: zucchini
+                Annotation: none
+            KwOnlyDefaults
+              NoneExpr(start: 11:16, end: 11:16)
+            Kwarg: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(*): "Ratatouille"
   func test_varargsUnnamed_withoutFollowingArguments_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -519,7 +530,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc12, end: loc13)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .starWithoutFollowingArguments)
       XCTAssertEqual(error.location, loc8)
     }
@@ -529,7 +540,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
 
   /// def cook(**zucchini): "Ratatouille"
   func test_kwargs() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -540,35 +551,35 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc14, end: loc15)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let kwargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertArgument(d.args.kwarg, kwargA)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc9)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(**zucchini) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 15:20)
+      FunctionDefStmt(start: 0:0, end: 15:20)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 9:14)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg
+              Arg
+                Name: zucchini
+                Annotation: none
+        Body
+          ExprStmt(start: 14:14, end: 15:20)
+            StringExpr(start: 14:14, end: 15:20)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(**zucchini,): "Ratatouille"
   func test_kwargs_withCommaAfter() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -580,35 +591,35 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let kwargA = self.arg(name: "zucchini", annotation: nil, start: loc8, end: loc9)
-      XCTAssertArguments(d.args.args, [])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .none)
-      XCTAssertArguments(d.args.kwOnlyArgs, [])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [])
-      XCTAssertArgument(d.args.kwarg, kwargA)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc11)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(stmt, "(def cook(**zucchini) do: 'Ratatouille')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      FunctionDefStmt(start: 0:0, end: 17:22)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 11:16)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg
+              Arg
+                Name: zucchini
+                Annotation: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// def cook(**zucchini, **tomato): "Ratatouille"
   func test_kwargs_duplicate_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -622,7 +633,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc20, end: loc21)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .duplicateKwargs)
       XCTAssertEqual(error.location, loc12)
     }
@@ -632,7 +643,7 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
 
   /// def cook(zucchini, *tomato, pepper, **eggplant): "Ratatouille"
   func test_all() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                    start: loc0, end: loc1),
       self.token(.identifier("cook"),     start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -650,36 +661,40 @@ class ParseFunctionDef: XCTestCase, Common, StatementMatcher, ASTBuilderOwner {
       self.token(.string("Ratatouille"),  start: loc28, end: loc29)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "cook")
-      XCTAssertEqual(d.returns, nil)
-
-      let argA    = self.arg(name: "zucchini", annotation: nil, start: loc6, end: loc7)
-      let varargB = self.arg(name: "tomato", annotation: nil, start: loc12, end: loc13)
-      let kwC     = self.arg(name: "pepper", annotation: nil, start: loc16, end: loc17)
-      let kwDefC  = self.expression(.none, start: loc17, end: loc17)
-      let kwargD = self.arg(name: "eggplant", annotation: nil, start: loc22, end: loc23)
-      XCTAssertArguments(d.args.args, [argA])
-      XCTAssertArgumentDefaults(d.args.defaults, [])
-      XCTAssertVararg(d.args.vararg, .named(varargB))
-      XCTAssertArguments(d.args.kwOnlyArgs, [kwC])
-      XCTAssertArgumentDefaults(d.args.kwOnlyDefaults, [kwDefC])
-      XCTAssertArgument(d.args.kwarg, kwargD)
-      XCTAssertEqual(d.args.start, loc6)
-      XCTAssertEqual(d.args.end,   loc23)
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ratatouille'")
-
-      XCTAssertStatement(
-        stmt,
-        "(def cook(zucchini *tomato pepper=None **eggplant) do: 'Ratatouille')"
-      )
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc29)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 29:34)
+      FunctionDefStmt(start: 0:0, end: 29:34)
+        Name: cook
+        Args
+          Arguments(start: 6:6, end: 23:28)
+            Args
+              Arg
+                Name: zucchini
+                Annotation: none
+            Defaults: none
+            Vararg
+              Named
+                Arg
+                  Name: tomato
+                  Annotation: none
+            KwOnlyArgs
+              Arg
+                Name: pepper
+                Annotation: none
+            KwOnlyDefaults
+              NoneExpr(start: 17:22, end: 17:22)
+            Kwarg
+              Arg
+                Name: eggplant
+                Annotation: none
+        Body
+          ExprStmt(start: 28:28, end: 29:34)
+            StringExpr(start: 28:28, end: 29:34)
+              String: 'Ratatouille'
+        Decorators: none
+        Returns: none
+    """)
   }
 }

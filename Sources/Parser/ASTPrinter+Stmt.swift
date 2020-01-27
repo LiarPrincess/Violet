@@ -91,11 +91,11 @@ extension ASTPrinter {
   // MARK: - Return stmt
 
   public func visit(_ node: ReturnStmt) -> Doc {
-    let v = node.value.map(self.visit) ?? self.text("none")
-    return self.base(
-      stmt: node,
-      lines: self.block(title: "Value", lines: v)
-    )
+    let v = node.value.map {
+      self.block(title: "Value", lines: self.visit($0))
+    } ?? self.text("Value: none")
+
+    return self.base(stmt: node, lines: v)
   }
 
   // MARK: - Delete stmt
@@ -138,7 +138,8 @@ extension ASTPrinter {
       lines:
         self.block(title: "Target", lines: self.visit(node.target)),
         self.block(title: "Annotation", lines: self.visit(node.annotation)),
-        v
+        v,
+        self.text("IsSimple: \(node.isSimple)")
     )
   }
 
@@ -153,7 +154,7 @@ extension ASTPrinter {
       stmt: node,
       lines:
         self.block(title: "Target", lines: self.visit(node.target)),
-        self.block(title: "Iter", lines: self.visit(node.iterable)),
+        self.block(title: "Iterable", lines: self.visit(node.iterable)),
         self.block(title: "Body", lines: node.body.map(self.visit)),
         e
     )
@@ -168,7 +169,7 @@ extension ASTPrinter {
       stmt: node,
       lines:
         self.block(title: "Target", lines: self.visit(node.target)),
-        self.block(title: "Iter", lines: self.visit(node.iterable)),
+        self.block(title: "Iterable", lines: self.visit(node.iterable)),
         self.block(title: "Body", lines: node.body.map(self.visit)),
         e
     )

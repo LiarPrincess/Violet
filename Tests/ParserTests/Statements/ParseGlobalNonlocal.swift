@@ -3,85 +3,78 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseGlobalNonlocal: XCTestCase, Common, StatementMatcher {
+class ParseGlobalNonlocal: XCTestCase, Common {
 
   // MARK: - global
 
   /// global Aladdin
   func test_global() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.global,                start: loc0, end: loc1),
       self.token(.identifier("Aladdin"), start: loc2, end: loc3)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchGlobal(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d, ["Aladdin"])
-
-      XCTAssertStatement(stmt, "(global Aladdin)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc3)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 3:8)
+      GlobalStmt(start: 0:0, end: 3:8)
+        Aladdin
+    """)
   }
 
   /// global Aladdin, Jasmine
   func test_global_multiple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.global,                start: loc0, end: loc1),
       self.token(.identifier("Aladdin"), start: loc2, end: loc3),
       self.token(.comma,                 start: loc4, end: loc5),
       self.token(.identifier("Jasmine"), start: loc6, end: loc7)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchGlobal(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d, ["Aladdin", "Jasmine"])
-
-      XCTAssertStatement(stmt, "(global Aladdin Jasmine)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc7)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 7:12)
+      GlobalStmt(start: 0:0, end: 7:12)
+        Aladdin
+        Jasmine
+    """)
   }
 
   // MARK: - nonlocal
 
   /// nonlocal Genie
   func test_nonlocal() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.nonlocal,            start: loc0, end: loc1),
       self.token(.identifier("Genie"), start: loc2, end: loc3)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchNonlocal(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d, ["Genie"])
-
-      XCTAssertStatement(stmt, "(nonlocal Genie)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc3)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 3:8)
+      NonlocalStmt(start: 0:0, end: 3:8)
+        Genie
+    """)
   }
-
   /// nonlocal Genie, MagicCarpet
   func test_nonlocal_multiple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.nonlocal,                  start: loc0, end: loc1),
       self.token(.identifier("Genie"),       start: loc2, end: loc3),
       self.token(.comma,                     start: loc4, end: loc5),
       self.token(.identifier("MagicCarpet"), start: loc6, end: loc7)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchNonlocal(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d, ["Genie", "MagicCarpet"])
-
-      XCTAssertStatement(stmt, "(nonlocal Genie MagicCarpet)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc7)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 7:12)
+      NonlocalStmt(start: 0:0, end: 7:12)
+        Genie
+        MagicCarpet
+    """)
   }
 }

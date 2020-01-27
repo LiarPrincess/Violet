@@ -3,100 +3,109 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseYield: XCTestCase, Common, StatementMatcher {
+class ParseYield: XCTestCase, Common {
 
   // MARK: - Yield
 
   /// yield
   func test_withoutValue() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.yield, start: loc0, end: loc1)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchExpr(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d, "(yield)")
-
-      XCTAssertStatement(stmt, "(yield)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc1)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 1:6)
+      ExprStmt(start: 0:0, end: 1:6)
+        YieldExpr(start: 0:0, end: 1:6)
+          Value: none
+    """)
   }
 
   /// yield Megara
   func test_value() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.yield,                start: loc0, end: loc1),
       self.token(.identifier("Megara"), start: loc2, end: loc3)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchExpr(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d, "(yield Megara)")
-
-      XCTAssertStatement(stmt, "(yield Megara)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc3)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 3:8)
+      ExprStmt(start: 0:0, end: 3:8)
+        YieldExpr(start: 0:0, end: 3:8)
+          Value
+            IdentifierExpr(start: 2:2, end: 3:8)
+              Value: Megara
+    """)
   }
 
   /// yield Megara,
   func test_value_withCommaAfter_yieldsTuple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.yield,                start: loc0, end: loc1),
       self.token(.identifier("Megara"), start: loc2, end: loc3),
       self.token(.comma,                start: loc4, end: loc5)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchExpr(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d, "(yield (Megara))")
-
-      XCTAssertStatement(stmt, "(yield (Megara))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc5)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 5:10)
+      ExprStmt(start: 0:0, end: 5:10)
+        YieldExpr(start: 0:0, end: 5:10)
+          Value
+            TupleExpr(start: 2:2, end: 5:10)
+              Elements
+                IdentifierExpr(start: 2:2, end: 3:8)
+                  Value: Megara
+    """)
   }
 
   /// yield Pain, Panic
   func test_value_multiple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.yield,           start: loc0, end: loc1),
       self.token(.identifier("Pain"), start: loc2, end: loc3),
       self.token(.comma,           start: loc4, end: loc5),
       self.token(.identifier("Panic"), start: loc6, end: loc7)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchExpr(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d, "(yield (Pain Panic))")
-
-      XCTAssertStatement(stmt, "(yield (Pain Panic))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc7)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 7:12)
+      ExprStmt(start: 0:0, end: 7:12)
+        YieldExpr(start: 0:0, end: 7:12)
+          Value
+            TupleExpr(start: 2:2, end: 7:12)
+              Elements
+                IdentifierExpr(start: 2:2, end: 3:8)
+                  Value: Pain
+                IdentifierExpr(start: 6:6, end: 7:12)
+                  Value: Panic
+    """)
   }
 
   /// yield from Olympus
   func test_from() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.yield,                 start: loc0, end: loc1),
       self.token(.from,                  start: loc2, end: loc3),
       self.token(.identifier("Olympus"), start: loc4, end: loc5)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchExpr(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d, "(yieldFrom Olympus)")
-
-      XCTAssertStatement(stmt, "(yieldFrom Olympus)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc5)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 5:10)
+      ExprStmt(start: 0:0, end: 5:10)
+        YieldFromExpr(start: 0:0, end: 5:10)
+          Value
+            IdentifierExpr(start: 4:4, end: 5:10)
+              Value: Olympus
+    """)
   }
 }

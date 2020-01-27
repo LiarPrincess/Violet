@@ -5,39 +5,38 @@ import Lexer
 
 // swiftlint:disable file_length
 
-class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
+class ParseClassDef: XCTestCase, Common {
 
   // MARK: - No base
 
   /// class Princess: "Sing"
   func test_noBase() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Princess"), start: loc2, end: loc3),
       self.token(.colon,                  start: loc4, end: loc5),
       self.token(.string("Sing"),         start: loc6, end: loc7)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Princess")
-      XCTAssertEqual(d.bases, [])
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sing'")
-
-      XCTAssertStatement(stmt, "(class Princess body: 'Sing')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc7)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 7:12)
+      ClassDefStmt(start: 0:0, end: 7:12)
+        Name: Princess
+        Bases: none
+        Keywords: none
+        Body
+          ExprStmt(start: 6:6, end: 7:12)
+            StringExpr(start: 6:6, end: 7:12)
+              String: 'Sing'
+        Decorators: none
+    """)
   }
 
   /// class Princess(): "Sing"
   func test_noBase_emptyParens() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Princess"), start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -46,28 +45,27 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sing"),         start: loc10, end: loc11)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Princess")
-      XCTAssertEqual(d.bases, [])
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sing'")
-
-      XCTAssertStatement(stmt, "(class Princess body: 'Sing')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc11)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 11:16)
+      ClassDefStmt(start: 0:0, end: 11:16)
+        Name: Princess
+        Bases: none
+        Keywords: none
+        Body
+          ExprStmt(start: 10:10, end: 11:16)
+            StringExpr(start: 10:10, end: 11:16)
+              String: 'Sing'
+        Decorators: none
+    """)
   }
 
   // MARK: - Bases
 
   /// class Aurora(Princess): "Sleep"
   func test_base_single() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -77,29 +75,27 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc12, end: loc13)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.bases.count, 1)
-      guard d.bases.count == 1 else { return }
-      XCTAssertExpression(d.bases[0], "Princess")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (Princess) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 13:18)
+      ClassDefStmt(start: 0:0, end: 13:18)
+        Name: Aurora
+        Bases
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: Princess
+        Keywords: none
+        Body
+          ExprStmt(start: 12:12, end: 13:18)
+            StringExpr(start: 12:12, end: 13:18)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   /// class Aurora(Princess,): "Sleep"
   func test_base_withCommaAfter() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -110,29 +106,27 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc14, end: loc15)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.bases.count, 1)
-      guard d.bases.count == 1 else { return }
-      XCTAssertExpression(d.bases[0], "Princess")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (Princess) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 15:20)
+      ClassDefStmt(start: 0:0, end: 15:20)
+        Name: Aurora
+        Bases
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: Princess
+        Keywords: none
+        Body
+          ExprStmt(start: 14:14, end: 15:20)
+            StringExpr(start: 14:14, end: 15:20)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   /// class Aurora(Princess, Human): "Sleep"
   func test_base_multiple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -144,30 +138,29 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.bases.count, 2)
-      guard d.bases.count == 2 else { return }
-      XCTAssertExpression(d.bases[0], "Princess")
-      XCTAssertExpression(d.bases[1], "Human")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (Princess Human) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      ClassDefStmt(start: 0:0, end: 17:22)
+        Name: Aurora
+        Bases
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: Princess
+          IdentifierExpr(start: 10:10, end: 11:16)
+            Value: Human
+        Keywords: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   /// class Aurora((Princess)): "Sleep"
   func test_base_withAdditionalParens() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -179,29 +172,27 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.bases.count, 1)
-      guard d.bases.count == 1 else { return }
-      XCTAssertExpression(d.bases[0], "Princess")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (Princess) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      ClassDefStmt(start: 0:0, end: 17:22)
+        Name: Aurora
+        Bases
+          IdentifierExpr(start: 6:6, end: 11:16)
+            Value: Princess
+        Keywords: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   /// class Aurora(Princess=1, Human): "Sleep"
   func test_base_afterKeyword_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -215,7 +206,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc20, end: loc21)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithPositionalArgumentAfterKeywordArgument)
       XCTAssertEqual(error.location, loc14)
     }
@@ -223,7 +214,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   /// class Aurora(**Princess, Human): "Sleep"
   func test_base_afterKeywordUnpacking_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -236,7 +227,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc18, end: loc19)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithPositionalArgumentAfterKeywordUnpacking)
       XCTAssertEqual(error.location, loc12)
     }
@@ -246,7 +237,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   /// class Aurora(*Princess): "Sleep"
   func test_base_withStar() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -257,29 +248,29 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc14, end: loc15)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-      XCTAssertEqual(d.keywords, [])
-
-      XCTAssertEqual(d.bases.count, 1)
-      guard d.bases.count == 1 else { return }
-      XCTAssertExpression(d.bases[0], "*Princess")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (*Princess) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 15:20)
+      ClassDefStmt(start: 0:0, end: 15:20)
+        Name: Aurora
+        Bases
+          StarredExpr(start: 6:6, end: 9:14)
+            Expression
+              IdentifierExpr(start: 8:8, end: 9:14)
+                Value: Princess
+        Keywords: none
+        Body
+          ExprStmt(start: 14:14, end: 15:20)
+            StringExpr(start: 14:14, end: 15:20)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   /// class Aurora(Princess=1, *Human): "Sleep"
   func test_base_withStar_afterKeyword() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -294,32 +285,35 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc22, end: loc23)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-
-      XCTAssertEqual(d.bases.count, 1)
-      guard d.bases.count == 1 else { return }
-      XCTAssertExpression(d.bases[0], "*Human")
-
-      XCTAssertEqual(d.keywords.count, 1)
-      guard d.keywords.count == 1 else { return }
-      XCTAssertKeyword(d.keywords[0], "Princess=1.0")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (*Human Princess=1.0) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc23)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 23:28)
+      ClassDefStmt(start: 0:0, end: 23:28)
+        Name: Aurora
+        Bases
+          StarredExpr(start: 14:14, end: 17:22)
+            Expression
+              IdentifierExpr(start: 16:16, end: 17:22)
+                Value: Human
+        Keywords
+          Keyword(start: 6:6, end: 11:16)
+            Kind
+              Named('Princess')
+            Value
+              FloatExpr(start: 10:10, end: 11:16)
+                Value: 1.0
+        Body
+          ExprStmt(start: 22:22, end: 23:28)
+            StringExpr(start: 22:22, end: 23:28)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   /// class Aurora(**Princess, *Human): "Sleep"
   func test_base_withStar_afterKeywordUnpacking_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -333,7 +327,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc20, end: loc21)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithIterableArgumentAfterKeywordUnpacking)
       XCTAssertEqual(error.location, loc12)
     }
@@ -343,7 +337,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   /// class Aurora(Princess=1): "Sleep"
   func test_keyword_single() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -355,29 +349,31 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-      XCTAssertEqual(d.bases.count, 0)
-
-      XCTAssertEqual(d.keywords.count, 1)
-      guard d.keywords.count == 1 else { return }
-      XCTAssertKeyword(d.keywords[0], "Princess=1.0")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (Princess=1.0) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      ClassDefStmt(start: 0:0, end: 17:22)
+        Name: Aurora
+        Bases: none
+        Keywords
+          Keyword(start: 6:6, end: 11:16)
+            Kind
+              Named('Princess')
+            Value
+              FloatExpr(start: 10:10, end: 11:16)
+                Value: 1.0
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   /// class Aurora(Princess=1, Human=2): "Sleep"
   func test_keyword_multiple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -393,30 +389,37 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc24, end: loc25)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-      XCTAssertEqual(d.bases.count, 0)
-
-      XCTAssertEqual(d.keywords.count, 2)
-      guard d.keywords.count == 2 else { return }
-      XCTAssertKeyword(d.keywords[0], "Princess=1.0")
-      XCTAssertKeyword(d.keywords[1], "Human=2.0")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (Princess=1.0 Human=2.0) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc25)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 25:30)
+      ClassDefStmt(start: 0:0, end: 25:30)
+        Name: Aurora
+        Bases: none
+        Keywords
+          Keyword(start: 6:6, end: 11:16)
+            Kind
+              Named('Princess')
+            Value
+              FloatExpr(start: 10:10, end: 11:16)
+                Value: 1.0
+          Keyword(start: 14:14, end: 19:24)
+            Kind
+              Named('Human')
+            Value
+              FloatExpr(start: 18:18, end: 19:24)
+                Value: 2.0
+        Body
+          ExprStmt(start: 24:24, end: 25:30)
+            StringExpr(start: 24:24, end: 25:30)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   /// class Aurora(Princess=1, Princess=2): "Sleep"
   func test_keyword_duplicate_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -432,7 +435,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc24, end: loc25)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithDuplicateKeywordArgument("Princess"))
       XCTAssertEqual(error.location, loc14)
     }
@@ -442,7 +445,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
   /// class Aurora(lambda x: x[0] = 3): "Sleep"
   /// I have no idea what would that even mean in class context.
   func test_keyword_lambda_assignment_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                   start: loc0, end: loc1),
       self.token(.identifier("Aurora"),    start: loc2, end: loc3),
       self.token(.leftParen,               start: loc4, end: loc5),
@@ -460,7 +463,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),         start: loc26, end: loc27)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithLambdaAssignment)
       XCTAssertEqual(error.location, loc6)
     }
@@ -468,7 +471,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   /// class Aurora(3=1): "Sleep"
   func test_keyword_invalidName_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                   start: loc0, end: loc1),
       self.token(.identifier("Aurora"),    start: loc2, end: loc3),
       self.token(.leftParen,               start: loc4, end: loc5),
@@ -480,7 +483,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),         start: loc16, end: loc17)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .callWithKeywordExpression)
       XCTAssertEqual(error.location, loc6)
     }
@@ -490,7 +493,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
 
   /// class Aurora(**Princess): "Sleep"
   func test_keyword_withStarStar() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -501,29 +504,31 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc14, end: loc15)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-      XCTAssertEqual(d.bases.count, 0)
-
-      XCTAssertEqual(d.keywords.count, 1)
-      guard d.keywords.count == 1 else { return }
-      XCTAssertKeyword(d.keywords[0], "**Princess")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (**Princess) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 15:20)
+      ClassDefStmt(start: 0:0, end: 15:20)
+        Name: Aurora
+        Bases: none
+        Keywords
+          Keyword(start: 6:6, end: 9:14)
+            Kind
+              DictionaryUnpack
+            Value
+              IdentifierExpr(start: 8:8, end: 9:14)
+                Value: Princess
+        Body
+          ExprStmt(start: 14:14, end: 15:20)
+            StringExpr(start: 14:14, end: 15:20)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   /// class Aurora(Princess, **Human): "Sleep"
   func test_keyword_withStarStar_afterNormal() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -536,34 +541,35 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc18, end: loc19)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.name, "Aurora")
-
-      XCTAssertEqual(d.bases.count, 1)
-      guard d.bases.count == 1 else { return }
-      XCTAssertExpression(d.bases[0], "Princess")
-
-      XCTAssertEqual(d.keywords.count, 1)
-      guard d.keywords.count == 2 else { return }
-      XCTAssertKeyword(d.keywords[1], "**Human")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Sleep'")
-
-      XCTAssertStatement(stmt, "(class Aurora (Princess **Human) body: 'Sleep')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 19:24)
+      ClassDefStmt(start: 0:0, end: 19:24)
+        Name: Aurora
+        Bases
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: Princess
+        Keywords
+          Keyword(start: 10:10, end: 13:18)
+            Kind
+              DictionaryUnpack
+            Value
+              IdentifierExpr(start: 12:12, end: 13:18)
+                Value: Human
+        Body
+          ExprStmt(start: 18:18, end: 19:24)
+            StringExpr(start: 18:18, end: 19:24)
+              String: 'Sleep'
+        Decorators: none
+    """)
   }
 
   // MARK: - Comprehension/generator
 
   /// class Aurora(a for b in []): "Sleep"
   func test_generator_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,                  start: loc0, end: loc1),
       self.token(.identifier("Aurora"),   start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -578,7 +584,7 @@ class ParseClassDef: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Sleep"),        start: loc22, end: loc23)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .baseClassWithGenerator)
       XCTAssertEqual(error.location, loc6)
     }

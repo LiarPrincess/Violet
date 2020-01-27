@@ -5,38 +5,37 @@ import Lexer
 
 // swiftlint:disable function_body_length
 
-class ParseIfStatement: XCTestCase,
-Common, ExpressionMatcher, StatementMatcher, StringMatcher {
+class ParseIfStatement: XCTestCase, Common {
 
   /// if Pooh: "Honey"
   func test_simple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.if,                 start: loc0, end: loc1),
       self.token(.identifier("Pooh"), start: loc2, end: loc3),
       self.token(.colon,              start: loc4, end: loc5),
       self.token(.string("Honey"),    start: loc6, end: loc7)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchIf(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.test, "Pooh")
-      XCTAssertEqual(d.orElse, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Honey'")
-
-      XCTAssertStatement(stmt, "(if Pooh then: 'Honey')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc7)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 7:12)
+      IfStmt(start: 0:0, end: 7:12)
+        Test
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Pooh
+        Body
+          ExprStmt(start: 6:6, end: 7:12)
+            StringExpr(start: 6:6, end: 7:12)
+              String: 'Honey'
+        OrElse: none
+    """)
   }
 
   /// if Pooh: "Honey"
   /// else: "More honey"
   func test_withElse() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.if,                   start: loc0, end: loc1),
       self.token(.identifier("Pooh"),   start: loc2, end: loc3),
       self.token(.colon,                start: loc4, end: loc5),
@@ -47,23 +46,23 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
       self.token(.string("More honey"), start: loc14, end: loc15)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchIf(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.test, "Pooh")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Honey'")
-
-      XCTAssertEqual(d.orElse.count, 1)
-      guard d.orElse.count == 1 else { return }
-      XCTAssertStatement(d.orElse[0], "'More honey'")
-
-      XCTAssertStatement(stmt, "(if Pooh then: 'Honey' else: 'More honey')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 15:20)
+      IfStmt(start: 0:0, end: 15:20)
+        Test
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Pooh
+        Body
+          ExprStmt(start: 6:6, end: 7:12)
+            StringExpr(start: 6:6, end: 7:12)
+              String: 'Honey'
+        OrElse
+          ExprStmt(start: 14:14, end: 15:20)
+            StringExpr(start: 14:14, end: 15:20)
+              String: 'More honey'
+    """)
   }
 
   /// if Pooh: "Honey"
@@ -80,7 +79,7 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
   ///       orelse: empty
   /// ```
   func test_withElif() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.if,                   start: loc0, end: loc1),
       self.token(.identifier("Pooh"),   start: loc2, end: loc3),
       self.token(.colon,                start: loc4, end: loc5),
@@ -92,32 +91,29 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
       self.token(.string("Bouncing"),   start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      // first if
-      guard let if0 = self.matchIf(stmt) else { return }
-      XCTAssertExpression(if0.test, "Pooh")
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(if0.body.count, 1)
-      guard if0.body.count == 1 else { return }
-      XCTAssertStatement(if0.body[0], "'Honey'")
-
-      XCTAssertEqual(if0.orElse.count, 1)
-      guard if0.orElse.count == 1 else { return }
-
-      // nested if
-      guard let if1 = self.matchIf(if0.orElse[0]) else { return }
-
-      XCTAssertExpression(if1.test, "Tigger")
-      XCTAssertEqual(if1.orElse, [])
-
-      XCTAssertEqual(if1.body.count, 1)
-      guard if1.body.count == 1 else { return }
-      XCTAssertStatement(if1.body[0], "'Bouncing'")
-
-      // general
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      IfStmt(start: 0:0, end: 17:22)
+        Test
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Pooh
+        Body
+          ExprStmt(start: 6:6, end: 7:12)
+            StringExpr(start: 6:6, end: 7:12)
+              String: 'Honey'
+        OrElse
+          IfStmt(start: 10:10, end: 17:22)
+            Test
+              IdentifierExpr(start: 12:12, end: 13:18)
+                Value: Tigger
+            Body
+              ExprStmt(start: 16:16, end: 17:22)
+                StringExpr(start: 16:16, end: 17:22)
+                  String: 'Bouncing'
+            OrElse: none
+    """)
   }
 
   /// if Pooh:     "Honey"
@@ -125,7 +121,7 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
   /// else:        "Carrots?"
   /// Expected AST is similiar to the one in `test_withElif`.
   func test_withElif_andElse() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.if,                   start: loc0, end: loc1),
       self.token(.identifier("Pooh"),   start: loc2, end: loc3),
       self.token(.colon,                start: loc4, end: loc5),
@@ -141,33 +137,31 @@ Common, ExpressionMatcher, StatementMatcher, StringMatcher {
       self.token(.string("Carrots?"),   start: loc24, end: loc25)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      // first if
-      guard let if0 = self.matchIf(stmt) else { return }
-      XCTAssertExpression(if0.test, "Pooh")
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(if0.body.count, 1)
-      guard if0.body.count == 1 else { return }
-      XCTAssertStatement(if0.body[0], "'Honey'")
-
-      XCTAssertEqual(if0.orElse.count, 1)
-      guard if0.orElse.count == 1 else { return }
-
-      // nested if
-      guard let if1 = self.matchIf(if0.orElse[0]) else { return }
-      XCTAssertExpression(if1.test, "Tigger")
-
-      XCTAssertEqual(if1.body.count, 1)
-      guard if1.body.count == 1 else { return }
-      XCTAssertStatement(if1.body[0], "'Bouncing'")
-
-      XCTAssertEqual(if1.orElse.count, 1)
-      guard if1.orElse.count == 1 else { return }
-      XCTAssertStatement(if1.orElse[0], "'Carrots?'")
-
-      // general
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc25)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 25:30)
+      IfStmt(start: 0:0, end: 25:30)
+        Test
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Pooh
+        Body
+          ExprStmt(start: 6:6, end: 7:12)
+            StringExpr(start: 6:6, end: 7:12)
+              String: 'Honey'
+        OrElse
+          IfStmt(start: 10:10, end: 25:30)
+            Test
+              IdentifierExpr(start: 12:12, end: 13:18)
+                Value: Tigger
+            Body
+              ExprStmt(start: 16:16, end: 17:22)
+                StringExpr(start: 16:16, end: 17:22)
+                  String: 'Bouncing'
+            OrElse
+              ExprStmt(start: 24:24, end: 25:30)
+                StringExpr(start: 24:24, end: 25:30)
+                  String: 'Carrots?'
+    """)
   }
 }

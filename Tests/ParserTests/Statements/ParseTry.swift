@@ -6,19 +6,19 @@ import Lexer
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
+class ParseTry: XCTestCase, Common {
 
   // MARK: - No else or finally
 
   /// try: "Mulan"
   func test_withoutFinallyOrElse_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,             start: loc0, end: loc1),
       self.token(.colon,           start: loc2, end: loc3),
       self.token(.string("Mulan"), start: loc4, end: loc5)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .tryWithoutExceptOrFinally)
       XCTAssertEqual(error.location, loc0)
     }
@@ -29,7 +29,7 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
   /// try:     "Ping"
   /// finally: "Mulan"
   func test_finally() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,             start: loc0,  end: loc1),
       self.token(.colon,           start: loc2,  end: loc3),
       self.token(.string("Ping"),  start: loc4,  end: loc5),
@@ -39,24 +39,22 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Mulan"), start: loc12, end: loc13)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchTry(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.handlers, [])
-      XCTAssertEqual(d.orElse, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Ping'")
-
-      XCTAssertEqual(d.finally.count, 1)
-      guard d.finally.count == 1 else { return }
-      XCTAssertStatement(d.finally[0], "'Mulan'")
-
-      XCTAssertStatement(stmt, "(try 'Ping' finally: 'Mulan')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 13:18)
+      TryStmt(start: 0:0, end: 13:18)
+        Body
+          ExprStmt(start: 4:4, end: 5:10)
+            StringExpr(start: 4:4, end: 5:10)
+              String: 'Ping'
+        Handlers: none
+        OrElse: none
+        Finally
+          ExprStmt(start: 12:12, end: 13:18)
+            StringExpr(start: 12:12, end: 13:18)
+              String: 'Mulan'
+    """)
   }
 
   // MARK: - Except
@@ -64,7 +62,7 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
   /// try:    "Mulan"
   /// except: "Ping"
   func test_except() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,             start: loc0,  end: loc1),
       self.token(.colon,           start: loc2,  end: loc3),
       self.token(.string("Mulan"), start: loc4,  end: loc5),
@@ -74,30 +72,32 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Ping"),  start: loc12, end: loc13)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchTry(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.orElse, [])
-      XCTAssertEqual(d.finally, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Mulan'")
-
-      XCTAssertEqual(d.handlers.count, 1)
-      guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except do: 'Ping')")
-
-      XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 13:18)
+      TryStmt(start: 0:0, end: 13:18)
+        Body
+          ExprStmt(start: 4:4, end: 5:10)
+            StringExpr(start: 4:4, end: 5:10)
+              String: 'Mulan'
+        Handlers
+          ExceptHandler(start: 8:8, end: 13:18)
+            Kind
+              Default
+            Body
+              ExprStmt(start: 12:12, end: 13:18)
+                StringExpr(start: 12:12, end: 13:18)
+                  String: 'Ping'
+        OrElse: none
+        Finally: none
+    """)
   }
 
   /// try: "Mulan"
   /// except Soldier: "Ping"
   func test_except_type() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,                   start: loc0,  end: loc1),
       self.token(.colon,                 start: loc2,  end: loc3),
       self.token(.string("Mulan"),       start: loc4,  end: loc5),
@@ -108,30 +108,36 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Ping"),        start: loc14, end: loc15)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchTry(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.orElse, [])
-      XCTAssertEqual(d.finally, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Mulan'")
-
-      XCTAssertEqual(d.handlers.count, 1)
-      guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except Soldier do: 'Ping')")
-
-      XCTAssertStatement(stmt, "(try 'Mulan' (except Soldier do: 'Ping'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc15)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 15:20)
+      TryStmt(start: 0:0, end: 15:20)
+        Body
+          ExprStmt(start: 4:4, end: 5:10)
+            StringExpr(start: 4:4, end: 5:10)
+              String: 'Mulan'
+        Handlers
+          ExceptHandler(start: 8:8, end: 15:20)
+            Kind
+              Typed
+                Type
+                  IdentifierExpr(start: 10:10, end: 11:16)
+                    Value: Soldier
+                AsName: none
+            Body
+              ExprStmt(start: 14:14, end: 15:20)
+                StringExpr(start: 14:14, end: 15:20)
+                  String: 'Ping'
+        OrElse: none
+        Finally: none
+    """)
   }
 
   /// try: "Mulan"
   /// except Disguise as Soldier: "Ping"
   func test_except_type_withName() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,                    start: loc0,  end: loc1),
       self.token(.colon,                  start: loc2,  end: loc3),
       self.token(.string("Mulan"),        start: loc4,  end: loc5),
@@ -144,31 +150,37 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Ping"),         start: loc18, end: loc19)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchTry(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.orElse, [])
-      XCTAssertEqual(d.finally, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Mulan'")
-
-      XCTAssertEqual(d.handlers.count, 1)
-      guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except Disguise as: Soldier do: 'Ping')")
-
-      XCTAssertStatement(stmt, "(try 'Mulan' (except Disguise as: Soldier do: 'Ping'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 19:24)
+      TryStmt(start: 0:0, end: 19:24)
+        Body
+          ExprStmt(start: 4:4, end: 5:10)
+            StringExpr(start: 4:4, end: 5:10)
+              String: 'Mulan'
+        Handlers
+          ExceptHandler(start: 8:8, end: 19:24)
+            Kind
+              Typed
+                Type
+                  IdentifierExpr(start: 10:10, end: 11:16)
+                    Value: Disguise
+                AsName: Soldier
+            Body
+              ExprStmt(start: 18:18, end: 19:24)
+                StringExpr(start: 18:18, end: 19:24)
+                  String: 'Ping'
+        OrElse: none
+        Finally: none
+    """)
   }
 
   /// try: "Mulan"
   /// except Soldier: "Ping"
   /// except: "Pong"
   func test_except_multiple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,                   start: loc0,  end: loc1),
       self.token(.colon,                 start: loc2,  end: loc3),
       self.token(.string("Mulan"),       start: loc4,  end: loc5),
@@ -183,32 +195,44 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Pong"),        start: loc22, end: loc23)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchTry(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.orElse, [])
-      XCTAssertEqual(d.finally, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Mulan'")
-
-      XCTAssertEqual(d.handlers.count, 2)
-      guard d.handlers.count == 2 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except Soldier do: 'Ping')")
-      XCTAssertExceptHandler(d.handlers[1], "(except do: 'Pong')")
-
-      XCTAssertStatement(stmt, "(try 'Mulan' (except Soldier do: 'Ping') (except do: 'Pong'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc23)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 23:28)
+      TryStmt(start: 0:0, end: 23:28)
+        Body
+          ExprStmt(start: 4:4, end: 5:10)
+            StringExpr(start: 4:4, end: 5:10)
+              String: 'Mulan'
+        Handlers
+          ExceptHandler(start: 8:8, end: 15:20)
+            Kind
+              Typed
+                Type
+                  IdentifierExpr(start: 10:10, end: 11:16)
+                    Value: Soldier
+                AsName: none
+            Body
+              ExprStmt(start: 14:14, end: 15:20)
+                StringExpr(start: 14:14, end: 15:20)
+                  String: 'Ping'
+          ExceptHandler(start: 18:18, end: 23:28)
+            Kind
+              Default
+            Body
+              ExprStmt(start: 22:22, end: 23:28)
+                StringExpr(start: 22:22, end: 23:28)
+                  String: 'Pong'
+        OrElse: none
+        Finally: none
+    """)
   }
 
   /// try: "Mulan"
   /// except: "Ping"
   /// else: "Fa Mulan"
   func test_except_else() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,                start: loc0,  end: loc1),
       self.token(.colon,              start: loc2,  end: loc3),
       self.token(.string("Mulan"),    start: loc4,  end: loc5),
@@ -222,35 +246,36 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Fa Mulan"), start: loc20, end: loc21)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchTry(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.finally, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Mulan'")
-
-      XCTAssertEqual(d.handlers.count, 1)
-      guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except do: 'Ping')")
-
-      XCTAssertEqual(d.orElse.count, 1)
-      guard d.orElse.count == 1 else { return }
-      XCTAssertStatement(d.orElse[0], "'Fa Mulan'")
-
-      print(stmt)
-      XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping') else: 'Fa Mulan')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc21)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 21:26)
+      TryStmt(start: 0:0, end: 21:26)
+        Body
+          ExprStmt(start: 4:4, end: 5:10)
+            StringExpr(start: 4:4, end: 5:10)
+              String: 'Mulan'
+        Handlers
+          ExceptHandler(start: 8:8, end: 13:18)
+            Kind
+              Default
+            Body
+              ExprStmt(start: 12:12, end: 13:18)
+                StringExpr(start: 12:12, end: 13:18)
+                  String: 'Ping'
+        OrElse
+          ExprStmt(start: 20:20, end: 21:26)
+            StringExpr(start: 20:20, end: 21:26)
+              String: 'Fa Mulan'
+        Finally: none
+    """)
   }
 
   /// try: "Mulan"
   /// except: "Ping"
   /// finally: "Fa Mulan"
   func test_except_finally() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,                start: loc0,  end: loc1),
       self.token(.colon,              start: loc2,  end: loc3),
       self.token(.string("Mulan"),    start: loc4,  end: loc5),
@@ -264,28 +289,29 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Fa Mulan"), start: loc20, end: loc21)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchTry(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.orElse, [])
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Mulan'")
-
-      XCTAssertEqual(d.handlers.count, 1)
-      guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except do: 'Ping')")
-
-      XCTAssertEqual(d.finally.count, 1)
-      guard d.finally.count == 1 else { return }
-      XCTAssertStatement(d.finally[0], "'Fa Mulan'")
-
-      print(stmt)
-      XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping') finally: 'Fa Mulan')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc21)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 21:26)
+      TryStmt(start: 0:0, end: 21:26)
+        Body
+          ExprStmt(start: 4:4, end: 5:10)
+            StringExpr(start: 4:4, end: 5:10)
+              String: 'Mulan'
+        Handlers
+          ExceptHandler(start: 8:8, end: 13:18)
+            Kind
+              Default
+            Body
+              ExprStmt(start: 12:12, end: 13:18)
+                StringExpr(start: 12:12, end: 13:18)
+                  String: 'Ping'
+        OrElse: none
+        Finally
+          ExprStmt(start: 20:20, end: 21:26)
+            StringExpr(start: 20:20, end: 21:26)
+              String: 'Fa Mulan'
+    """)
   }
 
   /// try: "Mulan"
@@ -293,7 +319,7 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
   /// else:   "Pong"
   /// finally: "Fa Mulan"
   func test_except_else_finally() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,                start: loc0,  end: loc1),
       self.token(.colon,              start: loc2,  end: loc3),
       self.token(.string("Mulan"),    start: loc4,  end: loc5),
@@ -311,30 +337,32 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Fa Mulan"), start: loc28, end: loc29)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchTry(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'Mulan'")
-
-      XCTAssertEqual(d.handlers.count, 1)
-      guard d.handlers.count == 1 else { return }
-      XCTAssertExceptHandler(d.handlers[0], "(except do: 'Ping')")
-
-      XCTAssertEqual(d.orElse.count, 1)
-      guard d.orElse.count == 1 else { return }
-      XCTAssertStatement(d.orElse[0], "'Pong'")
-
-      XCTAssertEqual(d.finally.count, 1)
-      guard d.finally.count == 1 else { return }
-      XCTAssertStatement(d.finally[0], "'Fa Mulan'")
-
-      print(stmt)
-      XCTAssertStatement(stmt, "(try 'Mulan' (except do: 'Ping') else: 'Pong' finally: 'Fa Mulan')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc29)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 29:34)
+      TryStmt(start: 0:0, end: 29:34)
+        Body
+          ExprStmt(start: 4:4, end: 5:10)
+            StringExpr(start: 4:4, end: 5:10)
+              String: 'Mulan'
+        Handlers
+          ExceptHandler(start: 8:8, end: 13:18)
+            Kind
+              Default
+            Body
+              ExprStmt(start: 12:12, end: 13:18)
+                StringExpr(start: 12:12, end: 13:18)
+                  String: 'Ping'
+        OrElse
+          ExprStmt(start: 20:20, end: 21:26)
+            StringExpr(start: 20:20, end: 21:26)
+              String: 'Pong'
+        Finally
+          ExprStmt(start: 28:28, end: 29:34)
+            StringExpr(start: 28:28, end: 29:34)
+              String: 'Fa Mulan'
+    """)
   }
 
   // MARK: - Else without except
@@ -343,7 +371,7 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
   /// else: "Ping"
   /// finally: "Fa Mulan"
   func test_else_withoutExcept_throws() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.try,                start: loc0,  end: loc1),
       self.token(.colon,              start: loc2,  end: loc3),
       self.token(.string("Mulan"),    start: loc4,  end: loc5),
@@ -357,7 +385,7 @@ class ParseTry: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("Fa Mulan"), start: loc20, end: loc21)
     )
 
-    if let error = self.error(&parser) {
+    if let error = self.error(parser) {
       XCTAssertEqual(error.kind, .tryWithElseWithoutExcept)
       XCTAssertEqual(error.location, loc0)
     }

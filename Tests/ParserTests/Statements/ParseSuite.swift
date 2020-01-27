@@ -12,13 +12,13 @@ import Lexer
 /// with     with class
 /// try??
 /// ```
-class ParseSuite: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
+class ParseSuite: XCTestCase, Common {
 
   /// class Peter:
   ///   def fly():
   ///     up
   func test_class_withFunction() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.class,               start: loc0, end: loc1),
       self.token(.identifier("Peter"), start: loc2, end: loc3),
       self.token(.colon,               start: loc4, end: loc5),
@@ -37,24 +37,40 @@ class ParseSuite: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.dedent,              start: loc30, end: loc31)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(def fly() do: 'up')")
-
-      XCTAssertStatement(stmt, "(class Peter body: (def fly() do: 'up'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc25) // 'up' is is last statement
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 25:30)
+      ClassDefStmt(start: 0:0, end: 25:30)
+        Name: Peter
+        Bases: none
+        Keywords: none
+        Body
+          FunctionDefStmt(start: 10:10, end: 25:30)
+            Name: fly
+            Args
+              Arguments(start: 16:16, end: 16:16)
+                Args: none
+                Defaults: none
+                Vararg: none
+                KwOnlyArgs: none
+                KwOnlyDefaults: none
+                Kwarg: none
+            Body
+              ExprStmt(start: 24:24, end: 25:30)
+                StringExpr(start: 24:24, end: 25:30)
+                  String: 'up'
+            Decorators: none
+            Returns: none
+        Decorators: none
+    """)
   }
 
   /// def fly():
   ///   if Peter:
   ///      fly
   func test_function_withIf() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.def,                 start: loc0, end: loc1),
       self.token(.identifier("fly"),   start: loc2, end: loc3),
       self.token(.leftParen,           start: loc4, end: loc5),
@@ -73,24 +89,40 @@ class ParseSuite: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.dedent,              start: loc30, end: loc31)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(if Peter then: fly)")
-
-      XCTAssertStatement(stmt, "(def fly() do: (if Peter then: fly))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc25) // 'fly' is is last statement
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 25:30)
+      FunctionDefStmt(start: 0:0, end: 25:30)
+        Name: fly
+        Args
+          Arguments(start: 6:6, end: 6:6)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          IfStmt(start: 14:14, end: 25:30)
+            Test
+              IdentifierExpr(start: 16:16, end: 17:22)
+                Value: Peter
+            Body
+              ExprStmt(start: 24:24, end: 25:30)
+                IdentifierExpr(start: 24:24, end: 25:30)
+                  Value: fly
+            OrElse: none
+        Decorators: none
+        Returns: none
+    """)
   }
 
   /// if Hook:
   ///   while tick:
   ///      run
   func test_if_withWhile() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.if,                 start: loc0, end: loc1),
       self.token(.identifier("Hook"), start: loc2, end: loc3),
       self.token(.colon,              start: loc4, end: loc5),
@@ -107,24 +139,33 @@ class ParseSuite: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.dedent,             start: loc26, end: loc27)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchIf(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(while tick do: 'run')")
-
-      XCTAssertStatement(stmt, "(if Hook then: (while tick do: 'run'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc21) // 'run' is is last statement
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 21:26)
+      IfStmt(start: 0:0, end: 21:26)
+        Test
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Hook
+        Body
+          WhileStmt(start: 10:10, end: 21:26)
+            Test
+              IdentifierExpr(start: 12:12, end: 13:18)
+                Value: tick
+            Body
+              ExprStmt(start: 20:20, end: 21:26)
+                StringExpr(start: 20:20, end: 21:26)
+                  String: 'run'
+            OrElse: none
+        OrElse: none
+    """)
   }
 
   /// while tick:
   ///   for tock in crocodile:
   ///      run
   func test_while_withFor() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.while,                   start: loc0, end: loc1),
       self.token(.identifier("tick"),      start: loc2, end: loc3),
       self.token(.colon,                   start: loc4, end: loc5),
@@ -143,24 +184,36 @@ class ParseSuite: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.dedent,                  start: loc30, end: loc31)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchWhile(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(for tock in: crocodile do: 'run')")
-
-      XCTAssertStatement(stmt, "(while tick do: (for tock in: crocodile do: 'run'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc25) // 'run' is is last statement
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 25:30)
+      WhileStmt(start: 0:0, end: 25:30)
+        Test
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: tick
+        Body
+          ForStmt(start: 10:10, end: 25:30)
+            Target
+              IdentifierExpr(start: 12:12, end: 13:18)
+                Value: tock
+            Iterable
+              IdentifierExpr(start: 16:16, end: 17:22)
+                Value: crocodile
+            Body
+              ExprStmt(start: 24:24, end: 25:30)
+                StringExpr(start: 24:24, end: 25:30)
+                  String: 'run'
+            OrElse: none
+        OrElse: none
+    """)
   }
 
   /// for tock in crocodile:
   ///   with Hook:
   ///      run
   func test_for_withWith() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.for,                     start: loc0, end: loc1),
       self.token(.identifier("tock"),      start: loc2, end: loc3),
       self.token(.in,                      start: loc4, end: loc5),
@@ -179,24 +232,38 @@ class ParseSuite: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.dedent,                  start: loc30, end: loc31)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFor(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(with Hook do: 'run')")
-
-      XCTAssertStatement(stmt, "(for tock in: crocodile do: (with Hook do: 'run'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc25) // 'run' is is last statement
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 25:30)
+      ForStmt(start: 0:0, end: 25:30)
+        Target
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: tock
+        Iterable
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: crocodile
+        Body
+          WithStmt(start: 14:14, end: 25:30)
+            Items
+              WithItem(start: 16:16, end: 17:22)
+                ContextExpr
+                  IdentifierExpr(start: 16:16, end: 17:22)
+                    Value: Hook
+                OptionalVars: none
+            Body
+              ExprStmt(start: 24:24, end: 25:30)
+                StringExpr(start: 24:24, end: 25:30)
+                  String: 'run'
+        OrElse: none
+    """)
   }
 
   /// with TinkerBell:
   ///   class Dust:
   ///      fly
   func test_with_withClass() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.with,                     start: loc0, end: loc1),
       self.token(.identifier("TinkerBell"), start: loc2, end: loc3),
       self.token(.colon,                    start: loc4, end: loc5),
@@ -213,16 +280,27 @@ class ParseSuite: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.dedent,                   start: loc26, end: loc27)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchWith(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "(class Dust body: 'fly')")
-
-      XCTAssertStatement(stmt, "(with TinkerBell do: (class Dust body: 'fly'))")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc21) // 'fly' is is last statement
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 21:26)
+      WithStmt(start: 0:0, end: 21:26)
+        Items
+          WithItem(start: 2:2, end: 3:8)
+            ContextExpr
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: TinkerBell
+            OptionalVars: none
+        Body
+          ClassDefStmt(start: 10:10, end: 21:26)
+            Name: Dust
+            Bases: none
+            Keywords: none
+            Body
+              ExprStmt(start: 20:20, end: 21:26)
+                StringExpr(start: 20:20, end: 21:26)
+                  String: 'fly'
+            Decorators: none
+    """)
   }
 }

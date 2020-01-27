@@ -3,63 +3,63 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseRaise: XCTestCase, Common, StatementMatcher {
+class ParseRaise: XCTestCase, Common {
 
   /// raise
   func test_reRaise() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.raise, start: loc0, end: loc1)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchRaise(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertNil(d.exception)
-      XCTAssertNil(d.cause)
-
-      XCTAssertStatement(stmt, "(raise)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc1)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 1:6)
+      RaiseStmt(start: 0:0, end: 1:6)
+        Exc: none
+        Cause: none
+    """)
   }
 
   /// raise Hades
   func test_exception() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.raise,               start: loc0, end: loc1),
       self.token(.identifier("Hades"), start: loc2, end: loc3)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchRaise(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.exception, "Hades")
-      XCTAssertNil(d.cause)
-
-      XCTAssertStatement(stmt, "(raise Hades)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc3)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 3:8)
+      RaiseStmt(start: 0:0, end: 3:8)
+        Exc
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Hades
+        Cause: none
+    """)
   }
 
   /// raise Hercules from Olympus
   func test_exception_from() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.raise,                start: loc0, end: loc1),
       self.token(.identifier("Hercules"), start: loc2, end: loc3),
       self.token(.from,                 start: loc4, end: loc5),
       self.token(.identifier("Olympus"),   start: loc6, end: loc7)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchRaise(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertExpression(d.exception, "Hercules")
-      XCTAssertExpression(d.cause, "Olympus")
-
-      XCTAssertStatement(stmt, "(raise Hercules from: Olympus)")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc7)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 7:12)
+      RaiseStmt(start: 0:0, end: 7:12)
+        Exc
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Hercules
+        Cause
+          IdentifierExpr(start: 6:6, end: 7:12)
+            Value: Olympus
+    """)
   }
 }

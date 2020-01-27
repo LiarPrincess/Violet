@@ -3,37 +3,38 @@ import Core
 import Lexer
 @testable import Parser
 
-class ParseWith: XCTestCase, Common, StatementMatcher {
+class ParseWith: XCTestCase, Common {
 
   /// with Alice: "wonderland"
   func test_simple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.with,                 start: loc0, end: loc1),
       self.token(.identifier("Alice"),  start: loc2, end: loc3),
       self.token(.colon,                start: loc4, end: loc5),
       self.token(.string("wonderland"), start: loc6, end: loc7)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchWith(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.items.count, 1)
-      guard d.items.count == 1 else { return }
-      XCTAssertWithItem(d.items[0], "Alice")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'wonderland'")
-
-      XCTAssertStatement(stmt, "(with Alice do: 'wonderland')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc7)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 7:12)
+      WithStmt(start: 0:0, end: 7:12)
+        Items
+          WithItem(start: 2:2, end: 3:8)
+            ContextExpr
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: Alice
+            OptionalVars: none
+        Body
+          ExprStmt(start: 6:6, end: 7:12)
+            StringExpr(start: 6:6, end: 7:12)
+              String: 'wonderland'
+    """)
   }
 
   /// with Alice as smol: "wonderland"
   func test_alias() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.with,                 start: loc0, end: loc1),
       self.token(.identifier("Alice"),  start: loc2, end: loc3),
       self.token(.as,                   start: loc4, end: loc5),
@@ -42,26 +43,29 @@ class ParseWith: XCTestCase, Common, StatementMatcher {
       self.token(.string("wonderland"), start: loc10, end: loc11)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchWith(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.items.count, 1)
-      guard d.items.count == 1 else { return }
-      XCTAssertWithItem(d.items[0], "(Alice as: smol)")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'wonderland'")
-
-      XCTAssertStatement(stmt, "(with (Alice as: smol) do: 'wonderland')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc11)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 11:16)
+      WithStmt(start: 0:0, end: 11:16)
+        Items
+          WithItem(start: 2:2, end: 7:12)
+            ContextExpr
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: Alice
+            OptionalVars
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: smol
+        Body
+          ExprStmt(start: 10:10, end: 11:16)
+            StringExpr(start: 10:10, end: 11:16)
+              String: 'wonderland'
+    """)
   }
 
   /// with Alice, Rabbit: "wonderland"
   func test_multipleItems() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.with,                 start: loc0, end: loc1),
       self.token(.identifier("Alice"),  start: loc2, end: loc3),
       self.token(.comma,                start: loc4, end: loc5),
@@ -70,27 +74,32 @@ class ParseWith: XCTestCase, Common, StatementMatcher {
       self.token(.string("wonderland"), start: loc10, end: loc11)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchWith(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.items.count, 2)
-      guard d.items.count == 2 else { return }
-      XCTAssertWithItem(d.items[0], "Alice")
-      XCTAssertWithItem(d.items[1], "Rabbit")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'wonderland'")
-
-      XCTAssertStatement(stmt, "(with Alice Rabbit do: 'wonderland')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc11)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 11:16)
+      WithStmt(start: 0:0, end: 11:16)
+        Items
+          WithItem(start: 2:2, end: 3:8)
+            ContextExpr
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: Alice
+            OptionalVars: none
+          WithItem(start: 6:6, end: 7:12)
+            ContextExpr
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: Rabbit
+            OptionalVars: none
+        Body
+          ExprStmt(start: 10:10, end: 11:16)
+            StringExpr(start: 10:10, end: 11:16)
+              String: 'wonderland'
+    """)
   }
 
   /// with Alice as big, Rabbit as smol: "wonderland"
   func test_multipleItems_withAlias() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.with,                 start: loc0, end: loc1),
       self.token(.identifier("Alice"),  start: loc2, end: loc3),
       self.token(.as,                   start: loc4, end: loc5),
@@ -103,21 +112,30 @@ class ParseWith: XCTestCase, Common, StatementMatcher {
       self.token(.string("wonderland"), start: loc18, end: loc19)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchWith(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.items.count, 2)
-      guard d.items.count == 2 else { return }
-      XCTAssertWithItem(d.items[0], "(Alice as: big)")
-      XCTAssertWithItem(d.items[1], "(Rabbit as: small)")
-
-      XCTAssertEqual(d.body.count, 1)
-      guard d.body.count == 1 else { return }
-      XCTAssertStatement(d.body[0], "'wonderland'")
-
-      XCTAssertStatement(stmt, "(with (Alice as: big) (Rabbit as: small) do: 'wonderland')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 19:24)
+      WithStmt(start: 0:0, end: 19:24)
+        Items
+          WithItem(start: 2:2, end: 7:12)
+            ContextExpr
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: Alice
+            OptionalVars
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: big
+          WithItem(start: 10:10, end: 15:20)
+            ContextExpr
+              IdentifierExpr(start: 10:10, end: 11:16)
+                Value: Rabbit
+            OptionalVars
+              IdentifierExpr(start: 14:14, end: 15:20)
+                Value: small
+        Body
+          ExprStmt(start: 18:18, end: 19:24)
+            StringExpr(start: 18:18, end: 19:24)
+              String: 'wonderland'
+    """)
   }
 }

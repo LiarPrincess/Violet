@@ -5,14 +5,14 @@ import Lexer
 
 // swiftlint:disable file_length
 
-class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
+class ParseDecorators: XCTestCase, Common {
 
   // MARK: - General
 
   /// @Joy
   /// class Riley: "feel"
   func test_simple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.at,                     start: loc0, end: loc1),
       self.token(.identifier("Joy"),      start: loc2, end: loc3),
       self.token(.newLine,                start: loc4, end: loc5),
@@ -22,26 +22,28 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("feel"),         start: loc12, end: loc13)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.decorators.count, 1)
-      guard d.decorators.count == 1 else { return }
-
-      XCTAssertExpression(d.decorators[0], "Joy")
-      XCTAssertEqual(d.decorators[0].start, loc2)
-      XCTAssertEqual(d.decorators[0].end,   loc3)
-
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy body: 'feel')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc13)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 13:18)
+      ClassDefStmt(start: 0:0, end: 13:18)
+        Name: Riley
+        Bases: none
+        Keywords: none
+        Body
+          ExprStmt(start: 12:12, end: 13:18)
+            StringExpr(start: 12:12, end: 13:18)
+              String: 'feel'
+        Decorators
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Joy
+    """)
   }
 
   /// @Emotion.Joy
   /// class Riley: "feel"
   func test_dottedName() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.at,                     start: loc0, end: loc1),
       self.token(.identifier("Emotion"),  start: loc2, end: loc3),
       self.token(.dot,                    start: loc4, end: loc5),
@@ -53,27 +55,32 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("feel"),         start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.decorators.count, 1)
-      guard d.decorators.count == 1 else { return }
-
-      XCTAssertExpression(d.decorators[0], "Emotion.Joy")
-      XCTAssertEqual(d.decorators[0].start, loc2)
-      XCTAssertEqual(d.decorators[0].end,   loc7)
-
-      XCTAssertStatement(stmt, "(class Riley decorators: @Emotion.Joy body: 'feel')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      ClassDefStmt(start: 0:0, end: 17:22)
+        Name: Riley
+        Bases: none
+        Keywords: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'feel'
+        Decorators
+          AttributeExpr(start: 2:2, end: 7:12)
+            Object
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: Emotion
+            Name: Joy
+    """)
   }
 
   /// @Joy
   /// @Sadness
   /// class Riley: "feel"
   func test_multiple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.at,                     start: loc0, end: loc1),
       self.token(.identifier("Joy"),      start: loc2, end: loc3),
       self.token(.newLine,                start: loc4, end: loc5),
@@ -86,24 +93,24 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("feel"),         start: loc18, end: loc19)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.decorators.count, 2)
-      guard d.decorators.count == 2 else { return }
-
-      XCTAssertExpression(d.decorators[0], "Joy")
-      XCTAssertEqual(d.decorators[0].start, loc2)
-      XCTAssertEqual(d.decorators[0].end,   loc3)
-
-      XCTAssertExpression(d.decorators[1], "Sadness")
-      XCTAssertEqual(d.decorators[1].start, loc8)
-      XCTAssertEqual(d.decorators[1].end,   loc9)
-
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy @Sadness body: 'feel')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 19:24)
+      ClassDefStmt(start: 0:0, end: 19:24)
+        Name: Riley
+        Bases: none
+        Keywords: none
+        Body
+          ExprStmt(start: 18:18, end: 19:24)
+            StringExpr(start: 18:18, end: 19:24)
+              String: 'feel'
+        Decorators
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Joy
+          IdentifierExpr(start: 8:8, end: 9:14)
+            Value: Sadness
+    """)
   }
 
   // MARK: - Arguments
@@ -111,7 +118,7 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
   /// @Joy()
   /// class Riley: "feel"
   func test_arguments_none() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.at,                     start: loc0, end: loc1),
       self.token(.identifier("Joy"),      start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -123,26 +130,32 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("feel"),         start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.decorators.count, 1)
-      guard d.decorators.count == 1 else { return }
-
-      XCTAssertExpression(d.decorators[0], "Joy()")
-      XCTAssertEqual(d.decorators[0].start, loc2)
-      XCTAssertEqual(d.decorators[0].end,   loc7)
-
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy() body: 'feel')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      ClassDefStmt(start: 0:0, end: 17:22)
+        Name: Riley
+        Bases: none
+        Keywords: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'feel'
+        Decorators
+          CallExpr(start: 2:2, end: 7:12)
+            Name
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: Joy
+            Args: none
+            Keywords: none
+    """)
   }
 
   /// @Joy(memory)
   /// class Riley: "feel"
   func test_arguments_positional() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.at,                     start: loc0, end: loc1),
       self.token(.identifier("Joy"),      start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -155,26 +168,34 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("feel"),         start: loc18, end: loc19)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.decorators.count, 1)
-      guard d.decorators.count == 1 else { return }
-
-      XCTAssertExpression(d.decorators[0], "Joy(memory)")
-      XCTAssertEqual(d.decorators[0].start, loc2)
-      XCTAssertEqual(d.decorators[0].end,   loc9)
-
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy(memory) body: 'feel')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 19:24)
+      ClassDefStmt(start: 0:0, end: 19:24)
+        Name: Riley
+        Bases: none
+        Keywords: none
+        Body
+          ExprStmt(start: 18:18, end: 19:24)
+            StringExpr(start: 18:18, end: 19:24)
+              String: 'feel'
+        Decorators
+          CallExpr(start: 2:2, end: 9:14)
+            Name
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: Joy
+            Args
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: memory
+            Keywords: none
+    """)
   }
 
   /// @Joy(memory="happy")
   /// class Riley: "feel"
   func test_arguments_keyword() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.at,                     start: loc0, end: loc1),
       self.token(.identifier("Joy"),      start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -189,26 +210,38 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("feel"),         start: loc22, end: loc23)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.decorators.count, 1)
-      guard d.decorators.count == 1 else { return }
-
-      XCTAssertExpression(d.decorators[0], "Joy(memory='happy')")
-      XCTAssertEqual(d.decorators[0].start, loc2)
-      XCTAssertEqual(d.decorators[0].end,   loc13)
-
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy(memory='happy') body: 'feel')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc23)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 23:28)
+      ClassDefStmt(start: 0:0, end: 23:28)
+        Name: Riley
+        Bases: none
+        Keywords: none
+        Body
+          ExprStmt(start: 22:22, end: 23:28)
+            StringExpr(start: 22:22, end: 23:28)
+              String: 'feel'
+        Decorators
+          CallExpr(start: 2:2, end: 13:18)
+            Name
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: Joy
+            Args: none
+            Keywords
+              Keyword(start: 6:6, end: 11:16)
+                Kind
+                  Named('memory')
+                Value
+                  StringExpr(start: 10:10, end: 11:16)
+                    String: 'happy'
+    """)
   }
 
   /// @Joy(core, memory="happy")
   /// class Riley: "feel"
   func test_arguments_multiple() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.at,                     start: loc0, end: loc1),
       self.token(.identifier("Joy"),      start: loc2, end: loc3),
       self.token(.leftParen,              start: loc4, end: loc5),
@@ -225,20 +258,34 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("feel"),         start: loc26, end: loc27)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchClassDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.decorators.count, 1)
-      guard d.decorators.count == 1 else { return }
-
-      XCTAssertExpression(d.decorators[0], "Joy(core memory='happy')")
-      XCTAssertEqual(d.decorators[0].start, loc2)
-      XCTAssertEqual(d.decorators[0].end,   loc17)
-
-      XCTAssertStatement(stmt, "(class Riley decorators: @Joy(core memory='happy') body: 'feel')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc27)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 27:32)
+      ClassDefStmt(start: 0:0, end: 27:32)
+        Name: Riley
+        Bases: none
+        Keywords: none
+        Body
+          ExprStmt(start: 26:26, end: 27:32)
+            StringExpr(start: 26:26, end: 27:32)
+              String: 'feel'
+        Decorators
+          CallExpr(start: 2:2, end: 17:22)
+            Name
+              IdentifierExpr(start: 2:2, end: 3:8)
+                Value: Joy
+            Args
+              IdentifierExpr(start: 6:6, end: 7:12)
+                Value: core
+            Keywords
+              Keyword(start: 10:10, end: 15:20)
+                Kind
+                  Named('memory')
+                Value
+                  StringExpr(start: 14:14, end: 15:20)
+                    String: 'happy'
+    """)
   }
 
   // MARK: - Function
@@ -246,7 +293,7 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
   /// @Joy
   /// def feel(): "emotion"
   func test_function() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.at,                     start: loc0, end: loc1),
       self.token(.identifier("Joy"),      start: loc2, end: loc3),
       self.token(.newLine,                start: loc4, end: loc5),
@@ -258,26 +305,35 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("emotion"),      start: loc16, end: loc17)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.decorators.count, 1)
-      guard d.decorators.count == 1 else { return }
-
-      XCTAssertExpression(d.decorators[0], "Joy")
-      XCTAssertEqual(d.decorators[0].start, loc2)
-      XCTAssertEqual(d.decorators[0].end,   loc3)
-
-      XCTAssertStatement(stmt, "(def feel() decorators: @Joy do: 'emotion')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc17)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      FunctionDefStmt(start: 0:0, end: 17:22)
+        Name: feel
+        Args
+          Arguments(start: 12:12, end: 12:12)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 16:16, end: 17:22)
+            StringExpr(start: 16:16, end: 17:22)
+              String: 'emotion'
+        Decorators
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Joy
+        Returns: none
+    """)
   }
 
   /// @Joy
   /// async def feel(): "emotion"
   func test_function_async() {
-    var parser = self.createStmtParser(
+    let parser = self.createStmtParser(
       self.token(.at,                     start: loc0, end: loc1),
       self.token(.identifier("Joy"),      start: loc2, end: loc3),
       self.token(.newLine,                start: loc4, end: loc5),
@@ -290,19 +346,28 @@ class ParseDecorators: XCTestCase, Common, ExpressionMatcher, StatementMatcher {
       self.token(.string("emotion"),      start: loc18, end: loc19)
     )
 
-    if let stmt = self.parseStmt(&parser) {
-      guard let d = self.matchAsyncFunctionDef(stmt) else { return }
+    guard let ast = self.parse(parser) else { return }
 
-      XCTAssertEqual(d.decorators.count, 1)
-      guard d.decorators.count == 1 else { return }
-
-      XCTAssertExpression(d.decorators[0], "Joy")
-      XCTAssertEqual(d.decorators[0].start, loc2)
-      XCTAssertEqual(d.decorators[0].end,   loc3)
-
-      XCTAssertStatement(stmt, "(asyncDef feel() decorators: @Joy do: 'emotion')")
-      XCTAssertEqual(stmt.start, loc0)
-      XCTAssertEqual(stmt.end,   loc19)
-    }
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 19:24)
+      AsyncFunctionDefStmt(start: 0:0, end: 19:24)
+        Name: feel
+        Args
+          Arguments(start: 14:14, end: 14:14)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          ExprStmt(start: 18:18, end: 19:24)
+            StringExpr(start: 18:18, end: 19:24)
+              String: 'emotion'
+        Decorators
+          IdentifierExpr(start: 2:2, end: 3:8)
+            Value: Joy
+        Returns: none
+    """)
   }
 }
