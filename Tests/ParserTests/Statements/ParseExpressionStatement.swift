@@ -16,7 +16,7 @@ class ParseExpressionStatement: XCTestCase, Common {
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 1:6)
       ExprStmt(start: 0:0, end: 1:6)
-        StringExpr(start: 0:0, end: 1:6)
+        StringExpr(context: Load, start: 0:0, end: 1:6)
           String: 'Ariel+Eric'
     """)
   }

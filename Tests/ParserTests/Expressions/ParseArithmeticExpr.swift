@@ -22,10 +22,10 @@ class ParseArithmeticExpr: XCTestCase, Common {
 
       XCTAssertAST(ast, """
       ExpressionAST(start: 0:0, end: 3:8)
-        UnaryOpExpr(start: 0:0, end: 3:8)
+        UnaryOpExpr(context: Load, start: 0:0, end: 3:8)
           Operator: \(op)
           Right
-            IdentifierExpr(start: 2:2, end: 3:8)
+            IdentifierExpr(context: Load, start: 2:2, end: 3:8)
               Value: lilo
       """)
     }
@@ -54,13 +54,13 @@ class ParseArithmeticExpr: XCTestCase, Common {
 
       XCTAssertAST(ast, """
       ExpressionAST(start: 0:0, end: 5:10)
-        BinaryOpExpr(start: 0:0, end: 5:10)
+        BinaryOpExpr(context: Load, start: 0:0, end: 5:10)
           Operator: \(op)
           Left
-            IdentifierExpr(start: 0:0, end: 1:6)
+            IdentifierExpr(context: Load, start: 0:0, end: 1:6)
               Value: lilo
           Right
-            IdentifierExpr(start: 4:4, end: 5:10)
+            IdentifierExpr(context: Load, start: 4:4, end: 5:10)
               Value: stitch
       """)
     }
@@ -80,13 +80,13 @@ class ParseArithmeticExpr: XCTestCase, Common {
 
       XCTAssertAST(ast, """
       ExpressionAST(start: 0:0, end: 5:10)
-        UnaryOpExpr(start: 0:0, end: 5:10)
+        UnaryOpExpr(context: Load, start: 0:0, end: 5:10)
           Operator: -
           Right
-            UnaryOpExpr(start: 2:2, end: 5:10)
+            UnaryOpExpr(context: Load, start: 2:2, end: 5:10)
               Operator: +
               Right
-                IdentifierExpr(start: 4:4, end: 5:10)
+                IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                   Value: lilo
       """)
   }
@@ -106,19 +106,19 @@ class ParseArithmeticExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BinaryOpExpr(start: 0:0, end: 9:14)
+      BinaryOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: **
         Left
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: lilo
         Right
-          BinaryOpExpr(start: 4:4, end: 9:14)
+          BinaryOpExpr(context: Load, start: 4:4, end: 9:14)
             Operator: **
             Left
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: stitch
             Right
-              IdentifierExpr(start: 8:8, end: 9:14)
+              IdentifierExpr(context: Load, start: 8:8, end: 9:14)
                 Value: nani
     """)
   }
@@ -137,19 +137,19 @@ class ParseArithmeticExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BinaryOpExpr(start: 0:0, end: 9:14)
+      BinaryOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: -
         Left
-          BinaryOpExpr(start: 0:0, end: 5:10)
+          BinaryOpExpr(context: Load, start: 0:0, end: 5:10)
             Operator: +
             Left
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Load, start: 0:0, end: 1:6)
                 Value: lilo
             Right
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: stitch
         Right
-          IdentifierExpr(start: 8:8, end: 9:14)
+          IdentifierExpr(context: Load, start: 8:8, end: 9:14)
             Value: nani
     """)
   }
@@ -168,19 +168,19 @@ class ParseArithmeticExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BinaryOpExpr(start: 0:0, end: 9:14)
+      BinaryOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: /
         Left
-          BinaryOpExpr(start: 0:0, end: 5:10)
+          BinaryOpExpr(context: Load, start: 0:0, end: 5:10)
             Operator: *
             Left
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Load, start: 0:0, end: 1:6)
                 Value: lilo
             Right
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: stitch
         Right
-          IdentifierExpr(start: 8:8, end: 9:14)
+          IdentifierExpr(context: Load, start: 8:8, end: 9:14)
             Value: nani
     """)
   }
@@ -200,16 +200,16 @@ class ParseArithmeticExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      BinaryOpExpr(start: 0:0, end: 7:12)
+      BinaryOpExpr(context: Load, start: 0:0, end: 7:12)
         Operator: *
         Left
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: lilo
         Right
-          UnaryOpExpr(start: 4:4, end: 7:12)
+          UnaryOpExpr(context: Load, start: 4:4, end: 7:12)
             Operator: -
             Right
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: stitch
     """)
   }
@@ -228,19 +228,19 @@ class ParseArithmeticExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BinaryOpExpr(start: 0:0, end: 9:14)
+      BinaryOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: +
         Left
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: lilo
         Right
-          BinaryOpExpr(start: 4:4, end: 9:14)
+          BinaryOpExpr(context: Load, start: 4:4, end: 9:14)
             Operator: *
             Left
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: stitch
             Right
-              IdentifierExpr(start: 8:8, end: 9:14)
+              IdentifierExpr(context: Load, start: 8:8, end: 9:14)
                 Value: nani
     """)
   }

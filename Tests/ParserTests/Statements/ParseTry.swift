@@ -46,13 +46,13 @@ class ParseTry: XCTestCase, Common {
       TryStmt(start: 0:0, end: 13:18)
         Body
           ExprStmt(start: 4:4, end: 5:10)
-            StringExpr(start: 4:4, end: 5:10)
+            StringExpr(context: Load, start: 4:4, end: 5:10)
               String: 'Ping'
         Handlers: none
         OrElse: none
         Finally
           ExprStmt(start: 12:12, end: 13:18)
-            StringExpr(start: 12:12, end: 13:18)
+            StringExpr(context: Load, start: 12:12, end: 13:18)
               String: 'Mulan'
     """)
   }
@@ -79,7 +79,7 @@ class ParseTry: XCTestCase, Common {
       TryStmt(start: 0:0, end: 13:18)
         Body
           ExprStmt(start: 4:4, end: 5:10)
-            StringExpr(start: 4:4, end: 5:10)
+            StringExpr(context: Load, start: 4:4, end: 5:10)
               String: 'Mulan'
         Handlers
           ExceptHandler(start: 8:8, end: 13:18)
@@ -87,7 +87,7 @@ class ParseTry: XCTestCase, Common {
               Default
             Body
               ExprStmt(start: 12:12, end: 13:18)
-                StringExpr(start: 12:12, end: 13:18)
+                StringExpr(context: Load, start: 12:12, end: 13:18)
                   String: 'Ping'
         OrElse: none
         Finally: none
@@ -115,19 +115,19 @@ class ParseTry: XCTestCase, Common {
       TryStmt(start: 0:0, end: 15:20)
         Body
           ExprStmt(start: 4:4, end: 5:10)
-            StringExpr(start: 4:4, end: 5:10)
+            StringExpr(context: Load, start: 4:4, end: 5:10)
               String: 'Mulan'
         Handlers
           ExceptHandler(start: 8:8, end: 15:20)
             Kind
               Typed
                 Type
-                  IdentifierExpr(start: 10:10, end: 11:16)
+                  IdentifierExpr(context: Load, start: 10:10, end: 11:16)
                     Value: Soldier
                 AsName: none
             Body
               ExprStmt(start: 14:14, end: 15:20)
-                StringExpr(start: 14:14, end: 15:20)
+                StringExpr(context: Load, start: 14:14, end: 15:20)
                   String: 'Ping'
         OrElse: none
         Finally: none
@@ -157,19 +157,19 @@ class ParseTry: XCTestCase, Common {
       TryStmt(start: 0:0, end: 19:24)
         Body
           ExprStmt(start: 4:4, end: 5:10)
-            StringExpr(start: 4:4, end: 5:10)
+            StringExpr(context: Load, start: 4:4, end: 5:10)
               String: 'Mulan'
         Handlers
           ExceptHandler(start: 8:8, end: 19:24)
             Kind
               Typed
                 Type
-                  IdentifierExpr(start: 10:10, end: 11:16)
+                  IdentifierExpr(context: Load, start: 10:10, end: 11:16)
                     Value: Disguise
                 AsName: Soldier
             Body
               ExprStmt(start: 18:18, end: 19:24)
-                StringExpr(start: 18:18, end: 19:24)
+                StringExpr(context: Load, start: 18:18, end: 19:24)
                   String: 'Ping'
         OrElse: none
         Finally: none
@@ -202,26 +202,26 @@ class ParseTry: XCTestCase, Common {
       TryStmt(start: 0:0, end: 23:28)
         Body
           ExprStmt(start: 4:4, end: 5:10)
-            StringExpr(start: 4:4, end: 5:10)
+            StringExpr(context: Load, start: 4:4, end: 5:10)
               String: 'Mulan'
         Handlers
           ExceptHandler(start: 8:8, end: 15:20)
             Kind
               Typed
                 Type
-                  IdentifierExpr(start: 10:10, end: 11:16)
+                  IdentifierExpr(context: Load, start: 10:10, end: 11:16)
                     Value: Soldier
                 AsName: none
             Body
               ExprStmt(start: 14:14, end: 15:20)
-                StringExpr(start: 14:14, end: 15:20)
+                StringExpr(context: Load, start: 14:14, end: 15:20)
                   String: 'Ping'
           ExceptHandler(start: 18:18, end: 23:28)
             Kind
               Default
             Body
               ExprStmt(start: 22:22, end: 23:28)
-                StringExpr(start: 22:22, end: 23:28)
+                StringExpr(context: Load, start: 22:22, end: 23:28)
                   String: 'Pong'
         OrElse: none
         Finally: none
@@ -253,7 +253,7 @@ class ParseTry: XCTestCase, Common {
       TryStmt(start: 0:0, end: 21:26)
         Body
           ExprStmt(start: 4:4, end: 5:10)
-            StringExpr(start: 4:4, end: 5:10)
+            StringExpr(context: Load, start: 4:4, end: 5:10)
               String: 'Mulan'
         Handlers
           ExceptHandler(start: 8:8, end: 13:18)
@@ -261,11 +261,11 @@ class ParseTry: XCTestCase, Common {
               Default
             Body
               ExprStmt(start: 12:12, end: 13:18)
-                StringExpr(start: 12:12, end: 13:18)
+                StringExpr(context: Load, start: 12:12, end: 13:18)
                   String: 'Ping'
         OrElse
           ExprStmt(start: 20:20, end: 21:26)
-            StringExpr(start: 20:20, end: 21:26)
+            StringExpr(context: Load, start: 20:20, end: 21:26)
               String: 'Fa Mulan'
         Finally: none
     """)
@@ -296,7 +296,7 @@ class ParseTry: XCTestCase, Common {
       TryStmt(start: 0:0, end: 21:26)
         Body
           ExprStmt(start: 4:4, end: 5:10)
-            StringExpr(start: 4:4, end: 5:10)
+            StringExpr(context: Load, start: 4:4, end: 5:10)
               String: 'Mulan'
         Handlers
           ExceptHandler(start: 8:8, end: 13:18)
@@ -304,12 +304,12 @@ class ParseTry: XCTestCase, Common {
               Default
             Body
               ExprStmt(start: 12:12, end: 13:18)
-                StringExpr(start: 12:12, end: 13:18)
+                StringExpr(context: Load, start: 12:12, end: 13:18)
                   String: 'Ping'
         OrElse: none
         Finally
           ExprStmt(start: 20:20, end: 21:26)
-            StringExpr(start: 20:20, end: 21:26)
+            StringExpr(context: Load, start: 20:20, end: 21:26)
               String: 'Fa Mulan'
     """)
   }
@@ -344,7 +344,7 @@ class ParseTry: XCTestCase, Common {
       TryStmt(start: 0:0, end: 29:34)
         Body
           ExprStmt(start: 4:4, end: 5:10)
-            StringExpr(start: 4:4, end: 5:10)
+            StringExpr(context: Load, start: 4:4, end: 5:10)
               String: 'Mulan'
         Handlers
           ExceptHandler(start: 8:8, end: 13:18)
@@ -352,15 +352,15 @@ class ParseTry: XCTestCase, Common {
               Default
             Body
               ExprStmt(start: 12:12, end: 13:18)
-                StringExpr(start: 12:12, end: 13:18)
+                StringExpr(context: Load, start: 12:12, end: 13:18)
                   String: 'Ping'
         OrElse
           ExprStmt(start: 20:20, end: 21:26)
-            StringExpr(start: 20:20, end: 21:26)
+            StringExpr(context: Load, start: 20:20, end: 21:26)
               String: 'Pong'
         Finally
           ExprStmt(start: 28:28, end: 29:34)
-            StringExpr(start: 28:28, end: 29:34)
+            StringExpr(context: Load, start: 28:28, end: 29:34)
               String: 'Fa Mulan'
     """)
   }

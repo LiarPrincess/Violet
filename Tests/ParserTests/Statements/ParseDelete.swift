@@ -17,7 +17,7 @@ class ParseDelete: XCTestCase, Common {
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 3:8)
       DeleteStmt(start: 0:0, end: 3:8)
-        IdentifierExpr(start: 2:2, end: 3:8)
+        IdentifierExpr(context: Del, start: 2:2, end: 3:8)
           Value: Jafar
     """)
   }
@@ -35,7 +35,7 @@ class ParseDelete: XCTestCase, Common {
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 5:10)
       DeleteStmt(start: 0:0, end: 5:10)
-        IdentifierExpr(start: 2:2, end: 3:8)
+        IdentifierExpr(context: Del, start: 2:2, end: 3:8)
           Value: Jafar
     """)
   }
@@ -56,11 +56,11 @@ class ParseDelete: XCTestCase, Common {
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 11:16)
       DeleteStmt(start: 0:0, end: 11:16)
-        IdentifierExpr(start: 2:2, end: 3:8)
+        IdentifierExpr(context: Del, start: 2:2, end: 3:8)
           Value: Jafar
-        IdentifierExpr(start: 6:6, end: 7:12)
+        IdentifierExpr(context: Del, start: 6:6, end: 7:12)
           Value: Iago
-        IdentifierExpr(start: 10:10, end: 11:16)
+        IdentifierExpr(context: Del, start: 10:10, end: 11:16)
           Value: Lamp
     """)
   }

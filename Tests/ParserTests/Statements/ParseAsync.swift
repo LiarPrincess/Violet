@@ -33,7 +33,7 @@ class ParseAsync: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 12:12, end: 13:18)
-            StringExpr(start: 12:12, end: 13:18)
+            StringExpr(context: Load, start: 12:12, end: 13:18)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -58,12 +58,12 @@ class ParseAsync: XCTestCase, Common {
         Items
           WithItem(start: 4:4, end: 5:10)
             ContextExpr
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: Alice
             OptionalVars: none
         Body
           ExprStmt(start: 8:8, end: 9:14)
-            StringExpr(start: 8:8, end: 9:14)
+            StringExpr(context: Load, start: 8:8, end: 9:14)
               String: 'wonderland'
     """)
   }
@@ -86,14 +86,14 @@ class ParseAsync: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 13:18)
       AsyncForStmt(start: 0:0, end: 13:18)
         Target
-          IdentifierExpr(start: 4:4, end: 5:10)
+          IdentifierExpr(context: Store, start: 4:4, end: 5:10)
             Value: person
         Iterable
-          IdentifierExpr(start: 8:8, end: 9:14)
+          IdentifierExpr(context: Load, start: 8:8, end: 9:14)
             Value: castle
         Body
           ExprStmt(start: 12:12, end: 13:18)
-            StringExpr(start: 12:12, end: 13:18)
+            StringExpr(context: Load, start: 12:12, end: 13:18)
               String: 'becomeItem'
         OrElse: none
     """)

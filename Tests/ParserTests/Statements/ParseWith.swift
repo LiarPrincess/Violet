@@ -22,12 +22,12 @@ class ParseWith: XCTestCase, Common {
         Items
           WithItem(start: 2:2, end: 3:8)
             ContextExpr
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Alice
             OptionalVars: none
         Body
           ExprStmt(start: 6:6, end: 7:12)
-            StringExpr(start: 6:6, end: 7:12)
+            StringExpr(context: Load, start: 6:6, end: 7:12)
               String: 'wonderland'
     """)
   }
@@ -51,14 +51,14 @@ class ParseWith: XCTestCase, Common {
         Items
           WithItem(start: 2:2, end: 7:12)
             ContextExpr
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Alice
             OptionalVars
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Store, start: 6:6, end: 7:12)
                 Value: smol
         Body
           ExprStmt(start: 10:10, end: 11:16)
-            StringExpr(start: 10:10, end: 11:16)
+            StringExpr(context: Load, start: 10:10, end: 11:16)
               String: 'wonderland'
     """)
   }
@@ -82,17 +82,17 @@ class ParseWith: XCTestCase, Common {
         Items
           WithItem(start: 2:2, end: 3:8)
             ContextExpr
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Alice
             OptionalVars: none
           WithItem(start: 6:6, end: 7:12)
             ContextExpr
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: Rabbit
             OptionalVars: none
         Body
           ExprStmt(start: 10:10, end: 11:16)
-            StringExpr(start: 10:10, end: 11:16)
+            StringExpr(context: Load, start: 10:10, end: 11:16)
               String: 'wonderland'
     """)
   }
@@ -120,21 +120,21 @@ class ParseWith: XCTestCase, Common {
         Items
           WithItem(start: 2:2, end: 7:12)
             ContextExpr
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Alice
             OptionalVars
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Store, start: 6:6, end: 7:12)
                 Value: big
           WithItem(start: 10:10, end: 15:20)
             ContextExpr
-              IdentifierExpr(start: 10:10, end: 11:16)
+              IdentifierExpr(context: Load, start: 10:10, end: 11:16)
                 Value: Rabbit
             OptionalVars
-              IdentifierExpr(start: 14:14, end: 15:20)
+              IdentifierExpr(context: Store, start: 14:14, end: 15:20)
                 Value: small
         Body
           ExprStmt(start: 18:18, end: 19:24)
-            StringExpr(start: 18:18, end: 19:24)
+            StringExpr(context: Load, start: 18:18, end: 19:24)
               String: 'wonderland'
     """)
   }

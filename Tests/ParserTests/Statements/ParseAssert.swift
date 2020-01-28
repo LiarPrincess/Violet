@@ -18,7 +18,7 @@ class ParseAssert: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 3:8)
       AssertStmt(start: 0:0, end: 3:8)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Aladdin
         Msg: none
     """)
@@ -39,10 +39,10 @@ class ParseAssert: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 7:12)
       AssertStmt(start: 0:0, end: 7:12)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Aladdin
         Msg
-          IdentifierExpr(start: 6:6, end: 7:12)
+          IdentifierExpr(context: Load, start: 6:6, end: 7:12)
             Value: Jasmine
     """)
   }

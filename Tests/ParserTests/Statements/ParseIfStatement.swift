@@ -22,11 +22,11 @@ class ParseIfStatement: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 7:12)
       IfStmt(start: 0:0, end: 7:12)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Pooh
         Body
           ExprStmt(start: 6:6, end: 7:12)
-            StringExpr(start: 6:6, end: 7:12)
+            StringExpr(context: Load, start: 6:6, end: 7:12)
               String: 'Honey'
         OrElse: none
     """)
@@ -52,15 +52,15 @@ class ParseIfStatement: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 15:20)
       IfStmt(start: 0:0, end: 15:20)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Pooh
         Body
           ExprStmt(start: 6:6, end: 7:12)
-            StringExpr(start: 6:6, end: 7:12)
+            StringExpr(context: Load, start: 6:6, end: 7:12)
               String: 'Honey'
         OrElse
           ExprStmt(start: 14:14, end: 15:20)
-            StringExpr(start: 14:14, end: 15:20)
+            StringExpr(context: Load, start: 14:14, end: 15:20)
               String: 'More honey'
     """)
   }
@@ -97,20 +97,20 @@ class ParseIfStatement: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 17:22)
       IfStmt(start: 0:0, end: 17:22)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Pooh
         Body
           ExprStmt(start: 6:6, end: 7:12)
-            StringExpr(start: 6:6, end: 7:12)
+            StringExpr(context: Load, start: 6:6, end: 7:12)
               String: 'Honey'
         OrElse
           IfStmt(start: 10:10, end: 17:22)
             Test
-              IdentifierExpr(start: 12:12, end: 13:18)
+              IdentifierExpr(context: Load, start: 12:12, end: 13:18)
                 Value: Tigger
             Body
               ExprStmt(start: 16:16, end: 17:22)
-                StringExpr(start: 16:16, end: 17:22)
+                StringExpr(context: Load, start: 16:16, end: 17:22)
                   String: 'Bouncing'
             OrElse: none
     """)
@@ -143,24 +143,24 @@ class ParseIfStatement: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 25:30)
       IfStmt(start: 0:0, end: 25:30)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Pooh
         Body
           ExprStmt(start: 6:6, end: 7:12)
-            StringExpr(start: 6:6, end: 7:12)
+            StringExpr(context: Load, start: 6:6, end: 7:12)
               String: 'Honey'
         OrElse
           IfStmt(start: 10:10, end: 25:30)
             Test
-              IdentifierExpr(start: 12:12, end: 13:18)
+              IdentifierExpr(context: Load, start: 12:12, end: 13:18)
                 Value: Tigger
             Body
               ExprStmt(start: 16:16, end: 17:22)
-                StringExpr(start: 16:16, end: 17:22)
+                StringExpr(context: Load, start: 16:16, end: 17:22)
                   String: 'Bouncing'
             OrElse
               ExprStmt(start: 24:24, end: 25:30)
-                StringExpr(start: 24:24, end: 25:30)
+                StringExpr(context: Load, start: 24:24, end: 25:30)
                   String: 'Carrots?'
     """)
   }

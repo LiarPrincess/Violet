@@ -20,11 +20,11 @@ class ParseWhile: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 7:12)
       WhileStmt(start: 0:0, end: 7:12)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Frollo
         Body
           ExprStmt(start: 6:6, end: 7:12)
-            StringExpr(start: 6:6, end: 7:12)
+            StringExpr(context: Load, start: 6:6, end: 7:12)
               String: 'Quasimodo'
         OrElse: none
     """)
@@ -50,15 +50,15 @@ class ParseWhile: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 15:20)
       WhileStmt(start: 0:0, end: 15:20)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Frollo
         Body
           ExprStmt(start: 6:6, end: 7:12)
-            StringExpr(start: 6:6, end: 7:12)
+            StringExpr(context: Load, start: 6:6, end: 7:12)
               String: 'Quasimodo'
         OrElse
           ExprStmt(start: 14:14, end: 15:20)
-            StringExpr(start: 14:14, end: 15:20)
+            StringExpr(context: Load, start: 14:14, end: 15:20)
               String: 'Esmeralda'
     """)
   }

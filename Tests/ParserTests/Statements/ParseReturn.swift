@@ -33,7 +33,7 @@ class ParseReturn: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 3:8)
       ReturnStmt(start: 0:0, end: 3:8)
         Value
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Megara
     """)
   }
@@ -52,9 +52,9 @@ class ParseReturn: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 5:10)
       ReturnStmt(start: 0:0, end: 5:10)
         Value
-          TupleExpr(start: 2:2, end: 5:10)
+          TupleExpr(context: Load, start: 2:2, end: 5:10)
             Elements
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Megara
     """)
   }
@@ -77,13 +77,13 @@ class ParseReturn: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 11:16)
       ReturnStmt(start: 0:0, end: 11:16)
         Value
-          TupleExpr(start: 2:2, end: 11:16)
+          TupleExpr(context: Load, start: 2:2, end: 11:16)
             Elements
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Calliope
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: Melpomene
-              IdentifierExpr(start: 10:10, end: 11:16)
+              IdentifierExpr(context: Load, start: 10:10, end: 11:16)
                 Value: Terpsichore
     """)
   }

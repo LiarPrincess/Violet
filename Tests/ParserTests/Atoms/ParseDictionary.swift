@@ -18,7 +18,7 @@ class ParseDictionary: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
-      DictionaryExpr(start: 0:0, end: 3:8)
+      DictionaryExpr(context: Load, start: 0:0, end: 3:8)
         Elements: none
     """)
   }
@@ -39,14 +39,14 @@ class ParseDictionary: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      DictionaryExpr(start: 0:0, end: 9:14)
+      DictionaryExpr(context: Load, start: 0:0, end: 9:14)
         Elements
           Key/value
             Key
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: rapunzel
             Value
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: eugene
     """)
   }
@@ -66,14 +66,14 @@ class ParseDictionary: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
-      DictionaryExpr(start: 0:0, end: 11:16)
+      DictionaryExpr(context: Load, start: 0:0, end: 11:16)
         Elements
           Key/value
             Key
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: rapunzel
             Value
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: eugene
     """)
   }
@@ -91,10 +91,10 @@ class ParseDictionary: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      DictionaryExpr(start: 0:0, end: 7:12)
+      DictionaryExpr(context: Load, start: 0:0, end: 7:12)
         Elements
           Unpack
-            IdentifierExpr(start: 4:4, end: 5:10)
+            IdentifierExpr(context: Load, start: 4:4, end: 5:10)
               Value: rapunzel
     """)
   }
@@ -120,24 +120,24 @@ class ParseDictionary: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 23:28)
-      DictionaryExpr(start: 0:0, end: 23:28)
+      DictionaryExpr(context: Load, start: 0:0, end: 23:28)
         Elements
           Key/value
             Key
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: rapunzel
             Value
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: eugene
           Unpack
-            IdentifierExpr(start: 12:12, end: 13:18)
+            IdentifierExpr(context: Load, start: 12:12, end: 13:18)
               Value: cassandra
           Key/value
             Key
-              IdentifierExpr(start: 16:16, end: 17:22)
+              IdentifierExpr(context: Load, start: 16:16, end: 17:22)
                 Value: pascal
             Value
-              IdentifierExpr(start: 20:20, end: 21:26)
+              IdentifierExpr(context: Load, start: 20:20, end: 21:26)
                 Value: maximus
     """)
   }
@@ -163,21 +163,21 @@ class ParseDictionary: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 19:24)
-      DictionaryComprehensionExpr(start: 0:0, end: 19:24)
+      DictionaryComprehensionExpr(context: Load, start: 0:0, end: 19:24)
         Key
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: rapunzel
         Value
-          IdentifierExpr(start: 6:6, end: 7:12)
+          IdentifierExpr(context: Load, start: 6:6, end: 7:12)
             Value: eugene
         Generators
           Comprehension(start: 8:8, end: 17:22)
             isAsync: false
             Target
-              IdentifierExpr(start: 10:10, end: 11:16)
+              IdentifierExpr(context: Store, start: 10:10, end: 11:16)
                 Value: cassandra
             Iterable
-              ListExpr(start: 14:14, end: 17:22)
+              ListExpr(context: Load, start: 14:14, end: 17:22)
                 Elements: none
             Ifs: none
     """)

@@ -35,13 +35,13 @@ class ParseSubscript: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      SubscriptExpr(start: 0:0, end: 7:12)
+      SubscriptExpr(context: Load, start: 0:0, end: 7:12)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Slice(start: 2:2, end: 7:12)
           Index
-            IntExpr(start: 4:4, end: 5:10)
+            IntExpr(context: Load, start: 4:4, end: 5:10)
               Value: 1
     """)
   }
@@ -61,17 +61,17 @@ class ParseSubscript: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
-      SubscriptExpr(start: 0:0, end: 11:16)
+      SubscriptExpr(context: Load, start: 0:0, end: 11:16)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Slice(start: 2:2, end: 11:16)
           Index
-            TupleExpr(start: 4:4, end: 9:14)
+            TupleExpr(context: Load, start: 4:4, end: 9:14)
               Elements
-                IntExpr(start: 4:4, end: 5:10)
+                IntExpr(context: Load, start: 4:4, end: 5:10)
                   Value: 1
-                IntExpr(start: 8:8, end: 9:14)
+                IntExpr(context: Load, start: 8:8, end: 9:14)
                   Value: 2
     """)
   }
@@ -90,15 +90,15 @@ class ParseSubscript: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      SubscriptExpr(start: 0:0, end: 9:14)
+      SubscriptExpr(context: Load, start: 0:0, end: 9:14)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Slice(start: 2:2, end: 9:14)
           Index
-            TupleExpr(start: 4:4, end: 5:10)
+            TupleExpr(context: Load, start: 4:4, end: 5:10)
               Elements
-                IntExpr(start: 4:4, end: 5:10)
+                IntExpr(context: Load, start: 4:4, end: 5:10)
                   Value: 1
     """)
   }
@@ -119,9 +119,9 @@ class ParseSubscript: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      SubscriptExpr(start: 0:0, end: 9:14)
+      SubscriptExpr(context: Load, start: 0:0, end: 9:14)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Slice(start: 2:2, end: 9:14)
           Slice
@@ -145,14 +145,14 @@ class ParseSubscript: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      SubscriptExpr(start: 0:0, end: 9:14)
+      SubscriptExpr(context: Load, start: 0:0, end: 9:14)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Slice(start: 2:2, end: 9:14)
           Slice
             Lower
-              IntExpr(start: 4:4, end: 5:10)
+              IntExpr(context: Load, start: 4:4, end: 5:10)
                 Value: 1
             Upper: none
             Step: none
@@ -174,15 +174,15 @@ class ParseSubscript: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
-      SubscriptExpr(start: 0:0, end: 11:16)
+      SubscriptExpr(context: Load, start: 0:0, end: 11:16)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Slice(start: 2:2, end: 11:16)
           Slice
             Lower: none
             Upper
-              IntExpr(start: 6:6, end: 7:12)
+              IntExpr(context: Load, start: 6:6, end: 7:12)
                 Value: 2
             Step: none
     """)
@@ -203,16 +203,16 @@ class ParseSubscript: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
-      SubscriptExpr(start: 0:0, end: 11:16)
+      SubscriptExpr(context: Load, start: 0:0, end: 11:16)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Slice(start: 2:2, end: 11:16)
           Slice
             Lower: none
             Upper: none
             Step
-              IntExpr(start: 8:8, end: 9:14)
+              IntExpr(context: Load, start: 8:8, end: 9:14)
                 Value: 3
     """)
   }
@@ -234,20 +234,20 @@ class ParseSubscript: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)
-      SubscriptExpr(start: 0:0, end: 15:20)
+      SubscriptExpr(context: Load, start: 0:0, end: 15:20)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Slice(start: 2:2, end: 15:20)
           Slice
             Lower
-              IntExpr(start: 4:4, end: 5:10)
+              IntExpr(context: Load, start: 4:4, end: 5:10)
                 Value: 1
             Upper
-              IntExpr(start: 8:8, end: 9:14)
+              IntExpr(context: Load, start: 8:8, end: 9:14)
                 Value: 2
             Step
-              IntExpr(start: 12:12, end: 13:18)
+              IntExpr(context: Load, start: 12:12, end: 13:18)
                 Value: 3
     """)
   }
@@ -270,22 +270,22 @@ class ParseSubscript: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 13:18)
-      SubscriptExpr(start: 0:0, end: 13:18)
+      SubscriptExpr(context: Load, start: 0:0, end: 13:18)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Slice(start: 2:2, end: 13:18)
           ExtSlice
             Slice(start: 4:4, end: 7:12)
               Slice
                 Lower
-                  IntExpr(start: 4:4, end: 5:10)
+                  IntExpr(context: Load, start: 4:4, end: 5:10)
                     Value: 1
                 Upper: none
                 Step: none
             Slice(start: 10:10, end: 11:16)
               Index
-                IntExpr(start: 10:10, end: 11:16)
+                IntExpr(context: Load, start: 10:10, end: 11:16)
                   Value: 2
     """)
   }

@@ -40,11 +40,11 @@ class ParseAugAssign: XCTestCase, Common {
       ModuleAST(start: 0:0, end: 5:10)
         AugAssignStmt(start: 0:0, end: 5:10)
           Target
-            IdentifierExpr(start: 0:0, end: 1:6)
+            IdentifierExpr(context: Store, start: 0:0, end: 1:6)
               Value: Ariel
           Operator: \(op)
           Value
-            StringExpr(start: 4:4, end: 5:10)
+            StringExpr(context: Load, start: 4:4, end: 5:10)
               String: 'legs'
       """)
     }
@@ -66,14 +66,14 @@ class ParseAugAssign: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 9:14)
       AugAssignStmt(start: 0:0, end: 9:14)
         Target
-          AttributeExpr(start: 0:0, end: 5:10)
+          AttributeExpr(context: Store, start: 0:0, end: 5:10)
             Object
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Load, start: 0:0, end: 1:6)
                 Value: sea
             Name: cavern
         Operator: +
         Value
-          StringExpr(start: 8:8, end: 9:14)
+          StringExpr(context: Load, start: 8:8, end: 9:14)
             String: 'Gizmos'
     """)
   }
@@ -95,17 +95,17 @@ class ParseAugAssign: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 11:16)
       AugAssignStmt(start: 0:0, end: 11:16)
         Target
-          SubscriptExpr(start: 0:0, end: 7:12)
+          SubscriptExpr(context: Store, start: 0:0, end: 7:12)
             Object
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Load, start: 0:0, end: 1:6)
                 Value: sea
             Slice(start: 2:2, end: 7:12)
               Index
-                IdentifierExpr(start: 4:4, end: 5:10)
+                IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                   Value: cavern
         Operator: +
         Value
-          StringExpr(start: 10:10, end: 11:16)
+          StringExpr(context: Load, start: 10:10, end: 11:16)
             String: 'Gizmos'
     """)
   }
@@ -139,13 +139,13 @@ class ParseAugAssign: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 7:12)
       AugAssignStmt(start: 0:0, end: 7:12)
         Target
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Store, start: 0:0, end: 1:6)
             Value: Ariel
         Operator: +
         Value
-          YieldExpr(start: 4:4, end: 7:12)
+          YieldExpr(context: Load, start: 4:4, end: 7:12)
             Value
-              StringExpr(start: 6:6, end: 7:12)
+              StringExpr(context: Load, start: 6:6, end: 7:12)
                 String: 'legs'
     """)
   }

@@ -131,7 +131,7 @@ class FStringTests: XCTestCase, Common {
 
     XCTAssertString(group, """
     Formatted string
-      IntExpr(start: 1:0, end: 1:4)
+      IntExpr(context: Load, start: 1:0, end: 1:4)
         Value: 2013
       Conversion: none
       Spec: none
@@ -146,13 +146,13 @@ class FStringTests: XCTestCase, Common {
 
     XCTAssertString(group, """
     Formatted string
-      BinaryOpExpr(start: 1:0, end: 1:7)
+      BinaryOpExpr(context: Load, start: 1:0, end: 1:7)
         Operator: +
         Left
-          IntExpr(start: 1:0, end: 1:2)
+          IntExpr(context: Load, start: 1:0, end: 1:2)
             Value: 20
         Right
-          IntExpr(start: 1:5, end: 1:7)
+          IntExpr(context: Load, start: 1:5, end: 1:7)
             Value: 13
       Conversion: none
       Spec: none
@@ -167,7 +167,7 @@ class FStringTests: XCTestCase, Common {
 
     XCTAssertString(group, """
     Formatted string
-      StringExpr(start: 1:0, end: 1:22)
+      StringExpr(context: Load, start: 1:0, end: 1:22)
         String: 'Let it go, let it go'
       Conversion: none
       Spec: none
@@ -182,7 +182,7 @@ class FStringTests: XCTestCase, Common {
 
     XCTAssertString(group, """
     Formatted string
-      StringExpr(start: 1:0, end: 1:29)
+      StringExpr(context: Load, start: 1:0, end: 1:29)
         String: 'Cant hold it back anymore'
       Conversion: none
       Spec: none
@@ -197,7 +197,7 @@ class FStringTests: XCTestCase, Common {
 
     XCTAssertString(group, """
     Formatted string
-      StringExpr(start: 1:0, end: 1:22)
+      StringExpr(context: Load, start: 1:0, end: 1:22)
         String: 'Let it go, let it go'
       Conversion: repr
       Spec: none
@@ -212,7 +212,7 @@ class FStringTests: XCTestCase, Common {
 
     XCTAssertString(group, """
     Formatted string
-      StringExpr(start: 1:0, end: 1:22)
+      StringExpr(context: Load, start: 1:0, end: 1:22)
         String: 'Let it go, let it go'
       Conversion: none
       Spec: ^30
@@ -227,7 +227,7 @@ class FStringTests: XCTestCase, Common {
 
     XCTAssertString(group, """
     Formatted string
-      StringExpr(start: 1:0, end: 1:30)
+      StringExpr(context: Load, start: 1:0, end: 1:30)
         String: 'Turn away and slam the door!'
       Conversion: ascii
       Spec: ^30
@@ -245,7 +245,7 @@ class FStringTests: XCTestCase, Common {
     XCTAssertString(group, """
     Joined string
       Formatted string
-        IdentifierExpr(start: 1:0, end: 1:1)
+        IdentifierExpr(context: Load, start: 1:0, end: 1:1)
           Value: I
         Conversion: none
         Spec: none
@@ -263,7 +263,7 @@ class FStringTests: XCTestCase, Common {
     Joined string
       String: 'Let the storm rage '
       Formatted string
-        IdentifierExpr(start: 1:0, end: 1:2)
+        IdentifierExpr(context: Load, start: 1:0, end: 1:2)
           Value: on
         Conversion: none
         Spec: none
@@ -280,7 +280,7 @@ class FStringTests: XCTestCase, Common {
     Joined string
       String: 'The cold never '
       Formatted string
-        IdentifierExpr(start: 1:0, end: 1:8)
+        IdentifierExpr(context: Load, start: 1:0, end: 1:8)
           Value: bothered
         Conversion: none
         Spec: none
@@ -298,7 +298,7 @@ class FStringTests: XCTestCase, Common {
     Joined string
       String: 'Its funny '
       Formatted string
-        IdentifierExpr(start: 1:0, end: 1:3)
+        IdentifierExpr(context: Load, start: 1:0, end: 1:3)
           Value: how
         Conversion: str
         Spec: -10
@@ -316,13 +316,13 @@ class FStringTests: XCTestCase, Common {
     Joined string
       String: 'Makes '
       Formatted string
-        IdentifierExpr(start: 1:0, end: 1:10)
+        IdentifierExpr(context: Load, start: 1:0, end: 1:10)
           Value: everything
         Conversion: none
         Spec: +6
       String: ' seem '
       Formatted string
-        IdentifierExpr(start: 1:0, end: 1:5)
+        IdentifierExpr(context: Load, start: 1:0, end: 1:5)
           Value: small
         Conversion: ascii
         Spec: none
@@ -339,12 +339,12 @@ class FStringTests: XCTestCase, Common {
     Joined string
       String: 'And the '
       Formatted string
-        IdentifierExpr(start: 1:0, end: 1:5)
+        IdentifierExpr(context: Load, start: 1:0, end: 1:5)
           Value: fears
         Conversion: none
         Spec: none
       Formatted string
-        IdentifierExpr(start: 1:0, end: 1:4)
+        IdentifierExpr(context: Load, start: 1:0, end: 1:4)
           Value: that
         Conversion: none
         Spec: none
@@ -405,7 +405,7 @@ class FStringTests: XCTestCase, Common {
     Joined string
       String: 'No right, no wrong, '
       Formatted string
-        StringExpr(start: 1:0, end: 1:21)
+        StringExpr(context: Load, start: 1:0, end: 1:21)
           String: 'no rules for me'
         Conversion: none
         Spec: none

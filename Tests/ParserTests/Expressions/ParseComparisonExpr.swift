@@ -31,15 +31,15 @@ class ParseComparisonExpr: XCTestCase, Common {
 
       XCTAssertAST(ast, """
       ExpressionAST(start: 0:0, end: 5:10)
-        CompareExpr(start: 0:0, end: 5:10)
+        CompareExpr(context: Load, start: 0:0, end: 5:10)
           Left
-            IdentifierExpr(start: 0:0, end: 1:6)
+            IdentifierExpr(context: Load, start: 0:0, end: 1:6)
               Value: aladdin
           Elements
             ComparisonElement
               Operator: \(op)
               Right
-                IdentifierExpr(start: 4:4, end: 5:10)
+                IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                   Value: jasmine
       """)
     }
@@ -57,15 +57,15 @@ class ParseComparisonExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      CompareExpr(start: 0:0, end: 7:12)
+      CompareExpr(context: Load, start: 0:0, end: 7:12)
         Left
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: rapunzel
         Elements
           ComparisonElement
             Operator: not in
             Right
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: aladdin
     """)
   }
@@ -82,15 +82,15 @@ class ParseComparisonExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      CompareExpr(start: 0:0, end: 7:12)
+      CompareExpr(context: Load, start: 0:0, end: 7:12)
         Left
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: aladdin
         Elements
           ComparisonElement
             Operator: is not
             Right
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: jasmine
     """)
   }
@@ -109,20 +109,20 @@ class ParseComparisonExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      CompareExpr(start: 0:0, end: 9:14)
+      CompareExpr(context: Load, start: 0:0, end: 9:14)
         Left
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: aladdin
         Elements
           ComparisonElement
             Operator: <
             Right
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: jasmine
           ComparisonElement
             Operator: <=
             Right
-              IdentifierExpr(start: 8:8, end: 9:14)
+              IdentifierExpr(context: Load, start: 8:8, end: 9:14)
                 Value: genie
     """)
   }

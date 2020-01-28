@@ -9,7 +9,7 @@ extension ASTPrinter {
 
   private func base(expr: Expression, lines: [Doc] = []) -> Doc {
     let type = self.typeName(of: expr)
-    let title = "\(type)(start: \(expr.start), end: \(expr.end))"
+    let title = "\(type)(context: \(expr.context), start: \(expr.start), end: \(expr.end))"
 
     return lines.isEmpty ?
       self.text(title) :

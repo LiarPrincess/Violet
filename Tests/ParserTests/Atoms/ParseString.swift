@@ -24,7 +24,7 @@ class ParseString: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      BytesExpr(start: 0:0, end: 1:6)
+      BytesExpr(context: Load, start: 0:0, end: 1:6)
         Count: 4
     """)
   }
@@ -42,7 +42,7 @@ class ParseString: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
-      BytesExpr(start: 0:0, end: 3:8)
+      BytesExpr(context: Load, start: 0:0, end: 3:8)
         Count: 4
     """)
   }
@@ -86,7 +86,7 @@ class ParseString: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      StringExpr(start: 0:0, end: 1:6)
+      StringExpr(context: Load, start: 0:0, end: 1:6)
         String: 'Let it go'
     """)
   }
@@ -102,7 +102,7 @@ class ParseString: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
-      StringExpr(start: 0:0, end: 5:10)
+      StringExpr(context: Load, start: 0:0, end: 5:10)
         String: 'Let it go'
     """)
   }
@@ -116,11 +116,11 @@ class ParseString: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      StringExpr(start: 0:0, end: 1:6)
+      StringExpr(context: Load, start: 0:0, end: 1:6)
         Joined string
           String: 'Let '
           Formatted string
-            StringExpr(start: 1:0, end: 1:4)
+            StringExpr(context: Load, start: 1:0, end: 1:4)
               String: 'it'
             Conversion: none
             Spec: none
@@ -139,17 +139,17 @@ class ParseString: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
-      StringExpr(start: 0:0, end: 5:10)
+      StringExpr(context: Load, start: 0:0, end: 5:10)
         Joined string
           String: 'Let '
           Formatted string
-            StringExpr(start: 1:0, end: 1:4)
+            StringExpr(context: Load, start: 1:0, end: 1:4)
               String: 'it'
             Conversion: none
             Spec: none
           String: ' '
           Formatted string
-            StringExpr(start: 1:0, end: 1:4)
+            StringExpr(context: Load, start: 1:0, end: 1:4)
               String: 'go'
             Conversion: none
             Spec: none

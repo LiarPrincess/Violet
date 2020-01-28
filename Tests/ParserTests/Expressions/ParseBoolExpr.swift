@@ -15,10 +15,10 @@ class ParseBoolExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
-      UnaryOpExpr(start: 0:0, end: 3:8)
+      UnaryOpExpr(context: Load, start: 0:0, end: 3:8)
         Operator: not
         Right
-          FalseExpr(start: 2:2, end: 3:8)
+          FalseExpr(context: Load, start: 2:2, end: 3:8)
     """)
   }
 
@@ -39,12 +39,12 @@ class ParseBoolExpr: XCTestCase, Common {
 
       XCTAssertAST(ast, """
       ExpressionAST(start: 0:0, end: 5:10)
-        BoolOpExpr(start: 0:0, end: 5:10)
+        BoolOpExpr(context: Load, start: 0:0, end: 5:10)
           Operator: \(op)
           Left
-            TrueExpr(start: 0:0, end: 1:6)
+            TrueExpr(context: Load, start: 0:0, end: 1:6)
           Right
-            FalseExpr(start: 4:4, end: 5:10)
+            FalseExpr(context: Load, start: 4:4, end: 5:10)
       """)
     }
   }
@@ -63,13 +63,13 @@ class ParseBoolExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
-      UnaryOpExpr(start: 0:0, end: 5:10)
+      UnaryOpExpr(context: Load, start: 0:0, end: 5:10)
         Operator: not
         Right
-          UnaryOpExpr(start: 2:2, end: 5:10)
+          UnaryOpExpr(context: Load, start: 2:2, end: 5:10)
             Operator: not
             Right
-              FalseExpr(start: 4:4, end: 5:10)
+              FalseExpr(context: Load, start: 4:4, end: 5:10)
     """)
   }
 
@@ -87,17 +87,17 @@ class ParseBoolExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BoolOpExpr(start: 0:0, end: 9:14)
+      BoolOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: and
         Left
-          BoolOpExpr(start: 0:0, end: 5:10)
+          BoolOpExpr(context: Load, start: 0:0, end: 5:10)
             Operator: and
             Left
-              TrueExpr(start: 0:0, end: 1:6)
+              TrueExpr(context: Load, start: 0:0, end: 1:6)
             Right
-              FalseExpr(start: 4:4, end: 5:10)
+              FalseExpr(context: Load, start: 4:4, end: 5:10)
         Right
-          TrueExpr(start: 8:8, end: 9:14)
+          TrueExpr(context: Load, start: 8:8, end: 9:14)
     """)
   }
 
@@ -115,17 +115,17 @@ class ParseBoolExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BoolOpExpr(start: 0:0, end: 9:14)
+      BoolOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: or
         Left
-          BoolOpExpr(start: 0:0, end: 5:10)
+          BoolOpExpr(context: Load, start: 0:0, end: 5:10)
             Operator: or
             Left
-              TrueExpr(start: 0:0, end: 1:6)
+              TrueExpr(context: Load, start: 0:0, end: 1:6)
             Right
-              FalseExpr(start: 4:4, end: 5:10)
+              FalseExpr(context: Load, start: 4:4, end: 5:10)
         Right
-          TrueExpr(start: 8:8, end: 9:14)
+          TrueExpr(context: Load, start: 8:8, end: 9:14)
     """)
   }
 
@@ -144,15 +144,15 @@ class ParseBoolExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      BoolOpExpr(start: 0:0, end: 7:12)
+      BoolOpExpr(context: Load, start: 0:0, end: 7:12)
         Operator: and
         Left
-          UnaryOpExpr(start: 0:0, end: 3:8)
+          UnaryOpExpr(context: Load, start: 0:0, end: 3:8)
             Operator: not
             Right
-              TrueExpr(start: 2:2, end: 3:8)
+              TrueExpr(context: Load, start: 2:2, end: 3:8)
         Right
-          FalseExpr(start: 6:6, end: 7:12)
+          FalseExpr(context: Load, start: 6:6, end: 7:12)
     """)
   }
 
@@ -170,17 +170,17 @@ class ParseBoolExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BoolOpExpr(start: 0:0, end: 9:14)
+      BoolOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: or
         Left
-          TrueExpr(start: 0:0, end: 1:6)
+          TrueExpr(context: Load, start: 0:0, end: 1:6)
         Right
-          BoolOpExpr(start: 4:4, end: 9:14)
+          BoolOpExpr(context: Load, start: 4:4, end: 9:14)
             Operator: and
             Left
-              FalseExpr(start: 4:4, end: 5:10)
+              FalseExpr(context: Load, start: 4:4, end: 5:10)
             Right
-              TrueExpr(start: 8:8, end: 9:14)
+              TrueExpr(context: Load, start: 8:8, end: 9:14)
     """)
   }
 }

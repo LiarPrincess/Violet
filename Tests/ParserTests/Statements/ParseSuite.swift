@@ -58,7 +58,7 @@ class ParseSuite: XCTestCase, Common {
                 Kwarg: none
             Body
               ExprStmt(start: 24:24, end: 25:30)
-                StringExpr(start: 24:24, end: 25:30)
+                StringExpr(context: Load, start: 24:24, end: 25:30)
                   String: 'up'
             Decorators: none
             Returns: none
@@ -106,11 +106,11 @@ class ParseSuite: XCTestCase, Common {
         Body
           IfStmt(start: 14:14, end: 25:30)
             Test
-              IdentifierExpr(start: 16:16, end: 17:22)
+              IdentifierExpr(context: Load, start: 16:16, end: 17:22)
                 Value: Peter
             Body
               ExprStmt(start: 24:24, end: 25:30)
-                IdentifierExpr(start: 24:24, end: 25:30)
+                IdentifierExpr(context: Load, start: 24:24, end: 25:30)
                   Value: fly
             OrElse: none
         Decorators: none
@@ -145,16 +145,16 @@ class ParseSuite: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 21:26)
       IfStmt(start: 0:0, end: 21:26)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Hook
         Body
           WhileStmt(start: 10:10, end: 21:26)
             Test
-              IdentifierExpr(start: 12:12, end: 13:18)
+              IdentifierExpr(context: Load, start: 12:12, end: 13:18)
                 Value: tick
             Body
               ExprStmt(start: 20:20, end: 21:26)
-                StringExpr(start: 20:20, end: 21:26)
+                StringExpr(context: Load, start: 20:20, end: 21:26)
                   String: 'run'
             OrElse: none
         OrElse: none
@@ -190,19 +190,19 @@ class ParseSuite: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 25:30)
       WhileStmt(start: 0:0, end: 25:30)
         Test
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: tick
         Body
           ForStmt(start: 10:10, end: 25:30)
             Target
-              IdentifierExpr(start: 12:12, end: 13:18)
+              IdentifierExpr(context: Store, start: 12:12, end: 13:18)
                 Value: tock
             Iterable
-              IdentifierExpr(start: 16:16, end: 17:22)
+              IdentifierExpr(context: Load, start: 16:16, end: 17:22)
                 Value: crocodile
             Body
               ExprStmt(start: 24:24, end: 25:30)
-                StringExpr(start: 24:24, end: 25:30)
+                StringExpr(context: Load, start: 24:24, end: 25:30)
                   String: 'run'
             OrElse: none
         OrElse: none
@@ -238,22 +238,22 @@ class ParseSuite: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 25:30)
       ForStmt(start: 0:0, end: 25:30)
         Target
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Store, start: 2:2, end: 3:8)
             Value: tock
         Iterable
-          IdentifierExpr(start: 6:6, end: 7:12)
+          IdentifierExpr(context: Load, start: 6:6, end: 7:12)
             Value: crocodile
         Body
           WithStmt(start: 14:14, end: 25:30)
             Items
               WithItem(start: 16:16, end: 17:22)
                 ContextExpr
-                  IdentifierExpr(start: 16:16, end: 17:22)
+                  IdentifierExpr(context: Load, start: 16:16, end: 17:22)
                     Value: Hook
                 OptionalVars: none
             Body
               ExprStmt(start: 24:24, end: 25:30)
-                StringExpr(start: 24:24, end: 25:30)
+                StringExpr(context: Load, start: 24:24, end: 25:30)
                   String: 'run'
         OrElse: none
     """)
@@ -288,7 +288,7 @@ class ParseSuite: XCTestCase, Common {
         Items
           WithItem(start: 2:2, end: 3:8)
             ContextExpr
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: TinkerBell
             OptionalVars: none
         Body
@@ -298,7 +298,7 @@ class ParseSuite: XCTestCase, Common {
             Keywords: none
             Body
               ExprStmt(start: 20:20, end: 21:26)
-                StringExpr(start: 20:20, end: 21:26)
+                StringExpr(context: Load, start: 20:20, end: 21:26)
                   String: 'fly'
             Decorators: none
     """)

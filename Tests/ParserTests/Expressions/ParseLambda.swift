@@ -22,7 +22,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
-      LambdaExpr(start: 0:0, end: 11:16)
+      LambdaExpr(context: Load, start: 0:0, end: 11:16)
         Args
           Arguments(start: 8:8, end: 8:8)
             Args: none
@@ -32,7 +32,7 @@ class ParseLambda: XCTestCase, Common {
             KwOnlyDefaults: none
             Kwarg: none
         Body
-          StringExpr(start: 10:10, end: 11:16)
+          StringExpr(context: Load, start: 10:10, end: 11:16)
             String: 'Ratatouille'
     """)
   }
@@ -52,7 +52,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 13:18)
-      LambdaExpr(start: 0:0, end: 13:18)
+      LambdaExpr(context: Load, start: 0:0, end: 13:18)
         Args
           Arguments(start: 6:6, end: 7:12)
             Args
@@ -65,7 +65,7 @@ class ParseLambda: XCTestCase, Common {
             KwOnlyDefaults: none
             Kwarg: none
         Body
-          StringExpr(start: 12:12, end: 13:18)
+          StringExpr(context: Load, start: 12:12, end: 13:18)
             String: 'Ratatouille'
     """)
   }
@@ -85,7 +85,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 17:22)
-      LambdaExpr(start: 0:0, end: 17:22)
+      LambdaExpr(context: Load, start: 0:0, end: 17:22)
         Args
           Arguments(start: 6:6, end: 11:16)
             Args
@@ -93,14 +93,14 @@ class ParseLambda: XCTestCase, Common {
                 Name: zucchini
                 Annotation: none
             Defaults
-              FloatExpr(start: 10:10, end: 11:16)
+              FloatExpr(context: Load, start: 10:10, end: 11:16)
                 Value: 1.0
             Vararg: none
             KwOnlyArgs: none
             KwOnlyDefaults: none
             Kwarg: none
         Body
-          StringExpr(start: 16:16, end: 17:22)
+          StringExpr(context: Load, start: 16:16, end: 17:22)
             String: 'Ratatouille'
     """)
   }
@@ -120,7 +120,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 17:22)
-      LambdaExpr(start: 0:0, end: 17:22)
+      LambdaExpr(context: Load, start: 0:0, end: 17:22)
         Args
           Arguments(start: 6:6, end: 11:16)
             Args
@@ -136,7 +136,7 @@ class ParseLambda: XCTestCase, Common {
             KwOnlyDefaults: none
             Kwarg: none
         Body
-          StringExpr(start: 16:16, end: 17:22)
+          StringExpr(context: Load, start: 16:16, end: 17:22)
             String: 'Ratatouille'
     """)
   }
@@ -158,7 +158,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 21:26)
-      LambdaExpr(start: 0:0, end: 21:26)
+      LambdaExpr(context: Load, start: 0:0, end: 21:26)
         Args
           Arguments(start: 6:6, end: 15:20)
             Args
@@ -169,14 +169,14 @@ class ParseLambda: XCTestCase, Common {
                 Name: tomato
                 Annotation: none
             Defaults
-              FloatExpr(start: 14:14, end: 15:20)
+              FloatExpr(context: Load, start: 14:14, end: 15:20)
                 Value: 1.0
             Vararg: none
             KwOnlyArgs: none
             KwOnlyDefaults: none
             Kwarg: none
         Body
-          StringExpr(start: 20:20, end: 21:26)
+          StringExpr(context: Load, start: 20:20, end: 21:26)
             String: 'Ratatouille'
     """)
   }
@@ -216,7 +216,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)
-      LambdaExpr(start: 0:0, end: 15:20)
+      LambdaExpr(context: Load, start: 0:0, end: 15:20)
         Args
           Arguments(start: 6:6, end: 9:14)
             Args: none
@@ -230,7 +230,7 @@ class ParseLambda: XCTestCase, Common {
             KwOnlyDefaults: none
             Kwarg: none
         Body
-          StringExpr(start: 14:14, end: 15:20)
+          StringExpr(context: Load, start: 14:14, end: 15:20)
             String: 'Ratatouille'
     """)
   }
@@ -253,7 +253,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 23:28)
-      LambdaExpr(start: 0:0, end: 23:28)
+      LambdaExpr(context: Load, start: 0:0, end: 23:28)
         Args
           Arguments(start: 6:6, end: 17:22)
             Args: none
@@ -268,11 +268,11 @@ class ParseLambda: XCTestCase, Common {
                 Name: tomato
                 Annotation: none
             KwOnlyDefaults
-              FloatExpr(start: 16:16, end: 17:22)
+              FloatExpr(context: Load, start: 16:16, end: 17:22)
                 Value: 1.0
             Kwarg: none
         Body
-          StringExpr(start: 22:22, end: 23:28)
+          StringExpr(context: Load, start: 22:22, end: 23:28)
             String: 'Ratatouille'
     """)
   }
@@ -293,7 +293,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 19:24)
-      LambdaExpr(start: 0:0, end: 19:24)
+      LambdaExpr(context: Load, start: 0:0, end: 19:24)
         Args
           Arguments(start: 6:6, end: 13:18)
             Args: none
@@ -308,10 +308,10 @@ class ParseLambda: XCTestCase, Common {
                 Name: tomato
                 Annotation: none
             KwOnlyDefaults
-              NoneExpr(start: 13:18, end: 13:18)
+              NoneExpr(context: Load, start: 13:18, end: 13:18)
             Kwarg: none
         Body
-          StringExpr(start: 18:18, end: 19:24)
+          StringExpr(context: Load, start: 18:18, end: 19:24)
             String: 'Ratatouille'
     """)
   }
@@ -350,7 +350,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 17:22)
-      LambdaExpr(start: 0:0, end: 17:22)
+      LambdaExpr(context: Load, start: 0:0, end: 17:22)
         Args
           Arguments(start: 6:6, end: 11:16)
             Args: none
@@ -361,10 +361,10 @@ class ParseLambda: XCTestCase, Common {
                 Name: zucchini
                 Annotation: none
             KwOnlyDefaults
-              NoneExpr(start: 11:16, end: 11:16)
+              NoneExpr(context: Load, start: 11:16, end: 11:16)
             Kwarg: none
         Body
-          StringExpr(start: 16:16, end: 17:22)
+          StringExpr(context: Load, start: 16:16, end: 17:22)
             String: 'Ratatouille'
     """)
   }
@@ -400,7 +400,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)
-      LambdaExpr(start: 0:0, end: 15:20)
+      LambdaExpr(context: Load, start: 0:0, end: 15:20)
         Args
           Arguments(start: 6:6, end: 9:14)
             Args: none
@@ -413,7 +413,7 @@ class ParseLambda: XCTestCase, Common {
                 Name: zucchini
                 Annotation: none
         Body
-          StringExpr(start: 14:14, end: 15:20)
+          StringExpr(context: Load, start: 14:14, end: 15:20)
             String: 'Ratatouille'
     """)
   }
@@ -433,7 +433,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 17:22)
-      LambdaExpr(start: 0:0, end: 17:22)
+      LambdaExpr(context: Load, start: 0:0, end: 17:22)
         Args
           Arguments(start: 6:6, end: 11:16)
             Args: none
@@ -446,7 +446,7 @@ class ParseLambda: XCTestCase, Common {
                 Name: zucchini
                 Annotation: none
         Body
-          StringExpr(start: 16:16, end: 17:22)
+          StringExpr(context: Load, start: 16:16, end: 17:22)
             String: 'Ratatouille'
     """)
   }
@@ -493,7 +493,7 @@ class ParseLambda: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 29:34)
-      LambdaExpr(start: 0:0, end: 29:34)
+      LambdaExpr(context: Load, start: 0:0, end: 29:34)
         Args
           Arguments(start: 6:6, end: 23:28)
             Args
@@ -511,13 +511,13 @@ class ParseLambda: XCTestCase, Common {
                 Name: pepper
                 Annotation: none
             KwOnlyDefaults
-              NoneExpr(start: 17:22, end: 17:22)
+              NoneExpr(context: Load, start: 17:22, end: 17:22)
             Kwarg
               Arg
                 Name: eggplant
                 Annotation: none
         Body
-          StringExpr(start: 28:28, end: 29:34)
+          StringExpr(context: Load, start: 28:28, end: 29:34)
             String: 'Ratatouille'
     """)
   }

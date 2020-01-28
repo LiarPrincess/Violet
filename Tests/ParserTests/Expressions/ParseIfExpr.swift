@@ -16,18 +16,18 @@ class ParseIfExpr: XCTestCase, Common {
     )
 
     guard let ast = self.parse(parser) else { return }
-    
+
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      IfExpr(start: 0:0, end: 9:14)
+      IfExpr(context: Load, start: 0:0, end: 9:14)
         Test
-          IdentifierExpr(start: 4:4, end: 5:10)
+          IdentifierExpr(context: Load, start: 4:4, end: 5:10)
             Value: belle
         Body
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: prince
         OrElse
-          IdentifierExpr(start: 8:8, end: 9:14)
+          IdentifierExpr(context: Load, start: 8:8, end: 9:14)
             Value: beast
     """)
   }

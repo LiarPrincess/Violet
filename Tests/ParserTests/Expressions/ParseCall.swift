@@ -21,9 +21,9 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
-      CallExpr(start: 0:0, end: 5:10)
+      CallExpr(context: Load, start: 0:0, end: 5:10)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args: none
         Keywords: none
@@ -45,12 +45,12 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      CallExpr(start: 0:0, end: 7:12)
+      CallExpr(context: Load, start: 0:0, end: 7:12)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args
-          FloatExpr(start: 4:4, end: 5:10)
+          FloatExpr(context: Load, start: 4:4, end: 5:10)
             Value: 1.0
         Keywords: none
     """)
@@ -71,14 +71,14 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
-      CallExpr(start: 0:0, end: 11:16)
+      CallExpr(context: Load, start: 0:0, end: 11:16)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args
-          IdentifierExpr(start: 4:4, end: 5:10)
+          IdentifierExpr(context: Load, start: 4:4, end: 5:10)
             Value: a
-          FloatExpr(start: 8:8, end: 9:14)
+          FloatExpr(context: Load, start: 8:8, end: 9:14)
             Value: 1.0
         Keywords: none
     """)
@@ -98,12 +98,12 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      CallExpr(start: 0:0, end: 9:14)
+      CallExpr(context: Load, start: 0:0, end: 9:14)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args
-          FloatExpr(start: 4:4, end: 5:10)
+          FloatExpr(context: Load, start: 4:4, end: 5:10)
             Value: 1.0
         Keywords: none
     """)
@@ -124,12 +124,12 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
-      CallExpr(start: 0:0, end: 11:16)
+      CallExpr(context: Load, start: 0:0, end: 11:16)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args
-          IdentifierExpr(start: 4:4, end: 9:14)
+          IdentifierExpr(context: Load, start: 4:4, end: 9:14)
             Value: a
         Keywords: none
     """)
@@ -188,14 +188,14 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      CallExpr(start: 0:0, end: 9:14)
+      CallExpr(context: Load, start: 0:0, end: 9:14)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args
-          StarredExpr(start: 4:4, end: 7:12)
+          StarredExpr(context: Load, start: 4:4, end: 7:12)
             Expression
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: a
         Keywords: none
     """)
@@ -217,16 +217,16 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 13:18)
-      CallExpr(start: 0:0, end: 13:18)
+      CallExpr(context: Load, start: 0:0, end: 13:18)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args
-          IdentifierExpr(start: 4:4, end: 5:10)
+          IdentifierExpr(context: Load, start: 4:4, end: 5:10)
             Value: a
-          StarredExpr(start: 8:8, end: 11:16)
+          StarredExpr(context: Load, start: 8:8, end: 11:16)
             Expression
-              IdentifierExpr(start: 10:10, end: 11:16)
+              IdentifierExpr(context: Load, start: 10:10, end: 11:16)
                 Value: b
         Keywords: none
     """)
@@ -250,21 +250,21 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 17:22)
-      CallExpr(start: 0:0, end: 17:22)
+      CallExpr(context: Load, start: 0:0, end: 17:22)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args
-          StarredExpr(start: 12:12, end: 15:20)
+          StarredExpr(context: Load, start: 12:12, end: 15:20)
             Expression
-              IdentifierExpr(start: 14:14, end: 15:20)
+              IdentifierExpr(context: Load, start: 14:14, end: 15:20)
                 Value: b
         Keywords
           Keyword(start: 4:4, end: 9:14)
             Kind
               Named('a')
             Value
-              FloatExpr(start: 8:8, end: 9:14)
+              FloatExpr(context: Load, start: 8:8, end: 9:14)
                 Value: 1.0
     """)
   }
@@ -305,9 +305,9 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
-      CallExpr(start: 0:0, end: 11:16)
+      CallExpr(context: Load, start: 0:0, end: 11:16)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args: none
         Keywords
@@ -315,7 +315,7 @@ class ParseCall: XCTestCase, Common {
             Kind
               Named('a')
             Value
-              FloatExpr(start: 8:8, end: 9:14)
+              FloatExpr(context: Load, start: 8:8, end: 9:14)
                 Value: 1.0
     """)
   }
@@ -339,9 +339,9 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 19:24)
-      CallExpr(start: 0:0, end: 19:24)
+      CallExpr(context: Load, start: 0:0, end: 19:24)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args: none
         Keywords
@@ -349,13 +349,13 @@ class ParseCall: XCTestCase, Common {
             Kind
               Named('a')
             Value
-              FloatExpr(start: 8:8, end: 9:14)
+              FloatExpr(context: Load, start: 8:8, end: 9:14)
                 Value: 1.0
           Keyword(start: 12:12, end: 17:22)
             Kind
               Named('b')
             Value
-              FloatExpr(start: 16:16, end: 17:22)
+              FloatExpr(context: Load, start: 16:16, end: 17:22)
                 Value: 2.0
     """)
   }
@@ -438,9 +438,9 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      CallExpr(start: 0:0, end: 9:14)
+      CallExpr(context: Load, start: 0:0, end: 9:14)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args: none
         Keywords
@@ -448,7 +448,7 @@ class ParseCall: XCTestCase, Common {
             Kind
               DictionaryUnpack
             Value
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: a
     """)
   }
@@ -469,19 +469,19 @@ class ParseCall: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 13:18)
-      CallExpr(start: 0:0, end: 13:18)
+      CallExpr(context: Load, start: 0:0, end: 13:18)
         Name
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: f
         Args
-          IdentifierExpr(start: 4:4, end: 5:10)
+          IdentifierExpr(context: Load, start: 4:4, end: 5:10)
             Value: a
         Keywords
           Keyword(start: 8:8, end: 11:16)
             Kind
               DictionaryUnpack
             Value
-              IdentifierExpr(start: 10:10, end: 11:16)
+              IdentifierExpr(context: Load, start: 10:10, end: 11:16)
                 Value: b
     """)
   }

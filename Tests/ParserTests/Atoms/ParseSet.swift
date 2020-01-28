@@ -19,9 +19,9 @@ class ParseSet: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
-      SetExpr(start: 0:0, end: 5:10)
+      SetExpr(context: Load, start: 0:0, end: 5:10)
         Elements
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: rapunzel
     """)
   }
@@ -39,9 +39,9 @@ class ParseSet: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      SetExpr(start: 0:0, end: 7:12)
+      SetExpr(context: Load, start: 0:0, end: 7:12)
         Elements
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: rapunzel
     """)
   }
@@ -59,11 +59,11 @@ class ParseSet: XCTestCase, Common {
 
     XCTAssertAST(ast, """
   ExpressionAST(start: 0:0, end: 7:12)
-    SetExpr(start: 0:0, end: 7:12)
+    SetExpr(context: Load, start: 0:0, end: 7:12)
       Elements
-        StarredExpr(start: 2:2, end: 5:10)
+        StarredExpr(context: Load, start: 2:2, end: 5:10)
           Expression
-            IdentifierExpr(start: 4:4, end: 5:10)
+            IdentifierExpr(context: Load, start: 4:4, end: 5:10)
               Value: rapunzel
   """)
   }
@@ -85,15 +85,15 @@ class ParseSet: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)
-      SetExpr(start: 0:0, end: 15:20)
+      SetExpr(context: Load, start: 0:0, end: 15:20)
         Elements
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: rapunzel
-          StarredExpr(start: 6:6, end: 9:14)
+          StarredExpr(context: Load, start: 6:6, end: 9:14)
             Expression
-              IdentifierExpr(start: 8:8, end: 9:14)
+              IdentifierExpr(context: Load, start: 8:8, end: 9:14)
                 Value: eugene
-          IdentifierExpr(start: 12:12, end: 13:18)
+          IdentifierExpr(context: Load, start: 12:12, end: 13:18)
             Value: cassandra
     """)
   }
@@ -117,18 +117,18 @@ class ParseSet: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)
-      SetComprehensionExpr(start: 0:0, end: 15:20)
+      SetComprehensionExpr(context: Load, start: 0:0, end: 15:20)
         Element
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: rapunzel
         Generators
           Comprehension(start: 4:4, end: 13:18)
             isAsync: false
             Target
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Store, start: 6:6, end: 7:12)
                 Value: eugene
             Iterable
-              ListExpr(start: 10:10, end: 13:18)
+              ListExpr(context: Load, start: 10:10, end: 13:18)
                 Elements: none
             Ifs: none
     """)

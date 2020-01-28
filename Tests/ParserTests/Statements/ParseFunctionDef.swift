@@ -37,7 +37,7 @@ class ParseFunctionDef: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 10:10, end: 11:16)
-            StringExpr(start: 10:10, end: 11:16)
+            StringExpr(context: Load, start: 10:10, end: 11:16)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -73,11 +73,11 @@ class ParseFunctionDef: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 14:14, end: 15:20)
-            StringExpr(start: 14:14, end: 15:20)
+            StringExpr(context: Load, start: 14:14, end: 15:20)
               String: 'Ratatouille'
         Decorators: none
         Returns
-          IdentifierExpr(start: 10:10, end: 11:16)
+          IdentifierExpr(context: Load, start: 10:10, end: 11:16)
             Value: Dish
     """)
   }
@@ -115,7 +115,7 @@ class ParseFunctionDef: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 12:12, end: 13:18)
-            StringExpr(start: 12:12, end: 13:18)
+            StringExpr(context: Load, start: 12:12, end: 13:18)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -148,7 +148,7 @@ class ParseFunctionDef: XCTestCase, Common {
               Arg
                 Name: zucchini
                 Annotation
-                  IdentifierExpr(start: 10:10, end: 11:16)
+                  IdentifierExpr(context: Load, start: 10:10, end: 11:16)
                     Value: Vegetable
             Defaults: none
             Vararg: none
@@ -157,7 +157,7 @@ class ParseFunctionDef: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -191,7 +191,7 @@ class ParseFunctionDef: XCTestCase, Common {
                 Name: zucchini
                 Annotation: none
             Defaults
-              FloatExpr(start: 10:10, end: 11:16)
+              FloatExpr(context: Load, start: 10:10, end: 11:16)
                 Value: 1.0
             Vararg: none
             KwOnlyArgs: none
@@ -199,7 +199,7 @@ class ParseFunctionDef: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -242,7 +242,7 @@ class ParseFunctionDef: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -281,7 +281,7 @@ class ParseFunctionDef: XCTestCase, Common {
                 Name: tomato
                 Annotation: none
             Defaults
-              FloatExpr(start: 14:14, end: 15:20)
+              FloatExpr(context: Load, start: 14:14, end: 15:20)
                 Value: 1.0
             Vararg: none
             KwOnlyArgs: none
@@ -289,7 +289,7 @@ class ParseFunctionDef: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 20:20, end: 21:26)
-            StringExpr(start: 20:20, end: 21:26)
+            StringExpr(context: Load, start: 20:20, end: 21:26)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -353,7 +353,7 @@ class ParseFunctionDef: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 14:14, end: 15:20)
-            StringExpr(start: 14:14, end: 15:20)
+            StringExpr(context: Load, start: 14:14, end: 15:20)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -397,12 +397,12 @@ class ParseFunctionDef: XCTestCase, Common {
                 Name: tomato
                 Annotation: none
             KwOnlyDefaults
-              FloatExpr(start: 16:16, end: 17:22)
+              FloatExpr(context: Load, start: 16:16, end: 17:22)
                 Value: 1.0
             Kwarg: none
         Body
           ExprStmt(start: 22:22, end: 23:28)
-            StringExpr(start: 22:22, end: 23:28)
+            StringExpr(context: Load, start: 22:22, end: 23:28)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -444,11 +444,11 @@ class ParseFunctionDef: XCTestCase, Common {
                 Name: tomato
                 Annotation: none
             KwOnlyDefaults
-              NoneExpr(start: 13:18, end: 13:18)
+              NoneExpr(context: Load, start: 13:18, end: 13:18)
             Kwarg: none
         Body
           ExprStmt(start: 18:18, end: 19:24)
-            StringExpr(start: 18:18, end: 19:24)
+            StringExpr(context: Load, start: 18:18, end: 19:24)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -507,11 +507,11 @@ class ParseFunctionDef: XCTestCase, Common {
                 Name: zucchini
                 Annotation: none
             KwOnlyDefaults
-              NoneExpr(start: 11:16, end: 11:16)
+              NoneExpr(context: Load, start: 11:16, end: 11:16)
             Kwarg: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -570,7 +570,7 @@ class ParseFunctionDef: XCTestCase, Common {
                 Annotation: none
         Body
           ExprStmt(start: 14:14, end: 15:20)
-            StringExpr(start: 14:14, end: 15:20)
+            StringExpr(context: Load, start: 14:14, end: 15:20)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -610,7 +610,7 @@ class ParseFunctionDef: XCTestCase, Common {
                 Annotation: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'Ratatouille'
         Decorators: none
         Returns: none
@@ -684,14 +684,14 @@ class ParseFunctionDef: XCTestCase, Common {
                 Name: pepper
                 Annotation: none
             KwOnlyDefaults
-              NoneExpr(start: 17:22, end: 17:22)
+              NoneExpr(context: Load, start: 17:22, end: 17:22)
             Kwarg
               Arg
                 Name: eggplant
                 Annotation: none
         Body
           ExprStmt(start: 28:28, end: 29:34)
-            StringExpr(start: 28:28, end: 29:34)
+            StringExpr(context: Load, start: 28:28, end: 29:34)
               String: 'Ratatouille'
         Decorators: none
         Returns: none

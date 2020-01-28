@@ -13,10 +13,10 @@ class ParseAtoms: XCTestCase, Common {
     )
 
     guard let ast = self.parse(parser) else { return }
-    
+
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      NoneExpr(start: 0:0, end: 1:6)
+      NoneExpr(context: Load, start: 0:0, end: 1:6)
     """)
   }
 
@@ -31,7 +31,7 @@ class ParseAtoms: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      TrueExpr(start: 0:0, end: 1:6)
+      TrueExpr(context: Load, start: 0:0, end: 1:6)
     """)
   }
 
@@ -44,7 +44,7 @@ class ParseAtoms: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      FalseExpr(start: 0:0, end: 1:6)
+      FalseExpr(context: Load, start: 0:0, end: 1:6)
     """)
   }
 
@@ -61,7 +61,7 @@ class ParseAtoms: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      IntExpr(start: 0:0, end: 1:6)
+      IntExpr(context: Load, start: 0:0, end: 1:6)
         Value: 42
     """)
   }
@@ -75,7 +75,7 @@ class ParseAtoms: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      FloatExpr(start: 0:0, end: 1:6)
+      FloatExpr(context: Load, start: 0:0, end: 1:6)
         Value: 4.2
     """)
   }
@@ -89,7 +89,7 @@ class ParseAtoms: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      ComplexExpr(start: 0:0, end: 1:6)
+      ComplexExpr(context: Load, start: 0:0, end: 1:6)
         Real: 0.0
         Imag: 4.2
     """)
@@ -106,7 +106,7 @@ class ParseAtoms: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 1:6)
-      EllipsisExpr(start: 0:0, end: 1:6)
+      EllipsisExpr(context: Load, start: 0:0, end: 1:6)
     """)
   }
 
@@ -122,9 +122,9 @@ class ParseAtoms: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
-      AwaitExpr(start: 0:0, end: 3:8)
+      AwaitExpr(context: Load, start: 0:0, end: 3:8)
         Value
-          StringExpr(start: 2:2, end: 3:8)
+          StringExpr(context: Load, start: 2:2, end: 3:8)
             String: 'Elsa'
     """)
   }

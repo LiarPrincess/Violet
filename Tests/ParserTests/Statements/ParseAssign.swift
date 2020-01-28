@@ -21,10 +21,10 @@ class ParseAssign: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 5:10)
       AssignStmt(start: 0:0, end: 5:10)
         Targets
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Store, start: 0:0, end: 1:6)
             Value: Ariel
         Value
-          StringExpr(start: 4:4, end: 5:10)
+          StringExpr(context: Load, start: 4:4, end: 5:10)
             String: 'Princess'
     """)
   }
@@ -45,14 +45,14 @@ class ParseAssign: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 9:14)
       AssignStmt(start: 0:0, end: 9:14)
         Targets
-          TupleExpr(start: 0:0, end: 5:10)
+          TupleExpr(context: Store, start: 0:0, end: 5:10)
             Elements
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Store, start: 0:0, end: 1:6)
                 Value: Ariel
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Store, start: 4:4, end: 5:10)
                 Value: Eric
         Value
-          StringExpr(start: 8:8, end: 9:14)
+          StringExpr(context: Load, start: 8:8, end: 9:14)
             String: 'couple'
     """)
   }
@@ -72,12 +72,12 @@ class ParseAssign: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 7:12)
       AssignStmt(start: 0:0, end: 7:12)
         Targets
-          TupleExpr(start: 0:0, end: 3:8)
+          TupleExpr(context: Store, start: 0:0, end: 3:8)
             Elements
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Store, start: 0:0, end: 1:6)
                 Value: Ariel
         Value
-          StringExpr(start: 6:6, end: 7:12)
+          StringExpr(context: Load, start: 6:6, end: 7:12)
             String: 'Princess'
     """)
   }
@@ -98,12 +98,12 @@ class ParseAssign: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 9:14)
       AssignStmt(start: 0:0, end: 9:14)
         Targets
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Store, start: 0:0, end: 1:6)
             Value: Sebastian
-          IdentifierExpr(start: 4:4, end: 5:10)
+          IdentifierExpr(context: Store, start: 4:4, end: 5:10)
             Value: Flounder
         Value
-          StringExpr(start: 8:8, end: 9:14)
+          StringExpr(context: Load, start: 8:8, end: 9:14)
             String: 'Friend'
     """)
   }
@@ -125,12 +125,12 @@ class ParseAssign: XCTestCase, Common {
     ModuleAST(start: 0:0, end: 7:12)
       AssignStmt(start: 0:0, end: 7:12)
         Targets
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Store, start: 0:0, end: 1:6)
             Value: Ariel
         Value
-          YieldExpr(start: 4:4, end: 7:12)
+          YieldExpr(context: Load, start: 4:4, end: 7:12)
             Value
-              StringExpr(start: 6:6, end: 7:12)
+              StringExpr(context: Load, start: 6:6, end: 7:12)
                 String: 'Princess'
     """)
   }

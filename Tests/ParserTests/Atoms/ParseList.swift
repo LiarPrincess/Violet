@@ -21,7 +21,7 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
-      ListExpr(start: 0:0, end: 3:8)
+      ListExpr(context: Load, start: 0:0, end: 3:8)
         Elements: none
     """)
   }
@@ -38,9 +38,9 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
-      ListExpr(start: 0:0, end: 5:10)
+      ListExpr(context: Load, start: 0:0, end: 5:10)
         Elements
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: ariel
     """)
   }
@@ -58,9 +58,9 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      ListExpr(start: 0:0, end: 7:12)
+      ListExpr(context: Load, start: 0:0, end: 7:12)
         Elements
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: ariel
     """)
   }
@@ -79,11 +79,11 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      ListExpr(start: 0:0, end: 9:14)
+      ListExpr(context: Load, start: 0:0, end: 9:14)
         Elements
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: ariel
-          IdentifierExpr(start: 6:6, end: 7:12)
+          IdentifierExpr(context: Load, start: 6:6, end: 7:12)
             Value: eric
     """)
   }
@@ -107,18 +107,18 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)
-      ListComprehensionExpr(start: 0:0, end: 15:20)
+      ListComprehensionExpr(context: Load, start: 0:0, end: 15:20)
         Element
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: ariel
         Generators
           Comprehension(start: 4:4, end: 13:18)
             isAsync: false
             Target
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Store, start: 6:6, end: 7:12)
                 Value: eric
             Iterable
-              ListExpr(start: 10:10, end: 13:18)
+              ListExpr(context: Load, start: 10:10, end: 13:18)
                 Elements: none
             Ifs: none
     """)
@@ -142,18 +142,18 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
   ExpressionAST(start: 0:0, end: 17:22)
-    ListComprehensionExpr(start: 0:0, end: 17:22)
+    ListComprehensionExpr(context: Load, start: 0:0, end: 17:22)
       Element
-        IdentifierExpr(start: 2:2, end: 3:8)
+        IdentifierExpr(context: Load, start: 2:2, end: 3:8)
           Value: ariel
       Generators
         Comprehension(start: 4:4, end: 15:20)
           isAsync: true
           Target
-            IdentifierExpr(start: 8:8, end: 9:14)
+            IdentifierExpr(context: Store, start: 8:8, end: 9:14)
               Value: eric
           Iterable
-            ListExpr(start: 12:12, end: 15:20)
+            ListExpr(context: Load, start: 12:12, end: 15:20)
               Elements: none
           Ifs: none
   """)
@@ -178,22 +178,22 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 19:24)
-      ListComprehensionExpr(start: 0:0, end: 19:24)
+      ListComprehensionExpr(context: Load, start: 0:0, end: 19:24)
         Element
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: ariel
         Generators
           Comprehension(start: 4:4, end: 17:22)
             isAsync: false
             Target
-              TupleExpr(start: 6:6, end: 11:16)
+              TupleExpr(context: Store, start: 6:6, end: 11:16)
                 Elements
-                  IdentifierExpr(start: 6:6, end: 7:12)
+                  IdentifierExpr(context: Store, start: 6:6, end: 7:12)
                     Value: eric
-                  IdentifierExpr(start: 10:10, end: 11:16)
+                  IdentifierExpr(context: Store, start: 10:10, end: 11:16)
                     Value: sebastian
             Iterable
-              ListExpr(start: 14:14, end: 17:22)
+              ListExpr(context: Load, start: 14:14, end: 17:22)
                 Elements: none
             Ifs: none
     """)
@@ -217,20 +217,20 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 17:22)
-      ListComprehensionExpr(start: 0:0, end: 17:22)
+      ListComprehensionExpr(context: Load, start: 0:0, end: 17:22)
         Element
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: ariel
         Generators
           Comprehension(start: 4:4, end: 15:20)
             isAsync: false
             Target
-              TupleExpr(start: 6:6, end: 9:14)
+              TupleExpr(context: Store, start: 6:6, end: 9:14)
                 Elements
-                  IdentifierExpr(start: 6:6, end: 7:12)
+                  IdentifierExpr(context: Store, start: 6:6, end: 7:12)
                     Value: eric
             Iterable
-              ListExpr(start: 12:12, end: 15:20)
+              ListExpr(context: Load, start: 12:12, end: 15:20)
                 Elements: none
             Ifs: none
     """)
@@ -258,27 +258,27 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 25:30)
-      ListComprehensionExpr(start: 0:0, end: 25:30)
+      ListComprehensionExpr(context: Load, start: 0:0, end: 25:30)
         Element
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: ariel
         Generators
           Comprehension(start: 4:4, end: 13:18)
             isAsync: false
             Target
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Store, start: 6:6, end: 7:12)
                 Value: eric
             Iterable
-              ListExpr(start: 10:10, end: 13:18)
+              ListExpr(context: Load, start: 10:10, end: 13:18)
                 Elements: none
             Ifs: none
           Comprehension(start: 14:14, end: 23:28)
             isAsync: false
             Target
-              IdentifierExpr(start: 16:16, end: 17:22)
+              IdentifierExpr(context: Store, start: 16:16, end: 17:22)
                 Value: sebastian
             Iterable
-              ListExpr(start: 20:20, end: 23:28)
+              ListExpr(context: Load, start: 20:20, end: 23:28)
                 Elements: none
             Ifs: none
     """)
@@ -305,23 +305,23 @@ class ParseList: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 23:28)
-      ListComprehensionExpr(start: 0:0, end: 23:28)
+      ListComprehensionExpr(context: Load, start: 0:0, end: 23:28)
         Element
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: ariel
         Generators
           Comprehension(start: 4:4, end: 21:26)
             isAsync: false
             Target
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Store, start: 6:6, end: 7:12)
                 Value: eric
             Iterable
-              ListExpr(start: 10:10, end: 13:18)
+              ListExpr(context: Load, start: 10:10, end: 13:18)
                 Elements: none
             Ifs
-              IdentifierExpr(start: 16:16, end: 17:22)
+              IdentifierExpr(context: Load, start: 16:16, end: 17:22)
                 Value: sebastian
-              IdentifierExpr(start: 20:20, end: 21:26)
+              IdentifierExpr(context: Load, start: 20:20, end: 21:26)
                 Value: flounder
     """)
   }

@@ -32,10 +32,10 @@ class ParseDecorators: XCTestCase, Common {
         Keywords: none
         Body
           ExprStmt(start: 12:12, end: 13:18)
-            StringExpr(start: 12:12, end: 13:18)
+            StringExpr(context: Load, start: 12:12, end: 13:18)
               String: 'feel'
         Decorators
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Joy
     """)
   }
@@ -65,12 +65,12 @@ class ParseDecorators: XCTestCase, Common {
         Keywords: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'feel'
         Decorators
-          AttributeExpr(start: 2:2, end: 7:12)
+          AttributeExpr(context: Load, start: 2:2, end: 7:12)
             Object
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Emotion
             Name: Joy
     """)
@@ -103,12 +103,12 @@ class ParseDecorators: XCTestCase, Common {
         Keywords: none
         Body
           ExprStmt(start: 18:18, end: 19:24)
-            StringExpr(start: 18:18, end: 19:24)
+            StringExpr(context: Load, start: 18:18, end: 19:24)
               String: 'feel'
         Decorators
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Joy
-          IdentifierExpr(start: 8:8, end: 9:14)
+          IdentifierExpr(context: Load, start: 8:8, end: 9:14)
             Value: Sadness
     """)
   }
@@ -140,12 +140,12 @@ class ParseDecorators: XCTestCase, Common {
         Keywords: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'feel'
         Decorators
-          CallExpr(start: 2:2, end: 7:12)
+          CallExpr(context: Load, start: 2:2, end: 7:12)
             Name
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Joy
             Args: none
             Keywords: none
@@ -178,15 +178,15 @@ class ParseDecorators: XCTestCase, Common {
         Keywords: none
         Body
           ExprStmt(start: 18:18, end: 19:24)
-            StringExpr(start: 18:18, end: 19:24)
+            StringExpr(context: Load, start: 18:18, end: 19:24)
               String: 'feel'
         Decorators
-          CallExpr(start: 2:2, end: 9:14)
+          CallExpr(context: Load, start: 2:2, end: 9:14)
             Name
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Joy
             Args
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: memory
             Keywords: none
     """)
@@ -220,12 +220,12 @@ class ParseDecorators: XCTestCase, Common {
         Keywords: none
         Body
           ExprStmt(start: 22:22, end: 23:28)
-            StringExpr(start: 22:22, end: 23:28)
+            StringExpr(context: Load, start: 22:22, end: 23:28)
               String: 'feel'
         Decorators
-          CallExpr(start: 2:2, end: 13:18)
+          CallExpr(context: Load, start: 2:2, end: 13:18)
             Name
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Joy
             Args: none
             Keywords
@@ -233,7 +233,7 @@ class ParseDecorators: XCTestCase, Common {
                 Kind
                   Named('memory')
                 Value
-                  StringExpr(start: 10:10, end: 11:16)
+                  StringExpr(context: Load, start: 10:10, end: 11:16)
                     String: 'happy'
     """)
   }
@@ -268,22 +268,22 @@ class ParseDecorators: XCTestCase, Common {
         Keywords: none
         Body
           ExprStmt(start: 26:26, end: 27:32)
-            StringExpr(start: 26:26, end: 27:32)
+            StringExpr(context: Load, start: 26:26, end: 27:32)
               String: 'feel'
         Decorators
-          CallExpr(start: 2:2, end: 17:22)
+          CallExpr(context: Load, start: 2:2, end: 17:22)
             Name
-              IdentifierExpr(start: 2:2, end: 3:8)
+              IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                 Value: Joy
             Args
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                 Value: core
             Keywords
               Keyword(start: 10:10, end: 15:20)
                 Kind
                   Named('memory')
                 Value
-                  StringExpr(start: 14:14, end: 15:20)
+                  StringExpr(context: Load, start: 14:14, end: 15:20)
                     String: 'happy'
     """)
   }
@@ -321,10 +321,10 @@ class ParseDecorators: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'emotion'
         Decorators
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Joy
         Returns: none
     """)
@@ -362,10 +362,10 @@ class ParseDecorators: XCTestCase, Common {
             Kwarg: none
         Body
           ExprStmt(start: 18:18, end: 19:24)
-            StringExpr(start: 18:18, end: 19:24)
+            StringExpr(context: Load, start: 18:18, end: 19:24)
               String: 'emotion'
         Decorators
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: Joy
         Returns: none
     """)

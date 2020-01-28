@@ -18,7 +18,7 @@ class ParseYield: XCTestCase, Common {
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 1:6)
       ExprStmt(start: 0:0, end: 1:6)
-        YieldExpr(start: 0:0, end: 1:6)
+        YieldExpr(context: Load, start: 0:0, end: 1:6)
           Value: none
     """)
   }
@@ -35,9 +35,9 @@ class ParseYield: XCTestCase, Common {
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 3:8)
       ExprStmt(start: 0:0, end: 3:8)
-        YieldExpr(start: 0:0, end: 3:8)
+        YieldExpr(context: Load, start: 0:0, end: 3:8)
           Value
-            IdentifierExpr(start: 2:2, end: 3:8)
+            IdentifierExpr(context: Load, start: 2:2, end: 3:8)
               Value: Megara
     """)
   }
@@ -55,11 +55,11 @@ class ParseYield: XCTestCase, Common {
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 5:10)
       ExprStmt(start: 0:0, end: 5:10)
-        YieldExpr(start: 0:0, end: 5:10)
+        YieldExpr(context: Load, start: 0:0, end: 5:10)
           Value
-            TupleExpr(start: 2:2, end: 5:10)
+            TupleExpr(context: Load, start: 2:2, end: 5:10)
               Elements
-                IdentifierExpr(start: 2:2, end: 3:8)
+                IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                   Value: Megara
     """)
   }
@@ -78,13 +78,13 @@ class ParseYield: XCTestCase, Common {
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 7:12)
       ExprStmt(start: 0:0, end: 7:12)
-        YieldExpr(start: 0:0, end: 7:12)
+        YieldExpr(context: Load, start: 0:0, end: 7:12)
           Value
-            TupleExpr(start: 2:2, end: 7:12)
+            TupleExpr(context: Load, start: 2:2, end: 7:12)
               Elements
-                IdentifierExpr(start: 2:2, end: 3:8)
+                IdentifierExpr(context: Load, start: 2:2, end: 3:8)
                   Value: Pain
-                IdentifierExpr(start: 6:6, end: 7:12)
+                IdentifierExpr(context: Load, start: 6:6, end: 7:12)
                   Value: Panic
     """)
   }
@@ -102,9 +102,9 @@ class ParseYield: XCTestCase, Common {
     XCTAssertAST(ast, """
     ModuleAST(start: 0:0, end: 5:10)
       ExprStmt(start: 0:0, end: 5:10)
-        YieldFromExpr(start: 0:0, end: 5:10)
+        YieldFromExpr(context: Load, start: 0:0, end: 5:10)
           Value
-            IdentifierExpr(start: 4:4, end: 5:10)
+            IdentifierExpr(context: Load, start: 4:4, end: 5:10)
               Value: Olympus
     """)
   }

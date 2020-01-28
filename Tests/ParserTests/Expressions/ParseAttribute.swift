@@ -17,9 +17,9 @@ class ParseAttribute: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
-      AttributeExpr(start: 0:0, end: 5:10)
+      AttributeExpr(context: Load, start: 0:0, end: 5:10)
         Object
-          IdentifierExpr(start: 0:0, end: 1:6)
+          IdentifierExpr(context: Load, start: 0:0, end: 1:6)
             Value: a
         Name: b
     """)
@@ -39,11 +39,11 @@ class ParseAttribute: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      AttributeExpr(start: 0:0, end: 9:14)
+      AttributeExpr(context: Load, start: 0:0, end: 9:14)
         Object
-          AttributeExpr(start: 0:0, end: 5:10)
+          AttributeExpr(context: Load, start: 0:0, end: 5:10)
             Object
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Load, start: 0:0, end: 1:6)
                 Value: a
             Name: b
         Name: c

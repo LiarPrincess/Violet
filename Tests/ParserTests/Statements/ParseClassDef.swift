@@ -28,7 +28,7 @@ class ParseClassDef: XCTestCase, Common {
         Keywords: none
         Body
           ExprStmt(start: 6:6, end: 7:12)
-            StringExpr(start: 6:6, end: 7:12)
+            StringExpr(context: Load, start: 6:6, end: 7:12)
               String: 'Sing'
         Decorators: none
     """)
@@ -55,7 +55,7 @@ class ParseClassDef: XCTestCase, Common {
         Keywords: none
         Body
           ExprStmt(start: 10:10, end: 11:16)
-            StringExpr(start: 10:10, end: 11:16)
+            StringExpr(context: Load, start: 10:10, end: 11:16)
               String: 'Sing'
         Decorators: none
     """)
@@ -82,12 +82,12 @@ class ParseClassDef: XCTestCase, Common {
       ClassDefStmt(start: 0:0, end: 13:18)
         Name: Aurora
         Bases
-          IdentifierExpr(start: 6:6, end: 7:12)
+          IdentifierExpr(context: Load, start: 6:6, end: 7:12)
             Value: Princess
         Keywords: none
         Body
           ExprStmt(start: 12:12, end: 13:18)
-            StringExpr(start: 12:12, end: 13:18)
+            StringExpr(context: Load, start: 12:12, end: 13:18)
               String: 'Sleep'
         Decorators: none
     """)
@@ -113,12 +113,12 @@ class ParseClassDef: XCTestCase, Common {
       ClassDefStmt(start: 0:0, end: 15:20)
         Name: Aurora
         Bases
-          IdentifierExpr(start: 6:6, end: 7:12)
+          IdentifierExpr(context: Load, start: 6:6, end: 7:12)
             Value: Princess
         Keywords: none
         Body
           ExprStmt(start: 14:14, end: 15:20)
-            StringExpr(start: 14:14, end: 15:20)
+            StringExpr(context: Load, start: 14:14, end: 15:20)
               String: 'Sleep'
         Decorators: none
     """)
@@ -145,14 +145,14 @@ class ParseClassDef: XCTestCase, Common {
       ClassDefStmt(start: 0:0, end: 17:22)
         Name: Aurora
         Bases
-          IdentifierExpr(start: 6:6, end: 7:12)
+          IdentifierExpr(context: Load, start: 6:6, end: 7:12)
             Value: Princess
-          IdentifierExpr(start: 10:10, end: 11:16)
+          IdentifierExpr(context: Load, start: 10:10, end: 11:16)
             Value: Human
         Keywords: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'Sleep'
         Decorators: none
     """)
@@ -179,12 +179,12 @@ class ParseClassDef: XCTestCase, Common {
       ClassDefStmt(start: 0:0, end: 17:22)
         Name: Aurora
         Bases
-          IdentifierExpr(start: 6:6, end: 11:16)
+          IdentifierExpr(context: Load, start: 6:6, end: 11:16)
             Value: Princess
         Keywords: none
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'Sleep'
         Decorators: none
     """)
@@ -255,14 +255,14 @@ class ParseClassDef: XCTestCase, Common {
       ClassDefStmt(start: 0:0, end: 15:20)
         Name: Aurora
         Bases
-          StarredExpr(start: 6:6, end: 9:14)
+          StarredExpr(context: Load, start: 6:6, end: 9:14)
             Expression
-              IdentifierExpr(start: 8:8, end: 9:14)
+              IdentifierExpr(context: Load, start: 8:8, end: 9:14)
                 Value: Princess
         Keywords: none
         Body
           ExprStmt(start: 14:14, end: 15:20)
-            StringExpr(start: 14:14, end: 15:20)
+            StringExpr(context: Load, start: 14:14, end: 15:20)
               String: 'Sleep'
         Decorators: none
     """)
@@ -292,20 +292,20 @@ class ParseClassDef: XCTestCase, Common {
       ClassDefStmt(start: 0:0, end: 23:28)
         Name: Aurora
         Bases
-          StarredExpr(start: 14:14, end: 17:22)
+          StarredExpr(context: Load, start: 14:14, end: 17:22)
             Expression
-              IdentifierExpr(start: 16:16, end: 17:22)
+              IdentifierExpr(context: Load, start: 16:16, end: 17:22)
                 Value: Human
         Keywords
           Keyword(start: 6:6, end: 11:16)
             Kind
               Named('Princess')
             Value
-              FloatExpr(start: 10:10, end: 11:16)
+              FloatExpr(context: Load, start: 10:10, end: 11:16)
                 Value: 1.0
         Body
           ExprStmt(start: 22:22, end: 23:28)
-            StringExpr(start: 22:22, end: 23:28)
+            StringExpr(context: Load, start: 22:22, end: 23:28)
               String: 'Sleep'
         Decorators: none
     """)
@@ -361,11 +361,11 @@ class ParseClassDef: XCTestCase, Common {
             Kind
               Named('Princess')
             Value
-              FloatExpr(start: 10:10, end: 11:16)
+              FloatExpr(context: Load, start: 10:10, end: 11:16)
                 Value: 1.0
         Body
           ExprStmt(start: 16:16, end: 17:22)
-            StringExpr(start: 16:16, end: 17:22)
+            StringExpr(context: Load, start: 16:16, end: 17:22)
               String: 'Sleep'
         Decorators: none
     """)
@@ -401,17 +401,17 @@ class ParseClassDef: XCTestCase, Common {
             Kind
               Named('Princess')
             Value
-              FloatExpr(start: 10:10, end: 11:16)
+              FloatExpr(context: Load, start: 10:10, end: 11:16)
                 Value: 1.0
           Keyword(start: 14:14, end: 19:24)
             Kind
               Named('Human')
             Value
-              FloatExpr(start: 18:18, end: 19:24)
+              FloatExpr(context: Load, start: 18:18, end: 19:24)
                 Value: 2.0
         Body
           ExprStmt(start: 24:24, end: 25:30)
-            StringExpr(start: 24:24, end: 25:30)
+            StringExpr(context: Load, start: 24:24, end: 25:30)
               String: 'Sleep'
         Decorators: none
     """)
@@ -516,11 +516,11 @@ class ParseClassDef: XCTestCase, Common {
             Kind
               DictionaryUnpack
             Value
-              IdentifierExpr(start: 8:8, end: 9:14)
+              IdentifierExpr(context: Load, start: 8:8, end: 9:14)
                 Value: Princess
         Body
           ExprStmt(start: 14:14, end: 15:20)
-            StringExpr(start: 14:14, end: 15:20)
+            StringExpr(context: Load, start: 14:14, end: 15:20)
               String: 'Sleep'
         Decorators: none
     """)
@@ -548,18 +548,18 @@ class ParseClassDef: XCTestCase, Common {
       ClassDefStmt(start: 0:0, end: 19:24)
         Name: Aurora
         Bases
-          IdentifierExpr(start: 6:6, end: 7:12)
+          IdentifierExpr(context: Load, start: 6:6, end: 7:12)
             Value: Princess
         Keywords
           Keyword(start: 10:10, end: 13:18)
             Kind
               DictionaryUnpack
             Value
-              IdentifierExpr(start: 12:12, end: 13:18)
+              IdentifierExpr(context: Load, start: 12:12, end: 13:18)
                 Value: Human
         Body
           ExprStmt(start: 18:18, end: 19:24)
-            StringExpr(start: 18:18, end: 19:24)
+            StringExpr(context: Load, start: 18:18, end: 19:24)
               String: 'Sleep'
         Decorators: none
     """)

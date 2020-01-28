@@ -22,16 +22,16 @@ class ParseBitExpr: XCTestCase, Common {
       )
 
       guard let ast = self.parse(parser) else { continue }
-      
+
       XCTAssertAST(ast, """
       ExpressionAST(start: 0:0, end: 5:10)
-        BinaryOpExpr(start: 0:0, end: 5:10)
+        BinaryOpExpr(context: Load, start: 0:0, end: 5:10)
           Operator: \(op)
           Left
-            IdentifierExpr(start: 0:0, end: 1:6)
+            IdentifierExpr(context: Load, start: 0:0, end: 1:6)
               Value: lilo
           Right
-            IdentifierExpr(start: 4:4, end: 5:10)
+            IdentifierExpr(context: Load, start: 4:4, end: 5:10)
               Value: stitch
       """)
     }
@@ -53,19 +53,19 @@ class ParseBitExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BinaryOpExpr(start: 0:0, end: 9:14)
+      BinaryOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: <<
         Left
-          BinaryOpExpr(start: 0:0, end: 5:10)
+          BinaryOpExpr(context: Load, start: 0:0, end: 5:10)
             Operator: <<
             Left
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Load, start: 0:0, end: 1:6)
                 Value: lilo
             Right
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: stitch
         Right
-          IdentifierExpr(start: 8:8, end: 9:14)
+          IdentifierExpr(context: Load, start: 8:8, end: 9:14)
             Value: nani
     """)
   }
@@ -84,19 +84,19 @@ class ParseBitExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BinaryOpExpr(start: 0:0, end: 9:14)
+      BinaryOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: &
         Left
-          BinaryOpExpr(start: 0:0, end: 5:10)
+          BinaryOpExpr(context: Load, start: 0:0, end: 5:10)
             Operator: &
             Left
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Load, start: 0:0, end: 1:6)
                 Value: lilo
             Right
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: stitch
         Right
-          IdentifierExpr(start: 8:8, end: 9:14)
+          IdentifierExpr(context: Load, start: 8:8, end: 9:14)
             Value: nani
     """)
   }
@@ -115,19 +115,19 @@ class ParseBitExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BinaryOpExpr(start: 0:0, end: 9:14)
+      BinaryOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: ^
         Left
-          BinaryOpExpr(start: 0:0, end: 5:10)
+          BinaryOpExpr(context: Load, start: 0:0, end: 5:10)
             Operator: ^
             Left
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Load, start: 0:0, end: 1:6)
                 Value: lilo
             Right
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: stitch
         Right
-          IdentifierExpr(start: 8:8, end: 9:14)
+          IdentifierExpr(context: Load, start: 8:8, end: 9:14)
             Value: nani
     """)
   }
@@ -146,19 +146,19 @@ class ParseBitExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      BinaryOpExpr(start: 0:0, end: 9:14)
+      BinaryOpExpr(context: Load, start: 0:0, end: 9:14)
         Operator: |
         Left
-          BinaryOpExpr(start: 0:0, end: 5:10)
+          BinaryOpExpr(context: Load, start: 0:0, end: 5:10)
             Operator: |
             Left
-              IdentifierExpr(start: 0:0, end: 1:6)
+              IdentifierExpr(context: Load, start: 0:0, end: 1:6)
                 Value: lilo
             Right
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: stitch
         Right
-          IdentifierExpr(start: 8:8, end: 9:14)
+          IdentifierExpr(context: Load, start: 8:8, end: 9:14)
             Value: nani
     """)
   }

@@ -18,7 +18,7 @@ class ParseParenExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 3:8)
-      TupleExpr(start: 0:0, end: 3:8)
+      TupleExpr(context: Load, start: 0:0, end: 3:8)
         Elements: none
     """)
   }
@@ -37,7 +37,7 @@ class ParseParenExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
-      IdentifierExpr(start: 0:0, end: 5:10)
+      IdentifierExpr(context: Load, start: 0:0, end: 5:10)
         Value: elsa
     """)
   }
@@ -57,9 +57,9 @@ class ParseParenExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      TupleExpr(start: 0:0, end: 7:12)
+      TupleExpr(context: Load, start: 0:0, end: 7:12)
         Elements
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: elsa
     """)
   }
@@ -78,11 +78,11 @@ class ParseParenExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 9:14)
-      TupleExpr(start: 0:0, end: 9:14)
+      TupleExpr(context: Load, start: 0:0, end: 9:14)
         Elements
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: elsa
-          IdentifierExpr(start: 6:6, end: 7:12)
+          IdentifierExpr(context: Load, start: 6:6, end: 7:12)
             Value: anna
     """)
   }
@@ -101,7 +101,7 @@ class ParseParenExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 5:10)
-      YieldExpr(start: 2:2, end: 3:8)
+      YieldExpr(context: Load, start: 2:2, end: 3:8)
         Value: none
     """)
   }
@@ -119,9 +119,9 @@ class ParseParenExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 7:12)
-      YieldExpr(start: 2:2, end: 5:10)
+      YieldExpr(context: Load, start: 2:2, end: 5:10)
         Value
-          IdentifierExpr(start: 4:4, end: 5:10)
+          IdentifierExpr(context: Load, start: 4:4, end: 5:10)
             Value: elsa
     """)
   }
@@ -141,13 +141,13 @@ class ParseParenExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 11:16)
-      YieldExpr(start: 2:2, end: 9:14)
+      YieldExpr(context: Load, start: 2:2, end: 9:14)
         Value
-          TupleExpr(start: 4:4, end: 9:14)
+          TupleExpr(context: Load, start: 4:4, end: 9:14)
             Elements
-              IdentifierExpr(start: 4:4, end: 5:10)
+              IdentifierExpr(context: Load, start: 4:4, end: 5:10)
                 Value: elsa
-              IdentifierExpr(start: 8:8, end: 9:14)
+              IdentifierExpr(context: Load, start: 8:8, end: 9:14)
                 Value: anna
     """)
   }
@@ -171,18 +171,18 @@ class ParseParenExpr: XCTestCase, Common {
 
     XCTAssertAST(ast, """
     ExpressionAST(start: 0:0, end: 15:20)
-      GeneratorExpr(start: 0:0, end: 15:20)
+      GeneratorExpr(context: Load, start: 0:0, end: 15:20)
         Element
-          IdentifierExpr(start: 2:2, end: 3:8)
+          IdentifierExpr(context: Load, start: 2:2, end: 3:8)
             Value: elsa
         Generators
           Comprehension(start: 4:4, end: 13:18)
             isAsync: false
             Target
-              IdentifierExpr(start: 6:6, end: 7:12)
+              IdentifierExpr(context: Store, start: 6:6, end: 7:12)
                 Value: anna
             Iterable
-              ListExpr(start: 10:10, end: 13:18)
+              ListExpr(context: Load, start: 10:10, end: 13:18)
                 Elements: none
             Ifs: none
     """)
