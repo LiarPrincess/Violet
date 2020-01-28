@@ -7,12 +7,16 @@ import Lexer
 extension Parser {
 
   /// `atom_expr: [AWAIT] atom trailer*`
-  internal func atomExpr() throws -> Expression {
+  internal func atomExpr(context: ExpressionContext) throws -> Expression {
     let start = self.peek.start
     let isAwait = try self.consumeIf(.await)
 
-    var rightExpr = try self.atom(context: .load)
-    while let withTrailer = try self.trailerOrNop(for: rightExpr, context: .load) {
+    // 'await' is always load.
+    let contextOverride = isAwait ? .load : context
+
+    var rightExpr = try self.atom(context: contextOverride)
+    while let withTrailer = try self.trailerOrNop(for: rightExpr,
+                                                  context: contextOverride) {
       rightExpr = withTrailer
     }
 

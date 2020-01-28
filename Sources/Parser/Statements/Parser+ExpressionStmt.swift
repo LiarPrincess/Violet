@@ -57,7 +57,7 @@ extension Parser {
   private func parseAnnAssign(target: Expression,
                               isTargetInParen: Bool) throws -> Statement {
     try self.checkAnnAssignTarget(target)
-    ExpressionContextSetter.set(expression: target, context: .store)
+    SetStoreExpressionContext.run(expression: target)
 
     assert(self.peek.kind == .colon)
     try self.advance() // :
@@ -134,7 +134,7 @@ extension Parser {
   private func parseAugAssign(target: Expression,
                               closingTokens: [TokenKind]) throws -> Statement {
     try self.checkAugAssignTarget(target)
-    ExpressionContextSetter.set(expression: target, context: .store)
+    SetStoreExpressionContext.run(expression: target)
 
     let op = Parser.augAssign[self.peek.kind]
     assert(op != nil)
@@ -203,8 +203,8 @@ extension Parser {
     let targets = NonEmptyArray(first: firstTarget, rest: elements.dropLast())
     try self.checkNormalAssignTargets(targets)
 
-    ExpressionContextSetter.set(expressions: targets, context: .store)
-    ExpressionContextSetter.set(expression: value, context: .load)
+    SetStoreExpressionContext.run(expressions: targets)
+    SetLoadExpressionContext.run(expression: value)
 
     return self.builder.assignStmt(targets: targets,
                                    value: value,

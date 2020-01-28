@@ -418,7 +418,7 @@ extension Parser {
 
   /// `power: atom_expr ['**' factor]`
   internal func power(context: ExpressionContext) throws -> Expression {
-    let atomExpr = try self.atomExpr()
+    let atomExpr = try self.atomExpr(context: context)
 
     if try self.consumeIf(.starStar) {
       let factor = try self.factor(context: context)

@@ -522,7 +522,7 @@ internal class ASTValidatorPass:
   private func guaranteeContext(_ expression: Expression,
                                 context: ExpressionContext) throws {
     if expression.context != context {
-      let e = ParserErrorKind.invalidContext(expression, expected: .load)
+      let e = ParserErrorKind.invalidContext(expression, expected: context)
       throw self.error(e, expression: expression)
     }
   }

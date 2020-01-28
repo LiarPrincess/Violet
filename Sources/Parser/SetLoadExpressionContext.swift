@@ -1,43 +1,34 @@
 import Core
 
-/// Set expression context.
-public class ExpressionContextSetter: ExpressionVisitor {
+internal class SetLoadExpressionContext: ExpressionVisitor {
 
-  public typealias ExpressionResult = ()
-  public typealias ExpressionPayload = ()
+  internal typealias ExpressionResult = ()
+  internal typealias ExpressionPayload = ()
 
-  private let context: ExpressionContext
-
-  public init(context: ExpressionContext) {
-    self.context = context
-  }
-
-  public static func set(expression: Expression, context: ExpressionContext) {
-    let setter = ExpressionContextSetter(context: context)
+  internal static func run(expression: Expression) {
+    let setter = SetLoadExpressionContext()
     setter.visit(expression)
   }
 
-  public static func set<S: Sequence>(
-    expressions: S,
-    context: ExpressionContext
-  ) where S.Element: Expression {
-    let setter = ExpressionContextSetter(context: context)
-    setter.visit(expressions)
+  internal static func run<S: Sequence>(expressions: S) where S.Element: Expression {
+    for e in expressions {
+      SetLoadExpressionContext.run(expression: e)
+    }
   }
 
   // MARK: - General
 
-  public func visit(_ node: Expression) {
+  internal func visit(_ node: Expression) {
     try! node.accept(self, payload: ())
   }
 
-  public func visit(_ node: Expression?) {
+  internal func visit(_ node: Expression?) {
     if let n = node {
       self.visit(n)
     }
   }
 
-  public func visit<S: Sequence>(_ nodes: S)
+  internal func visit<S: Sequence>(_ nodes: S)
     where S.Element: Expression {
 
     for node in nodes {
@@ -47,64 +38,64 @@ public class ExpressionContextSetter: ExpressionVisitor {
 
   // MARK: - Visitor
 
-  public func visit(_ node: TrueExpr) {
+  internal func visit(_ node: TrueExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: FalseExpr) {
+  internal func visit(_ node: FalseExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: NoneExpr) {
+  internal func visit(_ node: NoneExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: EllipsisExpr) {
+  internal func visit(_ node: EllipsisExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: IdentifierExpr) {
+  internal func visit(_ node: IdentifierExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: StringExpr) {
+  internal func visit(_ node: StringExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: IntExpr) {
+  internal func visit(_ node: IntExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: FloatExpr) {
+  internal func visit(_ node: FloatExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: ComplexExpr) {
+  internal func visit(_ node: ComplexExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: BytesExpr) {
+  internal func visit(_ node: BytesExpr) {
     self.setContext(node)
   }
 
-  public func visit(_ node: UnaryOpExpr) {
+  internal func visit(_ node: UnaryOpExpr) {
     self.setContext(node)
     self.visit(node.right)
   }
 
-  public func visit(_ node: BinaryOpExpr) {
+  internal func visit(_ node: BinaryOpExpr) {
     self.setContext(node)
     self.visit(node.left)
     self.visit(node.right)
   }
 
-  public func visit(_ node: BoolOpExpr) {
+  internal func visit(_ node: BoolOpExpr) {
     self.setContext(node)
     self.visit(node.left)
     self.visit(node.right)
   }
 
-  public func visit(_ node: CompareExpr) {
+  internal func visit(_ node: CompareExpr) {
     self.setContext(node)
     self.visit(node.left)
 
@@ -113,17 +104,17 @@ public class ExpressionContextSetter: ExpressionVisitor {
     }
   }
 
-  public func visit(_ node: TupleExpr) {
+  internal func visit(_ node: TupleExpr) {
     self.setContext(node)
     self.visit(node.elements)
   }
 
-  public func visit(_ node: ListExpr) {
+  internal func visit(_ node: ListExpr) {
     self.setContext(node)
     self.visit(node.elements)
   }
 
-  public func visit(_ node: DictionaryExpr) {
+  internal func visit(_ node: DictionaryExpr) {
     self.setContext(node)
 
     for e in node.elements {
@@ -137,31 +128,31 @@ public class ExpressionContextSetter: ExpressionVisitor {
     }
   }
 
-  public func visit(_ node: SetExpr) {
+  internal func visit(_ node: SetExpr) {
     self.setContext(node)
     self.visit(node.elements)
   }
 
-  public func visit(_ node: ListComprehensionExpr) {
+  internal func visit(_ node: ListComprehensionExpr) {
     self.setContext(node)
     self.visit(node.element)
     self.visitComprehensions(node.generators)
   }
 
-  public func visit(_ node: SetComprehensionExpr) {
+  internal func visit(_ node: SetComprehensionExpr) {
     self.setContext(node)
     self.visit(node.element)
     self.visitComprehensions(node.generators)
   }
 
-  public func visit(_ node: DictionaryComprehensionExpr) {
+  internal func visit(_ node: DictionaryComprehensionExpr) {
     self.setContext(node)
     self.visit(node.key)
     self.visit(node.value)
     self.visitComprehensions(node.generators)
   }
 
-  public func visit(_ node: GeneratorExpr) {
+  internal func visit(_ node: GeneratorExpr) {
     self.setContext(node)
     self.visit(node.element)
     self.visitComprehensions(node.generators)
@@ -176,28 +167,28 @@ public class ExpressionContextSetter: ExpressionVisitor {
     }
   }
 
-  public func visit(_ node: AwaitExpr) {
+  internal func visit(_ node: AwaitExpr) {
     self.setContext(node)
     self.visit(node.value)
   }
 
-  public func visit(_ node: YieldExpr) {
+  internal func visit(_ node: YieldExpr) {
     self.setContext(node)
     self.visit(node.value)
   }
 
-  public func visit(_ node: YieldFromExpr) {
+  internal func visit(_ node: YieldFromExpr) {
     self.setContext(node)
     self.visit(node.value)
   }
 
-  public func visit(_ node: LambdaExpr) {
+  internal func visit(_ node: LambdaExpr) {
     self.setContext(node)
     self.visitArguments(node.args)
     self.visit(node.body)
   }
 
-  public func visit(_ node: CallExpr) {
+  internal func visit(_ node: CallExpr) {
     self.setContext(node)
     self.visit(node.function)
     self.visit(node.args)
@@ -234,19 +225,19 @@ public class ExpressionContextSetter: ExpressionVisitor {
     }
   }
 
-  public func visit(_ node: IfExpr) {
+  internal func visit(_ node: IfExpr) {
     self.setContext(node)
     self.visit(node.test)
     self.visit(node.body)
     self.visit(node.orElse)
   }
 
-  public func visit(_ node: AttributeExpr) {
+  internal func visit(_ node: AttributeExpr) {
     self.setContext(node)
     self.visit(node.object)
   }
 
-  public func visit(_ node: SubscriptExpr) {
+  internal func visit(_ node: SubscriptExpr) {
     self.setContext(node)
     self.visit(node.object)
     self.visitSlice(node.slice)
@@ -270,7 +261,7 @@ public class ExpressionContextSetter: ExpressionVisitor {
     }
   }
 
-  public func visit(_ node: StarredExpr) {
+  internal func visit(_ node: StarredExpr) {
     self.setContext(node)
     self.visit(node.expression)
   }
@@ -278,6 +269,6 @@ public class ExpressionContextSetter: ExpressionVisitor {
   // MARK: - Helpers
 
   private func setContext(_ node: Expression) {
-    node.context = self.context
+    node.context = .load
   }
 }
