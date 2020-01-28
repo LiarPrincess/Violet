@@ -74,6 +74,9 @@ private func printBuilder<T: ProductType>(_ def: T) {
   for prop in def.properties where prop.name != "id" {
     properties.append(Property(name: prop.name, type: prop.type))
   }
+  if !properties.contains(where: { $0.name == "context" }) && def.isExprSubclass {
+    properties.append(Property(name: "context", type: "ExpressionContext"))
+  }
   if !properties.contains(where: { $0.name == "start" }) {
     properties.append(Property(name: "start", type: "SourceLocation"))
   }

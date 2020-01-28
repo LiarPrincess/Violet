@@ -27,7 +27,7 @@ extension Parser {
 
     var returns: Expression?
     if try self.consumeIf(.rightArrow) {
-      returns = try self.test()
+      returns = try self.test(context: .load)
     }
 
     try self.consumeOrThrow(.colon)

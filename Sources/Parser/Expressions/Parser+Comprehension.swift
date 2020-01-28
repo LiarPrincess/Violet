@@ -52,18 +52,18 @@ extension Parser {
 
       // sync_comp_for: 'for' exprlist 'in' or_test
       try self.consumeOrThrow(.for)
-      let exprList = try self.exprList(closingTokens: [.in])
+      let targets = try self.exprList(context: .store, closingTokens: [.in])
       try self.consumeOrThrow(.in)
-      let iter = try self.orTest()
+      let iter = try self.orTest(context: .load)
 
       // comp_if: 'if' test_nocond
       var ifs = [Expression]()
       while self.peek.kind == .if {
         try self.advance() // if
-        ifs.append(try self.testNoCond())
+        ifs.append(try self.testNoCond(context: .load))
       }
 
-      let compr = self.builder.comprehension(target: self.compForTarget(exprList),
+      let compr = self.builder.comprehension(target: self.compForTarget(targets),
                                              iter: iter,
                                              ifs: ifs,
                                              isAsync: isAsync,
@@ -81,11 +81,12 @@ extension Parser {
   }
 
   private func compForTarget(_ result: ExprListResult) -> Expression {
-    switch result {
+    switch result.kind {
     case let .single(e):
       return e
     case let .tuple(es, end):
       return self.builder.tupleExpr(elements: Array(es),
+                                    context: .store,
                                     start: es.first.start,
                                     end: end)
     }

@@ -120,7 +120,7 @@ extension Parser {
     var annotation: Expression?
     if parser.peek.kind == .colon {
       try parser.advance() // :
-      annotation = try parser.test()
+      annotation = try parser.test(context: .load)
     }
 
     let end = annotation?.end ?? token.end
@@ -174,7 +174,7 @@ extension Parser {
 
     var defaultValue: Expression?
     if try self.consumeIf(.equal) {
-      let value = try self.test()
+      let value = try self.test(context: .load)
       defaultValue = value
       ir.end = value.end
     }
@@ -194,7 +194,7 @@ extension Parser {
       } else {
         // We will place 'implicit None' just after 'argument'
         let loc = argument.end
-        let implicitNone = self.builder.noneExpr(start: loc, end: loc)
+        let implicitNone = self.builder.noneExpr(context: .load, start: loc, end: loc)
         ir.kwOnlyDefaults.append(implicitNone)
       }
     }

@@ -9,8 +9,6 @@ private func generateAST() {
   let parserDir = sourcesDir
     .appendingPathComponent("Parser")
     .appendingPathComponent("Generated")
-  let parserTestsDir = testsDir
-    .appendingPathComponent("ParserTests")
 
   let definition = rootDir
     .appendingPathComponent("Definitions", isDirectory: true)

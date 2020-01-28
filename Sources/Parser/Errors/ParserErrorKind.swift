@@ -88,10 +88,12 @@ public enum ParserErrorKind: Equatable {
 
   /// "'xxx' cannot be used as an identifier."
   case forbiddenName(String)
-  // Unexpected end of file, expected: [expected].
+  /// Unexpected end of file, expected: [expected].
   case unexpectedEOF(expected: [ExpectedToken])
-  // Unexpected 'tokenKind', expected: 'expected'.
+  /// Unexpected 'tokenKind', expected: 'expected'.
   case unexpectedToken(TokenKind, expected: [ExpectedToken])
+  /// Expression must have 'expected' context but has 'Expression.context' instead
+  case invalidContext(Expression, expected: ExpressionContext)
 }
 
 extension ParserErrorKind: CustomStringConvertible {
@@ -187,6 +189,9 @@ extension ParserErrorKind: CustomStringConvertible {
         let e = joinWithCommaAndOr(expected)
         return "Unexpected \(token), expected \(e)."
       }
+    case let .invalidContext(expr, expected):
+      let real = expr.context
+      return "Expression must have '\(expected)' context but has '\(real)' instead"
     }
   }
 }

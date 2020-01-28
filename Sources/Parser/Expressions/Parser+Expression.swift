@@ -8,14 +8,14 @@ extension Parser {
   // MARK: - Test
 
   /// `test: or_test ['if' or_test 'else' test] | lambdef`
-  internal func test() throws -> Expression {
+  internal func test(context: ExpressionContext) throws -> Expression {
     // we will start from lambdef, becuse it is simpler
 
-    if let lambda = try self.lambDefOrNop() {
+    if let lambda = try self.lambDefOrNop(context: context) {
       return lambda
     }
 
-    let left = try self.orTest()
+    let left = try self.orTest(context: context)
 
     // is this a simple form? if so then just return
     guard self.peek.kind == .if else {
@@ -23,26 +23,27 @@ extension Parser {
     }
 
     try self.advance() // if
-    let test = try self.orTest()
+    let test = try self.orTest(context: context)
     try self.consumeOrThrow(.else)
-    let right = try self.test()
+    let right = try self.test(context: context)
 
     return self.builder.ifExpr(test: test,
                                body: left,
                                orElse: right,
+                               context: context,
                                start: left.start,
                                end: right.end)
   }
 
   /// `test_nocond: or_test | lambdef_nocond`
-  internal func testNoCond() throws -> Expression {
+  internal func testNoCond(context: ExpressionContext) throws -> Expression {
     // we will start from lambdef_nocond, becuse it is simpler
 
-    if let lambda = try self.lambDefNoCondOrNop() {
+    if let lambda = try self.lambDefNoCondOrNop(context: context) {
       return lambda
     }
 
-    return try self.orTest()
+    return try self.orTest(context: context)
   }
 
   // MARK: - Lambda
@@ -51,7 +52,7 @@ extension Parser {
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal func lambDefOrNop() throws -> Expression? {
+  internal func lambDefOrNop(context: ExpressionContext) throws -> Expression? {
     guard self.peek.kind == .lambda else {
       return nil
     }
@@ -62,15 +63,19 @@ extension Parser {
     let args = try self.varArgsList(closingToken: .colon)
     try self.consumeOrThrow(.colon)
 
-    let body = try self.test()
-    return self.builder.lambdaExpr(args: args, body: body, start: start, end: body.end)
+    let body = try self.test(context: context)
+    return self.builder.lambdaExpr(args: args,
+                                   body: body,
+                                   context: context,
+                                   start: start,
+                                   end: body.end)
   }
 
   /// `lambdef_nocond: 'lambda' [varargslist] ':' test_nocond`
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal func lambDefNoCondOrNop() throws -> Expression? {
+  internal func lambDefNoCondOrNop(context: ExpressionContext) throws -> Expression? {
     guard self.peek.kind == .lambda else {
       return nil
     }
@@ -81,23 +86,28 @@ extension Parser {
     let args = try self.varArgsList(closingToken: .colon)
     try self.consumeOrThrow(.colon)
 
-    let body = try self.testNoCond()
-    return self.builder.lambdaExpr(args: args, body: body, start: start, end: body.end)
+    let body = try self.testNoCond(context: context)
+    return self.builder.lambdaExpr(args: args,
+                                   body: body,
+                                   context: context,
+                                   start: start,
+                                   end: body.end)
   }
 
   // MARK: - Or test
 
   /// `or_test: and_test ('or' and_test)*`
-  internal func orTest() throws -> Expression {
-    var left = try self.andTest()
+  internal func orTest(context: ExpressionContext) throws -> Expression {
+    var left = try self.andTest(context: context)
 
     while self.peek.kind == .or {
       try self.advance() // or
 
-      let right = try self.andTest()
+      let right = try self.andTest(context: context)
       left = self.builder.boolOpExpr(op: .or,
                                      left: left,
                                      right: right,
+                                     context: context,
                                      start: left.start,
                                      end: right.end)
     }
@@ -108,16 +118,17 @@ extension Parser {
   // MARK: - And test
 
   /// `and_test: not_test ('and' not_test)*`
-  internal func andTest() throws -> Expression {
-    var left = try self.notTest()
+  internal func andTest(context: ExpressionContext) throws -> Expression {
+    var left = try self.notTest(context: context)
 
     while self.peek.kind == .and {
       try self.advance() // and
 
-      let right = try self.notTest()
+      let right = try self.notTest(context: context)
       left = self.builder.boolOpExpr(op: .and,
                                      left: left,
                                      right: right,
+                                     context: context,
                                      start: left.start,
                                      end: right.end)
     }
@@ -128,19 +139,20 @@ extension Parser {
   // MARK: - Not test
 
   /// `not_test: 'not' not_test | comparison`
-  internal func notTest() throws -> Expression {
+  internal func notTest(context: ExpressionContext) throws -> Expression {
     let token = self.peek
     if token.kind == .not {
       try self.advance() // not
 
-      let right = try self.notTest()
+      let right = try self.notTest(context: context)
       return self.builder.unaryOpExpr(op: .not,
                                       right: right,
+                                      context: context,
                                       start: token.start,
                                       end: right.end)
     }
 
-    return try self.comparison()
+    return try self.comparison(context: context)
   }
 
   // MARK: - Comparison
@@ -161,8 +173,8 @@ extension Parser {
   ]
 
   /// `comparison: expr (comp_op expr)*`
-  internal func comparison() throws -> Expression {
-    let left = try self.expr()
+  internal func comparison(context: ExpressionContext) throws -> Expression {
+    let left = try self.expr(context: context)
 
     var elements = [ComparisonElement]()
     while var op = Parser.comparisonOperators[self.peek.kind] {
@@ -178,7 +190,7 @@ extension Parser {
         try self.advance() // not
       }
 
-      let right = try self.expr()
+      let right = try self.expr(context: context)
       let element = ComparisonElement(op: op, right: right)
       elements.append(element)
     }
@@ -190,6 +202,7 @@ extension Parser {
 
       return self.builder.compareExpr(left: left,
                                       elements: comps,
+                                      context: context,
                                       start: left.start,
                                       end: comps.last.right.end)
     }
@@ -203,13 +216,14 @@ extension Parser {
   ///
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal func starExprOrNop() throws -> Expression? {
+  internal func starExprOrNop(context: ExpressionContext) throws -> Expression? {
     let token = self.peek
     switch token.kind {
     case .star:
       try self.advance() // *
-      let expr = try self.expr()
+      let expr = try self.expr(context: context)
       return self.builder.starredExpr(expression: expr,
+                                      context: context,
                                       start: token.start,
                                       end: expr.end)
     default:
@@ -220,16 +234,17 @@ extension Parser {
   // MARK: - Expr
 
   /// `expr: xor_expr ('|' xor_expr)*`
-  internal func expr() throws -> Expression {
-    var left = try self.xorExpr()
+  internal func expr(context: ExpressionContext) throws -> Expression {
+    var left = try self.xorExpr(context: context)
 
     while self.peek.kind == .vbar {
       try self.advance() // op
 
-      let right = try self.xorExpr()
+      let right = try self.xorExpr(context: context)
       left = self.builder.binaryOpExpr(op: .bitOr,
                                        left: left,
                                        right: right,
+                                       context: context,
                                        start: left.start,
                                        end: right.end)
     }
@@ -240,16 +255,17 @@ extension Parser {
   // MARK: - Xor expr
 
   /// `xor_expr: and_expr ('^' and_expr)*`
-  internal func xorExpr() throws -> Expression {
-    var left = try self.andExpr()
+  internal func xorExpr(context: ExpressionContext) throws -> Expression {
+    var left = try self.andExpr(context: context)
 
     while self.peek.kind == .circumflex {
       try self.advance() // op
 
-      let right = try self.andExpr()
+      let right = try self.andExpr(context: context)
       left = self.builder.binaryOpExpr(op: .bitXor,
                                        left: left,
                                        right: right,
+                                       context: context,
                                        start: left.start,
                                        end: right.end)
     }
@@ -260,16 +276,17 @@ extension Parser {
   // MARK: - And expr
 
   /// `and_expr: shift_expr ('&' shift_expr)*`
-  internal func andExpr() throws -> Expression {
-    var left = try self.shiftExpr()
+  internal func andExpr(context: ExpressionContext) throws -> Expression {
+    var left = try self.shiftExpr(context: context)
 
     while self.peek.kind == .amper {
       try self.advance() // op
 
-      let right = try self.shiftExpr()
+      let right = try self.shiftExpr(context: context)
       left = self.builder.binaryOpExpr(op: .bitAnd,
                                        left: left,
                                        right: right,
+                                       context: context,
                                        start: left.start,
                                        end: right.end)
     }
@@ -285,16 +302,17 @@ extension Parser {
   ]
 
   /// `shift_expr: arith_expr (('<<'|'>>') arith_expr)*`
-  internal func shiftExpr() throws -> Expression {
-    var left = try self.arithExpr()
+  internal func shiftExpr(context: ExpressionContext) throws -> Expression {
+    var left = try self.arithExpr(context: context)
 
     while let op = Parser.shiftExprOperators[self.peek.kind] {
       try self.advance() // op
 
-      let right = try self.term()
+      let right = try self.term(context: context)
       left = self.builder.binaryOpExpr(op: op,
                                        left: left,
                                        right: right,
+                                       context: context,
                                        start: left.start,
                                        end: right.end)
     }
@@ -310,16 +328,17 @@ extension Parser {
   ]
 
   /// `arith_expr: term (('+'|'-') term)*`
-  internal func arithExpr() throws -> Expression {
-    var left = try self.term()
+  internal func arithExpr(context: ExpressionContext) throws -> Expression {
+    var left = try self.term(context: context)
 
     while let op = Parser.arithExprOperators[self.peek.kind] {
       try self.advance() // op
 
-      let right = try self.term()
+      let right = try self.term(context: context)
       left = self.builder.binaryOpExpr(op: op,
                                        left: left,
                                        right: right,
+                                       context: context,
                                        start: left.start,
                                        end: right.end)
     }
@@ -338,16 +357,17 @@ extension Parser {
   ]
 
   /// `term: factor (('*'|'@'|'/'|'%'|'//') factor)*`
-  internal func term() throws -> Expression {
-    var left = try self.factor()
+  internal func term(context: ExpressionContext) throws -> Expression {
+    var left = try self.factor(context: context)
 
     while let op = Parser.termOperators[self.peek.kind] {
       try self.advance() // op
 
-      let right = try self.factor()
+      let right = try self.factor(context: context)
       left = self.builder.binaryOpExpr(op: op,
                                        left: left,
                                        right: right,
+                                       context: context,
                                        start: left.start,
                                        end: right.end)
     }
@@ -358,50 +378,54 @@ extension Parser {
   // MARK: - Factor
 
   /// `factor: ('+'|'-'|'~') factor | power`
-  internal func factor() throws -> Expression {
+  internal func factor(context: ExpressionContext) throws -> Expression {
     let token = self.peek
 
     switch self.peek.kind {
     case .plus:
       try self.advance() // +
-      let factor = try self.factor()
+      let factor = try self.factor(context: context)
       return self.builder.unaryOpExpr(op: .plus,
                                       right: factor,
+                                      context: context,
                                       start: token.start,
                                       end: factor.end)
 
     case .minus:
       try self.advance() // -
-      let factor = try self.factor()
+      let factor = try self.factor(context: context)
       return self.builder.unaryOpExpr(op: .minus,
                                       right: factor,
+                                      context: context,
                                       start: token.start,
                                       end: factor.end)
 
     case .tilde:
       try self.advance() // ~
-      let factor = try self.factor()
+      let factor = try self.factor(context: context)
       return self.builder.unaryOpExpr(op: .invert,
                                       right: factor,
+                                      context: context,
                                       start: token.start,
                                       end: factor.end)
 
     default:
-      return try self.power()
+      return try self.power(context: context)
     }
   }
 
   // MARK: - Power
 
   /// `power: atom_expr ['**' factor]`
-  internal func power() throws -> Expression {
+  internal func power(context: ExpressionContext) throws -> Expression {
     let atomExpr = try self.atomExpr()
 
     if try self.consumeIf(.starStar) {
-      let factor = try self.factor()
+      let factor = try self.factor(context: context)
       return self.builder.binaryOpExpr(op: .pow,
                                        left: atomExpr,
                                        right: factor,
+                                       context: context,
                                        start: atomExpr.start,
                                        end: factor.end)
     }
@@ -413,7 +437,7 @@ extension Parser {
 
   /// Star expression if possible else test.
   /// There is no rule for this, but it is commonly used.
-  internal func testOrStarExpr() throws -> Expression {
-    return try self.starExprOrNop() ?? self.test()
+  internal func testOrStarExpr(context: ExpressionContext) throws -> Expression {
+    return try self.starExprOrNop(context: context) ?? self.test(context: context)
   }
 }

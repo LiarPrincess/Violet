@@ -583,11 +583,13 @@ public struct ASTBuilder {
   // MARK: - TrueExpr
 
   public mutating func trueExpr(
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> TrueExpr {
     return TrueExpr(
       id: self.getNextId(),
+      context: context,
       start: start,
       end: end
     )
@@ -596,11 +598,13 @@ public struct ASTBuilder {
   // MARK: - FalseExpr
 
   public mutating func falseExpr(
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> FalseExpr {
     return FalseExpr(
       id: self.getNextId(),
+      context: context,
       start: start,
       end: end
     )
@@ -609,11 +613,13 @@ public struct ASTBuilder {
   // MARK: - NoneExpr
 
   public mutating func noneExpr(
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> NoneExpr {
     return NoneExpr(
       id: self.getNextId(),
+      context: context,
       start: start,
       end: end
     )
@@ -622,11 +628,13 @@ public struct ASTBuilder {
   // MARK: - EllipsisExpr
 
   public mutating func ellipsisExpr(
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> EllipsisExpr {
     return EllipsisExpr(
       id: self.getNextId(),
+      context: context,
       start: start,
       end: end
     )
@@ -636,12 +644,14 @@ public struct ASTBuilder {
 
   public mutating func identifierExpr(
     value: String,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> IdentifierExpr {
     return IdentifierExpr(
       id: self.getNextId(),
       value: value,
+      context: context,
       start: start,
       end: end
     )
@@ -651,12 +661,14 @@ public struct ASTBuilder {
 
   public mutating func stringExpr(
     value: StringGroup,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> StringExpr {
     return StringExpr(
       id: self.getNextId(),
       value: value,
+      context: context,
       start: start,
       end: end
     )
@@ -666,12 +678,14 @@ public struct ASTBuilder {
 
   public mutating func intExpr(
     value: BigInt,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> IntExpr {
     return IntExpr(
       id: self.getNextId(),
       value: value,
+      context: context,
       start: start,
       end: end
     )
@@ -681,12 +695,14 @@ public struct ASTBuilder {
 
   public mutating func floatExpr(
     value: Double,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> FloatExpr {
     return FloatExpr(
       id: self.getNextId(),
       value: value,
+      context: context,
       start: start,
       end: end
     )
@@ -697,6 +713,7 @@ public struct ASTBuilder {
   public mutating func complexExpr(
     real: Double,
     imag: Double,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> ComplexExpr {
@@ -704,6 +721,7 @@ public struct ASTBuilder {
       id: self.getNextId(),
       real: real,
       imag: imag,
+      context: context,
       start: start,
       end: end
     )
@@ -713,12 +731,14 @@ public struct ASTBuilder {
 
   public mutating func bytesExpr(
     value: Data,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> BytesExpr {
     return BytesExpr(
       id: self.getNextId(),
       value: value,
+      context: context,
       start: start,
       end: end
     )
@@ -729,6 +749,7 @@ public struct ASTBuilder {
   public mutating func unaryOpExpr(
     op: UnaryOperator,
     right: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> UnaryOpExpr {
@@ -736,6 +757,7 @@ public struct ASTBuilder {
       id: self.getNextId(),
       op: op,
       right: right,
+      context: context,
       start: start,
       end: end
     )
@@ -747,6 +769,7 @@ public struct ASTBuilder {
     op: BinaryOperator,
     left: Expression,
     right: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> BinaryOpExpr {
@@ -755,6 +778,7 @@ public struct ASTBuilder {
       op: op,
       left: left,
       right: right,
+      context: context,
       start: start,
       end: end
     )
@@ -766,6 +790,7 @@ public struct ASTBuilder {
     op: BooleanOperator,
     left: Expression,
     right: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> BoolOpExpr {
@@ -774,6 +799,7 @@ public struct ASTBuilder {
       op: op,
       left: left,
       right: right,
+      context: context,
       start: start,
       end: end
     )
@@ -784,6 +810,7 @@ public struct ASTBuilder {
   public mutating func compareExpr(
     left: Expression,
     elements: NonEmptyArray<ComparisonElement>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> CompareExpr {
@@ -791,6 +818,7 @@ public struct ASTBuilder {
       id: self.getNextId(),
       left: left,
       elements: elements,
+      context: context,
       start: start,
       end: end
     )
@@ -800,12 +828,14 @@ public struct ASTBuilder {
 
   public mutating func tupleExpr(
     elements: [Expression],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> TupleExpr {
     return TupleExpr(
       id: self.getNextId(),
       elements: elements,
+      context: context,
       start: start,
       end: end
     )
@@ -815,12 +845,14 @@ public struct ASTBuilder {
 
   public mutating func listExpr(
     elements: [Expression],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> ListExpr {
     return ListExpr(
       id: self.getNextId(),
       elements: elements,
+      context: context,
       start: start,
       end: end
     )
@@ -830,12 +862,14 @@ public struct ASTBuilder {
 
   public mutating func dictionaryExpr(
     elements: [DictionaryElement],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> DictionaryExpr {
     return DictionaryExpr(
       id: self.getNextId(),
       elements: elements,
+      context: context,
       start: start,
       end: end
     )
@@ -845,12 +879,14 @@ public struct ASTBuilder {
 
   public mutating func setExpr(
     elements: [Expression],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> SetExpr {
     return SetExpr(
       id: self.getNextId(),
       elements: elements,
+      context: context,
       start: start,
       end: end
     )
@@ -861,6 +897,7 @@ public struct ASTBuilder {
   public mutating func listComprehensionExpr(
     element: Expression,
     generators: NonEmptyArray<Comprehension>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> ListComprehensionExpr {
@@ -868,6 +905,7 @@ public struct ASTBuilder {
       id: self.getNextId(),
       element: element,
       generators: generators,
+      context: context,
       start: start,
       end: end
     )
@@ -878,6 +916,7 @@ public struct ASTBuilder {
   public mutating func setComprehensionExpr(
     element: Expression,
     generators: NonEmptyArray<Comprehension>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> SetComprehensionExpr {
@@ -885,6 +924,7 @@ public struct ASTBuilder {
       id: self.getNextId(),
       element: element,
       generators: generators,
+      context: context,
       start: start,
       end: end
     )
@@ -896,6 +936,7 @@ public struct ASTBuilder {
     key: Expression,
     value: Expression,
     generators: NonEmptyArray<Comprehension>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> DictionaryComprehensionExpr {
@@ -904,6 +945,7 @@ public struct ASTBuilder {
       key: key,
       value: value,
       generators: generators,
+      context: context,
       start: start,
       end: end
     )
@@ -914,6 +956,7 @@ public struct ASTBuilder {
   public mutating func generatorExpr(
     element: Expression,
     generators: NonEmptyArray<Comprehension>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> GeneratorExpr {
@@ -921,6 +964,7 @@ public struct ASTBuilder {
       id: self.getNextId(),
       element: element,
       generators: generators,
+      context: context,
       start: start,
       end: end
     )
@@ -930,12 +974,14 @@ public struct ASTBuilder {
 
   public mutating func awaitExpr(
     value: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> AwaitExpr {
     return AwaitExpr(
       id: self.getNextId(),
       value: value,
+      context: context,
       start: start,
       end: end
     )
@@ -945,12 +991,14 @@ public struct ASTBuilder {
 
   public mutating func yieldExpr(
     value: Expression?,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> YieldExpr {
     return YieldExpr(
       id: self.getNextId(),
       value: value,
+      context: context,
       start: start,
       end: end
     )
@@ -960,12 +1008,14 @@ public struct ASTBuilder {
 
   public mutating func yieldFromExpr(
     value: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> YieldFromExpr {
     return YieldFromExpr(
       id: self.getNextId(),
       value: value,
+      context: context,
       start: start,
       end: end
     )
@@ -976,6 +1026,7 @@ public struct ASTBuilder {
   public mutating func lambdaExpr(
     args: Arguments,
     body: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> LambdaExpr {
@@ -983,6 +1034,7 @@ public struct ASTBuilder {
       id: self.getNextId(),
       args: args,
       body: body,
+      context: context,
       start: start,
       end: end
     )
@@ -994,6 +1046,7 @@ public struct ASTBuilder {
     function: Expression,
     args: [Expression],
     keywords: [Keyword],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> CallExpr {
@@ -1002,6 +1055,7 @@ public struct ASTBuilder {
       function: function,
       args: args,
       keywords: keywords,
+      context: context,
       start: start,
       end: end
     )
@@ -1013,6 +1067,7 @@ public struct ASTBuilder {
     test: Expression,
     body: Expression,
     orElse: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> IfExpr {
@@ -1021,6 +1076,7 @@ public struct ASTBuilder {
       test: test,
       body: body,
       orElse: orElse,
+      context: context,
       start: start,
       end: end
     )
@@ -1031,6 +1087,7 @@ public struct ASTBuilder {
   public mutating func attributeExpr(
     object: Expression,
     name: String,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> AttributeExpr {
@@ -1038,6 +1095,7 @@ public struct ASTBuilder {
       id: self.getNextId(),
       object: object,
       name: name,
+      context: context,
       start: start,
       end: end
     )
@@ -1048,6 +1106,7 @@ public struct ASTBuilder {
   public mutating func subscriptExpr(
     object: Expression,
     slice: Slice,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> SubscriptExpr {
@@ -1055,6 +1114,7 @@ public struct ASTBuilder {
       id: self.getNextId(),
       object: object,
       slice: slice,
+      context: context,
       start: start,
       end: end
     )
@@ -1064,12 +1124,14 @@ public struct ASTBuilder {
 
   public mutating func starredExpr(
     expression: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) -> StarredExpr {
     return StarredExpr(
       id: self.getNextId(),
       expression: expression,
+      context: context,
       start: start,
       end: end
     )

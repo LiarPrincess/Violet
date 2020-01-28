@@ -159,7 +159,7 @@ public class Parser {
   /// eval_input: testlist NEWLINE* ENDMARKER
   internal func evalInput() throws -> AST {
     let start = self.peek.start
-    let list = try self.testList(closingTokens: [.newLine, .eof])
+    let list = try self.testList(context: .load, closingTokens: [.newLine, .eof])
 
     while self.peek.kind == .newLine {
       try self.advance() // newLine

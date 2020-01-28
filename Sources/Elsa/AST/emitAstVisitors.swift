@@ -27,11 +27,45 @@ private func printVisitor(type: String, classes: [ClassDef]) {
   print("// MARK: - \(type)")
   print()
 
-  print("public protocol \(type)Visitor: AnyObject {")
-  print("  associatedtype PassResult")
+  print("/// Visitor for AST nodes.")
+  print("public protocol \(type)Visitor: \(type)VisitorWithPayload {")
+  print("  /// Visit result.")
+  print("  associatedtype \(type)Result")
+  print()
+
   for c in classes {
     let name = c.name
-    print("  func visit(_ node: \(name)) throws -> PassResult")
+    print("  func visit(_ node: \(name)) throws -> \(type)Result")
+  }
+  print("}")
+  print()
+
+  print("/// Visitor for AST nodes.")
+  print("///")
+  print("/// Each function has additional `payload` argument to pass data between")
+  print("/// nodes (so that we don't have to use fileds/globals which is always awkard).")
+  print("public protocol \(type)VisitorWithPayload: AnyObject {")
+  print("  /// Visit result.")
+  print("  associatedtype \(type)Result")
+  print("  /// Additional value passed to all of the calls.")
+  print("  associatedtype \(type)Payload")
+  print()
+
+  for c in classes {
+    let name = c.name
+    print("  func visit(_ node: \(name), payload: \(type)Payload) throws -> \(type)Result")
+  }
+  print("}")
+  print()
+
+  print("// \(type)Visitor is also \(type)VisitorWithPayload, but with Void payload.")
+  print("extension \(type)Visitor {")
+  for c in classes {
+    let name = c.name
+    print()
+    print("  public func visit(_ node: \(name), payload: \(type)Payload) throws -> \(type)Result {")
+    print("    return try self.visit(node)")
+    print("  }")
   }
   print("}")
   print()

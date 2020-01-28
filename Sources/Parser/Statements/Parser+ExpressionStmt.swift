@@ -26,7 +26,8 @@ extension Parser {
     firstClosing.append(.equal)
 
     let firstStart = self.peek.start
-    let firstList = try self.testListStarExpr(closingTokens: firstClosing)
+    let firstList = try self.testListStarExpr(context: .load,
+                                              closingTokens: firstClosing)
     let first = firstList.toExpression(using: &self.builder, start: firstStart)
 
     switch self.peek.kind {
@@ -56,15 +57,16 @@ extension Parser {
   private func parseAnnAssign(target: Expression,
                               isTargetInParen: Bool) throws -> Statement {
     try self.checkAnnAssignTarget(target)
+    ExpressionContextSetter.set(expression: target, context: .store)
 
     assert(self.peek.kind == .colon)
     try self.advance() // :
 
-    let annotation = try self.test()
+    let annotation = try self.test(context: .load)
 
     var value: Expression?
     if try self.consumeIf(.equal) {
-      value = try self.test()
+      value = try self.test(context: .load)
     }
 
     let isSimple = target is IdentifierExpr && !isTargetInParen
@@ -131,8 +133,8 @@ extension Parser {
   /// expr_stmt: testlist_star_expr augassign (yield_expr|testlist)
   private func parseAugAssign(target: Expression,
                               closingTokens: [TokenKind]) throws -> Statement {
-
     try self.checkAugAssignTarget(target)
+    ExpressionContextSetter.set(expression: target, context: .store)
 
     let op = Parser.augAssign[self.peek.kind]
     assert(op != nil)
@@ -163,7 +165,7 @@ extension Parser {
     }
 
     let listStart = self.peek.start
-    let list = try self.testList(closingTokens: closingTokens)
+    let list = try self.testList(context: .load, closingTokens: closingTokens)
     return list.toExpression(using: &self.builder, start: listStart)
   }
 
@@ -172,7 +174,7 @@ extension Parser {
   /// `expr_stmt: testlist_star_expr ('=' (yield_expr|testlist_star_expr))*
   private func parseNormalAssign(firstTarget: Expression,
                                  closingTokens: [TokenKind]) throws -> Statement {
-
+    // 'firstTarget' has '.load' context, we will change it later
     var elements = [Expression]()
 
     var elementClosing = closingTokens
@@ -185,14 +187,14 @@ extension Parser {
         elements.append(yield)
       } else {
         let testStart = self.peek.start
-        let test = try self.testListStarExpr(closingTokens: elementClosing)
+        let test = try self.testListStarExpr(context: .load, closingTokens: elementClosing)
         elements.append(test.toExpression(using: &self.builder, start: testStart))
       }
     }
 
     guard let value = elements.last else {
       // Just an expr, without anything else. It does not even matter
-      // (unless it has an side-effect like exception...).
+      // (unless it has a side-effect, like exception...).
       return self.builder.exprStmt(expression: firstTarget,
                                    start: firstTarget.start,
                                    end: firstTarget.end)
@@ -200,6 +202,9 @@ extension Parser {
 
     let targets = NonEmptyArray(first: firstTarget, rest: elements.dropLast())
     try self.checkNormalAssignTargets(targets)
+
+    ExpressionContextSetter.set(expressions: targets, context: .store)
+    ExpressionContextSetter.set(expression: value, context: .load)
 
     return self.builder.assignStmt(targets: targets,
                                    value: value,

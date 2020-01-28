@@ -19,7 +19,7 @@ extension ASTPrinter {
   // MARK: - Stmt
 
   public func visit(_ node: Statement) -> Doc {
-    return try! node.accept(self)
+    return try! node.accept(self, payload: ())
   }
 
   // MARK: - Function def stmt

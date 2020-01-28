@@ -351,11 +351,18 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- A unique node identifier.
   -- Mostly used for efficient Equatable/Hashable implementation.
   NodeId id,
+  -- Why do we need this expression? Store? Load? Delete?
+  ExpressionContext context,
   -- Location of the first character in the source code.
   Loc start,
   -- Location just after the last character in the source code.
   Loc end
 )
+
+@enum ExpressionContext: Equatable =
+  Store
+  | Load
+  | Del
 
 @finalClass TrueExpr: Expr = ()
 @finalClass FalseExpr: Expr = ()

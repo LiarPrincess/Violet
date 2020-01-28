@@ -61,7 +61,7 @@ extension Parser {
 
     let start = self.peek.start
     try self.advance() // if
-    let test = try self.test()
+    let test = try self.test(context: .load)
     try self.consumeOrThrow(.colon)
     let body = try self.suite()
 
@@ -71,7 +71,7 @@ extension Parser {
     while self.peek.kind == .elif {
       let start = self.peek.start
       try self.advance() // elif
-      let test = try self.test()
+      let test = try self.test(context: .load)
       try self.consumeOrThrow(.colon)
       let body = try self.suite()
       irs.append(IfIR(start: start, test: test, body: body))
@@ -139,7 +139,7 @@ extension Parser {
     let start = self.peek.start
     try self.advance() // while
 
-    let test = try self.test()
+    let test = try self.test(context: .load)
     try self.consumeOrThrow(.colon)
     let body = try self.suite()
 
@@ -170,12 +170,12 @@ extension Parser {
     try self.advance() // for
 
     let targetStart = self.peek.start
-    let targetRaw = try self.exprList(closingTokens: [.in])
+    let targetRaw = try self.exprList(context: .store, closingTokens: [.in])
     let target = targetRaw.toExpression(using: &self.builder, start: targetStart)
     try self.consumeOrThrow(.in)
 
     let iterStart = self.peek.start
-    let iterRaw = try self.testList(closingTokens: [.colon])
+    let iterRaw = try self.testList(context: .load, closingTokens: [.colon])
     let iter = iterRaw.toExpression(using: &self.builder, start: iterStart)
     try self.consumeOrThrow(.colon)
 
@@ -231,11 +231,11 @@ extension Parser {
   /// `with_item: test ['as' expr]`
   private func withItem() throws -> WithItem {
     let token = self.peek
-    let context = try self.test()
+    let context = try self.test(context: .load)
 
     var optionalVars: Expression?
     if try self.consumeIf(.as) {
-      optionalVars = try self.expr()
+      optionalVars = try self.expr(context: .store)
     }
 
     return self.builder.withItem(contextExpr: context,

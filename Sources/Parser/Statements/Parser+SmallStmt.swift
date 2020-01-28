@@ -59,8 +59,8 @@ extension Parser {
     let start = self.peek.start
     try self.advance() // del
 
-    let exprs = try self.exprList(closingTokens: closingTokens)
-    switch exprs {
+    let exprs = try self.exprList(context: .del, closingTokens: closingTokens)
+    switch exprs.kind {
     case let .single(e):
       let es = NonEmptyArray(first: e)
       return self.builder.deleteStmt(values: es, start: start, end: e.end)
@@ -82,13 +82,14 @@ extension Parser {
       return self.builder.returnStmt(value: nil, start: start, end: token.end)
     }
 
-    let testList = try self.testList(closingTokens: closingTokens)
-    switch testList {
+    let testList = try self.testList(context: .load, closingTokens: closingTokens)
+    switch testList.kind {
     case let .single(e):
       return self.builder.returnStmt(value: e, start: start, end: e.end)
     case let .tuple(es, end):
       let tupleStart = es.first.start
       let tuple = self.builder.tupleExpr(elements: Array(es),
+                                         context: .load,
                                          start: tupleStart,
                                          end: end)
       return self.builder.returnStmt(value: tuple, start: start, end: end)
@@ -111,11 +112,11 @@ extension Parser {
                                     end: token.end)
     }
 
-    let exception = try self.test()
+    let exception = try self.test(context: .load)
 
     var cause: Expression?
     if try self.consumeIf(.from) {
-      cause = try self.test()
+      cause = try self.test(context: .load)
     }
 
     return self.builder.raiseStmt(exception: exception,
@@ -156,11 +157,11 @@ extension Parser {
     let start = token.start
     try self.advance() // assert
 
-    let test = try self.test()
+    let test = try self.test(context: .load)
 
     var msg: Expression?
     if try self.consumeIf(.comma) {
-      msg = try self.test()
+      msg = try self.test(context: .load)
     }
 
     let end = msg?.end ?? test.end

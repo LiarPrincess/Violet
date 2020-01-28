@@ -16,10 +16,18 @@ extension ASTPrinter {
       self.block(title: title, lines: lines)
   }
 
+  public func visit(_ context: ExpressionContext) -> Doc {
+    switch context {
+    case .store: return self.text("Store")
+    case .load: return self.text("Load")
+    case .del: return self.text("Del")
+    }
+  }
+
   // MARK: - Expr
 
   public func visit(_ node: Expression) -> Doc {
-    return try! node.accept(self)
+    return try! node.accept(self, payload: ())
   }
 
   // MARK: - Bool expr

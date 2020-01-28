@@ -139,22 +139,31 @@ private func printSubclassInit<T: ProductType>(def: T) {
     return
   }
 
-   print("  public init(")
-   print("    id: ASTNodeId,")
-   for prop in def.properties {
-     print("    \(prop.nameColonType),")
-   }
-   print("    start: SourceLocation,")
-   print("    end: SourceLocation")
-   print("  ) {")
+  let isExpr = def.isExprSubclass
 
-   for property in def.properties {
-     print("    self.\(property.name) = \(property.name)")
-   }
+  print("  public init(")
+  print("    id: ASTNodeId,")
+  for prop in def.properties {
+    print("    \(prop.nameColonType),")
+  }
+  if isExpr {
+    print("    context: ExpressionContext,")
+  }
+  print("    start: SourceLocation,")
+  print("    end: SourceLocation")
+  print("  ) {")
 
-  print("    super.init(id: id, start: start, end: end)")
-   print("  }")
-   print()
+  for property in def.properties {
+    print("    self.\(property.name) = \(property.name)")
+  }
+
+  if isExpr {
+    print("    super.init(id: id, context: context, start: start, end: end)")
+  } else {
+    print("    super.init(id: id, start: start, end: end)")
+  }
+  print("  }")
+  print()
 }
 
 private func productPropertyInit(_ prop: ProductProperty) -> String {
@@ -165,11 +174,14 @@ private func productPropertyInit(_ prop: ProductProperty) -> String {
 // MARK: - Visitor
 
 private func printVisitor<T: ProductType>(def: T) {
-  let visitorType = def.astVisitorTypeName
+  guard let prefix = def.visitorPrefix else { return }
 
   if def.isAST || def .isStmt || def.isExpr {
     print("""
-  public func accept<V: \(visitorType)>(_ visitor: V) throws -> V.PassResult {
+  public func accept<V: \(prefix)VisitorWithPayload>(
+      _ visitor: V,
+      payload: V.\(prefix)Payload
+  ) throws -> V.\(prefix)Result {
     trap("'accept' method should be overriden in subclass")
   }
 
@@ -178,8 +190,11 @@ private func printVisitor<T: ProductType>(def: T) {
 
   if def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass {
     print("""
-  override public func accept<V: \(visitorType)>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: \(prefix)VisitorWithPayload>(
+      _ visitor: V,
+      payload: V.\(prefix)Payload
+  ) throws -> V.\(prefix)Result {
+    try visitor.visit(self, payload: payload)
   }
 
 """)

@@ -18,7 +18,8 @@ extension Parser {
   /// ```
   /// 'Or nop' means that we terminate (without changing current parser state)
   /// if we can't parse according to this rule.
-  internal func trailerOrNop(for leftExpr: Expression) throws -> Expression? {
+  internal func trailerOrNop(for leftExpr: Expression,
+                             context: ExpressionContext) throws -> Expression? {
     switch self.peek.kind {
     case .leftParen:
       try self.advance() // (
@@ -31,6 +32,7 @@ extension Parser {
       return self.builder.callExpr(function: leftExpr,
                                    args: ir.args,
                                    keywords: ir.keywords,
+                                   context: .load,
                                    start: leftExpr.start,
                                    end: end)
 
@@ -46,6 +48,7 @@ extension Parser {
       let slice = self.builder.slice(kind: sliceKind, start: start, end: end)
       return self.builder.subscriptExpr(object: leftExpr,
                                         slice: slice,
+                                        context: context,
                                         start: leftExpr.start,
                                         end: end)
 
@@ -57,6 +60,7 @@ extension Parser {
 
       return self.builder.attributeExpr(object: leftExpr,
                                         name: name,
+                                        context: context,
                                         start: leftExpr.start,
                                         end: nameToken.end)
 
@@ -112,6 +116,7 @@ extension Parser {
     }
 
     let result = self.builder.tupleExpr(elements: indices,
+                                        context: .load,
                                         start: slices.first.start,
                                         end: slices.last.end)
 
@@ -127,7 +132,7 @@ extension Parser {
     var lower, upper, step: Expression?
 
     if self.peek.kind != .colon {
-      lower = try self.test()
+      lower = try self.test(context: .load)
     }
 
     // subscript: test -> index
@@ -142,7 +147,7 @@ extension Parser {
 
     // do we have 2nd? a[1:(we are here)]
     if self.peek.kind != .colon && !closingTokens.contains(self.peek.kind) {
-      upper = try self.test()
+      upper = try self.test(context: .load)
       end = upper?.end ?? end
     }
 
@@ -152,7 +157,7 @@ extension Parser {
       try self.advance() // :
 
       if !closingTokens.contains(self.peek.kind) {
-        step = try self.test()
+        step = try self.test(context: .load)
         end = step?.end ?? end
       }
     }

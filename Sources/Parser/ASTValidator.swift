@@ -15,14 +15,21 @@ public class ASTValidator {
   }
 }
 
-internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor {
+internal class ASTValidatorPass:
+  ASTVisitor, StatementVisitor, ExpressionVisitorWithPayload {
 
-  internal typealias PassResult = Void
+  internal typealias ASTResult = Void
+  internal typealias ASTPayload = Void
+  internal typealias StatementResult = Void
+  internal typealias StatementPayload = Void
+  internal typealias ExpressionResult = Void
+  /// Expected context.
+  internal typealias ExpressionPayload = ExpressionContext
 
   // MARK: - AST
 
   internal func visitAST(_ node: AST) throws {
-    try node.accept(self)
+    try node.accept(self, payload: ())
   }
 
   /// int PyAST_Validate(mod_ty mod)
@@ -37,14 +44,14 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
 
   /// int PyAST_Validate(mod_ty mod)
   internal func visit(_ node: ExpressionAST) throws {
-    try self.visitExpression(node.expression)
+    try self.visitExpression(node.expression, payload: .load)
   }
 
   // MARK: - Statement
 
   /// validate_stmt(stmt_ty stmt)
   internal func visitStatement(_ node: Statement) throws {
-    try node.accept(self)
+    try node.accept(self, payload: ())
   }
 
   private func visitStatement(_ node: Statement?) throws {
@@ -64,40 +71,40 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
   internal func visit(_ node: FunctionDefStmt) throws {
     try self.visitStatements(node.body)
     try self.visitArguments(node.args)
-    try self.visitExpressions(node.decorators)
-    try self.visitExpression(node.returns)
+    try self.visitExpressions(node.decorators, payload: .load)
+    try self.visitExpression(node.returns, payload: .load)
   }
 
   internal func visit(_ node: AsyncFunctionDefStmt) throws {
     try self.visitStatements(node.body)
     try self.visitArguments(node.args)
-    try self.visitExpressions(node.decorators)
-    try self.visitExpression(node.returns)
+    try self.visitExpressions(node.decorators, payload: .load)
+    try self.visitExpression(node.returns, payload: .load)
   }
 
   internal func visit(_ node: ClassDefStmt) throws {
     try self.visitStatements(node.body)
-    try self.visitExpressions(node.bases)
+    try self.visitExpressions(node.bases, payload: .load)
     try self.visitKeywords(node.keywords)
-    try self.visitExpressions(node.decorators)
+    try self.visitExpressions(node.decorators, payload: .load)
   }
 
   internal func visit(_ node: ReturnStmt) throws {
-    try self.visitExpression(node.value)
+    try self.visitExpression(node.value, payload: .load)
   }
 
   internal func visit(_ node: DeleteStmt) throws {
-    try self.visitExpressions(node.values)
+    try self.visitExpressions(node.values, payload: .del)
   }
 
   internal func visit(_ node: AssignStmt) throws {
-    try self.visitExpressions(node.targets)
-    try self.visitExpression(node.value)
+    try self.visitExpressions(node.targets, payload: .store)
+    try self.visitExpression(node.value, payload: .load)
   }
 
   internal func visit(_ node: AugAssignStmt) throws {
-    try self.visitExpression(node.target)
-    try self.visitExpression(node.value)
+    try self.visitExpression(node.target, payload: .store)
+    try self.visitExpression(node.value, payload: .load)
   }
 
   internal func visit(_ node: AnnAssignStmt) throws {
@@ -106,33 +113,33 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
       throw self.error(.simpleAnnAssignmentWithNonNameTarget, statement: node)
     }
 
-    try self.visitExpression(node.target)
-    try self.visitExpression(node.value)
-    try self.visitExpression(node.annotation)
+    try self.visitExpression(node.target, payload: .store)
+    try self.visitExpression(node.value, payload: .load)
+    try self.visitExpression(node.annotation, payload: .load)
   }
 
   internal func visit(_ node: ForStmt) throws {
-    try self.visitExpression(node.target)
-    try self.visitExpression(node.iterable)
+    try self.visitExpression(node.target, payload: .store)
+    try self.visitExpression(node.iterable, payload: .load)
     try self.visitStatements(node.body)
     try self.visitStatements(node.orElse)
   }
 
   internal func visit(_ node: AsyncForStmt) throws {
-    try self.visitExpression(node.target)
-    try self.visitExpression(node.iterable)
+    try self.visitExpression(node.target, payload: .store)
+    try self.visitExpression(node.iterable, payload: .load)
     try self.visitStatements(node.body)
     try self.visitStatements(node.orElse)
   }
 
   internal func visit(_ node: WhileStmt) throws {
-    try self.visitExpression(node.test)
+    try self.visitExpression(node.test, payload: .load)
     try self.visitStatements(node.body)
     try self.visitStatements(node.orElse)
   }
 
   internal func visit(_ node: IfStmt) throws {
-    try self.visitExpression(node.test)
+    try self.visitExpression(node.test, payload: .load)
     try self.visitStatements(node.body)
     try self.visitStatements(node.orElse)
   }
@@ -151,8 +158,8 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
 
   internal func visit(_ node: RaiseStmt) throws {
     if let exc = node.exception {
-      try self.visitExpression(exc)
-      try self.visitExpression(node.cause)
+      try self.visitExpression(exc, payload: .load)
+      try self.visitExpression(node.cause, payload: .load)
     } else if node.cause != nil {
       throw self.error(.raiseWithCauseWithoutException, statement: node)
     }
@@ -175,8 +182,8 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
   }
 
   internal func visit(_ node: AssertStmt) throws {
-    try self.visitExpression(node.test)
-    try self.visitExpression(node.msg)
+    try self.visitExpression(node.test, payload: .load)
+    try self.visitExpression(node.msg, payload: .load)
   }
 
   internal func visit(_ node: ImportStmt) throws {
@@ -203,7 +210,7 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
   }
 
   internal func visit(_ node: ExprStmt) throws {
-    try self.visitExpression(node.expression)
+    try self.visitExpression(node.expression, payload: .load)
   }
 
   internal func visit(_ node: PassStmt) throws { }
@@ -214,8 +221,8 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
 
   private func visitWithItems(_ items: NonEmptyArray<WithItem>) throws {
     for i in items {
-      try self.visitExpression(i.contextExpr)
-      try self.visitExpression(i.optionalVars)
+      try self.visitExpression(i.contextExpr, payload: .load)
+      try self.visitExpression(i.optionalVars, payload: .store)
     }
   }
 
@@ -224,7 +231,7 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
   private func visitExceptHandlers(_ handlers: [ExceptHandler]) throws {
     for h in handlers {
       if case let .typed(type: type, asName: _) = h.kind {
-        try self.visitExpression(type)
+        try self.visitExpression(type, payload: .load)
       }
       try self.visitStatements(h.body)
     }
@@ -234,143 +241,198 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
 
   /// validate_constant(PyObject *value)
   /// validate_expr(expr_ty exp, expr_context_ty ctx)
-  internal func visitExpression(_ node: Expression) throws {
-    try node.accept(self)
+  internal func visitExpression(_ node: Expression,
+                                payload: ExpressionPayload) throws {
+    try node.accept(self, payload: payload)
   }
 
-  private func visitExpression(_ node: Expression?) throws {
+  private func visitExpression(_ node: Expression?,
+                               payload: ExpressionPayload) throws {
     if let n = node {
-      try self.visitExpression(n)
+      try self.visitExpression(n, payload: payload)
     }
   }
 
-  private func visitExpressions<S: Sequence>(_ nodes: S) throws
+  private func visitExpressions<S: Sequence>(_ nodes: S,
+                                             payload: ExpressionPayload) throws
     where S.Element: Expression {
 
     for node in nodes {
-      try self.visitExpression(node)
+      try self.visitExpression(node, payload: payload)
     }
   }
 
-  internal func visit(_ node: NoneExpr) throws { }
-  internal func visit(_ node: EllipsisExpr) throws { }
-  internal func visit(_ node: TrueExpr) throws { }
-  internal func visit(_ node: FalseExpr) throws { }
-  internal func visit(_ node: IntExpr) throws { }
-  internal func visit(_ node: FloatExpr) throws { }
-  internal func visit(_ node: ComplexExpr) throws { }
-  internal func visit(_ node: StringExpr) throws { }
-  internal func visit(_ node: BytesExpr) throws { }
-  internal func visit(_ node: IdentifierExpr) throws { }
-
-  internal func visit(_ node: UnaryOpExpr) throws {
-    try self.visitExpression(node.right)
+  internal func visit(_ node: NoneExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
   }
 
-  internal func visit(_ node: BinaryOpExpr) throws {
-    try self.visitExpression(node.left)
-    try self.visitExpression(node.right)
+  internal func visit(_ node: EllipsisExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
   }
 
-  internal func visit(_ node: BoolOpExpr) throws {
-    try self.visitExpression(node.left)
-    try self.visitExpression(node.right)
+  internal func visit(_ node: TrueExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
   }
 
-  internal func visit(_ node: CompareExpr) throws {
-    try self.visitExpression(node.left)
+  internal func visit(_ node: FalseExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+  }
+
+  internal func visit(_ node: IntExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+  }
+
+  internal func visit(_ node: FloatExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+  }
+
+  internal func visit(_ node: ComplexExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+  }
+
+  internal func visit(_ node: StringExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+  }
+
+  internal func visit(_ node: BytesExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+  }
+
+  internal func visit(_ node: IdentifierExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeContext(node, context: payload)
+  }
+
+  internal func visit(_ node: UnaryOpExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.right, payload: .load)
+  }
+
+  internal func visit(_ node: BinaryOpExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.left, payload: .load)
+    try self.visitExpression(node.right, payload: .load)
+  }
+
+  internal func visit(_ node: BoolOpExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.left, payload: .load)
+    try self.visitExpression(node.right, payload: .load)
+  }
+
+  internal func visit(_ node: CompareExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+
+    try self.visitExpression(node.left, payload: .load)
 
     // we don't have to check elements.isEmpty because of NonEmptyArray
     for e in node.elements {
-      try self.visitExpression(e.right)
+      try self.visitExpression(e.right, payload: .load)
     }
   }
 
-  internal func visit(_ node: TupleExpr) throws {
-    try self.visitExpressions(node.elements)
+  internal func visit(_ node: TupleExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeContext(node, context: payload)
+    try self.visitExpressions(node.elements, payload: payload)
   }
 
-  internal func visit(_ node: ListExpr) throws {
-    try self.visitExpressions(node.elements)
+  internal func visit(_ node: ListExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeContext(node, context: payload)
+    try self.visitExpressions(node.elements, payload: payload)
   }
 
-  internal func visit(_ node: DictionaryExpr) throws {
+  internal func visit(_ node: DictionaryExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+
     for e in node.elements {
       switch e {
       case let .unpacking(expr):
-        try self.visitExpression(expr)
+        try self.visitExpression(expr, payload: .load)
       case let .keyValue(key, value):
-        try self.visitExpression(key)
-        try self.visitExpression(value)
+        try self.visitExpression(key, payload: .load)
+        try self.visitExpression(value, payload: .load)
       }
     }
   }
 
-  internal func visit(_ node: SetExpr) throws {
-    try self.visitExpressions(node.elements)
+  internal func visit(_ node: SetExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpressions(node.elements, payload: .load)
   }
 
-  internal func visit(_ node: ListComprehensionExpr) throws {
-    try self.visitExpression(node.element)
+  internal func visit(_ node: ListComprehensionExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.element, payload: .load)
     try self.visitComprehensions(node.generators)
   }
 
-  internal func visit(_ node: SetComprehensionExpr) throws {
-    try self.visitExpression(node.element)
+  internal func visit(_ node: SetComprehensionExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.element, payload: .load)
     try self.visitComprehensions(node.generators)
   }
 
-  internal func visit(_ node: DictionaryComprehensionExpr) throws {
-    try self.visitExpression(node.key)
-    try self.visitExpression(node.value)
+  internal func visit(_ node: DictionaryComprehensionExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.key, payload: .load)
+    try self.visitExpression(node.value, payload: .load)
     try self.visitComprehensions(node.generators)
   }
 
-  internal func visit(_ node: GeneratorExpr) throws {
-    try self.visitExpression(node.element)
+  internal func visit(_ node: GeneratorExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.element, payload: .load)
     try self.visitComprehensions(node.generators)
   }
 
-  internal func visit(_ node: AwaitExpr) throws {
-    try self.visitExpression(node.value)
+  internal func visit(_ node: AwaitExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.value, payload: .load)
   }
 
-  internal func visit(_ node: YieldExpr) throws {
-    try self.visitExpression(node.value)
+  internal func visit(_ node: YieldExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.value, payload: .load)
   }
 
-  internal func visit(_ node: YieldFromExpr) throws {
-    try self.visitExpression(node.value)
+  internal func visit(_ node: YieldFromExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.value, payload: .load)
   }
 
-  internal func visit(_ node: LambdaExpr) throws {
+  internal func visit(_ node: LambdaExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
     try self.visitArguments(node.args)
-    try self.visitExpression(node.body)
+    try self.visitExpression(node.body, payload: .load)
   }
 
-  internal func visit(_ node: CallExpr) throws {
-    try self.visitExpression(node.function)
-    try self.visitExpressions(node.args)
+  internal func visit(_ node: CallExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.function, payload: .load)
+    try self.visitExpressions(node.args, payload: .load)
     try self.visitKeywords(node.keywords)
   }
 
-  internal func visit(_ node: IfExpr) throws {
-    try self.visitExpression(node.test)
-    try self.visitExpression(node.body)
-    try self.visitExpression(node.orElse)
+  internal func visit(_ node: IfExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeLoadContext(node)
+    try self.visitExpression(node.test, payload: .load)
+    try self.visitExpression(node.body, payload: .load)
+    try self.visitExpression(node.orElse, payload: .load)
   }
 
-  internal func visit(_ node: AttributeExpr) throws {
-    try self.visitExpression(node.object)
+  internal func visit(_ node: AttributeExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeContext(node, context: payload)
+    try self.visitExpression(node.object, payload: .load)
   }
 
-  internal func visit(_ node: SubscriptExpr) throws {
-    try self.visitExpression(node.object)
+  internal func visit(_ node: SubscriptExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeContext(node, context: payload)
+    try self.visitExpression(node.object, payload: .load)
     try self.visitSlice(node.slice)
   }
 
-  internal func visit(_ node: StarredExpr) throws {
-    try self.visitExpression(node.expression)
+  internal func visit(_ node: StarredExpr, payload: ExpressionPayload) throws {
+    try self.guaranteeContext(node, context: payload)
+    try self.visitExpression(node.expression, payload: payload)
   }
 
   // MARK: - Comprehensions
@@ -379,9 +441,9 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
   private func visitComprehensions(
     _ comprehensions: NonEmptyArray<Comprehension>) throws {
     for c in comprehensions {
-      try self.visitExpression(c.target)
-      try self.visitExpression(c.iter)
-      try self.visitExpressions(c.ifs)
+      try self.visitExpression(c.target, payload: .store)
+      try self.visitExpression(c.iter, payload: .load)
+      try self.visitExpressions(c.ifs, payload: .load)
     }
   }
 
@@ -391,9 +453,9 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
   private func visitSlice(_ slice: Slice) throws {
     switch slice.kind {
     case let .slice(lower, upper, step):
-      if let lower = lower { try self.visitExpression(lower) }
-      if let upper = upper { try self.visitExpression(upper) }
-      if let step  = step { try self.visitExpression(step) }
+      if let lower = lower { try self.visitExpression(lower, payload: .load) }
+      if let upper = upper { try self.visitExpression(upper, payload: .load) }
+      if let step  = step { try self.visitExpression(step, payload: .load) }
 
     case let .extSlice(dims):
       // we don't have to check .isEmpty because of NonEmptyArray
@@ -402,7 +464,7 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
       }
 
     case let .index(expr):
-      try self.visitExpression(expr)
+      try self.visitExpression(expr, payload: .load)
     }
   }
 
@@ -413,7 +475,7 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
     try self.visitArgs(args.args)
     try self.visitVararg(args.vararg)
     try self.visitArgs(args.kwOnlyArgs)
-    try self.visitExpression(args.kwarg?.annotation)
+    try self.visitExpression(args.kwarg?.annotation, payload: .load)
 
     if args.defaults.count > args.args.count {
       throw self.error(.moreDefaultsThanArgs, location: args.start)
@@ -423,14 +485,14 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
       throw self.error(.kwOnlyArgsCountNotEqualToDefaults, location: args.start)
     }
 
-    try self.visitExpressions(args.defaults)
-    try self.visitExpressions(args.kwOnlyDefaults)
+    try self.visitExpressions(args.defaults, payload: .load)
+    try self.visitExpressions(args.kwOnlyDefaults, payload: .load)
   }
 
   /// validate_args(asdl_seq *args)
   private func visitArgs(_ args: [Arg]) throws {
     for a in args {
-      try self.visitExpression(a.annotation)
+      try self.visitExpression(a.annotation, payload: .load)
     }
   }
 
@@ -440,14 +502,28 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
     case .none, .unnamed:
       break
     case let .named(arg):
-      try self.visitExpression(arg.annotation)
+      try self.visitExpression(arg.annotation, payload: .load)
     }
   }
 
   /// validate_keywords(asdl_seq *keywords)
   private func visitKeywords(_ keywords: [Keyword]) throws {
     for keyword in keywords {
-      try self.visitExpression(keyword.value)
+      try self.visitExpression(keyword.value, payload: .load)
+    }
+  }
+
+  // MARK: - Context
+
+  private func guaranteeLoadContext(_ expression: Expression) throws {
+    try self.guaranteeContext(expression, context: .load)
+  }
+
+  private func guaranteeContext(_ expression: Expression,
+                                context: ExpressionContext) throws {
+    if expression.context != context {
+      let e = ParserErrorKind.invalidContext(expression, expected: .load)
+      throw self.error(e, expression: expression)
     }
   }
 
@@ -457,6 +533,12 @@ internal class ASTValidatorPass: ASTVisitor, StatementVisitor, ExpressionVisitor
   private func error(_ kind: ParserErrorKind,
                      statement: Statement) -> ParserError {
     return ParserError(kind, location: statement.start)
+  }
+
+  /// Create parser error
+  private func error(_ kind: ParserErrorKind,
+                     expression: Expression) -> ParserError {
+    return ParserError(kind, location: expression.start)
   }
 
   /// Create parser error

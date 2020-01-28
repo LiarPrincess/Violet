@@ -3,9 +3,15 @@ import Rapunzel
 
 public class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
-  public typealias PassResult = Doc
+  public typealias ASTResult = Doc
+  public typealias ASTPayload = Void
+  public typealias StatementResult = Doc
+  public typealias StatementPayload = Void
+  public typealias ExpressionResult = Doc
+  public typealias ExpressionPayload = Void
 
   private static let indent = 2
+  /// We will trim strings after certain number of characters.
   private static let stringCutoff = 60
 
   // MARK: - AST
@@ -17,7 +23,7 @@ public class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
   }
 
   public func visit(_ node: AST) -> Doc {
-    return try! node.accept(self)
+    return try! node.accept(self, payload: ())
   }
 
   public func visit(_ node: InteractiveAST) -> Doc {

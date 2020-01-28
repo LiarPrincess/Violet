@@ -45,7 +45,10 @@ public class AST: ASTNode, CustomStringConvertible {
     self.end = end
   }
 
-  public func accept<V: ASTVisitor>(_ visitor: V) throws -> V.PassResult {
+  public func accept<V: ASTVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ASTPayload
+  ) throws -> V.ASTResult {
     trap("'accept' method should be overriden in subclass")
   }
 
@@ -70,8 +73,11 @@ public class InteractiveAST: AST {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: ASTVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ASTVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ASTPayload
+  ) throws -> V.ASTResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -100,8 +106,11 @@ public class ModuleAST: AST {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: ASTVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ASTVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ASTPayload
+  ) throws -> V.ASTResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -125,8 +134,11 @@ public class ExpressionAST: AST {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: ASTVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ASTVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ASTPayload
+  ) throws -> V.ASTResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -164,7 +176,10 @@ public class Statement: ASTNode, CustomStringConvertible {
     self.end = end
   }
 
-  public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
+  public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
     trap("'accept' method should be overriden in subclass")
   }
 
@@ -205,8 +220,11 @@ public class FunctionDefStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -246,8 +264,11 @@ public class AsyncFunctionDefStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -290,8 +311,11 @@ public class ClassDefStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -313,8 +337,11 @@ public class ReturnStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -337,8 +364,11 @@ public class DeleteStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -366,8 +396,11 @@ public class AssignStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -398,8 +431,11 @@ public class AugAssignStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -433,8 +469,11 @@ public class AnnAssignStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -471,8 +510,11 @@ public class ForStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -509,8 +551,11 @@ public class AsyncForStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -542,8 +587,11 @@ public class WhileStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -578,8 +626,11 @@ public class IfStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -606,8 +657,11 @@ public class WithStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -634,8 +688,11 @@ public class AsyncWithStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -662,8 +719,11 @@ public class RaiseStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -697,8 +757,11 @@ public class TryStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -725,8 +788,11 @@ public class AssertStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -748,8 +814,11 @@ public class ImportStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -780,8 +849,11 @@ public class ImportFromStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -811,8 +883,11 @@ public class ImportFromStarStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -834,8 +909,11 @@ public class GlobalStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -857,8 +935,11 @@ public class NonlocalStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -880,8 +961,11 @@ public class ExprStmt: Statement {
     super.init(id: id, start: start, end: end)
   }
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -892,8 +976,11 @@ public class ExprStmt: Statement {
 public class PassStmt: Statement {
 
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -904,8 +991,11 @@ public class PassStmt: Statement {
 public class BreakStmt: Statement {
 
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -916,8 +1006,11 @@ public class BreakStmt: Statement {
 public class ContinueStmt: Statement {
 
 
-  override public func accept<V: StatementVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: StatementVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.StatementPayload
+  ) throws -> V.StatementResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1069,6 +1162,8 @@ public class Expression: ASTNode, CustomStringConvertible {
   /// A unique node identifier.
   /// Mostly used for efficient Equatable/Hashable implementation.
   public var id: ASTNodeId
+  /// Why do we need this expression? Store? Load? Delete?
+  public var context: ExpressionContext
   /// Location of the first character in the source code.
   public var start: SourceLocation
   /// Location just after the last character in the source code.
@@ -1082,16 +1177,34 @@ public class Expression: ASTNode, CustomStringConvertible {
 
   public init(
     id: ASTNodeId,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.id = id
+    self.context = context
     self.start = start
     self.end = end
   }
 
-  public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
+  public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
     trap("'accept' method should be overriden in subclass")
+  }
+
+}
+
+public enum ExpressionContext: Equatable, CustomStringConvertible {
+  case store
+  case load
+  case del
+
+  public var description: String {
+    let printer = ASTPrinter()
+    let doc = printer.visit(self)
+    return doc.layout()
   }
 
 }
@@ -1101,8 +1214,11 @@ public class Expression: ASTNode, CustomStringConvertible {
 public class TrueExpr: Expression {
 
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1112,8 +1228,11 @@ public class TrueExpr: Expression {
 public class FalseExpr: Expression {
 
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1123,8 +1242,11 @@ public class FalseExpr: Expression {
 public class NoneExpr: Expression {
 
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1134,8 +1256,11 @@ public class NoneExpr: Expression {
 public class EllipsisExpr: Expression {
 
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1149,15 +1274,19 @@ public class IdentifierExpr: Expression {
   public init(
     id: ASTNodeId,
     value: String,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.value = value
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1171,15 +1300,19 @@ public class StringExpr: Expression {
   public init(
     id: ASTNodeId,
     value: StringGroup,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.value = value
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1193,15 +1326,19 @@ public class IntExpr: Expression {
   public init(
     id: ASTNodeId,
     value: BigInt,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.value = value
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1215,15 +1352,19 @@ public class FloatExpr: Expression {
   public init(
     id: ASTNodeId,
     value: Double,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.value = value
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1239,16 +1380,20 @@ public class ComplexExpr: Expression {
     id: ASTNodeId,
     real: Double,
     imag: Double,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.real = real
     self.imag = imag
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1262,15 +1407,19 @@ public class BytesExpr: Expression {
   public init(
     id: ASTNodeId,
     value: Data,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.value = value
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1287,16 +1436,20 @@ public class UnaryOpExpr: Expression {
     id: ASTNodeId,
     op: UnaryOperator,
     right: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.op = op
     self.right = right
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1315,17 +1468,21 @@ public class BinaryOpExpr: Expression {
     op: BinaryOperator,
     left: Expression,
     right: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.op = op
     self.left = left
     self.right = right
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1352,17 +1509,21 @@ public class BoolOpExpr: Expression {
     op: BooleanOperator,
     left: Expression,
     right: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.op = op
     self.left = left
     self.right = right
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1378,16 +1539,20 @@ public class CompareExpr: Expression {
     id: ASTNodeId,
     left: Expression,
     elements: NonEmptyArray<ComparisonElement>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.left = left
     self.elements = elements
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1402,15 +1567,19 @@ public class TupleExpr: Expression {
   public init(
     id: ASTNodeId,
     elements: [Expression],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.elements = elements
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1425,15 +1594,19 @@ public class ListExpr: Expression {
   public init(
     id: ASTNodeId,
     elements: [Expression],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.elements = elements
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1448,15 +1621,19 @@ public class DictionaryExpr: Expression {
   public init(
     id: ASTNodeId,
     elements: [DictionaryElement],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.elements = elements
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1471,15 +1648,19 @@ public class SetExpr: Expression {
   public init(
     id: ASTNodeId,
     elements: [Expression],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.elements = elements
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1498,16 +1679,20 @@ public class ListComprehensionExpr: Expression {
     id: ASTNodeId,
     element: Expression,
     generators: NonEmptyArray<Comprehension>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.element = element
     self.generators = generators
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1526,16 +1711,20 @@ public class SetComprehensionExpr: Expression {
     id: ASTNodeId,
     element: Expression,
     generators: NonEmptyArray<Comprehension>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.element = element
     self.generators = generators
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1557,17 +1746,21 @@ public class DictionaryComprehensionExpr: Expression {
     key: Expression,
     value: Expression,
     generators: NonEmptyArray<Comprehension>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.key = key
     self.value = value
     self.generators = generators
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1586,16 +1779,20 @@ public class GeneratorExpr: Expression {
     id: ASTNodeId,
     element: Expression,
     generators: NonEmptyArray<Comprehension>,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.element = element
     self.generators = generators
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1613,15 +1810,19 @@ public class AwaitExpr: Expression {
   public init(
     id: ASTNodeId,
     value: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.value = value
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1638,15 +1839,19 @@ public class YieldExpr: Expression {
   public init(
     id: ASTNodeId,
     value: Expression?,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.value = value
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1663,15 +1868,19 @@ public class YieldFromExpr: Expression {
   public init(
     id: ASTNodeId,
     value: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.value = value
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1689,16 +1898,20 @@ public class LambdaExpr: Expression {
     id: ASTNodeId,
     args: Arguments,
     body: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.args = args
     self.body = body
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1720,17 +1933,21 @@ public class CallExpr: Expression {
     function: Expression,
     args: [Expression],
     keywords: [Keyword],
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.function = function
     self.args = args
     self.keywords = keywords
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1749,17 +1966,21 @@ public class IfExpr: Expression {
     test: Expression,
     body: Expression,
     orElse: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.test = test
     self.body = body
     self.orElse = orElse
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1776,16 +1997,20 @@ public class AttributeExpr: Expression {
     id: ASTNodeId,
     object: Expression,
     name: String,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.object = object
     self.name = name
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1802,16 +2027,20 @@ public class SubscriptExpr: Expression {
     id: ASTNodeId,
     object: Expression,
     slice: Slice,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.object = object
     self.slice = slice
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }
@@ -1828,15 +2057,19 @@ public class StarredExpr: Expression {
   public init(
     id: ASTNodeId,
     expression: Expression,
+    context: ExpressionContext,
     start: SourceLocation,
     end: SourceLocation
   ) {
     self.expression = expression
-    super.init(id: id, start: start, end: end)
+    super.init(id: id, context: context, start: start, end: end)
   }
 
-  override public func accept<V: ExpressionVisitor>(_ visitor: V) throws -> V.PassResult {
-    try visitor.visit(self)
+  override public func accept<V: ExpressionVisitorWithPayload>(
+      _ visitor: V,
+      payload: V.ExpressionPayload
+  ) throws -> V.ExpressionResult {
+    try visitor.visit(self, payload: payload)
   }
 
 }

@@ -8,79 +8,436 @@ import Foundation
 
 // MARK: - AST
 
-public protocol ASTVisitor: AnyObject {
-  associatedtype PassResult
-  func visit(_ node: InteractiveAST) throws -> PassResult
-  func visit(_ node: ModuleAST) throws -> PassResult
-  func visit(_ node: ExpressionAST) throws -> PassResult
+/// Visitor for AST nodes.
+public protocol ASTVisitor: ASTVisitorWithPayload {
+  /// Visit result.
+  associatedtype ASTResult
+
+  func visit(_ node: InteractiveAST) throws -> ASTResult
+  func visit(_ node: ModuleAST) throws -> ASTResult
+  func visit(_ node: ExpressionAST) throws -> ASTResult
+}
+
+/// Visitor for AST nodes.
+///
+/// Each function has additional `payload` argument to pass data between
+/// nodes (so that we don't have to use fileds/globals which is always awkard).
+public protocol ASTVisitorWithPayload: AnyObject {
+  /// Visit result.
+  associatedtype ASTResult
+  /// Additional value passed to all of the calls.
+  associatedtype ASTPayload
+
+  func visit(_ node: InteractiveAST, payload: ASTPayload) throws -> ASTResult
+  func visit(_ node: ModuleAST, payload: ASTPayload) throws -> ASTResult
+  func visit(_ node: ExpressionAST, payload: ASTPayload) throws -> ASTResult
+}
+
+// ASTVisitor is also ASTVisitorWithPayload, but with Void payload.
+extension ASTVisitor {
+
+  public func visit(_ node: InteractiveAST, payload: ASTPayload) throws -> ASTResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ModuleAST, payload: ASTPayload) throws -> ASTResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ExpressionAST, payload: ASTPayload) throws -> ASTResult {
+    return try self.visit(node)
+  }
 }
 
 // MARK: - Statement
 
-public protocol StatementVisitor: AnyObject {
-  associatedtype PassResult
-  func visit(_ node: FunctionDefStmt) throws -> PassResult
-  func visit(_ node: AsyncFunctionDefStmt) throws -> PassResult
-  func visit(_ node: ClassDefStmt) throws -> PassResult
-  func visit(_ node: ReturnStmt) throws -> PassResult
-  func visit(_ node: DeleteStmt) throws -> PassResult
-  func visit(_ node: AssignStmt) throws -> PassResult
-  func visit(_ node: AugAssignStmt) throws -> PassResult
-  func visit(_ node: AnnAssignStmt) throws -> PassResult
-  func visit(_ node: ForStmt) throws -> PassResult
-  func visit(_ node: AsyncForStmt) throws -> PassResult
-  func visit(_ node: WhileStmt) throws -> PassResult
-  func visit(_ node: IfStmt) throws -> PassResult
-  func visit(_ node: WithStmt) throws -> PassResult
-  func visit(_ node: AsyncWithStmt) throws -> PassResult
-  func visit(_ node: RaiseStmt) throws -> PassResult
-  func visit(_ node: TryStmt) throws -> PassResult
-  func visit(_ node: AssertStmt) throws -> PassResult
-  func visit(_ node: ImportStmt) throws -> PassResult
-  func visit(_ node: ImportFromStmt) throws -> PassResult
-  func visit(_ node: ImportFromStarStmt) throws -> PassResult
-  func visit(_ node: GlobalStmt) throws -> PassResult
-  func visit(_ node: NonlocalStmt) throws -> PassResult
-  func visit(_ node: ExprStmt) throws -> PassResult
-  func visit(_ node: PassStmt) throws -> PassResult
-  func visit(_ node: BreakStmt) throws -> PassResult
-  func visit(_ node: ContinueStmt) throws -> PassResult
+/// Visitor for AST nodes.
+public protocol StatementVisitor: StatementVisitorWithPayload {
+  /// Visit result.
+  associatedtype StatementResult
+
+  func visit(_ node: FunctionDefStmt) throws -> StatementResult
+  func visit(_ node: AsyncFunctionDefStmt) throws -> StatementResult
+  func visit(_ node: ClassDefStmt) throws -> StatementResult
+  func visit(_ node: ReturnStmt) throws -> StatementResult
+  func visit(_ node: DeleteStmt) throws -> StatementResult
+  func visit(_ node: AssignStmt) throws -> StatementResult
+  func visit(_ node: AugAssignStmt) throws -> StatementResult
+  func visit(_ node: AnnAssignStmt) throws -> StatementResult
+  func visit(_ node: ForStmt) throws -> StatementResult
+  func visit(_ node: AsyncForStmt) throws -> StatementResult
+  func visit(_ node: WhileStmt) throws -> StatementResult
+  func visit(_ node: IfStmt) throws -> StatementResult
+  func visit(_ node: WithStmt) throws -> StatementResult
+  func visit(_ node: AsyncWithStmt) throws -> StatementResult
+  func visit(_ node: RaiseStmt) throws -> StatementResult
+  func visit(_ node: TryStmt) throws -> StatementResult
+  func visit(_ node: AssertStmt) throws -> StatementResult
+  func visit(_ node: ImportStmt) throws -> StatementResult
+  func visit(_ node: ImportFromStmt) throws -> StatementResult
+  func visit(_ node: ImportFromStarStmt) throws -> StatementResult
+  func visit(_ node: GlobalStmt) throws -> StatementResult
+  func visit(_ node: NonlocalStmt) throws -> StatementResult
+  func visit(_ node: ExprStmt) throws -> StatementResult
+  func visit(_ node: PassStmt) throws -> StatementResult
+  func visit(_ node: BreakStmt) throws -> StatementResult
+  func visit(_ node: ContinueStmt) throws -> StatementResult
+}
+
+/// Visitor for AST nodes.
+///
+/// Each function has additional `payload` argument to pass data between
+/// nodes (so that we don't have to use fileds/globals which is always awkard).
+public protocol StatementVisitorWithPayload: AnyObject {
+  /// Visit result.
+  associatedtype StatementResult
+  /// Additional value passed to all of the calls.
+  associatedtype StatementPayload
+
+  func visit(_ node: FunctionDefStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: AsyncFunctionDefStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: ClassDefStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: ReturnStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: DeleteStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: AssignStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: AugAssignStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: AnnAssignStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: ForStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: AsyncForStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: WhileStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: IfStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: WithStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: AsyncWithStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: RaiseStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: TryStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: AssertStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: ImportStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: ImportFromStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: ImportFromStarStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: GlobalStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: NonlocalStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: ExprStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: PassStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: BreakStmt, payload: StatementPayload) throws -> StatementResult
+  func visit(_ node: ContinueStmt, payload: StatementPayload) throws -> StatementResult
+}
+
+// StatementVisitor is also StatementVisitorWithPayload, but with Void payload.
+extension StatementVisitor {
+
+  public func visit(_ node: FunctionDefStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: AsyncFunctionDefStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ClassDefStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ReturnStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: DeleteStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: AssignStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: AugAssignStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: AnnAssignStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ForStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: AsyncForStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: WhileStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: IfStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: WithStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: AsyncWithStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: RaiseStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: TryStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: AssertStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ImportStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ImportFromStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ImportFromStarStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: GlobalStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: NonlocalStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ExprStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: PassStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: BreakStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ContinueStmt, payload: StatementPayload) throws -> StatementResult {
+    return try self.visit(node)
+  }
 }
 
 // MARK: - Expression
 
-public protocol ExpressionVisitor: AnyObject {
-  associatedtype PassResult
-  func visit(_ node: TrueExpr) throws -> PassResult
-  func visit(_ node: FalseExpr) throws -> PassResult
-  func visit(_ node: NoneExpr) throws -> PassResult
-  func visit(_ node: EllipsisExpr) throws -> PassResult
-  func visit(_ node: IdentifierExpr) throws -> PassResult
-  func visit(_ node: StringExpr) throws -> PassResult
-  func visit(_ node: IntExpr) throws -> PassResult
-  func visit(_ node: FloatExpr) throws -> PassResult
-  func visit(_ node: ComplexExpr) throws -> PassResult
-  func visit(_ node: BytesExpr) throws -> PassResult
-  func visit(_ node: UnaryOpExpr) throws -> PassResult
-  func visit(_ node: BinaryOpExpr) throws -> PassResult
-  func visit(_ node: BoolOpExpr) throws -> PassResult
-  func visit(_ node: CompareExpr) throws -> PassResult
-  func visit(_ node: TupleExpr) throws -> PassResult
-  func visit(_ node: ListExpr) throws -> PassResult
-  func visit(_ node: DictionaryExpr) throws -> PassResult
-  func visit(_ node: SetExpr) throws -> PassResult
-  func visit(_ node: ListComprehensionExpr) throws -> PassResult
-  func visit(_ node: SetComprehensionExpr) throws -> PassResult
-  func visit(_ node: DictionaryComprehensionExpr) throws -> PassResult
-  func visit(_ node: GeneratorExpr) throws -> PassResult
-  func visit(_ node: AwaitExpr) throws -> PassResult
-  func visit(_ node: YieldExpr) throws -> PassResult
-  func visit(_ node: YieldFromExpr) throws -> PassResult
-  func visit(_ node: LambdaExpr) throws -> PassResult
-  func visit(_ node: CallExpr) throws -> PassResult
-  func visit(_ node: IfExpr) throws -> PassResult
-  func visit(_ node: AttributeExpr) throws -> PassResult
-  func visit(_ node: SubscriptExpr) throws -> PassResult
-  func visit(_ node: StarredExpr) throws -> PassResult
+/// Visitor for AST nodes.
+public protocol ExpressionVisitor: ExpressionVisitorWithPayload {
+  /// Visit result.
+  associatedtype ExpressionResult
+
+  func visit(_ node: TrueExpr) throws -> ExpressionResult
+  func visit(_ node: FalseExpr) throws -> ExpressionResult
+  func visit(_ node: NoneExpr) throws -> ExpressionResult
+  func visit(_ node: EllipsisExpr) throws -> ExpressionResult
+  func visit(_ node: IdentifierExpr) throws -> ExpressionResult
+  func visit(_ node: StringExpr) throws -> ExpressionResult
+  func visit(_ node: IntExpr) throws -> ExpressionResult
+  func visit(_ node: FloatExpr) throws -> ExpressionResult
+  func visit(_ node: ComplexExpr) throws -> ExpressionResult
+  func visit(_ node: BytesExpr) throws -> ExpressionResult
+  func visit(_ node: UnaryOpExpr) throws -> ExpressionResult
+  func visit(_ node: BinaryOpExpr) throws -> ExpressionResult
+  func visit(_ node: BoolOpExpr) throws -> ExpressionResult
+  func visit(_ node: CompareExpr) throws -> ExpressionResult
+  func visit(_ node: TupleExpr) throws -> ExpressionResult
+  func visit(_ node: ListExpr) throws -> ExpressionResult
+  func visit(_ node: DictionaryExpr) throws -> ExpressionResult
+  func visit(_ node: SetExpr) throws -> ExpressionResult
+  func visit(_ node: ListComprehensionExpr) throws -> ExpressionResult
+  func visit(_ node: SetComprehensionExpr) throws -> ExpressionResult
+  func visit(_ node: DictionaryComprehensionExpr) throws -> ExpressionResult
+  func visit(_ node: GeneratorExpr) throws -> ExpressionResult
+  func visit(_ node: AwaitExpr) throws -> ExpressionResult
+  func visit(_ node: YieldExpr) throws -> ExpressionResult
+  func visit(_ node: YieldFromExpr) throws -> ExpressionResult
+  func visit(_ node: LambdaExpr) throws -> ExpressionResult
+  func visit(_ node: CallExpr) throws -> ExpressionResult
+  func visit(_ node: IfExpr) throws -> ExpressionResult
+  func visit(_ node: AttributeExpr) throws -> ExpressionResult
+  func visit(_ node: SubscriptExpr) throws -> ExpressionResult
+  func visit(_ node: StarredExpr) throws -> ExpressionResult
+}
+
+/// Visitor for AST nodes.
+///
+/// Each function has additional `payload` argument to pass data between
+/// nodes (so that we don't have to use fileds/globals which is always awkard).
+public protocol ExpressionVisitorWithPayload: AnyObject {
+  /// Visit result.
+  associatedtype ExpressionResult
+  /// Additional value passed to all of the calls.
+  associatedtype ExpressionPayload
+
+  func visit(_ node: TrueExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: FalseExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: NoneExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: EllipsisExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: IdentifierExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: StringExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: IntExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: FloatExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: ComplexExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: BytesExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: UnaryOpExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: BinaryOpExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: BoolOpExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: CompareExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: TupleExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: ListExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: DictionaryExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: SetExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: ListComprehensionExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: SetComprehensionExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: DictionaryComprehensionExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: GeneratorExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: AwaitExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: YieldExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: YieldFromExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: LambdaExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: CallExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: IfExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: AttributeExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: SubscriptExpr, payload: ExpressionPayload) throws -> ExpressionResult
+  func visit(_ node: StarredExpr, payload: ExpressionPayload) throws -> ExpressionResult
+}
+
+// ExpressionVisitor is also ExpressionVisitorWithPayload, but with Void payload.
+extension ExpressionVisitor {
+
+  public func visit(_ node: TrueExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: FalseExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: NoneExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: EllipsisExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: IdentifierExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: StringExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: IntExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: FloatExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ComplexExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: BytesExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: UnaryOpExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: BinaryOpExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: BoolOpExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: CompareExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: TupleExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ListExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: DictionaryExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: SetExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: ListComprehensionExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: SetComprehensionExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: DictionaryComprehensionExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: GeneratorExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: AwaitExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: YieldExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: YieldFromExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: LambdaExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: CallExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: IfExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: AttributeExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: SubscriptExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
+
+  public func visit(_ node: StarredExpr, payload: ExpressionPayload) throws -> ExpressionResult {
+    return try self.visit(node)
+  }
 }
 

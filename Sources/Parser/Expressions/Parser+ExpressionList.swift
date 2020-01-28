@@ -5,31 +5,40 @@ extension Parser {
 
   // MARK: - Expr list
 
-  internal enum ExprListResult {
+  internal struct ExprListResult {
+    let context: ExpressionContext
+    let kind: Kind
+
+    internal enum Kind {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
+    }
 
     internal func toExpression(using builder: inout ASTBuilder,
                                start: SourceLocation) -> Expression {
-      switch self {
+      switch self.kind {
       case let .single(e):
         return e
       case let .tuple(es, end):
-        return builder.tupleExpr(elements: Array(es), start: start, end: end)
+        return builder.tupleExpr(elements: Array(es),
+                                 context: self.context,
+                                 start: start,
+                                 end: end)
       }
     }
   }
 
   /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
-  internal func exprList(closingTokens: [TokenKind]) throws -> ExprListResult {
-    let first = try self.starExprOrNop() ?? self.expr()
+  internal func exprList(context: ExpressionContext,
+                         closingTokens: [TokenKind]) throws -> ExprListResult {
+    let first = try self.starExprOrNop(context: context) ?? self.expr(context: context)
     var end = first.end
 
     var additionalElements = [Expression]()
     while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
       try self.advance() // ,
 
-      let test = try self.starExprOrNop() ?? self.expr()
+      let test = try self.starExprOrNop(context: context) ?? self.expr(context: context)
       additionalElements.append(test)
       end = test.end
     }
@@ -42,40 +51,49 @@ extension Parser {
 
     // if we have coma then it is a tuple! (even if it has only 1 element!)
     if additionalElements.isEmpty && !hasTrailingComma {
-      return .single(first)
+      return ExprListResult(context: context, kind: .single(first))
     }
 
     let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-    return .tuple(array, end: end)
+    return ExprListResult(context: context, kind: .tuple(array, end: end))
   }
 
   // MARK: - Test list
 
-  internal enum TestListResult {
+  internal struct TestListResult {
+    let context: ExpressionContext
+    let kind: Kind
+
+    internal enum Kind {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
+    }
 
     internal func toExpression(using builder: inout ASTBuilder,
                                start: SourceLocation) -> Expression {
-      switch self {
+      switch self.kind {
       case let .single(e):
         return e
       case let .tuple(es, end):
-        return builder.tupleExpr(elements: Array(es), start: start, end: end)
+        return builder.tupleExpr(elements: Array(es),
+                                 context: self.context,
+                                 start: start,
+                                 end: end)
       }
     }
   }
 
   /// `testlist: test (',' test)* [',']`
-  internal func testList(closingTokens: [TokenKind]) throws -> TestListResult {
-    let first = try self.test()
+  internal func testList(context: ExpressionContext,
+                         closingTokens: [TokenKind]) throws -> TestListResult {
+    let first = try self.test(context: context)
     var end = first.end
 
     var additionalElements = [Expression]()
     while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
       try self.advance() // ,
 
-      let test = try self.test()
+      let test = try self.test(context: context)
       additionalElements.append(test)
       end = test.end
     }
@@ -87,11 +105,11 @@ extension Parser {
     }
 
     if additionalElements.isEmpty && !hasTrailingComma {
-      return .single(first)
+      return TestListResult(context: context, kind: .single(first))
     }
 
     let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
-    return .tuple(array, end: end)
+    return TestListResult(context: context, kind: .tuple(array, end: end))
   }
 
   // MARK: - Test list comprehension
@@ -107,8 +125,9 @@ extension Parser {
   ///   (test|star_expr) ( comp_for
   ///                    | (',' (test|star_expr))* [','])
   /// ```
-  internal func testListComp(closingToken: TokenKind) throws -> TestListCompResult {
-    let first = try self.testOrStarExpr()
+  internal func testListComp(context: ExpressionContext,
+                             closingToken: TokenKind) throws -> TestListCompResult {
+    let first = try self.testOrStarExpr(context: context)
 
     if let generators = try self.compForOrNop(closingTokens: [closingToken]) {
       return .listComprehension(elt: first, generators: generators)
@@ -121,7 +140,7 @@ extension Parser {
     while self.peek.kind == .comma && self.peekNext.kind != closingToken {
       try self.advance() // ,
 
-      let test = try self.testOrStarExpr()
+      let test = try self.testOrStarExpr(context: context)
       elements.append(test)
     }
 
@@ -140,31 +159,43 @@ extension Parser {
 
   // MARK: - Test list star expr
 
-  internal enum TestListStarExprResult {
+  internal struct TestListStarExprResult {
+    let context: ExpressionContext
+    let kind: Kind
+
+    internal enum Kind {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
+    }
 
     internal func toExpression(using builder: inout ASTBuilder,
                                start: SourceLocation) -> Expression {
-      switch self {
+      switch self.kind {
       case let .single(e):
         return e
       case let .tuple(es, end):
-        return builder.tupleExpr(elements: Array(es), start: start, end: end)
+        return builder.tupleExpr(elements: Array(es),
+                                 context: context,
+                                 start: start,
+                                 end: end)
       }
     }
   }
 
   /// `testlist_star_expr: (test|star_expr) (',' (test|star_expr))* [',']`
-  internal func testListStarExpr(closingTokens: [TokenKind]) throws -> TestListStarExprResult {
-    let first = try self.testOrStarExpr()
+  internal func testListStarExpr(
+    context: ExpressionContext,
+    closingTokens: [TokenKind]
+  ) throws -> TestListStarExprResult {
+
+    let first = try self.testOrStarExpr(context: context)
     var end = first.end
 
     var additionalElements = [Expression]()
     while self.peek.kind == .comma && !closingTokens.contains(self.peekNext.kind) {
       try self.advance() // ,
 
-      let element = try self.testOrStarExpr()
+      let element = try self.testOrStarExpr(context: context)
       additionalElements.append(element)
       end = element.end
     }
@@ -176,10 +207,10 @@ extension Parser {
     }
 
     if additionalElements.isEmpty && !hasTrailingComma {
-      return .single(first)
+      return TestListStarExprResult(context: context, kind: .single(first))
     }
 
     let array = NonEmptyArray(first: first, rest: additionalElements)
-    return .tuple(array, end: end)
+    return TestListStarExprResult(context: context, kind: .tuple(array, end: end))
   }
 }

@@ -70,20 +70,20 @@ extension ProductType {
       || self.isExprSubclass
   }
 
-  internal var astVisitorTypeName: String {
+  internal var visitorPrefix: String? {
     if self.isAST || self.isASTSubclass {
-      return "ASTVisitor"
+      return "AST"
     }
 
     if self.isStmt || self.isStmtSubclass {
-      return "StatementVisitor"
+      return "Statement"
     }
 
     if self.isExpr || self.isExprSubclass {
-      return "ExpressionVisitor"
+      return "Expression"
     }
 
-    return ""
+    return nil
   }
 }
 

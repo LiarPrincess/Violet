@@ -90,7 +90,7 @@ extension Parser {
       return .default
     }
 
-    let type = try self.test()
+    let type = try self.test(context: .load)
 
     var asName: String?
     if self.peek.kind == .as {

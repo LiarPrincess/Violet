@@ -75,7 +75,7 @@ extension Parser {
     // test [comp_for] | test '=' test |
     default:
       let nameToken = self.peek
-      let test = try self.test()
+      let test = try self.test(context: .load)
 
       if self.peek.kind == .equal {
         // "test '=' test" is really "keyword '=' test",
@@ -100,8 +100,11 @@ extension Parser {
     let start = self.peek.start
     try self.advance() // *
 
-    let test = try self.test()
-    let expr = self.builder.starredExpr(expression: test, start: start, end: test.end)
+    let test = try self.test(context: .load)
+    let expr = self.builder.starredExpr(expression: test,
+                                        context: .load,
+                                        start: start,
+                                        end: test.end)
     ir.args.append(expr)
   }
 
@@ -111,7 +114,7 @@ extension Parser {
     let start = self.peek.start
     try self.advance() // **
 
-    let test = try self.test()
+    let test = try self.test(context: .load)
     let keyword = self.builder.keyword(kind: .dictionaryUnpack,
                                        value: test,
                                        start: start,
@@ -137,7 +140,7 @@ extension Parser {
         throw self.error(kind, location: nameToken.start)
       }
 
-      let value = try self.test()
+      let value = try self.test(context: .load)
       let keyword = self.builder.keyword(kind: .named(name),
                                          value: value,
                                          start: nameToken.start,
@@ -191,6 +194,7 @@ extension Parser {
       let end = generators.last?.end ?? test.end
       let expr = self.builder.generatorExpr(element: test,
                                             generators: generators,
+                                            context: .load,
                                             start: test.start,
                                             end: end)
 
