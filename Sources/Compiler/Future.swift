@@ -54,9 +54,8 @@ public final class FutureBuilder {
 
       previousLine = stmt.start.line
 
-      if case
-        let .importFrom(moduleName: module, names: names, level: _) = stmt.kind,
-        module == SpecialIdentifiers.__future__ {
+      if let importStmt = stmt as? ImportFromStmt,
+        importStmt.moduleName == SpecialIdentifiers.__future__ {
 
         if isDone {
           // '__future__' imports have to be first, so this is not valid:
@@ -66,7 +65,7 @@ public final class FutureBuilder {
         }
 
         result.lastLine = stmt.start.line
-        try self.appendFeatures(from: names,
+        try self.appendFeatures(from: importStmt.names,
                                 into: &result,
                                 errorLocation: stmt.start)
       } else {
@@ -78,13 +77,15 @@ public final class FutureBuilder {
   }
 
   private func getStatements(from ast: AST) -> [Statement] {
-    switch ast.kind {
-    case let .interactive(stmts),
-         let .module(stmts):
-      return stmts
-    case .expression:
-      return []
+    if let node = ast as? InteractiveAST {
+      return node.statements
     }
+
+    if let node = ast as? ModuleAST {
+      return node.statements
+    }
+
+    return []
   }
 
   private func getIndexAfterDoc(_ statements: [Statement]) -> Int {

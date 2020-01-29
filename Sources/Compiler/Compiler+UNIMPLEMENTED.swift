@@ -13,49 +13,35 @@ internal typealias Comprehensions = NonEmptyArray<Comprehension>
 extension Compiler {
 
   // MARK: - Comprehension
+  // Remember about self.setAppendLocation(ASTNode)!
 
-  internal func visitGeneratorExpression(elt: Expression,
-                                         generators: Comprehensions) throws {
-    // Remember about self.setAppendLocation(ASTNode)!
+  public func visit(_ node: ListComprehensionExpr) throws {
     throw self.notImplementedComprehension()
   }
 
-  internal func visitListComprehension(elt: Expression,
-                                       generators: Comprehensions) throws {
+  public func visit(_ node: SetComprehensionExpr) throws {
     throw self.notImplementedComprehension()
   }
 
-  internal func visitSetComprehension(elt: Expression,
-                                      generators: Comprehensions) throws {
+  public func visit(_ node: DictionaryComprehensionExpr) throws {
     throw self.notImplementedComprehension()
   }
 
-  internal func visitDictionaryComprehension(key: Expression,
-                                             value: Expression,
-                                             generators: Comprehensions) throws {
+  public func visit(_ node: GeneratorExpr) throws {
     throw self.notImplementedComprehension()
   }
 
-  // MARK: - Compiler+If+Loops
+  // MARK: - Async
 
-  internal func visitAsyncFor(target: Expression,
-                              iter:   Expression,
-                              body:   NonEmptyArray<Statement>,
-                              orElse: [Statement]) throws {
+  public func visit(_ node: AsyncForStmt) throws {
     throw self.notImplementedAsync()
   }
 
-  // MARK: - With
-
-  internal func visitAsyncWith(items: NonEmptyArray<WithItem>,
-                               body:  NonEmptyArray<Statement>) throws {
+  public func visit(_ node: AsyncWithStmt) throws -> () {
     throw self.notImplementedAsync()
   }
 
-  // MARK: - Compiler+Function
-
-  internal func visitAsyncFunctionDef(args: FunctionDefArgs,
-                                      statement: Statement) throws {
+  public func visit(_ node: AsyncFunctionDefStmt) throws -> () {
     throw self.notImplementedAsync()
   }
 

@@ -6,180 +6,170 @@ import Parser
 
 extension SymbolTableBuilder {
 
-  // MARK: - Expression
+  internal func visit(_ node: Expression) throws {
+    try node.accept(self, payload: ())
+  }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  internal func visitExpressions<S: Sequence>(
-    _ exprs: S,
-    context: ExpressionContext = .load) throws where S.Element == Expression {
-
-    for e in exprs {
-      try self.visitExpression(e, context: context)
+  internal func visit(_ node: Expression?) throws {
+    if let n = node {
+      try self.visit(n)
     }
   }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  internal func visitExpression(_ expr: Expression?,
-                                context: ExpressionContext = .load) throws {
-    if let e = expr {
-      try self.visitExpression(e, context: context)
+  internal func visit<S: Sequence>(_ nodes: S) throws
+    where S.Element == Expression {
+
+    for n in nodes {
+      try self.visit(n)
     }
   }
 
-// swiftlint:disable function_body_length
+  // MARK: - General
+
+  public func visit(_ node: NoneExpr) throws { }
+  public func visit(_ node: EllipsisExpr) throws { }
+
+  // MARK: - Bool
+
+  public func visit(_ node: TrueExpr) throws { }
+  public func visit(_ node: FalseExpr) throws { }
+
+  // MARK: - Identifier
+
+  public func visit(_ node: IdentifierExpr) throws {
+    let flags = node.context == .store ?
+      SymbolFlags.defLocal :
+      SymbolFlags.use
+
+    try self.addSymbol(node.value, flags: flags, location: node.start)
+
+    let isSuper = self.currentScope.type == .function && node.value == "super"
+    if node.context == .load && isSuper {
+      let name = SpecialIdentifiers.__class__
+      try self.addSymbol(name, flags: .use, location: node.start)
+    }
+  }
+
+  // MARK: - Numbers
+
+  public func visit(_ node: IntExpr) throws { }
+  public func visit(_ node: FloatExpr) throws { }
+  public func visit(_ node: ComplexExpr) throws { }
+
+  // MARK: - String
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  internal func visitExpression(_ expr: Expression,
-                                context: ExpressionContext = .load) throws {
-// swiftlint:enable function_body_length
+  public func visit(_ node: StringExpr) throws {
+    try self.visit(node.value)
+  }
 
-    switch expr.kind {
-    case .true, .false, .none, .ellipsis:
+  private func visit(_ group: StringGroup) throws {
+    switch group {
+    case .literal:
       break
-    case .int, .float, .complex, .bytes:
-      break
-
-    case let .identifier(name):
-      let flags: SymbolFlags = context == .store ? .defLocal : .use
-      try self.addSymbol(name, flags: flags, location: expr.start)
-
-      let isSuper = self.currentScope.type == .function && name == "super"
-      if context == .load && isSuper {
-        let name = SpecialIdentifiers.__class__
-        try self.addSymbol(name, flags: .use, location: expr.start)
+    case let .formattedValue(expr, _, _):
+      try self.visit(expr)
+    case let .joined(groups):
+      for g in groups {
+        try self.visit(g)
       }
-    case let .string(group):
-      try self.visitString(group)
-
-    case let .unaryOp(_, right):
-      try self.visitExpression(right)
-    case let .binaryOp(_, left, right),
-         let .boolOp(_, left, right):
-      try self.visitExpression(left)
-      try self.visitExpression(right)
-    case let .compare(left, elements):
-      try self.visitExpression(left)
-      try self.visitComparisonElements(elements)
-
-    case let .tuple(elements),
-         let .list(elements):
-      try self.visitExpressions(elements, context: context)
-    case let .set(elements):
-      try self.visitExpressions(elements)
-    case let .dictionary(elements):
-      try self.visitDictionaryElements(elements)
-
-    case let .listComprehension(elt, generators):
-      try self.visitComprehension(elt: elt,
-                                  value: nil,
-                                  generators: generators,
-                                  expr: expr,
-                                  kind: .list)
-
-    case let .setComprehension(elt, generators):
-      try self.visitComprehension(elt: elt,
-                                  value: nil,
-                                  generators: generators,
-                                  expr: expr,
-                                  kind: .set)
-
-    case let .dictionaryComprehension(key, value, generators):
-      try self.visitComprehension(elt: key,
-                                  value: value,
-                                  generators: generators,
-                                  expr: expr,
-                                  kind: .dictionary)
-
-    case let .generatorExp(elt, generators):
-      try self.visitComprehension(elt: elt,
-                                  value: nil,
-                                  generators: generators,
-                                  expr: expr,
-                                  kind: .generator)
-
-    case let .await(value):
-      try self.visitExpression(value)
-      self.currentScope.isCoroutine = true
-    case let .yield(value):
-      try self.visitExpression(value)
-      self.currentScope.isGenerator = true
-    case let .yieldFrom(value):
-      try self.visitExpression(value)
-      self.currentScope.isGenerator = true
-
-    case let .lambda(args, body):
-      try self.visitDefaults(args)
-
-      self.enterScope(name: SymbolScopeNames.lambda, type: .function, node: expr)
-      try self.visitArguments(args)
-      try self.visitExpression(body)
-      self.leaveScope()
-
-    case let .call(function, args, keywords):
-      try self.visitExpression(function)
-      try self.visitExpressions(args)
-      try self.visitKeywords(keywords)
-
-    case let .ifExpression(test, body, orElse):
-      try self.visitExpression(test)
-      try self.visitExpression(body)
-      try self.visitExpression(orElse)
-
-    case let .attribute(expr, _):
-      try self.visitExpression(expr, context: context)
-    case let .subscript(expr, slice):
-      try self.visitExpression(expr, context: context)
-      try self.visitSlice(slice)
-    case let .starred(expr):
-      try self.visitExpression(expr, context: context)
     }
   }
 
-  // MARK: - ComparisonElement
+  public func visit(_ node: BytesExpr) throws { }
+
+  // MARK: - Operators
+
+  public func visit(_ node: UnaryOpExpr) throws {
+    try self.visit(node.right)
+  }
+
+  public func visit(_ node: BinaryOpExpr) throws {
+    try self.visit(node.left)
+    try self.visit(node.right)
+  }
+
+  public func visit(_ node: BoolOpExpr) throws {
+    try self.visit(node.left)
+    try self.visit(node.right)
+  }
+
+  // MARK: - Compare
+
+  public func visit(_ node: CompareExpr) throws {
+    try self.visit(node.left)
+    try self.visit(node.elements)
+  }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private func visitComparisonElements(
-    _ elements: NonEmptyArray<ComparisonElement>) throws {
-
+  private func visit(_ elements: NonEmptyArray<ComparisonElement>) throws {
     for e in elements {
-      try self.visitExpression(e.right)
+      try self.visit(e.right)
     }
   }
 
-  // MARK: - Slice
+  // MARK: - Collections
 
-  /// symtable_visit_slice(struct symtable *st, slice_ty s)
-  private func visitSlice(_ slice: Slice) throws {
-    switch slice.kind {
-    case let .slice(lower, upper, step):
-      try self.visitExpression(lower)
-      try self.visitExpression(upper)
-      try self.visitExpression(step)
-    case let .extSlice(slices):
-      for s in slices {
-        try self.visitSlice(s)
-      }
-    case let .index(expr):
-      try self.visitExpression(expr)
-    }
+  public func visit(_ node: TupleExpr) throws {
+    try self.visit(node.elements)
   }
 
-  // MARK: - DictionaryElement
+  public func visit(_ node: ListExpr) throws {
+    try self.visit(node.elements)
+  }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private func visitDictionaryElements(_ elements: [DictionaryElement]) throws {
-    for e in elements {
+  public func visit(_ node: DictionaryExpr) throws {
+    for e in node.elements {
       switch e {
       case let .unpacking(expr):
-        try self.visitExpression(expr)
+        try self.visit(expr)
       case let .keyValue(key, value):
-        try self.visitExpression(key)
-        try self.visitExpression(value)
+        try self.visit(key)
+        try self.visit(value)
       }
     }
+  }
+
+  public func visit(_ node: SetExpr) throws {
+    try self.visit(node.elements)
   }
 
   // MARK: - Comprehension
+
+  public func visit(_ node: ListComprehensionExpr) throws {
+    try self.visitComprehension(elt: node.element,
+                                value: nil,
+                                generators: node.generators,
+                                expr: node,
+                                kind: .list)
+  }
+
+  public func visit(_ node: SetComprehensionExpr) throws {
+    try self.visitComprehension(elt: node.element,
+                                value: nil,
+                                generators: node.generators,
+                                expr: node,
+                                kind: .set)
+  }
+
+  public func visit(_ node: DictionaryComprehensionExpr) throws {
+    try self.visitComprehension(elt: node.key,
+                                value: node.value,
+                                generators: node.generators,
+                                expr: node,
+                                kind: .dictionary)
+  }
+
+  public func visit(_ node: GeneratorExpr) throws {
+    try self.visitComprehension(elt: node.element,
+                                value: nil,
+                                generators: node.generators,
+                                expr: node,
+                                kind: .generator)
+  }
 
   /// symtable_handle_comprehension(struct symtable *st, expr_ty e, ...)
   ///
@@ -191,10 +181,9 @@ extension SymbolTableBuilder {
                                   generators: NonEmptyArray<Comprehension>,
                                   expr: Expression,
                                   kind: ComprehensionKind) throws {
-
     // iterator (source) is evaluated in parent scope
     let first = generators.first
-    try self.visitExpression(first.iter)
+    try self.visit(first.iter)
 
     // new scope for comprehensions
     let scopeKind = self.getIdentifier(for: kind)
@@ -206,15 +195,15 @@ extension SymbolTableBuilder {
 
     // Outermost iter is received as an argument
     try self.implicitArg(pos: 0, location: generators.first.start)
-    try self.visitExpression(first.target, context: .store)
-    try self.visitExpressions(first.ifs)
+    try self.visit(first.target)
+    try self.visit(first.ifs)
 
     for c in generators.dropFirst() {
       try self.visitComprehension(c)
     }
 
-    try self.visitExpression(value)
-    try self.visitExpression(elt)
+    try self.visit(value)
+    try self.visit(elt)
 
     if currentScope.isGenerator {
       // we don't have a better location, we just know it happened
@@ -245,28 +234,93 @@ extension SymbolTableBuilder {
 
   /// symtable_visit_comprehension(struct symtable *st, comprehension_ty lc)
   private func visitComprehension(_ comprehension: Comprehension) throws {
-    try self.visitExpression(comprehension.target)
-    try self.visitExpression(comprehension.iter)
-    try self.visitExpressions(comprehension.ifs)
+    try self.visit(comprehension.target)
+    try self.visit(comprehension.iter)
+    try self.visit(comprehension.ifs)
 
     if comprehension.isAsync {
       self.currentScope.isCoroutine = true
     }
   }
 
-  // MARK: - StringGroup
+  // MARK: - Await
 
-  /// symtable_visit_expr(struct symtable *st, expr_ty e)
-  private func visitString(_ group: StringGroup) throws {
-    switch group {
-    case .literal:
-      break
-    case let .formattedValue(expr, _, _):
-      try self.visitExpression(expr)
-    case let .joined(groups):
-      for g in groups {
-        try self.visitString(g)
+  public func visit(_ node: AwaitExpr) throws {
+    try self.visit(node.value)
+    self.currentScope.isCoroutine = true
+  }
+
+  // MARK: - Yield
+
+  public func visit(_ node: YieldExpr) throws {
+    try self.visit(node.value)
+    self.currentScope.isGenerator = true
+  }
+
+  public func visit(_ node: YieldFromExpr) throws {
+    try self.visit(node.value)
+    self.currentScope.isGenerator = true
+  }
+
+  // MARK: - Lambda
+
+  public func visit(_ node: LambdaExpr) throws {
+    try self.visitDefaults(node.args)
+
+    self.enterScope(name: SymbolScopeNames.lambda, type: .function, node: node)
+    try self.visitArguments(node.args)
+    try self.visit(node.body)
+    self.leaveScope()
+  }
+
+  // MARK: - Call
+
+  public func visit(_ node: CallExpr) throws {
+    try self.visit(node.function)
+    try self.visit(node.args)
+    try self.visitKeywords(node.keywords)
+  }
+
+  // MARK: - If
+
+  public func visit(_ node: IfExpr) throws {
+    try self.visit(node.test)
+    try self.visit(node.body)
+    try self.visit(node.orElse)
+  }
+
+  // MARK: - Attribute
+
+  public func visit(_ node: AttributeExpr) throws {
+    try self.visit(node.object)
+  }
+
+  // MARK: - Subscript
+
+  public func visit(_ node: SubscriptExpr) throws {
+    try self.visit(node.object)
+    try self.visit(node.slice)
+  }
+
+  /// symtable_visit_slice(struct symtable *st, slice_ty s)
+  private func visit(_ slice: Slice) throws {
+    switch slice.kind {
+    case let .slice(lower, upper, step):
+      try self.visit(lower)
+      try self.visit(upper)
+      try self.visit(step)
+    case let .extSlice(slices):
+      for s in slices {
+        try self.visit(s)
       }
+    case let .index(expr):
+      try self.visit(expr)
     }
+  }
+
+  // MARK: - Starred
+
+  public func visit(_ node: StarredExpr) throws {
+    try self.visit(node.expression)
   }
 }

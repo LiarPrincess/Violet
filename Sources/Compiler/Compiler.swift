@@ -7,7 +7,14 @@ import Bytecode
 
 // swiftlint:disable file_length
 
-public final class Compiler {
+public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
+
+  public typealias ASTResult = Void
+  public typealias ASTPayload = Void
+  public typealias StatementResult = Void
+  public typealias StatementPayload = Void
+  public typealias ExpressionResult = Void
+  public typealias ExpressionPayload = Void
 
   /// Program that we are compiling.
   private let ast: AST
@@ -62,7 +69,7 @@ public final class Compiler {
 
   /// True if in interactive mode (REPL)
   internal var isInteractive: Bool {
-    return self.ast.kind.isInteractive
+    return self.ast is InteractiveAST
   }
 
   /// Stack of blocks (loop, except, finallyTry, finallyEnd)
@@ -98,21 +105,12 @@ public final class Compiler {
     self.enterScope(node: ast, type: .module)
     self.setAppendLocation(ast)
 
-    switch self.ast.kind {
-    case let .interactive(stmts):
-      if self.hasAnnotations(stmts) {
-        self.builder.appendSetupAnnotations()
-      }
-      try self.visitStatements(stmts)
-    case let .module(stmts):
-      try self.visitBody(stmts)
-    case let .expression(expr):
-      try self.visitExpression(expr)
-    }
+    try self.visit(ast)
 
     // Emit epilog (because we may be a jump target).
     if !self.currentScope.hasReturnValue {
-      if !self.ast.kind.isExpression {
+      let isExpression = ast is ExpressionAST
+      if !isExpression {
         self.builder.appendNone()
       }
       self.builder.appendReturn()
@@ -122,26 +120,42 @@ public final class Compiler {
     return self.codeObject
   }
 
+  internal func visit(_ node: AST) throws {
+    self.setAppendLocation(node)
+    try node.accept(self, payload: ())
+  }
+
+  public func visit(_ node: InteractiveAST) throws {
+    if self.hasAnnotations(node.statements) {
+      self.builder.appendSetupAnnotations()
+    }
+    try self.visit(node.statements)
+  }
+
   /// Compile a sequence of statements, checking for a docstring
   /// and for annotations.
   ///
   /// compiler_body(struct compiler *c, asdl_seq *stmts)
-  private func visitBody(_ stmts: [Statement]) throws {
-    if self.hasAnnotations(stmts) {
+  public func visit(_ node: ModuleAST) throws {
+    if self.hasAnnotations(node.statements) {
       self.builder.appendSetupAnnotations()
     }
 
-    guard let first = stmts.first else {
+    guard let first = node.statements.first else {
       return
     }
 
     if let doc = first.getDocString(), self.options.optimizationLevel < .OO {
       self.builder.appendString(doc)
       self.builder.appendStoreName(SpecialIdentifiers.__doc__)
-      try self.visitStatements(stmts.dropFirst())
+      try self.visit(node.statements.dropFirst())
     } else {
-      try self.visitStatements(stmts)
+      try self.visit(node.statements)
     }
+  }
+
+  public func visit(_ node: ExpressionAST) throws {
+    try self.visit(node.expression)
   }
 
   /// Search if variable annotations are present statically in a block.
@@ -155,26 +169,43 @@ public final class Compiler {
   /// Search if variable annotations are present statically in a block.
   ///
   /// find_ann(asdl_seq *stmts)
-  private func hasAnnotations(_ stmt: Statement) -> Bool {
-    switch stmt.kind {
-    case .annAssign:
+  private func hasAnnotations(_ statement: Statement) -> Bool {
+    if statement is AnnAssignStmt {
       return true
-    case let .for(_, _, body, orElse),
-         let .asyncFor(_, _, body, orElse),
-         let .while(_, body, orElse),
-         let .if(_, body, orElse):
-      return self.hasAnnotations(body) || self.hasAnnotations(orElse)
-    case let .with(_, body),
-         let .asyncWith(_, body):
-      return self.hasAnnotations(body)
-    case let .try(body, handlers, orElse, finally):
-      return self.hasAnnotations(body)
-          || self.hasAnnotations(finally)
-          || self.hasAnnotations(orElse)
-          || handlers.contains { [unowned self] in self.hasAnnotations($0.body) }
-    default:
-      return false
     }
+
+    if let loop = statement as? ForStmt {
+      return self.hasAnnotations(loop.body) || self.hasAnnotations(loop.orElse)
+    }
+
+    if let loop = statement as? AsyncForStmt {
+      return self.hasAnnotations(loop.body) || self.hasAnnotations(loop.orElse)
+    }
+
+    if let loop = statement as? WhileStmt {
+      return self.hasAnnotations(loop.body) || self.hasAnnotations(loop.orElse)
+    }
+
+    if let iff = statement as? IfStmt {
+      return self.hasAnnotations(iff.body) || self.hasAnnotations(iff.orElse)
+    }
+
+    if let with = statement as? WithStmt {
+      return self.hasAnnotations(with.body)
+    }
+
+    if let with = statement as? AsyncWithStmt {
+      return self.hasAnnotations(with.body)
+    }
+
+    if let tryy = statement as? TryStmt {
+      return self.hasAnnotations(tryy.body)
+        || self.hasAnnotations(tryy.finally)
+        || self.hasAnnotations(tryy.orElse)
+        || tryy.handlers.contains { self.hasAnnotations($0.body) }
+    }
+
+    return false
   }
 
   // MARK: - Scope/code object

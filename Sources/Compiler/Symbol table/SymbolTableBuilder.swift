@@ -5,7 +5,14 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
-public final class SymbolTableBuilder {
+public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionVisitor {
+
+  public typealias ASTResult = Void
+  public typealias ASTPayload = Void
+  public typealias StatementResult = Void
+  public typealias StatementPayload = Void
+  public typealias ExpressionResult = Void
+  public typealias ExpressionPayload = Void
 
   /// Scope stack.
   /// Current scope is at the top, top scope is at the bottom.
@@ -34,13 +41,7 @@ public final class SymbolTableBuilder {
   public func visit(_ ast: AST) throws -> SymbolTable {
     self.enterScope(name: SymbolScopeNames.top, type: .module, node: ast)
 
-    switch ast.kind {
-    case let .interactive(stmts),
-         let .module(stmts):
-      try self.visitStatements(stmts)
-    case let .expression(expr):
-      try self.visitExpression(expr)
-    }
+    try ast.accept(self, payload: ())
 
     assert(self.scopeStack.count == 1)
     let top = self.scopeStack[0]
@@ -50,6 +51,18 @@ public final class SymbolTableBuilder {
     try sourcePass.analyze(table: table)
 
     return table
+  }
+
+  public func visit(_ node: InteractiveAST) throws {
+    try self.visit(node.statements)
+  }
+
+  public func visit(_ node: ModuleAST) throws {
+    try self.visit(node.statements)
+  }
+
+  public func visit(_ node: ExpressionAST) throws {
+    try self.visit(node.expression)
   }
 
   // MARK: - Scope
@@ -133,8 +146,8 @@ public final class SymbolTableBuilder {
   // MARK: - Visit arguments
 
   internal func visitDefaults(_ args: Arguments) throws {
-    try self.visitExpressions(args.defaults)
-    try self.visitExpressions(args.kwOnlyDefaults)
+    try self.visit(args.defaults)
+    try self.visit(args.kwOnlyDefaults)
   }
 
   /// symtable_visit_params(struct symtable *st, asdl_seq *args)
@@ -166,21 +179,21 @@ public final class SymbolTableBuilder {
   /// symtable_visit_annotations(struct symtable *st, stmt_ty s, ...)
   internal func visitAnnotations(_ args: Arguments) throws {
     for a in args.args {
-      try self.visitExpression(a.annotation)
+      try self.visit(a.annotation)
     }
 
     switch args.vararg {
     case let .named(a):
-      try self.visitExpression(a.annotation)
+      try self.visit(a.annotation)
     case .none, .unnamed:
       break
     }
 
     for a in args.kwOnlyArgs {
-      try self.visitExpression(a.annotation)
+      try self.visit(a.annotation)
     }
 
-    try self.visitExpression(args.kwarg?.annotation)
+    try self.visit(args.kwarg?.annotation)
   }
 
   // MARK: - Visit keyword
@@ -188,7 +201,7 @@ public final class SymbolTableBuilder {
   /// symtable_visit_keyword(struct symtable *st, keyword_ty k)
   internal func visitKeywords(_ keywords: [Keyword]) throws {
     for k in keywords {
-      try self.visitExpression(k.value)
+      try self.visit(k.value)
     }
   }
 

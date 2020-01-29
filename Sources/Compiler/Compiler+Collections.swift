@@ -30,20 +30,6 @@ extension Compiler {
 
   // MARK: - Tuple
 
-  /// compiler_tuple(struct compiler *c, expr_ty e)
-  internal func visitTuple(elements: [Expression],
-                           context:  ExpressionContext) throws {
-    switch context {
-    case .store:
-      try self.emitStoreWithPossibleUnpack(elements: elements)
-    case .load:
-      let adapter = TupleLoadAdapter(builder: self.builder)
-      try self.emitLoadWithPossibleUnpack(elements: elements, adapter:  adapter)
-    case .del:
-      try self.visitExpressions(elements, context: .del)
-    }
-  }
-
   private struct TupleLoadAdapter: CollectionLoadAdapter {
 
     fileprivate let builder: CodeObjectBuilder
@@ -61,20 +47,22 @@ extension Compiler {
     }
   }
 
-  // MARK: - List
+  /// compiler_tuple(struct compiler *c, expr_ty e)
+  public func visit(_ node: TupleExpr) throws {
+    let elements = node.elements
 
-  /// compiler_list(struct compiler *c, expr_ty e)
-  internal func visitList(elements: [Expression], context:  ExpressionContext) throws {
-    switch context {
+    switch node.context {
     case .store:
       try self.emitStoreWithPossibleUnpack(elements: elements)
     case .load:
-      let adapter = ListLoadAdapter(builder: self.builder)
+      let adapter = TupleLoadAdapter(builder: self.builder)
       try self.emitLoadWithPossibleUnpack(elements: elements, adapter:  adapter)
     case .del:
-      try self.visitExpressions(elements, context: .del)
+      try self.visit(elements)
     }
   }
+
+  // MARK: - List
 
   private struct ListLoadAdapter: CollectionLoadAdapter {
 
@@ -93,21 +81,35 @@ extension Compiler {
     }
   }
 
+  /// compiler_list(struct compiler *c, expr_ty e)
+  public func visit(_ node: ListExpr) throws {
+    let elements = node.elements
+
+    switch node.context {
+    case .store:
+      try self.emitStoreWithPossibleUnpack(elements: elements)
+    case .load:
+      let adapter = ListLoadAdapter(builder: self.builder)
+      try self.emitLoadWithPossibleUnpack(elements: elements, adapter:  adapter)
+    case .del:
+      try self.visit(elements)
+    }
+  }
+
   // MARK: - Dictionary
 
   /// compiler_dict(struct compiler *c, expr_ty e)
   ///
   /// Our implementation is similiar to `self.visitLoadWithPossibleUnpack(...)`.
-  internal func visitDictionary(elements: [DictionaryElement],
-                                context:  ExpressionContext) throws {
-    assert(context == .load)
+  public func visit(_ node: DictionaryExpr) throws {
+    assert(node.context == .load)
 
     /// Elements that do not need unpacking
     var nSimpleElement = 0
     /// Elements that need unpacking
     var nPackedElement = 0
 
-    for element in elements {
+    for element in node.elements {
       switch element {
       case let .unpacking(expr):
         // change elements to container, so we can unpack it later
@@ -118,12 +120,12 @@ extension Compiler {
         }
 
         // add another container
-        try self.visitExpression(expr)
+        try self.visit(expr)
         nPackedElement += 1
 
       case let .keyValue(key: k, value: v):
-        try self.visitExpression(k)
-        try self.visitExpression(v)
+        try self.visit(k)
+        try self.visit(v)
         nSimpleElement += 1
       }
     }
@@ -142,14 +144,6 @@ extension Compiler {
 
   // MARK: - Set
 
-  /// compiler_set(struct compiler *c, expr_ty e)
-  internal func visitSet(elements: [Expression], context:  ExpressionContext) throws {
-    assert(context == .load)
-
-    let adapter = SetLoadAdapter(builder: self.builder)
-    try self.emitLoadWithPossibleUnpack(elements: elements, adapter:  adapter)
-  }
-
   private struct SetLoadAdapter: CollectionLoadAdapter {
 
     fileprivate let builder: CodeObjectBuilder
@@ -165,6 +159,15 @@ extension Compiler {
     func emitBuildUnpackCollection(count: Int) throws {
       self.builder.appendBuildSetUnpack(elementCount: count)
     }
+  }
+
+  /// compiler_set(struct compiler *c, expr_ty e)
+  public func visit(_ node: SetExpr) throws {
+    assert(node.context == .load)
+
+    let elements = node.elements
+    let adapter = SetLoadAdapter(builder: self.builder)
+    try self.emitLoadWithPossibleUnpack(elements: elements, adapter:  adapter)
   }
 
   // MARK: - Helpers
@@ -186,12 +189,12 @@ extension Compiler {
   /// 20 RETURN_VALUE
   /// ```
   private func emitStoreWithPossibleUnpack(elements: [Expression]) throws {
-
     var hasSeenStar = false
     var elementsWithoutUnpack = elements
 
+    // Find unpack
     for (index, element) in elements.enumerated() {
-      guard case let .starred(inner) = element.kind else {
+      guard let star = element as? StarredExpr else {
         continue
       }
 
@@ -211,7 +214,7 @@ extension Compiler {
       }
 
       hasSeenStar = true
-      elementsWithoutUnpack[index] = inner
+      elementsWithoutUnpack[index] = star.expression
       self.builder.appendUnpackEx(countBefore: countBefore, countAfter: countAfter)
     }
 
@@ -219,7 +222,7 @@ extension Compiler {
       self.builder.appendUnpackSequence(elementCount: elements.count)
     }
 
-    try self.visitExpressions(elementsWithoutUnpack, context: .store)
+    try self.visit(elementsWithoutUnpack)
   }
 
   /// starunpack_helper(struct compiler *c, asdl_seq *elts, int single_op,
@@ -237,7 +240,8 @@ extension Compiler {
   /// ```
   private func emitLoadWithPossibleUnpack<A: CollectionLoadAdapter>(
     elements: [Expression],
-    adapter:  A) throws {
+    adapter: A
+  ) throws {
 
     /// Elements that do not need unpacking
     var nSimpleElement = 0
@@ -245,8 +249,7 @@ extension Compiler {
     var nPackedElement = 0
 
     for element in elements {
-      switch element.kind {
-      case let .starred(inner):
+      if let star = element as? StarredExpr {
         // change elements to container, so we can unpack it later
         if nSimpleElement > 0 {
           try adapter.emitPackElements(count: nSimpleElement)
@@ -255,11 +258,10 @@ extension Compiler {
         }
 
         // add another container
-        try self.visitExpression(inner)
+        try self.visit(star.expression)
         nPackedElement += 1
-
-      default:
-        try self.visitExpression(element)
+      } else {
+        try self.visit(element)
         nSimpleElement += 1
       }
     }

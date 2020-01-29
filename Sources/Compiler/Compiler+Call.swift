@@ -12,23 +12,20 @@ import Bytecode
 extension Compiler {
 
   /// compiler_call(struct compiler *c, expr_ty e)
-  internal func visitCall(function: Expression,
-                          args:     [Expression],
-                          keywords: [Keyword],
-                          context:  ExpressionContext) throws {
-
-    if try self.emitOptimizedMethodCall(function: function,
-                                        args: args,
-                                        keywords: keywords,
-                                        context: context) {
+  public func visit(_ node: CallExpr) throws {
+    if try self.emitOptimizedMethodCall(function: node.function,
+                                        args: node.args,
+                                        keywords: node.keywords,
+                                        context: node.context) {
       return
     }
 
-    try self.visitExpression(function)
-    try self.callHelper(args:     args,
-                        keywords: keywords,
-                        context:  context,
+    try self.visit(node.function)
+    try self.callHelper(args:     node.args,
+                        keywords: node.keywords,
+                        context:  node.context,
                         alreadyPushedArgs: 0)
+
   }
 
   /// maybe_optimize_method_call(struct compiler *c, expr_ty e)
@@ -36,21 +33,20 @@ extension Compiler {
                                        args:     [Expression],
                                        keywords: [Keyword],
                                        context:  ExpressionContext) throws -> Bool {
-
     // Check if it is an method
-    guard case let .attribute(object, name: methodName) = function.kind,
-          context == .load else {
+    guard let method = function as? AttributeExpr, context == .load else {
       return false
     }
 
     // No keywords or varargs
-    guard keywords.isEmpty && !args.contains(where: { $0.kind.isStarred }) else {
+    let hasVarargs = args.contains { $0 is StarredExpr }
+    guard !hasVarargs && keywords.isEmpty  else {
       return false
     }
 
-    try self.visitExpression(object)
-    self.builder.appendLoadMethod(name: methodName)
-    try self.visitExpressions(args)
+    try self.visit(method.object)
+    self.builder.appendLoadMethod(name: method.name)
+    try self.visit(args)
     self.builder.appendCallMethod(argumentCount: args.count)
     return true
   }
@@ -67,14 +63,12 @@ extension Compiler {
                            keywords: [Keyword],
                            context:  ExpressionContext,
                            alreadyPushedArgs: Int) throws {
-
     var nSeen = alreadyPushedArgs
     var nSubArgs = 0
     var nSubKwArgs = 0
 
     for arg in args {
-      switch arg.kind {
-      case let .starred(inner):
+      if let star = arg as? StarredExpr {
         // If we've seen positional arguments, then pack them into a tuple.
         if nSeen > 0 {
           self.builder.appendBuildTuple(elementCount: nSeen)
@@ -82,11 +76,10 @@ extension Compiler {
           nSubArgs += 1
         }
 
-        try self.visitExpression(inner)
+        try self.visit(star.expression)
         nSubArgs += 1
-
-      default:
-        try self.visitExpression(arg)
+      } else {
+        try self.visit(arg)
         nSeen += 1
       }
     }
@@ -119,7 +112,7 @@ extension Compiler {
             nSeen = 0
           }
 
-          try self.visitExpression(keyword.value)
+          try self.visit(keyword.value)
           nSubKwArgs += 1
         case .named:
           nSeen += 1
@@ -167,7 +160,7 @@ extension Compiler {
   /// compiler_visit_keyword(struct compiler *c, keyword_ty k)
   private func visitKeywords(keywords: [Keyword]) throws {
     for keyword in keywords {
-      try self.visitExpression(keyword.value)
+      try self.visit(keyword.value)
     }
   }
 
@@ -185,7 +178,7 @@ extension Compiler {
       }
 
       self.builder.appendString(name)
-      try self.visitExpression(keyword.value)
+      try self.visit(keyword.value)
       self.builder.appendBuildMap(elementCount: 1)
     } else {
       var names = [Constant]()
@@ -194,7 +187,7 @@ extension Compiler {
           fatalError("[BUG] Compiler: VisitSubkwargs should not be called for unpack.")
         }
 
-        try self.visitExpression(keyword.value)
+        try self.visit(keyword.value)
         names.append(.string(name))
       }
 

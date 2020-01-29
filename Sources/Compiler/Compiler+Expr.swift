@@ -10,204 +10,42 @@ import Bytecode
 
 extension Compiler {
 
-  /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  internal func visitExpressions<S: Sequence>(
-    _ exprs: S,
-    context: ExpressionContext = .load) throws where S.Element == Expression {
+  internal func visit(_ node: Expression) throws {
+    self.setAppendLocation(node)
+    try node.accept(self, payload: ())
+  }
 
-    for e in exprs {
-      try self.visitExpression(e, context: context)
+  private func visit(_ node: Expression?) throws {
+    if let n = node {
+      try self.visit(n)
     }
   }
 
-// swiftlint:disable function_body_length
-
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
-  internal func visitExpression(_ expr: Expression,
-                                context: ExpressionContext = .load) throws {
-// swiftlint:enable function_body_length
-    self.setAppendLocation(expr)
-
-    switch expr.kind {
-    case .true:
-      self.builder.appendTrue()
-    case .false:
-      self.builder.appendFalse()
-    case .none:
-      self.builder.appendNone()
-    case .ellipsis:
-      self.builder.appendEllipsis()
-
-    case let .identifier(value):
-      try self.visitIdentifier(value, context: context)
-
-    case let .bytes(value):
-      self.builder.appendBytes(value)
-    case let .string(string):
-      try self.visitString(string)
-
-    case let .int(value):
-      self.builder.appendInteger(value)
-    case let .float(value):
-      self.builder.appendFloat(value)
-    case let .complex(real, imag):
-      self.builder.appendComplex(real: real, imag: imag)
-
-    case let .unaryOp(op, right):
-      try self.visitExpression(right)
-      self.builder.appendUnaryOperator(op)
-    case let .binaryOp(op, left, right):
-      try self.visitExpression(left)
-      try self.visitExpression(right)
-      self.builder.appendBinaryOperator(op)
-    case let .boolOp(op, left, right):
-      try self.visitBoolOp(op, left: left, right: right)
-    case let .compare(left, elements):
-      try self.visitCompare(left: left, elements: elements)
-
-    case let .tuple(elements):
-      try self.visitTuple(elements: elements, context: context)
-    case let .list(elements):
-      try self.visitList(elements: elements, context: context)
-    case let .dictionary(elements):
-      try self.visitDictionary(elements: elements, context: context)
-    case let .set(elements):
-      try self.visitSet(elements: elements, context: context)
-
-    case let .generatorExp(elt, generators):
-      try self.visitGeneratorExpression(elt: elt, generators: generators)
-    case let .listComprehension(elt, generators):
-      try self.visitListComprehension(elt: elt, generators: generators)
-    case let  .setComprehension(elt, generators):
-      try self.visitSetComprehension(elt: elt, generators: generators)
-    case let .dictionaryComprehension(key, value, generators):
-      try self.visitDictionaryComprehension(key: key, value: value, generators: generators)
-
-    case let .await(expr):
-      try self.visitAwait(expr: expr)
-    case let .yield(expr):
-      try self.visitYield(value: expr)
-    case let .yieldFrom(expr):
-      try self.visitYieldFrom(expr: expr)
-
-    case let .lambda(args, body):
-      try self.visitLambda(args: args, body: body, expression: expr)
-
-    case let .call(function, args, keywords):
-      try self.visitCall(function: function,
-                         args: args,
-                         keywords: keywords,
-                         context: context)
-
-    case let .ifExpression(test, body, orElse):
-      try self.visitIfExpression(test: test, body: body, orElse: orElse)
-
-    case let .attribute(object, name):
-      try self.visitAttribute(object: object, name: name, context: context)
-    case let .subscript(object, slice):
-      try self.visitSubscript(object: object, slice: slice, context: context)
-
-    case .starred:
-      // In all legitimate cases, the starred node was already replaced
-      // inside assign, call etc.
-      switch context {
-      case .store:
-        throw self.error(.starredAssignmentNotListOrTuple)
-      default:
-        throw self.error(.invalidStarredExpression)
-      }
+  internal func visit<S: Sequence>(_ nodes: S) throws where S.Element: Expression {
+    for node in nodes {
+      try self.visit(node)
     }
   }
 
-// swiftlint:disable function_body_length
+  // MARK: - General
 
-  /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
-  internal func visitExpression(_ expr:  Expression,
-                                andJumpTo next: Label,
-                                ifBooleanValueIs cond: Bool) throws {
-// swiftlint:enable function_body_length
-    self.setAppendLocation(expr)
+  public func visit(_ node: NoneExpr) throws {
+    self.builder.appendNone()
+  }
 
-    switch expr.kind {
-    case let .unaryOp(op, right: right):
-      switch op {
-      case .not:
-        try self.visitExpression(right, andJumpTo: next, ifBooleanValueIs: !cond)
-        return
-      case .plus, .minus, .invert:
-        break // fallback to general implementation
-      }
+  public func visit(_ node: EllipsisExpr) throws {
+    self.builder.appendEllipsis()
+  }
 
-    case let .boolOp(op, left, right):
-      let isOr = op == .or
-      let hasLabel = cond != isOr
-      let next2 = hasLabel ? self.builder.createLabel() : next
+  // MARK: - Bool
 
-      try self.visitExpression(left,  andJumpTo: next2, ifBooleanValueIs: isOr)
-      try self.visitExpression(right, andJumpTo: next,  ifBooleanValueIs: cond)
+  public func visit(_ node: TrueExpr) throws {
+    self.builder.appendTrue()
+  }
 
-      if hasLabel {
-        self.builder.setLabel(next2)
-      }
-      return
-
-    case let .ifExpression(test, body, orElse):
-      let end   = self.builder.createLabel()
-      let next2 = self.builder.createLabel()
-
-      try self.visitExpression(test, andJumpTo: next2, ifBooleanValueIs: false)
-      try self.visitExpression(body, andJumpTo: next,  ifBooleanValueIs: cond)
-      self.builder.appendJumpAbsolute(to: end)
-      self.builder.setLabel(next2)
-      try self.visitExpression(orElse, andJumpTo: next, ifBooleanValueIs: cond)
-      self.builder.setLabel(end)
-
-    case let .compare(left, elements):
-      guard elements.count > 1 else {
-        break // fallback to general implementation
-      }
-
-      try self.visitExpression(left)
-
-      let end     = self.builder.createLabel()
-      let cleanup = self.builder.createLabel()
-
-      for element in elements.dropLast() {
-        try self.visitExpression(element.right)
-        self.builder.appendDupTop()
-        self.builder.appendRotThree()
-        self.builder.appendCompareOp(element.op)
-        self.builder.appendJumpIfFalseOrPop(to: cleanup)
-      }
-
-      let last = elements.last
-      try self.visitExpression(last.right)
-      self.builder.appendCompareOp(last.op)
-
-      switch cond {
-      case true:  self.builder.appendPopJumpIfTrue(to: next)
-      case false: self.builder.appendPopJumpIfFalse(to: next)
-      }
-
-      self.builder.appendJumpAbsolute(to: end)
-      self.builder.setLabel(cleanup)
-      self.builder.appendPopTop()
-
-      if !cond {
-        self.builder.appendJumpAbsolute(to: next)
-      }
-      self.builder.setLabel(end)
-      return
-
-    default:
-      break // fallback to general implementation
-    }
-
-    try self.visitExpression(expr)
-    switch cond {
-    case true:  self.builder.appendPopJumpIfTrue(to: next)
-    case false: self.builder.appendPopJumpIfFalse(to: next)
-    }
+  public func visit(_ node: FalseExpr) throws {
+    self.builder.appendFalse()
   }
 
   // MARK: - Identifier
@@ -220,12 +58,12 @@ extension Compiler {
   }
 
   /// compiler_nameop(struct compiler *c, identifier name, expr_context_ty ctx)
-  private func visitIdentifier(_ value: String, context: ExpressionContext) throws {
-    let mangled = self.mangleName(value)
+  public func visit(_ node: IdentifierExpr) throws {
+    let mangled = self.mangleName(node.value)
     let info = self.currentScope.symbols[mangled]
 
     // TODO: Leave assert here, but handle __doc__ and the like better
-    assert(info != nil || value.starts(with: "_"))
+    assert(info != nil || node.value.starts(with: "_"))
 
     let flags = info?.flags ?? []
     var operation = IdentifierOperation.name
@@ -246,7 +84,7 @@ extension Compiler {
 
     switch operation {
     case .deref:
-      switch context {
+      switch node.context {
       case .store:
         self.builder.appendStoreDeref(mangled)
       case .load where self.currentScope.type == .class:
@@ -257,25 +95,43 @@ extension Compiler {
         self.builder.appendDeleteDeref(mangled)
       }
     case .fast:
-      self.builder.appendFast(name: mangled, context: context)
+      self.builder.appendFast(name: mangled, context: node.context)
     case .global:
-      self.builder.appendGlobal(name: mangled, context: context)
+      self.builder.appendGlobal(name: mangled, context: node.context)
     case .name:
-      self.builder.appendName(name: mangled, context: context)
+      self.builder.appendName(name: mangled, context: node.context)
     }
+  }
+
+  // MARK: - Numbers
+
+  public func visit(_ node: IntExpr) throws {
+    self.builder.appendInteger(node.value)
+  }
+
+  public func visit(_ node: FloatExpr) throws {
+    self.builder.appendFloat(node.value)
+  }
+
+  public func visit(_ node: ComplexExpr) throws {
+    self.builder.appendComplex(real: node.real, imag: node.imag)
   }
 
   // MARK: - String
 
   /// compiler_formatted_value(struct compiler *c, expr_ty e)
   /// compiler_joined_str(struct compiler *c, expr_ty e)
-  private func visitString(_ group: StringGroup) throws {
+  public func visit(_ node: StringExpr) throws {
+    try self.visit(node.value)
+  }
+
+  public func visit(_ group: StringGroup) throws {
     switch group {
     case let .literal(s):
       self.builder.appendString(s)
 
     case let .formattedValue(expr, conversion: conv, spec: spec):
-      try self.visitExpression(expr)
+      try self.visit(expr)
 
       var conversion = StringConversion.none
       switch conv {
@@ -295,7 +151,7 @@ extension Compiler {
 
     case let .joined(groups):
       for g in groups {
-        try self.visitString(g)
+        try self.visit(g)
       }
 
       if groups.count > 1 {
@@ -304,7 +160,22 @@ extension Compiler {
     }
   }
 
-  // MARK: - Operations
+  public func visit(_ node: BytesExpr) throws {
+    self.builder.appendBytes(node.value)
+  }
+
+  // MARK: - Operators
+
+  public func visit(_ node: UnaryOpExpr) throws {
+    try self.visit(node.right)
+    self.builder.appendUnaryOperator(node.op)
+  }
+
+  public func visit(_ node: BinaryOpExpr) throws {
+    try self.visit(node.left)
+    try self.visit(node.right)
+    self.builder.appendBinaryOperator(node.op)
+  }
 
   /// compiler_boolop(struct compiler *c, expr_ty e)
   ///
@@ -315,21 +186,21 @@ extension Compiler {
   /// 4 LOAD_NAME                1 (b)
   /// 6 RETURN_VALUE
   /// ```
-  private func visitBoolOp(_ op:  BooleanOperator,
-                           left:  Expression,
-                           right: Expression) throws {
+  public func visit(_ node: BoolOpExpr) throws {
     let end = self.builder.createLabel()
 
-    try self.visitExpression(left)
+    try self.visit(node.left)
 
-    switch op {
+    switch node.op {
     case .and: self.builder.appendJumpIfFalseOrPop(to: end)
     case .or:  self.builder.appendJumpIfTrueOrPop(to: end)
     }
 
-    try self.visitExpression(right)
+    try self.visit(node.right)
     self.builder.setLabel(end)
   }
+
+  // MARK: - Compare
 
   /// compiler_compare(struct compiler *c, expr_ty e)
   ///
@@ -348,29 +219,27 @@ extension Compiler {
   ///  20 POP_TOP
   ///  22 RETURN_VALUE
   /// ```
-  private func visitCompare(left: Expression,
-                            elements: NonEmptyArray<ComparisonElement>) throws {
+  public func visit(_ node: CompareExpr) throws {
+    try self.visit(node.left)
 
-    try self.visitExpression(left)
-
-    if elements.count == 1 {
-      let first = elements.first
-      try self.visitExpression(first.right)
+    if node.elements.count == 1 {
+      let first = node.elements.first
+      try self.visit(first.right)
       self.builder.appendCompareOp(first.op)
     } else {
       let end = self.builder.createLabel()
       let cleanup = self.builder.createLabel()
 
-      for element in elements.dropLast() {
-        try self.visitExpression(element.right)
+      for element in node.elements.dropLast() {
+        try self.visit(element.right)
         self.builder.appendDupTop()
         self.builder.appendRotThree()
         self.builder.appendCompareOp(element.op)
         self.builder.appendJumpIfFalseOrPop(to: cleanup)
       }
 
-      let last = elements.last
-      try self.visitExpression(last.right)
+      let last = node.elements.last
+      try self.visit(last.right)
       self.builder.appendCompareOp(last.op)
 
       self.builder.appendJumpAbsolute(to: end)
@@ -379,6 +248,58 @@ extension Compiler {
       self.builder.appendPopTop()
       self.builder.setLabel(end)
     }
+  }
+
+  // MARK: - Await
+
+  /// compiler_visit_expr(struct compiler *c, expr_ty e)
+  public func visit(_ node: AwaitExpr) throws {
+    guard self.currentScope.type == .function else {
+      throw self.error(.awaitOutsideFunction)
+    }
+
+    let type = self.codeObject.type
+    guard type == .asyncFunction || type == .comprehension else {
+      throw self.error(.awaitOutsideAsyncFunction)
+    }
+
+    try self.visit(node.value)
+    self.builder.appendGetAwaitable()
+    self.builder.appendNone()
+    self.builder.appendYieldFrom()
+  }
+
+  // MARK: - Yield
+
+  /// compiler_visit_expr(struct compiler *c, expr_ty e)
+  public func visit(_ node: YieldExpr) throws {
+    guard self.currentScope.type == .function else {
+      throw self.error(.yieldOutsideFunction)
+    }
+
+    if let v = node.value {
+      try self.visit(v)
+    } else {
+      self.builder.appendNone()
+    }
+
+    self.builder.appendYieldValue()
+  }
+
+  /// compiler_visit_expr(struct compiler *c, expr_ty e)
+  public func visit(_ node: YieldFromExpr) throws {
+    guard self.currentScope.type == .function else {
+      throw self.error(.yieldOutsideFunction)
+    }
+
+    if self.codeObject.type == .asyncFunction {
+      throw self.error(.yieldFromInsideAsyncFunction)
+    }
+
+    try self.visit(node.value)
+    self.builder.appendGetYieldFromIter()
+    self.builder.appendNone()
+    self.builder.appendYieldFrom()
   }
 
   // MARK: - If
@@ -394,21 +315,25 @@ extension Compiler {
   ///  8 LOAD_CONST               1 (3)
   /// 10 RETURN_VALUE
   /// ```
-  private func visitIfExpression(test: Expression,
-                                 body: Expression,
-                                 orElse: Expression) throws {
+  public func visit(_ node: IfExpr) throws {
     let end = self.builder.createLabel()
     let orElseStart = self.builder.createLabel()
 
-    try self.visitExpression(test, andJumpTo: orElseStart, ifBooleanValueIs: false)
-    try self.visitExpression(body)
+    try self.visit(node.test, andJumpTo: orElseStart, ifBooleanValueIs: false)
+    try self.visit(node.body)
     self.builder.appendJumpAbsolute(to: end)
     self.builder.setLabel(orElseStart)
-    try self.visitExpression(orElse)
+    try self.visit(node.orElse)
     self.builder.setLabel(end)
   }
 
   // MARK: - Attribute
+
+  public func visit(_ node: AttributeExpr) throws {
+    try self.visitAttribute(object: node.object,
+                            name: node.name,
+                            context: node.context)
+  }
 
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visitAttribute(object: Expression,
@@ -419,7 +344,7 @@ extension Compiler {
 
     let isAugumentedStore = isAugumented && context == .store
     if !isAugumentedStore {
-      try self.visitExpression(object)
+      try self.visit(object)
     }
 
     switch context {
@@ -441,6 +366,12 @@ extension Compiler {
 
   // MARK: - Slice
 
+  public func visit(_ node: SubscriptExpr) throws {
+    try self.visitSubscript(object: node.object,
+                            slice: node.slice,
+                            context: node.context)
+  }
+
   /// compiler_visit_expr(struct compiler *c, expr_ty e)
   internal func visitSubscript(object: Expression,
                                slice:  Slice,
@@ -448,7 +379,7 @@ extension Compiler {
                                isAugumented: Bool = false) throws {
     let isAugumentedStore = isAugumented && context == .store
     if !isAugumentedStore {
-      try self.visitExpression(object)
+      try self.visit(object)
     }
 
     try self.visitSlice(slice: slice, context: context, isAugumented: isAugumented)
@@ -464,7 +395,7 @@ extension Compiler {
     if !isAugumentedStore {
       switch slice.kind {
       case let .index(index):
-        try self.visitExpression(index)
+        try self.visit(index)
       case let .slice(lower, upper, step):
         try self.compileSlice(lower: lower, upper: upper, step: step)
       case let .extSlice(slices):
@@ -497,7 +428,7 @@ extension Compiler {
   private func visitNestedSlice(slice: Slice, context: ExpressionContext) throws {
     switch slice.kind {
     case let .index(index):
-      try self.visitExpression(index)
+      try self.visit(index)
     case let .slice(lower, upper, step):
       try self.compileSlice(lower: lower, upper: upper, step: step)
     case .extSlice:
@@ -511,13 +442,13 @@ extension Compiler {
                             step:  Expression?) throws {
 
     if let l = lower {
-      try self.visitExpression(l)
+      try self.visit(l)
     } else {
       self.builder.appendNone()
     }
 
     if let u = upper {
-      try self.visitExpression(u)
+      try self.visit(u)
     } else {
       self.builder.appendNone()
     }
@@ -525,9 +456,117 @@ extension Compiler {
     var type = SliceArg.lowerUpper
     if let s = step {
       type = .lowerUpperStep
-      try self.visitExpression(s)
+      try self.visit(s)
     }
 
     self.builder.appendBuildSlice(type)
+  }
+
+  // MARK: - Starred
+
+  public func visit(_ node: StarredExpr) throws {
+    // In all legitimate cases, the starred node was already replaced
+    // inside assign, call etc.
+    switch node.context {
+    case .store:
+      throw self.error(.starredAssignmentNotListOrTuple)
+    case .load, .del:
+      throw self.error(.invalidStarredExpression)
+    }
+  }
+
+  // MARK: - Helper
+
+  // swiftlint:disable function_body_length
+
+  /// compiler_jump_if(struct compiler *c, expr_ty e, basicblock *next, int cond)
+  internal func visit(_ expression:  Expression,
+                      andJumpTo next: Label,
+                      ifBooleanValueIs cond: Bool) throws {
+    // swiftlint:enable function_body_length
+    self.setAppendLocation(expression)
+
+    if let unaryOp = expression as? UnaryOpExpr {
+      switch unaryOp.op {
+      case .not:
+        try self.visit(unaryOp.right, andJumpTo: next, ifBooleanValueIs: !cond)
+        return
+      case .plus, .minus, .invert:
+        break // fallback to general implementation
+      }
+    } else if let boolOp = expression as? BoolOpExpr {
+      let isOr = boolOp.op == .or
+      let hasLabel = cond != isOr
+      let next2 = hasLabel ? self.builder.createLabel() : next
+
+      try self.visit(boolOp.left,  andJumpTo: next2, ifBooleanValueIs: isOr)
+      try self.visit(boolOp.right, andJumpTo: next,  ifBooleanValueIs: cond)
+
+      if hasLabel {
+        self.builder.setLabel(next2)
+      }
+
+      return
+    } else if let ifExpr = expression as? IfExpr {
+      let end   = self.builder.createLabel()
+      let next2 = self.builder.createLabel()
+
+      try self.visit(ifExpr.test, andJumpTo: next2, ifBooleanValueIs: false)
+      try self.visit(ifExpr.body, andJumpTo: next,  ifBooleanValueIs: cond)
+
+      self.builder.appendJumpAbsolute(to: end)
+      self.builder.setLabel(next2)
+
+      try self.visit(ifExpr.orElse, andJumpTo: next, ifBooleanValueIs: cond)
+      self.builder.setLabel(end)
+    } else if let compare = expression as? CompareExpr, compare.elements.count > 1 {
+      // If the count is 1 then fallback to general implementation!
+      try self.visit(compare, andJumpTo: next, ifBooleanValueIs: cond)
+      return
+    }
+
+    // general implementation:
+    try self.visit(expression)
+    switch cond {
+    case true:  self.builder.appendPopJumpIfTrue(to: next)
+    case false: self.builder.appendPopJumpIfFalse(to: next)
+    }
+  }
+
+  private func visit(_ compare:  CompareExpr,
+                     andJumpTo next: Label,
+                     ifBooleanValueIs cond: Bool) throws {
+    assert(compare.elements.count > 1)
+
+    try self.visit(compare.left)
+
+    let end     = self.builder.createLabel()
+    let cleanup = self.builder.createLabel()
+
+    for element in compare.elements.dropLast() {
+      try self.visit(element.right)
+      self.builder.appendDupTop()
+      self.builder.appendRotThree()
+      self.builder.appendCompareOp(element.op)
+      self.builder.appendJumpIfFalseOrPop(to: cleanup)
+    }
+
+    let last = compare.elements.last
+    try self.visit(last.right)
+    self.builder.appendCompareOp(last.op)
+
+    switch cond {
+    case true:  self.builder.appendPopJumpIfTrue(to: next)
+    case false: self.builder.appendPopJumpIfFalse(to: next)
+    }
+
+    self.builder.appendJumpAbsolute(to: end)
+    self.builder.setLabel(cleanup)
+    self.builder.appendPopTop()
+
+    if !cond {
+      self.builder.appendJumpAbsolute(to: next)
+    }
+    self.builder.setLabel(end)
   }
 }

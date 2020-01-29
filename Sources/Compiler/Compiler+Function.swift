@@ -10,21 +10,19 @@ extension Compiler {
 
   // MARK: - Lambda
 
-  internal func visitLambda(args: Arguments,
-                            body: Expression,
-                            expression: Expression) throws {
-    let location = expression.start
+  public func visit(_ node: LambdaExpr) throws {
+    let location = node.start
 
     var flags: FunctionFlags = []
-    try self.visitDefaultArguments(args: args,
+    try self.visitDefaultArguments(args: node.args,
                                    updating: &flags,
                                    location: location)
 
-    let codeObject = try self.inNewCodeObject(node: expression, type: .lambda) {
+    let codeObject = try self.inNewCodeObject(node: node, type: .lambda) {
       // Make None the first constant, so the lambda can't have a docstring.
       self.builder.appendNone()
 
-      try self.visitExpression(body)
+      try self.visit(node.body)
       if !self.currentScope.isGenerator {
         self.builder.appendReturn()
       }
@@ -36,27 +34,26 @@ extension Compiler {
   // MARK: - Function
 
   /// compiler_function(struct compiler *c, stmt_ty s, int is_async)
-  internal func visitFunctionDef(args: FunctionDefArgs,
-                                 statement: Statement) throws {
-    let location = statement.start
-    try self.visitDecorators(decorators: args.decorators, location: location)
+  public func visit(_ node: FunctionDefStmt) throws {
+    let location = node.start
+    try self.visitDecorators(decorators: node.decorators, location: location)
 
     var flags: FunctionFlags = []
-    try self.visitDefaultArguments(args: args.args,
+    try self.visitDefaultArguments(args: node.args,
                                    updating: &flags,
                                    location: location)
-    try self.visitAnnotations(args: args.args,
-                              returns: args.returns,
+    try self.visitAnnotations(args: node.args,
+                              returns: node.returns,
                               updating: &flags,
                               location: location)
 
-    let codeObject = try self.inNewCodeObject(node: statement, type: .function) {
+    let codeObject = try self.inNewCodeObject(node: node, type: .function) {
       let optimizationLevel = self.options.optimizationLevel
-      if let docString = args.body.first.getDocString(), optimizationLevel < .OO {
+      if let docString = node.body.first.getDocString(), optimizationLevel < .OO {
         self.builder.appendString(docString)
       }
 
-      try self.visitStatements(args.body)
+      try self.visit(node.body)
 
       if !self.currentScope.hasReturnValue {
         self.builder.appendNone()
@@ -66,11 +63,11 @@ extension Compiler {
 
     try self.makeClosure(codeObject: codeObject, flags: flags, location: location)
 
-    for _ in args.decorators {
+    for _ in node.decorators {
       self.builder.appendCallFunction(argumentCount: 1)
     }
 
-    self.builder.appendStoreName(args.name)
+    self.builder.appendStoreName(node.name)
   }
 
   // MARK: - Decorators
@@ -78,7 +75,7 @@ extension Compiler {
   /// compiler_decorators(struct compiler *c, asdl_seq* decos)
   internal func visitDecorators(decorators: [Expression],
                                 location: SourceLocation) throws {
-    try self.visitExpressions(decorators)
+    try self.visit(decorators)
   }
 
   // MARK: - Defaults
@@ -89,7 +86,7 @@ extension Compiler {
                                      location: SourceLocation) throws {
     if args.defaults.any {
       flags.formUnion(.hasPositionalArgDefaults)
-      try self.visitExpressions(args.defaults)
+      try self.visit(args.defaults)
       self.builder.appendBuildTuple(elementCount: args.defaults.count)
     }
 
@@ -111,12 +108,12 @@ extension Compiler {
 
     var names = [MangledName]()
     for (arg, def) in zip(kwOnlyArgs, kwOnlyDefaults) {
-      if def.kind == .none {
+      if def is NoneExpr {
         continue
       }
 
       names.append(self.mangleName(arg.name))
-      try self.visitExpression(def)
+      try self.visit(def)
     }
 
     if names.any {
@@ -194,7 +191,7 @@ extension Compiler {
     if self.future.flags.contains(.annotations) {
       try self.visitAnnExpr(ann)
     } else {
-      try self.visitExpression(ann)
+      try self.visit(ann)
     }
 
     names.append(self.mangleName(name))

@@ -8,6 +8,8 @@ import Bytecode
 
 extension Compiler {
 
+  // MARK: - Import
+
   /// compiler_import(struct compiler *c, stmt_ty s)
   ///
   /// `dis.dis('import a.b')` gives us:
@@ -19,8 +21,8 @@ extension Compiler {
   ///  8 LOAD_CONST               1 (None)
   /// 10 RETURN_VALUE
   /// ```
-  internal func visitImport(aliases: NonEmptyArray<Alias>) throws {
-    for alias in aliases {
+  public func visit(_ node: ImportStmt) throws {
+    for alias in node.aliases {
       self.setAppendLocation(alias)
 
       // The Import node stores a module name like a.b.c as a single string.
@@ -41,6 +43,8 @@ extension Compiler {
     }
   }
 
+  // MARK: - Import from star
+
   /// compiler_from_import(struct compiler *c, stmt_ty s)
   ///
   /// from Tangled import *
@@ -54,14 +58,17 @@ extension Compiler {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
-  internal func visitImportFromStar(module: String?,
-                                    level: UInt8,
-                                    location: SourceLocation) throws {
-    try self.checkLateFuture(module: module, location: location)
-    try self.appendImportFromProlog(module: module, names: ["*"], level: level)
+  public func visit(_ node: ImportFromStarStmt) throws {
+    try self.checkLateFuture(module: node.moduleName, location: node.start)
+    try self.appendImportFromProlog(module: node.moduleName,
+                                    names: ["*"],
+                                    level: node.level)
+
     self.builder.appendImportStar()
     self.builder.appendPopTop()
   }
+
+  // MARK: - Import from
 
   /// compiler_from_import(struct compiler *c, stmt_ty s)
   ///
@@ -75,17 +82,13 @@ extension Compiler {
   /// 10 POP_TOP
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
-  internal func visitImportFrom(module:  String?,
-                                aliases: NonEmptyArray<Alias>,
-                                level:   UInt8,
-                                location: SourceLocation) throws {
+  public func visit(_ node: ImportFromStmt) throws {
+    try self.checkLateFuture(module: node.moduleName, location: node.start)
+    try self.appendImportFromProlog(module: node.moduleName,
+                                    names: node.names.map { $0.name },
+                                    level: node.level)
 
-    try self.checkLateFuture(module: module, location: location)
-    try self.appendImportFromProlog(module: module,
-                                    names: aliases.map { $0.name },
-                                    level: level)
-
-    for alias in aliases {
+    for alias in node.names {
       if alias.name == "*" {
         throw self.error(.unexpectedStarImport)
       }

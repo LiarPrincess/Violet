@@ -28,7 +28,7 @@ public class VM: PyDelegate {
 
   internal func dump(_ ast: AST) {
     print("=== AST ===")
-    print(ast.dump())
+    print(ast)
   }
 
   internal func dump(_ code: CodeObject) {

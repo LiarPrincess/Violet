@@ -9,15 +9,15 @@ extension Statement {
 
   /// compiler_isdocstring(stmt_ty s)
   internal func getDocString() -> String? {
-    guard case let StatementKind.expr(expr) = self.kind else {
+    guard let exprStmt = self as? ExprStmt else {
       return nil
     }
 
-    guard case let ExpressionKind.string(group) = expr.kind else {
+    guard let stringExpr = exprStmt.expression as? StringExpr else {
       return nil
     }
 
-    switch group {
+    switch stringExpr.value {
     case let .literal(s): return s
     case .formattedValue, .joined: return nil
     }

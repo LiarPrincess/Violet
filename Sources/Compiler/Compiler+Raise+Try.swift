@@ -14,14 +14,15 @@ extension Compiler {
   // MARK: - Raise
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)
-  internal func visitRaise(exception: Expression?, cause: Expression?) throws {
+  public func visit(_ node: RaiseStmt) throws {
     var arg = RaiseArg.reRaise
-    if let exc = exception {
-      try self.visitExpression(exc)
+
+    if let exception = node.exception {
+      try self.visit(exception)
       arg = .exceptionOnly
 
-      if let c = cause {
-        try self.visitExpression(c)
+      if let cause = node.cause {
+        try self.visit(cause)
         arg = .exceptionAndCause
       }
     }
@@ -31,17 +32,16 @@ extension Compiler {
 
   // MARK: - Try
 
-  internal func visitTry(body: NonEmptyArray<Statement>,
-                         handlers: [ExceptHandler],
-                         orElse:   [Statement],
-                         finally:  [Statement]) throws {
-    if finally.any {
-      try self.visitTryFinally(body: body,
-                               handlers: handlers,
-                               orElse: orElse,
-                               finally: finally)
+  public func visit(_ node: TryStmt) throws {
+    if node.finally.any {
+      try self.visitTryFinally(body: node.body,
+                               handlers: node.handlers,
+                               orElse: node.orElse,
+                               finally: node.finally)
     } else {
-      try self.visitTryExcept(body: body, handlers: handlers, orElse: orElse)
+      try self.visitTryExcept(body: node.body,
+                              handlers: node.handlers,
+                              orElse: node.orElse)
     }
   }
 
@@ -85,7 +85,7 @@ extension Compiler {
       if handlers.any {
         try self.visitTryExcept(body: body, handlers: handlers, orElse: orElse)
       } else {
-        try self.visitStatements(body)
+        try self.visit(body)
       }
 
       self.builder.appendPopBlock()
@@ -96,7 +96,7 @@ extension Compiler {
     // finally
     self.builder.setLabel(finallyStart)
     try self.inBlock(.finallyEnd) {
-      try self.visitStatements(finally)
+      try self.visit(finally)
       self.builder.appendEndFinally()
     }
   }
@@ -142,7 +142,7 @@ extension Compiler {
     // body
     self.builder.appendSetupExcept(firstExcept: firstExcept)
     try self.inBlock(.except) {
-      try self.visitStatements(body)
+      try self.visit(body)
       self.builder.appendPopBlock()
     }
     // if no exception happened then go to 'orElse'
@@ -161,7 +161,7 @@ extension Compiler {
 
       if case let .typed(type: type, asName: _) = handler.kind {
         self.builder.appendDupTop()
-        try self.visitExpression(type)
+        try self.visit(type)
         self.builder.appendCompareOp(.exceptionMatch)
         self.builder.appendPopJumpIfFalse(to: nextExcept)
       }
@@ -184,7 +184,7 @@ extension Compiler {
         let cleanupEnd = self.builder.createLabel()
         self.builder.appendSetupFinally(finallyStart: cleanupEnd)
         try self.inBlock(.finallyTry) {
-          try self.visitStatements(handler.body)
+          try self.visit(handler.body)
           self.builder.appendPopBlock()
         }
 
@@ -207,7 +207,7 @@ extension Compiler {
         self.builder.appendPopTop()
 
         try self.inBlock(.finallyTry) {
-          try self.visitStatements(handler.body)
+          try self.visit(handler.body)
           self.builder.appendPopExcept()
         }
       }
@@ -218,7 +218,7 @@ extension Compiler {
 
     self.builder.appendEndFinally()
     self.builder.setLabel(orElseStart)
-    try self.visitStatements(orElse)
+    try self.visit(orElse)
     self.builder.setLabel(end)
   }
 }

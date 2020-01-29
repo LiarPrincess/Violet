@@ -21,12 +21,12 @@ extension Compiler {
   /// - `<name>` is the class name
   /// - `<bases>` is the positional arguments and *varargs argument
   /// - `<keywords>` is the keyword arguments and **kwds argument
-  internal func visitClassDef(args: ClassDefArgs, statement: Statement) throws {
-    let location = statement.start
-    try self.visitDecorators(decorators: args.decorators, location: location)
+  public func visit(_ node: ClassDefStmt) throws {
+    let location = node.start
+    try self.visitDecorators(decorators: node.decorators, location: location)
 
     // 1. compile the class body into a code object
-    let codeObject = try self.inNewCodeObject(node: statement, type: .class) {
+    let codeObject = try self.inNewCodeObject(node: node, type: .class) {
       // load (global) __name__ and store it as __module__
       self.builder.appendLoadName(SpecialIdentifiers.__name__)
       self.builder.appendStoreName(SpecialIdentifiers.__module__)
@@ -34,7 +34,7 @@ extension Compiler {
       self.builder.appendString(self.codeObject.qualifiedName)
       self.builder.appendStoreName(SpecialIdentifiers.__qualname__)
 
-      try self.visitStatements(args.body)
+      try self.visit(node.body)
 
       // Return __class__ cell if it is referenced, otherwise return None
       if self.currentScope.needsClassClosure {
@@ -58,17 +58,17 @@ extension Compiler {
     // 3. load a function (or closure) made from the code object
     try self.makeClosure(codeObject: codeObject, flags: [], location: location)
     // 4. load class name
-    self.builder.appendString(args.name)
+    self.builder.appendString(node.name)
     // 5. generate the rest of the code for the call
-    try self.callHelper(args: args.bases,
-                        keywords: args.keywords,
+    try self.callHelper(args: node.bases,
+                        keywords: node.keywords,
                         context: .load,
                         alreadyPushedArgs: 2)
     // 6. apply decorators
-    for _ in args.decorators {
+    for _ in node.decorators {
       self.builder.appendCallFunction(argumentCount: 1)
     }
     // 7. store into <name>
-    self.builder.appendStoreName(args.name)
+    self.builder.appendStoreName(node.name)
   }
 }

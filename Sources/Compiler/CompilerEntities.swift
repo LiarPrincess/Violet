@@ -16,12 +16,6 @@ internal enum SpecialIdentifiers {
   internal static let __qualname__ = "__qualname__"
 }
 
-public enum ExpressionContext {
-  case store
-  case load
-  case del
-}
-
 internal enum BlockType {
   case loop(continueTarget: Label)
   case except

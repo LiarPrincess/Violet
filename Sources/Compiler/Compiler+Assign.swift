@@ -23,16 +23,16 @@ extension Compiler {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   /// ```
-  internal func visitAssign(targets: NonEmptyArray<Expression>,
-                            value: Expression) throws {
-    try self.visitExpression(value)
-    for (index, t) in targets.enumerated() {
-      let isLast = index == targets.count - 1
+  public func visit(_ node: AssignStmt) throws {
+    try self.visit(node.value)
+
+    for (index, target) in node.targets.enumerated() {
+      let isLast = index == node.targets.count - 1
       if !isLast {
         self.builder.appendDupTop()
       }
 
-      try self.visitExpression(t, context: .store)
+      try self.visit(target)
     }
   }
 
@@ -49,46 +49,48 @@ extension Compiler {
   ///  8 LOAD_CONST               0 (None)
   /// 10 RETURN_VALUE
   /// ```
-  internal func visitAugAssign(target: Expression,
-                               op:     BinaryOperator,
-                               value:  Expression) throws {
-    switch target.kind {
-    case let .identifier(name):
-      let mangled = self.mangleName(name)
+  public func visit(_ node: AugAssignStmt) throws {
+    if let identifier = node.target as? IdentifierExpr {
+      let mangled = self.mangleName(identifier.value)
       self.builder.appendLoadName(mangled)
-      try self.visitExpression(value)
-      self.builder.appendInplaceOperator(op)
-      self.builder.appendStoreName(mangled)
 
-    case let .attribute(object, name: name):
+      try self.visit(node.value)
+      self.builder.appendInplaceOperator(node.op)
+      self.builder.appendStoreName(mangled)
+      return
+    }
+
+    if let attribute = node.target as? AttributeExpr {
       func visitAttribute(context: ExpressionContext) throws {
-        try self.visitAttribute(object: object,
-                                name: name,
+        try self.visitAttribute(object: attribute.object,
+                                name: attribute.name,
                                 context: context,
                                 isAugumented: true)
       }
 
       try visitAttribute(context: .load)
-      try self.visitExpression(value)
-      self.builder.appendInplaceOperator(op)
+      try self.visit(node.value)
+      self.builder.appendInplaceOperator(node.op)
       try visitAttribute(context: .store)
+      return
+    }
 
-    case let .subscript(object, slice: slice):
+    if let subscr = node.target as? SubscriptExpr {
       func visitSubscript(context: ExpressionContext) throws {
-        try self.visitSubscript(object: object,
-                                slice: slice,
+        try self.visitSubscript(object: subscr.object,
+                                slice: subscr.slice,
                                 context: context,
                                 isAugumented: true)
       }
 
       try visitSubscript(context: .load)
-      try self.visitExpression(value)
-      self.builder.appendInplaceOperator(op)
+      try self.visit(node.value)
+      self.builder.appendInplaceOperator(node.op)
       try visitSubscript(context: .store)
-
-    default:
-      throw self.error(.invalidTargetForAugmentedAssignment)
+      return
     }
+
+    throw self.error(.invalidTargetForAugmentedAssignment)
   }
 
   // MARK: - Ann assign
@@ -108,59 +110,66 @@ extension Compiler {
   /// 14 LOAD_CONST               1 (None)
   /// 16 RETURN_VALUE
   /// ```
-  internal func visitAnnAssign(target:     Expression,
-                               annotation: Expression,
-                               value:    Expression?,
-                               isSimple: Bool) throws {
+  public func visit(_ node: AnnAssignStmt) throws {
     // Assignment first
-    if let v = value {
-      try self.visitExpression(v)
-      try self.visitExpression(target, context: .store)
+    if let v = node.value {
+      try self.visit(v)
+      try self.visit(node.target)
     }
 
     let scopeType = self.currentScope.type
     let isModuleOrClass = scopeType == .module || scopeType == .class
 
-    switch target.kind {
-    case let .identifier(name):
-      guard isSimple && isModuleOrClass else {
-        break
+    func check() throws {
+      if !node.isSimple && isModuleOrClass {
+        try self.checkAnnExpr(node.annotation)
+      }
+    }
+
+    if let identifier = node.target as? IdentifierExpr {
+      guard node.isSimple && isModuleOrClass else {
+        try check()
+        return
       }
 
       if self.future.flags.contains(.annotations) {
-        try self.visitAnnExpr(annotation)
+        try self.visitAnnExpr(node.annotation)
       } else {
-        try self.visitExpression(annotation)
+        try self.visit(node.annotation)
       }
 
-      let mangled = self.mangleName(name)
+      let mangled = self.mangleName(identifier.value)
       self.builder.appendLoadName(SpecialIdentifiers.__annotations__)
       self.builder.appendString(mangled)
       self.builder.appendStoreSubscr()
-
-    case let .attribute(obj, name: _):
-      if value == nil {
-        try self.checkAnnExpr(obj)
-      }
-
-    case let .subscript(obj, slice: slice):
-      if value == nil {
-        try self.checkAnnExpr(obj)
-        try self.checktAnnSlice(slice)
-      }
-
-    default:
-      throw self.error(.invalidTargetForAnnotatedAssignment)
+      return
     }
 
-    if !isSimple && isModuleOrClass {
-      try self.checkAnnExpr(annotation)
+    if let attribute = node.target as? AttributeExpr {
+      if node.value == nil {
+        try self.checkAnnExpr(attribute.object)
+      }
+
+      try check()
+      return
     }
+
+    if let subscr = node.target as? SubscriptExpr {
+      if node.value == nil {
+        try self.checkAnnExpr(subscr.object)
+        try self.checktAnnSlice(subscr.slice)
+      }
+
+      try check()
+      return
+    }
+
+    throw self.error(.invalidTargetForAnnotatedAssignment)
   }
 
   /// check_ann_expr(struct compiler *c, expr_ty e)
   private func checkAnnExpr(_ expr: Expression) throws {
-    try self.visitExpression(expr)
+    try self.visit(expr)
     self.builder.appendPopTop()
   }
 
