@@ -9,6 +9,7 @@ import Bytecode
 // It is quite complicated (but it does make sense if you spend some time with it).
 
 // swiftlint:disable file_length
+// swiftlint:disable function_body_length
 
 /// Structure that represents outer scope
 /// (basically everything OUTSIDE of the currently analyzed function).

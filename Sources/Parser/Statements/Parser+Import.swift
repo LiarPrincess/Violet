@@ -162,17 +162,17 @@ extension Parser {
     try self.parseImportFromNames(into: &ir, closingTokens: closingTokens)
 
     switch ir.values {
-      case .all:
-        return self.builder.importFromStarStmt(moduleName: ir.module,
-                                               level: ir.level,
-                                               start: start,
-                                               end: ir.end)
-      case let .aliases(aliases):
-        return self.builder.importFromStmt(moduleName: ir.module,
-                                           names: aliases,
-                                           level: ir.level,
-                                           start: start,
-                                           end: ir.end)
+    case .all:
+      return self.builder.importFromStarStmt(moduleName: ir.module,
+                                             level: ir.level,
+                                             start: start,
+                                             end: ir.end)
+    case let .aliases(aliases):
+      return self.builder.importFromStmt(moduleName: ir.module,
+                                         names: aliases,
+                                         level: ir.level,
+                                         start: start,
+                                         end: ir.end)
     }
   }
 

@@ -142,12 +142,13 @@ extension Parser {
 
     let value = try self.parseAugAssignValue(closingTokens: closingTokens)
 
-    // swiftlint:disable:next force_unwrapping
+    // swiftlint:disable force_unwrapping
     return self.builder.augAssignStmt(target: target,
                                       op: op!,
                                       value: value,
                                       start: target.start,
                                       end: value.end)
+    // swiftlint:enable force_unwrapping
   }
 
   private func checkAugAssignTarget(_ target: Expression) throws {
@@ -214,6 +215,7 @@ extension Parser {
 
   private func checkNormalAssignTargets(_ targets: NonEmptyArray<Expression>) throws {
     for expr in targets {
+      // swiftlint:disable:next for_where
       if expr is YieldExpr {
         throw self.error(.assignmentToYield, location: expr.start)
       }

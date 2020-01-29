@@ -1,32 +1,32 @@
 import Core
 import Lexer
 
-extension Parser {
+// MARK: - Expr list
 
-  // MARK: - Expr list
+internal struct ExprListResult {
+  let context: ExpressionContext
+  let kind: Kind
 
-  internal struct ExprListResult {
-    let context: ExpressionContext
-    let kind: Kind
-
-    internal enum Kind {
+  internal enum Kind {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
-    }
+  }
 
-    internal func toExpression(using builder: inout ASTBuilder,
-                               start: SourceLocation) -> Expression {
-      switch self.kind {
-      case let .single(e):
-        return e
-      case let .tuple(es, end):
-        return builder.tupleExpr(elements: Array(es),
-                                 context: self.context,
-                                 start: start,
-                                 end: end)
-      }
+  internal func toExpression(using builder: inout ASTBuilder,
+                             start: SourceLocation) -> Expression {
+    switch self.kind {
+    case let .single(e):
+      return e
+    case let .tuple(es, end):
+      return builder.tupleExpr(elements: Array(es),
+                               context: self.context,
+                               start: start,
+                               end: end)
     }
   }
+}
+
+extension Parser {
 
   /// `exprlist: (expr|star_expr) (',' (expr|star_expr))* [',']`
   internal func exprList(context: ExpressionContext,
@@ -57,31 +57,34 @@ extension Parser {
     let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
     return ExprListResult(context: context, kind: .tuple(array, end: end))
   }
+}
 
-  // MARK: - Test list
+// MARK: - Test list
 
-  internal struct TestListResult {
-    let context: ExpressionContext
-    let kind: Kind
+internal struct TestListResult {
+  let context: ExpressionContext
+  let kind: Kind
 
-    internal enum Kind {
+  internal enum Kind {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
-    }
+  }
 
-    internal func toExpression(using builder: inout ASTBuilder,
-                               start: SourceLocation) -> Expression {
-      switch self.kind {
-      case let .single(e):
-        return e
-      case let .tuple(es, end):
-        return builder.tupleExpr(elements: Array(es),
-                                 context: self.context,
-                                 start: start,
-                                 end: end)
-      }
+  internal func toExpression(using builder: inout ASTBuilder,
+                             start: SourceLocation) -> Expression {
+    switch self.kind {
+    case let .single(e):
+      return e
+    case let .tuple(es, end):
+      return builder.tupleExpr(elements: Array(es),
+                               context: self.context,
+                               start: start,
+                               end: end)
     }
   }
+}
+
+extension Parser {
 
   /// `testlist: test (',' test)* [',']`
   internal func testList(context: ExpressionContext,
@@ -111,14 +114,17 @@ extension Parser {
     let array = NonEmptyArray<Expression>(first: first, rest: additionalElements)
     return TestListResult(context: context, kind: .tuple(array, end: end))
   }
+}
 
-  // MARK: - Test list comprehension
+// MARK: - Test list comprehension
 
-  internal enum TestListCompResult {
-    case single(Expression)
-    case multiple([Expression])
-    case listComprehension(elt: Expression, generators: NonEmptyArray<Comprehension>)
-  }
+internal enum TestListCompResult {
+  case single(Expression)
+  case multiple([Expression])
+  case listComprehension(elt: Expression, generators: NonEmptyArray<Comprehension>)
+}
+
+extension Parser {
 
   /// ```c
   /// testlist_comp:
@@ -156,31 +162,34 @@ extension Parser {
 
     return .multiple(elements)
   }
+}
 
-  // MARK: - Test list star expr
+// MARK: - Test list star expr
 
-  internal struct TestListStarExprResult {
-    let context: ExpressionContext
-    let kind: Kind
+internal struct TestListStarExprResult {
+  let context: ExpressionContext
+  let kind: Kind
 
-    internal enum Kind {
+  internal enum Kind {
     case single(Expression)
     case tuple(NonEmptyArray<Expression>, end: SourceLocation)
-    }
+  }
 
-    internal func toExpression(using builder: inout ASTBuilder,
-                               start: SourceLocation) -> Expression {
-      switch self.kind {
-      case let .single(e):
-        return e
-      case let .tuple(es, end):
-        return builder.tupleExpr(elements: Array(es),
-                                 context: context,
-                                 start: start,
-                                 end: end)
-      }
+  internal func toExpression(using builder: inout ASTBuilder,
+                             start: SourceLocation) -> Expression {
+    switch self.kind {
+    case let .single(e):
+      return e
+    case let .tuple(es, end):
+      return builder.tupleExpr(elements: Array(es),
+                               context: context,
+                               start: start,
+                               end: end)
     }
   }
+}
+
+extension Parser {
 
   /// `testlist_star_expr: (test|star_expr) (',' (test|star_expr))* [',']`
   internal func testListStarExpr(

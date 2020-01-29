@@ -25,7 +25,6 @@ extension Compiler {
                         keywords: node.keywords,
                         context:  node.context,
                         alreadyPushedArgs: 0)
-
   }
 
   /// maybe_optimize_method_call(struct compiler *c, expr_ty e)

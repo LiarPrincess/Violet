@@ -14,6 +14,9 @@ private func emitAstBuilder(inputFile: URL) {
   print()
 
   print("// swiftlint:disable file_length")
+  print("// swiftlint:disable trailing_newline")
+  print("// swiftlint:disable function_parameter_count")
+  print("// swiftlint:disable vertical_whitespace_closing_braces")
   print()
 
   let entities = parse(url: inputFile)

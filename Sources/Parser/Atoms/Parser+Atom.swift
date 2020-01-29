@@ -4,6 +4,8 @@ import Lexer
 // Python -> ast.c
 //  ast_for_atom(struct compiling *c, const node *n)
 
+// swiftlint:disable function_body_length
+
 extension Parser {
 
   /// `atom_expr: [AWAIT] atom trailer*`
@@ -50,23 +52,30 @@ extension Parser {
 
     case let .identifier(value):
       try self.advance()
-      return self.builder
-        .identifierExpr(value: value, context: context, start: start, end: end)
+      return self.builder.identifierExpr(value: value,
+                                         context: context,
+                                         start: start,
+                                         end: end)
 
     case let .int(value):
       try self.advance()
-      return self.builder
-        .intExpr(value: value, context: .load, start: start, end: end)
-
+      return self.builder.intExpr(value: value,
+                                  context: .load,
+                                  start: start,
+                                  end: end)
     case let .float(value):
       try self.advance()
-      return self.builder
-        .floatExpr(value: value, context: .load, start: start, end: end)
-
+      return self.builder.floatExpr(value: value,
+                                    context: .load,
+                                    start: start,
+                                    end: end)
     case let .imaginary(value):
       try self.advance()
-      return self.builder
-        .complexExpr(real: 0.0, imag: value, context: .load, start: start, end: end)
+      return self.builder.complexExpr(real: 0.0,
+                                      imag: value,
+                                      context: .load,
+                                      start: start,
+                                      end: end)
 
     case .string, .formatString:
       return try self.strPlus()

@@ -23,6 +23,7 @@ public class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
   }
 
   public func visit(_ node: AST) -> Doc {
+    // swiftlint:disable:next force_try
     return try! node.accept(self, payload: ())
   }
 

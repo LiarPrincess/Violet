@@ -14,6 +14,8 @@ private func emitAstVisitors(inputFile: URL) {
   print()
 
   print("// swiftlint:disable file_length")
+  print("// swiftlint:disable line_length")
+  print("// swiftlint:disable trailing_newline")
   print()
 
   let entities = parse(url: inputFile)
@@ -23,6 +25,7 @@ private func emitAstVisitors(inputFile: URL) {
   printVisitor(type: "Expression", classes: groups.expressionSubclasses)
 }
 
+// swiftlint:disable:next function_body_length
 private func printVisitor(type: String, classes: [ClassDef]) {
   print("// MARK: - \(type)")
   print()

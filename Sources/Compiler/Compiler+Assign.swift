@@ -95,6 +95,8 @@ extension Compiler {
 
   // MARK: - Ann assign
 
+  // swiftlint:disable function_body_length
+
   /// compiler_annassign(struct compiler *c, stmt_ty s)
   /// check_annotation(struct compiler *c, stmt_ty s)
   ///
@@ -111,6 +113,8 @@ extension Compiler {
   /// 16 RETURN_VALUE
   /// ```
   public func visit(_ node: AnnAssignStmt) throws {
+    // swiftlint:enable function_body_length
+
     // Assignment first
     if let v = node.value {
       try self.visit(v)

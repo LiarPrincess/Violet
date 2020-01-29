@@ -37,11 +37,11 @@ extension Compiler {
     throw self.notImplementedAsync()
   }
 
-  public func visit(_ node: AsyncWithStmt) throws -> () {
+  public func visit(_ node: AsyncWithStmt) throws {
     throw self.notImplementedAsync()
   }
 
-  public func visit(_ node: AsyncFunctionDefStmt) throws -> () {
+  public func visit(_ node: AsyncFunctionDefStmt) throws {
     throw self.notImplementedAsync()
   }
 

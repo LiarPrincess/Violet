@@ -4,6 +4,8 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
+// swiftlint:disable file_length
+
 extension SymbolTableBuilder {
 
   internal func visit(_ node: Statement) throws {
@@ -47,6 +49,7 @@ extension SymbolTableBuilder {
                               node: node)
   }
 
+  // swiftlint:disable function_parameter_count
   private func visitFunctionDef(name: String,
                                 args: Arguments,
                                 body: NonEmptyArray<Statement>,
@@ -54,6 +57,8 @@ extension SymbolTableBuilder {
                                 returns: Expression?,
                                 isAsync: Bool,
                                 node stmt: Statement) throws {
+    // swiftlint:enable function_parameter_count
+
     try self.addSymbol(name, flags: .defLocal, location: stmt.start)
     try self.visitDefaults(args)
     try self.visitAnnotations(args)

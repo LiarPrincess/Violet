@@ -6,6 +6,8 @@ import Bytecode
 // In CPython:
 // Python -> compile.c
 
+// swiftlint:disable file_length
+
 extension Compiler {
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)

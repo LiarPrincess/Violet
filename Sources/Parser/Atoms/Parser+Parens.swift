@@ -4,6 +4,8 @@ import Lexer
 // Python -> ast.c
 //  ast_for_atom(struct compiling *c, const node *n)
 
+// swiftlint:disable function_body_length
+
 extension Parser {
 
   // MARK: - Tuple/yield/generator

@@ -12,6 +12,8 @@ extension Parser {
   ///              import_stmt | global_stmt | nonlocal_stmt | assert_stmt)
   ///```
   internal func smallStmt(closingTokens: [TokenKind]) throws -> Statement {
+    // swiftlint:disable:previous function_body_length
+
     let token = self.peek
 
     switch token.kind {

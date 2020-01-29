@@ -16,7 +16,7 @@ internal func parse(url: URL) -> [Entity] {
 
 // MARK: - Streams
 
-internal func withRedirectedStandardOutput(to file: URL, f: () -> ()) {
+internal func withRedirectedStandardOutput(to file: URL, f: () -> Void) {
   freopen(file.path, "w", stdout)
   defer { fclose(stdout) }
 

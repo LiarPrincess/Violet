@@ -3,6 +3,9 @@ import Core
 import Lexer
 @testable import Parser
 
+// swiftlint:disable file_length
+// swiftlint:disable function_body_length
+
 /// ```c
 /// class    with function
 /// function with if

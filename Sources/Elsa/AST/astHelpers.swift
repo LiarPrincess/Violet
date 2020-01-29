@@ -86,4 +86,3 @@ extension ProductType {
     return nil
   }
 }
-

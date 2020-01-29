@@ -1,6 +1,9 @@
 import Core
 import Rapunzel
 
+// swiftlint:disable file_length
+// swiftlint:disable vertical_parameter_alignment_on_call
+
 extension ASTPrinter {
 
   private func base(expr: Expression, lines: Doc...) -> Doc {
@@ -27,6 +30,7 @@ extension ASTPrinter {
   // MARK: - Expr
 
   public func visit(_ node: Expression) -> Doc {
+    // swiftlint:disable:next force_try
     return try! node.accept(self, payload: ())
   }
 
@@ -515,8 +519,8 @@ extension ASTPrinter {
 
   public func visit(_ op: BooleanOperator) -> Doc {
     switch op {
-      case .and: return self.text("and")
-      case .or:  return self.text("or")
+    case .and: return self.text("and")
+    case .or:  return self.text("or")
     }
   }
 

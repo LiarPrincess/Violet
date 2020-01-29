@@ -1,6 +1,9 @@
 import Core
 import Rapunzel
 
+// swiftlint:disable file_length
+// swiftlint:disable vertical_parameter_alignment_on_call
+
 extension ASTPrinter {
 
   private func base(stmt: Statement, lines: Doc...) -> Doc {
@@ -10,7 +13,7 @@ extension ASTPrinter {
   private func base(stmt: Statement, lines: [Doc] = []) -> Doc {
     let type = self.typeName(of: stmt)
     let title = "\(type)(start: \(stmt.start), end: \(stmt.end))"
-    
+
     return lines.isEmpty ?
       self.text(title) :
       self.block(title: title, lines: lines)
@@ -19,6 +22,7 @@ extension ASTPrinter {
   // MARK: - Stmt
 
   public func visit(_ node: Statement) -> Doc {
+    // swiftlint:disable:next force_try
     return try! node.accept(self, payload: ())
   }
 
@@ -249,10 +253,7 @@ extension ASTPrinter {
     let c = node.cause.map { block(title: "Cause", lines: self.visit($0)) } ??
       self.text("Cause: none")
 
-    return self.base(
-      stmt: node,
-      lines: e, c
-    )
+    return self.base(stmt: node, lines: e, c)
   }
 
   // MARK: - Try stmt

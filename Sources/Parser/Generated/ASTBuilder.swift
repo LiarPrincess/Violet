@@ -5,6 +5,9 @@ import Core
 import Foundation
 
 // swiftlint:disable file_length
+// swiftlint:disable trailing_newline
+// swiftlint:disable function_parameter_count
+// swiftlint:disable vertical_whitespace_closing_braces
 
 /// Helper for creating AST nodes with increasing id.
 public struct ASTBuilder {

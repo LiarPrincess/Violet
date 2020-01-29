@@ -3,6 +3,8 @@ import Core
 import Lexer
 @testable import Parser
 
+// swiftlint:disable function_body_length
+
 class ParseWith: XCTestCase, Common {
 
   /// with Alice: "wonderland"

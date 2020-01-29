@@ -84,22 +84,26 @@ extension Compiler {
 
     switch operation {
     case .deref:
-      switch node.context {
-      case .store:
-        self.builder.appendStoreDeref(mangled)
-      case .load where self.currentScope.type == .class:
-        self.builder.appendLoadClassDeref(mangled)
-      case .load:
-        self.builder.appendLoadDeref(mangled)
-      case .del:
-        self.builder.appendDeleteDeref(mangled)
-      }
+      self.appendDeref(mangled: mangled, context: node.context)
     case .fast:
       self.builder.appendFast(name: mangled, context: node.context)
     case .global:
       self.builder.appendGlobal(name: mangled, context: node.context)
     case .name:
       self.builder.appendName(name: mangled, context: node.context)
+    }
+  }
+
+  private func appendDeref(mangled: MangledName, context: ExpressionContext) {
+    switch context {
+    case .store:
+      self.builder.appendStoreDeref(mangled)
+    case .load where self.currentScope.type == .class:
+      self.builder.appendLoadClassDeref(mangled)
+    case .load:
+      self.builder.appendLoadDeref(mangled)
+    case .del:
+      self.builder.appendDeleteDeref(mangled)
     }
   }
 

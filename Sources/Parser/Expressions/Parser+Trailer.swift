@@ -10,6 +10,8 @@ extension Parser {
 
   // MARK: - Trailer
 
+  // swiftlint:disable function_body_length
+
   /// ```c
   /// trailer:
   ///     '(' [arglist] ')'
@@ -20,6 +22,8 @@ extension Parser {
   /// if we can't parse according to this rule.
   internal func trailerOrNop(for leftExpr: Expression,
                              context: ExpressionContext) throws -> Expression? {
+    // swiftlint:enable function_body_length
+
     switch self.peek.kind {
     case .leftParen:
       try self.advance() // (

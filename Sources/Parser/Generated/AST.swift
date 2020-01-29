@@ -5,10 +5,9 @@ import Core
 import Lexer
 import Foundation
 
-// swiftlint:disable superfluous_disable_command
-// swiftlint:disable line_length
 // swiftlint:disable file_length
 // swiftlint:disable trailing_newline
+// swiftlint:disable vertical_whitespace
 // swiftlint:disable vertical_whitespace_closing_braces
 
 // MARK: - AST

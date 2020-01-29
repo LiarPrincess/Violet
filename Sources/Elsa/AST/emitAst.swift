@@ -14,10 +14,9 @@ private func emitAst(inputFile: URL) {
   print("import Foundation")
   print()
 
-  print("// swiftlint:disable superfluous_disable_command")
-  print("// swiftlint:disable line_length")
   print("// swiftlint:disable file_length")
   print("// swiftlint:disable trailing_newline")
+  print("// swiftlint:disable vertical_whitespace")
   print("// swiftlint:disable vertical_whitespace_closing_braces")
   print("")
 
@@ -115,7 +114,6 @@ private func printInit<T: ProductType>(def: T) {
     printSubclassInit(def: def)
     return
   }
-
 
   print("  public init(")
   for (index, prop) in def.properties.enumerated() {

@@ -4,6 +4,8 @@ import Parser
 // In CPython:
 // Python -> symtable.c
 
+// swiftlint:disable file_length
+
 extension SymbolTableBuilder {
 
   internal func visit(_ node: Expression) throws {

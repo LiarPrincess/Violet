@@ -3,6 +3,8 @@ import Core
 import Lexer
 @testable import Parser
 
+// swiftlint:disable function_body_length
+
 class ParseAugAssign: XCTestCase, Common {
 
   // MARK: - Augumented assignment

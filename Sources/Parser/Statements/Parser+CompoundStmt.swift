@@ -191,11 +191,13 @@ extension Parser {
 
     let end = orElse.last?.end ?? body.last.end
 
+    // swiftlint:disable multiline_arguments no_space_in_method_call
     return isAsync ?
       self.builder.asyncForStmt(target: target, iterable: iter, body: body,
                                 orElse: orElse, start: forStart, end: end) :
       self.builder.forStmt     (target: target, iterable: iter, body: body,
                                 orElse: orElse, start: forStart, end: end)
+    // swiftlint:enable multiline_arguments no_space_in_method_call
   }
 
   // MARK: - With
@@ -223,9 +225,11 @@ extension Parser {
     let body = try self.suite()
     let end = body.last.end
 
+    // swiftlint:disable no_space_in_method_call
     return isAsync ?
       self.builder.asyncWithStmt(items: items, body: body, start: start, end: end) :
       self.builder.withStmt     (items: items, body: body, start: start, end: end)
+    // swiftlint:enable no_space_in_method_call
   }
 
   /// `with_item: test ['as' expr]`

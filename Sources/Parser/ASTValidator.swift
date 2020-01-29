@@ -3,7 +3,6 @@ import Core
 import Lexer
 
 // swiftlint:disable file_length
-// swiftlint:disable function_body_length
 
 // In CPython:
 // Python -> ast.c

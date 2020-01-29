@@ -34,6 +34,7 @@ extension Parser {
     let body = try self.suite()
     let end = body.last.end
 
+    // swiftlint:disable multiline_arguments
     return isAsync ?
       self.builder.asyncFunctionDefStmt(name: name, args: args, body: body,
                                         decorators: decorators, returns: returns,
@@ -41,6 +42,7 @@ extension Parser {
       self.builder.functionDefStmt(name: name, args: args, body: body,
                                    decorators: decorators, returns: returns,
                                    start: start, end: end)
+    // swiftlint:enable multiline_arguments
   }
 
   // MARK: - Class
