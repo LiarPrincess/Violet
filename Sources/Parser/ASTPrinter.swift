@@ -4,11 +4,8 @@ import Rapunzel
 public class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   public typealias ASTResult = Doc
-  public typealias ASTPayload = Void
   public typealias StatementResult = Doc
-  public typealias StatementPayload = Void
   public typealias ExpressionResult = Doc
-  public typealias ExpressionPayload = Void
 
   private static let indent = 2
   /// We will trim strings after certain number of characters.
@@ -24,7 +21,7 @@ public class ASTPrinter: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   public func visit(_ node: AST) -> Doc {
     // swiftlint:disable:next force_try
-    return try! node.accept(self, payload: ())
+    return try! node.accept(self)
   }
 
   public func visit(_ node: InteractiveAST) -> Doc {

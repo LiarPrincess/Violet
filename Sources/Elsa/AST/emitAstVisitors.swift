@@ -25,13 +25,12 @@ private func emitAstVisitors(inputFile: URL) {
   printVisitor(type: "Expression", classes: groups.expressionSubclasses)
 }
 
-// swiftlint:disable:next function_body_length
 private func printVisitor(type: String, classes: [ClassDef]) {
   print("// MARK: - \(type)")
   print()
 
   print("/// Visitor for AST nodes.")
-  print("public protocol \(type)Visitor: \(type)VisitorWithPayload {")
+  print("public protocol \(type)Visitor {")
   print("  /// Visit result.")
   print("  associatedtype \(type)Result")
   print()
@@ -57,18 +56,6 @@ private func printVisitor(type: String, classes: [ClassDef]) {
   for c in classes {
     let name = c.name
     print("  func visit(_ node: \(name), payload: \(type)Payload) throws -> \(type)Result")
-  }
-  print("}")
-  print()
-
-  print("// \(type)Visitor is also \(type)VisitorWithPayload, but with Void payload.")
-  print("extension \(type)Visitor {")
-  for c in classes {
-    let name = c.name
-    print()
-    print("  public func visit(_ node: \(name), payload: \(type)Payload) throws -> \(type)Result {")
-    print("    return try self.visit(node)")
-    print("  }")
   }
   print("}")
   print()

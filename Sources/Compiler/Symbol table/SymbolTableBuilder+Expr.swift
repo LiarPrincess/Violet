@@ -9,7 +9,7 @@ import Parser
 extension SymbolTableBuilder {
 
   internal func visit(_ node: Expression) throws {
-    try node.accept(self, payload: ())
+    try node.accept(self)
   }
 
   /// symtable_visit_expr(struct symtable *st, expr_ty e)

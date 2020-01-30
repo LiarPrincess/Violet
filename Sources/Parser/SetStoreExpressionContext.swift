@@ -20,7 +20,7 @@ internal class SetStoreExpressionContext: ExpressionVisitor {
 
   internal func visit(_ node: Expression) {
     // swiftlint:disable:next force_try
-    try! node.accept(self, payload: ())
+    try! node.accept(self)
   }
 
   internal func visit(_ node: Expression?) {

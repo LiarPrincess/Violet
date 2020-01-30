@@ -8,11 +8,8 @@ import Parser
 public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   public typealias ASTResult = Void
-  public typealias ASTPayload = Void
   public typealias StatementResult = Void
-  public typealias StatementPayload = Void
   public typealias ExpressionResult = Void
-  public typealias ExpressionPayload = Void
 
   /// Scope stack.
   /// Current scope is at the top, top scope is at the bottom.
@@ -41,7 +38,7 @@ public final class SymbolTableBuilder: ASTVisitor, StatementVisitor, ExpressionV
   public func visit(_ ast: AST) throws -> SymbolTable {
     self.enterScope(name: SymbolScopeNames.top, type: .module, node: ast)
 
-    try ast.accept(self, payload: ())
+    try ast.accept(self)
 
     assert(self.scopeStack.count == 1)
     let top = self.scopeStack[0]

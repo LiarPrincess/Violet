@@ -14,7 +14,7 @@ extension Compiler {
 
   internal func visit(_ node: Statement) throws {
     self.setAppendLocation(node)
-    try node.accept(self, payload: ())
+    try node.accept(self)
   }
 
   /// compiler_visit_stmt(struct compiler *c, stmt_ty s)

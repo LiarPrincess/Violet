@@ -21,17 +21,15 @@ internal class ASTValidatorPass:
   ASTVisitor, StatementVisitor, ExpressionVisitorWithPayload {
 
   internal typealias ASTResult = Void
-  internal typealias ASTPayload = Void
   internal typealias StatementResult = Void
-  internal typealias StatementPayload = Void
   internal typealias ExpressionResult = Void
-  /// Expected context.
+   /// Expected context.
   internal typealias ExpressionPayload = ExpressionContext
 
   // MARK: - AST
 
   internal func visitAST(_ node: AST) throws {
-    try node.accept(self, payload: ())
+    try node.accept(self)
   }
 
   /// int PyAST_Validate(mod_ty mod)
@@ -53,7 +51,7 @@ internal class ASTValidatorPass:
 
   /// validate_stmt(stmt_ty stmt)
   internal func visitStatement(_ node: Statement) throws {
-    try node.accept(self, payload: ())
+    try node.accept(self)
   }
 
   private func visitStatement(_ node: Statement?) throws {

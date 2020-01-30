@@ -31,7 +31,7 @@ extension ASTPrinter {
 
   public func visit(_ node: Expression) -> Doc {
     // swiftlint:disable:next force_try
-    return try! node.accept(self, payload: ())
+    return try! node.accept(self)
   }
 
   // MARK: - Bool expr

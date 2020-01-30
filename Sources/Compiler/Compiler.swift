@@ -10,11 +10,8 @@ import Bytecode
 public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   public typealias ASTResult = Void
-  public typealias ASTPayload = Void
   public typealias StatementResult = Void
-  public typealias StatementPayload = Void
   public typealias ExpressionResult = Void
-  public typealias ExpressionPayload = Void
 
   /// Program that we are compiling.
   private let ast: AST
@@ -122,7 +119,7 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   internal func visit(_ node: AST) throws {
     self.setAppendLocation(node)
-    try node.accept(self, payload: ())
+    try node.accept(self)
   }
 
   public func visit(_ node: InteractiveAST) throws {

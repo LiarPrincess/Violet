@@ -12,7 +12,7 @@ extension Compiler {
 
   internal func visit(_ node: Expression) throws {
     self.setAppendLocation(node)
-    try node.accept(self, payload: ())
+    try node.accept(self)
   }
 
   private func visit(_ node: Expression?) throws {

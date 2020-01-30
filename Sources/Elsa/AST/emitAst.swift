@@ -176,26 +176,38 @@ private func printVisitor<T: ProductType>(def: T) {
 
   if def.isAST || def .isStmt || def.isExpr {
     print("""
-  public func accept<V: \(prefix)VisitorWithPayload>(
-      _ visitor: V,
-      payload: V.\(prefix)Payload
-  ) throws -> V.\(prefix)Result {
-    trap("'accept' method should be overriden in subclass")
-  }
+      public func accept<V: \(prefix)Visitor>(
+          _ visitor: V
+      ) throws -> V.\(prefix)Result {
+        trap("'accept' method should be overriden in subclass")
+      }
 
-""")
+      public func accept<V: \(prefix)VisitorWithPayload>(
+          _ visitor: V,
+          payload: V.\(prefix)Payload
+      ) throws -> V.\(prefix)Result {
+        trap("'accept' method should be overriden in subclass")
+      }
+
+    """)
   }
 
   if def.isASTSubclass || def.isStmtSubclass || def.isExprSubclass {
     print("""
-  override public func accept<V: \(prefix)VisitorWithPayload>(
-      _ visitor: V,
-      payload: V.\(prefix)Payload
-  ) throws -> V.\(prefix)Result {
-    try visitor.visit(self, payload: payload)
-  }
+      override public func accept<V: \(prefix)Visitor>(
+          _ visitor: V
+      ) throws -> V.\(prefix)Result {
+        try visitor.visit(self)
+      }
 
-""")
+      override public func accept<V: \(prefix)VisitorWithPayload>(
+          _ visitor: V,
+          payload: V.\(prefix)Payload
+      ) throws -> V.\(prefix)Result {
+        try visitor.visit(self, payload: payload)
+      }
+
+    """)
   }
 }
 

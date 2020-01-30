@@ -9,7 +9,7 @@ import Parser
 extension SymbolTableBuilder {
 
   internal func visit(_ node: Statement) throws {
-    try node.accept(self, payload: ())
+    try node.accept(self)
   }
 
   internal func visit(_ node: Statement?) throws {

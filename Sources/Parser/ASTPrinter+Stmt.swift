@@ -23,7 +23,7 @@ extension ASTPrinter {
 
   public func visit(_ node: Statement) -> Doc {
     // swiftlint:disable:next force_try
-    return try! node.accept(self, payload: ())
+    return try! node.accept(self)
   }
 
   // MARK: - Function def stmt
