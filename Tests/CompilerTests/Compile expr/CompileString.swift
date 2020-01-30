@@ -17,7 +17,7 @@ class CompileStringTests: CompileTestCase {
 
   func test_bytes() {
     let data = Data([a, l, i, c, e])
-    let expr = self.expression(.bytes(data))
+    let expr = self.bytesExpr(value: data)
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "b'Alice'"),
@@ -33,7 +33,7 @@ class CompileStringTests: CompileTestCase {
   // MARK: - String - literal
 
   func test_stringLiteral() {
-    let expr = self.expression(.string(.literal("Alice")))
+    let expr = self.stringExpr(value: .literal("Alice"))
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "'Alice'"),
@@ -54,11 +54,12 @@ class CompileStringTests: CompileTestCase {
   /// 2 FORMAT_VALUE             0
   /// 4 RETURN_VALUE
   func test_formattedValue_withoutConversion_orFormat() {
-    let expr = self.expression(.string(.formattedValue(
-      self.identifierExpr("alice"),
+    let expr = self.stringExpr(value: .formattedValue(
+      self.identifierExpr(value: "alice"),
       conversion: nil,
-      spec: nil)
-    ))
+      spec: nil
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "alice"),
@@ -85,11 +86,11 @@ class CompileStringTests: CompileTestCase {
     ]
 
     for (conversion, str) in conversions {
-      let expr = self.expression(.string(.formattedValue(
-        self.identifierExpr("alice"),
+      let expr = self.stringExpr(value: .formattedValue(
+        self.identifierExpr(value: "alice"),
         conversion: conversion,
         spec: nil)
-      ))
+      )
 
       let expected: [EmittedInstruction] = [
         .init(.loadName, "alice"),
@@ -111,11 +112,11 @@ class CompileStringTests: CompileTestCase {
   ///  4 FORMAT_VALUE             4 (with format)
   ///  6 RETURN_VALUE
   func test_formattedValue_withFormat() {
-    let expr = self.expression(.string(.formattedValue(
-      self.identifierExpr("alice"),
+    let expr = self.stringExpr(value: .formattedValue(
+      self.identifierExpr(value: "alice"),
       conversion: nil,
       spec: "wonderland")
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "alice"),
@@ -137,11 +138,11 @@ class CompileStringTests: CompileTestCase {
   /// 4 FORMAT_VALUE             5 (str, with format)
   /// 6 RETURN_VALUE
   func test_formattedValue_withConvarsion_andFormat() {
-    let expr = self.expression(.string(.formattedValue(
-      self.identifierExpr("alice"),
+    let expr = self.stringExpr(value: .formattedValue(
+      self.identifierExpr(value: "alice"),
       conversion: .str,
       spec: "wonderland")
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "alice"),
@@ -167,13 +168,13 @@ class CompileStringTests: CompileTestCase {
   ///  8 BUILD_STRING             2
   /// 10 RETURN_VALUE
   func test_joinedString() {
-    let expr = self.expression(.string(.joined([
+    let expr = self.stringExpr(value: .joined([
       .literal("alice "),
       .formattedValue(
-        self.identifierExpr("in"),
+        self.identifierExpr(value: "in"),
         conversion: .str,
         spec: "wonderland")
-    ])))
+    ]))
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "'alice '"),

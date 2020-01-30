@@ -28,8 +28,8 @@ class CompileOperators: CompileTestCase {
     for (op, emittedOp) in operators {
       let msg = "for '\(op)'"
 
-      let right = self.identifierExpr("rapunzel")
-      let expr = self.expression(.unaryOp(op, right: right))
+      let right = self.identifierExpr(value: "rapunzel")
+      let expr = self.unaryOpExpr(op: op, right: right)
 
       let expected: [EmittedInstruction] = [
         .init(.loadName, "rapunzel"),
@@ -51,12 +51,11 @@ class CompileOperators: CompileTestCase {
   /// 4 UNARY_POSITIVE
   /// 6 RETURN_VALUE
   func test_unary_multiple() {
-    let right = self.identifierExpr("rapunzel")
+    let right = self.identifierExpr(value: "rapunzel")
 
-    let expr = self.expression(
-      .unaryOp(.plus,
-               right: self.expression(.unaryOp(.minus, right: right))
-      )
+    let expr = self.unaryOpExpr(
+      op: .plus,
+      right: self.unaryOpExpr(op: .minus, right: right)
     )
 
     let expected: [EmittedInstruction] = [
@@ -101,9 +100,9 @@ class CompileOperators: CompileTestCase {
     for (op, emittedOp) in operators {
       let msg = "for '\(op)'"
 
-      let left = self.identifierExpr("rapunzel")
-      let right = self.identifierExpr("cassandra")
-      let expr = self.expression(.binaryOp(op, left: left, right: right))
+      let left = self.identifierExpr(value: "rapunzel")
+      let right = self.identifierExpr(value: "cassandra")
+      let expr = self.binaryOpExpr(op: op, left: left, right: right)
 
       let expected: [EmittedInstruction] = [
         .init(.loadName, "rapunzel"),
@@ -128,12 +127,12 @@ class CompileOperators: CompileTestCase {
   ///  8 BINARY_SUBTRACT
   /// 10 RETURN_VALUE
   func test_binary_multiple() {
-    let left   = self.identifierExpr("eugene")
-    let middle = self.identifierExpr("rapunzel")
-    let right  = self.identifierExpr("cassandra")
+    let left   = self.identifierExpr(value: "eugene")
+    let middle = self.identifierExpr(value: "rapunzel")
+    let right  = self.identifierExpr(value: "cassandra")
 
-    let add  = self.expression(.binaryOp(.add, left: left, right: middle))
-    let expr = self.expression(.binaryOp(.sub, left: add, right: right))
+    let add  = self.binaryOpExpr(op: .add, left: left, right: middle)
+    let expr = self.binaryOpExpr(op: .sub, left: add, right: right)
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "eugene"),
@@ -160,9 +159,9 @@ class CompileOperators: CompileTestCase {
   /// 4 LOAD_NAME                1 (cassandra)
   /// 6 RETURN_VALUE
   func test_boolean_and() {
-    let left = self.identifierExpr("rapunzel")
-    let right = self.identifierExpr("cassandra")
-    let expr = self.expression(.boolOp(.and, left: left, right: right))
+    let left = self.identifierExpr(value: "rapunzel")
+    let right = self.identifierExpr(value: "cassandra")
+    let expr = self.boolOpExpr(op: .and, left: left, right: right)
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "rapunzel"),
@@ -185,9 +184,9 @@ class CompileOperators: CompileTestCase {
   /// 4 LOAD_NAME                1 (cassandra)
   /// 6 RETURN_VALUE
   func test_boolean_or() {
-    let left = self.identifierExpr("rapunzel")
-    let right = self.identifierExpr("cassandra")
-    let expr = self.expression(.boolOp(.or, left: left, right: right))
+    let left = self.identifierExpr(value: "rapunzel")
+    let right = self.identifierExpr(value: "cassandra")
+    let expr = self.boolOpExpr(op: .or, left: left, right: right)
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "rapunzel"),
@@ -212,12 +211,12 @@ class CompileOperators: CompileTestCase {
   ///  8 LOAD_NAME                2 (eugene)
   /// 10 RETURN_VALUE
   func test_boolean_multiple() {
-    let left   = self.identifierExpr("rapunzel")
-    let middle = self.identifierExpr("cassandra")
-    let right  = self.identifierExpr("eugene")
+    let left   = self.identifierExpr(value: "rapunzel")
+    let middle = self.identifierExpr(value: "cassandra")
+    let right  = self.identifierExpr(value: "eugene")
 
-    let and  = self.expression(.boolOp(.and, left: left, right: middle))
-    let expr = self.expression(.boolOp(.or, left: and, right: right))
+    let and  = self.boolOpExpr(op: .and, left: left, right: middle)
+    let expr = self.boolOpExpr(op: .or, left: and, right: right)
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "rapunzel"),
@@ -260,13 +259,12 @@ class CompileOperators: CompileTestCase {
     for (op, emittedOp) in operators {
       let msg = "for '\(op)'"
 
-      let left = self.identifierExpr("rapunzel")
-      let right = self.identifierExpr("cassandra")
-      let expr = self.expression(
-        .compare(
-          left: left,
-          elements: NonEmptyArray(first: ComparisonElement(op: op, right: right))
-        )
+      let left = self.identifierExpr(value: "rapunzel")
+      let right = self.identifierExpr(value: "cassandra")
+
+      let expr = self.compareExpr(
+        left: left,
+        elements: [ComparisonElement(op: op, right: right)]
       )
 
       let expected: [EmittedInstruction] = [
@@ -304,18 +302,16 @@ class CompileOperators: CompileTestCase {
   /// 28 LOAD_CONST               0 (None)
   /// 30 RETURN_VALUE
   func test_compare_triple() {
-    let left   = self.identifierExpr("eugene")
-    let middle = self.identifierExpr("rapunzel")
-    let right  = self.identifierExpr("cassandra")
+    let left   = self.identifierExpr(value: "eugene")
+    let middle = self.identifierExpr(value: "rapunzel")
+    let right  = self.identifierExpr(value: "cassandra")
 
-    let expr = self.expression(
-      .compare(
-        left: left,
-        elements: NonEmptyArray(
-          first: ComparisonElement(op: .less, right: middle),
-          rest: [ComparisonElement(op: .less, right: right)]
-        )
-      )
+    let expr = self.compareExpr(
+      left: left,
+      elements: [
+        ComparisonElement(op: .less, right: middle),
+        ComparisonElement(op: .less, right: right)
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -366,22 +362,18 @@ class CompileOperators: CompileTestCase {
   /// 38 LOAD_CONST               0 (None)
   /// 40 RETURN_VALUE
   func test_compare_quad() {
-    let element1 = self.identifierExpr("eugene")
-    let element2 = self.identifierExpr("pascal")
-    let element3 = self.identifierExpr("rapunzel")
-    let element4 = self.identifierExpr("cassandra")
+    let element1 = self.identifierExpr(value: "eugene")
+    let element2 = self.identifierExpr(value: "pascal")
+    let element3 = self.identifierExpr(value: "rapunzel")
+    let element4 = self.identifierExpr(value: "cassandra")
 
-    let expr = self.expression(
-      .compare(
-        left: element1,
-        elements: NonEmptyArray(
-          first: ComparisonElement(op: .less, right: element2),
-          rest: [
-            ComparisonElement(op: .less, right: element3),
-            ComparisonElement(op: .less, right: element4)
-          ]
-        )
-      )
+    let expr = self.compareExpr(
+      left: element1,
+      elements: [
+        ComparisonElement(op: .less, right: element2),
+        ComparisonElement(op: .less, right: element3),
+        ComparisonElement(op: .less, right: element4)
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -417,13 +409,14 @@ class CompileOperators: CompileTestCase {
   /// 4 COMPARE_OP               0 (<)
   /// 6 RETURN_VALUE
   func test_compare_const() {
-    let left = self.expression(.int(BigInt(1)))
-    let right = self.expression(.int(BigInt(2)))
-    let expr = self.expression(
-      .compare(
-        left: left,
-        elements: NonEmptyArray(first: ComparisonElement(op: .less, right: right))
-      )
+    let left = self.intExpr(value: 1)
+    let right = self.intExpr(value: 2)
+
+    let expr = self.compareExpr(
+      left: left,
+      elements: [
+        ComparisonElement(op: .less, right: right)
+      ]
     )
 
     let expected: [EmittedInstruction] = [

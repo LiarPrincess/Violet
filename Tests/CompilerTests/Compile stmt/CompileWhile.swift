@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileWhile: CompileTestCase {
 
   /// while frollo: quasimodo
@@ -19,9 +19,9 @@ class CompileWhile: CompileTestCase {
   /// 14 LOAD_CONST               0 (None)
   /// 16 RETURN_VALUE
   func test_simple() {
-    let stmt = self.while(
-      test: self.identifierExpr("frollo"),
-      body: [self.statement(expr: .identifier("quasimodo"))],
+    let stmt = self.whileStmt(
+      test: self.identifierExpr(value: "frollo"),
+      body: [self.identifierStmt(value: "quasimodo")],
       orElse: []
     )
 
@@ -58,10 +58,10 @@ class CompileWhile: CompileTestCase {
   /// 18 LOAD_CONST               0 (None)
   /// 20 RETURN_VALUE
   func test_withElse() {
-    let stmt = self.while(
-      test: self.identifierExpr("frollo"),
-      body:   [self.statement(expr: .identifier("quasimodo"))],
-      orElse: [self.statement(expr: .identifier("esmeralda"))]
+    let stmt = self.whileStmt(
+      test: self.identifierExpr(value: "frollo"),
+      body:   [self.identifierStmt(value: "quasimodo")],
+      orElse: [self.identifierStmt(value: "esmeralda")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -99,11 +99,11 @@ class CompileWhile: CompileTestCase {
   /// 16 LOAD_CONST               0 (None)
   /// 18 RETURN_VALUE
   func test_continue() {
-    let stmt = self.while(
-      test: self.identifierExpr("frollo"),
+    let stmt = self.whileStmt(
+      test: self.identifierExpr(value: "frollo"),
       body: [
-        self.statement(.continue),
-        self.statement(expr: .identifier("quasimodo"))
+        self.continueStmt(),
+        self.identifierStmt(value: "quasimodo")
       ],
       orElse: []
     )
@@ -142,11 +142,11 @@ class CompileWhile: CompileTestCase {
   /// 16 LOAD_CONST               0 (None)
   /// 18 RETURN_VALUE
   func test_break() {
-    let stmt = self.while(
-      test: self.identifierExpr("frollo"),
+    let stmt = self.whileStmt(
+      test: self.identifierExpr(value: "frollo"),
       body: [
-        self.statement(.break),
-        self.statement(expr: .identifier("quasimodo"))
+        self.breakStmt(),
+        self.identifierStmt(value: "quasimodo")
       ],
       orElse: []
     )

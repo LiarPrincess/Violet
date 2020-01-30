@@ -232,8 +232,7 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
   private func enterScope<N: ASTNode>(node: N, type: CodeObjectType) {
     guard let scope = self.symbolTable.scopeByNode[node] else {
-      fatalError(
-        "[BUG] Compiler: Entering scope that is not present in symbol table.")
+      trap("[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
 
     assert(self.isMatchingScopeType(scope.type, to: type))

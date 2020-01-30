@@ -17,10 +17,10 @@ class CompileCall: CompileTestCase {
   /// 2 CALL_FUNCTION            0
   /// 4 RETURN_VALUE
   func test_noArgs() {
-    let expr = self.expression(.call(
-      function: self.identifierExpr("cook"),
+    let expr = self.callExpr(
+      function: self.identifierExpr(value: "cook"),
       args: [],
-      keywords: [])
+      keywords: []
     )
 
     let expected: [EmittedInstruction] = [
@@ -45,13 +45,13 @@ class CompileCall: CompileTestCase {
   /// 6 CALL_FUNCTION            2
   /// 8 RETURN_VALUE
   func test_args() {
-    let expr = self.expression(.call(
-      function: self.identifierExpr("cook"),
+    let expr = self.callExpr(
+      function: self.identifierExpr(value: "cook"),
       args: [
-        self.identifierExpr("zucchini"),
-        self.identifierExpr("tomato")
+        self.identifierExpr(value: "zucchini"),
+        self.identifierExpr(value: "tomato")
       ],
-      keywords: [])
+      keywords: []
     )
 
     let expected: [EmittedInstruction] = [
@@ -78,15 +78,15 @@ class CompileCall: CompileTestCase {
   /// 10 CALL_FUNCTION_EX         0
   /// 12 RETURN_VALUE
   func test_args_unpack() {
-    let expr = self.expression(.call(
-      function: self.identifierExpr("cook"),
+    let expr = self.callExpr(
+      function: self.identifierExpr(value: "cook"),
       args: [
-        self.identifierExpr("zucchini"),
-        self.expression(.starred(
-          self.identifierExpr("tomato")
-        ))
+        self.identifierExpr(value: "zucchini"),
+        self.starredExpr(
+          expression: self.identifierExpr(value: "tomato")
+        )
       ],
-      keywords: [])
+      keywords: []
     )
 
     let expected: [EmittedInstruction] = [
@@ -118,19 +118,19 @@ class CompileCall: CompileTestCase {
   /// 16 CALL_FUNCTION_EX         0
   /// 18 RETURN_VALUE
   func test_args_unpack_multiple() {
-    let expr = self.expression(.call(
-      function: self.identifierExpr("cook"),
+    let expr = self.callExpr(
+      function: self.identifierExpr(value: "cook"),
       args: [
-        self.identifierExpr("zucchini"),
-        self.expression(.starred(
-          self.identifierExpr("tomato")
-        )),
-        self.expression(.starred(
-          self.identifierExpr("pepper")
-        )),
-        self.identifierExpr("eggplant")
+        self.identifierExpr(value: "zucchini"),
+        self.starredExpr(
+          expression: self.identifierExpr(value: "tomato")
+        ),
+        self.starredExpr(
+          expression: self.identifierExpr(value: "pepper")
+        ),
+        self.identifierExpr(value: "eggplant")
       ],
-      keywords: [])
+      keywords: []
     )
 
     let expected: [EmittedInstruction] = [
@@ -163,13 +163,13 @@ class CompileCall: CompileTestCase {
   ///  8 CALL_FUNCTION_KW         2
   /// 10 RETURN_VALUE
   func test_keyword() {
-    let expr = self.expression(.call(
-      function: self.identifierExpr("cook"),
+    let expr = self.callExpr(
+      function: self.identifierExpr(value: "cook"),
       args: [],
       keywords: [
-        self.keyword(kind: .named("zucchini"), value: self.identifierExpr("tomato")),
-        self.keyword(kind: .named("pepper"),   value: self.identifierExpr("eggplant"))
-      ])
+        self.keyword(kind: .named("zucchini"), value: self.identifierExpr(value: "tomato")),
+        self.keyword(kind: .named("pepper"),   value: self.identifierExpr(value: "eggplant"))
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -200,14 +200,14 @@ class CompileCall: CompileTestCase {
   /// 16 CALL_FUNCTION_EX         1
   /// 18 RETURN_VALUE
   func test_keyword_unpack() {
-    let expr = self.expression(.call(
-      function: self.identifierExpr("cook"),
+    let expr = self.callExpr(
+      function: self.identifierExpr(value: "cook"),
       args: [],
       keywords: [
-        self.keyword(kind: .named("zucchini"), value: self.identifierExpr("tomato")),
-        self.keyword(kind: .named("salt"),     value: self.identifierExpr("pepper")),
-        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr("eggplant"))
-      ])
+        self.keyword(kind: .named("zucchini"), value: self.identifierExpr(value: "tomato")),
+        self.keyword(kind: .named("salt"),     value: self.identifierExpr(value: "pepper")),
+        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr(value: "eggplant"))
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -245,15 +245,15 @@ class CompileCall: CompileTestCase {
   /// 22 CALL_FUNCTION_EX         1
   /// 24 RETURN_VALUE
   func test_keyword_unpack_multiple() {
-    let expr = self.expression(.call(
-      function: self.identifierExpr("cook"),
+    let expr = self.callExpr(
+      function: self.identifierExpr(value: "cook"),
       args: [],
       keywords: [
-        self.keyword(kind: .named("zucchini"), value: self.identifierExpr("tomato")),
-        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr("pepper")),
-        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr("eggplant")),
-        self.keyword(kind: .named("salt"),     value: self.identifierExpr("onion"))
-      ])
+        self.keyword(kind: .named("zucchini"), value: self.identifierExpr(value: "tomato")),
+        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr(value: "pepper")),
+        self.keyword(kind: .dictionaryUnpack,  value: self.identifierExpr(value: "eggplant")),
+        self.keyword(kind: .named("salt"),     value: self.identifierExpr(value: "onion"))
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -295,18 +295,18 @@ class CompileCall: CompileTestCase {
   /// 20 CALL_FUNCTION_EX         1
   /// 22 RETURN_VALUE
   func test_all() {
-    let expr = self.expression(.call(
-      function: self.identifierExpr("cook"),
+    let expr = self.callExpr(
+      function: self.identifierExpr(value: "cook"),
       args: [
-        self.identifierExpr("zucchini"),
-        self.expression(.starred(
-          self.identifierExpr("tomato")
-        ))
+        self.identifierExpr(value: "zucchini"),
+        self.starredExpr(
+          expression: self.identifierExpr(value: "tomato")
+        )
       ],
       keywords: [
-        self.keyword(kind: .named("pepper"),  value: self.identifierExpr("salt")),
-        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr("eggplant"))
-      ])
+        self.keyword(kind: .named("pepper"),  value: self.identifierExpr(value: "salt")),
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr(value: "eggplant"))
+      ]
     )
 
     let expected: [EmittedInstruction] = [

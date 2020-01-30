@@ -25,11 +25,11 @@ class CompileIfExpr: CompileTestCase {
   /// 16 LOAD_CONST               0 (None)
   /// 18 RETURN_VALUE
   func test_constants() {
-    let expr = self.expression(.ifExpression(
-      test:   self.expression(.string(.literal("touched"))),
-      body:   self.expression(.string(.literal("genie"))),
-      orElse: self.expression(.string(.literal("lamp")))
-    ))
+    let expr = self.ifExpr(
+      test:   self.stringExpr(value: .literal("touched")),
+      body:   self.stringExpr(value: .literal("genie")),
+      orElse: self.stringExpr(value: .literal("lamp"))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "'touched'"),
@@ -61,11 +61,11 @@ class CompileIfExpr: CompileTestCase {
   /// 16 LOAD_CONST               0 (None)
   /// 18 RETURN_VALUE
   func test_withIdentifier() {
-    let expr = self.expression(.ifExpression(
-      test:   self.identifierExpr("touched"),
-      body:   self.identifierExpr("genie"),
-      orElse: self.identifierExpr("lamp")
-    ))
+    let expr = self.ifExpr(
+      test:   self.identifierExpr(value: "touched"),
+      body:   self.identifierExpr(value: "genie"),
+      orElse: self.identifierExpr(value: "lamp")
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "touched"),
@@ -100,15 +100,15 @@ class CompileIfExpr: CompileTestCase {
   /// 24 LOAD_CONST               0 (None)
   /// 26 RETURN_VALUE
   func test_nested() {
-    let expr = self.expression(.ifExpression(
-      test:   self.identifierExpr("jasmine"),
-      body:   self.identifierExpr("aladdin"),
-      orElse: self.expression(.ifExpression(
-        test: self.identifierExpr("prince"),
-        body: self.identifierExpr("ali"),
-        orElse: self.identifierExpr("thief")
-      ))
-    ))
+    let expr = self.ifExpr(
+      test:   self.identifierExpr(value: "jasmine"),
+      body:   self.identifierExpr(value: "aladdin"),
+      orElse: self.ifExpr(
+        test: self.identifierExpr(value: "prince"),
+        body: self.identifierExpr(value: "ali"),
+        orElse: self.identifierExpr(value: "thief")
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "jasmine"),

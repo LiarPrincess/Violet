@@ -7,7 +7,7 @@ import Bytecode
 // swiftlint:disable file_length
 // swiftlint:disable function_body_length
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileTry: CompileTestCase {
 
   // MARK: - Only finally
@@ -26,11 +26,11 @@ class CompileTry: CompileTestCase {
   /// 16 LOAD_CONST               0 (None)
   /// 18 RETURN_VALUE
   func test_finally() {
-    let stmt = self.try(
-      body: self.identifierExpr("ping"),
+    let stmt = self.tryStmt(
+      body: [self.identifierStmt(value: "ping")],
       handlers: [],
       orElse: [],
-      finalBody: [self.identifierExpr("mulan")]
+      finally: [self.identifierStmt(value: "mulan")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -73,16 +73,16 @@ class CompileTry: CompileTestCase {
   /// 26 LOAD_CONST               0 (None)
   /// 28 RETURN_VALUE
   func test_except() {
-    let stmt = self.try(
-      body: self.identifierExpr("mulan"),
+    let stmt = self.tryStmt(
+      body: [self.identifierStmt(value: "mulan")],
       handlers: [
         self.exceptHandler(
           kind: .default,
-          body: self.statement(expr: .identifier("ping"))
+          body: [self.identifierStmt(value: "ping")]
         )
       ],
       orElse: [],
-      finalBody: []
+      finally: []
     )
 
     let expected: [EmittedInstruction] = [
@@ -132,19 +132,19 @@ class CompileTry: CompileTestCase {
   /// 34 LOAD_CONST               0 (None)
   /// 36 RETURN_VALUE
   func test_except_type() {
-    let stmt = self.try(
-      body: self.identifierExpr("mulan"),
+    let stmt = self.tryStmt(
+      body: [self.identifierStmt(value: "mulan")],
       handlers: [
         self.exceptHandler(
           kind: .typed(
-            type: self.identifierExpr("soldier"),
+            type: self.identifierExpr(value: "soldier"),
             asName: nil
           ),
-          body: self.statement(expr: .identifier("ping"))
+          body: [self.identifierStmt(value: "ping")]
         )
       ],
       orElse: [],
-      finalBody: []
+      finally: []
     )
 
     let expected: [EmittedInstruction] = [
@@ -205,19 +205,19 @@ class CompileTry: CompileTestCase {
   /// 48 LOAD_CONST               0 (None)
   /// 50 RETURN_VALUE
   func test_except_type_withName() {
-    let stmt = self.try(
-      body: self.identifierExpr("mulan"),
+    let stmt = self.tryStmt(
+      body: [self.identifierStmt(value: "mulan")],
       handlers: [
         self.exceptHandler(
           kind: .typed(
-            type: self.identifierExpr("disguise"),
+            type: self.identifierExpr(value: "disguise"),
             asName: "soldier"
           ),
-          body: self.statement(expr: .identifier("ping"))
+          body: [self.identifierStmt(value: "ping")]
         )
       ],
       orElse: [],
-      finalBody: []
+      finally: []
     )
 
     let expected: [EmittedInstruction] = [
@@ -286,23 +286,23 @@ class CompileTry: CompileTestCase {
   /// 48 LOAD_CONST               0 (None)
   /// 50 RETURN_VALUE
   func test_except_multiple() {
-    let stmt = self.try(
-      body: self.identifierExpr("mulan"),
+    let stmt = self.tryStmt(
+      body: [self.identifierStmt(value: "mulan")],
       handlers: [
         self.exceptHandler(
           kind: .typed(
-            type: self.identifierExpr("soldier"),
+            type: self.identifierExpr(value: "soldier"),
             asName: nil
           ),
-          body: self.statement(expr: .identifier("ping"))
+          body: [self.identifierStmt(value: "ping")]
         ),
         self.exceptHandler(
           kind: .default,
-          body: self.statement(expr: .identifier("pong"))
+          body: [self.identifierStmt(value: "pong")]
         )
       ],
       orElse: [],
-      finalBody: []
+      finally: []
     )
 
     let expected: [EmittedInstruction] = [
@@ -362,16 +362,16 @@ class CompileTry: CompileTestCase {
   /// 30 LOAD_CONST               0 (None)
   /// 32 RETURN_VALUE
   func test_except_else() {
-    let stmt = self.try(
-      body: self.identifierExpr("mulan"),
+    let stmt = self.tryStmt(
+      body: [self.identifierStmt(value: "mulan")],
       handlers: [
         self.exceptHandler(
           kind: .default,
-          body: self.statement(expr: .identifier("ping"))
+          body: [self.identifierStmt(value: "ping")]
         )
       ],
-      orElse: [self.identifierExpr("faMulan")],
-      finalBody: []
+      orElse: [self.identifierStmt(value: "faMulan")],
+      finally: []
     )
 
     let expected: [EmittedInstruction] = [
@@ -426,16 +426,16 @@ class CompileTry: CompileTestCase {
   /// 38 LOAD_CONST               0 (None)
   /// 40 RETURN_VALUE
   func test_except_finally() {
-    let stmt = self.try(
-      body: self.identifierExpr("mulan"),
+    let stmt = self.tryStmt(
+      body: [self.identifierStmt(value: "mulan")],
       handlers: [
         self.exceptHandler(
           kind: .default,
-          body: self.statement(expr: .identifier("ping"))
+          body: [self.identifierStmt(value: "ping")]
         )
       ],
       orElse: [],
-      finalBody: [self.identifierExpr("faMulan")]
+      finally: [self.identifierStmt(value: "faMulan")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -497,16 +497,16 @@ class CompileTry: CompileTestCase {
   /// 42 LOAD_CONST               0 (None)
   /// 44 RETURN_VALUE
   func test_except_else_finally() {
-    let stmt = self.try(
-      body: self.identifierExpr("mulan"),
+    let stmt = self.tryStmt(
+      body: [self.identifierStmt(value: "mulan")],
       handlers: [
         self.exceptHandler(
           kind: .default,
-          body: self.statement(expr: .identifier("ping"))
+          body: [self.identifierStmt(value: "ping")]
         )
       ],
-      orElse: [self.identifierExpr("pong")],
-      finalBody: [self.identifierExpr("faMulan")]
+      orElse: [self.identifierStmt(value: "pong")],
+      finally: [self.identifierStmt(value: "faMulan")]
     )
 
     let expected: [EmittedInstruction] = [

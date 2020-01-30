@@ -6,7 +6,7 @@ import Bytecode
 
 // swiftlint:disable file_length
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileFunctionDef: CompileTestCase {
 
   // MARK: - No arguments
@@ -25,10 +25,10 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_noArguments() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -77,11 +77,11 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_noArguments_return() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(),
-      body: [self.statement(expr: .identifier("ratatouille"))],
-      returns: self.identifierExpr("Dish")
+      body: [self.identifierStmt(value: "ratatouille")],
+      returns: self.identifierExpr(value: "Dish")
     )
 
     let expected: [EmittedInstruction] = [
@@ -130,12 +130,12 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_positional() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
-        args: [self.arg("zucchini")]
+        args: [self.arg(name: "zucchini")]
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -182,14 +182,14 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_positional_withType() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
         args: [
-          self.arg("zucchini", annotation: self.identifierExpr("Vegetable"))
+          self.arg(name: "zucchini", annotation: self.identifierExpr(value: "Vegetable"))
         ]
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -237,13 +237,13 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_positional_default() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
-        args: [self.arg("zucchini")],
-        defaults: [self.expression(.int(BigInt(1)))]
+        args: [self.arg(name: "zucchini")],
+        defaults: [self.intExpr(value: 1)]
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -289,12 +289,12 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_positional_multiple() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
-        args: [self.arg("zucchini"), self.arg("tomato")]
+        args: [self.arg(name: "zucchini"), self.arg(name: "tomato")]
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -339,13 +339,13 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_positional_default_afterRequired() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
-        args: [self.arg("zucchini"), self.arg("tomato")],
-        defaults: [self.expression(.int(BigInt(1)))]
+        args: [self.arg(name: "zucchini"), self.arg(name: "tomato")],
+        defaults: [self.intExpr(value: 1)]
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -393,12 +393,12 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_varargs() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
-        vararg: .named(self.arg("zucchini"))
+        vararg: .named(self.arg(name: "zucchini"))
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -445,14 +445,14 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_varargs_keywordOnly_withDefault() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
-        vararg: .named(self.arg("zucchini")),
-        kwOnlyArgs: [self.arg("tomato")],
-        kwOnlyDefaults: [self.expression(.int(BigInt(1)))]
+        vararg: .named(self.arg(name: "zucchini")),
+        kwOnlyArgs: [self.arg(name: "tomato")],
+        kwOnlyDefaults: [self.intExpr(value: 1)]
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -499,14 +499,14 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_varargsUnnamed() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
         vararg: .unnamed,
-        kwOnlyArgs: [self.arg("zucchini")],
-        kwOnlyDefaults: [self.expression(.none)] // default
+        kwOnlyArgs: [self.arg(name: "zucchini")],
+        kwOnlyDefaults: [self.noneExpr()] // default
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -552,12 +552,12 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_kwargs() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
-        kwarg: self.arg("zucchini")
+        kwarg: self.arg(name: "zucchini")
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -603,16 +603,16 @@ class CompileFunctionDef: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_all() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "cook",
       args: self.arguments(
-        args: [self.arg("zucchini")],
-        vararg: .named(self.arg("tomato")),
-        kwOnlyArgs: [self.arg("pepper")],
-        kwOnlyDefaults: [self.expression(.none)], // default
-        kwarg: self.arg("eggplant")
+        args: [self.arg(name: "zucchini")],
+        vararg: .named(self.arg(name: "tomato")),
+        kwOnlyArgs: [self.arg(name: "pepper")],
+        kwOnlyDefaults: [self.noneExpr()], // default
+        kwarg: self.arg(name: "eggplant")
       ),
-      body: [self.statement(expr: .identifier("ratatouille"))]
+      body: [self.identifierStmt(value: "ratatouille")]
     )
 
     let expected: [EmittedInstruction] = [

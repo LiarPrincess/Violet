@@ -13,10 +13,10 @@ class CompileAttribute: CompileTestCase {
   /// 2 LOAD_ATTR                1 (notre_dame)
   /// 4 RETURN_VALUE
   func test_single() {
-    let expr = self.expression(.attribute(
-      self.identifierExpr("paris"),
+    let expr = self.attributeExpr(
+      object: self.identifierExpr(value: "paris"),
       name: "notre_dame"
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
@@ -37,13 +37,13 @@ class CompileAttribute: CompileTestCase {
   /// 4 LOAD_ATTR                2 (bell)
   /// 6 RETURN_VALUE
   func test_nested() {
-    let expr = self.expression(.attribute(
-      self.expression(.attribute(
-        self.identifierExpr("paris"),
+    let expr = self.attributeExpr(
+      object: self.attributeExpr(
+        object: self.identifierExpr(value: "paris"),
         name: "notre_dame"
-      )),
+      ),
       name: "bell"
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),

@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileAugAssign: CompileTestCase {
 
   /// prince += beast
@@ -35,10 +35,10 @@ class CompileAugAssign: CompileTestCase {
     for (op, emittedOp) in operators {
       let msg = "for '\(op)'"
 
-      let stmt = self.augAssign(
-        target: self.identifierExpr("prince"),
+      let stmt = self.augAssignStmt(
+        target: self.identifierExpr(value: "prince", context: .store),
         op: op,
-        value: self.identifierExpr("beast")
+        value: self.identifierExpr(value: "beast")
       )
 
       let expected: [EmittedInstruction] = [
@@ -70,16 +70,17 @@ class CompileAugAssign: CompileTestCase {
   /// 16 LOAD_CONST               0 (None)
   /// 18 RETURN_VALUE
   func test_attribute() {
-    let stmt = self.augAssign(
-      target: self.expression(.attribute(
-        self.identifierExpr("pretty"),
-        name: "prince"
-      )),
+    let stmt = self.augAssignStmt(
+      target: self.attributeExpr(
+        object: self.identifierExpr(value: "pretty"),
+        name: "prince",
+        context: .store
+      ),
       op: .add,
-      value: self.expression(.attribute(
-        self.identifierExpr("hairy"),
+      value: self.attributeExpr(
+        object: self.identifierExpr(value: "hairy"),
         name: "beast"
-      ))
+      )
     )
 
     let expected: [EmittedInstruction] = [
@@ -116,20 +117,21 @@ class CompileAugAssign: CompileTestCase {
   /// 20 LOAD_CONST               0 (None)
   /// 22 RETURN_VALUE
   func test_subscript() {
-    let stmt = self.augAssign(
-      target: self.expression(.subscript(
-        self.identifierExpr("castle"),
-          slice: self.slice(.index(
-            self.identifierExpr("inhabitant")
-          ))
-        )),
+    let stmt = self.augAssignStmt(
+      target: self.subscriptExpr(
+        object: self.identifierExpr(value: "castle"),
+        slice: self.slice(
+          kind: .index(self.identifierExpr(value: "inhabitant"))
+        ),
+        context: .store
+      ),
       op: .add,
-      value: self.expression(.subscript(
-        self.identifierExpr("items"),
-        slice: self.slice(.index(
-          self.identifierExpr("random")
-        ))
-      ))
+      value: self.subscriptExpr(
+        object: self.identifierExpr(value: "items"),
+        slice: self.slice(
+          kind: .index(self.identifierExpr(value: "random"))
+        )
+      )
     )
 
     let expected: [EmittedInstruction] = [

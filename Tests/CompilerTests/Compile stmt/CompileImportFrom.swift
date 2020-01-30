@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileImportFrom: CompileTestCase {
 
   // MARK: - Module
@@ -20,7 +20,7 @@ class CompileImportFrom: CompileTestCase {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module() {
-    let stmt = self.importFrom(
+    let stmt = self.importFromStmt(
       moduleName: "Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: nil)
@@ -56,7 +56,7 @@ class CompileImportFrom: CompileTestCase {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module_withAlias() {
-    let stmt = self.importFrom(
+    let stmt = self.importFromStmt(
       moduleName: "Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: "Daughter")
@@ -95,7 +95,7 @@ class CompileImportFrom: CompileTestCase {
   /// 16 LOAD_CONST               2 (None)
   /// 18 RETURN_VALUE
   func test_module_multiple() {
-    let stmt = self.importFrom(
+    let stmt = self.importFromStmt(
       moduleName: "Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: "Daughter"),
@@ -134,7 +134,7 @@ class CompileImportFrom: CompileTestCase {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module_nested() {
-    let stmt = self.importFrom(
+    let stmt = self.importFromStmt(
       moduleName: "Disnep.Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: nil)
@@ -173,7 +173,7 @@ class CompileImportFrom: CompileTestCase {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_module_importAll() {
-    let stmt = self.importFromStar(
+    let stmt = self.importFromStarStmt(
       moduleName: "Tangled",
       level: 0
     )
@@ -207,7 +207,7 @@ class CompileImportFrom: CompileTestCase {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_dir() {
-    let stmt = self.importFrom(
+    let stmt = self.importFromStmt(
       moduleName: nil,
       names: [
         self.alias(name: "Rapunzel", asName: nil)
@@ -243,7 +243,7 @@ class CompileImportFrom: CompileTestCase {
   /// 12 LOAD_CONST               2 (None)
   /// 14 RETURN_VALUE
   func test_dotModule() {
-    let stmt = self.importFrom(
+    let stmt = self.importFromStmt(
       moduleName: "Tangled",
       names: [
         self.alias(name: "Rapunzel", asName: nil)

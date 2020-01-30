@@ -4,20 +4,25 @@ import Foundation
 
 // swiftlint:disable file_length
 
+private var _id: ASTNodeId = 0
+
 /// Create AST (without locations, because we don't need them most of the time).
 internal protocol ASTCreator { }
 
 extension ASTCreator {
 
-  internal var id: ASTNodeId {
-    return 0
+  private var id: ASTNodeId {
+    // We have to increment 'id', because it is used as a key in 'SymbolTable'.
+    let value = _id
+    _id += 1
+    return value
   }
 
-  internal var start: SourceLocation {
+  private var start: SourceLocation {
     return SourceLocation(line: 98, column: 5)
   }
 
-  internal var end: SourceLocation {
+  private var end: SourceLocation {
     return SourceLocation(line: 99, column: 9)
   }
 
@@ -119,7 +124,7 @@ extension ASTCreator {
     bases: [Expression],
     keywords: [Keyword],
     body: [Statement],
-    decorators: [Expression],
+    decorators: [Expression] = [],
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
   ) -> ClassDefStmt {

@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileFor: CompileTestCase {
 
   /// for person in castle: becomeItem
@@ -21,10 +21,10 @@ class CompileFor: CompileTestCase {
   /// 18 LOAD_CONST               0 (None)
   /// 20 RETURN_VALUE
   func test_simple() {
-    let stmt = self.for(
-      target: self.identifierExpr("person"),
-      iter: self.identifierExpr("castle"),
-      body: [self.statement(expr: .identifier("becomeItem"))],
+    let stmt = self.forStmt(
+      target: self.identifierExpr(value: "person", context: .store),
+      iterable: self.identifierExpr(value: "castle"),
+      body: [self.identifierStmt(value: "becomeItem")],
       orElse: []
     )
 
@@ -65,11 +65,11 @@ class CompileFor: CompileTestCase {
   /// 22 LOAD_CONST               0 (None)
   /// 24 RETURN_VALUE
   func test_withElse() {
-    let stmt = self.for(
-      target: self.identifierExpr("person"),
-      iter: self.identifierExpr("belle"),
-      body: [self.statement(expr: .identifier("husband"))],
-      orElse: [self.statement(expr: .identifier("beast"))]
+    let stmt = self.forStmt(
+      target: self.identifierExpr(value: "person", context: .store),
+      iterable: self.identifierExpr(value: "belle"),
+      body: [self.identifierStmt(value: "husband")],
+      orElse: [self.identifierStmt(value: "beast")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -111,12 +111,12 @@ class CompileFor: CompileTestCase {
   /// 20 LOAD_CONST               0 (None)
   /// 22 RETURN_VALUE
   func test_continue() {
-    let stmt = self.for(
-      target: self.identifierExpr("person"),
-      iter: self.identifierExpr("castle"),
+    let stmt = self.forStmt(
+      target: self.identifierExpr(value: "person", context: .store),
+      iterable: self.identifierExpr(value: "castle"),
       body: [
-        self.statement(.continue),
-        self.statement(expr: .identifier("becomeItem"))
+        self.continueStmt(),
+        self.identifierStmt(value: "becomeItem")
       ],
       orElse: []
     )
@@ -159,12 +159,12 @@ class CompileFor: CompileTestCase {
   /// 20 LOAD_CONST               0 (None)
   /// 22 RETURN_VALUE
   func test_break() {
-    let stmt = self.for(
-      target: self.identifierExpr("person"),
-      iter: self.identifierExpr("castle"),
+    let stmt = self.forStmt(
+      target: self.identifierExpr(value: "person", context: .store),
+      iterable: self.identifierExpr(value: "castle"),
       body: [
-        self.statement(.break),
-        self.statement(expr: .identifier("becomeItem"))
+        self.breakStmt(),
+        self.identifierStmt(value: "becomeItem")
       ],
       orElse: []
     )

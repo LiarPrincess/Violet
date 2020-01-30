@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileAssert: CompileTestCase {
 
   /// assert pooh
@@ -16,10 +16,10 @@ class CompileAssert: CompileTestCase {
   ///  8 LOAD_CONST               0 (None)
   /// 10 RETURN_VALUE
   func test_simple() {
-    let stmt = self.statement(.assert(
-      test: self.identifierExpr("pooh"),
+    let stmt = self.assertStmt(
+      test: self.identifierExpr(value: "pooh"),
       msg: nil
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "pooh"),
@@ -47,10 +47,10 @@ class CompileAssert: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_withMessage() {
-    let stmt = self.statement(.assert(
-      test: self.identifierExpr("pooh"),
-      msg:  self.expression(.string(.literal("Stuck at Rabbits Howse")))
-    ))
+    let stmt = self.assertStmt(
+      test: self.identifierExpr(value: "pooh"),
+      msg:  self.stringExpr(value: .literal("Stuck at Rabbits Howse"))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "pooh"),
@@ -71,10 +71,10 @@ class CompileAssert: CompileTestCase {
 
   /// assert pooh
   func test_withOptimization_emitsNothing() {
-    let stmt = self.statement(.assert(
-      test: self.identifierExpr("pooh"),
+    let stmt = self.assertStmt(
+      test: self.identifierExpr(value: "pooh"),
       msg:  nil
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "none"),

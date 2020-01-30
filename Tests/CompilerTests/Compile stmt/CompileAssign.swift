@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileAssign: CompileTestCase {
 
   /// prince = beast
@@ -14,9 +14,9 @@ class CompileAssign: CompileTestCase {
   ///  4 LOAD_CONST               0 (None)
   ///  6 RETURN_VALUE
   func test_single() {
-    let stmt = self.assign(
-      target: [self.identifierExpr("prince")],
-      value: self.identifierExpr("beast")
+    let stmt = self.assignStmt(
+      targets: [self.identifierExpr(value: "prince", context: .store)],
+      value: self.identifierExpr(value: "beast")
     )
 
     let expected: [EmittedInstruction] = [
@@ -43,13 +43,13 @@ class CompileAssign: CompileTestCase {
   /// 12 LOAD_CONST               0 (None)
   /// 14 RETURN_VALUE
   func test_multiple() {
-    let stmt = self.assign(
-      target: [
-        self.identifierExpr("lumiere"),
-        self.identifierExpr("mrsPotts"),
-        self.identifierExpr("cogsworth")
+    let stmt = self.assignStmt(
+      targets: [
+        self.identifierExpr(value: "lumiere", context: .store),
+        self.identifierExpr(value: "mrsPotts", context: .store),
+        self.identifierExpr(value: "cogsworth", context: .store)
       ],
-      value: self.identifierExpr("items")
+      value: self.identifierExpr(value: "items")
     )
 
     let expected: [EmittedInstruction] = [
@@ -78,17 +78,18 @@ class CompileAssign: CompileTestCase {
   ///  8 LOAD_CONST               0 (None)
   /// 10 RETURN_VALUE
   func test_attribute() {
-    let stmt = self.assign(
-      target: [
-        self.expression(.attribute(
-          self.identifierExpr("pretty"),
-          name: "prince"
-        ))
+    let stmt = self.assignStmt(
+      targets: [
+        self.attributeExpr(
+          object: self.identifierExpr(value: "pretty"),
+          name: "prince",
+          context: .store
+        )
       ],
-      value: self.expression(.attribute(
-        self.identifierExpr("hairy"),
+      value: self.attributeExpr(
+        object: self.identifierExpr(value: "hairy"),
         name: "beast"
-      ))
+      )
     )
 
     let expected: [EmittedInstruction] = [
@@ -117,21 +118,22 @@ class CompileAssign: CompileTestCase {
   /// 12 LOAD_CONST               0 (None)
   /// 14 RETURN_VALUE
   func test_subscript() {
-    let stmt = self.assign(
-      target: [
-        self.expression(.subscript(
-          self.identifierExpr("castle"),
-          slice: self.slice(.index(
-            self.identifierExpr("inhabitant")
-          ))
-        ))
+    let stmt = self.assignStmt(
+      targets: [
+        self.subscriptExpr(
+          object: self.identifierExpr(value: "castle"),
+          slice: self.slice(
+            kind: .index(self.identifierExpr(value: "inhabitant"))
+          ),
+          context: .store
+        )
       ],
-      value: self.expression(.subscript(
-        self.identifierExpr("items"),
-        slice: self.slice(.index(
-          self.identifierExpr("random")
-        ))
-      ))
+      value: self.subscriptExpr(
+        object: self.identifierExpr(value: "items"),
+        slice: self.slice(
+          kind: .index(self.identifierExpr(value: "random"))
+        )
+      )
     )
 
     let expected: [EmittedInstruction] = [

@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileIfStmt: CompileTestCase {
 
   /// if eat_me: big
@@ -17,13 +17,13 @@ class CompileIfStmt: CompileTestCase {
   ///  8 LOAD_CONST               0 (None)
   /// 10 RETURN_VALUE
   func test_onlyTrue() {
-    let stmt = self.statement(.if(
-      test: self.identifierExpr("eat_me"),
-      body: NonEmptyArray(first:
-        self.statement(expr: .identifier("big"))
-      ),
+    let stmt = self.ifStmt(
+      test: self.identifierExpr(value: "eat_me"),
+      body: [
+        self.identifierStmt(value: "big")
+      ],
       orElse: []
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "eat_me"),
@@ -55,15 +55,15 @@ class CompileIfStmt: CompileTestCase {
   /// 14 LOAD_CONST               0 (None)
   /// 16 RETURN_VALUE
   func test_withElse() {
-    let stmt = self.statement(.if(
-      test: self.identifierExpr("eat_me"),
-      body: NonEmptyArray(first:
-        self.statement(expr: .identifier("big"))
-      ),
+    let stmt = self.ifStmt(
+      test: self.identifierExpr(value: "eat_me"),
+      body: [
+        self.identifierStmt(value: "big")
+      ],
       orElse: [
-        self.statement(expr: .identifier("smol"))
+        self.identifierStmt(value: "smol")
       ]
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "eat_me"),
@@ -104,23 +104,23 @@ class CompileIfStmt: CompileTestCase {
   /// 24 LOAD_CONST               0 (None)
   /// 26 RETURN_VALUE
   func test_multiple() {
-    let stmt = self.statement(.if(
-      test: self.identifierExpr("eat_me"),
-      body: NonEmptyArray(first:
-        self.statement(expr: .identifier("big"))
-      ),
+    let stmt = self.ifStmt(
+      test: self.identifierExpr(value: "eat_me"),
+      body: [
+        self.identifierStmt(value: "big")
+      ],
       orElse: [
-        self.statement(.if(
-          test: self.identifierExpr("drink_me"),
-          body: NonEmptyArray(first:
-            self.statement(expr: .identifier("smol"))
-          ),
+        self.ifStmt(
+          test: self.identifierExpr(value: "drink_me"),
+          body: [
+            self.identifierStmt(value: "smol")
+          ],
           orElse: [
-            self.statement(expr: .identifier("alice"))
+            self.identifierStmt(value: "alice")
           ]
-        ))
+        )
       ]
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "eat_me"),
@@ -156,15 +156,15 @@ class CompileIfStmt: CompileTestCase {
   ///               4 LOAD_CONST               0 (None)
   ///               6 RETURN_VALUE
   func test_true() {
-    let stmt = self.statement(.if(
-      test: self.expression(.true),
-      body: NonEmptyArray(first:
-        self.statement(expr: .identifier("big"))
-      ),
+    let stmt = self.ifStmt(
+      test: self.trueExpr(),
+      body: [
+        self.identifierStmt(value: "big")
+      ],
       orElse: [
-        self.statement(expr: .identifier("smol"))
+        self.identifierStmt(value: "smol")
       ]
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "true"),
@@ -193,15 +193,15 @@ class CompileIfStmt: CompileTestCase {
   ///               4 LOAD_CONST               0 (None)
   ///               6 RETURN_VALUE
   func test_false() {
-    let stmt = self.statement(.if(
-      test: self.expression(.false),
-      body: NonEmptyArray(first:
-        self.statement(expr: .identifier("big"))
-      ),
+    let stmt = self.ifStmt(
+      test: self.falseExpr(),
+      body: [
+        self.identifierStmt(value: "big")
+      ],
       orElse: [
-        self.statement(expr: .identifier("smol"))
+        self.identifierStmt(value: "smol")
       ]
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "false"),

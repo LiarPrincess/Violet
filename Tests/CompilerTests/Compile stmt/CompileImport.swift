@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileImport: CompileTestCase {
 
   /// import Rapunzel
@@ -16,8 +16,8 @@ class CompileImport: CompileTestCase {
   ///  8 LOAD_CONST               1 (None)
   /// 10 RETURN_VALUE
   func test_single() {
-    let stmt = self.import(
-      self.alias(name: "Rapunzel", asName: nil)
+    let stmt = self.importStmt(
+      aliases: [self.alias(name: "Rapunzel", asName: nil)]
     )
 
     let expected: [EmittedInstruction] = [
@@ -44,8 +44,8 @@ class CompileImport: CompileTestCase {
   ///  8 LOAD_CONST               1 (None)
   /// 10 RETURN_VALUE
   func test_simple_withDot() {
-    let stmt = self.import(
-      self.alias(name: "Tangled.Rapunzel", asName: nil)
+    let stmt = self.importStmt(
+      aliases: [self.alias(name: "Tangled.Rapunzel", asName: nil)]
     )
 
     let expected: [EmittedInstruction] = [
@@ -72,8 +72,8 @@ class CompileImport: CompileTestCase {
   ///  8 LOAD_CONST               1 (None)
   /// 10 RETURN_VALUE
   func test_alias() {
-    let stmt = self.import(
-      self.alias(name: "Rapunzel", asName: "Daughter")
+    let stmt = self.importStmt(
+      aliases: [self.alias(name: "Rapunzel", asName: "Daughter")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -104,9 +104,11 @@ class CompileImport: CompileTestCase {
   /// 16 LOAD_CONST               1 (None)
   /// 18 RETURN_VALUE
   func test_alias_multiple() {
-    let stmt = self.import(
-      self.alias(name: "Rapunzel", asName: "Daughter"),
-      self.alias(name: "Pascal",   asName: nil)
+    let stmt = self.importStmt(
+      aliases: [
+        self.alias(name: "Rapunzel", asName: "Daughter"),
+        self.alias(name: "Pascal",   asName: nil)
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -142,8 +144,8 @@ class CompileImport: CompileTestCase {
   /// 16 LOAD_CONST               1 (None)
   /// 18 RETURN_VALUE
   func test_attributedModule() {
-    let stmt = self.import(
-      self.alias(name: "Tangled.Rapunzel", asName: "Daughter")
+    let stmt = self.importStmt(
+      aliases: [self.alias(name: "Tangled.Rapunzel", asName: "Daughter")]
     )
 
     let expected: [EmittedInstruction] = [

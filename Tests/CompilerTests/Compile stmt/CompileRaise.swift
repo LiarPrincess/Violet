@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileRaise: CompileTestCase {
 
   /// raise
@@ -13,10 +13,10 @@ class CompileRaise: CompileTestCase {
   /// 2 LOAD_CONST               0 (None)
   /// 4 RETURN_VALUE
   func test_reRaise() {
-    let stmt = self.statement(.raise(
+    let stmt = self.raiseStmt(
       exception: nil,
       cause: nil
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.raiseVarargs, "reRaise"),
@@ -37,10 +37,10 @@ class CompileRaise: CompileTestCase {
   /// 4 LOAD_CONST               0 (None)
   /// 6 RETURN_VALUE
   func test_raise_exception() {
-    let stmt = self.statement(.raise(
-      exception: self.identifierExpr("Hades"),
+    let stmt = self.raiseStmt(
+      exception: self.identifierExpr(value: "Hades"),
       cause: nil
-    ))
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "Hades"),
@@ -63,10 +63,10 @@ class CompileRaise: CompileTestCase {
   /// 6 LOAD_CONST               0 (None)
   /// 8 RETURN_VALUE
   func test_raise_exception_from() {
-    let stmt = self.statement(.raise(
-      exception: self.identifierExpr("Hercules"),
-      cause: self.identifierExpr("Olympus")
-    ))
+    let stmt = self.raiseStmt(
+      exception: self.identifierExpr(value: "Hercules"),
+      cause: self.identifierExpr(value: "Olympus")
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "Hercules"),

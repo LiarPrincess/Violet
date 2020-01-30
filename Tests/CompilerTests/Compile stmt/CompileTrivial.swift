@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileTrivial: CompileTestCase {
 
   func test_empty() {
@@ -20,7 +20,7 @@ class CompileTrivial: CompileTestCase {
   }
 
   func test_pass_doesNothing() {
-    let stmt = self.statement(.pass)
+    let stmt = self.passStmt()
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "none"),

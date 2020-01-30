@@ -4,6 +4,8 @@ import Parser
 import Bytecode
 @testable import Compiler
 
+// swiftlint:disable file_length
+
 /// Use 'Scripts/dump_dis.py' for reference.
 class CompileSubscript: CompileTestCase {
 
@@ -16,12 +18,12 @@ class CompileSubscript: CompileTestCase {
   /// 4 BINARY_SUBSCR
   /// 6 RETURN_VALUE
   func test_index_constant() {
-    let expr = self.expression(.subscript(
-      self.identifierExpr("paris"),
-      slice: self.slice(.index(
-        self.expression(.string(.literal("notre_dame")))
-      ))
-    ))
+    let expr = self.subscriptExpr(
+      object: self.identifierExpr(value: "paris"),
+      slice: self.slice(
+        kind: .index(self.stringExpr(value: .literal("notre_dame")))
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
@@ -43,12 +45,12 @@ class CompileSubscript: CompileTestCase {
   /// 4 BINARY_SUBSCR
   /// 6 RETURN_VALUE
   func test_index_identifier() {
-    let expr = self.expression(.subscript(
-      self.identifierExpr("paris"),
-      slice: self.slice(.index(
-        self.identifierExpr("notre_dame")
-      ))
-    ))
+    let expr = self.subscriptExpr(
+      object: self.identifierExpr(value: "paris"),
+      slice: self.slice(
+        kind: .index(self.identifierExpr(value: "notre_dame"))
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
@@ -72,19 +74,19 @@ class CompileSubscript: CompileTestCase {
   ///  8 BINARY_SUBSCR
   /// 10 RETURN_VALUE
   func test_index_afterIndex() {
-    let left = self.expression(.subscript(
-      self.identifierExpr("paris"),
-      slice: self.slice(.index(
-        self.identifierExpr("notre_dame")
-      ))
-    ))
+    let left = self.subscriptExpr(
+      object: self.identifierExpr(value: "paris"),
+      slice: self.slice(
+        kind: .index(self.identifierExpr(value: "notre_dame"))
+      )
+    )
 
-    let expr = self.expression(.subscript(
-      left,
-      slice: self.slice(.index(
-        self.identifierExpr("bell")
-      ))
-    ))
+    let expr = self.subscriptExpr(
+      object: left,
+      slice: self.slice(
+        kind: .index(self.identifierExpr(value: "bell"))
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
@@ -113,14 +115,16 @@ class CompileSubscript: CompileTestCase {
   /// 10 BINARY_SUBSCR
   /// 12 RETURN_VALUE
   func test_slice_constant() {
-    let expr = self.expression(.subscript(
-      self.identifierExpr("paris"),
-      slice: self.slice(.slice(
-        lower: self.expression(.string(.literal("Quasimodo"))),
-        upper: self.expression(.string(.literal("Esmeralda"))),
-        step:  self.expression(.string(.literal("Frollo")))
-      ))
-    ))
+    let expr = self.subscriptExpr(
+      object: self.identifierExpr(value: "paris"),
+      slice: self.slice(
+        kind: .slice(
+          lower: self.stringExpr(value: .literal("Quasimodo")),
+          upper: self.stringExpr(value: .literal("Esmeralda")),
+          step:  self.stringExpr(value: .literal("Frollo"))
+        )
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
@@ -148,14 +152,16 @@ class CompileSubscript: CompileTestCase {
   /// 10 BINARY_SUBSCR
   /// 12 RETURN_VALUE
   func test_slice_identifiers() {
-    let expr = self.expression(.subscript(
-      self.identifierExpr("paris"),
-      slice: self.slice(.slice(
-        lower: self.identifierExpr("Quasimodo"),
-        upper: self.identifierExpr("Esmeralda"),
-        step:  self.identifierExpr("Frollo")
-      ))
-    ))
+    let expr = self.subscriptExpr(
+      object: self.identifierExpr(value: "paris"),
+      slice: self.slice(
+        kind: .slice(
+          lower: self.identifierExpr(value: "Quasimodo"),
+          upper: self.identifierExpr(value: "Esmeralda"),
+          step:  self.identifierExpr(value: "Frollo")
+        )
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
@@ -182,14 +188,16 @@ class CompileSubscript: CompileTestCase {
   ///  8 BINARY_SUBSCR
   /// 10 RETURN_VALUE
   func test_slice_identifiers_withoutStep() {
-    let expr = self.expression(.subscript(
-      self.identifierExpr("paris"),
-      slice: self.slice(.slice(
-        lower: self.identifierExpr("Quasimodo"),
-        upper: self.identifierExpr("Esmeralda"),
-        step:  nil
-      ))
-    ))
+    let expr = self.subscriptExpr(
+      object: self.identifierExpr(value: "paris"),
+      slice: self.slice(
+        kind: .slice(
+          lower: self.identifierExpr(value: "Quasimodo"),
+          upper: self.identifierExpr(value: "Esmeralda"),
+          step:  nil
+        )
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
@@ -215,10 +223,12 @@ class CompileSubscript: CompileTestCase {
   ///  8 BINARY_SUBSCR
   /// 10 RETURN_VALUE
   func test_slice_allNil() {
-    let expr = self.expression(.subscript(
-      self.identifierExpr("paris"),
-      slice: self.slice(.slice(lower: nil, upper: nil, step: nil))
-    ))
+    let expr = self.subscriptExpr(
+      object: self.identifierExpr(value: "paris"),
+      slice: self.slice(
+        kind: .slice(lower: nil, upper: nil, step: nil)
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
@@ -248,22 +258,26 @@ class CompileSubscript: CompileTestCase {
   /// 12 BINARY_SUBSCR
   /// 14 RETURN_VALUE
   func test_slice_extended() {
-    let expr = self.expression(.subscript(
-      self.identifierExpr("paris"),
+
+    let expr = self.subscriptExpr(
+      object: self.identifierExpr(value: "paris"),
       slice: self.slice(
-        .extSlice(NonEmptyArray(
-          first: self.slice(.slice(
-            lower: self.identifierExpr("Quasimodo"),
-            upper: self.identifierExpr("Esmeralda"),
-            step:  nil
-          )),
-          rest: [
-            self.slice(.index(
-              self.identifierExpr("Frollo")
-            ))
-          ])
-        ))
-    ))
+        kind: self.extSlice(
+          slices: [
+            self.slice(
+              kind: .slice(
+                lower: self.identifierExpr(value: "Quasimodo"),
+                upper: self.identifierExpr(value: "Esmeralda"),
+                step:  nil
+              )
+            ),
+            self.slice(
+              kind: .index(self.identifierExpr(value: "Frollo"))
+            )
+          ]
+        )
+      )
+    )
 
     let expected: [EmittedInstruction] = [
       .init(.loadName, "paris"),
@@ -280,5 +294,12 @@ class CompileSubscript: CompileTestCase {
       XCTAssertCode(code, name: "<module>", qualified: "", type: .module)
       XCTAssertInstructions(code, expected)
     }
+  }
+
+  private func extSlice(slices: [Slice]) -> SliceKind {
+    assert(slices.any)
+    let first = slices[0]
+    let rest = Array(slices.dropFirst())
+    return .extSlice(NonEmptyArray(first: first, rest: rest))
   }
 }

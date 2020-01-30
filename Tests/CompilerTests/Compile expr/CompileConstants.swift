@@ -11,7 +11,7 @@ class CompileConstants: CompileTestCase {
 
   /// none
   func test_none() {
-    let expr = self.expression(.none)
+    let expr = self.noneExpr()
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "none"),
@@ -26,7 +26,7 @@ class CompileConstants: CompileTestCase {
 
   /// ...
   func test_ellipsis() {
-    let expr = self.expression(.ellipsis)
+    let expr = self.ellipsisExpr()
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "ellipsis"),
@@ -43,7 +43,7 @@ class CompileConstants: CompileTestCase {
 
   /// true
   func test_true() {
-    let expr = self.expression(.true)
+    let expr = self.trueExpr()
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "true"),
@@ -58,7 +58,7 @@ class CompileConstants: CompileTestCase {
 
   /// false
   func test_false() {
-    let expr = self.expression(.false)
+    let expr = self.falseExpr()
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "false"),
@@ -75,7 +75,7 @@ class CompileConstants: CompileTestCase {
 
   /// 3
   func test_integer() {
-    let expr = self.expression(.int(BigInt(3)))
+    let expr = self.intExpr(value: 3)
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "3"),
@@ -90,7 +90,7 @@ class CompileConstants: CompileTestCase {
 
   /// 12.3
   func test_float() {
-    let expr = self.expression(.float(12.3))
+    let expr = self.floatExpr(value: 12.3)
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "12.3"),
@@ -105,7 +105,7 @@ class CompileConstants: CompileTestCase {
 
   /// 1.2+3.4j
   func test_complex() {
-    let expr = self.expression(.complex(real: 1.2, imag: 3.4))
+    let expr = self.complexExpr(real: 1.2, imag: 3.4)
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "1.2+3.4j"),

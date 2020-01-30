@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileAnnAssign: CompileTestCase {
 
   /// flounder:Animal = "Friend"
@@ -19,10 +19,10 @@ class CompileAnnAssign: CompileTestCase {
   /// 14 LOAD_CONST               2 (None)
   /// 16 RETURN_VALUE
   func test_simple() {
-    let stmt = self.annAssign(
-      target: self.identifierExpr("flounder"),
-      annotation: self.identifierExpr("Animal"),
-      value: self.expression(.string(.literal("Friend"))),
+    let stmt = self.annAssignStmt(
+      target: self.identifierExpr(value: "flounder", context: .store),
+      annotation: self.identifierExpr(value: "Animal"),
+      value: self.stringExpr(value: .literal("Friend")),
       isSimple: true
     )
 
@@ -54,9 +54,9 @@ class CompileAnnAssign: CompileTestCase {
   /// 10 LOAD_CONST               1 (None)
   /// 12 RETURN_VALUE
   func test_withoutValue() {
-    let stmt = self.annAssign(
-      target: self.identifierExpr("ariel"),
-      annotation: self.identifierExpr("Mermaid"),
+    let stmt = self.annAssignStmt(
+      target: self.identifierExpr(value: "ariel", context: .store),
+      annotation: self.identifierExpr(value: "Mermaid"),
       value: nil,
       isSimple: true
     )
@@ -88,13 +88,14 @@ class CompileAnnAssign: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_toAttribute() {
-    let stmt = self.annAssign(
-      target: self.expression(.attribute(
-        self.identifierExpr("sea"),
-        name: "flounder"
-      )),
-      annotation: self.identifierExpr("Animal"),
-      value: self.expression(.string(.literal("Friend"))),
+    let stmt = self.annAssignStmt(
+      target: self.attributeExpr(
+        object: self.identifierExpr(value: "sea"),
+        name: "flounder",
+        context: .store
+      ),
+      annotation: self.identifierExpr(value: "Animal"),
+      value: self.stringExpr(value: .literal("Friend")),
       isSimple: false
     )
 
@@ -127,15 +128,16 @@ class CompileAnnAssign: CompileTestCase {
   /// 14 LOAD_CONST               1 (None)
   /// 16 RETURN_VALUE
   func test_toSubscript() {
-    let stmt = self.annAssign(
-      target: self.expression(.subscript(
-        self.identifierExpr("sea"),
-        slice: self.slice(.index(
-          self.identifierExpr("flounder")
-        ))
-      )),
-      annotation: self.identifierExpr("Animal"),
-      value: self.expression(.string(.literal("Friend"))),
+    let stmt = self.annAssignStmt(
+      target: self.subscriptExpr(
+        object: self.identifierExpr(value: "sea"),
+        slice: self.slice(
+          kind: .index(self.identifierExpr(value: "flounder"))
+        ),
+        context: .store
+      ),
+      annotation: self.identifierExpr(value: "Animal"),
+      value: self.stringExpr(value: .literal("Friend")),
       isSimple: false
     )
 

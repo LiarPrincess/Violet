@@ -7,7 +7,7 @@ import Bytecode
 // swiftlint:disable function_body_length
 // swiftlint:disable file_length
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileClassDef: CompileTestCase {
 
   // MARK: - No base
@@ -33,11 +33,11 @@ class CompileClassDef: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_noBase() {
-    let stmt = self.class(
+    let stmt = self.classDefStmt(
       name: "Princess",
       bases: [],
       keywords: [],
-      body: [self.identifierStmt("sing")]
+      body: [self.identifierStmt(value: "sing")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -98,11 +98,11 @@ class CompileClassDef: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_base_single() {
-    let stmt = self.class(
+    let stmt = self.classDefStmt(
       name: "Aurora",
-      bases: [self.identifierExpr("Princess")],
+      bases: [self.identifierExpr(value: "Princess")],
       keywords: [],
-      body: [self.identifierStmt("sleep")]
+      body: [self.identifierStmt(value: "sleep")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -163,11 +163,11 @@ class CompileClassDef: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_base_multiple() {
-    let stmt = self.class(
+    let stmt = self.classDefStmt(
       name: "Aurora",
-      bases: [self.identifierExpr("Princess"), self.identifierExpr("Human")],
+      bases: [self.identifierExpr(value: "Princess"), self.identifierExpr(value: "Human")],
       keywords: [],
-      body: [self.identifierStmt("sleep")]
+      body: [self.identifierStmt(value: "sleep")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -230,11 +230,13 @@ class CompileClassDef: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_base_withStar() {
-    let stmt = self.class(
+    let stmt = self.classDefStmt(
       name: "Aurora",
-      bases: [self.expression(.starred(self.identifierExpr("Princess")))],
+      bases: [
+        self.starredExpr(expression: self.identifierExpr(value: "Princess"))
+      ],
       keywords: [],
-      body: [self.identifierStmt("sleep")]
+      body: [self.identifierStmt(value: "sleep")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -301,16 +303,18 @@ class CompileClassDef: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_base_withStar_afterKeyword() {
-    let stmt = self.class(
+    let stmt = self.classDefStmt(
       name: "Aurora",
-      bases: [self.expression(.starred(self.identifierExpr("Human")))],
+      bases: [
+        self.starredExpr(expression: self.identifierExpr(value: "Human"))
+      ],
       keywords: [
         self.keyword(
           kind: .named("Princess"),
-          value: self.expression(.int(BigInt(1)))
+          value: self.intExpr(value: 1)
         )
       ],
-      body: [self.identifierStmt("sleep")]
+      body: [self.identifierStmt(value: "sleep")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -378,13 +382,13 @@ class CompileClassDef: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_keyword_single() {
-    let stmt = self.class(
+    let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [],
       keywords: [
-        self.keyword(kind: .named("Princess"), value: self.expression(.int(BigInt(1))))
+        self.keyword(kind: .named("Princess"), value: self.intExpr(value: 1))
       ],
-      body: [self.identifierStmt("sleep")]
+      body: [self.identifierStmt(value: "sleep")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -447,14 +451,14 @@ class CompileClassDef: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_keyword_multiple() {
-    let stmt = self.class(
+    let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [],
       keywords: [
-        self.keyword(kind: .named("Princess"), value: self.expression(.int(BigInt(1)))),
-        self.keyword(kind: .named("Human"),    value: self.expression(.int(BigInt(2))))
+        self.keyword(kind: .named("Princess"), value: self.intExpr(value: 1)),
+        self.keyword(kind: .named("Human"),    value: self.intExpr(value: 2))
       ],
-      body: [self.identifierStmt("sleep")]
+      body: [self.identifierStmt(value: "sleep")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -519,13 +523,13 @@ class CompileClassDef: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_keyword_withStarStar() {
-    let stmt = self.class(
+    let stmt = self.classDefStmt(
       name: "Aurora",
       bases: [],
       keywords: [
-        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr("**Princess"))
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr(value: "**Princess"))
       ],
-      body: [self.identifierStmt("sleep")]
+      body: [self.identifierStmt(value: "sleep")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -588,13 +592,13 @@ class CompileClassDef: CompileTestCase {
   /// 12 LOAD_CONST               1 (None)
   /// 14 RETURN_VALUE
   func test_keyword_withStarStar_afterNormal() {
-    let stmt = self.class(
+    let stmt = self.classDefStmt(
       name: "Aurora",
-      bases: [self.identifierExpr("Princess")],
+      bases: [self.identifierExpr(value: "Princess")],
       keywords: [
-        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr("**Human"))
+        self.keyword(kind: .dictionaryUnpack, value: self.identifierExpr(value: "**Human"))
       ],
-      body: [self.identifierStmt("sleep")]
+      body: [self.identifierStmt(value: "sleep")]
     )
 
     let expected: [EmittedInstruction] = [

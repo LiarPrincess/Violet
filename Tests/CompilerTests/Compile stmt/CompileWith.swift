@@ -6,7 +6,7 @@ import Bytecode
 
 // swiftlint:disable function_body_length
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileWith: CompileTestCase {
 
   /// with alice: wonderland
@@ -24,14 +24,14 @@ class CompileWith: CompileTestCase {
   /// 20 LOAD_CONST               0 (None)
   /// 22 RETURN_VALUE
   func test_simple() {
-    let stmt = self.with(
+    let stmt = self.withStmt(
       items: [
         self.withItem(
-          contextExpr: self.identifierExpr("alice"),
+          contextExpr: self.identifierExpr(value: "alice"),
           optionalVars: nil
         )
       ],
-      body: [self.statement(expr: .identifier("wonderland"))]
+      body: [self.identifierStmt(value: "wonderland")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -70,14 +70,14 @@ class CompileWith: CompileTestCase {
   /// 20 LOAD_CONST               0 (None)
   /// 22 RETURN_VALUE
   func test_alias() {
-    let stmt = self.with(
+    let stmt = self.withStmt(
       items: [
         self.withItem(
-          contextExpr: self.identifierExpr("alice"),
-          optionalVars: self.identifierExpr("smol")
+          contextExpr: self.identifierExpr(value: "alice"),
+          optionalVars: self.identifierExpr(value: "smol", context: .store)
         )
       ],
-      body: [self.statement(expr: .identifier("wonderland"))]
+      body: [self.identifierStmt(value: "wonderland")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -124,18 +124,18 @@ class CompileWith: CompileTestCase {
   /// 36 LOAD_CONST               0 (None)
   /// 38 RETURN_VALUE
   func test_multipleItems() {
-    let stmt = self.with(
+    let stmt = self.withStmt(
       items: [
         self.withItem(
-          contextExpr: self.identifierExpr("alice"),
+          contextExpr: self.identifierExpr(value: "alice"),
           optionalVars: nil
         ),
         self.withItem(
-          contextExpr: self.identifierExpr("rabbit"),
+          contextExpr: self.identifierExpr(value: "rabbit"),
           optionalVars: nil
         )
       ],
-      body: [self.statement(expr: .identifier("wonderland"))]
+      body: [self.identifierStmt(value: "wonderland")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -190,18 +190,18 @@ class CompileWith: CompileTestCase {
   /// 36 LOAD_CONST               0 (None)
   /// 38 RETURN_VALUE
   func test_multipleItemsAlias() {
-    let stmt = self.with(
+    let stmt = self.withStmt(
       items: [
         self.withItem(
-          contextExpr: self.identifierExpr("alice"),
-          optionalVars: self.identifierExpr("big")
+          contextExpr: self.identifierExpr(value: "alice"),
+          optionalVars: self.identifierExpr(value: "big", context: .store)
         ),
         self.withItem(
-          contextExpr: self.identifierExpr("rabbit"),
-          optionalVars: self.identifierExpr("smol")
+          contextExpr: self.identifierExpr(value: "rabbit"),
+          optionalVars: self.identifierExpr(value: "smol", context: .store)
         )
       ],
-      body: [self.statement(expr: .identifier("wonderland"))]
+      body: [self.identifierStmt(value: "wonderland")]
     )
 
     let expected: [EmittedInstruction] = [

@@ -9,7 +9,7 @@ class CompileDictionary: CompileTestCase {
 
   /// { }
   func test_empty() {
-    let expr = self.expression(.dictionary([]))
+    let expr = self.dictionaryExpr(elements: [])
 
     let expected: [EmittedInstruction] = [
       .init(.buildMap, "0"),
@@ -24,16 +24,16 @@ class CompileDictionary: CompileTestCase {
 
   /// { 'ariel': 'mermaid', 'eric': 'human' }
   func test_constantsOnly() {
-    let expr = self.expression(.dictionary([
+    let expr = self.dictionaryExpr(elements: [
       .keyValue(
-        key: self.expression(.string(.literal("ariel"))),
-        value: self.expression(.string(.literal("mermaid")))
+        key: self.stringExpr(value: .literal("ariel")),
+        value: self.stringExpr(value: .literal("mermaid"))
       ),
       .keyValue(
-        key: self.expression(.string(.literal("eric"))),
-        value: self.expression(.string(.literal("human")))
+        key: self.stringExpr(value: .literal("eric")),
+        value: self.stringExpr(value: .literal("human"))
       )
-    ]))
+    ])
 
     let expected: [EmittedInstruction] = [
       .init(.loadConst, "'ariel'"),
@@ -52,16 +52,16 @@ class CompileDictionary: CompileTestCase {
 
   /// { ariel: 'mermaid', eric: human }
   func test_withIdentifier() {
-    let expr = self.expression(.dictionary([
+    let expr = self.dictionaryExpr(elements: [
       .keyValue(
-        key: self.identifierExpr("ariel"),
-        value: self.expression(.string(.literal("mermaid")))
+        key: self.identifierExpr(value: "ariel"),
+        value: self.stringExpr(value: .literal("mermaid"))
       ),
       .keyValue(
-        key: self.identifierExpr("eric"),
-        value: self.identifierExpr("human")
+        key: self.identifierExpr(value: "eric"),
+        value: self.identifierExpr(value: "human")
       )
-    ]))
+    ])
 
     let expected: [EmittedInstruction] = [
       .init(.loadName,  "ariel"),
@@ -87,13 +87,13 @@ class CompileDictionary: CompileTestCase {
   ///  8 BUILD_MAP_UNPACK         2
   /// 10 RETURN_VALUE
   func test_withUnpack() {
-    let expr = self.expression(.dictionary([
+    let expr = self.dictionaryExpr(elements: [
       .keyValue(
-        key: self.identifierExpr("ariel"),
-        value: self.expression(.string(.literal("mermaid")))
+        key: self.identifierExpr(value: "ariel"),
+        value: self.stringExpr(value: .literal("mermaid"))
       ),
-      .unpacking(self.identifierExpr("sea"))
-    ]))
+      .unpacking(self.identifierExpr(value: "sea"))
+    ])
 
     let expected: [EmittedInstruction] = [
       .init(.loadName,  "ariel"),
@@ -123,18 +123,18 @@ class CompileDictionary: CompileTestCase {
   /// 16 BUILD_MAP_UNPACK         4
   /// 18 RETURN_VALUE
   func test_withUnpack_multiple() {
-    let expr = self.expression(.dictionary([
+    let expr = self.dictionaryExpr(elements: [
       .keyValue(
-        key: self.identifierExpr("ariel"),
-        value: self.expression(.string(.literal("mermaid")))
+        key: self.identifierExpr(value: "ariel"),
+        value: self.stringExpr(value: .literal("mermaid"))
       ),
-      .unpacking(self.identifierExpr("sea")),
-      .unpacking(self.identifierExpr("land")),
+      .unpacking(self.identifierExpr(value: "sea")),
+      .unpacking(self.identifierExpr(value: "land")),
       .keyValue(
-        key: self.identifierExpr("eric"),
-        value: self.identifierExpr("human")
+        key: self.identifierExpr(value: "eric"),
+        value: self.identifierExpr(value: "human")
       )
-    ]))
+    ])
 
     let expected: [EmittedInstruction] = [
       .init(.loadName,  "ariel"),

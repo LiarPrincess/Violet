@@ -4,7 +4,7 @@ import Parser
 import Bytecode
 @testable import Compiler
 
-/// Use './Scripts/dump_compiler_test' for reference.
+/// Use './Scripts/dump' for reference.
 class CompileDelete: CompileTestCase {
 
   /// del jafar
@@ -13,8 +13,10 @@ class CompileDelete: CompileTestCase {
   /// 2 LOAD_CONST               0 (None)
   /// 4 RETURN_VALUE
   func test_identifier() {
-    let stmt = self.delete(
-      self.identifierExpr("jafar")
+    let stmt = self.deleteStmt(
+      values: [
+        self.identifierExpr(value: "jafar", context: .del)
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -36,9 +38,11 @@ class CompileDelete: CompileTestCase {
   /// 4 LOAD_CONST               0 (None)
   /// 6 RETURN_VALUE
   func test_multiple() {
-    let stmt = self.delete(
-      self.identifierExpr("jafar"),
-      self.identifierExpr("iago")
+    let stmt = self.deleteStmt(
+      values: [
+        self.identifierExpr(value: "jafar", context: .del),
+        self.identifierExpr(value: "iago", context: .del)
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -61,11 +65,16 @@ class CompileDelete: CompileTestCase {
   /// 4 LOAD_CONST               0 (None)
   /// 6 RETURN_VALUE
   func test_tuple() {
-    let stmt = self.delete(
-      self.expression(.tuple([
-        self.identifierExpr("jafar"),
-        self.identifierExpr("iago")
-      ]))
+    let stmt = self.deleteStmt(
+      values: [
+        self.tupleExpr(
+          elements: [
+            self.identifierExpr(value: "jafar", context: .del),
+            self.identifierExpr(value: "iago", context: .del)
+          ],
+          context: .del
+        )
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -88,13 +97,14 @@ class CompileDelete: CompileTestCase {
   /// 4 LOAD_CONST               0 (None)
   /// 6 RETURN_VALUE
   func test_attribute() {
-    let stmt = self.delete(
-      self.expression(
-        .attribute(
-          self.identifierExpr("agrabah"),
-          name: "jafar"
+    let stmt = self.deleteStmt(
+      values: [
+        self.attributeExpr(
+          object: self.identifierExpr(value: "agrabah"),
+          name: "jafar",
+          context: .del
         )
-      )
+      ]
     )
 
     let expected: [EmittedInstruction] = [
@@ -118,15 +128,16 @@ class CompileDelete: CompileTestCase {
   ///  6 LOAD_CONST               0 (None)
   ///  8 RETURN_VALUE
   func test_subscript() {
-    let stmt = self.delete(
-      self.expression(
-        .subscript(
-          self.identifierExpr("agrabah"),
-          slice: self.slice(.index(
-            self.identifierExpr("jafar")
-          ))
+    let stmt = self.deleteStmt(
+      values: [
+        self.subscriptExpr(
+          object: self.identifierExpr(value: "agrabah"),
+          slice: self.slice(
+            kind: .index(self.identifierExpr(value: "jafar"))
+          ),
+          context: .del
         )
-      )
+      ]
     )
 
     let expected: [EmittedInstruction] = [
