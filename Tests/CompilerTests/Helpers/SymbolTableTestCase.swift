@@ -10,38 +10,24 @@ internal class SymbolTableTestCase: XCTestCase, ASTCreator {
 
   // MARK: - Create
 
-  internal func createSymbolTable(forExpr expr: Expression,
+  internal func createSymbolTable(expr: Expression,
                                   file: StaticString = #file,
                                   line: UInt         = #line) -> SymbolTable? {
-    let ast = self.ast(.expression(expr))
+    let ast = self.expressionAST(expression: expr)
     return self.createSymbolTable(for: ast, file: file, line: line)
   }
 
-  internal func createSymbolTable(forExpr kind: ExpressionKind,
+  internal func createSymbolTable(stmt: Statement,
                                   file: StaticString = #file,
                                   line: UInt         = #line) -> SymbolTable? {
-    let ast = self.ast(.expression(self.expression(kind)))
+    let ast = self.interactiveAST(statements: [stmt])
     return self.createSymbolTable(for: ast, file: file, line: line)
   }
 
-  internal func createSymbolTable(forStmt stmt: Statement,
+  internal func createSymbolTable(stmts: [Statement],
                                   file: StaticString = #file,
                                   line: UInt         = #line) -> SymbolTable? {
-    let ast = self.ast(.interactive([stmt]))
-    return self.createSymbolTable(for: ast, file: file, line: line)
-  }
-
-  internal func createSymbolTable(forStmt kind: StatementKind,
-                                  file: StaticString = #file,
-                                  line: UInt         = #line) -> SymbolTable? {
-    let ast = self.ast(.interactive([self.statement(kind)]))
-    return self.createSymbolTable(for: ast, file: file, line: line)
-  }
-
-  internal func createSymbolTable(forStmts stmts: [Statement],
-                                  file: StaticString = #file,
-                                  line: UInt         = #line) -> SymbolTable? {
-    let ast = self.ast(.interactive(stmts))
+    let ast = self.interactiveAST(statements: stmts)
     return self.createSymbolTable(for: ast, file: file, line: line)
   }
 
@@ -49,6 +35,9 @@ internal class SymbolTableTestCase: XCTestCase, ASTCreator {
                                  file: StaticString = #file,
                                  line: UInt         = #line) -> SymbolTable? {
     do {
+      let validator = ASTValidator()
+      try validator.validate(ast: ast)
+
       let builer = SymbolTableBuilder()
       return try builer.visit(ast)
     } catch {
@@ -62,28 +51,21 @@ internal class SymbolTableTestCase: XCTestCase, ASTCreator {
   internal func error(forExpr expr: Expression,
                       file: StaticString = #file,
                       line: UInt         = #line) -> CompilerError? {
-    let ast = self.ast(.expression(expr))
+    let ast = self.expressionAST(expression: expr)
     return self.error(for: ast, file: file, line: line)
   }
 
   internal func error(forStmt stmt: Statement,
                       file: StaticString = #file,
                       line: UInt         = #line) -> CompilerError? {
-    let ast = self.ast(.interactive([stmt]))
-    return self.error(for: ast, file: file, line: line)
-  }
-
-  internal func error(forStmt kind: StatementKind,
-                      file: StaticString = #file,
-                      line: UInt         = #line) -> CompilerError? {
-    let ast = self.ast(.interactive([self.statement(kind)]))
+    let ast = self.interactiveAST(statements: [stmt])
     return self.error(for: ast, file: file, line: line)
   }
 
   internal func error(forStmts stmts: [Statement],
                       file: StaticString = #file,
                       line: UInt         = #line) -> CompilerError? {
-    let ast = self.ast(.interactive(stmts))
+    let ast = self.interactiveAST(statements: stmts)
     return self.error(for: ast, file: file, line: line)
   }
 

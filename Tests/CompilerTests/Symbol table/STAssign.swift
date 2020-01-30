@@ -21,12 +21,14 @@ class STAssign: SymbolTableTestCase {
   ///   rapunzel - local, assigned,
   /// ```
   func test_assign() {
-    let stmt = self.assign(
-      target: self.identifierExpr("rapunzel", start: loc1),
-      value: self.expression(.int(BigInt(5)))
+    let stmt = self.assignStmt(
+      targets: [
+        self.identifierExpr(value: "rapunzel", context: .store, start: loc1)
+      ],
+      value: self.intExpr(value: 5)
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -49,12 +51,14 @@ class STAssign: SymbolTableTestCase {
   ///   rapunzel - referenced, local, assigned,
   /// ```
   func test_assign_toItself() {
-    let stmt = self.assign(
-      target: self.identifierExpr("rapunzel", start: loc1),
-      value: self.identifierExpr("rapunzel")
+    let stmt = self.assignStmt(
+      targets: [
+        self.identifierExpr(value: "rapunzel", context: .store, start: loc1)
+      ],
+      value: self.identifierExpr(value: "rapunzel")
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -78,15 +82,15 @@ class STAssign: SymbolTableTestCase {
   ///   eugine - local, assigned,
   /// ```
   func test_assign_multiple() {
-    let stmt = self.assign(
-      target: [
-        self.identifierExpr("rapunzel", start: loc1),
-        self.expression(.identifier("eugine"), start: loc2)
+    let stmt = self.assignStmt(
+      targets: [
+        self.identifierExpr(value: "rapunzel", context: .store, start: loc1),
+        self.identifierExpr(value: "eugine", context: .store, start: loc2)
       ],
-      value: self.expression(.int(BigInt(5)))
+      value: self.intExpr(value: 5)
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -115,13 +119,13 @@ class STAssign: SymbolTableTestCase {
   ///   rapunzel - local, assigned,
   /// ```
   func test_augAssign() {
-    let stmt = self.augAssign(
-      target: self.identifierExpr("rapunzel", start: loc1),
+    let stmt = self.augAssignStmt(
+      target: self.identifierExpr(value: "rapunzel", context: .store, start: loc1),
       op: .add,
-      value: self.expression(.int(BigInt(5)))
+      value: self.intExpr(value: 5)
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -144,13 +148,13 @@ class STAssign: SymbolTableTestCase {
   ///   rapunzel - referenced, local, assigned,
   /// ```
   func test_augAssign_toItself() {
-    let stmt = self.augAssign(
-      target: self.identifierExpr("rapunzel", start: loc1),
+    let stmt = self.augAssignStmt(
+      target: self.identifierExpr(value: "rapunzel", context: .store, start: loc1),
       op: .add,
-      value: self.identifierExpr("rapunzel")
+      value: self.identifierExpr(value: "rapunzel")
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -176,14 +180,14 @@ class STAssign: SymbolTableTestCase {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign() {
-    let stmt = self.annAssign(
-      target: self.identifierExpr("rapunzel", start: loc1),
-      annotation: self.expression(.identifier("Int"), start: loc2),
-      value: self.expression(.int(BigInt(5))),
+    let stmt = self.annAssignStmt(
+      target: self.identifierExpr(value: "rapunzel", context: .store, start: loc1),
+      annotation: self.identifierExpr(value: "Int", start: loc2),
+      value: self.intExpr(value: 5),
       isSimple: true
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -211,14 +215,14 @@ class STAssign: SymbolTableTestCase {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign_inParens() {
-    let stmt = self.annAssign(
-      target: self.identifierExpr("rapunzel", start: loc1),
-      annotation: self.expression(.identifier("Int"), start: loc2),
-      value: self.expression(.int(BigInt(5))),
+    let stmt = self.annAssignStmt(
+      target: self.identifierExpr(value: "rapunzel", context: .store, start: loc1),
+      annotation: self.identifierExpr(value: "Int", start: loc2),
+      value: self.intExpr(value: 5),
       isSimple: false // <- parens
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -242,25 +246,24 @@ class STAssign: SymbolTableTestCase {
   /// name: top
   /// lineno: 0
   /// symbols:
-  ///   tangled - referenced, global, <- not really sure why CPython does it
+  ///   tangled - referenced, global,
   ///   Int - referenced, global,
   /// ```
   func test_annAssign_attribute() {
-    let target = self.expression(
-      .attribute(
-        self.identifierExpr("tangled", start: loc1),
-        name: "rapunzel"
-      )
+    let target = self.attributeExpr(
+      object: self.identifierExpr(value: "tangled", start: loc1),
+      name: "rapunzel",
+      context: .store
     )
 
-    let stmt = self.annAssign(
+    let stmt = self.annAssignStmt(
       target: target,
-      annotation: self.identifierExpr("Int", start: loc3),
-      value: self.expression(.int(BigInt(5))),
+      annotation: self.identifierExpr(value: "Int", start: loc3),
+      value: self.intExpr(value: 5),
       isSimple: false
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -269,7 +272,7 @@ class STAssign: SymbolTableTestCase {
       XCTAssertEqual(top.symbols.count, 2)
       XCTAssertContainsSymbol(top,
                               name: "tangled",
-                              flags: [.defLocal, .srcLocal],
+                              flags: [.srcGlobalImplicit, .use],
                               location: loc1)
       XCTAssertContainsSymbol(top,
                               name: "Int",
@@ -288,14 +291,14 @@ class STAssign: SymbolTableTestCase {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign_toItself() {
-    let stmt = self.annAssign(
-      target: self.identifierExpr("rapunzel", start: loc1),
-      annotation: self.expression(.identifier("Int"), start: loc2),
-      value: self.identifierExpr("rapunzel", start: loc3),
+    let stmt = self.annAssignStmt(
+      target: self.identifierExpr(value: "rapunzel", context: .store, start: loc1),
+      annotation: self.identifierExpr(value: "Int", start: loc2),
+      value: self.identifierExpr(value: "rapunzel", start: loc3),
       isSimple: true
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -323,14 +326,14 @@ class STAssign: SymbolTableTestCase {
   ///   Int - referenced, global,
   /// ```
   func test_annAssign_withoutValue() {
-    let stmt = self.annAssign(
-      target: self.identifierExpr("rapunzel", start: loc1),
-      annotation: self.expression(.identifier("Int"), start: loc2),
+    let stmt = self.annAssignStmt(
+      target: self.identifierExpr(value: "rapunzel", context: .store, start: loc1),
+      annotation: self.identifierExpr(value: "Int", start: loc2),
       value: nil,
       isSimple: true
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.children.isEmpty)
@@ -351,11 +354,11 @@ class STAssign: SymbolTableTestCase {
   // global rapunzel
   // rapunzel: Int
   func test_annAssign_global_withAnnotation_throws() {
-    let stmt1 = self.global(name: "rapunzel")
+    let stmt1 = self.globalStmt(identifier: "rapunzel")
 
-    let stmt2 = self.annAssign(
-      target: self.identifierExpr("rapunzel"),
-      annotation: self.identifierExpr("Int"),
+    let stmt2 = self.annAssignStmt(
+      target: self.identifierExpr(value: "rapunzel"),
+      annotation: self.identifierExpr(value: "Int"),
       value: nil,
       isSimple: true,
       start: loc1
@@ -370,11 +373,11 @@ class STAssign: SymbolTableTestCase {
   // nonlocal rapunzel
   // rapunzel: Int
   func test_annAssign_nonlocal_withAnnotation_throws() {
-    let stmt1 = self.nonlocal(name: "rapunzel")
+    let stmt1 = self.nonlocalStmt(identifier: "rapunzel")
 
-    let stmt2 = self.annAssign(
-      target: self.identifierExpr("rapunzel"),
-      annotation: self.identifierExpr("Int"),
+    let stmt2 = self.annAssignStmt(
+      target: self.identifierExpr(value: "rapunzel"),
+      annotation: self.identifierExpr(value: "Int"),
       value: nil,
       isSimple: true,
       start: loc1

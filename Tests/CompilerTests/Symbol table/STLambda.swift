@@ -25,17 +25,17 @@ class STLambda: SymbolTableTestCase {
   ///     anna - parameter, local,
   /// ```
   func test_lambda() {
-    let kind = ExpressionKind.lambda(
+    let expr = self.lambdaExpr(
       args: self.arguments(
         args: [
-          self.arg("elsa", annotation: nil, start: loc1),
-          self.arg("anna", annotation: nil, start: loc2)
+          self.arg(name: "elsa", annotation: nil, start: loc1),
+          self.arg(name: "anna", annotation: nil, start: loc2)
         ]
       ),
-      body: self.identifierExpr("elsa", start: loc3)
+      body: self.identifierExpr(value: "elsa", start: loc3)
     )
 
-    if let table = self.createSymbolTable(forExpr: kind) {
+    if let table = self.createSymbolTable(expr: expr) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.symbols.isEmpty)
@@ -90,28 +90,28 @@ class STLambda: SymbolTableTestCase {
   ///        elsa - referenced, free,
   /// ```
   func test_lambda_free_cell() {
-    let stmt1 = self.assign(
-      target: [
-        self.identifierExpr("elsa", start: loc1)
+    let stmt1 = self.assignStmt(
+      targets: [
+        self.identifierExpr(value: "elsa", context: .store, start: loc1)
       ],
-      value: self.expression(.int(BigInt(1)))
+      value: self.intExpr(value: 1)
     )
 
-    let stmt2 = self.statement(expr:
-      .lambda(
+    let stmt2 = self.exprStmt(
+      expression: self.lambdaExpr(
         args: self.arguments(),
-        body: self.identifierExpr("elsa", start: loc2)
+        body: self.identifierExpr(value: "elsa", start: loc2)
       )
     )
 
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "let_it_go",
       args: self.arguments(),
       body: [stmt1, stmt2],
       start: loc3
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)

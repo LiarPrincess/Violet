@@ -10,10 +10,9 @@ class STTopScope: SymbolTableTestCase {
 
   /// elsa
   func test_identifier_expression() {
-    let kind = ExpressionKind.identifier("elsa")
-    let expr = self.expression(kind, start: loc1)
+    let expr = self.identifierExpr(value: "elsa", start: loc1)
 
-    if let table = self.createSymbolTable(forExpr: expr) {
+    if let table = self.createSymbolTable(expr: expr) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
 
@@ -30,10 +29,10 @@ class STTopScope: SymbolTableTestCase {
 
   /// elsa
   func test_identifier_statement() {
-    let kind = ExpressionKind.identifier("elsa")
-    let expr = self.expression(kind, start: loc1)
+    let expr = self.identifierExpr(value: "elsa", start: loc1)
+    let stmt = self.exprStmt(expression: expr)
 
-    if let table = self.createSymbolTable(forStmt: StatementKind.expr(expr)) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
 
@@ -52,9 +51,9 @@ class STTopScope: SymbolTableTestCase {
 
   /// global elsa
   func test_global() {
-    let stmt = self.global(name: "elsa", start: loc1)
+    let stmt = self.globalStmt(identifier: "elsa", start: loc1)
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
 
@@ -71,11 +70,13 @@ class STTopScope: SymbolTableTestCase {
 
   /// def let_it_go(elsa): global elsa
   func test_global_equalToParam_throws() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "let_it_go",
-      args: self.arguments(args: [self.arg("elsa")]),
+      args: self.arguments(
+        args: [self.arg(name: "elsa")]
+      ),
       body: [
-        self.global(name: "elsa", start: loc1)
+        self.globalStmt(identifier: "elsa", start: loc1)
       ]
     )
 
@@ -88,8 +89,8 @@ class STTopScope: SymbolTableTestCase {
   /// elsa
   /// global elsa
   func test_useAsLocal_thenGlobal_throws() {
-    let stmt1 = self.statement(expr: .identifier("elsa"))
-    let stmt2 = self.global(name: "elsa", start: loc1)
+    let stmt1 = self.identifierStmt(value: "elsa")
+    let stmt2 = self.globalStmt(identifier: "elsa", start: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .globalAfterUse("elsa"))
@@ -100,14 +101,14 @@ class STTopScope: SymbolTableTestCase {
   /// elsa: Queen = 5
   /// global elsa
   func test_annotatedLocal_thenGlobal_throws() {
-    let stmt1 = self.statement(.annAssign(
-      target: self.identifierExpr("elsa"),
-      annotation: self.identifierExpr("Queen"),
-      value: self.expression(.int(BigInt(5))),
-      isSimple: true)
+    let stmt1 = self.annAssignStmt(
+      target: self.identifierExpr(value: "elsa"),
+      annotation: self.identifierExpr(value: "Queen"),
+      value: self.intExpr(value: 5),
+      isSimple: true
     )
 
-    let stmt2 = self.global(name: "elsa", start: loc1)
+    let stmt2 = self.globalStmt(identifier: "elsa", start: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .globalAnnot("elsa"))
@@ -119,7 +120,7 @@ class STTopScope: SymbolTableTestCase {
 
   /// nonlocal elsa
   func test_nonlocal_atModuleScope_throws() {
-    let stmt = self.nonlocal(name: "elsa", start: loc1)
+    let stmt = self.nonlocalStmt(identifier: "elsa", start: loc1)
 
     if let error = self.error(forStmt: stmt) {
       XCTAssertEqual(error.kind, .nonlocalAtModuleLevel("elsa"))
@@ -129,12 +130,14 @@ class STTopScope: SymbolTableTestCase {
 
   /// def let_it_go(elsa): nonlocal elsa
   func test_nonlocal_equalToParam_throws() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "let_it_go",
       args: self.arguments(
-        args: [self.arg("elsa")]
+        args: [self.arg(name: "elsa")]
       ),
-      body: [self.nonlocal(name: "elsa", start: loc1)]
+      body: [
+        self.nonlocalStmt(identifier: "elsa", start: loc1)
+      ]
     )
 
     if let error = self.error(forStmt: stmt) {
@@ -146,8 +149,8 @@ class STTopScope: SymbolTableTestCase {
   /// elsa
   /// nonlocal elsa
   func test_useAsLocal_thenNonlocal_throws() {
-    let stmt1 = self.statement(expr: .identifier("elsa"))
-    let stmt2 = self.nonlocal(name: "elsa", start: loc1)
+    let stmt1 = self.identifierStmt(value: "elsa")
+    let stmt2 = self.nonlocalStmt(identifier: "elsa", start: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .nonlocalAfterUse("elsa"))
@@ -158,14 +161,14 @@ class STTopScope: SymbolTableTestCase {
   /// elsa: Queen = 5
   /// nonlocal elsa
   func test_annotatedLocal_thenNonlocal_throws() {
-    let stmt1 = self.statement(.annAssign(
-      target: self.identifierExpr("elsa"),
-      annotation: self.identifierExpr("Queen"),
-      value: self.expression(.int(BigInt(5))),
-      isSimple: true)
+    let stmt1 = self.annAssignStmt(
+      target: self.identifierExpr(value: "elsa"),
+      annotation: self.identifierExpr(value: "Queen"),
+      value: self.intExpr(value: 5),
+      isSimple: true
     )
 
-    let stmt2 = self.nonlocal(name: "elsa", start: loc1)
+    let stmt2 = self.nonlocalStmt(identifier: "elsa", start: loc1)
 
     if let error = self.error(forStmts: [stmt1, stmt2]) {
       XCTAssertEqual(error.kind, .nonlocalAnnot("elsa"))

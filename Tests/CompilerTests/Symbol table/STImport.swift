@@ -18,12 +18,14 @@ class STImport: SymbolTableTestCase {
   ///   tangled - imported, local,
   /// ```
   func test_import() {
-    let stmt = self.import(
-      self.alias(name: "frozen",  asName: nil, start: loc1),
-      self.alias(name: "tangled", asName: nil, start: loc2)
+    let stmt = self.importStmt(
+      aliases: [
+        self.alias(name: "frozen",  asName: nil, start: loc1),
+        self.alias(name: "tangled", asName: nil, start: loc2)
+      ]
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -43,12 +45,14 @@ class STImport: SymbolTableTestCase {
 
   /// import frozen, tangled as bestMovieEver
   func test_import_withAlias() {
-    let stmt = self.import(
-      self.alias(name: "frozen",  asName: nil, start: loc1),
-      self.alias(name: "tangled", asName: "bestMovieEver", start: loc2)
+    let stmt = self.importStmt(
+      aliases: [
+        self.alias(name: "frozen",  asName: nil, start: loc1),
+        self.alias(name: "tangled", asName: "bestMovieEver", start: loc2)
+      ]
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -75,11 +79,13 @@ class STImport: SymbolTableTestCase {
   ///   tangled - imported, local,
   /// ```
   func test_import_withAttribute() {
-    let stmt = self.import(
-      self.alias(name: "tangled.rapunzel", asName: nil, start: loc1)
+    let stmt = self.importStmt(
+      aliases: [
+        self.alias(name: "tangled.rapunzel", asName: nil, start: loc1)
+      ]
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -105,7 +111,7 @@ class STImport: SymbolTableTestCase {
   ///   rapunzel - imported, local,
   /// ```
   func test_importFrom() {
-    let stmt = self.importFrom(
+    let stmt = self.importFromStmt(
       moduleName: "disnep",
       names: [
         self.alias(name: "elsa",     asName: nil, start: loc1),
@@ -114,7 +120,7 @@ class STImport: SymbolTableTestCase {
       level: 0
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -142,7 +148,7 @@ class STImport: SymbolTableTestCase {
   ///   princess - imported, local,
   /// ```
   func test_importFrom_withAlias() {
-    let stmt = self.importFrom(
+    let stmt = self.importFromStmt(
       moduleName: "disnep",
       names: [
         self.alias(name: "elsa",     asName: nil, start: loc1),
@@ -151,7 +157,7 @@ class STImport: SymbolTableTestCase {
       level: 0
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -177,9 +183,12 @@ class STImport: SymbolTableTestCase {
   /// symbols:
   /// ```
   func test_importFrom_withStar() {
-    let stmt = self.importFromStar(moduleName: "disnep", level: 0)
+    let stmt = self.importFromStarStmt(
+      moduleName: "disnep",
+      level: 0
+    )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -193,13 +202,13 @@ class STImport: SymbolTableTestCase {
   ///   from disnep import *
   /// ```
   func test_importFrom_withStar_inFunction_throws() {
-    let importStmt = self.importFromStar(
+    let importStmt = self.importFromStarStmt(
       moduleName: "disnep",
       level: 0,
       start: loc1
     )
 
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "sing",
       args: self.arguments(),
       body: [importStmt]

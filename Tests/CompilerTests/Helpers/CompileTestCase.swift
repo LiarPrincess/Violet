@@ -14,14 +14,7 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
   internal func compile(expr: Expression,
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.expression(expr))
-    return self.compile(ast: ast, file: file, line: line)
-  }
-
-  internal func compile(expr kind: ExpressionKind,
-                        file: StaticString = #file,
-                        line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.expression(self.expression(kind)))
+    let ast = self.expressionAST(expression: expr)
     return self.compile(ast: ast, file: file, line: line)
   }
 
@@ -29,24 +22,17 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
                         optimizationLevel: OptimizationLevel = .none,
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.module([stmt]))
+    let ast = self.moduleAST(statements: [stmt])
     return self.compile(ast: ast,
                         optimizationLevel: optimizationLevel,
                         file: file,
                         line: line)
   }
 
-  internal func compile(stmt kind: StatementKind,
-                        file: StaticString = #file,
-                        line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.module([self.statement(kind)]))
-    return self.compile(ast: ast, file: file, line: line)
-  }
-
   internal func compile(stmts: [Statement],
                         file: StaticString = #file,
                         line: UInt         = #line) -> CodeObject? {
-    let ast = self.ast(.module(stmts))
+    let ast = self.moduleAST(statements: stmts)
     return self.compile(ast: ast, file: file, line: line)
   }
 
@@ -55,6 +41,9 @@ internal class CompileTestCase: XCTestCase, ASTCreator {
                        file: StaticString = #file,
                        line: UInt         = #line) -> CodeObject? {
     do {
+      let validator = ASTValidator()
+      try validator.validate(ast: ast)
+
       let options = CompilerOptions(optimizationLevel: optimizationLevel)
       let compiler = try Compiler(ast: ast, filename: "file", options: options)
       return try compiler.run()

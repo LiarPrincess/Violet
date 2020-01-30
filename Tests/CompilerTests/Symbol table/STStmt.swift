@@ -11,26 +11,50 @@ import Parser
 /// Use 'Tools/dump_symtable.py' for reference.
 class STStmt: SymbolTableTestCase {
 
-  // MARK: - Pass, break, continue, return, delete and assert
+  // MARK: - Pass
 
-  func test_pass_break_continue() {
-    let stmtKinds: [StatementKind] = [
-      .pass, .break, .continue
-    ]
+  func test_pass() {
+    let stmt = self.passStmt()
 
-    for kind in stmtKinds {
-      let msg = "for '\(kind)'"
+    if let table = self.createSymbolTable(stmt: stmt) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
 
-      if let table = self.createSymbolTable(forStmt: kind) {
-        let top = table.top
-        XCTAssertScope(top, name: "top", type: .module, flags: [], msg)
-
-        XCTAssert(top.symbols.isEmpty, msg)
-        XCTAssert(top.children.isEmpty, msg)
-        XCTAssert(top.varNames.isEmpty, msg)
-      }
+      XCTAssert(top.symbols.isEmpty)
+      XCTAssert(top.children.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
     }
   }
+
+  // MARK: - Break, continue
+
+  func test_break() {
+    let stmt = self.breakStmt()
+
+    if let table = self.createSymbolTable(stmt: stmt) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+
+      XCTAssert(top.symbols.isEmpty)
+      XCTAssert(top.children.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
+    }
+  }
+
+  func test_continue() {
+    let stmt = self.continueStmt()
+
+    if let table = self.createSymbolTable(stmt: stmt) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+
+      XCTAssert(top.symbols.isEmpty)
+      XCTAssert(top.children.isEmpty)
+      XCTAssert(top.varNames.isEmpty)
+    }
+  }
+
+  // MARK: - Return
 
   /// def let_it_go(elsa):
   ///   return elsa
@@ -50,17 +74,17 @@ class STStmt: SymbolTableTestCase {
   ///     elsa - referenced, parameter, local,
   /// ```
   func test_return() {
-    let stmt = self.functionDef(
+    let stmt = self.functionDefStmt(
       name: "let_it_go",
-      args: self.arguments(args: [self.arg("elsa")]),
+      args: self.arguments(args: [self.arg(name: "elsa")]),
       body: [
-        self.statement(.return(
-          self.identifierExpr("elsa", start: loc1)
-        ))
+        self.returnStmt(
+          value: self.identifierExpr(value: "elsa", start: loc1)
+        )
       ]
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -91,6 +115,8 @@ class STStmt: SymbolTableTestCase {
     }
   }
 
+  // MARK: - Delete
+
   /// del elsa, anna
   ///
   /// ```c
@@ -101,12 +127,15 @@ class STStmt: SymbolTableTestCase {
   ///   anna - local, assigned,
   /// ```
   func test_delete() {
-    let stmt = self.delete(
-      self.identifierExpr("elsa", start: loc1),
-      self.identifierExpr("anna", start: loc2)
+    let stmt = self.deleteStmt(
+      values:
+      [
+        self.identifierExpr(value: "elsa", context: .del, start: loc1),
+        self.identifierExpr(value: "anna", context: .del, start: loc2)
+      ]
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -124,6 +153,8 @@ class STStmt: SymbolTableTestCase {
     }
   }
 
+  // MARK: - Assert
+
   /// assert elsa, anna
   ///
   /// ```c
@@ -134,12 +165,12 @@ class STStmt: SymbolTableTestCase {
   ///   anna - referenced, global,
   /// ```
   func test_assert() {
-    let kind = StatementKind.assert(
-      test: self.identifierExpr("elsa", start: loc1),
-      msg: self.identifierExpr("anna", start: loc2)
+    let stmt = self.assertStmt(
+      test: self.identifierExpr(value: "elsa", start: loc1),
+      msg: self.identifierExpr(value: "anna", start: loc2)
     )
 
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -171,18 +202,18 @@ class STStmt: SymbolTableTestCase {
   ///   anna - referenced, global,
   /// ```
   func test_for() {
-    let kind = self.for(
-      target: self.identifierExpr("elsa", start: loc1),
-      iter: self.identifierExpr("frozen", start: loc2),
+    let stmt = self.forStmt(
+      target: self.identifierExpr(value: "elsa", context: .store, start: loc1),
+      iterable: self.identifierExpr(value: "frozen", start: loc2),
       body: [
-        self.identifierStmt("elsa", exprStart: loc3)
+        self.identifierStmt(value: "elsa", exprStart: loc3)
       ],
       orElse: [
-        self.identifierStmt("anna", exprStart: loc4)
+        self.identifierStmt(value: "anna", exprStart: loc4)
       ]
     )
 
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -217,17 +248,17 @@ class STStmt: SymbolTableTestCase {
   ///   snowgies - referenced, global,
   /// ```
   func test_while() {
-    let kind = self.while(
-      test: self.identifierExpr("elsa", start: loc1),
+    let stmt = self.whileStmt(
+      test: self.identifierExpr(value: "elsa", start: loc1),
       body: [
-        self.identifierStmt("anna", exprStart: loc2)
+        self.identifierStmt(value: "anna", exprStart: loc2)
       ],
       orElse: [
-        self.identifierStmt("snowgies", exprStart: loc3)
+        self.identifierStmt(value: "snowgies", exprStart: loc3)
       ]
     )
 
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -262,13 +293,13 @@ class STStmt: SymbolTableTestCase {
   ///   snowgies - referenced, global,
   /// ```
   func test_if() {
-    let kind = self.if(
-      test: self.identifierExpr("elsa", start: loc1),
-      body: self.identifierExpr("anna", start: loc2),
-      orElse: self.identifierExpr("snowgies", start: loc3)
+    let stmt = self.ifStmt(
+      test: self.identifierExpr(value: "elsa", start: loc1),
+      body: [self.identifierStmt(value: "anna", exprStart: loc2)],
+      orElse: [self.identifierStmt(value: "snowgies", exprStart: loc3)]
     )
 
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -304,18 +335,18 @@ class STStmt: SymbolTableTestCase {
   /// ```
   func test_with() {
     let item = self.withItem(
-      contextExpr: self.identifierExpr("elsa", start: loc1),
-      optionalVars: self.identifierExpr("queen", start: loc2)
+      contextExpr: self.identifierExpr(value: "elsa", start: loc1),
+      optionalVars: self.identifierExpr(value: "queen", context: .store, start: loc2)
     )
 
-    let stmt = self.with(
+    let stmt = self.withStmt(
       items: [item],
       body: [
-        self.identifierStmt("queen", exprStart: loc3)
+        self.identifierStmt(value: "queen", exprStart: loc3)
       ]
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -345,12 +376,12 @@ class STStmt: SymbolTableTestCase {
   ///   arendelle - referenced, global,
   /// ```
   func test_raise() {
-    let kind = StatementKind.raise(
-      exception: self.identifierExpr("elsa", start: loc1),
-      cause: self.identifierExpr("arendelle", start: loc2)
+    let stmt = self.raiseStmt(
+      exception: self.identifierExpr(value: "elsa", start: loc1),
+      cause: self.identifierExpr(value: "arendelle", start: loc2)
     )
 
-    if let table = self.createSymbolTable(forStmt: kind) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -386,21 +417,21 @@ class STStmt: SymbolTableTestCase {
   func test_try() {
     let handler = self.exceptHandler(
       kind: .typed(
-        type: self.identifierExpr("elsa", start: loc4),
+        type: self.identifierExpr(value: "elsa", start: loc4),
         asName: "queen"
       ),
-      body: self.statement(expr: .identifier("queen")),
+      body: [self.identifierStmt(value: "queen")],
       start: loc5
     )
 
-    let stmt = self.try(
-      body: self.identifierExpr("magic", start: loc1),
+    let stmt = self.tryStmt(
+      body: [self.identifierStmt(value: "magic", exprStart: loc1)],
       handlers: [handler],
-      orElse: [self.identifierExpr("spell", start: loc2)],
-      finalBody: [self.identifierExpr("sing", start: loc3)]
+      orElse: [self.identifierStmt(value: "spell", exprStart: loc2)],
+      finally: [self.identifierStmt(value: "sing", exprStart: loc3)]
     )
 
-    if let table = self.createSymbolTable(forStmt: stmt) {
+    if let table = self.createSymbolTable(stmt: stmt) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)

@@ -31,17 +31,19 @@ class STExprComprehension: SymbolTableTestCase {
   ///      ariel - referenced, local, assigned,
   /// ```
   func test_list() {
-    let elt = self.identifierExpr("ariel", start: loc1)
-    let iter = self.identifierExpr("sea", start: loc2)
-
-    let expr = self.listComprehension(
-      elt: elt,
+    let expr = self.listComprehensionExpr(
+      element: self.identifierExpr(value: "ariel", start: loc1),
       generators: [
-        self.comprehension(target: elt, iter: iter, ifs: [], isAsync: false)
+        self.comprehension(
+          target: self.identifierExpr(value: "ariel", context: .store, start: loc2),
+          iter: self.identifierExpr(value: "sea", start: loc3),
+          ifs: [],
+          isAsync: false
+        )
       ]
     )
 
-    if let table = self.createSymbolTable(forExpr: expr) {
+    if let table = self.createSymbolTable(expr: expr) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -50,7 +52,7 @@ class STExprComprehension: SymbolTableTestCase {
       XCTAssertContainsSymbol(top,
                               name: "sea",
                               flags: [.use, .srcGlobalImplicit],
-                              location: loc2)
+                              location: loc3)
 
       XCTAssertEqual(top.children.count, 1)
       guard top.children.count == 1 else { return }
@@ -69,7 +71,7 @@ class STExprComprehension: SymbolTableTestCase {
       XCTAssertContainsSymbol(listComp,
                               name: "ariel",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: loc1)
+                              location: loc2)
     }
   }
 
@@ -92,22 +94,21 @@ class STExprComprehension: SymbolTableTestCase {
   ///     hasLegs - referenced, global,
   /// ```
   func test_list_ifs() {
-    let elt = self.identifierExpr("ariel", start: loc1)
-    let iff = self.identifierExpr("hasLegs", start: loc2)
-
-    let expr = self.listComprehension(
-      elt: elt,
+    let expr = self.listComprehensionExpr(
+      element: self.identifierExpr(value: "ariel", start: loc1),
       generators: [
         self.comprehension(
-          target: elt,
-          iter: self.expression(.list([])),
-          ifs: [iff],
+          target: self.identifierExpr(value: "ariel", context: .store, start: loc2),
+          iter: self.listExpr(elements: []),
+          ifs: [
+            self.identifierExpr(value: "hasLegs", start: loc3)
+          ],
           isAsync: true
         )
       ]
     )
 
-    if let table = self.createSymbolTable(forExpr: expr) {
+    if let table = self.createSymbolTable(expr: expr) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -130,11 +131,11 @@ class STExprComprehension: SymbolTableTestCase {
       XCTAssertContainsSymbol(listComp,
                               name: "ariel",
                               flags: [.defLocal, .srcLocal, .use],
-                              location: loc1)
+                              location: loc2)
       XCTAssertContainsSymbol(listComp,
                               name: "hasLegs",
                               flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
+                              location: loc3)
     }
   }
 
@@ -154,24 +155,26 @@ class STExprComprehension: SymbolTableTestCase {
   ///     ariel - local, assigned,
   ///     eric - referenced, local, assigned,
   func test_list_nested() {
-    let elt1 = self.identifierExpr("ariel", start: loc1)
-    let compr1 = self.comprehension(target: elt1,
-                                    iter: self.expression(.list([])),
-                                    ifs: [],
-                                    isAsync: false)
+    let compr1 = self.comprehension(
+      target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
+      iter: self.listExpr(elements: []),
+      ifs: [],
+      isAsync: false
+    )
 
-    let elt2 = self.identifierExpr("eric", start: loc2)
-    let compr2 = self.comprehension(target: elt2,
-                                    iter: self.expression(.list([])),
-                                    ifs: [],
-                                    isAsync: false)
+    let compr2 = self.comprehension(
+      target: self.identifierExpr(value: "eric", context: .store, start: loc2),
+      iter: self.listExpr(elements: []),
+      ifs: [],
+      isAsync: false
+    )
 
-    let expr = self.listComprehension(
-      elt: elt2,
+    let expr = self.listComprehensionExpr(
+      element: self.identifierExpr(value: "eric", start: loc3),
       generators: [compr1, compr2]
     )
 
-    if let table = self.createSymbolTable(forExpr: expr) {
+    if let table = self.createSymbolTable(expr: expr) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -197,7 +200,7 @@ class STExprComprehension: SymbolTableTestCase {
                               location: loc1)
       XCTAssertContainsSymbol(listComp,
                               name: "eric",
-                              flags: [.srcGlobalImplicit, .use],
+                              flags: [.defLocal, .srcLocal, .use],
                               location: loc2)
     }
   }
@@ -207,20 +210,19 @@ class STExprComprehension: SymbolTableTestCase {
   /// {ariel for ariel in sea}
   /// (similiar to `self.test_list`)
   func test_set() {
-    let elt = self.identifierExpr("ariel", start: loc1)
-    let iter = self.identifierExpr("sea", start: loc2)
-
-    let compr = self.comprehension(target: elt,
-                                   iter: iter,
-                                   ifs: [],
-                                   isAsync: false)
-
-    let kind = ExpressionKind.setComprehension(
-      elt: elt,
-      generators: NonEmptyArray(first: compr)
+    let compr = self.comprehension(
+      target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
+      iter: self.identifierExpr(value: "sea", start: loc2),
+      ifs: [],
+      isAsync: false
     )
 
-    if let table = self.createSymbolTable(forExpr: kind) {
+    let kind = self.setComprehensionExpr(
+      element: self.identifierExpr(value: "ariel", start: loc3),
+      generators: [compr]
+    )
+
+    if let table = self.createSymbolTable(expr: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -274,22 +276,20 @@ class STExprComprehension: SymbolTableTestCase {
   ///     eric - referenced, global,
   /// ```
   func test_dictionary() {
-    let key = self.identifierExpr("ariel", start: loc1)
-    let value = self.identifierExpr("eric", start: loc2)
-    let iter = self.identifierExpr("sea", start: loc3)
-
-    let compr = self.comprehension(target: key,
-                                   iter: iter,
-                                   ifs: [],
-                                   isAsync: false)
-
-    let kind = ExpressionKind.dictionaryComprehension(
-      key: key,
-      value: value,
-      generators: NonEmptyArray(first: compr)
+    let compr = self.comprehension(
+      target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
+      iter: self.identifierExpr(value: "sea", start: loc2),
+      ifs: [],
+      isAsync: false
     )
 
-    if let table = self.createSymbolTable(forExpr: kind) {
+    let kind = self.dictionaryComprehensionExpr(
+      key: self.identifierExpr(value: "ariel", start: loc3),
+      value: self.identifierExpr(value: "eric", start: loc4),
+      generators: [compr]
+    )
+
+    if let table = self.createSymbolTable(expr: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)
@@ -298,7 +298,7 @@ class STExprComprehension: SymbolTableTestCase {
       XCTAssertContainsSymbol(top,
                               name: "sea",
                               flags: [.use, .srcGlobalImplicit],
-                              location: loc3)
+                              location: loc2)
 
       XCTAssertEqual(top.children.count, 1)
       guard top.children.count == 1 else { return }
@@ -321,7 +321,7 @@ class STExprComprehension: SymbolTableTestCase {
       XCTAssertContainsSymbol(listComp,
                               name: "eric",
                               flags: [.srcGlobalImplicit, .use],
-                              location: loc2)
+                              location: loc4)
     }
   }
 
@@ -330,20 +330,19 @@ class STExprComprehension: SymbolTableTestCase {
   /// [ariel for ariel in sea]
   /// (similiar to `self.test_list`)
   func test_generator() {
-    let elt = self.identifierExpr("ariel", start: loc1)
-    let iter = self.identifierExpr("sea", start: loc2)
-
-    let compr = self.comprehension(target: elt,
-                                   iter: iter,
-                                   ifs: [],
-                                   isAsync: false)
-
-    let kind = ExpressionKind.generatorExp(
-      elt: elt,
-      generators: NonEmptyArray(first: compr)
+    let compr = self.comprehension(
+      target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
+      iter: self.identifierExpr(value: "sea", start: loc2),
+      ifs: [],
+      isAsync: false
     )
 
-    if let table = self.createSymbolTable(forExpr: kind) {
+    let kind = self.generatorExpr(
+      element: self.identifierExpr(value: "ariel", start: loc3),
+      generators: [compr]
+    )
+
+    if let table = self.createSymbolTable(expr: kind) {
       let top = table.top
       XCTAssertScope(top, name: "top", type: .module, flags: [])
       XCTAssert(top.varNames.isEmpty)

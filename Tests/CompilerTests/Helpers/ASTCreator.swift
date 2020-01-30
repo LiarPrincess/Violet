@@ -1,374 +1,1279 @@
 import Core
 import Parser
+import Foundation
 
 // swiftlint:disable file_length
 
 /// Create AST (without locations, because we don't need them most of the time).
-internal protocol ASTCreator: ASTBuilderOwner { }
+internal protocol ASTCreator { }
 
 extension ASTCreator {
 
-  /// Start location
+  internal var id: ASTNodeId {
+    return 0
+  }
+
   internal var start: SourceLocation {
     return SourceLocation(line: 98, column: 5)
   }
 
-  /// End location
   internal var end: SourceLocation {
     return SourceLocation(line: 99, column: 9)
   }
 
-  // MARK: - AST
+  // MARK: - InteractiveAST
 
-  internal func ast(_ kind: ASTKind) -> AST {
-    return self.ast(kind, start: start, end: end)
-  }
-
-  // MARK: - Statements
-
-  internal func statement(_ kind: StatementKind,
-                          start: SourceLocation? = nil) -> Statement {
-    return self.statement(kind, start: start ?? self.start, end: end)
-  }
-
-  internal func statement(expr kind: ExpressionKind,
-                          start: SourceLocation? = nil) -> Statement {
-    let stmtKind = StatementKind.expr(self.expression(kind))
-    return self.statement(stmtKind, start: start ?? self.start, end: end)
-  }
-
-  internal func `for`(target: Expression,
-                      iter:   Expression,
-                      body:   [Statement],
-                      orElse: [Statement]) -> Statement {
-    return self.statement(
-      .for(
-        target: target,
-        iter: iter,
-        body: self.toNonEmptyArray(body),
-        orElse: orElse
-      )
+  public func interactiveAST(
+    statements: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> InteractiveAST {
+    return InteractiveAST(
+      id: self.id,
+      statements: statements,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func delete(_ exprs: Expression...) -> Statement {
-    return self.statement(.delete(self.toNonEmptyArray(exprs)))
-  }
+  // MARK: - ModuleAST
 
-  internal func `try`(body: Expression,
-                      handlers:  [ExceptHandler],
-                      orElse:    [Expression],
-                      finalBody: [Expression]) -> Statement {
-    return self.statement(
-      .try(
-        body: NonEmptyArray(first: self.statement(.expr(body))),
-        handlers: handlers,
-        orElse:   self.toStatements(orElse),
-        finally:  self.toStatements(finalBody)
-      )
+  public func moduleAST(
+    statements: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ModuleAST {
+    return ModuleAST(
+      id: self.id,
+      statements: statements,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func with(items: [WithItem], body: [Statement]) -> Statement {
-    return self.statement(
-      .with(
-        items: self.toNonEmptyArray(items),
-        body: self.toNonEmptyArray(body)
-      )
+  // MARK: - ExpressionAST
+
+  public func expressionAST(
+    expression: Expression,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ExpressionAST {
+    return ExpressionAST(
+      id: self.id,
+      expression: expression,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func `while`(test: Expression,
-                        body: [Statement],
-                        orElse: [Statement]) -> Statement {
-    return self.statement(
-      .while(
-        test: test,
-        body: self.toNonEmptyArray(body),
-        orElse: orElse
-      )
+  // MARK: - FunctionDefStmt
+
+  public func functionDefStmt(
+    name: String,
+    args: Arguments,
+    body: [Statement],
+    decorators: [Expression] = [],
+    returns: Expression? = nil,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> FunctionDefStmt {
+    return FunctionDefStmt(
+      id: self.id,
+      name: name,
+      args: args,
+      body: self.toNonEmptyArray(body),
+      decorators: decorators,
+      returns: returns,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func `if`(test: Expression,
-                     body: Expression,
-                     orElse: Expression) -> Statement {
-    return self.statement(
-      .if(
-        test: test,
-        body: NonEmptyArray(first: self.statement(.expr(body))),
-        orElse: [self.statement(.expr(orElse))]
-      )
+  // MARK: - AsyncFunctionDefStmt
+
+  public func asyncFunctionDefStmt(
+    name: String,
+    args: Arguments,
+    body: [Statement],
+    decorators: [Expression] = [],
+    returns: Expression? = nil,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> AsyncFunctionDefStmt {
+    return AsyncFunctionDefStmt(
+      id: self.id,
+      name: name,
+      args: args,
+      body: self.toNonEmptyArray(body),
+      decorators: decorators,
+      returns: returns,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func functionDef(name: String,
-                            args: Arguments,
-                            body: [Statement],
-                            decorators: [Expression] = [],
-                            returns: Expression? = nil,
-                            start: SourceLocation? = nil) -> Statement {
-    let kindArgs = FunctionDefArgs(name: name,
-                                   args: args,
-                                   body: self.toNonEmptyArray(body),
-                                   decorators: decorators,
-                                   returns: returns)
+  // MARK: - ClassDefStmt
 
-    return self.statement(
-      .functionDef(kindArgs),
-      start: start ?? self.start
+  public func classDefStmt(
+    name: String,
+    bases: [Expression],
+    keywords: [Keyword],
+    body: [Statement],
+    decorators: [Expression],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ClassDefStmt {
+    return ClassDefStmt(
+      id: self.id,
+      name: name,
+      bases: bases,
+      keywords: keywords,
+      body: self.toNonEmptyArray(body),
+      decorators: decorators,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func asyncFunctionDef(name: String,
-                                 args: Arguments,
-                                 body: Statement? = nil,
-                                 decorators: [Expression] = [],
-                                 returns: Expression? = nil,
-                                 start: SourceLocation? = nil) -> Statement {
-    let bodyStatement = body ?? self.statement(.pass)
-    let bodyArray = self.toNonEmptyArray([bodyStatement])
+  // MARK: - ReturnStmt
 
-    let kindArgs = FunctionDefArgs(name: name,
-                                   args: args,
-                                   body: bodyArray,
-                                   decorators: decorators,
-                                   returns: returns)
-
-    return self.statement(
-      .asyncFunctionDef(kindArgs),
-      start: start ?? self.start
+  public func returnStmt(
+    value: Expression?,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ReturnStmt {
+    return ReturnStmt(
+      id: self.id,
+      value: value,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func `import`(_ aliasses: Alias...) -> Statement {
-    return self.statement(.import(self.toNonEmptyArray(aliasses)))
-  }
+  // MARK: - DeleteStmt
 
-  internal func importFrom(moduleName: String?,
-                           names: [Alias],
-                           level: UInt8,
-                           start: SourceLocation? = nil) -> Statement {
-    return self.statement(
-      .importFrom(
-        moduleName: moduleName,
-        names: self.toNonEmptyArray(names),
-        level: level
-      ),
-      start: start
+  public func deleteStmt(
+    values: [Expression],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> DeleteStmt {
+    return DeleteStmt(
+      id: self.id,
+      values: self.toNonEmptyArray(values),
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func importFromStar(moduleName: String?,
-                               level: UInt8,
-                               start: SourceLocation? = nil) -> Statement {
-    return self.statement(
-      .importFromStar(moduleName: moduleName, level: level),
-      start: start
+  // MARK: - AssignStmt
+
+  public func assignStmt(
+    targets: [Expression],
+    value: Expression,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> AssignStmt {
+    return AssignStmt(
+      id: self.id,
+      targets: self.toNonEmptyArray(targets),
+      value: value,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func global(name: String, start: SourceLocation? = nil) -> Statement {
-    let kind = StatementKind.global(NonEmptyArray(first: name))
-    return self.statement(kind, start: start ?? self.start)
-  }
+  // MARK: - AugAssignStmt
 
-  internal func nonlocal(name: String, start: SourceLocation? = nil) -> Statement {
-    let kind = StatementKind.nonlocal(NonEmptyArray(first: name))
-    return self.statement(kind, start: start ?? self.start)
-  }
-
-  internal func assign(target: Expression,
-                       value: Expression,
-                       start: SourceLocation? = nil) -> Statement {
-    return self.assign(target: [target], value: value, start: start)
-  }
-
-  internal func assign(target: [Expression],
-                       value: Expression,
-                       start: SourceLocation? = nil) -> Statement {
-    return self.statement(
-      .assign(
-        targets: self.toNonEmptyArray(target),
-        value: value
-      ),
-      start: start ?? self.start
+  public func augAssignStmt(
+    target: Expression,
+    op: BinaryOperator,
+    value: Expression,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> AugAssignStmt {
+    return AugAssignStmt(
+      id: self.id,
+      target: target,
+      op: op,
+      value: value,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func augAssign(target: Expression,
-                          op: BinaryOperator,
-                          value: Expression,
-                          start: SourceLocation? = nil) -> Statement {
-    return self.statement(
-      .augAssign(
-        target: target,
-        op: op,
-        value: value
-      ),
-      start: start ?? self.start
+  // MARK: - AnnAssignStmt
+
+  public func annAssignStmt(
+    target: Expression,
+    annotation: Expression,
+    value: Expression?,
+    isSimple: Bool,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> AnnAssignStmt {
+    return AnnAssignStmt(
+      id: self.id,
+      target: target,
+      annotation: annotation,
+      value: value,
+      isSimple: isSimple,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func annAssign(target: Expression,
-                          annotation: Expression,
-                          value: Expression?,
-                          isSimple: Bool,
-                          start: SourceLocation? = nil) -> Statement {
-    return self.statement(
-      .annAssign(
-        target: target,
-        annotation: annotation,
-        value: value,
-        isSimple: isSimple
-      ),
-      start: start ?? self.start
+  // MARK: - ForStmt
+
+  public func forStmt(
+    target: Expression,
+    iterable: Expression,
+    body: [Statement],
+    orElse: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ForStmt {
+    return ForStmt(
+      id: self.id,
+      target: target,
+      iterable: iterable,
+      body: self.toNonEmptyArray(body),
+      orElse: orElse,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func `class`(name: String,
-                        bases: [Expression],
-                        keywords: [Keyword],
-                        body: [Statement],
-                        decorators: [Expression] = [],
-                        start: SourceLocation? = nil) -> Statement {
-    let kindArgs = ClassDefArgs(name: name,
-                                bases: bases,
-                                keywords: keywords,
-                                body: self.toNonEmptyArray(body),
-                                decorators: decorators)
+  // MARK: - AsyncForStmt
 
-    return self.statement(
-      .classDef(kindArgs),
-      start: start ?? self.start
+  public func asyncForStmt(
+    target: Expression,
+    iterable: Expression,
+    body: [Statement],
+    orElse: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> AsyncForStmt {
+    return AsyncForStmt(
+      id: self.id,
+      target: target,
+      iterable: iterable,
+      body: self.toNonEmptyArray(body),
+      orElse: orElse,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  // MARK: - Expressions
+  // MARK: - WhileStmt
 
-  internal func expression(_ kind: ExpressionKind,
-                           start: SourceLocation? = nil) -> Expression {
-    return self.expression(kind, start: start ?? self.start, end: end)
+  public func whileStmt(
+    test: Expression,
+    body: [Statement],
+    orElse: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> WhileStmt {
+    return WhileStmt(
+      id: self.id,
+      test: test,
+      body: self.toNonEmptyArray(body),
+      orElse: orElse,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
   }
 
-  internal func listComprehension(elt: Expression,
-                                  generators: [Comprehension]) -> Expression {
-    return self.expression(
-      .listComprehension(
-        elt: elt,
-        generators: self.toNonEmptyArray(generators)
-      )
+  // MARK: - IfStmt
+
+  public func ifStmt(
+    test: Expression,
+    body: [Statement],
+    orElse: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> IfStmt {
+    return IfStmt(
+      id: self.id,
+      test: test,
+      body: self.toNonEmptyArray(body),
+      orElse: orElse,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - WithStmt
+
+  public func withStmt(
+    items: [WithItem],
+    body: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> WithStmt {
+    return WithStmt(
+      id: self.id,
+      items: self.toNonEmptyArray(items),
+      body: self.toNonEmptyArray(body),
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - AsyncWithStmt
+
+  public func asyncWithStmt(
+    items: [WithItem],
+    body: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> AsyncWithStmt {
+    return AsyncWithStmt(
+      id: self.id,
+      items: self.toNonEmptyArray(items),
+      body: self.toNonEmptyArray(body),
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - RaiseStmt
+
+  public func raiseStmt(
+    exception: Expression?,
+    cause: Expression?,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> RaiseStmt {
+    return RaiseStmt(
+      id: self.id,
+      exception: exception,
+      cause: cause,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - TryStmt
+
+  public func tryStmt(
+    body: [Statement],
+    handlers: [ExceptHandler],
+    orElse: [Statement],
+    finally: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> TryStmt {
+    return TryStmt(
+      id: self.id,
+      body: self.toNonEmptyArray(body),
+      handlers: handlers,
+      orElse: orElse,
+      finally: finally,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - AssertStmt
+
+  public func assertStmt(
+    test: Expression,
+    msg: Expression?,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> AssertStmt {
+    return AssertStmt(
+      id: self.id,
+      test: test,
+      msg: msg,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - ImportStmt
+
+  public func importStmt(
+    aliases: [Alias],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ImportStmt {
+    return ImportStmt(
+      id: self.id,
+      aliases: self.toNonEmptyArray(aliases),
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - ImportFromStmt
+
+  public func importFromStmt(
+    moduleName: String?,
+    names: [Alias],
+    level: UInt8,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ImportFromStmt {
+    return ImportFromStmt(
+      id: self.id,
+      moduleName: moduleName,
+      names: self.toNonEmptyArray(names),
+      level: level,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - ImportFromStarStmt
+
+  public func importFromStarStmt(
+    moduleName: String?,
+    level: UInt8,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ImportFromStarStmt {
+    return ImportFromStarStmt(
+      id: self.id,
+      moduleName: moduleName,
+      level: level,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - GlobalStmt
+
+  public func globalStmt(
+    identifier: String,
+    start: SourceLocation? = nil
+  ) -> GlobalStmt {
+    return self.globalStmt(identifiers: [identifier], start: start)
+  }
+
+  public func globalStmt(
+    identifiers: [String],
+    start: SourceLocation? = nil
+  ) -> GlobalStmt {
+    return GlobalStmt(
+      id: self.id,
+      identifiers: self.toNonEmptyArray(identifiers),
+      start: start ?? self.start,
+      end: self.end
+    )
+  }
+
+  // MARK: - NonlocalStmt
+
+  public func nonlocalStmt(
+    identifier: String,
+    start: SourceLocation? = nil
+  ) -> NonlocalStmt {
+    return self.nonlocalStmt(identifiers: [identifier], start: start)
+  }
+
+  public func nonlocalStmt(
+    identifiers: [String],
+    start: SourceLocation? = nil
+  ) -> NonlocalStmt {
+    return NonlocalStmt(
+      id: self.id,
+      identifiers: self.toNonEmptyArray(identifiers),
+      start: start ?? self.start,
+      end: self.end
+    )
+  }
+
+  // MARK: - ExprStmt
+
+  public func exprStmt(
+    expression: Expression,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ExprStmt {
+    return ExprStmt(
+      id: self.id,
+      expression: expression,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - PassStmt
+
+  public func passStmt(
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> PassStmt {
+    return PassStmt(
+      id: self.id,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - BreakStmt
+
+  public func breakStmt(
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> BreakStmt {
+    return BreakStmt(
+      id: self.id,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - ContinueStmt
+
+  public func continueStmt(
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ContinueStmt {
+    return ContinueStmt(
+      id: self.id,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - TrueExpr
+
+  public func trueExpr(
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> TrueExpr {
+    return TrueExpr(
+      id: self.id,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - FalseExpr
+
+  public func falseExpr(
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> FalseExpr {
+    return FalseExpr(
+      id: self.id,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - NoneExpr
+
+  public func noneExpr(
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> NoneExpr {
+    return NoneExpr(
+      id: self.id,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - EllipsisExpr
+
+  public func ellipsisExpr(
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> EllipsisExpr {
+    return EllipsisExpr(
+      id: self.id,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - IdentifierExpr
+
+  public func identifierExpr(
+    value: String,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> IdentifierExpr {
+    return IdentifierExpr(
+      id: self.id,
+      value: value,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  public func identifierStmt(
+    value: String,
+    context: ExpressionContext = .load,
+    exprStart: SourceLocation? = nil,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ExprStmt {
+    let expr = self.identifierExpr(
+      value: value,
+      context: context,
+      start: exprStart ?? self.start,
+      end: end ?? self.end
+    )
+
+    return self.exprStmt(
+      expression: expr,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - StringExpr
+
+  public func stringExpr(
+    value: StringGroup,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> StringExpr {
+    return StringExpr(
+      id: self.id,
+      value: value,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - IntExpr
+
+  public func intExpr(
+    value: Int,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> IntExpr {
+    return IntExpr(
+      id: self.id,
+      value: BigInt(value),
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  public func intExpr(
+    value: BigInt,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> IntExpr {
+    return IntExpr(
+      id: self.id,
+      value: value,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - FloatExpr
+
+  public func floatExpr(
+    value: Double,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> FloatExpr {
+    return FloatExpr(
+      id: self.id,
+      value: value,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - ComplexExpr
+
+  public func complexExpr(
+    real: Double,
+    imag: Double,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ComplexExpr {
+    return ComplexExpr(
+      id: self.id,
+      real: real,
+      imag: imag,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - BytesExpr
+
+  public func bytesExpr(
+    value: Data,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> BytesExpr {
+    return BytesExpr(
+      id: self.id,
+      value: value,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - UnaryOpExpr
+
+  public func unaryOpExpr(
+    op: UnaryOperator,
+    right: Expression,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> UnaryOpExpr {
+    return UnaryOpExpr(
+      id: self.id,
+      op: op,
+      right: right,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - BinaryOpExpr
+
+  public func binaryOpExpr(
+    op: BinaryOperator,
+    left: Expression,
+    right: Expression,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> BinaryOpExpr {
+    return BinaryOpExpr(
+      id: self.id,
+      op: op,
+      left: left,
+      right: right,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - BoolOpExpr
+
+  public func boolOpExpr(
+    op: BooleanOperator,
+    left: Expression,
+    right: Expression,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> BoolOpExpr {
+    return BoolOpExpr(
+      id: self.id,
+      op: op,
+      left: left,
+      right: right,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - CompareExpr
+
+  public func compareExpr(
+    left: Expression,
+    elements: [ComparisonElement],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> CompareExpr {
+    return CompareExpr(
+      id: self.id,
+      left: left,
+      elements: self.toNonEmptyArray(elements),
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - TupleExpr
+
+  public func tupleExpr(
+    elements: [Expression],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> TupleExpr {
+    return TupleExpr(
+      id: self.id,
+      elements: elements,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - ListExpr
+
+  public func listExpr(
+    elements: [Expression],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ListExpr {
+    return ListExpr(
+      id: self.id,
+      elements: elements,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - DictionaryExpr
+
+  public func dictionaryExpr(
+    elements: [DictionaryElement],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> DictionaryExpr {
+    return DictionaryExpr(
+      id: self.id,
+      elements: elements,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - SetExpr
+
+  public func setExpr(
+    elements: [Expression],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> SetExpr {
+    return SetExpr(
+      id: self.id,
+      elements: elements,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - ListComprehensionExpr
+
+  public func listComprehensionExpr(
+    element: Expression,
+    generators: [Comprehension],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ListComprehensionExpr {
+    return ListComprehensionExpr(
+      id: self.id,
+      element: element,
+      generators: self.toNonEmptyArray(generators),
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - SetComprehensionExpr
+
+  public func setComprehensionExpr(
+    element: Expression,
+    generators: [Comprehension],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> SetComprehensionExpr {
+    return SetComprehensionExpr(
+      id: self.id,
+      element: element,
+      generators: self.toNonEmptyArray(generators),
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - DictionaryComprehensionExpr
+
+  public func dictionaryComprehensionExpr(
+    key: Expression,
+    value: Expression,
+    generators: [Comprehension],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> DictionaryComprehensionExpr {
+    return DictionaryComprehensionExpr(
+      id: self.id,
+      key: key,
+      value: value,
+      generators: self.toNonEmptyArray(generators),
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - GeneratorExpr
+
+  public func generatorExpr(
+    element: Expression,
+    generators: [Comprehension],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> GeneratorExpr {
+    return GeneratorExpr(
+      id: self.id,
+      element: element,
+      generators: self.toNonEmptyArray(generators),
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - AwaitExpr
+
+  public func awaitExpr(
+    value: Expression,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> AwaitExpr {
+    return AwaitExpr(
+      id: self.id,
+      value: value,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - YieldExpr
+
+  public func yieldExpr(
+    value: Expression?,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> YieldExpr {
+    return YieldExpr(
+      id: self.id,
+      value: value,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - YieldFromExpr
+
+  public func yieldFromExpr(
+    value: Expression,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> YieldFromExpr {
+    return YieldFromExpr(
+      id: self.id,
+      value: value,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - LambdaExpr
+
+  public func lambdaExpr(
+    args: Arguments,
+    body: Expression,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> LambdaExpr {
+    return LambdaExpr(
+      id: self.id,
+      args: args,
+      body: body,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - CallExpr
+
+  public func callExpr(
+    function: Expression,
+    args: [Expression],
+    keywords: [Keyword],
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> CallExpr {
+    return CallExpr(
+      id: self.id,
+      function: function,
+      args: args,
+      keywords: keywords,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - IfExpr
+
+  public func ifExpr(
+    test: Expression,
+    body: Expression,
+    orElse: Expression,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> IfExpr {
+    return IfExpr(
+      id: self.id,
+      test: test,
+      body: body,
+      orElse: orElse,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - AttributeExpr
+
+  public func attributeExpr(
+    object: Expression,
+    name: String,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> AttributeExpr {
+    return AttributeExpr(
+      id: self.id,
+      object: object,
+      name: name,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - SubscriptExpr
+
+  public func subscriptExpr(
+    object: Expression,
+    slice: Slice,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> SubscriptExpr {
+    return SubscriptExpr(
+      id: self.id,
+      object: object,
+      slice: slice,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - StarredExpr
+
+  public func starredExpr(
+    expression: Expression,
+    context: ExpressionContext = .load,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> StarredExpr {
+    return StarredExpr(
+      id: self.id,
+      expression: expression,
+      context: context,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - Arguments
+
+  internal func arguments(
+    args: [Arg] = [],
+    defaults: [Expression] = [],
+    vararg: Vararg = .none,
+    kwOnlyArgs: [Arg] = [],
+    kwOnlyDefaults: [Expression] = [],
+    kwarg: Arg? = nil,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> Arguments {
+    return Arguments(
+      id: self.id,
+      args: args,
+      defaults: defaults,
+      vararg: vararg,
+      kwOnlyArgs: kwOnlyArgs,
+      kwOnlyDefaults: kwOnlyDefaults,
+      kwarg: kwarg,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  internal func arg(
+    name: String,
+    annotation: Expression? = nil,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> Arg {
+    return Arg(
+      id: self.id,
+      name: name,
+      annotation: annotation,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  internal func keyword(
+    kind: KeywordKind,
+    value: Expression,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> Keyword {
+    return Keyword(
+      id: self.id,
+      kind: kind,
+      value: value,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - Alias
+
+  internal func alias(
+    name: String,
+    asName: String?,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> Alias {
+    return Alias(
+      id: self.id,
+      name: name,
+      asName: asName,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - WithItem
+
+  internal func withItem(
+    contextExpr: Expression,
+    optionalVars: Expression?,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> WithItem {
+    return WithItem(
+      id: self.id,
+      contextExpr: contextExpr,
+      optionalVars: optionalVars,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
+  }
+
+  // MARK: - ExceptHandler
+
+  internal func exceptHandler(
+    kind: ExceptHandlerKind,
+    body: [Statement],
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> ExceptHandler {
+    return ExceptHandler(
+      id: self.id,
+      kind: kind,
+      body: self.toNonEmptyArray(body),
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
   // MARK: - Slice
 
-  internal func slice(_ kind: SliceKind) -> Slice {
-    return self.slice(kind, start: start, end: end)
-  }
-
-  // MARK: - Alias
-
-  internal func alias(name: String,
-                      asName: String?,
-                      start: SourceLocation? = nil) -> Alias {
-    return self.alias(name: name,
-                      asName: asName,
-                      start: start ?? self.start,
-                      end: end)
-  }
-
-  // MARK: - WithItem
-
-  internal func withItem(contextExpr: Expression,
-                         optionalVars: Expression?) -> WithItem {
-    return self.withItem(contextExpr: contextExpr,
-                         optionalVars: optionalVars,
-                         start: start,
-                         end: end)
-  }
-
-  // MARK: - ExceptHandler
-
-  internal func exceptHandler(kind: ExceptHandlerKind,
-                              body: Statement,
-                              start: SourceLocation? = nil) -> ExceptHandler {
-    return self.exceptHandler(kind: kind,
-                              body: NonEmptyArray(first: body),
-                              start: start ?? self.start,
-                              end: self.end)
+  internal func slice(
+    kind: SliceKind,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> Slice {
+    return Slice(
+      id: self.id,
+      kind: kind,
+      start: start ?? self.start,
+      end: end ?? self.end
+    )
   }
 
   // MARK: - Comprehension
 
-  internal func comprehension(target: Expression,
-                              iter: Expression,
-                              ifs: [Expression],
-                              isAsync: Bool) -> Comprehension {
-    return self.comprehension(target: target,
-                              iter: iter,
-                              ifs: ifs,
-                              isAsync: isAsync,
-                              start: start,
-                              end: end)
-  }
-
-  // MARK: - Arguments
-
-  internal func arguments(args: [Arg] = [],
-                          defaults: [Expression] = [],
-                          vararg: Vararg = .none,
-                          kwOnlyArgs: [Arg] = [],
-                          kwOnlyDefaults: [Expression] = [],
-                          kwarg: Arg? = nil) -> Arguments {
-    return self.arguments(args: args,
-                          defaults: defaults,
-                          vararg: vararg,
-                          kwOnlyArgs: kwOnlyArgs,
-                          kwOnlyDefaults: kwOnlyDefaults,
-                          kwarg: kwarg,
-                          start: start,
-                          end: end)
-  }
-
-  internal func arg(_ name: String,
-                    annotation: Expression? = nil,
-                    start: SourceLocation? = nil) -> Arg {
-    return self.arg(name: name,
-                    annotation: annotation,
-                    start: start ?? self.start,
-                    end: end)
-  }
-
-  // MARK: - Keyword
-
-  internal func keyword(kind: KeywordKind, value: Expression) -> Keyword {
-    return self.keyword(kind, value: value, start: start, end: end)
-  }
-
-  // MARK: - Other helpers
-
-  internal func identifierExpr(_ value: String,
-                               start: SourceLocation? = nil) -> Expression {
-    return self.expression(
-      .identifier(value),
-      start: start ?? self.start
+  internal func comprehension(
+    target: Expression,
+    iter: Expression,
+    ifs: [Expression],
+    isAsync: Bool,
+    start: SourceLocation? = nil,
+    end: SourceLocation? = nil
+  ) -> Comprehension {
+    return Comprehension(
+      id: self.id,
+      target: target,
+      iter: iter,
+      ifs: ifs,
+      isAsync: isAsync,
+      start: start ?? self.start,
+      end: end ?? self.end
     )
   }
 
-  internal func identifierStmt(_ value: String,
-                               exprStart: SourceLocation? = nil) -> Statement {
-
-    return self.statement(
-      .expr(
-        self.expression(.identifier(value), start: exprStart ?? self.start)
-      )
-    )
-  }
-
-  private func toStatements(_ exprs: [Expression]) -> [Statement] {
-    return exprs.map { self.statement(.expr($0)) }
-  }
+  // MARK: - Helpers
 
   private func toNonEmptyArray<E>(_ array: [E]) -> NonEmptyArray<E> {
     assert(array.any)

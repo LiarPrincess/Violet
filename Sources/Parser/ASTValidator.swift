@@ -8,6 +8,9 @@ import Lexer
 // Python -> ast.c
 
 public class ASTValidator {
+
+  public init() { }
+
   public func validate(ast: AST) throws {
     let pass = ASTValidatorPass()
     try pass.visitAST(ast)
