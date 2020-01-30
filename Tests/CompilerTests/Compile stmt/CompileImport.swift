@@ -17,7 +17,7 @@ class CompileImport: CompileTestCase {
   /// 10 RETURN_VALUE
   func test_single() {
     let stmt = self.importStmt(
-      aliases: [self.alias(name: "Rapunzel", asName: nil)]
+      names: [self.alias(name: "Rapunzel", asName: nil)]
     )
 
     let expected: [EmittedInstruction] = [
@@ -45,7 +45,7 @@ class CompileImport: CompileTestCase {
   /// 10 RETURN_VALUE
   func test_simple_withDot() {
     let stmt = self.importStmt(
-      aliases: [self.alias(name: "Tangled.Rapunzel", asName: nil)]
+      names: [self.alias(name: "Tangled.Rapunzel", asName: nil)]
     )
 
     let expected: [EmittedInstruction] = [
@@ -73,7 +73,7 @@ class CompileImport: CompileTestCase {
   /// 10 RETURN_VALUE
   func test_alias() {
     let stmt = self.importStmt(
-      aliases: [self.alias(name: "Rapunzel", asName: "Daughter")]
+      names: [self.alias(name: "Rapunzel", asName: "Daughter")]
     )
 
     let expected: [EmittedInstruction] = [
@@ -105,7 +105,7 @@ class CompileImport: CompileTestCase {
   /// 18 RETURN_VALUE
   func test_alias_multiple() {
     let stmt = self.importStmt(
-      aliases: [
+      names: [
         self.alias(name: "Rapunzel", asName: "Daughter"),
         self.alias(name: "Pascal",   asName: nil)
       ]
@@ -145,7 +145,7 @@ class CompileImport: CompileTestCase {
   /// 18 RETURN_VALUE
   func test_attributedModule() {
     let stmt = self.importStmt(
-      aliases: [self.alias(name: "Tangled.Rapunzel", asName: "Daughter")]
+      names: [self.alias(name: "Tangled.Rapunzel", asName: "Daughter")]
     )
 
     let expected: [EmittedInstruction] = [

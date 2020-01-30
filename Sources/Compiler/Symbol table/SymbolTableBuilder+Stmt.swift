@@ -265,7 +265,7 @@ extension SymbolTableBuilder {
   // MARK: - Import
 
   public func visit(_ node: ImportStmt) throws {
-    try self.visitAliases(node.aliases, importStart: node.start)
+    try self.visitAliases(node.names, importStart: node.start)
   }
 
   public func visit(_ node: ImportFromStmt) throws {

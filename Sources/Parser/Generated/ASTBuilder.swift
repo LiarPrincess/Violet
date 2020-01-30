@@ -400,13 +400,13 @@ public struct ASTBuilder {
   // MARK: - ImportStmt
 
   public mutating func importStmt(
-    aliases: NonEmptyArray<Alias>,
+    names: NonEmptyArray<Alias>,
     start: SourceLocation,
     end: SourceLocation
   ) -> ImportStmt {
     return ImportStmt(
       id: self.getNextId(),
-      aliases: aliases,
+      names: names,
       start: start,
       end: end
     )
@@ -1159,7 +1159,7 @@ public struct ASTBuilder {
 
   public mutating func comprehension(
     target: Expression,
-    iter: Expression,
+    iterable: Expression,
     ifs: [Expression],
     isAsync: Bool,
     start: SourceLocation,
@@ -1168,7 +1168,7 @@ public struct ASTBuilder {
     return Comprehension(
       id: self.getNextId(),
       target: target,
-      iter: iter,
+      iterable: iterable,
       ifs: ifs,
       isAsync: isAsync,
       start: start,

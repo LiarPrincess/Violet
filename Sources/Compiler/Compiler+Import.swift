@@ -22,7 +22,7 @@ extension Compiler {
   /// 10 RETURN_VALUE
   /// ```
   public func visit(_ node: ImportStmt) throws {
-    for alias in node.aliases {
+    for alias in node.names {
       self.setAppendLocation(alias)
 
       // The Import node stores a module name like a.b.c as a single string.

@@ -442,7 +442,7 @@ internal class ASTValidatorPass:
     _ comprehensions: NonEmptyArray<Comprehension>) throws {
     for c in comprehensions {
       try self.visitExpression(c.target, payload: .store)
-      try self.visitExpression(c.iter, payload: .load)
+      try self.visitExpression(c.iterable, payload: .load)
       try self.visitExpressions(c.ifs, payload: .load)
     }
   }

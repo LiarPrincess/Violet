@@ -933,15 +933,15 @@ public class AssertStmt: Statement {
 /// An import statement.
 public class ImportStmt: Statement {
 
-  public var aliases: NonEmptyArray<Alias>
+  public var names: NonEmptyArray<Alias>
 
   public init(
     id: ASTNodeId,
-    aliases: NonEmptyArray<Alias>,
+    names: NonEmptyArray<Alias>,
     start: SourceLocation,
     end: SourceLocation
   ) {
-    self.aliases = aliases
+    self.names = names
     super.init(id: id, start: start, end: end)
   }
 
@@ -2732,7 +2732,7 @@ public struct Comprehension: ASTNode, CustomStringConvertible {
   /// typically a `Identifier` or `Tuple` node.
   public var target: Expression
   /// Object to iterate over.
-  public var iter: Expression
+  public var iterable: Expression
   /// List of test expressions. We can have multiple `ifs`.
   public var ifs: [Expression]
   /// Indicates that the comprehension is asynchronous.
@@ -2751,7 +2751,7 @@ public struct Comprehension: ASTNode, CustomStringConvertible {
   public init(
     id: ASTNodeId,
     target: Expression,
-    iter: Expression,
+    iterable: Expression,
     ifs: [Expression],
     isAsync: Bool,
     start: SourceLocation,
@@ -2759,7 +2759,7 @@ public struct Comprehension: ASTNode, CustomStringConvertible {
   ) {
     self.id = id
     self.target = target
-    self.iter = iter
+    self.iterable = iterable
     self.ifs = ifs
     self.isAsync = isAsync
     self.start = start

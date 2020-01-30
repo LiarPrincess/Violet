@@ -36,7 +36,7 @@ class STExprComprehension: SymbolTableTestCase {
       generators: [
         self.comprehension(
           target: self.identifierExpr(value: "ariel", context: .store, start: loc2),
-          iter: self.identifierExpr(value: "sea", start: loc3),
+          iterable: self.identifierExpr(value: "sea", start: loc3),
           ifs: [],
           isAsync: false
         )
@@ -99,7 +99,7 @@ class STExprComprehension: SymbolTableTestCase {
       generators: [
         self.comprehension(
           target: self.identifierExpr(value: "ariel", context: .store, start: loc2),
-          iter: self.listExpr(elements: []),
+          iterable: self.listExpr(elements: []),
           ifs: [
             self.identifierExpr(value: "hasLegs", start: loc3)
           ],
@@ -157,14 +157,14 @@ class STExprComprehension: SymbolTableTestCase {
   func test_list_nested() {
     let compr1 = self.comprehension(
       target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
-      iter: self.listExpr(elements: []),
+      iterable: self.listExpr(elements: []),
       ifs: [],
       isAsync: false
     )
 
     let compr2 = self.comprehension(
       target: self.identifierExpr(value: "eric", context: .store, start: loc2),
-      iter: self.listExpr(elements: []),
+      iterable: self.listExpr(elements: []),
       ifs: [],
       isAsync: false
     )
@@ -212,7 +212,7 @@ class STExprComprehension: SymbolTableTestCase {
   func test_set() {
     let compr = self.comprehension(
       target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
-      iter: self.identifierExpr(value: "sea", start: loc2),
+      iterable: self.identifierExpr(value: "sea", start: loc2),
       ifs: [],
       isAsync: false
     )
@@ -278,7 +278,7 @@ class STExprComprehension: SymbolTableTestCase {
   func test_dictionary() {
     let compr = self.comprehension(
       target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
-      iter: self.identifierExpr(value: "sea", start: loc2),
+      iterable: self.identifierExpr(value: "sea", start: loc2),
       ifs: [],
       isAsync: false
     )
@@ -332,7 +332,7 @@ class STExprComprehension: SymbolTableTestCase {
   func test_generator() {
     let compr = self.comprehension(
       target: self.identifierExpr(value: "ariel", context: .store, start: loc1),
-      iter: self.identifierExpr(value: "sea", start: loc2),
+      iterable: self.identifierExpr(value: "sea", start: loc2),
       ifs: [],
       isAsync: false
     )

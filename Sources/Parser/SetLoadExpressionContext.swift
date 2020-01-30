@@ -163,7 +163,7 @@ internal class SetLoadExpressionContext: ExpressionVisitor {
     _ comprehensions: NonEmptyArray<Comprehension>) {
     for c in comprehensions {
       self.visit(c.target)
-      self.visit(c.iter)
+      self.visit(c.iterable)
       self.visit(c.ifs)
     }
   }

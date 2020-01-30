@@ -324,7 +324,7 @@ extension ASTPrinter {
   public func visit(_ node: ImportStmt) -> Doc {
     return self.base(
       stmt: node,
-      lines: self.block(title: "Aliases", lines: node.aliases.map(self.visit))
+      lines: self.block(title: "Aliases", lines: node.names.map(self.visit))
     )
   }
 

@@ -246,7 +246,8 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
 )
 
 -- An import statement.
-@finalClass ImportStmt: Stmt = (Alias+ aliases)
+@finalClass ImportStmt: Stmt = (Alias+ names)
+
 -- Represents `from x import y`.
 @finalClass ImportFromStmt: Stmt = (
   -- Raw string of the ‘from’ name, without any leading dots
@@ -603,7 +604,7 @@ https://greentreesnakes.readthedocs.io/en/latest/nodes.html
   -- typically a `Identifier` or `Tuple` node.
   Expr target,
   -- Object to iterate over.
-  Expr iter,
+  Expr iterable,
   -- List of test expressions. We can have multiple `ifs`.
   Expr* ifs,
   -- Indicates that the comprehension is asynchronous.

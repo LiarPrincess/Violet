@@ -54,7 +54,7 @@ extension Parser {
     try self.advance() // import
 
     let names = try self.dottedAsNames()
-    return self.builder.importStmt(aliases: names,
+    return self.builder.importStmt(names: names,
                                    start: start,
                                    end: names.last.end)
   }

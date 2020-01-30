@@ -185,7 +185,7 @@ extension SymbolTableBuilder {
                                   kind: ComprehensionKind) throws {
     // iterator (source) is evaluated in parent scope
     let first = generators.first
-    try self.visit(first.iter)
+    try self.visit(first.iterable)
 
     // new scope for comprehensions
     let scopeKind = self.getIdentifier(for: kind)
@@ -237,7 +237,7 @@ extension SymbolTableBuilder {
   /// symtable_visit_comprehension(struct symtable *st, comprehension_ty lc)
   private func visitComprehension(_ comprehension: Comprehension) throws {
     try self.visit(comprehension.target)
-    try self.visit(comprehension.iter)
+    try self.visit(comprehension.iterable)
     try self.visit(comprehension.ifs)
 
     if comprehension.isAsync {

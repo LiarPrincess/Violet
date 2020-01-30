@@ -280,7 +280,7 @@ extension ASTPrinter {
       lines:
         self.text("isAsync: \(node.isAsync)"),
         self.block(title: "Target", lines: self.visit(node.target)),
-        self.block(title: "Iterable", lines: self.visit(node.iter)),
+        self.block(title: "Iterable", lines: self.visit(node.iterable)),
         node.ifs.isEmpty ?
           self.text("Ifs: none") :
           self.block(title: "Ifs", lines: node.ifs.map(self.visit))

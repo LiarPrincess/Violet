@@ -399,13 +399,13 @@ extension ASTCreator {
   // MARK: - ImportStmt
 
   public func importStmt(
-    aliases: [Alias],
+    names: [Alias],
     start: SourceLocation? = nil,
     end: SourceLocation? = nil
   ) -> ImportStmt {
     return ImportStmt(
       id: self.id,
-      aliases: self.toNonEmptyArray(aliases),
+      names: self.toNonEmptyArray(names),
       start: start ?? self.start,
       end: end ?? self.end
     )
@@ -1261,7 +1261,7 @@ extension ASTCreator {
 
   internal func comprehension(
     target: Expression,
-    iter: Expression,
+    iterable: Expression,
     ifs: [Expression],
     isAsync: Bool,
     start: SourceLocation? = nil,
@@ -1270,7 +1270,7 @@ extension ASTCreator {
     return Comprehension(
       id: self.id,
       target: target,
-      iter: iter,
+      iterable: iterable,
       ifs: ifs,
       isAsync: isAsync,
       start: start ?? self.start,
