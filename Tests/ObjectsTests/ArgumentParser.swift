@@ -2,7 +2,7 @@ import XCTest
 import Core
 @testable import Objects
 
-private class TestObject: PyObject {
+private class DummyObject: PyObject {
 
   fileprivate let value: Int
 
@@ -29,113 +29,81 @@ extension Objects.ArgumentParser {
   }
 }
 
-class ArgumentParser: XCTestCase {
+class ArgumentParser: PyTestCaseOtherwiseItWillTrap {
 
   // MARK: - Create
 
   func test_init_withoutName_fails() {
-    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", ""],
-                                                   format: "|OOO") else {
+    guard case let .error(e) = self.create(arguments: ["", "kw", ""],
+                                           format: "|OOO") else {
       XCTAssert(false)
       return
     }
 
-    guard case PyErrorEnum.systemError = e else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssert(e is PySystemError)
   }
 
   func test_init_withoutName2_fails() {
-    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", ""],
-                                                   format: "|OOO:") else {
+    guard case let .error(e) = self.create(arguments: ["", "kw", ""],
+                                           format: "|OOO:") else {
       XCTAssert(false)
       return
     }
 
-    guard case PyErrorEnum.systemError = e else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssert(e is PySystemError)
   }
 
   func test_init_positionalAfterKwarg_fails() {
-    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", ""],
-                                                   format: "|OOO:fn") else {
+    guard case let .error(e) = self.create(arguments: ["", "kw", ""],
+                                           format: "|OOO:fn") else {
       XCTAssert(false)
       return
     }
 
-    guard case PyErrorEnum.systemError = e else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssert(e is PySystemError)
   }
 
   func test_init_moreArguments_thanInFormat_fails() {
-    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", "kw2"],
-                                                   format: "|OO:fn") else {
+    guard case let .error(e) = self.create(arguments: ["", "kw", "kw2"],
+                                           format: "|OO:fn") else {
       XCTAssert(false)
       return
     }
 
-    guard case PyErrorEnum.systemError = e else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssert(e is PySystemError)
   }
 
   func test_init_moreArgumentsInFormat_thanNames_fails() {
-    guard case let PyResult.error(e) = self.create(arguments: ["", "kw"],
-                                                   format: "|OOO:fn") else {
+    guard case let .error(e) = self.create(arguments: ["", "kw"],
+                                           format: "|OOO:fn") else {
       XCTAssert(false)
       return
     }
 
-    guard case PyErrorEnum.systemError = e else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssert(e is PySystemError)
   }
 
   func test_init_multipleMinArgMarker_fails() {
-    guard case let PyResult.error(e) = self.create(arguments: ["", "kw"],
-                                                   format: "|O|OO:fn") else {
+    guard case let .error(e) = self.create(arguments: ["", "kw"],
+                                           format: "|O|OO:fn") else {
       XCTAssert(false)
       return
     }
 
-    guard case PyErrorEnum.systemError = e else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssert(e is PySystemError)
   }
 
   func test_init_multipleMaxPositionalMarker_fails() {
-    guard case let PyResult.error(e) = self.create(arguments: ["", "kw", "kw2"],
-                                                   format: "|O$O$O:fn") else {
+    guard case let .error(e) = self.create(arguments: ["", "kw", "kw2"],
+                                           format: "|O$O$O:fn") else {
       XCTAssert(false)
       return
     }
 
-    guard case PyErrorEnum.systemError = e else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssert(e is PySystemError)
   }
 
   // MARK: - Int.int
-
-  private func createIntParser(file: StaticString = #file,
-                               line: UInt         = #line) -> Objects.ArgumentParser? {
-    switch self.create(arguments: ["", "base"], format: "|OO:int") {
-    case let .value(r):
-      return r
-    case let .error(e):
-      XCTAssert(false, String(describing: e), file: file, line: line)
-      return nil
-    }
-  }
 
   /// int()
   func test_int_new_withoutArgs() {
@@ -156,7 +124,7 @@ class ArgumentParser: XCTestCase {
       return
     }
 
-    let arg = TestObject(value: 5)
+    let arg = DummyObject(value: 5)
     guard let result = parser.parseOrNil(args: [arg], kwargs: [:]) else {
       return
     }
@@ -175,8 +143,8 @@ class ArgumentParser: XCTestCase {
       return
     }
 
-    let arg0 = TestObject(value: 5)
-    let arg1 = TestObject(value: 16)
+    let arg0 = DummyObject(value: 5)
+    let arg1 = DummyObject(value: 16)
     guard let result = parser.parseOrNil(args: [arg0, arg1], kwargs: [:]) else {
       return
     }
@@ -196,8 +164,8 @@ class ArgumentParser: XCTestCase {
       return
     }
 
-    let arg0 = TestObject(value: 5)
-    let arg1 = TestObject(value: 16)
+    let arg0 = DummyObject(value: 5)
+    let arg1 = DummyObject(value: 16)
     guard let result = parser.parseOrNil(args: [arg0], kwargs: ["base":arg1]) else {
       return
     }
@@ -217,21 +185,18 @@ class ArgumentParser: XCTestCase {
       return
     }
 
-    let arg0 = TestObject(value: 5)
-    let arg1 = TestObject(value: 16)
-    let arg2 = TestObject(value: 1)
+    let arg0 = DummyObject(value: 5)
+    let arg1 = DummyObject(value: 16)
+    let arg2 = DummyObject(value: 1)
     let args = [arg0, arg1, arg2]
 
-    guard case let PyResult.error(e) = parser.parse(args: args, kwargs: [:]) else {
+    guard case let .error(e) = parser.parse(args: args, kwargs: [:]) else {
       XCTAssert(false)
       return
     }
 
     let msg = "int() takes at most 2 arguments (3 given)"
-    guard case PyErrorEnum.typeError(msg) = e else {
-      XCTAssert(false, String(describing: e))
-      return
-    }
+    XCTAssertTypeError(error: e, msg: msg)
   }
 
   /// int('5', elsa=16)
@@ -240,21 +205,29 @@ class ArgumentParser: XCTestCase {
       return
     }
 
-    let arg0 = TestObject(value: 5)
-    let arg1 = TestObject(value: 16)
-    guard case let PyResult.error(e) = parser.parse(args: [arg0], kwargs: ["elsa":arg1]) else {
+    let arg0 = DummyObject(value: 5)
+    let arg1 = DummyObject(value: 16)
+    guard case let .error(e) = parser.parse(args: [arg0], kwargs: ["elsa":arg1]) else {
       XCTAssert(false)
       return
     }
 
     let msg = "'elsa' is an invalid keyword argument for int()"
-    guard case PyErrorEnum.typeError(msg) = e else {
-      XCTAssert(false, String(describing: e))
-      return
-    }
+    XCTAssertTypeError(error: e, msg: msg)
   }
 
   // MARK: - Create helpers
+
+  private func createIntParser(file: StaticString = #file,
+                               line: UInt         = #line) -> Objects.ArgumentParser? {
+    switch self.create(arguments: ["", "base"], format: "|OO:int") {
+    case let .value(r):
+      return r
+    case let .error(e):
+      XCTAssert(false, String(describing: e), file: file, line: line)
+      return nil
+    }
+  }
 
   private func create(arguments: [String],
                       format: String) -> PyResult<Objects.ArgumentParser> {

@@ -1,20 +1,20 @@
 import Core
 import Foundation
 
-public let Py = PyInstance()
+public private(set) var Py = PyInstance()
 
 public class PyInstance: BuiltinFunctions {
 
   // MARK: - Builtins
 
-  public lazy var `true`  = PyBool(value: true)
-  public lazy var `false` = PyBool(value: false)
-  public lazy var none  = PyNone()
-  public lazy var ellipsis = PyEllipsis()
-  public lazy var emptyTuple = PyTuple(elements: [])
-  public lazy var emptyString = PyString(value: "")
-  public lazy var emptyFrozenSet = PyFrozenSet()
-  public lazy var notImplemented = PyNotImplemented()
+  public private(set) lazy var `true`  = PyBool(value: true)
+  public private(set) lazy var `false` = PyBool(value: false)
+  public private(set) lazy var none  = PyNone()
+  public private(set) lazy var ellipsis = PyEllipsis()
+  public private(set) lazy var emptyTuple = PyTuple(elements: [])
+  public private(set) lazy var emptyString = PyString(value: "")
+  public private(set) lazy var emptyFrozenSet = PyFrozenSet()
+  public private(set) lazy var notImplemented = PyNotImplemented()
 
   // MARK: - Modules
 
@@ -93,8 +93,11 @@ public class PyInstance: BuiltinFunctions {
 
   private var isInitialized = false
 
+  /// Configure `Py` instance.
+  ///
+  /// This function **has** to be called before any other call!
   public func initialize(config: PyConfig, delegate: PyDelegate) {
-    assert(!self.isInitialized, "Py was already initialized.")
+    precondition(!self.isInitialized, "Py was already initialized.")
 
     self._config = config
     self._delegate = delegate
@@ -116,6 +119,20 @@ public class PyInstance: BuiltinFunctions {
   private func trapUninitialized() -> Never {
     let fn = "Py.initialize(config:delegate:)"
     trap("Python context must first be initialized with '\(fn)'.")
+  }
+
+  // MARK: - Destroy
+
+  /// Destroy `Py` instance.
+  ///
+  /// You don't actually need to call this method.
+  /// `Py` will be destroyed when the program exists.
+  ///
+  /// But....
+  /// You can use this to reinitialize `Py` (note that you will have to call
+  /// `Py.initialize(config:,delegate:)` again).
+  public func destroy() {
+    Py = PyInstance()
   }
 
   // MARK: - Intern integers

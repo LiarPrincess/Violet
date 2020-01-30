@@ -2,7 +2,7 @@ import XCTest
 import Core
 @testable import Objects
 
-class PyComplexParse: XCTestCase {
+class PyComplexParse: PyTestCaseOtherwiseItWillTrap {
 
   // MARK: - Empty
 
@@ -11,10 +11,7 @@ class PyComplexParse: XCTestCase {
       return
     }
 
-    guard case PyErrorEnum.valueError = e else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssert(e is PyValueError)
   }
 
   // MARK: - Real only
@@ -109,7 +106,7 @@ class PyComplexParse: XCTestCase {
 
   private func parseError(_ s: String,
                           file: StaticString = #file,
-                          line: UInt         = #line) -> PyErrorEnum? {
+                          line: UInt         = #line) -> PyBaseException? {
     switch PyComplex.parse(s) {
     case let .value(r):
       XCTAssertNotNil(r, file: file, line: line)

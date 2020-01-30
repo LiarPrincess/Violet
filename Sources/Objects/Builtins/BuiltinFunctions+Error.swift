@@ -106,6 +106,11 @@ extension BuiltinFunctions {
     return PyUnicodeEncodeError(msg: msg)
   }
 
+  /// Assertion failed.
+  public func newAssertionError(msg: String) -> PyAssertionError {
+    return PyAssertionError(msg: msg)
+  }
+
   /// static PyObject*
   /// _PyErr_CreateException(PyObject *exception, PyObject *value)
   public func newException(type: PyType,

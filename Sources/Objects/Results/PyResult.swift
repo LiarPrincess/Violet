@@ -132,4 +132,8 @@ extension PyResult {
   public static func osError(_ msg: String) -> PyResult<Wrapped> {
     return PyResult.error(Py.newOSError(msg: msg))
   }
+
+  public static func assertionError(_ msg: String) -> PyResult<Wrapped> {
+    return PyResult.error(Py.newAssertionError(msg: msg))
+  }
 }
