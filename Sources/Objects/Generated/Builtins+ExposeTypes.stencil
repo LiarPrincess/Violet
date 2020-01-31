@@ -17,7 +17,7 @@ extension Builtins {
   {% set py %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".","" }}{% endset %}
   {% set prop %}{{ py|lowerFirstWord }}{% endset %}
   // sourcery: pyproperty = {{ py }}
-  internal func type_{{ prop }}() -> PyType {
+  internal var type_{{ prop }}: PyType {
     return Py.types.{{ prop }}
   }
 {% endfor %}
@@ -28,7 +28,7 @@ extension Builtins {
   {% set py %}{{ type.annotations.pyerrortype }}{% endset %}
   {% set prop %}{{ py|lowerFirstWord }}{% endset %}
   // sourcery: pyproperty = {{ py }}
-  internal func type_{{ prop }}() -> PyType {
+  internal var type_{{ prop }}: PyType {
     return Py.errorTypes.{{ prop }}
   }
 {% endfor %}

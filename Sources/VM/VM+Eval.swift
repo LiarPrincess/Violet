@@ -43,7 +43,12 @@ extension VM {
                       globals: globals,
                       parent: parent)
 
-    _ = frame.run()
+    switch frame.run() {
+    case let .value(o):
+      print("Result:", o)
+    case let .error(e):
+      print("Error:", e)
+    }
 
 //    fastlocals = f->f_localsplus;
 //    freevars = f->f_localsplus + co->co_nlocals;
