@@ -544,7 +544,7 @@ extension ASTPrinter {
 
   public func visit(_ op: ComparisonOperator) -> Doc {
     switch op {
-    case .equal:    return self.text("=")
+    case .equal:    return self.text("==")
     case .notEqual: return self.text("!=")
     case .less:      return self.text("<")
     case .lessEqual: return self.text("<=")

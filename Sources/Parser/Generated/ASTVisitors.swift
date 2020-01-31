@@ -4,7 +4,6 @@
 import Core
 import Foundation
 
-// swiftlint:disable file_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_newline
 

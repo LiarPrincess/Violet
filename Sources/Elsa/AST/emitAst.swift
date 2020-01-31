@@ -171,6 +171,7 @@ private func productPropertyInit(_ prop: ProductProperty) -> String {
 
 // MARK: - Visitor
 
+// swiftlint:disable:next function_body_length
 private func printVisitor<T: ProductType>(def: T) {
   guard let prefix = def.visitorPrefix else { return }
 

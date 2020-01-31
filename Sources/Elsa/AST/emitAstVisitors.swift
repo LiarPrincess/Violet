@@ -13,7 +13,6 @@ private func emitAstVisitors(inputFile: URL) {
   print("import Foundation")
   print()
 
-  print("// swiftlint:disable file_length")
   print("// swiftlint:disable line_length")
   print("// swiftlint:disable trailing_newline")
   print()
