@@ -159,4 +159,18 @@ public class PyInstance: BuiltinFunctions {
     let index = value + Swift.abs(PyInstance.smallIntRange.lowerBound)
     return self.smallInts[index]
   }
+
+  // MARK: - Intern strings
+
+  private var internedString = [String:PyString]()
+
+  internal func getInterned(_ value: String) -> PyString {
+    if let interned = self.internedString[value] {
+      return interned
+    }
+
+    let str = self.newString(value)
+    internedString[value] = str
+    return str
+  }
 }

@@ -104,7 +104,7 @@ public class PyModule: PyObject {
     }
 
     if let getAttr = self.attributes["__getattr__"] {
-      let nameArg = pyName ?? Py.newString(name)
+      let nameArg = pyName ?? Py.getInterned(name)
 
       switch Py.call(callable: getAttr, args: [self, nameArg]) {
       case .value(let r):
