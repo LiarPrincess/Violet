@@ -18,7 +18,8 @@ public final class PySystemExit: PyBaseException {
   }
 
   override public var description: String {
-    return "PySystemExit()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PySystemExit(\(msg))"
   }
 
   override internal func setType() {
@@ -61,7 +62,8 @@ public final class PyKeyboardInterrupt: PyBaseException {
   }
 
   override public var description: String {
-    return "PyKeyboardInterrupt()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyKeyboardInterrupt(\(msg))"
   }
 
   override internal func setType() {
@@ -104,7 +106,8 @@ public final class PyGeneratorExit: PyBaseException {
   }
 
   override public var description: String {
-    return "PyGeneratorExit()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyGeneratorExit(\(msg))"
   }
 
   override internal func setType() {
@@ -147,7 +150,8 @@ public class PyException: PyBaseException {
   }
 
   override public var description: String {
-    return "PyException()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyException(\(msg))"
   }
 
   override internal func setType() {
@@ -190,7 +194,8 @@ public final class PyStopIteration: PyException {
   }
 
   override public var description: String {
-    return "PyStopIteration()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyStopIteration(\(msg))"
   }
 
   override internal func setType() {
@@ -233,7 +238,8 @@ public final class PyStopAsyncIteration: PyException {
   }
 
   override public var description: String {
-    return "PyStopAsyncIteration()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyStopAsyncIteration(\(msg))"
   }
 
   override internal func setType() {
@@ -276,7 +282,8 @@ public class PyArithmeticError: PyException {
   }
 
   override public var description: String {
-    return "PyArithmeticError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyArithmeticError(\(msg))"
   }
 
   override internal func setType() {
@@ -319,7 +326,8 @@ public final class PyFloatingPointError: PyArithmeticError {
   }
 
   override public var description: String {
-    return "PyFloatingPointError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyFloatingPointError(\(msg))"
   }
 
   override internal func setType() {
@@ -362,7 +370,8 @@ public final class PyOverflowError: PyArithmeticError {
   }
 
   override public var description: String {
-    return "PyOverflowError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyOverflowError(\(msg))"
   }
 
   override internal func setType() {
@@ -405,7 +414,8 @@ public final class PyZeroDivisionError: PyArithmeticError {
   }
 
   override public var description: String {
-    return "PyZeroDivisionError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyZeroDivisionError(\(msg))"
   }
 
   override internal func setType() {
@@ -448,7 +458,8 @@ public final class PyAssertionError: PyException {
   }
 
   override public var description: String {
-    return "PyAssertionError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyAssertionError(\(msg))"
   }
 
   override internal func setType() {
@@ -491,7 +502,8 @@ public final class PyAttributeError: PyException {
   }
 
   override public var description: String {
-    return "PyAttributeError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyAttributeError(\(msg))"
   }
 
   override internal func setType() {
@@ -534,7 +546,8 @@ public final class PyBufferError: PyException {
   }
 
   override public var description: String {
-    return "PyBufferError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyBufferError(\(msg))"
   }
 
   override internal func setType() {
@@ -577,7 +590,8 @@ public final class PyEOFError: PyException {
   }
 
   override public var description: String {
-    return "PyEOFError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyEOFError(\(msg))"
   }
 
   override internal func setType() {
@@ -620,7 +634,8 @@ public class PyImportError: PyException {
   }
 
   override public var description: String {
-    return "PyImportError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyImportError(\(msg))"
   }
 
   override internal func setType() {
@@ -663,7 +678,8 @@ public final class PyModuleNotFoundError: PyImportError {
   }
 
   override public var description: String {
-    return "PyModuleNotFoundError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyModuleNotFoundError(\(msg))"
   }
 
   override internal func setType() {
@@ -706,7 +722,8 @@ public class PyLookupError: PyException {
   }
 
   override public var description: String {
-    return "PyLookupError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyLookupError(\(msg))"
   }
 
   override internal func setType() {
@@ -749,7 +766,8 @@ public final class PyIndexError: PyLookupError {
   }
 
   override public var description: String {
-    return "PyIndexError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyIndexError(\(msg))"
   }
 
   override internal func setType() {
@@ -792,7 +810,8 @@ public final class PyKeyError: PyLookupError {
   }
 
   override public var description: String {
-    return "PyKeyError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyKeyError(\(msg))"
   }
 
   override internal func setType() {
@@ -835,7 +854,8 @@ public final class PyMemoryError: PyException {
   }
 
   override public var description: String {
-    return "PyMemoryError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyMemoryError(\(msg))"
   }
 
   override internal func setType() {
@@ -878,7 +898,8 @@ public class PyNameError: PyException {
   }
 
   override public var description: String {
-    return "PyNameError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyNameError(\(msg))"
   }
 
   override internal func setType() {
@@ -921,7 +942,8 @@ public final class PyUnboundLocalError: PyNameError {
   }
 
   override public var description: String {
-    return "PyUnboundLocalError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyUnboundLocalError(\(msg))"
   }
 
   override internal func setType() {
@@ -964,7 +986,8 @@ public class PyOSError: PyException {
   }
 
   override public var description: String {
-    return "PyOSError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyOSError(\(msg))"
   }
 
   override internal func setType() {
@@ -1007,7 +1030,8 @@ public final class PyBlockingIOError: PyOSError {
   }
 
   override public var description: String {
-    return "PyBlockingIOError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyBlockingIOError(\(msg))"
   }
 
   override internal func setType() {
@@ -1050,7 +1074,8 @@ public final class PyChildProcessError: PyOSError {
   }
 
   override public var description: String {
-    return "PyChildProcessError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyChildProcessError(\(msg))"
   }
 
   override internal func setType() {
@@ -1093,7 +1118,8 @@ public class PyConnectionError: PyOSError {
   }
 
   override public var description: String {
-    return "PyConnectionError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyConnectionError(\(msg))"
   }
 
   override internal func setType() {
@@ -1136,7 +1162,8 @@ public final class PyBrokenPipeError: PyConnectionError {
   }
 
   override public var description: String {
-    return "PyBrokenPipeError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyBrokenPipeError(\(msg))"
   }
 
   override internal func setType() {
@@ -1179,7 +1206,8 @@ public final class PyConnectionAbortedError: PyConnectionError {
   }
 
   override public var description: String {
-    return "PyConnectionAbortedError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyConnectionAbortedError(\(msg))"
   }
 
   override internal func setType() {
@@ -1222,7 +1250,8 @@ public final class PyConnectionRefusedError: PyConnectionError {
   }
 
   override public var description: String {
-    return "PyConnectionRefusedError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyConnectionRefusedError(\(msg))"
   }
 
   override internal func setType() {
@@ -1265,7 +1294,8 @@ public final class PyConnectionResetError: PyConnectionError {
   }
 
   override public var description: String {
-    return "PyConnectionResetError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyConnectionResetError(\(msg))"
   }
 
   override internal func setType() {
@@ -1308,7 +1338,8 @@ public final class PyFileExistsError: PyOSError {
   }
 
   override public var description: String {
-    return "PyFileExistsError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyFileExistsError(\(msg))"
   }
 
   override internal func setType() {
@@ -1351,7 +1382,8 @@ public final class PyFileNotFoundError: PyOSError {
   }
 
   override public var description: String {
-    return "PyFileNotFoundError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyFileNotFoundError(\(msg))"
   }
 
   override internal func setType() {
@@ -1394,7 +1426,8 @@ public final class PyInterruptedError: PyOSError {
   }
 
   override public var description: String {
-    return "PyInterruptedError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyInterruptedError(\(msg))"
   }
 
   override internal func setType() {
@@ -1437,7 +1470,8 @@ public final class PyIsADirectoryError: PyOSError {
   }
 
   override public var description: String {
-    return "PyIsADirectoryError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyIsADirectoryError(\(msg))"
   }
 
   override internal func setType() {
@@ -1480,7 +1514,8 @@ public final class PyNotADirectoryError: PyOSError {
   }
 
   override public var description: String {
-    return "PyNotADirectoryError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyNotADirectoryError(\(msg))"
   }
 
   override internal func setType() {
@@ -1523,7 +1558,8 @@ public final class PyPermissionError: PyOSError {
   }
 
   override public var description: String {
-    return "PyPermissionError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyPermissionError(\(msg))"
   }
 
   override internal func setType() {
@@ -1566,7 +1602,8 @@ public final class PyProcessLookupError: PyOSError {
   }
 
   override public var description: String {
-    return "PyProcessLookupError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyProcessLookupError(\(msg))"
   }
 
   override internal func setType() {
@@ -1609,7 +1646,8 @@ public final class PyTimeoutError: PyOSError {
   }
 
   override public var description: String {
-    return "PyTimeoutError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyTimeoutError(\(msg))"
   }
 
   override internal func setType() {
@@ -1652,7 +1690,8 @@ public final class PyReferenceError: PyException {
   }
 
   override public var description: String {
-    return "PyReferenceError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyReferenceError(\(msg))"
   }
 
   override internal func setType() {
@@ -1695,7 +1734,8 @@ public class PyRuntimeError: PyException {
   }
 
   override public var description: String {
-    return "PyRuntimeError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyRuntimeError(\(msg))"
   }
 
   override internal func setType() {
@@ -1738,7 +1778,8 @@ public final class PyNotImplementedError: PyRuntimeError {
   }
 
   override public var description: String {
-    return "PyNotImplementedError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyNotImplementedError(\(msg))"
   }
 
   override internal func setType() {
@@ -1781,7 +1822,8 @@ public final class PyRecursionError: PyRuntimeError {
   }
 
   override public var description: String {
-    return "PyRecursionError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyRecursionError(\(msg))"
   }
 
   override internal func setType() {
@@ -1824,7 +1866,8 @@ public class PySyntaxError: PyException {
   }
 
   override public var description: String {
-    return "PySyntaxError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PySyntaxError(\(msg))"
   }
 
   override internal func setType() {
@@ -1867,7 +1910,8 @@ public class PyIndentationError: PySyntaxError {
   }
 
   override public var description: String {
-    return "PyIndentationError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyIndentationError(\(msg))"
   }
 
   override internal func setType() {
@@ -1910,7 +1954,8 @@ public final class PyTabError: PyIndentationError {
   }
 
   override public var description: String {
-    return "PyTabError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyTabError(\(msg))"
   }
 
   override internal func setType() {
@@ -1956,7 +2001,8 @@ public final class PySystemError: PyException {
   }
 
   override public var description: String {
-    return "PySystemError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PySystemError(\(msg))"
   }
 
   override internal func setType() {
@@ -1999,7 +2045,8 @@ public final class PyTypeError: PyException {
   }
 
   override public var description: String {
-    return "PyTypeError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyTypeError(\(msg))"
   }
 
   override internal func setType() {
@@ -2042,7 +2089,8 @@ public class PyValueError: PyException {
   }
 
   override public var description: String {
-    return "PyValueError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyValueError(\(msg))"
   }
 
   override internal func setType() {
@@ -2085,7 +2133,8 @@ public class PyUnicodeError: PyValueError {
   }
 
   override public var description: String {
-    return "PyUnicodeError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyUnicodeError(\(msg))"
   }
 
   override internal func setType() {
@@ -2128,7 +2177,8 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   }
 
   override public var description: String {
-    return "PyUnicodeDecodeError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyUnicodeDecodeError(\(msg))"
   }
 
   override internal func setType() {
@@ -2171,7 +2221,8 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   }
 
   override public var description: String {
-    return "PyUnicodeEncodeError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyUnicodeEncodeError(\(msg))"
   }
 
   override internal func setType() {
@@ -2214,7 +2265,8 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   }
 
   override public var description: String {
-    return "PyUnicodeTranslateError()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyUnicodeTranslateError(\(msg))"
   }
 
   override internal func setType() {
@@ -2257,7 +2309,8 @@ public class PyWarning: PyException {
   }
 
   override public var description: String {
-    return "PyWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2300,7 +2353,8 @@ public final class PyDeprecationWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PyDeprecationWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyDeprecationWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2344,7 +2398,8 @@ public final class PyPendingDeprecationWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PyPendingDeprecationWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyPendingDeprecationWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2387,7 +2442,8 @@ public final class PyRuntimeWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PyRuntimeWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyRuntimeWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2430,7 +2486,8 @@ public final class PySyntaxWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PySyntaxWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PySyntaxWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2473,7 +2530,8 @@ public final class PyUserWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PyUserWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyUserWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2517,7 +2575,8 @@ public final class PyFutureWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PyFutureWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyFutureWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2560,7 +2619,8 @@ public final class PyImportWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PyImportWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyImportWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2604,7 +2664,8 @@ public final class PyUnicodeWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PyUnicodeWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyUnicodeWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2648,7 +2709,8 @@ public final class PyBytesWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PyBytesWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyBytesWarning(\(msg))"
   }
 
   override internal func setType() {
@@ -2691,7 +2753,8 @@ public final class PyResourceWarning: PyWarning {
   }
 
   override public var description: String {
-    return "PyResourceWarning()"
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyResourceWarning(\(msg))"
   }
 
   override internal func setType() {

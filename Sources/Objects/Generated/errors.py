@@ -126,7 +126,8 @@ public {final}class Py{name}: Py{base} {{
   }}
 
   override public var description: String {{
-    return "Py{name}()"
+    let msg = self.message.map {{ "msg: \($0)" }} ?? ""
+    return "Py{name}(\(msg))"
   }}
 
   override internal func setType() {{

@@ -23,6 +23,11 @@ public class PyBaseException: PyObject {
   internal var exceptionContext: PyBaseException?
   internal var suppressExceptionContext: Bool
 
+  override public var description: String {
+    let msg = self.message.map { "msg: \($0)" } ?? ""
+    return "PyBaseException(\(msg))"
+  }
+
   // MARK: - Init
 
   convenience init(msg: String,
@@ -70,6 +75,24 @@ public class PyBaseException: PyObject {
   /// We went with 3 using dynamic dyspatch.
   internal func setType() {
     self.setType(to: Py.errorTypes.baseException)
+  }
+
+  // MARK: - Msg
+
+  /// Try to get message from first `self.args`.
+  ///
+  /// If it fails then...
+  /// Well whatever.
+  public var message: String? {
+    guard let firstArg = self.args.elements.first else {
+      return nil
+    }
+
+    guard let stringyThingy = firstArg as? PyString else {
+      return nil
+    }
+
+    return stringyThingy.value
   }
 
   // MARK: - Subclass checks
