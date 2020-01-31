@@ -26,6 +26,14 @@ ignored_methods = [
   'update'
 ]
 
+manually_written_protocols = [
+  '__init__',
+  '__new__',
+  '__getattribute__',
+  '__setattr__',
+  '__delattr__'
+]
+
 # ----
 # File
 # ----
@@ -120,8 +128,7 @@ def print_protocols():
     elif line.operation == 'func' or line.operation == 'static_func':
       static = 'static ' if line.operation == 'static_func' else ''
 
-      if python_name == '__init__' or python_name == '__new__':
-        # We will add this one manually.
+      if python_name in manually_written_protocols:
         pass
       elif is_ranged_function(signature):
         # Special case for 'str' methods with 'start' and 'end' args
@@ -170,6 +177,21 @@ protocol __new__Owner {
 protocol __init__Owner {
   associatedtype Zelf: PyObject
   static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
+}
+
+protocol __getattribute__Owner {
+  func getAttribute(name: String) -> PyResult<PyObject>
+  func getAttribute(name: PyObject) -> PyResult<PyObject>
+}
+
+protocol __setattr__Owner {
+  func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone>
+  func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
+}
+
+protocol __delattr__Owner {
+  func delAttribute(name: String) -> PyResult<PyNone>
+  func delAttribute(name: PyObject) -> PyResult<PyNone>
 }
 ''')
 

@@ -78,6 +78,18 @@ public class PyModule: PyObject {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    guard let str = name as? PyString else {
+      return .typeError("attribute name must be string, not '\(name.typeName)'")
+    }
+
+    return self.getAttribute(name: str.value, pyName: str)
+  }
+
+  internal func getAttribute(name: String) -> PyResult<PyObject> {
+    return self.getAttribute(name: name, pyName: nil)
+  }
+
+  private func getAttribute(name: String, pyName: PyString?) -> PyResult<PyObject> {
     let attr = AttributeHelper.getAttribute(from: self, name: name)
 
     switch attr {
@@ -91,12 +103,10 @@ public class PyModule: PyObject {
       return attr // 'attr' is an error, just return it
     }
 
-    guard let nameString = name as? PyString else {
-      return .typeError("attribute name must be string, not '\(name.typeName)'")
-    }
-
     if let getAttr = self.attributes["__getattr__"] {
-      switch Py.call(callable: getAttr, args: [self, name]) {
+      let nameArg = pyName ?? Py.newString(name)
+
+      switch Py.call(callable: getAttr, args: [self, nameArg]) {
       case .value(let r):
         return .value(r)
       case .error(let e), .notCallable(let e):
@@ -104,12 +114,16 @@ public class PyModule: PyObject {
       }
     }
 
-    let msg = "module \(self.name) has no attribute '\(nameString.value)'"
+    let msg = "module \(self.name) has no attribute '\(name)'"
     return .attributeError(msg)
   }
 
   // sourcery: pymethod = __setattr__
   internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+    return AttributeHelper.setAttribute(on: self, name: name, to: value)
+  }
+
+  public func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 

@@ -47,6 +47,10 @@ public class PyEllipsis: PyObject {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
+  internal func getAttribute(name: String) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(from: self, name: name)
+  }
+
   // MARK: - Python new
 
   // sourcery: pymethod = __new__

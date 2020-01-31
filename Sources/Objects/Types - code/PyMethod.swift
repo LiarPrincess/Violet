@@ -125,17 +125,29 @@ public class PyMethod: PyObject {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(from: self, name: name)
+  }
+
+  public func getAttribute(name: String) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+  public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+    return AttributeHelper.setAttribute(on: self, name: name, to: value)
+  }
+
+  public func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
+  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
+    return AttributeHelper.delAttribute(on: self, name: name)
+  }
+
+  public func delAttribute(name: String) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
   }
 

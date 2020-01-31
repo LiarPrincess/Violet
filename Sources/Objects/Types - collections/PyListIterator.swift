@@ -36,6 +36,10 @@ public class PyListIterator: PyObject {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
+  internal func getAttribute(name: String) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(from: self, name: name)
+  }
+
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__

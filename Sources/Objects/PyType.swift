@@ -522,6 +522,10 @@ public class PyType: PyObject {
     return self.setAttribute(name: name, value: nil)
   }
 
+  public func delAttribute(name: String) -> PyResult<PyNone> {
+    return self.setAttribute(name: name, value: nil)
+  }
+
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
