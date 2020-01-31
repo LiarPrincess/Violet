@@ -35,7 +35,7 @@
     {% if type.annotations.typeSubclass %}type.setFlag(.typeSubclass){% endif %}
 {% endmacro %}
 
-{% macro fillDict type %}
+{% macro fillDict type pyName %}
   {% set castSelf %}Cast.as{{ type.name }}{% endset %}
 
     let dict = type.getDict()
@@ -52,10 +52,10 @@
   {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
     {% if attribute == "__new__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(typeName: "{{ pyName }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% else %}
     {% if attribute == "__init__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(typeName: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(typeName: "{{ pyName }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% else %}
     dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
     {% endif %}
@@ -88,8 +88,9 @@ internal enum FillTypes {
   // MARK: - Base object
 
   internal static func object(_ type: PyType) {
+    {% call addDoc type %}
     {% call addFlags type %}
-    {% call fillDict type %}
+    {% call fillDict type "object" %}
   }
 {% endfor %}
 
@@ -98,8 +99,9 @@ internal enum FillTypes {
   // MARK: - Type type
 
   internal static func type(_ type: PyType) {
+    {% call addDoc type %}
     {% call addFlags type %}
-    {% call fillDict type %}
+    {% call fillDict type "type" %}
   }
 {% endfor %}
 
@@ -107,22 +109,24 @@ internal enum FillTypes {
 
   // MARK: - {{ type.name|replace:"Py","" }}
 
-  {% set fnName %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+  {% set annotation %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".","" }}{% endset %}
+  {% set fnName %}{{ annotation|lowerFirstWord }}{% endset %}
   internal static func {{ fnName }}(_ type: PyType) {
     {% call addDoc type %}
     {% call addFlags type %}
-    {% call fillDict type %}
+    {% call fillDict type annotation %}
   }
 {% endfor %}
 {% for type in types.classes|annotated:"pyerrortype" %}
 
   // MARK: - {{ type.name|replace:"Py","" }}
 
-  {% set fnName %}{{ type.annotations.pyerrortype|lowerFirstWord }}{% endset %}
+  {% set annotation %}{{ type.annotations.pyerrortype }}{% endset %}
+  {% set fnName %}{{ annotation|lowerFirstWord }}{% endset %}
   internal static func {{ fnName }}(_ type: PyType) {
     {% call addDoc type %}
     {% call addFlags type %}
-    {% call fillDict type %}
+    {% call fillDict type annotation %}
   }
 {% endfor %}
 }
