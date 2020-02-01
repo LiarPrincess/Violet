@@ -8,21 +8,21 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
 
   /// The Swift function that will be called.
   internal let function: FunctionWrapper
-  /// **Optional** instance it is bound to (`__self__`).
-  internal let object: PyObject?
+  /// Instance it is bound to (`__self__`).
+  internal let object: PyObject
   /// The `__module__` attribute, can be anything
   internal let module: PyObject?
   /// The `__doc__` attribute, or `nil`.
   internal let doc: String?
 
   override public var description: String {
-    return self.descriptionShared(type: "Method")
+    return "PyBuiltinMethod(name: \(self.name))"
   }
 
   // MARK: - Init
 
   internal init(fn: FunctionWrapper,
-                object: PyObject? = nil,
+                object: PyObject,
                 module: PyObject? = nil,
                 doc: String? = nil) {
     self.function = fn
@@ -77,7 +77,13 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return self.reprShared(type: "method")
+    if self.object is PyModule {
+      return .value("<built-in method \(self.name)>")
+    }
+
+    let ptr = self.object.ptrString
+    let type = self.object.typeName
+    return .value("<built-in method \(self.name) of \(type) object at \(ptr)>")
   }
 
   // MARK: - Attributes
@@ -95,14 +101,33 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
 
   // sourcery: pyproperty = __name__
   internal func getName() -> String {
-    return self.getNameShared()
+    return self.name
   }
 
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__
   internal func getQualname() -> String {
-    return self.getQualnameShared()
+    // If __self__ is a module or nil, return __name__, for example:
+    // >>> len.__qualname__
+    // 'len'
+    if self.object is PyModule {
+      return self.name
+    }
+
+    // If __self__ is a type, return m.__self__.__qualname__ + '.' + m.__name__
+    // >>> dict.fromkeys.__qualname__ # 'dict' is a type, so use it!
+    // 'dict.fromkeys'
+    var type = self.object.type
+    if let ifObjectIsTypeThenUseItAsType = self.object as? PyType {
+      type = ifObjectIsTypeThenUseItAsType
+    }
+
+    // Return type(m.__self__).__qualname__ + '.' + m.__name__
+    // >>> [].append.__qualname__
+    // 'list.append'
+    let typeQualname = type.getQualname()
+    return typeQualname + "." + self.name
   }
 
   // MARK: - TextSignature
@@ -123,7 +148,7 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
 
   // sourcery: pyproperty = __self__
   internal func getSelf() -> PyObject {
-    return self.getSelfShared()
+    return self.object
   }
 
   // MARK: - Get
@@ -153,8 +178,12 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
   ///                              PyObject *kwargs)
   /// static PyObject *
   /// slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
+  /// PyObject *
+  /// _PyObject_Call_Prepend(PyObject *callable,
+  ///                        PyObject *obj, PyObject *args, PyObject *kwargs)
   internal func call(args: [PyObject],
                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    return self.callShared(args: args, kwargs: kwargs)
+    let realArgs = [self.object] + args
+    return self.function.call(args: realArgs, kwargs: kwargs)
   }
 }

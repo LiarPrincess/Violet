@@ -8,15 +8,13 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
 
   /// The Swift function that will be called.
   internal let function: FunctionWrapper
-  /// **Optional** instance it is bound to (`__self__`).
-  internal var object: PyObject? { return nil }
   /// The `__module__` attribute, can be anything
   internal let module: PyObject?
   /// The `__doc__` attribute, or `nil`.
   internal let doc: String?
 
   override public var description: String {
-    return self.descriptionShared(type: "Function")
+    return "PyBuiltinFunction(name: \(self.name))"
   }
 
   // MARK: - Init
@@ -75,7 +73,7 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return self.reprShared(type: "function")
+    return .value("<built-in function \(self.name)>")
   }
 
   // MARK: - Attributes
@@ -100,14 +98,14 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
 
   // sourcery: pyproperty = __name__
   internal func getName() -> String {
-    return self.getNameShared()
+    return self.name
   }
 
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__
   internal func getQualname() -> String {
-    return self.getQualnameShared()
+    return self.name
   }
 
   // MARK: - TextSignature
@@ -128,7 +126,7 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
 
   // sourcery: pyproperty = __self__
   internal func getSelf() -> PyObject {
-    return self.getSelfShared()
+    return Py.none
   }
 
   // MARK: - Get
@@ -160,6 +158,6 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
   /// slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
   internal func call(args: [PyObject],
                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    return self.callShared(args: args, kwargs: kwargs)
+    return self.function.call(args: args, kwargs: kwargs)
   }
 }
