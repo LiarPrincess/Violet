@@ -66,6 +66,22 @@ PyBuiltinFunction|PyObject|func|__hash__|hash() -> HashResult
 PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyBuiltinFunction|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyBuiltinMethod|PyObject|get|__name__|getName() -> String
+PyBuiltinMethod|PyObject|get|__qualname__|getQualname() -> String
+PyBuiltinMethod|PyObject|get|__text_signature__|getTextSignature() -> String?
+PyBuiltinMethod|PyObject|get|__module__|getModule() -> PyResult<String>
+PyBuiltinMethod|PyObject|get|__self__|getSelf() -> PyObject
+
+PyBuiltinMethod|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
+PyBuiltinMethod|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> CompareResult
+PyBuiltinMethod|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
+PyBuiltinMethod|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
+PyBuiltinMethod|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
+PyBuiltinMethod|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
+PyBuiltinMethod|PyObject|func|__hash__|hash() -> HashResult
+PyBuiltinMethod|PyObject|func|__repr__|repr() -> PyResult<String>
+PyBuiltinMethod|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyBuiltinMethod|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResult<PyObject>
 PyByteArray|PyObject|get|__class__|getClass() -> PyType
 
 PyByteArray|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult

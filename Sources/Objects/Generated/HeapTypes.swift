@@ -32,6 +32,10 @@ internal protocol HeapType { }
 
 // PyBuiltinFunction is not a base type.
 
+// MARK: - BuiltinMethod
+
+// PyBuiltinMethod is not a base type.
+
 // MARK: - ByteArray
 
 /// Type used when we subclass builtin `bytearray` class.

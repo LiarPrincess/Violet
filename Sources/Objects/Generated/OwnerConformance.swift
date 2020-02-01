@@ -63,6 +63,26 @@ extension PyBuiltinFunction:
   __call__Owner
 { }
 
+// MARK: - BuiltinMethod
+
+extension PyBuiltinMethod:
+  __name__GetterOwner,
+  __qualname__GetterOwner,
+  __text_signature__GetterOwner,
+  __module__GetterOwner,
+  __self__GetterOwner,
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __hash__Owner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __call__Owner
+{ }
+
 // MARK: - ByteArray
 
 extension PyByteArray:

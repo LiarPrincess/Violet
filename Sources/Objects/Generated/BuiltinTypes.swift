@@ -25,6 +25,7 @@ public final class BuiltinTypes {
 
   public let bool: PyType
   public let builtinFunction: PyType
+  public let builtinMethod: PyType
   public let bytearray: PyType
   public let bytearray_iterator: PyType
   public let bytes: PyType
@@ -83,6 +84,7 @@ public final class BuiltinTypes {
 
     // 'self.bool' has to be last because it uses 'self.int' as base!
     self.builtinFunction = PyType.initBuiltinType(name: "builtinFunction", type: self.type, base: self.object)
+    self.builtinMethod = PyType.initBuiltinType(name: "builtinMethod", type: self.type, base: self.object)
     self.bytearray = PyType.initBuiltinType(name: "bytearray", type: self.type, base: self.object)
     self.bytearray_iterator = PyType.initBuiltinType(name: "bytearray_iterator", type: self.type, base: self.object)
     self.bytes = PyType.initBuiltinType(name: "bytes", type: self.type, base: self.object)
@@ -142,6 +144,7 @@ public final class BuiltinTypes {
     FillTypes.type(self.type)
     FillTypes.bool(self.bool)
     FillTypes.builtinFunction(self.builtinFunction)
+    FillTypes.builtinMethod(self.builtinMethod)
     FillTypes.bytearray(self.bytearray)
     FillTypes.bytearray_iterator(self.bytearray_iterator)
     FillTypes.bytes(self.bytes)
@@ -194,6 +197,7 @@ public final class BuiltinTypes {
       self.type,
       self.bool,
       self.builtinFunction,
+      self.builtinMethod,
       self.bytearray,
       self.bytearray_iterator,
       self.bytes,

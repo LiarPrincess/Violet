@@ -137,6 +137,34 @@ internal enum FillTypes {
     dict["__call__"] = PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyBuiltinFunction.call(args:kwargs:), castSelf: Cast.asPyBuiltinFunction)
   }
 
+  // MARK: - BuiltinMethod
+
+  internal static func builtinMethod(_ type: PyType) {
+    type.setBuiltinTypeDoc(nil)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
+
+    let dict = type.getDict()
+    dict["__name__"] = PyProperty.wrap(name: "__name__", doc: nil, get: PyBuiltinMethod.getName, castSelf: Cast.asPyBuiltinMethod)
+    dict["__qualname__"] = PyProperty.wrap(name: "__qualname__", doc: nil, get: PyBuiltinMethod.getQualname, castSelf: Cast.asPyBuiltinMethod)
+    dict["__text_signature__"] = PyProperty.wrap(name: "__text_signature__", doc: nil, get: PyBuiltinMethod.getTextSignature, castSelf: Cast.asPyBuiltinMethod)
+    dict["__module__"] = PyProperty.wrap(name: "__module__", doc: nil, get: PyBuiltinMethod.getModule, castSelf: Cast.asPyBuiltinMethod)
+    dict["__self__"] = PyProperty.wrap(name: "__self__", doc: nil, get: PyBuiltinMethod.getSelf, castSelf: Cast.asPyBuiltinMethod)
+
+
+
+    dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyBuiltinMethod.isEqual(_:), castSelf: Cast.asPyBuiltinMethod)
+    dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyBuiltinMethod.isNotEqual(_:), castSelf: Cast.asPyBuiltinMethod)
+    dict["__lt__"] = PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PyBuiltinMethod.isLess(_:), castSelf: Cast.asPyBuiltinMethod)
+    dict["__le__"] = PyBuiltinFunction.wrap(name: "__le__", doc: nil, fn: PyBuiltinMethod.isLessEqual(_:), castSelf: Cast.asPyBuiltinMethod)
+    dict["__gt__"] = PyBuiltinFunction.wrap(name: "__gt__", doc: nil, fn: PyBuiltinMethod.isGreater(_:), castSelf: Cast.asPyBuiltinMethod)
+    dict["__ge__"] = PyBuiltinFunction.wrap(name: "__ge__", doc: nil, fn: PyBuiltinMethod.isGreaterEqual(_:), castSelf: Cast.asPyBuiltinMethod)
+    dict["__hash__"] = PyBuiltinFunction.wrap(name: "__hash__", doc: nil, fn: PyBuiltinMethod.hash, castSelf: Cast.asPyBuiltinMethod)
+    dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBuiltinMethod.repr, castSelf: Cast.asPyBuiltinMethod)
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyBuiltinMethod.getAttribute(name:), castSelf: Cast.asPyBuiltinMethod)
+    dict["__call__"] = PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyBuiltinMethod.call(args:kwargs:), castSelf: Cast.asPyBuiltinMethod)
+  }
+
   // MARK: - ByteArray
 
   internal static func bytearray(_ type: PyType) {

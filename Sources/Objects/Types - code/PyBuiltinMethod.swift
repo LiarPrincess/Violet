@@ -1,33 +1,35 @@
 // In CPython:
 // Objects -> methodobject.c
 
-// sourcery: pytype = builtinFunction, default, hasGC
+// sourcery: pytype = builtinMethod, default, hasGC
 /// This is about the type `builtin_function_or_method`,
 /// not Python methods in user-defined classes.
-public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
+public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
 
   /// The Swift function that will be called.
   internal let function: FunctionWrapper
   /// **Optional** instance it is bound to (`__self__`).
-  internal var object: PyObject? { return nil }
+  internal let object: PyObject?
   /// The `__module__` attribute, can be anything
   internal let module: PyObject?
   /// The `__doc__` attribute, or `nil`.
   internal let doc: String?
 
   override public var description: String {
-    return self.descriptionShared(type: "Function")
+    return self.descriptionShared(type: "Method")
   }
 
   // MARK: - Init
 
   internal init(fn: FunctionWrapper,
+                object: PyObject? = nil,
                 module: PyObject? = nil,
                 doc: String? = nil) {
     self.function = fn
+    self.object = object
     self.module = module
     self.doc = doc
-    super.init(type: Py.types.builtinFunction)
+    super.init(type: Py.types.builtinMethod)
   }
 
   // MARK: - Equatable
@@ -75,7 +77,7 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    return self.reprShared(type: "function")
+    return self.reprShared(type: "method")
   }
 
   // MARK: - Attributes
@@ -87,13 +89,6 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
 
   internal func getAttribute(name: String) -> PyResult<PyObject> {
     return self.getAttributeShared(name: name)
-  }
-
-  // MARK: - Class
-
-  // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
-    return self.type
   }
 
   // MARK: - Name

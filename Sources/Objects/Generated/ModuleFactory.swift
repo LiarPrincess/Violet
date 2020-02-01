@@ -27,6 +27,7 @@ internal enum ModuleFactory {
 
     dict["bool"] = object.type_bool
     dict["builtinFunction"] = object.type_builtinFunction
+    dict["builtinMethod"] = object.type_builtinMethod
     dict["bytearray"] = object.type_bytearray
     dict["bytearray_iterator"] = object.type_bytearray_iterator
     dict["bytes"] = object.type_bytes

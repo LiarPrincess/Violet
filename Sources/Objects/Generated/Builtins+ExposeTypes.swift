@@ -23,6 +23,11 @@ extension Builtins {
     return Py.types.builtinFunction
   }
 
+  // sourcery: pyproperty = builtinMethod
+  internal var type_builtinMethod: PyType {
+    return Py.types.builtinMethod
+  }
+
   // sourcery: pyproperty = bytearray
   internal var type_bytearray: PyType {
     return Py.types.bytearray
