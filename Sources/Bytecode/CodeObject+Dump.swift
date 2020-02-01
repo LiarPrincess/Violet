@@ -249,13 +249,12 @@ extension CodeObject {
       let bin = String(arg.rawValue, radix: 2, uppercase: false)
       return "makeFunction; \(bin) (\(a.joined(separator: ", ")))"
 
-//    case let .callFunction(argumentCount: arg):
-//      return EmittedInstruction(.callFunction, String(describing: arg))
-//    case let .callFunctionKw(argumentCount: arg):
-//      return EmittedInstruction(.callFunctionKw, String(describing: arg))
-//    case let .callFunctionEx(hasKeywordArguments: hasKeywordArguments):
-//      let arg = hasKeywordArguments ? "1" : "0"
-//      return EmittedInstruction(.callFunctionEx, arg)
+    case let .callFunction(argumentCount: arg):
+      return "callFunction; argumentCount: \(extendedArg + Int(arg)))"
+    case let .callFunctionKw(argumentCount: arg):
+      return "callFunction; argumentCount: \(extendedArg + Int(arg)))"
+    case let .callFunctionEx(hasKeywordArguments: hasKeywordArguments):
+      return "callFunction; hasKeywordArguments: \(hasKeywordArguments))"
 
     case .`return`:
       return "return"
@@ -325,13 +324,10 @@ extension CodeObject {
       return "setupAnnotations"
     case .popBlock:
       return "popBlock"
-//    case let .loadClosure(cellOrFreeIndex: arg):
-//      return EmittedInstruction(.loadClosure, String(describing: arg) + "_INVALID")
+    case let .loadClosure(cellOrFreeIndex: arg):
+      return "loadClosure; cellOrFreeIndex: \(extendedArg + Int(arg))"
     case let .buildSlice(arg):
       return "buildSlice; \(self.toString(arg))"
-
-    default:
-      fatalError()
     }
   }
 
