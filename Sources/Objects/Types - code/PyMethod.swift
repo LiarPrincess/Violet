@@ -167,12 +167,10 @@ public class PyMethod: PyObject {
 
   // sourcery: pymethod = __get__
   internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
-    // Don't rebind already bound method of a class that's not a base class of cls
-    if object is PyNone {
+    if object.isDescriptorStaticMarker {
       return .value(self)
     }
 
-    // Bind it to obj
     return .value(PyMethod(fn: self.fn, object: object))
   }
 }

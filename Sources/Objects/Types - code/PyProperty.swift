@@ -111,7 +111,7 @@ public class PyProperty: PyObject {
 
   // sourcery: pymethod = __get__
   internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
-    if object is PyNone {
+    if object.isDescriptorStaticMarker {
       return .value(self)
     }
 

@@ -22,6 +22,23 @@
 // klass: <class '__main__.C'>
 // 7
 
+// MARK: - Marker
+
+/// If descriptor is called on a class then this value will be used
+/// as a `object` parameter.
+internal var descriptorStaticMarker: PyObject {
+  return Py.none
+}
+
+extension PyObject {
+
+  /// If descriptor is called on a class then this value will be used
+  /// as a `object` parameter.
+  internal var isDescriptorStaticMarker: Bool {
+    return self is PyNone
+  }
+}
+
 // MARK: - Get
 
 // It has to be class because it is a very common pattern to check `self.isData`
@@ -51,7 +68,7 @@ internal class GetDescriptor {
   }
 
   internal func call(withOwner: Bool = true) -> PyResult<PyObject> {
-    let owner = withOwner ? self.owner : Py.none
+    let owner = withOwner ? self.owner : descriptorStaticMarker
     let args = [self.descriptor, owner, self.owner.type]
 
     switch Py.call(callable: self.get, args: args) {
