@@ -41,6 +41,8 @@ extension PyObject {
 
 // MARK: - Get
 
+// SEE COMMENT AT THE TOP OF THIS FILE FOR AN EXPLANATION OF WHAT A DESCRIPTOR IS!
+//
 // It has to be class because it is a very common pattern to check `self.isData`
 // after creation. Since this property is lazy it would be mutation
 // and then we would have to declare descriptor as `var` which is ugly.
@@ -107,6 +109,9 @@ internal class GetDescriptor {
 
 // MARK: - Set
 
+// SEE COMMENT AT THE TOP OF THIS FILE FOR AN EXPLANATION OF WHAT A DESCRIPTOR IS!
+//
+// It is a class because 'GetDescriptor' also is (and we like symetry).
 internal class SetDescriptor {
 
   /// Object on which this descriptor should be called.

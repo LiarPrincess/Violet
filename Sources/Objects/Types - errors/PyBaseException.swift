@@ -202,13 +202,21 @@ public class PyBaseException: PyObject {
       return .typeError("args may not be deleted")
     }
 
-    switch Py.newTuple(iterable: value) {
-    case let .value(tuple):
-      self.args = tuple
-      return .value()
+    if let tuple = value as? PyTuple {
+      return self.setArgs(tuple)
+    }
+
+    switch Py.toArray(iterable: value) {
+    case let .value(elements):
+      return self.setArgs(Py.newTuple(elements))
     case let .error(e):
       return .error(e)
     }
+  }
+
+  public func setArgs(_ value: PyTuple) -> PyResult<()> {
+    self.args = value
+    return .value()
   }
 
   // MARK: - Traceback

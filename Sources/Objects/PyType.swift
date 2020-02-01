@@ -464,9 +464,10 @@ public class PyType: PyObject {
     // Look in __dict__ of this type and its bases
     if let attribute = self.lookup(name: name) {
       if let descr = GetDescriptor.get(object: self, attribute: attribute) {
+        // CPython uses 'withOwner: false'. Not really sure why, their reasoning:
         // NULL ;owner; indicates the descriptor was
         // found on the target object itself (or a base)
-        return descr.call(withOwner: false)
+        return descr.call(withOwner: true)
       }
 
       return .value(attribute)
@@ -586,9 +587,7 @@ public class PyType: PyObject {
       return .value(object)
     }
 
-    // TODO: Add `object` as first args
-    // Call '__init__' (on object type not on self!).
-    let initResult = Py.callMethod(on: object.type,
+    let initResult = Py.callMethod(on: object,
                                    selector: "__init__",
                                    args: args,
                                    kwargs: kwargs)

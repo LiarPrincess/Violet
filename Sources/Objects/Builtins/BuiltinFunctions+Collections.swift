@@ -29,10 +29,6 @@ extension BuiltinFunctions {
   }
 
   public func newTuple(iterable: PyObject) -> PyResult<PyTuple> {
-    if let seq = iterable as? PySequenceType {
-      return .value(self.newTuple(seq.data))
-    }
-
     return self.toArray(iterable: iterable).map(self.newTuple)
   }
 
@@ -533,6 +529,10 @@ extension BuiltinFunctions {
   }
 
   internal func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
+    if let seq = iterable as? PySequenceType {
+      return .value(seq.data.elements)
+    }
+
     return self.reduce(iterable: iterable, into: [PyObject]()) { acc, object in
       acc.append(object)
       return .goToNextElement

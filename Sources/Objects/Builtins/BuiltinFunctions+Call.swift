@@ -27,23 +27,6 @@ public enum CallMethodResult {
 
 extension BuiltinFunctions {
 
-  // MARK: - Lookup
-
-  /// Internal API to look for a name through the MRO.
-  public func lookup(_ object: PyObject, name: String) -> PyObject? {
-    return object.type.lookup(name: name)
-  }
-
-  // MARK: - Callable
-
-  // sourcery: pymethod = callable
-  /// callable(object)
-  /// See [this](https://docs.python.org/3/library/functions.html#callable)
-  public func isCallable(_ object: PyObject) -> Bool {
-    return object is __call__Owner
-      || self.lookup(object, name: "__call__") != nil
-  }
-
   // MARK: - Call
 
   public func call(callable: PyObject, args: [PyObject]) -> CallResult {
@@ -80,12 +63,27 @@ extension BuiltinFunctions {
       return .notCallable(self.newTypeError(msg: msg))
     }
 
+    // TODO: What if user wrote their own '__call__'? -> lookup through MRO.
+
     switch owner.call(args: args, kwargs: kwargs) {
     case .value(let result):
       return .value(result)
     case .error(let e):
       return .error(e)
     }
+  }
+
+  // MARK: - Callable
+
+  // sourcery: pymethod = callable
+  /// callable(object)
+  /// See [this](https://docs.python.org/3/library/functions.html#callable)
+  public func isCallable(_ object: PyObject) -> PyResult<Bool> {
+    if object is __call__Owner {
+      return .value(true)
+    }
+
+    return self.hasAttribute(object, name: "__call__")
   }
 
   // MARK: - Method
@@ -124,9 +122,10 @@ extension BuiltinFunctions {
                            selector: String,
                            args: [PyObject] = [],
                            kwargs: PyDictData? = nil) -> CallMethodResult {
-    guard let boundMethod = self.lookup(object, name: selector) else {
-      let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
-      return .missingMethod(self.newAttributeError(msg: msg))
+    let boundMethod: PyObject
+    switch self.getAttribute(object, name: selector) {
+    case let .value(m): boundMethod = m
+    case let .error(e): return .error(e)
     }
 
     // Case that is not supported in this method
