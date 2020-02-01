@@ -131,6 +131,22 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
     return self.getSelfShared()
   }
 
+  // MARK: - Get
+
+  // sourcery: pymethod = __get__
+  internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+    if object is PyNone {
+      return .value(self)
+    }
+
+    let result = PyBuiltinMethod(fn: self.function,
+                                 object: object,
+                                 module: self.module,
+                                 doc: self.doc)
+
+    return .value(result)
+  }
+
   // MARK: - Call
 
   // sourcery: pymethod = __call__

@@ -107,10 +107,10 @@ public class PyProperty: PyObject {
     return self.deleter ?? Py.none
   }
 
-  // MARK: - Call
+  // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject) -> PyResult<PyObject> {
+  internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
     if object is PyNone {
       return .value(self)
     }
@@ -126,6 +126,8 @@ public class PyProperty: PyObject {
       return .error(e)
     }
   }
+
+  // MARK: - Set
 
   // sourcery: pymethod = __set__
   internal func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
@@ -144,6 +146,8 @@ public class PyProperty: PyObject {
       return .error(e)
     }
   }
+
+  // MARK: - Del
 
   // sourcery: pymethod = __delete__
   internal func del(object: PyObject) -> PyResult<PyObject> {

@@ -126,6 +126,24 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
     return self.getSelfShared()
   }
 
+  // MARK: - Get
+
+  // sourcery: pymethod = __get__
+  internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+    // Don't rebind already bound method of a class that's not a base class of cls
+    if object is PyNone {
+      return .value(self)
+    }
+
+    // Bind it to obj
+    let result = PyBuiltinMethod(fn: self.function,
+                                 object: object,
+                                 module: self.module,
+                                 doc: self.doc)
+
+    return .value(result)
+  }
+
   // MARK: - Call
 
   // sourcery: pymethod = __call__

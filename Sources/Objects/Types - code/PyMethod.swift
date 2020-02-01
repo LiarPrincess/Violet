@@ -163,12 +163,11 @@ public class PyMethod: PyObject {
     return self.object
   }
 
-  // MARK: - Call
+  // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject) -> PyResult<PyObject> {
+  internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
     // Don't rebind already bound method of a class that's not a base class of cls
-    // TODO: Is this correct?
     if object is PyNone {
       return .value(self)
     }

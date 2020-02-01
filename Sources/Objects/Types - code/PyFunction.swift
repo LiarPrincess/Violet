@@ -164,7 +164,7 @@ public class PyFunction: PyObject {
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject) -> PyResult<PyObject> {
+  internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
     if object is PyNone {
       return .value(self)
     }

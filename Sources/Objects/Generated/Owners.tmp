@@ -65,6 +65,7 @@ PyBuiltinFunction|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> Comp
 PyBuiltinFunction|PyObject|func|__hash__|hash() -> HashResult
 PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyBuiltinFunction|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
 PyBuiltinFunction|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResult<PyObject>
 PyBuiltinMethod|PyObject|get|__name__|getName() -> String
 PyBuiltinMethod|PyObject|get|__qualname__|getQualname() -> String
@@ -81,6 +82,7 @@ PyBuiltinMethod|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> Compar
 PyBuiltinMethod|PyObject|func|__hash__|hash() -> HashResult
 PyBuiltinMethod|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinMethod|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyBuiltinMethod|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
 PyBuiltinMethod|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResult<PyObject>
 PyByteArray|PyObject|get|__class__|getClass() -> PyType
 
@@ -450,7 +452,7 @@ PyFunction|PyObject|get|__module__|getModule() -> PyResult<String>
 PyFunction|PyObject|get|__dict__|getDict() -> Attributes
 
 PyFunction|PyObject|func|__repr__|repr() -> PyResult<String>
-PyFunction|PyObject|func|__get__|get(object: PyObject) -> PyResult<PyObject>
+PyFunction|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|get|__class__|getClass() -> PyType
 
 PyInt|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
@@ -582,7 +584,7 @@ PyMethod|PyObject|func|__setattr__|setAttribute(name: PyObject, value: PyObject?
 PyMethod|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNone>
 PyMethod|PyObject|func|__func__|getFunc() -> PyObject
 PyMethod|PyObject|func|__self__|getSelf() -> PyObject
-PyMethod|PyObject|func|__get__|get(object: PyObject) -> PyResult<PyObject>
+PyMethod|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
 PyModule|PyObject|get|__dict__|getDict() -> Attributes
 PyModule|PyObject|get|__class__|getClass() -> PyType
 
@@ -621,7 +623,7 @@ PyProperty|PyObject|get|fset|getFSet() -> PyObject
 PyProperty|PyObject|get|fdel|getFDel() -> PyObject
 
 PyProperty|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
-PyProperty|PyObject|func|__get__|get(object: PyObject) -> PyResult<PyObject>
+PyProperty|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__set__|set(object: PyObject, value: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|func|__delete__|del(object: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>

@@ -60,6 +60,7 @@ extension PyBuiltinFunction:
   __hash__Owner,
   __repr__Owner,
   __getattribute__Owner,
+  __get__Owner,
   __call__Owner
 { }
 
@@ -80,6 +81,7 @@ extension PyBuiltinMethod:
   __hash__Owner,
   __repr__Owner,
   __getattribute__Owner,
+  __get__Owner,
   __call__Owner
 { }
 

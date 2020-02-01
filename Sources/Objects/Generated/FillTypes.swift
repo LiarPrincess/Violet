@@ -134,6 +134,7 @@ internal enum FillTypes {
     dict["__hash__"] = PyBuiltinFunction.wrap(name: "__hash__", doc: nil, fn: PyBuiltinFunction.hash, castSelf: Cast.asPyBuiltinFunction)
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBuiltinFunction.repr, castSelf: Cast.asPyBuiltinFunction)
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyBuiltinFunction.getAttribute(name:), castSelf: Cast.asPyBuiltinFunction)
+    dict["__get__"] = PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyBuiltinFunction.get(object:type:), castSelf: Cast.asPyBuiltinFunction)
     dict["__call__"] = PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyBuiltinFunction.call(args:kwargs:), castSelf: Cast.asPyBuiltinFunction)
   }
 
@@ -162,6 +163,7 @@ internal enum FillTypes {
     dict["__hash__"] = PyBuiltinFunction.wrap(name: "__hash__", doc: nil, fn: PyBuiltinMethod.hash, castSelf: Cast.asPyBuiltinMethod)
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBuiltinMethod.repr, castSelf: Cast.asPyBuiltinMethod)
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyBuiltinMethod.getAttribute(name:), castSelf: Cast.asPyBuiltinMethod)
+    dict["__get__"] = PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyBuiltinMethod.get(object:type:), castSelf: Cast.asPyBuiltinMethod)
     dict["__call__"] = PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyBuiltinMethod.call(args:kwargs:), castSelf: Cast.asPyBuiltinMethod)
   }
 
@@ -773,7 +775,7 @@ internal enum FillTypes {
 
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyFunction.repr, castSelf: Cast.asPyFunction)
-    dict["__get__"] = PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyFunction.get(object:), castSelf: Cast.asPyFunction)
+    dict["__get__"] = PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyFunction.get(object:type:), castSelf: Cast.asPyFunction)
   }
 
   // MARK: - Int
@@ -993,7 +995,7 @@ internal enum FillTypes {
     dict["__delattr__"] = PyBuiltinFunction.wrap(name: "__delattr__", doc: nil, fn: PyMethod.delAttribute(name:), castSelf: Cast.asPyMethod)
     dict["__func__"] = PyBuiltinFunction.wrap(name: "__func__", doc: nil, fn: PyMethod.getFunc, castSelf: Cast.asPyMethod)
     dict["__self__"] = PyBuiltinFunction.wrap(name: "__self__", doc: nil, fn: PyMethod.getSelf, castSelf: Cast.asPyMethod)
-    dict["__get__"] = PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyMethod.get(object:), castSelf: Cast.asPyMethod)
+    dict["__get__"] = PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyMethod.get(object:type:), castSelf: Cast.asPyMethod)
   }
 
   // MARK: - Module
@@ -1095,7 +1097,7 @@ internal enum FillTypes {
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyProperty.getAttribute(name:), castSelf: Cast.asPyProperty)
-    dict["__get__"] = PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyProperty.get(object:), castSelf: Cast.asPyProperty)
+    dict["__get__"] = PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyProperty.get(object:type:), castSelf: Cast.asPyProperty)
     dict["__set__"] = PyBuiltinFunction.wrap(name: "__set__", doc: nil, fn: PyProperty.set(object:value:), castSelf: Cast.asPyProperty)
     dict["__delete__"] = PyBuiltinFunction.wrap(name: "__delete__", doc: nil, fn: PyProperty.del(object:), castSelf: Cast.asPyProperty)
   }
