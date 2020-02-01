@@ -182,4 +182,10 @@ extension BuiltinFunctions {
     let mod = mod ?? Py.none
     return PowOp.call(left: base, middle: exp, right: mod)
   }
+
+  public func powInPlace(base: PyObject,
+                         exp: PyObject,
+                         mod: PyObject? = nil) -> PyResult<PyObject> {
+    return self.pow(base: base, exp: exp, mod: mod)
+  }
 }

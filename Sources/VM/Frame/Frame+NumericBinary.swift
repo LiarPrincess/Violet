@@ -3,6 +3,38 @@ import Objects
 
 extension Frame {
 
+  // MARK: - Add
+
+  /// Implements `TOS = TOS1 + TOS`.
+  internal func binaryAdd() -> InstructionResult {
+    let right = self.stack.pop()
+    let left = self.stack.top
+
+    switch Py.add(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Sub
+
+  /// Implements `TOS = TOS1 - TOS`.
+  internal func binarySubtract() -> InstructionResult {
+    let right = self.stack.pop()
+    let left = self.stack.top
+
+    switch Py.sub(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Mul
 
   /// Implements `TOS = TOS1 * TOS`.
@@ -25,6 +57,20 @@ extension Frame {
     let left = self.stack.top
 
     switch Py.matmul(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// Implements `TOS = TOS1 ** TOS`.
+  internal func binaryPower() -> InstructionResult {
+    let exp = self.stack.pop()
+    let base = self.stack.top
+
+    switch Py.pow(base: base, exp: exp, mod: Py.none) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -69,38 +115,6 @@ extension Frame {
     let dividend = self.stack.top
 
     switch Py.mod(left: dividend, right: divisor) {
-    case let .value(result):
-      self.stack.top = result
-      return .ok
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Add
-
-  /// Implements `TOS = TOS1 + TOS`.
-  internal func binaryAdd() -> InstructionResult {
-    let right = self.stack.pop()
-    let left = self.stack.top
-
-    switch Py.add(left: left, right: right) {
-    case let .value(result):
-      self.stack.top = result
-      return .ok
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Sub
-
-  /// Implements `TOS = TOS1 - TOS`.
-  internal func binarySubtract() -> InstructionResult {
-    let right = self.stack.pop()
-    let left = self.stack.top
-
-    switch Py.sub(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok

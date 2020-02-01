@@ -3,6 +3,38 @@ import Bytecode
 
 extension Frame {
 
+  // MARK: - Add
+
+  /// Implements in-place TOS = TOS1 + TOS.
+  internal func inplaceAdd() -> InstructionResult {
+    let right = self.stack.pop()
+    let left = self.stack.top
+
+    switch Py.addInPlace(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Sub
+
+  /// Implements in-place TOS = TOS1 - TOS.
+  internal func inplaceSubtract() -> InstructionResult {
+    let right = self.stack.pop()
+    let left = self.stack.top
+
+    switch Py.subInPlace(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
   // MARK: - Mul
 
   /// Implements in-place TOS = TOS1 * TOS.
@@ -25,6 +57,20 @@ extension Frame {
     let left = self.stack.top
 
     switch Py.matmulInPlace(left: left, right: right) {
+    case let .value(result):
+      self.stack.top = result
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// Implements in-place TOS = TOS1 ** TOS.
+  internal func inplacePower() -> InstructionResult {
+    let exp = self.stack.pop()
+    let base = self.stack.top
+
+    switch Py.powInPlace(base: base, exp: exp, mod: Py.none) {
     case let .value(result):
       self.stack.top = result
       return .ok
@@ -69,38 +115,6 @@ extension Frame {
     let dividend = self.stack.top
 
     switch Py.modInPlace(left: dividend, right: divisor) {
-    case let .value(result):
-      self.stack.top = result
-      return .ok
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Add
-
-  /// Implements in-place TOS = TOS1 + TOS.
-  internal func inplaceAdd() -> InstructionResult {
-    let right = self.stack.pop()
-    let left = self.stack.top
-
-    switch Py.addInPlace(left: left, right: right) {
-    case let .value(result):
-      self.stack.top = result
-      return .ok
-    case let .error(e):
-      return .error(e)
-    }
-  }
-
-  // MARK: - Sub
-
-  /// Implements in-place TOS = TOS1 - TOS.
-  internal func inplaceSubtract() -> InstructionResult {
-    let right = self.stack.pop()
-    let left = self.stack.top
-
-    switch Py.subInPlace(left: left, right: right) {
     case let .value(result):
       self.stack.top = result
       return .ok

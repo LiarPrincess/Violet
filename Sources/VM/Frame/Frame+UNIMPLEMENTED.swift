@@ -5,20 +5,6 @@ import Objects
 
 extension Frame {
 
-  // MARK: - Numeric binary
-
-  /// Implements `TOS = TOS1 ** TOS`.
-  internal func binaryPower() -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  // MARK: - Numeric in-place
-
-  /// Implements in-place TOS = TOS1 ** TOS.
-  internal func inplacePower() -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - Class
 
   /// Pushes `builtins.BuildClass()` onto the stack.
