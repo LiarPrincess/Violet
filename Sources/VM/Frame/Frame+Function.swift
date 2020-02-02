@@ -39,7 +39,8 @@ extension Frame {
     case let .value(o):
       self.stack.push(o)
       return .ok
-    case let .error(e):
+    case let .error(e),
+         let .notCallable(e):
       return .error(e)
     }
   }
@@ -78,18 +79,19 @@ extension Frame {
     case let .value(o):
       self.stack.push(o)
       return .ok
-    case let .error(e):
+    case let .error(e),
+         let .notCallable(e):
       return .error(e)
     }
   }
 
   /// call_function(PyObject ***pp_stack, Py_ssize_t argCount, PyObject *kwnames)
   private func callFunction(argAndKwargCount: Int,
-                            kwNames: PyTuple?) -> PyResult<PyObject> {
+                            kwNames: PyTuple?) -> CallResult {
     guard let kwNames = kwNames else {
       let args = stack.popElementsInPushOrder(count: argAndKwargCount)
       let fn = self.stack.pop()
-      return Py.call(callable: fn, args: args).asResult
+      return Py.call(callable: fn, args: args)
     }
 
     let nKwargs = kwNames.elements.count
@@ -107,7 +109,7 @@ extension Frame {
     assert(args.count == nArgs)
 
     let fn = self.stack.pop()
-    return Py.call(callable: fn, args: args, kwargs: kwargs).asResult
+    return Py.call(callable: fn, args: args, kwargs: kwargs)
   }
 
   private func createKwargs(names: [PyObject],
@@ -134,5 +136,58 @@ extension Frame {
 
     assert(result.count == names.count)
     return .value(result)
+  }
+
+  // MARK: - Load method
+
+  /// Loads a method named `name` from TOS object.
+  ///
+  /// TOS is popped and method and TOS are pushed when interpreter
+  /// can call unbound method directly.
+  /// TOS will be used as the first argument (self) by `CallMethod`.
+  /// Otherwise, NULL and method is pushed (method is bound method or something else).
+  internal func loadMethod(nameIndex: Int) -> InstructionResult {
+    let name = self.code.names[nameIndex]
+    let object = self.stack.top
+
+    switch Py.getMethod(object: object, selector: name) {
+    case let .value(boundMethod):
+      // 'bound' means that method already captured 'self' reference
+      self.stack.top = boundMethod
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Call method
+
+  /// Calls a method.
+  /// `argc` is number of positional arguments.
+  /// Keyword arguments are not supported.
+  ///
+  /// This opcode is designed to be used with `LoadMethod`.
+  /// Positional arguments are on top of the stack.
+  /// Below them, two items described in `LoadMethod` on the stack.
+  /// All of them are popped and return value is pushed.
+  internal func callMethod(argumentCount: Int) -> InstructionResult {
+    let args = stack.popElementsInPushOrder(count: argumentCount)
+    assert(args.count == argumentCount)
+
+    // 'bound' means that method already captured 'self' reference
+    let boundMethod = self.stack.top
+
+    let level = self.stackLevel
+    let result = Py.call(callable: boundMethod, args: args, kwargs: nil)
+    assert(self.stackLevel == level)
+
+    switch result {
+    case let .value(o):
+      self.stack.push(o)
+      return .ok
+    case let .error(e),
+         let .notCallable(e):
+      return .error(e)
+    }
   }
 }

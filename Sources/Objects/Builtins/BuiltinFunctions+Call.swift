@@ -147,6 +147,11 @@ extension BuiltinFunctions {
     }
   }
 
+  public func getMethod(object: PyObject,
+                        selector: String) -> PyResult<PyObject> {
+    return self.getAttribute(object, name: selector)
+  }
+
   /// Call with positional arguments and optional keyword arguments.
   /// - Parameters:
   ///   - object: `self` argument
@@ -163,7 +168,7 @@ extension BuiltinFunctions {
                          kwargs: PyDictData? = nil) -> CallMethodResult {
     // 'bound' means that method already captured 'self' reference
     let boundMethod: PyObject
-    switch self.getAttribute(object, name: selector) {
+    switch self.getMethod(object: object, selector: selector) {
     case let .value(m): boundMethod = m
     case let .error(e): return .error(e)
     }
