@@ -6,12 +6,14 @@ extension CodeObjectBuilder {
   public func appendLoadMethod(name: String) {
     // ADDOP_NAME(c, LOAD_METHOD, meth->v.Attribute.attr, names);
     // self.append(.loadMethod)
+    self.unimplemented()
   }
 
   /// Append a `callMethod` instruction to this code object.
   public func appendCallMethod(argumentCount: Int) {
     // ADDOP_I(c, CALL_METHOD, asdl_seq_LEN(e->v.Call.args));
     // self.append(.callMethod)
+    self.unimplemented()
   }
 
   // MARK: - Collections
@@ -19,16 +21,19 @@ extension CodeObjectBuilder {
   /// Append a `setAdd` instruction to this code object.
   public func appendSetAdd(value: Any) {
     // self.append(.setAdd)
+    self.unimplemented()
   }
 
   /// Append a `listAppend` instruction to this code object.
   public func appendListAppend(value: Any) {
     // self.append(.listAppend)
+    self.unimplemented()
   }
 
   /// Append a `mapAdd` instruction to this code object.
   public func appendMapAdd(value: Any) {
     // self.append(.mapAdd)
+    self.unimplemented()
   }
 
   /// Implements assignment with a starred target.
@@ -45,6 +50,7 @@ extension CodeObjectBuilder {
     precondition(countAfter  <= 0xffff_ff)
 
     //    let rawValue = countAfter << 8 | countBefore
+    self.unimplemented()
   }
 
   // MARK: - General
@@ -52,6 +58,7 @@ extension CodeObjectBuilder {
   /// Append an `extendedArg` instruction to this code object.
   public func appendExtendedArg(value: UInt8) {
     // self.append(.extendedArg)
+    self.unimplemented()
   }
 
   /// Append a `loadClosure` instruction to this code object.
@@ -71,7 +78,7 @@ extension CodeObjectBuilder {
     //      // index = offset + i
     //      break
     //    }
-
+    self.unimplemented()
   }
 
   // MARK: - Store+Load+Delete
@@ -79,20 +86,28 @@ extension CodeObjectBuilder {
   /// Append a `loadDeref` instruction to this code object.
   public func appendLoadDeref<S: ConstantString>(_ name: S) {
     // self.append(.loadDeref)
+    self.unimplemented()
   }
 
   /// Append a `loadClassDeref` instruction to this code object.
   public func appendLoadClassDeref<S: ConstantString>(_ name: S) {
     // self.append(.loadClassDeref)
+    self.unimplemented()
   }
 
   /// Append a `storeDeref` instruction to this code object.
   public func appendStoreDeref<S: ConstantString>(_ name: S) {
     // self.append(.storeDeref)
+    self.unimplemented()
   }
 
   /// Append a `deleteDeref` instruction to this code object.
   public func appendDeleteDeref<S: ConstantString>(_ name: S) {
     // self.append(.deleteDeref)
+    self.unimplemented()
+  }
+
+  private func unimplemented(fn: StaticString = #function) -> Never {
+    fatalError("[CodeObjectBuilder] '\(fn)' is currently not implemented.")
   }
 }
