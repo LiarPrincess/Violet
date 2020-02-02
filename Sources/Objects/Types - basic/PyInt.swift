@@ -772,7 +772,7 @@ public class PyInt: PyObject {
     case let .error(e): return .error(e)
     }
 
-    guard (baseInt == 0 || baseInt > 2) && baseInt <= 36 else {
+    guard (baseInt == 0 || baseInt >= 2) && baseInt <= 36 else {
       return .valueError("int() base must be >= 2 and <= 36, or 0")
     }
 
