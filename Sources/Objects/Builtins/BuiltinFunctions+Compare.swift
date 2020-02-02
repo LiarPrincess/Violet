@@ -135,7 +135,7 @@ extension CompareOp {
 
 private enum EqualCompare: CompareOp {
 
-  typealias reflected = NotEqualCompare
+  typealias reflected = EqualCompare
   fileprivate static let selector = "__eq__"
   fileprivate static let baseCompare = PyBaseObject.isEqual
 
@@ -172,7 +172,7 @@ extension BuiltinFunctions {
 
 private enum NotEqualCompare: CompareOp {
 
-  typealias reflected = EqualCompare
+  typealias reflected = NotEqualCompare
   fileprivate static let selector = "__ne__"
   fileprivate static let baseCompare = PyBaseObject.isNotEqual
 
@@ -209,7 +209,7 @@ extension BuiltinFunctions {
 
 private enum LessCompare: CompareOp {
 
-  typealias reflected = GreaterEqualCompare
+  typealias reflected = GreaterCompare
   fileprivate static let selector = "__lt__"
   fileprivate static let baseCompare = PyBaseObject.isLess
 
@@ -246,7 +246,7 @@ extension BuiltinFunctions {
 
 private enum LessEqualCompare: CompareOp {
 
-  typealias reflected = GreaterCompare
+  typealias reflected = GreaterEqualCompare
   fileprivate static let selector = "__le__"
   fileprivate static let baseCompare = PyBaseObject.isLessEqual
 
@@ -283,7 +283,7 @@ extension BuiltinFunctions {
 
 private enum GreaterCompare: CompareOp {
 
-  typealias reflected = LessEqualCompare
+  typealias reflected = LessCompare
   fileprivate static let selector = "__gt__"
   fileprivate static let baseCompare = PyBaseObject.isGreater
 
@@ -320,7 +320,7 @@ extension BuiltinFunctions {
 
 private enum GreaterEqualCompare: CompareOp {
 
-  typealias reflected = LessCompare
+  typealias reflected = LessEqualCompare
   fileprivate static let selector = "__ge__"
   fileprivate static let baseCompare = PyBaseObject.isGreaterEqual
 
