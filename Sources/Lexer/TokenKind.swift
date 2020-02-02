@@ -123,9 +123,9 @@ extension TokenKind: CustomStringConvertible {
     switch self {
     case .eof: return "eof"
 
-    case let .identifier(val):   return "identifier (value: \"\(val)\")"
-    case let .string(val):       return "string (value: \"\(val)\")"
-    case let .formatString(val): return "format string (value: \"\(val)\"):"
+    case let .identifier(val):   return "identifier (value: '\(val)')"
+    case let .string(val):       return "string (value: '\(val)')"
+    case let .formatString(val): return "format string (value: '\(val)'):"
 
     case let .int(val):       return "int (value: \(val))"
     case let .float(val):     return "float (value: \(val))"
@@ -136,7 +136,7 @@ extension TokenKind: CustomStringConvertible {
     case .indent:  return "indent"
     case .dedent:  return "dedent"
     case .newLine: return "new line"
-    case .comment(let s): return "comment (value: \(s))"
+    case .comment(let s): return "comment (value: '\(s)')"
 
     case .leftParen:  return "("
     case .leftSqb:    return "["

@@ -64,9 +64,32 @@ public class Parser {
     return self.peek
   }
 
+  private func populatePeeks() throws {
+    let first = try self.lexer.getToken()
+
+    if case TokenKind.eof = first.kind {
+      self.peek = first
+      self.peekNext = first
+      return
+    }
+
+    self.peek = first
+    self.peekNext = try self.lexer.getToken() // 2nd token in file
+
+    while self.isComment(self.peek) || self.isNewLine(self.peek) {
+      self.peek = self.peekNext
+      self.peekNext = try self.lexer.getToken()
+    }
+  }
+
   private func isComment(_ token: Token) -> Bool {
-    guard case TokenKind.comment = token.kind else { return false }
-    return true
+    if case TokenKind.comment = token.kind { return true }
+    return false
+  }
+
+  private func isNewLine(_ token: Token) -> Bool {
+    if case TokenKind.newLine = token.kind { return true }
+    return false
   }
 
   // MARK: - Parse
@@ -74,12 +97,9 @@ public class Parser {
   public func parse() throws -> AST {
     switch self.state {
     case .notStarted:
-
-      // populate peeks
-      self.peek = try self.lexer.getToken()
-      self.peekNext = try self.lexer.getToken()
-
       do {
+        try self.populatePeeks()
+
         let ast = try self.parseByMode()
         try self.validate(ast)
         self.state = .finished(ast)
