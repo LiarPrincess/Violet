@@ -55,7 +55,7 @@ extension Frame {
   /// or whether the function returns, and continues with the outer-next block.
   internal func endFinally() -> InstructionResult {
     // See 'FinallyMarker' type for comment about what this is.
-    switch FinallyMarker.pop(from: self.stack) {
+    switch FinallyMarker.pop(from: &self.stack) {
     case .return(let value):
       return .return(value) // We are still returning value
     case .break:

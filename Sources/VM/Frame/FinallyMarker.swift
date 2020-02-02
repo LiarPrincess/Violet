@@ -36,7 +36,7 @@ internal enum FinallyMarker {
   }
 
   /// Remember what we were doing before we started `finally` block.
-  internal static func push(_ value: Push, on stack: ObjectStack) {
+  internal static func push(_ value: Push, on stack: inout ObjectStack) {
     switch value {
     case .return(let o):
       stack.push(o)
@@ -62,7 +62,7 @@ internal enum FinallyMarker {
     case invalid
   }
 
-  internal static func pop(from stack: ObjectStack) -> Pop {
+  internal static func pop(from stack: inout ObjectStack) -> Pop {
     let marker = stack.pop()
 
     if marker === FinallyMarker.return {

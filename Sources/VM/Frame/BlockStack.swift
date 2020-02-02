@@ -14,7 +14,7 @@ internal enum BlockType {
   case exceptHandler
 }
 
-internal class BlockStack {
+internal struct BlockStack {
 
   private var elements = [Block]()
 
@@ -25,11 +25,11 @@ internal class BlockStack {
 
   /// void
   /// PyFrame_BlockSetup(PyFrameObject *f, int type, int handler, int level)
-  internal func push(block: Block) {
+  internal mutating func push(block: Block) {
     self.elements.push(block)
   }
 
-  internal func pop() -> Block? {
+  internal mutating func pop() -> Block? {
     return self.elements.popLast()
   }
 }

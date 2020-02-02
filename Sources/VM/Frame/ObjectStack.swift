@@ -1,6 +1,6 @@
 import Objects
 
-internal class ObjectStack {
+internal struct ObjectStack {
 
   private var elements = [PyObject]()
 
@@ -42,7 +42,7 @@ internal class ObjectStack {
 
   // MARK: - Set
 
-  internal func set(_ n: Int, to value: PyObject) {
+  internal mutating func set(_ n: Int, to value: PyObject) {
     let count = self.elements.count
     assert(count >= n, "Stack set out of bounds (set: \(n), count: \(count)).")
     self.elements[count - n] = value
@@ -50,13 +50,13 @@ internal class ObjectStack {
 
   // MARK: - Push
 
-  internal func push(_ value: PyObject) {
+  internal mutating func push(_ value: PyObject) {
     self.elements.push(value)
   }
 
   // MARK: - Pop
 
-  internal func pop() -> PyObject {
+  internal mutating func pop() -> PyObject {
     // Using 'isEmpty' or 'count' for assert would require another type lookup.
     // (only in DEBUG and it depends on inling, but still...)
 
@@ -70,7 +70,7 @@ internal class ObjectStack {
   ///
   /// - Note:
   /// Actual implementation is faster and does not require reversal.
-  internal func popElementsInPushOrder(count requestedCount: Int) -> [PyObject] {
+  internal mutating func popElementsInPushOrder(count requestedCount: Int) -> [PyObject] {
     // Fast check to avoid allocation.
     if requestedCount == 0 {
       return []
@@ -94,7 +94,7 @@ internal class ObjectStack {
   }
 
   /// Pop elements untill we reach `untilCount`.
-  internal func pop(untilCount: Int) {
+  internal mutating func pop(untilCount: Int) {
     assert(self.elements.count >= untilCount)
 
     // Avoid allocation when we have correct size

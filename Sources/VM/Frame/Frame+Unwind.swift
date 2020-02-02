@@ -113,7 +113,7 @@ extension Frame {
       }
     }()
 
-    FinallyMarker.push(marker, on: self.stack)
+    FinallyMarker.push(marker, on: &self.stack)
   }
 
   /// \#define UNWIND_BLOCK(b)
