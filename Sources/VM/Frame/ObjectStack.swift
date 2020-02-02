@@ -57,36 +57,51 @@ internal class ObjectStack {
   // MARK: - Pop
 
   internal func pop() -> PyObject {
+    // Using 'isEmpty' or 'count' for assert would require another type lookup.
+    // (only in DEBUG and it depends on inling, but still...)
+
     let last = self.elements.popLast()
     assert(last != nil, "Stack pop from empty stack.")
     return last! // swiftlint:disable:this force_unwrapping
   }
 
   /// Pop `count` elements and then reverse,
-  /// so that first pushed element is in 1st position.
-  internal func popElementsInPushOrder(count elementCount: Int) -> [PyObject] {
-    let count = self.elements.count
-    assert(
-      count >= elementCount,
-      "Stack popElements out of bounds (pop: \(elementCount), count: \(count))."
-    )
-
-    let resultStart = count - elementCount
-    let result = self.elements[resultStart...]
-
-    self.elements.removeLast(elementCount)
-
-    return Array(result.reversed())
-  }
-
-  internal func popUntil(count: Int) {
-    assert(self.elements.count >= count)
-
-    // Avoid allocation when we have correct size
-    if self.elements.count != count {
-      self.elements = Array(self.elements[0..<count])
+  /// so that first pushed element is at `0` index.
+  ///
+  /// - Note:
+  /// Actual implementation is faster and does not require reversal.
+  internal func popElementsInPushOrder(count requestedCount: Int) -> [PyObject] {
+    // Fast check to avoid allocation.
+    if requestedCount == 0 {
+      return []
     }
 
-    assert(self.elements.count == count)
+    let count = self.elements.count
+    assert(
+      count >= requestedCount,
+      "Stack popElements out of bounds (pop: \(requestedCount), count: \(count))."
+    )
+
+    // Use 'Array.init' on slice before'removeLast'!
+    // Otherwise COW would copy whole array on 'removeLast'
+    // (because slice still has reference to it).
+    let resultStart = count - requestedCount
+    let result = Array(self.elements[resultStart...])
+
+    self.elements.removeLast(requestedCount)
+
+    return result
+  }
+
+  /// Pop elements untill we reach `untilCount`.
+  internal func pop(untilCount: Int) {
+    assert(self.elements.count >= untilCount)
+
+    // Avoid allocation when we have correct size
+    if self.elements.count != untilCount {
+      self.elements = Array(self.elements[0..<untilCount])
+    }
+
+    assert(self.elements.count == untilCount)
   }
 }

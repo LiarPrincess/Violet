@@ -118,7 +118,7 @@ extension Frame {
 
   /// \#define UNWIND_BLOCK(b)
   internal func unwindBlock(block: Block) {
-    self.stack.popUntil(count: block.level)
+    self.stack.pop(untilCount: block.level)
   }
 
   /// \#define UNWIND_EXCEPT_HANDLER(b)
@@ -126,7 +126,7 @@ extension Frame {
     let stackCountIncludingException = block.level + 1
     assert(self.stack.count >= stackCountIncludingException)
 
-    self.stack.popUntil(count: stackCountIncludingException)
+    self.stack.pop(untilCount: stackCountIncludingException)
 
     let exception = self.stack.pop()
     assert(exception is PyBaseException)
