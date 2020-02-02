@@ -58,4 +58,9 @@ extension CodeObjectBuilder {
   public func appendBuildSlice(_ arg: SliceArg) {
     self.append(.buildSlice(arg))
   }
+
+  /// Append an `extendedArg` instruction to this code object.
+  public func appendExtendedArg(value: UInt8) {
+    self.append(.extendedArg(value))
+  }
 }

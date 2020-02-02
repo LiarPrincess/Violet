@@ -193,7 +193,7 @@ public class CodeObjectBuilder {
 
     let emit1 = value > 0
     if emit1 {
-      self.append(.extendedArg(value))
+      self.appendExtendedArg(value: value)
     }
 
     shift = 16
@@ -202,7 +202,7 @@ public class CodeObjectBuilder {
 
     let emit2 = emit1 || value > 0
     if emit2 {
-      self.append(.extendedArg(value))
+      self.appendExtendedArg(value: value)
     }
 
     shift = 8
@@ -211,7 +211,7 @@ public class CodeObjectBuilder {
 
     let emit3 = emit2 || value > 0
     if emit3 {
-      self.append(.extendedArg(value))
+      self.appendExtendedArg(value: value)
     }
 
     return UInt8(arg & ffMask)

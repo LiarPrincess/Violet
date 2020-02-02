@@ -2,10 +2,14 @@ import Core
 
 extension CodeObjectBuilder {
 
+  // MARK: - Make function
+
   /// Append a `makeFunction` instruction to this code object.
   public func appendMakeFunction(flags: FunctionFlags) {
     self.append(.makeFunction(flags))
   }
+
+  // MARK: - Call function
 
   /// Append a `callFunction` instruction to this code object.
   public func appendCallFunction(argumentCount: Int) {
@@ -23,6 +27,24 @@ extension CodeObjectBuilder {
   public func appendCallFunctionEx(hasKeywordArguments: Bool) {
     self.append(.callFunctionEx(hasKeywordArguments: hasKeywordArguments))
   }
+
+  // MARK: - Load method
+
+  /// Append a `loadMethod` instruction to this code object.
+  public func appendLoadMethod(name: String) {
+    let index = self.addNameWithExtendedArgIfNeeded(name: name)
+    self.append(.loadMethod(nameIndex: index))
+  }
+
+  // MARK: - Call method
+
+  /// Append a `callMethod` instruction to this code object.
+  public func appendCallMethod(argumentCount: Int) {
+    let arg = self.appendExtendedArgIfNeeded(argumentCount)
+    self.append(.callMethod(argumentCount: arg))
+  }
+
+  // MARK: - Return
 
   /// Append a `returnValue` instruction to this code object.
   public func appendReturn() {

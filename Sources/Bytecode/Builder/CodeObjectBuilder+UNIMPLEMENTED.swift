@@ -1,40 +1,6 @@
 extension CodeObjectBuilder {
 
-  // MARK: - Class
-
-  /// Append a `loadMethod` instruction to this code object.
-  public func appendLoadMethod(name: String) {
-    // ADDOP_NAME(c, LOAD_METHOD, meth->v.Attribute.attr, names);
-    // self.append(.loadMethod)
-    self.unimplemented()
-  }
-
-  /// Append a `callMethod` instruction to this code object.
-  public func appendCallMethod(argumentCount: Int) {
-    // ADDOP_I(c, CALL_METHOD, asdl_seq_LEN(e->v.Call.args));
-    // self.append(.callMethod)
-    self.unimplemented()
-  }
-
   // MARK: - Collections
-
-  /// Append a `setAdd` instruction to this code object.
-  public func appendSetAdd(value: Any) {
-    // self.append(.setAdd)
-    self.unimplemented()
-  }
-
-  /// Append a `listAppend` instruction to this code object.
-  public func appendListAppend(value: Any) {
-    // self.append(.listAppend)
-    self.unimplemented()
-  }
-
-  /// Append a `mapAdd` instruction to this code object.
-  public func appendMapAdd(value: Any) {
-    // self.append(.mapAdd)
-    self.unimplemented()
-  }
 
   /// Implements assignment with a starred target.
   ///
@@ -54,12 +20,6 @@ extension CodeObjectBuilder {
   }
 
   // MARK: - General
-
-  /// Append an `extendedArg` instruction to this code object.
-  public func appendExtendedArg(value: UInt8) {
-    // self.append(.extendedArg)
-    self.unimplemented()
-  }
 
   /// Append a `loadClosure` instruction to this code object.
   public func appendLoadClosure(_ variable: ClosureVariable) {
@@ -106,6 +66,8 @@ extension CodeObjectBuilder {
     // self.append(.deleteDeref)
     self.unimplemented()
   }
+
+  // MARK: - Helper
 
   private func unimplemented(fn: StaticString = #function) -> Never {
     fatalError("[CodeObjectBuilder] '\(fn)' is currently not implemented.")

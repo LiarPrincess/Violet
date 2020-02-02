@@ -2,7 +2,7 @@ import Core
 
 extension CodeObjectBuilder {
 
-  // MARK: - Build collection
+  // MARK: - Build
 
   /// Append a `buildTuple` instruction to this code object.
   public func appendBuildTuple(elementCount: Int) {
@@ -32,6 +32,39 @@ extension CodeObjectBuilder {
   public func appendBuildConstKeyMap(elementCount: Int) {
     let arg = self.appendExtendedArgIfNeeded(elementCount)
     self.append(.buildConstKeyMap(elementCount: arg))
+  }
+
+  // MARK: - Append, add
+
+  /// Append a `listAppend` instruction to this code object.
+  public func appendListAppend(relativeStackIndex: Int) {
+    assert(relativeStackIndex >= 0)
+
+    // Calls `list.append(TOS[-i], TOS)`. Container object remains on the stack.
+    // Used to implement list comprehensions.
+    let arg = self.appendExtendedArgIfNeeded(relativeStackIndex)
+    self.append(.listAppend(arg))
+  }
+
+  /// Append a `setAdd` instruction to this code object.
+  public func appendSetAdd(relativeStackIndex: Int) {
+    assert(relativeStackIndex >= 0)
+
+    // Calls `set.add(TOS1[-i], TOS)`. Container object remains on the stack.
+    // Used to implement set comprehensions.
+    let arg = self.appendExtendedArgIfNeeded(relativeStackIndex)
+    self.append(.setAdd(arg))
+  }
+
+  /// Append a `mapAdd` instruction to this code object.
+  public func appendMapAdd(relativeStackIndex: Int) {
+    assert(relativeStackIndex >= 0)
+
+    /// Calls `dict.setitem(TOS1[-i], TOS, TOS1)`.
+    /// Container object remains on the stack.
+    /// Used to implement dict comprehensions.
+    let arg = self.appendExtendedArgIfNeeded(relativeStackIndex)
+    self.append(.mapAdd(arg))
   }
 
   // MARK: - Tuple unpack
