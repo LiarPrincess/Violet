@@ -51,40 +51,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  /// Calls a callable object with positional arguments.
-  /// `argc` indicates the number of positional arguments.
-  ///
-  /// Stack layout (1st item means TOS):
-  /// - positional arguments, with the right-most argument on top
-  /// - callable object to call.
-  ///
-  /// It will:
-  /// 1. pop all arguments and the callable object off the stack
-  /// 2. call the callable object with those arguments
-  /// 3. push the return value returned by the callable object
-  /// - Note:
-  /// This opcode is used only for calls with positional arguments!
-  internal func callFunction(argumentCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// Calls a callable object with positional (if any) and keyword arguments.
-  /// `argc` indicates the total number of positional and keyword arguments.
-  ///
-  /// Stack layout (1st item means TOS):
-  /// - tuple of keyword argument names
-  /// - keyword arguments in the order corresponding to the tuple
-  /// - positional arguments, with the right-most parameter on top
-  /// - callable object to call.
-  ///
-  /// It will:
-  /// 1. pop all arguments and the callable object off the stack
-  /// 2. call the callable object with those arguments
-  /// 3. push the return value returned by the callable object.
-  internal func callFunctionKw(argumentCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   /// Calls a callable object with variable set of positional and keyword arguments.
   ///
   /// Stack layout (1st item means TOS):

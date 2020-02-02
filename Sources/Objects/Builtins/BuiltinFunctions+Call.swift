@@ -5,15 +5,21 @@ import Core
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-// Comment from CPython 'Python/ceval.h':
-// PyObject_Call(), PyObject_CallFunction() and PyObject_CallMethod()
-// are recommended to call a callable object.
-
 public enum CallResult {
   case value(PyObject)
   /// Object is not callable.
   case notCallable(PyBaseException)
   case error(PyBaseException)
+
+  public var asResult: PyResult<PyObject> {
+    switch self {
+    case let .value(o):
+      return .value(o)
+    case let .error(e),
+         let .notCallable(e):
+      return .error(e)
+    }
+  }
 }
 
 public enum CallMethodResult {
@@ -23,16 +29,34 @@ public enum CallMethodResult {
   /// Method exists, but it is not callable.
   case notCallable(PyBaseException)
   case error(PyBaseException)
+
+  public var asResult: PyResult<PyObject> {
+    switch self {
+    case let .value(o):
+      return .value(o)
+    case let .error(e),
+         let .notCallable(e),
+         let .missingMethod(e):
+      return .error(e)
+    }
+  }
 }
 
 extension BuiltinFunctions {
 
   // MARK: - Call
 
-  public func call(callable: PyObject, args: [PyObject]) -> CallResult {
-    return self.call(callable: callable, args: args, kwargs: nil)
+  /// Call `callable` with single positional argument.
+  public func call(callable: PyObject, arg: PyObject) -> CallResult {
+    return self.call(callable: callable, args: [arg], kwargs: nil)
   }
 
+  /// Call with positional arguments and optional keyword arguments.
+  ///
+  /// - Parameters:
+  ///   - callable: object to call
+  ///   - args: positional arguments
+  ///   - kwargs: keyword argument `dict`
   public func call(callable: PyObject,
                    args: PyObject,
                    kwargs: PyObject?) -> CallResult {
@@ -50,14 +74,15 @@ extension BuiltinFunctions {
     }
   }
 
-  internal func call(callable: PyObject,
-                     arg: PyObject) -> CallResult {
-    return self.call(callable: callable, args: [arg], kwargs: nil)
-  }
-
-  internal func call(callable: PyObject,
-                     args: [PyObject] = [],
-                     kwargs: PyDictData? = nil) -> CallResult {
+  /// Call with positional arguments and optional keyword arguments.
+  ///
+  /// - Parameters:
+  ///   - callable: object to call
+  ///   - args: positional arguments
+  ///   - kwargs: keyword arguments
+  public func call(callable: PyObject,
+                   args: [PyObject] = [],
+                   kwargs: PyDictData? = nil) -> CallResult {
     guard let owner = callable as? __call__Owner else {
       let msg = "object of type '\(callable.typeName)' is not callable"
       return .notCallable(self.newTypeError(msg: msg))
@@ -88,6 +113,19 @@ extension BuiltinFunctions {
 
   // MARK: - Method
 
+  /// Call method with single positional argument.
+  internal func callMethod(on object: PyObject,
+                           selector: String,
+                           arg: PyObject) -> CallMethodResult {
+    return self.callMethod(on: object, selector: selector, args: [arg])
+  }
+
+  /// Call with positional arguments and optional keyword arguments.
+  /// - Parameters:
+  ///   - object: `self` argument
+  ///   - selector: name of the method to call
+  ///   - args: positional arguments
+  ///   - kwargs: keyword argument `dict`
   public func callMethod(on object: PyObject,
                          selector: String,
                          args: PyObject,
@@ -109,19 +147,21 @@ extension BuiltinFunctions {
     }
   }
 
-  /// Call method with single arg.
-  internal func callMethod(on object: PyObject,
-                           selector: String,
-                           arg: PyObject) -> CallMethodResult {
-    return self.callMethod(on: object, selector: selector, args: [arg])
-  }
-
+  /// Call with positional arguments and optional keyword arguments.
+  /// - Parameters:
+  ///   - object: `self` argument
+  ///   - selector: name of the method to call
+  ///   - args: positional arguments
+  ///   - kwargs: keyword arguments
+  ///
+  /// CPython:
   /// PyObject *
   /// PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...)
-  internal func callMethod(on object: PyObject,
-                           selector: String,
-                           args: [PyObject] = [],
-                           kwargs: PyDictData? = nil) -> CallMethodResult {
+  public func callMethod(on object: PyObject,
+                         selector: String,
+                         args: [PyObject] = [],
+                         kwargs: PyDictData? = nil) -> CallMethodResult {
+    // 'bound' means that method already captured 'self' reference
     let boundMethod: PyObject
     switch self.getAttribute(object, name: selector) {
     case let .value(m): boundMethod = m
