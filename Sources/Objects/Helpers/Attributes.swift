@@ -149,7 +149,7 @@ public final class Attributes {
 
 extension String: PyHashable {
 
-  internal func isEqual(to other: String) -> PyResult<Bool> {
+  public func isEqual(to other: String) -> PyResult<Bool> {
     var selfIter = self.unicodeScalars.makeIterator()
     var otherIter = other.unicodeScalars.makeIterator()
 

@@ -18,7 +18,7 @@ private let perturbShift = 5
 
 // MARK: - Hashable
 
-internal protocol PyHashable {
+public protocol PyHashable {
 
   /// The hash value.
   ///
@@ -34,9 +34,9 @@ internal protocol PyHashable {
 
 /// A generic collection to store key-value pairs in the order they were
 /// inserted in.
-internal struct OrderedDictionary<Key: PyHashable, Value> {
+public struct OrderedDictionary<Key: PyHashable, Value> {
 
-  internal struct Entry {
+  public struct Entry {
     internal let hash: Int
     internal let key:  Key
     internal let value: Value
@@ -126,24 +126,24 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   /// The number of keys in the dictionary.
   ///
   /// - Complexity: O(1).
-  internal var count: Int {
+  public var count: Int {
     return self.used
   }
 
   /// The total number of key-value pairs that the dictionary can contain without
   /// allocating new storage.
-  internal var capacity: Int {
+  public var capacity: Int {
     return self.size
   }
 
   /// A Boolean value indicating whether the collection is empty.
-  internal var isEmpty: Bool {
+  public var isEmpty: Bool {
     return self.used == 0
   }
 
   /// The last inserted element.
   /// If the dictionary is empty, the value of this property is `nil`.
-  internal var last: Entry? {
+  public var last: Entry? {
     if self.isEmpty {
       return nil
     }
@@ -162,12 +162,12 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Init
 
-  internal init() {
+  public init() {
     self.init(size: minsize)
   }
 
   /// static PyDictKeysObject *new_keys_object(Py_ssize_t size)
-  internal init(size: Int) {
+  public init(size: Int) {
     let size = Swift.max(nextPowerOf2(size), minsize)
     assert(isPowerOf2(size))
 
@@ -183,7 +183,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
     self.checkConsistency()
   }
 
-  fileprivate init(copy: OrderedDictionary<Key, Value>) {
+  public init(copy: OrderedDictionary<Key, Value>) {
     self.entries = copy.entries
     self.indices = copy.indices
     self.used = copy.used
@@ -192,7 +192,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Get
 
-  internal enum GetResult {
+  public enum GetResult {
     case value(Value)
     case notFound
     case error(PyBaseException)
@@ -202,7 +202,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   ///
   /// This *key-based* function returns the value for the given key if the key
   /// is found in the dictionary, or `nil` if the key is not found.
-  internal func get(key: Key) -> GetResult {
+  public func get(key: Key) -> GetResult {
     switch self.lookup(key: key) {
     case let .entry(index: _, entryIndex: _, entry: entry):
       return .value(entry.value)
@@ -215,7 +215,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Contains
 
-  internal func contains(key: Key) -> PyResult<Bool> {
+  public func contains(key: Key) -> PyResult<Bool> {
     switch self.get(key: key) {
     case .value:
       return .value(true)
@@ -228,7 +228,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Insert
 
-  internal enum InsertResult {
+  public enum InsertResult {
     case inserted
     case updated
     case error(PyBaseException)
@@ -238,7 +238,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   /// new key-value pair if the key does not exist.
   ///
   /// insertdict(PyDictObject *mp, PyObject *key, Py_hash_t hash, PyObject *value)
-  internal mutating func insert(key: Key, value: Value) -> InsertResult {
+  public mutating func insert(key: Key, value: Value) -> InsertResult {
     switch self.lookup(key: key) {
     case let .entry(index: _, entryIndex: entryIndex, entry: _):
       // Update existing entry.
@@ -289,7 +289,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Remove
 
-  internal enum RemoveResult {
+  public enum RemoveResult {
     case value(Value)
     case notFound
     case error(PyBaseException)
@@ -301,7 +301,7 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
   /// associated value.
   /// int
   /// _PyDict_DelItem_KnownHash(PyObject *op, PyObject *key, Py_hash_t hash)
-  internal mutating func remove(key: Key) -> RemoveResult {
+  public mutating func remove(key: Key) -> RemoveResult {
     switch self.lookup(key: key) {
     case .notFound:
       return .notFound
@@ -385,13 +385,13 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 
   // MARK: - Copy
 
-  internal func copy() -> OrderedDictionary<Key, Value> {
+  public func copy() -> OrderedDictionary<Key, Value> {
     return OrderedDictionary<Key, Value>(copy: self)
   }
 
   // MARK: - Clear
 
-  internal mutating func clear() {
+  public mutating func clear() {
     self = OrderedDictionary()
   }
 
@@ -482,18 +482,18 @@ internal struct OrderedDictionary<Key: PyHashable, Value> {
 // MARK: - Iterator
 
 /// Iterator for `OrderedDictionary` that will skip deleted entries.
-internal struct OrderedDictionaryIterator<Key: PyHashable, Value>: IteratorProtocol {
+public struct OrderedDictionaryIterator<Key: PyHashable, Value>: IteratorProtocol {
 
-  internal typealias OrderedDictionaryType = OrderedDictionary<Key, Value>
-  internal typealias Element = OrderedDictionaryType.Entry
+  public typealias OrderedDictionaryType = OrderedDictionary<Key, Value>
+  public typealias Element = OrderedDictionaryType.Entry
 
   private var inner: IndexingIterator<[OrderedDictionaryType.EntryOrDeleted]>
 
-  internal init(_ dictionary: OrderedDictionaryType) {
+  public init(_ dictionary: OrderedDictionaryType) {
     self.inner = dictionary.entries.makeIterator()
   }
 
-  internal mutating func next() -> Self.Element? {
+  public mutating func next() -> Self.Element? {
     while let entryOrDeleted = self.inner.next() {
       switch entryOrDeleted {
       case let .entry(entry):
@@ -511,7 +511,7 @@ internal struct OrderedDictionaryIterator<Key: PyHashable, Value>: IteratorProto
 // MARK: - Extensions
 
 extension OrderedDictionary: CustomStringConvertible {
-  internal var description: String {
+  public var description: String {
     var result = ""
 
     for entry in self {
@@ -526,9 +526,9 @@ extension OrderedDictionary: CustomStringConvertible {
 }
 
 extension OrderedDictionary: Sequence {
-  internal typealias Element = Array<Entry>.Element
+  public typealias Element = Array<Entry>.Element
 
-  internal func makeIterator() -> OrderedDictionaryIterator<Key, Value> {
+  public func makeIterator() -> OrderedDictionaryIterator<Key, Value> {
     return OrderedDictionaryIterator(self)
   }
 }

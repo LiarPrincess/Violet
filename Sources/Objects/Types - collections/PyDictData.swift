@@ -1,16 +1,16 @@
-internal typealias PyDictData = OrderedDictionary<PyDictKey, PyObject>
+public typealias PyDictData = OrderedDictionary<PyDictKey, PyObject>
 
-internal struct PyDictKey: PyHashable {
+public struct PyDictKey: PyHashable {
 
-  internal var hash: PyHash
-  internal var object: PyObject
+  public var hash: PyHash
+  public var object: PyObject
 
-  internal init(hash: PyHash, object: PyObject) {
+  public init(hash: PyHash, object: PyObject) {
     self.hash = hash
     self.object = object
   }
 
-  internal func isEqual(to other: PyDictKey) -> PyResult<Bool> {
+  public func isEqual(to other: PyDictKey) -> PyResult<Bool> {
     // >>> class C:
     // ...     def __eq__(self, other): raise NotImplementedError('a')
     // ...     def __hash__(self): return 1
