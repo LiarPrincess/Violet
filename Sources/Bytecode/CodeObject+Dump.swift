@@ -262,9 +262,9 @@ extension CodeObject {
     case .loadBuildClass:
       return "loadBuildClass"
     case let .loadMethod(nameIndex: arg):
-      return "loadMethod  \(self.getName(extendedArg + Int(arg)))"
+      return "loadMethod; name: \(self.getName(extendedArg + Int(arg)))"
     case let .callMethod(argumentCount: arg):
-      return "callMethod  \(self.getName(extendedArg + Int(arg)))"
+      return "callMethod; argumentCount: \(extendedArg + Int(arg))"
     case .importStar:
       return "importStar"
     case let .importName(nameIndex: arg):

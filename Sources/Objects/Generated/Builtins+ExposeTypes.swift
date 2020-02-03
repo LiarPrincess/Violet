@@ -1,4 +1,5 @@
 // swiftlint:disable file_length
+// swiftlint:disable vertical_whitespace
 
 // This file will add type properties to 'Builtins', so that they are exposed
 // to Python runtime.

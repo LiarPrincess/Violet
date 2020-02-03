@@ -60,7 +60,17 @@ extension BuiltinFunctions {
       return self.defaultIfAttributeError(result: result, default: `default`)
     }
 
+    // Calling '__getattribute__' method would ask for '__getattribute__' attribute.
+    // Which would try to call '__getattribute__' to get '__getattribute__'.
+    // Which would... (you probably know where this is going...)
+    // Anyway... we have to break the cycle.
+    if name == "__getattribute__" {
+      let result = AttributeHelper.getAttribute(from: object, name: name)
+      return self.defaultIfAttributeError(result: result, default: `default`)
+    }
+
     // Slow python path
+    // attribute names tend to be reused, so we will intern them
     let n = pyName ?? self.interned(name: name)
     switch self.callMethod(on: object, selector: "__getattribute__", arg: n) {
     case .value(let o):
