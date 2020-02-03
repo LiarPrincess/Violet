@@ -147,9 +147,9 @@ extension CodeObject {
     case .printExpr: return "printExpr"
 
     case let .setupLoop(arg):
-      return "setupLoop; label: \(self.getLabel(extendedArg + Int(arg)))"
+      return "setupLoop (loopEnd label: \(self.getLabel(extendedArg + Int(arg))))"
     case let .forIter(arg):
-      return "forIter; label: \(self.getLabel(extendedArg + Int(arg)))"
+      return "forIter (ifEmpty label: \(self.getLabel(extendedArg + Int(arg))))"
     case .getIter:
       return "getIter"
     case .getYieldFromIter:
@@ -158,39 +158,39 @@ extension CodeObject {
     case .`break`: return "break"
 
     case let .buildTuple(elementCount: arg):
-      return "buildTuple; elementCount: \(extendedArg + Int(arg)))"
+      return "buildTuple (elementCount: \(extendedArg + Int(arg)))"
     case let .buildList(elementCount: arg):
-      return "buildList; elementCount: \(extendedArg + Int(arg)))"
+      return "buildList (elementCount: \(extendedArg + Int(arg)))"
     case let .buildSet(elementCount: arg):
-      return "buildSet; elementCount: \(extendedArg + Int(arg)))"
+      return "buildSet (elementCount: \(extendedArg + Int(arg)))"
     case let .buildMap(elementCount: arg):
-      return "buildMap; elementCount: \(extendedArg + Int(arg)))"
+      return "buildMap (elementCount: \(extendedArg + Int(arg)))"
     case let .buildConstKeyMap(elementCount: arg):
-      return "buildConstKeyMap; elementCount: \(extendedArg + Int(arg)))"
+      return "buildConstKeyMap (elementCount: \(extendedArg + Int(arg)))"
 
     case let .setAdd(arg):
-      return "setAdd \(extendedArg + Int(arg))"
+      return "setAdd (relativeStackIndex: \(extendedArg + Int(arg)))"
     case let .listAppend(arg):
-      return "listAppend \(extendedArg + Int(arg))"
+      return "listAppend (relativeStackIndex: \(extendedArg + Int(arg)))"
     case let .mapAdd(arg):
-      return "mapAdd \(extendedArg + Int(arg))"
+      return "mapAdd (relativeStackIndex: \(extendedArg + Int(arg)))"
 
     case let .buildTupleUnpack(elementCount: arg):
-      return "buildTupleUnpack; elementCount: \(extendedArg + Int(arg)))"
+      return "buildTupleUnpack (elementCount: \(extendedArg + Int(arg)))"
     case let .buildTupleUnpackWithCall(elementCount: arg):
-      return "buildTupleUnpackWithCall; elementCount: \(extendedArg + Int(arg)))"
+      return "buildTupleUnpackWithCall (elementCount: \(extendedArg + Int(arg)))"
     case let .buildListUnpack(elementCount: arg):
-      return "buildListUnpack; elementCount: \(extendedArg + Int(arg)))"
+      return "buildListUnpack (elementCount: \(extendedArg + Int(arg)))"
     case let .buildSetUnpack(elementCount: arg):
-      return "buildSetUnpack; elementCount: \(extendedArg + Int(arg)))"
+      return "buildSetUnpack (elementCount: \(extendedArg + Int(arg)))"
     case let .buildMapUnpack(elementCount: arg):
-      return "buildMapUnpack; elementCount: \(extendedArg + Int(arg)))"
+      return "buildMapUnpack (elementCount: \(extendedArg + Int(arg)))"
     case let .buildMapUnpackWithCall(elementCount: arg):
-      return "buildMapUnpackWithCall; elementCount: \(extendedArg + Int(arg)))"
+      return "buildMapUnpackWithCall (elementCount: \(extendedArg + Int(arg)))"
     case let .unpackSequence(elementCount: arg):
-      return "unpackSequence; elementCount: \(extendedArg + Int(arg)))"
+      return "unpackSequence (elementCount: \(extendedArg + Int(arg)))"
     case let .unpackEx(elementCountBefore: arg):
-      return "unpackEx \(extendedArg + Int(arg)))"
+      return "unpackEx (elementCountBefore: \(extendedArg + Int(arg)))"
 
     case let .loadConst(index: arg):
       return "loadConst \(self.getConstant(extendedArg + Int(arg)))"
@@ -203,11 +203,11 @@ extension CodeObject {
       return "deleteName \(self.getName(extendedArg + Int(arg)))"
 
     case let .storeAttribute(nameIndex: arg):
-      return ".storeAttribute \(self.getName(extendedArg + Int(arg)))"
+      return "storeAttribute \(self.getName(extendedArg + Int(arg)))"
     case let .loadAttribute(nameIndex: arg):
-      return ".loadAttribute \(self.getName(extendedArg + Int(arg)))"
+      return "loadAttribute \(self.getName(extendedArg + Int(arg)))"
     case let .deleteAttribute(nameIndex: arg):
-      return ".deleteAttribute \(self.getName(extendedArg + Int(arg)))"
+      return "deleteAttribute \(self.getName(extendedArg + Int(arg)))"
 
     case .binarySubscript:
       return "binarySubscript"
@@ -231,13 +231,13 @@ extension CodeObject {
       return "deleteFast \(self.getName(extendedArg + Int(arg)))"
 
     case let .loadDeref(nameIndex: arg):
-      return "loadDeref; \(self.getName(extendedArg + Int(arg)))"
+      return "loadDeref \(self.getName(extendedArg + Int(arg)))"
     case let .storeDeref(nameIndex: arg):
-      return "storeDeref; \(self.getName(extendedArg + Int(arg)))"
+      return "storeDeref \(self.getName(extendedArg + Int(arg)))"
     case let .deleteDeref(nameIndex: arg):
-      return "deleteDeref; \(self.getName(extendedArg + Int(arg)))"
+      return "deleteDeref \(self.getName(extendedArg + Int(arg)))"
     case let .loadClassDeref(nameIndex: arg):
-      return "loadClassDeref; \(self.getName(extendedArg + Int(arg)))"
+      return "loadClassDeref \(self.getName(extendedArg + Int(arg)))"
 
     case let .makeFunction(arg):
       var a = [String]()
@@ -247,14 +247,14 @@ extension CodeObject {
       if arg.contains(.hasFreeVariables) { a.append("hasFreeVariables") }
 
       let bin = String(arg.rawValue, radix: 2, uppercase: false)
-      return "makeFunction; \(bin) (\(a.joined(separator: ", ")))"
+      return "makeFunction (\(bin) - \(a.joined(separator: ", ")))"
 
     case let .callFunction(argumentCount: arg):
-      return "callFunction; argumentCount: \(extendedArg + Int(arg)))"
+      return "callFunction (argumentCount: \(extendedArg + Int(arg)))"
     case let .callFunctionKw(argumentCount: arg):
-      return "callFunction; argumentCount: \(extendedArg + Int(arg)))"
+      return "callFunction (argumentCount: \(extendedArg + Int(arg)))"
     case let .callFunctionEx(hasKeywordArguments: hasKeywordArguments):
-      return "callFunction; hasKeywordArguments: \(hasKeywordArguments))"
+      return "callFunction (hasKeywordArguments: \(hasKeywordArguments))"
 
     case .`return`:
       return "return"
@@ -262,9 +262,9 @@ extension CodeObject {
     case .loadBuildClass:
       return "loadBuildClass"
     case let .loadMethod(nameIndex: arg):
-      return "loadMethod; name: \(self.getName(extendedArg + Int(arg)))"
+      return "loadMethod \(self.getName(extendedArg + Int(arg)))"
     case let .callMethod(argumentCount: arg):
-      return "callMethod; argumentCount: \(extendedArg + Int(arg))"
+      return "callMethod (argumentCount: \(extendedArg + Int(arg)))"
     case .importStar:
       return "importStar"
     case let .importName(nameIndex: arg):
@@ -276,13 +276,16 @@ extension CodeObject {
     case .endFinally:
       return "endFinally"
     case let .setupExcept(arg):
-      return "setupExcept \(self.getLabel(extendedArg + Int(arg)))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "setupExcept (firstExcept label: \(label))"
     case let .setupFinally(arg):
-      return "setupFinally \(self.getLabel(extendedArg + Int(arg)))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "setupFinally (finallyStart label: \(label))"
     case let .raiseVarargs(arg):
       return "raiseVarargs \(self.toString(arg))"
     case let .setupWith(arg):
-      return "setupWith \(self.getLabel(extendedArg + Int(arg)))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "setupWith (afterBody: \(label))"
     case .withCleanupStart:
       return "withCleanupStart"
     case .withCleanupFinish:
@@ -293,15 +296,15 @@ extension CodeObject {
       return "setupAsyncWith"
 
     case let .jumpAbsolute(labelIndex: arg):
-      return "jumpAbsolute; label: \(self.getLabel(extendedArg + Int(arg)))"
+      return "jumpAbsolute (label: \(self.getLabel(extendedArg + Int(arg))))"
     case let .popJumpIfTrue(labelIndex: arg):
-      return "popJumpIfTrue; label: \(self.getLabel(extendedArg + Int(arg)))"
+      return "popJumpIfTrue (label: \(self.getLabel(extendedArg + Int(arg))))"
     case let .popJumpIfFalse(labelIndex: arg):
-      return "popJumpIfFalse; label: \(self.getLabel(extendedArg + Int(arg)))"
+      return "popJumpIfFalse (label: \(self.getLabel(extendedArg + Int(arg))))"
     case let .jumpIfTrueOrPop(labelIndex: arg):
-      return "jumpIfTrueOrPop; label: \(self.getLabel(extendedArg + Int(arg)))"
+      return "jumpIfTrueOrPop (label: \(self.getLabel(extendedArg + Int(arg))))"
     case let .jumpIfFalseOrPop(labelIndex: arg):
-      return "jumpIfFalseOrPop; label: \(self.getLabel(extendedArg + Int(arg)))"
+      return "jumpIfFalseOrPop (label: \(self.getLabel(extendedArg + Int(arg))))"
 
     case let .formatValue(conversion: conversion, hasFormat: hasFormat):
       var arg = ""
@@ -314,20 +317,20 @@ extension CodeObject {
       }
       return "formatValue \(arg)"
     case let .buildString(arg):
-      return "buildString; count: \(arg)"
+      return "buildString (count: \(arg))"
 
     case let .extendedArg(arg):
       let total = extendedArg << 8 | Int(arg)
-      return "extendedArg; \(arg) (total: \(total))"
+      return "extendedArg (value: \(arg), total: \(total))"
 
     case .setupAnnotations:
       return "setupAnnotations"
     case .popBlock:
       return "popBlock"
     case let .loadClosure(cellOrFreeIndex: arg):
-      return "loadClosure; cellOrFreeIndex: \(extendedArg + Int(arg))"
+      return "loadClosure (cellOrFreeIndex: \(extendedArg + Int(arg)))"
     case let .buildSlice(arg):
-      return "buildSlice; \(self.toString(arg))"
+      return "buildSlice (arg: \(self.toString(arg)))"
     }
   }
 
