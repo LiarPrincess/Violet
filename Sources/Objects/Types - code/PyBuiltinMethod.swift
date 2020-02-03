@@ -16,7 +16,7 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
   internal let doc: String?
 
   override public var description: String {
-    return "PyBuiltinMethod(name: \(self.name))"
+    return "PyBuiltinMethod(name: \(self.name), object: \(self.object))"
   }
 
   // MARK: - Init

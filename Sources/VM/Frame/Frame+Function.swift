@@ -183,7 +183,7 @@ extension Frame {
 
     switch result {
     case let .value(o):
-      self.stack.push(o)
+      self.stack.top = o
       return .ok
     case let .error(e),
          let .notCallable(e):
