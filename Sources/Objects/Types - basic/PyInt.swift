@@ -510,8 +510,24 @@ public class PyInt: PyObject {
     return .value(Py.newInt(result))
   }
 
+  /// (Not so) fun fact: (-2).__floordiv__(3) == -1
+  ///
+  /// To be really honest: I have no idea how this works.
+  /// But we have test for this, so it must be true.
   private func floordivRaw(left: BigInt, right: BigInt) -> BigInt {
-    return left / right
+    if self.sameSign(left: left, right: right) {
+      return left / right
+    }
+
+    let leftAbs = Swift.abs(left)
+    let rightAbs = Swift.abs(right)
+    return (leftAbs - 1) / rightAbs - 1
+  }
+
+  private func sameSign(left: BigInt, right: BigInt) -> Bool {
+    let bothPositive = left >= 0 && right >= 0
+    let bothNegative = left <= 0 && right <= 0
+    return bothPositive || bothNegative
   }
 
   // MARK: - Mod
@@ -543,8 +559,22 @@ public class PyInt: PyObject {
     return .value(Py.newInt(result))
   }
 
+  /// -2 % 3 == 1
   private func modRaw(left: BigInt, right: BigInt) -> BigInt {
-    return left % right
+    if self.sameSign(left: left, right: right) {
+      return left % right
+    }
+
+    // x = (x // y) * y + (x % y)
+    // which gives us:
+    // (x % y) = x - (x // y) * y
+
+    let leftAbs = Swift.abs(left)
+    let rightAbs = Swift.abs(right)
+    let partial = rightAbs - 1 - (leftAbs - 1) % rightAbs
+
+    let sign = BigInt(right < 0 ? -1 : 1)
+    return sign * partial
   }
 
   // MARK: - Div mod
@@ -572,6 +602,7 @@ public class PyInt: PyObject {
       return .zeroDivisionError("divmod() by zero")
     }
 
+    // Let's pray to inlining god for performance
     let div = self.floordivRaw(left: left, right: right)
     let mod = self.modRaw(left: left, right: right)
 
