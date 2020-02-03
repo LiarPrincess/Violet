@@ -395,6 +395,8 @@ internal enum FillTypes {
     type.setFlag(.baseType)
 
     let dict = type.getDict()
+    dict["real"] = PyProperty.wrap(name: "real", doc: nil, get: PyComplex.asReal, castSelf: Cast.asPyComplex)
+    dict["imag"] = PyProperty.wrap(name: "imag", doc: nil, get: PyComplex.asImag, castSelf: Cast.asPyComplex)
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyComplex.getClass, castSelf: Cast.asPyComplex)
 
 
@@ -412,8 +414,6 @@ internal enum FillTypes {
     dict["__bool__"] = PyBuiltinFunction.wrap(name: "__bool__", doc: nil, fn: PyComplex.asBool, castSelf: Cast.asPyComplex)
     dict["__int__"] = PyBuiltinFunction.wrap(name: "__int__", doc: nil, fn: PyComplex.asInt, castSelf: Cast.asPyComplex)
     dict["__float__"] = PyBuiltinFunction.wrap(name: "__float__", doc: nil, fn: PyComplex.asFloat, castSelf: Cast.asPyComplex)
-    dict["real"] = PyBuiltinFunction.wrap(name: "real", doc: nil, fn: PyComplex.asReal, castSelf: Cast.asPyComplex)
-    dict["imag"] = PyBuiltinFunction.wrap(name: "imag", doc: nil, fn: PyComplex.asImag, castSelf: Cast.asPyComplex)
     dict["conjugate"] = PyBuiltinFunction.wrap(name: "conjugate", doc: nil, fn: PyComplex.conjugate, castSelf: Cast.asPyComplex)
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyComplex.getAttribute(name:), castSelf: Cast.asPyComplex)
     dict["__pos__"] = PyBuiltinFunction.wrap(name: "__pos__", doc: nil, fn: PyComplex.positive, castSelf: Cast.asPyComplex)
@@ -667,6 +667,8 @@ internal enum FillTypes {
     type.setFlag(.baseType)
 
     let dict = type.getDict()
+    dict["real"] = PyProperty.wrap(name: "real", doc: nil, get: PyFloat.asReal, castSelf: Cast.asPyFloat)
+    dict["imag"] = PyProperty.wrap(name: "imag", doc: nil, get: PyFloat.asImag, castSelf: Cast.asPyFloat)
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyFloat.getClass, castSelf: Cast.asPyFloat)
 
 
@@ -684,8 +686,6 @@ internal enum FillTypes {
     dict["__bool__"] = PyBuiltinFunction.wrap(name: "__bool__", doc: nil, fn: PyFloat.asBool, castSelf: Cast.asPyFloat)
     dict["__int__"] = PyBuiltinFunction.wrap(name: "__int__", doc: nil, fn: PyFloat.asInt, castSelf: Cast.asPyFloat)
     dict["__float__"] = PyBuiltinFunction.wrap(name: "__float__", doc: nil, fn: PyFloat.asFloat, castSelf: Cast.asPyFloat)
-    dict["real"] = PyBuiltinFunction.wrap(name: "real", doc: nil, fn: PyFloat.asReal, castSelf: Cast.asPyFloat)
-    dict["imag"] = PyBuiltinFunction.wrap(name: "imag", doc: nil, fn: PyFloat.asImag, castSelf: Cast.asPyFloat)
     dict["conjugate"] = PyBuiltinFunction.wrap(name: "conjugate", doc: nil, fn: PyFloat.conjugate, castSelf: Cast.asPyFloat)
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyFloat.getAttribute(name:), castSelf: Cast.asPyFloat)
     dict["__pos__"] = PyBuiltinFunction.wrap(name: "__pos__", doc: nil, fn: PyFloat.positive, castSelf: Cast.asPyFloat)
@@ -788,6 +788,10 @@ internal enum FillTypes {
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyInt.getClass, castSelf: Cast.asPyInt)
+    dict["real"] = PyProperty.wrap(name: "real", doc: nil, get: PyInt.asReal, castSelf: Cast.asPyInt)
+    dict["imag"] = PyProperty.wrap(name: "imag", doc: nil, get: PyInt.asImag, castSelf: Cast.asPyInt)
+    dict["numerator"] = PyProperty.wrap(name: "numerator", doc: nil, get: PyInt.numerator, castSelf: Cast.asPyInt)
+    dict["denominator"] = PyProperty.wrap(name: "denominator", doc: nil, get: PyInt.denominator, castSelf: Cast.asPyInt)
 
 
     dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "int", doc: nil, fn: PyInt.pyNew(type:args:kwargs:))
@@ -805,11 +809,7 @@ internal enum FillTypes {
     dict["__int__"] = PyBuiltinFunction.wrap(name: "__int__", doc: nil, fn: PyInt.asInt, castSelf: Cast.asPyInt)
     dict["__float__"] = PyBuiltinFunction.wrap(name: "__float__", doc: nil, fn: PyInt.asFloat, castSelf: Cast.asPyInt)
     dict["__index__"] = PyBuiltinFunction.wrap(name: "__index__", doc: nil, fn: PyInt.asIndex, castSelf: Cast.asPyInt)
-    dict["real"] = PyBuiltinFunction.wrap(name: "real", doc: nil, fn: PyInt.asReal, castSelf: Cast.asPyInt)
-    dict["imag"] = PyBuiltinFunction.wrap(name: "imag", doc: nil, fn: PyInt.asImag, castSelf: Cast.asPyInt)
     dict["conjugate"] = PyBuiltinFunction.wrap(name: "conjugate", doc: nil, fn: PyInt.conjugate, castSelf: Cast.asPyInt)
-    dict["numerator"] = PyBuiltinFunction.wrap(name: "numerator", doc: nil, fn: PyInt.numerator, castSelf: Cast.asPyInt)
-    dict["denominator"] = PyBuiltinFunction.wrap(name: "denominator", doc: nil, fn: PyInt.denominator, castSelf: Cast.asPyInt)
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyInt.getAttribute(name:), castSelf: Cast.asPyInt)
     dict["__pos__"] = PyBuiltinFunction.wrap(name: "__pos__", doc: nil, fn: PyInt.positive, castSelf: Cast.asPyInt)
     dict["__neg__"] = PyBuiltinFunction.wrap(name: "__neg__", doc: nil, fn: PyInt.negative, castSelf: Cast.asPyInt)

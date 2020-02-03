@@ -232,6 +232,8 @@ PyCode|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__hash__|hash() -> HashResult
 PyCode|PyObject|func|__repr__|repr() -> PyResult<String>
+PyComplex|PyObject|get|real|asReal() -> PyObject
+PyComplex|PyObject|get|imag|asImag() -> PyObject
 PyComplex|PyObject|get|__class__|getClass() -> PyType
 
 PyComplex|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
@@ -246,8 +248,6 @@ PyComplex|PyObject|func|__str__|str() -> PyResult<String>
 PyComplex|PyObject|func|__bool__|asBool() -> Bool
 PyComplex|PyObject|func|__int__|asInt() -> PyResult<PyInt>
 PyComplex|PyObject|func|__float__|asFloat() -> PyResult<PyFloat>
-PyComplex|PyObject|func|real|asReal() -> PyObject
-PyComplex|PyObject|func|imag|asImag() -> PyObject
 PyComplex|PyObject|func|conjugate|conjugate() -> PyObject
 PyComplex|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyComplex|PyObject|func|__pos__|positive() -> PyObject
@@ -369,6 +369,8 @@ PyFilter|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult
 PyFilter|PyObject|func|__iter__|iter() -> PyObject
 PyFilter|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyFilter|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
+PyFloat|PyObject|get|real|asReal() -> PyObject
+PyFloat|PyObject|get|imag|asImag() -> PyObject
 PyFloat|PyObject|get|__class__|getClass() -> PyType
 
 PyFloat|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
@@ -383,8 +385,6 @@ PyFloat|PyObject|func|__str__|str() -> PyResult<String>
 PyFloat|PyObject|func|__bool__|asBool() -> Bool
 PyFloat|PyObject|func|__int__|asInt() -> PyResult<PyInt>
 PyFloat|PyObject|func|__float__|asFloat() -> PyResult<PyFloat>
-PyFloat|PyObject|func|real|asReal() -> PyObject
-PyFloat|PyObject|func|imag|asImag() -> PyObject
 PyFloat|PyObject|func|conjugate|conjugate() -> PyObject
 PyFloat|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyFloat|PyObject|func|__pos__|positive() -> PyObject
@@ -454,6 +454,10 @@ PyFunction|PyObject|get|__dict__|getDict() -> Attributes
 PyFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyFunction|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|get|__class__|getClass() -> PyType
+PyInt|PyObject|get|real|asReal() -> PyObject
+PyInt|PyObject|get|imag|asImag() -> PyObject
+PyInt|PyObject|get|numerator|numerator() -> PyInt
+PyInt|PyObject|get|denominator|denominator() -> PyInt
 
 PyInt|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
 PyInt|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> CompareResult
@@ -468,11 +472,7 @@ PyInt|PyObject|func|__bool__|asBool() -> Bool
 PyInt|PyObject|func|__int__|asInt() -> PyResult<PyInt>
 PyInt|PyObject|func|__float__|asFloat() -> PyResult<PyFloat>
 PyInt|PyObject|func|__index__|asIndex() -> BigInt
-PyInt|PyObject|func|real|asReal() -> PyObject
-PyInt|PyObject|func|imag|asImag() -> PyObject
 PyInt|PyObject|func|conjugate|conjugate() -> PyObject
-PyInt|PyObject|func|numerator|numerator() -> PyInt
-PyInt|PyObject|func|denominator|denominator() -> PyInt
 PyInt|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyInt|PyObject|func|__pos__|positive() -> PyObject
 PyInt|PyObject|func|__neg__|negative() -> PyObject

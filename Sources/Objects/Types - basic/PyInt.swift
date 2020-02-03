@@ -165,12 +165,12 @@ public class PyInt: PyObject {
 
   // MARK: - Imaginary
 
-  // sourcery: pymethod = real
+  // sourcery: pyproperty = real
   internal func asReal() -> PyObject {
     return self
   }
 
-  // sourcery: pymethod = imag
+  // sourcery: pyproperty = imag
   internal func asImag() -> PyObject {
     return Py.newInt(0)
   }
@@ -182,12 +182,12 @@ public class PyInt: PyObject {
     return self
   }
 
-  // sourcery: pymethod = numerator
+  // sourcery: pyproperty = numerator
   internal func numerator() -> PyInt {
     return self
   }
 
-  // sourcery: pymethod = denominator
+  // sourcery: pyproperty = denominator
   internal func denominator() -> PyInt {
     return Py.newInt(1)
   }

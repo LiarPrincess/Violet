@@ -130,12 +130,12 @@ public class PyFloat: PyObject {
     return .value(self)
   }
 
-  // sourcery: pymethod = real
+  // sourcery: pyproperty = real
   internal func asReal() -> PyObject {
     return self
   }
 
-  // sourcery: pymethod = imag
+  // sourcery: pyproperty = imag
   internal func asImag() -> PyObject {
     return Py.newFloat(0.0)
   }

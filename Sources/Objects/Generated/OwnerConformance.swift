@@ -237,6 +237,8 @@ extension PyCode:
 // MARK: - Complex
 
 extension PyComplex:
+  RealGetterOwner,
+  ImagGetterOwner,
   __class__GetterOwner,
   __eq__Owner,
   __ne__Owner,
@@ -250,8 +252,6 @@ extension PyComplex:
   __bool__Owner,
   __int__Owner,
   __float__Owner,
-  realOwner,
-  imagOwner,
   conjugateOwner,
   __getattribute__Owner,
   __pos__Owner,
@@ -416,6 +416,8 @@ extension PyFilter:
 // MARK: - Float
 
 extension PyFloat:
+  RealGetterOwner,
+  ImagGetterOwner,
   __class__GetterOwner,
   __eq__Owner,
   __ne__Owner,
@@ -429,8 +431,6 @@ extension PyFloat:
   __bool__Owner,
   __int__Owner,
   __float__Owner,
-  realOwner,
-  imagOwner,
   conjugateOwner,
   __getattribute__Owner,
   __pos__Owner,
@@ -513,6 +513,10 @@ extension PyFunction:
 
 extension PyInt:
   __class__GetterOwner,
+  RealGetterOwner,
+  ImagGetterOwner,
+  NumeratorGetterOwner,
+  DenominatorGetterOwner,
   __eq__Owner,
   __ne__Owner,
   __lt__Owner,
@@ -526,11 +530,7 @@ extension PyInt:
   __int__Owner,
   __float__Owner,
   __index__Owner,
-  realOwner,
-  imagOwner,
   conjugateOwner,
-  numeratorOwner,
-  denominatorOwner,
   __getattribute__Owner,
   __pos__Owner,
   __neg__Owner,

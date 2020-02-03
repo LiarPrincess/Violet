@@ -28,9 +28,13 @@ protocol __delattr__Owner {
 
 protocol ArgsGetterOwner { func getArgs() -> PyTuple }
 protocol ArgsSetterOwner { func setArgs(_ value: PyObject?) -> PyResult<()> }
+protocol DenominatorGetterOwner { func denominator() -> PyInt }
 protocol FdelGetterOwner { func getFDel() -> PyObject }
 protocol FgetGetterOwner { func getFGet() -> PyObject }
 protocol FsetGetterOwner { func getFSet() -> PyObject }
+protocol ImagGetterOwner { func asImag() -> PyObject }
+protocol NumeratorGetterOwner { func numerator() -> PyInt }
+protocol RealGetterOwner { func asReal() -> PyObject }
 protocol __abs__Owner { func abs() -> PyObject }
 protocol __add__Owner { func add(_ other: PyObject) -> PyResult<PyObject> }
 protocol __and__Owner { func and(_ other: PyObject) -> PyResult<PyObject> }
@@ -148,7 +152,6 @@ protocol conjugateOwner { func conjugate() -> PyObject }
 protocol copyOwner { func copy() -> PyObject }
 protocol countOwner { func count(_ element: PyObject) -> PyResult<BigInt> }
 protocol countRangedOwner { func count(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
-protocol denominatorOwner { func denominator() -> PyInt }
 protocol differenceOwner { func difference(with other: PyObject) -> PyResult<PyObject> }
 protocol discardOwner { func discard(_ value: PyObject) -> PyResult<PyNone> }
 protocol endswithOwner { func endsWith(_ element: PyObject) -> PyResult<Bool> }
@@ -157,7 +160,6 @@ protocol extendOwner { func extend(iterable: PyObject) -> PyResult<PyNone> }
 protocol findOwner { func find(_ element: PyObject) -> PyResult<BigInt> }
 protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol getOwner { func get(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
-protocol imagOwner { func asImag() -> PyObject }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
 protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol indicesOwner { func indicesInSequence(length: PyObject) -> PyResult<PyObject> }
@@ -181,12 +183,10 @@ protocol istitleOwner { func isTitle() -> Bool }
 protocol isupperOwner { func isUpper() -> Bool }
 protocol itemsOwner { func items() -> PyObject }
 protocol keysOwner { func keys() -> PyObject }
-protocol numeratorOwner { func numerator() -> PyInt }
 protocol partitionOwner { func partition(separator: PyObject) -> PyResult<PyTuple> }
 protocol popitemOwner { func popitem() -> PyResult<PyObject> }
 protocol readOwner { func read(size: PyObject) -> PyResult<PyString> }
 protocol readableOwner { func isReadable() -> Bool }
-protocol realOwner { func asReal() -> PyObject }
 protocol removeOwner { func remove(_ value: PyObject) -> PyResult<PyNone> }
 protocol reverseOwner { func reverse() -> PyResult<PyNone> }
 protocol rfindOwner { func rfind(_ element: PyObject) -> PyResult<BigInt> }

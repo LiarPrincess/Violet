@@ -126,12 +126,12 @@ public class PyComplex: PyObject {
     return .typeError("can't convert complex to float")
   }
 
-  // sourcery: pymethod = real
+  // sourcery: pyproperty = real
   internal func asReal() -> PyObject {
     return Py.newFloat(self.real)
   }
 
-  // sourcery: pymethod = imag
+  // sourcery: pyproperty = imag
   internal func asImag() -> PyObject {
     return Py.newFloat(self.imag)
   }
