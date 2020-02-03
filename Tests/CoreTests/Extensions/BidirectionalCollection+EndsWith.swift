@@ -1,7 +1,7 @@
 import XCTest
 import Core
 
-class CollectionEndsWith: XCTestCase {
+class BidirectionalCollectionEndsWith: XCTestCase {
 
   // MARK: - Empty
 

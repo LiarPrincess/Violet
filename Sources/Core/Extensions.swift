@@ -90,7 +90,10 @@ extension BidirectionalCollection {
   ///   returns `false` it will not be called again.
   ///
   /// - Complexity: O(*n*), where *n* is the length of the collection.
-  public func dropLast(while predicate: (Element) throws -> Bool) rethrows -> SubSequence {
+  public func dropLast(
+    while predicate: (Element) throws -> Bool
+  ) rethrows -> SubSequence {
+
     if self.isEmpty {
       return self.emptySubSequence
     }
@@ -102,11 +105,17 @@ extension BidirectionalCollection {
     while index != self.startIndex {
       let isSkipped = try predicate(self[index])
       guard isSkipped else {
-        return self[self.startIndex..<index]
+        return self[self.startIndex...index]
       }
+
+      self.formIndex(before: &index)
     }
 
-    return self.emptySubSequence
+    // We are at 'self.startIndex'
+    let isStartSkipped = try predicate(self[index])
+    return isStartSkipped ?
+      self.emptySubSequence :
+      self[index...index] // include 1st character
   }
 
   private var emptySubSequence: SubSequence {
