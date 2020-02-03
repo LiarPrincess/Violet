@@ -13,19 +13,20 @@ extension Builtins {
 
   // MARK: - Types
 
+  // sourcery: pyproperty = object
+  internal var type_object: PyType {
+    return Py.types.object
+  }
+
+  // sourcery: pyproperty = type
+  internal var type_type: PyType {
+    return Py.types.type
+  }
+
+
   // sourcery: pyproperty = bool
   internal var type_bool: PyType {
     return Py.types.bool
-  }
-
-  // sourcery: pyproperty = builtinFunction
-  internal var type_builtinFunction: PyType {
-    return Py.types.builtinFunction
-  }
-
-  // sourcery: pyproperty = builtinMethod
-  internal var type_builtinMethod: PyType {
-    return Py.types.builtinMethod
   }
 
   // sourcery: pyproperty = bytearray
@@ -33,29 +34,9 @@ extension Builtins {
     return Py.types.bytearray
   }
 
-  // sourcery: pyproperty = bytearray_iterator
-  internal var type_bytearray_iterator: PyType {
-    return Py.types.bytearray_iterator
-  }
-
   // sourcery: pyproperty = bytes
   internal var type_bytes: PyType {
     return Py.types.bytes
-  }
-
-  // sourcery: pyproperty = bytes_iterator
-  internal var type_bytes_iterator: PyType {
-    return Py.types.bytes_iterator
-  }
-
-  // sourcery: pyproperty = callable_iterator
-  internal var type_callable_iterator: PyType {
-    return Py.types.callable_iterator
-  }
-
-  // sourcery: pyproperty = code
-  internal var type_code: PyType {
-    return Py.types.code
   }
 
   // sourcery: pyproperty = complex
@@ -66,41 +47,6 @@ extension Builtins {
   // sourcery: pyproperty = dict
   internal var type_dict: PyType {
     return Py.types.dict
-  }
-
-  // sourcery: pyproperty = dict_itemiterator
-  internal var type_dict_itemiterator: PyType {
-    return Py.types.dict_itemiterator
-  }
-
-  // sourcery: pyproperty = dict_items
-  internal var type_dict_items: PyType {
-    return Py.types.dict_items
-  }
-
-  // sourcery: pyproperty = dict_keyiterator
-  internal var type_dict_keyiterator: PyType {
-    return Py.types.dict_keyiterator
-  }
-
-  // sourcery: pyproperty = dict_keys
-  internal var type_dict_keys: PyType {
-    return Py.types.dict_keys
-  }
-
-  // sourcery: pyproperty = dict_valueiterator
-  internal var type_dict_valueiterator: PyType {
-    return Py.types.dict_valueiterator
-  }
-
-  // sourcery: pyproperty = dict_values
-  internal var type_dict_values: PyType {
-    return Py.types.dict_values
-  }
-
-  // sourcery: pyproperty = ellipsis
-  internal var type_ellipsis: PyType {
-    return Py.types.ellipsis
   }
 
   // sourcery: pyproperty = enumerate
@@ -123,19 +69,9 @@ extension Builtins {
     return Py.types.frozenset
   }
 
-  // sourcery: pyproperty = function
-  internal var type_function: PyType {
-    return Py.types.function
-  }
-
   // sourcery: pyproperty = int
   internal var type_int: PyType {
     return Py.types.int
-  }
-
-  // sourcery: pyproperty = iterator
-  internal var type_iterator: PyType {
-    return Py.types.iterator
   }
 
   // sourcery: pyproperty = list
@@ -143,44 +79,9 @@ extension Builtins {
     return Py.types.list
   }
 
-  // sourcery: pyproperty = list_iterator
-  internal var type_list_iterator: PyType {
-    return Py.types.list_iterator
-  }
-
-  // sourcery: pyproperty = list_reverseiterator
-  internal var type_list_reverseiterator: PyType {
-    return Py.types.list_reverseiterator
-  }
-
   // sourcery: pyproperty = map
   internal var type_map: PyType {
     return Py.types.map
-  }
-
-  // sourcery: pyproperty = method
-  internal var type_method: PyType {
-    return Py.types.method
-  }
-
-  // sourcery: pyproperty = module
-  internal var type_module: PyType {
-    return Py.types.module
-  }
-
-  // sourcery: pyproperty = SimpleNamespace
-  internal var type_simpleNamespace: PyType {
-    return Py.types.simpleNamespace
-  }
-
-  // sourcery: pyproperty = None
-  internal var type_none: PyType {
-    return Py.types.none
-  }
-
-  // sourcery: pyproperty = NotImplemented
-  internal var type_notImplemented: PyType {
-    return Py.types.notImplemented
   }
 
   // sourcery: pyproperty = property
@@ -193,11 +94,6 @@ extension Builtins {
     return Py.types.range
   }
 
-  // sourcery: pyproperty = range_iterator
-  internal var type_range_iterator: PyType {
-    return Py.types.range_iterator
-  }
-
   // sourcery: pyproperty = reversed
   internal var type_reversed: PyType {
     return Py.types.reversed
@@ -206,11 +102,6 @@ extension Builtins {
   // sourcery: pyproperty = set
   internal var type_set: PyType {
     return Py.types.set
-  }
-
-  // sourcery: pyproperty = set_iterator
-  internal var type_set_iterator: PyType {
-    return Py.types.set_iterator
   }
 
   // sourcery: pyproperty = slice
@@ -223,24 +114,9 @@ extension Builtins {
     return Py.types.str
   }
 
-  // sourcery: pyproperty = str_iterator
-  internal var type_str_iterator: PyType {
-    return Py.types.str_iterator
-  }
-
-  // sourcery: pyproperty = TextFile
-  internal var type_textFile: PyType {
-    return Py.types.textFile
-  }
-
   // sourcery: pyproperty = tuple
   internal var type_tuple: PyType {
     return Py.types.tuple
-  }
-
-  // sourcery: pyproperty = tuple_iterator
-  internal var type_tuple_iterator: PyType {
-    return Py.types.tuple_iterator
   }
 
   // sourcery: pyproperty = zip

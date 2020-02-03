@@ -12,7 +12,42 @@
 extension Builtins {
 
   // MARK: - Types
+
+  // sourcery: pyproperty = object
+  internal var type_object: PyType {
+    return Py.types.object
+  }
+
+  // sourcery: pyproperty = type
+  internal var type_type: PyType {
+    return Py.types.type
+  }
+
 {% for type in types.classes|annotated:"pytype" %}
+  {% if type.annotations.pytype == "bool" or
+        type.annotations.pytype == "bytearray" or
+        type.annotations.pytype == "bytes" or
+        type.annotations.pytype == "classmethod" or
+        type.annotations.pytype == "complex" or
+        type.annotations.pytype == "dict" or
+        type.annotations.pytype == "enumerate" or
+        type.annotations.pytype == "filter" or
+        type.annotations.pytype == "float" or
+        type.annotations.pytype == "frozenset" or
+        type.annotations.pytype == "int" or
+        type.annotations.pytype == "list" or
+        type.annotations.pytype == "map" or
+        type.annotations.pytype == "memoryview" or
+        type.annotations.pytype == "property" or
+        type.annotations.pytype == "range" or
+        type.annotations.pytype == "reversed" or
+        type.annotations.pytype == "set" or
+        type.annotations.pytype == "slice" or
+        type.annotations.pytype == "staticmethod" or
+        type.annotations.pytype == "str" or
+        type.annotations.pytype == "super" or
+        type.annotations.pytype == "tuple" or
+        type.annotations.pytype == "zip" %}
 
   {% set py %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".","" }}{% endset %}
   {% set prop %}{{ py|lowerFirstWord }}{% endset %}
@@ -20,6 +55,7 @@ extension Builtins {
   internal var type_{{ prop }}: PyType {
     return Py.types.{{ prop }}
   }
+  {% endif %}
 {% endfor %}
 
   // MARK: - Error types
