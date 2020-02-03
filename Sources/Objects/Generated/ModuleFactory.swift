@@ -25,6 +25,11 @@ internal enum ModuleFactory {
     let result = PyModule(name: "builtins", doc: nil)
     let dict = result.getDict()
 
+    dict["True"] = object.`true`
+    dict["False"] = object.`false`
+    dict["None"] = object.none
+    dict["..."] = object.ellipsis
+    dict["NotImplemented"] = object.notImplemented
     dict["bool"] = object.type_bool
     dict["builtinFunction"] = object.type_builtinFunction
     dict["builtinMethod"] = object.type_builtinMethod

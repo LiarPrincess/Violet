@@ -13,9 +13,15 @@ public final class Builtins: BuiltinFunctions {
     Noteworthy: None is the `nil' object; Ellipsis represents `...' in slices.
     """
 
-  public var `true`: PyBool { return Py.`true` }
-  public var `false`: PyBool { return Py.`false` }
+  // sourcery: pyproperty = None
   public var none: PyNone { return Py.none }
+  // sourcery: pyproperty = ...
   public var ellipsis: PyEllipsis { return Py.ellipsis }
+  // sourcery: pyproperty = NotImplemented
   public var notImplemented: PyNotImplemented { return Py.notImplemented }
+
+  // sourcery: pyproperty = True
+  public var `true`: PyBool { return Py.`true` }
+  // sourcery: pyproperty = False
+  public var `false`: PyBool { return Py.`false` }
 }
