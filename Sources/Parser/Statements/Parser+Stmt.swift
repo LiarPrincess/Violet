@@ -27,13 +27,13 @@ extension Parser {
       array.append(element)
     }
 
-    // optional trailing semocolon
+    // optional trailing semicolon
     try self.consumeIf(.semicolon)
 
     // consume new line (we will also accept eof)
     switch self.peek.kind {
     case .eof: break
-    case .newLine: try self.advance()
+    case .newLine: try self.consumeNewLines()
     default: throw self.unexpectedToken(expected: [.newLine, .eof])
     }
 
