@@ -521,7 +521,7 @@ public class PyInt: PyObject {
 
     let leftAbs = Swift.abs(left)
     let rightAbs = Swift.abs(right)
-    return (leftAbs - 1) / rightAbs - 1
+    return -1 - (leftAbs - 1) / rightAbs
   }
 
   private func sameSign(left: BigInt, right: BigInt) -> Bool {
@@ -794,7 +794,7 @@ public class PyInt: PyObject {
     }
 
     guard let base = base else {
-      return PyInt.parseBigIntWithoutBase(x).map { alloca(type, $0) }
+      return PyInt.parseBigInt(objectWithoutBase: x).map { alloca(type, $0) }
     }
 
     let baseInt: Int
@@ -807,7 +807,7 @@ public class PyInt: PyObject {
       return .valueError("int() base must be >= 2 and <= 36, or 0")
     }
 
-    switch PyInt.parseBigIntFromString(x, radix: baseInt) {
+    switch PyInt.parseBigInt(string: x, base: baseInt) {
     case .value(let v): return .value(alloca(type, v))
     case .notString: break
     case .error(let e): return .error(e)
@@ -823,7 +823,7 @@ public class PyInt: PyObject {
 
   /// PyObject *
   /// PyNumber_Long(PyObject *o)
-  private static func parseBigIntWithoutBase(_ object: PyObject) -> PyResult<BigInt> {
+  private static func parseBigInt(objectWithoutBase object: PyObject) -> PyResult<BigInt> {
     // Call has to be before 'PyInt' cast, because it can override
     switch PyInt.callTrunc(object) {
     case .value(let o):
@@ -841,7 +841,7 @@ public class PyInt: PyObject {
       return .value(int.value)
     }
 
-    switch PyInt.parseBigIntFromString(object, radix: 10) {
+    switch PyInt.parseBigInt(string: object, base: 10) {
     case .value(let v): return .value(v)
     case .notString: break
     case .error(let e): return .error(e)
@@ -866,10 +866,10 @@ public class PyInt: PyObject {
     case error(PyBaseException)
   }
 
-  private static func parseBigIntFromString(_ object: PyObject,
-                                            radix: Int) -> IntFromString {
+  private static func parseBigInt(string object: PyObject,
+                                  base: Int) -> IntFromString {
     if let str = object as? PyString {
-      if let value = BigInt(str.value, radix: radix) {
+      if let value = PyInt.parseBigInt(string: str.value, base: base) {
         return .value(value)
       }
 
@@ -883,7 +883,7 @@ public class PyInt: PyObject {
         return .error(Py.newValueError(msg: msg))
       }
 
-      if let value = BigInt(string, radix: radix) {
+      if let value = PyInt.parseBigInt(string: string, base: base) {
         return .value(value)
       }
 
@@ -892,5 +892,66 @@ public class PyInt: PyObject {
     }
 
     return .notString
+  }
+
+  private static func parseBigInt(string: String, base: Int) -> BigInt? {
+    // Convert to substring, so that we don't have to allocate on every operation
+    var input: Substring = string[string.startIndex...]
+
+    // Remove thingies (we don't now how BigInt parser would react)
+    input.removeAll { $0.isWhitespace || $0 == "_" }
+
+    // Deal with '+-' prefix
+    var isNegative = false
+    while input.hasPrefix("+") || input.hasPrefix("-") {
+      if input.hasPrefix("-") {
+        isNegative.toggle()
+      }
+      input = input.dropFirst()
+    }
+
+    // Remove 'Ox' prefix
+    let radix = PyInt.getRadix(string: input, base: base)
+
+    let prefixes = ["0x", "0X", "0o", "0O", "0b", "0B"]
+    for prefix in prefixes where input.hasPrefix(prefix) {
+      input = input.dropFirst(prefix.count)
+      break // we do not have to iterate more
+    }
+
+    // If result is '<0' (for example when input is '-123') -> incorrect.
+    // We have already parsed 'isNegative'.
+    guard let result = BigInt(input, radix: radix), result > 0 else {
+      return nil
+    }
+
+    return isNegative ? -result : result
+  }
+
+  private static func getRadix(string: Substring, base: Int) -> Int {
+    assert(base == 0 || base >= 2)
+    assert(base <= 36)
+
+    // The only case that needs special handling is '0'.
+    guard base == 0 else {
+      return base
+    }
+
+    // We are only interested in strings that start with '0'.
+    var iter = string.makeIterator()
+    guard let first = iter.next(), first == "0" else {
+      return 10
+    }
+
+    guard let second = iter.next() else {
+      return 10
+    }
+
+    switch second {
+    case "x", "X": return 16
+    case "o", "O": return 8
+    case "b", "B": return 2
+    default: return 10
+    }
   }
 }

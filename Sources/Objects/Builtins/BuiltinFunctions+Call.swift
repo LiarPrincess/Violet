@@ -170,7 +170,7 @@ extension BuiltinFunctions {
     let boundMethod: PyObject
     switch self.getMethod(object: object, selector: selector) {
     case let .value(m): boundMethod = m
-    case let .error(e): return .error(e)
+    case let .error(e): return .missingMethod(e)
     }
 
     // Case that is not supported in this method

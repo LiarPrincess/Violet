@@ -141,6 +141,11 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     return self.used == 0
   }
 
+  /// A Boolean value indicating whether the collection has any elements.
+  public var any: Bool {
+    return !self.isEmpty
+  }
+
   /// The last inserted element.
   /// If the dictionary is empty, the value of this property is `nil`.
   public var last: Entry? {

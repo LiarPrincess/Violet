@@ -187,10 +187,13 @@ internal enum PyBaseObject {
   internal static func pyInit(zelf: PyObject,
                               args: [PyObject],
                               kwargs: PyDictData?) -> PyResult<PyNone> {
-    if PyBaseObject.excessArgs(args: args, kwargs: kwargs) {
-      let t = zelf.typeName
-      let msg = "\(t).__init__() takes exactly one argument (the instance to initialize)"
-      return .typeError(msg)
+    let isObject = zelf.type === Py.types.object
+    let hasArgs = args.any || (kwargs?.any ?? false)
+
+    if isObject && hasArgs {
+      return .typeError(
+        "object.__init__() takes exactly one argument (the instance to initialize)"
+      )
     }
 
     return .value(Py.none)
@@ -200,6 +203,7 @@ internal enum PyBaseObject {
   /// excess_args(PyObject *args, PyObject *kwds)
   private static func excessArgs(args: [PyObject], kwargs: PyDictData?) -> Bool {
     let noKwargs = kwargs?.isEmpty ?? true
-    return args.isEmpty && noKwargs
+    let noArgs = args.isEmpty && noKwargs
+    return !noArgs
   }
 }
