@@ -167,7 +167,9 @@ public class PyInt: PyObject {
 
   // sourcery: pyproperty = real
   internal func asReal() -> PyObject {
-    return self
+    // We cannot just return 'self'!
+    // If we call 'True.real' then the result should be '1' not 'True'.
+    return Py.newInt(self.value)
   }
 
   // sourcery: pyproperty = imag
