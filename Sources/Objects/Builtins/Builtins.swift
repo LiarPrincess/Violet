@@ -15,8 +15,10 @@ public final class Builtins: BuiltinFunctions {
 
   // sourcery: pyproperty = None
   public var none: PyNone { return Py.none }
-  // sourcery: pyproperty = ...
+  // sourcery: pyproperty = Ellipsis
   public var ellipsis: PyEllipsis { return Py.ellipsis }
+  // sourcery: pyproperty = ...
+  internal var ellipsisDots: PyEllipsis { return Py.ellipsis }
   // sourcery: pyproperty = NotImplemented
   public var notImplemented: PyNotImplemented { return Py.notImplemented }
 

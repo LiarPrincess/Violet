@@ -26,7 +26,8 @@ internal enum ModuleFactory {
     let dict = result.getDict()
 
     dict["None"] = object.none
-    dict["..."] = object.ellipsis
+    dict["Ellipsis"] = object.ellipsis
+    dict["..."] = object.ellipsisDots
     dict["NotImplemented"] = object.notImplemented
     dict["True"] = object.`true`
     dict["False"] = object.`false`
