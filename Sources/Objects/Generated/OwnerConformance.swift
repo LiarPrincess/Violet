@@ -389,6 +389,7 @@ extension PyDictValues:
 extension PyEllipsis:
   __class__GetterOwner,
   __repr__Owner,
+  __reduce__Owner,
   __getattribute__Owner,
   __new__Owner
 { }

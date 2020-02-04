@@ -36,7 +36,7 @@ public class PyEllipsis: PyObject {
   // MARK: - Reduce
 
   // sourcery: pymethod = __reduce__
-  internal var reduce: String {
+  internal func reduce() -> String {
     return "Ellipsis"
   }
 

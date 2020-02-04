@@ -111,6 +111,7 @@ protocol __qualname__SetterOwner { func setQualname(_ value: PyObject?) -> PyRes
 protocol __radd__Owner { func radd(_ other: PyObject) -> PyResult<PyObject> }
 protocol __rand__Owner { func rand(_ other: PyObject) -> PyResult<PyObject> }
 protocol __rdivmod__Owner { func rdivmod(_ other: PyObject) -> PyResult<PyObject> }
+protocol __reduce__Owner { func reduce() -> String }
 protocol __repr__Owner { func repr() -> PyResult<String> }
 protocol __reversed__Owner { func reversed() -> PyObject }
 protocol __rfloordiv__Owner { func rfloordiv(_ other: PyObject) -> PyResult<PyObject> }
