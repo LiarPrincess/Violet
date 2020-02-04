@@ -464,10 +464,8 @@ public class PyType: PyObject {
     // Look in __dict__ of this type and its bases
     if let attribute = self.lookup(name: name) {
       if let descr = GetDescriptor.get(object: self, attribute: attribute) {
-        // CPython uses 'withOwner: false'. Not really sure why, their reasoning:
-        // NULL ;owner; indicates the descriptor was
-        // found on the target object itself (or a base)
-        return descr.call(withOwner: true)
+        // 'Without owner' means that we will use 'descriptorStaticMarker'
+        return descr.call(withOwner: false)
       }
 
       return .value(attribute)

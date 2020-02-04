@@ -166,30 +166,34 @@ extension BuiltinFunctions {
                          selector: String,
                          args: [PyObject] = [],
                          kwargs: PyDictData? = nil) -> CallMethodResult {
-    // 'bound' means that method already captured 'self' reference
-    let boundMethod: PyObject
+    let method: PyObject
     switch self.getMethod(object: object, selector: selector) {
-    case let .value(m): boundMethod = m
+    case let .value(m): method = m
     case let .error(e): return .missingMethod(e)
     }
 
-    // Case that is not supported in this method
-    // (because it is actually a callable property):
-    // >>> class F():
-    // ...     def __call__(self, arg): print(arg)
-    // >>> class C:
-    // ...     def __init__(self, f): self.f = f
-    //
-    // >>> f = F()
-    // >>> c = C(f)
-    // >>> c.f(1) <-- we are calling method 'f' on object 'c'
-    // 1
+    var realArgs = args
 
-    switch self.call(callable: boundMethod, args: args, kwargs: kwargs) {
+    // 'bound' means that method already captured 'self' reference
+    let isUnbound = method is PyBuiltinFunction || method is PyFunction
+    if isUnbound {
+      // Basically if 'self' was not bound we will add it as a 1st arg.
+      // >>> o1 = int.__add__ # type attribute -> unbound function
+      // >>> o1(1,2)
+      // 3
+      // >>> o2 = (1).__add__ # object attribute -> bound method
+      // >>> o2(1)
+      // 2
+      // CPython: slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
+      //          lookup_maybe_method(PyObject *self, _Py_Identifier *attrid...)
+      realArgs = [object] + args
+    }
+
+    switch self.call(callable: method, args: realArgs, kwargs: kwargs) {
     case .value(let result):
       return .value(result)
     case .notCallable:
-      let msg = "attribute of type '\(boundMethod.typeName)' is not callable"
+      let msg = "attribute of type '\(method.typeName)' is not callable"
       return .notCallable(self.newTypeError(msg: msg))
     case .error(let e):
       return .error(e)
