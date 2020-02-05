@@ -32,7 +32,6 @@ internal func XCTAssertInstructions(_ code: CodeObject,
                                     _ message: String = "",
                                     file: StaticString = #file,
                                     line: UInt         = #line) {
-
   XCTAssertEqual(code.instructions.count,
                  expected.count,
                  "\(message) (count)",
@@ -41,14 +40,17 @@ internal func XCTAssertInstructions(_ code: CodeObject,
 
   var index = 0
   for (emitted, exp) in zip(code.emittedInstructions, expected) {
+    let kindDetails = "(emitted: \(emitted.kind), expected: \(exp.kind))"
     XCTAssertEqual(emitted.kind,
                    exp.kind,
-                   "Invalid instruction \(index) (\(exp.kind)) kind \(message)",
+                   "Invalid instruction kind at \(index) \(kindDetails) \(message)",
                    file: file,
                    line: line)
+
+    let argDetails = "(emitted: \(emitted.arg ?? "empty"), expected: \(exp.arg ?? "empty"))"
     XCTAssertEqual(emitted.arg,
                    exp.arg,
-                   "Invalid instruction \(index) (\(exp.kind)) arg \(message)",
+                   "Invalid instruction arg at \(index) \(argDetails) \(message)",
                    file: file,
                    line: line)
 

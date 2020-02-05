@@ -63,8 +63,8 @@ class CompileTry: CompileTestCase {
   ///  6 POP_BLOCK
   ///  8 JUMP_FORWARD            16 (to 26)
   /// 10 POP_TOP
-  /// 12 POP_TOP
-  /// 14 POP_TOP
+  ///   12 POP_TOP - NOPE, we only store exception on stack (without type and traceback)
+  ///   14 POP_TOP
   /// 16 LOAD_NAME                1 (ping)
   /// 18 POP_TOP
   /// 20 POP_EXCEPT
@@ -90,14 +90,14 @@ class CompileTry: CompileTestCase {
       .init(.loadName, "mulan"),
       .init(.popTop),
       .init(.popBlock),
-      .init(.jumpAbsolute, "26"),
+      .init(.jumpAbsolute, "22"), // different label as we pop only once
       .init(.popTop),
-      .init(.popTop),
-      .init(.popTop),
+//      .init(.popTop),
+//      .init(.popTop),
       .init(.loadName, "ping"),
       .init(.popTop),
       .init(.popExcept),
-      .init(.jumpAbsolute, "26"),
+      .init(.jumpAbsolute, "22"), // different label as we pop only once
       .init(.endFinally),
       .init(.loadConst, "none"),
       .init(.return)
@@ -122,8 +122,8 @@ class CompileTry: CompileTestCase {
   /// 14 COMPARE_OP              10 (exception match)
   /// 16 POP_JUMP_IF_FALSE       32
   /// 18 POP_TOP
-  /// 20 POP_TOP
-  /// 22 POP_TOP
+  ///   20 POP_TOP - NOPE, we only store exception on stack (without type and traceback)
+  ///   22 POP_TOP
   /// 24 LOAD_NAME                2 (ping)
   /// 26 POP_TOP
   /// 28 POP_EXCEPT
@@ -152,18 +152,18 @@ class CompileTry: CompileTestCase {
       .init(.loadName, "mulan"),
       .init(.popTop),
       .init(.popBlock),
-      .init(.jumpAbsolute, "34"),
+      .init(.jumpAbsolute, "30"), // different label as we pop only once
       .init(.dupTop),
       .init(.loadName, "soldier"),
       .init(.compareOp, "exception match"),
-      .init(.popJumpIfFalse, "32"),
+      .init(.popJumpIfFalse, "28"), // different label as we pop only once
       .init(.popTop),
-      .init(.popTop),
-      .init(.popTop),
+//      .init(.popTop),
+//      .init(.popTop),
       .init(.loadName, "ping"),
       .init(.popTop),
       .init(.popExcept),
-      .init(.jumpAbsolute, "34"),
+      .init(.jumpAbsolute, "30"), // different label as we pop only once
       .init(.endFinally),
       .init(.loadConst, "none"),
       .init(.return)
@@ -187,9 +187,9 @@ class CompileTry: CompileTestCase {
   /// 12 LOAD_NAME                1 (disguise)
   /// 14 COMPARE_OP              10 (exception match)
   /// 16 POP_JUMP_IF_FALSE       46
-  /// 18 POP_TOP
-  /// 20 STORE_NAME               2 (soldier)
-  /// 22 POP_TOP
+  ///   18 POP_TOP - NOPE, we only store exception on stack (without type and traceback)
+  /// 20 STORE_NAME               2 (soldier) - this stores exception
+  ///   22 POP_TOP - NOPE, we only store exception on stack (without type and traceback)
   /// 24 SETUP_FINALLY            8 (to 34)
   /// 26 LOAD_NAME                3 (ping)
   /// 28 POP_TOP
@@ -225,15 +225,15 @@ class CompileTry: CompileTestCase {
       .init(.loadName, "mulan"),
       .init(.popTop),
       .init(.popBlock),
-      .init(.jumpAbsolute, "48"),
+      .init(.jumpAbsolute, "44"), // different label as we pop only once
       .init(.dupTop),
       .init(.loadName, "disguise"),
       .init(.compareOp, "exception match"),
-      .init(.popJumpIfFalse, "46"),
-      .init(.popTop),
+      .init(.popJumpIfFalse, "42"), // different label as we pop only once
+//      .init(.popTop),
       .init(.storeName, "soldier"),
-      .init(.popTop),
-      .init(.setupFinally, "34"),
+//      .init(.popTop),
+      .init(.setupFinally, "30"), // different label as we pop only once
       .init(.loadName, "ping"),
       .init(.popTop),
       .init(.popBlock),
@@ -243,7 +243,7 @@ class CompileTry: CompileTestCase {
       .init(.deleteName, "soldier"),
       .init(.endFinally),
       .init(.popExcept),
-      .init(.jumpAbsolute, "48"),
+      .init(.jumpAbsolute, "44"), // different label as we pop only once
       .init(.endFinally),
       .init(.loadConst, "none"),
       .init(.return)
@@ -269,15 +269,15 @@ class CompileTry: CompileTestCase {
   /// 14 COMPARE_OP              10 (exception match)
   /// 16 POP_JUMP_IF_FALSE       32
   /// 18 POP_TOP
-  /// 20 POP_TOP
-  /// 22 POP_TOP
+  ///   20 POP_TOP - NOPE, we only store exception on stack (without type and traceback)
+  ///   22 POP_TOP
   /// 24 LOAD_NAME                2 (ping)
   /// 26 POP_TOP
   /// 28 POP_EXCEPT
   /// 30 JUMP_FORWARD            16 (to 48)
   /// 32 POP_TOP
-  /// 34 POP_TOP
-  /// 36 POP_TOP
+  ///   34 POP_TOP - NOPE, we only store exception on stack (without type and traceback)
+  ///   36 POP_TOP
   /// 38 LOAD_NAME                3 (pong)
   /// 40 POP_TOP
   /// 42 POP_EXCEPT
@@ -310,27 +310,27 @@ class CompileTry: CompileTestCase {
       .init(.loadName, "mulan"),
       .init(.popTop),
       .init(.popBlock),
-      .init(.jumpAbsolute, "48"),
+      .init(.jumpAbsolute, "40"), // different label as we pop only once
       .init(.dupTop),
       .init(.loadName, "soldier"),
       .init(.compareOp, "exception match"),
-      .init(.popJumpIfFalse, "32"),
+      .init(.popJumpIfFalse, "28"), // different label as we pop only once
       .init(.popTop),
-      .init(.popTop),
-      .init(.popTop),
+//      .init(.popTop),
+//      .init(.popTop),
       .init(.loadName, "ping"),
       .init(.popTop),
       .init(.popExcept),
-      .init(.jumpAbsolute, "48"),
+      .init(.jumpAbsolute, "40"), // different label as we pop only once
       .init(.popTop),
-      .init(.popTop),
-      .init(.popTop),
+//      .init(.popTop),
+//      .init(.popTop),
       .init(.loadName, "pong"),
       .init(.popTop),
       .init(.popExcept),
-      .init(.jumpAbsolute, "48"),
+      .init(.jumpAbsolute, "40"), // different label as we pop only once
       .init(.endFinally),
-      .init(.loadConst, "none"),
+      .init(.loadConst, "none"), // this is 40
       .init(.return)
     ]
 
@@ -350,8 +350,8 @@ class CompileTry: CompileTestCase {
   ///  6 POP_BLOCK
   ///  8 JUMP_FORWARD            16 (to 26)
   /// 10 POP_TOP
-  /// 12 POP_TOP
-  /// 14 POP_TOP
+  ///   12 POP_TOP - NOPE, we only store exception on stack (without type and traceback)
+  ///   14 POP_TOP
   /// 16 LOAD_NAME                1 (ping)
   /// 18 POP_TOP
   /// 20 POP_EXCEPT
@@ -379,14 +379,14 @@ class CompileTry: CompileTestCase {
       .init(.loadName, "mulan"),
       .init(.popTop),
       .init(.popBlock),
-      .init(.jumpAbsolute, "26"),
+      .init(.jumpAbsolute, "22"), // different label as we pop only once
       .init(.popTop),
-      .init(.popTop),
-      .init(.popTop),
+//      .init(.popTop),
+//      .init(.popTop),
       .init(.loadName, "ping"),
       .init(.popTop),
       .init(.popExcept),
-      .init(.jumpAbsolute, "30"),
+      .init(.jumpAbsolute, "26"), // different label as we pop only once
       .init(.endFinally),
       .init(.loadName, "faMulan"),
       .init(.popTop),
@@ -411,8 +411,8 @@ class CompileTry: CompileTestCase {
   ///  8 POP_BLOCK
   /// 10 JUMP_FORWARD            16 (to 28)
   /// 12 POP_TOP
-  /// 14 POP_TOP
-  /// 16 POP_TOP
+  ///   14 POP_TOP - NOPE, we only store exception on stack (without type and traceback)
+  ///   16 POP_TOP
   /// 18 LOAD_NAME                1 (ping)
   /// 20 POP_TOP
   /// 22 POP_EXCEPT
@@ -439,19 +439,19 @@ class CompileTry: CompileTestCase {
     )
 
     let expected: [EmittedInstruction] = [
-      .init(.setupFinally, "32"),
+      .init(.setupFinally, "28"), // different label as we pop only once
       .init(.setupExcept, "12"),
       .init(.loadName, "mulan"),
       .init(.popTop),
       .init(.popBlock),
-      .init(.jumpAbsolute, "28"),
-      .init(.popTop),
-      .init(.popTop),
-      .init(.popTop),
+      .init(.jumpAbsolute, "24"), // different label as we pop only once
+      .init(.popTop), // 12
+//      .init(.popTop),
+//      .init(.popTop),
       .init(.loadName, "ping"),
       .init(.popTop),
       .init(.popExcept),
-      .init(.jumpAbsolute, "28"),
+      .init(.jumpAbsolute, "24"), // different label as we pop only once
       .init(.endFinally),
       .init(.popBlock),
       .init(.loadConst, "none"),
@@ -480,8 +480,8 @@ class CompileTry: CompileTestCase {
   ///  8 POP_BLOCK
   /// 10 JUMP_FORWARD            16 (to 28)
   /// 12 POP_TOP
-  /// 14 POP_TOP
-  /// 16 POP_TOP
+  ///   14 POP_TOP - NOPE, we only store exception on stack (without type and traceback)
+  ///   16 POP_TOP
   /// 18 LOAD_NAME                1 (ping)
   /// 20 POP_TOP
   /// 22 POP_EXCEPT
@@ -510,19 +510,19 @@ class CompileTry: CompileTestCase {
     )
 
     let expected: [EmittedInstruction] = [
-      .init(.setupFinally, "36"),
+      .init(.setupFinally, "32"), // different label as we pop only once
       .init(.setupExcept, "12"),
       .init(.loadName, "mulan"),
       .init(.popTop),
       .init(.popBlock),
-      .init(.jumpAbsolute, "28"),
+      .init(.jumpAbsolute, "24"), // different label as we pop only once
       .init(.popTop),
-      .init(.popTop),
-      .init(.popTop),
+//      .init(.popTop),
+//      .init(.popTop),
       .init(.loadName, "ping"),
       .init(.popTop),
       .init(.popExcept),
-      .init(.jumpAbsolute, "32"),
+      .init(.jumpAbsolute, "28"), // different label as we pop only once
       .init(.endFinally),
       .init(.loadName, "pong"),
       .init(.popTop),

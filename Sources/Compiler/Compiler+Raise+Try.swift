@@ -7,7 +7,6 @@ import Bytecode
 // Python -> compile.c
 
 // swiftlint:disable function_body_length
-// TODO: ^ Remove this
 
 extension Compiler {
 
@@ -104,32 +103,34 @@ extension Compiler {
   /// compiler_try_except(struct compiler *c, stmt_ty s)
   ///
   /// Code generated for "try: S except E1 as V1: S1 except E2 as V2: S2 ...":
-  /// (The contents of the value stack is shown in [], with the top
-  /// at the right; 'tb' is trace-back info, 'val' the exception's
-  /// associated value, and 'exc' the exception.)
+  /// (The contents of the value stack is shown in [], with the top at the right)
   ///
+  /// NOTE THAT THERE IS A DIFFERENCE BETWEEN US AND CPYTHON.
+  /// We store only exception on stack and CPython stores type, exception
+  /// and traceback. So where CPython does 3x 'pop' we do it once!
+  ///
+  /// ```
   /// Value stack          Label   Instruction     Argument
   /// []                           SETUP_EXCEPT    L1
   /// []                           <code for S>
   /// []                           POP_BLOCK
-  /// []                           JUMP_FORWARD    L0
+  /// []                           JUMP_FORWARD    L0 # go to next statement
   ///
-  /// [tb, val, exc]       L1:     DUP                             )
-  /// [tb, val, exc, exc]          <evaluate E1>                   )
-  /// [tb, val, exc, exc, E1]      COMPARE_OP      EXC_MATCH       ) only if E1
-  /// [tb, val, exc, 1-or-0]       POP_JUMP_IF_FALSE       L2      )
-  /// [tb, val, exc]               POP
-  /// [tb, val]                    <assign to V1>  (or POP if no V1)
-  /// [tb]                         POP
+  /// [exc]                L1:     DUP                             )
+  /// [exc, exc]                   <evaluate E1>                   )
+  /// [exc, exc, E1]               COMPARE_OP      EXC_MATCH       ) only if E1
+  /// [exc, 1-or-0]                POP_JUMP_IF_FALSE       L2      )
+  /// []                           <assign to V1>  (or POP if no V1)
   /// []                           <code for S1>
-  ///                             JUMP_FORWARD    L0
+  ///                              JUMP_FORWARD    L0
   ///
-  /// [tb, val, exc]       L2:     DUP
+  /// [exc]                L2:     DUP # another except
   /// .............................etc.......................
   ///
-  /// [tb, val, exc]       Ln+1:   END_FINALLY     # re-raise exception
+  /// [exc]                Ln+1:   END_FINALLY     # re-raise exception
   ///
-  /// []                   L0:     <next statement>
+  /// []                   L0:     # next statement
+  /// ```
   ///
   /// Of course, parts are not generated if Vi or Ei is not present.
   private func visitTryExcept(body: NonEmptyArray<Statement>,
@@ -159,17 +160,16 @@ extension Compiler {
       self.setAppendLocation(handler)
       let nextExcept = self.builder.createLabel()
 
+      // check if exception type match
       if case let .typed(type: type, asName: _) = handler.kind {
-        self.builder.appendDupTop()
+        self.builder.appendDupTop() // dup exception (exception match will consume it)
         try self.visit(type)
         self.builder.appendCompareOp(.exceptionMatch)
         self.builder.appendPopJumpIfFalse(to: nextExcept)
       }
-      self.builder.appendPopTop()
 
       if case let .typed(type: _, asName: asName) = handler.kind, let name = asName {
-        self.builder.appendStoreName(name)
-        self.builder.appendPopTop()
+        self.builder.appendStoreName(name) // we have name -> store exception
 
         // try:
         //     # body
@@ -203,8 +203,7 @@ extension Compiler {
           self.builder.appendPopExcept()
         }
       } else {
-        self.builder.appendPopTop()
-        self.builder.appendPopTop()
+        self.builder.appendPopTop() // no name -> pop exception
 
         try self.inBlock(.finallyTry) {
           try self.visit(handler.body)
