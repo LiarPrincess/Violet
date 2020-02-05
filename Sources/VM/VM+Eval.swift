@@ -43,11 +43,16 @@ extension VM {
                       globals: globals,
                       parent: parent)
 
+    print("=== Run ===")
     switch frame.run() {
     case let .value(o):
       print("Result:", o)
     case let .error(e):
+      let pc = frame.nextInstructionIndex
+      let line = code.instructionLines[pc]
       print("Error:", e)
+      print("Instruction:", pc)
+      print("Line:", line)
     }
 
 //    fastlocals = f->f_localsplus;
