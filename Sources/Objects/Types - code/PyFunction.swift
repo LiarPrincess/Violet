@@ -169,6 +169,10 @@ public class PyFunction: PyObject {
       return .value(self)
     }
 
-    return .value(PyMethod(fn: self, object: object))
+    return .value(self.bind(to: object))
+  }
+
+  internal func bind(to object: PyObject) -> PyMethod {
+    return PyMethod(fn: self, object: object)
   }
 }

@@ -137,12 +137,14 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
       return .value(self)
     }
 
-    let result = PyBuiltinMethod(fn: self.function,
-                                 object: object,
-                                 module: self.module,
-                                 doc: self.doc)
+    return .value(self.bind(to: object))
+  }
 
-    return .value(result)
+  internal func bind(to object: PyObject) -> PyBuiltinMethod {
+    return PyBuiltinMethod(fn: self.function,
+                           object: object,
+                           module: self.module,
+                           doc: self.doc)
   }
 
   // MARK: - Call
