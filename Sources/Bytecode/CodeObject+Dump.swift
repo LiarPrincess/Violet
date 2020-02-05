@@ -91,8 +91,8 @@ extension CodeObject {
   // MARK: - Dump instruction
 
   // swiftlint:disable:next function_body_length
-  private func dumpInstruction(_ instruction: Instruction,
-                               extendedArg: Int) -> String {
+  public func dumpInstruction(_ instruction: Instruction,
+                              extendedArg: Int) -> String {
     switch instruction {
     case .nop: return "nop"
     case .popTop: return "popTop"

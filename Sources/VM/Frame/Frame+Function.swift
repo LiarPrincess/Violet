@@ -91,7 +91,9 @@ extension Frame {
     guard let kwNames = kwNames else {
       let args = stack.popElementsInPushOrder(count: argAndKwargCount)
       let fn = self.stack.pop()
-      return Py.call(callable: fn, args: args)
+      let result = Py.call(callable: fn, args: args)
+      self.callFunctionDebug(fn: fn, args: args, kwargs: nil, result: result)
+      return result
     }
 
     let nKwargs = kwNames.elements.count
@@ -151,9 +153,10 @@ extension Frame {
     let object = self.stack.top
 
     switch Py.getMethod(object: object, selector: name) {
-    case let .value(boundMethod):
+    case let .value(method):
       // 'bound' means that method already captured 'self' reference
-      self.stack.top = boundMethod
+      self.loadMethodDebug(method: method)
+      self.stack.top = method
       return .ok
     case let .error(e):
       return .error(e)
@@ -175,11 +178,12 @@ extension Frame {
     assert(args.count == argumentCount)
 
     // 'bound' means that method already captured 'self' reference
-    let boundMethod = self.stack.top
+    let method = self.stack.top
 
     let level = self.stackLevel
-    let result = Py.call(callable: boundMethod, args: args, kwargs: nil)
+    let result = Py.call(callable: method, args: args, kwargs: nil)
     assert(self.stackLevel == level)
+    self.callMethodDebug(method: method, args: args, result: result)
 
     switch result {
     case let .value(o):

@@ -143,6 +143,7 @@ internal final class Frame {
   // swiftlint:disable:next function_body_length
   private func executeInstruction(extendedArg: Int = 0) -> InstructionResult {
     let instruction = self.fetchInstruction()
+    self.instructionDebug(instruction: instruction, extendedArg: extendedArg)
 
     // According to CPython doing single switch will trash our jump prediction
     // (unles you have the same opcode multiple times in a row).
