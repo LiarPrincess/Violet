@@ -32,13 +32,13 @@ extension PyBuiltinFunction {
   // MARK: - New
 
   internal static func wrapNew(
-    typeName: String,
+    type: PyType,
     doc: String?,
     fn: @escaping NewFunction,
     module: PyModule? = nil) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
-      fn: NewFunctionWrapper(typeName: typeName, fn: fn),
+      fn: NewFunctionWrapper(type: type, fn: fn),
       module: module,
       doc: doc
     )
@@ -47,13 +47,13 @@ extension PyBuiltinFunction {
   // MARK: - Init
 
   internal static func wrapInit<Zelf: PyObject>(
-    typeName: String,
+    type: PyType,
     doc: String?,
     fn: @escaping InitFunction<Zelf>,
     module: PyModule? = nil) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
-      fn: InitFunctionWrapper(typeName: typeName, fn: fn),
+      fn: InitFunctionWrapper(type: type, fn: fn),
       module: module,
       doc: doc
     )

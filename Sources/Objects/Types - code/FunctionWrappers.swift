@@ -18,11 +18,11 @@ internal typealias NewFunction = (PyType, [PyObject], PyDictData?) -> PyResult<P
 /// Wrapper dedicated to `__new__` function
 internal struct NewFunctionWrapper: FunctionWrapper {
 
-  internal let typeName: String
+  internal let type: PyType
   internal let fn: NewFunction
 
   internal var name: String {
-    return self.typeName + ".__new__"
+    return "__new__"
   }
 
   /// static PyObject *
@@ -33,12 +33,19 @@ internal struct NewFunctionWrapper: FunctionWrapper {
     }
 
     let arg0 = args[0]
-    guard let type = arg0 as? PyType else {
+    guard let subtype = arg0 as? PyType else {
       return .typeError("\(self.name)(X): X is not a type object (\(arg0))")
     }
 
+    // For example: type(int).__new__(None)
+    guard subtype.isSubtype(of: self.type) else {
+      let t = self.type.getName()
+      let s = subtype.getName()
+      return .typeError("\(t).__new__(\(s)): \(s) is not a subtype of \(t)")
+    }
+
     let argsWithoutType = Array(args.dropFirst())
-    return self.fn(type, argsWithoutType, kwargs)
+    return self.fn(subtype, argsWithoutType, kwargs)
   }
 }
 
@@ -50,27 +57,28 @@ internal typealias InitFunction<Zelf: PyObject> =
 /// Wrapper dedicated to `__init__` function
 internal struct InitFunctionWrapper: FunctionWrapper {
 
-  internal let typeName: String
+  internal let type: PyType
   internal let fn: InitFunction<PyObject>
 
   internal var name: String {
-    return self.typeName + ".__init__"
+    return "__init__"
   }
 
-  internal init<Zelf: PyObject>(typeName: String,
+  internal init<Zelf: PyObject>(type: PyType,
                                 fn: @escaping InitFunction<Zelf>) {
-    self.typeName = typeName
-    self.fn = InitFunctionWrapper.downcastZelf(typeName: typeName, fn: fn)
+    self.type = type
+    self.fn = InitFunctionWrapper.eraseZelf(type: type, fn: fn)
   }
 
-  private static func downcastZelf<Zelf: PyObject>(
-    typeName: String,
+  /// Convert from `InitFunction<Zelf>` to `InitFunction<PyObject>`
+  private static func eraseZelf<Zelf: PyObject>(
+    type: PyType,
     fn: @escaping InitFunction<Zelf>) -> InitFunction<PyObject> {
 
     return { (object: PyObject, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> in
       guard let zelf = object as? Zelf else {
         return .typeError(
-          "descriptor '__init__' requires a '\(typeName)' object " +
+          "descriptor '__init__' requires a '\(type.getName())' object " +
           "but received a '\(object.type)'")
       }
 
@@ -82,15 +90,6 @@ internal struct InitFunctionWrapper: FunctionWrapper {
     guard args.any else {
       return .typeError("\(self.name)(): not enough arguments")
     }
-
-    // TODO: Old code:
-    // let arg0 = args[0]
-    // guard let type = arg0 as? PyType else {
-    //   return .typeError("\(self.name)(X): X is not a type object (\(arg0))")
-    // }
-    //
-    // let argsWithoutType = Array(args.dropFirst())
-    // return self.fn(type, argsWithoutType, kwargs).map { $0 as PyObject }
 
     let zelf = args[0]
     let argsWithoutZelf = Array(args.dropFirst())

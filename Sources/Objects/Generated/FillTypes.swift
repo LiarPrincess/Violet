@@ -43,8 +43,8 @@ internal enum FillTypes {
     dict["__delattr__"] = PyBuiltinFunction.wrap(name: "__delattr__", doc: nil, fn: PyBaseObject.delAttribute(zelf:name:))
     dict["__subclasshook__"] = PyBuiltinFunction.wrap(name: "__subclasshook__", doc: nil, fn: PyBaseObject.subclasshook(zelf:))
     dict["__init_subclass__"] = PyBuiltinFunction.wrap(name: "__init_subclass__", doc: nil, fn: PyBaseObject.initSubclass(zelf:))
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "object", doc: nil, fn: PyBaseObject.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "object", doc: nil, fn: PyBaseObject.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBaseObject.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBaseObject.pyInit(zelf:args:kwargs:))
 
 
   }
@@ -70,8 +70,8 @@ internal enum FillTypes {
     dict["__base__"] = PyProperty.wrap(name: "__base__", doc: nil, get: PyType.getBase, castSelf: Cast.asPyType)
     dict["__mro__"] = PyProperty.wrap(name: "__mro__", doc: nil, get: PyType.getMRO, castSelf: Cast.asPyType)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "type", doc: nil, fn: PyType.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "type", doc: nil, fn: PyType.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyType.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyType.pyInit(zelf:args:kwargs:))
 
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyType.repr, castSelf: Cast.asPyType)
@@ -96,7 +96,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyBool.getClass, castSelf: Cast.asPyBool)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "bool", doc: nil, fn: PyBool.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBool.pyNew(type:args:kwargs:))
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBool.repr, castSelf: Cast.asPyBool)
     dict["__str__"] = PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyBool.str, castSelf: Cast.asPyBool)
@@ -177,9 +177,9 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArray.getClass, castSelf: Cast.asPyByteArray)
 
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "bytearray", doc: nil, fn: PyByteArray.pyInit(zelf:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyByteArray.pyInit(zelf:args:kwargs:))
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "bytearray", doc: nil, fn: PyByteArray.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyByteArray.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyByteArray.isEqual(_:), castSelf: Cast.asPyByteArray)
     dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyByteArray.isNotEqual(_:), castSelf: Cast.asPyByteArray)
@@ -256,7 +256,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArrayIterator.getClass, castSelf: Cast.asPyByteArrayIterator)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "bytearray_iterator", doc: nil, fn: PyByteArrayIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyByteArrayIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyByteArrayIterator.getAttribute(name:), castSelf: Cast.asPyByteArrayIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyByteArrayIterator.iter, castSelf: Cast.asPyByteArrayIterator)
@@ -275,7 +275,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyBytes.getClass, castSelf: Cast.asPyBytes)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "bytes", doc: nil, fn: PyBytes.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBytes.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyBytes.isEqual(_:), castSelf: Cast.asPyBytes)
     dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyBytes.isNotEqual(_:), castSelf: Cast.asPyBytes)
@@ -342,7 +342,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesIterator.getClass, castSelf: Cast.asPyBytesIterator)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "bytes_iterator", doc: nil, fn: PyBytesIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBytesIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyBytesIterator.getAttribute(name:), castSelf: Cast.asPyBytesIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyBytesIterator.iter, castSelf: Cast.asPyBytesIterator)
@@ -400,7 +400,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyComplex.getClass, castSelf: Cast.asPyComplex)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "complex", doc: nil, fn: PyComplex.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyComplex.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyComplex.isEqual(_:), castSelf: Cast.asPyComplex)
     dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyComplex.isNotEqual(_:), castSelf: Cast.asPyComplex)
@@ -449,8 +449,8 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyDict.getClass, castSelf: Cast.asPyDict)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "dict", doc: nil, fn: PyDict.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "dict", doc: nil, fn: PyDict.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDict.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyDict.pyInit(zelf:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyDict.isEqual(_:), castSelf: Cast.asPyDict)
@@ -491,7 +491,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItemIterator.getClass, castSelf: Cast.asPyDictItemIterator)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "dict_itemiterator", doc: nil, fn: PyDictItemIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictItemIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyDictItemIterator.getAttribute(name:), castSelf: Cast.asPyDictItemIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictItemIterator.iter, castSelf: Cast.asPyDictItemIterator)
@@ -509,7 +509,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItems.getClass, castSelf: Cast.asPyDictItems)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "dict_items", doc: nil, fn: PyDictItems.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictItems.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyDictItems.isEqual(_:), castSelf: Cast.asPyDictItems)
     dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyDictItems.isNotEqual(_:), castSelf: Cast.asPyDictItems)
@@ -536,7 +536,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeyIterator.getClass, castSelf: Cast.asPyDictKeyIterator)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "dict_keyiterator", doc: nil, fn: PyDictKeyIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictKeyIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyDictKeyIterator.getAttribute(name:), castSelf: Cast.asPyDictKeyIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictKeyIterator.iter, castSelf: Cast.asPyDictKeyIterator)
@@ -554,7 +554,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeys.getClass, castSelf: Cast.asPyDictKeys)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "dict_keys", doc: nil, fn: PyDictKeys.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictKeys.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyDictKeys.isEqual(_:), castSelf: Cast.asPyDictKeys)
     dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyDictKeys.isNotEqual(_:), castSelf: Cast.asPyDictKeys)
@@ -581,7 +581,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyDictValueIterator.getClass, castSelf: Cast.asPyDictValueIterator)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "dict_valueiterator", doc: nil, fn: PyDictValueIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDictValueIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyDictValueIterator.getAttribute(name:), castSelf: Cast.asPyDictValueIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyDictValueIterator.iter, castSelf: Cast.asPyDictValueIterator)
@@ -614,7 +614,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyEllipsis.getClass, castSelf: Cast.asPyEllipsis)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ellipsis", doc: nil, fn: PyEllipsis.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyEllipsis.pyNew(type:args:kwargs:))
 
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyEllipsis.repr, castSelf: Cast.asPyEllipsis)
@@ -633,7 +633,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyEnumerate.getClass, castSelf: Cast.asPyEnumerate)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "enumerate", doc: nil, fn: PyEnumerate.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyEnumerate.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyEnumerate.getAttribute(name:), castSelf: Cast.asPyEnumerate)
@@ -652,7 +652,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyFilter.getClass, castSelf: Cast.asPyFilter)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "filter", doc: nil, fn: PyFilter.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFilter.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyFilter.getAttribute(name:), castSelf: Cast.asPyFilter)
@@ -673,7 +673,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyFloat.getClass, castSelf: Cast.asPyFloat)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "float", doc: nil, fn: PyFloat.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFloat.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyFloat.isEqual(_:), castSelf: Cast.asPyFloat)
     dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyFloat.isNotEqual(_:), castSelf: Cast.asPyFloat)
@@ -725,7 +725,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyFrozenSet.getClass, castSelf: Cast.asPyFrozenSet)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "frozenset", doc: nil, fn: PyFrozenSet.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFrozenSet.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyFrozenSet.isEqual(_:), castSelf: Cast.asPyFrozenSet)
     dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyFrozenSet.isNotEqual(_:), castSelf: Cast.asPyFrozenSet)
@@ -795,7 +795,7 @@ internal enum FillTypes {
     dict["denominator"] = PyProperty.wrap(name: "denominator", doc: nil, get: PyInt.denominator, castSelf: Cast.asPyInt)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "int", doc: nil, fn: PyInt.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyInt.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyInt.isEqual(_:), castSelf: Cast.asPyInt)
     dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyInt.isNotEqual(_:), castSelf: Cast.asPyInt)
@@ -878,8 +878,8 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyList.getClass, castSelf: Cast.asPyList)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "list", doc: nil, fn: PyList.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "list", doc: nil, fn: PyList.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyList.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyList.pyInit(zelf:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyList.isEqual(_:), castSelf: Cast.asPyList)
@@ -926,7 +926,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyListIterator.getClass, castSelf: Cast.asPyListIterator)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "list_iterator", doc: nil, fn: PyListIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyListIterator.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyListIterator.getAttribute(name:), castSelf: Cast.asPyListIterator)
@@ -944,7 +944,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyListReverseIterator.getClass, castSelf: Cast.asPyListReverseIterator)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "list_reverseiterator", doc: nil, fn: PyListReverseIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyListReverseIterator.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyListReverseIterator.getAttribute(name:), castSelf: Cast.asPyListReverseIterator)
@@ -963,7 +963,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyMap.getClass, castSelf: Cast.asPyMap)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "map", doc: nil, fn: PyMap.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyMap.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyMap.getAttribute(name:), castSelf: Cast.asPyMap)
@@ -1011,8 +1011,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyModule.getDict, castSelf: Cast.asPyModule)
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyModule.getClass, castSelf: Cast.asPyModule)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "module", doc: nil, fn: PyModule.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "module", doc: nil, fn: PyModule.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyModule.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyModule.pyInit(zelf:args:kwargs:))
 
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyModule.repr, castSelf: Cast.asPyModule)
@@ -1033,7 +1033,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyNamespace.getDict, castSelf: Cast.asPyNamespace)
 
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "SimpleNamespace", doc: nil, fn: PyNamespace.pyInit(zelf:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNamespace.pyInit(zelf:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyNamespace.isEqual(_:), castSelf: Cast.asPyNamespace)
@@ -1057,7 +1057,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyNone.getClass, castSelf: Cast.asPyNone)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "None", doc: nil, fn: PyNone.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNone.pyNew(type:args:kwargs:))
 
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyNone.repr, castSelf: Cast.asPyNone)
@@ -1073,7 +1073,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplemented.getClass, castSelf: Cast.asPyNotImplemented)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "NotImplemented", doc: nil, fn: PyNotImplemented.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNotImplemented.pyNew(type:args:kwargs:))
 
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyNotImplemented.repr, castSelf: Cast.asPyNotImplemented)
@@ -1093,8 +1093,8 @@ internal enum FillTypes {
     dict["fset"] = PyProperty.wrap(name: "fset", doc: nil, get: PyProperty.getFSet, castSelf: Cast.asPyProperty)
     dict["fdel"] = PyProperty.wrap(name: "fdel", doc: nil, get: PyProperty.getFDel, castSelf: Cast.asPyProperty)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "property", doc: nil, fn: PyProperty.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "property", doc: nil, fn: PyProperty.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyProperty.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProperty.pyInit(zelf:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyProperty.getAttribute(name:), castSelf: Cast.asPyProperty)
@@ -1112,7 +1112,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyRange.getClass, castSelf: Cast.asPyRange)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "range", doc: nil, fn: PyRange.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRange.pyNew(type:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyRange.isEqual(_:), castSelf: Cast.asPyRange)
@@ -1146,7 +1146,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyRangeIterator.getClass, castSelf: Cast.asPyRangeIterator)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "range_iterator", doc: nil, fn: PyRangeIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRangeIterator.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyRangeIterator.getAttribute(name:), castSelf: Cast.asPyRangeIterator)
@@ -1165,7 +1165,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyReversed.getClass, castSelf: Cast.asPyReversed)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "reversed", doc: nil, fn: PyReversed.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyReversed.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyReversed.getAttribute(name:), castSelf: Cast.asPyReversed)
@@ -1184,8 +1184,8 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PySet.getClass, castSelf: Cast.asPySet)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "set", doc: nil, fn: PySet.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "set", doc: nil, fn: PySet.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySet.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySet.pyInit(zelf:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PySet.isEqual(_:), castSelf: Cast.asPySet)
@@ -1235,7 +1235,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PySetIterator.getClass, castSelf: Cast.asPySetIterator)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "set_iterator", doc: nil, fn: PySetIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySetIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PySetIterator.getAttribute(name:), castSelf: Cast.asPySetIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PySetIterator.iter, castSelf: Cast.asPySetIterator)
@@ -1252,7 +1252,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PySlice.getClass, castSelf: Cast.asPySlice)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "slice", doc: nil, fn: PySlice.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySlice.pyNew(type:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PySlice.isEqual(_:), castSelf: Cast.asPySlice)
@@ -1282,7 +1282,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyString.getClass, castSelf: Cast.asPyString)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "str", doc: nil, fn: PyString.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyString.pyNew(type:args:kwargs:))
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyString.isEqual(_:), castSelf: Cast.asPyString)
     dict["__ne__"] = PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyString.isNotEqual(_:), castSelf: Cast.asPyString)
@@ -1354,7 +1354,7 @@ internal enum FillTypes {
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyStringIterator.getClass, castSelf: Cast.asPyStringIterator)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "str_iterator", doc: nil, fn: PyStringIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyStringIterator.pyNew(type:args:kwargs:))
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyStringIterator.getAttribute(name:), castSelf: Cast.asPyStringIterator)
     dict["__iter__"] = PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyStringIterator.iter, castSelf: Cast.asPyStringIterator)
@@ -1396,7 +1396,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: Cast.asPyTuple)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "tuple", doc: nil, fn: PyTuple.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTuple.pyNew(type:args:kwargs:))
 
 
     dict["__eq__"] = PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyTuple.isEqual(_:), castSelf: Cast.asPyTuple)
@@ -1429,7 +1429,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyTupleIterator.getClass, castSelf: Cast.asPyTupleIterator)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "tuple_iterator", doc: nil, fn: PyTupleIterator.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTupleIterator.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyTupleIterator.getAttribute(name:), castSelf: Cast.asPyTupleIterator)
@@ -1448,7 +1448,7 @@ internal enum FillTypes {
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyZip.getClass, castSelf: Cast.asPyZip)
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "zip", doc: nil, fn: PyZip.pyNew(type:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyZip.pyNew(type:args:kwargs:))
 
 
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyZip.getAttribute(name:), castSelf: Cast.asPyZip)
@@ -1470,8 +1470,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyArithmeticError.getDict, castSelf: Cast.asPyArithmeticError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ArithmeticError", doc: nil, fn: PyArithmeticError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ArithmeticError", doc: nil, fn: PyArithmeticError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyArithmeticError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyArithmeticError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1489,8 +1489,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyAssertionError.getDict, castSelf: Cast.asPyAssertionError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "AssertionError", doc: nil, fn: PyAssertionError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "AssertionError", doc: nil, fn: PyAssertionError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyAssertionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyAssertionError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1508,8 +1508,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyAttributeError.getDict, castSelf: Cast.asPyAttributeError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "AttributeError", doc: nil, fn: PyAttributeError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "AttributeError", doc: nil, fn: PyAttributeError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyAttributeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyAttributeError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1532,8 +1532,8 @@ internal enum FillTypes {
     dict["__suppress_context__"] = PyProperty.wrap(name: "__suppress_context__", doc: nil, get: PyBaseException.getSuppressContext, set: PyBaseException.setSuppressContext, castSelf: Cast.asPyBaseException)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "BaseException", doc: nil, fn: PyBaseException.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "BaseException", doc: nil, fn: PyBaseException.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBaseException.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBaseException.pyInit(zelf:args:kwargs:))
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyBaseException.repr, castSelf: Cast.asPyBaseException)
     dict["__str__"] = PyBuiltinFunction.wrap(name: "__str__", doc: nil, fn: PyBaseException.str, castSelf: Cast.asPyBaseException)
@@ -1556,8 +1556,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyBlockingIOError.getDict, castSelf: Cast.asPyBlockingIOError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "BlockingIOError", doc: nil, fn: PyBlockingIOError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "BlockingIOError", doc: nil, fn: PyBlockingIOError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBlockingIOError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBlockingIOError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1575,8 +1575,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyBrokenPipeError.getDict, castSelf: Cast.asPyBrokenPipeError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "BrokenPipeError", doc: nil, fn: PyBrokenPipeError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "BrokenPipeError", doc: nil, fn: PyBrokenPipeError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBrokenPipeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBrokenPipeError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1594,8 +1594,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyBufferError.getDict, castSelf: Cast.asPyBufferError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "BufferError", doc: nil, fn: PyBufferError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "BufferError", doc: nil, fn: PyBufferError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBufferError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBufferError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1613,8 +1613,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyBytesWarning.getDict, castSelf: Cast.asPyBytesWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "BytesWarning", doc: nil, fn: PyBytesWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "BytesWarning", doc: nil, fn: PyBytesWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyBytesWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyBytesWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1632,8 +1632,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyChildProcessError.getDict, castSelf: Cast.asPyChildProcessError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ChildProcessError", doc: nil, fn: PyChildProcessError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ChildProcessError", doc: nil, fn: PyChildProcessError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyChildProcessError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyChildProcessError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1651,8 +1651,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionAbortedError.getDict, castSelf: Cast.asPyConnectionAbortedError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ConnectionAbortedError", doc: nil, fn: PyConnectionAbortedError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ConnectionAbortedError", doc: nil, fn: PyConnectionAbortedError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyConnectionAbortedError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionAbortedError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1670,8 +1670,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionError.getDict, castSelf: Cast.asPyConnectionError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ConnectionError", doc: nil, fn: PyConnectionError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ConnectionError", doc: nil, fn: PyConnectionError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyConnectionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1689,8 +1689,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionRefusedError.getDict, castSelf: Cast.asPyConnectionRefusedError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ConnectionRefusedError", doc: nil, fn: PyConnectionRefusedError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ConnectionRefusedError", doc: nil, fn: PyConnectionRefusedError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyConnectionRefusedError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionRefusedError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1708,8 +1708,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionResetError.getDict, castSelf: Cast.asPyConnectionResetError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ConnectionResetError", doc: nil, fn: PyConnectionResetError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ConnectionResetError", doc: nil, fn: PyConnectionResetError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyConnectionResetError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyConnectionResetError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1727,8 +1727,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyDeprecationWarning.getDict, castSelf: Cast.asPyDeprecationWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "DeprecationWarning", doc: nil, fn: PyDeprecationWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "DeprecationWarning", doc: nil, fn: PyDeprecationWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDeprecationWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyDeprecationWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1746,8 +1746,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyEOFError.getDict, castSelf: Cast.asPyEOFError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "EOFError", doc: nil, fn: PyEOFError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "EOFError", doc: nil, fn: PyEOFError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyEOFError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyEOFError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1765,8 +1765,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyException.getDict, castSelf: Cast.asPyException)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "Exception", doc: nil, fn: PyException.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "Exception", doc: nil, fn: PyException.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyException.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyException.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1784,8 +1784,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileExistsError.getDict, castSelf: Cast.asPyFileExistsError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "FileExistsError", doc: nil, fn: PyFileExistsError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "FileExistsError", doc: nil, fn: PyFileExistsError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFileExistsError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFileExistsError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1803,8 +1803,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileNotFoundError.getDict, castSelf: Cast.asPyFileNotFoundError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "FileNotFoundError", doc: nil, fn: PyFileNotFoundError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "FileNotFoundError", doc: nil, fn: PyFileNotFoundError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFileNotFoundError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFileNotFoundError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1822,8 +1822,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyFloatingPointError.getDict, castSelf: Cast.asPyFloatingPointError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "FloatingPointError", doc: nil, fn: PyFloatingPointError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "FloatingPointError", doc: nil, fn: PyFloatingPointError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFloatingPointError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFloatingPointError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1841,8 +1841,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyFutureWarning.getDict, castSelf: Cast.asPyFutureWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "FutureWarning", doc: nil, fn: PyFutureWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "FutureWarning", doc: nil, fn: PyFutureWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFutureWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyFutureWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1860,8 +1860,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyGeneratorExit.getDict, castSelf: Cast.asPyGeneratorExit)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "GeneratorExit", doc: nil, fn: PyGeneratorExit.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "GeneratorExit", doc: nil, fn: PyGeneratorExit.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyGeneratorExit.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyGeneratorExit.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1879,8 +1879,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportError.getDict, castSelf: Cast.asPyImportError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ImportError", doc: nil, fn: PyImportError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ImportError", doc: nil, fn: PyImportError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyImportError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1898,8 +1898,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportWarning.getDict, castSelf: Cast.asPyImportWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ImportWarning", doc: nil, fn: PyImportWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ImportWarning", doc: nil, fn: PyImportWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyImportWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyImportWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1917,8 +1917,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndentationError.getDict, castSelf: Cast.asPyIndentationError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "IndentationError", doc: nil, fn: PyIndentationError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "IndentationError", doc: nil, fn: PyIndentationError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyIndentationError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIndentationError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1936,8 +1936,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndexError.getDict, castSelf: Cast.asPyIndexError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "IndexError", doc: nil, fn: PyIndexError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "IndexError", doc: nil, fn: PyIndexError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyIndexError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIndexError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1955,8 +1955,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyInterruptedError.getDict, castSelf: Cast.asPyInterruptedError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "InterruptedError", doc: nil, fn: PyInterruptedError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "InterruptedError", doc: nil, fn: PyInterruptedError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyInterruptedError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyInterruptedError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1974,8 +1974,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyIsADirectoryError.getDict, castSelf: Cast.asPyIsADirectoryError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "IsADirectoryError", doc: nil, fn: PyIsADirectoryError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "IsADirectoryError", doc: nil, fn: PyIsADirectoryError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyIsADirectoryError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyIsADirectoryError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -1993,8 +1993,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyError.getDict, castSelf: Cast.asPyKeyError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "KeyError", doc: nil, fn: PyKeyError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "KeyError", doc: nil, fn: PyKeyError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyKeyError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2012,8 +2012,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyboardInterrupt.getDict, castSelf: Cast.asPyKeyboardInterrupt)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "KeyboardInterrupt", doc: nil, fn: PyKeyboardInterrupt.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "KeyboardInterrupt", doc: nil, fn: PyKeyboardInterrupt.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyKeyboardInterrupt.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyKeyboardInterrupt.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2031,8 +2031,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyLookupError.getDict, castSelf: Cast.asPyLookupError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "LookupError", doc: nil, fn: PyLookupError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "LookupError", doc: nil, fn: PyLookupError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyLookupError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyLookupError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2050,8 +2050,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyMemoryError.getDict, castSelf: Cast.asPyMemoryError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "MemoryError", doc: nil, fn: PyMemoryError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "MemoryError", doc: nil, fn: PyMemoryError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyMemoryError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyMemoryError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2069,8 +2069,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyModuleNotFoundError.getDict, castSelf: Cast.asPyModuleNotFoundError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ModuleNotFoundError", doc: nil, fn: PyModuleNotFoundError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ModuleNotFoundError", doc: nil, fn: PyModuleNotFoundError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyModuleNotFoundError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyModuleNotFoundError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2088,8 +2088,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyNameError.getDict, castSelf: Cast.asPyNameError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "NameError", doc: nil, fn: PyNameError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "NameError", doc: nil, fn: PyNameError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNameError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNameError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2107,8 +2107,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotADirectoryError.getDict, castSelf: Cast.asPyNotADirectoryError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "NotADirectoryError", doc: nil, fn: PyNotADirectoryError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "NotADirectoryError", doc: nil, fn: PyNotADirectoryError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNotADirectoryError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNotADirectoryError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2126,8 +2126,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotImplementedError.getDict, castSelf: Cast.asPyNotImplementedError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "NotImplementedError", doc: nil, fn: PyNotImplementedError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "NotImplementedError", doc: nil, fn: PyNotImplementedError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNotImplementedError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNotImplementedError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2145,8 +2145,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyOSError.getDict, castSelf: Cast.asPyOSError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "OSError", doc: nil, fn: PyOSError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "OSError", doc: nil, fn: PyOSError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyOSError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyOSError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2164,8 +2164,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyOverflowError.getDict, castSelf: Cast.asPyOverflowError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "OverflowError", doc: nil, fn: PyOverflowError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "OverflowError", doc: nil, fn: PyOverflowError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyOverflowError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyOverflowError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2183,8 +2183,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyPendingDeprecationWarning.getDict, castSelf: Cast.asPyPendingDeprecationWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "PendingDeprecationWarning", doc: nil, fn: PyPendingDeprecationWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "PendingDeprecationWarning", doc: nil, fn: PyPendingDeprecationWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyPendingDeprecationWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyPendingDeprecationWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2202,8 +2202,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyPermissionError.getDict, castSelf: Cast.asPyPermissionError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "PermissionError", doc: nil, fn: PyPermissionError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "PermissionError", doc: nil, fn: PyPermissionError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyPermissionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyPermissionError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2221,8 +2221,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyProcessLookupError.getDict, castSelf: Cast.asPyProcessLookupError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ProcessLookupError", doc: nil, fn: PyProcessLookupError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ProcessLookupError", doc: nil, fn: PyProcessLookupError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyProcessLookupError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyProcessLookupError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2240,8 +2240,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyRecursionError.getDict, castSelf: Cast.asPyRecursionError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "RecursionError", doc: nil, fn: PyRecursionError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "RecursionError", doc: nil, fn: PyRecursionError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRecursionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRecursionError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2259,8 +2259,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyReferenceError.getDict, castSelf: Cast.asPyReferenceError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ReferenceError", doc: nil, fn: PyReferenceError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ReferenceError", doc: nil, fn: PyReferenceError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyReferenceError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyReferenceError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2278,8 +2278,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyResourceWarning.getDict, castSelf: Cast.asPyResourceWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ResourceWarning", doc: nil, fn: PyResourceWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ResourceWarning", doc: nil, fn: PyResourceWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyResourceWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyResourceWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2297,8 +2297,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeError.getDict, castSelf: Cast.asPyRuntimeError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "RuntimeError", doc: nil, fn: PyRuntimeError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "RuntimeError", doc: nil, fn: PyRuntimeError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRuntimeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRuntimeError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2316,8 +2316,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeWarning.getDict, castSelf: Cast.asPyRuntimeWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "RuntimeWarning", doc: nil, fn: PyRuntimeWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "RuntimeWarning", doc: nil, fn: PyRuntimeWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRuntimeWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyRuntimeWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2335,8 +2335,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopAsyncIteration.getDict, castSelf: Cast.asPyStopAsyncIteration)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "StopAsyncIteration", doc: nil, fn: PyStopAsyncIteration.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "StopAsyncIteration", doc: nil, fn: PyStopAsyncIteration.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyStopAsyncIteration.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStopAsyncIteration.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2354,8 +2354,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopIteration.getDict, castSelf: Cast.asPyStopIteration)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "StopIteration", doc: nil, fn: PyStopIteration.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "StopIteration", doc: nil, fn: PyStopIteration.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyStopIteration.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStopIteration.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2373,8 +2373,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxError.getDict, castSelf: Cast.asPySyntaxError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "SyntaxError", doc: nil, fn: PySyntaxError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "SyntaxError", doc: nil, fn: PySyntaxError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySyntaxError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2392,8 +2392,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxWarning.getDict, castSelf: Cast.asPySyntaxWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "SyntaxWarning", doc: nil, fn: PySyntaxWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "SyntaxWarning", doc: nil, fn: PySyntaxWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySyntaxWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySyntaxWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2411,8 +2411,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemError.getDict, castSelf: Cast.asPySystemError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "SystemError", doc: nil, fn: PySystemError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "SystemError", doc: nil, fn: PySystemError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySystemError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySystemError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2430,8 +2430,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemExit.getDict, castSelf: Cast.asPySystemExit)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "SystemExit", doc: nil, fn: PySystemExit.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "SystemExit", doc: nil, fn: PySystemExit.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySystemExit.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySystemExit.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2449,8 +2449,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyTabError.getDict, castSelf: Cast.asPyTabError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "TabError", doc: nil, fn: PyTabError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "TabError", doc: nil, fn: PyTabError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTabError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTabError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2468,8 +2468,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyTimeoutError.getDict, castSelf: Cast.asPyTimeoutError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "TimeoutError", doc: nil, fn: PyTimeoutError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "TimeoutError", doc: nil, fn: PyTimeoutError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTimeoutError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTimeoutError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2487,8 +2487,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyTypeError.getDict, castSelf: Cast.asPyTypeError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "TypeError", doc: nil, fn: PyTypeError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "TypeError", doc: nil, fn: PyTypeError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTypeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyTypeError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2506,8 +2506,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnboundLocalError.getDict, castSelf: Cast.asPyUnboundLocalError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "UnboundLocalError", doc: nil, fn: PyUnboundLocalError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "UnboundLocalError", doc: nil, fn: PyUnboundLocalError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnboundLocalError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnboundLocalError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2525,8 +2525,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeDecodeError.getDict, castSelf: Cast.asPyUnicodeDecodeError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "UnicodeDecodeError", doc: nil, fn: PyUnicodeDecodeError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "UnicodeDecodeError", doc: nil, fn: PyUnicodeDecodeError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeDecodeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeDecodeError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2544,8 +2544,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeEncodeError.getDict, castSelf: Cast.asPyUnicodeEncodeError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "UnicodeEncodeError", doc: nil, fn: PyUnicodeEncodeError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "UnicodeEncodeError", doc: nil, fn: PyUnicodeEncodeError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeEncodeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeEncodeError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2563,8 +2563,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeError.getDict, castSelf: Cast.asPyUnicodeError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "UnicodeError", doc: nil, fn: PyUnicodeError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "UnicodeError", doc: nil, fn: PyUnicodeError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2582,8 +2582,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeTranslateError.getDict, castSelf: Cast.asPyUnicodeTranslateError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "UnicodeTranslateError", doc: nil, fn: PyUnicodeTranslateError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "UnicodeTranslateError", doc: nil, fn: PyUnicodeTranslateError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeTranslateError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeTranslateError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2601,8 +2601,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeWarning.getDict, castSelf: Cast.asPyUnicodeWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "UnicodeWarning", doc: nil, fn: PyUnicodeWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "UnicodeWarning", doc: nil, fn: PyUnicodeWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUnicodeWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUnicodeWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2620,8 +2620,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyUserWarning.getDict, castSelf: Cast.asPyUserWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "UserWarning", doc: nil, fn: PyUserWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "UserWarning", doc: nil, fn: PyUserWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyUserWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyUserWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2639,8 +2639,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyValueError.getDict, castSelf: Cast.asPyValueError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ValueError", doc: nil, fn: PyValueError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ValueError", doc: nil, fn: PyValueError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyValueError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyValueError.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2658,8 +2658,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyWarning.getDict, castSelf: Cast.asPyWarning)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "Warning", doc: nil, fn: PyWarning.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "Warning", doc: nil, fn: PyWarning.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyWarning.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyWarning.pyInit(zelf:args:kwargs:))
 
   }
 
@@ -2677,8 +2677,8 @@ internal enum FillTypes {
     dict["__dict__"] = PyProperty.wrap(name: "__dict__", doc: nil, get: PyZeroDivisionError.getDict, castSelf: Cast.asPyZeroDivisionError)
 
 
-    dict["__new__"] = PyBuiltinFunction.wrapNew(typeName: "ZeroDivisionError", doc: nil, fn: PyZeroDivisionError.pyNew(type:args:kwargs:))
-    dict["__init__"] = PyBuiltinFunction.wrapInit(typeName: "ZeroDivisionError", doc: nil, fn: PyZeroDivisionError.pyInit(zelf:args:kwargs:))
+    dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyZeroDivisionError.pyNew(type:args:kwargs:))
+    dict["__init__"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyZeroDivisionError.pyInit(zelf:args:kwargs:))
 
   }
 }
