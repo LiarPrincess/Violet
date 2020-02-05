@@ -337,27 +337,18 @@ extension CodeObject {
   // MARK: - Helpers - get
 
   private func getConstant(_ index: Int) -> String {
-    guard index < self.constants.count else {
-      return "INDEX_OUT_OF_RANGE: \(index)"
-    }
-
+    assert(0 <= index && index < self.constants.count)
     let constant = self.constants[index]
     return self.toString(constant)
   }
 
   private func getName(_ index: Int) -> String {
-    guard index < self.name.count else {
-      return "INDEX_OUT_OF_RANGE: \(index)"
-    }
-
+    assert(0 <= index && index < self.names.count)
     return self.names[index]
   }
 
   private func getLabel(_ index: Int) -> String {
-    guard index < self.labels.count else {
-      return "INDEX_OUT_OF_RANGE: \(index)"
-    }
-
+    assert(0 <= index && index < self.labels.count)
     let address = Instruction.byteSize * self.labels[Int(index)]
     return String(describing: address)
   }
