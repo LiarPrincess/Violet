@@ -8,7 +8,8 @@ extension Frame {
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `delta` points to the first except block.
   internal func setupExcept(firstExceptLabelIndex: Int) -> InstructionResult {
-    let type = BlockType.setupExcept(firstExceptLabelIndex: firstExceptLabelIndex)
+    let label = self.getLabel(index: firstExceptLabelIndex)
+    let type = BlockType.setupExcept(firstExceptLabel: label)
     let block = Block(type: type, level: self.stackLevel)
     self.blocks.push(block: block)
     return .ok
@@ -17,7 +18,8 @@ extension Frame {
   /// Pushes a try block from a try-except clause onto the block stack.
   /// `delta` points to the finally block.
   internal func setupFinally(finallyStartLabelIndex: Int) -> InstructionResult {
-    let type = BlockType.setupFinally(finallyStartLabelIndex: finallyStartLabelIndex)
+    let label = self.getLabel(index: finallyStartLabelIndex)
+    let type = BlockType.setupFinally(finallyStartLabel: label)
     let block = Block(type: type, level: self.stackLevel)
     self.blocks.push(block: block)
     return .ok

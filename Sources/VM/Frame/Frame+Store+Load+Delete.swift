@@ -7,7 +7,7 @@ extension Frame {
 
   /// Pushes constant pointed by `index` onto the stack.
   internal func loadConst(index: Int) -> InstructionResult {
-    let value = self.code.constants[index]
+    let value = self.getConstant(index: index)
     let object = self.toObject(value)
     self.stack.push(object)
     return .ok
@@ -35,7 +35,7 @@ extension Frame {
 
   /// Implements `name = TOS`.
   internal func storeName(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
     let value = self.stack.pop()
     self.localSymbols[name] = value
     return .ok
@@ -43,7 +43,7 @@ extension Frame {
 
   /// Pushes the value associated with `name` onto the stack.
   internal func loadName(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
 
     if let local = self.localSymbols[name] {
       self.stack.push(local)
@@ -65,7 +65,7 @@ extension Frame {
 
   /// Implements `del name`.
   internal func deleteName(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
     let value = self.localSymbols.del(key: name)
 
     if value == nil {
@@ -79,7 +79,7 @@ extension Frame {
 
   /// Implements `TOS.name = TOS1`.
   internal func storeAttribute(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
     let object = self.stack.pop()
     let value = self.stack.pop()
 
@@ -93,7 +93,7 @@ extension Frame {
 
   /// Replaces TOS with `getAttr(TOS, name)`.
   internal func loadAttribute(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
     let object = self.stack.top
 
     switch Py.getAttribute(object, name: name) {
@@ -107,7 +107,7 @@ extension Frame {
 
   /// Implements `del TOS.name`.
   internal func deleteAttribute(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
     let object = self.stack.pop()
 
     switch Py.deleteAttribute(object, name: name) {
@@ -165,7 +165,7 @@ extension Frame {
 
   /// Works as StoreName, but stores the name as a global.
   internal func storeGlobal(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
     let value = self.stack.pop()
     self.globalSymbols[name] = value
     return .ok
@@ -173,7 +173,7 @@ extension Frame {
 
   /// Loads the global named `name` onto the stack.
   internal func loadGlobal(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
 
     if let global = self.globalSymbols[name] {
       self.stack.push(global)
@@ -190,7 +190,7 @@ extension Frame {
 
   /// Works as DeleteName, but deletes a global name.
   internal func deleteGlobal(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
     let value = self.globalSymbols.del(key: name)
 
     if value == nil {

@@ -82,14 +82,14 @@ extension Frame {
 
   private func popJumpIf(_ cond: Bool, to labelIndex: Int) {
     if cond {
-      let label = self.code.labels[labelIndex]
+      let label = self.getLabel(index: labelIndex)
       self.jumpTo(label: label)
     }
   }
 
   private func jumpIfOrPop(_ cond: Bool, to labelIndex: Int) {
     if cond {
-      let label = self.code.labels[labelIndex]
+      let label = self.getLabel(index: labelIndex)
       self.jumpTo(label: label)
     } else {
       _ = self.stack.pop()

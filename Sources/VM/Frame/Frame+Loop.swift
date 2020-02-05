@@ -8,7 +8,8 @@ extension Frame {
   /// Pushes a block for a loop onto the block stack.
   /// The block spans from the current instruction up until `loopEndLabel`.
   internal func setupLoop(loopEndLabelIndex: Int) -> InstructionResult {
-    let type = BlockType.setupLoop(endLabelIndex: loopEndLabelIndex)
+    let label = self.getLabel(index: loopEndLabelIndex)
+    let type = BlockType.setupLoop(endLabel: label)
     let block = Block(type: type, level: self.stackLevel)
     self.blocks.push(block: block)
     return .ok

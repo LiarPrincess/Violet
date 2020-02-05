@@ -94,6 +94,16 @@ internal final class Frame {
     return self.stack.count
   }
 
+  internal func getName(index: Int) -> String {
+    assert(0 <= index && index < self.code.names.count)
+    return self.code.names[index]
+  }
+
+  internal func getConstant(index: Int) -> Constant {
+    assert(0 <= index && index < self.code.constants.count)
+    return self.code.constants[index]
+  }
+
   internal func getLabel(index: Int) -> Int {
     assert(0 <= index && index < self.code.labels.count)
     return self.code.labels[index]

@@ -149,7 +149,7 @@ extension Frame {
   /// TOS will be used as the first argument (self) by `CallMethod`.
   /// Otherwise, NULL and method is pushed (method is bound method or something else).
   internal func loadMethod(nameIndex: Int) -> InstructionResult {
-    let name = self.code.names[nameIndex]
+    let name = self.getName(index: nameIndex)
     let object = self.stack.top
 
     switch Py.getMethod(object: object, selector: name) {
