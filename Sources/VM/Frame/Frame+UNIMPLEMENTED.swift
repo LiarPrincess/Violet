@@ -144,7 +144,7 @@ extension Frame {
   /// Loads the cell contained in slot i of the cell and free variable storage.
   /// Pushes a reference to the object the cell contains on the stack.
   internal func loadDeref(nameIndex: Int) -> InstructionResult {
-//    let name = self.code.names[nameIndex]
+//    let name = self.getName(index: nameIndex)
 //    if let value = self.freeVariables[name] {
 //      self.stack.push(value)
 //      return .ok
@@ -157,7 +157,7 @@ extension Frame {
   /// Stores TOS into the cell contained in slot i of the cell
   /// and free variable storage.
   internal func storeDeref(nameIndex: Int) -> InstructionResult {
-//    let name = self.code.names[nameIndex]
+//    let name = self.getName(index: nameIndex)
 //    let value = self.stack.pop()
 //    self.freeVariables[name] = value
     return self.unimplemented()
@@ -166,7 +166,7 @@ extension Frame {
   /// Empties the cell contained in slot i of the cell and free variable storage.
   /// Used by the del statement.
   internal func deleteDeref(nameIndex: Int) -> InstructionResult {
-//    let name = self.code.names[nameIndex]
+//    let name = self.getName(index: nameIndex)
 //    let value = self.freeVariables.removeValue(forKey: name)
 //
 //    if value == nil {
