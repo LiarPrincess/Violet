@@ -3,6 +3,12 @@ import Objects
 /// In CPython part of `PyThreadState`.
 internal struct ExceptionStack {
 
+  /// Exception currently being handled.
+  ///
+  /// CPython: `_PyErr_StackItem *exc_info`
+  internal var current: PyBaseException?
+
+/*
   /// Exceptions currently being handled.
   ///
   /// CPython: `_PyErr_StackItem *exc_info`
@@ -32,7 +38,8 @@ internal struct ExceptionStack {
 
     // No value -> no problem
     guard let valueObject = valueObject else {
-      return self.push(type: type, value: nil)
+      return Py.newException(type: type, value: nil)
+        .flatMap { self.push(type: type, value: $0) }
     }
 
     // Is it already exception -> pass it
@@ -41,7 +48,7 @@ internal struct ExceptionStack {
       return self.push(type: type, value: e)
     }
 
-    // Not exception -> wrap it
+    // Not exception -> wrap
     return Py.newException(type: type, value: valueObject)
       .flatMap { self.push(type: type, value: $0) }
   }
@@ -87,4 +94,5 @@ internal struct ExceptionStack {
       o = context
     }
   }
+*/
 }

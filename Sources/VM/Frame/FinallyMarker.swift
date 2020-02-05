@@ -36,6 +36,19 @@ internal enum FinallyMarker {
   }
 
   /// Remember what we were doing before we started `finally` block.
+  internal static func push(reason: UnwindReason, on stack: inout ObjectStack) {
+    let marker: FinallyMarker.Push = {
+      switch reason {
+      case .return(let value): return .return(value)
+      case .break: return .break
+      case .exception(let e): return .exception(e)
+      }
+    }()
+
+    FinallyMarker.push(marker, on: &stack)
+  }
+
+  /// Remember what we were doing before we started `finally` block.
   internal static func push(_ value: Push, on stack: inout ObjectStack) {
     switch value {
     case .return(let o):

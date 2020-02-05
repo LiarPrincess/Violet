@@ -166,30 +166,36 @@ extension BuiltinFunctions {
                          selector: String,
                          args: [PyObject] = [],
                          kwargs: PyDictData? = nil) -> CallMethodResult {
-    let method: PyObject
+    var method: PyObject
     switch self.getMethod(object: object, selector: selector) {
     case let .value(m): method = m
     case let .error(e): return .missingMethod(e)
     }
 
-    var realArgs = args
+    // If 'self' was not bound/captured we will manually do it.
+    // We could also prepend 'object' to 'args' but this would do more allocations.
+    //
+    // In CPython:
+    // - slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
+    // - lookup_maybe_method(PyObject *self, _Py_Identifier *attrid...)
+    //
+    // Examples:
+    // >>> o1 = int.__add__ # type attribute -> unbound function
+    // >>> o1(1,2)
+    // 3
+    // >>> o2 = (1).__add__ # object attribute -> bound method
+    // >>> o2(1)
+    // 2
 
-    // 'bound' means that method already captured 'self' reference
-    let isUnbound = method is PyBuiltinFunction || method is PyFunction
-    if isUnbound {
-      // Basically if 'self' was not bound we will add it as a 1st arg.
-      // >>> o1 = int.__add__ # type attribute -> unbound function
-      // >>> o1(1,2)
-      // 3
-      // >>> o2 = (1).__add__ # object attribute -> bound method
-      // >>> o2(1)
-      // 2
-      // CPython: slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
-      //          lookup_maybe_method(PyObject *self, _Py_Identifier *attrid...)
-      realArgs = [object] + args
+    if let fn = method as? PyBuiltinFunction {
+      method = fn.bind(to: object)
     }
 
-    switch self.call(callable: method, args: realArgs, kwargs: kwargs) {
+    if let fn = method as? PyFunction {
+      method = fn.bind(to: object)
+    }
+
+    switch self.call(callable: method, args: args, kwargs: kwargs) {
     case .value(let result):
       return .value(result)
     case .notCallable:

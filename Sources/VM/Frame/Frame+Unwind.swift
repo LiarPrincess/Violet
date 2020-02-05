@@ -37,48 +37,49 @@ extension Frame {
 
   // MARK: - Unwind
 
-  /// Unwind stacks if a exception occurred.
+  /// Unwind stack if a return/exception/etc. occurred.
   ///
   /// CPython: fast_block_end:
   internal func unwind(reason: UnwindReason) -> UnwindResult {
+    // swiftlint:disable:previous function_body_length
+
     while let block = self.blocks.pop() {
-      // Order is roughly the same order as in CPython.
+      // Order is roughly the same as in CPython.
       switch block.type {
       case .exceptHandler:
         self.unwindExceptHandler(block: block)
 
       // From now on every case has to start with 'self.unwindBlock'
 
-      case let .setupLoop(endLabelIndex):
+      case let .setupLoop(endLabel):
         self.unwindBlock(block: block)
 
         if case .break = reason {
-          self.jumpTo(labelIndex: endLabelIndex)
+          self.jumpTo(label: endLabel)
           return .ok
         }
 
-      case let .setupExcept(firstExceptLabelIndex):
+      case let .setupExcept(firstExceptLabel):
         self.unwindBlock(block: block)
 
         if case let .exception(e) = reason {
-          self.saveCurrentExceptionOnStack(newException: e)
-          self.jumpTo(labelIndex: firstExceptLabelIndex)
+          self.startExceptHandler(exception: e)
+          self.jumpTo(label: firstExceptLabel) // execute except
           return .ok
         }
 
-      case let .setupFinally(finallyStartLabelIndex):
+      case let .setupFinally(finallyStartLabel):
         self.unwindBlock(block: block)
 
-        // If it is an exception
         if case let .exception(e) = reason {
-          self.saveCurrentExceptionOnStack(newException: e)
-          self.jumpTo(labelIndex: finallyStartLabelIndex) // execute finally
+          self.startExceptHandler(exception: e)
+          self.jumpTo(label: finallyStartLabel) // execute finally
           return .ok
         }
 
         // See 'FinallyMarker' type for comment about what this is.
-        self.pushFinallyMarker(reason: reason)
-        self.jumpTo(labelIndex: finallyStartLabelIndex) // execute finally
+        FinallyMarker.push(reason: reason, on: &self.stack)
+        self.jumpTo(label: finallyStartLabel) // execute finally
         return .ok
       }
     }
@@ -93,27 +94,17 @@ extension Frame {
     }
   }
 
-  private func saveCurrentExceptionOnStack(newException: PyBaseException) {
+  private func startExceptHandler(exception: PyBaseException) {
     let exceptHandler = Block(type: .exceptHandler, level: self.stackLevel)
     self.blocks.push(block: exceptHandler)
 
-    if let current = self.exceptions.current {
-      self.stack.push(current)
-    }
+    // Remember 'current' on stack
+    let current = self.exceptions.current
+    PushExceptionHelper.push(current, on: &self.stack)
 
-    self.stack.push(newException)
-  }
-
-  private func pushFinallyMarker(reason: UnwindReason) {
-    let marker: FinallyMarker.Push = {
-      switch reason {
-      case .return(let value): return .return(value)
-      case .break: return .break
-      case .exception(let e): return .exception(e)
-      }
-    }()
-
-    FinallyMarker.push(marker, on: &self.stack)
+    // Make 'exception' current
+    self.exceptions.current = exception
+    self.stack.push(exception)
   }
 
   /// \#define UNWIND_BLOCK(b)
@@ -122,14 +113,25 @@ extension Frame {
   }
 
   /// \#define UNWIND_EXCEPT_HANDLER(b)
+  ///
+  /// Basically restore exception that was `current` when we entered
+  /// `self.startExceptHandler`.
   internal func unwindExceptHandler(block: Block) {
     let stackCountIncludingException = block.level + 1
     assert(self.stack.count >= stackCountIncludingException)
 
     self.stack.pop(untilCount: stackCountIncludingException)
 
-    let exception = self.stack.pop()
-    assert(exception is PyBaseException)
+    // Pop new 'current' exception
+    switch PushExceptionHelper.pop(from: &self.stack) {
+    case .exception(let e):
+      self.exceptions.current = e
+    case .noException:
+      self.exceptions.current = nil
+    case .invalidValue(let o):
+      assert(false, "Expected to pop exception (or None), but popped '\(o)'.")
+    }
+
     assert(self.stack.count == block.level)
   }
 }
