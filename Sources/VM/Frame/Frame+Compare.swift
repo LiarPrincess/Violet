@@ -8,9 +8,12 @@ extension Frame {
     let right = self.stack.pop()
     let left = self.stack.top
 
-    switch self.compare(left: left, right: right, comparison: comparison) {
-    case let .value(result):
-      self.stack.top = result
+    let result = self.compare(left: left, right: right, comparison: comparison)
+    Debug.compare(a: left, b: right, op: comparison, result: result)
+
+    switch result {
+    case let .value(o):
+      self.stack.top = o
       return .ok
     case let .error(e):
       return .error(e)
@@ -40,10 +43,12 @@ extension Frame {
       let result = Py.is(left: left, right: right)
       return .value(Py.newBool(!result))
     case .in:
-      let result = Py.contains(iterable: left, element: right)
+      // Iterable is on the right! For example: '1 in { 1, 2, 3 }'
+      let result = Py.contains(iterable: right, element: left)
       return result.map(Py.newBool)
     case .notIn:
-      let result = Py.contains(iterable: left, element: right)
+      // Iterable is on the right! For example: '1 in { 1, 2, 3 }'
+      let result = Py.contains(iterable: right, element: left)
       return result.map { !$0 }.map(Py.newBool)
     case .exceptionMatch:
       return self.exceptionMatch(left: left, right: right)

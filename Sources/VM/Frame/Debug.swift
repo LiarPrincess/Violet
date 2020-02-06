@@ -12,6 +12,19 @@ internal enum Debug {
     print(code.dumpInstruction(instruction, extendedArg: extendedArg))
   }
 
+  // MARK: - Compare
+
+  internal static func compare(a: PyObject,
+                               b: PyObject,
+                               op: ComparisonOpcode,
+                               result: PyResult<PyObject>) {
+    guard isEnabled else { return }
+    print("  a:", a)
+    print("  b:", b)
+    print("  op:", op)
+    print("  result:", result)
+  }
+
   // MARK: - Function/method
 
   internal static func callFunction(fn: PyObject,
