@@ -78,11 +78,8 @@ public class PyModule: PyObject {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    guard let str = name as? PyString else {
-      return .typeError("attribute name must be string, not '\(name.typeName)'")
-    }
-
-    return self.getAttribute(name: str.value, pyName: str)
+    return AttributeHelper.extractName(name)
+      .flatMap(self.getAttribute(name:))
   }
 
   internal func getAttribute(name: String) -> PyResult<PyObject> {

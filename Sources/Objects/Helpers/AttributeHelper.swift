@@ -11,11 +11,9 @@ internal enum AttributeHelper {
   ///                                  int suppress)
   internal static func getAttribute(from object: PyObject,
                                     name: PyObject) -> PyResult<PyObject> {
-    guard let nameString = name as? PyString else {
-      return .error(AttributeHelper.nameTypeError(name: name))
+    return AttributeHelper.extractName(name).flatMap {
+      AttributeHelper.getAttribute(from: object, name: $0)
     }
-
-    return getAttribute(from: object, name: nameString.value)
   }
 
   internal static func getAttribute(from object: PyObject,
@@ -35,7 +33,8 @@ internal enum AttributeHelper {
       return descr.call()
     }
 
-    return .error(attributeError(object: object, name: name))
+    let msg = "\(object.typeName) object has no attribute '\(name)'"
+    return .attributeError(msg)
   }
 
   // MARK: - Set
@@ -50,11 +49,9 @@ internal enum AttributeHelper {
   internal static func setAttribute(on object: PyObject,
                                     name: PyObject,
                                     to value: PyObject?) -> PyResult<PyNone> {
-    guard let nameString = name as? PyString else {
-      return .error(AttributeHelper.nameTypeError(name: name))
+    return AttributeHelper.extractName(name).flatMap {
+      AttributeHelper.setAttribute(on: object, name: $0, to: value)
     }
-
-    return setAttribute(on: object, name: nameString.value, to: value)
   }
 
   internal static func setAttribute(on object: PyObject,
@@ -90,7 +87,9 @@ internal enum AttributeHelper {
   /// Basically: `AttributeHelper.setAttribute` with `None` as value
   internal static func delAttribute(on object: PyObject,
                                     name: PyObject) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(on: object, name: name, to: nil)
+    return AttributeHelper.extractName(name).flatMap {
+      AttributeHelper.delAttribute(on: object, name: $0)
+    }
   }
 
   internal static func delAttribute(on object: PyObject,
@@ -98,16 +97,14 @@ internal enum AttributeHelper {
     return AttributeHelper.setAttribute(on: object, name: name, to: nil)
   }
 
-  // MARK: - Errors
+  // MARK: - Extract name
 
-  internal static func attributeError(object: PyObject,
-                                      name: String) -> PyBaseException {
-    let msg = "\(object.typeName) object has no attribute '\(name)'"
-    return Py.newAttributeError(msg: msg)
-  }
+  internal static func extractName(_ object: PyObject) -> PyResult<String> {
+    guard let string = object as? PyString else {
+      let msg = "attribute name must be string, not '\(object.typeName)'"
+      return .typeError(msg)
+    }
 
-  internal static func nameTypeError(name: PyObject) -> PyBaseException {
-    let msg = "attribute name must be string, not '\(name.typeName)'"
-    return Py.newTypeError(msg: msg)
+    return .value(string.value)
   }
 }

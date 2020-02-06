@@ -440,11 +440,8 @@ public class PyType: PyObject {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    guard let nameString = name as? PyString else {
-      return .typeError("attribute name must be string, not '\(name.typeName)'")
-    }
-
-    return self.getAttribute(name: nameString.value)
+    return AttributeHelper.extractName(name)
+      .flatMap(self.getAttribute(name:))
   }
 
   public func getAttribute(name: String) -> PyResult<PyObject> {
@@ -492,11 +489,8 @@ public class PyType: PyObject {
       return .error(error)
     }
 
-    guard let nameString = name as? PyString else {
-      return .error(AttributeHelper.nameTypeError(name: name))
-    }
-
-    return self.setAttribute(name: nameString.value, value: value)
+    return AttributeHelper.extractName(name)
+      .flatMap { self.setAttribute(name: $0, value: value) }
   }
 
   public func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
