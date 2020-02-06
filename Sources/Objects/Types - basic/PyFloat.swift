@@ -428,35 +428,48 @@ public class PyFloat: PyObject {
 
   // MARK: - Round
 
+  /// Round to 'nearest' integer
+  /// Also: 0.5.__round__() == 0
+  private var roundingRule: FloatingPointRoundingRule {
+    return .toNearestOrEven
+  }
+
   // sourcery: pymethod = __round__
   /// Round a Python float v to the closest multiple of 10**-ndigits
   ///
   /// Return the Integral closest to x, rounding half toward even.
   /// When an argument is passed, work like built-in round(x, ndigits).
+  ///
+  /// If `nDigits` is not given or is `None` -> Int.
+  /// Otherwise -> Float.
   internal func round(nDigits: PyObject?) -> PyResult<PyObject> {
-    let nDigits = nDigits ?? Py.none
-
-    var digitCount: BigInt?
+    guard let nDigits = nDigits else {
+      return .value(self.roundToInt())
+    }
 
     if nDigits is PyNone {
-      digitCount = 0
+      return .value(self.roundToInt())
     }
 
-    if let int = nDigits as? PyInt {
-      digitCount = int.value
-    }
-
-    switch digitCount {
-    case .some(0):
-      // round to nearest integer
-      return .value(Py.newFloat(self.value.rounded()))
-    case .some:
-      // TODO: Implement float rounding to arbitrary precision
-      return .value(Py.notImplemented)
-    case .none:
+    guard let nDigitsInt = nDigits as? PyInt else {
       let msg = "'\(nDigits.typeName)' object cannot be interpreted as an integer"
       return .typeError(msg)
     }
+
+    switch nDigitsInt.value {
+    case 0:
+      let rounded = self.value.rounded(self.roundingRule)
+      return .value(Py.newFloat(rounded))
+    default:
+      // TODO: Implement float rounding to arbitrary precision
+      let msg = "Float rounding to arbitrary precision was not yet implemented."
+      return .systemError(msg)
+    }
+  }
+
+  internal func roundToInt() -> PyInt {
+    let rounded = self.value.rounded(self.roundingRule)
+    return Py.newInt(BigInt(rounded))
   }
 
   // MARK: - Trunc
@@ -505,14 +518,51 @@ public class PyFloat: PyObject {
     }
 
     let arg0 = args[0]
-    if let str = arg0 as? PyString {
-      guard let value = Double(str.value) else {
-        return .valueError("float() '\(str.value)' cannot be interpreted as float")
-      }
-      return .value(alloca(type, value))
+    switch PyFloat.parseDouble(string: arg0) {
+    case .value(let d): return .value(alloca(type, d))
+    case .notString: break
+    case .error(let e): return .error(e)
     }
 
     return PyFloat.extractDouble(arg0).map { alloca(type, $0) }
+  }
+
+  private enum DoubleFromString {
+    case value(Double)
+    case notString
+    case error(PyBaseException)
+  }
+
+  private static func parseDouble(string object: PyObject) -> DoubleFromString {
+    if let str = object as? PyString {
+      guard let value = PyFloat.parseDouble(string: str.value) else {
+        let msg = "float() '\(str.value)' cannot be interpreted as float"
+        return .error(Py.newValueError(msg: msg))
+      }
+      return .value(value)
+    }
+
+    if let bytes = object as? PyBytesType {
+      guard let string = bytes.data.string else {
+        let msg = "float() bytes '\(bytes.ptrString)' cannot be interpreted as str"
+        return .error(Py.newValueError(msg: msg))
+      }
+
+      if let value = PyFloat.parseDouble(string: string) {
+        return .value(value)
+      }
+
+      let msg = "float() '\(string)' cannot be interpreted as float"
+      return .error(Py.newValueError(msg: msg))
+    }
+
+    return .notString
+  }
+
+  private static func parseDouble(string: String) -> Double? {
+    var input = string
+    input.removeAll { $0.isWhitespace || $0 == "_" }
+    return Double(input)
   }
 
   /// PyObject *
@@ -560,6 +610,8 @@ public class PyFloat: PyObject {
     }
 
     if let pyInt = object as? PyInt {
+      // This will not work in a looooot of the cases.
+      // But in most of the cases it will, so we will do it anyway.
       return Double(pyInt.value)
     }
 

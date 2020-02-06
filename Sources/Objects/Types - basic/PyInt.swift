@@ -756,7 +756,8 @@ public class PyInt: PyObject {
     }
 
     // TODO: Implement int rounding to arbitrary precision
-    return .value(Py.notImplemented)
+    let msg = "Int rounding to arbitrary precision was not yet implemented."
+    return .systemError(msg)
   }
 
   // MARK: - Python new
