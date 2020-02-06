@@ -56,30 +56,42 @@ public class Parser {
     // Consuming 'EOF' should not be a thing.
     assert(self.peek.kind != .eof)
 
-    repeat {
-      self.peek = self.peekNext
-      self.peekNext = try self.lexer.getToken()
-    } while self.isComment(self.peek)
+    // We know that 'self.peekNext' is not a comment
+    // because we used 'self.getNextNonCommentToken'
+    self.peek = self.peekNext
+    self.peekNext = try self.getNextNonCommentToken()
 
     return self.peek
   }
 
   private func populatePeeks() throws {
-    let first = try self.lexer.getToken()
+    self.peek = try self.getNextToken()
 
-    if case TokenKind.eof = first.kind {
-      self.peek = first
-      self.peekNext = first
+    // Advance 'self.peek' until first not comment or new line
+    while self.isComment(self.peek) || self.isNewLine(self.peek) {
+      self.peek = try self.getNextToken()
+    }
+
+    // If we have empty source -> both eof
+    if case TokenKind.eof = self.peek.kind {
+      self.peekNext = self.peek
       return
     }
 
-    self.peek = first
-    self.peekNext = try self.lexer.getToken() // 2nd token in file
+    self.peekNext = try self.getNextNonCommentToken()
+  }
 
-    while self.isComment(self.peek) || self.isNewLine(self.peek) {
-      self.peek = self.peekNext
-      self.peekNext = try self.lexer.getToken()
+  private func getNextNonCommentToken() throws -> Token {
+    var result = try self.getNextToken()
+    while self.isComment(result) {
+      result = try self.getNextToken()
     }
+
+    return result
+  }
+
+  private func getNextToken() throws -> Token {
+    return try self.lexer.getToken()
   }
 
   private func isComment(_ token: Token) -> Bool {
