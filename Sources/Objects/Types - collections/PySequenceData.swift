@@ -129,34 +129,6 @@ internal struct PySequenceData {
     return .value(x + 97_531)
   }
 
-  // MARK: - String
-
-  internal func repr(openBrace: String,
-                     closeBrace: String) -> PyResult<String> {
-    if self.isEmpty {
-      return .value(openBrace + closeBrace) // '[]'
-    }
-
-    var result = openBrace // start with '['
-    for (index, element) in self.elements.enumerated() {
-      if index > 0 {
-        result += ", " // so that we don't have ', )'.
-      }
-
-      switch Py.repr(element) {
-      case let .value(s): result += s
-      case let .error(e): return .error(e)
-      }
-    }
-
-    if self.count > 1 {
-      result += ","
-    }
-
-    result += closeBrace
-    return .value(result)
-  }
-
   // MARK: - Length
 
   internal var isEmpty: Bool {

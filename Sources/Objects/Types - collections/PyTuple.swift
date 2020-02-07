@@ -111,8 +111,33 @@ public class PyTuple: PyObject, PySequenceType {
     }
 
     return self.withReprLock {
-      self.data.repr(openBrace: "(", closeBrace: ")")
+      self.reprInner()
     }
+  }
+
+  private func reprInner() -> PyResult<String> {
+    if self.data.isEmpty {
+      return .value("()")
+    }
+
+    var result = "("
+    for (index, element) in self.elements.enumerated() {
+      if index > 0 {
+        result += ", " // so that we don't have ', )'.
+      }
+
+      switch Py.repr(element) {
+      case let .value(s): result += s
+      case let .error(e): return .error(e)
+      }
+    }
+
+    if self.data.count == 1 {
+      result += ","
+    }
+
+    result += ")"
+    return .value(result)
   }
 
   // MARK: - Attributes

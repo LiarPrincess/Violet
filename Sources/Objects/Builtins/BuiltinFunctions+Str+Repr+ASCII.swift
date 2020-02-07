@@ -10,10 +10,6 @@ extension BuiltinFunctions {
   /// repr(object)
   /// See [this](https://docs.python.org/3/library/functions.html#repr)
   public func repr(_ object: PyObject) -> PyResult<String> {
-    if object.hasReprLock {
-      return .value("")
-    }
-
     if let owner = object as? __repr__Owner {
       return owner.repr()
     }
