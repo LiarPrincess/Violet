@@ -379,12 +379,7 @@ internal struct PySequenceData {
 
     // Slow path: iterable
     // Do not modify `self.elements` until we finished iteration.
-    let d = Py.reduce(iterable: iterable, into: [PyObject]()) { acc, object in
-      acc.append(object)
-      return .goToNextElement
-    }
-
-    switch d {
+    switch Py.toArray(iterable: iterable) {
     case let .value(elements):
       self.elements.append(contentsOf: elements)
       return .value(Py.none)

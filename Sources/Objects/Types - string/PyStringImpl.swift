@@ -1652,7 +1652,7 @@ extension PyStringImpl {
     let b = Py.reduce(iterable: iterable, into: Builder()) { builder, object in
       let isFirst = index == 0
       if !isFirst {
-        builder.append(contentsOf: self.scalars)
+        builder.append(contentsOf: self.scalars) // comma in ','.join([1, 2])
       }
 
       guard let string = Self.extractSelf(from: object) else {

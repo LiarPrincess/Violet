@@ -367,6 +367,7 @@ extension BuiltinFunctions {
 
   public func contains(iterable: PyObject,
                        allFrom subset: PyObject) -> PyResult<Bool> {
+    // Iterate 'subset' and check if every element is in 'iterable'.
     return self.reduce(iterable: subset, initial: true) { _, object in
       switch self.contains(iterable: iterable, element: object) {
       case .value(true): return .goToNextElement
@@ -514,6 +515,12 @@ extension BuiltinFunctions {
         return .error(e)
       }
     }
+  }
+
+  // MARK: - Sequence
+
+  public func asSwiftSequence(iterable: PyObject) -> PyResult<PySwiftSequence> {
+    return PySwiftSequence.create(iterable: iterable)
   }
 
   // MARK: - Helpers
