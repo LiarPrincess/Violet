@@ -49,7 +49,7 @@ extension PyObject {
 internal class GetDescriptor {
 
   /// Object on which this descriptor should be called.
-  private let owner: PyObject
+  private let object: PyObject
   /// Descriptor object (the one with get/set/del methods).
   private let descriptor: PyObject
 
@@ -63,15 +63,16 @@ internal class GetDescriptor {
     return self.set != nil
   }
 
-  private init(owner: PyObject, descriptor: PyObject, get: PyObject) {
-    self.owner = owner
+  private init(object: PyObject, descriptor: PyObject, get: PyObject) {
+    self.object = object
     self.descriptor = descriptor
     self.get = get
   }
 
-  internal func call(withOwner: Bool = true) -> PyResult<PyObject> {
-    let owner = withOwner ? self.owner : descriptorStaticMarker
-    let args = [self.descriptor, owner, self.owner.type]
+  /// Most of the time `withObject` set to false means static binding.
+  internal func call(withObject: Bool = true) -> PyResult<PyObject> {
+    let owner = withObject ? self.object : descriptorStaticMarker
+    let args = [self.descriptor, owner, self.object.type]
 
     switch Py.call(callable: self.get, args: args) {
     case .value(let r):
@@ -103,7 +104,7 @@ internal class GetDescriptor {
     }
 
     // We found ourselves a fully functioning descriptor!
-    return GetDescriptor(owner: object, descriptor: attribute, get: get)
+    return GetDescriptor(object: object, descriptor: attribute, get: get)
   }
 }
 
@@ -115,20 +116,20 @@ internal class GetDescriptor {
 internal class SetDescriptor {
 
   /// Object on which this descriptor should be called.
-  private let owner: PyObject
+  private let object: PyObject
   /// Descriptor object (the one with get/set/del methods).
   private let descriptor: PyObject
   /// `__set__` method on `self.descriptor`.
   private var set: PyObject
 
-  private init(owner: PyObject, descriptor: PyObject, set: PyObject) {
-    self.owner = owner
+  private init(object: PyObject, descriptor: PyObject, set: PyObject) {
+    self.object = object
     self.descriptor = descriptor
     self.set = set
   }
 
   internal func call(value: PyObject?) -> PyResult<PyObject> {
-    let args = [self.descriptor, self.owner, value ?? Py.none]
+    let args = [self.descriptor, self.object, value ?? Py.none]
 
     switch Py.call(callable: self.set, args: args) {
     case .value(let r):
@@ -152,6 +153,6 @@ internal class SetDescriptor {
       return nil
     }
 
-    return SetDescriptor(owner: object, descriptor: attribute, set: set)
+    return SetDescriptor(object: object, descriptor: attribute, set: set)
   }
 }

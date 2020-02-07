@@ -464,7 +464,7 @@ public class PyType: PyObject {
         // 'Without owner' means that we will call '__get__' with 'None' object
         // This will result in static binding.
         // For example: 'int.__eq__' will not bind 'self' to any number!
-        return descr.call(withOwner: false)
+        return descr.call(withObject: false)
       }
 
       return .value(attribute)
