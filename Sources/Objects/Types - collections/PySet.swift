@@ -45,11 +45,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
-      return .notImplemented
-    }
-
-    return self.data.isEqual(to: other.data)
+    return self.data.isEqual(to: other)
   }
 
   // sourcery: pymethod = __ne__
@@ -63,38 +59,22 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
-      return .notImplemented
-    }
-
-    return self.data.isLess(than: other.data)
+    return self.data.isLess(than: other)
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
-      return .notImplemented
-    }
-
-    return self.data.isLessEqual(than: other.data)
+    return self.data.isLessEqual(than: other)
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
-      return .notImplemented
-    }
-
-    return self.data.isGreater(than: other.data)
+    return self.data.isGreater(than: other)
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PySetType else {
-      return .notImplemented
-    }
-
-    return self.data.isGreaterEqual(than: other.data)
+    return self.data.isGreaterEqual(than: other)
   }
 
   // MARK: - Hashable
@@ -153,11 +133,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = __and__
   internal func and(_ other: PyObject) -> PyResult<PyObject> {
-    guard let otherSet = other as? PySetType else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.data.and(other: otherSet.data).map(self.createSet(data:))
+    return self.createSet(result: self.data.and(other: other))
   }
 
   // sourcery: pymethod = __rand__
@@ -169,11 +145,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = __or__
   internal func or(_ other: PyObject) -> PyResult<PyObject> {
-    guard let otherSet = other as? PySetType else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.data.or(other: otherSet.data).map(self.createSet(data:))
+    return self.createSet(result: self.data.or(other: other))
   }
 
   // sourcery: pymethod = __ror__
@@ -185,11 +157,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = __xor__
   internal func xor(_ other: PyObject) -> PyResult<PyObject> {
-    guard let otherSet = other as? PySetType else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.data.xor(other: otherSet.data).map(self.createSet(data:))
+    return self.createSet(result: self.data.xor(other: other))
   }
 
   // sourcery: pymethod = __rxor__
@@ -201,20 +169,12 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = __sub__
   internal func sub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let otherSet = other as? PySetType else {
-      return .value(Py.notImplemented)
-    }
-
-    return self.data.difference(with: otherSet.data).map(self.createSet(data:))
+    return self.createSet(result: self.data.sub(other: other))
   }
 
   // sourcery: pymethod = __rsub__
   internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
-    guard let otherSet = other as? PySetType else {
-      return .value(Py.notImplemented)
-    }
-
-    return otherSet.data.difference(with: self.data).map(self.createSet(data:))
+    return self.createSet(result: self.data.rsub(other: other))
   }
 
   // MARK: - Subset
@@ -225,11 +185,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = issubset, doc = isSubsetDoc
   internal func isSubset(of other: PyObject) -> PyResult<Bool> {
-    guard let otherSet = other as? PySetType else {
-      return .typeError("'\(other.typeName)' object is not iterable")
-    }
-
-    return self.data.isSubset(of: otherSet.data)
+    return self.data.isSubset(of: other)
   }
 
   // MARK: - Superset
@@ -240,11 +196,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = issuperset, doc = isSupersetDoc
   internal func isSuperset(of other: PyObject) -> PyResult<Bool> {
-    guard let otherSet = other as? PySetType else {
-      return .typeError("'\(other.typeName)' object is not iterable")
-    }
-
-    return self.data.isSuperset(of: otherSet.data)
+    return self.data.isSuperset(of: other)
   }
 
   // MARK: - Intersection
@@ -257,12 +209,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = intersection, doc = intersectionDoc
   internal func intersection(with other: PyObject) -> PyResult<PyObject> {
-    guard let otherSet = other as? PySetType else {
-      return .typeError("'\(other.typeName)' object is not iterable")
-    }
-
-    return self.data.intersection(with: otherSet.data)
-      .map(self.createSet(data:))
+    return self.data.intersection(with: other).map(self.createSet(data:))
   }
 
   // MARK: - Union
@@ -275,12 +222,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = union, doc = unionDoc
   internal func union(with other: PyObject) -> PyResult<PyObject> {
-    guard let otherSet = other as? PySetType else {
-      return .typeError("'\(other.typeName)' object is not iterable")
-    }
-
-    return self.data.union(with: otherSet.data)
-      .map(self.createSet(data:))
+    return self.data.union(with: other).map(self.createSet(data:))
   }
 
   // MARK: - Difference
@@ -293,12 +235,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = difference, doc = differenceDoc
   internal func difference(with other: PyObject) -> PyResult<PyObject> {
-    guard let otherSet = other as? PySetType else {
-      return .typeError("'\(other.typeName)' object is not iterable")
-    }
-
-    return self.data.difference(with: otherSet.data)
-      .map(self.createSet(data:))
+    return self.data.difference(with: other).map(self.createSet(data:))
   }
 
   // MARK: - Symmetric difference
@@ -311,12 +248,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = symmetric_difference, doc = symmetricDifferenceDoc
   internal func symmetricDifference(with other: PyObject) -> PyResult<PyObject> {
-    guard let otherSet = other as? PySetType else {
-      return .typeError("'\(other.typeName)' object is not iterable")
-    }
-
-    return self.data.symmetricDifference(with: otherSet.data)
-      .map(self.createSet(data:))
+    return self.data.symmetricDifference(with: other).map(self.createSet(data:))
   }
 
   // MARK: - Is disjoint
@@ -327,11 +259,7 @@ public class PySet: PyObject, PySetType {
 
   // sourcery: pymethod = isdisjoint, doc = isDisjointDoc
   internal func isDisjoint(with other: PyObject) -> PyResult<Bool> {
-    guard let otherSet = other as? PySetType else {
-      return .typeError("'\(other.typeName)' object is not iterable")
-    }
-
-    return self.data.isDisjoint(with: otherSet.data)
+    return self.data.isDisjoint(with: other)
   }
 
   // MARK: - Add
@@ -488,6 +416,17 @@ public class PySet: PyObject, PySetType {
   }
 
   // MARK: - Helpers
+
+  private func createSet(result: PySetData.BitOpResult) -> PyResult<PyObject> {
+    switch result {
+    case .set(let s):
+      return .value(self.createSet(data: s))
+    case .notImplemented:
+      return .value(Py.notImplemented)
+    case .error(let e):
+      return .error(e)
+    }
+  }
 
   private func createSet(data: PySetData) -> PySet {
     return PySet(data: data)

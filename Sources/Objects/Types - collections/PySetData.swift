@@ -1,6 +1,5 @@
 import Core
 
-// TODO: All of the set methods should work for any iterable
 // TODO: All of the set methods should have tuple as an arg
 
 // swiftlint:disable file_length
@@ -63,13 +62,19 @@ internal struct PySetData {
 
   // MARK: - Equatable
 
-  internal func isEqual(to other: PySetData) -> CompareResult {
+  internal func isEqual(to other: PyObject) -> CompareResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    let otherData = other.data
+
     // Equal count + isSubset -> equal
-    guard self.count == other.count else {
+    guard self.count == otherData.count else {
       return .value(false)
     }
 
-    switch self.isSubset(of: other) {
+    switch self.isSubset(of: otherData) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
@@ -77,37 +82,61 @@ internal struct PySetData {
 
   // MARK: - Comparable
 
-  internal func isLess(than other: PySetData) -> CompareResult {
-    guard self.count < other.count else {
+  internal func isLess(than other: PyObject) -> CompareResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    let otherData = other.data
+
+    guard self.count < otherData.count else {
       return .value(false)
     }
 
-    switch self.isSubset(of: other) {
+    switch self.isSubset(of: otherData) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
   }
 
-  internal func isLessEqual(than other: PySetData) -> CompareResult {
-    switch self.isSubset(of: other) {
+  internal func isLessEqual(than other: PyObject) -> CompareResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    let otherData = other.data
+
+    switch self.isSubset(of: otherData) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
   }
 
-  internal func isGreater(than other: PySetData) -> CompareResult {
-    guard self.count > other.count else {
+  internal func isGreater(than other: PyObject) -> CompareResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    let otherData = other.data
+
+    guard self.count > otherData.count else {
       return .value(false)
     }
 
-    switch self.isSuperset(of: other) {
+    switch self.isSuperset(of: otherData) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
   }
 
-  internal func isGreaterEqual(than other: PySetData) -> CompareResult {
-    switch self.isSuperset(of: other) {
+  internal func isGreaterEqual(than other: PyObject) -> CompareResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    let otherData = other.data
+
+    switch self.isSuperset(of: otherData) {
     case let .value(b): return .value(b)
     case let .error(e): return .error(e)
     }
@@ -163,31 +192,82 @@ internal struct PySetData {
 
   // MARK: - And
 
-  internal func and(other: PySetData) -> PyResult<PySetData> {
-    return self.intersection(with: other)
+  internal func and(other: PyObject) -> BitOpResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    let result = self.intersection(with: other)
+    return self.toBinOpResult(result)
+  }
+
+  internal enum BitOpResult {
+    case set(PySetData)
+    case notImplemented
+    case error(PyBaseException)
+  }
+
+  private func toBinOpResult(_ result: PyResult<PySetData>) -> BitOpResult {
+    switch result {
+    case let .value(data):
+      return .set(data)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Or
 
-  internal func or(other: PySetData) -> PyResult<PySetData> {
-    return self.union(with: other)
+  internal func or(other: PyObject) -> BitOpResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    let result = self.union(with: other)
+    return self.toBinOpResult(result)
   }
 
   // MARK: - Xor
 
-  internal func xor(other: PySetData) -> PyResult<PySetData> {
-    return self.symmetricDifference(with: other)
+  internal func xor(other: PyObject) -> BitOpResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    let result = self.symmetricDifference(with: other)
+    return self.toBinOpResult(result)
   }
 
   // MARK: - Sub
 
-  internal func sub(other: PySetData) -> PyResult<PySetData> {
-    return self.difference(with: other)
+  internal func sub(other: PyObject) -> BitOpResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    return self.sub(other: other.data)
+  }
+
+  private func sub(other: PySetData) -> BitOpResult {
+    let result = self.difference(with: other)
+    return self.toBinOpResult(result)
+  }
+
+  internal func rsub(other: PyObject) -> BitOpResult {
+    guard let other = other as? PySetType else {
+      return .notImplemented
+    }
+
+    return other.data.sub(other: self)
   }
 
   // MARK: - Subset
 
-  internal func isSubset(of other: PySetData) -> PyResult<Bool> {
+  internal func isSubset(of other: PyObject) -> PyResult<Bool> {
+    return self.makeSet(from: other).flatMap(self.isSubset(of:))
+  }
+
+  private func isSubset(of other: PySetData) -> PyResult<Bool> {
     guard self.count <= other.count else {
       return .value(false)
     }
@@ -205,13 +285,21 @@ internal struct PySetData {
 
   // MARK: - Superset
 
-  internal func isSuperset(of other: PySetData) -> PyResult<Bool> {
+  internal func isSuperset(of other: PyObject) -> PyResult<Bool> {
+    return self.makeSet(from: other).flatMap(self.isSuperset(of:))
+  }
+
+  private func isSuperset(of other: PySetData) -> PyResult<Bool> {
     return other.isSubset(of: self)
   }
 
   // MARK: - Intersection
 
-  internal func intersection(with other: PySetData) -> PyResult<PySetData> {
+  internal func intersection(with other: PyObject) -> PyResult<PySetData> {
+    return self.makeSet(from: other).flatMap(self.intersection(with:))
+  }
+
+  private func intersection(with other: PySetData) -> PyResult<PySetData> {
     let isSelfSmaller = self.count < other.count
     let smallerSet = isSelfSmaller ? self : other
     let largerSet = isSelfSmaller ? other : self
@@ -234,7 +322,11 @@ internal struct PySetData {
 
   // MARK: - Union
 
-  internal func union(with other: PySetData) -> PyResult<PySetData> {
+  internal func union(with other: PyObject) -> PyResult<PySetData> {
+    return self.makeSet(from: other).flatMap(self.union(with:))
+  }
+
+  private func union(with other: PySetData) -> PyResult<PySetData> {
     let isSelfSmaller = self.count < other.count
     let smallerSet = isSelfSmaller ? self : other
     let largerSet = isSelfSmaller ? other : self
@@ -252,7 +344,11 @@ internal struct PySetData {
 
   // MARK: - Difference
 
-  internal func difference(with other: PySetData) -> PyResult<PySetData> {
+  internal func difference(with other: PyObject) -> PyResult<PySetData> {
+    return self.makeSet(from: other).flatMap(self.difference(with:))
+  }
+
+  private func difference(with other: PySetData) -> PyResult<PySetData> {
     var result = PySetData()
     for entry in self.dict {
       switch other.dict.contains(key: entry.key) {
@@ -273,7 +369,11 @@ internal struct PySetData {
 
   // MARK: - Symmetric difference
 
-  internal func symmetricDifference(with other: PySetData) -> PyResult<PySetData > {
+  internal func symmetricDifference(with other: PyObject) -> PyResult<PySetData > {
+    return self.makeSet(from: other).flatMap(self.symmetricDifference(with:))
+  }
+
+  private func symmetricDifference(with other: PySetData) -> PyResult<PySetData > {
     var result = PySetData()
 
     for entry in self.dict {
@@ -309,7 +409,11 @@ internal struct PySetData {
 
   // MARK: - Is disjoint
 
-  internal func isDisjoint(with other: PySetData) -> PyResult<Bool> {
+  internal func isDisjoint(with other: PyObject) -> PyResult<Bool> {
+    return self.makeSet(from: other).flatMap(self.isDisjoint(with:))
+  }
+
+  private func isDisjoint(with other: PySetData) -> PyResult<Bool> {
     let isSelfSmaller = self.count < other.count
     let smallerSet = isSelfSmaller ? self : other
     let largerSet = isSelfSmaller ? other : self
@@ -472,6 +576,35 @@ internal struct PySetData {
   }
 
   // MARK: - Helpers
+
+  private func makeSet(from other: PyObject) -> PyResult<PySetData> {
+    if let set = other as? PySetType {
+      return .value(set.data)
+    }
+
+    if let dict = other as? PyDict {
+      // Init 'elements' with size, so that we don't have to resize later
+      var elements = PySetData.DictType(size: dict.data.count)
+
+      for entry in dict.data {
+        let key = PySetElement(hash: entry.hash, object: entry.key.object)
+        switch elements.insert(key: key) {
+        case .inserted,
+             .updated: break
+        case .error(let e): return .error(e)
+        }
+      }
+
+      return .value(PySetData(elements: elements))
+    }
+
+    return Py.reduce(iterable: other, into: PySetData()) { acc, element in
+      switch acc.insert(value: element) {
+      case .ok: return .goToNextElement
+      case .error(let e): return .error(e)
+      }
+    }
+  }
 
   private func createElement(from object: PyObject) -> PyResult<PySetElement> {
     switch Py.hash(object) {
