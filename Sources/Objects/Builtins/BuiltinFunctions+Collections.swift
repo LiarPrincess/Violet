@@ -528,7 +528,7 @@ extension BuiltinFunctions {
     return .typeError("expected \(typeName), but received a '\(object.typeName)'")
   }
 
-  internal func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
+  public func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
     if let seq = iterable as? PySequenceType {
       return .value(seq.data.elements)
     }

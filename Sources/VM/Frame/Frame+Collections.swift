@@ -158,4 +158,47 @@ extension Frame {
       return self.stack.pop()
     }
   }
+
+  // MARK: - Unpack
+
+  /// Pops count iterables from the stack, joins them in a single tuple,
+  /// and pushes the result.
+  /// Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
+  internal func buildTupleUnpack(elementCount: Int) -> InstructionResult {
+    switch self.unpack(elementCount: elementCount) {
+    case let .value(elements):
+      self.stack.push(Py.newTuple(elements))
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// This is similar to `BuildTupleUnpack`, but pushes a list instead of tuple.
+  /// Implements iterable unpacking in list displays `[*x, *y, *z]`.
+  internal func buildListUnpack(elementCount: Int) -> InstructionResult {
+    switch self.unpack(elementCount: elementCount) {
+    case let .value(elements):
+      self.stack.push(Py.newList(elements))
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func unpack(elementCount: Int) -> PyResult<[PyObject]> {
+    var result = [PyObject]()
+
+    let iterables = self.stack.popElementsInPushOrder(count: elementCount)
+    for iterable in iterables {
+      switch Py.toArray(iterable: iterable) {
+      case let .value(elements):
+        result.append(contentsOf: elements)
+      case let .error(e):
+        return .error(e)
+      }
+    }
+
+    return .value(result)
+  }
 }

@@ -186,22 +186,9 @@ extension Frame {
 
   // MARK: - Unpack
 
-  /// Pops count iterables from the stack, joins them in a single tuple,
-  /// and pushes the result.
-  /// Implements iterable unpacking in tuple displays `(*x, *y, *z)`.
-  internal func buildTupleUnpack(elementCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   /// This is similar to `BuildTupleUnpack`, but is used for `f(*x, *y, *z)` call syntax.
   /// The stack item at position count + 1 should be the corresponding callable `f`.
   internal func buildTupleUnpackWithCall(elementCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// This is similar to `BuildTupleUnpack`, but pushes a list instead of tuple.
-  /// Implements iterable unpacking in list displays `[*x, *y, *z]`.
-  internal func buildListUnpack(elementCount: Int) -> InstructionResult {
     return self.unimplemented()
   }
 
