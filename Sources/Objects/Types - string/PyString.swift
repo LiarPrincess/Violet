@@ -707,7 +707,7 @@ public class PyString: PyObject {
       PyStringHeap.init(type:value:)
 
     guard let object = object else {
-      return .value(alloca(type, ""))
+      return .value(alloca(type, "<NULL>"))
     }
 
     // TODO: [str.__new__] `encoding` and `error` args (also in bytes and bytearray)

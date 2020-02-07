@@ -115,6 +115,10 @@ public class PyProperty: PyObject {
       return .value(self)
     }
 
+    return self.bind(to: object)
+  }
+
+  internal func bind(to object: PyObject) -> PyResult<PyObject> {
     guard let propGet = self.getter else {
       return .attributeError("unreadable attribute")
     }

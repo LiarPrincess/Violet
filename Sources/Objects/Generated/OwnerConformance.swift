@@ -707,6 +707,7 @@ extension PyNone:
   __class__GetterOwner,
   __repr__Owner,
   __bool__Owner,
+  __getattribute__Owner,
   __new__Owner
 { }
 

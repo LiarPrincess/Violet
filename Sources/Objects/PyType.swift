@@ -440,7 +440,7 @@ public class PyType: PyObject {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.extractName(name)
+    return AttributeHelper.extractName(from: name)
       .flatMap(self.getAttribute(name:))
   }
 
@@ -453,7 +453,7 @@ public class PyType: PyObject {
     if let metaAttribute = metaAttribute {
       metaDescriptor = GetDescriptor.get(object: self, attribute: metaAttribute)
       if let desc = metaDescriptor, desc.isData {
-        return desc.call()
+        return desc.call() // Will call '__get__' with self (PyType)
       }
     }
 
@@ -461,7 +461,9 @@ public class PyType: PyObject {
     // Look in __dict__ of this type and its bases
     if let attribute = self.lookup(name: name) {
       if let descr = GetDescriptor.get(object: self, attribute: attribute) {
-        // 'Without owner' means that we will use 'descriptorStaticMarker'
+        // 'Without owner' means that we will call '__get__' with 'None' object
+        // This will result in static binding.
+        // For example: 'int.__eq__' will not bind 'self' to any number!
         return descr.call(withOwner: false)
       }
 
@@ -471,10 +473,10 @@ public class PyType: PyObject {
     // No attribute found in __dict__ (or bases):
     // use the descriptor from the metatype
     if let descr = metaDescriptor {
-      return descr.call()
+      return descr.call() // Will call '__get__' with self (PyType)
     }
 
-    // If an ordinary attribute was found on the metatype, return it now
+    // If an ordinary attribute was found on the metatype, return it
     if let metaAttribute = metaAttribute {
       return .value(metaAttribute)
     }
@@ -489,7 +491,7 @@ public class PyType: PyObject {
       return .error(error)
     }
 
-    return AttributeHelper.extractName(name)
+    return AttributeHelper.extractName(from: name)
       .flatMap { self.setAttribute(name: $0, value: value) }
   }
 

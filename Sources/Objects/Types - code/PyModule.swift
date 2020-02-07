@@ -78,7 +78,7 @@ public class PyModule: PyObject {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.extractName(name)
+    return AttributeHelper.extractName(from: name)
       .flatMap(self.getAttribute(name:))
   }
 

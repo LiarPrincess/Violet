@@ -1062,6 +1062,7 @@ internal enum FillTypes {
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyNone.repr, castSelf: Cast.asPyNone)
     dict["__bool__"] = PyBuiltinFunction.wrap(name: "__bool__", doc: nil, fn: PyNone.asBool, castSelf: Cast.asPyNone)
+    dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyNone.getAttribute(name:), castSelf: Cast.asPyNone)
   }
 
   // MARK: - NotImplemented

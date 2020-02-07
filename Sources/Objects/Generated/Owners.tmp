@@ -613,6 +613,7 @@ PyNone|PyObject|get|__class__|getClass() -> PyType
 
 PyNone|PyObject|func|__repr__|repr() -> PyResult<String>
 PyNone|PyObject|func|__bool__|asBool() -> Bool
+PyNone|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyNone|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyNotImplemented|PyObject|get|__class__|getClass() -> PyType
 

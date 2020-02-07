@@ -11,9 +11,8 @@ internal enum AttributeHelper {
   ///                                  int suppress)
   internal static func getAttribute(from object: PyObject,
                                     name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.extractName(name).flatMap {
-      AttributeHelper.getAttribute(from: object, name: $0)
-    }
+    return AttributeHelper.extractName(from: name)
+      .flatMap { AttributeHelper.getAttribute(from: object, name: $0) }
   }
 
   internal static func getAttribute(from object: PyObject,
@@ -49,9 +48,8 @@ internal enum AttributeHelper {
   internal static func setAttribute(on object: PyObject,
                                     name: PyObject,
                                     to value: PyObject?) -> PyResult<PyNone> {
-    return AttributeHelper.extractName(name).flatMap {
-      AttributeHelper.setAttribute(on: object, name: $0, to: value)
-    }
+    return AttributeHelper.extractName(from: name)
+      .flatMap { AttributeHelper.setAttribute(on: object, name: $0, to: value) }
   }
 
   internal static func setAttribute(on object: PyObject,
@@ -87,9 +85,8 @@ internal enum AttributeHelper {
   /// Basically: `AttributeHelper.setAttribute` with `None` as value
   internal static func delAttribute(on object: PyObject,
                                     name: PyObject) -> PyResult<PyNone> {
-    return AttributeHelper.extractName(name).flatMap {
-      AttributeHelper.delAttribute(on: object, name: $0)
-    }
+    return AttributeHelper.extractName(from: name)
+      .flatMap { AttributeHelper.delAttribute(on: object, name: $0) }
   }
 
   internal static func delAttribute(on object: PyObject,
@@ -99,7 +96,7 @@ internal enum AttributeHelper {
 
   // MARK: - Extract name
 
-  internal static func extractName(_ object: PyObject) -> PyResult<String> {
+  internal static func extractName(from object: PyObject) -> PyResult<String> {
     guard let string = object as? PyString else {
       let msg = "attribute name must be string, not '\(object.typeName)'"
       return .typeError(msg)

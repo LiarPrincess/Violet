@@ -9,11 +9,27 @@ import Core
 // {'a': 1} <-- attribute is present in dict
 
 /// Dictionary used for `__dict__`.
-public final class Attributes {
+public final class Attributes: CustomStringConvertible {
 
   internal typealias DataType = OrderedDictionary<String, PyObject>
 
   private lazy var data = DataType()
+
+  public var isEmpty: Bool {
+    return self.data.isEmpty
+  }
+
+  public var description: String {
+    var result = "Attributes("
+
+    for (index, entry) in self.entries.enumerated() {
+      let isFirst = index == 0
+      let comma = isFirst ? "" : ", "
+      result += "\(comma)\(entry.key): \(entry.value)"
+    }
+
+    return result + ")"
+  }
 
   // MARK: - Subscript
 
