@@ -140,6 +140,7 @@ internal enum ModuleFactory {
     dict["len"] = PyBuiltinFunction.wrap(name: "len", doc: nil, fn: object.length(iterable:), module: result)
     dict["sorted"] = PyBuiltinFunction.wrap(name: "sorted", doc: nil, fn: object.sorted(iterable:key:reverse:), module: result)
     dict["callable"] = PyBuiltinFunction.wrap(name: "callable", doc: nil, fn: object.isCallable(_:), module: result)
+    dict["round"] = PyBuiltinFunction.wrap(name: "round", doc: nil, fn: object.round(number:nDigits:), module: result)
     dict["divmod"] = PyBuiltinFunction.wrap(name: "divmod", doc: nil, fn: object.divmod(left:right:), module: result)
     dict["pow"] = PyBuiltinFunction.wrap(name: "pow", doc: nil, fn: object.pow(base:exp:mod:), module: result)
     dict["open"] = PyBuiltinFunction.wrap(name: "open", doc: nil, fn: object.open(args:kwargs:), module: result)

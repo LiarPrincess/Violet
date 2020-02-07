@@ -123,13 +123,6 @@ extension BuiltinFunctions {
     return self.unimplemented
   }
 
-  // sourcery: pymethod = round
-  /// round(number[, ndigits])
-  /// See [this](https://docs.python.org/3/library/functions.html#round)
-  public func round() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pymethod = super
   /// super([type[, object-or-type]])
   /// See [this](https://docs.python.org/3/library/functions.html#super)
