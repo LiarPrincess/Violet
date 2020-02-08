@@ -51,7 +51,11 @@ internal struct ObjectStack {
   // MARK: - Push
 
   internal mutating func push(_ value: PyObject) {
-    self.elements.push(value)
+    self.elements.append(value)
+  }
+
+  internal mutating func push(contentsOf values: [PyObject]) {
+    self.elements.append(contentsOf: values)
   }
 
   // MARK: - Pop

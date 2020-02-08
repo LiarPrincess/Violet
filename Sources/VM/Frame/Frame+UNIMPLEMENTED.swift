@@ -211,12 +211,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  /// Unpacks TOS into count individual values,
-  /// which are put onto the stack right-to-left.
-  internal func unpackSequence(elementCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   /// Implements assignment with a starred target.
   ///
   /// Unpacks an iterable in TOS into individual values, where the total number

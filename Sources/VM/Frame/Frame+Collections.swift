@@ -201,4 +201,18 @@ extension Frame {
 
     return .value(result)
   }
+
+  /// Unpacks TOS into count individual values,
+  /// which are put onto the stack right-to-left.
+  internal func unpackSequence(elementCount: Int) -> InstructionResult {
+    let seq = self.stack.pop()
+
+    switch Py.toArray(iterable: seq) {
+    case let .value(elements):
+      self.stack.push(contentsOf: elements)
+      return .ok
+    case let .error(e):
+      return .error(e)
+    }
+  }
 }
