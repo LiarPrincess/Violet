@@ -582,6 +582,7 @@ internal struct PySetData {
       return .value(set.data)
     }
 
+    // Fast path for dictionaries (since they already have hashed elements)
     if let dict = other as? PyDict {
       // Init 'elements' with size, so that we don't have to resize later
       var elements = PySetData.DictType(size: dict.data.count)

@@ -517,12 +517,6 @@ extension BuiltinFunctions {
     }
   }
 
-  // MARK: - Sequence
-
-  public func asSwiftSequence(iterable: PyObject) -> PyResult<PySwiftSequence> {
-    return PySwiftSequence.create(iterable: iterable)
-  }
-
   // MARK: - Helpers
 
   private func cast<T>(_ object: PyObject,
