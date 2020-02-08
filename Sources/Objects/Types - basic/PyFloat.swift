@@ -139,17 +139,19 @@ extension FloatCompare {
     // BREAKPOINT: You can use 'assert 2.**54 == 2**54' to get here.
     assert(exponent == nBits)
 
+    // 'vv' and 'ww' are the names used in CPython
     let (intPart, fracPart) = Foundation.modf(left)
-    var vv = BigInt(intPart)
-    var ww = Swift.abs(right)
+    var leftVV = BigInt(intPart)
+    var rightWW = Swift.abs(right)
 
     if fracPart != 0.0 {
-      ww = ww << 1
-      vv = vv << 1
-      vv = vv | 1
+      // Remove the last bit, and repace it with 1 for left
+      rightWW = rightWW << 1
+      leftVV = leftVV << 1
+      leftVV = leftVV | 1
     }
 
-    let result = Self.compare(left: vv, right: ww)
+    let result = Self.compare(left: leftVV, right: rightWW)
     return .value(result)
   }
 

@@ -293,6 +293,22 @@ extension PyBuiltinFunction {
     )
   }
 
+  // Overload without `self` argument.
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping (PyObject, PyObject, PyObject?) -> R,
+    module: PyModule? = nil) -> PyBuiltinFunction {
+
+    return PyBuiltinFunction(
+      fn: TernaryFunctionOptWrapper(name: name) { arg0, arg1, arg2 in
+        fn(arg0, arg1, arg2).asFunctionResult
+      },
+      module: module,
+      doc: doc
+    )
+  }
+
   // Special overload for ternany method (self + 2 args) with optionals.
   // See top of this file for reasoning.
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
@@ -307,6 +323,22 @@ extension PyBuiltinFunction {
         castSelf(arg0, name)
           .map { fn($0)(arg1, arg2) }
           .asFunctionResult
+      },
+      module: module,
+      doc: doc
+    )
+  }
+
+  // Overload without `self` argument.
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping (PyObject, PyObject?, PyObject?) -> R,
+    module: PyModule? = nil) -> PyBuiltinFunction {
+
+    return PyBuiltinFunction(
+      fn: TernaryFunctionOptOptWrapper(name: name) { arg0, arg1, arg2 in
+        fn(arg0, arg1, arg2).asFunctionResult
       },
       module: module,
       doc: doc
