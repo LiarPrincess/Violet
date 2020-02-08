@@ -44,7 +44,7 @@ private protocol CompareOp {
   static var selector: String { get }
   /// Call compare from PyBaseObject.
   static var baseCompare: (PyObject, PyObject) -> CompareResult { get }
-  /// Reflected compare operation, for example 'equal' -> 'not equal'.
+  /// Reflected compare operation, for example 'less' -> 'greater'.
   associatedtype reflected: CompareOp
   /// Call compare with fast protocol dispatch.
   static func callFastCompare(left: PyObject, right: PyObject) -> FastCallResult

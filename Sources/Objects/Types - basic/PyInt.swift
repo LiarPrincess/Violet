@@ -267,7 +267,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = bit_length, , doc = bitLengthDoc
   internal func bitLength() -> PyObject {
-    let result = self.value.bitWidth
+    let result = self.value.minRequiredWidth
     return Py.newInt(result)
   }
 
