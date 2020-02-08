@@ -7,11 +7,139 @@ import Foundation
 
 // MARK: - Print
 
+private let printArguments = ArgumentParser.createOrTrap(
+  arguments: ["sep", "end", "file", "flush"],
+  format: "|OOOO:print"
+)
+
 extension BuiltinFunctions {
 
-  public func print(value: PyObject, raw: Bool) -> PyResult<PyNone> {
-    let string = raw ? self.strValue(value) : self.repr(value)
-    return string.flatMap(Py.sys.stdout.write(string:))
+  private var stdout: PyTextFile {
+    return Py.sys.stdout
+  }
+
+  // sourcery: pymethod = print
+  /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
+  /// See [this](https://docs.python.org/3/library/functions.html#print)
+  internal func print(args: [PyObject],
+                      kwargs: PyDictData?) -> PyResult<PyNone> {
+    // 'args' contains objects to print
+    // 'kwargs' contains options
+
+    switch printArguments.parse(args: [], kwargs: kwargs) {
+    case let .value(bind):
+      assert(
+        0 <= bind.count && bind.count <= 4,
+        "Invalid argument count returned from parser."
+      )
+
+      return self.print(args: args,
+                        sep: bind.count >= 1 ? bind[0] : nil,
+                        end: bind.count >= 2 ? bind[1] : nil,
+                        file: bind.count >= 3 ? bind[2] : nil,
+                        flush: bind.count >= 4 ? bind[3] : nil)
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  public func print(args: [PyObject] = [],
+                    sep: PyObject? = nil,
+                    end: PyObject? = nil,
+                    file: PyObject? = nil,
+                    flush: PyObject? = nil) -> PyResult<PyNone> {
+    let textFile: PyTextFile
+    switch self.getTextFile(file: file) {
+    case let .value(t): textFile = t
+    case let .error(e): return .error(e)
+    }
+
+    let separator: PyString?
+    switch self.getSeparator(argName: "sep", object: sep) {
+    case let .value(s): separator = s
+    case let .error(e): return .error(e)
+    }
+
+    let ending: PyString?
+    switch self.getSeparator(argName: "end", object: end) {
+    case let .value(s): ending = s
+    case let .error(e): return .error(e)
+    }
+
+    return self.print(args: args,
+                      sep: separator,
+                      end: ending,
+                      file: textFile,
+                      flush: flush)
+  }
+
+  public func print(args: [PyObject],
+                    sep: PyString? = nil,
+                    end: PyString? = nil,
+                    file: PyTextFile? = nil,
+                    flush: PyObject? = nil) -> PyResult<PyNone> {
+    let file = file ?? self.stdout
+
+    for (index, object) in args.enumerated() {
+      if index > 0 {
+        let separator = sep?.value ?? " "
+        switch file.write(string: separator) {
+        case .value: break
+        case .error(let e): return .error(e)
+        }
+      }
+
+      let raw = Py.strValue(object)
+      switch raw.flatMap(file.write(string:)) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
+    }
+
+    let ending = end?.value ?? "\n"
+    switch file.write(string: ending) {
+    case .value: break
+    case .error(let e): return .error(e)
+    }
+
+    // We do not support 'flush' at the moment.
+    return .value(Py.none)
+  }
+
+  private func getTextFile(file: PyObject?) -> PyResult<PyTextFile> {
+    guard let file = file else {
+      return .value(self.stdout)
+    }
+
+    if file.isNone {
+      return .value(self.stdout)
+    }
+
+    guard let textFile = file as? PyTextFile else {
+      let msg = "'\(file.typeName)' object has no attribute 'write'"
+      return .attributeError(msg)
+    }
+
+    return .value(textFile)
+  }
+
+  private func getSeparator(argName: String,
+                            object: PyObject?) -> PyResult<PyString?> {
+    guard let object = object else {
+      return .value(.none)
+    }
+
+    if object.isNone {
+      return .value(.none)
+    }
+
+    guard let string = object as? PyString else {
+      let msg = "\(argName) must be None or a string, not \(object.typeName)"
+      return .typeError(msg)
+    }
+
+    return .value(string)
   }
 }
 

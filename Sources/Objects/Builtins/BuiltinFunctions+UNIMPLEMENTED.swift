@@ -91,13 +91,6 @@ extension BuiltinFunctions {
   public func input() -> PyObject {
     return self.unimplemented
   }
-
-  // sourcery: pymethod = print
-  /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
-  /// See [this](https://docs.python.org/3/library/functions.html#print)
-  internal func print(args: PyObject, kwargs: PyObject) -> PyResult<PyNone> {
-    return .value(self.none)
-  }
 */
 
   // MARK: - Other

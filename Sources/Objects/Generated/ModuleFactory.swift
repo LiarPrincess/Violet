@@ -143,6 +143,7 @@ internal enum ModuleFactory {
     dict["round"] = PyBuiltinFunction.wrap(name: "round", doc: nil, fn: object.round(number:nDigits:), module: result)
     dict["divmod"] = PyBuiltinFunction.wrap(name: "divmod", doc: nil, fn: object.divmod(left:right:), module: result)
     dict["pow"] = PyBuiltinFunction.wrap(name: "pow", doc: nil, fn: object.pow(base:exp:mod:), module: result)
+    dict["print"] = PyBuiltinFunction.wrap(name: "print", doc: nil, fn: object.print(args:kwargs:), module: result)
     dict["open"] = PyBuiltinFunction.wrap(name: "open", doc: nil, fn: object.open(args:kwargs:), module: result)
     dict["getattr"] = PyBuiltinFunction.wrap(name: "getattr", doc: nil, fn: object.getAttribute(_:name:default:), module: result)
     dict["hasattr"] = PyBuiltinFunction.wrap(name: "hasattr", doc: nil, fn: object.hasAttribute(_:name:), module: result)
