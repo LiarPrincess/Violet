@@ -305,9 +305,10 @@ internal final class Frame {
     case let .unpackSequence(elementCount):
       let extended = self.extend(base: extendedArg, arg: elementCount)
       return self.unpackSequence(elementCount: extended)
-    case let .unpackEx(elementCountBefore):
-      let extended = self.extend(base: extendedArg, arg: elementCountBefore)
-      return self.unpackEx(elementCountBefore: extended)
+    case let .unpackEx(arg):
+      let extended = self.extend(base: extendedArg, arg: arg)
+      let decoded = UnpackExArg(value: extended)
+      return self.unpackEx(arg: decoded)
     case let .loadConst(index):
       let extended = self.extend(base: extendedArg, arg: index)
       return self.loadConst(index: extended)

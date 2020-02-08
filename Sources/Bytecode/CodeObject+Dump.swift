@@ -189,8 +189,11 @@ extension CodeObject {
       return "buildMapUnpackWithCall (elementCount: \(extendedArg + Int(arg)))"
     case let .unpackSequence(elementCount: arg):
       return "unpackSequence (elementCount: \(extendedArg + Int(arg)))"
-    case let .unpackEx(elementCountBefore: arg):
-      return "unpackEx (elementCountBefore: \(extendedArg + Int(arg)))"
+    case let .unpackEx(arg: arg):
+      let encoded = UnpackExArg(value: extendedArg + Int(arg))
+      let countBefore = encoded.countBefore
+      let countAfter = encoded.countAfter
+      return "unpackEx (countBefore: \(countBefore), countAfter: \(countAfter))"
 
     case let .loadConst(index: arg):
       return "loadConst \(self.getConstant(extendedArg + Int(arg)))"

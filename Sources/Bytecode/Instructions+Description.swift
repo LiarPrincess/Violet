@@ -232,8 +232,8 @@ extension Instruction: CustomStringConvertible {
       return "buildMapUnpackWithCall(elementCount: \(hex(value0)))"
     case let .unpackSequence(elementCount: value0):
       return "unpackSequence(elementCount: \(hex(value0)))"
-    case let .unpackEx(elementCountBefore: value0):
-      return "unpackEx(elementCountBefore: \(hex(value0)))"
+    case let .unpackEx(arg: value0):
+      return "unpackEx(arg: \(hex(value0)))"
     case let .loadConst(index: value0):
       return "loadConst(index: \(hex(value0)))"
     case let .storeName(nameIndex: value0):

@@ -349,7 +349,9 @@ and labels properties of 'CodeObject'.
   -- The low byte of counts is the number of values before the list value,
   -- the high byte of counts the number of values after it.
   -- The resulting values are put onto the stack right-to-left.
-  | UnpackEx(Count elementCountBefore)
+  --
+  -- Use `UnpackExArg` struct to handle argument.
+  | UnpackEx(Count arg)
 
 {- --------------------- -}
 {-  Store, load, delete  -}

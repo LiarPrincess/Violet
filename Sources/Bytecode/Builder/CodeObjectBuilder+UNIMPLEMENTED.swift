@@ -1,24 +1,5 @@
 extension CodeObjectBuilder {
 
-  // MARK: - Collections
-
-  /// Implements assignment with a starred target.
-  ///
-  /// Unpacks an iterable in TOS into individual values, where the total number
-  /// of values can be smaller than the number of items in the iterable:
-  /// one of the new values will be a list of all leftover items.
-  ///
-  /// The low byte of counts is the number of values before the list value,
-  /// the high byte of counts the number of values after it.
-  /// The resulting values are put onto the stack right-to-left.
-  public func appendUnpackEx(countBefore: Int, countAfter: Int) {
-    precondition(countBefore <= 0xff)
-    precondition(countAfter  <= 0xffff_ff)
-
-    //    let rawValue = countAfter << 8 | countBefore
-    self.unimplemented()
-  }
-
   // MARK: - General
 
   /// Append a `loadClosure` instruction to this code object.

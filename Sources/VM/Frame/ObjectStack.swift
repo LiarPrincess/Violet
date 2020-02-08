@@ -54,7 +54,9 @@ internal struct ObjectStack {
     self.elements.append(value)
   }
 
-  internal mutating func push(contentsOf values: [PyObject]) {
+  internal mutating func push<S: Sequence>(
+    contentsOf values: S
+  ) where S.Element == PyObject {
     self.elements.append(contentsOf: values)
   }
 

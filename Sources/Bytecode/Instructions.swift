@@ -282,7 +282,9 @@ public enum Instruction {
   /// The low byte of counts is the number of values before the list value,
   /// the high byte of counts the number of values after it.
   /// The resulting values are put onto the stack right-to-left.
-  case unpackEx(elementCountBefore: UInt8)
+  /// 
+  /// Use `UnpackExArg` struct to handle argument.
+  case unpackEx(arg: UInt8)
   /// Pushes constant pointed by `index` onto the stack.
   case loadConst(index: UInt8)
   /// Implements `name = TOS`.

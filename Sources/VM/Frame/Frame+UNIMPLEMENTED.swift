@@ -1,8 +1,6 @@
 import Bytecode
 import Objects
 
-// swiftlint:disable file_length
-
 extension Frame {
 
   // MARK: - Class
@@ -208,19 +206,6 @@ extension Frame {
   /// This is similar to `BuildMapUnpack`, but is used for `f(**x, **y, **z)` call syntax.
   /// The stack item at position count + 2 should be the corresponding callable `f`.
   internal func buildMapUnpackWithCall(elementCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// Implements assignment with a starred target.
-  ///
-  /// Unpacks an iterable in TOS into individual values, where the total number
-  /// of values can be smaller than the number of items in the iterable:
-  /// one of the new values will be a list of all leftover items.
-  ///
-  /// The low byte of counts is the number of values before the list value,
-  /// the high byte of counts the number of values after it.
-  /// The resulting values are put onto the stack right-to-left.
-  internal func unpackEx(elementCountBefore: Int) -> InstructionResult {
     return self.unimplemented()
   }
 

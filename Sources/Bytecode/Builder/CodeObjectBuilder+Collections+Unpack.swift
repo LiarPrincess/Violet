@@ -67,7 +67,7 @@ extension CodeObjectBuilder {
     self.append(.mapAdd(arg))
   }
 
-  // MARK: - Tuple unpack
+  // MARK: - Unpack
 
   /// Append a `buildTupleUnpack` instruction to this code object.
   public func appendBuildTupleUnpack(elementCount: Int) {
@@ -81,23 +81,17 @@ extension CodeObjectBuilder {
     self.append(.buildTupleUnpackWithCall(elementCount: arg))
   }
 
-  // MARK: - List unpack
-
   /// Append a `buildListUnpack` instruction to this code object.
   public func appendBuildListUnpack(elementCount: Int) {
     let arg = self.appendExtendedArgIfNeeded(elementCount)
     self.append(.buildListUnpack(elementCount: arg))
   }
 
-  // MARK: - Set unpack
-
   /// Append a `buildSetUnpack` instruction to this code object.
   public func appendBuildSetUnpack(elementCount: Int) {
     let arg = self.appendExtendedArgIfNeeded(elementCount)
     self.append(.buildSetUnpack(elementCount: arg))
   }
-
-  // MARK: - Map unpack
 
   /// Append a `buildMapUnpack` instruction to this code object.
   public func appendBuildMapUnpack(elementCount: Int) {
@@ -111,11 +105,24 @@ extension CodeObjectBuilder {
     self.append(.buildMapUnpackWithCall(elementCount: arg))
   }
 
-  // MARK: - Other unpack
-
   /// Append an `unpackSequence` instruction to this code object.
   public func appendUnpackSequence(elementCount: Int) {
     let arg = self.appendExtendedArgIfNeeded(elementCount)
     self.append(.unpackSequence(elementCount: arg))
+  }
+
+  /// Implements assignment with a starred target.
+  ///
+  /// Unpacks an iterable in TOS into individual values, where the total number
+  /// of values can be smaller than the number of items in the iterable:
+  /// one of the new values will be a list of all leftover items.
+  ///
+  /// The low byte of counts is the number of values before the list value,
+  /// the high byte of counts the number of values after it.
+  /// The resulting values are put onto the stack right-to-left.
+  public func appendUnpackEx(countBefore: Int, countAfter: Int) {
+    let encoded = UnpackExArg(countBefore: countBefore, countAfter: countAfter)
+    let arg = self.appendExtendedArgIfNeeded(encoded.value)
+    self.append(.unpackEx(arg: arg))
   }
 }

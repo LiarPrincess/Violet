@@ -205,14 +205,88 @@ extension Frame {
   /// Unpacks TOS into count individual values,
   /// which are put onto the stack right-to-left.
   internal func unpackSequence(elementCount: Int) -> InstructionResult {
-    let seq = self.stack.pop()
+    let iterable = self.stack.pop()
 
-    switch Py.toArray(iterable: seq) {
-    case let .value(elements):
-      self.stack.push(contentsOf: elements)
-      return .ok
+    let elements: [PyObject]
+    switch Py.toArray(iterable: iterable) {
+    case let .value(e):
+      elements = e
     case let .error(e):
-      return .error(e)
+      // Try to be a bit more precise in the error message.
+      return .error(self.notIterableUnpackError(iterable: iterable) ?? e)
     }
+
+    if elements.count < elementCount {
+      let got = elements.count
+      let msg = "not enough values to unpack (expected \(elementCount), got \(got))"
+      return .error(Py.newValueError(msg: msg))
+    }
+
+    if elements.count > elementCount {
+      let msg = "too many values to unpack (expected \(elementCount))"
+      return .error(Py.newValueError(msg: msg))
+    }
+
+    assert(elements.count == elementCount)
+
+    // Reverse because we have to push them in 'right-to-left' order!
+    self.stack.push(contentsOf: elements.reversed())
+    return .ok
+  }
+
+  /// Implements assignment with a starred target.
+  ///
+  /// Unpacks an iterable in TOS into individual values, where the total number
+  /// of values can be smaller than the number of items in the iterable:
+  /// one of the new values will be a list of all leftover items.
+  ///
+  /// The low byte of counts is the number of values before the list value,
+  /// the high byte of counts the number of values after it.
+  /// The resulting values are put onto the stack right-to-left.
+  internal func unpackEx(arg: UnpackExArg) -> InstructionResult {
+    let iterable = self.stack.pop()
+
+    let elements: [PyObject]
+    switch Py.toArray(iterable: iterable) {
+    case let .value(e):
+      elements = e
+    case let .error(e):
+      // Try to be a bit more precise in the error message.
+      return .error(self.notIterableUnpackError(iterable: iterable) ?? e)
+    }
+
+    let minCount = arg.countBefore + arg.countAfter
+    if elements.count < minCount {
+      let got = elements.count
+      let msg = "not enough values to unpack (expected at least \(minCount), got \(got))"
+      return .error(Py.newValueError(msg: msg))
+    }
+
+    let afterStartsAtIndex = elements.count - arg.countAfter
+    let before = elements[..<arg.countBefore]
+    let pack = Array(elements[arg.countBefore..<afterStartsAtIndex])
+    let after = elements[afterStartsAtIndex...]
+
+    assert(before.count == arg.countBefore)
+    assert(pack.count == elements.count - arg.countBefore - arg.countAfter)
+    assert(after.count == arg.countAfter)
+
+    // Reverse because we have to push them in 'right-to-left' order!
+    self.stack.push(contentsOf: after.reversed())
+    self.stack.push(Py.newList(pack))
+    self.stack.push(contentsOf: before.reversed())
+
+    return .ok
+  }
+
+  private func notIterableUnpackError(iterable: PyObject) -> PyBaseException? {
+    let hasIter = Py.hasIter(object: iterable)
+
+    if !hasIter {
+      let msg = "cannot unpack non-iterable \(iterable.typeName) object"
+      return Py.newTypeError(msg: msg)
+    }
+
+    return nil
   }
 }

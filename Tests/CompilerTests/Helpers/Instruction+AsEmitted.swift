@@ -152,7 +152,7 @@ extension CodeObject {
       return EmittedInstruction(.buildMapUnpackWithCall, String(describing: arg))
     case let .unpackSequence(elementCount: arg):
       return EmittedInstruction(.unpackSequence, String(describing: arg))
-    case let .unpackEx(elementCountBefore: arg):
+    case let .unpackEx(arg: arg):
       return EmittedInstruction(.unpackEx, String(describing: arg))
 
     case let .loadConst(index: arg):
