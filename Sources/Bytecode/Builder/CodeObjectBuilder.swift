@@ -10,9 +10,9 @@ internal struct CachedIndices {
   internal var zero: Int?
   internal var one: Int?
   /// CodeObject.constants -> string
-  internal var strings = [String:Int]()
+  internal var constantStrings = [UseScalarsToHashString:Int]()
   /// CodeObject.names
-  internal var names = [String:Int]()
+  internal var names = [UseScalarsToHashString:Int]()
   /// CodeObject.varNames
   internal var varNames = [MangledName:Int]()
 }
@@ -59,7 +59,8 @@ public class CodeObjectBuilder {
         self.cachedIndices.ellipsis = index
 
       case let .string(s):
-        self.cachedIndices.strings[s] = index
+        let key = UseScalarsToHashString(s)
+        self.cachedIndices.constantStrings[key] = index
 
       case let .integer(i) where i == 0:
         self.cachedIndices.zero = index
@@ -72,7 +73,8 @@ public class CodeObjectBuilder {
     }
 
     for (index, name) in self.codeObject.names.enumerated() {
-      self.cachedIndices.names[name] = index
+      let key = UseScalarsToHashString(name)
+      self.cachedIndices.names[key] = index
     }
 
     for (index, name) in self.codeObject.varNames.enumerated() {
@@ -128,13 +130,15 @@ public class CodeObjectBuilder {
   }
 
   private func getNameIndex(_ name: String) -> Int {
-    if let cachedIndex = self.cachedIndices.names[name] {
+    let key = UseScalarsToHashString(name)
+
+    if let cachedIndex = self.cachedIndices.names[key] {
       return cachedIndex
     }
 
     let index = self.codeObject.names.endIndex
     self.codeObject.names.append(name)
-    self.cachedIndices.names[name] = index
+    self.cachedIndices.names[key] = index
     return index
   }
 

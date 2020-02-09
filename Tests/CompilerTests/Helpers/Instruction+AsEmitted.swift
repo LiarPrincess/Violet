@@ -288,10 +288,7 @@ extension CodeObject {
   }
 
   private func getConstant(_ index: UInt8) -> String {
-    guard index < self.constants.count else {
-      return "INDEX_OUT_OF_RANGE: \(index)"
-    }
-
+    precondition(index < self.constants.count)
     let constant = self.constants[Int(index)]
     return self.toString(constant)
   }
@@ -326,18 +323,12 @@ extension CodeObject {
   }
 
   private func getName(_ index: UInt8) -> String {
-    guard index < self.name.count else {
-      return "INDEX_OUT_OF_RANGE: \(index)"
-    }
-
+    precondition(index < self.names.count)
     return self.names[Int(index)]
   }
 
   private func getLabel(_ index: UInt8) -> String {
-    guard index < self.labels.count else {
-      return "INDEX_OUT_OF_RANGE: \(index)"
-    }
-
+    precondition(index < self.labels.count)
     let address = Instruction.byteSize * self.labels[Int(index)]
     return String(describing: address)
   }
