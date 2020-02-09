@@ -93,14 +93,14 @@ extension BuiltinFunctions {
   }
 
   /// Unicode decoding error.
-  public func newUnicodeDecodeError(encoding: FileEncoding,
+  public func newUnicodeDecodeError(encoding: PyStringEncoding,
                                     data: Data) -> PyUnicodeDecodeError {
     let msg = "'\(encoding)' codec can't decode data"
     return PyUnicodeDecodeError(msg: msg)
   }
 
   /// Unicode encoding error.
-  public func newUnicodeEncodeError(encoding: FileEncoding,
+  public func newUnicodeEncodeError(encoding: PyStringEncoding,
                                     string: String) -> PyUnicodeEncodeError {
     let msg = "'\(encoding)' codec can't encode data"
     return PyUnicodeEncodeError(msg: msg)

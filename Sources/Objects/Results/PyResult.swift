@@ -117,13 +117,13 @@ extension PyResult {
     return PyResult.error(Py.newLookupError(msg: msg))
   }
 
-  public static func unicodeDecodeError(encoding: FileEncoding,
+  public static func unicodeDecodeError(encoding: PyStringEncoding,
                                         data: Data) -> PyResult<Wrapped> {
     let error = Py.newUnicodeDecodeError(encoding: encoding, data: data)
     return PyResult.error(error)
   }
 
-  public static func unicodeEncodeError(encoding: FileEncoding,
+  public static func unicodeEncodeError(encoding: PyStringEncoding,
                                         string: String) -> PyResult<Wrapped> {
     let error = Py.newUnicodeEncodeError(encoding: encoding, string: string)
     return PyResult.error(error)

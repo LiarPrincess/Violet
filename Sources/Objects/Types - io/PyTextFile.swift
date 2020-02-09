@@ -5,8 +5,6 @@ import Foundation
 // Python -> codecs.c
 // https://docs.python.org/3.7/library/io.html
 
-// swiftlint:disable file_length
-
 // sourcery: pytype = TextFile, default, hasGC, hasFinalize
 /// We don't have `_io` module.
 /// Instead we have our own `TextFile` type based on `_io.TextIOWrapper`.
@@ -33,8 +31,8 @@ public class PyTextFile: PyObject {
 
   internal let name: String?
   internal let fd: FileDescriptorType
-  internal let encoding: FileEncoding
-  internal let errors: FileErrorHandler
+  internal let encoding: PyStringEncoding
+  internal let errors: PyStringErrorHandler
 
   internal let mode: FileMode
   internal let closeOnDealloc: Bool
@@ -48,8 +46,8 @@ public class PyTextFile: PyObject {
 
   internal convenience init(fd: FileDescriptorType,
                             mode: FileMode,
-                            encoding: FileEncoding,
-                            errors: FileErrorHandler,
+                            encoding: PyStringEncoding,
+                            errors: PyStringErrorHandler,
                             closeOnDealloc: Bool) {
     self.init(name: nil,
               fd: fd,
@@ -62,8 +60,8 @@ public class PyTextFile: PyObject {
   internal init(name: String?,
                 fd: FileDescriptorType,
                 mode: FileMode,
-                encoding: FileEncoding,
-                errors: FileErrorHandler,
+                encoding: PyStringEncoding,
+                errors: PyStringErrorHandler,
                 closeOnDealloc: Bool) {
     self.name = name
     self.fd = fd
@@ -161,7 +159,7 @@ public class PyTextFile: PyObject {
         try self.fd.read(upToCount: size) :
         try self.fd.readToEnd()
 
-      return self.decode(data: data)
+      return self.encoding.decode(data: data, errors: self.errors)
     } catch {
       return .error(self.osError(from: error))
     }
@@ -200,7 +198,7 @@ public class PyTextFile: PyObject {
       return .error(self.modeError("not writable"))
     }
 
-    switch self.encode(string: string) {
+    switch self.encoding.encode(string: string, errors: self.errors) {
     case let .value(data):
       do {
         try self.fd.write(contentsOf: data)
@@ -258,52 +256,6 @@ public class PyTextFile: PyObject {
 
     // 'self.close' is (or at least should be) idempotent
     return self.close()
-  }
-
-  // MARK: - Encoding
-
-  private func decode(data: Data) -> PyResult<String> {
-    let encoding = self.encoding.swift
-    guard let string = String(data: data, encoding: encoding) else {
-      return self.decodeError(data: data)
-    }
-
-    return .value(string)
-  }
-
-  /// static int _PyCodecRegistry_Init(void)
-  private func decodeError(data: Data) -> PyResult<String> {
-    switch self.errors {
-    case .strict:
-      return .unicodeDecodeError(encoding: self.encoding, data: data)
-    case .ignore:
-      return .value("")
-    }
-  }
-
-  private func encode(string: String) -> PyResult<Data> {
-    let e = self.encoding.swift
-
-    switch self.errors {
-    case .strict:
-      guard let data = string.data(using: e, allowLossyConversion: false) else {
-        return self.encodeError(string: string)
-      }
-
-      return .value(data)
-
-    case .ignore:
-      guard let data = string.data(using: e, allowLossyConversion: true) else {
-        return .value(Data())
-      }
-
-      return .value(data)
-    }
-  }
-
-  /// static int _PyCodecRegistry_Init(void)
-  private func encodeError(string: String) -> PyResult<Data> {
-    return .unicodeEncodeError(encoding: self.encoding, string: string)
   }
 
   // MARK: - Helpers

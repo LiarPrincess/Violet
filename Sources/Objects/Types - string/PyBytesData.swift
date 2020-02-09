@@ -323,21 +323,23 @@ internal struct PyBytesData: PyStringImpl {
       return .value(Data())
     }
 
-    guard encoding == nil && errors == nil else {
-      trap("Violet currently does not support 'encoding' and 'errors' parameters")
-    }
-
-    if let bytes = object as? PyBytesType {
+    // Fast path when we don't have encoding and kwargs
+    let hasEncoding = encoding != nil || errors != nil
+    if let bytes = object as? PyBytesType, !hasEncoding {
       return .value(bytes.data.values)
     }
 
-    switch PyBytesData.newFromCount(object: object) {
+    if hasEncoding {
+      return PyBytesData.new(encoded: object, encoding: encoding, errors: errors)
+    }
+
+    switch PyBytesData.new(fromCount: object) {
     case .bytes(let data): return .value(data)
     case .tryOther: break
     case .error(let e): return .error(e)
     }
 
-    switch PyBytesData.newFromIterable(object: object) {
+    switch PyBytesData.new(fromIterable: object) {
     case .bytes(let data): return .value(data)
     case .tryOther: break
     case .error(let e): return .error(e)
@@ -346,13 +348,35 @@ internal struct PyBytesData: PyStringImpl {
     return .typeError("cannot convert '\(object.typeName)' object to bytes")
   }
 
+  private static func new(encoded object: PyObject,
+                          encoding encodingObj: PyObject?,
+                          errors errorObj: PyObject?) -> PyResult<Data> {
+    let encoding: PyStringEncoding
+    switch PyStringEncoding.from(encodingObj) {
+    case let .value(e): encoding = e
+    case let .error(e): return .error(e)
+    }
+
+    let errors: PyStringErrorHandler
+    switch PyStringErrorHandler.from(errorObj) {
+    case let .value(e): errors = e
+    case let .error(e): return .error(e)
+    }
+
+    guard let string = object as? PyString else {
+      return .typeError("encoding without a string argument")
+    }
+
+    return encoding.encode(string: string.value, errors: errors)
+  }
+
   private enum NewFromResult {
     case bytes(Data)
     case tryOther
     case error(PyBaseException)
   }
 
-  private static func newFromCount(object: PyObject) -> NewFromResult {
+  private static func new(fromCount object: PyObject) -> NewFromResult {
     switch IndexHelper.tryInt(object) {
     case .value(let count):
       // swiftlint:disable:next empty_count
@@ -370,7 +394,7 @@ internal struct PyBytesData: PyStringImpl {
     }
   }
 
-  private static func newFromIterable(object: PyObject) -> NewFromResult {
+  private static func new(fromIterable object: PyObject) -> NewFromResult {
     guard Py.hasIter(object: object) else {
       return .tryOther
     }

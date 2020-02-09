@@ -213,14 +213,14 @@ extension BuiltinFunctions {
       return .error(e)
     }
 
-    let encoding: FileEncoding
-    switch FileEncoding.from(encodingArg) {
+    let encoding: PyStringEncoding
+    switch PyStringEncoding.from(encodingArg) {
     case let .value(e): encoding = e
     case let .error(e): return .error(e)
     }
 
-    let errors: FileErrorHandler
-    switch FileErrorHandler.from(errorsArg) {
+    let errors: PyStringErrorHandler
+    switch PyStringErrorHandler.from(errorsArg) {
     case let .value(e): errors = e
     case let .error(e): return .error(e)
     }

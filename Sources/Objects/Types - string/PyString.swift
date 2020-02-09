@@ -699,23 +699,45 @@ public class PyString: PyObject {
 
   private static func pyNew(type: PyType,
                             object: PyObject?,
-                            encoding: PyObject?,
-                            errors: PyObject?) -> PyResult<PyObject> {
+                            encoding encodingObj: PyObject?,
+                            errors errorObj: PyObject?) -> PyResult<PyObject> {
     let isBuiltin = type === Py.types.str
     let alloca = isBuiltin ?
       newString(type:value:) :
       PyStringHeap.init(type:value:)
 
     guard let object = object else {
-      return .value(alloca(type, "<NULL>"))
+      return .value(alloca(type, ""))
     }
 
-    // TODO: [str.__new__] `encoding` and `error` args (also in bytes and bytearray)
-    guard encoding == nil && errors == nil else {
-      trap("Violet currently does not support 'encoding' and 'errors' parameters")
+    // Fast path when we don't have encoding and kwargs
+    if encodingObj == nil && errorObj == nil {
+      return Py.strValue(object).map { alloca(type, $0) }
     }
 
-    return Py.strValue(object).map { alloca(type, $0) }
+    let encoding: PyStringEncoding
+    switch PyStringEncoding.from(encodingObj) {
+    case let .value(e): encoding = e
+    case let .error(e): return .error(e)
+    }
+
+    let errors: PyStringErrorHandler
+    switch PyStringErrorHandler.from(errorObj) {
+    case let .value(e): errors = e
+    case let .error(e): return .error(e)
+    }
+
+    if let bytes = object as? PyBytesType {
+      let data = bytes.data.values
+      return encoding.decode(data: data, errors: errors).map { alloca(type, $0) }
+    }
+
+    if object is PyString {
+      return .typeError("decoding str is not supported")
+    }
+
+    let t = object.typeName
+    return .typeError("decoding to str: need a bytes-like object, \(t) found")
   }
 
   /// Allocate new PyString (it will use 'builtins' cache if possible).
