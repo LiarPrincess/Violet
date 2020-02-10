@@ -18,18 +18,21 @@ internal struct StringBuilder: StringBuilderType {
   internal mutating func append<C: Sequence>(contentsOf other: C)
     where C.Element == UnicodeScalar {
 
+    // This may be O(self.count + other.count), but I'm not sure.
+    // For now it will stay as it is.
     self.result.unicodeScalars.append(contentsOf: other)
   }
 }
 
 // MARK: - String data
 
-/// Basically `PyString` that does not require `PyContext`.
-///
 /// We work on scalars (Unicode code points) instead of graphemes because:
 /// - len("Cafe\u0301") = 5 (Swift: "Cafe\u{0301}".unicodeScalars.count)
 /// - len("Café")       = 4 (Swift: "Café".unicodeScalars.count)
 /// See: https://www.python.org/dev/peps/pep-0393/
+///
+/// Anyway, if you are looking for something it is probably in `PyStringImpl`
+/// and not here.
 internal struct PyStringData: PyStringImpl, CustomStringConvertible {
 
   internal let value: String

@@ -55,7 +55,7 @@ public class PyStringIterator: PyObject {
                                           offsetBy: self.index,
                                           limitedBy: scalars.endIndex)
 
-    if let scalarsIndex = scalarsIndexOrNil {
+    if let scalarsIndex = scalarsIndexOrNil, scalarsIndex != scalars.endIndex {
       self.index += 1
       let char = String(scalars[scalarsIndex])
       return .value(Py.newString(char))

@@ -341,8 +341,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = startswith, doc = startswithDoc
   internal func startsWith(_ element: PyObject,
-                           start: PyObject?,
-                           end: PyObject?) -> PyResult<Bool> {
+                           start: PyObject? = nil,
+                           end: PyObject? = nil) -> PyResult<Bool> {
     return self.data.starts(with: element, start: start, end: end)
   }
 
@@ -361,8 +361,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = endswith, doc = endswithDoc
   internal func endsWith(_ element: PyObject,
-                         start: PyObject?,
-                         end: PyObject?) -> PyResult<Bool> {
+                         start: PyObject? = nil,
+                         end: PyObject? = nil) -> PyResult<Bool> {
     return self.data.ends(with: element, start: start, end: end)
   }
 
@@ -375,7 +375,7 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = strip, doc = stripDoc
-  internal func strip(_ chars: PyObject?) -> PyResult<String> {
+  internal func strip(_ chars: PyObject? = nil) -> PyResult<String> {
     return self.data.strip(chars).map(String.init)
   }
 
@@ -386,7 +386,7 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = lstrip, doc = lstripDoc
-  internal func lstrip(_ chars: PyObject) -> PyResult<String> {
+  internal func lstrip(_ chars: PyObject? = nil) -> PyResult<String> {
     return self.data.lstrip(chars).map(String.init)
   }
 
@@ -397,7 +397,7 @@ public class PyString: PyObject {
     """
 
   // sourcery: pymethod = rstrip, doc = rstripDoc
-  internal func rstrip(_ chars: PyObject) -> PyResult<String> {
+  internal func rstrip(_ chars: PyObject? = nil) -> PyResult<String> {
     return self.data.rstrip(chars).map(String.init)
   }
 
@@ -419,8 +419,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = find, doc = findDoc
   internal func find(_ element: PyObject,
-                     start: PyObject?,
-                     end: PyObject?) -> PyResult<BigInt> {
+                     start: PyObject? = nil,
+                     end: PyObject? = nil) -> PyResult<BigInt> {
     return self.data.find(element, start: start, end: end)
   }
 
@@ -440,8 +440,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = rfind, doc = rfindDoc
   internal func rfind(_ element: PyObject,
-                      start: PyObject?,
-                      end: PyObject?) -> PyResult<BigInt> {
+                      start: PyObject? = nil,
+                      end: PyObject? = nil) -> PyResult<BigInt> {
     return self.data.rfind(element, start: start, end: end)
   }
 
@@ -464,8 +464,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = index, doc = indexDoc
   internal func index(of element: PyObject,
-                      start: PyObject?,
-                      end: PyObject?) -> PyResult<BigInt> {
+                      start: PyObject? = nil,
+                      end: PyObject? = nil) -> PyResult<BigInt> {
     return self.data.index(of: element, start: start, end: end)
   }
 
@@ -485,8 +485,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = rindex, doc = rindexDoc
   internal func rindex(_ element: PyObject,
-                       start: PyObject?,
-                       end: PyObject?) -> PyResult<BigInt> {
+                       start: PyObject? = nil,
+                       end: PyObject? = nil) -> PyResult<BigInt> {
     return self.data.rindex(element, start: start, end: end)
   }
 
@@ -525,38 +525,41 @@ public class PyString: PyObject {
   // MARK: - Center, just
 
   // sourcery: pymethod = center
-  internal func center(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+  internal func center(width: PyObject,
+                       fillChar: PyObject? = nil) -> PyResult<String> {
     return self.data.center(width: width, fill: fillChar)
   }
 
   // sourcery: pymethod = ljust
-  internal func ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+  internal func ljust(width: PyObject,
+                      fillChar: PyObject? = nil) -> PyResult<String> {
     return self.data.ljust(width: width, fill: fillChar)
   }
 
   // sourcery: pymethod = rjust
-  internal func rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String> {
+  internal func rjust(width: PyObject,
+                      fillChar: PyObject? = nil) -> PyResult<String> {
     return self.data.rjust(width: width, fill: fillChar)
   }
 
   // MARK: - Split
 
   // sourcery: pymethod = split
-  internal func split(separator: PyObject?,
-                      maxCount: PyObject?) -> PyResult<[String]> {
+  internal func split(separator: PyObject? = nil,
+                      maxCount: PyObject? = nil) -> PyResult<[String]> {
     return self.data.split(separator: separator, maxCount: maxCount)
       .map(self.toStringArray(_:))
   }
 
   // sourcery: pymethod = rsplit
-  internal func rsplit(separator: PyObject?,
-                       maxCount: PyObject?) -> PyResult<[String]> {
+  internal func rsplit(separator: PyObject? = nil,
+                       maxCount: PyObject? = nil) -> PyResult<[String]> {
     return self.data.rsplit(separator: separator, maxCount: maxCount)
       .map(self.toStringArray(_:))
   }
 
   // sourcery: pymethod = splitlines
-  internal func splitLines(keepEnds: PyObject) -> PyResult<[String]> {
+  internal func splitLines(keepEnds: PyObject? = nil) -> PyResult<[String]> {
     return self.data.splitLines(keepEnds: keepEnds)
       .map(self.toStringArray(_:))
   }
@@ -569,21 +572,7 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = partition
   internal func partition(separator: PyObject) -> PyResult<PyTuple> {
-    return self.data.partition(separator: separator)
-      .flatMap { self.toTuple(separator: separator, result: $0) }
-  }
-
-  // sourcery: pymethod = rpartition
-  internal func rpartition(separator: PyObject) -> PyResult<PyTuple> {
-    return self.data.rpartition(separator: separator)
-      .flatMap { self.toTuple(separator: separator, result: $0) }
-  }
-
-  private func toTuple(
-    separator: PyObject,
-    result: StringPartitionResult<UnicodeScalarViewSub>) -> PyResult<PyTuple> {
-
-    switch result {
+    switch self.data.partition(separator: separator) {
     case .separatorNotFound:
       let empty = Py.emptyString
       return .value(Py.newTuple(self, empty, empty))
@@ -591,7 +580,22 @@ public class PyString: PyObject {
       let b = Py.newString(String(before))
       let a = Py.newString(String(after))
       return .value(Py.newTuple(b, separator, a))
-    case .error(let e):
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // sourcery: pymethod = rpartition
+  internal func rpartition(separator: PyObject) -> PyResult<PyTuple> {
+    switch self.data.rpartition(separator: separator) {
+    case .separatorNotFound:
+      let empty = Py.emptyString
+      return .value(Py.newTuple(empty, empty, self))
+    case let .separatorFound(before, after):
+      let b = Py.newString(String(before))
+      let a = Py.newString(String(after))
+      return .value(Py.newTuple(b, separator, a))
+    case let .error(e):
       return .error(e)
     }
   }
@@ -620,8 +624,8 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = count, doc = countDoc
   internal func count(_ element: PyObject,
-                      start: PyObject?,
-                      end: PyObject?) -> PyResult<BigInt> {
+                      start: PyObject? = nil,
+                      end: PyObject? = nil) -> PyResult<BigInt> {
     return self.data.count(element, start: start, end: end)
   }
 

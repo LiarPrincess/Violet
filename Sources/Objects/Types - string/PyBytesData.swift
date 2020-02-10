@@ -34,6 +34,9 @@ internal struct BytesBuilder: StringBuilderType {
 // MARK: - Bytes data
 
 /// Shared code between `PyBytes` and `PyBytesArray`.
+///
+/// Anyway, if you are looking for something it is probably in `PyStringImpl`
+/// and not here.
 internal struct PyBytesData: PyStringImpl {
 
   internal private(set) var values: Data

@@ -13,6 +13,7 @@ public class PyInstance: BuiltinFunctions {
   public private(set) lazy var ellipsis = PyEllipsis()
   public private(set) lazy var emptyTuple = PyTuple(elements: [])
   public private(set) lazy var emptyString = PyString(value: "")
+  public private(set) lazy var emptyBytes = PyBytes(value: Data())
   public private(set) lazy var emptyFrozenSet = PyFrozenSet()
   public private(set) lazy var notImplemented = PyNotImplemented()
 
