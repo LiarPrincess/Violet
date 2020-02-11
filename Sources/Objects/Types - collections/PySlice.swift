@@ -24,7 +24,10 @@ public class PySlice: PyObject {
   internal var step:  PyObject
 
   override public var description: String {
-    return "PySlice()"
+    let start = "start: \(self.start)"
+    let stop = "stop: \(self.stop)"
+    let step = "step: \(self.step)"
+    return "PySlice(\(start), \(stop), \(step))"
   }
 
   // MARK: - Init
@@ -141,23 +144,19 @@ public class PySlice: PyObject {
     return self.type
   }
 
-  // MARK: - Start
+  // MARK: - Properties
 
-  // sourcery: pymethod = start
+  // sourcery: pyproperty = start
   internal func getStart() -> PyObject {
     return self.start
   }
 
-  // MARK: - Stop
-
-  // sourcery: pymethod = stop
+  // sourcery: pyproperty = stop
   internal func getStop() -> PyObject {
     return self.stop
   }
 
-  // MARK: - Step
-
-  // sourcery: pymethod = step
+  // sourcery: pyproperty = step
   internal func getStep() -> PyObject {
     return self.step
   }
@@ -212,6 +211,8 @@ public class PySlice: PyObject {
     case let .error(e):
       return .error(e)
     }
+
+    assert(step != 0)
 
     // Find lower and upper bounds for start and stop.
     let isGoingUp = step > 0
@@ -394,9 +395,10 @@ public class PySlice: PyObject {
   }
 
   /// _PyEval_SliceIndex
+  /// evaluate_slice_index
   private func extractIndex(_ value: PyObject) -> ExtractIndexResult {
     if value is PyNone {
-      return .index(1)
+      return .none
     }
 
     switch IndexHelper.tryInt(value) {

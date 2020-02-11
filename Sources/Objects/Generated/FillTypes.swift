@@ -1252,6 +1252,9 @@ internal enum FillTypes {
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PySlice.getClass, castSelf: Cast.asPySlice)
+    dict["start"] = PyProperty.wrap(name: "start", doc: nil, get: PySlice.getStart, castSelf: Cast.asPySlice)
+    dict["stop"] = PyProperty.wrap(name: "stop", doc: nil, get: PySlice.getStop, castSelf: Cast.asPySlice)
+    dict["step"] = PyProperty.wrap(name: "step", doc: nil, get: PySlice.getStep, castSelf: Cast.asPySlice)
 
     dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySlice.pyNew(type:args:kwargs:))
 
@@ -1265,9 +1268,6 @@ internal enum FillTypes {
     dict["__hash__"] = PyBuiltinFunction.wrap(name: "__hash__", doc: nil, fn: PySlice.hash, castSelf: Cast.asPySlice)
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PySlice.repr, castSelf: Cast.asPySlice)
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PySlice.getAttribute(name:), castSelf: Cast.asPySlice)
-    dict["start"] = PyBuiltinFunction.wrap(name: "start", doc: nil, fn: PySlice.getStart, castSelf: Cast.asPySlice)
-    dict["stop"] = PyBuiltinFunction.wrap(name: "stop", doc: nil, fn: PySlice.getStop, castSelf: Cast.asPySlice)
-    dict["step"] = PyBuiltinFunction.wrap(name: "step", doc: nil, fn: PySlice.getStep, castSelf: Cast.asPySlice)
     dict["indices"] = PyBuiltinFunction.wrap(name: "indices", doc: nil, fn: PySlice.indicesInSequence(length:), castSelf: Cast.asPySlice)
   }
 

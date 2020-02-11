@@ -710,6 +710,9 @@ PySetIterator|PyObject|func|__iter__|iter() -> PyObject
 PySetIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PySetIterator|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDictData?) -> PyResult<PyObject>
 PySlice|PyObject|get|__class__|getClass() -> PyType
+PySlice|PyObject|get|start|getStart() -> PyObject
+PySlice|PyObject|get|stop|getStop() -> PyObject
+PySlice|PyObject|get|step|getStep() -> PyObject
 
 PySlice|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
 PySlice|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> CompareResult
@@ -720,9 +723,6 @@ PySlice|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
 PySlice|PyObject|func|__hash__|hash() -> HashResult
 PySlice|PyObject|func|__repr__|repr() -> PyResult<String>
 PySlice|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
-PySlice|PyObject|func|start|getStart() -> PyObject
-PySlice|PyObject|func|stop|getStop() -> PyObject
-PySlice|PyObject|func|step|getStep() -> PyObject
 PySlice|PyObject|func|indices|indicesInSequence(length: PyObject) -> PyResult<PyObject>
 PySlice|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyString|PyObject|get|__class__|getClass() -> PyType

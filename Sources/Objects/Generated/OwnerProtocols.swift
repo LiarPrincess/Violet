@@ -35,6 +35,9 @@ protocol FsetGetterOwner { func getFSet() -> PyObject }
 protocol ImagGetterOwner { func asImag() -> PyObject }
 protocol NumeratorGetterOwner { func numerator() -> PyInt }
 protocol RealGetterOwner { func asReal() -> PyObject }
+protocol StartGetterOwner { func getStart() -> PyObject }
+protocol StepGetterOwner { func getStep() -> PyObject }
+protocol StopGetterOwner { func getStop() -> PyObject }
 protocol __abs__Owner { func abs() -> PyObject }
 protocol __add__Owner { func add(_ other: PyObject) -> PyResult<PyObject> }
 protocol __and__Owner { func and(_ other: PyObject) -> PyResult<PyObject> }

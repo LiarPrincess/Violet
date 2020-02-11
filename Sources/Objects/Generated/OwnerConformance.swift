@@ -835,6 +835,9 @@ extension PySetIterator:
 
 extension PySlice:
   __class__GetterOwner,
+  StartGetterOwner,
+  StopGetterOwner,
+  StepGetterOwner,
   __eq__Owner,
   __ne__Owner,
   __lt__Owner,
@@ -844,9 +847,6 @@ extension PySlice:
   __hash__Owner,
   __repr__Owner,
   __getattribute__Owner,
-  startOwner,
-  stopOwner,
-  stepOwner,
   indicesOwner,
   __new__Owner
 { }
