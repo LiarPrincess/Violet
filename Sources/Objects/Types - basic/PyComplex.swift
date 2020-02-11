@@ -93,14 +93,28 @@ public class PyComplex: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
+    // Real part is 0: just output the imaginary part and do not include parens.
     if self.real.isZero {
-      return .value(String(describing: self.imag) + "j")
+      let imag = self.dimensionRepr(self.imag)
+      return .value(imag + "j")
     }
 
     let sign = self.imag >= 0 ? "+" : ""
-    let real = String(describing: self.real)
-    let imag = String(describing: self.imag)
+    let real = self.dimensionRepr(self.real)
+    let imag = self.dimensionRepr(self.imag)
     return .value("(\(real)\(sign)\(imag)j)")
+  }
+
+  private func dimensionRepr(_ value: Double) -> String {
+    let result = String(describing: value)
+
+    // If it is 'int' then remove '.0'
+    if result.ends(with: ".0") {
+      let withoutDotZero = result.dropLast(2)
+      return withoutDotZero.isEmpty ? "0" : String(withoutDotZero)
+    }
+
+    return result
   }
 
   // sourcery: pymethod = __str__
