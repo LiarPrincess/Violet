@@ -11,7 +11,7 @@
 /// This would fail following test:
 /// ```py
 /// assert len("é") == 1
-/// assert len("é") == 2 <-- it would say 1, because it would use cached 'é'.
+/// assert len("e\u0301") == 2 <-- it would say 1, because it would use cached 'é'.
 /// ```
 internal struct UseScalarsToHashString: Equatable, Hashable {
 
@@ -22,26 +22,32 @@ internal struct UseScalarsToHashString: Equatable, Hashable {
   }
 
   func hash(into hasher: inout Hasher) {
-    for scalar in value.unicodeScalars {
-      hasher.combine(scalar)
+    for scalar in self.value.unicodeScalars {
+      hasher.combine(scalar.value)
     }
   }
 
   internal static func == (lhs: Self, rhs: Self) -> Bool {
-    // Do not use 'count'!
-    // It may be O(n) and which would iterate string 2 times!
+    // Do not use 'xxx.value.unicodeScalars.count'!
+    // It may be O(n) which would iterate string 2 times!
 
     var lhsIter = lhs.value.unicodeScalars.makeIterator()
     var rhsIter = rhs.value.unicodeScalars.makeIterator()
 
-    while let l = lhsIter.next(), let r = rhsIter.next() {
+    var lhsValue = lhsIter.next()
+    var rhsValue = rhsIter.next()
+
+    while let l = lhsValue, let r = rhsValue {
       if l != r {
         return false
       }
+
+      lhsValue = lhsIter.next()
+      rhsValue = rhsIter.next()
     }
 
-    let isLhsEnd = lhsIter.next() == nil
-    let isRhsEnd = rhsIter.next() == nil
+    let isLhsEnd = lhsValue == nil
+    let isRhsEnd = rhsValue == nil
     return isLhsEnd && isRhsEnd
   }
 }
