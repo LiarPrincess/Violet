@@ -23,11 +23,6 @@ public class PySlice: PyObject {
   internal var stop:  PyObject
   internal var step:  PyObject
 
-  private var asStartStopStepSequence: PySequenceData {
-    let elements = [self.start, self.stop, self.step]
-    return PySequenceData(elements: elements)
-  }
-
   override public var description: String {
     return "PySlice()"
   }
@@ -47,12 +42,7 @@ public class PySlice: PyObject {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PySlice else {
-      return .notImplemented
-    }
-
-    let data = self.asStartStopStepSequence
-    return data.isEqual(to: other.asStartStopStepSequence)
+    return self.compare(with: other) { $0.isEqual(to: $1) }
   }
 
   // sourcery: pymethod = __ne__
@@ -64,42 +54,41 @@ public class PySlice: PyObject {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PySlice else {
-      return .notImplemented
-    }
-
-    let data = self.asStartStopStepSequence
-    return data.isLess(than: other.asStartStopStepSequence)
+    return self.compare(with: other) { $0.isLess(than: $1) }
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PySlice else {
-      return .notImplemented
-    }
-
-    let data = self.asStartStopStepSequence
-    return data.isLessEqual(than: other.asStartStopStepSequence)
+    return self.compare(with: other) { $0.isLessEqual(than: $1) }
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PySlice else {
-      return .notImplemented
-    }
-
-    let data = self.asStartStopStepSequence
-    return data.isGreater(than: other.asStartStopStepSequence)
+    return self.compare(with: other) { $0.isGreater(than: $1) }
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+    return self.compare(with: other) { $0.isGreaterEqual(than: $1) }
+  }
+
+  private func compare(
+    with other: PyObject,
+    using compareFn: (PySequenceData, PySequenceData) -> CompareResult
+  ) -> CompareResult {
     guard let other = other as? PySlice else {
       return .notImplemented
     }
 
-    let data = self.asStartStopStepSequence
-    return data.isGreaterEqual(than: other.asStartStopStepSequence)
+    let selfSeq = self.asStartStopStepSequence
+    let otherSeq = other.asStartStopStepSequence
+    return compareFn(selfSeq, otherSeq)
+  }
+
+  /// Create `self.start, self.stop, self.step` sequence.
+  private var asStartStopStepSequence: PySequenceData {
+    let elements = [self.start, self.stop, self.step]
+    return PySequenceData(elements: elements)
   }
 
   // MARK: - Hashable

@@ -57,11 +57,7 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyInt else {
-      return .notImplemented
-    }
-
-    return .value(self.isEqual(other))
+    return self.compare(with: other) { $0 == $1 }
   }
 
   internal func isEqual(_ other: PyInt) -> Bool {
@@ -77,38 +73,34 @@ public class PyInt: PyObject {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyInt else {
-      return .notImplemented
-    }
-
-    return .value(self.value < other.value)
+    return self.compare(with: other) { $0 < $1 }
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyInt else {
-      return .notImplemented
-    }
-
-    return .value(self.value <= other.value)
+    return self.compare(with: other) { $0 <= $1 }
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyInt else {
-      return .notImplemented
-    }
-
-    return .value(self.value > other.value)
+    return self.compare(with: other) { $0 > $1 }
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+    return self.compare(with: other) { $0 >= $1 }
+  }
+
+  private func compare(
+    with other: PyObject,
+    using compareFn: (BigInt, BigInt) -> Bool
+  ) -> CompareResult {
     guard let other = other as? PyInt else {
       return .notImplemented
     }
 
-    return .value(self.value >= other.value)
+    let result = compareFn(self.value, other.value)
+    return .value(result)
   }
 
   // MARK: - Hashable

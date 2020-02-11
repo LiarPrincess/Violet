@@ -31,36 +31,30 @@ extension PyBuiltinFunctionShared where Self: PyObject {
 
   // MARK: - Comparable
 
-  // sourcery: pymethod = __lt__
   internal func isLessShared(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
-  // sourcery: pymethod = __le__
   internal func isLessEqualShared(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
-  // sourcery: pymethod = __gt__
   internal func isGreaterShared(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
-  // sourcery: pymethod = __ge__
   internal func isGreaterEqualShared(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // MARK: - Hashable
 
-  // sourcery: pymethod = __hash__
   internal func hashShared() -> HashResult {
     return .notImplemented
   }
 
   // MARK: - Attributes
 
-  // sourcery: pymethod = __getattribute__
   internal func getAttributeShared(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
@@ -71,14 +65,12 @@ extension PyBuiltinFunctionShared where Self: PyObject {
 
   // MARK: - TextSignature
 
-  // sourcery: pyproperty = __text_signature__
   internal func getTextSignatureShared() -> String? {
     return self.doc.flatMap(DocHelper.getSignature)
   }
 
   // MARK: - Module
 
-  // sourcery: pyproperty = __module__
   internal func getModuleShared() -> PyResult<String> {
     guard let moduleObject = self.module else {
       return .value("")

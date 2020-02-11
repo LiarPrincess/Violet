@@ -52,11 +52,7 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = __eq__
   internal func isEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyList else {
-      return .notImplemented
-    }
-
-    return self.data.isEqual(to: other.data)
+    return self.compare(with: other) { $0.isEqual(to: $1) }
   }
 
   // sourcery: pymethod = __ne__
@@ -68,38 +64,33 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = __lt__
   internal func isLess(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyList else {
-      return .notImplemented
-    }
-
-    return self.data.isLess(than: other.data)
+    return self.compare(with: other) { $0.isLess(than: $1) }
   }
 
   // sourcery: pymethod = __le__
   internal func isLessEqual(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyList else {
-      return .notImplemented
-    }
-
-    return self.data.isLessEqual(than: other.data)
+    return self.compare(with: other) { $0.isLessEqual(than: $1) }
   }
 
   // sourcery: pymethod = __gt__
   internal func isGreater(_ other: PyObject) -> CompareResult {
-    guard let other = other as? PyList else {
-      return .notImplemented
-    }
-
-    return self.data.isGreater(than: other.data)
+    return self.compare(with: other) { $0.isGreater(than: $1) }
   }
 
   // sourcery: pymethod = __ge__
   internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+    return self.compare(with: other) { $0.isGreaterEqual(than: $1) }
+  }
+
+  private func compare(
+    with other: PyObject,
+    using compareFn: (PySequenceData, PySequenceData) -> CompareResult
+  ) -> CompareResult {
     guard let other = other as? PyList else {
       return .notImplemented
     }
 
-    return self.data.isGreaterEqual(than: other.data)
+    return compareFn(self.data, other.data)
   }
 
   // MARK: - Hashable
