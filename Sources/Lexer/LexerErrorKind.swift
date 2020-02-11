@@ -38,6 +38,9 @@ public enum LexerErrorKind: Equatable {
   case invalidDecimalDigit(UnicodeScalar)
   /// Unable to parse integer from 'x'
   case unableToParseDecimal(String)
+
+  // Expected new line after '\'.
+  case missingNewLineAfterBackslashEscape
 }
 
 extension LexerErrorKind: CustomStringConvertible {
@@ -79,6 +82,9 @@ extension LexerErrorKind: CustomStringConvertible {
       return "Character '\(c)' (unicode: \(c.uPlus)) is not valid decimal digit."
     case .unableToParseDecimal(let s):
       return "Unable to parse decimal from '\(s)'."
+
+    case .missingNewLineAfterBackslashEscape:
+      return "Expected new line after '\'."
     }
   }
 }

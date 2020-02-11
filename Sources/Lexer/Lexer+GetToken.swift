@@ -6,6 +6,7 @@ extension Lexer {
       if self.isAtBeginOfLine {
         self.isAtBeginOfLine = false
 
+        // Multi-line tuple/array/dict/set declaration does not change indent
         let isTupleArrayDict = self.nesting > 0
         if !isTupleArrayDict {
           try self.calculateIndent()
@@ -40,10 +41,9 @@ extension Lexer {
       case " ", "\t":
         // just consume it, nothing else
         // we don't collect trivia
-
         repeat {
           self.advance()
-        } while self.peek == " " || self.peek == "\t"
+        } while self.isWhitespace(self.peek)
 
       // MARK: Main
 
@@ -55,6 +55,28 @@ extension Lexer {
         return try self.comment()
       case "'", "\"":
         return try self.string()
+
+      case "\\":
+        // Special symbol to escape (ignore) end of the line
+        // (at least this is the most common usage).
+        self.advance() // '\'
+
+        // If this the last character in file, then input is still valid
+        guard let next = self.peek else {
+          return self.token(.eof)
+        }
+
+        guard self.isNewLine(next) else {
+          throw self.error(.missingNewLineAfterBackslashEscape)
+        }
+
+        self.advance() // new line
+
+        while let c = self.peek, self.isWhitespace(c) {
+          self.advance()
+        }
+
+        return try self.getToken()
 
       // MARK: Basic operators
 

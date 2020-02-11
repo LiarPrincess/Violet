@@ -25,6 +25,11 @@ public class Lexer: LexerType {
   /// Where are we in the source file?
   internal var location = SourceLocation.start
 
+  /// Did we finish lexing?
+  internal var isAtEnd: Bool {
+    return self.sourceIndex == self.source.endIndex
+  }
+
   /// Create lexer that will produce tokens from the source.
   public init(for source: String) {
     self.source = source.unicodeScalars
@@ -35,15 +40,20 @@ public class Lexer: LexerType {
 
   /// Current character. Use `self.advance` to consume.
   internal var peek: UnicodeScalar? {
-    let atEnd = self.sourceIndex == self.source.endIndex
-    return atEnd ? nil : self.source[self.sourceIndex]
+    return self.isAtEnd ? nil : self.source[self.sourceIndex]
   }
 
   /// Character after `self.peek`.
   internal var peekNext: UnicodeScalar? {
-    let end = self.source.endIndex
-    let index = self.source.index(self.sourceIndex, offsetBy: 1, limitedBy: end)
-    return index.flatMap { $0 == end ? nil : self.source[$0] }
+    if self.isAtEnd {
+      return nil
+    }
+
+    var indexCopy = self.sourceIndex
+    self.source.formIndex(after: &indexCopy)
+
+    let isAtEnd = indexCopy == self.source.endIndex
+    return isAtEnd ? nil : self.source[indexCopy]
   }
 
   /// Consumes current character.
@@ -107,7 +117,7 @@ public class Lexer: LexerType {
 
   // MARK: - Helpers
 
-  internal func isWhitespace(_ c: UnicodeScalar) -> Bool {
+  internal func isWhitespace(_ c: UnicodeScalar?) -> Bool {
     return c == " " || c == "\t"
   }
 
