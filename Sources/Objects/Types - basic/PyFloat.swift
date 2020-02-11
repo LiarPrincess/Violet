@@ -58,6 +58,13 @@ private enum FloatSign: BigInt, Equatable {
 extension FloatCompare {
 
   fileprivate static func compare(left: Double, right: PyObject) -> CompareResult {
+    // If both are floats then use standard Swift compare
+    // (even if one of them is nan/inf/whatever).
+    if let rightFloat = right as? PyFloat {
+      let result = Self.compare(left: left, right: rightFloat.value)
+      return .value(result)
+    }
+
     // If i is an infinity, its magnitude exceeds any finite integer,
     // so it doesn't matter which int we compare i with. If i is a NaN, similarly.
     guard left.isFinite else {
@@ -67,11 +74,6 @@ extension FloatCompare {
       }
 
       return .notImplemented
-    }
-
-    if let rightFloat = right as? PyFloat {
-      let result = Self.compare(left: left, right: rightFloat.value)
-      return .value(result)
     }
 
     if let rightInt = right as? PyInt {
@@ -107,6 +109,7 @@ extension FloatCompare {
     assert(leftSign != .zero) // we checked 'leftSign != rightSign'
 
     // We want to work with non-negative numbers.
+    // Multiply both sides by -1; this also swaps the comparator.
     return leftSign == .minus ?
       Self.reflected.magic(left: -left, right: right, nBits: nBits) :
       Self.magic(left: left, right: right, nBits: nBits)
