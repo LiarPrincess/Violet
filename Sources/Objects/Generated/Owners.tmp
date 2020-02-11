@@ -110,8 +110,8 @@ PyByteArray|PyObject|func|isupper|isUpper() -> Bool
 PyByteArray|PyObject|func|startswith|startsWith(_ element: PyObject,                           start: PyObject?,                           end: PyObject?) -> PyResult<Bool>
 PyByteArray|PyObject|func|endswith|endsWith(_ element: PyObject,                         start: PyObject?,                         end: PyObject?) -> PyResult<Bool>
 PyByteArray|PyObject|func|strip|strip(_ chars: PyObject?) -> PyResult<Data>
-PyByteArray|PyObject|func|lstrip|lstrip(_ chars: PyObject) -> PyResult<Data>
-PyByteArray|PyObject|func|rstrip|rstrip(_ chars: PyObject) -> PyResult<Data>
+PyByteArray|PyObject|func|lstrip|lstrip(_ chars: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|rstrip|rstrip(_ chars: PyObject?) -> PyResult<Data>
 PyByteArray|PyObject|func|find|find(_ element: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<BigInt>
 PyByteArray|PyObject|func|rfind|rfind(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
 PyByteArray|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
@@ -121,12 +121,12 @@ PyByteArray|PyObject|func|upper|upper() -> Data
 PyByteArray|PyObject|func|title|title() -> Data
 PyByteArray|PyObject|func|swapcase|swapcase() -> Data
 PyByteArray|PyObject|func|capitalize|capitalize() -> Data
-PyByteArray|PyObject|func|center|center(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
-PyByteArray|PyObject|func|ljust|ljust(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
-PyByteArray|PyObject|func|rjust|rjust(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|center|center(width: PyObject,                       fillChar: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|ljust|ljust(width: PyObject,                      fillChar: PyObject?) -> PyResult<Data>
+PyByteArray|PyObject|func|rjust|rjust(width: PyObject,                      fillChar: PyObject?) -> PyResult<Data>
 PyByteArray|PyObject|func|split|split(separator: PyObject?,                      maxCount: PyObject?) -> PyResult<[Data]>
 PyByteArray|PyObject|func|rsplit|rsplit(separator: PyObject?,                       maxCount: PyObject?) -> PyResult<[Data]>
-PyByteArray|PyObject|func|splitlines|splitLines(keepEnds: PyObject) -> PyResult<[Data]>
+PyByteArray|PyObject|func|splitlines|splitLines(keepEnds: PyObject?) -> PyResult<[Data]>
 PyByteArray|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTuple>
 PyByteArray|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
 PyByteArray|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<Data>
@@ -182,8 +182,8 @@ PyBytes|PyObject|func|isupper|isUpper() -> Bool
 PyBytes|PyObject|func|startswith|startsWith(_ element: PyObject,                           start: PyObject?,                           end: PyObject?) -> PyResult<Bool>
 PyBytes|PyObject|func|endswith|endsWith(_ element: PyObject,                         start: PyObject?,                         end: PyObject?) -> PyResult<Bool>
 PyBytes|PyObject|func|strip|strip(_ chars: PyObject?) -> PyResult<Data>
-PyBytes|PyObject|func|lstrip|lstrip(_ chars: PyObject) -> PyResult<Data>
-PyBytes|PyObject|func|rstrip|rstrip(_ chars: PyObject) -> PyResult<Data>
+PyBytes|PyObject|func|lstrip|lstrip(_ chars: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|rstrip|rstrip(_ chars: PyObject?) -> PyResult<Data>
 PyBytes|PyObject|func|find|find(_ element: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<BigInt>
 PyBytes|PyObject|func|rfind|rfind(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
 PyBytes|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
@@ -193,12 +193,12 @@ PyBytes|PyObject|func|upper|upper() -> Data
 PyBytes|PyObject|func|title|title() -> Data
 PyBytes|PyObject|func|swapcase|swapcase() -> Data
 PyBytes|PyObject|func|capitalize|capitalize() -> Data
-PyBytes|PyObject|func|center|center(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
-PyBytes|PyObject|func|ljust|ljust(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
-PyBytes|PyObject|func|rjust|rjust(width: PyObject, fillChar: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|center|center(width: PyObject,                       fillChar: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|ljust|ljust(width: PyObject,                      fillChar: PyObject?) -> PyResult<Data>
+PyBytes|PyObject|func|rjust|rjust(width: PyObject,                      fillChar: PyObject?) -> PyResult<Data>
 PyBytes|PyObject|func|split|split(separator: PyObject?,                      maxCount: PyObject?) -> PyResult<[Data]>
 PyBytes|PyObject|func|rsplit|rsplit(separator: PyObject?,                       maxCount: PyObject?) -> PyResult<[Data]>
-PyBytes|PyObject|func|splitlines|splitLines(keepEnds: PyObject) -> PyResult<[Data]>
+PyBytes|PyObject|func|splitlines|splitLines(keepEnds: PyObject?) -> PyResult<[Data]>
 PyBytes|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTuple>
 PyBytes|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
 PyBytes|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<Data>
@@ -755,8 +755,8 @@ PyString|PyObject|func|isupper|isUpper() -> Bool
 PyString|PyObject|func|startswith|startsWith(_ element: PyObject,                           start: PyObject?,                           end: PyObject?) -> PyResult<Bool>
 PyString|PyObject|func|endswith|endsWith(_ element: PyObject,                         start: PyObject?,                         end: PyObject?) -> PyResult<Bool>
 PyString|PyObject|func|strip|strip(_ chars: PyObject?) -> PyResult<String>
-PyString|PyObject|func|lstrip|lstrip(_ chars: PyObject) -> PyResult<String>
-PyString|PyObject|func|rstrip|rstrip(_ chars: PyObject) -> PyResult<String>
+PyString|PyObject|func|lstrip|lstrip(_ chars: PyObject?) -> PyResult<String>
+PyString|PyObject|func|rstrip|rstrip(_ chars: PyObject?) -> PyResult<String>
 PyString|PyObject|func|find|find(_ element: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<BigInt>
 PyString|PyObject|func|rfind|rfind(_ element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
 PyString|PyObject|func|index|index(of element: PyObject,                      start: PyObject?,                      end: PyObject?) -> PyResult<BigInt>
@@ -767,12 +767,12 @@ PyString|PyObject|func|title|title() -> String
 PyString|PyObject|func|swapcase|swapcase() -> String
 PyString|PyObject|func|casefold|casefold() -> String
 PyString|PyObject|func|capitalize|capitalize() -> String
-PyString|PyObject|func|center|center(width: PyObject, fillChar: PyObject?) -> PyResult<String>
-PyString|PyObject|func|ljust|ljust(width: PyObject, fillChar: PyObject?) -> PyResult<String>
-PyString|PyObject|func|rjust|rjust(width: PyObject, fillChar: PyObject?) -> PyResult<String>
+PyString|PyObject|func|center|center(width: PyObject,                       fillChar: PyObject?) -> PyResult<String>
+PyString|PyObject|func|ljust|ljust(width: PyObject,                      fillChar: PyObject?) -> PyResult<String>
+PyString|PyObject|func|rjust|rjust(width: PyObject,                      fillChar: PyObject?) -> PyResult<String>
 PyString|PyObject|func|split|split(separator: PyObject?,                      maxCount: PyObject?) -> PyResult<[String]>
 PyString|PyObject|func|rsplit|rsplit(separator: PyObject?,                       maxCount: PyObject?) -> PyResult<[String]>
-PyString|PyObject|func|splitlines|splitLines(keepEnds: PyObject) -> PyResult<[String]>
+PyString|PyObject|func|splitlines|splitLines(keepEnds: PyObject?) -> PyResult<[String]>
 PyString|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTuple>
 PyString|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
 PyString|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<String>
