@@ -316,10 +316,21 @@ internal struct PySequenceData {
 
   internal mutating func insert(at index: PyObject,
                                 item: PyObject) -> PyResult<PyNone> {
-    let parsedIndex: Int
+    var parsedIndex: Int
     switch IndexHelper.int(index) {
     case let .value(i): parsedIndex = i
     case let .error(e): return .error(e)
+    }
+
+    if parsedIndex < 0 {
+      parsedIndex += self.elements.count
+      if parsedIndex < 0 {
+        parsedIndex = 0
+      }
+    }
+
+    if parsedIndex > self.elements.count {
+      parsedIndex = self.elements.count
     }
 
     self.elements.insert(item, at: parsedIndex)
@@ -367,13 +378,8 @@ internal struct PySequenceData {
 
   internal mutating func extend(iterable: PyObject) -> PyResult<PyNone> {
     // Fast path: adding tuples, lists
-    if let tuple = iterable as? PyTuple {
-      self.elements.append(contentsOf: tuple.elements)
-      return .value(Py.none)
-    }
-
-    if let list = iterable as? PyList {
-      self.elements.append(contentsOf: list.elements)
+    if let sequence = iterable as? PySequenceType {
+      self.elements.append(contentsOf: sequence.data.elements)
       return .value(Py.none)
     }
 
