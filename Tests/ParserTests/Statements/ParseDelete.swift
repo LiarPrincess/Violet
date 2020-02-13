@@ -64,4 +64,52 @@ class ParseDelete: XCTestCase, Common {
           Value: Lamp
     """)
   }
+
+  // del agrabah[0]
+  func test_subscript() {
+    let parser = self.createStmtParser(
+      self.token(.del,                   start: loc0, end: loc1),
+      self.token(.identifier("agrabah"), start: loc2, end: loc3),
+      self.token(.leftSqb,               start: loc4, end: loc5),
+      self.token(.int(0),                start: loc6, end: loc7),
+      self.token(.rightSqb,              start: loc8, end: loc9)
+    )
+
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 9:14)
+      DeleteStmt(start: 0:0, end: 9:14)
+        SubscriptExpr(context: Del, start: 2:2, end: 9:14)
+          Object
+            IdentifierExpr(context: Load, start: 2:2, end: 3:8)
+              Value: agrabah
+          Slice(start: 4:4, end: 9:14)
+            Index
+              IntExpr(context: Load, start: 6:6, end: 7:12)
+                Value: 0
+    """)
+  }
+
+  // del agrabah.jafar
+  func test_attribute() {
+    let parser = self.createStmtParser(
+      self.token(.del,                   start: loc0, end: loc1),
+      self.token(.identifier("agrabah"), start: loc2, end: loc3),
+      self.token(.dot,                   start: loc4, end: loc5),
+      self.token(.identifier("jafar")  , start: loc6, end: loc7)
+    )
+
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 7:12)
+      DeleteStmt(start: 0:0, end: 7:12)
+        AttributeExpr(context: Del, start: 2:2, end: 7:12)
+          Object
+            IdentifierExpr(context: Load, start: 2:2, end: 3:8)
+              Value: agrabah
+          Name: jafar
+    """)
+  }
 }

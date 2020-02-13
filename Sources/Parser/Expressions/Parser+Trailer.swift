@@ -49,6 +49,10 @@ extension Parser {
       let end = self.peek.end
       try self.consumeOrThrow(.rightSqb)
 
+      // If we are deleting subscript then 'leftExpr' is a container.
+      // Container should be loaded and 'del' context should be set on 'subscriptExpr'.
+      SetLoadExpressionContext.run(expression: leftExpr)
+
       let slice = self.builder.slice(kind: sliceKind, start: start, end: end)
       return self.builder.subscriptExpr(object: leftExpr,
                                         slice: slice,
@@ -61,6 +65,10 @@ extension Parser {
 
       let nameToken = self.peek
       let name = try self.consumeIdentifierOrThrow()
+
+      // If we are deleting attribute then 'leftExpr' is a object.
+      // Object should be loaded and 'del' context should be set on 'attributeExpr'.
+      SetLoadExpressionContext.run(expression: leftExpr)
 
       return self.builder.attributeExpr(object: leftExpr,
                                         name: name,
