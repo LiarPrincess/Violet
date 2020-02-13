@@ -2,225 +2,312 @@ import XCTest
 import Core
 @testable import Objects
 
-private class DummyObject: PyObject {
+// swiftlint:disable file_length
 
-  fileprivate let value: Int
+class ArgumentParserTests: PyTestCaseOtherwiseItWillTrap {
 
-  fileprivate init(value: Int) {
-    self.value = value
-    super.init()
-  }
-}
+  // MARK: - Init - name
 
-extension Objects.ArgumentParser {
+  func test_init_withoutFunctionName_fails() {
+    guard let e = self.createError(
+      arguments: ["", "elsa"],
+      format: "|OO" // Missing ':function_name'
+    ) else { return }
 
-  // swiftlint:disable:next discouraged_optional_collection
-  fileprivate func parseOrNil(args: [PyObject],
-                              kwargs: [String:PyObject],
-                              file: StaticString = #file,
-                              line: UInt         = #line) -> [PyObject]? {
-    switch self.parse(args: args, kwargs: kwargs) {
-    case let .value(r):
-      return r
-    case let .error(e):
-      XCTAssert(false, String(describing: e), file: file, line: line)
-      return nil
-    }
-  }
-}
-
-class ArgumentParser: PyTestCaseOtherwiseItWillTrap {
-
-  // MARK: - Create
-
-  func test_init_withoutName_fails() {
-    guard case let .error(e) = self.create(arguments: ["", "kw", ""],
-                                           format: "|OOO") else {
-      XCTAssert(false)
-      return
-    }
-
-    XCTAssert(e is PySystemError)
+    guard let s = self.asSystemError(e) else { return }
+    XCTAssertEqual(s.message, "Format does not contain function name")
   }
 
-  func test_init_withoutName2_fails() {
-    guard case let .error(e) = self.create(arguments: ["", "kw", ""],
-                                           format: "|OOO:") else {
-      XCTAssert(false)
-      return
-    }
+  func test_init_withoutFunctionName_withColon_fails() {
+    guard let e = self.createError(
+      arguments: ["", "elsa"],
+      format: "|OO:" // Nothing after ':'
+    ) else { return }
 
-    XCTAssert(e is PySystemError)
+    guard let s = self.asSystemError(e) else { return }
+    XCTAssertEqual(s.message, "Format does not contain function name")
   }
 
-  func test_init_positionalAfterKwarg_fails() {
-    guard case let .error(e) = self.create(arguments: ["", "kw", ""],
-                                           format: "|OOO:fn") else {
-      XCTAssert(false)
-      return
-    }
+  // MARK: - Init - argument count
 
-    XCTAssert(e is PySystemError)
+  func test_init_argumentCount_moreNamesThanInFormat_fails() {
+    guard let e = self.createError(
+      arguments: ["", "elsa", "anna"], // 3
+      format: "|OO:frozen" // 2
+    ) else { return }
+
+    guard let s = self.asSystemError(e) else { return }
+    XCTAssertEqual(s.message, "More keyword list entries (3) than format specifiers (2)")
   }
 
-  func test_init_moreArguments_thanInFormat_fails() {
-    guard case let .error(e) = self.create(arguments: ["", "kw", "kw2"],
-                                           format: "|OO:fn") else {
-      XCTAssert(false)
-      return
-    }
+  func test_init_argumentCount_moreInFormatThanNames_fails() {
+    guard let e = self.createError(
+      arguments: ["", "elsa"], // 2
+      format: "|OOO:frozen" // 3
+    ) else { return }
 
-    XCTAssert(e is PySystemError)
+    guard let s = self.asSystemError(e) else { return }
+    XCTAssertEqual(s.message, "More argument specifiers than keyword list entries")
   }
 
-  func test_init_moreArgumentsInFormat_thanNames_fails() {
-    guard case let .error(e) = self.create(arguments: ["", "kw"],
-                                           format: "|OOO:fn") else {
-      XCTAssert(false)
-      return
-    }
+  // MARK: - Init - argument names
 
-    XCTAssert(e is PySystemError)
+  func test_init_argumentNames_positionalAfterKwarg_fails() {
+    guard let e = self.createError(
+      arguments: ["", "elsa", ""], // we have "" after "elsa"
+      format: "|OOO:frozen"
+    ) else { return }
+
+    guard let s = self.asSystemError(e) else { return }
+    XCTAssertEqual(s.message, "Empty keyword parameter name")
   }
 
-  func test_init_multipleMinArgMarker_fails() {
-    guard case let .error(e) = self.create(arguments: ["", "kw"],
-                                           format: "|O|OO:fn") else {
-      XCTAssert(false)
-      return
-    }
+  // MARK: - Init - markers
 
-    XCTAssert(e is PySystemError)
+  func test_init_markers_multipleRequiredArg_fails() {
+    guard let e = self.createError(
+      arguments: ["", "elsa", "anna"],
+      format: "|O|OO:frozen" // multiple '|'
+    ) else { return }
+
+    guard let s = self.asSystemError(e) else { return }
+    XCTAssertEqual(s.message, "Invalid format string (| specified twice)")
   }
 
-  func test_init_multipleMaxPositionalMarker_fails() {
-    guard case let .error(e) = self.create(arguments: ["", "kw", "kw2"],
-                                           format: "|O$O$O:fn") else {
-      XCTAssert(false)
-      return
-    }
+  func test_init_markers_multipleMaxPositional_fails() {
+    guard let e = self.createError(
+      arguments: ["", "elsa", "anna"],
+      format: "|O$O$O:frozen"  // multiple '$'
+    ) else { return }
 
-    XCTAssert(e is PySystemError)
+    guard let s = self.asSystemError(e) else { return }
+    XCTAssertEqual(s.message, "Invalid format string ($ specified twice)")
   }
 
-  // MARK: - Int.int
+  // MARK: - Bind - too much arguments
 
-  /// int()
-  func test_int_new_withoutArgs() {
-    guard let parser = self.createIntParser() else {
-      return
-    }
+  func test_bind_count_tooMuch_args() {
+    let value0 = Py.newInt(1)
+    let value1 = Py.newInt(2)
+    let value2 = Py.newInt(3)
 
-    guard let result = parser.parseOrNil(args: [], kwargs: [:]) else {
-      return
-    }
+    guard let e = self.bindError(
+      arguments: ["", "elsa", "anna"], // 1 positional
+      format: "O$OO:frozen",
+      args: [value0, value1], // 2 positionals
+      kwargs: ["anna": value2]
+    ) else { return }
 
-    XCTAssertEqual(result.count, 0)
+    guard let t = self.asTypeError(e) else { return }
+    XCTAssertEqual(t.message, "frozen() takes at most 1 positional arguments (2 given)")
   }
 
-  /// int('5')
-  func test_int_new_positional() {
-    guard let parser = self.createIntParser() else {
-      return
-    }
+  func test_bind_count_tooMuch_argsKwargs() {
+    let value0 = Py.newInt(1)
+    let value1 = Py.newInt(2)
+    let value2 = Py.newInt(3)
 
-    let arg = DummyObject(value: 5)
-    guard let result = parser.parseOrNil(args: [arg], kwargs: [:]) else {
-      return
-    }
+    guard let e = self.bindError(
+      arguments: ["", "elsa"], // 2 arguments (1 positional + 1 kwarg)
+      format: "OO:frozen",
+      args: [value0, value1], // 2 positional
+      kwargs: ["elsa": value2] // 1 kwarg -> total 3 arguments
+    ) else { return }
 
-    guard result.count == 1 else {
-      XCTAssert(false)
-      return
-    }
-
-    XCTAssert(result[0] === arg)
+    guard let t = self.asTypeError(e) else { return }
+    XCTAssertEqual(t.message, "frozen() takes at most 2 arguments (3 given)")
   }
 
-  /// int('5', 16)
-  func test_int_new_positional_positional() {
-    guard let parser = self.createIntParser() else {
-      return
-    }
+  // MARK: - Bind - required to value
 
-    let arg0 = DummyObject(value: 5)
-    let arg1 = DummyObject(value: 16)
-    guard let result = parser.parseOrNil(args: [arg0, arg1], kwargs: [:]) else {
-      return
-    }
+  func test_bind_required_arg() {
+    let value = Py.newInt(1)
 
-    guard result.count == 2 else {
-      XCTAssert(false)
-      return
-    }
+    guard let binding = self.bind(
+      arguments: [""], // 1 arg
+      format: "O:frozen",
+      args: [value], // its value
+      kwargs: [:]
+    ) else { return }
 
-    XCTAssert(result[0] === arg0)
-    XCTAssert(result[1] === arg1)
+    XCTAssertEqual(binding.requiredCount, 1)
+    XCTAssertEqual(binding.optionalCount, 0)
+
+    XCTAssert(binding.required(at: 0) === value)
   }
 
-  /// int('5', base=16)
-  func test_int_new_positional_keyword() {
-    guard let parser = self.createIntParser() else {
-      return
-    }
+  func test_bind_required_kwarg() {
+    let value = Py.newInt(1)
 
-    let arg0 = DummyObject(value: 5)
-    let arg1 = DummyObject(value: 16)
-    guard let result = parser.parseOrNil(args: [arg0], kwargs: ["base":arg1]) else {
-      return
-    }
+    guard let binding = self.bind(
+      arguments: ["elsa"], // 1 kwarg
+      format: "O:frozen",
+      args: [],
+      kwargs: ["elsa": value] // its value
+    ) else { return }
 
-    guard result.count == 2 else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssertEqual(binding.requiredCount, 1)
+    XCTAssertEqual(binding.optionalCount, 0)
 
-    XCTAssert(result[0] === arg0)
-    XCTAssert(result[1] === arg1)
+    XCTAssert(binding.required(at: 0) === value)
   }
 
-  /// int('5', 16, 1)
-  func test_int_new_tooMuchPositional_fails() {
-    guard let parser = self.createIntParser() else {
-      return
-    }
+  func test_bind_required_arg_kwarg() {
+    let value0 = Py.newInt(1)
+    let value1 = Py.newInt(2)
 
-    let arg0 = DummyObject(value: 5)
-    let arg1 = DummyObject(value: 16)
-    let arg2 = DummyObject(value: 1)
-    let args = [arg0, arg1, arg2]
+    guard let binding = self.bind(
+      arguments: ["", "elsa"], // 1 positional + 1 kwarg
+      format: "OO:frozen",
+      args: [value0], // positional value
+      kwargs: ["elsa": value1] // kwarg value
+    ) else { return }
 
-    guard case let .error(e) = parser.parse(args: args, kwargs: [:]) else {
-      XCTAssert(false)
-      return
-    }
+    XCTAssertEqual(binding.requiredCount, 2)
+    XCTAssertEqual(binding.optionalCount, 0)
 
-    let msg = "int() takes at most 2 arguments (3 given)"
-    XCTAssertTypeError(error: e, msg: msg)
+    XCTAssert(binding.required(at: 0) === value0)
+    XCTAssert(binding.required(at: 1) === value1)
   }
 
-  /// int('5', elsa=16)
-  func test_int_new_invalidKeyword_fails() {
-    guard let parser = self.createIntParser() else {
-      return
-    }
+  // MARK: - Bind - optional to value
 
-    let arg0 = DummyObject(value: 5)
-    let arg1 = DummyObject(value: 16)
-    guard case let .error(e) = parser.parse(args: [arg0], kwargs: ["elsa":arg1]) else {
-      XCTAssert(false)
-      return
-    }
+  func test_bind_optional_arg() {
+    let value = Py.newInt(1)
 
-    let msg = "'elsa' is an invalid keyword argument for int()"
-    XCTAssertTypeError(error: e, msg: msg)
+    guard let binding = self.bind(
+      arguments: [""], // 1 optional positional
+      format: "|O:frozen", // note '|' - it means that it is optional
+      args: [value], // its value
+      kwargs: [:]
+    ) else { return }
+
+    XCTAssertEqual(binding.requiredCount, 0)
+    XCTAssertEqual(binding.optionalCount, 1)
+
+    XCTAssert(binding.optional(at: 0) === value)
+  }
+
+  func test_bind_optional_kwarg() {
+    let value = Py.newInt(1)
+
+    guard let binding = self.bind(
+      arguments: ["elsa"], // 1 kwarg
+      format: "|O:frozen", // note '|' - it means that it is optional
+      args: [],
+      kwargs: ["elsa": value] // its value
+    ) else { return }
+
+    XCTAssertEqual(binding.requiredCount, 0)
+    XCTAssertEqual(binding.optionalCount, 1)
+
+    XCTAssert(binding.optional(at: 0) === value)
+  }
+
+  func test_bind_optional_arg_kwarg() {
+    let value0 = Py.newInt(1)
+    let value1 = Py.newInt(2)
+
+    guard let binding = self.bind(
+      arguments: ["", "elsa"], // 1 positional + 1 kwarg
+      format: "|OO:frozen", // note '|' - it means that it is optional
+      args: [value0], // positional value
+      kwargs: ["elsa": value1] // kwarg value
+    ) else { return }
+
+    XCTAssertEqual(binding.requiredCount, 0)
+    XCTAssertEqual(binding.optionalCount, 2)
+
+    XCTAssert(binding.optional(at: 0) === value0)
+    XCTAssert(binding.optional(at: 1) === value1)
+  }
+
+  func test_bind_optional_notProvided() {
+    guard let binding = self.bind(
+      arguments: [""],
+      format: "|O:frozen", // note '|' - it means that it is optional
+      args: [], // no positional
+      kwargs: [:] // no kwarg either
+    ) else { return }
+
+    XCTAssertEqual(binding.requiredCount, 0)
+    XCTAssertEqual(binding.optionalCount, 1)
+
+    XCTAssert(binding.optional(at: 0) == nil)
+  }
+
+  /// We have 2 kwargs: 'elsa' and 'anna'.
+  /// Bind only 'anna' and leave 'elsa' with default value.
+  func test_bind_optional_skipKwarg_andBind_nextOne() {
+    let value = Py.newInt(1)
+
+    guard let binding = self.bind(
+      arguments: ["elsa", "anna"], // 2 kwargs
+      format: "|OO:frozen", // note '|' - it means that it is optional
+      args: [],
+      kwargs: ["anna": value] // value for 2nd kwarg
+    ) else { return }
+
+    XCTAssertEqual(binding.requiredCount, 0)
+    XCTAssertEqual(binding.optionalCount, 2)
+
+    XCTAssert(binding.optional(at: 0) == nil)
+    XCTAssert(binding.optional(at: 1) === value)
+  }
+
+  // MARK: - Bind - errors
+
+  func test_bind_missingRequiredArg_fails() {
+    let value0 = Py.newInt(1)
+
+    guard let e = self.bindError(
+      arguments: ["", "", "elsa"],
+      format: "OO|O:frozen", // 2 required args
+      args: [value0], // 1 provided
+      kwargs: [:]
+    ) else { return }
+
+    guard let t = self.asTypeError(e) else { return }
+    XCTAssertEqual(t.message, "frozen() takes at least 2 positional arguments (1 given)")
+  }
+
+  func test_bind_extraneousKwarg_fails() {
+    let value = Py.newInt(1)
+
+    guard let e = self.bindError(
+      arguments: ["", "elsa"],
+      format: "|OO:frozen",
+      args: [],
+      kwargs: ["anna": value] // totally unrelated kwarg
+    ) else { return }
+
+    guard let t = self.asTypeError(e) else { return }
+    XCTAssertEqual(t.message, "'anna' is an invalid keyword argument for frozen()")
+  }
+
+  func test_bind_argumentGivenBy_argsAndKwargs_fails() {
+    let value0 = Py.newInt(1)
+    let value1 = Py.newInt(2)
+    let value2 = Py.newInt(3)
+
+    guard let e = self.bindError(
+      arguments: ["", "elsa", "dummy"],
+      format: "|OOO:frozen",
+      args: [value0, value1], // 2 positional, 2nd one will bind 'elsa'
+      kwargs: ["elsa": value2] // elsa kwarg
+    ) else { return }
+
+    guard let t = self.asTypeError(e) else { return }
+    XCTAssertEqual(t.message, "argument for frozen() given by name ('elsa') and position (2)")
   }
 
   // MARK: - Create helpers
 
-  private func createIntParser(file: StaticString = #file,
-                               line: UInt         = #line) -> Objects.ArgumentParser? {
-    switch self.create(arguments: ["", "base"], format: "|OO:int") {
+  private func createParser(arguments: [String],
+                            format: String,
+                            file: StaticString = #file,
+                            line: UInt         = #line) -> ArgumentParser? {
+    switch ArgumentParser.create(arguments: arguments, format: format) {
     case let .value(r):
       return r
     case let .error(e):
@@ -229,8 +316,82 @@ class ArgumentParser: PyTestCaseOtherwiseItWillTrap {
     }
   }
 
-  private func create(arguments: [String],
-                      format: String) -> PyResult<Objects.ArgumentParser> {
-    return Objects.ArgumentParser.create(arguments: arguments, format: format)
+  private func createError(arguments: [String],
+                           format: String,
+                           file: StaticString = #file,
+                           line: UInt         = #line) -> PyBaseException? {
+    switch ArgumentParser.create(arguments: arguments, format: format) {
+    case let .value(r):
+      XCTAssert(false, String(describing: r), file: file, line: line)
+      return nil
+    case let .error(e):
+      return e
+    }
   }
+
+  private func asSystemError(_ e: PyBaseException?,
+                             file: StaticString = #file,
+                             line: UInt         = #line) -> PySystemError? {
+    if let s = e as? PySystemError {
+      return s
+    }
+
+    XCTAssert(false, String(describing: e), file: file, line: line)
+    return nil
+  }
+
+  private func asTypeError(_ e: PyBaseException?,
+                           file: StaticString = #file,
+                           line: UInt         = #line) -> PyTypeError? {
+    if let s = e as? PyTypeError {
+      return s
+    }
+
+    XCTAssert(false, String(describing: e), file: file, line: line)
+    return nil
+  }
+
+  private func bind(arguments: [String],
+                    format: String,
+                    args: [PyObject],
+                    kwargs: [String:PyObject],
+                    file: StaticString = #file,
+                    line: UInt         = #line) -> ArgumentParser.Binding? {
+    guard let parser = self.createParser(arguments: arguments,
+                                         format: format,
+                                         file: file,
+                                         line: line) else {
+      return nil
+    }
+
+     switch parser.bind(args: args, kwargs: kwargs) {
+     case let .value(r):
+       return r
+     case let .error(e):
+       XCTAssert(false, String(describing: e), file: file, line: line)
+       return nil
+     }
+   }
+
+  private func bindError(arguments: [String],
+                         format: String,
+                         args: [PyObject],
+                         kwargs: [String:PyObject],
+                         file: StaticString = #file,
+                         line: UInt         = #line) -> PyBaseException? {
+    guard let parser = self.createParser(arguments: arguments,
+                                         format: format,
+                                         file: file,
+                                         line: line) else {
+      return nil
+    }
+
+     switch parser.bind(args: args, kwargs: kwargs) {
+     case let .value(r):
+      XCTAssert(false, String(describing: r), file: file, line: line)
+       return nil
+     case let .error(e):
+       return e
+     }
+   }
 }

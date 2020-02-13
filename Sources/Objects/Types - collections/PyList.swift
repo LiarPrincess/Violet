@@ -310,11 +310,20 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = sort, doc = sortDoc
   internal func sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> {
-    switch PyList.sortArguments.parse(args: [], kwargs: kwargs) {
-    case let .value(bind):
-      assert(bind.count <= 2, "Invalid argument count returned from parser.")
-      let key = bind.count >= 1 ? bind[0] : nil
-      let isReverse = bind.count >= 2 ? bind[1] : nil
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "sort",
+                                                        args: args,
+                                                        min: 0,
+                                                        max: 0) {
+      return .error(e)
+    }
+
+    switch PyList.sortArguments.bind(args: [], kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 2, "Invalid optional argument count.")
+
+      let key = binding.optional(at: 0)
+      let isReverse = binding.optional(at: 1)
       return self.sort(key: key, isReverse: isReverse)
     case let .error(e):
       return .error(e)

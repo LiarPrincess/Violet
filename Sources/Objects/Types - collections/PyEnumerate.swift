@@ -120,13 +120,13 @@ public class PyEnumerate: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch PyEnumerate.newArguments.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(1 <= bind.count && bind.count <= 2,
-             "Invalid argument count returned from parser.")
+    switch PyEnumerate.newArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 1, "Invalid required argument count.")
+      assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
-      let iterable = bind[0]
-      let start = bind.count >= 2 ? bind[1] : nil
+      let iterable = binding.required(at: 0)
+      let start = binding.optional(at: 1)
       return PyEnumerate.pyNew(type: type, iterable: iterable, startFrom: start)
 
     case let .error(e):

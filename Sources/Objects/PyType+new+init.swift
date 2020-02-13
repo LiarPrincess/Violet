@@ -50,20 +50,26 @@ extension PyType {
     }
 
     // class type(name, bases, dict)
-    switch newArguments.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(bind.count == 3, "Invalid argument count returned from parser.")
+    switch newArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 3, "Invalid required argument count.")
+      assert(binding.optionalCount == 0, "Invalid optional argument count.")
 
-      guard let name = bind[0] as? PyString else {
-        return .typeError("type.__new__() argument 1 must be str, not \(bind[0].typeName)")
+      let fn = "type.__new__()"
+
+      let arg0 = binding.required(at: 0)
+      guard let name = arg0 as? PyString else {
+        return .typeError("\(fn) argument 1 must be str, not \(arg0.typeName)")
       }
 
-      guard let bases = bind[1] as? PyTuple else {
-        return .typeError("type.__new__() argument 2 must be tuple, not \(bind[1].typeName)")
+      let arg1 = binding.required(at: 1)
+      guard let bases = arg1 as? PyTuple else {
+        return .typeError("\(fn) argument 2 must be tuple, not \(arg1.typeName)")
       }
 
-      guard let dict = bind[2] as? PyDict else {
-        return .typeError("type.__new__() argument 3 must be dict, not \(bind[2].typeName)")
+      let arg2 = binding.required(at: 2)
+      guard let dict = arg2 as? PyDict else {
+        return .typeError("\(fn) argument 3 must be dict, not \(arg2.typeName)")
       }
 
       var baseTypes = [PyType]()

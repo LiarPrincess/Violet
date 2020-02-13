@@ -26,18 +26,16 @@ extension BuiltinFunctions {
     // 'args' contains objects to print
     // 'kwargs' contains options
 
-    switch printArguments.parse(args: [], kwargs: kwargs) {
-    case let .value(bind):
-      assert(
-        0 <= bind.count && bind.count <= 4,
-        "Invalid argument count returned from parser."
-      )
+    switch printArguments.bind(args: [], kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 4, "Invalid optional argument count.")
 
-      return self.print(args: args,
-                        sep: bind.count >= 1 ? bind[0] : nil,
-                        end: bind.count >= 2 ? bind[1] : nil,
-                        file: bind.count >= 3 ? bind[2] : nil,
-                        flush: bind.count >= 4 ? bind[3] : nil)
+      let sep = binding.optional(at: 0)
+      let end = binding.optional(at: 1)
+      let file = binding.optional(at: 2)
+      let flush = binding.optional(at: 3)
+      return self.print(args: args, sep: sep, end: end, file: file, flush: flush)
 
     case let .error(e):
       return .error(e)
@@ -166,21 +164,28 @@ extension BuiltinFunctions {
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)
   internal func open(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch openArguments.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(
-        1 <= bind.count && bind.count <= 8,
-        "Invalid argument count returned from parser."
-      )
+    switch openArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 1, "Invalid required argument count.")
+      assert(binding.optionalCount == 7, "Invalid optional argument count.")
 
-      return self.open(file: bind[0],
-                       mode: bind.count >= 2 ? bind[1] : nil,
-                       buffering: bind.count >= 3 ? bind[2] : nil,
-                       encoding: bind.count >= 4 ? bind[3] : nil,
-                       errors: bind.count >= 5 ? bind[4] : nil,
-                       newline: bind.count >= 6 ? bind[5] : nil,
-                       closefd: bind.count >= 7 ? bind[6] : nil,
-                       opener: bind.count >= 8 ? bind[7] : nil)
+      let file = binding.required(at: 0)
+      let mode = binding.optional(at: 1)
+      let buffering = binding.optional(at: 2)
+      let encoding = binding.optional(at: 3)
+      let errors = binding.optional(at: 4)
+      let newline = binding.optional(at: 5)
+      let closefd = binding.optional(at: 6)
+      let opener = binding.optional(at: 7)
+
+      return self.open(file: file,
+                       mode: mode,
+                       buffering: buffering,
+                       encoding: encoding,
+                       errors: errors,
+                       newline: newline,
+                       closefd: closefd,
+                       opener: opener)
     case let .error(e):
       return .error(e)
     }

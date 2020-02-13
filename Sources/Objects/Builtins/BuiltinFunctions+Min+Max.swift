@@ -24,19 +24,21 @@ extension MinMaxImpl {
 
   fileprivate static func run(args: [PyObject],
                               kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch Self.argumentParser.parse(args: [], kwargs: kwargs) {
-    case let .value(bind):
-      assert(bind.count <= 2, "Invalid argument count returned from parser.")
-      let key = bind.count >= 1 ? bind[0] : nil
-      let dflt = bind.count >= 2 ? bind[1] : nil
+    switch Self.argumentParser.bind(args: [], kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 2, "Invalid optional argument count.")
+
+      let key = binding.optional(at: 0)
+      let default_ = binding.optional(at: 1)
 
       switch args.count {
       case 0:
         return Self.emptyCollectionError()
       case 1:
-        return Self.iterable(iterable: args[0], key: key, default: dflt)
+        return Self.iterable(iterable: args[0], key: key, default: default_)
       default:
-        return Self.positional(args: args, key: key, default: dflt)
+        return Self.positional(args: args, key: key, default: default_)
       }
     case let .error(e):
       return .error(e)

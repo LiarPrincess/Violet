@@ -43,9 +43,24 @@ public class PyProperty: PyObject {
             del self._x
     """
 
-  internal private(set) var getter: PyObject?
-  internal private(set) var setter: PyObject?
-  internal private(set) var deleter: PyObject?
+  private var _getter: PyObject?
+  internal var getter: PyObject? {
+    get { return self._getter is PyNone ? nil : self._getter }
+    set { self._getter = newValue }
+  }
+
+  private var _setter: PyObject?
+  internal var setter: PyObject? {
+    get { return self._getter is PyNone ? nil : self._getter }
+    set { self._getter = newValue }
+  }
+
+  private var _deleter: PyObject?
+  internal var deleter: PyObject? {
+    get { return self._getter is PyNone ? nil : self._getter }
+    set { self._getter = newValue }
+  }
+
   internal private(set) var doc: PyObject?
 
   override public var description: String {
@@ -55,9 +70,9 @@ public class PyProperty: PyObject {
   internal init(getter: PyObject?,
                 setter: PyObject?,
                 deleter: PyObject?) {
-    self.getter = getter is PyNone ? nil : getter
-    self.setter = setter is PyNone ? nil : setter
-    self.deleter = deleter is PyNone ? nil : deleter
+    self._getter = getter
+    self._setter = setter
+    self._deleter = deleter
     self.doc = nil
 
     super.init(type: Py.types.property)
@@ -65,9 +80,9 @@ public class PyProperty: PyObject {
 
   /// Use only in `__new__`!
   override internal init(type: PyType) {
-    self.getter = nil
-    self.setter = nil
-    self.deleter = nil
+    self._getter = nil
+    self._setter = nil
+    self._deleter = nil
     self.doc = nil
     super.init(type: type)
   }
@@ -180,21 +195,16 @@ public class PyProperty: PyObject {
   internal static func pyInit(zelf: PyProperty,
                               args: [PyObject],
                               kwargs: PyDictData?) -> PyResult<PyNone> {
-    switch PyProperty.initArguments.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(bind.count <= 4, "Invalid argument count returned from parser.")
-      zelf.getter = bind.count >= 1 ? PyProperty.nilIfNone(bind[0]) : nil
-      zelf.setter = bind.count >= 2 ? PyProperty.nilIfNone(bind[1]) : nil
-      zelf.deleter = bind.count >= 3 ? PyProperty.nilIfNone(bind[2]) : nil
-      zelf.doc = bind.count >= 4 ? bind[3] : nil
+    switch PyProperty.initArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      zelf.getter = binding.optional(at: 0)
+      zelf.setter = binding.optional(at: 1)
+      zelf.deleter = binding.optional(at: 2)
+      zelf.doc = binding.optional(at: 3)
       return .value(Py.none)
 
     case let .error(e):
       return .error(e)
     }
-  }
-
-  private static func nilIfNone(_ value: PyObject) -> PyObject? {
-    return value is PyNone ? nil : value
   }
 }

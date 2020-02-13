@@ -4,8 +4,9 @@ import Core
 // Python -> modsupport.h
 // Python -> getargs.c
 
-// This code is quite complicated, but most of the time it is just line-by-line
-// copy of CPython.
+// WARNING: This code is quite complicated!
+// And it is easly the ugliest/most tangled part of CPython.
+// Like really, it will break your mind when you go into it!
 
 // swiftlint:disable file_length
 
@@ -19,10 +20,10 @@ internal struct ArgumentParser {
   private let fnName: String
   /// Minimal number of arguments needed to call the function.
   /// `min` in Cpython.
-  private let minArgCount: Int
+  private let requiredArgCount: Int
   /// Number of positional-only arguments.
   /// `pos` in CPython.
-  private let positionalArgCount: Int
+  private let positionalOnlyArgCount: Int
   /// Maximal number of positional-only arguments.
   /// `max` in CPython.
   private let maxPositionalArgCount: Int
@@ -33,7 +34,7 @@ internal struct ArgumentParser {
   /// `len` in CPython.
   /// `self.positionalArgCount + self.keywordArgNames.count`
   private var argumentCount: Int {
-    return self.positionalArgCount + self.keywordArgNames.count
+    return self.positionalOnlyArgCount + self.keywordArgNames.count
   }
 
   // MARK: - Create
@@ -93,8 +94,8 @@ internal struct ArgumentParser {
     return .value(
       ArgumentParser(
         fnName: name,
-        minArgCount: Swift.min(parsedFormat.min, arguments.count),
-        positionalArgCount: positionalArgCount,
+        requiredArgCount: Swift.min(parsedFormat.min, arguments.count),
+        positionalOnlyArgCount: positionalArgCount,
         maxPositionalArgCount: Swift.min(parsedFormat.max, arguments.count),
         keywordArgNames: keywordArgumentNames
       )
@@ -134,9 +135,11 @@ internal struct ArgumentParser {
     fileprivate let max: Int
   }
 
-  private static func parseFormat(format: String,
-                                  argCount: Int,
-                                  positionalArgCount: Int) -> PyResult<ParsedFormat> {
+  private static func parseFormat(
+    format: String,
+    argCount: Int,
+    positionalArgCount: Int
+  ) -> PyResult<ParsedFormat> {
     var minArgCount = Int.max
     var maxPositionalArgCount = Int.max
 
@@ -191,22 +194,68 @@ internal struct ArgumentParser {
     return c == ";" || c == ":"
   }
 
-  // MARK: - Parse
+  // MARK: - Bind
+
+  /// Assign values to an arguments.
+  ///
+  /// You can obtain argument value using its index.
+  /// For example to obtain value of the 3rd argument use `3` as an index.
+  ///
+  /// There are 2 types of arguments:
+  /// - required - arguments that have to be present to be able call a function.
+  /// If a `required` argument was not provided then `bind` will throw.
+  /// They are before `|` in `ArgumentParser.format` specifier.
+  /// - optional - arguments not needed to call a function (they probably have
+  /// some default value). `nil` means that this argument was not provided.
+  /// They are after `|` in `ArgumentParser.format` specifier.
+  ///
+  /// Distinction between 'required' and 'optional' was introduced for additional
+  /// type-safety (optional values can be nil, required can't).
+  /// Otherwise we would have to check requied for `nil` on every call site.
+  internal struct Binding {
+    fileprivate var _required = [PyObject]()
+    fileprivate var _optional = [PyObject?]()
+
+    internal var requiredCount: Int { return self._required.count }
+    internal var optionalCount: Int { return self._optional.count }
+
+    /// Get required argument at specified index.
+    internal func required(at index: Int) -> PyObject {
+      return self._required[index]
+    }
+
+    /// Get required argument at specified index.
+    /// Note that optional arguments start after required.
+    internal func optional(at index: Int) -> PyObject? {
+      let optionalIndex = index - self._required.count
+      assert(optionalIndex >= 0, "Accessing optional arg using required index")
+      return self._optional[optionalIndex]
+    }
+
+    fileprivate mutating func addRequired(_ value: PyObject) {
+      assert(self._optional.isEmpty, "Required after optional")
+      self._required.append(value)
+    }
+
+    fileprivate mutating func addOptional(_ value: PyObject?) {
+      self._optional.append(value)
+    }
+  }
 
   /// static int
   /// vgetargskeywordsfast_impl(PyObject *const *args, Py_ssize_t nargs,
   ///                           PyObject *kwargs, PyObject *kwnames,
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
-  internal func parse(args: PyObject,
-                      kwargs: PyObject?) -> PyResult<[PyObject]> {
+  internal func bind(args: PyObject,
+                     kwargs: PyObject?) -> PyResult<Binding> {
     let argsArray: [PyObject]
     switch ArgumentParser.unpackArgsTuple(args: args) {
     case let .value(o): argsArray = o
     case let .error(e): return .error(e)
     }
 
-    return self.parse(args: argsArray, kwargs: kwargs)
+    return self.bind(args: argsArray, kwargs: kwargs)
   }
 
   /// static int
@@ -214,15 +263,15 @@ internal struct ArgumentParser {
   ///                           PyObject *kwargs, PyObject *kwnames,
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
-  internal func parse(args: [PyObject],
-                      kwargs: PyObject?) -> PyResult<[PyObject]> {
+  internal func bind(args: [PyObject],
+                     kwargs: PyObject?) -> PyResult<Binding> {
     let kwargsData: PyDictData?
     switch ArgumentParser.unpackKwargsDict(kwargs: kwargs) {
     case let .value(o): kwargsData = o
     case let .error(e): return .error(e)
     }
 
-    return self.parse(args: args, kwargs: kwargsData)
+    return self.bind(args: args, kwargs: kwargsData)
   }
 
   /// static int
@@ -230,8 +279,8 @@ internal struct ArgumentParser {
   ///                           PyObject *kwargs, PyObject *kwnames,
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
-  internal func parse(args: [PyObject],
-                      kwargs: PyDictData?) -> PyResult<[PyObject]> {
+  internal func bind(args: [PyObject],
+                     kwargs: PyDictData?) -> PyResult<Binding> {
     // We do not expect large kwargs dictionaries,
     // so the allocation should be minimal.
     var kwargsDict: [String:PyObject]
@@ -240,20 +289,16 @@ internal struct ArgumentParser {
     case let .error(e): return .error(e)
     }
 
-    return self.parse(args: args, kwargs: kwargsDict)
+    return self.bind(args: args, kwargs: kwargsDict)
   }
-
-  // swiftlint:disable cyclomatic_complexity
 
   /// static int
   /// vgetargskeywordsfast_impl(PyObject *const *args, Py_ssize_t nargs,
   ///                           PyObject *kwargs, PyObject *kwnames,
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
-  internal func parse(args: [PyObject],
-                      kwargs: [String:PyObject]) -> PyResult<[PyObject]> {
-    // swiftlint:enable cyclomatic_complexity
-
+  internal func bind(args: [PyObject],
+                     kwargs: [String:PyObject]) -> PyResult<Binding> {
     if args.count + kwargs.count > self.argumentCount {
       return .error(self.tooMuchArgumentsError(args: args, kwargs: kwargs))
     }
@@ -262,62 +307,59 @@ internal struct ArgumentParser {
       return .error(self.tooMuchPositionalArgumentsError(args: args))
     }
 
-    var result = [PyObject]()
-    var remainingKwargArgs = kwargs.count
+    var result = Binding()
 
     for i in 0..<self.argumentCount {
-      // Use as many positional arguments as we can
-      // (we could move it before loop, but we want to stay the same as CPython)
+      let isRequired = i < self.requiredArgCount
+
+      // Try to use positional to fill argument at 'i' index
       if i < args.count {
-        result.append(args[i])
+        let value = args[i]
+        isRequired ? result.addRequired(value) : result.addOptional(value)
         continue
       }
 
-      if i >= self.positionalArgCount && remainingKwargArgs > 0 {
-        let keyword = self.keywordArgNames[i - self.positionalArgCount]
-        if let arg = kwargs[keyword] {
-          result.append(arg)
-          remainingKwargArgs -= 1
+      // Try to use kwarg to fill argument at 'i' index
+      let keywordNameIndex = i - self.positionalOnlyArgCount
+      if keywordNameIndex >= 0 {
+        let keyword = self.keywordArgNames[keywordNameIndex]
+        if let value = kwargs[keyword] {
+          isRequired ? result.addRequired(value) : result.addOptional(value)
           continue
         }
       }
 
-      // We are missing positional OR we don't have enough kwargs
-      // OR we have already finished.
-
-      let hasAllRequiredArguments = i >= self.minArgCount
-      guard hasAllRequiredArguments else {
+      // We have not filled 'i' argument from args or kwargs
+      if isRequired {
         let e = self.missingArgumentError(argIndex: i, args: args, kwargs: kwargs)
         return .error(e)
       }
 
-      // Current code reports success when all required args are fulfilled
-      // and no keyword args left with no further validation.
-      if remainingKwargArgs == 0 {
-        return .value(result)
-      }
+      // This is a optional argument, just set it to 'nil'
+      result.addOptional(nil)
     }
 
-    if remainingKwargArgs > 0 {
-      // Make sure there are no arguments given by name and position
-      if let e = self.checkArgumentGivenAsPositionalAndKwarg(args: args,
-                                                             kwargs: kwargs) {
-        return .error(e)
-      }
-
-      // Make sure there are no extraneous keyword arguments
-      if let e = self.checkExtraneousKeywordArguments(kwargs: kwargs) {
-        return .error(e)
-      }
+    // Make sure there are no arguments given by name and position
+    if let e = self.checkArgumentGivenAsPositionalAndKwarg(args: args, kwargs: kwargs) {
+      return .error(e)
     }
 
+    // Make sure there are no extraneous keyword arguments
+    if let e = self.checkExtraneousKeywordArguments(kwargs: kwargs) {
+      return .error(e)
+    }
+
+    assert(result._required.count == self.requiredArgCount)
+    assert(result._optional.count == self.argumentCount - self.requiredArgCount)
     return .value(result)
   }
 
   // MARK: - Parsing errors
 
-  private func tooMuchArgumentsError(args: [PyObject],
-                                     kwargs: [String:PyObject]) -> PyBaseException {
+  private func tooMuchArgumentsError(
+    args: [PyObject],
+    kwargs: [String:PyObject]
+  ) -> PyBaseException {
     let providedCount = args.count + kwargs.count
     assert(providedCount > self.argumentCount)
 
@@ -332,7 +374,9 @@ internal struct ArgumentParser {
     return Py.newTypeError(msg: msg)
   }
 
-  private func tooMuchPositionalArgumentsError(args: [PyObject]) -> PyBaseException {
+  private func tooMuchPositionalArgumentsError(
+    args: [PyObject]
+  ) -> PyBaseException {
     assert(args.count > self.maxPositionalArgCount)
 
     let fn = self.fnName + "()"
@@ -341,7 +385,7 @@ internal struct ArgumentParser {
       let msg = "\(fn) takes no positional arguments"
       return Py.newTypeError(msg: msg)
     case let max:
-      let s = self.minArgCount == Int.max ? "exactly" : "at most"
+      let s = self.requiredArgCount == Int.max ? "exactly" : "at most"
       let msg = "\(fn) takes \(s) \(max) positional arguments (\(args.count) given)"
       return Py.newTypeError(msg: msg)
     }
@@ -352,17 +396,17 @@ internal struct ArgumentParser {
                                     kwargs: [String:PyObject]) -> PyBaseException {
     let fn = self.fnName + "()"
 
-    if argIndex < self.positionalArgCount {
-      let atLeast = self.minArgCount < self.maxPositionalArgCount ?
+    if argIndex < self.positionalOnlyArgCount {
+      let atLeast = self.requiredArgCount < self.maxPositionalArgCount ?
         "at least" :
         "exactly"
 
-      let msg = "\(fn) takes \(atLeast) \(self.minArgCount) positional arguments " +
+      let msg = "\(fn) takes \(atLeast) \(self.requiredArgCount) positional arguments " +
                 "(\(args.count) given)"
       return Py.newTypeError(msg: msg)
     }
 
-    let keyword = self.keywordArgNames[argIndex - self.positionalArgCount]
+    let keyword = self.keywordArgNames[argIndex - self.positionalOnlyArgCount]
     let msg = "\(fn) missing required argument '\(keyword)' (pos \(argIndex + 1))"
     return Py.newTypeError(msg: msg)
   }
@@ -371,8 +415,13 @@ internal struct ArgumentParser {
     args: [PyObject],
     kwargs: [String:PyObject]) -> PyBaseException? {
 
-    for i in self.positionalArgCount..<args.count {
-      let keyword = self.keywordArgNames[i - self.positionalArgCount]
+    // We are missing some positional args (it may be OK, they may be optional)
+    if args.count < self.positionalOnlyArgCount {
+      return nil
+    }
+
+    for i in self.positionalOnlyArgCount..<args.count {
+      let keyword = self.keywordArgNames[i - self.positionalOnlyArgCount]
       if kwargs.contains(keyword) {
         let fn = self.fnName + "()"
         let msg = "argument for \(fn) given by name ('\(keyword)') and position (\(i + 1))"
@@ -384,12 +433,12 @@ internal struct ArgumentParser {
   }
 
   private func checkExtraneousKeywordArguments(
-    kwargs: [String:PyObject]) -> PyBaseException? {
+    kwargs: [String:PyObject]
+  ) -> PyBaseException? {
 
     for key in kwargs.keys {
       if !self.keywordArgNames.contains(key) {
-        let fn = self.fnName + "()"
-        let msg = "'\(key)' is an invalid keyword argument for \(fn)"
+        let msg = "'\(key)' is an invalid keyword argument for \(self.fnName)()"
         return Py.newTypeError(msg: msg)
       }
     }
@@ -421,7 +470,7 @@ internal struct ArgumentParser {
     return .value(kwargsDict.data)
   }
 
-  // MARK: - Unpack
+  // MARK: - Arg count
 
   /// int
   /// PyArg_UnpackTuple(PyObject *args,
@@ -431,7 +480,16 @@ internal struct ArgumentParser {
                                                  args: [PyObject],
                                                  min: Int,
                                                  max: Int) -> PyBaseException? {
+    assert(min >= 0)
+    assert(max >= 0)
+    assert(min <= max)
+
     let nargs = args.count
+
+    if min == 0 && max == 0 && args.any {
+      let msg = "\(fnName) takes no positional arguments, got \(nargs)"
+      return Py.newTypeError(msg: msg)
+    }
 
     if nargs < min {
       let s = min == max ? "" : "at least "
@@ -452,8 +510,6 @@ internal struct ArgumentParser {
     return nil
   }
 
-  // MARK: - No keywords
-
   /// int
   /// _PyArg_NoKeywords(const char *funcname, PyObject *kwargs)
   internal static func noKwargsOrError(fnName: String,
@@ -470,8 +526,9 @@ internal struct ArgumentParser {
 
   /// int
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
-  internal static func guaranteeStringKeywords(kwargs: PyDictData?)
-    -> PyResult<[String:PyObject]> {
+  internal static func guaranteeStringKeywords(
+    kwargs: PyDictData?
+  ) -> PyResult<[String:PyObject]> {
 
     switch kwargs {
     case .some(let kwargs):
@@ -483,8 +540,9 @@ internal struct ArgumentParser {
 
   /// int
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
-  internal static func guaranteeStringKeywords(kwargs: PyDictData)
-    -> PyResult<[String:PyObject]> {
+  internal static func guaranteeStringKeywords(
+    kwargs: PyDictData
+  ) -> PyResult<[String:PyObject]> {
 
     var result = [String:PyObject]()
 
@@ -506,8 +564,8 @@ internal struct ArgumentParser {
   @available(*, deprecated, message: "Only for debug. Remove after.")
   internal func dump() {
     print("fnName: \(self.fnName)")
-    print("minArgCount: \(self.minArgCount)")
-    print("positionalArgCount: \(self.positionalArgCount)")
+    print("requiredArgCount: \(self.requiredArgCount)")
+    print("positionalOnlyArgCount: \(self.positionalOnlyArgCount)")
     print("maxPositionalArgCount: \(self.maxPositionalArgCount)")
     print("keywordArgNames: \(self.keywordArgNames)")
     print("total argumentCount: \(self.argumentCount)")

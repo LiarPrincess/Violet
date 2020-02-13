@@ -172,15 +172,13 @@ public class PyModule: PyObject {
   internal static func pyInit(zelf: PyModule,
                               args: [PyObject],
                               kwargs: PyDictData?) -> PyResult<PyNone> {
-    switch PyModule.initArguments.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(
-        1 <= bind.count && bind.count <= 2,
-        "Invalid argument count returned from parser."
-      )
+    switch PyModule.initArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 1, "Invalid required argument count.")
+      assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
-      let name = bind[0]
-      let doc = bind.count >= 2 ? bind[1] : Py.none
+      let name = binding.required(at: 0)
+      let doc = binding.optional(at: 1) ?? Py.none
 
       zelf.attributes.set(key: "___name__", to: name)
       zelf.attributes.set(key: "___doc__", to: doc)

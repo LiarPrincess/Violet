@@ -275,15 +275,13 @@ public class PyDict: PyObject {
   // sourcery: pymethod = get, doc = getDoc
   internal func get(args: [PyObject],
                     kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch PyDict.getArguments.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(
-        1 <= bind.count && bind.count <= 2,
-        "Invalid argument count returned from parser."
-      )
+    switch PyDict.getArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 1, "Invalid required argument count.")
+      assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
-      let arg0 = bind[0]
-      let arg1 = bind.count >= 2 ? bind[1] : nil
+      let arg0 = binding.required(at: 0)
+      let arg1 = binding.optional(at: 1)
       return self.get(arg0, default: arg1)
     case let .error(e):
       return .error(e)

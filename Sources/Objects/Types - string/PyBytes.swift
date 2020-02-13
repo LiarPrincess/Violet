@@ -614,13 +614,18 @@ public class PyBytes: PyObject, PyBytesType {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch newArguments.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(bind.count <= 3, "Invalid argument count returned from parser.")
-      let arg0 = bind.count >= 1 ? bind[0] : nil
-      let arg1 = bind.count >= 2 ? bind[1] : nil
-      let arg2 = bind.count >= 3 ? bind[2] : nil
-      return PyBytes.pyNew(type: type, object: arg0, encoding: arg1, errors: arg2)
+    switch newArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 3, "Invalid optional argument count.")
+
+      let object = binding.optional(at: 0)
+      let encoding = binding.optional(at: 1)
+      let errors = binding.optional(at: 2)
+      return PyBytes.pyNew(type: type,
+                           object: object,
+                           encoding: encoding,
+                           errors: errors)
     case let .error(e):
       return .error(e)
     }

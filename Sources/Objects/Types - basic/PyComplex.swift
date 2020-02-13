@@ -434,11 +434,13 @@ public class PyComplex: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch newArguments.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(bind.count <= 2, "Invalid argument count returned from parser.")
-      let arg0 = bind.count >= 1 ? bind[0] : nil
-      let arg1 = bind.count >= 2 ? bind[1] : nil
+    switch newArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 2, "Invalid optional argument count.")
+
+      let arg0 = binding.optional(at: 0)
+      let arg1 = binding.optional(at: 1)
       return PyComplex.pyNew(type: type, arg0: arg0, arg1: arg1)
     case let .error(e):
       return .error(e)

@@ -763,12 +763,14 @@ public class PyInt: PyObject {
   internal class func pyNew(type: PyType,
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch newArguments.parse(args: args, kwargs: kwargs) {
-    case let .value(bind):
-      assert(bind.count <= 2, "Invalid argument count returned from parser.")
-      let arg0 = bind.count >= 1 ? bind[0] : nil
-      let arg1 = bind.count >= 2 ? bind[1] : nil
-      return PyInt.pyNew(type: type, x: arg0, base: arg1)
+    switch newArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 2, "Invalid optional argument count.")
+
+      let x = binding.optional(at: 0)
+      let base = binding.optional(at: 1)
+      return PyInt.pyNew(type: type, x: x, base: base)
     case let .error(e):
       return .error(e)
     }
