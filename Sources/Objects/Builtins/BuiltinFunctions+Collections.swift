@@ -394,12 +394,20 @@ extension BuiltinFunctions {
   // sourcery: pymethod = sorted
   /// sorted(iterable, *, key=None, reverse=False)
   /// See [this](https://docs.python.org/3/library/functions.html#sorted)
-  public func sorted(iterable: PyObject,
-                     key: PyObject? = nil,
-                     reverse: PyObject? = nil) -> PyResult<PyList> {
+  internal func sorted(args: [PyObject],
+                       kwargs: PyDictData?) -> PyResult<PyList> {
+    if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "sorted",
+                                                        args: args,
+                                                        min: 1,
+                                                        max: 1) {
+      return .error(e)
+    }
+
+    let iterable = args[0]
+
     switch self.newList(iterable: iterable) {
     case let .value(list):
-      switch list.sort(key: key, isReverse: reverse) {
+      switch list.sort(args: [], kwargs: kwargs) {
       case .value: return .value(list)
       case .error(let e): return .error(e)
       }
@@ -530,9 +538,25 @@ extension BuiltinFunctions {
   }
 
   public func toArray(iterable: PyObject) -> PyResult<[PyObject]> {
-    if let seq = iterable as? PySequenceType {
-      return .value(seq.data.elements)
+    // TODO: This is actually quite risky. We should check if it is a heap type.
+
+    if let sequence = iterable as? PySequenceType {
+      return .value(sequence.data.elements)
     }
+
+    if let bytes = iterable as? PyBytesType {
+      let scalars = bytes.data.scalars
+      let byteObjects = scalars.map(Py.newInt)
+      return .value(byteObjects)
+    }
+
+    if let string = iterable as? PyString {
+      let scalars = string.data.scalars
+      let characterObjects = scalars.map { Py.getInterned(String($0)) }
+      return .value(characterObjects)
+    }
+
+    // For now there is no fast path for 'PyDict' and 'PySetType'
 
     return self.reduce(iterable: iterable, into: [PyObject]()) { acc, object in
       acc.append(object)
