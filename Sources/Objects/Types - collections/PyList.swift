@@ -433,13 +433,12 @@ public class PyList: PyObject, PySequenceType {
 
   // sourcery: pymethod = __iadd__
   internal func iadd(_ other: PyObject) -> PyResult<PyObject> {
-    guard let otherList = other as? PyList else {
-      let msg = "can only concatenate list (not '\(other.typeName)') to list"
-      return .typeError(msg)
+    switch self.extend(iterable: other) {
+    case .value:
+      return .value(self)
+    case .error(let e):
+      return .error(e)
     }
-
-    self.data.iadd(other: otherList.data)
-    return .value(self)
   }
 
   // MARK: - Mul

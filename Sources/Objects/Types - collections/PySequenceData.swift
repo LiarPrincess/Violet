@@ -571,10 +571,6 @@ internal struct PySequenceData {
     return self.elements + other.elements
   }
 
-  internal mutating func iadd(other: PySequenceData) {
-    self.elements += other.elements
-  }
-
   // MARK: - Mul
 
   internal enum MulResult {
