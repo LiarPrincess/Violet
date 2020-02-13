@@ -255,9 +255,9 @@ extension CodeObject {
     case let .callFunction(argumentCount: arg):
       return "callFunction (argumentCount: \(extendedArg + Int(arg)))"
     case let .callFunctionKw(argumentCount: arg):
-      return "callFunction (argumentCount: \(extendedArg + Int(arg)))"
+      return "callFunctionKw (argumentCount: \(extendedArg + Int(arg)))"
     case let .callFunctionEx(hasKeywordArguments: hasKeywordArguments):
-      return "callFunction (hasKeywordArguments: \(hasKeywordArguments))"
+      return "callFunctionEx (hasKeywordArguments: \(hasKeywordArguments))"
 
     case .`return`:
       return "return"

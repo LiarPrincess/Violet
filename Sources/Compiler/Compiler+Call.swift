@@ -7,6 +7,7 @@ import Bytecode
 // Python -> compile.c
 
 // swiftlint:disable function_body_length
+// swiftlint:disable cyclomatic_complexity
 // TODO: ^ Remove this
 
 extension Compiler {
@@ -131,7 +132,6 @@ extension Compiler {
 
       self.builder.appendCallFunctionEx(hasKeywordArguments: nSubKwArgs > 0)
     } else if keywords.any {
-
       let names = self.getNames(keywords: keywords)
       let argCount = alreadyPushedArgs + args.count + keywords.count
 
@@ -150,7 +150,7 @@ extension Compiler {
     for keyword in keywords {
       switch keyword.kind {
       case .dictionaryUnpack: assert(false)
-      case let .named(name): result.append(.string(name))
+      case .named(let name): result.append(.string(name))
       }
     }
     return result
