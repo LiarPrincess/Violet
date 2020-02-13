@@ -253,13 +253,84 @@ internal struct PySequenceData {
   }
 
   internal mutating func delItem(at index: PyObject) -> PyResult<PyNone> {
-    let parsedIndex: Int
-    switch IndexHelper.int(index) {
-    case let .value(i): parsedIndex = i
+    switch IndexHelper.tryInt(index) {
+    case .value(let indexInt):
+      return self.delItem(at: indexInt)
+    case .notIndex:
+      break // Try other
+    case .error(let e):
+      return .error(e)
+    }
+
+    if let slice = index as? PySlice {
+      return self.delItem(at: slice)
+    }
+
+    let msg = "list indices must be integers or slices, not \(index.typeName)"
+    return .error(Py.newTypeError(msg: msg))
+  }
+
+  internal mutating func delItem(at index: Int) -> PyResult<PyNone> {
+    var index = index
+
+    if index < 0 {
+      index += self.elements.count
+    }
+
+    guard 0 <= index && index < self.elements.count else {
+      let msg = "list assignment index out of range"
+      return .error(Py.newIndexError(msg: msg))
+    }
+
+    _ = self.elements.remove(at: index)
+    return .value(Py.none)
+  }
+
+  internal mutating func delItem(at slice: PySlice) -> PyResult<PyNone> {
+    var indices: PySlice.AdjustedIndices
+    switch slice.unpack() {
+    case let .value(u): indices = slice.adjust(u, toLength: self.elements.count)
     case let .error(e): return .error(e)
     }
 
-    _ = self.elements.remove(at: parsedIndex)
+    if indices.step == 1 {
+      let range = indices.start..<indices.stop
+      self.elements.replaceSubrange(range, with: [])
+      return .value(Py.none)
+    }
+
+    // Make sure s[5:2] = [..] inserts at the right place: before 5, not before 2.
+    if (indices.step < 0 && indices.start < indices.stop) ||
+       (indices.step > 0 && indices.start > indices.stop) {
+      indices.stop = indices.start
+    }
+
+    if indices.length <= 0 {
+      return .value(Py.none)
+    }
+
+    if indices.step < 0 {
+      indices.stop = indices.start + 1
+      indices.start = indices.stop + indices.step * (indices.length - 1) - 1
+      indices.step = -indices.step
+    }
+
+    var groupStart = 0
+    var result = [PyObject]()
+
+    for delIndex in stride(from: indices.start, to: indices.stop, by: indices.step) {
+      let elements = self.elements[groupStart..<delIndex]
+      result.append(contentsOf: elements)
+      groupStart = delIndex + 1 // +1 to skip 'delIndex'
+    }
+
+    // Include final group
+    if groupStart < self.elements.count {
+      let elements = self.elements[groupStart..<self.elements.count]
+      result.append(contentsOf: elements)
+    }
+
+    self.elements = result
     return .value(Py.none)
   }
 
