@@ -18,7 +18,7 @@ public class PyBytesIterator: PyObject {
   }
 
   override public var description: String {
-    return "PyBytesIterator()"
+    return "PyBytesIterator(bytes: \(self.bytes), index: \(self.index))"
   }
 
   // MARK: - Class
@@ -51,14 +51,12 @@ public class PyBytesIterator: PyObject {
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
     let scalars = self.bytes.data.scalars
-    let scalarsIndexOrNil = scalars.index(scalars.startIndex,
-                                          offsetBy: self.index,
-                                          limitedBy: scalars.endIndex)
 
-    if let scalarsIndex = scalarsIndexOrNil {
+    if self.index < scalars.count {
+      let byte = scalars[self.index]
+      let result = Py.newInt(byte)
       self.index += 1
-      let byte = scalars[scalarsIndex]
-      return .value(Py.newInt(byte))
+      return .value(result)
     }
 
     return .stopIteration()
