@@ -236,28 +236,126 @@ internal struct PySequenceData {
     return .value(result)
   }
 
-  // MARK: - Set/del item
+  // MARK: - Set item
 
   internal mutating func setItem(at index: PyObject,
                                  to value: PyObject) -> PyResult<PyNone> {
-    // Setting slice is not (yet) implemented
+    switch IndexHelper.tryInt(index) {
+    case .value(let indexInt):
+      return self.setItem(at: indexInt, to: value)
+    case .notIndex:
+      break // Try other
+    case .error(let e):
+      return .error(e)
+    }
 
-    let parsedIndex: Int
-    switch IndexHelper.int(index) {
-    case let .value(i): parsedIndex = i
+    if let slice = index as? PySlice {
+      return self.setItem(at: slice, to: value)
+    }
+
+    let msg = "list indices must be integers or slices, not \(index.typeName)"
+    return .error(Py.newTypeError(msg: msg))
+  }
+
+  internal mutating func setItem(at index: Int,
+                                 to value: PyObject) -> PyResult<PyNone> {
+    var index = index
+
+    if index < 0 {
+      index += self.elements.count
+    }
+
+    guard 0 <= index && index < self.elements.count else {
+      let msg = "list assignment index out of range"
+      return .error(Py.newIndexError(msg: msg))
+    }
+
+    self.elements[index] = value
+    return .value(Py.none)
+  }
+
+  internal mutating func setItem(at slice: PySlice,
+                                 to value: PyObject) -> PyResult<PyNone> {
+    var indices: PySlice.AdjustedIndices
+    switch slice.unpack() {
+    case let .value(u): indices = slice.adjust(u, toLength: self.elements.count)
     case let .error(e): return .error(e)
     }
 
-    self.elements[parsedIndex] = value
+    if indices.step == 1 {
+      return self.setContinuousItems(start: indices.start, stop: indices.stop, to: value)
+    }
+
+    // Make sure s[5:2] = [..] inserts at the right place: before 5, not before 2.
+    if (indices.step < 0 && indices.start < indices.stop) ||
+       (indices.step > 0 && indices.start > indices.stop) {
+      indices.stop = indices.start
+    }
+
+    let elements: [PyObject]
+    switch Py.toArray(iterable: value) {
+    case .value(let e): elements = e
+    case .error: return .typeError("must assign iterable to extended slice")
+    }
+
+    guard elements.count == indices.length else {
+      let msg = "attempt to assign sequence of size \(elements.count) " +
+                "to extended slice of size \(indices.length)"
+      return .valueError(msg)
+    }
+
+    if indices.length == 0 {
+      return .value(Py.none)
+    }
+
+    var elementsIndex = 0
+    for index in stride(from: indices.start, to: indices.stop, by: indices.step) {
+      self.elements[index] = elements[elementsIndex]
+      elementsIndex += 1
+    }
+
     return .value(Py.none)
   }
+
+  // static int
+  // list_ass_slice(PyListObject *a, Py_ssize_t ilow, Py_ssize_t ihigh, PyObject *v)
+  private mutating func setContinuousItems(
+    start: Int,
+    stop: Int,
+    to value: PyObject
+  ) -> PyResult<PyNone> {
+
+    let elements: [PyObject]
+    switch Py.toArray(iterable: value) {
+    case .value(let e): elements = e
+    case .error: return .typeError("can only assign an iterable")
+    }
+
+    let low = min(max(start, 0), self.elements.count)
+    let high = min(max(stop, low), self.elements.count)
+
+    let replacementCount = high - low
+    assert(replacementCount >= 0)
+
+    // Fast path: we have list of 7 elements, add 3 more but replace 10.
+    // In total that gives us empty list.
+    let countChange = elements.count - replacementCount
+    if self.elements.count + countChange == 0 {
+      return self.clear()
+    }
+
+    self.elements.replaceSubrange(low..<high, with: elements)
+    return .value(Py.none)
+  }
+
+  // MARK: - Del item
 
   internal mutating func delItem(at index: PyObject) -> PyResult<PyNone> {
     switch IndexHelper.tryInt(index) {
     case .value(let indexInt):
       return self.delItem(at: indexInt)
     case .notIndex:
-      break // Try other
+      break // Try slice
     case .error(let e):
       return .error(e)
     }
@@ -309,6 +407,7 @@ internal struct PySequenceData {
       return .value(Py.none)
     }
 
+    // Fix the slice, so we can start from lower indices
     if indices.step < 0 {
       indices.stop = indices.start + 1
       indices.start = indices.stop + indices.step * (indices.length - 1) - 1
@@ -317,11 +416,12 @@ internal struct PySequenceData {
 
     var groupStart = 0
     var result = [PyObject]()
+    result.reserveCapacity(self.elements.count - indices.length)
 
-    for delIndex in stride(from: indices.start, to: indices.stop, by: indices.step) {
-      let elements = self.elements[groupStart..<delIndex]
+    for index in stride(from: indices.start, to: indices.stop, by: indices.step) {
+      let elements = self.elements[groupStart..<index]
       result.append(contentsOf: elements)
-      groupStart = delIndex + 1 // +1 to skip 'delIndex'
+      groupStart = index + 1 // +1 to skip 'index'
     }
 
     // Include final group
