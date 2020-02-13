@@ -151,10 +151,16 @@ private enum EqualCompare: CompareOp {
 extension BuiltinFunctions {
 
   public func isEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    // Quick result when objects are the same.
+    // Guarantees that identity implies equality.
+    if  left === right {
+      return .value(Py.true)
+    }
+
     switch EqualCompare.compare(left: left, right: right) {
     case .value(let result):
       if result.isNotImplemented {
-        return .value(self.newBool(left === right))
+        return .value(self.newBool(left === right)) // always false
       }
       return .value(result)
 
@@ -188,6 +194,11 @@ private enum NotEqualCompare: CompareOp {
 extension BuiltinFunctions {
 
   public func isNotEqual(left: PyObject, right: PyObject) -> PyResult<PyObject> {
+    // Quick result when objects are the same.
+    if left === right {
+      return .value(Py.false)
+    }
+
     switch NotEqualCompare.compare(left: left, right: right) {
     case .value(let result):
       if result.isNotImplemented {
