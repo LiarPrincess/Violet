@@ -401,7 +401,7 @@ public class PySlice: PyObject {
       return .none
     }
 
-    switch IndexHelper.tryInt(value) {
+    switch IndexHelper.intMaybe(value) {
     case .value(let value):
       return .index(value)
     case .notIndex:

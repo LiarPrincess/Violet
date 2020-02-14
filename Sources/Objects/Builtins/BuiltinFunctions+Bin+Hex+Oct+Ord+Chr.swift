@@ -48,7 +48,7 @@ extension BuiltinFunctions {
     // Integer Unicode code point -> string representing a character
 
     let bigInt: BigInt
-    switch IndexHelper.tryBigInt(object) {
+    switch IndexHelper.bigIntMaybe(object) {
     case .value(let i):
       bigInt = i
     case .notIndex:

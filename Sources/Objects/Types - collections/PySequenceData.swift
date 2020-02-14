@@ -165,7 +165,7 @@ internal struct PySequenceData {
   }
 
   internal func getItem(index: PyObject, typeName: String) -> GetItemResult {
-    switch IndexHelper.tryInt(index) {
+    switch IndexHelper.intMaybe(index) {
     case .value(let index):
       switch self.getItem(index: index, typeName: typeName) {
       case let .value(v): return .single(v)
@@ -240,7 +240,7 @@ internal struct PySequenceData {
 
   internal mutating func setItem(at index: PyObject,
                                  to value: PyObject) -> PyResult<PyNone> {
-    switch IndexHelper.tryInt(index) {
+    switch IndexHelper.intMaybe(index) {
     case .value(let indexInt):
       return self.setItem(at: indexInt, to: value)
     case .notIndex:
@@ -351,7 +351,7 @@ internal struct PySequenceData {
   // MARK: - Del item
 
   internal mutating func delItem(at index: PyObject) -> PyResult<PyNone> {
-    switch IndexHelper.tryInt(index) {
+    switch IndexHelper.intMaybe(index) {
     case .value(let indexInt):
       return self.delItem(at: indexInt)
     case .notIndex:

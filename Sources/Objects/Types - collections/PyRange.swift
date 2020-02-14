@@ -250,7 +250,7 @@ public class PyRange: PyObject {
 
   // sourcery: pymethod = __getitem__
   internal func getItem(at index: PyObject) -> PyResult<PyObject> {
-    switch IndexHelper.tryInt(index) {
+    switch IndexHelper.intMaybe(index) {
     case .value(let int):
       // swiftlint:disable:next array_init
       return self.getItem(at: BigInt(int)).map { $0 }

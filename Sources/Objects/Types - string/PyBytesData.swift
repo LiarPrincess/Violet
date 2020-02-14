@@ -380,7 +380,7 @@ internal struct PyBytesData: PyStringImpl {
   }
 
   private static func new(fromCount object: PyObject) -> NewFromResult {
-    switch IndexHelper.tryInt(object) {
+    switch IndexHelper.intMaybe(object) {
     case .value(let count):
       // swiftlint:disable:next empty_count
       guard count >= 0 else {

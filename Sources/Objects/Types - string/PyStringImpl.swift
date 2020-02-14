@@ -1162,7 +1162,7 @@ extension PyStringImpl {
   internal func getItem(
     at index: PyObject
   ) -> StringGetItemResult<Element, Builder.Result> {
-    switch IndexHelper.tryInt(index) {
+    switch IndexHelper.intMaybe(index) {
     case .value(let index):
       switch self.getItem(at: index) {
       case let .value(r): return .item(r)
