@@ -15,15 +15,18 @@ extension OrderedDictionaryBackedIterator {
   }
 
   internal func nextShared() -> PyResult<Dict.Entry> {
-    while self.index < self.dict.count {
-      switch self.dict.entries[self.index] {
+    while self.index < self.dict.entries.count {
+      let entry = self.dict.entries[self.index]
+
+      // Increment index NOW, so that the regardles of whether we return 'entry'
+      // or iterate more we move to next element.
+      self.index += 1
+
+      switch entry {
       case .entry(let e):
-        // Increment index, so that the next iteration
-        // does not return the same element
-        self.index += 1
         return .value(e)
       case .deleted:
-        self.index += 1
+        break // move to next element
       }
     }
 
