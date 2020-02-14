@@ -245,9 +245,13 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// insertdict(PyDictObject *mp, PyObject *key, Py_hash_t hash, PyObject *value)
   public mutating func insert(key: Key, value: Value) -> InsertResult {
     switch self.lookup(key: key) {
-    case let .entry(index: _, entryIndex: entryIndex, entry: _):
+    case let .entry(index: _, entryIndex: entryIndex, entry: oldEntry):
       // Update existing entry.
-      self.entries[entryIndex] = .entry(Entry(key: key, value: value))
+      // We have to use old 'key':
+      // >>> d = { }
+      // >>> d[True] = True # -> {True: True}
+      // >>> d[1] = 1       # -> {True: 1} <- key is still 'True' not '1'
+      self.entries[entryIndex] = .entry(Entry(key: oldEntry.key, value: value))
       return .updated
 
     case .notFound:
