@@ -1209,16 +1209,16 @@ extension PyStringImpl {
   }
 
   private func getSlice(slice: PySlice) -> PyResult<Builder.Result> {
-    let unpack: PySlice.UnpackedIndices
     switch slice.unpack() {
-    case let .value(v): unpack = v
-    case let .error(e): return .error(e)
-    }
+    case let .value(u):
+      let indices = u.adjust(toCount: self.scalars.count)
+      return self.getSlice(start: indices.start,
+                           step: indices.step,
+                           count: indices.count)
 
-    let adjusted = slice.adjust(unpack, toLength: self.scalars.count)
-    return self.getSlice(start: adjusted.start,
-                         step: adjusted.step,
-                         count: adjusted.length)
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   internal func getSlice(start: Int,

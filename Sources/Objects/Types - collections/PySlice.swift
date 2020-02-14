@@ -258,12 +258,72 @@ public class PySlice: PyObject {
 
   // MARK: - Unpack
 
+  /// Ok, so `UnpackedIndices` stores extracted idices,
+  /// use `adjust(toCount:)` method to clamp them to desired length.
+  internal struct AdjustedIndices {
+    internal var start:  Int
+    internal var stop:   Int
+    internal var step:   Int
+    /// Number of entries between `self.start` and `self.stop` using `self.step`.
+    internal let count: Int
+  }
+
+  /// We store `PyObjects` as slice `start, stop, step` properties,
+  /// use `PySlice.unpack` to extract correct indices.
   internal struct UnpackedIndices {
     internal var start: Int
     internal var stop:  Int
     internal var step:  Int
+
+    /// Ok, so we have correct indices, now clamp them to desired length.
+    ///
+    /// Py_ssize_t
+    /// PySlice_AdjustIndices(Py_ssize_t length,
+    ///                       Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t step)
+    internal func adjust(toCount count: Int) -> AdjustedIndices {
+      var start = self.start
+      var stop = self.stop
+      let step = self.step
+
+      assert(step != 0)
+      let isGoingDown = step < 0
+
+      if start < 0 {
+        start += count
+        if start < 0 {
+          start = isGoingDown ? -1 : 0
+        }
+      } else if start >= count {
+        start = isGoingDown ? count - 1 : count
+      }
+
+      if stop < 0 {
+        stop += count
+        if stop < 0 {
+          stop = isGoingDown ? -1 : 0
+        }
+      } else if stop >= count {
+        stop = isGoingDown ? count - 1 : count
+      }
+
+      var length = 0
+      if isGoingDown {
+        if stop < start {
+          length = (start - stop - 1) / (-step) + 1
+        }
+      } else {
+        if start < stop {
+          length = (stop - start - 1) / step + 1
+        }
+      }
+
+      return AdjustedIndices(start: start, stop: stop, step: step, count: length)
+    }
   }
 
+  /// We store `PyObjects` as slice properties, use this method to extract
+  /// correct indices.
+  ///
   /// int
   /// PySlice_Unpack(PyObject *_r,
   ///                Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t *step)
@@ -286,71 +346,18 @@ public class PySlice: PyObject {
     var start = step < 0 ? max : 0
     switch self.extractIndex(self.start) {
     case .none: break
-    case let .index(value): start = value
-    case let .error(e): return .error(e)
+    case .index(let value): start = value
+    case .error(let e): return .error(e)
     }
 
     var stop = step < 0 ? min : max
     switch self.extractIndex(self.stop) {
     case .none: break
-    case let .index(value): stop = value
-    case let .error(e): return .error(e)
+    case .index(let value): stop = value
+    case .error(let e): return .error(e)
     }
 
     return .value(UnpackedIndices(start: start, stop: stop, step: step))
-  }
-
-  // MARK: - Adjust indices
-
-  internal struct AdjustedIndices {
-    internal var start:  Int
-    internal var stop:   Int
-    internal var step:   Int
-    internal let length: Int
-  }
-
-  /// Py_ssize_t
-  /// PySlice_AdjustIndices(Py_ssize_t length,
-  ///                       Py_ssize_t *start, Py_ssize_t *stop, Py_ssize_t step)
-  internal func adjust(_ unpack: UnpackedIndices,
-                       toLength length: Int) -> AdjustedIndices {
-    var start = unpack.start
-    var stop = unpack.stop
-    let step = unpack.step
-
-    assert(step != 0)
-    let isGoingDown = step < 0
-
-    if start < 0 {
-      start += length
-      if start < 0 {
-        start = isGoingDown ? -1 : 0
-      }
-    } else if start >= length {
-      start = isGoingDown ? length - 1 : length
-    }
-
-    if stop < 0 {
-      stop += length
-      if stop < 0 {
-        stop = isGoingDown ? -1 : 0
-      }
-    } else if stop >= length {
-      stop = isGoingDown ? length - 1 : length
-    }
-
-    var length = 0
-    if isGoingDown {
-      if stop < start {
-        length = (start - stop - 1) / (-step) + 1
-      }
-    } else {
-      if start < stop {
-        length = (stop - start - 1) / step + 1
-      }
-    }
-
-    return AdjustedIndices(start: start, stop: stop, step: step, length: length)
   }
 
   // MARK: - Python new

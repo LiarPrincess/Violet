@@ -202,29 +202,29 @@ internal struct PySequenceData {
   }
 
   internal func getItem(slice: PySlice) -> PyResult<[PyObject]> {
-    let unpack: PySlice.UnpackedIndices
+    let indices: PySlice.AdjustedIndices
     switch slice.unpack() {
-    case let .value(v): unpack = v
+    case let .value(u): indices = u.adjust(toCount: self.count)
     case let .error(e): return .error(e)
     }
 
-    let adjusted = slice.adjust(unpack, toLength: self.count)
-    if adjusted.length <= 0 {
+    // swiftlint:disable:next empty_count
+    if indices.count <= 0 {
       return .value([])
     }
 
-    if adjusted.step == 0 {
+    if indices.step == 0 {
       return .valueError("slice step cannot be zero")
     }
 
-    if adjusted.step == 1 {
-      let result = self.elements.dropFirst(adjusted.start).prefix(adjusted.length)
+    if indices.step == 1 {
+      let result = self.elements.dropFirst(indices.start).prefix(indices.count)
       return .value(Array(result))
     }
 
     var result = [PyObject]()
-    for i in 0..<adjusted.length {
-      let index = adjusted.start + i * adjusted.step
+    for i in 0..<indices.count {
+      let index = indices.start + i * indices.step
 
       guard 0 <= index && index < self.count else {
         return .value(result)
@@ -278,7 +278,7 @@ internal struct PySequenceData {
                                  to value: PyObject) -> PyResult<PyNone> {
     var indices: PySlice.AdjustedIndices
     switch slice.unpack() {
-    case let .value(u): indices = slice.adjust(u, toLength: self.elements.count)
+    case let .value(u): indices = u.adjust(toCount: self.elements.count)
     case let .error(e): return .error(e)
     }
 
@@ -298,13 +298,14 @@ internal struct PySequenceData {
     case .error: return .typeError("must assign iterable to extended slice")
     }
 
-    guard elements.count == indices.length else {
+    guard elements.count == indices.count else {
       let msg = "attempt to assign sequence of size \(elements.count) " +
-                "to extended slice of size \(indices.length)"
+                "to extended slice of size \(indices.count)"
       return .valueError(msg)
     }
 
-    if indices.length == 0 {
+    // swiftlint:disable:next empty_count
+    if indices.count == 0 {
       return .value(Py.none)
     }
 
@@ -387,7 +388,7 @@ internal struct PySequenceData {
   internal mutating func delItem(at slice: PySlice) -> PyResult<PyNone> {
     var indices: PySlice.AdjustedIndices
     switch slice.unpack() {
-    case let .value(u): indices = slice.adjust(u, toLength: self.elements.count)
+    case let .value(u): indices = u.adjust(toCount: self.elements.count)
     case let .error(e): return .error(e)
     }
 
@@ -403,20 +404,21 @@ internal struct PySequenceData {
       indices.stop = indices.start
     }
 
-    if indices.length <= 0 {
+    // swiftlint:disable:next empty_count
+    if indices.count <= 0 {
       return .value(Py.none)
     }
 
     // Fix the slice, so we can start from lower indices
     if indices.step < 0 {
       indices.stop = indices.start + 1
-      indices.start = indices.stop + indices.step * (indices.length - 1) - 1
+      indices.start = indices.stop + indices.step * (indices.count - 1) - 1
       indices.step = -indices.step
     }
 
     var groupStart = 0
     var result = [PyObject]()
-    result.reserveCapacity(self.elements.count - indices.length)
+    result.reserveCapacity(self.elements.count - indices.count)
 
     for index in stride(from: indices.start, to: indices.stop, by: indices.step) {
       let elements = self.elements[groupStart..<index]
