@@ -67,7 +67,7 @@ protocol __eq__Owner { func isEqual(_ other: PyObject) -> CompareResult }
 protocol __float__Owner { func asFloat() -> PyResult<PyFloat> }
 protocol __floor__Owner { func floor() -> PyObject }
 protocol __floordiv__Owner { func floordiv(_ other: PyObject) -> PyResult<PyObject> }
-protocol __func__Owner { func getFunc() -> PyObject }
+protocol __func__Owner { func getFunc() -> PyFunction }
 protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
 protocol __get__Owner { func get(object: PyObject, type: PyObject) -> PyResult<PyObject> }
 protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }

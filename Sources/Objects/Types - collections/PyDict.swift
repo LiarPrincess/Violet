@@ -48,7 +48,7 @@ public class PyDict: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
+  public func isEqual(_ other: PyObject) -> CompareResult {
     guard let other = other as? PyDict else {
       return .notImplemented
     }
@@ -76,43 +76,43 @@ public class PyDict: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
+  public func isNotEqual(_ other: PyObject) -> CompareResult {
     return self.isEqual(other).not
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
+  public func isLess(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+  public func isLessEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
+  public func isGreater(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
+  public func hash() -> HashResult {
     return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     if self.data.isEmpty {
       return .value("{}")
     }
@@ -149,32 +149,32 @@ public class PyDict: PyObject {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
+  public func getAttribute(name: String) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
+  public func getLength() -> BigInt {
     return BigInt(self.data.count)
   }
 
   // MARK: - Get/set/del item
 
   // sourcery: pymethod = __getitem__
-  internal func getItem(at index: PyObject) -> PyResult<PyObject> {
+  public func getItem(at index: PyObject) -> PyResult<PyObject> {
     let key: PyDictKey
     switch self.createKey(from: index) {
     case let .value(v): key = v
@@ -199,8 +199,8 @@ public class PyDict: PyObject {
   }
 
   // sourcery: pymethod = __setitem__
-  internal func setItem(at index: PyObject,
-                        to value: PyObject) -> PyResult<PyNone> {
+  public func setItem(at index: PyObject,
+                      to value: PyObject) -> PyResult<PyNone> {
     let key: PyDictKey
     switch self.createKey(from: index) {
     case let .value(v): key = v
@@ -216,7 +216,7 @@ public class PyDict: PyObject {
   }
 
   // sourcery: pymethod = __delitem__
-  internal func delItem(at index: PyObject) -> PyResult<PyNone> {
+  public func delItem(at index: PyObject) -> PyResult<PyNone> {
     let key: PyDictKey
     switch self.createKey(from: index) {
     case let .value(v): key = v
@@ -236,7 +236,7 @@ public class PyDict: PyObject {
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+  public func contains(_ element: PyObject) -> PyResult<Bool> {
     let key: PyDictKey
     switch self.createKey(from: element) {
     case let .value(v): key = v
@@ -253,7 +253,7 @@ public class PyDict: PyObject {
     """
 
   // sourcery: pymethod = clear, doc = clearDoc
-  internal func clear() -> PyResult<PyNone> {
+  public func clear() -> PyResult<PyNone> {
     self.data.clear()
     return .value(Py.none)
   }
@@ -273,8 +273,8 @@ public class PyDict: PyObject {
   )
 
   // sourcery: pymethod = get, doc = getDoc
-  internal func get(args: [PyObject],
-                    kwargs: PyDictData?) -> PyResult<PyObject> {
+  public func get(args: [PyObject],
+                  kwargs: PyDictData?) -> PyResult<PyObject> {
     switch PyDict.getArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -288,7 +288,7 @@ public class PyDict: PyObject {
     }
   }
 
-  internal func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> {
+  public func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
     switch self.createKey(from: index) {
     case let .value(v): key = v
@@ -308,7 +308,7 @@ public class PyDict: PyObject {
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
+  public func iter() -> PyObject {
     return PyDictKeyIterator(dict: self)
   }
 
@@ -327,8 +327,8 @@ public class PyDict: PyObject {
   /// If `key` is in the dictionary, return its value.
   /// If not, insert key with a value of `default` and return `default`.
   /// `default` defaults to None.
-  internal func setDefault(_ index: PyObject,
-                           default: PyObject?) -> PyResult<PyObject> {
+  public func setDefault(_ index: PyObject,
+                         default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
     switch self.createKey(from: index) {
     case let .value(v): key = v
@@ -354,7 +354,7 @@ public class PyDict: PyObject {
   // MARK: - Update
 
   // sourcery: pymethod = update
-  internal func update(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> {
+  public func update(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> {
     // Guarantee 0 or 1 args
     if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "update",
                                                         args: args,
@@ -363,40 +363,38 @@ public class PyDict: PyObject {
       return .error(e)
     }
 
-    // Handle single arg
     if let arg = args.first {
-      if let dict = arg as? PyDict {
-        switch self.update(fromData: dict.data) {
-        case .value: break
-        case .error(let e): return .error(e)
-        }
-      } else {
-        switch self.callKeys(on: arg) {
-        case .value(let keys): // We have keys -> dict-like object
-          switch self.update(fromKeysOwner: arg, keys: keys) {
-          case .value: break
-          case .error(let e): return .error(e)
-          }
-        case .missingMethod: // We don't have keys -> try iterable
-          switch self.update(fromIterableOfPairs: arg) {
-          case .value: break
-          case .error(let e): return .error(e)
-          }
-        case .error(let e):
-          return .error(e)
-        }
+      switch self.update(from: arg) {
+      case .value: break
+      case .error(let e): return .error(e)
       }
     }
 
-    // Handle kwargs
     if let kwargs = kwargs {
-      switch self.update(fromData: kwargs) {
+      switch self.update(from: kwargs) {
       case .value: break
       case .error(let e): return .error(e)
       }
     }
 
     return .value(Py.none)
+  }
+
+  public func update(from object: PyObject) -> PyResult<PyNone> {
+    if let dict = object as? PyDict {
+      return self.update(from: dict.data)
+    }
+
+    switch self.callKeys(on: object) {
+    case .value(let keys): // We have keys -> dict-like object
+      return self.update(fromKeysOwner: object, keys: keys)
+
+    case .missingMethod: // We don't have keys -> try iterable
+      return self.update(fromIterableOfPairs: object)
+
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   private enum CallKeysResult {
@@ -420,7 +418,7 @@ public class PyDict: PyObject {
     }
   }
 
-  private func update(fromData data: PyDictData) -> PyResult<()> {
+  public func update(from data: PyDictData) -> PyResult<PyNone> {
     for entry in data {
       switch self.insert(key: entry.key, value: entry.value) {
       case .value: break
@@ -428,10 +426,10 @@ public class PyDict: PyObject {
       }
     }
 
-    return .value()
+    return .value(Py.none)
   }
 
-  internal func insert(key: PyDictKey, value: PyObject) -> PyResult<()> {
+  public func insert(key: PyDictKey, value: PyObject) -> PyResult<()> {
     switch self.data.insert(key: key, value: value) {
     case .inserted, .updated:
       return .value()
@@ -446,7 +444,7 @@ public class PyDict: PyObject {
   /// PyDict_MergeFromSeq2(PyObject *d, PyObject *seq2, int override)
   ///
   /// Iterable of sequences with 2 elements (key and value).
-  private func update(fromIterableOfPairs iterable: PyObject) -> PyResult<()> {
+  private func update(fromIterableOfPairs iterable: PyObject) -> PyResult<PyNone> {
     let kvs = Py.reduce(iterable: iterable, into: [KeyValue]()) { acc, object in
       switch self.unpackKeyValue(fromIterable: object) {
       case let .value(keyValue):
@@ -466,7 +464,7 @@ public class PyDict: PyObject {
         }
       }
 
-      return .value()
+      return .value(Py.none)
 
     case let .error(e):
       return .error(e)
@@ -494,7 +492,7 @@ public class PyDict: PyObject {
   /// static int
   /// dict_merge(PyObject *a, PyObject *b, int override)
   private func update(fromKeysOwner dict: PyObject,
-                      keys keyIterable: PyObject) -> PyResult<()> {
+                      keys keyIterable: PyObject) -> PyResult<PyNone> {
     let keys: [PyObject]
     switch Py.toArray(iterable: keyIterable) {
     case let .value(k): keys = k
@@ -520,7 +518,7 @@ public class PyDict: PyObject {
       }
     }
 
-    return .value()
+    return .value(Py.none)
   }
 
   // MARK: - Copy
@@ -528,7 +526,7 @@ public class PyDict: PyObject {
   internal static let copyDoc = "D.copy() -> a shallow copy of D"
 
   // sourcery: pymethod = copy, doc = copyDoc
-  internal func copy() -> PyObject {
+  public func copy() -> PyObject {
     let result = Py.newDict()
     result.data = self.data
     return result
@@ -542,8 +540,8 @@ public class PyDict: PyObject {
     """
 
   // sourcery: pymethod = pop, doc = popDoc
-  internal func pop(_ index: PyObject,
-                    default: PyObject?) -> PyResult<PyObject> {
+  public func pop(_ index: PyObject,
+                  default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
     switch self.createKey(from: index) {
     case let .value(v): key = v
@@ -586,17 +584,17 @@ public class PyDict: PyObject {
   // MARK: - Views
 
   // sourcery: pymethod = keys
-  internal func keys() -> PyObject {
+  public func keys() -> PyObject {
     return PyDictKeys(dict: self)
   }
 
   // sourcery: pymethod = items
-  internal func items() -> PyObject {
+  public func items() -> PyObject {
     return PyDictItems(dict: self)
   }
 
   // sourcery: pymethod = values
-  internal func values() -> PyObject {
+  public func values() -> PyObject {
     return PyDictValues(dict: self)
   }
 

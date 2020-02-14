@@ -66,12 +66,16 @@ extension BuiltinFunctions {
 
   // MARK: - Set
 
-  /// PyObject * PySet_New(PyObject *iterable)
-  public func newSet(_ elements: [PyObject] = []) -> PyResult<PySet> {
-    return self.toSetData(elements).map(self.newSet(_:))
+  public func newSet() -> PySet {
+    return self.newSet(data: PySetData())
   }
 
-  internal func newSet(_ data: PySetData) -> PySet {
+  /// PyObject * PySet_New(PyObject *iterable)
+  public func newSet(elements: [PyObject]) -> PyResult<PySet> {
+    return self.toSetData(elements).map(self.newSet(data:))
+  }
+
+  internal func newSet(data: PySetData) -> PySet {
     return PySet(data: data)
   }
 
@@ -96,11 +100,11 @@ extension BuiltinFunctions {
 
   // MARK: - Frozen set
 
-  public func newFrozenSet(_ elements: [PyObject] = []) -> PyResult<PyFrozenSet> {
-    return self.toSetData(elements).map(self.newFrozenSet(_:))
+  public func newFrozenSet(elements: [PyObject] = []) -> PyResult<PyFrozenSet> {
+    return self.toSetData(elements).map(self.newFrozenSet(data:))
   }
 
-  internal func newFrozenSet(_ data: PySetData) -> PyFrozenSet {
+  internal func newFrozenSet(data: PySetData) -> PyFrozenSet {
     return data.isEmpty ?
       Py.emptyFrozenSet :
       PyFrozenSet(data: data)
@@ -121,8 +125,12 @@ extension BuiltinFunctions {
 
   // MARK: - Dictionary
 
-  internal func newDict(data: PyDictData? = nil) -> PyDict {
-    return PyDict(data: data ?? PyDictData())
+  public func newDict() -> PyDict {
+    return PyDict(data: PyDictData())
+  }
+
+  public func newDict(data: PyDictData) -> PyDict {
+    return PyDict(data: data)
   }
 
   public func newDict(elements: [CreateDictionaryArg]) -> PyResult<PyDict> {

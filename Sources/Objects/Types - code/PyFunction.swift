@@ -74,25 +74,25 @@ public class PyFunction: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     return .value("<function \(self.qualname) at \(self.ptrString)>")
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter = setName
-  internal func getName() -> String {
+  public func getName() -> String {
     return self.name
   }
 
-  internal func setName(_ value: PyObject?) -> PyResult<()> {
+  public func setName(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
       return .value()
     }
@@ -108,11 +108,11 @@ public class PyFunction: PyObject {
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter = setQualname
-  internal func getQualname() -> String {
+  public func getQualname() -> String {
     return self.qualname
   }
 
-  internal func setQualname(_ value: PyObject?) -> PyResult<()> {
+  public func setQualname(_ value: PyObject?) -> PyResult<()> {
     guard let value = value else {
       return .value()
     }
@@ -128,14 +128,14 @@ public class PyFunction: PyObject {
   // MARK: - Code
 
   // sourcery: pyproperty = __code__
-  internal func getCode() -> PyCode {
+  public func getCode() -> PyCode {
     return self.code
   }
 
   // MARK: - Doc
 
   // sourcery: pyproperty = __doc__
-  internal func getDoc() -> PyResult<PyObject> {
+  public func getDoc() -> PyResult<PyObject> {
     guard let doc = self.doc else {
       return .value(Py.none)
     }
@@ -146,7 +146,7 @@ public class PyFunction: PyObject {
   // MARK: - Module
 
   // sourcery: pyproperty = __module__
-  internal func getModule() -> PyResult<String> {
+  public func getModule() -> PyResult<String> {
     if let module = self.module as? PyModule {
       return module.name
     }
@@ -157,14 +157,14 @@ public class PyFunction: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal func getDict() -> Attributes {
+  public func getDict() -> Attributes {
     return self.attributes
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+  public func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
     if object.isDescriptorStaticMarker {
       return .value(self)
     }
@@ -172,7 +172,7 @@ public class PyFunction: PyObject {
     return .value(self.bind(to: object))
   }
 
-  internal func bind(to object: PyObject) -> PyMethod {
+  public func bind(to object: PyObject) -> PyMethod {
     return PyMethod(fn: self, object: object)
   }
 }

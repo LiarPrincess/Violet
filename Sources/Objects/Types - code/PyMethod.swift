@@ -35,7 +35,7 @@ public class PyMethod: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
+  public func isEqual(_ other: PyObject) -> CompareResult {
     guard let other = other as? PyMethod else {
       return .notImplemented
     }
@@ -53,36 +53,36 @@ public class PyMethod: PyObject {
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
+  public func isNotEqual(_ other: PyObject) -> CompareResult {
     return self.isEqual(other).not
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
+  public func isLess(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+  public func isLessEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
+  public func isGreater(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return .notImplemented
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     let funcNameObject = self.fn.attributes["__qualname__"] ??
                          self.fn.attributes["__name__"]
 
@@ -99,14 +99,14 @@ public class PyMethod: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
+  public func hash() -> HashResult {
     let objectHash: PyHash
     switch Py.hash(self.object) {
     case let .value(h): objectHash = h
@@ -154,19 +154,19 @@ public class PyMethod: PyObject {
   // MARK: - Getters
 
   // sourcery: pymethod = __func__
-  internal func getFunc() -> PyObject {
+  public func getFunc() -> PyFunction {
     return self.fn
   }
 
   // sourcery: pymethod = __self__
-  internal func getSelf() -> PyObject {
+  public func getSelf() -> PyObject {
     return self.object
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+  public func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
     if object.isDescriptorStaticMarker {
       return .value(self)
     }

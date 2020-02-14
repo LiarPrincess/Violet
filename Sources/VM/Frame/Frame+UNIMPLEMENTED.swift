@@ -182,33 +182,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  // MARK: - Unpack
-
-  /// This is similar to `BuildTupleUnpack`, but is used for `f(*x, *y, *z)` call syntax.
-  /// The stack item at position count + 1 should be the corresponding callable `f`.
-  internal func buildTupleUnpackWithCall(elementCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// This is similar to `BuildTupleUnpack`, but pushes a set instead of tuple.
-  /// Implements iterable unpacking in set displays `{*x, *y, *z}`.
-  internal func buildSetUnpack(elementCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// Pops count mappings from the stack, merges them into a single dictionary,
-  /// and pushes the result.
-  /// Implements dictionary unpacking in dictionary displays `{**x, **y, **z}`.
-  internal func buildMapUnpack(elementCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  /// This is similar to `BuildMapUnpack`, but is used for `f(**x, **y, **z)` call syntax.
-  /// The stack item at position count + 2 should be the corresponding callable `f`.
-  internal func buildMapUnpackWithCall(elementCount: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - With
 
   /// This opcode performs several operations before a `with` block starts.

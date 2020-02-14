@@ -44,12 +44,12 @@ public class PySet: PyObject, PySetType {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
+  public func isEqual(_ other: PyObject) -> CompareResult {
     return self.data.isEqual(to: other)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
+  public func isNotEqual(_ other: PyObject) -> CompareResult {
     // CPython has different implementation here,
     // but in the end it all comes down to:
     return self.isEqual(other).not
@@ -58,36 +58,36 @@ public class PySet: PyObject, PySetType {
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
+  public func isLess(_ other: PyObject) -> CompareResult {
     return self.data.isLess(than: other)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+  public func isLessEqual(_ other: PyObject) -> CompareResult {
     return self.data.isLessEqual(than: other)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
+  public func isGreater(_ other: PyObject) -> CompareResult {
     return self.data.isGreater(than: other)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return self.data.isGreaterEqual(than: other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
+  public func hash() -> HashResult {
     return .error(Py.hashNotImplemented(self))
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     if self.hasReprLock {
       return .value("(...)")
     }
@@ -100,80 +100,80 @@ public class PySet: PyObject, PySetType {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
+  public func getAttribute(name: String) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Length
 
   // sourcery: pymethod = __len__
-  internal func getLength() -> BigInt {
+  public func getLength() -> BigInt {
     return BigInt(self.data.count)
   }
 
   // MARK: - Contaions
 
   // sourcery: pymethod = __contains__
-  internal func contains(_ element: PyObject) -> PyResult<Bool> {
+  public func contains(_ element: PyObject) -> PyResult<Bool> {
     return self.data.contains(value: element)
   }
 
   // MARK: - And
 
   // sourcery: pymethod = __and__
-  internal func and(_ other: PyObject) -> PyResult<PyObject> {
+  public func and(_ other: PyObject) -> PyResult<PyObject> {
     return self.createSet(result: self.data.and(other: other))
   }
 
   // sourcery: pymethod = __rand__
-  internal func rand(_ other: PyObject) -> PyResult<PyObject> {
+  public func rand(_ other: PyObject) -> PyResult<PyObject> {
     return self.and(other)
   }
 
   // MARK: - Or
 
   // sourcery: pymethod = __or__
-  internal func or(_ other: PyObject) -> PyResult<PyObject> {
+  public func or(_ other: PyObject) -> PyResult<PyObject> {
     return self.createSet(result: self.data.or(other: other))
   }
 
   // sourcery: pymethod = __ror__
-  internal func ror(_ other: PyObject) -> PyResult<PyObject> {
+  public func ror(_ other: PyObject) -> PyResult<PyObject> {
     return self.or(other)
   }
 
   // MARK: - Xor
 
   // sourcery: pymethod = __xor__
-  internal func xor(_ other: PyObject) -> PyResult<PyObject> {
+  public func xor(_ other: PyObject) -> PyResult<PyObject> {
     return self.createSet(result: self.data.xor(other: other))
   }
 
   // sourcery: pymethod = __rxor__
-  internal func rxor(_ other: PyObject) -> PyResult<PyObject> {
+  public func rxor(_ other: PyObject) -> PyResult<PyObject> {
     return self.xor(other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
+  public func sub(_ other: PyObject) -> PyResult<PyObject> {
     return self.createSet(result: self.data.sub(other: other))
   }
 
   // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
+  public func rsub(_ other: PyObject) -> PyResult<PyObject> {
     return self.createSet(result: self.data.rsub(other: other))
   }
 
@@ -184,7 +184,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = issubset, doc = isSubsetDoc
-  internal func isSubset(of other: PyObject) -> PyResult<Bool> {
+  public func isSubset(of other: PyObject) -> PyResult<Bool> {
     return self.data.isSubset(of: other)
   }
 
@@ -195,7 +195,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = issuperset, doc = isSupersetDoc
-  internal func isSuperset(of other: PyObject) -> PyResult<Bool> {
+  public func isSuperset(of other: PyObject) -> PyResult<Bool> {
     return self.data.isSuperset(of: other)
   }
 
@@ -208,7 +208,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = intersection, doc = intersectionDoc
-  internal func intersection(with other: PyObject) -> PyResult<PyObject> {
+  public func intersection(with other: PyObject) -> PyResult<PyObject> {
     return self.data.intersection(with: other).map(self.createSet(data:))
   }
 
@@ -221,7 +221,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = union, doc = unionDoc
-  internal func union(with other: PyObject) -> PyResult<PyObject> {
+  public func union(with other: PyObject) -> PyResult<PyObject> {
     return self.data.union(with: other).map(self.createSet(data:))
   }
 
@@ -234,7 +234,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = difference, doc = differenceDoc
-  internal func difference(with other: PyObject) -> PyResult<PyObject> {
+  public func difference(with other: PyObject) -> PyResult<PyObject> {
     return self.data.difference(with: other).map(self.createSet(data:))
   }
 
@@ -247,7 +247,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = symmetric_difference, doc = symmetricDifferenceDoc
-  internal func symmetricDifference(with other: PyObject) -> PyResult<PyObject> {
+  public func symmetricDifference(with other: PyObject) -> PyResult<PyObject> {
     return self.data.symmetricDifference(with: other).map(self.createSet(data:))
   }
 
@@ -258,7 +258,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = isdisjoint, doc = isDisjointDoc
-  internal func isDisjoint(with other: PyObject) -> PyResult<Bool> {
+  public func isDisjoint(with other: PyObject) -> PyResult<Bool> {
     return self.data.isDisjoint(with: other)
   }
 
@@ -271,7 +271,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = add, doc = addDoc
-  internal func add(_ value: PyObject) -> PyResult<PyNone> {
+  public func add(_ value: PyObject) -> PyResult<PyNone> {
     switch self.data.insert(value: value) {
     case .ok:
       return .value(Py.none)
@@ -287,7 +287,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = update, doc = updateDoc
-  internal func update(from other: PyObject) -> PyResult<PyNone> {
+  public func update(from other: PyObject) -> PyResult<PyNone> {
     switch self.data.update(from: other) {
     case .ok:
       return .value(Py.none)
@@ -305,7 +305,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = remove, doc = removeDoc
-  internal func remove(_ value: PyObject) -> PyResult<PyNone> {
+  public func remove(_ value: PyObject) -> PyResult<PyNone> {
     switch self.data.remove(value: value) {
     case .ok:
       return .value(Py.none)
@@ -323,7 +323,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = discard, doc = discardDoc
-  internal func discard(_ value: PyObject) -> PyResult<PyNone> {
+  public func discard(_ value: PyObject) -> PyResult<PyNone> {
     switch self.data.discard(value: value) {
     case .ok:
       return .value(Py.none)
@@ -339,7 +339,7 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = clear, doc = clearDoc
-  internal func clear() -> PyResult<PyNone> {
+  public func clear() -> PyResult<PyNone> {
     self.data.clear()
     return .value(Py.none)
   }
@@ -349,7 +349,7 @@ public class PySet: PyObject, PySetType {
   internal static let copyDoc = "Return a shallow copy of a set."
 
   // sourcery: pymethod = copy, doc = copyDoc
-  internal func copy() -> PyObject {
+  public func copy() -> PyObject {
     return self.createSet(data: self.data)
   }
 
@@ -361,14 +361,14 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = pop, doc = popDoc
-  internal func pop() -> PyResult<PyObject> {
+  public func pop() -> PyResult<PyObject> {
     return self.data.pop()
   }
 
   // MARK: - Iter
 
   // sourcery: pymethod = __iter__
-  internal func iter() -> PyObject {
+  public func iter() -> PyObject {
     return PySetIterator(set: self)
   }
 
