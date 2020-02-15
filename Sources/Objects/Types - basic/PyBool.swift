@@ -44,26 +44,26 @@ public class PyBool: PyInt {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  override internal func repr() -> PyResult<String> {
+  override public func repr() -> PyResult<String> {
     return .value(self.value.isTrue ? "True" : "False")
   }
 
   // sourcery: pymethod = __str__
-  override internal func str() -> PyResult<String> {
+  override public func str() -> PyResult<String> {
     return self.repr()
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  override internal func getClass() -> PyType {
+  override public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - And
 
   // sourcery: pymethod = __and__
-  override internal func and(_ other: PyObject) -> PyResult<PyObject> {
+  override public func and(_ other: PyObject) -> PyResult<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue && other.value.isTrue
       return .value(Py.newBool(result))
@@ -73,14 +73,14 @@ public class PyBool: PyInt {
   }
 
   // sourcery: pymethod = __rand__
-  override internal func rand(_ other: PyObject) -> PyResult<PyObject> {
+  override public func rand(_ other: PyObject) -> PyResult<PyObject> {
     return self.and(other)
   }
 
   // MARK: - Or
 
   // sourcery: pymethod = __or__
-  override internal func or(_ other: PyObject) -> PyResult<PyObject> {
+  override public func or(_ other: PyObject) -> PyResult<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue || other.value.isTrue
       return .value(Py.newBool(result))
@@ -90,14 +90,14 @@ public class PyBool: PyInt {
   }
 
   // sourcery: pymethod = __ror__
-  override internal func ror(_ other: PyObject) -> PyResult<PyObject> {
+  override public func ror(_ other: PyObject) -> PyResult<PyObject> {
     return self.or(other)
   }
 
   // MARK: - Xor
 
   // sourcery: pymethod = __xor__
-  override internal func xor(_ other: PyObject) -> PyResult<PyObject> {
+  override public func xor(_ other: PyObject) -> PyResult<PyObject> {
     if let other = other as? PyBool {
       let result = self.value.isTrue != other.value.isTrue
       return .value(Py.newBool(result))
@@ -107,7 +107,7 @@ public class PyBool: PyInt {
   }
 
   // sourcery: pymethod = __rxor__
-  override internal func rxor(_ other: PyObject) -> PyResult<PyObject> {
+  override public func rxor(_ other: PyObject) -> PyResult<PyObject> {
     return self.xor(other)
   }
 

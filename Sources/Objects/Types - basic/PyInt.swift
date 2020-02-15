@@ -30,7 +30,7 @@ public class PyInt: PyObject {
   }
 
   // This has to be `let` because we cache most used ints!
-  internal let value: BigInt
+  public let value: BigInt
 
   override public var description: String {
     return "PyInt(\(self.value))"
@@ -56,38 +56,38 @@ public class PyInt: PyObject {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
+  public func isEqual(_ other: PyObject) -> CompareResult {
     return self.compare(with: other) { $0 == $1 }
   }
 
-  internal func isEqual(_ other: PyInt) -> Bool {
+  public func isEqual(_ other: PyInt) -> Bool {
     return self.value == other.value
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
+  public func isNotEqual(_ other: PyObject) -> CompareResult {
     return self.isEqual(other).not
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
+  public func isLess(_ other: PyObject) -> CompareResult {
     return self.compare(with: other) { $0 < $1 }
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+  public func isLessEqual(_ other: PyObject) -> CompareResult {
     return self.compare(with: other) { $0 <= $1 }
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
+  public func isGreater(_ other: PyObject) -> CompareResult {
     return self.compare(with: other) { $0 > $1 }
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return self.compare(with: other) { $0 >= $1 }
   }
 
@@ -106,7 +106,7 @@ public class PyInt: PyObject {
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
+  public func hash() -> HashResult {
     return .value(self.hashRaw())
   }
 
@@ -117,102 +117,102 @@ public class PyInt: PyObject {
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     return .value(String(describing: self.value))
   }
 
   // sourcery: pymethod = __str__
-  internal func str() -> PyResult<String> {
+  public func str() -> PyResult<String> {
     return self.repr()
   }
 
   // MARK: - Convertible
 
   // sourcery: pymethod = __bool__
-  internal func asBool() -> Bool {
+  public func asBool() -> Bool {
     return self.value.isTrue
   }
 
   // sourcery: pymethod = __int__
-  internal func asInt() -> PyResult<PyInt> {
+  public func asInt() -> PyResult<PyInt> {
     return .value(self)
   }
 
   // sourcery: pymethod = __float__
-  internal func asFloat() -> PyResult<PyFloat> {
+  public func asFloat() -> PyResult<PyFloat> {
     return .value(Py.newFloat(Double(self.value)))
   }
 
   // sourcery: pymethod = __index__
-  internal func asIndex() -> BigInt {
+  public func asIndex() -> BigInt {
     return self.value
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Imaginary
 
   // sourcery: pyproperty = real
-  internal func asReal() -> PyObject {
+  public func asReal() -> PyObject {
     // We cannot just return 'self'!
     // If we call 'True.real' then the result should be '1' not 'True'.
     return Py.newInt(self.value)
   }
 
   // sourcery: pyproperty = imag
-  internal func asImag() -> PyObject {
+  public func asImag() -> PyObject {
     return Py.newInt(0)
   }
 
   // sourcery: pymethod = conjugate
   /// int.conjugate
   /// Return self, the complex conjugate of any int.
-  internal func conjugate() -> PyObject {
+  public func conjugate() -> PyObject {
     return self
   }
 
   // sourcery: pyproperty = numerator
-  internal func numerator() -> PyInt {
+  public func numerator() -> PyInt {
     return self
   }
 
   // sourcery: pyproperty = denominator
-  internal func denominator() -> PyInt {
+  public func denominator() -> PyInt {
     return Py.newInt(1)
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
+  public func getAttribute(name: String) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Sign
 
   // sourcery: pymethod = __pos__
-  internal func positive() -> PyObject {
+  public func positive() -> PyObject {
     return self
   }
 
   // sourcery: pymethod = __neg__
-  internal func negative() -> PyObject {
+  public func negative() -> PyObject {
     return Py.newInt(-self.value)
   }
 
   // MARK: - Abs
 
   // sourcery: pymethod = __abs__
-  internal func abs() -> PyObject {
+  public func abs() -> PyObject {
     return Py.newInt(Swift.abs(self.value))
   }
 
@@ -221,7 +221,7 @@ public class PyInt: PyObject {
   internal static let truncDoc = "Truncating an Integral returns itself."
 
   // sourcery: pymethod = __trunc__, , doc = truncDoc
-  internal func trunc() -> PyObject {
+  public func trunc() -> PyObject {
     return self
   }
 
@@ -230,7 +230,7 @@ public class PyInt: PyObject {
   internal static let floorDoc = "Flooring an Integral returns itself."
 
   // sourcery: pymethod = __floor__, , doc = floorDoc
-  internal func floor() -> PyObject {
+  public func floor() -> PyObject {
     return self
   }
 
@@ -239,7 +239,7 @@ public class PyInt: PyObject {
   internal static let ceilDoc = "Ceiling of an Integral returns itself."
 
   // sourcery: pymethod = __ceil__, , doc = ceilDoc
-  internal func ceil() -> PyObject {
+  public func ceil() -> PyObject {
     return self
   }
 
@@ -258,7 +258,7 @@ public class PyInt: PyObject {
     """
 
   // sourcery: pymethod = bit_length, , doc = bitLengthDoc
-  internal func bitLength() -> PyObject {
+  public func bitLength() -> PyObject {
     let result = self.value.minRequiredWidth
     return Py.newInt(result)
   }
@@ -266,7 +266,7 @@ public class PyInt: PyObject {
   // MARK: - Add
 
   // sourcery: pymethod = __add__
-  internal func add(_ other: PyObject) -> PyResult<PyObject> {
+  public func add(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -275,14 +275,14 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __radd__
-  internal func radd(_ other: PyObject) -> PyResult<PyObject> {
+  public func radd(_ other: PyObject) -> PyResult<PyObject> {
     return self.add(other)
   }
 
   // MARK: - Sub
 
   // sourcery: pymethod = __sub__
-  internal func sub(_ other: PyObject) -> PyResult<PyObject> {
+  public func sub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -291,7 +291,7 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rsub__
-  internal func rsub(_ other: PyObject) -> PyResult<PyObject> {
+  public func rsub(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -302,7 +302,7 @@ public class PyInt: PyObject {
   // MARK: - Mul
 
   // sourcery: pymethod = __mul__
-  internal func mul(_ other: PyObject) -> PyResult<PyObject> {
+  public func mul(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -311,18 +311,18 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rmul__
-  internal func rmul(_ other: PyObject) -> PyResult<PyObject> {
+  public func rmul(_ other: PyObject) -> PyResult<PyObject> {
     return self.mul(other)
   }
 
   // MARK: - Pow
 
-  internal func pow(exp: PyObject) -> PyResult<PyObject> {
+  public func pow(exp: PyObject) -> PyResult<PyObject> {
     return self.pow(exp: exp, mod: nil)
   }
 
   // sourcery: pymethod = __pow__
-  internal func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
+  public func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard let exp = exp as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -352,12 +352,12 @@ public class PyInt: PyObject {
     }
   }
 
-  internal func rpow(base: PyObject) -> PyResult<PyObject> {
+  public func rpow(base: PyObject) -> PyResult<PyObject> {
     return self.rpow(base: base, mod: nil)
   }
 
   // sourcery: pymethod = __rpow__
-  internal func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
+  public func rpow(base: PyObject, mod: PyObject?) -> PyResult<PyObject> {
     guard let base = base as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -450,7 +450,7 @@ public class PyInt: PyObject {
   // MARK: - True div
 
   // sourcery: pymethod = __truediv__
-  internal func truediv(_ other: PyObject) -> PyResult<PyObject> {
+  public func truediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -459,7 +459,7 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rtruediv__
-  internal func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
+  public func rtruediv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -478,7 +478,7 @@ public class PyInt: PyObject {
   // MARK: - Floor div
 
   // sourcery: pymethod = __floordiv__
-  internal func floordiv(_ other: PyObject) -> PyResult<PyObject> {
+  public func floordiv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -487,7 +487,7 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rfloordiv__
-  internal func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
+  public func rfloordiv(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -527,7 +527,7 @@ public class PyInt: PyObject {
   // MARK: - Mod
 
   // sourcery: pymethod = __mod__
-  internal func mod(_ other: PyObject) -> PyResult<PyObject> {
+  public func mod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -536,7 +536,7 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rmod__
-  internal func rmod(_ other: PyObject) -> PyResult<PyObject> {
+  public func rmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -574,7 +574,7 @@ public class PyInt: PyObject {
   // MARK: - Div mod
 
   // sourcery: pymethod = __divmod__
-  internal func divmod(_ other: PyObject) -> PyResult<PyObject> {
+  public func divmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -583,7 +583,7 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rdivmod__
-  internal func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
+  public func rdivmod(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -608,7 +608,7 @@ public class PyInt: PyObject {
   // MARK: - LShift
 
   // sourcery: pymethod = __lshift__
-  internal func lshift(_ other: PyObject) -> PyResult<PyObject> {
+  public func lshift(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -617,7 +617,7 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rlshift__
-  internal func rlshift(_ other: PyObject) -> PyResult<PyObject> {
+  public func rlshift(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -636,7 +636,7 @@ public class PyInt: PyObject {
   // MARK: - RShift
 
   // sourcery: pymethod = __rshift__
-  internal func rshift(_ other: PyObject) -> PyResult<PyObject> {
+  public func rshift(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -645,7 +645,7 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rrshift__
-  internal func rrshift(_ other: PyObject) -> PyResult<PyObject> {
+  public func rrshift(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -664,7 +664,7 @@ public class PyInt: PyObject {
   // MARK: - And
 
   // sourcery: pymethod = __and__
-  internal func and(_ other: PyObject) -> PyResult<PyObject> {
+  public func and(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -673,14 +673,14 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rand__
-  internal func rand(_ other: PyObject) -> PyResult<PyObject> {
+  public func rand(_ other: PyObject) -> PyResult<PyObject> {
     return self.and(other)
   }
 
   // MARK: - Or
 
   // sourcery: pymethod = __or__
-  internal func or(_ other: PyObject) -> PyResult<PyObject> {
+  public func or(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -689,14 +689,14 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __ror__
-  internal func ror(_ other: PyObject) -> PyResult<PyObject> {
+  public func ror(_ other: PyObject) -> PyResult<PyObject> {
     return self.or(other)
   }
 
   // MARK: - Xor
 
   // sourcery: pymethod = __xor__
-  internal func xor(_ other: PyObject) -> PyResult<PyObject> {
+  public func xor(_ other: PyObject) -> PyResult<PyObject> {
     guard let other = other as? PyInt else {
       return .value(Py.notImplemented)
     }
@@ -705,14 +705,14 @@ public class PyInt: PyObject {
   }
 
   // sourcery: pymethod = __rxor__
-  internal func rxor(_ other: PyObject) -> PyResult<PyObject> {
+  public func rxor(_ other: PyObject) -> PyResult<PyObject> {
     return self.xor(other)
   }
 
   // MARK: - Invert
 
   // sourcery: pymethod = __invert__
-  internal func invert() -> PyObject {
+  public func invert() -> PyObject {
     return Py.newInt(~self.value)
   }
 
@@ -725,7 +725,7 @@ public class PyInt: PyObject {
   /// int.__round__(12345,  2) -> 12345
   /// int.__round__(12345, -2) -> 12300
   /// ```
-  internal func round(nDigits: PyObject?) -> PyResult<PyObject> {
+  public func round(nDigits: PyObject?) -> PyResult<PyObject> {
     let digitCount: BigInt? = {
       guard let n = nDigits else {
         return 0
