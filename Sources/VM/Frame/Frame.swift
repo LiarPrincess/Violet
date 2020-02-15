@@ -36,7 +36,7 @@ internal final class Frame {
 
   /// Stack of `PyObjects`.
   internal var stack = ObjectStack()
-  /// Stack of blocks.
+  /// Stack of blocks (for loops, exception handlers etc.).
   internal var blocks = BlockStack()
   /// Stack of exceptions.
   internal var exceptions = ExceptionStack()
@@ -93,6 +93,8 @@ internal final class Frame {
   internal var stackLevel: Int {
     return self.stack.count
   }
+
+  // MARK: - Code object getters
 
   internal func getName(index: Int) -> String {
     assert(0 <= index && index < self.code.names.count)
@@ -152,6 +154,8 @@ internal final class Frame {
 
   // swiftlint:disable:next function_body_length
   private func executeInstruction(extendedArg: Int = 0) -> InstructionResult {
+    Debug.stack(stack: self.stack)
+    Debug.stack(stack: self.blocks)
     let instruction = self.fetchInstruction()
     Debug.instruction(code: self.code,
                       instruction: instruction,

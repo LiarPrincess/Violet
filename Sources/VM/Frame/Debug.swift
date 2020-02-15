@@ -12,6 +12,16 @@ internal enum Debug {
     print(code.dumpInstruction(instruction, extendedArg: extendedArg))
   }
 
+  internal static func stack(stack: ObjectStack) {
+    guard isEnabled else { return }
+    print("  \(stack)")
+  }
+
+  internal static func stack(stack: BlockStack) {
+    guard isEnabled else { return }
+    print("  \(stack)")
+  }
+
   // MARK: - Compare
 
   internal static func compare(a: PyObject,
@@ -37,7 +47,7 @@ internal enum Debug {
     print("  result:", result)
   }
 
-  internal static func loadMethod(method: PyObject) {
+  internal static func loadMethod(method: GetMethodResult) {
     guard isEnabled else { return }
     print("  method:", method)
   }

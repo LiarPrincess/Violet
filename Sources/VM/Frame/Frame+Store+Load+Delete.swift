@@ -68,11 +68,12 @@ extension Frame {
     let name = self.getName(index: nameIndex)
     let value = self.localSymbols.del(key: name)
 
-    if value == nil {
+    switch value {
+    case .some:
+      return .ok
+    case .none:
       return self.nameError(name)
     }
-
-    fatalError()
   }
 
   // MARK: - Attribute
@@ -193,11 +194,12 @@ extension Frame {
     let name = self.getName(index: nameIndex)
     let value = self.globalSymbols.del(key: name)
 
-    if value == nil {
+    switch value {
+    case .some:
+      return .ok
+    case .none:
       return self.nameError(name)
     }
-
-    fatalError()
   }
 
   // MARK: - Fast
@@ -242,6 +244,7 @@ extension Frame {
   // MARK: - Helpers
 
   private func nameError(_ name: String) -> InstructionResult {
-    return .error(Py.newNameError(msg: "name '\(name)' is not defined"))
+    let e = Py.newNameError(msg: "name '\(name)' is not defined")
+    return .error(e)
   }
 }
