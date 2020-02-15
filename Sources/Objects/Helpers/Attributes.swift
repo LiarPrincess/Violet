@@ -198,11 +198,6 @@ extension Attributes: PyFunctionResultConvertible {
       return CreateDictionaryArg(key: key, value: entry.value)
     }
 
-    switch Py.newDict(elements: args) {
-    case let .value(dict):
-      return .value(dict)
-    case let .error(e):
-      return .error(e)
-    }
+    return Py.newDict(elements: args).map { $0 as PyObject }
   }
 }

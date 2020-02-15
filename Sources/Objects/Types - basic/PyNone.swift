@@ -52,7 +52,7 @@ public class PyNone: PyObject {
     //
     // Descriptors use a comparision with 'None' to determine if they are either
     // invoked by an instance binding or a static binding.
-    // But, if the object itself is 'None' then this detection won't work.
+    // Unfortunatelly, if the object itself is 'None' then this detection won't work.
     // Alas, my friends, welcome to 'None-Descriptor' hack.
     assert(self.isDescriptorStaticMarker)
 
