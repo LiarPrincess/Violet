@@ -155,15 +155,6 @@ public class PyReversed: PyObject {
       return .value(true)
     }
 
-    switch Py.getMethod(object: object, selector: "__getitem__") {
-    case .value:
-      return .value(true)
-    case .error(let e):
-      if e.isAttributeError {
-        return .value(false)
-      }
-
-      return .error(e)
-    }
+    return Py.hasMethod(object: object, selector: "__getitem__")
   }
 }

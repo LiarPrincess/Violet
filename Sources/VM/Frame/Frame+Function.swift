@@ -153,12 +153,24 @@ extension Frame {
     let object = self.stack.top
 
     switch Py.getMethod(object: object, selector: name) {
-    case let .value(method):
-      // 'bound' means that method already captured 'self' reference
-      Debug.loadMethod(method: method)
+    case let .objectAttribute(o),
+         let .typeAttribute(o),
+         let .typeDescriptorAttribute(o):
+      // method is bound to as specific 'self' instance
+      self.stack.top = o
+      return .ok
+    case let .unboundFunction(fn):
+      // method is not bound -> manually bind 'self' to 'object'
+      let method = Py.newMethod(fn: fn, object: object)
       self.stack.top = method
       return .ok
-    case let .error(e):
+    case let .unboundBuiltinFunction(fn):
+      // method is not bound -> manually bind 'self' to 'object'
+      let method = Py.newBuiltinMethod(fn: fn, object: object)
+      self.stack.top = method
+      return .ok
+    case let .error(e),
+         let .missingMethod(e):
       return .error(e)
     }
   }
@@ -177,13 +189,12 @@ extension Frame {
     let args = stack.popElementsInPushOrder(count: argumentCount)
     assert(args.count == argumentCount)
 
-    // 'bound' means that method already captured 'self' reference
+    let level = self.stackLevel
     let method = self.stack.top
 
-    let level = self.stackLevel
     let result = Py.call(callable: method, args: args, kwargs: nil)
-    assert(self.stackLevel == level)
     Debug.callMethod(method: method, args: args, result: result)
+    assert(self.stackLevel == level)
 
     switch result {
     case let .value(o):

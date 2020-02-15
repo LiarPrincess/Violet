@@ -22,7 +22,8 @@ internal struct NewFunctionWrapper: FunctionWrapper {
   internal let fn: NewFunction
 
   internal var name: String {
-    return "__new__"
+    let typeName = self.type.getName()
+    return "\(typeName).__new__"
   }
 
   /// static PyObject *
@@ -61,7 +62,8 @@ internal struct InitFunctionWrapper: FunctionWrapper {
   internal let fn: InitFunction<PyObject>
 
   internal var name: String {
-    return "__init__"
+    let typeName = self.type.getName()
+    return "\(typeName).__init__"
   }
 
   internal init<Zelf: PyObject>(type: PyType,

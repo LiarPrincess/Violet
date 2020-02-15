@@ -5,6 +5,23 @@ import Core
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
+// swiftlint:disable file_length
+
+// MARK: - New
+
+extension BuiltinFunctions {
+  public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod {
+    return fn.bind(to: object)
+  }
+
+  public func newBuiltinMethod(fn: PyBuiltinFunction,
+                               object: PyObject) -> PyBuiltinMethod {
+    return fn.bind(to: object)
+  }
+}
+
+// MARK: - Call
+
 public enum CallResult {
   case value(PyObject)
   /// Object is not callable.
@@ -22,29 +39,7 @@ public enum CallResult {
   }
 }
 
-public enum CallMethodResult {
-  case value(PyObject)
-  /// Such method does not exists.
-  case missingMethod(PyBaseException)
-  /// Method exists, but it is not callable.
-  case notCallable(PyBaseException)
-  case error(PyBaseException)
-
-  public var asResult: PyResult<PyObject> {
-    switch self {
-    case let .value(o):
-      return .value(o)
-    case let .error(e),
-         let .notCallable(e),
-         let .missingMethod(e):
-      return .error(e)
-    }
-  }
-}
-
 extension BuiltinFunctions {
-
-  // MARK: - Call
 
   /// Call `callable` with single positional argument.
   public func call(callable: PyObject, arg: PyObject) -> CallResult {
@@ -83,22 +78,37 @@ extension BuiltinFunctions {
   public func call(callable: PyObject,
                    args: [PyObject] = [],
                    kwargs: PyDictData? = nil) -> CallResult {
-    guard let owner = callable as? __call__Owner else {
-      let msg = "object of type '\(callable.typeName)' is not callable"
-      return .notCallable(self.newTypeError(msg: msg))
+    if let owner = callable as? __call__Owner {
+      switch owner.call(args: args, kwargs: kwargs) {
+      case .value(let result):
+        return .value(result)
+      case .error(let e):
+        return .error(e)
+      }
     }
 
-    // TODO: What if user wrote their own '__call__'? -> lookup through MRO.
+    let result = self.callMethod(on: callable,
+                                 selector: "__call__",
+                                 args: args,
+                                 kwargs: kwargs)
 
-    switch owner.call(args: args, kwargs: kwargs) {
-    case .value(let result):
-      return .value(result)
-    case .error(let e):
+    switch result {
+    case let .value(o):
+      return .value(o)
+    case .missingMethod:
+      let msg = "object of type '\(callable.typeName)' is not callable"
+      return .notCallable(self.newTypeError(msg: msg))
+    case let .notCallable(e):
+      return .notCallable(e)
+    case let .error(e):
       return .error(e)
     }
   }
+}
 
-  // MARK: - Callable
+// MARK: - Is callable
+
+extension BuiltinFunctions {
 
   // sourcery: pymethod = callable
   /// callable(object)
@@ -110,8 +120,133 @@ extension BuiltinFunctions {
 
     return self.hasAttribute(object, name: "__call__")
   }
+}
 
-  // MARK: - Method
+// MARK: - Get method
+
+public enum GetMethodResult {
+    /// Attribute found in object `__dict__`.
+  /// CPython 0
+  case objectAttribute(PyObject)
+  /// Attribute found on type.
+  /// CPython 0
+  case typeAttribute(PyObject)
+  /// Descriptor found on type.
+  /// CPython 0
+  case typeDescriptorAttribute(PyObject)
+  /// Raw method from type, not binded to any object.
+  /// CPython 1
+  case unboundFunction(PyFunction)
+  /// Raw method from type, not binded to any object.
+  /// CPython 1
+  case unboundBuiltinFunction(PyBuiltinFunction)
+  /// Such method does not exists.
+  case missingMethod(PyBaseException)
+  /// Raise error in VM.
+  case error(PyBaseException)
+}
+
+private enum FunctionAttribute {
+  case function(PyFunction)
+  case builtinFunction(PyBuiltinFunction)
+}
+
+extension BuiltinFunctions {
+
+  public func hasMethod(object: PyObject, selector: String) -> PyResult<Bool> {
+    let method = self.getMethod(object: object, selector: selector)
+    switch method {
+    case .objectAttribute,
+         .typeAttribute,
+         .typeDescriptorAttribute,
+         .unboundFunction,
+         .unboundBuiltinFunction:
+      return .value(true)
+    case .missingMethod:
+      return .value(false)
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  /// int
+  /// _PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method)
+  public func getMethod(object: PyObject, selector: String) -> GetMethodResult {
+    let attribute = object.type.lookup(name: selector)
+    var descriptor: GetDescriptor?
+    var functionAttribute: FunctionAttribute?
+
+    if let attr = attribute {
+      if let fn = attr as? PyFunction {
+        functionAttribute = .function(fn)
+      } else if let fn = attr as? PyBuiltinFunction {
+        functionAttribute = .builtinFunction(fn)
+      } else {
+        descriptor = GetDescriptor.get(object: object, attribute: attr)
+        if let descr = descriptor, descr.isData {
+          return self.getMethod(descriptor: descr)
+        }
+      }
+    }
+
+    // TODO: Add Py.get__dict__ method (here + AttributeHelper)
+    if let owner = object as? __dict__GetterOwner,
+       let value = owner.getDict().get(key: selector) {
+      return .objectAttribute(value)
+    }
+
+    switch functionAttribute {
+    case .some(.function(let fn)): return .unboundFunction(fn)
+    case .some(.builtinFunction(let fn)): return .unboundBuiltinFunction(fn)
+    case .none: break // try other
+    }
+
+    if let descr = descriptor {
+      return self.getMethod(descriptor: descr)
+    }
+
+    if let attr = attribute {
+      return .typeAttribute(attr)
+    }
+
+    let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
+    return .missingMethod(Py.newAttributeError(msg: msg))
+  }
+
+  private func getMethod(descriptor: GetDescriptor) -> GetMethodResult {
+    let result = descriptor.call()
+    switch result {
+    case let .value(o):
+      return .typeDescriptorAttribute(o)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+}
+
+// MARK: - Call method
+
+public enum CallMethodResult {
+  case value(PyObject)
+  /// Such method does not exists.
+  case missingMethod(PyBaseException)
+  /// Method exists, but it is not callable.
+  case notCallable(PyBaseException)
+  case error(PyBaseException)
+
+  public var asResult: PyResult<PyObject> {
+    switch self {
+    case let .value(o):
+      return .value(o)
+    case let .error(e),
+         let .notCallable(e),
+         let .missingMethod(e):
+      return .error(e)
+    }
+  }
+}
+
+extension BuiltinFunctions {
 
   /// Call method with single positional argument.
   internal func callMethod(on object: PyObject,
@@ -147,11 +282,6 @@ extension BuiltinFunctions {
     }
   }
 
-  public func getMethod(object: PyObject,
-                        selector: String) -> PyResult<PyObject> {
-    return self.getAttribute(object, name: selector)
-  }
-
   /// Call with positional arguments and optional keyword arguments.
   /// - Parameters:
   ///   - object: `self` argument
@@ -159,17 +289,25 @@ extension BuiltinFunctions {
   ///   - args: positional arguments
   ///   - kwargs: keyword arguments
   ///
-  /// CPython:
-  /// PyObject *
-  /// PyObject_CallMethod(PyObject *obj, const char *name, const char *format, ...)
+  /// Based on CPython 'LOAD_METHOD' and 'CALL_METHOD'.
   public func callMethod(on object: PyObject,
                          selector: String,
                          args: [PyObject] = [],
                          kwargs: PyDictData? = nil) -> CallMethodResult {
     var method: PyObject
     switch self.getMethod(object: object, selector: selector) {
-    case let .value(m): method = m
-    case let .error(e): return .missingMethod(e)
+    case let .objectAttribute(o),
+         let .typeAttribute(o),
+         let .typeDescriptorAttribute(o):
+      method = o
+    case let .unboundFunction(fn):
+      method = fn.bind(to: object)
+    case let .unboundBuiltinFunction(fn):
+      method = fn.bind(to: object)
+    case let .missingMethod(e):
+      return .missingMethod(e)
+    case let .error(e):
+      return .error(e)
     }
 
     // If 'self' was not bound/captured we will manually do it.
@@ -188,11 +326,10 @@ extension BuiltinFunctions {
     // 2
 
     if let fn = method as? PyBuiltinFunction {
-      method = fn.bind(to: object)
+        method = fn.bind(to: object)
     }
-
     if let fn = method as? PyFunction {
-      method = fn.bind(to: object)
+       method = fn.bind(to: object)
     }
 
     switch self.call(callable: method, args: args, kwargs: kwargs) {

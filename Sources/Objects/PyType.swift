@@ -557,15 +557,10 @@ public class PyType: PyObject {
   /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
   internal func call(args: [PyObject],
                      kwargs: PyDictData?) -> PyResult<PyObject> {
-    let newResult = Py.callMethod(on: self,
-                                  selector: "__new__",
-                                  args: args,
-                                  kwargs: kwargs)
     let object: PyObject
-    switch newResult {
-    case .value(let o): object = o
-    case .missingMethod: return .typeError("cannot create '\(self.name)' instances")
-    case .error(let e), .notCallable(let e): return .error(e)
+    switch self.call__new__(args: args, kwargs: kwargs) {
+    case let .value(o): object = o
+    case let .error(e): return .error(e)
     }
 
     // Ugly exception: when the call was type(something),
@@ -581,15 +576,52 @@ public class PyType: PyObject {
       return .value(object)
     }
 
-    let initResult = Py.callMethod(on: object,
-                                   selector: "__init__",
-                                   args: args,
-                                   kwargs: kwargs)
-
-    switch initResult {
-    case .value, .missingMethod:
+    switch self.call__init__(object: object, args: args, kwargs: kwargs) {
+    case .value:
       return .value(object)
-    case .error(let e), .notCallable(let e):
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private func call__new__(args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<PyObject> {
+    // Fast path for 'type' type.
+    // Mostly because of how common type checks are (e.g. 'type(elsa)')
+    if self === Py.types.type {
+      return PyType.pyNew(type: self, args: args, kwargs: kwargs)
+    }
+
+    let result = Py.callMethod(on: self,
+                               selector: "__new__",
+                               args: args,
+                               kwargs: kwargs)
+
+    switch result {
+    case .value(let o):
+      return .value(o)
+    case .missingMethod:
+      return .typeError("cannot create '\(self.name)' instances")
+    case .error(let e),
+         .notCallable(let e):
+      return .error(e)
+    }
+  }
+
+  private func call__init__(object: PyObject,
+                            args: [PyObject],
+                            kwargs: PyDictData?) -> PyResult<PyNone> {
+    let result = Py.callMethod(on: object,
+                               selector: "__init__",
+                               args: args,
+                               kwargs: kwargs)
+
+    switch result {
+    case .value,
+         .missingMethod:
+      return .value(Py.none)
+    case .error(let e),
+         .notCallable(let e):
       return .error(e)
     }
   }

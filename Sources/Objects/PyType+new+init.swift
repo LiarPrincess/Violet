@@ -37,14 +37,12 @@ extension PyType {
                              kwargs: PyDictData?) -> PyResult<PyObject> {
     // Special case: type(x) should return x->ob_type
     if type === Py.types.type {
-      let nargs = args.count
-      let nkwds = kwargs?.count ?? 0
-
-      if nargs == 1 && nkwds == 0 {
+      let noKwargs = kwargs?.isEmpty ?? true
+      if args.count == 1 && noKwargs {
         return .value(args[0].type)
       }
 
-      if nargs != 3 {
+      if args.count != 3 {
         return .typeError("type() takes 1 or 3 arguments")
       }
     }
