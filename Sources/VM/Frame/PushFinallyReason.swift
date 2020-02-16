@@ -1,3 +1,4 @@
+import Core
 import Objects
 
 /// Helper for `unwind` block and `endFinally` instruction.
@@ -14,14 +15,15 @@ import Objects
 /// Eventually we will arrive to `endFinally` instruction:
 /// 1. pop **marker**
 /// 2. based on marker decide what we need to do
-internal enum FinallyMarker {
+internal enum PushFinallyReason {
 
   // MARK: - Marker values
 
-  // Feel free to use any `PyObject` you want.
-  private static var `return`: PyObject { return Py.none }
-  private static var `break`: PyObject { return Py.ellipsis }
-  private static var exception: PyObject { return Py.notImplemented }
+  private static let `return`  = BigInt(0)
+  private static let `break`   = BigInt(1)
+  private static let exception = BigInt(2)
+  private static let yield     = BigInt(3)
+  private static let silenced  = BigInt(4)
 
   // MARK: - Push
 
@@ -29,23 +31,29 @@ internal enum FinallyMarker {
   internal enum Push {
     /// We were handling a `return`.
     case `return`(PyObject)
-    /// We are unwinding blocks, since we hit `break`.
+    /// We were unwinding blocks, since we hit `break`.
     case `break`
     /// We were handling exception.
     case exception(PyBaseException)
+    /// 'yield' operator
+    case yield
+    /// Exception silenced by 'with'
+    case silenced
   }
 
   /// Remember what we were doing before we started `finally` block.
   internal static func push(reason: UnwindReason, on stack: inout ObjectStack) {
-    let marker: FinallyMarker.Push = {
+    let marker: PushFinallyReason.Push = {
       switch reason {
       case .return(let value): return .return(value)
       case .break: return .break
       case .exception(let e): return .exception(e)
+      case .yield: return .yield
+      case .silenced: return .silenced
       }
     }()
 
-    FinallyMarker.push(marker, on: &stack)
+    PushFinallyReason.push(marker, on: &stack)
   }
 
   /// Remember what we were doing before we started `finally` block.
@@ -53,12 +61,15 @@ internal enum FinallyMarker {
     switch value {
     case .return(let o):
       stack.push(o)
-      stack.push(FinallyMarker.return)
+      stack.push(Py.newInt(PushFinallyReason.return))
     case .break:
-      stack.push(FinallyMarker.break)
-    case .exception(let e):
-      stack.push(e)
-      stack.push(FinallyMarker.exception)
+      stack.push(Py.newInt(PushFinallyReason.break))
+    case .exception:
+      stack.push(Py.newInt(PushFinallyReason.exception))
+    case .yield:
+      stack.push(Py.newInt(PushFinallyReason.yield))
+    case .silenced:
+      stack.push(Py.newInt(PushFinallyReason.silenced))
     }
   }
 
@@ -71,29 +82,42 @@ internal enum FinallyMarker {
     case `break`
     /// We were handling exception.
     case exception(PyBaseException)
+    /// 'yield' operator
+    case silenced
+    /// Nothing to do
+    case none
     /// Marker is not valid.
     case invalid
   }
 
+  /// CPython: TARGET(END_FINALLY)
   internal static func pop(from stack: inout ObjectStack) -> Pop {
     let marker = stack.pop()
 
-    if marker === FinallyMarker.return {
-      let value = stack.pop()
-      return .return(value)
-    }
-
-    if marker === FinallyMarker.break {
-      return .break
-    }
-
-    if marker === FinallyMarker.exception {
-      guard let exception = stack.pop() as? PyBaseException else {
-        let msg = "'finally' pops bad exception"
-        return .exception(Py.newSystemError(msg: msg))
+    if let pyInt = marker as? PyInt {
+      switch pyInt.value {
+      case PushFinallyReason.return:
+        let value = stack.pop()
+        return .return(value)
+      case PushFinallyReason.break:
+        return .break
+      case PushFinallyReason.exception:
+        assert(false)
+      case PushFinallyReason.yield:
+        assert(false)
+      case PushFinallyReason.silenced:
+        return .silenced
+      default:
+        break // Try other, but probably 'invalid'
       }
+    }
 
-      return .exception(exception)
+    if let e = marker as? PyBaseException {
+      return .exception(e)
+    }
+
+    if marker.isNone {
+      return .none
     }
 
     return .invalid

@@ -56,17 +56,30 @@ extension Frame {
   /// The interpreter recalls whether the exception has to be re-raised,
   /// or whether the function returns, and continues with the outer-next block.
   internal func endFinally() -> InstructionResult {
-    // See 'FinallyMarker' type for comment about what this is.
-    switch FinallyMarker.pop(from: &self.stack) {
+    // See 'PushFinallyReason' type for comment about what this is.
+    switch PushFinallyReason.pop(from: &self.stack) {
     case .return(let value):
       return .return(value) // We are still returning value
     case .break:
       return .break // We are still 'breaking'
     case .exception(let e):
       return .error(e) // We are still handling the same exception
+    case .silenced:
+      // An exception was silenced by 'with', we must manually unwind the
+      // EXCEPT_HANDLER block which was created when the exception was caught,
+      // otherwise the stack will be in an inconsistent state.
+      guard let block = self.blocks.pop() else {
+        return .error(Py.newSystemError(msg: "XXX block stack underflow"))
+      }
+
+      assert(block.type.isExceptHandler)
+      self.unwindExceptHandler(block: block)
+      return .ok
+
+    case .none:
+      return .ok
     case .invalid:
-      let msg = "'finally' pops bad exception"
-      return .error(Py.newSystemError(msg: msg))
+      return .error(Py.newSystemError(msg: "'finally' pops bad exception"))
     }
   }
 

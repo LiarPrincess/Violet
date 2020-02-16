@@ -13,6 +13,15 @@ internal enum BlockType: CustomStringConvertible {
   case setupFinally(finallyStartLabel: Int)
   case exceptHandler
 
+  internal var isExceptHandler: Bool {
+    switch self {
+    case .exceptHandler:
+      return true
+    default:
+      return false
+    }
+  }
+
   internal var description: String {
     switch self {
     case let .setupLoop(endLabel: value):

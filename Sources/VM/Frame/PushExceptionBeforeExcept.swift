@@ -3,7 +3,7 @@ import Objects
 /// Helper for the situation when we want to push current exception on stack.
 /// Later we will probably want to pop this exception.
 /// This helper will to this in a type-safe way.
-internal enum PushExceptionHelper {
+internal enum PushExceptionBeforeExcept {
 
   internal static func push(_ exception: PyBaseException?,
                             on stack: inout ObjectStack) {

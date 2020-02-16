@@ -14,12 +14,10 @@ internal enum UnwindReason {
   case `break`
   /// We hit an exception, so unwind any try-except and finally blocks.
   case exception(PyBaseException)
-  /// We are unwinding blocks since we hit a `continue` statements.
-//  case `continue`(labelIndex: Int)
   /// 'yield' operator
-//  case yield
+  case yield
   /// Exception silenced by 'with'
-//  case silenced
+  case silenced
 }
 
 // MARK: - Unwind result
@@ -77,8 +75,8 @@ extension Frame {
           return .ok
         }
 
-        // See 'FinallyMarker' type for comment about what this is.
-        FinallyMarker.push(reason: reason, on: &self.stack)
+        // See 'PushFinallyReason' type for comment about what this is.
+        PushFinallyReason.push(reason: reason, on: &self.stack)
         self.jumpTo(label: finallyStartLabel) // execute finally
         return .ok
       }
@@ -91,6 +89,10 @@ extension Frame {
       return .error(e)
     case .break:
       trap("Internal error: break or continue must occur within a loop block.")
+    case .yield:
+      fatalError()
+    case .silenced:
+      fatalError()
     }
   }
 
@@ -100,7 +102,7 @@ extension Frame {
 
     // Remember 'current' on stack
     let current = self.exceptions.current
-    PushExceptionHelper.push(current, on: &self.stack)
+    PushExceptionBeforeExcept.push(current, on: &self.stack)
 
     // Make 'exception' current
     self.exceptions.current = exception
@@ -117,13 +119,15 @@ extension Frame {
   /// Basically restore exception that was `current` when we entered
   /// `self.startExceptHandler`.
   internal func unwindExceptHandler(block: Block) {
+    assert(block.type.isExceptHandler)
+
     let stackCountIncludingException = block.level + 1
     assert(self.stack.count >= stackCountIncludingException)
 
     self.stack.pop(untilCount: stackCountIncludingException)
 
     // Pop new 'current' exception
-    switch PushExceptionHelper.pop(from: &self.stack) {
+    switch PushExceptionBeforeExcept.pop(from: &self.stack) {
     case .exception(let e):
       self.exceptions.current = e
     case .noException:
