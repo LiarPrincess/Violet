@@ -77,12 +77,12 @@ public class PyModule: PyObject {
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.extractName(from: name)
       .flatMap(self.getAttribute(name:))
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
+  public func getAttribute(name: String) -> PyResult<PyObject> {
     return self.getAttribute(name: name, pyName: nil)
   }
 
@@ -116,7 +116,7 @@ public class PyModule: PyObject {
   }
 
   // sourcery: pymethod = __setattr__
-  internal func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
+  public func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
@@ -125,18 +125,18 @@ public class PyModule: PyObject {
   }
 
   // sourcery: pymethod = __delattr__
-  internal func delAttribute(name: PyObject) -> PyResult<PyNone> {
+  public func delAttribute(name: PyObject) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
   }
 
-  internal func delAttribute(name: String) -> PyResult<PyNone> {
+  public func delAttribute(name: String) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 

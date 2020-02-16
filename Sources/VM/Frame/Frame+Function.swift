@@ -152,7 +152,7 @@ extension Frame {
     let name = self.getName(index: nameIndex)
     let object = self.stack.top
 
-    switch Py.getMethod(object: object, selector: name) {
+    switch Py.loadMethod(object: object, selector: name) {
     case let .objectAttribute(o),
          let .typeAttribute(o),
          let .typeDescriptorAttribute(o):
@@ -161,12 +161,12 @@ extension Frame {
       return .ok
     case let .unboundFunction(fn):
       // method is not bound -> manually bind 'self' to 'object'
-      let method = Py.newMethod(fn: fn, object: object)
+      let method = fn.bind(to: object)
       self.stack.top = method
       return .ok
     case let .unboundBuiltinFunction(fn):
       // method is not bound -> manually bind 'self' to 'object'
-      let method = Py.newBuiltinMethod(fn: fn, object: object)
+      let method = fn.bind(to: object)
       self.stack.top = method
       return .ok
     case let .error(e),

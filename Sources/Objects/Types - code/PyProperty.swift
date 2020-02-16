@@ -90,42 +90,42 @@ public class PyProperty: PyObject {
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
+  public func getAttribute(name: String) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
   // MARK: - Getters
 
   // sourcery: pyproperty = fget
-  internal func getFGet() -> PyObject {
+  public func getFGet() -> PyObject {
     return self.getter ?? Py.none
   }
 
   // sourcery: pyproperty = fset
-  internal func getFSet() -> PyObject {
+  public func getFSet() -> PyObject {
     return self.setter ?? Py.none
   }
 
   // sourcery: pyproperty = fdel
-  internal func getFDel() -> PyObject {
+  public func getFDel() -> PyObject {
     return self.deleter ?? Py.none
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+  public func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
     if object.isDescriptorStaticMarker {
       return .value(self)
     }
@@ -133,7 +133,7 @@ public class PyProperty: PyObject {
     return self.bind(to: object)
   }
 
-  internal func bind(to object: PyObject) -> PyResult<PyObject> {
+  public func bind(to object: PyObject) -> PyResult<PyObject> {
     guard let propGet = self.getter else {
       return .attributeError("unreadable attribute")
     }
@@ -149,7 +149,7 @@ public class PyProperty: PyObject {
   // MARK: - Set
 
   // sourcery: pymethod = __set__
-  internal func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
+  public func set(object: PyObject, value: PyObject) -> PyResult<PyObject> {
     let isDelete = value is PyNone
     let fnOrNil = isDelete ? self.deleter : self.setter
 
@@ -169,7 +169,7 @@ public class PyProperty: PyObject {
   // MARK: - Del
 
   // sourcery: pymethod = __delete__
-  internal func del(object: PyObject) -> PyResult<PyObject> {
+  public func del(object: PyObject) -> PyResult<PyObject> {
     self.set(object: object, value: Py.none)
   }
 

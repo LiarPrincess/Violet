@@ -31,108 +31,108 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
   // MARK: - Equatable
 
   // sourcery: pymethod = __eq__
-  internal func isEqual(_ other: PyObject) -> CompareResult {
+  public func isEqual(_ other: PyObject) -> CompareResult {
     return self.isEqualShared(other)
   }
 
   // sourcery: pymethod = __ne__
-  internal func isNotEqual(_ other: PyObject) -> CompareResult {
+  public func isNotEqual(_ other: PyObject) -> CompareResult {
     return self.isNotEqualShared(other)
   }
 
   // MARK: - Comparable
 
   // sourcery: pymethod = __lt__
-  internal func isLess(_ other: PyObject) -> CompareResult {
+  public func isLess(_ other: PyObject) -> CompareResult {
     return self.isLessShared(other)
   }
 
   // sourcery: pymethod = __le__
-  internal func isLessEqual(_ other: PyObject) -> CompareResult {
+  public func isLessEqual(_ other: PyObject) -> CompareResult {
     return self.isLessEqualShared(other)
   }
 
   // sourcery: pymethod = __gt__
-  internal func isGreater(_ other: PyObject) -> CompareResult {
+  public func isGreater(_ other: PyObject) -> CompareResult {
     return self.isGreaterShared(other)
   }
 
   // sourcery: pymethod = __ge__
-  internal func isGreaterEqual(_ other: PyObject) -> CompareResult {
+  public func isGreaterEqual(_ other: PyObject) -> CompareResult {
     return self.isGreaterEqualShared(other)
   }
 
   // MARK: - Hashable
 
   // sourcery: pymethod = __hash__
-  internal func hash() -> HashResult {
+  public func hash() -> HashResult {
     return self.hashShared()
   }
 
   // MARK: - String
 
   // sourcery: pymethod = __repr__
-  internal func repr() -> PyResult<String> {
+  public func repr() -> PyResult<String> {
     return .value("<built-in function \(self.name)>")
   }
 
   // MARK: - Attributes
 
   // sourcery: pymethod = __getattribute__
-  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+  public func getAttribute(name: PyObject) -> PyResult<PyObject> {
     return self.getAttributeShared(name: name)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
+  public func getAttribute(name: String) -> PyResult<PyObject> {
     return self.getAttributeShared(name: name)
   }
 
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
-  internal func getClass() -> PyType {
+  public func getClass() -> PyType {
     return self.type
   }
 
   // MARK: - Name
 
   // sourcery: pyproperty = __name__
-  internal func getName() -> String {
+  public func getName() -> String {
     return self.name
   }
 
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__
-  internal func getQualname() -> String {
+  public func getQualname() -> String {
     return self.name
   }
 
   // MARK: - TextSignature
 
   // sourcery: pyproperty = __text_signature__
-  internal func getTextSignature() -> String? {
+  public func getTextSignature() -> String? {
     return self.getTextSignatureShared()
   }
 
   // MARK: - Module
 
   // sourcery: pyproperty = __module__
-  internal func getModule() -> PyResult<String> {
+  public func getModule() -> PyResult<String> {
     return self.getModuleShared()
   }
 
   // MARK: - Self
 
   // sourcery: pyproperty = __self__
-  internal func getSelf() -> PyObject {
+  public func getSelf() -> PyObject {
     return Py.none
   }
 
   // MARK: - Get
 
   // sourcery: pymethod = __get__
-  internal func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+  public func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
     if object.isDescriptorStaticMarker {
       return .value(self)
     }
@@ -140,7 +140,7 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
     return .value(self.bind(to: object))
   }
 
-  internal func bind(to object: PyObject) -> PyBuiltinMethod {
+  public func bind(to object: PyObject) -> PyBuiltinMethod {
     return PyBuiltinMethod(fn: self.function,
                            object: object,
                            module: self.module,
@@ -158,8 +158,8 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
   ///                              PyObject *kwargs)
   /// static PyObject *
   /// slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
-  internal func call(args: [PyObject],
-                     kwargs: PyDictData?) -> PyResult<PyObject> {
+  public func call(args: [PyObject],
+                   kwargs: PyDictData?) -> PyResult<PyObject> {
     return self.function.call(args: args, kwargs: kwargs)
   }
 }
