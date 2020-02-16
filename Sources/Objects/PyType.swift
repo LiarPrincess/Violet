@@ -592,20 +592,13 @@ public class PyType: PyObject {
       return PyType.pyNew(type: self, args: args, kwargs: kwargs)
     }
 
-    let result = Py.callMethod(on: self,
-                               selector: "__new__",
-                               args: args,
-                               kwargs: kwargs)
-
-    switch result {
-    case .value(let o):
-      return .value(o)
-    case .missingMethod:
+    // '__new__' is a static method, so we can't just use 'callMethod'
+    guard let newFn = self.lookup(name: "__new__") else {
       return .typeError("cannot create '\(self.name)' instances")
-    case .error(let e),
-         .notCallable(let e):
-      return .error(e)
     }
+
+    let argsWithType = [self] + args
+    return Py.call(callable: newFn, args: argsWithType, kwargs: kwargs).asResult
   }
 
   private func call__init__(object: PyObject,

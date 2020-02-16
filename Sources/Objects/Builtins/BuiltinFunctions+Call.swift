@@ -358,7 +358,7 @@ extension BuiltinFunctions {
     // 2
 
     if let fn = method as? PyBuiltinFunction {
-        method = fn.bind(to: object)
+      method = fn.bind(to: object)
     }
     if let fn = method as? PyFunction {
        method = fn.bind(to: object)
