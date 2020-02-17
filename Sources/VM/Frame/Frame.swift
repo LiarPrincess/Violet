@@ -112,6 +112,7 @@ internal final class Frame {
       case .ok:
         break // go to next instruction
       case .unwind(let reason):
+        self.addExceptionContextIfNeeded(reason)
         self.unwind(reason: reason)
 
         // If we still have some blocks then continue loop.
@@ -136,6 +137,25 @@ internal final class Frame {
         }
       }
     }
+  }
+
+  /// Context - another exception during whose handling this exception was raised.
+  private func addExceptionContextIfNeeded(_ reason: UnwindReason) {
+    guard case let UnwindReason.exception(exception) = reason else {
+      return
+    }
+
+    let currentContext = exception.getContext()
+    let isCurrentContextNilOrNone = currentContext?.isNone ?? true
+    guard isCurrentContextNilOrNone else {
+      return
+    }
+
+    guard let currentException = self.exceptions.current else {
+      return
+    }
+
+    exception.setContext(currentException)
   }
 
   private func fetchInstruction() -> Instruction {
