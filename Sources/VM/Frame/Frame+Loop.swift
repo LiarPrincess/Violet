@@ -26,7 +26,7 @@ extension Frame {
       self.stack.top = iter
     return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -49,7 +49,7 @@ extension Frame {
         return .ok
       }
 
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -57,6 +57,6 @@ extension Frame {
 
   /// Terminates a loop due to a break statement.
   internal func doBreak() -> InstructionResult {
-    return .break
+    return .unwind(.break)
   }
 }

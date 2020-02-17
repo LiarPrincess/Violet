@@ -5,6 +5,15 @@ internal struct Block {
   internal let type: BlockType
   /// Stack size when the block was entered.
   internal let level: Int
+
+  internal var isExceptHandler: Bool {
+    switch self.type {
+    case .exceptHandler:
+      return true
+    default:
+      return false
+    }
+  }
 }
 
 internal enum BlockType: CustomStringConvertible {
@@ -12,15 +21,6 @@ internal enum BlockType: CustomStringConvertible {
   case setupExcept(firstExceptLabel: Int)
   case setupFinally(finallyStartLabel: Int)
   case exceptHandler
-
-  internal var isExceptHandler: Bool {
-    switch self {
-    case .exceptHandler:
-      return true
-    default:
-      return false
-    }
-  }
 
   internal var description: String {
     switch self {
@@ -43,6 +43,14 @@ internal struct BlockStack {
   /// Top-most block.
   internal var current: Block? {
     return self.elements.last
+  }
+
+  internal var isEmpty: Bool {
+    return self.elements.isEmpty
+  }
+
+  internal var any: Bool {
+    return self.elements.any
   }
 
   /// void

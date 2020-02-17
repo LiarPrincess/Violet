@@ -14,15 +14,8 @@ import Objects
 internal enum InstructionResult {
   /// Instruction executed succesfully.
   case ok
-  /// Instruction requested a `break`.
-  /// We will unwind stopping at nearest loop.
-  case `break`
-  /// Instruction requested a `return` from a current frame.
-  /// We will unwind and the return `value`.
-  case `return`(PyObject)
-  /// Instruction raised an error.
-  /// We will unwind trying to handle it.
-  case error(PyBaseException)
+  /// Instruction requested stack unwind (`return`, `exception` etc.).
+  case unwind(UnwindReason)
 }
 
 // MARK: - Frame
@@ -114,33 +107,35 @@ internal final class Frame {
   // MARK: - Run
 
   internal func run() -> PyResult<PyObject> {
-    // TODO: When we 'case .error(let e):' unwind remaining blocks?
-    while self.nextInstructionIndex != self.code.instructions.endIndex {
+    while true {
       switch self.executeInstruction() {
       case .ok:
-        // Just go to next instruction
-        break
-      case .break:
-        // Ok -> go to next instruction;
-        switch self.unwind(reason: .break) {
-        case .ok: break
-        case .error(let e): return .error(e)
+        break // go to next instruction
+      case .unwind(let reason):
+        self.unwind(reason: reason)
+
+        // If we still have some blocks then continue loop.
+        // It may happen for example for break/except/finally blocks
+        // (they would just jump to other part of the code and continue execution).
+        if self.blocks.any {
+          break // continue loop
         }
-      case .return(let value):
-        // Unwind will unwind all blocks -> then just return
-        switch self.unwind(reason: .return(value)) {
-        case .ok: return .value(value)
-        case .error(let e): return .error(e)
-        }
-      case .error(let e):
-        switch self.unwind(reason: .exception(e)) {
-        case .ok: break
-        case .error(let e): return .error(e)
+
+        // No blocks! (kinda 'yay', kinda scarry)
+        assert(self.blocks.isEmpty)
+        switch reason {
+        case .return(let object):
+          return .value(object)
+        case .break,
+             .exception,
+             .yield,
+             .silenced:
+          print("============")
+          print(reason)
+          exit(1)
         }
       }
     }
-
-    return .value(Py.none)
   }
 
   private func fetchInstruction() -> Instruction {

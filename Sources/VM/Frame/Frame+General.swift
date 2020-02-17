@@ -25,7 +25,8 @@ extension Frame {
       return .ok
     }
 
-    return .error(Py.newSystemError(msg: "XXX block stack underflow"))
+    let e = Py.newSystemError(msg: "XXX block stack underflow")
+    return .unwind(.exception(e))
   }
 
   // MARK: - Rot
@@ -82,7 +83,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 }

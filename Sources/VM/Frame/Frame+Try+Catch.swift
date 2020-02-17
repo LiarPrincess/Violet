@@ -25,7 +25,7 @@ extension Frame {
     return .ok
   }
 
-  // MARK: - Pop
+  // MARK: - Pop except
 
   /// Removes one block from the block stack.
   /// The popped block must be an exception handler block,
@@ -33,24 +33,17 @@ extension Frame {
   /// In addition to popping extraneous values from the frame stack,
   /// the last three popped values are used to restore the exception state.
   internal func popExcept() -> InstructionResult {
-    guard let block = self.blocks.pop(), self.isExceptHandler(block) else {
+    guard let block = self.blocks.pop(), block.isExceptHandler else {
       let msg = "popped block is not an except handler"
-      return .error(Py.newSystemError(msg: msg))
+      let e = Py.newSystemError(msg: msg)
+      return .unwind(.exception(e))
     }
 
     self.unwindExceptHandler(block: block)
     return .ok
   }
 
-  private func isExceptHandler(_ block: Block) -> Bool {
-    if case .exceptHandler = block.type {
-      return true
-    }
-
-    return false
-  }
-
-  // MARK: - End
+  // MARK: - End finally
 
   /// Terminates a finally clause.
   /// The interpreter recalls whether the exception has to be re-raised,
@@ -59,27 +52,33 @@ extension Frame {
     // See 'PushFinallyReason' type for comment about what this is.
     switch PushFinallyReason.pop(from: &self.stack) {
     case .return(let value):
-      return .return(value) // We are still returning value
+      return .unwind(.return(value)) // We are still returning value
+
     case .break:
-      return .break // We are still 'breaking'
+      return .unwind(.break) // We are still 'breaking'
+
     case .exception(let e):
-      return .error(e) // We are still handling the same exception
+      return .unwind(.exception(e)) // We are still handling the same exception
+
     case .silenced:
       // An exception was silenced by 'with', we must manually unwind the
       // EXCEPT_HANDLER block which was created when the exception was caught,
       // otherwise the stack will be in an inconsistent state.
       guard let block = self.blocks.pop() else {
-        return .error(Py.newSystemError(msg: "XXX block stack underflow"))
+        let e = Py.newSystemError(msg: "XXX block stack underflow")
+        return .unwind(.exception(e))
       }
 
-      assert(block.type.isExceptHandler)
+      assert(block.isExceptHandler)
       self.unwindExceptHandler(block: block)
       return .ok
 
     case .none:
       return .ok
+
     case .invalid:
-      return .error(Py.newSystemError(msg: "'finally' pops bad exception"))
+      let e = Py.newSystemError(msg: "'finally' pops bad exception")
+      return .unwind(.exception(e))
     }
   }
 
@@ -104,7 +103,7 @@ extension Frame {
       fallthrough // swiftlint:disable:this fallthrough
     case .reRaise:
       let e = self.createException(value: value, cause: cause)
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -129,13 +128,13 @@ extension Frame {
     }
 
     var exceptionOrNil: PyBaseException?
-    if let type = value as? PyType, type.isException {
+    if let error = value as? PyBaseException {
+      exceptionOrNil = error
+    } else if let type = value as? PyType, type.isException {
       switch Py.newException(type: type, value: nil) {
       case let .value(e): exceptionOrNil = e
       case let .error(e): return e
       }
-    } else if let error = value as? PyBaseException {
-      exceptionOrNil = error
     }
 
     guard let exception = exceptionOrNil else {

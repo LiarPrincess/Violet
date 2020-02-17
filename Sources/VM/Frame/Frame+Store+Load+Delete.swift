@@ -88,7 +88,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -102,7 +102,7 @@ extension Frame {
       self.stack.top = r
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -115,7 +115,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -131,7 +131,7 @@ extension Frame {
       self.stack.top = r
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -145,7 +145,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -158,7 +158,7 @@ extension Frame {
     case .value:
       return .ok
     case .error(let e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -238,13 +238,14 @@ extension Frame {
     assert(0 <= index && index < self.code.varNames.count)
 
     let mangled = self.code.varNames[index]
-    return .error(Py.newUnboundLocalError(variableName: mangled.value))
+    let e = Py.newUnboundLocalError(variableName: mangled.value)
+    return .unwind(.exception(e))
   }
 
   // MARK: - Helpers
 
   private func nameError(_ name: String) -> InstructionResult {
     let e = Py.newNameError(msg: "name '\(name)' is not defined")
-    return .error(e)
+    return .unwind(.exception(e))
   }
 }

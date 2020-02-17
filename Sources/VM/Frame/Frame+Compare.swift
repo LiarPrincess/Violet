@@ -16,7 +16,7 @@ extension Frame {
       self.stack.top = o
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 

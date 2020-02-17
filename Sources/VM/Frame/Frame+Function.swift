@@ -8,7 +8,7 @@ extension Frame {
   /// Returns with TOS to the caller of the function.
   internal func doReturn() -> InstructionResult {
     let value = self.stack.pop()
-    return .return(value)
+    return .unwind(.return(value))
   }
 
   // MARK: - Call function
@@ -41,7 +41,7 @@ extension Frame {
       return .ok
     case let .error(e),
          let .notCallable(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -64,7 +64,7 @@ extension Frame {
     guard let kwNames = kwNamesObject as? PyTuple else {
       let t = kwNamesObject.typeName
       let msg = "Keyword argument names should to be a tuple, not \(t)."
-      return .error(Py.newSystemError(msg: msg))
+      return .unwind(.exception(Py.newSystemError(msg: msg)))
     }
 
     let level = self.stackLevel
@@ -81,7 +81,7 @@ extension Frame {
       return .ok
     case let .error(e),
          let .notCallable(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -171,7 +171,7 @@ extension Frame {
       return .ok
     case let .error(e),
          let .missingMethod(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -202,7 +202,7 @@ extension Frame {
       return .ok
     case let .error(e),
          let .notCallable(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 }

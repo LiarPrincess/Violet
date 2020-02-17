@@ -15,7 +15,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -31,7 +31,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -47,7 +47,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -61,7 +61,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -75,7 +75,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -91,7 +91,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -105,7 +105,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -119,7 +119,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -135,7 +135,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -149,7 +149,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -165,7 +165,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -179,7 +179,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 
@@ -193,7 +193,7 @@ extension Frame {
       self.stack.top = result
       return .ok
     case let .error(e):
-      return .error(e)
+      return .unwind(.exception(e))
     }
   }
 }

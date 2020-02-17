@@ -8,25 +8,19 @@ import Objects
 /// This could be return of function, exception being raised,
 /// a `break` or `continue` being hit, etc..
 internal enum UnwindReason {
-  /// We are returning a value from a return statement.
+  /// Instruction requested a `return` from a current frame.
+  /// We will unwind and the return `value`.
   case `return`(PyObject)
-  /// We are unwinding blocks, since we hit `break`
+  /// Instruction requested a `break`.
+  /// We will unwind stopping at nearest loop.
   case `break`
-  /// We hit an exception, so unwind any try-except and finally blocks.
+  /// Instruction raised an error.
+  /// We will unwind trying to handle it (try-except and finally blocks).
   case exception(PyBaseException)
   /// 'yield' operator
   case yield
   /// Exception silenced by 'with'
   case silenced
-}
-
-// MARK: - Unwind result
-
-internal enum UnwindResult {
-  /// Unwind performed succesfully.
-  case ok
-  /// Unwind encountered an error and cannot continue.
-  case error(PyBaseException)
 }
 
 // MARK: - Frame
@@ -38,65 +32,47 @@ extension Frame {
   /// Unwind stack if a return/exception/etc. occurred.
   ///
   /// CPython: fast_block_end:
-  internal func unwind(reason: UnwindReason) -> UnwindResult {
-    // swiftlint:disable:previous function_body_length
-
+  internal func unwind(reason: UnwindReason) {
     while let block = self.blocks.pop() {
-      // Order is roughly the same as in CPython.
       switch block.type {
-      case .exceptHandler:
-        self.unwindExceptHandler(block: block)
-
-      // From now on every case has to start with 'self.unwindBlock'
-
       case let .setupLoop(endLabel):
         self.unwindBlock(block: block)
 
         if case .break = reason {
           self.jumpTo(label: endLabel)
-          return .ok
+          return
         }
 
       case let .setupExcept(firstExceptLabel):
         self.unwindBlock(block: block)
 
         if case let .exception(e) = reason {
-          self.startExceptHandler(exception: e)
+          self.prepareForExceptionHandling(exception: e)
           self.jumpTo(label: firstExceptLabel) // execute except
-          return .ok
+          return
         }
 
       case let .setupFinally(finallyStartLabel):
         self.unwindBlock(block: block)
 
         if case let .exception(e) = reason {
-          self.startExceptHandler(exception: e)
+          self.prepareForExceptionHandling(exception: e)
           self.jumpTo(label: finallyStartLabel) // execute finally
-          return .ok
+          return
         }
 
         // See 'PushFinallyReason' type for comment about what this is.
         PushFinallyReason.push(reason: reason, on: &self.stack)
         self.jumpTo(label: finallyStartLabel) // execute finally
-        return .ok
-      }
-    }
+        return
 
-    switch reason {
-    case .return:
-      return .ok
-    case .exception(let e):
-      return .error(e)
-    case .break:
-      trap("Internal error: break or continue must occur within a loop block.")
-    case .yield:
-      fatalError()
-    case .silenced:
-      fatalError()
+      case .exceptHandler:
+        self.unwindExceptHandler(block: block)
+      }
     }
   }
 
-  private func startExceptHandler(exception: PyBaseException) {
+  private func prepareForExceptionHandling(exception: PyBaseException) {
     let exceptHandler = Block(type: .exceptHandler, level: self.stackLevel)
     self.blocks.push(block: exceptHandler)
 
@@ -115,11 +91,8 @@ extension Frame {
   }
 
   /// \#define UNWIND_EXCEPT_HANDLER(b)
-  ///
-  /// Basically restore exception that was `current` when we entered
-  /// `self.startExceptHandler`.
   internal func unwindExceptHandler(block: Block) {
-    assert(block.type.isExceptHandler)
+    assert(block.isExceptHandler)
 
     let stackCountIncludingException = block.level + 1
     assert(self.stack.count >= stackCountIncludingException)
