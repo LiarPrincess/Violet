@@ -40,20 +40,23 @@ internal func XCTAssertInstructions(_ code: CodeObject,
 
   var index = 0
   for (emitted, exp) in zip(code.emittedInstructions, expected) {
-    let kindDetails = "(emitted: \(emitted.kind), expected: \(exp.kind))"
+    let details = "(emitted: \(toString(emitted)), expected: \(toString(exp)))"
     XCTAssertEqual(emitted.kind,
                    exp.kind,
-                   "Invalid instruction kind at \(index) \(kindDetails) \(message)",
+                   "Invalid instruction kind at \(index) \(details) \(message)",
                    file: file,
                    line: line)
 
-    let argDetails = "(emitted: \(emitted.arg ?? "empty"), expected: \(exp.arg ?? "empty"))"
     XCTAssertEqual(emitted.arg,
                    exp.arg,
-                   "Invalid instruction arg at \(index) \(argDetails) \(message)",
+                   "Invalid instruction argument at \(index) \(details) \(message)",
                    file: file,
                    line: line)
 
     index += 1
   }
+}
+
+private func toString(_ instruction: EmittedInstruction) -> String {
+  return "'\(instruction.kind) \(instruction.arg ?? "")'"
 }

@@ -326,22 +326,33 @@ extension Compiler {
 
     switch blockType {
     case let .loop(continueTarget):
+      // If 'continue' is directly in loop then we can just jump.
       self.builder.appendJumpAbsolute(to: continueTarget)
+
     case .except,
          .finallyTry:
+      let blocksWithoutAlreadyChecked = self.blockStack.dropLast()
+
       // Try to find the previous loop.
-      for block in self.blockStack.reversed() {
+      for block in blocksWithoutAlreadyChecked.reversed() {
         switch block {
-        case let .loop(continueTarget):
-          self.builder.appendJumpAbsolute(to: continueTarget)
+        case .loop(let continueTarget):
+          // If 'continue' is nested inside 'except' or 'finally',
+          // then we have to unwind that block first.
+          // For this we have separate 'continue' instruction.
+          self.builder.appendContinue(loopStartLabel: continueTarget)
           return
-        case .except,
-             .finallyTry:
-          break
+
+        case .except, .finallyTry:
+          break // ignore
+
         case .finallyEnd:
           throw self.error(.continueInsideFinally)
         }
       }
+
+      throw self.error(.continueOutsideLoop)
+
     case .finallyEnd:
       throw self.error(.continueInsideFinally)
     }

@@ -147,15 +147,21 @@ extension CodeObject {
     case .printExpr: return "printExpr"
 
     case let .setupLoop(arg):
-      return "setupLoop (loopEnd label: \(self.getLabel(extendedArg + Int(arg))))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "setupLoop (loopEndLabel: \(label))"
     case let .forIter(arg):
-      return "forIter (ifEmpty label: \(self.getLabel(extendedArg + Int(arg))))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "forIter (ifEmptyLabel: \(label))"
     case .getIter:
       return "getIter"
     case .getYieldFromIter:
       return "getYieldFromIter"
 
-    case .`break`: return "break"
+    case .`break`:
+      return "break"
+    case .`continue`(let loopStartLabel):
+      let label = self.getLabel(extendedArg + Int(loopStartLabel))
+      return "continue (loopStartLabel: \(label))"
 
     case let .buildTuple(elementCount: arg):
       return "buildTuple (elementCount: \(extendedArg + Int(arg)))"
@@ -280,10 +286,10 @@ extension CodeObject {
       return "endFinally"
     case let .setupExcept(arg):
       let label = self.getLabel(extendedArg + Int(arg))
-      return "setupExcept (firstExcept label: \(label))"
+      return "setupExcept (firstExceptLabel: \(label))"
     case let .setupFinally(arg):
       let label = self.getLabel(extendedArg + Int(arg))
-      return "setupFinally (finallyStart label: \(label))"
+      return "setupFinally (finallyStartLabel: \(label))"
     case let .raiseVarargs(arg):
       return "raiseVarargs \(self.toString(arg))"
     case let .setupWith(arg):

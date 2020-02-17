@@ -263,18 +263,16 @@ and labels properties of 'CodeObject'.
 
   -- Implements `TOS = iter(TOS)`.
   | GetIter
-    -- If TOS is a generator iterator or coroutine object then it is left as is.
+  -- If TOS is a generator iterator or coroutine object then it is left as is.
   -- Otherwise, implements `TOS = iter(TOS)`.
   | GetYieldFromIter
 
   -- Terminates a loop due to a break statement.
   | Break
-{-
-  This one is never emitted by CPython (they use jumps).
   -- Continues a loop due to a continue statement.
-  -- `target` is the address to jump to (which should be a `ForIter` instruction).
-  | Continue(target)
- -}
+  -- `loopStartLabel` is the address to jump to
+  -- (which should be a `ForIter` instruction).
+  | Continue(LabelIndex loopStartLabel)
 
 {- ------------ -}
 {-  Collections -}

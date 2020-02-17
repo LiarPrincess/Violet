@@ -32,4 +32,14 @@ extension CodeObjectBuilder {
   public func appendBreak() {
     self.append(.break)
   }
+
+  // MARK: - Continue
+
+  /// Continues a loop due to a continue statement.
+  /// `loopStartLabel` is the address to jump to
+  /// (which should be a `ForIter` instruction).
+  public func appendContinue(loopStartLabel: Label) {
+    let arg = self.addLabelWithExtendedArgIfNeeded(loopStartLabel)
+    self.append(.continue(loopStartLabel: arg))
+  }
 }

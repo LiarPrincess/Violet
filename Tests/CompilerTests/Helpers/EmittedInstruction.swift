@@ -68,6 +68,7 @@ enum EmittedInstructionKind {
   case getIter
   case getYieldFromIter
   case `break`
+  case `continue`
   case buildTuple
   case buildList
   case buildSet

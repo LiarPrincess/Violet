@@ -202,6 +202,8 @@ extension Instruction: CustomStringConvertible {
       return "getYieldFromIter"
     case .`break`:
       return "break"
+    case let .`continue`(loopStartLabel: value0):
+      return "continue(loopStartLabel: \(hex(value0)))"
     case let .buildTuple(elementCount: value0):
       return "buildTuple(elementCount: \(hex(value0)))"
     case let .buildList(elementCount: value0):
