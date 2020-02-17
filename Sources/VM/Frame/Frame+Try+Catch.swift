@@ -10,7 +10,7 @@ extension Frame {
   internal func setupExcept(firstExceptLabelIndex: Int) -> InstructionResult {
     let label = self.getLabel(index: firstExceptLabelIndex)
     let type = BlockType.setupExcept(firstExceptLabel: label)
-    let block = Block(type: type, level: self.stackLevel)
+    let block = Block(type: type, stackLevel: self.stackLevel)
     self.blocks.push(block: block)
     return .ok
   }
@@ -20,7 +20,7 @@ extension Frame {
   internal func setupFinally(finallyStartLabelIndex: Int) -> InstructionResult {
     let label = self.getLabel(index: finallyStartLabelIndex)
     let type = BlockType.setupFinally(finallyStartLabel: label)
-    let block = Block(type: type, level: self.stackLevel)
+    let block = Block(type: type, stackLevel: self.stackLevel)
     self.blocks.push(block: block)
     return .ok
   }
@@ -56,6 +56,9 @@ extension Frame {
 
     case .break:
       return .unwind(.break) // We are still 'breaking'
+
+    case .continue(let loopStartLabel):
+      return .unwind(.continue(loopStartLabel: loopStartLabel))
 
     case .exception(let e):
       return .unwind(.exception(e)) // We are still handling the same exception

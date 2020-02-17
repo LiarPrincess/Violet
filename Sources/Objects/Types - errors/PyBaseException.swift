@@ -4,6 +4,7 @@ import Core
 // Objects -> exceptions.c
 // Lib->test->exception_hierarchy.txt <-- this is amazing
 // https://docs.python.org/3.7/c-api/exceptions.html
+// https://www.python.org/dev/peps/pep-0415/#proposal
 
 // swiftlint:disable file_length
 
@@ -20,8 +21,8 @@ public class PyBaseException: PyObject {
   internal var attributes: Attributes
 
   /// Another exception during whose handling this exception was raised.
-  internal var exceptionContext: PyBaseException?
-  internal var suppressExceptionContext: Bool
+  internal var context: PyBaseException?
+  internal var suppressContext: Bool
 
   override public var description: String {
     let msg = self.message.map { "msg: \($0)" } ?? ""
@@ -30,11 +31,11 @@ public class PyBaseException: PyObject {
 
   // MARK: - Init
 
-  convenience init(msg: String,
-                   traceback: PyObject? = nil,
-                   cause: PyObject? = nil,
-                   exceptionContext: PyBaseException? = nil,
-                   suppressExceptionContext: Bool = false) {
+  internal convenience init(msg: String,
+                            traceback: PyObject? = nil,
+                            cause: PyObject? = nil,
+                            exceptionContext: PyBaseException? = nil,
+                            suppressExceptionContext: Bool = false) {
     self.init(args: Py.newTuple(Py.newString(msg)),
               traceback: traceback,
               cause: cause,
@@ -51,8 +52,8 @@ public class PyBaseException: PyObject {
     self.traceback = traceback
     self.cause = cause
     self.attributes = Attributes()
-    self.exceptionContext = exceptionContext
-    self.suppressExceptionContext = suppressExceptionContext
+    self.context = exceptionContext
+    self.suppressContext = suppressExceptionContext
 
     super.init()
     self.setType()
@@ -88,11 +89,11 @@ public class PyBaseException: PyObject {
       return nil
     }
 
-    guard let stringyThingy = firstArg as? PyString else {
+    guard let string = firstArg as? PyString else {
       return nil
     }
 
-    return stringyThingy.value
+    return string.value
   }
 
   // MARK: - Subclass checks
@@ -260,7 +261,7 @@ public class PyBaseException: PyObject {
     }
 
     if value is PyNone {
-      self.delContext()
+      self.delCause()
       return .value()
     }
 
@@ -274,6 +275,8 @@ public class PyBaseException: PyObject {
   }
 
   public func setCause(_ value: PyBaseException) {
+    // https://www.python.org/dev/peps/pep-0415/#proposal
+    self.suppressContext = true
     self.cause = value
   }
 
@@ -283,11 +286,11 @@ public class PyBaseException: PyObject {
 
   // MARK: - Context
 
-  internal static let getContetDoc = "exception context"
+  internal static let getContextDoc = "exception context"
 
-  // sourcery: pyproperty = __context__, setter = setContext, doc = getContetDoc
+  // sourcery: pyproperty = __context__, setter = setContext, doc = getContextDoc
   public func getContext() -> PyBaseException? {
-    return self.exceptionContext
+    return self.context
   }
 
   public func setContext(_ value: PyObject?) -> PyResult<()> {
@@ -310,31 +313,54 @@ public class PyBaseException: PyObject {
   }
 
   public func setContext(_ value: PyBaseException) {
-    self.exceptionContext = value
+    self.avoidCycleInContexts(with: value)
+    self.context = value
+  }
+
+  // When we want to set exception as 'context',
+  // we have to check if this exception is already in exception stack.
+  // Otherwise we would create cycle.
+  private func avoidCycleInContexts(with other: PyBaseException) {
+    var current = other
+
+    // Traverse context down looking for 'self'.
+    while let context = current.getContext() {
+      if context === self {
+        // Clear context
+        // We can return, because when setting 'context' exception
+        // we also ran 'avoidCycleInContext'.
+        current.delContext()
+        return
+      }
+
+      current = context
+    }
   }
 
   public func delContext() {
-    self.exceptionContext = nil
+    self.context = nil
   }
 
   // MARK: - Suppress context
 
   // sourcery: pyproperty = __suppress_context__, setter = setSuppressContext
   public func getSuppressContext() -> PyBool {
-    return Py.newBool(self.suppressExceptionContext)
+    return Py.newBool(self.suppressContext)
   }
 
   public func setSuppressContext(_ value: PyObject?) -> PyResult<()> {
-    if let value = value {
-      switch Py.isTrueBool(value) {
-      case let .value(v): self.suppressExceptionContext = v
-      case let .error(e): return .error(e)
-      }
-    } else {
-      self.suppressExceptionContext = false
+    guard let value = value else {
+      self.suppressContext = false
+      return .value()
     }
 
-    return .value()
+    switch Py.isTrueBool(value) {
+    case let .value(b):
+      self.suppressContext = b
+      return .value()
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Python new

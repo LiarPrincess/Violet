@@ -14,6 +14,9 @@ internal enum UnwindReason {
   /// Instruction requested a `break`.
   /// We will unwind stopping at nearest loop.
   case `break`
+  /// Instruction requested a `break`.
+  /// We will unwind stopping at nearest loop.
+  case `continue`(loopStartLabel: Int)
   /// Instruction raised an error.
   /// We will unwind trying to handle it (try-except and finally blocks).
   case exception(PyBaseException)
@@ -33,9 +36,18 @@ extension Frame {
   ///
   /// CPython: fast_block_end:
   internal func unwind(reason: UnwindReason) {
-    while let block = self.blocks.pop() {
+    // swiftlint:disable:previous function_body_length
+
+    while let block = self.blocks.last {
       switch block.type {
       case let .setupLoop(endLabel):
+        if case let .continue(loopStartLabel) = reason {
+          // Do not unwind! We are still in a loop!
+          self.jumpTo(label: loopStartLabel)
+          return
+        }
+
+        _ = self.blocks.pop()
         self.unwindBlock(block: block)
 
         if case .break = reason {
@@ -44,6 +56,7 @@ extension Frame {
         }
 
       case let .setupExcept(firstExceptLabel):
+        _ = self.blocks.pop()
         self.unwindBlock(block: block)
 
         if case let .exception(e) = reason {
@@ -53,6 +66,7 @@ extension Frame {
         }
 
       case let .setupFinally(finallyStartLabel):
+        _ = self.blocks.pop()
         self.unwindBlock(block: block)
 
         if case let .exception(e) = reason {
@@ -67,13 +81,14 @@ extension Frame {
         return
 
       case .exceptHandler:
+        _ = self.blocks.pop()
         self.unwindExceptHandler(block: block)
       }
     }
   }
 
   private func prepareForExceptionHandling(exception: PyBaseException) {
-    let exceptHandler = Block(type: .exceptHandler, level: self.stackLevel)
+    let exceptHandler = Block(type: .exceptHandler, stackLevel: self.stackLevel)
     self.blocks.push(block: exceptHandler)
 
     // Remember 'current' on stack
@@ -87,14 +102,14 @@ extension Frame {
 
   /// \#define UNWIND_BLOCK(b)
   internal func unwindBlock(block: Block) {
-    self.stack.pop(untilCount: block.level)
+    self.stack.pop(untilCount: block.stackLevel)
   }
 
   /// \#define UNWIND_EXCEPT_HANDLER(b)
   internal func unwindExceptHandler(block: Block) {
     assert(block.isExceptHandler)
 
-    let stackCountIncludingException = block.level + 1
+    let stackCountIncludingException = block.stackLevel + 1
     assert(self.stack.count >= stackCountIncludingException)
 
     self.stack.pop(untilCount: stackCountIncludingException)
@@ -109,6 +124,6 @@ extension Frame {
       assert(false, "Expected to pop exception (or None), but popped '\(o)'.")
     }
 
-    assert(self.stack.count == block.level)
+    assert(self.stack.count == block.stackLevel)
   }
 }

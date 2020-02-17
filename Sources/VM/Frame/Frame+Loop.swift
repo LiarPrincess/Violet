@@ -10,7 +10,7 @@ extension Frame {
   internal func setupLoop(loopEndLabelIndex: Int) -> InstructionResult {
     let label = self.getLabel(index: loopEndLabelIndex)
     let type = BlockType.setupLoop(endLabel: label)
-    let block = Block(type: type, level: self.stackLevel)
+    let block = Block(type: type, stackLevel: self.stackLevel)
     self.blocks.push(block: block)
     return .ok
   }
@@ -58,5 +58,15 @@ extension Frame {
   /// Terminates a loop due to a break statement.
   internal func doBreak() -> InstructionResult {
     return .unwind(.break)
+  }
+
+  // MARK: - Continue
+
+  /// Continues a loop due to a continue statement.
+  /// `loopStartLabel` is the address to jump to
+  /// (which should be a `ForIter` instruction).
+  internal func doContinue(loopStartLabelIndex: Int) -> InstructionResult {
+    let label = self.getLabel(index: loopStartLabelIndex)
+    return .unwind(.continue(loopStartLabel: label))
   }
 }

@@ -1,10 +1,14 @@
 import Core
 
-internal struct Block {
+internal struct Block: CustomStringConvertible {
   /// The type of block.
   internal let type: BlockType
   /// Stack size when the block was entered.
-  internal let level: Int
+  internal let stackLevel: Int
+
+  internal var description: String {
+    return "Block(type: \(self.type), level: \(self.stackLevel))"
+  }
 
   internal var isExceptHandler: Bool {
     switch self.type {
@@ -42,6 +46,10 @@ internal struct BlockStack {
 
   /// Top-most block.
   internal var current: Block? {
+    return self.elements.last
+  }
+
+  internal var last: Block? {
     return self.elements.last
   }
 

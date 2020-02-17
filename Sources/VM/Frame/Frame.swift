@@ -100,6 +100,9 @@ internal final class Frame {
   }
 
   internal func getLabel(index: Int) -> Int {
+    // In all of the dumps/prints we multiply by 'Instruction.byteSize'.
+    // We don't have to it here because 'index' is already instruction index.
+
     assert(0 <= index && index < self.code.labels.count)
     return self.code.labels[index]
   }
@@ -116,7 +119,7 @@ internal final class Frame {
         self.unwind(reason: reason)
 
         // If we still have some blocks then continue loop.
-        // It may happen for example for break/except/finally blocks
+        // It may happen for break/except/finally blocks
         // (they would just jump to other part of the code and continue execution).
         if self.blocks.any {
           break // continue loop
@@ -128,10 +131,12 @@ internal final class Frame {
         case .return(let object):
           return .value(object)
         case .break,
+             .continue,
              .exception,
              .yield,
              .silenced:
-          print("============")
+          print("=== ERROR ===")
+          print("Popped all blocks, but this still remains:")
           print(reason)
           exit(1)
         }
@@ -279,6 +284,9 @@ internal final class Frame {
       return self.getYieldFromIter()
     case .`break`:
       return self.doBreak()
+    case let .continue(loopStartLabel):
+      let extended = self.extend(base: extendedArg, arg: loopStartLabel)
+      return self.doContinue(loopStartLabelIndex: extended)
     case let .buildTuple(elementCount):
       let extended = self.extend(base: extendedArg, arg: elementCount)
       return self.buildTuple(elementCount: extended)

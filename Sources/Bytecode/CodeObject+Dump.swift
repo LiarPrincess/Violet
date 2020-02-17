@@ -148,10 +148,10 @@ extension CodeObject {
 
     case let .setupLoop(arg):
       let label = self.getLabel(extendedArg + Int(arg))
-      return "setupLoop (loopEndLabel: \(label))"
+      return "setupLoop (loopEndByte: \(label))"
     case let .forIter(arg):
       let label = self.getLabel(extendedArg + Int(arg))
-      return "forIter (ifEmptyLabel: \(label))"
+      return "forIter (ifEmptyByte: \(label))"
     case .getIter:
       return "getIter"
     case .getYieldFromIter:
@@ -161,7 +161,7 @@ extension CodeObject {
       return "break"
     case .`continue`(let loopStartLabel):
       let label = self.getLabel(extendedArg + Int(loopStartLabel))
-      return "continue (loopStartLabel: \(label))"
+      return "continue (loopStartByte: \(label))"
 
     case let .buildTuple(elementCount: arg):
       return "buildTuple (elementCount: \(extendedArg + Int(arg)))"
@@ -286,15 +286,15 @@ extension CodeObject {
       return "endFinally"
     case let .setupExcept(arg):
       let label = self.getLabel(extendedArg + Int(arg))
-      return "setupExcept (firstExceptLabel: \(label))"
+      return "setupExcept (firstExceptByte: \(label))"
     case let .setupFinally(arg):
       let label = self.getLabel(extendedArg + Int(arg))
-      return "setupFinally (finallyStartLabel: \(label))"
+      return "setupFinally (finallyStartByte: \(label))"
     case let .raiseVarargs(arg):
       return "raiseVarargs \(self.toString(arg))"
     case let .setupWith(arg):
       let label = self.getLabel(extendedArg + Int(arg))
-      return "setupWith (afterBody: \(label))"
+      return "setupWith (afterBodyByte: \(label))"
     case .withCleanupStart:
       return "withCleanupStart"
     case .withCleanupFinish:
@@ -305,15 +305,20 @@ extension CodeObject {
       return "setupAsyncWith"
 
     case let .jumpAbsolute(labelIndex: arg):
-      return "jumpAbsolute (label: \(self.getLabel(extendedArg + Int(arg))))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "jumpAbsolute (byte: \(label))"
     case let .popJumpIfTrue(labelIndex: arg):
-      return "popJumpIfTrue (label: \(self.getLabel(extendedArg + Int(arg))))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "popJumpIfTrue (byte: \(label))"
     case let .popJumpIfFalse(labelIndex: arg):
-      return "popJumpIfFalse (label: \(self.getLabel(extendedArg + Int(arg))))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "popJumpIfFalse (byte: \(label))"
     case let .jumpIfTrueOrPop(labelIndex: arg):
-      return "jumpIfTrueOrPop (label: \(self.getLabel(extendedArg + Int(arg))))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "jumpIfTrueOrPop (byte: \(label))"
     case let .jumpIfFalseOrPop(labelIndex: arg):
-      return "jumpIfFalseOrPop (label: \(self.getLabel(extendedArg + Int(arg))))"
+      let label = self.getLabel(extendedArg + Int(arg))
+      return "jumpIfFalseOrPop (byte: \(label))"
 
     case let .formatValue(conversion: conversion, hasFormat: hasFormat):
       var arg = ""

@@ -19,11 +19,12 @@ internal enum PushFinallyReason {
 
   // MARK: - Marker values
 
-  private static let `return`  = BigInt(0)
-  private static let `break`   = BigInt(1)
-  private static let exception = BigInt(2)
-  private static let yield     = BigInt(3)
-  private static let silenced  = BigInt(4)
+  private static let `return`   = BigInt(0)
+  private static let `break`    = BigInt(1)
+  private static let `continue` = BigInt(2)
+  private static let exception  = BigInt(3)
+  private static let yield      = BigInt(4)
+  private static let silenced   = BigInt(5)
 
   // MARK: - Push
 
@@ -33,6 +34,8 @@ internal enum PushFinallyReason {
     case `return`(PyObject)
     /// We were unwinding blocks, since we hit `break`.
     case `break`
+    /// We were unwinding blocks, since we hit `continue`.
+    case `continue`(loopStartLabel: Int)
     /// We were handling exception.
     case exception(PyBaseException)
     /// 'yield' operator
@@ -47,6 +50,7 @@ internal enum PushFinallyReason {
       switch reason {
       case .return(let value): return .return(value)
       case .break: return .break
+      case .continue(let l): return .continue(loopStartLabel: l)
       case .exception(let e): return .exception(e)
       case .yield: return .yield
       case .silenced: return .silenced
@@ -64,6 +68,9 @@ internal enum PushFinallyReason {
       stack.push(Py.newInt(PushFinallyReason.return))
     case .break:
       stack.push(Py.newInt(PushFinallyReason.break))
+    case .continue(let l):
+      stack.push(Py.newInt(l))
+      stack.push(Py.newInt(PushFinallyReason.continue))
     case .exception:
       stack.push(Py.newInt(PushFinallyReason.exception))
     case .yield:
@@ -80,6 +87,8 @@ internal enum PushFinallyReason {
     case `return`(PyObject)
     /// We are unwinding blocks, since we hit `break`.
     case `break`
+    /// We are unwinding blocks, since we hit `continue`.
+    case `continue`(loopStartLabel: Int)
     /// We were handling exception.
     case exception(PyBaseException)
     /// 'yield' operator
@@ -101,6 +110,12 @@ internal enum PushFinallyReason {
         return .return(value)
       case PushFinallyReason.break:
         return .break
+      case PushFinallyReason.continue:
+        let value = stack.pop()
+        if let pyInt = value as? PyInt,
+           let int = Int(exactly: pyInt.value) { // otherwise 'invalid'
+          return .continue(loopStartLabel: int)
+        }
       case PushFinallyReason.exception:
         assert(false)
       case PushFinallyReason.yield:
