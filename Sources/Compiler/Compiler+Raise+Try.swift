@@ -102,12 +102,12 @@ extension Compiler {
 
   /// compiler_try_except(struct compiler *c, stmt_ty s)
   ///
-  /// Code generated for "try: S except E1 as V1: S1 except E2 as V2: S2 ...":
-  /// (The contents of the value stack is shown in [], with the top at the right)
-  ///
   /// NOTE THAT THERE IS A DIFFERENCE BETWEEN US AND CPYTHON.
   /// We store only exception on stack and CPython stores type, exception
   /// and traceback. So where CPython does 3x 'pop' we do it once!
+  ///
+  /// Code generated for "try: S except E1 as V1: S1 except E2 as V2: S2 ...":
+  /// (The contents of the value stack is shown in [], with the top at the right)
   ///
   /// ```
   /// Value stack          Label   Instruction     Argument
@@ -136,6 +136,10 @@ extension Compiler {
   private func visitTryExcept(body: NonEmptyArray<Statement>,
                               handlers: [ExceptHandler],
                               orElse:   [Statement]) throws {
+    // THERE IS A DIFFERENCE BETWEEN US AND CPYTHON.
+    // SEE LONG COMMENT ABOVE THIS FUNCTION!
+    // WE WILL PUSH ONLY EXCEPTION (WITHOUT TYPE AND TRACEBACK)!
+
     let firstExcept = self.builder.createLabel()
     let orElseStart = self.builder.createLabel()
     let end = self.builder.createLabel()
