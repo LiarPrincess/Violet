@@ -165,8 +165,9 @@ internal struct NullaryFunctionWrapper: FunctionWrapper {
 // MARK: - Positional unary
 
 internal typealias UnaryFunction = (PyObject) -> PyFunctionResult
+internal typealias UnaryFunctionOpt = (PyObject?) -> PyFunctionResult
 
-/// Wrapper dedicated to method that takes 1 arguments.
+/// Wrapper dedicated to method that takes 1 argument.
 internal struct UnaryFunctionWrapper: FunctionWrapper {
 
   internal let name: String
@@ -183,6 +184,28 @@ internal struct UnaryFunctionWrapper: FunctionWrapper {
     }
 
     return self.fn(args[0])
+  }
+}
+
+/// Wrapper dedicated to method that takes 1 optional argument.
+internal struct UnaryFunctionOptWrapper: FunctionWrapper {
+
+  internal let name: String
+  internal let fn: UnaryFunctionOpt
+
+  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+    if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
+      return .error(e)
+    }
+
+    switch args.count {
+    case 0:
+      return self.fn(nil)
+    case 1:
+      return self.fn(args[0])
+    default:
+      return .typeError("expected 1 arguments, got \(args.count)")
+    }
   }
 }
 

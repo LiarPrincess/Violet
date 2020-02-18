@@ -130,7 +130,7 @@ extension BuiltinFunctions {
     }
 
     // TODO: Add '_dir_locals(void)' from 'PyObject_Dir(PyObject *obj)'
-    return .value(self.unimplemented)
+    trap("'dir()' is not implemented")
   }
 
   private func call__dir__(on object: PyObject) -> PyFunctionResult {

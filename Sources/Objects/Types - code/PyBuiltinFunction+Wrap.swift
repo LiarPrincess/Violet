@@ -170,6 +170,23 @@ extension PyBuiltinFunction {
     )
   }
 
+  // Overload without `self` argument.
+  internal static func wrap<R: PyFunctionResultConvertible>(
+    name: String,
+    doc: String?,
+    fn: @escaping (PyObject?) -> R,
+    module: PyModule? = nil) -> PyBuiltinFunction {
+
+    return PyBuiltinFunction(
+      fn: UnaryFunctionOptWrapper(name: name) { arg0 in
+        let result = fn(arg0)
+        return result.asFunctionResult
+      },
+      module: module,
+      doc: doc
+    )
+  }
+
   // MARK: - Positional binary
 
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(

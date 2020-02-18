@@ -86,7 +86,16 @@ public class PyComplex: PyObject {
   internal func hash() -> HashResult {
     let realHash = Py.hasher.hash(self.real)
     let imagHash = Py.hasher.hash(self.imag)
-    return .value(realHash + Hasher.imag * imagHash)
+
+    // If the imaginary part is 0, hashimag is 0 now,
+    // so the following returns hashreal unchanged.
+    // This is important because numbers of different types that
+    // compare equal must have the same hash value, so that
+    // hash(x + 0*j) must equal hash(x).
+
+    // Overflows are acceprable (and surprisingly common).
+    let imagHashNeg = Hasher.imag &* imagHash
+    return .value(realHash &+ imagHashNeg)
   }
 
   // MARK: - String
