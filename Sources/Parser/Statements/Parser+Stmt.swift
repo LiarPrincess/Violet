@@ -43,6 +43,10 @@ extension Parser {
   /// suite: simple_stmt | NEWLINE INDENT stmt+ DEDENT`
   internal func suite() throws -> NonEmptyArray<Statement> {
     if try self.consumeIf(.newLine) {
+      // Consume additional new lines (we can have more than 1).
+      // It will also handle the case when we have comment as 1st line.
+      try self.consumeNewLines()
+
       try self.consumeOrThrow(.indent)
 
       var result = try self.stmt()
