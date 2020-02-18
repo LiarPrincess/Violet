@@ -72,4 +72,33 @@ class OtherTests: XCTestCase, Common {
 
     self.getEOF(&lexer)
   }
+
+  func test_newLine_escape() {
+    var lexer = Lexer(for: "Elsa\\\n   Anna")
+
+    if let token1 = self.getToken(&lexer) {
+      XCTAssertEqual(token1.kind, .identifier("Elsa"))
+      XCTAssertEqual(token1.start, SourceLocation(line: 1, column: 0))
+      XCTAssertEqual(token1.end,   SourceLocation(line: 1, column: 4))
+    }
+
+    if let token2 = self.getToken(&lexer) {
+      XCTAssertEqual(token2.kind, .identifier("Anna"))
+      XCTAssertEqual(token2.start, SourceLocation(line: 2, column: 3))
+      XCTAssertEqual(token2.end,   SourceLocation(line: 2, column: 7))
+    }
+
+    self.getEOF(&lexer)
+  }
+
+  func test_newLine_escape_withoutNewLine_throws() {
+    var lexer = Lexer(for: "Elsa\\Anna")
+
+    self.getIdentifier(&lexer, value: "Elsa")
+
+    if let error = self.error(&lexer) {
+      XCTAssertEqual(error.kind, LexerErrorKind.missingNewLineAfterBackslashEscape)
+      XCTAssertEqual(error.location, SourceLocation(line: 1, column: 5))
+    }
+  }
 }

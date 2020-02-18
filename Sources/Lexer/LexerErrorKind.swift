@@ -84,7 +84,7 @@ extension LexerErrorKind: CustomStringConvertible {
       return "Unable to parse decimal from '\(s)'."
 
     case .missingNewLineAfterBackslashEscape:
-      return "Expected new line after '\'."
+      return "Expected new line after backslash escape ('\\')."
     }
   }
 }
