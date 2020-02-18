@@ -1,5 +1,5 @@
-from testutils import assert_raises
-import itertools
+# from testutils import assert_raises
+# import itertools
 
 a = slice(10)
 assert a.start == None
@@ -35,20 +35,20 @@ assert slice(0).__ne__(0) == NotImplemented
 assert slice(None).__ne__(slice(0))
 
 # slice gt, ge, lt, le
-assert_raises(TypeError, lambda: slice(0, slice(), 0) < slice(0, 0, 0))
-assert_raises(TypeError, lambda: slice(0, slice(), 0) <= slice(0, 0, 0))
-assert_raises(TypeError, lambda: slice(0, slice(), 0) > slice(0, 0, 0))
-assert_raises(TypeError, lambda: slice(0, slice(), 0) >= slice(0, 0, 0))
+# assert_raises(TypeError, lambda: slice(0, slice(), 0) < slice(0, 0, 0))
+# assert_raises(TypeError, lambda: slice(0, slice(), 0) <= slice(0, 0, 0))
+# assert_raises(TypeError, lambda: slice(0, slice(), 0) > slice(0, 0, 0))
+# assert_raises(TypeError, lambda: slice(0, slice(), 0) >= slice(0, 0, 0))
 
-assert_raises(TypeError, lambda: slice(0, 0, 0) < slice(0, 0, slice()))
-assert_raises(TypeError, lambda: slice(0, 0, 0) <= slice(0, 0, slice()))
-assert_raises(TypeError, lambda: slice(0, 0, 0) > slice(0, 0, slice()))
-assert_raises(TypeError, lambda: slice(0, 0, 0) >= slice(0, 0, slice()))
+# assert_raises(TypeError, lambda: slice(0, 0, 0) < slice(0, 0, slice()))
+# assert_raises(TypeError, lambda: slice(0, 0, 0) <= slice(0, 0, slice()))
+# assert_raises(TypeError, lambda: slice(0, 0, 0) > slice(0, 0, slice()))
+# assert_raises(TypeError, lambda: slice(0, 0, 0) >= slice(0, 0, slice()))
 
-assert_raises(TypeError, lambda: slice(0, 0) >= slice(0, 0, 0))
-assert_raises(TypeError, lambda: slice(0, 0) <= slice(0, 0, 0))
-assert_raises(TypeError, lambda: slice(0, 0) < slice(0, 0, 0))
-assert_raises(TypeError, lambda: slice(0, 0) > slice(0, 0, 0))
+# assert_raises(TypeError, lambda: slice(0, 0) >= slice(0, 0, 0))
+# assert_raises(TypeError, lambda: slice(0, 0) <= slice(0, 0, 0))
+# assert_raises(TypeError, lambda: slice(0, 0) < slice(0, 0, 0))
+# assert_raises(TypeError, lambda: slice(0, 0) > slice(0, 0, 0))
 
 assert slice(0, 0, 0) < slice(0, 1, -1)
 assert slice(0, 0, 0) < slice(0, 0, 1)
@@ -78,19 +78,19 @@ assert slice(0, float('inf'), float('inf')) >= slice(0, float('inf'), float('inf
 assert not slice(0, float('inf'), float('inf')) < slice(0, float('inf'), float('inf'))
 assert not slice(0, float('inf'), float('inf')) > slice(0, float('inf'), float('inf'))
 
-assert_raises(TypeError, lambda: slice(0) < 3)
-assert_raises(TypeError, lambda: slice(0) > 3)
-assert_raises(TypeError, lambda: slice(0) <= 3)
-assert_raises(TypeError, lambda: slice(0) >= 3)
+# assert_raises(TypeError, lambda: slice(0) < 3)
+# assert_raises(TypeError, lambda: slice(0) > 3)
+# assert_raises(TypeError, lambda: slice(0) <= 3)
+# assert_raises(TypeError, lambda: slice(0) >= 3)
 
-assert_raises(TypeError, hash, slice(0))
-assert_raises(TypeError, hash, slice(None))
+# assert_raises(TypeError, hash, slice(0))
+# assert_raises(TypeError, hash, slice(None))
 
-def dict_slice():
-    d = {}
-    d[slice(0)] = 3
+# def dict_slice():
+#     d = {}
+#     d[slice(0)] = 3
 
-assert_raises(TypeError, dict_slice)
+# assert_raises(TypeError, dict_slice)
 
 assert slice(None           ).indices(10) == (0, 10,  1)
 assert slice(None,  None,  2).indices(10) == (0, 10,  2)
