@@ -32,7 +32,12 @@ extension BuiltinFunctions {
                               prefix: String) -> PyResult<PyObject> {
     switch IndexHelper.bigInt(object) {
     case let .value(bigInt):
-      let result = prefix + String(bigInt, radix: radix, uppercase: false)
+      let sign = bigInt < 0 ? "-" : ""
+
+      let bigIntAbs = Swift.abs(bigInt)
+      let number = String(bigIntAbs, radix: radix, uppercase: false)
+
+      let result = sign + prefix + number
       return .value(self.newString(result))
     case let .error(e):
       return .error(e)
