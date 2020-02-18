@@ -69,7 +69,8 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: ArgsKwargsFunctionWrapper(name: name) { args, kwargs in
-        fn(args, kwargs).asFunctionResult
+        let result = fn(args, kwargs)
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -87,9 +88,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: ArgsKwargsMethodWrapper(name: name) { arg0, args, kwargs in
-        castSelf(arg0, name)
-          .map { fn($0)(args, kwargs) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(args, kwargs) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -106,7 +107,8 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: NullaryFunctionWrapper(name: name) {
-        fn().asFunctionResult
+        let result = fn()
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -124,7 +126,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: UnaryFunctionWrapper(name: name) { arg0 in
-        castSelf(arg0, name).map(fn).asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map(fn)
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -140,9 +144,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: UnaryFunctionWrapper(name: name) { arg0 in
-        castSelf(arg0, name)
-          .map { fn($0)() }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)() }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -158,7 +162,8 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: UnaryFunctionWrapper(name: name) { arg0 in
-        fn(arg0).asFunctionResult
+        let result = fn(arg0)
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -176,9 +181,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: BinaryFunctionWrapper(name: name) { arg0, arg1 in
-        castSelf(arg0, name)
-          .map { fn($0)(arg1) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(arg1) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -194,7 +199,8 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: BinaryFunctionWrapper(name: name) { arg0, arg1 in
-        fn(arg0, arg1).asFunctionResult
+        let result = fn(arg0, arg1)
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -212,9 +218,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: BinaryFunctionOptWrapper(name: name) { arg0, arg1 in
-        castSelf(arg0, name)
-          .map { fn($0)(arg1) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(arg1) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -230,7 +236,8 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: BinaryFunctionOptWrapper(name: name) { arg0, arg1 in
-        fn(arg0, arg1).asFunctionResult
+        let result = fn(arg0, arg1)
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -248,9 +255,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionWrapper(name: name) { arg0, arg1, arg2 in
-        castSelf(arg0, name)
-          .map { fn($0)(arg1, arg2) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(arg1, arg2) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -266,7 +273,8 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionWrapper(name: name) { arg0, arg1, arg2 in
-        fn(arg0, arg1, arg2).asFunctionResult
+        let result = fn(arg0, arg1, arg2)
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -284,9 +292,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionOptWrapper(name: name) { arg0, arg1, arg2 in
-        castSelf(arg0, name)
-          .map { fn($0)(arg1, arg2) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(arg1, arg2) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -302,7 +310,8 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionOptWrapper(name: name) { arg0, arg1, arg2 in
-        fn(arg0, arg1, arg2).asFunctionResult
+        let result = fn(arg0, arg1, arg2)
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -320,9 +329,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionOptOptWrapper(name: name) { arg0, arg1, arg2 in
-        castSelf(arg0, name)
-          .map { fn($0)(arg1, arg2) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(arg1, arg2) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -338,7 +347,8 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: TernaryFunctionOptOptWrapper(name: name) { arg0, arg1, arg2 in
-        fn(arg0, arg1, arg2).asFunctionResult
+        let result = fn(arg0, arg1, arg2)
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -356,9 +366,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: QuartaryFunctionWrapper(name: name) { arg0, arg1, arg2, arg3 in
-        castSelf(arg0, name)
-          .map { fn($0)(arg1, arg2, arg3) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(arg1, arg2, arg3) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -376,9 +386,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: QuartaryFunctionOptWrapper(name: name) { arg0, arg1, arg2, arg3 in
-        castSelf(arg0, name)
-          .map { fn($0)(arg1, arg2, arg3) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(arg1, arg2, arg3) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -396,9 +406,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: QuartaryFunctionOptOptWrapper(name: name) { arg0, arg1, arg2, arg3 in
-        castSelf(arg0, name)
-          .map { fn($0)(arg1, arg2, arg3) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(arg1, arg2, arg3) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
@@ -416,9 +426,9 @@ extension PyBuiltinFunction {
 
     return PyBuiltinFunction(
       fn: QuartaryFunctionOptOptOptWrapper(name: name) { arg0, arg1, arg2, arg3 in
-        castSelf(arg0, name)
-          .map { fn($0)(arg1, arg2, arg3) }
-          .asFunctionResult
+        let zelf = castSelf(arg0, name)
+        let result = zelf.map { fn($0)(arg1, arg2, arg3) }
+        return result.asFunctionResult
       },
       module: module,
       doc: doc
