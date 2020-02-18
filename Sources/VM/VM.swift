@@ -24,17 +24,7 @@ public class VM: PyDelegate {
     Py.initialize(config: config, delegate: self)
   }
 
-  // MARK: - Dump
-
-  internal func dump(_ ast: AST) {
-    print("=== AST ===")
-    print(ast)
-    print()
-  }
-
-  internal func dump(_ code: CodeObject) {
-    print("=== Bytecode ===")
-    print(code.dump())
-    print()
+  deinit {
+    Py.destroy()
   }
 }

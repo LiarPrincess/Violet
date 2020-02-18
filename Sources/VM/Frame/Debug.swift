@@ -1,9 +1,28 @@
+import Parser
 import Objects
 import Bytecode
 
 private let isEnabled = true
 
 internal enum Debug {
+
+  // MARK: - Parser, compiler
+
+  internal static func ast(_ ast: AST) {
+    guard isEnabled else { return }
+    print("=== AST ===")
+    print(ast)
+    print()
+  }
+
+  internal static func code(_ code: CodeObject) {
+    guard isEnabled else { return }
+    print("=== Bytecode ===")
+    print(code.dump())
+    print()
+  }
+
+  // MARK: - Frame
 
   internal static func instruction(code: CodeObject,
                                    instruction: Instruction,

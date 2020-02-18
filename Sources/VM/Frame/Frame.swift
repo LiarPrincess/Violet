@@ -130,14 +130,21 @@ internal final class Frame {
         switch reason {
         case .return(let object):
           return .value(object)
-        case .break,
-             .continue,
+        case .break:
+          // We popped top level loop, we can continue execution
+          break
+        case .continue,
              .exception,
              .yield,
              .silenced:
-          print("=== ERROR ===")
-          print("Popped all blocks, but this still remains:")
-          print(reason)
+          let pc = Swift.max(self.nextInstructionIndex - 1, 0)
+          let line = self.code.instructionLines[pc]
+
+          print()
+          print("===")
+          print("Popped all blocks, but this still remains: '\(reason)'")
+          print("Instruction:", pc)
+          print("Line:", line)
           exit(1)
         }
       }

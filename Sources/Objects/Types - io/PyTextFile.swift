@@ -75,7 +75,17 @@ public class PyTextFile: PyObject {
   // MARK: - Deinit
 
   deinit {
-    _ = self.del()
+    // Remember that during 'deinit' we are not allowed to call any other
+    // 'Py' function as the whole 'Py' may be deinitializing.
+
+    if self.closeOnDealloc {
+      // Regardles of whether it succeded/failed we will ignore result.
+      // (we could use '_ = self.closeRaw()', but we want to be explicit)
+      switch self.closeRaw() {
+      case .ok: break
+      case .error: break
+      }
+    }
   }
 
    // MARK: - String
@@ -222,15 +232,29 @@ public class PyTextFile: PyObject {
   // sourcery: pymethod = close
   /// Idempotent
   internal func close() -> PyResult<PyNone> {
-    guard !self.isClosed() else {
+    switch self.closeRaw() {
+    case .ok:
       return .value(Py.none)
+    case .error(let e):
+      return .error(self.osError(from: e))
+    }
+  }
+
+  private enum CloseRawResult {
+    case ok
+    case error(Error)
+  }
+
+  private func closeRaw() -> CloseRawResult {
+    guard !self.isClosed() else {
+      return .ok
     }
 
     do {
       try self.fd.close()
-      return .value(Py.none)
+      return .ok
     } catch {
-      return .error(self.osError(from: error))
+      return .error(error)
     }
   }
 

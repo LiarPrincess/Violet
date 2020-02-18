@@ -11,7 +11,7 @@ extension VM {
     let parser = Parser(mode: mode, tokenSource: lexer)
     let ast = try parser.parse()
 
-    self.dump(ast)
+    Debug.ast(ast)
 
     let optimizationLevel = self.configuration.optimization
     let compilerOptions = CompilerOptions(optimizationLevel: optimizationLevel)
@@ -20,7 +20,7 @@ extension VM {
                                 options: compilerOptions)
 
     let code = try compiler.run()
-    self.dump(code)
+    Debug.code(code)
     return code
   }
 }
