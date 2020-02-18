@@ -17,6 +17,45 @@ import Lexer
 /// ```
 class ParseSuite: XCTestCase, Common {
 
+  /// def fly():
+  ///                <-- this line is empty
+  ///   pass
+  func test_multipleNewLines_atTheBeginning() {
+    let parser = self.createStmtParser(
+      self.token(.def,                 start: loc0, end: loc1),
+      self.token(.identifier("fly"),   start: loc2, end: loc3),
+      self.token(.leftParen,           start: loc4, end: loc5),
+      self.token(.rightParen,          start: loc6, end: loc7),
+      self.token(.colon,               start: loc8, end: loc9),
+      self.token(.newLine,             start: loc10, end: loc11),
+      self.token(.newLine,             start: loc12, end: loc13), // < here
+      self.token(.indent,              start: loc14, end: loc15),
+      self.token(.pass,                start: loc16, end: loc17),
+      self.token(.newLine,             start: loc18, end: loc19),
+      self.token(.dedent,              start: loc21, end: loc21)
+    )
+
+    guard let ast = self.parse(parser) else { return }
+
+    XCTAssertAST(ast, """
+    ModuleAST(start: 0:0, end: 17:22)
+      FunctionDefStmt(start: 0:0, end: 17:22)
+        Name: fly
+        Args
+          Arguments(start: 6:6, end: 6:6)
+            Args: none
+            Defaults: none
+            Vararg: none
+            KwOnlyArgs: none
+            KwOnlyDefaults: none
+            Kwarg: none
+        Body
+          PassStmt(start: 16:16, end: 17:22)
+        Decorators: none
+        Returns: none
+    """)
+  }
+
   /// class Peter:
   ///   def fly():
   ///     up
