@@ -62,7 +62,7 @@ internal struct PyBytesData: PyStringImpl {
   internal static let defaultFill: UInt8 = 0x20 // space
   internal static let zFill: UInt8 = 0x30 // 0
 
-  internal static func toScalar(_ element: UInt8) -> UnicodeScalar {
+  internal static func toUnicodeScalar(_ element: UInt8) -> UnicodeScalar {
     return UnicodeScalar(element)
   }
 

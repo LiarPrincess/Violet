@@ -149,13 +149,10 @@ internal struct Hasher {
       return 0
     }
 
-    let hashOrNil = value.withContiguousStorageIfAvailable { ptr -> UInt64 in
+    // This is also how Foundation hashes Data.
+    // Note that 'withContiguousStorageIfAvailable' will always fail.
+    let hash = value.withUnsafeBytes { ptr in
       SipHash.hash(key0: self.key0, key1: self.key1, bytes: ptr)
-    }
-
-    guard let hash = hashOrNil else {
-      let method = "Data.withContiguousStorageIfAvailable"
-      trap("Error when hashing '\(value)', unable to obtain '\(method)'")
     }
 
     return self.toPyHash(hash)

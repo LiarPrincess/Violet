@@ -71,7 +71,7 @@ internal protocol PyStringImpl {
   ///
   /// Sometimes we will do that when we really need to work on strings
   /// (for example to classify something as whitespace).
-  static func toScalar(_ element: Element) -> UnicodeScalar
+  static func toUnicodeScalar(_ element: Element) -> UnicodeScalar
   /// Given a `PyObject` try to extract valid value to use in function.
   ///
   /// For `str`: `Self` will be `str`.
@@ -91,12 +91,12 @@ extension PyStringImpl {
   // MARK: - Is(thingie) predicates
 
   private static func isWhitespace(_ value: Element) -> Bool {
-    let scalar = Self.toScalar(value)
+    let scalar = Self.toUnicodeScalar(value)
     return scalar.properties.isWhitespace
   }
 
   private static func isLineBreak(_ value: Element) -> Bool {
-    let scalar = Self.toScalar(value)
+    let scalar = Self.toUnicodeScalar(value)
     return Unicode.lineBreaks.contains(scalar)
   }
 }
@@ -155,10 +155,10 @@ extension PyStringImpl {
     let quote = self.getReprQuoteChar()
 
     var result = String(quote)
-    result.reserveCapacity(self.scalars.count)
+    result.reserveCapacity(self.count)
 
     for element in self.scalars {
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       switch scalar {
       case quote, "\\":
         result.append("\\")
@@ -188,7 +188,7 @@ extension PyStringImpl {
     var doubleCount = 0
 
     for element in self.scalars {
-      switch Self.toScalar(element) {
+      switch Self.toUnicodeScalar(element) {
       case "'":  singleCount += 1
       case "\"": doubleCount += 1
       default: break
@@ -259,9 +259,19 @@ extension PyStringImpl {
   }
 }
 
-// MARK: - Index
+// MARK: - Subscript/index
 
 extension PyStringImpl {
+
+  internal subscript(index: Index) -> Element {
+    return self.scalars[index]
+  }
+
+  internal subscript<R: RangeExpression>(
+    range: R
+  ) -> SubSequence where R.Bound == Index {
+    return self.scalars[range]
+  }
 
   internal var startIndex: Index {
     return self.scalars.startIndex
@@ -271,12 +281,50 @@ extension PyStringImpl {
     return self.scalars.endIndex
   }
 
+  internal func index(after index: Index) -> Index {
+    assert(index != self.endIndex)
+    var copy = index
+    self.formIndex(after: &copy)
+    return copy
+  }
+
   internal func formIndex(after i: inout Index) {
     self.scalars.formIndex(after: &i)
   }
 
+  internal func formIndex(after index: inout Self.Index,
+                          while predicate: (Self.Index) -> Bool) {
+    while index != self.endIndex {
+      switch predicate(index) {
+      case true:
+        self.formIndex(after: &index) // go to the next element
+      case false:
+        return
+      }
+    }
+  }
+
+  internal func index(before index: Index) -> Index {
+    assert(index != self.startIndex)
+    var copy = index
+    self.formIndex(before: &copy)
+    return copy
+  }
+
   internal func formIndex(before i: inout Index) {
     self.scalars.formIndex(before: &i)
+  }
+
+  internal func formIndex(before index: inout Self.Index,
+                          while predicate: (Self.Index) -> Bool) {
+    while index != self.startIndex {
+      switch predicate(index) {
+      case true:
+        self.formIndex(before: &index) // go to the previous element
+      case false:
+        return
+      }
+    }
   }
 
   internal func index(_ i: Index, offsetBy distance: Int) -> Index {
@@ -339,8 +387,8 @@ extension PyStringImpl {
 
     // Handle something like 'elsa'[1000: 5]
     guard startInt < endInt else {
-      let start = self.scalars.startIndex
-      let empty = self.scalars[start..<start]
+      let start = self.startIndex
+      let empty = self[start..<start]
       let result = IndexedSubSequence(value: empty,
                                       start: startIndex,
                                       end: endIndex)
@@ -358,10 +406,10 @@ extension PyStringImpl {
   }
 
   internal func substring(start: Index? = nil,
-                          end:   Index? = nil) -> Scalars.SubSequence {
+                          end:   Index? = nil) -> SubSequence {
     let s = start ?? self.startIndex
     let e = end   ?? self.endIndex
-    return self.scalars[s..<e]
+    return self[s..<e]
   }
 
   private func extractIndex(
@@ -441,7 +489,7 @@ extension PyStringImpl {
   /// https://docs.python.org/3/library/stdtypes.html#str.isalnum
   internal var isAlphaNumeric: Bool {
     return self.scalars.any && self.scalars.allSatisfy { element in
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       let properties = scalar.properties
       let category = properties.generalCategory
       return Unicode.alphaCategories.contains(category)
@@ -458,7 +506,7 @@ extension PyStringImpl {
   /// https://docs.python.org/3/library/stdtypes.html#str.isalpha
   internal var isAlpha: Bool {
     return self.scalars.any && self.scalars.allSatisfy { element in
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       let category = scalar.properties.generalCategory
       return Unicode.alphaCategories.contains(category)
     }
@@ -469,7 +517,7 @@ extension PyStringImpl {
   /// https://docs.python.org/3/library/stdtypes.html#str.isascii
   internal var isAscii: Bool {
     return self.scalars.any && self.scalars.allSatisfy {  element in
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       return scalar.isASCII
     }
   }
@@ -481,7 +529,7 @@ extension PyStringImpl {
   /// https://docs.python.org/3/library/stdtypes.html#str.isdecimal
   internal var isDecimal: Bool {
     return self.scalars.any && self.scalars.allSatisfy { element in
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       return scalar.properties.generalCategory == .decimalNumber
     }
   }
@@ -493,7 +541,7 @@ extension PyStringImpl {
   /// https://docs.python.org/3/library/stdtypes.html#str.isdigit
   internal var isDigit: Bool {
     return self.scalars.any && self.scalars.allSatisfy { element in
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       guard let numericType = scalar.properties.numericType else {
         return false
       }
@@ -509,7 +557,7 @@ extension PyStringImpl {
     // If the character does not have case then True, for example:
     // "a\u02B0b".islower() -> True
     return self.scalars.any && self.scalars.allSatisfy { element in
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       let properties = scalar.properties
       return !properties.isCased || properties.isLowercase
     }
@@ -520,7 +568,7 @@ extension PyStringImpl {
   /// https://docs.python.org/3/library/stdtypes.html#str.isupper
   internal var isUpper: Bool {
     return self.scalars.any && self.scalars.allSatisfy { element in
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       let properties = scalar.properties
       return !properties.isCased || properties.isUppercase
     }
@@ -533,7 +581,7 @@ extension PyStringImpl {
   /// https://docs.python.org/3/library/stdtypes.html#str.isnumeric
   internal var isNumeric: Bool {
     return self.scalars.any && self.scalars.allSatisfy { element in
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       return scalar.properties.numericType != nil
     }
   }
@@ -562,7 +610,7 @@ extension PyStringImpl {
   }
 
   private func isPritable(element: Element) -> Bool {
-    let scalar = Self.toScalar(element)
+    let scalar = Self.toUnicodeScalar(element)
     return self.isPritable(scalar: scalar)
   }
 
@@ -594,7 +642,7 @@ extension PyStringImpl {
   /// https://docs.python.org/3/library/stdtypes.html#str.isspace
   internal var isSpace: Bool {
     return self.scalars.any && self.scalars.allSatisfy { element in
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       return scalar.properties.generalCategory == .spaceSeparator
         || Unicode.bidiClass_ws_b_s.contains(scalar.value)
     }
@@ -608,7 +656,7 @@ extension PyStringImpl {
     var cased = false
     var isPreviousCased = false
     for element in self.scalars {
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       switch scalar.properties.generalCategory {
       case .lowercaseLetter:
         if !isPreviousCased {
@@ -644,7 +692,7 @@ extension PyStringImpl {
     var isPreviousCased = false
 
     for element in self.scalars {
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       let properties = scalar.properties
 
       switch properties.generalCategory {
@@ -676,7 +724,7 @@ extension PyStringImpl {
   internal func swapCaseString() -> String {
     var result = ""
     for element in self.scalars {
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       let properties = scalar.properties
       if properties.isLowercase {
         result.append(properties.uppercaseMapping)
@@ -692,7 +740,7 @@ extension PyStringImpl {
   internal func caseFoldString() -> String {
     var result = ""
     for element in self.scalars {
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       if let mapping = Unicode.caseFoldMapping[scalar.value] {
         result.append(mapping)
       } else {
@@ -710,11 +758,11 @@ extension PyStringImpl {
       return ""
     }
 
-    let firstScalar = Self.toScalar(first)
+    let firstScalar = Self.toUnicodeScalar(first)
     var result = firstScalar.properties.titlecaseMapping
 
     for element in self.scalars.dropFirst() {
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       result.append(contentsOf: scalar.properties.lowercaseMapping)
     }
 
@@ -795,21 +843,21 @@ extension PyStringImpl {
   }
 
   internal func starts(substring zelf: IndexedSubSequence,
-                       with string: Self) -> Bool {
-    if self.is(substring: zelf, longerThan: string) {
+                       with other: Self) -> Bool {
+    if self.is(substring: zelf, longerThan: other) {
       return false
     }
 
-    if string.isEmpty {
+    if other.isEmpty {
       return true
     }
 
-    return zelf.value.starts(with: string.scalars)
+    return zelf.value.starts(with: other.scalars)
   }
 
   internal func ends(substring zelf: IndexedSubSequence,
-                     with string: Self) -> Bool {
-    if self.is(substring: zelf, longerThan: string) {
+                     with other: Self) -> Bool {
+    if self.is(substring: zelf, longerThan: other) {
       return false
     }
 
@@ -817,14 +865,14 @@ extension PyStringImpl {
       return true
     }
 
-    return zelf.value.ends(with: string.scalars)
+    return zelf.value.ends(with: other.scalars)
   }
 
   private func `is`(substring zelf: IndexedSubSequence,
-                    longerThan string: Self) -> Bool {
+                    longerThan other: Self) -> Bool {
     let start = zelf.start?.adjustedInt ?? Int.min
     var end = zelf.end?.adjustedInt ?? Int.max
-    end -= string.count
+    end -= other.count
 
     return start > end
   }
@@ -948,15 +996,15 @@ extension PyStringImpl {
     return self.rstripWhitespace(in: self.scalars)
   }
 
-  private func lstripWhitespace<C: Collection>(in value: C) -> C.SubSequence
-    where C.Element == Self.Element {
-
+  private func lstripWhitespace<C: Collection>(
+    in value: C
+  ) -> C.SubSequence where C.Element == Self.Element {
     return value.drop(while: Self.isWhitespace)
   }
 
-  private func rstripWhitespace<C: BidirectionalCollection>(in value: C) -> C.SubSequence
-    where C.Element == Self.Element {
-
+  private func rstripWhitespace<C: BidirectionalCollection>(
+    in value: C
+  ) -> C.SubSequence where C.Element == Self.Element {
     return value.dropLast(while: Self.isWhitespace)
   }
 }
@@ -1197,21 +1245,21 @@ extension PyStringImpl {
       return .indexError("\(Self.typeName) index out of range")
     }
 
-    let indexOrNil = self.scalars.index(self.scalars.startIndex,
-                                        offsetBy: offset,
-                                        limitedBy: self.scalars.endIndex)
+    let indexOrNil = self.index(self.startIndex,
+                                offsetBy: offset,
+                                limitedBy: self.endIndex)
 
     guard let index = indexOrNil else {
       return .indexError("\(Self.typeName) index out of range")
     }
 
-    return .value(self.scalars[index])
+    return .value(self[index])
   }
 
   private func getSlice(slice: PySlice) -> PyResult<Builder.Result> {
     switch slice.unpack() {
     case let .value(u):
-      let indices = u.adjust(toCount: self.scalars.count)
+      let indices = u.adjust(toCount: self.count)
       return self.getSlice(start: indices.start,
                            step: indices.step,
                            count: indices.count)
@@ -1241,19 +1289,19 @@ extension PyStringImpl {
       return .value(builder.result)
     }
 
-    guard var index = self.scalars.index(self.scalars.startIndex,
-                                         offsetBy: start,
-                                         limitedBy: self.scalars.endIndex) else {
+    guard var index = self.index(self.startIndex,
+                                 offsetBy: start,
+                                 limitedBy: self.endIndex) else {
       return .value(builder.result)
     }
 
     for _ in 0..<count {
-      builder.append(self.scalars[index])
+      builder.append(self[index])
 
-      let limit = step > 0 ? self.scalars.endIndex : self.scalars.startIndex
-      guard let newIndex = self.scalars.index(index,
-                                              offsetBy: step,
-                                              limitedBy: limit) else {
+      let limit = step > 0 ? self.endIndex : self.startIndex
+      guard let newIndex = self.index(index,
+                                      offsetBy: step,
+                                      limitedBy: limit) else {
         return .value(builder.result)
       }
 
@@ -1293,7 +1341,7 @@ extension PyStringImpl {
   }
 
   internal func center(width: Int, fill: Element) -> Builder.Result {
-    let marg = width - self.scalars.count
+    let marg = width - self.count
     guard marg > 0 else {
       var builder = Builder()
       builder.append(contentsOf: self.scalars)
@@ -1324,7 +1372,7 @@ extension PyStringImpl {
   }
 
   internal func ljust(width: Int, fill: Element) -> Builder.Result {
-    let count = width - self.scalars.count
+    let count = width - self.count
     return self.pad(left: 0, right: count, fill: fill)
   }
 
@@ -1347,7 +1395,7 @@ extension PyStringImpl {
   }
 
   internal func rjust(width: Int, fill: Element) -> Builder.Result {
-    let count = width - self.scalars.count
+    let count = width - self.count
     return self.pad(left: count, right: 0, fill: fill)
   }
 
@@ -1404,6 +1452,12 @@ extension PyStringImpl {
 
 // MARK: - Split
 
+/// Parser for 'split' method.
+private let splitArguments = ArgumentParser.createOrTrap(
+  arguments: ["sep", "maxsplit"],
+  format: "|OO:split"
+)
+
 private enum SplitSeparator<T> {
   case whitespace
   case some(T)
@@ -1412,12 +1466,23 @@ private enum SplitSeparator<T> {
 
 extension PyStringImpl {
 
-  internal func split(separator: PyObject?,
-                      maxCount: PyObject?) -> PyResult<[Scalars.SubSequence]> {
-    if self.isEmpty {
-      return .value([])
-    }
+  internal func split(args: [PyObject],
+                      kwargs: PyDictData?) -> PyResult<[SubSequence]> {
+    switch splitArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 2, "Invalid optional argument count.")
 
+      let sep = binding.optional(at: 0)
+      let maxCount = binding.optional(at: 1)
+      return self.split(separator: sep, maxCount: maxCount)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func split(separator: PyObject?,
+                      maxCount: PyObject?) -> PyResult<[SubSequence]> {
     var count: Int
     switch self.parseSplitMaxCount(maxCount) {
     case let .value(c): count = c
@@ -1434,12 +1499,13 @@ extension PyStringImpl {
     }
   }
 
-  internal func split(separator: Self, maxCount: Int) -> [Scalars.SubSequence] {
-    let sepScalars = separator.scalars
-    let sepCount = sepScalars.count
+  internal func split(separator: Self, maxCount: Int) -> [SubSequence] {
+    if self.count < separator.count {
+      return [self.asSubSequence]
+    }
 
-    var result = [Scalars.SubSequence]()
-    var index = self.scalars.startIndex
+    var result = [SubSequence]()
+    var index = self.startIndex
 
     var remainingCount = maxCount
     while remainingCount > 0 {
@@ -1447,82 +1513,78 @@ extension PyStringImpl {
 
       // Advance index until the end of the group
       let groupStart = index
-      while index != self.scalars.endIndex {
-        if self.scalars[index...].starts(with: sepScalars) {
-          break // we found separator, break while
-        }
+      self.formIndex(after: &index) { !self[$0...].starts(with: separator.scalars) }
 
-        self.scalars.formIndex(after: &index)
-      }
+      result.append(self[groupStart..<index])
 
-      if index == self.scalars.endIndex {
-        break
-      }
-
-      // If we start with the `sep` then don't add it, just advance
-      if index != self.scalars.startIndex {
-        result.append(self.scalars[groupStart..<index])
+      if index == self.endIndex {
+        return result
       }
 
       // Move index after `sep`
-      index = self.scalars.index(index, offsetBy: sepCount)
+      index = self.index(index, offsetBy: separator.count)
     }
 
-    result.append(self.scalars[index...])
+    if index != self.endIndex {
+      result.append(self[index...])
+    }
+
     return result
   }
 
-  internal func splitWhitespace(maxCount: Int) -> [Scalars.SubSequence] {
-    var result = [Scalars.SubSequence]()
-    var index = self.scalars.startIndex
+  internal func splitWhitespace(maxCount: Int) -> [SubSequence] {
+    var result = [SubSequence]()
+    var index = self.startIndex
 
     var remainingCount = maxCount
     while remainingCount > 0 {
       defer { remainingCount -= 1 }
 
       // Consume whitespaces
-      while index != self.scalars.endIndex && Self.isWhitespace(self.scalars[index]) {
-        self.scalars.formIndex(after: &index)
-      }
+      self.formIndex(after: &index) { Self.isWhitespace(self[$0]) }
 
-      if index == self.scalars.endIndex {
-        break
+      if index == self.endIndex {
+        return result
       }
 
       // Consume group
       let groupStart = index
-      while index != self.scalars.endIndex && !Self.isWhitespace(self.scalars[index]) {
-        self.scalars.formIndex(after: &index)
-      }
+      self.formIndex(after: &index) { !Self.isWhitespace(self[$0]) }
 
-      let s = index == self.scalars.endIndex ?
-        self.scalars[groupStart...] :
-        self.scalars[groupStart...index]
-
+      let s = self[groupStart..<index]
       result.append(s)
     }
 
-    if index != self.scalars.endIndex {
+    if index != self.endIndex {
       // Only occurs when maxcount was reached
       // Skip any remaining whitespace and copy to end of string
-      while index != self.scalars.endIndex && Self.isWhitespace(self.scalars[index]) {
-        self.scalars.formIndex(after: &index)
-      }
+      self.formIndex(after: &index) { Self.isWhitespace(self[$0]) }
 
-      if index != self.scalars.endIndex {
-        result.append(self.scalars[index...])
+      if index != self.endIndex {
+        result.append(self[index...])
       }
     }
 
     return result
   }
 
-  internal func rsplit(separator: PyObject?,
-                       maxCount: PyObject?) -> PyResult<[Scalars.SubSequence]> {
-    if self.isEmpty {
-      return .value([])
-    }
+  internal func rsplit(args: [PyObject],
+                       kwargs: PyDictData?) -> PyResult<[SubSequence]> {
+    switch splitArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 2, "Invalid optional argument count.")
 
+      let sep = binding.optional(at: 0)
+      let maxCount = binding.optional(at: 1)
+      return self.rsplit(separator: sep, maxCount: maxCount)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func rsplit(separator: PyObject?,
+                       maxCount: PyObject?) -> PyResult<[SubSequence]> {
     var count: Int
     switch self.parseSplitMaxCount(maxCount) {
     case let .value(c): count = c
@@ -1539,37 +1601,35 @@ extension PyStringImpl {
     }
   }
 
-  internal func rsplit(separator: Self, maxCount: Int) -> [Scalars.SubSequence] {
-    let sepScalars = separator.scalars
-    let sepCount = sepScalars.count
+  internal func rsplit(separator: Self, maxCount: Int) -> [SubSequence] {
+    if self.count < separator.count {
+      return [self.asSubSequence]
+    }
 
-    var result = [Scalars.SubSequence]()
-    var index = self.scalars.index(before: self.scalars.endIndex)
+    var result = [SubSequence]()
+    var index = scalars.endIndex
+
+    // `endIndex` is AFTER the collection
+    scalars.formIndex(before: &index)
 
     var remainingCount = maxCount
     while remainingCount > 0 {
       defer { remainingCount -= 1 }
 
       let groupEnd = index // Include character at this index!
-      while index != self.scalars.startIndex {
-        if self.scalars[index...].starts(with: sepScalars) {
-          break // we found separator, break while
-        }
-
-        self.scalars.formIndex(before: &index)
-      }
+      self.formIndex(before: &index) { !self[$0...].starts(with: separator.scalars) }
 
       // Consume group
-      let groupStart = self.scalars.index(index, offsetBy: sepCount)
-      result.append(self.scalars[groupStart...groupEnd])
+      let groupStart = self.index(index, offsetBy: separator.count)
+      result.append(self[groupStart...groupEnd])
 
-      if index == self.scalars.startIndex {
+      if index == self.startIndex {
         break
       }
     }
 
-    if index != self.scalars.startIndex {
-      result.append(self.scalars[self.scalars.startIndex..<index])
+    if index != self.startIndex {
+      result.append(self[self.startIndex..<index])
     }
 
     // Because we were going from end we appended in a reverse order.
@@ -1580,51 +1640,51 @@ extension PyStringImpl {
     return result
   }
 
-  internal func rsplitWhitespace(maxCount: Int) -> [Scalars.SubSequence] {
-    var result = [Scalars.SubSequence]()
-    var index = self.scalars.endIndex
-    self.scalars.formIndex(before: &index)
+  internal func rsplitWhitespace(maxCount: Int) -> [SubSequence] {
+    var result = [SubSequence]()
+    var index = self.endIndex
+    self.formIndex(before: &index)
 
     var remainingCount = maxCount
     while remainingCount > 0 {
       defer { remainingCount -= 1 }
 
       // Consume whitespaces
-      while index != self.scalars.startIndex && Self.isWhitespace(self.scalars[index]) {
-        self.scalars.formIndex(before: &index)
-      }
+      self.formIndex(before: &index) { Self.isWhitespace(self[$0]) }
 
-      if index == self.scalars.startIndex {
+      if index == self.startIndex {
         break
       }
 
       // Consume group
       let groupEnd = index // Include character at this index!
       var groupStart = index
-      while index != self.scalars.startIndex && !Self.isWhitespace(self.scalars[index]) {
-        groupStart = index // `groupStart` = index to the right of `index`
-        self.scalars.formIndex(before: &index)
+      while index != self.startIndex && !Self.isWhitespace(self[index]) {
+        groupStart = index // 'groupStart' is always 1 step behind 'index'
+        self.formIndex(before: &index)
       }
 
       /// Index may be non-whitespace when we arrive at startIndex
-      let s = Self.isWhitespace(self.scalars[index]) ?
-        self.scalars[groupStart...groupEnd] :
-        self.scalars[index...groupEnd]
+      let s = Self.isWhitespace(self[index]) ?
+        self[groupStart...groupEnd] :
+        self[index...groupEnd]
 
       result.append(s)
     }
 
-    if index != self.scalars.startIndex {
-      while index != self.scalars.startIndex && Self.isWhitespace(self.scalars[index]) {
-        self.scalars.formIndex(before: &index)
-      }
-
+    if index != self.startIndex {
       // Only occurs when maxcount was reached
       // Skip any remaining whitespace and copy to end of string
-      result.append(self.scalars[...index])
+      self.formIndex(before: &index) { Self.isWhitespace(self[$0]) }
+      result.append(self[...index])
     }
 
     return result
+  }
+
+  // `SubSequence` that contains the whole string
+  private var asSubSequence: SubSequence {
+    return self[self.startIndex...]
   }
 
   private func parseSplitSeparator(_ separator: PyObject?) -> SplitSeparator<Self> {
@@ -1667,9 +1727,28 @@ extension PyStringImpl {
 
 // MARK: - Split lines
 
+private let splitlinesArguments = ArgumentParser.createOrTrap(
+  arguments: ["keepends"],
+  format: "|O:splitlines"
+)
+
 extension PyStringImpl {
 
-  internal func splitLines(keepEnds: PyObject?) -> PyResult<[Scalars.SubSequence]> {
+  internal func splitLines(args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<[SubSequence]> {
+    switch splitlinesArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 0, "Invalid required argument count.")
+      assert(binding.optionalCount == 1, "Invalid optional argument count.")
+
+      let keepEnds = binding.optional(at: 0)
+      return self.splitLines(keepEnds: keepEnds)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func splitLines(keepEnds: PyObject?) -> PyResult<[SubSequence]> {
     guard let keepEnds = keepEnds else {
       return .value(self.splitLines(keepEnds: false))
     }
@@ -1683,42 +1762,40 @@ extension PyStringImpl {
     return .typeError("keepends must be integer or bool, not \(keepEnds.typeName)")
   }
 
-  internal func splitLines(keepEnds: Bool) -> [Scalars.SubSequence] {
-    var result = [Scalars.SubSequence]()
-    var index = self.scalars.startIndex
+  internal func splitLines(keepEnds: Bool) -> [SubSequence] {
+    var result = [SubSequence]()
+    var index = self.startIndex
 
-    while index != self.scalars.endIndex {
+    while index != self.endIndex {
       let groupStart = index
 
       // Advance 'till line break
-      while index != self.scalars.endIndex && !Self.isLineBreak(self.scalars[index]) {
-        self.scalars.formIndex(after: &index)
-      }
+      self.formIndex(after: &index) { !Self.isLineBreak(self[$0]) }
 
       // 'index' is either new line or 'endIndex'
       let lineExcludingNewLine = groupStart..<index
 
       // Consume CRLF as one line break
-      if index != self.scalars.endIndex {
-        let after = self.scalars.index(after: index)
-        if after != self.scalars.endIndex
-          && Self.toScalar(self.scalars[index]) == "\r"
-          && Self.toScalar(self.scalars[after]) == "\n" {
+      if index != self.endIndex {
+        let after = self.index(after: index)
+        if after != self.endIndex
+          && Self.toUnicodeScalar(self[index]) == "\r"
+          && Self.toUnicodeScalar(self[after]) == "\n" {
 
           index = after
         }
       }
 
       // Go to the start of the next group
-      if index != self.scalars.endIndex {
-        self.scalars.formIndex(after: &index)
+      if index != self.endIndex {
+        self.formIndex(after: &index)
       }
 
       // 'index' is either 1st character of next group or end
       let lineIncludingNewLine = groupStart..<index
 
       let line = keepEnds ? lineIncludingNewLine : lineExcludingNewLine
-      result.append(self.scalars[line])
+      result.append(self[line])
     }
 
     return result
@@ -1816,7 +1893,7 @@ extension PyStringImpl {
     var linePos = 0
 
     for element in self.scalars {
-      let scalar = Self.toScalar(element)
+      let scalar = Self.toUnicodeScalar(element)
       switch scalar {
       case "\t":
         if tabSize > 0 {
@@ -1874,7 +1951,18 @@ extension PyStringImpl {
     }
   }
 
-  private func count(in collection: Scalars.SubSequence, element: Self) -> BigInt {
+  /// STRINGLIB(count)(const STRINGLIB_CHAR* str, Py_ssize_t str_len,
+  ///                  const STRINGLIB_CHAR* sub, Py_ssize_t sub_len,
+  ///                  Py_ssize_t maxcount)
+  private func count(in collection: SubSequence, element: Self) -> BigInt {
+    if collection.isEmpty {
+      return 0
+    }
+
+    if element.isEmpty {
+      return BigInt(collection.count + 1)
+    }
+
     var result = BigInt(0)
     var index = collection.startIndex
 
@@ -1882,7 +1970,9 @@ extension PyStringImpl {
       let s = collection[index...]
       if s.starts(with: element.scalars) {
         result += 1
-        index = self.index(index, offsetBy: element.count)
+
+        // we know that 'element.count' != 0, because we cehcked 'element.isEmpty'
+        index = collection.index(index, offsetBy: element.count)
       } else {
         self.formIndex(after: &index)
       }
@@ -1945,28 +2035,32 @@ extension PyStringImpl {
     return .value(result)
   }
 
-  internal func replace(old: Self, new: Self, count: Int) -> Builder.Result {
+  private func replace(old: Self, new: Self, count: Int) -> Builder.Result {
+    var builder = Builder()
+
+    // swiftlint:disable:next empty_count
+    guard count != 0 else {
+      builder.append(contentsOf: self[self.startIndex...])
+      return builder.result
+    }
+
+    var index = self.startIndex
     var remainingCount = count
 
-    let oldScalars = old.scalars
-    let oldCount = oldScalars.count
-
-    var builder = Builder()
-    var index = self.scalars.startIndex
-
-    while index != self.scalars.endIndex {
-      let s = self.scalars[index...]
-      guard s.starts(with: oldScalars) else {
-        builder.append(self.scalars[index])
+    while index != self.endIndex {
+      let s = self[index...]
+      guard s.starts(with: old.scalars) else {
+        builder.append(self[index])
+        self.formIndex(after: &index)
         continue
       }
 
       builder.append(contentsOf: new.scalars)
-      index = self.scalars.index(index, offsetBy: oldCount)
+      index = self.index(index, offsetBy: old.count)
 
       remainingCount -= 1
       if remainingCount <= 0 {
-        builder.append(contentsOf: self.scalars[index...])
+        builder.append(contentsOf: self[index...])
         break
       }
     }
@@ -2011,7 +2105,7 @@ extension PyStringImpl {
   internal func zfill(width: Int) -> Builder.Result {
     var builder = Builder()
 
-    let fillCount = width - self.scalars.count
+    let fillCount = width - self.count
     guard fillCount > 0 else {
       builder.append(contentsOf: self.scalars)
       return builder.result
@@ -2023,7 +2117,7 @@ extension PyStringImpl {
       return builder.result
     }
 
-    let firstScalar = Self.toScalar(first)
+    let firstScalar = Self.toUnicodeScalar(first)
     let hasSign = firstScalar == "+" || firstScalar == "-"
 
     if hasSign {
@@ -2120,7 +2214,7 @@ extension PyStringImpl {
   }
 
   @available(*, deprecated, message: "Use only for debug")
-  private func toString(_ value: Self.Scalars.SubSequence) -> String {
+  private func toString(_ value: Self.SubSequence) -> String {
     // swiftlint:disable force_cast
     let view = value as! String.SubSequence.UnicodeScalarView
     return String(view)

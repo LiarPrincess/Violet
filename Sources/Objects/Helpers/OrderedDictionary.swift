@@ -102,7 +102,6 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   // MARK: - Properties
 
   /// Data held in dictinary.
-  /// `nil` means that there was an entry here but it was deleted.
   internal fileprivate(set) var entries: [EntryOrDeleted]
   /// Actual hash table of `self.size` entries. Holds indices to `self.entries`.
   /// Indices must be: `0 <= indice < usableFraction(self.size)`.

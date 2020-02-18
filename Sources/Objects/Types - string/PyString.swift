@@ -545,6 +545,12 @@ public class PyString: PyObject {
   // MARK: - Split
 
   // sourcery: pymethod = split
+  internal func split(args: [PyObject],
+                      kwargs: PyDictData?) -> PyResult<[String]> {
+    return self.data.split(args: args, kwargs: kwargs)
+      .map(self.toStringArray(_:))
+  }
+
   internal func split(separator: PyObject?,
                       maxCount: PyObject?) -> PyResult<[String]> {
     return self.data.split(separator: separator, maxCount: maxCount)
@@ -552,6 +558,12 @@ public class PyString: PyObject {
   }
 
   // sourcery: pymethod = rsplit
+  internal func rsplit(args: [PyObject],
+                       kwargs: PyDictData?) -> PyResult<[String]> {
+    return self.data.rsplit(args: args, kwargs: kwargs)
+      .map(self.toStringArray(_:))
+  }
+
   internal func rsplit(separator: PyObject?,
                        maxCount: PyObject?) -> PyResult<[String]> {
     return self.data.rsplit(separator: separator, maxCount: maxCount)
@@ -559,6 +571,12 @@ public class PyString: PyObject {
   }
 
   // sourcery: pymethod = splitlines
+  internal func splitLines(args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<[String]> {
+    return self.data.splitLines(args: args, kwargs: kwargs)
+      .map(self.toStringArray(_:))
+  }
+
   internal func splitLines(keepEnds: PyObject?) -> PyResult<[String]> {
     return self.data.splitLines(keepEnds: keepEnds)
       .map(self.toStringArray(_:))

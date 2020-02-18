@@ -58,7 +58,7 @@ internal struct PyStringData: PyStringImpl, CustomStringConvertible {
   internal static let defaultFill: UnicodeScalar = " "
   internal static let zFill: UnicodeScalar = "0"
 
-  internal static func toScalar(_ element: UnicodeScalar) -> UnicodeScalar {
+  internal static func toUnicodeScalar(_ element: UnicodeScalar) -> UnicodeScalar {
     return element
   }
 

@@ -476,18 +476,33 @@ public class PyByteArray: PyObject, PyBytesType {
   // MARK: - Split
 
   // sourcery: pymethod = split
+  internal func split(args: [PyObject],
+                      kwargs: PyDictData?) -> PyResult<[Data]> {
+    return self.data.split(args: args, kwargs: kwargs)
+  }
+
   internal func split(separator: PyObject?,
                       maxCount: PyObject?) -> PyResult<[Data]> {
     return self.data.split(separator: separator, maxCount: maxCount)
   }
 
   // sourcery: pymethod = rsplit
+  internal func rsplit(args: [PyObject],
+                       kwargs: PyDictData?) -> PyResult<[Data]> {
+    return self.data.rsplit(args: args, kwargs: kwargs)
+  }
+
   internal func rsplit(separator: PyObject?,
                        maxCount: PyObject?) -> PyResult<[Data]> {
     return self.data.rsplit(separator: separator, maxCount: maxCount)
   }
 
   // sourcery: pymethod = splitlines
+  internal func splitLines(args: [PyObject],
+                           kwargs: PyDictData?) -> PyResult<[Data]> {
+    return self.data.splitLines(args: args, kwargs: kwargs)
+  }
+
   internal func splitLines(keepEnds: PyObject?) -> PyResult<[Data]> {
     return self.data.splitLines(keepEnds: keepEnds)
   }

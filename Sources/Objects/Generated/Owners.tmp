@@ -66,7 +66,7 @@ PyBuiltinFunction|PyObject|func|__hash__|hash() -> HashResult
 PyBuiltinFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinFunction|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyBuiltinFunction|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
-PyBuiltinFunction|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyBuiltinFunction|PyObject|func|__call__|call(args: [PyObject],                   kwargs: PyDictData?) -> PyResult<PyObject>
 PyBuiltinMethod|PyObject|get|__name__|getName() -> String
 PyBuiltinMethod|PyObject|get|__qualname__|getQualname() -> String
 PyBuiltinMethod|PyObject|get|__text_signature__|getTextSignature() -> String?
@@ -83,7 +83,7 @@ PyBuiltinMethod|PyObject|func|__hash__|hash() -> HashResult
 PyBuiltinMethod|PyObject|func|__repr__|repr() -> PyResult<String>
 PyBuiltinMethod|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyBuiltinMethod|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
-PyBuiltinMethod|PyObject|func|__call__|call(args: [PyObject],                     kwargs: PyDictData?) -> PyResult<PyObject>
+PyBuiltinMethod|PyObject|func|__call__|call(args: [PyObject],                   kwargs: PyDictData?) -> PyResult<PyObject>
 PyByteArray|PyObject|get|__class__|getClass() -> PyType
 
 PyByteArray|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
@@ -124,9 +124,9 @@ PyByteArray|PyObject|func|capitalize|capitalize() -> Data
 PyByteArray|PyObject|func|center|center(width: PyObject,                       fillChar: PyObject?) -> PyResult<Data>
 PyByteArray|PyObject|func|ljust|ljust(width: PyObject,                      fillChar: PyObject?) -> PyResult<Data>
 PyByteArray|PyObject|func|rjust|rjust(width: PyObject,                      fillChar: PyObject?) -> PyResult<Data>
-PyByteArray|PyObject|func|split|split(separator: PyObject?,                      maxCount: PyObject?) -> PyResult<[Data]>
-PyByteArray|PyObject|func|rsplit|rsplit(separator: PyObject?,                       maxCount: PyObject?) -> PyResult<[Data]>
-PyByteArray|PyObject|func|splitlines|splitLines(keepEnds: PyObject?) -> PyResult<[Data]>
+PyByteArray|PyObject|func|split|split(args: [PyObject],                      kwargs: PyDictData?) -> PyResult<[Data]>
+PyByteArray|PyObject|func|rsplit|rsplit(args: [PyObject],                       kwargs: PyDictData?) -> PyResult<[Data]>
+PyByteArray|PyObject|func|splitlines|splitLines(args: [PyObject],                           kwargs: PyDictData?) -> PyResult<[Data]>
 PyByteArray|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTuple>
 PyByteArray|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
 PyByteArray|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<Data>
@@ -196,9 +196,9 @@ PyBytes|PyObject|func|capitalize|capitalize() -> Data
 PyBytes|PyObject|func|center|center(width: PyObject,                       fillChar: PyObject?) -> PyResult<Data>
 PyBytes|PyObject|func|ljust|ljust(width: PyObject,                      fillChar: PyObject?) -> PyResult<Data>
 PyBytes|PyObject|func|rjust|rjust(width: PyObject,                      fillChar: PyObject?) -> PyResult<Data>
-PyBytes|PyObject|func|split|split(separator: PyObject?,                      maxCount: PyObject?) -> PyResult<[Data]>
-PyBytes|PyObject|func|rsplit|rsplit(separator: PyObject?,                       maxCount: PyObject?) -> PyResult<[Data]>
-PyBytes|PyObject|func|splitlines|splitLines(keepEnds: PyObject?) -> PyResult<[Data]>
+PyBytes|PyObject|func|split|split(args: [PyObject],                      kwargs: PyDictData?) -> PyResult<[Data]>
+PyBytes|PyObject|func|rsplit|rsplit(args: [PyObject],                       kwargs: PyDictData?) -> PyResult<[Data]>
+PyBytes|PyObject|func|splitlines|splitLines(args: [PyObject],                           kwargs: PyDictData?) -> PyResult<[Data]>
 PyBytes|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTuple>
 PyBytes|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
 PyBytes|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<Data>
@@ -770,9 +770,9 @@ PyString|PyObject|func|capitalize|capitalize() -> String
 PyString|PyObject|func|center|center(width: PyObject,                       fillChar: PyObject?) -> PyResult<String>
 PyString|PyObject|func|ljust|ljust(width: PyObject,                      fillChar: PyObject?) -> PyResult<String>
 PyString|PyObject|func|rjust|rjust(width: PyObject,                      fillChar: PyObject?) -> PyResult<String>
-PyString|PyObject|func|split|split(separator: PyObject?,                      maxCount: PyObject?) -> PyResult<[String]>
-PyString|PyObject|func|rsplit|rsplit(separator: PyObject?,                       maxCount: PyObject?) -> PyResult<[String]>
-PyString|PyObject|func|splitlines|splitLines(keepEnds: PyObject?) -> PyResult<[String]>
+PyString|PyObject|func|split|split(args: [PyObject],                      kwargs: PyDictData?) -> PyResult<[String]>
+PyString|PyObject|func|rsplit|rsplit(args: [PyObject],                       kwargs: PyDictData?) -> PyResult<[String]>
+PyString|PyObject|func|splitlines|splitLines(args: [PyObject],                           kwargs: PyDictData?) -> PyResult<[String]>
 PyString|PyObject|func|partition|partition(separator: PyObject) -> PyResult<PyTuple>
 PyString|PyObject|func|rpartition|rpartition(separator: PyObject) -> PyResult<PyTuple>
 PyString|PyObject|func|expandtabs|expandTabs(tabSize: PyObject?) -> PyResult<String>
