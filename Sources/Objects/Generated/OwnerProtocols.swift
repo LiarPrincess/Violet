@@ -41,6 +41,7 @@ protocol StopGetterOwner { func getStop() -> PyObject }
 protocol __abs__Owner { func abs() -> PyObject }
 protocol __add__Owner { func add(_ other: PyObject) -> PyResult<PyObject> }
 protocol __and__Owner { func and(_ other: PyObject) -> PyResult<PyObject> }
+protocol __annotations__GetterOwner { func getAnnotations() -> PyObject }
 protocol __base__GetterOwner { func getBase() -> PyType? }
 protocol __bases__GetterOwner { func getBases() -> PyTuple }
 protocol __bases__SetterOwner { func setBases(_ value: PyObject?) -> PyResult<()> }
@@ -50,11 +51,13 @@ protocol __cause__GetterOwner { func getCause() -> PyObject? }
 protocol __cause__SetterOwner { func setCause(_ value: PyObject?) -> PyResult<()> }
 protocol __ceil__Owner { func ceil() -> PyObject }
 protocol __class__GetterOwner { func getClass() -> PyType }
+protocol __closure__GetterOwner { func getClosure() -> PyObject }
 protocol __code__GetterOwner { func getCode() -> PyCode }
 protocol __complex__Owner { func asComplex() -> PyObject }
 protocol __contains__Owner { func contains(_ element: PyObject) -> PyResult<Bool> }
 protocol __context__GetterOwner { func getContext() -> PyBaseException? }
 protocol __context__SetterOwner { func setContext(_ value: PyObject?) -> PyResult<()> }
+protocol __defaults__GetterOwner { func getDefaults() -> PyObject }
 protocol __del__Owner { func del() -> PyResult<PyNone> }
 protocol __delete__Owner { func del(object: PyObject) -> PyResult<PyObject> }
 protocol __delitem__Owner { func delItem(at index: PyObject) -> PyResult<PyNone> }
@@ -71,6 +74,7 @@ protocol __func__Owner { func getFunc() -> PyFunction }
 protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
 protocol __get__Owner { func get(object: PyObject, type: PyObject) -> PyResult<PyObject> }
 protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
+protocol __globals__GetterOwner { func getGlobals() -> Attributes }
 protocol __gt__Owner { func isGreater(_ other: PyObject) -> CompareResult }
 protocol __hash__Owner { func hash() -> HashResult }
 protocol __iadd__Owner { func iadd(_ other: PyObject) -> PyResult<PyObject> }
@@ -91,6 +95,7 @@ protocol __isub__Owner { func isub(_ other: PyObject) -> PyResult<PyObject> }
 protocol __iter__Owner { func iter() -> PyObject }
 protocol __itruediv__Owner { func itruediv(_ other: PyObject) -> PyResult<PyObject> }
 protocol __ixor__Owner { func ixor(_ other: PyObject) -> PyResult<PyObject> }
+protocol __kwdefaults__GetterOwner { func getKeywordDefaults() -> PyObject }
 protocol __le__Owner { func isLessEqual(_ other: PyObject) -> CompareResult }
 protocol __len__Owner { func getLength() -> BigInt }
 protocol __lshift__Owner { func lshift(_ other: PyObject) -> PyResult<PyObject> }

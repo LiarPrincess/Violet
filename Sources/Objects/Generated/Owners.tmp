@@ -447,6 +447,11 @@ PyFunction|PyObject|get|__name__|getName() -> String
 PyFunction|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__qualname__|getQualname() -> String
 PyFunction|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
+PyFunction|PyObject|get|__defaults__|getDefaults() -> PyObject
+PyFunction|PyObject|get|__kwdefaults__|getKeywordDefaults() -> PyObject
+PyFunction|PyObject|get|__closure__|getClosure() -> PyObject
+PyFunction|PyObject|get|__globals__|getGlobals() -> Attributes
+PyFunction|PyObject|get|__annotations__|getAnnotations() -> PyObject
 PyFunction|PyObject|get|__code__|getCode() -> PyCode
 PyFunction|PyObject|get|__doc__|getDoc() -> PyResult<PyObject>
 PyFunction|PyObject|get|__module__|getModule() -> PyResult<String>

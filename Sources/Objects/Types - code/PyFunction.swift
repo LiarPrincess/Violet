@@ -25,9 +25,9 @@ public class PyFunction: PyObject {
     """
 
   /// The `__name__` attribute, a string object
-  internal var name: String
+  internal private(set) var name: String
   /// The qualified name
-  internal var qualname: String
+  internal private(set) var qualname: String
   /// The `__doc__` attribute, can be anything
   internal let doc: String?
   /// The `__dict__` attribute, a dict or NULL
@@ -37,20 +37,15 @@ public class PyFunction: PyObject {
   /// A code object, the `__code__` attribute
   internal let code: PyCode
 
-  internal let globals: Attributes
-  internal let defaults: PyTuple?
-  internal let kwdefaults: PyDict?
-  internal let closure: PyTuple?
+  internal private(set) var globals: Attributes
+  internal private(set) var defaults: PyTuple?
+  internal private(set) var kwdefaults: PyDict?
+  internal private(set) var closure: PyTuple?
+  internal private(set) var annotations: PyDict?
 
   override public var description: String {
     return "PyFunction(name: \(self.name), qualname: \(self.qualname))"
   }
-
-  // TODO: Whats up with these?
-  public func setDefaults(_ value: PyObject) { }
-  public func setKeywordDefaults(_ value: PyObject) { }
-  public func setClosure(_ value: PyObject) { }
-  public func setAnnotations(_ value: PyObject) { }
 
   // MARK: - Init
 
@@ -68,6 +63,7 @@ public class PyFunction: PyObject {
     self.defaults = nil
     self.kwdefaults = nil
     self.closure = nil
+    self.annotations = nil
 
     switch code.codeObject.constants.first {
     case let .some(.string(s)): self.doc = s
@@ -129,6 +125,99 @@ public class PyFunction: PyObject {
 
     self.qualname = valueString.value
     return .value()
+  }
+
+  // MARK: - Defaults
+
+  // sourcery: pyproperty = __defaults__
+  public func getDefaults() -> PyObject {
+    return self.defaults ?? Py.none
+  }
+
+  public func setDefaults(_ object: PyObject) -> PyResult<PyNone> {
+    if object.isNone {
+      self.defaults = nil
+      return .value(Py.none)
+    }
+
+    if let tuple = object as? PyTuple {
+      self.defaults = tuple
+      return .value(Py.none)
+    }
+
+    return .systemError("non-tuple default args")
+  }
+
+  // MARK: - Keyword defaults
+
+  // sourcery: pyproperty = __kwdefaults__
+  public func getKeywordDefaults() -> PyObject {
+    return self.kwdefaults ?? Py.none
+  }
+
+  public func setKeywordDefaults(_ object: PyObject) -> PyResult<PyNone> {
+    if object.isNone {
+      self.kwdefaults = nil
+      return .value(Py.none)
+    }
+
+    if let dict = object as? PyDict {
+      self.kwdefaults = dict
+      return .value(Py.none)
+    }
+
+    return .systemError("non-dict keyword only default args")
+  }
+
+  // MARK: - Closure
+
+  // sourcery: pyproperty = __closure__
+  public func getClosure() -> PyObject {
+    return self.closure ?? Py.none
+  }
+
+  /// Note that there is not `Python` setter for closure.
+  /// It can be only set from `Swift`.
+  public func setClosure(_ object: PyObject) -> PyResult<PyNone> {
+    if object.isNone {
+      self.closure = nil
+      return .value(Py.none)
+    }
+
+    if let tuple = object as? PyTuple {
+      self.closure = tuple
+      return .value(Py.none)
+    }
+
+    return .systemError("expected tuple for closure, got '\(object.typeName)'")
+  }
+
+  // MARK: - Globals
+
+  // sourcery: pyproperty = __globals__
+  public func getGlobals() -> Attributes {
+    return self.globals
+  }
+
+  // MARK: - Annotations
+
+  // sourcery: pyproperty = __annotations__
+  public func getAnnotations() -> PyObject {
+    return self.closure ?? Py.none
+  }
+
+  public func setAnnotations(_ object: PyObject) -> PyResult<PyNone> {
+    if object.isNone {
+      self.annotations = nil
+      return .value(Py.none)
+    }
+
+    if let dict = object as? PyDict {
+      self.annotations = dict
+      return .value(Py.none)
+    }
+
+    return .systemError("non-dict annotations")
   }
 
   // MARK: - Code

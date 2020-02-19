@@ -17,6 +17,10 @@ type
   Why do we even have this?
     __doc__
 
+builtin_function_or_method
+  Why do we even have this?
+    __get__
+
 bytearray
   Unimplemented:
     fromhex - <class 'builtin_function_or_method'>
@@ -88,6 +92,10 @@ dict_keys
     __xor__
     isdisjoint
 
+ellipsis
+  Why do we even have this?
+    __reduce__
+
 float
   Unimplemented:
     __getformat__ - <class 'builtin_function_or_method'>
@@ -100,12 +108,7 @@ float
 function
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
-    __annotations__
     __call__
-    __closure__
-    __defaults__
-    __globals__
-    __kwdefaults__
   Why do we even have this?
     __doc__
 
@@ -123,6 +126,10 @@ method
   Unimplemented:
     __new__ - <class 'builtin_function_or_method'>
     __call__
+
+NoneType
+  Why do we even have this?
+    __getattribute__
 
 property
   Unimplemented:

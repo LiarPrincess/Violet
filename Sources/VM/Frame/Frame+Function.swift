@@ -31,26 +31,34 @@ extension Frame {
 
     if flags.contains(.hasFreeVariables) {
       let value = self.stack.pop()
-      assert(value is PyTuple)
-      fn.setClosure(value)
+      switch fn.setClosure(value) {
+      case .value: break
+      case .error(let e): return .unwind(.exception(e))
+      }
     }
 
     if flags.contains(.hasAnnotations) {
       let value = self.stack.pop()
-      assert(value is PyDict)
-      fn.setAnnotations(value)
+      switch fn.setAnnotations(value) {
+      case .value: break
+      case .error(let e): return .unwind(.exception(e))
+      }
     }
 
     if flags.contains(.hasKwOnlyArgDefaults) {
       let value = self.stack.pop()
-      assert(value is PyDict)
-      fn.setKeywordDefaults(value)
+      switch fn.setKeywordDefaults(value) {
+      case .value: break
+      case .error(let e): return .unwind(.exception(e))
+      }
     }
 
     if flags.contains(.hasPositionalArgDefaults) {
       let value = self.stack.pop()
-      assert(value is PyTuple)
-      fn.setDefaults(value)
+      switch fn.setDefaults(value) {
+      case .value: break
+      case .error(let e): return .unwind(.exception(e))
+      }
     }
 
     self.stack.push(fn)
