@@ -1112,6 +1112,9 @@ internal enum FillTypes {
 
     let dict = type.getDict()
     dict["__class__"] = PyProperty.wrap(name: "__class__", doc: nil, get: PyRange.getClass, castSelf: Cast.asPyRange)
+    dict["start"] = PyProperty.wrap(name: "start", doc: nil, get: PyRange.getStart, castSelf: Cast.asPyRange)
+    dict["stop"] = PyProperty.wrap(name: "stop", doc: nil, get: PyRange.getStop, castSelf: Cast.asPyRange)
+    dict["step"] = PyProperty.wrap(name: "step", doc: nil, get: PyRange.getStep, castSelf: Cast.asPyRange)
 
     dict["__new__"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRange.pyNew(type:args:kwargs:))
 
@@ -1129,9 +1132,6 @@ internal enum FillTypes {
     dict["__getattribute__"] = PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyRange.getAttribute(name:), castSelf: Cast.asPyRange)
     dict["__contains__"] = PyBuiltinFunction.wrap(name: "__contains__", doc: nil, fn: PyRange.contains(_:), castSelf: Cast.asPyRange)
     dict["__getitem__"] = PyBuiltinFunction.wrap(name: "__getitem__", doc: nil, fn: PyRange.getItem(at:), castSelf: Cast.asPyRange)
-    dict["start"] = PyBuiltinFunction.wrap(name: "start", doc: nil, fn: PyRange.getStart, castSelf: Cast.asPyRange)
-    dict["stop"] = PyBuiltinFunction.wrap(name: "stop", doc: nil, fn: PyRange.getStop, castSelf: Cast.asPyRange)
-    dict["step"] = PyBuiltinFunction.wrap(name: "step", doc: nil, fn: PyRange.getStep, castSelf: Cast.asPyRange)
     dict["__reversed__"] = PyBuiltinFunction.wrap(name: "__reversed__", doc: nil, fn: PyRange.reversed, castSelf: Cast.asPyRange)
     dict["__iter__"] = PyBuiltinFunction.wrap(name: "__iter__", doc: nil, fn: PyRange.iter, castSelf: Cast.asPyRange)
     dict["count"] = PyBuiltinFunction.wrap(name: "count", doc: nil, fn: PyRange.count(_:), castSelf: Cast.asPyRange)

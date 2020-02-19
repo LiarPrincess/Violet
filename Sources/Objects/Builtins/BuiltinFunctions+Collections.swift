@@ -191,7 +191,7 @@ extension BuiltinFunctions {
   }
 
   public func newRange(stop: PyObject) -> PyResult<PyRange> {
-    return IndexHelper.bigInt(stop).flatMap(self.newRange(stop:))
+    return self.extractRangeProperty(stop).flatMap(self.newRange(stop:))
   }
 
   public func newRange(start: BigInt,
@@ -217,14 +217,14 @@ extension BuiltinFunctions {
   public func newRange(start: PyObject,
                        stop: PyObject,
                        step: PyObject?) -> PyResult<PyRange> {
-    let parsedStart: BigInt
-    switch IndexHelper.bigInt(start) {
+    let parsedStart: PyInt
+    switch self.extractRangeProperty(start) {
     case let .value(i): parsedStart = i
     case let .error(e): return .error(e)
     }
 
-    let parsedStop: BigInt
-    switch IndexHelper.bigInt(stop) {
+    let parsedStop: PyInt
+    switch self.extractRangeProperty(stop) {
     case let .value(i): parsedStop = i
     case let .error(e): return .error(e)
     }
@@ -233,13 +233,25 @@ extension BuiltinFunctions {
       return self.newRange(start: parsedStart, stop: parsedStop, step: nil)
     }
 
-    let parsedStep: BigInt
-    switch IndexHelper.bigInt(step) {
+    let parsedStep: PyInt
+    switch self.extractRangeProperty(step) {
     case let .value(i): parsedStep = i
     case let .error(e): return .error(e)
     }
 
     return self.newRange(start: parsedStart, stop: parsedStop, step: parsedStep)
+  }
+
+  private func extractRangeProperty(_ object: PyObject) -> PyResult<PyInt> {
+    // If we are already 'PyInt' then we have to use EXACTLY this value!
+    // >>> i = 2**60 # <-- high value to skip interned values (small int cache)
+    // >>> assert range(i).stop is i
+
+    if let objectInt = object as? PyInt {
+      return .value(objectInt)
+    }
+
+    return IndexHelper.bigInt(object).map(self.newInt)
   }
 
   // MARK: - Enumerate

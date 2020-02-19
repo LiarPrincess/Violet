@@ -119,14 +119,14 @@ internal struct PySequenceData {
     for e in self.elements {
       switch Py.hash(e) {
       case let .value(y):
-        x = (x ^ y) * mult
-        mult += 82_520 + PyHash(2 * self.elements.count)
+        x = (x ^ y) &* mult
+        mult &+= 82_520 + PyHash(2 * self.elements.count)
       case let .error(e):
         return .error(e)
       }
     }
 
-    return .value(x + 97_531)
+    return .value(x &+ 97_531)
   }
 
   // MARK: - Length
@@ -136,7 +136,7 @@ internal struct PySequenceData {
   }
 
   internal var count: Int {
-  return self.elements.count
+    return self.elements.count
   }
 
   // MARK: - Contains

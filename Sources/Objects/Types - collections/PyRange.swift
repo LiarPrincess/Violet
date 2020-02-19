@@ -57,9 +57,7 @@ public class PyRange: PyObject {
       "PyRange.step cannot be 0. Use 'Py.newRange' to handle this case."
     )
 
-    let isGoingUp = start.value <= stop.value
-    let unwrappedStep = step?.value ?? (isGoingUp ? 1 : -1)
-
+    let unwrappedStep = step?.value ?? 1
     let length = PyRange.calculateLength(start: start.value,
                                          stop: stop.value,
                                          step: unwrappedStep)
@@ -303,42 +301,38 @@ public class PyRange: PyObject {
     case let .error(e): return .error(e)
     }
 
-    let subStart: PyInt
-    switch self.getItem(at: indices.start) {
-    case let .value(s): subStart = s
-    case let .error(e): return .error(e)
-    }
-
-    let subStop: PyInt
-    switch self.getItem(at: indices.stop) {
-    case let .value(s): subStop = s
-    case let .error(e): return .error(e)
-    }
-
     let subStep = self.step.value * BigInt(indices.step)
+    let subStart = self.computeItem(at: indices.start)
+    let subStop = self.computeItem(at: indices.stop)
 
     return Py.newRange(start: subStart,
                        stop: subStop,
-                       step: Py.newInt(subStep))
+                       step: subStep)
+  }
+
+  /// static PyObject *
+  /// compute_item(rangeobject *r, PyObject *i)
+  private func computeItem(at index: Int) -> BigInt {
+    return self.start.value + BigInt(index) * self.step.value
   }
 
   // MARK: - Start
 
-  // sourcery: pymethod = start
+  // sourcery: pyproperty = start
   internal func getStart() -> PyObject {
     return self.start
   }
 
   // MARK: - Stop
 
-  // sourcery: pymethod = stop
+  // sourcery: pyproperty = stop
   internal func getStop() -> PyObject {
     return self.stop
   }
 
   // MARK: - Step
 
-  // sourcery: pymethod = step
+  // sourcery: pyproperty = step
   internal func getStep() -> PyObject {
     return self.step
   }

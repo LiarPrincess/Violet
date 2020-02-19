@@ -631,6 +631,9 @@ PyProperty|PyObject|func|__delete__|del(object: PyObject) -> PyResult<PyObject>
 PyProperty|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDictData?) -> PyResult<PyObject>
 PyProperty|PyObject|static_func|__init__|pyInit(zelf: PyProperty,                              args: [PyObject],                              kwargs: PyDictData?) -> PyResult<PyNone>
 PyRange|PyObject|get|__class__|getClass() -> PyType
+PyRange|PyObject|get|start|getStart() -> PyObject
+PyRange|PyObject|get|stop|getStop() -> PyObject
+PyRange|PyObject|get|step|getStep() -> PyObject
 
 PyRange|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
 PyRange|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> CompareResult
@@ -645,9 +648,6 @@ PyRange|PyObject|func|__len__|getLength() -> BigInt
 PyRange|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyRange|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
 PyRange|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
-PyRange|PyObject|func|start|getStart() -> PyObject
-PyRange|PyObject|func|stop|getStop() -> PyObject
-PyRange|PyObject|func|step|getStep() -> PyObject
 PyRange|PyObject|func|__reversed__|reversed() -> PyObject
 PyRange|PyObject|func|__iter__|iter() -> PyObject
 PyRange|PyObject|func|count|count(_ element: PyObject) -> PyResult<BigInt>

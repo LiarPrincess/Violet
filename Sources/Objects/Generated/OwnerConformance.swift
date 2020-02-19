@@ -738,6 +738,9 @@ extension PyProperty:
 
 extension PyRange:
   __class__GetterOwner,
+  StartGetterOwner,
+  StopGetterOwner,
+  StepGetterOwner,
   __eq__Owner,
   __ne__Owner,
   __lt__Owner,
@@ -751,9 +754,6 @@ extension PyRange:
   __getattribute__Owner,
   __contains__Owner,
   __getitem__Owner,
-  startOwner,
-  stopOwner,
-  stepOwner,
   __reversed__Owner,
   __iter__Owner,
   countOwner,

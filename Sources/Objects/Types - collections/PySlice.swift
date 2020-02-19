@@ -203,27 +203,27 @@ public class PySlice: PyObject {
     var step = 1
     switch self.extractIndex(self.step) {
     case .none: break
-    case let .index(value):
+    case .index(let value):
       if value == 0 {
         return .valueError("slice step cannot be zero")
       }
       step = value
-    case let .error(e):
+    case .error(let e):
       return .error(e)
     }
 
     assert(step != 0)
 
     // Find lower and upper bounds for start and stop.
-    let isGoingUp = step > 0
-    let lower = isGoingUp ? 0 : -1
-    let upper = isGoingUp ? length : length - 1
+    let isStepNegative = step < 0
+    let lower = isStepNegative ?  -1 : 0
+    let upper = isStepNegative ? length - 1 : length
 
     // Compute start.
-    var start = isGoingUp ? lower : upper
+    var start = isStepNegative ? upper : lower
     switch self.extractIndex(self.start) {
     case .none: break
-    case let .index(value):
+    case .index(let value):
       start = value
 
       if start < 0 {
@@ -232,15 +232,15 @@ public class PySlice: PyObject {
       } else {
         start = min(start, upper)
       }
-    case let .error(e):
+    case .error(let e):
       return .error(e)
     }
 
     // Compute stop.
-    var stop = isGoingUp ? upper : lower
+    var stop = isStepNegative ? lower : upper
     switch self.extractIndex(self.stop) {
     case .none: break
-    case let .index(value):
+    case .index(let value):
       stop = value
 
       if stop < 0 {
@@ -249,7 +249,7 @@ public class PySlice: PyObject {
       } else {
         stop = min(stop, upper)
       }
-    case let .error(e):
+    case .error(let e):
       return .error(e)
     }
 
