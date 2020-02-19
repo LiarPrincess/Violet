@@ -11,23 +11,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  // MARK: - Function
-
-  /// Pushes a new function object on the stack.
-  ///
-  /// From bottom to top, the consumed stack must consist of values
-  /// if the argument carries a specified flag value
-  /// - `0x01` - has tuple of default values for positional-only
-  ///            and positional-or-keyword parameters in positional order
-  /// - `0x02` - has dictionary of keyword-only parameters default values
-  /// - `0x04` - has annotation dictionary
-  /// - `0x08` - has tuple containing cells for free variables,
-  ///            making a closure the code associated with the function (at TOS1)
-  ///            the qualified name of the function (at TOS)
-  internal func makeFunction(flags: FunctionFlags) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - General
 
   /// Checks whether Annotations is defined in locals(),

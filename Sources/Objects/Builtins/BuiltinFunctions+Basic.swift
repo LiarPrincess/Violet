@@ -92,6 +92,44 @@ extension BuiltinFunctions {
     return PyCode(code: code)
   }
 
+  // MARK: - Function
+
+  public func newFunction(qualname: PyObject,
+                          code: PyObject,
+                          globals: Attributes) -> PyResult<PyFunction> {
+    guard let codeValue = code as? PyCode else {
+      let t = code.typeName
+      return .typeError("function() code must be code, not \(t)")
+    }
+
+    let qualnameValue: String?
+    if qualname is PyNone {
+      qualnameValue = nil
+    } else if let q = qualname as? PyString {
+      qualnameValue = q.value
+    } else {
+      let t = qualname.typeName
+      let msg = "function() qualname must be None or string, not \(t)"
+      return .typeError(msg)
+    }
+
+    let result = self.newFunction(qualname: qualnameValue,
+                                  code: codeValue,
+                                  globals: globals)
+
+    return .value(result)
+  }
+
+  public func newFunction(qualname: String?,
+                          code: PyCode,
+                          globals: Attributes) -> PyFunction {
+    return PyFunction(
+      qualname: qualname,
+      code: code,
+      globals: globals
+    )
+  }
+
   // MARK: - Id
 
   // sourcery: pymethod = id

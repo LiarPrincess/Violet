@@ -46,6 +46,12 @@ public class PyFunction: PyObject {
     return "PyFunction(name: \(self.name), qualname: \(self.qualname))"
   }
 
+  // TODO: Whats up with these?
+  public func setDefaults(_ value: PyObject) { }
+  public func setKeywordDefaults(_ value: PyObject) { }
+  public func setClosure(_ value: PyObject) { }
+  public func setAnnotations(_ value: PyObject) { }
+
   // MARK: - Init
 
   internal init(qualname: String?,

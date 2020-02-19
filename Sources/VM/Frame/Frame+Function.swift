@@ -1,7 +1,61 @@
 import Bytecode
 import Objects
 
+// swiftlint:disable file_length
+
 extension Frame {
+
+  // MARK: - Make function
+
+  /// Pushes a new function object on the stack.
+  ///
+  /// From bottom to top, the consumed stack must consist of values
+  /// if the argument carries a specified flag value
+  /// - `0x01` - has tuple of default values for positional-only
+  ///            and positional-or-keyword parameters in positional order
+  /// - `0x02` - has dictionary of keyword-only parameters default values
+  /// - `0x04` - has annotation dictionary
+  /// - `0x08` - has tuple containing cells for free variables,
+  ///            making a closure the code associated with the function (at TOS1)
+  ///            the qualified name of the function (at TOS)
+  internal func makeFunction(flags: FunctionFlags) -> InstructionResult {
+    let qualname = self.stack.pop()
+    let code = self.stack.pop()
+    let globals = self.globalSymbols
+
+    let fn: PyFunction
+    switch Py.newFunction(qualname: qualname, code: code, globals: globals) {
+    case let .value(f): fn = f
+    case let .error(e): return .unwind(.exception(e))
+    }
+
+    if flags.contains(.hasFreeVariables) {
+      let value = self.stack.pop()
+      assert(value is PyTuple)
+      fn.setClosure(value)
+    }
+
+    if flags.contains(.hasAnnotations) {
+      let value = self.stack.pop()
+      assert(value is PyDict)
+      fn.setAnnotations(value)
+    }
+
+    if flags.contains(.hasKwOnlyArgDefaults) {
+      let value = self.stack.pop()
+      assert(value is PyDict)
+      fn.setKeywordDefaults(value)
+    }
+
+    if flags.contains(.hasPositionalArgDefaults) {
+      let value = self.stack.pop()
+      assert(value is PyTuple)
+      fn.setDefaults(value)
+    }
+
+    self.stack.push(fn)
+    return .ok
+  }
 
   // MARK: - Return
 
