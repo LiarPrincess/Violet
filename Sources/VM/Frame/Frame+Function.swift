@@ -140,6 +140,84 @@ extension Frame {
     return .value(result)
   }
 
+  // MARK: - Call function ex
+
+  /// Calls a callable object with variable set of positional and keyword arguments.
+  ///
+  /// Stack layout (1st item means TOS):
+  /// - (if `hasKeywordArguments` is set) mapping object containing keyword arguments
+  /// - iterable object containing positional arguments and a callable object to call
+  ///
+  /// `BuildmapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
+  /// merging multiple mapping objects and iterables containing arguments.
+  ///
+  /// It will:
+  /// 1. pop all arguments and the callable object off the stack
+  /// 2. mapping object and iterable object are each “unpacked” and their
+  /// contents is passed in as keyword and positional arguments respectively
+  /// 3. call the callable object with those arguments
+  /// 4. push the return value returned by the callable object
+  internal func callFunctionEx(hasKeywordArguments: Bool) -> InstructionResult {
+    var kwargs: PyDict?
+    if hasKeywordArguments {
+      let kwargsObject = self.stack.pop()
+      switch self.extractKwargs(from: kwargsObject) {
+      case let .value(d): kwargs = d
+      case let .error(e): return .unwind(.exception(e))
+      }
+    }
+
+    let argsObject = self.stack.pop()
+    let fn = self.stack.top
+
+    let args: [PyObject]
+    switch self.extractArgs(fn: fn, args: argsObject) {
+    case let .value(a): args = a
+    case let .error(e): return .unwind(.exception(e))
+    }
+
+    let level = self.stackLevel
+    let result = Py.call(callable: fn, args: args, kwargs: kwargs?.data)
+
+    switch result {
+    case let .value(o):
+      assert(self.stackLevel == level)
+      self.stack.top = o
+      return .ok
+    case let .error(e),
+         let .notCallable(e):
+      return .unwind(.exception(e))
+    }
+  }
+
+  private func extractKwargs(from object: PyObject) -> PyResult<PyDict> {
+    if let dict = object as? PyDict {
+      return .value(dict)
+    }
+
+    let result = Py.newDict()
+    switch result.update(from: object) {
+    case .value:
+      return .value(result)
+    case .error(let e):
+      return .error(e)
+    }
+  }
+
+  private func extractArgs(fn: PyObject, args: PyObject) -> PyResult<[PyObject]> {
+    if let tuple = args as? PyTuple {
+      return .value(tuple.elements)
+    }
+
+    guard Py.hasIter(object: args) else {
+      let fnName = self.getFunctionName(object: fn) ?? "function"
+      let msg = "\(fnName) argument after * must be an iterable, not \(args.typeName)"
+      return .typeError(msg)
+    }
+
+    return Py.toArray(iterable: args)
+  }
+
   // MARK: - Load method
 
   /// Loads a method named `name` from TOS object.

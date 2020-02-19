@@ -83,7 +83,7 @@ extension Frame {
     return Py.newTypeError(msg: msg)
   }
 
-  private func getFunctionName(object: PyObject) -> String? {
+  internal func getFunctionName(object: PyObject) -> String? {
     if let fn = object as? PyFunction {
      return fn.getName()
    }

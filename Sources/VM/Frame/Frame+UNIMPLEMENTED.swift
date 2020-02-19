@@ -28,25 +28,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  /// Calls a callable object with variable set of positional and keyword arguments.
-  ///
-  /// Stack layout (1st item means TOS):
-  /// - (if `hasKeywordArguments` is set) mapping object containing keyword arguments
-  /// - iterable object containing positional arguments and a callable object to call
-  ///
-  /// `BuildmapUnpackWithCall` and `BuildTupleUnpackWithCall` can be used for
-  /// merging multiple mapping objects and iterables containing arguments.
-  ///
-  /// It will:
-  /// 1. pop all arguments and the callable object off the stack
-  /// 2. mapping object and iterable object are each “unpacked” and their
-  /// contents is passed in as keyword and positional arguments respectively
-  /// 3. call the callable object with those arguments
-  /// 4. push the return value returned by the callable object
-  internal func callFunctionEx(hasKeywordArguments: Bool) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - General
 
   /// Checks whether Annotations is defined in locals(),
