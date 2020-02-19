@@ -7,18 +7,18 @@ assert list(zip(*zip(['a', 'b', 'c'], range(1, 4)))) == [('a', 'b', 'c'), (1, 2,
 
 
 # test infinite iterator
-class Counter(object):
-    def __init__(self, counter=0):
-        self.counter = counter
+# class Counter(object):
+#     def __init__(self, counter=0):
+#         self.counter = counter
 
-    def __next__(self):
-        self.counter += 1
-        return self.counter
+#     def __next__(self):
+#         self.counter += 1
+#         return self.counter
 
-    def __iter__(self):
-        return self
+#     def __iter__(self):
+#         return self
 
 
-it = zip(Counter(), Counter(3))
-assert next(it) == (1, 4)
-assert next(it) == (2, 5)
+# it = zip(Counter(), Counter(3))
+# assert next(it) == (1, 4)
+# assert next(it) == (2, 5)

@@ -1,4 +1,4 @@
-from testutils import assert_raises
+# from testutils import assert_raises
 
 # simple values
 assert max(0, 0) == 0
@@ -16,39 +16,39 @@ assert max({
 }) == "b"
 assert max([1, 2], default=0) == 2
 assert max([], default=0) == 0
-assert_raises(ValueError, max, [])
+# assert_raises(ValueError, max, [])
 
 # key parameter
 assert max(1, 2, -3, key=abs) == -3
 assert max([1, 2, -3], key=abs) == -3
 
 # no argument
-assert_raises(TypeError, max)
+# assert_raises(TypeError, max)
 
 # one non-iterable argument
-assert_raises(TypeError, max, 1)
+# assert_raises(TypeError, max, 1)
 
 
 # custom class
-class MyComparable():
-    nb = 0
+# class MyComparable():
+#     nb = 0
 
-    def __init__(self):
-        self.my_nb = MyComparable.nb
-        MyComparable.nb += 1
+#     def __init__(self):
+#         self.my_nb = MyComparable.nb
+#         MyComparable.nb += 1
 
-    def __gt__(self, other):
-        return self.my_nb > other.my_nb
-
-
-first = MyComparable()
-second = MyComparable()
-assert max(first, second) == second
-assert max([first, second]) == second
+#     def __gt__(self, other):
+#         return self.my_nb > other.my_nb
 
 
-class MyNotComparable():
-    pass
+# first = MyComparable()
+# second = MyComparable()
+# assert max(first, second) == second
+# assert max([first, second]) == second
 
 
-assert_raises(TypeError, max, MyNotComparable(), MyNotComparable())
+# class MyNotComparable():
+#     pass
+
+
+# assert_raises(TypeError, max, MyNotComparable(), MyNotComparable())
