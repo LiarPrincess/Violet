@@ -64,14 +64,12 @@ public class PyFilter: PyObject {
 
   // sourcery: pymethod = __next__
   internal func next() -> PyResult<PyObject> {
+    let checkTrue = self.fn is PyNone || self.fn is PyBool
+
     loop: while true {
       switch Py.next(iterator: self.iterator) {
       case let .value(item):
-        if self.fn is PyNone {
-          return .value(item)
-        }
-
-        if self.iterator === Py.types.bool {
+        if checkTrue {
           switch Py.isTrueBool(item) {
           case .value(true): return .value(item)
           case .value(false): continue loop // try next item

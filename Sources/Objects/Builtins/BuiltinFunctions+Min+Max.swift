@@ -6,6 +6,12 @@ private enum MinMaxResult {
   case error(PyBaseException)
 }
 
+private struct ObjectPropertyPair {
+  fileprivate let object: PyObject
+  /// `self.object` after applying `key` function.
+  fileprivate let property: PyObject
+}
+
 /// Shared code for `min/max` implementation.
 private protocol MinMaxImpl {
   static var fnName: String { get }
@@ -57,7 +63,10 @@ extension MinMaxImpl {
                       + "with multiple positional arguments")
     }
 
-    var result: PyObject?
+    // Return value BEFORE applying 'key':
+    // assert max(1, 2, -3, key=abs) == -3
+
+    var result: ObjectPropertyPair?
     for arg in args {
       switch Self.compare(current: result, object: arg, key: key) {
       case let .value(r): result = r
@@ -66,7 +75,7 @@ extension MinMaxImpl {
     }
 
     if let r = result {
-      return .value(r)
+      return .value(r.object)
     }
 
     return Self.emptyCollectionError()
@@ -77,7 +86,7 @@ extension MinMaxImpl {
   private static func iterable(iterable: PyObject,
                                key: PyObject?,
                                default: PyObject?) -> PyResult<PyObject> {
-    let initial: PyObject? = nil
+    let initial: ObjectPropertyPair? = nil
     let acc = Py.reduce(iterable: iterable, initial: initial) { acc, object in
       switch Self.compare(current: acc, object: object, key: key) {
       case let .value(r): return .setAcc(r)
@@ -88,7 +97,7 @@ extension MinMaxImpl {
     switch acc {
     case let .value(result):
       if let r = result {
-        return .value(r)
+        return .value(r.object)
       }
 
       if let d = `default` {
@@ -108,9 +117,9 @@ extension MinMaxImpl {
     return .valueError("\(Self.fnName) arg is an empty sequence")
   }
 
-  private static func compare(current: PyObject?,
+  private static func compare(current: ObjectPropertyPair?,
                               object: PyObject,
-                              key: PyObject?) -> PyResult<PyObject> {
+                              key: PyObject?) -> PyResult<ObjectPropertyPair> {
     let property: PyObject
     switch Py.selectKey(object: object, key: key) {
     case let .value(e): property = e
@@ -118,13 +127,18 @@ extension MinMaxImpl {
     }
 
     if let current = current {
-      switch Self.compare(current: current, with: property) {
-      case .useCurrent: return .value(current)
-      case .useNew: return .value(property)
-      case .error(let e): return .error(e)
+      switch Self.compare(current: current.property, with: property) {
+      case .useCurrent:
+        return .value(current)
+      case .useNew:
+        let pair = ObjectPropertyPair(object: object, property: property)
+        return .value(pair)
+      case .error(let e):
+        return .error(e)
       }
     } else {
-      return .value(property)
+      let pair = ObjectPropertyPair(object: object, property: object)
+      return .value(pair)
     }
   }
 }

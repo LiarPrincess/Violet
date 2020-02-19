@@ -22,7 +22,7 @@ public class PyDict: PyObject {
     in the keyword argument list.  For example:  dict(one=1, two=2)
     """
 
-  internal private(set) var data: PyDictData
+  public private(set) var data: PyDictData
 
   override public var description: String {
     return "PyDict(count: \(self.data.count))"

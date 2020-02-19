@@ -77,11 +77,6 @@ public class PyZip: PyObject {
       }
     }
 
-    // Single iterator -> single object
-    if result.count == 1 {
-      return .value(result[0])
-    }
-
     // Multiple iterators -> tuple
     let tuple = Py.newTuple(result)
     return .value(tuple)
