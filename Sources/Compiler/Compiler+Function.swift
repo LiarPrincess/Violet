@@ -18,7 +18,13 @@ extension Compiler {
                                    updating: &flags,
                                    location: location)
 
-    let codeObject = try self.inNewCodeObject(node: node, type: .lambda) {
+    let argCount = node.args.args.count
+    let kwOnlyArgCount = node.args.kwOnlyArgs.count
+
+    let codeObject = try self.inNewCodeObject(node: node,
+                                              type: .lambda,
+                                              argCount: argCount,
+                                              kwOnlyArgCount: kwOnlyArgCount) {
       // Make None the first constant, so the lambda can't have a docstring.
       self.builder.appendNone()
 
@@ -47,7 +53,13 @@ extension Compiler {
                               updating: &flags,
                               location: location)
 
-    let codeObject = try self.inNewCodeObject(node: node, type: .function) {
+    let argCount = node.args.args.count
+    let kwOnlyArgCount = node.args.kwOnlyArgs.count
+
+    let codeObject = try self.inNewCodeObject(node: node,
+                                              type: .function,
+                                              argCount: argCount,
+                                              kwOnlyArgCount: kwOnlyArgCount) {
       let optimizationLevel = self.options.optimizationLevel
       if let docString = node.body.first.getDocString(), optimizationLevel < .OO {
         self.builder.appendString(docString)

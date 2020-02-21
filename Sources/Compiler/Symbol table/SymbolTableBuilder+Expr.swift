@@ -269,7 +269,9 @@ extension SymbolTableBuilder {
   public func visit(_ node: LambdaExpr) throws {
     try self.visitDefaults(node.args)
 
-    self.enterScope(name: SymbolScopeNames.lambda, type: .function, node: node)
+    self.enterScope(name: SymbolScopeNames.lambda,
+                    type: .function,
+                    node: node)
     try self.visitArguments(node.args)
     try self.visit(node.body)
     self.leaveScope()

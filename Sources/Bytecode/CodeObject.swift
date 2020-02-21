@@ -9,6 +9,25 @@ public enum CodeObjectType {
   case comprehension
 }
 
+public struct CodeObjectFlags: OptionSet {
+  public let rawValue: UInt16
+
+  public static let optimized   = CodeObjectFlags(rawValue: 0x0001)
+  public static let newLocals   = CodeObjectFlags(rawValue: 0x0002)
+  public static let varArgs     = CodeObjectFlags(rawValue: 0x0004)
+  public static let varKeywords = CodeObjectFlags(rawValue: 0x0008)
+  public static let nested      = CodeObjectFlags(rawValue: 0x0010)
+  public static let generator   = CodeObjectFlags(rawValue: 0x0020)
+  public static let noFree      = CodeObjectFlags(rawValue: 0x0040)
+  public static let coroutine         = CodeObjectFlags(rawValue: 0x0080)
+  public static let iterableCoroutine = CodeObjectFlags(rawValue: 0x0100)
+  public static let asyncGenerator    = CodeObjectFlags(rawValue: 0x0200)
+
+  public init(rawValue: UInt16) {
+    self.rawValue = rawValue
+  }
+}
+
 public final class CodeObject {
 
   public static let moduleName = "<module>"
@@ -45,6 +64,8 @@ public final class CodeObject {
   /// Type of the code object.
   /// Possible values are: module, class, (async)function, lambda and comprehension.
   public let type: CodeObjectType
+  /// Various flags used during the compilation process.
+  public let flags: CodeObjectFlags
   /// First source line number
   public let firstLine: SourceLine
 
@@ -70,21 +91,34 @@ public final class CodeObject {
   /// List of cell variable names (from SymbolTable).
   public let cellVars: [MangledName]
 
+  /// Arguments, except `*args`.
+  /// CPython: `co_argcount`.
+  public let argCount: Int
+  /// Keyword only arguments.
+  /// CPython: `co_kwonlyargcount`.
+  public let kwOnlyArgCount: Int
+
   public init(name: String,
               qualifiedName: String,
               filename: String,
               type: CodeObjectType,
+              flags: CodeObjectFlags,
               varNames: [MangledName],
               freeVars: [MangledName],
               cellVars: [MangledName],
+              argCount: Int,
+              kwOnlyArgCount: Int,
               firstLine: SourceLine) {
     self.name = name
     self.qualifiedName = qualifiedName
     self.filename = filename
     self.type = type
+    self.flags = flags
     self.varNames = varNames
     self.freeVars = freeVars
     self.cellVars = cellVars
+    self.argCount = argCount
+    self.kwOnlyArgCount = kwOnlyArgCount
     self.firstLine = firstLine
   }
 }

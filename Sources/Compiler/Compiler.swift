@@ -99,7 +99,7 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
       return self.codeObject
     }
 
-    self.enterScope(node: ast, type: .module)
+    self.enterScope(node: ast, type: .module, argCount: 0, kwOnlyArgCount: 0)
     self.setAppendLocation(ast)
 
     try self.visit(ast)
@@ -214,9 +214,33 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
   internal func inNewCodeObject<N: ASTNode>(
     node: N,
     type: CodeObjectType,
-    emitInstructions block: () throws -> Void) throws -> CodeObject {
+    emitInstructions block: () throws -> Void
+  ) throws -> CodeObject {
+    return try self.inNewCodeObject(
+      node: node,
+      type: type,
+      argCount: 0,
+      kwOnlyArgCount: 0,
+      emitInstructions: block
+    )
+  }
 
-    self.enterScope(node: node, type: type)
+  /// Helper for creation of new code objects.
+  /// It surrounds given `block` with `enterScope` and `leaveScope`
+  /// (1 scope = 1 code object).
+  /// Use `self.codeObject` to emit instructions.
+  internal func inNewCodeObject<N: ASTNode>(
+    node: N,
+    type: CodeObjectType,
+    argCount: Int,
+    kwOnlyArgCount: Int,
+    emitInstructions block: () throws -> Void
+  ) throws -> CodeObject {
+
+    self.enterScope(node: node,
+                    type: type,
+                    argCount: argCount,
+                    kwOnlyArgCount: kwOnlyArgCount)
     try block()
     let code = self.codeObject
     try self.leaveScope()
@@ -227,7 +251,10 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
   /// Push new scope (and generate a new code object to emit to).
   ///
   /// compiler_enter_scope(struct compiler *c, identifier name, ...)
-  private func enterScope<N: ASTNode>(node: N, type: CodeObjectType) {
+  private func enterScope<N: ASTNode>(node: N,
+                                      type: CodeObjectType,
+                                      argCount: Int,
+                                      kwOnlyArgCount: Int) {
     guard let scope = self.symbolTable.scopeByNode[node] else {
       trap("[BUG] Compiler: Entering scope that is not present in symbol table.")
     }
@@ -236,6 +263,7 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
     let name = self.createName(type: type, scope: scope)
     let qualifiedName = self.createQualifiedName(for: name, type: type)
+    let flags = self.createFlags(type: type, scope: scope)
 
     let varNames = scope.varNames
     let freeVars = self.getSymbols(scope, withAnyOf: [.defFree, .defFreeClass])
@@ -251,9 +279,12 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
                             qualifiedName: qualifiedName,
                             filename: self.filename,
                             type: type,
+                            flags: flags,
                             varNames: varNames,
                             freeVars: freeVars,
                             cellVars: cellVars,
+                            argCount: argCount,
+                            kwOnlyArgCount: kwOnlyArgCount,
                             firstLine: node.start.line)
 
     let className = type == .class ? name : nil
@@ -380,6 +411,40 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
       }
     }
 
+    return result
+  }
+
+  /// static int
+  /// compute_code_flags(struct compiler *c)
+  private func createFlags(type: CodeObjectType,
+                           scope: SymbolScope) -> CodeObjectFlags {
+    var result = CodeObjectFlags()
+
+    if scope.type == .function {
+      result.formUnion(.newLocals)
+      result.formUnion(.optimized)
+
+      if scope.isNested {
+        result.formUnion(.nested)
+      }
+
+      switch (scope.isGenerator, scope.isCoroutine) {
+      case (true, true): result.formUnion(.asyncGenerator)
+      case (true, false): result.formUnion(.generator)
+      case (false, true): result.formUnion(.coroutine)
+      case (false, false): break
+      }
+
+      if scope.hasVarargs {
+        result.formUnion(.varArgs)
+      }
+
+      if scope.hasVarKeywords {
+        result.formUnion(.varKeywords)
+      }
+    }
+
+    // CPython will also copy 'self.future' flags, we don't need them (for now).
     return result
   }
 
