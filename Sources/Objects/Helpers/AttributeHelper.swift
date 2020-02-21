@@ -23,8 +23,8 @@ internal enum AttributeHelper {
       return descr.call()
     }
 
-    if let owner = object as? __dict__GetterOwner,
-       let value = owner.getDict().get(key: name) {
+    if let dict = Py.get__dict__(object: object),
+       let value = dict.get(key: name) {
       return .value(value)
     }
 

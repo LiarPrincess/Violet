@@ -226,10 +226,9 @@ extension BuiltinFunctions {
       }
     }
 
-    // TODO: Add Py.get__dict__ method (here + AttributeHelper)
     if allowsCallableProperties {
-      if let owner = object as? __dict__GetterOwner,
-         let value = owner.getDict().get(key: selector) {
+      if let dict = Py.get__dict__(object: object),
+         let value = dict.get(key: selector) {
         return .objectAttribute(value)
       }
     }

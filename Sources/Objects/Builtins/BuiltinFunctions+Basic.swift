@@ -130,6 +130,17 @@ extension BuiltinFunctions {
     )
   }
 
+  // MARK: - Dict
+
+  // TODO: This should return 'PyDict'
+  public func get__dict__(object: PyObject) -> Attributes? {
+    if let owner = object as? __dict__GetterOwner {
+      return owner.getDict()
+    }
+
+    return nil
+  }
+
   // MARK: - Id
 
   // sourcery: pymethod = id
