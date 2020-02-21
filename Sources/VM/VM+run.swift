@@ -85,7 +85,7 @@ extension VM {
     let mainDict = main.getDict()
     mainDict.set(key: "__file__", to: Py.newString(file))
 
-    self.eval(code: code, globals: mainDict, locals: mainDict)
+    _ = self.eval(code: code, globals: mainDict, locals: mainDict)
     mainDict.del(key: "__file__")
   }
 

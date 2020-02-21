@@ -165,7 +165,7 @@ public class PyInstance: BuiltinFunctions {
 
   private var internedString = [String:PyString]()
 
-  internal func getInterned(_ value: String) -> PyString {
+  public func getInterned(_ value: String) -> PyString {
     if let interned = self.internedString[value] {
       return interned
     }

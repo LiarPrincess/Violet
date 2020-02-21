@@ -82,7 +82,7 @@ public class PyCode: PyObject {
   internal func repr() -> PyResult<String> {
     let name = self.codeObject.name
     let ptr = self.ptrString
-    let file = self.filename
+    let file = self.codeObject.filename
     let line = self.codeObject.firstLine
     return .value("<code object \(name) at \(ptr), file '\(file)', line \(line)>")
   }

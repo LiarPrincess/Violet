@@ -2,7 +2,17 @@ import Parser
 import Objects
 import Bytecode
 
+#if DEBUG
+/// Change this if you feel like it.
+/// You have a whole 2 options to choose from, so go wild
+/// (and rememeber to wash your hands after, also floss).
 private let isEnabled = true
+#else
+/// Do not change this.
+/// It will be inlined to all of the functions making them nops,
+/// which will optimize away the whole call (probably).
+private let isEnabled = false
+#endif
 
 internal enum Debug {
 

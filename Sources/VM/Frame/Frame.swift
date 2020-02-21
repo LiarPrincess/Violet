@@ -71,13 +71,14 @@ internal final class Frame {
 
   private static func getBuiltins(globals: Attributes,
                                   parent: Frame?) -> Attributes {
-
     if parent == nil || parent?.globalSymbols !== globals {
       if let module = globals.get(key: "__builtins__") as? PyModule {
         return module.getDict()
       }
     }
 
+    // If we share the globals, we share the builtins.
+    // Saves a lookup and a call.
     return Py.builtinsModule.getDict()
   }
 
