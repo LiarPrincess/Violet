@@ -88,6 +88,10 @@ public class PyInstance: BuiltinFunctions {
     for type in self.errorTypes.all {
       type.gcClean()
     }
+
+    // And also modules:
+    self.builtinsModule.gcClean()
+    self.sysModule.gcClean()
   }
 
   // MARK: - Initialize
@@ -109,6 +113,10 @@ public class PyInstance: BuiltinFunctions {
     // So let start with finishing our type hierarchy:
     self.types.fill__dict__()
     self.errorTypes.fill__dict__()
+
+    // Now finish modules:
+    _ = self.builtinsModule
+    _ = self.sysModule
   }
 
   private func ensureInitialized() {
@@ -133,6 +141,7 @@ public class PyInstance: BuiltinFunctions {
   /// You can use this to reinitialize `Py` (note that you will have to call
   /// `Py.initialize(config:,delegate:)` again).
   public func destroy() {
+    // Assigning new instance will 'deinit' old one.
     Py = PyInstance()
   }
 

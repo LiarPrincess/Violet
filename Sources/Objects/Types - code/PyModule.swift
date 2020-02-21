@@ -152,6 +152,14 @@ public class PyModule: PyObject {
     }
   }
 
+  // MARK: - GC
+
+  /// Remove all of the references to other Python objects.
+  override internal func gcClean() {
+    self.attributes.clear()
+    super.gcClean()
+  }
+
   // MARK: - Python new
 
   // sourcery: pymethod = __new__
