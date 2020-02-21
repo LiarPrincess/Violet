@@ -37,9 +37,9 @@ public protocol PyHashable {
 public struct OrderedDictionary<Key: PyHashable, Value> {
 
   public struct Entry {
-    internal let hash: Int
-    internal let key:  Key
-    internal let value: Value
+    public let hash: Int
+    public let key:  Key
+    public let value: Value
 
     fileprivate init(key: Key, value: Value) {
       self.hash = key.hash

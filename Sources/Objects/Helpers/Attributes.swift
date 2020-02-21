@@ -9,9 +9,9 @@ import Core
 // {'a': 1} <-- attribute is present in dict
 
 /// Dictionary used for `__dict__`.
-public final class Attributes: CustomStringConvertible {
+public final class Attributes: Sequence, CustomStringConvertible {
 
-  internal typealias DataType = OrderedDictionary<String, PyObject>
+  public typealias DataType = OrderedDictionary<String, PyObject>
 
   private lazy var data = DataType()
 
@@ -158,6 +158,16 @@ public final class Attributes: CustomStringConvertible {
     }
 
     return .value(true)
+  }
+
+  // MARK: - Sequence
+
+  public typealias Element = DataType.Element
+  public typealias Iterator = DataType.Iterator
+
+  /// Returns an iterator over the elements of this sequence.
+  public func makeIterator() -> Iterator {
+    return self.data.makeIterator()
   }
 }
 

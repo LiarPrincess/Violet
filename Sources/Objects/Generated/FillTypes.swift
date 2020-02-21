@@ -782,6 +782,7 @@ internal enum FillTypes {
 
     dict["__repr__"] = PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyFunction.repr, castSelf: Cast.asPyFunction)
     dict["__get__"] = PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyFunction.get(object:type:), castSelf: Cast.asPyFunction)
+    dict["__call__"] = PyBuiltinFunction.wrap(name: "__call__", doc: nil, fn: PyFunction.call(args:kwargs:), castSelf: Cast.asPyFunction)
   }
 
   // MARK: - Int

@@ -512,7 +512,8 @@ extension PyFunction:
   __module__GetterOwner,
   __dict__GetterOwner,
   __repr__Owner,
-  __get__Owner
+  __get__Owner,
+  __call__Owner
 { }
 
 // MARK: - Int

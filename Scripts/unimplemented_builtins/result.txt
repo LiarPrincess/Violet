@@ -106,9 +106,6 @@ float
     hex
 
 function
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __call__
   Why do we even have this?
     __doc__
 

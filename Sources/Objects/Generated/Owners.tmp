@@ -459,6 +459,7 @@ PyFunction|PyObject|get|__dict__|getDict() -> Attributes
 
 PyFunction|PyObject|func|__repr__|repr() -> PyResult<String>
 PyFunction|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
+PyFunction|PyObject|func|__call__|call(args: [PyObject],                   kwargs: PyDictData?) -> PyResult<PyObject>
 PyInt|PyObject|get|__class__|getClass() -> PyType
 PyInt|PyObject|get|real|asReal() -> PyObject
 PyInt|PyObject|get|imag|asImag() -> PyObject

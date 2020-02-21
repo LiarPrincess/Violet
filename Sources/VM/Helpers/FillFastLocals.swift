@@ -14,9 +14,9 @@ internal struct FillFastLocals {
 
   private let frame: Frame
   private let args: [PyObject]
-  private let kwArgs: [String: PyObject]
+  private let kwArgs: Attributes?
   private let defaults: [PyObject]
-  private let kwDefaults: [String: PyObject]
+  private let kwDefaults: Attributes?
 
   private var varKwargs: PyDict?
 
@@ -38,9 +38,9 @@ internal struct FillFastLocals {
 
   internal init(frame: Frame,
                 args: [PyObject],
-                kwArgs: [String: PyObject],
+                kwArgs: Attributes?,
                 defaults: [PyObject],
-                kwDefaults: [String: PyObject]) {
+                kwDefaults: Attributes?) {
     self.frame = frame
     self.args = args
     self.kwArgs = kwArgs
@@ -122,6 +122,10 @@ internal struct FillFastLocals {
   // MARK: - Kwargs
 
   private mutating func fillFromKwargs() -> PyBaseException? {
+    guard let kwArgs = self.kwArgs else {
+      return nil
+    }
+
     // Create a dictionary for keyword parameters (**kwags)
     if self.hasVarKeywords {
       let dict = Py.newDict()
@@ -130,7 +134,9 @@ internal struct FillFastLocals {
     }
 
     // Handle keyword arguments
-    nextKwarg: for (keyword, value) in self.kwArgs {
+    nextKwarg: for entry in kwArgs {
+      let keyword = entry.key
+
       // Try to find proper index in locals
       for index in 0..<self.totalArgs {
         let name = self.getName(self.code.varNames[index])
@@ -144,7 +150,7 @@ internal struct FillFastLocals {
           return Py.newTypeError(msg: msg)
         }
 
-        self.set(index: index, value: value)
+        self.set(index: index, value: entry.value)
         continue nextKwarg
       }
 
@@ -152,7 +158,7 @@ internal struct FillFastLocals {
       if let dict = self.varKwargs {
         let kw = Py.getInterned(keyword)
 
-        switch dict.setItem(at: kw, to: value) {
+        switch dict.setItem(at: kw, to: entry.value) {
         case .value: break
         case .error(let e): return e
         }
@@ -209,6 +215,10 @@ internal struct FillFastLocals {
   private func fillFromKwArgsDefaults() -> PyBaseException? {
     // Add missing keyword arguments (copy default values from kwdefs)
 
+    guard let kwDefaults = kwDefaults else {
+      return nil
+    }
+
     if self.code.kwOnlyArgCount == 0 {
       return nil
     }
@@ -221,7 +231,7 @@ internal struct FillFastLocals {
 
       let name = self.getName(self.code.varNames[index])
 
-      if let defaultValue = self.kwDefaults[name] {
+      if let defaultValue = kwDefaults[name] {
         self.set(index: index, value: defaultValue)
       } else {
         missing += 1

@@ -9,15 +9,17 @@ extension VM {
                      globals: Attributes,
                      locals: Attributes) -> PyResult<PyObject> {
     return self.eval(
-      code: code,
-      globals: globals,
-      locals: locals,
-      args: [],
-      kwArgs: [:],
-      defaults: [],
-      kwDefaults: [:],
       name: nil,
       qualname: nil,
+      code: code,
+
+      args: [],
+      kwArgs: nil,
+      defaults: [],
+      kwDefaults: nil,
+
+      globals: globals,
+      locals: locals,
       parent: nil
     )
   }
@@ -26,17 +28,17 @@ extension VM {
 
   /// PyObject *
   /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals...)
-  internal func eval(code: CodeObject,
-                     globals: Attributes,
-                     locals: Attributes,
+  internal func eval(name: String?,
+                     qualname: String?,
+                     code: CodeObject,
 
                      args: [PyObject],
-                     kwArgs: [String: PyObject],
+                     kwArgs: Attributes?,
                      defaults: [PyObject],
-                     kwDefaults: [String: PyObject],
+                     kwDefaults: Attributes?,
 
-                     name: String?,
-                     qualname: String?,
+                     globals: Attributes,
+                     locals: Attributes,
                      parent: Frame?) -> PyResult<PyObject> {
 // swiftlint:enable function_parameter_count
 

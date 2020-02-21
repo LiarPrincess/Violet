@@ -3,6 +3,8 @@ import Bytecode
 // In CPython:
 // Objects -> funcobject.c
 
+// swiftlint:disable file_length
+
 // sourcery: pytype = function, default, hasGC
 public class PyFunction: PyObject {
 
@@ -39,7 +41,9 @@ public class PyFunction: PyObject {
 
   internal private(set) var globals: Attributes
   internal private(set) var defaults: PyTuple?
-  internal private(set) var kwdefaults: PyDict?
+  internal private(set) var kwDefaults: PyDict?
+  /// Basically the same as `self.kwDefaults`, but as `Attributes`.
+  private var kwDefaultsAttributes: Attributes?
   internal private(set) var closure: PyTuple?
   internal private(set) var annotations: PyDict?
 
@@ -61,7 +65,7 @@ public class PyFunction: PyObject {
 
     self.globals = globals
     self.defaults = nil
-    self.kwdefaults = nil
+    self.kwDefaults = nil
     self.closure = nil
     self.annotations = nil
 
@@ -152,21 +156,29 @@ public class PyFunction: PyObject {
 
   // sourcery: pyproperty = __kwdefaults__
   public func getKeywordDefaults() -> PyObject {
-    return self.kwdefaults ?? Py.none
+    return self.kwDefaults ?? Py.none
   }
 
   public func setKeywordDefaults(_ object: PyObject) -> PyResult<PyNone> {
     if object.isNone {
-      self.kwdefaults = nil
+      self.kwDefaults = nil
+      self.kwDefaultsAttributes = nil
       return .value(Py.none)
     }
 
-    if let dict = object as? PyDict {
-      self.kwdefaults = dict
-      return .value(Py.none)
+    guard let dict = object as? PyDict else {
+      return .systemError("non-dict keyword only default args")
     }
 
-    return .systemError("non-dict keyword only default args")
+    let attributes: Attributes
+    switch self.toAttributes(data: dict.data) {
+    case let .value(a): attributes = a
+    case let .error(e): return .error(e)
+    }
+
+    self.kwDefaults = dict
+    self.kwDefaultsAttributes = attributes
+    return .value(Py.none)
   }
 
   // MARK: - Closure
@@ -269,5 +281,72 @@ public class PyFunction: PyObject {
 
   public func bind(to object: PyObject) -> PyMethod {
     return PyMethod(fn: self, object: object)
+  }
+
+  // MARK: - Call
+
+  // sourcery: pymethod = __call__
+  /// static PyObject *
+  /// function_call(PyObject *func, PyObject *args, PyObject *kwargs)
+  public func call(args: [PyObject],
+                   kwargs: PyDictData?) -> PyResult<PyObject> {
+    let name = self.name
+    let qualname = self.qualname
+    let code = self.code.codeObject
+
+    // Caller and callee functions should not share the kwargs dictionary.
+    // Btw. we do not expect a lot of kwargs so the performance hit
+    // should be acceptable.
+    let kwargsAttributes: Attributes?
+    switch self.toAttributes(data: kwargs) {
+    case let .value(k): kwargsAttributes = k
+    case let .error(e): return .error(e)
+    }
+
+    let argsDefaults = self.defaults?.elements ?? []
+    let kwDefaults = self.kwDefaultsAttributes
+
+    let globals = self.globals
+    let locals = Attributes()
+
+    let result = Py.delegate.eval(
+      name: name,
+      qualname: qualname,
+      code: code,
+
+      args: args,
+      kwArgs: kwargsAttributes,
+      defaults: argsDefaults,
+      kwDefaults: kwDefaults,
+
+      globals: globals,
+      locals: locals
+    )
+
+    return result
+  }
+
+  private func toAttributes(data: PyDictData?) -> PyResult<Attributes?> {
+    guard let data = data else {
+      return .value(nil)
+    }
+
+    return self.toAttributes(data: data)
+  }
+
+  private func toAttributes(data: PyDictData) -> PyResult<Attributes> {
+    let result = Attributes()
+    for entry in data {
+      let key = entry.key.object
+      let value = entry.value
+
+      guard let keyString = key as? PyString else {
+        return .typeError("keywords must be strings")
+      }
+
+      result.set(key: keyString.value, to: value)
+    }
+
+    return .value(result)
   }
 }

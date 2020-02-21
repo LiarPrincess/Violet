@@ -1,7 +1,10 @@
 import Objects
+import Bytecode
 import Foundation
 
 extension VM {
+
+  // MARK: - Open
 
   public func open(fileno: Int32,
                    mode: FileMode) -> PyResult<FileDescriptorType> {
@@ -33,5 +36,35 @@ extension VM {
     }
 
     return .osError("unable to open '\(file)' (mode: \(mode))")
+  }
+
+  // MARK: - Eval
+
+  // swiftlint:disable:next function_parameter_count
+  public func eval(name: String?,
+                   qualname: String?,
+                   code: CodeObject,
+
+                   args: [PyObject],
+                   kwArgs: Attributes?,
+                   defaults: [PyObject],
+                   kwDefaults: Attributes?,
+
+                   globals: Attributes,
+                   locals: Attributes) -> PyResult<PyObject> {
+    return self.eval(
+      name: name,
+      qualname: qualname,
+      code: code,
+
+      args: args,
+      kwArgs: kwArgs,
+      defaults: defaults,
+      kwDefaults: kwDefaults,
+
+      globals: globals,
+      locals: locals,
+      parent: nil // TODO: Parent
+    )
   }
 }

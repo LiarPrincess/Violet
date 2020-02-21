@@ -527,6 +527,7 @@ types = {
     '__dict__',
     '__repr__',
     '__get__',
+    '__call__',
   ],
   int: [
     '__class__',
