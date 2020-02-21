@@ -86,9 +86,12 @@ class AppendConstants: XCTestCase {
       qualifiedName: "q",
       filename: "f",
       type: .module,
-      varNames: [],
-      freeVars: [],
-      cellVars: [],
+      flags: CodeObjectFlags(),
+      variableNames: [],
+      freeVariableNames: [],
+      cellVariableNames: [],
+      argCount: 0,
+      kwOnlyArgCount: 0,
       firstLine: 0
     )
   }
