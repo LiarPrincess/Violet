@@ -14,7 +14,7 @@ internal struct CachedIndices {
   /// CodeObject.names
   internal var names = [UseScalarsToHashString:Int]()
   /// CodeObject.varNames
-  internal var varNames = [MangledName:Int]()
+  internal var variableNames = [MangledName:Int]()
 }
 
 /// Helper for adding new instructions to `CodeObject`.
@@ -77,8 +77,8 @@ public class CodeObjectBuilder {
       self.cachedIndices.names[key] = index
     }
 
-    for (index, name) in self.codeObject.varNames.enumerated() {
-      self.cachedIndices.varNames[name] = index
+    for (index, name) in self.codeObject.variableNames.enumerated() {
+      self.cachedIndices.variableNames[name] = index
     }
   }
 
@@ -150,13 +150,13 @@ public class CodeObjectBuilder {
   }
 
   private func getVarNameIndex(_ name: MangledName) -> Int {
-    if let cachedIndex = self.cachedIndices.varNames[name] {
+    if let cachedIndex = self.cachedIndices.variableNames[name] {
       return cachedIndex
     }
 
-    let index = self.codeObject.varNames.endIndex
-    self.codeObject.varNames.append(name)
-    self.cachedIndices.varNames[name] = index
+    let index = self.codeObject.variableNames.endIndex
+    self.codeObject.variableNames.append(name)
+    self.cachedIndices.variableNames[name] = index
     return index
   }
 

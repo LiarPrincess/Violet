@@ -220,8 +220,8 @@ extension Compiler {
     let qualifiedName = codeObject.qualifiedName
     var makeFunctionFlags = flags
 
-    if codeObject.freeVars.any {
-      for name in codeObject.freeVars {
+    if codeObject.freeVariableNames.any {
+      for name in codeObject.freeVariableNames {
         // If a class contains a method with a *free variable* that has the same
         // name as a *method*, the name will be considered free and local.
 
@@ -235,7 +235,7 @@ extension Compiler {
         self.builder.appendLoadClosure(variable)
       }
 
-      self.builder.appendBuildTuple(elementCount: codeObject.freeVars.count)
+      self.builder.appendBuildTuple(elementCount: codeObject.freeVariableNames.count)
       makeFunctionFlags.formUnion(.hasFreeVariables)
     }
 

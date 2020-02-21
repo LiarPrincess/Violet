@@ -51,7 +51,7 @@ internal final class Frame {
   /// but as 'the hipster trash that we are' (quote from @bestdressed)
   /// we won't do this.
   internal lazy var fastLocals = [PyObject?](repeating: nil,
-                                             count: code.varNames.count)
+                                             count: code.variableNames.count)
 
   /// Index of the next instruction to run (program counter).
   internal var nextInstructionIndex = 0

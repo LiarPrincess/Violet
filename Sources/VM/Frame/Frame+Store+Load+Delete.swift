@@ -235,9 +235,9 @@ extension Frame {
   }
 
   private func unboundFast(index: Int) -> InstructionResult {
-    assert(0 <= index && index < self.code.varNames.count)
+    assert(0 <= index && index < self.code.variableNames.count)
 
-    let mangled = self.code.varNames[index]
+    let mangled = self.code.variableNames[index]
     let e = Py.newUnboundLocalError(variableName: mangled.value)
     return .unwind(.exception(e))
   }

@@ -85,11 +85,11 @@ public final class CodeObject {
   public internal(set) var labels = [Int]()
 
   /// List of local variable names (from SymbolTable).
-  public internal(set) var varNames: [MangledName]
+  public internal(set) var variableNames: [MangledName]
   /// List of free variable names (from SymbolTable).
-  public let freeVars: [MangledName]
+  public let freeVariableNames: [MangledName]
   /// List of cell variable names (from SymbolTable).
-  public let cellVars: [MangledName]
+  public let cellVariableNames: [MangledName]
 
   /// Arguments, except `*args`.
   /// CPython: `co_argcount`.
@@ -103,9 +103,9 @@ public final class CodeObject {
               filename: String,
               type: CodeObjectType,
               flags: CodeObjectFlags,
-              varNames: [MangledName],
-              freeVars: [MangledName],
-              cellVars: [MangledName],
+              variableNames: [MangledName],
+              freeVariableNames: [MangledName],
+              cellVariableNames: [MangledName],
               argCount: Int,
               kwOnlyArgCount: Int,
               firstLine: SourceLine) {
@@ -114,9 +114,9 @@ public final class CodeObject {
     self.filename = filename
     self.type = type
     self.flags = flags
-    self.varNames = varNames
-    self.freeVars = freeVars
-    self.cellVars = cellVars
+    self.variableNames = variableNames
+    self.freeVariableNames = freeVariableNames
+    self.cellVariableNames = cellVariableNames
     self.argCount = argCount
     self.kwOnlyArgCount = kwOnlyArgCount
     self.firstLine = firstLine

@@ -139,7 +139,7 @@ internal struct FillFastLocals {
 
       // Try to find proper index in locals
       for index in 0..<self.totalArgs {
-        let name = self.getName(self.code.varNames[index])
+        let name = self.getName(self.code.variableNames[index])
         guard name == keyword else {
           continue
         }
@@ -154,7 +154,7 @@ internal struct FillFastLocals {
         continue nextKwarg
       }
 
-      // If none of the 'code.varNames' fit:
+      // If none of the 'code.variableNames' fit:
       if let dict = self.varKwargs {
         let kw = Py.getInterned(keyword)
 
@@ -229,7 +229,7 @@ internal struct FillFastLocals {
         continue
       }
 
-      let name = self.getName(self.code.varNames[index])
+      let name = self.getName(self.code.variableNames[index])
 
       if let defaultValue = kwDefaults[name] {
         self.set(index: index, value: defaultValue)
@@ -319,7 +319,7 @@ internal struct FillFastLocals {
       let isMissing = !self.isSet(index: index)
       guard isMissing else { continue }
 
-      let name = self.getName(self.code.varNames[index])
+      let name = self.getName(self.code.variableNames[index])
       missingNames.append(name)
     }
 

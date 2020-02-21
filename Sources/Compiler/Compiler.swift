@@ -280,9 +280,9 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
                             filename: self.filename,
                             type: type,
                             flags: flags,
-                            varNames: varNames,
-                            freeVars: freeVars,
-                            cellVars: cellVars,
+                            variableNames: varNames,
+                            freeVariableNames: freeVars,
+                            cellVariableNames: cellVars,
                             argCount: argCount,
                             kwOnlyArgCount: kwOnlyArgCount,
                             firstLine: node.start.line)

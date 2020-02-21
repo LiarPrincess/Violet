@@ -46,7 +46,7 @@ extension Compiler {
         self.builder.appendDupTop()
         self.builder.appendStoreName(__classcell__)
       } else {
-        assert(self.codeObject.cellVars.isEmpty)
+        assert(self.codeObject.cellVariableNames.isEmpty)
         self.builder.appendNone()
       }
 
