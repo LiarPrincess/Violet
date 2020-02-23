@@ -193,7 +193,7 @@ protocol isupperOwner { func isUpper() -> Bool }
 protocol itemsOwner { func items() -> PyObject }
 protocol keysOwner { func keys() -> PyObject }
 protocol partitionOwner { func partition(separator: PyObject) -> PyResult<PyTuple> }
-protocol popitemOwner { func popitem() -> PyResult<PyObject> }
+protocol popitemOwner { func popItem() -> PyResult<PyObject> }
 protocol readOwner { func read(size: PyObject) -> PyResult<PyString> }
 protocol readableOwner { func isReadable() -> Bool }
 protocol removeOwner { func remove(_ value: PyObject) -> PyResult<PyNone> }
