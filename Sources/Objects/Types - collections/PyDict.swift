@@ -198,6 +198,20 @@ public class PyDict: PyObject {
     }
   }
 
+  internal func getItem(id: PyId) -> PyResult<PyObject?> {
+    let key: PyDictKey
+    switch self.createKey(from: id) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    switch self.data.get(key: key) {
+    case .value(let o): return .value(o)
+    case .notFound: return .value(nil)
+    case .error(let e): return .error(e)
+    }
+  }
+
   // sourcery: pymethod = __setitem__
   public func setItem(at index: PyObject,
                       to value: PyObject) -> PyResult<PyNone> {
@@ -273,8 +287,8 @@ public class PyDict: PyObject {
   )
 
   // sourcery: pymethod = get, doc = getDoc
-  public func get(args: [PyObject],
-                  kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal func get(args: [PyObject],
+                    kwargs: PyDictData?) -> PyResult<PyObject> {
     switch PyDict.getArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -354,7 +368,8 @@ public class PyDict: PyObject {
   // MARK: - Update
 
   // sourcery: pymethod = update
-  public func update(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> {
+  internal func update(args: [PyObject],
+                       kwargs: PyDictData?) -> PyResult<PyNone> {
     // Guarantee 0 or 1 args
     if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "update",
                                                         args: args,
@@ -429,7 +444,7 @@ public class PyDict: PyObject {
     return .value(Py.none)
   }
 
-  public func insert(key: PyDictKey, value: PyObject) -> PyResult<()> {
+  private func insert(key: PyDictKey, value: PyObject) -> PyResult<()> {
     switch self.data.insert(key: key, value: value) {
     case .inserted, .updated:
       return .value()
@@ -568,7 +583,7 @@ public class PyDict: PyObject {
     """
 
   // sourcery: pymethod = popitem, doc = popitemDoc
-  internal func popitem() -> PyResult<PyObject> {
+  internal func popItem() -> PyResult<PyObject> {
     guard let last = self.data.last else {
       return .keyError("popitem(): dictionary is empty")
     }

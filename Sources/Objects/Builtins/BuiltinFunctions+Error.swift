@@ -111,6 +111,11 @@ extension BuiltinFunctions {
     return PyAssertionError(msg: msg)
   }
 
+  /// Import failed.
+  public func newPyImportError(msg: String) -> PyImportError {
+    return PyImportError(msg: msg)
+  }
+
   /// static PyObject*
   /// _PyErr_CreateException(PyObject *exception, PyObject *value)
   public func newException(type: PyType,
@@ -148,6 +153,20 @@ extension BuiltinFunctions {
     }
 
     return Py.call(callable: type, args: [arg])
+  }
+}
+
+// MARK: - Warn
+
+public enum WarningType {
+  case `import`
+}
+
+extension BuiltinFunctions {
+
+  public func warn(type: WarningType, msg: String) -> PyBaseException? {
+    // TODO: Finish warnings
+    return nil
   }
 
   // MARK: - Exception matches

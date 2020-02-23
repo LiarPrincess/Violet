@@ -75,16 +75,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  /// Imports the module `name`.
-  ///
-  /// TOS and TOS1 are popped and provide the `fromlist` and `level` arguments of `Import()`.
-  /// The module object is pushed onto the stack.
-  /// The current namespace is not affected: for a proper import statement,
-  /// a subsequent StoreFast instruction modifies the namespace.
-  internal func importName(nameIndex: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   /// Loads the attribute `name` from the module found in TOS.
   ///
   /// The resulting object is pushed onto the stack,

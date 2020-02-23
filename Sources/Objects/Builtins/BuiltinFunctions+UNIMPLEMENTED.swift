@@ -6,12 +6,6 @@ extension BuiltinFunctions {
 
   // MARK: - Code
 /*
-  // sourcery: pymethod = __import__
-  /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
-  /// See [this](https://docs.python.org/3/library/functions.html#__import__)
-  public func __import__() -> PyObject {
-    return self.unimplemented
-  }
 
   // sourcery: pymethod = compile
   /// compile(source, filename, mode, flags=0, dont_inherit=False, optimize=-1)

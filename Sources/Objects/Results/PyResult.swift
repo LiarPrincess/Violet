@@ -136,4 +136,8 @@ extension PyResult {
   public static func assertionError(_ msg: String) -> PyResult<Wrapped> {
     return PyResult.error(Py.newAssertionError(msg: msg))
   }
+
+  public static func importError(_ msg: String) -> PyResult<Wrapped> {
+    return PyResult.error(Py.newPyImportError(msg: msg))
+  }
 }
