@@ -30,7 +30,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
 
-    let dict = type.getDict()
 
     addBoring(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyBaseObject.isEqual(zelf:other:)))
     addBoring(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyBaseObject.isNotEqual(zelf:other:)))
@@ -65,7 +64,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.typeSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Cast.asPyType))
     addBoring(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyType.getQualname, set: PyType.setQualname, castSelf: Cast.asPyType))
     addBoring(type: type, name: "__doc__", value: PyProperty.wrap(name: "__doc__", doc: nil, get: PyType.getDoc, set: PyType.setDoc, castSelf: Cast.asPyType))
@@ -98,7 +96,6 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyBool.doc)
     type.setFlag(.default)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBool.getClass, castSelf: Cast.asPyBool))
 
 
@@ -121,7 +118,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBuiltinFunction.getClass, castSelf: Cast.asPyBuiltinFunction))
     addBoring(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyBuiltinFunction.getName, castSelf: Cast.asPyBuiltinFunction))
     addBoring(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyBuiltinFunction.getQualname, castSelf: Cast.asPyBuiltinFunction))
@@ -151,7 +147,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyBuiltinMethod.getName, castSelf: Cast.asPyBuiltinMethod))
     addBoring(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyBuiltinMethod.getQualname, castSelf: Cast.asPyBuiltinMethod))
     addBoring(type: type, name: "__text_signature__", value: PyProperty.wrap(name: "__text_signature__", doc: nil, get: PyBuiltinMethod.getTextSignature, castSelf: Cast.asPyBuiltinMethod))
@@ -180,7 +175,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArray.getClass, castSelf: Cast.asPyByteArray))
 
     addBoring(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyByteArray.pyInit(zelf:args:kwargs:)))
@@ -258,7 +252,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArrayIterator.getClass, castSelf: Cast.asPyByteArrayIterator))
 
 
@@ -277,7 +270,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.bytesSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytes.getClass, castSelf: Cast.asPyBytes))
 
 
@@ -344,7 +336,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesIterator.getClass, castSelf: Cast.asPyBytesIterator))
 
 
@@ -362,7 +353,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCallableIterator.getClass, castSelf: Cast.asPyCallableIterator))
 
 
@@ -378,7 +368,6 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyCode.doc)
     type.setFlag(.default)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCode.getClass, castSelf: Cast.asPyCode))
 
 
@@ -400,7 +389,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyComplex.asReal, castSelf: Cast.asPyComplex))
     addBoring(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyComplex.asImag, castSelf: Cast.asPyComplex))
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyComplex.getClass, castSelf: Cast.asPyComplex))
@@ -452,7 +440,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.dictSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDict.getClass, castSelf: Cast.asPyDict))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyDict.pyNew(type:args:kwargs:)))
@@ -493,7 +480,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItemIterator.getClass, castSelf: Cast.asPyDictItemIterator))
 
 
@@ -511,7 +497,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItems.getClass, castSelf: Cast.asPyDictItems))
 
 
@@ -538,7 +523,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeyIterator.getClass, castSelf: Cast.asPyDictKeyIterator))
 
 
@@ -556,7 +540,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeys.getClass, castSelf: Cast.asPyDictKeys))
 
 
@@ -583,7 +566,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictValueIterator.getClass, castSelf: Cast.asPyDictValueIterator))
 
 
@@ -601,7 +583,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
 
 
 
@@ -617,7 +598,6 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEllipsis.getClass, castSelf: Cast.asPyEllipsis))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyEllipsis.pyNew(type:args:kwargs:)))
@@ -636,7 +616,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEnumerate.getClass, castSelf: Cast.asPyEnumerate))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyEnumerate.pyNew(type:args:kwargs:)))
@@ -655,7 +634,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFilter.getClass, castSelf: Cast.asPyFilter))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyFilter.pyNew(type:args:kwargs:)))
@@ -673,7 +651,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyFloat.asReal, castSelf: Cast.asPyFloat))
     addBoring(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyFloat.asImag, castSelf: Cast.asPyFloat))
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFloat.getClass, castSelf: Cast.asPyFloat))
@@ -727,7 +704,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrozenSet.getClass, castSelf: Cast.asPyFrozenSet))
 
 
@@ -770,7 +746,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFunction.getClass, castSelf: Cast.asPyFunction))
     addBoring(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyFunction.getName, set: PyFunction.setName, castSelf: Cast.asPyFunction))
     addBoring(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyFunction.getQualname, set: PyFunction.setQualname, castSelf: Cast.asPyFunction))
@@ -799,7 +774,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.longSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyInt.getClass, castSelf: Cast.asPyInt))
     addBoring(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyInt.asReal, castSelf: Cast.asPyInt))
     addBoring(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyInt.asImag, castSelf: Cast.asPyInt))
@@ -868,7 +842,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIterator.getClass, castSelf: Cast.asPyIterator))
 
 
@@ -887,7 +860,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.listSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyList.getClass, castSelf: Cast.asPyList))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyList.pyNew(type:args:kwargs:)))
@@ -935,7 +907,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyListIterator.getClass, castSelf: Cast.asPyListIterator))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyListIterator.pyNew(type:args:kwargs:)))
@@ -953,7 +924,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyListReverseIterator.getClass, castSelf: Cast.asPyListReverseIterator))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyListReverseIterator.pyNew(type:args:kwargs:)))
@@ -972,7 +942,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMap.getClass, castSelf: Cast.asPyMap))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyMap.pyNew(type:args:kwargs:)))
@@ -990,7 +959,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: Cast.asPyMethod))
 
 
@@ -1019,7 +987,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyModule.getDict, castSelf: Cast.asPyModule))
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyModule.getClass, castSelf: Cast.asPyModule))
 
@@ -1042,7 +1009,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNamespace.getDict, castSelf: Cast.asPyNamespace))
 
     addBoring(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyNamespace.pyInit(zelf:args:kwargs:)))
@@ -1066,7 +1032,6 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNone.getClass, castSelf: Cast.asPyNone))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNone.pyNew(type:args:kwargs:)))
@@ -1083,7 +1048,6 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplemented.getClass, castSelf: Cast.asPyNotImplemented))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyNotImplemented.pyNew(type:args:kwargs:)))
@@ -1100,7 +1064,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyProperty.getClass, castSelf: Cast.asPyProperty))
     addBoring(type: type, name: "fget", value: PyProperty.wrap(name: "fget", doc: nil, get: PyProperty.getFGet, castSelf: Cast.asPyProperty))
     addBoring(type: type, name: "fset", value: PyProperty.wrap(name: "fset", doc: nil, get: PyProperty.getFSet, castSelf: Cast.asPyProperty))
@@ -1122,7 +1085,6 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyRange.doc)
     type.setFlag(.default)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRange.getClass, castSelf: Cast.asPyRange))
     addBoring(type: type, name: "start", value: PyProperty.wrap(name: "start", doc: nil, get: PyRange.getStart, castSelf: Cast.asPyRange))
     addBoring(type: type, name: "stop", value: PyProperty.wrap(name: "stop", doc: nil, get: PyRange.getStop, castSelf: Cast.asPyRange))
@@ -1156,7 +1118,6 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRangeIterator.getClass, castSelf: Cast.asPyRangeIterator))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyRangeIterator.pyNew(type:args:kwargs:)))
@@ -1175,7 +1136,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyReversed.getClass, castSelf: Cast.asPyReversed))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyReversed.pyNew(type:args:kwargs:)))
@@ -1194,7 +1154,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySet.getClass, castSelf: Cast.asPySet))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySet.pyNew(type:args:kwargs:)))
@@ -1244,7 +1203,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySetIterator.getClass, castSelf: Cast.asPySetIterator))
 
 
@@ -1262,7 +1220,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySlice.getClass, castSelf: Cast.asPySlice))
     addBoring(type: type, name: "start", value: PyProperty.wrap(name: "start", doc: nil, get: PySlice.getStart, castSelf: Cast.asPySlice))
     addBoring(type: type, name: "stop", value: PyProperty.wrap(name: "stop", doc: nil, get: PySlice.getStop, castSelf: Cast.asPySlice))
@@ -1291,7 +1248,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.unicodeSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyString.getClass, castSelf: Cast.asPyString))
 
 
@@ -1363,7 +1319,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStringIterator.getClass, castSelf: Cast.asPyStringIterator))
 
 
@@ -1382,7 +1337,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.hasFinalize)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTextFile.getClass, castSelf: Cast.asPyTextFile))
 
 
@@ -1406,7 +1360,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.tupleSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: Cast.asPyTuple))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTuple.pyNew(type:args:kwargs:)))
@@ -1439,7 +1392,6 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTupleIterator.getClass, castSelf: Cast.asPyTupleIterator))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyTupleIterator.pyNew(type:args:kwargs:)))
@@ -1458,7 +1410,6 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyZip.getClass, castSelf: Cast.asPyZip))
 
     addBoring(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyZip.pyNew(type:args:kwargs:)))
@@ -1478,7 +1429,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyArithmeticError.getClass, castSelf: Cast.asPyArithmeticError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyArithmeticError.getDict, castSelf: Cast.asPyArithmeticError))
 
@@ -1497,7 +1447,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyAssertionError.getClass, castSelf: Cast.asPyAssertionError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyAssertionError.getDict, castSelf: Cast.asPyAssertionError))
 
@@ -1516,7 +1465,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyAttributeError.getClass, castSelf: Cast.asPyAttributeError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyAttributeError.getDict, castSelf: Cast.asPyAttributeError))
 
@@ -1535,7 +1483,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBaseException.getDict, castSelf: Cast.asPyBaseException))
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBaseException.getClass, castSelf: Cast.asPyBaseException))
     addBoring(type: type, name: "args", value: PyProperty.wrap(name: "args", doc: nil, get: PyBaseException.getArgs, set: PyBaseException.setArgs, castSelf: Cast.asPyBaseException))
@@ -1564,7 +1511,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBlockingIOError.getClass, castSelf: Cast.asPyBlockingIOError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBlockingIOError.getDict, castSelf: Cast.asPyBlockingIOError))
 
@@ -1583,7 +1529,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBrokenPipeError.getClass, castSelf: Cast.asPyBrokenPipeError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBrokenPipeError.getDict, castSelf: Cast.asPyBrokenPipeError))
 
@@ -1602,7 +1547,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBufferError.getClass, castSelf: Cast.asPyBufferError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBufferError.getDict, castSelf: Cast.asPyBufferError))
 
@@ -1621,7 +1565,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesWarning.getClass, castSelf: Cast.asPyBytesWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBytesWarning.getDict, castSelf: Cast.asPyBytesWarning))
 
@@ -1640,7 +1583,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyChildProcessError.getClass, castSelf: Cast.asPyChildProcessError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyChildProcessError.getDict, castSelf: Cast.asPyChildProcessError))
 
@@ -1659,7 +1601,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionAbortedError.getClass, castSelf: Cast.asPyConnectionAbortedError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionAbortedError.getDict, castSelf: Cast.asPyConnectionAbortedError))
 
@@ -1678,7 +1619,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionError.getClass, castSelf: Cast.asPyConnectionError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionError.getDict, castSelf: Cast.asPyConnectionError))
 
@@ -1697,7 +1637,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionRefusedError.getClass, castSelf: Cast.asPyConnectionRefusedError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionRefusedError.getDict, castSelf: Cast.asPyConnectionRefusedError))
 
@@ -1716,7 +1655,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionResetError.getClass, castSelf: Cast.asPyConnectionResetError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionResetError.getDict, castSelf: Cast.asPyConnectionResetError))
 
@@ -1735,7 +1673,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDeprecationWarning.getClass, castSelf: Cast.asPyDeprecationWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyDeprecationWarning.getDict, castSelf: Cast.asPyDeprecationWarning))
 
@@ -1754,7 +1691,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEOFError.getClass, castSelf: Cast.asPyEOFError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyEOFError.getDict, castSelf: Cast.asPyEOFError))
 
@@ -1773,7 +1709,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyException.getClass, castSelf: Cast.asPyException))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyException.getDict, castSelf: Cast.asPyException))
 
@@ -1792,7 +1727,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFileExistsError.getClass, castSelf: Cast.asPyFileExistsError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileExistsError.getDict, castSelf: Cast.asPyFileExistsError))
 
@@ -1811,7 +1745,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFileNotFoundError.getClass, castSelf: Cast.asPyFileNotFoundError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileNotFoundError.getDict, castSelf: Cast.asPyFileNotFoundError))
 
@@ -1830,7 +1763,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFloatingPointError.getClass, castSelf: Cast.asPyFloatingPointError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFloatingPointError.getDict, castSelf: Cast.asPyFloatingPointError))
 
@@ -1849,7 +1781,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFutureWarning.getClass, castSelf: Cast.asPyFutureWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFutureWarning.getDict, castSelf: Cast.asPyFutureWarning))
 
@@ -1868,7 +1799,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyGeneratorExit.getClass, castSelf: Cast.asPyGeneratorExit))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyGeneratorExit.getDict, castSelf: Cast.asPyGeneratorExit))
 
@@ -1887,7 +1817,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyImportError.getClass, castSelf: Cast.asPyImportError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportError.getDict, castSelf: Cast.asPyImportError))
 
@@ -1906,7 +1835,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyImportWarning.getClass, castSelf: Cast.asPyImportWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportWarning.getDict, castSelf: Cast.asPyImportWarning))
 
@@ -1925,7 +1853,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIndentationError.getClass, castSelf: Cast.asPyIndentationError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndentationError.getDict, castSelf: Cast.asPyIndentationError))
 
@@ -1944,7 +1871,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIndexError.getClass, castSelf: Cast.asPyIndexError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndexError.getDict, castSelf: Cast.asPyIndexError))
 
@@ -1963,7 +1889,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyInterruptedError.getClass, castSelf: Cast.asPyInterruptedError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyInterruptedError.getDict, castSelf: Cast.asPyInterruptedError))
 
@@ -1982,7 +1907,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIsADirectoryError.getClass, castSelf: Cast.asPyIsADirectoryError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIsADirectoryError.getDict, castSelf: Cast.asPyIsADirectoryError))
 
@@ -2001,7 +1925,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyError.getClass, castSelf: Cast.asPyKeyError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyError.getDict, castSelf: Cast.asPyKeyError))
 
@@ -2020,7 +1943,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyboardInterrupt.getClass, castSelf: Cast.asPyKeyboardInterrupt))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyboardInterrupt.getDict, castSelf: Cast.asPyKeyboardInterrupt))
 
@@ -2039,7 +1961,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyLookupError.getClass, castSelf: Cast.asPyLookupError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyLookupError.getDict, castSelf: Cast.asPyLookupError))
 
@@ -2058,7 +1979,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMemoryError.getClass, castSelf: Cast.asPyMemoryError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyMemoryError.getDict, castSelf: Cast.asPyMemoryError))
 
@@ -2077,7 +1997,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyModuleNotFoundError.getClass, castSelf: Cast.asPyModuleNotFoundError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyModuleNotFoundError.getDict, castSelf: Cast.asPyModuleNotFoundError))
 
@@ -2096,7 +2015,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNameError.getClass, castSelf: Cast.asPyNameError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNameError.getDict, castSelf: Cast.asPyNameError))
 
@@ -2115,7 +2033,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotADirectoryError.getClass, castSelf: Cast.asPyNotADirectoryError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotADirectoryError.getDict, castSelf: Cast.asPyNotADirectoryError))
 
@@ -2134,7 +2051,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplementedError.getClass, castSelf: Cast.asPyNotImplementedError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotImplementedError.getDict, castSelf: Cast.asPyNotImplementedError))
 
@@ -2153,7 +2069,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyOSError.getClass, castSelf: Cast.asPyOSError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyOSError.getDict, castSelf: Cast.asPyOSError))
 
@@ -2172,7 +2087,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyOverflowError.getClass, castSelf: Cast.asPyOverflowError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyOverflowError.getDict, castSelf: Cast.asPyOverflowError))
 
@@ -2191,7 +2105,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyPendingDeprecationWarning.getClass, castSelf: Cast.asPyPendingDeprecationWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyPendingDeprecationWarning.getDict, castSelf: Cast.asPyPendingDeprecationWarning))
 
@@ -2210,7 +2123,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyPermissionError.getClass, castSelf: Cast.asPyPermissionError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyPermissionError.getDict, castSelf: Cast.asPyPermissionError))
 
@@ -2229,7 +2141,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyProcessLookupError.getClass, castSelf: Cast.asPyProcessLookupError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyProcessLookupError.getDict, castSelf: Cast.asPyProcessLookupError))
 
@@ -2248,7 +2159,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRecursionError.getClass, castSelf: Cast.asPyRecursionError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRecursionError.getDict, castSelf: Cast.asPyRecursionError))
 
@@ -2267,7 +2177,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyReferenceError.getClass, castSelf: Cast.asPyReferenceError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyReferenceError.getDict, castSelf: Cast.asPyReferenceError))
 
@@ -2286,7 +2195,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyResourceWarning.getClass, castSelf: Cast.asPyResourceWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyResourceWarning.getDict, castSelf: Cast.asPyResourceWarning))
 
@@ -2305,7 +2213,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeError.getClass, castSelf: Cast.asPyRuntimeError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeError.getDict, castSelf: Cast.asPyRuntimeError))
 
@@ -2324,7 +2231,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeWarning.getClass, castSelf: Cast.asPyRuntimeWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeWarning.getDict, castSelf: Cast.asPyRuntimeWarning))
 
@@ -2343,7 +2249,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStopAsyncIteration.getClass, castSelf: Cast.asPyStopAsyncIteration))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopAsyncIteration.getDict, castSelf: Cast.asPyStopAsyncIteration))
 
@@ -2362,7 +2267,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStopIteration.getClass, castSelf: Cast.asPyStopIteration))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopIteration.getDict, castSelf: Cast.asPyStopIteration))
 
@@ -2381,7 +2285,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxError.getClass, castSelf: Cast.asPySyntaxError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxError.getDict, castSelf: Cast.asPySyntaxError))
 
@@ -2400,7 +2303,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxWarning.getClass, castSelf: Cast.asPySyntaxWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxWarning.getDict, castSelf: Cast.asPySyntaxWarning))
 
@@ -2419,7 +2321,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySystemError.getClass, castSelf: Cast.asPySystemError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemError.getDict, castSelf: Cast.asPySystemError))
 
@@ -2438,7 +2339,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySystemExit.getClass, castSelf: Cast.asPySystemExit))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemExit.getDict, castSelf: Cast.asPySystemExit))
 
@@ -2457,7 +2357,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTabError.getClass, castSelf: Cast.asPyTabError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTabError.getDict, castSelf: Cast.asPyTabError))
 
@@ -2476,7 +2375,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTimeoutError.getClass, castSelf: Cast.asPyTimeoutError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTimeoutError.getDict, castSelf: Cast.asPyTimeoutError))
 
@@ -2495,7 +2393,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTypeError.getClass, castSelf: Cast.asPyTypeError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTypeError.getDict, castSelf: Cast.asPyTypeError))
 
@@ -2514,7 +2411,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnboundLocalError.getClass, castSelf: Cast.asPyUnboundLocalError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnboundLocalError.getDict, castSelf: Cast.asPyUnboundLocalError))
 
@@ -2533,7 +2429,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeDecodeError.getClass, castSelf: Cast.asPyUnicodeDecodeError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeDecodeError.getDict, castSelf: Cast.asPyUnicodeDecodeError))
 
@@ -2552,7 +2447,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeEncodeError.getClass, castSelf: Cast.asPyUnicodeEncodeError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeEncodeError.getDict, castSelf: Cast.asPyUnicodeEncodeError))
 
@@ -2571,7 +2465,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeError.getClass, castSelf: Cast.asPyUnicodeError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeError.getDict, castSelf: Cast.asPyUnicodeError))
 
@@ -2590,7 +2483,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeTranslateError.getClass, castSelf: Cast.asPyUnicodeTranslateError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeTranslateError.getDict, castSelf: Cast.asPyUnicodeTranslateError))
 
@@ -2609,7 +2501,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeWarning.getClass, castSelf: Cast.asPyUnicodeWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeWarning.getDict, castSelf: Cast.asPyUnicodeWarning))
 
@@ -2628,7 +2519,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUserWarning.getClass, castSelf: Cast.asPyUserWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUserWarning.getDict, castSelf: Cast.asPyUserWarning))
 
@@ -2647,7 +2537,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyValueError.getClass, castSelf: Cast.asPyValueError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyValueError.getDict, castSelf: Cast.asPyValueError))
 
@@ -2666,7 +2555,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyWarning.getClass, castSelf: Cast.asPyWarning))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyWarning.getDict, castSelf: Cast.asPyWarning))
 
@@ -2685,7 +2573,6 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
 
-    let dict = type.getDict()
     addBoring(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyZeroDivisionError.getClass, castSelf: Cast.asPyZeroDivisionError))
     addBoring(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyZeroDivisionError.getDict, castSelf: Cast.asPyZeroDivisionError))
 

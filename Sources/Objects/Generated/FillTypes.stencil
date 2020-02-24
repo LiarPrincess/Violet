@@ -44,7 +44,6 @@ private func addBoring(type: PyType, name: String, value: PyObject) {
 {% macro fillDict type pyName %}
   {% set castSelf %}Cast.as{{ type.name }}{% endset %}
 
-    let dict = type.getDict()
   {% for prop in type.instanceMethods|annotated:"pyproperty" %}
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     {% set getter %}{{ type.name }}.{{ prop.selectorName }}{% endset %}
