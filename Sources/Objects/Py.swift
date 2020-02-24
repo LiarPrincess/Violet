@@ -89,6 +89,9 @@ public class PyInstance: BuiltinFunctions {
       type.gcClean()
     }
 
+    // Ids:
+    IdString.gcClean()
+
     // And also modules:
     self.builtinsModule.gcClean()
     self.sysModule.gcClean()

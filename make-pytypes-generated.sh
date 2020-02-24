@@ -100,7 +100,7 @@ sourcery \
 
 python3 $GENERATED/remove-sourcery-header.py ModuleFactory.swift
 
-# Owner protocols
+# === Owner protocols ===
 # Sometimes instead of doing slow Python dispatch we will use Swift protocols.
 sourcery \
   --sources ./Sources/Objects \
@@ -109,3 +109,9 @@ sourcery \
 
 python3 $GENERATED/Owners.py "protocols" > $GENERATED/OwnerProtocols.swift
 python3 $GENERATED/Owners.py "conformance" > $GENERATED/OwnerConformance.swift
+
+
+# === IdString ===
+# Predefined commonly used `__dict__` keys.
+# Similiar to `_Py_IDENTIFIER` in `CPython`.
+python3 $GENERATED/IdStrings.py > $GENERATED/IdStrings.swift
