@@ -235,7 +235,7 @@ public class PyType: PyObject {
 
   // sourcery: pyproperty = __doc__, setter = setDoc
   public func getDoc() -> PyResult<PyObject> {
-    guard let doc = self.__dict__.getItem(id: Ids.__doc__) else {
+    guard let doc = self.__dict__.getItem(id: .__doc__) else {
       return .value(Py.none)
     }
 
@@ -256,7 +256,7 @@ public class PyType: PyObject {
     case let .error(e): return .error(e)
     }
 
-    self.__dict__.setItem(at: Ids.__doc__, to: object)
+    self.__dict__.setItem(id: .__doc__, to: object)
     return .value()
   }
 
@@ -268,7 +268,7 @@ public class PyType: PyObject {
       .map(DocHelper.getDocWithoutSignature)
       .map(Py.newString) ?? Py.none
 
-    self.__dict__.setItem(at: Ids.__doc__, to: doc)
+    self.__dict__.setItem(id: .__doc__, to: doc)
   }
 
   // MARK: - Module
@@ -293,7 +293,7 @@ public class PyType: PyObject {
 
   public func getModuleRaw() -> GetModuleRawResult {
     if self.isHeapType {
-      guard let object = self.__dict__.getItem(id: Ids.__module__) else {
+      guard let object = self.__dict__.getItem(id: .__module__) else {
         return .error(Py.newAttributeError(msg: "__module__"))
       }
 
@@ -329,7 +329,7 @@ public class PyType: PyObject {
     case let .error(e): return .error(e)
     }
 
-    self.__dict__.setItem(at: Ids.__module__, to: object)
+    self.__dict__.setItem(id: .__module__, to: object)
     return .value()
   }
 

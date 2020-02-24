@@ -190,7 +190,10 @@ extension PyType {
         return .typeError("Dictionary key mus be a str.")
       }
 
-      result.setItem(at: key, to: entry.value)
+      switch result.setItem(at: key, to: entry.value) {
+      case .value: break
+      case .error(let e): return .error(e)
+      }
     }
 
     return .value(result)

@@ -224,7 +224,7 @@ extension BuiltinFunctions {
   }
 
   private func get__package__(from globals: PyDict) -> PyResult<PyObject?> {
-    switch globals.getItem(id: Ids.__package__) {
+    switch globals.getItem(id: .__package__) {
     case let .value(o):
       let isNone = o?.isNone ?? true
       return .value(isNone ? nil : o)
@@ -234,7 +234,7 @@ extension BuiltinFunctions {
   }
 
   private func get__name__(from globals: PyDict) -> PyResult<PyString> {
-    switch globals.getItem(id: Ids.__name__) {
+    switch globals.getItem(id: .__name__) {
     case let .value(o):
       guard let object = o else {
         return .keyError("'__name__' not in globals")
@@ -251,11 +251,11 @@ extension BuiltinFunctions {
   }
 
   private func get__spec__(from globals: PyDict) -> PyResult<PyObject?> {
-    return globals.getItem(id: Ids.__spec__)
+    return globals.getItem(id: .__spec__)
   }
 
   private func get__path__(from globals: PyDict) -> PyResult<PyObject?> {
-    return globals.getItem(id: Ids.__path__)
+    return globals.getItem(id: .__path__)
   }
 
   private func guaranteeSpecParentIsEqualToPackage(

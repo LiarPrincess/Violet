@@ -235,7 +235,7 @@ public class PyDict: PyObject {
 
   // MARK: - Id - get/set/del item
 
-  internal func getItem(_ id: IdString) -> PyObject? {
+  internal func getItem(id: IdString) -> PyObject? {
     let key = self.createKey(from: id)
 
     switch self.data.get(key: key) {
@@ -248,7 +248,7 @@ public class PyDict: PyObject {
     }
   }
 
-  internal func setItem(_ id: IdString,
+  internal func setItem(id: IdString,
                         to value: PyObject) {
     let key = self.createKey(from: id)
 

@@ -17,7 +17,7 @@ public class PyModule: PyObject {
   /// PyObject*
   /// PyModule_GetNameObject(PyObject *m)
   internal var name: PyResult<String> {
-    if let name = self.__dict__.getItem(id: Ids.__name__) {
+    if let name = self.__dict__.getItem(id: .__name__) {
       return Py.strValue(name)
     }
 
@@ -44,11 +44,11 @@ public class PyModule: PyObject {
   internal init(name: PyObject, doc: PyObject?) {
     super.init(type: Py.types.module)
 
-    self.__dict__.setItem(at: Ids.__name__, to: name)
-    self.__dict__.setItem(at: Ids.__doc__, to: doc ?? Py.none)
-    self.__dict__.setItem(at: Ids.__package__, to: Py.none)
-    self.__dict__.setItem(at: Ids.__loader__, to: Py.none)
-    self.__dict__.setItem(at: Ids.__spec__, to: Py.none)
+    self.__dict__.setItem(id: .__name__, to: name)
+    self.__dict__.setItem(id: .__doc__, to: doc ?? Py.none)
+    self.__dict__.setItem(id: .__package__, to: Py.none)
+    self.__dict__.setItem(id: .__loader__, to: Py.none)
+    self.__dict__.setItem(id: .__spec__, to: Py.none)
   }
 
   /// Use only in `__new__`!
@@ -101,7 +101,7 @@ public class PyModule: PyObject {
       return attr // 'attr' is an error, just return it
     }
 
-    if let getAttr = self.__dict__.getItem(id: Ids.__getattr__) {
+    if let getAttr = self.__dict__.getItem(id: .__getattr__) {
       let nameArg = pyName ?? Py.getInterned(name)
 
       switch Py.call(callable: getAttr, args: [self, nameArg]) {
@@ -146,7 +146,7 @@ public class PyModule: PyObject {
   // sourcery: pymethod = __dir__
   public func dir() -> DirResult {
     // Do not add 'self.type' dir!
-    if let dirFunc = self.__dict__.getItem(id: Ids.__dir__) {
+    if let dirFunc = self.__dict__.getItem(id: .__dir__) {
       return Py.callDir(dirFunc, args: [])
     }
 
@@ -191,11 +191,11 @@ public class PyModule: PyObject {
       let name = binding.required(at: 0)
       let doc = binding.optional(at: 1) ?? Py.none
 
-      zelf.__dict__.setItem(at: Ids.__name__, to: name)
-      zelf.__dict__.setItem(at: Ids.__doc__, to: doc)
-      zelf.__dict__.setItem(at: Ids.__package__, to: Py.none)
-      zelf.__dict__.setItem(at: Ids.__loader__, to: Py.none)
-      zelf.__dict__.setItem(at: Ids.__spec__, to: Py.none)
+      zelf.__dict__.setItem(id: .__name__, to: name)
+      zelf.__dict__.setItem(id: .__doc__, to: doc)
+      zelf.__dict__.setItem(id: .__package__, to: Py.none)
+      zelf.__dict__.setItem(id: .__loader__, to: Py.none)
+      zelf.__dict__.setItem(id: .__spec__, to: Py.none)
       return .value(Py.none)
 
     case let .error(e):
