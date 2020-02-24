@@ -21,13 +21,13 @@ internal protocol HeapType { }
 
 {% macro printHeapType type %}
   {# If we already have 'attributes: Attributes' then we dont need 'Heap' type #}
-  {% set hasAttributes %}{% for variable in type.allVariables where variable.name == "attributes" and variable.type.name == "Attributes" %}x{% endfor %}{% endset %}
+  {% set has__dict__ %}{% for variable in type.allVariables where variable.name == "__dict__" %}x{% endfor %}{% endset %}
 
 // MARK: - {{ type.name|replace:"Py","" }}
 
   {% if not type.annotations.baseType %}
 // {{ type.name }} is not a base type.
-  {% else %}{% if hasAttributes %}
+  {% else %}{% if has__dict__ %}
 // {{ type.name }} already has everything we need.
   {% else %}
 /// Type used when we subclass builtin `{{ type.annotations.pytype }}` class.
@@ -35,7 +35,7 @@ internal protocol HeapType { }
 internal final class {{ type.name }}Heap: {{ type.name }}, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
   {% endif %}
   {% endif %}

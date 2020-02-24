@@ -61,7 +61,7 @@ protocol __defaults__GetterOwner { func getDefaults() -> PyObject }
 protocol __del__Owner { func del() -> PyResult<PyNone> }
 protocol __delete__Owner { func del(object: PyObject) -> PyResult<PyObject> }
 protocol __delitem__Owner { func delItem(at index: PyObject) -> PyResult<PyNone> }
-protocol __dict__GetterOwner { func getDict() -> Attributes }
+protocol __dict__GetterOwner { func getDict() -> PyDict }
 protocol __dir__Owner { func dir() -> DirResult }
 protocol __divmod__Owner { func divmod(_ other: PyObject) -> PyResult<PyObject> }
 protocol __doc__GetterOwner { func getDoc() -> PyResult<PyObject> }
@@ -74,7 +74,7 @@ protocol __func__Owner { func getFunc() -> PyFunction }
 protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
 protocol __get__Owner { func get(object: PyObject, type: PyObject) -> PyResult<PyObject> }
 protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
-protocol __globals__GetterOwner { func getGlobals() -> Attributes }
+protocol __globals__GetterOwner { func getGlobals() -> PyDict }
 protocol __gt__Owner { func isGreater(_ other: PyObject) -> CompareResult }
 protocol __hash__Owner { func hash() -> HashResult }
 protocol __iadd__Owner { func iadd(_ other: PyObject) -> PyResult<PyObject> }

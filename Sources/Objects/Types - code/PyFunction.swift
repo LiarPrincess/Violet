@@ -33,17 +33,15 @@ public class PyFunction: PyObject {
   /// The `__doc__` attribute, can be anything
   internal let doc: String?
   /// The `__dict__` attribute, a dict or NULL
-  internal let attributes = Attributes()
+  internal let __dict__ = PyDict()
   /// The `__module__` attribute, can be anything
   internal let module: PyObject
   /// A code object, the `__code__` attribute
   internal let code: PyCode
 
-  internal private(set) var globals: Attributes
+  internal private(set) var globals: PyDict
   internal private(set) var defaults: PyTuple?
   internal private(set) var kwDefaults: PyDict?
-  /// Basically the same as `self.kwDefaults`, but as `Attributes`.
-  private var kwDefaultsAttributes: Attributes?
   internal private(set) var closure: PyTuple?
   internal private(set) var annotations: PyDict?
 
@@ -54,14 +52,13 @@ public class PyFunction: PyObject {
   // MARK: - Init
 
   internal init(qualname: String?,
+                module: PyObject,
                 code: PyCode,
-                globals: Attributes) {
+                globals: PyDict) {
     self.name = code.codeObject.name
     self.qualname = qualname ?? code.codeObject.name
     self.code = code
-
-    // __module__: If module name is in globals, use it. Otherwise, use None.
-    self.module = globals["__name__"] ?? Py.none
+    self.module = module
 
     self.globals = globals
     self.defaults = nil
@@ -162,7 +159,6 @@ public class PyFunction: PyObject {
   public func setKeywordDefaults(_ object: PyObject) -> PyResult<PyNone> {
     if object.isNone {
       self.kwDefaults = nil
-      self.kwDefaultsAttributes = nil
       return .value(Py.none)
     }
 
@@ -170,14 +166,7 @@ public class PyFunction: PyObject {
       return .systemError("non-dict keyword only default args")
     }
 
-    let attributes: Attributes
-    switch self.toAttributes(data: dict.data) {
-    case let .value(a): attributes = a
-    case let .error(e): return .error(e)
-    }
-
     self.kwDefaults = dict
-    self.kwDefaultsAttributes = attributes
     return .value(Py.none)
   }
 
@@ -207,7 +196,7 @@ public class PyFunction: PyObject {
   // MARK: - Globals
 
   // sourcery: pyproperty = __globals__
-  public func getGlobals() -> Attributes {
+  public func getGlobals() -> PyDict {
     return self.globals
   }
 
@@ -264,8 +253,8 @@ public class PyFunction: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func getDict() -> Attributes {
-    return self.attributes
+  public func getDict() -> PyDict {
+    return self.__dict__
   }
 
   // MARK: - Get
@@ -297,17 +286,20 @@ public class PyFunction: PyObject {
     // Caller and callee functions should not share the kwargs dictionary.
     // Btw. we do not expect a lot of kwargs so the performance hit
     // should be acceptable.
-    let kwargsAttributes: Attributes?
-    switch self.toAttributes(data: kwargs) {
-    case let .value(k): kwargsAttributes = k
-    case let .error(e): return .error(e)
+    var kwargsCopy: PyDict? = nil
+    if let kwargs = kwargs {
+      let copy = Py.newDict()
+      switch copy.update(from: kwargs) {
+      case .value: kwargsCopy = copy
+      case .error(let e): return .error(e)
+      }
     }
 
     let argsDefaults = self.defaults?.elements ?? []
-    let kwDefaults = self.kwDefaultsAttributes
+    let kwDefaults = self.kwDefaults
 
     let globals = self.globals
-    let locals = Attributes()
+    let locals = Py.newDict()
 
     let result = Py.delegate.eval(
       name: name,
@@ -315,7 +307,7 @@ public class PyFunction: PyObject {
       code: code,
 
       args: args,
-      kwArgs: kwargsAttributes,
+      kwArgs: kwargsCopy,
       defaults: argsDefaults,
       kwDefaults: kwDefaults,
 
@@ -324,29 +316,5 @@ public class PyFunction: PyObject {
     )
 
     return result
-  }
-
-  private func toAttributes(data: PyDictData?) -> PyResult<Attributes?> {
-    guard let data = data else {
-      return .value(nil)
-    }
-
-    return self.toAttributes(data: data)
-  }
-
-  private func toAttributes(data: PyDictData) -> PyResult<Attributes> {
-    let result = Attributes()
-    for entry in data {
-      let key = entry.key.object
-      let value = entry.value
-
-      guard let keyString = key as? PyString else {
-        return .typeError("keywords must be strings")
-      }
-
-      result.set(key: keyString.value, to: value)
-    }
-
-    return .value(result)
   }
 }

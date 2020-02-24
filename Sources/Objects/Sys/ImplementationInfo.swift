@@ -6,15 +6,21 @@ public class ImplementationInfo {
   public let cacheTag: String?
 
   public lazy var object: PyNamespace = {
-    let cacheTag: PyObject =
-      self.cacheTag.map(Py.newString(_:)) ?? Py.none
+    let dict = PyDict()
 
-    let attributes = Attributes()
-    attributes.set(key: "name", to: Py.newString(self.name))
-    attributes.set(key: "version", to: self.version.object)
-    attributes.set(key: "hexversion", to: self.version.hexVersionObject)
-    attributes.set(key: "cache_tag", to: cacheTag)
-    return Py.newNamespace(attributes: attributes)
+    func set(name: String, value: PyObject) {
+      let interned = Py.getInterned(name)
+      dict.setItem(at: interned, to: value)
+    }
+
+    let cacheTag: PyObject = self.cacheTag.map(Py.newString(_:)) ?? Py.none
+
+    set(name: "name", value: Py.newString(self.name))
+    set(name: "version", value: self.version.object)
+    set(name: "hexversion", value: self.version.hexVersionObject)
+    set(name: "cache_tag", value: cacheTag)
+
+    return Py.newNamespace(dict: dict)
   }()
 
   internal init(name: String, version: VersionInfo, cacheTag: String?) {

@@ -198,17 +198,26 @@ public class PyDict: PyObject {
     }
   }
 
-  internal func getItem(id: PyId) -> PyResult<PyObject?> {
+  internal enum GetItemByIdResult {
+    case value(PyObject)
+    case notFound
+    case error(PyBaseException)
+  }
+
+  internal func getItem(id: PyId) -> PyObject? {
     let key: PyDictKey
     switch self.createKey(from: id) {
     case let .value(v): key = v
-    case let .error(e): return .error(e)
+    case let .error(e): self.idErrorNotHandled(operation: "get", error: e)
     }
 
     switch self.data.get(key: key) {
-    case .value(let o): return .value(o)
-    case .notFound: return .value(nil)
-    case .error(let e): return .error(e)
+    case .value(let o):
+      return o
+    case .notFound:
+      return nil
+    case .error(let e):
+      self.idErrorNotHandled(operation: "get", error: e)
     }
   }
 
@@ -226,6 +235,23 @@ public class PyDict: PyObject {
       return .value(Py.none)
     case .error(let e):
       return .error(e)
+    }
+  }
+
+  internal func setItem(at id: PyId,
+                        to value: PyObject) {
+    let key: PyDictKey
+    switch self.createKey(from: id) {
+    case let .value(v): key = v
+    case let .error(e): self.idErrorNotHandled(operation: "set", error: e)
+    }
+
+    switch self.data.insert(key: key, value: value) {
+    case .inserted,
+         .updated:
+      break
+    case .error(let e):
+      self.idErrorNotHandled(operation: "set", error: e)
     }
   }
 
@@ -648,5 +674,13 @@ public class PyDict: PyObject {
     case let .error(e):
       return .error(e)
     }
+  }
+
+  /// Errors can happen when the value is not-hashable.
+  /// Strings are always hashable, so we don't expect errors.
+  private func idErrorNotHandled(operation: String,
+                                 error: PyBaseException) -> Never {
+    let repr = Py.reprOrGeneric(error)
+    trap("Dict operation '\(operation)' returned an error: '\(repr)'")
   }
 }

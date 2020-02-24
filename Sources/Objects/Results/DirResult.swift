@@ -24,6 +24,14 @@ public struct DirResult {
     }
   }
 
+  internal mutating func append(contentsOf dict: PyDict) {
+    for entry in dict.data {
+      if let str = entry.key.object as? PyString {
+        self.append(str.value)
+      }
+    }
+  }
+
   internal mutating func append(contentsOf newElements: DirResult) {
     self.append(contentsOf: newElements.values)
   }

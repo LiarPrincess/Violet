@@ -83,13 +83,12 @@ public class PyMethod: PyObject {
 
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
-    let funcNameObject = self.fn.attributes["__qualname__"] ??
-                         self.fn.attributes["__name__"]
+    let funcNameObject =
+      self.fn.__dict__.getItem(id: Ids.__qualname__) ??
+      self.fn.__dict__.getItem(id: Ids.__name__)
 
-    var funcName = self.fn.name
-    if let str = funcNameObject as? PyString {
-      funcName = str.value
-    }
+    let funcNameString = funcNameObject as? PyString
+    let funcName = funcNameString?.value ?? self.fn.name
 
     let ptr = self.object.ptrString
     let type = self.object.typeName

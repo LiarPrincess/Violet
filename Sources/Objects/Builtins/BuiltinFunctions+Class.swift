@@ -57,7 +57,7 @@ extension BuiltinFunctions {
     // TODO: locals: namespace
     // TODO: closure PyFunction_GET_CLOSURE(func)
     let code = fn.code.codeObject
-    let locals = Attributes()
+    let locals = Py.newDict()
 
     return Py.delegate.eval(
       name: nil,

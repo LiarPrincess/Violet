@@ -84,7 +84,7 @@ public class PyType: PyObject {
   private var bases: [PyType]
   private var mro:   [PyType]
   private var subclasses: [PyTypeWeakRef] = []
-  private var attributes = Attributes()
+  private lazy var __dict__ = PyDict()
 
   internal private(set) var typeFlags = PyTypeFlags()
 
@@ -98,10 +98,6 @@ public class PyType: PyObject {
 
   internal func setFlag(_ flag: PyTypeFlags) {
     self.typeFlags.insert(flag)
-  }
-
-  internal func setAttributes(_ attributes: Attributes) {
-    self.attributes = attributes
   }
 
   override public var description: String {
@@ -239,7 +235,7 @@ public class PyType: PyObject {
 
   // sourcery: pyproperty = __doc__, setter = setDoc
   public func getDoc() -> PyResult<PyObject> {
-    guard let doc = self.attributes.get(key: "__doc__") else {
+    guard let doc = self.__dict__.getItem(id: Ids.__doc__) else {
       return .value(Py.none)
     }
 
@@ -260,7 +256,7 @@ public class PyType: PyObject {
     case let .error(e): return .error(e)
     }
 
-    self.attributes.set(key: "__doc__", to: object)
+    self.__dict__.setItem(at: Ids.__doc__, to: object)
     return .value()
   }
 
@@ -268,9 +264,11 @@ public class PyType: PyObject {
   /// We can't do it in init because we are not allowed to use other types in init.
   /// (Which means that we would not be able to create PyString to put in dict)
   internal func setBuiltinTypeDoc(_ value: String?) {
-    self.attributes["__doc__"] = value
+    let doc: PyObject = value
       .map(DocHelper.getDocWithoutSignature)
       .map(Py.newString) ?? Py.none
+
+    self.__dict__.setItem(at: Ids.__doc__, to: doc)
   }
 
   // MARK: - Module
@@ -295,7 +293,7 @@ public class PyType: PyObject {
 
   public func getModuleRaw() -> GetModuleRawResult {
     if self.isHeapType {
-      guard let object = self.attributes.get(key: "__module__") else {
+      guard let object = self.__dict__.getItem(id: Ids.__module__) else {
         return .error(Py.newAttributeError(msg: "__module__"))
       }
 
@@ -331,7 +329,7 @@ public class PyType: PyObject {
     case let .error(e): return .error(e)
     }
 
-    self.attributes.set(key: "__module__", to: object)
+    self.__dict__.setItem(at: Ids.__module__, to: object)
     return .value()
   }
 
@@ -354,8 +352,8 @@ public class PyType: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func getDict() -> Attributes {
-    return self.attributes
+  public func getDict() -> PyDict {
+    return self.__dict__
   }
 
   // MARK: - Class
@@ -530,7 +528,7 @@ public class PyType: PyObject {
   /// metaclass would probably be more confusing than helpful.
   public func dir() -> DirResult {
     return self.mro.reduce(into: DirResult()) { acc, base in
-      acc.append(contentsOf: base.attributes.keys)
+      acc.append(contentsOf: base.__dict__)
     }
   }
 
@@ -540,9 +538,9 @@ public class PyType: PyObject {
   ///
   /// PyObject *
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
-  internal func lookup(name: String) -> PyObject? {
+  internal func lookup(name: PyString) -> PyObject? {
     for base in self.mro {
-      if let result = base.attributes[name] {
+      if let result = base.__dict__.getItem(id: name) {
         return result
       }
     }
@@ -593,7 +591,7 @@ public class PyType: PyObject {
     }
 
     // '__new__' is a static method, so we can't just use 'callMethod'
-    guard let newFn = self.lookup(name: "__new__") else {
+    guard let newFn = self.lookup(name: Ids.__new__) else {
       return .typeError("cannot create '\(self.name)' instances")
     }
 
@@ -627,7 +625,7 @@ public class PyType: PyObject {
     self.bases = []
     self.mro = []
     self.subclasses = []
-    self.attributes.clear()
+    self.__dict__.clear()
     super.gcClean()
   }
 

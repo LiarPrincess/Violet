@@ -67,11 +67,12 @@ extension BuiltinFunctions {
   // MARK: - Namespace
 
   public func newNamespace() -> PyNamespace {
-    return self.newNamespace(attributes: Attributes())
+    let dict = self.newDict()
+    return self.newNamespace(dict: dict)
   }
 
-  public func newNamespace(attributes: Attributes) -> PyNamespace {
-    return PyNamespace(attributes: attributes)
+  public func newNamespace(dict: PyDict) -> PyNamespace {
+    return PyNamespace(dict: dict)
   }
 
   // MARK: - Module
@@ -96,7 +97,7 @@ extension BuiltinFunctions {
 
   public func newFunction(qualname: PyObject,
                           code: PyObject,
-                          globals: Attributes) -> PyResult<PyFunction> {
+                          globals: PyDict) -> PyResult<PyFunction> {
     guard let codeValue = code as? PyCode else {
       let t = code.typeName
       return .typeError("function() code must be code, not \(t)")
@@ -122,23 +123,51 @@ extension BuiltinFunctions {
 
   public func newFunction(qualname: String?,
                           code: PyCode,
-                          globals: Attributes) -> PyFunction {
+                          globals: PyDict) -> PyFunction {
+    let module = globals.getItem(id: Ids.name) ?? Py.none
+
     return PyFunction(
       qualname: qualname,
+      module: module,
       code: code,
       globals: globals
     )
   }
+}
 
-  // MARK: - Dict
+// MARK: - Dict
+
+public enum Get__dict__Result {
+  case value(PyDict)
+  case noDict
+  case error(PyBaseException)
+}
+
+extension BuiltinFunctions {
 
   // TODO: This should return 'PyDict'
-  public func get__dict__(object: PyObject) -> Attributes? {
+  public func get__dict__(object: PyObject) -> Get__dict__Result {
     if let owner = object as? __dict__GetterOwner {
-      return owner.getDict()
+      return .value(owner.getDict())
     }
 
-    return nil
+    switch self.getAttribute(object, name: Ids.__dict__) {
+    case let .value(object):
+      guard let dict = object as? PyDict else {
+        let msg = "'__dict__' returned non-dict type '\(object.typeName)'"
+        let e = self.newTypeError(msg: msg)
+        return .error(e)
+      }
+
+      return .value(dict)
+
+    case let .error(e):
+      if e.isAttributeError {
+        return .noDict
+      }
+
+      return .error(e)
+    }
   }
 
   // MARK: - Id

@@ -32,8 +32,8 @@ public final class PySystemExit: PyBaseException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -76,8 +76,8 @@ public final class PyKeyboardInterrupt: PyBaseException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -120,8 +120,8 @@ public final class PyGeneratorExit: PyBaseException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -164,8 +164,8 @@ public class PyException: PyBaseException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -208,8 +208,8 @@ public final class PyStopIteration: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -252,8 +252,8 @@ public final class PyStopAsyncIteration: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -296,8 +296,8 @@ public class PyArithmeticError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -340,8 +340,8 @@ public final class PyFloatingPointError: PyArithmeticError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -384,8 +384,8 @@ public final class PyOverflowError: PyArithmeticError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -428,8 +428,8 @@ public final class PyZeroDivisionError: PyArithmeticError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -472,8 +472,8 @@ public final class PyAssertionError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -516,8 +516,8 @@ public final class PyAttributeError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -560,8 +560,8 @@ public final class PyBufferError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -604,8 +604,8 @@ public final class PyEOFError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -648,8 +648,8 @@ public class PyImportError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -692,8 +692,8 @@ public final class PyModuleNotFoundError: PyImportError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -736,8 +736,8 @@ public class PyLookupError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -780,8 +780,8 @@ public final class PyIndexError: PyLookupError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -824,8 +824,8 @@ public final class PyKeyError: PyLookupError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -868,8 +868,8 @@ public final class PyMemoryError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -912,8 +912,8 @@ public class PyNameError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -956,8 +956,8 @@ public final class PyUnboundLocalError: PyNameError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1000,8 +1000,8 @@ public class PyOSError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1044,8 +1044,8 @@ public final class PyBlockingIOError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1088,8 +1088,8 @@ public final class PyChildProcessError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1132,8 +1132,8 @@ public class PyConnectionError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1176,8 +1176,8 @@ public final class PyBrokenPipeError: PyConnectionError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1220,8 +1220,8 @@ public final class PyConnectionAbortedError: PyConnectionError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1264,8 +1264,8 @@ public final class PyConnectionRefusedError: PyConnectionError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1308,8 +1308,8 @@ public final class PyConnectionResetError: PyConnectionError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1352,8 +1352,8 @@ public final class PyFileExistsError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1396,8 +1396,8 @@ public final class PyFileNotFoundError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1440,8 +1440,8 @@ public final class PyInterruptedError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1484,8 +1484,8 @@ public final class PyIsADirectoryError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1528,8 +1528,8 @@ public final class PyNotADirectoryError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1572,8 +1572,8 @@ public final class PyPermissionError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1616,8 +1616,8 @@ public final class PyProcessLookupError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1660,8 +1660,8 @@ public final class PyTimeoutError: PyOSError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1704,8 +1704,8 @@ public final class PyReferenceError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1748,8 +1748,8 @@ public class PyRuntimeError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1792,8 +1792,8 @@ public final class PyNotImplementedError: PyRuntimeError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1836,8 +1836,8 @@ public final class PyRecursionError: PyRuntimeError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1880,8 +1880,8 @@ public class PySyntaxError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1924,8 +1924,8 @@ public class PyIndentationError: PySyntaxError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -1968,8 +1968,8 @@ public final class PyTabError: PyIndentationError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2015,8 +2015,8 @@ public final class PySystemError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2059,8 +2059,8 @@ public final class PyTypeError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2103,8 +2103,8 @@ public class PyValueError: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2147,8 +2147,8 @@ public class PyUnicodeError: PyValueError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2191,8 +2191,8 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2235,8 +2235,8 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2279,8 +2279,8 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2323,8 +2323,8 @@ public class PyWarning: PyException {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2367,8 +2367,8 @@ public final class PyDeprecationWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2412,8 +2412,8 @@ public final class PyPendingDeprecationWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2456,8 +2456,8 @@ public final class PyRuntimeWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2500,8 +2500,8 @@ public final class PySyntaxWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2544,8 +2544,8 @@ public final class PyUserWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2589,8 +2589,8 @@ public final class PyFutureWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2633,8 +2633,8 @@ public final class PyImportWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2678,8 +2678,8 @@ public final class PyUnicodeWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2723,8 +2723,8 @@ public final class PyBytesWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__
@@ -2767,8 +2767,8 @@ public final class PyResourceWarning: PyWarning {
    }
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {
-     return self.attributes
+   override public func getDict() -> PyDict {
+     return self.__dict__
    }
 
   // sourcery: pymethod = __new__

@@ -11,6 +11,12 @@
 /// - add `__doc__`
 /// - fill `__dict__`
 
+private func addBoring(type: PyType, name: String, value: PyObject) {
+  let dict = type.getDict()
+  let interned = Py.getInterned(name)
+  dict.setItem(at: interned, to: value)
+}
+
 {% macro addDoc type %}
     {# To find 'doc' we iterate all static variables looking for 'doc', if that fails then assign 'nil' #}
     {% set doc %}{% for variable in type.staticVariables where variable.name == "doc" %}{{ type.name }}.doc{% endfor %}{% endset %}
@@ -43,21 +49,21 @@
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     {% set getter %}{{ type.name }}.{{ prop.selectorName }}{% endset %}
     {% if prop.annotations.setter %}
-    dict["{{ attribute }}"] = PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }})
+    addBoring(type: type, name: "{{ attribute }}", value: PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }}))
     {% else %}
-    dict["{{ attribute }}"] = PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }})
+    addBoring(type: type, name: "{{ attribute }}", value: PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }}))
     {% endif %}
   {% endfor %}
 
   {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
     {% if attribute == "__new__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% else %}
     {% if attribute == "__init__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% else %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% endif %}
     {% endif %}
   {% endfor %}
@@ -65,19 +71,19 @@
   {% for method in type.classMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
     {% if attribute == "__new__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% else %}
     {% if attribute == "__init__" %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% else %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }})
+    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% endif %}
     {% endif %}
   {% endfor %}
 
   {% for method in type.instanceMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }})
+    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }}))
   {% endfor %}
 {% endmacro %}
 

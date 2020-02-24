@@ -18,7 +18,7 @@ public class PyBaseException: PyObject {
   internal var args: PyTuple
   internal var traceback: PyObject?
   internal var cause: PyObject?
-  internal var attributes: Attributes
+  internal lazy var __dict__ = Py.newDict()
 
   /// Another exception during whose handling this exception was raised.
   internal var context: PyBaseException?
@@ -51,7 +51,6 @@ public class PyBaseException: PyObject {
     self.args = args
     self.traceback = traceback
     self.cause = cause
-    self.attributes = Attributes()
     self.context = exceptionContext
     self.suppressContext = suppressExceptionContext
 
@@ -151,8 +150,8 @@ public class PyBaseException: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func getDict() -> Attributes {
-    return self.attributes
+  public func getDict() -> PyDict {
+    return self.__dict__
   }
 
   // MARK: - Class

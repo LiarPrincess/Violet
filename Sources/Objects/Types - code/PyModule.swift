@@ -12,16 +12,16 @@ public class PyModule: PyObject {
     The name must be a string; the optional doc argument can have any type.
     """
 
-  internal let attributes = Attributes()
+  internal let __dict__ = Py.newDict()
 
   /// PyObject*
   /// PyModule_GetNameObject(PyObject *m)
   internal var name: PyResult<String> {
-    guard let nameObject = self.attributes["__name__"] else {
-      return .systemError("nameless module")
+    if let name = self.__dict__.getItem(id: Ids.__name__) {
+      return Py.strValue(name)
     }
 
-    return Py.strValue(nameObject)
+    return .systemError("nameless module")
   }
 
   override public var description: String {
@@ -43,11 +43,12 @@ public class PyModule: PyObject {
 
   internal init(name: PyObject, doc: PyObject?) {
     super.init(type: Py.types.module)
-    self.attributes["__name__"] = name
-    self.attributes["__doc__"] = doc
-    self.attributes["__package__"] = Py.none
-    self.attributes["__loader__"] = Py.none
-    self.attributes["__spec__"] = Py.none
+
+    self.__dict__.setItem(at: Ids.__name__, to: name)
+    self.__dict__.setItem(at: Ids.__doc__, to: doc ?? Py.none)
+    self.__dict__.setItem(at: Ids.__package__, to: Py.none)
+    self.__dict__.setItem(at: Ids.__loader__, to: Py.none)
+    self.__dict__.setItem(at: Ids.__spec__, to: Py.none)
   }
 
   /// Use only in `__new__`!
@@ -58,8 +59,8 @@ public class PyModule: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  public func getDict() -> Attributes {
-    return self.attributes
+  public func getDict() -> PyDict {
+    return self.__dict__
   }
 
   // MARK: - String
@@ -100,7 +101,7 @@ public class PyModule: PyObject {
       return attr // 'attr' is an error, just return it
     }
 
-    if let getAttr = self.attributes["__getattr__"] {
+    if let getAttr = self.__dict__.getItem(id: Ids.__getattr__) {
       let nameArg = pyName ?? Py.getInterned(name)
 
       switch Py.call(callable: getAttr, args: [self, nameArg]) {
@@ -145,18 +146,20 @@ public class PyModule: PyObject {
   // sourcery: pymethod = __dir__
   public func dir() -> DirResult {
     // Do not add 'self.type' dir!
-    if let dirFunc = self.attributes["__dir__"] {
+    if let dirFunc = self.__dict__.getItem(id: Ids.__dir__) {
       return Py.callDir(dirFunc, args: [])
-    } else {
-      return DirResult(self.attributes.keys)
     }
+
+    var result = DirResult()
+    result.append(contentsOf: self.__dict__)
+    return result
   }
 
   // MARK: - GC
 
   /// Remove all of the references to other Python objects.
   override internal func gcClean() {
-    self.attributes.clear()
+    _ = self.__dict__.clear()
     super.gcClean()
   }
 
@@ -188,11 +191,11 @@ public class PyModule: PyObject {
       let name = binding.required(at: 0)
       let doc = binding.optional(at: 1) ?? Py.none
 
-      zelf.attributes.set(key: "___name__", to: name)
-      zelf.attributes.set(key: "___doc__", to: doc)
-      zelf.attributes.set(key: "___package__", to: Py.none)
-      zelf.attributes.set(key: "___loader__", to: Py.none)
-      zelf.attributes.set(key: "___spec__", to: Py.none)
+      zelf.__dict__.setItem(at: Ids.__name__, to: name)
+      zelf.__dict__.setItem(at: Ids.__doc__, to: doc)
+      zelf.__dict__.setItem(at: Ids.__package__, to: Py.none)
+      zelf.__dict__.setItem(at: Ids.__loader__, to: Py.none)
+      zelf.__dict__.setItem(at: Ids.__spec__, to: Py.none)
       return .value(Py.none)
 
     case let .error(e):

@@ -182,15 +182,15 @@ extension PyType {
     return .value(type)
   }
 
-  private static func createAttributes(from dict: PyDictData) -> PyResult<Attributes> {
-    let result = Attributes()
+  private static func create__dict__(from dict: PyDictData) -> PyResult<PyDict> {
+    let result = Py.newDict()
 
     for entry in dict {
       guard let key = entry.key.object as? PyString else {
         return .typeError("Dictionary key mus be a str.")
       }
 
-      result.set(key: key.value, to: entry.value)
+      result.setItem(at: key, to: entry.value)
     }
 
     return .value(result)

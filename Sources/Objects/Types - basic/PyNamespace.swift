@@ -10,7 +10,7 @@ public class PyNamespace: PyObject {
     SimpleNamespace(**kwargs)
     """
 
-  internal let attributes: Attributes
+  internal let __dict__: PyDict
 
   override public var description: String {
     return "PyNamespace()"
@@ -18,8 +18,8 @@ public class PyNamespace: PyObject {
 
   // MARK: - Init
 
-  internal init(attributes: Attributes) {
-    self.attributes = attributes
+  internal init(dict: PyDict) {
+    self.__dict__ = dict
     super.init(type: Py.types.simpleNamespace)
   }
 
@@ -31,7 +31,7 @@ public class PyNamespace: PyObject {
       return .notImplemented
     }
 
-    return self.attributes.isEqual(to: other.attributes).asCompareResult
+    return self.__dict__.isEqual(other.__dict__)
   }
 
   // sourcery: pymethod = __ne__
@@ -64,8 +64,8 @@ public class PyNamespace: PyObject {
   // MARK: - Dict
 
   // sourcery: pyproperty = __dict__
-  internal func getDict() -> Attributes {
-    return self.attributes
+  internal func getDict() -> PyDict {
+    return self.__dict__
   }
 
   // MARK: - String
@@ -81,7 +81,8 @@ public class PyNamespace: PyObject {
 
     return self.withReprLock {
       var list = [String]()
-      for entry in self.attributes.entries {
+
+      for entry in self.__dict__.data {
         switch Py.repr(entry.value) {
         case let .value(o): list.append("\(entry.key)=\(o)")
         case let .error(e): return .error(e)
@@ -136,13 +137,16 @@ public class PyNamespace: PyObject {
       return .value(Py.none)
     }
 
-    let kwargsDict: [String:PyObject]
     switch ArgumentParser.guaranteeStringKeywords(kwargs: kwargs) {
-    case let .value(r): kwargsDict = r
-    case let .error(e): return .error(e)
+    case .value: break
+    case .error(let e): return .error(e)
     }
 
-    zelf.attributes.update(values: kwargsDict)
+    switch zelf.__dict__.update(from: kwargs) {
+    case .value: break
+    case .error(let e): return .error(e)
+    }
+
     return .value(Py.none)
   }
 }

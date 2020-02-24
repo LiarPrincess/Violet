@@ -20,15 +20,22 @@ public class HashInfo {
   public let imag = Hasher.imag
 
   public lazy var object: PyNamespace = {
-    let attributes = Attributes()
-    attributes.set(key: "width", to: Py.newInt(self.width))
-    attributes.set(key: "modulus", to: Py.newInt(self.modulus))
-    attributes.set(key: "inf", to: Py.newInt(self.inf))
-    attributes.set(key: "nan", to: Py.newInt(self.nan))
-    attributes.set(key: "imag", to: Py.newInt(self.imag))
-    attributes.set(key: "algorithm", to: Py.newString(self.algorithm))
-    attributes.set(key: "hash_bits", to: Py.newInt(self.hashBits))
-    attributes.set(key: "seed_bits", to: Py.newInt(self.seedBits))
-    return Py.newNamespace(attributes: attributes)
+    let dict = PyDict()
+
+    func set(name: String, value: PyObject) {
+      let interned = Py.getInterned(name)
+      dict.setItem(at: interned, to: value)
+    }
+
+    set(name: "width", value: Py.newInt(self.width))
+    set(name: "modulus", value: Py.newInt(self.modulus))
+    set(name: "inf", value: Py.newInt(self.inf))
+    set(name: "nan", value: Py.newInt(self.nan))
+    set(name: "imag", value: Py.newInt(self.imag))
+    set(name: "algorithm", value: Py.newString(self.algorithm))
+    set(name: "hash_bits", value: Py.newInt(self.hashBits))
+    set(name: "seed_bits", value: Py.newInt(self.seedBits))
+
+    return Py.newNamespace(dict: dict)
   }()
 }

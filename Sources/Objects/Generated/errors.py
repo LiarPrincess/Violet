@@ -140,8 +140,8 @@ public {final}class Py{name}: Py{base} {{
    }}
 
    // sourcery: pyproperty = __dict__
-   override public func getDict() -> Attributes {{
-     return self.attributes
+   override public func getDict() -> PyDict {{
+     return self.__dict__
    }}
 
   // sourcery: pymethod = __new__

@@ -17,6 +17,11 @@
 // (and we would have gotten away with it without you meddling kids!)
 // https://www.youtube.com/watch?v=b4JLLv1lE7A
 
+private func addBoring(dict: PyDict, name: String, value: PyObject) {
+  let interned = Py.getInterned(name)
+  dict.setItem(at: interned, to: value)
+}
+
 internal enum ModuleFactory {
 {% for type in types.classes|annotated:"pymodule" %}
 
@@ -28,22 +33,22 @@ internal enum ModuleFactory {
 
   {% for prop in type.allVariables|annotated:"pyproperty" %}
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
-    dict["{{ attribute }}"] = object.{{ prop.name }}
+    addBoring(dict: dict, name: "{{ attribute }}", value: object.{{ prop.name }})
   {% endfor %}
 
   {% for prop in type.allMethods|annotated:"pyproperty" %}
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     {% set getter %}object.{{ prop.selectorName }}{% endset %}
     {% if prop.annotations.setter %}
-    dict["{{ attribute }}"] = PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: object.{{ prop.annotations.setter }})
+    addBoring(dict: dict, name: "{{ attribute }}", value: PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: object.{{ prop.annotations.setter }}))
     {% else %}
-    dict["{{ attribute }}"] = PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }})
+    addBoring(dict: dict, name: "{{ attribute }}", value: PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}))
     {% endif %}
   {% endfor %}
 
   {% for method in type.allMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    dict["{{ attribute }}"] = PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: object.{{ method.selectorName }}, module: result)
+    addBoring(dict: dict, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: object.{{ method.selectorName }}, module: result))
   {% endfor %}
 
     return result

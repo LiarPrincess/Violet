@@ -43,7 +43,7 @@ internal protocol HeapType { }
 internal final class PyByteArrayHeap: PyByteArray, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - ByteArrayIterator
@@ -57,7 +57,7 @@ internal final class PyByteArrayHeap: PyByteArray, HeapType {
 internal final class PyBytesHeap: PyBytes, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - BytesIterator
@@ -79,7 +79,7 @@ internal final class PyBytesHeap: PyBytes, HeapType {
 internal final class PyComplexHeap: PyComplex, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - Dict
@@ -89,7 +89,7 @@ internal final class PyComplexHeap: PyComplex, HeapType {
 internal final class PyDictHeap: PyDict, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - DictItemIterator
@@ -127,7 +127,7 @@ internal final class PyDictHeap: PyDict, HeapType {
 internal final class PyEnumerateHeap: PyEnumerate, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - Filter
@@ -137,7 +137,7 @@ internal final class PyEnumerateHeap: PyEnumerate, HeapType {
 internal final class PyFilterHeap: PyFilter, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - Float
@@ -147,7 +147,7 @@ internal final class PyFilterHeap: PyFilter, HeapType {
 internal final class PyFloatHeap: PyFloat, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - FrozenSet
@@ -157,7 +157,7 @@ internal final class PyFloatHeap: PyFloat, HeapType {
 internal final class PyFrozenSetHeap: PyFrozenSet, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - Function
@@ -171,7 +171,7 @@ internal final class PyFrozenSetHeap: PyFrozenSet, HeapType {
 internal final class PyIntHeap: PyInt, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - Iterator
@@ -185,7 +185,7 @@ internal final class PyIntHeap: PyInt, HeapType {
 internal final class PyListHeap: PyList, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - ListIterator
@@ -203,7 +203,7 @@ internal final class PyListHeap: PyList, HeapType {
 internal final class PyMapHeap: PyMap, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - Method
@@ -233,7 +233,7 @@ internal final class PyMapHeap: PyMap, HeapType {
 internal final class PyPropertyHeap: PyProperty, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - Range
@@ -251,7 +251,7 @@ internal final class PyPropertyHeap: PyProperty, HeapType {
 internal final class PyReversedHeap: PyReversed, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - Set
@@ -261,7 +261,7 @@ internal final class PyReversedHeap: PyReversed, HeapType {
 internal final class PySetHeap: PySet, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - SetIterator
@@ -279,7 +279,7 @@ internal final class PySetHeap: PySet, HeapType {
 internal final class PyStringHeap: PyString, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - StringIterator
@@ -297,7 +297,7 @@ internal final class PyStringHeap: PyString, HeapType {
 internal final class PyTupleHeap: PyTuple, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 // MARK: - TupleIterator
@@ -311,7 +311,7 @@ internal final class PyTupleHeap: PyTuple, HeapType {
 internal final class PyZipHeap: PyZip, HeapType {
 
   /// Python `__dict__` property.
-  internal lazy var attributes = Attributes()
+  internal lazy var __dict__ = PyDict()
 }
 
 

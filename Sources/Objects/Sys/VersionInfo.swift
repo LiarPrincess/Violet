@@ -50,13 +50,19 @@ public class VersionInfo {
   public let serial: UInt8
 
   public lazy var object: PyNamespace = {
-    let attributes = Attributes()
-    attributes.set(key: "major", to: Py.newInt(self.major))
-    attributes.set(key: "minor", to: Py.newInt(self.minor))
-    attributes.set(key: "micro", to: Py.newInt(self.micro))
-    attributes.set(key: "releaseLevel", to: Py.newString(self.releaseLevel.description))
-    attributes.set(key: "serial", to: Py.newInt(self.serial))
-    return Py.newNamespace(attributes: attributes)
+    let dict = PyDict()
+
+    func set(name: String, value: PyObject) {
+      let interned = Py.getInterned(name)
+      dict.setItem(at: interned, to: value)
+    }
+
+    set(name: "major", value: Py.newInt(self.major))
+    set(name: "minor", value: Py.newInt(self.minor))
+    set(name: "micro", value: Py.newInt(self.micro))
+    set(name: "releaseLevel", value: Py.newString(self.releaseLevel.description))
+    set(name: "serial", value: Py.newInt(self.serial))
+    return Py.newNamespace(dict: dict)
   }()
 
   public let hexVersion: UInt32

@@ -15,10 +15,10 @@ public protocol PyDelegate: AnyObject {
             code: CodeObject,
 
             args: [PyObject],
-            kwArgs: Attributes?,
+            kwArgs: PyDict?,
             defaults: [PyObject],
-            kwDefaults: Attributes?,
+            kwDefaults: PyDict?,
 
-            globals: Attributes,
-            locals: Attributes) -> PyResult<PyObject>
+            globals: PyDict,
+            locals: PyDict) -> PyResult<PyObject>
 }
