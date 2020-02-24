@@ -7,10 +7,12 @@ internal typealias PyId = PyString
 /// Kind of similiar to `PyId_` in `CPython`.
 internal enum Ids {
 
-  internal static var __name__:    PyId { return self.get("__name__") }
-  internal static var __package__: PyId { return self.get("__package__") }
-  internal static var __path__:    PyId { return self.get("__path__") }
-  internal static var __spec__:    PyId { return self.get("__spec__") }
+  internal static var metaclass:       PyId { return self.get("metaclass") }
+  internal static var __mro_entries__: PyId { return self.get("__mro_entries__") }
+  internal static var __name__:        PyId { return self.get("__name__") }
+  internal static var __package__:     PyId { return self.get("__package__") }
+  internal static var __path__:        PyId { return self.get("__path__") }
+  internal static var __spec__:        PyId { return self.get("__spec__") }
 
   private static func get(_ id: String) -> PyId {
     return Py.getInterned(id)

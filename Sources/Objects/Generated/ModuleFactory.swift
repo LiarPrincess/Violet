@@ -132,6 +132,7 @@ internal enum ModuleFactory {
     dict["hex"] = PyBuiltinFunction.wrap(name: "hex", doc: nil, fn: object.hex(_:), module: result)
     dict["chr"] = PyBuiltinFunction.wrap(name: "chr", doc: nil, fn: object.chr(_:), module: result)
     dict["ord"] = PyBuiltinFunction.wrap(name: "ord", doc: nil, fn: object.ord(_:), module: result)
+    dict["__build_class__"] = PyBuiltinFunction.wrap(name: "__build_class__", doc: nil, fn: object.buildClass(args:kwargs:), module: result)
     dict["hash"] = PyBuiltinFunction.wrap(name: "hash", doc: nil, fn: object.hash(_:), module: result)
     dict["id"] = PyBuiltinFunction.wrap(name: "id", doc: nil, fn: object.id(_:), module: result)
     dict["dir"] = PyBuiltinFunction.wrap(name: "dir", doc: nil, fn: object.dir(_:), module: result)

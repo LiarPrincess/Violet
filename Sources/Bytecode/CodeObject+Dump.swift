@@ -249,6 +249,10 @@ extension CodeObject {
       return "loadClassDeref \(self.getName(extendedArg + Int(arg)))"
 
     case let .makeFunction(arg):
+      if arg.isEmpty {
+        return "makeFunction"
+      }
+
       var a = [String]()
       if arg.contains(.hasPositionalArgDefaults) { a.append("hasPositionalArgDefaults") }
       if arg.contains(.hasKwOnlyArgDefaults) { a.append("hasKwOnlyArgDefaults") }

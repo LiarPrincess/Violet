@@ -3,14 +3,6 @@ import Objects
 
 extension Frame {
 
-  // MARK: - Class
-
-  /// Pushes `builtins.BuildClass()` onto the stack.
-  /// It is later called by `CallFunction` to construct a class.
-  internal func loadBuildClass() -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - General
 
   /// Checks whether Annotations is defined in locals(),

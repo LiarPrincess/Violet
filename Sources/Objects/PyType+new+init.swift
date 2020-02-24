@@ -202,8 +202,17 @@ extension PyType {
   /// PyTypeObject *
   /// _PyType_CalculateMetaclass(PyTypeObject *metatype, PyObject *bases)
   private static func calculateMetaclass(args: PyTypeNewArgs) -> PyResult<PyType> {
-    var winner = args.metatype
-    for tmp in args.bases {
+    return PyType.calculateMetaclass(metatype: args.metatype,
+                                     bases: args.bases)
+  }
+
+  /// Determine the most derived metatype.
+  /// PyTypeObject *
+  /// _PyType_CalculateMetaclass(PyTypeObject *metatype, PyObject *bases)
+  internal static func calculateMetaclass(metatype: PyType,
+                                          bases: [PyObject]) -> PyResult<PyType> {
+    var winner = metatype
+    for tmp in bases {
       let tmpType = tmp.type
 
       // Get to the most specific type (lowest subclass)
