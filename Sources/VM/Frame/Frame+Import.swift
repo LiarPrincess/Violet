@@ -26,7 +26,7 @@ extension Frame {
   private func import_name(name: PyString,
                            fromList: PyObject,
                            level: PyObject) -> PyResult<PyObject> {
-    guard let importFn = self.builtinSymbols.getItem(id: .__import__) else {
+    guard let importFn = self.builtinSymbols.get(id: .__import__) else {
       return .error(Py.newPyImportError(msg: "__import__ not found"))
     }
 

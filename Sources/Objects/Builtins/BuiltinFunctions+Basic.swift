@@ -124,7 +124,7 @@ extension BuiltinFunctions {
   public func newFunction(qualname: String?,
                           code: PyCode,
                           globals: PyDict) -> PyFunction {
-    let module = globals.getItem(id: .name) ?? Py.none
+    let module = globals.get(id: .name) ?? Py.none
 
     return PyFunction(
       qualname: qualname,

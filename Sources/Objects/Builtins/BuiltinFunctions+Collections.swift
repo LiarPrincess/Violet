@@ -176,8 +176,18 @@ extension BuiltinFunctions {
   public func add(dict object: PyObject,
                   key: PyObject,
                   value: PyObject) -> PyResult<PyNone> {
-    return self.cast(object, as: PyDict.self, typeName: "dict")
-      .flatMap { $0.setItem(at: key, to: value) }
+    switch self.cast(object, as: PyDict.self, typeName: "dict") {
+    case let .value(dict):
+      switch dict.set(key: key, to: value) {
+      case .ok:
+        return .value(Py.none)
+      case .error(let e):
+        return .error(e)
+      }
+
+    case let .error(e):
+      return .error(e)
+    }
   }
 
   // MARK: - Range

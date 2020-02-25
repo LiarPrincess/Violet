@@ -152,7 +152,7 @@ extension PyType {
     type.setDict(value: __dict__)
 
     // Set __module__ in the dict
-    if __dict__.getItem(id: .__module__) == nil {
+    if __dict__.get(id: .__module__) == nil {
       let globals = Py.getGlobals()
       if let module = globals["__name__"] {
         switch type.setModule(module) {
@@ -164,7 +164,7 @@ extension PyType {
 
     // Set ht_qualname to dict['__qualname__'] if available, else to __name__.
     // The __qualname__ accessor will use for self.qualname.
-    if let qualname = __dict__.getItem(id: .__qualname__) {
+    if let qualname = __dict__.get(id: .__qualname__) {
       switch type.setQualname(qualname) {
       case .value: break
       case .error(let e): return .error(e)
@@ -185,8 +185,8 @@ extension PyType {
         return .typeError("Dictionary key mus be a str.")
       }
 
-      switch result.setItem(at: key, to: entry.value) {
-      case .value: break
+      switch result.set(key: key, to: entry.value) {
+      case .ok: break
       case .error(let e): return .error(e)
       }
     }

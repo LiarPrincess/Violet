@@ -17,8 +17,8 @@ private func insert(type: PyType, name: String, value: PyObject) {
   let dict = type.getDict()
   let interned = Py.getInterned(name)
 
-  switch dict.setItem(at: interned, to: value) {
-  case .value:
+  switch dict.set(key: interned, to: value) {
+  case .ok:
     break
   case .error(let e):
     trap("Error when inserting '\(name)' to '\(type.getName())' type: \(e)")

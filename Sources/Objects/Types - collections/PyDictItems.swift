@@ -99,9 +99,11 @@ public class PyDictItems: PyObject, PyDictViewsShared {
     let key = tuple.data.elements[0]
     let value = tuple.data.elements[1]
 
-    switch self.dict.getItem(at: key) {
+    switch self.dict.get(key: key) {
     case let .value(o):
       return Py.isEqualBool(left: value, right: o)
+    case .notFound:
+      return .value(false)
     case let .error(e):
       return .error(e)
     }

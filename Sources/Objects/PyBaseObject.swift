@@ -113,7 +113,7 @@ internal enum PyBaseObject {
     if let attribOwner = zelf as? __dict__GetterOwner {
       let dict = attribOwner.getDict()
 
-      if let dirFunc = dict.getItem(id: .__dir__) {
+      if let dirFunc = dict.get(id: .__dir__) {
         let dir = Py.callDir(dirFunc, args: [])
         result.append(contentsOf: dir)
       } else {

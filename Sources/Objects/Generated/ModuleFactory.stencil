@@ -23,8 +23,8 @@ private func insert(module: PyModule, name: String, value: PyObject) {
   let dict = module.getDict()
   let interned = Py.getInterned(name)
 
-  switch dict.setItem(at: interned, to: value) {
-  case .value:
+  switch dict.set(key: interned, to: value) {
+  case .ok:
     break
   case .error(let e):
     trap("Error when inserting '\(name)' to '\(module)' module: \(e)")

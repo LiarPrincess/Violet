@@ -158,8 +158,8 @@ internal struct FillFastLocals {
 
       // If none of the 'code.variableNames' fit:
       if let dict = self.varKwargs {
-        switch dict.setItem(at: keyword, to: entry.value) {
-        case .value: break
+        switch dict.set(key: keyword, to: entry.value) {
+        case .ok: break
         case .error(let e): return e
         }
       } else {
@@ -232,15 +232,12 @@ internal struct FillFastLocals {
       let name = self.getName(self.code.variableNames[index])
       let interned = Py.getInterned(name)
 
-      switch kwDefaults.getItem(at: interned) {
-      case let .value(defaultValue):
+      switch kwDefaults.get(key: interned) {
+      case .value(let defaultValue):
         self.set(index: index, value: defaultValue)
-      case let .error(e):
-        if e.isKeyError {
-          missing += 1
-          continue // not found -> go to next kwarg
-        }
-
+      case .notFound:
+        missing += 1
+      case .error(let e):
         return e
       }
     }

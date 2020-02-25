@@ -235,7 +235,7 @@ public class PyType: PyObject {
 
   // sourcery: pyproperty = __doc__, setter = setDoc
   public func getDoc() -> PyResult<PyObject> {
-    guard let doc = self.__dict__.getItem(id: .__doc__) else {
+    guard let doc = self.__dict__.get(id: .__doc__) else {
       return .value(Py.none)
     }
 
@@ -256,7 +256,7 @@ public class PyType: PyObject {
     case let .error(e): return .error(e)
     }
 
-    self.__dict__.setItem(id: .__doc__, to: object)
+    self.__dict__.set(id: .__doc__, to: object)
     return .value()
   }
 
@@ -268,7 +268,7 @@ public class PyType: PyObject {
       .map(DocHelper.getDocWithoutSignature)
       .map(Py.newString) ?? Py.none
 
-    self.__dict__.setItem(id: .__doc__, to: doc)
+    self.__dict__.set(id: .__doc__, to: doc)
   }
 
   // MARK: - Module
@@ -293,7 +293,7 @@ public class PyType: PyObject {
 
   public func getModuleRaw() -> GetModuleRawResult {
     if self.isHeapType {
-      guard let object = self.__dict__.getItem(id: .__module__) else {
+      guard let object = self.__dict__.get(id: .__module__) else {
         return .error(Py.newAttributeError(msg: "__module__"))
       }
 
@@ -329,7 +329,7 @@ public class PyType: PyObject {
     case let .error(e): return .error(e)
     }
 
-    self.__dict__.setItem(id: .__module__, to: object)
+    self.__dict__.set(id: .__module__, to: object)
     return .value()
   }
 
@@ -553,16 +553,10 @@ public class PyType: PyObject {
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
   internal func lookup(name: PyString) -> LookupResult {
     for base in self.mro {
-
-      switch base.__dict__.getItem(at: name) {
-      case let .value(o):
-        return .value(o)
-      case let .error(e):
-        if e.isKeyError {
-          break // not in dict, move to next item
-        }
-
-        return .error(e)
+      switch base.__dict__.get(key: name) {
+      case .value(let o): return .value(o)
+      case .notFound: break // not in dict, move to next item
+      case .error(let e): return .error(e)
       }
     }
 
@@ -575,7 +569,7 @@ public class PyType: PyObject {
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
   internal func lookup(name: IdString) -> PyObject? {
     for base in self.mro {
-      if let result = base.__dict__.getItem(id: name) {
+      if let result = base.__dict__.get(id: name) {
         return result
       }
     }

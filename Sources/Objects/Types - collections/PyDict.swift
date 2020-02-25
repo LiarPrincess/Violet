@@ -167,7 +167,130 @@ public class PyDict: PyObject {
     return BigInt(self.data.count)
   }
 
-  // MARK: - Get/set/del item
+  // MARK: - Get
+
+  public enum GetResult {
+    case value(PyObject)
+    case notFound
+    case error(PyBaseException)
+  }
+
+  public func get(id: IdString) -> PyObject? {
+    let key = self.createKey(from: id)
+
+    switch self.data.get(key: key) {
+    case .value(let o):
+      return o
+    case .notFound:
+      return nil
+    case .error(let e):
+      self.idErrorNotHandled(operation: "get", error: e)
+    }
+  }
+
+  public func get(key: PyObject) -> GetResult {
+    switch self.createKey(from: key) {
+    case let .value(key):
+      switch self.data.get(key: key) {
+      case .value(let o):
+        return .value(o)
+      case .notFound:
+        return .notFound
+      case .error(let e):
+        return .error(e)
+      }
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Set
+
+  public enum SetResult {
+    case ok
+    case error(PyBaseException)
+  }
+
+  public func set(id: IdString, to value: PyObject) {
+    let key = self.createKey(from: id)
+
+    switch self.data.insert(key: key, value: value) {
+    case .inserted,
+         .updated:
+      break
+    case .error(let e):
+      self.idErrorNotHandled(operation: "set", error: e)
+    }
+  }
+
+  public func set(key: PyObject, to value: PyObject) -> SetResult {
+    switch self.createKey(from: key) {
+    case let .value(key):
+      switch self.data.insert(key: key, value: value) {
+      case .inserted,
+           .updated:
+        return .ok
+      case .error(let e):
+        return .error(e)
+      }
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Del
+
+  public enum DelResult {
+    case value(PyObject)
+    case notFound
+    case error(PyBaseException)
+  }
+
+  public func del(id: IdString) -> PyObject? {
+    let key = self.createKey(from: id)
+
+    switch self.data.remove(key: key) {
+    case .value(let o):
+      return o
+    case .notFound:
+      return nil
+    case .error(let e):
+      self.idErrorNotHandled(operation: "del", error: e)
+    }
+  }
+
+  public func del(key: PyObject) -> DelResult {
+    switch self.createKey(from: key) {
+    case let .value(key):
+      switch self.data.remove(key: key) {
+      case .value(let o):
+        return .value(o)
+      case .notFound:
+        return .notFound
+      case .error(let e):
+        return .error(e)
+      }
+
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// Errors can happen when the value is not-hashable.
+  /// Strings are always hashable, so we don't expect errors.
+  private func idErrorNotHandled(operation: String,
+                                 error: PyBaseException) -> Never {
+    // TODO: PyDict.idErrorNotHandled
+    // This may still fail when we insert to '__dict__' value that will
+    // always throw on compare. We will ignore this for now.
+
+    let repr = Py.reprOrGeneric(error)
+    trap("Dict operation '\(operation)' returned an error: '\(repr)'")
+  }
+
+  // MARK: - Get - subscript
 
   // sourcery: pymethod = __getitem__
   public func getItem(at index: PyObject) -> PyResult<PyObject> {
@@ -198,6 +321,8 @@ public class PyDict: PyObject {
     }
   }
 
+  // MARK: - Set - subscript
+
   // sourcery: pymethod = __setitem__
   public func setItem(at index: PyObject,
                       to value: PyObject) -> PyResult<PyNone> {
@@ -222,6 +347,8 @@ public class PyDict: PyObject {
     }
   }
 
+  // MARK: - Del - subscript
+
   // sourcery: pymethod = __delitem__
   public func delItem(at index: PyObject) -> PyResult<PyNone> {
     switch Py.hash(index) {
@@ -244,62 +371,6 @@ public class PyDict: PyObject {
     case .error(let e):
       return .error(e)
     }
-  }
-
-  // MARK: - Id - get/set/del item
-
-  public func getItem(id: IdString) -> PyObject? {
-    let key = self.createKey(from: id)
-
-    switch self.data.get(key: key) {
-    case .value(let o):
-      return o
-    case .notFound:
-      return nil
-    case .error(let e):
-      self.idErrorNotHandled(operation: "get", error: e)
-    }
-  }
-
-  public func setItem(id: IdString, to value: PyObject) {
-    let key = self.createKey(from: id)
-
-    switch self.data.insert(key: key, value: value) {
-    case .inserted,
-         .updated:
-      break
-    case .error(let e):
-      self.idErrorNotHandled(operation: "set", error: e)
-    }
-  }
-
-  public func delItem(id: IdString) -> PyObject? {
-    let key = self.createKey(from: id)
-
-    switch self.data.remove(key: key) {
-    case .value(let o):
-      return o
-    case .notFound:
-      return nil
-    case .error(let e):
-      self.idErrorNotHandled(operation: "del", error: e)
-    }
-  }
-
-  private func createKey(from id: IdString) -> PyDictKey {
-    return PyDictKey(hash: id.hash, object: id.value)
-  }
-
-  /// Errors can happen when the value is not-hashable.
-  /// Strings are always hashable, so we don't expect errors.
-  private func idErrorNotHandled(operation: String,
-                                 error: PyBaseException) -> Never {
-    // TODO: PyDict.idErrorNotHandled
-    // This may still fail when we insert to '__dict__' value that will
-    // always throw on compare. We will ignore this for now.
-
-    let repr = Py.reprOrGeneric(error)
-    trap("Dict operation '\(operation)' returned an error: '\(repr)'")
   }
 
   // MARK: - Get - default
@@ -733,6 +804,10 @@ public class PyDict: PyObject {
   }
 
   // MARK: - Helpers
+
+  private func createKey(from id: IdString) -> PyDictKey {
+    return PyDictKey(hash: id.hash, object: id.value)
+  }
 
   private func createKey(from object: PyObject) -> PyResult<PyDictKey> {
     switch Py.hash(object) {

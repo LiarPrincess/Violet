@@ -206,8 +206,8 @@ extension Frame {
   private func store(name: PyString,
                      value: PyObject,
                      dict: PyDict) -> InstructionResult {
-    switch dict.setItem(at: name, to: value) {
-    case .value:
+    switch dict.set(key: name, to: value) {
+    case .ok:
       return .ok
     case .error(let e):
       return .unwind(.exception(e))
@@ -216,15 +216,13 @@ extension Frame {
 
   private func load(dicts: [PyDict], name: PyString) -> InstructionResult {
     for dict in dicts {
-      switch dict.getItem(at: name) {
+      switch dict.get(key: name) {
       case .value(let o):
         self.stack.push(o)
         return .ok
+      case .notFound:
+        break // try in the next 'dict'
       case .error(let e):
-        if e.isKeyError {
-          break // try in the next 'dict'
-        }
-
         return .unwind(.exception(e))
       }
     }
@@ -233,14 +231,12 @@ extension Frame {
   }
 
   private func del(name: PyString, from dict: PyDict) -> InstructionResult {
-    switch dict.delItem(at: name) {
+    switch dict.del(key: name) {
     case .value:
       return .ok
+    case .notFound:
+      return self.nameError(name)
     case .error(let e):
-      if e.isKeyError {
-        return self.nameError(name)
-      }
-
       return .unwind(.exception(e))
     }
   }

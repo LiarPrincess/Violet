@@ -72,7 +72,7 @@ internal final class Frame {
   private static func getBuiltins(globals: PyDict,
                                   parent: Frame?) -> PyDict {
     if parent == nil || parent?.globalSymbols !== globals {
-      if let module = globals.getItem(id: .__builtins__) as? PyModule {
+      if let module = globals.get(id: .__builtins__) as? PyModule {
         return module.getDict()
       }
     }
