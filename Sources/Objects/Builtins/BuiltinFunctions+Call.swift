@@ -157,8 +157,8 @@ private enum GetCallableProperty {
 
 extension BuiltinFunctions {
 
-  internal func hasMethod(object: PyObject,
-                          selector: IdString) -> PyResult<Bool> {
+  public func hasMethod(object: PyObject,
+                        selector: IdString) -> PyResult<Bool> {
     return self.hasMethod(object: object, selector: selector.value)
   }
 
@@ -214,6 +214,7 @@ extension BuiltinFunctions {
   /// will also include callable properties from `__dict__`.)
   public func loadMethod(object: PyObject,
                          selector: PyString) -> LoadMethodResult {
+    // Method names tend to be repeated a lot -> intern them
     return self.getMethod(object: object,
                           selector: selector,
                           allowsCallableProperties: true)
@@ -331,9 +332,9 @@ public enum CallMethodResult {
 extension BuiltinFunctions {
 
   /// Call method with single positional argument.
-  internal func callMethod(on object: PyObject,
-                           selector: IdString,
-                           arg: PyObject) -> CallMethodResult {
+  public func callMethod(on object: PyObject,
+                         selector: IdString,
+                         arg: PyObject) -> CallMethodResult {
     return self.callMethod(on: object, selector: selector.value, arg: arg)
   }
 
@@ -350,10 +351,10 @@ extension BuiltinFunctions {
   ///   - selector: name of the method to call
   ///   - args: positional arguments
   ///   - kwargs: keyword argument `dict`
-  internal func callMethod(on object: PyObject,
-                           selector: IdString,
-                           args: PyObject,
-                           kwargs: PyObject?) -> CallMethodResult {
+  public func callMethod(on object: PyObject,
+                         selector: IdString,
+                         args: PyObject,
+                         kwargs: PyObject?) -> CallMethodResult {
     return self.callMethod(on: object,
                            selector: selector.value,
                            args: args,
@@ -395,10 +396,10 @@ extension BuiltinFunctions {
   ///   - kwargs: keyword arguments
   ///
   /// Based on CPython 'LOAD_METHOD' and 'CALL_METHOD'.
-  internal func callMethod(on object: PyObject,
-                           selector: IdString,
-                           args: [PyObject] = [],
-                           kwargs: PyDictData? = nil) -> CallMethodResult {
+  public func callMethod(on object: PyObject,
+                         selector: IdString,
+                         args: [PyObject] = [],
+                         kwargs: PyDictData? = nil) -> CallMethodResult {
     return self.callMethod(on: object,
                            selector: selector.value,
                            args: args,

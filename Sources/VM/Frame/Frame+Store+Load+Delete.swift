@@ -37,43 +37,20 @@ extension Frame {
   internal func storeName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
     let value = self.stack.pop()
-    self.localSymbols[name] = value
-    return .ok
+    return self.store(name: name, value: value, dict: self.localSymbols)
   }
 
   /// Pushes the value associated with `name` onto the stack.
   internal func loadName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-
-    if let local = self.localSymbols[name] {
-      self.stack.push(local)
-      return .ok
-    }
-
-    if let global = self.globalSymbols[name] {
-      self.stack.push(global)
-      return .ok
-    }
-
-    if let builtin = self.builtinSymbols[name] {
-      self.stack.push(builtin)
-      return .ok
-    }
-
-    return self.nameError(name)
+    let dicts = [self.localSymbols, self.globalSymbols, self.builtinSymbols]
+    return self.load(dicts: dicts, name: name)
   }
 
   /// Implements `del name`.
   internal func deleteName(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    let value = self.localSymbols.del(key: name)
-
-    switch value {
-    case .some:
-      return .ok
-    case .none:
-      return self.nameError(name)
-    }
+    return self.del(name: name, from: self.localSymbols)
   }
 
   // MARK: - Attribute
@@ -168,38 +145,20 @@ extension Frame {
   internal func storeGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
     let value = self.stack.pop()
-    self.globalSymbols[name] = value
-    return .ok
+    return self.store(name: name, value: value, dict: self.globalSymbols)
   }
 
   /// Loads the global named `name` onto the stack.
   internal func loadGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-
-    if let global = self.globalSymbols[name] {
-      self.stack.push(global)
-      return .ok
-    }
-
-    if let builtin = self.builtinSymbols[name] {
-      self.stack.push(builtin)
-      return .ok
-    }
-
-    return self.nameError(name)
+    let dicts = [self.globalSymbols, self.builtinSymbols]
+    return self.load(dicts: dicts, name: name)
   }
 
   /// Works as DeleteName, but deletes a global name.
   internal func deleteGlobal(nameIndex: Int) -> InstructionResult {
     let name = self.getName(index: nameIndex)
-    let value = self.globalSymbols.del(key: name)
-
-    switch value {
-    case .some:
-      return .ok
-    case .none:
-      return self.nameError(name)
-    }
+    return self.del(name: name, from: self.globalSymbols)
   }
 
   // MARK: - Fast
@@ -244,8 +203,51 @@ extension Frame {
 
   // MARK: - Helpers
 
-  private func nameError(_ name: String) -> InstructionResult {
-    let e = Py.newNameError(msg: "name '\(name)' is not defined")
+  private func store(name: PyString,
+                     value: PyObject,
+                     dict: PyDict) -> InstructionResult {
+    switch dict.setItem(at: name, to: value) {
+    case .value:
+      return .ok
+    case .error(let e):
+      return .unwind(.exception(e))
+    }
+  }
+
+  private func load(dicts: [PyDict], name: PyString) -> InstructionResult {
+    for dict in dicts {
+      switch dict.getItem(at: name) {
+      case .value(let o):
+        self.stack.push(o)
+        return .ok
+      case .error(let e):
+        if e.isKeyError {
+          break // try in the next 'dict'
+        }
+
+        return .unwind(.exception(e))
+      }
+    }
+
+    return self.nameError(name)
+  }
+
+  private func del(name: PyString, from dict: PyDict) -> InstructionResult {
+    switch dict.delItem(at: name) {
+    case .value:
+      return .ok
+    case .error(let e):
+      if e.isKeyError {
+        return self.nameError(name)
+      }
+
+      return .unwind(.exception(e))
+    }
+  }
+
+  private func nameError(_ name: PyString) -> InstructionResult {
+    let repr = Py.reprOrGeneric(name)
+    let e = Py.newNameError(msg: "name '\(repr)' is not defined")
     return .unwind(.exception(e))
   }
 }

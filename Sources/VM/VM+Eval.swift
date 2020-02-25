@@ -6,15 +6,15 @@ extension VM {
   /// PyObject *
   /// PyEval_EvalCode(PyObject *co, PyObject *globals, PyObject *locals)
   public func eval(code: CodeObject,
-                   globals: Attributes,
-                   locals: Attributes) -> PyResult<PyObject> {
+                   globals: PyDict,
+                   locals: PyDict) -> PyResult<PyObject> {
     return self.eval(
       name: nil,
       qualname: nil,
       code: code,
 
       args: [],
-      kwArgs: nil,
+      kwargs: nil,
       defaults: [],
       kwDefaults: nil,
 
@@ -32,12 +32,12 @@ extension VM {
                    code: CodeObject,
 
                    args: [PyObject],
-                   kwArgs: Attributes?,
+                   kwargs: PyDict?,
                    defaults: [PyObject],
-                   kwDefaults: Attributes?,
+                   kwDefaults: PyDict?,
 
-                   globals: Attributes,
-                   locals: Attributes) -> PyResult<PyObject> {
+                   globals: PyDict,
+                   locals: PyDict) -> PyResult<PyObject> {
 // swiftlint:enable function_parameter_count
 
     // We don't support zombie frames, we always create new one.
@@ -49,7 +49,7 @@ extension VM {
 
     var fillFastLocals = FillFastLocals(frame: frame,
                                         args: args,
-                                        kwArgs: kwArgs,
+                                        kwargs: kwargs,
                                         defaults: defaults,
                                         kwDefaults: kwDefaults)
 

@@ -29,7 +29,7 @@ public class PyString: PyObject {
 
   internal let data: PyStringData
 
-  internal var value: String {
+  public var value: String {
     return self.data.value
   }
 

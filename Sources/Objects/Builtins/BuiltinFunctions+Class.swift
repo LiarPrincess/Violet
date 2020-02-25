@@ -64,7 +64,7 @@ extension BuiltinFunctions {
       qualname: nil,
       code: code,
       args: [],
-      kwArgs: nil,
+      kwargs: nil,
       defaults: [],
       kwDefaults: nil,
       globals: fn.globals,

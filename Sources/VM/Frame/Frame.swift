@@ -35,11 +35,11 @@ internal final class Frame {
   internal var exceptions = ExceptionStack()
 
   /// Local variables.
-  internal var localSymbols: Attributes
+  internal var localSymbols: PyDict
   /// Global variables.
-  internal var globalSymbols: Attributes
+  internal var globalSymbols: PyDict
   /// Builtin symbols (most of the time it would be `Py.builtinsModule.__dict__`).
-  internal var builtinSymbols: Attributes
+  internal var builtinSymbols: PyDict
   /// Free variables (variables from upper scopes).
   internal lazy var freeVariables = [String: PyObject]()
   /// Function args and local variables.
@@ -59,8 +59,8 @@ internal final class Frame {
   /// PyFrameObject* _Py_HOT_FUNCTION
   /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
   internal init(code: CodeObject,
-                locals: Attributes,
-                globals: Attributes,
+                locals: PyDict,
+                globals: PyDict,
                 parent: Frame?) {
     self.code = code
     self.parent = parent
@@ -69,10 +69,10 @@ internal final class Frame {
     self.builtinSymbols = Frame.getBuiltins(globals: globals, parent: parent)
   }
 
-  private static func getBuiltins(globals: Attributes,
-                                  parent: Frame?) -> Attributes {
+  private static func getBuiltins(globals: PyDict,
+                                  parent: Frame?) -> PyDict {
     if parent == nil || parent?.globalSymbols !== globals {
-      if let module = globals.get(key: "__builtins__") as? PyModule {
+      if let module = globals.getItem(id: .__builtins__) as? PyModule {
         return module.getDict()
       }
     }
@@ -90,9 +90,14 @@ internal final class Frame {
 
   // MARK: - Code object getters
 
-  internal func getName(index: Int) -> String {
+  internal func getName(index: Int) -> PyString {
+    // TODO: If we store 'PyStrings' in code object we will improve performance
+    // But since 'Objects' have reference to 'Bytecode' we can't add reference
+    // from 'Bytecode' to 'Objects'.
+
     assert(0 <= index && index < self.code.names.count)
-    return self.code.names[index]
+    let value = self.code.names[index]
+    return Py.getInterned(value)
   }
 
   internal func getConstant(index: Int) -> Constant {

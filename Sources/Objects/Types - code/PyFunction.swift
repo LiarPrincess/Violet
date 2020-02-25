@@ -307,7 +307,7 @@ public class PyFunction: PyObject {
       code: code,
 
       args: args,
-      kwArgs: kwargsCopy,
+      kwargs: kwargsCopy,
       defaults: argsDefaults,
       kwDefaults: kwDefaults,
 

@@ -14,9 +14,9 @@ internal struct FillFastLocals {
 
   private let frame: Frame
   private let args: [PyObject]
-  private let kwArgs: Attributes?
+  private let kwargs: PyDict?
   private let defaults: [PyObject]
-  private let kwDefaults: Attributes?
+  private let kwDefaults: PyDict?
 
   private var varKwargs: PyDict?
 
@@ -38,12 +38,12 @@ internal struct FillFastLocals {
 
   internal init(frame: Frame,
                 args: [PyObject],
-                kwArgs: Attributes?,
+                kwargs: PyDict?,
                 defaults: [PyObject],
-                kwDefaults: Attributes?) {
+                kwDefaults: PyDict?) {
     self.frame = frame
     self.args = args
-    self.kwArgs = kwArgs
+    self.kwargs = kwargs
     self.defaults = defaults
     self.kwDefaults = kwDefaults
   }
@@ -53,7 +53,6 @@ internal struct FillFastLocals {
   /// PyObject *
   /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, ...)
   internal mutating func run() -> PyResult<PyNone> {
-
     self.fillFromArgs()
 
     if let e = self.fillFromKwargs() {
@@ -122,7 +121,7 @@ internal struct FillFastLocals {
   // MARK: - Kwargs
 
   private mutating func fillFromKwargs() -> PyBaseException? {
-    guard let kwArgs = self.kwArgs else {
+    guard let kwargs = self.kwargs else {
       return nil
     }
 
@@ -134,13 +133,16 @@ internal struct FillFastLocals {
     }
 
     // Handle keyword arguments
-    nextKwarg: for entry in kwArgs {
-      let keyword = entry.key
+    nextKwarg: for entry in kwargs.data {
+      guard let keyword = entry.key.object as? PyString else {
+        let name = self.code.name
+        return Py.newTypeError(msg: "\(name)() keywords must be strings")
+      }
 
       // Try to find proper index in locals
       for index in 0..<self.totalArgs {
         let name = self.getName(self.code.variableNames[index])
-        guard name == keyword else {
+        guard name == keyword.value else {
           continue
         }
 
@@ -156,9 +158,7 @@ internal struct FillFastLocals {
 
       // If none of the 'code.variableNames' fit:
       if let dict = self.varKwargs {
-        let kw = Py.getInterned(keyword)
-
-        switch dict.setItem(at: kw, to: entry.value) {
+        switch dict.setItem(at: keyword, to: entry.value) {
         case .value: break
         case .error(let e): return e
         }
@@ -230,11 +230,18 @@ internal struct FillFastLocals {
       }
 
       let name = self.getName(self.code.variableNames[index])
+      let interned = Py.getInterned(name)
 
-      if let defaultValue = kwDefaults[name] {
+      switch kwDefaults.getItem(at: interned) {
+      case let .value(defaultValue):
         self.set(index: index, value: defaultValue)
-      } else {
-        missing += 1
+      case let .error(e):
+        if e.isKeyError {
+          missing += 1
+          continue // not found -> go to next kwarg
+        }
+
+        return e
       }
     }
 

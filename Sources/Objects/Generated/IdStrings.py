@@ -10,6 +10,7 @@ ids = [
   '__await__',
   '__bases__',
   '__bool__',
+  '__build_class__',
   '__builtins__',
   '__bytes__',
   '__call__',
@@ -48,6 +49,7 @@ ids = [
   '__ilshift__',
   '__imatmul__',
   '__imod__',
+  '__import__',
   '__imul__',
   '__index__',
   '__init__',
@@ -174,7 +176,7 @@ if __name__ == '__main__':
 /// 'it will be inlined anyway' and 'hello cache, my old friend'.
 ///
 /// We also need to support cleaning for when `Py` gets destroyed.
-internal struct IdString {
+public struct IdString {
 
   internal let value: PyString
   internal let hash: PyHash
@@ -200,7 +202,7 @@ internal struct IdString {
 ''')
 
   for id in ids:
-    print(f'  internal static let {escaped(id)} = Self.impl.{escaped(id)}')
+    print(f'  public static let {escaped(id)} = Self.impl.{escaped(id)}')
 
   print('}')
 

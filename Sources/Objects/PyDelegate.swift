@@ -15,7 +15,7 @@ public protocol PyDelegate: AnyObject {
             code: CodeObject,
 
             args: [PyObject],
-            kwArgs: PyDict?,
+            kwargs: PyDict?,
             defaults: [PyObject],
             kwDefaults: PyDict?,
 

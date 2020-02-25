@@ -30,7 +30,8 @@ extension BuiltinFunctions {
     }
   }
 
-  internal func reprOrGeneric(_ object: PyObject) -> String {
+  /// Get object `__repr__` if that fail then use generic representation.
+  public func reprOrGeneric(_ object: PyObject) -> String {
     switch self.repr(object) {
     case .value(let s): return s
     case .error: return self.genericRepr(object)

@@ -83,10 +83,10 @@ extension VM {
 
     let main = Py.newModule(name: "__main__")
     let mainDict = main.getDict()
-    mainDict.set(key: "__file__", to: Py.newString(file))
+    mainDict.setItem(id: .__file__, to: Py.getInterned(file))
 
     _ = self.eval(code: code, globals: mainDict, locals: mainDict)
-    mainDict.del(key: "__file__")
+    _ = mainDict.delItem(id: .__file__)
   }
 
   private func getScriptURL(_ file: String) throws -> URL {

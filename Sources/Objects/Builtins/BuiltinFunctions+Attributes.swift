@@ -27,9 +27,9 @@ extension BuiltinFunctions {
                              default: `default`)
   }
 
-  internal func getAttribute(_ object: PyObject,
-                             name: IdString,
-                             default: PyObject? = nil) -> PyResult<PyObject> {
+  public func getAttribute(_ object: PyObject,
+                           name: IdString,
+                           default: PyObject? = nil) -> PyResult<PyObject> {
     return self.getAttribute(object, name: name.value, default: `default`)
   }
 
@@ -113,8 +113,8 @@ extension BuiltinFunctions {
     return self.hasAttribute(object, name: interned)
   }
 
-  internal func hasAttribute(_ object: PyObject,
-                             name: IdString) -> PyResult<Bool> {
+  public func hasAttribute(_ object: PyObject,
+                           name: IdString) -> PyResult<Bool> {
     return self.hasAttribute(object, name: name.value)
   }
 
@@ -151,9 +151,9 @@ extension BuiltinFunctions {
     return self.setAttribute(object, name: interned, value: value)
   }
 
-  internal func setAttribute(_ object: PyObject,
-                             name: IdString,
-                             value: PyObject) -> PyResult<PyNone> {
+  public func setAttribute(_ object: PyObject,
+                           name: IdString,
+                           value: PyObject) -> PyResult<PyNone> {
     return self.setAttribute(object, name: name.value, value: value)
   }
 
@@ -202,8 +202,8 @@ extension BuiltinFunctions {
     return self.deleteAttribute(object, name: interned)
   }
 
-  internal func deleteAttribute(_ object: PyObject,
-                                name: IdString) -> PyResult<PyNone> {
+  public func deleteAttribute(_ object: PyObject,
+                              name: IdString) -> PyResult<PyNone> {
     return self.deleteAttribute(object, name: name.value)
   }
 
