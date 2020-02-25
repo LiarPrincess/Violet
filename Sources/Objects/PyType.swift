@@ -442,7 +442,7 @@ public class PyType: PyObject {
       .flatMap(self.getAttribute(name:))
   }
 
-  public func getAttribute(name: String) -> PyResult<PyObject> {
+  public func getAttribute(name: PyString) -> PyResult<PyObject> {
     let metaType = self.type
     let metaAttribute = metaType.lookup(name: name)
     var metaDescriptor: GetDescriptor?
@@ -479,7 +479,7 @@ public class PyType: PyObject {
       return .value(metaAttribute)
     }
 
-    let msg = "type object '\(self.typeName)' has no attribute '\(name)'"
+    let msg = "type object '\(self.typeName)' has no attribute '\(name.reprRaw())'"
     return .attributeError(msg)
   }
 
@@ -493,7 +493,7 @@ public class PyType: PyObject {
       .flatMap { self.setAttribute(name: $0, value: value) }
   }
 
-  public func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
+  public func setAttribute(name: PyString, value: PyObject?) -> PyResult<PyNone> {
     if let error = self.checkSetAttributeOnBuiltin() {
       return .error(error)
     }
@@ -515,10 +515,6 @@ public class PyType: PyObject {
     return self.setAttribute(name: name, value: nil)
   }
 
-  public func delAttribute(name: String) -> PyResult<PyNone> {
-    return self.setAttribute(name: name, value: nil)
-  }
-
   // MARK: - Dir
 
   // sourcery: pymethod = __dir__
@@ -534,11 +530,39 @@ public class PyType: PyObject {
 
   // MARK: - Lookup
 
+  internal enum LookupResult {
+    case value(PyObject)
+    case notFound
+    case error(PyBaseException)
+  }
+
   /// Internal API to look for a name through the MRO.
   ///
   /// PyObject *
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
-  internal func lookup(name: PyString) -> PyObject? {
+  internal func lookup(name: PyString) -> LookupResult {
+    for base in self.mro {
+
+      switch base.__dict__.getItem(at: name) {
+      case let .value(o):
+        return .value(o)
+      case let .error(e):
+        if e.isKeyError {
+          break // not in dict, move to next item
+        }
+
+        return .error(e)
+      }
+    }
+
+    return .notFound
+  }
+
+  /// Internal API to look for a name through the MRO.
+  ///
+  /// PyObject *
+  /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
+  internal func lookup(name: IdString) -> PyObject? {
     for base in self.mro {
       if let result = base.__dict__.getItem(id: name) {
         return result
@@ -591,7 +615,7 @@ public class PyType: PyObject {
     }
 
     // '__new__' is a static method, so we can't just use 'callMethod'
-    guard let newFn = self.lookup(name: Ids.__new__) else {
+    guard let newFn = self.lookup(name: .__new__) else {
       return .typeError("cannot create '\(self.name)' instances")
     }
 

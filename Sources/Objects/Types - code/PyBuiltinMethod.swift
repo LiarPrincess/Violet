@@ -93,10 +93,6 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
     return self.getAttributeShared(name: name)
   }
 
-  public func getAttribute(name: String) -> PyResult<PyObject> {
-    return self.getAttributeShared(name: name)
-  }
-
   // MARK: - Name
 
   // sourcery: pyproperty = __name__

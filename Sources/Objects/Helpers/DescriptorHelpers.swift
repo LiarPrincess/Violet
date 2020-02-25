@@ -56,7 +56,7 @@ internal class GetDescriptor {
   /// `__get__` method on `self.descriptor`.
   private let get: PyObject
   /// `__set__` method on `self.descriptor`.
-  private lazy var set = self.descriptor.type.lookup(name: "__set__")
+  private lazy var set = self.descriptor.type.lookup(name: .__set__)
 
   /// define PyDescr_IsData(d) (Py_TYPE(d)->tp_descr_set != NULL)
   internal var isData: Bool {
@@ -86,20 +86,21 @@ internal class GetDescriptor {
 
   /// Get 'get' descriptor with given `name` from `object`.
   internal static func get(object: PyObject,
-                           attributeName: String) -> GetDescriptor? {
+                           attributeName: PyString) -> GetDescriptor? {
     // Do we even have such attribute?
-    guard let attribute = object.type.lookup(name: attributeName) else {
+    switch object.type.lookup(name: attributeName) {
+    case .value(let attribute):
+      return GetDescriptor.get(object: object, attribute: attribute)
+    case .notFound, .error:
       return nil
     }
-
-    return GetDescriptor.get(object: object, attribute: attribute)
   }
 
   /// Get 'get' descriptor with given `attribute` from `object`.
   internal static func get(object: PyObject,
                            attribute: PyObject) -> GetDescriptor? {
     // No getter -> no descriptor
-    guard let get = attribute.type.lookup(name: "__get__") else {
+    guard let get = attribute.type.lookup(name: .__get__) else {
       return nil
     }
 
@@ -142,14 +143,20 @@ internal class SetDescriptor {
   // MARK: Factory
 
   internal static func get(object: PyObject,
-                           attributeName: String) -> SetDescriptor? {
+                           attributeName: PyString) -> SetDescriptor? {
     // Do we even have such attribute?
-    guard let attribute = object.type.lookup(name: attributeName) else {
+    switch object.type.lookup(name: attributeName) {
+    case .value(let attribute):
+      return SetDescriptor.get(object: object, attribute: attribute)
+    case .notFound, .error:
       return nil
     }
+  }
 
+  internal static func get(object: PyObject,
+                           attribute: PyObject) -> SetDescriptor? {
     // No setter -> no descriptor
-    guard let set = attribute.type.lookup(name: "__set__") else {
+    guard let set = attribute.type.lookup(name: .__set__) else {
       return nil
     }
 

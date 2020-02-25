@@ -208,10 +208,6 @@ public class PyRange: PyObject {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
-  }
-
   // MARK: - Contains
 
   // sourcery: pymethod = __contains__

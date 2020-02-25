@@ -59,10 +59,6 @@ extension PyBuiltinFunctionShared where Self: PyObject {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  internal func getAttributeShared(name: String) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
-  }
-
   // MARK: - TextSignature
 
   internal func getTextSignatureShared() -> String? {

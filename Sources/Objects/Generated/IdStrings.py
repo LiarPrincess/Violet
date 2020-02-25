@@ -120,11 +120,12 @@ if __name__ == '__main__':
 /// Predefined commonly used `__dict__` keys.
 /// Similiar to `_Py_IDENTIFIER` in `CPython`.
 ///
-/// Performance of this 'cache' (because that is what it actually is)
-/// is crucial for performance.
-/// Even using an dictionary (with its `O(1) + massive constants` access)
+/// Performance of this 'cache' (because that what it actually is)
+/// is crucial for overall performance.
+/// Even using a dictionary (with its `O(1) + massive constants` access)
 /// may be too slow.
-/// We will do it in a bit different way.
+/// We will do it in a bit different way with approximate complexity between
+/// 'it will be inlined anyway' and 'hello cache, my old friend'.
 ///
 /// We also need to support cleaning for when `Py` gets destroyed.
 internal struct IdString {

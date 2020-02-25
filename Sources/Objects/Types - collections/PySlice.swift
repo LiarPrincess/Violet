@@ -133,10 +133,6 @@ public class PySlice: PyObject {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
-  }
-
   // MARK: - Class
 
   // sourcery: pyproperty = __class__

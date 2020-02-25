@@ -21,10 +21,16 @@ extension BuiltinFunctions {
   public func getAttribute(_ object: PyObject,
                            name: String,
                            default: PyObject? = nil) -> PyResult<PyObject> {
+    let interned = self.interned(name: name)
     return self.getAttribute(object,
-                             name: name,
-                             pyName: nil,
+                             name: interned,
                              default: `default`)
+  }
+
+  internal func getAttribute(_ object: PyObject,
+                             name: IdString,
+                             default: PyObject? = nil) -> PyResult<PyObject> {
+    return self.getAttribute(object, name: name.value, default: `default`)
   }
 
   // sourcery: pymethod = getattr, doc = getAttributeDoc
@@ -40,20 +46,10 @@ extension BuiltinFunctions {
   public func getAttribute(_ object: PyObject,
                            name: PyObject,
                            default: PyObject? = nil) -> PyResult<PyObject> {
-    guard let str = name as? PyString else {
+    guard let name = name as? PyString else {
       return .typeError("getattr(): attribute name must be string")
     }
 
-    return self.getAttribute(object,
-                             name: str.value,
-                             pyName: str,
-                             default: `default`)
-  }
-
-  private func getAttribute(_ object: PyObject,
-                            name: String,
-                            pyName: PyString?,
-                            default: PyObject? = nil) -> PyResult<PyObject> {
     // Fast protocol-based path
     if let owner = object as? __getattribute__Owner {
       let result = owner.getAttribute(name: name)
@@ -65,15 +61,14 @@ extension BuiltinFunctions {
     // Which would... (you probably know where this is going...)
     // Anyway... we have to break the cycle.
     // Trust me it is not a hack, it is... yeah it is a hack.
-    if name == "__getattribute__" {
+    if name.value == "__getattribute__" {
       let result = AttributeHelper.getAttribute(from: object, name: name)
       return self.defaultIfAttributeError(result: result, default: `default`)
     }
 
     // Slow python path
     // attribute names tend to be reused, so we will intern them
-    let n = pyName ?? self.interned(name: name)
-    switch self.callMethod(on: object, selector: "__getattribute__", arg: n) {
+    switch self.callMethod(on: object, selector: "__getattribute__", arg: name) {
     case .value(let o):
       return .value(o)
     case .missingMethod:
@@ -114,7 +109,13 @@ extension BuiltinFunctions {
 
   public func hasAttribute(_ object: PyObject,
                            name: String) -> PyResult<Bool> {
-    return self.hasAttribute(object, name: name, pyName: nil)
+    let interned = self.interned(name: name)
+    return self.hasAttribute(object, name: interned)
+  }
+
+  internal func hasAttribute(_ object: PyObject,
+                             name: IdString) -> PyResult<Bool> {
+    return self.hasAttribute(object, name: name.value)
   }
 
   // sourcery: pymethod = hasattr
@@ -122,17 +123,11 @@ extension BuiltinFunctions {
   /// See [this](https://docs.python.org/3/library/functions.html#hasattr)
   public func hasAttribute(_ object: PyObject,
                            name: PyObject) -> PyResult<Bool> {
-    guard let str = name as? PyString else {
+    guard let name = name as? PyString else {
       return .typeError("hasattr(): attribute name must be string")
     }
 
-    return self.hasAttribute(object, name: str.value, pyName: str)
-  }
-
-  private func hasAttribute(_ object: PyObject,
-                            name: String,
-                            pyName: PyString?) -> PyResult<Bool> {
-    switch self.getAttribute(object, name: name, pyName: pyName, default: nil) {
+    switch self.getAttribute(object, name: name, default: nil) {
     case .value:
       return .value(true)
 
@@ -152,7 +147,14 @@ extension BuiltinFunctions {
   public func setAttribute(_ object: PyObject,
                            name: String,
                            value: PyObject) -> PyResult<PyNone> {
-    return self.setAttribute(object, name: name, pyName: nil, value: value)
+    let interned = self.interned(name: name)
+    return self.setAttribute(object, name: interned, value: value)
+  }
+
+  internal func setAttribute(_ object: PyObject,
+                             name: IdString,
+                             value: PyObject) -> PyResult<PyNone> {
+    return self.setAttribute(object, name: name.value, value: value)
   }
 
   // sourcery: pymethod = setattr
@@ -161,31 +163,23 @@ extension BuiltinFunctions {
   public func setAttribute(_ object: PyObject,
                            name: PyObject,
                            value: PyObject) -> PyResult<PyNone> {
-    guard let str = name as? PyString else {
+    guard let name = name as? PyString else {
       return .typeError("setattr(): attribute name must be string")
     }
 
-    return self.setAttribute(object, name: str.value, pyName: str, value: value)
-  }
-
-  private func setAttribute(_ object: PyObject,
-                            name: String,
-                            pyName: PyString?,
-                            value: PyObject) -> PyResult<PyNone> {
     if let owner = object as? __setattr__Owner {
       return owner.setAttribute(name: name, value: value)
     }
 
-    let n = pyName ?? self.interned(name: name)
-    switch self.callMethod(on: object, selector: "__setattr__", args: [n, value]) {
+    switch self.callMethod(on: object, selector: "__setattr__", args: [name, value]) {
     case .value:
       return .value(Py.none)
     case .missingMethod:
       let typeName = object.typeName
       let operation = value is PyNone ? "del" : "assign to"
-      let details = "(\(operation) \(name))"
+      let details = "(\(operation) \(name.reprRaw()))"
 
-      switch self.hasAttribute(object, name: name, pyName: n) {
+      switch self.hasAttribute(object, name: name) {
       case .value(true):
         return .typeError("'\(typeName)' object has only read-only attributes \(details)")
       case .value(false):
@@ -204,7 +198,13 @@ extension BuiltinFunctions {
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func deleteAttribute(_ object: PyObject,
                               name: String) -> PyResult<PyNone> {
-    return self.deleteAttribute(object, name: name, pyName: nil)
+    let interned = self.interned(name: name)
+    return self.deleteAttribute(object, name: interned)
+  }
+
+  internal func deleteAttribute(_ object: PyObject,
+                                name: IdString) -> PyResult<PyNone> {
+    return self.deleteAttribute(object, name: name.value)
   }
 
   // sourcery: pymethod = delattr
@@ -212,17 +212,11 @@ extension BuiltinFunctions {
   /// See [this](https://docs.python.org/3/library/functions.html#delattr)
   public func deleteAttribute(_ object: PyObject,
                               name: PyObject) -> PyResult<PyNone> {
-    guard let str = name as? PyString else {
+    guard let name = name as? PyString else {
       return .typeError("delattr(): attribute name must be string")
     }
 
-    return self.deleteAttribute(object, name: str.value, pyName: str)
-  }
-
-  private func deleteAttribute(_ object: PyObject,
-                               name: String,
-                               pyName: PyString?) -> PyResult<PyNone> {
-    return self.setAttribute(object, name: name, pyName: pyName, value: Py.none)
+    return self.setAttribute(object, name: name, value: Py.none)
   }
 
   // MARK: - Helpers

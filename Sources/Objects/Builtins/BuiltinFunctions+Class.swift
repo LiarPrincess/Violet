@@ -108,9 +108,8 @@ extension BuiltinFunctions {
   }
 
   private var metaclassKey: PyDictKey {
-    let id = Ids.metaclass
-    let hash = id.hashRaw()
-    return PyDictKey(hash: hash, object: id)
+    let id = IdString.metaclass
+    return PyDictKey(hash: id.hash, object: id.value)
   }
 
   private func getMetaclassRaw(kwargs: PyDictData?) -> PyDictData.GetResult {

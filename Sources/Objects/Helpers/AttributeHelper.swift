@@ -16,24 +16,57 @@ internal enum AttributeHelper {
   }
 
   internal static func getAttribute(from object: PyObject,
-                                    name: String) -> PyResult<PyObject> {
+                                    name: PyString) -> PyResult<PyObject> {
     let descriptor = GetDescriptor.get(object: object, attributeName: name)
 
     if let descr = descriptor, descr.isData {
       return descr.call()
     }
 
-    if let dict = Py.get__dict__(object: object),
-       let value = dict.get(key: name) {
-      return .value(value)
+    switch Self.getFrom__dict__(object: object, name: name) {
+    case .value(let o):
+      return .value(o)
+    case .notInDict:
+      break // try other
+    case .error(let e):
+      return .error(e)
     }
 
     if let descr = descriptor {
       return descr.call()
     }
 
-    let msg = "\(object.typeName) object has no attribute '\(name)'"
+    let msg = "\(object.typeName) object has no attribute '\(name.reprRaw())'"
     return .attributeError(msg)
+  }
+
+  private enum GetFrom__dict__Result {
+    case value(PyObject)
+    case notInDict
+    case error(PyBaseException)
+  }
+
+  private static func getFrom__dict__(object: PyObject,
+                                      name: PyString) -> GetFrom__dict__Result {
+    switch Py.get__dict__(object: object) {
+    case .value(let dict):
+      switch dict.getItem(at: object) {
+      case .value(let o):
+        return .value(o)
+      case .error(let e):
+        if e.isKeyError {
+          return .notInDict
+        }
+
+        return .error(e)
+      }
+
+    case .noDict:
+      return .notInDict
+
+    case .error(let e):
+      return .error(e)
+    }
   }
 
   // MARK: - Set
@@ -53,7 +86,7 @@ internal enum AttributeHelper {
   }
 
   internal static func setAttribute(on object: PyObject,
-                                    name: String,
+                                    name: PyString,
                                     to value: PyObject?) -> PyResult<PyNone> {
     let descriptor = SetDescriptor.get(object: object, attributeName: name)
 
@@ -62,20 +95,20 @@ internal enum AttributeHelper {
       return .value(Py.none)
     }
 
-    if let owner = object as? __dict__GetterOwner {
-      let dict = owner.getDict()
-
+    switch Py.get__dict__(object: object) {
+    case .value(let dict):
       if let value = value {
-        dict.set(key: name, to: value)
+        return dict.setItem(at: name, to: value)
       } else {
-        dict.del(key: name)
+        return dict.delItem(at: name)
       }
-      return .value(Py.none)
+    case .noDict: break // try other
+    case .error(let e): return .error(e)
     }
 
     let msg = descriptor == nil ?
-      "'\(object.typeName)' object has no attribute '\(name)'" :
-      "'\(object.typeName)' object attribute '\(name)' is read-only"
+      "'\(object.typeName)' object has no attribute '\(name.reprRaw())'" :
+      "'\(object.typeName)' object attribute '\(name.reprRaw())' is read-only"
 
     return .attributeError(msg)
   }
@@ -90,18 +123,18 @@ internal enum AttributeHelper {
   }
 
   internal static func delAttribute(on object: PyObject,
-                                    name: String) -> PyResult<PyNone> {
+                                    name: PyString) -> PyResult<PyNone> {
     return AttributeHelper.setAttribute(on: object, name: name, to: nil)
   }
 
   // MARK: - Extract name
 
-  internal static func extractName(from object: PyObject) -> PyResult<String> {
+  internal static func extractName(from object: PyObject) -> PyResult<PyString> {
     guard let string = object as? PyString else {
       let msg = "attribute name must be string, not '\(object.typeName)'"
       return .typeError(msg)
     }
 
-    return .value(string.value)
+    return .value(string)
   }
 }

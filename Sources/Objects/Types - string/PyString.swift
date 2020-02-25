@@ -122,8 +122,11 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __repr__
   internal func repr() -> PyResult<String> {
-    let result = self.data.createRepr()
-    return .value(result)
+    return .value(self.reprRaw())
+  }
+
+  internal func reprRaw() -> String {
+    return self.data.createRepr()
   }
 
   // sourcery: pymethod = __str__
@@ -142,10 +145,6 @@ public class PyString: PyObject {
 
   // sourcery: pymethod = __getattribute__
   internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
-  }
-
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 

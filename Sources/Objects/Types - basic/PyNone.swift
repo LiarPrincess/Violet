@@ -47,7 +47,7 @@ public class PyNone: PyObject {
       .flatMap(self.getAttribute(name:))
   }
 
-  public func getAttribute(name: String) -> PyResult<PyObject> {
+  public func getAttribute(name: PyString) -> PyResult<PyObject> {
     // (Read following sentences with Bernadette Banner voice.)
     //
     // Descriptors use a comparision with 'None' to determine if they are either
@@ -66,7 +66,7 @@ public class PyNone: PyObject {
       return unbinded.flatMap(self.bindToSelf(object:))
     }
 
-    let msg = "\(self.typeName) object has no attribute '\(name)'"
+    let msg = "\(self.typeName) object has no attribute '\(name.reprRaw())'"
     return .attributeError(msg)
   }
 

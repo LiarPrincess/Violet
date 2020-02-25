@@ -11,21 +11,6 @@ protocol __init__Owner {
   static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
 }
 
-protocol __getattribute__Owner {
-  func getAttribute(name: String) -> PyResult<PyObject>
-  func getAttribute(name: PyObject) -> PyResult<PyObject>
-}
-
-protocol __setattr__Owner {
-  func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone>
-  func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
-}
-
-protocol __delattr__Owner {
-  func delAttribute(name: String) -> PyResult<PyNone>
-  func delAttribute(name: PyObject) -> PyResult<PyNone>
-}
-
 protocol ArgsGetterOwner { func getArgs() -> PyTuple }
 protocol ArgsSetterOwner { func setArgs(_ value: PyObject?) -> PyResult<()> }
 protocol DenominatorGetterOwner { func denominator() -> PyInt }
@@ -59,6 +44,7 @@ protocol __context__GetterOwner { func getContext() -> PyBaseException? }
 protocol __context__SetterOwner { func setContext(_ value: PyObject?) -> PyResult<()> }
 protocol __defaults__GetterOwner { func getDefaults() -> PyObject }
 protocol __del__Owner { func del() -> PyResult<PyNone> }
+protocol __delattr__Owner { func delAttribute(name: PyObject) -> PyResult<PyNone> }
 protocol __delete__Owner { func del(object: PyObject) -> PyResult<PyObject> }
 protocol __delitem__Owner { func delItem(at index: PyObject) -> PyResult<PyNone> }
 protocol __dict__GetterOwner { func getDict() -> PyDict }
@@ -73,6 +59,7 @@ protocol __floordiv__Owner { func floordiv(_ other: PyObject) -> PyResult<PyObje
 protocol __func__Owner { func getFunc() -> PyFunction }
 protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
 protocol __get__Owner { func get(object: PyObject, type: PyObject) -> PyResult<PyObject> }
+protocol __getattribute__Owner { func getAttribute(name: PyObject) -> PyResult<PyObject> }
 protocol __getitem__Owner { func getItem(at index: PyObject) -> PyResult<PyObject> }
 protocol __globals__GetterOwner { func getGlobals() -> PyDict }
 protocol __gt__Owner { func isGreater(_ other: PyObject) -> CompareResult }
@@ -138,6 +125,7 @@ protocol __rxor__Owner { func rxor(_ other: PyObject) -> PyResult<PyObject> }
 protocol __self__GetterOwner { func getSelf() -> PyObject }
 protocol __self__Owner { func getSelf() -> PyObject }
 protocol __set__Owner { func set(object: PyObject, value: PyObject) -> PyResult<PyObject> }
+protocol __setattr__Owner { func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> }
 protocol __setitem__Owner { func setItem(at index: PyObject, to value: PyObject) -> PyResult<PyNone> }
 protocol __str__Owner { func str() -> PyResult<String> }
 protocol __sub__Owner { func sub(_ other: PyObject) -> PyResult<PyObject> }

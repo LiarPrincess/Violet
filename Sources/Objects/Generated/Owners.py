@@ -28,10 +28,7 @@ ignored_methods = [
 
 manually_written_protocols = [
   '__init__',
-  '__new__',
-  '__getattribute__',
-  '__setattr__',
-  '__delattr__'
+  '__new__'
 ]
 
 # ----
@@ -177,21 +174,6 @@ protocol __new__Owner {
 protocol __init__Owner {
   associatedtype Zelf: PyObject
   static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
-}
-
-protocol __getattribute__Owner {
-  func getAttribute(name: String) -> PyResult<PyObject>
-  func getAttribute(name: PyObject) -> PyResult<PyObject>
-}
-
-protocol __setattr__Owner {
-  func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone>
-  func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone>
-}
-
-protocol __delattr__Owner {
-  func delAttribute(name: String) -> PyResult<PyNone>
-  func delAttribute(name: PyObject) -> PyResult<PyNone>
 }
 ''')
 

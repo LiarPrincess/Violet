@@ -83,11 +83,7 @@ public class PyModule: PyObject {
       .flatMap(self.getAttribute(name:))
   }
 
-  public func getAttribute(name: String) -> PyResult<PyObject> {
-    return self.getAttribute(name: name, pyName: nil)
-  }
-
-  private func getAttribute(name: String, pyName: PyString?) -> PyResult<PyObject> {
+  private func getAttribute(name: PyString) -> PyResult<PyObject> {
     let attr = AttributeHelper.getAttribute(from: self, name: name)
 
     switch attr {
@@ -102,9 +98,7 @@ public class PyModule: PyObject {
     }
 
     if let getAttr = self.__dict__.getItem(id: .__getattr__) {
-      let nameArg = pyName ?? Py.getInterned(name)
-
-      switch Py.call(callable: getAttr, args: [self, nameArg]) {
+      switch Py.call(callable: getAttr, args: [self, name]) {
       case .value(let r):
         return .value(r)
       case .error(let e), .notCallable(let e):
@@ -112,7 +106,7 @@ public class PyModule: PyObject {
       }
     }
 
-    let msg = "module \(self.name) has no attribute '\(name)'"
+    let msg = "module \(self.name) has no attribute '\(name.reprRaw())'"
     return .attributeError(msg)
   }
 
@@ -121,16 +115,8 @@ public class PyModule: PyObject {
     return AttributeHelper.setAttribute(on: self, name: name, to: value)
   }
 
-  public func setAttribute(name: String, value: PyObject?) -> PyResult<PyNone> {
-    return AttributeHelper.setAttribute(on: self, name: name, to: value)
-  }
-
   // sourcery: pymethod = __delattr__
   public func delAttribute(name: PyObject) -> PyResult<PyNone> {
-    return AttributeHelper.delAttribute(on: self, name: name)
-  }
-
-  public func delAttribute(name: String) -> PyResult<PyNone> {
     return AttributeHelper.delAttribute(on: self, name: name)
   }
 

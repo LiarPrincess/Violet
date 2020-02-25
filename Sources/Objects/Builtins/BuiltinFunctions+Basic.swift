@@ -151,7 +151,7 @@ extension BuiltinFunctions {
       return .value(owner.getDict())
     }
 
-    switch self.getAttribute(object, name: Ids.__dict__) {
+    switch self.getAttribute(object, name: .__dict__) {
     case let .value(object):
       guard let dict = object as? PyDict else {
         let msg = "'__dict__' returned non-dict type '\(object.typeName)'"

@@ -182,10 +182,6 @@ public class PyComplex: PyObject {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
-  }
-
   // MARK: - Sign
 
   // sourcery: pymethod = __pos__

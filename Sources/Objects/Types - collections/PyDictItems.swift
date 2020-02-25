@@ -81,10 +81,6 @@ public class PyDictItems: PyObject, PyDictViewsShared {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  internal func getAttribute(name: String) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
-  }
-
   // MARK: - Length
 
   // sourcery: pymethod = __len__

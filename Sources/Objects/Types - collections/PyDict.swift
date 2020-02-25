@@ -153,10 +153,6 @@ public class PyDict: PyObject {
     return AttributeHelper.getAttribute(from: self, name: name)
   }
 
-  public func getAttribute(name: String) -> PyResult<PyObject> {
-    return AttributeHelper.getAttribute(from: self, name: name)
-  }
-
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
@@ -175,11 +171,16 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __getitem__
   public func getItem(at index: PyObject) -> PyResult<PyObject> {
-    let key: PyDictKey
-    switch self.createKey(from: index) {
-    case let .value(v): key = v
-    case let .error(e): return .error(e)
+    switch Py.hash(index) {
+    case let .value(hash):
+      return self.getItem(at: index, hash: hash)
+    case let .error(e):
+      return .error(e)
     }
+  }
+
+  public func getItem(at index: PyObject, hash: PyHash) -> PyResult<PyObject> {
+    let key = PyDictKey(hash: hash, object: index)
 
     switch self.data.get(key: key) {
     case .value(let o): return .value(o)
@@ -201,11 +202,18 @@ public class PyDict: PyObject {
   // sourcery: pymethod = __setitem__
   public func setItem(at index: PyObject,
                       to value: PyObject) -> PyResult<PyNone> {
-    let key: PyDictKey
-    switch self.createKey(from: index) {
-    case let .value(v): key = v
-    case let .error(e): return .error(e)
+    switch Py.hash(index) {
+    case let .value(hash):
+      return self.setItem(at: index, hash: hash, to: value)
+    case let .error(e):
+      return .error(e)
     }
+  }
+
+  public func setItem(at index: PyObject,
+                      hash: PyHash,
+                      to value: PyObject) -> PyResult<PyNone> {
+    let key = PyDictKey(hash: hash, object: index)
 
     switch self.data.insert(key: key, value: value) {
     case .inserted, .updated:
@@ -217,11 +225,17 @@ public class PyDict: PyObject {
 
   // sourcery: pymethod = __delitem__
   public func delItem(at index: PyObject) -> PyResult<PyNone> {
-    let key: PyDictKey
-    switch self.createKey(from: index) {
-    case let .value(v): key = v
-    case let .error(e): return .error(e)
+    switch Py.hash(index) {
+    case let .value(hash):
+      return self.delItem(at: index, hash: hash)
+    case let .error(e):
+      return .error(e)
     }
+  }
+
+  public func delItem(at index: PyObject,
+                      hash: PyHash) -> PyResult<PyNone> {
+    let key = PyDictKey(hash: hash, object: index)
 
     switch self.data.remove(key: key) {
     case .value:
