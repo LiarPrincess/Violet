@@ -1,3 +1,5 @@
+import Core
+
 public class HashInfo {
 
   /// Name of the algorithm for hashing of str, bytes, and memoryview
@@ -24,7 +26,12 @@ public class HashInfo {
 
     func set(name: String, value: PyObject) {
       let interned = Py.getInterned(name)
-      dict.setItem(at: interned, to: value)
+      switch dict.setItem(at: interned, to: value) {
+      case .value:
+        break
+      case .error(let e):
+        trap("Error when creating 'hash_info' namespace: \(e)")
+      }
     }
 
     set(name: "width", value: Py.newInt(self.width))

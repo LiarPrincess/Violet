@@ -781,9 +781,9 @@ public class PyByteArray: PyObject, PyBytesType {
     """
 
   // sourcery: pymethod = clear, doc = clearDoc
-  internal func clear() -> PyResult<PyNone> {
+  internal func clear() -> PyNone {
     self.data.clear()
-    return .value(Py.none)
+    return Py.none
   }
 
   // MARK: - Reverse

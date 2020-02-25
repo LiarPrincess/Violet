@@ -248,7 +248,7 @@ public class PyDict: PyObject {
 
   // MARK: - Id - get/set/del item
 
-  internal func getItem(id: IdString) -> PyObject? {
+  public func getItem(id: IdString) -> PyObject? {
     let key = self.createKey(from: id)
 
     switch self.data.get(key: key) {
@@ -261,8 +261,7 @@ public class PyDict: PyObject {
     }
   }
 
-  internal func setItem(id: IdString,
-                        to value: PyObject) {
+  public func setItem(id: IdString, to value: PyObject) {
     let key = self.createKey(from: id)
 
     switch self.data.insert(key: key, value: value) {
@@ -271,6 +270,19 @@ public class PyDict: PyObject {
       break
     case .error(let e):
       self.idErrorNotHandled(operation: "set", error: e)
+    }
+  }
+
+  public func delItem(id: IdString) -> PyObject? {
+    let key = self.createKey(from: id)
+
+    switch self.data.remove(key: key) {
+    case .value(let o):
+      return o
+    case .notFound:
+      return nil
+    case .error(let e):
+      self.idErrorNotHandled(operation: "del", error: e)
     }
   }
 
@@ -310,9 +322,9 @@ public class PyDict: PyObject {
     """
 
   // sourcery: pymethod = clear, doc = clearDoc
-  public func clear() -> PyResult<PyNone> {
+  public func clear() -> PyNone {
     self.data.clear()
-    return .value(Py.none)
+    return Py.none
   }
 
   // MARK: - Get
@@ -680,6 +692,14 @@ public class PyDict: PyObject {
     return zelf
       .update(args: args, kwargs: kwargs)
       .map { _ in Py.none }
+  }
+
+  // MARK: - GC
+
+  /// Remove all of the references to other Python objects.
+  override internal func gcClean() {
+    self.data.clear()
+    super.gcClean()
   }
 
   // MARK: - Helpers

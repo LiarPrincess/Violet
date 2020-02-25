@@ -1,3 +1,5 @@
+// swiftlint:disable file_length
+
 /// Predefined commonly used `__dict__` keys.
 /// Similiar to `_Py_IDENTIFIER` in `CPython`.
 ///

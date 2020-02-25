@@ -335,9 +335,9 @@ public class PySet: PyObject, PySetType {
     """
 
   // sourcery: pymethod = clear, doc = clearDoc
-  public func clear() -> PyResult<PyNone> {
+  public func clear() -> PyNone {
     self.data.clear()
-    return .value(Py.none)
+    return Py.none
   }
 
   // MARK: - Copy

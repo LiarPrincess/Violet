@@ -342,7 +342,7 @@ internal struct PySequenceData {
     // In total that gives us empty list.
     let countChange = elements.count - replacementCount
     if self.elements.count + countChange == 0 {
-      return self.clear()
+      return .value(self.clear())
     }
 
     self.elements.replaceSubrange(low..<high, with: elements)
@@ -628,9 +628,9 @@ internal struct PySequenceData {
 
   // MARK: - Clear
 
-  internal mutating func clear() -> PyResult<PyNone> {
+  internal mutating func clear() -> PyNone {
     self.elements.removeAll()
-    return .value(Py.none)
+    return Py.none
   }
 
   // MARK: - Pop

@@ -220,11 +220,15 @@ extension BuiltinFunctions {
                           allowsCallableProperties: true)
   }
 
+  // swiftlint:disable function_body_length
+
   /// int
   /// _PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method)
   public func getMethod(object: PyObject,
                         selector: PyString,
                         allowsCallableProperties: Bool) -> LoadMethodResult {
+    // swiftlint:enable function_body_length
+
     let attribute = object.type.lookup(name: selector)
     var descriptor: GetDescriptor?
     var functionAttribute: FunctionAttribute?

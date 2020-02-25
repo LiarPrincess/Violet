@@ -137,7 +137,7 @@ extension BuiltinFunctions {
 
 // MARK: - Dict
 
-public enum Get__dict__Result {
+public enum GetDictResult {
   case value(PyDict)
   case noDict
   case error(PyBaseException)
@@ -145,8 +145,7 @@ public enum Get__dict__Result {
 
 extension BuiltinFunctions {
 
-  // TODO: This should return 'PyDict'
-  public func get__dict__(object: PyObject) -> Get__dict__Result {
+  public func get__dict__(object: PyObject) -> GetDictResult {
     if let owner = object as? __dict__GetterOwner {
       return .value(owner.getDict())
     }

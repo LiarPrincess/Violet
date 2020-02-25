@@ -1,3 +1,5 @@
+import Core
+
 /// Internal helper for `sys.implementation`.
 public class ImplementationInfo {
 
@@ -10,7 +12,12 @@ public class ImplementationInfo {
 
     func set(name: String, value: PyObject) {
       let interned = Py.getInterned(name)
-      dict.setItem(at: interned, to: value)
+      switch dict.setItem(at: interned, to: value) {
+      case .value:
+        break
+      case .error(let e):
+        trap("Error when creating 'implementation' namespace: \(e)")
+      }
     }
 
     let cacheTag: PyObject = self.cacheTag.map(Py.newString(_:)) ?? Py.none

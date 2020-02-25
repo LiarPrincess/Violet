@@ -142,7 +142,7 @@ protocol __xor__Owner { func xor(_ other: PyObject) -> PyResult<PyObject> }
 protocol addOwner { func add(_ value: PyObject) -> PyResult<PyNone> }
 protocol appendOwner { func append(_ element: PyObject) -> PyResult<PyNone> }
 protocol bit_lengthOwner { func bitLength() -> PyObject }
-protocol clearOwner { func clear() -> PyResult<PyNone> }
+protocol clearOwner { func clear() -> PyNone }
 protocol closeOwner { func close() -> PyResult<PyNone> }
 protocol closedOwner { func isClosed() -> Bool }
 protocol conjugateOwner { func conjugate() -> PyObject }

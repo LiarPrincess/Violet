@@ -40,14 +40,14 @@ internal enum AttributeHelper {
     return .attributeError(msg)
   }
 
-  private enum GetFrom__dict__Result {
+  private enum GetFromDictResult {
     case value(PyObject)
     case notInDict
     case error(PyBaseException)
   }
 
   private static func getFrom__dict__(object: PyObject,
-                                      name: PyString) -> GetFrom__dict__Result {
+                                      name: PyString) -> GetFromDictResult {
     switch Py.get__dict__(object: object) {
     case .value(let dict):
       switch dict.getItem(at: object) {

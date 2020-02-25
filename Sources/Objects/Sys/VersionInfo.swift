@@ -1,3 +1,5 @@
+import Core
+
 /// Internal helper for `version_info`.
 ///
 /// A tuple containing the five components of the version number:
@@ -54,7 +56,12 @@ public class VersionInfo {
 
     func set(name: String, value: PyObject) {
       let interned = Py.getInterned(name)
-      dict.setItem(at: interned, to: value)
+      switch dict.setItem(at: interned, to: value) {
+      case .value:
+        break
+      case .error(let e):
+        trap("Error when creating 'version_info' namespace: \(e)")
+      }
     }
 
     set(name: "major", value: Py.newInt(self.major))

@@ -660,7 +660,7 @@ public class PyType: PyObject {
     self.bases = []
     self.mro = []
     self.subclasses = []
-    self.__dict__.clear()
+    self.__dict__.gcClean()
     super.gcClean()
   }
 

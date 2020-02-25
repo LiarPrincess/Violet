@@ -11,10 +11,18 @@
 /// - add `__doc__`
 /// - fill `__dict__`
 
-private func addBoring(type: PyType, name: String, value: PyObject) {
+import Core
+
+private func insert(type: PyType, name: String, value: PyObject) {
   let dict = type.getDict()
   let interned = Py.getInterned(name)
-  dict.setItem(at: interned, to: value)
+
+  switch dict.setItem(at: interned, to: value) {
+  case .value:
+    break
+  case .error(let e):
+    trap("Error when inserting '\(name)' to '\(type.getName())' type: \(e)")
+  }
 }
 
 {% macro addDoc type %}
@@ -48,21 +56,21 @@ private func addBoring(type: PyType, name: String, value: PyObject) {
     {% set attribute %}{{ prop.annotations.pyproperty }}{% endset %}
     {% set getter %}{{ type.name }}.{{ prop.selectorName }}{% endset %}
     {% if prop.annotations.setter %}
-    addBoring(type: type, name: "{{ attribute }}", value: PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }}))
+    insert(type: type, name: "{{ attribute }}", value: PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, set: {{ type.name }}.{{ prop.annotations.setter }}, castSelf: {{ castSelf }}))
     {% else %}
-    addBoring(type: type, name: "{{ attribute }}", value: PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }}))
+    insert(type: type, name: "{{ attribute }}", value: PyProperty.wrap(name: "{{ attribute }}", doc: nil, get: {{ getter }}, castSelf: {{ castSelf }}))
     {% endif %}
   {% endfor %}
 
   {% for method in type.staticMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
     {% if attribute == "__new__" %}
-    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
+    insert(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% else %}
     {% if attribute == "__init__" %}
-    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
+    insert(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% else %}
-    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
+    insert(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% endif %}
     {% endif %}
   {% endfor %}
@@ -70,19 +78,19 @@ private func addBoring(type: PyType, name: String, value: PyObject) {
   {% for method in type.classMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
     {% if attribute == "__new__" %}
-    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
+    insert(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% else %}
     {% if attribute == "__init__" %}
-    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
+    insert(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% else %}
-    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
+    insert(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}))
     {% endif %}
     {% endif %}
   {% endfor %}
 
   {% for method in type.instanceMethods|annotated:"pymethod" %}
     {% set attribute %}{{ method.annotations.pymethod }}{% endset %}
-    addBoring(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }}))
+    insert(type: type, name: "{{ attribute }}", value: PyBuiltinFunction.wrap(name: "{{ attribute }}", doc: nil, fn: {{ type.name }}.{{ method.selectorName }}, castSelf: {{ castSelf }}))
   {% endfor %}
 {% endmacro %}
 

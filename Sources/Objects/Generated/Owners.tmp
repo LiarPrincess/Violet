@@ -145,7 +145,7 @@ PyByteArray|PyObject|func|remove|remove(_ value: PyObject) -> PyResult<PyNone>
 PyByteArray|PyObject|func|pop|pop(index: PyObject?) -> PyResult<PyObject>
 PyByteArray|PyObject|func|__setitem__|setItem(at index: PyObject,                        to value: PyObject) -> PyResult<PyNone>
 PyByteArray|PyObject|func|__delitem__|delItem(at index: PyObject) -> PyResult<PyNone>
-PyByteArray|PyObject|func|clear|clear() -> PyResult<PyNone>
+PyByteArray|PyObject|func|clear|clear() -> PyNone
 PyByteArray|PyObject|func|reverse|reverse() -> PyResult<PyNone>
 PyByteArray|PyObject|func|copy|copy() -> PyObject
 PyByteArray|PyObject|static_func|__init__|pyInit(zelf: PyByteArray,                              args: [PyObject],                              kwargs: PyDictData?) -> PyResult<PyNone>
@@ -286,7 +286,7 @@ PyDict|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObjec
 PyDict|PyObject|func|__setitem__|setItem(at index: PyObject,                      to value: PyObject) -> PyResult<PyNone>
 PyDict|PyObject|func|__delitem__|delItem(at index: PyObject) -> PyResult<PyNone>
 PyDict|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
-PyDict|PyObject|func|clear|clear() -> PyResult<PyNone>
+PyDict|PyObject|func|clear|clear() -> PyNone
 PyDict|PyObject|func|get|get(args: [PyObject],                    kwargs: PyDictData?) -> PyResult<PyObject>
 PyDict|PyObject|func|__iter__|iter() -> PyObject
 PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                         default: PyObject?) -> PyResult<PyObject>
@@ -549,7 +549,7 @@ PyList|PyObject|func|remove|remove(_ value: PyObject) -> PyResult<PyNone>
 PyList|PyObject|func|pop|pop(index: PyObject?) -> PyResult<PyObject>
 PyList|PyObject|func|sort|sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
 PyList|PyObject|func|reverse|reverse() -> PyResult<PyNone>
-PyList|PyObject|func|clear|clear() -> PyResult<PyNone>
+PyList|PyObject|func|clear|clear() -> PyNone
 PyList|PyObject|func|copy|copy() -> PyObject
 PyList|PyObject|func|__add__|add(_ other: PyObject) -> PyResult<PyObject>
 PyList|PyObject|func|__iadd__|iadd(_ other: PyObject) -> PyResult<PyObject>
@@ -703,7 +703,7 @@ PySet|PyObject|func|add|add(_ value: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|update|update(from other: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|remove|remove(_ value: PyObject) -> PyResult<PyNone>
 PySet|PyObject|func|discard|discard(_ value: PyObject) -> PyResult<PyNone>
-PySet|PyObject|func|clear|clear() -> PyResult<PyNone>
+PySet|PyObject|func|clear|clear() -> PyNone
 PySet|PyObject|func|copy|copy() -> PyObject
 PySet|PyObject|func|pop|pop() -> PyResult<PyObject>
 PySet|PyObject|func|__iter__|iter() -> PyObject

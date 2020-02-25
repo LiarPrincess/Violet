@@ -403,7 +403,7 @@ public class PyList: PyObject, PySequenceType {
   // MARK: - Clear
 
   // sourcery: pymethod = clear
-  internal func clear() -> PyResult<PyNone> {
+  internal func clear() -> PyNone {
     return self.data.clear()
   }
 
