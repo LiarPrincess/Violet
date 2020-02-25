@@ -148,13 +148,6 @@ private enum FunctionAttribute {
   case builtinFunction(PyBuiltinFunction)
 }
 
-/// Helper for `getCallableProperty`.
-private enum GetCallableProperty {
-  case value(PyObject)
-  case noSuchProperty
-  case error(PyBaseException)
-}
-
 extension BuiltinFunctions {
 
   public func hasMethod(object: PyObject,
@@ -252,10 +245,12 @@ extension BuiltinFunctions {
     }
 
     if allowsCallableProperties {
-      switch self.getCallableProperty(object: object, selector: selector) {
-      case .value(let o): return .objectAttribute(o)
-      case .noSuchProperty: break // try other
-      case .error(let e): return .error(e)
+      if let dict = Py.get__dict__(object: object) {
+        switch dict.get(key: selector) {
+        case .value(let o): return .objectAttribute(o)
+        case .notFound: break // try other
+        case .error(let e): return .error(e)
+        }
       }
     }
 
@@ -284,28 +279,6 @@ extension BuiltinFunctions {
     case let .value(o):
       return .typeDescriptorAttribute(o)
     case let .error(e):
-      return .error(e)
-    }
-  }
-
-  private func getCallableProperty(object: PyObject,
-                                   selector: PyString) -> GetCallableProperty {
-    switch Py.get__dict__(object: object) {
-    case .value(let dict):
-      switch dict.getItem(at: selector) {
-      case let .value(o):
-        return .value(o)
-      case let .error(e):
-        if e.isKeyError {
-          return .noSuchProperty
-        }
-        return .error(e)
-      }
-
-    case .noDict:
-      return .noSuchProperty
-
-    case .error(let e):
       return .error(e)
     }
   }

@@ -137,36 +137,29 @@ extension BuiltinFunctions {
 
 // MARK: - Dict
 
-public enum GetDictResult {
-  case value(PyDict)
-  case noDict
-  case error(PyBaseException)
-}
-
 extension BuiltinFunctions {
 
-  public func get__dict__(object: PyObject) -> GetDictResult {
+  /// Returns the **builtin** (!!!!) `__dict__` instance.
+  ///
+  /// Extreme edge case: object has `__dict__` attribute:
+  /// ```py
+  /// >>> class C():
+  /// ...     def __init__(self):
+  /// ...             self.__dict__ = { 'a': 1 }
+  /// ...
+  /// >>> c = C()
+  /// >>> c.__dict__
+  /// {'a': 1}
+  /// ```
+  /// This is actually `dict` stored as '\_\_dict\_\_' in real '\_\_dict\_\_'.
+  /// In such situation we return real '\_\_dict\_\_' (not the user property!).
+  public func get__dict__(object: PyObject) -> PyDict? {
     if let owner = object as? __dict__GetterOwner {
-      return .value(owner.getDict())
+      let result = owner.getDict()
+      return result
     }
 
-    switch self.getAttribute(object, name: .__dict__) {
-    case let .value(object):
-      guard let dict = object as? PyDict else {
-        let msg = "'__dict__' returned non-dict type '\(object.typeName)'"
-        let e = self.newTypeError(msg: msg)
-        return .error(e)
-      }
-
-      return .value(dict)
-
-    case let .error(e):
-      if e.isAttributeError {
-        return .noDict
-      }
-
-      return .error(e)
-    }
+    return nil
   }
 
   // MARK: - Id

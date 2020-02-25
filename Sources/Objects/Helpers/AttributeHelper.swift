@@ -23,13 +23,15 @@ internal enum AttributeHelper {
       return descr.call()
     }
 
-    switch Self.getFrom__dict__(object: object, name: name) {
-    case .value(let o):
-      return .value(o)
-    case .notInDict:
-      break // try other
-    case .error(let e):
-      return .error(e)
+    if let dict = Py.get__dict__(object: object) {
+      switch dict.get(key: object) {
+      case .value(let o):
+        return .value(o)
+      case .notFound:
+        break // try other
+      case .error(let e):
+        return .error(e)
+      }
     }
 
     if let descr = descriptor {
@@ -44,29 +46,6 @@ internal enum AttributeHelper {
     case value(PyObject)
     case notInDict
     case error(PyBaseException)
-  }
-
-  private static func getFrom__dict__(object: PyObject,
-                                      name: PyString) -> GetFromDictResult {
-    switch Py.get__dict__(object: object) {
-    case .value(let dict):
-      switch dict.getItem(at: object) {
-      case .value(let o):
-        return .value(o)
-      case .error(let e):
-        if e.isKeyError {
-          return .notInDict
-        }
-
-        return .error(e)
-      }
-
-    case .noDict:
-      return .notInDict
-
-    case .error(let e):
-      return .error(e)
-    }
   }
 
   // MARK: - Set
@@ -95,15 +74,19 @@ internal enum AttributeHelper {
       return .value(Py.none)
     }
 
-    switch Py.get__dict__(object: object) {
-    case .value(let dict):
+    if let dict = Py.get__dict__(object: object) {
       if let value = value {
-        return dict.setItem(at: name, to: value)
+        switch dict.set(key: name, to: value) {
+        case .ok: return .value(Py.none)
+        case .error(let e): return .error(e)
+        }
       } else {
-        return dict.delItem(at: name)
+        switch dict.del(key: name) {
+        case .value: return .value(Py.none)
+        case .notFound: break // try other
+        case .error(let e): return .error(e)
+        }
       }
-    case .noDict: break // try other
-    case .error(let e): return .error(e)
     }
 
     let msg = descriptor == nil ?
