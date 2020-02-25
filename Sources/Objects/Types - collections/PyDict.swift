@@ -302,62 +302,40 @@ public class PyDict: PyObject {
     trap("Dict operation '\(operation)' returned an error: '\(repr)'")
   }
 
-  // MARK: - Contains
+  // MARK: - Get - default
 
-  // sourcery: pymethod = __contains__
-  public func contains(_ element: PyObject) -> PyResult<Bool> {
-    let key: PyDictKey
-    switch self.createKey(from: element) {
-    case let .value(v): key = v
-    case let .error(e): return .error(e)
-    }
-
-    return self.data.contains(key: key)
-  }
-
-  // MARK: - Clear
-
-  internal static let clearDoc = """
-    D.clear() -> None.  Remove all items from D.
-    """
-
-  // sourcery: pymethod = clear, doc = clearDoc
-  public func clear() -> PyNone {
-    self.data.clear()
-    return Py.none
-  }
-
-  // MARK: - Get
-
-  internal static let getDoc = """
+  internal static let getWithDefaultDoc = """
     get($self, key, default=None, /)
     --
 
     Return the value for key if key is in the dictionary, else default.
     """
 
-  private static let getArguments = ArgumentParser.createOrTrap(
+  private static let getWithDefaultArguments = ArgumentParser.createOrTrap(
     arguments: ["", "default"],
     format: "O|O:get"
   )
 
-  // sourcery: pymethod = get, doc = getDoc
-  internal func get(args: [PyObject],
-                    kwargs: PyDictData?) -> PyResult<PyObject> {
-    switch PyDict.getArguments.bind(args: args, kwargs: kwargs) {
+  // sourcery: pymethod = get, doc = getWithDefaultDoc
+  /// Implementation of Python `get($self, key, default=None, /)` method.
+  internal func getWithDefault(args: [PyObject],
+                               kwargs: PyDictData?) -> PyResult<PyObject> {
+    switch PyDict.getWithDefaultArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
       assert(binding.optionalCount == 1, "Invalid optional argument count.")
 
       let arg0 = binding.required(at: 0)
       let arg1 = binding.optional(at: 1)
-      return self.get(arg0, default: arg1)
+      return self.getWithDefault(arg0, default: arg1)
     case let .error(e):
       return .error(e)
     }
   }
 
-  public func get(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> {
+  /// Implementation of Python `get($self, key, default=None, /)` method.
+  public func getWithDefault(_ index: PyObject,
+                             default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
     switch self.createKey(from: index) {
     case let .value(v): key = v
@@ -374,16 +352,9 @@ public class PyDict: PyObject {
     }
   }
 
-  // MARK: - Iter
+  // MARK: - Set - default
 
-  // sourcery: pymethod = __iter__
-  public func iter() -> PyObject {
-    return PyDictKeyIterator(dict: self)
-  }
-
-  // MARK: - Set default
-
-  internal static let setdefaultDoc = """
+  internal static let setWithDefaultDoc = """
     setdefault($self, key, default=None, /)
     --
 
@@ -392,12 +363,39 @@ public class PyDict: PyObject {
     Return the value for key if key is in the dictionary, else default.
     """
 
-  // sourcery: pymethod = setdefault, doc = setdefaultDoc
+  private static let setWithDefaultArguments = ArgumentParser.createOrTrap(
+    arguments: ["", "default"],
+    format: "O|O:get"
+  )
+
+  // sourcery: pymethod = setdefault, doc = setWithDefaultDoc
+  /// Implementation of Python `setdefault($self, key, default=None, /)` method.
+  ///
   /// If `key` is in the dictionary, return its value.
   /// If not, insert key with a value of `default` and return `default`.
   /// `default` defaults to None.
-  public func setDefault(_ index: PyObject,
-                         default: PyObject?) -> PyResult<PyObject> {
+  internal func setWithDefault(args: [PyObject],
+                               kwargs: PyDictData?) -> PyResult<PyObject> {
+    switch PyDict.setWithDefaultArguments.bind(args: args, kwargs: kwargs) {
+    case let .value(binding):
+      assert(binding.requiredCount == 1, "Invalid required argument count.")
+      assert(binding.optionalCount == 1, "Invalid optional argument count.")
+
+      let arg0 = binding.required(at: 0)
+      let arg1 = binding.optional(at: 1)
+      return self.setWithDefault(arg0, default: arg1)
+    case let .error(e):
+      return .error(e)
+    }
+  }
+
+  /// Implementation of Python `setdefault($self, key, default=None, /)` method.
+  ///
+  /// If `key` is in the dictionary, return its value.
+  /// If not, insert key with a value of `default` and return `default`.
+  /// `default` defaults to None.
+  public func setWithDefault(_ index: PyObject,
+                             default: PyObject?) -> PyResult<PyObject> {
     let key: PyDictKey
     switch self.createKey(from: index) {
     case let .value(v): key = v
@@ -418,6 +416,38 @@ public class PyDict: PyObject {
     case .error(let e):
       return .error(e)
     }
+  }
+
+  // MARK: - Contains
+
+  // sourcery: pymethod = __contains__
+  public func contains(_ element: PyObject) -> PyResult<Bool> {
+    let key: PyDictKey
+    switch self.createKey(from: element) {
+    case let .value(v): key = v
+    case let .error(e): return .error(e)
+    }
+
+    return self.data.contains(key: key)
+  }
+
+  // MARK: - Iter
+
+  // sourcery: pymethod = __iter__
+  public func iter() -> PyObject {
+    return PyDictKeyIterator(dict: self)
+  }
+
+  // MARK: - Clear
+
+  internal static let clearDoc = """
+    D.clear() -> None.  Remove all items from D.
+    """
+
+  // sourcery: pymethod = clear, doc = clearDoc
+  public func clear() -> PyNone {
+    self.data.clear()
+    return Py.none
   }
 
   // MARK: - Update

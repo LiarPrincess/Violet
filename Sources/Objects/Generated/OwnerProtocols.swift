@@ -156,7 +156,7 @@ protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObjec
 protocol extendOwner { func extend(iterable: PyObject) -> PyResult<PyNone> }
 protocol findOwner { func find(_ element: PyObject) -> PyResult<BigInt> }
 protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
-protocol getOwner { func get(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
+protocol getOwner { func getWithDefault(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
 protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol indicesOwner { func indicesInSequence(length: PyObject) -> PyResult<PyObject> }
@@ -191,7 +191,7 @@ protocol rfindRangedOwner { func rfind(_ element: PyObject, start: PyObject?, en
 protocol rindexOwner { func rindex(_ element: PyObject) -> PyResult<BigInt> }
 protocol rindexRangedOwner { func rindex(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol rpartitionOwner { func rpartition(separator: PyObject) -> PyResult<PyTuple> }
-protocol setdefaultOwner { func setDefault(_ index: PyObject, default: PyObject?) -> PyResult<PyObject> }
+protocol setdefaultOwner { func setWithDefault(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
 protocol sortOwner { func sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> }
 protocol startswithOwner { func startsWith(_ element: PyObject) -> PyResult<Bool> }
 protocol startswithRangedOwner { func startsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Bool> }

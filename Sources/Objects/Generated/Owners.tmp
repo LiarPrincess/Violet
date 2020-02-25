@@ -285,11 +285,11 @@ PyDict|PyObject|func|__len__|getLength() -> BigInt
 PyDict|PyObject|func|__getitem__|getItem(at index: PyObject) -> PyResult<PyObject>
 PyDict|PyObject|func|__setitem__|setItem(at index: PyObject,                      to value: PyObject) -> PyResult<PyNone>
 PyDict|PyObject|func|__delitem__|delItem(at index: PyObject) -> PyResult<PyNone>
+PyDict|PyObject|func|get|getWithDefault(args: [PyObject],                               kwargs: PyDictData?) -> PyResult<PyObject>
+PyDict|PyObject|func|setdefault|setWithDefault(args: [PyObject],                               kwargs: PyDictData?) -> PyResult<PyObject>
 PyDict|PyObject|func|__contains__|contains(_ element: PyObject) -> PyResult<Bool>
-PyDict|PyObject|func|clear|clear() -> PyNone
-PyDict|PyObject|func|get|get(args: [PyObject],                    kwargs: PyDictData?) -> PyResult<PyObject>
 PyDict|PyObject|func|__iter__|iter() -> PyObject
-PyDict|PyObject|func|setdefault|setDefault(_ index: PyObject,                         default: PyObject?) -> PyResult<PyObject>
+PyDict|PyObject|func|clear|clear() -> PyNone
 PyDict|PyObject|func|update|update(args: [PyObject],                       kwargs: PyDictData?) -> PyResult<PyNone>
 PyDict|PyObject|func|copy|copy() -> PyObject
 PyDict|PyObject|func|pop|pop(_ index: PyObject,                  default: PyObject?) -> PyResult<PyObject>
