@@ -75,7 +75,7 @@ extension BuiltinFunctions {
     }
 
     let result = self.callMethod(on: callable,
-                                 selector: "__call__",
+                                 selector: .__call__,
                                  args: args,
                                  kwargs: kwargs)
 
@@ -105,7 +105,7 @@ extension BuiltinFunctions {
       return .value(true)
     }
 
-    return self.hasAttribute(object, name: "__call__")
+    return self.hasAttribute(object, name: .__call__)
   }
 }
 
@@ -148,9 +148,22 @@ private enum FunctionAttribute {
   case builtinFunction(PyBuiltinFunction)
 }
 
+/// Helper for `getCallableProperty`.
+private enum GetCallableProperty {
+  case value(PyObject)
+  case noSuchProperty
+  case error(PyBaseException)
+}
+
 extension BuiltinFunctions {
 
-  public func hasMethod(object: PyObject, selector: String) -> PyResult<Bool> {
+  internal func hasMethod(object: PyObject,
+                          selector: IdString) -> PyResult<Bool> {
+    return self.hasMethod(object: object, selector: selector.value)
+  }
+
+  public func hasMethod(object: PyObject,
+                        selector: PyString) -> PyResult<Bool> {
     let result = self.getMethod(object: object,
                                 selector: selector,
                                 allowsCallableProperties: false)
@@ -169,7 +182,8 @@ extension BuiltinFunctions {
     }
   }
 
-  public func getMethod(object: PyObject, selector: String) -> GetMethodResult {
+  public func getMethod(object: PyObject,
+                        selector: PyString) -> GetMethodResult {
     let result = self.getMethod(object: object,
                                 selector: selector,
                                 allowsCallableProperties: false)
@@ -198,7 +212,8 @@ extension BuiltinFunctions {
   ///
   /// (The difference between `loadMethod` and `getMethod` is that `loadMethod`
   /// will also include callable properties from `__dict__`.)
-  public func loadMethod(object: PyObject, selector: String) -> LoadMethodResult {
+  public func loadMethod(object: PyObject,
+                         selector: PyString) -> LoadMethodResult {
     return self.getMethod(object: object,
                           selector: selector,
                           allowsCallableProperties: true)
@@ -207,13 +222,14 @@ extension BuiltinFunctions {
   /// int
   /// _PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method)
   public func getMethod(object: PyObject,
-                        selector: String,
+                        selector: PyString,
                         allowsCallableProperties: Bool) -> LoadMethodResult {
     let attribute = object.type.lookup(name: selector)
     var descriptor: GetDescriptor?
     var functionAttribute: FunctionAttribute?
 
-    if let attr = attribute {
+    switch attribute {
+    case .value(let attr):
       if let fn = attr as? PyFunction {
         functionAttribute = .function(fn)
       } else if let fn = attr as? PyBuiltinFunction {
@@ -224,12 +240,17 @@ extension BuiltinFunctions {
           return self.getMethod(descriptor: descr)
         }
       }
+    case .notFound:
+      break // try other
+    case .error(let e):
+      return .error(e)
     }
 
     if allowsCallableProperties {
-      if let dict = Py.get__dict__(object: object),
-         let value = dict.get(key: selector) {
-        return .objectAttribute(value)
+      switch self.getCallableProperty(object: object, selector: selector) {
+      case .value(let o): return .objectAttribute(o)
+      case .noSuchProperty: break // try other
+      case .error(let e): return .error(e)
       }
     }
 
@@ -243,8 +264,9 @@ extension BuiltinFunctions {
       return self.getMethod(descriptor: descr)
     }
 
-    if let attr = attribute {
-      return .typeAttribute(attr)
+    switch attribute {
+    case .value(let attr): return .typeAttribute(attr)
+    case .notFound, .error: break // try other (errors were handled before)
     }
 
     let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
@@ -257,6 +279,28 @@ extension BuiltinFunctions {
     case let .value(o):
       return .typeDescriptorAttribute(o)
     case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func getCallableProperty(object: PyObject,
+                                   selector: PyString) -> GetCallableProperty {
+    switch Py.get__dict__(object: object) {
+    case .value(let dict):
+      switch dict.getItem(at: selector) {
+      case let .value(o):
+        return .value(o)
+      case let .error(e):
+        if e.isKeyError {
+          return .noSuchProperty
+        }
+        return .error(e)
+      }
+
+    case .noDict:
+      return .noSuchProperty
+
+    case .error(let e):
       return .error(e)
     }
   }
@@ -288,8 +332,15 @@ extension BuiltinFunctions {
 
   /// Call method with single positional argument.
   internal func callMethod(on object: PyObject,
-                           selector: String,
+                           selector: IdString,
                            arg: PyObject) -> CallMethodResult {
+    return self.callMethod(on: object, selector: selector.value, arg: arg)
+  }
+
+  /// Call method with single positional argument.
+  public func callMethod(on object: PyObject,
+                         selector: PyString,
+                         arg: PyObject) -> CallMethodResult {
     return self.callMethod(on: object, selector: selector, args: [arg])
   }
 
@@ -299,8 +350,24 @@ extension BuiltinFunctions {
   ///   - selector: name of the method to call
   ///   - args: positional arguments
   ///   - kwargs: keyword argument `dict`
+  internal func callMethod(on object: PyObject,
+                           selector: IdString,
+                           args: PyObject,
+                           kwargs: PyObject?) -> CallMethodResult {
+    return self.callMethod(on: object,
+                           selector: selector.value,
+                           args: args,
+                           kwargs: kwargs)
+  }
+
+  /// Call with positional arguments and optional keyword arguments.
+  /// - Parameters:
+  ///   - object: `self` argument
+  ///   - selector: name of the method to call
+  ///   - args: positional arguments
+  ///   - kwargs: keyword argument `dict`
   public func callMethod(on object: PyObject,
-                         selector: String,
+                         selector: PyString,
                          args: PyObject,
                          kwargs: PyObject?) -> CallMethodResult {
     let argsArray: [PyObject]
@@ -328,8 +395,26 @@ extension BuiltinFunctions {
   ///   - kwargs: keyword arguments
   ///
   /// Based on CPython 'LOAD_METHOD' and 'CALL_METHOD'.
+  internal func callMethod(on object: PyObject,
+                           selector: IdString,
+                           args: [PyObject] = [],
+                           kwargs: PyDictData? = nil) -> CallMethodResult {
+    return self.callMethod(on: object,
+                           selector: selector.value,
+                           args: args,
+                           kwargs: kwargs)
+  }
+
+  /// Call with positional arguments and optional keyword arguments.
+  /// - Parameters:
+  ///   - object: `self` argument
+  ///   - selector: name of the method to call
+  ///   - args: positional arguments
+  ///   - kwargs: keyword arguments
+  ///
+  /// Based on CPython 'LOAD_METHOD' and 'CALL_METHOD'.
   public func callMethod(on object: PyObject,
-                         selector: String,
+                         selector: PyString,
                          args: [PyObject] = [],
                          kwargs: PyDictData? = nil) -> CallMethodResult {
     var method: PyObject

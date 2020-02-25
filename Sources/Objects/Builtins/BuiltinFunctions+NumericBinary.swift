@@ -37,13 +37,13 @@ private protocol BinaryOp {
   static var inPlaceOp: String { get }
 
   /// Python selector, for example `__add__`.
-  static var selector: String { get }
+  static var selector: IdString { get }
   /// Python selector for reflected operation.
   /// For `__add__` it is `__radd__`.
-  static var reflectedSelector: String { get }
+  static var reflectedSelector: IdString { get }
   /// Python selector for in-place operation.
   /// For `__add__` it is `__iadd__`.
-  static var inPlaceSelector: String { get }
+  static var inPlaceSelector: IdString { get }
 
   /// Call op with fast protocol dispatch.
   static func callFastOp(left: PyObject,
@@ -248,9 +248,9 @@ private struct AddOp: BinaryOp {
 
   fileprivate static let op = "+"
   fileprivate static let inPlaceOp = "+="
-  fileprivate static let selector = "__add__"
-  fileprivate static let reflectedSelector = "__radd__"
-  fileprivate static let inPlaceSelector = "__iadd__"
+  fileprivate static let selector = IdString.__add__
+  fileprivate static let reflectedSelector = IdString.__radd__
+  fileprivate static let inPlaceSelector = IdString.__iadd__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -294,9 +294,9 @@ private struct SubOp: BinaryOp {
 
   fileprivate static let op = "-"
   fileprivate static let inPlaceOp = "-="
-  fileprivate static let selector = "__sub__"
-  fileprivate static let reflectedSelector = "__rsub__"
-  fileprivate static let inPlaceSelector = "__isub__"
+  fileprivate static let selector = IdString.__sub__
+  fileprivate static let reflectedSelector = IdString.__rsub__
+  fileprivate static let inPlaceSelector = IdString.__isub__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -340,9 +340,9 @@ private struct MulOp: BinaryOp {
 
   fileprivate static let op = "*"
   fileprivate static let inPlaceOp = "*="
-  fileprivate static let selector = "__mul__"
-  fileprivate static let reflectedSelector = "__rmul__"
-  fileprivate static let inPlaceSelector = "__imul__"
+  fileprivate static let selector = IdString.__mul__
+  fileprivate static let reflectedSelector = IdString.__rmul__
+  fileprivate static let inPlaceSelector = IdString.__imul__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -386,9 +386,9 @@ private struct MatmulOp: BinaryOp {
 
   fileprivate static let op = "@"
   fileprivate static let inPlaceOp = "@="
-  fileprivate static let selector = "__matmul__"
-  fileprivate static let reflectedSelector = "__rmatmul__"
-  fileprivate static let inPlaceSelector = "__imatmul__"
+  fileprivate static let selector = IdString.__matmul__
+  fileprivate static let reflectedSelector = IdString.__rmatmul__
+  fileprivate static let inPlaceSelector = IdString.__imatmul__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -432,9 +432,9 @@ private struct TruedivOp: BinaryOp {
 
   fileprivate static let op = "/"
   fileprivate static let inPlaceOp = "/="
-  fileprivate static let selector = "__truediv__"
-  fileprivate static let reflectedSelector = "__rtruediv__"
-  fileprivate static let inPlaceSelector = "__itruediv__"
+  fileprivate static let selector = IdString.__truediv__
+  fileprivate static let reflectedSelector = IdString.__rtruediv__
+  fileprivate static let inPlaceSelector = IdString.__itruediv__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -478,9 +478,9 @@ private struct FloordivOp: BinaryOp {
 
   fileprivate static let op = "//"
   fileprivate static let inPlaceOp = "//="
-  fileprivate static let selector = "__floordiv__"
-  fileprivate static let reflectedSelector = "__rfloordiv__"
-  fileprivate static let inPlaceSelector = "__ifloordiv__"
+  fileprivate static let selector = IdString.__floordiv__
+  fileprivate static let reflectedSelector = IdString.__rfloordiv__
+  fileprivate static let inPlaceSelector = IdString.__ifloordiv__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -524,9 +524,9 @@ private struct ModOp: BinaryOp {
 
   fileprivate static let op = "%"
   fileprivate static let inPlaceOp = "%="
-  fileprivate static let selector = "__mod__"
-  fileprivate static let reflectedSelector = "__rmod__"
-  fileprivate static let inPlaceSelector = "__imod__"
+  fileprivate static let selector = IdString.__mod__
+  fileprivate static let reflectedSelector = IdString.__rmod__
+  fileprivate static let inPlaceSelector = IdString.__imod__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -570,9 +570,9 @@ private struct DivmodOp: BinaryOp {
 
   fileprivate static let op = "divmod()"
   fileprivate static let inPlaceOp = "divmod()="
-  fileprivate static let selector = "__divmod__"
-  fileprivate static let reflectedSelector = "__rdivmod__"
-  fileprivate static let inPlaceSelector = "__idivmod__"
+  fileprivate static let selector = IdString.__divmod__
+  fileprivate static let reflectedSelector = IdString.__rdivmod__
+  fileprivate static let inPlaceSelector = IdString.__idivmod__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -615,9 +615,9 @@ private struct LshiftOp: BinaryOp {
 
   fileprivate static let op = "<<"
   fileprivate static let inPlaceOp = "<<="
-  fileprivate static let selector = "__lshift__"
-  fileprivate static let reflectedSelector = "__rlshift__"
-  fileprivate static let inPlaceSelector = "__ilshift__"
+  fileprivate static let selector = IdString.__lshift__
+  fileprivate static let reflectedSelector = IdString.__rlshift__
+  fileprivate static let inPlaceSelector = IdString.__ilshift__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -661,9 +661,9 @@ private struct RshiftOp: BinaryOp {
 
   fileprivate static let op = ">>"
   fileprivate static let inPlaceOp = ">>="
-  fileprivate static let selector = "__rshift__"
-  fileprivate static let reflectedSelector = "__rrshift__"
-  fileprivate static let inPlaceSelector = "__irshift__"
+  fileprivate static let selector = IdString.__rshift__
+  fileprivate static let reflectedSelector = IdString.__rrshift__
+  fileprivate static let inPlaceSelector = IdString.__irshift__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -707,9 +707,9 @@ private struct AndOp: BinaryOp {
 
   fileprivate static let op = "&"
   fileprivate static let inPlaceOp = "&="
-  fileprivate static let selector = "__and__"
-  fileprivate static let reflectedSelector = "__rand__"
-  fileprivate static let inPlaceSelector = "__iand__"
+  fileprivate static let selector = IdString.__and__
+  fileprivate static let reflectedSelector = IdString.__rand__
+  fileprivate static let inPlaceSelector = IdString.__iand__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -753,9 +753,9 @@ private struct OrOp: BinaryOp {
 
   fileprivate static let op = "|"
   fileprivate static let inPlaceOp = "|="
-  fileprivate static let selector = "__or__"
-  fileprivate static let reflectedSelector = "__ror__"
-  fileprivate static let inPlaceSelector = "__ior__"
+  fileprivate static let selector = IdString.__or__
+  fileprivate static let reflectedSelector = IdString.__ror__
+  fileprivate static let inPlaceSelector = IdString.__ior__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {
@@ -799,9 +799,9 @@ private struct XorOp: BinaryOp {
 
   fileprivate static let op = "^"
   fileprivate static let inPlaceOp = "^="
-  fileprivate static let selector = "__xor__"
-  fileprivate static let reflectedSelector = "__rxor__"
-  fileprivate static let inPlaceSelector = "__ixor__"
+  fileprivate static let selector = IdString.__xor__
+  fileprivate static let reflectedSelector = IdString.__rxor__
+  fileprivate static let inPlaceSelector = IdString.__ixor__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {

@@ -143,7 +143,7 @@ public class PyReversed: PyObject {
       return .value(owner.reversed())
     }
 
-    return Py.callMethod(on: object, selector: "__reversed__")
+    return Py.callMethod(on: object, selector: .__reversed__)
   }
 
   private static func has__getitem__(object: PyObject) -> PyResult<Bool> {
@@ -151,6 +151,6 @@ public class PyReversed: PyObject {
       return .value(true)
     }
 
-    return Py.hasMethod(object: object, selector: "__getitem__")
+    return Py.hasMethod(object: object, selector: .__getitem__)
   }
 }

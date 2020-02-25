@@ -87,9 +87,9 @@ private struct {struct_name}: BinaryOp {{
 
   fileprivate static let op = "{operator}"
   fileprivate static let inPlaceOp = "{operator}="
-  fileprivate static let selector = "__{name}__"
-  fileprivate static let reflectedSelector = "__r{name}__"
-  fileprivate static let inPlaceSelector = "__i{name}__"
+  fileprivate static let selector = IdString.__{name}__
+  fileprivate static let reflectedSelector = IdString.__r{name}__
+  fileprivate static let inPlaceSelector = IdString.__i{name}__
 
   fileprivate static func callFastOp(left: PyObject,
                                      right: PyObject) -> FastCallResult {{

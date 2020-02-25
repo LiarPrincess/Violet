@@ -68,7 +68,7 @@ extension BuiltinFunctions {
 
     // Slow python path
     // attribute names tend to be reused, so we will intern them
-    switch self.callMethod(on: object, selector: "__getattribute__", arg: name) {
+    switch self.callMethod(on: object, selector: .__getattribute__, arg: name) {
     case .value(let o):
       return .value(o)
     case .missingMethod:
@@ -171,7 +171,7 @@ extension BuiltinFunctions {
       return owner.setAttribute(name: name, value: value)
     }
 
-    switch self.callMethod(on: object, selector: "__setattr__", args: [name, value]) {
+    switch self.callMethod(on: object, selector: .__setattr__, args: [name, value]) {
     case .value:
       return .value(Py.none)
     case .missingMethod:

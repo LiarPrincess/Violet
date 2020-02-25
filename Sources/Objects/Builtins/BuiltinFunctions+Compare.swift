@@ -41,7 +41,7 @@ private enum FastCallResult {
 /// Or we could use templates.
 private protocol CompareOp {
   /// Python selector, for example `__eq__`.
-  static var selector: String { get }
+  static var selector: IdString { get }
   /// Call compare from PyBaseObject.
   static var baseCompare: (PyObject, PyObject) -> CompareResult { get }
   /// Reflected compare operation, for example 'less' -> 'greater'.
@@ -136,7 +136,7 @@ extension CompareOp {
 private enum EqualCompare: CompareOp {
 
   typealias reflected = EqualCompare
-  fileprivate static let selector = "__eq__"
+  fileprivate static let selector = IdString.__eq__
   fileprivate static let baseCompare = PyBaseObject.isEqual
 
   fileprivate static func callFastCompare(left: PyObject,
@@ -179,7 +179,7 @@ extension BuiltinFunctions {
 private enum NotEqualCompare: CompareOp {
 
   typealias reflected = NotEqualCompare
-  fileprivate static let selector = "__ne__"
+  fileprivate static let selector = IdString.__ne__
   fileprivate static let baseCompare = PyBaseObject.isNotEqual
 
   fileprivate static func callFastCompare(left: PyObject,
@@ -221,7 +221,7 @@ extension BuiltinFunctions {
 private enum LessCompare: CompareOp {
 
   typealias reflected = GreaterCompare
-  fileprivate static let selector = "__lt__"
+  fileprivate static let selector = IdString.__lt__
   fileprivate static let baseCompare = PyBaseObject.isLess
 
   fileprivate static func callFastCompare(left: PyObject,
@@ -258,7 +258,7 @@ extension BuiltinFunctions {
 private enum LessEqualCompare: CompareOp {
 
   typealias reflected = GreaterEqualCompare
-  fileprivate static let selector = "__le__"
+  fileprivate static let selector = IdString.__le__
   fileprivate static let baseCompare = PyBaseObject.isLessEqual
 
   fileprivate static func callFastCompare(left: PyObject,
@@ -295,7 +295,7 @@ extension BuiltinFunctions {
 private enum GreaterCompare: CompareOp {
 
   typealias reflected = LessCompare
-  fileprivate static let selector = "__gt__"
+  fileprivate static let selector = IdString.__gt__
   fileprivate static let baseCompare = PyBaseObject.isGreater
 
   fileprivate static func callFastCompare(left: PyObject,
@@ -332,7 +332,7 @@ extension BuiltinFunctions {
 private enum GreaterEqualCompare: CompareOp {
 
   typealias reflected = LessEqualCompare
-  fileprivate static let selector = "__ge__"
+  fileprivate static let selector = IdString.__ge__
   fileprivate static let baseCompare = PyBaseObject.isGreaterEqual
 
   fileprivate static func callFastCompare(left: PyObject,

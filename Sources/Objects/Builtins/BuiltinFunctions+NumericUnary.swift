@@ -13,7 +13,7 @@ extension BuiltinFunctions {
     }
 
     return self.callUnaryMethod(on: value,
-                                selector: "__pos__",
+                                selector: .__pos__,
                                 operation: "unary +")
   }
 
@@ -26,7 +26,7 @@ extension BuiltinFunctions {
     }
 
     return self.callUnaryMethod(on: value,
-                                selector: "__neg__",
+                                selector: .__neg__,
                                 operation: "unary -")
   }
 
@@ -39,7 +39,7 @@ extension BuiltinFunctions {
     }
 
     return self.callUnaryMethod(on: value,
-                                selector: "__invert__",
+                                selector: .__invert__,
                                 operation: "unary ~")
   }
 
@@ -56,14 +56,14 @@ extension BuiltinFunctions {
     }
 
     return self.callUnaryMethod(on: value,
-                                selector: "__abs__",
+                                selector: .__abs__,
                                 operation: "abs()")
   }
 
   // MARK: - Helpers
 
   private func callUnaryMethod(on value: PyObject,
-                               selector: String,
+                               selector: IdString,
                                operation: String) -> PyResult<PyObject> {
     switch self.callMethod(on: value, selector: selector) {
     case .value(let result):

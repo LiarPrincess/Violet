@@ -16,7 +16,7 @@ extension BuiltinFunctions {
       return owner.getItem(at: index)
     }
 
-    switch self.callMethod(on: object, selector: "__getitem__", arg: index) {
+    switch self.callMethod(on: object, selector: .__getitem__, arg: index) {
     case .value(let r):
       return .value(r)
     case .missingMethod:
@@ -36,7 +36,7 @@ extension BuiltinFunctions {
       return owner.setItem(at: index, to: value)
     }
 
-    switch self.callMethod(on: object, selector: "__setitem__", arg: value) {
+    switch self.callMethod(on: object, selector: .__setitem__, arg: value) {
     case .value:
       return .value(Py.none)
     case .missingMethod:
@@ -55,7 +55,7 @@ extension BuiltinFunctions {
       return owner.delItem(at: index)
     }
 
-    switch self.callMethod(on: object, selector: "__delitem__") {
+    switch self.callMethod(on: object, selector: .__delitem__) {
     case .value:
       return .value(Py.none)
     case .missingMethod:

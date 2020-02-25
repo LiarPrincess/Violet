@@ -67,7 +67,7 @@ internal enum IndexHelper {
       return .value(indexOwner.asIndex())
     }
 
-    switch Py.callMethod(on: value, selector: "__index__") {
+    switch Py.callMethod(on: value, selector: .__index__) {
     case .value(let object):
       guard let int = object as? PyInt else {
         let msg = "__index__ returned non-int (type \(object.typeName)"

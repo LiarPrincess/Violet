@@ -774,7 +774,7 @@ extension PyFloat {
       }
     }
 
-    return Py.callMethod(on: object, selector: "__float__")
+    return Py.callMethod(on: object, selector: .__float__)
   }
 
   // MARK: - Helpers

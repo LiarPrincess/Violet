@@ -147,17 +147,12 @@ extension PyType {
       type.setFlag(.hasGC)
     }
 
-    // Initialize dict from passed-in dict
-    let attributes: Attributes
-    switch PyType.createAttributes(from: args.dict) {
-    case let .value(a): attributes = a
-    case let .error(e): return .error(e)
-    }
-
-    type.setAttributes(attributes)
+    // Initialize '__dict__' from passed-in dict
+    let __dict__ = Py.newDict(data: args.dict)
+    type.setDict(value: __dict__)
 
     // Set __module__ in the dict
-    if !attributes.has(key: "__module__") {
+    if __dict__.getItem(id: .__module__) == nil {
       let globals = Py.getGlobals()
       if let module = globals["__name__"] {
         switch type.setModule(module) {
@@ -169,7 +164,7 @@ extension PyType {
 
     // Set ht_qualname to dict['__qualname__'] if available, else to __name__.
     // The __qualname__ accessor will use for self.qualname.
-    if let qualname = attributes.get(key: "__qualname__") {
+    if let qualname = __dict__.getItem(id: .__qualname__) {
       switch type.setQualname(qualname) {
       case .value: break
       case .error(let e): return .error(e)

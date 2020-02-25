@@ -356,6 +356,10 @@ public class PyType: PyObject {
     return self.__dict__
   }
 
+  internal func setDict(value: PyDict) {
+    self.__dict__ = value
+  }
+
   // MARK: - Class
 
   // sourcery: pyproperty = __class__
@@ -448,16 +452,20 @@ public class PyType: PyObject {
     var metaDescriptor: GetDescriptor?
 
     // Look for the attribute in the metatype
-    if let metaAttribute = metaAttribute {
-      metaDescriptor = GetDescriptor.get(object: self, attribute: metaAttribute)
+    switch metaAttribute {
+    case .value(let attribute):
+      metaDescriptor = GetDescriptor.get(object: self, attribute: attribute)
       if let desc = metaDescriptor, desc.isData {
         return desc.call() // Will call '__get__' with self (PyType)
       }
+    case .notFound: break
+    case .error(let e): return .error(e)
     }
 
     // No data descriptor found on metatype.
     // Look in __dict__ of this type and its bases
-    if let attribute = self.lookup(name: name) {
+    switch self.lookup(name: name) {
+    case .value(let attribute):
       if let descr = GetDescriptor.get(object: self, attribute: attribute) {
         // 'Without owner' means that we will call '__get__' with 'None' object
         // This will result in static binding.
@@ -466,6 +474,8 @@ public class PyType: PyObject {
       }
 
       return .value(attribute)
+    case .notFound: break
+    case .error(let e): return .error(e)
     }
 
     // No attribute found in __dict__ (or bases):
@@ -475,8 +485,9 @@ public class PyType: PyObject {
     }
 
     // If an ordinary attribute was found on the metatype, return it
-    if let metaAttribute = metaAttribute {
-      return .value(metaAttribute)
+    switch metaAttribute {
+    case .value(let attribute): return .value(attribute)
+    case .notFound, .error: break // error was handled before
     }
 
     let msg = "type object '\(self.typeName)' has no attribute '\(name.reprRaw())'"
@@ -627,7 +638,7 @@ public class PyType: PyObject {
                             args: [PyObject],
                             kwargs: PyDictData?) -> PyResult<PyNone> {
     let result = Py.callMethod(on: object,
-                               selector: "__init__",
+                               selector: .__init__,
                                args: args,
                                kwargs: kwargs)
 

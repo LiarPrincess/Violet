@@ -14,7 +14,7 @@ extension BuiltinFunctions {
       return owner.repr()
     }
 
-    switch self.callMethod(on: object, selector: "__repr__") {
+    switch self.callMethod(on: object, selector: .__repr__) {
     case .value(let result):
       guard let resultStr = result as? PyString else {
         return .typeError("__repr__ returned non-string (\(result.typeName))")
@@ -50,7 +50,7 @@ extension BuiltinFunctions {
       return owner.str()
     }
 
-    switch self.callMethod(on: object, selector: "__str__") {
+    switch self.callMethod(on: object, selector: .__str__) {
     case .value(let result):
       guard let resultStr = result as? PyString else {
         return .typeError("__str__ returned non-string (\(result.typeName))")

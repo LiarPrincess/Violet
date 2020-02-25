@@ -29,10 +29,10 @@ private protocol TernaryOp {
   static var op: String { get }
 
   /// Python selector, for example `__pow__`.
-  static var selector: String { get }
+  static var selector: IdString { get }
   /// Python selector for reflected operation.
   /// For `__pow__` it is `__rpow__`.
-  static var reflectedSelector: String { get }
+  static var reflectedSelector: IdString { get }
 
   /// Call op with fast protocol dispatch.
   static func callFastOp(left: PyObject,
@@ -149,8 +149,8 @@ extension TernaryOp {
 
 private enum PowOp: TernaryOp {
   fileprivate static var op = "** or pow()"
-  fileprivate static var selector = "__pow__"
-  fileprivate static var reflectedSelector = "__rpow__"
+  fileprivate static var selector = IdString.__pow__
+  fileprivate static var reflectedSelector = IdString.__rpow__
 
   fileprivate static func callFastOp(left: PyObject,
                                      middle: PyObject,
