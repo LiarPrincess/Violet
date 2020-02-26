@@ -65,10 +65,15 @@ types = {
   ],
 {% endfor %}
 {% for type in types.classes|annotated:"pytype" %}
+  {% if type.name == "PyCell" %}
+  # 'cell' is not available in Python (it is only in CPython).
+  # So we will skip it.
+  {% else %}
   {{ type.annotations.pytype }}: [
     {% call printProperties type.methods %}
     {% call printMethods type.methods %}
   ],
+  {% endif %}
 {% endfor %}
 {% for type in types.classes|annotated:"pyerrortype" %}
   {{ type.annotations.pyerrortype }}: [

@@ -278,6 +278,8 @@ types = {
     '__iter__',
     '__next__',
   ],
+  # 'cell' is not available in Python (it is only in CPython).
+  # So we will skip it.
   code: [
     '__class__',
     '__eq__',
@@ -343,11 +345,11 @@ types = {
     '__getitem__',
     '__setitem__',
     '__delitem__',
-    '__contains__',
-    'clear',
     'get',
-    '__iter__',
     'setdefault',
+    '__contains__',
+    '__iter__',
+    'clear',
     'update',
     'copy',
     'pop',
