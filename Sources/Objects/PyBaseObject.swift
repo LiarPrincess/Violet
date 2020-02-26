@@ -189,6 +189,7 @@ internal enum PyBaseObject {
                               args: [PyObject],
                               kwargs: PyDict?) -> PyResult<PyNone> {
     let isObject = zelf.type === Py.types.object
+    let hasArgs = args.any || (kwargs?.data.any ?? false)
 
     if isObject && hasArgs {
       return .typeError(

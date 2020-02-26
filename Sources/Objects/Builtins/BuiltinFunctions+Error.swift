@@ -160,6 +160,7 @@ extension BuiltinFunctions {
 
 public enum WarningType {
   case `import`
+  case deprecation
 }
 
 extension BuiltinFunctions {

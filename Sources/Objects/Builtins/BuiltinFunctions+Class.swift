@@ -11,6 +11,9 @@ extension BuiltinFunctions {
   }
 
   // sourcery: pymethod = __build_class__, doc = buildClassDoc
+  /// static PyObject *
+  /// builtin___build_class__(PyObject *self, PyObject *const *args,
+  ///                         Py_ssize_t nargs, PyObject *kwnames)
   public func buildClass(args: [PyObject],
                          kwargs: PyDict?) -> PyResult<PyObject> {
     if args.count < 2 {
@@ -26,7 +29,13 @@ extension BuiltinFunctions {
     }
 
     let bases = Py.newTuple(Array(args[2...]))
+    return self.buildClass(fn: fn, name: name, bases: bases, kwargs: kwargs)
+  }
 
+  public func buildClass(fn: PyFunction,
+                         name: PyString,
+                         bases: PyTuple,
+                         kwargs: PyDict?) -> PyResult<PyObject> {
     let metatype: PyObject
     switch self.calculateMetaclass(bases: bases, kwargs: kwargs) {
     case let .value(m): metatype = m
@@ -45,31 +54,44 @@ extension BuiltinFunctions {
     case let .error(e): return .error(e)
     }
 
+    let cls: PyObject
     let margs = [name, bases, namespace]
-    let cls = Py.call(callable: metatype, args: margs, kwargs: kwargs).asResult
-    // if (cls != NULL && PyType_Check(cls) && PyCell_Check(cell)) {
+    switch Py.call(callable: metatype, args: margs, kwargs: kwargs).asResult {
+    case let .value(c): cls = c
+    case let .error(e): return .error(e)
+    }
 
-    fatalError()
+    if let cls = cls as? PyType, let cell = cell as? PyCell {
+      if let e = self.setCellContent(name: name, cell: cell, cls: cls) {
+        return .error(e)
+      }
+    }
+
+    return .value(cls)
   }
 
-  private func createCell(fn: PyFunction,
-                          namespace: PyDict) -> PyResult<PyObject> {
-    // TODO: locals: namespace
-    // TODO: closure PyFunction_GET_CLOSURE(func)
-    let code = fn.code.codeObject
-    let locals = Py.newDict()
+  private func setCellContent(name: PyString,
+                              cell: PyCell,
+                              cls: PyType) -> PyBaseException? {
+    // If content is nil -> it may be warning
+    if cell.content == nil {
+      let msg = "__class__ not set defining \(name.value) as \(cls.getName()). " +
+                "Was __classcell__ propagated to type.__new__?"
+      if let e = Py.warn(type: .deprecation, msg: msg) {
+        return e
+      }
+    }
 
-    return Py.delegate.eval(
-      name: nil,
-      qualname: nil,
-      code: code,
-      args: [],
-      kwargs: nil,
-      defaults: [],
-      kwDefaults: nil,
-      globals: fn.globals,
-      locals: locals
-    )
+    // If we already have content that is not our class -> throw
+    if let content = cell.content, content !== cls {
+      let cntRepr = Py.reprOrGeneric(content)
+      let clsRepr = Py.reprOrGeneric(cls)
+      let msg = "__class__ set to \(cntRepr) defining \(name.value) as \(clsRepr)"
+      return Py.newTypeError(msg: msg)
+    }
+
+    cell.content = cls
+    return nil
   }
 }
 
@@ -81,19 +103,16 @@ extension BuiltinFunctions {
                                   kwargs: PyDict?) -> PyResult<PyObject> {
     var result: PyObject
 
-    switch self.getMetaclassRaw(kwargs: kwargs) {
-    case .value(let m):
+    if let meta = kwargs?.get(id: .metaclass) {
       // TODO: if (_PyDict_DelItemId(mkw, &PyId_metaclass) < 0)
-      result = m
-    case .notFound:
+      result = meta
+    } else {
       result = bases.elements.first?.type ?? Py.types.type
-    case .error(let e):
-      return .error(e)
     }
 
-    // meta is really a class, so check for a more derived
-    // metaclass, or possible metaclass conflicts:
     if let metaType = result as? PyType {
+      // meta is really a class, so check for a more derived
+      // metaclass, or possible metaclass conflicts:
       switch PyType.calculateMetaclass(metatype: metaType, bases: bases.elements) {
       case let .value(winner):
         result = winner
@@ -105,20 +124,6 @@ extension BuiltinFunctions {
     // calculation, so we will use the explicitly given object as it is
 
     return .value(result)
-  }
-
-  private var metaclassKey: PyDictKey {
-    let id = IdString.metaclass
-    return PyDictKey(hash: id.hash, object: id.value)
-  }
-
-  private func getMetaclassRaw(kwargs: PyDict?) -> PyDict.GetResult {
-    guard let kwargs = kwargs else {
-      return .notFound
-    }
-
-    let key = self.metaclassKey
-    return kwargs.get(key: key)
   }
 }
 
@@ -147,8 +152,8 @@ extension BuiltinFunctions {
       }
 
       guard let dict = object as? PyDict else {
-        let t = metatype.typeName
-        let msg = "\(t).__prepare__() must return a mapping, not \(object.typeName)"
+        let msg = "\(metatype.typeName).__prepare__() must return a mapping, " +
+                  "not \(object.typeName)"
         return .typeError(msg)
       }
 
@@ -163,7 +168,7 @@ extension BuiltinFunctions {
   }
 
   private func get__prepare__(metatype: PyObject) -> PrepareCallResult {
-    switch Py.getAttribute(metatype, name: "__prepare__") {
+    switch Py.getAttribute(metatype, name: .__prepare__) {
     case let .value(o):
       return .value(o)
 
@@ -174,5 +179,26 @@ extension BuiltinFunctions {
 
       return .error(e)
     }
+  }
+}
+
+// MARK: - Cell
+
+extension BuiltinFunctions {
+
+  private func createCell(fn: PyFunction,
+                          namespace: PyDict) -> PyResult<PyObject> {
+    // TODO: closure PyFunction_GET_CLOSURE(func)
+    return Py.delegate.eval(
+      name: nil,
+      qualname: nil,
+      code: fn.code.codeObject,
+      args: [],
+      kwargs: nil,
+      defaults: [],
+      kwDefaults: nil,
+      globals: fn.globals,
+      locals: namespace
+    )
   }
 }

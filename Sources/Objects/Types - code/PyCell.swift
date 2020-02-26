@@ -4,7 +4,7 @@
 // sourcery: pytype = cell, default, hasGC
 public class PyCell: PyObject {
 
-  internal let content: PyObject?
+  internal var content: PyObject?
 
   internal init(content: PyObject?) {
     self.content = content

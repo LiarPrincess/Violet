@@ -520,7 +520,11 @@ public struct OrderedDictionaryIterator<Key: PyHashable, Value>: IteratorProtoco
 
 extension OrderedDictionary: CustomStringConvertible {
   public var description: String {
-    var result = ""
+    if self.isEmpty {
+      return "OrderedDictionary()"
+    }
+
+    var result = "OrderedDictionary("
 
     for entry in self {
       result += "\(entry.key): \(entry.value), "
@@ -529,7 +533,9 @@ extension OrderedDictionary: CustomStringConvertible {
     // remove trailing ', '
     _ = result.popLast()
     _ = result.popLast()
-    return "[" + result + "]"
+
+    result += ")"
+    return result
   }
 }
 
