@@ -189,11 +189,11 @@ extension CodeObject {
       return EmittedInstruction(.deleteGlobal, self.getName(arg))
 
     case let .loadFast(nameIndex: arg):
-      return EmittedInstruction(.loadFast, self.getName(arg))
+      return EmittedInstruction(.loadFast, self.getVariableName(arg))
     case let .storeFast(nameIndex: arg):
-      return EmittedInstruction(.storeFast, self.getName(arg))
+      return EmittedInstruction(.storeFast, self.getVariableName(arg))
     case let .deleteFast(nameIndex: arg):
-      return EmittedInstruction(.deleteFast, self.getName(arg))
+      return EmittedInstruction(.deleteFast, self.getVariableName(arg))
 
     case let .loadDeref(nameIndex: arg):
       return EmittedInstruction(.loadDeref, String(describing: arg) + "_INVALID")
@@ -327,6 +327,11 @@ extension CodeObject {
   private func getName(_ index: UInt8) -> String {
     precondition(index < self.names.count)
     return self.names[Int(index)]
+  }
+
+  private func getVariableName(_ index: UInt8) -> String {
+    precondition(index < self.variableNames.count)
+    return self.variableNames[Int(index)].value
   }
 
   private func getLabel(_ index: UInt8) -> String {

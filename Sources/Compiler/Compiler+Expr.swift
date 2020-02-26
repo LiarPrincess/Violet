@@ -70,7 +70,7 @@ extension Compiler {
 
     if flags.containsAny([.srcFree, .cell]) {
       operation = .deref
-    } else if flags.contains(.defLocal) {
+    } else if flags.contains(.srcLocal) {
       if self.currentScope.type == .function {
         operation = .fast
       }
