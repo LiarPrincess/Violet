@@ -601,6 +601,7 @@ PyMethod|PyObject|func|__delattr__|delAttribute(name: PyObject) -> PyResult<PyNo
 PyMethod|PyObject|func|__func__|getFunc() -> PyFunction
 PyMethod|PyObject|func|__self__|getSelf() -> PyObject
 PyMethod|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
+PyMethod|PyObject|func|__call__|call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
 PyModule|PyObject|get|__dict__|getDict() -> PyDict
 PyModule|PyObject|get|__class__|getClass() -> PyType
 

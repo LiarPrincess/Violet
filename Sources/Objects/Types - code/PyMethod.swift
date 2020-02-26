@@ -14,20 +14,20 @@ public class PyMethod: PyObject {
     """
 
   /// The callable object implementing the method
-  internal let fn: PyFunction
+  internal let function: PyFunction
   /// The instance it is bound to
   internal let object: PyObject
 
   override public var description: String {
-    let name = self.fn.name
-    let qualname = self.fn.qualname
+    let name = self.function.name
+    let qualname = self.function.qualname
     return "PyMethod(name: \(name), qualname: \(qualname))"
   }
 
   // MARK: - Init
 
   internal init(fn: PyFunction, object: PyObject) {
-    self.fn = fn
+    self.function = fn
     self.object = object
     super.init(type: Py.types.method)
   }
@@ -40,7 +40,7 @@ public class PyMethod: PyObject {
       return .notImplemented
     }
 
-    switch Py.isEqualBool(left: self.fn, right: other.fn) {
+    switch Py.isEqualBool(left: self.function, right: other.function) {
     case .value(true): break // compare self
     case .value(false): return .value(false)
     case .error(let e): return .error(e)
@@ -84,11 +84,11 @@ public class PyMethod: PyObject {
   // sourcery: pymethod = __repr__
   public func repr() -> PyResult<String> {
     let funcNameObject =
-      self.fn.__dict__.get(id: .__qualname__) ??
-      self.fn.__dict__.get(id: .__name__)
+      self.function.__dict__.get(id: .__qualname__) ??
+      self.function.__dict__.get(id: .__name__)
 
     let funcNameString = funcNameObject as? PyString
-    let funcName = funcNameString?.value ?? self.fn.name
+    let funcName = funcNameString?.value ?? self.function.name
 
     let ptr = self.object.ptrString
     let type = self.object.typeName
@@ -113,7 +113,7 @@ public class PyMethod: PyObject {
     }
 
     let fnHash: PyHash
-    switch Py.hash(self.fn) {
+    switch Py.hash(self.function) {
     case let .value(h): fnHash = h
     case let .error(e): return .error(e)
     }
@@ -142,7 +142,7 @@ public class PyMethod: PyObject {
 
   // sourcery: pymethod = __func__
   public func getFunc() -> PyFunction {
-    return self.fn
+    return self.function
   }
 
   // sourcery: pymethod = __self__
@@ -158,6 +158,14 @@ public class PyMethod: PyObject {
       return .value(self)
     }
 
-    return .value(PyMethod(fn: self.fn, object: object))
+    return .value(PyMethod(fn: self.function, object: object))
+  }
+
+  // MARK: - Call
+
+  // sourcery: pymethod = __call__
+  public func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
+    let realArgs = [self.object] + args
+    return self.function.call(args: realArgs, kwargs: kwargs)
   }
 }

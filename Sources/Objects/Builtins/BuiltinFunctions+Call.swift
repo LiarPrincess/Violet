@@ -397,7 +397,8 @@ extension BuiltinFunctions {
                          kwargs: PyDict? = nil) -> CallMethodResult {
     var method: PyObject
     switch self.getMethod(object: object, selector: selector) {
-    case let .value(o): method = o
+    case let .value(o):
+      method = o
     case let .missingMethod(e):
       return .missingMethod(e)
     case let .error(e):

@@ -686,7 +686,8 @@ extension PyMethod:
   __delattr__Owner,
   __func__Owner,
   __self__Owner,
-  __get__Owner
+  __get__Owner,
+  __call__Owner
 { }
 
 // MARK: - Module

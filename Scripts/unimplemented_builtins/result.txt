@@ -119,11 +119,6 @@ Iterator
   Why do we even have this?
     __getattribute__
 
-method
-  Unimplemented:
-    __new__ - <class 'builtin_function_or_method'>
-    __call__
-
 NoneType
   Why do we even have this?
     __getattribute__

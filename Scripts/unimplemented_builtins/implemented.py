@@ -669,6 +669,7 @@ types = {
     '__func__',
     '__self__',
     '__get__',
+    '__call__',
   ],
   module: [
     '__dict__',
