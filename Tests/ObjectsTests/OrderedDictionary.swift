@@ -216,21 +216,27 @@ class OrderedDictionary: XCTestCase {
 
   func test_description() {
     var dict = self.createDictionary()
-    XCTAssertEqual(dict.description, "[]")
+    XCTAssertEqual(dict.description, "OrderedDictionary()")
 
     self.insert(&dict, key: 2010, value: "Tangled")
-    XCTAssertEqual(dict.description, "[2010: Tangled]")
+    XCTAssertEqual(dict.description, "OrderedDictionary(2010: Tangled)")
 
     self.insert(&dict, key: 2013, value: "Frozen")
     self.insert(&dict, key: 2019, value: "Frozen II")
-    XCTAssertEqual(dict.description, "[2010: Tangled, 2013: Frozen, 2019: Frozen II]")
+    XCTAssertEqual(
+      dict.description,
+      "OrderedDictionary(2010: Tangled, 2013: Frozen, 2019: Frozen II)"
+    )
 
     _ = dict.remove(key: 2013)
-    XCTAssertEqual(dict.description, "[2010: Tangled, 2019: Frozen II]")
+    XCTAssertEqual(
+      dict.description,
+      "OrderedDictionary(2010: Tangled, 2019: Frozen II)"
+    )
 
     _ = dict.remove(key: 2010)
     _ = dict.remove(key: 2019)
-    XCTAssertEqual(dict.description, "[]")
+    XCTAssertEqual(dict.description, "OrderedDictionary()")
   }
 
   // MARK: - Helpers
