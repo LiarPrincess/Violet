@@ -568,9 +568,20 @@ public class PyType: PyObject {
   /// PyObject *
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
   internal func lookup(name: IdString) -> PyObject? {
+    return self.lookupWithType(name: name)?.value
+  }
+
+  internal struct LookupWithType {
+    internal let value: PyObject
+    /// Type on which `self.value` was found.
+    internal let owner: PyType
+  }
+
+  /// Internal API to look for a name through the MRO.
+  internal func lookupWithType(name: IdString) -> LookupWithType? {
     for base in self.mro {
-      if let result = base.__dict__.get(id: name) {
-        return result
+      if let value = base.__dict__.get(id: name) {
+        return LookupWithType(value: value, owner: base)
       }
     }
 

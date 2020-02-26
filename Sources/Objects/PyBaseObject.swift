@@ -170,15 +170,27 @@ internal enum PyBaseObject {
 
   // MARK: - Python new
 
+  // There is a long comment in 'Objects -> typeobject.c' about '__new__'
+  // and '__init'.
+
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyObject> {
-    if PyBaseObject.excessArgs(args: args, kwargs: kwargs) {
-      return .typeError("\(type.getName()) takes no arguments")
+    if Self.excessArgs(args: args, kwargs: kwargs) {
+      if Self.hasOverriden__new__(type: type) {
+        let msg = "object.__new__() takes exactly one argument " +
+                  "(the type to instantiate)"
+        return .typeError(msg)
+      }
+
+      if !Self.hasOverriden__init__(type: type) {
+        return .typeError("\(type.getName()) takes no arguments")
+      }
     }
 
-    let result = PyObject(type: type)
+    let isBuiltin = type === Py.types.object
+    let result = isBuiltin ? PyObject(type: type) : PyObjectHeap(type: type)
     return .value(result)
   }
 
@@ -188,13 +200,19 @@ internal enum PyBaseObject {
   internal static func pyInit(zelf: PyObject,
                               args: [PyObject],
                               kwargs: PyDict?) -> PyResult<PyNone> {
-    let isObject = zelf.type === Py.types.object
-    let hasArgs = args.any || (kwargs?.data.any ?? false)
+    if Self.excessArgs(args: args, kwargs: kwargs) {
+      if Self.hasOverriden__init__(type: zelf.type) {
+        let msg = "object.__init__() takes exactly one argument " +
+                  "(the instance to initialize)"
+        return .typeError(msg)
+      }
 
-    if isObject && hasArgs {
-      return .typeError(
-        "object.__init__() takes exactly one argument (the instance to initialize)"
-      )
+      if !Self.hasOverriden__new__(type: zelf.type) {
+        let t = zelf.type.getName()
+        let msg = "\(t).__init__() takes exactly one argument " +
+                  "(the instance to initialize)"
+        return .typeError(msg)
+      }
     }
 
     return .value(Py.none)
@@ -203,8 +221,30 @@ internal enum PyBaseObject {
   /// static int
   /// excess_args(PyObject *args, PyObject *kwds)
   private static func excessArgs(args: [PyObject], kwargs: PyDict?) -> Bool {
-    let noKwargs = kwargs?.data.isEmpty ?? true
-    let noArgs = args.isEmpty && noKwargs
+    let noArgs = args.isEmpty && (kwargs?.data.isEmpty ?? true)
     return !noArgs
+  }
+
+  private static func hasOverriden__new__(type: PyType) -> Bool {
+    return self.hasOverriden(type: type, name: .__new__)
+  }
+
+  private static func hasOverriden__init__(type: PyType) -> Bool {
+    return self.hasOverriden(type: type, name: .__init__)
+  }
+
+  private static func hasOverriden(type: PyType, name: IdString) -> Bool {
+    guard let lookup = type.lookupWithType(name: name) else {
+      let t = type.getName()
+      let fn = name.value.value
+      trap("Uh... oh... So '\(fn)' lookup on \(t) failed to find anything. " +
+           "It should not be possible sice every type derieves from 'object', " +
+           "(which has this method) but here we are..."
+      )
+    }
+
+    let owner = lookup.owner
+    let hasFromObject = owner === Py.types.object
+    return !hasFromObject
   }
 }

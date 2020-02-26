@@ -64,7 +64,7 @@ public class PyObject: CustomStringConvertible {
   }
 
   public var description: String {
-    return "PyObject()"
+    return "PyObject(type: \(self.typeName))"
   }
 
   /// Object address.
