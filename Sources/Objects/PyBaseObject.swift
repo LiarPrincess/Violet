@@ -173,7 +173,7 @@ internal enum PyBaseObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     if PyBaseObject.excessArgs(args: args, kwargs: kwargs) {
       return .typeError("\(type.getName()) takes no arguments")
     }
@@ -187,9 +187,8 @@ internal enum PyBaseObject {
   // sourcery: pymethod = __init__
   internal static func pyInit(zelf: PyObject,
                               args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyNone> {
+                              kwargs: PyDict?) -> PyResult<PyNone> {
     let isObject = zelf.type === Py.types.object
-    let hasArgs = args.any || (kwargs?.any ?? false)
 
     if isObject && hasArgs {
       return .typeError(
@@ -202,8 +201,8 @@ internal enum PyBaseObject {
 
   /// static int
   /// excess_args(PyObject *args, PyObject *kwds)
-  private static func excessArgs(args: [PyObject], kwargs: PyDictData?) -> Bool {
-    let noKwargs = kwargs?.isEmpty ?? true
+  private static func excessArgs(args: [PyObject], kwargs: PyDict?) -> Bool {
+    let noKwargs = kwargs?.data.isEmpty ?? true
     let noArgs = args.isEmpty && noKwargs
     return !noArgs
   }

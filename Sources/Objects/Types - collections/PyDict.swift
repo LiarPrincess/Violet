@@ -191,16 +191,19 @@ public class PyDict: PyObject {
   public func get(key: PyObject) -> GetResult {
     switch self.createKey(from: key) {
     case let .value(key):
-      switch self.data.get(key: key) {
-      case .value(let o):
-        return .value(o)
-      case .notFound:
-        return .notFound
-      case .error(let e):
-        return .error(e)
-      }
-
+      return self.get(key: key)
     case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func get(key: PyDictKey) -> GetResult {
+    switch self.data.get(key: key) {
+    case .value(let o):
+      return .value(o)
+    case .notFound:
+      return .notFound
+    case .error(let e):
       return .error(e)
     }
   }
@@ -227,15 +230,18 @@ public class PyDict: PyObject {
   public func set(key: PyObject, to value: PyObject) -> SetResult {
     switch self.createKey(from: key) {
     case let .value(key):
-      switch self.data.insert(key: key, value: value) {
-      case .inserted,
-           .updated:
-        return .ok
-      case .error(let e):
-        return .error(e)
-      }
-
+      return self.set(key: key, to: value)
     case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func set(key: PyDictKey, to value: PyObject) -> SetResult {
+    switch self.data.insert(key: key, value: value) {
+    case .inserted,
+         .updated:
+      return .ok
+    case .error(let e):
       return .error(e)
     }
   }
@@ -264,16 +270,19 @@ public class PyDict: PyObject {
   public func del(key: PyObject) -> DelResult {
     switch self.createKey(from: key) {
     case let .value(key):
-      switch self.data.remove(key: key) {
-      case .value(let o):
-        return .value(o)
-      case .notFound:
-        return .notFound
-      case .error(let e):
-        return .error(e)
-      }
-
+      return self.del(key: key)
     case let .error(e):
+      return .error(e)
+    }
+  }
+
+  internal func del(key: PyDictKey) -> DelResult {
+    switch self.data.remove(key: key) {
+    case .value(let o):
+      return .value(o)
+    case .notFound:
+      return .notFound
+    case .error(let e):
       return .error(e)
     }
   }
@@ -390,7 +399,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = get, doc = getWithDefaultDoc
   /// Implementation of Python `get($self, key, default=None, /)` method.
   internal func getWithDefault(args: [PyObject],
-                               kwargs: PyDictData?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResult<PyObject> {
     switch PyDict.getWithDefaultArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -446,7 +455,7 @@ public class PyDict: PyObject {
   /// If not, insert key with a value of `default` and return `default`.
   /// `default` defaults to None.
   internal func setWithDefault(args: [PyObject],
-                               kwargs: PyDictData?) -> PyResult<PyObject> {
+                               kwargs: PyDict?) -> PyResult<PyObject> {
     switch PyDict.setWithDefaultArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")
@@ -524,8 +533,7 @@ public class PyDict: PyObject {
   // MARK: - Update
 
   // sourcery: pymethod = update
-  internal func update(args: [PyObject],
-                       kwargs: PyDictData?) -> PyResult<PyNone> {
+  internal func update(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     // Guarantee 0 or 1 args
     if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "update",
                                                         args: args,
@@ -774,7 +782,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     let isBuiltin = type === Py.types.dict
     let alloca = isBuiltin ?
       PyDict.init(type:data:) :
@@ -789,7 +797,7 @@ public class PyDict: PyObject {
   // sourcery: pymethod = __init__
   internal static func pyInit(zelf: PyDict,
                               args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyNone> {
+                              kwargs: PyDict?) -> PyResult<PyNone> {
     return zelf
       .update(args: args, kwargs: kwargs)
       .map { _ in Py.none }

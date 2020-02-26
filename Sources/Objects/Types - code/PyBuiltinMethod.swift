@@ -177,8 +177,7 @@ public class PyBuiltinMethod: PyObject, PyBuiltinFunctionShared {
   /// PyObject *
   /// _PyObject_Call_Prepend(PyObject *callable,
   ///                        PyObject *obj, PyObject *args, PyObject *kwargs)
-  public func call(args: [PyObject],
-                   kwargs: PyDictData?) -> PyResult<PyObject> {
+  public func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     let realArgs = [self.object] + args
     return self.function.call(args: realArgs, kwargs: kwargs)
   }

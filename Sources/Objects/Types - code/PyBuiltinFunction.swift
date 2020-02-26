@@ -154,8 +154,7 @@ public class PyBuiltinFunction: PyObject, PyBuiltinFunctionShared {
   ///                              PyObject *kwargs)
   /// static PyObject *
   /// slot_tp_call(PyObject *self, PyObject *args, PyObject *kwds)
-  public func call(args: [PyObject],
-                   kwargs: PyDictData?) -> PyResult<PyObject> {
+  public func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     return self.function.call(args: args, kwargs: kwargs)
   }
 }

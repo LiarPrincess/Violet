@@ -373,7 +373,7 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     let isBuiltin = type === Py.types.set
     let alloca = isBuiltin ?
       PySet.init(type:data:) :
@@ -388,7 +388,7 @@ public class PySet: PyObject, PySetType {
   // sourcery: pymethod = __init__
   internal static func pyInit(zelf: PySet,
                               args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyNone> {
+                              kwargs: PyDict?) -> PyResult<PyNone> {
     if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
                                               kwargs: kwargs) {
       return .error(e)

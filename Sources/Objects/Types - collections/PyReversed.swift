@@ -85,9 +85,8 @@ public class PyReversed: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
-    if let e = ArgumentParser.noKwargsOrError(fnName: "reversed",
-                                              kwargs: kwargs) {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
+    if let e = ArgumentParser.noKwargsOrError(fnName: "reversed", kwargs: kwargs) {
       return .error(e)
     }
 

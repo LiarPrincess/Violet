@@ -8,12 +8,12 @@ internal protocol FunctionWrapper {
   /// The name of the built-in function/method.
   var name: String { get }
   /// Call the stored function with provided arguments.
-  func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult
+  func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult
 }
 
 // MARK: - New
 
-internal typealias NewFunction = (PyType, [PyObject], PyDictData?) -> PyResult<PyObject>
+internal typealias NewFunction = (PyType, [PyObject], PyDict?) -> PyResult<PyObject>
 
 /// Wrapper dedicated to `__new__` function
 internal struct NewFunctionWrapper: FunctionWrapper {
@@ -28,7 +28,7 @@ internal struct NewFunctionWrapper: FunctionWrapper {
 
   /// static PyObject *
   /// tp_new_wrapper(PyObject *self, PyObject *args, PyObject *kwds)
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     guard args.any else {
       return .typeError("\(self.name)(): not enough arguments")
     }
@@ -53,7 +53,7 @@ internal struct NewFunctionWrapper: FunctionWrapper {
 // MARK: - Init
 
 internal typealias InitFunction<Zelf: PyObject> =
-  (Zelf, [PyObject], PyDictData?) -> PyResult<PyNone>
+  (Zelf, [PyObject], PyDict?) -> PyResult<PyNone>
 
 /// Wrapper dedicated to `__init__` function
 internal struct InitFunctionWrapper: FunctionWrapper {
@@ -77,7 +77,7 @@ internal struct InitFunctionWrapper: FunctionWrapper {
     type: PyType,
     fn: @escaping InitFunction<Zelf>) -> InitFunction<PyObject> {
 
-    return { (object: PyObject, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> in
+    return { (object: PyObject, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> in
       guard let zelf = object as? Zelf else {
         return .typeError(
           "descriptor '__init__' requires a '\(type.getName())' object " +
@@ -88,7 +88,7 @@ internal struct InitFunctionWrapper: FunctionWrapper {
     }
   }
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     guard args.any else {
       return .typeError("\(self.name)(): not enough arguments")
     }
@@ -102,7 +102,7 @@ internal struct InitFunctionWrapper: FunctionWrapper {
 // MARK: - Args kwargs function
 
 internal typealias ArgsKwargsFunction =
-  ([PyObject], PyDictData?) -> PyFunctionResult
+  ([PyObject], PyDict?) -> PyFunctionResult
 
 /// Wrapper dedicated to function that takes `args` and `kwargs` arguments.
 internal struct ArgsKwargsFunctionWrapper: FunctionWrapper {
@@ -110,7 +110,7 @@ internal struct ArgsKwargsFunctionWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: ArgsKwargsFunction
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     return self.fn(args, kwargs)
   }
 }
@@ -118,7 +118,7 @@ internal struct ArgsKwargsFunctionWrapper: FunctionWrapper {
 // MARK: - Args kwargs method
 
 internal typealias ArgsKwargsMethod =
-  (PyObject, [PyObject], PyDictData?) -> PyFunctionResult
+  (PyObject, [PyObject], PyDict?) -> PyFunctionResult
 
 /// Wrapper dedicated to method that takes `args` and `kwargs` arguments.
 /// First argument in `args` will be treeated as `self`.
@@ -127,7 +127,7 @@ internal struct ArgsKwargsMethodWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: ArgsKwargsMethod
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     guard args.any else {
       return .typeError("\(self.name)(): not enough arguments")
     }
@@ -148,7 +148,7 @@ internal struct NullaryFunctionWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: NullaryFunction
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if args.any {
       let msg = "'\(self.name)' takes no arguments (\(args.count) given)"
       return .typeError(msg)
@@ -173,7 +173,7 @@ internal struct UnaryFunctionWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: UnaryFunction
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if args.count != 1 {
       let msg = "'\(self.name)' takes exactly one argument (\(args.count) given)"
       return .typeError(msg)
@@ -193,7 +193,7 @@ internal struct UnaryFunctionOptWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: UnaryFunctionOpt
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }
@@ -220,7 +220,7 @@ internal struct BinaryFunctionWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: BinaryFunction
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }
@@ -240,7 +240,7 @@ internal struct BinaryFunctionOptWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: BinaryFunctionOpt
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }
@@ -271,7 +271,7 @@ internal struct TernaryFunctionWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: TernaryFunction
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }
@@ -291,7 +291,7 @@ internal struct TernaryFunctionOptWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: TernaryFunctionOpt
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }
@@ -313,7 +313,7 @@ internal struct TernaryFunctionOptOptWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: TernaryFunctionOptOpt
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }
@@ -348,7 +348,7 @@ internal struct QuartaryFunctionWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: QuartaryFunction
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }
@@ -368,7 +368,7 @@ internal struct QuartaryFunctionOptWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: QuartaryFunctionOpt
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }
@@ -390,7 +390,7 @@ internal struct QuartaryFunctionOptOptWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: QuartaryFunctionOptOpt
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }
@@ -414,7 +414,7 @@ internal struct QuartaryFunctionOptOptOptWrapper: FunctionWrapper {
   internal let name: String
   internal let fn: QuartaryFunctionOptOptOpt
 
-  internal func call(args: [PyObject], kwargs: PyDictData?) -> PyFunctionResult {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyFunctionResult {
     if let e = ArgumentParser.noKwargsOrError(fnName: self.name, kwargs: kwargs) {
       return .error(e)
     }

@@ -174,7 +174,7 @@ public class PyProperty: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     let isBuiltin = type === Py.types.property
     let alloca = isBuiltin ? PyProperty.init(type:) : PyPropertyHeap.init(type:)
     return .value(alloca(type))
@@ -190,7 +190,7 @@ public class PyProperty: PyObject {
   // sourcery: pymethod = __init__
   internal static func pyInit(zelf: PyProperty,
                               args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyNone> {
+                              kwargs: PyDict?) -> PyResult<PyNone> {
     switch PyProperty.initArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       zelf.getter = binding.optional(at: 0)

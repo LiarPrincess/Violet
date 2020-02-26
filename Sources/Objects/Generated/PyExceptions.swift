@@ -39,7 +39,7 @@ public final class PySystemExit: PyBaseException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PySystemExit(args: argsTuple))
   }
@@ -47,7 +47,7 @@ public final class PySystemExit: PyBaseException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PySystemExit,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -83,7 +83,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyKeyboardInterrupt(args: argsTuple))
   }
@@ -91,7 +91,7 @@ public final class PyKeyboardInterrupt: PyBaseException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyKeyboardInterrupt,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -127,7 +127,7 @@ public final class PyGeneratorExit: PyBaseException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyGeneratorExit(args: argsTuple))
   }
@@ -135,7 +135,7 @@ public final class PyGeneratorExit: PyBaseException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyGeneratorExit,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -171,7 +171,7 @@ public class PyException: PyBaseException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyException(args: argsTuple))
   }
@@ -179,7 +179,7 @@ public class PyException: PyBaseException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyException,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -215,7 +215,7 @@ public final class PyStopIteration: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyStopIteration(args: argsTuple))
   }
@@ -223,7 +223,7 @@ public final class PyStopIteration: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyStopIteration,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -259,7 +259,7 @@ public final class PyStopAsyncIteration: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyStopAsyncIteration(args: argsTuple))
   }
@@ -267,7 +267,7 @@ public final class PyStopAsyncIteration: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyStopAsyncIteration,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -303,7 +303,7 @@ public class PyArithmeticError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyArithmeticError(args: argsTuple))
   }
@@ -311,7 +311,7 @@ public class PyArithmeticError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyArithmeticError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -347,7 +347,7 @@ public final class PyFloatingPointError: PyArithmeticError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyFloatingPointError(args: argsTuple))
   }
@@ -355,7 +355,7 @@ public final class PyFloatingPointError: PyArithmeticError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyFloatingPointError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -391,7 +391,7 @@ public final class PyOverflowError: PyArithmeticError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyOverflowError(args: argsTuple))
   }
@@ -399,7 +399,7 @@ public final class PyOverflowError: PyArithmeticError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyOverflowError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -435,7 +435,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyZeroDivisionError(args: argsTuple))
   }
@@ -443,7 +443,7 @@ public final class PyZeroDivisionError: PyArithmeticError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyZeroDivisionError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -479,7 +479,7 @@ public final class PyAssertionError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyAssertionError(args: argsTuple))
   }
@@ -487,7 +487,7 @@ public final class PyAssertionError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyAssertionError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -523,7 +523,7 @@ public final class PyAttributeError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyAttributeError(args: argsTuple))
   }
@@ -531,7 +531,7 @@ public final class PyAttributeError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyAttributeError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -567,7 +567,7 @@ public final class PyBufferError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyBufferError(args: argsTuple))
   }
@@ -575,7 +575,7 @@ public final class PyBufferError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyBufferError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -611,7 +611,7 @@ public final class PyEOFError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyEOFError(args: argsTuple))
   }
@@ -619,7 +619,7 @@ public final class PyEOFError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyEOFError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -655,7 +655,7 @@ public class PyImportError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyImportError(args: argsTuple))
   }
@@ -663,7 +663,7 @@ public class PyImportError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyImportError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -699,7 +699,7 @@ public final class PyModuleNotFoundError: PyImportError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyModuleNotFoundError(args: argsTuple))
   }
@@ -707,7 +707,7 @@ public final class PyModuleNotFoundError: PyImportError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyModuleNotFoundError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -743,7 +743,7 @@ public class PyLookupError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyLookupError(args: argsTuple))
   }
@@ -751,7 +751,7 @@ public class PyLookupError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyLookupError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -787,7 +787,7 @@ public final class PyIndexError: PyLookupError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyIndexError(args: argsTuple))
   }
@@ -795,7 +795,7 @@ public final class PyIndexError: PyLookupError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyIndexError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -831,7 +831,7 @@ public final class PyKeyError: PyLookupError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyKeyError(args: argsTuple))
   }
@@ -839,7 +839,7 @@ public final class PyKeyError: PyLookupError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyKeyError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -875,7 +875,7 @@ public final class PyMemoryError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyMemoryError(args: argsTuple))
   }
@@ -883,7 +883,7 @@ public final class PyMemoryError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyMemoryError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -919,7 +919,7 @@ public class PyNameError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyNameError(args: argsTuple))
   }
@@ -927,7 +927,7 @@ public class PyNameError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyNameError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -963,7 +963,7 @@ public final class PyUnboundLocalError: PyNameError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyUnboundLocalError(args: argsTuple))
   }
@@ -971,7 +971,7 @@ public final class PyUnboundLocalError: PyNameError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyUnboundLocalError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1007,7 +1007,7 @@ public class PyOSError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyOSError(args: argsTuple))
   }
@@ -1015,7 +1015,7 @@ public class PyOSError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyOSError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1051,7 +1051,7 @@ public final class PyBlockingIOError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyBlockingIOError(args: argsTuple))
   }
@@ -1059,7 +1059,7 @@ public final class PyBlockingIOError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyBlockingIOError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1095,7 +1095,7 @@ public final class PyChildProcessError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyChildProcessError(args: argsTuple))
   }
@@ -1103,7 +1103,7 @@ public final class PyChildProcessError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyChildProcessError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1139,7 +1139,7 @@ public class PyConnectionError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyConnectionError(args: argsTuple))
   }
@@ -1147,7 +1147,7 @@ public class PyConnectionError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyConnectionError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1183,7 +1183,7 @@ public final class PyBrokenPipeError: PyConnectionError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyBrokenPipeError(args: argsTuple))
   }
@@ -1191,7 +1191,7 @@ public final class PyBrokenPipeError: PyConnectionError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyBrokenPipeError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1227,7 +1227,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyConnectionAbortedError(args: argsTuple))
   }
@@ -1235,7 +1235,7 @@ public final class PyConnectionAbortedError: PyConnectionError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyConnectionAbortedError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1271,7 +1271,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyConnectionRefusedError(args: argsTuple))
   }
@@ -1279,7 +1279,7 @@ public final class PyConnectionRefusedError: PyConnectionError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyConnectionRefusedError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1315,7 +1315,7 @@ public final class PyConnectionResetError: PyConnectionError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyConnectionResetError(args: argsTuple))
   }
@@ -1323,7 +1323,7 @@ public final class PyConnectionResetError: PyConnectionError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyConnectionResetError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1359,7 +1359,7 @@ public final class PyFileExistsError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyFileExistsError(args: argsTuple))
   }
@@ -1367,7 +1367,7 @@ public final class PyFileExistsError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyFileExistsError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1403,7 +1403,7 @@ public final class PyFileNotFoundError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyFileNotFoundError(args: argsTuple))
   }
@@ -1411,7 +1411,7 @@ public final class PyFileNotFoundError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyFileNotFoundError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1447,7 +1447,7 @@ public final class PyInterruptedError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyInterruptedError(args: argsTuple))
   }
@@ -1455,7 +1455,7 @@ public final class PyInterruptedError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyInterruptedError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1491,7 +1491,7 @@ public final class PyIsADirectoryError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyIsADirectoryError(args: argsTuple))
   }
@@ -1499,7 +1499,7 @@ public final class PyIsADirectoryError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyIsADirectoryError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1535,7 +1535,7 @@ public final class PyNotADirectoryError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyNotADirectoryError(args: argsTuple))
   }
@@ -1543,7 +1543,7 @@ public final class PyNotADirectoryError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyNotADirectoryError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1579,7 +1579,7 @@ public final class PyPermissionError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyPermissionError(args: argsTuple))
   }
@@ -1587,7 +1587,7 @@ public final class PyPermissionError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyPermissionError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1623,7 +1623,7 @@ public final class PyProcessLookupError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyProcessLookupError(args: argsTuple))
   }
@@ -1631,7 +1631,7 @@ public final class PyProcessLookupError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyProcessLookupError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1667,7 +1667,7 @@ public final class PyTimeoutError: PyOSError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyTimeoutError(args: argsTuple))
   }
@@ -1675,7 +1675,7 @@ public final class PyTimeoutError: PyOSError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyTimeoutError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1711,7 +1711,7 @@ public final class PyReferenceError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyReferenceError(args: argsTuple))
   }
@@ -1719,7 +1719,7 @@ public final class PyReferenceError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyReferenceError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1755,7 +1755,7 @@ public class PyRuntimeError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyRuntimeError(args: argsTuple))
   }
@@ -1763,7 +1763,7 @@ public class PyRuntimeError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyRuntimeError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1799,7 +1799,7 @@ public final class PyNotImplementedError: PyRuntimeError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyNotImplementedError(args: argsTuple))
   }
@@ -1807,7 +1807,7 @@ public final class PyNotImplementedError: PyRuntimeError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyNotImplementedError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1843,7 +1843,7 @@ public final class PyRecursionError: PyRuntimeError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyRecursionError(args: argsTuple))
   }
@@ -1851,7 +1851,7 @@ public final class PyRecursionError: PyRuntimeError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyRecursionError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1887,7 +1887,7 @@ public class PySyntaxError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PySyntaxError(args: argsTuple))
   }
@@ -1895,7 +1895,7 @@ public class PySyntaxError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PySyntaxError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1931,7 +1931,7 @@ public class PyIndentationError: PySyntaxError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyIndentationError(args: argsTuple))
   }
@@ -1939,7 +1939,7 @@ public class PyIndentationError: PySyntaxError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyIndentationError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -1975,7 +1975,7 @@ public final class PyTabError: PyIndentationError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyTabError(args: argsTuple))
   }
@@ -1983,7 +1983,7 @@ public final class PyTabError: PyIndentationError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyTabError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2022,7 +2022,7 @@ public final class PySystemError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PySystemError(args: argsTuple))
   }
@@ -2030,7 +2030,7 @@ public final class PySystemError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PySystemError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2066,7 +2066,7 @@ public final class PyTypeError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyTypeError(args: argsTuple))
   }
@@ -2074,7 +2074,7 @@ public final class PyTypeError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyTypeError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2110,7 +2110,7 @@ public class PyValueError: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyValueError(args: argsTuple))
   }
@@ -2118,7 +2118,7 @@ public class PyValueError: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyValueError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2154,7 +2154,7 @@ public class PyUnicodeError: PyValueError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeError(args: argsTuple))
   }
@@ -2162,7 +2162,7 @@ public class PyUnicodeError: PyValueError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyUnicodeError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2198,7 +2198,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeDecodeError(args: argsTuple))
   }
@@ -2206,7 +2206,7 @@ public final class PyUnicodeDecodeError: PyUnicodeError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyUnicodeDecodeError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2242,7 +2242,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeEncodeError(args: argsTuple))
   }
@@ -2250,7 +2250,7 @@ public final class PyUnicodeEncodeError: PyUnicodeError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyUnicodeEncodeError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2286,7 +2286,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeTranslateError(args: argsTuple))
   }
@@ -2294,7 +2294,7 @@ public final class PyUnicodeTranslateError: PyUnicodeError {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyUnicodeTranslateError,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2330,7 +2330,7 @@ public class PyWarning: PyException {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyWarning(args: argsTuple))
   }
@@ -2338,7 +2338,7 @@ public class PyWarning: PyException {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2374,7 +2374,7 @@ public final class PyDeprecationWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyDeprecationWarning(args: argsTuple))
   }
@@ -2382,7 +2382,7 @@ public final class PyDeprecationWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyDeprecationWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2419,7 +2419,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyPendingDeprecationWarning(args: argsTuple))
   }
@@ -2427,7 +2427,7 @@ public final class PyPendingDeprecationWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyPendingDeprecationWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2463,7 +2463,7 @@ public final class PyRuntimeWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyRuntimeWarning(args: argsTuple))
   }
@@ -2471,7 +2471,7 @@ public final class PyRuntimeWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyRuntimeWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2507,7 +2507,7 @@ public final class PySyntaxWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PySyntaxWarning(args: argsTuple))
   }
@@ -2515,7 +2515,7 @@ public final class PySyntaxWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PySyntaxWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2551,7 +2551,7 @@ public final class PyUserWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyUserWarning(args: argsTuple))
   }
@@ -2559,7 +2559,7 @@ public final class PyUserWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyUserWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2596,7 +2596,7 @@ public final class PyFutureWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyFutureWarning(args: argsTuple))
   }
@@ -2604,7 +2604,7 @@ public final class PyFutureWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyFutureWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2640,7 +2640,7 @@ public final class PyImportWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyImportWarning(args: argsTuple))
   }
@@ -2648,7 +2648,7 @@ public final class PyImportWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyImportWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2685,7 +2685,7 @@ public final class PyUnicodeWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyUnicodeWarning(args: argsTuple))
   }
@@ -2693,7 +2693,7 @@ public final class PyUnicodeWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyUnicodeWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2730,7 +2730,7 @@ public final class PyBytesWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyBytesWarning(args: argsTuple))
   }
@@ -2738,7 +2738,7 @@ public final class PyBytesWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyBytesWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }
@@ -2774,7 +2774,7 @@ public final class PyResourceWarning: PyWarning {
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {
+                                     kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyResourceWarning(args: argsTuple))
   }
@@ -2782,7 +2782,7 @@ public final class PyResourceWarning: PyWarning {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyResourceWarning,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 }

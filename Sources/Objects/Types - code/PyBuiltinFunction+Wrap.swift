@@ -64,7 +64,7 @@ extension PyBuiltinFunction {
   internal static func wrap<R: PyFunctionResultConvertible>(
     name: String,
     doc: String?,
-    fn: @escaping ([PyObject], PyDictData?) -> R,
+    fn: @escaping ([PyObject], PyDict?) -> R,
     module: PyModule? = nil) -> PyBuiltinFunction {
 
     return PyBuiltinFunction(
@@ -82,7 +82,7 @@ extension PyBuiltinFunction {
   internal static func wrap<Zelf, R: PyFunctionResultConvertible>(
     name: String,
     doc: String?,
-    fn: @escaping (Zelf) -> ([PyObject], PyDictData?) -> R,
+    fn: @escaping (Zelf) -> ([PyObject], PyDict?) -> R,
     castSelf: @escaping (PyObject, String) -> PyResult<Zelf>,
     module: PyModule? = nil) -> PyBuiltinFunction {
 

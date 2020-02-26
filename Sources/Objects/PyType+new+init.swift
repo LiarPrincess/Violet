@@ -8,7 +8,7 @@ private struct PyTypeNewArgs {
   /// Args passed to orginal function
   fileprivate let args: [PyObject]
   /// Kwargs passed to orginal function
-  fileprivate let kwargs: PyDictData?
+  fileprivate let kwargs: PyDict?
 
   /// Name string is the class name and becomes the `__name__` attribute
   /// `self.args[0] as String`
@@ -19,7 +19,7 @@ private struct PyTypeNewArgs {
   /// Dict is the namespace containing definitions for class body and is copied
   /// to a standard dictionary to become the `__dict__` attribute.
   /// `self.args[2] as Dict`
-  fileprivate let dict: PyDictData
+  fileprivate let dict: PyDict
 }
 
 extension PyType {
@@ -34,10 +34,10 @@ extension PyType {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     // Special case: type(x) should return x->ob_type
     if type === Py.types.type {
-      let noKwargs = kwargs?.isEmpty ?? true
+      let noKwargs = kwargs?.data.isEmpty ?? true
       if args.count == 1 && noKwargs {
         return .value(args[0].type)
       }
@@ -81,7 +81,7 @@ extension PyType {
                                               kwargs: kwargs,
                                               name: name.value,
                                               bases: baseTypes,
-                                              dict: dict.data))
+                                              dict: dict))
     case let .error(e):
       return .error(e)
     }
@@ -148,7 +148,7 @@ extension PyType {
     }
 
     // Initialize '__dict__' from passed-in dict
-    let __dict__ = Py.newDict(data: args.dict)
+    let __dict__ = Py.newDict(data: args.dict.data)
     type.setDict(value: __dict__)
 
     // Set __module__ in the dict
@@ -320,10 +320,11 @@ extension PyType {
   // sourcery: pymethod = __init__
   internal static func pyInit(zelf: PyType,
                               args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyNone> {
-    // swiftlint:disable:next empty_count
-    if let kwargs = kwargs, args.count == 1 && kwargs.count != 0 {
-      return .typeError("type.__init__() takes no keyword arguments")
+                              kwargs: PyDict?) -> PyResult<PyNone> {
+    if let kwargs = kwargs {
+      if args.count == 1 && kwargs.data.any {
+        return .typeError("type.__init__() takes no keyword arguments")
+      }
     }
 
     guard args.count == 1 || args.count == 3 else {

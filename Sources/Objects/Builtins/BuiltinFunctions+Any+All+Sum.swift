@@ -47,7 +47,7 @@ extension BuiltinFunctions {
   // sourcery: pymethod = sum
   /// sum(iterable, /, start=0)
   /// See [this](https://docs.python.org/3/library/functions.html#sum)
-  internal func sum(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal func sum(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     switch sumArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")

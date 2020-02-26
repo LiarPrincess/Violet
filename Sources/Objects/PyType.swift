@@ -582,8 +582,7 @@ public class PyType: PyObject {
   // sourcery: pymethod = __call__
   /// static PyObject *
   /// type_call(PyTypeObject *type, PyObject *args, PyObject *kwds)
-  internal func call(args: [PyObject],
-                     kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     let object: PyObject
     switch self.call__new__(args: args, kwargs: kwargs) {
     case let .value(o): object = o
@@ -593,7 +592,7 @@ public class PyType: PyObject {
     // Ugly exception: when the call was type(something),
     // don't call tp_init on the result.
     let hasSingleArg = args.count == 1
-    let hasEmptyKwargs = kwargs?.isEmpty ?? true
+    let hasEmptyKwargs = kwargs?.data.isEmpty ?? true
     if self === Py.types.type && hasSingleArg && hasEmptyKwargs {
       return .value(object)
     }
@@ -612,7 +611,7 @@ public class PyType: PyObject {
   }
 
   private func call__new__(args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<PyObject> {
+                           kwargs: PyDict?) -> PyResult<PyObject> {
     // Fast path for 'type' type.
     // Mostly because of how common type checks are (e.g. 'type(elsa)')
     if self === Py.types.type {
@@ -630,7 +629,7 @@ public class PyType: PyObject {
 
   private func call__init__(object: PyObject,
                             args: [PyObject],
-                            kwargs: PyDictData?) -> PyResult<PyNone> {
+                            kwargs: PyDict?) -> PyResult<PyNone> {
     let result = Py.callMethod(on: object,
                                selector: .__init__,
                                args: args,

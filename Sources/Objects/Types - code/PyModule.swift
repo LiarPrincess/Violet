@@ -154,7 +154,7 @@ public class PyModule: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     return .value(PyModule(type: type))
   }
 
@@ -168,7 +168,7 @@ public class PyModule: PyObject {
   // sourcery: pymethod = __init__
   internal static func pyInit(zelf: PyModule,
                               args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyNone> {
+                              kwargs: PyDict?) -> PyResult<PyNone> {
     switch PyModule.initArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")

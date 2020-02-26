@@ -1467,7 +1467,7 @@ private enum SplitSeparator<T> {
 extension PyStringImpl {
 
   internal func split(args: [PyObject],
-                      kwargs: PyDictData?) -> PyResult<[SubSequence]> {
+                      kwargs: PyDict?) -> PyResult<[SubSequence]> {
     switch splitArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -1569,7 +1569,7 @@ extension PyStringImpl {
   }
 
   internal func rsplit(args: [PyObject],
-                       kwargs: PyDictData?) -> PyResult<[SubSequence]> {
+                       kwargs: PyDict?) -> PyResult<[SubSequence]> {
     switch splitArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -1735,7 +1735,7 @@ private let splitlinesArguments = ArgumentParser.createOrTrap(
 extension PyStringImpl {
 
   internal func splitLines(args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<[SubSequence]> {
+                           kwargs: PyDict?) -> PyResult<[SubSequence]> {
     switch splitlinesArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")

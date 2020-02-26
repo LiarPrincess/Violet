@@ -147,7 +147,7 @@ public {final}class Py{name}: Py{base} {{
   // sourcery: pymethod = __new__
   override internal class func pyNew(type: PyType,
                                      args: [PyObject],
-                                     kwargs: PyDictData?) -> PyResult<PyObject> {{
+                                     kwargs: PyDict?) -> PyResult<PyObject> {{
     let argsTuple = Py.newTuple(args)
     return .value(Py{name}(args: argsTuple))
   }}
@@ -155,7 +155,7 @@ public {final}class Py{name}: Py{base} {{
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: Py{name},
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {{
+                             kwargs: PyDict?) -> PyResult<PyNone> {{
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }}
 }}

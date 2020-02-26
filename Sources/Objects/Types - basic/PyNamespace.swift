@@ -116,7 +116,7 @@ public class PyNamespace: PyObject {
   // sourcery: pymethod = __init__
   internal static func pyInit(zelf: PyNamespace,
                               args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyNone> {
+                              kwargs: PyDict?) -> PyResult<PyNone> {
     guard args.isEmpty else {
       return .typeError("no positional arguments expected")
     }

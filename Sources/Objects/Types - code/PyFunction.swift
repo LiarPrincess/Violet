@@ -277,8 +277,7 @@ public class PyFunction: PyObject {
   // sourcery: pymethod = __call__
   /// static PyObject *
   /// function_call(PyObject *func, PyObject *args, PyObject *kwargs)
-  public func call(args: [PyObject],
-                   kwargs: PyDictData?) -> PyResult<PyObject> {
+  public func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     let name = self.name
     let qualname = self.qualname
     let code = self.code.codeObject
@@ -286,13 +285,9 @@ public class PyFunction: PyObject {
     // Caller and callee functions should not share the kwargs dictionary.
     // Btw. we do not expect a lot of kwargs so the performance hit
     // should be acceptable.
-    var kwargsCopy: PyDict? = nil
+    var kwargsCopy: PyDict?
     if let kwargs = kwargs {
-      let copy = Py.newDict()
-      switch copy.update(from: kwargs) {
-      case .value: kwargsCopy = copy
-      case .error(let e): return .error(e)
-      }
+      kwargsCopy = Py.newDict(data: kwargs.data)
     }
 
     let argsDefaults = self.defaults?.elements ?? []

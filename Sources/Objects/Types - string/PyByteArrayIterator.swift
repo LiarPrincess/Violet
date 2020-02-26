@@ -63,7 +63,7 @@ public class PyByteArrayIterator: PyObject {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDictData?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyObject> {
     return .typeError("cannot create 'bytearray_iterator' instances")
   }
 }

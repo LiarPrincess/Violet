@@ -83,7 +83,7 @@ public class PyZip: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     if type === Py.types.zip {
       if let e = ArgumentParser.noKwargsOrError(fnName: "zip", kwargs: kwargs) {
         return .error(e)

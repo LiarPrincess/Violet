@@ -29,7 +29,7 @@ extension MinMaxImpl {
   }
 
   fileprivate static func run(args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyObject> {
+                              kwargs: PyDict?) -> PyResult<PyObject> {
     switch Self.argumentParser.bind(args: [], kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")
@@ -182,7 +182,7 @@ extension BuiltinFunctions {
   // sourcery: pymethod = min, doc = minDoc
   /// min(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#min)
-  internal func min(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal func min(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     return MinImpl.run(args: args, kwargs: kwargs)
   }
 }
@@ -226,7 +226,7 @@ extension BuiltinFunctions {
   // sourcery: pymethod = max, doc = maxDoc
   /// max(iterable, *[, key, default])
   /// See [this](https://docs.python.org/3/library/functions.html#max)
-  internal func max(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal func max(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     return MaxImpl.run(args: args, kwargs: kwargs)
   }
 }

@@ -95,7 +95,7 @@ public class PyFilter: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     if type === Py.types.filter {
       if let e = ArgumentParser.noKwargsOrError(fnName: "filter", kwargs: kwargs) {
         return .error(e)

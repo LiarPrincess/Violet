@@ -425,7 +425,7 @@ extension BuiltinFunctions {
   /// sorted(iterable, *, key=None, reverse=False)
   /// See [this](https://docs.python.org/3/library/functions.html#sorted)
   internal func sorted(args: [PyObject],
-                       kwargs: PyDictData?) -> PyResult<PyList> {
+                       kwargs: PyDict?) -> PyResult<PyList> {
     if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "sorted",
                                                         args: args,
                                                         min: 1,

@@ -474,7 +474,7 @@ public class PyBytes: PyObject, PyBytesType {
 
   // sourcery: pymethod = split
   internal func split(args: [PyObject],
-                      kwargs: PyDictData?) -> PyResult<[Data]> {
+                      kwargs: PyDict?) -> PyResult<[Data]> {
     return self.data.split(args: args, kwargs: kwargs)
   }
 
@@ -485,7 +485,7 @@ public class PyBytes: PyObject, PyBytesType {
 
   // sourcery: pymethod = rsplit
   internal func rsplit(args: [PyObject],
-                       kwargs: PyDictData?) -> PyResult<[Data]> {
+                       kwargs: PyDict?) -> PyResult<[Data]> {
     return self.data.rsplit(args: args, kwargs: kwargs)
   }
 
@@ -496,7 +496,7 @@ public class PyBytes: PyObject, PyBytesType {
 
   // sourcery: pymethod = splitlines
   internal func splitLines(args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<[Data]> {
+                           kwargs: PyDict?) -> PyResult<[Data]> {
     return self.data.splitLines(args: args, kwargs: kwargs)
   }
 
@@ -624,7 +624,7 @@ public class PyBytes: PyObject, PyBytesType {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDictData?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyObject> {
     switch newArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")

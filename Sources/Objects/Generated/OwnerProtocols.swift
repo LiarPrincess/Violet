@@ -3,12 +3,12 @@ import Core
 // swiftlint:disable line_length
 
 protocol __new__Owner {
-  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject>
+  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
 }
 
 protocol __init__Owner {
   associatedtype Zelf: PyObject
-  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
+  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone>
 }
 
 protocol ArgsGetterOwner { func getArgs() -> PyTuple }
@@ -31,7 +31,7 @@ protocol __base__GetterOwner { func getBase() -> PyType? }
 protocol __bases__GetterOwner { func getBases() -> PyTuple }
 protocol __bases__SetterOwner { func setBases(_ value: PyObject?) -> PyResult<()> }
 protocol __bool__Owner { func asBool() -> Bool }
-protocol __call__Owner { func call(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
+protocol __call__Owner { func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> }
 protocol __cause__GetterOwner { func getCause() -> PyObject? }
 protocol __cause__SetterOwner { func setCause(_ value: PyObject?) -> PyResult<()> }
 protocol __ceil__Owner { func ceil() -> PyObject }
@@ -156,7 +156,7 @@ protocol endswithRangedOwner { func endsWith(_ element: PyObject, start: PyObjec
 protocol extendOwner { func extend(iterable: PyObject) -> PyResult<PyNone> }
 protocol findOwner { func find(_ element: PyObject) -> PyResult<BigInt> }
 protocol findRangedOwner { func find(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
-protocol getOwner { func getWithDefault(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
+protocol getOwner { func getWithDefault(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> }
 protocol indexOwner { func index(of element: PyObject) -> PyResult<BigInt> }
 protocol indexRangedOwner { func index(of element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol indicesOwner { func indicesInSequence(length: PyObject) -> PyResult<PyObject> }
@@ -191,8 +191,8 @@ protocol rfindRangedOwner { func rfind(_ element: PyObject, start: PyObject?, en
 protocol rindexOwner { func rindex(_ element: PyObject) -> PyResult<BigInt> }
 protocol rindexRangedOwner { func rindex(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<BigInt> }
 protocol rpartitionOwner { func rpartition(separator: PyObject) -> PyResult<PyTuple> }
-protocol setdefaultOwner { func setWithDefault(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> }
-protocol sortOwner { func sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> }
+protocol setdefaultOwner { func setWithDefault(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> }
+protocol sortOwner { func sort(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> }
 protocol startswithOwner { func startsWith(_ element: PyObject) -> PyResult<Bool> }
 protocol startswithRangedOwner { func startsWith(_ element: PyObject, start: PyObject?, end: PyObject?) -> PyResult<Bool> }
 protocol symmetric_differenceOwner { func symmetricDifference(with other: PyObject) -> PyResult<PyObject> }

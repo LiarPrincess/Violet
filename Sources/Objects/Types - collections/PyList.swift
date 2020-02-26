@@ -305,7 +305,7 @@ public class PyList: PyObject, PySequenceType {
   )
 
   // sourcery: pymethod = sort, doc = sortDoc
-  internal func sort(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone> {
+  internal func sort(args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone> {
     if let e = ArgumentParser.guaranteeArgsCountOrError(fnName: "sort",
                                                         args: args,
                                                         min: 0,
@@ -478,7 +478,7 @@ public class PyList: PyObject, PySequenceType {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     let isBuiltin = type === Py.types.list
     let alloca = isBuiltin ?
       PyList.init(type:data:) :
@@ -493,7 +493,7 @@ public class PyList: PyObject, PySequenceType {
   // sourcery: pymethod = __init__
   internal static func pyInit(zelf: PyList,
                               args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyNone> {
+                              kwargs: PyDict?) -> PyResult<PyNone> {
     if zelf.type === Py.types.list {
       if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
                                                 kwargs: kwargs) {

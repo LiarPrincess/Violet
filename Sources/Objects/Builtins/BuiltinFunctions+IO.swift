@@ -22,7 +22,7 @@ extension BuiltinFunctions {
   /// print(*objects, sep=' ', end='\n', file=sys.stdout, flush=False)
   /// See [this](https://docs.python.org/3/library/functions.html#print)
   internal func print(args: [PyObject],
-                      kwargs: PyDictData?) -> PyResult<PyNone> {
+                      kwargs: PyDict?) -> PyResult<PyNone> {
     // 'args' contains objects to print
     // 'kwargs' contains options
 
@@ -163,7 +163,7 @@ extension BuiltinFunctions {
   /// open(file, mode='r', buffering=-1, encoding=None, errors=None, newline=None,
   ///            closefd=True, opener=None)
   /// See [this](https://docs.python.org/3/library/functions.html#open)
-  internal func open(args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject> {
+  internal func open(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
     switch openArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 1, "Invalid required argument count.")

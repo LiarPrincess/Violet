@@ -168,12 +168,12 @@ import Core
 // swiftlint:disable line_length
 
 protocol __new__Owner {
-  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyObject>
+  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
 }
 
 protocol __init__Owner {
   associatedtype Zelf: PyObject
-  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDictData?) -> PyResult<PyNone>
+  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone>
 }
 ''')
 

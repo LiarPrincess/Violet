@@ -12,7 +12,7 @@ extension BuiltinFunctions {
 
   // sourcery: pymethod = __build_class__, doc = buildClassDoc
   public func buildClass(args: [PyObject],
-                         kwargs: PyDictData?) -> PyResult<PyObject> {
+                         kwargs: PyDict?) -> PyResult<PyObject> {
     if args.count < 2 {
       return .typeError("__build_class__: not enough arguments")
     }
@@ -78,7 +78,7 @@ extension BuiltinFunctions {
 extension BuiltinFunctions {
 
   private func calculateMetaclass(bases: PyTuple,
-                                  kwargs: PyDictData?) -> PyResult<PyObject> {
+                                  kwargs: PyDict?) -> PyResult<PyObject> {
     var result: PyObject
 
     switch self.getMetaclassRaw(kwargs: kwargs) {
@@ -112,7 +112,7 @@ extension BuiltinFunctions {
     return PyDictKey(hash: id.hash, object: id.value)
   }
 
-  private func getMetaclassRaw(kwargs: PyDictData?) -> PyDictData.GetResult {
+  private func getMetaclassRaw(kwargs: PyDict?) -> PyDict.GetResult {
     guard let kwargs = kwargs else {
       return .notFound
     }

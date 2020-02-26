@@ -355,7 +355,7 @@ public class PyBaseException: PyObject {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDictData?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyObject> {
     let argsTuple = Py.newTuple(args)
     return .value(PyBaseException(args: argsTuple))
   }
@@ -365,14 +365,14 @@ public class PyBaseException: PyObject {
   // sourcery: pymethod = __init__
   internal class func pyInit(zelf: PyBaseException,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyNone> {
+                             kwargs: PyDict?) -> PyResult<PyNone> {
     return PyBaseException.pyInitShared(zelf: zelf, args: args, kwargs: kwargs)
   }
 
   /// `pyInit` in all of the exception classes will call this shared method.
   internal static func pyInitShared(zelf: PyBaseException,
                                     args: [PyObject],
-                                    kwargs: PyDictData?) -> PyResult<PyNone> {
+                                    kwargs: PyDict?) -> PyResult<PyNone> {
     if let e = ArgumentParser.noKwargsOrError(fnName: zelf.typeName,
                                               kwargs: kwargs) {
       return .error(e)

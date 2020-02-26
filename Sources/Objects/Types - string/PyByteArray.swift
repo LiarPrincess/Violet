@@ -473,7 +473,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = split
   internal func split(args: [PyObject],
-                      kwargs: PyDictData?) -> PyResult<[Data]> {
+                      kwargs: PyDict?) -> PyResult<[Data]> {
     return self.data.split(args: args, kwargs: kwargs)
   }
 
@@ -484,7 +484,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = rsplit
   internal func rsplit(args: [PyObject],
-                       kwargs: PyDictData?) -> PyResult<[Data]> {
+                       kwargs: PyDict?) -> PyResult<[Data]> {
     return self.data.rsplit(args: args, kwargs: kwargs)
   }
 
@@ -495,7 +495,7 @@ public class PyByteArray: PyObject, PyBytesType {
 
   // sourcery: pymethod = splitlines
   internal func splitLines(args: [PyObject],
-                           kwargs: PyDictData?) -> PyResult<[Data]> {
+                           kwargs: PyDict?) -> PyResult<[Data]> {
     return self.data.splitLines(args: args, kwargs: kwargs)
   }
 
@@ -618,7 +618,7 @@ public class PyByteArray: PyObject, PyBytesType {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDictData?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyObject> {
     let isBuiltin = type === Py.types.bytes
     let alloca = isBuiltin ? newByteArray(type:value:) : PyByteArrayHeap.init(type:value:)
 
@@ -640,7 +640,7 @@ public class PyByteArray: PyObject, PyBytesType {
   // sourcery: pymethod = __init__
   internal static func pyInit(zelf: PyByteArray,
                               args: [PyObject],
-                              kwargs: PyDictData?) -> PyResult<PyNone> {
+                              kwargs: PyDict?) -> PyResult<PyNone> {
     switch PyByteArray.initArguments.bind(args: args, kwargs: kwargs) {
     case let .value(binding):
       assert(binding.requiredCount == 0, "Invalid required argument count.")

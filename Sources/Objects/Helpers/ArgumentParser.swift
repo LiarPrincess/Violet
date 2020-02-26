@@ -224,7 +224,7 @@ internal struct ArgumentParser {
       return self._required[index]
     }
 
-    /// Get required argument at specified index.
+    /// Get optional argument at specified index.
     /// Note that optional arguments start after required.
     internal func optional(at index: Int) -> PyObject? {
       let optionalIndex = index - self._required.count
@@ -265,7 +265,7 @@ internal struct ArgumentParser {
   ///                           va_list *p_va, int flags)
   internal func bind(args: [PyObject],
                      kwargs: PyObject?) -> PyResult<Binding> {
-    let kwargsData: PyDictData?
+    let kwargsData: PyDict?
     switch ArgumentParser.unpackKwargsDict(kwargs: kwargs) {
     case let .value(o): kwargsData = o
     case let .error(e): return .error(e)
@@ -280,7 +280,7 @@ internal struct ArgumentParser {
   ///                           struct _PyArg_Parser *parser,
   ///                           va_list *p_va, int flags)
   internal func bind(args: [PyObject],
-                     kwargs: PyDictData?) -> PyResult<Binding> {
+                     kwargs: PyDict?) -> PyResult<Binding> {
     // We do not expect large kwargs dictionaries,
     // so the allocation should be minimal.
     var kwargsDict: [String:PyObject]
@@ -457,7 +457,7 @@ internal struct ArgumentParser {
     return .value(tuple.elements)
   }
 
-  internal static func unpackKwargsDict(kwargs: PyObject?) -> PyResult<PyDictData?> {
+  internal static func unpackKwargsDict(kwargs: PyObject?) -> PyResult<PyDict?> {
     guard let kwargs = kwargs else {
       return .value(nil)
     }
@@ -467,7 +467,7 @@ internal struct ArgumentParser {
       return .typeError("Function keyword arguments should be a dict, not \(t)")
     }
 
-    return .value(kwargsDict.data)
+    return .value(kwargsDict)
   }
 
   // MARK: - Arg count
@@ -513,8 +513,8 @@ internal struct ArgumentParser {
   /// int
   /// _PyArg_NoKeywords(const char *funcname, PyObject *kwargs)
   internal static func noKwargsOrError(fnName: String,
-                                       kwargs: PyDictData?) -> PyBaseException? {
-    let noKwargs = kwargs?.isEmpty ?? true
+                                       kwargs: PyDict?) -> PyBaseException? {
+    let noKwargs = kwargs?.data.isEmpty ?? true
     if noKwargs {
       return nil
     }
@@ -527,7 +527,7 @@ internal struct ArgumentParser {
   /// int
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
   internal static func guaranteeStringKeywords(
-    kwargs: PyDictData?
+    kwargs: PyDict?
   ) -> PyResult<[String:PyObject]> {
 
     switch kwargs {
@@ -541,12 +541,12 @@ internal struct ArgumentParser {
   /// int
   /// PyArg_ValidateKeywordArguments(PyObject *kwargs)
   internal static func guaranteeStringKeywords(
-    kwargs: PyDictData
+    kwargs: PyDict
   ) -> PyResult<[String:PyObject]> {
 
     var result = [String:PyObject]()
 
-    for entry in kwargs {
+    for entry in kwargs.data {
       switch entry.key.object as? PyString {
       case let .some(keyString):
         result[keyString.value] = entry.value

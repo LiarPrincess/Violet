@@ -31,7 +31,7 @@ extension BuiltinFunctions {
   /// __import__(name, globals=None, locals=None, fromlist=(), level=0)
   /// See [this](https://docs.python.org/3/library/functions.html#__import__)
   public func __import__(args: [PyObject],
-                         kwargs: PyDictData?) -> PyResult<PyObject> {
+                         kwargs: PyDict?) -> PyResult<PyObject> {
     fatalError()
 //    switch importArguments.bind(args: args, kwargs: kwargs) {
 //    case let .value(binding):

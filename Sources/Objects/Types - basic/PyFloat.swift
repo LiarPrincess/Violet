@@ -668,11 +668,10 @@ extension PyFloat {
   // sourcery: pymethod = __new__
   internal class func pyNew(type: PyType,
                             args: [PyObject],
-                            kwargs: PyDictData?) -> PyResult<PyObject> {
+                            kwargs: PyDict?) -> PyResult<PyObject> {
     let isBuiltin = type === Py.types.float
     if isBuiltin {
-      if let e = ArgumentParser.noKwargsOrError(fnName: "float",
-                                                kwargs: kwargs) {
+      if let e = ArgumentParser.noKwargsOrError(fnName: "float", kwargs: kwargs) {
         return .error(e)
       }
     }

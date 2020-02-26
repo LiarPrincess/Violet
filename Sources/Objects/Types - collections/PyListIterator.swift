@@ -61,7 +61,7 @@ public class PyListIterator: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     return .typeError("cannot create 'list_iterator' instances")
   }
 }

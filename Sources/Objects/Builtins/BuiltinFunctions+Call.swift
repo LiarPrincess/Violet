@@ -64,7 +64,7 @@ extension BuiltinFunctions {
   ///   - kwargs: keyword arguments
   public func call(callable: PyObject,
                    args: [PyObject] = [],
-                   kwargs: PyDictData? = nil) -> CallResult {
+                   kwargs: PyDict? = nil) -> CallResult {
     if let owner = callable as? __call__Owner {
       switch owner.call(args: args, kwargs: kwargs) {
       case .value(let result):
@@ -376,7 +376,7 @@ extension BuiltinFunctions {
   public func callMethod(on object: PyObject,
                          selector: IdString,
                          args: [PyObject] = [],
-                         kwargs: PyDictData? = nil) -> CallMethodResult {
+                         kwargs: PyDict? = nil) -> CallMethodResult {
     return self.callMethod(on: object,
                            selector: selector.value,
                            args: args,
@@ -394,7 +394,7 @@ extension BuiltinFunctions {
   public func callMethod(on object: PyObject,
                          selector: PyString,
                          args: [PyObject] = [],
-                         kwargs: PyDictData? = nil) -> CallMethodResult {
+                         kwargs: PyDict? = nil) -> CallMethodResult {
     var method: PyObject
     switch self.getMethod(object: object, selector: selector) {
     case let .value(o): method = o

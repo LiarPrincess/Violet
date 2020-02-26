@@ -162,7 +162,7 @@ extension Frame {
     let kwValues = self.stack.popElementsInPushOrder(count: nKwargs)
     assert(kwValues.count == nKwargs)
 
-    let kwargs: PyDictData
+    let kwargs: PyDict
     switch self.createKwargs(names: kwNames.elements, values: kwValues) {
     case let .value(d): kwargs = d
     case let .error(e): return .error(e)
@@ -177,28 +177,24 @@ extension Frame {
   }
 
   private func createKwargs(names: [PyObject],
-                            values: [PyObject]) -> PyResult<PyDictData> {
+                            values: [PyObject]) -> PyResult<PyDict> {
     assert(names.count == values.count)
 
-    var result = PyDictData(size: names.count)
+    let result = Py.newDict()
     if names.isEmpty {
       return .value(result)
     }
 
     for (name, value) in zip(names, values) {
-      switch Py.hash(name) {
-      case let .value(nameHash):
-        let key = PyDictKey(hash: nameHash, object: name)
-        switch result.insert(key: key, value: value) {
-        case .inserted, .updated: break
-        case .error(let e): return .error(e)
-        }
-      case let .error(e):
+      switch result.set(key: name, to: value) {
+      case .ok:
+        break
+      case .error(let e):
         return .error(e)
       }
     }
 
-    assert(result.count == names.count)
+    assert(result.data.count == names.count)
     return .value(result)
   }
 
@@ -239,7 +235,7 @@ extension Frame {
     }
 
     let level = self.stackLevel
-    let result = Py.call(callable: fn, args: args, kwargs: kwargs?.data)
+    let result = Py.call(callable: fn, args: args, kwargs: kwargs)
 
     switch result {
     case let .value(o):

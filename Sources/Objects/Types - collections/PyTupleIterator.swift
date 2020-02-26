@@ -60,7 +60,7 @@ public class PyTupleIterator: PyObject {
   // sourcery: pymethod = __new__
   internal static func pyNew(type: PyType,
                              args: [PyObject],
-                             kwargs: PyDictData?) -> PyResult<PyObject> {
+                             kwargs: PyDict?) -> PyResult<PyObject> {
     return .typeError("cannot create 'tuple_iterator' instances")
   }
 }
