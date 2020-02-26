@@ -31,6 +31,7 @@ public final class BuiltinTypes {
   public let bytes: PyType
   public let bytes_iterator: PyType
   public let callable_iterator: PyType
+  public let cell: PyType
   public let code: PyType
   public let complex: PyType
   public let dict: PyType
@@ -90,6 +91,7 @@ public final class BuiltinTypes {
     self.bytes = PyType.initBuiltinType(name: "bytes", type: self.type, base: self.object)
     self.bytes_iterator = PyType.initBuiltinType(name: "bytes_iterator", type: self.type, base: self.object)
     self.callable_iterator = PyType.initBuiltinType(name: "callable_iterator", type: self.type, base: self.object)
+    self.cell = PyType.initBuiltinType(name: "cell", type: self.type, base: self.object)
     self.code = PyType.initBuiltinType(name: "code", type: self.type, base: self.object)
     self.complex = PyType.initBuiltinType(name: "complex", type: self.type, base: self.object)
     self.dict = PyType.initBuiltinType(name: "dict", type: self.type, base: self.object)
@@ -150,6 +152,7 @@ public final class BuiltinTypes {
     FillTypes.bytes(self.bytes)
     FillTypes.bytes_iterator(self.bytes_iterator)
     FillTypes.callable_iterator(self.callable_iterator)
+    FillTypes.cell(self.cell)
     FillTypes.code(self.code)
     FillTypes.complex(self.complex)
     FillTypes.dict(self.dict)
@@ -203,6 +206,7 @@ public final class BuiltinTypes {
       self.bytes,
       self.bytes_iterator,
       self.callable_iterator,
+      self.cell,
       self.code,
       self.complex,
       self.dict,

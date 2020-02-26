@@ -87,6 +87,7 @@ ids = [
   '__package__',
   '__pos__',
   '__pow__',
+  '__prepare__',
   '__qualname__',
   '__radd__',
   '__rand__',

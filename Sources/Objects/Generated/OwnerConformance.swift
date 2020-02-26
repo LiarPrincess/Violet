@@ -220,6 +220,19 @@ extension PyCallableIterator:
   __next__Owner
 { }
 
+// MARK: - Cell
+
+extension PyCell:
+  __eq__Owner,
+  __ne__Owner,
+  __lt__Owner,
+  __le__Owner,
+  __gt__Owner,
+  __ge__Owner,
+  __repr__Owner,
+  __getattribute__Owner
+{ }
+
 // MARK: - Code
 
 extension PyCode:

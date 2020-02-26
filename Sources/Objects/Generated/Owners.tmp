@@ -222,6 +222,15 @@ PyCallableIterator|PyObject|get|__class__|getClass() -> PyType
 PyCallableIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyCallableIterator|PyObject|func|__iter__|iter() -> PyObject
 PyCallableIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
+
+PyCell|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
+PyCell|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> CompareResult
+PyCell|PyObject|func|__lt__|isLess(_ other: PyObject) -> CompareResult
+PyCell|PyObject|func|__le__|isLessEqual(_ other: PyObject) -> CompareResult
+PyCell|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
+PyCell|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
+PyCell|PyObject|func|__repr__|repr() -> PyResult<String>
+PyCell|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyCode|PyObject|get|__class__|getClass() -> PyType
 
 PyCode|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult

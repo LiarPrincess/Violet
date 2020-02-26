@@ -370,6 +370,26 @@ internal enum FillTypes {
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyCallableIterator.next, castSelf: Cast.asPyCallableIterator))
   }
 
+  // MARK: - Cell
+
+  internal static func cell(_ type: PyType) {
+    type.setBuiltinTypeDoc(nil)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
+
+
+
+
+    insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyCell.isEqual(_:), castSelf: Cast.asPyCell))
+    insert(type: type, name: "__ne__", value: PyBuiltinFunction.wrap(name: "__ne__", doc: nil, fn: PyCell.isNotEqual(_:), castSelf: Cast.asPyCell))
+    insert(type: type, name: "__lt__", value: PyBuiltinFunction.wrap(name: "__lt__", doc: nil, fn: PyCell.isLess(_:), castSelf: Cast.asPyCell))
+    insert(type: type, name: "__le__", value: PyBuiltinFunction.wrap(name: "__le__", doc: nil, fn: PyCell.isLessEqual(_:), castSelf: Cast.asPyCell))
+    insert(type: type, name: "__gt__", value: PyBuiltinFunction.wrap(name: "__gt__", doc: nil, fn: PyCell.isGreater(_:), castSelf: Cast.asPyCell))
+    insert(type: type, name: "__ge__", value: PyBuiltinFunction.wrap(name: "__ge__", doc: nil, fn: PyCell.isGreaterEqual(_:), castSelf: Cast.asPyCell))
+    insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyCell.repr, castSelf: Cast.asPyCell))
+    insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCell.getAttribute(name:), castSelf: Cast.asPyCell))
+  }
+
   // MARK: - Code
 
   internal static func code(_ type: PyType) {

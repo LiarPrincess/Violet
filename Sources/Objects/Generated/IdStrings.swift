@@ -121,6 +121,7 @@ public struct IdString {
   public static let __package__ = Self.impl.__package__
   public static let __pos__ = Self.impl.__pos__
   public static let __pow__ = Self.impl.__pow__
+  public static let __prepare__ = Self.impl.__prepare__
   public static let __qualname__ = Self.impl.__qualname__
   public static let __radd__ = Self.impl.__radd__
   public static let __rand__ = Self.impl.__rand__
@@ -276,6 +277,7 @@ private struct IdStringImpl {
   fileprivate let __package__ = IdString(value: "__package__")
   fileprivate let __pos__ = IdString(value: "__pos__")
   fileprivate let __pow__ = IdString(value: "__pow__")
+  fileprivate let __prepare__ = IdString(value: "__prepare__")
   fileprivate let __qualname__ = IdString(value: "__qualname__")
   fileprivate let __radd__ = IdString(value: "__radd__")
   fileprivate let __rand__ = IdString(value: "__rand__")

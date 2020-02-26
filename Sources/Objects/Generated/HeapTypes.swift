@@ -68,6 +68,10 @@ internal final class PyBytesHeap: PyBytes, HeapType {
 
 // PyCallableIterator is not a base type.
 
+// MARK: - Cell
+
+// PyCell is not a base type.
+
 // MARK: - Code
 
 // PyCode is not a base type.

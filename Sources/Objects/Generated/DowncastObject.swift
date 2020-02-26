@@ -78,6 +78,12 @@ internal enum Cast {
     return cast(object, as: PyCallableIterator.self, typeName: "callable_iterator", methodName: methodName)
   }
 
+  // MARK: - Cell
+
+  internal static func asPyCell(_ object: PyObject, methodName: String) -> PyResult<PyCell> {
+    return cast(object, as: PyCell.self, typeName: "cell", methodName: methodName)
+  }
+
   // MARK: - Code
 
   internal static func asPyCode(_ object: PyObject, methodName: String) -> PyResult<PyCode> {
