@@ -24,7 +24,7 @@ internal enum AttributeHelper {
     }
 
     if let dict = Py.get__dict__(object: object) {
-      switch dict.get(key: object) {
+      switch dict.get(key: name) {
       case .value(let o):
         return .value(o)
       case .notFound:

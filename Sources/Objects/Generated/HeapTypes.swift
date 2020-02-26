@@ -16,13 +16,32 @@
 // { }
 // ```
 
-/// Marker protocol for all heap types
-internal protocol HeapType { }
+internal protocol HeapType: __dict__GetterOwner {
+  var __dict__: PyDict { get set }
+}
 
+extension HeapType {
+  internal func getDict() -> PyDict {
+    return self.__dict__
+  }
+}
+
+
+
+// MARK: - Object
+
+/// Type used when we subclass builtin `` class.
+/// For example: `class Rapunzel(): pass`.
+internal final class PyObjectHeap: PyObject, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var __dict__ = PyDict()
+}
 
 // MARK: - Type type
 
 // PyType already has everything we need.
+
 
 // MARK: - Bool
 

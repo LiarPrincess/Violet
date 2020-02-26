@@ -16,10 +16,27 @@
 // { }
 // ```
 
-/// Marker protocol for all heap types
-internal protocol HeapType { }
+internal protocol HeapType: __dict__GetterOwner {
+  var __dict__: PyDict { get set }
+}
 
-{% macro printHeapType type %}
+extension HeapType {
+  internal func getDict() -> PyDict {
+    return self.__dict__
+  }
+}
+
+{% macro printHeapType type_name %}
+/// Type used when we subclass builtin `{{ type.annotations.pytype }}` class.
+/// For example: `class Rapunzel({{ type.annotations.pytype }}): pass`.
+internal final class {{ type_name }}Heap: {{ type_name }}, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var __dict__ = PyDict()
+}
+{% endmacro %}
+
+{% macro tryHeapType type %}
   {# If we already have 'attributes: Attributes' then we dont need 'Heap' type #}
   {% set has__dict__ %}{% for variable in type.allVariables where variable.name == "__dict__" %}x{% endfor %}{% endset %}
 
@@ -30,24 +47,27 @@ internal protocol HeapType { }
   {% else %}{% if has__dict__ %}
 // {{ type.name }} already has everything we need.
   {% else %}
-/// Type used when we subclass builtin `{{ type.annotations.pytype }}` class.
-/// For example: `class Rapunzel({{ type.annotations.pytype }}): pass`.
-internal final class {{ type.name }}Heap: {{ type.name }}, HeapType {
-
-  /// Python `__dict__` property.
-  internal lazy var __dict__ = PyDict()
-}
+{% call printHeapType type.name %}
   {% endif %}
   {% endif %}
 {% endmacro %}
 
+// MARK: - Object
+
+{% for type in types.enums where type.name == "PyBaseObject" %}
+{% call printHeapType "PyObject" %}
+{% endfor %}
+
 // MARK: - Type type
 
 // PyType already has everything we need.
+
+{# Normal types #}
 {% for type in types.classes|annotated:"pytype" %}
-{% call printHeapType type %}
+{% call tryHeapType type %}
 {% endfor %}
 
+{# Error types #}
 {% for type in types.classes|annotated:"pyerrortype" %}
-{% call printHeapType type %}
+{% call tryHeapType type %}
 {% endfor %}
