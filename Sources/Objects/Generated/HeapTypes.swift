@@ -89,6 +89,10 @@ internal final class PyBytesHeap: PyBytes, HeapType {
 
 // PyCell is not a base type.
 
+// MARK: - ClassMethod
+
+// PyClassMethod already has everything we need.
+
 // MARK: - Code
 
 // PyCode is not a base type.
@@ -292,6 +296,10 @@ internal final class PySetHeap: PySet, HeapType {
 // MARK: - Slice
 
 // PySlice is not a base type.
+
+// MARK: - StaticMethod
+
+// PyStaticMethod already has everything we need.
 
 // MARK: - String
 

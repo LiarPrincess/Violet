@@ -56,6 +56,7 @@ protocol __eq__Owner { func isEqual(_ other: PyObject) -> CompareResult }
 protocol __float__Owner { func asFloat() -> PyResult<PyFloat> }
 protocol __floor__Owner { func floor() -> PyObject }
 protocol __floordiv__Owner { func floordiv(_ other: PyObject) -> PyResult<PyObject> }
+protocol __func__GetterOwner { func getFunc() -> PyObject }
 protocol __func__Owner { func getFunc() -> PyFunction }
 protocol __ge__Owner { func isGreaterEqual(_ other: PyObject) -> CompareResult }
 protocol __get__Owner { func get(object: PyObject, type: PyObject) -> PyResult<PyObject> }
@@ -78,6 +79,7 @@ protocol __invert__Owner { func invert() -> PyObject }
 protocol __ior__Owner { func ior(_ other: PyObject) -> PyResult<PyObject> }
 protocol __ipow__Owner { func ipow(_ other: PyObject) -> PyResult<PyObject> }
 protocol __irshift__Owner { func irshift(_ other: PyObject) -> PyResult<PyObject> }
+protocol __isabstractmethod__Owner { func isAbstractMethod() -> PyResult<Bool> }
 protocol __isub__Owner { func isub(_ other: PyObject) -> PyResult<PyObject> }
 protocol __iter__Owner { func iter() -> PyObject }
 protocol __itruediv__Owner { func itruediv(_ other: PyObject) -> PyResult<PyObject> }

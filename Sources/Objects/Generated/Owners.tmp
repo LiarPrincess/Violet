@@ -231,6 +231,14 @@ PyCell|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyCell|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
 PyCell|PyObject|func|__repr__|repr() -> PyResult<String>
 PyCell|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PyClassMethod|PyObject|get|__class__|getClass() -> PyType
+PyClassMethod|PyObject|get|__dict__|getDict() -> PyDict
+PyClassMethod|PyObject|get|__func__|getFunc() -> PyObject
+
+PyClassMethod|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
+PyClassMethod|PyObject|func|__isabstractmethod__|isAbstractMethod() -> PyResult<Bool>
+PyClassMethod|PyObject|static_func|__init__|pyInit(zelf: PyClassMethod,                              args: [PyObject],                              kwargs: PyDict?) -> PyResult<PyNone>
+PyClassMethod|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?) -> PyResult<PyObject>
 PyCode|PyObject|get|__class__|getClass() -> PyType
 
 PyCode|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
@@ -741,6 +749,14 @@ PySlice|PyObject|func|__repr__|repr() -> PyResult<String>
 PySlice|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PySlice|PyObject|func|indices|indicesInSequence(length: PyObject) -> PyResult<PyObject>
 PySlice|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyObject>
+PyStaticMethod|PyObject|get|__class__|getClass() -> PyType
+PyStaticMethod|PyObject|get|__dict__|getDict() -> PyDict
+PyStaticMethod|PyObject|get|__func__|getFunc() -> PyObject
+
+PyStaticMethod|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
+PyStaticMethod|PyObject|func|__isabstractmethod__|isAbstractMethod() -> PyResult<Bool>
+PyStaticMethod|PyObject|static_func|__init__|pyInit(zelf: PyStaticMethod,                              args: [PyObject],                              kwargs: PyDict?) -> PyResult<PyNone>
+PyStaticMethod|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?) -> PyResult<PyObject>
 PyString|PyObject|get|__class__|getClass() -> PyType
 
 PyString|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult

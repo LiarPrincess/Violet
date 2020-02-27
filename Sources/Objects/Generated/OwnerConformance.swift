@@ -233,6 +233,18 @@ extension PyCell:
   __getattribute__Owner
 { }
 
+// MARK: - ClassMethod
+
+extension PyClassMethod:
+  __class__GetterOwner,
+  __dict__GetterOwner,
+  __func__GetterOwner,
+  __get__Owner,
+  __isabstractmethod__Owner,
+  __init__Owner,
+  __new__Owner
+{ }
+
 // MARK: - Code
 
 extension PyCode:
@@ -868,6 +880,18 @@ extension PySlice:
   __repr__Owner,
   __getattribute__Owner,
   indicesOwner,
+  __new__Owner
+{ }
+
+// MARK: - StaticMethod
+
+extension PyStaticMethod:
+  __class__GetterOwner,
+  __dict__GetterOwner,
+  __func__GetterOwner,
+  __get__Owner,
+  __isabstractmethod__Owner,
+  __init__Owner,
   __new__Owner
 { }
 

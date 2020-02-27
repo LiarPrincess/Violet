@@ -110,8 +110,7 @@ extension BuiltinFunctions {
       qualnameValue = q.value
     } else {
       let t = qualname.typeName
-      let msg = "function() qualname must be None or string, not \(t)"
-      return .typeError(msg)
+      return .typeError("function() qualname must be None or string, not \(t)")
     }
 
     let result = self.newFunction(qualname: qualnameValue,
@@ -133,11 +132,22 @@ extension BuiltinFunctions {
       globals: globals
     )
   }
-}
 
-// MARK: - Dict
+  // MARK: - Method
 
-extension BuiltinFunctions {
+  public func newMethod(fn: PyObject, object: PyObject) -> PyResult<PyMethod> {
+    guard let f = fn as? PyFunction else {
+      return .typeError("method() func must be function, not \(fn.typeName)")
+    }
+
+    return self.newMethod(fn: f, object: object)
+  }
+
+  public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod {
+    return PyMethod(fn: fn, object: object)
+  }
+
+  // MARK: - Dict
 
   /// Returns the **builtin** (!!!!) `__dict__` instance.
   ///
@@ -215,6 +225,21 @@ extension BuiltinFunctions {
     case .missingMethod:
       return .typeError("object does not provide __dir__")
     case .error(let e), .notCallable(let e):
+      return .error(e)
+    }
+  }
+
+  // MARK: - Is abstract method
+
+  public func isAbstractMethod(object: PyObject) -> PyResult<Bool> {
+    if let owner = object as? __isabstractmethod__Owner {
+      return owner.isAbstractMethod()
+    }
+
+    switch self.getAttribute(object, name: .__isabstractmethod__) {
+    case let .value(o):
+      return self.isTrueBool(o)
+    case let .error(e):
       return .error(e)
     }
   }

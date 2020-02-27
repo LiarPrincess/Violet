@@ -32,6 +32,7 @@ public final class BuiltinTypes {
   public let bytes_iterator: PyType
   public let callable_iterator: PyType
   public let cell: PyType
+  public let classmethod: PyType
   public let code: PyType
   public let complex: PyType
   public let dict: PyType
@@ -65,6 +66,7 @@ public final class BuiltinTypes {
   public let set: PyType
   public let set_iterator: PyType
   public let slice: PyType
+  public let staticmethod: PyType
   public let str: PyType
   public let str_iterator: PyType
   public let textFile: PyType
@@ -92,6 +94,7 @@ public final class BuiltinTypes {
     self.bytes_iterator = PyType.initBuiltinType(name: "bytes_iterator", type: self.type, base: self.object)
     self.callable_iterator = PyType.initBuiltinType(name: "callable_iterator", type: self.type, base: self.object)
     self.cell = PyType.initBuiltinType(name: "cell", type: self.type, base: self.object)
+    self.classmethod = PyType.initBuiltinType(name: "classmethod", type: self.type, base: self.object)
     self.code = PyType.initBuiltinType(name: "code", type: self.type, base: self.object)
     self.complex = PyType.initBuiltinType(name: "complex", type: self.type, base: self.object)
     self.dict = PyType.initBuiltinType(name: "dict", type: self.type, base: self.object)
@@ -125,6 +128,7 @@ public final class BuiltinTypes {
     self.set = PyType.initBuiltinType(name: "set", type: self.type, base: self.object)
     self.set_iterator = PyType.initBuiltinType(name: "set_iterator", type: self.type, base: self.object)
     self.slice = PyType.initBuiltinType(name: "slice", type: self.type, base: self.object)
+    self.staticmethod = PyType.initBuiltinType(name: "staticmethod", type: self.type, base: self.object)
     self.str = PyType.initBuiltinType(name: "str", type: self.type, base: self.object)
     self.str_iterator = PyType.initBuiltinType(name: "str_iterator", type: self.type, base: self.object)
     self.textFile = PyType.initBuiltinType(name: "TextFile", type: self.type, base: self.object)
@@ -153,6 +157,7 @@ public final class BuiltinTypes {
     FillTypes.bytes_iterator(self.bytes_iterator)
     FillTypes.callable_iterator(self.callable_iterator)
     FillTypes.cell(self.cell)
+    FillTypes.classmethod(self.classmethod)
     FillTypes.code(self.code)
     FillTypes.complex(self.complex)
     FillTypes.dict(self.dict)
@@ -186,6 +191,7 @@ public final class BuiltinTypes {
     FillTypes.set(self.set)
     FillTypes.set_iterator(self.set_iterator)
     FillTypes.slice(self.slice)
+    FillTypes.staticmethod(self.staticmethod)
     FillTypes.str(self.str)
     FillTypes.str_iterator(self.str_iterator)
     FillTypes.textFile(self.textFile)
@@ -207,6 +213,7 @@ public final class BuiltinTypes {
       self.bytes_iterator,
       self.callable_iterator,
       self.cell,
+      self.classmethod,
       self.code,
       self.complex,
       self.dict,
@@ -240,6 +247,7 @@ public final class BuiltinTypes {
       self.set,
       self.set_iterator,
       self.slice,
+      self.staticmethod,
       self.str,
       self.str_iterator,
       self.textFile,

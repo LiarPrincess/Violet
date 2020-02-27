@@ -280,6 +280,15 @@ types = {
   ],
   # 'cell' is not available in Python (it is only in CPython).
   # So we will skip it.
+  classmethod: [
+    '__class__',
+    '__dict__',
+    '__func__',
+    '__get__',
+    '__isabstractmethod__',
+    '__new__',
+    '__init__',
+  ],
   code: [
     '__class__',
     '__eq__',
@@ -820,6 +829,15 @@ types = {
     '__getattribute__',
     'indices',
     '__new__',
+  ],
+  staticmethod: [
+    '__class__',
+    '__dict__',
+    '__func__',
+    '__get__',
+    '__isabstractmethod__',
+    '__new__',
+    '__init__',
   ],
   str: [
     '__class__',

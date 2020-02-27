@@ -40,6 +40,11 @@ extension Builtins {
     return Py.types.bytes
   }
 
+  // sourcery: pyproperty = classmethod
+  internal var type_classmethod: PyType {
+    return Py.types.classmethod
+  }
+
   // sourcery: pyproperty = complex
   internal var type_complex: PyType {
     return Py.types.complex
@@ -108,6 +113,11 @@ extension Builtins {
   // sourcery: pyproperty = slice
   internal var type_slice: PyType {
     return Py.types.slice
+  }
+
+  // sourcery: pyproperty = staticmethod
+  internal var type_staticmethod: PyType {
+    return Py.types.staticmethod
   }
 
   // sourcery: pyproperty = str

@@ -390,6 +390,26 @@ internal enum FillTypes {
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCell.getAttribute(name:), castSelf: Cast.asPyCell))
   }
 
+  // MARK: - ClassMethod
+
+  internal static func classmethod(_ type: PyType) {
+    type.setBuiltinTypeDoc(PyClassMethod.doc)
+    type.setFlag(.default)
+    type.setFlag(.baseType)
+    type.setFlag(.hasGC)
+
+    insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyClassMethod.getClass, castSelf: Cast.asPyClassMethod))
+    insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyClassMethod.getDict, castSelf: Cast.asPyClassMethod))
+    insert(type: type, name: "__func__", value: PyProperty.wrap(name: "__func__", doc: nil, get: PyClassMethod.getFunc, castSelf: Cast.asPyClassMethod))
+
+    insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyClassMethod.pyInit(zelf:args:kwargs:)))
+
+    insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyClassMethod.pyNew(type:args:kwargs:)))
+
+    insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyClassMethod.get(object:type:), castSelf: Cast.asPyClassMethod))
+    insert(type: type, name: "__isabstractmethod__", value: PyBuiltinFunction.wrap(name: "__isabstractmethod__", doc: nil, fn: PyClassMethod.isAbstractMethod, castSelf: Cast.asPyClassMethod))
+  }
+
   // MARK: - Code
 
   internal static func code(_ type: PyType) {
@@ -1267,6 +1287,26 @@ internal enum FillTypes {
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PySlice.repr, castSelf: Cast.asPySlice))
     insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PySlice.getAttribute(name:), castSelf: Cast.asPySlice))
     insert(type: type, name: "indices", value: PyBuiltinFunction.wrap(name: "indices", doc: nil, fn: PySlice.indicesInSequence(length:), castSelf: Cast.asPySlice))
+  }
+
+  // MARK: - StaticMethod
+
+  internal static func staticmethod(_ type: PyType) {
+    type.setBuiltinTypeDoc(PyStaticMethod.doc)
+    type.setFlag(.default)
+    type.setFlag(.baseType)
+    type.setFlag(.hasGC)
+
+    insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStaticMethod.getClass, castSelf: Cast.asPyStaticMethod))
+    insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStaticMethod.getDict, castSelf: Cast.asPyStaticMethod))
+    insert(type: type, name: "__func__", value: PyProperty.wrap(name: "__func__", doc: nil, get: PyStaticMethod.getFunc, castSelf: Cast.asPyStaticMethod))
+
+    insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PyStaticMethod.pyInit(zelf:args:kwargs:)))
+
+    insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PyStaticMethod.pyNew(type:args:kwargs:)))
+
+    insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PyStaticMethod.get(object:type:), castSelf: Cast.asPyStaticMethod))
+    insert(type: type, name: "__isabstractmethod__", value: PyBuiltinFunction.wrap(name: "__isabstractmethod__", doc: nil, fn: PyStaticMethod.isAbstractMethod, castSelf: Cast.asPyStaticMethod))
   }
 
   // MARK: - String

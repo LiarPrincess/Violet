@@ -84,6 +84,12 @@ internal enum Cast {
     return cast(object, as: PyCell.self, typeName: "cell", methodName: methodName)
   }
 
+  // MARK: - ClassMethod
+
+  internal static func asPyClassMethod(_ object: PyObject, methodName: String) -> PyResult<PyClassMethod> {
+    return cast(object, as: PyClassMethod.self, typeName: "classmethod", methodName: methodName)
+  }
+
   // MARK: - Code
 
   internal static func asPyCode(_ object: PyObject, methodName: String) -> PyResult<PyCode> {
@@ -280,6 +286,12 @@ internal enum Cast {
 
   internal static func asPySlice(_ object: PyObject, methodName: String) -> PyResult<PySlice> {
     return cast(object, as: PySlice.self, typeName: "slice", methodName: methodName)
+  }
+
+  // MARK: - StaticMethod
+
+  internal static func asPyStaticMethod(_ object: PyObject, methodName: String) -> PyResult<PyStaticMethod> {
+    return cast(object, as: PyStaticMethod.self, typeName: "staticmethod", methodName: methodName)
   }
 
   // MARK: - String
