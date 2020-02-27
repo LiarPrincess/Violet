@@ -1,20 +1,18 @@
 // swiftlint:disable vertical_whitespace
 // swiftlint:disable file_length
 
-// Types used when we subclass on of the builtin types.
+// Types used when we subclass one of the builtin types.
 //
-// Normally most builtin types (like int, float etc.) do not have `__dict__`.
-// But if we subclass then then `__dict__` is now present.
+// Normally most builtin types (like int, float etc.) do not have '__dict__'.
+// But if we subclass then then '__dict__' is now present.
 //
 // For example:
-// ```Python
-// >>> 1.__dict__ # Builtin int does not have `__dict__`
+// >>> 1.__dict__ # Builtin int does not have '__dict__'
 // SyntaxError: invalid syntax
 //
 // >>> class MyInt(int): pass
 // >>> MyInt().__dict__ # But the subclass has
 // { }
-// ```
 
 internal protocol HeapType: __dict__GetterOwner {
   var __dict__: PyDict { get set }
@@ -26,10 +24,10 @@ extension HeapType {
   }
 }
 
-{% macro printHeapType type_name %}
-/// Type used when we subclass builtin `{{ type.annotations.pytype }}` class.
-/// For example: `class Rapunzel({{ type.annotations.pytype }}): pass`.
-internal final class {{ type_name }}Heap: {{ type_name }}, HeapType {
+{% macro printHeapType swift_type python_type %}
+/// Type used when we subclass builtin `{{ python_type }}` class.
+/// For example: `class Rapunzel({{ python_type }}): pass`.
+internal final class {{ swift_type }}Heap: {{ swift_type }}, HeapType {
 
   /// Python `__dict__` property.
   internal lazy var __dict__ = PyDict()
@@ -47,7 +45,7 @@ internal final class {{ type_name }}Heap: {{ type_name }}, HeapType {
   {% else %}{% if has__dict__ %}
 // {{ type.name }} already has everything we need.
   {% else %}
-{% call printHeapType type.name %}
+{% call printHeapType type.name type.annotations.pytype %}
   {% endif %}
   {% endif %}
 {% endmacro %}
@@ -55,7 +53,7 @@ internal final class {{ type_name }}Heap: {{ type_name }}, HeapType {
 // MARK: - Object
 
 {% for type in types.enums where type.name == "PyBaseObject" %}
-{% call printHeapType "PyObject" %}
+{% call printHeapType "PyObject" "object" %}
 {% endfor %}
 
 // MARK: - Type type

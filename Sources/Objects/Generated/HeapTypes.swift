@@ -1,20 +1,18 @@
 // swiftlint:disable vertical_whitespace
 // swiftlint:disable file_length
 
-// Types used when we subclass on of the builtin types.
+// Types used when we subclass one of the builtin types.
 //
-// Normally most builtin types (like int, float etc.) do not have `__dict__`.
-// But if we subclass then then `__dict__` is now present.
+// Normally most builtin types (like int, float etc.) do not have '__dict__'.
+// But if we subclass then then '__dict__' is now present.
 //
 // For example:
-// ```Python
-// >>> 1.__dict__ # Builtin int does not have `__dict__`
+// >>> 1.__dict__ # Builtin int does not have '__dict__'
 // SyntaxError: invalid syntax
 //
 // >>> class MyInt(int): pass
 // >>> MyInt().__dict__ # But the subclass has
 // { }
-// ```
 
 internal protocol HeapType: __dict__GetterOwner {
   var __dict__: PyDict { get set }
@@ -30,8 +28,8 @@ extension HeapType {
 
 // MARK: - Object
 
-/// Type used when we subclass builtin `` class.
-/// For example: `class Rapunzel(): pass`.
+/// Type used when we subclass builtin `object` class.
+/// For example: `class Rapunzel(object): pass`.
 internal final class PyObjectHeap: PyObject, HeapType {
 
   /// Python `__dict__` property.
