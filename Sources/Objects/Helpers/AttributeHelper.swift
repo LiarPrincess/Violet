@@ -17,7 +17,19 @@ internal enum AttributeHelper {
 
   internal static func getAttribute(from object: PyObject,
                                     name: PyString) -> PyResult<PyObject> {
-    let descriptor = GetDescriptor.get(object: object, attributeName: name)
+    let staticProperty: PyObject?
+    let descriptor: GetDescriptor?
+
+    switch object.type.lookup(name: name) {
+    case .value(let p):
+      staticProperty = p
+      descriptor = GetDescriptor.create(object: object, attribute: p)
+    case .notFound:
+      staticProperty = nil
+      descriptor = nil
+    case .error(let e):
+      return .error(e)
+    }
 
     if let descr = descriptor, descr.isData {
       return descr.call()
@@ -36,6 +48,10 @@ internal enum AttributeHelper {
 
     if let descr = descriptor {
       return descr.call()
+    }
+
+    if let p = staticProperty {
+      return .value(p)
     }
 
     let msg = "\(object.typeName) object has no attribute '\(name.reprRaw())'"
@@ -67,7 +83,7 @@ internal enum AttributeHelper {
   internal static func setAttribute(on object: PyObject,
                                     name: PyString,
                                     to value: PyObject?) -> PyResult<PyNone> {
-    let descriptor = SetDescriptor.get(object: object, attributeName: name)
+    let descriptor = SetDescriptor.create(object: object, attributeName: name)
 
     if let desc = descriptor {
       _ = desc.call(value: value)

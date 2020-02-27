@@ -222,26 +222,28 @@ extension BuiltinFunctions {
                         allowsCallableProperties: Bool) -> LoadMethodResult {
     // swiftlint:enable function_body_length
 
-    let attribute = object.type.lookup(name: selector)
+    let staticProperty: PyObject?
     var descriptor: GetDescriptor?
     var functionAttribute: FunctionAttribute?
 
-    switch attribute {
+    switch object.type.lookup(name: selector) {
     case .value(let attr):
+      staticProperty = attr
       if let fn = attr as? PyFunction {
         functionAttribute = .function(fn)
       } else if let fn = attr as? PyBuiltinFunction {
         functionAttribute = .builtinFunction(fn)
       } else {
-        descriptor = GetDescriptor.get(object: object, attribute: attr)
-        if let descr = descriptor, descr.isData {
-          return self.getMethod(descriptor: descr)
-        }
+        descriptor = GetDescriptor.create(object: object, attribute: attr)
       }
     case .notFound:
-      break // try other
+      staticProperty = nil
     case .error(let e):
       return .error(e)
+    }
+
+    if let descr = descriptor, descr.isData {
+      return self.getMethod(descriptor: descr)
     }
 
     if allowsCallableProperties {
@@ -264,9 +266,8 @@ extension BuiltinFunctions {
       return self.getMethod(descriptor: descr)
     }
 
-    switch attribute {
-    case .value(let attr): return .typeAttribute(attr)
-    case .notFound, .error: break // try other (errors were handled before)
+    if let p = staticProperty {
+      return .typeAttribute(p)
     }
 
     let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
@@ -424,7 +425,7 @@ extension BuiltinFunctions {
       method = fn.bind(to: object)
     }
     if let fn = method as? PyFunction {
-       method = fn.bind(to: object)
+      method = fn.bind(to: object)
     }
 
     switch self.call(callable: method, args: args, kwargs: kwargs) {

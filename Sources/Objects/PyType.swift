@@ -239,7 +239,7 @@ public class PyType: PyObject {
       return .value(Py.none)
     }
 
-    if let descr = GetDescriptor.get(object: self, attribute: doc) {
+    if let descr = GetDescriptor.create(object: self, attribute: doc) {
       switch descr.call() {
       case let .value(o): return .value(o)
       case let .error(e): return .error(e)
@@ -447,26 +447,30 @@ public class PyType: PyObject {
   }
 
   public func getAttribute(name: PyString) -> PyResult<PyObject> {
-    let metaType = self.type
-    let metaAttribute = metaType.lookup(name: name)
+    let metaAttribute: PyObject?
     var metaDescriptor: GetDescriptor?
 
     // Look for the attribute in the metatype
-    switch metaAttribute {
+    switch self.type.lookup(name: name) {
     case .value(let attribute):
-      metaDescriptor = GetDescriptor.get(object: self, attribute: attribute)
-      if let desc = metaDescriptor, desc.isData {
-        return desc.call() // Will call '__get__' with self (PyType)
-      }
-    case .notFound: break
-    case .error(let e): return .error(e)
+      metaAttribute = attribute
+      metaDescriptor = GetDescriptor.create(object: self, attribute: attribute)
+    case .notFound:
+      metaAttribute = nil
+      metaDescriptor = nil
+    case .error(let e):
+      return .error(e)
+    }
+
+    if let desc = metaDescriptor, desc.isData {
+      return desc.call() // Will call '__get__' with self (PyType)
     }
 
     // No data descriptor found on metatype.
     // Look in __dict__ of this type and its bases
     switch self.lookup(name: name) {
     case .value(let attribute):
-      if let descr = GetDescriptor.get(object: self, attribute: attribute) {
+      if let descr = GetDescriptor.create(object: self, attribute: attribute) {
         // 'Without owner' means that we will call '__get__' with 'None' object
         // This will result in static binding.
         // For example: 'int.__eq__' will not bind 'self' to any number!
@@ -485,9 +489,8 @@ public class PyType: PyObject {
     }
 
     // If an ordinary attribute was found on the metatype, return it
-    switch metaAttribute {
-    case .value(let attribute): return .value(attribute)
-    case .notFound, .error: break // error was handled before
+    if let a = metaAttribute {
+      return .value(a)
     }
 
     let msg = "type object '\(self.typeName)' has no attribute '\(name.reprRaw())'"

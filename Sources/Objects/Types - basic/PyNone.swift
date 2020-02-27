@@ -56,7 +56,20 @@ public class PyNone: PyObject {
     // Alas, my friends, welcome to 'None-Descriptor' hack.
     assert(self.isDescriptorStaticMarker)
 
-    let descriptor = GetDescriptor.get(object: self, attributeName: name)
+    let staticProperty: PyObject?
+    let descriptor: GetDescriptor?
+
+    switch self.type.lookup(name: name) {
+    case .value(let p):
+      staticProperty = p
+      descriptor = GetDescriptor.create(object: self, attribute: p)
+    case .notFound:
+      staticProperty = nil
+      descriptor = nil
+    case .error(let e):
+    return .error(e)
+    }
+
     if let descr = descriptor {
       // We know that this thingie has a '__get__' method.
       // When we call it with 'None' as a 'object' it will return unbinded 'self'.
@@ -64,6 +77,10 @@ public class PyNone: PyObject {
 
       let unbinded = descr.call(withObject: false)
       return unbinded.flatMap(self.bindToSelf(object:))
+    }
+
+    if let p = staticProperty {
+      return .value(p)
     }
 
     let msg = "\(self.typeName) object has no attribute '\(name.reprRaw())'"

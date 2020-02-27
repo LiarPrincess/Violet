@@ -84,21 +84,9 @@ internal class GetDescriptor {
 
   // MARK: Factory
 
-  /// Get 'get' descriptor with given `name` from `object`.
-  internal static func get(object: PyObject,
-                           attributeName: PyString) -> GetDescriptor? {
-    // Do we even have such attribute?
-    switch object.type.lookup(name: attributeName) {
-    case .value(let attribute):
-      return GetDescriptor.get(object: object, attribute: attribute)
-    case .notFound, .error:
-      return nil
-    }
-  }
-
   /// Get 'get' descriptor with given `attribute` from `object`.
-  internal static func get(object: PyObject,
-                           attribute: PyObject) -> GetDescriptor? {
+  internal static func create(object: PyObject,
+                              attribute: PyObject) -> GetDescriptor? {
     // No getter -> no descriptor
     guard let get = attribute.type.lookup(name: .__get__) else {
       return nil
@@ -142,19 +130,19 @@ internal class SetDescriptor {
 
   // MARK: Factory
 
-  internal static func get(object: PyObject,
-                           attributeName: PyString) -> SetDescriptor? {
+  internal static func create(object: PyObject,
+                              attributeName: PyString) -> SetDescriptor? {
     // Do we even have such attribute?
     switch object.type.lookup(name: attributeName) {
     case .value(let attribute):
-      return SetDescriptor.get(object: object, attribute: attribute)
+      return SetDescriptor.create(object: object, attribute: attribute)
     case .notFound, .error:
       return nil
     }
   }
 
-  internal static func get(object: PyObject,
-                           attribute: PyObject) -> SetDescriptor? {
+  private static func create(object: PyObject,
+                             attribute: PyObject) -> SetDescriptor? {
     // No setter -> no descriptor
     guard let set = attribute.type.lookup(name: .__set__) else {
       return nil
