@@ -1,12 +1,5 @@
 import Core
 
-public enum ClosureVariable {
-  /// Captured variable
-  case cell(MangledName)
-  /// Closure over 'name'
-  case free(MangledName)
-}
-
 extension CodeObjectBuilder {
 
   /// Append a `nop` instruction to this code object.

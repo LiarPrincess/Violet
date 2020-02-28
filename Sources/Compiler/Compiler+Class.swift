@@ -42,7 +42,7 @@ extension Compiler {
         let __classcell__ = SpecialIdentifiers.__classcell__
 
         // Store __classcell__ into class namespace & return it
-        self.builder.appendLoadClosure(.cell(__class__))
+        self.builder.appendLoadClosure(name: __class__, type: .cell)
         self.builder.appendDupTop()
         self.builder.appendStoreName(__classcell__)
       } else {

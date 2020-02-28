@@ -214,9 +214,8 @@ extension Compiler {
   /// compiler_make_closure(struct compiler *c, PyCodeObject *co,
   /// Py_ssize_t flags, PyObject *qualname)
   internal func makeClosure(codeObject: CodeObject,
-                            flags:    FunctionFlags,
+                            flags: FunctionFlags,
                             location: SourceLocation) throws {
-
     let qualifiedName = codeObject.qualifiedName
     var makeFunctionFlags = flags
 
@@ -228,14 +227,14 @@ extension Compiler {
         // The local var is a method
         // and the free var is a free var referenced within a method.
 
-        let flags = self.getRefType(name: name, qualifiedName: qualifiedName)
-        let variable: ClosureVariable =
-          flags.contains(.cell) ? .cell(name) : .free(name)
+        let refType = self.getRefType(name: name, qualifiedName: qualifiedName)
+        let type: ClosureType = refType.contains(.cell) ? .cell : .free
 
-        self.builder.appendLoadClosure(variable)
+        self.builder.appendLoadClosure(name: name, type: type)
       }
 
-      self.builder.appendBuildTuple(elementCount: codeObject.freeVariableNames.count)
+      let freeVariableCount = codeObject.freeVariableNames.count
+      self.builder.appendBuildTuple(elementCount: freeVariableCount)
       makeFunctionFlags.formUnion(.hasFreeVariables)
     }
 
