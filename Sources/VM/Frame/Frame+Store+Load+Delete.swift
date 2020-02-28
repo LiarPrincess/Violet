@@ -201,6 +201,18 @@ extension Frame {
     return .unwind(.exception(e))
   }
 
+  // MARK: - Load closure
+
+  /// Pushes a reference to the cell contained in slot 'i'
+  /// of the 'cell' or 'free' variable storage.
+  /// If 'i' < cellVars.count: name of the variable is cellVars[i].
+  /// otherwise:               name is freeVars[i - cellVars.count].
+  internal func loadClosure(cellOrFreeIndex: Int) -> InstructionResult {
+    let cell = self.cellsAndFreeVariables[cellOrFreeIndex]
+    self.stack.push(cell)
+    return .ok
+  }
+
   // MARK: - Helpers
 
   private func store(name: PyString,

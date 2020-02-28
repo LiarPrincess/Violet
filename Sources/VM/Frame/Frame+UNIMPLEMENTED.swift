@@ -13,14 +13,6 @@ extension Frame {
     return self.unimplemented()
   }
 
-  /// Pushes a reference to the cell contained in slot 'i'
-  /// of the 'cell' or 'free' variable storage.
-  /// If 'i' < cellVars.count: name of the variable is cellVars[i].
-  /// otherwise:               name is freeVars[i - cellVars.count].
-  internal func loadClosure(cellOrFreeIndex: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
   // MARK: - Coroutines
 
   /// Implements `TOS = GetAwaitable(TOS)`.

@@ -20,6 +20,16 @@ internal enum InstructionResult {
 
 // MARK: - Frame
 
+/// Basic evaluation environment.
+///
+/// CPython stores stack, local and free variables as a single block of memory
+/// in `PyFrameObject.f_localsplus` using following layout:
+/// ```
+/// Layout:        fastlocals      | cells + free variables | stack
+/// Variable name: ^ f_localsplus  ^ freevars               ^ f_valuestack
+///  ```
+///
+/// We have separate `fastLocals`, `cellsAndFreeVariables` and `stack`.
 internal final class Frame {
 
   /// Code to run.
@@ -40,18 +50,32 @@ internal final class Frame {
   internal var globalSymbols: PyDict
   /// Builtin symbols (most of the time it would be `Py.builtinsModule.__dict__`).
   internal var builtinSymbols: PyDict
-  /// Free variables (variables from upper scopes).
-  internal lazy var freeVariables = [String: PyObject]()
+
   /// Function args and local variables.
   ///
   /// We could use `self.localSymbols` but that would be `O(1)` with
   /// massive constants.
-  /// We use array which is like dictionary, but with lower constants.
   /// We could also put them at the bottom of our stack (like in other languages),
   /// but as 'the hipster trash that we are' (quote from @bestdressed)
   /// we won't do this.
-  internal lazy var fastLocals = [PyObject?](repeating: nil,
-                                             count: code.variableNames.count)
+  /// We use array which is like dictionary, but with lower constants.
+  internal lazy var fastLocals = [PyObject?](
+    repeating: nil,
+    count: self.code.variableNames.count
+  )
+
+  /// Free variables (variables from upper scopes).
+  ///
+  /// First cells and then free (see `loadClosure` bytecode instruction).
+  ///
+  /// And yes, just as `self.fastLocals` they could be placed at the bottom
+  /// of the stack.
+  /// And no, we will not do this (see `self.fastLocals` comment).
+  /// \#hipsters
+  internal lazy var cellsAndFreeVariables = [PyObject](
+    repeating: Py.none,
+    count: self.code.cellVariableNames.count + self.code.freeVariableNames.count
+  )
 
   /// Index of the next instruction to run (program counter).
   internal var nextInstructionIndex = 0
@@ -94,6 +118,7 @@ internal final class Frame {
     // TODO: If we store 'PyStrings' in code object we will improve performance
     // But since 'Objects' have reference to 'Bytecode' we can't add reference
     // from 'Bytecode' to 'Objects'.
+    // Idea: use 'PyCode' instead of 'self.code' and lazy convert
 
     assert(0 <= index && index < self.code.names.count)
     let value = self.code.names[index]

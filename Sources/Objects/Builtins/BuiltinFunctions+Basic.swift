@@ -147,6 +147,12 @@ extension BuiltinFunctions {
     return PyMethod(fn: fn, object: object)
   }
 
+  // MARK: - Cell
+
+  public func newCell(content: PyObject?) -> PyCell {
+    return PyCell(content: content)
+  }
+
   // MARK: - Dict
 
   /// Returns the **builtin** (!!!!) `__dict__` instance.

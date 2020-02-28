@@ -188,7 +188,6 @@ extension BuiltinFunctions {
 
   private func createCell(fn: PyFunction,
                           namespace: PyDict) -> PyResult<PyObject> {
-    // TODO: closure PyFunction_GET_CLOSURE(func)
     return Py.delegate.eval(
       name: nil,
       qualname: nil,
@@ -198,7 +197,8 @@ extension BuiltinFunctions {
       defaults: [],
       kwDefaults: nil,
       globals: fn.globals,
-      locals: namespace
+      locals: namespace,
+      closure: fn.closure
     )
   }
 }

@@ -19,7 +19,8 @@ extension VM {
       kwDefaults: nil,
 
       globals: globals,
-      locals: locals
+      locals: locals,
+      closure: nil
     )
   }
 
@@ -37,7 +38,8 @@ extension VM {
                    kwDefaults: PyDict?,
 
                    globals: PyDict,
-                   locals: PyDict) -> PyResult<PyObject> {
+                   locals: PyDict,
+                   closure: PyTuple?) -> PyResult<PyObject> {
 // swiftlint:enable function_parameter_count
 
     // We don't support zombie frames, we always create new one.
@@ -58,8 +60,11 @@ extension VM {
     case .error(let e): return .error(e)
     }
 
+    self.fillCells(in: frame, from: code)
+    self.fillFree(in: frame, from: code, using: closure)
+
     // TODO: Everything below following line:
-    // Allocate and initialize storage for cell vars, and copy free
+    /* Handle generator/coroutine/asynchronous generator */
 
     self.frames.push(frame)
     let result = frame.run()
@@ -67,5 +72,49 @@ extension VM {
     assert(poppedFrame === frame)
 
     return result
+  }
+
+  private func fillCells(in frame: Frame, from code: CodeObject) {
+    guard code.cellVariableNames.any else {
+      return
+    }
+
+    for (i, cellName) in code.cellVariableNames.enumerated() {
+      let cell: PyCell
+
+      // Possibly account for the cell variable being an argument.
+      if let arg = code.variableNames.firstIndex(of: cellName) {
+        let local = frame.fastLocals[arg]
+        cell = Py.newCell(content: local)
+        frame.fastLocals[arg] = nil
+      } else {
+        cell = Py.newCell(content: nil)
+      }
+
+      // CPython stores everything in a single memory block
+      // that's why they have to add 'co->co_nlocals'.
+      frame.cellsAndFreeVariables[i] = cell
+    }
+  }
+
+  private func fillFree(in frame: Frame,
+                        from code: CodeObject,
+                        using closure: PyTuple?) {
+    guard let closure = closure else {
+      return
+    }
+
+    assert(closure.elements.count == code.freeVariableNames.count)
+
+    let countBefore = frame.cellsAndFreeVariables.count
+
+    // Place free after cells
+    let cellCount = code.cellVariableNames.count
+    frame.cellsAndFreeVariables.replaceSubrange(
+      cellCount...,
+      with: closure.elements
+    )
+
+    assert(frame.cellsAndFreeVariables.count == countBefore)
   }
 }

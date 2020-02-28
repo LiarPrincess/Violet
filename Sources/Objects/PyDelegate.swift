@@ -20,5 +20,6 @@ public protocol PyDelegate: AnyObject {
             kwDefaults: PyDict?,
 
             globals: PyDict,
-            locals: PyDict) -> PyResult<PyObject>
+            locals: PyDict,
+            closure: PyTuple?) -> PyResult<PyObject>
 }

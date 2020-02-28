@@ -295,6 +295,7 @@ public class PyFunction: PyObject {
 
     let globals = self.globals
     let locals = Py.newDict()
+    let closure = self.closure
 
     let result = Py.delegate.eval(
       name: name,
@@ -307,7 +308,8 @@ public class PyFunction: PyObject {
       kwDefaults: kwDefaults,
 
       globals: globals,
-      locals: locals
+      locals: locals,
+      closure: closure
     )
 
     return result
