@@ -232,20 +232,20 @@ extension CodeObject {
     case let .deleteGlobal(nameIndex: arg):
       return "deleteGlobal \(self.getName(extendedArg + Int(arg)))"
 
-    case let .loadFast(nameIndex: arg):
+    case let .loadFast(variableIndex: arg):
       return "loadFast \(self.getVariableName(extendedArg + Int(arg)))"
-    case let .storeFast(nameIndex: arg):
+    case let .storeFast(variableIndex: arg):
       return "storeFast \(self.getVariableName(extendedArg + Int(arg)))"
-    case let .deleteFast(nameIndex: arg):
+    case let .deleteFast(variableIndex: arg):
       return "deleteFast \(self.getVariableName(extendedArg + Int(arg)))"
 
-    case let .loadDeref(nameIndex: arg):
+    case let .loadDeref(cellOrFreeIndex: arg):
       return "loadDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
-    case let .storeDeref(nameIndex: arg):
+    case let .storeDeref(cellOrFreeIndex: arg):
       return "storeDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
-    case let .deleteDeref(nameIndex: arg):
+    case let .deleteDeref(cellOrFreeIndex: arg):
       return "deleteDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
-    case let .loadClassDeref(nameIndex: arg):
+    case let .loadClassDeref(cellOrFreeIndex: arg):
       return "loadClassDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
 
     case let .makeFunction(arg):

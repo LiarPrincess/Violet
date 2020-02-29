@@ -28,7 +28,7 @@ public struct CodeObjectFlags: OptionSet {
   }
 }
 
-public final class CodeObject {
+public final class CodeObject: CustomStringConvertible {
 
   public static let moduleName = "<module>"
   public static let lambdaName = "<lambda>"
@@ -84,19 +84,33 @@ public final class CodeObject {
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
   public internal(set) var labels = [Int]()
 
-  /// List of local variable names (from SymbolTable).
-  public internal(set) var variableNames: [MangledName]
-  /// List of free variable names (from SymbolTable).
+  /// List of local variable names.
+  ///
+  /// This value is taken directly from the SymbolTable.
+  /// New entries should not be added after `init`.
+  public let variableNames: [MangledName]
+  /// List of free variable names.
+  ///
+  /// This value is taken directly from the SymbolTable.
+  /// New entries should not be added after `init`.
   public let freeVariableNames: [MangledName]
-  /// List of cell variable names (from SymbolTable).
+  /// List of cell variable names.
+  /// Cell = source for 'free' variable.
+  ///
+  /// This value is taken directly from the SymbolTable.
+  /// New entries should not be added after `init`.
   public let cellVariableNames: [MangledName]
 
-  /// Arguments, except `*args`.
+  /// Argument count (excluding `*args`).
   /// CPython: `co_argcount`.
   public let argCount: Int
-  /// Keyword only arguments.
+  /// Keyword only argument count.
   /// CPython: `co_kwonlyargcount`.
   public let kwOnlyArgCount: Int
+
+  public var description: String {
+    return "CodeObject(qualifiedName: \(self.qualifiedName))"
+  }
 
   public init(name: String,
               qualifiedName: String,

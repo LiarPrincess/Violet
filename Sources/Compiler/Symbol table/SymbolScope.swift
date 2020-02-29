@@ -11,15 +11,6 @@ public enum ScopeType: Equatable {
   case function
 }
 
-public struct SymbolInfo: Equatable {
-
-  /// Symbol information.
-  public let flags: SymbolFlags
-
-  /// Location of the first occurence of given symbol.
-  public let location: SourceLocation
-}
-
 /// Captures all symbols in the current scope
 /// and has a list of subscopes (childrens).
 public final class SymbolScope {

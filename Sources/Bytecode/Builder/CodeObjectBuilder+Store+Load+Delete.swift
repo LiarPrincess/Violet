@@ -94,19 +94,19 @@ extension CodeObjectBuilder {
   /// Append a `loadFast` instruction to this code object.
   public func appendLoadFast(_ name: MangledName) {
     let index = self.addVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.loadFast(nameIndex: index))
+    self.append(.loadFast(variableIndex: index))
   }
 
   /// Append a `storeFast` instruction to this code object.
   public func appendStoreFast(_ name: MangledName) {
     let index = self.addVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.storeFast(nameIndex: index))
+    self.append(.storeFast(variableIndex: index))
   }
 
   /// Append a `deleteFast` instruction to this code object.
   public func appendDeleteFast(_ name: MangledName) {
     let index = self.addVariableNameWithExtendedArgIfNeeded(name: name)
-    self.append(.deleteFast(nameIndex: index))
+    self.append(.deleteFast(variableIndex: index))
   }
 
   // MARK: - Deref
@@ -114,25 +114,25 @@ extension CodeObjectBuilder {
   /// Append a `loadDeref` instruction to this code object.
   public func appendLoadDeref(_ name: MangledName, type: DerefType) {
     let index = self.addCellOrFreeVariableName(name, type: type)
-    self.append(.loadDeref(nameIndex: index))
+    self.append(.loadDeref(cellOrFreeIndex: index))
   }
 
   /// Append a `loadClassDeref` instruction to this code object.
   public func appendLoadClassDeref(_ name: MangledName, type: DerefType) {
     let index = self.addCellOrFreeVariableName(name, type: type)
-    self.append(.loadClassDeref(nameIndex: index))
+    self.append(.loadClassDeref(cellOrFreeIndex: index))
   }
 
   /// Append a `storeDeref` instruction to this code object.
   public func appendStoreDeref(_ name: MangledName, type: DerefType) {
     let index = self.addCellOrFreeVariableName(name, type: type)
-    self.append(.storeDeref(nameIndex: index))
+    self.append(.storeDeref(cellOrFreeIndex: index))
   }
 
   /// Append a `deleteDeref` instruction to this code object.
   public func appendDeleteDeref(_ name: MangledName, type: DerefType) {
     let index = self.addCellOrFreeVariableName(name, type: type)
-    self.append(.deleteDeref(nameIndex: index))
+    self.append(.deleteDeref(cellOrFreeIndex: index))
   }
 
   private func addCellOrFreeVariableName(_ name: MangledName,

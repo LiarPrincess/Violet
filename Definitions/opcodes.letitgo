@@ -13,6 +13,8 @@ and labels properties of 'CodeObject'.
 @alias LabelIndex = UInt8
 @alias NameIndex = UInt8
 @alias ConstantIndex = UInt8
+@alias VariableIndex = UInt8
+@alias CellOrFreeIndex = UInt8
 @alias Item = UInt8
 
 @enum Constant =
@@ -389,27 +391,27 @@ and labels properties of 'CodeObject'.
   -- Used for local function variables. Currently it works similar to 'LoadName'.
   -- In the future it may be reimplemented to use frame slots with int index.
   -- Pushes a reference to the local names[nameIndex] onto the stack.
-  | LoadFast(NameIndex nameIndex)
+  | LoadFast(VariableIndex variableIndex)
   -- Used for local function variables. Currently it works similar to 'StoreName'.
   -- In the future it may be reimplemented to use frame slots with int index.
   -- Stores TOS into the local names[nameIndex].
-  | StoreFast(NameIndex nameIndex)
+  | StoreFast(VariableIndex variableIndex)
   -- Used for local function variables. Currently it works similar to 'DeleteName'.
   -- In the future it may be reimplemented to use frame slots with int index.
   -- Deletes local names[nameIndex].
-  | DeleteFast(NameIndex nameIndex)
+  | DeleteFast(VariableIndex variableIndex)
 
   -- Loads the cell contained in slot i of the cell and free variable storage.
   -- Pushes a reference to the object the cell contains on the stack.
-  | LoadDeref(NameIndex nameIndex)
+  | LoadDeref(CellOrFreeIndex cellOrFreeIndex)
   -- Stores TOS into the cell contained in slot i of the cell and free variable storage.
-  | StoreDeref(NameIndex nameIndex)
+  | StoreDeref(CellOrFreeIndex cellOrFreeIndex)
   -- Empties the cell contained in slot i of the cell and free variable storage.
   -- Used by the del statement.
-  | DeleteDeref(NameIndex nameIndex)
+  | DeleteDeref(CellOrFreeIndex cellOrFreeIndex)
   -- Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
   -- This is used for loading free variables in class bodies.
-  | LoadClassDeref(NameIndex nameIndex)
+  | LoadClassDeref(CellOrFreeIndex cellOrFreeIndex)
 
 {- ---------- -}
 {-  Function  -}
@@ -667,7 +669,7 @@ and labels properties of 'CodeObject'.
   -- of the 'cell' or 'free' variable storage.
   -- If 'i' < cellVars.count: name of the variable is cellVars[i].
   -- otherwise:               name is freeVars[i - cellVars.count].
-  | LoadClosure(NameIndex cellOrFreeIndex)
+  | LoadClosure(CellOrFreeIndex cellOrFreeIndex)
 
   -- Pushes a slice object on the stack.
   | BuildSlice(SliceArg)

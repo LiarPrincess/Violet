@@ -318,26 +318,26 @@ public enum Instruction {
   /// Used for local function variables. Currently it works similar to 'LoadName'.
   /// In the future it may be reimplemented to use frame slots with int index.
   /// Pushes a reference to the local names[nameIndex] onto the stack.
-  case loadFast(nameIndex: UInt8)
+  case loadFast(variableIndex: UInt8)
   /// Used for local function variables. Currently it works similar to 'StoreName'.
   /// In the future it may be reimplemented to use frame slots with int index.
   /// Stores TOS into the local names[nameIndex].
-  case storeFast(nameIndex: UInt8)
+  case storeFast(variableIndex: UInt8)
   /// Used for local function variables. Currently it works similar to 'DeleteName'.
   /// In the future it may be reimplemented to use frame slots with int index.
   /// Deletes local names[nameIndex].
-  case deleteFast(nameIndex: UInt8)
+  case deleteFast(variableIndex: UInt8)
   /// Loads the cell contained in slot i of the cell and free variable storage.
   /// Pushes a reference to the object the cell contains on the stack.
-  case loadDeref(nameIndex: UInt8)
+  case loadDeref(cellOrFreeIndex: UInt8)
   /// Stores TOS into the cell contained in slot i of the cell and free variable storage.
-  case storeDeref(nameIndex: UInt8)
+  case storeDeref(cellOrFreeIndex: UInt8)
   /// Empties the cell contained in slot i of the cell and free variable storage.
   /// Used by the del statement.
-  case deleteDeref(nameIndex: UInt8)
+  case deleteDeref(cellOrFreeIndex: UInt8)
   /// Much like `LoadDeref` but first checks the locals dictionary before consulting the cell.
   /// This is used for loading free variables in class bodies.
-  case loadClassDeref(nameIndex: UInt8)
+  case loadClassDeref(cellOrFreeIndex: UInt8)
   /// Pushes a new function object on the stack.
   /// 
   /// From bottom to top, the consumed stack must consist of values

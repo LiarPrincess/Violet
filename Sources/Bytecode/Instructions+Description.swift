@@ -262,20 +262,20 @@ extension Instruction: CustomStringConvertible {
       return "loadGlobal(nameIndex: \(hex(value0)))"
     case let .deleteGlobal(nameIndex: value0):
       return "deleteGlobal(nameIndex: \(hex(value0)))"
-    case let .loadFast(nameIndex: value0):
-      return "loadFast(nameIndex: \(hex(value0)))"
-    case let .storeFast(nameIndex: value0):
-      return "storeFast(nameIndex: \(hex(value0)))"
-    case let .deleteFast(nameIndex: value0):
-      return "deleteFast(nameIndex: \(hex(value0)))"
-    case let .loadDeref(nameIndex: value0):
-      return "loadDeref(nameIndex: \(hex(value0)))"
-    case let .storeDeref(nameIndex: value0):
-      return "storeDeref(nameIndex: \(hex(value0)))"
-    case let .deleteDeref(nameIndex: value0):
-      return "deleteDeref(nameIndex: \(hex(value0)))"
-    case let .loadClassDeref(nameIndex: value0):
-      return "loadClassDeref(nameIndex: \(hex(value0)))"
+    case let .loadFast(variableIndex: value0):
+      return "loadFast(variableIndex: \(hex(value0)))"
+    case let .storeFast(variableIndex: value0):
+      return "storeFast(variableIndex: \(hex(value0)))"
+    case let .deleteFast(variableIndex: value0):
+      return "deleteFast(variableIndex: \(hex(value0)))"
+    case let .loadDeref(cellOrFreeIndex: value0):
+      return "loadDeref(cellOrFreeIndex: \(hex(value0)))"
+    case let .storeDeref(cellOrFreeIndex: value0):
+      return "storeDeref(cellOrFreeIndex: \(hex(value0)))"
+    case let .deleteDeref(cellOrFreeIndex: value0):
+      return "deleteDeref(cellOrFreeIndex: \(hex(value0)))"
+    case let .loadClassDeref(cellOrFreeIndex: value0):
+      return "loadClassDeref(cellOrFreeIndex: \(hex(value0)))"
     case let .makeFunction(value0):
       return "makeFunction(\(value0))"
     case let .callFunction(argumentCount: value0):

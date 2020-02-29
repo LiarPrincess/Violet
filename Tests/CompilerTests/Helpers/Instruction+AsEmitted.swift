@@ -188,20 +188,20 @@ extension CodeObject {
     case let .deleteGlobal(nameIndex: arg):
       return EmittedInstruction(.deleteGlobal, self.getName(arg))
 
-    case let .loadFast(nameIndex: arg):
+    case let .loadFast(variableIndex: arg):
       return EmittedInstruction(.loadFast, self.getVariableName(arg))
-    case let .storeFast(nameIndex: arg):
+    case let .storeFast(variableIndex: arg):
       return EmittedInstruction(.storeFast, self.getVariableName(arg))
-    case let .deleteFast(nameIndex: arg):
+    case let .deleteFast(variableIndex: arg):
       return EmittedInstruction(.deleteFast, self.getVariableName(arg))
 
-    case let .loadDeref(nameIndex: arg):
+    case let .loadDeref(cellOrFreeIndex: arg):
       return EmittedInstruction(.loadDeref, self.getCellOrFreeName(arg))
-    case let .storeDeref(nameIndex: arg):
+    case let .storeDeref(cellOrFreeIndex: arg):
       return EmittedInstruction(.storeDeref, self.getCellOrFreeName(arg))
-    case let .deleteDeref(nameIndex: arg):
+    case let .deleteDeref(cellOrFreeIndex: arg):
       return EmittedInstruction(.deleteDeref, self.getCellOrFreeName(arg))
-    case let .loadClassDeref(nameIndex: arg):
+    case let .loadClassDeref(cellOrFreeIndex: arg):
       return EmittedInstruction(.loadClassDeref, self.getCellOrFreeName(arg))
 
     case let .makeFunction(arg):

@@ -121,7 +121,6 @@ extension SymbolTableBuilder {
   }
 
   public func visit(_ node: AnnAssignStmt) throws {
-    // if case let ExpressionKind.identifier(name) = target.kind {
     if let identifier = node.target as? IdentifierExpr {
       let name = identifier.value
       let current = self.lookupMangled(name)
