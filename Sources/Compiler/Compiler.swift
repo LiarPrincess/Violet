@@ -266,7 +266,7 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     let flags = self.createFlags(type: type, scope: scope)
 
     let varNames = scope.varNames
-    let freeVars = self.getSymbols(scope, withAnyOf: [.defFree, .defFreeClass])
+    let freeVars = self.getSymbols(scope, withAnyOf: [.srcFree, .defFreeClass])
     var cellVars = self.getSymbols(scope, withAnyOf: .cell)
 
     // append implicit __class__ cell.

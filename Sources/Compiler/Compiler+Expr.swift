@@ -53,7 +53,7 @@ extension Compiler {
   private enum IdentifierOperation {
     case fast
     case global
-    case deref
+    case deref(DerefType)
     case name
   }
 
@@ -68,8 +68,10 @@ extension Compiler {
     let flags = info?.flags ?? []
     var operation = IdentifierOperation.name
 
-    if flags.containsAny([.srcFree, .cell]) {
-      operation = .deref
+    if flags.contains(.srcFree) {
+      operation = .deref(.free)
+    } else if flags.contains(.cell) {
+      operation = .deref(.cell)
     } else if flags.contains(.srcLocal) {
       if self.currentScope.type == .function {
         operation = .fast
@@ -83,8 +85,8 @@ extension Compiler {
     }
 
     switch operation {
-    case .deref:
-      self.appendDeref(mangled: mangled, context: node.context)
+    case .deref(let type):
+      self.appendDeref(mangled: mangled, type: type, context: node.context)
     case .fast:
       self.builder.appendFast(name: mangled, context: node.context)
     case .global:
@@ -94,16 +96,18 @@ extension Compiler {
     }
   }
 
-  private func appendDeref(mangled: MangledName, context: ExpressionContext) {
+  private func appendDeref(mangled: MangledName,
+                           type: DerefType,
+                           context: ExpressionContext) {
     switch context {
     case .store:
-      self.builder.appendStoreDeref(mangled)
+      self.builder.appendStoreDeref(mangled, type: type)
     case .load where self.currentScope.type == .class:
-      self.builder.appendLoadClassDeref(mangled)
+      self.builder.appendLoadClassDeref(mangled, type: type)
     case .load:
-      self.builder.appendLoadDeref(mangled)
+      self.builder.appendLoadDeref(mangled, type: type)
     case .del:
-      self.builder.appendDeleteDeref(mangled)
+      self.builder.appendDeleteDeref(mangled, type: type)
     }
   }
 
