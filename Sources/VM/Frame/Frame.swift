@@ -66,14 +66,16 @@ internal final class Frame {
 
   /// Free variables (variables from upper scopes).
   ///
-  /// First cells and then free (see `loadClosure` bytecode instruction).
+  /// First cells and then free (see `loadClosure` or `deref` instructions).
+  ///
+  /// Btw. `Cell` = source for `free` variable.
   ///
   /// And yes, just as `self.fastLocals` they could be placed at the bottom
   /// of the stack.
   /// And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
-  internal lazy var cellsAndFreeVariables = [PyObject](
-    repeating: Py.none,
+  internal lazy var cellsAndFreeVariables = [PyCell](
+    repeating: Py.newCell(content: nil),
     count: self.code.cellVariableNames.count + self.code.freeVariableNames.count
   )
 
@@ -225,6 +227,7 @@ internal final class Frame {
     switch instruction {
     case .nop:
       return .ok
+
     case .popTop:
       return self.popTop()
     case .rotTwo:
@@ -235,6 +238,7 @@ internal final class Frame {
       return self.dupTop()
     case .dupTopTwo:
       return self.dupTopTwo()
+
     case .unaryPositive:
       return self.unaryPositive()
     case .unaryNegative:
@@ -243,6 +247,7 @@ internal final class Frame {
       return self.unaryNot()
     case .unaryInvert:
       return self.unaryInvert()
+
     case .binaryPower:
       return self.binaryPower()
     case .binaryMultiply:
@@ -269,6 +274,7 @@ internal final class Frame {
       return self.binaryXor()
     case .binaryOr:
       return self.binaryOr()
+
     case .inplacePower:
       return self.inplacePower()
     case .inplaceMultiply:
@@ -295,9 +301,11 @@ internal final class Frame {
       return self.inplaceXor()
     case .inplaceOr:
       return self.inplaceOr()
+
     case let .compareOp(comparison):
       assert(extendedArg == 0)
       return self.compareOp(comparison: comparison)
+
     case .getAwaitable:
       return self.getAwaitable()
     case .getAIter:
@@ -308,8 +316,10 @@ internal final class Frame {
       return self.yieldValue()
     case .yieldFrom:
       return self.yieldFrom()
+
     case .printExpr:
       return self.printExpr()
+
     case let .setupLoop(loopEndLabel):
       let extended = self.extend(base: extendedArg, arg: loopEndLabel)
       return self.setupLoop(loopEndLabelIndex: extended)
@@ -325,6 +335,7 @@ internal final class Frame {
     case let .continue(loopStartLabel):
       let extended = self.extend(base: extendedArg, arg: loopStartLabel)
       return self.doContinue(loopStartLabelIndex: extended)
+
     case let .buildTuple(elementCount):
       let extended = self.extend(base: extendedArg, arg: elementCount)
       return self.buildTuple(elementCount: extended)
@@ -340,6 +351,7 @@ internal final class Frame {
     case let .buildConstKeyMap(elementCount):
       let extended = self.extend(base: extendedArg, arg: elementCount)
       return self.buildConstKeyMap(elementCount: extended)
+
     case let .setAdd(value):
       let extended = self.extend(base: extendedArg, arg: value)
       return self.setAdd(value: extended)
@@ -349,6 +361,7 @@ internal final class Frame {
     case let .mapAdd(value):
       let extended = self.extend(base: extendedArg, arg: value)
       return self.mapAdd(value: extended)
+
     case let .buildTupleUnpack(elementCount):
       let extended = self.extend(base: extendedArg, arg: elementCount)
       return self.buildTupleUnpack(elementCount: extended)
@@ -374,9 +387,11 @@ internal final class Frame {
       let extended = self.extend(base: extendedArg, arg: arg)
       let decoded = UnpackExArg(value: extended)
       return self.unpackEx(arg: decoded)
+
     case let .loadConst(index):
       let extended = self.extend(base: extendedArg, arg: index)
       return self.loadConst(index: extended)
+
     case let .storeName(nameIndex):
       let extended = self.extend(base: extendedArg, arg: nameIndex)
       return self.storeName(nameIndex: extended)
@@ -386,6 +401,7 @@ internal final class Frame {
     case let .deleteName(nameIndex):
       let extended = self.extend(base: extendedArg, arg: nameIndex)
       return self.deleteName(nameIndex: extended)
+
     case let .storeAttribute(nameIndex):
       let extended = self.extend(base: extendedArg, arg: nameIndex)
       return self.storeAttribute(nameIndex: extended)
@@ -395,12 +411,14 @@ internal final class Frame {
     case let .deleteAttribute(nameIndex):
       let extended = self.extend(base: extendedArg, arg: nameIndex)
       return self.deleteAttribute(nameIndex: extended)
+
     case .binarySubscript:
       return self.binarySubscript()
     case .storeSubscript:
       return self.storeSubscript()
     case .deleteSubscript:
       return self.deleteSubscript()
+
     case let .storeGlobal(nameIndex):
       let extended = self.extend(base: extendedArg, arg: nameIndex)
       return self.storeGlobal(nameIndex: extended)
@@ -410,27 +428,30 @@ internal final class Frame {
     case let .deleteGlobal(nameIndex):
       let extended = self.extend(base: extendedArg, arg: nameIndex)
       return self.deleteGlobal(nameIndex: extended)
-    case let .loadFast(nameIndex):
-      let extended = self.extend(base: extendedArg, arg: nameIndex)
+
+    case let .loadFast(variableIndex: index):
+      let extended = self.extend(base: extendedArg, arg: index)
       return self.loadFast(index: extended)
-    case let .storeFast(nameIndex):
-      let extended = self.extend(base: extendedArg, arg: nameIndex)
+    case let .storeFast(variableIndex: index):
+      let extended = self.extend(base: extendedArg, arg: index)
       return self.storeFast(index: extended)
-    case let .deleteFast(nameIndex):
-      let extended = self.extend(base: extendedArg, arg: nameIndex)
+    case let .deleteFast(variableIndex: index):
+      let extended = self.extend(base: extendedArg, arg: index)
       return self.deleteFast(index: extended)
-    case let .loadDeref(nameIndex):
-      let extended = self.extend(base: extendedArg, arg: nameIndex)
-      return self.loadDeref(nameIndex: extended)
-    case let .storeDeref(nameIndex):
-      let extended = self.extend(base: extendedArg, arg: nameIndex)
-      return self.storeDeref(nameIndex: extended)
-    case let .deleteDeref(nameIndex):
-      let extended = self.extend(base: extendedArg, arg: nameIndex)
-      return self.deleteDeref(nameIndex: extended)
-    case let .loadClassDeref(nameIndex):
-      let extended = self.extend(base: extendedArg, arg: nameIndex)
-      return self.loadClassDeref(nameIndex: extended)
+
+    case let .loadDeref(cellOrFreeIndex: index):
+      let extended = self.extend(base: extendedArg, arg: index)
+      return self.loadDeref(cellOrFreeIndex: extended)
+    case let .storeDeref(cellOrFreeIndex: index):
+      let extended = self.extend(base: extendedArg, arg: index)
+      return self.storeDeref(cellOrFreeIndex: extended)
+    case let .deleteDeref(cellOrFreeIndex: index):
+      let extended = self.extend(base: extendedArg, arg: index)
+      return self.deleteDeref(cellOrFreeIndex: extended)
+    case let .loadClassDeref(cellOrFreeIndex: index):
+      let extended = self.extend(base: extendedArg, arg: index)
+      return self.loadClassDeref(cellOrFreeIndex: extended)
+
     case let .makeFunction(flags):
       assert(extendedArg == 0)
       return self.makeFunction(flags: flags)
@@ -443,16 +464,20 @@ internal final class Frame {
     case let .callFunctionEx(hasKeywordArguments):
       assert(extendedArg == 0)
       return self.callFunctionEx(hasKeywordArguments: hasKeywordArguments)
+
     case .`return`:
       return self.doReturn()
+
     case .loadBuildClass:
       return self.loadBuildClass()
+
     case let .loadMethod(nameIndex):
       let extended = self.extend(base: extendedArg, arg: nameIndex)
       return self.loadMethod(nameIndex: extended)
     case let .callMethod(argumentCount):
       let extended = self.extend(base: extendedArg, arg: argumentCount)
       return self.callMethod(argumentCount: extended)
+
     case .importStar:
       return self.importStar()
     case let .importName(nameIndex):
@@ -461,6 +486,7 @@ internal final class Frame {
     case let .importFrom(nameIndex):
       let extended = self.extend(base: extendedArg, arg: nameIndex)
       return self.importFrom(nameIndex: extended)
+
     case .popExcept:
       return self.popExcept()
     case .endFinally:
@@ -471,9 +497,11 @@ internal final class Frame {
     case let .setupFinally(finallyStartLabel):
       let extended = self.extend(base: extendedArg, arg: finallyStartLabel)
       return self.setupFinally(finallyStartLabelIndex: extended)
+
     case let .raiseVarargs(arg):
       assert(extendedArg == 0)
       return self.raiseVarargs(arg: arg)
+
     case let .setupWith(afterBodyLabel):
       let extended = self.extend(base: extendedArg, arg: afterBodyLabel)
       return self.setupWith(afterBodyLabelIndex: extended)
@@ -485,9 +513,11 @@ internal final class Frame {
       return self.beforeAsyncWith()
     case .setupAsyncWith:
       return self.setupAsyncWith()
+
     case let .jumpAbsolute(labelIndex):
       let extended = self.extend(base: extendedArg, arg: labelIndex)
       return self.jumpAbsolute(labelIndex: extended)
+
     case let .popJumpIfTrue(labelIndex):
       let extended = self.extend(base: extendedArg, arg: labelIndex)
       return self.popJumpIfTrue(labelIndex: extended)
@@ -500,15 +530,19 @@ internal final class Frame {
     case let .jumpIfFalseOrPop(labelIndex):
       let extended = self.extend(base: extendedArg, arg: labelIndex)
       return self.jumpIfFalseOrPop(labelIndex: extended)
+
     case let .formatValue(conversion, hasFormat):
       assert(extendedArg == 0)
       return self.formatValue(conversion: conversion, hasFormat: hasFormat)
+
     case let .buildString(arg):
       let extended = self.extend(base: extendedArg, arg: arg)
       return self.buildString(count: extended)
+
     case let .extendedArg(value):
       let extended = self.extend(base: extendedArg, arg: value)
       return self.executeInstruction(extendedArg: extended)
+
     case .setupAnnotations:
       return self.setupAnnotations()
     case .popBlock:

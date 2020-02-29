@@ -17,14 +17,15 @@ class PyFakeDelegate: PyDelegate {
   func eval(name: String?,
             qualname: String?,
             code: CodeObject,
-            
+
             args: [PyObject],
             kwargs: PyDict?,
             defaults: [PyObject],
             kwDefaults: PyDict?,
 
             globals: PyDict,
-            locals: PyDict)  -> PyResult<PyObject> {
+            locals: PyDict,
+            closure: PyTuple?)  -> PyResult<PyObject> {
     let e = Py.newSystemError(msg: "'\(#function)' should not be called")
     return .error(e)
   }

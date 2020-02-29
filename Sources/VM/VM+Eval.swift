@@ -1,3 +1,4 @@
+import Core
 import Objects
 import Bytecode
 
@@ -106,15 +107,16 @@ extension VM {
 
     assert(closure.elements.count == code.freeVariableNames.count)
 
-    let countBefore = frame.cellsAndFreeVariables.count
-
-    // Place free after cells
     let cellCount = code.cellVariableNames.count
-    frame.cellsAndFreeVariables.replaceSubrange(
-      cellCount...,
-      with: closure.elements
-    )
+    for (index, cellObject) in closure.elements.enumerated() {
+      guard let cell = cellObject as? PyCell else {
+        let t = cellObject.typeName
+        trap("Closure can only contain cells, not '\(t)'.")
+      }
 
-    assert(frame.cellsAndFreeVariables.count == countBefore)
+      // Free are laways after cells
+      let cellOrFreeIndex = cellCount + index
+      frame.cellsAndFreeVariables[cellOrFreeIndex] = cell
+    }
   }
 }

@@ -140,7 +140,8 @@ extension BuiltinFunctions {
       return .typeError("method() func must be function, not \(fn.typeName)")
     }
 
-    return self.newMethod(fn: f, object: object)
+    let result = self.newMethod(fn: f, object: object)
+    return .value(result)
   }
 
   public func newMethod(fn: PyFunction, object: PyObject) -> PyMethod {

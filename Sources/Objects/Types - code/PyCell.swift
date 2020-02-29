@@ -2,9 +2,13 @@
 // Objects -> namespaceobject.c
 
 // sourcery: pytype = cell, default, hasGC
+/// `Cell` = source for `free` variable.
+///
+/// Cells will be shared between multiple frames, so that child frame
+/// can interact with value in parent frame.
 public class PyCell: PyObject {
 
-  internal var content: PyObject?
+  public var content: PyObject?
 
   internal init(content: PyObject?) {
     self.content = content

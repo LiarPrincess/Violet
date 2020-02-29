@@ -1,5 +1,8 @@
+import Core
 import Bytecode
 import Objects
+
+// swiftlint:disable file_length
 
 extension Frame {
 
@@ -171,7 +174,7 @@ extension Frame {
       return .ok
     }
 
-    return self.unboundFast(index: index)
+    return self.unboundFastError(index: index)
   }
 
   internal func storeFast(index: Int) -> InstructionResult {
@@ -190,15 +193,107 @@ extension Frame {
       return .ok
     }
 
-    return self.unboundFast(index: index)
+    return self.unboundFastError(index: index)
   }
 
-  private func unboundFast(index: Int) -> InstructionResult {
+  private func unboundFastError(index: Int) -> InstructionResult {
     assert(0 <= index && index < self.code.variableNames.count)
 
     let mangled = self.code.variableNames[index]
     let e = Py.newUnboundLocalError(variableName: mangled.value)
     return .unwind(.exception(e))
+  }
+
+  // MARK: - Deref
+
+  /// Loads the cell contained in slot i of the cell and free variable storage.
+  /// Pushes a reference to the object the cell contains on the stack.
+  internal func loadDeref(cellOrFreeIndex index: Int) -> InstructionResult {
+    let cell = self.getCellOrFree(at: index)
+
+    if let content = cell.content {
+      self.stack.push(content)
+      return .ok
+    }
+
+    return self.unboundDerefError(index: index)
+  }
+
+  /// Stores TOS into the cell contained in slot i of the cell
+  /// and free variable storage.
+  internal func storeDeref(cellOrFreeIndex index: Int) -> InstructionResult {
+    let cell = self.getCellOrFree(at: index)
+
+    let value = self.stack.pop()
+    cell.content = value
+    return .ok
+  }
+
+  /// Empties the cell contained in slot i of the cell and free variable storage.
+  /// Used by the del statement.
+  internal func deleteDeref(cellOrFreeIndex index: Int) -> InstructionResult {
+    let cell = self.getCellOrFree(at: index)
+
+    let isEmpty = cell.content == nil
+    if isEmpty {
+      return self.unboundDerefError(index: index)
+    }
+
+    cell.content = nil
+    return .ok
+  }
+
+  /// Much like `LoadDeref` but first checks the locals dictionary before
+  /// consulting the cell.
+  /// This is used for loading free variables in class bodies.
+  internal func loadClassDeref(cellOrFreeIndex: Int) -> InstructionResult {
+    assert(cellOrFreeIndex >= self.code.cellVariableNames.count)
+
+    let freeIndex = cellOrFreeIndex - self.code.cellVariableNames.count
+    assert(0 <= freeIndex && freeIndex < self.code.freeVariableNames.count)
+
+    let mangled = self.code.freeVariableNames[freeIndex]
+    let name = Py.getInterned(mangled.value)
+
+    let value: PyObject
+    switch self.localSymbols.get(key: name) {
+    case .value(let o):
+      value = o
+    case .notFound:
+      let cell = self.cellsAndFreeVariables[cellOrFreeIndex]
+      switch cell.content {
+      case .some(let o): value = o
+      case .none: return self.unboundDerefError(index: cellOrFreeIndex)
+      }
+    case .error(let e):
+      return .unwind(.exception(e))
+    }
+
+    self.stack.push(value)
+    return .ok
+  }
+
+  private func getCellOrFree(at index: Int) -> PyCell {
+    assert(0 <= index && index < self.cellsAndFreeVariables.count)
+    return self.cellsAndFreeVariables[index]
+  }
+
+  private func unboundDerefError(index: Int) -> InstructionResult {
+    assert(0 <= index && index < self.code.cellVariableNames.count)
+
+    let mangled = self.getDerefName(index: index)
+    let msg = "cell/free variable '\(mangled)' referenced before assignment " +
+              "in enclosing scope"
+
+    let e = Py.newNameError(msg: msg)
+    return .unwind(.exception(e))
+  }
+
+  private func getDerefName(index: Int) -> MangledName {
+    let cellCount = self.code.cellVariableNames.count
+    return index < cellCount ?
+      self.code.cellVariableNames[index] :
+      self.code.freeVariableNames[index - cellCount]
   }
 
   // MARK: - Load closure

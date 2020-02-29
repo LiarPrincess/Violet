@@ -1,3 +1,4 @@
+import Core
 import Bytecode
 import Objects
 
@@ -48,6 +49,12 @@ extension Frame {
     return self.unimplemented()
   }
 
+  /// If TOS is a generator iterator or coroutine object then it is left as is.
+  /// Otherwise, implements `TOS = iter(TOS)`.
+  internal func getYieldFromIter() -> InstructionResult {
+    return self.unimplemented()
+  }
+
   // MARK: - Import
 
   /// Loads all symbols not starting with '_' directly from the module TOS
@@ -64,59 +71,6 @@ extension Frame {
   /// The resulting object is pushed onto the stack,
   /// to be subsequently stored by a `StoreFast` instruction.
   internal func importFrom(nameIndex: Int) -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  // MARK: - Loop
-
-  /// If TOS is a generator iterator or coroutine object then it is left as is.
-  /// Otherwise, implements `TOS = iter(TOS)`.
-  internal func getYieldFromIter() -> InstructionResult {
-    return self.unimplemented()
-  }
-
-  // MARK: - Frame+Store+Load+Delete
-
-  /// Loads the cell contained in slot i of the cell and free variable storage.
-  /// Pushes a reference to the object the cell contains on the stack.
-  internal func loadDeref(nameIndex: Int) -> InstructionResult {
-//    let name = self.getName(index: nameIndex)
-//    if let value = self.freeVariables[name] {
-//      self.stack.push(value)
-//      return .ok
-//    }
-
-    // format_exc_unbound(co, oparg);
-    return self.unimplemented()
-  }
-
-  /// Stores TOS into the cell contained in slot i of the cell
-  /// and free variable storage.
-  internal func storeDeref(nameIndex: Int) -> InstructionResult {
-//    let name = self.getName(index: nameIndex)
-//    let value = self.stack.pop()
-//    self.freeVariables[name] = value
-    return self.unimplemented()
-  }
-
-  /// Empties the cell contained in slot i of the cell and free variable storage.
-  /// Used by the del statement.
-  internal func deleteDeref(nameIndex: Int) -> InstructionResult {
-//    let name = self.getName(index: nameIndex)
-//    let value = self.freeVariables.removeValue(forKey: name)
-//
-//    if value == nil {
-//      // format_exc_unbound(co, oparg);
-//      fatalError()
-//    }
-
-    return self.unimplemented()
-  }
-
-  /// Much like `LoadDeref` but first checks the locals dictionary before
-  /// consulting the cell.
-  /// This is used for loading free variables in class bodies.
-  internal func loadClassDeref(nameIndex: Int) -> InstructionResult {
     return self.unimplemented()
   }
 
@@ -176,6 +130,6 @@ extension Frame {
   // MARK: - Unimplemented
 
   private func unimplemented(fn: StaticString = #function) -> InstructionResult {
-    fatalError("NOT IMPLEMENTED: '\(fn)'")
+    trap("NOT IMPLEMENTED: '\(fn)'")
   }
 }
