@@ -5,59 +5,59 @@ extension CodeObjectBuilder {
 
   /// Append a `loadConst(True)` instruction to this code object.
   public func appendTrue() {
-    if let index = self.cachedIndices.true {
+    if let index = self.cache.true {
       self.appendExistingConstant(index: index)
     } else {
       let index = self.appendNewConstant(.true)
-      self.cachedIndices.true = index
+      self.cache.true = index
     }
   }
 
   /// Append a `loadConst(False)` instruction to this code object.
   public func appendFalse() {
-    if let index = self.cachedIndices.false {
+    if let index = self.cache.false {
       self.appendExistingConstant(index: index)
     } else {
       let index = self.appendNewConstant(.false)
-      self.cachedIndices.false = index
+      self.cache.false = index
     }
   }
 
   /// Append a `loadConst(None)` instruction to this code object.
   public func appendNone() {
-    if let index = self.cachedIndices.none {
+    if let index = self.cache.none {
       self.appendExistingConstant(index: index)
     } else {
       let index = self.appendNewConstant(.none)
-      self.cachedIndices.none = index
+      self.cache.none = index
     }
   }
 
   /// Append a `loadConst(Ellipsis)` instruction to this code object.
   public func appendEllipsis() {
-    if let index = self.cachedIndices.ellipsis {
+    if let index = self.cache.ellipsis {
       self.appendExistingConstant(index: index)
     } else {
       let index = self.appendNewConstant(.ellipsis)
-      self.cachedIndices.ellipsis = index
+      self.cache.ellipsis = index
     }
   }
 
   /// Append a `loadConst(Integer)` instruction to this code object.
   public func appendInteger(_ value: BigInt) {
     if value == 0 {
-      if let index = self.cachedIndices.zero {
+      if let index = self.cache.zero {
         self.appendExistingConstant(index: index)
       } else {
         let index = self.appendNewConstant(.integer(value))
-        self.cachedIndices.zero = index
+        self.cache.zero = index
       }
     } else if value == 1 {
-      if let index = self.cachedIndices.one {
+      if let index = self.cache.one {
         self.appendExistingConstant(index: index)
       } else {
         let index = self.appendNewConstant(.integer(value))
-        self.cachedIndices.one = index
+        self.cache.one = index
       }
     } else {
       _ = self.appendNewConstant(.integer(value))
@@ -79,11 +79,11 @@ extension CodeObjectBuilder {
     let s = value.constant
     let key = UseScalarsToHashString(s)
 
-    if let index = self.cachedIndices.constantStrings[key] {
+    if let index = self.cache.constantStrings[key] {
       self.appendExistingConstant(index: index)
     } else {
       let index = self.appendNewConstant(.string(s))
-      self.cachedIndices.constantStrings[key] = index
+      self.cache.constantStrings[key] = index
     }
   }
 
@@ -105,8 +105,8 @@ extension CodeObjectBuilder {
   // MARK: - Helpers
 
   private func appendNewConstant(_ constant: Constant) -> Int {
-    let index = self.codeObject.constants.endIndex
-    self.codeObject.constants.append(constant)
+    let index = self.code.constants.endIndex
+    self.code.constants.append(constant)
 
     self.appendExistingConstant(index: index)
     return index

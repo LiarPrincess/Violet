@@ -90,19 +90,19 @@ extension CodeObjectBuilder {
 
   /// Append a `loadFast` instruction to this code object.
   public func appendLoadFast(_ name: MangledName) {
-    let index = self.addVarNameWithExtendedArgIfNeeded(name: name)
+    let index = self.addVariableNameWithExtendedArgIfNeeded(name: name)
     self.append(.loadFast(nameIndex: index))
   }
 
   /// Append a `storeFast` instruction to this code object.
   public func appendStoreFast(_ name: MangledName) {
-    let index = self.addVarNameWithExtendedArgIfNeeded(name: name)
+    let index = self.addVariableNameWithExtendedArgIfNeeded(name: name)
     self.append(.storeFast(nameIndex: index))
   }
 
   /// Append a `deleteFast` instruction to this code object.
   public func appendDeleteFast(_ name: MangledName) {
-    let index = self.addVarNameWithExtendedArgIfNeeded(name: name)
+    let index = self.addVariableNameWithExtendedArgIfNeeded(name: name)
     self.append(.deleteFast(nameIndex: index))
   }
 
@@ -151,7 +151,7 @@ extension CodeObjectBuilder {
   private func getLoadClosureArg(name: MangledName, type: ClosureType) -> Int {
     switch type {
     case .cell:
-      let names = self.codeObject.cellVariableNames
+      let names = self.code.cellVariableNames
       guard let index = names.firstIndex(of: name) else {
         trap("[LoadClosure] Name '\(name.value)' was not found in cell variables.")
       }
@@ -159,13 +159,12 @@ extension CodeObjectBuilder {
       return index
 
     case .free:
-      let names = self.codeObject.freeVariableNames
+      let names = self.code.freeVariableNames
       guard let index = names.firstIndex(of: name) else {
         trap("[LoadClosure] Name '\(name.value)' was not found in free variables.")
       }
 
-      let offset = self.codeObject.cellVariableNames.count
-      return offset + index
+      return self.offsetFreeVariable(index: index)
     }
   }
 }

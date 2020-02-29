@@ -1,85 +1,32 @@
 import Core
 
-/// Indices of already added constants (so that we don't store duplicates).
-internal struct CachedIndices {
-
-  internal var `true`: Int?
-  internal var `false`: Int?
-  internal var none: Int?
-  internal var ellipsis: Int?
-  internal var zero: Int?
-  internal var one: Int?
-  /// CodeObject.constants -> string
-  internal var constantStrings = [UseScalarsToHashString:Int]()
-  /// CodeObject.names
-  internal var names = [UseScalarsToHashString:Int]()
-  /// CodeObject.varNames
-  internal var variableNames = [MangledName:Int]()
-}
-
 /// Helper for adding new instructions to `CodeObject`.
 /// It will store reference to `codeObject`,
 /// it is acceptable to have multiple builders to a single `CodeObject`.
 public class CodeObjectBuilder {
 
   /// `CodeObject` that we are adding instructions to.
-  internal let codeObject: CodeObject
+  internal let code: CodeObject
 
   /// Location on which next `append` occurs.
   private var appendLocation = SourceLocation.start
 
   /// Indices of already added constants (so that we don't store duplicates).
-  internal var cachedIndices = CachedIndices()
+  internal var cache: CodeObjectBuilderCache
 
   internal var instructions: [Instruction] {
-    _read { yield self.codeObject.instructions }
-    _modify { yield &self.codeObject.instructions }
+    _read { yield self.code.instructions }
+    _modify { yield &self.code.instructions }
   }
 
   internal var instructionLines: [SourceLine] {
-    _read { yield self.codeObject.instructionLines }
-    _modify { yield &self.codeObject.instructionLines }
+    _read { yield self.code.instructionLines }
+    _modify { yield &self.code.instructionLines }
   }
 
   public init(codeObject: CodeObject) {
-    self.codeObject = codeObject
-    self.fillCachedIndices()
-  }
-
-  private func fillCachedIndices() {
-    for (index, constant) in self.codeObject.constants.enumerated() {
-      switch constant {
-      case .true:
-        self.cachedIndices.true = index
-      case .false:
-        self.cachedIndices.false = index
-      case .none:
-        self.cachedIndices.none = index
-      case .ellipsis:
-        self.cachedIndices.ellipsis = index
-
-      case let .string(s):
-        let key = UseScalarsToHashString(s)
-        self.cachedIndices.constantStrings[key] = index
-
-      case let .integer(i) where i == 0:
-        self.cachedIndices.zero = index
-      case let .integer(i) where i == 1:
-        self.cachedIndices.one = index
-
-      case .integer, .float, .complex, .bytes, .code, .tuple:
-        break
-      }
-    }
-
-    for (index, name) in self.codeObject.names.enumerated() {
-      let key = UseScalarsToHashString(name)
-      self.cachedIndices.names[key] = index
-    }
-
-    for (index, name) in self.codeObject.variableNames.enumerated() {
-      self.cachedIndices.variableNames[name] = index
-    }
+    self.code = codeObject
+    self.cache = CodeObjectBuilderCache(code: codeObject)
   }
 
   // MARK: - Append
@@ -108,18 +55,18 @@ public class CodeObjectBuilder {
   /// Creates new label (jump target) with invalid value.
   /// Use `self.setLabel()` to assign proper value.
   public func createLabel() -> Label {
-    let index = self.codeObject.labels.endIndex
-    self.codeObject.labels.append(Label.notAssigned)
+    let index = self.code.labels.endIndex
+    self.code.labels.append(Label.notAssigned)
     return Label(index: index)
   }
 
   /// Set label to next emitted instruction.
   public func setLabel(_ label: Label) {
-    assert(label.index < self.codeObject.labels.count)
-    assert(self.codeObject.labels[label.index] == Label.notAssigned)
+    assert(label.index < self.code.labels.count)
+    assert(self.code.labels[label.index] == Label.notAssigned)
 
     let jumpTarget = self.instructions.endIndex
-    self.codeObject.labels[label.index] = jumpTarget
+    self.code.labels[label.index] = jumpTarget
   }
 
   // MARK: - Add name
@@ -132,25 +79,27 @@ public class CodeObjectBuilder {
   private func getNameIndex(_ name: String) -> Int {
     let key = UseScalarsToHashString(name)
 
-    if let cachedIndex = self.cachedIndices.names[key] {
+    if let cachedIndex = self.cache.names[key] {
       return cachedIndex
     }
 
-    let index = self.codeObject.names.endIndex
-    self.codeObject.names.append(name)
-    self.cachedIndices.names[key] = index
+    let index = self.code.names.endIndex
+    self.code.names.append(name)
+    self.cache.names[key] = index
     return index
   }
 
-  // MARK: - Add var name
+  // MARK: - Add variable name
 
-  internal func addVarNameWithExtendedArgIfNeeded(name: MangledName) -> UInt8 {
-    let index = self.getVarNameIndex(name)
+  internal func addVariableNameWithExtendedArgIfNeeded(
+    name: MangledName
+  ) -> UInt8 {
+    let index = self.getVariableNameIndex(name)
     return self.appendExtendedArgIfNeeded(index)
   }
 
-  private func getVarNameIndex(_ name: MangledName) -> Int {
-    if let cachedIndex = self.cachedIndices.variableNames[name] {
+  private func getVariableNameIndex(_ name: MangledName) -> Int {
+    if let cachedIndex = self.cache.variableNames[name] {
       return cachedIndex
     }
 
@@ -183,9 +132,9 @@ public class CodeObjectBuilder {
   internal func appendExtendedArgIfNeeded(_ arg: Int) -> UInt8 {
     assert(arg >= 0)
     if arg > Instruction.maxExtendedArgument3 {
-      fatalError(
-        "[BUG] CodeObjectBuilder: Cannot create instruction with argument greater " +
-        "than '\(Instruction.maxExtendedArgument3)' (at \(self.appendLocation))."
+      trap(
+        "Cannot create instruction with argument greater than " +
+        "'\(Instruction.maxExtendedArgument3)' (at \(self.appendLocation))."
       )
     }
 
