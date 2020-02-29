@@ -134,11 +134,11 @@ extension CodeObject {
       return EmittedInstruction(.buildConstKeyMap, String(describing: arg))
 
     case let .setAdd(arg):
-      return EmittedInstruction(.setAdd, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.setAdd, String(describing: arg) + "_NOT_DONE")
     case let .listAppend(arg):
-      return EmittedInstruction(.listAppend, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.listAppend, String(describing: arg) + "_NOT_DONE")
     case let .mapAdd(arg):
-      return EmittedInstruction(.mapAdd, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.mapAdd, String(describing: arg) + "_NOT_DONE")
 
     case let .buildTupleUnpack(elementCount: arg):
       return EmittedInstruction(.buildTupleUnpack, String(describing: arg))
@@ -196,13 +196,13 @@ extension CodeObject {
       return EmittedInstruction(.deleteFast, self.getVariableName(arg))
 
     case let .loadDeref(nameIndex: arg):
-      return EmittedInstruction(.loadDeref, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.loadDeref, self.getCellOrFreeName(arg))
     case let .storeDeref(nameIndex: arg):
-      return EmittedInstruction(.storeDeref, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.storeDeref, self.getCellOrFreeName(arg))
     case let .deleteDeref(nameIndex: arg):
-      return EmittedInstruction(.deleteDeref, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.deleteDeref, self.getCellOrFreeName(arg))
     case let .loadClassDeref(nameIndex: arg):
-      return EmittedInstruction(.loadClassDeref, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.loadClassDeref, self.getCellOrFreeName(arg))
 
     case let .makeFunction(arg):
       return EmittedInstruction(.makeFunction, String(describing: arg.rawValue))
@@ -221,9 +221,9 @@ extension CodeObject {
     case .loadBuildClass:
       return EmittedInstruction(.loadBuildClass)
     case let .loadMethod(nameIndex: arg):
-      return EmittedInstruction(.loadMethod, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.loadMethod, String(describing: arg) + "_NOT_DONE")
     case let .callMethod(argumentCount: arg):
-      return EmittedInstruction(.callMethod, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.callMethod, String(describing: arg) + "_NOT_DONE")
     case .importStar:
       return EmittedInstruction(.importStar)
     case let .importName(nameIndex: arg):
@@ -276,14 +276,14 @@ extension CodeObject {
       return EmittedInstruction(.buildString, String(describing: arg))
 
     case let .extendedArg(arg):
-      return EmittedInstruction(.extendedArg, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.extendedArg, String(describing: arg) + "_NOT_DONE")
 
     case .setupAnnotations:
       return EmittedInstruction(.setupAnnotations)
     case .popBlock:
       return EmittedInstruction(.popBlock)
     case let .loadClosure(cellOrFreeIndex: arg):
-      return EmittedInstruction(.loadClosure, String(describing: arg) + "_INVALID")
+      return EmittedInstruction(.loadClosure, String(describing: arg) + "_NOT_DONE")
     case let .buildSlice(arg):
       return EmittedInstruction(.buildSlice, self.toString(arg))
     }
@@ -338,6 +338,14 @@ extension CodeObject {
     precondition(index < self.labels.count)
     let address = Instruction.byteSize * self.labels[Int(index)]
     return String(describing: address)
+  }
+
+  private func getCellOrFreeName(_ index: UInt8) -> String {
+    let mangled = index < self.cellVariableNames.count ?
+      self.cellVariableNames[Int(index)] :
+      self.freeVariableNames[Int(index)]
+
+    return mangled.value
   }
 
   private func toString(_ opcode: ComparisonOpcode) -> String {

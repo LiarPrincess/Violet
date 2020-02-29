@@ -1,9 +1,12 @@
 import Core
 
-public enum ClosureType {
-  /// Captured variable
+public enum DerefType {
   case cell
-  /// Closure over 'name'
+  case free
+}
+
+public enum ClosureType {
+  case cell
   case free
 }
 
@@ -109,27 +112,37 @@ extension CodeObjectBuilder {
   // MARK: - Deref
 
   /// Append a `loadDeref` instruction to this code object.
-  public func appendLoadDeref<S: ConstantString>(_ name: S) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
+  public func appendLoadDeref(_ name: MangledName, type: DerefType) {
+    let index = self.addCellOrFreeVariableName(name, type: type)
     self.append(.loadDeref(nameIndex: index))
   }
 
   /// Append a `loadClassDeref` instruction to this code object.
-  public func appendLoadClassDeref<S: ConstantString>(_ name: S) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
+  public func appendLoadClassDeref(_ name: MangledName, type: DerefType) {
+    let index = self.addCellOrFreeVariableName(name, type: type)
     self.append(.loadClassDeref(nameIndex: index))
   }
 
   /// Append a `storeDeref` instruction to this code object.
-  public func appendStoreDeref<S: ConstantString>(_ name: S) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
+  public func appendStoreDeref(_ name: MangledName, type: DerefType) {
+    let index = self.addCellOrFreeVariableName(name, type: type)
     self.append(.storeDeref(nameIndex: index))
   }
 
   /// Append a `deleteDeref` instruction to this code object.
-  public func appendDeleteDeref<S: ConstantString>(_ name: S) {
-    let index = self.addNameWithExtendedArgIfNeeded(name: name)
+  public func appendDeleteDeref(_ name: MangledName, type: DerefType) {
+    let index = self.addCellOrFreeVariableName(name, type: type)
     self.append(.deleteDeref(nameIndex: index))
+  }
+
+  private func addCellOrFreeVariableName(_ name: MangledName,
+                                         type: DerefType) -> UInt8 {
+    switch type {
+    case .cell:
+      return self.addCellVariableNameWithExtendedArgIfNeeded(name: name)
+    case .free:
+      return self.addFreeVariableNameWithExtendedArgIfNeeded(name: name)
+    }
   }
 
   // MARK: - Load closure

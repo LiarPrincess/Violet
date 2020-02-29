@@ -233,20 +233,20 @@ extension CodeObject {
       return "deleteGlobal \(self.getName(extendedArg + Int(arg)))"
 
     case let .loadFast(nameIndex: arg):
-      return "loadFast \(self.getName(extendedArg + Int(arg)))"
+      return "loadFast \(self.getVariableName(extendedArg + Int(arg)))"
     case let .storeFast(nameIndex: arg):
-      return "storeFast \(self.getName(extendedArg + Int(arg)))"
+      return "storeFast \(self.getVariableName(extendedArg + Int(arg)))"
     case let .deleteFast(nameIndex: arg):
-      return "deleteFast \(self.getName(extendedArg + Int(arg)))"
+      return "deleteFast \(self.getVariableName(extendedArg + Int(arg)))"
 
     case let .loadDeref(nameIndex: arg):
-      return "loadDeref \(self.getName(extendedArg + Int(arg)))"
+      return "loadDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
     case let .storeDeref(nameIndex: arg):
-      return "storeDeref \(self.getName(extendedArg + Int(arg)))"
+      return "storeDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
     case let .deleteDeref(nameIndex: arg):
-      return "deleteDeref \(self.getName(extendedArg + Int(arg)))"
+      return "deleteDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
     case let .loadClassDeref(nameIndex: arg):
-      return "loadClassDeref \(self.getName(extendedArg + Int(arg)))"
+      return "loadClassDeref \(self.getCellOrFreeName(extendedArg + Int(arg)))"
 
     case let .makeFunction(arg):
       if arg.isEmpty {
@@ -363,6 +363,19 @@ extension CodeObject {
   private func getName(_ index: Int) -> String {
     assert(0 <= index && index < self.names.count)
     return self.names[index]
+  }
+
+  private func getVariableName(_ index: Int) -> String {
+    assert(0 <= index && index < self.variableNames.count)
+    return self.variableNames[index].value
+  }
+
+  private func getCellOrFreeName(_ index: Int) -> String {
+    let mangled = index < self.cellVariableNames.count ?
+      self.cellVariableNames[index] :
+      self.freeVariableNames[index]
+
+    return mangled.value
   }
 
   private func getLabel(_ index: Int) -> String {

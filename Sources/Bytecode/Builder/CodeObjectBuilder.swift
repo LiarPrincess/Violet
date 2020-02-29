@@ -103,10 +103,76 @@ public class CodeObjectBuilder {
       return cachedIndex
     }
 
-    let index = self.codeObject.variableNames.endIndex
-    self.codeObject.variableNames.append(name)
-    self.cachedIndices.variableNames[name] = index
-    return index
+    self.missingVariable(name: name,
+                         allowedNames: self.code.variableNames,
+                         type: .variable)
+  }
+
+  private enum VariableType: String {
+    case variable = "variable"
+    case cell = "cell variable"
+    case free = "free variable"
+  }
+
+  private func missingVariable(name: MangledName,
+                               allowedNames: [MangledName],
+                               type: VariableType) -> Never {
+    let codeName = self.code.qualifiedName
+    var msg = "Code object '\(codeName)' does not contain \(type.rawValue) '\(name)'"
+
+    if allowedNames.any {
+      let names = allowedNames.map { $0.value }.joined(separator: ", ")
+      msg += ". Only one of the following names is allowed: \(names)."
+    } else {
+      msg += " (in fact it contains no such variables)."
+    }
+
+    trap(msg)
+  }
+
+  // MARK: - Add free variable name
+
+  internal func addFreeVariableNameWithExtendedArgIfNeeded(
+    name: MangledName
+  ) -> UInt8 {
+    let index = self.getFreeVariableNameIndex(name)
+    let realIndex = self.offsetFreeVariable(index: index)
+    return self.appendExtendedArgIfNeeded(realIndex)
+  }
+
+  private func getFreeVariableNameIndex(_ name: MangledName) -> Int {
+    if let cachedIndex = self.cache.freeVariableNames[name] {
+      return cachedIndex
+    }
+
+    self.missingVariable(name: name,
+                         allowedNames: self.code.freeVariableNames,
+                         type: .free)
+  }
+
+  internal func offsetFreeVariable(index: Int) -> Int {
+    // Int 'VM.Frame.cellsAndFreeVariables' we store cells first and then free.
+    let offset = self.code.cellVariableNames.count
+    return offset + index
+  }
+
+  // MARK: - Add cell variable name
+
+  internal func addCellVariableNameWithExtendedArgIfNeeded(
+    name: MangledName
+  ) -> UInt8 {
+    let index = self.getCellVariableNameIndex(name)
+    return self.appendExtendedArgIfNeeded(index)
+  }
+
+  private func getCellVariableNameIndex(_ name: MangledName) -> Int {
+    if let cachedIndex = self.cache.cellVariableNames[name] {
+      return cachedIndex
+    }
+
+    self.missingVariable(name: name,
+                         allowedNames: self.code.cellVariableNames,
+                         type: .cell)
   }
 
   // MARK: - Add label
