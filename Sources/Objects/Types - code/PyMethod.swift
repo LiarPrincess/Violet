@@ -21,7 +21,7 @@ public class PyMethod: PyObject {
   override public var description: String {
     let name = self.function.name
     let qualname = self.function.qualname
-    return "PyMethod(name: \(name), qualname: \(qualname))"
+    return "PyMethod(name: \(name), qualname: \(qualname), object: \(self.object))"
   }
 
   // MARK: - Init

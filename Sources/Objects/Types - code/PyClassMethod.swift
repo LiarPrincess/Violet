@@ -27,6 +27,11 @@ public class PyClassMethod: PyObject {
     If you want those, see the staticmethod builtin.
     """
 
+  override public var description: String {
+    let c = self.callable.map(String.init) ?? "nil"
+    return "PyClassMethod(callable: \(c))"
+  }
+
   private var callable: PyObject?
   private lazy var __dict__ = PyDict()
 

@@ -86,8 +86,8 @@ internal enum AttributeHelper {
     let descriptor = SetDescriptor.create(object: object, attributeName: name)
 
     if let desc = descriptor {
-      _ = desc.call(value: value)
-      return .value(Py.none)
+      let result = desc.call(value: value)
+      return result.map { _ in Py.none }
     }
 
     if let dict = Py.get__dict__(object: object) {

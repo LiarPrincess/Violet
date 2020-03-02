@@ -1,7 +1,10 @@
-// Run this:
+// Docs:
+// https://docs.python.org/3/howto/descriptor.html
+
+// Practical example:
 // >>> class MyProp:
 // ...     def __init__(self, method): pass
-// ...     def __get__(self, instance, klass):
+// ...     def __get__(self, instance, klass): # klass because we Java now
 // ...             print('instance:', instance)
 // ...             print('klass:', klass)
 // ...             return 7
@@ -18,22 +21,22 @@
 // 7
 
 // >>> C.x          <-- will call '__get__' on 'MyProp'
-// instance: None
+// instance: None   < called on type, None (marker) will we used as instance
 // klass: <class '__main__.C'>
 // 7
 
 // MARK: - Marker
 
-/// If descriptor is called on a class then this value will be used
-/// as a `object` parameter.
+/// If descriptor is called on a class/type then this value will be used
+/// as a `object/instance` parameter.
 internal var descriptorStaticMarker: PyObject {
   return Py.none
 }
 
 extension PyObject {
 
-  /// If descriptor is called on a class then this value will be used
-  /// as a `object` parameter.
+  /// If descriptor is called on a class/type then this value will be used
+  /// as a `object/instance` parameter.
   internal var isDescriptorStaticMarker: Bool {
     return self is PyNone
   }
@@ -43,8 +46,8 @@ extension PyObject {
 
 // SEE COMMENT AT THE TOP OF THIS FILE FOR AN EXPLANATION OF WHAT A DESCRIPTOR IS!
 //
-// It has to be class because it is a very common pattern to check `self.isData`
-// after creation. Since this property is lazy it would be mutation
+// It is a class because it is a very common pattern to check `self.isData`
+// after creation. Since this property is lazy, it would be a mutation
 // and then we would have to declare descriptor as `var` which is ugly.
 internal class GetDescriptor {
 

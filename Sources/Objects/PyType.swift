@@ -555,15 +555,14 @@ public class PyType: PyObject {
   /// PyObject *
   /// _PyType_Lookup(PyTypeObject *type, PyObject *name)
   internal func lookup(name: PyString) -> LookupResult {
-    for base in self.mro {
-      switch base.__dict__.get(key: name) {
-      case .value(let o): return .value(o)
-      case .notFound: break // not in dict, move to next item
-      case .error(let e): return .error(e)
-      }
+    switch self.lookupWithType(name: name) {
+    case .value(let lookup):
+      return .value(lookup.value)
+    case .notFound:
+      return .notFound
+    case .error(let e):
+      return .error(e)
     }
-
-    return .notFound
   }
 
   /// Internal API to look for a name through the MRO.
@@ -574,17 +573,42 @@ public class PyType: PyObject {
     return self.lookupWithType(name: name)?.value
   }
 
-  internal struct LookupWithType {
+  // MARK: - Lookup with type
+
+  /// Tuple: lookup result + type on which it was found
+  internal struct LookupAndType {
     internal let value: PyObject
     /// Type on which `self.value` was found.
     internal let owner: PyType
   }
 
+  internal enum LookupWithTypeResult {
+    case value(LookupAndType)
+    case notFound
+    case error(PyBaseException)
+  }
+
   /// Internal API to look for a name through the MRO.
-  internal func lookupWithType(name: IdString) -> LookupWithType? {
+  internal func lookupWithType(name: PyString) -> LookupWithTypeResult {
+    for base in self.mro {
+      switch base.__dict__.get(key: name) {
+      case .value(let o):
+        return .value(LookupAndType(value: o, owner: base))
+      case .notFound:
+        break // not in dict, move to next item
+      case .error(let e):
+        return .error(e)
+      }
+    }
+
+    return .notFound
+  }
+
+  /// Internal API to look for a name through the MRO.
+  internal func lookupWithType(name: IdString) -> LookupAndType? {
     for base in self.mro {
       if let value = base.__dict__.get(id: name) {
-        return LookupWithType(value: value, owner: base)
+        return LookupAndType(value: value, owner: base)
       }
     }
 

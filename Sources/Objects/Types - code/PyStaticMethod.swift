@@ -24,6 +24,11 @@ public class PyStaticMethod: PyObject {
     For a more advanced concept, see the classmethod builtin.
     """
 
+  override public var description: String {
+    let c = self.callable.map(String.init) ?? "nil"
+    return "PyStaticMethod(callable: \(c))"
+  }
+
   private var callable: PyObject?
   private lazy var __dict__ = PyDict()
 
@@ -67,8 +72,7 @@ public class PyStaticMethod: PyObject {
       return .runtimeError("uninitialized staticmethod object")
     }
 
-    let result = Py.newMethod(fn: callable, object: type)
-    return result.map { $0 as PyObject }
+    return .value(callable)
   }
 
   // MARK: - Is abstract method

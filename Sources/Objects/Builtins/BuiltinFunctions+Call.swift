@@ -114,30 +114,8 @@ extension BuiltinFunctions {
 public enum GetMethodResult {
   /// Method found (_yay!_), here is its value (_double yay!_).
   case value(PyObject)
-  /// Such method does not exists.
-  case missingMethod(PyBaseException)
-  /// Raise error in VM.
-  case error(PyBaseException)
-}
-
-public enum LoadMethodResult {
-    /// Attribute found in object `__dict__`.
-  /// CPython 0
-  case objectAttribute(PyObject)
-  /// Attribute found on type.
-  /// CPython 0
-  case typeAttribute(PyObject)
-  /// Descriptor found on type.
-  /// CPython 0
-  case typeDescriptorAttribute(PyObject)
-  /// Raw method from type, not binded to any object.
-  /// CPython 1
-  case unboundFunction(PyFunction)
-  /// Raw method from type, not binded to any object.
-  /// CPython 1
-  case unboundBuiltinFunction(PyBuiltinFunction)
-  /// Such method does not exists.
-  case missingMethod(PyBaseException)
+  /// Such method does not exist.
+  case notFound(PyBaseException)
   /// Raise error in VM.
   case error(PyBaseException)
 }
@@ -146,6 +124,20 @@ public enum LoadMethodResult {
 private enum FunctionAttribute {
   case function(PyFunction)
   case builtinFunction(PyBuiltinFunction)
+}
+
+/// Helper for `getMethod`.
+private enum CallableProperty {
+  case value(PyObject)
+  case notFound
+  case error(PyBaseException)
+
+  fileprivate init(result: PyResult<PyObject>) {
+    switch result {
+    case let .value(o): self = .value(o)
+    case let .error(e): self = .error(e)
+    }
+  }
 }
 
 extension BuiltinFunctions {
@@ -162,13 +154,9 @@ extension BuiltinFunctions {
                                 allowsCallableProperties: false)
 
     switch result {
-    case .objectAttribute,
-         .typeAttribute,
-         .typeDescriptorAttribute,
-         .unboundFunction,
-         .unboundBuiltinFunction:
+    case .value:
       return .value(true)
-    case .missingMethod:
+    case .notFound:
       return .value(false)
     case .error(let e):
       return .error(e)
@@ -177,26 +165,9 @@ extension BuiltinFunctions {
 
   public func getMethod(object: PyObject,
                         selector: PyString) -> GetMethodResult {
-    let result = self.getMethod(object: object,
-                                selector: selector,
-                                allowsCallableProperties: false)
-
-    switch result {
-    case let .objectAttribute(o),
-         let .typeAttribute(o),
-         let .typeDescriptorAttribute(o):
-      return .value(o)
-    case let .unboundFunction(fn):
-      let method = fn.bind(to: object)
-      return .value(method)
-    case let .unboundBuiltinFunction(fn):
-      let method = fn.bind(to: object)
-      return .value(method)
-    case let .missingMethod(e):
-      return .missingMethod(e)
-    case let .error(e):
-      return .error(e)
-    }
+    return self.getMethod(object: object,
+                          selector: selector,
+                          allowsCallableProperties: false)
   }
 
   /// DO NOT USE THIS METHOD!
@@ -206,8 +177,7 @@ extension BuiltinFunctions {
   /// (The difference between `loadMethod` and `getMethod` is that `loadMethod`
   /// will also include callable properties from `__dict__`.)
   public func loadMethod(object: PyObject,
-                         selector: PyString) -> LoadMethodResult {
-    // Method names tend to be repeated a lot -> intern them
+                         selector: PyString) -> GetMethodResult {
     return self.getMethod(object: object,
                           selector: selector,
                           allowsCallableProperties: true)
@@ -219,7 +189,7 @@ extension BuiltinFunctions {
   /// _PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method)
   public func getMethod(object: PyObject,
                         selector: PyString,
-                        allowsCallableProperties: Bool) -> LoadMethodResult {
+                        allowsCallableProperties: Bool) -> GetMethodResult {
     // swiftlint:enable function_body_length
 
     let staticProperty: PyObject?
@@ -247,18 +217,16 @@ extension BuiltinFunctions {
     }
 
     if allowsCallableProperties {
-      if let dict = Py.get__dict__(object: object) {
-        switch dict.get(key: selector) {
-        case .value(let o): return .objectAttribute(o)
-        case .notFound: break // try other
-        case .error(let e): return .error(e)
-        }
+      switch  self.getCallableProperty(object: object, selector: selector) {
+      case .value(let attr): return .value(attr)
+      case .notFound: break // try other
+      case .error(let e): return .error(e)
       }
     }
 
     switch functionAttribute {
-    case .some(.function(let fn)): return .unboundFunction(fn)
-    case .some(.builtinFunction(let fn)): return .unboundBuiltinFunction(fn)
+    case .some(.function(let fn)): return .value(fn.bind(to: object))
+    case .some(.builtinFunction(let fn)): return .value(fn.bind(to: object))
     case .none: break // try other
     }
 
@@ -267,19 +235,50 @@ extension BuiltinFunctions {
     }
 
     if let p = staticProperty {
-      return .typeAttribute(p)
+      return .value(p)
     }
 
     let msg = "'\(object.typeName)' object has no attribute '\(selector)'"
-    return .missingMethod(Py.newAttributeError(msg: msg))
+    return .notFound(Py.newAttributeError(msg: msg))
   }
 
-  private func getMethod(descriptor: GetDescriptor) -> LoadMethodResult {
+  private func getMethod(descriptor: GetDescriptor) -> GetMethodResult {
     let result = descriptor.call()
     switch result {
     case let .value(o):
-      return .typeDescriptorAttribute(o)
+      return .value(o)
     case let .error(e):
+      return .error(e)
+    }
+  }
+
+  private func getCallableProperty(object: PyObject,
+                                   selector: PyString) -> CallableProperty {
+    guard let dict = Py.get__dict__(object: object) else {
+      return .notFound
+    }
+
+    switch dict.get(key: selector) {
+    case .value(let attr):
+      // If we are dealing with classmethod/staticmethod on type then we have
+      // to bind it.
+      if let type = object as? PyType,
+         let classMethod = attr as? PyClassMethod {
+        let bound = classMethod.get(object: descriptorStaticMarker, type: type)
+        return CallableProperty(result: bound)
+      }
+
+      if let type = object as? PyType,
+         let classMethod = attr as? PyStaticMethod {
+        let bound = classMethod.get(object: descriptorStaticMarker, type: type)
+        return CallableProperty(result: bound)
+      }
+
+      return .value(attr)
+
+    case .notFound:
+      return .notFound
+    case .error(let e):
       return .error(e)
     }
   }
@@ -400,7 +399,7 @@ extension BuiltinFunctions {
     switch self.getMethod(object: object, selector: selector) {
     case let .value(o):
       method = o
-    case let .missingMethod(e):
+    case let .notFound(e):
       return .missingMethod(e)
     case let .error(e):
       return .error(e)
