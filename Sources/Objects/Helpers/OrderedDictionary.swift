@@ -37,12 +37,10 @@ public protocol PyHashable {
 public struct OrderedDictionary<Key: PyHashable, Value> {
 
   public struct Entry {
-    public let hash: Int
     public let key:  Key
     public let value: Value
 
     fileprivate init(key: Key, value: Value) {
-      self.hash = key.hash
       self.key = key
       self.value = value
     }
@@ -363,7 +361,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
           break
         }
 
-        if hash == old.hash {
+        if hash == old.key.hash {
           switch key.isEqual(to: old.key) {
           case .value(true):
             return .entry(index: index, entryIndex: arrayIndex, entry: old)
@@ -438,8 +436,8 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
     let mask = getIndexMask(size: newSize)
     for (n, entry) in newEntries.enumerated() {
-      var perturb = entry.hash
-      var index = entry.hash & mask
+      var perturb = entry.key.hash
+      var index = entry.key.hash & mask
       while newIndices[index] != EntryIndex.notAssigned {
         perturb >>= perturbShift
         index = (5 * index + perturb + 1) & mask

@@ -6,7 +6,7 @@ public struct PyDictKey: PyHashable, CustomStringConvertible {
   public var object: PyObject
 
   public var description: String {
-    return "PyDictKey(object: \(self.object), hash: \(self.hash))"
+    return "PyDictKey(hash: \(self.hash), object: \(self.object))"
   }
 
   public init(hash: PyHash, object: PyObject) {

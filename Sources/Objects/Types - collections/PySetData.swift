@@ -496,7 +496,8 @@ internal struct PySetData {
 
   internal mutating func update(from other: PyDictData) -> UpdateResult {
     for entry in other {
-      let element = PySetElement(hash: entry.hash, object: entry.key.object)
+      let key = entry.key
+      let element = PySetElement(hash: key.hash, object: key.object)
       switch self.insert(element: element) {
       case .ok: break
       case .error(let e): return .error(e)
@@ -588,8 +589,9 @@ internal struct PySetData {
       var elements = PySetData.DictType(size: dict.data.count)
 
       for entry in dict.data {
-        let key = PySetElement(hash: entry.hash, object: entry.key.object)
-        switch elements.insert(key: key) {
+        let key = entry.key
+        let element = PySetElement(hash: key.hash, object: key.object)
+        switch elements.insert(key: element) {
         case .inserted,
              .updated: break
         case .error(let e): return .error(e)
