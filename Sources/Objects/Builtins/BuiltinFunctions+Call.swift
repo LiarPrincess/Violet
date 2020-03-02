@@ -204,7 +204,7 @@ extension BuiltinFunctions {
       } else if let fn = attr as? PyBuiltinFunction {
         functionAttribute = .builtinFunction(fn)
       } else {
-        descriptor = GetDescriptor.create(object: object, attribute: attr)
+        descriptor = GetDescriptor(object: object, attribute: attr)
       }
     case .notFound:
       staticProperty = nil

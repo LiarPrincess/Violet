@@ -62,7 +62,7 @@ public class PyNone: PyObject {
     switch self.type.lookup(name: name) {
     case .value(let p):
       staticProperty = p
-      descriptor = GetDescriptor.create(object: self, attribute: p)
+      descriptor = GetDescriptor(object: self, attribute: p)
     case .notFound:
       staticProperty = nil
       descriptor = nil

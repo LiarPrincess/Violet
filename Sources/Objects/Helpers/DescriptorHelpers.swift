@@ -66,9 +66,15 @@ internal class GetDescriptor {
     return self.set != nil
   }
 
-  private init(object: PyObject, descriptor: PyObject, get: PyObject) {
+  internal init?(object: PyObject, attribute: PyObject) {
+    // No getter -> no descriptor
+    guard let get = attribute.type.lookup(name: .__get__) else {
+      return nil
+    }
+
+    // We found ourselves a fully functioning descriptor!
     self.object = object
-    self.descriptor = descriptor
+    self.descriptor = attribute
     self.get = get
   }
 
@@ -83,20 +89,6 @@ internal class GetDescriptor {
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
-  }
-
-  // MARK: Factory
-
-  /// Get 'get' descriptor with given `attribute` from `object`.
-  internal static func create(object: PyObject,
-                              attribute: PyObject) -> GetDescriptor? {
-    // No getter -> no descriptor
-    guard let get = attribute.type.lookup(name: .__get__) else {
-      return nil
-    }
-
-    // We found ourselves a fully functioning descriptor!
-    return GetDescriptor(object: object, descriptor: attribute, get: get)
   }
 }
 
@@ -114,9 +106,23 @@ internal class SetDescriptor {
   /// `__set__` method on `self.descriptor`.
   private var set: PyObject
 
-  private init(object: PyObject, descriptor: PyObject, set: PyObject) {
+  internal init?(object: PyObject, attributeName: PyString) {
+    // Do we even have such attribute?
+    let attribute: PyObject
+    switch object.type.lookup(name: attributeName) {
+    case .value(let a):
+      attribute = a
+    case .notFound, .error:
+      return nil
+    }
+
+    // No setter -> no descriptor
+    guard let set = attribute.type.lookup(name: .__set__) else {
+      return nil
+    }
+
     self.object = object
-    self.descriptor = descriptor
+    self.descriptor = attribute
     self.set = set
   }
 
@@ -129,28 +135,5 @@ internal class SetDescriptor {
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
-  }
-
-  // MARK: Factory
-
-  internal static func create(object: PyObject,
-                              attributeName: PyString) -> SetDescriptor? {
-    // Do we even have such attribute?
-    switch object.type.lookup(name: attributeName) {
-    case .value(let attribute):
-      return SetDescriptor.create(object: object, attribute: attribute)
-    case .notFound, .error:
-      return nil
-    }
-  }
-
-  private static func create(object: PyObject,
-                             attribute: PyObject) -> SetDescriptor? {
-    // No setter -> no descriptor
-    guard let set = attribute.type.lookup(name: .__set__) else {
-      return nil
-    }
-
-    return SetDescriptor(object: object, descriptor: attribute, set: set)
   }
 }

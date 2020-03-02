@@ -23,7 +23,7 @@ internal enum AttributeHelper {
     switch object.type.lookup(name: name) {
     case .value(let p):
       staticProperty = p
-      descriptor = GetDescriptor.create(object: object, attribute: p)
+      descriptor = GetDescriptor(object: object, attribute: p)
     case .notFound:
       staticProperty = nil
       descriptor = nil
@@ -83,7 +83,7 @@ internal enum AttributeHelper {
   internal static func setAttribute(on object: PyObject,
                                     name: PyString,
                                     to value: PyObject?) -> PyResult<PyNone> {
-    let descriptor = SetDescriptor.create(object: object, attributeName: name)
+    let descriptor = SetDescriptor(object: object, attributeName: name)
 
     if let desc = descriptor {
       let result = desc.call(value: value)

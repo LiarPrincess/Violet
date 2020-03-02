@@ -239,7 +239,7 @@ public class PyType: PyObject {
       return .value(Py.none)
     }
 
-    if let descr = GetDescriptor.create(object: self, attribute: doc) {
+    if let descr = GetDescriptor(object: self, attribute: doc) {
       switch descr.call() {
       case let .value(o): return .value(o)
       case let .error(e): return .error(e)
@@ -454,7 +454,7 @@ public class PyType: PyObject {
     switch self.type.lookup(name: name) {
     case .value(let attribute):
       metaAttribute = attribute
-      metaDescriptor = GetDescriptor.create(object: self, attribute: attribute)
+      metaDescriptor = GetDescriptor(object: self, attribute: attribute)
     case .notFound:
       metaAttribute = nil
       metaDescriptor = nil
@@ -470,7 +470,7 @@ public class PyType: PyObject {
     // Look in __dict__ of this type and its bases
     switch self.lookup(name: name) {
     case .value(let attribute):
-      if let descr = GetDescriptor.create(object: self, attribute: attribute) {
+      if let descr = GetDescriptor(object: self, attribute: attribute) {
         // 'Without owner' means that we will call '__get__' with 'None' object
         // This will result in static binding.
         // For example: 'int.__eq__' will not bind 'self' to any number!
