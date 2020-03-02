@@ -1,9 +1,13 @@
 public typealias PyDictData = OrderedDictionary<PyDictKey, PyObject>
 
-public struct PyDictKey: PyHashable {
+public struct PyDictKey: PyHashable, CustomStringConvertible {
 
   public var hash: PyHash
   public var object: PyObject
+
+  public var description: String {
+    return "PyDictKey(object: \(self.object), hash: \(self.hash))"
+  }
 
   public init(hash: PyHash, object: PyObject) {
     self.hash = hash

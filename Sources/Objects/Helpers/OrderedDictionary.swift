@@ -487,7 +487,44 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   }
 }
 
-// MARK: - Iterator
+// MARK: - CustomStringConvertible
+
+extension OrderedDictionary: CustomStringConvertible {
+  public var description: String {
+    if self.isEmpty {
+      return "OrderedDictionary()"
+    }
+
+    var result = "OrderedDictionary("
+
+    for entry in self {
+      result += "\(entry.key): \(entry.value), "
+    }
+
+    // remove trailing ', '
+    _ = result.popLast()
+    _ = result.popLast()
+
+    result += ")"
+    return result
+  }
+}
+
+// MARK: - CustomReflectable
+
+extension OrderedDictionary: CustomReflectable {
+
+  /// A mirror that reflects the dictionary.
+  public var customMirror: Mirror {
+    return Mirror(
+      self,
+      unlabeledChildren: Array(self),
+      displayStyle: .class
+    )
+  }
+}
+
+// MARK: - Sequence
 
 /// Iterator for `OrderedDictionary` that will skip deleted entries.
 public struct OrderedDictionaryIterator<Key: PyHashable, Value>: IteratorProtocol {
@@ -513,29 +550,6 @@ public struct OrderedDictionaryIterator<Key: PyHashable, Value>: IteratorProtoco
 
     // We reached end, no more entries to return
     return nil
-  }
-}
-
-// MARK: - Extensions
-
-extension OrderedDictionary: CustomStringConvertible {
-  public var description: String {
-    if self.isEmpty {
-      return "OrderedDictionary()"
-    }
-
-    var result = "OrderedDictionary("
-
-    for entry in self {
-      result += "\(entry.key): \(entry.value), "
-    }
-
-    // remove trailing ', '
-    _ = result.popLast()
-    _ = result.popLast()
-
-    result += ")"
-    return result
   }
 }
 
