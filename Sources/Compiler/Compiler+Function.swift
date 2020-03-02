@@ -60,12 +60,8 @@ extension Compiler {
                                               type: .function,
                                               argCount: argCount,
                                               kwOnlyArgCount: kwOnlyArgCount) {
-      let optimizationLevel = self.options.optimizationLevel
-      if let docString = node.body.first.getDocString(), optimizationLevel < .OO {
-        self.builder.appendString(docString)
-      }
 
-      try self.visit(node.body)
+      try self.visitBody(body: node.body, onDoc: .appendToConstants)
 
       if !self.currentScope.hasReturnValue {
         self.builder.appendNone()

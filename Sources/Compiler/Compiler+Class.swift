@@ -34,7 +34,8 @@ extension Compiler {
       self.builder.appendString(self.codeObject.qualifiedName)
       self.builder.appendStoreName(SpecialIdentifiers.__qualname__)
 
-      try self.visit(node.body)
+      try self.setupAnnotationsIfNeeded(body: node.body)
+      try self.visitBody(body: node.body, onDoc: .storeAs__doc__)
 
       // Return __class__ cell if it is referenced, otherwise return None
       if self.currentScope.needsClassClosure {

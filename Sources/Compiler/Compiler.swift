@@ -129,30 +129,56 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     try self.visit(node.statements)
   }
 
-  /// Compile a sequence of statements, checking for a docstring
-  /// and for annotations.
-  ///
-  /// compiler_body(struct compiler *c, asdl_seq *stmts)
   public func visit(_ node: ModuleAST) throws {
-    if self.hasAnnotations(node.statements) {
-      self.builder.appendSetupAnnotations()
-    }
-
-    guard let first = node.statements.first else {
-      return
-    }
-
-    if let doc = first.getDocString(), self.options.optimizationLevel < .OO {
-      self.builder.appendString(doc)
-      self.builder.appendStoreName(SpecialIdentifiers.__doc__)
-      try self.visit(node.statements.dropFirst())
-    } else {
-      try self.visit(node.statements)
-    }
+    try self.setupAnnotationsIfNeeded(body: node.statements)
+    try self.visitBody(body: node.statements, onDoc: .storeAs__doc__)
   }
 
   public func visit(_ node: ExpressionAST) throws {
     try self.visit(node.expression)
+  }
+
+  /// What to do when we have doc?
+  internal enum DocHandling {
+    /// Emit `appendString` and then `appendStoreName(__doc__)`.
+    case storeAs__doc__
+    /// Simply add new constant, without emitting any instruction.
+    case appendToConstants
+  }
+
+  /// Compile a sequence of statements, checking for a docstring
+  /// and for annotations.
+  ///
+  /// compiler_body(struct compiler *c, asdl_seq *stmts)
+  internal func visitBody<C: Collection>(
+    body: C,
+    onDoc: DocHandling
+  ) throws where C.Element == Statement {
+    guard let first = body.first else {
+      return
+    }
+
+    if let doc = first.getDocString(), self.options.optimizationLevel < .OO {
+      switch onDoc {
+      case .storeAs__doc__:
+        self.builder.appendString(doc)
+        self.builder.appendStoreName(SpecialIdentifiers.__doc__)
+      case .appendToConstants:
+        self.builder.addConstant(string: doc)
+      }
+
+      try self.visit(body.dropFirst())
+    } else {
+      try self.visit(body)
+    }
+  }
+
+  internal func setupAnnotationsIfNeeded<C: Collection>(
+    body: C
+  ) throws where C.Element == Statement {
+    if self.hasAnnotations(body) {
+      self.builder.appendSetupAnnotations()
+    }
   }
 
   /// Search if variable annotations are present statically in a block.
