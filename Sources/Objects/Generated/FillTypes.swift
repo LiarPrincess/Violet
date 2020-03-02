@@ -1008,6 +1008,7 @@ internal enum FillTypes {
     type.setFlag(.hasGC)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: Cast.asPyMethod))
+    insert(type: type, name: "__doc__", value: PyProperty.wrap(name: "__doc__", doc: nil, get: PyMethod.getDoc, castSelf: Cast.asPyMethod))
 
 
 

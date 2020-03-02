@@ -594,6 +594,7 @@ PyMap|PyObject|func|__iter__|iter() -> PyObject
 PyMap|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyMap|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyObject>
 PyMethod|PyObject|get|__class__|getClass() -> PyType
+PyMethod|PyObject|get|__doc__|getDoc() -> PyResult<PyObject>
 
 PyMethod|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
 PyMethod|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> CompareResult

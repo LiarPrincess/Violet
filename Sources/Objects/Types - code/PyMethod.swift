@@ -150,6 +150,11 @@ public class PyMethod: PyObject {
     return self.object
   }
 
+  // sourcery: pyproperty = __doc__
+  public func getDoc() -> PyResult<PyObject> {
+    return self.function.getDoc()
+  }
+
   // MARK: - Get
 
   // sourcery: pymethod = __get__

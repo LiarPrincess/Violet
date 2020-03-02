@@ -685,6 +685,7 @@ extension PyMap:
 
 extension PyMethod:
   __class__GetterOwner,
+  __doc__GetterOwner,
   __eq__Owner,
   __ne__Owner,
   __lt__Owner,
