@@ -2,6 +2,8 @@
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
+private let globals = Py.newDict()
+
 extension BuiltinFunctions {
 
   // MARK: - Code
@@ -128,8 +130,8 @@ extension BuiltinFunctions {
     return Py.none
   }
 
-  internal func getGlobals() -> [String: PyObject] {
-    return [:]
+  internal func getGlobals() -> PyDict {
+    return globals
   }
 
   // MARK: - Helpers

@@ -240,10 +240,7 @@ public class PyType: PyObject {
     }
 
     if let descr = GetDescriptor(object: self, attribute: doc) {
-      switch descr.call() {
-      case let .value(o): return .value(o)
-      case let .error(e): return .error(e)
-      }
+      return descr.call()
     }
 
     return .value(doc)

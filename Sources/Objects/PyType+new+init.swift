@@ -32,6 +32,7 @@ extension PyType {
   )
 
   // sourcery: pymethod = __new__
+  // swiftlint:disable:next function_body_length
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyObject> {
@@ -115,7 +116,7 @@ extension PyType {
       bases = [base]
     } else {
       // Search the bases for the proper metatype to deal with this
-      switch PyType.calculateMetaclass(args: args) {
+      switch PyType.calculateMetaclass(metatype: args.metatype, bases: args.bases) {
       case let .value(t): metatype = t
       case let .error(e): return .error(e)
       }
@@ -148,13 +149,14 @@ extension PyType {
     }
 
     // Initialize '__dict__' from passed-in dict
-    let __dict__ = Py.newDict(data: args.dict.data)
-    type.setDict(value: __dict__)
+    let dict = Py.newDict(data: args.dict.data)
+    type.setDict(value: dict)
 
     // Set __module__ in the dict
-    if __dict__.get(id: .__module__) == nil {
-      let globals = Py.getGlobals()
-      if let module = globals["__name__"] {
+    let globals = Py.getGlobals()
+
+    if dict.get(id: .__module__) == nil {
+      if let module = globals.get(id: .__name__) {
         switch type.setModule(module) {
         case .value: break
         case .error(let e): return .error(e)
@@ -162,9 +164,8 @@ extension PyType {
       }
     }
 
-    // Set ht_qualname to dict['__qualname__'] if available, else to __name__.
-    // The __qualname__ accessor will use for self.qualname.
-    if let qualname = __dict__.get(id: .__qualname__) {
+    // Set qualname to dict['__qualname__'] if available.
+    if let qualname = dict.get(id: .__qualname__) {
       switch type.setQualname(qualname) {
       case .value: break
       case .error(let e): return .error(e)
@@ -177,32 +178,7 @@ extension PyType {
     return .value(type)
   }
 
-  private static func create__dict__(from dict: PyDictData) -> PyResult<PyDict> {
-    let result = Py.newDict()
-
-    for entry in dict {
-      guard let key = entry.key.object as? PyString else {
-        return .typeError("Dictionary key mus be a str.")
-      }
-
-      switch result.set(key: key, to: entry.value) {
-      case .ok: break
-      case .error(let e): return .error(e)
-      }
-    }
-
-    return .value(result)
-  }
-
   // MARK: - Metaclass
-
-  /// Determine the most derived metatype.
-  /// PyTypeObject *
-  /// _PyType_CalculateMetaclass(PyTypeObject *metatype, PyObject *bases)
-  private static func calculateMetaclass(args: PyTypeNewArgs) -> PyResult<PyType> {
-    return PyType.calculateMetaclass(metatype: args.metatype,
-                                     bases: args.bases)
-  }
 
   /// Determine the most derived metatype.
   /// PyTypeObject *
@@ -272,7 +248,7 @@ extension PyType {
     //   Given:   Bool -> Int -> Object
     //   Returns: Int
     //   Reason: 'Bool' and 'Int' have the same layout (single BigInt property),
-    //           but 'Intĺ and 'Object' have different layouts.
+    //           but 'Int' and 'Object' have different layouts.
 
     // Special case for BaseObject
     guard let base = type.getBase() else {
