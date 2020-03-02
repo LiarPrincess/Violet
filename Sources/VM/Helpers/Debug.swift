@@ -20,16 +20,21 @@ internal enum Debug {
 
   internal static func ast(_ ast: AST) {
     guard isEnabled else { return }
-    print("=== AST ===")
-    print(ast)
-    print()
+//    print("=== AST ===")
+//    print(ast)
+//    print()
   }
 
   internal static func code(_ code: CodeObject) {
     guard isEnabled else { return }
-    print("=== Bytecode ===")
+
+    let name = code.qualifiedName.isEmpty ? "(no name)" : code.qualifiedName
+    print("=== \(name) ===")
     print(code.dump())
-    print()
+
+    for case Constant.code(let inner) in code.constants {
+      Debug.code(inner)
+    }
   }
 
   // MARK: - Frame
