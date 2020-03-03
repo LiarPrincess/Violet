@@ -27,14 +27,12 @@ public struct MangledName: Equatable, Hashable {
     self.value = mangle(className: className, name: name)
   }
 
-  // Use only mangled name as a base of Equatable, Hashable
-
-  public static func == (lhs: MangledName, rhs: MangledName) -> Bool {
-    return lhs.value == rhs.value
+  public func hash(into hasher: inout Hasher) {
+    hashScalars(value: self.value, into: &hasher)
   }
 
-  public func hash(into hasher: inout Hasher) {
-    hasher.combine(self.value)
+  public static func == (lhs: MangledName, rhs: MangledName) -> Bool {
+    return compareScalars(lhs: lhs.value, rhs: rhs.value)
   }
 }
 

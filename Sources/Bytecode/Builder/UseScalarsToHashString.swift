@@ -21,33 +21,40 @@ internal struct UseScalarsToHashString: Equatable, Hashable {
     self.value = value
   }
 
-  func hash(into hasher: inout Hasher) {
-    for scalar in self.value.unicodeScalars {
-      hasher.combine(scalar.value)
-    }
+  internal func hash(into hasher: inout Hasher) {
+    return hashScalars(value: self.value, into: &hasher)
   }
 
   internal static func == (lhs: Self, rhs: Self) -> Bool {
-    // Do not use 'xxx.value.unicodeScalars.count'!
-    // It may be O(n) which would iterate string 2 times!
+    return compareScalars(lhs: lhs.value, rhs: rhs.value)
+  }
+}
 
-    var lhsIter = lhs.value.unicodeScalars.makeIterator()
-    var rhsIter = rhs.value.unicodeScalars.makeIterator()
+internal func hashScalars(value: String, into hasher: inout Hasher) {
+  for scalar in value.unicodeScalars {
+    hasher.combine(scalar.value)
+  }
+}
 
-    var lhsValue = lhsIter.next()
-    var rhsValue = rhsIter.next()
+internal func compareScalars(lhs: String, rhs: String) -> Bool {
+  // Do not use 'xxx.value.unicodeScalars.count'!
+  // It may be O(n) which would iterate string 2 times!
+  var lhsIter = lhs.unicodeScalars.makeIterator()
+  var rhsIter = rhs.unicodeScalars.makeIterator()
 
-    while let l = lhsValue, let r = rhsValue {
-      if l != r {
-        return false
-      }
+  var lhsValue = lhsIter.next()
+  var rhsValue = rhsIter.next()
 
-      lhsValue = lhsIter.next()
-      rhsValue = rhsIter.next()
+  while let l = lhsValue, let r = rhsValue {
+    if l != r {
+      return false
     }
 
-    let isLhsEnd = lhsValue == nil
-    let isRhsEnd = rhsValue == nil
-    return isLhsEnd && isRhsEnd
+    lhsValue = lhsIter.next()
+    rhsValue = rhsIter.next()
   }
+
+  let isLhsEnd = lhsValue == nil
+  let isRhsEnd = rhsValue == nil
+  return isLhsEnd && isRhsEnd
 }
