@@ -1399,6 +1399,21 @@ internal enum FillTypes {
     insert(type: type, name: "__next__", value: PyBuiltinFunction.wrap(name: "__next__", doc: nil, fn: PyStringIterator.next, castSelf: Cast.asPyStringIterator))
   }
 
+  // MARK: - Super
+
+  internal static func `super`(_ type: PyType) {
+    type.setBuiltinTypeDoc(PySuper.doc)
+    type.setFlag(.default)
+    type.setFlag(.baseType)
+    type.setFlag(.hasGC)
+
+
+    insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySuper.pyNew(type:args:kwargs:)))
+
+    insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySuper.pyInit(zelf:args:kwargs:)))
+
+  }
+
   // MARK: - TextFile
 
   internal static func textFile(_ type: PyType) {

@@ -123,7 +123,7 @@ internal enum FillTypes {
   // MARK: - {{ type.name|replace:"Py","" }}
 
   {% set annotation %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".","" }}{% endset %}
-  {% set fnName %}{{ annotation|lowerFirstWord }}{% endset %}
+  {% set fnName %}{% if type.name == "PySuper" %}`super`{% else %}{{ annotation|lowerFirstWord }}{% endif %}{% endset %}
   internal static func {{ fnName }}(_ type: PyType) {
     {% call addDoc type %}
     {% call addFlags type %}

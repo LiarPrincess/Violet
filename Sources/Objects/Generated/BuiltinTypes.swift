@@ -1,6 +1,7 @@
 // swiftlint:disable function_body_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_comma
+// swiftlint:disable vertical_whitespace
 
 // VERY IMPORTANT:
 //
@@ -15,6 +16,7 @@
 //
 // Stage 2: Fill type objects ('fill__dict__()' method)
 // When all of the types are initalized we can finally fill dictionaries.
+
 
 public final class BuiltinTypes {
 
@@ -69,6 +71,7 @@ public final class BuiltinTypes {
   public let staticmethod: PyType
   public let str: PyType
   public let str_iterator: PyType
+  public let `super`: PyType
   public let textFile: PyType
   public let tuple: PyType
   public let tuple_iterator: PyType
@@ -131,6 +134,7 @@ public final class BuiltinTypes {
     self.staticmethod = PyType.initBuiltinType(name: "staticmethod", type: self.type, base: self.object)
     self.str = PyType.initBuiltinType(name: "str", type: self.type, base: self.object)
     self.str_iterator = PyType.initBuiltinType(name: "str_iterator", type: self.type, base: self.object)
+    self.`super` = PyType.initBuiltinType(name: "super", type: self.type, base: self.object)
     self.textFile = PyType.initBuiltinType(name: "TextFile", type: self.type, base: self.object)
     self.tuple = PyType.initBuiltinType(name: "tuple", type: self.type, base: self.object)
     self.tuple_iterator = PyType.initBuiltinType(name: "tuple_iterator", type: self.type, base: self.object)
@@ -194,6 +198,7 @@ public final class BuiltinTypes {
     FillTypes.staticmethod(self.staticmethod)
     FillTypes.str(self.str)
     FillTypes.str_iterator(self.str_iterator)
+    FillTypes.`super`(self.`super`)
     FillTypes.textFile(self.textFile)
     FillTypes.tuple(self.tuple)
     FillTypes.tuple_iterator(self.tuple_iterator)
@@ -250,6 +255,7 @@ public final class BuiltinTypes {
       self.staticmethod,
       self.str,
       self.str_iterator,
+      self.`super`,
       self.textFile,
       self.tuple,
       self.tuple_iterator,

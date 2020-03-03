@@ -125,6 +125,11 @@ extension Builtins {
     return Py.types.str
   }
 
+  // sourcery: pyproperty = super
+  internal var type_super: PyType {
+    return Py.types.super
+  }
+
   // sourcery: pyproperty = tuple
   internal var type_tuple: PyType {
     return Py.types.tuple

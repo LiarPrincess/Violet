@@ -1,6 +1,7 @@
 // swiftlint:disable function_body_length
 // swiftlint:disable line_length
 // swiftlint:disable trailing_comma
+// swiftlint:disable vertical_whitespace
 
 // VERY IMPORTANT:
 //
@@ -16,6 +17,8 @@
 // Stage 2: Fill type objects ('fill__dict__()' method)
 // When all of the types are initalized we can finally fill dictionaries.
 
+{% macro getName type %}{% if type.name == "PySuper" %}`super`{% else %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endif %}{% endmacro %}
+
 public final class BuiltinTypes {
 
   /// Root of the type hierarchy
@@ -24,7 +27,7 @@ public final class BuiltinTypes {
   public let type: PyType
 
 {% for type in types.classes|annotated:"pytype" %}
-  {% set name %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+  {% set name %}{% call getName type %}{% endset %}
   public let {{ name }}: PyType
 {% endfor %}
 
@@ -41,7 +44,7 @@ public final class BuiltinTypes {
 
     // 'self.bool' has to be last because it uses 'self.int' as base!
     {% for type in types.classes|annotated:"pytype" where type.name != "PyBool" %}
-    {% set name %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+    {% set name %}{% call getName type %}{% endset %}
     self.{{ name }} = PyType.initBuiltinType(name: "{{ type.annotations.pytype }}", type: self.type, base: self.object)
     {% endfor %}
     self.bool = PyType.initBuiltinType(name: "bool", type: self.type, base: self.int)
@@ -58,7 +61,7 @@ public final class BuiltinTypes {
     FillTypes.object(self.object)
     FillTypes.type(self.type)
     {% for type in types.classes|annotated:"pytype" %}
-    {% set name %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+    {% set name %}{% call getName type %}{% endset %}
     FillTypes.{{ name }}(self.{{ name }})
     {% endfor %}
   }
@@ -68,7 +71,7 @@ public final class BuiltinTypes {
       self.object,
       self.type,
     {% for type in types.classes|annotated:"pytype" %}
-    {% set name %}{{ type.annotations.pytype|replace:"Type",""|replace:"types",""|replace:".",""|lowerFirstWord }}{% endset %}
+    {% set name %}{% call getName type %}{% endset %}
       self.{{ name }},
     {% endfor %}
     ]

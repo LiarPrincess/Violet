@@ -306,6 +306,12 @@ internal enum Cast {
     return cast(object, as: PyStringIterator.self, typeName: "str_iterator", methodName: methodName)
   }
 
+  // MARK: - Super
+
+  internal static func asPySuper(_ object: PyObject, methodName: String) -> PyResult<PySuper> {
+    return cast(object, as: PySuper.self, typeName: "super", methodName: methodName)
+  }
+
   // MARK: - TextFile
 
   internal static func asPyTextFile(_ object: PyObject, methodName: String) -> PyResult<PyTextFile> {

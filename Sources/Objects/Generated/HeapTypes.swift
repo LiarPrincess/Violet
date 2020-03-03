@@ -315,6 +315,16 @@ internal final class PyStringHeap: PyString, HeapType {
 
 // PyStringIterator is not a base type.
 
+// MARK: - Super
+
+/// Type used when we subclass builtin `super` class.
+/// For example: `class Rapunzel(super): pass`.
+internal final class PySuperHeap: PySuper, HeapType {
+
+  /// Python `__dict__` property.
+  internal lazy var __dict__ = PyDict()
+}
+
 // MARK: - TextFile
 
 // PyTextFile is not a base type.

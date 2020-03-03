@@ -958,6 +958,13 @@ extension PyStringIterator:
   __new__Owner
 { }
 
+// MARK: - Super
+
+extension PySuper:
+  __new__Owner,
+  __init__Owner
+{ }
+
 // MARK: - TextFile
 
 extension PyTextFile:
