@@ -1407,11 +1407,17 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
 
+    insert(type: type, name: "__thisclass__", value: PyProperty.wrap(name: "__thisclass__", doc: nil, get: PySuper.getThisClass, castSelf: Cast.asPySuper))
+    insert(type: type, name: "__self__", value: PyProperty.wrap(name: "__self__", doc: nil, get: PySuper.getSelf, castSelf: Cast.asPySuper))
+    insert(type: type, name: "__self_class__", value: PyProperty.wrap(name: "__self_class__", doc: nil, get: PySuper.getSelfClass, castSelf: Cast.asPySuper))
 
     insert(type: type, name: "__new__", value: PyBuiltinFunction.wrapNew(type: type, doc: nil, fn: PySuper.pyNew(type:args:kwargs:)))
 
     insert(type: type, name: "__init__", value: PyBuiltinFunction.wrapInit(type: type, doc: nil, fn: PySuper.pyInit(zelf:args:kwargs:)))
 
+    insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PySuper.repr, castSelf: Cast.asPySuper))
+    insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PySuper.getAttribute(name:), castSelf: Cast.asPySuper))
+    insert(type: type, name: "__get__", value: PyBuiltinFunction.wrap(name: "__get__", doc: nil, fn: PySuper.get(object:type:), castSelf: Cast.asPySuper))
   }
 
   // MARK: - TextFile

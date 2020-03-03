@@ -46,11 +46,11 @@ public class PySuper: PyObject {
             super().cmeth(arg)
     """
 
-  /// Type that the user requested (1st arg).
+  /// Type that the user requested (`__thisclass__` in Python).
   ///
   /// For example:
   /// `super(int, True)` -> `requestedType` = `int` (even though value is `bool`).
-  private var requestedType: PyType?
+  private var thisClass: PyType?
   private var object: PyObject?
   private var objectType: PyType?
 
@@ -68,10 +68,151 @@ public class PySuper: PyObject {
                 requestedType: PyType?,
                 object: PyObject?,
                 objectType: PyType?) {
-    self.requestedType = type
+    self.thisClass = type
     self.object = object
     self.objectType = objectType
     super.init(type: type)
+  }
+
+  // MARK: - String
+
+  // sourcery: pymethod = __repr__
+  public func repr() -> PyResult<String> {
+    let typeName = self.thisClass?.getName() ?? "NULL"
+
+    if let objectType = self.objectType {
+      let objectTypeName = objectType.getName()
+      return .value("<super: <class '\(typeName)'>, <\(objectTypeName) object>>")
+    }
+
+    return .value("<super: <class '\(typeName)'>, NULL>")
+  }
+
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    guard let startType = self.objectType else {
+      return self.getAttributeSkip(name: name)
+    }
+
+    // We want __class__ to return the class of the super object
+    // (i.e. super, or a subclass), not the class of su->obj.
+    if self.is__class__(name: name) {
+      return self.getAttributeSkip(name: name)
+    }
+
+    // CPython: 'su->type' and 'su->obj
+    // It should never be nil (nil is allowed only because it is needed in '__new__')
+    guard let suType = self.thisClass, let suObj = self.object else {
+      return .value(self)
+    }
+
+    let mro = startType.getMRORaw()
+    var i = mro.firstIndex { $0 === suType } ?? mro.count
+    i += 1 // skip su->type (if any)
+
+    if i >= mro.count {
+      return self.getAttributeSkip(name: name)
+    }
+
+    repeat {
+      defer { i += 1 }
+
+      let tmp = mro[i]
+      let dict = tmp.getDict()
+
+      switch dict.get(key: name) {
+      case .value(let res):
+        if let descr = GetDescriptor(object: suObj, attribute: res) {
+          return descr.call(overrideType: startType)
+        }
+
+        return .value(res)
+
+      case .notFound,
+           .error:
+        break // just go to next element (ignore error)
+      }
+    } while i < mro.count
+
+    // Just in case
+    return self.getAttributeSkip(name: name)
+  }
+
+  /// `skip` label in `self.getAttribute`
+  internal func getAttributeSkip(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(from: self, name: name)
+  }
+
+  private func is__class__(name: PyObject) -> Bool {
+    switch Py.isEqualBool(left: name, right: IdString.__class__.value) {
+    case let .value(value):
+      return value
+    case .error:
+      return false
+    }
+  }
+
+  // MARK: - Getters
+
+  internal static let thisClassDoc = "the class invoking super()"
+
+  // sourcery: pyproperty = __thisclass__, doc = thisClassDoc
+  public func getThisClass() -> PyObject {
+    return self.thisClass ?? Py.none
+  }
+
+  internal static let selfDoc = "the instance invoking super(); may be None"
+
+  // sourcery: pyproperty = __self__, doc = selfDoc
+  public func getSelf() -> PyObject {
+    return self.object ?? Py.none
+  }
+
+  internal static let selfClassDoc = "the type of the instance invoking super(); may be None"
+
+  // sourcery: pyproperty = __self_class__, doc = selfClassDoc
+  public func getSelfClass() -> PyObject {
+    return self.object ?? Py.none
+  }
+
+  // MARK: - Get
+
+  // sourcery: pymethod = __get__
+  public func get(object: PyObject, type: PyObject) -> PyResult<PyObject> {
+    // Basically 'object.isNone'
+    if object.isDescriptorStaticMarker {
+      return .value(self)
+    }
+
+    let isAlreadyBound = self.object != nil
+    if isAlreadyBound {
+      return .value(self)
+    }
+
+    // CPython: 'su->type'
+    // It should never be nil (nil is allowed only because it is needed in '__new__')
+    guard let suType = self.thisClass else {
+      return .value(self)
+    }
+
+    // If su is an instance of a (strict) subclass of super, call its type
+    if self.type !== Py.types.super {
+      return Py.call(callable: self.type, args: [suType, object]).asResult
+    }
+
+    let objectType: PyType
+    switch PySuper.checkSuper(type: suType, object: object) {
+    case let .value(t): objectType = t
+    case let .error(e): return .error(e)
+    }
+
+    let result = PySuper.pyNewRaw(type: Py.types.super)
+    result.thisClass = suType
+    result.object = object
+    result.objectType = objectType
+    return .value(result)
   }
 
   // MARK: - Python new
@@ -80,6 +221,13 @@ public class PySuper: PyObject {
   internal static func pyNew(type: PyType,
                              args: [PyObject],
                              kwargs: PyDict?) -> PyResult<PyObject> {
+    let result = Self.pyNewRaw(type: type)
+    return .value(result)
+  }
+
+  /// Actual funciton for '__new__'
+  /// (the one that does not care about conforming, to '__new__Owner' protocol)
+  internal static func pyNewRaw(type: PyType) -> PySuper {
     let result = PySuper(
       type: type,
       requestedType: nil,
@@ -87,7 +235,7 @@ public class PySuper: PyObject {
       objectType: nil
     )
 
-    return .value(result)
+    return result
   }
 
   // MARK: - Python init
@@ -159,7 +307,7 @@ public class PySuper: PyObject {
       }
     }
 
-    zelf.requestedType = type
+    zelf.thisClass = type
     zelf.object = object
     zelf.objectType = objectType
     return .value(Py.none)

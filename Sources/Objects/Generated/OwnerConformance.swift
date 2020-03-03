@@ -961,6 +961,12 @@ extension PyStringIterator:
 // MARK: - Super
 
 extension PySuper:
+  __thisclass__GetterOwner,
+  __self__GetterOwner,
+  __self_class__GetterOwner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __get__Owner,
   __new__Owner,
   __init__Owner
 { }

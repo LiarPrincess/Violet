@@ -126,6 +126,7 @@ protocol __rtruediv__Owner { func rtruediv(_ other: PyObject) -> PyResult<PyObje
 protocol __rxor__Owner { func rxor(_ other: PyObject) -> PyResult<PyObject> }
 protocol __self__GetterOwner { func getSelf() -> PyObject }
 protocol __self__Owner { func getSelf() -> PyObject }
+protocol __self_class__GetterOwner { func getSelfClass() -> PyObject }
 protocol __set__Owner { func set(object: PyObject, value: PyObject) -> PyResult<PyObject> }
 protocol __setattr__Owner { func setAttribute(name: PyObject, value: PyObject?) -> PyResult<PyNone> }
 protocol __setitem__Owner { func setItem(at index: PyObject, to value: PyObject) -> PyResult<PyNone> }
@@ -136,6 +137,7 @@ protocol __subclasses__Owner { func getSubclasses() -> [PyType] }
 protocol __suppress_context__GetterOwner { func getSuppressContext() -> PyBool }
 protocol __suppress_context__SetterOwner { func setSuppressContext(_ value: PyObject?) -> PyResult<()> }
 protocol __text_signature__GetterOwner { func getTextSignature() -> String? }
+protocol __thisclass__GetterOwner { func getThisClass() -> PyObject }
 protocol __traceback__GetterOwner { func getTraceback() -> PyObject? }
 protocol __traceback__SetterOwner { func setTraceback(_ value: PyObject?) -> PyResult<()> }
 protocol __truediv__Owner { func truediv(_ other: PyObject) -> PyResult<PyObject> }

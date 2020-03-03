@@ -824,7 +824,13 @@ PyStringIterator|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> 
 PyStringIterator|PyObject|func|__iter__|iter() -> PyObject
 PyStringIterator|PyObject|func|__next__|next() -> PyResult<PyObject>
 PyStringIterator|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?) -> PyResult<PyObject>
+PySuper|PyObject|get|__thisclass__|getThisClass() -> PyObject
+PySuper|PyObject|get|__self__|getSelf() -> PyObject
+PySuper|PyObject|get|__self_class__|getSelfClass() -> PyObject
 
+PySuper|PyObject|func|__repr__|repr() -> PyResult<String>
+PySuper|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
+PySuper|PyObject|func|__get__|get(object: PyObject, type: PyObject) -> PyResult<PyObject>
 PySuper|PyObject|static_func|__new__|pyNew(type: PyType,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyObject>
 PySuper|PyObject|static_func|__init__|pyInit(zelf: PySuper,                             args: [PyObject],                             kwargs: PyDict?) -> PyResult<PyNone>
 PyTextFile|PyObject|get|__class__|getClass() -> PyType

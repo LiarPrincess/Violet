@@ -119,6 +119,10 @@ Iterator
   Why do we even have this?
     __getattribute__
 
+method
+  Why do we even have this?
+    __doc__
+
 NoneType
   Why do we even have this?
     __getattribute__

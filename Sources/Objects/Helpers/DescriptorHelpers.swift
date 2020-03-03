@@ -79,9 +79,11 @@ internal class GetDescriptor {
   }
 
   /// Most of the time `withObject` set to false means static binding.
-  internal func call(withObject: Bool = true) -> PyResult<PyObject> {
+  internal func call(withObject: Bool = true,
+                     overrideType: PyType? = nil) -> PyResult<PyObject> {
     let owner = withObject ? self.object : descriptorStaticMarker
-    let args = [self.descriptor, owner, self.object.type]
+    let type = overrideType ?? self.object.type
+    let args = [self.descriptor, owner, type]
 
     switch Py.call(callable: self.get, args: args) {
     case .value(let r):

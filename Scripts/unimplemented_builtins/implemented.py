@@ -664,6 +664,7 @@ types = {
   ],
   method: [
     '__class__',
+    '__doc__',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -906,6 +907,16 @@ types = {
     '__iter__',
     '__next__',
     '__new__',
+  ],
+  super: [
+    '__thisclass__',
+    '__self__',
+    '__self_class__',
+    '__repr__',
+    '__getattribute__',
+    '__get__',
+    '__new__',
+    '__init__',
   ],
   TextFile: [
     '__class__',
