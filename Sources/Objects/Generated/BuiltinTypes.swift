@@ -48,6 +48,7 @@ public final class BuiltinTypes {
   public let enumerate: PyType
   public let filter: PyType
   public let float: PyType
+  public let frame: PyType
   public let frozenset: PyType
   public let function: PyType
   public let int: PyType
@@ -111,6 +112,7 @@ public final class BuiltinTypes {
     self.enumerate = PyType.initBuiltinType(name: "enumerate", type: self.type, base: self.object)
     self.filter = PyType.initBuiltinType(name: "filter", type: self.type, base: self.object)
     self.float = PyType.initBuiltinType(name: "float", type: self.type, base: self.object)
+    self.frame = PyType.initBuiltinType(name: "frame", type: self.type, base: self.object)
     self.frozenset = PyType.initBuiltinType(name: "frozenset", type: self.type, base: self.object)
     self.function = PyType.initBuiltinType(name: "function", type: self.type, base: self.object)
     self.int = PyType.initBuiltinType(name: "int", type: self.type, base: self.object)
@@ -175,6 +177,7 @@ public final class BuiltinTypes {
     FillTypes.enumerate(self.enumerate)
     FillTypes.filter(self.filter)
     FillTypes.float(self.float)
+    FillTypes.frame(self.frame)
     FillTypes.frozenset(self.frozenset)
     FillTypes.function(self.function)
     FillTypes.int(self.int)
@@ -232,6 +235,7 @@ public final class BuiltinTypes {
       self.enumerate,
       self.filter,
       self.float,
+      self.frame,
       self.frozenset,
       self.function,
       self.int,

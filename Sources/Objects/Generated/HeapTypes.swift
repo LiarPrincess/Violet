@@ -175,6 +175,10 @@ internal final class PyFloatHeap: PyFloat, HeapType {
   internal lazy var __dict__ = PyDict()
 }
 
+// MARK: - Frame
+
+// PyFrame is not a base type.
+
 // MARK: - FrozenSet
 
 /// Type used when we subclass builtin `frozenset` class.

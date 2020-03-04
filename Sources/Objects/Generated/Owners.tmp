@@ -428,6 +428,7 @@ PyFloat|PyObject|func|__rdivmod__|rdivmod(_ other: PyObject) -> PyResult<PyObjec
 PyFloat|PyObject|func|__round__|round(nDigits: PyObject?) -> PyResult<PyObject>
 PyFloat|PyObject|func|__trunc__|trunc() -> PyObject
 PyFloat|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?) -> PyResult<PyObject>
+
 PyFrozenSet|PyObject|get|__class__|getClass() -> PyType
 
 PyFrozenSet|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult

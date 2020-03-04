@@ -12,6 +12,7 @@ method = types.MethodType
 builtinFunction = types.BuiltinFunctionType
 builtinMethod = types.BuiltinMethodType
 SimpleNamespace = types.SimpleNamespace
+frame = types.FrameType
 
 iterator = collections.Iterator
 callable_iterator = type(iter(str, None))

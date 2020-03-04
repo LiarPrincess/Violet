@@ -105,6 +105,26 @@ float
     as_integer_ratio
     hex
 
+frame
+  Unimplemented:
+    __class__ - <class 'type'>
+    __new__ - <class 'builtin_function_or_method'>
+    __delattr__
+    __getattribute__
+    __repr__
+    __setattr__
+    clear
+    f_back
+    f_builtins
+    f_code
+    f_globals
+    f_lasti
+    f_lineno
+    f_locals
+    f_trace
+    f_trace_lines
+    f_trace_opcodes
+
 function
   Why do we even have this?
     __doc__

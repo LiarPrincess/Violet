@@ -168,6 +168,12 @@ internal enum Cast {
     return cast(object, as: PyFloat.self, typeName: "float", methodName: methodName)
   }
 
+  // MARK: - Frame
+
+  internal static func asPyFrame(_ object: PyObject, methodName: String) -> PyResult<PyFrame> {
+    return cast(object, as: PyFrame.self, typeName: "frame", methodName: methodName)
+  }
+
   // MARK: - FrozenSet
 
   internal static func asPyFrozenSet(_ object: PyObject, methodName: String) -> PyResult<PyFrozenSet> {

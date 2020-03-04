@@ -13,6 +13,7 @@ method = types.MethodType
 builtinFunction = types.BuiltinFunctionType
 builtinMethod = types.BuiltinMethodType
 SimpleNamespace = types.SimpleNamespace
+frame = types.FrameType
 
 iterator = collections.Iterator
 callable_iterator = type(iter(str, None))
@@ -490,6 +491,8 @@ types = {
     '__round__',
     '__trunc__',
     '__new__',
+  ],
+  frame: [
   ],
   frozenset: [
     '__class__',

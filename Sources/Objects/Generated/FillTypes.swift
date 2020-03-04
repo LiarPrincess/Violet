@@ -744,6 +744,18 @@ internal enum FillTypes {
     insert(type: type, name: "__trunc__", value: PyBuiltinFunction.wrap(name: "__trunc__", doc: nil, fn: PyFloat.trunc, castSelf: Cast.asPyFloat))
   }
 
+  // MARK: - Frame
+
+  internal static func frame(_ type: PyType) {
+    type.setBuiltinTypeDoc(nil)
+    type.setFlag(.default)
+    type.setFlag(.hasGC)
+
+
+
+
+  }
+
   // MARK: - FrozenSet
 
   internal static func frozenset(_ type: PyType) {
