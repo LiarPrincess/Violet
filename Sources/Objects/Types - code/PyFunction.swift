@@ -27,9 +27,9 @@ public class PyFunction: PyObject {
     """
 
   /// The `__name__` attribute, a string object
-  internal private(set) var name: String
+  internal private(set) var name: PyString
   /// The qualified name
-  internal private(set) var qualname: String
+  internal private(set) var qualname: PyString
   /// The `__doc__` attribute, can be anything
   internal let doc: String?
   /// The `__dict__` attribute, a dict or NULL
@@ -56,7 +56,7 @@ public class PyFunction: PyObject {
                 code: PyCode,
                 globals: PyDict) {
     self.name = code.name
-    self.qualname = qualname ?? code.name
+    self.qualname = qualname.map(Py.getInterned) ?? code.name
     self.code = code
     self.module = module
 
@@ -91,7 +91,7 @@ public class PyFunction: PyObject {
   // MARK: - Name
 
   // sourcery: pyproperty = __name__, setter = setName
-  public func getName() -> String {
+  public func getName() -> PyString {
     return self.name
   }
 
@@ -104,14 +104,14 @@ public class PyFunction: PyObject {
       return .typeError("__name__ must be set to a string object")
     }
 
-    self.name = valueString.value
+    self.name = valueString
     return .value()
   }
 
   // MARK: - Qualname
 
   // sourcery: pyproperty = __qualname__, setter = setQualname
-  public func getQualname() -> String {
+  public func getQualname() -> PyString {
     return self.qualname
   }
 
@@ -124,7 +124,7 @@ public class PyFunction: PyObject {
       return .typeError("__qualname__ must be set to a string object")
     }
 
-    self.qualname = valueString.value
+    self.qualname = valueString
     return .value()
   }
 
@@ -288,8 +288,8 @@ public class PyFunction: PyObject {
     let locals = Py.newDict()
 
     let result = Py.delegate.eval(
-      name: self.name,
-      qualname: self.qualname,
+      name: self.name.value,
+      qualname: self.qualname.value,
       code: self.code,
 
       args: args,

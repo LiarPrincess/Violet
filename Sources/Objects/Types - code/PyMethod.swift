@@ -88,7 +88,7 @@ public class PyMethod: PyObject {
       self.function.__dict__.get(id: .__name__)
 
     let funcNameString = funcNameObject as? PyString
-    let funcName = funcNameString?.value ?? self.function.name
+    let funcName = funcNameString?.value ?? self.function.name.value
 
     let ptr = self.object.ptrString
     let type = self.object.typeName

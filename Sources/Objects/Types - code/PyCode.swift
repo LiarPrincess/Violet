@@ -29,9 +29,7 @@ public class PyCode: PyObject {
   /// - list comprehension -> \<listcomp\>
   /// - set comprehension -> \<setcomp\>
   /// - dictionary comprehension -> \<dictcomp\>
-  public var name: String {
-    return self.codeObject.name
-  }
+  public var name: PyString
 
   /// Unique dot-separated qualified name.
   ///
@@ -41,22 +39,22 @@ public class PyCode: PyObject {
   ///   def elsa:   <- qualified name: frozen.elsa
   ///     pass
   /// ```
-  public var qualifiedName: String {
-    return self.codeObject.qualifiedName
-  }
+  public var qualifiedName: PyString
 
   /// Various flags used during the compilation process.
   public var codeFlags: CodeObjectFlags {
     return self.codeObject.flags
   }
 
+  public var firstLine: SourceLine {
+    return self.codeObject.firstLine
+  }
+
   /// The filename from which the code was compiled.
   /// Will be `<stdin>` for code entered in the interactive interpreter
   /// or whatever name is given as the second argument to `compile`
   /// for code objects created with `compile`.
-  public var filename: String {
-    return self.codeObject.filename
-  }
+  public var filename: PyString
 
   // MARK: - Instructions
 
@@ -202,6 +200,9 @@ public class PyCode: PyObject {
 
   internal init(code: CodeObject) {
     self.codeObject = code
+    self.name = Py.getInterned(code.name)
+    self.qualifiedName = Py.getInterned(code.qualifiedName)
+    self.filename = Py.getInterned(code.filename)
     self._names = code.names.map(Py.getInterned)
     super.init(type: Py.types.code)
   }
@@ -270,6 +271,45 @@ public class PyCode: PyObject {
   // sourcery: pyproperty = __class__
   public func getClass() -> PyType {
     return self.type
+  }
+
+  // MARK: - Attributes
+
+  // sourcery: pymethod = __getattribute__
+  internal func getAttribute(name: PyObject) -> PyResult<PyObject> {
+    return AttributeHelper.getAttribute(from: self, name: name)
+  }
+
+  // MARK: - Properties
+
+  // sourcery: pyproperty = co_name
+  internal func getName() -> PyString {
+    return self.name
+  }
+
+  // sourcery: pyproperty = co_filename
+  internal func getFilename() -> PyString {
+    return self.filename
+  }
+
+  // sourcery: pyproperty = co_firstlineno
+  internal func getFirstLineNo() -> Int {
+    return Int(self.firstLine)
+  }
+
+  // sourcery: pyproperty = co_argcount
+  internal func getArgCount() -> Int {
+    return self.argCount
+  }
+
+  // sourcery: pyproperty = co_kwonlyargcount
+  internal func getKwOnlyArgCount() -> Int {
+    return self.kwOnlyArgCount
+  }
+
+  // sourcery: pyproperty = co_nlocals
+  internal func getNLocals() -> Int {
+    return self.localsCount
   }
 
   // MARK: - Dump

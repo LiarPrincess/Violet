@@ -13,6 +13,12 @@ protocol __init__Owner {
 
 protocol ArgsGetterOwner { func getArgs() -> PyTuple }
 protocol ArgsSetterOwner { func setArgs(_ value: PyObject?) -> PyResult<()> }
+protocol Co_ArgcountGetterOwner { func getArgCount() -> Int }
+protocol Co_FilenameGetterOwner { func getFilename() -> PyString }
+protocol Co_FirstlinenoGetterOwner { func getFirstLineNo() -> Int }
+protocol Co_KwonlyargcountGetterOwner { func getKwOnlyArgCount() -> Int }
+protocol Co_NameGetterOwner { func getName() -> PyString }
+protocol Co_NlocalsGetterOwner { func getNLocals() -> Int }
 protocol DenominatorGetterOwner { func denominator() -> PyInt }
 protocol F_BackGetterOwner { func getBack() -> PyObject }
 protocol F_BuiltinsGetterOwner { func getBuiltins() -> PyDict }
@@ -102,6 +108,7 @@ protocol __module__GetterOwner { func getModule() -> PyResult<String> }
 protocol __module__SetterOwner { func setModule(_ value: PyObject?) -> PyResult<()> }
 protocol __mro__GetterOwner { func getMRO() -> PyTuple }
 protocol __mul__Owner { func mul(_ other: PyObject) -> PyResult<PyObject> }
+protocol __name__GetterOwner { func getName() -> PyString }
 protocol __name__GetterOwner { func getName() -> String }
 protocol __name__SetterOwner { func setName(_ value: PyObject?) -> PyResult<()> }
 protocol __ne__Owner { func isNotEqual(_ other: PyObject) -> CompareResult }
@@ -110,6 +117,7 @@ protocol __next__Owner { func next() -> PyResult<PyObject> }
 protocol __or__Owner { func or(_ other: PyObject) -> PyResult<PyObject> }
 protocol __pos__Owner { func positive() -> PyObject }
 protocol __pow__Owner { func pow(exp: PyObject, mod: PyObject?) -> PyResult<PyObject> }
+protocol __qualname__GetterOwner { func getQualname() -> PyString }
 protocol __qualname__GetterOwner { func getQualname() -> String }
 protocol __qualname__SetterOwner { func setQualname(_ value: PyObject?) -> PyResult<()> }
 protocol __radd__Owner { func radd(_ other: PyObject) -> PyResult<PyObject> }

@@ -292,6 +292,12 @@ types = {
   ],
   code: [
     '__class__',
+    'co_name',
+    'co_filename',
+    'co_firstlineno',
+    'co_argcount',
+    'co_kwonlyargcount',
+    'co_nlocals',
     '__eq__',
     '__ne__',
     '__lt__',
@@ -300,6 +306,7 @@ types = {
     '__ge__',
     '__hash__',
     '__repr__',
+    '__getattribute__',
   ],
   complex: [
     'real',

@@ -417,6 +417,12 @@ internal enum FillTypes {
     type.setFlag(.default)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCode.getClass, castSelf: Cast.asPyCode))
+    insert(type: type, name: "co_name", value: PyProperty.wrap(name: "co_name", doc: nil, get: PyCode.getName, castSelf: Cast.asPyCode))
+    insert(type: type, name: "co_filename", value: PyProperty.wrap(name: "co_filename", doc: nil, get: PyCode.getFilename, castSelf: Cast.asPyCode))
+    insert(type: type, name: "co_firstlineno", value: PyProperty.wrap(name: "co_firstlineno", doc: nil, get: PyCode.getFirstLineNo, castSelf: Cast.asPyCode))
+    insert(type: type, name: "co_argcount", value: PyProperty.wrap(name: "co_argcount", doc: nil, get: PyCode.getArgCount, castSelf: Cast.asPyCode))
+    insert(type: type, name: "co_kwonlyargcount", value: PyProperty.wrap(name: "co_kwonlyargcount", doc: nil, get: PyCode.getKwOnlyArgCount, castSelf: Cast.asPyCode))
+    insert(type: type, name: "co_nlocals", value: PyProperty.wrap(name: "co_nlocals", doc: nil, get: PyCode.getNLocals, castSelf: Cast.asPyCode))
 
 
 
@@ -428,6 +434,7 @@ internal enum FillTypes {
     insert(type: type, name: "__ge__", value: PyBuiltinFunction.wrap(name: "__ge__", doc: nil, fn: PyCode.isGreaterEqual(_:), castSelf: Cast.asPyCode))
     insert(type: type, name: "__hash__", value: PyBuiltinFunction.wrap(name: "__hash__", doc: nil, fn: PyCode.hash, castSelf: Cast.asPyCode))
     insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyCode.repr, castSelf: Cast.asPyCode))
+    insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyCode.getAttribute(name:), castSelf: Cast.asPyCode))
   }
 
   // MARK: - Complex

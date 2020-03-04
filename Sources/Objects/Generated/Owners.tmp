@@ -240,6 +240,12 @@ PyClassMethod|PyObject|func|__isabstractmethod__|isAbstractMethod() -> PyResult<
 PyClassMethod|PyObject|static_func|__init__|pyInit(zelf: PyClassMethod,                              args: [PyObject],                              kwargs: PyDict?) -> PyResult<PyNone>
 PyClassMethod|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?) -> PyResult<PyObject>
 PyCode|PyObject|get|__class__|getClass() -> PyType
+PyCode|PyObject|get|co_name|getName() -> PyString
+PyCode|PyObject|get|co_filename|getFilename() -> PyString
+PyCode|PyObject|get|co_firstlineno|getFirstLineNo() -> Int
+PyCode|PyObject|get|co_argcount|getArgCount() -> Int
+PyCode|PyObject|get|co_kwonlyargcount|getKwOnlyArgCount() -> Int
+PyCode|PyObject|get|co_nlocals|getNLocals() -> Int
 
 PyCode|PyObject|func|__eq__|isEqual(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__ne__|isNotEqual(_ other: PyObject) -> CompareResult
@@ -249,6 +255,7 @@ PyCode|PyObject|func|__gt__|isGreater(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__ge__|isGreaterEqual(_ other: PyObject) -> CompareResult
 PyCode|PyObject|func|__hash__|hash() -> HashResult
 PyCode|PyObject|func|__repr__|repr() -> PyResult<String>
+PyCode|PyObject|func|__getattribute__|getAttribute(name: PyObject) -> PyResult<PyObject>
 PyComplex|PyObject|get|real|asReal() -> PyObject
 PyComplex|PyObject|get|imag|asImag() -> PyObject
 PyComplex|PyObject|get|__class__|getClass() -> PyType
@@ -473,9 +480,9 @@ PyFrozenSet|PyObject|func|copy|copy() -> PyObject
 PyFrozenSet|PyObject|func|__iter__|iter() -> PyObject
 PyFrozenSet|PyObject|static_func|__new__|pyNew(type: PyType,                            args: [PyObject],                            kwargs: PyDict?) -> PyResult<PyObject>
 PyFunction|PyObject|get|__class__|getClass() -> PyType
-PyFunction|PyObject|get|__name__|getName() -> String
+PyFunction|PyObject|get|__name__|getName() -> PyString
 PyFunction|PyObject|set|__name__|setName(_ value: PyObject?) -> PyResult<()>
-PyFunction|PyObject|get|__qualname__|getQualname() -> String
+PyFunction|PyObject|get|__qualname__|getQualname() -> PyString
 PyFunction|PyObject|set|__qualname__|setQualname(_ value: PyObject?) -> PyResult<()>
 PyFunction|PyObject|get|__defaults__|getDefaults() -> PyObject
 PyFunction|PyObject|get|__kwdefaults__|getKeywordDefaults() -> PyObject

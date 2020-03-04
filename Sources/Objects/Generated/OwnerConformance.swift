@@ -249,6 +249,12 @@ extension PyClassMethod:
 
 extension PyCode:
   __class__GetterOwner,
+  Co_NameGetterOwner,
+  Co_FilenameGetterOwner,
+  Co_FirstlinenoGetterOwner,
+  Co_ArgcountGetterOwner,
+  Co_KwonlyargcountGetterOwner,
+  Co_NlocalsGetterOwner,
   __eq__Owner,
   __ne__Owner,
   __lt__Owner,
@@ -256,7 +262,8 @@ extension PyCode:
   __gt__Owner,
   __ge__Owner,
   __hash__Owner,
-  __repr__Owner
+  __repr__Owner,
+  __getattribute__Owner
 { }
 
 // MARK: - Complex
