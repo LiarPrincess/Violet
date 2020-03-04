@@ -288,8 +288,8 @@ public class PyFunction: PyObject {
     let locals = Py.newDict()
 
     let result = Py.delegate.eval(
-      name: self.name.value,
-      qualname: self.qualname.value,
+      name: self.name,
+      qualname: self.qualname,
       code: self.code,
 
       args: args,

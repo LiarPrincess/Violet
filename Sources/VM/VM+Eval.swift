@@ -29,8 +29,8 @@ extension VM {
 
   /// PyObject *
   /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals...)
-  public func eval(name: String?,
-                   qualname: String?,
+  public func eval(name: PyString?,
+                   qualname: PyString?,
                    code: PyCode,
 
                    args: [PyObject],
