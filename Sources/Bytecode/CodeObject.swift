@@ -1,5 +1,11 @@
 import Core
 
+// In CPython:
+// Objects -> codeobject.c
+
+// (Unofficial) docs:
+// https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
+
 public enum CodeObjectType {
   case module
   case `class`
@@ -58,7 +64,10 @@ public final class CodeObject: CustomStringConvertible {
   ///     pass
   /// ```
   public let qualifiedName: String
-  /// Name of the file that this code object was loaded from.
+  /// The filename from which the code was compiled.
+  /// Will be `<stdin>` for code entered in the interactive interpreter
+  /// or whatever name is given as the second argument to `compile`
+  /// for code objects created with `compile`.
   public let filename: String
 
   /// Type of the code object.
@@ -80,7 +89,12 @@ public final class CodeObject: CustomStringConvertible {
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
   /// CPython: `co_consts`.
   public internal(set) var constants = [Constant]()
-  /// List of strings (names used).
+  /// Names which aren’t covered by any of the other fields (they are not local
+  /// variables, they are not free variables, etc) used by the bytecode.
+  /// This includes names deemed to be in the global or builtin namespace
+  /// as well as attributes (i.e., if you do foo.bar in a function, bar will
+  /// be listed in its code object’s names).
+  ///
   /// E.g. `LoadName 5` loads `self.names[5]` value.
   /// CPython: `co_names`.
   public internal(set) var names = [String]()
@@ -88,7 +102,17 @@ public final class CodeObject: CustomStringConvertible {
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
   public internal(set) var labels = [Int]()
 
-  /// List of local variable names.
+  /// Names of the local variables (including arguments).
+  ///
+  /// In the ‘richest’ case, `variableNames` contains (in order):
+  /// - positional argument names (including optional ones)
+  /// - keyword only argument names (again, both required and optional)
+  /// - varargs argument name (i.e., *args)
+  /// - kwds argument name (i.e., **kwargs)
+  /// - any other local variable names.
+  ///
+  /// So you need to look at `argCount`, `kwOnlyArgCount` and `codeFlags`
+  /// to fully interpret this
   ///
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
@@ -96,12 +120,19 @@ public final class CodeObject: CustomStringConvertible {
   public let variableNames: [MangledName]
   /// List of free variable names.
   ///
+  /// 'Free variable' means a variable which is referenced by an expression
+  /// but isn’t defined in it.
+  /// In our case, it means a variable that is referenced in this code object
+  /// but was defined and will be dereferenced to a cell in another code object
+  ///
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
   /// CPython: `co_freevars`.
   public let freeVariableNames: [MangledName]
   /// List of cell variable names.
   /// Cell = source for 'free' variable.
+  ///
+  /// [See docs.](https://docs.python.org/3/c-api/cell.html)
   ///
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.

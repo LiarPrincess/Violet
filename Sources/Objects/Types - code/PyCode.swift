@@ -4,6 +4,9 @@ import Bytecode
 // In CPython:
 // Objects -> codeobject.c
 
+// (Unofficial) docs:
+// https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
+
 // sourcery: pytype = code, default
 public class PyCode: PyObject {
 
@@ -47,24 +50,30 @@ public class PyCode: PyObject {
     return self.codeObject.flags
   }
 
-  /// Name of the file that this code object was loaded from.
+  /// The filename from which the code was compiled.
+  /// Will be `<stdin>` for code entered in the interactive interpreter
+  /// or whatever name is given as the second argument to `compile`
+  /// for code objects created with `compile`.
   public var filename: String {
     return self.codeObject.filename
   }
 
-  // MARK: - Names, constants and labels
+  // MARK: - Instructions
 
-  /// We will convert `CodeObject.names` -> `[PyString]` in `init`.
-  /// Otherwise we would have to convert them (`O(1)` + massive constants)
-  /// on each use.
-  private let _names: [PyString]
-
-  /// List of strings (names used).
-  /// E.g. `LoadName 5` loads `self.names[5]` value.
-  /// CPython: `co_names`.
-  public var names: [PyString] {
-    return self._names
+  /// Instruction opcodes.
+  /// CPython: `co_code`.
+  public var instructions: [Instruction] {
+    return self.codeObject.instructions
   }
+
+  /// CPython: `co_lnotab` <- but not exactly the same.
+  public func getLine(instructionIndex index: Int) -> SourceLine {
+    let lines = self.codeObject.instructionLines
+    assert(0 <= index && index < lines.count)
+    return lines[index]
+  }
+
+  // MARK: - Constants and labels
 
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
@@ -79,20 +88,23 @@ public class PyCode: PyObject {
     return self.codeObject.labels
   }
 
-  // MARK: - Instructions
+  // MARK: - Names
 
-  /// Instruction opcodes.
-  /// CPython: `co_code`.
-  public var instructions: [Instruction] {
-    return self.codeObject.instructions
-  }
+  /// We will convert `CodeObject.names` -> `[PyString]` in `init`.
+  /// Otherwise we would have to convert them (`O(1)` + massive constants)
+  /// on each use.
+  private let _names: [PyString]
 
-  /// Instruction locations.
-  /// CPython: `co_lnotab` <- but not exactly the same.
-  public func getLine(instructionIndex index: Int) -> SourceLine {
-    let lines = self.codeObject.instructionLines
-    assert(0 <= index && index < lines.count)
-    return lines[index]
+  /// Names which aren’t covered by any of the other fields (they are not local
+  /// variables, they are not free variables, etc) used by the bytecode.
+  /// This includes names deemed to be in the global or builtin namespace
+  /// as well as attributes (i.e., if you do foo.bar in a function, bar will
+  /// be listed in its code object’s names).
+  ///
+  /// E.g. `LoadName 5` loads `self.names[5]` value.
+  /// CPython: `co_names`.
+  public var names: [PyString] {
+    return self._names
   }
 
   // MARK: - Variables
@@ -101,7 +113,17 @@ public class PyCode: PyObject {
     return self.variableNames.count
   }
 
-  /// List of local variable names.
+  /// Names of the local variables (including arguments).
+  ///
+  /// In the ‘richest’ case, `variableNames` contains (in order):
+  /// - positional argument names (including optional ones)
+  /// - keyword only argument names (again, both required and optional)
+  /// - varargs argument name (i.e., *args)
+  /// - kwds argument name (i.e., **kwargs)
+  /// - any other local variable names.
+  ///
+  /// So you need to look at `argCount`, `kwOnlyArgCount` and `codeFlags`
+  /// to fully interpret this
   ///
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
@@ -110,12 +132,16 @@ public class PyCode: PyObject {
     return self.codeObject.variableNames
   }
 
+  // MARK: - Cell variables
+
   public var cellVariableCount: Int {
     return self.cellVariableNames.count
   }
 
   /// List of cell variable names.
   /// Cell = source for 'free' variable.
+  ///
+  /// [See docs.](https://docs.python.org/3/c-api/cell.html)
   ///
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
@@ -124,11 +150,18 @@ public class PyCode: PyObject {
     return self.codeObject.cellVariableNames
   }
 
+  // MARK: - Free variables
+
   public var freeVariableCount: Int {
     return self.freeVariableNames.count
   }
 
   /// List of free variable names.
+  ///
+  /// 'Free variable' means a variable which is referenced by an expression
+  /// but isn’t defined in it.
+  /// In our case, it means a variable that is referenced in this code object
+  /// but was defined and will be dereferenced to a cell in another code object
   ///
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
@@ -139,16 +172,23 @@ public class PyCode: PyObject {
 
   // MARK: - Count
 
-  /// Argument count (excluding `*args`).
+  /// The number of positional arguments the code object expects to receive,
+  /// including those with default values (but excluding `*args`).
   /// CPython: `co_argcount`.
   public var argCount: Int {
     return self.codeObject.argCount
   }
 
-  /// Keyword only argument count.
+  /// The number of keyword arguments the code object can receive.
   /// CPython: `co_kwonlyargcount`.
   public var kwOnlyArgCount: Int {
     return self.codeObject.kwOnlyArgCount
+  }
+
+  /// The number of local variables used in the code object (including arguments).
+  /// CPython: `co_nlocals`.
+  public var localsCount: Int {
+    return self.variableCount
   }
 
   // MARK: - Description
