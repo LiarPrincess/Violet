@@ -25,6 +25,18 @@ internal enum Debug {
 //    print()
   }
 
+  internal static func code(_ code: PyCode) {
+    guard isEnabled else { return }
+
+    let name = code.qualifiedName.isEmpty ? "(no name)" : code.qualifiedName
+    print("=== \(name) ===")
+    print(code.dump())
+
+    for case Constant.code(let inner) in code.constants {
+      Debug.code(inner)
+    }
+  }
+
   internal static func code(_ code: CodeObject) {
     guard isEnabled else { return }
 
@@ -39,7 +51,7 @@ internal enum Debug {
 
   // MARK: - Frame
 
-  internal static func instruction(code: CodeObject,
+  internal static func instruction(code: PyCode,
                                    instruction: Instruction,
                                    extendedArg: Int) {
     guard isEnabled else { return }

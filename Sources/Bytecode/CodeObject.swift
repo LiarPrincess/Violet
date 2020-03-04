@@ -70,15 +70,19 @@ public final class CodeObject: CustomStringConvertible {
   public let firstLine: SourceLine
 
   /// Instruction opcodes.
+  /// CPython: `co_code`.
   public internal(set) var instructions = [Instruction]()
   /// Instruction locations.
+  /// CPython: `co_lnotab` <- but not exactly the same.
   public internal(set) var instructionLines = [SourceLine]()
 
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
+  /// CPython: `co_consts`.
   public internal(set) var constants = [Constant]()
   /// List of strings (names used).
   /// E.g. `LoadName 5` loads `self.names[5]` value.
+  /// CPython: `co_names`.
   public internal(set) var names = [String]()
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
@@ -88,17 +92,20 @@ public final class CodeObject: CustomStringConvertible {
   ///
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
+  /// CPython: `co_varnames`.
   public let variableNames: [MangledName]
   /// List of free variable names.
   ///
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
+  /// CPython: `co_freevars`.
   public let freeVariableNames: [MangledName]
   /// List of cell variable names.
   /// Cell = source for 'free' variable.
   ///
   /// This value is taken directly from the SymbolTable.
   /// New entries should not be added after `init`.
+  /// CPython: `co_cellvars`.
   public let cellVariableNames: [MangledName]
 
   /// Argument count (excluding `*args`).

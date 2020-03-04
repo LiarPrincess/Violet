@@ -55,8 +55,8 @@ public class PyFunction: PyObject {
                 module: PyObject,
                 code: PyCode,
                 globals: PyDict) {
-    self.name = code.codeObject.name
-    self.qualname = qualname ?? code.codeObject.name
+    self.name = code.name
+    self.qualname = qualname ?? code.name
     self.code = code
     self.module = module
 
@@ -66,7 +66,7 @@ public class PyFunction: PyObject {
     self.closure = nil
     self.annotations = nil
 
-    switch code.codeObject.constants.first {
+    switch code.constants.first {
     case let .some(.string(s)): self.doc = s
     default: self.doc = nil
     }
@@ -278,38 +278,28 @@ public class PyFunction: PyObject {
   /// static PyObject *
   /// function_call(PyObject *func, PyObject *args, PyObject *kwargs)
   public func call(args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject> {
-    let name = self.name
-    let qualname = self.qualname
-    let code = self.code.codeObject
-
     // Caller and callee functions should not share the kwargs dictionary.
-    // Btw. we do not expect a lot of kwargs so the performance hit
-    // should be acceptable.
     var kwargsCopy: PyDict?
     if let kwargs = kwargs {
       kwargsCopy = Py.newDict(data: kwargs.data)
     }
 
     let argsDefaults = self.defaults?.elements ?? []
-    let kwDefaults = self.kwDefaults
-
-    let globals = self.globals
     let locals = Py.newDict()
-    let closure = self.closure
 
     let result = Py.delegate.eval(
-      name: name,
-      qualname: qualname,
-      code: code,
+      name: self.name,
+      qualname: self.qualname,
+      code: self.code,
 
       args: args,
       kwargs: kwargsCopy,
       defaults: argsDefaults,
-      kwDefaults: kwDefaults,
+      kwDefaults: self.kwDefaults,
 
-      globals: globals,
+      globals: self.globals,
       locals: locals,
-      closure: closure
+      closure: self.closure
     )
 
     return result

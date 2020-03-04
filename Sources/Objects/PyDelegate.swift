@@ -8,11 +8,10 @@ public protocol PyDelegate: AnyObject {
   /// Extension point for opening files.
   func open(file: String, mode: FileMode) -> PyResult<FileDescriptorType>
 
-  // TODO: closure
   /// Evaluate given code object.
   func eval(name: String?,
             qualname: String?,
-            code: CodeObject,
+            code: PyCode,
 
             args: [PyObject],
             kwargs: PyDict?,

@@ -73,9 +73,11 @@ extension VM {
 
     let url = try self.getScriptURL(file)
     let source = try self.readScript(from: url)
-    let code = try self.compile(filename: url.lastPathComponent,
-                                source: source,
-                                mode: .fileInput)
+
+    let codeObject = try self.compile(filename: url.lastPathComponent,
+                                      source: source,
+                                      mode: .fileInput)
+    let code = Py.newCode(code: codeObject)
 
 // TODO: This or RustPython main.rs -> line 410:
 // let sys_path = vm.get_attribute(sys_module, "path")

@@ -25,14 +25,14 @@ internal struct FillFastLocals {
   }
 
   private var hasVarArgs: Bool {
-    return self.code.flags.contains(.varArgs)
+    return self.code.codeFlags.contains(.varArgs)
   }
 
   private var hasVarKeywords: Bool {
-    return self.code.flags.contains(.varKeywords)
+    return self.code.codeFlags.contains(.varKeywords)
   }
 
-  private var code: CodeObject {
+  private var code: PyCode {
     return self.frame.code
   }
 

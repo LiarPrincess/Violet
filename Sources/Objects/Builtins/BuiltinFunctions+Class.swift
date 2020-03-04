@@ -191,7 +191,7 @@ extension BuiltinFunctions {
     return Py.delegate.eval(
       name: nil,
       qualname: nil,
-      code: fn.code.codeObject,
+      code: fn.code,
       args: [],
       kwargs: nil,
       defaults: [],

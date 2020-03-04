@@ -197,7 +197,7 @@ extension Frame {
   }
 
   private func unboundFastError(index: Int) -> InstructionResult {
-    assert(0 <= index && index < self.code.variableNames.count)
+    assert(0 <= index && index < self.code.variableCount)
 
     let mangled = self.code.variableNames[index]
     let e = Py.newUnboundLocalError(variableName: mangled.value)
@@ -247,10 +247,10 @@ extension Frame {
   /// consulting the cell.
   /// This is used for loading free variables in class bodies.
   internal func loadClassDeref(cellOrFreeIndex: Int) -> InstructionResult {
-    assert(cellOrFreeIndex >= self.code.cellVariableNames.count)
+    assert(cellOrFreeIndex >= self.code.cellVariableCount)
 
-    let freeIndex = cellOrFreeIndex - self.code.cellVariableNames.count
-    assert(0 <= freeIndex && freeIndex < self.code.freeVariableNames.count)
+    let freeIndex = cellOrFreeIndex - self.code.cellVariableCount
+    assert(0 <= freeIndex && freeIndex < self.code.freeVariableCount)
 
     let mangled = self.code.freeVariableNames[freeIndex]
     let name = Py.getInterned(mangled.value)
@@ -279,7 +279,7 @@ extension Frame {
   }
 
   private func unboundDerefError(index: Int) -> InstructionResult {
-    assert(0 <= index && index < self.code.cellVariableNames.count)
+    assert(0 <= index && index < self.code.cellVariableCount)
 
     let mangled = self.getDerefName(index: index)
     let msg = "cell/free variable '\(mangled)' referenced before assignment " +
@@ -290,7 +290,7 @@ extension Frame {
   }
 
   private func getDerefName(index: Int) -> MangledName {
-    let cellCount = self.code.cellVariableNames.count
+    let cellCount = self.code.cellVariableCount
     return index < cellCount ?
       self.code.cellVariableNames[index] :
       self.code.freeVariableNames[index - cellCount]

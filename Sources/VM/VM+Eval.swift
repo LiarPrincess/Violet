@@ -6,7 +6,7 @@ extension VM {
 
   /// PyObject *
   /// PyEval_EvalCode(PyObject *co, PyObject *globals, PyObject *locals)
-  public func eval(code: CodeObject,
+  public func eval(code: PyCode,
                    globals: PyDict,
                    locals: PyDict) -> PyResult<PyObject> {
     return self.eval(
@@ -31,7 +31,7 @@ extension VM {
   /// _PyEval_EvalCodeWithName(PyObject *_co, PyObject *globals, PyObject *locals...)
   public func eval(name: String?,
                    qualname: String?,
-                   code: CodeObject,
+                   code: PyCode,
 
                    args: [PyObject],
                    kwargs: PyDict?,
@@ -75,7 +75,7 @@ extension VM {
     return result
   }
 
-  private func fillCells(in frame: Frame, from code: CodeObject) {
+  private func fillCells(in frame: Frame, from code: PyCode) {
     guard code.cellVariableNames.any else {
       return
     }
@@ -99,15 +99,15 @@ extension VM {
   }
 
   private func fillFree(in frame: Frame,
-                        from code: CodeObject,
+                        from code: PyCode,
                         using closure: PyTuple?) {
     guard let closure = closure else {
       return
     }
 
-    assert(closure.elements.count == code.freeVariableNames.count)
+    assert(closure.elements.count == code.freeVariableCount)
 
-    let cellCount = code.cellVariableNames.count
+    let cellCount = code.cellVariableCount
     for (index, cellObject) in closure.elements.enumerated() {
       guard let cell = cellObject as? PyCell else {
         let t = cellObject.typeName

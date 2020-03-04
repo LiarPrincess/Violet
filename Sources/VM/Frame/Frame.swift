@@ -33,7 +33,7 @@ internal enum InstructionResult {
 internal final class Frame {
 
   /// Code to run.
-  internal let code: CodeObject
+  internal let code: PyCode
   /// Parent frame.
   internal let parent: Frame?
 
@@ -59,9 +59,11 @@ internal final class Frame {
   /// but as 'the hipster trash that we are' (quote from @bestdressed)
   /// we won't do this.
   /// We use array which is like dictionary, but with lower constants.
+  ///
+  /// CPython: `f_localsplus`.
   internal lazy var fastLocals = [PyObject?](
     repeating: nil,
-    count: self.code.variableNames.count
+    count: self.code.variableCount
   )
 
   /// Free variables (variables from upper scopes).
@@ -74,9 +76,11 @@ internal final class Frame {
   /// of the stack.
   /// And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
+  ///
+  /// CPython: `freevars`.
   internal lazy var cellsAndFreeVariables = [PyCell](
     repeating: Py.newCell(content: nil),
-    count: self.code.cellVariableNames.count + self.code.freeVariableNames.count
+    count: self.code.cellVariableCount + self.code.freeVariableCount
   )
 
   /// Index of the next instruction to run (program counter).
@@ -84,7 +88,7 @@ internal final class Frame {
 
   /// PyFrameObject* _Py_HOT_FUNCTION
   /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
-  internal init(code: CodeObject,
+  internal init(code: PyCode,
                 locals: PyDict,
                 globals: PyDict,
                 parent: Frame?) {
@@ -113,7 +117,6 @@ internal final class Frame {
   internal var stackLevel: Int {
     return self.stack.count
   }
-
   // MARK: - Code object getters
 
   internal func getName(index: Int) -> PyString {
@@ -171,7 +174,7 @@ internal final class Frame {
              .yield,
              .silenced:
           let pc = Swift.max(self.nextInstructionIndex - 1, 0)
-          let line = self.code.instructionLines[pc]
+          let line = self.code.getLine(instructionIndex: pc)
 
           print()
           print("===")
