@@ -1,35 +1,74 @@
 import os
 import sys
 
-# We will not generate protocols for following methods:
-ignored_methods = [
-  'pop',
-  'strip',
-  'lstrip',
-  'rstrip',
-  'center',
-  'ljust',
-  'rjust',
-  'split',
-  'rsplit',
-  'splitlines',
-  'expandtabs',
-  'replace',
-  'zfill',
-  'capitalize',
-  'lower',
-  'swapcase',
-  'title',
-  'upper',
-  'casefold',
-  'join',
-  'update'
-]
-
-manually_written_protocols = [
-  '__init__',
-  '__new__'
-]
+# All of the operations for which protocols will be generated
+# (Feel free to add new ones.)
+generated_protocols = set([
+  "__abs__",
+  "__add__",
+  "__and__",
+  "__bool__",
+  "__call__",
+  "__contains__",
+  "__del__",
+  "__delitem__",
+  "__dict__",
+  "__dir__",
+  "__divmod__",
+  "__eq__",
+  "__float__",
+  "__floordiv__",
+  "__ge__",
+  "__getattribute__",
+  "__getitem__",
+  "__gt__",
+  "__hash__",
+  "__iadd__",
+  "__index__",
+  "__init__",
+  "__instancecheck__",
+  "__invert__",
+  "__isabstractmethod__",
+  "__iter__",
+  "__le__",
+  "__len__",
+  "__lshift__",
+  "__lt__",
+  "__mod__",
+  "__mul__",
+  "__ne__",
+  "__neg__",
+  "__next__",
+  "__or__",
+  "__pos__",
+  "__pow__",
+  "__radd__",
+  "__rand__",
+  "__rdivmod__",
+  "__repr__",
+  "__reversed__",
+  "__rfloordiv__",
+  "__rlshift__",
+  "__rmod__",
+  "__rmul__",
+  "__ror__",
+  "__round__",
+  "__rpow__",
+  "__rrshift__",
+  "__rshift__",
+  "__rsub__",
+  "__rtruediv__",
+  "__rxor__",
+  "__setattr__",
+  "__setitem__",
+  "__str__",
+  "__sub__",
+  "__subclasscheck__",
+  "__truediv__",
+  "__trunc__",
+  "__xor__",
+  "keys",
+])
 
 # ----
 # File
@@ -64,7 +103,7 @@ def read_input_file() -> [Line]:
       python_name = line_split[3]
       swift_signature = line_split[4]
 
-      if python_name not in ignored_methods:
+      if python_name in generated_protocols:
         entry = Line(type_name, base_type_name, operation, python_name, swift_signature)
         result.append(entry)
 
@@ -74,6 +113,8 @@ def clean_signature(sig):
   ''' If signature spans multiple lines then Sourcery will ignore new lines, but
   preserve indentation, so we end up with:
   protocol findOwner { func find(_ value: PyObject,                     start: PyObject?,                     end: PyObject?) -> PyResult<Int> }
+
+  This function will remove those '   '.
   '''
 
   while '  ' in sig:
@@ -81,9 +122,9 @@ def clean_signature(sig):
 
   return sig
 
-# --------------
-# Protocol names
-# --------------
+# ------
+# Shared
+# ------
 
 def getter_protocol_name(name):
   name = name if name.startswith('__') else name.title()
@@ -96,11 +137,11 @@ def setter_protocol_name(name):
 def func_protocol_name(name):
   return f'{name}Owner'
 
-def ranged_func_protocol_name(name):
-  return f'{name}RangedOwner'
-
-def is_ranged_function(signature):
-  return 'start: PyObject?, end: PyObject?' in signature
+doc = '''\
+// Sometimes instead of doing slow Python dispatch we will use Swift protocols.
+// Feel free to add new protocols if you need them (just modify the script
+// responsible for generating the code).\
+'''
 
 # ---------
 # Protocols
@@ -109,12 +150,33 @@ def is_ranged_function(signature):
 def print_protocols():
   lines = read_input_file()
 
+  print(f'''\
+import Core
+
+{doc}
+
+// swiftlint:disable line_length
+
+protocol __new__Owner {{
+  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
+}}
+
+protocol __init__Owner {{
+  associatedtype Zelf: PyObject
+  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone>
+}}
+''')
+
   protocols = set()
   for line in lines:
     python_name = line.python_name
     signature = line.swift_signature
 
-    if line.operation == 'get':
+    # We hand-written '__new__' and '__init__'.
+    if python_name in ['__new__', '__init__']:
+      continue
+
+    elif line.operation == 'get':
       protocol_name = getter_protocol_name(python_name)
       protocols.add(f'protocol {protocol_name} {{ func {signature} }}')
 
@@ -125,20 +187,8 @@ def print_protocols():
     elif line.operation == 'func' or line.operation == 'static_func':
       static = 'static ' if line.operation == 'static_func' else ''
 
-      if python_name in manually_written_protocols:
-        pass
-      elif is_ranged_function(signature):
-        # Special case for 'str' methods with 'start' and 'end' args
-        # We will also have version without range.
-        protocol_name = func_protocol_name(python_name)
-        signature_no_range = signature.replace(', start: PyObject?, end: PyObject?', '')
-        protocols.add(f'protocol {protocol_name} {{ {static}func {signature_no_range} }}')
-
-        ranged_protocol_name = ranged_func_protocol_name(python_name)
-        protocols.add(f'protocol {ranged_protocol_name} {{ {static}func {signature} }}')
-      else:
-        protocol_name = func_protocol_name(python_name)
-        protocols.add(f'protocol {protocol_name} {{ {static}func {signature} }}')
+      protocol_name = func_protocol_name(python_name)
+      protocols.add(f'protocol {protocol_name} {{ {static}func {signature} }}')
 
     else:
       assert False
@@ -146,7 +196,6 @@ def print_protocols():
   # Additional protocols (none of the builtin types implement them)
   protocols.add('protocol __matmul__Owner { func matmul(_ other: PyObject) -> PyResult<PyObject> }')
   protocols.add('protocol __rmatmul__Owner { func rmatmul(_ other: PyObject) -> PyResult<PyObject> }')
-
   protocols.add('protocol __isub__Owner { func isub(_ other: PyObject) -> PyResult<PyObject> }')
   protocols.add('protocol __imul__Owner { func imul(_ other: PyObject) -> PyResult<PyObject> }')
   protocols.add('protocol __imatmul__Owner { func imatmul(_ other: PyObject) -> PyResult<PyObject> }')
@@ -160,22 +209,6 @@ def print_protocols():
   protocols.add('protocol __ixor__Owner { func ixor(_ other: PyObject) -> PyResult<PyObject> }')
   protocols.add('protocol __ior__Owner { func ior(_ other: PyObject) -> PyResult<PyObject> }')
   protocols.add('protocol __complex__Owner { func asComplex() -> PyObject }')
-
-  # We will manually create '__new__Owner' and '__init__Owner'
-  print('''\
-import Core
-
-// swiftlint:disable line_length
-
-protocol __new__Owner {
-  static func pyNew(type: PyType, args: [PyObject], kwargs: PyDict?) -> PyResult<PyObject>
-}
-
-protocol __init__Owner {
-  associatedtype Zelf: PyObject
-  static func pyInit(zelf: Zelf, args: [PyObject], kwargs: PyDict?) -> PyResult<PyNone>
-}
-''')
 
   for line in sorted(protocols):
     print(line)
@@ -192,6 +225,19 @@ class ConformanceEntry:
 
 def print_conformance():
   lines = read_input_file()
+
+  print(f'''\
+{doc}
+
+// swiftlint:disable file_length
+// swiftlint:disable opening_brace
+// swiftlint:disable trailing_newline
+
+// MARK: - BaseObject
+
+// PyBaseObject does not own anything.
+extension PyBaseObject {{ }}
+''')
 
   # type_name pointing to ConformanceEntry
   entries_by_type_name = { }
@@ -214,24 +260,9 @@ def print_conformance():
     elif line.operation == 'set':
       protocols.append(setter_protocol_name(python_name))
     elif line.operation == 'func' or line.operation == 'static_func':
-      if is_ranged_function(signature):
-        protocols.append(func_protocol_name(python_name))
-        protocols.append(ranged_func_protocol_name(python_name))
-      else:
-        protocols.append(func_protocol_name(python_name))
+      protocols.append(func_protocol_name(python_name))
     else:
       assert False
-
-  print('''\
-// swiftlint:disable file_length
-// swiftlint:disable opening_brace
-// swiftlint:disable trailing_newline
-
-// MARK: - BaseObject
-
-// PyBaseObject does not own anything.
-extension PyBaseObject { }
-''')
 
   for entry in entries_by_type_name.values():
     type_name = entry.type_name
