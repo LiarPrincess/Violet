@@ -751,9 +751,21 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
 
+    insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrame.getClass, castSelf: Cast.asPyFrame))
+    insert(type: type, name: "f_back", value: PyProperty.wrap(name: "f_back", doc: nil, get: PyFrame.getBack, castSelf: Cast.asPyFrame))
+    insert(type: type, name: "f_builtins", value: PyProperty.wrap(name: "f_builtins", doc: nil, get: PyFrame.getBuiltins, castSelf: Cast.asPyFrame))
+    insert(type: type, name: "f_globals", value: PyProperty.wrap(name: "f_globals", doc: nil, get: PyFrame.getGlobals, castSelf: Cast.asPyFrame))
+    insert(type: type, name: "f_locals", value: PyProperty.wrap(name: "f_locals", doc: nil, get: PyFrame.getLocals, castSelf: Cast.asPyFrame))
+    insert(type: type, name: "f_code", value: PyProperty.wrap(name: "f_code", doc: nil, get: PyFrame.getCode, castSelf: Cast.asPyFrame))
+    insert(type: type, name: "f_lasti", value: PyProperty.wrap(name: "f_lasti", doc: nil, get: PyFrame.getLasti, castSelf: Cast.asPyFrame))
+    insert(type: type, name: "f_lineno", value: PyProperty.wrap(name: "f_lineno", doc: nil, get: PyFrame.getLineno, castSelf: Cast.asPyFrame))
 
 
 
+    insert(type: type, name: "__repr__", value: PyBuiltinFunction.wrap(name: "__repr__", doc: nil, fn: PyFrame.repr, castSelf: Cast.asPyFrame))
+    insert(type: type, name: "__getattribute__", value: PyBuiltinFunction.wrap(name: "__getattribute__", doc: nil, fn: PyFrame.getAttribute(name:), castSelf: Cast.asPyFrame))
+    insert(type: type, name: "__setattr__", value: PyBuiltinFunction.wrap(name: "__setattr__", doc: nil, fn: PyFrame.setAttribute(name:value:), castSelf: Cast.asPyFrame))
+    insert(type: type, name: "__delattr__", value: PyBuiltinFunction.wrap(name: "__delattr__", doc: nil, fn: PyFrame.delAttribute(name:), castSelf: Cast.asPyFrame))
   }
 
   // MARK: - FrozenSet

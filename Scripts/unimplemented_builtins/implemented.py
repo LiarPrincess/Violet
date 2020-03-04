@@ -493,6 +493,18 @@ types = {
     '__new__',
   ],
   frame: [
+    '__class__',
+    'f_back',
+    'f_builtins',
+    'f_globals',
+    'f_locals',
+    'f_code',
+    'f_lasti',
+    'f_lineno',
+    '__repr__',
+    '__getattribute__',
+    '__setattr__',
+    '__delattr__',
   ],
   frozenset: [
     '__class__',

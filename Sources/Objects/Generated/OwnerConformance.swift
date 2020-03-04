@@ -484,6 +484,23 @@ extension PyFloat:
   __new__Owner
 { }
 
+// MARK: - Frame
+
+extension PyFrame:
+  __class__GetterOwner,
+  F_BackGetterOwner,
+  F_BuiltinsGetterOwner,
+  F_GlobalsGetterOwner,
+  F_LocalsGetterOwner,
+  F_CodeGetterOwner,
+  F_LastiGetterOwner,
+  F_LinenoGetterOwner,
+  __repr__Owner,
+  __getattribute__Owner,
+  __setattr__Owner,
+  __delattr__Owner
+{ }
+
 // MARK: - FrozenSet
 
 extension PyFrozenSet:

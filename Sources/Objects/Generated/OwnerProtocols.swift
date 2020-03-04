@@ -14,6 +14,13 @@ protocol __init__Owner {
 protocol ArgsGetterOwner { func getArgs() -> PyTuple }
 protocol ArgsSetterOwner { func setArgs(_ value: PyObject?) -> PyResult<()> }
 protocol DenominatorGetterOwner { func denominator() -> PyInt }
+protocol F_BackGetterOwner { func getBack() -> PyObject }
+protocol F_BuiltinsGetterOwner { func getBuiltins() -> PyDict }
+protocol F_CodeGetterOwner { func getCode() -> PyCode }
+protocol F_GlobalsGetterOwner { func getGlobals() -> PyDict }
+protocol F_LastiGetterOwner { func getLasti() -> Int }
+protocol F_LinenoGetterOwner { func getLineno() -> Int }
+protocol F_LocalsGetterOwner { func getLocals() -> PyDict }
 protocol FdelGetterOwner { func getFDel() -> PyObject }
 protocol FgetGetterOwner { func getFGet() -> PyObject }
 protocol FsetGetterOwner { func getFSet() -> PyObject }
