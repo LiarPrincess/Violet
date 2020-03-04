@@ -54,11 +54,16 @@ public class PyCode: PyObject {
 
   // MARK: - Names, constants and labels
 
+  /// We will convert `CodeObject.names` -> `[PyString]` in `init`.
+  /// Otherwise we would have to convert them (`O(1)` + massive constants)
+  /// on each use.
+  private let _names: [PyString]
+
   /// List of strings (names used).
   /// E.g. `LoadName 5` loads `self.names[5]` value.
   /// CPython: `co_names`.
-  public var names: [String] {
-    return self.codeObject.names
+  public var names: [PyString] {
+    return self._names
   }
 
   /// Constants used.
@@ -157,6 +162,7 @@ public class PyCode: PyObject {
 
   internal init(code: CodeObject) {
     self.codeObject = code
+    self._names = code.names.map(Py.getInterned)
     super.init(type: Py.types.code)
   }
 

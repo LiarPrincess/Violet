@@ -120,14 +120,8 @@ internal final class Frame {
   // MARK: - Code object getters
 
   internal func getName(index: Int) -> PyString {
-    // TODO: If we store 'PyStrings' in code object we will improve performance
-    // But since 'Objects' have reference to 'Bytecode' we can't add reference
-    // from 'Bytecode' to 'Objects'.
-    // Idea: use 'PyCode' instead of 'self.code' and lazy convert
-
     assert(0 <= index && index < self.code.names.count)
-    let value = self.code.names[index]
-    return Py.getInterned(value)
+    return self.code.names[index]
   }
 
   internal func getConstant(index: Int) -> Constant {
