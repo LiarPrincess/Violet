@@ -7,6 +7,8 @@ import Bytecode
 // (Unofficial) docs:
 // https://tech.blog.aknin.name/2010/07/03/pythons-innards-code-objects/
 
+// swiftlint:disable file_length
+
 // sourcery: pytype = code, default
 public class PyCode: PyObject {
 

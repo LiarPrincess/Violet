@@ -85,12 +85,15 @@ extension Frame {
 
   internal func getFunctionName(object: PyObject) -> String? {
     if let fn = object as? PyFunction {
-     return fn.getName()
-   }
+      let result = fn.getName()
+      return result.value
+    }
 
-   if let method = object as? PyMethod {
-     return method.getFunc().getName()
-   }
+    if let method = object as? PyMethod {
+      let fn = method.getFunc()
+      let result = fn.getName()
+      return result.value
+    }
 
     return nil
   }

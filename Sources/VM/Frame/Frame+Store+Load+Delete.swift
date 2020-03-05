@@ -2,6 +2,9 @@ import Core
 import Bytecode
 import Objects
 
+// Docs:
+// https://tech.blog.aknin.name/2010/06/05/pythons-innards-naming/
+
 // swiftlint:disable file_length
 
 extension Frame {

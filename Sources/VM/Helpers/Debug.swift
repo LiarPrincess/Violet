@@ -28,8 +28,10 @@ internal enum Debug {
   internal static func code(_ code: PyCode) {
     guard isEnabled else { return }
 
-    let name = code.qualifiedName.isEmpty ? "(no name)" : code.qualifiedName
-    print("=== \(name) ===")
+    let qualifiedName = code.qualifiedName.value
+    let title = qualifiedName.isEmpty ? "(no name)" : qualifiedName
+
+    print("=== \(title) ===")
     print(code.dump())
 
     for case Constant.code(let inner) in code.constants {
@@ -40,8 +42,10 @@ internal enum Debug {
   internal static func code(_ code: CodeObject) {
     guard isEnabled else { return }
 
-    let name = code.qualifiedName.isEmpty ? "(no name)" : code.qualifiedName
-    print("=== \(name) ===")
+    let qualifiedName = code.qualifiedName
+    let title = qualifiedName.isEmpty ? "(no name)" : qualifiedName
+
+    print("=== \(title) ===")
     print(code.dump())
 
     for case Constant.code(let inner) in code.constants {
