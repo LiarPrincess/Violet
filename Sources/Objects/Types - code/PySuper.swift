@@ -6,7 +6,7 @@ import Bytecode
 // swiftlint:disable file_length
 
 // sourcery: pytype = super, default, hasGC, baseType
-public class PySuper: PyObject {
+public class PySuper: PyObject, HasCustomGetMethod {
 
   // MARK: - Doc
 
@@ -131,6 +131,21 @@ public class PySuper: PyObject {
       return value
     case .error:
       return false
+    }
+  }
+
+  // MARK: - Get method
+
+  internal func getMethod(selector: PyString) -> GetMethodResult {
+    switch self.getAttribute(name: selector) {
+    case let .value(o):
+      return .value(o)
+    case let .error(e):
+      if e.isAttributeError {
+        return .notFound(e)
+      }
+
+      return .error(e)
     }
   }
 

@@ -120,6 +120,10 @@ public enum GetMethodResult {
   case error(PyBaseException)
 }
 
+internal protocol HasCustomGetMethod {
+  func getMethod(selector: PyString) -> GetMethodResult
+}
+
 /// Helper for `getMethod`.
 private enum FunctionAttribute {
   case function(PyFunction)
@@ -191,6 +195,10 @@ extension BuiltinFunctions {
                         selector: PyString,
                         allowsCallableProperties: Bool) -> GetMethodResult {
     // swiftlint:enable function_body_length
+
+    if let obj = object as? HasCustomGetMethod {
+      return obj.getMethod(selector: selector)
+    }
 
     let staticProperty: PyObject?
     var descriptor: GetDescriptor?
