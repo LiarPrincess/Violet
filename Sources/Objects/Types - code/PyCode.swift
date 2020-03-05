@@ -9,6 +9,36 @@ import Bytecode
 
 // swiftlint:disable file_length
 
+public enum Constant {
+  case `true`
+  case `false`
+  case none
+  case ellipsis
+  case integer(PyInt)
+  case float(PyFloat)
+  case complex(PyComplex)
+  case string(PyString)
+  case bytes(PyBytes)
+  case code(PyCode)
+  case tuple(PyTuple)
+
+  public var asObject: PyObject {
+    switch self {
+      case .true: return Py.true
+      case .false: return Py.false
+      case .none: return Py.none
+      case .ellipsis: return Py.ellipsis
+      case let .integer(object): return object
+      case let .float(object): return object
+      case let .complex(object): return object
+      case let .string(object): return object
+      case let .bytes(object): return object
+      case let .code(object): return object
+      case let .tuple(object): return object
+    }
+  }
+}
+
 // sourcery: pytype = code, default
 public class PyCode: PyObject {
 
@@ -73,14 +103,14 @@ public class PyCode: PyObject {
     return lines[index]
   }
 
-  // MARK: - Constants and labels
+  // MARK: - Constants
 
   /// Constants used.
   /// E.g. `LoadConst 5` loads `self.constants[5]` value.
   /// CPython: `co_consts`.
-  public var constants: [Constant] {
-    return self.codeObject.constants
-  }
+  public let constants: [Constant]
+
+  // MARK: - Labels
 
   /// Absolute jump targets.
   /// E.g. label `5` will move us to instruction at `self.labels[5]` index.
@@ -90,11 +120,6 @@ public class PyCode: PyObject {
 
   // MARK: - Names
 
-  /// We will convert `CodeObject.names` -> `[PyString]` in `init`.
-  /// Otherwise we would have to convert them (`O(1)` + massive constants)
-  /// on each use.
-  private let _names: [PyString]
-
   /// Names which aren’t covered by any of the other fields (they are not local
   /// variables, they are not free variables, etc) used by the bytecode.
   /// This includes names deemed to be in the global or builtin namespace
@@ -103,9 +128,7 @@ public class PyCode: PyObject {
   ///
   /// E.g. `LoadName 5` loads `self.names[5]` value.
   /// CPython: `co_names`.
-  public var names: [PyString] {
-    return self._names
-  }
+  public let names: [PyString]
 
   // MARK: - Variables
 
@@ -205,8 +228,42 @@ public class PyCode: PyObject {
     self.name = Py.getInterned(code.name)
     self.qualifiedName = Py.getInterned(code.qualifiedName)
     self.filename = Py.getInterned(code.filename)
-    self._names = code.names.map(Py.getInterned)
+
+    // We will convert constants and names here.
+    // Otherwise we would have to convert them (`O(1)` + massive constants)
+    // on each use.
+    self.constants = code.constants.map(PyCode.intern(constant:))
+    self.names = code.names.map(Py.getInterned)
+
     super.init(type: Py.types.code)
+  }
+
+  private static func intern(constant: Bytecode.Constant) -> Constant {
+    switch constant {
+    case .true: return .true
+    case .false: return .false
+    case .none: return .none
+    case .ellipsis: return .ellipsis
+
+    case let .integer(i):
+      return .integer(Py.newInt(i))
+    case let .float(d):
+      return .float(Py.newFloat(d))
+    case let .complex(real, imag):
+      return .complex(Py.newComplex(real: real, imag: imag))
+
+    case let .string(s):
+      return .string(Py.newString(s))
+    case let .bytes(b):
+      return .bytes(Py.newBytes(b))
+
+    case let .code(c):
+      return .code(Py.newCode(code: c))
+
+    case let .tuple(t):
+      let elements = t.map { PyCode.intern(constant: $0).asObject }
+      return .tuple(Py.newTuple(elements))
+    }
   }
 
   // MARK: - Equatable

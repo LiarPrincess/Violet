@@ -34,21 +34,7 @@ internal enum Debug {
     print("=== \(title) ===")
     print(code.dump())
 
-    for case Constant.code(let inner) in code.constants {
-      Debug.code(inner)
-    }
-  }
-
-  internal static func code(_ code: CodeObject) {
-    guard isEnabled else { return }
-
-    let qualifiedName = code.qualifiedName
-    let title = qualifiedName.isEmpty ? "(no name)" : qualifiedName
-
-    print("=== \(title) ===")
-    print(code.dump())
-
-    for case Constant.code(let inner) in code.constants {
+    for case Objects.Constant.code(let inner) in code.constants {
       Debug.code(inner)
     }
   }

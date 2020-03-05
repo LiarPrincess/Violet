@@ -13,28 +13,10 @@ extension Eval {
 
   /// Pushes constant pointed by `index` onto the stack.
   internal func loadConst(index: Int) -> InstructionResult {
-    let value = self.getConstant(index: index)
-    let object = self.toObject(value)
+    let constant = self.getConstant(index: index)
+    let object = constant.asObject
     self.stack.push(object)
     return .ok
-  }
-
-  private func toObject(_ value: Constant) -> PyObject {
-    switch value {
-    case .true: return Py.true
-    case .false: return Py.false
-    case .none: return Py.none
-    case .ellipsis: return Py.ellipsis
-    case let .integer(arg): return Py.newInt(arg)
-    case let .float(arg): return Py.newFloat(arg)
-    case let .complex(real, imag): return Py.newComplex(real: real, imag: imag)
-    case let .string(arg): return Py.newString(arg)
-    case let .bytes(arg): return Py.newBytes(arg)
-    case let .code(arg): return Py.newCode(code: arg)
-    case let .tuple(args):
-      let elements = args.map(self.toObject)
-      return Py.newTuple(elements)
-    }
   }
 
   // MARK: - Name

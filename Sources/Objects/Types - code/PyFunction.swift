@@ -31,7 +31,7 @@ public class PyFunction: PyObject {
   /// The qualified name
   internal private(set) var qualname: PyString
   /// The `__doc__` attribute, can be anything
-  internal let doc: String?
+  internal let doc: PyString?
   /// The `__dict__` attribute, a dict or NULL
   internal let __dict__ = PyDict()
   /// The `__module__` attribute, can be anything
@@ -67,7 +67,7 @@ public class PyFunction: PyObject {
     self.annotations = nil
 
     switch code.constants.first {
-    case let .some(.string(s)): self.doc = s
+    case .some(.string(let s)): self.doc = s
     default: self.doc = nil
     }
 
@@ -236,7 +236,7 @@ public class PyFunction: PyObject {
       return .value(Py.none)
     }
 
-    return .value(Py.newString(doc))
+    return .value(doc)
   }
 
   // MARK: - Module

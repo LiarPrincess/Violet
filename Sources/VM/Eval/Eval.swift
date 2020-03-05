@@ -89,7 +89,7 @@ internal class Eval {
     return self.code.names[index]
   }
 
-  internal func getConstant(index: Int) -> Constant {
+  internal func getConstant(index: Int) -> Objects.Constant {
     assert(0 <= index && index < self.code.constants.count)
     return self.code.constants[index]
   }
