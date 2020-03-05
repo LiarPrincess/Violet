@@ -24,10 +24,15 @@ public class PyFrame: PyObject {
   /// Parent frame.
   public let parent: PyFrame?
 
+  /// Stack of `PyObjects`.
+  public var stack = ObjectStack()
+  /// Stack of blocks (for loops, exception handlers etc.).
+  public var blocks = BlockStack()
+
   /// Local variables.
   public let locals: PyDict
   /// Global variables.
-  internal let globals: PyDict
+  public let globals: PyDict
   /// Builtin symbols (most of the time it would be `Py.builtinsModule.__dict__`).
   public let builtins: PyDict
 

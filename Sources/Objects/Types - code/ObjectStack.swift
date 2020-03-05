@@ -1,40 +1,40 @@
-import Objects
-
-internal struct ObjectStack {
+public struct ObjectStack {
 
   private var elements = [PyObject]()
 
-  internal var top: PyObject {
+  public var top: PyObject {
     get { return self.peek(1) }
     set { self.set(1, to: newValue) }
   }
 
-  internal var second: PyObject {
+  public var second: PyObject {
     get { return self.peek(2) }
     set { self.set(2, to: newValue) }
   }
 
-  internal var third: PyObject {
+  public var third: PyObject {
     get { return self.peek(3) }
     set { self.set(3, to: newValue) }
   }
 
-  internal var fourth: PyObject {
+  public var fourth: PyObject {
     get { return self.peek(4) }
     set { self.set(4, to: newValue) }
   }
 
-  internal var isEmpty: Bool {
+  public var isEmpty: Bool {
     return self.elements.isEmpty
   }
 
-  internal var count: Int {
+  public var count: Int {
     return self.elements.count
   }
 
+  public init() { }
+
   // MARK: - Peek
 
-  internal func peek(_ n: Int) -> PyObject {
+  public func peek(_ n: Int) -> PyObject {
     let count = self.elements.count
     assert(count >= n, "Stack peek out of bounds (peek: \(n), count: \(count)).")
     return self.elements[count - n]
@@ -42,7 +42,7 @@ internal struct ObjectStack {
 
   // MARK: - Set
 
-  internal mutating func set(_ n: Int, to value: PyObject) {
+  public mutating func set(_ n: Int, to value: PyObject) {
     let count = self.elements.count
     assert(count >= n, "Stack set out of bounds (set: \(n), count: \(count)).")
     self.elements[count - n] = value
@@ -50,11 +50,11 @@ internal struct ObjectStack {
 
   // MARK: - Push
 
-  internal mutating func push(_ value: PyObject) {
+  public mutating func push(_ value: PyObject) {
     self.elements.append(value)
   }
 
-  internal mutating func push<S: Sequence>(
+  public mutating func push<S: Sequence>(
     contentsOf values: S
   ) where S.Element == PyObject {
     self.elements.append(contentsOf: values)
@@ -62,7 +62,7 @@ internal struct ObjectStack {
 
   // MARK: - Pop
 
-  internal mutating func pop() -> PyObject {
+  public mutating func pop() -> PyObject {
     // Using 'isEmpty' or 'count' for assert would require another type lookup.
     // (only in DEBUG and it depends on inling, but still...)
 
@@ -76,7 +76,7 @@ internal struct ObjectStack {
   ///
   /// - Note:
   /// Actual implementation is faster and does not require reversal.
-  internal mutating func popElementsInPushOrder(count requestedCount: Int) -> [PyObject] {
+  public mutating func popElementsInPushOrder(count requestedCount: Int) -> [PyObject] {
     // Fast check to avoid allocation.
     if requestedCount == 0 {
       return []
@@ -100,7 +100,7 @@ internal struct ObjectStack {
   }
 
   /// Pop elements untill we reach `untilCount`.
-  internal mutating func pop(untilCount: Int) {
+  public mutating func pop(untilCount: Int) {
     assert(self.elements.count >= untilCount)
 
     // Avoid allocation when we have correct size
