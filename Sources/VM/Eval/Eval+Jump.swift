@@ -77,7 +77,7 @@ extension Eval {
   }
 
   internal func jumpTo(label: Int) {
-    self.frame.instructionIndex = label
+    self.instructionIndex = label
   }
 
   private func popJumpIf(_ cond: Bool, to labelIndex: Int) {

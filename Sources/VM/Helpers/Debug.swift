@@ -6,7 +6,7 @@ import Bytecode
 /// Change this if you feel like it.
 /// You have a whole 2 options to choose from, so go wild
 /// (and rememeber to wash your hands after, also floss).
-private let isEnabled = true
+private let isEnabled = false
 #else
 /// Do not change this.
 /// It will be inlined to all of the functions making them nops,
@@ -42,10 +42,14 @@ internal enum Debug {
   // MARK: - Frame
 
   internal static func instruction(code: PyCode,
-                                   instruction: Instruction,
+                                   instructionIndex: Int,
                                    extendedArg: Int) {
     guard isEnabled else { return }
-    print(code.dumpInstruction(instruction, extendedArg: extendedArg))
+    let instruction = code.instructions[instructionIndex]
+
+    let byte = instructionIndex * Instruction.byteSize
+    let dump = code.dumpInstruction(instruction, extendedArg: extendedArg)
+    print("\(byte): \(dump)")
   }
 
   internal static func stack(stack: ObjectStack) {

@@ -79,6 +79,12 @@ internal class Eval {
     set { self.frame.cellsAndFreeVariables = newValue }
   }
 
+  /// PC.
+  internal var instructionIndex: Int {
+    get { return self.frame.instructionIndex ?? 0 }
+    set { self.frame.instructionIndex = newValue }
+  }
+
   /// Stack of exceptions.
   internal var exceptions = ExceptionStack()
 
@@ -112,8 +118,6 @@ internal class Eval {
 
   internal func run() -> PyResult<PyObject> {
     while true {
-      defer { self.incrementInstructionIndex() }
-
       switch self.executeInstruction() {
       case .ok:
         break // go to next instruction
@@ -173,28 +177,25 @@ internal class Eval {
   }
 
   /// Fetch instruction at `self.frame.instructionIndex`.
-  /// It will not increment PC! (Use `self.incrementInstructionIndex` for that)
+  /// Will also increment `PC`
+  /// (just as the name... does not suggest, but as is customary).
   private func fetchInstruction() -> Instruction {
-    let index = self.frame.instructionIndex ?? 0
+    let index = self.instructionIndex
     assert(0 <= index && index < self.code.instructions.count)
-    return self.code.instructions[index]
-  }
-
-  /// Increment PC.
-  private func incrementInstructionIndex() {
-    let current = self.frame.instructionIndex ?? 0
-    self.frame.instructionIndex = current + 1
+    let result = self.code.instructions[index]
+    self.instructionIndex += 1
+    return result
   }
 
   // swiftlint:disable:next function_body_length
   private func executeInstruction(extendedArg: Int = 0) -> InstructionResult {
-    let instruction = self.fetchInstruction()
-
     Debug.stack(stack: self.stack)
     Debug.stack(stack: self.blocks)
     Debug.instruction(code: self.code,
-                      instruction: instruction,
+                      instructionIndex: self.instructionIndex,
                       extendedArg: extendedArg)
+
+    let instruction = self.fetchInstruction()
 
     // According to CPython doing single switch will trash our jump prediction
     // (unles you have the same opcode multiple times in a row).
