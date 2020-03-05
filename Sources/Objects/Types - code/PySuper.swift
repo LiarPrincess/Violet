@@ -8,26 +8,6 @@ import Bytecode
 // sourcery: pytype = super, default, hasGC, baseType
 public class PySuper: PyObject {
 
-  // MARK: - Remove this
-
-  private struct CodeDummy {
-    let argCount = 0
-    let nLocals = 0
-    let variableNames = [MangledName]()
-    let freeVariableNames = [MangledName]()
-    let cellVariableNames = [MangledName]()
-  }
-
-  private struct FrameDummy {
-    let code: CodeDummy?
-    let fastLocals: [PyObject?] = []
-    let cellsAndFreeVariables = [PyCell]()
-  }
-
-  private static var frame: FrameDummy? {
-    return nil
-  }
-
   // MARK: - Doc
 
   internal static var doc = """
@@ -321,13 +301,11 @@ public class PySuper: PyObject {
   }
 
   private static func getObjectAndTypeFromFrame() -> PyResult<ObjectAndType> {
-    guard let frame = self.frame else {
+    guard let frame = Py.delegate.frame else {
       return .runtimeError("super(): no current frame")
     }
 
-    guard let code = frame.code else {
-      return .runtimeError("super(): no code object")
-    }
+    let code = frame.code
 
     if code.argCount == 0 {
       return .runtimeError("super(): no arguments")
@@ -356,8 +334,8 @@ public class PySuper: PyObject {
   /// but users can actually put anything they want there,
   /// so we can't rely that.
   private static func getSelfObjectFromFirstArgument(
-    frame: FrameDummy,
-    code: CodeDummy
+    frame: PyFrame,
+    code: PyCode
   ) -> PyResult<PyObject> {
     // Note double optional below:
     // - 'frame.fastLocals' stores 'PyObject?'
@@ -379,8 +357,8 @@ public class PySuper: PyObject {
     return .value(firstArg)
   }
 
-  private static func handleFirstArgumentCell(frame: FrameDummy,
-                                              code: CodeDummy) -> PyObject? {
+  private static func handleFirstArgumentCell(frame: PyFrame,
+                                              code: PyCode) -> PyObject? {
     guard let firstArgument = code.variableNames.first else {
       return nil
     }
@@ -405,10 +383,8 @@ public class PySuper: PyObject {
     case error(PyBaseException)
   }
 
-  private static func getTypeFrom__class__(
-    frame: FrameDummy,
-    code: CodeDummy
-  ) -> TypeFromClass {
+  private static func getTypeFrom__class__(frame: PyFrame,
+                                           code: PyCode) -> TypeFromClass {
     for (i, name) in code.freeVariableNames.enumerated() {
       guard name.value == "__class__" else {
         continue

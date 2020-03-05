@@ -4,6 +4,9 @@ import Bytecode
 
 public protocol PyDelegate: AnyObject {
 
+  /// Currently executing frame.
+  var frame: PyFrame? { get }
+
   /// Extension point for opening files.
   func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType>
   /// Extension point for opening files.

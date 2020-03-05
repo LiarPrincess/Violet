@@ -4,6 +4,12 @@ import Foundation
 
 extension VM {
 
+  // MARK: - Frame
+
+  public var frame: PyFrame? {
+    return self.frames.last
+  }
+
   // MARK: - Open
 
   public func open(fileno: Int32,

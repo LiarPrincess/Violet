@@ -24,17 +24,17 @@ public enum Constant {
 
   public var asObject: PyObject {
     switch self {
-      case .true: return Py.true
-      case .false: return Py.false
-      case .none: return Py.none
-      case .ellipsis: return Py.ellipsis
-      case let .integer(object): return object
-      case let .float(object): return object
-      case let .complex(object): return object
-      case let .string(object): return object
-      case let .bytes(object): return object
-      case let .code(object): return object
-      case let .tuple(object): return object
+    case .true: return Py.true
+    case .false: return Py.false
+    case .none: return Py.none
+    case .ellipsis: return Py.ellipsis
+    case let .integer(object): return object
+    case let .float(object): return object
+    case let .complex(object): return object
+    case let .string(object): return object
+    case let .bytes(object): return object
+    case let .code(object): return object
+    case let .tuple(object): return object
     }
   }
 }
