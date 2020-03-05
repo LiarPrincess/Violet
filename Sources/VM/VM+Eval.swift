@@ -45,10 +45,10 @@ extension VM {
 
     // We don't support zombie frames, we always create new one.
     let parent = self.frames.last
-    let frame = Frame(code: code,
-                      locals: locals,
-                      globals: globals,
-                      parent: parent)
+    let frame = Py.newFrame(code: code,
+                            locals: locals,
+                            globals: globals,
+                            parent: parent)
 
     var fillFastLocals = FillFastLocals(frame: frame,
                                         args: args,
@@ -68,14 +68,14 @@ extension VM {
     /* Handle generator/coroutine/asynchronous generator */
 
     self.frames.push(frame)
-    let result = frame.run()
+    let result = Eval(frame: frame).run()
     let poppedFrame = self.frames.popLast()
     assert(poppedFrame === frame)
 
     return result
   }
 
-  private func fillCells(in frame: Frame, from code: PyCode) {
+  private func fillCells(in frame: PyFrame, from code: PyCode) {
     guard code.cellVariableNames.any else {
       return
     }
@@ -98,7 +98,7 @@ extension VM {
     }
   }
 
-  private func fillFree(in frame: Frame,
+  private func fillFree(in frame: PyFrame,
                         from code: PyCode,
                         using closure: PyTuple?) {
     guard let closure = closure else {

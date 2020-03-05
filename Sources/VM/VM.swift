@@ -9,7 +9,7 @@ import Rapunzel
 // swiftlint:disable:next type_name
 public class VM: PyDelegate {
 
-  internal var frames = [Frame]()
+  internal var frames = [PyFrame]()
   internal let fileManager = FileManager.default
   internal let configuration: CoreConfiguration
 

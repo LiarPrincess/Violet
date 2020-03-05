@@ -68,16 +68,16 @@ public class PyFrame: PyObject {
     count: self.code.cellVariableCount + self.code.freeVariableCount
   )
 
-  public static let notStartedInstructionIndex = -1
-
-  /// CPython: `freevars`.
-  public var instructionIndex = PyFrame.notStartedInstructionIndex
+  /// Current instruction index (`nil` it we have not started).
+  /// CPython: `f_lasti`.
+  public var instructionIndex: Int?
 
   public var currentLine: SourceLine {
-    let notStarted = self.instructionIndex == Self.notStartedInstructionIndex
-    return notStarted ?
-      self.code.firstLine :
-      self.code.getLine(instructionIndex: self.instructionIndex)
+    guard let index = self.instructionIndex else {
+      return self.code.firstLine
+    }
+
+    return self.code.getLine(instructionIndex: index)
   }
 
   // MARK: - Init
@@ -176,7 +176,7 @@ public class PyFrame: PyObject {
 
   // sourcery: pyproperty = f_lasti
   internal func getLasti() -> Int {
-    return self.instructionIndex
+    return self.instructionIndex ?? 0
   }
 
   // sourcery: pyproperty = f_lineno

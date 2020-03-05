@@ -1,7 +1,7 @@
 import Objects
 import Bytecode
 
-extension Frame {
+extension Eval {
 
   /// Performs a `Boolean` operation.
   internal func compareOp(comparison: ComparisonOpcode) -> InstructionResult {

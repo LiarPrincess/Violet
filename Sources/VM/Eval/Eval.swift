@@ -8,48 +8,44 @@ import Objects
 
 // swiftlint:disable file_length
 
-// MARK: - Instruction result
+/// Dummy namespace for `eval` function, just so we don't pollute `VM` with all
+/// of that nonsense (but don't worry, we use `VM` as a 'catch them all'
+/// for all of the code that does not fit anywhere else, so it is still a mess).
+internal class Eval {
 
-/// Result of running of a single instruction.
-internal enum InstructionResult {
-  /// Instruction executed succesfully.
-  case ok
-  /// Instruction requested stack unwind (`return`, `exception` etc.).
-  case unwind(UnwindReason)
-}
+  // MARK: - Properties
 
-// MARK: - Frame
-
-/// Basic evaluation environment.
-///
-/// CPython stores stack, local and free variables as a single block of memory
-/// in `PyFrameObject.f_localsplus` using following layout:
-/// ```
-/// Layout:        fastlocals      | cells + free variables | stack
-/// Variable name: ^ f_localsplus  ^ freevars               ^ f_valuestack
-///  ```
-///
-/// We have separate `fastLocals`, `cellsAndFreeVariables` and `stack`.
-internal final class Frame {
+  /// You know the thing that we are evaluating...
+  internal let frame: PyFrame
 
   /// Code to run.
-  internal let code: PyCode
+  internal var code: PyCode { return self.frame.code }
+
   /// Parent frame.
-  internal let parent: Frame?
+  internal var parent: PyFrame? { return self.frame.parent }
 
   /// Stack of `PyObjects`.
-  internal var stack = ObjectStack()
+  internal var stack: ObjectStack {
+    get { return self.frame.stack }
+    set { self.frame.stack = newValue }
+  }
+
+  internal var stackLevel: Int {
+    return self.frame.stack.count
+  }
+
   /// Stack of blocks (for loops, exception handlers etc.).
-  internal var blocks = BlockStack()
-  /// Stack of exceptions.
-  internal var exceptions = ExceptionStack()
+  internal var blocks: BlockStack {
+    get { return self.frame.blocks }
+    set { self.frame.blocks = newValue }
+  }
 
   /// Local variables.
-  internal var localSymbols: PyDict
+  internal var localSymbols: PyDict { return self.frame.locals }
   /// Global variables.
-  internal var globalSymbols: PyDict
+  internal var globalSymbols: PyDict { return self.frame.globals }
   /// Builtin symbols (most of the time it would be `Py.builtinsModule.__dict__`).
-  internal var builtinSymbols: PyDict
+  internal var builtinSymbols: PyDict { return self.frame.builtins }
 
   /// Function args and local variables.
   ///
@@ -61,10 +57,10 @@ internal final class Frame {
   /// We use array which is like dictionary, but with lower constants.
   ///
   /// CPython: `f_localsplus`.
-  internal lazy var fastLocals = [PyObject?](
-    repeating: nil,
-    count: self.code.variableCount
-  )
+  internal var fastLocals: [PyObject?] {
+    get { return self.frame.fastLocals }
+    set { self.frame.fastLocals = newValue }
+  }
 
   /// Free variables (variables from upper scopes).
   ///
@@ -77,46 +73,15 @@ internal final class Frame {
   /// And no, we will not do this (see `self.fastLocals` comment).
   /// \#hipsters
   ///
-  /// CPython: `freevars`.
-  internal lazy var cellsAndFreeVariables = [PyCell](
-    repeating: Py.newCell(content: nil),
-    count: self.code.cellVariableCount + self.code.freeVariableCount
-  )
-
-  /// Index of the next instruction to run (program counter).
-  internal var nextInstructionIndex = 0
-
-  /// PyFrameObject* _Py_HOT_FUNCTION
-  /// _PyFrame_New_NoTrack(PyThreadState *tstate, PyCodeObject *code,
-  internal init(code: PyCode,
-                locals: PyDict,
-                globals: PyDict,
-                parent: Frame?) {
-    self.code = code
-    self.parent = parent
-    self.localSymbols = locals
-    self.globalSymbols = globals
-    self.builtinSymbols = Frame.getBuiltins(globals: globals, parent: parent)
+  /// CPython: `f_lasti`.
+  internal var cellsAndFreeVariables: [PyCell] {
+    get { return self.frame.cellsAndFreeVariables }
+    set { self.frame.cellsAndFreeVariables = newValue }
   }
 
-  private static func getBuiltins(globals: PyDict,
-                                  parent: Frame?) -> PyDict {
-    if parent == nil || parent?.globalSymbols !== globals {
-      if let module = globals.get(id: .__builtins__) as? PyModule {
-        return module.getDict()
-      }
-    }
+  /// Stack of exceptions.
+  internal var exceptions = ExceptionStack()
 
-    // If we share the globals, we share the builtins.
-    // Saves a lookup and a call.
-    return Py.builtinsModule.getDict()
-  }
-
-  // MARK: - Helpers
-
-  internal var stackLevel: Int {
-    return self.stack.count
-  }
   // MARK: - Code object getters
 
   internal func getName(index: Int) -> PyString {
@@ -137,10 +102,18 @@ internal final class Frame {
     return self.code.labels[index]
   }
 
+  // MARK: - Init
+
+  internal init(frame: PyFrame) {
+    self.frame = frame
+  }
+
   // MARK: - Run
 
   internal func run() -> PyResult<PyObject> {
     while true {
+      defer { self.incrementInstructionIndex() }
+
       switch self.executeInstruction() {
       case .ok:
         break // go to next instruction
@@ -167,7 +140,7 @@ internal final class Frame {
              .exception,
              .yield,
              .silenced:
-          let pc = Swift.max(self.nextInstructionIndex - 1, 0)
+          let pc = self.frame.instructionIndex ?? 0
           let line = self.code.getLine(instructionIndex: pc)
 
           print()
@@ -187,9 +160,8 @@ internal final class Frame {
       return
     }
 
-    let currentContext = exception.getContext()
-    let isCurrentContextNilOrNone = currentContext?.isNone ?? true
-    guard isCurrentContextNilOrNone else {
+    let hasEmptyContext = exception.getContext()?.isNone ?? true
+    guard hasEmptyContext else {
       return
     }
 
@@ -200,20 +172,26 @@ internal final class Frame {
     exception.setContext(currentException)
   }
 
+  /// Fetch instruction at `self.frame.instructionIndex`.
+  /// It will not increment PC! (Use `self.incrementInstructionIndex` for that)
   private func fetchInstruction() -> Instruction {
-    assert(self.nextInstructionIndex >= 0)
-    assert(self.nextInstructionIndex < self.code.instructions.count)
+    let index = self.frame.instructionIndex ?? 0
+    assert(0 <= index && index < self.code.instructions.count)
+    return self.code.instructions[index]
+  }
 
-    let instr = self.code.instructions[self.nextInstructionIndex]
-    self.nextInstructionIndex += 1
-    return instr
+  /// Increment PC.
+  private func incrementInstructionIndex() {
+    let current = self.frame.instructionIndex ?? 0
+    self.frame.instructionIndex = current + 1
   }
 
   // swiftlint:disable:next function_body_length
   private func executeInstruction(extendedArg: Int = 0) -> InstructionResult {
+    let instruction = self.fetchInstruction()
+
     Debug.stack(stack: self.stack)
     Debug.stack(stack: self.blocks)
-    let instruction = self.fetchInstruction()
     Debug.instruction(code: self.code,
                       instruction: instruction,
                       extendedArg: extendedArg)

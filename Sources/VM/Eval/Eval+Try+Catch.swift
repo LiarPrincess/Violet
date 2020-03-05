@@ -1,7 +1,7 @@
 import Objects
 import Bytecode
 
-extension Frame {
+extension Eval {
 
   // MARK: - Setup
 

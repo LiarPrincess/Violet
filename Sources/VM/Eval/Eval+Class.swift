@@ -1,7 +1,7 @@
 import Objects
 import Bytecode
 
-extension Frame {
+extension Eval {
 
   /// Pushes `builtins.BuildClass()` onto the stack.
   /// It is later called by `CallFunction` to construct a class.

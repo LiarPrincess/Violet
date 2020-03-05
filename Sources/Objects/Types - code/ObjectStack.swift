@@ -26,6 +26,7 @@ public struct ObjectStack {
     return self.elements.isEmpty
   }
 
+  /// CPython `stacklevel`.
   public var count: Int {
     return self.elements.count
   }

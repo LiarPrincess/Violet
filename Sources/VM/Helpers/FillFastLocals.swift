@@ -12,7 +12,7 @@ import Bytecode
 /// ```
 internal struct FillFastLocals {
 
-  private let frame: Frame
+  private let frame: PyFrame
   private let args: [PyObject]
   private let kwargs: PyDict?
   private let defaults: [PyObject]
@@ -36,7 +36,7 @@ internal struct FillFastLocals {
     return self.frame.code
   }
 
-  internal init(frame: Frame,
+  internal init(frame: PyFrame,
                 args: [PyObject],
                 kwargs: PyDict?,
                 defaults: [PyObject],

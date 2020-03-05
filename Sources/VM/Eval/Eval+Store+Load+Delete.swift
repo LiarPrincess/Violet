@@ -7,7 +7,7 @@ import Objects
 
 // swiftlint:disable file_length
 
-extension Frame {
+extension Eval {
 
   // MARK: - Constant
 

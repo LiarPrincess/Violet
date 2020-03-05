@@ -1,6 +1,6 @@
 import Objects
 
-extension Frame {
+extension Eval {
 
   /// Imports the module `name`.
   ///

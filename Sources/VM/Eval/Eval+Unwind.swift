@@ -26,9 +26,9 @@ internal enum UnwindReason {
   case silenced
 }
 
-// MARK: - Frame
+// MARK: - Eval
 
-extension Frame {
+extension Eval {
 
   // MARK: - Unwind
 

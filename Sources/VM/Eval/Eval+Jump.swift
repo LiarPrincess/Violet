@@ -1,7 +1,7 @@
 import Objects
 import Bytecode
 
-extension Frame {
+extension Eval {
 
   // MARK: - Jump absolute
 
@@ -77,7 +77,7 @@ extension Frame {
   }
 
   internal func jumpTo(label: Int) {
-    self.nextInstructionIndex = label
+    self.frame.instructionIndex = label
   }
 
   private func popJumpIf(_ cond: Bool, to labelIndex: Int) {

@@ -2,7 +2,7 @@ import Core
 import Bytecode
 import Objects
 
-extension Frame {
+extension Eval {
 
   // MARK: - General
 
