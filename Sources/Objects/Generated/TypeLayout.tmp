@@ -21,6 +21,7 @@ PyType|PyObject
 - mro|[PyType]
 - subclasses|[PyTypeWeakRef]
 - __dict__|PyDict
+- layout|TypeLayout?
 - typeFlags|PyTypeFlags
 
 PyBool|PyInt

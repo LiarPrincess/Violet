@@ -28,6 +28,7 @@ private func insert(type: PyType, name: String, value: PyObject) {
 
 
 
+
 internal enum FillTypes {
 
 
@@ -37,6 +38,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyBaseObject.doc)
     type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setLayout(.PyObject)
 
 
     insert(type: type, name: "__eq__", value: PyBuiltinFunction.wrap(name: "__eq__", doc: nil, fn: PyBaseObject.isEqual(zelf:other:)))
@@ -71,6 +73,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.typeSubclass)
+    type.setLayout(.PyType)
 
     insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyType.getName, set: PyType.setName, castSelf: Cast.asPyType))
     insert(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyType.getQualname, set: PyType.setQualname, castSelf: Cast.asPyType))
@@ -103,6 +106,7 @@ internal enum FillTypes {
   internal static func bool(_ type: PyType) {
     type.setBuiltinTypeDoc(PyBool.doc)
     type.setFlag(.default)
+    type.setLayout(.PyBool)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBool.getClass, castSelf: Cast.asPyBool))
 
@@ -125,6 +129,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyBuiltinFunction)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBuiltinFunction.getClass, castSelf: Cast.asPyBuiltinFunction))
     insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyBuiltinFunction.getName, castSelf: Cast.asPyBuiltinFunction))
@@ -154,6 +159,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyBuiltinMethod)
 
     insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyBuiltinMethod.getName, castSelf: Cast.asPyBuiltinMethod))
     insert(type: type, name: "__qualname__", value: PyProperty.wrap(name: "__qualname__", doc: nil, get: PyBuiltinMethod.getQualname, castSelf: Cast.asPyBuiltinMethod))
@@ -182,6 +188,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyByteArray.doc)
     type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setLayout(.PyByteArray)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArray.getClass, castSelf: Cast.asPyByteArray))
 
@@ -259,6 +266,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyByteArrayIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyByteArrayIterator.getClass, castSelf: Cast.asPyByteArrayIterator))
 
@@ -277,6 +285,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.bytesSubclass)
+    type.setLayout(.PyBytes)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytes.getClass, castSelf: Cast.asPyBytes))
 
@@ -343,6 +352,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyBytesIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesIterator.getClass, castSelf: Cast.asPyBytesIterator))
 
@@ -360,6 +370,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyCallableIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCallableIterator.getClass, castSelf: Cast.asPyCallableIterator))
 
@@ -376,6 +387,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyCell)
 
 
 
@@ -397,6 +409,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyClassMethod)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyClassMethod.getClass, castSelf: Cast.asPyClassMethod))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyClassMethod.getDict, castSelf: Cast.asPyClassMethod))
@@ -415,6 +428,7 @@ internal enum FillTypes {
   internal static func code(_ type: PyType) {
     type.setBuiltinTypeDoc(PyCode.doc)
     type.setFlag(.default)
+    type.setLayout(.PyCode)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyCode.getClass, castSelf: Cast.asPyCode))
     insert(type: type, name: "co_name", value: PyProperty.wrap(name: "co_name", doc: nil, get: PyCode.getName, castSelf: Cast.asPyCode))
@@ -443,6 +457,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyComplex.doc)
     type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setLayout(.PyComplex)
 
     insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyComplex.asReal, castSelf: Cast.asPyComplex))
     insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyComplex.asImag, castSelf: Cast.asPyComplex))
@@ -494,6 +509,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.dictSubclass)
+    type.setLayout(.PyDict)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDict.getClass, castSelf: Cast.asPyDict))
 
@@ -534,6 +550,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyDictItemIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItemIterator.getClass, castSelf: Cast.asPyDictItemIterator))
 
@@ -551,6 +568,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyDictItems)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictItems.getClass, castSelf: Cast.asPyDictItems))
 
@@ -577,6 +595,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyDictKeyIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeyIterator.getClass, castSelf: Cast.asPyDictKeyIterator))
 
@@ -594,6 +613,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyDictKeys)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictKeys.getClass, castSelf: Cast.asPyDictKeys))
 
@@ -620,6 +640,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyDictValueIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDictValueIterator.getClass, castSelf: Cast.asPyDictValueIterator))
 
@@ -637,6 +658,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyDictValues)
 
 
 
@@ -652,6 +674,7 @@ internal enum FillTypes {
   internal static func ellipsis(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
+    type.setLayout(.PyEllipsis)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEllipsis.getClass, castSelf: Cast.asPyEllipsis))
 
@@ -670,6 +693,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyEnumerate)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEnumerate.getClass, castSelf: Cast.asPyEnumerate))
 
@@ -688,6 +712,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyFilter)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFilter.getClass, castSelf: Cast.asPyFilter))
 
@@ -705,6 +730,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyFloat.doc)
     type.setFlag(.default)
     type.setFlag(.baseType)
+    type.setLayout(.PyFloat)
 
     insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyFloat.asReal, castSelf: Cast.asPyFloat))
     insert(type: type, name: "imag", value: PyProperty.wrap(name: "imag", doc: nil, get: PyFloat.asImag, castSelf: Cast.asPyFloat))
@@ -757,6 +783,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyFrame)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrame.getClass, castSelf: Cast.asPyFrame))
     insert(type: type, name: "f_back", value: PyProperty.wrap(name: "f_back", doc: nil, get: PyFrame.getBack, castSelf: Cast.asPyFrame))
@@ -782,6 +809,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyFrozenSet)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFrozenSet.getClass, castSelf: Cast.asPyFrozenSet))
 
@@ -824,6 +852,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyFunction.doc)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyFunction)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFunction.getClass, castSelf: Cast.asPyFunction))
     insert(type: type, name: "__name__", value: PyProperty.wrap(name: "__name__", doc: nil, get: PyFunction.getName, set: PyFunction.setName, castSelf: Cast.asPyFunction))
@@ -852,6 +881,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.longSubclass)
+    type.setLayout(.PyInt)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyInt.getClass, castSelf: Cast.asPyInt))
     insert(type: type, name: "real", value: PyProperty.wrap(name: "real", doc: nil, get: PyInt.asReal, castSelf: Cast.asPyInt))
@@ -920,6 +950,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIterator.getClass, castSelf: Cast.asPyIterator))
 
@@ -938,6 +969,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.listSubclass)
+    type.setLayout(.PyList)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyList.getClass, castSelf: Cast.asPyList))
 
@@ -985,6 +1017,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyListIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyListIterator.getClass, castSelf: Cast.asPyListIterator))
 
@@ -1002,6 +1035,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyListReverseIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyListReverseIterator.getClass, castSelf: Cast.asPyListReverseIterator))
 
@@ -1020,6 +1054,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyMap)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMap.getClass, castSelf: Cast.asPyMap))
 
@@ -1037,6 +1072,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PyMethod.doc)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyMethod)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMethod.getClass, castSelf: Cast.asPyMethod))
     insert(type: type, name: "__doc__", value: PyProperty.wrap(name: "__doc__", doc: nil, get: PyMethod.getDoc, castSelf: Cast.asPyMethod))
@@ -1067,6 +1103,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyModule)
 
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyModule.getDict, castSelf: Cast.asPyModule))
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyModule.getClass, castSelf: Cast.asPyModule))
@@ -1089,6 +1126,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyNamespace)
 
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNamespace.getDict, castSelf: Cast.asPyNamespace))
 
@@ -1112,6 +1150,7 @@ internal enum FillTypes {
   internal static func none(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
+    type.setLayout(.PyNone)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNone.getClass, castSelf: Cast.asPyNone))
 
@@ -1128,6 +1167,7 @@ internal enum FillTypes {
   internal static func notImplemented(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
+    type.setLayout(.PyNotImplemented)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplemented.getClass, castSelf: Cast.asPyNotImplemented))
 
@@ -1144,6 +1184,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyProperty)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyProperty.getClass, castSelf: Cast.asPyProperty))
     insert(type: type, name: "fget", value: PyProperty.wrap(name: "fget", doc: nil, get: PyProperty.getFGet, castSelf: Cast.asPyProperty))
@@ -1165,6 +1206,7 @@ internal enum FillTypes {
   internal static func range(_ type: PyType) {
     type.setBuiltinTypeDoc(PyRange.doc)
     type.setFlag(.default)
+    type.setLayout(.PyRange)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRange.getClass, castSelf: Cast.asPyRange))
     insert(type: type, name: "start", value: PyProperty.wrap(name: "start", doc: nil, get: PyRange.getStart, castSelf: Cast.asPyRange))
@@ -1198,6 +1240,7 @@ internal enum FillTypes {
   internal static func range_iterator(_ type: PyType) {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
+    type.setLayout(.PyRangeIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRangeIterator.getClass, castSelf: Cast.asPyRangeIterator))
 
@@ -1216,6 +1259,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyReversed)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyReversed.getClass, castSelf: Cast.asPyReversed))
 
@@ -1234,6 +1278,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PySet)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySet.getClass, castSelf: Cast.asPySet))
 
@@ -1283,6 +1328,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PySetIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySetIterator.getClass, castSelf: Cast.asPySetIterator))
 
@@ -1300,6 +1346,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(PySlice.doc)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PySlice)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySlice.getClass, castSelf: Cast.asPySlice))
     insert(type: type, name: "start", value: PyProperty.wrap(name: "start", doc: nil, get: PySlice.getStart, castSelf: Cast.asPySlice))
@@ -1328,6 +1375,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyStaticMethod)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStaticMethod.getClass, castSelf: Cast.asPyStaticMethod))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStaticMethod.getDict, castSelf: Cast.asPyStaticMethod))
@@ -1348,6 +1396,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.unicodeSubclass)
+    type.setLayout(.PyString)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyString.getClass, castSelf: Cast.asPyString))
 
@@ -1419,6 +1468,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyStringIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStringIterator.getClass, castSelf: Cast.asPyStringIterator))
 
@@ -1437,6 +1487,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PySuper)
 
     insert(type: type, name: "__thisclass__", value: PyProperty.wrap(name: "__thisclass__", doc: nil, get: PySuper.getThisClass, castSelf: Cast.asPySuper))
     insert(type: type, name: "__self__", value: PyProperty.wrap(name: "__self__", doc: nil, get: PySuper.getSelf, castSelf: Cast.asPySuper))
@@ -1458,6 +1509,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.hasGC)
     type.setFlag(.hasFinalize)
+    type.setLayout(.PyTextFile)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTextFile.getClass, castSelf: Cast.asPyTextFile))
 
@@ -1481,6 +1533,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.tupleSubclass)
+    type.setLayout(.PyTuple)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTuple.getClass, castSelf: Cast.asPyTuple))
 
@@ -1513,6 +1566,7 @@ internal enum FillTypes {
     type.setBuiltinTypeDoc(nil)
     type.setFlag(.default)
     type.setFlag(.hasGC)
+    type.setLayout(.PyTupleIterator)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTupleIterator.getClass, castSelf: Cast.asPyTupleIterator))
 
@@ -1531,6 +1585,7 @@ internal enum FillTypes {
     type.setFlag(.default)
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
+    type.setLayout(.PyZip)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyZip.getClass, castSelf: Cast.asPyZip))
 
@@ -1550,6 +1605,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyArithmeticError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyArithmeticError.getClass, castSelf: Cast.asPyArithmeticError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyArithmeticError.getDict, castSelf: Cast.asPyArithmeticError))
@@ -1568,6 +1624,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyAssertionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyAssertionError.getClass, castSelf: Cast.asPyAssertionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyAssertionError.getDict, castSelf: Cast.asPyAssertionError))
@@ -1586,6 +1643,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyAttributeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyAttributeError.getClass, castSelf: Cast.asPyAttributeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyAttributeError.getDict, castSelf: Cast.asPyAttributeError))
@@ -1604,6 +1662,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyBaseException)
 
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBaseException.getDict, castSelf: Cast.asPyBaseException))
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBaseException.getClass, castSelf: Cast.asPyBaseException))
@@ -1632,6 +1691,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyBlockingIOError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBlockingIOError.getClass, castSelf: Cast.asPyBlockingIOError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBlockingIOError.getDict, castSelf: Cast.asPyBlockingIOError))
@@ -1650,6 +1710,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyBrokenPipeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBrokenPipeError.getClass, castSelf: Cast.asPyBrokenPipeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBrokenPipeError.getDict, castSelf: Cast.asPyBrokenPipeError))
@@ -1668,6 +1729,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyBufferError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBufferError.getClass, castSelf: Cast.asPyBufferError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBufferError.getDict, castSelf: Cast.asPyBufferError))
@@ -1686,6 +1748,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyBytesWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyBytesWarning.getClass, castSelf: Cast.asPyBytesWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyBytesWarning.getDict, castSelf: Cast.asPyBytesWarning))
@@ -1704,6 +1767,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyChildProcessError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyChildProcessError.getClass, castSelf: Cast.asPyChildProcessError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyChildProcessError.getDict, castSelf: Cast.asPyChildProcessError))
@@ -1722,6 +1786,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyConnectionAbortedError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionAbortedError.getClass, castSelf: Cast.asPyConnectionAbortedError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionAbortedError.getDict, castSelf: Cast.asPyConnectionAbortedError))
@@ -1740,6 +1805,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyConnectionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionError.getClass, castSelf: Cast.asPyConnectionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionError.getDict, castSelf: Cast.asPyConnectionError))
@@ -1758,6 +1824,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyConnectionRefusedError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionRefusedError.getClass, castSelf: Cast.asPyConnectionRefusedError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionRefusedError.getDict, castSelf: Cast.asPyConnectionRefusedError))
@@ -1776,6 +1843,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyConnectionResetError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyConnectionResetError.getClass, castSelf: Cast.asPyConnectionResetError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyConnectionResetError.getDict, castSelf: Cast.asPyConnectionResetError))
@@ -1794,6 +1862,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyDeprecationWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyDeprecationWarning.getClass, castSelf: Cast.asPyDeprecationWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyDeprecationWarning.getDict, castSelf: Cast.asPyDeprecationWarning))
@@ -1812,6 +1881,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyEOFError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyEOFError.getClass, castSelf: Cast.asPyEOFError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyEOFError.getDict, castSelf: Cast.asPyEOFError))
@@ -1830,6 +1900,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyException)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyException.getClass, castSelf: Cast.asPyException))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyException.getDict, castSelf: Cast.asPyException))
@@ -1848,6 +1919,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyFileExistsError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFileExistsError.getClass, castSelf: Cast.asPyFileExistsError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileExistsError.getDict, castSelf: Cast.asPyFileExistsError))
@@ -1866,6 +1938,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyFileNotFoundError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFileNotFoundError.getClass, castSelf: Cast.asPyFileNotFoundError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFileNotFoundError.getDict, castSelf: Cast.asPyFileNotFoundError))
@@ -1884,6 +1957,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyFloatingPointError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFloatingPointError.getClass, castSelf: Cast.asPyFloatingPointError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFloatingPointError.getDict, castSelf: Cast.asPyFloatingPointError))
@@ -1902,6 +1976,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyFutureWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyFutureWarning.getClass, castSelf: Cast.asPyFutureWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyFutureWarning.getDict, castSelf: Cast.asPyFutureWarning))
@@ -1920,6 +1995,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyGeneratorExit)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyGeneratorExit.getClass, castSelf: Cast.asPyGeneratorExit))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyGeneratorExit.getDict, castSelf: Cast.asPyGeneratorExit))
@@ -1938,6 +2014,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyImportError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyImportError.getClass, castSelf: Cast.asPyImportError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportError.getDict, castSelf: Cast.asPyImportError))
@@ -1956,6 +2033,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyImportWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyImportWarning.getClass, castSelf: Cast.asPyImportWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyImportWarning.getDict, castSelf: Cast.asPyImportWarning))
@@ -1974,6 +2052,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyIndentationError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIndentationError.getClass, castSelf: Cast.asPyIndentationError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndentationError.getDict, castSelf: Cast.asPyIndentationError))
@@ -1992,6 +2071,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyIndexError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIndexError.getClass, castSelf: Cast.asPyIndexError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIndexError.getDict, castSelf: Cast.asPyIndexError))
@@ -2010,6 +2090,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyInterruptedError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyInterruptedError.getClass, castSelf: Cast.asPyInterruptedError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyInterruptedError.getDict, castSelf: Cast.asPyInterruptedError))
@@ -2028,6 +2109,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyIsADirectoryError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyIsADirectoryError.getClass, castSelf: Cast.asPyIsADirectoryError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyIsADirectoryError.getDict, castSelf: Cast.asPyIsADirectoryError))
@@ -2046,6 +2128,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyKeyError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyError.getClass, castSelf: Cast.asPyKeyError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyError.getDict, castSelf: Cast.asPyKeyError))
@@ -2064,6 +2147,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyKeyboardInterrupt)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyKeyboardInterrupt.getClass, castSelf: Cast.asPyKeyboardInterrupt))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyKeyboardInterrupt.getDict, castSelf: Cast.asPyKeyboardInterrupt))
@@ -2082,6 +2166,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyLookupError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyLookupError.getClass, castSelf: Cast.asPyLookupError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyLookupError.getDict, castSelf: Cast.asPyLookupError))
@@ -2100,6 +2185,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyMemoryError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyMemoryError.getClass, castSelf: Cast.asPyMemoryError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyMemoryError.getDict, castSelf: Cast.asPyMemoryError))
@@ -2118,6 +2204,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyModuleNotFoundError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyModuleNotFoundError.getClass, castSelf: Cast.asPyModuleNotFoundError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyModuleNotFoundError.getDict, castSelf: Cast.asPyModuleNotFoundError))
@@ -2136,6 +2223,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyNameError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNameError.getClass, castSelf: Cast.asPyNameError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNameError.getDict, castSelf: Cast.asPyNameError))
@@ -2154,6 +2242,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyNotADirectoryError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotADirectoryError.getClass, castSelf: Cast.asPyNotADirectoryError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotADirectoryError.getDict, castSelf: Cast.asPyNotADirectoryError))
@@ -2172,6 +2261,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyNotImplementedError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyNotImplementedError.getClass, castSelf: Cast.asPyNotImplementedError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyNotImplementedError.getDict, castSelf: Cast.asPyNotImplementedError))
@@ -2190,6 +2280,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyOSError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyOSError.getClass, castSelf: Cast.asPyOSError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyOSError.getDict, castSelf: Cast.asPyOSError))
@@ -2208,6 +2299,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyOverflowError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyOverflowError.getClass, castSelf: Cast.asPyOverflowError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyOverflowError.getDict, castSelf: Cast.asPyOverflowError))
@@ -2226,6 +2318,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyPendingDeprecationWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyPendingDeprecationWarning.getClass, castSelf: Cast.asPyPendingDeprecationWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyPendingDeprecationWarning.getDict, castSelf: Cast.asPyPendingDeprecationWarning))
@@ -2244,6 +2337,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyPermissionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyPermissionError.getClass, castSelf: Cast.asPyPermissionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyPermissionError.getDict, castSelf: Cast.asPyPermissionError))
@@ -2262,6 +2356,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyProcessLookupError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyProcessLookupError.getClass, castSelf: Cast.asPyProcessLookupError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyProcessLookupError.getDict, castSelf: Cast.asPyProcessLookupError))
@@ -2280,6 +2375,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyRecursionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRecursionError.getClass, castSelf: Cast.asPyRecursionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRecursionError.getDict, castSelf: Cast.asPyRecursionError))
@@ -2298,6 +2394,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyReferenceError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyReferenceError.getClass, castSelf: Cast.asPyReferenceError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyReferenceError.getDict, castSelf: Cast.asPyReferenceError))
@@ -2316,6 +2413,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyResourceWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyResourceWarning.getClass, castSelf: Cast.asPyResourceWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyResourceWarning.getDict, castSelf: Cast.asPyResourceWarning))
@@ -2334,6 +2432,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyRuntimeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeError.getClass, castSelf: Cast.asPyRuntimeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeError.getDict, castSelf: Cast.asPyRuntimeError))
@@ -2352,6 +2451,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyRuntimeWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyRuntimeWarning.getClass, castSelf: Cast.asPyRuntimeWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyRuntimeWarning.getDict, castSelf: Cast.asPyRuntimeWarning))
@@ -2370,6 +2470,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyStopAsyncIteration)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStopAsyncIteration.getClass, castSelf: Cast.asPyStopAsyncIteration))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopAsyncIteration.getDict, castSelf: Cast.asPyStopAsyncIteration))
@@ -2388,6 +2489,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyStopIteration)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyStopIteration.getClass, castSelf: Cast.asPyStopIteration))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyStopIteration.getDict, castSelf: Cast.asPyStopIteration))
@@ -2406,6 +2508,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PySyntaxError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxError.getClass, castSelf: Cast.asPySyntaxError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxError.getDict, castSelf: Cast.asPySyntaxError))
@@ -2424,6 +2527,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PySyntaxWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySyntaxWarning.getClass, castSelf: Cast.asPySyntaxWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySyntaxWarning.getDict, castSelf: Cast.asPySyntaxWarning))
@@ -2442,6 +2546,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PySystemError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySystemError.getClass, castSelf: Cast.asPySystemError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemError.getDict, castSelf: Cast.asPySystemError))
@@ -2460,6 +2565,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PySystemExit)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PySystemExit.getClass, castSelf: Cast.asPySystemExit))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PySystemExit.getDict, castSelf: Cast.asPySystemExit))
@@ -2478,6 +2584,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyTabError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTabError.getClass, castSelf: Cast.asPyTabError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTabError.getDict, castSelf: Cast.asPyTabError))
@@ -2496,6 +2603,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyTimeoutError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTimeoutError.getClass, castSelf: Cast.asPyTimeoutError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTimeoutError.getDict, castSelf: Cast.asPyTimeoutError))
@@ -2514,6 +2622,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyTypeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyTypeError.getClass, castSelf: Cast.asPyTypeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyTypeError.getDict, castSelf: Cast.asPyTypeError))
@@ -2532,6 +2641,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyUnboundLocalError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnboundLocalError.getClass, castSelf: Cast.asPyUnboundLocalError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnboundLocalError.getDict, castSelf: Cast.asPyUnboundLocalError))
@@ -2550,6 +2660,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyUnicodeDecodeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeDecodeError.getClass, castSelf: Cast.asPyUnicodeDecodeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeDecodeError.getDict, castSelf: Cast.asPyUnicodeDecodeError))
@@ -2568,6 +2679,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyUnicodeEncodeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeEncodeError.getClass, castSelf: Cast.asPyUnicodeEncodeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeEncodeError.getDict, castSelf: Cast.asPyUnicodeEncodeError))
@@ -2586,6 +2698,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyUnicodeError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeError.getClass, castSelf: Cast.asPyUnicodeError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeError.getDict, castSelf: Cast.asPyUnicodeError))
@@ -2604,6 +2717,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyUnicodeTranslateError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeTranslateError.getClass, castSelf: Cast.asPyUnicodeTranslateError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeTranslateError.getDict, castSelf: Cast.asPyUnicodeTranslateError))
@@ -2622,6 +2736,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyUnicodeWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUnicodeWarning.getClass, castSelf: Cast.asPyUnicodeWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUnicodeWarning.getDict, castSelf: Cast.asPyUnicodeWarning))
@@ -2640,6 +2755,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyUserWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyUserWarning.getClass, castSelf: Cast.asPyUserWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyUserWarning.getDict, castSelf: Cast.asPyUserWarning))
@@ -2658,6 +2774,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyValueError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyValueError.getClass, castSelf: Cast.asPyValueError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyValueError.getDict, castSelf: Cast.asPyValueError))
@@ -2676,6 +2793,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyWarning)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyWarning.getClass, castSelf: Cast.asPyWarning))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyWarning.getDict, castSelf: Cast.asPyWarning))
@@ -2694,6 +2812,7 @@ internal enum FillTypes {
     type.setFlag(.baseType)
     type.setFlag(.hasGC)
     type.setFlag(.baseExceptionSubclass)
+    type.setLayout(.PyZeroDivisionError)
 
     insert(type: type, name: "__class__", value: PyProperty.wrap(name: "__class__", doc: nil, get: PyZeroDivisionError.getClass, castSelf: Cast.asPyZeroDivisionError))
     insert(type: type, name: "__dict__", value: PyProperty.wrap(name: "__dict__", doc: nil, get: PyZeroDivisionError.getDict, castSelf: Cast.asPyZeroDivisionError))

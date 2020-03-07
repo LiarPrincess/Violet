@@ -1,7 +1,5 @@
 import Core
 
-// swiftlint:disable file_length
-
 private struct PyTypeNewArgs {
   /// First argument in `__new__` invocation
   fileprivate let metatype: PyType
@@ -213,82 +211,59 @@ extension PyType {
   private static func bestBase(bases: [PyType]) -> PyResult<PyType> {
     assert(bases.any)
 
-    var base: PyType?
-    var winner: PyType?
+    var result: SolidBase?
 
     for b in bases {
       let candidate = PyType.solidBase(type: b)
-      guard let currentWinner = winner  else {
-        winner = candidate
-        base = b
+
+      guard let currentResult = result else {
+        result = candidate
         continue
       }
 
-      if currentWinner.isSubtype(of: candidate) {
+      if candidate.layout.isAddingNewProperties(to: currentResult.layout) {
+        result = candidate
+      } else if currentResult.layout.isAddingNewProperties(to: candidate.layout) {
         // nothing
-      } else if candidate.isSubtype(of: currentWinner) {
-        winner = candidate
-        base = b
       } else {
         return .typeError("multiple bases have instance lay-out conflict")
       }
     }
 
-    assert(base != nil) // basically the same check as 'bases.any' at top
-    return .value(base!) // swiftlint:disable:this force_unwrapping
+    assert(result != nil) // basically the same check as 'bases.any' at top
+    return .value(result!.type) // swiftlint:disable:this force_unwrapping
+  }
+
+  private struct SolidBase {
+    fileprivate let type: PyType
+    fileprivate let layout: TypeLayout
   }
 
   /// static PyTypeObject *
   /// solid_base(PyTypeObject *type)
-  private static func solidBase(type: PyType) -> PyType {
-    // Traverse class hierarchy (from derieved to base).
-    // Stop when base class has different memory layout than 'us'.
-    // Return 'us'.
+  private static func solidBase(type: PyType) -> SolidBase {
+    // Traverse class hierarchy (from derieved to base) until we reach
+    // something with defined layout.
     // For example:
     //   Given:   Bool -> Int -> Object
-    //   Returns: Int
+    //   Returns: Int layout
     //   Reason: 'Bool' and 'Int' have the same layout (single BigInt property),
     //           but 'Int' and 'Object' have different layouts.
 
-    // Special case for BaseObject
-    guard let base = type.getBase() else {
-      return type
+    var typeOrNil: PyType? = type
+
+    while let candidate = typeOrNil {
+      if let layout = candidate.layout {
+        return SolidBase(type: type, layout: layout)
+      }
+
+      typeOrNil = candidate.getBase()
     }
 
-    return PyType.hasExtraProperties(type: type, base: base) ? type : base
-  }
-
-  /// static int
-  /// extra_ivars(PyTypeObject *type, PyTypeObject *base)
-  private static func hasExtraProperties(type: PyType, base: PyType) -> Bool {
-    // This is aproximation of the correct behavior.
-
-    let isTypeHeap = type is HeapType
-    let isBaseHeap = base is HeapType
-
-    let isBuiltinDerievedFromBuiltin = !isTypeHeap && !isBaseHeap
-    if isBuiltinDerievedFromBuiltin {
-      // We assume that every builtin subclass adds something new.
-      // Not really true (for example: Bool and Int both have only BigInt property),
-      // but whatever (you can't subclass Bool anyway).
-      return true
-    }
-
-    let isUserTypeDerievedFromBuiltin = isTypeHeap && !isBaseHeap
-    if isUserTypeDerievedFromBuiltin {
-      // All of the user types (heap types) add `__dict__`.
-      return true
-    }
-
-    let isUserTypeDerievedFromUserType = isTypeHeap && isBaseHeap
-    if isUserTypeDerievedFromUserType {
-      // No change here (we already have `__dict__`).
-      // And we do not allow extensions.
-      return false
-    }
-
-    // Remaining case: !isTypeHeap && isBaseHeap
-    trap("Builtin type derieved from user type.")
+    // 'Object' type (the one at the top of the lattice) has defined layout.
+    // It should be used if anything else fails.
+    let name = type.getName()
+    trap("'\(name)' type does not derieve from 'object'.")
   }
 
   // MARK: - Python init

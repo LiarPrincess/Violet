@@ -46,7 +46,8 @@ public class PyFrame: PyObject {
   /// We use array which is like dictionary, but with lower constants.
   ///
   /// CPython: `f_localsplus`.
-  public lazy var fastLocals = [PyObject?](
+  public lazy var fastLocals: [PyObject?] = [PyObject?](
+    //                        ^ we need this for Sourcery
     repeating: nil,
     count: self.code.variableCount
   )
@@ -63,7 +64,8 @@ public class PyFrame: PyObject {
   /// \#hipsters
   ///
   /// CPython: `f_lasti`.
-  public lazy var cellsAndFreeVariables = [PyCell](
+  public lazy var cellsAndFreeVariables: [PyCell] = [PyCell](
+    //                                   ^ we need this for Sourcery
     repeating: Py.newCell(content: nil),
     count: self.code.cellVariableCount + self.code.freeVariableCount
   )

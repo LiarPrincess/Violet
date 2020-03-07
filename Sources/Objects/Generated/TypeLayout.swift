@@ -22,7 +22,7 @@ internal class TypeLayout: Equatable {
 
   /// Is the current layout based on given layout?
   /// 'Based' means that that is uses the given layout, but has more properties.
-  internal func isBased(on other: TypeLayout) -> Bool {
+  internal func isAddingNewProperties(to other: TypeLayout) -> Bool {
     var parentOrNil: TypeLayout? = self
 
     while let parent = parentOrNil {
@@ -52,6 +52,7 @@ internal class TypeLayout: Equatable {
   /// - `mro: [PyType]`
   /// - `subclasses: [PyTypeWeakRef]`
   /// - `__dict__: PyDict`
+  /// - `layout: TypeLayout?`
   /// - `typeFlags: PyTypeFlags`
   internal static let PyType = TypeLayout(base: TypeLayout.PyObject)
   /// `PyBool` uses the same layout as it s base type (`PyInt`).

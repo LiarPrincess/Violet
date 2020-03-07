@@ -88,7 +88,7 @@ internal class TypeLayout: Equatable {
 
   /// Is the current layout based on given layout?
   /// 'Based' means that that is uses the given layout, but has more properties.
-  internal func isBased(on other: TypeLayout) -> Bool {
+  internal func isAddingNewProperties(to other: TypeLayout) -> Bool {
     var parentOrNil: TypeLayout? = self
 
     while let parent = parentOrNil {

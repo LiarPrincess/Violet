@@ -2,6 +2,7 @@ import Core
 
 // In CPython:
 // Objects -> typeobject.c
+// https://docs.python.org/3/c-api/typeobj.html
 
 // swiftlint:disable file_length
 
@@ -86,6 +87,20 @@ public class PyType: PyObject {
   private var subclasses: [PyTypeWeakRef] = []
   private lazy var __dict__ = PyDict()
 
+  /// Swift storage (layout).
+  ///
+  /// When creating new class we will check if all of the base classes have
+  /// the same layout.
+  /// So, for example we will allow this:
+  ///   >>> class C(int, object): pass
+  /// but do not allow this:
+  ///   >>> class C(int, str): pass
+  ///   TypeError: multiple bases have instance lay-out conflict
+  ///
+  /// This field was added specially for `Violet`, it is not present
+  /// in `CPython` (or any other `Python` implementation for that matter).
+  internal private(set) var layout: TypeLayout?
+
   internal private(set) var typeFlags = PyTypeFlags()
 
   internal var isHeapType: Bool {
@@ -94,10 +109,6 @@ public class PyType: PyObject {
 
   internal var isBaseType: Bool {
     return self.typeFlags.contains(.baseType)
-  }
-
-  internal func setFlag(_ flag: PyTypeFlags) {
-    self.typeFlags.insert(flag)
   }
 
   override public var description: String {
@@ -678,6 +689,16 @@ public class PyType: PyObject {
          .notCallable(let e):
       return .error(e)
     }
+  }
+
+  // MARK: - Setters
+
+  internal func setFlag(_ flag: PyTypeFlags) {
+    self.typeFlags.insert(flag)
+  }
+
+  internal func setLayout(_ layout: TypeLayout) {
+    self.layout = layout
   }
 
   // MARK: - GC

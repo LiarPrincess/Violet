@@ -49,6 +49,10 @@ private func insert(type: PyType, name: String, value: PyObject) {
     {% if type.annotations.typeSubclass %}type.setFlag(.typeSubclass){% endif %}
 {% endmacro %}
 
+{% macro addLayout name %}
+    type.setLayout(.{{ name }})
+{% endmacro %}
+
 {% macro fillDict type pyName %}
   {% set castSelf %}Cast.as{{ type.name }}{% endset %}
 
@@ -103,6 +107,7 @@ internal enum FillTypes {
   internal static func object(_ type: PyType) {
     {% call addDoc type %}
     {% call addFlags type %}
+    {% call addLayout "PyObject" %}
     {% call fillDict type "object" %}
   }
 {% endfor %}
@@ -114,6 +119,7 @@ internal enum FillTypes {
   internal static func type(_ type: PyType) {
     {% call addDoc type %}
     {% call addFlags type %}
+    {% call addLayout type.name %}
     {% call fillDict type "type" %}
   }
 {% endfor %}
@@ -127,6 +133,7 @@ internal enum FillTypes {
   internal static func {{ fnName }}(_ type: PyType) {
     {% call addDoc type %}
     {% call addFlags type %}
+    {% call addLayout type.name %}
     {% call fillDict type annotation %}
   }
 {% endfor %}
@@ -139,6 +146,7 @@ internal enum FillTypes {
   internal static func {{ fnName }}(_ type: PyType) {
     {% call addDoc type %}
     {% call addFlags type %}
+    {% call addLayout type.name %}
     {% call fillDict type annotation %}
   }
 {% endfor %}
