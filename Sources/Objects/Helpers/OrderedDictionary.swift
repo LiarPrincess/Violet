@@ -1,3 +1,5 @@
+import Core
+
 // In CPython:
 // Objects -> dict-common.h
 // Objects -> dictobject.c
@@ -32,9 +34,11 @@ public protocol PyHashable {
 
 // MARK: - OrderedDictionary
 
-/// A generic collection to store key-value pairs in the order they were
-/// inserted in.
+/// A generic collection to store key-value pairs in exactly the same order
+/// as they were inserted.
 public struct OrderedDictionary<Key: PyHashable, Value> {
+
+  // MARK: - Helper data types
 
   public struct Entry {
     public let key:  Key
@@ -58,9 +62,10 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   ///
   /// We could use enum but that would cost us 2x more memory.
   /// (It would be also more type-safe, but nobody cares about that...)
-  /// If we want to optimize memory footprint further then we could use
-  /// 2 different kind of indices: Int8 and Int with 'enum trick'
-  /// from Foundation.Data.
+  ///
+  /// If we want to optimize memory footprint further we can use 2 different
+  /// kind of indices: `Int8` and `Int` with `IndexKind` enum
+  /// (similiar to Foundation.Data._Representation).
   fileprivate struct EntryIndex: Equatable {
 
     /// Slot is free to use.
@@ -77,12 +82,12 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
     /// Slot contains an entry. Use `self.entries[arrayIndex]` to get its value.
     fileprivate var asArrayIndex: Int {
-      assert(self.isArrayIndex, "Can't index array with 'notAssigned' or 'deleted'")
+      assert(self.isEntryIndex, "Can't index array with 'notAssigned' or 'deleted'")
       return self.value
     }
 
     /// Does the slot contain an entry?
-    fileprivate var isArrayIndex: Bool {
+    fileprivate var isEntryIndex: Bool {
       return self.value >= 0
     }
 
@@ -101,7 +106,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
   /// Data held in dictinary.
   internal fileprivate(set) var entries: [EntryOrDeleted]
-  /// Actual hash table of `self.size` entries. Holds indices to `self.entries`.
+  /// Actual hash table of `self.size` entries. Holds indices from `self.entries`.
   /// Indices must be: `0 <= indice < usableFraction(self.size)`.
   fileprivate var indices: [EntryIndex]
 
@@ -206,7 +211,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// is found in the dictionary, or `nil` if the key is not found.
   public func get(key: Key) -> GetResult {
     switch self.lookup(key: key) {
-    case let .entry(index: _, entryIndex: _, entry: entry):
+    case let .entry(indicesIndex: _, entriesIndex: _, entry: entry):
       return .value(entry.value)
     case .notFound:
       return .notFound
@@ -242,7 +247,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// insertdict(PyDictObject *mp, PyObject *key, Py_hash_t hash, PyObject *value)
   public mutating func insert(key: Key, value: Value) -> InsertResult {
     switch self.lookup(key: key) {
-    case let .entry(index: _, entryIndex: entryIndex, entry: oldEntry):
+    case let .entry(indicesIndex: _, entriesIndex: entryIndex, entry: oldEntry):
       // Update existing entry.
       // We have to use old 'key':
       // >>> d = { }
@@ -279,18 +284,15 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// static Py_ssize_t
   /// find_empty_slot(PyDictKeysObject *keys, Py_hash_t hash)
   private func findEmptySlot(hash: Int) -> Int {
-    let mask = getIndexMask(size: self.size)
-    var i = hash & mask
-    var ix = self.getIndexValue(i)
+    var index = IndexCalculation(hash: hash, dictionarySize: self.size)
+    var entryIndex = self.getEntryIndex(at: index)
 
-    var pertub = hash
-    while ix.isArrayIndex {
-      pertub >>= perturbShift
-      i = (5 * i + pertub + 1) & mask
-      ix = self.getIndexValue(i)
+    while entryIndex.isEntryIndex {
+      index.calculateNext()
+      entryIndex = self.getEntryIndex(at: index)
     }
 
-    return i
+    return index.value
   }
 
   // MARK: - Remove
@@ -312,7 +314,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     case .notFound:
       return .notFound
 
-    case let .entry(index: index, entryIndex: entryIndex, entry: entry):
+    case let .entry(indicesIndex: index, entriesIndex: entryIndex, entry: entry):
       self.used -= 1
       self.indices[index] = .deleted
       self.entries[entryIndex] = .deleted
@@ -329,7 +331,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
   private enum LookupResult {
     case notFound
-    case entry(index: Int, entryIndex: Int, entry: Entry)
+    case entry(indicesIndex: Int, entriesIndex: Int, entry: Entry)
     case error(PyBaseException)
   }
 
@@ -339,13 +341,11 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   /// lookdict(PyDictObject *mp, PyObject *key, Py_hash_t hash, PyObject ...)
   private func lookup(key: Key) -> LookupResult {
     let hash = key.hash
-    let mask = getIndexMask(size: self.size)
-    var pertub = hash
-    var index = hash & mask
+    var index = IndexCalculation(hash: hash, dictionarySize: self.size)
 
     while true {
       // Search unil we find entry with equal key or we hit 'notAssigned'.
-      switch self.getIndexValue(index) {
+      switch self.getEntryIndex(at: index) {
       case .notAssigned:
         return .notFound
 
@@ -353,18 +353,17 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
         break
 
       case let entryIndex:
-        assert(entryIndex.isArrayIndex)
+        assert(entryIndex.isEntryIndex)
         let arrayIndex = entryIndex.asArrayIndex
 
         guard case let .entry(old) = self.entries[arrayIndex] else {
-          assert(false, "Index was deleted, but entry was not.")
-          break
+          trap("Ordered dictionary - index was deleted, but entry was not.")
         }
 
         if hash == old.key.hash {
           switch key.isEqual(to: old.key) {
           case .value(true):
-            return .entry(index: index, entryIndex: arrayIndex, entry: old)
+            return .entry(indicesIndex: index.value, entriesIndex: arrayIndex, entry: old)
           case .value(false):
             break // Try next entry
           case .error(let e):
@@ -374,8 +373,31 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
       }
 
       // Try next entry
-      pertub >>= perturbShift
-      index = (5 * index + pertub + 1) & mask
+      index.calculateNext()
+    }
+  }
+
+  /// Minor helper used for calculating next index.
+  private struct IndexCalculation {
+    private let mask: Int
+    private var pertub: Int
+    fileprivate private(set) var value: Int
+
+    fileprivate init(hash: Int, dictionarySize: Int) {
+      self.mask = getIndexMask(size: dictionarySize)
+      self.pertub = hash
+      self.value = hash & self.mask
+    }
+
+    fileprivate init(hash: Int, mask: Int) {
+      self.mask = mask
+      self.pertub = hash
+      self.value = hash & self.mask
+    }
+
+    fileprivate mutating func calculateNext() {
+      self.pertub >>= perturbShift
+      self.value = (5 * self.value + self.pertub + 1) & self.mask
     }
   }
 
@@ -385,8 +407,8 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
   ///
   /// static inline Py_ssize_t
   /// dk_get_index(PyDictKeysObject *keys, Py_ssize_t i)
-  private func getIndexValue(_ i: Int) -> EntryIndex {
-    return self.indices[i]
+  private func getEntryIndex(at index: IndexCalculation) -> EntryIndex {
+    return self.indices[index.value]
   }
 
   // MARK: - Copy
@@ -436,14 +458,12 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
     let mask = getIndexMask(size: newSize)
     for (n, entry) in newEntries.enumerated() {
-      var perturb = entry.key.hash
-      var index = entry.key.hash & mask
-      while newIndices[index] != EntryIndex.notAssigned {
-        perturb >>= perturbShift
-        index = (5 * index + perturb + 1) & mask
+      var index = IndexCalculation(hash: entry.key.hash, mask: mask)
+      while newIndices[index.value] != EntryIndex.notAssigned {
+        index.calculateNext()
       }
 
-      newIndices[index] = EntryIndex(n)
+      newIndices[index.value] = EntryIndex(n)
     }
 
     // Update self
@@ -470,7 +490,7 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     assert(self.used + self.usable <= usableBySize)
 
     var indexEntryCount = 0
-    for entryIndex in self.indices where entryIndex.isArrayIndex {
+    for entryIndex in self.indices where entryIndex.isEntryIndex {
       assert(entryIndex.asArrayIndex <= self.entries.count)
       indexEntryCount += 1
     }
