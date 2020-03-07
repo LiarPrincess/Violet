@@ -487,6 +487,30 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
 // MARK: - CustomStringConvertible
 
+extension OrderedDictionary.EntryIndex: CustomStringConvertible {
+  fileprivate var description: String {
+    switch self.value {
+    case Self.notAssigned.value:
+      return "-"
+    case Self.deleted.value:
+      return "deleted"
+    default:
+      return "Index(value: \(self.value))"
+    }
+  }
+}
+
+extension OrderedDictionary.EntryOrDeleted: CustomStringConvertible {
+  internal var description: String {
+    switch self {
+    case .entry(let e):
+      return "Entry(key: \(e.key), value: \(e.value))"
+    case .deleted:
+      return "deleted"
+    }
+  }
+}
+
 extension OrderedDictionary: CustomStringConvertible {
   public var description: String {
     if self.isEmpty {
@@ -510,14 +534,29 @@ extension OrderedDictionary: CustomStringConvertible {
 
 // MARK: - CustomReflectable
 
+extension OrderedDictionary.EntryIndex: CustomReflectable {
+  public var customMirror: Mirror {
+    // This will print only description (1 index = 1 line)
+    return Mirror(self, children: [])
+  }
+}
+
+extension OrderedDictionary.EntryOrDeleted: CustomReflectable {
+  public var customMirror: Mirror {
+    // This will print only description (1 entry = 1 line)
+    return Mirror(self, children: [])
+  }
+}
+
 extension OrderedDictionary: CustomReflectable {
 
-  /// A mirror that reflects the dictionary.
   public var customMirror: Mirror {
     return Mirror(
       self,
-      unlabeledChildren: Array(self),
-      displayStyle: .class
+      children: [
+        "Indices": self.indices,
+        "Entries": self.entries
+      ]
     )
   }
 }
