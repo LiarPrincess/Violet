@@ -3,6 +3,11 @@ import Objects
 
 class PyFakeDelegate: PyDelegate {
 
+  var frame: PyFrame? {
+    assert(false)
+    return nil
+  }
+
   func open(fileno: Int32, mode: FileMode) -> PyResult<FileDescriptorType> {
     let e = Py.newSystemError(msg: "'\(#function)' should not be called")
     return .error(e)
@@ -14,9 +19,9 @@ class PyFakeDelegate: PyDelegate {
   }
 
   // swiftlint:disable:next function_parameter_count
-  func eval(name: String?,
-            qualname: String?,
-            code: CodeObject,
+  func eval(name: PyString?,
+            qualname: PyString?,
+            code: PyCode,
 
             args: [PyObject],
             kwargs: PyDict?,
