@@ -1,0 +1,268 @@
+
+# Output of 'TypeLayout.stencil'.
+# Used to generate 'TypeLayout.swift'
+#
+# Each line describes stored property with following attributes:
+# - type_name - name of the type to which property belongs to
+# - base_type_name - name of the base type
+# - property_name
+# - property_type
+
+
+PyObject|
+- _type|PyType!
+- flags|PyObjectFlags
+
+PyType|PyObject
+- name|String
+- qualname|String
+- base|PyType?
+- bases|[PyType]
+- mro|[PyType]
+- subclasses|[PyTypeWeakRef]
+- __dict__|PyDict
+- typeFlags|PyTypeFlags
+
+PyBool|PyInt
+PyBuiltinFunction|PyObject
+- function|FunctionWrapper
+- module|PyObject?
+- doc|String?
+PyBuiltinMethod|PyObject
+- function|FunctionWrapper
+- object|PyObject
+- module|PyObject?
+- doc|String?
+PyByteArray|PyObject
+- data|PyBytesData
+PyByteArrayIterator|PyObject
+- bytes|PyByteArray
+- index|Int
+PyBytes|PyObject
+- data|PyBytesData
+PyBytesIterator|PyObject
+- bytes|PyBytes
+- index|Int
+PyCallableIterator|PyObject
+- callable|PyObject
+- sentinel|PyObject
+PyCell|PyObject
+- content|PyObject?
+PyClassMethod|PyObject
+- callable|PyObject?
+- __dict__|PyDict
+PyCode|PyObject
+- codeObject|CodeObject
+- name|PyString
+- qualifiedName|PyString
+- filename|PyString
+- constants|[Constant]
+- names|[PyString]
+PyComplex|PyObject
+- real|Double
+- imag|Double
+PyDict|PyObject
+- data|PyDictData
+PyDictItemIterator|PyObject
+- object|PyDict
+- index|Int
+- initCount|Int
+PyDictItems|PyObject
+- dict|PyDict
+PyDictKeyIterator|PyObject
+- object|PyDict
+- index|Int
+- initCount|Int
+PyDictKeys|PyObject
+- dict|PyDict
+PyDictValueIterator|PyObject
+- object|PyDict
+- index|Int
+- initCount|Int
+PyDictValues|PyObject
+- dict|PyDict
+PyEllipsis|PyObject
+PyEnumerate|PyObject
+- iterator|PyObject
+- nextIndex|BigInt
+PyFilter|PyObject
+- fn|PyObject
+- iterator|PyObject
+PyFloat|PyObject
+- value|Double
+PyFrame|PyObject
+- code|PyCode
+- parent|PyFrame?
+- stack|ObjectStack
+- blocks|BlockStack
+- locals|PyDict
+- globals|PyDict
+- builtins|PyDict
+- fastLocals|[PyObject?]
+- cellsAndFreeVariables|[PyCell]
+- instructionIndex|Int?
+PyFrozenSet|PyObject
+- data|PySetData
+PyFunction|PyObject
+- name|PyString
+- qualname|PyString
+- doc|PyString?
+- __dict__|PyDict
+- module|PyObject
+- code|PyCode
+- globals|PyDict
+- defaults|PyTuple?
+- kwDefaults|PyDict?
+- closure|PyTuple?
+- annotations|PyDict?
+PyInt|PyObject
+- value|BigInt
+PyIterator|PyObject
+- sequence|PyObject
+- index|Int
+PyList|PyObject
+- data|PySequenceData
+PyListIterator|PyObject
+- list|PyList
+- index|Int
+PyListReverseIterator|PyObject
+- list|PyList
+- index|Int
+PyMap|PyObject
+- fn|PyObject
+- iterators|[PyObject]
+PyMethod|PyObject
+- function|PyFunction
+- object|PyObject
+PyModule|PyObject
+- __dict__|Py
+PyNamespace|PyObject
+- __dict__|PyDict
+PyNone|PyObject
+PyNotImplemented|PyObject
+PyProperty|PyObject
+- _getter|PyObject?
+- _setter|PyObject?
+- _deleter|PyObject?
+- doc|PyObject?
+PyRange|PyObject
+- start|PyInt
+- stop|PyInt
+- step|PyInt
+- length|PyInt
+- stepType|StepType
+PyRangeIterator|PyObject
+- start|BigInt
+- step|BigInt
+- length|BigInt
+- index|BigInt
+PyReversed|PyObject
+- sequence|PyObject
+- index|Int
+PySet|PyObject
+- data|PySetData
+PySetIterator|PyObject
+- set|PySetType
+- index|Int
+- initCount|Int
+PySlice|PyObject
+- start|PyObject
+- stop|PyObject
+- step|PyObject
+PyStaticMethod|PyObject
+- callable|PyObject?
+- __dict__|PyDict
+PyString|PyObject
+- data|PyStringData
+PyStringIterator|PyObject
+- string|PyString
+- index|Int
+PySuper|PyObject
+- thisClass|PyType?
+- object|PyObject?
+- objectType|PyType?
+PyTextFile|PyObject
+- name|String?
+- fd|FileDescriptorType
+- encoding|PyStringEncoding
+- errors|PyStringErrorHandler
+- mode|FileMode
+- closeOnDealloc|Bool
+PyTuple|PyObject
+- data|PySequenceData
+PyTupleIterator|PyObject
+- tuple|PyTuple
+- index|Int
+PyZip|PyObject
+- iterators|[PyObject]
+
+PyArithmeticError|PyException
+PyAssertionError|PyException
+PyAttributeError|PyException
+PyBaseException|PyObject
+- args|PyTuple
+- traceback|PyObject?
+- cause|PyObject?
+- __dict__|Py
+- context|PyBaseException?
+- suppressContext|Bool
+PyBlockingIOError|PyOSError
+PyBrokenPipeError|PyConnectionError
+PyBufferError|PyException
+PyBytesWarning|PyWarning
+PyChildProcessError|PyOSError
+PyConnectionAbortedError|PyConnectionError
+PyConnectionError|PyOSError
+PyConnectionRefusedError|PyConnectionError
+PyConnectionResetError|PyConnectionError
+PyDeprecationWarning|PyWarning
+PyEOFError|PyException
+PyException|PyBaseException
+PyFileExistsError|PyOSError
+PyFileNotFoundError|PyOSError
+PyFloatingPointError|PyArithmeticError
+PyFutureWarning|PyWarning
+PyGeneratorExit|PyBaseException
+PyImportError|PyException
+PyImportWarning|PyWarning
+PyIndentationError|PySyntaxError
+PyIndexError|PyLookupError
+PyInterruptedError|PyOSError
+PyIsADirectoryError|PyOSError
+PyKeyError|PyLookupError
+PyKeyboardInterrupt|PyBaseException
+PyLookupError|PyException
+PyMemoryError|PyException
+PyModuleNotFoundError|PyImportError
+PyNameError|PyException
+PyNotADirectoryError|PyOSError
+PyNotImplementedError|PyRuntimeError
+PyOSError|PyException
+PyOverflowError|PyArithmeticError
+PyPendingDeprecationWarning|PyWarning
+PyPermissionError|PyOSError
+PyProcessLookupError|PyOSError
+PyRecursionError|PyRuntimeError
+PyReferenceError|PyException
+PyResourceWarning|PyWarning
+PyRuntimeError|PyException
+PyRuntimeWarning|PyWarning
+PyStopAsyncIteration|PyException
+PyStopIteration|PyException
+PySyntaxError|PyException
+PySyntaxWarning|PyWarning
+PySystemError|PyException
+PySystemExit|PyBaseException
+PyTabError|PyIndentationError
+PyTimeoutError|PyOSError
+PyTypeError|PyException
+PyUnboundLocalError|PyNameError
+PyUnicodeDecodeError|PyUnicodeError
+PyUnicodeEncodeError|PyUnicodeError
+PyUnicodeError|PyValueError
+PyUnicodeTranslateError|PyUnicodeError
+PyUnicodeWarning|PyWarning
+PyUserWarning|PyWarning
+PyValueError|PyException
+PyWarning|PyException
+PyZeroDivisionError|PyArithmeticError

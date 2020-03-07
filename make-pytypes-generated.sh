@@ -86,6 +86,21 @@ sourcery \
 
 python3 $GENERATED/remove-sourcery-header.py DowncastObject.swift
 
+# === Layout ===
+# When creating new class we will check if all of the base classes have
+# the same layout.
+# So, for example we will allow this:
+#   >>> class C(int, object): pass
+# but do not allow this:
+#   >>> class C(int, str): pass
+#   TypeError: multiple bases have instance lay-out conflict
+sourcery \
+  --sources ./Sources/Objects \
+  --templates $GENERATED/TypeLayout.stencil \
+  --output $GENERATED/TypeLayout.tmp
+
+python3 $GENERATED/TypeLayout.py> $GENERATED/TypeLayout.swift
+
 # ==============
 # Stage 3: Other
 # ==============
