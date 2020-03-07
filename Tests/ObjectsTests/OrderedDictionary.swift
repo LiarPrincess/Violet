@@ -3,6 +3,7 @@ import Core
 @testable import Objects
 
 // swiftlint:disable number_separator
+// swiftlint:disable file_length
 
 private let minsize = 8
 
@@ -16,7 +17,7 @@ extension Int: PyHashable {
   }
 }
 
-class OrderedDictionary: XCTestCase {
+class OrderedDictionaryTests: XCTestCase {
 
   // MARK: - Init
 
@@ -239,9 +240,42 @@ class OrderedDictionary: XCTestCase {
     XCTAssertEqual(dict.description, "OrderedDictionary()")
   }
 
+  // MARK: - Index calculation
+
+  func test_indexCalculation_eventually_triesAllIndices() {
+    // swiftlint:disable:next nesting
+    typealias Dict = OrderedDictionary<Int, String>
+
+    let size = 32
+    let hash = -5073420405599346384
+    var index = Dict.IndexCalculation(hash: hash, dictionarySize: size)
+
+    let maxTries = 100
+    var usedIndices = [Bool](repeating: false, count: size)
+    var usedIndicesCount = 0
+
+    for _ in 0..<maxTries {
+      let i = index.value
+      if !usedIndices[i] {
+        usedIndices[i] = true
+        usedIndicesCount += 1
+      }
+
+      let hasAllIndices = usedIndicesCount == size
+      if hasAllIndices {
+        return
+      }
+
+      index.calculateNext()
+    }
+
+    let missing = usedIndices.enumerated().filter { !$0.element }.map { $0.offset }
+    XCTAssert(false, "Missing: \(missing)")
+  }
+
   // MARK: - Helpers
 
-  private func get(_ dict: Objects.OrderedDictionary<Int, String>,
+  private func get(_ dict: OrderedDictionary<Int, String>,
                    key: Int,
                    file: StaticString = #file,
                    line: UInt         = #line) -> String? {
@@ -256,7 +290,7 @@ class OrderedDictionary: XCTestCase {
     }
   }
 
-  private func insert(_ dict: inout Objects.OrderedDictionary<Int, String>,
+  private func insert(_ dict: inout OrderedDictionary<Int, String>,
                       key: Int,
                       value: String,
                       file: StaticString = #file,
@@ -269,7 +303,7 @@ class OrderedDictionary: XCTestCase {
     }
   }
 
-  private func remove(_ dict: inout Objects.OrderedDictionary<Int, String>,
+  private func remove(_ dict: inout OrderedDictionary<Int, String>,
                       key: Int,
                       file: StaticString = #file,
                       line: UInt         = #line) -> String? {
@@ -284,11 +318,11 @@ class OrderedDictionary: XCTestCase {
     }
   }
 
-  private func createDictionary(size: Int? = nil) -> Objects.OrderedDictionary<Int, String> {
+  private func createDictionary(size: Int? = nil) -> OrderedDictionary<Int, String> {
     if let size = size {
-      return Objects.OrderedDictionary(size: size)
+      return OrderedDictionary(size: size)
     } else {
-      return Objects.OrderedDictionary()
+      return OrderedDictionary()
     }
   }
 }

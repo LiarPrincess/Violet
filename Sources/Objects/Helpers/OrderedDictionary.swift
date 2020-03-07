@@ -102,6 +102,36 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
     }
   }
 
+  /// Minor helper used for calculating next index.
+  ///
+  /// Read the giant comment in `CPython/Objects/dictobject.c' for reasoning.
+  /// Also, we will ignore overflows.
+  internal struct IndexCalculation {
+    /// Modulo by dictionary size.
+    private let mask: Int
+    /// Include hash in the index calculation (this way it is more 'random')
+    private var pertub: Int
+    internal private(set) var value: Int
+
+    internal init(hash: Int, dictionarySize: Int) {
+      let mask = getIndexMask(size: dictionarySize)
+      self.init(hash: hash, mask: mask)
+    }
+
+    internal init(hash: Int, mask: Int) {
+      assert(mask >= 0)
+
+      self.mask = mask
+      self.pertub = Swift.abs(Swift.max(hash, Int.min + 1)) // abs(Int.min) -> trap
+      self.value = self.pertub & self.mask
+    }
+
+    internal mutating func calculateNext() {
+      self.pertub >>= perturbShift
+      self.value = (5 * self.value + self.pertub + 1) & self.mask
+    }
+  }
+
   // MARK: - Properties
 
   /// Data held in dictinary.
@@ -374,30 +404,6 @@ public struct OrderedDictionary<Key: PyHashable, Value> {
 
       // Try next entry
       index.calculateNext()
-    }
-  }
-
-  /// Minor helper used for calculating next index.
-  private struct IndexCalculation {
-    private let mask: Int
-    private var pertub: Int
-    fileprivate private(set) var value: Int
-
-    fileprivate init(hash: Int, dictionarySize: Int) {
-      self.mask = getIndexMask(size: dictionarySize)
-      self.pertub = hash
-      self.value = hash & self.mask
-    }
-
-    fileprivate init(hash: Int, mask: Int) {
-      self.mask = mask
-      self.pertub = hash
-      self.value = hash & self.mask
-    }
-
-    fileprivate mutating func calculateNext() {
-      self.pertub >>= perturbShift
-      self.value = (5 * self.value + self.pertub + 1) & self.mask
     }
   }
 
