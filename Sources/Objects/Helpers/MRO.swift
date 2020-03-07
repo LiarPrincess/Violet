@@ -71,7 +71,7 @@ internal struct MRO {
 
     // Perform C3 linearisation.
     var result = [PyType]()
-    let mros = baseClasses.map { $0.getMRORaw() } + [baseClasses]
+    var mros = baseClasses.map { $0.getMRORaw() } + [baseClasses]
 
     while MRO.hasAnyClassRemaining(mros) {
       guard let base = MRO.getNextBase(mros) else {
@@ -81,13 +81,13 @@ internal struct MRO {
 
       result.append(base)
 
-      // Not the best performance, but that does not matter.
-      for var m in mros {
-        m.removeAll { $0 === base }
+      // Not the best performance, but we do not expect huge MROs.
+      for index in 0..<mros.count {
+        mros[index].removeAll { $0 === base }
       }
     }
 
-    assert(result.count == baseClasses.count)
+    assert(result.count == MRO.expectedCount(baseClasses: baseClasses))
     return .value(MRO(baseClasses: baseClasses, resolutionOrder: result))
   }
 
@@ -132,5 +132,23 @@ internal struct MRO {
     }
 
     return nil
+  }
+
+  private static func expectedCount(baseClasses: [PyType]) -> Int {
+    var result = 0
+    var visitedTypes = Set<ObjectIdentifier>()
+
+    for base in baseClasses {
+      let mro = base.getMRORaw()
+      for type in mro {
+        let id = ObjectIdentifier(type)
+        if !visitedTypes.contains(id) {
+          result += 1
+          visitedTypes.insert(id)
+        }
+      }
+    }
+
+    return result
   }
 }
