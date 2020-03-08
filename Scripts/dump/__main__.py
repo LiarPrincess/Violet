@@ -1,9 +1,7 @@
 import os
-import ast
-import sys
-import dis
 from dump_ast import dump_ast
 from dump_symtable import dump_symtable
+from dump_code import dump_code
 
 def in_current_directory(file):
   current_file = __file__
@@ -30,5 +28,4 @@ if __name__ == '__main__':
   # print()
 
   print('=== Code ===')
-  dis.dis(code)
-  print()
+  dump_code(code)
