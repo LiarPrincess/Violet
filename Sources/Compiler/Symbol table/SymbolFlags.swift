@@ -45,7 +45,7 @@ public struct SymbolFlags: OptionSet, Equatable, CustomStringConvertible {
   /// Includes: global, nonlocal, local, param
   /// Does NOT include: import, free, freeClass
   /// CPython: `SCOPE_OFFSET`.
-  public static let SCOPE_MASK: SymbolFlags = [
+  public static let scopeMask: SymbolFlags = [
     .defGlobal, .defNonlocal, .defLocal, .defParam
   ]
 

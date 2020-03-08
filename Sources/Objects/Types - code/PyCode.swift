@@ -224,6 +224,9 @@ public class PyCode: PyObject {
   // MARK: - Init
 
   internal init(code: CodeObject) {
+    let totalArgs = PyCode.totalArgs(code: code)
+    assert(code.variableNames.count >= totalArgs)
+
     self.codeObject = code
     self.name = Py.getInterned(code.name)
     self.qualifiedName = Py.getInterned(code.qualifiedName)
@@ -236,6 +239,20 @@ public class PyCode: PyObject {
     self.names = code.names.map(Py.getInterned)
 
     super.init(type: Py.types.code)
+  }
+
+  private static func totalArgs(code: CodeObject) -> Int {
+    let argCount = code.argCount
+    let kwOnlyArgCount = code.kwOnlyArgCount
+    let variableCount = code.variableNames.count
+
+    if argCount <= variableCount && kwOnlyArgCount <= variableCount {
+      let varArgs = code.flags.contains(.varArgs) ? 1 : 0
+      let varKeywords = code.flags.contains(.varKeywords) ? 1 : 0
+      return argCount + kwOnlyArgCount + varArgs + varKeywords
+    }
+
+    return variableCount + 1
   }
 
   private static func intern(constant: Bytecode.Constant) -> Constant {

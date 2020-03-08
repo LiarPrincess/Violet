@@ -577,4 +577,61 @@ class STFunction: SymbolTableTestCase {
       XCTAssertEqual(error.location, loc1)
     }
   }
+
+  // MARK: - Local variable
+
+  /// def let_it_go(): x = 2
+  ///
+  ///```c
+  /// name: top
+  /// lineno: 0
+  /// symbols:
+  ///   let_it_go - local, assigned, namespace,
+  /// children:
+  ///   name: let_it_go
+  ///   lineno: 1
+  ///   is optimized
+  ///   locals: ('elsa',)
+  ///   symbols:
+  ///     elsa - local, assigned,
+  /// ```
+  func test_localVariable() {
+    let stmt = self.functionDefStmt(
+      name: "let_it_go",
+      args: self.arguments(),
+      body: [
+        self.assignStmt(
+          targets: [self.identifierExpr(value: "elsa", context: .store, start: loc0)],
+          value: self.intExpr(value: 2)
+        )
+      ],
+      start: loc4
+    )
+
+    if let table = self.createSymbolTable(stmt: stmt) {
+      let top = table.top
+      XCTAssertScope(top, name: "top", type: .module, flags: [])
+      XCTAssert(top.varNames.isEmpty)
+
+      XCTAssertEqual(top.symbols.count, 1)
+      XCTAssertContainsSymbol(top,
+                              name: "let_it_go",
+                              flags: [.defLocal, .srcLocal],
+                              location: loc4)
+
+      XCTAssertEqual(top.children.count, 1)
+      guard top.children.count == 1 else { return }
+
+      let letItGo = top.children[0]
+      XCTAssertScope(letItGo, name: "let_it_go", type: .function, flags: [.isNested])
+      XCTAssert(letItGo.varNames.isEmpty)
+      XCTAssertEqual(letItGo.children.count, 0)
+
+      XCTAssertEqual(letItGo.symbols.count, 1)
+      XCTAssertContainsSymbol(letItGo,
+                              name: "elsa",
+                              flags: [.defLocal, .srcLocal],
+                              location: loc0)
+    }
+  }
 }

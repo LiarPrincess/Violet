@@ -147,7 +147,8 @@ public final class CodeObject: CustomStringConvertible {
   public let kwOnlyArgCount: Int
 
   public var description: String {
-    return "CodeObject(qualifiedName: \(self.qualifiedName))"
+    let name = self.qualifiedName.isEmpty ? "(empty)" : self.qualifiedName
+    return "CodeObject(qualifiedName: \(name))"
   }
 
   public init(name: String,

@@ -291,7 +291,7 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     let qualifiedName = self.createQualifiedName(for: name, type: type)
     let flags = self.createFlags(type: type, scope: scope)
 
-    let varNames = scope.varNames
+    let varNames = scope.varNames + self.getSymbols(scope, withAnyOf: .srcLocal)
     let freeVars = self.getSymbols(scope, withAnyOf: [.srcFree, .defFreeClass])
     var cellVars = self.getSymbols(scope, withAnyOf: .cell)
 
@@ -418,21 +418,21 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
 
   /// dictbytype(PyObject *src, int scope_type, int flag, Py_ssize_t offset)
   ///
-  /// If the scope of a name matches either scope_type or flag is set,
-  /// insert it into the new dict.
+  /// If the scope of a name contains given flag add it to result.
   private func getSymbols(_ scope: SymbolScope,
                           withAnyOf flags: SymbolFlags) -> [MangledName] {
     // Sort the keys so that we have a deterministic order on the indexes
     // saved in the returned dictionary.
-    // These indexes are used as indexes into the free and cell var storage.
+
+    let sortedSymbols = scope.symbols.sorted { lhs, rhs in
+      let lhsName = lhs.key
+      let rhsName = rhs.key
+      return lhsName.value < rhsName.value
+    }
 
     var result = [MangledName]()
-    let sortedNames = scope.symbols.keys.sorted { $0.value < $1.value }
-
-    for name in sortedNames {
-      // swiftlint:disable:next force_unwrapping
-      let symbol = scope.symbols[name]!
-      if symbol.flags.containsAny(flags) {
+    for (name, info) in sortedSymbols {
+      if info.flags.containsAny(flags) {
         result.append(name)
       }
     }
