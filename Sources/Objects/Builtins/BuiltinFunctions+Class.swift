@@ -103,8 +103,8 @@ extension BuiltinFunctions {
                                   kwargs: PyDict?) -> PyResult<PyObject> {
     var result: PyObject
 
-    if let meta = kwargs?.get(id: .metaclass) {
-      // TODO: if (_PyDict_DelItemId(mkw, &PyId_metaclass) < 0)
+    if let kwargs = kwargs, let meta = kwargs.get(id: .metaclass) {
+      _ = kwargs.del(id: .metaclass)
       result = meta
     } else {
       result = bases.elements.first?.type ?? Py.types.type

@@ -2,6 +2,7 @@ import Bytecode
 
 // In CPython:
 // Objects -> typeobject.c
+// https://docs.python.org/3/library/functions.html#super
 
 // swiftlint:disable file_length
 
@@ -33,6 +34,18 @@ public class PySuper: PyObject, HasCustomGetMethod {
   private var thisClass: PyType?
   private var object: PyObject?
   private var objectType: PyType?
+
+  override public var description: String {
+    func describe(value: PyObject?) -> String {
+      guard let v = value else { return "nil" }
+      return String(describing: v)
+    }
+
+    let thisClass = describe(value: self.thisClass)
+    let object = describe(value: self.object)
+    let objectType = describe(value: self.objectType)
+    return "PySuper(thisClass: \(thisClass), object: \(object), objectType: \(objectType))"
+  }
 
   internal convenience init(requestedType: PyType?,
                             object: PyObject?,
@@ -82,25 +95,26 @@ public class PySuper: PyObject, HasCustomGetMethod {
       return self.getAttributeSkip(name: name)
     }
 
-    // CPython: 'su->type' and 'su->obj
+    // CPython: 'su->type' and 'su->obj'
     // It should never be nil (nil is allowed only because it is needed in '__new__')
     guard let suType = self.thisClass, let suObj = self.object else {
       return .value(self)
     }
 
+    // The 'self.objectType' determines the method resolution order to be searched.
+    // The search starts from the class right after the 'self.type'.
+    // https://docs.python.org/3/library/functions.html#super
     let mro = startType.getMRORaw()
-    var i = mro.firstIndex { $0 === suType } ?? mro.count
-    i += 1 // skip su->type (if any)
+    let typeIndex = mro.firstIndex { $0 === suType } ?? mro.count
+    let indexAfterTypeIndex = typeIndex + 1
 
-    if i >= mro.count {
+    if indexAfterTypeIndex >= mro.count {
       return self.getAttributeSkip(name: name)
     }
 
-    repeat {
-      defer { i += 1 }
-
-      let tmp = mro[i]
-      let dict = tmp.getDict()
+    for index in indexAfterTypeIndex..<mro.count {
+      let base = mro[index]
+      let dict = base.getDict()
 
       switch dict.get(key: name) {
       case .value(let res):
@@ -114,7 +128,7 @@ public class PySuper: PyObject, HasCustomGetMethod {
            .error:
         break // just go to next element (ignore error)
       }
-    } while i < mro.count
+    }
 
     // Just in case
     return self.getAttributeSkip(name: name)
@@ -126,12 +140,11 @@ public class PySuper: PyObject, HasCustomGetMethod {
   }
 
   private func is__class__(name: PyObject) -> Bool {
-    switch Py.isEqualBool(left: name, right: IdString.__class__.value) {
-    case let .value(value):
-      return value
-    case .error:
+    guard let string = name as? PyString else {
       return false
     }
+
+    return string.value == "__class__"
   }
 
   // MARK: - Get method

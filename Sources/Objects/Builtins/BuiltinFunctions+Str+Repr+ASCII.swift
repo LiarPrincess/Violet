@@ -1,10 +1,12 @@
+import Core
+
 // In CPython:
 // Python -> builtinmodule.c
 // https://docs.python.org/3/library/functions.html
 
-extension BuiltinFunctions {
+// MARK: - Repr
 
-  // MARK: - Repr
+extension BuiltinFunctions {
 
   // sourcery: pymethod = repr
   /// repr(object)
@@ -37,14 +39,22 @@ extension BuiltinFunctions {
     case .error: return self.genericRepr(object)
     }
   }
+}
 
-  // MARK: - Str
+// MARK: - Str
+
+extension BuiltinFunctions {
 
   /// class str(object='')
   /// class str(object=b'', encoding='utf-8', errors='strict')
   public func strValue(_ object: PyObject) -> PyResult<String> {
     if object.hasReprLock {
       return .value("")
+    }
+
+    // If we do not override '__str__' then we have to use '__repr__'.
+    guard self.hasCustom__str__(object) else {
+      return self.repr(object)
     }
 
     if let owner = object as? __str__Owner {
@@ -65,6 +75,19 @@ extension BuiltinFunctions {
     case .error(let e), .notCallable(let e):
       return .error(e)
     }
+  }
+
+  private func hasCustom__str__(_ object: PyObject) -> Bool {
+    let type = object.type
+
+    guard let lookup = type.lookupWithType(name: .__str__) else {
+      // 'object' has default implementation for '__str__',
+      // if we did not find it then something went really wrong.
+      trap("'\(type.getName())' is not a subclass of 'object'")
+    }
+
+    let isFromObject = lookup.owner === Py.types.object
+    return !isFromObject
   }
 
   // MARK: - ASCII
