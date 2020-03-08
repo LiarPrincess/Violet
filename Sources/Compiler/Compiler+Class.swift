@@ -56,20 +56,25 @@ extension Compiler {
 
     // 2. load the 'build_class' function
     self.builder.appendLoadBuildClass()
+
     // 3. load a function (or closure) made from the code object
     try self.makeClosure(codeObject: codeObject, flags: [], location: location)
+
     // 4. load class name
     self.builder.appendString(node.name)
+
     // 5. generate the rest of the code for the call
     try self.callHelper(args: node.bases,
                         keywords: node.keywords,
                         context: .load,
                         alreadyPushedArgs: 2)
+
     // 6. apply decorators
     for _ in node.decorators {
       self.builder.appendCallFunction(argumentCount: 1)
     }
+
     // 7. store into <name>
-    self.builder.appendStoreName(node.name)
+    self.visitName(name: node.name, context: .store)
   }
 }

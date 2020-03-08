@@ -57,13 +57,17 @@ extension Compiler {
     case name
   }
 
-  /// compiler_nameop(struct compiler *c, identifier name, expr_context_ty ctx)
   public func visit(_ node: IdentifierExpr) throws {
-    let mangled = self.mangleName(node.value)
+    self.visitName(name: node.value, context: node.context)
+  }
+
+  /// compiler_nameop(struct compiler *c, identifier name, expr_context_ty ctx)
+  internal func visitName(name: String, context: ExpressionContext) {
+    let mangled = self.mangleName(name)
     let info = self.currentScope.symbols[mangled]
 
     // TODO: Leave assert here, but handle __doc__ and the like better
-    assert(info != nil || node.value.starts(with: "_"))
+    assert(info != nil || name.starts(with: "_"))
 
     let flags = info?.flags ?? []
     var operation = IdentifierOperation.name
@@ -86,13 +90,13 @@ extension Compiler {
 
     switch operation {
     case .deref(let type):
-      self.appendDeref(mangled: mangled, type: type, context: node.context)
+      self.appendDeref(mangled: mangled, type: type, context: context)
     case .fast:
-      self.builder.appendFast(name: mangled, context: node.context)
+      self.builder.appendFast(name: mangled, context: context)
     case .global:
-      self.builder.appendGlobal(name: mangled, context: node.context)
+      self.builder.appendGlobal(name: mangled, context: context)
     case .name:
-      self.builder.appendName(name: mangled, context: node.context)
+      self.builder.appendName(name: mangled, context: context)
     }
   }
 
