@@ -119,6 +119,7 @@ public struct IdString {
   public static let __next__ = Self.impl.__next__
   public static let __or__ = Self.impl.__or__
   public static let __package__ = Self.impl.__package__
+  public static let __path__ = Self.impl.__path__
   public static let __pos__ = Self.impl.__pos__
   public static let __pow__ = Self.impl.__pow__
   public static let __prepare__ = Self.impl.__prepare__
@@ -184,6 +185,7 @@ public struct IdString {
   public static let sorted = Self.impl.sorted
   public static let special = Self.impl.special
   public static let symmetric_difference_update = Self.impl.symmetric_difference_update
+  public static let sys = Self.impl.sys
   public static let `throw` = Self.impl.`throw`
   public static let update = Self.impl.update
   public static let values = Self.impl.values
@@ -275,6 +277,7 @@ private struct IdStringImpl {
   fileprivate let __next__ = IdString(value: "__next__")
   fileprivate let __or__ = IdString(value: "__or__")
   fileprivate let __package__ = IdString(value: "__package__")
+  fileprivate let __path__ = IdString(value: "__path__")
   fileprivate let __pos__ = IdString(value: "__pos__")
   fileprivate let __pow__ = IdString(value: "__pow__")
   fileprivate let __prepare__ = IdString(value: "__prepare__")
@@ -340,6 +343,7 @@ private struct IdStringImpl {
   fileprivate let sorted = IdString(value: "sorted")
   fileprivate let special = IdString(value: "special")
   fileprivate let symmetric_difference_update = IdString(value: "symmetric_difference_update")
+  fileprivate let sys = IdString(value: "sys")
   fileprivate let `throw` = IdString(value: "throw")
   fileprivate let update = IdString(value: "update")
   fileprivate let values = IdString(value: "values")

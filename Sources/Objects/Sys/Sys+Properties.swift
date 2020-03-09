@@ -36,6 +36,18 @@ extension Sys {
     return .value()
   }
 
+  // MARK: - Modules
+
+  // sourcery: pyproperty = modules
+  /// sys.modules
+  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.modules).
+  ///
+  /// This is a dictionary that maps module names to modules
+  /// which have already been loaded.
+  internal func getModules() -> PyDict {
+    return self.modules
+  }
+
   // MARK: - Platform
 
   // sourcery: pyproperty = platform

@@ -78,7 +78,7 @@ public final class Sys {
     settrace() -- set the global debug tracing function
     """
 
-  // MARK: - Prompt values
+  // MARK: - Prompts
 
   public lazy var ps1: PyObject = Py.newString(">>> ")
   public lazy var ps2: PyObject = Py.newString("... ")
@@ -98,6 +98,10 @@ public final class Sys {
     case .error: return ""
     }
   }
+
+  // MARK: - Modules
+
+  public lazy var modules = PyDict()
 
   // MARK: - Platform
 

@@ -16,16 +16,6 @@ extension Sys {
     return self.unimplemented
   }
 
-  // sourcery: pyproperty = modules
-  /// sys.modules
-  /// See [this](https://docs.python.org/3.7/library/sys.html#sys.modules).
-  ///
-  /// This is a dictionary that maps module names to modules
-  /// which have already been loaded.
-  internal func getModules() -> PyObject {
-    return self.unimplemented
-  }
-
   // sourcery: pyproperty = path
   /// sys.path
   /// See [this](https://docs.python.org/3.7/library/sys.html#sys.path).
