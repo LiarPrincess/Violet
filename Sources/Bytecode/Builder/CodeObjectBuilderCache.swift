@@ -60,6 +60,7 @@ private func toIndexDict(names: [String]) -> [UseScalarsToHashString:Int] {
 
   for (index, name) in names.enumerated() {
     let key = UseScalarsToHashString(name)
+    assert(result[key] == nil, "Duplicate name: '\(name)'")
     result[key] = index
   }
 
@@ -72,6 +73,7 @@ private func toIndexDict(names: [MangledName]) -> [MangledName:Int] {
   result.reserveCapacity(names.count)
 
   for (index, name) in names.enumerated() {
+    assert(result[name] == nil, "Duplicate name: '\(name)'")
     result[name] = index
   }
 

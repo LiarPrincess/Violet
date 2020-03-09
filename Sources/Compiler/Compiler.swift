@@ -291,7 +291,7 @@ public final class Compiler: ASTVisitor, StatementVisitor, ExpressionVisitor {
     let qualifiedName = self.createQualifiedName(for: name, type: type)
     let flags = self.createFlags(type: type, scope: scope)
 
-    let varNames = scope.varNames + self.getSymbols(scope, withAnyOf: .srcLocal)
+    let varNames = self.getSymbols(scope, withAnyOf: .srcLocal)
     let freeVars = self.getSymbols(scope, withAnyOf: [.srcFree, .defFreeClass])
     var cellVars = self.getSymbols(scope, withAnyOf: .cell)
 
