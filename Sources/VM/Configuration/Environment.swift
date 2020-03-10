@@ -10,7 +10,7 @@ import Compiler
 public struct Environment {
 
   /// `PATH`
-  public var PATH: [String] = []
+  public var path: [String] = []
 
   /// VIOLETPATH (has precedence over `PYTHONPATH`)
   ///
@@ -85,11 +85,11 @@ public struct Environment {
 
       switch key {
       case "PATH":
-        self.PATH = splitPATH(value)
+        self.path = splitPath(value)
       case "VIOLETPATH":
-        self.violetPath = splitPATH(value)
+        self.violetPath = splitPath(value)
       case "PYTHONPATH":
-        self.pythonPath = splitPATH(value)
+        self.pythonPath = splitPath(value)
       case "PYTHONOPTIMIZE":
         let isInt = Int(value) != nil
         self.pythonOptimize = isInt ? .OO : .O
@@ -108,7 +108,7 @@ public struct Environment {
   }
 }
 
-private func splitPATH(_ path: String) -> [String] {
+private func splitPath(_ path: String) -> [String] {
   return path
     .split(separator: Constants.PATHSep)
     .map { String($0) }

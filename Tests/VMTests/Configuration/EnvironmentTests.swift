@@ -13,7 +13,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.PATH = ["All those days, chasing down a daydream"]
+    expected.path = ["All those days, chasing down a daydream"]
     self.assertEqual(env, expected)
   }
 
@@ -23,7 +23,7 @@ class EnvironmentTests: XCTestCase {
     ])
 
     var expected = Environment()
-    expected.PATH = ["All those years", "living in a blur"]
+    expected.path = ["All those years", "living in a blur"]
     self.assertEqual(env, expected)
   }
 
@@ -35,7 +35,7 @@ class EnvironmentTests: XCTestCase {
     let env = Environment(from: dict)
 
     var expected = Environment()
-    expected.PATH = ["All that time", "never truly seeing"]
+    expected.path = ["All that time", "never truly seeing"]
     self.assertEqual(env, expected)
   }
 
@@ -217,7 +217,7 @@ class EnvironmentTests: XCTestCase {
                            _ rhs: Environment,
                            file:  StaticString = #file,
                            line:  UInt         = #line) {
-    XCTAssertEqual(lhs.PATH, rhs.PATH, "PATH", file: file, line: line)
+    XCTAssertEqual(lhs.path, rhs.path, "PATH", file: file, line: line)
     XCTAssertEqual(lhs.violetPath, rhs.violetPath, "violetPath", file: file, line: line)
     XCTAssertEqual(lhs.pythonPath, rhs.pythonPath, "pythonPath", file: file, line: line)
     XCTAssertEqual(lhs.pythonOptimize, rhs.pythonOptimize, "pythonOptimize", file: file, line: line)
