@@ -1,3 +1,4 @@
+import ArgumentParser
 import Core
 import Compiler
 
@@ -15,7 +16,6 @@ public struct Arguments {
   /// `-h -help --help`
   ///
   /// Display available options.
-  /// Overrides `ArgumentParser` help.
   public var help = false
 
   /// `-v --version`
@@ -153,12 +153,12 @@ public struct Arguments {
     self.optimization = self.getOptimization(binding: binding)
     self.bytesWarning = self.getBytesWarning(binding: binding)
 
-    appendWarning(flag: binding.wDefault, warning: .default)
-    appendWarning(flag: binding.wError, warning: .error)
-    appendWarning(flag: binding.wAlways, warning: .always)
-    appendWarning(flag: binding.wModule, warning: .module)
-    appendWarning(flag: binding.wOnce, warning: .once)
-    appendWarning(flag: binding.wIgnore, warning: .ignore)
+    self.appendWarning(flag: binding.wDefault, warning: .default)
+    self.appendWarning(flag: binding.wError, warning: .error)
+    self.appendWarning(flag: binding.wAlways, warning: .always)
+    self.appendWarning(flag: binding.wModule, warning: .module)
+    self.appendWarning(flag: binding.wOnce, warning: .once)
+    self.appendWarning(flag: binding.wIgnore, warning: .ignore)
 
     // 'Command' should end with '\n'
     self.command = binding.command.map { $0 + "\n" }
@@ -205,16 +205,26 @@ public struct Arguments {
 
       trap(msg)
     } catch {
+      assert(self.isCleanExit_HelpRequest(error: error))
+
       var result = ArgumentBinding.fullMessage(for: error)
 
       // 'ArgumentParser' has tendency to add ' ' before new line.
-      // (Which is ugly and messes our unit tests because I have
-      // automatic trim turned on.)
+      // (Which is ugly and messes unit tests for people who have
+      // automatic whitespace trimming turned on.)
       result = result.replacingOccurrences(of: " \n", with: "\n")
 
-      // 'ArgumentParser' adds new line at the end (and we don't want that).
+      // 'ArgumentParser' adds new line at the end. (Again, kind of ugly.)
       result = result.trimmingCharacters(in: .newlines)
       return result
     }
+  }
+
+  private func isCleanExit_HelpRequest(error: Error) -> Bool {
+    if case CleanExit.helpRequest = error {
+      return true
+    }
+
+    return false
   }
 }

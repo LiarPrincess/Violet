@@ -154,7 +154,7 @@ internal class CoreConfiguration {
     // - the BytesWarning filter, if needed ('-b', '-bb')
     // - any '-W' command line options; then
     // - the 'PYTHONWARNINGS' environment variable;
-    self.warnings = arguments.warnings + (env?.pythonWarnings ?? [])
+    self.warnings = (env?.pythonWarnings ?? []) + arguments.warnings
     self.bytesWarning = arguments.bytesWarning
 
     self.debug = arguments.debug || (env?.pythonDebug ?? false)

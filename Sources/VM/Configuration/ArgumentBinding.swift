@@ -55,7 +55,7 @@ internal struct ArgumentBinding: ParsableCommand {
     name: NameSpecification.short,
     help: "debug output messages; also PYTHONDEBUG=x"
   )
-  internal var debug: Bool// = false
+  internal var debug: Bool
 
   /// `-q`
   ///
@@ -132,14 +132,14 @@ internal struct ArgumentBinding: ParsableCommand {
     name: NameSpecification.customShort("O"),
     help: "remove assert and __debug__-dependent statements; also PYTHONOPTIMIZE=x"
   )
-  internal var optimization1: Bool
+  internal var optimization1: Bool // Do not use 'Int'. '-O and -OO' are separate options
 
   /// `-OO`
   @Flag(
     name: NameSpecification.customLong("OO", withSingleDash: true),
     help: "do -O changes and also discard docstrings (overrides '-O' if it is also set)"
   )
-  internal var optimization2: Bool
+  internal var optimization2: Bool // Do not use 'Int'. '-O and -OO' are separate options
 
   // MARK: - Warnings
 
@@ -239,6 +239,5 @@ internal struct ArgumentBinding: ParsableCommand {
 
   // MARK: - Init
 
-  /// Use arguments with predefined values.
   internal init() { }
 }

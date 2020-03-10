@@ -331,9 +331,8 @@ OPTIONS:
   -q                      don't print version and copyright messages on
                           interactive startup
   -i                      inspect interactively after running script; forces a
-                          prompt even
-                          if stdin does not appear to be a terminal; also
-                          PYTHONINSPECT=x
+                          prompt even if stdin does not appear to be a
+                          terminal; also PYTHONINSPECT=x
   -E                      ignore PYTHON* environment variables (such as
                           PYTHONPATH)
   -I                      isolate Violet from the user's environment (implies
@@ -357,8 +356,8 @@ OPTIONS:
                           PYTHONWARNINGS=arg
   -Wignore                warning control; never warn; also PYTHONWARNINGS=arg
   -b                      issue warning about str(bytes_instance),
-                          str(bytearray_instance)
-                          and comparing bytes/bytearray with str.
+                          str(bytearray_instance) and comparing bytes/bytearray
+                          with str.
   -c <c>                  program passed in as string (terminates option list)
   -m <m>                  run library module as a script (terminates option
                           list)
