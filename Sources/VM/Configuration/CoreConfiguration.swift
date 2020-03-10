@@ -145,14 +145,16 @@ internal class CoreConfiguration {
     self.executable = dependencies.executablePath ?? programName
 
     self.moduleSearchPathsEnv = (env?.violetPath ?? []) + (env?.pythonPath ?? [])
-    self.moduleSearchPaths = getModuleSearchPaths(environment: env,
-                                                  dependencies: dependencies)
+    self.moduleSearchPaths = getModuleSearchPaths(
+      environment: env,
+      dependencies: dependencies
+    )
 
     // The priority order for warnings configuration is (highest first):
     // - the BytesWarning filter, if needed ('-b', '-bb')
     // - any '-W' command line options; then
     // - the 'PYTHONWARNINGS' environment variable;
-    self.warnings = (env?.pythonWarnings ?? []) + arguments.warnings
+    self.warnings = arguments.warnings + (env?.pythonWarnings ?? [])
     self.bytesWarning = arguments.bytesWarning
 
     self.debug = arguments.debug || (env?.pythonDebug ?? false)
@@ -164,8 +166,10 @@ internal class CoreConfiguration {
     self.noSite = arguments.noSite
     self.noUserSite = arguments.noUserSite || (env?.pythonNoUserSite ?? false)
 
-    self.optimization = mergeOptimization(arguments: arguments.optimization,
-                                          environment: env?.pythonOptimize)
+    self.optimization = mergeOptimization(
+      arguments: arguments.optimization,
+      environment: env?.pythonOptimize
+    )
   }
 
   internal func dump() {
@@ -232,15 +236,20 @@ private func getModuleSearchPaths(environment: Environment?,
 
 private func mergeOptimization(
   arguments: OptimizationLevel,
-  environment: OptimizationLevel?) -> OptimizationLevel {
+  environment: OptimizationLevel?
+) -> OptimizationLevel {
 
   guard let env = environment else {
     return arguments
   }
 
-  switch arguments {
-  case .none: return env
-  case .O:    return env == .OO ? .OO : .O
-  case .OO:   return .OO
+  if arguments == .OO || env == .OO {
+    return .OO
   }
+
+  if arguments == .O || env == .O {
+    return .O
+  }
+
+  return .none
 }

@@ -313,6 +313,7 @@ class ArgumentsTests: XCTestCase {
 
   // MARK: - Usage
 
+  // swiftlint:disable:next function_body_length
   func test_usage() {
     let arguments = Arguments()
     XCTAssertEqual(arguments.usage, """
