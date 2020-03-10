@@ -10,12 +10,12 @@ extension VM {
   /// static void
   /// pymain_run_python(_PyMain *pymain)
   public func run() throws {
-    if self.arguments.printHelp {
-      print(self.arguments.getUsage())
+    if self.arguments.help {
+      print(self.arguments.usage)
       return
     }
 
-    if self.arguments.printVersion {
+    if self.arguments.version {
       print("Python \(Py.sys.version)")
       return
     }

@@ -15,9 +15,9 @@ let package = Package(
     .library(name: "Rapunzel", targets: ["Rapunzel"])
   ],
   dependencies: [
-    // We will use 'TSCUtility.ArgumentParser' from this package.
-    // Also: this is VERY old version of SPM, but it works, so whatever.
-    .package(url: "https://github.com/apple/swift-package-manager", from: "0.4.0")
+    // If it is possible we try to avoid adding new dependencies because… oh so many reasons!
+    // Tbh. I’m still not sure if we can trust this ‘apple’ person…
+    .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMinor(from: "0.0.1"))
   ],
   targets: [
     // Shared module that all of the other modules depend on.
@@ -45,7 +45,7 @@ let package = Package(
     .testTarget(name: "ObjectsTests", dependencies: ["Objects"]),
 
     // Python runtime + bytecode interpretation
-    .target(name: "VM", dependencies: ["Compiler", "Objects", "SPMUtility"]),
+    .target(name: "VM", dependencies: ["Compiler", "Objects", "ArgumentParser"]),
     .testTarget(name: "VMTests", dependencies: ["VM"]),
 
     // Main executable

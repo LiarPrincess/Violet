@@ -5,7 +5,7 @@ import Compiler
 
 // swiftlint:disable file_length
 
-class ArgumentParserTests: XCTestCase {
+class ArgumentsTests: XCTestCase {
 
   private let programName = "Violet"
 
@@ -15,7 +15,7 @@ class ArgumentParserTests: XCTestCase {
     for cmd in ["-v", "--version"] {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
-        expected.printVersion = true
+        expected.version = true
         assertEqual(parsed, expected)
       }
     }
@@ -177,7 +177,7 @@ class ArgumentParserTests: XCTestCase {
     for cmd in values {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
-        expected.printVersion = true
+        expected.version = true
         expected.debug = true
         expected.quiet = true
         expected.bytesWarning = .warning
@@ -206,7 +206,7 @@ class ArgumentParserTests: XCTestCase {
 
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
-      expected.printVersion = true
+      expected.version = true
       expected.debug = true
       expected.quiet = true
       expected.bytesWarning = .warning
@@ -233,7 +233,7 @@ class ArgumentParserTests: XCTestCase {
 
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
-      expected.printVersion = true
+      expected.version = true
       expected.debug = true
       expected.quiet = true
       expected.bytesWarning = .warning
@@ -260,7 +260,7 @@ class ArgumentParserTests: XCTestCase {
 
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
-      expected.printVersion = true
+      expected.version = true
       expected.debug = true
       expected.quiet = true
       expected.bytesWarning = .warning
@@ -287,7 +287,7 @@ class ArgumentParserTests: XCTestCase {
 
     if let parsed = self.parse(cmd) {
       var expected = Arguments()
-      expected.printVersion = true
+      expected.version = true
       expected.debug = true
       expected.quiet = true
       expected.bytesWarning = .warning
@@ -305,10 +305,63 @@ class ArgumentParserTests: XCTestCase {
     for cmd in ["-h", "-help", "--help"] {
       if let parsed = self.parse(cmd) {
         var expected = Arguments()
-        expected.printHelp = true
+        expected.help = true
         assertEqual(parsed, expected)
       }
     }
+  }
+
+  // MARK: - Usage
+
+  func test_usage() {
+    let arguments = Arguments()
+    XCTAssertEqual(arguments.usage, """
+USAGE: argument-binding <options>
+
+ARGUMENTS:
+  <script>                execute the code contained in script (terminates
+                          option list)
+
+OPTIONS:
+  -help, -h, --help       print this help message and exit (also --help)
+  -v, --version           print the Python version number and exit (also
+                          --version)
+  -d                      debug output messages; also PYTHONDEBUG=x
+  -q                      don't print version and copyright messages on
+                          interactive startup
+  -i                      inspect interactively after running script; forces a
+                          prompt even
+                          if stdin does not appear to be a terminal; also
+                          PYTHONINSPECT=x
+  -E                      ignore PYTHON* environment variables (such as
+                          PYTHONPATH)
+  -I                      isolate Violet from the user's environment (implies
+                          -E)
+  -S                      don't imply 'import site' on initialization
+  -s                      don't add user site directory to sys.path; also
+                          PYTHONNOUSERSITE
+  -O                      remove assert and __debug__-dependent statements;
+                          also PYTHONOPTIMIZE=x
+  -OO                     do -O changes and also discard docstrings (overrides
+                          '-O' if it is also set)
+  -Wdefault               warning control; warn once per call location; also
+                          PYTHONWARNINGS=arg
+  -Werror                 warning control; convert to exceptions; also
+                          PYTHONWARNINGS=arg
+  -Walways                warning control; warn every time; also
+                          PYTHONWARNINGS=arg
+  -Wmodule                warning control; warn once per calling module; also
+                          PYTHONWARNINGS=arg
+  -Wonce                  warning control; warn once per Python process; also
+                          PYTHONWARNINGS=arg
+  -Wignore                warning control; never warn; also PYTHONWARNINGS=arg
+  -b                      issue warning about str(bytes_instance),
+                          str(bytearray_instance)
+                          and comparing bytes/bytearray with str.
+  -c <c>                  program passed in as string (terminates option list)
+  -m <m>                  run library module as a script (terminates option
+                          list)
+""")
   }
 
   // MARK: - Helpers
@@ -317,8 +370,8 @@ class ArgumentParserTests: XCTestCase {
                            _ rhs: Arguments,
                            file:  StaticString = #file,
                            line:  UInt         = #line) {
-    XCTAssertEqual(lhs.printHelp, rhs.printHelp, "printHelp", file: file, line: line)
-    XCTAssertEqual(lhs.printVersion, rhs.printVersion, "printVersion", file: file, line: line)
+    XCTAssertEqual(lhs.help, rhs.help, "help", file: file, line: line)
+    XCTAssertEqual(lhs.version, rhs.version, "version", file: file, line: line)
     XCTAssertEqual(lhs.debug, rhs.debug, "debug", file: file, line: line)
     XCTAssertEqual(lhs.quiet, rhs.quiet, "quiet", file: file, line: line)
     XCTAssertEqual(lhs.isolated, rhs.isolated, "isolated", file: file, line: line)
@@ -348,9 +401,9 @@ class ArgumentParserTests: XCTestCase {
                      line: UInt         = #line) -> Arguments? {
 
     do {
-      let parser = ArgumentParser()
       let split = arguments.split(separator: " ").map { String($0) }
-      return try parser.parse(arguments: [programName] + split)
+      let result = try Arguments(from: [programName] + split)
+      return result
     } catch {
       XCTAssert(false, "\(error)", file: file, line: line)
       return nil
