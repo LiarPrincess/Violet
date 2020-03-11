@@ -61,7 +61,9 @@ public struct IdString {
   public static let __dir__ = Self.impl.__dir__
   public static let __divmod__ = Self.impl.__divmod__
   public static let __doc__ = Self.impl.__doc__
+  public static let __enter__ = Self.impl.__enter__
   public static let __eq__ = Self.impl.__eq__
+  public static let __exit__ = Self.impl.__exit__
   public static let __file__ = Self.impl.__file__
   public static let __float__ = Self.impl.__float__
   public static let __floordiv__ = Self.impl.__floordiv__
@@ -219,7 +221,9 @@ private struct IdStringImpl {
   fileprivate let __dir__ = IdString(value: "__dir__")
   fileprivate let __divmod__ = IdString(value: "__divmod__")
   fileprivate let __doc__ = IdString(value: "__doc__")
+  fileprivate let __enter__ = IdString(value: "__enter__")
   fileprivate let __eq__ = IdString(value: "__eq__")
+  fileprivate let __exit__ = IdString(value: "__exit__")
   fileprivate let __file__ = IdString(value: "__file__")
   fileprivate let __float__ = IdString(value: "__float__")
   fileprivate let __floordiv__ = IdString(value: "__floordiv__")

@@ -584,14 +584,14 @@ public class PyType: PyObject {
   // MARK: - Lookup with type
 
   /// Tuple: lookup result + type on which it was found
-  internal struct LookupAndType {
+  internal struct ValueAndOwner {
     internal let value: PyObject
     /// Type on which `self.value` was found.
     internal let owner: PyType
   }
 
   internal enum LookupWithTypeResult {
-    case value(LookupAndType)
+    case value(ValueAndOwner)
     case notFound
     case error(PyBaseException)
   }
@@ -601,7 +601,7 @@ public class PyType: PyObject {
     for base in self.mro {
       switch base.__dict__.get(key: name) {
       case .value(let o):
-        return .value(LookupAndType(value: o, owner: base))
+        return .value(ValueAndOwner(value: o, owner: base))
       case .notFound:
         break // not in dict, move to next item
       case .error(let e):
@@ -613,10 +613,10 @@ public class PyType: PyObject {
   }
 
   /// Internal API to look for a name through the MRO.
-  internal func lookupWithType(name: IdString) -> LookupAndType? {
+  internal func lookupWithType(name: IdString) -> ValueAndOwner? {
     for base in self.mro {
       if let value = base.__dict__.get(id: name) {
-        return LookupAndType(value: value, owner: base)
+        return ValueAndOwner(value: value, owner: base)
       }
     }
 

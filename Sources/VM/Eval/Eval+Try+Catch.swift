@@ -51,16 +51,16 @@ extension Eval {
   internal func endFinally() -> InstructionResult {
     // See 'PushFinallyReason' type for comment about what this is.
     switch PushFinallyReason.pop(from: &self.stack) {
-    case .return(let value):
+    case let .return(value):
       return .unwind(.return(value)) // We are still returning value
 
     case .break:
       return .unwind(.break) // We are still 'breaking'
 
-    case .continue(let loopStartLabel):
-      return .unwind(.continue(loopStartLabel: loopStartLabel))
+    case let .continue(loopStartLabel: label, asObject: _):
+      return .unwind(.continue(loopStartLabel: label))
 
-    case .exception(let e):
+    case let .exception(e):
       return .unwind(.exception(e)) // We are still handling the same exception
 
     case .silenced:

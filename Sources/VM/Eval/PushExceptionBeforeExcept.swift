@@ -7,7 +7,7 @@ internal enum PushExceptionBeforeExcept {
 
   internal static func push(_ exception: PyBaseException?,
                             on stack: inout ObjectStack) {
-    stack.push(exception ?? noExceptionMarker)
+    stack.push(exception ?? Self.noExceptionMarker)
   }
 
   internal enum Pop {
@@ -26,7 +26,7 @@ internal enum PushExceptionBeforeExcept {
       return .exception(exception)
     }
 
-    if isNoExceptionMarker(value) {
+    if Self.isNoExceptionMarker(value) {
       return .noException
     }
 

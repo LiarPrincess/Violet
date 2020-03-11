@@ -218,6 +218,35 @@ extension BuiltinFunctions {
 
     return self.setAttribute(object, name: name, value: Py.none)
   }
+}
+
+// MARK: - Lookup
+
+public enum LookupResult {
+  case value(PyObject)
+  case notFound
+  case error(PyBaseException)
+}
+
+extension BuiltinFunctions {
+
+  /// Look for a name through the MRO.
+  ///
+  /// _PyObject_LookupSpecial(PyObject *self, _Py_Identifier *attrid)
+  public func lookup(on object: PyObject, name: IdString) -> LookupResult {
+    guard let attribute = object.type.lookup(name: name) else {
+      return .notFound
+    }
+
+    if let descr = GetDescriptor(object: object, attribute: attribute) {
+      switch descr.call() {
+      case let .value(o): return .value(o)
+      case let .error(e): return .error(e)
+      }
+    }
+
+    return .value(attribute)
+  }
 
   // MARK: - Helpers
 

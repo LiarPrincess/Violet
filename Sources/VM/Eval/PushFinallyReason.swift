@@ -36,6 +36,8 @@ internal enum PushFinallyReason {
     case `break`
     /// We were unwinding blocks, since we hit `continue`.
     case `continue`(loopStartLabel: Int)
+    /// We were unwinding blocks, since we hit `continue`.
+    case continuePy(loopStartLabel: PyInt)
     /// We were handling exception.
     case exception(PyBaseException)
     /// 'yield' operator
@@ -63,13 +65,16 @@ internal enum PushFinallyReason {
   /// Remember what we were doing before we started `finally` block.
   internal static func push(_ value: Push, on stack: inout ObjectStack) {
     switch value {
-    case .return(let o):
-      stack.push(o)
+    case .return(let value):
+      stack.push(value)
       stack.push(Py.newInt(PushFinallyReason.return))
     case .break:
       stack.push(Py.newInt(PushFinallyReason.break))
-    case .continue(let l):
-      stack.push(Py.newInt(l))
+    case .continue(let loopStartLabel):
+      stack.push(Py.newInt(loopStartLabel))
+      stack.push(Py.newInt(PushFinallyReason.continue))
+    case .continuePy(let loopStartLabel):
+      stack.push(loopStartLabel)
       stack.push(Py.newInt(PushFinallyReason.continue))
     case .exception:
       stack.push(Py.newInt(PushFinallyReason.exception))
@@ -88,7 +93,7 @@ internal enum PushFinallyReason {
     /// We are unwinding blocks, since we hit `break`.
     case `break`
     /// We are unwinding blocks, since we hit `continue`.
-    case `continue`(loopStartLabel: Int)
+    case `continue`(loopStartLabel: Int, asObject: PyInt)
     /// We were handling exception.
     case exception(PyBaseException)
     /// 'yield' operator
@@ -114,7 +119,7 @@ internal enum PushFinallyReason {
         let value = stack.pop()
         if let pyInt = value as? PyInt,
            let int = Int(exactly: pyInt.value) { // otherwise 'invalid'
-          return .continue(loopStartLabel: int)
+          return .continue(loopStartLabel: int, asObject: pyInt)
         }
       case PushFinallyReason.exception:
         assert(false)
