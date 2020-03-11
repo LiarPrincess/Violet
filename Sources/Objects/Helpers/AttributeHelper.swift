@@ -54,8 +54,8 @@ internal enum AttributeHelper {
       return .value(p)
     }
 
-    let msg = "\(object.typeName) object has no attribute '\(name.reprRaw())'"
-    return .attributeError(msg)
+    let e = Py.newAttributeError(object: object, hasNoAttribute: name.reprRaw())
+    return .error(e)
   }
 
   private enum GetFromDictResult {
@@ -105,11 +105,11 @@ internal enum AttributeHelper {
       }
     }
 
-    let msg = descriptor == nil ?
-      "'\(object.typeName)' object has no attribute '\(name.reprRaw())'" :
-      "'\(object.typeName)' object attribute '\(name.reprRaw())' is read-only"
+    let e = descriptor == nil ?
+      Py.newAttributeError(object: object, hasNoAttribute: name.reprRaw()) :
+      Py.newAttributeError(object: object, attributeIsReadOnly: name.reprRaw())
 
-    return .attributeError(msg)
+    return .error(e)
   }
 
   // MARK: - Del

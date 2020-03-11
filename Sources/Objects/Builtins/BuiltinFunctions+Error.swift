@@ -29,6 +29,24 @@ extension BuiltinFunctions {
     return PyAttributeError(msg: msg)
   }
 
+  /// Attribute not found.
+  public func newAttributeError(
+    object: PyObject,
+    hasNoAttribute name: String
+  ) -> PyAttributeError {
+    let msg = "\(object.typeName) object has no attribute '\(name)'"
+    return self.newAttributeError(msg: msg)
+  }
+
+  /// Attribute is read-only.
+  public func newAttributeError(
+    object: PyObject,
+    attributeIsReadOnly name: String
+  ) -> PyAttributeError {
+    let msg = "'\(object.typeName)' object attribute '\(name)' is read-only"
+    return self.newAttributeError(msg: msg)
+  }
+
   /// Second argument to a division or modulo operation was zero.
   public func newZeroDivisionError(msg: String) -> PyZeroDivisionError {
     return PyZeroDivisionError(msg: msg)
