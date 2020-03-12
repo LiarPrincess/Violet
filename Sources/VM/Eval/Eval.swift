@@ -121,38 +121,14 @@ internal class Eval {
       switch self.executeInstruction() {
       case .ok:
         break // go to next instruction
+
       case .unwind(let reason):
         self.addExceptionContextIfNeeded(reason)
-        self.unwind(reason: reason)
-
-        // If we still have some blocks then continue loop.
-        // It may happen for break/except/finally blocks
-        // (they would just jump to other part of the code and continue execution).
-        if self.blocks.any {
-          break // continue loop
-        }
-
-        // No blocks! (kinda 'yay', kinda scarry)
-        assert(self.blocks.isEmpty)
-        switch reason {
-        case .return(let object):
-          return .value(object)
-        case .break:
-          // We popped top level loop, we can continue execution
+        switch self.unwind(reason: reason) {
+        case .continueCodeExecution:
           break
-        case .continue,
-             .exception,
-             .yield,
-             .silenced:
-          let pc = self.frame.instructionIndex ?? 0
-          let line = self.code.getLine(instructionIndex: pc)
-
-          print()
-          print("===")
-          print("Popped all blocks, but this still remains: '\(reason)'")
-          print("Instruction:", pc)
-          print("Line:", line)
-          exit(1)
+        case .return(let value):
+          return .value(value)
         }
       }
     }

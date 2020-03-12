@@ -1,5 +1,6 @@
 import Core
 import Objects
+import Foundation
 
 // MARK: - Unwind reason
 
@@ -26,6 +27,16 @@ internal enum UnwindReason {
   case silenced
 }
 
+internal enum UnwindResult {
+  /// Just continue code execution.
+  /// Mostly used after some sort of a jump
+  /// (for example `continue` jumps to the start of the loop).
+  case continueCodeExecution
+  /// We popped all of the blocks, which means
+  /// that we can finally return value to caller.
+  case `return`(PyObject)
+}
+
 // MARK: - Eval
 
 extension Eval {
@@ -35,7 +46,7 @@ extension Eval {
   /// Unwind stack if a return/exception/etc. occurred.
   ///
   /// CPython: fast_block_end:
-  internal func unwind(reason: UnwindReason) {
+  internal func unwind(reason: UnwindReason) -> UnwindResult {
     // swiftlint:disable:previous function_body_length
 
     while let block = self.blocks.last {
@@ -44,7 +55,7 @@ extension Eval {
         if case let .continue(loopStartLabel) = reason {
           // Do not unwind! We are still in a loop!
           self.jumpTo(label: loopStartLabel)
-          return
+          return .continueCodeExecution
         }
 
         _ = self.blocks.pop()
@@ -52,7 +63,7 @@ extension Eval {
 
         if case .break = reason {
           self.jumpTo(label: endLabel)
-          return
+          return .continueCodeExecution
         }
 
       case let .setupExcept(firstExceptLabel):
@@ -62,7 +73,7 @@ extension Eval {
         if case let .exception(e) = reason {
           self.prepareForExceptionHandling(exception: e)
           self.jumpTo(label: firstExceptLabel) // execute except
-          return
+          return .continueCodeExecution
         }
 
       case let .setupFinally(finallyStartLabel):
@@ -72,18 +83,41 @@ extension Eval {
         if case let .exception(e) = reason {
           self.prepareForExceptionHandling(exception: e)
           self.jumpTo(label: finallyStartLabel) // execute finally
-          return
+          return .continueCodeExecution
         }
 
         // See 'PushFinallyReason' type for comment about what this is.
         PushFinallyReason.push(reason: reason, on: &self.stack)
         self.jumpTo(label: finallyStartLabel) // execute finally
-        return
+        return .continueCodeExecution
 
       case .exceptHandler:
         _ = self.blocks.pop()
         self.unwindExceptHandler(block: block)
       }
+    }
+
+    // No blocks! (kinda 'yay', kinda scarry)
+    assert(self.blocks.isEmpty)
+    switch reason {
+    case .return(let value):
+      return .return(value)
+    case .break:
+      // We popped top level loop, we can continue execution
+      return .continueCodeExecution
+    case .continue, // Continue outside of loop?
+         .exception, // Let parent frame deal with it.
+         .yield,
+         .silenced:
+      let pc = self.frame.instructionIndex ?? 0
+      let line = self.code.getLine(instructionIndex: pc)
+
+      print()
+      print("===")
+      print("Popped all blocks, but this still remains: '\(reason)'")
+      print("Instruction:", pc)
+      print("Line:", line)
+      exit(1)
     }
   }
 
